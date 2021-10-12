@@ -608,6 +608,15 @@ public class EstimationService {
 		final String all = configs.getSlabValueAll();
 
 		List<BillingSlab> matchingList = new ArrayList<>();
+		
+		log.info("Total billing slabs " + billingSlabs.size());
+		log.info(" getUsageCategoryMajor " + unit.getUsageCategoryMajor());
+		log.info(" getUsageCategoryMinor " + unit.getUsageCategoryMinor());
+		log.info(" getUsageCategorySubMinor " + unit.getUsageCategorySubMinor());
+		log.info(" getUsageCategoryDetail " + unit.getUsageCategoryDetail());
+		log.info(" getFloorNo " + unit.getFloorNo());
+		log.info(" getOccupancyType " + unit.getOccupancyType());
+
 
 		for (BillingSlab billSlb : billingSlabs) {
 
@@ -634,9 +643,12 @@ public class EstimationService {
 					&& isOccupancyTypeMatching) {
 
 				matchingList.add(billSlb);
-				log.debug(" The Id of the matching slab : " + billSlb.getId());
+				log.info(" The Id of the matching slab : " + billSlb.getId());
 			}
 		}
+		
+		log.info(" matchingList.size() " + matchingList.size());
+
 		if (matchingList.size() == 1)
 			return matchingList.get(0);
 		else if (matchingList.size() == 0)
