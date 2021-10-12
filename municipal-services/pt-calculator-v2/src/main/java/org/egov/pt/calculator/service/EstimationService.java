@@ -557,6 +557,15 @@ public class EstimationService {
 		final String dtlAreaType = property.getAddress().getLocality().getArea();
 		final Boolean dtlIsMultiFloored = detail.getNoOfFloors() > 1;
 
+		
+		log.info(" dtlPtType : " + dtlPtType);
+		log.info(" dtlPtSubType : " + dtlPtSubType);
+		log.info(" dtlOwnerShipCat : " + dtlOwnerShipCat);
+		log.info(" dtlSubOwnerShipCat : " + dtlSubOwnerShipCat);
+		log.info(" dtlAreaType : " + dtlAreaType);
+		log.info(" dtlIsMultiFloored : " + dtlIsMultiFloored);
+		
+		
 		return billingSlabs.stream().filter(slab -> {
 
 			Boolean slabMultiFloored = slab.getIsPropertyMultiFloored();
@@ -639,6 +648,12 @@ public class EstimationService {
 			boolean isOccupancyTypeMatching = billSlb.getOccupancyType().equalsIgnoreCase(unit.getOccupancyType())
 					|| (billSlb.getOccupancyType().equalsIgnoreCase(all));
 
+			log.info(" isMajorMatching:  " + isMajorMatching + " isMinorMatching: "+isMinorMatching+" isSubMinorMatching:"+isSubMinorMatching + " isDetailsMatching:"+isDetailsMatching +" isFloorMatching:"+isFloorMatching+" isOccupancyTypeMatching:" +isOccupancyTypeMatching);
+
+			
+			log.info(" billSlb " + billSlb.toString());
+			
+			
 			if (isMajorMatching && isMinorMatching && isSubMinorMatching && isDetailsMatching && isFloorMatching
 					&& isOccupancyTypeMatching) {
 
