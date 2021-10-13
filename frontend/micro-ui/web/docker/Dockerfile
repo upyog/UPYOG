@@ -12,7 +12,6 @@ RUN ls -lah
 RUN cd frontend/micro-ui/web/ \
     && node envs.js \
     && git branch --show-current \
-    &&  ./install-deps.sh \
     && yarn install \
     && yarn build 
 
