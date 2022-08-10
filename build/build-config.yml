@@ -18,7 +18,7 @@
 # -
 config:
 # Business Services
-  - name: "builds/nugp-digit/business-services/billing-service"
+  - name: "builds/upyog/business-services/billing-service"
     build:
       - work-dir: "business-services/billing-service"
         image-name: "billing-service"
@@ -26,7 +26,7 @@ config:
       - work-dir: "business-services/billing-service/src/main/resources/db"
         image-name: "billing-service-db"
 
-  - name: "builds/nugp-digit/business-services/collection-services"
+  - name: "builds/upyog/business-services/collection-services"
     build:
       - work-dir: "business-services/collection-services"
         image-name: "collection-services"
@@ -34,7 +34,7 @@ config:
       - work-dir: "business-services/collection-services/src/main/resources/db"
         image-name: "collection-services-db"
 
-  - name: "builds/nugp-digit/business-services/egf-instrument"
+  - name: "builds/upyog/business-services/egf-instrument"
     build:
       - work-dir: "business-services/egf-instrument"
         image-name: "egf-instrument"
@@ -42,7 +42,7 @@ config:
       - work-dir: "business-services/egf-instrument/src/main/resources/db"
         image-name: "egf-instrument-db"
 
-  - name: "builds/nugp-digit/business-services/egf-master"
+  - name: "builds/upyog/business-services/egf-master"
     build:
       - work-dir: "business-services/egf-master"
         image-name: "egf-master"
@@ -50,7 +50,7 @@ config:
       - work-dir: "business-services/egf-master/src/main/resources/db"
         image-name: "egf-master-db"
 
-  - name: "builds/nugp-digit/business-services/egov-apportion-service"
+  - name: "builds/upyog/business-services/egov-apportion-service"
     build:
       - work-dir: "business-services/egov-apportion-service"
         image-name: "egov-apportion-service"
@@ -58,7 +58,7 @@ config:
       - work-dir: "business-services/egov-apportion-service/src/main/resources/db"
         image-name: "egov-apportion-service-db"
         
-  - name: "builds/nugp-digit/business-services/egov-hrms"
+  - name: "builds/upyog/business-services/egov-hrms"
     build:
       - work-dir: "business-services/egov-hrms"
         image-name: "egov-hrms"
@@ -66,7 +66,7 @@ config:
       - work-dir: "business-services/egov-hrms/src/main/resources/db"
         image-name: "egov-hrms-db"
 
-  - name: "builds/nugp-digit/business-services/finance-collections-voucher-consumer"
+  - name: "builds/upyog/business-services/finance-collections-voucher-consumer"
     build:
       - work-dir: "business-services/finance-collections-voucher-consumer"
         image-name: "finance-collections-voucher-consumer"
@@ -74,24 +74,24 @@ config:
       - work-dir: "business-services/finance-collections-voucher-consumer/src/main/resources/db"
         image-name: "finance-collections-voucher-consumer-db"
 
-  - name: "builds/nugp-digit/business-services/dashboard-analytics"
+  - name: "builds/upyog/business-services/dashboard-analytics"
     build:
       - work-dir: "business-services/dashboard-analytics"
         image-name: "dashboard-analytics"
         dockerfile: "build/maven/Dockerfile"
 
-  - name: "builds/nugp-digit/business-services/dashboard-ingest"
+  - name: "builds/upyog/business-services/dashboard-ingest"
     build:
       - work-dir: "business-services/dashboard-ingest"
         image-name: "dashboard-ingest"
         dockerfile: "build/maven/Dockerfile"
-  - name: "builds/nugp-digit/core-services/egov-accesscontrol"
+  - name: "builds/upyog/core-services/egov-accesscontrol"
     build:
       - work-dir: "core-services/egov-accesscontrol"
         image-name: "egov-accesscontrol"
         dockerfile: "build/maven/Dockerfile"
 # Core Services
-  - name: "builds/digit-dev/core-services/egov-common-masters"
+  - name: "builds/upyog/core-services/egov-common-masters"
     build:
       - work-dir: "core-services/egov-common-masters"
         image-name: "egov-common-masters"
@@ -99,7 +99,7 @@ config:
       - work-dir: "core-services/egov-common-masters/src/main/resources/db"
         image-name: "egov-common-masters-db"
 
-  - name: "builds/nugp-digit/core-services/egov-data-uploader"
+  - name: "builds/upyog/core-services/egov-data-uploader"
     build:
       - work-dir: "core-services/egov-data-uploader"
         image-name: "egov-data-uploader"
@@ -107,7 +107,7 @@ config:
       - work-dir: "core-services/egov-data-uploader/src/main/resources/db"
         image-name: "egov-data-uploader-db"
 
-  - name: "builds/nugp-digit/core-services/egov-enc-service"
+  - name: "builds/upyog/core-services/egov-enc-service"
     build:
       - work-dir: "core-services/egov-enc-service"
         image-name: "egov-enc-service"
@@ -115,7 +115,7 @@ config:
       - work-dir: "core-services/egov-enc-service/src/main/resources/db"
         image-name: "egov-enc-service-db"
 
-  - name: "builds/nugp-digit/core-services/egov-filestore"
+  - name: "builds/upyog/core-services/egov-filestore"
     build:
       - work-dir: "core-services/egov-filestore"
         image-name: "egov-filestore"
@@ -123,7 +123,7 @@ config:
       - work-dir: "core-services/egov-filestore/src/main/resources/db"
         image-name: "egov-filestore-db"
 
-  - name: "builds/nugp-digit/core-services/egov-idgen"
+  - name: "builds/upyog/core-services/egov-idgen"
     build:
       - work-dir: "core-services/egov-idgen"
         image-name: "egov-idgen"
@@ -131,7 +131,7 @@ config:
       - work-dir: "core-services/egov-idgen/src/main/resources/db"
         image-name: "egov-idgen-db"
 
-  - name: "builds/nugp-digit/core-services/egov-indexer"
+  - name: "builds/upyog/core-services/egov-indexer"
     build:
       - work-dir: "core-services/egov-indexer"
         image-name: "egov-indexer"
@@ -139,7 +139,7 @@ config:
       - work-dir: "core-services/egov-indexer/src/main/resources/db"
         image-name: "egov-indexer-db"
 
-  - name: "builds/nugp-digit/core-services/egov-localization"
+  - name: "builds/upyog/core-services/egov-localization"
     build:
       - work-dir: "core-services/egov-localization"
         image-name: "egov-localization"
@@ -147,7 +147,7 @@ config:
       - work-dir: "core-services/egov-localization/src/main/resources/db"
         image-name: "egov-localization-db"
 
-  - name: "builds/nugp-digit/core-services/egov-location"
+  - name: "builds/upyog/core-services/egov-location"
     build:
       - work-dir: "core-services/egov-location"
         image-name: "egov-location"
@@ -155,25 +155,25 @@ config:
       - work-dir: "core-services/egov-location/src/main/resources/db"
         image-name: "egov-location-db"
 
-  - name: "builds/nugp-digit/core-services/egov-mdms-service"
+  - name: "builds/upyog/core-services/egov-mdms-service"
     build:
       - work-dir: "core-services/egov-mdms-service"
         image-name: "egov-mdms-service"
         dockerfile: "build/maven/Dockerfile"
 
-  - name: "builds/nugp-digit/core-services/egov-notification-mail"
+  - name: "builds/upyog/core-services/egov-notification-mail"
     build:
       - work-dir: "core-services/egov-notification-mail"
         image-name: "egov-notification-mail"
         dockerfile: "build/maven/Dockerfile"
 
-  - name: "builds/nugp-digit/core-services/egov-notification-sms"
+  - name: "builds/upyog/core-services/egov-notification-sms"
     build:
       - work-dir: "core-services/egov-notification-sms"
         image-name: "egov-notification-sms"
         dockerfile: "build/maven/Dockerfile"
 
-  - name: "builds/nugp-digit/core-services/egov-otp"
+  - name: "builds/upyog/core-services/egov-otp"
     build:
       - work-dir: "core-services/egov-otp"
         image-name: "egov-otp"
@@ -181,13 +181,13 @@ config:
       - work-dir: "core-services/egov-otp/src/main/resources/db"
         image-name: "egov-otp-db"
 
-  - name: "builds/nugp-digit/core-services/egov-persister"
+  - name: "builds/upyog/core-services/egov-persister"
     build:
       - work-dir: "core-services/egov-persister"
         image-name: "egov-persister"
         dockerfile: "build/maven/Dockerfile"
 
-  - name: "builds/nugp-digit/core-services/egov-pg-service"
+  - name: "builds/upyog/core-services/egov-pg-service"
     build:
       - work-dir: "core-services/egov-pg-service"
         image-name: "egov-pg-service"
@@ -195,19 +195,19 @@ config:
       - work-dir: "core-services/egov-pg-service/src/main/resources/db"
         image-name: "egov-pg-service-db"
 
-  - name: "builds/nugp-digit/core-services/egov-searcher"
+  - name: "builds/upyog/core-services/egov-searcher"
     build:
       - work-dir: "core-services/egov-searcher"
         image-name: "egov-searcher"
         dockerfile: "build/maven/Dockerfile"
 
-  - name: "builds/nugp-digit/core-services/egov-telemetry"
+  - name: "builds/upyog/core-services/egov-telemetry"
     build:
       - work-dir: "core-services/egov-telemetry"
         image-name: "egov-telemetry"
         dockerfile: "build/maven/Dockerfile"
 
-  - name: "builds/nugp-digit/core-services/egov-user"
+  - name: "builds/upyog/core-services/egov-user"
     build:
       - work-dir: "core-services/egov-user"
         image-name: "egov-user"
@@ -215,7 +215,7 @@ config:
       - work-dir: "core-services/egov-user/src/main/resources/db"
         image-name: "egov-user-db"
 
-  - name: "builds/nugp-digit/core-services/egov-workflow-v2"
+  - name: "builds/upyog/core-services/egov-workflow-v2"
     build:
       - work-dir: "core-services/egov-workflow-v2"
         image-name: "egov-workflow-v2"
@@ -223,7 +223,7 @@ config:
       - work-dir: "core-services/egov-workflow-v2/src/main/resources/db"
         image-name: "egov-workflow-v2-db"
 
-  - name: "builds/digit-dev/core-services/egov-document-uploader"
+  - name: "builds/upyog/core-services/egov-document-uploader"
     build:
       - work-dir: "core-services/egov-document-uploader"
         image-name: "egov-document-uploader"
@@ -231,7 +231,7 @@ config:
       - work-dir: "core-services/egov-document-uploader/src/main/resources/db"
         image-name: "egov-document-uploader-db"
 
-  - name: "builds/digit-dev/core-services/national-dashboard-ingest"
+  - name: "builds/upyog/core-services/national-dashboard-ingest"
     build:
       - work-dir: "core-services/national-dashboard-ingest"
         image-name: "national-dashboard-ingest"
@@ -239,13 +239,13 @@ config:
       - work-dir: "core-services/national-dashboard-ingest/src/main/resources/db"
         image-name: "national-dashboard-ingest-db"
 
-  - name: "builds/digit-dev/core-services/national-dashboard-kafka-pipeline"
+  - name: "builds/upyog/core-services/national-dashboard-kafka-pipeline"
     build:
       - work-dir: "core-services/national-dashboard-kafka-pipeline"
         image-name: "national-dashboard-kafka-pipeline"
         dockerfile: "build/maven/Dockerfile"
 
-  - name: "builds/digit-dev/core-services/egov-survey-services"
+  - name: "builds/upyog/core-services/egov-survey-services"
     build:
       - work-dir: "core-services/egov-survey-services"
         image-name: "egov-survey-services"
@@ -254,13 +254,13 @@ config:
         image-name: "egov-survey-services-db"
 
 
-  - name: "builds/nugp-digit/core-services/report"
+  - name: "builds/upyog/core-services/report"
     build:
       - work-dir: "core-services/report"
         image-name: "report"
         dockerfile: "build/maven/Dockerfile"   
 
-  - name: "builds/nugp-digit/core-services/tenant"
+  - name: "builds/upyog/core-services/tenant"
     build:
       - work-dir: "core-services/tenant"
         image-name: "tenant"
@@ -268,25 +268,25 @@ config:
       - work-dir: "core-services/tenant/src/main/resources/db"
         image-name: "tenant-db"
 
-  - name: "builds/nugp-digit/core-services/user-otp"
+  - name: "builds/upyog/core-services/user-otp"
     build:
       - work-dir: "core-services/user-otp"
         image-name: "user-otp"
         dockerfile: "build/maven/Dockerfile"
 
-  - name: "builds/nugp-digit/core-services/zuul"
+  - name: "builds/upyog/core-services/zuul"
     build:
       - work-dir: "core-services/zuul"
         image-name: "zuul"
         dockerfile: "build/maven/Dockerfile"
 
-  - name: "builds/nugp-digit/core-services/internal-gateway"
+  - name: "builds/upyog/core-services/internal-gateway"
     build:
       - work-dir: "core-services/internal-gateway"
         image-name: "internal-gateway"
         dockerfile: "build/maven/Dockerfile"
         
-  - name: "builds/nugp-digit/core-services/egov-user-event"
+  - name: "builds/upyog/core-services/egov-user-event"
     build:
       - work-dir: "core-services/egov-user-event"
         image-name: "egov-user-event"
@@ -295,25 +295,25 @@ config:
         image-name: "egov-user-event-db"
         dockerfile: "build/maven/Dockerfile"       
 
-  - name: "builds/nugp-digit/core-services/pdf-service"
+  - name: "builds/upyog/core-services/pdf-service"
     build:
       - work-dir: "core-services/pdf-service"
         image-name: "pdf-service"
       - work-dir: "core-services/pdf-service/migration"
         image-name: "pdf-service-db"
         
-  - name: "builds/nugp-digit/core-services/telemetry/egov-telemetry-kafka-streams"
+  - name: "builds/upyog/core-services/telemetry/egov-telemetry-kafka-streams"
     build:
       - work-dir: "core-services/egov-telemetry/egov-telemetry-kafka-streams"
         image-name: "egov-telemetry-kafka-streams"
 
-  - name: "builds/nugp-digit/core-services/telemetry/egov-telemetry-batch-process"
+  - name: "builds/upyog/core-services/telemetry/egov-telemetry-batch-process"
     build:
       - work-dir: "core-services/egov-telemetry/egov-telemetry-batch-process"
         image-name: "egov-telemetry-batch-process"
         dockerfile: "build/maven/Dockerfile"
   
-  - name: "builds/nugp-digit/core-services/egov-url-shortening"
+  - name: "builds/upyog/core-services/egov-url-shortening"
     build:
       - work-dir: "core-services/egov-url-shortening"
         image-name: "egov-url-shortening"
@@ -321,7 +321,7 @@ config:
       - work-dir: "core-services/egov-url-shortening/src/main/resources/db"
         image-name: "egov-url-shortening-db"
   
-  - name: "builds/nugp-digit/core-services/chatbot"
+  - name: "builds/upyog/core-services/chatbot"
     build:
       - work-dir: "core-services/chatbot"
         image-name: "chatbot"
@@ -329,40 +329,40 @@ config:
       - work-dir: "core-services/chatbot/src/main/resources/db"
         image-name: "chatbot-db"
         
-  - name: "builds/nugp-digit/core-services/http-to-kafka-connector"
+  - name: "builds/upyog/core-services/http-to-kafka-connector"
     build:
       - work-dir: "core-services/http-to-kafka-connector"
         image-name: "whatsapp-webhook"
 
-  - name: "builds/nugp-digit/core-services/egov-user-chatbot"
+  - name: "builds/upyog/core-services/egov-user-chatbot"
     build:
       - work-dir: "core-services/egov-user"
         image-name: "egov-user-chatbot"
         dockerfile: "build/maven/Dockerfile"
 
-  - name: "builds/nugp-digit/core-services/mailbot"
+  - name: "builds/upyog/core-services/mailbot"
     build:
       - work-dir: "core-services/mailbot"
         image-name: "mailbot"
         dockerfile: "build/maven/Dockerfile"
 
-  - name: "builds/nugp-digit/core-services/libraries/enc-client"
+  - name: "builds/upyog/core-services/libraries/enc-client"
     build:
       - work-dir: "core-services/libraries/enc-client"
         image-name: "enc-client"
         
-  - name: "builds/nugp-digit/core-services/libraries/tracer"
+  - name: "builds/upyog/core-services/libraries/tracer"
     build:
       - work-dir: "core-services/libraries/tracer"
         image-name: "tracer"
 
-  - name: "builds/nugp-digit/core-services/nlp-engine"
+  - name: "builds/upyog/core-services/nlp-engine"
     build:
       - work-dir: "core-services/nlp-engine"
         image-name: "nlp-engine"
         dockerfile: "nlp-engine/Dockerfile"
 
-  - name: "builds/nugp-digit/core-services/xstate-chatbot"
+  - name: "builds/upyog/core-services/xstate-chatbot"
     build:
       - work-dir: "core-services/xstate-chatbot/nodejs"
         image-name: "xstate-chatbot"
@@ -371,7 +371,7 @@ config:
         
 #Municipal Services
 
-  - name: "builds/nugp-digit/municipal-services/egov-user-event"
+  - name: "builds/upyog/municipal-services/egov-user-event"
     build:
       - work-dir: "municipal-services/egov-user-event"
         image-name: "egov-user-event"
@@ -379,7 +379,7 @@ config:
       - work-dir: "municipal-services/egov-user-event/src/main/resources/db"
         image-name: "egov-user-event-db"
 
-  - name: "builds/nugp-digit/municipal-services/pt-calculator-v2"
+  - name: "builds/upyog/municipal-services/pt-calculator-v2"
     build:
       - work-dir: "municipal-services/pt-calculator-v2"
         image-name: "pt-calculator-v2"
@@ -387,7 +387,7 @@ config:
       - work-dir: "municipal-services/pt-calculator-v2/src/main/resources/db"
         image-name: "pt-calculator-v2-db"
 
-  - name: "builds/nugp-digit/municipal-services/pt-services-v2"
+  - name: "builds/upyog/municipal-services/pt-services-v2"
     build:
       - work-dir: "municipal-services/pt-services-v2"
         image-name: "pt-services-v2"
@@ -395,7 +395,7 @@ config:
       - work-dir: "municipal-services/pt-services-v2/src/main/resources/db"
         image-name: "pt-services-v2-db"
 
-  - name: "builds/nugp-digit/municipal-services/rainmaker-pgr"
+  - name: "builds/upyog/municipal-services/rainmaker-pgr"
     build:
       - work-dir: "municipal-services/rainmaker-pgr"
         image-name: "rainmaker-pgr"
@@ -403,7 +403,7 @@ config:
       - work-dir: "municipal-services/rainmaker-pgr/src/main/resources/db"
         image-name: "rainmaker-pgr-db"
 
-  - name: "builds/nugp-digit/municipal-services/pgr-services"
+  - name: "builds/upyog/municipal-services/pgr-services"
     build:
       - work-dir: "municipal-services/pgr-services"
         image-name: "pgr-services"
@@ -411,7 +411,7 @@ config:
       - work-dir: "municipal-services/pgr-services/src/main/resources/db"
         image-name: "pgr-services-db"
 
-  - name: "builds/nugp-digit/municipal-services/tl-calculator"
+  - name: "builds/upyog/municipal-services/tl-calculator"
     build:
       - work-dir: "municipal-services/tl-calculator"
         image-name: "tl-calculator"
@@ -419,7 +419,7 @@ config:
       - work-dir: "municipal-services/tl-calculator/src/main/resources/db"
         image-name: "tl-calculator-db"
         
-  - name: "builds/nugp-digit/municipal-services/tl-services"
+  - name: "builds/upyog/municipal-services/tl-services"
     build:
       - work-dir: "municipal-services/tl-services"
         image-name: "tl-services"
@@ -427,21 +427,21 @@ config:
       - work-dir: "municipal-services/tl-services/src/main/resources/db"
         image-name: "tl-services-db"
 
-  - name: "builds/nugp-digit/municipal-services/firenoc-services"
+  - name: "builds/upyog/municipal-services/firenoc-services"
     build:
       - work-dir: "municipal-services/firenoc-services"
         image-name: "firenoc-services"
       - work-dir: "municipal-services/firenoc-services/migration"
         image-name: "firenoc-services-db"
 
-  - name: "builds/nugp-digit/municipal-services/firenoc-calculator"
+  - name: "builds/upyog/municipal-services/firenoc-calculator"
     build:
       - work-dir: "municipal-services/firenoc-calculator"
         image-name: "firenoc-calculator"
       - work-dir: "municipal-services/firenoc-calculator/migration"
         image-name: "firenoc-calculator-db"
 
-  - name: "builds/nugp-digit/municipal-services/ws-services"
+  - name: "builds/upyog/municipal-services/ws-services"
     build:
       - work-dir: "municipal-services/ws-services"
         image-name: "ws-services"
@@ -449,7 +449,7 @@ config:
       - work-dir: "municipal-services/ws-services/src/main/resources/db"
         image-name: "ws-services-db"
         
-  - name: "builds/nugp-digit/municipal-services/property-services"
+  - name: "builds/upyog/municipal-services/property-services"
     build:
       - work-dir: "municipal-services/property-services"
         image-name: "property-services"
@@ -457,7 +457,7 @@ config:
       - work-dir: "municipal-services/property-services/src/main/resources/db"
         image-name: "property-services-db"
 
-  - name: "builds/nugp-digit/municipal-services/ws-calculator"
+  - name: "builds/upyog/municipal-services/ws-calculator"
     build:
       - work-dir: "municipal-services/ws-calculator"
         image-name: "ws-calculator"
@@ -465,7 +465,7 @@ config:
       - work-dir: "municipal-services/ws-calculator/src/main/resources/db"
         image-name: "ws-calculator-db"
 
-  - name: "builds/nugp-digit/municipal-services/sw-services"
+  - name: "builds/upyog/municipal-services/sw-services"
     build:
       - work-dir: "municipal-services/sw-services"
         image-name: "sw-services"
@@ -473,7 +473,7 @@ config:
       - work-dir: "municipal-services/sw-services/src/main/resources/db"
         image-name: "sw-services-db"
 
-  - name: "builds/nugp-digit/municipal-services/sw-calculator"
+  - name: "builds/upyog/municipal-services/sw-calculator"
     build:
       - work-dir: "municipal-services/sw-calculator"
         image-name: "sw-calculator"
@@ -481,7 +481,7 @@ config:
       - work-dir: "municipal-services/sw-calculator/src/main/resources/db"
         image-name: "sw-calculator-db"     
 
-  - name: "builds/nugp-digit/municipal-services/bpa-services"
+  - name: "builds/upyog/municipal-services/bpa-services"
     build:
       - work-dir: "municipal-services/bpa-services"
         image-name: "bpa-services"
@@ -489,13 +489,13 @@ config:
       - work-dir: "municipal-services/bpa-services/src/main/resources/db"
         image-name: "bpa-services-db"         
 
-  - name: "builds/nugp-digit/municipal-services/bpa-calculator"
+  - name: "builds/upyog/municipal-services/bpa-calculator"
     build:
       - work-dir: "municipal-services/bpa-calculator"
         image-name: "bpa-calculator"
         dockerfile: "build/maven/Dockerfile"     
 
-  - name: "builds/nugp-digit/municipal-services/land-services"
+  - name: "builds/upyog/municipal-services/land-services"
     build:
       - work-dir: "municipal-services/land-services"
         image-name: "land-services"
@@ -503,7 +503,7 @@ config:
       - work-dir: "municipal-services/land-services/src/main/resources/db"
         image-name: "land-services-db"
 
-  - name: "builds/nugp-digit/municipal-services/noc-services"
+  - name: "builds/upyog/municipal-services/noc-services"
     build:
       - work-dir: "municipal-services/noc-services"
         image-name: "noc-services"
@@ -511,7 +511,7 @@ config:
       - work-dir: "municipal-services/noc-services/src/main/resources/db"
         image-name: "noc-services-db"
 
-  - name: "builds/nugp-digit/municipal-services/echallan-services"
+  - name: "builds/upyog/municipal-services/echallan-services"
     build:
       - work-dir: "municipal-services/echallan-services"
         image-name: "echallan-services"
@@ -519,13 +519,13 @@ config:
       - work-dir: "municipal-services/echallan-services/src/main/resources/db"
         image-name: "echallan-services-db"         
 
-  - name: "builds/nugp-digit/municipal-services/echallan-calculator"
+  - name: "builds/upyog/municipal-services/echallan-calculator"
     build:
       - work-dir: "municipal-services/echallan-calculator"
         image-name: "echallan-calculator"
         dockerfile: "build/maven/Dockerfile"  
         
-  - name: "builds/nugp-digit/municipal-services/fsm"
+  - name: "builds/upyog/municipal-services/fsm"
     build:
       - work-dir: "municipal-services/fsm"
         image-name: "fsm"
@@ -534,7 +534,7 @@ config:
         image-name: "fsm-db"
 
 
-  - name: "builds/nugp-digit/municipal-services/vehicle"
+  - name: "builds/upyog/municipal-services/vehicle"
     build:
       - work-dir: "municipal-services/vehicle"
         image-name: "vehicle"
@@ -542,7 +542,7 @@ config:
       - work-dir: "municipal-services/vehicle/src/main/resources/db"
         image-name: "vehicle-db"
 
-  - name: "builds/nugp-digit/municipal-services/vendor"
+  - name: "builds/upyog/municipal-services/vendor"
     build:
       - work-dir: "municipal-services/vendor"
         image-name: "vendor"
@@ -550,7 +550,7 @@ config:
       - work-dir: "municipal-services/vendor/src/main/resources/db"
         image-name: "vendor-db"
 
-  - name: "builds/nugp-digit/municipal-services/fsm-calculator"
+  - name: "builds/upyog/municipal-services/fsm-calculator"
     build:
       - work-dir: "municipal-services/fsm-calculator"
         image-name: "fsm-calculator"
@@ -558,13 +558,13 @@ config:
       - work-dir: "municipal-services/fsm-calculator/src/main/resources/db"
         image-name: "fsm-calculator-db"
         
-  - name: "builds/nugp-digit/municipal-services/turn-io-adapter"
+  - name: "builds/upyog/municipal-services/turn-io-adapter"
     build:
       - work-dir: "municipal-services/turn-io-adapter"
         image-name: "turn-io-adapter"
         dockerfile: "build/maven/Dockerfile"
         
-  - name: "builds/nugp-digit/municipal-services/inbox"
+  - name: "builds/upyog/municipal-services/inbox"
     build:
       - work-dir: "municipal-services/inbox"
         image-name: "inbox"
@@ -572,40 +572,40 @@ config:
  
  # Utilities
  
-  - name: "builds/nugp-digit/utilities/egov-weekly-impact-notifier"
+  - name: "builds/upyog/utilities/egov-weekly-impact-notifier"
     build:
       - work-dir: "utilities/egov-weekly-impact-notifier"
         image-name: "egov-weekly-impact-notifier"
         dockerfile: "build/maven/Dockerfile"
         
-  - name: "builds/nugp-digit/utilities/zuul-kubernetes-discovery"
+  - name: "builds/upyog/utilities/zuul-kubernetes-discovery"
     build:
       - work-dir: "utilities/zuul-kubernetes-discovery"
         image-name: "zuul-kubernetes-discovery"  
 
-  - name: "builds/nugp-digit/utilities/egov-api-cron-job"
+  - name: "builds/upyog/utilities/egov-api-cron-job"
     build:
       - work-dir: "utilities/egov-api-cron-job"
         image-name: "egov-api-cron-job"
         dockerfile: "build/python/Dockerfile"
 
-  - name: "builds/nugp-digit/utilities/kuberhealthy-checks"
+  - name: "builds/upyog/utilities/kuberhealthy-checks"
     build:
       - work-dir: "utilities/kuberhealthy-checks"
         image-name: "kuberhealthy-checks"
 
-  - name: "builds/nugp-digit/utilities/egov-pdf"
+  - name: "builds/upyog/utilities/egov-pdf"
     build:
       - work-dir: "utilities/egov-pdf"
         image-name: "egov-pdf"  
 
-  - name: "builds/nugp-digit/utilities/epass-chatbot"
+  - name: "builds/upyog/utilities/epass-chatbot"
     build:
       - work-dir: "utilities/epass-chatbot"
         image-name: "epass-chatbot"
         dockerfile: "build/maven/Dockerfile"
 
-  - name: "builds/nugp-digit/utilities/case-management"
+  - name: "builds/upyog/utilities/case-management"
     build:
       - work-dir: "utilities/case-management"
         image-name: "case-management"
@@ -613,72 +613,72 @@ config:
       - work-dir: "utilities/case-management/src/main/resources/db"
         image-name: "case-management-db"
 
-  - name: "builds/nugp-digit/utilities/data-upload"
+  - name: "builds/upyog/utilities/data-upload"
     build:
       - work-dir: "utilities/data-upload"
         image-name: "data-upload"
         dockerfile: "build/maven/Dockerfile"
 
-  - name: "builds/nugp-digit/utilities/egov-custom-consumer"
+  - name: "builds/upyog/utilities/egov-custom-consumer"
     build:
       - work-dir: "utilities/egov-custom-consumer"
         image-name: "egov-custom-consumer"
         dockerfile: "build/maven/Dockerfile"
 
-  - name: "builds/nugp-digit/utilities/certificate_signer"
+  - name: "builds/upyog/utilities/certificate_signer"
     build:
       - work-dir: "utilities/certificate_signer"
         image-name: "certificate_signer"
 
-  - name: "builds/nugp-digit/utilities/certificate-verification"
+  - name: "builds/upyog/utilities/certificate-verification"
     build:
       - work-dir: "utilities/certificate-verification"
         image-name: "certificate-verification"
 
 # Frontend
 
-  - name: builds/nugp-digit/frontend/mono-ui/citizen
+  - name: builds/upyog/frontend/mono-ui/citizen
     build:
       - work-dir: frontend/mono-ui/web/rainmaker/
         dockerfile: frontend/mono-ui/web/rainmaker/docker/citizen/Dockerfile
         image-name: citizen
 
-  - name: builds/nugp-digit/frontend/mono-ui/employee
+  - name: builds/upyog/frontend/mono-ui/employee
     build:
       - work-dir: frontend/mono-ui/web/rainmaker/
         dockerfile: frontend/mono-ui/web/rainmaker/docker/employee/Dockerfile
         image-name: employee
 
-  - name: builds/nugp-digit/frontend/mono-ui/employee-mcs
+  - name: builds/upyog/frontend/mono-ui/employee-mcs
     build:
       - work-dir: frontend/mono-ui/web/rainmaker/
         dockerfile: frontend/mono-ui/web/rainmaker/docker/employee-mcs/Dockerfile
         image-name: employee-mcs
 
-  - name: builds/nugp-digit/frontend/mono-ui/localization
+  - name: builds/upyog/frontend/mono-ui/localization
     build:
       - work-dir: frontend/mono-ui/web/rainmaker/
         dockerfile: frontend/mono-ui/web/rainmaker/docker/localization/Dockerfile
         image-name: ui-localisation
 
-  - name: builds/nugp-digit/frontend/mono-ui/ui-uploader
+  - name: builds/upyog/frontend/mono-ui/ui-uploader
     build:
       - work-dir: frontend/mono-ui/web/ui-uploader/
         image-name: ui-uploader
 
-  - name: builds/nugp-digit/frontend/mono-ui/dss-dashboard
+  - name: builds/upyog/frontend/mono-ui/dss-dashboard
     build:
       - work-dir: frontend/mono-ui/web/dss-dashboard/
         dockerfile: frontend/mono-ui/web/dss-dashboard/docker/Dockerfile
         image-name: dss-dashboard
       
-  - name: builds/nugp-digit/frontend/mono-ui/common-screen
+  - name: builds/upyog/frontend/mono-ui/common-screen
     build:
       - work-dir: frontend/mono-ui/web/egov-common-screen/
         dockerfile: frontend/mono-ui/web/egov-common-screen/docker/Dockerfile
         image-name: common-screen
 
-  - name: builds/nugp-digit/frontend/micro-ui/digit-ui
+  - name: builds/upyog/frontend/micro-ui/digit-ui
     build:
       - work-dir: .
         dockerfile: frontend/micro-ui/web/docker/Dockerfile
@@ -686,13 +686,13 @@ config:
   
   #EDCR
   
-  - name: builds/nugp-digit/edcr/dcr-client/egov-dcr
+  - name: builds/upyog/edcr/dcr-client/egov-dcr
     build:
       - work-dir: edcr/client/egov
         dockerfile: edcr/client/Dockerfile
         image-name: egov-edcr
         
-  - name: builds/nugp-digit/edcr/dcr-service/egov-dcr
+  - name: builds/upyog/edcr/dcr-service/egov-dcr
     build:
       - work-dir: edcr/service/egov
         dockerfile: edcr/service/Dockerfile
