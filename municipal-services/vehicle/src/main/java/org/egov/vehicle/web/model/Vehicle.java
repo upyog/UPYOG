@@ -63,6 +63,10 @@ public class Vehicle {
     @SafeHtml
     @JsonProperty("suctionType")
     private String suctionType = null;
+    
+    @SafeHtml
+    @JsonProperty("vehicleOwner")
+    private String vehicleOwner = null;
 
     @JsonProperty("pollutionCertiValidTill")
     private Long pollutionCertiValidTill;
@@ -88,12 +92,13 @@ public class Vehicle {
 
     @SafeHtml
     @JsonProperty("ownerId")
-    private String ownerId = null;
+    private String ownerId = null; 
 
     public enum StatusEnum {
         ACTIVE("ACTIVE"),
 
-        INACTIVE("INACTIVE");
+        INACTIVE("INACTIVE"),
+    	DISABLED("DISABLED");
 
         private String value;
 

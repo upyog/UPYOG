@@ -26,7 +26,6 @@ const getMDMSData = (action, dispatch) => {
   try {
     getRequiredDocData(action, dispatch, moduleDetails)
   } catch (e) {
-    console.log(e);
   }
 };
 
@@ -53,7 +52,9 @@ const getMDMSAppType =async (dispatch) => {
           applicationType.forEach(type=>getBusinessService(type.businessService,dispatch))
           dispatch(prepareFinalObject("applyScreenMdmsData.searchScreen.applicationType", applicationType));
         }
-    } catch (e) { console.log(e); }
+    } catch (e) { 
+      
+     }
   }
 
 const header = getCommonHeader({
@@ -116,7 +117,6 @@ export const getMdmsTenantsData = async (dispatch) => {
       dispatch(prepareFinalObject("applyScreenMdmsData.tenant", payload.MdmsRes.tenant));
 
   } catch (e) {
-      console.log(e);
   }
 };
 
@@ -149,6 +149,8 @@ const employeeSearchResults = {
     getMdmsTenantsData(dispatch);
     dispatch(prepareFinalObject("searchConnection.tenantId", getTenantIdCommon()));
     dispatch(prepareFinalObject("currentTab", "SEARCH_CONNECTION"));
+    localStorage.setItem("WS_ADDITIONAL_DETAILS_FOR_DATA", JSON.stringify({}));
+    localStorage.setItem("IS_WS_ADDITIONAL_DETAILS_FOR_DATA", JSON.stringify(false));
     return action;
   },
   components: {

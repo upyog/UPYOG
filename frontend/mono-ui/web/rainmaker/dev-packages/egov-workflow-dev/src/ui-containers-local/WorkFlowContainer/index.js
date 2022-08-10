@@ -400,15 +400,18 @@ class WorkFlowContainer extends React.Component {
     if (nextAction === currentAction) {
       data.states &&
         data.states.forEach(state => {
+          state &&
           state.actions &&
+          state.actions.length > 0 && 
             state.actions.forEach(action => {
               roles = [...roles, ...action.roles];
             });
         });
     } else {
-      const states = find(data.states, { uuid: nextAction });
+      const states = data && data.states && find(data.states, { uuid: nextAction });
       states &&
         states.actions &&
+        states.actions.length > 0 && 
         states.actions.forEach(action => {
           roles = [...roles, ...action.roles];
         });
@@ -434,7 +437,7 @@ class WorkFlowContainer extends React.Component {
       localStorageGet("businessServiceData")
     );
     const data = find(businessServiceData, { businessService: moduleName });
-    const nextState = find(data.states, { uuid: nextStateUUID });
+    const nextState = data && data.states && find(data.states, { uuid: nextStateUUID });
     return nextState && nextState.docUploadRequired;
   };
 
@@ -443,9 +446,11 @@ class WorkFlowContainer extends React.Component {
       localStorageGet("businessServiceData")
     );
     const data = find(businessServiceData, { businessService: moduleName });
-    const state = applicationState ? find(data.states, { applicationStatus: status, state: applicationState }) : find(data.states, { applicationStatus: status });
+    const state = applicationState ? data && data.states && find(data.states, { applicationStatus: status, state: applicationState }) : data && data.states && find(data.states, { applicationStatus: status });
     let actions = [];
+    state &&
     state.actions &&
+    state.actions.length > 0 &&
       state.actions.forEach(item => {
         actions = [...actions, ...item.roles];
       });
@@ -456,7 +461,7 @@ class WorkFlowContainer extends React.Component {
 
     let editAction = {};
     // state.isStateUpdatable = true; // Hardcoded configuration for PT mutation Edit
-    if (state.isStateUpdatable && actions.length > 0 && roleIndex > -1) {
+    if (state && state.isStateUpdatable && actions.length > 0 && roleIndex > -1) {
       editAction = {
         buttonLabel: "EDIT",
         moduleName: moduleName,
@@ -498,7 +503,7 @@ class WorkFlowContainer extends React.Component {
         isLast: item.action === "PAY" ? true : false,
         buttonUrl: getRedirectUrl(item.action, businessId, businessService),
         dialogHeader: getHeaderName(item.action),
-        showEmployeeList: (businessService === "NewWS1" || businessService === "ModifyWSConnection" || businessService === "ModifySWConnection" || businessService === "NewSW1") ? !checkIfTerminatedState(item.nextState, businessService) && item.action !== "SEND_BACK_TO_CITIZEN" && item.action !== "APPROVE_CONNECTION" && item.action !== "APPROVE_FOR_CONNECTION" && item.action !== "RESUBMIT_APPLICATION" : !checkIfTerminatedState(item.nextState, businessService) && item.action !== "SENDBACKTOCITIZEN",
+        showEmployeeList: process.env.REACT_APP_NAME === "Citizen"?false:(businessService === "NewWS1" || businessService === "ModifyWSConnection" || businessService === "ModifySWConnection" || businessService === "NewSW1") ? !checkIfTerminatedState(item.nextState, businessService) && item.action !== "SEND_BACK_TO_CITIZEN" && item.action !== "APPROVE_CONNECTION" && item.action !== "APPROVE_FOR_CONNECTION" && item.action !== "RESUBMIT_APPLICATION" : !checkIfTerminatedState(item.nextState, businessService) && item.action !== "SENDBACKTOCITIZEN",
         roles: getEmployeeRoles(item.nextState, item.currentState, businessService),
         isDocRequired: checkIfDocumentRequired(item.nextState, businessService)
       };

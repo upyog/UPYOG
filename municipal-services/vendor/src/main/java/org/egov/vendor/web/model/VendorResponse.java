@@ -38,6 +38,8 @@ public class VendorResponse {
 	 @Valid
 	 private List<Vendor> vendor = null;
 	 
+	 @JsonProperty("totalCount")
+	 private Integer totalCount = null;
 	 
 
 }
