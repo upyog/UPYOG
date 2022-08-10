@@ -41,14 +41,10 @@ public class VehicleTripDetail {
 	  @JsonProperty("tenantId")
 	  private String tenantId = null;
 	  
-	  @NotNull
 	  @SafeHtml
-	  @NotBlank
 	  @JsonProperty("referenceNo")
 	  private String referenceNo = null;
 	  
-	  @NotBlank
-	  @NotNull
 	  @SafeHtml
 	  @JsonProperty("referenceStatus")
 	  private String referenceStatus = null;
@@ -103,4 +99,8 @@ public class VehicleTripDetail {
 	  @JsonProperty("auditDetails")
 	  private AuditDetails auditDetails = null;
 	  
+	  @SafeHtml
+	  @JsonProperty("trip_id")
+	  private String trip_id = null;
 }
+

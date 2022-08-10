@@ -91,7 +91,7 @@ config:
         image-name: "egov-accesscontrol"
         dockerfile: "build/maven/Dockerfile"
 # Core Services
-  - name: "builds/nugp-digit/core-services/egov-common-masters"
+  - name: "builds/digit-dev/core-services/egov-common-masters"
     build:
       - work-dir: "core-services/egov-common-masters"
         image-name: "egov-common-masters"
@@ -222,6 +222,37 @@ config:
         dockerfile: "build/maven/Dockerfile"
       - work-dir: "core-services/egov-workflow-v2/src/main/resources/db"
         image-name: "egov-workflow-v2-db"
+
+  - name: "builds/digit-dev/core-services/egov-document-uploader"
+    build:
+      - work-dir: "core-services/egov-document-uploader"
+        image-name: "egov-document-uploader"
+        dockerfile: "build/maven/Dockerfile"
+      - work-dir: "core-services/egov-document-uploader/src/main/resources/db"
+        image-name: "egov-document-uploader-db"
+
+  - name: "builds/digit-dev/core-services/national-dashboard-ingest"
+    build:
+      - work-dir: "core-services/national-dashboard-ingest"
+        image-name: "national-dashboard-ingest"
+        dockerfile: "build/maven/Dockerfile"
+      - work-dir: "core-services/national-dashboard-ingest/src/main/resources/db"
+        image-name: "national-dashboard-ingest-db"
+
+  - name: "builds/digit-dev/core-services/national-dashboard-kafka-pipeline"
+    build:
+      - work-dir: "core-services/national-dashboard-kafka-pipeline"
+        image-name: "national-dashboard-kafka-pipeline"
+        dockerfile: "build/maven/Dockerfile"
+
+  - name: "builds/digit-dev/core-services/egov-survey-services"
+    build:
+      - work-dir: "core-services/egov-survey-services"
+        image-name: "egov-survey-services"
+        dockerfile: "build/maven/Dockerfile"
+      - work-dir: "core-services/egov-survey-services/src/main/resources/db"
+        image-name: "egov-survey-services-db"
+
 
   - name: "builds/nugp-digit/core-services/report"
     build:
