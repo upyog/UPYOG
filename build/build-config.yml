@@ -91,6 +91,13 @@ config:
         image-name: "egov-accesscontrol"
         dockerfile: "build/maven/Dockerfile"
 # Core Services
+  - name: "builds/upyog/core-services/audit-service"
+    build:
+      - work-dir: "core-services/audit-service"
+        image-name: "audit-service"
+        dockerfile: "build/maven/Dockerfile"
+      - work-dir: "core-services/audit-service/src/main/resources/db"
+        image-name: "audit-service-db"
   - name: "builds/upyog/core-services/egov-common-masters"
     build:
       - work-dir: "core-services/egov-common-masters"
@@ -351,6 +358,16 @@ config:
       - work-dir: "core-services/libraries/enc-client"
         image-name: "enc-client"
         
+  - name: "builds/upyog/core-services/libraries/services-common"
+    build:
+      - work-dir: "core-services/libraries/services-common"
+        image-name: "services-common"
+        
+  - name: "builds/upyog/core-services/libraries/digit-models"
+    build:
+      - work-dir: "core-services/libraries/digit-models"
+        image-name: "digit-models"
+                
   - name: "builds/upyog/core-services/libraries/tracer"
     build:
       - work-dir: "core-services/libraries/tracer"
@@ -369,6 +386,13 @@ config:
       - work-dir: "core-services/xstate-chatbot/nodejs/db"
         image-name: "xstate-chatbot-db"
         
+  - name: "builds/upyog/core-services/xstate-webchat"
+    build:
+      - work-dir: "core-services/xstate-webchat/nodejs"
+        image-name: "xstate-webchat"
+      - work-dir: "core-services/xstate-webchat/nodejs/db"
+        image-name: "xstate-webchat-db"
+                
 #Municipal Services
 
   - name: "builds/upyog/municipal-services/egov-user-event"
@@ -570,6 +594,14 @@ config:
         image-name: "inbox"
         dockerfile: "build/maven/Dockerfile"
  
+  - name: "builds/upyog/municipal-services/birth-death-services"
+    build:
+      - work-dir: "municipal-services/birth-death-services"
+        image-name: "birth-death-services"
+        dockerfile: "build/maven/Dockerfile"
+      - work-dir: "municipal-services/birth-death-services/src/main/resources/db"
+        image-name: "birth-death-services-db"
+        
  # Utilities
  
   - name: "builds/upyog/utilities/egov-weekly-impact-notifier"
@@ -634,7 +666,13 @@ config:
     build:
       - work-dir: "utilities/certificate-verification"
         image-name: "certificate-verification"
-
+        
+  - name: "builds/upyog/utilities/demo-utility"
+    build:
+      - work-dir: "utilities/demo-utility"
+        image-name: "demo-utility"
+        dockerfile: "build/maven/Dockerfile"
+        
 # Frontend
 
   - name: builds/upyog/frontend/mono-ui/citizen
@@ -680,10 +718,16 @@ config:
 
   - name: builds/upyog/frontend/micro-ui/digit-ui
     build:
-      - work-dir: .
+      - work-dir: frontend/micro-ui/
         dockerfile: frontend/micro-ui/web/docker/Dockerfile
         image-name: digit-ui
-  
+
+  - name: builds/upyog/frontend/micro-ui/storybook
+    build:
+    - work-dir: .
+      dockerfile: frontend/micro-ui/web/micro-ui-internals/packages/react-components/docker/Dockerfile
+      image-name: storybook
+
   #EDCR
   
   - name: builds/upyog/edcr/dcr-client/egov-dcr
@@ -697,5 +741,10 @@ config:
       - work-dir: edcr/service/egov
         dockerfile: edcr/service/Dockerfile
         image-name: egov-edcr
-              
+        
+  - name: builds/upyog/finance/egov-finance
+    build:
+      - work-dir: finance/egov
+        image-name: egov-finance
+        dockerfile: finance/Dockerfile              
 
