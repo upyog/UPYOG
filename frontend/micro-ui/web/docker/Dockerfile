@@ -1,5 +1,5 @@
-# FROM egovio/alpine-node-builder-14:yarn AS build
-FROM ghcr.io/egovernments/alpine-node-builder-14:yarn AS build
+FROM egovio/alpine-node-builder-14:yarn AS build
+# FROM ghcr.io/egovernments/alpine-node-builder-14:yarn AS build
 RUN apk update && apk upgrade
 RUN apk add --no-cache git>2.30.0
 ARG WORK_DIR
@@ -14,10 +14,10 @@ RUN cd web/ \
     && node envs.js \
     &&  ./install-deps.sh \
     && yarn install \
-    && yarn build
+    && yarn build 
 
-#FROM nginx:mainline-alpine
-FROM ghcr.io/egovernments/nginx:mainline-alpine
+FROM nginx:mainline-alpine
+#FROM ghcr.io/egovernments/nginx:mainline-alpine
 ENV WORK_DIR=/var/web/digit-ui
 
 RUN mkdir -p ${WORK_DIR}
