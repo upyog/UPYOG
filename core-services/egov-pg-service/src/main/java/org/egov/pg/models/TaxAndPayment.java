@@ -14,9 +14,9 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @EqualsAndHashCode
 public class TaxAndPayment {
-	
+
 	private BigDecimal taxAmount;
-	
+
 	@NotNull
 	private BigDecimal amountPaid;
 

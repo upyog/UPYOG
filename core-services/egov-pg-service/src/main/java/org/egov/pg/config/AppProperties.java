@@ -23,7 +23,7 @@ public class AppProperties {
     private final String saveTxnDumpTopic;
 
     private final String updateTxnDumpTopic;
-    
+
     private final String idGenHost;
 
     private final String idGenPath;
@@ -37,7 +37,7 @@ public class AppProperties {
     private final String collectionServiceCreatePath;
 
     private final String collectionServiceValidatePath;
-    
+
     private final String paymentCreatePath;
 
     private final String paymentValidatePath;
@@ -80,6 +80,10 @@ public class AppProperties {
 
     private final String egovPgReconciliationSystemUserUuid;
 
+    private final String pgDetailHost;
+
+    private final String pgDetailPath;
+
     @Autowired
     public AppProperties(Environment environment){
         this.earlyReconcileJobRunInterval = Integer.valueOf(environment.getRequiredProperty("pg.earlyReconcileJobRunInterval.mins"));
@@ -115,6 +119,8 @@ public class AppProperties {
         this.billingServiceSearchEndpoint = environment.getRequiredProperty("egov.bill.searchendpoint");
         this.notificationHost = environment.getRequiredProperty("notification.url");
         this.egovPgReconciliationSystemUserUuid = environment.getRequiredProperty("egov.pg.reconciliation.system.user.uuid");
+        this.pgDetailHost = environment.getRequiredProperty("egov.pgdetail.host");
+        this.pgDetailPath = environment.getRequiredProperty("egov.pgdetail.path");
     }
 
 }
