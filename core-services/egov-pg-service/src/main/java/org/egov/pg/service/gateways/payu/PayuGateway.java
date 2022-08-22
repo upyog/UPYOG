@@ -114,7 +114,7 @@ public class PayuGateway implements Gateway {
     public Transaction fetchStatus(Transaction currentStatus, Map<String, String> params) {
         PayuResponse resp = objectMapper.convertValue(params, PayuResponse.class);
         if( ! isNull(resp.getHash()) && ! isNull(resp.getStatus()) && ! isNull(resp.getTxnid()) && ! isNull(resp.getAmount())
-            && !isNull(resp.getProductinfo()) && !isNull(resp.getFirstname()) ){
+                && !isNull(resp.getProductinfo()) && !isNull(resp.getFirstname()) ){
             resp.setTransaction_amount(resp.getAmount());
             String checksum = resp.getHash();
 
@@ -265,6 +265,12 @@ public class PayuGateway implements Gateway {
         }
 
         return hexString.toString();
+    }
+
+    @Override
+    public String generateRedirectFormData(Transaction transaction) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }
