@@ -134,23 +134,35 @@ class App extends Component {
      sourceUrl="https://s3.ap-south-1.amazonaws.com/egov-qa-assets";  // changes for the image configured in s3 bucket
     return (
       <div>
-            <div style={{minHeight:'calc(100vh - 3em)'}}>
-        <Router routes={routes} hasLocalisation={hasLocalisation} defaultUrl={defaultUrl} />
-          </div>
+        <div style={{minHeight:'calc(100vh - 3em)'}}>
+          <Router routes={routes} hasLocalisation={hasLocalisation} defaultUrl={defaultUrl} />
+        </div>
+        
         {toast && toast.open && !isEmpty(toast.message) && <Toast open={toast.open} message={toast.message} variant={toast.variant} />}
+        
         {loading && <LoadingIndicator />}
-        {!loginScreens && <div style={{ width: '100%', display: 'flex', flexFlow: 'column' }}>
-          <div style={{ display: 'flex', justifyContent: 'center' }}>
-            <img style={{ display: "inline-flex", height: '1.4em' }} className={"jk-footer-image-cursor"} alt={"Powered by DIGIT"} src={`${sourceUrl}/digit-footer.png`} onError={"this.src='./../digit-footer.png'"} onClick={() => {
+        
+        {!loginScreens && <div style={{ width: '100%', display: 'flex', flexFlow: 'column', position: 'fixed', bottom: 0 }}>
+          <div style={{ display: 'flex', justifyContent: 'center', color:"white" }}>
+            <img style={{ display: "inline-flex", height: '1.4em' }} className={"jk-footer-image-cursor"} alt={"Powered by DIGIT"} src={`${sourceUrl}/digit-footer-bw.png`} onError={"this.src='./../digit-footer.png'"} onClick={() => {
               window.open('https://www.digit.org/', '_blank').focus();
             }}></img>
+            <span style={{ margin: "0 10px" }}>|</span>
+            <span style={{ cursor: "pointer", fontSize: "16px", fontWeight: "400"}} onClick={() => { window.open('https://niua.in/', '_blank').focus();}} >Copyright © 2022 National Institute of Urban Affairs</span>
+            <span style={{ margin: "0 10px" }}>|</span>
+            <span style={{ cursor: "pointer", fontSize: "16px", fontWeight: "400"}} onClick={() => { window.open('Upyog Code and Copyright License_v1.pdf', '_blank').focus();}}>UPYOG License</span>
           </div>
         </div>}
+        
         {loginScreens && <div style={{ width: '100%', position: 'fixed', bottom: 0 }}>
-          <div style={{ display: 'flex', justifyContent: 'center' }}>
-            <img style={{ display: "inline-flex", height: '1em' }} className={"jk-footer-image-cursor"} alt={"Powered by DIGIT"} src={`${sourceUrl}/digit-footer-bw.png`} onError={"this.src='./../digit-footer-bw.png'"} onClick={() => {
+          <div style={{ display: 'flex', justifyContent: 'center', color:"white" }}>
+          <img style={{ display: "inline-flex", height: '1.4em' }} className={"jk-footer-image-cursor"} alt={"Powered by DIGIT"} src={`${sourceUrl}/digit-footer-bw.png`} onError={"this.src='./../digit-footer.png'"} onClick={() => {
               window.open('https://www.digit.org/', '_blank').focus();
             }}></img>
+            <span style={{ margin: "0 10px" }}>|</span>
+            <span style={{ cursor: "pointer", fontSize: "16px", fontWeight: "400"}} onClick={() => { window.open('https://niua.in/', '_blank').focus();}} >Copyright © 2022 National Institute of Urban Affairs</span>
+            <span style={{ margin: "0 10px" }}>|</span>
+            <span style={{ cursor: "pointer", fontSize: "16px", fontWeight: "400"}} onClick={() => { window.open('Upyog Code and Copyright License_v1.pdf', '_blank').focus();}}>UPYOG License</span>
           </div>
         </div>}
       </div>
