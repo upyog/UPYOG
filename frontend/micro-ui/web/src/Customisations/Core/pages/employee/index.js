@@ -9,6 +9,8 @@ import ForgotPassword from "./ForgotPassword";
 import LanguageSelection from "./LanguageSelection";
 import EmployeeLogin from "./Login";
 import UserProfile from "../citizen/Home/UserProfile";
+var Digit = window.Digit;
+var Digit = window.Digit;
 
 const EmployeeApp = ({
   stateInfo,
