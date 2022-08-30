@@ -16,6 +16,8 @@ const ChangePasswordComponent = ({ config: propsConfig, t }) => {
   const [isOtpValid, setIsOtpValid] = useState(true);
   const [showToast, setShowToast] = useState(null);
   const getUserType = () => Digit.UserService.getType();
+  let sourceUrl = `${window.location.origin}/employee`;
+  
   useEffect(() => {
     if (!user) {
       Digit.UserService.setType("employee");

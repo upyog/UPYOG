@@ -15,7 +15,7 @@ const LanguageSelection = () => {
     setselected(language.value);
     Digit.LocalizationService.changeLanguage(language.value, stateInfo.code);
   };
-
+  let sourceUrl = `${window.location.origin}/employee`;
   const handleSubmit = (event) => {
     history.push("/digit-ui/employee/user/login");
   };

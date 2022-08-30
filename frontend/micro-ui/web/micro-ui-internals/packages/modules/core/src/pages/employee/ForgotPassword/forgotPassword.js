@@ -11,7 +11,7 @@ const ForgotPassword = ({ config: propsConfig, t }) => {
   const history = useHistory();
   const [showToast, setShowToast] = useState(null);
   const getUserType = () => Digit.UserService.getType();
-
+  let sourceUrl = `${window.location.origin}/employee`;
   useEffect(() => {
     if (!user) {
       Digit.UserService.setType("employee");
