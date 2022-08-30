@@ -16,10 +16,10 @@
   <description>egov File Management Service</description>
   <properties>
     <java.version>17</java.version>
-    <log4j2.version>2.18.0</log4j2.version>
     <springdoc.version>1.6.11</springdoc.version>
     <p6spy.version>1.8.0</p6spy.version>
     <archunit.version>1.0.0-rc1</archunit.version>
+    <checkstyle.version>3.2.0</checkstyle.version>
     <mapstruct.version>1.5.2.Final</mapstruct.version>
     <m2e.apt.activation>jdt_apt</m2e.apt.activation>
   </properties>
@@ -107,6 +107,23 @@
             </exclude>
           </excludes>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <version>${checkstyle.version}</version>
+        <configuration>
+          <configLocation>checkstyle.xml</configLocation>
+          <consoleOutput>true</consoleOutput>
+          <failsOnError>true</failsOnError>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
