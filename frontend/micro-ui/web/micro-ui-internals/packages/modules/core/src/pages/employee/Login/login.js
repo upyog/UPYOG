@@ -29,7 +29,7 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
 
   const history = useHistory();
   // const getUserType = () => "EMPLOYEE" || Digit.UserService.getType();
-
+  let sourceUrl = `${window.location.origin}/employee`;
   useEffect(() => {
     if (!user) {
       return;

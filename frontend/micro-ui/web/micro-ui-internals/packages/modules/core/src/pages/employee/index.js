@@ -33,7 +33,7 @@ const EmployeeApp = ({
   useEffect(() => {
     Digit.UserService.setType("employee");
   }, []);
-
+  sourceUrl = `${window.location.origin}/employee`;
   return (
     <div className="employee">
       <Switch>
