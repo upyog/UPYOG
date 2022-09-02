@@ -29,7 +29,7 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
 
   const history = useHistory();
   // const getUserType = () => "EMPLOYEE" || Digit.UserService.getType();
-  let sourceUrl = `${window.location.origin}/employee`;
+  let   sourceUrl = "https://s3.ap-south-1.amazonaws.com/egov-qa-assets";
   useEffect(() => {
     if (!user) {
       return;

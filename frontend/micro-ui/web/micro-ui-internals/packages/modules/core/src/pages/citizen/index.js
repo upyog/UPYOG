@@ -10,6 +10,7 @@ import LanguageSelection from "./Home/LanguageSelection";
 import LocationSelection from "./Home/LocationSelection";
 import Login from "./Login";
 import UserProfile from "./Home/UserProfile";
+// import PDF from "../../assets/Upyog Code and Copyright License_v1.pdf";
 
 const getTenants = (codes, tenants) => {
   return tenants.filter((tenant) => codes.map((item) => item.code).includes(tenant.code));
@@ -33,6 +34,7 @@ const Home = ({
   const classname = Digit.Hooks.fsm.useRouteSubscription(pathname);
   const { t } = useTranslation();
   const { path } = useRouteMatch();
+  sourceUrl = "https://s3.ap-south-1.amazonaws.com/egov-qa-assets";
 
   const appRoutes = modules.map(({ code, tenants }, index) => {
     const Module = Digit.ComponentRegistryService.getComponent(`${code}Module`);
@@ -117,7 +119,7 @@ const Home = ({
           <span style={{ margin: "0 10px" }}>|</span>
           <span style={{ cursor: "pointer", fontSize: "16px", fontWeight: "400"}} onClick={() => { window.open('https://niua.in/', '_blank').focus();}} >Copyright © 2022 National Institute of Urban Affairs</span>
           <span style={{ margin: "0 10px" }}>|</span>
-          <span style={{ cursor: "pointer", fontSize: "16px", fontWeight: "400"}} onClick={() => { window.open('Upyog Code and Copyright License_v1.pdf', '_blank').focus();}}>UPYOG License</span>
+          <a style={{ cursor: "pointer", fontSize: "16px", fontWeight: "400"}} href={PDF} target='_blank'>UPYOG License</a>
         </div>
       </div>
     </div>
