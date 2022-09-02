@@ -10,7 +10,7 @@ import LanguageSelection from "./Home/LanguageSelection";
 import LocationSelection from "./Home/LocationSelection";
 import Login from "./Login";
 import UserProfile from "./Home/UserProfile";
-// import PDF from "../../assets/Upyog Code and Copyright License_v1.pdf";
+// import PDF from "../../assets/";
 
 const getTenants = (codes, tenants) => {
   return tenants.filter((tenant) => codes.map((item) => item.code).includes(tenant.code));
@@ -119,7 +119,7 @@ const Home = ({
           <span style={{ margin: "0 10px" }}>|</span>
           <span style={{ cursor: "pointer", fontSize: "16px", fontWeight: "400"}} onClick={() => { window.open('https://niua.in/', '_blank').focus();}} >Copyright © 2022 National Institute of Urban Affairs</span>
           <span style={{ margin: "0 10px" }}>|</span>
-          <a style={{ cursor: "pointer", fontSize: "16px", fontWeight: "400"}} href={PDF} target='_blank'>UPYOG License</a>
+          <a style={{ cursor: "pointer", fontSize: "16px", fontWeight: "400"}} href="#" target='_blank'>UPYOG License</a>
         </div>
       </div>
     </div>

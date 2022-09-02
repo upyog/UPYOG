@@ -170,7 +170,7 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
           <span style={{ margin: "0 10px" }}>|</span>
           <span style={{ cursor: "pointer", fontSize: "16px", fontWeight: "400"}} onClick={() => { window.open('https://niua.in/', '_blank').focus();}} >Copyright © 2022 National Institute of Urban Affairs</span>
           <span style={{ margin: "0 10px" }}>|</span>
-          <span style={{ cursor: "pointer", fontSize: "16px", fontWeight: "400"}} onClick={() => { window.open('Upyog Code and Copyright License_v1.pdf', '_blank').focus();}}>UPYOG License</span>
+          <a style={{ cursor: "pointer", fontSize: "16px", fontWeight: "400"}} href="#" target='_blank'>UPYOG License</a>
         </div>
       </div>
     </Background>
