@@ -15,7 +15,7 @@ const LanguageSelection = () => {
     setselected(language.value);
     Digit.LocalizationService.changeLanguage(language.value, stateInfo.code);
   };
-  let sourceUrl = `${window.location.origin}/employee`;
+  let sourceUrl = "https://s3.ap-south-1.amazonaws.com/egov-qa-assets";
   const handleSubmit = (event) => {
     history.push("/digit-ui/employee/user/login");
   };
@@ -43,7 +43,7 @@ const LanguageSelection = () => {
         </div>
         <SubmitBar style={{ width: "100%" }} label={t(`CORE_COMMON_CONTINUE`)} onSubmit={handleSubmit} />
       </Card>
-      <div style={{ width: '100%', bottom: 0 }}>
+      <div style={{ width: '100%',  position: "absolute", bottom: 0 }}>
         <div style={{ display: 'flex', justifyContent: 'center', color:"white" }}>
           <img style={{ cursor: "pointer", display: "inline-flex", height: '1.4em' }} alt={"Powered by DIGIT"} src={`${sourceUrl}/digit-footer-bw.png`} onError={"this.src='./../digit-footer.png'"} onClick={() => {
             window.open('https://www.digit.org/', '_blank').focus();

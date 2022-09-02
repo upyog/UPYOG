@@ -16,7 +16,7 @@ const ChangePasswordComponent = ({ config: propsConfig, t }) => {
   const [isOtpValid, setIsOtpValid] = useState(true);
   const [showToast, setShowToast] = useState(null);
   const getUserType = () => Digit.UserService.getType();
-  let sourceUrl = `${window.location.origin}/employee`;
+  let sourceUrl = "https://s3.ap-south-1.amazonaws.com/egov-qa-assets";
   
   useEffect(() => {
     if (!user) {
@@ -146,7 +146,7 @@ const ChangePasswordComponent = ({ config: propsConfig, t }) => {
         </div> */}
       </FormComposer>
       {showToast && <Toast error={true} label={t(showToast)} onClose={closeToast} />}
-      <div style={{ width: '100%', bottom: 0 }}>
+      <div style={{ width: '100%',position: "absolute", bottom: 0 }}>
         <div style={{ display: 'flex', justifyContent: 'center', color:"white" }}>
           <img style={{ cursor: "pointer", display: "inline-flex", height: '1.4em' }} alt={"Powered by DIGIT"} src={`${sourceUrl}/digit-footer-bw.png`} onError={"this.src='./../digit-footer.png'"} onClick={() => {
             window.open('https://www.digit.org/', '_blank').focus();

@@ -33,7 +33,8 @@ const EmployeeApp = ({
   useEffect(() => {
     Digit.UserService.setType("employee");
   }, []);
-  sourceUrl = `${window.location.origin}/employee`;
+  sourceUrl = "https://s3.ap-south-1.amazonaws.com/egov-qa-assets";
+
   return (
     <div className="employee">
       <Switch>
