@@ -15,7 +15,7 @@
   <name>egov-filemgmnt</name>
   <description>egov File Management Service</description>
   <properties>
-    <java.version>17</java.version>
+    <java.version>1.8</java.version>
     <springdoc.version>1.6.11</springdoc.version>
     <p6spy.version>1.8.0</p6spy.version>
     <archunit.version>1.0.0-rc1</archunit.version>
