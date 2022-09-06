@@ -1,13 +1,16 @@
 package org.egov.filemgmnt.archunit;
 
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+
 import com.tngtech.archunit.base.DescribedPredicate;
 import com.tngtech.archunit.core.domain.JavaClass;
 import com.tngtech.archunit.core.domain.JavaClasses;
 import com.tngtech.archunit.lang.syntax.ArchRuleDefinition;
 import com.tngtech.archunit.library.Architectures;
-
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+import com.tngtech.archunit.library.dependencies.SliceAssignment;
+import com.tngtech.archunit.library.dependencies.SliceIdentifier;
+import com.tngtech.archunit.library.dependencies.SlicesRuleDefinition;
 
 @ExtendWith(JavaClassesResolver.class)
 class ArchitectureTest {
@@ -25,6 +28,7 @@ class ArchitectureTest {
                                               "..filemgmnt.business.service",
 
                                               "..filemgmnt.common.enums",
+                                              "..filemgmnt.common.exception",
                                               "..filemgmnt.common.mappers",
                                               "..filemgmnt.common.utils",
 
@@ -43,21 +47,21 @@ class ArchitectureTest {
     @Test
     void layerAccessRule(JavaClasses javaClasses) {
         Architectures.layeredArchitecture()
-                     .consideringAllDependencies()
+                     .consideringOnlyDependenciesInLayers()
                      .ensureAllClassesAreContainedInArchitecture()
                      .withOptionalLayers(true)
 
                      // layers
                      .layer("App")
-                     .definedBy("..filemgmnt")
+                     .definedBy("..filemgmnt", "..filemgmnt.config")
 
                      .layer("API")
                      .definedBy("..filemgmnt.api..")
 
-                     .layer("Business")
+                     .optionalLayer("Business")
                      .definedBy("..filemgmnt.business..")
 
-                     .layer("Store")
+                     .optionalLayer("Store")
                      .definedBy("..filemgmnt.store..")
 
                      .layer("Common")
@@ -81,6 +85,33 @@ class ArchitectureTest {
                      .mayOnlyBeAccessedByLayers("Business", "Common")
 
                      .check(javaClasses);
+    }
+
+    @Test
+    void cyclicCheckRule(JavaClasses javaClasses) {
+        SlicesRuleDefinition.slices().assignedFrom(new SliceAssignment() {
+
+            @Override
+            public String getDescription() {
+                return "org.egov.filemgmnt package";
+            }
+
+            @Override
+            public SliceIdentifier getIdentifierOf(JavaClass javaClass) {
+                String pckgName = javaClass.getPackageName();
+
+                if (pckgName.matches(".*(filemgmnt.api).*")) {
+                    return SliceIdentifier.of("Api");
+                } else if (pckgName.matches(".*(filemgmnt.business).*")) {
+                    return SliceIdentifier.of("Business");
+                } else if (pckgName.matches(".*(filemgmnt.store).*")) {
+                    return SliceIdentifier.of("Store");
+                }
+
+                return SliceIdentifier.ignore();
+            }
+        }).should().beFreeOfCycles().check(javaClasses);
+
     }
 
     @Test

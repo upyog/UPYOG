@@ -1,17 +1,14 @@
 package org.egov.filemgmnt.archunit;
 
-import com.tngtech.archunit.core.domain.JavaClasses;
-import com.tngtech.archunit.core.importer.ClassFileImporter;
-import com.tngtech.archunit.core.importer.ImportOption;
-import com.tngtech.archunit.core.importer.Location;
-
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.ParameterContext;
 import org.junit.jupiter.api.extension.ParameterResolutionException;
 import org.junit.jupiter.api.extension.ParameterResolver;
-import org.junit.jupiter.params.provider.Arguments;
 
-import java.util.stream.Stream;
+import com.tngtech.archunit.core.domain.JavaClasses;
+import com.tngtech.archunit.core.importer.ClassFileImporter;
+import com.tngtech.archunit.core.importer.ImportOption;
+import com.tngtech.archunit.core.importer.Location;
 
 class JavaClassesResolver implements ParameterResolver {
 
@@ -38,10 +35,5 @@ class JavaClassesResolver implements ParameterResolver {
     public Object resolveParameter(ParameterContext parameterContext,
             ExtensionContext extensionContext) throws ParameterResolutionException {
         return javaClasses;
-    }
-
-    // for parameterized test
-    static Stream<Arguments> javaClassFiles() {
-        return Stream.of(Arguments.of(javaClasses));
     }
 }
