@@ -16,6 +16,8 @@ const LanguageSelection = () => {
     Digit.LocalizationService.changeLanguage(language.value, stateInfo.code);
   };
   let sourceUrl = "https://s3.ap-south-1.amazonaws.com/egov-qa-assets";
+  const pdfUrl = "https://pg-egov-assets.s3.ap-south-1.amazonaws.com/Upyog+Code+and+Copyright+License_v1.pdf";
+
   const handleSubmit = (event) => {
     history.push("/digit-ui/employee/user/login");
   };
@@ -51,7 +53,7 @@ const LanguageSelection = () => {
           <span style={{ margin: "0 10px" }}>|</span>
           <span style={{ cursor: "pointer", fontSize: "16px", fontWeight: "400"}} onClick={() => { window.open('https://niua.in/', '_blank').focus();}} >Copyright © 2022 National Institute of Urban Affairs</span>
           <span style={{ margin: "0 10px" }}>|</span>
-          <a style={{ cursor: "pointer", fontSize: "16px", fontWeight: "400"}} href="#" target='_blank'>UPYOG License</a>
+          <a style={{ cursor: "pointer", fontSize: "16px", fontWeight: "400"}} href={pdfUrl} target='_blank'>UPYOG License</a>
         </div>
       </div>
     </Background>
