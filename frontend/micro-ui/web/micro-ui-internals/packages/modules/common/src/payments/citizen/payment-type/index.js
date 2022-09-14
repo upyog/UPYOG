@@ -29,6 +29,9 @@ export const SelectPaymentType = (props) => {
   const { t } = useTranslation();
   const history = useHistory();
 
+  console.log(userInfo, 'userInfo');
+  console.log(paymentAmount, 'paymentAmount');
+
   const { pathname, search } = useLocation();
   // const menu = ["AXIS"];
   const { consumerCode, businessService } = useParams();
@@ -40,6 +43,12 @@ export const SelectPaymentType = (props) => {
     { tenantId: tenantId, consumerCode: wrkflow === "WNS" ? stringReplaceAll(consumerCode, "+", "/") : consumerCode, businessService },
     {}
   );
+
+  console.log(control, 'control');
+  console.log(handleSubmit, 'handleSubmit');
+  console.log(paymentdetails, 'paymentdetails');
+  console.log(menu, 'menu (types of payment gateway)');
+
   useEffect(() => {
     if (paymentdetails?.Bill && paymentdetails.Bill.length == 0) {
       setShowToast({ key: true, label: "CS_BILL_NOT_FOUND" });
@@ -51,8 +60,11 @@ export const SelectPaymentType = (props) => {
   const { name, mobileNumber } = state;
 
   const billDetails = paymentdetails?.Bill ? paymentdetails?.Bill[0] : {};
+  console.log(billDetails, 'billDetails');
 
   const onSubmit = async (d) => {
+    console.log(d, "onSubmit data that is coming when we click on submit button");
+
     const filterData = {
       Transaction: {
         tenantId: tenantId,
@@ -83,12 +95,20 @@ export const SelectPaymentType = (props) => {
       },
     };
 
+    console.log(filterData, "data to be passed in payment service to create Reciept");
+
     try {
       const data = await Digit.PaymentService.createCitizenReciept(tenantId, filterData);
+      console.log(data, "data we are getting from payment service");
+
       const redirectUrl = data?.Transaction?.redirectUrl;
+      console.log(redirectUrl, "redirectUrl");
+
       if (d?.paymentType == "AXIS") {
+        console.log("if payment type is AXIS it will redirect to this URL: ",redirectUrl );
         window.location = redirectUrl;
       } else {
+        console.log("paygov service selected");
         // new payment gatewayfor UPYOG pay
         try {
 
@@ -102,12 +122,16 @@ export const SelectPaymentType = (props) => {
               curr[d[0]] = d[1];
               return curr;
             }, {});
+            console.log(gatewayParam, "gatewayParam");
+
           var newForm = $("<form>", {
             action: gatewayParam.txURL,
             method: "POST",
             target: "_top",
           });
-          
+
+          console.log(newForm,'newForm (api calling)');
+
           const orderForNDSLPaymentSite = [
             "checksum",
             "messageType",
@@ -127,6 +151,9 @@ export const SelectPaymentType = (props) => {
             "additionalField5",
           ];
 
+          console.log(orderForNDSLPaymentSite,'orderForNDSLPaymentSite');
+
+
           // override default date for UPYOG Custom pay
           gatewayParam["requestDateTime"] = gatewayParam["requestDateTime"]?.split(new Date().getFullYear()).join(`${new Date().getFullYear()} `);
         
@@ -136,6 +163,7 @@ export const SelectPaymentType = (props) => {
           // gatewayParam["failUrl"]= data?.Transaction?.callbackUrl;
           
           // var formdata = new FormData();
+          console.log(gatewayParam, "gatewayParam 2");
           
           for (var key of orderForNDSLPaymentSite) {
            
@@ -151,6 +179,9 @@ export const SelectPaymentType = (props) => {
           }
           $(document.body).append(newForm);
           newForm.submit();
+
+          console.log(newForm,'newForm after appending the orderForNDSLPaymentSite data');
+          console.log(gatewayParam, "gatewayParam 3");
 
         
           // makePayment(gatewayParam.txURL,formdata);
