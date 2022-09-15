@@ -1,0 +1,24 @@
+{
+  "properties": [
+    {
+      "name": "app.timezone",
+      "type": "java.lang.String"
+    },
+    {
+      "name": "persister.save.applicantpersonal.topic",
+      "type": "java.lang.String",
+      "description": "File management applicant personal 'persister' save topic"
+    }
+  ],
+  "hints": [
+    {
+      "name": "app.timezone",
+      "values": [
+        {
+          "value": "UTC",
+          "description": "Coordinated Universal Time, (IST, India Standard Time, Asia/Kolkata = UTC+05:30)."
+        }
+      ]
+    }
+  ]
+}

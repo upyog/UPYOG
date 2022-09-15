@@ -1,0 +1,15 @@
+serviceMaps:
+  serviceName: filemgmnt-services
+  mappings:
+  - version: 1.0
+    description: Persists file management details in eg_filemgmnt database
+    fromTopic: save-fm-applicantpersonal
+    isTransaction: true
+    queryMaps:
+
+    - query: INSERT INTO eg_fm_applicantpersonal(id, firstname) VALUES (?, ?)
+      basePath: ApplicantPersonals.*
+      jsonMaps:
+      - jsonPath: $.ApplicantPersonals.*.id
+
+      - jsonPath: $.ApplicantPersonals.*.firstName

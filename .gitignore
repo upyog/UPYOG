@@ -3,3 +3,4 @@ frontend/micro-ui-internals/node_modules/*
 .idea
 index.lock
 /.metadata/
+/.sonarlint
