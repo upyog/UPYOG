@@ -106,6 +106,7 @@ const BillDetails = ({ paymentRules, businessService }) => {
   }, [isLoading]);
 
   const onSubmit = () => {
+    console.log(paymentAmount, 'paymentAmount');
     let paymentAmount = paymentType === t("CS_PAYMENT_FULL_AMOUNT") ? getTotal() : amount;
     if (window.location.href.includes("mcollect")) {
       history.push(`/digit-ui/citizen/payment/collect/${businessService}/${consumerCode}?workflow=mcollect`, {
@@ -118,7 +119,14 @@ const BillDetails = ({ paymentRules, businessService }) => {
         tenantId: billDetails.tenantId,
       });
     } else if (businessService === "PT") {
-      history.push(`/digit-ui/citizen/payment/billDetails/${businessService}/${consumerCode}/${paymentAmount}`, {
+      let url = "/digit-ui/citizen/payment/billDetails/";
+
+      console.log(url,"url");
+      console.log(businessService,"businessService");
+      console.log(consumerCode,"consumerCode");
+      console.log(paymentAmount,"paymentAmount");
+
+      history.push(`${url}${businessService}/${consumerCode}/${paymentAmount}`, {
         paymentAmount,
         tenantId: billDetails.tenantId,
         name: bill.payerName,
