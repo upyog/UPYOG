@@ -2,7 +2,6 @@ package org.egov.filemgmnt.archunit;
 
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.ParameterContext;
-import org.junit.jupiter.api.extension.ParameterResolutionException;
 import org.junit.jupiter.api.extension.ParameterResolver;
 
 import com.tngtech.archunit.core.domain.JavaClasses;
@@ -21,19 +20,19 @@ class JavaClassesResolver implements ParameterResolver {
                                                  public boolean includes(Location location) {
                                                      return !location.contains("/test-classes/");
                                                  }
-                                             })//
+                                             })
                                              .importPackages("org.egov.filemgmnt");
     }
 
     @Override
     public boolean supportsParameter(ParameterContext parameterContext,
-            ExtensionContext extensionContext) throws ParameterResolutionException {
+            ExtensionContext extensionContext) {
         return parameterContext.getParameter().getType() == JavaClasses.class;
     }
 
     @Override
     public Object resolveParameter(ParameterContext parameterContext,
-            ExtensionContext extensionContext) throws ParameterResolutionException {
+            ExtensionContext extensionContext) {
         return javaClasses;
     }
 }
