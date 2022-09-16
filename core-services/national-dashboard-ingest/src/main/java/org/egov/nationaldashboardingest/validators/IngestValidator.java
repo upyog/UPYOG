@@ -82,6 +82,10 @@ public class IngestValidator {
     public void verifyCrossStateMasterDataRequest(MasterDataRequest masterDataRequest) {
         String employeeUlb = masterDataRequest.getRequestInfo().getUserInfo().getTenantId();
         String ulbPresentInRequest = masterDataRequest.getMasterData().getUlb();
+        Set<String> roles = new HashSet<>();
+        masterDataRequest.getRequestInfo().getUserInfo().getRoles().forEach(role -> {
+            roles.add(role.getCode());
+        });
         // Skip validations in case the user is having adaptor ingest specific role
         if(!roles.contains(applicationProperties.getAdaptorIngestSystemRole())) {
             if (ulbPresentInRequest.contains(".")) {
