@@ -82,12 +82,15 @@ public class IngestValidator {
     public void verifyCrossStateMasterDataRequest(MasterDataRequest masterDataRequest) {
         String employeeUlb = masterDataRequest.getRequestInfo().getUserInfo().getTenantId();
         String ulbPresentInRequest = masterDataRequest.getMasterData().getUlb();
-        if(ulbPresentInRequest.contains(".")){
-            if(!employeeUlb.equals(ulbPresentInRequest))
-                throw new CustomException("EG_MASTER_DATA_INGEST_ERR", "Employee of ulb: " + employeeUlb + " cannot insert data for ulb: " + ulbPresentInRequest);
-        }else{
-            if(!employeeUlb.contains(ulbPresentInRequest.toLowerCase()))
-                throw new CustomException("EG_MASTER_DATA_INGEST_ERR", "Employee of ulb: " + employeeUlb + " cannot insert data for ulb: " + ulbPresentInRequest);
+        // Skip validations in case the user is having adaptor ingest specific role
+        if(!roles.contains(applicationProperties.getAdaptorIngestSystemRole())) {
+            if (ulbPresentInRequest.contains(".")) {
+                if (!employeeUlb.equals(ulbPresentInRequest))
+                    throw new CustomException("EG_MASTER_DATA_INGEST_ERR", "Employee of ulb: " + employeeUlb + " cannot insert data for ulb: " + ulbPresentInRequest);
+            } else {
+                if (!employeeUlb.contains(ulbPresentInRequest.toLowerCase()))
+                    throw new CustomException("EG_MASTER_DATA_INGEST_ERR", "Employee of ulb: " + employeeUlb + " cannot insert data for ulb: " + ulbPresentInRequest);
+            }
         }
     }
 
