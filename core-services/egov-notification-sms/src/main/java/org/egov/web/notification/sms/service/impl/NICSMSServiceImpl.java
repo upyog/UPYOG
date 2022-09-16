@@ -27,6 +27,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.ClassPathResource;
 
 import lombok.extern.slf4j.Slf4j;
 
