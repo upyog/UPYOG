@@ -11,6 +11,8 @@ const Home = () => {
   const tenantId = Digit.ULBService.getCitizenCurrentTenant(true);
   const { data: { stateInfo } = {}, isLoading } = Digit.Hooks.useStore.getInitData();
 
+  console.log("page where it is sending us");
+
   const conditionsToDisableNotificationCountTrigger = () => {
     if (Digit.UserService?.getUser()?.info?.type === "EMPLOYEE") return false;
     if (!Digit.UserService?.getUser()?.access_token) return false;
