@@ -2,8 +2,7 @@
 let map;
 var script = document.createElement("script");
 const key = globalConfigs?.getConfig("gmaps_api_key");
-script.src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAQOd09-vjmk1sXFb_ZQYDz2nlfhXq7Wf8&callback=initMap"
-//script.src = `https://maps.googleapis.com/maps/api/js?key=${key}&callback=initAutocomplete&libraries=places`;
+script.src = `https://maps.googleapis.com/maps/api/js?key=${key}&callback=initAutocomplete&libraries=places`;
 script.defer = true;
 window.initAutocomplete = function () {
   const map = new google.maps.Map(document.getElementById("map"), {
