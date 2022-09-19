@@ -2,7 +2,7 @@ package org.egov.filemgmnt.enrichment;
 
 import org.egov.filemgmnt.web.models.AuditDetails;
 
-interface EnrichmentInterface {
+interface BaseEnrichment {
 
     default AuditDetails buildAuditDetails(String by, Boolean create) {
         AuditDetails auditDetails;

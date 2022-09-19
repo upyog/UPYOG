@@ -11,7 +11,7 @@ import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ApplicantPersonalRowMapper implements ResultSetExtractor<List<ApplicantPersonal>>, RowMapperInterface {
+public class ApplicantPersonalRowMapper implements ResultSetExtractor<List<ApplicantPersonal>>, BaseRowMapper {
 
     @Override
     public List<ApplicantPersonal> extractData(ResultSet rs) throws SQLException, DataAccessException { // NOPMD
