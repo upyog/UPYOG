@@ -9,7 +9,7 @@ import org.egov.filemgmnt.web.models.AuditDetails;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ApplicantPersonalEnrichment implements AuditDetailsBuilderInterface {
+public class ApplicantPersonalEnrichment implements EnrichmentInterface {
 
     public void enrichCreate(ApplicantPersonalRequest request) {
 

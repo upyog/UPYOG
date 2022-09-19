@@ -5,7 +5,7 @@ import java.sql.SQLException;
 
 import org.egov.filemgmnt.web.models.AuditDetails;
 
-interface AuditDetailsInterface {
+interface RowMapperInterface {
 
     default AuditDetails getAuditDetails(ResultSet rs) throws SQLException {
         return AuditDetails.builder()
