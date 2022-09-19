@@ -7,6 +7,9 @@ import BillSumary from "./bill-summary";
 import { stringReplaceAll } from "./utils";
 
 const BillDetails = ({ paymentRules, businessService }) => {
+
+  console.log("on bill details");
+
   const { t } = useTranslation();
   const history = useHistory();
   const { state, ...location } = useLocation();
