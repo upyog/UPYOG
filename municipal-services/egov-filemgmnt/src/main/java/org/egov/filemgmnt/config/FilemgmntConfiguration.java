@@ -11,7 +11,6 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @Component
-//@Import({TracerConfiguration.class})
 public class FilemgmntConfiguration {
 
     @Value("${app.timezone}")
@@ -19,4 +18,7 @@ public class FilemgmntConfiguration {
 
     @Value("${persister.save.applicantpersonal.topic}")
     private String saveApplicantPersonalTopic;
+
+    @Value("${persister.update.applicantpersonal.topic}")
+    private String updateApplicantPersonalTopic;
 }

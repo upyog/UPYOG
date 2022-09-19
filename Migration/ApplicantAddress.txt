@@ -1,0 +1,14 @@
+CREATE TABLE IF NOT EXISTS eg_fm_applicantaddress
+(
+    id character varying(64) PRIMARY KEY,
+	tenantid character varying(64),
+    houseno character varying(64),
+    housename character varying(64),
+    street character varying(64),
+    pincode character varying(64),
+    postofficename character varying(64),
+    createdby character varying(64),
+    createdat bigint,
+    lastmodifiedby character varying(64),
+    lastmodifiedat bigint
+)
