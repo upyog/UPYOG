@@ -18,3 +18,17 @@ compose*.yml
 Dockerfile.local
 local.env
 
+## other local only files ###
+/src/test/java/org/egov/filemgmnt/arch
+additional-spring-configuration-metadata.json
+archunit.properties
+checkstyle.xml
+pmd.rulesets
+sonarqube.xml
+eclipse.importorder
+eclipse-formatter.xml
+filetree.bat
+test.properties
+
+ApplicantPersonalRequest.json
+ApplicantPersonalSearchQuery.sql

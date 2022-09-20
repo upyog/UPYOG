@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Import;
         "org.egov.filemgmnt.config" })
 public class Main { // NOPMD
 
-    public static void main(String[] args) {
+    public static void main(String[] args) { // NOPMD
         SpringApplication.run(Main.class, args);
     }
 

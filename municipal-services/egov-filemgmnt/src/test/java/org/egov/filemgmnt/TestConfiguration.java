@@ -1,11 +1,13 @@
 package org.egov.filemgmnt;
 
 import org.springframework.context.annotation.Configuration;
-import org.springframework.test.context.ActiveProfiles;
+
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 @Configuration
-@ActiveProfiles("local")
-public class TestConfiguration {
+@NoArgsConstructor(access = AccessLevel.PACKAGE)
+public class TestConfiguration { // NOPMD
 //    @Bean
 //    @SuppressWarnings("unchecked")
 //    public KafkaTemplate<String, Object> kafkaTemplate() {

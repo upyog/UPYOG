@@ -5,7 +5,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 
-import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.response.ResponseInfo;
 import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -22,15 +22,19 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ApplicantPersonalRequest {
-    @JsonProperty("RequestInfo")
-    private RequestInfo requestInfo;
+public class ApplicantPersonalResponse {
+
+    @JsonProperty("ResponseInfo")
+    private ResponseInfo responseInfo;
 
     @JsonProperty("ApplicantPersonals")
     @Valid
     private List<ApplicantPersonal> applicantPersonals;
 
-    public ApplicantPersonalRequest addApplicantPersonal(ApplicantPersonal applicantPersonal) {
+    @JsonProperty("Count")
+    private int count;
+
+    public ApplicantPersonalResponse addApplicantPersonal(ApplicantPersonal applicantPersonal) {
         if (applicantPersonals == null) {
             applicantPersonals = new ArrayList<>();
         }
