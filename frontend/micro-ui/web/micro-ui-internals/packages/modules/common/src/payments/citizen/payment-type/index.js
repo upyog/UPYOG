@@ -28,7 +28,7 @@ export const SelectPaymentType = (props) => {
   const paymentAmount = state?.paymentAmount;
   const { t } = useTranslation();
   const history = useHistory();
-
+  console.log("Payment type selection");
   const { pathname, search } = useLocation();
   // const menu = ["AXIS"];
   const { consumerCode, businessService } = useParams();
@@ -86,6 +86,8 @@ export const SelectPaymentType = (props) => {
     try {
       const data = await Digit.PaymentService.createCitizenReciept(tenantId, filterData);
       const redirectUrl = data?.Transaction?.redirectUrl;
+        console.log("redirectUrl");
+        console.log("redirectUrl",redirectUrl);
       if (d?.paymentType == "AXIS") {
         window.location = redirectUrl;
       } else {

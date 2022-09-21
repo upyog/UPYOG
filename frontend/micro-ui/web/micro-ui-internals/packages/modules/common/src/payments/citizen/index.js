@@ -10,7 +10,8 @@ import { SuccessfulPayment, FailedPayment } from "./response";
 const CitizenPayment = ({ stateCode, cityCode, moduleCode }) => {
   const { path: currentPath } = useRouteMatch();
   const commonProps = { stateCode, cityCode, moduleCode };
-
+  console.log("payment redirect");
+    console.log("currentpath",${currentPath});
   return (
     <React.Fragment>
       <Switch>
