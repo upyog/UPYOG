@@ -3,6 +3,7 @@ import { CardText, FormStep } from "@egovernments/digit-ui-react-components";
 import { Link } from "react-router-dom";
 
 const SelectMobileNumber = ({ t, onSelect, showRegisterLink, mobileNumber, onMobileChange, config }) => {
+  console.log("mobile number page", mobileNumber);
   return (
     <FormStep
       isDisabled={mobileNumber.length !== 10}
