@@ -7,10 +7,6 @@ public class GlobalException extends CustomException {
 
     private static final long serialVersionUID = -5316203007519923839L;
 
-    public GlobalException(ErrorCodes errorCode) {
-        super(errorCode.getCode(), errorCode.getMessage());
-    }
-
     public GlobalException(ErrorCodes errorCode, String message) {
         super(errorCode.getCode(), message);
     }

@@ -1,53 +1,76 @@
 package org.egov.filemgmnt.service;
 
+import java.util.List;
+import java.util.UUID;
+
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.request.User;
+import org.egov.filemgmnt.util.CoreUtils;
+import org.egov.filemgmnt.web.models.ApplicantPersonal;
 import org.egov.filemgmnt.web.models.ApplicantPersonalRequest;
+import org.egov.filemgmnt.web.models.ApplicantPersonalSearchCriteria;
+import org.egov.filemgmnt.web.models.AuditDetails;
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.TestPropertySource;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Disabled
-//@SpringBootTest
+@SpringBootTest
+//@Import(TestConfig.class)
+@TestPropertySource(locations = { "classpath:test.properties" })
+@SuppressWarnings({ "PMD.JUnitTestsShouldIncludeAssert" })
+@Slf4j
 class ApplicantPersonalServiceTests {
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Autowired
     private ApplicantPersonalService service;
 
     @Test
-    void createApplicantPersonal() {
+    @Order(1)
+    void create() {
+        ApplicantPersonalRequest request = ApplicantPersonalRequest.builder()
+                                                                   .requestInfo(RequestInfo.builder()
+                                                                                           .userInfo(User.builder()
+                                                                                                         .uuid(UUID.randomUUID()
+                                                                                                                   .toString())
+                                                                                                         .build())
+                                                                                           .build())
+                                                                   .build();
+        request.addApplicantPersonal(ApplicantPersonal.builder()
+                                                      .id(UUID.randomUUID()
+                                                              .toString())
+                                                      .firstName("FirstName")
+                                                      .lastName("LastName")
+                                                      .mobileNo("1234567890")
+                                                      .auditDetails(new AuditDetails())
+                                                      .build());
+        service.create(request);
+    }
 
-        ApplicantPersonalRequest request = new ApplicantPersonalRequest();
-        request.setRequestInfo(new RequestInfo());
-//        request.addApplicantPersonal(ApplicantPersonal.builder().aadhaarNo("123456789").build());
-//        request.addApplicantPersonal(ApplicantPersonal.builder().email("priyamalu@gmail.com").build());
-//        request.addApplicantPersonal(ApplicantPersonal.builder().firstName("Krishna").build());
-//        request.addApplicantPersonal(ApplicantPersonal.builder().lastName("Priya").build());
-//        request.addApplicantPersonal(ApplicantPersonal.builder().title("Smt").build());
-//        request.addApplicantPersonal(ApplicantPersonal.builder().mobileNo("9746402315").build());
-//        request.addApplicantPersonal(ApplicantPersonal.builder().tenantId("1").build());
-//        request.addApplicantPersonal(ApplicantPersonal.builder().createdBy("365").build());
-//        request.addApplicantPersonal(ApplicantPersonal.builder().createdAt(12/03/2009).build());
-//        request.addApplicantPersonal(ApplicantPersonal.builder().lastmodifiedBy("10").build());
-//        request.addApplicantPersonal(ApplicantPersonal.builder().lastmodifiedAt(21/11/2020).build());
-//        request.addApplicantPersonal(ApplicantPersonal.builder().applicantaddressId("214").build());
-// 
-
-//        request.addApplicantPersonal(ApplicantPersonal.builder()
-//                                                      .aadhaarNo("123456789")
-//                                                      .email("priyamalu@gmail.com")
-//                                                      .firstName("Krishna")
-//                                                      .lastName("Priya")
-//                                                      .title("Smt")
-//                                                      .mobileNo("9746402315")
-//                                                      .tenantId("1")
-//                                                      .createdBy("365")
-//                                                      .createdAt(12032009)
-//                                                      .lastmodifiedBy("10")
-//                                                      .lastmodifiedAt(21112020)
-//                                                      .applicantaddressId("214")
-//
-//                                                      .build());
-//
-//        service.createApplicantPersonals(request);
+    @Test
+    @Order(2)
+    void search() {
+        List<ApplicantPersonal> result = service.search(ApplicantPersonalSearchCriteria.builder()
+                                                                                       .build());
+        result.forEach(personal -> {
+            try {
+                log.info(" *** APPLICANT PERSONAL JSON \n {}",
+                         objectMapper.writerWithDefaultPrettyPrinter()
+                                     .writeValueAsString(personal));
+            } catch (JsonProcessingException e) {
+                CoreUtils.ignore(e);
+            }
+        });
     }
 }

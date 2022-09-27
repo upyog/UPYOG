@@ -13,7 +13,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Schema(description = "A Object holds the basic data for a Applicant Personal")
+@Schema(description = "A Object holds the  data for a Applicant Service")
 @Validated
 
 @Getter
@@ -21,40 +21,34 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ApplicantPersonal {
+
+public class ApplicantService {
 
     @Size(max = 64)
     @JsonProperty("id")
     private String id;
 
     @Size(max = 64)
-    @JsonProperty("aadhaarNo")
-    private String aadhaarNo;
+    @JsonProperty("applicantPersonalId")
+    private String applicantPersonalId;
 
     @Size(max = 64)
-    @JsonProperty("email")
-    private String email;
+    @JsonProperty("serviceId")
+    private String serviceId;
 
     @Size(max = 64)
-    @JsonProperty("firstName")
-    private String firstName;
+    @JsonProperty("serviceCode")
+    private String serviceCode;
 
     @Size(max = 64)
-    @JsonProperty("lastName")
-    private String lastName;
+    @JsonProperty("businessService")
+    private String businessService;
 
     @Size(max = 64)
-    @JsonProperty("title")
-    private String title;
-
-    @Size(max = 15)
-    @JsonProperty("mobileNo")
-    private String mobileNo;
-
-    @Size(max = 64)
-    @JsonProperty("tenantId")
-    private String tenantId;
+    @JsonProperty("workflowCode")
+    private String workflowCode;
 
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails;
+
 }

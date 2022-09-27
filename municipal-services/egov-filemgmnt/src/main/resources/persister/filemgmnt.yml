@@ -2,13 +2,13 @@ serviceMaps:
   serviceName: egov-filemgmnt
   mappings:
   - version: 1.0
-    description: Persists applicant details in egov_filemngmnt database, eg_fm_applicantpersonal table
+    description: Persists applicant details in egov_filemgmnt database, eg_fm_applicantpersonal table
     fromTopic: save-fm-applicantpersonal
     isTransaction: true
     queryMaps:
     - query: >
-        INSERT INTO eg_fm_applicantpersonal(id, aadhaarno, email, firstname, lastname, title, mobileno, tenantid, applicantaddressid, createdby, createdat, lastmodifiedby, lastmodifiedat) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO eg_fm_applicantpersonal(id, aadhaarno, email, firstname, lastname, title, mobileno, tenantid, createdby, createdtime, lastmodifiedby, lastmodifiedtime) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       basePath: ApplicantPersonals.*
       jsonMaps:
       - jsonPath: $.ApplicantPersonals.*.id
@@ -27,8 +27,6 @@ serviceMaps:
       
       - jsonPath: $.ApplicantPersonals.*.tenantId
       
-      - jsonPath: $.ApplicantPersonals.*.applicantAddressId 
-      
       - jsonPath: $.ApplicantPersonals.*.auditDetails.createdBy
 
       - jsonPath: $.ApplicantPersonals.*.auditDetails.createdTime
@@ -38,7 +36,7 @@ serviceMaps:
       - jsonPath: $.ApplicantPersonals.*.auditDetails.lastModifiedTime
 
   - version: 1.0
-    description: Update applicant details in egov_filemngmnt database, eg_fm_applicantpersonal table
+    description: Update applicant details in egov_filemgmnt database, eg_fm_applicantpersonal table
     fromTopic: update-fm-applicantpersonal
     isTransaction: true
     queryMaps:

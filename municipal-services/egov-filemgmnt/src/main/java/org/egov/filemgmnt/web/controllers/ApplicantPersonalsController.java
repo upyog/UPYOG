@@ -2,10 +2,10 @@ package org.egov.filemgmnt.web.controllers;
 
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.egov.filemgmnt.service.ApplicantPersonalService;
+import org.egov.filemgmnt.util.ResponseInfoFactory;
 import org.egov.filemgmnt.web.models.ApplicantPersonal;
 import org.egov.filemgmnt.web.models.ApplicantPersonalRequest;
 import org.egov.filemgmnt.web.models.ApplicantPersonalResponse;
@@ -18,24 +18,20 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 @RestController
 @RequestMapping("/v1")
 @Validated
-public class ApplicantPersonalsController implements ResponseInfoBuilderInterface {
+public class ApplicantPersonalsController {
 
-//    private final HttpServletRequest httpRequest;
-//    private final ObjectMapper objectMapper;
+    @Autowired
+    private ResponseInfoFactory responseInfoFactory;
+
     private final ApplicantPersonalService personalService;
 
     @Autowired
-    public ApplicantPersonalsController(HttpServletRequest httpRequest, ObjectMapper objectMapper,
-                                        ApplicantPersonalService applicantPersonalService) {
+    public ApplicantPersonalsController(ApplicantPersonalService personalService) {
 
-//        this.httpRequest = httpRequest;
-//        this.objectMapper = objectMapper;
-        this.personalService = applicantPersonalService;
+        this.personalService = personalService;
     }
 
     @PostMapping("/applicantpersonals/_create")
@@ -44,8 +40,8 @@ public class ApplicantPersonalsController implements ResponseInfoBuilderInterfac
         List<ApplicantPersonal> personals = personalService.create(request);
 
         ApplicantPersonalResponse response = ApplicantPersonalResponse.builder()
-                                                                      .responseInfo(buildResponseInfo(request.getRequestInfo(),
-                                                                                                      Boolean.TRUE))
+                                                                      .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(),
+                                                                                                                                          Boolean.TRUE))
                                                                       .applicantPersonals(personals)
                                                                       .build();
         return ResponseEntity.ok(response);
@@ -57,8 +53,8 @@ public class ApplicantPersonalsController implements ResponseInfoBuilderInterfac
         List<ApplicantPersonal> personals = personalService.update(request);
 
         ApplicantPersonalResponse response = ApplicantPersonalResponse.builder()
-                                                                      .responseInfo(buildResponseInfo(request.getRequestInfo(),
-                                                                                                      Boolean.TRUE))
+                                                                      .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(),
+                                                                                                                                          Boolean.TRUE))
                                                                       .applicantPersonals(personals)
                                                                       .build();
         return ResponseEntity.ok(response);
