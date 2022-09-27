@@ -1,0 +1,85 @@
+{
+  "properties": [
+    {
+      "name": "app.timezone",
+      "type": "java.lang.String"
+    },
+    {
+      "name": "persister.save.applicantpersonal.topic",
+      "type": "java.lang.String",
+      "description": "File management applicant personal save topic"
+    },
+    {
+      "name": "persister.update.applicantpersonal.topic",
+      "type": "java.lang.String",
+      "description": "File management applicant personal update topic"
+    },
+    {
+      "name": "server.context-path",
+      "type": "java.lang.String"
+    },
+    {
+      "name": "kafka.config.bootstrap_server_config",
+      "type": "java.lang.String"
+    },
+    {
+      "name": "kafka.producer.config.retries_config",
+      "type": "java.lang.Long"
+    },
+    {
+      "name": "kafka.producer.config.batch_size_config",
+      "type": "java.lang.Long"
+    },
+    {
+      "name": "kafka.producer.config.linger_ms_config",
+      "type": "java.lang.Long"
+    },
+    {
+      "name": "kafka.producer.config.buffer_memory_config",
+      "type": "java.lang.Long"
+    },
+    {
+      "name": "egov.idgen.host",
+      "type": "java.lang.String"
+    },
+    {
+      "name": "egov.idgen.path",
+      "type": "java.lang.String"
+    },
+    {
+      "name": "egov.mdms.host",
+      "type": "java.lang.String"
+    },
+    {
+      "name": "egov.mdms.search.endpoint",
+      "type": "java.lang.String"
+    },
+    {
+      "name": "egov.mdms.master.name",
+      "type": "java.lang.String"
+    },
+    {
+      "name": "egov.mdms.module.name",
+      "type": "java.lang.String"
+    },
+    {
+      "name": "egov.url.shortner.host",
+      "type": "java.lang.String"
+    },
+    {
+      "name": "egov.url.shortner.endpoint",
+      "type": "java.lang.String"
+    }
+  ],
+  "hints": [
+    {
+      "name": "app.timezone",
+      "values": [
+        {
+          "value": "UTC",
+          "description": "Coordinated Universal Time, (IST, India Standard Time, Asia/Kolkata = UTC+05:30)."
+        }
+      ]
+    }
+  ]
+}

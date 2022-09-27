@@ -51,7 +51,7 @@ public class ApplicantPersonalService {
 
         if (CollectionUtils.isEmpty(criteria.getIds())) {
 //            throw new GlobalException(ErrorCodes.APPLICANT_PERSONAL_INVALID_SEARCH_CRITERIA,
-//                    "Atleast one applicant id is required.");
+//                    "At least one applicant id is required.");
         }
 
         return repository.getApplicantPersonals(criteria);

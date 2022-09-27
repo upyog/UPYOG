@@ -14,7 +14,7 @@ class OpenApiDocConfiguration {
     @Bean
     GroupedOpenApi fileMgmntApi() {
         return GroupedOpenApi.builder()
-                             .group("v1.0")
+                             .group("1.0.0")
                              .pathsToMatch("/v1/**")
                              .packagesToScan("org.egov.filemgmnt.web")
                              .build();
@@ -24,7 +24,7 @@ class OpenApiDocConfiguration {
     OpenAPI fileMgmntApiInfo() {
         return new OpenAPI().info(new Info().title("File Management API's")
                                             .description("egov File Management Service API's")
-                                            .version("v1.0"))
+                                            .version("1.0.0"))
                             .addServersItem(new Server().url("http://localhost:8080/filemgmnt")
                                                         .description("Local Development Server"));
     }

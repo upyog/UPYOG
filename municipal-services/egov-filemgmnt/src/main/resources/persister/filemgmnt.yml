@@ -7,8 +7,8 @@ serviceMaps:
     isTransaction: true
     queryMaps:
     - query: >
-        INSERT INTO eg_fm_applicantpersonal(id, aadhaarno, email, firstname, lastname, title, mobileno, tenantid, applicantaddressid, createdby, createdat, lastmodifiedby, lastmodifiedat) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO eg_fm_applicantpersonal(id, aadhaarno, email, firstname, lastname, title, mobileno, tenantid, createdby, createdtime, lastmodifiedby, lastmodifiedtime) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       basePath: ApplicantPersonals.*
       jsonMaps:
       - jsonPath: $.ApplicantPersonals.*.id
@@ -26,8 +26,6 @@ serviceMaps:
       - jsonPath: $.ApplicantPersonals.*.mobileNo 
       
       - jsonPath: $.ApplicantPersonals.*.tenantId
-      
-      - jsonPath: $.ApplicantPersonals.*.applicantAddressId 
       
       - jsonPath: $.ApplicantPersonals.*.auditDetails.createdBy
 

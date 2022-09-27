@@ -22,7 +22,7 @@ public class ApplicantPersonalValidator {
      */
     public void validateCreate(ApplicantPersonalRequest request) {
         if (CollectionUtils.isEmpty(request.getApplicantPersonals())) {
-            new GlobalException(ErrorCodes.APPLICANT_PERSONAL_REQUIRED);
+            new GlobalException(ErrorCodes.APPLICANT_PERSONAL_REQUIRED, "Atleast one applicant personal is required.");
         }
     }
 
@@ -35,7 +35,7 @@ public class ApplicantPersonalValidator {
         List<ApplicantPersonal> applicantPersonals = request.getApplicantPersonals();
 
         if (CollectionUtils.isEmpty(applicantPersonals)) {
-            new GlobalException(ErrorCodes.APPLICANT_PERSONAL_REQUIRED);
+            new GlobalException(ErrorCodes.APPLICANT_PERSONAL_REQUIRED, "Atleast one applicant personal is required.");
         }
 
         if (applicantPersonals.size() != searchResult.size()) {
