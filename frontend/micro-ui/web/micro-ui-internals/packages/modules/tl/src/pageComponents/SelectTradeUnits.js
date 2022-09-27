@@ -1,4 +1,4 @@
-import { CardLabel, Dropdown, FormStep, LinkButton, Loader, RadioButtons, TextInput } from "@egovernments/digit-ui-react-components";
+import { CardLabel, Dropdown, FormStep, LinkButton, Loader, RadioButtons, RadioOrSelect, TextInput } from "@egovernments/digit-ui-react-components";
 import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
 import Timeline from "../components/TLTimeline";
@@ -187,16 +187,18 @@ const SelectTradeUnits = ({ t, config, onSelect, userType, formData }) => {
                     onClick={(e) => handleRemove(index)}
                   />
                   {!isLoading ? (
-                    <RadioButtons
+                    <Dropdown
                       t={t}
-                      options={TradeCategoryMenu}
-                      optionsKey="i18nKey"
+                      option={TradeCategoryMenu}
+                      optionKey="i18nKey"
                       name={`TradeCategory-${index}`}
                       value={field?.tradecategory}
-                      selectedOption={field?.tradecategory}
-                      onSelect={(e) => selectTradeCategory(index, e)}
+                      selected={field?.tradecategory}
+                      select={(e) => selectTradeCategory(index, e)}
                       labelKey=""
-                      isPTFlow={true}
+                      optionCardStyles={{maxHeight:"125px",overflow:"scroll"}}
+
+                      // isPTFlow={true}
                     />
                   ) : (
                     <Loader />
@@ -209,6 +211,9 @@ const SelectTradeUnits = ({ t, config, onSelect, userType, formData }) => {
                     option={getTradeTypeMenu(field?.tradecategory)}
                     selected={field?.tradetype}
                     select={(e) => selectTradeType(index, e)}
+                    optionCardStyles={{maxHeight:"125px",overflow:"scroll"}}
+
+                    
                   />
                   <CardLabel>{`${t("TL_NEW_TRADE_DETAILS_TRADE_SUBTYPE_LABEL")}*`}</CardLabel>
                     <Dropdown
@@ -220,7 +225,7 @@ const SelectTradeUnits = ({ t, config, onSelect, userType, formData }) => {
                       optionCardStyles={{maxHeight:"125px",overflow:"scroll"}}
                       select={(e) => selectTradeSubType(index, e)}
                     />
-                  <CardLabel>{`${t("TL_UNIT_OF_MEASURE_LABEL")}`}</CardLabel>
+                  {/* <CardLabel>{`${t("TL_UNIT_OF_MEASURE_LABEL")}`}</CardLabel>
                   <TextInput
                     style={{ background: "#FAFAFA" }}
                     t={t}
@@ -233,8 +238,8 @@ const SelectTradeUnits = ({ t, config, onSelect, userType, formData }) => {
                     onChange={(e) => selectUnitOfMeasure(index, e)}
                     disable={true}
                   />
-                  <CardLabel>{`${t("TL_NEW_TRADE_DETAILS_UOM_VALUE_LABEL")}${!field.unit ? "" : "*"}`}</CardLabel>
-                  <TextInput
+                  <CardLabel>{`${t("TL_NEW_TRADE_DETAILS_UOM_VALUE_LABEL")}${!field.unit ? "" : "*"}`}</CardLabel> */}
+                  {/* <TextInput
                     style={{ background: "#FAFAFA" }}
                     t={t}
                     type={"text"}
@@ -251,7 +256,7 @@ const SelectTradeUnits = ({ t, config, onSelect, userType, formData }) => {
                       type: "text",
                       title: t("TL_WRONG_UOM_VALUE_ERROR"),
                     })}
-                  />
+                  /> */}
                 </div>
               </div>
             );
