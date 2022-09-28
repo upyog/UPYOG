@@ -111,7 +111,7 @@ public class NICSMSServiceImpl extends BaseSMSService {
 
             }else if(StringUtils.isEmpty(sms.getTemplateId())){
                 log.info("No template Id, Message Not sent"+smsBody);
-                return;
+                //return;
             }
 
             String message= "" + smsBody ;
