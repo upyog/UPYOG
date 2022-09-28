@@ -99,8 +99,8 @@ public class NICSMSServiceImpl extends BaseSMSService {
 
             String final_data="";
             final_data+="username="+ smsProperties.getUsername();
-            final_data+="&pin="+ smsProperties.getPassword();
-
+            //final_data+="&pin="+ smsProperties.getPassword();
+            final_data+="&pin="+ "GHt%40%23321ter";
             String smsBody = sms.getMessage();
 
             if(smsBody.split("#").length > 1) {
