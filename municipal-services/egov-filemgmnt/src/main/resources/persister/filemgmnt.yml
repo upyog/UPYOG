@@ -62,7 +62,36 @@ serviceMaps:
 
       - jsonPath: $.ApplicantPersonals.*.auditDetails.lastModifiedTime
       
-      - jsonPath: $.ApplicantPersonals.*.id     
- 
+      - jsonPath: $.ApplicantPersonals.*.id 
+
+  - version: 1.0
+    description: Persists applicant service details in egov_filemgmnt database, eg_fm_servicedetails table
+    fromTopic: save-fm_servicedetails
+    isTransaction: true
+    queryMaps:
+    - query: >
+        INSERT INTO eg_fm_servicedetails(id, applicantpersonalid, serviceid, servicecode, businessservice, workflowcode, createdby, createdtime, lastmodifiedby, lastmodifiedtime) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      basePath: ApplicantServices.*
+      jsonMaps:
+      - jsonPath: $.ApplicantServices.*.id
+
+      - jsonPath: $.ApplicantServices.*.applicantPersonalId 
       
-     
+      - jsonPath: $.ApplicantServices.*.serviceId 
+      
+      - jsonPath: $.ApplicantServices.*.serviceCode 
+      
+      - jsonPath: $.ApplicantServices.*.businessService 
+      
+      - jsonPath: $.ApplicantServices.*.workflowCode 
+      
+      - jsonPath: $.ApplicantServices.*.auditDetails.createdBy
+
+      - jsonPath: $.ApplicantServices.*.auditDetails.createdTime
+      
+      - jsonPath: $.ApplicantServices.*.auditDetails.lastModifiedBy
+
+      - jsonPath: $.ApplicantServices.*.auditDetails.lastModifiedTime 
+      
+       

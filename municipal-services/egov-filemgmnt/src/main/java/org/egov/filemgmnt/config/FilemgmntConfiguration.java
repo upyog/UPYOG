@@ -21,4 +21,10 @@ public class FilemgmntConfiguration {
 
     @Value("${persister.update.applicantpersonal.topic}")
     private String updateApplicantPersonalTopic;
+
+    @Value("${persister.save.applicantservice.topic}")
+    private String saveApplicantServiceTopic;
+
+//    @Value("${persister.update.applicantservice.topic}")
+//    private String updateApplicantServiceTopic;
 }

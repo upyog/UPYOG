@@ -13,7 +13,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Schema(description = "A Object holds the  data for a Applicant Service")
+@Schema(description = "A Object holds the  data for a Service Details")
 @Validated
 
 @Getter
@@ -22,7 +22,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Builder
 
-public class ApplicantService {
+public class ServiceDetails {
 
     @Size(max = 64)
     @JsonProperty("id")

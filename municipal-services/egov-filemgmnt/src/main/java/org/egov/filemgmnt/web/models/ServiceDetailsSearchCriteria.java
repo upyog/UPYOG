@@ -15,8 +15,10 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ApplicantServiceSearchCriteria {
+
+public class ServiceDetailsSearchCriteria {
 
     @JsonProperty("ids")
     private List<String> ids;
+
 }

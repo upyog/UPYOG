@@ -11,12 +11,9 @@ import org.egov.filemgmnt.enrichment.ApplicantServiceEnrichment;
 import org.egov.filemgmnt.kafka.Producer;
 import org.egov.filemgmnt.repository.ApplicantServiceRepository;
 import org.egov.filemgmnt.validators.ApplicantServiceValidator;
-import org.egov.filemgmnt.web.models.ApplicantService;
-import org.egov.filemgmnt.web.models.ApplicantServiceRequest;
-import org.egov.filemgmnt.web.models.ApplicantServiceSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class ApplicantServiceService {
+public class ServiceDetailsService {
 
     private final Producer producer;
     private final FilemgmntConfiguration filemgmntConfig;

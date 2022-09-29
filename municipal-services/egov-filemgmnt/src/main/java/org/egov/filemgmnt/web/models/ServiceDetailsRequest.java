@@ -23,20 +23,22 @@ import lombok.Setter;
 @NoArgsConstructor
 @Builder
 
-public class ApplicantServiceRequest {
+public class ServiceDetailsRequest {
+
     @JsonProperty("RequestInfo")
     private RequestInfo requestInfo;
 
-    @JsonProperty("ApplicantServices")
+    @JsonProperty("ServiceDetails")
     @Valid
-    private List<ApplicantService> applicantServices;
+    private List<ServiceDetails> serviceDetailsreq;
 
-    public ApplicantServiceRequest addApplicantService(ApplicantService applicantService) {
-        if (applicantServices == null) {
-            applicantServices = new ArrayList<>();
+    public ServiceDetailsRequest addServiceDetails(ServiceDetails serviceDetails) {
+        if (serviceDetailsreq == null) {
+            serviceDetailsreq = new ArrayList<>();
         }
-        applicantServices.add(applicantService);
+        serviceDetailsreq.add(serviceDetails);
 
         return this;
     }
+
 }
