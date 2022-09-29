@@ -65,6 +65,7 @@ public class NICSMSServiceImpl extends BaseSMSService {
 
                 TrustManager[] trustManagers = trustFactory.getTrustManagers();
                 sslContext.init(null, trustManagers, null);
+                log.info(sslContext.getCategory());
             }
             else {
                 log.info("not checking certificate");
