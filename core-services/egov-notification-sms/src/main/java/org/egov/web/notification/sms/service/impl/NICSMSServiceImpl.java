@@ -53,6 +53,7 @@ public class NICSMSServiceImpl extends BaseSMSService {
             if(smsProperties.isVerifyCertificate()) {
                 log.info("checking certificate");
                 KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
+                System.out.println(KeyStore.getDefaultType());
                 //File file = new File(System.getenv("JAVA_HOME")+"/lib/security/cacerts");
                 //File file = new File(getClass().getClassLoader().getResource("smsgwsmsgovin-sep22.cer").getFile());
                 Resource resource = (Resource) new ClassPathResource("smsgwsmsgovin-sep22.cer");
