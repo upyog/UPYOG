@@ -16,7 +16,6 @@ const SelectStructureType = ({ t, config, onSelect, userType, formData }) => {
   function selectStructuretype(value) {
     setStructureType(value);
   }
-
   function goNext() {
     sessionStorage.setItem("StructureType", StructureType.i18nKey);
     onSelect(config.key, { StructureType });
