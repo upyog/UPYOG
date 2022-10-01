@@ -13,8 +13,10 @@ const LocationSelection = () => {
   const history = useHistory();
 
   const { data: cities, isLoading } = Digit.Hooks.useTenants();
+  const { data: districts, isLoad } = Digit.Hooks.useTenants();
 
   const [selectedCity, setSelectedCity] = useState(() => ({ code: Digit.ULBService.getCitizenCurrentTenant(true) }));
+  const [selectedDistrict, setSelectedDistrict] = useState(() => ({ code: Digit.ULBService.getCitizenCurrentTenant(true) }));
   const [showError, setShowError] = useState(false);
 
   const texts = useMemo(
@@ -26,19 +28,23 @@ const LocationSelection = () => {
   );
 
   function selectCity(city) {
-    setSelectedCity(city);
+    setSelectedDistrict(city);
+    setShowError(false);
+  }
+  function selectDistrict(district) {
+    setSelectedCity(district);
     setShowError(false);
   }
 
-  const RadioButtonProps = useMemo(() => {
-    return {
-      options: cities,
-      optionsKey: "i18nKey",
-      additionalWrapperClass: "reverse-radio-selection-wrapper",
-      onSelect: selectCity,
-      selectedOption: selectedCity,
-    };
-  }, [cities, t, selectedCity]);
+  // const RadioButtonProps = useMemo(() => {
+  //   return {
+  //     options: cities,
+  //     optionsKey: "i18nKey",
+  //     additionalWrapperClass: "reverse-radio-selection-wrapper",
+  //     onSelect: selectCity,
+  //     selectedOption: selectedCity,
+  //   };
+  // }, [cities, t, selectedCity]);
 
   function onSubmit() {
     if (selectedCity) {
@@ -49,7 +55,7 @@ const LocationSelection = () => {
     }
   }
 
-  return isLoading ? (
+  return isLoading ,isLoad? (
     <loader />
   ) : (
     <>
@@ -59,11 +65,21 @@ const LocationSelection = () => {
           Choose Your Local Body
           {/* {t("CS_COMMON_CHOOSE_LOCATION")} */}
         </CardHeader>
+        <CardLabel>Districts</CardLabel>
+        <RadioOrSelect 
+          options={cities}
+          selectedOption={selectedCity}
+          optionKey="name"
+          onSelect={selectCity}
+          t={t}
+          labelKey=""
+        //  disabled={isEdit}
+        />
         <CardLabel>Local Body</CardLabel>
         <RadioOrSelect 
          options={cities}
          selectedOption={selectedCity}
-         optionKey="i18nKey"
+         optionKey="name"
          onSelect={selectCity}
          t={t}
          labelKey=""

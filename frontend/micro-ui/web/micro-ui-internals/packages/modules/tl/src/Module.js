@@ -26,7 +26,6 @@ import TLAcknowledgement from "./pages/citizen/Create/TLAcknowledgement";
 import MyApplications from "./pages/citizen/Applications/Application";
 import TradeLicenseList  from "./pages/citizen/Renewal/TradeLicenseList";
 import TLWFApplicationTimeline from "./pageComponents/TLWFApplicationTimeline";
-
 import TLOwnerDetailsEmployee from "./pageComponents/TLOwnerDetailsEmployee";
 import TLTradeDetailsEmployee from "./pageComponents/TLTradeDetailsEmployee";
 import TLTradeUnitsEmployee from "./pageComponents/TLTradeUnitsEmployee";
@@ -41,7 +40,6 @@ import NewApplication from "./pages/employee/NewApplication";
 import ReNewApplication from "./pages/employee/ReNewApplication";
 import Search from "./pages/employee/Search";
 import Response from "./pages/Response";
-
 import TLApplicationDetails from "./pages/citizen/Applications/ApplicationDetails"
 import CreateTradeLicence from "./pages/citizen/Create";
 import EditTrade from "./pages/citizen/EditTrade";
