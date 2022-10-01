@@ -4,7 +4,7 @@ import { FormStep, RadioOrSelect, RadioButtons } from "@egovernments/digit-ui-re
 import Timeline from "../components/TLTimeline";
 
 const SelectStructureType = ({ t, config, onSelect, userType, formData }) => {
-  const [TradeStructureSubtype, setTradeStructureSubtype] = useState(formData?.TradeDetails?.TradeStructureSubtype);
+  const [StructureType, setStructureType] = useState(formData?.TradeDetails?.StructureType);
   const isEdit = window.location.href.includes("/edit-application/")||window.location.href.includes("renew-trade");
   const menu = [
     { i18nKey: "TL_COMMON_YES", code: "IMMOVABLE" },
@@ -13,18 +13,18 @@ const SelectStructureType = ({ t, config, onSelect, userType, formData }) => {
 
   const onSkip = () => onSelect();
 
-  function selectTradeStructureSubtype(value) {
-    setTradeStructureSubtype(value);
+  function selectStructuretype(value) {
+    setStructureType(value);
   }
 
   function goNext() {
-    sessionStorage.setItem("TradeStructureSubtype", TradeStructureSubtype.i18nKey);
-    onSelect(config.key, { TradeStructureSubtype });
+    sessionStorage.setItem("StructureType", StructureType.i18nKey);
+    onSelect(config.key, { StructureType });
   }
   return (
     <React.Fragment>
     {window.location.href.includes("/citizen") ? <Timeline /> : null}
-    <FormStep t={t} config={config} onSelect={goNext} onSkip={onSkip} isDisabled={!TradeStructureSubtype}>
+    <FormStep t={t} config={config} onSelect={goNext} onSkip={onSkip} isDisabled={!StructureType}>
       
       <CardLabel>Place Of Activity</CardLabel>
       <RadioOrSelect />
@@ -36,8 +36,8 @@ const SelectStructureType = ({ t, config, onSelect, userType, formData }) => {
         optionsKey="i18nKey"
         isMandatory={config.isMandatory}
         options={menu}
-        selectedOption={TradeStructureSubtype}
-        onSelect={selectTradeStructureSubtype}
+        selectedOption={StructureType}
+        onSelect={selectStructuretype}
         disabled={isEdit}
       />
     </FormStep>
