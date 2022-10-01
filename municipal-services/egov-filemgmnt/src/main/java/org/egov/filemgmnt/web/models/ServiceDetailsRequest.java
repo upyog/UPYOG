@@ -30,13 +30,13 @@ public class ServiceDetailsRequest {
 
     @JsonProperty("ServiceDetails")
     @Valid
-    private List<ServiceDetails> serviceDetailsreq;
+    private List<ServiceDetails> serviceDetails;
 
     public ServiceDetailsRequest addServiceDetails(ServiceDetails serviceDetails) {
-        if (serviceDetailsreq == null) {
-            serviceDetailsreq = new ArrayList<>();
+        if (serviceDetails == null) {
+            this.serviceDetails = new ArrayList<>();
         }
-        serviceDetailsreq.add(serviceDetails);
+        this.serviceDetails.add(serviceDetails);
 
         return this;
     }

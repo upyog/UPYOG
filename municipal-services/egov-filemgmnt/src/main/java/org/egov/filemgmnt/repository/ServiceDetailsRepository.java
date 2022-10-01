@@ -29,7 +29,7 @@ public class ServiceDetailsRepository {
     public List<ServiceDetails> getApplicantServices(ServiceDetailsSearchCriteria criteria) {
         List<Object> preparedStmtValues = new ArrayList<>();
 
-        String query = queryBuilder.getApplicantServiceSearchQuery(criteria, preparedStmtValues, Boolean.FALSE);
+        String query = queryBuilder.getServiceDetailsSearchQuery(criteria, preparedStmtValues, Boolean.FALSE);
 
         List<ServiceDetails> result = jdbcTemplate.query(query, preparedStmtValues.toArray(), rowMapper);
 

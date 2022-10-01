@@ -27,5 +27,17 @@ class OpenApiDocConfiguration {
                                             .version("1.0.0"))
                             .addServersItem(new Server().url("http://localhost:8080/filemgmnt")
                                                         .description("Local Development Server"));
+        // .schema("Error", getErrorSchema());
     }
+
+//    private Schema<?> getErrorSchema() {
+//        return new Schema<>().type("object")
+//                             .description("Error details")
+//                             .addProperty("code",
+//                                          new Schema<>().type("string")
+//                                                        .description("error message code")
+//                                                        .example("NOT_FOUND"));
+//    }
 }
+
+// https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Annotations#OpenAPIDefinition

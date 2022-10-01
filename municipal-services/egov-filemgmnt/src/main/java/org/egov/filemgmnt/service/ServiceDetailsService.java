@@ -7,24 +7,29 @@ import javax.validation.Valid;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.egov.filemgmnt.config.FilemgmntConfiguration;
-import org.egov.filemgmnt.enrichment.ApplicantServiceEnrichment;
+import org.egov.filemgmnt.enrichment.ServiceDetailsEnrichment;
 import org.egov.filemgmnt.kafka.Producer;
-import org.egov.filemgmnt.repository.ApplicantServiceRepository;
-import org.egov.filemgmnt.validators.ApplicantServiceValidator;
+import org.egov.filemgmnt.repository.ServiceDetailsRepository;
+import org.egov.filemgmnt.validators.ServiceDetailsValidator;
+import org.egov.filemgmnt.web.models.ServiceDetails;
+import org.egov.filemgmnt.web.models.ServiceDetailsRequest;
+import org.egov.filemgmnt.web.models.ServiceDetailsSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+@Service
 public class ServiceDetailsService {
 
     private final Producer producer;
     private final FilemgmntConfiguration filemgmntConfig;
-    private final ApplicantServiceValidator validatorService;
-    private final ApplicantServiceEnrichment enrichmentService;
-    private final ApplicantServiceRepository repository;
+    private final ServiceDetailsValidator validatorService;
+    private final ServiceDetailsEnrichment enrichmentService;
+    private final ServiceDetailsRepository repository;
 
     @Autowired
-    ApplicantServiceService(ApplicantServiceValidator validatorService, ApplicantServiceEnrichment enrichmentService,
-                            ApplicantServiceRepository repository, Producer producer,
-                            FilemgmntConfiguration filemgmntConfig) {
+    ServiceDetailsService(ServiceDetailsValidator validatorService, ServiceDetailsEnrichment enrichmentService,
+                          ServiceDetailsRepository repository, Producer producer,
+                          FilemgmntConfiguration filemgmntConfig) {
         this.validatorService = validatorService;
         this.enrichmentService = enrichmentService;
         this.repository = repository;
@@ -33,19 +38,19 @@ public class ServiceDetailsService {
 
     }
 
-    public List<ApplicantService> create(@Valid ApplicantServiceRequest request) {
+    public List<ServiceDetails> create(@Valid ServiceDetailsRequest request) {
         // validate request
         validatorService.validateCreate(request);
 
         // enrich request
         enrichmentService.enrichCreate(request);
 
-        producer.push(filemgmntConfig.getSaveApplicantServiceTopic(), request);
+        producer.push(filemgmntConfig.getSaveServiceDetailsTopic(), request);
 
-        return request.getApplicantServices();
+        return request.getServiceDetails();
     }
 
-    public List<ApplicantService> search(ApplicantServiceSearchCriteria criteria) {
+    public List<ServiceDetails> search(ServiceDetailsSearchCriteria criteria) {
 
         if (CollectionUtils.isEmpty(criteria.getIds())) {
 //            throw new GlobalException(ErrorCodes.APPLICANT_SERVICE_INVALID_SEARCH_CRITERIA,
@@ -55,16 +60,16 @@ public class ServiceDetailsService {
         return repository.getApplicantServices(criteria);
     }
 
-    public List<ApplicantService> update(ApplicantServiceRequest request) {
+    public List<ServiceDetails> update(ServiceDetailsRequest request) {
 
         List<String> ids = new LinkedList<>();
-        request.getApplicantServices()
+        request.getServiceDetails()
                .forEach(personal -> ids.add(personal.getId()));
 
         // search database
-        List<ApplicantService> searchResult = repository.getApplicantServices(ApplicantServiceSearchCriteria.builder()
-                                                                                                            .ids(ids)
-                                                                                                            .build());
+        List<ServiceDetails> searchResult = repository.getApplicantServices(ServiceDetailsSearchCriteria.builder()
+                                                                                                        .ids(ids)
+                                                                                                        .build());
         // validate request
         validatorService.validateUpdate(request, searchResult);
 
@@ -72,7 +77,7 @@ public class ServiceDetailsService {
 
         producer.push(filemgmntConfig.getSaveApplicantPersonalTopic(), request);
 
-        return request.getApplicantServices();
+        return request.getServiceDetails();
     }
 
 }

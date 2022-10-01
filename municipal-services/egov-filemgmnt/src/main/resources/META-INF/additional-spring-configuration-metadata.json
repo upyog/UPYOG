@@ -7,12 +7,17 @@
     {
       "name": "persister.save.applicantpersonal.topic",
       "type": "java.lang.String",
-      "description": "File management applicant personal save topic"
+      "description": "Applicant personal save topic"
     },
     {
       "name": "persister.update.applicantpersonal.topic",
       "type": "java.lang.String",
-      "description": "File management applicant personal update topic"
+      "description": "Applicant personal update topic"
+    },
+    {
+      "name": "persister.save.servicedetails.topic",
+      "type": "java.lang.String",
+      "description": "Service details save topic"
     },
     {
       "name": "server.context-path",

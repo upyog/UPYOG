@@ -50,7 +50,7 @@ public class ApplicantPersonalService {
     public List<ApplicantPersonal> search(ApplicantPersonalSearchCriteria criteria) {
 
         if (CollectionUtils.isEmpty(criteria.getIds())) {
-//            throw new GlobalException(ErrorCodes.APPLICANT_PERSONAL_INVALID_SEARCH_CRITERIA,
+//            throw CoreUtils.newException(ErrorCodes.APPLICANT_PERSONAL_INVALID_SEARCH_CRITERIA,
 //                    "At least one applicant id is required.");
         }
 

@@ -19,7 +19,7 @@ public class ServiceDetailsEnrichment implements BaseEnrichment {
 
         AuditDetails auditDetails = buildAuditDetails(userInfo.getUuid(), Boolean.TRUE);
 
-        request.getServiceDetailsreq()
+        request.getServiceDetails()
                .forEach(personal -> {
                    personal.setId(UUID.randomUUID()
                                       .toString());
@@ -34,7 +34,7 @@ public class ServiceDetailsEnrichment implements BaseEnrichment {
 
         AuditDetails auditDetails = buildAuditDetails(userInfo.getUuid(), Boolean.FALSE);
 
-        request.getServiceDetailsreq()
+        request.getServiceDetails()
                .forEach(personal -> personal.setAuditDetails(auditDetails));
     }
 
