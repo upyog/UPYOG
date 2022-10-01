@@ -28,11 +28,11 @@ const LocationSelection = () => {
   );
 
   function selectCity(city) {
-    setSelectedDistrict(city);
+    setSelectedCity(city);
     setShowError(false);
   }
   function selectDistrict(district) {
-    setSelectedCity(district);
+    setSelectedDistrict(district);
     setShowError(false);
   }
 
@@ -54,6 +54,14 @@ const LocationSelection = () => {
       setShowError(true);
     }
   }
+  function onSubmit() {
+    if (selectedCity) {
+      Digit.SessionStorage.set("CITIZEN.COMMON.HOME.CITY", selectedCity);
+      history.push("/digit-ui/citizen");
+    } else {
+      setShowError(true);
+    }
+  }
 
   return isLoading ,isLoad? (
     <loader />
@@ -67,8 +75,8 @@ const LocationSelection = () => {
         </CardHeader>
         <CardLabel>Districts</CardLabel>
         <RadioOrSelect 
-          options={cities}
-          selectedOption={selectedCity}
+          options={districts}
+          selectedOption={selectedDistrict}
           optionKey="name"
           onSelect={selectCity}
           t={t}
