@@ -52,7 +52,7 @@ public class NICSMSServiceImpl extends BaseSMSService {
             sslContext = SSLContext.getInstance("TLSv1.2");
             if(smsProperties.isVerifyCertificate()) {
                 log.info("checking certificate");
-                KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
+                KeyStore trustStore = KeyStore.getInstance("pkcs12");
                 System.out.println(KeyStore.getDefaultType());
                 //File file = new File(System.getenv("JAVA_HOME")+"/lib/security/cacerts");
                 //File file = new File(Thread.currentThread().getContextClassLoader().getResource("smsgwsmsgovin-sep22.cer").getFile());
