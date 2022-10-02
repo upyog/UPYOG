@@ -52,7 +52,7 @@ public class NICSMSServiceImpl extends BaseSMSService {
         try
         {
             //sslContext = SSLContext.getInstance("TLSv1.2");
-            SSLContext sslContext = SSLContext.getInstance("TLSv1.2");
+            sslContext = SSLContext.getInstance("TLSv1.2");
             if(smsProperties.isVerifyCertificate()) {
                 log.info("checking certificate");
                 //KeyStore trustStore = KeyStore.getInstance("pkcs11");
