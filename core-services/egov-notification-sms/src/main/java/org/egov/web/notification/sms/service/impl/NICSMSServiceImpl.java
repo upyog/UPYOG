@@ -31,6 +31,8 @@ import org.springframework.core.io.ClassPathResource;
 
 import lombok.extern.slf4j.Slf4j;
 
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
 
 @Service
 @Slf4j
