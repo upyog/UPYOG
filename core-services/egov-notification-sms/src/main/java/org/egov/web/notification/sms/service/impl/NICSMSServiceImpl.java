@@ -49,25 +49,53 @@ public class NICSMSServiceImpl extends BaseSMSService {
         log.info("postConstruct() start");
         try
         {
-            sslContext = SSLContext.getInstance("TLSv1.2");
+            //sslContext = SSLContext.getInstance("TLSv1.2");
+            SSLContext sslContext = SSLContext.getInstance("TLSv1.2");
             if(smsProperties.isVerifyCertificate()) {
                 log.info("checking certificate");
-                KeyStore trustStore = KeyStore.getInstance("pkcs11");
-                System.out.println(KeyStore.getDefaultType());
+                //KeyStore trustStore = KeyStore.getInstance("pkcs11");
+                //System.out.println(KeyStore.getDefaultType());
                 //File file = new File(System.getenv("JAVA_HOME")+"/lib/security/cacerts");
                 //File file = new File(Thread.currentThread().getContextClassLoader().getResource("smsgwsmsgovin-sep22.cer").getFile());
                 //InputStream is = new FileInputStream(file);
                 //Resource resource = (Resource) new ClassPathResource("smsgwsmsgovin-sep22.cer");
                 //InputStream is = resource.getInputStream(); 
-                InputStream is = getClass().getClassLoader().getResourceAsStream("smsgwsmsgovin-sep22.cer");
-                trustStore.load(is, "changeit".toCharArray());
-                TrustManagerFactory trustFactory = TrustManagerFactory
-                        .getInstance(TrustManagerFactory.getDefaultAlgorithm());
-                trustFactory.init(trustStore);
+                //InputStream is = getClass().getClassLoader().getResourceAsStream("smsgwsmsgovin-sep22.cer");
+                //trustStore.load(is, "changeit".toCharArray());
+                
+               
+                try (InputStream is = getClass().getClassLoader()
+                                            .getResourceAsStream("smsgwsmsgovin-sep22.cer")) {
 
-                TrustManager[] trustManagers = trustFactory.getTrustManagers();
-                sslContext.init(null, trustManagers, null);
-                System.out.println(sslContext.getSocketFactory());
+                    //KeyStore trustStore = KeyStore.getInstance("pkcs12");
+                    //trustStore.load(is, "changeit".toCharArray());
+
+                    CertificateFactory certFactory = CertificateFactory.getInstance("X.509");
+                    X509Certificate caCert = (X509Certificate) certFactory.generateCertificate(is);
+
+                    KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
+                    trustStore.load(null);
+                    trustStore.setCertificateEntry("caCert", caCert);
+
+                    TrustManagerFactory trustFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+                    trustFactory.init(trustStore);
+
+                    TrustManager[] trustManagers = trustFactory.getTrustManagers();
+                    sslContext.init(null, trustManagers, null);
+                }       
+                catch(Exception e) {
+                    e.printStackTrace();
+                    log.error("Not able to load SMS certificate from the specified path");
+                }
+
+
+                //TrustManagerFactory trustFactory = TrustManagerFactory
+                //        .getInstance(TrustManagerFactory.getDefaultAlgorithm());
+                //trustFactory.init(trustStore);
+
+                //TrustManager[] trustManagers = trustFactory.getTrustManagers();
+                //sslContext.init(null, trustManagers, null);
+                //System.out.println(sslContext.getSocketFactory());
             }
             else {
                 log.info("not checking certificate");
@@ -136,8 +164,12 @@ public class NICSMSServiceImpl extends BaseSMSService {
             if(smsProperties.isSmsEnabled()) {
                 HttpsURLConnection conn = (HttpsURLConnection) new URL(smsProperties.getUrl()+"?"+final_data).openConnection();
                 conn.setSSLSocketFactory(sslContext.getSocketFactory());
+                conn.setDoInput(true);
                 conn.setDoOutput(true);
-                conn.setRequestMethod("GET");
+                conn.setRequestMethod("POST");
+                conn.setRequestProperty("Content-Type", "application/json");
+                conn.connect();
+
                 final BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
                 final StringBuffer stringBuffer = new StringBuffer();
                 String line;
