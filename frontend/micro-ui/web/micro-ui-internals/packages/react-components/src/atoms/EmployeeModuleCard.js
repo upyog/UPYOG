@@ -16,7 +16,9 @@ const EmployeeModuleCard = ({ Icon, moduleName, kpis = [], links = [], isCitizen
               {kpis.map(({ count, label, link }, index) => (
                 <div className="card-count" key={index}>
                   <div>
-                    <span>{count || "-"}</span>
+                    <span style={{
+                      fontSize: "35px"
+                    }}>{count || "-"}</span>
                   </div>
                   <div>
                     {link ? (
