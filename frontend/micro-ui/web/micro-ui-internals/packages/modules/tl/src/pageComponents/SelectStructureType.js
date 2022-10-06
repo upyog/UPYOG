@@ -16,6 +16,7 @@ const SelectStructureType = ({ t, config, onSelect, userType, formData }) => {
   function selectStructuretype(value) {
     setStructureType(value);
   }
+
   function goNext() {
     sessionStorage.setItem("StructureType", StructureType.i18nKey);
     onSelect(config.key, { StructureType });
@@ -25,11 +26,11 @@ const SelectStructureType = ({ t, config, onSelect, userType, formData }) => {
     {window.location.href.includes("/citizen") ? <Timeline /> : null}
     <FormStep t={t} config={config} onSelect={goNext} onSkip={onSkip} isDisabled={!StructureType}>
       
-      <CardLabel>Place Of Activity</CardLabel>
+      {/* <CardLabel>Place Of Activity</CardLabel>
       <RadioOrSelect />
 
       <CardLabel>Nature Of Structure</CardLabel>
-      <RadioOrSelect />
+      <RadioOrSelect /> */}
       <RadioButtons
         t={t}
         optionsKey="i18nKey"
