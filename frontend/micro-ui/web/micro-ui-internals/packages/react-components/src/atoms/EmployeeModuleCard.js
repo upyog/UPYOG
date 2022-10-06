@@ -39,7 +39,7 @@ const EmployeeModuleCard = ({ Icon, moduleName, kpis = [], links = [], isCitizen
                   <>
                     {FsmHideCount ? null : <span className={"inbox-total"}>{count || "-"}</span>}
                     <Link to={link}>
-                      <ArrowRightInbox />
+                      {/* <ArrowRightInbox /> */}
                     </Link>
                   </>
                 ) : null}
