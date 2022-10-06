@@ -11,12 +11,15 @@ const LocationSelection = () => {
   /////////////////////////////////////////////////////////////////////////////////
   const { t } = useTranslation();
   const history = useHistory();
-
+  const { data: { districts } = {}, isLoad } = Digit.Hooks.useStore.getInitData();
+  console.log(Digit.Hooks.useStore.getInitData());
   const { data: cities, isLoading } = Digit.Hooks.useTenants();
-  const { data: districts, isLoad } = Digit.Hooks.useTenants();
+  
+  // console.log(Digit.Hooks.useStore.getInitData());
+  // const { data: districts, isLoad } = Digit.Hooks.useTenantsDistrict();
 
   const [selectedCity, setSelectedCity] = useState(() => ({ code: Digit.ULBService.getCitizenCurrentTenant(true) }));
-  const [selectedDistrict, setSelectedDistrict] = useState(() => ({ code: Digit.ULBService.getCitizenCurrentTenant(true) }));
+  const [selectedDistrict, setSelectedDistrict] = useState(() => ({ code: true }));
   const [showError, setShowError] = useState(false);
 
   const texts = useMemo(
@@ -78,7 +81,7 @@ const LocationSelection = () => {
           options={districts}
           selectedOption={selectedDistrict}
           optionKey="name"
-          onSelect={selectCity}
+          onSelect={selectDistrict}
           t={t}
           labelKey=""
         //  disabled={isEdit}
