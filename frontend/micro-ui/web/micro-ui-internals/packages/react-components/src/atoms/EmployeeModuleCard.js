@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 
 const EmployeeModuleCard = ({ Icon, moduleName, kpis = [], links = [], isCitizen = false, className, styles, FsmHideCount }) => {
   return (
+    <>
     <div className={className ? className : "employeeCard card-home customEmployeeCard"} style={styles ? styles : {}}>
       <div className="complaint-links-container">
         <div className="header" style={isCitizen ? { padding: "0px" } : {}}>
@@ -49,6 +50,8 @@ const EmployeeModuleCard = ({ Icon, moduleName, kpis = [], links = [], isCitizen
         </div>
       </div>
     </div>
+    </>
+    
   );
 };
 
