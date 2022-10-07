@@ -25,6 +25,4 @@ public class FilemgmntConfiguration {
     @Value("${persister.save.servicedetails.topic}")
     private String saveServiceDetailsTopic;
 
-//    @Value("${persister.update.servicedetails.topic}")
-//    private String updateServiceDetailsTopic;
 }

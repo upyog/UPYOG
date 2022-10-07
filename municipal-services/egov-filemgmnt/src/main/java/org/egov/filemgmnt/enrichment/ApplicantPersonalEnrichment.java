@@ -23,6 +23,16 @@ public class ApplicantPersonalEnrichment implements BaseEnrichment {
                    personal.setId(UUID.randomUUID()
                                       .toString());
                    personal.setAuditDetails(auditDetails);
+                   personal.getServiceDetails()
+                           .setId(UUID.randomUUID()
+                                      .toString());
+                   personal.getApplicantAddress()
+                           .setId(UUID.randomUUID()
+                                      .toString());
+                   personal.getApplicantServiceDocuments()
+                           .setId(UUID.randomUUID()
+                                      .toString());
+
                });
     }
 

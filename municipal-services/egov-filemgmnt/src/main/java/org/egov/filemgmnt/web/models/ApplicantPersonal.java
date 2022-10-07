@@ -1,5 +1,7 @@
 package org.egov.filemgmnt.web.models;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.springframework.validation.annotation.Validated;
@@ -61,6 +63,21 @@ public class ApplicantPersonal {
     @Size(max = 64)
     @JsonProperty("tenantId")
     private String tenantId;
+
+    @Valid
+    @NotNull
+    @JsonProperty("serviceDetails")
+    private ServiceDetails serviceDetails = null;
+
+    @Valid
+    @NotNull
+    @JsonProperty("applicantAddresses")
+    private ApplicantAddress applicantAddress = null;
+
+    @Valid
+    @NotNull
+    @JsonProperty("applicantServiceDocuments")
+    private ApplicantServiceDocuments applicantServiceDocuments = null;
 
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails;

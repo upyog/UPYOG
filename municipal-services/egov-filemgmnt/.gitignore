@@ -16,3 +16,4 @@ docker_data/
 ### local only files ###
 compose.yml
 SearchQueries.sql
+smsgwsmsgovin-sep22.cer
