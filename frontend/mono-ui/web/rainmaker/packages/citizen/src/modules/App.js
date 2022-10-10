@@ -143,7 +143,7 @@ class App extends Component {
         {loading && <LoadingIndicator />}
         
         {!loginScreens && <div style={{ width: '100%', display: 'flex', flexFlow: 'column', position: 'fixed', bottom: 0 }}>
-          <div style={{ display: 'flex', justifyContent: 'center', color:"white" }}>
+          <div style={{ display: 'flex', justifyContent: 'center', color:"#22394d" }}>
             <img style={{ display: "inline-flex", height: '1.4em' }} className={"jk-footer-image-cursor"} alt={"Powered by DIGIT"} src={`${sourceUrl}/digit-footer-bw.png`} onError={"this.src='./../digit-footer.png'"} onClick={() => {
               window.open('https://www.digit.org/', '_blank').focus();
             }}></img>

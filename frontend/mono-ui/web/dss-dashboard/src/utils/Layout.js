@@ -58,7 +58,7 @@ class Layout extends Component {
                         <span style={{ margin: "0 10px" }}>|</span>
                         <span style={{ cursor: "pointer", fontSize: "16px", fontWeight: "400"}} onClick={() => { window.open('https://niua.in/', '_blank').focus();}} >Copyright © 2022 National Institute of Urban Affairs</span>
                         <span style={{ margin: "0 10px" }}>|</span>
-                        <a style={{ cursor: "pointer", fontSize: "16px", fontWeight: "400"}} href={pdfUrl} target='_blank'>UPYOG License</a>
+                        <a style={{ cursor: "pointer", fontSize: "16px", fontWeight: "400", textDecoration: "none"}} href={pdfUrl} target='_blank'>UPYOG License</a>
                     </div>
                 </div>
             </div>
