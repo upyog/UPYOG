@@ -15,7 +15,7 @@
     margin-bottom: 15px;
     display: inline-block;
     background-color: #fff;
-    // min-width: 270px;
+    min-width: 270px;
     border-radius: 0.8rem;
   }
   .topbar {
@@ -32,8 +32,7 @@
 
       &.city {
         margin-right: 8px;
-        height: 48px;
-        width: 48px;
+        width: 100%;
       }
 
       &.state {

@@ -2,7 +2,7 @@
   position: fixed;
   top: 0;
   width: 100%;
-  padding: 10px 24px;
+  padding: 10px 12px;
   background: white;
   box-shadow: rgba(0, 0, 0, 0.24) 0 1px 4px;
   z-index: 9999999;
@@ -13,8 +13,7 @@
 
     &.city {
       margin-right: 8px;
-      height: 48px;
-      width: 48px;
+      width: 100%;
     }
 
     &.state {

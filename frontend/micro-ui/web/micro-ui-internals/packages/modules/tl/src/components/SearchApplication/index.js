@@ -6,6 +6,23 @@ import { convertEpochToDateDMY } from  "../../utils";
 import SearchFields from "./SearchFields";
 import MobileSearchApplication from "./MobileSearchApplication";
 
+const mystyle = {
+  bgOpacity:"1",
+  backgroundColor:"#fff",
+  backgroundColor:"rgba(255, 255, 255, var(--bg-opacity))",
+  marginBottom:"24px",
+  padding:"1.5rem",
+  borderRadius:"1.6rem"
+ };
+ const hstyle ={
+  fontSize:"20px",
+  fontWeight:"500",
+  color:"#2B2F3E",
+  marginBottom:".5rem",
+  lineHieght:"1.5rem"
+
+ };
+
 const SearchApplication = ({tenantId, t, onSubmit, data, count }) => {
     const { register, control, handleSubmit, setValue, getValues, reset } = useForm({
         defaultValues: {
@@ -106,10 +123,18 @@ const SearchApplication = ({tenantId, t, onSubmit, data, count }) => {
       ]), [] )
 
     return <React.Fragment>
-                <Header>{t("TL_SEARCH_APPLICATIONS")}</Header>
-                <SearchForm onSubmit={onSubmit} handleSubmit={handleSubmit}>
+                
+                <div style={mystyle}>
+                <h1 style={hstyle}>{t("TL_SEARCH_APPLICATIONS")}</h1>
+                  <SearchForm onSubmit={onSubmit} handleSubmit={handleSubmit}>
                   <SearchFields {...{register, control, reset, tenantId, t}} />
+
+                  
+
                 </SearchForm>
+
+                </div>
+                  
             {data?.display ? <Card style={{ marginTop: 20 }}>
                 {
                 t(data.display)
