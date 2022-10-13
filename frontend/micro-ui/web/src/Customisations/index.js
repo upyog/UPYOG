@@ -5,7 +5,7 @@ var Digit = window.Digit || {};
 
 const customisedComponent = {
     ...ptComponents,
-    ...tlComponents
+    ...tlComponents,
 }
 
 
