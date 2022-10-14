@@ -57,6 +57,7 @@ import { PrivateRoute } from "./atoms/PrivateRoute";
 import RadioButtons from "./atoms/RadioButtons";
 import Rating from "./atoms/Rating";
 import RoundedLabel from "./atoms/RoundedLabel";
+
 import SectionalDropdown from "./atoms/SectionalDropdown";
 import { LastRow, MediaRow, Row, StatusTable } from "./atoms/StatusTable";
 import SubmitBar from "./atoms/SubmitBar";
@@ -162,6 +163,7 @@ import InboxLinks from "./atoms/InboxLinks";
 import PopupHeadingLabel from "./atoms/PopupHeadingLabel";
 
 import { FormComposer } from "./hoc/FormComposer";
+import {NewApplicationForm} from "./hoc/NewApplicationForm"
 import Modal from "./hoc/Modal";
 import ResponseComposer from "./hoc/ResponseComposer";
 import InboxComposer from "./hoc/InboxComposer";
@@ -331,6 +333,7 @@ export {
   SortAction,
   // hoc
   FormComposer,
+  NewApplicationForm,
   ResponseComposer,
   PitDimension,
   Modal,

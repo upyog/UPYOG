@@ -4,7 +4,6 @@ import { TextInput, SubmitBar, DatePicker, SearchField, Dropdown, Loader, Button
 
 //style
 const mystyle = {
-   marginBottom:"0.5rem",
    display:"block"
   };
 
@@ -38,7 +37,7 @@ const SearchFields = ({register, control, reset, tenantId, t }) => {
     return <>
         <SearchField>
             <label>{t("TL_HOME_SEARCH_RESULTS_APP_NO_LABEL")}</label>
-            <TextInput style={{marginTop:"0.5rem"}} name="applicationNumber" inputRef={register({})} />
+            <TextInput name="applicationNumber" inputRef={register({})} />
         </SearchField>
         {applicationTypesLoading ? <Loader/> : <SearchField>
             <label>{t("TL_LOCALIZATION_APPLICATION_TYPE")}</label>
@@ -63,7 +62,7 @@ const SearchFields = ({register, control, reset, tenantId, t }) => {
             <label  style={mystyle}>{t("TL_TRADE_LICENCE_FROM_DATE")}</label>
             <Controller
            
-                render={(props) => <DatePicker style={{marginTop:"0.5rem"}} date={props.value} onChange={props.onChange} />}
+                render={(props) => <DatePicker  date={props.value} onChange={props.onChange} />}
                 name="fromDate"
                 control={control}
                 />
@@ -71,14 +70,14 @@ const SearchFields = ({register, control, reset, tenantId, t }) => {
         <SearchField>
             <label style={mystyle}>{t("TL_TRADE_LICENCE_TO_DATE")}</label>
             <Controller
-                render={(props) => <DatePicker style={{marginTop:"0.5rem"}}  date={props.value} onChange={props.onChange} />}
+                render={(props) => <DatePicker   date={props.value} onChange={props.onChange} />}
                 name="toDate"
                 control={control}
                 />
         </SearchField>
         <SearchField>
             <label>{t("TL_TRADE_LICENSE_LABEL")}</label>
-            <TextInput style={{marginTop:"0.5rem"}} name="licenseNumbers" inputRef={register({})}/>
+            <TextInput  name="licenseNumbers" inputRef={register({})}/>
         </SearchField>
         { isLoading ? <Loader/> : <SearchField>
             <label>{t("TL_HOME_SEARCH_RESULTS_APP_STATUS_LABEL")}</label>
@@ -87,7 +86,6 @@ const SearchFields = ({register, control, reset, tenantId, t }) => {
                     name="status"
                     render={(props) => (
                         <Dropdown
-                        style={{marginTop:"0.5rem"}}
                         selected={props.value}
                         select={props.onChange}
                         onBlur={props.onBlur}
@@ -100,7 +98,7 @@ const SearchFields = ({register, control, reset, tenantId, t }) => {
         </SearchField>}
         <SearchField>
             <label>{t("TL_LOCALIZATION_TRADE_NAME")}</label>
-            <TextInput style={{marginTop:"0.5rem"}} name="tradeName" inputRef={register({})}/>
+            <TextInput  name="tradeName" inputRef={register({})}/>
         </SearchField>
         <SearchField className="submit">
             <SubmitBar label={t("ES_COMMON_SEARCH")} submit />
