@@ -18,13 +18,13 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
-import org.apache.commons.codec.binary.Hex;
 import org.egov.web.notification.sms.config.SMSProperties;
 import org.egov.web.notification.sms.models.Sms;
 import org.egov.web.notification.sms.service.BaseSMSService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ResourceUtils;
 import org.springframework.util.StringUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -52,7 +52,7 @@ public class NICSMSServiceImpl extends BaseSMSService {
                 log.info("checking certificate");
                 KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
                 //File file = new File(System.getenv("JAVA_HOME")+"/lib/security/cacerts");
-                File file = new File(getClass().getClassLoader().getResource("smsgwsmsgovin.cer").getFile());
+                File file = ResourceUtils.getFile("classpath:smsgwsmsgovin.cer");
                 InputStream is = new FileInputStream(file);
                 trustStore.load(is, "changeit".toCharArray());
                 TrustManagerFactory trustFactory = TrustManagerFactory
