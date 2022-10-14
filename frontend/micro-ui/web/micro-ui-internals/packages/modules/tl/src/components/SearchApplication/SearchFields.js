@@ -104,7 +104,7 @@ const SearchFields = ({register, control, reset, tenantId, t }) => {
         </SearchField>
         <SearchField className="submit">
             <SubmitBar label={t("ES_COMMON_SEARCH")} submit />
-            <button onClick={() => {
+            <p onClick={() => {
                 reset({ 
                     applicationType: "", 
                     fromDate: "", 
