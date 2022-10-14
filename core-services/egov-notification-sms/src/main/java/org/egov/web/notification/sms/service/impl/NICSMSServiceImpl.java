@@ -138,7 +138,7 @@ public class NICSMSServiceImpl extends BaseSMSService {
 
             if(smsBody.split("#").length > 1) {
                 //String templateId = smsBody.split("#")[1];
-                String templateId=smsBody.substring(smsBody.lastIndexOf("#"), smsBody.length());
+                String templateId=smsBody.substring(smsBody.lastIndexOf("#")+1, smsBody.length());
                 sms.setTemplateId(templateId);
                 smsBody = smsBody.split("#")[0];
 
