@@ -8,10 +8,10 @@ import Body from "./atoms/Body";
 import BreadCrumb from "./atoms/BreadCrumb";
 import BreakLine from "./atoms/BreakLine";
 import ButtonSelector from "./atoms/ButtonSelector";
-import Card from "./atoms/Card";
+import Card from "./atoms/Card"
 import CardCaption from "./atoms/CardCaption";
 import CardHeader from "./atoms/CardHeader";
-import CardLabel from "./atoms/CardLabel";
+import CardLabel from "./atoms/CardLabel";f
 import CardLabelDesc from "./atoms/CardLabelDesc";
 import CardLabelError from "./atoms/CardLabelError";
 import CardSectionHeader from "./atoms/CardSectionHeader";
@@ -163,7 +163,6 @@ import InboxLinks from "./atoms/InboxLinks";
 import PopupHeadingLabel from "./atoms/PopupHeadingLabel";
 
 import { FormComposer } from "./hoc/FormComposer";
-import {NewApplicationForm} from "./hoc/NewApplicationForm"
 import Modal from "./hoc/Modal";
 import ResponseComposer from "./hoc/ResponseComposer";
 import InboxComposer from "./hoc/InboxComposer";
@@ -333,7 +332,6 @@ export {
   SortAction,
   // hoc
   FormComposer,
-  NewApplicationForm,
   ResponseComposer,
   PitDimension,
   Modal,
