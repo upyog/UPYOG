@@ -92,8 +92,7 @@ public class ApplicantPersonalEnrichment implements BaseEnrichment {
         if (CollectionUtils.isEmpty(idResponses))
             throw new CustomException("IDGEN ERROR", "No ids returned from idgen Service");
 
-        return idResponses.stream()
-                .map(IdResponse::getId).collect(Collectors.toList());
+        return idResponses;
     }
     public void enrichUpdate(ApplicantPersonalRequest request) {
 
