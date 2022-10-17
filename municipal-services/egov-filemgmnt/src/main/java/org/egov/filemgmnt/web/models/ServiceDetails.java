@@ -47,7 +47,7 @@ public class ServiceDetails {
     @Size(max = 64)
     @JsonProperty("workflowCode")
     private String workflowCode;
-    
+
     @Size(max = 64)
     @JsonProperty("fileCode")
     private String fileCode;
