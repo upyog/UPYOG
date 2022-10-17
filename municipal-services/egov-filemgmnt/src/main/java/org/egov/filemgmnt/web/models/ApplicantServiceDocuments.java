@@ -21,7 +21,6 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-
 public class ApplicantServiceDocuments {
 
     @Size(max = 64)

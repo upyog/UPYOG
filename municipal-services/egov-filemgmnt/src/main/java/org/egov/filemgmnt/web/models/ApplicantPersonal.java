@@ -17,6 +17,7 @@ import lombok.Setter;
 
 @Schema(description = "Applicant details")
 @Validated
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -67,17 +68,17 @@ public class ApplicantPersonal {
     @Valid
     @NotNull
     @JsonProperty("serviceDetails")
-    private ServiceDetails serviceDetails = null;
+    private ServiceDetails serviceDetails;
 
     @Valid
     @NotNull
     @JsonProperty("applicantAddresses")
-    private ApplicantAddress applicantAddress = null;
+    private ApplicantAddress applicantAddress;
 
     @Valid
     @NotNull
     @JsonProperty("applicantServiceDocuments")
-    private ApplicantServiceDocuments applicantServiceDocuments = null;
+    private ApplicantServiceDocuments applicantServiceDocuments;
 
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails;

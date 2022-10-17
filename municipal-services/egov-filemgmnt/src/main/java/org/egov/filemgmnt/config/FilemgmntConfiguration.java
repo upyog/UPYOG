@@ -24,14 +24,11 @@ public class FilemgmntConfiguration {
 
     @Value("${persister.save.servicedetails.topic}")
     private String saveServiceDetailsTopic;
-    
-    
-    
+
     @Value("${egov.idgen.fm.fileCode.name}")
-    private String fileCodeIdgenNameFM;
+    private String filemgmntFileCodeName;
 
     @Value("${egov.idgen.fm.fileCode.format}")
-    private String fileCodeIdgenFormatFM;
-
+    private String filemgmntFileCodeFormat;
 
 }
