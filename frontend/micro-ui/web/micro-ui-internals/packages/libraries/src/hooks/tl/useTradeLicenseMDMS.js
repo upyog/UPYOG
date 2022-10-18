@@ -2,11 +2,15 @@ import { MdmsService } from "../../services/elements/MDMS";
 import { useQuery } from "react-query";
 
 const useTradeLicenseMDMS = (tenantId, moduleCode, type, filter, config = {}) => {
+  
   const useTLDocuments = () => {
     return useQuery("TL_DOCUMENTS", () => MdmsService.getTLDocumentRequiredScreen(tenantId, moduleCode, type), config);
   };
   const useStructureType = () => {
     return useQuery("TL_STRUCTURE_TYPE", () => MdmsService.getTLStructureType(tenantId, moduleCode, type), config);
+  };
+  const useStructureTypePlace = () => {
+    return useQuery("TL_STRUCTURE_TYPE", () => MdmsService.getTLStructureTypePlace(tenantId, moduleCode, type), config);
   };
   const useTradeUnitsData = () => {
     return useQuery("TL_TRADE_UNITS", () => MdmsService.getTradeUnitsData(tenantId, moduleCode, type, filter), config);
@@ -108,6 +112,8 @@ const useTradeLicenseMDMS = (tenantId, moduleCode, type, filter, config = {}) =>
       return useTLDocuments();
     case "StructureType":
       return useStructureType();
+    case "TradeStructureSubtype":
+      return useStructureTypePlace();
     case "TradeUnits":
       return useTradeUnitsData();
     case "TLOwnerShipCategory":

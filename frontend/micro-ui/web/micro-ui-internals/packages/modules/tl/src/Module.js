@@ -27,6 +27,9 @@ import MyApplications from "./pages/citizen/Applications/Application";
 import TradeLicenseList  from "./pages/citizen/Renewal/TradeLicenseList";
 import TLWFApplicationTimeline from "./pageComponents/TLWFApplicationTimeline";
 
+import SelectLand from "./pageComponents/SelectLand";
+import SelectBuilding from "./pageComponents/SelectBuilding";
+
 import TLOwnerDetailsEmployee from "./pageComponents/TLOwnerDetailsEmployee";
 import TLTradeDetailsEmployee from "./pageComponents/TLTradeDetailsEmployee";
 import TLTradeUnitsEmployee from "./pageComponents/TLTradeUnitsEmployee";
@@ -97,6 +100,8 @@ const componentsToRegister = {
   TLModule,
   TLLinks,
   TLCard,
+  SelectLand,
+  SelectBuilding,
   TradeLicense,
   SelectTradeName,
   SelectStructureType,
