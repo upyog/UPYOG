@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 public class ApplicantPersonalQueryBuilder extends BaseQueryBuilder {
 
     private static final String QUERY = new StringBuilder().append(" SELECT ap.id, ap.aadhaarno, ap.email, ap.firstname, ap.lastname, ap.title, ap.mobileno, ap.tenantid")
-                                                           .append("     , ap.createdby, ap.createdat, ap.lastmodifiedby, ap.lastmodifiedat")
+                                                           .append("     , ap.createdby, ap.createdtime, ap.lastmodifiedby, ap.lastmodifiedtime")
                                                            .append(" FROM eg_fm_applicantpersonal ap")
                                                            .toString();
 
