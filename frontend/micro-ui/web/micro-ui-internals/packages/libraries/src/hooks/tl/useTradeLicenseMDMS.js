@@ -18,6 +18,9 @@ const useTradeLicenseMDMS = (tenantId, moduleCode, type, filter, config = {}) =>
   const useTradeUnitsData = () => {
     return useQuery("TL_TRADE_UNITS", () => MdmsService.getTradeUnitsData(tenantId, moduleCode, type, filter), config);
   };
+  const useSector = () => {
+    return useQuery("TL_STRUCTURE_TYPE_SECTOR", () => MdmsService.getTLSector(tenantId, moduleCode, type), config);
+  };
   const useTradeOwnerShipCategory = () => {
     return useQuery("TL_TRADE_OWNERSHIP_CATEGORY", () => MdmsService.GetTradeOwnerShipCategory(tenantId, moduleCode, type), config);
   };
@@ -121,6 +124,8 @@ const useTradeLicenseMDMS = (tenantId, moduleCode, type, filter, config = {}) =>
       return useNatureOfStructure();
     case "TradeUnits":
       return useTradeUnitsData();
+    case "EnterpriseType":
+      return useSector();
     case "TLOwnerShipCategory":
       return useTradeOwnerShipCategory();
     case "TLOwnerTypeWithSubtypes":

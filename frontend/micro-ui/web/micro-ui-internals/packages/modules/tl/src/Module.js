@@ -29,6 +29,7 @@ import TLWFApplicationTimeline from "./pageComponents/TLWFApplicationTimeline";
 
 import SelectLand from "./pageComponents/SelectLand";
 import SelectBuilding from "./pageComponents/SelectBuilding";
+import SelectBusinessCategory from "./pageComponents/SelectBusinessCategory";
 
 import TLOwnerDetailsEmployee from "./pageComponents/TLOwnerDetailsEmployee";
 import TLTradeDetailsEmployee from "./pageComponents/TLTradeDetailsEmployee";
@@ -102,6 +103,7 @@ const componentsToRegister = {
   TLCard,
   SelectLand,
   SelectBuilding,
+  SelectBusinessCategory,
   TradeLicense,
   SelectTradeName,
   SelectStructureType,

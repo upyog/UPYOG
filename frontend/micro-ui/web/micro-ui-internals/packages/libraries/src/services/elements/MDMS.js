@@ -490,6 +490,18 @@ const getTLNatureOfStructureList = (tenantId, moduleCode, type) => ({
     ],
   },
 });
+const getTLSectorList = (tenantId, moduleCode, type) => ({
+  type,
+  details: {
+    tenantId: tenantId,
+    moduleDetails: [
+      {
+        moduleName: "TradeLicense",
+        masterDetails: [{ name: "EnterpriseType" }],
+      },
+    ],
+  },
+});
 
 const getTLAccessoriesTypeList = (tenantId, moduleCode, type) => ({
   type,
@@ -1487,6 +1499,9 @@ export const MdmsService = {
   },
   getTLNatureOfStructure: (tenantId, moduleCode, type) => {
     return MdmsService.getDataByCriteria(tenantId, getTLNatureOfStructureList(tenantId, moduleCode), moduleCode);
+  },
+  getTLSector: (tenantId, moduleCode, type) => {
+    return MdmsService.getDataByCriteria(tenantId, getTLSectorList(tenantId, moduleCode), moduleCode);
   },
   getTLAccessoriesType: (tenantId, moduleCode, type) => {
     return MdmsService.getDataByCriteria(tenantId, getTLAccessoriesTypeList(tenantId, moduleCode), moduleCode);
