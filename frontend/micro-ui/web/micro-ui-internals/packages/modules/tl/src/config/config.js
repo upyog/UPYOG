@@ -250,11 +250,11 @@ export const newConfig = [
         key: "TradeDetails",
         withoutLabel: true,
         hideInEmployee: true,
-        // nextStep: sessionStorage.getItem("routeElement"),
-        nextStep: {
-          TL_COMMON_LAND: "land-type",
-          TL_COMMON_BUILDING: "building-det",
-        },
+        nextStep:"land-type",
+        // nextStep: {
+        //   TL_COMMON_LAND: "land-type",
+        //   TL_COMMON_BUILDING: "building-det",
+        // },
         
       },
       {

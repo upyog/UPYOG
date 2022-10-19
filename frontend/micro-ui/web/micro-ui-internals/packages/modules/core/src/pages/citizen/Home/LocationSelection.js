@@ -11,11 +11,10 @@ const LocationSelection = () => {
   /////////////////////////////////////////////////////////////////////////////////
   const { t } = useTranslation();
   const history = useHistory(); 
-  console.log(Digit.Hooks.useStore.getInitData());
   const { data: { districts } = {}, isLoad } = Digit.Hooks.useStore.getInitData(); 
   const { data: localbodies, isLoading } = Digit.Hooks.useTenants();
-  // console.log(localbodies);
-  const [lbs, setLbs] = useState();
+  const [lbs, setLbs] = useState(0);
+  const [isInitialRender, setIsInitialRender] = useState(true);
   const [selectedCity, setSelectedCity] = useState(() => ({ code: Digit.ULBService.getCitizenCurrentTenant(true) }));
   const [selectedDistrict, setSelectedDistrict] = useState(); 
   const [showError, setShowError] = useState(false);
@@ -36,31 +35,26 @@ const LocationSelection = () => {
   }
   
  function selectDistrict(district) {
+    setIsInitialRender(true);
     setSelectedDistrict(district);
     setSelectedCity(null);
     setLbs(null);
-    // console.log(district.districtid);
     districtid=district.districtid
-    // console.log(localbodies);
     setShowError(false);
-    if(districtid){
-      // console.log(districtid);
-    }
+    // if(districtid){
+    // }
    
   }
   useEffect(() => {
-    // console.log(districtid);
-    if(selectedDistrict){
-      // console.log(selectedDistrict.districtid);
-      // const _locality = localities?.filter((e) => e.code === code)[0];districtid===selectedDistrict.districtid
-      setLbs(localbodies.filter( (localbodies) => localbodies.city.districtid===selectedDistrict.districtid));
-      // console.log(lbs);
+    if (isInitialRender) {
+      
+      if(selectedDistrict){
+        setIsInitialRender(false);
+        setLbs(localbodies.filter( (localbodies) => localbodies.city.districtid===selectedDistrict.districtid));
+      }
     }
-  }, [lbs]);
+  }, [lbs,isInitialRender]);
 
-  // useEffect(() => {
-  //   // executed only once
-  // }, [])
  
   // const RadioButtonProps = useMemo(() => {
   //   return {
@@ -76,19 +70,14 @@ const LocationSelection = () => {
     if (selectedCity) {
       Digit.SessionStorage.set("CITIZEN.COMMON.HOME.CITY", selectedCity);
       history.push("/digit-ui/citizen");
-    } else {
-      setShowError(true);
-    }
-  }
-  function onSubmit() {
-    if (selectedCity) {
-      Digit.SessionStorage.set("CITIZEN.COMMON.HOME.CITY", selectedCity);
+    } else if (selectedDistrict) {
+      Digit.SessionStorage.set("CITIZEN.COMMON.HOME.DISTRICT", selectedDistrict);
       history.push("/digit-ui/citizen");
     } else {
       setShowError(true);
     }
   }
-
+  
   return isLoading ,isLoad? (
     <loader />
   ) : (

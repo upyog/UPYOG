@@ -34,7 +34,7 @@ const SelectLand = ({ t, config, onSelect, userType, formData }) => {
   return (
     <React.Fragment>
     {window.location.href.includes("/citizen") ? <Timeline /> : null}
-    <FormStep t={t} config={config} onSelect={goNext} onSkip={onSkip} isDisabled={[!BlockNo,!SurveyNo,!SubDivNo]} >
+    <FormStep t={t} config={config} onSelect={goNext} onSkip={onSkip} isDisabled={!BlockNo} >
             
       <CardLabel>Block No</CardLabel>
        <TextInput
@@ -46,7 +46,7 @@ const SelectLand = ({ t, config, onSelect, userType, formData }) => {
           value={BlockNo}
           onChange={setSelectBlockNo}
           disable={isEdit}
-          {...(validation = { pattern: "^[a-zA-Z-.`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_TRADE_NAME") })}
+          {...(validation = { pattern: "^[a-zA-Z-.0-9`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_TRADE_NAME") })}
         />
         <CardLabel>Survey No</CardLabel>
         <TextInput
@@ -58,7 +58,7 @@ const SelectLand = ({ t, config, onSelect, userType, formData }) => {
             value={SurveyNo}
             onChange={setSelectSurveyNo}
             disable={isEdit}
-            {...(validation = { pattern: "^[a-zA-Z-.`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_TRADE_NAME") })}
+            {...(validation = { pattern: "^[a-zA-Z-.0-9`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_TRADE_NAME") })}
             />
         <CardLabel>Sub Division No</CardLabel>
         <TextInput
@@ -70,7 +70,7 @@ const SelectLand = ({ t, config, onSelect, userType, formData }) => {
             value={SubDivNo}
             onChange={setSelectSubDivNo}
             disable={isEdit}
-            {...(validation = { pattern: "^[a-zA-Z-.`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_TRADE_NAME") })}
+            {...(validation = { pattern: "^[a-zA-Z-.0-9`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_TRADE_NAME") })}
         />
     </FormStep>
     </React.Fragment>

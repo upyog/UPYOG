@@ -5,43 +5,52 @@ import Timeline from "../components/TLTimeline";
 
 const SelectStructureType = ({ t, config, onSelect, userType, formData }) => {
   const stateId = Digit.ULBService.getStateId();
+  const { data: place = {}, isLoad } = Digit.Hooks.tl.useTradeLicenseMDMS(stateId, "TradeLicense", "PlaceOfActivity");
   const { data: dataitem = {}, isLoading } = Digit.Hooks.tl.useTradeLicenseMDMS(stateId, "TradeLicense", "TradeStructureSubtype");
   const [setPlaceofActivity, setSelectedPlaceofActivity] = useState(formData?.TradeDetails?.setPlaceofActivity);
   const [StructureType, setStructureType] = useState(formData?.TradeDetails?.StructureType);
   const [activities, setActivity] = useState(0);
+  const [isInitialRender, setIsInitialRender] = useState(true);
   const isEdit = window.location.href.includes("/edit-application/")||window.location.href.includes("renew-trade");
   let naturetype =null;
   let naturetypecmbvalue =null;
   let routeComponent =null;
   let cmbPlace = [];
   let cmbStructure = [];
+  place &&
+  place["TradeLicense"] &&
+  place["TradeLicense"].PlaceOfActivity.map((ob) => {
+        cmbPlace.push(ob);
+    });
   dataitem &&
   dataitem["TradeLicense"] &&
     dataitem["TradeLicense"].TradeStructureSubtype.map((ob) => {
-        cmbPlace.push(ob);
+      cmbStructure.push(ob);
     });
-  const menu = [
-    { i18nKey: "TL_COMMON_LAND", code: "LAND" },
-    { i18nKey: "TL_COMMON_BUILDING", code: "BUILDINg" },
-  ];
+   
+  // const menu = [
+  //   { i18nKey: "TL_COMMON_LAND", code: "LAND" },
+  //   { i18nKey: "TL_COMMON_BUILDING", code: "BUILDINg" },
+  // ];
  
   const onSkip = () => onSelect();
 
   function selectPlaceofactivity(value) {
+    setIsInitialRender(true);
     naturetypecmbvalue=value.code.substring(0, 4);
     setSelectedPlaceofActivity(value);
     setStructureType(null);
     setActivity(null);
-    console.log(naturetypecmbvalue);    
-     if(naturetypecmbvalue =="LAND"){      
-        routeComponent = "land-type";
-        console.log(routeComponent);        
-      } else if(naturetypecmbvalue =="BUIL"){
-        routeComponent = "building-det";
-        console.log(routeComponent);
-      }    
+    // console.log(naturetypecmbvalue);    
+    //  if(naturetypecmbvalue =="LAND"){      
+    //     routeComponent = "land-type";
+    //     console.log(routeComponent);        
+    //   } else if(naturetypecmbvalue =="BUIL"){
+    //     routeComponent = "building-det";
+    //     console.log(routeComponent);
+    //   }    
       // sessionStorage.removeItem("routeElement");
-      sessionStorage.setItem("routeElement", routeComponent);
+      // sessionStorage.setItem("routeElement", routeComponent);
       // onSelect(config.key, { routeElement });
   }
   function selectStructuretype(value) {
@@ -50,21 +59,22 @@ const SelectStructureType = ({ t, config, onSelect, userType, formData }) => {
   }
 
   useEffect(() => {
-    if(setPlaceofActivity){
-      // console.log(setPlaceofActivity);
-      naturetype = setPlaceofActivity.code.substring(0, 4);    
-      setActivity(cmbPlace.filter( (cmbPlace) => cmbPlace.code.includes(naturetype)));
-      // console.log(naturetype);     
+    if (isInitialRender) {
+      if(setPlaceofActivity){
+        setIsInitialRender(false);
+        naturetype = setPlaceofActivity.code.substring(0, 4);    
+        setActivity(cmbStructure.filter( (cmbStructure) => cmbStructure.code.includes(naturetype)));
+      }
     }
-  }, [activities]);
+  }, [activities,isInitialRender]);
  
   function goNext() {
    
-    sessionStorage.setItem("setPlaceofActivity", setPlaceofActivity.mainName);
+    sessionStorage.setItem("setPlaceofActivity", setPlaceofActivity.code);
     onSelect(config.key, { setPlaceofActivity });
     sessionStorage.setItem("StructureType", StructureType.name);
     onSelect(config.key, { StructureType });
-    onSelect(config.key, { routeElement });
+    // onSelect(config.key, { routeElement });
     
   }
   return (
@@ -75,7 +85,7 @@ const SelectStructureType = ({ t, config, onSelect, userType, formData }) => {
       <CardLabel>Place Of Activity</CardLabel>
       <Dropdown
         t={t}
-        optionKey="mainName"
+        optionKey="code"
         isMandatory={config.isMandatory}
         option={cmbPlace}
         selected={setPlaceofActivity}
