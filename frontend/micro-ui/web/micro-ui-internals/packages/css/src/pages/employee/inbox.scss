@@ -1,13 +1,18 @@
 .complaint-links-container {
-  border-radius: px;
+
   .header {
     margin-right: 0px;
     background-color: #37c5ab;
+    display: flex;
+    align-items: center;
+    color: #ffff;
+    border-radius: 0.25rem;
+   padding: 12px;
     .logo {
       width: 56px;
       height: 56px;
-      padding: 12px;
       border-radius: 4px;
+      display: contents;
       svg {
         @apply w-8 h-8;
       }
@@ -216,12 +221,12 @@
 
 @screen dt {
   .complaint-links-container {
-    @apply bg-white;
+    
 
     .header {
       display: flex;
       align-items: center;
-    padding: 16px;
+      padding: 16px;
       border-radius: 6px;
 
       .logo {
@@ -467,7 +472,7 @@
 }
 .employeeTotalLink {
   color: #505a5f;
-  font-size: 16px;
+  font-size: 14px;
 }
 
 .inboxLinksFSM {

@@ -138,7 +138,7 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
   return isLoading || isStoreLoading ? (
     <Loader />
   ) : (
-    <Background>
+    <Background >
       <div className="employeeBackbuttonAlign">
         <BackButton variant="white" style={{ borderBottom: "none" }} />
       </div>

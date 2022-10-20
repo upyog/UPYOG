@@ -102,7 +102,8 @@ const CreateTradeLicence = ({ parentRoute }) => {
     sessionStorage.removeItem("CurrentFinancialYear");
     queryClient.invalidateQueries("TL_CREATE_TRADE");
   };
-  newConfig = newConfig ? newConfig : newConfigTL;
+  newConfig = newConfigTL;
+  // newConfig = newConfig ? newConfig : newConfigTL;
   newConfig?.forEach((obj) => {
     config = config.concat(obj.body.filter((a) => !a.hideInCitizen));
   });

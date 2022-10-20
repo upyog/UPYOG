@@ -47,7 +47,6 @@ const SearchFields = ({register, control, reset, tenantId, t }) => {
                     name="applicationType"
                     render={(props) => (
                         <Dropdown
-                        style={{marginTop:"0.5rem"}}
                         selected={props.value}
                         select={props.onChange}
                         onBlur={props.onBlur}
