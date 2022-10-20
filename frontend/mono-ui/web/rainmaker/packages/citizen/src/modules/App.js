@@ -132,7 +132,9 @@ class App extends Component {
     }
     let sourceUrl = `${window.location.origin}/citizen`;
      sourceUrl="https://s3.ap-south-1.amazonaws.com/egov-qa-assets";  // changes for the image configured in s3 bucket
-    return (
+    
+     const pdfUrl = "https://pg-egov-assets.s3.ap-south-1.amazonaws.com/Upyog+Code+and+Copyright+License_v1.pdf";
+     return (
       <div>
         <div style={{minHeight:'calc(100vh - 3em)'}}>
           <Router routes={routes} hasLocalisation={hasLocalisation} defaultUrl={defaultUrl} />
@@ -143,14 +145,14 @@ class App extends Component {
         {loading && <LoadingIndicator />}
         
         {!loginScreens && <div style={{ width: '100%', display: 'flex', flexFlow: 'column', position: 'fixed', bottom: 0 }}>
-          <div style={{ display: 'flex', justifyContent: 'center', color:"white" }}>
-            <img style={{ display: "inline-flex", height: '1.4em' }} className={"jk-footer-image-cursor"} alt={"Powered by DIGIT"} src={`${sourceUrl}/digit-footer-bw.png`} onError={"this.src='./../digit-footer.png'"} onClick={() => {
+          <div style={{ display: 'flex', justifyContent: 'center', color:"#22394d" }}>
+            <img style={{ display: "inline-flex", height: '1.4em' }} className={"jk-footer-image-cursor"} alt={"Powered by DIGIT"} src={`${sourceUrl}/digit-footer.png`} onError={"this.src='./../digit-footer.png'"} onClick={() => {
               window.open('https://www.digit.org/', '_blank').focus();
             }}></img>
             <span style={{ margin: "0 10px" }}>|</span>
             <span style={{ cursor: "pointer", fontSize: "16px", fontWeight: "400"}} onClick={() => { window.open('https://niua.in/', '_blank').focus();}} >Copyright © 2022 National Institute of Urban Affairs</span>
             <span style={{ margin: "0 10px" }}>|</span>
-            <span style={{ cursor: "pointer", fontSize: "16px", fontWeight: "400"}} onClick={() => { window.open('Upyog Code and Copyright License_v1.pdf', '_blank').focus();}}>UPYOG License</span>
+            <span style={{ cursor: "pointer", fontSize: "16px", fontWeight: "400"}} onClick={() => { window.open(pdfUrl, '_blank').focus();}}>UPYOG License</span>
           </div>
         </div>}
         
@@ -162,7 +164,7 @@ class App extends Component {
             <span style={{ margin: "0 10px" }}>|</span>
             <span style={{ cursor: "pointer", fontSize: "16px", fontWeight: "400"}} onClick={() => { window.open('https://niua.in/', '_blank').focus();}} >Copyright © 2022 National Institute of Urban Affairs</span>
             <span style={{ margin: "0 10px" }}>|</span>
-            <span style={{ cursor: "pointer", fontSize: "16px", fontWeight: "400"}} onClick={() => { window.open('Upyog Code and Copyright License_v1.pdf', '_blank').focus();}}>UPYOG License</span>
+            <span style={{ cursor: "pointer", fontSize: "16px", fontWeight: "400"}} onClick={() => { window.open(pdfUrl, '_blank').focus();}}>UPYOG License</span>
           </div>
         </div>}
       </div>
