@@ -72,7 +72,7 @@ public class ApplicantPersonalService {
 
         enrichmentService.enrichUpdate(request);
 
-        producer.push(filemgmntConfig.getSaveApplicantPersonalTopic(), request);
+        producer.push(filemgmntConfig.getUpdateApplicantPersonalTopic(), request);
 
         return request.getApplicantPersonals();
     }
