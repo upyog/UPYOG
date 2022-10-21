@@ -28,9 +28,17 @@ public class ApplicantPersonalRepository {
 
     public List<ApplicantPersonal> getApplicantPersonals(ApplicantPersonalSearchCriteria criteria) {
         List<Object> preparedStmtValues = new ArrayList<>();
+        String query = queryBuilder.getApplicantPersonalSearchQuery(criteria, preparedStmtValues, Boolean.FALSE);    
+        
+        List<ApplicantPersonal> result = jdbcTemplate.query(query, preparedStmtValues.toArray(), rowMapper);    
+        
+        return result;
+    }
+    public List<ApplicantPersonal> getApplicantPersonalsFromFilecode(ApplicantPersonalSearchCriteria criteria) {
+        List<Object> preparedStmtValues = new ArrayList<>();
 
         String query = queryBuilder.getApplicantPersonalSearchQuery(criteria, preparedStmtValues, Boolean.FALSE);
-
+       
         List<ApplicantPersonal> result = jdbcTemplate.query(query, preparedStmtValues.toArray(), rowMapper);
 
         return result;
