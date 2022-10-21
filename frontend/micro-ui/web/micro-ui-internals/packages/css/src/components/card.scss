@@ -236,6 +236,7 @@
     }
 
     .employee-card-sub-header {
+      display:flex;
       margin-bottom: 40px;
       @apply text-heading-l-dt;
     }
