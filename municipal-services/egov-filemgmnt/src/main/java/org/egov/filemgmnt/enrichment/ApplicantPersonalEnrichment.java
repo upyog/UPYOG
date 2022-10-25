@@ -53,7 +53,9 @@ public class ApplicantPersonalEnrichment implements BaseEnrichment {
                    personal.getApplicantServiceDocuments()
                            .setId(UUID.randomUUID()
                                       .toString());
-
+                   personal.getApplicantDocuments()
+                   			.setId(UUID.randomUUID()
+                                      .toString());
                });
 
         setIdgenIds(request);
