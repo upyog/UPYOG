@@ -4,6 +4,8 @@ import javax.validation.Valid;
 
 import org.egov.filemgmnt.web.models.ApplicantPersonalRequest;
 import org.egov.filemgmnt.web.models.ApplicantPersonalResponse;
+import org.egov.filemgmnt.web.models.ApplicantPersonalSearchCriteria;
+import org.egov.filemgmnt.web.models.RequestInfoWrapper;
 import org.egov.tracer.model.ErrorRes;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -35,6 +37,9 @@ interface ApplicantPersonalsResource {
                                                        schema = @Schema(implementation = ErrorRes.class))) })
     ResponseEntity<ApplicantPersonalResponse> create(@Valid ApplicantPersonalRequest request);
 
-    ResponseEntity<ApplicantPersonalResponse> update(@Valid ApplicantPersonalRequest request);
+    ResponseEntity<ApplicantPersonalResponse> update(@Valid ApplicantPersonalRequest request);	 
+
+	ResponseEntity<ApplicantPersonalResponse> search(@Valid RequestInfoWrapper requestInfoWrapper,
+			@Valid ApplicantPersonalSearchCriteria criteria);
 
 }

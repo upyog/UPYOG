@@ -1,5 +1,6 @@
 package org.egov.filemgmnt.service;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -11,7 +12,7 @@ import org.egov.filemgmnt.repository.ApplicantPersonalRepository;
 import org.egov.filemgmnt.validators.ApplicantPersonalValidator;
 import org.egov.filemgmnt.web.models.ApplicantPersonal;
 import org.egov.filemgmnt.web.models.ApplicantPersonalRequest;
-import org.egov.filemgmnt.web.models.ApplicantPersonalSearchCriteria;
+import org.egov.filemgmnt.web.models.ApplicantPersonalSearchCriteria; 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -48,13 +49,20 @@ public class ApplicantPersonalService {
     }
 
     public List<ApplicantPersonal> search(ApplicantPersonalSearchCriteria criteria) {
+    	
+    	 List<ApplicantPersonal> details = null ;
 
         if (CollectionUtils.isEmpty(criteria.getIds())) {
 //            throw CoreUtils.newException(ErrorCodes.APPLICANT_PERSONAL_INVALID_SEARCH_CRITERIA,
 //                    "At least one applicant id is required.");
         }
-
-        return repository.getApplicantPersonals(criteria);
+        if(criteria.getIds() != null) {
+        	details = repository.getApplicantPersonals(criteria);
+        }
+        if(criteria.getFilecode() != null) {
+        	details = repository.getApplicantPersonalsFromFilecode(criteria);
+        }
+        return details;
     }
 
     public List<ApplicantPersonal> update(ApplicantPersonalRequest request) {
@@ -62,6 +70,7 @@ public class ApplicantPersonalService {
         List<String> ids = new LinkedList<>();
         request.getApplicantPersonals()
                .forEach(personal -> ids.add(personal.getId()));
+        
 
         // search database
         List<ApplicantPersonal> searchResult = repository.getApplicantPersonals(ApplicantPersonalSearchCriteria.builder()

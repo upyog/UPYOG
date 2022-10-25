@@ -8,7 +8,7 @@ import org.apache.commons.collections4.CollectionUtils;
 
 class BaseQueryBuilder {
 
-    void addIdsFilter(String column, List<String> ids, StringBuilder query, List<Object> paramValues) {
+    void addIdsFilter(String column, List<String> ids, StringBuilder query, List<Object> paramValues) {     
         if (CollectionUtils.isNotEmpty(ids)) {
             addWhereClause(paramValues, query);
             query.append(column)
@@ -28,7 +28,7 @@ class BaseQueryBuilder {
     }
 
     private String getStatementParameters(int count) {
-        return Collections.nCopies(count, "LOWER(?)")
+        return Collections.nCopies(count, "(?)")
                           .stream()
                           .collect(Collectors.joining(", "));
     }

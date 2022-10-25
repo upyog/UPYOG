@@ -77,13 +77,20 @@ public class ApplicantPersonalEnrichment implements BaseEnrichment {
                                            config.getFilemgmntFileCodeFormat(),
                                            applicantPersonals.size());
 
-        ListIterator<String> itr = filecodes.listIterator();
-
-        request.getApplicantPersonals()
-               .forEach(personal -> {
-                   ServiceDetails details = personal.getServiceDetails();
-                   details.setFileCode(itr.next());
-               });
+//        ListIterator<String> itr = filecodes.listIterator();
+//			System.out.println("itr    :"+itr);
+//        request.getApplicantPersonals()
+//               .forEach(personal -> {
+//                   ServiceDetails details = personal.getServiceDetails();
+//                   details.setFileCode(itr.next());
+//               });
+        
+      for (int i=0; i<applicantPersonals.size(); i++) {
+    	  ServiceDetails details = applicantPersonals.get(i).getServiceDetails();
+    	  details.setFileCode(filecodes.get(i));
+  }
+      
+      System.out.println("itr    :"+filecodes.get(0));
     }
 
     /**
