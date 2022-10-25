@@ -15,8 +15,8 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-
 public class RequestInfoWrapper {
+
     @JsonProperty("RequestInfo")
     private RequestInfo requestInfo;
 

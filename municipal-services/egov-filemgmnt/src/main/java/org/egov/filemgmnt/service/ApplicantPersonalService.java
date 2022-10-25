@@ -49,19 +49,15 @@ public class ApplicantPersonalService {
 
     public List<ApplicantPersonal> search(ApplicantPersonalSearchCriteria criteria) {
 
-        List<ApplicantPersonal> details = null;
+        List<ApplicantPersonal> result = null;
 
-        if (CollectionUtils.isEmpty(criteria.getIds())) {
-//            throw CoreUtils.newException(ErrorCodes.APPLICANT_PERSONAL_INVALID_SEARCH_CRITERIA,
-//                    "At least one applicant id is required.");
+        if (!CollectionUtils.isEmpty(criteria.getIds())) {
+            result = repository.getApplicantPersonals(criteria);
+        } else if (!CollectionUtils.isEmpty(criteria.getFileCodes())) {
+            result = repository.getApplicantPersonalsFromFilecode(criteria);
         }
-        if (criteria.getIds() != null) {
-            details = repository.getApplicantPersonals(criteria);
-        }
-        if (criteria.getFilecode() != null) {
-            details = repository.getApplicantPersonalsFromFilecode(criteria);
-        }
-        return details;
+
+        return result;
     }
 
     public List<ApplicantPersonal> update(ApplicantPersonalRequest request) {

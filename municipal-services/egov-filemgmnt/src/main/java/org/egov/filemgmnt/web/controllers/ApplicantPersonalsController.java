@@ -12,7 +12,6 @@ import org.egov.filemgmnt.web.models.ApplicantPersonalResponse;
 import org.egov.filemgmnt.web.models.ApplicantPersonalSearchCriteria;
 import org.egov.filemgmnt.web.models.RequestInfoWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,15 +27,13 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/v1")
 public class ApplicantPersonalsController implements ApplicantPersonalsResource {
 
-    @Autowired
-    private ResponseInfoFactory responseInfoFactory;
-
+    private final ResponseInfoFactory responseInfoFactory;
     private final ApplicantPersonalService personalService;
 
     @Autowired
-    public ApplicantPersonalsController(ApplicantPersonalService personalService) {
-
+    ApplicantPersonalsController(ApplicantPersonalService personalService, ResponseInfoFactory responseInfoFactory) {
         this.personalService = personalService;
+        this.responseInfoFactory = responseInfoFactory;
     }
 
     @Override
@@ -71,16 +68,16 @@ public class ApplicantPersonalsController implements ApplicantPersonalsResource 
 
     @Override
     @PostMapping("/applicantpersonals/_search")
-    public ResponseEntity<ApplicantPersonalResponse> search(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
+    public ResponseEntity<ApplicantPersonalResponse> search(@Valid @RequestBody RequestInfoWrapper request,
                                                             @Valid @ModelAttribute ApplicantPersonalSearchCriteria criteria) {
 
-        List<ApplicantPersonal> details = personalService.search(criteria);
+        List<ApplicantPersonal> personals = personalService.search(criteria);
 
         ApplicantPersonalResponse response = ApplicantPersonalResponse.builder()
-                                                                      .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(),
+                                                                      .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(),
                                                                                                                                           Boolean.TRUE))
-                                                                      .applicantPersonals(details)
+                                                                      .applicantPersonals(personals)
                                                                       .build();
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return ResponseEntity.ok(response);
     }
 }

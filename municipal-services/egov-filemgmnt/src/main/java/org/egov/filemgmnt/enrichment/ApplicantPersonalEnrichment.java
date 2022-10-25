@@ -17,6 +17,9 @@ import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Component
 public class ApplicantPersonalEnrichment implements BaseEnrichment {
     private final FilemgmntConfiguration config;
@@ -77,7 +80,6 @@ public class ApplicantPersonalEnrichment implements BaseEnrichment {
                                            applicantPersonals.size());
 
 //        ListIterator<String> itr = filecodes.listIterator();
-//        System.out.println("itr    :" + itr);
 //        request.getApplicantPersonals()
 //               .forEach(personal -> {
 //                   ServiceDetails details = personal.getServiceDetails();
@@ -90,7 +92,7 @@ public class ApplicantPersonalEnrichment implements BaseEnrichment {
             details.setFileCode(filecodes.get(i));
         }
 
-        System.out.println("itr    :" + filecodes.get(0));
+        log.info("itr : {}", filecodes.get(0));
     }
 
     /**
