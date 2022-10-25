@@ -1,0 +1,1 @@
+ALTER TABLE eg_tl_billingslab ALTER COLUMN enterprisetype character varying(64);
