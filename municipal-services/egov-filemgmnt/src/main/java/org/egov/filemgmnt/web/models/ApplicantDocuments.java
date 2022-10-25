@@ -1,4 +1,5 @@
 package org.egov.filemgmnt.web.models;
+
 import javax.validation.constraints.Size;
 
 import org.springframework.validation.annotation.Validated;
@@ -21,31 +22,28 @@ import lombok.Setter;
 @NoArgsConstructor
 @Builder
 
-
 public class ApplicantDocuments {
-	
-	  	@Size(max = 64)
-	    @JsonProperty("id")
-	    private String id;
-	    
-	    @Size(max = 64)
-	    @JsonProperty("applicantPersonalId")
-	    private String applicantPersonalId;
-	    
-	    @Size(max = 64)
-	    @JsonProperty("documenttypeId")
-	    private String documenttypeId;
-	    
-	    @Size(max = 64)
-	    @JsonProperty("documentNumber")
-	    private String documentNumber;
-	    
-	     
-	    @JsonProperty("docexpiryDate")
-	    private Long docexpiryDate;    
-	  
-	    
-	    @JsonProperty("auditDetails")
-	    private AuditDetails auditDetails;
+
+    @Size(max = 64)
+    @JsonProperty("id")
+    private String id;
+
+    @Size(max = 64)
+    @JsonProperty("applicantPersonalId")
+    private String applicantPersonalId;
+
+    @Size(max = 64)
+    @JsonProperty("documenttypeId")
+    private String documenttypeId;
+
+    @Size(max = 64)
+    @JsonProperty("documentNumber")
+    private String documentNumber;
+
+    @JsonProperty("docexpiryDate")
+    private Long docexpiryDate;
+
+    @JsonProperty("auditDetails")
+    private AuditDetails auditDetails;
 
 }

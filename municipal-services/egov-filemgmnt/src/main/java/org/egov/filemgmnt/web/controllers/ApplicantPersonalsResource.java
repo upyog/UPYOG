@@ -37,9 +37,9 @@ interface ApplicantPersonalsResource {
                                                        schema = @Schema(implementation = ErrorRes.class))) })
     ResponseEntity<ApplicantPersonalResponse> create(@Valid ApplicantPersonalRequest request);
 
-    ResponseEntity<ApplicantPersonalResponse> update(@Valid ApplicantPersonalRequest request);	 
+    ResponseEntity<ApplicantPersonalResponse> update(@Valid ApplicantPersonalRequest request);
 
-	ResponseEntity<ApplicantPersonalResponse> search(@Valid RequestInfoWrapper requestInfoWrapper,
-			@Valid ApplicantPersonalSearchCriteria criteria);
+    ResponseEntity<ApplicantPersonalResponse> search(@Valid RequestInfoWrapper requestInfoWrapper,
+                                                     @Valid ApplicantPersonalSearchCriteria criteria);
 
 }

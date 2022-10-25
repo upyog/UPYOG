@@ -1,17 +1,18 @@
 package org.egov.filemgmnt.repository.querybuilder;
 
-import lombok.extern.slf4j.Slf4j;
-import java.util.*;
+import java.util.List;
+
 import javax.validation.constraints.NotNull;
 
 import org.egov.filemgmnt.web.models.ApplicantPersonalSearchCriteria;
- 
 import org.springframework.stereotype.Component;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
 public class ApplicantPersonalQueryBuilder extends BaseQueryBuilder {
-	 private static final String INNER_JOIN_STRING = " INNER JOIN ";
+    private static final String INNER_JOIN_STRING = " INNER JOIN ";
 
     private static final String QUERY = new StringBuilder().append(" SELECT ap.id, ap.aadhaarno, ap.email, ap.firstname, ap.lastname, ap.title, ap.mobileno, ap.tenantid")
                                                            .append("     , ap.createdby, ap.createdtime, ap.lastmodifiedby, ap.lastmodifiedtime")
@@ -30,15 +31,15 @@ public class ApplicantPersonalQueryBuilder extends BaseQueryBuilder {
                                                   @NotNull List<Object> preparedStmtValues, Boolean isCount) {
 
         StringBuilder query = new StringBuilder(QUERY);
-       
-        if(criteria.getIds()!=null){
-        	addIdsFilter("ap.id", criteria.getIds(), query, preparedStmtValues);
+
+        if (criteria.getIds() != null) {
+            addIdsFilter("ap.id", criteria.getIds(), query, preparedStmtValues);
         }
-        if(criteria.getFilecode()!=null){
-        	
+        if (criteria.getFilecode() != null) {
+
             addIdsFilter("sd.filecode", criteria.getFilecode(), query, preparedStmtValues);
         }
-       
+
         return query.toString();
     }
 }

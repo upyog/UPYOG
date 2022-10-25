@@ -8,7 +8,7 @@ import org.apache.commons.collections4.CollectionUtils;
 
 class BaseQueryBuilder {
 
-    void addIdsFilter(String column, List<String> ids, StringBuilder query, List<Object> paramValues) {     
+    void addIdsFilter(String column, List<String> ids, StringBuilder query, List<Object> paramValues) {
         if (CollectionUtils.isNotEmpty(ids)) {
             addWhereClause(paramValues, query);
             query.append(column)
