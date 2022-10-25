@@ -52,6 +52,16 @@
       "type": "java.lang.String"
     },
     {
+      "name": "egov.idgen.fm.file-code.name",
+      "type": "java.lang.String",
+      "description": "A description for 'egov.idgen.fm.fileCode.name'"
+    },
+    {
+      "name": "egov.idgen.fm.file-code.format",
+      "type": "java.lang.String",
+      "description": "A description for 'egov.idgen.fm.fileCode.format'"
+    },
+    {
       "name": "egov.mdms.host",
       "type": "java.lang.String"
     },
@@ -76,15 +86,11 @@
       "type": "java.lang.String"
     }
   ],
-  "hints": [
-    {
-      "name": "app.timezone",
-      "values": [
-        {
-          "value": "UTC",
-          "description": "Coordinated Universal Time, (IST, India Standard Time, Asia/Kolkata = UTC+05:30)."
-        }
-      ]
-    }
-  ]
+  "hints": [{
+    "name": "app.timezone",
+    "values": [{
+      "value": "UTC",
+      "description": "Coordinated Universal Time, (IST, India Standard Time, Asia/Kolkata = UTC+05:30)."
+    }]
+  }]
 }

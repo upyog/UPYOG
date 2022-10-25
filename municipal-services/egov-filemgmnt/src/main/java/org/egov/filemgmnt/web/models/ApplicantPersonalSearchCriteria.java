@@ -19,7 +19,7 @@ public class ApplicantPersonalSearchCriteria {
 
     @JsonProperty("ids")
     private List<String> ids;
-    
-    @JsonProperty("filecode")
-    private List<String>  filecode;
+
+    @JsonProperty("fileCodes")
+    private List<String> fileCodes;
 }

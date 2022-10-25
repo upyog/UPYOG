@@ -21,7 +21,7 @@ public class ServiceDetailsQueryBuilder extends BaseQueryBuilder {
 
         StringBuilder query = new StringBuilder(QUERY);
 
-        addIdsFilter("ap.id", criteria.getIds(), query, preparedStmtValues);
+        addFilters("ap.id", criteria.getIds(), query, preparedStmtValues);
 
         return query.toString();
     }
