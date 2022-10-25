@@ -4,9 +4,10 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class BillingslabConstants {
-	
-	private BillingslabConstants() {}
-	
+
+	private BillingslabConstants() {
+	}
+
 	public static final String TL_MDMS_MODULE_NAME = "TradeLicense";
 	public static final String BPA_MDMS_MODULE_NAME = "StakeholderRegistraition";
 	public static final String BPA_MDMS_TRADETYPETOROLEMAPPING = "TradeTypetoRoleMapping";
@@ -18,5 +19,7 @@ public class BillingslabConstants {
 	public static final String TL_MDMS_DOCUMENT = "DocumentType";
 	public static final String MDMS_JSONPATH_FOR_MASTER_CODES = "$.MdmsRes.#module#.#master#.*.code";
 	public static final String BPA_MDMS_JSONPATH_FOR_MAPPING = "$.MdmsRes.StakeholderRegistraition.TradeTypetoRoleMapping";
+	public static final String TL_MDMS_ENTERPRISETYPE = "EnterpriseType";
+	public static final String TL_APPLICATION_TYPE = "TL";
 
 }

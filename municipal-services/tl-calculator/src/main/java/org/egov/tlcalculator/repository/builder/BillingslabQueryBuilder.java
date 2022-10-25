@@ -12,9 +12,10 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 @Slf4j
 public class BillingslabQueryBuilder {
-	
+
 	/**
 	 * Builds search query for searching billing slabs from db
+	 * 
 	 * @param criteria
 	 * @param preparedStmtList
 	 * @return
@@ -25,18 +26,20 @@ public class BillingslabQueryBuilder {
 		addWhereClause(queryBuilder, criteria, preparedStmtList);
 		return queryBuilder.toString();
 	}
-	
+
 	/**
-	 * Builds the where clause for the search query. 
+	 * Builds the where clause for the search query.
+	 * 
 	 * @param queryBuilder
 	 * @param billingSlabSearcCriteria
 	 * @param preparedStmtList
 	 */
-	public void addWhereClause(StringBuilder queryBuilder, BillingSlabSearchCriteria billingSlabSearcCriteria, List<Object> preparedStmtList) {
+	public void addWhereClause(StringBuilder queryBuilder, BillingSlabSearchCriteria billingSlabSearcCriteria,
+			List<Object> preparedStmtList) {
 		queryBuilder.append(" WHERE tenantid = ?");
 		preparedStmtList.add(billingSlabSearcCriteria.getTenantId());
 		List<String> ids = billingSlabSearcCriteria.getIds();
-		
+
 		if (!CollectionUtils.isEmpty(ids)) {
 			queryBuilder.append(" AND id IN ( ");
 			setValuesForList(queryBuilder, preparedStmtList, ids);
@@ -52,7 +55,7 @@ public class BillingslabQueryBuilder {
 			queryBuilder.append(" AND (licensetype = ? OR licensetype = 'ALL')");
 			preparedStmtList.add(billingSlabSearcCriteria.getLicenseType());
 		}
-		
+
 		if (!StringUtils.isEmpty(billingSlabSearcCriteria.getApplicationType())) {
 			queryBuilder.append(" AND applicationtype = ? ");
 			preparedStmtList.add(billingSlabSearcCriteria.getApplicationType());
@@ -67,7 +70,7 @@ public class BillingslabQueryBuilder {
 			queryBuilder.append(" AND tradetype = ?");
 			preparedStmtList.add(billingSlabSearcCriteria.getTradeType());
 		}
-		
+
 		if (!StringUtils.isEmpty(billingSlabSearcCriteria.getType())) {
 			queryBuilder.append(" AND type = ?");
 			preparedStmtList.add(billingSlabSearcCriteria.getType());
@@ -82,7 +85,7 @@ public class BillingslabQueryBuilder {
 			queryBuilder.append(" AND fromUom <= ?");
 			preparedStmtList.add(billingSlabSearcCriteria.getFrom());
 		}
-		
+
 		if (null != billingSlabSearcCriteria.getTo()) {
 			queryBuilder.append(" AND toUom >= ?");
 			preparedStmtList.add(billingSlabSearcCriteria.getTo());
@@ -97,10 +100,15 @@ public class BillingslabQueryBuilder {
 			queryBuilder.append(" AND toUom > ?");
 			preparedStmtList.add(billingSlabSearcCriteria.getUomValue());
 		}
-		
-		if(null != billingSlabSearcCriteria.getApplicationType()){
+
+		if (null != billingSlabSearcCriteria.getApplicationType()) {
 			queryBuilder.append(" AND (applicationtype =? OR licensetype = 'ALL')");
 			preparedStmtList.add(billingSlabSearcCriteria.getApplicationType());
+		}
+
+		if (null != billingSlabSearcCriteria.getEnterpriseType()) {
+			queryBuilder.append(" AND (enterprisetype =? )");
+			preparedStmtList.add(billingSlabSearcCriteria.getEnterpriseType());
 		}
 	}
 

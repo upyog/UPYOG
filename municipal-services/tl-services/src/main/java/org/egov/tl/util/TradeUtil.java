@@ -36,13 +36,11 @@ public class TradeUtil {
 
     @Autowired
     public TradeUtil(TLConfiguration config, ServiceRequestRepository serviceRequestRepository,
-                     WorkflowService workflowService) {
+            WorkflowService workflowService) {
         this.config = config;
         this.serviceRequestRepository = serviceRequestRepository;
         this.workflowService = workflowService;
     }
-
-
 
     /**
      * Method to return auditDetails for create/update flows
@@ -53,15 +51,16 @@ public class TradeUtil {
      */
     public AuditDetails getAuditDetails(String by, Boolean isCreate) {
         Long time = System.currentTimeMillis();
-        if(isCreate)
-            return AuditDetails.builder().createdBy(by).lastModifiedBy(by).createdTime(time).lastModifiedTime(time).build();
+        if (isCreate)
+            return AuditDetails.builder().createdBy(by).lastModifiedBy(by).createdTime(time).lastModifiedTime(time)
+                    .build();
         else
             return AuditDetails.builder().lastModifiedBy(by).lastModifiedTime(time).build();
     }
 
-
     /**
      * Creates url for tl-calculator service
+     * 
      * @return url for tl-calculator service
      */
     public StringBuilder getCalculationURI(String businessService) {
@@ -83,6 +82,7 @@ public class TradeUtil {
 
     /**
      * Creates url for tl-calculator service
+     * 
      * @return url for tl-calculator service
      */
     public StringBuilder getEstimationURI(String businessService) {
@@ -100,9 +100,10 @@ public class TradeUtil {
 
     /**
      * Creates search url for pt-services-v2 service
+     * 
      * @return url for pt-services-v2 service search
      */
-    public String getPropertySearchURL(){
+    public String getPropertySearchURL() {
         StringBuilder url = new StringBuilder(config.getPropertyHost());
         url.append(config.getPropertyContextPath());
         url.append(config.getPropertySearchEndpoint());
@@ -115,9 +116,9 @@ public class TradeUtil {
         return url.toString();
     }
 
-
     /**
      * Creates request to search UOM from MDMS
+     * 
      * @return request to search UOM from MDMS
      */
     public List<ModuleDetail> getTradeModuleRequest() {
@@ -127,10 +128,10 @@ public class TradeUtil {
 
         // filter to only get code field from master data
         final String filterCode = "$.[?(@.active==true)].code";
-
         tlMasterDetails.add(MasterDetail.builder().name(TRADE_TYPE).build());
         tlMasterDetails.add(MasterDetail.builder().name(ACCESSORIES_CATEGORY).build());
         tlMasterDetails.add(MasterDetail.builder().name(REMINDER_PERIODS).build());
+        tlMasterDetails.add(MasterDetail.builder().name(STRUCTURE_PLACE_TYPE).filter(filterCode).build());
 
         ModuleDetail tlModuleDtls = ModuleDetail.builder().masterDetails(tlMasterDetails)
                 .moduleName(TRADE_LICENSE_MODULE).build();
@@ -142,17 +143,20 @@ public class TradeUtil {
         ModuleDetail commonMasterMDtl = ModuleDetail.builder().masterDetails(commonMasterDetails)
                 .moduleName(COMMON_MASTERS_MODULE).build();
 
+        /*
+         * MdmsCriteria mdmsCriteria =
+         * MdmsCriteria.builder().moduleDetails(Arrays.asList(tlModuleDtls,
+         * commonMasterMDtl)).tenantId(tenantId)
+         * .build();
+         */
 
-        /*MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(Arrays.asList(tlModuleDtls,commonMasterMDtl)).tenantId(tenantId)
-                .build();*/
-
-        return Arrays.asList(tlModuleDtls,commonMasterMDtl);
+        return Arrays.asList(tlModuleDtls, commonMasterMDtl);
 
     }
 
-
     /**
      * Creates request to search UOM from MDMS
+     * 
      * @return request to search UOM from MDMS
      */
     public ModuleDetail getTradeUomRequest() {
@@ -162,20 +166,21 @@ public class TradeUtil {
 
         // filter to only get code field from master data
 
-
         tlMasterDetails.add(MasterDetail.builder().name(TRADE_TYPE).build());
         tlMasterDetails.add(MasterDetail.builder().name(ACCESSORIES_CATEGORY).build());
 
         ModuleDetail tlModuleDtls = ModuleDetail.builder().masterDetails(tlMasterDetails)
                 .moduleName(TRADE_LICENSE_MODULE).build();
 
-
-        /*MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(Collections.singletonList(tlModuleDtls)).tenantId(tenantId)
-                .build();*/
+        /*
+         * MdmsCriteria mdmsCriteria =
+         * MdmsCriteria.builder().moduleDetails(Collections.singletonList(tlModuleDtls))
+         * .tenantId(tenantId)
+         * .build();
+         */
 
         return tlModuleDtls;
     }
-
 
     /**
      * Returns the url for mdms search endpoint
@@ -186,57 +191,62 @@ public class TradeUtil {
         return new StringBuilder().append(config.getMdmsHost()).append(config.getMdmsEndPoint());
     }
 
-
     /**
      * Creates map containing the startTime and endTime of the given tradeLicense
+     * 
      * @param license The create or update TradeLicense request
      * @return Map containing startTime and endTime
      */
-    public Map<String,Long> getTaxPeriods(TradeLicense license,Object mdmsData){
-        Map<String,Long> taxPeriods = new HashMap<>();
+    public Map<String, Long> getTaxPeriods(TradeLicense license, Object mdmsData) {
+        Map<String, Long> taxPeriods = new HashMap<>();
         try {
-            String jsonPath = TLConstants.MDMS_FINACIALYEAR_PATH.replace("{}",license.getFinancialYear());
-            List<Map<String,Object>> jsonOutput =  JsonPath.read(mdmsData, jsonPath);
-            Map<String,Object> financialYearProperties = jsonOutput.get(0);
+            String jsonPath = TLConstants.MDMS_FINACIALYEAR_PATH.replace("{}", license.getFinancialYear());
+            List<Map<String, Object>> jsonOutput = JsonPath.read(mdmsData, jsonPath);
+            Map<String, Object> financialYearProperties = jsonOutput.get(0);
             Object startDate = financialYearProperties.get(TLConstants.MDMS_STARTDATE);
             Object endDate = financialYearProperties.get(TLConstants.MDMS_ENDDATE);
-            taxPeriods.put(TLConstants.MDMS_STARTDATE,(Long) startDate);
-            taxPeriods.put(TLConstants.MDMS_ENDDATE,(Long) endDate);
+            taxPeriods.put(TLConstants.MDMS_STARTDATE, (Long) startDate);
+            taxPeriods.put(TLConstants.MDMS_ENDDATE, (Long) endDate);
 
         } catch (Exception e) {
             log.error("Error while fetching MDMS data", e);
-            throw new CustomException("INVALID FINANCIALYEAR", "No data found for the financialYear: "+license.getFinancialYear());
+            throw new CustomException("INVALID FINANCIALYEAR",
+                    "No data found for the financialYear: " + license.getFinancialYear());
         }
         return taxPeriods;
     }
 
-
     /**
-     * Creates map containing the startTime and endTime of the given tradeLicense for Renewal 
+     * Creates map containing the startTime and endTime of the given tradeLicense
+     * for Renewal
+     * 
      * @param license The create or update TradeLicense request
      * @return Map containing startTime and endTime
      */
-//    public Map<String,Long> getTaxPeriodsforRenewal(TradeLicense license,Object mdmsData){
-//        Map<String,Long> taxPeriods = new HashMap<>();
-//        try {
-//            String currentYearjsonPath = TLConstants.MDMS_FINACIALYEAR_PATH.replace("{}",license.getFinancialYear());
-//            List<Map<String,Object>> currentFinancialYear = JsonPath.read(mdmsData, currentYearjsonPath);
-//            Map<String,Object> currentFYObject = currentFinancialYear.get(0);
-//            Object startDate = currentFYObject.get(TLConstants.MDMS_STARTDATE);
-//            Object endDate = currentFYObject.get(TLConstants.MDMS_ENDDATE);
-//            taxPeriods.put(TLConstants.MDMS_STARTDATE,(Long) startDate);
-//            taxPeriods.put(TLConstants.MDMS_ENDDATE,(Long) endDate);
-//        } catch (Exception e) {
-//            log.error("Error while fetching MDMS data", e);
-//            throw new CustomException("INVALID FINANCIALYEAR", "No data found for the financialYear: "+license.getFinancialYear());
-//        }
-//        return taxPeriods;
-//    }
-
-
+    // public Map<String,Long> getTaxPeriodsforRenewal(TradeLicense license,Object
+    // mdmsData){
+    // Map<String,Long> taxPeriods = new HashMap<>();
+    // try {
+    // String currentYearjsonPath =
+    // TLConstants.MDMS_FINACIALYEAR_PATH.replace("{}",license.getFinancialYear());
+    // List<Map<String,Object>> currentFinancialYear = JsonPath.read(mdmsData,
+    // currentYearjsonPath);
+    // Map<String,Object> currentFYObject = currentFinancialYear.get(0);
+    // Object startDate = currentFYObject.get(TLConstants.MDMS_STARTDATE);
+    // Object endDate = currentFYObject.get(TLConstants.MDMS_ENDDATE);
+    // taxPeriods.put(TLConstants.MDMS_STARTDATE,(Long) startDate);
+    // taxPeriods.put(TLConstants.MDMS_ENDDATE,(Long) endDate);
+    // } catch (Exception e) {
+    // log.error("Error while fetching MDMS data", e);
+    // throw new CustomException("INVALID FINANCIALYEAR", "No data found for the
+    // financialYear: "+license.getFinancialYear());
+    // }
+    // return taxPeriods;
+    // }
 
     /**
      * Creates request to search financialYear in mdms
+     * 
      * @return MDMS request for financialYear
      */
     private ModuleDetail getFinancialYearRequest() {
@@ -248,20 +258,23 @@ public class TradeUtil {
 
         final String filterCodeForUom = "$.[?(@.active==true && @.module=='TL')]";
 
-        tlMasterDetails.add(MasterDetail.builder().name(TLConstants.MDMS_FINANCIALYEAR).filter(filterCodeForUom).build());
+        tlMasterDetails
+                .add(MasterDetail.builder().name(TLConstants.MDMS_FINANCIALYEAR).filter(filterCodeForUom).build());
 
         ModuleDetail tlModuleDtls = ModuleDetail.builder().masterDetails(tlMasterDetails)
                 .moduleName(TLConstants.MDMS_EGF_MASTER).build();
 
-
-  /*      MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(Collections.singletonList(tlModuleDtls)).tenantId(tenantId)
-                .build();*/
+        /*
+         * MdmsCriteria mdmsCriteria =
+         * MdmsCriteria.builder().moduleDetails(Collections.singletonList(tlModuleDtls))
+         * .tenantId(tenantId)
+         * .build();
+         */
 
         return tlModuleDtls;
     }
 
-
-    private MdmsCriteriaReq getMDMSRequest(RequestInfo requestInfo,String tenantId){
+    private MdmsCriteriaReq getMDMSRequest(RequestInfo requestInfo, String tenantId) {
         ModuleDetail financialYearRequest = getFinancialYearRequest();
         List<ModuleDetail> tradeModuleRequest = getTradeModuleRequest();
 
@@ -274,6 +287,8 @@ public class TradeUtil {
 
         MdmsCriteriaReq mdmsCriteriaReq = MdmsCriteriaReq.builder().mdmsCriteria(mdmsCriteria)
                 .requestInfo(requestInfo).build();
+
+        System.out.println(mdmsCriteriaReq);
         return mdmsCriteriaReq;
     }
 
@@ -282,46 +297,42 @@ public class TradeUtil {
         List<String> endstates = new ArrayList<>();
         for (TradeLicense tradeLicense : tradeLicenseRequest.getLicenses()) {
             String tradetype = tradeLicense.getTradeLicenseDetail().getTradeUnits().get(0).getTradeType();
-            Object mdmsData = mDMSCallForBPA(tradeLicenseRequest.getRequestInfo(), tradeLicense.getTenantId(), tradetype);
+            Object mdmsData = mDMSCallForBPA(tradeLicenseRequest.getRequestInfo(), tradeLicense.getTenantId(),
+                    tradetype);
             List<String> res = JsonPath.read(mdmsData, BPAConstants.MDMS_ENDSTATEPATH);
             endstates.add(res.get(0));
         }
         return endstates;
     }
 
-    public List<String> getusernewRoleFromMDMS(TradeLicense license,RequestInfo requestInfo){
-        String tradetype=license.getTradeLicenseDetail().getTradeUnits().get(0).getTradeType();
-        Object mdmsData=mDMSCallForBPA(requestInfo,license.getTenantId(),tradetype);
-        List<List<String>>res=JsonPath.read(mdmsData, BPAConstants.MDMS_BPAROLEPATH);
-        return  res.get(0);
+    public List<String> getusernewRoleFromMDMS(TradeLicense license, RequestInfo requestInfo) {
+        String tradetype = license.getTradeLicenseDetail().getTradeUnits().get(0).getTradeType();
+        Object mdmsData = mDMSCallForBPA(requestInfo, license.getTenantId(), tradetype);
+        List<List<String>> res = JsonPath.read(mdmsData, BPAConstants.MDMS_BPAROLEPATH);
+        return res.get(0);
     }
 
     public Object mDMSCall(RequestInfo requestInfo, String tenantId) {
-    	MdmsCriteriaReq mdmsCriteriaReq = getMDMSRequest(requestInfo,tenantId);
+        MdmsCriteriaReq mdmsCriteriaReq = getMDMSRequest(requestInfo, tenantId);
         Object result = serviceRequestRepository.fetchResult(getMdmsSearchUrl(), mdmsCriteriaReq);
         return result;
     }
 
-
-
-
-    public Object mDMSCallForBPA(RequestInfo requestInfo,String tenantId,String tradetype){
-
+    public Object mDMSCallForBPA(RequestInfo requestInfo, String tenantId, String tradetype) {
 
         List<MasterDetail> masterDetails = new ArrayList<>();
 
+        final String filterCodeForLicenseetypes = "$.[?(@.tradeType =='" + tradetype + "')]";
 
-        final String filterCodeForLicenseetypes = "$.[?(@.tradeType =='"+tradetype+"')]";
-
-        masterDetails.add(MasterDetail.builder().name(BPAConstants.TRADETYPE_TO_ROLEMAPPING).filter(filterCodeForLicenseetypes).build());
+        masterDetails.add(MasterDetail.builder().name(BPAConstants.TRADETYPE_TO_ROLEMAPPING)
+                .filter(filterCodeForLicenseetypes).build());
 
         ModuleDetail moduleDetail = ModuleDetail.builder().masterDetails(masterDetails)
                 .moduleName(BPAConstants.MDMS_MODULE_BPAREGISTRATION).build();
 
-
-        MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(Collections.singletonList(moduleDetail)).tenantId(tenantId)
+        MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(Collections.singletonList(moduleDetail))
+                .tenantId(tenantId)
                 .build();
-
 
         MdmsCriteriaReq mdmsCriteriaReq = MdmsCriteriaReq.builder().mdmsCriteria(mdmsCriteria)
                 .requestInfo(requestInfo).build();
@@ -329,40 +340,40 @@ public class TradeUtil {
         return result;
     }
 
-
-
-
     /**
      * Creates a map of id to isStateUpdatable
-     * @param searchresult Licenses from DB
+     * 
+     * @param searchresult    Licenses from DB
      * @param businessService The businessService configuration
      * @return Map of is to isStateUpdatable
      */
-    public Map<String, Boolean> getIdToIsStateUpdatableMap(BusinessService businessService, List<TradeLicense> searchresult) {
+    public Map<String, Boolean> getIdToIsStateUpdatableMap(BusinessService businessService,
+            List<TradeLicense> searchresult) {
         Map<String, Boolean> idToIsStateUpdatableMap = new HashMap<>();
         searchresult.forEach(result -> {
             String nameofBusinessService = result.getBusinessService();
-            if (StringUtils.equals(nameofBusinessService,businessService_BPA) && (result.getStatus().equalsIgnoreCase(STATUS_INITIATED))) {
+            if (StringUtils.equals(nameofBusinessService, businessService_BPA)
+                    && (result.getStatus().equalsIgnoreCase(STATUS_INITIATED))) {
                 idToIsStateUpdatableMap.put(result.getId(), true);
             } else
-                idToIsStateUpdatableMap.put(result.getId(), workflowService.isStateUpdatable(result.getStatus(), businessService));
+                idToIsStateUpdatableMap.put(result.getId(),
+                        workflowService.isStateUpdatable(result.getStatus(), businessService));
         });
         return idToIsStateUpdatableMap;
     }
 
+    public Map<String, Long> getTenantIdToReminderPeriod(RequestInfo requestInfo) {
+        Object mdmsData = mDMSCall(requestInfo, requestInfo.getUserInfo().getTenantId());
+        String jsonPath = REMINDER_JSONPATH;
+        List<Map<String, Object>> jsonOutput = JsonPath.read(mdmsData, jsonPath);
+        Map<String, Long> tenantIdToReminderPeriod = new HashMap<String, Long>();
 
+        for (int i = 0; i < jsonOutput.size(); i++) {
+            tenantIdToReminderPeriod.put((String) jsonOutput.get(i).get(TENANT_ID),
+                    ((Number) jsonOutput.get(i).get(REMINDER_INTERVAL)).longValue());
+        }
 
-	public Map<String, Long> getTenantIdToReminderPeriod(RequestInfo requestInfo) {
-		Object mdmsData = mDMSCall(requestInfo, requestInfo.getUserInfo().getTenantId());
-		String jsonPath = REMINDER_JSONPATH;
-		List<Map<String,Object>> jsonOutput = JsonPath.read(mdmsData, jsonPath);
-		Map<String,Long>tenantIdToReminderPeriod = new HashMap <String,Long>();
-		
-		for (int i=0; i<jsonOutput.size();i++) {
-	        tenantIdToReminderPeriod.put((String) jsonOutput.get(i).get(TENANT_ID),((Number)jsonOutput.get(i).get(REMINDER_INTERVAL)).longValue());
-	        }
-		
-		return tenantIdToReminderPeriod;
-		
-	}
+        return tenantIdToReminderPeriod;
+
+    }
 }
