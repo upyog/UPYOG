@@ -61,7 +61,7 @@ public class ServiceDetailsService {
     }
 
     public List<ServiceDetails> update(ServiceDetailsRequest request) {
-
+        System.out.println("srvice" + request);
         List<String> ids = new LinkedList<>();
         request.getServiceDetails()
                .forEach(personal -> ids.add(personal.getId()));

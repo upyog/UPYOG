@@ -48,6 +48,8 @@ public class ApplicantPersonalsController implements ApplicantPersonalsResource 
     @PutMapping("/applicantpersonals/_update")
     public ResponseEntity<ApplicantPersonalResponse> update(@RequestBody ApplicantPersonalRequest request) {
 
+        System.out.println("cntroler" + request);
+
         List<ApplicantPersonal> personals = personalService.update(request);
 
         ApplicantPersonalResponse response = ApplicantPersonalResponse.builder()
