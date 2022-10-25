@@ -8,8 +8,7 @@ import org.springframework.context.annotation.Import;
 
 @Import({ TracerConfiguration.class })
 @SpringBootApplication
-@ComponentScan(basePackages = { "org.egov.filemgmnt", "org.egov.filemgmnt.web.controllers",
-        "org.egov.filemgmnt.config" })
+@ComponentScan(basePackages = { "org.egov.filemgmnt" })
 public class Main { // NOPMD
 
     public static void main(String[] args) { // NOPMD

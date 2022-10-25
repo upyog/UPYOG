@@ -39,7 +39,7 @@ interface ApplicantPersonalsResource {
 
     ResponseEntity<ApplicantPersonalResponse> update(@Valid ApplicantPersonalRequest request);
 
-    ResponseEntity<ApplicantPersonalResponse> search(@Valid RequestInfoWrapper requestInfoWrapper,
+    ResponseEntity<ApplicantPersonalResponse> search(@Valid RequestInfoWrapper request,
                                                      @Valid ApplicantPersonalSearchCriteria criteria);
 
 }
