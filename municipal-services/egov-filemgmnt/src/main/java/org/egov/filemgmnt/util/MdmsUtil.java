@@ -53,6 +53,23 @@ public class MdmsUtil {
         // log.info(ulbToCategoryListMap.toString());
         return rate;
     }
+    public Object fetchFileServiceSubtypeFromMdms(RequestInfo requestInfo, String tenantId) {
+        StringBuilder uri = new StringBuilder();
+        Object result = null;
+        uri.append(mdmsHost)
+           .append(mdmsUrl);
+        MdmsCriteriaReq mdmsCriteriaReq = getMdmsRequestForCategoryList(requestInfo, tenantId);
+
+        Integer rate = 0;
+        try {
+        	result  = restTemplate.postForObject(uri.toString(), mdmsCriteriaReq, Map.class);
+            
+        } catch (Exception e) {
+            log.error("Exception occurred while fetching category lists from mdms: ", e);
+        }
+        // log.info(ulbToCategoryListMap.toString());
+        return result;
+    }
 
     private MdmsCriteriaReq getMdmsRequestForCategoryList(RequestInfo requestInfo, String tenantId) {
         MasterDetail masterDetail = new MasterDetail();
