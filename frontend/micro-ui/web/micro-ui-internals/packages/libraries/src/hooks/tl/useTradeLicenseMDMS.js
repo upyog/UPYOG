@@ -2,14 +2,27 @@ import { MdmsService } from "../../services/elements/MDMS";
 import { useQuery } from "react-query";
 
 const useTradeLicenseMDMS = (tenantId, moduleCode, type, filter, config = {}) => {
+  
   const useTLDocuments = () => {
     return useQuery("TL_DOCUMENTS", () => MdmsService.getTLDocumentRequiredScreen(tenantId, moduleCode, type), config);
   };
   const useStructureType = () => {
     return useQuery("TL_STRUCTURE_TYPE", () => MdmsService.getTLStructureType(tenantId, moduleCode, type), config);
   };
+  const useStructureTypePlace = () => {
+    return useQuery("TL_STRUCTURE_TYPE_PLACE", () => MdmsService.getTLStructureTypePlace(tenantId, moduleCode, type), config);
+  };
+  const useNatureOfStructure = () => {
+    return useQuery("TL_STRUCTURE_TYPE_NATURE", () => MdmsService.getTLNatureOfStructure(tenantId, moduleCode, type), config);
+  };
+  const useZonalOffice = () => {
+    return useQuery("TL_ZONAL_OFFICE", () => MdmsService.getTLZonalOffice(tenantId, moduleCode, type), config);
+  };
   const useTradeUnitsData = () => {
     return useQuery("TL_TRADE_UNITS", () => MdmsService.getTradeUnitsData(tenantId, moduleCode, type, filter), config);
+  };
+  const useSector = () => {
+    return useQuery("TL_STRUCTURE_TYPE_SECTOR", () => MdmsService.getTLSector(tenantId, moduleCode, type), config);
   };
   const useTradeOwnerShipCategory = () => {
     return useQuery("TL_TRADE_OWNERSHIP_CATEGORY", () => MdmsService.GetTradeOwnerShipCategory(tenantId, moduleCode, type), config);
@@ -108,8 +121,16 @@ const useTradeLicenseMDMS = (tenantId, moduleCode, type, filter, config = {}) =>
       return useTLDocuments();
     case "StructureType":
       return useStructureType();
+    case "TradeStructureSubtype":
+      return useStructureTypePlace();
+    case "PlaceOfActivity":
+      return useNatureOfStructure();
+    case "boundary-data":
+      return useZonalOffice();
     case "TradeUnits":
       return useTradeUnitsData();
+    case "EnterpriseType":
+      return useSector();
     case "TLOwnerShipCategory":
       return useTradeOwnerShipCategory();
     case "TLOwnerTypeWithSubtypes":

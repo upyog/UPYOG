@@ -27,7 +27,6 @@ public class ApplicantPersonalRowMapper implements ResultSetExtractor<List<Appli
                                         .title(rs.getString("title"))
                                         .mobileNo(rs.getString("mobileno"))
                                         .tenantId(rs.getString("tenantid"))
-                                        .applicantAddressId(rs.getString("applicantaddressid"))
                                         .auditDetails(getAuditDetails(rs))
                                         .build());
         }

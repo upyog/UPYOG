@@ -32,8 +32,7 @@ class JsonMapperConfiguration {
 
     @Bean
     public ObjectMapper objectMapper() {
-//        return new ObjectMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-//                                 .setTimeZone(TimeZone.getTimeZone(filemgmntConfig.getTimeZone()));
+
         return JsonMapper.builder()
                          .addModules(new JavaTimeModule())
                          .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)

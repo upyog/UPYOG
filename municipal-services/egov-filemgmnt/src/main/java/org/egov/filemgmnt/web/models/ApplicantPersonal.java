@@ -55,10 +55,6 @@ public class ApplicantPersonal {
     @JsonProperty("tenantId")
     private String tenantId;
 
-    @Size(max = 64)
-    @JsonProperty("applicantAddressId")
-    private String applicantAddressId;
-
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails;
 }

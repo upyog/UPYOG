@@ -56,21 +56,25 @@ public class IngestValidator {
         requestInfo.getUserInfo().getRoles().forEach(role -> {
             roles.add(role.getCode());
         });
-        if(roles.contains("SUPERUSER")){
-            String ulbPresentInRequest = data.getUlb();
-            log.info(ulbPresentInRequest.split("\\.")[0]);
-            if(!ulbPresentInRequest.split("\\.")[0].equals(employeeUlb.split("\\.")[0])){
-                throw new CustomException("EG_INGEST_ERR", "Superusers of one state cannot insert data for another state");
-            }
 
-        }else {
-            String ulbPresentInRequest = data.getUlb();
-            if (ulbPresentInRequest.contains(".")) {
-                if (!employeeUlb.equals(ulbPresentInRequest))
-                    throw new CustomException("EG_INGEST_ERR", "Employee of ulb: " + employeeUlb + " cannot insert data for ulb: " + ulbPresentInRequest);
+        // Skip validations in case the user is having adaptor ingest specific role
+        if(!roles.contains(applicationProperties.getAdaptorIngestSystemRole())) {
+            if (roles.contains("SUPERUSER")) {
+                String ulbPresentInRequest = data.getUlb();
+                log.info(ulbPresentInRequest.split("\\.")[0]);
+                if (!ulbPresentInRequest.split("\\.")[0].equals(employeeUlb.split("\\.")[0])) {
+                    throw new CustomException("EG_INGEST_ERR", "Superusers of one state cannot insert data for another state");
+                }
+
             } else {
-                if (!employeeUlb.contains(ulbPresentInRequest.toLowerCase()))
-                    throw new CustomException("EG_INGEST_ERR", "Employee of ulb: " + employeeUlb + " cannot insert data for ulb: " + ulbPresentInRequest);
+                String ulbPresentInRequest = data.getUlb();
+                if (ulbPresentInRequest.contains(".")) {
+                    if (!employeeUlb.equals(ulbPresentInRequest))
+                        throw new CustomException("EG_INGEST_ERR", "Employee of ulb: " + employeeUlb + " cannot insert data for ulb: " + ulbPresentInRequest);
+                } else {
+                    if (!employeeUlb.contains(ulbPresentInRequest.toLowerCase()))
+                        throw new CustomException("EG_INGEST_ERR", "Employee of ulb: " + employeeUlb + " cannot insert data for ulb: " + ulbPresentInRequest);
+                }
             }
         }
     }
@@ -78,12 +82,19 @@ public class IngestValidator {
     public void verifyCrossStateMasterDataRequest(MasterDataRequest masterDataRequest) {
         String employeeUlb = masterDataRequest.getRequestInfo().getUserInfo().getTenantId();
         String ulbPresentInRequest = masterDataRequest.getMasterData().getUlb();
-        if(ulbPresentInRequest.contains(".")){
-            if(!employeeUlb.equals(ulbPresentInRequest))
-                throw new CustomException("EG_MASTER_DATA_INGEST_ERR", "Employee of ulb: " + employeeUlb + " cannot insert data for ulb: " + ulbPresentInRequest);
-        }else{
-            if(!employeeUlb.contains(ulbPresentInRequest.toLowerCase()))
-                throw new CustomException("EG_MASTER_DATA_INGEST_ERR", "Employee of ulb: " + employeeUlb + " cannot insert data for ulb: " + ulbPresentInRequest);
+        Set<String> roles = new HashSet<>();
+        masterDataRequest.getRequestInfo().getUserInfo().getRoles().forEach(role -> {
+            roles.add(role.getCode());
+        });
+        // Skip validations in case the user is having adaptor ingest specific role
+        if(!roles.contains(applicationProperties.getAdaptorIngestSystemRole())) {
+            if (ulbPresentInRequest.contains(".")) {
+                if (!employeeUlb.equals(ulbPresentInRequest))
+                    throw new CustomException("EG_MASTER_DATA_INGEST_ERR", "Employee of ulb: " + employeeUlb + " cannot insert data for ulb: " + ulbPresentInRequest);
+            } else {
+                if (!employeeUlb.contains(ulbPresentInRequest.toLowerCase()))
+                    throw new CustomException("EG_MASTER_DATA_INGEST_ERR", "Employee of ulb: " + employeeUlb + " cannot insert data for ulb: " + ulbPresentInRequest);
+            }
         }
     }
 
@@ -137,8 +148,8 @@ public class IngestValidator {
                             if(!applicationProperties.getModuleAllowedGroupByFieldsMapping().containsKey(ingestData.getModule()))
                                 throw new CustomException("EG_DS_VALIDATE_ERR", "Allowed groupBy fields mapping are mandatory for array type fields. It has not been configured for module: " + ingestData.getModule());
                             else
-                                if(!applicationProperties.getModuleAllowedGroupByFieldsMapping().get(ingestData.getModule()).contains(inputGroupByField))
-                                    throw new CustomException("EG_DS_VALIDATE_ERR", "Group by field provided in input: " + inputGroupByField + " is not configured for module: " + ingestData.getModule() + ". Please note that the field name provided against groupBy metric in ingest payload should exactly match the field name provided in allowed fields configuration.");
+                            if(!applicationProperties.getModuleAllowedGroupByFieldsMapping().get(ingestData.getModule()).contains(inputGroupByField))
+                                throw new CustomException("EG_DS_VALIDATE_ERR", "Group by field provided in input: " + inputGroupByField + " is not configured for module: " + ingestData.getModule() + ". Please note that the field name provided against groupBy metric in ingest payload should exactly match the field name provided in allowed fields configuration.");
                             // Validate data type of values passed in ingest API
                             for(JsonNode bucketNode : childNode.get("buckets")) {
                                 if (!(bucketNode.get("value").getNodeType().toString().equalsIgnoreCase(valueType)))

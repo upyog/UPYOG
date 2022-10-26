@@ -52,7 +52,10 @@ const initRequestBody = (tenantId) => ({
       {
         moduleName: "common-masters",
         masterDetails: [{ name: "Department" }, { name: "Designation" }, { name: "StateInfo" }, { name: "wfSlaConfig" },{ name: "District" }],
+<<<<<<< HEAD
       
+=======
+>>>>>>> 98956340d46c8cd43ff9bc1be576479d43931349
       },
       {
         moduleName: "tenant",
@@ -463,7 +466,55 @@ const getTLStructureTypeList = (tenantId, moduleCode, type) => ({
     moduleDetails: [
       {
         moduleName: moduleCode,
-        masterDetails: [{ name: "StructureType" }],
+        masterDetails: [{ name: "StructureType"}],
+      },
+    ],
+  },
+});
+const getTLStructureTypePlaceList = (tenantId, moduleCode, type) => ({
+  type,
+  details: {
+    tenantId: tenantId,
+    moduleDetails: [
+      {
+        moduleName: "TradeLicense",
+        masterDetails: [{ name: "TradeStructureSubtype" }],
+      },
+    ],
+  },
+});
+const getTLNatureOfStructureList = (tenantId, moduleCode, type) => ({
+  type,
+  details: {
+    tenantId: tenantId,
+    moduleDetails: [
+      {
+        moduleName: "TradeLicense",
+        masterDetails: [{ name: "PlaceOfActivity" }],
+      },
+    ],
+  },
+});
+const getTLZonalOfficeList = (tenantId, moduleCode, type) => ({
+  type,
+  details: {
+    tenantId: tenantId,
+    moduleDetails: [
+      {
+        moduleName: "egov-location",
+        masterDetails: [{ name: "TenantBoundary" }],
+      },
+    ],
+  },
+});
+const getTLSectorList = (tenantId, moduleCode, type) => ({
+  type,
+  details: {
+    tenantId: tenantId,
+    moduleDetails: [
+      {
+        moduleName: "TradeLicense",
+        masterDetails: [{ name: "EnterpriseType" }],
       },
     ],
   },
@@ -992,6 +1043,13 @@ const getTLStructureType = (MdmsRes) =>
       i18nKey: `COMMON_MASTERS_STRUCTURETYPE_${stringReplaceAll(TLStructureTypeList.code, ".", "_")}`,
     };
   });
+const getTLStructureTypePlace = (MdmsRes) =>
+MdmsRes["TradeLicense"].TradeStructureSubtype.filter((TradeStructureSubtype) => TradeStructureSubtype.active).map((TLStructureSubtypeList) => {
+  return {
+    ...TLStructureSubtypeList,
+    // i18nKey: `TradeLicense_STRUCTURESUBTYPE_${stringReplaceAll(TLStructureSubtypeList.code, ".", "_")}`,
+  };
+});
 
 const getTLAccessoriesType = (MdmsRes) =>
   MdmsRes["TradeLicense"].AccessoriesCategory.filter((AccessoriesCategory) => AccessoriesCategory.active).map((TLAccessoryTypeList) => {
@@ -1208,6 +1266,8 @@ const transformResponse = (type, MdmsRes, moduleCode, tenantId) => {
       return getPTPropertyType(MdmsRes);
     case "StructureType":
       return getTLStructureType(MdmsRes);
+    case "TradeStructureSubtype":
+      return getTLStructureTypePlace(MdmsRes);
     case "AccessoryCategory":
       return getTLAccessoriesType(MdmsRes);
     case "FinancialYear":
@@ -1450,6 +1510,18 @@ export const MdmsService = {
   },
   getTLStructureType: (tenantId, moduleCode, type) => {
     return MdmsService.getDataByCriteria(tenantId, getTLStructureTypeList(tenantId, moduleCode), moduleCode);
+  },
+  getTLStructureTypePlace: (tenantId, moduleCode, type) => {
+    return MdmsService.getDataByCriteria(tenantId, getTLStructureTypePlaceList(tenantId, moduleCode), moduleCode);
+  },
+  getTLNatureOfStructure: (tenantId, moduleCode, type) => {
+    return MdmsService.getDataByCriteria(tenantId, getTLNatureOfStructureList(tenantId, moduleCode), moduleCode);
+  },
+  getTLZonalOffice: (tenantId, moduleCode, type) => {
+    return MdmsService.getDataByCriteria(tenantId, getTLZonalOfficeList(tenantId, moduleCode), moduleCode);
+  },
+  getTLSector: (tenantId, moduleCode, type) => {
+    return MdmsService.getDataByCriteria(tenantId, getTLSectorList(tenantId, moduleCode), moduleCode);
   },
   getTLAccessoriesType: (tenantId, moduleCode, type) => {
     return MdmsService.getDataByCriteria(tenantId, getTLAccessoriesTypeList(tenantId, moduleCode), moduleCode);
