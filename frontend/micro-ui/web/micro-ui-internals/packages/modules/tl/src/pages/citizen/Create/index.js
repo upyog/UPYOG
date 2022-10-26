@@ -42,6 +42,7 @@ const CreateTradeLicence = ({ parentRoute }) => {
         (nextStep[sessionStorage.getItem("StructureType")] === "Building-type" ||
           nextStep[sessionStorage.getItem("StructureType")] === "vehicle-type")
       ) {
+        nextStep = `${nextStep[sessionStorage.getItem("setPlaceofActivity")]}`;
         nextStep = `${nextStep[sessionStorage.getItem("StructureType")]}`;
       } else if (
         nextStep[sessionStorage.getItem("KnowProperty")] &&

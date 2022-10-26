@@ -7,7 +7,8 @@ const SelectStructureType = ({ t, config, onSelect, userType, formData }) => {
   const stateId = Digit.ULBService.getStateId();
   const { data: place = {}, isLoad } = Digit.Hooks.tl.useTradeLicenseMDMS(stateId, "TradeLicense", "PlaceOfActivity");
   const { data: dataitem = {}, isLoading } = Digit.Hooks.tl.useTradeLicenseMDMS(stateId, "TradeLicense", "TradeStructureSubtype");
-  const [setPlaceofActivity, setSelectedPlaceofActivity] = useState(formData?.TradeDetails?.setPlaceofActivity);
+  console.log(formData);
+  const [setPlaceofActivity, setSelectedPlaceofActivity] = useState();
   const [StructureType, setStructureType] = useState(formData?.TradeDetails?.StructureType);
   const [activities, setActivity] = useState(0);
   const [isInitialRender, setIsInitialRender] = useState(true);
@@ -58,7 +59,7 @@ const SelectStructureType = ({ t, config, onSelect, userType, formData }) => {
     
   }
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (isInitialRender) {
       if(setPlaceofActivity){
         setIsInitialRender(false);
@@ -70,7 +71,7 @@ const SelectStructureType = ({ t, config, onSelect, userType, formData }) => {
  
   function goNext() {
    
-    sessionStorage.setItem("setPlaceofActivity", setPlaceofActivity.code);
+    sessionStorage.setItem("PlaceOfActivity", setPlaceofActivity.code);
     onSelect(config.key, { setPlaceofActivity });
     sessionStorage.setItem("StructureType", StructureType.name);
     onSelect(config.key, { StructureType });

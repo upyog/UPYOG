@@ -65,7 +65,7 @@ export const newConfig = [
         {
             "route": "map",
             component: "TLSelectGeolocation",
-            nextStep: "address",
+            nextStep: "tladdress",
             hideInEmployee: true,
             key: "address",
             withoutLabel: true,
@@ -90,6 +90,21 @@ export const newConfig = [
             key: "address",
             nextStep: "address",
             type: "component"
+        },
+        {
+          "route": "tladdress",
+          "component": "SelectTradeAddress",
+          "withoutLabel": true,
+          "texts": {
+              "headerCaption": "TL_LOCATION_CAPTION",
+              "header": "TL_ADDRESS_HEADER",
+              "cardText": "TL_ADDRESS_TEXT",
+              "submitBarLabel": "CS_COMMON_NEXT"
+          },
+          "key": "address",
+          "nextStep": "street",
+          "isMandatory": true,
+          "type": "component"
         },
         {
             "route": "address",
@@ -282,6 +297,23 @@ export const newConfig = [
         texts: {
           // headerCaption: "TL_STRUCTURE_TYPE",
           header: "Building Details",
+          // cardText: "TL_STRUCTURE_TYPE_TEXT",
+          submitBarLabel: "CS_COMMON_NEXT",
+        },
+        key: "TradeDetails",
+        withoutLabel: true,
+        hideInEmployee: true,
+        nextStep: "commencement-date",
+        
+      },
+      {
+        type: "component",
+        route: "vechicle-det",
+        isMandatory: true,
+        component: "SelectTLVechicle",
+        texts: {
+          // headerCaption: "TL_STRUCTURE_TYPE",
+          header: "Vechicle Details",
           // cardText: "TL_STRUCTURE_TYPE_TEXT",
           submitBarLabel: "CS_COMMON_NEXT",
         },

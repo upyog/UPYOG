@@ -490,6 +490,18 @@ const getTLNatureOfStructureList = (tenantId, moduleCode, type) => ({
     ],
   },
 });
+const getTLZonalOfficeList = (tenantId, moduleCode, type) => ({
+  type,
+  details: {
+    tenantId: tenantId,
+    moduleDetails: [
+      {
+        moduleName: "egov-location",
+        masterDetails: [{ name: "TenantBoundary" }],
+      },
+    ],
+  },
+});
 const getTLSectorList = (tenantId, moduleCode, type) => ({
   type,
   details: {
@@ -1499,6 +1511,9 @@ export const MdmsService = {
   },
   getTLNatureOfStructure: (tenantId, moduleCode, type) => {
     return MdmsService.getDataByCriteria(tenantId, getTLNatureOfStructureList(tenantId, moduleCode), moduleCode);
+  },
+  getTLZonalOffice: (tenantId, moduleCode, type) => {
+    return MdmsService.getDataByCriteria(tenantId, getTLZonalOfficeList(tenantId, moduleCode), moduleCode);
   },
   getTLSector: (tenantId, moduleCode, type) => {
     return MdmsService.getDataByCriteria(tenantId, getTLSectorList(tenantId, moduleCode), moduleCode);

@@ -15,6 +15,9 @@ const useTradeLicenseMDMS = (tenantId, moduleCode, type, filter, config = {}) =>
   const useNatureOfStructure = () => {
     return useQuery("TL_STRUCTURE_TYPE_NATURE", () => MdmsService.getTLNatureOfStructure(tenantId, moduleCode, type), config);
   };
+  const useZonalOffice = () => {
+    return useQuery("TL_ZONAL_OFFICE", () => MdmsService.getTLZonalOffice(tenantId, moduleCode, type), config);
+  };
   const useTradeUnitsData = () => {
     return useQuery("TL_TRADE_UNITS", () => MdmsService.getTradeUnitsData(tenantId, moduleCode, type, filter), config);
   };
@@ -122,6 +125,8 @@ const useTradeLicenseMDMS = (tenantId, moduleCode, type, filter, config = {}) =>
       return useStructureTypePlace();
     case "PlaceOfActivity":
       return useNatureOfStructure();
+    case "boundary-data":
+      return useZonalOffice();
     case "TradeUnits":
       return useTradeUnitsData();
     case "EnterpriseType":

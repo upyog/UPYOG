@@ -30,6 +30,9 @@ import TLWFApplicationTimeline from "./pageComponents/TLWFApplicationTimeline";
 import SelectLand from "./pageComponents/SelectLand";
 import SelectBuilding from "./pageComponents/SelectBuilding";
 import SelectBusinessCategory from "./pageComponents/SelectBusinessCategory";
+import SelectTradeAddress from "./pageComponents/SelectTradeAddress";
+import SelectTLVechicle from "./pageComponents/SelectTLVechicle";
+import SelectTLWater from "./pageComponents/SelectTLWater";
 
 import TLOwnerDetailsEmployee from "./pageComponents/TLOwnerDetailsEmployee";
 import TLTradeDetailsEmployee from "./pageComponents/TLTradeDetailsEmployee";
@@ -104,6 +107,9 @@ const componentsToRegister = {
   SelectLand,
   SelectBuilding,
   SelectBusinessCategory,
+  SelectTradeAddress,
+  SelectTLVechicle,
+  SelectTLWater,
   TradeLicense,
   SelectTradeName,
   SelectStructureType,
