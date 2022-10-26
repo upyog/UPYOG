@@ -165,7 +165,92 @@ serviceMaps:
          
       - jsonPath: $.ApplicantPersonals.*.id 
       
+
+    - query: >      
+        UPDATE eg_fm_applicantaddress 
+        SET houseno = ?, housename = ?, street = ?, pincode = ?, postofficename = ?
+        WHERE id = ?;
+      basePath: ApplicantPersonals.applicantAddresses
+      jsonMaps:
+      - jsonPath: $.ApplicantPersonals.*.applicantAddresses.houseNo 
       
+      - jsonPath: $.ApplicantPersonals.*.applicantAddresses.houseName  
+      
+      - jsonPath: $.ApplicantPersonals.*.applicantAddresses.street 
+      
+      - jsonPath: $.ApplicantPersonals.*.applicantAddresses.pincode
+      
+      - jsonPath: $.ApplicantPersonals.*.applicantAddresses.postOfficeName          
+         
+      - jsonPath: $.ApplicantPersonals.*.id 
+      
+    - query: >      
+        UPDATE eg_fm_applicantaddress 
+        SET houseno = ?, housename = ?, street = ?, pincode = ?, postofficename = ?
+        WHERE id = ?;
+      basePath: ApplicantPersonals.applicantAddresses
+      jsonMaps:
+      - jsonPath: $.ApplicantPersonals.*.applicantAddresses.houseNo 
+      
+      - jsonPath: $.ApplicantPersonals.*.applicantAddresses.houseName  
+      
+      - jsonPath: $.ApplicantPersonals.*.applicantAddresses.street 
+      
+      - jsonPath: $.ApplicantPersonals.*.applicantAddresses.pincode
+      
+      - jsonPath: $.ApplicantPersonals.*.applicantAddresses.postOfficeName          
+         
+      - jsonPath: $.ApplicantPersonals.*.id 
+      
+    - query: >      
+        UPDATE eg_fm_applicantdocuments 
+        SET documenttypeid = ?, documentnumber = ?, docexpirydate = ?
+        
+        WHERE id = ?;
+      basePath: ApplicantPersonals.applicantAddresses
+      jsonMaps:
+      - jsonPath: $.ApplicantPersonals.*.applicantAddresses.houseNo 
+      
+      - jsonPath: $.ApplicantPersonals.*.applicantAddresses.houseName  
+      
+      - jsonPath: $.ApplicantPersonals.*.applicantAddresses.street 
+      
+      - jsonPath: $.ApplicantPersonals.*.applicantAddresses.pincode
+      
+      - jsonPath: $.ApplicantPersonals.*.applicantAddresses.postOfficeName          
+         
+      - jsonPath: $.ApplicantPersonals.*.id 
+            
+            
+#  - version: 1.0
+#    description: Persists applicant service details in egov_filemgmnt database, eg_fm_servicedetails table
+#    fromTopic: save-fm-servicedetails
+#    isTransaction: true
+#    queryMaps:
+#    - query: >
+#        INSERT INTO eg_fm_servicedetails(id, applicantpersonalid, serviceid, servicecode, businessservice, workflowcode, createdby, createdtime, lastmodifiedby, lastmodifiedtime) 
+#        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+#      basePath: ServiceDetails.*
+#      jsonMaps:
+#      - jsonPath: $.ServiceDetails.*.id
+#
+#      - jsonPath: $.ServiceDetails.*.applicantPersonalId 
+#      
+#      - jsonPath: $.ServiceDetails.*.serviceId 
+#      
+#      - jsonPath: $.ServiceDetails.*.serviceCode 
+#      
+#      - jsonPath: $.ServiceDetails.*.businessService 
+#      
+#      - jsonPath: $.ServiceDetails.*.workflowCode 
+#      
+#      - jsonPath: $.ServiceDetails.*.auditDetails.createdBy
+#
+#      - jsonPath: $.ServiceDetails.*.auditDetails.createdTime
+#      
+#      - jsonPath: $.ServiceDetails.*.auditDetails.lastModifiedBy
+#
+#      - jsonPath: $.ServiceDetails.*.auditDetails.lastModifiedTime     
     - query: >
         UPDATE eg_fm_applicantaddress SET houseno = ?, housename = ?, street = ?, pincode = ?,postofficename = ?, WHERE id = ?;
         basePath: ApplicantPersonals.*.applicantAddresses
@@ -180,6 +265,6 @@ serviceMaps:
           
           - jsonPath: $.ApplicantPersonals.*.applicantAddresses.postOfficeName
           
-          - jsonPath: $.ApplicantPersonals.*.applicantAddresses.id
- 
+          - jsonPath: $.ApplicantPersonals.*.applicantAddresses.id 
+
        
