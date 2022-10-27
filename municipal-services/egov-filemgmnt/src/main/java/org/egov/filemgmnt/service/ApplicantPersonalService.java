@@ -47,7 +47,7 @@ public class ApplicantPersonalService {
         
         //validate mdms data
         
-        Object mdmsData = mutil.fetchFileServiceSubtypeFromMdms( request.getRequestInfo(), request.getApplicantPersonals().get(0).getTenantId());
+        Object mdmsData = mutil.mDMSCall( request.getRequestInfo(), request.getApplicantPersonals().get(0).getTenantId());
        
         // validate request
         validatorService.validateCreate(request,mdmsData);
@@ -63,13 +63,13 @@ public class ApplicantPersonalService {
     public List<ApplicantPersonal> search(ApplicantPersonalSearchCriteria criteria) {
 
         List<ApplicantPersonal> result = null;
-
+        log.info("criteria.getFileCodes()   "  +criteria.getFileCodes());
         if (!CollectionUtils.isEmpty(criteria.getIds())) {
             result = repository.getApplicantPersonals(criteria);
         } else if (!CollectionUtils.isEmpty(criteria.getFileCodes())) {
             result = repository.getApplicantPersonalsFromFilecode(criteria);
         }
-
+log.info("result   "  +result);
         return result;
     }
 
