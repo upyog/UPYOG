@@ -24,22 +24,27 @@ import lombok.Setter;
 
 public class ApplicantDocuments {
 
+    @Schema(type = "string", format = "uuid", description = "Applicant Document id")
     @Size(max = 64)
     @JsonProperty("id")
     private String id;
 
+    @Schema(type = "string", format = "uuid", description = "Applicant id")
     @Size(max = 64)
     @JsonProperty("applicantPersonalId")
     private String applicantPersonalId;
 
+    @Schema(type = "string", description = "Document type id")
     @Size(max = 64)
     @JsonProperty("documenttypeId")
     private String documenttypeId;
 
+    @Schema(type = "string", description = "Document number")
     @Size(max = 64)
     @JsonProperty("documentNumber")
     private String documentNumber;
 
+    @Schema(type = "long", description = "Document expiry date")
     @JsonProperty("docexpiryDate")
     private Long docexpiryDate;
 
