@@ -30,20 +30,20 @@ const SelectBusinessCategory = ({ t, config, onSelect, userType, formData, }) =>
   function selectedsetCapitalAmount(e) {
     setCapitalAmount(e.target.value);
     // setIsInitialRender(true);
-    if(setSector){
-        cmbSectorFileterData.push((cmbSector.filter( (cmbSector) => cmbSector.code.includes(setSector.code))));
-        console.log(cmbSectorFileterData);
-        cmbSectorFileterData[0].forEach(element => {
-            console.log('element',parseFloat(CapitalAmount).toString());
-            console.log('element',parseFloat(element.investmentTo).toString());
-            if(parseFloat(CapitalAmount).toString()<=parseFloat(element.investmentTo).toString()){
-                console.log(element.typeName);
-            }
+    // if(setSector){
+    //     cmbSectorFileterData.push((cmbSector.filter( (cmbSector) => cmbSector.code.includes(setSector.code))));
+    //     console.log(cmbSectorFileterData);
+    //     cmbSectorFileterData[0].forEach(element => {
+    //         console.log('element',parseFloat(CapitalAmount).toString());
+    //         console.log('element',parseFloat(element.investmentTo).toString());
+    //         if(parseFloat(CapitalAmount).toString()<=parseFloat(element.investmentTo).toString()){
+    //             console.log(element.typeName);
+    //         }
             
-        //    this.deductionAmountTemp=+element.amount ;
-        //    this.deductionAmountTotal=this.deductionAmountTotal+this.deductionAmountTemp;
-      });
-    }
+    //     //    this.deductionAmountTemp=+element.amount ;
+    //     //    this.deductionAmountTotal=this.deductionAmountTotal+this.deductionAmountTemp;
+    //   });
+    // }
     //    this.paymentorderForm.controls.pamount.setValue(this.paymentorderForm.controls.grossamount.value-this.deductionAmountTotal);
   }
 
