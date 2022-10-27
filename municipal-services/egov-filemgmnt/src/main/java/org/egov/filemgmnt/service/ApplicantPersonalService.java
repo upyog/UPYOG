@@ -8,13 +8,18 @@ import org.egov.filemgmnt.config.FilemgmntConfiguration;
 import org.egov.filemgmnt.enrichment.ApplicantPersonalEnrichment;
 import org.egov.filemgmnt.kafka.Producer;
 import org.egov.filemgmnt.repository.ApplicantPersonalRepository;
+import org.egov.filemgmnt.repository.querybuilder.ApplicantPersonalQueryBuilder;
+import org.egov.filemgmnt.util.MdmsUtil;
 import org.egov.filemgmnt.validators.ApplicantPersonalValidator;
 import org.egov.filemgmnt.web.models.ApplicantPersonal;
 import org.egov.filemgmnt.web.models.ApplicantPersonalRequest;
 import org.egov.filemgmnt.web.models.ApplicantPersonalSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import lombok.extern.slf4j.Slf4j;
 
+
+@Slf4j
 @Service
 public class ApplicantPersonalService {
 
@@ -23,21 +28,29 @@ public class ApplicantPersonalService {
     private final ApplicantPersonalValidator validatorService;
     private final ApplicantPersonalEnrichment enrichmentService;
     private final ApplicantPersonalRepository repository;
+    private final MdmsUtil mutil;
 
     @Autowired
     ApplicantPersonalService(ApplicantPersonalValidator validatorService, ApplicantPersonalEnrichment enrichmentService,
-                             ApplicantPersonalRepository repository, Producer producer,
+                             ApplicantPersonalRepository repository, Producer producer,MdmsUtil mutil,
                              FilemgmntConfiguration filemgmntConfig) {
         this.validatorService = validatorService;
         this.enrichmentService = enrichmentService;
         this.repository = repository;
         this.producer = producer;
         this.filemgmntConfig = filemgmntConfig;
+        this.mutil= mutil;
     }
 
     public List<ApplicantPersonal> create(ApplicantPersonalRequest request) {
+       
+        
+        //validate mdms data
+        
+        Object mdmsData = mutil.fetchFileServiceSubtypeFromMdms( request.getRequestInfo(), request.getApplicantPersonals().get(0).getTenantId());
+       
         // validate request
-        validatorService.validateCreate(request);
+        validatorService.validateCreate(request,mdmsData);
 
         // enrich request
         enrichmentService.enrichCreate(request);

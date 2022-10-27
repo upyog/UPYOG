@@ -6,25 +6,55 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.egov.filemgmnt.web.enums.ErrorCodes;
 import org.egov.filemgmnt.web.models.ApplicantPersonal;
 import org.egov.filemgmnt.web.models.ApplicantPersonalRequest;
+import org.egov.filemgmnt.config.FilemgmntConfiguration;
+import org.egov.filemgmnt.repository.ApplicantPersonalRepository;
 import org.egov.tracer.model.CustomException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.egov.filemgmnt.repository.querybuilder.ApplicantPersonalQueryBuilder;
+import org.egov.filemgmnt.validators.MDMSValidator;
+import lombok.extern.slf4j.Slf4j;
+
+
 
 /**
  * The Class ApplicantPersonalValidator.
  */
+@Slf4j
 @Component
 public class ApplicantPersonalValidator {
+	
+    private MDMSValidator mdmsValidator;
+    
+    private ApplicantPersonalRepository appRepository;
+    
+    private FilemgmntConfiguration config;
+    
+     
+    
+    @Autowired
+    public ApplicantPersonalValidator(ApplicantPersonalRepository appRepository, FilemgmntConfiguration config, 
+                       MDMSValidator mdmsValidator) {
+        this.appRepository = appRepository;
+        this.config = config;
+        
+        this.mdmsValidator = mdmsValidator;
+        
+       
+    }
 
     /**
      * Validate applicant personal create request.
      *
      * @param request the {@link ApplicantPersonalRequest}
      */
-    public void validateCreate(ApplicantPersonalRequest request) {
+    public void validateCreate(ApplicantPersonalRequest request, Object mdmsData) {
         if (CollectionUtils.isEmpty(request.getApplicantPersonals())) {
             throw new CustomException(ErrorCodes.APPLICANT_PERSONAL_REQUIRED.getCode(),
                     "Atleast one applicant personal is required.");
         }
+      
+        mdmsValidator.validateMdmsData(request, mdmsData);
     }
 
     /**
