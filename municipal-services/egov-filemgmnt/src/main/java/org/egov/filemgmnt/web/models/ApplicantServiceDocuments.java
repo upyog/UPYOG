@@ -23,30 +23,37 @@ import lombok.Setter;
 @Builder
 public class ApplicantServiceDocuments {
 
+    @Schema(type = "string", format = "uuid", description = "Applicant service documents id")
     @Size(max = 64)
     @JsonProperty("id")
     private String id;
 
+    @Schema(type = "string", format = "uuid", description = "Applicant id")
     @Size(max = 64)
     @JsonProperty("applicantPersonalId")
     private String applicantPersonalId;
 
+    @Schema(type = "string", description = "Service details id")
     @Size(max = 64)
     @JsonProperty("serviceDetailsId")
     private String serviceDetailsId;
 
+    @Schema(type = "string", description = "Document Type id")
     @Size(max = 64)
     @JsonProperty("documentTypeId")
     private String documentTypeId;
 
+    @Schema(type = "string", description = "File store id")
     @Size(max = 64)
     @JsonProperty("fileStoreId")
     private String fileStoreId;
 
+    @Schema(type = "string", description = "Document active or not")
     @Size(max = 64)
     @JsonProperty("active")
     private String active;
 
+    @Schema(type = "string", description = "Document number")
     @Size(max = 64)
     @JsonProperty("documentNumber")
     private String documentNumber;

@@ -23,30 +23,37 @@ import lombok.Setter;
 @Builder
 public class ApplicantAddress {
 
+    @Schema(type = "string", format = "uuid", description = "Applicant Address id")
     @Size(max = 64)
     @JsonProperty("id")
     private String id;
 
+    @Schema(type = "string", description = "House number")
     @Size(max = 64)
     @JsonProperty("houseNo")
     private String houseNo;
 
+    @Schema(type = "string", description = "House name")
     @Size(max = 64)
     @JsonProperty("houseName")
     private String houseName;
 
+    @Schema(type = "string", description = "Street name")
     @Size(max = 64)
     @JsonProperty("street")
     private String street;
 
+    @Schema(type = "string", description = "Pincode")
     @Size(max = 64)
     @JsonProperty("pincode")
     private String pincode;
 
+    @Schema(type = "string", description = "Postoffice Name")
     @Size(max = 64)
     @JsonProperty("postOfficeName")
     private String postOfficeName;
 
+    @Schema(type = "string", format = "uuid", description = "Applicant id")
     @Size(max = 64)
     @JsonProperty("applicantPersonalId")
     private String applicantPersonalId;
