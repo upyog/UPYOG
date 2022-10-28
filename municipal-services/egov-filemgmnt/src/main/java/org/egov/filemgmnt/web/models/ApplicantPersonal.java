@@ -79,11 +79,16 @@ public class ApplicantPersonal {
     @NotNull
     @JsonProperty("applicantServiceDocuments")
     private ApplicantServiceDocuments applicantServiceDocuments;
-    
+
     @Valid
     @NotNull
     @JsonProperty("applicantDocuments")
     private ApplicantDocuments applicantDocuments;
+
+    @Valid
+    @NotNull
+    @JsonProperty("fileDetail")
+    private ApplicantDocuments fileDetail;
 
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails;

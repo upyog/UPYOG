@@ -138,7 +138,46 @@ serviceMaps:
 
       - jsonPath: $.ApplicantPersonals.*.auditDetails.lastModifiedTime 
       
-      - jsonPath: $.ApplicantPersonals.*.applicantServiceDocuments.documentNumber      
+      - jsonPath: $.ApplicantPersonals.*.applicantServiceDocuments.documentNumber 
+      
+    - query: >
+        INSERT INTO eg_fm_filedetails(id, tenantid, servicedetailsid, filenumber, filecode, filename, filearisingmode, filearisingdate, financialyear, applicationdate, workflowcode, action, filestatus, createdby, createddate, lastmodifiedby, lastmodifieddate)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?, ? )        
+      basePath: ApplicantPersonals.*.fileDetail
+      jsonMaps:    
+      - jsonPath: $.ApplicantPersonals.*.fileDetail.id         
+      
+      - jsonPath: $.ApplicantPersonals.*.fileDetail.tenantId
+      
+      - jsonPath: $.ApplicantPersonals.*.fileDetail.serviceDetailsId
+
+      - jsonPath: $.ApplicantPersonals.*.fileDetail.fileNumber
+     
+      - jsonPath: $.ApplicantPersonals.*.fileDetail.fileCode
+     
+      - jsonPath: $.ApplicantPersonals.*.fileDetail.fileName     
+      
+      - jsonPath: $.ApplicantPersonals.*.fileDetail.fileArisingMode 
+      
+      - jsonPath: $.ApplicantPersonals.*.fileDetail.fileArisingDate 
+      
+      - jsonPath: $.ApplicantPersonals.*.fileDetail.financialYear 
+      
+      - jsonPath: $.ApplicantPersonals.*.fileDetail.applicationDate 
+      
+      - jsonPath: $.ApplicantPersonals.*.fileDetail.workflowCode 
+      
+      - jsonPath: $.ApplicantPersonals.*.fileDetail.action 
+      
+      - jsonPath: $.ApplicantPersonals.*.fileDetail.fileStatus          
+       
+      - jsonPath: $.ApplicantPersonals.*.auditDetails.createdBy
+
+      - jsonPath: $.ApplicantPersonals.*.auditDetails.createdTime
+     
+      - jsonPath: $.ApplicantPersonals.*.auditDetails.lastModifiedBy
+
+      - jsonPath: $.ApplicantPersonals.*.auditDetails.lastModifiedTime          
 
   - version: 1.0
     description: Update applicant details in egov_filemgmnt database, eg_fm_applicantpersonal table
