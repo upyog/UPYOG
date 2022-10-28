@@ -68,7 +68,7 @@ public class ApplicantPersonalsController implements ApplicantPersonalsResource 
     @PostMapping("/applicantpersonals/_search")
     public ResponseEntity<ApplicantPersonalResponse> search(@Valid @RequestBody RequestInfoWrapper request,
                                                             @Valid @ModelAttribute ApplicantPersonalSearchCriteria criteria) {
-
+log.info("creiteria  :" +criteria.getFileCodes());
         List<ApplicantPersonal> personals = personalService.search(criteria);
 
         ApplicantPersonalResponse response = ApplicantPersonalResponse.builder()

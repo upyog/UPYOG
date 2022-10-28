@@ -1,6 +1,11 @@
 package org.egov.filemgmnt.util;
 
+import static org.egov.filemgmnt.util.FMConstants.FILEMANAGEMENT_MODULE;
+import static org.egov.filemgmnt.util.FMConstants.FILE_SERVICE_SUBTYPE;
+
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -14,83 +19,67 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-import com.jayway.jsonpath.JsonPath;
-
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
 public class MdmsUtil {
 
-    @Autowired
-    private RestTemplate restTemplate;
+	@Autowired
+	private RestTemplate restTemplate;
 
-    @Value("${egov.mdms.host}")
-    private String mdmsHost;
+	@Value("${egov.mdms.host}")
+	private String mdmsHost;
 
-    @Value("${egov.mdms.search.endpoint}")
-    private String mdmsUrl;
+	@Value("${egov.mdms.search.endpoint}")
+	private String mdmsUrl;
 
-    @Value("${egov.mdms.master.name}")
-    private String masterName;
+	@Value("${egov.mdms.master.name}")
+	private String masterName;
 
-    @Value("${egov.mdms.module.name}")
-    private String moduleName;
+	@Value("${egov.mdms.module.name}")
+	private String moduleName;
 
-    public Integer fetchRegistrationChargesFromMdms(RequestInfo requestInfo, String tenantId) {
-        StringBuilder uri = new StringBuilder();
-        uri.append(mdmsHost)
-           .append(mdmsUrl);
-        MdmsCriteriaReq mdmsCriteriaReq = getMdmsRequestForCategoryList(requestInfo, tenantId);
+	public Object mDMSCall(RequestInfo requestInfo, String tenantId) {
+		StringBuilder uri = new StringBuilder();
+		uri.append(mdmsHost).append(mdmsUrl);
+		Object result = null;
+		MdmsCriteriaReq mdmsCriteriaReq = getMDMSRequest(requestInfo, tenantId);
 
-        Integer rate = 0;
-        try {
-            Object response = restTemplate.postForObject(uri.toString(), mdmsCriteriaReq, Map.class);
-            rate = JsonPath.read(response, "$.MdmsRes.VTR.RegistrationCharges.[0].amount");
-        } catch (Exception e) {
-            log.error("Exception occurred while fetching category lists from mdms: ", e);
-        }
-        // log.info(ulbToCategoryListMap.toString());
-        return rate;
-    }
-    public Object fetchFileServiceSubtypeFromMdms(RequestInfo requestInfo, String tenantId) {
-        StringBuilder uri = new StringBuilder();
-        Object result = null;
-        uri.append(mdmsHost)
-           .append(mdmsUrl);
-        MdmsCriteriaReq mdmsCriteriaReq = getMdmsRequestForCategoryList(requestInfo, tenantId);
+		try {
+			result = restTemplate.postForObject(uri.toString(), mdmsCriteriaReq, Map.class);
 
-        Integer rate = 0;
-        try {
-        	result  = restTemplate.postForObject(uri.toString(), mdmsCriteriaReq, Map.class);
-            
-        } catch (Exception e) {
-            log.error("Exception occurred while fetching category lists from mdms: ", e);
-        }
-        // log.info(ulbToCategoryListMap.toString());
-        return result;
-    }
+		} catch (Exception e) {
+			log.error("Exception occurred while fetching category lists from mdms: ", e);
+		}
 
-    private MdmsCriteriaReq getMdmsRequestForCategoryList(RequestInfo requestInfo, String tenantId) {
-        MasterDetail masterDetail = new MasterDetail();
-        masterDetail.setName(masterName);
-        List<MasterDetail> masterDetailList = new ArrayList<>();
-        masterDetailList.add(masterDetail);
+		return result;
+	}
 
-        ModuleDetail moduleDetail = new ModuleDetail();
-        moduleDetail.setMasterDetails(masterDetailList);
-        moduleDetail.setModuleName(moduleName);
-        List<ModuleDetail> moduleDetailList = new ArrayList<>();
-        moduleDetailList.add(moduleDetail);
+	private MdmsCriteriaReq getMDMSRequest(RequestInfo requestInfo, String tenantId) {
 
-        MdmsCriteria mdmsCriteria = new MdmsCriteria();
-        mdmsCriteria.setTenantId(tenantId.split("\\.")[0]);
-        mdmsCriteria.setModuleDetails(moduleDetailList);
+		List<ModuleDetail> fmModuleRequest = getFMModuleRequest();
 
-        MdmsCriteriaReq mdmsCriteriaReq = new MdmsCriteriaReq();
-        mdmsCriteriaReq.setMdmsCriteria(mdmsCriteria);
-        mdmsCriteriaReq.setRequestInfo(requestInfo);
+		List<ModuleDetail> moduleDetails = new LinkedList<>();
 
-        return mdmsCriteriaReq;
-    }
+		moduleDetails.addAll(fmModuleRequest);
+
+		MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(moduleDetails).tenantId(tenantId).build();
+
+		return MdmsCriteriaReq.builder().mdmsCriteria(mdmsCriteria).requestInfo(requestInfo).build();
+	}
+
+	public List<ModuleDetail> getFMModuleRequest() {
+
+		// master details for FM module
+		List<MasterDetail> fmMasterDetails = new ArrayList<>();
+
+		fmMasterDetails.add(MasterDetail.builder().name(FILE_SERVICE_SUBTYPE).build());
+
+		ModuleDetail fmModuleDtls = ModuleDetail.builder().masterDetails(fmMasterDetails)
+				.moduleName(FILEMANAGEMENT_MODULE).build();
+
+		return Arrays.asList(fmModuleDtls);
+
+	}
 }

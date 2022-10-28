@@ -3,19 +3,16 @@ package org.egov.filemgmnt.validators;
 import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.egov.filemgmnt.config.FilemgmntConfiguration;
+import org.egov.filemgmnt.repository.ApplicantPersonalRepository;
 import org.egov.filemgmnt.web.enums.ErrorCodes;
 import org.egov.filemgmnt.web.models.ApplicantPersonal;
 import org.egov.filemgmnt.web.models.ApplicantPersonalRequest;
-import org.egov.filemgmnt.config.FilemgmntConfiguration;
-import org.egov.filemgmnt.repository.ApplicantPersonalRepository;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.egov.filemgmnt.repository.querybuilder.ApplicantPersonalQueryBuilder;
-import org.egov.filemgmnt.validators.MDMSValidator;
+
 import lombok.extern.slf4j.Slf4j;
-
-
 
 /**
  * The Class ApplicantPersonalValidator.
@@ -23,57 +20,54 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Component
 public class ApplicantPersonalValidator {
-	
-    private MDMSValidator mdmsValidator;
-    
-    private ApplicantPersonalRepository appRepository;
-    
-    private FilemgmntConfiguration config;
-    
-     
-    
-    @Autowired
-    public ApplicantPersonalValidator(ApplicantPersonalRepository appRepository, FilemgmntConfiguration config, 
-                       MDMSValidator mdmsValidator) {
-        this.appRepository = appRepository;
-        this.config = config;
-        
-        this.mdmsValidator = mdmsValidator;
-        
-       
-    }
 
-    /**
-     * Validate applicant personal create request.
-     *
-     * @param request the {@link ApplicantPersonalRequest}
-     */
-    public void validateCreate(ApplicantPersonalRequest request, Object mdmsData) {
-        if (CollectionUtils.isEmpty(request.getApplicantPersonals())) {
-            throw new CustomException(ErrorCodes.APPLICANT_PERSONAL_REQUIRED.getCode(),
-                    "Atleast one applicant personal is required.");
-        }
-      
-        mdmsValidator.validateMdmsData(request, mdmsData);
-    }
+	private MDMSValidator mdmsValidator;
 
-    /**
-     * Validate applicant personal update request.
-     *
-     * @param request the {@link ApplicantPersonalRequest}
-     */
-    public void validateUpdate(ApplicantPersonalRequest request, List<ApplicantPersonal> searchResult) {
-        List<ApplicantPersonal> applicantPersonals = request.getApplicantPersonals();
+	private ApplicantPersonalRepository appRepository;
 
-        if (CollectionUtils.isEmpty(applicantPersonals)) {
-            throw new CustomException(ErrorCodes.APPLICANT_PERSONAL_REQUIRED.getCode(),
-                    "Atleast one applicant personal is required.");
-        }
+	private FilemgmntConfiguration config;
 
-        if (applicantPersonals.size() != searchResult.size()) {
-            throw new CustomException(ErrorCodes.APPLICANT_PERSONAL_INVALID_UPDATE.getCode(),
-                    "Applicant Personal(s) not found in database.");
-        }
-    }
+	@Autowired
+	public ApplicantPersonalValidator(ApplicantPersonalRepository appRepository, FilemgmntConfiguration config,
+			MDMSValidator mdmsValidator) {
+		this.appRepository = appRepository;
+		this.config = config;
+
+		this.mdmsValidator = mdmsValidator;
+
+	}
+
+	/**
+	 * Validate applicant personal create request.
+	 *
+	 * @param request the {@link ApplicantPersonalRequest}
+	 */
+	public void validateCreate(ApplicantPersonalRequest request, Object mdmsData) {
+		if (CollectionUtils.isEmpty(request.getApplicantPersonals())) {
+			throw new CustomException(ErrorCodes.APPLICANT_PERSONAL_REQUIRED.getCode(),
+					"Atleast one applicant personal is required.");
+		}
+
+		mdmsValidator.validateMdmsData(request, mdmsData);
+	}
+
+	/**
+	 * Validate applicant personal update request.
+	 *
+	 * @param request the {@link ApplicantPersonalRequest}
+	 */
+	public void validateUpdate(ApplicantPersonalRequest request, List<ApplicantPersonal> searchResult) {
+		List<ApplicantPersonal> applicantPersonals = request.getApplicantPersonals();
+
+		if (CollectionUtils.isEmpty(applicantPersonals)) {
+			throw new CustomException(ErrorCodes.APPLICANT_PERSONAL_REQUIRED.getCode(),
+					"Atleast one applicant personal is required.");
+		}
+
+		if (applicantPersonals.size() != searchResult.size()) {
+			throw new CustomException(ErrorCodes.APPLICANT_PERSONAL_INVALID_UPDATE.getCode(),
+					"Applicant Personal(s) not found in database.");
+		}
+	}
 
 }

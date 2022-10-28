@@ -13,9 +13,9 @@ public class FMConstants {
 	
 	   // MDMS
 
-    public static final String TRADE_LICENSE_MODULE = "FileManagement";
+    public static final String FILEMANAGEMENT_MODULE = "FileManagement";
 
-    public static final String TRADE_LICENSE_MODULE_CODE = "TL";
+    public static final String FILEMANAGEMENT_MODULE_CODE = "TL";
 
     public static final String COMMON_MASTERS_MODULE = "common-masters";
     
