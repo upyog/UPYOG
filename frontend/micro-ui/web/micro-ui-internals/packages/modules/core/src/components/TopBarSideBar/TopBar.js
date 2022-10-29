@@ -126,7 +126,7 @@ const TopBar = ({
             </div>
             <div className="left">{showLanguageChange && <ChangeLanguage dropdown={true} />}</div>
             {userDetails?.access_token && (
-              <div className="left">
+              <div className="">
                 <Dropdown
                   option={userOptions}
                   optionKey={"name"}

@@ -26,8 +26,6 @@ import TLAcknowledgement from "./pages/citizen/Create/TLAcknowledgement";
 import MyApplications from "./pages/citizen/Applications/Application";
 import TradeLicenseList  from "./pages/citizen/Renewal/TradeLicenseList";
 import TLWFApplicationTimeline from "./pageComponents/TLWFApplicationTimeline";
-<<<<<<< HEAD
-=======
 
 import SelectLand from "./pageComponents/SelectLand";
 import SelectBuilding from "./pageComponents/SelectBuilding";
@@ -35,8 +33,6 @@ import SelectBusinessCategory from "./pageComponents/SelectBusinessCategory";
 import SelectTradeAddress from "./pageComponents/SelectTradeAddress";
 import SelectTLVechicle from "./pageComponents/SelectTLVechicle";
 import SelectTLWater from "./pageComponents/SelectTLWater";
-
->>>>>>> 98956340d46c8cd43ff9bc1be576479d43931349
 import TLOwnerDetailsEmployee from "./pageComponents/TLOwnerDetailsEmployee";
 import TLTradeDetailsEmployee from "./pageComponents/TLTradeDetailsEmployee";
 import TLTradeUnitsEmployee from "./pageComponents/TLTradeUnitsEmployee";

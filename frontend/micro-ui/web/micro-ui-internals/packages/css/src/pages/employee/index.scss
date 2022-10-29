@@ -23,7 +23,7 @@
     position: fixed;
     top: 0;
     width: 100%;
-    padding: 4px 4px;
+    padding: 4px 4px 4px 80px;
     background: white;
     box-shadow: rgba(0, 0, 0, 0.24) 0 1px 4px;
     z-index: 9999;
@@ -107,16 +107,15 @@
 
 .citizen,
 .employee {
-  .sidebar {
+  .sidebar{
     position: fixed;
     left: 0;
-    padding: 20px 0;
+    padding: 85px 0;
     background: #22394d;
     height: 100%;
     color: white;
-    margin-top: 75px;
-    z-index: 1000;
-
+    margin-top: 0px;
+    z-index: 10000;
     .actions {
       cursor: pointer;
       padding: 0 20px;

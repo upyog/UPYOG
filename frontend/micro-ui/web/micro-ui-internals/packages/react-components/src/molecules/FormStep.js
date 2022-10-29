@@ -35,6 +35,9 @@ const FormStep = ({
   };
 
   var isDisable = isDisabled ? true : config.canDisable && Object.keys(errors).filter((i) => errors[i]).length;
+  const mystyle={
+    marginBottom:"24px"
+  };
 
   const inputs = config.inputs?.map((input, index) => {
     if (input.type === "text") {
@@ -44,7 +47,8 @@ const FormStep = ({
           {errors[input.name] && <CardLabelError>{t(input.error)}</CardLabelError>}
           <div className="field-container">
             {componentInFront ? <span className="citizen-card-input citizen-card-input--front">{componentInFront}</span> : null}
-            <TextInput
+            <TextInput 
+            style={mystyle}
               key={index}
               name={input.name}
               value={value}

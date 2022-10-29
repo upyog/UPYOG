@@ -1,10 +1,8 @@
-<<<<<<< HEAD
+
 import React, { useState } from "react";
 import { CardLabel, TypeSelectCard } from "@egovernments/digit-ui-react-components";
-=======
-import React, { useState,useEffect } from "react";
-import { CardLabel, TypeSelectCard,Dropdown } from "@egovernments/digit-ui-react-components";
->>>>>>> 98956340d46c8cd43ff9bc1be576479d43931349
+// import React, { useState,useEffect } from "react";
+// import { CardLabel, TypeSelectCard,Dropdown } from "@egovernments/digit-ui-react-components";
 import { FormStep, RadioOrSelect, RadioButtons } from "@egovernments/digit-ui-react-components";
 import Timeline from "../components/TLTimeline";
 
@@ -88,14 +86,13 @@ const SelectStructureType = ({ t, config, onSelect, userType, formData }) => {
     {window.location.href.includes("/citizen") ? <Timeline /> : null}
     <FormStep t={t} config={config} onSelect={goNext} onSkip={onSkip} isDisabled={!StructureType}>
       
-<<<<<<< HEAD
+
       {/* <CardLabel>Place Of Activity</CardLabel>
       <RadioOrSelect />
 
       <CardLabel>Nature Of Structure</CardLabel>
       <RadioOrSelect /> */}
-      <RadioButtons
-=======
+      {/* <RadioButtons */}
       <CardLabel>Place Of Activity</CardLabel>
       <Dropdown
         t={t}

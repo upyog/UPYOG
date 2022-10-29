@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
+// import styled from 'styled-components'
 
 const ToolTipWrapper = ({ child, label, t }) => (
   <span className="tooltip">
@@ -24,49 +25,74 @@ const EmployeeSideBar = () => {
     key = "ACTION_TEST_NATDASHBOARD";
   }
 
-  function getRedirectionUrl(){
-    if (NATADMIN)
-      return "/digit-ui/employee/payment/integration/dss/NURT_DASHBOARD";
-    else if(STADMIN)
-      return "/employee/integration/dss/home";
-    else
-      return "/employee";
+  function getRedirectionUrl() {
+    if (NATADMIN) return "/digit-ui/employee/payment/integration/dss/NURT_DASHBOARD";
+    else if (STADMIN) return "/employee/integration/dss/home";
+    else return "/employee";
   }
-
+  // const Nav =styled.div``
   const { t } = useTranslation();
+  const [sidebar, setSideBar] = useState(false);
+  const showSidebar = () => setSideBar(!sidebar);
+
   return (
     <div className="sidebar">
-      <Link to="/digit-ui/employee">
-        <div className="actions active">
-          <ToolTipWrapper
-            child={
-              <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
-                <path d="M0 0h24v24H0z" fill="none" />
-                <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" fill="white" />
-              </svg>
-            }
-            t={t}
-            label={"ACTION_TEST_HOME"}
-          />
+      {/* <div>
+        <div>
+          <div>
+            <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24" onClick={showSidebar}>
+              <path d="M0 0h24v24H0z" fill="none" />
+              <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" fill="white" />
+            </svg>
+          </div>
+        </div> */}
+        <div sidebar={sidebar}>
+          <Link to="/digit-ui/employee">
+            <div className="actions active">
+              <ToolTipWrapper
+                child={
+                  <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
+                    <path d="M0 0h24v24H0z" fill="none" />
+                    <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" fill="white" />
+                  </svg>
+                }
+                t={t}
+                label={"ACTION_TEST_HOME"}
+              />
+            </div>
+          </Link>
+          <Link to="/digit-ui/employee/tl/search/application">
+            <div className="actions active">
+              <ToolTipWrapper
+                child={
+                  <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
+                    <path d="M0 0h24v24H0z" fill="none" />
+                    <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" fill="white" />
+                  </svg>
+                }
+                t={t}
+                label={"ACTION_TEST_HOME"}
+              />
+            </div>
+          </Link>
+          <a href={getRedirectionUrl()}>
+            <div className="actions">
+              <ToolTipWrapper
+                child={
+                  <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
+                    <path d="M0 0h24v24H0z" fill="none" />
+                    <path d="M8.17 5.7L1 10.48V21h5v-8h4v8h5V10.25z" fill="white" />
+                    <path d="M17 7h2v2h-2z" fill="none" />
+                    <path d="M10 3v1.51l2 1.33L13.73 7H15v.85l2 1.34V11h2v2h-2v2h2v2h-2v4h6V3H10zm9 6h-2V7h2v2z" fill="white" />
+                  </svg>
+                }
+                t={t}
+                label={"CORE_CHANGE_TENANT_DESCRIPTION"}
+              />
+            </div>
+          </a>
         </div>
-      </Link>
-      <a href={getRedirectionUrl()}>
-        <div className="actions">
-          <ToolTipWrapper
-            child={
-              <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
-                <path d="M0 0h24v24H0z" fill="none" />
-                <path d="M8.17 5.7L1 10.48V21h5v-8h4v8h5V10.25z" fill="white" />
-                <path d="M17 7h2v2h-2z" fill="none" />
-                <path d="M10 3v1.51l2 1.33L13.73 7H15v.85l2 1.34V11h2v2h-2v2h2v2h-2v4h6V3H10zm9 6h-2V7h2v2z" fill="white" />
-              </svg>
-            }
-            t={t}
-            label={"CORE_CHANGE_TENANT_DESCRIPTION"}
-          />
-        </div>
-      </a>
-      {/*
+        {/*
       <a href={key.includes("DASHBOARD") ? `/employee/integration/dss/${NATADMIN ? "NURT_DASHBOARD" : "home"}` : "/employee"}>
         <div className="actions">
           <ToolTipWrapper
@@ -108,7 +134,7 @@ const EmployeeSideBar = () => {
         </div>
       </a> 
       */}
-    </div>
+      </div>
   );
 };
 

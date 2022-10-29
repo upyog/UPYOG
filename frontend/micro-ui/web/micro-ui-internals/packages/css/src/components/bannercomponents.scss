@@ -153,5 +153,10 @@
     @apply flex justify-center items-center;
     margin-bottom: 24px;
   }
+  @media screen and (max-width: 768px) {
+    .leftdiv{
+      display: none;
+        }
+  }
  
 }

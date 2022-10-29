@@ -58,10 +58,7 @@ export const StoreService = {
     const { MdmsRes } = await MdmsService.init(stateCode);
     const stateInfo = MdmsRes["common-masters"].StateInfo[0];
     const districts = MdmsRes["common-masters"].District;
-<<<<<<< HEAD
     console.log(districts);
-=======
->>>>>>> 98956340d46c8cd43ff9bc1be576479d43931349
     const localities = {};
     const revenue_localities = {};
     const initData = {

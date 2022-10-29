@@ -52,10 +52,6 @@ const initRequestBody = (tenantId) => ({
       {
         moduleName: "common-masters",
         masterDetails: [{ name: "Department" }, { name: "Designation" }, { name: "StateInfo" }, { name: "wfSlaConfig" },{ name: "District" }],
-<<<<<<< HEAD
-      
-=======
->>>>>>> 98956340d46c8cd43ff9bc1be576479d43931349
       },
       {
         moduleName: "tenant",
