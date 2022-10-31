@@ -158,8 +158,10 @@ public class CalculationService {
         EstimatesAndSlabs estimatesAndSlabs = new EstimatesAndSlabs();
         BillingSlabSearchCriteria searchCriteria = new BillingSlabSearchCriteria();
         searchCriteria.setTenantId(license.getTenantId());
-        searchCriteria.setStructureType(license.getTradeLicenseDetail().getStructureType());
-        searchCriteria.setLicenseType(license.getLicenseType().toString());
+        // searchCriteria.setStructureType(license.getTradeLicenseDetail().getStructureType());
+        // searchCriteria.setLicenseType(license.getLicenseType().toString());
+        searchCriteria.setEnterpriseType(license.getTradeLicenseDetail().getEnterpriseType().toString()); // Added for
+                                                                                                          // EnterpriseType
 
         Map calculationTypeMap = mdmsService.getCalculationType(requestInfo, license, mdmsData);
         String tradeUnitCalculationType = (String) calculationTypeMap
@@ -174,13 +176,16 @@ public class CalculationService {
         estimatesAndSlabs.setTradeTypeFeeAndBillingSlabIds(tradeTypeFeeAndBillingSlabIds);
         BigDecimal accessoryFee = new BigDecimal(0);
 
-        if (!CollectionUtils.isEmpty(license.getTradeLicenseDetail().getAccessories())) {
-            FeeAndBillingSlabIds accessoryFeeAndBillingSlabIds = getAccessoryFeeAndBillingSlabIds(license,
-                    CalculationType
-                            .fromValue(accessoryCalculationType));
-            accessoryFee = accessoryFeeAndBillingSlabIds.getFee();
-            estimatesAndSlabs.setAccessoryFeeAndBillingSlabIds(accessoryFeeAndBillingSlabIds);
-        }
+        // if
+        // (!CollectionUtils.isEmpty(license.getTradeLicenseDetail().getAccessories()))
+        // {
+        // FeeAndBillingSlabIds accessoryFeeAndBillingSlabIds =
+        // getAccessoryFeeAndBillingSlabIds(license,
+        // CalculationType
+        // .fromValue(accessoryCalculationType));
+        // accessoryFee = accessoryFeeAndBillingSlabIds.getFee();
+        // estimatesAndSlabs.setAccessoryFeeAndBillingSlabIds(accessoryFeeAndBillingSlabIds);
+        // }
 
         TaxHeadEstimate estimate = new TaxHeadEstimate();
         List<TaxHeadEstimate> estimateList = new ArrayList<>();
@@ -255,14 +260,14 @@ public class CalculationService {
                 List<Object> preparedStmtList = new ArrayList<>();
                 BillingSlabSearchCriteria searchCriteria = new BillingSlabSearchCriteria();
                 searchCriteria.setTenantId(license.getTenantId());
-                searchCriteria.setStructureType(license.getTradeLicenseDetail().getStructureType());
-                searchCriteria.setApplicationType(license.getApplicationType().toString());
-                searchCriteria.setLicenseType(license.getLicenseType().toString());
-                searchCriteria.setTradeType(tradeUnit.getTradeType());
-                if (tradeUnit.getUomValue() != null) {
-                    searchCriteria.setUomValue(Double.parseDouble(tradeUnit.getUomValue()));
-                    searchCriteria.setUom(tradeUnit.getUom());
-                }
+                // searchCriteria.setStructureType(license.getTradeLicenseDetail().getStructureType());
+                // searchCriteria.setApplicationType(license.getApplicationType().toString());
+                // searchCriteria.setLicenseType(license.getLicenseType().toString());
+                // searchCriteria.setTradeType(tradeUnit.getTradeType());
+                // if (tradeUnit.getUomValue() != null) {
+                // searchCriteria.setUomValue(Double.parseDouble(tradeUnit.getUomValue()));
+                // searchCriteria.setUom(tradeUnit.getUom());
+                // }
                 // Call the Search
                 String query = queryBuilder.getSearchQuery(searchCriteria, preparedStmtList);
                 log.info("query " + query);

@@ -37,75 +37,26 @@ public class BillingslabQueryBuilder {
 	public void addWhereClause(StringBuilder queryBuilder, BillingSlabSearchCriteria billingSlabSearcCriteria,
 			List<Object> preparedStmtList) {
 		queryBuilder.append(" WHERE tenantid = ?");
-		preparedStmtList.add(billingSlabSearcCriteria.getTenantId());
+		preparedStmtList.add(billingSlabSearcCriteria.getTenantId().split("\\.")[0]);
+		System.out.println("TenantID:" + billingSlabSearcCriteria.getTenantId().split("\\.")[0]);
 		List<String> ids = billingSlabSearcCriteria.getIds();
-
 		if (!CollectionUtils.isEmpty(ids)) {
 			queryBuilder.append(" AND id IN ( ");
 			setValuesForList(queryBuilder, preparedStmtList, ids);
 			queryBuilder.append(")");
 		}
-
-		if (!StringUtils.isEmpty(billingSlabSearcCriteria.getAccessoryCategory())) {
-			queryBuilder.append(" AND accessorycategory = ?");
-			preparedStmtList.add(billingSlabSearcCriteria.getAccessoryCategory());
-		}
-
 		if (!StringUtils.isEmpty(billingSlabSearcCriteria.getLicenseType())) {
-			queryBuilder.append(" AND (licensetype = ? OR licensetype = 'ALL')");
-			preparedStmtList.add(billingSlabSearcCriteria.getLicenseType());
+			queryBuilder.append(" AND licensetype = 'ALL'");
 		}
-
 		if (!StringUtils.isEmpty(billingSlabSearcCriteria.getApplicationType())) {
-			queryBuilder.append(" AND applicationtype = ? ");
-			preparedStmtList.add(billingSlabSearcCriteria.getApplicationType());
+			queryBuilder.append(" AND applicationtype = 'TL' ");
 		}
-
 		if (!StringUtils.isEmpty(billingSlabSearcCriteria.getStructureType())) {
-			queryBuilder.append(" AND (structuretype = ? OR structuretype = 'ALL')");
-			preparedStmtList.add(billingSlabSearcCriteria.getStructureType());
+			queryBuilder.append(" AND  structuretype = 'NA'");
 		}
-
 		if (!StringUtils.isEmpty(billingSlabSearcCriteria.getTradeType())) {
-			queryBuilder.append(" AND tradetype = ?");
-			preparedStmtList.add(billingSlabSearcCriteria.getTradeType());
+			queryBuilder.append(" AND tradetype = 'ALL'");
 		}
-
-		if (!StringUtils.isEmpty(billingSlabSearcCriteria.getType())) {
-			queryBuilder.append(" AND type = ?");
-			preparedStmtList.add(billingSlabSearcCriteria.getType());
-		}
-
-		if (!StringUtils.isEmpty(billingSlabSearcCriteria.getUom())) {
-			queryBuilder.append(" AND uom = ?");
-			preparedStmtList.add(billingSlabSearcCriteria.getUom());
-		}
-
-		if (null != billingSlabSearcCriteria.getFrom()) {
-			queryBuilder.append(" AND fromUom <= ?");
-			preparedStmtList.add(billingSlabSearcCriteria.getFrom());
-		}
-
-		if (null != billingSlabSearcCriteria.getTo()) {
-			queryBuilder.append(" AND toUom >= ?");
-			preparedStmtList.add(billingSlabSearcCriteria.getTo());
-		}
-
-		if (null != billingSlabSearcCriteria.getUomValue()) {
-			queryBuilder.append(" AND fromUom <= ?");
-			preparedStmtList.add(billingSlabSearcCriteria.getUomValue());
-		}
-
-		if (null != billingSlabSearcCriteria.getUomValue()) {
-			queryBuilder.append(" AND toUom > ?");
-			preparedStmtList.add(billingSlabSearcCriteria.getUomValue());
-		}
-
-		if (null != billingSlabSearcCriteria.getApplicationType()) {
-			queryBuilder.append(" AND (applicationtype =? OR licensetype = 'ALL')");
-			preparedStmtList.add(billingSlabSearcCriteria.getApplicationType());
-		}
-
 		if (null != billingSlabSearcCriteria.getEnterpriseType()) {
 			queryBuilder.append(" AND (enterprisetype =? )");
 			preparedStmtList.add(billingSlabSearcCriteria.getEnterpriseType());
