@@ -353,8 +353,8 @@ export const convertToTrade = (data = {}) => {
               wardNo: data?.TradeDetails?.setPlaceofActivity.code =="BUILDING" ? data.address.WardNo.wardno:null,
               doorNo: data?.TradeDetails?.setPlaceofActivity.code =="BUILDING" ? data.address.DoorNoBuild.DoorNoBuild:null,
               doorNoSub: data?.TradeDetails?.setPlaceofActivity.code =="BUILDING" ? data.address.DoorSubBuild.DoorSubBuild:null,
-              vehicleNo: data?.TradeDetails?.setPlaceofActivity.code =="VechicleNo" ? data.address.VechicleNo.VechicleNo:null,
-              vesselNo: data?.TradeDetails?.setPlaceofActivity.code =="Water" ? data.address.WaterDet.WaterDet:null,
+              vehicleNo: data?.TradeDetails?.setPlaceofActivity.code =="VEHICLE" ? data.address.VechicleNo.VechicleNo:null,
+              vesselNo: data?.TradeDetails?.setPlaceofActivity.code =="WATER" ? data.address.WaterDet.WaterDet:null,
             }
           ],
           businessSector: data?.TradeDetails?.setSector.code, 
