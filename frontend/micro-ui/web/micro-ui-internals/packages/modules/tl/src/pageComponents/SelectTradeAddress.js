@@ -1,6 +1,6 @@
 import React, { useState,useEffect } from "react";
-import { CardLabel, TypeSelectCard,Dropdown,TextInput } from "@egovernments/digit-ui-react-components";
-import { FormStep, RadioOrSelect, RadioButtons } from "@egovernments/digit-ui-react-components";
+import { CardLabel, Dropdown } from "@egovernments/digit-ui-react-components";
+import { FormStep } from "@egovernments/digit-ui-react-components";
 import Timeline from "../components/TLTimeline";
 
 const SelectTradeAddress = ({ t, config, onSelect, userType, formData }) => {
@@ -9,8 +9,8 @@ const SelectTradeAddress = ({ t, config, onSelect, userType, formData }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();
   const { data: boundaryList = {}, isLoad } = Digit.Hooks.tl.useTradeLicenseMDMS("kl.cochin", "cochin/egov-location", "boundary-data");
-  const [Zonal, setZonal] = useState(formData.TradeDetails?.Zonal);
-  const [WardNo, setWardNo] = useState(formData.TradeDetails?.WardNo);
+  const [Zonal, setZonal] = useState(() => formData?.address?.Zonal || {});
+  const [WardNo, setWardNo] = useState(() => formData?.address?.WardNo || {});
   const [wards, setFilterWard] = useState(0);
   const [isInitialRender, setIsInitialRender] = useState(true);
   const isEdit = window.location.href.includes("/edit-application/") || window.location.href.includes("renew-trade");
@@ -24,7 +24,6 @@ const SelectTradeAddress = ({ t, config, onSelect, userType, formData }) => {
   });
   function setSelectZonalOffice(e) {
     setIsInitialRender(true);
-    // console.log(e);
     setZonal(e);
     setWardNo(null);
     setFilterWard(null);
@@ -32,13 +31,11 @@ const SelectTradeAddress = ({ t, config, onSelect, userType, formData }) => {
   function setSelectWard(e) {
     setWardNo(e);
   }
-  React.useEffect(() => {
-
+  useEffect(() => {
+    
     if (isInitialRender) {
-      console.log(isInitialRender);
       if(Zonal){
         setIsInitialRender(false);
-        console.log(Zonal.children); 
         setFilterWard(Zonal.children)
       }
     }
@@ -47,9 +44,10 @@ const SelectTradeAddress = ({ t, config, onSelect, userType, formData }) => {
  
   function goNext() {
     sessionStorage.setItem("Zonal", Zonal);
-    onSelect(config.key, { Zonal });
     sessionStorage.setItem("WardNo", WardNo);
-    onSelect(config.key, { WardNo });
+    onSelect(config.key, { Zonal,WardNo });
+    // onSelect(config.key, { Zonal });
+
   }
   return (
     <React.Fragment>

@@ -8,28 +8,53 @@ const SelectBuilding = ({ t, config, onSelect, userType, formData }) => {
   const onSkip = () => onSelect();
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();
-  const [BlockNo, setBlockno] = useState(formData.TradeDetails?.BlockNo);
-  const [SurveyNo, setSurveyNo] = useState(formData.TradeDetails?.SurveyNo);
-  const [SubDivNo, setSubDivNo] = useState(formData.TradeDetails?.SubDivNo);
+  const { data: boundaryList = {}, isLoad } = Digit.Hooks.tl.useTradeLicenseMDMS("kl.cochin", "cochin/egov-location", "boundary-data");
+  const [Zonal, setZonal] = useState(() => formData?.address?.Zonal || {});
+  const [WardNo, setWardNo] = useState(() => formData?.address?.WardNo || {});
+  const [DoorNoBuild, setDoorNoBuild] = useState(formData.TradeDetails?.DoorNoBuild);
+  const [DoorSubBuild, setDoorSubBuild] = useState(formData.TradeDetails?.DoorSubBuild);
+  const [wards, setFilterWard] = useState(0);
+  const [isInitialRender, setIsInitialRender] = useState(true);
   const isEdit = window.location.href.includes("/edit-application/") || window.location.href.includes("renew-trade");
-  let cmbPlace = [];
-  function setSelectBlockNo(e) {
-    setBlockno(e.target.value);
+  let cmbZonal = [];
+  let cmbWard = [];
+  let code =null;
+  boundaryList &&
+  boundaryList["egov-location"] &&
+  boundaryList["egov-location"].TenantBoundary.map((ob) => {    
+    cmbZonal.push(ob.boundary.children);
+  });
+  function setSelectZonalOffice(e) {
+    setIsInitialRender(true);
+    setZonal(e);
+    setWardNo(null);
+    setFilterWard(null);
   }
-  function setSelectSurveyNo(e) {
-    setSurveyNo(e.target.value);
+  function setSelectWard(e) {
+    setWardNo(e);
   }
-  function setSelectSubDivNo(e) {
-    setSubDivNo(e.target.value);
+  function setSelectDoorNoBuild(e) {
+    setDoorNoBuild(e.target.value);
   }
+  function setSelectDoorSubBuild(e) {
+    setDoorSubBuild(e.target.value);
+  }
+  useEffect(() => {
+    
+    if (isInitialRender) {
+      if(Zonal){
+        setIsInitialRender(false);
+        setFilterWard(Zonal.children)
+      }
+    }
+  }, [wards,isInitialRender]);
  
   function goNext() {
-    sessionStorage.setItem("BlockNo", BlockNo);
-    onSelect(config.key, { BlockNo });
-    sessionStorage.setItem("SurveyNo", SurveyNo);
-    onSelect(config.key, { SurveyNo });
-    sessionStorage.setItem("SubDivNo", SubDivNo);
-    onSelect(config.key, { SubDivNo });
+    sessionStorage.setItem("Zonal", Zonal);
+    sessionStorage.setItem("WardNo", WardNo);
+    sessionStorage.setItem("DoorNoBuild", DoorNoBuild);
+    sessionStorage.setItem("DoorSubBuild", DoorSubBuild);
+    onSelect(config.key, { Zonal,WardNo,DoorNoBuild,DoorSubBuild });
   }
   return (
     <React.Fragment>
@@ -39,21 +64,21 @@ const SelectBuilding = ({ t, config, onSelect, userType, formData }) => {
       <CardLabel>Zonal Office</CardLabel>
       <Dropdown
         t={t}
-        optionKey="BlockNo"
+        optionKey="name"
         isMandatory={config.isMandatory}
-        option={cmbPlace}
-        selected={BlockNo}
-        select={setSelectBlockNo}
+        option={cmbZonal[0]}
+        selected={setZonal}
+        select={setSelectZonalOffice}
         disabled={isEdit}
       />
       <CardLabel>Ward No</CardLabel>
       <Dropdown
         t={t}
-        optionKey="BlockNo"
+        optionKey="name"
         isMandatory={config.isMandatory}
-        option={cmbPlace}
-        selected={BlockNo}
-        select={setSelectBlockNo}
+        option={wards}
+        selected={setWardNo}
+        select={setSelectWard}
         disabled={isEdit}
       />
       <CardLabel>Door No</CardLabel>
@@ -62,9 +87,9 @@ const SelectBuilding = ({ t, config, onSelect, userType, formData }) => {
           isMandatory={false}
           type={"text"}
           optionKey="i18nKey"
-          name="BlockNo"
-          value={BlockNo}
-          onChange={setSelectBlockNo}
+          name="DoorNoBuild"
+          value={DoorNoBuild}
+          onChange={setSelectDoorNoBuild}
           disable={isEdit}
           {...(validation = { pattern: "^[a-zA-Z-.`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_TRADE_NAME") })}
         />
@@ -74,9 +99,9 @@ const SelectBuilding = ({ t, config, onSelect, userType, formData }) => {
             isMandatory={false}
             type={"text"}
             optionKey="i18nKey"
-            name="SurveyNo"
-            value={SurveyNo}
-            onChange={setSelectSurveyNo}
+            name="DoorSubBuild"
+            value={DoorSubBuild}
+            onChange={setSelectDoorSubBuild}
             disable={isEdit}
             {...(validation = { pattern: "^[a-zA-Z-.`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_TRADE_NAME") })}
             />

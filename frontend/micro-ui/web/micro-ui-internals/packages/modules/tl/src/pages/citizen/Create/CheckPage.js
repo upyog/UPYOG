@@ -73,15 +73,29 @@ const CheckPage = ({ onSubmit, value }) => {
             actionButton={<ActionButton jumpTo={`${routeLink}/TradeName`} />}
           />
           <Row
-            label={t("TL_STRUCTURE_TYPE")}
-            text={t(`TL_${TradeDetails?.StructureType.code}`)}
+            label="Place Of Activity"
+            // {t("TL_STRUCTURE_TYPE")}
+            text={t(`TL_${TradeDetails?.setPlaceofActivity.code}`)}
             actionButton={<ActionButton jumpTo={`${routeLink}/structure-type`} />}
           />
           <Row
+            label="Nature Of Structure"
+            // {t("TL_STRUCTURE_TYPE")}
+            text={t(`TL_${TradeDetails?.StructureType.code}`)}
+            actionButton={<ActionButton jumpTo={`${routeLink}/structure-type`} />}
+          />          
+          <Row
+            label="Block No/Sub Division No/SurveyNo"
+            // {t("TL_STRUCTURE_SUB_TYPE")}
+            text={t(TradeDetails?.BlockNo, + "/" , + TradeDetails?.SubDivNo, + "/", + TradeDetails?.SurveyNo)}
+            actionButton={<ActionButton jumpTo={`${routeLink}/land-type`} />}
+          />
+                    
+          {/* <Row
             label={t("TL_STRUCTURE_SUB_TYPE")}
             text={t(TradeDetails?.StructureType.code !== "IMMOVABLE" ? TradeDetails?.VehicleType?.i18nKey : TradeDetails?.BuildingType?.i18nKey)}
             actionButton={<ActionButton jumpTo={TradeDetails?.VehicleType ? `${routeLink}/vehicle-type` : `${routeLink}/Building-type`} />}
-          />
+          /> */}
           <Row
             label={t("TL_NEW_TRADE_DETAILS_TRADE_COMM_DATE_LABEL")}
             text={t(getdate(TradeDetails?.CommencementDate))}
@@ -121,7 +135,7 @@ const CheckPage = ({ onSubmit, value }) => {
               />
             </div>
           ))}
-          {TradeDetails?.accessories &&
+          {/* {TradeDetails?.accessories &&
             TradeDetails?.accessories.map((acc, index) => (
               <div key={index}>
                 <CardSubHeader>
@@ -150,29 +164,29 @@ const CheckPage = ({ onSubmit, value }) => {
                   actionButton={<ActionButton jumpTo={`${routeLink}/accessories-details`} />}
                 />
               </div>
-            ))}
+            ))} */}
           <CardSubHeader>{t("TL_NEW_TRADE_DETAILS_HEADER_TRADE_LOC_DETAILS")}</CardSubHeader>
-          {cpt && cpt.details && cpt.details.propertyId ? (
+          {TradeDetails && TradeDetails.details && TradeDetails.details.propertyId ? (
             <React.Fragment>
               <Row
                 label={t("TL_PROPERTY_ID")}
-                text={`${cpt.details.propertyId?.trim()}`}
-                actionButton={<ActionButton jumpTo={`${routeLink}/know-your-property`} />}
+                text={`${TradeDetails.details.propertyId?.trim()}`}
+                // actionButton={<ActionButton jumpTo={`${routeLink}/know-your-property`} />}
               />
               <Row
                 label={t("TL_CHECK_ADDRESS")}
-                text={`${cpt.details?.address?.doorNo?.trim() ? `${cpt.details?.address?.doorNo?.trim()}, ` : ""} ${
-                  cpt.details?.address?.street?.trim() ? `${cpt.details?.address?.street?.trim()}, ` : ""
-                } ${cpt.details?.address?.buildingName?.trim() ? `${cpt.details?.address?.buildingName?.trim()}, ` : ""}
-              ${t(cpt.details?.address?.locality?.name)}, ${t(cpt.details?.address?.city)} ${
-                  cpt.details?.address?.pincode?.trim() ? `,${cpt.details?.address?.pincode?.trim()}` : ""
+                text={`${TradeDetails.details?.address?.doorNo?.trim() ? `${TradeDetails.details?.address?.doorNo?.trim()}, ` : ""} ${
+                  TradeDetails.details?.address?.street?.trim() ? `${TradeDetails.details?.address?.street?.trim()}, ` : ""
+                } ${TradeDetails.details?.address?.buildingName?.trim() ? `${TradeDetails.details?.address?.buildingName?.trim()}, ` : ""}
+              ${t(TradeDetails.details?.address?.Zonal?.name)}, ${t(TradeDetails.details?.address?.WardNo.children.code)} ${
+                TradeDetails.details?.address?.pincode?.trim() ? `,${TradeDetails.details?.address?.pincode?.trim()}` : ""
                 }`}
                 actionButton={
-                  cpt && cpt.details && cpt.details.propertyId ? (
-                    <ActionButton jumpTo={`${routeLink}/property-details`} />
-                  ) : (
+                  // cpt && cpt.details && cpt.details.propertyId ? (
+                  //   <ActionButton jumpTo={`${routeLink}/property-details`} />
+                  // ) : (
                     <ActionButton jumpTo={`${routeLink}/map`} />
-                  )
+                  // )
                 }
               />
             </React.Fragment>
@@ -181,10 +195,11 @@ const CheckPage = ({ onSubmit, value }) => {
               label={t("TL_CHECK_ADDRESS")}
               text={`${address?.doorNo?.trim() ? `${address?.doorNo?.trim()}, ` : ""} ${
                 address?.street?.trim() ? `${address?.street?.trim()}, ` : ""
-              }${t(address?.locality?.i18nkey)}, ${t(address?.city.code)} ${address?.pincode?.trim() ? `,${address?.pincode?.trim()}` : ""}`}
-              actionButton={<ActionButton jumpTo={`${routeLink}/map`} />}
+              }${t(address?.Zonal?.name)},${t(address?.WardNo.name)}  ${address?.pincode?.trim() ? `,${address?.pincode?.trim()}` : ""}`}
+              actionButton={<ActionButton jumpTo={`${routeLink}/tladdress`} />}
             />
           )}
+          {/* ${t(address?.city.code)} */}
           <CardSubHeader>{t("TL_NEW_OWNER_DETAILS_HEADER")}</CardSubHeader>
           {owners.owners &&
             owners.owners.map((owner, index) => (

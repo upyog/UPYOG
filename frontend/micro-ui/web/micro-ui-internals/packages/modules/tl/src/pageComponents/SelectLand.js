@@ -25,11 +25,11 @@ const SelectLand = ({ t, config, onSelect, userType, formData }) => {
  
   function goNext() {
     sessionStorage.setItem("BlockNo", BlockNo);
-    onSelect(config.key, { BlockNo });
     sessionStorage.setItem("SurveyNo", SurveyNo);
-    onSelect(config.key, { SurveyNo });
-    sessionStorage.setItem("SubDivNo", SubDivNo);
-    onSelect(config.key, { SubDivNo });
+    sessionStorage.setItem("SubDivNo", SubDivNo);   
+    onSelect(config.key, { BlockNo,SurveyNo,SubDivNo });   
+    // onSelect(config.key, { BlockNo });       
+    // onSelect(config.key, { SurveyNo });    
   }
   return (
     <React.Fragment>

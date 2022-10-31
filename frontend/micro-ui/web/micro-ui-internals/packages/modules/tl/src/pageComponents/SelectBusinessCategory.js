@@ -7,8 +7,8 @@ const SelectBusinessCategory = ({ t, config, onSelect, userType, formData, }) =>
   let validation = {};
   const stateId = Digit.ULBService.getStateId();
   const { data: sector = {}, isLoad } = Digit.Hooks.tl.useTradeLicenseMDMS(stateId, "TradeLicense", "EnterpriseType");
-  const [setSector, setSelectedSector] = useState(formData?.TradeDetails?.setPlaceofActivity);
-  const [CapitalAmount, setCapitalAmount] = useState(formData.TradeDetails?.BlockNo);
+  const [setSector, setSelectedSector] = useState(formData?.TradeDetails?.setSector);
+  const [CapitalAmount, setCapitalAmount] = useState(formData.TradeDetails?.CapitalAmount);
   const [isInitialRender, setIsInitialRender] = useState(true);
   let cmbSector = [];
   let cmbSectorFileterData = [];
@@ -56,14 +56,16 @@ const SelectBusinessCategory = ({ t, config, onSelect, userType, formData, }) =>
 //     }
 //   }, [isInitialRender]);
  
-  function goNext() {
-   
+  function goNext() {    
+    let accessories =[];
+    let details =[];
+    details.propertyId ="PG-PT-2022-09-14-006185";
+    sessionStorage.setItem("details", details);
+    sessionStorage.setItem("accessories", accessories);
     sessionStorage.setItem("setSector", setSector.sectorName);
-    onSelect(config.key, { setSector });
-    sessionStorage.setItem("CapitalAmount", CapitalAmount);
-    onSelect(config.key, { CapitalAmount });
-    // onSelect(config.key, { routeElement });
-    
+    sessionStorage.setItem("CapitalAmount", CapitalAmount);   
+    onSelect(config.key, { accessories,setSector,CapitalAmount,details });  
+     
   }
   return (
     <React.Fragment>

@@ -84,6 +84,8 @@ export const ULBService = {
   getCitizenCurrentTenant: (selectedCity=false) => {
     const homeCity=Digit.SessionStorage.get("CITIZEN.COMMON.HOME.CITY")?.code;
     if(selectedCity){
+      console.log("homeCity"+homeCity);
+      
       return homeCity;
     }
     return homeCity|| Digit.UserService.getUser()?.info?.permanentCity || ULBService.getStateId();
