@@ -28,7 +28,7 @@ public class ApplicantPersonalQueryBuilder extends BaseQueryBuilder {
 
         addFilters("ap.id", criteria.getIds(), query, preparedStmtValues);
         addFilters("sd.filecode", criteria.getFileCodes(), query, preparedStmtValues);
-log.info("query  "+query);
+        log.info("query  " + query);
         return query.toString();
     }
 }

@@ -25,19 +25,19 @@ import lombok.Setter;
 @NoArgsConstructor
 @Builder
 public class ApplicantPersonalRequest {
-	@JsonProperty("RequestInfo")
-	private RequestInfo requestInfo;
+    @JsonProperty("RequestInfo")
+    private RequestInfo requestInfo;
 
-	@JsonProperty("ApplicantPersonals")
-	@Valid
-	private List<ApplicantPersonal> applicantPersonals;
+    @JsonProperty("ApplicantPersonals")
+    @Valid
+    private List<ApplicantPersonal> applicantPersonals;
 
-	public ApplicantPersonalRequest addApplicantPersonal(ApplicantPersonal applicantPersonal) {
-		if (applicantPersonals == null) {
-			applicantPersonals = new ArrayList<>();
-		}
-		applicantPersonals.add(applicantPersonal);
+    public ApplicantPersonalRequest addApplicantPersonal(ApplicantPersonal applicantPersonal) {
+        if (applicantPersonals == null) {
+            applicantPersonals = new ArrayList<>();
+        }
+        applicantPersonals.add(applicantPersonal);
 
-		return this;
-	}
+        return this;
+    }
 }

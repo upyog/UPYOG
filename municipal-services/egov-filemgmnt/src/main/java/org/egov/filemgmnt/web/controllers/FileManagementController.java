@@ -2,8 +2,6 @@ package org.egov.filemgmnt.web.controllers;
 
 import java.util.List;
 
-import javax.validation.Valid;
-
 import org.egov.filemgmnt.service.ApplicantPersonalService;
 import org.egov.filemgmnt.util.ResponseInfoFactory;
 import org.egov.filemgmnt.web.models.ApplicantPersonal;
@@ -25,13 +23,13 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RestController
 @RequestMapping("/v1")
-public class ApplicantPersonalsController implements ApplicantPersonalsResource {
+public class FileManagementController implements FileManagementResource {
 
     private final ResponseInfoFactory responseInfoFactory;
     private final ApplicantPersonalService personalService;
 
     @Autowired
-    ApplicantPersonalsController(ApplicantPersonalService personalService, ResponseInfoFactory responseInfoFactory) {
+    FileManagementController(ApplicantPersonalService personalService, ResponseInfoFactory responseInfoFactory) {
         this.personalService = personalService;
         this.responseInfoFactory = responseInfoFactory;
     }
@@ -66,9 +64,9 @@ public class ApplicantPersonalsController implements ApplicantPersonalsResource 
 
     @Override
     @PostMapping("/applicantpersonals/_search")
-    public ResponseEntity<ApplicantPersonalResponse> search(@Valid @RequestBody RequestInfoWrapper request,
-                                                            @Valid @ModelAttribute ApplicantPersonalSearchCriteria criteria) {
-log.info("creiteria  :" +criteria.getFileCodes());
+    public ResponseEntity<ApplicantPersonalResponse> search(@RequestBody RequestInfoWrapper request,
+                                                            @ModelAttribute ApplicantPersonalSearchCriteria criteria) {
+        log.info("creiteria  :" + criteria.getFileCodes());
         List<ApplicantPersonal> personals = personalService.search(criteria);
 
         ApplicantPersonalResponse response = ApplicantPersonalResponse.builder()

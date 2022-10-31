@@ -25,61 +25,72 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class MdmsUtil {
 
-	@Autowired
-	private RestTemplate restTemplate;
+    @Autowired
+    private RestTemplate restTemplate;
 
-	@Value("${egov.mdms.host}")
-	private String mdmsHost;
+    @Value("${egov.mdms.host}")
+    private String mdmsHost;
 
-	@Value("${egov.mdms.search.endpoint}")
-	private String mdmsUrl;
+    @Value("${egov.mdms.search.endpoint}")
+    private String mdmsUrl;
 
-	@Value("${egov.mdms.master.name}")
-	private String masterName;
+    @Value("${egov.mdms.master.name}")
+    private String masterName;
 
-	@Value("${egov.mdms.module.name}")
-	private String moduleName;
+    @Value("${egov.mdms.module.name}")
+    private String moduleName;
 
-	public Object mDMSCall(RequestInfo requestInfo, String tenantId) {
-		StringBuilder uri = new StringBuilder();
-		uri.append(mdmsHost).append(mdmsUrl);
-		Object result = null;
-		MdmsCriteriaReq mdmsCriteriaReq = getMDMSRequest(requestInfo, tenantId);
+    public Object mDMSCall(RequestInfo requestInfo, String tenantId) {
+        StringBuilder uri = new StringBuilder();
+        uri.append(mdmsHost)
+           .append(mdmsUrl);
+        Object result = null;
+        MdmsCriteriaReq mdmsCriteriaReq = getMDMSRequest(requestInfo, tenantId);
 
-		try {
-			result = restTemplate.postForObject(uri.toString(), mdmsCriteriaReq, Map.class);
+        try {
+            result = restTemplate.postForObject(uri.toString(), mdmsCriteriaReq, Map.class);
 
-		} catch (Exception e) {
-			log.error("Exception occurred while fetching category lists from mdms: ", e);
-		}
+        } catch (Exception e) {
+            log.error("Exception occurred while fetching category lists from mdms: ", e);
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	private MdmsCriteriaReq getMDMSRequest(RequestInfo requestInfo, String tenantId) {
+    private MdmsCriteriaReq getMDMSRequest(RequestInfo requestInfo, String tenantId) {
 
-		List<ModuleDetail> fmModuleRequest = getFMModuleRequest();
+        List<ModuleDetail> fmModuleRequest = getFMModuleRequest();
 
-		List<ModuleDetail> moduleDetails = new LinkedList<>();
+        List<ModuleDetail> moduleDetails = new LinkedList<>();
 
-		moduleDetails.addAll(fmModuleRequest);
+        moduleDetails.addAll(fmModuleRequest);
 
-		MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(moduleDetails).tenantId(tenantId).build();
+        MdmsCriteria mdmsCriteria = MdmsCriteria.builder()
+                                                .moduleDetails(moduleDetails)
+                                                .tenantId(tenantId)
+                                                .build();
 
-		return MdmsCriteriaReq.builder().mdmsCriteria(mdmsCriteria).requestInfo(requestInfo).build();
-	}
+        return MdmsCriteriaReq.builder()
+                              .mdmsCriteria(mdmsCriteria)
+                              .requestInfo(requestInfo)
+                              .build();
+    }
 
-	public List<ModuleDetail> getFMModuleRequest() {
+    public List<ModuleDetail> getFMModuleRequest() {
 
-		// master details for FM module
-		List<MasterDetail> fmMasterDetails = new ArrayList<>();
+        // master details for FM module
+        List<MasterDetail> fmMasterDetails = new ArrayList<>();
 
-		fmMasterDetails.add(MasterDetail.builder().name(FILE_SERVICE_SUBTYPE).build());
+        fmMasterDetails.add(MasterDetail.builder()
+                                        .name(FILE_SERVICE_SUBTYPE)
+                                        .build());
 
-		ModuleDetail fmModuleDtls = ModuleDetail.builder().masterDetails(fmMasterDetails)
-				.moduleName(FILEMANAGEMENT_MODULE).build();
+        ModuleDetail fmModuleDtls = ModuleDetail.builder()
+                                                .masterDetails(fmMasterDetails)
+                                                .moduleName(FILEMANAGEMENT_MODULE)
+                                                .build();
 
-		return Arrays.asList(fmModuleDtls);
+        return Arrays.asList(fmModuleDtls);
 
-	}
+    }
 }

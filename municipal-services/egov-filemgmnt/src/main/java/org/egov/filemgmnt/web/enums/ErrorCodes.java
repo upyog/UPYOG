@@ -20,7 +20,11 @@ public enum ErrorCodes {
     APPLICANT_SERVICE_INVALID_UPDATE("INVALID_UPDATE"),
 
     // Idgen Service
-    IDGEN_ERROR("IDGEN_ERROR");
+    IDGEN_ERROR("IDGEN_ERROR"),
+
+    // Mdms Service
+    MDMS_DATA_ERROR("MDMS_DATA_ERROR"),
+    MDMS_INVALID_TENANT_ID("INVALID_TENANTID");
 
     private String code;
 }

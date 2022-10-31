@@ -5,7 +5,6 @@ import java.util.UUID;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
-import org.egov.filemgmnt.util.CoreUtils;
 import org.egov.filemgmnt.web.models.ApplicantPersonal;
 import org.egov.filemgmnt.web.models.ApplicantPersonalRequest;
 import org.egov.filemgmnt.web.models.ApplicantPersonalSearchCriteria;
@@ -69,7 +68,7 @@ class ApplicantPersonalServiceTests {
                          objectMapper.writerWithDefaultPrettyPrinter()
                                      .writeValueAsString(personal));
             } catch (JsonProcessingException e) {
-                CoreUtils.ignore(e);
+                ;
             }
         });
     }

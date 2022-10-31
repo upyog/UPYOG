@@ -18,7 +18,6 @@ import javax.net.ssl.TrustManagerFactory;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
 import org.egov.filemgmnt.TestConfig;
-import org.egov.filemgmnt.util.CoreUtils;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,7 +62,7 @@ class ApplicantPersonalRequestTests {
                      objectMapper.writerWithDefaultPrettyPrinter()
                                  .writeValueAsString(request));
         } catch (JsonProcessingException e) {
-            CoreUtils.ignore(e);
+            ;
         }
     }
 
