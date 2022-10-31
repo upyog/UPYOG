@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 
 import lombok.extern.slf4j.Slf4j;
@@ -21,49 +23,72 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class MDMSValidator {
 
+	@Autowired
+	private ObjectMapper objectMapper;
+
 	private ServiceRequestRepository requestRepository;
 
 	private ServiceRequestRepository serviceRequestRepository;
 
-	@Autowired
-	public MDMSValidator(ServiceRequestRepository requestRepository,
-			ServiceRequestRepository serviceRequestRepository) {
-		this.requestRepository = requestRepository;
-
-		this.serviceRequestRepository = serviceRequestRepository;
-	}
+//	@Autowired
+//	public MDMSValidator(ServiceRequestRepository requestRepository,
+//			ServiceRequestRepository serviceRequestRepository) {
+//		this.requestRepository = requestRepository;
+//
+//		this.serviceRequestRepository = serviceRequestRepository;
+//	}
 
 	/**
 	 * method to validate the mdms data in the request
 	 *
 	 * @param licenseRequest
 	 */
+	@SuppressWarnings("unchecked")
 	public void validateMdmsData(ApplicantPersonalRequest request, Object mdmsData) {
 
 		Map<String, String> errorMap = new HashMap<>();
 
 		Map<String, List<String>> masterData = getAttributeValues(mdmsData);
+		log.info("*** MDMS MASTER DATA \n {}", formatJson(mdmsData));
 
 		String[] masterArray = { FMConstants.FILE_SERVICE_SUBTYPE };
-
 		validateIfMasterPresent(masterArray, masterData);
 
-		request.getApplicantPersonals().forEach(personal -> {
+		List<String> subTypes = masterData.get(FMConstants.FILE_SERVICE_SUBTYPE);
 
-			if (!masterData.get(FMConstants.FILE_SERVICE_SUBTYPE)
-					.contains(personal.getServiceDetails().getServiceCode())) {
-				errorMap.put("FileServiceSubtype",
-						"The Service SubType '" + personal.getServiceDetails().getServiceCode() + "' does not exists");
+		request.getApplicantPersonals().forEach(personal -> {
+			String serviceCode = personal.getServiceDetails().getServiceCode();
+			// log.info("service code : \n{}", serviceCode);
+
+			boolean codeFound = false;
+//			if (org.apache.commons.collections4.CollectionUtils.isNotEmpty(subTypes)
+//					&& subTypes.contains(serviceCode)) {
+//				codeFound = true;
+//			}
+
+			if (!CollectionUtils.isEmpty(subTypes)) {
+				for (Object subType : subTypes) {
+					Map<String, String> subTypeMap = (Map<String, String>) subType;
+					// log.info("subType Map: \n{}", subTypeMap.toString());
+
+					if (serviceCode.equals(subTypeMap.get("code"))) {
+						codeFound = true;
+					}
+				}
+//				log.info(" *** \n {}",
+//						subTypes.stream().filter(LinkedHashMap.class::isInstance).map(LinkedHashMap.class::cast));
+
 			}
-			boolean f = (masterData.get(FMConstants.FILE_SERVICE_SUBTYPE))
-					.contains(personal.getServiceDetails().getServiceCode());
-			log.info("f is    :" + f);
+
+			if (!codeFound) {
+				errorMap.put("FileServiceSubtype", "The Service SubType '" + serviceCode + "' does not exists");
+			}
+
 		});
-		log.info("errorMap   :" + errorMap);
-		log.info("service subtype   :" + masterData.get(FMConstants.FILE_SERVICE_SUBTYPE));
-		log.info("getServiceCode   :" + request.getApplicantPersonals().get(0).getServiceDetails().getServiceCode());
-		if (!CollectionUtils.isEmpty(errorMap))
+
+		if (!CollectionUtils.isEmpty(errorMap)) {
 			throw new CustomException(errorMap);
+		}
 	}
 
 	/**
@@ -85,6 +110,7 @@ public class MDMSValidator {
 		final Map<String, List<String>> mdmsResMap = new HashMap<>();
 		modulepaths.forEach(modulepath -> {
 			try {
+				log.info("JSONPATH MAP : \n{}", JsonPath.read(mdmsData, modulepath).toString());
 				mdmsResMap.putAll(JsonPath.read(mdmsData, modulepath));
 			} catch (Exception e) {
 				log.error("Error while fetvhing MDMS data", e);
@@ -111,5 +137,14 @@ public class MDMSValidator {
 		}
 		if (!errorMap.isEmpty())
 			throw new CustomException(errorMap);
+	}
+
+	private String formatJson(Object json) {
+		try {
+			return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(json);
+		} catch (JsonProcessingException e) {
+			;
+		}
+		return "";
 	}
 }
