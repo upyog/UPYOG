@@ -9,13 +9,21 @@ public class FMConstants {
 
     public static final String FILEMANAGEMENT_MODULE = "FileManagement";
 
-    public static final String FILEMANAGEMENT_MODULE_CODE = "TL";
+    public static final String FILEMANAGEMENT_MODULE_CODE = "FM";
+
+    // mdms master names
 
     public static final String COMMON_MASTERS_MODULE = "common-masters";
 
     // mdms master names
 
     public static final String FILE_SERVICE_SUBTYPE = "FileServiceSubtype";
+
+    // error constants
+
+    public static final String FILE_CATEGORY = "FileCategory";
+
+    public static final String FILE_ARISING_MODE = "FileArisingmode";
 
     // mdms path codes
 

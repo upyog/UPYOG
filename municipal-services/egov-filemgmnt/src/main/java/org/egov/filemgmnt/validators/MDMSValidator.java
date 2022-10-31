@@ -7,9 +7,8 @@ import java.util.Map;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.egov.filemgmnt.repository.ServiceRequestRepository;
 import org.egov.filemgmnt.util.FMConstants;
-import org.egov.filemgmnt.web.enums.ErrorCodes;
 import org.egov.filemgmnt.web.models.ApplicantPersonalRequest;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,46 +27,67 @@ public class MDMSValidator {
     @Autowired
     private ObjectMapper objectMapper;
 
+    private ServiceRequestRepository requestRepository;
+
+    private ServiceRequestRepository serviceRequestRepository;
+
+// @Autowired
+// public MDMSValidator(ServiceRequestRepository requestRepository,
+// ServiceRequestRepository serviceRequestRepository) {
+// this.requestRepository = requestRepository;
+//
+// this.serviceRequestRepository = serviceRequestRepository;
+// }
+
     /**
      * method to validate the mdms data in the request
      *
      * @param licenseRequest
      */
+    @SuppressWarnings("unchecked")
     public void validateMdmsData(ApplicantPersonalRequest request, Object mdmsData) {
 
+        Map<String, String> errorMap = new HashMap<>();
+
         Map<String, List<String>> masterData = getAttributeValues(mdmsData);
-        log.info("*** MDMS MASTER DATA:- \n{}", formatJson(masterData));
+        log.info("*** MDMS MASTER DATA \n {}", formatJson(mdmsData));
 
         String[] masterArray = { FMConstants.FILE_SERVICE_SUBTYPE };
         validateIfMasterPresent(masterArray, masterData);
 
-        Map<String, String> errorMap = new HashMap<>();
+        List<String> subTypes = masterData.get(FMConstants.FILE_SERVICE_SUBTYPE);
+
         request.getApplicantPersonals()
                .forEach(personal -> {
-                   List<String> subTypes = masterData.get(FMConstants.FILE_SERVICE_SUBTYPE);
-                   log.info("*** SUB TYPES:- \n{}", subTypes.toString());
-                   if (CollectionUtils.isNotEmpty(subTypes)) {
+                   String serviceCode = personal.getServiceDetails()
+                                                .getServiceCode();
+// log.info("service code : \n{}", serviceCode);
+
+                   boolean codeFound = false;
+// if (org.apache.commons.collections4.CollectionUtils.isNotEmpty(subTypes)
+// && subTypes.contains(serviceCode)) {
+// codeFound = true;
+// }
+
+                   if (!CollectionUtils.isEmpty(subTypes)) {
+                       for (Object subType : subTypes) {
+                           Map<String, String> subTypeMap = (Map<String, String>) subType;
+// log.info("subType Map: \n{}", subTypeMap.toString());
+
+                           if (serviceCode.equals(subTypeMap.get("code"))) {
+                               codeFound = true;
+                           }
+                       }
+// log.info(" *** \n {}",
+// subTypes.stream().filter(LinkedHashMap.class::isInstance).map(LinkedHashMap.class::cast));
 
                    }
 
-                   if (!masterData.get(FMConstants.FILE_SERVICE_SUBTYPE)
-                                  .contains(personal.getServiceDetails()
-                                                    .getServiceCode())) {
-                       errorMap.put("FileServiceSubtype",
-                                    "The Service SubType '" + personal.getServiceDetails()
-                                                                      .getServiceCode()
-                                            + "' does not exists");
+                   if (!codeFound) {
+                       errorMap.put("FileServiceSubtype", "The Service SubType '" + serviceCode + "' does not exists");
                    }
-                   boolean f = (masterData.get(FMConstants.FILE_SERVICE_SUBTYPE)).contains(personal.getServiceDetails()
-                                                                                                   .getServiceCode());
-                   log.info("f is    :" + f);
+
                });
-        log.info("errorMap          :" + errorMap);
-        log.info("service subtype   :" + masterData.get(FMConstants.FILE_SERVICE_SUBTYPE));
-        log.info("getServiceCode    :" + request.getApplicantPersonals()
-                                                .get(0)
-                                                .getServiceDetails()
-                                                .getServiceCode());
 
         if (MapUtils.isNotEmpty(errorMap)) {
             throw new CustomException(errorMap);
@@ -76,10 +96,13 @@ public class MDMSValidator {
 
     /**
      * Fetches all the values of particular attribute as map of field name to list
-     * takes all the masters from each module and adds them in to a single map note
-     * : if two masters from different modules have the same name then it will lead
-     * to overriding of the earlier one by the latest one added to the map
-     * 
+     *
+     * takes all the masters from each module and adds them in to a single map
+     *
+     * note : if two masters from different modules have the same name then it
+     *
+     * will lead to overriding of the earlier one by the latest one added to the map
+     *
      * @return Map of MasterData name to the list of code in the MasterData
      *
      */
@@ -90,10 +113,13 @@ public class MDMSValidator {
         final Map<String, List<String>> mdmsResMap = new HashMap<>();
         modulepaths.forEach(modulepath -> {
             try {
+                log.info("JSONPATH MAP : \n{}",
+                         JsonPath.read(mdmsData, modulepath)
+                                 .toString());
                 mdmsResMap.putAll(JsonPath.read(mdmsData, modulepath));
             } catch (Exception e) {
-                log.error("Error while fetching MDMS data", e);
-                throw new CustomException(ErrorCodes.MDMS_INVALID_TENANT_ID.getCode(),
+                log.error("Error while fetvhing MDMS data", e);
+                throw new CustomException(FMConstants.INVALID_TENANT_ID_MDMS_KEY,
                         FMConstants.INVALID_TENANT_ID_MDMS_MSG);
             }
         });
@@ -103,24 +129,19 @@ public class MDMSValidator {
 
     /**
      * Validates if MasterData is properly fetched for the given MasterData names
-     * 
+     *
      * @param masterNames
      * @param codes
      */
     private void validateIfMasterPresent(String[] masterNames, Map<String, List<String>> codes) {
-        final Map<String, String> errorMap = new HashMap<>();
-
-        Arrays.stream(masterNames)
-              .forEach(masterName -> {
-                  if (CollectionUtils.isEmpty(codes.get(masterName))) {
-                      errorMap.put(ErrorCodes.MDMS_DATA_ERROR.getCode(),
-                                   "Unable to fetch " + masterName + " codes from MDMS");
-                  }
-              });
-
-        if (MapUtils.isNotEmpty(errorMap)) {
-            throw new CustomException(errorMap);
+        Map<String, String> errorMap = new HashMap<>();
+        for (String masterName : masterNames) {
+            if (CollectionUtils.isEmpty(codes.get(masterName))) {
+                errorMap.put("MDMS DATA ERROR ", "Unable to fetch " + masterName + " codes from MDMS");
+            }
         }
+        if (!errorMap.isEmpty())
+            throw new CustomException(errorMap);
     }
 
     private String formatJson(Object json) {
@@ -130,6 +151,6 @@ public class MDMSValidator {
         } catch (JsonProcessingException e) {
             ;
         }
-        return StringUtils.EMPTY;
+        return "";
     }
 }
