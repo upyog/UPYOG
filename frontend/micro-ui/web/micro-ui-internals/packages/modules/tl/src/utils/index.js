@@ -292,6 +292,7 @@ export const gettradeupdateaccessories = (data) => {
 }
 
 export const convertToTrade = (data = {}) => {
+ 
   let Financialyear = sessionStorage.getItem("CurrentFinancialYear");
   const formdata = {
     Licenses: [
@@ -359,7 +360,7 @@ export const convertToTrade = (data = {}) => {
           ],
           businessSector: data?.TradeDetails?.setSector.code, 
           capitalInvestment: data?.TradeDetails?.CapitalAmount,
-          enterpriseType: "MANUFACTORING.MICRO"
+          enterpriseType: data?.TradeDetails?.enterpriseType
         },
         
         tradeName: data?.TradeDetails?.TradeName,

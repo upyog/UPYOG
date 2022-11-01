@@ -175,7 +175,7 @@ const CheckPage = ({ onSubmit, value }) => {
               />
               <Row
                 label={t("TL_CHECK_ADDRESS")}
-                text={`${TradeDetails.details?.address?.doorNo?.trim() ? `${TradeDetails.details?.address?.doorNo?.trim()}, ` : ""} ${
+                text={`${address?.doorNo?.trim() ? `${details?.address?.doorNo?.trim()}, ` : ""} ${
                   TradeDetails.details?.address?.street?.trim() ? `${TradeDetails.details?.address?.street?.trim()}, ` : ""
                 } ${TradeDetails.details?.address?.buildingName?.trim() ? `${TradeDetails.details?.address?.buildingName?.trim()}, ` : ""}
               ${t(TradeDetails.details?.address?.Zonal?.name)}, ${t(TradeDetails.details?.address?.WardNo.children.code)} ${

@@ -28,43 +28,52 @@ const SelectBusinessCategory = ({ t, config, onSelect, userType, formData, }) =>
        
   }
   function selectedsetCapitalAmount(e) {
-    setCapitalAmount(e.target.value);
-    // setIsInitialRender(true);
-    // if(setSector){
-    //     cmbSectorFileterData.push((cmbSector.filter( (cmbSector) => cmbSector.code.includes(setSector.code))));
-    //     console.log(cmbSectorFileterData);
-    //     cmbSectorFileterData[0].forEach(element => {
-    //         console.log('element',parseFloat(CapitalAmount).toString());
-    //         console.log('element',parseFloat(element.investmentTo).toString());
-    //         if(parseFloat(CapitalAmount).toString()<=parseFloat(element.investmentTo).toString()){
-    //             console.log(element.typeName);
-    //         }
-            
-    //     //    this.deductionAmountTemp=+element.amount ;
-    //     //    this.deductionAmountTotal=this.deductionAmountTotal+this.deductionAmountTemp;
-    //   });
-    // }
-    //    this.paymentorderForm.controls.pamount.setValue(this.paymentorderForm.controls.grossamount.value-this.deductionAmountTotal);
+    setCapitalAmount(e.target.value);    
   }
 
-//   useEffect(() => {
-//     if (isInitialRender) {
-//       if(setSector){
-//         setIsInitialRender(false);
-//         cmbSectorFileterData.push((cmbSector.filter( (cmbSector) => cmbSector.code.includes(setSector.code))));
-//       }
-//     }
-//   }, [isInitialRender]);
+  useEffect(() => {
+    if (isInitialRender) {
+      // if(setSector){
+      //   setIsInitialRender(false);
+      //   cmbSectorFileterData.push((cmbSector.filter( (cmbSector) => cmbSector.code.includes(setSector.code))));
+      //   console.log(cmbSectorFileterData);
+      //   if(setCapitalAmount){
+      //     cmbSectorFileterData[0].forEach(element => {
+      //       console.log('element',parseFloat(CapitalAmount).toString());
+      //       console.log('element',parseFloat(element.investmentTo).toString());
+      //       if(parseFloat(CapitalAmount).toString()<=parseFloat(element.investmentTo).toString()){
+      //           console.log(element.code);
+      //       }
+      //     });
+      //   }
+        
+      // }
+    }
+  }, [isInitialRender]);
  
-  function goNext() {    
+  function goNext() { 
     let accessories =[];
     let details =[];
+    let enterpriseType = null;
     details.propertyId ="PG-PT-2022-09-14-006185";
     sessionStorage.setItem("details", details);
     sessionStorage.setItem("accessories", accessories);
     sessionStorage.setItem("setSector", setSector.sectorName);
     sessionStorage.setItem("CapitalAmount", CapitalAmount);   
-    onSelect(config.key, { accessories,setSector,CapitalAmount,details });  
+    if(sessionStorage.getItem("CapitalAmount")){
+      cmbSectorFileterData.push((cmbSector.filter( (cmbSector) => cmbSector.code.includes(setSector.code))));
+      console.log(cmbSectorFileterData);      
+        cmbSectorFileterData[0].forEach(element => {
+          if(parseFloat(CapitalAmount) >= parseFloat(element.investmentFrom) && parseFloat(CapitalAmount) <= parseFloat(element.investmentTo)){
+              console.log(element.code);
+              enterpriseType = element.code;
+              
+          }
+        });
+          
+    } 
+    sessionStorage.setItem("enterpriseType", enterpriseType);    
+    onSelect(config.key, { accessories,setSector,CapitalAmount,details,enterpriseType });  
      
   }
   return (
@@ -92,6 +101,7 @@ const SelectBusinessCategory = ({ t, config, onSelect, userType, formData, }) =>
           name="CapitalAmount"
           value={CapitalAmount}
           onChange={selectedsetCapitalAmount}
+          // onBlur={() => selectedsetCapitalAmount()}
         //   disable={isEdit}
           {...(validation = { pattern: "^[0-9 ]*$", isRequired: true, type: "text", title: t("TL_INVALID_TRADE_NAME") })}
         />
