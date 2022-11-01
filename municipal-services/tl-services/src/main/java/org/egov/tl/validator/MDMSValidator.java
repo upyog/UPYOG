@@ -74,11 +74,10 @@ public class MDMSValidator {
                     // + license.getTradeLicenseDetail().getStructureType());
 
                     if (!masterData.get(TLConstants.STRUCTURE_PLACE_TYPE)
-                            .contains(license.getTradeLicenseDetail().getStructureType() + "." + license
+                            .contains(license
                                     .getTradeLicenseDetail().getStructurePlace().get(0).getStructurePlaceSubType()))
                         errorMap.put("INVALID STRUCTUREPLACETYPE", "The structurePlaceType '"
-                                + license.getTradeLicenseDetail().getStructureType() + "." + license
-                                        .getTradeLicenseDetail().getStructurePlace().get(0).getStructurePlaceSubType()
+                                + license.getTradeLicenseDetail().getStructurePlace().get(0).getStructurePlaceSubType()
                                 + "' does not exists");
 
                     license.getTradeLicenseDetail().getTradeUnits().forEach(unit -> {
