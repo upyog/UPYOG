@@ -265,7 +265,10 @@ export const newConfig = [
         key: "TradeDetails",
         withoutLabel: true,
         hideInEmployee: true,
-        nextStep:"land-type",
+        nextStep: "land-type",
+        // sessionStorage.getItem("routeElement"),
+        // sessionStorage.setItem("routeElement"
+        // "land-type",
         // nextStep: {
         //   TL_COMMON_LAND: "land-type",
         //   TL_COMMON_BUILDING: "building-det",
@@ -314,6 +317,23 @@ export const newConfig = [
         texts: {
           // headerCaption: "TL_STRUCTURE_TYPE",
           header: "Vechicle Details",
+          // cardText: "TL_STRUCTURE_TYPE_TEXT",
+          submitBarLabel: "CS_COMMON_NEXT",
+        },
+        key: "TradeDetails",
+        withoutLabel: true,
+        hideInEmployee: true,
+        nextStep: "commencement-date",
+        
+      },
+      {
+        type: "component",
+        route: "water-det",
+        isMandatory: true,
+        component: "SelectTLWater",
+        texts: {
+          // headerCaption: "TL_STRUCTURE_TYPE",
+          header: "Water Details",
           // cardText: "TL_STRUCTURE_TYPE_TEXT",
           submitBarLabel: "CS_COMMON_NEXT",
         },

@@ -339,10 +339,10 @@ export const convertToTrade = (data = {}) => {
           structureType: data?.TradeDetails?.setPlaceofActivity.code,
           subOwnerShipCategory: data?.owners.owners?.[0]?.subOwnerShipCategory?.code ? data?.owners.owners?.[0]?.subOwnerShipCategory?.code : data?.ownershipCategory?.code,
           tradeUnits: gettradeunits(data),
-          additionalDetail: {
-            propertyId: "PG-PT-2022-09-14-006185",
-            // !data?.cpt ? "" :data?.cpt?.details?.propertyId,
-          },
+          // additionalDetail: {
+          //   propertyId: "PG-PT-2022-09-14-006185",
+          //   // !data?.cpt ? "" :data?.cpt?.details?.propertyId,
+          // },
           structurePlace: [
             {
               structurePlaceSubType: data?.TradeDetails?.StructureType.code,

@@ -59,7 +59,7 @@ const SelectBuilding = ({ t, config, onSelect, userType, formData }) => {
   return (
     <React.Fragment>
     {window.location.href.includes("/citizen") ? <Timeline /> : null}
-    <FormStep t={t} config={config} onSelect={goNext} onSkip={onSkip} isDisabled={[!BlockNo,!SurveyNo,!SubDivNo]} >
+    <FormStep t={t} config={config} onSelect={goNext} onSkip={onSkip} isDisabled={[!Zonal,!WardNo,!DoorNoBuild,!DoorSubBuild]} >
   
       <CardLabel>Zonal Office</CardLabel>
       <Dropdown

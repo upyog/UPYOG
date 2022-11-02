@@ -44,11 +44,22 @@ const SelectStructureType = ({ t, config, onSelect, userType, formData }) => {
     // console.log(naturetypecmbvalue);    
     //  if(naturetypecmbvalue =="LAND"){      
     //     routeComponent = "land-type";
-    //     console.log(routeComponent);        
+    //     console.log(routeComponent);  
+    //     sessionStorage.setItem("routeElement", routeComponent);             
     //   } else if(naturetypecmbvalue =="BUIL"){
     //     routeComponent = "building-det";
     //     console.log(routeComponent);
-    //   }    
+    //     sessionStorage.setItem("routeElement", routeComponent);
+
+    //   } else if(naturetypecmbvalue =="VEHI"){
+    //     routeComponent = "vechicle-det";
+    //     console.log(routeComponent);
+    //     sessionStorage.setItem("routeElement", routeComponent);
+    //   } else if(naturetypecmbvalue =="WATE"){
+    //     routeComponent = "water-det";
+    //     console.log(routeComponent);
+    //     sessionStorage.setItem("routeElement", routeComponent);
+    //   }       
       // sessionStorage.removeItem("routeElement");
       // sessionStorage.setItem("routeElement", routeComponent);
       // onSelect(config.key, { routeElement });
@@ -63,19 +74,15 @@ const SelectStructureType = ({ t, config, onSelect, userType, formData }) => {
       if(setPlaceofActivity){
         setIsInitialRender(false);
         naturetype = setPlaceofActivity.code.substring(0, 4);    
-        setActivity(cmbStructure.filter( (cmbStructure) => cmbStructure.code.includes(naturetype)));
+        setActivity(cmbStructure.filter( (cmbStructure) => cmbStructure.maincode.includes(naturetype)));
       }
     }
   }, [activities,isInitialRender]);
  
   function goNext() {
-   
     sessionStorage.setItem("PlaceOfActivity", setPlaceofActivity.code);   
     sessionStorage.setItem("StructureType", StructureType.name);
     onSelect(config.key, { StructureType,setPlaceofActivity });
-    // onSelect(config.key, { setPlaceofActivity });
-    // onSelect(config.key, { routeElement });
-    
   }
   return (
     <React.Fragment>

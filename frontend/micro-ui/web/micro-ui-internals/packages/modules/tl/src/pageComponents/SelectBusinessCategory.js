@@ -31,32 +31,32 @@ const SelectBusinessCategory = ({ t, config, onSelect, userType, formData, }) =>
     setCapitalAmount(e.target.value);    
   }
 
-  useEffect(() => {
-    if (isInitialRender) {
-      // if(setSector){
-      //   setIsInitialRender(false);
-      //   cmbSectorFileterData.push((cmbSector.filter( (cmbSector) => cmbSector.code.includes(setSector.code))));
-      //   console.log(cmbSectorFileterData);
-      //   if(setCapitalAmount){
-      //     cmbSectorFileterData[0].forEach(element => {
-      //       console.log('element',parseFloat(CapitalAmount).toString());
-      //       console.log('element',parseFloat(element.investmentTo).toString());
-      //       if(parseFloat(CapitalAmount).toString()<=parseFloat(element.investmentTo).toString()){
-      //           console.log(element.code);
-      //       }
-      //     });
-      //   }
+  // useEffect(() => {
+  //   if (isInitialRender) {
+  //     // if(setSector){
+  //     //   setIsInitialRender(false);
+  //     //   cmbSectorFileterData.push((cmbSector.filter( (cmbSector) => cmbSector.code.includes(setSector.code))));
+  //     //   console.log(cmbSectorFileterData);
+  //     //   if(setCapitalAmount){
+  //     //     cmbSectorFileterData[0].forEach(element => {
+  //     //       console.log('element',parseFloat(CapitalAmount).toString());
+  //     //       console.log('element',parseFloat(element.investmentTo).toString());
+  //     //       if(parseFloat(CapitalAmount).toString()<=parseFloat(element.investmentTo).toString()){
+  //     //           console.log(element.code);
+  //     //       }
+  //     //     });
+  //     //   }
         
-      // }
-    }
-  }, [isInitialRender]);
+  //     // }
+  //   }
+  // }, [isInitialRender]);
  
   function goNext() { 
     let accessories =[];
     let details =[];
     let enterpriseType = null;
-    details.propertyId ="PG-PT-2022-09-14-006185";
-    sessionStorage.setItem("details", details);
+    // details.propertyId ="PG-PT-2022-09-14-006185";
+    sessionStorage.setItem("details", details.propertyId ="PG-PT-2022-09-14-006185");
     sessionStorage.setItem("accessories", accessories);
     sessionStorage.setItem("setSector", setSector.sectorName);
     sessionStorage.setItem("CapitalAmount", CapitalAmount);   

@@ -9,8 +9,8 @@ const SelectTradeAddress = ({ t, config, onSelect, userType, formData }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();
   const { data: boundaryList = {}, isLoad } = Digit.Hooks.tl.useTradeLicenseMDMS("kl.cochin", "cochin/egov-location", "boundary-data");
-  const [Zonal, setZonal] = useState(() => formData?.address?.Zonal || {});
-  const [WardNo, setWardNo] = useState(() => formData?.address?.WardNo || {});
+  const [Zonal, setZonal] = useState();
+  const [WardNo, setWardNo] = useState();
   const [wards, setFilterWard] = useState(0);
   const [isInitialRender, setIsInitialRender] = useState(true);
   const isEdit = window.location.href.includes("/edit-application/") || window.location.href.includes("renew-trade");
