@@ -9,17 +9,43 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Slf4j
 public class ApplicantPersonalSearchCriteria {
 
-    @JsonProperty("ids")
-    private List<String> ids;
+	@JsonProperty("tenantId")
+	private String tenantId;
 
-    @JsonProperty("fileCodes")
-    private List<String> fileCodes;
+	@JsonProperty("ids")
+	private List<String> ids;
+
+	@JsonProperty("fileCodes")
+	private List<String> fileCodes;
+
+	@JsonProperty("fromDate")
+	private Long fromDate = null;
+
+	@JsonProperty("toDate")
+	private Long toDate = null;
+
+	@JsonProperty("offset")
+	private Integer offset;
+
+	@JsonProperty("limit")
+	private Integer limit;
+
+	public boolean isEmpty() {
+		log.info("this.tenantId " + this.tenantId);
+		return (this.tenantId == null && this.fileCodes == null);
+	}
+
+	public boolean tenantIdOnly() {
+		return (this.tenantId != null);
+	}
 }

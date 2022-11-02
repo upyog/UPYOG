@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.egov.common.contract.request.RequestInfo;
 import org.egov.filemgmnt.config.FilemgmntConfiguration;
 import org.egov.filemgmnt.enrichment.ApplicantPersonalEnrichment;
 import org.egov.filemgmnt.kafka.Producer;
@@ -22,76 +23,76 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class ApplicantPersonalService {
 
-    private final Producer producer;
-    private final FilemgmntConfiguration filemgmntConfig;
-    private final ApplicantPersonalValidator validatorService;
-    private final ApplicantPersonalEnrichment enrichmentService;
-    private final ApplicantPersonalRepository repository;
-    private final MdmsUtil mutil;
+	private final Producer producer;
+	private final FilemgmntConfiguration filemgmntConfig;
+	private final ApplicantPersonalValidator validatorService;
+	private final ApplicantPersonalEnrichment enrichmentService;
+	private final ApplicantPersonalRepository repository;
+	private final MdmsUtil mutil;
 
-    @Autowired
-    ApplicantPersonalService(ApplicantPersonalValidator validatorService, ApplicantPersonalEnrichment enrichmentService,
-                             ApplicantPersonalRepository repository, Producer producer, MdmsUtil mutil,
-                             FilemgmntConfiguration filemgmntConfig) {
-        this.validatorService = validatorService;
-        this.enrichmentService = enrichmentService;
-        this.repository = repository;
-        this.producer = producer;
-        this.filemgmntConfig = filemgmntConfig;
-        this.mutil = mutil;
-    }
+	@Autowired
+	ApplicantPersonalService(ApplicantPersonalValidator validatorService, ApplicantPersonalEnrichment enrichmentService,
+			ApplicantPersonalRepository repository, Producer producer, MdmsUtil mutil,
+			FilemgmntConfiguration filemgmntConfig) {
+		this.validatorService = validatorService;
+		this.enrichmentService = enrichmentService;
+		this.repository = repository;
+		this.producer = producer;
+		this.filemgmntConfig = filemgmntConfig;
+		this.mutil = mutil;
 
-    public List<ApplicantPersonal> create(ApplicantPersonalRequest request) {
+	}
 
-        // validate mdms data
+	public List<ApplicantPersonal> create(ApplicantPersonalRequest request) {
 
-        Object mdmsData = mutil.mDMSCall(request.getRequestInfo(),
-                                         request.getApplicantPersonals()
-                                                .get(0)
-                                                .getTenantId());
+		// validate mdms data
 
-        // validate request
-        validatorService.validateCreate(request, mdmsData);
+		Object mdmsData = mutil.mDMSCall(request.getRequestInfo(),
+				request.getApplicantPersonals().get(0).getTenantId());
 
-        // enrich request
-        enrichmentService.enrichCreate(request);
+		// validate request
+		validatorService.validateCreate(request, mdmsData);
 
-        producer.push(filemgmntConfig.getSaveApplicantPersonalTopic(), request);
+		// enrich request
+		enrichmentService.enrichCreate(request);
 
-        return request.getApplicantPersonals();
+		producer.push(filemgmntConfig.getSaveApplicantPersonalTopic(), request);
 
-    }
+		return request.getApplicantPersonals();
 
-    public List<ApplicantPersonal> search(ApplicantPersonalSearchCriteria criteria) {
+	}
 
-        List<ApplicantPersonal> result = null;
+	public List<ApplicantPersonal> search(ApplicantPersonalSearchCriteria criteria, RequestInfo requestInfo) {
 
-        if (!CollectionUtils.isEmpty(criteria.getIds())) {
-            result = repository.getApplicantPersonals(criteria);
-        } else if (!CollectionUtils.isEmpty(criteria.getFileCodes())) {
-            result = repository.getApplicantPersonalsFromFilecode(criteria);
-        }
+		List<ApplicantPersonal> result = null;
 
-        return result;
-    }
+		validatorService.validateSearch(requestInfo, criteria);
+		if (!CollectionUtils.isEmpty(criteria.getIds())) {
+			result = repository.getApplicantPersonals(criteria);
+		} else if (!CollectionUtils.isEmpty(criteria.getFileCodes())) {
+			result = repository.getApplicantPersonalsFromFilecode(criteria);
+		} else if (criteria.getFromDate() != null) {
+			result = repository.getApplicantPersonalsFromFilecode(criteria);
+		}
 
-    public List<ApplicantPersonal> update(ApplicantPersonalRequest request) {
+		return result;
+	}
 
-        List<String> ids = new LinkedList<>();
-        request.getApplicantPersonals()
-               .forEach(personal -> ids.add(personal.getId()));
+	public List<ApplicantPersonal> update(ApplicantPersonalRequest request) {
 
-        // search database
-        List<ApplicantPersonal> searchResult = repository.getApplicantPersonals(ApplicantPersonalSearchCriteria.builder()
-                                                                                                               .ids(ids)
-                                                                                                               .build());
-        // validate request
-        validatorService.validateUpdate(request, searchResult);
+		List<String> ids = new LinkedList<>();
+		request.getApplicantPersonals().forEach(personal -> ids.add(personal.getId()));
 
-        enrichmentService.enrichUpdate(request);
+		// search database
+		List<ApplicantPersonal> searchResult = repository
+				.getApplicantPersonals(ApplicantPersonalSearchCriteria.builder().ids(ids).build());
+		// validate request
+		validatorService.validateUpdate(request, searchResult);
 
-        producer.push(filemgmntConfig.getUpdateApplicantPersonalTopic(), request);
+		enrichmentService.enrichUpdate(request);
 
-        return request.getApplicantPersonals();
-    }
+		producer.push(filemgmntConfig.getUpdateApplicantPersonalTopic(), request);
+
+		return request.getApplicantPersonals();
+	}
 }

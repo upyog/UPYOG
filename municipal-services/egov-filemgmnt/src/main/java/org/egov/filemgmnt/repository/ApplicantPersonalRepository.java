@@ -14,35 +14,35 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class ApplicantPersonalRepository {
 
-    private final JdbcTemplate jdbcTemplate;
-    private final ApplicantPersonalQueryBuilder queryBuilder;
-    private final ApplicantPersonalRowMapper rowMapper;
+	private final JdbcTemplate jdbcTemplate;
+	private final ApplicantPersonalQueryBuilder queryBuilder;
+	private final ApplicantPersonalRowMapper rowMapper;
 
-    @Autowired
-    ApplicantPersonalRepository(JdbcTemplate jdbcTemplate, ApplicantPersonalQueryBuilder queryBuilder,
-                                ApplicantPersonalRowMapper rowMapper) {
-        this.jdbcTemplate = jdbcTemplate;
-        this.queryBuilder = queryBuilder;
-        this.rowMapper = rowMapper;
-    }
+	@Autowired
+	ApplicantPersonalRepository(JdbcTemplate jdbcTemplate, ApplicantPersonalQueryBuilder queryBuilder,
+			ApplicantPersonalRowMapper rowMapper) {
+		this.jdbcTemplate = jdbcTemplate;
+		this.queryBuilder = queryBuilder;
+		this.rowMapper = rowMapper;
+	}
 
-    public List<ApplicantPersonal> getApplicantPersonals(ApplicantPersonalSearchCriteria criteria) {
-        List<Object> preparedStmtValues = new ArrayList<>();
-        String query = queryBuilder.getApplicantPersonalSearchQuery(criteria, preparedStmtValues, Boolean.FALSE);
+	public List<ApplicantPersonal> getApplicantPersonals(ApplicantPersonalSearchCriteria criteria) {
+		List<Object> preparedStmtValues = new ArrayList<>();
+		String query = queryBuilder.getApplicantPersonalSearchQuery(criteria, preparedStmtValues, Boolean.FALSE);
 
-        List<ApplicantPersonal> result = jdbcTemplate.query(query, preparedStmtValues.toArray(), rowMapper);
+		List<ApplicantPersonal> result = jdbcTemplate.query(query, preparedStmtValues.toArray(), rowMapper);
 
-        return result;
-    }
+		return result;
+	}
 
-    public List<ApplicantPersonal> getApplicantPersonalsFromFilecode(ApplicantPersonalSearchCriteria criteria) {
-        List<Object> preparedStmtValues = new ArrayList<>();
+	public List<ApplicantPersonal> getApplicantPersonalsFromFilecode(ApplicantPersonalSearchCriteria criteria) {
+		List<Object> preparedStmtValues = new ArrayList<>();
 
-        String query = queryBuilder.getApplicantPersonalSearchQuery(criteria, preparedStmtValues, Boolean.FALSE);
+		String query = queryBuilder.getApplicantPersonalSearchQuery(criteria, preparedStmtValues, Boolean.FALSE);
 
-        List<ApplicantPersonal> result = jdbcTemplate.query(query, preparedStmtValues.toArray(), rowMapper);
+		List<ApplicantPersonal> result = jdbcTemplate.query(query, preparedStmtValues.toArray(), rowMapper);
 
-        return result;
-    }
+		return result;
+	}
 
 }

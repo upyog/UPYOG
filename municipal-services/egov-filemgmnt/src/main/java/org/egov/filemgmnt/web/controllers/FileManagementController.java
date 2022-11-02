@@ -25,55 +25,52 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/v1")
 public class FileManagementController implements FileManagementResource {
 
-    private final ResponseInfoFactory responseInfoFactory;
-    private final ApplicantPersonalService personalService;
+	private final ResponseInfoFactory responseInfoFactory;
+	private final ApplicantPersonalService personalService;
 
-    @Autowired
-    FileManagementController(ApplicantPersonalService personalService, ResponseInfoFactory responseInfoFactory) {
-        this.personalService = personalService;
-        this.responseInfoFactory = responseInfoFactory;
-    }
+	@Autowired
+	FileManagementController(ApplicantPersonalService personalService, ResponseInfoFactory responseInfoFactory) {
+		this.personalService = personalService;
+		this.responseInfoFactory = responseInfoFactory;
+	}
 
-    @Override
-    @PostMapping("/applicantpersonals/_create")
-    public ResponseEntity<ApplicantPersonalResponse> create(@RequestBody ApplicantPersonalRequest request) {
+	@Override
+	@PostMapping("/applicantpersonals/_create")
+	public ResponseEntity<ApplicantPersonalResponse> create(@RequestBody ApplicantPersonalRequest request) {
 
-        List<ApplicantPersonal> personals = personalService.create(request);
+		List<ApplicantPersonal> personals = personalService.create(request);
 
-        ApplicantPersonalResponse response = ApplicantPersonalResponse.builder()
-                                                                      .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(),
-                                                                                                                                          Boolean.TRUE))
-                                                                      .applicantPersonals(personals)
-                                                                      .build();
-        return ResponseEntity.ok(response);
-    }
+		ApplicantPersonalResponse response = ApplicantPersonalResponse.builder()
+				.responseInfo(
+						responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), Boolean.TRUE))
+				.applicantPersonals(personals).build();
+		return ResponseEntity.ok(response);
+	}
 
-    @Override
-    @PutMapping("/applicantpersonals/_update")
-    public ResponseEntity<ApplicantPersonalResponse> update(@RequestBody ApplicantPersonalRequest request) {
+	@Override
+	@PutMapping("/applicantpersonals/_update")
+	public ResponseEntity<ApplicantPersonalResponse> update(@RequestBody ApplicantPersonalRequest request) {
 
-        List<ApplicantPersonal> personals = personalService.update(request);
+		List<ApplicantPersonal> personals = personalService.update(request);
 
-        ApplicantPersonalResponse response = ApplicantPersonalResponse.builder()
-                                                                      .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(),
-                                                                                                                                          Boolean.TRUE))
-                                                                      .applicantPersonals(personals)
-                                                                      .build();
-        return ResponseEntity.ok(response);
-    }
+		ApplicantPersonalResponse response = ApplicantPersonalResponse.builder()
+				.responseInfo(
+						responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), Boolean.TRUE))
+				.applicantPersonals(personals).build();
+		return ResponseEntity.ok(response);
+	}
 
-    @Override
-    @PostMapping("/applicantpersonals/_search")
-    public ResponseEntity<ApplicantPersonalResponse> search(@RequestBody RequestInfoWrapper request,
-                                                            @ModelAttribute ApplicantPersonalSearchCriteria criteria) {
-        log.info("creiteria  :" + criteria.getFileCodes());
-        List<ApplicantPersonal> personals = personalService.search(criteria);
+	@Override
+	@PostMapping("/applicantpersonals/_search")
+	public ResponseEntity<ApplicantPersonalResponse> search(@RequestBody RequestInfoWrapper request,
+			@ModelAttribute ApplicantPersonalSearchCriteria criteria) {
 
-        ApplicantPersonalResponse response = ApplicantPersonalResponse.builder()
-                                                                      .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(),
-                                                                                                                                          Boolean.TRUE))
-                                                                      .applicantPersonals(personals)
-                                                                      .build();
-        return ResponseEntity.ok(response);
-    }
+		List<ApplicantPersonal> personals = personalService.search(criteria, request.getRequestInfo());
+
+		ApplicantPersonalResponse response = ApplicantPersonalResponse.builder()
+				.responseInfo(
+						responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), Boolean.TRUE))
+				.applicantPersonals(personals).build();
+		return ResponseEntity.ok(response);
+	}
 }
