@@ -36,83 +36,97 @@ public class TLQueryBuilder {
     @Value("${egov.receipt.businessserviceTL}")
     private String businessServiceTL;
 
-
     @Value("${egov.receipt.businessserviceBPA}")
     private String businessServiceBPA;
-    
+
     @Value("${renewal.pending.interval}")
     private long renewalPeriod;
 
     private static final String QUERY = "SELECT tl.*,tld.*,tlunit.*,tlacc.*,tlowner.*," +
-            "tladdress.*,tlapldoc.*,tlverdoc.*,tlownerdoc.*,tlinsti.*,tl.id as tl_id,tl.tenantid as tl_tenantId,tl.lastModifiedTime as " +
-            "tl_lastModifiedTime,tl.createdBy as tl_createdBy,tl.lastModifiedBy as tl_lastModifiedBy,tl.createdTime as " +
-            "tl_createdTime,tl.filestoreid as tl_fileStoreId,tld.id as tld_id,tladdress.id as tl_ad_id,tld.createdBy as tld_createdBy," +
+            "tladdress.*,tlapldoc.*,tlverdoc.*,tlownerdoc.*,tlinsti.*,tl.id as tl_id,tl.tenantid as tl_tenantId,tl.lastModifiedTime as "
+            +
+            "tl_lastModifiedTime,tl.createdBy as tl_createdBy,tl.lastModifiedBy as tl_lastModifiedBy,tl.createdTime as "
+            +
+            "tl_createdTime,tl.filestoreid as tl_fileStoreId,tld.id as tld_id,tladdress.id as tl_ad_id,tld.createdBy as tld_createdBy,"
+            +
             "tlowner.id as tlowner_uuid,tlowner.active as useractive," +
             "tld.createdTime as tld_createdTime,tld.lastModifiedBy as tld_lastModifiedBy,tld.createdTime as " +
-            "tld_createdTime,tlunit.id as tl_un_id,tlunit.tradeType as tl_un_tradeType,tlunit.uom as tl_un_uom,tlunit.active as tl_un_active," +
-            "tlunit.uomvalue as tl_un_uomvalue,tlacc.id as tl_acc_id,tlacc.uom as tl_acc_uom,tlacc.uomvalue as tl_acc_uomvalue,tlacc.active as tl_acc_active," +
-            "tlapldoc.id as tl_ap_doc_id,tlapldoc.documenttype as tl_ap_doc_documenttype,tlapldoc.filestoreid as tl_ap_doc_filestoreid,tlapldoc.active as tl_ap_doc_active," +
-            "tlverdoc.id as tl_ver_doc_id,tlverdoc.documenttype as tl_ver_doc_documenttype,tlverdoc.filestoreid as tl_ver_doc_filestoreid,tlverdoc.active as tl_ver_doc_active," +
-            "tlownerdoc.userid as docuserid,tlownerdoc.tradeLicenseDetailId as doctradelicensedetailid,tlownerdoc.id as ownerdocid,"+
-            "tlownerdoc.documenttype as ownerdocType,tlownerdoc.filestoreid as ownerfileStoreId,tlownerdoc.documentuid as ownerdocuid,tlownerdoc.active as ownerdocactive," +
-            " tlinsti.id as instiid,tlinsti.name as authorisedpersonname,tlinsti.type as institutiontype,tlinsti.tenantid as institenantId,tlinsti.active as instiactive, "+
-            " tlinsti.instituionname as instiinstituionname, tlinsti.contactno as insticontactno, tlinsti.organisationregistrationno as instiorganisationregistrationno, tlinsti.address as instiaddress FROM eg_tl_tradelicense tl"
-            +INNER_JOIN_STRING
-            +"eg_tl_tradelicensedetail tld ON tld.tradelicenseid = tl.id"
-            +INNER_JOIN_STRING
-            +"eg_tl_address tladdress ON tladdress.tradelicensedetailid = tld.id"
-            +INNER_JOIN_STRING
-            +"eg_tl_owner tlowner ON tlowner.tradelicensedetailid = tld.id"
-            +INNER_JOIN_STRING
-            +"eg_tl_tradeunit tlunit ON tlunit.tradelicensedetailid = tld.id"
-            +LEFT_OUTER_JOIN_STRING
-            +"eg_tl_accessory tlacc ON tlacc.tradelicensedetailid = tld.id"
-            +LEFT_OUTER_JOIN_STRING
-            +"eg_tl_document_owner tlownerdoc ON tlownerdoc.userid = tlowner.id"
-            +LEFT_OUTER_JOIN_STRING
-            +"eg_tl_applicationdocument tlapldoc ON tlapldoc.tradelicensedetailid = tld.id"
-            +LEFT_OUTER_JOIN_STRING
-            +"eg_tl_verificationdocument tlverdoc ON tlverdoc.tradelicensedetailid = tld.id"
-            +LEFT_OUTER_JOIN_STRING
-            +"eg_tl_institution tlinsti ON tlinsti.tradelicensedetailid = tld.id ";
+            "tld_createdTime, tld.businesssector as businesssector, tld.capitalinvestment as capitalinvestment, tld.enterprisetype as enterprisetype, "
+            +
+            "tlunit.id as tl_un_id,tlunit.tradeType as tl_un_tradeType,tlunit.uom as tl_un_uom,tlunit.active as tl_un_active,"
+            +
+            "tlunit.uomvalue as tl_un_uomvalue,tlacc.id as tl_acc_id,tlacc.uom as tl_acc_uom,tlacc.uomvalue as tl_acc_uomvalue,tlacc.active as tl_acc_active,"
+            +
+            "tlapldoc.id as tl_ap_doc_id,tlapldoc.documenttype as tl_ap_doc_documenttype,tlapldoc.filestoreid as tl_ap_doc_filestoreid,tlapldoc.active as tl_ap_doc_active,"
+            +
+            "tlverdoc.id as tl_ver_doc_id,tlverdoc.documenttype as tl_ver_doc_documenttype,tlverdoc.filestoreid as tl_ver_doc_filestoreid,tlverdoc.active as tl_ver_doc_active,"
+            +
+            "tlownerdoc.userid as docuserid,tlownerdoc.tradeLicenseDetailId as doctradelicensedetailid,tlownerdoc.id as ownerdocid,"
+            +
+            "tlownerdoc.documenttype as ownerdocType,tlownerdoc.filestoreid as ownerfileStoreId,tlownerdoc.documentuid as ownerdocuid,tlownerdoc.active as ownerdocactive,"
+            +
+            " tlinsti.id as instiid,tlinsti.name as authorisedpersonname,tlinsti.type as institutiontype,tlinsti.tenantid as institenantId,tlinsti.active as instiactive, "
+            +
+            " tlinsti.instituionname as instiinstituionname, tlinsti.contactno as insticontactno, tlinsti.organisationregistrationno as instiorganisationregistrationno, tlinsti.address as instiaddress, "
+            +
+            " tlstructplace.id as tlstructplace_id, tlstructplace.structureplacesubtype as structureplacesubtype, tlstructplace.blockno as blockno, tlstructplace.surveyno as surveyno, tlstructplace.subdivisionno as subdivisionno, "
+            +
+            " tlstructplace.zonalcode as zonalcode, tlstructplace.wardcode as wardcode, tlstructplace.wardno as wardno, tlstructplace.doorno as doorno, "
+            +
+            " tlstructplace.doorsub as doorsub, tlstructplace.vehicleno as vehicleno, tlstructplace.vesselno as vesselno,tlstructplace.active as tlstructplace_active FROM eg_tl_tradelicense tl"
+            + LEFT_OUTER_JOIN_STRING
+            + "eg_tl_tradelicensedetail tld ON tld.tradelicenseid = tl.id"
+            + LEFT_OUTER_JOIN_STRING
+            + "eg_tl_address tladdress ON tladdress.tradelicensedetailid = tld.id"
+            + LEFT_OUTER_JOIN_STRING
+            + "eg_tl_owner tlowner ON tlowner.tradelicensedetailid = tld.id"
+            + LEFT_OUTER_JOIN_STRING
+            + "eg_tl_tradeunit tlunit ON tlunit.tradelicensedetailid = tld.id"
+            + LEFT_OUTER_JOIN_STRING
+            + "eg_tl_accessory tlacc ON tlacc.tradelicensedetailid = tld.id"
+            + LEFT_OUTER_JOIN_STRING
+            + "eg_tl_document_owner tlownerdoc ON tlownerdoc.userid = tlowner.id"
+            + LEFT_OUTER_JOIN_STRING
+            + "eg_tl_applicationdocument tlapldoc ON tlapldoc.tradelicensedetailid = tld.id"
+            + LEFT_OUTER_JOIN_STRING
+            + "eg_tl_verificationdocument tlverdoc ON tlverdoc.tradelicensedetailid = tld.id"
+            + LEFT_OUTER_JOIN_STRING
+            + "eg_tl_institution tlinsti ON tlinsti.tradelicensedetailid = tld.id "
+            + LEFT_OUTER_JOIN_STRING
+            + "eg_tl_structureplacedetail tlstructplace ON tlstructplace.tradelicensedetailid = tld.id ";
 
+    private final String paginationWrapper = "SELECT * FROM " +
+            "(SELECT *, DENSE_RANK() OVER (ORDER BY tl_lastModifiedTime DESC , tl_id) offset_ FROM " +
+            "({})" +
+            " result) result_offset " +
+            "WHERE offset_ > ? AND offset_ <= ?";
 
-      private final String paginationWrapper = "SELECT * FROM " +
-              "(SELECT *, DENSE_RANK() OVER (ORDER BY tl_lastModifiedTime DESC , tl_id) offset_ FROM " +
-              "({})" +
-              " result) result_offset " +
-              "WHERE offset_ > ? AND offset_ <= ?";
-      
-      private final String countWrapper = "SELECT COUNT(DISTINCT(tl_id)) FROM ({INTERNAL_QUERY}) as license_count";
-      
-      public static final String TENANTIDQUERY="select distinct(tenantid) from eg_tl_tradelicense";
+    private final String countWrapper = "SELECT COUNT(DISTINCT(tl_id)) FROM ({INTERNAL_QUERY}) as license_count";
 
+    public static final String TENANTIDQUERY = "select distinct(tenantid) from eg_tl_tradelicense";
 
-
-
-
-    public String getTLSearchQuery(TradeLicenseSearchCriteria criteria, List<Object> preparedStmtList, boolean isCount) {
+    public String getTLSearchQuery(TradeLicenseSearchCriteria criteria, List<Object> preparedStmtList,
+            boolean isCount) {
 
         StringBuilder builder = new StringBuilder(QUERY);
 
-        addBusinessServiceClause(criteria,preparedStmtList,builder);
+        addBusinessServiceClause(criteria, preparedStmtList, builder);
 
-
-        if(criteria.getAccountId()!=null){
-            addClauseIfRequired(preparedStmtList,builder);
+        if (criteria.getAccountId() != null) {
+            addClauseIfRequired(preparedStmtList, builder);
             builder.append(" tl.accountid = ? ");
             preparedStmtList.add(criteria.getAccountId());
 
             List<String> ownerIds = criteria.getOwnerIds();
-            if(!CollectionUtils.isEmpty(ownerIds)) {
+            if (!CollectionUtils.isEmpty(ownerIds)) {
                 builder.append(" OR (tlowner.id IN (").append(createQuery(ownerIds)).append(")");
-                addToPreparedStatement(preparedStmtList,ownerIds);
-                addBusinessServiceClause(criteria,preparedStmtList,builder);
+                addToPreparedStatement(preparedStmtList, ownerIds);
+                addBusinessServiceClause(criteria, preparedStmtList, builder);
                 builder.append(" AND tlowner.active = ? )");
                 preparedStmtList.add(true);
-            }            
+            }
         }
-        
+
         else {
 
             if (criteria.getTenantId() != null) {
@@ -163,12 +177,12 @@ public class TLQueryBuilder {
                 builder.append(" LOWER(tl.licensenumber) IN (").append(createQuery(licenseNumbers)).append(")");
                 addToPreparedStatement(preparedStmtList, licenseNumbers);
             }
-            
-//            if (criteria.getLicenseNumber() != null) {
-//                addClauseIfRequired(preparedStmtList, builder);
-//                builder.append("  tl.licensenumber = ? ");
-//                preparedStmtList.add(criteria.getLicenseNumber());
-//            }
+
+            // if (criteria.getLicenseNumber() != null) {
+            // addClauseIfRequired(preparedStmtList, builder);
+            // builder.append(" tl.licensenumber = ? ");
+            // preparedStmtList.add(criteria.getLicenseNumber());
+            // }
 
             if (criteria.getOldLicenseNumber() != null) {
                 addClauseIfRequired(preparedStmtList, builder);
@@ -188,27 +202,25 @@ public class TLQueryBuilder {
                 preparedStmtList.add(criteria.getToDate());
             }
 
-
             if (criteria.getValidTo() != null) {
                 addClauseIfRequired(preparedStmtList, builder);
                 builder.append("  tl.validTo <= ? ");
                 preparedStmtList.add(criteria.getValidTo());
             }
-            
-            
-            if(criteria.getRenewalPending()!=null && criteria.getRenewalPending()) {     
 
-            	addRenewalCriteria(builder,preparedStmtList,criteria);
+            if (criteria.getRenewalPending() != null && criteria.getRenewalPending()) {
+
+                addRenewalCriteria(builder, preparedStmtList, criteria);
 
             }
 
-            if(criteria.getLocality() != null) {
+            if (criteria.getLocality() != null) {
                 addClauseIfRequired(preparedStmtList, builder);
                 builder.append("  tladdress.locality = ? ");
                 preparedStmtList.add(criteria.getLocality());
             }
 
-            if(criteria.getTradeName() != null) {
+            if (criteria.getTradeName() != null) {
                 addClauseIfRequired(preparedStmtList, builder);
                 builder.append("  LOWER(tl.tradename) = LOWER(?) ");
                 preparedStmtList.add(criteria.getTradeName());
@@ -229,73 +241,88 @@ public class TLQueryBuilder {
             if (criteria.getTradeType() != null) {
                 addClauseIfRequired(preparedStmtList, builder);
                 builder.append("  tlunit.tradetype LIKE ? ");
-                preparedStmtList.add(criteria.getTradeType().split("\\.")[0]+"%");
+                preparedStmtList.add(criteria.getTradeType().split("\\.")[0] + "%");
             }
 
         }
 
-       // enrichCriteriaForUpdateSearch(builder,preparedStmtList,criteria);
+        // enrichCriteriaForUpdateSearch(builder,preparedStmtList,criteria);
 
-        if(!isCount) {
-        	return addPaginationWrapper(builder.toString(),preparedStmtList,criteria);
+        if (!isCount) {
+            return addPaginationWrapper(builder.toString(), preparedStmtList, criteria);
         }
-        
+
         else {
-        	return addCountWrapper(builder.toString());
+            return addCountWrapper(builder.toString());
         }
     }
 
+    private void addRenewalCriteria(StringBuilder builder, List<Object> preparedStmtList,
+            TradeLicenseSearchCriteria criteria) {
 
-    private void addRenewalCriteria(StringBuilder builder, List<Object> preparedStmtList, TradeLicenseSearchCriteria criteria) {
-    	
-    	addClauseIfRequired(preparedStmtList, builder);
+        addClauseIfRequired(preparedStmtList, builder);
         builder.append(" ((  tl.validTo <= ? ");
-        preparedStmtList.add(System.currentTimeMillis()+renewalPeriod); 
-        
+        preparedStmtList.add(System.currentTimeMillis() + renewalPeriod);
+
         addClauseIfRequired(preparedStmtList, builder);
         builder.append(" (( (tl.status IN (?,?)) ");
-        preparedStmtList.add(TLConstants.STATUS_APPROVED); 
+        preparedStmtList.add(TLConstants.STATUS_APPROVED);
         preparedStmtList.add(TLConstants.STATUS_EXPIRED);
-        
+
         addClauseIfRequired(preparedStmtList, builder);
-        
+
         /* SELECT NewTL applications which do not have any renewal applications yet */
-        builder.append(" (tl.licensenumber NOT IN (SELECT licensenumber from eg_tl_tradelicense WHERE UPPER(applicationtype) = ? AND licensenumber IS NOT NULL)  OR (");    
-        
-        /*SELECT applications which have application type as renewal, and having the latest financial year among all the renewal application
-         * for that particular license number*/
-        builder.append(" tl.applicationtype = ? and ? > tl.financialyear AND tl.financialyear = (select max(financialyear) from eg_tl_tradelicense where licensenumber=tl.licensenumber)    )))");
-        
-        /* SELECT applications which are manually expired after their real expiry date, and which is having the latest financial year from among all the applications for that particular license number*/
-        builder.append(" OR ( tl.status = ? AND tl.financialyear = (select max(financialyear) from eg_tl_tradelicense where licensenumber=tl.licensenumber)  )))  ");
-        
-        /* SELECT those applications for which there exist a rejected application for the current financial year, and financial year of this application should be just before that of the rejected application*/
-        builder.append("OR  ( tl.financialyear= (select max(financialyear) from eg_tl_tradelicense where licensenumber=tl.licensenumber and licensenumber in ( select licensenumber from eg_tl_tradelicense where status=? and financialyear=? ) and status<>?  ) ");
-        
-        /*set status (approved) and validTo(before current timestamp) conditions*/
+        builder.append(
+                " (tl.licensenumber NOT IN (SELECT licensenumber from eg_tl_tradelicense WHERE UPPER(applicationtype) = ? AND licensenumber IS NOT NULL)  OR (");
+
+        /*
+         * SELECT applications which have application type as renewal, and having the
+         * latest financial year among all the renewal application
+         * for that particular license number
+         */
+        builder.append(
+                " tl.applicationtype = ? and ? > tl.financialyear AND tl.financialyear = (select max(financialyear) from eg_tl_tradelicense where licensenumber=tl.licensenumber)    )))");
+
+        /*
+         * SELECT applications which are manually expired after their real expiry date,
+         * and which is having the latest financial year from among all the applications
+         * for that particular license number
+         */
+        builder.append(
+                " OR ( tl.status = ? AND tl.financialyear = (select max(financialyear) from eg_tl_tradelicense where licensenumber=tl.licensenumber)  )))  ");
+
+        /*
+         * SELECT those applications for which there exist a rejected application for
+         * the current financial year, and financial year of this application should be
+         * just before that of the rejected application
+         */
+        builder.append(
+                "OR  ( tl.financialyear= (select max(financialyear) from eg_tl_tradelicense where licensenumber=tl.licensenumber and licensenumber in ( select licensenumber from eg_tl_tradelicense where status=? and financialyear=? ) and status<>?  ) ");
+
+        /* set status (approved) and validTo(before current timestamp) conditions */
         builder.append(" AND (tl.status IN (?,?) ) AND tl.validTo <= ? ) ) ");
-        
-        preparedStmtList.add(TLConstants.APPLICATION_TYPE_RENEWAL); 
+
         preparedStmtList.add(TLConstants.APPLICATION_TYPE_RENEWAL);
-        preparedStmtList.add(Integer.toString(Calendar.getInstance().get(Calendar.YEAR)));        
+        preparedStmtList.add(TLConstants.APPLICATION_TYPE_RENEWAL);
+        preparedStmtList.add(Integer.toString(Calendar.getInstance().get(Calendar.YEAR)));
         preparedStmtList.add(TLConstants.STATUS_MANUALLYEXPIRED);
         preparedStmtList.add(TLConstants.STATUS_REJECTED);
         preparedStmtList.add(criteria.getFinancialYear());
         preparedStmtList.add(TLConstants.STATUS_REJECTED);
         preparedStmtList.add(TLConstants.STATUS_APPROVED);
         preparedStmtList.add(TLConstants.STATUS_EXPIRED);
-        preparedStmtList.add(System.currentTimeMillis()+renewalPeriod); 
+        preparedStmtList.add(System.currentTimeMillis() + renewalPeriod);
 
-	}
+    }
 
-	private String addCountWrapper(String query) {
-		
-    	String finalQuery = countWrapper.replace("{INTERNAL_QUERY}",query );
-		return finalQuery;
-	}
+    private String addCountWrapper(String query) {
 
+        String finalQuery = countWrapper.replace("{INTERNAL_QUERY}", query);
+        return finalQuery;
+    }
 
-	private void addBusinessServiceClause(TradeLicenseSearchCriteria criteria,List<Object> preparedStmtList,StringBuilder builder){
+    private void addBusinessServiceClause(TradeLicenseSearchCriteria criteria, List<Object> preparedStmtList,
+            StringBuilder builder) {
         if ((criteria.getBusinessService() == null) || (businessServiceTL.equals(criteria.getBusinessService()))) {
             addClauseIfRequired(preparedStmtList, builder);
             builder.append(" (tl.businessservice=? or tl.businessservice isnull) ");
@@ -310,40 +337,40 @@ public class TLQueryBuilder {
     private String createQuery(List<String> ids) {
         StringBuilder builder = new StringBuilder();
         int length = ids.size();
-        for( int i = 0; i< length; i++){
+        for (int i = 0; i < length; i++) {
             builder.append(" LOWER(?)");
-            if(i != length -1) builder.append(",");
+            if (i != length - 1)
+                builder.append(",");
         }
         return builder.toString();
     }
 
-    private void addToPreparedStatement(List<Object> preparedStmtList,List<String> ids)
-    {
-        ids.forEach(id ->{ preparedStmtList.add(id);});
+    private void addToPreparedStatement(List<Object> preparedStmtList, List<String> ids) {
+        ids.forEach(id -> {
+            preparedStmtList.add(id);
+        });
     }
 
-
-    private String addPaginationWrapper(String query,List<Object> preparedStmtList,
-                                      TradeLicenseSearchCriteria criteria){
+    private String addPaginationWrapper(String query, List<Object> preparedStmtList,
+            TradeLicenseSearchCriteria criteria) {
         int limit = config.getDefaultLimit();
         int offset = config.getDefaultOffset();
-        String finalQuery = paginationWrapper.replace("{}",query);
+        String finalQuery = paginationWrapper.replace("{}", query);
 
-        if(criteria.getLimit()!=null && criteria.getLimit()<=config.getMaxSearchLimit())
+        if (criteria.getLimit() != null && criteria.getLimit() <= config.getMaxSearchLimit())
             limit = criteria.getLimit();
 
-        if(criteria.getLimit()!=null && criteria.getLimit()>config.getMaxSearchLimit())
+        if (criteria.getLimit() != null && criteria.getLimit() > config.getMaxSearchLimit())
             limit = config.getMaxSearchLimit();
 
-        if(criteria.getOffset()!=null)
+        if (criteria.getOffset() != null)
             offset = criteria.getOffset();
 
         preparedStmtList.add(offset);
-        preparedStmtList.add(limit+offset);
+        preparedStmtList.add(limit + offset);
 
-       return finalQuery;
+        return finalQuery;
     }
-
 
     private static void addClauseIfRequired(List<Object> values, StringBuilder queryString) {
         if (values.isEmpty())
@@ -358,7 +385,7 @@ public class TLQueryBuilder {
 
         List<String> ids = criteria.getIds();
         if (!CollectionUtils.isEmpty(ids)) {
-            addClauseIfRequired(preparedStmtList,builder);
+            addClauseIfRequired(preparedStmtList, builder);
             builder.append(" tl.id IN (").append(createQuery(ids)).append(")");
             addToPreparedStatement(preparedStmtList, ids);
         }
@@ -366,8 +393,5 @@ public class TLQueryBuilder {
         return addPaginationWrapper(builder.toString(), preparedStmtList, criteria);
 
     }
-
-
-
 
 }
