@@ -1,5 +1,6 @@
 package org.egov.filemgmnt.web.models;
 
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.springframework.validation.annotation.Validated;
@@ -34,16 +35,6 @@ public class ServiceDetails {
 	@JsonProperty("applicantPersonalId")
 	private String applicantPersonalId;
 
-	@Schema(type = "string", description = "Service id")
-	@Size(max = 64)
-	@JsonProperty("serviceId")
-	private String serviceId;
-
-	@Schema(type = "string", description = "Service code")
-	@Size(max = 64)
-	@JsonProperty("serviceCode")
-	private String serviceCode;
-
 	@Schema(type = "string", description = "Business service")
 	@Size(max = 64)
 	@JsonProperty("businessService")
@@ -56,5 +47,17 @@ public class ServiceDetails {
 
 	@JsonProperty("auditDetails")
 	private AuditDetails auditDetails;
+
+	@Schema(type = "string", description = "Service id")
+	@Size(max = 64)
+	@NotNull
+	@JsonProperty("serviceId")
+	private String serviceId;
+
+	@Schema(type = "string", description = "Service code")
+	@Size(max = 64)
+	@NotNull
+	@JsonProperty("serviceCode")
+	private String serviceCode;
 
 }

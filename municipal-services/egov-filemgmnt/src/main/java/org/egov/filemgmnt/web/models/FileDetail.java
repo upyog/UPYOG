@@ -1,5 +1,6 @@
 package org.egov.filemgmnt.web.models;
 
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -28,6 +29,7 @@ public class FileDetail {
 
     @Schema(type = "string", description = "Tenant identification number")
     @Size(max = 64)
+    @NotNull
     @JsonProperty("tenantId")
     private String tenantId;
 
@@ -38,6 +40,7 @@ public class FileDetail {
 
     @Schema(type = "string", description = "File Number")
     @Size(max = 64)
+    @NotNull
     @JsonProperty("fileNumber")
     private String fileNumber;
 
@@ -48,31 +51,37 @@ public class FileDetail {
 
     @Schema(type = "string", description = "File Name")
     @Size(max = 64)
+    @NotNull
     @JsonProperty("fileName")
     private String fileName;
 
     @Schema(type = "string", description = "File arising mode whether efile/frontoffice")
     @Size(max = 64)
+    @NotNull
     @JsonProperty("fileArisingMode")
     private String fileArisingMode;
 
     @Schema(type = "int", format = "int64", description = "fileArisingDate")
     @Size(max = 64)
+    @NotNull
     @JsonProperty("fileArisingDate")
     private String fileArisingDate;
 
     @Schema(type = "string", description = "FinancialYear")
     @Size(max = 64)
+    @NotNull
     @JsonProperty("financialYear")
     private String financialYear;
 
     @Schema(type = "int", format = "int64", description = "Application submitted Date")
     @Size(max = 64)
+    @NotNull
     @JsonProperty("applicationDate")
     private String applicationDate;
 
     @Schema(type = "string", description = "workflow code")
     @Size(max = 64)
+    @NotNull
     @JsonProperty("workflowCode")
     private String workflowCode;
 
@@ -83,6 +92,7 @@ public class FileDetail {
 
     @Schema(type = "string", description = "status of a file")
     @Size(max = 64)
+    @NotNull
     @JsonProperty("fileStatus")
     private String fileStatus;
 

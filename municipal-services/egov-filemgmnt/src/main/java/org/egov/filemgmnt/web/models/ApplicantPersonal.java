@@ -32,6 +32,7 @@ public class ApplicantPersonal {
 
     @Schema(type = "string", description = "Aadhaar number")
     @Size(max = 64)
+    @NotNull
     @JsonProperty("aadhaarNo")
     private String aadhaarNo;
 
@@ -42,11 +43,13 @@ public class ApplicantPersonal {
 
     @Schema(type = "string", description = "First name")
     @Size(max = 64)
+    @NotNull
     @JsonProperty("firstName")
     private String firstName;
 
     @Schema(type = "string", description = "Last name")
     @Size(max = 64)
+    @NotNull
     @JsonProperty("lastName")
     private String lastName;
 
@@ -57,11 +60,13 @@ public class ApplicantPersonal {
 
     @Schema(type = "string", description = "Mobile number")
     @Size(max = 15)
+    @NotNull
     @JsonProperty("mobileNo")
     private String mobileNo;
 
     @Schema(type = "string", description = "Tenant identification number")
     @Size(max = 64)
+    @NotNull
     @JsonProperty("tenantId")
     private String tenantId;
 
@@ -88,7 +93,7 @@ public class ApplicantPersonal {
     @Valid
     @NotNull
     @JsonProperty("fileDetail")
-    private ApplicantDocuments fileDetail;
+    private FileDetail fileDetail;
 
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails;
