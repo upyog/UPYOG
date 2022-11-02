@@ -260,6 +260,8 @@ public class CalculationService {
                 List<Object> preparedStmtList = new ArrayList<>();
                 BillingSlabSearchCriteria searchCriteria = new BillingSlabSearchCriteria();
                 searchCriteria.setTenantId(license.getTenantId());
+
+                /******* Commented. EnterpriseType is required in search condition ****/
                 // searchCriteria.setStructureType(license.getTradeLicenseDetail().getStructureType());
                 // searchCriteria.setApplicationType(license.getApplicationType().toString());
                 // searchCriteria.setLicenseType(license.getLicenseType().toString());
@@ -269,6 +271,9 @@ public class CalculationService {
                 // searchCriteria.setUom(tradeUnit.getUom());
                 // }
                 // Call the Search
+                searchCriteria.setEnterpriseType(license.getTradeLicenseDetail().getEnterpriseType());// Added for
+                                                                                                      // enterprise type
+
                 String query = queryBuilder.getSearchQuery(searchCriteria, preparedStmtList);
                 log.info("query " + query);
                 log.info("preparedStmtList " + preparedStmtList.toString());
@@ -293,9 +298,7 @@ public class CalculationService {
                     if (CollectionUtils.isEmpty(billingSlabs))
                         throw new CustomException("BILLINGSLAB ERROR", "No BillingSlab Found for the given tradeType");
                 }
-                // System.out
-                // .println("TradeUnit: " + tradeUnit.getTradeType() + " rate: " +
-                // billingSlabs.get(0).getRate());
+                ;
 
                 billingSlabIds.add(billingSlabs.get(0).getId() + "|" + i + "|" + tradeUnit.getId());
 

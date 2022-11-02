@@ -181,6 +181,7 @@ public class BillingslabValidator {
 	 */
 	public void validateMDMSCodes(BillingSlab billingSlab, Map<String, List<String>> mdmsDataMap,
 			Map<String, String> errorMap) {
+		/******* Commented. EnterpriseType validation only required ****/
 		// if (!StringUtils.isEmpty(billingSlab.getTradeType())) {
 		// if
 		// (!mdmsDataMap.get(BillingslabConstants.TL_MDMS_TRADETYPE).contains(billingSlab.getTradeType()))

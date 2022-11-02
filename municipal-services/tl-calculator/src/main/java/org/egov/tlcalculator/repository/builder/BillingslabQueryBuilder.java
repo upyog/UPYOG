@@ -38,7 +38,8 @@ public class BillingslabQueryBuilder {
 			List<Object> preparedStmtList) {
 		queryBuilder.append(" WHERE tenantid = ?");
 		preparedStmtList.add(billingSlabSearcCriteria.getTenantId().split("\\.")[0]);
-		System.out.println("TenantID:" + billingSlabSearcCriteria.getTenantId().split("\\.")[0]);
+		// System.out.println("TenantID:" +
+		// billingSlabSearcCriteria.getTenantId().split("\\.")[0]);
 		List<String> ids = billingSlabSearcCriteria.getIds();
 		if (!CollectionUtils.isEmpty(ids)) {
 			queryBuilder.append(" AND id IN ( ");
@@ -46,7 +47,7 @@ public class BillingslabQueryBuilder {
 			queryBuilder.append(")");
 		}
 		if (!StringUtils.isEmpty(billingSlabSearcCriteria.getLicenseType())) {
-			queryBuilder.append(" AND licensetype = 'ALL'");
+			queryBuilder.append(" AND licensetype = 'PERMANENT'");
 		}
 		if (!StringUtils.isEmpty(billingSlabSearcCriteria.getApplicationType())) {
 			queryBuilder.append(" AND applicationtype = 'TL' ");
