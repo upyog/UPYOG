@@ -12,7 +12,7 @@ import org.egov.filemgmnt.web.enums.ErrorCodes;
 import org.egov.filemgmnt.web.models.ApplicantPersonal;
 import org.egov.filemgmnt.web.models.ApplicantPersonalRequest;
 import org.egov.filemgmnt.web.models.AuditDetails;
-import org.egov.filemgmnt.web.models.ServiceDetails;
+import org.egov.filemgmnt.web.models.FileDetail;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -92,8 +92,13 @@ public class ApplicantPersonalEnrichment implements BaseEnrichment {
 //               });
 
         for (int i = 0; i < applicantPersonals.size(); i++) {
-            ServiceDetails details = applicantPersonals.get(i)
-                                                       .getServiceDetails();
+
+//            ServiceDetails details = applicantPersonals.get(i)
+//                                                       .getServiceDetails();
+
+            FileDetail details = applicantPersonals.get(i)
+                                                   .getFileDetail();
+
             details.setFileCode(filecodes.get(i));
         }
 
