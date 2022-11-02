@@ -216,4 +216,12 @@ public class TradeLicenseDetail {
     return this;
   }
 
+  public TradeLicenseDetail addStructurePlaceItem(StructurePlace structureplaceItem) {
+    if (this.structurePlace == null)
+      this.structurePlace = new ArrayList<>();
+    if (!this.structurePlace.contains(structureplaceItem))
+      this.structurePlace.add(structureplaceItem);
+    return this;
+  }
+
 }
