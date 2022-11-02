@@ -72,7 +72,7 @@ public class ApplicantPersonalService {
 		} else if (!CollectionUtils.isEmpty(criteria.getFileCodes())) {
 			result = repository.getApplicantPersonalsFromFilecode(criteria);
 		} else if (criteria.getFromDate() != null) {
-			result = repository.getApplicantPersonalsFromFilecode(criteria);
+			result = repository.getApplicantPersonalsFromDate(criteria);
 		}
 
 		return result;
