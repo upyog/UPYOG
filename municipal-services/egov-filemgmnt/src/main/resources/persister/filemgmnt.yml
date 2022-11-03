@@ -1,0 +1,68 @@
+serviceMaps:
+  serviceName: egov-filemgmnt
+  mappings:
+  - version: 1.0
+    description: Persists applicant details in egov_filemgmnt database, eg_fm_applicantpersonal table
+    fromTopic: save-fm-applicantpersonal
+    isTransaction: true
+    queryMaps:
+    - query: >
+        INSERT INTO eg_fm_applicantpersonal(id, aadhaarno, email, firstname, lastname, title, mobileno, tenantid, createdby, createdtime, lastmodifiedby, lastmodifiedtime) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      basePath: ApplicantPersonals.*
+      jsonMaps:
+      - jsonPath: $.ApplicantPersonals.*.id
+
+      - jsonPath: $.ApplicantPersonals.*.aadhaarNo 
+      
+      - jsonPath: $.ApplicantPersonals.*.email 
+      
+      - jsonPath: $.ApplicantPersonals.*.firstName 
+      
+      - jsonPath: $.ApplicantPersonals.*.lastName 
+      
+      - jsonPath: $.ApplicantPersonals.*.title 
+      
+      - jsonPath: $.ApplicantPersonals.*.mobileNo 
+      
+      - jsonPath: $.ApplicantPersonals.*.tenantId
+      
+      - jsonPath: $.ApplicantPersonals.*.auditDetails.createdBy
+
+      - jsonPath: $.ApplicantPersonals.*.auditDetails.createdTime
+      
+      - jsonPath: $.ApplicantPersonals.*.auditDetails.lastModifiedBy
+
+      - jsonPath: $.ApplicantPersonals.*.auditDetails.lastModifiedTime
+
+  - version: 1.0
+    description: Update applicant details in egov_filemgmnt database, eg_fm_applicantpersonal table
+    fromTopic: update-fm-applicantpersonal
+    isTransaction: true
+    queryMaps:
+    - query: >
+        UPDATE eg_fm_applicantpersonal 
+        SET aadhaarno = ?, email = ?, firstname = ?, lastname = ?, title = ?, mobileno = ?, applicantaddressid = ?, lastmodifiedby = ?, lastmodifiedat = ? 
+        WHERE id = ?;
+      basePath: ApplicantPersonals.*
+      jsonMaps:
+      - jsonPath: $.ApplicantPersonals.*.aadhaarNo 
+      
+      - jsonPath: $.ApplicantPersonals.*.email 
+      
+      - jsonPath: $.ApplicantPersonals.*.firstName 
+      
+      - jsonPath: $.ApplicantPersonals.*.lastName 
+      
+      - jsonPath: $.ApplicantPersonals.*.title 
+      
+      - jsonPath: $.ApplicantPersonals.*.mobileNo 
+      
+      - jsonPath: $.ApplicantPersonals.*.auditDetails.lastModifiedBy
+
+      - jsonPath: $.ApplicantPersonals.*.auditDetails.lastModifiedTime
+      
+      - jsonPath: $.ApplicantPersonals.*.id     
+ 
+      
+     

@@ -158,10 +158,12 @@ public class CalculationService {
         EstimatesAndSlabs estimatesAndSlabs = new EstimatesAndSlabs();
         BillingSlabSearchCriteria searchCriteria = new BillingSlabSearchCriteria();
         searchCriteria.setTenantId(license.getTenantId());
+
         // searchCriteria.setStructureType(license.getTradeLicenseDetail().getStructureType());
         // searchCriteria.setLicenseType(license.getLicenseType().toString());
         searchCriteria.setEnterpriseType(license.getTradeLicenseDetail().getEnterpriseType().toString()); // Added for
                                                                                                           // EnterpriseType
+
 
         Map calculationTypeMap = mdmsService.getCalculationType(requestInfo, license, mdmsData);
         String tradeUnitCalculationType = (String) calculationTypeMap
@@ -176,6 +178,7 @@ public class CalculationService {
         estimatesAndSlabs.setTradeTypeFeeAndBillingSlabIds(tradeTypeFeeAndBillingSlabIds);
         BigDecimal accessoryFee = new BigDecimal(0);
 
+
         // if
         // (!CollectionUtils.isEmpty(license.getTradeLicenseDetail().getAccessories()))
         // {
@@ -186,6 +189,7 @@ public class CalculationService {
         // accessoryFee = accessoryFeeAndBillingSlabIds.getFee();
         // estimatesAndSlabs.setAccessoryFeeAndBillingSlabIds(accessoryFeeAndBillingSlabIds);
         // }
+
 
         TaxHeadEstimate estimate = new TaxHeadEstimate();
         List<TaxHeadEstimate> estimateList = new ArrayList<>();
@@ -261,6 +265,7 @@ public class CalculationService {
                 BillingSlabSearchCriteria searchCriteria = new BillingSlabSearchCriteria();
                 searchCriteria.setTenantId(license.getTenantId());
 
+
                 /******* Commented. EnterpriseType is required in search condition ****/
                 // searchCriteria.setStructureType(license.getTradeLicenseDetail().getStructureType());
                 // searchCriteria.setApplicationType(license.getApplicationType().toString());
@@ -274,6 +279,7 @@ public class CalculationService {
                 searchCriteria.setEnterpriseType(license.getTradeLicenseDetail().getEnterpriseType());// Added for
                                                                                                       // enterprise type
 
+
                 String query = queryBuilder.getSearchQuery(searchCriteria, preparedStmtList);
                 log.info("query " + query);
                 log.info("preparedStmtList " + preparedStmtList.toString());
@@ -282,9 +288,11 @@ public class CalculationService {
                 if (billingSlabs.size() > 1)
                     throw new CustomException("BILLINGSLAB ERROR",
                             "Found multiple BillingSlabs for the given TradeType");
+
                 // if (CollectionUtils.isEmpty(billingSlabs))
                 // throw new CustomException("BILLINGSLAB ERROR", "No BillingSlab Found for the
                 // given tradeType");
+
                 if (CollectionUtils.isEmpty(billingSlabs)) {
                     preparedStmtList.clear();
                     searchCriteria.setTenantId(license.getTenantId().toString().split("\\.")[0]);
@@ -298,7 +306,7 @@ public class CalculationService {
                     if (CollectionUtils.isEmpty(billingSlabs))
                         throw new CustomException("BILLINGSLAB ERROR", "No BillingSlab Found for the given tradeType");
                 }
-                ;
+
 
                 billingSlabIds.add(billingSlabs.get(0).getId() + "|" + i + "|" + tradeUnit.getId());
 
@@ -357,8 +365,10 @@ public class CalculationService {
                 if (billingSlabs.size() > 1)
                     throw new CustomException("BILLINGSLAB ERROR",
                             "Found multiple BillingSlabs for the given accessories ");
+
                 if (CollectionUtils.isEmpty(billingSlabs))
                     throw new CustomException("BILLINGSLAB ERROR", "No BillingSlab Found for the given accessory");
+
                 System.out.println(
                         "Accessory: " + accessory.getAccessoryCategory() + " rate: " + billingSlabs.get(0).getRate());
                 billingSlabIds.add(billingSlabs.get(0).getId() + "|" + i + "|" + accessory.getId());

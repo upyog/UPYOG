@@ -1,0 +1,15 @@
+CREATE TABLE IF NOT EXISTS eg_fm_applicantdetails
+(
+    id character varying(64) PRIMARY KEY,
+	tenantid character varying(64),
+    servicedetailsid character varying(64),
+    applicantpersonalid character varying(64),
+    fatherfirstname character varying(64),
+    fatherlastname character varying(64),
+    motherfirstname character varying(64),
+    motherlastname character varying(64),
+    createdby character varying(64),
+    createdat bigint,
+    lastmodifiedby character varying(64),
+    lastmodifiedat bigint
+)

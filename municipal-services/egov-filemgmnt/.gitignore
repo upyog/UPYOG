@@ -1,33 +1,18 @@
-HELP.md
-target/
-!.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
-
 ### STS ###
 .apt_generated
+.settings
+.checkstyle
 .classpath
 .factorypath
+/.pmd
 .project
-.settings
-.springBeans
-.sts4-cache
+/.sonarlint
 
-### IntelliJ IDEA ###
-.idea
-*.iws
-*.iml
-*.ipr
+### maven ###
+target/
+reports/
+docker_data/
 
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
-
-### VS Code ###
-.vscode/
+### local only files ###
+compose.yml
+SearchQueries.sql

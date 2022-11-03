@@ -1,0 +1,17 @@
+CREATE TABLE IF NOT EXISTS eg_fm_applicantpersonal
+(
+    id character varying(64) PRIMARY KEY,
+	aadhaarno character varying(64),
+    email character varying(64),
+    firstname character varying(64),
+    lastname character varying(64),
+    title character varying(64),
+    mobileno character varying(64),
+    tenantid character varying(64),
+    createdby character varying(64),
+    createdat bigint,
+    lastmodifiedby character varying(64),
+    lastmodifiedat bigint,
+    applicantaddressid character varying(64)     
+    
+)

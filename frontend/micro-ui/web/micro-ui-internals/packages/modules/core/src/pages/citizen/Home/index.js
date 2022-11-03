@@ -41,11 +41,11 @@ const Home = () => {
         Icon: <ComplaintIcon />,
         onClick: () => history.push("/digit-ui/citizen/pgr-home"),
       },
-      {
-        name: t("MODULE_PT"),
-        Icon: <PTIcon className="fill-path-primary-main" />,
-        onClick: () => history.push("/digit-ui/citizen/pt-home"),
-      },
+      //{
+       // name: t("MODULE_PT"),
+       // Icon: <PTIcon className="fill-path-primary-main" />,
+       // onClick: () => history.push("/digit-ui/citizen/pt-home"),
+     // },
       {
         name: t("MODULE_TL"),
         Icon: <CaseIcon className="fill-path-primary-main" />,
@@ -57,9 +57,14 @@ const Home = () => {
       //     onClick: () => history.push("/digit-ui/citizen")
       // },
       {
-        name: t("CS_COMMON_INBOX_BPA"),
+        name: t("ACTION_TEST_BIRTH"),
         Icon: <OBPSIcon />,
-        onClick: () => history.push("/digit-ui/citizen/obps-home"),
+        onClick: () => history.push("/citizen/birth-citizen/home"),
+      },
+          {
+        name: t("ACTION_TEST_DEATH"),
+        Icon: <OBPSIcon />,
+        onClick: () => history.push("/citizen/death-citizen/home"),
       },
     ],
     styles: { display: "flex", flexWrap: "wrap", justifyContent: "flex-start", width: "100%" },
