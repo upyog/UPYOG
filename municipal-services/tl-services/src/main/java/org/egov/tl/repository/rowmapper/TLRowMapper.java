@@ -17,15 +17,11 @@ import java.util.*;
 
 import static org.egov.tl.util.TLConstants.*;
 
-
 @Component
-public class TLRowMapper  implements ResultSetExtractor<List<TradeLicense>> {
-
+public class TLRowMapper implements ResultSetExtractor<List<TradeLicense>> {
 
     @Autowired
     private ObjectMapper mapper;
-
-
 
     public List<TradeLicense> extractData(ResultSet rs) throws SQLException, DataAccessException {
         Map<String, TradeLicense> tradeLicenseMap = new LinkedHashMap<>();
@@ -35,9 +31,11 @@ public class TLRowMapper  implements ResultSetExtractor<List<TradeLicense>> {
             TradeLicense currentTradeLicense = tradeLicenseMap.get(id);
             String tenantId = rs.getString("tl_tenantId");
 
-            if(currentTradeLicense == null){
+            if (currentTradeLicense == null) {
                 Long lastModifiedTime = rs.getLong("tl_lastModifiedTime");
-                if(rs.wasNull()){lastModifiedTime = null;}
+                if (rs.wasNull()) {
+                    lastModifiedTime = null;
+                }
 
                 Long commencementDate = (Long) rs.getObject("commencementdate");
                 Long issuedDate = (Long) rs.getObject("issueddate");
@@ -55,7 +53,7 @@ public class TLRowMapper  implements ResultSetExtractor<List<TradeLicense>> {
                 currentTradeLicense = TradeLicense.builder().auditDetails(auditdetails)
                         .licenseNumber(rs.getString("licensenumber"))
                         .licenseType(TradeLicense.LicenseTypeEnum.fromValue(rs.getString("licensetype")))
-                        .applicationType(TradeLicense.ApplicationTypeEnum.fromValue(rs.getString( "applicationType")))
+                        .applicationType(TradeLicense.ApplicationTypeEnum.fromValue(rs.getString("applicationType")))
                         .workflowCode(rs.getString("workflowCode"))
                         .oldLicenseNumber(rs.getString("oldlicensenumber"))
                         .applicationDate(applicationDate)
@@ -77,7 +75,7 @@ public class TLRowMapper  implements ResultSetExtractor<List<TradeLicense>> {
                         .id(id)
                         .build();
 
-                tradeLicenseMap.put(id,currentTradeLicense);
+                tradeLicenseMap.put(id, currentTradeLicense);
             }
             addChildrenToProperty(rs, currentTradeLicense);
 
@@ -87,14 +85,12 @@ public class TLRowMapper  implements ResultSetExtractor<List<TradeLicense>> {
 
     }
 
-
-
     private void addChildrenToProperty(ResultSet rs, TradeLicense tradeLicense) throws SQLException {
 
         String tenantId = tradeLicense.getTenantId();
         String tradeLicenseDetailId = rs.getString("tld_id");
 
-        if(tradeLicense.getTradeLicenseDetail()==null){
+        if (tradeLicense.getTradeLicenseDetail() == null) {
 
             Boundary locality = Boundary.builder().code(rs.getString("locality"))
                     .build();
@@ -122,19 +118,19 @@ public class TLRowMapper  implements ResultSetExtractor<List<TradeLicense>> {
                     .build();
 
             Institution institution = null;
-            if(rs.getString("instiid")!=null && rs.getBoolean("instiactive"))
-            { institution = Institution.builder()
-                    .id(rs.getString("instiid"))
-                    .tenantId(rs.getString("institenantId"))
-                    .name(rs.getString("name"))
-                    .type(rs.getString("institutionType"))
-                    .designation(rs.getString("designation"))
-                    .active(rs.getBoolean("instiactive"))
-                    .contactNo(rs.getString("insticontactno"))
-                    .instituionName(rs.getString("instiinstituionname"))
-                    .organisationRegistrationNo(rs.getString("instiorganisationregistrationno"))
-                    .address(rs.getString("address"))
-                    .build();
+            if (rs.getString("instiid") != null && rs.getBoolean("instiactive")) {
+                institution = Institution.builder()
+                        .id(rs.getString("instiid"))
+                        .tenantId(rs.getString("institenantId"))
+                        .name(rs.getString("name"))
+                        .type(rs.getString("institutionType"))
+                        .designation(rs.getString("designation"))
+                        .active(rs.getBoolean("instiactive"))
+                        .contactNo(rs.getString("insticontactno"))
+                        .instituionName(rs.getString("instiinstituionname"))
+                        .organisationRegistrationNo(rs.getString("instiorganisationregistrationno"))
+                        .address(rs.getString("address"))
+                        .build();
             }
 
             AuditDetails auditdetails = AuditDetails.builder()
@@ -163,21 +159,23 @@ public class TLRowMapper  implements ResultSetExtractor<List<TradeLicense>> {
                         .adhocExemptionReason(rs.getString("adhocExemptionReason"))
                         .adhocPenaltyReason(rs.getString("adhocPenaltyReason"))
                         .institution(institution)
+                        .businessSector(rs.getString("businesssector"))
+                        .capitalInvestment(rs.getDouble("capitalinvestment"))
+                        .enterpriseType(rs.getString("enterprisetype"))
                         .build();
 
-                if(pgObj!=null){
+                if (pgObj != null) {
                     JsonNode additionalDetail = mapper.readTree(pgObj.getValue());
                     tradeLicenseDetail.setAdditionalDetail(additionalDetail);
                 }
 
                 tradeLicense.setTradeLicenseDetail(tradeLicenseDetail);
-            }
-            catch (IOException e){
-                throw new CustomException("PARSING ERROR","The additionalDetail json cannot be parsed");
+            } catch (IOException e) {
+                throw new CustomException("PARSING ERROR", "The additionalDetail json cannot be parsed");
             }
         }
 
-        if(rs.getString("tl_un_id")!=null && rs.getBoolean("tl_un_active")){
+        if (rs.getString("tl_un_id") != null && rs.getBoolean("tl_un_active")) {
             TradeUnit tradeUnit = TradeUnit.builder()
                     .tradeType(rs.getString("tl_un_tradeType"))
                     .uom(rs.getString("tl_un_uom"))
@@ -189,9 +187,11 @@ public class TLRowMapper  implements ResultSetExtractor<List<TradeLicense>> {
             tradeLicense.getTradeLicenseDetail().addTradeUnitsItem(tradeUnit);
         }
 
-        if(rs.getString("tl_acc_id")!=null && rs.getBoolean("tl_acc_active")) {
+        if (rs.getString("tl_acc_id") != null && rs.getBoolean("tl_acc_active")) {
             Integer count = rs.getInt("count");
-            if(rs.wasNull()){count = null;}
+            if (rs.wasNull()) {
+                count = null;
+            }
             Accessory accessory = Accessory.builder()
                     .accessoryCategory(rs.getString("accessoryCategory"))
                     .uom(rs.getString("tl_acc_uom"))
@@ -204,7 +204,6 @@ public class TLRowMapper  implements ResultSetExtractor<List<TradeLicense>> {
             tradeLicense.getTradeLicenseDetail().addAccessoriesItem(accessory);
         }
 
-
         Document ownerDocument = Document.builder().id(rs.getString("ownerdocid"))
                 .documentType(rs.getString("ownerdocType"))
                 .fileStoreId(rs.getString("ownerfileStoreId"))
@@ -212,13 +211,11 @@ public class TLRowMapper  implements ResultSetExtractor<List<TradeLicense>> {
                 .active(rs.getBoolean("ownerdocactive"))
                 .build();
 
-
-
         Boolean isPrimaryOwner = (Boolean) rs.getObject("isprimaryowner");
-        Double ownerShipPercentage = (Double) rs.getObject("ownershippercentage") ;
+        Double ownerShipPercentage = (Double) rs.getObject("ownershippercentage");
 
-        if(rs.getBoolean("useractive") && rs.getString("tlowner_uuid")!=null)
-        {   OwnerInfo owner = OwnerInfo.builder()
+        if (rs.getBoolean("useractive") && rs.getString("tlowner_uuid") != null) {
+            OwnerInfo owner = OwnerInfo.builder()
                     .uuid(rs.getString("tlowner_uuid"))
                     .isPrimaryOwner(isPrimaryOwner)
                     .ownerType(rs.getString("ownerType"))
@@ -233,7 +230,7 @@ public class TLRowMapper  implements ResultSetExtractor<List<TradeLicense>> {
         // Add owner document to the specific tradeLicense for which it was used
         String docuserid = rs.getString("docuserid");
         String doctradeLicenseDetailId = rs.getString("doctradelicensedetailid");
-        if(tradeLicenseDetailId.equalsIgnoreCase(doctradeLicenseDetailId) && docuserid!=null
+        if (tradeLicenseDetailId.equalsIgnoreCase(doctradeLicenseDetailId) && docuserid != null
                 && rs.getBoolean("ownerdocactive") && rs.getBoolean("useractive")) {
             tradeLicense.getTradeLicenseDetail().getOwners().forEach(ownerInfo -> {
                 if (docuserid.equalsIgnoreCase(ownerInfo.getUuid()))
@@ -241,7 +238,7 @@ public class TLRowMapper  implements ResultSetExtractor<List<TradeLicense>> {
             });
         }
 
-        if(rs.getString("tl_ap_doc_id")!=null && rs.getBoolean("tl_ap_doc_active")) {
+        if (rs.getString("tl_ap_doc_id") != null && rs.getBoolean("tl_ap_doc_active")) {
             Document applicationDocument = Document.builder()
                     .documentType(rs.getString("tl_ap_doc_documenttype"))
                     .fileStoreId(rs.getString("tl_ap_doc_filestoreid"))
@@ -252,7 +249,7 @@ public class TLRowMapper  implements ResultSetExtractor<List<TradeLicense>> {
             tradeLicense.getTradeLicenseDetail().addApplicationDocumentsItem(applicationDocument);
         }
 
-        if(rs.getString("tl_ver_doc_id")!=null && rs.getBoolean("tl_ver_doc_active")) {
+        if (rs.getString("tl_ver_doc_id") != null && rs.getBoolean("tl_ver_doc_active")) {
             Document verificationDocument = Document.builder()
                     .documentType(rs.getString("tl_ver_doc_documenttype"))
                     .fileStoreId(rs.getString("tl_ver_doc_filestoreid"))
@@ -262,9 +259,26 @@ public class TLRowMapper  implements ResultSetExtractor<List<TradeLicense>> {
                     .build();
             tradeLicense.getTradeLicenseDetail().addVerificationDocumentsItem(verificationDocument);
         }
+
+        if (rs.getString("tlstructplace_id") != null && rs.getBoolean("tlstructplace_active")) {
+            StructurePlace structurePlace = StructurePlace.builder()
+                    .id(rs.getString("tlstructplace_id"))
+                    .tenantId(tenantId)
+                    .structurePlaceSubType(rs.getString("structureplacesubtype"))
+                    .blockNo(rs.getString("blockno"))
+                    .surveyNo(rs.getString("surveyno"))
+                    .subDivisionNo(rs.getString("subdivisionno"))
+                    .zonalcode(rs.getString("zonalcode"))
+                    .wardcode(rs.getString("wardcode"))
+                    .wardNo(rs.getInt("wardno"))
+                    .doorNo(rs.getInt("tlstructplace_doorno"))
+                    .doorNoSub(rs.getString("doorsub"))
+                    .vehicleNo(rs.getString("vehicleno"))
+                    .vesselNo(rs.getString("vesselno"))
+                    .active(rs.getBoolean("tlstructplace_active"))
+                    .build();
+            tradeLicense.getTradeLicenseDetail().addStructurePlaceItem(structurePlace);
+        }
     }
-
-
-
 
 }
