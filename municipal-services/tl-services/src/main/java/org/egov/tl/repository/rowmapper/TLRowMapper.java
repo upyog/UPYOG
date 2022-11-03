@@ -271,7 +271,7 @@ public class TLRowMapper implements ResultSetExtractor<List<TradeLicense>> {
                     .zonalcode(rs.getString("zonalcode"))
                     .wardcode(rs.getString("wardcode"))
                     .wardNo(rs.getInt("wardno"))
-                    .doorNo(rs.getInt("doorno"))
+                    .doorNo(rs.getInt("tlstructplace_doorno"))
                     .doorNoSub(rs.getString("doorsub"))
                     .vehicleNo(rs.getString("vehicleno"))
                     .vesselNo(rs.getString("vesselno"))

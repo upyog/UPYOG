@@ -71,7 +71,7 @@ public class TLQueryBuilder {
             +
             " tlstructplace.id as tlstructplace_id, tlstructplace.structureplacesubtype as structureplacesubtype, tlstructplace.blockno as blockno, tlstructplace.surveyno as surveyno, tlstructplace.subdivisionno as subdivisionno, "
             +
-            " tlstructplace.zonalcode as zonalcode, tlstructplace.wardcode as wardcode, tlstructplace.wardno as wardno, tlstructplace.doorno as doorno, "
+            " tlstructplace.zonalcode as zonalcode, tlstructplace.wardcode as wardcode, tlstructplace.wardno as wardno, tlstructplace.doorno as tlstructplace_doorno, "
             +
             " tlstructplace.doorsub as doorsub, tlstructplace.vehicleno as vehicleno, tlstructplace.vesselno as vesselno,tlstructplace.active as tlstructplace_active FROM eg_tl_tradelicense tl"
             + LEFT_OUTER_JOIN_STRING
