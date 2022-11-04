@@ -89,11 +89,11 @@ const LocationSelection = () => {
     <>
       <BackButton />
       <PageBasedInput texts={texts} onSubmit={onSubmit}>
-        <CardHeader>
+        <CardHeader>st
           {/* Choose Your Local Body */}
           {t("CS_COMMON_CHOOSE_LOCATION")}
         </CardHeader>
-        <CardLabel>{t("CS_COMMON_CHOOSE_DISTRICT")}</CardLabel>
+        <CardLabel>{t("CS_COMMON_DISTRICT")}</CardLabel>
         <RadioOrSelect 
           options={districts}
           selectedOption={selectedDistrict}
@@ -104,7 +104,7 @@ const LocationSelection = () => {
           // onChange={(e) => onChangeLB(e.target.value)}
         //  disabled={isEdit}
         />
-        <CardLabel>{t("CS_COMMON_CHOOSE_LB")}</CardLabel>
+        <CardLabel>{t("CS_COMMON_LB")}</CardLabel>
         <RadioOrSelect 
          options={lbs}
          selectedOption={selectedCity}

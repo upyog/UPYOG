@@ -92,7 +92,7 @@ const SelectBusinessCategory = ({ t, config, onSelect, userType, formData, }) =>
         // disabled={isEdit}
         {...(validation = { isRequired: true, title: t("TL_INVALID_SECTOR_NAME") })}
       />
-     <CardLabel>{`${t("TL_LOCALIZATION_CAPITAL_AMOUNT")}`}Amount Of Capital Investment</CardLabel>
+     <CardLabel>{`${t("TL_LOCALIZATION_CAPITAL_AMOUNT")}`}</CardLabel>
        <TextInput
           t={t}
           isMandatory={false}
