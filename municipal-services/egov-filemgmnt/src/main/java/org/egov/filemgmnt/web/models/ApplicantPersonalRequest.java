@@ -24,7 +24,9 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+
 public class ApplicantPersonalRequest {
+
     @JsonProperty("RequestInfo")
     private RequestInfo requestInfo;
 

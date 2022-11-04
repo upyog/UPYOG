@@ -62,8 +62,12 @@ class ApplicantPersonalRequestTests {
                      objectMapper.writerWithDefaultPrettyPrinter()
                                  .writeValueAsString(request));
         } catch (JsonProcessingException e) {
-            ;
+            log.error(e.getMessage(), e);
         }
+    }
+
+    void convertDateToLong() {
+
     }
 
     @Disabled

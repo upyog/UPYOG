@@ -1,8 +1,5 @@
 package org.egov.filemgmnt.util;
 
-import static org.egov.filemgmnt.util.FMConstants.FILEMANAGEMENT_MODULE;
-import static org.egov.filemgmnt.util.FMConstants.FILE_SERVICE_SUBTYPE;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -45,7 +42,7 @@ public class MdmsUtil {
         uri.append(mdmsHost)
            .append(mdmsUrl);
         Object result = null;
-        MdmsCriteriaReq mdmsCriteriaReq = getMDMSRequest(requestInfo, tenantId);
+        MdmsCriteriaReq mdmsCriteriaReq = getMdmsRequest(requestInfo, tenantId);
 
         try {
             result = restTemplate.postForObject(uri.toString(), mdmsCriteriaReq, Map.class);
@@ -57,7 +54,7 @@ public class MdmsUtil {
         return result;
     }
 
-    private MdmsCriteriaReq getMDMSRequest(RequestInfo requestInfo, String tenantId) {
+    private MdmsCriteriaReq getMdmsRequest(RequestInfo requestInfo, String tenantId) {
 
         List<ModuleDetail> fmModuleRequest = getFMModuleRequest();
 
@@ -82,12 +79,12 @@ public class MdmsUtil {
         List<MasterDetail> fmMasterDetails = new ArrayList<>();
 
         fmMasterDetails.add(MasterDetail.builder()
-                                        .name(FILE_SERVICE_SUBTYPE)
+                                        .name(FMConstants.FM_MDMS_FILE_SERVICE_SUBTYPE)
                                         .build());
 
         ModuleDetail fmModuleDtls = ModuleDetail.builder()
                                                 .masterDetails(fmMasterDetails)
-                                                .moduleName(FILEMANAGEMENT_MODULE)
+                                                .moduleName(FMConstants.FILEMANAGEMENT_MODULE)
                                                 .build();
 
         return Arrays.asList(fmModuleDtls);

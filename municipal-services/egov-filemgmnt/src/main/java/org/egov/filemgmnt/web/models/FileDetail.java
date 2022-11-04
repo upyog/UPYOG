@@ -63,7 +63,7 @@ public class FileDetail {
 
     @Schema(type = "int", format = "int64", description = "fileArisingDate")
     @Size(max = 64)
-    @NotNull
+    // @NotNull
     @JsonProperty("fileArisingDate")
     private String fileArisingDate;
 
@@ -75,7 +75,7 @@ public class FileDetail {
 
     @Schema(type = "int", format = "int64", description = "Application submitted Date")
     @Size(max = 64)
-    @NotNull
+    // @NotNull
     @JsonProperty("applicationDate")
     private String applicationDate;
 

@@ -15,10 +15,6 @@ public class FMConstants {
 
     public static final String COMMON_MASTERS_MODULE = "common-masters";
 
-    // mdms master names
-
-    public static final String FILE_SERVICE_SUBTYPE = "FileServiceSubtype";
-
     // error constants
 
     public static final String FILE_CATEGORY = "FileCategory";
@@ -27,9 +23,15 @@ public class FMConstants {
 
     // mdms path codes
 
-    public static final String FM_JSONPATH_CODE = "$.MdmsRes.FileManagement";
+    public static final String FM_MDMS_JSONPATH = "$.MdmsRes.FileManagement";
 
     public static final String COMMON_MASTER_JSONPATH_CODE = "$.MdmsRes.common-masters";
+
+    // mdms master names
+
+    public static final String FM_MDMS_FILE_SERVICE_SUBTYPE = "FileServiceSubtype";
+
+    public static final String FM_MDMS_FILE_SERVICE_SUBTYPE_CODE_JSONPATH = "$.MdmsRes.FileManagement.FileServiceSubtype[*].code";
 
     // error constants
 

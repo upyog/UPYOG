@@ -61,14 +61,15 @@ class ApplicantPersonalServiceTests {
     @Order(2)
     void search() {
         List<ApplicantPersonal> result = service.search(ApplicantPersonalSearchCriteria.builder()
-                                                                                       .build());
+                                                                                       .build(),
+                                                        null);
         result.forEach(personal -> {
             try {
                 log.info(" *** APPLICANT PERSONAL JSON \n {}",
                          objectMapper.writerWithDefaultPrettyPrinter()
                                      .writeValueAsString(personal));
             } catch (JsonProcessingException e) {
-                ;
+                log.error(e.getMessage(), e);
             }
         });
     }

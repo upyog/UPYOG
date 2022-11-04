@@ -8,6 +8,33 @@ import org.apache.commons.collections4.CollectionUtils;
 
 class BaseQueryBuilder {
 
+    void addDateRangeFilter(String column, Long startDate, Long endDate, StringBuilder query,
+                            List<Object> paramValues) {
+
+        if (startDate != null || endDate != null) {
+            addWhereClause(paramValues, query);
+            query.append("(");
+
+            if (startDate != null) {
+                query.append(column)
+                     .append(" >= ? ");
+                paramValues.add(startDate);
+            }
+
+            if (endDate != null) {
+                if (startDate != null) {
+                    query.append(" AND ");
+                }
+
+                query.append(column)
+                     .append(" <= ? ");
+                paramValues.add(endDate);
+            }
+
+            query.append(")");
+        }
+    }
+
     void addFilters(String column, List<String> ids, StringBuilder query, List<Object> paramValues) {
         if (CollectionUtils.isNotEmpty(ids)) {
             addWhereClause(paramValues, query);
@@ -19,7 +46,7 @@ class BaseQueryBuilder {
         }
     }
 
-    private void addWhereClause(List<Object> values, StringBuilder query) {
+    void addWhereClause(List<Object> values, StringBuilder query) {
         if (CollectionUtils.isEmpty(values)) {
             query.append(" WHERE ");
         } else {

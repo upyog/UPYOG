@@ -1,6 +1,5 @@
 package org.egov.filemgmnt.web.models;
 
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.springframework.validation.annotation.Validated;
@@ -31,13 +30,13 @@ public class ApplicantAddress {
 
     @Schema(type = "string", description = "House number")
     @Size(max = 64)
-    @NotNull
+//    @NotNull
     @JsonProperty("houseNo")
     private String houseNo;
 
     @Schema(type = "string", description = "House name")
     @Size(max = 64)
-    @NotNull
+//    @NotNull
     @JsonProperty("houseName")
     private String houseName;
 
@@ -48,7 +47,7 @@ public class ApplicantAddress {
 
     @Schema(type = "string", description = "Pincode")
     @Size(max = 64)
-    @NotNull
+//    @NotNull
     @JsonProperty("pincode")
     private String pincode;
 

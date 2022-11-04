@@ -1,6 +1,5 @@
 package org.egov.filemgmnt.web.models;
 
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.springframework.validation.annotation.Validated;
@@ -37,18 +36,18 @@ public class ApplicantDocuments {
 
     @Schema(type = "string", description = "Document type id")
     @Size(max = 64)
-    @NotNull
+//    @NotNull
     @JsonProperty("documenttypeId")
     private String documenttypeId;
 
     @Schema(type = "string", description = "Document number")
     @Size(max = 64)
-    @NotNull
+//    @NotNull
     @JsonProperty("documentNumber")
     private String documentNumber;
 
     @Schema(type = "long", description = "Document expiry date")
-    @NotNull
+//    @NotNull
     @JsonProperty("docexpiryDate")
     private Long docexpiryDate;
 

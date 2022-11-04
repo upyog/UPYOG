@@ -36,7 +36,7 @@ serviceMaps:
       - jsonPath: $.ApplicantPersonals.*.auditDetails.lastModifiedTime
       
     - query: >
-        INSERT INTO eg_fm_servicedetails(id, applicantpersonalid, serviceid, servicecode, businessservice, workflowcode, createdby, createddate, lastmodifiedby, lastmodifieddate) 
+        INSERT INTO eg_fm_servicedetails(id, applicantpersonalid, serviceid, servicecode, businessservice, workflowcode, createdby, createdtime, lastmodifiedby, lastmodifiedtime) 
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       basePath: ApplicantPersonals.*.serviceDetails
       jsonMaps:
@@ -206,8 +206,8 @@ serviceMaps:
     - query: >      
         UPDATE eg_fm_applicantaddress 
         SET houseno = ?, housename = ?, street = ?, pincode = ?, postofficename = ?
-        WHERE id = ?;
-      basePath: ApplicantPersonals.applicantAddresses
+        WHERE applicantpersonalid = ?;
+      basePath: ApplicantPersonals.*.applicantAddresses
       jsonMaps:
       - jsonPath: $.ApplicantPersonals.*.applicantAddresses.houseNo 
       
@@ -219,27 +219,39 @@ serviceMaps:
       
       - jsonPath: $.ApplicantPersonals.*.applicantAddresses.postOfficeName          
          
-      - jsonPath: $.ApplicantPersonals.*.id 
+      - jsonPath: $.ApplicantPersonals.*.applicantAddresses.applicantpersonalid
       
     - query: >      
         UPDATE eg_fm_applicantdocuments 
         SET documenttypeid = ?, documentnumber = ?, docexpirydate = ?        
-        WHERE id = ?;
-      basePath: ApplicantPersonals.applicantDocuments
+        WHERE applicantpersonalid = ?;
+      basePath: ApplicantPersonals.*.applicantDocuments
       jsonMaps:
-      - jsonPath: $.ApplicantPersonals.*.applicantAddresses.documenttypeId 
+      - jsonPath: $.ApplicantPersonals.*.applicantDocuments.documenttypeId 
       
-      - jsonPath: $.ApplicantPersonals.*.applicantAddresses.documentNumber  
+      - jsonPath: $.ApplicantPersonals.*.applicantDocuments.documentNumber  
       
-      - jsonPath: $.ApplicantPersonals.*.applicantAddresses.docexpiryDate             
+      - jsonPath: $.ApplicantPersonals.*.applicantDocuments.docexpiryDate             
          
-      - jsonPath: $.ApplicantPersonals.*.id 
+      - jsonPath: $.ApplicantPersonals.*.applicantDocuments.applicantpersonalid 
+      
+    - query: >      
+        UPDATE eg_fm_applicantservicedocuments 
+        SET documenttypeid = ?, servicedetailsid = ?     
+        WHERE applicantid = ?;
+      basePath: ApplicantPersonals.*.applicantServiceDocuments
+      jsonMaps:
+      - jsonPath: $.ApplicantPersonals.*.applicantServiceDocuments.serviceDetailsId 
+      
+      - jsonPath: $.ApplicantPersonals.*.applicantServiceDocuments.documentTypeId             
+         
+      - jsonPath: $.ApplicantPersonals.*.applicantServiceDocuments.applicantid  
       
     - query: >      
         UPDATE eg_fm_servicedetails 
         SET servicecode = ?, businessservice = ?, workflowcode = ?        
-        WHERE id = ?;
-      basePath: ApplicantPersonals.serviceDetails
+        WHERE applicantpersonalid = ?;
+      basePath: ApplicantPersonals.*.serviceDetails
       jsonMaps:
       - jsonPath: $.ApplicantPersonals.*.serviceDetails.serviceCode 
       
@@ -247,7 +259,7 @@ serviceMaps:
       
       - jsonPath: $.ApplicantPersonals.*.serviceDetails.workflowCode             
          
-      - jsonPath: $.ApplicantPersonals.*.id 
+      - jsonPath: $.ApplicantPersonals.*.serviceDetails.applicantpersonalid 
             
             
 #  - version: 1.0

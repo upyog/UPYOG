@@ -1,7 +1,6 @@
 package org.egov.filemgmnt.web.models;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.springframework.validation.annotation.Validated;
@@ -32,7 +31,7 @@ public class ApplicantPersonal {
 
     @Schema(type = "string", description = "Aadhaar number")
     @Size(max = 64)
-    @NotNull
+//    @NotNull
     @JsonProperty("aadhaarNo")
     private String aadhaarNo;
 
@@ -43,13 +42,13 @@ public class ApplicantPersonal {
 
     @Schema(type = "string", description = "First name")
     @Size(max = 64)
-    @NotNull
+//    @NotNull
     @JsonProperty("firstName")
     private String firstName;
 
     @Schema(type = "string", description = "Last name")
     @Size(max = 64)
-    @NotNull
+//    @NotNull
     @JsonProperty("lastName")
     private String lastName;
 
@@ -60,38 +59,38 @@ public class ApplicantPersonal {
 
     @Schema(type = "string", description = "Mobile number")
     @Size(max = 15)
-    @NotNull
+//    @NotNull
     @JsonProperty("mobileNo")
     private String mobileNo;
 
     @Schema(type = "string", description = "Tenant identification number")
     @Size(max = 64)
-    @NotNull
+//    @NotNull
     @JsonProperty("tenantId")
     private String tenantId;
 
     @Valid
-    @NotNull
+//    @NotNull
     @JsonProperty("serviceDetails")
     private ServiceDetails serviceDetails;
 
     @Valid
-    @NotNull
+//    @NotNull
     @JsonProperty("applicantAddresses")
     private ApplicantAddress applicantAddress;
 
     @Valid
-    @NotNull
+//    @NotNull
     @JsonProperty("applicantServiceDocuments")
     private ApplicantServiceDocuments applicantServiceDocuments;
 
     @Valid
-    @NotNull
+//    @NotNull
     @JsonProperty("applicantDocuments")
     private ApplicantDocuments applicantDocuments;
 
     @Valid
-    @NotNull
+//    @NotNull
     @JsonProperty("fileDetail")
     private FileDetail fileDetail;
 
