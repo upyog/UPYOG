@@ -81,7 +81,7 @@ const SelectBusinessCategory = ({ t, config, onSelect, userType, formData, }) =>
     {window.location.href.includes("/citizen") ? <Timeline /> : null}
     <FormStep t={t} config={config} onSelect={goNext} onSkip={onSkip} isDisabled={!setSector}>
       
-      <CardLabel>Sector</CardLabel>
+      <CardLabel>{`${t("TL_LOCALIZATION_SECTOR")}`}</CardLabel>
       <Dropdown
         t={t}
         optionKey="name"
@@ -90,9 +90,9 @@ const SelectBusinessCategory = ({ t, config, onSelect, userType, formData, }) =>
         selected={setSector}
         select={selectSector}
         // disabled={isEdit}
-        {...(validation = { isRequired: true, title: t("TL_INVALID_TRADE_NAME") })}
+        {...(validation = { isRequired: true, title: t("TL_INVALID_SECTOR_NAME") })}
       />
-     <CardLabel>Amount Of Capital Investment</CardLabel>
+     <CardLabel>{`${t("TL_LOCALIZATION_CAPITAL_AMOUNT")}`}Amount Of Capital Investment</CardLabel>
        <TextInput
           t={t}
           isMandatory={false}
@@ -103,7 +103,7 @@ const SelectBusinessCategory = ({ t, config, onSelect, userType, formData, }) =>
           onChange={selectedsetCapitalAmount}
           // onBlur={() => selectedsetCapitalAmount()}
         //   disable={isEdit}
-          {...(validation = { pattern: "^[0-9 ]*$", isRequired: true, type: "text", title: t("TL_INVALID_TRADE_NAME") })}
+          {...(validation = { pattern: "^[0-9 ]*$", isRequired: true, type: "text", title: t("TL_INVALID_CAPITAL_AMOUNT") })}
         />
     </FormStep>
     </React.Fragment>

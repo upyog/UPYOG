@@ -14,6 +14,8 @@ const SelectTradeAddress = ({ t, config, onSelect, userType, formData }) => {
   const [wards, setFilterWard] = useState(0);
   const [isInitialRender, setIsInitialRender] = useState(true);
   const isEdit = window.location.href.includes("/edit-application/") || window.location.href.includes("renew-trade");
+  // console.log(formData?.address.Zonal);
+  // console.log(formData?.address.WardNo);
   let cmbZonal = [];
   let cmbWard = [];
   let code =null;
@@ -31,7 +33,7 @@ const SelectTradeAddress = ({ t, config, onSelect, userType, formData }) => {
   function setSelectWard(e) {
     setWardNo(e);
   }
-  useEffect(() => {
+  React.useEffect(() => {
     
     if (isInitialRender) {
       if(Zonal){
@@ -43,8 +45,8 @@ const SelectTradeAddress = ({ t, config, onSelect, userType, formData }) => {
  
  
   function goNext() {
-    sessionStorage.setItem("Zonal", Zonal);
-    sessionStorage.setItem("WardNo", WardNo);
+    sessionStorage.setItem("ZonalDet", Zonal.name);
+    sessionStorage.setItem("WardDet", WardNo.name);
     onSelect(config.key, { Zonal,WardNo });
     // onSelect(config.key, { Zonal });
 
@@ -54,7 +56,7 @@ const SelectTradeAddress = ({ t, config, onSelect, userType, formData }) => {
     {window.location.href.includes("/citizen") ? <Timeline /> : null}
     <FormStep t={t} config={config} onSelect={goNext} onSkip={onSkip} isEdit={[!Zonal]} >
   
-      <CardLabel>Zonal Office</CardLabel>
+      <CardLabel>{`${t("TL_LOCALIZATION_ZONAL_OFFICE")}`}</CardLabel>
       <Dropdown
         t={t}
         optionKey="name"
@@ -63,8 +65,9 @@ const SelectTradeAddress = ({ t, config, onSelect, userType, formData }) => {
         selected={setZonal}
         select={setSelectZonalOffice}
         disabled={isEdit}
+        {...(validation = { isRequired: true, title: t("TL_INVALID_ZONAL_NAME") })}
       />
-      <CardLabel>Ward No</CardLabel>
+      <CardLabel>{`${t("TL_LOCALIZATION_WARD_NO")}`}</CardLabel>
       <Dropdown
         t={t}
         optionKey="name"
@@ -73,6 +76,7 @@ const SelectTradeAddress = ({ t, config, onSelect, userType, formData }) => {
         selected={setWardNo}
         select={setSelectWard}
         disabled={isEdit}
+        {...(validation = { isRequired: true, title: t("TL_INVALID_WARD_NO") })}
       />
       
         

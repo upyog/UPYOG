@@ -89,7 +89,7 @@ const SelectStructureType = ({ t, config, onSelect, userType, formData }) => {
     {window.location.href.includes("/citizen") ? <Timeline /> : null}
     <FormStep t={t} config={config} onSelect={goNext} onSkip={onSkip} isDisabled={!StructureType}>
       
-      <CardLabel>Place Of Activity</CardLabel>
+      <CardLabel>{`${t("TL_LOCALIZATION_PLACE_ACTVITY")}`}</CardLabel>
       <Dropdown
         t={t}
         optionKey="code"
@@ -110,7 +110,7 @@ const SelectStructureType = ({ t, config, onSelect, userType, formData }) => {
         //  disabled={isEdit}
         /> */}
 
-      <CardLabel>Nature Of Structure</CardLabel>
+      <CardLabel>{`${t("TL_LOCALIZATION_NATURE_STRUCTURE")}`}</CardLabel>
       <Dropdown
         t={t}
         optionKey="name"

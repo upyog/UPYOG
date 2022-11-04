@@ -282,7 +282,7 @@ export const newConfig = [
         component: "SelectLand",
         texts: {
           // headerCaption: "TL_STRUCTURE_TYPE",
-          header: "Land Details",
+          header: "TL_STRUCTURE_TYPE_LAND",
           // cardText: "TL_STRUCTURE_TYPE_TEXT",
           submitBarLabel: "CS_COMMON_NEXT",
         },
@@ -418,7 +418,7 @@ export const newConfig = [
         component: "SelectBusinessCategory",
         texts: {
           headerCaption: "",
-          header: "Business Category",
+          header: "TL_TRADE_BUISINESS_CATEGORY",
           // cardText: "TL_TRADE_UNITS_TEXT",
           submitBarLabel: "CS_COMMON_NEXT",
         },
