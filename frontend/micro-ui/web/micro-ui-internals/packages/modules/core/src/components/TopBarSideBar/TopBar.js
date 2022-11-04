@@ -145,7 +145,7 @@ const TopBar = ({
                 />
               </div>
             )}
-            <img className="state" src={logoUrl} />
+            {/* <img className="state" src={logoUrl} /> */}
           </div>
         )}
       </span>

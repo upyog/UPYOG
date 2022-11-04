@@ -3,7 +3,8 @@ body {
 }
 
 .body-container {
-  @apply bg-grey-bg h-full min-h-screen overflow-x-hidden;
+  @apply  h-full min-h-screen overflow-x-hidden;
+  background-color: #F4F1EC;
 }
 
 .navbar {
@@ -88,6 +89,11 @@ body {
 @screen dt {
   .employee-app-container {
     @apply w-full;
+  }
+  .dash-head{
+    font-size:16px;
+    margin-left:10px;
+    
   }
 
   .app-container {

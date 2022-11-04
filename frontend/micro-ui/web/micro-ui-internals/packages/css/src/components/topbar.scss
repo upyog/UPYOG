@@ -4,7 +4,6 @@
   width: 100%;
   padding: 4px 4px;
   background: white;
-  box-shadow: rgba(0, 0, 0, 0.24) 0 1px 4px;
   z-index: 9999999;
   @apply flex items-center;
 
@@ -121,7 +120,7 @@
 .profile-dropdown--item {
   display: flex;
   flex-direction: row;
-  padding: 10px;
+  padding: 8px;
   column-gap: 10px;
 
   &:hover {

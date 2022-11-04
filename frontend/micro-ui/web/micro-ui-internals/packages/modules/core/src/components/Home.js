@@ -30,7 +30,11 @@ const CitizenHome = ({ modules }) => {
 const EmployeeHome = ({ modules }) => {
   return (
     <div className="employee-app-container">
+       <div style={{fontWeight:"600"}}>
+        Dashboard
+      </div>
       <div className="ground-container moduleCardWrapper gridModuleWrapper">
+     
         {modules.map(({ code }, index) => {
           const Card = Digit.ComponentRegistryService.getComponent(`${code}Card`) || (() => <React.Fragment />);
           return <Card key={index} />;

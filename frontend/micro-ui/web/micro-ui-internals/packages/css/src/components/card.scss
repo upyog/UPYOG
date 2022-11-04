@@ -2,9 +2,7 @@
   @apply bg-white m-sm px-md pt-md pb-lg shadow-card;
   border-radius: 4px;
 
-  .card-header {
-    @apply text-text-primary text-heading-xl font-bold font-rc align-middle text-left mb-md;
-  }
+  .card-header {  }
 
   .card-sub-header {
     @apply text-text-primary text-caption-xl font-bold align-middle text-left mb-sm;
@@ -61,14 +59,8 @@
 }
 
 .employeeCard {
- 
-  padding: 16px;
-  margin-right: 15px;
-  margin-bottom: 15px;
-  display: inline-block;
-  background-color: #ffff;
-  min-width: 80%;
-  border-radius: 0.8rem;
+  @apply bg-white shadow-card p-md mb-xl;
+  border-radius: 4px;
 
   .card-header {
     @apply text-text-primary text-heading-xl font-bold font-rc align-middle text-left mb-md;
@@ -91,8 +83,7 @@
     @apply text-text-secondary text-body-l align-middle text-left mb-lg;
 
     span {
-     
-          color: #72849a !important;
+      @apply text-text-primary;
     }
   }
 
@@ -158,7 +149,7 @@
 
 .submit-bar {
   @apply h-10 bg-primary-main text-center w-full outline-none;
-
+  box-shadow: inset 0px -2px 0px #0B0C0C;
 
   &:focus {
     @apply outline-none;
@@ -219,8 +210,7 @@
   }
 
   .employeeCard {
-    @apply mb-md mx-md;
-    
+    @apply mb-md mx-md !important;
 
     &.filter {
       margin-left: auto;
@@ -236,7 +226,6 @@
     }
 
     .employee-card-sub-header {
-      display:flex;
       margin-bottom: 40px;
       @apply text-heading-l-dt;
     }
@@ -268,7 +257,7 @@
     }
 
     .label-field-pair {
-     padding: 25px;
+      @apply flex items-center;
 
       h2 {
         width: 30%;

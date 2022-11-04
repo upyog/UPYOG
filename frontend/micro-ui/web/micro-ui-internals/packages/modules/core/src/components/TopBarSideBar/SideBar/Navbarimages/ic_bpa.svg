@@ -1,0 +1,7 @@
+<svg id="ic_bpa" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+  <rect id="Rectangle_8" data-name="Rectangle 8" width="24" height="24" fill="none"/>
+  <g id="Group_14" data-name="Group 14">
+    <path id="Path_25" data-name="Path 25" d="M0,0H24V24H0Z" fill="none"/>
+    <path id="Path_26" data-name="Path 26" d="M20,22H4a1,1,0,0,1-1-1V3A1,1,0,0,1,4,2H20a1,1,0,0,1,1,1V21A1,1,0,0,1,20,22Zm-1-2V4H5V20ZM7,6h4v4H7Zm0,6H17v2H7Zm0,4H17v2H7Zm6-9h4V9H13Z" fill="#696b74"/>
+  </g>
+</svg>

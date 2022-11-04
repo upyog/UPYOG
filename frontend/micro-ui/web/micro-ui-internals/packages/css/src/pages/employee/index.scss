@@ -23,9 +23,8 @@
     position: fixed;
     top: 0;
     width: 100%;
-    padding: 4px 4px 4px 80px;
+    padding: 10px 4px 10px 80px;
     background: white;
-    box-shadow: rgba(0, 0, 0, 0.24) 0 1px 4px;
     z-index: 9999;
 
     img {
@@ -62,7 +61,7 @@
   }
 
   .main {
-    padding-top: 88px;
+    padding: calc(70px + 25px) 25px 25px;
   }
 
   .loginContainer {
@@ -81,12 +80,12 @@
     display: none;
   }
 
-  .react-time-picker__inputGroup__leadingZero {
+  .react-time-picker_inputGroup_leadingZero {
     padding-right: 8px;
     display: inline !important;
   }
 
-  .react-time-picker__inputGroup__input {
+  .react-time-picker_inputGroup_input {
     padding: 0;
     min-width: none;
     outline: none !important;
@@ -108,24 +107,51 @@
 .citizen,
 .employee {
   .sidebar{
-    position: fixed;
+  
+    transition: all 0.2s ease;
+    position: absolute;
     left: 0;
     padding: 85px 0;
-    background: #22394d;
+    background: #ffff;
     height: 100%;
-    color: white;
+    color: black;
     margin-top: 0px;
     z-index: 10000;
     .actions {
       cursor: pointer;
       padding: 0 20px;
       margin-bottom: 32px;
-
       &.active {
-        border-right: 4px solid #f47738;
         padding-right: 16px;
+        
       }
     }
+    .nav_drop{
+      width: 300px;
+      display: block;
+      list-style: none;
+      position: relative;
+      left: 70px;
+    }
+    
+  }
+  .display {
+    transition: all 3s 3s;
+   width: 300px;
+   position: absolute;
+   left: 0;
+   padding: 85px 0;
+   background: #ffff;
+   height: 100%;
+   color: balck;
+   margin-top: 0px;
+   z-index: 10000;
+   .actions {
+     cursor: pointer;
+     padding: 0 20px;
+     margin-bottom: 32px;
+   }
+
   }
 
   .wrapperStyles {
@@ -336,4 +362,3 @@
 .mb-25{
   margin-bottom: 25px;
 }
-
