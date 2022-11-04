@@ -89,7 +89,7 @@ const LocationSelection = () => {
     <>
       <BackButton />
       <PageBasedInput texts={texts} onSubmit={onSubmit}>
-        <CardHeader>st
+        <CardHeader>
           {/* Choose Your Local Body */}
           {t("CS_COMMON_CHOOSE_LOCATION")}
         </CardHeader>
