@@ -27,6 +27,13 @@ import MyApplications from "./pages/citizen/Applications/Application";
 import TradeLicenseList  from "./pages/citizen/Renewal/TradeLicenseList";
 import TLWFApplicationTimeline from "./pageComponents/TLWFApplicationTimeline";
 
+import SelectLand from "./pageComponents/SelectLand";
+import SelectBuilding from "./pageComponents/SelectBuilding";
+import SelectBusinessCategory from "./pageComponents/SelectBusinessCategory";
+import SelectTradeAddress from "./pageComponents/SelectTradeAddress";
+import SelectTLVechicle from "./pageComponents/SelectTLVechicle";
+import SelectTLWater from "./pageComponents/SelectTLWater";
+
 import TLOwnerDetailsEmployee from "./pageComponents/TLOwnerDetailsEmployee";
 import TLTradeDetailsEmployee from "./pageComponents/TLTradeDetailsEmployee";
 import TLTradeUnitsEmployee from "./pageComponents/TLTradeUnitsEmployee";
@@ -97,6 +104,12 @@ const componentsToRegister = {
   TLModule,
   TLLinks,
   TLCard,
+  SelectLand,
+  SelectBuilding,
+  SelectBusinessCategory,
+  SelectTradeAddress,
+  SelectTLVechicle,
+  SelectTLWater,
   TradeLicense,
   SelectTradeName,
   SelectStructureType,

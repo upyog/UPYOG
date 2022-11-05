@@ -1,5 +1,5 @@
 import {
-    Calender, CardBasedOptions, CaseIcon, ComplaintIcon, DocumentIcon, HomeIcon, Loader, OBPSIcon, PTIcon, StandaloneSearchBar, WhatsNewCard
+    Calender, CardBasedOptions, CaseIcon,DropIcon, ComplaintIcon, DocumentIcon, HomeIcon, Loader, OBPSIcon, PTIcon, StandaloneSearchBar, WhatsNewCard
 } from "@egovernments/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
@@ -59,11 +59,11 @@ const Home = () => {
       {
         name: t("ACTION_TEST_BIRTH"),
         Icon: <OBPSIcon />,
-        onClick: () => history.push("/citizen/birth-citizen/home"),
+        onClick: () => history.push("/citizen/birth-common/"),
       },
           {
         name: t("ACTION_TEST_DEATH"),
-        Icon: <OBPSIcon />,
+        Icon: <DropIcon />,
         onClick: () => history.push("/citizen/death-citizen/home"),
       },
     ],
@@ -94,6 +94,11 @@ const Home = () => {
         name: t("CS_COMMON_SURVEYS"),
         Icon: <DocumentIcon />,
         onClick: () => history.push("/digit-ui/citizen/engagement/surveys/list"),
+      },
+      {
+        name: t("CS_COMMON_INBOX_BPA"),
+        Icon: <OBPSIcon />,
+        onClick: () => history.push("/digit-ui/citizen/obps-home"),
       },
       // {
       //     name: t("CS_COMMON_HELP"),

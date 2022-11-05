@@ -194,7 +194,8 @@ export const gettradeownerarray = (data) => {
 export const gettradeunits = (data) => {
   let tradeunits = [];
   data?.TradeDetails?.units.map((ob) => {
-    tradeunits.push({ tradeType: ob.tradesubtype.code, uom: ob.unit, uomValue: ob.uom });
+    tradeunits.push({ tradeType: ob.tradesubtype.code });
+    //, uom: ob.unit, uomValue: ob.uom
   });
   return tradeunits;
 };
@@ -291,6 +292,7 @@ export const gettradeupdateaccessories = (data) => {
 }
 
 export const convertToTrade = (data = {}) => {
+ 
   let Financialyear = sessionStorage.getItem("CurrentFinancialYear");
   const formdata = {
     Licenses: [
@@ -300,16 +302,22 @@ export const convertToTrade = (data = {}) => {
         commencementDate: Date.parse(data?.TradeDetails?.CommencementDate),
         financialYear: Financialyear ? Financialyear : "2021-22",
         licenseType: "PERMANENT",
-        tenantId: data?.address?.city?.code,
+        tenantId: Digit.ULBService.getCitizenCurrentTenant(),
+        // data?.address?.city?.code,
         tradeLicenseDetail: {
           channel:"CITIZEN",
           address: {
-            city:  !data?.cpt ? data?.address?.city?.code : data?.cpt?.details?.address?.city?.code,
+            city: !data?.cpt ? data?.address?.city?.code : data?.cpt?.details?.address?.city?.code,
+            // sessionStorage.getItem(Digit.CITIZEN.COMMON.HOME.CITY.code),
+            // !data?.cpt ? data?.address?.city?.code : data?.cpt?.details?.address?.city?.code,
             locality: {
-              code: !data?.cpt ? data?.address?.locality?.code : data?.cpt?.details?.address?.locality?.code,
+              // code: !data?.cpt ? data?.address?.locality?.code : data?.cpt?.details?.address?.locality?.code,
+              code: data.address.WardNo.wardno,
             },
-            tenantId: data?.tenantId,
-            pincode: !data?.cpt ? data?.address?.pincode :  data?.cpt?.details?.address?.pincode,
+            tenantId:Digit.ULBService.getCitizenCurrentTenant(),
+            //  data?.tenantId,
+            pincode: null,
+            // !data?.cpt ? data?.address?.pincode :  data?.cpt?.details?.address?.pincode,
             doorNo: !data?.cpt ? data?.address?.doorNo : data?.cpt?.details?.address?.doorNo,
             street: !data?.cpt ? data?.address?.street : data?.cpt?.details?.address?.street,
             landmark: !data?.cpt ? data?.address?.landmark : data?.cpt?.details?.address?.landmark,
@@ -327,13 +335,34 @@ export const convertToTrade = (data = {}) => {
           // ...data?.owners.owners?.[0]?.designation && data?.owners.owners?.[0]?.designation !== "" ? { institution: {
           //   designation: data?.owners.owners?.[0]?.designation
           // }} : {},
-          structureType: data?.TradeDetails?.StructureType?.code !=="IMMOVABLE" ? data?.TradeDetails?.VehicleType?.code : data?.TradeDetails?.BuildingType?.code,
+          // structureType: data?.TradeDetails?.StructureType?.code !=="IMMOVABLE" ? data?.TradeDetails?.VehicleType?.code : data?.TradeDetails?.BuildingType?.code,
+          structureType: data?.TradeDetails?.setPlaceofActivity.code,
           subOwnerShipCategory: data?.owners.owners?.[0]?.subOwnerShipCategory?.code ? data?.owners.owners?.[0]?.subOwnerShipCategory?.code : data?.ownershipCategory?.code,
           tradeUnits: gettradeunits(data),
-          additionalDetail: {
-            propertyId: !data?.cpt ? "" :data?.cpt?.details?.propertyId,
-          }
+          // additionalDetail: {
+          //   propertyId: "PG-PT-2022-09-14-006185",
+          //   // !data?.cpt ? "" :data?.cpt?.details?.propertyId,
+          // },
+          structurePlace: [
+            {
+              structurePlaceSubType: data?.TradeDetails?.StructureType.code,
+              blockNo: data?.TradeDetails?.setPlaceofActivity.code =="LAND" ? data?.TradeDetails?.BlockNo:null,
+              surveyNo: data?.TradeDetails?.setPlaceofActivity.code =="LAND" ? data?.TradeDetails?.SurveyNo:null,
+              subDivisionNo: data?.TradeDetails?.setPlaceofActivity.code =="LAND" ? data?.TradeDetails?.SurveyNo:null,
+              zonalcode: data?.TradeDetails?.setPlaceofActivity.code =="BUILDING" ? data.address.Zonal.code:null,
+              wardcode: data?.TradeDetails?.setPlaceofActivity.code =="BUILDING" ? data.address.WardNo.code:null,
+              wardNo: data?.TradeDetails?.setPlaceofActivity.code =="BUILDING" ? data.address.WardNo.wardno:null,
+              doorNo: data?.TradeDetails?.setPlaceofActivity.code =="BUILDING" ? data.address.DoorNoBuild.DoorNoBuild:null,
+              doorNoSub: data?.TradeDetails?.setPlaceofActivity.code =="BUILDING" ? data.address.DoorSubBuild.DoorSubBuild:null,
+              vehicleNo: data?.TradeDetails?.setPlaceofActivity.code =="VEHICLE" ? data.address.VechicleNo.VechicleNo:null,
+              vesselNo: data?.TradeDetails?.setPlaceofActivity.code =="WATER" ? data.address.WaterDet.WaterDet:null,
+            }
+          ],
+          businessSector: data?.TradeDetails?.setSector.code, 
+          capitalInvestment: data?.TradeDetails?.CapitalAmount,
+          enterpriseType: data?.TradeDetails?.enterpriseType
         },
+        
         tradeName: data?.TradeDetails?.TradeName,
         wfDocuments: [],
         applicationDocuments: [],
