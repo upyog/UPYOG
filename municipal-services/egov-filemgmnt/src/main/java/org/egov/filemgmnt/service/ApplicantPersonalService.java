@@ -23,86 +23,77 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class ApplicantPersonalService {
 
-    private final Producer producer;
-    private final FilemgmntConfiguration filemgmntConfig;
-    private final ApplicantPersonalValidator validatorService;
-    private final ApplicantPersonalEnrichment enrichmentService;
-    private final ApplicantPersonalRepository repository;
-    private final MdmsUtil mutil;
+	private final Producer producer;
+	private final FilemgmntConfiguration filemgmntConfig;
+	private final ApplicantPersonalValidator validatorService;
+	private final ApplicantPersonalEnrichment enrichmentService;
+	private final ApplicantPersonalRepository repository;
+	private final MdmsUtil mutil;
 
-    @Autowired
-    ApplicantPersonalService(ApplicantPersonalValidator validatorService, ApplicantPersonalEnrichment enrichmentService,
-                             ApplicantPersonalRepository repository, Producer producer, MdmsUtil mutil,
-                             FilemgmntConfiguration filemgmntConfig) {
-        this.validatorService = validatorService;
-        this.enrichmentService = enrichmentService;
-        this.repository = repository;
-        this.producer = producer;
-        this.filemgmntConfig = filemgmntConfig;
-        this.mutil = mutil;
+	@Autowired
+	ApplicantPersonalService(ApplicantPersonalValidator validatorService, ApplicantPersonalEnrichment enrichmentService,
+			ApplicantPersonalRepository repository, Producer producer, MdmsUtil mutil,
+			FilemgmntConfiguration filemgmntConfig) {
+		this.validatorService = validatorService;
+		this.enrichmentService = enrichmentService;
+		this.repository = repository;
+		this.producer = producer;
+		this.filemgmntConfig = filemgmntConfig;
+		this.mutil = mutil;
 
-    }
+	}
 
-    public List<ApplicantPersonal> create(ApplicantPersonalRequest request) {
+	public List<ApplicantPersonal> create(ApplicantPersonalRequest request) {
 
-        // validate mdms data
+		// validate mdms data
+		Object mdmsData = mutil.mDMSCall(request.getRequestInfo(),
+				request.getApplicantPersonals().get(0).getTenantId());
 
-        Object mdmsData = mutil.mDMSCall(request.getRequestInfo(),
-                                         request.getApplicantPersonals()
-                                                .get(0)
-                                                .getTenantId());
+		// validate request
+		validatorService.validateCreate(request, mdmsData);
 
-        // validate request
-        validatorService.validateCreate(request, mdmsData);
+		// enrich request
+		enrichmentService.enrichCreate(request);
 
-        // enrich request
-        enrichmentService.enrichCreate(request);
+		producer.push(filemgmntConfig.getSaveApplicantPersonalTopic(), request);
 
-        producer.push(filemgmntConfig.getSaveApplicantPersonalTopic(), request);
+		return request.getApplicantPersonals();
 
-        return request.getApplicantPersonals();
+	}
 
-    }
+	public List<ApplicantPersonal> search(ApplicantPersonalSearchCriteria criteria, RequestInfo requestInfo) {
 
-    public List<ApplicantPersonal> search(ApplicantPersonalSearchCriteria criteria, RequestInfo requestInfo) {
+		List<ApplicantPersonal> result = null;
 
-        List<ApplicantPersonal> result = null;
+		validatorService.validateSearch(requestInfo, criteria);
+		if (!CollectionUtils.isEmpty(criteria.getIds())) {
+			result = repository.getApplicantPersonals(criteria);
+		} else if (!CollectionUtils.isEmpty(criteria.getFileCodes())) {
+			result = repository.getApplicantPersonalsFromFilecode(criteria);
+		} else if (criteria.getFromDate() != null) {
+			result = repository.getApplicantPersonalsFromDate(criteria);
+		}
 
-        validatorService.validateSearch(requestInfo, criteria);
-        if (!CollectionUtils.isEmpty(criteria.getIds())) {
-            result = repository.getApplicantPersonals(criteria);
-        } else if (!CollectionUtils.isEmpty(criteria.getFileCodes())) {
-            result = repository.getApplicantPersonalsFromFilecode(criteria);
-        } else if (criteria.getFromDate() != null) {
-            result = repository.getApplicantPersonalsFromDate(criteria);
-        }
+		return result;
+	}
 
-        return result;
-    }
+	public List<ApplicantPersonal> update(ApplicantPersonalRequest request) {
 
-    public List<ApplicantPersonal> update(ApplicantPersonalRequest request) {
-        System.out.println(request);
+		List<String> ids = new LinkedList<>();
 
-        List<String> ids = new LinkedList<>();
-        System.out.println(request.getApplicantPersonals()
-                                  .get(0)
-                                  .getApplicantAddress()
-                                  .getHouseName());
-        request.getApplicantPersonals()
-               .forEach(personal -> ids.add(personal.getId()));
+		request.getApplicantPersonals().forEach(personal -> ids.add(personal.getId()));
 
-        // search database
-        List<ApplicantPersonal> searchResult = repository.getApplicantPersonals(ApplicantPersonalSearchCriteria.builder()
-                                                                                                               .ids(ids)
-                                                                                                               .build());
+		// search database
+		List<ApplicantPersonal> searchResult = repository
+				.getApplicantPersonals(ApplicantPersonalSearchCriteria.builder().ids(ids).build());
 
-        // validate request
-        validatorService.validateUpdate(request, searchResult);
+		// validate request
+		validatorService.validateUpdate(request, searchResult);
 
-        enrichmentService.enrichUpdate(request);
+		enrichmentService.enrichUpdate(request);
 
-        producer.push(filemgmntConfig.getUpdateApplicantPersonalTopic(), request);
+		producer.push(filemgmntConfig.getUpdateApplicantPersonalTopic(), request);
 
-        return request.getApplicantPersonals();
-    }
+		return request.getApplicantPersonals();
+	}
 }
