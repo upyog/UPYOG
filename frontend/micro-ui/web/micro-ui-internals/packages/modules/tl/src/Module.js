@@ -33,7 +33,6 @@ import SelectBusinessCategory from "./pageComponents/SelectBusinessCategory";
 import SelectTradeAddress from "./pageComponents/SelectTradeAddress";
 import SelectTLVechicle from "./pageComponents/SelectTLVechicle";
 import SelectTLWater from "./pageComponents/SelectTLWater";
-
 import TLOwnerDetailsEmployee from "./pageComponents/TLOwnerDetailsEmployee";
 import TLTradeDetailsEmployee from "./pageComponents/TLTradeDetailsEmployee";
 import TLTradeUnitsEmployee from "./pageComponents/TLTradeUnitsEmployee";
@@ -48,7 +47,6 @@ import NewApplication from "./pages/employee/NewApplication";
 import ReNewApplication from "./pages/employee/ReNewApplication";
 import Search from "./pages/employee/Search";
 import Response from "./pages/Response";
-
 import TLApplicationDetails from "./pages/citizen/Applications/ApplicationDetails"
 import CreateTradeLicence from "./pages/citizen/Create";
 import EditTrade from "./pages/citizen/EditTrade";

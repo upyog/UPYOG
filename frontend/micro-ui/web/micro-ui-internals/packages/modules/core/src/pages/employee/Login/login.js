@@ -140,7 +140,22 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
   return isLoading || isStoreLoading ? (
     <Loader />
   ) : (
-    <Background>
+    <Background >
+     <div className="leftdiv">
+        <div className="leftflex" >
+          <h1 className="logostyle">
+            <a href="" src={stateInfo?.logoUrl}>
+              {/* <img className="bannerLogo" src={stateInfo?.logoUrl} alt="Digit" /> */}
+              KSMART
+            </a>
+          </h1>
+          <div style={{ color: "#fff", width:"75%", fontSize:"19px" }}>
+            <h2 style={{fontSize:"28px",marginBottom:"18px", fontWeight:"bold"}}>Ksmart</h2>
+            <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsum, expedita. </p>
+          </div>
+          <div> 2022&copy; Ksmart</div>
+        </div>
+      </div>
       <div className="employeeBackbuttonAlign">
         <BackButton variant="white" style={{ borderBottom: "none" }} />
       </div>
@@ -161,7 +176,7 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
         className="loginFormStyleEmployee"
         buttonStyle={{ maxWidth: "100%", width: "100%" }}
       >
-        <Header />
+        {/* <Header /> */}
       </FormComposer>
       {showToast && <Toast error={true} label={t(showToast)} onClose={closeToast} />}
       <div style={{ width: '100%', position: 'fixed', bottom: 0 }}>

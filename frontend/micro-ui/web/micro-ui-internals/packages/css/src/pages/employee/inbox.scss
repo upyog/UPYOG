@@ -1,15 +1,18 @@
 .complaint-links-container {
-  @apply bg-white;
-  border-radius: 4px;
-  .header {
-    @apply flex items-center border-b border-border justify-between;
 
+  .header {
+    margin-right: 0px;
+    background-color: #37c5ab;
+    display: flex;
+    align-items: center;
+    color: #ffff;
+    border-radius: 0.25rem;
+   padding: 12px;
     .logo {
       width: 56px;
       height: 56px;
-      @apply bg-focus;
-      padding: 12px;
       border-radius: 4px;
+      display: contents;
       svg {
         @apply w-8 h-8;
       }
@@ -21,37 +24,62 @@
   }
 
   .body {
-    padding: 10px;
     @apply flex items-start flex-col;
     margin-left: 46px;
 
     .link {
       @apply p-sm text-primary-main items-center;
       display: flex !important;
+      width: 100%;
+    --border-opacity: 1;
+    border-color: #d6d5d4;
+    border-bottom: 1px;
+    border-color: rgba(214, 213, 212, var(--border-opacity));
+    border-style: solid;
+    padding: 8px 10px;
+      border-style: solid;
     }
 
     .inbox-total {
+      margin-left: 130px;
+      background-color: #de4436;
+      color: #fff;
+      font-size: 75%;
+      font-weight: 700;
+      line-height: 1;
+      width: 25%;
+      padding: 0.25em 0.7em em;
+      text-align: center;
       padding: 4px;
       display: table;
-      @apply whitespace-normal text-center text-white w-8 h-8 bg-primary-main rounded-full ml-xs;
+      display: inline-block;
+      white-space: nowrap;
+      vertical-align: baseline;
+      border-radius: 12px;
+      transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
     }
   }
 
   .links-wrapper {
-    @apply pl-md py-sm text-text-btn;
+      padding-top: 12px;
+    padding-bottom: 12px;
+    font-size: 16px;
+    line-height: 24px;
+    width: 100% !important;
     .link {
-      padding: 0 !important;
-      padding-bottom: 4px !important;
+      justify-content: space-between;
+    }
+    
       svg {
         @apply ml-sm;
       }
     }
   }
-}
 
-.MobilePopupHeadingWrapper{
+
+.MobilePopupHeadingWrapper {
   @apply flex place-content-between mb-md;
-  h2{
+  h2 {
     @apply text-heading-l font-bold;
   }
 }
@@ -85,8 +113,8 @@
     padding: 10px;
 
     .heading {
-      justify-content: unset ;
-      @apply flex ;
+      justify-content: unset;
+      @apply flex;
 
       .clearAll {
         display: none;
@@ -96,17 +124,17 @@
     .filter-label {
       @apply font-bold text-heading-l flex gap-3;
       padding-bottom: 6px;
-      svg{
-        fill: #0b0c0c
+      svg {
+        fill: #0b0c0c;
       }
     }
-    .sub-filter-label{
+    .sub-filter-label {
       font-weight: 400;
       font-size: 16px;
     }
   }
-  .filter-form-field{
-    p{
+  .filter-form-field {
+    p {
       @apply text-form-field text-text-primary block mb-md;
     }
   }
@@ -118,7 +146,7 @@
       .filter-card {
         @apply bg-white;
         padding: 10px;
-        .filter-card-close-button{
+        .filter-card-close-button {
           @apply flex flex-row-reverse;
         }
         .heading {
@@ -132,12 +160,12 @@
         .filter-label {
           @apply text-heading-m block flex gap-3 items-center;
           padding-bottom: 6px;
-          svg{
-            fill: #0b0c0c
+          svg {
+            fill: #0b0c0c;
           }
         }
 
-        .sub-filter-label{
+        .sub-filter-label {
           font-weight: 400;
           font-size: 16px;
         }
@@ -192,29 +220,31 @@
 
 @screen dt {
   .complaint-links-container {
-    @apply bg-white;
+    
 
     .header {
-      @apply flex items-center border-b border-border;
+      display: flex;
+      align-items: center;
+      padding: 25px;
+      border-radius: 6px;
 
       .logo {
-        @apply bg-focus;
         padding: 12px;
         border-radius: 4px;
       }
 
       .text {
-        @apply pl-md text-heading-m-dt font-bold;
+        color: #ffff;
+        font-size: 20px;
       }
     }
 
     .body {
-      padding: 10px;
       @apply flex items-start flex-col;
       margin-left: 46px;
 
       .link {
-        @apply p-sm text-primary-main;
+        color: #72849a !important;
       }
     }
   }
@@ -332,7 +362,6 @@
             }
           }
 
-    
           .input-fields {
             /*width: calc(50% - 16px);*/
 
@@ -368,8 +397,6 @@
           }
         }
 
-      
-
         .search-action-wrapper {
           width: 33%;
           margin-top: 28px;
@@ -388,15 +415,13 @@
   }
 }
 
-.document-clear-all{
+.document-clear-all {
   grid-area: 2/2;
   display: flex;
   justify-content: flex-end;
   padding-right: 16px;
   align-items: center;
-}         
-
-
+}
 
 .cell-text {
   color: #505a5f;
@@ -441,13 +466,11 @@
 }
 @screen dt {
   .customEmployeeCard {
-    width: 273px !important;
-    height: 263px !important;
   }
 }
-.employeeTotalLink{
-  color: #505A5F;
-  font-size: 16px;
+.employeeTotalLink {
+  color: #505a5f;
+  font-size: 14px;
 }
 
 .inboxLinksFSM {

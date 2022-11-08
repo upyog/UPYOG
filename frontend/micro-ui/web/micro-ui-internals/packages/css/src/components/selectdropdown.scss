@@ -19,10 +19,14 @@
 }
 */
 .employee-select-wrap {
-  @apply mb-lg relative;
+
 
   .select {
+    margin-bottom: 20px;
     @apply relative block w-full h-10 border border-solid border-input-border;
+  
+    border: 1px solid #c9cccf;
+   
     &:hover {
       @apply border-2 border-solid border-primary-main;
     }
@@ -75,7 +79,7 @@
   }
 
   .options-card {
-    width: 100% !important;
+    width: 8% !important;
     box-shadow: 0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12), 0 5px 5px -3px rgba(0, 0, 0, 0.2);
     max-height: 400px;
     overflow: auto;

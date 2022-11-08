@@ -1,0 +1,7 @@
+<svg id="ic_dashboard" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+  <rect id="Rectangle_7" data-name="Rectangle 7" width="24" height="24" fill="none"/>
+  <g id="Group_10" data-name="Group 10">
+    <path id="Path_17" data-name="Path 17" d="M0,0H24V24H0Z" fill="none"/>
+    <path id="Path_18" data-name="Path 18" d="M13,21V11h8V21ZM3,13V3h8V13Zm6-2V5H5v6ZM3,21V15h8v6Zm2-2H9V17H5Zm10,0h4V13H15ZM13,3h8V9H13Zm2,2V7h4V5Z" fill="#696b74"/>
+  </g>
+</svg>
