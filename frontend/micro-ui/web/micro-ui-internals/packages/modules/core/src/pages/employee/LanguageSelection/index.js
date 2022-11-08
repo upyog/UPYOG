@@ -35,8 +35,8 @@ const LanguageSelection = () => {
             </a>
           </h1>
           <div style={{ color: "#fff", width:"75%", fontSize:"19px" }}>
-            <h2 style={{fontSize:"28px",marginBottom:"18px", fontWeight:"bold"}}>Ksmart</h2>
-            <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsum, expedita. </p>
+            <h2 style={{fontSize:"28px",marginBottom:"18px", fontWeight:"bold"}}>KSMART</h2>
+            <p>Kerala Solution For Administrative Reformation And Transformation</p>
           </div>
           <div> 2022&copy; Ksmart</div>
         </div>

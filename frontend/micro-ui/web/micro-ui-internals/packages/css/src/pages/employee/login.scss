@@ -1,12 +1,12 @@
 .loginFormStyleEmployee {
-  margin-right: 20%;
+  margin-left: 20%;
   .employeeCard {
     .submit-bar {
       @apply w-full;
     }
   }
   @media screen and (max-width: 768px) {
-    margin-right: 0;
+    margin-left: 0;
   }
 }
 .banner .bannerCard{

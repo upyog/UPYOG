@@ -130,7 +130,7 @@ const SelectStructureType = ({ t, config, onSelect, userType, formData }) => {
           // onChange={(e) => onChangeLB(e.target.value)}
         //  disabled={isEdit}
         /> */}
-      {/* <RadioButtons
+      {/* <RadioButtonsgit 
         t={t}
         optionsKey="i18nKey"
         isMandatory={config.isMandatory}
