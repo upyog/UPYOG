@@ -109,11 +109,11 @@
   .sidebar{
   
     transition: all 0.2s ease;
-    position: absolute;
+    position: fixed;
     left: 0;
     padding: 85px 0;
     background: #ffff;
-    height: 100%;
+    height:100vh;
     color: black;
     margin-top: 0px;
     z-index: 10000;

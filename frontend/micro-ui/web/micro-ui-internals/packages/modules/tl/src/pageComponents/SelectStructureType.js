@@ -1,8 +1,5 @@
-
-import React, { useState } from "react";
-import { CardLabel, TypeSelectCard } from "@egovernments/digit-ui-react-components";
-// import React, { useState,useEffect } from "react";
-// import { CardLabel, TypeSelectCard,Dropdown } from "@egovernments/digit-ui-react-components";
+import React, { useState,useEffect } from "react";
+import { CardLabel, TypeSelectCard,Dropdown } from "@egovernments/digit-ui-react-components";
 import { FormStep, RadioOrSelect, RadioButtons } from "@egovernments/digit-ui-react-components";
 import Timeline from "../components/TLTimeline";
 
@@ -10,8 +7,7 @@ const SelectStructureType = ({ t, config, onSelect, userType, formData }) => {
   const stateId = Digit.ULBService.getStateId();
   const { data: place = {}, isLoad } = Digit.Hooks.tl.useTradeLicenseMDMS(stateId, "TradeLicense", "PlaceOfActivity");
   const { data: dataitem = {}, isLoading } = Digit.Hooks.tl.useTradeLicenseMDMS(stateId, "TradeLicense", "TradeStructureSubtype");
-  console.log(formData);
-  const [setPlaceofActivity, setSelectedPlaceofActivity] = useState();
+  const [setPlaceofActivity, setSelectedPlaceofActivity] = useState(formData?.TradeDetails?.setPlaceofActivity);
   const [StructureType, setStructureType] = useState(formData?.TradeDetails?.StructureType);
   const [activities, setActivity] = useState(0);
   const [isInitialRender, setIsInitialRender] = useState(true);
@@ -48,11 +44,22 @@ const SelectStructureType = ({ t, config, onSelect, userType, formData }) => {
     // console.log(naturetypecmbvalue);    
     //  if(naturetypecmbvalue =="LAND"){      
     //     routeComponent = "land-type";
-    //     console.log(routeComponent);        
+    //     console.log(routeComponent);  
+    //     sessionStorage.setItem("routeElement", routeComponent);             
     //   } else if(naturetypecmbvalue =="BUIL"){
     //     routeComponent = "building-det";
     //     console.log(routeComponent);
-    //   }    
+    //     sessionStorage.setItem("routeElement", routeComponent);
+
+    //   } else if(naturetypecmbvalue =="VEHI"){
+    //     routeComponent = "vechicle-det";
+    //     console.log(routeComponent);
+    //     sessionStorage.setItem("routeElement", routeComponent);
+    //   } else if(naturetypecmbvalue =="WATE"){
+    //     routeComponent = "water-det";
+    //     console.log(routeComponent);
+    //     sessionStorage.setItem("routeElement", routeComponent);
+    //   }       
       // sessionStorage.removeItem("routeElement");
       // sessionStorage.setItem("routeElement", routeComponent);
       // onSelect(config.key, { routeElement });
@@ -67,33 +74,22 @@ const SelectStructureType = ({ t, config, onSelect, userType, formData }) => {
       if(setPlaceofActivity){
         setIsInitialRender(false);
         naturetype = setPlaceofActivity.code.substring(0, 4);    
-        setActivity(cmbStructure.filter( (cmbStructure) => cmbStructure.code.includes(naturetype)));
+        setActivity(cmbStructure.filter( (cmbStructure) => cmbStructure.maincode.includes(naturetype)));
       }
     }
   }, [activities,isInitialRender]);
  
   function goNext() {
-   
-    sessionStorage.setItem("PlaceOfActivity", setPlaceofActivity.code);
-    onSelect(config.key, { setPlaceofActivity });
+    sessionStorage.setItem("PlaceOfActivity", setPlaceofActivity.code);   
     sessionStorage.setItem("StructureType", StructureType.name);
-    onSelect(config.key, { StructureType });
-    // onSelect(config.key, { routeElement });
-    
+    onSelect(config.key, { StructureType,setPlaceofActivity });
   }
   return (
     <React.Fragment>
     {window.location.href.includes("/citizen") ? <Timeline /> : null}
     <FormStep t={t} config={config} onSelect={goNext} onSkip={onSkip} isDisabled={!StructureType}>
       
-
-      {/* <CardLabel>Place Of Activity</CardLabel>
-      <RadioOrSelect />
-
-      <CardLabel>Nature Of Structure</CardLabel>
-      <RadioOrSelect /> */}
-      {/* <RadioButtons */}
-      <CardLabel>Place Of Activity</CardLabel>
+      <CardLabel>{`${t("TL_LOCALIZATION_PLACE_ACTVITY")}`}</CardLabel>
       <Dropdown
         t={t}
         optionKey="code"
@@ -114,7 +110,7 @@ const SelectStructureType = ({ t, config, onSelect, userType, formData }) => {
         //  disabled={isEdit}
         /> */}
 
-      <CardLabel>Nature Of Structure</CardLabel>
+      <CardLabel>{`${t("TL_LOCALIZATION_NATURE_STRUCTURE")}`}</CardLabel>
       <Dropdown
         t={t}
         optionKey="name"
@@ -135,7 +131,6 @@ const SelectStructureType = ({ t, config, onSelect, userType, formData }) => {
         //  disabled={isEdit}
         /> */}
       {/* <RadioButtons
->>>>>>> 98956340d46c8cd43ff9bc1be576479d43931349
         t={t}
         optionsKey="i18nKey"
         isMandatory={config.isMandatory}
