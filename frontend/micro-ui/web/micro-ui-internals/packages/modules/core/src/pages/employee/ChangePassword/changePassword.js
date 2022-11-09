@@ -147,7 +147,7 @@ const ChangePasswordComponent = ({ config: propsConfig, t }) => {
         </div> */}
       </FormComposer>
       {showToast && <Toast error={true} label={t(showToast)} onClose={closeToast} />}
-      <div style={{ width: '100%',position: "absolute", bottom: 0 }}>
+      {/* <div style={{ width: '100%',position: "absolute", bottom: 0 }}>
         <div style={{ display: 'flex', justifyContent: 'center', color:"white" }}>
           <img style={{ cursor: "pointer", display: "inline-flex", height: '1.4em' }} alt={"Powered by DIGIT"} src={`${sourceUrl}/digit-footer-bw.png`} onError={"this.src='./../digit-footer.png'"} onClick={() => {
             window.open('https://www.digit.org/', '_blank').focus();
@@ -157,7 +157,7 @@ const ChangePasswordComponent = ({ config: propsConfig, t }) => {
           <span style={{ margin: "0 10px" }}>|</span>
           <a style={{ cursor: "pointer", fontSize: "16px", fontWeight: "400"}} href={pdfUrl} target='_blank'>UPYOG License</a>
         </div>
-      </div>
+      </div> */}
     </Background>
   );
 };
