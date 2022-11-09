@@ -6,11 +6,13 @@
   margin-left: 10px;
 }
 .bannerCard .language-button-container button{
+  border-radius: 0.25rem;
   width: 6.2rem;
   height: 2.5rem;
+  font-size: 14px;
 }
 .bannerCard .customBtn{
-  border-color: #505A5F;
+  border-color: #c9cccf;
 }
 .bannerCard .customBtn:focus{
   outline: none;

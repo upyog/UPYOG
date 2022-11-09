@@ -1,56 +1,79 @@
-.search-form-wrapper{
-    @apply flex flex-wrap justify-between bg-white mb-lg py-lg pl-lg;
-    .form-field{
-        width: calc( 25% - 16px );
-        @apply inline-block mr-md align-middle;
-    }
-    .SubmitAndClearAllContainer{
-        @apply w-full;
-        .submit{
-            right: 36px;
-            margin-top: 22px;
-            margin-left: -16px !important;
-            @apply flex flex-row-reverse items-center w-full align-middle text-center !important;
-            button{
-                margin: 0;
-                @apply inline-block w-1/4 !important;
-            }
-            p{
-                @apply cursor-pointer text-link text-focus w-1/4 inline-block ;
-            }
-        }
-    }
-    .submit{
-        right: 36px;
-        margin-top: 22px;
-        @apply inline align-middle text-center !important;
-        button{
-            margin: 0;
-            @apply inline-block w-full !important;
-        }
-        p{
-            @apply cursor-pointer text-link text-focus w-full inline-block ;
-        }
-    }
-    .pt-property-search{
-        justify-content: unset;
-    }
+.search-form-wrapper {
+  display: flex;
+  flex-wrap: wrap;
 
+  .form-field {
+    width: calc(25% - 16px);
+    margin-bottom: 25px;
+    @apply inline-block mr-md align-middle;
+  }
+  .SubmitAndClearAllContainer {
+    @apply w-full;
+    .submit {
+      right: 36px;
+      margin-top: 22px;
+      margin-left: -16px !important;
+      justify-content: space-evenly;
+      @apply flex flex-row-reverse items-center w-full align-middle text-center !important;
+      button {
+        border-radius: 0.25rem;
+        margin-right: 20px;
+        width: 30%;
+        @apply inline-block !important;
+      }
+      p {
+        border: 1px solid #cfccc9;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 15px;
+        border-radius: 0.25rem;
+        width: 30%;
+        @apply cursor-pointer text-link text-focus;
+      }
+    }
+  }
+  .submit {
+    right: 36px;
+    margin-top: 22px;
+    display: inline-flex;
+    justify-content: space-evenly;
+    @apply align-middle text-center !important;
+    button {
+        margin-right: 20px;
+      border-radius: 0.25rem;
+      width: 30%;
+      @apply inline-block !important;
+    }
+    p {
+            border: 1px solid #cfccc9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            border-radius: 0.25rem;
+      width: 30%;
+      @apply cursor-pointer text-link text-focus;
+    }
+  }
+  .pt-property-search {
+    justify-content: unset;
+  }
 }
 
 @media (min-width: 780px) {
-    .search-form-wrapper{
-        .pt-form-field{
-            width: 30% !important;
-            margin-bottom: 20px;
-          }
+  .search-form-wrapper {
+    .pt-form-field {
+      width: 30% !important;
+      margin-bottom: 20px;
     }
   }
-  @media (max-width: 780px) {
-    .search-form-wrapper{
-        .pt-form-field{
-            width: 100% !important;
-            margin-bottom: 15px;
-          }
+}
+@media (max-width: 780px) {
+  .search-form-wrapper {
+    .pt-form-field {
+      width: 100% !important;
+      margin-bottom: 15px;
     }
+  }
 }

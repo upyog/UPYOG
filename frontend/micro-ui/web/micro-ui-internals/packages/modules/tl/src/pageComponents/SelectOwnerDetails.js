@@ -419,6 +419,31 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                     },
                   }}
                 />
+                <CardLabel style={typeOfOwner === "MULTIOWNER" ? { marginBottom: "-15px" } : {}}>Aadhar No</CardLabel>
+                <TextInput
+                  style={typeOfOwner === "MULTIOWNER" ? { background: "#FAFAFA" } : {}}
+                  t={t}
+                  type={"text"}
+                  isMandatory={false}
+                  optionKey="i18nKey"
+                  name="aadharno"
+                  value={field.aadharno}
+                  onChange={(e) => handleTextInputField(index, e, "aadharno")}
+                  keyup="updateFormStoryNumber();"
+                  ValidationRequired={true}
+                 
+                  //disable={isUpdateProperty || isEditProperty}
+                  {...{
+                    validation: {
+                      isRequired: true,
+                      pattern: "[0-9]",
+                      type: "number",
+                      title: t("TL_NAME_ERROR_MESSAGE"),
+                      maxLength:12,
+                      minLength:12
+                    },
+                  }}
+                />
                 <CardLabel>{`${t("TL_NEW_OWNER_DETAILS_GENDER_LABEL")}*`}</CardLabel>
                 {!isGenderLoading ? (
                   <RadioButtons

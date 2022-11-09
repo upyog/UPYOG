@@ -1,5 +1,5 @@
 import {
-    Calender, CardBasedOptions, CaseIcon, ComplaintIcon, DocumentIcon, HomeIcon, Loader, OBPSIcon, PTIcon, StandaloneSearchBar, WhatsNewCard
+    Calender, CardBasedOptions, CaseIcon,DropIcon, ComplaintIcon, DocumentIcon, HomeIcon, Loader, OBPSIcon, PTIcon, StandaloneSearchBar, WhatsNewCard
 } from "@egovernments/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
@@ -41,11 +41,11 @@ const Home = () => {
         Icon: <ComplaintIcon />,
         onClick: () => history.push("/digit-ui/citizen/pgr-home"),
       },
-      {
-        name: t("MODULE_PT"),
-        Icon: <PTIcon className="fill-path-primary-main" />,
-        onClick: () => history.push("/digit-ui/citizen/pt-home"),
-      },
+      //{
+       // name: t("MODULE_PT"),
+       // Icon: <PTIcon className="fill-path-primary-main" />,
+       // onClick: () => history.push("/digit-ui/citizen/pt-home"),
+     // },
       {
         name: t("MODULE_TL"),
         Icon: <CaseIcon className="fill-path-primary-main" />,
@@ -57,9 +57,14 @@ const Home = () => {
       //     onClick: () => history.push("/digit-ui/citizen")
       // },
       {
-        name: t("CS_COMMON_INBOX_BPA"),
+        name: t("ACTION_TEST_BIRTH"),
         Icon: <OBPSIcon />,
-        onClick: () => history.push("/digit-ui/citizen/obps-home"),
+        onClick: () => history.push("/citizen/birth-common/"),
+      },
+          {
+        name: t("ACTION_TEST_DEATH"),
+        Icon: <DropIcon />,
+        onClick: () => history.push("/citizen/death-citizen/home"),
       },
     ],
     styles: { display: "flex", flexWrap: "wrap", justifyContent: "flex-start", width: "100%" },
@@ -89,6 +94,11 @@ const Home = () => {
         name: t("CS_COMMON_SURVEYS"),
         Icon: <DocumentIcon />,
         onClick: () => history.push("/digit-ui/citizen/engagement/surveys/list"),
+      },
+      {
+        name: t("CS_COMMON_INBOX_BPA"),
+        Icon: <OBPSIcon />,
+        onClick: () => history.push("/digit-ui/citizen/obps-home"),
       },
       // {
       //     name: t("CS_COMMON_HELP"),
