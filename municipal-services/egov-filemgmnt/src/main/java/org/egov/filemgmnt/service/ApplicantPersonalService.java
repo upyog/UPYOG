@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.filemgmnt.config.FilemgmntConfiguration;
 import org.egov.filemgmnt.enrichment.ApplicantPersonalEnrichment;
@@ -71,6 +72,8 @@ public class ApplicantPersonalService {
 		} else if (!CollectionUtils.isEmpty(criteria.getFileCodes())) {
 			result = repository.getApplicantPersonalsFromFilecode(criteria);
 		} else if (criteria.getFromDate() != null) {
+			result = repository.getApplicantPersonalsFromDate(criteria);
+		} else if (!StringUtils.isEmpty(criteria.getAadhaarno())) {
 			result = repository.getApplicantPersonalsFromDate(criteria);
 		}
 

@@ -22,35 +22,38 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ApplicantPersonalSearchCriteria {
 
-    @JsonProperty("tenantId")
-    private String tenantId;
+	@JsonProperty("tenantId")
+	private String tenantId;
 
-    @JsonProperty("ids")
-    private List<String> ids;
+	@JsonProperty("ids")
+	private List<String> ids;
 
-    @JsonProperty("fileCodes")
-    private List<String> fileCodes;
+	@JsonProperty("fileCodes")
+	private List<String> fileCodes;
 
-    @JsonProperty("fromDate")
-    private Long fromDate;
+	@JsonProperty("fromDate")
+	private Long fromDate;
 
-    @JsonProperty("toDate")
-    private Long toDate;
+	@JsonProperty("toDate")
+	private Long toDate;
 
-    @JsonProperty("offset")
-    private Integer offset;
+	@JsonProperty("offset")
+	private Integer offset;
 
-    @JsonProperty("limit")
-    private Integer limit;
+	@JsonProperty("limit")
+	private Integer limit;
 
-    public boolean isEmpty() {
-        log.info("this.tenantId " + this.tenantId);
-        // return (tenantId == null && this.fileCodes == null);
-        return (StringUtils.isBlank(tenantId) && CollectionUtils.isEmpty(fileCodes));
-    }
+	@JsonProperty("aadhaarno")
+	private String aadhaarno;
 
-    public boolean tenantIdOnly() {
-        // return (tenantId != null);
-        return StringUtils.isNotBlank(tenantId);
-    }
+	public boolean isEmpty() {
+		log.info("this.tenantId " + this.tenantId);
+		// return (tenantId == null && this.fileCodes == null);
+		return (StringUtils.isBlank(tenantId) && CollectionUtils.isEmpty(fileCodes));
+	}
+
+	public boolean tenantIdOnly() {
+		// return (tenantId != null);
+		return StringUtils.isNotBlank(tenantId);
+	}
 }

@@ -31,6 +31,7 @@ public class ApplicantPersonalQueryBuilder extends BaseQueryBuilder {
 		addFilters("fd.filecode", criteria.getFileCodes(), query, preparedStmtValues);
 		addDateRangeFilter("fd.filearisingdate", criteria.getFromDate(), criteria.getToDate(), query,
 				preparedStmtValues);
+//		addFilters("ap.aadhaarno", criteria.getAadhaarno(), query, preparedStmtValues);
 
 		return query.toString();
 	}
