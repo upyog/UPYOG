@@ -7,9 +7,6 @@ import javax.validation.constraints.NotNull;
 import org.egov.filemgmnt.web.models.ApplicantPersonalSearchCriteria;
 import org.springframework.stereotype.Component;
 
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
 @Component
 public class ApplicantPersonalQueryBuilder extends BaseQueryBuilder {
     private static final String QUERY = new StringBuilder().append(" SELECT ap.id, ap.aadhaarno, ap.email, ap.firstname, ap.lastname, ap.title, ap.mobileno, ap.tenantid")
@@ -42,7 +39,6 @@ public class ApplicantPersonalQueryBuilder extends BaseQueryBuilder {
                            query,
                            preparedStmtValues);
 
-        log.info("query  " + query);
         return query.toString();
     }
 }

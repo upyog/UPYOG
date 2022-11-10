@@ -70,6 +70,41 @@ public class ApplicantPersonal {
     @JsonProperty("tenantId")
     private String tenantId;
 
+    @Schema(type = "string", description = "Father First Name")
+    @Size(max = 64)
+    @JsonProperty("fatherFirstName")
+    private String fatherfirstname;
+
+    @Schema(type = "string", description = "Father Last Name")
+    @Size(max = 64)
+    @JsonProperty("fatherLastName")
+    private String fatherlastname;
+
+    @Schema(type = "string", description = "Mother First Name")
+    @Size(max = 64)
+    @JsonProperty("motherFirstName")
+    private String motherfirstname;
+
+    @Schema(type = "string", description = "Mother Last Name")
+    @Size(max = 64)
+    @JsonProperty("motherLastName")
+    private String motherlastname;
+
+    @Schema(type = "string", description = "Category of Applicant")
+    @Size(max = 64)
+    @JsonProperty("applicantCategory")
+    private String applicantcategory;
+
+    @Schema(type = "string", description = "Date of Birth")
+    @Size(max = 64)
+    @JsonProperty("dateOfBirth")
+    private String dateofbirth;
+
+    @Schema(type = "string", description = "Bank Account Number")
+    @Size(max = 64)
+    @JsonProperty("bankAccountNo")
+    private String bankaccountno;
+
     @Valid
     @NotNull
     @JsonProperty("serviceDetails")

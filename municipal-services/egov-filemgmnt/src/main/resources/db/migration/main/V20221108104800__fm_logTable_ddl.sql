@@ -1,8 +1,9 @@
--- Table: public.eg_fm_applicantpersonal
 
--- DROP TABLE IF EXISTS public.eg_fm_applicantpersonal;
+-- Table: public.eg_fm_applicantpersonal_log
 
-CREATE TABLE IF NOT EXISTS public.eg_fm_applicantpersonal
+-- DROP TABLE IF EXISTS public.eg_fm_applicantpersonal_log;
+
+CREATE TABLE IF NOT EXISTS public.eg_fm_applicantpersonal_log
 (
     id character varying(64) ,
     aadhaarno character varying(20) ,
@@ -19,15 +20,14 @@ CREATE TABLE IF NOT EXISTS public.eg_fm_applicantpersonal
     fatherfirstname character varying(45) ,
     fatherlastname character varying(45) ,
     motherfirstname character varying(45) ,
-    motherlastname character varying(45) ,
-    CONSTRAINT eg_fm_applicantpersonal_pkey PRIMARY KEY (id)
+    motherlastname character varying(45) 
 );
 
--- Table: public.eg_fm_applicantaddress
+-- Table: public.eg_fm_applicantaddress_log
 
--- DROP TABLE IF EXISTS public.eg_fm_applicantaddress;
+-- DROP TABLE IF EXISTS public.eg_fm_applicantaddress_log;
 
-CREATE TABLE IF NOT EXISTS public.eg_fm_applicantaddress
+CREATE TABLE IF NOT EXISTS public.eg_fm_applicantaddress_log
 (
     id character varying(64) ,
     houseno character varying(20) ,
@@ -39,17 +39,15 @@ CREATE TABLE IF NOT EXISTS public.eg_fm_applicantaddress
     createddate bigint,
     lastmodifiedby character varying(64) ,
     lastmodifieddate bigint,
-    applicantpersonalid character varying(64) ,
-    CONSTRAINT eg_fm_applicantaddress_pkey PRIMARY KEY (id),
-    CONSTRAINT eg_fm_applicantaddress_fkey FOREIGN KEY (applicantpersonalid)
-        REFERENCES public.eg_fm_applicantpersonal (id) 
+    applicantpersonalid character varying(64) 
+    
 );
 
--- Table: public.eg_fm_applicantdocuments
+-- Table: public.eg_fm_applicantdocuments_log
 
--- DROP TABLE IF EXISTS public.eg_fm_applicantdocuments;
+-- DROP TABLE IF EXISTS public.eg_fm_applicantdocuments_log;
 
-CREATE TABLE IF NOT EXISTS public.eg_fm_applicantdocuments
+CREATE TABLE IF NOT EXISTS public.eg_fm_applicantdocuments_log
 (
     id character varying(64),
     applicantpersonalid character varying(64) ,
@@ -59,17 +57,15 @@ CREATE TABLE IF NOT EXISTS public.eg_fm_applicantdocuments
     createdby character varying(45) ,
     createddate bigint,
     lastmodifiedby character varying(45) ,
-    lastmodifieddate bigint,
-    CONSTRAINT eg_fm_applicantdocuments_pkey PRIMARY KEY (id),
- CONSTRAINT eg_fm_applicantdocuments_fkey FOREIGN KEY (applicantpersonalid)
-        REFERENCES public.eg_fm_applicantpersonal (id) 
+    lastmodifieddate bigint
+   
 );
 
--- Table: public.eg_fm_applicantservicedocuments
+-- Table: public.eg_fm_applicantservicedocuments_log
 
--- DROP TABLE IF EXISTS public.eg_fm_applicantservicedocuments;
+-- DROP TABLE IF EXISTS public.eg_fm_applicantservicedocuments_log;
 
-CREATE TABLE IF NOT EXISTS public.eg_fm_applicantservicedocuments
+CREATE TABLE IF NOT EXISTS public.eg_fm_applicantservicedocuments_log
 (
     id character varying(64),
     applicantpersonalid character varying(45),
@@ -81,17 +77,15 @@ CREATE TABLE IF NOT EXISTS public.eg_fm_applicantservicedocuments
     createddate bigint,
     lastmodifiedby character varying(45) ,
     lastmodifieddate bigint,
-    documentnumber character varying(45),
-    CONSTRAINT eg_fm_applicantservicendocuments_pkey PRIMARY KEY (id),
-CONSTRAINT eg_fm_applicantservicedocuments_fkey FOREIGN KEY (applicantpersonalid)
-        REFERENCES public.eg_fm_applicantpersonal (id) 
+    documentnumber character varying(45)
+  
 );
 
--- Table: public.eg_fm_servicedetails
+-- Table: public.eg_fm_servicedetails_log
 
--- DROP TABLE IF EXISTS public.eg_fm_servicedetails;
+-- DROP TABLE IF EXISTS public.eg_fm_servicedetails_log;
 
-CREATE TABLE IF NOT EXISTS public.eg_fm_servicedetails
+CREATE TABLE IF NOT EXISTS public.eg_fm_servicedetails_log
 (
     id character varying(64) ,
     applicantpersonalid character varying(64) ,
@@ -103,17 +97,15 @@ CREATE TABLE IF NOT EXISTS public.eg_fm_servicedetails
     createdtime bigint,
     lastmodifiedby character varying(45) ,
     lastmodifiedtime bigint,
-    servicesubtype character varying(45) ,
-    CONSTRAINT eg_fm_servicedetails_pkey PRIMARY KEY (id),
-CONSTRAINT eg_fm_servicedetails_fkey FOREIGN KEY (applicantpersonalid )
-        REFERENCES public.eg_fm_applicantpersonal (id)
+    servicesubtype character varying(45) 
+  
 );
 
--- Table: public.eg_fm_filedetails
+-- Table: public.eg_fm_filedetails_log
 
--- DROP TABLE IF EXISTS public.eg_fm_filedetails;
+-- DROP TABLE IF EXISTS public.eg_fm_filedetails_log;
 
-CREATE TABLE IF NOT EXISTS public.eg_fm_filedetails
+CREATE TABLE IF NOT EXISTS public.eg_fm_filedetails_log
 (
     id character varying(64) ,
     tenantid character varying(15) ,
@@ -133,11 +125,9 @@ CREATE TABLE IF NOT EXISTS public.eg_fm_filedetails
     createddate bigint,
     lastmodifiedby character varying(45) ,
     lastmodifieddate bigint,
-    filecategory character varying(45), 
-   CONSTRAINT eg_fm_filedetails_pkey PRIMARY KEY (id),
-CONSTRAINT eg_fm_filedetails_service_fkey FOREIGN KEY (servicedetailsid)
-        REFERENCES public.eg_fm_servicedetails (id) ,
-CONSTRAINT eg_fm_filedetails_applicant_fkey FOREIGN KEY (applicantpersonalid )
-        REFERENCES public.eg_fm_applicantpersonal (id) 
+    filecategory character varying(45) 
+ 
 );
+
+
 

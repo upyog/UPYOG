@@ -17,40 +17,35 @@ import org.egov.filemgmnt.web.models.ApplicantPersonalSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
 @Service
 public class ApplicantPersonalService {
 
-    private final Producer producer;
-    private final FilemgmntConfiguration filemgmntConfig;
     private final ApplicantPersonalValidator validatorService;
     private final ApplicantPersonalEnrichment enrichmentService;
     private final ApplicantPersonalRepository repository;
-    private final MdmsUtil mutil;
+    private final Producer producer;
+    private final MdmsUtil mdmsUtil;
+    private final FilemgmntConfiguration fmConfig;
 
     @Autowired
     ApplicantPersonalService(ApplicantPersonalValidator validatorService, ApplicantPersonalEnrichment enrichmentService,
-                             ApplicantPersonalRepository repository, Producer producer, MdmsUtil mutil,
+                             ApplicantPersonalRepository repository, Producer producer, MdmsUtil mdmsUtil,
                              FilemgmntConfiguration filemgmntConfig) {
         this.validatorService = validatorService;
         this.enrichmentService = enrichmentService;
         this.repository = repository;
         this.producer = producer;
-        this.filemgmntConfig = filemgmntConfig;
-        this.mutil = mutil;
-
+        this.mdmsUtil = mdmsUtil;
+        this.fmConfig = filemgmntConfig;
     }
 
     public List<ApplicantPersonal> create(ApplicantPersonalRequest request) {
 
         // validate mdms data
-
-        Object mdmsData = mutil.mDMSCall(request.getRequestInfo(),
-                                         request.getApplicantPersonals()
-                                                .get(0)
-                                                .getTenantId());
+        String tenantId = request.getApplicantPersonals()
+                                 .get(0)
+                                 .getTenantId();
+        Object mdmsData = mdmsUtil.mdmsCall(request.getRequestInfo(), tenantId);
 
         // validate request
         validatorService.validateCreate(request, mdmsData);
@@ -58,7 +53,7 @@ public class ApplicantPersonalService {
         // enrich request
         enrichmentService.enrichCreate(request);
 
-        producer.push(filemgmntConfig.getSaveApplicantPersonalTopic(), request);
+        producer.push(fmConfig.getSaveApplicantPersonalTopic(), request);
 
         return request.getApplicantPersonals();
 
@@ -101,7 +96,7 @@ public class ApplicantPersonalService {
 
         enrichmentService.enrichUpdate(request);
 
-        producer.push(filemgmntConfig.getUpdateApplicantPersonalTopic(), request);
+        producer.push(fmConfig.getUpdateApplicantPersonalTopic(), request);
 
         return request.getApplicantPersonals();
     }

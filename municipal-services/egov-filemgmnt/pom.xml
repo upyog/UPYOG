@@ -45,14 +45,11 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-jdbc</artifactId>
         </dependency>
-        <!-- <dependency> <groupId>org.flywaydb</groupId> <artifactId>flyway-core</artifactId> </dependency> -->
-        
-          <dependency>
-      <groupId>org.flywaydb</groupId>
-      <artifactId>flyway-core</artifactId>
-      <version>6.4.3</version>
-    </dependency>
-    
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
@@ -74,11 +71,8 @@
             <artifactId>services-common</artifactId>
             <version>1.0.1-SNAPSHOT</version>
         </dependency>
-<!--         <dependency>
-            <groupId>org.egov.services</groupId>
-            <artifactId>digit-models</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-        </dependency> -->
+        <!-- <dependency> <groupId>org.egov.services</groupId> <artifactId>digit-models</artifactId> 
+            <version>1.0.0-SNAPSHOT</version> </dependency> -->
         <dependency>
             <groupId>org.egov</groupId>
             <artifactId>mdms-client</artifactId>
@@ -110,6 +104,11 @@
             <artifactId>spring-boot-devtools</artifactId>
             <scope>runtime</scope>
             <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>p6spy</groupId>
+            <artifactId>p6spy</artifactId>
+            <version>3.9.1</version>
         </dependency>
         <!-- development only : end -->
         <dependency>

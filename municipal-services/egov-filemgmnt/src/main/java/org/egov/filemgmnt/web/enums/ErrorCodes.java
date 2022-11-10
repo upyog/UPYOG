@@ -24,7 +24,10 @@ public enum ErrorCodes {
 
     // Mdms Service
     MDMS_DATA_ERROR("MDMS_DATA_ERROR"),
-    MDMS_INVALID_TENANT_ID("INVALID_TENANTID");
+    MDMS_INVALID_TENANT_ID("INVALID_TENANTID"),
+
+    // Search
+    INVALID_SEARCH("INVALID_SEARCH");
 
     private String code;
 }

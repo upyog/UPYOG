@@ -7,8 +7,8 @@ serviceMaps:
     isTransaction: true
     queryMaps:
     - query: >
-        INSERT INTO eg_fm_applicantpersonal(id, aadhaarno, email, firstname, lastname, title, mobileno, tenantid, createdby, createdtime, lastmodifiedby, lastmodifiedtime) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO eg_fm_applicantpersonal(id, aadhaarno, email, firstname, lastname, title, mobileno, tenantid, fatherfirstname, fatherlastname, motherfirstname, motherlastname, applicantcategory, dateofbirth, bankaccountno, createdby, createdtime, lastmodifiedby, lastmodifiedtime) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       basePath: ApplicantPersonals.*
       jsonMaps:
       - jsonPath: $.ApplicantPersonals.*.id
@@ -27,6 +27,20 @@ serviceMaps:
       
       - jsonPath: $.ApplicantPersonals.*.tenantId
       
+      - jsonPath: $.ApplicantPersonals.*.fatherFirstName
+      
+      - jsonPath: $.ApplicantPersonals.*.fatherLastName
+      
+      - jsonPath: $.ApplicantPersonals.*.motherFirstName
+      
+      - jsonPath: $.ApplicantPersonals.*.motherLastName
+      
+      - jsonPath: $.ApplicantPersonals.*.applicantCategory
+      
+      - jsonPath: $.ApplicantPersonals.*.dateOfBirth
+      
+      - jsonPath: $.ApplicantPersonals.*.bankAccountNo
+      
       - jsonPath: $.ApplicantPersonals.*.auditDetails.createdBy
 
       - jsonPath: $.ApplicantPersonals.*.auditDetails.createdTime
@@ -36,7 +50,7 @@ serviceMaps:
       - jsonPath: $.ApplicantPersonals.*.auditDetails.lastModifiedTime
       
     - query: >
-        INSERT INTO eg_fm_servicedetails(id, applicantpersonalid, serviceid, servicecode, businessservice, workflowcode, createdby, createdtime, lastmodifiedby, lastmodifiedtime) 
+        INSERT INTO eg_fm_servicedetail(id, applicantpersonalid, serviceid, servicecode, businessservice, workflowcode, createdby, createdtime, lastmodifiedby, lastmodifiedtime) 
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       basePath: ApplicantPersonals.*.serviceDetails
       jsonMaps:
@@ -62,8 +76,8 @@ serviceMaps:
  
       
     - query: >
-        INSERT INTO eg_fm_applicantaddress(id, houseno, housename, street, pincode, postofficename, createdby, createddate, lastmodifiedby, lastmodifieddate,applicantpersonalid)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )
+        INSERT INTO eg_fm_applicantaddress(id, houseno, housename, street, pincode, postofficename, residenceassociationno, localplace, mainplace, wardno, createdby, createddate, lastmodifiedby, lastmodifieddate,applicantpersonalid)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )
       basePath: ApplicantPersonals.*.applicantAddresses
       jsonMaps:    
       - jsonPath: $.ApplicantPersonals.*.applicantAddresses.id
@@ -77,6 +91,14 @@ serviceMaps:
       - jsonPath: $.ApplicantPersonals.*.applicantAddresses.pincode
      
       - jsonPath: $.ApplicantPersonals.*.applicantAddresses.postOfficeName
+      
+      - jsonPath: $.ApplicantPersonals.*.applicantAddresses.residenceAssociationNo
+      
+      - jsonPath: $.ApplicantPersonals.*.applicantAddresses.localPlace
+      
+      - jsonPath: $.ApplicantPersonals.*.applicantAddresses.mainPlace
+      
+      - jsonPath: $.ApplicantPersonals.*.applicantAddresses.wardNo
      
       - jsonPath: $.ApplicantPersonals.*.auditDetails.createdBy
 
@@ -89,7 +111,7 @@ serviceMaps:
       - jsonPath: $.ApplicantPersonals.*.id
       
     - query: >
-        INSERT INTO eg_fm_applicantdocuments(id, applicantpersonalid, documenttypeid, documentnumber, docexpirydate, createdby, createddate, lastmodifiedby, lastmodifieddate )
+        INSERT INTO eg_fm_applicantdocument(id, applicantpersonalid, documenttypeid, documentnumber, docexpirydate, createdby, createddate, lastmodifiedby, lastmodifieddate )
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?  )        
       basePath: ApplicantPersonals.*.applicantDocuments
       jsonMaps:    
@@ -101,8 +123,7 @@ serviceMaps:
 
       - jsonPath: $.ApplicantPersonals.*.applicantDocuments.documentNumber
      
-      - jsonPath: $.ApplicantPersonals.*.applicantDocuments.docexpiryDate   
-           
+      - jsonPath: $.ApplicantPersonals.*.applicantDocuments.docexpiryDate              
        
       - jsonPath: $.ApplicantPersonals.*.auditDetails.createdBy
 
@@ -113,8 +134,8 @@ serviceMaps:
       - jsonPath: $.ApplicantPersonals.*.auditDetails.lastModifiedTime  
       
     - query: >
-        INSERT INTO eg_fm_applicantservicedocuments(id, applicantid, servicedetailsid, documenttypeid, filestoreid, active, createdby, createddate, lastmodifiedby, lastmodifieddate,documentnumber)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )        
+        INSERT INTO eg_fm_applicantservicedocument(id, applicantid, servicedetailsid, documenttypeid, filestoreid, active, documentnumber, applicationdetails, createdby, createddate, lastmodifiedby, lastmodifieddate)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )        
       basePath: ApplicantPersonals.*.applicantServiceDocuments
       jsonMaps:    
       - jsonPath: $.ApplicantPersonals.*.applicantServiceDocuments.id         
@@ -127,7 +148,11 @@ serviceMaps:
      
       - jsonPath: $.ApplicantPersonals.*.applicantServiceDocuments.fileStoreId
      
-      - jsonPath: $.ApplicantPersonals.*.applicantServiceDocuments.active              
+      - jsonPath: $.ApplicantPersonals.*.applicantServiceDocuments.active 
+      
+      - jsonPath: $.ApplicantPersonals.*.applicantServiceDocuments.documentNumber 
+       
+      - jsonPath: $.ApplicantPersonals.*.applicantServiceDocuments.applicationDetails              
        
       - jsonPath: $.ApplicantPersonals.*.auditDetails.createdBy
 
@@ -137,10 +162,10 @@ serviceMaps:
 
       - jsonPath: $.ApplicantPersonals.*.auditDetails.lastModifiedTime 
       
-      - jsonPath: $.ApplicantPersonals.*.applicantServiceDocuments.documentNumber 
+     
       
     - query: >
-        INSERT INTO eg_fm_filedetails(id, tenantid, servicedetailsid, filenumber, filecode, filename, filearisingmode, filearisingdate, financialyear, applicationdate, workflowcode, action, filestatus, createdby, createddate, lastmodifiedby, lastmodifieddate)
+        INSERT INTO eg_fm_filedetail(id, tenantid, servicedetailsid, filenumber, filecode, filename, filearisingmode, filearisingdate, financialyear, applicationdate, workflowcode, action, filestatus, createdby, createddate, lastmodifiedby, lastmodifieddate)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?, ? )        
       basePath: ApplicantPersonals.*.fileDetail
       jsonMaps:    
@@ -222,7 +247,7 @@ serviceMaps:
       - jsonPath: $.ApplicantPersonals.*.applicantAddresses.applicantpersonalid
       
     - query: >      
-        UPDATE eg_fm_applicantdocuments 
+        UPDATE eg_fm_applicantdocument 
         SET documenttypeid = ?, documentnumber = ?, docexpirydate = ?        
         WHERE applicantpersonalid = ?;
       basePath: ApplicantPersonals.*.applicantDocuments
@@ -236,7 +261,7 @@ serviceMaps:
       - jsonPath: $.ApplicantPersonals.*.applicantDocuments.applicantpersonalid 
       
     - query: >      
-        UPDATE eg_fm_applicantservicedocuments 
+        UPDATE eg_fm_applicantservicedocument
         SET documenttypeid = ?, servicedetailsid = ?     
         WHERE applicantid = ?;
       basePath: ApplicantPersonals.*.applicantServiceDocuments
@@ -248,7 +273,7 @@ serviceMaps:
       - jsonPath: $.ApplicantPersonals.*.applicantServiceDocuments.applicantid  
       
     - query: >      
-        UPDATE eg_fm_servicedetails 
+        UPDATE eg_fm_servicedetail
         SET servicecode = ?, businessservice = ?, workflowcode = ?        
         WHERE applicantpersonalid = ?;
       basePath: ApplicantPersonals.*.serviceDetails

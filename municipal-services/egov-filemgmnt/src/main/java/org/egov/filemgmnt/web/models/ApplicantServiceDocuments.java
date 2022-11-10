@@ -61,6 +61,11 @@ public class ApplicantServiceDocuments {
     @JsonProperty("documentNumber")
     private String documentNumber;
 
+    @Schema(type = "string", description = "Application Details")
+    @Size(max = 64)
+    @JsonProperty("applicationDetails")
+    private String applicationdetails;
+
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails;
 

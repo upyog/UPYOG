@@ -51,6 +51,6 @@ public class ApplicantPersonalSearchCriteria {
 
     public boolean tenantIdOnly() {
         // return (tenantId != null);
-        return StringUtils.isNotBlank(tenantId);
+        return (StringUtils.isNotBlank(tenantId) && CollectionUtils.isEmpty(fileCodes));
     }
 }

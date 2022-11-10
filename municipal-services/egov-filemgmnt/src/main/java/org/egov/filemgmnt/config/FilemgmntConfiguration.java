@@ -34,4 +34,7 @@ public class FilemgmntConfiguration {
     @Value("${citizen.allowed.search.params}")
     private String allowedCitizenSearchParams;
 
+    @Value("${employee.allowed.search.params}")
+    private String allowedEmployeeSearchParams;
+
 }
