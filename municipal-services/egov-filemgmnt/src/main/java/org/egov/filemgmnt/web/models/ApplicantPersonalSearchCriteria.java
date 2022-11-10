@@ -43,14 +43,18 @@ public class ApplicantPersonalSearchCriteria {
     @JsonProperty("limit")
     private Integer limit;
 
+    @JsonProperty("aadhaarno")
+    private String aadhaarno;
+
+    public boolean tenantIdOnly() {
+        // return (tenantId != null);
+        return (StringUtils.isNotBlank(tenantId) && CollectionUtils.isEmpty(fileCodes));
+    }
+
     public boolean isEmpty() {
         log.info("this.tenantId " + this.tenantId);
         // return (tenantId == null && this.fileCodes == null);
         return (StringUtils.isBlank(tenantId) && CollectionUtils.isEmpty(fileCodes));
     }
 
-    public boolean tenantIdOnly() {
-        // return (tenantId != null);
-        return (StringUtils.isNotBlank(tenantId) && CollectionUtils.isEmpty(fileCodes));
-    }
 }

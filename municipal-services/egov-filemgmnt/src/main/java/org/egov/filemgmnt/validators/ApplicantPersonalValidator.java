@@ -6,13 +6,17 @@ import static org.egov.filemgmnt.web.enums.ErrorCodes.INVALID_SEARCH;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.filemgmnt.config.FilemgmntConfiguration;
 import org.egov.filemgmnt.repository.ApplicantPersonalRepository;
+import org.egov.filemgmnt.web.enums.ErrorCodes;
 import org.egov.filemgmnt.web.models.ApplicantPersonal;
 import org.egov.filemgmnt.web.models.ApplicantPersonalRequest;
 import org.egov.filemgmnt.web.models.ApplicantPersonalSearchCriteria;
@@ -56,6 +60,7 @@ public class ApplicantPersonalValidator {
         }
 
         mdmsValidator.validateMdmsData(request, mdmsData);
+        validateFMSpecificNotNullFields(request);
     }
 
     /**
@@ -73,6 +78,16 @@ public class ApplicantPersonalValidator {
 
         if (applicantPersonals.size() != searchResult.size()) {
             throw new CustomException(APPLICANT_PERSONAL_INVALID_UPDATE.getCode(),
+                    "Applicant Personal(s) not found in database.");
+        }
+
+        if (CollectionUtils.isEmpty(applicantPersonals)) {
+            throw new CustomException(ErrorCodes.APPLICANT_PERSONAL_REQUIRED.getCode(),
+                    "Atleast one applicant personal is required.");
+        }
+
+        if (applicantPersonals.size() != searchResult.size()) {
+            throw new CustomException(ErrorCodes.APPLICANT_PERSONAL_INVALID_UPDATE.getCode(),
                     "Applicant Personal(s) not found in database.");
         }
 
@@ -141,6 +156,56 @@ public class ApplicantPersonalValidator {
             throw new CustomException(INVALID_SEARCH.getCode(), "Search on limit is not allowed");
         }
 
+        if (criteria.getTenantId() != null && !allowedParams.contains("tenantId"))
+            throw new CustomException("INVALID SEARCH", "Search on tenantId is not allowed");
+
+        if (criteria.getToDate() != null && !allowedParams.contains("toDate"))
+            throw new CustomException("INVALID SEARCH", "Search on toDate is not allowed");
+
+        if (criteria.getFromDate() != null && !allowedParams.contains("fromDate"))
+            throw new CustomException("INVALID SEARCH", "Search on fromDate is not allowed");
+
+        if (criteria.getIds() != null && !allowedParams.contains("ids"))
+            throw new CustomException("INVALID SEARCH", "Search on ids is not allowed");
+
+        if (criteria.getFileCodes() != null && !allowedParams.contains("filecode"))
+            throw new CustomException("INVALID SEARCH", "Search on filecode is not allowed");
+
+        if (criteria.getOffset() != null && !allowedParams.contains("offset"))
+            throw new CustomException("INVALID SEARCH", "Search on offset is not allowed");
+
+        if (criteria.getLimit() != null && !allowedParams.contains("limit"))
+            throw new CustomException("INVALID SEARCH", "Search on limit is not allowed");
+
+    }
+
+    private void validateFMSpecificNotNullFields(ApplicantPersonalRequest request) {
+        Map<String, String> errorMap = new HashMap<>();
+        request.getApplicantPersonals()
+               .forEach(personal -> {
+                   if (StringUtils.isEmpty(personal.getFileDetail()
+                                                   .getFinancialYear()))
+                       errorMap.put("NULL_FINANCIALYEAR", " Financial Year cannot be null");
+                   if (StringUtils.isEmpty(personal.getServiceDetails()
+                                                   .getServiceCode()))
+                       errorMap.put("NULL_SERVICESUBTYPE", " Service Sub Type cannot be null");
+               });
+        if (MapUtils.isNotEmpty(errorMap)) {
+            throw new CustomException(errorMap);
+        }
+
+        request.getApplicantPersonals()
+               .forEach(personal -> {
+                   if (StringUtils.isEmpty(personal.getApplicantAddress()
+                                                   .getHouseNo())) {
+                       throw new CustomException("NULL_HOUSENO", " House Number cannot be null");
+                   }
+                   if (StringUtils.isEmpty(personal.getApplicantAddress()
+                                                   .getHouseName())) {
+                       throw new CustomException("NULL_HOUSENAME", " House Name cannot be null");
+                   }
+
+               });
     }
 
     @SuppressWarnings("unused")

@@ -6,20 +6,24 @@
   }
   .ground-container {
     margin-bottom: 56px;
+    
     @apply flex flex-col;
   }
   .card-home {
-    font-size: 16px;
-    padding: 0 0 16px 0;
-    width: 92vw;
+    border: 1px solid #edf2f9;
+    padding: 16px;
+    margin-right: 15px;
+    margin-bottom: 15px;
     display: inline-block;
-    margin: 8px auto;
+    background-color: #fff;
+    min-width: 300px;
+    border-radius: 0.8rem;
   }
   .topbar {
     position: fixed;
     top: 0;
     width: 100%;
-    padding: 16px 24px;
+    padding: 4px 4px 4px 80px;
     background: white;
     box-shadow: rgba(0, 0, 0, 0.24) 0 1px 4px;
     z-index: 9999;
@@ -29,8 +33,7 @@
 
       &.city {
         margin-right: 8px;
-        height: 48px;
-        width: 48px;
+        width: 100%;
       }
 
       &.state {
@@ -104,16 +107,15 @@
 
 .citizen,
 .employee {
-  .sidebar {
+  .sidebar{
     position: fixed;
     left: 0;
-    padding: 20px 0;
+    padding: 85px 0;
     background: #22394d;
     height: 100%;
     color: white;
-    margin-top: 80px;
-    z-index: 1000;
-
+    margin-top: 0px;
+    z-index: 10000;
     .actions {
       cursor: pointer;
       padding: 0 20px;

@@ -287,35 +287,35 @@ serviceMaps:
       - jsonPath: $.ApplicantPersonals.*.serviceDetails.applicantpersonalid 
             
             
-#  - version: 1.0
-#    description: Persists applicant service details in egov_filemgmnt database, eg_fm_servicedetails table
-#    fromTopic: save-fm-servicedetails
-#    isTransaction: true
-#    queryMaps:
-#    - query: >
-#        INSERT INTO eg_fm_servicedetails(id, applicantpersonalid, serviceid, servicecode, businessservice, workflowcode, createdby, createdtime, lastmodifiedby, lastmodifiedtime) 
-#        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-#      basePath: ServiceDetails.*
-#      jsonMaps:
-#      - jsonPath: $.ServiceDetails.*.id
-#
-#      - jsonPath: $.ServiceDetails.*.applicantPersonalId 
-#      
-#      - jsonPath: $.ServiceDetails.*.serviceId 
-#      
-#      - jsonPath: $.ServiceDetails.*.serviceCode 
-#      
-#      - jsonPath: $.ServiceDetails.*.businessService 
-#      
-#      - jsonPath: $.ServiceDetails.*.workflowCode 
-#      
-#      - jsonPath: $.ServiceDetails.*.auditDetails.createdBy
-#
-#      - jsonPath: $.ServiceDetails.*.auditDetails.createdTime
-#      
-#      - jsonPath: $.ServiceDetails.*.auditDetails.lastModifiedBy
-#
-#      - jsonPath: $.ServiceDetails.*.auditDetails.lastModifiedTime     
+  - version: 1.0
+    description: Persists communication file  details in egov_filemgmnt database, eg_fm_communicationfile table
+    fromTopic: save-fm-communicationfile
+    isTransaction: true
+    queryMaps:
+    - query: >
+        INSERT INTO eg_fm_communicationfile(id, subjecttypeid, senderid, priorityid, filestoreid, details, createdby, createddate, lastmodifiedby, lastmodifieddate) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      basePath: CommunicationFile.*
+      jsonMaps:
+      - jsonPath: $.CommunicationFile.*.id
+
+      - jsonPath: $.CommunicationFile.*.subjectTypeId 
+      
+      - jsonPath: $.CommunicationFile.*.senderId 
+      
+      - jsonPath: $.CommunicationFile.*.priorityId 
+      
+      - jsonPath: $.CommunicationFile.*.fileStoreId 
+      
+      - jsonPath: $.CommunicationFile.*.details 
+      
+      - jsonPath: $.CommunicationFile.*.auditDetails.createdBy
+
+      - jsonPath: $.CommunicationFile.*.auditDetails.createdTime
+      
+      - jsonPath: $.CommunicationFile.*.auditDetails.lastModifiedBy
+
+      - jsonPath: $.CommunicationFile.*.auditDetails.lastModifiedTime     
    
 
        

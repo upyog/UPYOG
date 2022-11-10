@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.filemgmnt.config.FilemgmntConfiguration;
 import org.egov.filemgmnt.enrichment.ApplicantPersonalEnrichment;
@@ -47,9 +48,6 @@ public class ApplicantPersonalService {
                                  .getTenantId();
         Object mdmsData = mdmsUtil.mdmsCall(request.getRequestInfo(), tenantId);
 
-        // validate request
-        validatorService.validateCreate(request, mdmsData);
-
         // enrich request
         enrichmentService.enrichCreate(request);
 
@@ -70,19 +68,17 @@ public class ApplicantPersonalService {
             result = repository.getApplicantPersonalsFromFilecode(criteria);
         } else if (criteria.getFromDate() != null) {
             result = repository.getApplicantPersonalsFromDate(criteria);
+        } else if (!StringUtils.isEmpty(criteria.getAadhaarno())) {
+            result = repository.getApplicantPersonalsFromDate(criteria);
         }
 
         return result;
     }
 
     public List<ApplicantPersonal> update(ApplicantPersonalRequest request) {
-        System.out.println(request);
 
         List<String> ids = new LinkedList<>();
-        System.out.println(request.getApplicantPersonals()
-                                  .get(0)
-                                  .getApplicantAddress()
-                                  .getHouseName());
+
         request.getApplicantPersonals()
                .forEach(personal -> ids.add(personal.getId()));
 

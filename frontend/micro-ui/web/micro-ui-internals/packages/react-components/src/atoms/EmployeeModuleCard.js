@@ -4,11 +4,13 @@ import { Link } from "react-router-dom";
 
 const EmployeeModuleCard = ({ Icon, moduleName, kpis = [], links = [], isCitizen = false, className, styles, FsmHideCount }) => {
   return (
+    <>
     <div className={className ? className : "employeeCard card-home customEmployeeCard"} style={styles ? styles : {}}>
       <div className="complaint-links-container">
         <div className="header" style={isCitizen ? { padding: "0px" } : {}}>
+        <span className="logo removeBorderRadiusLogo">{Icon}</span>
           <span className="text removeHeight">{moduleName}</span>
-          <span className="logo removeBorderRadiusLogo">{Icon}</span>
+          
         </div>
         <div className="body" style={{ margin: "0px", padding: "0px" }}>
           {kpis.length !== 0 && (
@@ -16,7 +18,9 @@ const EmployeeModuleCard = ({ Icon, moduleName, kpis = [], links = [], isCitizen
               {kpis.map(({ count, label, link }, index) => (
                 <div className="card-count" key={index}>
                   <div>
-                    <span>{count || "-"}</span>
+                    <span style={{
+                      fontSize: "35px"
+                    }}>{count || "-"}</span>
                   </div>
                   <div>
                     {link ? (
@@ -37,7 +41,7 @@ const EmployeeModuleCard = ({ Icon, moduleName, kpis = [], links = [], isCitizen
                   <>
                     {FsmHideCount ? null : <span className={"inbox-total"}>{count || "-"}</span>}
                     <Link to={link}>
-                      <ArrowRightInbox />
+                      {/* <ArrowRightInbox /> */}
                     </Link>
                   </>
                 ) : null}
@@ -47,6 +51,8 @@ const EmployeeModuleCard = ({ Icon, moduleName, kpis = [], links = [], isCitizen
         </div>
       </div>
     </div>
+    </>
+    
   );
 };
 
