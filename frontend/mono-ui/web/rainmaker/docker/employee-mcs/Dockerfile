@@ -1,5 +1,5 @@
 
-FROM egovio/alpine-node-builder-10:yarn AS build
+FROM upyogio/alpine-node-builder-12:yarn AS build
 ARG WORK_DIR
 WORKDIR /app
 

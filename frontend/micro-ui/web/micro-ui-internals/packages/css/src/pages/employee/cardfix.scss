@@ -1,9 +1,18 @@
 .flex-fit{
-    @apply flex w-full border-b border-solid border-border;
-    padding : 8px 10px;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    --border-opacity:1;
+    border-color: #d6d5d4;
+    border-bottom: 1px;
+    border-color: rgba(214, 213, 212, var(--border-opacity));
+    border-style: solid;
+    padding: 8px 10px; 
 }
 .card-count{
-    @apply pr-xl;
+
     div{
         @apply text-link;
         span{

@@ -109,11 +109,36 @@
 }
 
 .banner {
-  @apply flex justify-center items-center;
+ display: flex;
+ justify-content: space-between;
+ align-items: center;
   height: calc(100vh - 80px);
-  background: linear-gradient(rgba(11,75,102,0.8), rgba(11,75,102,0.8)), var(--banner-url) center center;
-
+  background-color: #ffff;
+  .leftdiv{
+    padding: 15px 40px 15px 40px;
+    background-color: #fe7a51;
+    height: 100vh;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center center;
+    width: 35%;
+  }
+  .leftflex{
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+  }
+  .logostyle{
+    font-size: 24px;
+    font-weight: bold;
+    color: #fff;
+  }
   .bannerCard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     min-width: 400px;
   }
   .bannerLogo {
@@ -128,4 +153,10 @@
     @apply flex justify-center items-center;
     margin-bottom: 24px;
   }
+  @media screen and (max-width: 768px) {
+    .leftdiv{
+      display: none;
+        }
+  }
+ 
 }

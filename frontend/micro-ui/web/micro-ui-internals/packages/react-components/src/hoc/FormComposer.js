@@ -19,7 +19,12 @@ import LinkButton from "../atoms/LinkButton";
 import { useTranslation } from "react-i18next";
 import MobileNumber from "../atoms/MobileNumber";
 
+
+
 export const FormComposer = (props) => {
+  const mystyle = {
+    padding:"1.5rem"
+   };
   const { register, handleSubmit, setValue, getValues, watch, control, formState, errors, setError, clearErrors, unregister } = useForm({
     defaultValues: props.defaultValues,
   });
@@ -231,6 +236,7 @@ export const FormComposer = (props) => {
                 );
               return (
                 <Fragment>
+                <div style={mystyle}>
                   <LabelFieldPair key={index}>
                     {!field.withoutLabel && (
                       <CardLabel style={{ color: field.isSectionText ? "#505A5F" : "", marginBottom: props.inline ? "8px" : "revert" }}>
@@ -243,6 +249,9 @@ export const FormComposer = (props) => {
                       {field?.description && <CardText style={{ fontSize: "14px", marginTop: "-24px" }}>{t(field?.description)}</CardText>}
                     </div>
                   </LabelFieldPair>
+                </div>
+                 
+                  
                   {field?.populators?.name && errors && errors[field?.populators?.name] && Object.keys(errors[field?.populators?.name]).length ? (
                     <CardLabelError style={{ width: "70%", marginLeft: "30%", fontSize: "12px", marginTop: "-21px" }}>
                       {t(field?.populators?.error)}
