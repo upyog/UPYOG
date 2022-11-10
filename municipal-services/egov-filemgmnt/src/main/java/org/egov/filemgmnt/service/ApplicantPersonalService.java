@@ -21,79 +21,78 @@ import org.springframework.stereotype.Service;
 @Service
 public class ApplicantPersonalService {
 
-    private final ApplicantPersonalValidator validatorService;
-    private final ApplicantPersonalEnrichment enrichmentService;
-    private final ApplicantPersonalRepository repository;
-    private final Producer producer;
-    private final MdmsUtil mdmsUtil;
-    private final FilemgmntConfiguration fmConfig;
+	private final ApplicantPersonalValidator validatorService;
+	private final ApplicantPersonalEnrichment enrichmentService;
+	private final ApplicantPersonalRepository repository;
+	private final Producer producer;
+	private final MdmsUtil mdmsUtil;
+	private final FilemgmntConfiguration fmConfig;
 
-    @Autowired
-    ApplicantPersonalService(ApplicantPersonalValidator validatorService, ApplicantPersonalEnrichment enrichmentService,
-                             ApplicantPersonalRepository repository, Producer producer, MdmsUtil mdmsUtil,
-                             FilemgmntConfiguration filemgmntConfig) {
-        this.validatorService = validatorService;
-        this.enrichmentService = enrichmentService;
-        this.repository = repository;
-        this.producer = producer;
-        this.mdmsUtil = mdmsUtil;
-        this.fmConfig = filemgmntConfig;
-    }
+	@Autowired
+	ApplicantPersonalService(ApplicantPersonalValidator validatorService, ApplicantPersonalEnrichment enrichmentService,
+			ApplicantPersonalRepository repository, Producer producer, MdmsUtil mdmsUtil,
+			FilemgmntConfiguration filemgmntConfig) {
+		this.validatorService = validatorService;
+		this.enrichmentService = enrichmentService;
+		this.repository = repository;
+		this.producer = producer;
+		this.mdmsUtil = mdmsUtil;
+		this.fmConfig = filemgmntConfig;
+	}
 
-    public List<ApplicantPersonal> create(ApplicantPersonalRequest request) {
+	public List<ApplicantPersonal> create(ApplicantPersonalRequest request) {
 
-        // validate mdms data
-        String tenantId = request.getApplicantPersonals()
-                                 .get(0)
-                                 .getTenantId();
-        Object mdmsData = mdmsUtil.mdmsCall(request.getRequestInfo(), tenantId);
+		// validate mdms data
+		String tenantId = request.getApplicantPersonals().get(0).getTenantId();
+		Object mdmsData = mdmsUtil.mdmsCall(request.getRequestInfo(), tenantId);
 
-        // enrich request
-        enrichmentService.enrichCreate(request);
+		// validate request
+		validatorService.validateCreate(request, mdmsData);
 
-        producer.push(fmConfig.getSaveApplicantPersonalTopic(), request);
+		// enrich request
+		enrichmentService.enrichCreate(request);
 
-        return request.getApplicantPersonals();
+		producer.push(fmConfig.getSaveApplicantPersonalTopic(), request);
 
-    }
+		return request.getApplicantPersonals();
 
-    public List<ApplicantPersonal> search(ApplicantPersonalSearchCriteria criteria, RequestInfo requestInfo) {
+	}
 
-        List<ApplicantPersonal> result = null;
+	public List<ApplicantPersonal> search(ApplicantPersonalSearchCriteria criteria, RequestInfo requestInfo) {
 
-        validatorService.validateSearch(requestInfo, criteria);
-        if (!CollectionUtils.isEmpty(criteria.getIds())) {
-            result = repository.getApplicantPersonals(criteria);
-        } else if (!CollectionUtils.isEmpty(criteria.getFileCodes())) {
-            result = repository.getApplicantPersonalsFromFilecode(criteria);
-        } else if (criteria.getFromDate() != null) {
-            result = repository.getApplicantPersonalsFromDate(criteria);
-        } else if (!StringUtils.isEmpty(criteria.getAadhaarno())) {
-            result = repository.getApplicantPersonalsFromDate(criteria);
-        }
+		List<ApplicantPersonal> result = null;
 
-        return result;
-    }
+		validatorService.validateSearch(requestInfo, criteria);
+		if (!CollectionUtils.isEmpty(criteria.getIds())) {
+			result = repository.getApplicantPersonals(criteria);
+		} else if (!CollectionUtils.isEmpty(criteria.getFileCodes())) {
+			result = repository.getApplicantPersonalsFromFilecode(criteria);
+		} else if (criteria.getFromDate() != null) {
+			result = repository.getApplicantPersonalsFromDate(criteria);
+		} else if (!StringUtils.isEmpty(criteria.getAadhaarno())) {
+			result = repository.getApplicantPersonalsFromDate(criteria);
+		}
 
-    public List<ApplicantPersonal> update(ApplicantPersonalRequest request) {
+		return result;
+	}
 
-        List<String> ids = new LinkedList<>();
+	public List<ApplicantPersonal> update(ApplicantPersonalRequest request) {
 
-        request.getApplicantPersonals()
-               .forEach(personal -> ids.add(personal.getId()));
+		List<String> ids = new LinkedList<>();
 
-        // search database
-        List<ApplicantPersonal> searchResult = repository.getApplicantPersonals(ApplicantPersonalSearchCriteria.builder()
-                                                                                                               .ids(ids)
-                                                                                                               .build());
+		request.getApplicantPersonals().forEach(personal -> ids.add(personal.getId()));
 
-        // validate request
-        validatorService.validateUpdate(request, searchResult);
+		// search database
+		List<ApplicantPersonal> searchResult = repository
+				.getApplicantPersonals(ApplicantPersonalSearchCriteria.builder().ids(ids).build());
 
-        enrichmentService.enrichUpdate(request);
+		// validate request
+		validatorService.validateUpdate(request, searchResult);
 
-        producer.push(fmConfig.getUpdateApplicantPersonalTopic(), request);
+		enrichmentService.enrichUpdate(request);
 
-        return request.getApplicantPersonals();
-    }
+		producer.push(fmConfig.getUpdateApplicantPersonalTopic(), request);
+
+		return request.getApplicantPersonals();
+	}
 }
