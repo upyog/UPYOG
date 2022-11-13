@@ -3,6 +3,8 @@ package org.egov.tlcalculator.web.models;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.egov.tlcalculator.utils.TLCalculatorConstants;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
@@ -16,7 +18,6 @@ import lombok.ToString;
 
 import java.math.BigDecimal;
 
-
 @Getter
 @Setter
 @AllArgsConstructor
@@ -24,7 +25,7 @@ import java.math.BigDecimal;
 @Builder
 @ToString
 public class BillingSlab {
-	
+
 	@JsonProperty("tenantId")
 	@NotNull
 	@Size(min = 2, max = 128)
@@ -35,26 +36,26 @@ public class BillingSlab {
 	private String id = null;
 
 	@JsonProperty("licenseType")
-	private LicenseTypeEnum licenseType = null;
-	
+	private LicenseTypeEnum licenseType = LicenseTypeEnum.PERMANENT;;
+
 	@JsonProperty("applicationType")
 	private String applicationType = null;
 
 	@JsonProperty("structureType")
 	@Size(min = 2, max = 64)
-	private String structureType = null;
+	private String structureType = TLCalculatorConstants.STRUCTURE_TYPE;
 
 	@JsonProperty("tradeType")
 	@Size(min = 2, max = 64)
-	private String tradeType = null;
+	private String tradeType = TLCalculatorConstants.TRADE_TYPE;
 
 	@JsonProperty("accessoryCategory")
 	@Size(min = 2, max = 64)
 	private String accessoryCategory = null;
 
 	@JsonProperty("type")
-	private TypeEnum type = null;
-	
+	private TypeEnum type = TypeEnum.FLAT;
+
 	@JsonProperty("uom")
 	@Size(min = 2, max = 32)
 	private String uom = null;
@@ -67,10 +68,13 @@ public class BillingSlab {
 
 	@JsonProperty("rate")
 	private BigDecimal rate = null;
-	
+
+	@JsonProperty("enterpriseType")
+	@Size(min = 2, max = 64)
+	private String enterpriseType = null;
+
 	private AuditDetails auditDetails;
 
-	
 	public enum LicenseTypeEnum {
 		TEMPORARY("TEMPORARY"),
 
@@ -98,7 +102,7 @@ public class BillingSlab {
 			return null;
 		}
 	}
-	
+
 	public enum TypeEnum {
 		RATE("RATE"),
 

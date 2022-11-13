@@ -99,7 +99,7 @@ const EmployeeApp = ({
                 <AppModules stateCode={stateCode} userType="employee" modules={modules} appTenants={appTenants} />
               </ErrorBoundary>
             </div>
-            <div style={{ width: '100%', bottom: 0 }}>
+            {/* <div style={{ width: '100%', bottom: 0 }}>
               <div style={{ display: 'flex', justifyContent: 'center', color:"#22394d" }}>
                 <img style={{ cursor: "pointer", display: "inline-flex", height: '1.4em' }} alt={"Powered by DIGIT"} src={`${sourceUrl}/digit-footer.png`} onError={"this.src='./../digit-footer.png'"} onClick={() => {
                   window.open('https://www.digit.org/', '_blank').focus();
@@ -109,7 +109,7 @@ const EmployeeApp = ({
                 <span style={{ margin: "0 10px" }}>|</span>
                 <a style={{ cursor: "pointer", fontSize: "16px", fontWeight: "400"}} href={pdfUrl} target='_blank'>UPYOG License</a>
               </div>
-            </div>
+            </div> */}
           </div>
         </Route>
         <Route>

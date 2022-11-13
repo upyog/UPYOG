@@ -29,7 +29,7 @@ public class BillingSlabSearchCriteria {
 
 	@JsonProperty("licenseType")
 	private String licenseType;
-	
+
 	@JsonProperty("applicationType")
 	private String applicationType;
 
@@ -44,7 +44,7 @@ public class BillingSlabSearchCriteria {
 
 	@JsonProperty("type")
 	private String type;
-	
+
 	@JsonProperty("uom")
 	private String uom;
 
@@ -57,5 +57,10 @@ public class BillingSlabSearchCriteria {
 	@JsonIgnore
 	private Double uomValue;
 
+	@JsonProperty("enterpriseType")
+	private String enterpriseType;
+
+	@JsonProperty("rate")
+	private String rate;
 
 }

@@ -61,6 +61,7 @@ const initRequestBody = (tenantId) => ({
         moduleName: "DIGIT-UI",
         masterDetails: [{ name: "ApiCachingSettings" }],
       },
+           
     ],
   },
 });

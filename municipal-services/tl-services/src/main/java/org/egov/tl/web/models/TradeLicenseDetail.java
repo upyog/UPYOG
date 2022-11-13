@@ -39,63 +39,63 @@ import lombok.Builder;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class TradeLicenseDetail   {
+public class TradeLicenseDetail {
 
-        @JsonProperty("id")
-        @SafeHtml
-        @Size(max=64)
-        private String id;
+  @JsonProperty("id")
+  @SafeHtml
+  @Size(max = 64)
+  private String id;
 
-        @JsonProperty("surveyNo")
-        @SafeHtml
-        @Size(max=64)
-        private String surveyNo = null;
+  @JsonProperty("surveyNo")
+  @SafeHtml
+  @Size(max = 64)
+  private String surveyNo = null;
 
-        @Size(max=64)
-        @SafeHtml
-        @JsonProperty("subOwnerShipCategory")
-        private String subOwnerShipCategory = null;
+  @Size(max = 64)
+  @SafeHtml
+  @JsonProperty("subOwnerShipCategory")
+  private String subOwnerShipCategory = null;
 
-        @Size(max=64)
-        @SafeHtml
-        @JsonProperty("structureType")
-        private String structureType;
+  @Size(max = 64)
+  @SafeHtml
+  @JsonProperty("structureType")
+  private String structureType;
 
-        @JsonProperty("operationalArea")
-        private Double operationalArea;
+  @JsonProperty("operationalArea")
+  private Double operationalArea;
 
-        @JsonProperty("noOfEmployees")
-        private Integer noOfEmployees;
+  @JsonProperty("noOfEmployees")
+  private Integer noOfEmployees;
 
-        @JsonProperty("adhocExemption")
-        private BigDecimal adhocExemption;
+  @JsonProperty("adhocExemption")
+  private BigDecimal adhocExemption;
 
-        @JsonProperty("adhocPenalty")
-        private BigDecimal adhocPenalty;
+  @JsonProperty("adhocPenalty")
+  private BigDecimal adhocPenalty;
 
-        @Size(max=1024)
-        @SafeHtml
-        @JsonProperty("adhocExemptionReason")
-        private String adhocExemptionReason;
+  @Size(max = 1024)
+  @SafeHtml
+  @JsonProperty("adhocExemptionReason")
+  private String adhocExemptionReason;
 
-        @Size(max=1024)
-        @SafeHtml
-        @JsonProperty("adhocPenaltyReason")
-        private String adhocPenaltyReason;
+  @Size(max = 1024)
+  @SafeHtml
+  @JsonProperty("adhocPenaltyReason")
+  private String adhocPenaltyReason;
 
-        @NotNull
-        @JsonProperty("owners")
-        @Valid
-        private List<OwnerInfo> owners = new ArrayList<>();
+  @NotNull
+  @JsonProperty("owners")
+  @Valid
+  private List<OwnerInfo> owners = new ArrayList<>();
 
-              /**
+  /**
    * License can be created from different channels
    */
   public enum ChannelEnum {
     COUNTER("COUNTER"),
-    
+
     CITIZEN("CITIZEN"),
-    
+
     DATAENTRY("DATAENTRY");
 
     private String value;
@@ -121,84 +121,107 @@ public class TradeLicenseDetail   {
     }
   }
 
-        @JsonProperty("channel")
-        private ChannelEnum channel = null;
+  @JsonProperty("channel")
+  private ChannelEnum channel = null;
 
-        @NotNull
-        @Valid
-        @JsonProperty("address")
-        private Address address = null;
+  @NotNull
+  @Valid
+  @JsonProperty("address")
+  private Address address = null;
 
-        @NotNull
-        @JsonProperty("tradeUnits")
-        @Valid
-        private List<TradeUnit> tradeUnits = new ArrayList<>();
+  @NotNull
+  @JsonProperty("tradeUnits")
+  @Valid
+  private List<TradeUnit> tradeUnits = new ArrayList<>();
 
-        @JsonProperty("accessories")
-        @Valid
-        private List<Accessory> accessories = null;
+  @JsonProperty("accessories")
+  @Valid
+  private List<Accessory> accessories = null;
 
-        @JsonProperty("applicationDocuments")
-        @Valid
-        private List<Document> applicationDocuments = null;
+  @JsonProperty("applicationDocuments")
+  @Valid
+  private List<Document> applicationDocuments = null;
 
-        @JsonProperty("verificationDocuments")
-        @Valid
-        private List<Document> verificationDocuments = null;
+  @JsonProperty("verificationDocuments")
+  @Valid
+  private List<Document> verificationDocuments = null;
 
-        @JsonProperty("additionalDetail")
-        private JsonNode additionalDetail = null;
+  @JsonProperty("additionalDetail")
+  private JsonNode additionalDetail = null;
 
-        @Valid
-        @JsonProperty("institution")
-        private Institution institution = null;
+  @Valid
+  @JsonProperty("institution")
+  private Institution institution = null;
 
-        @JsonProperty("auditDetails")
-        private AuditDetails auditDetails = null;
+  @JsonProperty("structurePlace")
+  @Valid
+  private List<StructurePlace> structurePlace = null;
 
+  @Size(max = 64)
+  @SafeHtml
+  @JsonProperty("businessSector")
+  private String businessSector;
 
-        public TradeLicenseDetail addOwnersItem(OwnerInfo ownersItem) {
-            if(this.owners==null)
-                this.owners = new ArrayList<>();
-            if(!this.owners.contains(ownersItem))
-                this.owners.add(ownersItem);
-            return this;
-        }
+  @JsonProperty("capitalInvestment")
+  private Double capitalInvestment;
 
-        public TradeLicenseDetail addTradeUnitsItem(TradeUnit tradeUnitsItem) {
-            if(this.tradeUnits==null)
-                this.tradeUnits = new ArrayList<>();
-            if(!this.tradeUnits.contains(tradeUnitsItem))
-                this.tradeUnits.add(tradeUnitsItem);
-            return this;
-        }
+  @Size(max = 64)
+  @SafeHtml
+  @JsonProperty("enterpriseType")
+  private String enterpriseType;
 
-        public TradeLicenseDetail addAccessoriesItem(Accessory accessoriesItem) {
-            if (this.accessories == null) {
-            this.accessories = new ArrayList<>();
-            }
-            if(!this.accessories.contains(accessoriesItem))
-                this.accessories.add(accessoriesItem);
-            return this;
-        }
+  @JsonProperty("auditDetails")
+  private AuditDetails auditDetails = null;
 
-        public TradeLicenseDetail addApplicationDocumentsItem(Document applicationDocumentsItem) {
-            if (this.applicationDocuments == null) {
-            this.applicationDocuments = new ArrayList<>();
-            }
-            if(!this.applicationDocuments.contains(applicationDocumentsItem))
-                this.applicationDocuments.add(applicationDocumentsItem);
-            return this;
-        }
+  public TradeLicenseDetail addOwnersItem(OwnerInfo ownersItem) {
+    if (this.owners == null)
+      this.owners = new ArrayList<>();
+    if (!this.owners.contains(ownersItem))
+      this.owners.add(ownersItem);
+    return this;
+  }
 
-        public TradeLicenseDetail addVerificationDocumentsItem(Document verificationDocumentsItem) {
-            if (this.verificationDocuments == null) {
-            this.verificationDocuments = new ArrayList<>();
-            }
-            if(!this.verificationDocuments.contains(verificationDocumentsItem))
-                this.verificationDocuments.add(verificationDocumentsItem);
-            return this;
-        }
+  public TradeLicenseDetail addTradeUnitsItem(TradeUnit tradeUnitsItem) {
+    if (this.tradeUnits == null)
+      this.tradeUnits = new ArrayList<>();
+    if (!this.tradeUnits.contains(tradeUnitsItem))
+      this.tradeUnits.add(tradeUnitsItem);
+    return this;
+  }
+
+  public TradeLicenseDetail addAccessoriesItem(Accessory accessoriesItem) {
+    if (this.accessories == null) {
+      this.accessories = new ArrayList<>();
+    }
+    if (!this.accessories.contains(accessoriesItem))
+      this.accessories.add(accessoriesItem);
+    return this;
+  }
+
+  public TradeLicenseDetail addApplicationDocumentsItem(Document applicationDocumentsItem) {
+    if (this.applicationDocuments == null) {
+      this.applicationDocuments = new ArrayList<>();
+    }
+    if (!this.applicationDocuments.contains(applicationDocumentsItem))
+      this.applicationDocuments.add(applicationDocumentsItem);
+    return this;
+  }
+
+  public TradeLicenseDetail addVerificationDocumentsItem(Document verificationDocumentsItem) {
+    if (this.verificationDocuments == null) {
+      this.verificationDocuments = new ArrayList<>();
+    }
+    if (!this.verificationDocuments.contains(verificationDocumentsItem))
+      this.verificationDocuments.add(verificationDocumentsItem);
+    return this;
+  }
+
+  public TradeLicenseDetail addStructurePlaceItem(StructurePlace structureplaceItem) {
+    if (this.structurePlace == null)
+      this.structurePlace = new ArrayList<>();
+    if (!this.structurePlace.contains(structureplaceItem))
+      this.structurePlace.add(structureplaceItem);
+    return this;
+  }
 
 }
-

@@ -2,9 +2,7 @@
   @apply bg-white m-sm px-md pt-md pb-lg shadow-card;
   border-radius: 4px;
 
-  .card-header {
-    @apply text-text-primary text-heading-xl font-bold font-rc align-middle text-left mb-md;
-  }
+  .card-header {  }
 
   .card-sub-header {
     @apply text-text-primary text-caption-xl font-bold align-middle text-left mb-sm;
@@ -151,7 +149,7 @@
 
 .submit-bar {
   @apply h-10 bg-primary-main text-center w-full outline-none;
-  box-shadow: inset 0px -2px 0px #0B0C0C;
+  
 
   &:focus {
     @apply outline-none;
@@ -212,7 +210,7 @@
   }
 
   .employeeCard {
-    @apply mb-md mx-md !important;
+  ;
 
     &.filter {
       margin-left: auto;

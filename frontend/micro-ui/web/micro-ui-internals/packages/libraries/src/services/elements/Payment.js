@@ -7,7 +7,7 @@ export const PaymentService = {
       url: Urls.payment.fetch_bill,
       useCache: false,
       method: "POST",
-      auth: false,
+      auth: true,
       userService: false,
       params: { tenantId, ...filters },
     })
@@ -76,7 +76,7 @@ export const PaymentService = {
       url: Urls.payment.create_citizen_reciept,
       useCache: false,
       method: "POST",
-      auth: false,
+      auth: true,
       userService: false,
       params: { tenantId },
       data: { ...details },

@@ -1,0 +1,7 @@
+<svg id="ic_fire_noc" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+  <rect id="Rectangle_5" data-name="Rectangle 5" width="24" height="24" fill="none"/>
+  <g id="Group_12" data-name="Group 12" transform="translate(-356 -376)">
+    <path id="Path_21" data-name="Path 21" d="M0,0H24V24H0Z" transform="translate(356 376)" fill="none"/>
+    <path id="Union_2" data-name="Union 2" d="M1,20a1,1,0,0,1-1-1V1A1,1,0,0,1,1,0H17a1,1,0,0,1,1,1V19a1,1,0,0,1-1,1Zm1-2H16V2H2Zm3.327-4.461A3.821,3.821,0,0,1,6.2,9.212c.05-.047.216-.2.506-.453l.025-.023c.289-.259.516-.48.736-.715A6.811,6.811,0,0,0,9.142,5.111L9.172,5h.171l.042.035a4.068,4.068,0,0,1,1.74,2.786A6.65,6.65,0,0,1,9.92,11.407a1.184,1.184,0,0,0,1.028,1.77A2.819,2.819,0,0,0,12.29,12.8l.3-.164-.088.334A3.822,3.822,0,0,1,9.118,15.8c-.1.007-.2.012-.3.012A3.818,3.818,0,0,1,5.327,13.539Z" transform="translate(359 378)" fill="#696b74"/>
+  </g>
+</svg>

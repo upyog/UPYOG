@@ -1,8 +1,12 @@
 .loginFormStyleEmployee {
+  margin-left: 20%;
   .employeeCard {
     .submit-bar {
       @apply w-full;
     }
+  }
+  @media screen and (max-width: 768px) {
+    margin-left: 0;
   }
 }
 .banner .bannerCard{
@@ -162,7 +166,7 @@
     left: 20px;
   }
   .banner{
-    align-items: flex-end;
+    justify-content: center;
     padding-bottom: 40px;
     height: 100vh !important;
   }

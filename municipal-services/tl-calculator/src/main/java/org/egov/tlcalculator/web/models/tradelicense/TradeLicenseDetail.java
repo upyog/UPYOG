@@ -1,4 +1,5 @@
 package org.egov.tlcalculator.web.models.tradelicense;
+
 import java.math.BigDecimal;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -31,7 +32,7 @@ import lombok.Builder;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class TradeLicenseDetail   {
+public class TradeLicenseDetail {
 
     @JsonProperty("id")
     private String id;
@@ -57,11 +58,11 @@ public class TradeLicenseDetail   {
     @JsonProperty("adhocPenalty")
     private BigDecimal adhocPenalty;
 
-    @Size(max=1024)
+    @Size(max = 1024)
     @JsonProperty("adhocExemptionReason")
     private String adhocExemptionReason;
 
-    @Size(max=1024)
+    @Size(max = 1024)
     @JsonProperty("adhocPenaltyReason")
     private String adhocPenaltyReason;
 
@@ -135,19 +136,21 @@ public class TradeLicenseDetail   {
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails = null;
 
+    @JsonProperty("enterpriseType")
+    private String enterpriseType;
 
     public TradeLicenseDetail addOwnersItem(OwnerInfo ownersItem) {
-        if(this.owners==null)
+        if (this.owners == null)
             this.owners = new ArrayList<>();
-        if(!this.owners.contains(ownersItem))
+        if (!this.owners.contains(ownersItem))
             this.owners.add(ownersItem);
         return this;
     }
 
     public TradeLicenseDetail addTradeUnitsItem(TradeUnit tradeUnitsItem) {
-        if(this.tradeUnits==null)
+        if (this.tradeUnits == null)
             this.tradeUnits = new ArrayList<>();
-        if(!this.tradeUnits.contains(tradeUnitsItem))
+        if (!this.tradeUnits.contains(tradeUnitsItem))
             this.tradeUnits.add(tradeUnitsItem);
         return this;
     }
@@ -156,7 +159,7 @@ public class TradeLicenseDetail   {
         if (this.accessories == null) {
             this.accessories = new ArrayList<>();
         }
-        if(!this.accessories.contains(accessoriesItem))
+        if (!this.accessories.contains(accessoriesItem))
             this.accessories.add(accessoriesItem);
         return this;
     }
@@ -165,7 +168,7 @@ public class TradeLicenseDetail   {
         if (this.applicationDocuments == null) {
             this.applicationDocuments = new ArrayList<>();
         }
-        if(!this.applicationDocuments.contains(applicationDocumentsItem))
+        if (!this.applicationDocuments.contains(applicationDocumentsItem))
             this.applicationDocuments.add(applicationDocumentsItem);
         return this;
     }
@@ -174,12 +177,9 @@ public class TradeLicenseDetail   {
         if (this.verificationDocuments == null) {
             this.verificationDocuments = new ArrayList<>();
         }
-        if(!this.verificationDocuments.contains(verificationDocumentsItem))
+        if (!this.verificationDocuments.contains(verificationDocumentsItem))
             this.verificationDocuments.add(verificationDocumentsItem);
         return this;
     }
 
 }
-
-
-

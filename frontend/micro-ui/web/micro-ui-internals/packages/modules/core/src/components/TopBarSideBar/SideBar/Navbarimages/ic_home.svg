@@ -1,0 +1,7 @@
+<svg id="ic_home" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+  <rect id="Rectangle_3" data-name="Rectangle 3" width="24" height="24" fill="none"/>
+  <g id="Group_2" data-name="Group 2">
+    <path id="Path_3" data-name="Path 3" d="M0,0H24V24H0Z" fill="none"/>
+    <path id="Path_4" data-name="Path 4" d="M13,19h6V9.978L12,4.534,5,9.978V19h6V13h2Zm8,1a1,1,0,0,1-1,1H4a1,1,0,0,1-1-1V9.49a1,1,0,0,1,.386-.79l8-6.222a1,1,0,0,1,1.228,0l8,6.222A1,1,0,0,1,21,9.49V20Z" fill="#696b74"/>
+  </g>
+</svg>

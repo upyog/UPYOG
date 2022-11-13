@@ -1,0 +1,7 @@
+<svg id="ic_mcollect" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+  <rect id="Rectangle_11" data-name="Rectangle 11" width="24" height="24" fill="none"/>
+  <g id="Group_13" data-name="Group 13">
+    <path id="Path_23" data-name="Path 23" d="M0,0H24V24H0Z" fill="none"/>
+    <path id="Path_24" data-name="Path 24" d="M21,19h2v2H1V19H3V4A1,1,0,0,1,4,3H14a1,1,0,0,1,1,1V19h4V11H17V9h3a1,1,0,0,1,1,1ZM5,5V19h8V5Zm2,6h4v2H7ZM7,7h4V9H7Z" fill="#696b74"/>
+  </g>
+</svg>

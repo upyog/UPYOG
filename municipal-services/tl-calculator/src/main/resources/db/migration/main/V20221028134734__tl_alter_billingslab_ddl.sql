@@ -1,0 +1,1 @@
+ALTER TABLE eg_tl_billingslab ADD COLUMN enterprisetype CHARACTER VARYING(64);

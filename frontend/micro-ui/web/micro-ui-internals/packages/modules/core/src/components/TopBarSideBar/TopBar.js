@@ -98,8 +98,11 @@ const TopBar = ({
   return (
     <div className="topbar">
       {mobileView ? <Hamburger handleClick={toggleSidebar} color="#9E9E9E" /> : null}
+      <div style={{borderRight:"1px solid #edf2f9", width:"3%"}}>
       <img className="city" src={loggedin ? cityDetails?.logoId : stateInfo?.statelogo} />
-      <span style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
+      </div>
+      
+      <span style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%",paddingLeft:"120px" }}>
         {loggedin &&
           (cityDetails?.city?.ulbGrade ? (
             <p className="ulb" style={mobileView ? { fontSize: "14px", display: "inline-block" } : {}}>
@@ -123,7 +126,7 @@ const TopBar = ({
             </div>
             <div className="left">{showLanguageChange && <ChangeLanguage dropdown={true} />}</div>
             {userDetails?.access_token && (
-              <div className="left">
+              <div className="">
                 <Dropdown
                   option={userOptions}
                   optionKey={"name"}
@@ -142,7 +145,7 @@ const TopBar = ({
                 />
               </div>
             )}
-            <img className="state" src={logoUrl} />
+            {/* <img className="state" src={logoUrl} /> */}
           </div>
         )}
       </span>

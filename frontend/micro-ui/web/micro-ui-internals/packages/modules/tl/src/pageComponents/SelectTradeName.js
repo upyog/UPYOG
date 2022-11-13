@@ -16,6 +16,9 @@ const SelectTradeName = ({ t, config, onSelect, value, userType, formData }) => 
   function setSelectTradeName(e) {
     setTradeName(e.target.value);
   }
+  const mystyle={
+    marginBottom:"24px"
+  };
 
   const goNext = () => {
     sessionStorage.setItem("CurrentFinancialYear", FY);
@@ -37,6 +40,7 @@ const SelectTradeName = ({ t, config, onSelect, value, userType, formData }) => 
       >
         <CardLabel>{`${t("TL_LOCALIZATION_TRADE_NAME")}`}</CardLabel>
         <TextInput
+        style={mystyle}
           t={t}
           isMandatory={false}
           type={"text"}
