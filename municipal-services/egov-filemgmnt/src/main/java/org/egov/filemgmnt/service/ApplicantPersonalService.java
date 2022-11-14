@@ -1,9 +1,7 @@
 package org.egov.filemgmnt.service;
 
-import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.filemgmnt.config.FilemgmntConfiguration;
@@ -21,78 +19,82 @@ import org.springframework.stereotype.Service;
 @Service
 public class ApplicantPersonalService {
 
-	private final ApplicantPersonalValidator validatorService;
-	private final ApplicantPersonalEnrichment enrichmentService;
-	private final ApplicantPersonalRepository repository;
-	private final Producer producer;
-	private final MdmsUtil mdmsUtil;
-	private final FilemgmntConfiguration fmConfig;
+    private final ApplicantPersonalValidator validatorService;
+    private final ApplicantPersonalEnrichment enrichmentService;
+    private final ApplicantPersonalRepository repository;
+    private final Producer producer;
+    private final MdmsUtil mdmsUtil;
+    private final FilemgmntConfiguration fmConfig;
 
-	@Autowired
-	ApplicantPersonalService(ApplicantPersonalValidator validatorService, ApplicantPersonalEnrichment enrichmentService,
-			ApplicantPersonalRepository repository, Producer producer, MdmsUtil mdmsUtil,
-			FilemgmntConfiguration filemgmntConfig) {
-		this.validatorService = validatorService;
-		this.enrichmentService = enrichmentService;
-		this.repository = repository;
-		this.producer = producer;
-		this.mdmsUtil = mdmsUtil;
-		this.fmConfig = filemgmntConfig;
-	}
+    @Autowired
+    ApplicantPersonalService(ApplicantPersonalValidator validatorService, ApplicantPersonalEnrichment enrichmentService,
+                             ApplicantPersonalRepository repository, Producer producer, MdmsUtil mdmsUtil,
+                             FilemgmntConfiguration filemgmntConfig) {
+        this.validatorService = validatorService;
+        this.enrichmentService = enrichmentService;
+        this.repository = repository;
+        this.producer = producer;
+        this.mdmsUtil = mdmsUtil;
+        this.fmConfig = filemgmntConfig;
+    }
 
-	public List<ApplicantPersonal> create(ApplicantPersonalRequest request) {
+    public List<ApplicantPersonal> create(ApplicantPersonalRequest request) {
+        String tenantId = request.getApplicantPersonals()
+                                 .get(0)
+                                 .getTenantId();
 
-		// validate mdms data
-		String tenantId = request.getApplicantPersonals().get(0).getTenantId();
-		Object mdmsData = mdmsUtil.mdmsCall(request.getRequestInfo(), tenantId);
+        // validate mdms data
+        Object mdmsData = mdmsUtil.mdmsCall(request.getRequestInfo(), tenantId);
 
-		// validate request
-		validatorService.validateCreate(request, mdmsData);
+        // validate request
+        validatorService.validateCreate(request, mdmsData);
 
-		// enrich request
-		enrichmentService.enrichCreate(request);
+        // enrich request
+        enrichmentService.enrichCreate(request);
 
-		producer.push(fmConfig.getSaveApplicantPersonalTopic(), request);
+        producer.push(fmConfig.getSaveApplicantPersonalTopic(), request);
 
-		return request.getApplicantPersonals();
+        return request.getApplicantPersonals();
 
-	}
+    }
 
-	public List<ApplicantPersonal> search(ApplicantPersonalSearchCriteria criteria, RequestInfo requestInfo) {
+    public List<ApplicantPersonal> search(ApplicantPersonalSearchCriteria criteria, RequestInfo requestInfo) {
 
-		List<ApplicantPersonal> result = null;
+        List<ApplicantPersonal> result = null;
 
-		validatorService.validateSearch(requestInfo, criteria);
-		if (!CollectionUtils.isEmpty(criteria.getIds())) {
-			result = repository.getApplicantPersonals(criteria);
-		} else if (!CollectionUtils.isEmpty(criteria.getFileCodes())) {
-			result = repository.getApplicantPersonalsFromFilecode(criteria);
-		} else if (criteria.getFromDate() != null) {
-			result = repository.getApplicantPersonalsFromDate(criteria);
-		} else if (!StringUtils.isEmpty(criteria.getAadhaarno())) {
-			result = repository.getApplicantPersonalsFromDate(criteria);
-		}
+        validatorService.validateSearch(requestInfo, criteria);
 
-		return result;
-	}
+        if (StringUtils.isNotBlank(criteria.getId())) {
+            result = repository.getApplicantPersonals(criteria);
+        } else if (StringUtils.isNotBlank(criteria.getFileCode())) {
+            result = repository.getApplicantPersonalsFromFilecode(criteria);
+        } else if (criteria.getFromDate() != null) {
+            result = repository.getApplicantPersonalsFromDate(criteria);
+        } else if (StringUtils.isNotBlank(criteria.getAadhaarno())) {
+            result = repository.getApplicantPersonalsFromDate(criteria);
+        }
 
-	public List<ApplicantPersonal> update(ApplicantPersonalRequest request) {
+        return result;
+    }
 
-		List<String> ids = new LinkedList<>();
+    public List<ApplicantPersonal> update(ApplicantPersonalRequest request) {
 
-		request.getApplicantPersonals().forEach(personal -> ids.add(personal.getId()));
+        String id = request.getApplicantPersonals()
+                           .get(0)
+                           .getId();
 
-		// search database
-		List<ApplicantPersonal> searchResult = repository
-				.getApplicantPersonals(ApplicantPersonalSearchCriteria.builder().ids(ids).build());
+        // search database
+        List<ApplicantPersonal> searchResult = repository.getApplicantPersonals(ApplicantPersonalSearchCriteria.builder()
+                                                                                                               .id(id)
+                                                                                                               .build());
 
-		// validate request
-		validatorService.validateUpdate(request, searchResult);
+        // validate request
+        validatorService.validateUpdate(request, searchResult);
 
-		enrichmentService.enrichUpdate(request);
+        enrichmentService.enrichUpdate(request);
 
-		producer.push(fmConfig.getUpdateApplicantPersonalTopic(), request);
+        producer.push(fmConfig.getUpdateApplicantPersonalTopic(), request);
 
-		return request.getApplicantPersonals();
-	}
+        return request.getApplicantPersonals();
+    }
 }

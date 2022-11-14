@@ -24,14 +24,15 @@ public class ApplicantPersonalQueryBuilder extends BaseQueryBuilder {
 
         StringBuilder query = new StringBuilder(QUERY);
 
-        addFilters("ap.id", criteria.getIds(), query, preparedStmtValues);
-        addFilters("fd.filecode", criteria.getFileCodes(), query, preparedStmtValues);
+        addFilter("ap.id", criteria.getId(), query, preparedStmtValues);
+        addFilter("fd.filecode", criteria.getFileCode(), query, preparedStmtValues);
         addDateRangeFilter("fd.filearisingdate",
                            criteria.getFromDate(),
                            criteria.getToDate(),
                            query,
                            preparedStmtValues);
-//		addFilters("ap.aadhaarno", criteria.getAadhaarno(), query, preparedStmtValues);
+
+//        addFilter("ap.aadhaarno", criteria.getAadhaarno(), query, preparedStmtValues);
 
 //        if (criteria.getFromDate() != null) {
 //            addWhereClause(preparedStmtValues, query);

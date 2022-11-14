@@ -12,20 +12,25 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class CommunicationFileManagementRowMapper
-		implements ResultSetExtractor<List<CommunicationFile>>, BaseRowMapper {
-	@Override
-	public List<CommunicationFile> extractData(ResultSet rs) throws SQLException, DataAccessException { // NOPMD
+        implements ResultSetExtractor<List<CommunicationFile>>, BaseRowMapper {
+    @Override
+    public List<CommunicationFile> extractData(ResultSet rs) throws SQLException, DataAccessException { // NOPMD
 
-		List<CommunicationFile> result = new ArrayList<>();
+        List<CommunicationFile> result = new ArrayList<>();
 
-		while (rs.next()) {
-			result.add(CommunicationFile.builder().id(rs.getString("id")).subjectTypeId(rs.getString("subjecttypeid"))
-					.senderId(rs.getString("senderid")).priorityId(rs.getString("priorityid"))
-					.fileStoreId(rs.getString("filestoreid")).details(rs.getString("details"))
-					.auditDetails(getAuditDetails(rs)).build());
+        while (rs.next()) {
+            result.add(CommunicationFile.builder()
+                                        .id(rs.getString("id"))
+                                        .subjectTypeId(rs.getString("subjecttypeid"))
+                                        .senderId(rs.getString("senderid"))
+                                        .priorityId(rs.getString("priorityid"))
+                                        .fileStoreId(rs.getString("filestoreid"))
+                                        .details(rs.getString("details"))
+                                        .auditDetails(getAuditDetails(rs))
+                                        .build());
 
-		}
-		return result;
-	}
+        }
+        return result;
+    }
 
 }
