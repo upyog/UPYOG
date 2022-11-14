@@ -134,7 +134,7 @@ serviceMaps:
       - jsonPath: $.ApplicantPersonals.*.auditDetails.lastModifiedTime  
       
     - query: >
-        INSERT INTO eg_fm_applicantservicedocument(id, applicantid, servicedetailsid, documenttypeid, filestoreid, active, documentnumber, applicationdetails, createdby, createddate, lastmodifiedby, lastmodifieddate)
+        INSERT INTO eg_fm_applicantservicedocument(id, applicantpersonalid, servicedetailsid, documenttypeid, filestoreid, active, documentnumber, applicationdetails, createdby, createddate, lastmodifiedby, lastmodifieddate)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )        
       basePath: ApplicantPersonals.*.applicantServiceDocuments
       jsonMaps:    
@@ -263,14 +263,14 @@ serviceMaps:
     - query: >      
         UPDATE eg_fm_applicantservicedocument
         SET documenttypeid = ?, servicedetailsid = ?     
-        WHERE applicantid = ?;
+        WHERE applicantpersonalid = ?;
       basePath: ApplicantPersonals.*.applicantServiceDocuments
       jsonMaps:
       - jsonPath: $.ApplicantPersonals.*.applicantServiceDocuments.serviceDetailsId 
       
       - jsonPath: $.ApplicantPersonals.*.applicantServiceDocuments.documentTypeId             
          
-      - jsonPath: $.ApplicantPersonals.*.applicantServiceDocuments.applicantid  
+      - jsonPath: $.ApplicantPersonals.*.applicantServiceDocuments.applicantpersonalid  
       
     - query: >      
         UPDATE eg_fm_servicedetail

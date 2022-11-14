@@ -14,7 +14,7 @@ public class ApplicantPersonalQueryBuilder extends BaseQueryBuilder {
                                                            .append(" FROM eg_fm_applicantpersonal ap")
                                                            .append(" INNER JOIN eg_fm_applicantaddress apa ON apa.applicantpersonalid = ap.id")
                                                            .append(" INNER JOIN eg_fm_applicantdocuments ad ON ad.applicantpersonalid = ap.id")
-                                                           .append(" INNER JOIN eg_fm_applicantservicedocuments asd ON asd.applicantid = ap.id")
+                                                           .append(" INNER JOIN eg_fm_applicantservicedocuments asd ON asd.applicantpersonalid = ap.id")
                                                            .append(" INNER JOIN eg_fm_servicedetails sd ON sd.applicantpersonalid = ap.id")
                                                            .append(" INNER JOIN eg_fm_filedetails fd ON fd.servicedetailsid = sd.id")
                                                            .toString();
