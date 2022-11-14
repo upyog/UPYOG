@@ -70,6 +70,7 @@ class ApplicantPersonalRequestTests {
         }
     }
 
+    @Disabled
     @ParameterizedTest
     @MethodSource("validateArguments")
     void validateApplicantPersonalRequest(Validator validator, ApplicantPersonalRequest request) {
