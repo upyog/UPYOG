@@ -250,7 +250,7 @@ public class BirthRepository {
 	}
 
 	public void updateCounter(String birthDtlId) {
-		try {
+		/*try {
 			String updateQry="UPDATE public.eg_birth_dtls SET counter=counter+1 WHERE id=:id and tenantid not in (:tenantIds)";
 			Map<String, Object> params = new HashMap<>();
 			params.put("id", birthDtlId);
@@ -259,7 +259,7 @@ public class BirthRepository {
 		}catch(Exception e) {
 			e.printStackTrace();
 			throw new CustomException("Invalid_data","Error in updating");
-		}
+		}*/
 		
 	}
 
