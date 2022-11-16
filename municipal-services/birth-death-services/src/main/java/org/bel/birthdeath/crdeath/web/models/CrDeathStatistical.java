@@ -24,61 +24,61 @@ public class CrDeathStatistical {
     @JsonProperty("id")
     private String id;
 
-    @JsonProperty("deathDtlId")
+    @JsonProperty("death_dtl_id")
     private String deathDtlId ; 
 
-    @JsonProperty("residenceLb")
-    private String residenceLb;
+    @JsonProperty("residencelocalbody")
+    private String residenceLocalbody;
 
-    @JsonProperty("residencePlaceType")
+    @JsonProperty("residence_place_type")
     private String residencePlaceType;
 
-    @JsonProperty("residenceDist")
-    private String residenceDist;
+    @JsonProperty("residencedistrict")
+    private String residenceDistrict;
 
-    @JsonProperty("residenceState")
+    @JsonProperty("residencestate")
     private String residenceState;
 
     @JsonProperty("religion")
     private String religion;
 
-    @JsonProperty("otherReligion")
-    private String otherReligion;
+    @JsonProperty("religion_other")
+    private String religionOther;
 
     @JsonProperty("occupation")
     private String occupation;
 
-    @JsonProperty("occupationOther")
+    @JsonProperty("occupation_other")
     private String occupationOther;
 
-    @JsonProperty("medAttentionType")
-    private String medAttentionType;
+    @JsonProperty("medical_attention_type")
+    private String medicalAttentionType;
 
-    @JsonProperty("deathMedCertified")
-    private Integer deathMedCertified;
+    @JsonProperty("death_medically_certified")
+    private Integer deathMedicallyCertified;
 
-    @JsonProperty("deathcauseMain")
-    private String deathcauseMain;
+    @JsonProperty("death_cause_main")
+    private String deathCauseMain;
 
-    @JsonProperty("deathcauseSub")
-    private String deathcauseSub;
+    @JsonProperty("death_cause_sub")
+    private String deathCauseSub;
 
-    @JsonProperty("deathcauseOther")
-    private String deathcauseOther;
+    @JsonProperty("death_cause_other")
+    private String deathCauseOther;
 
-    @JsonProperty("deliveryDeath")
-    private Integer deliveryDeath;
+    @JsonProperty("death_during_delivery")
+    private Integer deathDuringDelivery;
 
-    @JsonProperty("smokingNumYears")
+    @JsonProperty("smoking_num_years")
     private String smokingNumYears;
 
-    @JsonProperty("tobaccoNumYears")
+    @JsonProperty("tobacco_num_years")
     private String tobaccoNumYears;
 
-    @JsonProperty("arecanutNumYears")
+    @JsonProperty("arecanut_num_years")
     private String arecanutNumYears;
 
-    @JsonProperty("alcoholnumYears")
-    private String alcoholnumYears;
+    @JsonProperty("alcohol_num_years")
+    private String alcoholNumYears;
     
 }
