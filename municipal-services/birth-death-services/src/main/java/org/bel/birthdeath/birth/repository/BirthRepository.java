@@ -171,7 +171,7 @@ public class BirthRepository {
 
 	public EgovPdfResp saveBirthCertPdf(BirthPdfApplicationRequest pdfApplicationRequest) {
 		EgovPdfResp result= new EgovPdfResp();
-		try {
+		//try {
 		SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");	
 		pdfApplicationRequest.getBirthCertificate().forEach(cert-> {
 			String uiHost = config.getUiAppHost();
@@ -201,10 +201,11 @@ public class BirthRepository {
 				}
 				result.setFilestoreIds(response.getFilestoreIds());
 			});
+		/*Maya
 		}catch(Exception e) {
 			e.printStackTrace();
 			throw new CustomException("PDF_ERROR","Error in generating PDF");
-		}
+		}*/
 		return result;
 	}
 
