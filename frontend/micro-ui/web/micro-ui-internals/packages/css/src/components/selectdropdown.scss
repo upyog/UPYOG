@@ -18,6 +18,9 @@
   }
 }
 */
+.employee-select-wrap:active{
+  background-color: white
+}
 .employee-select-wrap {
   @apply mb-lg relative;
 
@@ -49,6 +52,9 @@
 
   .select-active {
     @apply relative block w-full h-10 border-2 border-solid border-primary-main;
+    height: 2 rem !important;
+    border: 1px solid black;
+    background-color: white;
 
     input[type="text"] {
       width: calc(100% - 32px);
