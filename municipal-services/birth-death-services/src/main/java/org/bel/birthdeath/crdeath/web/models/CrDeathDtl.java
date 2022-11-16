@@ -45,107 +45,107 @@ public class CrDeathDtl {
     @JsonProperty("dateOfDeath1")
     private Long dateOfDeath1;
 
-    @JsonProperty("time_of_death_1")
-    private Integer time_of_death_1 ;
+    @JsonProperty("timeOfDeath1")
+    private Integer timeOfDeath1 ;
 
-    @JsonProperty("timeofdeath_unit1")
-    private Long timeofdeath_unit1 ;
+    @JsonProperty("timeOfDeathUnit1")
+    private Long timeOfDeathUnit1 ;
 
-    @JsonProperty("deceased_identified")
-    private Integer deceased_identified ;
+    @JsonProperty("deceasedIdentified")
+    private Integer deceasedIdentified ;
 
-    @JsonProperty("deceased_title")
-    private String deceased_title ;
+    @JsonProperty("deceasedTitle")
+    private String deceasedTitle ;
 
-    @JsonProperty("deceased_firstname_en")
-    private String deceased_firstname_en ;
+    @JsonProperty("deceasedFirstNameEn")
+    private String deceasedFirstNameEn ;
 
-    @JsonProperty("deceased_firstname_ml")
-    private String deceased_firstname_ml ;
+    @JsonProperty("deceasedFirstNameMl")
+    private String deceasedFirstNameMl ;
 
-    @JsonProperty("deceased_middlename_en")
-    private String deceased_middlename_en ;
+    @JsonProperty("deceasedMiddleNameEn")
+    private String deceasedMiddleNameEn ;
 
-    @JsonProperty("deceased_middlename_ml")
-    private String deceased_middlename_ml ;
+    @JsonProperty("deceasedMiddleNameMl")
+    private String deceasedMiddleNameMl ;
 
-    @JsonProperty("deceased_lastname_en")
-    private String deceased_lastname_en ;
+    @JsonProperty("deceasedLastNameEn")
+    private String deceasedLastNameEn ;
 
-    @JsonProperty("deceased_lastname_ml")
-    private String deceased_lastname_ml ;
+    @JsonProperty("deceasedLastNameMl")
+    private String deceasedLastNameMl ;
 
-    @JsonProperty("deceased_aadhar_submitted")
-    private String deceased_aadhar_submitted ;
+    @JsonProperty("deceasedAadharSubmitted")
+    private String deceasedAadharSubmitted ;
 
-    @JsonProperty("deceased_aadhar_number")
-    private String deceased_aadhar_number ;
+    @JsonProperty("deceasedAadharNumber")
+    private String deceasedAadharNumber ;
 
-    @JsonProperty("deceased_gender")
-    private String deceased_gender ;
+    @JsonProperty("deceasedGender")
+    private String deceasedGender ;
 
     @JsonProperty("age")
     private Integer age ;
 
-    @JsonProperty("age_unit")
-    private Integer age_unit ;
+    @JsonProperty("ageUnit")
+    private Integer ageUnit ;
 
-    @JsonProperty("dateofbirth")
-    private Long dateofbirth ;
+    @JsonProperty("dateOfBirth")
+    private Long dateOfBirth ;
 
-    @JsonProperty("death_place")
-    private String death_place ;
+    @JsonProperty("deathPlace")
+    private String deathPlace ;
 
-    @JsonProperty("death_place_type")
-    private String death_place_type ;
+    @JsonProperty("deathPlaceType")
+    private String deathPlaceType ;
 
-    @JsonProperty("death_place_inst_id")
-    private String death_place_inst_id ;
+    @JsonProperty("deathPlaceInstId")
+    private String deathPlaceInstId ;
 
-    @JsonProperty("death_place_office_name")
-    private String death_place_office_name ;
+    @JsonProperty("deathPlaceOfficeName")
+    private String deathPlaceOfficeName ;
 
-    @JsonProperty("death_place_other_ml")
-    private String death_place_other_ml ;
+    @JsonProperty("deathPlaceOtherMl")
+    private String deathPlaceOtherMl ;
 
-    @JsonProperty("death_place_other_en")
-    private String death_place_other_en ;
+    @JsonProperty("deathPlaceOtherEn")
+    private String deathPlaceOtherEn ;
 
-    @JsonProperty("informant_title")
-    private String  informant_title ;
+    @JsonProperty("informantTitle")
+    private String  informantTitle ;
 
-    @JsonProperty("informant_name_en")
-    private String  informant_name_en ;
+    @JsonProperty("informantNameEn")
+    private String  informantNameEn ;
 
-    @JsonProperty("informant_name_ml")
-    private String  informant_name_ml ;
+    @JsonProperty("informantNameMl")
+    private String  informantNameMl ;
 
-    @JsonProperty("informant_aadhar_submitted")
-    private String  informant_aadhar_submitted ;
+    @JsonProperty("informantAadharSubmitted")
+    private String  informantAadharSubmitted ;
 
-    @JsonProperty("informant_aadhar_no")
-    private String  informant_aadhar_no ;
+    @JsonProperty("informantAadharNo")
+    private String  informantAadharNo ;
 
-    @JsonProperty("informant_mobile_no")
-    private String  informant_aadhar_no ;
+    @JsonProperty("informantMobileNo")
+    private String  informantMobileNo ;
 
-    @JsonProperty("genRemarks")
-    private String   genRemarks ;
+    @JsonProperty("generalRemarks")
+    private String   generalRemarks ;
 
     @JsonProperty("applicationStatus")
     private String   applicationStatus ;
 
     @JsonProperty("submittedOn")
-    private String  submittedOn ;
+    private String  submittedOn ;    
 
     @JsonProperty("placeBurial")
     private String  placeBurial;
 
-    @JsonProperty("placeBurialInstType")
-    private String   placeBurialInstType ;
+    @JsonProperty("placeBurialInstitutionType")
+    private String   placeBurialInstitutionType ;
 
-    @JsonProperty("placeBurialInstName")
-    private String  placeBurialInstName ;
+    @JsonProperty("placePurialInstitutionName")
+    private String  placePurialInstitutionName ;
 
     @JsonProperty("registrationNo")
     private String  registrationNo ;
@@ -156,45 +156,67 @@ public class CrDeathDtl {
     @JsonProperty("opNo")
     private String  opNo ;
 
-    @JsonProperty("maleDepntType")
-    private String  maleDepntType ;
+    @JsonProperty("maleDependentType")
+    private String  maleDependentType ;
 
-    @JsonProperty("maleDepntTitle")
-    private String  maleDepntTitle ;
+    @JsonProperty("maleDependentTitle")
+    private String  maleDependentTitle ;
 
-    @JsonProperty("maleDepntNameEn")
-    private String  maleDepntNameEn ;
+    @JsonProperty("maleDependentNameEn")
+    private String  maleDependentNameEn ;
 
-    @JsonProperty("maleDepntNamel")
-    private String  maleDepntNamel ;
+    @JsonProperty("maleDependentNameMl")
+    private String  maleDependentNameMl ;
 
-    @JsonProperty("maleDepntAadharNo")
-    private String  maleDepntAadharNo ;
+    @JsonProperty("maleDependentAadharNo")
+    private String  maleDependentAadharNo ;
 
-    @JsonProperty("maleDepntMobNo")
-    private String  maleDepntMobNo ;
+    @JsonProperty("maleDependentMobileNo")
+    private String  maleDependentMobileNo ;
 
-    @JsonProperty("maleDepntMailId")
-    private String  maleDepntMailId ;
+    @JsonProperty("maleDependentMailId")
+    private String  maleDependentMailId ;
 
-    @JsonProperty("femaleDepntType")
-    private String  femaleDepntType ;
+    @JsonProperty("femaleDependentType")
+    private String  femaleDependentType ;
 
-    @JsonProperty("femaleDepntTitle")
-    private String  femaleDepntTitle ;
+    @JsonProperty("femaleDependentTitle")
+    private String  femaleDependentTitle ;
 
-    @JsonProperty("femaleDepntNameEn")
-    private String  femaleDepntNameEn ;
+    @JsonProperty("femaleDependentNameEn")
+    private String  femaleDependentNameEn ;
 
-    @JsonProperty("femaleDepntNameMl")
-    private String  femaleDepntNameMl ;
+    @JsonProperty("femaleDependentNameMl")
+    private String  femaleDependentNameMl ;
 
-    @JsonProperty("femaleDepntAadharNo")
-    private String  femaleDepntAadharNo;
+    @JsonProperty("femaleDependentAadharNo")
+    private String  femaleDependentAadharNo;
 
-    @JsonProperty("femaleDepntMobNo")
-    private String  femaleDepntMobNo ;
+    @JsonProperty("femaleDependentMobileNo")
+    private String  femaleDependentMobileNo ;
 
-    @JsonProperty("femaleDepntMailId")
-    private String  femaleDepntMailId ;
+    @JsonProperty("femaleDependentMailId")
+    private String  femaleDependentMailId ;
+
+    @JsonProperty("auditDetails")
+    private AuditDetails auditDetails;
+
+    @JsonProperty("presentAddress")
+    private CrDeathAddress presentAddress;
+
+    @JsonProperty("permanentAddress")
+    private CrDeathAddress permanentAddress;
+
+    @JsonProperty("informantAddress")
+    private CrDeathAddress informantAddress;
+
+    @JsonProperty("deathplaceAddress")
+    private CrDeathAddress deathplaceAddress;
+
+    @JsonProperty("burialAddress")
+    private CrDeathAddress burialAddress;
+
+    @JsonProperty("statisticalInfo")
+    private CrDeathStatistical statisticalInfo;
+
 }
