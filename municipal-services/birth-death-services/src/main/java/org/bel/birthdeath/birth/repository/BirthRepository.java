@@ -289,11 +289,13 @@ public class BirthRepository {
 		StringBuilder builder = new StringBuilder(config.getUrlShortnerHost());
 		builder.append(config.getUrlShortnerEndpoint());
 		String res = restTemplate.postForObject(builder.toString(), body, String.class);
-		if(StringUtils.isEmpty(res)){
+		//maya
+		/*if(StringUtils.isEmpty(res)){
 			log.error("URL_SHORTENING_ERROR","Unable to shorten url: "+url);
 			return url;
 		}
-		else return res;
+		else*/
+		return res;
 	}
 
 	public List<EgBirthDtl> viewCertificateData(SearchCriteria criteria) {
