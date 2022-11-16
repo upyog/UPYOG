@@ -164,6 +164,7 @@
 
 .submit-bar-disabled {
   @apply h-10 bg-primary-main text-center w-full outline-none opacity-50;
+  background-color: #5a1166;
 
   &:focus {
     @apply outline-none;
@@ -171,6 +172,7 @@
 
   header {
     @apply font-rc font-medium text-legend text-white leading-10;
+    line-height: 2rem !important;
   }
 }
 
@@ -178,6 +180,8 @@
   .submit-bar,
   .submit-bar-disabled {
     width: 240px;
+    background-color: #5a1166 !important;
+    height: 2rem !important
   }
 
   .card {
@@ -387,4 +391,8 @@
   position: unset !important;
   margin: 0 !important;
   width: 100% !important;
+}
+
+.language-selector .submit-bar, .submit-bar-disabled{
+  background-color: #5a1166;
 }

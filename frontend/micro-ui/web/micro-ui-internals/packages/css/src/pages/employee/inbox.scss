@@ -28,12 +28,14 @@
     .link {
       @apply p-sm text-primary-main items-center;
       display: flex !important;
+      color: #a82227 !important;
     }
 
     .inbox-total {
       padding: 4px;
       display: table;
       @apply whitespace-normal text-center text-white w-8 h-8 bg-primary-main rounded-full ml-xs;
+      background-color: #a82227 !important;
     }
   }
 
@@ -42,6 +44,7 @@
     .link {
       padding: 0 !important;
       padding-bottom: 4px !important;
+      color: #a82227 !important;
       svg {
         @apply ml-sm;
       }
@@ -214,7 +217,9 @@
       margin-left: 46px;
 
       .link {
+        color:#a82227 !important;
         @apply p-sm text-primary-main;
+        
       }
     }
   }
@@ -229,7 +234,7 @@
         @apply bg-white;
         svg {
           path {
-            fill: #f47738;
+            fill: #a82227;
           }
         }
       }
@@ -437,6 +442,7 @@
 @screen dt {
   .complaint-links-container .header .removeBorderRadiusLogo {
     border-radius: 2px !important;
+    background-color: #a82227
   }
 }
 @screen dt {
@@ -452,4 +458,7 @@
 
 .inboxLinksFSM {
   margin: 0 !important;
+}
+.complaint-links-container .body .link{
+  color: #a82227 !important;
 }
