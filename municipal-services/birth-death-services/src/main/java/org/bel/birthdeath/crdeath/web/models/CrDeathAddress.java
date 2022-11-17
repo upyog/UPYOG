@@ -1,5 +1,4 @@
 package org.bel.birthdeath.crdeath.web.models;
-import java.sql.Timestamp;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;

@@ -42,6 +42,7 @@ public class CrDeathController {
     @PostMapping("/crdeathdetails/_create")
     public ResponseEntity<CrDeathDtlResponse> create(@Valid @RequestBody CrDeathDtlRequest request) {
 
+        System.out.println("hai");
         List<CrDeathDtl> deathDetails = deathService.create(request);
 
         CrDeathDtlResponse response = CrDeathDtlResponse.builder()

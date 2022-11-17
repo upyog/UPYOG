@@ -1,6 +1,4 @@
 package org.bel.birthdeath.crdeath.web.models;
-import java.sql.Timestamp;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -40,7 +38,7 @@ public class CrDeathDtl {
     private Integer  timeOfDeath ;
 
     @JsonProperty("timeOfDeathUnit")
-    private Integer timeOfDeathUnit ;
+    private String timeOfDeathUnit ;
 
     @JsonProperty("dateOfDeath1")
     private Long dateOfDeath1;
@@ -49,7 +47,7 @@ public class CrDeathDtl {
     private Integer timeOfDeath1 ;
 
     @JsonProperty("timeOfDeathUnit1")
-    private Long timeOfDeathUnit1 ;
+    private String timeOfDeathUnit1 ;
 
     @JsonProperty("deceasedIdentified")
     private Integer deceasedIdentified ;
@@ -76,7 +74,7 @@ public class CrDeathDtl {
     private String deceasedLastNameMl ;
 
     @JsonProperty("deceasedAadharSubmitted")
-    private String deceasedAadharSubmitted ;
+    private Integer deceasedAadharSubmitted ;
 
     @JsonProperty("deceasedAadharNumber")
     private String deceasedAadharNumber ;
@@ -88,7 +86,7 @@ public class CrDeathDtl {
     private Integer age ;
 
     @JsonProperty("ageUnit")
-    private Integer ageUnit ;
+    private String ageUnit ;
 
     @JsonProperty("dateOfBirth")
     private Long dateOfBirth ;
