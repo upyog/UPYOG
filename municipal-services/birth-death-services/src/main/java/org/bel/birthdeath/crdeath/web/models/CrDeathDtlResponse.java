@@ -26,18 +26,18 @@ public class CrDeathDtlResponse {
     @JsonProperty("ResponseInfo")
     private ResponseInfo responseInfo;
 
-    @JsonProperty("CrDeathDtls")
+    @JsonProperty("deathCertificateDtls")
     @Valid
-    private List<CrDeathDtl> crDeathDtls;
+    private List<CrDeathDtl> deathCertificateDtls;
 
     @JsonProperty("Count")
     private int count;
 
     public CrDeathDtlResponse addCrDeathDtl(CrDeathDtl crDeathDtl) {
-        if (crDeathDtls == null) {
-            crDeathDtls = new ArrayList<>();
+        if (deathCertificateDtls == null) {
+            deathCertificateDtls = new ArrayList<>();
         }
-        crDeathDtls.add(crDeathDtl);
+        deathCertificateDtls.add(crDeathDtl);
 
         return this;
     }

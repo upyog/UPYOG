@@ -10,133 +10,136 @@ serviceMaps:
 
     - query: INSERT INTO public.eg_death_dtls(id, registrationunit, tenantid, correct_death_date_known, dateofdeath, time_of_death, timeofdeath_unit, date_of_death_1, time_of_death_1, timeofdeath_unit1, deceased_identified, deceased_title, deceased_firstname_en, deceased_firstname_ml, deceased_middlename_en, deceased_middlename_ml, deceased_lastname_en, deceased_lastname_ml, deceased_aadhar_submitted, deceased_aadhar_number, deceased_gender, age, age_unit, dateofbirth, death_place, death_place_type, death_place_inst_id, death_place_office_name, death_place_other_ml, death_place_other_en, informant_title, informant_name_en, informant_name_ml, informant_aadhar_submitted, informant_aadhar_no, informant_mobile_no, general_remarks, application_status, submitted_on, created_by, createdtime, lastmodifiedby, lastmodifiedtime, place_burial, place_burial_institution_type, place_burial_institution_name, registration_no, ip_no, op_no, male_dependent_type, male_dependent_title, male_dependent_name_en, male_dependent_name_ml, male_dependent_aadharno, male_dependent_mobileno, male_dependent_mailid, female_dependent_type, female_dependent_title, female_dependent_name_en, female_dependent_name_ml, female_dependent_aadharno, female_dependent_mobileno, female_dependent_mailid)
                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+     
+     
+     
       basePath: deathCertificateDtls.*
       jsonMaps:
       - jsonPath: $.deathCertificateDtls.*.id
 
-      - jsonPath: $.deathCertificateDtls.*.registrationunit
+      - jsonPath: $.deathCertificateDtls.*.registrationUnit
 
-      - jsonPath: $.deathCertificateDtls.*.tenantid
+      - jsonPath: $.deathCertificateDtls.*.tenantId
 
-      - jsonPath: $.deathCertificateDtls.*.correct_death_date_known
+      - jsonPath: $.deathCertificateDtls.*.correctDeathDateKnown
       
-      - jsonPath: $.deathCertificateDtls.*.dateofdeath
+      - jsonPath: $.deathCertificateDtls.*.dateOfDeath
 
-      - jsonPath: $.deathCertificateDtls.*.time_of_death
+      - jsonPath: $.deathCertificateDtls.*.timeOfDeath
 
-      - jsonPath: $.deathCertificateDtls.*.timeofdeath_unit
+      - jsonPath: $.deathCertificateDtls.*.timeOfDeathUnit
 
-      - jsonPath: $.deathCertificateDtls.*.date_of_death_1
+      - jsonPath: $.deathCertificateDtls.*.dateOfDeath1
       
-      - jsonPath: $.deathCertificateDtls.*.time_of_death_1
+      - jsonPath: $.deathCertificateDtls.*.timeOfDeath1
 
-      - jsonPath: $.deathCertificateDtls.*.timeofdeath_unit1
+      - jsonPath: $.deathCertificateDtls.*.timeOfDeathUnit1
 
-      - jsonPath: $.deathCertificateDtls.*.deceased_identified
+      - jsonPath: $.deathCertificateDtls.*.deceasedIdentified
 
-      - jsonPath: $.deathCertificateDtls.*.deceased_title
+      - jsonPath: $.deathCertificateDtls.*.deceasedTitle
       
-      - jsonPath: $.deathCertificateDtls.*.deceased_firstname_en
+      - jsonPath: $.deathCertificateDtls.*.deceasedFirstNameEn
 
-      - jsonPath: $.deathCertificateDtls.*.deceased_firstname_ml
+      - jsonPath: $.deathCertificateDtls.*.deceasedFirstNameMl
 
-      - jsonPath: $.deathCertificateDtls.*.deceased_middlename_en
+      - jsonPath: $.deathCertificateDtls.*.deceasedMiddleNameEn
 
-      - jsonPath: $.deathCertificateDtls.*.deceased_middlename_ml
+      - jsonPath: $.deathCertificateDtls.*.deceasedMiddleNameMl
       
-      - jsonPath: $.deathCertificateDtls.*.deceased_lastname_en
+      - jsonPath: $.deathCertificateDtls.*.deceasedLastNameEn
 
-      - jsonPath: $.deathCertificateDtls.*.deceased_lastname_ml
+      - jsonPath: $.deathCertificateDtls.*.deceasedLastNameMl
 
-      - jsonPath: $.deathCertificateDtls.*.deceased_aadhar_submitted
+      - jsonPath: $.deathCertificateDtls.*.deceasedAadharSubmitted
 
-      - jsonPath: $.deathCertificateDtls.*.deceased_aadhar_number
+      - jsonPath: $.deathCertificateDtls.*.deceasedAadharNumber
       
-      - jsonPath: $.deathCertificateDtls.*.deceased_gender
+      - jsonPath: $.deathCertificateDtls.*.deceasedGender
 
       - jsonPath: $.deathCertificateDtls.*.age
 
-      - jsonPath: $.deathCertificateDtls.*.age_unit
+      - jsonPath: $.deathCertificateDtls.*.ageUnit
 
-      - jsonPath: $.deathCertificateDtls.*.dateofbirth
+      - jsonPath: $.deathCertificateDtls.*.dateOfBirth
       
-      - jsonPath: $.deathCertificateDtls.*.death_place
+      - jsonPath: $.deathCertificateDtls.*.deathPlace
 
-      - jsonPath: $.deathCertificateDtls.*.death_place_type
+      - jsonPath: $.deathCertificateDtls.*.deathPlaceType
       
-      - jsonPath: $.deathCertificateDtls.*.death_place_inst_id
+      - jsonPath: $.deathCertificateDtls.*.deathPlaceInstId
 
-      - jsonPath: $.deathCertificateDtls.*.death_place_office_name
+      - jsonPath: $.deathCertificateDtls.*.deathPlaceOfficeName
       
-      - jsonPath: $.deathCertificateDtls.*.death_place_other_ml
+      - jsonPath: $.deathCertificateDtls.*.deathPlaceOtherMl
 
-      - jsonPath: $.deathCertificateDtls.*.death_place_other_en
+      - jsonPath: $.deathCertificateDtls.*.deathPlaceOtherEn
       
-      - jsonPath: $.deathCertificateDtls.*.informant_title
+      - jsonPath: $.deathCertificateDtls.*.informantTitle
 
-      - jsonPath: $.deathCertificateDtls.*.informant_name_en
+      - jsonPath: $.deathCertificateDtls.*.informantNameEn
       
-      - jsonPath: $.deathCertificateDtls.*.informant_name_ml
+      - jsonPath: $.deathCertificateDtls.*.informantNameMl
 
-      - jsonPath: $.deathCertificateDtls.*.informant_aadhar_submitted
+      - jsonPath: $.deathCertificateDtls.*.informantAadharSubmitted
       
-      - jsonPath: $.deathCertificateDtls.*.informant_aadhar_no
+      - jsonPath: $.deathCertificateDtls.*.informantAadharNo
 
-      - jsonPath: $.deathCertificateDtls.*.informant_mobile_no
+      - jsonPath: $.deathCertificateDtls.*.informantMobileNo
       
-      - jsonPath: $.deathCertificateDtls.*.general_remarks
+      - jsonPath: $.deathCertificateDtls.*.generalRemarks
 
-      - jsonPath: $.deathCertificateDtls.*.application_status      
+      - jsonPath: $.deathCertificateDtls.*.applicationStatus      
       
-      - jsonPath: $.deathCertificateDtls.*.submitted_on
+      - jsonPath: $.deathCertificateDtls.*.submittedOn
 
-      - jsonPath: $.deathCertificateDtls.*.auditDetails.created_by
+      - jsonPath: $.deathCertificateDtls.*.auditDetails.createdBy
       
-      - jsonPath: $.deathCertificateDtls.*.auditDetails.createdtime
+      - jsonPath: $.deathCertificateDtls.*.auditDetails.createdTime
 
-      - jsonPath: $.deathCertificateDtls.*.auditDetails.lastmodifiedby
+      - jsonPath: $.deathCertificateDtls.*.auditDetails.lastModifiedBy
       
-      - jsonPath: $.deathCertificateDtls.*.auditDetails.lastmodifiedtime
+      - jsonPath: $.deathCertificateDtls.*.auditDetails.lastModifiedTime
 
-      - jsonPath: $.deathCertificateDtls.*.place_burial
+      - jsonPath: $.deathCertificateDtls.*.placeBurial
       
-      - jsonPath: $.deathCertificateDtls.*.place_burial_institution_type
+      - jsonPath: $.deathCertificateDtls.*.placeBurialInstitutionType
 
-      - jsonPath: $.deathCertificateDtls.*.place_burial_institution_name
+      - jsonPath: $.deathCertificateDtls.*.placePurialInstitutionName
       
-      - jsonPath: $.deathCertificateDtls.*.registration_no
+      - jsonPath: $.deathCertificateDtls.*.registrationNo
 
-      - jsonPath: $.deathCertificateDtls.*.ip_no
+      - jsonPath: $.deathCertificateDtls.*.ipNo
       
-      - jsonPath: $.deathCertificateDtls.*.op_no
+      - jsonPath: $.deathCertificateDtls.*.opNo
 
-      - jsonPath: $.deathCertificateDtls.*.male_dependent_type      
+      - jsonPath: $.deathCertificateDtls.*.maleDependentType      
       
-      - jsonPath: $.deathCertificateDtls.*.male_dependent_title
+      - jsonPath: $.deathCertificateDtls.*.maleDependentTitle
 
-      - jsonPath: $.deathCertificateDtls.*.male_dependent_name_en
+      - jsonPath: $.deathCertificateDtls.*.maleDependentNameEn
       
-      - jsonPath: $.deathCertificateDtls.*.male_dependent_name_ml
+      - jsonPath: $.deathCertificateDtls.*.maleDependentNameMl
 
-      - jsonPath: $.deathCertificateDtls.*.male_dependent_aadharno
+      - jsonPath: $.deathCertificateDtls.*.maleDependentAadharNo
       
-      - jsonPath: $.deathCertificateDtls.*.male_dependent_mobileno
+      - jsonPath: $.deathCertificateDtls.*.maleDependentMobileNo
 
-      - jsonPath: $.deathCertificateDtls.*.male_dependent_mailid
+      - jsonPath: $.deathCertificateDtls.*.maleDependentMailId
       
-      - jsonPath: $.deathCertificateDtls.*.female_dependent_type
+      - jsonPath: $.deathCertificateDtls.*.femaleDependentType
 
-      - jsonPath: $.deathCertificateDtls.*.female_dependent_title
+      - jsonPath: $.deathCertificateDtls.*.femaleDependentTitle
       
-      - jsonPath: $.deathCertificateDtls.*.female_dependent_name_en
+      - jsonPath: $.deathCertificateDtls.*.femaleDependentNameEn
 
-      - jsonPath: $.deathCertificateDtls.*.female_dependent_name_ml
+      - jsonPath: $.deathCertificateDtls.*.femaleDependentNameMl
       
-      - jsonPath: $.deathCertificateDtls.*.female_dependent_aadharno
+      - jsonPath: $.deathCertificateDtls.*.femaleDependentAadharNo
 
-      - jsonPath: $.deathCertificateDtls.*.female_dependent_mobileno
+      - jsonPath: $.deathCertificateDtls.*.femaleDependentMobileNo
       
-      - jsonPath: $.deathCertificateDtls.*.female_dependent_mailid
+      - jsonPath: $.deathCertificateDtls.*.femaleDependentMailId
   
      
     - query: INSERT INTO public.eg_death_statistical_dtls(id, death_dtl_id, tenantid, residencelocalbody, residence_place_type, residencedistrict, residencestate, religion, religion_other, occupation, occupation_other, medical_attention_type, death_medically_certified, death_cause_main, death_cause_sub, death_cause_other, death_during_delivery, smoking_num_years, tobacco_num_years, arecanut_num_years, alcohol_num_years, createdby, createdtime, lastmodifiedby, lastmodifiedtime)
@@ -147,51 +150,51 @@ serviceMaps:
 
       - jsonPath: $.deathCertificateDtls.*.id
 
-      - jsonPath: $.deathCertificateDtls.*.tenantid
+      - jsonPath: $.deathCertificateDtls.*.tenantId
       
-      - jsonPath: $.deathCertificateDtls.*.statisticalInfo.residencelocalbody
+      - jsonPath: $.deathCertificateDtls.*.statisticalInfo.residenceLocalbody
       
-      - jsonPath: $.deathCertificateDtls.*.statisticalInfo.residence_place_type
+      - jsonPath: $.deathCertificateDtls.*.statisticalInfo.residencePlaceType
       
-      - jsonPath: $.deathCertificateDtls.*.statisticalInfo.residencedistrict
+      - jsonPath: $.deathCertificateDtls.*.statisticalInfo.residenceDistrict
       
-      - jsonPath: $.deathCertificateDtls.*.statisticalInfo.residencestate
+      - jsonPath: $.deathCertificateDtls.*.statisticalInfo.residenceState
       
       - jsonPath: $.deathCertificateDtls.*.statisticalInfo.religion
       
-      - jsonPath: $.deathCertificateDtls.*.statisticalInfo.religion_other
+      - jsonPath: $.deathCertificateDtls.*.statisticalInfo.religionOther
       
       - jsonPath: $.deathCertificateDtls.*.statisticalInfo.occupation
       
-      - jsonPath: $.deathCertificateDtls.*.statisticalInfo.occupation_other
+      - jsonPath: $.deathCertificateDtls.*.statisticalInfo.occupationOther
       
-      - jsonPath: $.deathCertificateDtls.*.statisticalInfo.medical_attention_type
+      - jsonPath: $.deathCertificateDtls.*.statisticalInfo.medicalAttentionType
       
-      - jsonPath: $.deathCertificateDtls.*.statisticalInfo.death_medically_certified
+      - jsonPath: $.deathCertificateDtls.*.statisticalInfo.deathMedicallyCertified
       
-      - jsonPath: $.deathCertificateDtls.*.statisticalInfo.death_cause_main
+      - jsonPath: $.deathCertificateDtls.*.statisticalInfo.deathCauseMain
       
-      - jsonPath: $.deathCertificateDtls.*.statisticalInfo.death_cause_sub
+      - jsonPath: $.deathCertificateDtls.*.statisticalInfo.deathCauseSub
       
-      - jsonPath: $.deathCertificateDtls.*.statisticalInfo.death_cause_other
+      - jsonPath: $.deathCertificateDtls.*.statisticalInfo.deathCauseOther
       
-      - jsonPath: $.deathCertificateDtls.*.statisticalInfo.death_during_delivery
+      - jsonPath: $.deathCertificateDtls.*.statisticalInfo.deathDuringDelivery
       
-      - jsonPath: $.deathCertificateDtls.*.statisticalInfo.smoking_num_years
+      - jsonPath: $.deathCertificateDtls.*.statisticalInfo.smokingNumYears
       
-      - jsonPath: $.deathCertificateDtls.*.statisticalInfo.tobacco_num_years
+      - jsonPath: $.deathCertificateDtls.*.statisticalInfo.tobaccoNumYears
       
-      - jsonPath: $.deathCertificateDtls.*.statisticalInfo.arecanut_num_years      
+      - jsonPath: $.deathCertificateDtls.*.statisticalInfo.arecanutNumYears      
       
-      - jsonPath: $.deathCertificateDtls.*.statisticalInfo.alcohol_num_years
+      - jsonPath: $.deathCertificateDtls.*.statisticalInfoAlcoholNumYears
       
-      - jsonPath: $.deathCertificateDtls.*.statisticalInfo.auditDetails.createdby  
+      - jsonPath: $.deathCertificateDtls.*..auditDetails.createdBy
       
-      - jsonPath: $.deathCertificateDtls.*.statisticalInfo.auditDetails.createdtime
+      - jsonPath: $.deathCertificateDtls.*.auditDetails.createdTime
       
-      - jsonPath: $.deathCertificateDtls.*.statisticalInfo.auditDetails.lastmodifiedby
+      - jsonPath: $.deathCertificateDtls.*.auditDetails.lastModifiedBy
       
-      - jsonPath: $.deathCertificateDtls.*.statisticalInfo.auditDetails.lastmodifiedtime
+      - jsonPath: $.deathCertificateDtls.*.auditDetails.lastModifiedTime
       
       
     - query: INSERT INTO public.eg_death_address_dtls(id, death_dtl_id, tenantid, addr_typeid, house_no, residence_assc_no, streetname_en, streetname_ml, locality_en, locality_ml, city_en, city_ml, ward_id, taluk_id, village_id, postoffice_id, pincode, district_id, state_id, country_id, taluk_name_en, taluk_name_ml, village_name_en, village_name_ml, postoffice_name_en, postoffice_name_ml, createdby, createdtime, lastmodifiedby, lastmodifiedtime)
@@ -202,61 +205,61 @@ serviceMaps:
 
       - jsonPath: $.deathCertificateDtls.*.id
 
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.tenantid
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.tenantId
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.addr_typeid
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.addrTypeId
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.house_no
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.houseNo
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.residence_assc_no
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.residenceAsscNo
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.streetname_en
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.streetNameEn
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.streetname_ml
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.streetNameMl
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.locality_en
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.localityEn
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.locality_ml
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.localityMl
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.city_en
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.cityEn
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.city_ml
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.cityMl
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.ward_id
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.wardId
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.taluk_id
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.talukId
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.village_id
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.villageId
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.postoffice_id
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.postofficeId
       
       - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.pincode 
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.district_id
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.districtId
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.state_id
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.stateId
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.country_id
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.countryId
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.taluk_name_en
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.talukNameIn
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.taluk_name_ml
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.talukNameMl
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.village_name_en
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.villageNameEn
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.village_name_ml
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.villageNameMl
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.postoffice_name_en
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.postofficeNameEn
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.postoffice_name_ml
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.postofficeNameMl
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.auditDetails.createdby
+      - jsonPath: $.deathCertificateDtls.*..auditDetails.createdBy
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.auditDetails.createdtime
+      - jsonPath: $.deathCertificateDtls.*.auditDetails.createdTime
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.auditDetails.lastmodifiedby
+      - jsonPath: $.deathCertificateDtls.*.auditDetails.lastModifiedBy
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.auditDetails.lastmodifiedtime
+      - jsonPath: $.deathCertificateDtls.*.auditDetails.lastModifiedTime
       
       
     - query: INSERT INTO public.eg_death_address_dtls(id, death_dtl_id, tenantid, addr_typeid, house_no, residence_assc_no, streetname_en, streetname_ml, locality_en, locality_ml, city_en, city_ml, ward_id, taluk_id, village_id, postoffice_id, pincode, district_id, state_id, country_id, taluk_name_en, taluk_name_ml, village_name_en, village_name_ml, postoffice_name_en, postoffice_name_ml, createdby, createdtime, lastmodifiedby, lastmodifiedtime)
@@ -267,61 +270,61 @@ serviceMaps:
 
       - jsonPath: $.deathCertificateDtls.*.id
 
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.permanentAddress.tenantid
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.tenantId
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.permanentAddress.addr_typeid
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.addrTypeId
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.permanentAddress.house_no
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.houseNo
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.permanentAddress.residence_assc_no
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.residenceAsscNo
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.permanentAddress.streetname_en
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.streetNameEn
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.permanentAddress.streetname_ml
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.streetNameMl
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.permanentAddress.locality_en
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.localityEn
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.permanentAddress.locality_ml
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.localityMl
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.permanentAddress.city_en
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.cityEn
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.permanentAddress.city_ml
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.cityMl
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.permanentAddress.ward_id
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.wardId
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.permanentAddress.taluk_id
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.talukId
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.permanentAddress.village_id
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.villageId
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.permanentAddress.postoffice_id
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.postofficeId
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.permanentAddress.pincode 
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.pincode 
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.permanentAddress.district_id
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.districtId
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.permanentAddress.state_id
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.stateId
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.permanentAddress.country_id
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.countryId
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.permanentAddress.taluk_name_en
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.talukNameIn
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.permanentAddress.taluk_name_ml
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.talukNameMl
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.permanentAddress.village_name_en
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.villageNameEn
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.permanentAddress.village_name_ml
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.villageNameMl
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.permanentAddress.postoffice_name_en
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.postofficeNameEn
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.permanentAddress.postoffice_name_ml
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.postofficeNameMl
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.permanentAddress.auditDetails.createdby
+      - jsonPath: $.deathCertificateDtls.*..auditDetails.createdBy
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.permanentAddress.auditDetails.createdtime
+      - jsonPath: $.deathCertificateDtls.*.auditDetails.createdTime
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.permanentAddress.auditDetails.lastmodifiedby
+      - jsonPath: $.deathCertificateDtls.*.auditDetails.lastModifiedBy
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.permanentAddress.auditDetails.lastmodifiedtime
+      - jsonPath: $.deathCertificateDtls.*.auditDetails.lastModifiedTime
       
      
     - query: INSERT INTO public.eg_death_address_dtls(id, death_dtl_id, tenantid, addr_typeid, house_no, residence_assc_no, streetname_en, streetname_ml, locality_en, locality_ml, city_en, city_ml, ward_id, taluk_id, village_id, postoffice_id, pincode, district_id, state_id, country_id, taluk_name_en, taluk_name_ml, village_name_en, village_name_ml, postoffice_name_en, postoffice_name_ml, createdby, createdtime, lastmodifiedby, lastmodifiedtime)
@@ -332,61 +335,61 @@ serviceMaps:
 
       - jsonPath: $.deathCertificateDtls.*.id
 
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.informantAddress.tenantid
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.tenantId
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.informantAddress.addr_typeid
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.addrTypeId
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.informantAddress.house_no
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.houseNo
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.informantAddress.residence_assc_no
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.residenceAsscNo
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.informantAddress.streetname_en
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.streetNameEn
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.informantAddress.streetname_ml
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.streetNameMl
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.informantAddress.locality_en
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.localityEn
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.informantAddress.locality_ml
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.localityMl
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.informantAddress.city_en
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.cityEn
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.informantAddress.city_ml
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.cityMl
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.informantAddress.ward_id
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.wardId
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.informantAddress.taluk_id
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.talukId
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.informantAddress.village_id
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.villageId
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.informantAddress.postoffice_id
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.postofficeId
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.informantAddress.pincode 
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.pincode 
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.informantAddress.district_id
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.districtId
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.informantAddress.state_id
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.stateId
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.informantAddress.country_id
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.countryId
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.informantAddress.taluk_name_en
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.talukNameIn
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.informantAddress.taluk_name_ml
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.talukNameMl
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.informantAddress.village_name_en
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.villageNameEn
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.informantAddress.village_name_ml
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.villageNameMl
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.informantAddress.postoffice_name_en
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.postofficeNameEn
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.informantAddress.postoffice_name_ml
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.postofficeNameMl
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.informantAddress.auditDetails.createdby
+      - jsonPath: $.deathCertificateDtls.*..auditDetails.createdBy
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.informantAddress.auditDetails.createdtime
+      - jsonPath: $.deathCertificateDtls.*.auditDetails.createdTime
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.informantAddress.auditDetails.lastmodifiedby
+      - jsonPath: $.deathCertificateDtls.*.auditDetails.lastModifiedBy
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.informantAddress.auditDetails.lastmodifiedtime
+      - jsonPath: $.deathCertificateDtls.*.auditDetails.lastModifiedTime
       
       
     - query: INSERT INTO public.eg_death_address_dtls(id, death_dtl_id, tenantid, addr_typeid, house_no, residence_assc_no, streetname_en, streetname_ml, locality_en, locality_ml, city_en, city_ml, ward_id, taluk_id, village_id, postoffice_id, pincode, district_id, state_id, country_id, taluk_name_en, taluk_name_ml, village_name_en, village_name_ml, postoffice_name_en, postoffice_name_ml, createdby, createdtime, lastmodifiedby, lastmodifiedtime)
@@ -397,61 +400,61 @@ serviceMaps:
 
       - jsonPath: $.deathCertificateDtls.*.id
 
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.deathplaceAddress.tenantid
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.tenantId
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.deathplaceAddress.addr_typeid
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.addrTypeId
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.deathplaceAddress.house_no
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.houseNo
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.deathplaceAddress.residence_assc_no
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.residenceAsscNo
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.deathplaceAddress.streetname_en
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.streetNameEn
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.deathplaceAddress.streetname_ml
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.streetNameMl
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.deathplaceAddress.locality_en
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.localityEn
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.deathplaceAddress.locality_ml
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.localityMl
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.deathplaceAddress.city_en
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.cityEn
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.deathplaceAddress.city_ml
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.cityMl
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.deathplaceAddress.ward_id
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.wardId
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.deathplaceAddress.taluk_id
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.talukId
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.deathplaceAddress.village_id
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.villageId
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.deathplaceAddress.postoffice_id
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.postofficeId
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.deathplaceAddress.pincode 
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.pincode 
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.deathplaceAddress.district_id
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.districtId
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.deathplaceAddress.state_id
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.stateId
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.deathplaceAddress.country_id
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.countryId
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.deathplaceAddress.taluk_name_en
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.talukNameIn
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.deathplaceAddress.taluk_name_ml
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.talukNameMl
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.deathplaceAddress.village_name_en
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.villageNameEn
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.deathplaceAddress.village_name_ml
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.villageNameMl
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.deathplaceAddress.postoffice_name_en
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.postofficeNameEn
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.deathplaceAddress.postoffice_name_ml
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.postofficeNameMl
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.deathplaceAddress.auditDetails.createdby
+      - jsonPath: $.deathCertificateDtls.*..auditDetails.createdBy
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.deathplaceAddress.auditDetails.createdtime
+      - jsonPath: $.deathCertificateDtls.*.auditDetails.createdTime
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.deathplaceAddress.auditDetails.lastmodifiedby
+      - jsonPath: $.deathCertificateDtls.*.auditDetails.lastModifiedBy
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.deathplaceAddress.auditDetails.lastmodifiedtime
+      - jsonPath: $.deathCertificateDtls.*.auditDetails.lastModifiedTime
      
      
     - query: INSERT INTO public.eg_death_address_dtls(id, death_dtl_id, tenantid, addr_typeid, house_no, residence_assc_no, streetname_en, streetname_ml, locality_en, locality_ml, city_en, city_ml, ward_id, taluk_id, village_id, postoffice_id, pincode, district_id, state_id, country_id, taluk_name_en, taluk_name_ml, village_name_en, village_name_ml, postoffice_name_en, postoffice_name_ml, createdby, createdtime, lastmodifiedby, lastmodifiedtime)
@@ -462,61 +465,61 @@ serviceMaps:
 
       - jsonPath: $.deathCertificateDtls.*.id
 
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.burialAddress.tenantid
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.tenantId
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.burialAddress.addr_typeid
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.addrTypeId
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.burialAddress.house_no
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.houseNo
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.burialAddress.residence_assc_no
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.residenceAsscNo
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.burialAddress.streetname_en
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.streetNameEn
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.burialAddress.streetname_ml
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.streetNameMl
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.burialAddress.locality_en
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.localityEn
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.burialAddress.locality_ml
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.localityMl
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.burialAddress.city_en
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.cityEn
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.burialAddress.city_ml
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.cityMl
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.burialAddress.ward_id
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.wardId
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.burialAddress.taluk_id
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.talukId
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.burialAddress.village_id
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.villageId
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.burialAddress.postoffice_id
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.postofficeId
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.burialAddress.pincode 
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.pincode 
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.burialAddress.district_id
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.districtId
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.burialAddress.state_id
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.stateId
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.burialAddress.country_id
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.countryId
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.burialAddress.taluk_name_en
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.talukNameIn
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.burialAddress.taluk_name_ml
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.talukNameMl
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.burialAddress.village_name_en
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.villageNameEn
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.burialAddress.village_name_ml
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.villageNameMl
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.burialAddress.postoffice_name_en
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.postofficeNameEn
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.burialAddress.postoffice_name_ml
+      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.presentAddress.postofficeNameMl
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.burialAddress.auditDetails.createdby
+      - jsonPath: $.deathCertificateDtls.*..auditDetails.createdBy
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.burialAddress.auditDetails.createdtime
+      - jsonPath: $.deathCertificateDtls.*.auditDetails.createdTime
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.burialAddress.auditDetails.lastmodifiedby
+      - jsonPath: $.deathCertificateDtls.*.auditDetails.lastModifiedBy
       
-      - jsonPath: $.deathCertificateDtls.*.addressInfo.*.burialAddress.auditDetails.lastmodifiedtime
+      - jsonPath: $.deathCertificateDtls.*.auditDetails.lastModifiedTime
      
      
      
