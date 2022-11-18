@@ -13,28 +13,34 @@ import lombok.Setter;
 @Component
 public class FilemgmntConfiguration {
 
-    @Value("${app.timezone}")
-    private String timeZone;
+	@Value("${app.timezone}")
+	private String timeZone;
 
-    @Value("${persister.save.applicantpersonal.topic}")
-    private String saveApplicantPersonalTopic;
+	@Value("${persister.save.applicantpersonal.topic}")
+	private String saveApplicantPersonalTopic;
 
-    @Value("${persister.update.applicantpersonal.topic}")
-    private String updateApplicantPersonalTopic;
+	@Value("${persister.update.applicantpersonal.topic}")
+	private String updateApplicantPersonalTopic;
 
-    @Value("${persister.save.servicedetails.topic}")
-    private String saveServiceDetailsTopic;
+	@Value("${persister.save.servicedetails.topic}")
+	private String saveServiceDetailsTopic;
 
-    @Value("${egov.idgen.fm.fileCode.name}")
-    private String filemgmntFileCodeName;
+	@Value("${egov.idgen.fm.fileCode.name}")
+	private String filemgmntFileCodeName;
 
-    @Value("${egov.idgen.fm.fileCode.format}")
-    private String filemgmntFileCodeFormat;
+	@Value("${egov.idgen.fm.fileCode.format}")
+	private String filemgmntFileCodeFormat;
 
-    @Value("${citizen.allowed.search.params}")
-    private String allowedCitizenSearchParams;
+	@Value("${citizen.allowed.search.params}")
+	private String allowedCitizenSearchParams;
 
-    @Value("${employee.allowed.search.params}")
-    private String allowedEmployeeSearchParams;
+	@Value("${employee.allowed.search.params}")
+	private String allowedEmployeeSearchParams;
+
+	@Value("${workflow.context.path}")
+	private String wfHost;
+
+	@Value("${workflow.transition.path}")
+	private String wfTransitionPath;
 
 }

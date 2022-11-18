@@ -315,7 +315,28 @@ serviceMaps:
       
       - jsonPath: $.CommunicationFile.*.auditDetails.lastModifiedBy
 
-      - jsonPath: $.CommunicationFile.*.auditDetails.lastModifiedTime     
+      - jsonPath: $.CommunicationFile.*.auditDetails.lastModifiedTime   
+      
+  - version: 1.0
+    description: Update communication file   in egov_filemgmnt database, eg_fm_communicationfile table
+    fromTopic: update-fm-communicationfile
+    isTransaction: true
+    queryMaps:
+    - query: >
+        UPDATE eg_fm_communicationfile 
+        SET subjecttypeid = ?, senderid = ?, priorityid = ?, details = ? 
+        WHERE id = ?;
+      basePath: CommunicationFile.*
+      jsonMaps:
+      - jsonPath: $.CommunicationFile.*.subjectTypeId 
+      
+      - jsonPath: $.CommunicationFile.*.senderId 
+      
+      - jsonPath: $.CommunicationFile.*.priorityId 
+      
+      - jsonPath: $.CommunicationFile.*.details      
+ 
+      - jsonPath: $.CommunicationFile.*.id          
    
 
        

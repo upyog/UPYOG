@@ -40,4 +40,15 @@ public class CommunicationFileManagementEnrichment implements BaseEnrichment {
 		});
 
 	}
+
+	public void enrichUpdate(CommunicationFileRequest request) {
+
+		RequestInfo requestInfo = request.getRequestInfo();
+		User userInfo = requestInfo.getUserInfo();
+
+		AuditDetails auditDetails = buildAuditDetails(userInfo.getUuid(), Boolean.FALSE);
+
+		request.getCommunicationFiles().forEach(communication -> communication.setAuditDetails(auditDetails));
+	}
+
 }

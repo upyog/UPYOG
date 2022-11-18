@@ -19,4 +19,10 @@ public class CommunicationFileManagementConfiguration {
 	@Value("${persister.save.communicationfile.topic}")
 	private String saveCommunicationFileTopic;
 
+	@Value("${persister.update.communicationfile.topic}")
+	private String updateCommunicationFileTopic;
+
+	@Value("${employee.allowed.search.params}")
+	private String allowedEmployeeSearchParams;
+
 }
