@@ -103,7 +103,7 @@ public class ApplicantPersonalValidator {
         if (criteria.isEmpty()) {
             throw new CustomException(INVALID_SEARCH.getCode(), "Search without any paramters is not allowed");
         }
-
+        log.info("codes " + criteria.getFileCode());
         if (criteria.tenantIdOnly()) {
             throw new CustomException(INVALID_SEARCH.getCode(), "Search based only on tenantId is not allowed");
         }

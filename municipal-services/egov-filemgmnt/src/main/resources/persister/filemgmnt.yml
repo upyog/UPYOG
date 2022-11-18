@@ -208,10 +208,18 @@ serviceMaps:
     fromTopic: update-fm-applicantpersonal
     isTransaction: true
     queryMaps:
+    
+    - query: >
+         INSERT INTO eg_fm_applicantpersonal_log SELECT * FROM eg_fm_applicantpersonal WHERE id = ?;
+      basePath: ApplicantPersonals.*
+      jsonMaps:
+      - jsonPath: $.ApplicantPersonals.*.id
+                 
     - query: >
         UPDATE eg_fm_applicantpersonal 
         SET aadhaarno = ?, email = ?, firstname = ?, lastname = ?, title = ?, mobileno = ?
         WHERE id = ?;
+        
       basePath: ApplicantPersonals.*
       jsonMaps:
       - jsonPath: $.ApplicantPersonals.*.aadhaarNo 
@@ -226,7 +234,14 @@ serviceMaps:
       
       - jsonPath: $.ApplicantPersonals.*.mobileNo       
          
-      - jsonPath: $.ApplicantPersonals.*.id        
+      - jsonPath: $.ApplicantPersonals.*.id   
+      
+      
+    - query: >
+         INSERT INTO eg_fm_applicantaddress_log SELECT * FROM eg_fm_applicantaddress WHERE id = ?;
+      basePath: ApplicantPersonals.*
+      jsonMaps:
+      - jsonPath: $.ApplicantPersonals.*.id       
       
     - query: >      
         UPDATE eg_fm_applicantaddress 
@@ -246,6 +261,12 @@ serviceMaps:
          
       - jsonPath: $.ApplicantPersonals.*.applicantAddresses.applicantpersonalid
       
+    - query: >
+         INSERT INTO eg_fm_applicantdocument_log SELECT * FROM eg_fm_applicantdocument WHERE id = ?;
+      basePath: ApplicantPersonals.*
+      jsonMaps:
+      - jsonPath: $.ApplicantPersonals.*.id   
+      
     - query: >      
         UPDATE eg_fm_applicantdocument 
         SET documenttypeid = ?, documentnumber = ?, docexpirydate = ?        
@@ -258,7 +279,13 @@ serviceMaps:
       
       - jsonPath: $.ApplicantPersonals.*.applicantDocuments.docexpiryDate             
          
-      - jsonPath: $.ApplicantPersonals.*.applicantDocuments.applicantpersonalid 
+      - jsonPath: $.ApplicantPersonals.*.applicantDocuments.applicantpersonalid
+      
+    - query: >
+         INSERT INTO eg_fm_applicantservicedocument_log SELECT * FROM eg_fm_applicantservicedocument WHERE id = ?;
+      basePath: ApplicantPersonals.*
+      jsonMaps:
+      - jsonPath: $.ApplicantPersonals.*.id      
       
     - query: >      
         UPDATE eg_fm_applicantservicedocument
@@ -270,7 +297,13 @@ serviceMaps:
       
       - jsonPath: $.ApplicantPersonals.*.applicantServiceDocuments.documentTypeId             
          
-      - jsonPath: $.ApplicantPersonals.*.applicantServiceDocuments.applicantpersonalid  
+      - jsonPath: $.ApplicantPersonals.*.applicantServiceDocuments.applicantpersonalid
+      
+    - query: >
+         INSERT INTO eg_fm_servicedetail_log SELECT * FROM eg_fm_servicedetail WHERE id = ?;
+      basePath: ApplicantPersonals.*
+      jsonMaps:
+      - jsonPath: $.ApplicantPersonals.*.id  
       
     - query: >      
         UPDATE eg_fm_servicedetail
@@ -315,7 +348,7 @@ serviceMaps:
       
       - jsonPath: $.CommunicationFile.*.auditDetails.lastModifiedBy
 
-      - jsonPath: $.CommunicationFile.*.auditDetails.lastModifiedTime     
+      - jsonPath: $.CommunicationFile.*.auditDetails.lastModifiedTime    
    
 
        

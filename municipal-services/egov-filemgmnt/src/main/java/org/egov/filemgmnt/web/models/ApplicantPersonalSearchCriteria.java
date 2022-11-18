@@ -1,5 +1,8 @@
 package org.egov.filemgmnt.web.models;
 
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
+import lombok.extern.slf4j.Slf4j;
+
 import org.apache.commons.lang3.StringUtils;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -15,6 +18,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Slf4j
 public class ApplicantPersonalSearchCriteria {
 
     @JsonProperty("tenantId")
@@ -42,6 +46,8 @@ public class ApplicantPersonalSearchCriteria {
     private String aadhaarno;
 
     public boolean tenantIdOnly() {
+        log.info("file code : \n{}", fileCode);
+
         return (StringUtils.isNotBlank(tenantId) && StringUtils.isBlank(fileCode));
     }
 
