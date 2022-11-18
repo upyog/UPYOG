@@ -25,38 +25,28 @@ import lombok.Setter;
 
 public class ServiceDetails {
 
-    @Schema(type = "string", format = "uuid", description = "Service details id")
-    @Size(max = 64)
-    @JsonProperty("id")
-    private String id;
+	@Schema(type = "string", format = "uuid", description = "Service details id")
+	@Size(max = 64)
+	@JsonProperty("id")
+	private String id;
 
-    @Schema(type = "string", description = "Applicant id")
-    @Size(max = 64)
-    @JsonProperty("applicantPersonalId")
-    private String applicantPersonalId;
+	@Schema(type = "string", description = "Applicant id")
+	@Size(max = 64)
+	@JsonProperty("applicantPersonalId")
+	private String applicantPersonalId;
 
-    @Schema(type = "string", description = "Business service")
-    @Size(max = 64)
-    @JsonProperty("businessService")
-    private String businessService;
+	@JsonProperty("auditDetails")
+	private AuditDetails auditDetails;
 
-    @Schema(type = "string", description = "Workflow code")
-    @Size(max = 64)
-    @JsonProperty("workflowCode")
-    private String workflowCode;
+	@Schema(type = "string", description = "Service id")
+	@Size(max = 64)
+	@JsonProperty("serviceId")
+	private String serviceId;
 
-    @JsonProperty("auditDetails")
-    private AuditDetails auditDetails;
-
-    @Schema(type = "string", description = "Service id")
-    @Size(max = 64)
-    @JsonProperty("serviceId")
-    private String serviceId;
-
-    @Schema(type = "string", description = "Service code")
-    @Size(max = 64)
-    @NotNull
-    @JsonProperty("serviceCode")
-    private String serviceCode;
+	@Schema(type = "string", description = "Service code")
+	@Size(max = 64)
+	@NotNull
+	@JsonProperty("serviceCode")
+	private String serviceCode;
 
 }

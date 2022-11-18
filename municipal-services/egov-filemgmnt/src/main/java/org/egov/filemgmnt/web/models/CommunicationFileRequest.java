@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotEmpty;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.springframework.validation.annotation.Validated;
@@ -18,7 +17,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Schema(description = "Applicant personal request for create and update.")
+@Schema(description = "Communication Filel request for create and update.")
 @Validated
 @Getter
 @Setter
@@ -26,21 +25,22 @@ import lombok.Setter;
 @NoArgsConstructor
 @Builder
 
-public class ApplicantPersonalRequest {
+public class CommunicationFileRequest {
 
     @JsonProperty("RequestInfo")
     private RequestInfo requestInfo;
 
-    @JsonProperty("ApplicantPersonals")
-    @NotEmpty(message = "Applicant personal is required")
-    private List<@Valid ApplicantPersonal> applicantPersonals;
+    @JsonProperty("CommunicationFile")
+    @Valid
+    private List<CommunicationFile> communicationFiles;
 
-    public ApplicantPersonalRequest addApplicantPersonal(ApplicantPersonal applicantPersonal) {
-        if (applicantPersonals == null) {
-            applicantPersonals = new ArrayList<>();
+    public CommunicationFileRequest addCommunicationFile(CommunicationFile communicationFile) {
+
+        if (communicationFiles == null) {
+            communicationFiles = new ArrayList<>();
         }
-        applicantPersonals.add(applicantPersonal);
-
+        communicationFiles.add(communicationFile);
         return this;
     }
+
 }

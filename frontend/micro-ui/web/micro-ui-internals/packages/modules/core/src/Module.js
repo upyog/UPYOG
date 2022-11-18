@@ -180,7 +180,11 @@ const tmpInitData ={
           ]
       },
       {
+<<<<<<< HEAD
         "module": "DFM",
+=======
+        "module": "Digital file management",
+>>>>>>> 9d26947c03e57659572c419e4f0a38a5026d989a
         "code": "DFM",
         "bannerImage": "https://egov-uat-assets.s3.amazonaws.com/TL.png",
         "active": true,

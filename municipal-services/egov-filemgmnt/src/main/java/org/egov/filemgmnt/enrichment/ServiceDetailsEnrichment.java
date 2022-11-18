@@ -9,7 +9,6 @@ import org.egov.filemgmnt.web.models.ServiceDetailsRequest;
 import org.springframework.stereotype.Component;
 
 @Component
-
 public class ServiceDetailsEnrichment implements BaseEnrichment {
 
     public void enrichCreate(ServiceDetailsRequest request) {
