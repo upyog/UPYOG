@@ -172,7 +172,6 @@ export const CitizenSideBar = ({ isOpen, isMobile, toggleSidebar, onLogout, isEm
 
   return (
     <div>
-      <h1>hello</h1>
       <NavBar open={isOpen} profileItem={profileItem} menuItems={menuItems} onClose={closeSidebar} Footer={<PoweredBy />} />
     </div>
   );

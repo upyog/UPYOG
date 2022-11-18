@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 const EmployeeModuleCard = ({ Icon, moduleName, kpis = [], links = [], isCitizen = false, className, styles, FsmHideCount }) => {
   return (
     <div className={className ? className : "employeeCard card-home customEmployeeCard"} style={styles ? styles : {}}>
-      <div className="complaint-links-container">
+      {/* <div className="complaint-links-container">
         <div className="header" style={isCitizen ? { padding: "0px" } : {}}>
           <span className="text removeHeight">{moduleName}</span>
           <span className="logo removeBorderRadiusLogo">{Icon}</span>
@@ -45,6 +45,49 @@ const EmployeeModuleCard = ({ Icon, moduleName, kpis = [], links = [], isCitizen
             ))}
           </div>
         </div>
+      </div> */}
+      <div className="employeeCustomCard" style={{ width: "100%", height: "85%", position: "relative" }}>
+        <span className="text-employee-card">{moduleName}</span>
+        <span className="logo-removeBorderRadiusLogo" style={{ position: "absolute", right: "10%", top: "10%" }}>{Icon}</span>
+        <div className="employee-card-banner">
+          <div className="body" style={{ margin: "0px", padding: "0px" }}>
+            {kpis.length !== 0 && (
+              <div className="flex-fit" style={isCitizen ? { paddingLeft: "17px" } : {}}>
+
+                {kpis.map(({ count, label, link }, index) => (
+                  <div className="card-count" key={index} style={{ display: "flex", width: "100%" }}>
+                    <div style={{ width: "50px", height: "50px" }}><span className="icon-banner-employee" style={{ position: "absolute", left: "10%", top: "10%", borderRadius: "5px", boxShadow: "5px 5px 5px 0px #e3e4e3" }}>{Icon}</span></div>
+                    <div style={{ marginLeft: "auto", display: "flex", flexDirection: "row-reverse", width: "100%" }}>
+
+                      <button type="button" class="inboxButton">
+                        {link ? (
+                          <Link to={link} className="employeeTotalLink">
+                            {label}
+                          </Link>
+                        ) : null}
+                      </button>
+                      <div style={{ padding: "10px 15px" }}>
+                        <span style={{ color: "#ae1e28", fontSize: "18px", fontFamily: "sans-serif", fontWeight: "bold" }}>{count || "-"}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+            <div className="links-wrapper" style={{ width: "100%", display: "flex", fontSize: "0.8rem", padding: "5px", paddingLeft: "10px" }}>
+              {links.map(({ count, label, link }, index) => (
+                <span className="link" key={index} style={{ paddingLeft: "5px", color: "#a1a5b7" }}>
+                  {link ? <Link to={link}>{label} |</Link> : null}
+                </span>
+
+              ))}
+            </div>
+          </div>
+
+        </div>
+      </div>
+      
+      <div>
       </div>
     </div>
   );
