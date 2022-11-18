@@ -21,6 +21,7 @@ import { initNOCComponents } from "@egovernments/digit-ui-module-noc";
 import { initWSComponents } from "@egovernments/digit-ui-module-ws"; 
 import { DigitUI } from "@egovernments/digit-ui-module-core";
 import { initCommonPTComponents } from "@egovernments/digit-ui-module-commonpt";
+import { initCRComponents } from "@egovernments/digit-ui-module-cr";
 
 // import {initCustomisationComponents} from "./customisations";
 
@@ -37,7 +38,7 @@ import { pgrCustomizations, pgrComponents } from "./pgr";
 
 var Digit = window.Digit || {};
 
-const enabledModules = ["PGR", "FSM", "Payment", "PT", "QuickPayLinks", "DSS", "MCollect", "HRMS", "TL", "Receipts", "OBPS", "Engagement", "NOC", "WS","CommonPT", "NDSS"];
+const enabledModules = ["PGR", "FSM", "Payment", "PT", "QuickPayLinks", "DSS", "MCollect", "HRMS", "TL", "Receipts", "OBPS", "Engagement", "NOC", "WS","CommonPT", "NDSS","CR"];
 
 const initTokens = (stateCode) => {
   const userType = window.sessionStorage.getItem("userType") || process.env.REACT_APP_USER_TYPE || "CITIZEN";
@@ -89,6 +90,7 @@ const initDigitUI = () => {
   initMCollectComponents();
   initHRMSComponents();
   initTLComponents();
+  initCRComponents();
   initReceiptsComponents();
   initOBPSComponents();
   initEngagementComponents();

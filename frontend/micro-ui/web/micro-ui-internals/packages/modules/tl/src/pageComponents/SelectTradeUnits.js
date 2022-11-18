@@ -1,4 +1,4 @@
-import { CardLabel, Dropdown, FormStep, LinkButton, Loader, RadioButtons, RadioOrSelect, TextInput } from "@egovernments/digit-ui-react-components";
+import { CardLabel, Dropdown, FormStep, LinkButton, Loader, RadioButtons, RadioOrSelect, TextInput,TextArea } from "@egovernments/digit-ui-react-components";
 import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
 import Timeline from "../components/TLTimeline";
@@ -9,8 +9,8 @@ const SelectTradeUnits = ({ t, config, onSelect, userType, formData }) => {
   const [TradeCategory, setTradeCategory] = useState("");
   const [TradeType, setTradeType] = useState(formData?.TadeDetails?.Units?.TradeType || "");
   const [TradeSubType, setTradeSubType] = useState(formData?.TadeDetails?.Units?.TradeSubType || "");
-  const [UnitOfMeasure, setUnitOfMeasure] = useState(formData?.TadeDetails?.Units?.UnitOfMeasure || "");
-  const [UomValue, setUomValue] = useState(formData?.TadeDetails?.Units?.UomValue || "");
+  const [CustomType, setCustomType] = useState(formData?.TadeDetails?.Units?.CustomType || "");
+  const [BusinessActivity, setBusinessActivity] = useState(formData?.TadeDetails?.Units?.BusinessActivity || "");
   const [fields, setFeilds] = useState(
     (formData?.TradeDetails && formData?.TradeDetails?.units) || [{ tradecategory: "", tradetype: "", tradesubtype: "", unit: null, uom: null }]
   );
@@ -96,38 +96,53 @@ const SelectTradeUnits = ({ t, config, onSelect, userType, formData }) => {
     let units = [...fields];
     units[i].tradesubtype = value;
     setTradeSubType(value);
-    if (value == null) {
-      units[i].unit = null;
-      setUnitOfMeasure(null);
-    }
-    Array.from(document.querySelectorAll("input")).forEach((input) => (input.value = ""));
-    value &&
-      Data &&
-      Data.TradeLicense &&
-      Data.TradeLicense.TradeType.map((ob) => {
-        if (value.code === ob.code) {
-          units[i].unit = ob.uom;
-          setUnitOfMeasure(ob.uom);
-          // setFeilds(units);
-        }
-      });
+    // if (value == null) {
+    //   units[i].unit = null;
+    //   setUnitOfMeasure(null);
+    // }
+    // Array.from(document.querySelectorAll("input")).forEach((input) => (input.value = ""));
+    // value &&
+    //   Data &&
+    //   Data.TradeLicense &&
+    //   Data.TradeLicense.TradeType.map((ob) => {
+    //     if (value.code === ob.code) {
+    //       units[i].unit = ob.uom;
+    //       setUnitOfMeasure(ob.uom);
+    //       // setFeilds(units);
+    //     }
+    //   });
     setFeilds(units);
   }
-  function selectUnitOfMeasure(i, e) {
+  // function selectUnitOfMeasure(i, e) {
+  //   let units = [...fields];
+  //   units[i].unit = e.target.value;
+  //   setUnitOfMeasure(e.target.value);
+  //   setFeilds(units);
+  // }
+  // function selectUomValue(i, e) {
+  //   let units = [...fields];
+  //   units[i].uom = e.target.value;
+  //   setUomValue(e.target.value);
+  //   setFeilds(units);
+  // }
+  function selectCustomType(i, e) {
+    
     let units = [...fields];
     units[i].unit = e.target.value;
-    setUnitOfMeasure(e.target.value);
+    setCustomType(e.target.value);
     setFeilds(units);
   }
-  function selectUomValue(i, e) {
+  function selectBusinessActivity(i, e) {
     let units = [...fields];
     units[i].uom = e.target.value;
-    setUomValue(e.target.value);
+    setBusinessActivity(e.target.value);
     setFeilds(units);
   }
 
   const goNext = () => {
-    let units = formData.TradeDetails.Units;
+    console.log(formData);
+    let units = fields;
+    // formData.TradeDetails.Units;    
     let unitsdata;
 
     unitsdata = { ...units, units: fields };
@@ -146,7 +161,7 @@ const SelectTradeUnits = ({ t, config, onSelect, userType, formData }) => {
           onSelect={goNext}
           onSkip={onSkip}
           t={t}
-          isDisabled={!fields[0].tradecategory || !fields[0].tradetype || !fields[0].tradesubtype}
+          isDisabled={!fields[0].tradecategory || !fields[0].tradetype || !fields[0].tradesubtype || !fields[0].unit || !fields[0].uom }
         >
           {fields.map((field, index) => {
             return (
@@ -225,47 +240,49 @@ const SelectTradeUnits = ({ t, config, onSelect, userType, formData }) => {
                       optionCardStyles={{maxHeight:"125px",overflow:"scroll"}}
                       select={(e) => selectTradeSubType(index, e)}
                     />
-                  {/* <CardLabel>{`${t("TL_UNIT_OF_MEASURE_LABEL")}`}</CardLabel>
+                  <CardLabel>{`${t("TL_CUSTOM_DETAILED_TYPE_LABEL")}`}</CardLabel>
                   <TextInput
                     style={{ background: "#FAFAFA" }}
                     t={t}
                     type={"text"}
-                    isMandatory={false}
+                    isMandatory={config.isMandatory}
                     optionKey="i18nKey"
-                    name="UnitOfMeasure"
+                    name="CustomType"
                     //value={UnitOfMeasure}
                     value={field?.unit}
-                    onChange={(e) => selectUnitOfMeasure(index, e)}
-                    disable={true}
+                    // onChange={selectCustomType}
+                    onChange={(e) => selectCustomType(index, e)}
+                    // disable={true}
                   />
-                  <CardLabel>{`${t("TL_NEW_TRADE_DETAILS_UOM_VALUE_LABEL")}${!field.unit ? "" : "*"}`}</CardLabel> */}
-                  {/* <TextInput
+                  <CardLabel>{`${t("TL_BUSINESS_ACTIVITY_LABEL")}`}</CardLabel> 
+                   <TextArea
                     style={{ background: "#FAFAFA" }}
                     t={t}
                     type={"text"}
-                    isMandatory={false}
+                    isMandatory={config.isMandatory}
                     optionKey="i18nKey"
-                    name="UomValue"
+                    name="BusinessActivity"
                     //value={UomValue}
                     value={field?.uom}
-                    onChange={(e) => selectUomValue(index, e)}
-                    disable={!field.unit}
+                    // onChange={selectBusinessActivity}
+                    onChange={(e) => selectBusinessActivity(index, e)}
+                    // disable={!field.unit}
                     {...(validation = {
                       isRequired: true,
                       pattern: "[0-9]+",
                       type: "text",
                       title: t("TL_WRONG_UOM_VALUE_ERROR"),
                     })}
-                  /> */}
+                  />
                 </div>
               </div>
             );
           })}
-          <div style={{ justifyContent: "center", display: "flex", paddingBottom: "15px", color: "#FF8C00" }}>
+          {/* <div style={{ justifyContent: "center", display: "flex", paddingBottom: "15px", color: "#FF8C00" }}>
             <button type="button" style={{ paddingTop: "10px" }} onClick={() => handleAdd()}>
               {`${t("TL_ADD_MORE_TRADE_UNITS")}`}
             </button>
-          </div>
+          </div> */}
         </FormStep>
       )}
     </React.Fragment>

@@ -55,10 +55,10 @@ export const StoreService = {
     return await Promise.all(allBoundries);
   },
   digitInitData: async (stateCode, enabledModules) => {
+    console.log("enabledModules" + enabledModules);
     const { MdmsRes } = await MdmsService.init(stateCode);
     const stateInfo = MdmsRes["common-masters"].StateInfo[0];
     const districts = MdmsRes["common-masters"].District;
-    console.log(districts);
     const localities = {};
     const revenue_localities = {};
     const initData = {
