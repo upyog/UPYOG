@@ -1,0 +1,122 @@
+.Form-Conatiner {
+    margin: 10px;
+    .p-0{
+        padding: 0 !important;
+    }
+    h5 {
+        color: #2B2F3E !important;
+        font-size: 16px;
+        margin-bottom: 0.5rem;
+    }
+    .card-wrapper{
+        padding: 1.5rem;
+        background-color: #fff;
+        margin-bottom: 1.6rem;
+        border: 1px solid #edf2f9;
+        border-radius: 1.6rem;
+        transition: all 0.3s ease-in-out;
+        -webkit-transition: all 0.3s ease-in-out;
+        -moz-transition: all 0.3s ease-in-out;
+        -o-transition: all 0.3s ease-in-out;
+        -ms-transition: all 0.3s ease-in-out; 
+    }
+    .form-row{
+        display: flex;
+        flex-wrap: wrap;
+    
+    }
+    .form-row>.col{
+        padding: 0 5px;
+    }
+    .form-row label{
+        font-size: 14px;
+        color: #53535f;
+        line-height: 1.5;
+        margin-bottom: 0.5rem;
+    }
+    .form-group{
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 24px;
+    }
+    .font-weight-semibold{
+        font-weight: 500 !important;
+    }
+    .form-control {
+        border: 1px solid #c9cccf;
+        padding: .55rem 1rem;
+        height: auto;
+        color: #53535f;
+        border: 1px solid #edf2f9;
+        font-size: .875rem;
+        line-height: 1.5;
+    }
+    @media (min-width: 768px){
+        .col-md-12{
+            flex: 0 0 100%;
+            max-width: 100%;
+        }
+    }
+    
+    @media (min-width: 1200px){
+        .Form-Conatiner{
+            max-width: 1140px;
+        }
+    }
+    
+}
+.Common_terms_checkbox {
+    align-items: center;
+    justify-content: space-around;
+    margin-bottom: 30px;
+    input{
+        width: 1.25rem;
+        height: 1.25rem;
+        margin-right: 10px;
+        border-radius: .25rem;
+        font-size: 12px;
+        font-family: "anticon";
+        font-weight: 400;
+        line-height: 1.4;
+        vertical-align: bottom;
+        text-align: center;
+        background: #fff;
+        color: transparent;
+        cursor: pointer;
+    }
+    label{
+        font-size: 14px;
+        color: #53535f;
+        line-height: 1.5;
+    }
+}
+.Common_submitBtn{
+    .C_submit-btn{
+        margin: 20px 0px;
+    }
+}
+.cardSectionBody .select-wrap {
+    margin-bottom: 0px !important;
+}
+.cardSectionBody .select-wrap .select{
+    border: 1px solid #c9cccf !important;
+}
+.cardSectionBody .employee-card-textarea{
+    border: 1px solid #c9cccf !important;
+    margin-top: 0px !important;
+    margin-bottom: 0px !important;
+}
+.secondaryBackBtn{
+    align-items: center;
+    gap: 7px;
+    background-color: #fff;
+    height: 35px;
+    width: 80px;
+    padding: 7px;
+    border-radius: 5px;
+    margin-left: 20px;
+}
+.secondaryBackBtn:hover{
+    background: rgb(208, 208, 208);
+    color: #fff;
+}

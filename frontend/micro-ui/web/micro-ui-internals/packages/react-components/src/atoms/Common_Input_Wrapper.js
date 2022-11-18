@@ -12,9 +12,8 @@ import {
   PitDimension,
   Dropdown
 } from "@egovernments/digit-ui-react-components";
-import DFMuploadFiles from './DFMuploadFiles'
 
-const InputCommonWrapper = ({ label, type, selectOptions, onChange, value, placeholder,fullWidth }) => {
+const CommonInputWrapper = ({ label, type, selectOptions, onChange, value, placeholder,fullWidth }) => {
   const inputTypeSelect = (type,selectOptions, onChange, value, placeholder) => {
     const [dropdownValue,setDropdownValue] =useState('')
     const handleChange=(value)=>{
@@ -68,4 +67,4 @@ const InputCommonWrapper = ({ label, type, selectOptions, onChange, value, place
   );
 };
 
-export default InputCommonWrapper;
+export default CommonInputWrapper;

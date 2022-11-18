@@ -9,38 +9,37 @@
     margin-left: -15px;
     padding: 1.5rem;
     border-radius: 1.6rem;
-    margin: 10px !important;
+    animation: 1s ease-out 0s 1 slideInLeft;
+
 }
 .cardWrapper{
     display: flex;
     flex-wrap: wrap;
-    flex-direction: column;
     gap:10px;
 }
-.file{
+.crfile{
     padding: 10px 20px;
-    background-color: #FF543D;
-    border: 1px solid #FF543D;
-    color: #fff;
+    background-color: #2db6c0;
+    border: 1px solid #2db6c0;
+    color: #cc550f;
     min-width: 200px;
     border-radius: .8rem !important;
+    
 }
 .contentMenu{
     display:flex;
     min-height: 58px;
     align-items: center !important;
-    text-align: center;
-    justify-content: center;
 }
 .contentImg{
     margin-right: 15px !important;
     font-size: 30px !important;
 }
 .contentText{
-    min-width: 100px;
     h6{
         color:#fff;
         margin-bottom: 0 !important;
+        font-size: 14px !important;
     }
     span{
         font-size: 13px !important;
@@ -50,36 +49,10 @@
 }
 .fileText {
     padding: 10px;
-    margin: 10px;
 }
 @media (min-width: 768px){
     .FileFlowWrapper{
         flex: 0 0 100%;
         max-width: 100%;
         }
-}
-@media (min-width: 768px){
-    .FileFlowWrapper{
-        max-width: 720px; 
-    }
-    
-}
-@media (min-width: 1200px){
-    .FileFlowWrapper{
-        max-width: 1140px; 
-    }
-}
-@media (min-width: 992px){
-    .FileFlowWrapper{
-        max-width: 960px; 
-    }
-    .cardWrapper{
-        display: flex;
-        flex-direction: row !important; 
-    }
-}
-@media (min-width: 576px){
-    .FileFlowWrapper{
-        max-width: 540px;
-    }
 }

@@ -54,7 +54,7 @@ import Response from "./pages/Response";
 // import RenewTrade from "./pages/citizen/Renewal/renewTrade";
 // import SearchTradeComponent from "./pages/citizen/SearchTrade";
 
-// import CitizenApp from "./pages/citizen";
+import CitizenApp from "./pages/citizen";
 import EmployeeApp from "./pages/employee";
 
 export const DFMModule = ({ stateCode, userType, tenants }) => {
@@ -70,7 +70,7 @@ export const DFMModule = ({ stateCode, userType, tenants }) => {
   if (userType === "employee") {
     return <EmployeeApp path={path} url={url} userType={userType} />;
   }
-  // else return <CitizenApp />;
+  else return <CitizenApp />;
 };
 
 export const DFMLinks = ({ matchPath, userType }) => {
@@ -84,7 +84,7 @@ export const DFMLinks = ({ matchPath, userType }) => {
   const links = [
     {
       link: `${matchPath}/tradelicence/new-application`,
-      i18nKey: t("TL_CREATE_TRADE"),
+      i18nKey: t("DFM"),
     },
     {
       link: `${matchPath}/tradelicence/renewal-list`,
@@ -96,7 +96,7 @@ export const DFMLinks = ({ matchPath, userType }) => {
     },
   ];
 
-  return <CitizenHomeCard header={t("ACTION_TEST_TRADE_LICENSE")} links={links} Icon={() => <CaseIcon className="fill-path-primary-main" />} />;
+  return <CitizenHomeCard header={t("Digital File Management")} links={links} Icon={() => <CaseIcon className="fill-path-primary-main" />} />;
 };
 
 const componentsToRegister = {
