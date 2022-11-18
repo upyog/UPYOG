@@ -78,27 +78,27 @@ serviceMaps:
     - query: >
         INSERT INTO eg_fm_applicantaddress(id, houseno, housename, street, pincode, postofficename, residenceassociationno, localplace, mainplace, wardno, createdby, createddate, lastmodifiedby, lastmodifieddate,applicantpersonalid)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )
-      basePath: ApplicantPersonals.*.applicantAddresses
+      basePath: ApplicantPersonals.*.applicantAddress
       jsonMaps:    
-      - jsonPath: $.ApplicantPersonals.*.applicantAddresses.id
+      - jsonPath: $.ApplicantPersonals.*.applicantAddress.id
 
-      - jsonPath: $.ApplicantPersonals.*.applicantAddresses.houseNo
+      - jsonPath: $.ApplicantPersonals.*.applicantAddress.houseNo
      
-      - jsonPath: $.ApplicantPersonals.*.applicantAddresses.houseName
+      - jsonPath: $.ApplicantPersonals.*.applicantAddress.houseName
      
-      - jsonPath: $.ApplicantPersonals.*.applicantAddresses.street
+      - jsonPath: $.ApplicantPersonals.*.applicantAddress.street
      
-      - jsonPath: $.ApplicantPersonals.*.applicantAddresses.pincode
+      - jsonPath: $.ApplicantPersonals.*.applicantAddress.pincode
      
-      - jsonPath: $.ApplicantPersonals.*.applicantAddresses.postOfficeName
+      - jsonPath: $.ApplicantPersonals.*.applicantAddress.postOfficeName
       
-      - jsonPath: $.ApplicantPersonals.*.applicantAddresses.residenceAssociationNo
+      - jsonPath: $.ApplicantPersonals.*.applicantAddress.residenceAssociationNo
       
-      - jsonPath: $.ApplicantPersonals.*.applicantAddresses.localPlace
+      - jsonPath: $.ApplicantPersonals.*.applicantAddress.localPlace
       
-      - jsonPath: $.ApplicantPersonals.*.applicantAddresses.mainPlace
+      - jsonPath: $.ApplicantPersonals.*.applicantAddress.mainPlace
       
-      - jsonPath: $.ApplicantPersonals.*.applicantAddresses.wardNo
+      - jsonPath: $.ApplicantPersonals.*.applicantAddress.wardNo
      
       - jsonPath: $.ApplicantPersonals.*.auditDetails.createdBy
 
@@ -247,19 +247,19 @@ serviceMaps:
         UPDATE eg_fm_applicantaddress 
         SET houseno = ?, housename = ?, street = ?, pincode = ?, postofficename = ?
         WHERE applicantpersonalid = ?;
-      basePath: ApplicantPersonals.*.applicantAddresses
+      basePath: ApplicantPersonals.*.applicantAddress
       jsonMaps:
-      - jsonPath: $.ApplicantPersonals.*.applicantAddresses.houseNo 
+      - jsonPath: $.ApplicantPersonals.*.applicantAddress.houseNo 
       
-      - jsonPath: $.ApplicantPersonals.*.applicantAddresses.houseName  
+      - jsonPath: $.ApplicantPersonals.*.applicantAddress.houseName  
       
-      - jsonPath: $.ApplicantPersonals.*.applicantAddresses.street 
+      - jsonPath: $.ApplicantPersonals.*.applicantAddress.street 
       
-      - jsonPath: $.ApplicantPersonals.*.applicantAddresses.pincode
+      - jsonPath: $.ApplicantPersonals.*.applicantAddress.pincode
       
-      - jsonPath: $.ApplicantPersonals.*.applicantAddresses.postOfficeName          
+      - jsonPath: $.ApplicantPersonals.*.applicantAddress.postOfficeName          
          
-      - jsonPath: $.ApplicantPersonals.*.applicantAddresses.applicantpersonalid
+      - jsonPath: $.ApplicantPersonals.*.applicantAddress.applicantpersonalid
       
     - query: >
          INSERT INTO eg_fm_applicantdocument_log SELECT * FROM eg_fm_applicantdocument WHERE id = ?;
