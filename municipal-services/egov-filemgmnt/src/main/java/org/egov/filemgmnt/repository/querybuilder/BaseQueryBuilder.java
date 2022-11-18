@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 
 class BaseQueryBuilder {
 
@@ -31,7 +32,7 @@ class BaseQueryBuilder {
                 paramValues.add(endDate);
             }
 
-            query.append(")");
+            query.append(") ");
         }
     }
 
@@ -41,8 +42,17 @@ class BaseQueryBuilder {
             query.append(column)
                  .append(" IN (")
                  .append(getStatementParameters(ids.size()))
-                 .append(')');
+                 .append(") ");
             ids.forEach(paramValues::add);
+        }
+    }
+
+    void addFilter(String column, String value, StringBuilder query, List<Object> paramValues) {
+        if (StringUtils.isNotBlank(value)) {
+            addWhereClause(paramValues, query);
+            query.append(column)
+                 .append("=? ");
+            paramValues.add(value);
         }
     }
 

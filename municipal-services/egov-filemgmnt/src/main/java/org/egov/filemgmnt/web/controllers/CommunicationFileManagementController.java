@@ -25,28 +25,29 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/v1")
 public class CommunicationFileManagementController {
 
-	private final ResponseInfoFactory responseInfoFactory;
-	private final CommunicationFileManagementService communicationService;
+    private final ResponseInfoFactory responseInfoFactory;
+    private final CommunicationFileManagementService communicationService;
 
-	@Autowired
-	CommunicationFileManagementController(ResponseInfoFactory responseInfoFactory,
-			CommunicationFileManagementService communicationService) {
-		this.responseInfoFactory = responseInfoFactory;
-		this.communicationService = communicationService;
+    @Autowired
+    CommunicationFileManagementController(ResponseInfoFactory responseInfoFactory,
+                                          CommunicationFileManagementService communicationService) {
+        this.responseInfoFactory = responseInfoFactory;
+        this.communicationService = communicationService;
 
-	}
+    }
 
-	@PostMapping("/officecommunication/_create")
-	public ResponseEntity<CommunicationFileResponse> create(@RequestBody CommunicationFileRequest request) {
-		List<CommunicationFile> files = communicationService.create(request);
+    @PostMapping("/officecommunication/_create")
+    public ResponseEntity<CommunicationFileResponse> create(@RequestBody CommunicationFileRequest request) {
+        List<CommunicationFile> files = communicationService.create(request);
 
-		CommunicationFileResponse response = CommunicationFileResponse.builder()
-				.responseInfo(
-						responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), Boolean.TRUE))
-				.communicationFiles(files).build();
+        CommunicationFileResponse response = CommunicationFileResponse.builder()
+                                                                      .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(),
+                                                                                                                                          Boolean.TRUE))
+                                                                      .communicationFiles(files)
+                                                                      .build();
 
-		return ResponseEntity.ok(response);
-	}
+        return ResponseEntity.ok(response);
+    }
 
 	@PutMapping("/officecommuication/_update")
 	public ResponseEntity<CommunicationFileResponse> update(@RequestBody CommunicationFileRequest request) {

@@ -23,38 +23,38 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class CommunicationFileManagementService {
 
-	private final Producer producer;
-	private final CommunicationFileManagementConfiguration communicationFilemgmntConfig;
-	private final CommunicationFileManagementRepository communicationRepository;
-	private final CommunicationFileManagementValidator communicationValidator;
-	private final CommunicationFileManagementEnrichment enrichmentService;
-	private final MdmsUtil mutil;
+    private final Producer producer;
+    private final CommunicationFileManagementConfiguration communicationFilemgmntConfig;
+    private final CommunicationFileManagementRepository communicationRepository;
+    private final CommunicationFileManagementValidator communicationValidator;
+    private final CommunicationFileManagementEnrichment enrichmentService;
+    private final MdmsUtil mutil;
 
-	@Autowired
-	CommunicationFileManagementService(Producer producer,
-			CommunicationFileManagementConfiguration communicationFilemgmntConfig,
-			CommunicationFileManagementRepository communicationRepository,
-			CommunicationFileManagementValidator communicationValidator,
-			CommunicationFileManagementEnrichment enrichmentService, MdmsUtil mutil) {
+    @Autowired
+    CommunicationFileManagementService(Producer producer,
+                                       CommunicationFileManagementConfiguration communicationFilemgmntConfig,
+                                       CommunicationFileManagementRepository communicationRepository,
+                                       CommunicationFileManagementValidator communicationValidator,
+                                       CommunicationFileManagementEnrichment enrichmentService, MdmsUtil mutil) {
 
-		this.producer = producer;
-		this.communicationFilemgmntConfig = communicationFilemgmntConfig;
-		this.communicationRepository = communicationRepository;
-		this.communicationValidator = communicationValidator;
-		this.enrichmentService = enrichmentService;
-		this.mutil = mutil;
-	}
+        this.producer = producer;
+        this.communicationFilemgmntConfig = communicationFilemgmntConfig;
+        this.communicationRepository = communicationRepository;
+        this.communicationValidator = communicationValidator;
+        this.enrichmentService = enrichmentService;
+        this.mutil = mutil;
+    }
 
-	public List<CommunicationFile> create(CommunicationFileRequest request) {
+    public List<CommunicationFile> create(CommunicationFileRequest request) {
 
-		// enrich request
-		enrichmentService.enrichCreate(request);
+        // enrich request
+        enrichmentService.enrichCreate(request);
 
-		producer.push(communicationFilemgmntConfig.getSaveCommunicationFileTopic(), request);
+        producer.push(communicationFilemgmntConfig.getSaveCommunicationFileTopic(), request);
 
-		return request.getCommunicationFiles();
+        return request.getCommunicationFiles();
 
-	}
+    }
 
 	public List<CommunicationFile> update(CommunicationFileRequest request) {
 

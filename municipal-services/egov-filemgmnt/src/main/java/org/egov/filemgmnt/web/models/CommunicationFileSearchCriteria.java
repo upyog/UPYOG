@@ -22,8 +22,8 @@ import lombok.extern.slf4j.Slf4j;
 
 public class CommunicationFileSearchCriteria {
 
-	@JsonProperty("tenantId")
-	private String tenantId;
+    @JsonProperty("tenantId")
+    private String tenantId;
 
 	@JsonProperty("ids")
 	private List<String> ids;

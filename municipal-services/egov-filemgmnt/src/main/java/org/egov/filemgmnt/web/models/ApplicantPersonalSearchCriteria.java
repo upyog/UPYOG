@@ -1,8 +1,8 @@
 package org.egov.filemgmnt.web.models;
 
-import java.util.List;
+//import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
+import lombok.extern.slf4j.Slf4j;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -12,7 +12,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 
 @Getter
 @Setter
@@ -25,11 +24,11 @@ public class ApplicantPersonalSearchCriteria {
     @JsonProperty("tenantId")
     private String tenantId;
 
-    @JsonProperty("ids")
-    private List<String> ids;
+    @JsonProperty("id")
+    private String id;
 
-    @JsonProperty("fileCodes")
-    private List<String> fileCodes;
+    @JsonProperty("fileCode")
+    private String fileCode;
 
     @JsonProperty("fromDate")
     private Long fromDate;
@@ -47,14 +46,13 @@ public class ApplicantPersonalSearchCriteria {
     private String aadhaarno;
 
     public boolean tenantIdOnly() {
-        // return (tenantId != null);
-        return (StringUtils.isNotBlank(tenantId) && CollectionUtils.isEmpty(fileCodes));
+        log.info("file code : \n{}", fileCode);
+
+        return (StringUtils.isNotBlank(tenantId) && StringUtils.isBlank(fileCode));
     }
 
     public boolean isEmpty() {
-        log.info("this.tenantId " + this.tenantId);
-        // return (tenantId == null && this.fileCodes == null);
-        return (StringUtils.isBlank(tenantId) && CollectionUtils.isEmpty(fileCodes));
+        return (StringUtils.isBlank(tenantId) && StringUtils.isBlank(fileCode));
     }
 
 }

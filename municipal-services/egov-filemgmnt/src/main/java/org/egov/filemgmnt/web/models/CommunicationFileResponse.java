@@ -25,24 +25,24 @@ import lombok.Setter;
 
 public class CommunicationFileResponse {
 
-	@JsonProperty("ResponseInfo")
-	private ResponseInfo responseInfo;
+    @JsonProperty("ResponseInfo")
+    private ResponseInfo responseInfo;
 
-	@JsonProperty("CommunicationFile")
-	@Valid
-	private List<CommunicationFile> communicationFiles;
+    @JsonProperty("CommunicationFile")
+    @Valid
+    private List<CommunicationFile> communicationFiles;
 
-	@JsonProperty("Count")
-	private int count;
+    @JsonProperty("Count")
+    private int count;
 
-	public CommunicationFileResponse addCommunicationFile(CommunicationFile communicationFile) {
+    public CommunicationFileResponse addCommunicationFile(CommunicationFile communicationFile) {
 
-		if (communicationFiles == null) {
-			communicationFiles = new ArrayList<>();
-		}
-		communicationFiles.add(communicationFile);
-		return this;
+        if (communicationFiles == null) {
+            communicationFiles = new ArrayList<>();
+        }
+        communicationFiles.add(communicationFile);
+        return this;
 
-	}
+    }
 
 }

@@ -1,5 +1,6 @@
 package org.egov.filemgmnt.validators;
 
+import static org.egov.filemgmnt.web.enums.ErrorCodes.APPLICANT_PERSONAL_INVALID_CREATE;
 import static org.egov.filemgmnt.web.enums.ErrorCodes.APPLICANT_PERSONAL_INVALID_UPDATE;
 import static org.egov.filemgmnt.web.enums.ErrorCodes.APPLICANT_PERSONAL_REQUIRED;
 import static org.egov.filemgmnt.web.enums.ErrorCodes.INVALID_SEARCH;
@@ -16,7 +17,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.filemgmnt.config.FilemgmntConfiguration;
 import org.egov.filemgmnt.repository.ApplicantPersonalRepository;
-import org.egov.filemgmnt.web.enums.ErrorCodes;
 import org.egov.filemgmnt.web.models.ApplicantPersonal;
 import org.egov.filemgmnt.web.models.ApplicantPersonalRequest;
 import org.egov.filemgmnt.web.models.ApplicantPersonalSearchCriteria;
@@ -54,13 +54,19 @@ public class ApplicantPersonalValidator {
      * @param request the {@link ApplicantPersonalRequest}
      */
     public void validateCreate(ApplicantPersonalRequest request, Object mdmsData) {
-        if (CollectionUtils.isEmpty(request.getApplicantPersonals())) {
-            throw new CustomException(APPLICANT_PERSONAL_REQUIRED.getCode(),
-                    "Atleast one applicant personal is required.");
+        List<ApplicantPersonal> applicantPersonals = request.getApplicantPersonals();
+
+        if (CollectionUtils.isEmpty(applicantPersonals)) {
+            throw new CustomException(APPLICANT_PERSONAL_REQUIRED.getCode(), "Applicant personal is required.");
+        }
+
+        if (applicantPersonals.size() > 1) {
+            throw new CustomException(APPLICANT_PERSONAL_INVALID_CREATE.getCode(),
+                    "Supports only single Applicant personal create.");
         }
 
         mdmsValidator.validateMdmsData(request, mdmsData);
-        validateFMSpecificNotNullFields(request);
+        validateApplicantPersonalRequiredFields(request);
     }
 
     /**
@@ -72,25 +78,18 @@ public class ApplicantPersonalValidator {
         List<ApplicantPersonal> applicantPersonals = request.getApplicantPersonals();
 
         if (CollectionUtils.isEmpty(applicantPersonals)) {
-            throw new CustomException(APPLICANT_PERSONAL_REQUIRED.getCode(),
-                    "Atleast one applicant personal is required.");
+            throw new CustomException(APPLICANT_PERSONAL_REQUIRED.getCode(), "Applicant personal is required.");
+        }
+
+        if (applicantPersonals.size() > 1) {
+            throw new CustomException(APPLICANT_PERSONAL_INVALID_UPDATE.getCode(),
+                    "Supports only single Applicant personal update.");
         }
 
         if (applicantPersonals.size() != searchResult.size()) {
             throw new CustomException(APPLICANT_PERSONAL_INVALID_UPDATE.getCode(),
                     "Applicant Personal(s) not found in database.");
         }
-
-        if (CollectionUtils.isEmpty(applicantPersonals)) {
-            throw new CustomException(ErrorCodes.APPLICANT_PERSONAL_REQUIRED.getCode(),
-                    "Atleast one applicant personal is required.");
-        }
-
-        if (applicantPersonals.size() != searchResult.size()) {
-            throw new CustomException(ErrorCodes.APPLICANT_PERSONAL_INVALID_UPDATE.getCode(),
-                    "Applicant Personal(s) not found in database.");
-        }
-
     }
 
     /**
@@ -104,7 +103,7 @@ public class ApplicantPersonalValidator {
         if (criteria.isEmpty()) {
             throw new CustomException(INVALID_SEARCH.getCode(), "Search without any paramters is not allowed");
         }
-
+        log.info("codes " + criteria.getFileCode());
         if (criteria.tenantIdOnly()) {
             throw new CustomException(INVALID_SEARCH.getCode(), "Search based only on tenantId is not allowed");
         }
@@ -140,12 +139,12 @@ public class ApplicantPersonalValidator {
             throw new CustomException(INVALID_SEARCH.getCode(), "Search on fromDate is not allowed");
         }
 
-        if (criteria.getIds() != null && !allowedParams.contains("ids")) {
-            throw new CustomException(INVALID_SEARCH.getCode(), "Search on ids is not allowed");
+        if (criteria.getId() != null && !allowedParams.contains("id")) {
+            throw new CustomException(INVALID_SEARCH.getCode(), "Search on id is not allowed");
         }
 
-        if (criteria.getFileCodes() != null && !allowedParams.contains("filecode")) {
-            throw new CustomException(INVALID_SEARCH.getCode(), "Search on filecode is not allowed");
+        if (criteria.getFileCode() != null && !allowedParams.contains("fileCode")) {
+            throw new CustomException(INVALID_SEARCH.getCode(), "Search on fileCode is not allowed");
         }
 
         if (criteria.getOffset() != null && !allowedParams.contains("offset")) {
@@ -155,38 +154,16 @@ public class ApplicantPersonalValidator {
         if (criteria.getLimit() != null && !allowedParams.contains("limit")) {
             throw new CustomException(INVALID_SEARCH.getCode(), "Search on limit is not allowed");
         }
-
-        if (criteria.getTenantId() != null && !allowedParams.contains("tenantId"))
-            throw new CustomException("INVALID SEARCH", "Search on tenantId is not allowed");
-
-        if (criteria.getToDate() != null && !allowedParams.contains("toDate"))
-            throw new CustomException("INVALID SEARCH", "Search on toDate is not allowed");
-
-        if (criteria.getFromDate() != null && !allowedParams.contains("fromDate"))
-            throw new CustomException("INVALID SEARCH", "Search on fromDate is not allowed");
-
-        if (criteria.getIds() != null && !allowedParams.contains("ids"))
-            throw new CustomException("INVALID SEARCH", "Search on ids is not allowed");
-
-        if (criteria.getFileCodes() != null && !allowedParams.contains("filecode"))
-            throw new CustomException("INVALID SEARCH", "Search on filecode is not allowed");
-
-        if (criteria.getOffset() != null && !allowedParams.contains("offset"))
-            throw new CustomException("INVALID SEARCH", "Search on offset is not allowed");
-
-        if (criteria.getLimit() != null && !allowedParams.contains("limit"))
-            throw new CustomException("INVALID SEARCH", "Search on limit is not allowed");
-
     }
 
-    private void validateFMSpecificNotNullFields(ApplicantPersonalRequest request) {
+    private void validateApplicantPersonalRequiredFields(ApplicantPersonalRequest request) {
         Map<String, String> errorMap = new HashMap<>();
         request.getApplicantPersonals()
                .forEach(personal -> {
-                   if (StringUtils.isEmpty(personal.getFileDetail()
+                   if (StringUtils.isBlank(personal.getFileDetail()
                                                    .getFinancialYear()))
                        errorMap.put("NULL_FINANCIALYEAR", " Financial Year cannot be null");
-                   if (StringUtils.isEmpty(personal.getServiceDetails()
+                   if (StringUtils.isBlank(personal.getServiceDetails()
                                                    .getServiceCode()))
                        errorMap.put("NULL_SERVICESUBTYPE", " Service Sub Type cannot be null");
                });
@@ -215,8 +192,8 @@ public class ApplicantPersonalValidator {
         validateSearchParam(bw, "tenantId", allowedParams);
         validateSearchParam(bw, "toDate", allowedParams);
         validateSearchParam(bw, "fromDate", allowedParams);
-        validateSearchParam(bw, "ids", allowedParams);
-        validateSearchParam(bw, "filecode", allowedParams);
+        validateSearchParam(bw, "id", allowedParams);
+        validateSearchParam(bw, "fileCode", allowedParams);
         validateSearchParam(bw, "offset", allowedParams);
         validateSearchParam(bw, "limit", allowedParams);
     }

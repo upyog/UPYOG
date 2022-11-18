@@ -14,18 +14,19 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class CommunicationFileManagementRepository {
 
-	private final JdbcTemplate jdbcTemplate;
-	private final CommunicationFileManagementQueryBuilder queryBuilder;
-	private final CommunicationFileManagementRowMapper rowMapper;
+    private final JdbcTemplate jdbcTemplate;
+    private final CommunicationFileManagementQueryBuilder queryBuilder;
+    private final CommunicationFileManagementRowMapper rowMapper;
 
-	@Autowired
-	CommunicationFileManagementRepository(JdbcTemplate jdbcTemplate,
-			CommunicationFileManagementQueryBuilder queryBuilder, CommunicationFileManagementRowMapper rowMapper) {
+    @Autowired
+    CommunicationFileManagementRepository(JdbcTemplate jdbcTemplate,
+                                          CommunicationFileManagementQueryBuilder queryBuilder,
+                                          CommunicationFileManagementRowMapper rowMapper) {
 
-		this.jdbcTemplate = jdbcTemplate;
-		this.queryBuilder = queryBuilder;
-		this.rowMapper = rowMapper;
-	}
+        this.jdbcTemplate = jdbcTemplate;
+        this.queryBuilder = queryBuilder;
+        this.rowMapper = rowMapper;
+    }
 
 	public List<CommunicationFile> getCommunicationfiles(CommunicationFileSearchCriteria criteria) {
 

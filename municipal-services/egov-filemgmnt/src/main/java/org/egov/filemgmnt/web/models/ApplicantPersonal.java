@@ -1,7 +1,9 @@
 package org.egov.filemgmnt.web.models;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import org.springframework.validation.annotation.Validated;
@@ -31,13 +33,15 @@ public class ApplicantPersonal {
     private String id;
 
     @Schema(type = "string", description = "Aadhaar number")
-    @Size(max = 64)
+    @Size(max = 12)
     @NotNull
+//    @Pattern(regexp = "^[1-9][0-9]{11}$")
     @JsonProperty("aadhaarNo")
     private String aadhaarNo;
 
     @Schema(type = "string", format = "email", description = "Email address")
     @Size(max = 64)
+    @Email
     @JsonProperty("email")
     private String email;
 
@@ -61,6 +65,7 @@ public class ApplicantPersonal {
     @Schema(type = "string", description = "Mobile number")
     @Size(max = 15)
     @NotNull
+    @Pattern(regexp = "^[1-9][0-9]{9,14}$")
     @JsonProperty("mobileNo")
     private String mobileNo;
 
@@ -73,37 +78,37 @@ public class ApplicantPersonal {
     @Schema(type = "string", description = "Father First Name")
     @Size(max = 64)
     @JsonProperty("fatherFirstName")
-    private String fatherfirstname;
+    private String fatherFirstName;
 
     @Schema(type = "string", description = "Father Last Name")
     @Size(max = 64)
     @JsonProperty("fatherLastName")
-    private String fatherlastname;
+    private String fatherLastName;
 
     @Schema(type = "string", description = "Mother First Name")
     @Size(max = 64)
     @JsonProperty("motherFirstName")
-    private String motherfirstname;
+    private String motherFirstName;
 
     @Schema(type = "string", description = "Mother Last Name")
     @Size(max = 64)
     @JsonProperty("motherLastName")
-    private String motherlastname;
+    private String motherLastName;
 
     @Schema(type = "string", description = "Category of Applicant")
     @Size(max = 64)
     @JsonProperty("applicantCategory")
-    private String applicantcategory;
+    private String applicantCategory;
 
     @Schema(type = "string", description = "Date of Birth")
     @Size(max = 64)
     @JsonProperty("dateOfBirth")
-    private String dateofbirth;
+    private String dateOfBirth;
 
     @Schema(type = "string", description = "Bank Account Number")
     @Size(max = 64)
     @JsonProperty("bankAccountNo")
-    private String bankaccountno;
+    private String bankAccountNo;
 
     @Valid
     @NotNull

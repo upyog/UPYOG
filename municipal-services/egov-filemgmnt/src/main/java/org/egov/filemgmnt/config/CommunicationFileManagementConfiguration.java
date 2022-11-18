@@ -13,11 +13,11 @@ import lombok.Setter;
 @Component
 public class CommunicationFileManagementConfiguration {
 
-	@Value("${app.timezone}")
-	private String timeZone;
+    @Value("${app.timezone}")
+    private String timeZone;
 
-	@Value("${persister.save.communicationfile.topic}")
-	private String saveCommunicationFileTopic;
+    @Value("${persister.save.communicationfile.topic}")
+    private String saveCommunicationFileTopic;
 
 	@Value("${persister.update.communicationfile.topic}")
 	private String updateCommunicationFileTopic;

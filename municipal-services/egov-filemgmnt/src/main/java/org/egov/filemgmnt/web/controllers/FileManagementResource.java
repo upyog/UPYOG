@@ -13,7 +13,6 @@ import org.springframework.validation.annotation.Validated;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
@@ -61,20 +60,22 @@ interface FileManagementResource {
                requestBody = @RequestBody(content = @Content(mediaType = "application/json",
                                                              schema = @Schema(implementation = RequestInfoWrapper.class)),
                                           required = true),
-               parameters = {
-                       @Parameter(in = ParameterIn.QUERY,
-                                  name = "ids",
-                                  required = false,
-                                  allowEmptyValue = true,
-                                  description = "Applicant personal id(s)",
-                                  array = @ArraySchema(schema = @Schema(type = "string",
-                                                                        format = "uuid",
-                                                                        accessMode = Schema.AccessMode.READ_ONLY))),
+               parameters = { @Parameter(in = ParameterIn.QUERY,
+                                         name = "id",
+                                         required = false,
+                                         allowEmptyValue = true,
+                                         description = "Applicant personal id",
+//                                  array = @ArraySchema(schema = @Schema(type = "string",
+//                                                                        format = "uuid",
+//                                                                        accessMode = Schema.AccessMode.READ_ONLY)),
+                                         schema = @Schema(type = "string",
+                                                          format = "uuid",
+                                                          accessMode = Schema.AccessMode.READ_ONLY)),
                        @Parameter(in = ParameterIn.QUERY,
                                   name = "fileCodes",
                                   required = false,
                                   allowEmptyValue = true,
-                                  description = "File code(s)",
+                                  description = "File code",
                                   schema = @Schema(type = "string",
                                                    example = "KL-FM-2022-10-25-000001",
                                                    accessMode = Schema.AccessMode.READ_ONLY)) },
