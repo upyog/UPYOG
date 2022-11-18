@@ -547,3 +547,33 @@ min-height: calc(100vh - 8em);
 .submit-bar header{
   line-height: 2.0rem !important;
 }
+.logo-removeBorderRadiusLogo svg{
+  width: 50px;
+  height: 60px;
+}
+
+.icon-banner-employee {
+    background-color:#d7aefc !important;
+}
+.icon-banner-employee svg{
+  background-color:#bf2f3b !important;
+  width: 40px;
+  height: 40px;
+}
+.inboxButton{
+  background-color: #5c6192;
+    border: none;
+    color: white;
+    padding: 5px 15px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    margin: 4px 2px;
+    cursor: pointer;
+    height: fit-content;
+    border-radius: 5px;
+    background-image: url(https://i.ibb.co/J703cMf/top-red.png);
+    font-family: sans-serif;
+    font-weight: 700;
+}

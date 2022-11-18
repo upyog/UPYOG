@@ -6,10 +6,12 @@ body {
   @apply bg-grey-bg h-full min-h-screen overflow-x-hidden;
   position: relative !important;
 
+
 }
 
 .navbar {
   @apply text-white bg-secondary p-md w-full mb-md;
+  background: linear-gradient(to right, #feeee7, #a82227,#feeee7) !important;
   img {
     height: 24px;
   }

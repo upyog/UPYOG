@@ -25,9 +25,9 @@ const EmployeeLogin = () => {
   return (
     <Switch>
       <Route path={`${path}`} exact>
-        <div styles={{"backgroundColor":"blue !important"}}>
+       
         <LoginComponent config={loginParams[0]} t={t} />
-        </div>
+     
       </Route>
     </Switch>
   );
