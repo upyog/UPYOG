@@ -1,5 +1,7 @@
 package org.bel.birthdeath.crdeath.web.models;
 
+import javax.validation.constraints.Size;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -32,5 +34,9 @@ public class CrDeathAddressInfo {
     private CrDeathAddress burialAddress;
 
     @JsonProperty("auditDetails")
-    private AuditDetails auditDetails;    
+    private AuditDetails auditDetails;   
+    
+    @Size(max = 64)
+    @JsonProperty("parentdeathDtlId")
+    private String parentdeathDtlId ; 
 }
