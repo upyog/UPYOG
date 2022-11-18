@@ -26,7 +26,7 @@ const NewApplication = () => {
     { filters: { propertyIds: propertyId }, tenantId: tenantId },
     { filters: { propertyIds: propertyId }, tenantId: tenantId, enabled: propertyId ? true : false }
   );
-
+console.log(newConfig);
   useEffect(() => {
     !propertyId && setPropertyId(sessionFormData?.cpt?.details?.propertyId);
   }, [sessionFormData?.cpt]);
@@ -232,7 +232,7 @@ const NewApplication = () => {
       configs.push(conf);
     }
   });
-
+console.log(configs);
   function checkHead(head) {
     if (head === "ES_NEW_APPLICATION_LOCATION_DETAILS") {
       return "TL_CHECK_ADDRESS";

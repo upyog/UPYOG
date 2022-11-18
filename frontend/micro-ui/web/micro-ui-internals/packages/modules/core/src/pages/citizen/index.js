@@ -10,6 +10,7 @@ import LanguageSelection from "./Home/LanguageSelection";
 import LocationSelection from "./Home/LocationSelection";
 import Login from "./Login";
 import UserProfile from "./Home/UserProfile";
+import Dashboard from "./Dashboard";
 // import PDF from "../../assets/";
 
 const getTenants = (codes, tenants) => {
@@ -55,9 +56,13 @@ const Home = ({
           <BackButton className="moduleLinkHomePageBackButton" />
           <h1>{t("MODULE_" + code.toUpperCase())}</h1>
         </div>
-        <div className="moduleLinkHomePageModuleLinks">
-          <Links key={index} matchPath={`/digit-ui/citizen/${code.toLowerCase()}`} userType={"citizen"} />
-        </div>
+        {code === "DFM" ? (
+          <Dashboard path={path} />
+        ) : (
+          <div className="moduleLinkHomePageModuleLinks">
+            <Links key={index} matchPath={`/digit-ui/citizen/${code.toLowerCase()}`} userType={"citizen"} />
+          </div>
+        )}
       </Route>
     );
   });

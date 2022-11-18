@@ -61,6 +61,11 @@ import SectionalDropdown from "./atoms/SectionalDropdown";
 import { LastRow, MediaRow, Row, StatusTable } from "./atoms/StatusTable";
 import SubmitBar from "./atoms/SubmitBar";
 import StandaloneSearchBar from "./atoms/StandaloneSearchBar";
+import CommonInputWrapper from './atoms/Common_Input_Wrapper'
+import CommonUploadFiles from './atoms/Common_Upload_files'
+import CommonRadioButtons from './atoms/Common_Radio_buttons'
+import CommonDashboard from './atoms/Common_Dashboard'
+import CommonSecondaryBackButton from './atoms/Common_SecondaryBackButton'
 import {
   AnnouncementIcon,
   ArrowDown,
@@ -145,6 +150,7 @@ import {
   AddNewIcon,
   InboxIcon,
   ViewReportIcon,
+  SecondaryBackButton
 } from "./atoms/svgindex";
 import Table from "./atoms/Table";
 import TelePhone from "./atoms/TelePhone";
@@ -265,6 +271,11 @@ export {
   CitizenHomeCard,
   EmployeeModuleCard,
   StandaloneSearchBar,
+  CommonInputWrapper,
+  CommonUploadFiles,
+  CommonRadioButtons,
+  CommonDashboard,
+  CommonSecondaryBackButton,
   CardBasedOptions,
   WhatsNewCard,
   EventCalendarView,
@@ -390,4 +401,5 @@ export {
   AddNewIcon,
   InboxIcon,
   ViewReportIcon,
+  SecondaryBackButton,
 };

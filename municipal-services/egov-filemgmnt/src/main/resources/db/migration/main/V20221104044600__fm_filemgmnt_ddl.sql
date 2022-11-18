@@ -65,6 +65,10 @@ CREATE TABLE IF NOT EXISTS public.eg_fm_applicantdocuments
         REFERENCES public.eg_fm_applicantpersonal (id) 
 );
 
+-- Table: public.eg_fm_applicantservicedocuments
+
+-- DROP TABLE IF EXISTS public.eg_fm_applicantservicedocuments;
+
 CREATE TABLE IF NOT EXISTS public.eg_fm_applicantservicedocuments
 (
     id character varying(64),
@@ -105,6 +109,9 @@ CONSTRAINT eg_fm_servicedetails_fkey FOREIGN KEY (applicantpersonalid )
         REFERENCES public.eg_fm_applicantpersonal (id)
 );
 
+-- Table: public.eg_fm_filedetails
+
+-- DROP TABLE IF EXISTS public.eg_fm_filedetails;
 
 CREATE TABLE IF NOT EXISTS public.eg_fm_filedetails
 (

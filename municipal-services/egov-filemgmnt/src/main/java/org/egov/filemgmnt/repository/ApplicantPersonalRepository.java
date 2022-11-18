@@ -55,4 +55,14 @@ public class ApplicantPersonalRepository {
         return result;
     }
 
+    public List<ApplicantPersonal> getApplicantPersonalsFromAadhar(ApplicantPersonalSearchCriteria criteria) {
+        List<Object> preparedStmtValues = new ArrayList<>();
+
+        String query = queryBuilder.getApplicantPersonalSearchQuery(criteria, preparedStmtValues, Boolean.FALSE);
+
+        List<ApplicantPersonal> result = jdbcTemplate.query(query, preparedStmtValues.toArray(), rowMapper);
+
+        return result;
+    }
+
 }

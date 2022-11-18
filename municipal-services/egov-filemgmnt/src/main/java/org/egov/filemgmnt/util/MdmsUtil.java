@@ -1,7 +1,6 @@
 package org.egov.filemgmnt.util;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -37,16 +36,13 @@ public class MdmsUtil {
     @Value("${egov.mdms.module.name}")
     private String moduleName;
 
-    public Object mDMSCall(RequestInfo requestInfo, String tenantId) {
-        StringBuilder uri = new StringBuilder();
-        uri.append(mdmsHost)
-           .append(mdmsUrl);
-        Object result = null;
+    public Object mdmsCall(RequestInfo requestInfo, String tenantId) {
         MdmsCriteriaReq mdmsCriteriaReq = getMdmsRequest(requestInfo, tenantId);
 
+        String mdmsUri = String.format("%s%s", mdmsHost, mdmsUrl);
+        Object result = null;
         try {
-            result = restTemplate.postForObject(uri.toString(), mdmsCriteriaReq, Map.class);
-
+            result = restTemplate.postForObject(mdmsUri, mdmsCriteriaReq, Map.class);
         } catch (Exception e) {
             log.error("Exception occurred while fetching category lists from mdms: ", e);
         }
@@ -56,11 +52,8 @@ public class MdmsUtil {
 
     private MdmsCriteriaReq getMdmsRequest(RequestInfo requestInfo, String tenantId) {
 
-        List<ModuleDetail> fmModuleRequest = getFMModuleRequest();
-
         List<ModuleDetail> moduleDetails = new LinkedList<>();
-
-        moduleDetails.addAll(fmModuleRequest);
+        moduleDetails.addAll(getFMModuleDetails());
 
         MdmsCriteria mdmsCriteria = MdmsCriteria.builder()
                                                 .moduleDetails(moduleDetails)
@@ -73,21 +66,19 @@ public class MdmsUtil {
                               .build();
     }
 
-    public List<ModuleDetail> getFMModuleRequest() {
-
+    public List<ModuleDetail> getFMModuleDetails() {
         // master details for FM module
-        List<MasterDetail> fmMasterDetails = new ArrayList<>();
+        List<MasterDetail> fmMasterDetails = Collections.singletonList(MasterDetail.builder()
+                                                                                   .name(FMConstants.FM_MDMS_FILE_SERVICE_SUBTYPE)
+                                                                                   .build());
 
-        fmMasterDetails.add(MasterDetail.builder()
-                                        .name(FMConstants.FM_MDMS_FILE_SERVICE_SUBTYPE)
-                                        .build());
+        ModuleDetail fmModuleDetail = ModuleDetail.builder()
+                                                  .masterDetails(fmMasterDetails)
+                                                  .moduleName(FMConstants.FILEMANAGEMENT_MODULE)
+                                                  .build();
 
-        ModuleDetail fmModuleDtls = ModuleDetail.builder()
-                                                .masterDetails(fmMasterDetails)
-                                                .moduleName(FMConstants.FILEMANAGEMENT_MODULE)
-                                                .build();
-
-        return Arrays.asList(fmModuleDtls);
+        // return Arrays.asList(fmModuleDetail);
+        return Collections.singletonList(fmModuleDetail);
 
     }
 }

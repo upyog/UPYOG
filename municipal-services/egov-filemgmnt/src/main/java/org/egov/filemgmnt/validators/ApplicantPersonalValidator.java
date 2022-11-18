@@ -1,6 +1,12 @@
 package org.egov.filemgmnt.validators;
 
+import static org.egov.filemgmnt.web.enums.ErrorCodes.APPLICANT_PERSONAL_INVALID_CREATE;
+import static org.egov.filemgmnt.web.enums.ErrorCodes.APPLICANT_PERSONAL_INVALID_UPDATE;
+import static org.egov.filemgmnt.web.enums.ErrorCodes.APPLICANT_PERSONAL_REQUIRED;
+import static org.egov.filemgmnt.web.enums.ErrorCodes.INVALID_SEARCH;
+
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,11 +17,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.filemgmnt.config.FilemgmntConfiguration;
 import org.egov.filemgmnt.repository.ApplicantPersonalRepository;
-import org.egov.filemgmnt.web.enums.ErrorCodes;
 import org.egov.filemgmnt.web.models.ApplicantPersonal;
 import org.egov.filemgmnt.web.models.ApplicantPersonalRequest;
 import org.egov.filemgmnt.web.models.ApplicantPersonalSearchCriteria;
 import org.egov.tracer.model.CustomException;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -28,133 +35,182 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class ApplicantPersonalValidator {
 
-	private final ApplicantPersonalRepository appRepository;
-	private final FilemgmntConfiguration config;
-	private final MdmsValidator mdmsValidator;
+    private final ApplicantPersonalRepository appRepository;
+    private final FilemgmntConfiguration config;
+    private final MdmsValidator mdmsValidator;
 
-	@Autowired
-	public ApplicantPersonalValidator(ApplicantPersonalRepository appRepository, FilemgmntConfiguration config,
-			MdmsValidator mdmsValidator) {
-		this.appRepository = appRepository;
-		this.config = config;
-		this.mdmsValidator = mdmsValidator;
+    @Autowired
+    public ApplicantPersonalValidator(ApplicantPersonalRepository appRepository, FilemgmntConfiguration config,
+                                      MdmsValidator mdmsValidator) {
+        this.appRepository = appRepository;
+        this.config = config;
+        this.mdmsValidator = mdmsValidator;
 
-	}
+    }
 
-	/**
-	 * Validate applicant personal create request.
-	 *
-	 * @param request the {@link ApplicantPersonalRequest}
-	 */
-	public void validateCreate(ApplicantPersonalRequest request, Object mdmsData) {
-		if (CollectionUtils.isEmpty(request.getApplicantPersonals())) {
-			throw new CustomException(ErrorCodes.APPLICANT_PERSONAL_REQUIRED.getCode(),
-					"Atleast one applicant personal is required.");
-		}
+    /**
+     * Validate applicant personal create request.
+     *
+     * @param request the {@link ApplicantPersonalRequest}
+     */
+    public void validateCreate(ApplicantPersonalRequest request, Object mdmsData) {
+        List<ApplicantPersonal> applicantPersonals = request.getApplicantPersonals();
 
-		mdmsValidator.validateMdmsData(request, mdmsData);
-		validateFMSpecificNotNullFields(request);
-	}
+        if (CollectionUtils.isEmpty(applicantPersonals)) {
+            throw new CustomException(APPLICANT_PERSONAL_REQUIRED.getCode(), "Applicant personal is required.");
+        }
 
-	/**
-	 * Validate applicant personal update request.
-	 *
-	 * @param request the {@link ApplicantPersonalRequest}
-	 */
-	public void validateUpdate(ApplicantPersonalRequest request, List<ApplicantPersonal> searchResult) {
-		List<ApplicantPersonal> applicantPersonals = request.getApplicantPersonals();
+        if (applicantPersonals.size() > 1) {
+            throw new CustomException(APPLICANT_PERSONAL_INVALID_CREATE.getCode(),
+                    "Supports only single Applicant personal create.");
+        }
 
-		if (CollectionUtils.isEmpty(applicantPersonals)) {
-			throw new CustomException(ErrorCodes.APPLICANT_PERSONAL_REQUIRED.getCode(),
-					"Atleast one applicant personal is required.");
-		}
+        mdmsValidator.validateMdmsData(request, mdmsData);
+        validateApplicantPersonalRequiredFields(request);
+    }
 
-		if (applicantPersonals.size() != searchResult.size()) {
-			throw new CustomException(ErrorCodes.APPLICANT_PERSONAL_INVALID_UPDATE.getCode(),
-					"Applicant Personal(s) not found in database.");
-		}
+    /**
+     * Validate applicant personal update request.
+     *
+     * @param request the {@link ApplicantPersonalRequest}
+     */
+    public void validateUpdate(ApplicantPersonalRequest request, List<ApplicantPersonal> searchResult) {
+        List<ApplicantPersonal> applicantPersonals = request.getApplicantPersonals();
 
-	}
+        if (CollectionUtils.isEmpty(applicantPersonals)) {
+            throw new CustomException(APPLICANT_PERSONAL_REQUIRED.getCode(), "Applicant personal is required.");
+        }
 
-	/**
-	 * Validates if the search parameters are valid
-	 * 
-	 * @param requestInfo The requestInfo of the incoming request
-	 * @param criteria    The TradeLicenseSearch Criteria
-	 */
-	public void validateSearch(RequestInfo requestInfo, ApplicantPersonalSearchCriteria criteria) {
+        if (applicantPersonals.size() > 1) {
+            throw new CustomException(APPLICANT_PERSONAL_INVALID_UPDATE.getCode(),
+                    "Supports only single Applicant personal update.");
+        }
 
-		if (criteria.isEmpty()) {
-			throw new CustomException("INVALID SEARCH", "Search without any paramters is not allowed");
-		}
+        if (applicantPersonals.size() != searchResult.size()) {
+            throw new CustomException(APPLICANT_PERSONAL_INVALID_UPDATE.getCode(),
+                    "Applicant Personal(s) not found in database.");
+        }
+    }
 
-		if (criteria.tenantIdOnly())
-			throw new CustomException("INVALID SEARCH", "Search based only on tenantId is not allowed");
+    /**
+     * Validates if the search parameters are valid
+     * 
+     * @param requestInfo The requestInfo of the incoming request
+     * @param criteria    The TradeLicenseSearch Criteria
+     */
+    public void validateSearch(RequestInfo requestInfo, ApplicantPersonalSearchCriteria criteria) {
 
-		String allowedParamStr;
-		allowedParamStr = config.getAllowedCitizenSearchParams();
+        if (criteria.isEmpty()) {
+            throw new CustomException(INVALID_SEARCH.getCode(), "Search without any paramters is not allowed");
+        }
+        log.info("codes " + criteria.getFileCode());
+        if (criteria.tenantIdOnly()) {
+            throw new CustomException(INVALID_SEARCH.getCode(), "Search based only on tenantId is not allowed");
+        }
 
-		if (StringUtils.isEmpty(allowedParamStr) && !criteria.isEmpty()) {
-			throw new CustomException("INVALID SEARCH", "No search parameters are expected");
-		} else {
-			List<String> allowedParams = Arrays.asList(allowedParamStr.split(","));
-			validateSearchParams(criteria, allowedParams, requestInfo);
-		}
-	}
+        String allowedSearchParams = config.getAllowedCitizenSearchParams();
 
-	/**
-	 * Validates if the paramters coming in search are allowed
-	 * 
-	 * @param criteria      TradeLicense search criteria
-	 * @param allowedParams Allowed Params for search
-	 */
-	private void validateSearchParams(ApplicantPersonalSearchCriteria criteria, List<String> allowedParams,
-			RequestInfo requestInfo) {
+        if (StringUtils.isBlank(allowedSearchParams) && !criteria.isEmpty()) {
+            throw new CustomException(INVALID_SEARCH.getCode(), "No search parameters are expected");
+        }
 
-		if (criteria.getTenantId() != null && !allowedParams.contains("tenantId"))
-			throw new CustomException("INVALID SEARCH", "Search on tenantId is not allowed");
+        List<String> allowedSearchTokens = Arrays.asList(allowedSearchParams.split(","));
+        validateSearchParams(criteria, allowedSearchTokens, requestInfo);
+    }
 
-		if (criteria.getToDate() != null && !allowedParams.contains("toDate"))
-			throw new CustomException("INVALID SEARCH", "Search on toDate is not allowed");
+    /**
+     * Validates if the paramters coming in search are allowed
+     * 
+     * @param criteria      TradeLicense search criteria
+     * @param allowedParams Allowed Params for search
+     */
+    private void validateSearchParams(ApplicantPersonalSearchCriteria criteria, List<String> allowedParams,
+                                      RequestInfo requestInfo) {
 
-		if (criteria.getFromDate() != null && !allowedParams.contains("fromDate"))
-			throw new CustomException("INVALID SEARCH", "Search on fromDate is not allowed");
+        if (criteria.getTenantId() != null && !allowedParams.contains("tenantId")) {
+            throw new CustomException(INVALID_SEARCH.getCode(), "Search on tenantId is not allowed");
+        }
 
-		if (criteria.getIds() != null && !allowedParams.contains("ids"))
-			throw new CustomException("INVALID SEARCH", "Search on ids is not allowed");
+        if (criteria.getToDate() != null && !allowedParams.contains("toDate")) {
+            throw new CustomException(INVALID_SEARCH.getCode(), "Search on toDate is not allowed");
+        }
 
-		if (criteria.getFileCodes() != null && !allowedParams.contains("filecode"))
-			throw new CustomException("INVALID SEARCH", "Search on filecode is not allowed");
+        if (criteria.getFromDate() != null && !allowedParams.contains("fromDate")) {
+            throw new CustomException(INVALID_SEARCH.getCode(), "Search on fromDate is not allowed");
+        }
 
-		if (criteria.getOffset() != null && !allowedParams.contains("offset"))
-			throw new CustomException("INVALID SEARCH", "Search on offset is not allowed");
+        if (criteria.getId() != null && !allowedParams.contains("id")) {
+            throw new CustomException(INVALID_SEARCH.getCode(), "Search on id is not allowed");
+        }
 
-		if (criteria.getLimit() != null && !allowedParams.contains("limit"))
-			throw new CustomException("INVALID SEARCH", "Search on limit is not allowed");
+        if (criteria.getFileCode() != null && !allowedParams.contains("fileCode")) {
+            throw new CustomException(INVALID_SEARCH.getCode(), "Search on fileCode is not allowed");
+        }
 
-	}
+        if (criteria.getOffset() != null && !allowedParams.contains("offset")) {
+            throw new CustomException(INVALID_SEARCH.getCode(), "Search on offset is not allowed");
+        }
 
-	private void validateFMSpecificNotNullFields(ApplicantPersonalRequest request) {
-		Map<String, String> errorMap = new HashMap<>();
-		request.getApplicantPersonals().forEach(personal -> {
-			if (StringUtils.isEmpty(personal.getFileDetail().getFinancialYear()))
-				errorMap.put("NULL_FINANCIALYEAR", " Financial Year cannot be null");
-			if (StringUtils.isEmpty(personal.getServiceDetails().getServiceCode()))
-				errorMap.put("NULL_SERVICESUBTYPE", " Service Sub Type cannot be null");
-		});
-		if (MapUtils.isNotEmpty(errorMap)) {
-			throw new CustomException(errorMap);
-		}
+        if (criteria.getLimit() != null && !allowedParams.contains("limit")) {
+            throw new CustomException(INVALID_SEARCH.getCode(), "Search on limit is not allowed");
+        }
+    }
 
-		request.getApplicantPersonals().forEach(personal -> {
-			if (StringUtils.isEmpty(personal.getApplicantAddress().getHouseNo())) {
-				throw new CustomException("NULL_HOUSENO", " House Number cannot be null");
-			}
-			if (StringUtils.isEmpty(personal.getApplicantAddress().getHouseName())) {
-				throw new CustomException("NULL_HOUSENAME", " House Name cannot be null");
-			}
+    private void validateApplicantPersonalRequiredFields(ApplicantPersonalRequest request) {
+        Map<String, String> errorMap = new HashMap<>();
+        request.getApplicantPersonals()
+               .forEach(personal -> {
+                   if (StringUtils.isBlank(personal.getFileDetail()
+                                                   .getFinancialYear()))
+                       errorMap.put("NULL_FINANCIALYEAR", " Financial Year cannot be null");
+                   if (StringUtils.isBlank(personal.getServiceDetails()
+                                                   .getServiceCode()))
+                       errorMap.put("NULL_SERVICESUBTYPE", " Service Sub Type cannot be null");
+               });
+        if (MapUtils.isNotEmpty(errorMap)) {
+            throw new CustomException(errorMap);
+        }
 
-		});
-	}
+        request.getApplicantPersonals()
+               .forEach(personal -> {
+                   if (StringUtils.isEmpty(personal.getApplicantAddress()
+                                                   .getHouseNo())) {
+                       throw new CustomException("NULL_HOUSENO", " House Number cannot be null");
+                   }
+                   if (StringUtils.isEmpty(personal.getApplicantAddress()
+                                                   .getHouseName())) {
+                       throw new CustomException("NULL_HOUSENAME", " House Name cannot be null");
+                   }
+
+               });
+    }
+
+    @SuppressWarnings("unused")
+    private void validateSearchParams2(ApplicantPersonalSearchCriteria criteria, List<String> allowedParams) {
+        BeanWrapper bw = new BeanWrapperImpl(criteria);
+
+        validateSearchParam(bw, "tenantId", allowedParams);
+        validateSearchParam(bw, "toDate", allowedParams);
+        validateSearchParam(bw, "fromDate", allowedParams);
+        validateSearchParam(bw, "id", allowedParams);
+        validateSearchParam(bw, "fileCode", allowedParams);
+        validateSearchParam(bw, "offset", allowedParams);
+        validateSearchParam(bw, "limit", allowedParams);
+    }
+
+    private void validateSearchParam(BeanWrapper bw, String param, List<String> allowedParams) {
+        Object value = bw.getPropertyValue(param);
+
+        boolean invalid = false;
+        if (value instanceof Collection) {
+            invalid = (CollectionUtils.isNotEmpty((Collection<?>) value) && !allowedParams.contains(param));
+        } else {
+            invalid = (value != null && !allowedParams.contains(param));
+        }
+
+        if (invalid) {
+            throw new CustomException(INVALID_SEARCH.getCode(), String.format("Search on %s is not allowed", param));
+        }
+    }
 
 }

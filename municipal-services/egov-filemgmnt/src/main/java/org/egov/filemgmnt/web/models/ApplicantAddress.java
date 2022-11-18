@@ -57,6 +57,26 @@ public class ApplicantAddress {
     @JsonProperty("postOfficeName")
     private String postOfficeName;
 
+    @Schema(type = "string", description = "Residence Association No")
+    @Size(max = 64)
+    @JsonProperty("residenceAssociationNo")
+    private String residenceassociationno;
+
+    @Schema(type = "string", description = "Local Place")
+    @Size(max = 64)
+    @JsonProperty("localPlace")
+    private String localplace;
+
+    @Schema(type = "string", description = "Main Place")
+    @Size(max = 64)
+    @JsonProperty("mainPlace")
+    private String mainplace;
+
+    @Schema(type = "string", description = "Ward No")
+    @Size(max = 64)
+    @JsonProperty("wardNo")
+    private String wardno;
+
     @Schema(type = "string", format = "uuid", description = "Applicant id")
     @Size(max = 64)
     @JsonProperty("applicantPersonalId")
