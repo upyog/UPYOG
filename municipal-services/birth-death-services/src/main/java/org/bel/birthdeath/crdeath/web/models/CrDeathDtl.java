@@ -7,6 +7,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.validation.Valid;
 import javax.validation.constraints.Size;
 
 
@@ -197,24 +201,23 @@ public class CrDeathDtl {
     private String  femaleDependentMailId ;
 
     @JsonProperty("auditDetails")
-    private AuditDetails auditDetails;
-
-    @JsonProperty("presentAddress")
-    private CrDeathAddress presentAddress;
-
-    @JsonProperty("permanentAddress")
-    private CrDeathAddress permanentAddress;
-
-    @JsonProperty("informantAddress")
-    private CrDeathAddress informantAddress;
-
-    @JsonProperty("deathplaceAddress")
-    private CrDeathAddress deathplaceAddress;
-
-    @JsonProperty("burialAddress")
-    private CrDeathAddress burialAddress;
+    private AuditDetails auditDetails;    
 
     @JsonProperty("statisticalInfo")
     private CrDeathStatistical statisticalInfo;
 
+    @JsonProperty("addressInfo")
+    @Valid
+    private List<CrDeathAddressInfo>  addressInfo;
+
+    public CrDeathDtl addCrDeathDtl(CrDeathAddressInfo crDeathAddressInfo) {
+        if (addressInfo == null) {
+            addressInfo = new ArrayList<>();
+        }
+        addressInfo.add(crDeathAddressInfo);
+
+        return this;
+    }
+
+   
 }

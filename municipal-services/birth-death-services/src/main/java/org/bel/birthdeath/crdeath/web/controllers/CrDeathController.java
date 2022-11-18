@@ -20,8 +20,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-//import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
+import lombok.extern.slf4j.Slf4j;
+
+//import io.swagger.v3.oas.annotations.parameters.RequestBody;
+@Slf4j
 @RestController
 @RequestMapping("/v1")
 @Validated
@@ -43,6 +48,19 @@ public class CrDeathController {
     public ResponseEntity<CrDeathDtlResponse> create(@Valid @RequestBody CrDeathDtlRequest request) {
 
         System.out.println("hai");
+           /********************************************* */
+
+        try {
+                ObjectMapper mapper = new ObjectMapper();
+                Object obj = request;
+                mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+               System.out.println("rakhi3 "+ mapper.writeValueAsString(obj));
+        }catch(Exception e) {
+            log.error("Exception while fetching from searcher: ",e);
+        }
+
+        /********************************************** */
+        
         List<CrDeathDtl> deathDetails = deathService.create(request);
 
         CrDeathDtlResponse response = CrDeathDtlResponse.builder()

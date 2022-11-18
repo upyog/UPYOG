@@ -21,6 +21,7 @@ public class CrDeathServiceEnrichment implements BaseEnrichment {
                .forEach(deathdtls -> {
                 deathdtls.setId(UUID.randomUUID().toString());
                 deathdtls.setAuditDetails(auditDetails);
+               
                });
     }
 

@@ -22,6 +22,16 @@ public class CrDeathEnrichment implements BaseEnrichment{
                .forEach(deathdtls -> {
                 deathdtls.setId(UUID.randomUUID().toString());
                 deathdtls.setAuditDetails(auditDetails);
+                deathdtls.getStatisticalInfo().setId(UUID.randomUUID().toString());               
+             
+                deathdtls.getAddressInfo().get(0).setAuditDetails(auditDetails);
+                deathdtls.getAddressInfo().forEach(addressdtls -> {
+                      addressdtls.getPresentAddress().setId(UUID.randomUUID().toString());
+                      addressdtls.getPermanentAddress().setId(UUID.randomUUID().toString());
+                      addressdtls.getInformantAddress().setId(UUID.randomUUID().toString());
+                      addressdtls.getDeathplaceAddress().setId(UUID.randomUUID().toString());
+                      addressdtls.getBurialAddress().setId(UUID.randomUUID().toString());                       
+                     });
                });
     }
 }
