@@ -7,6 +7,7 @@ import org.egov.filemgmnt.web.models.ApplicantPersonalResponse;
 import org.egov.filemgmnt.web.models.ApplicantPersonalSearchCriteria;
 import org.egov.filemgmnt.web.models.RequestInfoWrapper;
 import org.egov.tracer.model.ErrorRes;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 
@@ -25,7 +26,7 @@ interface FileManagementResource {
 
     @Operation(summary = "Create applicant personal along with details.",
                description = "",
-               requestBody = @RequestBody(content = @Content(mediaType = "application/json",
+               requestBody = @RequestBody(content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                                                              schema = @Schema(implementation = ApplicantPersonalRequest.class)),
                                           required = true),
                responses = {
@@ -35,13 +36,14 @@ interface FileManagementResource {
                                                        schema = @Schema(implementation = ApplicantPersonalResponse.class))),
                        @ApiResponse(responseCode = "400",
                                     description = "Bad request",
-                                    content = @Content(mediaType = "application/json",
+                                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                                                        schema = @Schema(implementation = ErrorRes.class))) })
+
     ResponseEntity<ApplicantPersonalResponse> create(@Valid ApplicantPersonalRequest request);
 
     @Operation(summary = "Update applicant personal along with details.",
                description = "",
-               requestBody = @RequestBody(content = @Content(mediaType = "application/json",
+               requestBody = @RequestBody(content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                                                              schema = @Schema(implementation = ApplicantPersonalRequest.class)),
                                           required = true),
                responses = {
@@ -51,13 +53,13 @@ interface FileManagementResource {
                                                        schema = @Schema(implementation = ApplicantPersonalResponse.class))),
                        @ApiResponse(responseCode = "400",
                                     description = "Bad request",
-                                    content = @Content(mediaType = "application/json",
+                                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                                                        schema = @Schema(implementation = ErrorRes.class))) })
     ResponseEntity<ApplicantPersonalResponse> update(@Valid ApplicantPersonalRequest request);
 
     @Operation(summary = "Search applicant personal along with details.",
                description = "",
-               requestBody = @RequestBody(content = @Content(mediaType = "application/json",
+               requestBody = @RequestBody(content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                                                              schema = @Schema(implementation = RequestInfoWrapper.class)),
                                           required = true),
                parameters = { @Parameter(in = ParameterIn.QUERY,
@@ -82,11 +84,11 @@ interface FileManagementResource {
                responses = {
                        @ApiResponse(responseCode = "200",
                                     description = "Applicant personals retrieved successfully",
-                                    content = @Content(mediaType = "application/json",
+                                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                                                        schema = @Schema(implementation = ApplicantPersonalResponse.class))),
                        @ApiResponse(responseCode = "400",
                                     description = "Bad request",
-                                    content = @Content(mediaType = "application/json",
+                                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                                                        schema = @Schema(implementation = ErrorRes.class))) })
     ResponseEntity<ApplicantPersonalResponse> search(@Valid RequestInfoWrapper request,
                                                      @Valid ApplicantPersonalSearchCriteria criteria);

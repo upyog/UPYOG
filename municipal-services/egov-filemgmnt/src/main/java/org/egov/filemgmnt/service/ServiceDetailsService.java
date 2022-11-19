@@ -3,10 +3,8 @@ package org.egov.filemgmnt.service;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.validation.Valid;
-
 import org.apache.commons.collections4.CollectionUtils;
-import org.egov.filemgmnt.config.FilemgmntConfiguration;
+import org.egov.filemgmnt.config.FMConfiguration;
 import org.egov.filemgmnt.enrichment.ServiceDetailsEnrichment;
 import org.egov.filemgmnt.kafka.Producer;
 import org.egov.filemgmnt.repository.ServiceDetailsRepository;
@@ -17,35 +15,37 @@ import org.egov.filemgmnt.web.models.ServiceDetailsSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Service
 public class ServiceDetailsService {
 
-    private final Producer producer;
-    private final FilemgmntConfiguration filemgmntConfig;
     private final ServiceDetailsValidator validatorService;
     private final ServiceDetailsEnrichment enrichmentService;
     private final ServiceDetailsRepository repository;
+    private final Producer producer;
+    private final FMConfiguration fmConfig;
 
     @Autowired
     ServiceDetailsService(ServiceDetailsValidator validatorService, ServiceDetailsEnrichment enrichmentService,
-                          ServiceDetailsRepository repository, Producer producer,
-                          FilemgmntConfiguration filemgmntConfig) {
+                          ServiceDetailsRepository repository, Producer producer, FMConfiguration fmConfig) {
         this.validatorService = validatorService;
         this.enrichmentService = enrichmentService;
         this.repository = repository;
         this.producer = producer;
-        this.filemgmntConfig = filemgmntConfig;
+        this.fmConfig = fmConfig;
 
     }
 
-    public List<ServiceDetails> create(@Valid ServiceDetailsRequest request) {
+    public List<ServiceDetails> create(ServiceDetailsRequest request) {
         // validate request
         validatorService.validateCreate(request);
 
         // enrich request
         enrichmentService.enrichCreate(request);
 
-        producer.push(filemgmntConfig.getSaveServiceDetailsTopic(), request);
+        producer.push(fmConfig.getSaveServiceDetailsTopic(), request);
 
         return request.getServiceDetails();
     }
@@ -61,7 +61,10 @@ public class ServiceDetailsService {
     }
 
     public List<ServiceDetails> update(ServiceDetailsRequest request) {
-        System.out.println("srvice" + request);
+        if (log.isDebugEnabled()) {
+            log.debug("ServiceDetails.update\n{}", request);
+        }
+
         List<String> ids = new LinkedList<>();
         request.getServiceDetails()
                .forEach(personal -> ids.add(personal.getId()));
@@ -75,7 +78,7 @@ public class ServiceDetailsService {
 
         enrichmentService.enrichUpdate(request);
 
-        producer.push(filemgmntConfig.getSaveApplicantPersonalTopic(), request);
+        producer.push(fmConfig.getSaveApplicantPersonalTopic(), request);
 
         return request.getServiceDetails();
     }

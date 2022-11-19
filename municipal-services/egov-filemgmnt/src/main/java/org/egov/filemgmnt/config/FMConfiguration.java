@@ -11,7 +11,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @Component
-public class FilemgmntConfiguration {
+public class FMConfiguration {
 
     @Value("${app.timezone}")
     private String timeZone;
@@ -37,4 +37,7 @@ public class FilemgmntConfiguration {
     @Value("${employee.allowed.search.params}")
     private String allowedEmployeeSearchParams;
 
+    // communication file config
+    @Value("${persister.save.communicationfile.topic}")
+    private String saveCommunicationFileTopic;
 }

@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 public class ServiceDetailsQueryBuilder extends BaseQueryBuilder {
 
     private static final String QUERY = new StringBuilder().append(" SELECT aps.id, aps.applicantpersonalid, aps.serviceid, aps.servicecode, aps.businessservice, aps.workflowcode")
-                                                           .append("     , aps.createdby, aps.createddate, aps.lastmodifiedby, aps.lastmodifieddate")
+                                                           .append("   , aps.createdby, aps.createddate, aps.lastmodifiedby, aps.lastmodifieddate")
                                                            .append(" FROM eg_fm_servicedetails aps")
                                                            .toString();
 

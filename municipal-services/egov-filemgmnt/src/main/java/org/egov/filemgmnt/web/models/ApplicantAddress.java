@@ -1,5 +1,6 @@
 package org.egov.filemgmnt.web.models;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -31,13 +32,13 @@ public class ApplicantAddress {
 
     @Schema(type = "string", description = "House number")
     @Size(max = 64)
-    @NotNull
+    @NotBlank(message = "House number is requried")
     @JsonProperty("houseNo")
     private String houseNo;
 
     @Schema(type = "string", description = "House name")
     @Size(max = 64)
-    @NotNull
+    @NotBlank(message = "House name is requried")
     @JsonProperty("houseName")
     private String houseName;
 

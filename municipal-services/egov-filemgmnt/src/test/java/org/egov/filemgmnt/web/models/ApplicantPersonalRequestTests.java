@@ -13,18 +13,15 @@ import org.assertj.core.api.Assertions;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
 import org.egov.filemgmnt.TestConfig;
+import org.egov.filemgmnt.util.FMUtils;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -34,9 +31,6 @@ import lombok.extern.slf4j.Slf4j;
 @SuppressWarnings({ "PMD.JUnitTestsShouldIncludeAssert" })
 @Slf4j
 class ApplicantPersonalRequestTests {
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
     @Disabled
     @Test
@@ -61,13 +55,7 @@ class ApplicantPersonalRequestTests {
                                                       .fileDetail(new FileDetail())
                                                       .auditDetails(new AuditDetails())
                                                       .build());
-        try {
-            log.info(" *** APPLICANT PERSONAL JSON \n {}",
-                     objectMapper.writerWithDefaultPrettyPrinter()
-                                 .writeValueAsString(request));
-        } catch (JsonProcessingException e) {
-            log.error(e.getMessage(), e);
-        }
+        log.info(" *** APPLICANT PERSONAL JSON \n {}", FMUtils.toJson(request));
     }
 
     @Disabled

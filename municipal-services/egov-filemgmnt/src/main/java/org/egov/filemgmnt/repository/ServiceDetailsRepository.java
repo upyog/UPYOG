@@ -33,7 +33,7 @@ public class ServiceDetailsRepository {
 
         List<ServiceDetails> result = jdbcTemplate.query(query, preparedStmtValues.toArray(), rowMapper);
 
-        return result;
+        return result; // NOPMD
     }
 
 }

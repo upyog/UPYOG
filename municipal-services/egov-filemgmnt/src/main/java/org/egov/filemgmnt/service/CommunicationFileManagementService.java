@@ -2,7 +2,7 @@ package org.egov.filemgmnt.service;
 
 import java.util.List;
 
-import org.egov.filemgmnt.config.CommunicationFileManagementConfiguration;
+import org.egov.filemgmnt.config.FMConfiguration;
 import org.egov.filemgmnt.enrichment.CommunicationFileManagementEnrichment;
 import org.egov.filemgmnt.kafka.Producer;
 import org.egov.filemgmnt.repository.CommunicationFileManagementRepository;
@@ -13,32 +13,28 @@ import org.egov.filemgmnt.web.models.CommunicationFileRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
 @Service
 public class CommunicationFileManagementService {
 
-    private final Producer producer;
-    private final CommunicationFileManagementConfiguration communicationFilemgmntConfig;
-    private final CommunicationFileManagementRepository communicationRepository;
-    private final CommunicationFileManagementValidator communicationValidator;
+    private final CommunicationFileManagementValidator validator;
     private final CommunicationFileManagementEnrichment enrichmentService;
-    private final MdmsUtil mutil;
+    private final CommunicationFileManagementRepository repository;
+    private final Producer producer;
+    private final MdmsUtil mdmsUtil;
+    private final FMConfiguration fmConfig;
 
     @Autowired
-    CommunicationFileManagementService(Producer producer,
-                                       CommunicationFileManagementConfiguration communicationFilemgmntConfig,
-                                       CommunicationFileManagementRepository communicationRepository,
-                                       CommunicationFileManagementValidator communicationValidator,
-                                       CommunicationFileManagementEnrichment enrichmentService, MdmsUtil mutil) {
+    CommunicationFileManagementService(CommunicationFileManagementValidator validator,
+                                       CommunicationFileManagementEnrichment enrichmentService,
+                                       CommunicationFileManagementRepository repository, Producer producer,
+                                       MdmsUtil mdmsUtil, FMConfiguration fmConfig) {
 
-        this.producer = producer;
-        this.communicationFilemgmntConfig = communicationFilemgmntConfig;
-        this.communicationRepository = communicationRepository;
-        this.communicationValidator = communicationValidator;
+        this.validator = validator;
         this.enrichmentService = enrichmentService;
-        this.mutil = mutil;
+        this.repository = repository;
+        this.producer = producer;
+        this.mdmsUtil = mdmsUtil;
+        this.fmConfig = fmConfig;
     }
 
     public List<CommunicationFile> create(CommunicationFileRequest request) {
@@ -46,7 +42,7 @@ public class CommunicationFileManagementService {
         // enrich request
         enrichmentService.enrichCreate(request);
 
-        producer.push(communicationFilemgmntConfig.getSaveCommunicationFileTopic(), request);
+        producer.push(fmConfig.getSaveCommunicationFileTopic(), request);
 
         return request.getCommunicationFiles();
 

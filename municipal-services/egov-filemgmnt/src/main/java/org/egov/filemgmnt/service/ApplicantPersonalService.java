@@ -2,9 +2,8 @@ package org.egov.filemgmnt.service;
 
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
-import org.egov.filemgmnt.config.FilemgmntConfiguration;
+import org.egov.filemgmnt.config.FMConfiguration;
 import org.egov.filemgmnt.enrichment.ApplicantPersonalEnrichment;
 import org.egov.filemgmnt.kafka.Producer;
 import org.egov.filemgmnt.repository.ApplicantPersonalRepository;
@@ -24,18 +23,18 @@ public class ApplicantPersonalService {
     private final ApplicantPersonalRepository repository;
     private final Producer producer;
     private final MdmsUtil mdmsUtil;
-    private final FilemgmntConfiguration fmConfig;
+    private final FMConfiguration filemgmntConfig;
 
     @Autowired
     ApplicantPersonalService(ApplicantPersonalValidator validatorService, ApplicantPersonalEnrichment enrichmentService,
                              ApplicantPersonalRepository repository, Producer producer, MdmsUtil mdmsUtil,
-                             FilemgmntConfiguration filemgmntConfig) {
+                             FMConfiguration filemgmntConfig) {
         this.validatorService = validatorService;
         this.enrichmentService = enrichmentService;
         this.repository = repository;
         this.producer = producer;
         this.mdmsUtil = mdmsUtil;
-        this.fmConfig = filemgmntConfig;
+        this.filemgmntConfig = filemgmntConfig;
     }
 
     public List<ApplicantPersonal> create(ApplicantPersonalRequest request) {
@@ -52,29 +51,10 @@ public class ApplicantPersonalService {
         // enrich request
         enrichmentService.enrichCreate(request);
 
-        producer.push(fmConfig.getSaveApplicantPersonalTopic(), request);
+        producer.push(filemgmntConfig.getSaveApplicantPersonalTopic(), request);
 
         return request.getApplicantPersonals();
 
-    }
-
-    public List<ApplicantPersonal> search(ApplicantPersonalSearchCriteria criteria, RequestInfo requestInfo) {
-
-        List<ApplicantPersonal> result = null;
-
-        validatorService.validateSearch(requestInfo, criteria);
-
-        if (StringUtils.isNotBlank(criteria.getId())) {
-            result = repository.getApplicantPersonals(criteria);
-        } else if (StringUtils.isNotBlank(criteria.getFileCode())) {
-            result = repository.getApplicantPersonalsFromFilecode(criteria);
-        } else if (criteria.getFromDate() != null) {
-            result = repository.getApplicantPersonalsFromDate(criteria);
-        } else if (StringUtils.isNotBlank(criteria.getAadhaarno())) {
-            result = repository.getApplicantPersonalsFromDate(criteria);
-        }
-
-        return result;
     }
 
     public List<ApplicantPersonal> update(ApplicantPersonalRequest request) {
@@ -93,8 +73,13 @@ public class ApplicantPersonalService {
 
         enrichmentService.enrichUpdate(request);
 
-        producer.push(fmConfig.getUpdateApplicantPersonalTopic(), request);
+        producer.push(filemgmntConfig.getUpdateApplicantPersonalTopic(), request);
 
         return request.getApplicantPersonals();
+    }
+
+    public List<ApplicantPersonal> search(ApplicantPersonalSearchCriteria criteria, RequestInfo requestInfo) {
+        validatorService.validateSearch(requestInfo, criteria);
+        return repository.getApplicantPersonals(criteria);
     }
 }

@@ -131,7 +131,7 @@ public class ApplicantPersonal {
     private ApplicantDocuments applicantDocuments;
 
     @Valid
-//    @NotNull
+    @NotNull
     @JsonProperty("fileDetail")
     private FileDetail fileDetail;
 

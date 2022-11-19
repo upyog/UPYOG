@@ -20,6 +20,11 @@
       "description": "Service details save topic"
     },
     {
+      "name": "persister.save.communicationfile.topic",
+      "type": "java.lang.String",
+      "description": "Communication file save topic"
+    },
+    {
       "name": "server.context-path",
       "type": "java.lang.String"
     },

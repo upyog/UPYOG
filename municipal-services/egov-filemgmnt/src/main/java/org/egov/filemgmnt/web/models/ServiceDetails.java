@@ -1,6 +1,6 @@
 package org.egov.filemgmnt.web.models;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 import org.springframework.validation.annotation.Validated;
@@ -55,7 +55,7 @@ public class ServiceDetails {
 
     @Schema(type = "string", description = "Service code")
     @Size(max = 64)
-    @NotNull
+    @NotBlank(message = "Service code is required")
     @JsonProperty("serviceCode")
     private String serviceCode;
 

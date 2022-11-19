@@ -1,6 +1,7 @@
 package org.egov.filemgmnt.web.models;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -68,8 +69,9 @@ public class FileDetail {
     private String fileArisingDate;
 
     @Schema(type = "string", description = "FinancialYear")
-    @Size(max = 64)
-    @NotNull
+    @Size(min = 4, max = 4, message = "Invalid financial year")
+    @Pattern(regexp = "^[1-9][0-9]{3}$", message = "Invalid financial year")
+    @NotNull(message = "Financial year is required")
     @JsonProperty("financialYear")
     private String financialYear;
 
