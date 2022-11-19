@@ -1,5 +1,6 @@
 package org.bel.birthdeath.crdeath.enrichment;
 
+// import java.text.SimpleDateFormat;
 import java.util.UUID;
 
 import org.bel.birthdeath.crdeath.web.models.AuditDetails;
@@ -24,7 +25,9 @@ public class CrDeathEnrichment implements BaseEnrichment{
                 deathdtls.setAuditDetails(auditDetails);
                 deathdtls.getStatisticalInfo().setId(UUID.randomUUID().toString());               
              
-                
+                // String str = new SimpleDateFormat("dd/MM/yyyy").format(deathdtls.getDateOfDeath() * 1000);
+                // System.out.println("DOD Epoc"+str);
+
                 deathdtls.getAddressInfo().get(0).setParentdeathDtlId(deathdtls.getId());
                 deathdtls.getAddressInfo().get(0).setAuditDetails(auditDetails);
                 deathdtls.getAddressInfo().forEach(addressdtls -> {

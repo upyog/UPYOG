@@ -59,6 +59,7 @@ public class CrDeathController {
             log.error("Exception while fetching from searcher: ",e);
         }
 
+ 
         /********************************************** */
         
         List<CrDeathDtl> deathDetails = deathService.create(request);

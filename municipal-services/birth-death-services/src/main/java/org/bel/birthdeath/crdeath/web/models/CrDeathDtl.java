@@ -33,7 +33,7 @@ public class CrDeathDtl {
     private String tenantId ;
 
     @JsonProperty("correctDeathDateKnown")
-    private String correctDeathDateKnown ;
+    private Integer correctDeathDateKnown ;
 
     @JsonProperty("dateOfDeath")
     private Long dateOfDeath ;
