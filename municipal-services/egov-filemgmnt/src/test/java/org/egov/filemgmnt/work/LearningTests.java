@@ -26,6 +26,7 @@ import org.springframework.test.context.TestPropertySource;
 
 import lombok.extern.slf4j.Slf4j;
 
+@Disabled
 @SpringBootTest
 @Import(TestConfig.class)
 @TestPropertySource(locations = { "classpath:test.properties" })
@@ -33,7 +34,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 class LearningTests {
 
-    @Disabled
     @Test
     void convertDateToLong() {
         LocalDateTime localDateTime = LocalDateTime.of(2022, 11, 13, 19, 10, 05);
@@ -47,7 +47,6 @@ class LearningTests {
 //        log.info("date={}, milliseconds={}", date, dateMillis);
     }
 
-    @Disabled
     @Test
     void dateToLongTest() {
         java.util.Date now = new java.util.Date();

@@ -25,6 +25,7 @@ import org.springframework.test.context.TestPropertySource;
 
 import lombok.extern.slf4j.Slf4j;
 
+@Disabled
 @SpringBootTest
 @Import(TestConfig.class)
 @TestPropertySource(locations = { "classpath:test.properties" })
@@ -32,7 +33,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 class ApplicantPersonalRequestTests {
 
-    @Disabled
     @Test
     void requestJson() {
         ApplicantPersonalRequest request = ApplicantPersonalRequest.builder()
@@ -58,7 +58,6 @@ class ApplicantPersonalRequestTests {
         log.info(" *** APPLICANT PERSONAL JSON \n {}", FMUtils.toJson(request));
     }
 
-    @Disabled
     @ParameterizedTest
     @MethodSource("validateArguments")
     void validateApplicantPersonalRequest(Validator validator, ApplicantPersonalRequest request) {

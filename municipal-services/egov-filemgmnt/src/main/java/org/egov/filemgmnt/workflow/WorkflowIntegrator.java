@@ -28,14 +28,14 @@ import net.minidev.json.JSONObject;
 @Slf4j
 public class WorkflowIntegrator {
 
-    private RestTemplate rest;
+    private final RestTemplate restTemplate;
 
-    private FMConfiguration config;
+    private final FMConfiguration fmConfig;
 
     @Autowired
-    public WorkflowIntegrator(RestTemplate rest, FMConfiguration config) {
-        this.rest = rest;
-        this.config = config;
+    public WorkflowIntegrator(RestTemplate restTemplate, FMConfiguration fmConfig) {
+        this.restTemplate = restTemplate;
+        this.fmConfig = fmConfig;
     }
 
     /**
@@ -122,10 +122,10 @@ public class WorkflowIntegrator {
             String response = null;
 
             try {
-                response = rest.postForObject(config.getWfHost()
-                                                    .concat(config.getWfTransitionPath()),
-                                              workFlowRequest,
-                                              String.class);
+                response = restTemplate.postForObject(fmConfig.getWfHost()
+                                                              .concat(fmConfig.getWfTransitionPath()),
+                                                      workFlowRequest,
+                                                      String.class);
             } catch (HttpClientErrorException e) {
                 /*
                  * extracting message from client error exception
