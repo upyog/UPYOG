@@ -58,28 +58,14 @@
         max-width: 100%;
         }
 }
-@media (min-width: 768px){
-    .FileFlowWrapper{
-        max-width: 720px; 
-    }
-    
-}
 @media (min-width: 1200px){
     .FileFlowWrapper{
         max-width: 1140px; 
     }
 }
 @media (min-width: 992px){
-    .FileFlowWrapper{
-        max-width: 960px; 
-    }
     .cardWrapper{
         display: flex;
         flex-direction: row !important; 
-    }
-}
-@media (min-width: 576px){
-    .FileFlowWrapper{
-        max-width: 540px;
     }
 }
