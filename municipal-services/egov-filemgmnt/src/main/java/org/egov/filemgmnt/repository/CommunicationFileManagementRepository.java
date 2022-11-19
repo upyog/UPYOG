@@ -28,15 +28,15 @@ public class CommunicationFileManagementRepository {
         this.rowMapper = rowMapper;
     }
 
-	public List<CommunicationFile> getCommunicationfiles(CommunicationFileSearchCriteria criteria) {
+    public List<CommunicationFile> getCommunicationfiles(CommunicationFileSearchCriteria criteria) {
 
-		List<Object> preparedStmtValues = new ArrayList<>();
+        List<Object> preparedStmtValues = new ArrayList<>();
 
-		String query = queryBuilder.getCommunicationFileSearchQuery(criteria, preparedStmtValues, Boolean.FALSE);
+        String query = queryBuilder.getCommunicationFileSearchQuery(criteria, preparedStmtValues, Boolean.FALSE);
 
-		List<CommunicationFile> result = jdbcTemplate.query(query, preparedStmtValues.toArray(), rowMapper);
+        List<CommunicationFile> result = jdbcTemplate.query(query, preparedStmtValues.toArray(), rowMapper);
 
-		return result;
+        return result;
 
-	}
+    }
 }

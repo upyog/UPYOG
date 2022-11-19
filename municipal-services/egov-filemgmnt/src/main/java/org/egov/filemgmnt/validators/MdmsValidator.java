@@ -3,21 +3,19 @@ package org.egov.filemgmnt.validators;
 import static org.egov.filemgmnt.web.enums.ErrorCodes.MDMS_DATA_ERROR;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.egov.filemgmnt.repository.ServiceRequestRepository;
 import org.egov.filemgmnt.util.FMConstants;
+import org.egov.filemgmnt.util.FMUtils;
 import org.egov.filemgmnt.web.models.ApplicantPersonalRequest;
 import org.egov.tracer.model.CustomException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 
 import lombok.extern.slf4j.Slf4j;
@@ -25,9 +23,6 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 @Slf4j
 public class MdmsValidator {
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
     private ServiceRequestRepository requestRepository;
 
@@ -44,7 +39,7 @@ public class MdmsValidator {
     public void validateMdmsData(ApplicantPersonalRequest request, Object mdmsData) {
 
         if (log.isDebugEnabled()) {
-            log.debug("*** MDMS MASTER DATA \n {}", formatJson(mdmsData));
+            log.debug("MDMS master data \n {}", FMUtils.toJson(mdmsData));
         }
 
         Map<String, Object> masterData = getFileManagementMasterData(mdmsData);
@@ -52,14 +47,14 @@ public class MdmsValidator {
 
         List<String> subTypeCodes = getFileServiceSubTypeCodes(mdmsData);
 
-        Map<String, String> errorMap = new HashMap<>();
+        Map<String, String> errorMap = new ConcurrentHashMap<>();
         request.getApplicantPersonals()
                .forEach(personal -> {
                    String serviceCode = personal.getServiceDetails()
                                                 .getServiceCode();
 
                    if (log.isDebugEnabled()) {
-                       log.info("service code : \n{}", serviceCode);
+                       log.debug("Service code : \n{}", serviceCode);
                    }
 
                    if (CollectionUtils.isEmpty(subTypeCodes) || !subTypeCodes.contains(serviceCode)) {
@@ -87,16 +82,6 @@ public class MdmsValidator {
 
     private List<String> getFileServiceSubTypeCodes(Object mdmsData) {
         return JsonPath.read(mdmsData, FMConstants.FM_MDMS_FILE_SERVICE_SUBTYPE_CODE_JSONPATH);
-    }
-
-    private String formatJson(Object json) {
-        try {
-            return objectMapper.writerWithDefaultPrettyPrinter()
-                               .writeValueAsString(json);
-        } catch (JsonProcessingException e) {
-            log.error("Failed formatting json", e);
-        }
-        return "";
     }
 
 //    /////////////////// BEGIN

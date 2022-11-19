@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.egov.common.contract.request.RequestInfo;
-import org.egov.filemgmnt.config.CommunicationFileManagementConfiguration;
+import org.egov.filemgmnt.config.FMConfiguration;
 import org.egov.filemgmnt.enrichment.CommunicationFileManagementEnrichment;
 import org.egov.filemgmnt.kafka.Producer;
 import org.egov.filemgmnt.repository.CommunicationFileManagementRepository;
@@ -17,32 +17,28 @@ import org.egov.filemgmnt.web.models.CommunicationFileSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
 @Service
 public class CommunicationFileManagementService {
 
-    private final Producer producer;
-    private final CommunicationFileManagementConfiguration communicationFilemgmntConfig;
-    private final CommunicationFileManagementRepository communicationRepository;
-    private final CommunicationFileManagementValidator communicationValidator;
+    private final CommunicationFileManagementValidator validator;
     private final CommunicationFileManagementEnrichment enrichmentService;
-    private final MdmsUtil mutil;
+    private final CommunicationFileManagementRepository repository;
+    private final Producer producer;
+    private final MdmsUtil mdmsUtil;
+    private final FMConfiguration fmConfig;
 
     @Autowired
-    CommunicationFileManagementService(Producer producer,
-                                       CommunicationFileManagementConfiguration communicationFilemgmntConfig,
-                                       CommunicationFileManagementRepository communicationRepository,
-                                       CommunicationFileManagementValidator communicationValidator,
-                                       CommunicationFileManagementEnrichment enrichmentService, MdmsUtil mutil) {
+    CommunicationFileManagementService(CommunicationFileManagementValidator validator,
+                                       CommunicationFileManagementEnrichment enrichmentService,
+                                       CommunicationFileManagementRepository repository, Producer producer,
+                                       MdmsUtil mdmsUtil, FMConfiguration fmConfig) {
 
-        this.producer = producer;
-        this.communicationFilemgmntConfig = communicationFilemgmntConfig;
-        this.communicationRepository = communicationRepository;
-        this.communicationValidator = communicationValidator;
+        this.validator = validator;
         this.enrichmentService = enrichmentService;
-        this.mutil = mutil;
+        this.repository = repository;
+        this.producer = producer;
+        this.mdmsUtil = mdmsUtil;
+        this.fmConfig = fmConfig;
     }
 
     public List<CommunicationFile> create(CommunicationFileRequest request) {
@@ -50,37 +46,39 @@ public class CommunicationFileManagementService {
         // enrich request
         enrichmentService.enrichCreate(request);
 
-        producer.push(communicationFilemgmntConfig.getSaveCommunicationFileTopic(), request);
+        producer.push(fmConfig.getSaveCommunicationFileTopic(), request);
 
         return request.getCommunicationFiles();
 
     }
 
-	public List<CommunicationFile> update(CommunicationFileRequest request) {
+    public List<CommunicationFile> update(CommunicationFileRequest request) {
 
-		List<String> ids = new LinkedList<>();
+        List<String> ids = new LinkedList<>();
 
-		request.getCommunicationFiles().forEach(file -> ids.add(file.getId()));
+        request.getCommunicationFiles()
+               .forEach(file -> ids.add(file.getId()));
 
-		// search database
-		List<CommunicationFile> searchResult = communicationRepository
-				.getCommunicationfiles(CommunicationFileSearchCriteria.builder().ids(ids).build());
+        // search database
+        List<CommunicationFile> searchResult = repository.getCommunicationfiles(CommunicationFileSearchCriteria.builder()
+                                                                                                               .ids(ids)
+                                                                                                               .build());
 
-		enrichmentService.enrichUpdate(request);
+        enrichmentService.enrichUpdate(request);
 
-		producer.push(communicationFilemgmntConfig.getUpdateCommunicationFileTopic(), request);
+        producer.push(fmConfig.getUpdateCommunicationFileTopic(), request);
 
-		return request.getCommunicationFiles();
-	}
+        return request.getCommunicationFiles();
+    }
 
-	public List<CommunicationFile> search(CommunicationFileSearchCriteria criteria, RequestInfo requestInfo) {
+    public List<CommunicationFile> search(CommunicationFileSearchCriteria criteria, RequestInfo requestInfo) {
 
-		List<CommunicationFile> result = null;
-		communicationValidator.validateSearch(requestInfo, criteria);
-		if (!CollectionUtils.isEmpty(criteria.getIds())) {
-			result = communicationRepository.getCommunicationfiles(criteria);
-		}
-		return result;
-	}
+        List<CommunicationFile> result = null;
+        validator.validateSearch(requestInfo, criteria);
+        if (!CollectionUtils.isEmpty(criteria.getIds())) {
+            result = repository.getCommunicationfiles(criteria);
+        }
+        return result;
+    }
 
 }

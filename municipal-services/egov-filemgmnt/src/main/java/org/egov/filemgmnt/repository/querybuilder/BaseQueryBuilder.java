@@ -14,7 +14,7 @@ class BaseQueryBuilder {
 
         if (startDate != null || endDate != null) {
             addWhereClause(paramValues, query);
-            query.append("(");
+            query.append(" (");
 
             if (startDate != null) {
                 query.append(column)

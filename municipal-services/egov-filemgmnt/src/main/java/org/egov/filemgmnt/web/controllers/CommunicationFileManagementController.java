@@ -18,9 +18,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
 @RestController
 @RequestMapping("/v1")
 public class CommunicationFileManagementController {
@@ -49,29 +46,31 @@ public class CommunicationFileManagementController {
         return ResponseEntity.ok(response);
     }
 
-	@PutMapping("/officecommuication/_update")
-	public ResponseEntity<CommunicationFileResponse> update(@RequestBody CommunicationFileRequest request) {
+    @PutMapping("/officecommuication/_update")
+    public ResponseEntity<CommunicationFileResponse> update(@RequestBody CommunicationFileRequest request) {
 
-		List<CommunicationFile> files = communicationService.update(request);
+        List<CommunicationFile> files = communicationService.update(request);
 
-		CommunicationFileResponse response = CommunicationFileResponse.builder()
-				.responseInfo(
-						responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), Boolean.TRUE))
-				.communicationFiles(files).build();
+        CommunicationFileResponse response = CommunicationFileResponse.builder()
+                                                                      .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(),
+                                                                                                                                          Boolean.TRUE))
+                                                                      .communicationFiles(files)
+                                                                      .build();
 
-		return ResponseEntity.ok(response);
-	}
+        return ResponseEntity.ok(response);
+    }
 
-	@PostMapping("/officecommuication/_search")
-	public ResponseEntity<CommunicationFileResponse> search(@RequestBody RequestInfoWrapper request,
-			@ModelAttribute CommunicationFileSearchCriteria criteria) {
+    @PostMapping("/officecommuication/_search")
+    public ResponseEntity<CommunicationFileResponse> search(@RequestBody RequestInfoWrapper request,
+                                                            @ModelAttribute CommunicationFileSearchCriteria criteria) {
 
-		List<CommunicationFile> files = communicationService.search(criteria, request.getRequestInfo());
+        List<CommunicationFile> files = communicationService.search(criteria, request.getRequestInfo());
 
-		CommunicationFileResponse response = CommunicationFileResponse.builder()
-				.responseInfo(
-						responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), Boolean.TRUE))
-				.communicationFiles(files).build();
-		return ResponseEntity.ok(response);
-	}
+        CommunicationFileResponse response = CommunicationFileResponse.builder()
+                                                                      .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(),
+                                                                                                                                          Boolean.TRUE))
+                                                                      .communicationFiles(files)
+                                                                      .build();
+        return ResponseEntity.ok(response);
+    }
 }

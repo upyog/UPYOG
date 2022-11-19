@@ -22,7 +22,6 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-
 public class ServiceDetailsRequest {
 
     @JsonProperty("RequestInfo")

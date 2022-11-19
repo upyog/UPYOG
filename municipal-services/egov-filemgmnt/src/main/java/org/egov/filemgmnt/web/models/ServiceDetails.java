@@ -1,6 +1,6 @@
 package org.egov.filemgmnt.web.models;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 import org.springframework.validation.annotation.Validated;
@@ -25,28 +25,28 @@ import lombok.Setter;
 
 public class ServiceDetails {
 
-	@Schema(type = "string", format = "uuid", description = "Service details id")
-	@Size(max = 64)
-	@JsonProperty("id")
-	private String id;
+    @Schema(type = "string", format = "uuid", description = "Service details id")
+    @Size(max = 64)
+    @JsonProperty("id")
+    private String id;
 
-	@Schema(type = "string", description = "Applicant id")
-	@Size(max = 64)
-	@JsonProperty("applicantPersonalId")
-	private String applicantPersonalId;
+    @Schema(type = "string", description = "Applicant id")
+    @Size(max = 64)
+    @JsonProperty("applicantPersonalId")
+    private String applicantPersonalId;
 
-	@JsonProperty("auditDetails")
-	private AuditDetails auditDetails;
+    @JsonProperty("auditDetails")
+    private AuditDetails auditDetails;
 
-	@Schema(type = "string", description = "Service id")
-	@Size(max = 64)
-	@JsonProperty("serviceId")
-	private String serviceId;
+    @Schema(type = "string", description = "Service id")
+    @Size(max = 64)
+    @JsonProperty("serviceId")
+    private String serviceId;
 
-	@Schema(type = "string", description = "Service code")
-	@Size(max = 64)
-	@NotNull
-	@JsonProperty("serviceCode")
-	private String serviceCode;
+    @Schema(type = "string", description = "Service code")
+    @Size(max = 64)
+    @NotBlank(message = "Service code is required")
+    @JsonProperty("serviceCode")
+    private String serviceCode;
 
 }

@@ -7,7 +7,7 @@ import java.util.UUID;
 import org.apache.commons.collections4.CollectionUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
-import org.egov.filemgmnt.config.FilemgmntConfiguration;
+import org.egov.filemgmnt.config.FMConfiguration;
 import org.egov.filemgmnt.util.IdgenUtil;
 import org.egov.filemgmnt.web.enums.ErrorCodes;
 import org.egov.filemgmnt.web.models.ApplicantPersonal;
@@ -21,15 +21,22 @@ import org.springframework.stereotype.Component;
 @Component
 public class ApplicantPersonalEnrichment implements BaseEnrichment {
 
-    private final FilemgmntConfiguration config;
+    private final FMConfiguration fmConfig;
     private final IdgenUtil idgenUtil;
 
     @Autowired
-    ApplicantPersonalEnrichment(FilemgmntConfiguration config, IdgenUtil idgenUtil) {
-        this.config = config;
+    ApplicantPersonalEnrichment(FMConfiguration fmConfig, IdgenUtil idgenUtil) {
+        this.fmConfig = fmConfig;
         this.idgenUtil = idgenUtil;
     }
 
+    /**
+     * Enrich applicant personal create request.
+     *
+     * @param request the
+     *                {@link org.egov.filemgmnt.web.models.ApplicantPersonalRequest
+     *                ApplicantPersonalRequest}
+     */
     public void enrichCreate(ApplicantPersonalRequest request) {
 
         RequestInfo requestInfo = request.getRequestInfo();
@@ -65,6 +72,13 @@ public class ApplicantPersonalEnrichment implements BaseEnrichment {
         setFileCodes(request);
     }
 
+    /**
+     * Enrich applicant personal update request.
+     *
+     * @param request the
+     *                {@link org.egov.filemgmnt.web.models.ApplicantPersonalRequest
+     *                ApplicantPersonalRequest}
+     */
     public void enrichUpdate(ApplicantPersonalRequest request) {
 
         RequestInfo requestInfo = request.getRequestInfo();
@@ -76,11 +90,6 @@ public class ApplicantPersonalEnrichment implements BaseEnrichment {
                .forEach(personal -> personal.setAuditDetails(auditDetails));
     }
 
-    /**
-     * Sets the FileCode for given ServiceRequest
-     *
-     * @param request Request which is to be created
-     */
     private void setFileCodes(ApplicantPersonalRequest request) {
         RequestInfo requestInfo = request.getRequestInfo();
         List<ApplicantPersonal> applicantPersonals = request.getApplicantPersonals();
@@ -90,8 +99,8 @@ public class ApplicantPersonalEnrichment implements BaseEnrichment {
 
         List<String> filecodes = getFileCodes(requestInfo,
                                               tenantId,
-                                              config.getFilemgmntFileCodeName(),
-                                              config.getFilemgmntFileCodeFormat(),
+                                              fmConfig.getFilemgmntFileCodeName(),
+                                              fmConfig.getFilemgmntFileCodeFormat(),
                                               applicantPersonals.size());
         validateFileCodes(filecodes, applicantPersonals.size());
 
@@ -103,17 +112,6 @@ public class ApplicantPersonalEnrichment implements BaseEnrichment {
                });
     }
 
-    /**
-     * Returns a list of numbers generated from idgen
-     *
-     * @param requestInfo RequestInfo from the request
-     * @param tenantId    tenantId of the city
-     * @param idKey       code of the field defined in application properties for
-     *                    which ids are generated for
-     * @param idformat    format in which ids are to be generated
-     * @param count       Number of ids to be generated
-     * @return List of ids generated using idGen service
-     */
     private List<String> getFileCodes(RequestInfo requestInfo, String tenantId, String idKey, String idformat,
                                       int count) {
         return idgenUtil.getIdList(requestInfo, tenantId, idKey, idformat, count);

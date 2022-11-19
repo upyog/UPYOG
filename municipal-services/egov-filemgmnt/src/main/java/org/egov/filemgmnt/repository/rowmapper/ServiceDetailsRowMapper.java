@@ -13,17 +13,21 @@ import org.springframework.stereotype.Component;
 @Component
 public class ServiceDetailsRowMapper implements ResultSetExtractor<List<ServiceDetails>>, BaseRowMapper {
 
-	@Override
-	public List<ServiceDetails> extractData(ResultSet rs) throws SQLException, DataAccessException { // NOPMD
+    @Override
+    public List<ServiceDetails> extractData(ResultSet rs) throws SQLException, DataAccessException { // NOPMD
 
-		List<ServiceDetails> result = new ArrayList<>();
-		while (rs.next()) {
-			result.add(ServiceDetails.builder().id(rs.getString("id"))
-					.applicantPersonalId(rs.getString("applicantpersonalid")).serviceId(rs.getString("serviceid"))
-					.serviceCode(rs.getString("servicecode")).auditDetails(getAuditDetails(rs)).build());
-		}
+        List<ServiceDetails> result = new ArrayList<>();
+        while (rs.next()) {
+            result.add(ServiceDetails.builder()
+                                     .id(rs.getString("id"))
+                                     .applicantPersonalId(rs.getString("applicantpersonalid"))
+                                     .serviceId(rs.getString("serviceid"))
+                                     .serviceCode(rs.getString("servicecode"))
+                                     .auditDetails(getAuditDetails(rs))
+                                     .build());
+        }
 
-		return result;
-	}
+        return result;
+    }
 
 }

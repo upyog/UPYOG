@@ -25,21 +25,21 @@ public class CommunicationFileSearchCriteria {
     @JsonProperty("tenantId")
     private String tenantId;
 
-	@JsonProperty("ids")
-	private List<String> ids;
+    @JsonProperty("ids")
+    private List<String> ids;
 
-	@JsonProperty("fileCode")
-	private String fileCode;
+    @JsonProperty("fileCode")
+    private String fileCode;
 
-	public boolean isEmpty() {
+    public boolean isEmpty() {
 
-		return (StringUtils.isBlank(tenantId) && StringUtils.isEmpty(fileCode));
+        return (StringUtils.isBlank(tenantId) && StringUtils.isEmpty(fileCode));
 
-	}
+    }
 
-	public boolean tenantIdOnly() {
-		// return (tenantId != null);
-		return (StringUtils.isNotBlank(tenantId) && StringUtils.isEmpty(fileCode));
-	}
+    public boolean tenantIdOnly() {
+        // return (tenantId != null);
+        return (StringUtils.isNotBlank(tenantId) && StringUtils.isEmpty(fileCode));
+    }
 
 }
