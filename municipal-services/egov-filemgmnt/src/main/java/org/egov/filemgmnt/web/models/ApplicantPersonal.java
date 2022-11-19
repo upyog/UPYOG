@@ -117,7 +117,7 @@ public class ApplicantPersonal {
 
     @Valid
     @NotNull
-    @JsonProperty("applicantAddresses")
+    @JsonProperty("applicantAddress")
     private ApplicantAddress applicantAddress;
 
     @Valid

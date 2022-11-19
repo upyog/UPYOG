@@ -28,7 +28,10 @@ public enum ErrorCodes {
     MDMS_INVALID_TENANT_ID("INVALID_TENANTID"),
 
     // Search
-    INVALID_SEARCH("INVALID_SEARCH");
+    INVALID_SEARCH("INVALID_SEARCH"),
+
+    // Communication File
+    COMUNICATION_FILE_REQUIRED("REQUIRED");
 
     private String code;
 }

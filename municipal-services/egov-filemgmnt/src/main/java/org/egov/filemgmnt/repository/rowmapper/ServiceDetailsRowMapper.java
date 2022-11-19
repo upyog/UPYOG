@@ -23,8 +23,6 @@ public class ServiceDetailsRowMapper implements ResultSetExtractor<List<ServiceD
                                      .applicantPersonalId(rs.getString("applicantpersonalid"))
                                      .serviceId(rs.getString("serviceid"))
                                      .serviceCode(rs.getString("servicecode"))
-                                     .businessService(rs.getString("businessservice"))
-                                     .workflowCode(rs.getString("workflowcode"))
                                      .auditDetails(getAuditDetails(rs))
                                      .build());
         }

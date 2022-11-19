@@ -1,8 +1,14 @@
 package org.egov.filemgmnt.web.models;
 
+import java.util.List;
+
+import javax.swing.text.Document;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.SafeHtml;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -98,6 +104,23 @@ public class FileDetail {
     @JsonProperty("fileStatus")
     private String fileStatus;
 
+    @Schema(type = "string", description = "Business service")
+    @Size(max = 64)
+    @JsonProperty("businessService")
+    private String businessService;
+
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails;
+
+    @JsonProperty("assignee")
+    private List<String> assignee = null;
+
+    @Size(max = 128)
+    @SafeHtml
+    private String comment;
+
+    @Valid
+    @JsonProperty("wfDocuments")
+    private List<Document> wfDocuments;
+
 }

@@ -24,6 +24,11 @@
       "type": "java.lang.String",
       "description": "Communication file save topic"
     },
+        {
+      "name": "persister.update.communicationfile.topic",
+      "type": "java.lang.String",
+      "description": "Communication file update topic"
+    },
     {
       "name": "server.context-path",
       "type": "java.lang.String"

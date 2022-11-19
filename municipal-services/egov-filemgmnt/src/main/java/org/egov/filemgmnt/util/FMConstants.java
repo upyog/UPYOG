@@ -39,4 +39,40 @@ public class FMConstants {
 
     public static final String INVALID_TENANT_ID_MDMS_MSG = "No data found for this tenentID";
 
+    // workflow integrator
+
+    public static final String businessService_FM = "NewDFM";
+
+    public static final String TENANTIDKEY = "tenantId";
+
+    public static final String BUSINESSSERVICEKEY = "businessService";
+
+    public static final String ACTIONKEY = "action";
+
+    public static final String COMMENTKEY = "comment";
+
+    public static final String MODULENAMEKEY = "moduleName";
+
+    public static final String BUSINESSIDKEY = "businessId";
+
+    public static final String DOCUMENTSKEY = "documents";
+
+    public static final String ASSIGNEEKEY = "assignes";
+
+    public static final String UUIDKEY = "uuid";
+
+    public static final String FMMODULENAMEVALUE = "FM";
+
+    public static final String WORKFLOWREQUESTARRAYKEY = "ProcessInstances";
+
+    public static final String REQUESTINFOKEY = "RequestInfo";
+
+    public static final String PROCESSINSTANCESJOSNKEY = "$.ProcessInstances";
+
+    public static final String BUSINESSIDJOSNKEY = "$.businessId";
+
+    public static final String STATUSJSONKEY = "$.state.applicationStatus";
+
+    public static final String TRIGGER_NOWORKFLOW = "NOWORKFLOW";
+
 }

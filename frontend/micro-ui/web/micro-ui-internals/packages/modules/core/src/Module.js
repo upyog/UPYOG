@@ -12,7 +12,7 @@ import ErrorBoundary from "./components/ErrorBoundaries";
 
 const DigitUIWrapper = ({ stateCode, enabledModules, moduleReducers }) => {
   const { isLoading, data: initData } = Digit.Hooks.useInitStore(stateCode, enabledModules);
-console.log(initData);
+console.log('init api',initData);
 const tmpInitData ={
   "languages": [
       {
@@ -180,7 +180,7 @@ const tmpInitData ={
           ]
       },
       {
-        "module": "Digital file management",
+        "module": "DFM",
         "code": "DFM",
         "bannerImage": "https://egov-uat-assets.s3.amazonaws.com/TL.png",
         "active": true,

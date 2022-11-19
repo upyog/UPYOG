@@ -35,16 +35,6 @@ public class ServiceDetails {
     @JsonProperty("applicantPersonalId")
     private String applicantPersonalId;
 
-    @Schema(type = "string", description = "Business service")
-    @Size(max = 64)
-    @JsonProperty("businessService")
-    private String businessService;
-
-    @Schema(type = "string", description = "Workflow code")
-    @Size(max = 64)
-    @JsonProperty("workflowCode")
-    private String workflowCode;
-
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails;
 

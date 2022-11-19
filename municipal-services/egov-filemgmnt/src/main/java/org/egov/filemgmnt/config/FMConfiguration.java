@@ -37,7 +37,16 @@ public class FMConfiguration {
     @Value("${employee.allowed.search.params}")
     private String allowedEmployeeSearchParams;
 
+    @Value("${workflow.context.path}")
+    private String wfHost;
+
+    @Value("${workflow.transition.path}")
+    private String wfTransitionPath;
+
     // communication file config
     @Value("${persister.save.communicationfile.topic}")
     private String saveCommunicationFileTopic;
+
+    @Value("${persister.update.communicationfile.topic}")
+    private String updateCommunicationFileTopic;
 }

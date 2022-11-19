@@ -21,7 +21,6 @@ public class CommunicationFileManagementEnrichment implements BaseEnrichment {
     CommunicationFileManagementEnrichment(FMConfiguration fmConfig, IdgenUtil idgenUtil) {
         this.fmConfig = fmConfig;
         this.idgenUtil = idgenUtil;
-
     }
 
     /**
@@ -32,7 +31,6 @@ public class CommunicationFileManagementEnrichment implements BaseEnrichment {
      *                CommunicationFileRequest}
      */
     public void enrichCreate(CommunicationFileRequest request) {
-
         RequestInfo requestInfo = request.getRequestInfo();
         User userInfo = requestInfo.getUserInfo();
 
@@ -46,4 +44,16 @@ public class CommunicationFileManagementEnrichment implements BaseEnrichment {
                });
 
     }
+
+    public void enrichUpdate(CommunicationFileRequest request) {
+
+        RequestInfo requestInfo = request.getRequestInfo();
+        User userInfo = requestInfo.getUserInfo();
+
+        AuditDetails auditDetails = buildAuditDetails(userInfo.getUuid(), Boolean.FALSE);
+
+        request.getCommunicationFiles()
+               .forEach(communication -> communication.setAuditDetails(auditDetails));
+    }
+
 }
