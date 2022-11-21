@@ -561,10 +561,8 @@ min-height: calc(100vh - 8em);
   height: 40px;
 }
 .inboxButton{
-  background-color: #5c6192;
     border: none;
     color: white;
-    padding: 5px 15px;
     text-align: center;
     text-decoration: none;
     display: inline-block;
@@ -573,7 +571,14 @@ min-height: calc(100vh - 8em);
     cursor: pointer;
     height: fit-content;
     border-radius: 5px;
-    background-image: url(https://i.ibb.co/J703cMf/top-red.png);
     font-family: sans-serif;
     font-weight: 700;
+}
+.employee .inboxButton{
+  padding: 5px 15px;
+  background: #ba2b36
+}
+.citizen .inboxButton{
+  padding: 15px;
+  font-size: 1.2rem
 }
