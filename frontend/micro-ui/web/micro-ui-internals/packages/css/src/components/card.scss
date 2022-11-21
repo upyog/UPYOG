@@ -164,7 +164,7 @@
 
 .submit-bar-disabled {
   @apply h-10 bg-primary-main text-center w-full outline-none opacity-50;
-  background-color: #5a1166;
+  background-color: #5a1166 !important;
 
   &:focus {
     @apply outline-none;
@@ -363,7 +363,7 @@
 .BPAemployeeCard {
   margin-left: 0px !important;
   margin-right: 0px !important;
-  margin-bottom: 64px !important;
+  margin-bottom: 0px !important;
 }
 
 .employee-application-details {
@@ -394,5 +394,11 @@
 }
 
 .language-selector .submit-bar, .submit-bar-disabled{
-  background-color: #5a1166;
+  background-color: #5a1166 !important;
+}
+.citizen .employeeCard{
+  margin-bottom: 0px !important;
+}
+.pt-citizen .employeeCard{
+  margin-bottom: 64px !important;
 }

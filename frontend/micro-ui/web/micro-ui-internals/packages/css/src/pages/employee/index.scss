@@ -21,7 +21,7 @@
     width: 100%;
     padding: 16px 24px;
     background: #ffffff;
-    box-shadow: 0 1px 4px #543367;
+    box-shadow: 0 1px 4px #b1b4b6;
     z-index: 9999;
 
     img {
@@ -178,11 +178,14 @@
     position: fixed;
     left: 0;
     padding: 20px 0;
-    background: #543367;
     height: 100%;
     color: white;
     margin-top: 80px;
     z-index: 1000;
+    background-image: url(https://iili.io/H9EGul1.th.png), url(https://i.ibb.co/J703cMf/top-red.png);
+    background-blend-mode: lighten;
+    background-size: cover;
+
 
     .actions {
       cursor: pointer;
@@ -476,4 +479,11 @@
   font-size: 4vw !important;
 }
 
+}
+@media only screen and (min-width:300px)
+{
+.employee .card-home{
+height: 200px;
+box-shadow: #32325d14 0px 50px 100px -20px, rgb(0 0 0 / 18%) 0px 30px 60px -30px, #0a254038 0px -2px 6px 0px inset;
+}
 }

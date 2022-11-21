@@ -25,7 +25,7 @@
   height: 32px !important;
   margin-top: -16px !important;
   z-index: 999;
-  background-color: white;
+  background-color:#ffffffeb;
 }
 @screen dt {
   .employeeForgotPassword .employeeCard .field .field-container .component-in-front {
@@ -34,7 +34,7 @@
     height: 32px !important;
     margin-top: -16px !important;
     z-index: 999;
-    background-color: white;
+    background-color: #ffffffeb;
 
   }
  .loginFormStyleEmployee .employeeCard, .banner .bannerCard{
@@ -45,6 +45,7 @@
   .employeeForgotPassword .employeeCard, .employeeChangePassword .employeeCard{
     max-width: 270px !important;
     min-width: 270px !important;
+    background-color: #ffffffeb
   }
 }
 
@@ -59,7 +60,7 @@
 .employeeForgotPassword {
   .submit-bar {
     @apply w-full;
-    background-color: #5a1166;
+    background-color: #5a1166 !important;
   }
 }
 .employeeChangePassword .submit-bar {
@@ -177,7 +178,7 @@
     min-width: 250px !important;
    
     margin-top: -50% !important;
-    background-color: #ffffffd4
+    background-color: #ffffffeb;
   }
 }
 .employeeChangePassword .employeeCard .card-text{
@@ -214,8 +215,7 @@ background-color: white !important;
     z-index: 1;
   }
   .topbar{
-    background: rgba(34, 57, 77, var(--bg-opacity)) !important;
-    color: white;
+    background: white;
   }
   .employee .loginContainer{
     padding-top: 0px !important;
@@ -242,7 +242,7 @@ background-color: white !important;
   .loginFormStyleEmployee .employeeForgotPassword
   {
     margin-top: -50% !important;
-    background-color: #ffffffb8 !important;
+    background-color: #ffffffeb !important;
     z-index: 2;
   }
   .psuedo-banner{
@@ -251,7 +251,7 @@ background-color: white !important;
   .banner-slogan{
     font-size: 14px;
   }
-  .loginFormStyleEmployee{
+  .loginFormStyleEmployee, .employeeForgotPassword{
     margin-top: -30% !important;
    
   }

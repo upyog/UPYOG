@@ -85,7 +85,7 @@ const EmployeeApp = ({
                 </div>
               <picture>
                 <source id="backgroung-login" media="(min-width: 950px)" srcset="https://i.postimg.cc/PrVjVmDf/Banner-Image-Desktop.png" style={{"position":"absolute","height":"100%","width":"100%"}} />
-                  <source media="(min-width: 300px)" srcset="https://i.postimg.cc/MpF64xnV/Banner-Background-for-Mobile-App.png" />
+                  <source media="(min-width: 250px)" srcset="https://i.postimg.cc/MpF64xnV/Banner-Background-for-Mobile-App.png" />
                     <img src="https://i.postimg.cc/PrVjVmDf/Banner-Image-Desktop.png" alt="imagealttext" style={{"position":"absolute","height":"100%","width":"100%"}}/>
                     </picture>
               {/* <img class="image" id="main-img" src="https://i.postimg.cc/PrVjVmDf/Banner-Image-Desktop.png" /> */}

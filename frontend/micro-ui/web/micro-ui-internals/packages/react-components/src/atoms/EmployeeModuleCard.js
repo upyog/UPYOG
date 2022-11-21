@@ -74,7 +74,7 @@ const EmployeeModuleCard = ({ Icon, moduleName, kpis = [], links = [], isCitizen
                 ))}
               </div>
             )}
-            <div className="links-wrapper" style={{ width: "100%", display: "flex", fontSize: "0.8rem", padding: "5px", paddingLeft: "10px" }}>
+            <div className="links-wrapper" style={{ width: "100%", display: "flex", fontSize: "0.6rem", padding: "5px", paddingLeft: "10px" }}>
               {links.map(({ count, label, link }, index) => (
                 <span className="link" key={index} style={{ paddingLeft: "5px", color: "#a1a5b7" }}>
                   {link ? <Link to={link}>{label} |</Link> : null}
