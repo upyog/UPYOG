@@ -8,7 +8,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-import org.hibernate.validator.constraints.SafeHtml;
+//import org.hibernate.validator.constraints.SafeHtml;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -116,7 +116,7 @@ public class FileDetail {
     private List<String> assignee = null;
 
     @Size(max = 128)
-    @SafeHtml
+//    @SafeHtml
     private String comment;
 
     @Valid

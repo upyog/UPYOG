@@ -18,15 +18,13 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class Main { // NOPMD
 
-    @Autowired
-    private Environment env;
-
     public static void main(String[] args) { // NOPMD
         SpringApplication.run(Main.class, args);
     }
 
+    @Autowired
     @Bean
-    public ApplicationRunner debugJdbcUrl() {
+    public ApplicationRunner debugJdbcUrl(Environment env) {
         return args -> {
             log.info("JDBC Url = {}", env.getProperty("spring.datasource.url"));
         };
