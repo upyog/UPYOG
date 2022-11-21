@@ -50,8 +50,8 @@ serviceMaps:
       - jsonPath: $.ApplicantPersonals.*.auditDetails.lastModifiedTime
       
     - query: >
-        INSERT INTO eg_fm_servicedetail(id, applicantpersonalid, serviceid, servicecode, businessservice, workflowcode, createdby, createdtime, lastmodifiedby, lastmodifiedtime) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO eg_fm_servicedetail(id, applicantpersonalid, serviceid, servicecode,  createdby, createdtime, lastmodifiedby, lastmodifiedtime) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
       basePath: ApplicantPersonals.*.serviceDetails
       jsonMaps:
       - jsonPath: $.ApplicantPersonals.*.serviceDetails.id
@@ -60,12 +60,8 @@ serviceMaps:
       
       - jsonPath: $.ApplicantPersonals.*.serviceDetails.serviceId 
       
-      - jsonPath: $.ApplicantPersonals.*.serviceDetails.serviceCode 
-      
-      - jsonPath: $.ApplicantPersonals.*.serviceDetails.businessService 
-      
-      - jsonPath: $.ApplicantPersonals.*.serviceDetails.workflowCode 
-      
+      - jsonPath: $.ApplicantPersonals.*.serviceDetails.serviceCode      
+    
       - jsonPath: $.ApplicantPersonals.*.auditDetails.createdBy
 
       - jsonPath: $.ApplicantPersonals.*.auditDetails.createdTime
@@ -165,8 +161,8 @@ serviceMaps:
      
       
     - query: >
-        INSERT INTO eg_fm_filedetail(id, tenantid, servicedetailsid, filenumber, filecode, filename, filearisingmode, filearisingdate, financialyear, applicationdate, workflowcode, action, filestatus, createdby, createddate, lastmodifiedby, lastmodifieddate)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?, ? )        
+        INSERT INTO eg_fm_filedetail(id, tenantid, servicedetailsid, filenumber, filecode, filename, filearisingmode, filearisingdate, financialyear, applicationdate, workflowcode, businessservice, action, filestatus, createdby, createddate, lastmodifiedby, lastmodifieddate)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?)        
       basePath: ApplicantPersonals.*.fileDetail
       jsonMaps:    
       - jsonPath: $.ApplicantPersonals.*.fileDetail.id         
@@ -190,6 +186,8 @@ serviceMaps:
       - jsonPath: $.ApplicantPersonals.*.fileDetail.applicationDate 
       
       - jsonPath: $.ApplicantPersonals.*.fileDetail.workflowCode 
+      
+      - jsonPath: $.ApplicantPersonals.*.fileDetail.businessService 
       
       - jsonPath: $.ApplicantPersonals.*.fileDetail.action 
       
