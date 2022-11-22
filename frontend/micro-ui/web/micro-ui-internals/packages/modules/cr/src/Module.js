@@ -9,6 +9,13 @@ import PublicPlace from "./pageComponents/birthComponents/PublicPlace";
 import BirthPlace from "./pageComponents/birthComponents/BirthPlace";
 import Address from "./pageComponents/birthComponents/Address";
 import AddressOutsideIndia from "./pageComponents/birthComponents/AddressOutsideIndia";
+import childDetails from "../src/pageComponents/birthComponents/ChildDetails";
+import FatherInformation from "../src/pageComponents/birthComponents/FatherInformation";
+import MotherInformation from "./pageComponents/birthComponents/MotherInformation";
+import PlaceofBirth from "./pageComponents/birthComponents/PlaceofBirth";
+import HospitalDetails from "./pageComponents/birthComponents/HospitalDetails";
+import OtherCountry from "./pageComponents/birthComponents/OtherCountry";
+import InstitutionDetails from "./pageComponents/birthComponents/InstitutionDetails";
 // import TLSelectGeolocation from "../src/pageComponents/TLSelectGeolocation";
 // import TLSelectAddress from "./pageComponents/TLSelectAddress";
 // import TLSelectPincode from "./pageComponents/TLSelectPincode";
@@ -116,6 +123,14 @@ const componentsToRegister = {
   BirthPlace,
   Address,
   AddressOutsideIndia,
+  FatherInformation,
+  MotherInformation,
+  PlaceofBirth,
+  HospitalDetails,
+  OtherCountry,
+  InstitutionDetails,
+
+
   // SelectLand,
   // SelectBuilding,
   // SelectBusinessCategory,
