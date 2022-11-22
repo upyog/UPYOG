@@ -74,7 +74,7 @@ curl --location --request POST 'https://dev.digit.org/egov-workflow-v2/egov-wf/b
               "nextState": "APPLIED",
               "roles": [                 
                 "TL_CEMP",
-                "FM_OPERATOR"
+                "CITIZEN"
               ]
             },
             {
@@ -83,7 +83,7 @@ curl --location --request POST 'https://dev.digit.org/egov-workflow-v2/egov-wf/b
               "nextState": "INITIATED",
               "roles": [               
                 "TL_CEMP",
-                "FM_OPERATOR"
+                "CITIZEN"
               ]
             }
           ]
@@ -101,7 +101,7 @@ curl --location --request POST 'https://dev.digit.org/egov-workflow-v2/egov-wf/b
             {
               "tenantId": "kl",
               "action": "FORWARD",
-              "nextState": "VERIFIED",
+              "nextState": "PENDINGFORAPPROVAL",
               "roles": [
                 "FM_VERIFIER"
               ]
@@ -121,8 +121,8 @@ curl --location --request POST 'https://dev.digit.org/egov-workflow-v2/egov-wf/b
         {
           "tenantId": "kl",
           "sla": 43200000,
-          "state": "PENDINGAPPROVAL",
-          "applicationStatus": "PENDINGAPPROVAL",
+          "state": "PENDINGFORAPPROVAL",
+          "applicationStatus": "PENDINGFORAPPROVAL",
           "docUploadRequired": false,
           "isStartState": false,
           "isTerminateState": false,
@@ -208,7 +208,8 @@ curl --location --request POST 'https://dev.digit.org/egov-workflow-v2/egov-wf/b
               "action": "RESUBMIT",
               "nextState": "INITIATE",
               "roles": [
-                "TL_CEMP"
+                "TL_CEMP",
+                "CITIZEN"
               ]
             },
             {              
