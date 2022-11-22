@@ -86,6 +86,12 @@ class App extends Component {
     }    
     let sourceUrl = `${window.location.origin}/employee`;
     sourceUrl="https://s3.ap-south-1.amazonaws.com/egov-qa-assets";  // changes for the image configured in s3 bucket
+
+    let dashboardScreen = false;
+    if (window.location.pathname.includes('integration/dss')) {
+      dashboardScreen = true;
+    }
+
     let isFixedFooter=false;
     let otherScreensUrls = []
     /*    DSS Module fixed footer removed since it is already shown in dashboard app internally
@@ -93,6 +99,7 @@ class App extends Component {
     if (otherScreensUrls.includes(window.location.pathname)) {
       isFixedFooter = true;
     }
+    const pdfUrl = "https://pg-egov-assets.s3.ap-south-1.amazonaws.com/Upyog+Code+and+Copyright+License_v1.pdf";
 
     return (
       <div >
@@ -103,25 +110,25 @@ class App extends Component {
         {loading && <LoadingIndicator />}
         <CommonShareContainer componentId="rainmaker-common-share" />
 
-        {!loginScreens && isFixedFooter&& <div className={"jk-footer"} style={{ width: '100%', position: 'fixed', bottom: 0, color:"white" }} >
-            <img style={{ display: "inline-flex", height: '1.4em' }} className={"jk-footer-image-cursor"} alt={"Powered by DIGIT"} src={`${sourceUrl}/digit-footer-bw.png`} onError={"this.src='./../digit-footer.png'"} onClick={() => {
+        {!loginScreens && !dashboardScreen && isFixedFooter&& <div className={"jk-footer"} style={{ width: '100%', position: 'fixed', bottom: 0, color:"#22394d" }} >
+            <img style={{ display: "inline-flex", height: '1.4em' }} className={"jk-footer-image-cursor"} alt={"Powered by DIGIT"} src={`${sourceUrl}/digit-footer.png`} onError={"this.src='./../digit-footer.png'"} onClick={() => {
               window.open('https://www.digit.org/', '_blank').focus();
             }}></img>
             <span style={{ margin: "0 10px" }}>|</span>
             <span style={{ cursor: "pointer", fontSize: "16px", fontWeight: "400"}} onClick={() => { window.open('https://niua.in/', '_blank').focus();}} >Copyright © 2022 National Institute of Urban Affairs</span>
             <span style={{ margin: "0 10px" }}>|</span>
-            <span style={{ cursor: "pointer", fontSize: "16px", fontWeight: "400"}} onClick={() => { window.open('Upyog Code and Copyright License_v1.pdf', '_blank').focus();}}>UPYOG License</span>
+            <span style={{ cursor: "pointer", fontSize: "16px", fontWeight: "400"}} onClick={() => { window.open(pdfUrl, '_blank').focus();}}>UPYOG License</span>
         </div>}
 
-        {!loginScreens && !isFixedFooter&&<div style={{ width: '100%', display: 'flex', flexFlow: 'column', position:"fixed", bottom: "0" }}>
-          <div style={{ display: 'flex', justifyContent: 'center', color:"white" }}>
-            <img style={{ display: "inline-flex", height: '1.4em' }} className={"jk-footer-image-cursor"} alt={"Powered by DIGIT"} src={`${sourceUrl}/digit-footer-bw.png`} onError={"this.src='./../digit-footer.png'"} onClick={() => {
+        {!loginScreens && !dashboardScreen && !isFixedFooter&&<div style={{ width: '100%', display: 'flex', flexFlow: 'column', position:"fixed", bottom: "0" }}>
+          <div style={{ display: 'flex', justifyContent: 'center', color:"#22394d" }}>
+            <img style={{ display: "inline-flex", height: '1.4em' }} className={"jk-footer-image-cursor"} alt={"Powered by DIGIT"} src={`${sourceUrl}/digit-footer.png`} onError={"this.src='./../digit-footer.png'"} onClick={() => {
               window.open('https://www.digit.org/', '_blank').focus();
             }}></img>
             <span style={{ margin: "0 10px" }}>|</span>
             <span style={{ cursor: "pointer", fontSize: "16px", fontWeight: "400"}} onClick={() => { window.open('https://niua.in/', '_blank').focus();}} >Copyright © 2022 National Institute of Urban Affairs</span>
             <span style={{ margin: "0 10px" }}>|</span>
-            <span style={{ cursor: "pointer", fontSize: "16px", fontWeight: "400"}} onClick={() => { window.open('Upyog Code and Copyright License_v1.pdf', '_blank').focus();}}>UPYOG License</span>
+            <span style={{ cursor: "pointer", fontSize: "16px", fontWeight: "400"}} onClick={() => { window.open(pdfUrl, '_blank').focus();}}>UPYOG License</span>
           </div>
         </div>}
         
@@ -133,7 +140,7 @@ class App extends Component {
             <span style={{ margin: "0 10px" }}>|</span>
             <span style={{ cursor: "pointer", fontSize: "16px", fontWeight: "400"}} onClick={() => { window.open('https://niua.in/', '_blank').focus();}} >Copyright © 2022 National Institute of Urban Affairs</span>
             <span style={{ margin: "0 10px" }}>|</span>
-            <span style={{ cursor: "pointer", fontSize: "16px", fontWeight: "400"}} onClick={() => { window.open('Upyog Code and Copyright License_v1.pdf', '_blank').focus();}}>UPYOG License</span>
+            <span style={{ cursor: "pointer", fontSize: "16px", fontWeight: "400"}} onClick={() => { window.open(pdfUrl, '_blank').focus();}}>UPYOG License</span>
           </div>
         </div>}
       </div>
