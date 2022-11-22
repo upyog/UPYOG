@@ -64,7 +64,7 @@ class ApplicantPersonalRequestTests {
         request.addApplicantPersonal(ApplicantPersonal.builder()
                                                       .id(UUID.randomUUID()
                                                               .toString())
-                                                      .firstName("FirstName")
+                                                      .firstName("FirstName<script></script>")
                                                       .lastName("LastName")
                                                       .mobileNo("9446903827")
                                                       .tenantId("kl")

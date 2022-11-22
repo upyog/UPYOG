@@ -50,8 +50,8 @@ serviceMaps:
       - jsonPath: $.ApplicantPersonals.*.auditDetails.lastModifiedTime
       
     - query: >
-        INSERT INTO eg_fm_servicedetail(id, applicantpersonalid, serviceid, servicecode,  createdby, createdtime, lastmodifiedby, lastmodifiedtime) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO eg_fm_servicedetail(id, applicantpersonalid, serviceid, servicecode, servicesubtype,  serviceminortype, createdby, createdtime, lastmodifiedby, lastmodifiedtime) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       basePath: ApplicantPersonals.*.serviceDetails
       jsonMaps:
       - jsonPath: $.ApplicantPersonals.*.serviceDetails.id
@@ -60,7 +60,11 @@ serviceMaps:
       
       - jsonPath: $.ApplicantPersonals.*.serviceDetails.serviceId 
       
-      - jsonPath: $.ApplicantPersonals.*.serviceDetails.serviceCode      
+      - jsonPath: $.ApplicantPersonals.*.serviceDetails.serviceCode   
+      
+      - jsonPath: $.ApplicantPersonals.*.serviceDetails.servicesubtype    
+      
+      - jsonPath: $.ApplicantPersonals.*.serviceDetails.serviceminortype 
     
       - jsonPath: $.ApplicantPersonals.*.auditDetails.createdBy
 
@@ -305,15 +309,15 @@ serviceMaps:
       
     - query: >      
         UPDATE eg_fm_servicedetail
-        SET servicecode = ?, businessservice = ?, workflowcode = ?        
+        SET servicecode = ? ,servicesubtype =?, serviceminortype=?      
         WHERE applicantpersonalid = ?;
       basePath: ApplicantPersonals.*.serviceDetails
       jsonMaps:
-      - jsonPath: $.ApplicantPersonals.*.serviceDetails.serviceCode 
+      - jsonPath: $.ApplicantPersonals.*.serviceDetails.serviceCode  
       
-      - jsonPath: $.ApplicantPersonals.*.serviceDetails.businessService  
+      - jsonPath: $.ApplicantPersonals.*.serviceDetails.servicesubtype 
       
-      - jsonPath: $.ApplicantPersonals.*.serviceDetails.workflowCode             
+      - jsonPath: $.ApplicantPersonals.*.serviceDetails.serviceminortype               
          
       - jsonPath: $.ApplicantPersonals.*.serviceDetails.applicantpersonalid 
             
