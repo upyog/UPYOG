@@ -46,17 +46,17 @@ const ChildDetails = ({ config, onSelect, userType, formData }) => {
     <header className="card-header" style={{fontSize:"35px"}}>Child Information</header>
     <div className="row">    
         <div className="col-md-12 col-lg-12" > 
-        <div className="col-md-5" > 
-            <hr className="aligncss"></hr>
-        </div>
-        <div className="col-md-2" > 
-        <h1 className="headingh1" >
-            <span> Registration Details</span>
-        </h1>
-        </div>
-        <div className="col-md-5" > 
-            <hr className="aligncss"></hr>
-        </div>
+            <div className="col-md-5" > 
+                <hr className="aligncss"></hr>
+            </div>
+            <div className="col-md-2" > 
+            <h1 className="headingh1" >
+                <span> Registration Details</span>
+            </h1>
+            </div>
+            <div className="col-md-5" > 
+                <hr className="aligncss"></hr>
+            </div>
         </div>        
     </div>
     <div className="row">

@@ -2,7 +2,7 @@ import { Header, CitizenHomeCard, CaseIcon, HomeLink } from "@egovernments/digit
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useRouteMatch } from "react-router-dom";
-import childDetails from "../src/pageComponents/birthComponents/childDetails";
+import ChildDetails from "../src/pageComponents/birthComponents/ChildDetails";
 // import TLSelectGeolocation from "../src/pageComponents/TLSelectGeolocation";
 // import TLSelectAddress from "./pageComponents/TLSelectAddress";
 // import TLSelectPincode from "./pageComponents/TLSelectPincode";
@@ -102,7 +102,7 @@ const componentsToRegister = {
   CRModule,
   CRLinks,
   CRCard,
-  childDetails,
+  ChildDetails,
   // SelectLand,
   // SelectBuilding,
   // SelectBusinessCategory,

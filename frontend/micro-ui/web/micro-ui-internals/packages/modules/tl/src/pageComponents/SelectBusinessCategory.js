@@ -18,8 +18,8 @@ const SelectBusinessCategory = ({ t, config, onSelect, userType, formData, }) =>
     cmbSector.push(ob);
     });
  const menu = [
-    { name: "MANUFACTORING SECTOR", code: "MANUFACTORING" },
-    { name: "SERVICE SECTOR", code: "SERVICE" },
+    { name: "Manufacturing Sector", code: "MANUFACTORING" },
+    { name: "Service Sector", code: "SERVICE" },
   ];
   const onSkip = () => onSelect();
 
@@ -80,31 +80,48 @@ const SelectBusinessCategory = ({ t, config, onSelect, userType, formData, }) =>
     <React.Fragment>
     {window.location.href.includes("/citizen") ? <Timeline /> : null}
     <FormStep t={t} config={config} onSelect={goNext} onSkip={onSkip} isDisabled={!setSector}>
-      
-      <CardLabel>{`${t("TL_LOCALIZATION_SECTOR")}`}</CardLabel>
-      <Dropdown
-        t={t}
-        optionKey="name"
-        isMandatory={config.isMandatory}
-        option={menu}
-        selected={setSector}
-        select={selectSector}
-        // disabled={isEdit}
-        {...(validation = { isRequired: true, title: t("TL_INVALID_SECTOR_NAME") })}
-      />
-     <CardLabel>{`${t("TL_LOCALIZATION_CAPITAL_AMOUNT")}`}</CardLabel>
-       <TextInput
-          t={t}
-          isMandatory={false}
-          type={"text"}
-          optionKey="i18nKey"
-          name="CapitalAmount"
-          value={CapitalAmount}
-          onChange={selectedsetCapitalAmount}
-          // onBlur={() => selectedsetCapitalAmount()}
-        //   disable={isEdit}
-          {...(validation = { pattern: "^[0-9 ]*$", isRequired: true, type: "text", title: t("TL_INVALID_CAPITAL_AMOUNT") })}
-        />
+    <div className="row">    
+          <div className="col-md-12" > 
+              <h1 className="headingh1" >
+                  <span style={{background:"#fff",padding:"0 10px" }}>{`${t("Business Category Details")}*`}</span>
+              </h1>
+          </div>        
+        </div>
+        <div className="row">
+          <div className="col-md-6" >
+            <CardLabel>{`${t("TL_LOCALIZATION_SECTOR")}`}</CardLabel>
+            <Dropdown
+              t={t}
+              optionKey="name"
+              isMandatory={config.isMandatory}
+              option={menu}
+              selected={setSector}
+              select={selectSector}
+              // disabled={isEdit}
+              {...(validation = { isRequired: true, title: t("TL_INVALID_SECTOR_NAME") })}
+            />
+          </div>
+          <div className="col-md-6" >
+          <CardLabel>{`${t("TL_LOCALIZATION_CAPITAL_AMOUNT")}`}</CardLabel>
+          <TextInput
+              t={t}
+              isMandatory={false}
+              type={"text"}
+              optionKey="i18nKey"
+              name="CapitalAmount"
+              value={CapitalAmount}
+              onChange={selectedsetCapitalAmount}
+              // onBlur={() => selectedsetCapitalAmount()}
+            //   disable={isEdit}
+              {...(validation = { pattern: "^[0-9 ]*$", isRequired: true, type: "text", title: t("TL_INVALID_CAPITAL_AMOUNT") })}
+            />
+          </div>
+        </div>    
+        <div className="row">
+          <div className="col-md-12" >
+              <CardLabel>{`${t("I hereby declare that my business activity is Service/Production  (Pick data from inputs) with capital investment (Pick data from inputs) defined as Micro/Mini/Small/Medium/Large as per IFTE &OS Rules 2020")}`}</CardLabel>
+          </div> 
+        </div> 
     </FormStep>
     </React.Fragment>
   );
