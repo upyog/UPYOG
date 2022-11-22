@@ -582,3 +582,10 @@ min-height: calc(100vh - 8em);
   padding: 15px;
   font-size: 1.2rem
 }
+
+@media screen and (max-width: 768px) {
+  .citizen .inboxButton{
+    font-size: 1rem;
+  }
+}
+
