@@ -14,6 +14,8 @@
         <!-- <postgresql.version>42.2.2.jre7</postgresql.version> -->
         <postgresql.version>42.5.0</postgresql.version>
         <lombok.version>1.18.24</lombok.version>
+        <p6spy.version>3.9.1</p6spy.version>
+        <jsoup.version>1.15.3</jsoup.version>
     </properties>
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -45,7 +47,11 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-jdbc</artifactId>
         </dependency>
-        <!-- <dependency> <groupId>org.flywaydb</groupId> <artifactId>flyway-core</artifactId> </dependency> -->
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
@@ -67,11 +73,8 @@
             <artifactId>services-common</artifactId>
             <version>1.0.1-SNAPSHOT</version>
         </dependency>
-<!--         <dependency>
-            <groupId>org.egov.services</groupId>
-            <artifactId>digit-models</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-        </dependency> -->
+        <!-- <dependency> <groupId>org.egov.services</groupId> <artifactId>digit-models</artifactId> 
+            <version>1.0.0-SNAPSHOT</version> </dependency> -->
         <dependency>
             <groupId>org.egov</groupId>
             <artifactId>mdms-client</artifactId>
@@ -104,7 +107,17 @@
             <scope>runtime</scope>
             <optional>true</optional>
         </dependency>
+        <dependency>
+            <groupId>p6spy</groupId>
+            <artifactId>p6spy</artifactId>
+            <version>${p6spy.version}</version>
+        </dependency>
         <!-- development only : end -->
+        <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+            <version>${jsoup.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-ui</artifactId>

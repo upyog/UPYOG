@@ -10,9 +10,9 @@ interface BaseRowMapper {
     default AuditDetails getAuditDetails(ResultSet rs) throws SQLException {
         return AuditDetails.builder()
                            .createdBy(rs.getString("createdby"))
-                           .createdTime(Long.valueOf(rs.getLong("createdat")))
+                           .createdTime(Long.valueOf(rs.getLong("createdtime")))
                            .lastModifiedBy(rs.getString("lastmodifiedby"))
-                           .lastModifiedTime(Long.valueOf(rs.getLong("lastmodifiedat")))
+                           .lastModifiedTime(Long.valueOf(rs.getLong("lastmodifiedtime")))
                            .build();
     }
 

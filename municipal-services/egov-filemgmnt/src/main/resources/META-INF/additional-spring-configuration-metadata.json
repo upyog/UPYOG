@@ -7,12 +7,27 @@
     {
       "name": "persister.save.applicantpersonal.topic",
       "type": "java.lang.String",
-      "description": "File management applicant personal save topic"
+      "description": "Applicant personal save topic"
     },
     {
       "name": "persister.update.applicantpersonal.topic",
       "type": "java.lang.String",
-      "description": "File management applicant personal update topic"
+      "description": "Applicant personal update topic"
+    },
+    {
+      "name": "persister.save.servicedetails.topic",
+      "type": "java.lang.String",
+      "description": "Service details save topic"
+    },
+    {
+      "name": "persister.save.communicationfile.topic",
+      "type": "java.lang.String",
+      "description": "Communication file save topic"
+    },
+        {
+      "name": "persister.update.communicationfile.topic",
+      "type": "java.lang.String",
+      "description": "Communication file update topic"
     },
     {
       "name": "server.context-path",
@@ -47,6 +62,16 @@
       "type": "java.lang.String"
     },
     {
+      "name": "egov.idgen.fm.file-code.name",
+      "type": "java.lang.String",
+      "description": "A description for 'egov.idgen.fm.fileCode.name'"
+    },
+    {
+      "name": "egov.idgen.fm.file-code.format",
+      "type": "java.lang.String",
+      "description": "A description for 'egov.idgen.fm.fileCode.format'"
+    },
+    {
       "name": "egov.mdms.host",
       "type": "java.lang.String"
     },
@@ -69,6 +94,16 @@
     {
       "name": "egov.url.shortner.endpoint",
       "type": "java.lang.String"
+    },
+    {
+      "name": "citizen.allowed.search.params",
+      "type": "java.lang.String",
+      "description": "A description for 'citizen.allowed.search.params'"
+    },
+    {
+      "name": "employee.allowed.search.params",
+      "type": "java.lang.String",
+      "description": "A description for 'employee.allowed.search.params'"
     }
   ],
   "hints": [

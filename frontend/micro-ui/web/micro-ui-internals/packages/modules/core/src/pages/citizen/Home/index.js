@@ -61,10 +61,15 @@ const Home = () => {
         Icon: <OBPSIcon />,
         onClick: () => history.push("/citizen/birth-common/"),
       },
-          {
+      {
         name: t("ACTION_TEST_DEATH"),
         Icon: <DropIcon />,
         onClick: () => history.push("/citizen/death-citizen/home"),
+      },
+      {
+        name: t("File Management"),
+        Icon: <CaseIcon className="fill-path-primary-main" />,
+        onClick: () => history.push("/digit-ui/citizen/dfm-home"),
       },
     ],
     styles: { display: "flex", flexWrap: "wrap", justifyContent: "flex-start", width: "100%" },
