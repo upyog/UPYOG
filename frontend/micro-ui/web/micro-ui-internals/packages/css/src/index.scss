@@ -104,7 +104,9 @@
 .display-none{
   display: none;
 }
-
+.primary-label-btn{
+  margin: 10px auto 0px !important;
+}
 .p-unset{
   padding: unset !important;
 }
@@ -178,7 +180,7 @@
 }
 
 .clear-search-label {
-  color: #f47738;
+  color: #a82227;
   cursor: pointer;
 }
 
@@ -191,7 +193,7 @@
   @apply flex justify-between items-center;
 
   .download-button {
-    color: #f47738;
+    color: a82227;
     margin-left: 8px;
   }
 }
@@ -200,13 +202,13 @@
   @apply flex mb-sm;
 
   .download-button {
-    color: #f47738;
+    color: #a82227;
     margin-left: 8px;
   }
 }
 
 .check-page-link-button {
-  color: #f47738 !important;
+  color: #a82227 !important;
 }
 
 .pt-application-download-btn {
@@ -229,10 +231,10 @@
   gap: 10px;
 
   svg {
-    fill: #f47738;
+    fill: #a82227;
   }
 
-  color: #f47738;
+  color: #5a1166;
 
   cursor: pointer;
   font-weight: 500;
@@ -542,3 +544,48 @@ input[type="number"] {
 .employee-app-wrapper{
 min-height: calc(100vh - 8em);
 }
+.submit-bar header{
+  line-height: 2.0rem !important;
+}
+.logo-removeBorderRadiusLogo svg{
+  width: 50px;
+  height: 60px;
+}
+
+.icon-banner-employee {
+    background-color:#d7aefc !important;
+}
+.icon-banner-employee svg{
+  background-color:#bf2f3b !important;
+  width: 40px;
+  height: 40px;
+}
+.inboxButton{
+    border: none;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    margin: 4px 2px;
+    cursor: pointer;
+    height: fit-content;
+    border-radius: 5px;
+    font-family: sans-serif;
+    font-weight: 700;
+}
+.employee .inboxButton{
+  padding: 5px 15px;
+  background: #ba2b36
+}
+.citizen .inboxButton{
+  padding: 15px;
+  font-size: 1.2rem
+}
+
+@media screen and (max-width: 768px) {
+  .citizen .inboxButton{
+    font-size: 1rem;
+  }
+}
+

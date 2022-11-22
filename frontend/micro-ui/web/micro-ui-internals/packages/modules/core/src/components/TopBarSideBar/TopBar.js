@@ -98,7 +98,7 @@ const TopBar = ({
   return (
     <div className="topbar">
       {mobileView ? <Hamburger handleClick={toggleSidebar} color="#9E9E9E" /> : null}
-      <img className="city" src={loggedin ? cityDetails?.logoId : stateInfo?.statelogo} />
+      <img className="city" src="https://i.postimg.cc/Y9Xbpp4x/UPYOG-Logo-removebg-preview.png" />
       <span style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
         {loggedin &&
           (cityDetails?.city?.ulbGrade ? (
@@ -136,13 +136,13 @@ const TopBar = ({
                     profilePic == null ? (
                       <TextToImg name={userDetails?.info?.name || userDetails?.info?.userInfo?.name || "Employee"} />
                     ) : (
-                      <img src={profilePic} style={{ height: "48px", width: "48px", borderRadius: "50%" }} />
+                      <img src="https://i.postimg.cc/Y9Xbpp4x/UPYOG-Logo-removebg-preview.png" style={{ height: "48px", width: "48px", borderRadius: "50%" }} />
                     )
                   }
                 />
               </div>
             )}
-            <img className="state" src={logoUrl} />
+            <img className="state" src="https://i.postimg.cc/Y9Xbpp4x/UPYOG-Logo-removebg-preview.png" />
           </div>
         )}
       </span>
