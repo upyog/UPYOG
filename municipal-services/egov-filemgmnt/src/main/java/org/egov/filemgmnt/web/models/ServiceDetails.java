@@ -49,4 +49,15 @@ public class ServiceDetails {
     @JsonProperty("serviceCode")
     private String serviceCode;
 
+    @Schema(type = "string", description = "Service Sub Type")
+    @Size(max = 64)
+    @NotBlank(message = "Service Sub Type is required")
+    @JsonProperty("serviceSubType")
+    private String serviceSubType;
+
+    @Schema(type = "string", description = "Service Minor Type")
+    @Size(max = 64)
+    @NotBlank(message = "Service Minor Type is required")
+    @JsonProperty("serviceMinorType")
+    private String serviceMinorType;
 }

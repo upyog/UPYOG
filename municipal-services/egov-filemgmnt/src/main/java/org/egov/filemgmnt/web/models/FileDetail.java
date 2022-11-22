@@ -8,6 +8,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import org.egov.filemgmnt.constraints.Html;
+
 //import org.hibernate.validator.constraints.SafeHtml;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -40,7 +42,7 @@ public class FileDetail {
     @JsonProperty("tenantId")
     private String tenantId;
 
-    @Schema(type = "string", description = "Foreign key servicedetails")
+    @Schema(type = "string", description = "Foreign key service details")
     @Size(max = 64)
     @JsonProperty("serviceDetailsId")
     private String serviceDetailsId;
@@ -68,13 +70,13 @@ public class FileDetail {
     @JsonProperty("fileArisingMode")
     private String fileArisingMode;
 
-    @Schema(type = "int", format = "int64", description = "fileArisingDate")
+    @Schema(type = "int", format = "int64", description = "File Arising Date")
     @Size(max = 64)
     // @NotNull
     @JsonProperty("fileArisingDate")
     private String fileArisingDate;
 
-    @Schema(type = "string", description = "FinancialYear")
+    @Schema(type = "string", description = "Financial Year")
     @Size(min = 4, max = 4, message = "Invalid financial year")
     @Pattern(regexp = "^[1-9][0-9]{3}$", message = "Invalid financial year")
     @NotNull(message = "Financial year is required")
@@ -98,7 +100,7 @@ public class FileDetail {
     @JsonProperty("action")
     private String action;
 
-    @Schema(type = "string", description = "status of a file")
+    @Schema(type = "string", description = "Status of  file")
     @Size(max = 64)
     @NotNull
     @JsonProperty("fileStatus")
@@ -115,7 +117,9 @@ public class FileDetail {
     @JsonProperty("assignee")
     private List<String> assignee = null;
 
+    @Schema(type = "string", description = "comments")
     @Size(max = 128)
+    @Html
 //    @SafeHtml
     private String comment;
 
