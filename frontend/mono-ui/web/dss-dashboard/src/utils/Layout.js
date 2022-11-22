@@ -28,6 +28,8 @@ class Layout extends Component {
         const { classes } = this.props;
         let sourceUrl = `${window.location.origin}/citizen`;
             sourceUrl="https://s3.ap-south-1.amazonaws.com/egov-qa-assets";
+
+        const pdfUrl = "https://pg-egov-assets.s3.ap-south-1.amazonaws.com/Upyog+Code+and+Copyright+License_v1.pdf"
         return (
             <div className={`App ${classes.root}`}>
                 {/* <div>
@@ -48,15 +50,16 @@ class Layout extends Component {
                         <AppRouter />
                     </main>
                 </div>
-                <div className="employee-home-footer">
-                    <img
-                        alt="Powered by DIGIT"
-                        src={`${sourceUrl}/digit-footer.png`}
-                        onError={"this.src='./../digit-footer.png'"}
-                        style={{ height: "1.1em", cursor: "pointer" }}
-                        onClick={() => {
+                <div style={{ width: '100%', bottom: 0 }}>
+                    <div style={{ display: 'flex', justifyContent: 'center', color:"#22394d" }}>
+                        <img style={{ cursor: "pointer", display: "inline-flex", height: '1.4em' }} alt={"Powered by DIGIT"} src={`${sourceUrl}/digit-footer.png`} onError={"this.src='./../digit-footer.png'"} onClick={() => {
                         window.open('https://www.digit.org/', '_blank').focus();
-                        }}/>
+                        }}></img>
+                        <span style={{ margin: "0 10px" }}>|</span>
+                        <span style={{ cursor: "pointer", fontSize: "16px", fontWeight: "400"}} onClick={() => { window.open('https://niua.in/', '_blank').focus();}} >Copyright © 2022 National Institute of Urban Affairs</span>
+                        <span style={{ margin: "0 10px" }}>|</span>
+                        <span style={{ cursor: "pointer", fontSize: "16px", fontWeight: "400"}} onClick={() => { window.open(pdfUrl, '_blank').focus();}}>UPYOG License</span>
+                    </div>
                 </div>
             </div>
         )

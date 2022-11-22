@@ -1,14 +1,17 @@
 package org.egov.web.notification.sms.service.impl;
 
-
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.security.KeyManagementException;
 import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 
 import javax.annotation.PostConstruct;
@@ -18,7 +21,6 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
-import org.apache.commons.codec.binary.Hex;
 import org.egov.web.notification.sms.config.SMSProperties;
 import org.egov.web.notification.sms.models.Sms;
 import org.egov.web.notification.sms.service.BaseSMSService;
@@ -29,150 +31,157 @@ import org.springframework.util.StringUtils;
 
 import lombok.extern.slf4j.Slf4j;
 
-
 @Service
 @Slf4j
 @ConditionalOnProperty(value = "sms.provider.class", matchIfMissing = true, havingValue = "NIC")
 public class NICSMSServiceImpl extends BaseSMSService {
 
+	@Autowired
+	private SMSProperties smsProperties;
 
+	private SSLContext sslContext;
 
-    @Autowired
-    private SMSProperties smsProperties;
+	@PostConstruct
+	private void postConstruct() {
+		log.info("postConstruct() start");
+		try {
+			sslContext = SSLContext.getInstance("TLSv1.2");
+			if (smsProperties.isVerifyCertificate()) {
+				log.info("checking certificate");
+				/*
+				 * KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType()); //File
+				 * file = new File(System.getenv("JAVA_HOME")+"/lib/security/cacerts"); File
+				 * file = ResourceUtils.getFile("classpath:smsgwsmsgovin.cer"); InputStream is =
+				 * new FileInputStream(file); trustStore.load(is, "changeit".toCharArray());
+				 * TrustManagerFactory trustFactory = TrustManagerFactory
+				 * .getInstance(TrustManagerFactory.getDefaultAlgorithm());
+				 * trustFactory.init(trustStore);
+				 * 
+				 * TrustManager[] trustManagers = trustFactory.getTrustManagers();
+				 * sslContext.init(null, trustManagers, null);
+				 */
 
-    private SSLContext sslContext;
+				try (InputStream is = getClass().getClassLoader().getResourceAsStream("smsgwsmsgovin.cer")) {
+					CertificateFactory certFactory = CertificateFactory.getInstance("X.509");
+					X509Certificate caCert = (X509Certificate) certFactory.generateCertificate(is);
 
-    @PostConstruct
-    private void postConstruct() {
-        log.info("postConstruct() start");
-        try
-        {
-            sslContext = SSLContext.getInstance("TLSv1.2");
-            if(smsProperties.isVerifyCertificate()) {
-                log.info("checking certificate");
-                KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
-                //File file = new File(System.getenv("JAVA_HOME")+"/lib/security/cacerts");
-                File file = new File(getClass().getClassLoader().getResource("smsgwsmsgovin-Mar22.cer").getFile());
-                InputStream is = new FileInputStream(file);
-                trustStore.load(is, "changeit".toCharArray());
-                TrustManagerFactory trustFactory = TrustManagerFactory
-                        .getInstance(TrustManagerFactory.getDefaultAlgorithm());
-                trustFactory.init(trustStore);
+					KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
+					trustStore.load(null);
+					trustStore.setCertificateEntry("caCert", caCert);
 
-                TrustManager[] trustManagers = trustFactory.getTrustManagers();
-                sslContext.init(null, trustManagers, null);
-            }
-            else {
-                log.info("not checking certificate");
-                TrustManager tm = new X509TrustManager() {
-                    @Override
-                    public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType)
-                            throws java.security.cert.CertificateException {
-                    }
+					TrustManagerFactory trustFactory = TrustManagerFactory
+							.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+					trustFactory.init(trustStore);
 
-                    @Override
-                    public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType)
-                            throws java.security.cert.CertificateException {
-                    }
+					TrustManager[] trustManagers = trustFactory.getTrustManagers();
+					sslContext.init(null, trustManagers, null);
+				} catch (KeyManagementException | IllegalStateException | CertificateException | KeyStoreException | IOException e) {
+					log.error("Not able to load SMS certificate from the specified path {}", e.getMessage());
+				}
+			} else {
+				log.info("not checking certificate");
+				TrustManager tm = new X509TrustManager() {
+					@Override
+					public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType)
+							throws java.security.cert.CertificateException {
+					}
 
-                    @Override
-                    public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-                        return null;
-                    }
-                };
-                sslContext.init(null, new TrustManager[] { tm }, null);
-            }
-            SSLContext.setDefault(sslContext);
+					@Override
+					public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType)
+							throws java.security.cert.CertificateException {
+					}
 
-        }catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+					@Override
+					public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+						return null;
+					}
+				};
+				sslContext.init(null, new TrustManager[] { tm }, null);
+			}
+			SSLContext.setDefault(sslContext);
 
-    protected void submitToExternalSmsService(Sms sms) {
-        log.info("submitToExternalSmsService() start");
-        try {
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
-            String final_data="";
-            final_data+="username="+ smsProperties.getUsername();
-            final_data+="&pin="+ smsProperties.getPassword();
+	protected void submitToExternalSmsService(Sms sms) {
+		log.info("submitToExternalSmsService() start");
+		try {
 
-            String smsBody = sms.getMessage();
+			String final_data = "";
+			final_data += "username=" + smsProperties.getUsername();
+			final_data += "&pin=" + smsProperties.getPassword();
 
-            if(smsBody.split("#").length > 1) {
-                String templateId = smsBody.split("#")[1];
+			String smsBody = sms.getMessage();
 
-                sms.setTemplateId(templateId);
-                smsBody = smsBody.split("#")[0];
+			if (smsBody.split("#").length > 1) {
+				String templateId = smsBody.split("#")[1];
 
-            }else if(StringUtils.isEmpty(sms.getTemplateId())){
-                log.info("No template Id, Message Not sent"+smsBody);
-                return;
-            }
+				sms.setTemplateId(templateId);
+				smsBody = smsBody.split("#")[0];
 
-            String message= "" + smsBody ;
-            message=URLEncoder.encode(message,"UTF-8");
+			} else if (StringUtils.isEmpty(sms.getTemplateId())) {
+				log.info("No template Id, Message Not sent" + smsBody);
+				return;
+			}
 
+			String message = "" + smsBody;
+			message = URLEncoder.encode(message, "UTF-8");
 
-            final_data+="&message="+ message;
-            final_data+="&mnumber=91"+ sms.getMobileNumber();
-            final_data+="&signature="+ smsProperties.getSenderid();
-            final_data+="&dlt_entity_id="+ smsProperties.getSmsEntityId();
-            if(null == sms.getTemplateId())
-            {
-                final_data+="&dlt_template_id="+smsProperties.getSmsDefaultTmplid();
-            }
-            else
-                final_data+="&dlt_template_id="+sms.getTemplateId();
+			final_data += "&message=" + message;
+			final_data += "&mnumber=91" + sms.getMobileNumber();
+			final_data += "&signature=" + smsProperties.getSenderid();
+			final_data += "&dlt_entity_id=" + smsProperties.getSmsEntityId();
+			if (null == sms.getTemplateId()) {
+				final_data += "&dlt_template_id=" + smsProperties.getSmsDefaultTmplid();
+			} else
+				final_data += "&dlt_template_id=" + sms.getTemplateId();
 
-            if(smsProperties.isSmsEnabled()) {
-                HttpsURLConnection conn = (HttpsURLConnection) new URL(smsProperties.getUrl()+"?"+final_data).openConnection();
-                conn.setSSLSocketFactory(sslContext.getSocketFactory());
-                conn.setDoOutput(true);
-                conn.setRequestMethod("GET");
-                final BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                final StringBuffer stringBuffer = new StringBuffer();
-                String line;
-                while ((line = rd.readLine()) != null) {
-                    stringBuffer.append(line);
-                }
-                log.info("conn: "+conn.toString());
-                if(smsProperties.isDebugMsggateway())
-                {
-                    log.info("sms api url : "+ smsProperties.getUrl() );
-                    log.info("sms response: " + stringBuffer.toString());
-                    log.info("sms data: " + final_data);
-                }
-                rd.close();
-                conn.disconnect();
-            }
-            else {
-                log.info("SMS Data: "+final_data);
-            }
-        }
-        catch(Exception e) {
-            e.printStackTrace();
-            log.error("Error occurred while sending SMS to : " + sms.getMobileNumber(), e);
-        }
-    }
+			if (smsProperties.isSmsEnabled()) {
+				HttpsURLConnection conn = (HttpsURLConnection) new URL(smsProperties.getUrl() + "?" + final_data)
+						.openConnection();
+				conn.setSSLSocketFactory(sslContext.getSocketFactory());
+				conn.setDoOutput(true);
+                conn.setRequestMethod("POST");
+                conn.setRequestProperty("Content-Type", "application/json");
+                conn.connect();
+				final BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+				final StringBuffer stringBuffer = new StringBuffer();
+				String line;
+				while ((line = rd.readLine()) != null) {
+					stringBuffer.append(line);
+				}
+				log.info("conn: " + conn.toString());
+				if (smsProperties.isDebugMsggateway()) {
+					log.info("sms api url : " + smsProperties.getUrl());
+					log.info("sms response: " + stringBuffer.toString());
+					log.info("sms data: " + final_data);
+				}
+				rd.close();
+				conn.disconnect();
+			} else {
+				log.info("SMS Data: " + final_data);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.error("Error occurred while sending SMS to : " + sms.getMobileNumber(), e);
+		}
+	}
 
-    private boolean textIsInEnglish(String text) {
-        ArrayList<Character.UnicodeBlock> english = new ArrayList<>();
-        english.add(Character.UnicodeBlock.BASIC_LATIN);
-        english.add(Character.UnicodeBlock.LATIN_1_SUPPLEMENT);
-        english.add(Character.UnicodeBlock.LATIN_EXTENDED_A);
-        english.add(Character.UnicodeBlock.GENERAL_PUNCTUATION);
-        for (char currentChar : text.toCharArray()) {
-            Character.UnicodeBlock unicodeBlock = Character.UnicodeBlock.of(currentChar);
-            if (!english.contains(unicodeBlock)){
-                return false;
-            }
-        }
-        return true;
-    }
-
-
-
-
+	private boolean textIsInEnglish(String text) {
+		ArrayList<Character.UnicodeBlock> english = new ArrayList<>();
+		english.add(Character.UnicodeBlock.BASIC_LATIN);
+		english.add(Character.UnicodeBlock.LATIN_1_SUPPLEMENT);
+		english.add(Character.UnicodeBlock.LATIN_EXTENDED_A);
+		english.add(Character.UnicodeBlock.GENERAL_PUNCTUATION);
+		for (char currentChar : text.toCharArray()) {
+			Character.UnicodeBlock unicodeBlock = Character.UnicodeBlock.of(currentChar);
+			if (!english.contains(unicodeBlock)) {
+				return false;
+			}
+		}
+		return true;
+	}
 
 }
