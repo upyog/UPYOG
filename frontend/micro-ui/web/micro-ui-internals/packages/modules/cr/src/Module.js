@@ -3,6 +3,12 @@ import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useRouteMatch } from "react-router-dom";
 import childDetails from "../src/pageComponents/birthComponents/childDetails";
+import StatisticalInformation from "./pageComponents/birthComponents/StatisticalInformation";
+import BirthVehicle from "./pageComponents/birthComponents/BirthVehicle";
+import PublicPlace from "./pageComponents/birthComponents/PublicPlace";
+import BirthPlace from "./pageComponents/birthComponents/BirthPlace";
+import Address from "./pageComponents/birthComponents/Address";
+import AddressOutsideIndia from "./pageComponents/birthComponents/AddressOutsideIndia";
 // import TLSelectGeolocation from "../src/pageComponents/TLSelectGeolocation";
 // import TLSelectAddress from "./pageComponents/TLSelectAddress";
 // import TLSelectPincode from "./pageComponents/TLSelectPincode";
@@ -56,6 +62,7 @@ import Response from "./pages/Response";
 // import CitizenApp from "./pages/citizen";
 import EmployeeApp from "./pages/employee";
 
+
 export const CRModule = ({ stateCode, userType, tenants }) => {
   const { path, url } = useRouteMatch();
 
@@ -103,6 +110,12 @@ const componentsToRegister = {
   CRLinks,
   CRCard,
   childDetails,
+  StatisticalInformation,
+  BirthVehicle,
+  PublicPlace,
+  BirthPlace,
+  Address,
+  AddressOutsideIndia,
   // SelectLand,
   // SelectBuilding,
   // SelectBusinessCategory,
