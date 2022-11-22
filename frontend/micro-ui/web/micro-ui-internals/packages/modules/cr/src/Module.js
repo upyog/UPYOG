@@ -2,7 +2,13 @@ import { Header, CitizenHomeCard, CaseIcon, HomeLink } from "@egovernments/digit
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useRouteMatch } from "react-router-dom";
-import childDetails from "../src/pageComponents/birthComponents/childDetails";
+import childDetails from "../src/pageComponents/birthComponents/ChildDetails";
+import FatherInformation from "../src/pageComponents/birthComponents/FatherInformation";
+import MotherInformation from "./pageComponents/birthComponents/MotherInformation";
+import PlaceofBirth from "./pageComponents/birthComponents/PlaceofBirth";
+import HospitalDetails from "./pageComponents/birthComponents/HospitalDetails";
+import OtherCountry from "./pageComponents/birthComponents/OtherCountry";
+import InstitutionDetails from "./pageComponents/birthComponents/InstitutionDetails";
 // import TLSelectGeolocation from "../src/pageComponents/TLSelectGeolocation";
 // import TLSelectAddress from "./pageComponents/TLSelectAddress";
 // import TLSelectPincode from "./pageComponents/TLSelectPincode";
@@ -103,6 +109,14 @@ const componentsToRegister = {
   CRLinks,
   CRCard,
   childDetails,
+  FatherInformation,
+  MotherInformation,
+  PlaceofBirth,
+  HospitalDetails,
+  OtherCountry,
+  InstitutionDetails,
+
+
   // SelectLand,
   // SelectBuilding,
   // SelectBusinessCategory,
