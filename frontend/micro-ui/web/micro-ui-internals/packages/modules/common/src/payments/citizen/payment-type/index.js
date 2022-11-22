@@ -107,7 +107,7 @@ export const SelectPaymentType = (props) => {
             method: "POST",
             target: "_top",
           });
-
+          
           const orderForNDSLPaymentSite = [
             "checksum",
             "messageType",
@@ -129,18 +129,18 @@ export const SelectPaymentType = (props) => {
 
           // override default date for UPYOG Custom pay
           gatewayParam["requestDateTime"] = gatewayParam["requestDateTime"]?.split(new Date().getFullYear()).join(`${new Date().getFullYear()} `);
-
+        
           gatewayParam["successUrl"]= redirectUrl?.split("successUrl=")?.[1]?.split("eg_pg_txnid=")?.[0]+'eg_pg_txnid=' +gatewayParam?.orderId;
           gatewayParam["failUrl"]= redirectUrl?.split("failUrl=")?.[1]?.split("eg_pg_txnid=")?.[0]+'eg_pg_txnid=' +gatewayParam?.orderId;
           // gatewayParam["successUrl"]= data?.Transaction?.callbackUrl;
           // gatewayParam["failUrl"]= data?.Transaction?.callbackUrl;
-
+          
           // var formdata = new FormData();
-
+          
           for (var key of orderForNDSLPaymentSite) {
-
+           
             // formdata.append(key,gatewayParam[key]);
-
+           
             newForm.append(
               $("<input>", {
                 name: key,
@@ -152,7 +152,7 @@ export const SelectPaymentType = (props) => {
           $(document.body).append(newForm);
           newForm.submit();
 
-
+        
           // makePayment(gatewayParam.txURL,formdata);
 
         } catch (e) {
