@@ -26,7 +26,7 @@ const SelectCommencementDate = ({ t, config, onSelect, userType, formData }) => 
         <div className="row">    
           <div className="col-md-12" > 
               <h1 className="headingh1" >
-                  <span style={{background:"#fff",padding:"0 10px" }}>{`${t("Declaration Details")}*`}</span>
+                  <span style={{background:"#fff",padding:"0 10px" }}>{`${t("TL_LICENSE_DECLARATION")}*`}</span>
               </h1>
           </div>        
         </div>
@@ -36,7 +36,7 @@ const SelectCommencementDate = ({ t, config, onSelect, userType, formData }) => 
             <DatePicker date={CommencementDate} name="CommencementDate" onChange={selectCommencementDate} disabled={isEdit} />
           </div>
           <div className="col-md-6" >
-            <CardLabel>{`${t("TL_OWNER_AADHAR_NO")}`}</CardLabel>
+            <CardLabel>{`${t("TL_LICENSE_PERIOD")}`}</CardLabel>
             <TextInput
                 t={t}
                 isMandatory={false}
@@ -50,24 +50,31 @@ const SelectCommencementDate = ({ t, config, onSelect, userType, formData }) => 
             />
           </div>
         </div>
+        <div className="row">    
+          <div className="col-md-12" > 
+              <h1 className="headingh1" >
+                  <span style={{background:"#fff",padding:"0 10px" }}>{`${t("TL_LICENSE_DECLARATION_FINAL")}*`}</span>
+              </h1>
+          </div>        
+        </div>
         <div className="row">
           <div className="col-md-12" >
-              <CardLabel>{`${t("The name board showing place will be displayed in English and in the local language")}`}</CardLabel>
+              <CardLabel>{`${t("TL_LICENSE_DECLARATION_MSG_ONE")}`}</CardLabel>
           </div> 
         </div>
         <div className="row">
           <div className="col-md-12" >
-              <CardLabel>{`${t("Affidavit of compliance with the provisions of The Cigarettes and other Tobacco products (prohibition of Advertisement And Regulation of Trade, commerce, production, supply and distribution) 2003/")}`}</CardLabel>
+              <CardLabel>{`${t("TL_LICENSE_DECLARATION_MSG_TWO")}`}</CardLabel>
           </div> 
         </div>
         <div className="row">
           <div className="col-md-12" >
-              <CardLabel>{`${t("If information furnished in the application or the document attached is found incorrect, my application can be rejected, or the license can be terminated/")}`}</CardLabel>
+              <CardLabel>{`${t("TL_LICENSE_DECLARATION_MSG_THREE")}`}</CardLabel>
           </div> 
         </div>
         <div className="row">
           <div className="col-md-12" >
-              <CardLabel>{`${t("Self  Declaration on adhering to Waste Management Rules 2016")}`}</CardLabel>
+              <CardLabel>{`${t("TL_LICENSE_DECLARATION_MSG_FOUR")}`}</CardLabel>
           </div> 
         </div>
     </FormStep>

@@ -157,7 +157,7 @@ const SelectStructureType = ({ t, config, onSelect, userType, formData }) => {
     <div className="row">    
           <div className="col-md-12" > 
               <h1 className="headingh1" >
-                  <span style={{background:"#fff",padding:"0 10px" }}>{`${t("Place and Structure")}*`}</span>
+                  <span style={{background:"#fff",padding:"0 10px" }}>{`${t("TL_PLACE_HEADER_MSG")}*`}</span>
               </h1>
           </div>        
         </div>
@@ -191,7 +191,7 @@ const SelectStructureType = ({ t, config, onSelect, userType, formData }) => {
         <div>                 
           <div className="row">
             <div className="col-md-12" >
-              <CardLabel>{`${t("Whether Resurveyed Land")}`}</CardLabel>
+              <CardLabel>{`${t("TL_RESURVEY_LAND")}`}</CardLabel>
               <RadioButtons
                 t={t}
                 optionsKey="i18nKey"
@@ -211,7 +211,7 @@ const SelectStructureType = ({ t, config, onSelect, userType, formData }) => {
             <div className="row">    
             <div className="col-md-12" > 
                 <h1 className="headingh1" >
-                    <span style={{background:"#fff",padding:"0 10px" }}>{`${t("Land Details")}*`}</span>
+                    <span style={{background:"#fff",padding:"0 10px" }}>{`${t("TL_RESURVEY_LAN_DETAILS")}*`}</span>
                 </h1>
             </div>        
           </div>
@@ -282,7 +282,7 @@ const SelectStructureType = ({ t, config, onSelect, userType, formData }) => {
             <div className="row">    
             <div className="col-md-12" > 
                 <h1 className="headingh1" >
-                    <span style={{background:"#fff",padding:"0 10px" }}>{`${t("Land Details")}*`}</span>
+                    <span style={{background:"#fff",padding:"0 10px" }}>{`${t("TL_RESURVEY_LAN_DETAILS")}*`}</span>
                 </h1>
             </div>        
           </div>
@@ -339,7 +339,7 @@ const SelectStructureType = ({ t, config, onSelect, userType, formData }) => {
         <div className="row">    
           <div className="col-md-12" > 
               <h1 className="headingh1" >
-                  <span style={{background:"#fff",padding:"0 10px" }}>{`${t("Building Details")}*`}</span>
+                  <span style={{background:"#fff",padding:"0 10px" }}>{`${t("TL_BUILDING_HEADER")}*`}</span>
               </h1>
           </div>        
         </div>              
@@ -371,7 +371,7 @@ const SelectStructureType = ({ t, config, onSelect, userType, formData }) => {
                 />
               </div>
               <div className="col-md-6" >
-                <CardLabel>Door No</CardLabel>
+                <CardLabel>{`${t("TL_LOCALIZATION_DOOR_NO")}`}</CardLabel>
                 <TextInput
                     t={t}
                     isMandatory={false}
@@ -385,7 +385,7 @@ const SelectStructureType = ({ t, config, onSelect, userType, formData }) => {
                   />
               </div>
               <div className="col-md-6" >
-                <CardLabel>Door Sub No</CardLabel>
+                <CardLabel>{`${t("TL_LOCALIZATION_DOOR_NO_SUB")}`}</CardLabel>
                 <TextInput
                     t={t}
                     isMandatory={false}
@@ -406,13 +406,13 @@ const SelectStructureType = ({ t, config, onSelect, userType, formData }) => {
         <div className="row">    
           <div className="col-md-12" > 
               <h1 className="headingh1" >
-                  <span style={{background:"#fff",padding:"0 10px" }}>{`${t("Vechicle Details")}*`}</span>
+                  <span style={{background:"#fff",padding:"0 10px" }}>{`${t("TL_VECHICLE_HEADER")}*`}</span>
               </h1>
           </div>        
         </div>              
           <div className="row">              
               <div className="col-md-12" >
-                <CardLabel>Vechicle No</CardLabel>
+                <CardLabel>{`${t("TL_VECHICLE_NO")}`}</CardLabel>
                 <TextInput
                   t={t}
                   isMandatory={false}
@@ -433,13 +433,13 @@ const SelectStructureType = ({ t, config, onSelect, userType, formData }) => {
         <div className="row">    
           <div className="col-md-12" > 
               <h1 className="headingh1" >
-                  <span style={{background:"#fff",padding:"0 10px" }}>{`${t("Vessel Details")}*`}</span>
+                  <span style={{background:"#fff",padding:"0 10px" }}>{`${t("TL_VESSEL_HEADER")}*`}</span>
               </h1>
           </div>        
         </div>              
           <div className="row">              
               <div className="col-md-12" >
-                <CardLabel>Vessel No</CardLabel>
+                <CardLabel>{`${t("TL_VESSEL_NO")}`}</CardLabel>
                 <TextInput
                   t={t}
                   isMandatory={false}

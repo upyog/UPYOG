@@ -462,7 +462,7 @@ export const newConfig = [
         texts: {
           headerCaption: "",
           header: "TL_NEW_TRADE_DETAILS_TRADE_COMM_DATE_LABEL",
-          cardText: "TL_TRADE_COMM_DATE_TEXT",
+          cardText: "",
           submitBarLabel: "CS_COMMON_NEXT",
         },
         key: "TradeDetails",

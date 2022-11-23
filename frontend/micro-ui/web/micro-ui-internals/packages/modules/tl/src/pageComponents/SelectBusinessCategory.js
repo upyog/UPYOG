@@ -80,10 +80,10 @@ const SelectBusinessCategory = ({ t, config, onSelect, userType, formData, }) =>
     <React.Fragment>
     {window.location.href.includes("/citizen") ? <Timeline /> : null}
     <FormStep t={t} config={config} onSelect={goNext} onSkip={onSkip} isDisabled={!setSector}>
-    <div className="row">    
+        <div className="row">    
           <div className="col-md-12" > 
               <h1 className="headingh1" >
-                  <span style={{background:"#fff",padding:"0 10px" }}>{`${t("Business Category Details")}*`}</span>
+                  <span style={{background:"#fff",padding:"0 10px" }}>{`${t("TL_BUISINESS_HEADER_MSG")}*`}</span>
               </h1>
           </div>        
         </div>
@@ -119,7 +119,7 @@ const SelectBusinessCategory = ({ t, config, onSelect, userType, formData, }) =>
         </div>    
         <div className="row">
           <div className="col-md-12" >
-              <CardLabel>{`${t("I hereby declare that my business activity is Service/Production  (Pick data from inputs) with capital investment (Pick data from inputs) defined as Micro/Mini/Small/Medium/Large as per IFTE &OS Rules 2020")}`}</CardLabel>
+              <CardLabel>{`${t("TL_BUISINESS_DECLARATION_ONE")}`}{`${t("TL_BUISINESS_DECLARATION_TWO")}`}{`${t("TL_BUISINESS_DECLARATION_THREE")}`}{`${t("TL_BUISINESS_DECLARATION_FOUR")}`}</CardLabel>
           </div> 
         </div> 
     </FormStep>

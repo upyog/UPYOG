@@ -65,7 +65,7 @@ const SelectLicenseePlaceActivity = ({ t, config, onSelect, userType, formData }
         <div className="row">    
           <div className="col-md-12" > 
               <h1 className="headingh1" >
-                  <span style={{background:"#fff",padding:"0 10px" }}>{`${t("Owner Details")}*`}</span>
+                  <span style={{background:"#fff",padding:"0 10px" }}>{`${t("TL_OWNER_DETAILS_HEADER")}*`}</span>
               </h1>
           </div>        
         </div>

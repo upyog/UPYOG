@@ -104,7 +104,7 @@ const SelectLicensee = ({ t, config, onSelect, userType, formData }) => {
         <div className="row">    
           <div className="col-md-12" > 
               <h1 className="headingh1" >
-                  <span style={{background:"#fff",padding:"0 10px" }}>{`${t("Details of Licensing Unit")}*`}</span>
+                  <span style={{background:"#fff",padding:"0 10px" }}>{`${t("TL_LICENSEE_INDIVIDUAL_HEADER")}*`}</span>
               </h1>
           </div>        
         </div>
@@ -245,7 +245,7 @@ const SelectLicensee = ({ t, config, onSelect, userType, formData }) => {
         <div className="row">    
           <div className="col-md-12" > 
               <h1 className="headingh1" >
-                  <span style={{background:"#fff",padding:"0 10px" }}>{`${t("Details of the Licensing Institution")}*`}</span>
+                  <span style={{background:"#fff",padding:"0 10px" }}>{`${t("TL_LICENSING_INSTITUTION_HEADER")}*`}</span>
               </h1>
           </div>        
         </div>
@@ -340,7 +340,7 @@ const SelectLicensee = ({ t, config, onSelect, userType, formData }) => {
         <div className="row">    
           <div className="col-md-12" > 
               <h1 className="headingh1" >
-                  <span style={{background:"#fff",padding:"0 10px" }}>{`${t("Details of the Licensing Unit")}*`}</span>
+                  <span style={{background:"#fff",padding:"0 10px" }}>{`${t("TL_LICENSING_UNIT_HEADER")}*`}</span>
               </h1>
           </div>        
         </div>

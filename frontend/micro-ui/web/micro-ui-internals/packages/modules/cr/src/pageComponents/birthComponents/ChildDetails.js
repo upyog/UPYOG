@@ -45,19 +45,11 @@ const ChildDetails = ({ config, onSelect, userType, formData }) => {
     <FormStep t={t} config={config} onSelect={goNext} onSkip={onSkip} isDisabled={!CommencementDate}>
     <header className="card-header" style={{fontSize:"35px"}}>Child Information</header>
     <div className="row">    
-        <div className="col-md-12 col-lg-12" > 
-            <div className="col-md-5" > 
-                <hr className="aligncss"></hr>
-            </div>
-            <div className="col-md-2" > 
-            <h1 className="headingh1" >
-                <span> Registration Details</span>
-            </h1>
-            </div>
-            <div className="col-md-5" > 
-                <hr className="aligncss"></hr>
-            </div>
-        </div>        
+          <div className="col-md-12" > 
+              <h1 className="headingh1" >
+                  <span style={{background:"#fff",padding:"0 10px" }}>{`${t("Registration Details")}*`}</span>
+              </h1>
+          </div>        
     </div>
     <div className="row">
         <div className="col-md-4" >
@@ -83,19 +75,11 @@ const ChildDetails = ({ config, onSelect, userType, formData }) => {
         </div>
     </div>
     <div className="row">    
-        <div className="col-md-12 col-lg-12" > 
-        <div className="col-md-5" > 
-            <hr className="aligncss"></hr>
-        </div>
-        <div className="col-md-2" > 
-        <h1 className="headingh1" >
-            <span> Name of Child</span>
-        </h1>
-        </div>
-        <div className="col-md-5" > 
-            <hr className="aligncss"></hr>
-        </div>
-        </div>        
+          <div className="col-md-12" > 
+              <h1 className="headingh1" >
+                  <span style={{background:"#fff",padding:"0 10px" }}>{`${t("Name of Child")}*`}</span>
+              </h1>
+          </div>        
     </div>
     <div className="row">    
         <div className="col-md-4" > 
