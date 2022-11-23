@@ -1,0 +1,91 @@
+services:
+  zookeeper:
+    container_name: zookeeper
+    image: 'bitnami/zookeeper:latest'
+    pull_policy: missing
+    restart: 'no'
+    ports:
+      - '2181:2181'
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+    volumes:
+      - './docker_data:/bitnami'
+    networks:
+      - ksmart
+  kafka:
+    container_name: kafka
+    image: 'bitnami/kafka:latest'
+    init: true
+    pull_policy: missing
+    restart: 'on-failure'
+    ports:
+      - '9092:9092'
+      - '9093:9093'
+    environment:
+      - KAFKA_BROKER_ID=1
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CLIENT:PLAINTEXT,EXTERNAL:PLAINTEXT
+      - KAFKA_CFG_LISTENERS=CLIENT://:9093,EXTERNAL://:9092
+      - KAFKA_CFG_ADVERTISED_LISTENERS=CLIENT://kafka:9093,EXTERNAL://127.0.0.1:9092
+      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=CLIENT
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+      - ALLOW_PLAINTEXT_LISTENER=yes
+    volumes:
+      - './docker_data:/bitnami'
+    networks:
+      - ksmart
+    depends_on:
+      - zookeeper
+    healthcheck:
+      test: curl -v localhost:9093 || exit 0
+      start_period: 20s
+      interval: 5s
+      timeout: 3s
+      retries: 2
+  persister:
+    container_name: persister
+    image: 'egovio/egov-persister:v1.1.4-1715164454-22' 
+    pull_policy: missing
+    restart: 'on-failure'
+    ports:
+      - '8082:8082'
+    environment:
+      - SERVER_PORT=8082
+      - EGOV_PERSIST_YML_REPO_PATH=file:///filemgmnt.yml
+      - SPRING_KAFKA_BOOTSTRAPSERVERS=kafka:9093
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://host.docker.internal:5432/egov_filemgmnt
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=123
+#    extra_hosts:
+#      - 'host.docker.internal:host-gateway'
+    volumes:
+      - './src/main/resources/persister/filemgmnt.yml:/filemgmnt.yml'
+    networks:
+      - ksmart
+    depends_on:
+      kafka:
+        condition: service_healthy 
+
+networks:
+  ksmart:
+    name: ksmart-tier
+    external: true
+
+# 1. Create network if not exists
+# docker network create -d bridge ksmart-tier
+
+# 2. Run docker compose in detached mode
+# docker compose up -d
+
+# 3. Stop running containers
+# docker compose down
+
+# 4.persister logs
+# docker logs persister
+
+#-Dspring.profiles.active=local
+#-Dserver.port=8082 
+#-Degov.persist.yml.repo.path=file:///D:/KSMART/municipal-services/egov-filemgmnt/src/main/resources/persister/filemgmnt.yml 
+#-Dspring.datasource.url=jdbc:postgresql://localhost:5432/egov_filemngmnt 
+#-Dspring.datasource.username=postgres 
+#-Dspring.datasource.password=123
+#-Dspring.kafka.bootstrap-servers=localhost:9092

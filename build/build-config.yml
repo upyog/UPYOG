@@ -402,7 +402,6 @@ config:
       - work-dir: "municipal-services/egov-filemgmnt/src/main/resources/db"
         image-name: "egov-filemgmnt-db"
 
-
   - name: "builds/upyog/municipal-services/egov-user-event"
     build:
       - work-dir: "municipal-services/egov-user-event"
