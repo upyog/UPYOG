@@ -7,6 +7,7 @@
 /.pmd
 .project
 /.sonarlint
+/.ucdetector_reports
 
 ### maven ###
 target/
@@ -14,5 +15,6 @@ reports/
 docker_data/
 
 ### local only files ###
-compose.yml
+spy.log
 SearchQueries.sql
+smsgwsmsgovin-sep22.cer

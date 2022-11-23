@@ -1,0 +1,240 @@
+curl --location --request POST 'https://dev.digit.org/egov-workflow-v2/egov-wf/businessservice/_create' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+  "RequestInfo": {
+    "apiId": "Rainmaker",
+    "action": "",
+    "did": 1,
+    "key": "",
+    "msgId": "20170310130900|en_IN",
+    "requesterId": "",
+    "ts": 1513579888683,
+    "ver": ".01",
+    "authToken": "e03cfa08-072c-405f-bb77-83dd4b9876d0",
+    "userInfo": {
+      "id": 73,
+      "userName": null,
+      "name": null,
+      "type": "EMPLOYEE",
+      "mobileNumber": null,
+      "emailId": null,
+      "roles": [
+        {
+          "id": 2,
+          "name": "Customer Support Representative",
+          "code": null,
+          "tenantId": null
+        }
+      ],
+      "tenantId": null,
+      "uuid": "uuid"
+    }
+  },
+  "BusinessServices": [
+    {
+      "tenantId": "kl",
+      "businessService": "NewDFM",
+      "business": "fm-services",
+      "businessServiceSla": 172800000,
+      "states": [
+        {
+          "tenantId": "kl",
+          "sla": null,
+          "state": null,
+          "applicationStatus": null,
+          "docUploadRequired": false,
+          "isStartState": true,
+          "isTerminateState": false,
+          "isStateUpdatable": true,
+          "actions": [
+            {
+              "tenantId": "kl",
+              "action": "INITIATE",
+              "nextState": "INITIATED",
+              "roles": [
+                "CITIZEN",
+                "TL_CEMP"
+              ]
+            }
+          ]
+        },
+        {
+          "tenantId": "kl",
+          "sla": null,
+          "state": "INITIATED",
+          "applicationStatus": "INITIATED",
+          "docUploadRequired": false,
+          "isStartState": true,
+          "isTerminateState": false,
+          "isStateUpdatable": true,
+          "actions": [
+            {
+              "tenantId": "kl",
+              "action": "APPLY",
+              "nextState": "APPLIED",
+              "roles": [                 
+                "TL_CEMP",
+                "CITIZEN"
+              ]
+            },
+            {
+              "tenantId": "kl",
+              "action": "INITIATE",
+              "nextState": "INITIATED",
+              "roles": [               
+                "TL_CEMP",
+                "CITIZEN"
+              ]
+            }
+          ]
+        },
+        {
+          "tenantId": "kl",
+          "sla": null,
+          "state": "APPLIED",
+          "applicationStatus": "APPLIED",
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": false,
+          "isStateUpdatable": true,
+          "actions": [
+            {
+              "tenantId": "kl",
+              "action": "FORWARD",
+              "nextState": "PENDINGFORAPPROVAL",
+              "roles": [
+                "FM_VERIFIER"
+              ]
+            },
+            {
+              "tenantId": "kl",
+              "action": "SENDBACKTOCITIZEN",
+              "nextState": "CITIZENACTIONREQUIRED",
+              "roles": [
+                "FM_VERIFIER"
+              ]
+            }
+          ]
+        },
+       
+      
+        {
+          "tenantId": "kl",
+          "sla": 43200000,
+          "state": "PENDINGFORAPPROVAL",
+          "applicationStatus": "PENDINGFORAPPROVAL",
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": false,
+          "isStateUpdatable": false,
+          "actions": [
+            {
+              "tenantId": "kl",
+              "action": "SENDBACK",
+              "nextState": "VERIFICATION",
+              "roles": [
+                "FM_APPROVER"
+              ]
+            },
+            {
+              "tenantId": "kl",
+              "action": "APPROVE",
+              "nextState": "APPROVED",
+              "roles": [
+                "FM_APPROVER"
+              ]
+            },
+            {
+              "tenantId": "pb.amritsar",
+              "action": "REJECT",
+              "nextState": "REJECTED",
+              "roles": [
+                "FM_APPROVER"
+              ]
+            }
+          ]
+        },       
+        {
+          "tenantId": "kl",
+          "sla": null,
+          "state": "APPROVED",
+          "applicationStatus": "APPROVED",
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": false,
+          "isStateUpdatable": false,
+          "actions": [
+            {
+              "tenantId": "kl",
+              "action": "EXPIRE",
+              "nextState": "EXPIRED",
+              "roles": [
+                "SYSTEM"
+              ]
+            },
+            {
+              "tenantId": "kl",
+              "action": "CANCEL",
+              "nextState": "CANCELLED",
+              "roles": [
+                "FM_APPROVER"
+              ]
+            }
+          ]
+        },
+        {
+          "tenantId": "kl",
+          "sla": null,
+          "state": "CANCELLED",
+          "applicationStatus": "CANCELLED",
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": true,
+          "isStateUpdatable": false,
+          "actions": null
+        },
+        {
+          "tenantId": "kl",
+          "sla": null,
+          "state": "CITIZENACTIONREQUIRED",
+          "applicationStatus": "CITIZENACTIONREQUIRED",
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": false,
+          "isStateUpdatable": true,
+          "actions": [
+            {
+              "tenantId": "kl",
+              "action": "RESUBMIT",
+              "nextState": "INITIATE",
+              "roles": [
+                "TL_CEMP",
+                "CITIZEN"
+              ]
+            },
+            {              
+              "tenantId": "kl",
+              "action": "INITIATE",
+              "nextState": "INITIATED",
+              "roles": [
+                "CITIZEN",
+                "TL_CEMP"
+              ]
+            }
+          ]
+        },
+        {
+          "tenantId": "kl",
+          "sla": null,
+          "state": "EXPIRED",
+          "applicationStatus": "EXPIRED",
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": true,
+          "isStateUpdatable": false,
+          "actions": null
+        }
+      ]
+    }
+  ]
+}'

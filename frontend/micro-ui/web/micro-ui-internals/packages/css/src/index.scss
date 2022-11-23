@@ -91,6 +91,8 @@
 @import "./pages/employee/dss.scss";
 @import "./pages/employee/iframe.scss";
 @import "./pages/employee/cr-employee.scss";
+@import "./pages/employee/fileflow.scss";
+@import "./pages/employee/tl.scss";
 
 @import "./pages/citizen/payment/payment-type.scss";
 @import "./pages/citizen/container.scss";
@@ -101,6 +103,7 @@
 @import "./pages/citizen/SurveyList.scss";
 @import "./pages/citizen/updatePropertyNumber.scss";
 @import "./pages/citizen/citizenDocument.scss";
+@import "./pages/citizen/FormUi.scss";
 @import "./pages/employee/surveys.scss";
 
 .display-none{
