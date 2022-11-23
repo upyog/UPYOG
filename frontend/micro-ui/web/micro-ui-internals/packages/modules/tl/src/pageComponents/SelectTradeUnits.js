@@ -165,19 +165,22 @@ const SelectTradeUnits = ({ t, config, onSelect, userType, formData }) => {
         >
           {fields.map((field, index) => {
             return (
+              
               <div key={`${field}-${index}`}>
+                
                 <div
                   style={{
-                    border: "solid",
+                    // border: "solid",
                     borderRadius: "5px",
-                    padding: "10px",
-                    paddingTop: "20px",
-                    marginTop: "10px",
+                    // padding: "10px",
+                    // paddingTop: "20px",
+                    // marginTop: "10px",
                     borderColor: "#f3f3f3",
-                    background: "#FAFAFA",
+                    background: "white",
+                    display:"flow-root",
                   }}
                 >
-                  <CardLabel>{`${t("TL_NEW_TRADE_DETAILS_TRADE_CAT_LABEL")}*`}</CardLabel>
+                  
                   <LinkButton
                     label={
                       <div>
@@ -201,79 +204,101 @@ const SelectTradeUnits = ({ t, config, onSelect, userType, formData }) => {
                     style={{ width: "100px", display: "inline" }}
                     onClick={(e) => handleRemove(index)}
                   />
-                  {!isLoading ? (
-                    <Dropdown
-                      t={t}
-                      option={TradeCategoryMenu}
-                      optionKey="i18nKey"
-                      name={`TradeCategory-${index}`}
-                      value={field?.tradecategory}
-                      selected={field?.tradecategory}
-                      select={(e) => selectTradeCategory(index, e)}
-                      labelKey=""
-                      optionCardStyles={{maxHeight:"125px",overflow:"scroll"}}
+                   <div className="row">    
+                      <div className="col-md-12" > 
+                          <h1 className="headingh1" >
+                              <span style={{background:"#fff",padding:"0 10px" }}>{`${t("TL_TRADE_UNITS_TEXT")}*`}</span>
+                          </h1>
+                      </div>        
+                    </div>
+                    <div className="row">
+                      {!isLoading ? (
+                      <div className="col-md-6" >
+                        <CardLabel>{`${t("TL_NEW_TRADE_DETAILS_TRADE_CAT_LABEL")}*`}</CardLabel>
+                        <Dropdown
+                          t={t}
+                          option={TradeCategoryMenu}
+                          optionKey="i18nKey"
+                          name={`TradeCategory-${index}`}
+                          value={field?.tradecategory}
+                          selected={field?.tradecategory}
+                          select={(e) => selectTradeCategory(index, e)}
+                          labelKey=""
+                          optionCardStyles={{maxHeight:"125px",overflow:"scroll"}}
 
-                      // isPTFlow={true}
-                    />
-                  ) : (
-                    <Loader />
-                  )}
-                  <CardLabel>{`${t("TL_NEW_TRADE_DETAILS_TRADE_TYPE_LABEL")}*`}</CardLabel>
-                  <Dropdown
-                    t={t}
-                    optionKey="i18nKey"
-                    isMandatory={config.isMandatory}
-                    option={getTradeTypeMenu(field?.tradecategory)}
-                    selected={field?.tradetype}
-                    select={(e) => selectTradeType(index, e)}
-                    optionCardStyles={{maxHeight:"125px",overflow:"scroll"}}
-
-                    
-                  />
-                  <CardLabel>{`${t("TL_NEW_TRADE_DETAILS_TRADE_SUBTYPE_LABEL")}*`}</CardLabel>
-                    <Dropdown
-                      t={t}
-                      optionKey="i18nKey"
-                      isMandatory={config.isMandatory}
-                      option={sortDropdownNames(getTradeSubTypeMenu(field?.tradetype), "i18nKey", t)}
-                      selected={field?.tradesubtype}
-                      optionCardStyles={{maxHeight:"125px",overflow:"scroll"}}
-                      select={(e) => selectTradeSubType(index, e)}
-                    />
-                  <CardLabel>{`${t("TL_CUSTOM_DETAILED_TYPE_LABEL")}`}</CardLabel>
-                  <TextInput
-                    style={{ background: "#FAFAFA" }}
-                    t={t}
-                    type={"text"}
-                    isMandatory={config.isMandatory}
-                    optionKey="i18nKey"
-                    name="CustomType"
-                    //value={UnitOfMeasure}
-                    value={field?.unit}
-                    // onChange={selectCustomType}
-                    onChange={(e) => selectCustomType(index, e)}
-                    // disable={true}
-                  />
-                  <CardLabel>{`${t("TL_BUSINESS_ACTIVITY_LABEL")}`}</CardLabel> 
-                   <TextArea
-                    style={{ background: "#FAFAFA" }}
-                    t={t}
-                    type={"text"}
-                    isMandatory={config.isMandatory}
-                    optionKey="i18nKey"
-                    name="BusinessActivity"
-                    //value={UomValue}
-                    value={field?.uom}
-                    // onChange={selectBusinessActivity}
-                    onChange={(e) => selectBusinessActivity(index, e)}
-                    // disable={!field.unit}
-                    {...(validation = {
-                      isRequired: true,
-                      pattern: "[0-9]+",
-                      type: "text",
-                      title: t("TL_WRONG_UOM_VALUE_ERROR"),
-                    })}
-                  />
+                          // isPTFlow={true}
+                        />
+                      </div>
+                      ) : (
+                        <Loader />
+                      )}
+                       <div className="col-md-6" >
+                       <CardLabel>{`${t("TL_NEW_TRADE_DETAILS_TRADE_TYPE_LABEL")}*`}</CardLabel>
+                        <Dropdown
+                          t={t}
+                          optionKey="i18nKey"
+                          isMandatory={config.isMandatory}
+                          option={getTradeTypeMenu(field?.tradecategory)}
+                          selected={field?.tradetype}
+                          select={(e) => selectTradeType(index, e)}
+                          optionCardStyles={{maxHeight:"125px",overflow:"scroll"}}                          
+                        />
+                       </div>
+                    </div>
+                    <div className="row">
+                      <div className="col-md-6" >                  
+                        <CardLabel>{`${t("TL_NEW_TRADE_DETAILS_TRADE_SUBTYPE_LABEL")}*`}</CardLabel>
+                          <Dropdown
+                            t={t}
+                            optionKey="i18nKey"
+                            isMandatory={config.isMandatory}
+                            option={sortDropdownNames(getTradeSubTypeMenu(field?.tradetype), "i18nKey", t)}
+                            selected={field?.tradesubtype}
+                            optionCardStyles={{maxHeight:"125px",overflow:"scroll"}}
+                            select={(e) => selectTradeSubType(index, e)}
+                          />
+                      </div>
+                      <div className="col-md-6">
+                        <CardLabel>{`${t("TL_CUSTOM_DETAILED_TYPE_LABEL")}`}</CardLabel>
+                        <TextInput
+                          style={{ background: "#FAFAFA" }}
+                          t={t}
+                          type={"text"}
+                          isMandatory={config.isMandatory}
+                          optionKey="i18nKey"
+                          name="CustomType"
+                          //value={UnitOfMeasure}
+                          value={field?.unit}
+                          // onChange={selectCustomType}
+                          onChange={(e) => selectCustomType(index, e)}
+                          // disable={true}
+                        />
+                      </div>
+                    </div>
+                    <div className="row">
+                      <div className="col-md-12">
+                        <CardLabel>{`${t("TL_BUSINESS_ACTIVITY_LABEL")}`}</CardLabel> 
+                        <TextArea
+                          style={{ background: "#FAFAFA" }}
+                          t={t}
+                          type={"text"}
+                          isMandatory={config.isMandatory}
+                          optionKey="i18nKey"
+                          name="BusinessActivity"
+                          //value={UomValue}
+                          value={field?.uom}
+                          // onChange={selectBusinessActivity}
+                          onChange={(e) => selectBusinessActivity(index, e)}
+                          // disable={!field.unit}
+                          {...(validation = {
+                            isRequired: true,
+                            pattern: "[0-9]+",
+                            type: "text",
+                            title: t("TL_WRONG_UOM_VALUE_ERROR"),
+                          })}
+                        />
+                      </div>
+                    </div>
                 </div>
               </div>
             );

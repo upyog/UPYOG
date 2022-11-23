@@ -770,10 +770,15 @@ h1.headingh1{
   color: #0e4685;
   font-weight: 700;
   text-transform: uppercase;
-  text-align: center;
-  overflow: hidden;
-  font-size: 15px;
-  padding-bottom: 20px;
+  width: 100%; 
+  text-align: center; 
+  border-bottom: 1px solid yellowgreen; 
+  line-height: 0.1em;
+  margin: 10px 0 20px; 
+}
+h2.span { 
+  background:#fff; 
+  padding:0 10px; 
 }
 .aligncss{
   margin-top: 10px;

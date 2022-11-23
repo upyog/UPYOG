@@ -63,6 +63,54 @@ export const newConfig = [
     "head": "ES_NEW_APPLICATION_LOCATION_DETAILS",
     "body": [
         {
+          type: "component",
+          route: "license-individual",
+          component: "SelectLicenseeIndividualDetails",
+          texts: {
+            headerCaption: "",
+            header: "TL_LICENSEE_TYPE",
+            cardText: "TL_LICENSEE_INDIVIDUAL_TEXT",
+            submitBarLabel: "CS_COMMON_NEXT",
+            skipText: "",
+          },
+          withoutLabel: true,
+          key: "address",
+          nextStep: "place-structure",        
+          hideInEmployee: true,
+        },
+        {
+          type: "component",
+          route: "license-institution",
+          component: "SelectLicenseeInstitutionDetails",
+          texts: {
+            headerCaption: "",
+            header: "TL_LICENSEE_TYPE",
+            cardText: "",
+            submitBarLabel: "CS_COMMON_NEXT",
+            skipText: "",
+          },
+          withoutLabel: true,
+          key: "address",
+          nextStep: "place-structure",        
+          hideInEmployee: true,
+        },
+        {
+          type: "component",
+          route: "place-structure",
+          component: "SelectLicenseePlaceActivity",
+          texts: {
+            headerCaption: "",
+            header: "TL_LICENSEE_PLACE_STRUCTURE",
+            cardText: "",
+            submitBarLabel: "CS_COMMON_NEXT",
+            skipText: "",
+          },
+          withoutLabel: true,
+          key: "address",
+          nextStep: "structure-type",        
+          hideInEmployee: true,
+        },
+        {
             "route": "map",
             component: "TLSelectGeolocation",
             nextStep: "tladdress",
@@ -237,7 +285,7 @@ export const newConfig = [
         texts: {
           headerCaption: "",
           header: "TL_TRADE_UNITS_HEADER",
-          cardText: "TL_TRADE_UNITS_TEXT",
+          cardText: "",
           submitBarLabel: "CS_COMMON_NEXT",
         },
         withoutLabel: true,
@@ -252,18 +300,19 @@ export const newConfig = [
         texts: {
           headerCaption: "",
           header: "TL_LICENSEE_TYPE",
-          cardText: "TL_LICENSEE_UNIT_MSG",
+          cardText: "",
           submitBarLabel: "CS_COMMON_NEXT",
         },
         key: "TradeDetails",
         withoutLabel: true,
         hideInEmployee: true,
-        //nextStep: "property-usage-type",
-        nextStep: {
-          "TL_COMMON_YES": "Building-type",
-          "TL_COMMON_NO": "vehicle-type",
-        },
+        nextStep: "license-institution",
+        // nextStep: {
+        //   "TL_COMMON_INDIVIDUAL": "license-individual",
+        //   "TL_COMMON_INSTITUTION": "vehicle-type",
+        // },
       },
+      
       {
         route: "info",
         component: "TradeLicense",
@@ -301,15 +350,7 @@ export const newConfig = [
         key: "TradeDetails",
         withoutLabel: true,
         hideInEmployee: true,
-        nextStep: "land-type",
-        // sessionStorage.getItem("routeElement"),
-        // sessionStorage.setItem("routeElement"
-        // "land-type",
-        // nextStep: {
-        //   TL_COMMON_LAND: "land-type",
-        //   TL_COMMON_BUILDING: "building-det",
-        // },
-        
+        nextStep: "business-category",
       },
       {
         type: "component",
@@ -443,7 +484,7 @@ export const newConfig = [
           submitBarLabel: "CS_COMMON_NEXT",
         },
         withoutLabel: true,
-        nextStep: "info",
+        nextStep: "commencement-date",
         hideInEmployee: true,
       },
       // {

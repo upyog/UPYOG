@@ -1,6 +1,7 @@
 .card {
   @apply bg-white m-sm px-md pt-md pb-lg shadow-card;
   border-radius: 4px;
+  display: flow-root;
 
   .card-header {  }
 
@@ -29,7 +30,7 @@
   }
 
   .card-label {
-    @apply text-legend text-text-primary mb-md;
+    @apply text-text-primary mb-md;
   }
 
   .card-label-error {
@@ -61,9 +62,10 @@
 .employeeCard {
   @apply bg-white shadow-card p-md mb-xl;
   border-radius: 4px;
-
+  display: flow-root;
   .card-header {
     @apply text-text-primary text-heading-xl font-bold font-rc align-middle text-left mb-md;
+    font-size: 30px!important;
   }
 
   .card-sub-header,
@@ -180,7 +182,6 @@
 
   .card {
     margin-right: auto;
-    padding-right: 300px;
     padding-left: 16px;
     padding-top: 16px;
     max-width: 960px;
@@ -190,6 +191,7 @@
 
     .card-header {
       @apply text-heading-xl-dt;
+      font-size: 30px!important;
     }
 
     .card-sub-header {
@@ -220,6 +222,7 @@
 
     .card-header {
       @apply text-heading-xl-dt;
+      font-size: 30px!important;
     }
 
     .card-sub-header {
