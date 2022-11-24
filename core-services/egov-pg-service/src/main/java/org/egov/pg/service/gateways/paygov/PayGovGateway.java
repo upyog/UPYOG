@@ -67,7 +67,7 @@ public class PayGovGateway implements Gateway {
     private final String MESSAGE_TYPE_KEY = "messageType";
     private final String MERCHANT_ID_KEY = "merchantId";
 
-    private final String SERVICE_ID_KEY = "serviceId";
+    private final String SERVICE_ID_KEY = "KSMARTLSG";
     private final String ORDER_ID_KEY = "orderId";
     private final String CUSTOMER_ID_KEY = "customerId";
     private final String TRANSACTION_AMOUNT_KEY = "transactionAmount";
@@ -231,7 +231,7 @@ public class PayGovGateway implements Gateway {
             if (transaction.getModule().equals("BPAREG")) {
                 moduleCode = "BPA001";
             } else {
-                moduleCode = transaction.getModule().concat("001").toUpperCase();
+                moduleCode = "KSMARTLSG"/*transaction.getModule().concat("001").toUpperCase()*/;
             }
         }
         return moduleCode;
