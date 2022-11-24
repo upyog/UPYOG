@@ -1,5 +1,6 @@
 .CardBasedOptions{
     box-shadow: #32325d14 0px 50px 100px -20px, rgb(0 0 0 / 18%) 0px 30px 60px -30px, #0a254038 0px -2px 6px 0px inset;
+    padding: 0px !important;
     @apply bg-white mb-md px-sm py-md mx-sm rounded w-full;
     .headContent{
         @apply flex justify-between mb-lg;
