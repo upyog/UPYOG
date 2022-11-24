@@ -1,16 +1,36 @@
 package org.bel.birthdeath.crdeath.enrichment;
 
-// import java.text.SimpleDateFormat;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.bel.birthdeath.common.Idgen.IdResponse;
+import org.bel.birthdeath.common.repository.IdGenRepository;
+import org.bel.birthdeath.common.repository.ServiceRequestRepository;
+import org.bel.birthdeath.crdeath.config.CrDeathConfiguration;
 import org.bel.birthdeath.crdeath.web.models.AuditDetails;
+import org.bel.birthdeath.crdeath.web.models.CrDeathDtl;
 import org.bel.birthdeath.crdeath.web.models.CrDeathDtlRequest;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
+import org.egov.tracer.model.CustomException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class CrDeathEnrichment implements BaseEnrichment{
+
+   
+	@Autowired
+	IdGenRepository idGenRepository;
+
+    @Autowired
+	ServiceRequestRepository serviceRequestRepository;
+
+    @Autowired
+	CrDeathConfiguration config;
+
 
     public void enrichCreate(CrDeathDtlRequest request) {
 
@@ -38,5 +58,26 @@ public class CrDeathEnrichment implements BaseEnrichment{
                       addressdtls.getBurialAddress().setId(UUID.randomUUID().toString());                       
                      });
                });
+      
     }
+
+    private List<String> getIdList(RequestInfo requestInfo, String tenantId, String idKey,
+                                   String idformat, int count) {
+        List<IdResponse> idResponses = idGenRepository.getId(requestInfo, tenantId, idKey, idformat, count).getIdResponses();
+        
+        System.out.println("idResponse"+idResponses);
+        if (CollectionUtils.isEmpty(idResponses))
+            throw new CustomException("IDGEN ERROR", "No ids returned from idgen Service");
+
+        return idResponses.stream()
+                .map(IdResponse::getId).collect(Collectors.toList());
+    }
+    public void setIdgenIds(CrDeathDtlRequest request) {
+        RequestInfo requestInfo = request.getRequestInfo();
+        String tenantId = request.getDeathCertificateDtls().get(0).getTenantId();
+        List<CrDeathDtl> deathDtls = request.getDeathCertificateDtls();
+        String applNo = getIdList(requestInfo, tenantId, config.getDeathApplnFileCodeName(), config.getDeathApplnFileCodeFormat(), 1).get(0);
+        deathDtls.get(0).setDeathApplicationNo(applNo);
+    }    
+    
 }

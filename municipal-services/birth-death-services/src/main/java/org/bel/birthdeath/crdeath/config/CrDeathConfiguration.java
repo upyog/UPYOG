@@ -25,4 +25,21 @@ public class CrDeathConfiguration {
 
     @Value("${egov.mdms.search.endpoint}")
     private String mdmsEndPoint;
+
+    //IDGen
+
+    @Value("${egov.idgen.host}")
+    private String idGenHost;
+
+    @Value("${egov.idgen.path}")
+    private String idGenPath;
+
+    
+    @Value("${egov.idgen.deathapplfilecode.name}")
+    private String deathApplnFileCodeName;
+
+    @Value("${egov.idgen.deathapplfilecode.format}")
+    private String deathApplnFileCodeFormat;
+
+
 }

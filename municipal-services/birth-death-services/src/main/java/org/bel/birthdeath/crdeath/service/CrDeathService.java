@@ -5,7 +5,7 @@ import java.util.List;
 import org.bel.birthdeath.crdeath.config.CrDeathConfiguration;
 import org.bel.birthdeath.crdeath.enrichment.CrDeathEnrichment;
 import org.bel.birthdeath.crdeath.kafka.producer.CrDeathProducer;
-import org.bel.birthdeath.crdeath.util.CrDeathUtil;
+import org.bel.birthdeath.crdeath.util.CrDeathMdmsUtil;
 import org.bel.birthdeath.crdeath.web.models.CrDeathDtl;
 import org.bel.birthdeath.crdeath.web.models.CrDeathDtlRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,26 +20,25 @@ public class CrDeathService {
     private final CrDeathProducer producer;
     private final CrDeathConfiguration deathConfig;
     private final CrDeathEnrichment enrichmentService;
-    private final CrDeathUtil util;
-    //private  CrDeathDtlRequest crDeathDtlRequest;
+    private final CrDeathMdmsUtil util;
 
     @Autowired
     CrDeathService(CrDeathProducer producer,CrDeathConfiguration deathConfig,
-                CrDeathEnrichment enrichmentService,CrDeathUtil util){//,CrDeathDtlRequest crDeathDtlRequest){
+                CrDeathEnrichment enrichmentService,CrDeathMdmsUtil util){
         this.producer = producer;
         this.deathConfig = deathConfig;
         this.enrichmentService = enrichmentService;
         this.util = util;
-        //this.crDeathDtlRequest=crDeathDtlRequest;
     }
     
     public List<CrDeathDtl> create(CrDeathDtlRequest request) {
         // validate request
        // validatorService.validateCreate(request);
 
-       //mdms request
+       // validate mdms data
          Object mdmsData = util.mDMSCall(request.getRequestInfo(), request.getDeathCertificateDtls().get(0).getTenantId());
         
+         
          /********************************************* */
 
         try {
@@ -56,6 +55,8 @@ public class CrDeathService {
 
          // enrich request
         enrichmentService.enrichCreate(request);
+        //IDGen call
+        enrichmentService.setIdgenIds(request);    
 
         producer.push(deathConfig.getSaveDeathDetailsTopic(), request);
 
