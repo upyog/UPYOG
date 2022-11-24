@@ -1,6 +1,6 @@
 {
-  "name": "upyog-pwc",
-  "version": "1.0.0",
+  "name": "@upyog-niua/upyog-css",
+  "version": "1.0.1",
   "license": "MIT",
   "main": "dist/index.css",
   "engines": {
