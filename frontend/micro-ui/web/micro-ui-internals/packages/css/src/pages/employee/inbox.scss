@@ -447,13 +447,14 @@
 }
 @screen dt {
   .customEmployeeCard {
-    width: 290px !important;
-    height: 200px !important;
+    width: 320px !important;
+    height: 220px !important;
   }
 }
 .employeeTotalLink{
-  color: #ffffff;
-  font-size: 16px;
+  color: #a82227;
+  
+  font-size: 12px;
 }
 
 .inboxLinksFSM {
@@ -484,7 +485,6 @@ background-size: cover
 .employee-card-banner{
     background-color: white;
     width: 88%;
-    height: 60%;
     margin: 0 auto;
     bottom: 0px;
     position: absolute;
