@@ -42,19 +42,21 @@ public class CrDeathMdmsUtil {
 
     private MdmsCriteriaReq getMDMSRequest(RequestInfo requestInfo, String tenantId) {
         ModuleDetail tenantIdRequest = getTenantIdRequest(tenantId);
-       // List<ModuleDetail> tradeModuleRequest = getTradeModuleRequest();
+        ModuleDetail GenderTypeRequest = getGenderTypeRequest();
 
         List<ModuleDetail> moduleDetails = new LinkedList<>();
         moduleDetails.add(tenantIdRequest);
-       // moduleDetails.addAll(tradeModuleRequest);
+        moduleDetails.add(GenderTypeRequest);
 
-        MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(moduleDetails).tenantId(tenantId)
-                .build();
+        // MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(moduleDetails).tenantId(tenantId)
+        //         .build();
+        MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(moduleDetails).tenantId(requestInfo.getUserInfo().getTenantId())
+        .build();
 
         MdmsCriteriaReq mdmsCriteriaReq = MdmsCriteriaReq.builder().mdmsCriteria(mdmsCriteria)
                 .requestInfo(requestInfo).build();
 
-        System.out.println("mdmsreq1"+mdmsCriteriaReq);
+        System.out.println("mdmsreq2"+mdmsCriteriaReq);
         return mdmsCriteriaReq;
     }
 
@@ -69,9 +71,9 @@ public class CrDeathMdmsUtil {
         List<MasterDetail> crDeathMasterDetails = new ArrayList<>();
 
         // filter to only get code field from master data    
-        final String filterCodeForUom = "$.[?(@.code=='"+tenantId+"')]";
+        final String filterCode = "$.[?(@.code=='"+tenantId+"')].*";
         crDeathMasterDetails
-                .add(MasterDetail.builder().name(CrDeathConstants.TENANTS).filter(filterCodeForUom).build());
+                .add(MasterDetail.builder().name(CrDeathConstants.TENANTS).filter(filterCode).build());
 
         // crDeathMasterDetails
         //         .add(MasterDetail.builder().name(CrDeathConstants.TENANTS).build());
@@ -79,6 +81,29 @@ public class CrDeathMdmsUtil {
 
         ModuleDetail crDeathModuleDtls = ModuleDetail.builder().masterDetails(crDeathMasterDetails)
                 .moduleName(CrDeathConstants.TENANT_MODULE_NAME).build();
+
+       
+        return crDeathModuleDtls;
+    }
+
+     /**
+     * Creates request to search Gender Type in mdms
+     * 
+     * @return MDMS request for Gender Type
+     */
+    private ModuleDetail getGenderTypeRequest() {
+
+        // master details for crDeath module
+        List<MasterDetail> crDeathMasterDetails = new ArrayList<>();
+
+        // filter to only get code field from master data    
+        final String filterCode = "$.[?(@.active==true)].code";
+        crDeathMasterDetails
+                .add(MasterDetail.builder().name(CrDeathConstants.GENDERTYPE).filter(filterCode).build());
+       
+
+        ModuleDetail crDeathModuleDtls = ModuleDetail.builder().masterDetails(crDeathMasterDetails)
+                .moduleName(CrDeathConstants.GENDER_MODULE_NAME).build();
 
        
         return crDeathModuleDtls;

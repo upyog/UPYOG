@@ -42,4 +42,12 @@ public class CrDeathConfiguration {
     private String deathApplnFileCodeFormat;
 
 
+    @Value("${egov.idgen.deathackno.name}")
+    private String deathAckName;
+
+    @Value("${egov.idgen.deathackno.format}")
+    private String deathACKFormat;
+
+
+
 }

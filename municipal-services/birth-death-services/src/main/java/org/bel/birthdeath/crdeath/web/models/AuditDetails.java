@@ -11,6 +11,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 //@Schema(description = "Collection of audit related fields used by most models")
+/**
+     * Creates Audit details Model 
+     * Rakhi S IKM
+     * 
+     */
 
 @Getter
 @Setter

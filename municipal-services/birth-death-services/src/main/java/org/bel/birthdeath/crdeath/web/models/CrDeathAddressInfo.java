@@ -10,6 +10,12 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+/**
+     * Creates CrDeathAddressInfo model
+     * Rakhi S IKM
+     * 
+     */
+
 @Getter
 @Setter
 @ToString

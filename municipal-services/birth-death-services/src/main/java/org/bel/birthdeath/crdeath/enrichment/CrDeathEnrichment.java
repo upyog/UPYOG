@@ -18,6 +18,12 @@ import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+/**
+     * Creates CrDeathEnrichment for UUID ,Audit details and IDGeneration
+     * Rakhi S IKM
+     * 
+     */
+
 @Component
 public class CrDeathEnrichment implements BaseEnrichment{
 
@@ -74,10 +80,14 @@ public class CrDeathEnrichment implements BaseEnrichment{
     }
     public void setIdgenIds(CrDeathDtlRequest request) {
         RequestInfo requestInfo = request.getRequestInfo();
-        String tenantId = request.getDeathCertificateDtls().get(0).getTenantId();
+        // String tenantId = request.getDeathCertificateDtls().get(0).getTenantId();
+        String tenantId = requestInfo.getUserInfo().getTenantId();
         List<CrDeathDtl> deathDtls = request.getDeathCertificateDtls();
         String applNo = getIdList(requestInfo, tenantId, config.getDeathApplnFileCodeName(), config.getDeathApplnFileCodeFormat(), 1).get(0);
         deathDtls.get(0).setDeathApplicationNo(applNo);
+
+        String ackNo = getIdList(requestInfo, tenantId, config.getDeathAckName(), config.getDeathACKFormat(), 1).get(0);
+        deathDtls.get(0).setDeathACKNo(ackNo);
     }    
     
 }

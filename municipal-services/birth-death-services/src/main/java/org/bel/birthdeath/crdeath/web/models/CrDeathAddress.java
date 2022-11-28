@@ -9,7 +9,11 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.validation.constraints.Size;
-
+/**
+     * Creates CrDeathAddress  model
+     * Rakhi S IKM
+     * 
+     */
 
 @Getter
 @Setter

@@ -6,6 +6,7 @@ import org.bel.birthdeath.crdeath.config.CrDeathConfiguration;
 import org.bel.birthdeath.crdeath.enrichment.CrDeathEnrichment;
 import org.bel.birthdeath.crdeath.kafka.producer.CrDeathProducer;
 import org.bel.birthdeath.crdeath.util.CrDeathMdmsUtil;
+import org.bel.birthdeath.crdeath.validators.MDMSValidator;
 import org.bel.birthdeath.crdeath.web.models.CrDeathDtl;
 import org.bel.birthdeath.crdeath.web.models.CrDeathDtlRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,12 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
+/**
+     * Creates CrDeathService
+     * Rakhi S IKM
+     * 
+     */
+
 @Service
 public class CrDeathService {
 
@@ -21,14 +28,16 @@ public class CrDeathService {
     private final CrDeathConfiguration deathConfig;
     private final CrDeathEnrichment enrichmentService;
     private final CrDeathMdmsUtil util;
+    private final MDMSValidator mdmsValidator;
 
     @Autowired
     CrDeathService(CrDeathProducer producer,CrDeathConfiguration deathConfig,
-                CrDeathEnrichment enrichmentService,CrDeathMdmsUtil util){
+                CrDeathEnrichment enrichmentService,CrDeathMdmsUtil util,MDMSValidator mdmsValidator){
         this.producer = producer;
         this.deathConfig = deathConfig;
         this.enrichmentService = enrichmentService;
         this.util = util;
+        this.mdmsValidator = mdmsValidator;
     }
     
     public List<CrDeathDtl> create(CrDeathDtlRequest request) {
@@ -36,8 +45,8 @@ public class CrDeathService {
        // validatorService.validateCreate(request);
 
        // validate mdms data
-         Object mdmsData = util.mDMSCall(request.getRequestInfo(), request.getDeathCertificateDtls().get(0).getTenantId());
-        
+        //  Object mdmsData = util.mDMSCall(request.getRequestInfo(), request.getDeathCertificateDtls().get(0).getTenantId());
+        Object mdmsData = util.mDMSCall(request.getRequestInfo(), request.getDeathCertificateDtls().get(0).getTenantId());
          
          /********************************************* */
 
@@ -52,6 +61,7 @@ public class CrDeathService {
 
 
             /********************************************** */
+            mdmsValidator.validateMDMSData(request,mdmsData);
 
          // enrich request
         enrichmentService.enrichCreate(request);

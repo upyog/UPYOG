@@ -14,6 +14,11 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+/**
+     * Creates main model class 
+     * Rakhi S IKM
+     * 
+     */
 
 @Getter
 @Setter
@@ -222,6 +227,10 @@ public class CrDeathDtl {
 
     @JsonProperty("deathApplicationNo")
     private String deathApplicationNo = null;
+
+    @JsonProperty("deathACKNo")
+    private String deathACKNo = null;
+
 
    
 }

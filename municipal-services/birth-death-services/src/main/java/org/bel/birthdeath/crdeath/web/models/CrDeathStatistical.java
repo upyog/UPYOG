@@ -12,6 +12,12 @@ import lombok.ToString;
 
 import javax.validation.constraints.Size;
 
+/**
+     * Creates statistical details model 
+     * Rakhi S IKM
+     * 
+     */
+
 @Getter
 @Setter
 @ToString
