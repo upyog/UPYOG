@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { FormStep,CardLabel,TextArea,TextInput,Dropdown,DatePicker } from "@egovernments/digit-ui-react-components";
-import Timeline from "../../components/TLTimeline";
+import Timeline from "../../components/CRTimeline";
 import { useTranslation } from "react-i18next";
 
 const OtherCountry = ({ config, onSelect, userType, formData }) => {

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { FormStep,CardLabel, TextInput,Dropdown,DatePicker } from "@egovernments/digit-ui-react-components";
-import Timeline from "../../components/TLTimeline";
+import Timeline from "../../components/CRTimeline";
 import { useTranslation } from "react-i18next";
 
 const ChildDetails = ({ config, onSelect, userType, formData }) => {
@@ -36,7 +36,7 @@ const ChildDetails = ({ config, onSelect, userType, formData }) => {
   
  
   const goNext = () => {
-    sessionStorage.setItem("PlaceOfActivity", setPlaceofActivity.code);   
+    sessionStorage.setItem("PlaceOfActivity", setPlaceofActivity);   
     onSelect(config.key, { setPlaceofActivity });
   }
   return (

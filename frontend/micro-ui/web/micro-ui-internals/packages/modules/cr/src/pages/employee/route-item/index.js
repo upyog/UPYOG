@@ -129,14 +129,16 @@ const CrFlowApp = ({ parentUrl }) => {
               onAdd={handleMultiple}
               userType="employee"
             />
-          </Route>
+           </Route>  
+          
         );
       })}
       
-        <Route path={`${path}`} exact>
-          <CrFlow  path={path}/>
-        </Route>
-        <PrivateRoute  parentRoute={path} path={`${path}/${config.indexRoute}`} component={() => <ChildDetails parentUrl={path} />} />
+      <Route path={`${path}`} exact>
+              <CrFlow  path={path}/>
+             </Route>
+             <PrivateRoute  parentRoute={path} path={`${path}/${config.indexRoute}`} component={() => <ChildDetails parentUrl={path} />} />
+         
       </Switch>
     </React.Fragment>
   );

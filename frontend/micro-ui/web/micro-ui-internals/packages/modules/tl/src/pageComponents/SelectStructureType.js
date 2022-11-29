@@ -91,28 +91,6 @@ const SelectStructureType = ({ t, config, onSelect, userType, formData }) => {
     setSelectedPlaceofActivity(value);
     setStructureType(null);
     setActivity(null);
-    // console.log(naturetypecmbvalue);    
-    //  if(naturetypecmbvalue =="LAND"){      
-    //     routeComponent = "land-type";
-    //     console.log(routeComponent);  
-    //     sessionStorage.setItem("routeElement", routeComponent);             
-    //   } else if(naturetypecmbvalue =="BUIL"){
-    //     routeComponent = "building-det";
-    //     console.log(routeComponent);
-    //     sessionStorage.setItem("routeElement", routeComponent);
-
-    //   } else if(naturetypecmbvalue =="VEHI"){
-    //     routeComponent = "vechicle-det";
-    //     console.log(routeComponent);
-    //     sessionStorage.setItem("routeElement", routeComponent);
-    //   } else if(naturetypecmbvalue =="WATE"){
-    //     routeComponent = "water-det";
-    //     console.log(routeComponent);
-    //     sessionStorage.setItem("routeElement", routeComponent);
-    //   }       
-      // sessionStorage.removeItem("routeElement");
-      // sessionStorage.setItem("routeElement", routeComponent);
-      // onSelect(config.key, { routeElement });
   }
   function selectStructuretype(value) {
     setStructureType(value);

@@ -97,6 +97,7 @@ const EmployeeApp = ({
             <div className="employee-app-wrapper">
               <ErrorBoundary>
                 <AppModules stateCode={stateCode} userType="employee" modules={modules} appTenants={appTenants} />
+                {/* <AppModules /> */}
               </ErrorBoundary>
             </div>
             {/* <div style={{ width: '100%', bottom: 0 }}>

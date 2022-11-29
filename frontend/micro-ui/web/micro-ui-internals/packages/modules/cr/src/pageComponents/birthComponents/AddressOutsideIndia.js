@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { FormStep,CardLabel, TextInput,Dropdown,DatePicker, TextArea,CheckBox, } from "@egovernments/digit-ui-react-components";
-import Timeline from "../../components/TLTimeline";
+import Timeline from "../../components/CRTimeline";
 import { useTranslation } from "react-i18next";
 
 const AddressOutsideIndia = ({ config, onSelect, userType, formData }) => {

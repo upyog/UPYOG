@@ -69,7 +69,7 @@ export const newConfig = [
           texts: {
             headerCaption: "",
             header: "TL_LICENSEE_TYPE",
-            cardText: "TL_LICENSEE_INDIVIDUAL_TEXT",
+            cardText: "",
             submitBarLabel: "CS_COMMON_NEXT",
             skipText: "",
           },
@@ -306,10 +306,12 @@ export const newConfig = [
         key: "TradeDetails",
         withoutLabel: true,
         hideInEmployee: true,
-        nextStep: "license-institution",
+        nextStep: "license-individual",
         // nextStep: {
-        //   "TL_COMMON_INDIVIDUAL": "license-individual",
-        //   "TL_COMMON_INSTITUTION": "vehicle-type",
+        //   TL_COMMON_YES: "license-individual",
+        //   TL_COMMON_NO: "know-your-property",
+        //   // "TL_COMMON_INDIVIDUAL": "license-individual",
+        //   // "TL_COMMON_INSTITUTION": "vehicle-type",
         // },
       },
       
@@ -469,7 +471,7 @@ export const newConfig = [
         withoutLabel: true,
         hideInEmployee: true,
         //nextStep: "property-usage-type",
-        nextStep: "units-details",
+        nextStep: null,
       },
       {
         isMandatory: true,

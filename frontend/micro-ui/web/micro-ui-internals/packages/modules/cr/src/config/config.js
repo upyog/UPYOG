@@ -229,9 +229,23 @@ export const newConfig = [
     head: "ES_NEW_APPLICATION_PROPERTY_ASSESSMENT",
     body: [
       {
-        route: "birth-places",
-        component: "BirthPlace",
+        type: "component",
         route: "child-details",
+        isMandatory: true,
+        component: "ChildDetails",
+        texts: {
+          // headerCaption: "TL_STRUCTURE_TYPE",
+          header: "TL_STRUCTURE_TYPE_HEADER",
+          // cardText: "TL_STRUCTURE_TYPE_TEXT",
+          submitBarLabel: "CS_COMMON_NEXT",
+        },
+        key: "CRDetails",
+        withoutLabel: true,
+        hideInEmployee: true,
+        nextStep:"mother-details",        
+      },
+      {
+        route: "mother-details",
         component: "MotherInformation",
         texts: {
           headerCaption: "",
@@ -459,27 +473,7 @@ export const newConfig = [
         type: "component",
         hideInEmployee: true,
       },
-      {
-        type: "component",
-        route: "child-details",
-        isMandatory: true,
-        component: "childDetails",
-        texts: {
-          // headerCaption: "TL_STRUCTURE_TYPE",
-          header: "TL_STRUCTURE_TYPE_HEADER",
-          // cardText: "TL_STRUCTURE_TYPE_TEXT",
-          submitBarLabel: "CS_COMMON_NEXT",
-        },
-        key: "CRDetails",
-        withoutLabel: true,
-        hideInEmployee: true,
-        nextStep:"land-type",
-        // nextStep: {
-        //   TL_COMMON_LAND: "land-type",
-        //   TL_COMMON_BUILDING: "building-det",
-        // },
-        
-      },
+      
       {
         type: "component",
         route: "structure-type",
