@@ -8,18 +8,26 @@ const SelectLicenseePlaceActivity = ({ t, config, onSelect, userType, formData }
   const onSkip = () => onSelect();
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();
-  const [OwnerAadharNo, setOwnerAadharNo] = useState(formData.TradeDetails?.OwnerAadharNo);
-  const [OwnerName, setOwnerName] = useState(formData.TradeDetails?.OwnerName);
-  const [OwnerMobileNo, setOwnerMobileNo] = useState(formData.TradeDetails?.OwnerMobileNo);
-  const [OwnerAddress, setOwnerAddress] = useState(formData.TradeDetails?.OwnerAddress);
-  const [OwnerConsentPlace, setOwnerConsentPlace] = useState(formData.TradeDetails?.OwnerConsentPlace);
-  const [OwnerConsentDateStart, setOwnerConsentDateStart] = useState(formData?.TradeDetails?.OwnerConsentDateStart);
-  const [OwnerConsentDateEnd, setOwnerConsentDateEnd] = useState(formData?.TradeDetails?.OwnerConsentDateEnd);
+  const [OwnerAadharNo, setOwnerAadharNo] = useState(formData.address?.OwnerAadharNo);
+  const [OwnerName, setOwnerName] = useState(formData.address?.OwnerName);
+  const [OwnerMobileNo, setOwnerMobileNo] = useState(formData.address?.OwnerMobileNo);
+  const [OwnerAddress, setOwnerAddress] = useState(formData.address?.OwnerAddress);
+  const [OwnerConsentPlace, setOwnerConsentPlace] = useState(formData.address?.OwnerConsentPlace);
+  const [OwnerConsentDateStart, setOwnerConsentDateStart] = useState(formData?.address?.OwnerConsentDateStart);
+  const [OwnerConsentDateEnd, setOwnerConsentDateEnd] = useState(formData?.address?.OwnerConsentDateEnd);
+  const [isInitialRenderRadio, setIsInitialRenderRadio] = useState(true);
+  const [value2, setValue2] = useState();
+  const [OwnProperty, setOwnProperty] = useState(formData?.address?.OwnProperty);
   const isEdit = window.location.href.includes("/edit-application/") || window.location.href.includes("renew-trade");
   const menu = [
     { i18nKey: "TL_COMMON_YES", code: "YES" },
     { i18nKey: "TL_COMMON_NO", code: "NO" },
   ];
+  function setSelectOwnProperty(value) {
+    setOwnProperty(value);
+    setValue2(value.code);
+    setIsInitialRenderRadio(true);
+  }
   function setSelectOwnerAadharNo(e) {
     setOwnerAadharNo(e.target.value);
   }
@@ -41,7 +49,18 @@ const SelectLicenseePlaceActivity = ({ t, config, onSelect, userType, formData }
   function selectOwnerConsentDateEnd(value) {
     setOwnerConsentDateEnd(value);
   }
+  useEffect(() => {
+    
+    if (isInitialRenderRadio) {
+      if(OwnProperty){
+        setIsInitialRenderRadio(false);
+        setValue2(OwnProperty.code);
+      }
+    }
+  }, [isInitialRenderRadio]);
+  console.log(formData);
   function goNext() {
+    sessionStorage.setItem("OwnProperty", OwnProperty.code);
     sessionStorage.setItem("OwnerAadharNo", OwnerAadharNo);
     sessionStorage.setItem("OwnerName", OwnerName);
     sessionStorage.setItem("OwnerMobileNo", OwnerMobileNo);   
@@ -49,14 +68,14 @@ const SelectLicenseePlaceActivity = ({ t, config, onSelect, userType, formData }
     sessionStorage.setItem("OwnerConsentPlace", OwnerConsentPlace);
     sessionStorage.setItem("OwnerConsentDateStart", OwnerConsentDateStart);   
     sessionStorage.setItem("OwnerConsentDateEnd", OwnerConsentDateEnd);   
-    onSelect(config.key, { OwnerAadharNo,OwnerName,OwnerMobileNo,OwnerAddress,OwnerConsentPlace,OwnerConsentDateStart,OwnerConsentDateEnd });   
+    onSelect(config.key, { OwnProperty,OwnerAadharNo,OwnerName,OwnerMobileNo,OwnerAddress,OwnerConsentPlace,OwnerConsentDateStart,OwnerConsentDateEnd });   
   }
   return (
     <React.Fragment>
-    {window.location.href.includes("/citizen") ? <Timeline /> : null}
-    <FormStep t={t} config={config} onSelect={goNext} onSkip={onSkip} isDisabled={!BlockNo} >
+    {window.location.href.includes("/citizen") ? <Timeline currentStep={2} /> : null}
+    <FormStep t={t} config={config} onSelect={goNext} onSkip={onSkip} isDisabled={!OwnProperty} >
     <LabelFieldPair style={{ display: "flex" }}><CardLabel>{`${t("TL_PLACE_MSG")}`}</CardLabel>
-      <RadioButtons t={t} optionsKey="i18nKey" isMandatory={config.isMandatory} options={menu} selectedOption={LicenseeType} onSelect={selectLicenseeType} style={{ marginTop:"-8px",paddingLeft:"5px" ,height:"25px"}} /> 
+      <RadioButtons t={t} optionsKey="i18nKey" isMandatory={config.isMandatory} options={menu} selectedOption={OwnProperty} onSelect={setSelectOwnProperty} style={{ marginTop:"-8px",paddingLeft:"5px" ,height:"25px"}} /> 
     </LabelFieldPair>
       {value2 === "NO" && (
       <div>

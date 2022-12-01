@@ -6,12 +6,12 @@ import Timeline from "../components/TLTimeline";
 const SelectLicenseeIndividualDetails = ({ t, config, onSelect, userType, formData }) => {
   let validation = {};
   const onSkip = () => onSelect();
-  const [IndividualDesignation, setIndividualDesignation] = useState(formData.TradeDetails?.IndividualDesignation);
-  const [IndividualAadharNo, setIndividualAadharNo] = useState(formData.TradeDetails?.IndividualAadharNo);
-  const [IndividualName, setIndividualName] = useState(formData.TradeDetails?.IndividualName);
-  const [IndividualAddress, setIndividualAddress] = useState(formData.TradeDetails?.IndividualAddress);
-  const [IndividualMobNo, setIndividualMobNo] = useState(formData.TradeDetails?.IndividualMobNo);
-  const [IndividualEmailID, setIndividualEmailID] = useState(formData.TradeDetails?.IndividualEmailID);
+  const [IndividualDesignation, setIndividualDesignation] = useState(formData.address?.IndividualDesignation);
+  const [IndividualAadharNo, setIndividualAadharNo] = useState(formData.address?.IndividualAadharNo);
+  const [IndividualName, setIndividualName] = useState(formData.address?.IndividualName);
+  const [IndividualAddress, setIndividualAddress] = useState(formData.address?.IndividualAddress);
+  const [IndividualMobNo, setIndividualMobNo] = useState(formData.address?.IndividualMobNo);
+  const [IndividualEmailID, setIndividualEmailID] = useState(formData.address?.IndividualEmailID);
   const isEdit = window.location.href.includes("/edit-application/") || window.location.href.includes("renew-trade");
 
   function setSelectIndividualDesignation(e) {
@@ -32,18 +32,19 @@ const SelectLicenseeIndividualDetails = ({ t, config, onSelect, userType, formDa
   function setSelectIndividualEmailID(e) {
     setIndividualEmailID(e.target.value);
   }
- console.log(formData.TradeDetails?.LicenseeType.code);
+ console.log(formData.address?.IndividualAadharNo);
   function goNext() {
+    sessionStorage.setItem("IndividualDesignation", IndividualDesignation);
     sessionStorage.setItem("IndividualAadharNo", IndividualAadharNo);
     sessionStorage.setItem("IndividualName", IndividualName);
     sessionStorage.setItem("IndividualAddress", IndividualAddress);
     sessionStorage.setItem("IndividualMobNo", IndividualMobNo);
     sessionStorage.setItem("IndividualEmailID", IndividualEmailID);
-    onSelect(config.key, { IndividualAadharNo, IndividualName, IndividualAddress, IndividualMobNo, IndividualEmailID });
+    onSelect(config.key, { IndividualDesignation,IndividualAadharNo, IndividualName, IndividualAddress, IndividualMobNo, IndividualEmailID });
   }
   return (
     <React.Fragment>
-      {window.location.href.includes("/citizen") ? <Timeline /> : null}
+      {window.location.href.includes("/citizen") ? <Timeline currentStep={1} /> : null}
       <FormStep t={t} config={config} onSelect={goNext} onSkip={onSkip} isDisabled={!IndividualAadharNo} >
 
         {formData.TradeDetails?.LicenseeType.code === "INDIVIDUAL" && (

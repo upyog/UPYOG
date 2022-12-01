@@ -29,11 +29,11 @@ const CitizenHome = ({ modules }) => {
 
 const EmployeeHome = ({ modules }) => {
   return (
-    <div className="employee-app-container">
+    <div className="file-manager-content">
        <div style={{fontWeight:"600"}}>
-        Dashboard
+        Home/Dashboard
       </div>
-      <div className="ground-container moduleCardWrapper gridModuleWrapper">
+      <div className="file-wrapper m-t-20 moduleCardWrapper file-wrapper m-t-20">
      
         {modules.map(({ code }, index) => {
           const Card = Digit.ComponentRegistryService.getComponent(`${code}Card`) || (() => <React.Fragment />);

@@ -497,13 +497,13 @@ const EmployeeSideBar = () => {
                 t={t}
                 label={"ACTION_TEST_HOME"}
               />
-              {click ? <span style={{ display: "inline-block" }}>Trade Licence</span> : null}
+              {click ? <span style={{ display: "inline-block" }}>Trade Licenceeeee</span> : null}
             </div>
           </div>
           {first === "Home9" ? (
             <div style={navStyle} className="nav_drop">
               <li style={navLi}>
-                <Link to="/digit-ui/employee/tl/inbox">Trade License</Link>
+                <Link to="/digit-ui/employee/tl/inbox">Trade Licenseeeee</Link>
               </li>
               <li style={navLi}><Link to="/digit-ui/employee/tl/search/application">Search</Link></li>
               <li style={navLi}><Link to="/digit-ui/employee//tl/new-application">Apply TL</Link></li>

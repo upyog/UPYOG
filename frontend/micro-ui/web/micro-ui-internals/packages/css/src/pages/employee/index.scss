@@ -14,7 +14,6 @@
     padding: 16px;
     margin-right: 15px;
     margin-bottom: 15px;
-    display: inline-block;
     background-color: #fff;
     min-width: 300px;
     border-radius: 0.8rem;
@@ -61,7 +60,7 @@
   }
 
   .main {
-    padding: calc(70px + 25px) 25px 25px;
+    padding: calc(70px + 15px) 10px 10px 10px;
   }
 
   .loginContainer {

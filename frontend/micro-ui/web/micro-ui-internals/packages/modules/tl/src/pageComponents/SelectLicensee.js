@@ -127,7 +127,7 @@ const SelectLicensee = ({ t, config, onSelect, userType, formData }) => {
         setValue2(LicenseeType.code);
       }
     }
-  }, [wards,isInitialRender]);
+  }, [isInitialRender]);
 
   function goNext() {
     if(value2 === "INDIVIDUAL"){

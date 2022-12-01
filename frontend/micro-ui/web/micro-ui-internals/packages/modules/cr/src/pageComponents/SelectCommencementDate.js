@@ -18,7 +18,7 @@ const SelectCommencementDate = ({ t, config, onSelect, userType, formData }) => 
   }
   return (
     <React.Fragment>
-    {window.location.href.includes("/citizen") ? <Timeline /> : null}
+    {window.location.href.includes("/citizen") ? <Timeline currentStep={2}/> : null}
     <FormStep t={t} config={config} onSelect={goNext} onSkip={onSkip} isDisabled={!CommencementDate}>
       <CardLabel>{t("TL_NEW_TRADE_DETAILS_TRADE_COMM_DATE_LABEL")}</CardLabel>
       <DatePicker date={CommencementDate} name="CommencementDate" onChange={selectCommencementDate} disabled={isEdit} />
