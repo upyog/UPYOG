@@ -292,7 +292,7 @@ export const gettradeupdateaccessories = (data) => {
 }
 
 export const convertToTrade = (data = {}) => {
- 
+ console.log(data);
   let Financialyear = sessionStorage.getItem("CurrentFinancialYear");
   const formdata = {
     Licenses: [
@@ -323,6 +323,22 @@ export const convertToTrade = (data = {}) => {
             landmark: !data?.cpt ? data?.address?.landmark : data?.cpt?.details?.address?.landmark,
           },
           applicationDocuments: null,
+          owners: [
+            {
+              mobileNumber: data?.TradeDetails?.StructureType.code,
+              name: data?.TradeDetails?.setPlaceofActivity.code =="LAND" ? data?.TradeDetails?.BlockNo:null,
+              fatherOrHusbandName: data?.TradeDetails?.setPlaceofActivity.code =="LAND" ? data?.TradeDetails?.SurveyNo:null,
+              dob: data?.TradeDetails?.setPlaceofActivity.code =="LAND" ? data?.TradeDetails?.SurveyNo:null,
+              gender: data?.TradeDetails?.setPlaceofActivity.code =="BUILDING" ? data.address.Zonal.code:null,
+              permanentAddress: data?.TradeDetails?.setPlaceofActivity.code =="BUILDING" ? data.address.WardNo.code:null,
+              emailId: data?.TradeDetails?.setPlaceofActivity.code =="BUILDING" ? data.address.WardNo.wardno:null,
+              aadhaarNumber: data?.TradeDetails?.setPlaceofActivity.code =="BUILDING" ? data.address.DoorNoBuild.DoorNoBuild:null,
+              ownerType: data?.TradeDetails?.setPlaceofActivity.code =="BUILDING" ? data.address.DoorSubBuild.DoorSubBuild:null,
+              consentAgreementPlace: data?.TradeDetails?.setPlaceofActivity.code =="VEHICLE" ? data.address.VechicleNo.VechicleNo:null,
+              consentAgreementDate: data?.TradeDetails?.setPlaceofActivity.code =="WATER" ? data.address.WaterDet.WaterDet:null,
+              consentAgreementEndDate: data?.TradeDetails?.setPlaceofActivity.code =="WATER" ? data.address.WaterDet.WaterDet:null,
+            }
+          ],
           accessories: data?.TradeDetails?.accessories ? getaccessories(data) : null,
           owners: getownerarray(data),
           ...(data?.ownershipCategory?.code.includes("INSTITUTIONAL") && {institution: {
@@ -345,7 +361,6 @@ export const convertToTrade = (data = {}) => {
           // },
           structurePlace: [
             {
-              structurePlaceSubType: data?.TradeDetails?.StructureType.code,
               blockNo: data?.TradeDetails?.setPlaceofActivity.code =="LAND" ? data?.TradeDetails?.BlockNo:null,
               surveyNo: data?.TradeDetails?.setPlaceofActivity.code =="LAND" ? data?.TradeDetails?.SurveyNo:null,
               subDivisionNo: data?.TradeDetails?.setPlaceofActivity.code =="LAND" ? data?.TradeDetails?.SurveyNo:null,
@@ -360,7 +375,12 @@ export const convertToTrade = (data = {}) => {
           ],
           businessSector: data?.TradeDetails?.setSector.code, 
           capitalInvestment: data?.TradeDetails?.CapitalAmount,
-          enterpriseType: data?.TradeDetails?.enterpriseType
+          enterpriseType: data?.TradeDetails?.enterpriseType,
+          licenseUnitType: data?.TradeDetails?.enterpriseType,
+          licenseUnitId: data?.TradeDetails?.enterpriseType,
+          structurePlaceSubType: data?.TradeDetails?.StructureType.code,
+          customDetailType: data?.TradeDetails?.enterpriseType,
+          businessActivityDesc: data?.TradeDetails?.enterpriseType
         },
         
         tradeName: data?.TradeDetails?.TradeName,

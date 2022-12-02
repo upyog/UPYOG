@@ -15,6 +15,8 @@ import HospitalDetails from "./pageComponents/birthComponents/HospitalDetails";
 import OtherCountry from "./pageComponents/birthComponents/OtherCountry";
 import InstitutionDetails from "./pageComponents/birthComponents/InstitutionDetails";
 import ChildDetails from "../src/pageComponents/birthComponents/ChildDetails";
+
+import InformationDeath from "../src/pageComponents/deathComponents/InformationDeath";
 // import TLSelectGeolocation from "../src/pageComponents/TLSelectGeolocation";
 // import TLSelectAddress from "./pageComponents/TLSelectAddress";
 // import TLSelectPincode from "./pageComponents/TLSelectPincode";
@@ -128,6 +130,7 @@ const componentsToRegister = {
   OtherCountry,
   InstitutionDetails,
   ChildDetails,
+  InformationDeath,
   // SelectLand,
   // SelectBuilding,
   // SelectBusinessCategory,

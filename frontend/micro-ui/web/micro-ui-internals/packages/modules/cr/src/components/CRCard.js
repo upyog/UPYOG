@@ -53,7 +53,7 @@ const CRCard = () => {
         },
         {
             label: t("Death Registration"),
-            link: `/digit-ui/employee/cr/cr-flow`,
+            link: `/digit-ui/employee/cr/death-flow`,
         },
     ]
 

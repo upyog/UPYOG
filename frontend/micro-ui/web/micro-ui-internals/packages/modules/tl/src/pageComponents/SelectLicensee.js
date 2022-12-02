@@ -6,11 +6,11 @@ import Timeline from "../components/TLTimeline";
 const SelectLicensee = ({ t, config, onSelect, userType, formData }) => {
   let validation = {};
   const onSkip = () => onSelect();
-  const tenantId = Digit.ULBService.getCurrentTenantId();
+  const tenantId = Digit.ULBService.getCitizenCurrentTenant();
   const stateId = Digit.ULBService.getStateId();
   const { data: place = {}, isLoad } = Digit.Hooks.tl.useTradeLicenseMDMS(stateId, "TradeLicense", "NatureOfInstitution");
   const { data: type = {}, isLoaded } = Digit.Hooks.tl.useTradeLicenseMDMS(stateId, "TradeLicense", "TypeOfUnit");
-  const { data: boundaryList = {}, isLoading } = Digit.Hooks.tl.useTradeLicenseMDMS("kl.cochin", "cochin/egov-location", "boundary-data");
+  const { data: boundaryList = {}, isLoading } = Digit.Hooks.tl.useTradeLicenseMDMS(tenantId, "cochin/egov-location", "boundary-data");
   const [value2, setValue2] = useState();
   const [LicenseeType, setLicenseeType] = useState(formData?.TradeDetails?.LicenseeType);
   const [LicensingUnitType, setLicensingUnitType] = useState(formData?.TradeDetails?.LicensingUnitType);

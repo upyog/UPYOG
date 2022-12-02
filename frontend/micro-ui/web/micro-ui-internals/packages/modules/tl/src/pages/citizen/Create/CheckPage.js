@@ -68,7 +68,7 @@ const CheckPage = ({ onSubmit, value }) => {
         {/* <CardText>{t("CS_CHECK_CHECK_YOUR_ANSWERS_TEXT")}</CardText> */}
         {isEdit && <CitizenInfoLabel info={t("CS_FILE_APPLICATION_INFO_LABEL")} text={t("TL_RENEWAL_INFO_TEXT")} />}
         {/* <CardSubHeader>{t("TL_TRADE_UNITS_HEADER")}</CardSubHeader> */}
-        <CardHeader>{t("TL_TRADE_UNITS_HEADER")}</CardHeader>
+        <label style={{ fontSize: "17px", fontWeight: "bold" }} >{t("TL_TRADE_UNITS_HEADER")}</label>
         <div className="row">
           <div className="col-md-12" ><h1 className="headingh1" ><span style={{ background: "#fff", padding: "0 10px" }}>{`${t("TL_TRADE_UNITS_HEADER")}`}</span></h1>
           </div>
@@ -94,7 +94,7 @@ const CheckPage = ({ onSubmit, value }) => {
             </div>
           </div>
         </StatusTable>
-        <CardHeader>{t("TL_LICENSEE_TYPE")}</CardHeader>
+        <label style={{ fontSize: "17px", fontWeight: "bold" }} >{t("TL_LICENSEE_TYPE")}</label>
         {TradeDetails?.LicenseeType.code === "INDIVIDUAL" && (
           <div>
             <div className="row">
@@ -244,7 +244,7 @@ const CheckPage = ({ onSubmit, value }) => {
               </div>
             </div>
             <StatusTable>
-            <div className="row">
+              <div className="row">
                 <div className="col-md-4" ><CardLabel>{`${t("TL_LICENSEE_DESIGNATION")}`}</CardLabel>
                   <CardText style={{ fontSize: "15px", Colour: "black" }}>{t(TradeDetails.LandMark)}</CardText>
                 </div>
@@ -268,13 +268,13 @@ const CheckPage = ({ onSubmit, value }) => {
               </div>
             </StatusTable>
           </div>)}
-          <CardHeader>{t("TL_LICENSEE_PLACE_STRUCTURE")}</CardHeader>
-          {address?.OwnProperty.code === "YES" && (
+        <label style={{ fontSize: "17px", fontWeight: "bold" }} >{t("TL_LICENSEE_PLACE_STRUCTURE")}</label>
+        {address?.OwnProperty.code === "YES" && (
           <div>
             <StatusTable >
               <div className="row">
-                <div className="col-md-4" ><CardLabel>{`${t("TL_PLACE_MSG")}`}</CardLabel>
-                  <CardText style={{ fontSize: "15px", Colour: "black" }}>{t(address.OwnProperty.code)}</CardText>
+                <div className="col-md-4" ><CardLabel>{`${t("TL_PLACE_MSG")}`} : {t(address.OwnProperty.code)}</CardLabel>
+                  {/* <CardText style={{ fontSize: "15px", Colour: "black" }}>{t(address.OwnProperty.code)}</CardText> */}
                 </div>
               </div>
             </StatusTable>
@@ -286,12 +286,12 @@ const CheckPage = ({ onSubmit, value }) => {
               </div>
             </div>
             <StatusTable>
-            <div className="row">
+              <div className="row">
                 <div className="col-md-12" ><CardLabel>{`${t("TL_PLACE_MSG")}`} : {t(address.OwnProperty.code)}</CardLabel>
                   {/* <CardText style={{ fontSize: "15px", Colour: "black" }}>{t(address.OwnProperty.code)}</CardText> */}
                 </div>
               </div>
-            <div className="row">
+              <div className="row">
                 <div className="col-md-4" ><CardLabel>{`${t("TL_OWNER_AADHAR_NO")}`}</CardLabel>
                   <CardText style={{ fontSize: "15px", Colour: "black" }}>{t(address.OwnerAadharNo)}</CardText>
                 </div>
@@ -320,6 +320,173 @@ const CheckPage = ({ onSubmit, value }) => {
               </div>
             </StatusTable>
           </div>)}
+
+        <label style={{ fontSize: "17px", fontWeight: "bold" }} >{t("TL_STRUCTURE_TYPE_HEADER")}</label>
+        <div className="row">
+          <div className="col-md-12" ><h1 className="headingh1" ><span style={{ background: "#fff", padding: "0 10px" }}>{`${t("TL_PLACE_HEADER_MSG")}`}</span></h1>
+          </div>
+        </div>
+        <StatusTable >
+          <div className="row">
+            <div className="col-md-6" ><CardLabel>{`${t("TL_LOCALIZATION_PLACE_ACTVITY")}`}</CardLabel>
+              <CardText style={{ fontSize: "15px", Colour: "black" }}>{t(TradeDetails.setPlaceofActivity.name)}</CardText>
+            </div>
+            <div className="col-md-6" ><CardLabel>{`${t("TL_LOCALIZATION_NATURE_STRUCTURE")}`}</CardLabel>
+              <CardText style={{ fontSize: "15px", Colour: "black" }}>{t(TradeDetails.StructureType.name)}</CardText>
+            </div>
+          </div>
+        </StatusTable>
+        {TradeDetails?.setPlaceofActivity.code === "LAND" && (
+          <div >
+            <StatusTable >
+              <div className="row">
+                <div className="col-md-12" ><CardLabel>{`${t("TL_RESURVEY_LAND")}`} : {t(TradeDetails.ResurveyedLand.code)}</CardLabel>
+                </div>
+              </div>
+            </StatusTable>
+            {TradeDetails?.ResurveyedLand.code === "YES" && (
+              <div>
+                <div className="row">
+                  <div className="col-md-12" ><h1 className="headingh1" ><span style={{ background: "#fff", padding: "0 10px" }}>{`${t("TL_RESURVEY_LAN_DETAILS")}`}</span></h1>
+                  </div>
+                </div>
+                <StatusTable>
+                  <div className="row">
+                    <div className="col-md-6" ><CardLabel>{`${t("TL_LOCALIZATION_BLOCK_NO")}`} : {t(TradeDetails.BlockNo)}</CardLabel>
+                      {/* <CardText style={{ fontSize: "15px", Colour: "black" }}></CardText> */}
+                    </div>
+                    <div className="col-md-6" ><CardLabel>{`${t("TL_LOCALIZATION_SURVEY_NO")}`} : {t(TradeDetails.SurveyNo)}</CardLabel>
+                      {/* <CardText style={{ fontSize: "15px", Colour: "black" }}></CardText> */}
+                    </div>
+                  </div>
+                  <div className="row">
+                    <div className="col-md-6" ><CardLabel>{`${t("TL_LOCALIZATION_SUBDIVISION_NO")}`} : {t(TradeDetails.SubDivNo)}</CardLabel>
+                      {/* <CardText style={{ fontSize: "15px", Colour: "black" }}></CardText> */}
+                    </div>
+                    <div className="col-md-6" ><CardLabel>{`${t("TL_LOCALIZATION_PARTITION_NO")}`} : {t(TradeDetails.SubDivNo)}</CardLabel>
+                      <CardText>{<ActionButton jumpTo={`${routeLink}/units-details`} />}</CardText>
+                    </div>
+                  </div>
+                </StatusTable>
+              </div>
+            )}
+            {TradeDetails?.ResurveyedLand.code === "NO" && (
+              <div>
+                <div className="row">
+                  <div className="col-md-12" ><h1 className="headingh1" ><span style={{ background: "#fff", padding: "0 10px" }}>{`${t("TL_RESURVEY_LAN_DETAILS")}`}</span></h1>
+                  </div>
+                </div>
+                <StatusTable>
+                  <div className="row">
+                    <div className="col-md-6" ><CardLabel>{`${t("TL_LOCALIZATION_BLOCK_NO")}`} : {t(TradeDetails.BlockNo)}</CardLabel>
+                      {/* <CardText style={{ fontSize: "15px", Colour: "black" }}></CardText> */}
+                    </div>
+                    <div className="col-md-6" ><CardLabel>{`${t("TL_LOCALIZATION_SURVEY_NO")}`} : {t(TradeDetails.SurveyNo)}</CardLabel>
+                      {/* <CardText style={{ fontSize: "15px", Colour: "black" }}></CardText> */}
+                    </div>
+                  </div>
+                  <div className="row">
+                    <div className="col-md-6" ><CardLabel>{`${t("TL_LOCALIZATION_SUBDIVISION_NO")}`} : {t(TradeDetails.SubDivNo)}</CardLabel>
+                      {/* <CardText style={{ fontSize: "15px", Colour: "black" }}></CardText> */}
+                    </div>
+                    <div className="col-md-6" ><CardLabel></CardLabel>
+                    <CardText>{<ActionButton jumpTo={`${routeLink}/units-details`} />}</CardText>
+                    </div>
+                  </div>
+                </StatusTable>
+              </div>
+            )}
+
+          </div>)}
+        {TradeDetails?.setPlaceofActivity.code === "BUILDING" && (
+          <div>
+            <div className="row">
+              <div className="col-md-12" ><h1 className="headingh1" ><span style={{ background: "#fff", padding: "0 10px" }}>{`${t("TL_BUILDING_HEADER")}`}</span></h1>
+              </div>
+            </div>
+            <StatusTable>              
+              <div className="row">
+                <div className="col-md-6" ><CardLabel>{`${t("TL_LOCALIZATION_ZONAL_OFFICE")}`}</CardLabel>
+                  <CardText style={{ fontSize: "15px", Colour: "black" }}>{t(TradeDetails.ZonalBuilding)}</CardText>
+                </div>
+                <div className="col-md-6" ><CardLabel>{`${t("TL_LOCALIZATION_WARD_NO")}`}</CardLabel>
+                  <CardText style={{ fontSize: "15px", Colour: "black" }}>{t(TradeDetails.WardNoBuilding)}</CardText>
+                </div>
+              </div>
+              <div className="row">                
+                <div className="col-md-6" ><CardLabel>{`${t("TL_LOCALIZATION_DOOR_NO")}`}</CardLabel>
+                  <CardText style={{ fontSize: "15px", Colour: "black" }}>{t(TradeDetails.DoorNoBuild)}</CardText>
+                </div>
+                <div className="col-md-6" ><CardLabel>{`${t("TL_LOCALIZATION_DOOR_NO_SUB")}`}</CardLabel>
+                  <CardText style={{ fontSize: "15px", Colour: "black" }}>{t(TradeDetails.DoorSubBuild)}&nbsp;&nbsp;{<ActionButton jumpTo={`${routeLink}/units-details`} />}</CardText>
+                </div>
+              </div>
+            </StatusTable>
+          </div>)}
+          {TradeDetails?.setPlaceofActivity.code === "VECHICLE" && (
+          <div>
+            <div className="row">
+              <div className="col-md-12" ><h1 className="headingh1" ><span style={{ background: "#fff", padding: "0 10px" }}>{`${t("TL_VECHICLE_HEADER")}`}</span></h1>
+              </div>
+            </div>
+            <StatusTable>              
+              <div className="row">
+                <div className="col-md-6" ><CardLabel>{`${t("TL_VECHICLE_NO")}`}</CardLabel>
+                  <CardText style={{ fontSize: "15px", Colour: "black" }}>{t(TradeDetails.VechicleNo)}</CardText>
+                </div>
+                <div className="col-md-6" ><CardLabel></CardLabel>
+                  <CardText style={{ fontSize: "15px", Colour: "black" }}>{<ActionButton jumpTo={`${routeLink}/units-details`} />}</CardText>
+                </div>
+              </div>
+            </StatusTable>
+          </div>)}
+          {TradeDetails?.setPlaceofActivity.code === "WATER" && (
+          <div>
+            <div className="row">
+              <div className="col-md-12" ><h1 className="headingh1" ><span style={{ background: "#fff", padding: "0 10px" }}>{`${t("TL_VESSEL_HEADER")}`}</span></h1>
+              </div>
+            </div>
+            <StatusTable>              
+              <div className="row">
+                <div className="col-md-6" ><CardLabel>{`${t("TL_VESSEL_NO")}`}</CardLabel>
+                  <CardText style={{ fontSize: "15px", Colour: "black" }}>{t(TradeDetails.VesselNo)}</CardText>
+                </div>
+                <div className="col-md-6" ><CardLabel></CardLabel>
+                  <CardText style={{ fontSize: "15px", Colour: "black" }}>{<ActionButton jumpTo={`${routeLink}/units-details`} />}</CardText>
+                </div>
+              </div>
+            </StatusTable>
+          </div>)}
+        <label style={{ fontSize: "17px", fontWeight: "bold" }} >{t("TL_TRADE_BUISINESS_CATEGORY")}</label>
+        <div className="row">
+          <div className="col-md-12" ><h1 className="headingh1" ><span style={{ background: "#fff", padding: "0 10px" }}>{`${t("TL_BUISINESS_HEADER_MSG")}`}</span></h1>
+          </div>
+        </div>
+        <StatusTable >
+          <div className="row">
+            <div className="col-md-6" ><CardLabel style={{ lineHeight: "auto" }}>{`${t("TL_LOCALIZATION_SECTOR")}`}</CardLabel>
+              <CardText style={{ fontSize: "15px", Colour: "black" }}>{t(TradeDetails.setSector.name)}</CardText>
+            </div>
+            <div className="col-md-6" ><CardLabel style={{ lineHeight: "auto" }}>{`${t("TL_LOCALIZATION_CAPITAL_AMOUNT")}`}</CardLabel>
+              <CardText style={{ fontSize: "15px", Colour: "black" }}>{t(TradeDetails.CapitalAmount)}&nbsp;&nbsp;{<ActionButton jumpTo={`${routeLink}/units-details`} />}</CardText>
+            </div>
+          </div>
+        </StatusTable>
+        <label style={{ fontSize: "17px", fontWeight: "bold" }} >{t("Date of Commencement and Final Declaration")}</label>
+        <div className="row">
+          <div className="col-md-12" ><h1 className="headingh1" ><span style={{ background: "#fff", padding: "0 10px" }}>{`${t("TL_LICENSE_DECLARATION")}`}</span></h1>
+          </div>
+        </div>
+        <StatusTable >
+          <div className="row">
+            <div className="col-md-6" ><CardLabel style={{ lineHeight: "auto" }}>{`${t("TL_NEW_TRADE_DETAILS_TRADE_COMM_DATE_LABEL")}`}</CardLabel>
+              <CardText style={{ fontSize: "15px", Colour: "black" }}>{t(TradeDetails.CommencementDate)}</CardText>
+            </div>
+            <div className="col-md-6" ><CardLabel style={{ lineHeight: "auto" }}>{`${t("TL_LICENSE_PERIOD")}`}</CardLabel>
+              <CardText style={{ fontSize: "15px", Colour: "black" }}>{t(TradeDetails.LicensePeriod)}&nbsp;&nbsp;{<ActionButton jumpTo={`${routeLink}/units-details`} />}</CardText>
+            </div>
+          </div>
+        </StatusTable>
 
         <StatusTable>
           {/* <Row

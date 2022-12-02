@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { CardLabel, TextInput, Dropdown } from "@egovernments/digit-ui-react-components";
-import { FormStep, RadioOrSelect, RadioButtons } from "@egovernments/digit-ui-react-components";
+import { FormStep, RadioOrSelect, RadioButtons,LabelFieldPair  } from "@egovernments/digit-ui-react-components";
 import Timeline from "../components/TLTimeline";
 import SelectLand from "./SelectLand";
 
 const SelectStructureType = ({ t, config, onSelect, userType, formData }) => {
   const stateId = Digit.ULBService.getStateId();
+  const tenantId = Digit.ULBService.getCitizenCurrentTenant();
   const { data: place = {}, isLoad } = Digit.Hooks.tl.useTradeLicenseMDMS(stateId, "TradeLicense", "PlaceOfActivity");
   const { data: dataitem = {}, isLoading } = Digit.Hooks.tl.useTradeLicenseMDMS(stateId, "TradeLicense", "TradeStructureSubtype");
   const [setPlaceofActivity, setSelectedPlaceofActivity] = useState(formData?.TradeDetails?.setPlaceofActivity);
@@ -20,7 +21,7 @@ const SelectStructureType = ({ t, config, onSelect, userType, formData }) => {
   const [SurveyNo, setSurveyNo] = useState(formData.TradeDetails?.SurveyNo);
   const [SubDivNo, setSubDivNo] = useState(formData.TradeDetails?.SubDivNo);
   const [PartitionNo, setPartitionNo] = useState(formData.TradeDetails?.PartitionNo);
-  const { data: boundaryList = {} } = Digit.Hooks.tl.useTradeLicenseMDMS("kl.cochin", "cochin/egov-location", "boundary-data");
+  const { data: boundaryList = {} } = Digit.Hooks.tl.useTradeLicenseMDMS(tenantId, "cochin/egov-location", "boundary-data");
   const [ZonalBuilding, setZonal] = useState(() => formData?.address?.ZonalBuilding || {});
   const [WardNoBuilding, setWardNo] = useState(() => formData?.address?.Building || {});
   const [DoorNoBuild, setDoorNoBuild] = useState(formData.TradeDetails?.DoorNoBuild);
@@ -170,51 +171,51 @@ const SelectStructureType = ({ t, config, onSelect, userType, formData }) => {
       sessionStorage.setItem("PartitionNo", PartitionNo);
       sessionStorage.setItem("ZonalBuilding", null);
       sessionStorage.setItem("WardNoBuilding", null);
-      sessionStorage.setItem("DoorNoBuild", null);
-      sessionStorage.setItem("DoorSubBuild", null);
-      sessionStorage.setItem("VechicleNo", null);
-      sessionStorage.setItem("VesselNo", null);
+      sessionStorage.setItem("DoorNoBuild", '');
+      sessionStorage.setItem("DoorSubBuild", '');
+      sessionStorage.setItem("VechicleNo", '');
+      sessionStorage.setItem("VesselNo", '');
       onSelect(config.key, { StructureType, setPlaceofActivity, ResurveyedLand, BlockNo, SurveyNo, SubDivNo, PartitionNo,ZonalBuilding,WardNoBuilding,DoorNoBuild,DoorSubBuild,VechicleNo,VesselNo });
 
     } else if(value2 === "BUIL"){
       sessionStorage.setItem("ResurveyedLand", null);
-      sessionStorage.setItem("BlockNo", null);
-      sessionStorage.setItem("SurveyNo", null);
-      sessionStorage.setItem("SubDivNo", null);
-      sessionStorage.setItem("PartitionNo", null);
+      sessionStorage.setItem("BlockNo", '');
+      sessionStorage.setItem("SurveyNo", '');
+      sessionStorage.setItem("SubDivNo", '');
+      sessionStorage.setItem("PartitionNo", '');
       sessionStorage.setItem("ZonalBuilding", ZonalBuilding.name);
       sessionStorage.setItem("WardNoBuilding", WardNo.name);
       sessionStorage.setItem("DoorNoBuild", DoorNoBuild);
       sessionStorage.setItem("DoorSubBuild", DoorSubBuild);
-      sessionStorage.setItem("VechicleNo", null);
-      sessionStorage.setItem("VesselNo", null);
+      sessionStorage.setItem("VechicleNo", '');
+      sessionStorage.setItem("VesselNo", '');
       onSelect(config.key, { StructureType, setPlaceofActivity, ResurveyedLand, BlockNo, SurveyNo, SubDivNo, PartitionNo,ZonalBuilding,WardNoBuilding,DoorNoBuild,DoorSubBuild,VechicleNo,VesselNo });
 
     } else if(value2 === "VEHI"){
       sessionStorage.setItem("ResurveyedLand", null);
-      sessionStorage.setItem("BlockNo", null);
-      sessionStorage.setItem("SurveyNo", null);
-      sessionStorage.setItem("SubDivNo", null);
-      sessionStorage.setItem("PartitionNo", null);
+      sessionStorage.setItem("BlockNo", '');
+      sessionStorage.setItem("SurveyNo", '');
+      sessionStorage.setItem("SubDivNo", '');
+      sessionStorage.setItem("PartitionNo", '');
       sessionStorage.setItem("ZonalBuilding", null);
       sessionStorage.setItem("WardNoBuilding", null);
-      sessionStorage.setItem("DoorNoBuild", null);
-      sessionStorage.setItem("DoorSubBuild", null);
+      sessionStorage.setItem("DoorNoBuild", '');
+      sessionStorage.setItem("DoorSubBuild", '');
       sessionStorage.setItem("VechicleNo", VechicleNo);
-      sessionStorage.setItem("VesselNo", null);
+      sessionStorage.setItem("VesselNo", '');
       onSelect(config.key, { StructureType, setPlaceofActivity, ResurveyedLand, BlockNo, SurveyNo, SubDivNo, PartitionNo,ZonalBuilding,WardNoBuilding,DoorNoBuild,DoorSubBuild,VechicleNo,VesselNo });
 
     } else if(value2 === "VEHI"){
       sessionStorage.setItem("ResurveyedLand", null);
-      sessionStorage.setItem("BlockNo", null);
-      sessionStorage.setItem("SurveyNo", null);
-      sessionStorage.setItem("SubDivNo", null);
-      sessionStorage.setItem("PartitionNo", null);
+      sessionStorage.setItem("BlockNo", '');
+      sessionStorage.setItem("SurveyNo", '');
+      sessionStorage.setItem("SubDivNo", '');
+      sessionStorage.setItem("PartitionNo", '');
       sessionStorage.setItem("ZonalBuilding", null);
       sessionStorage.setItem("WardNoBuilding", null);
-      sessionStorage.setItem("DoorNoBuild", null);
-      sessionStorage.setItem("DoorSubBuild", null);
-      sessionStorage.setItem("VechicleNo", null);
+      sessionStorage.setItem("DoorNoBuild", '');
+      sessionStorage.setItem("DoorSubBuild", '');
+      sessionStorage.setItem("VechicleNo", '');
       sessionStorage.setItem("VesselNo", VesselNo);
       onSelect(config.key, { StructureType, setPlaceofActivity, ResurveyedLand, BlockNo, SurveyNo, SubDivNo, PartitionNo,ZonalBuilding,WardNoBuilding,DoorNoBuild,DoorSubBuild,VechicleNo,VesselNo });
 
@@ -241,10 +242,12 @@ const SelectStructureType = ({ t, config, onSelect, userType, formData }) => {
         </div>
         {value2 === "LAND" && (
           <div>
-            <div className="row"> <div className="col-md-12" ><CardLabel>{`${t("TL_RESURVEY_LAND")}`}</CardLabel>
-              <RadioButtons t={t} optionsKey="i18nKey" isMandatory={config.isMandatory} options={menu} selectedOption={ResurveyedLand} onSelect={selectResurveyedLand} disabled={isEdit} />  </div>
+            <div className="row"><div className="col-md-12" >
+            <LabelFieldPair style={{ display: "flex" }}><CardLabel>{`${t("TL_RESURVEY_LAND")}`}</CardLabel>
+            <RadioButtons t={t} optionsKey="i18nKey" isMandatory={config.isMandatory} options={menu} selectedOption={ResurveyedLand} onSelect={selectResurveyedLand} disabled={isEdit} style={{ marginTop:"-8px",paddingLeft:"5px" ,height:"25px"}} /> 
+            </LabelFieldPair></div>
             </div>
-
+            
             {value3 === "YES" && (
               <div> <div className="row"><div className="col-md-12" ><h1 className="headingh1" ><span style={{ background: "#fff", padding: "0 10px" }}>{`${t("TL_RESURVEY_LAN_DETAILS")}*`}</span>   </h1> </div>
               </div>
