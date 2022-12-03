@@ -17,6 +17,12 @@ import InstitutionDetails from "./pageComponents/birthComponents/InstitutionDeta
 import ChildDetails from "../src/pageComponents/birthComponents/ChildDetails";
 
 import InformationDeath from "../src/pageComponents/deathComponents/InformationDeath";
+import InformationDeath1 from "../src/pageComponents/deathComponents/InformationDeath1";
+import AddressOfDecesed from "./pageComponents/deathComponents/AddressOfDecesed";
+import OutSideIndia from "./pageComponents/deathComponents/OutSideIndia";
+import FamilyInformation from "./pageComponents/deathComponents/FamilyInformation";
+
+
 // import TLSelectGeolocation from "../src/pageComponents/TLSelectGeolocation";
 // import TLSelectAddress from "./pageComponents/TLSelectAddress";
 // import TLSelectPincode from "./pageComponents/TLSelectPincode";
@@ -130,7 +136,12 @@ const componentsToRegister = {
   OtherCountry,
   InstitutionDetails,
   ChildDetails,
+
   InformationDeath,
+  InformationDeath1,
+  AddressOfDecesed,
+  OutSideIndia,
+  FamilyInformation,
   // SelectLand,
   // SelectBuilding,
   // SelectBusinessCategory,
