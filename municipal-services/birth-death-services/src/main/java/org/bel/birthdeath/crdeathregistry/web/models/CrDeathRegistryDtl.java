@@ -83,8 +83,8 @@ public class CrDeathRegistryDtl {
     @JsonProperty("deceasedLastNameMl")
     private String deceasedLastNameMl ;
 
-    @JsonProperty("deceasedAadharSubmitted")
-    private Integer deceasedAadharSubmitted ;
+    // @JsonProperty("deceasedAadharSubmitted")
+    // private Integer deceasedAadharSubmitted ;
 
     @JsonProperty("deceasedAadharNumber")
     private String deceasedAadharNumber ;

@@ -29,7 +29,8 @@ public class MDMSValidator {
         Map<String,String> errorMap = new HashMap<>();
         Map<String,List<String>> masterData = getAttributeValues(mdmsdata);
         
-        String[] masterArray = {CrDeathConstants.TENANTS,CrDeathConstants.GENDERTYPE};
+        String[] masterArray = {CrDeathConstants.TENANTS,CrDeathConstants.GENDERTYPE
+                            ,CrDeathConstants.HOSPITAL_LIST,CrDeathConstants.DEATH_PLACE};
         validateIfMasterPresent(masterArray,masterData);
 
         System.out.println("hairakhi4"+masterData.get(CrDeathConstants.TENANTS));
@@ -49,6 +50,16 @@ public class MDMSValidator {
         errorMap.put("INVALID GENDER TYPE", "The gender of the deceased " +
                     request.getDeathCertificateDtls().get(0).getDeceasedGender()+ " is invalid");
 
+        if(!masterData.get(CrDeathConstants.HOSPITAL_LIST)
+                    .contains(request.getDeathCertificateDtls().get(0).getDeathPlaceOfficeName()))
+            errorMap.put("HOSPITAL DETAILS INVALID", "The deceased hospital details " +
+                        request.getDeathCertificateDtls().get(0).getDeathPlaceOfficeName()+ " is invalid");
+
+        if(!masterData.get(CrDeathConstants.DEATH_PLACE)
+                        .contains(request.getDeathCertificateDtls().get(0).getDeathPlace()))
+            errorMap.put("DEATH PLACE DETAILS INVALID", "The deceased death place details " +
+                            request.getDeathCertificateDtls().get(0).getDeathPlace()+ " is invalid");
+
 
         if(!CollectionUtils.isEmpty(errorMap))
             throw new CustomException(errorMap);
@@ -57,7 +68,8 @@ public class MDMSValidator {
 
     private Map<String, List<String>> getAttributeValues(Object mdmsdata){
         List<String> modulepaths = Arrays.asList(CrDeathConstants.TENANT_JSONPATH, 
-                                    CrDeathConstants.COMMON_MASTER_JSONPATH);
+                                    CrDeathConstants.COMMON_MASTER_JSONPATH,
+                                    CrDeathConstants.HOSPITAL_LIST_JSONPATH);
         final Map<String, List<String>> mdmsResMap = new HashMap<>();
        
         modulepaths.forEach(modulepath -> {

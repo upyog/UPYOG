@@ -1,6 +1,7 @@
 package org.bel.birthdeath.crdeath.util;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -43,10 +44,16 @@ public class CrDeathMdmsUtil {
     private MdmsCriteriaReq getMDMSRequest(RequestInfo requestInfo, String tenantId) {
         ModuleDetail tenantIdRequest = getTenantIdRequest(tenantId);
         ModuleDetail GenderTypeRequest = getGenderTypeRequest();
+        List<ModuleDetail> BNDListRequest = getBNDListRequest();
+        // ModuleDetail DeathPlaceRequest = getDeathPlaceRequest();
+
 
         List<ModuleDetail> moduleDetails = new LinkedList<>();
         moduleDetails.add(tenantIdRequest);
         moduleDetails.add(GenderTypeRequest);
+        moduleDetails.addAll(BNDListRequest);
+        // moduleDetails.add(DeathPlaceRequest);
+
 
         // MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(moduleDetails).tenantId(tenantId)
         //         .build();
@@ -109,5 +116,55 @@ public class CrDeathMdmsUtil {
         return crDeathModuleDtls;
     }
 
+     /**
+     * Creates request to search Gender Type in mdms
+     * 
+     * @return MDMS request for HospitalList
+     */
+    private List<ModuleDetail> getBNDListRequest() {
+
+        // master details for crDeath module
+        List<MasterDetail> crDeathMasterDetails = new ArrayList<>();
+
+        // filter to only get code field from master data    
+        final String filterCode = "$.[?(@.active==true)].hospitalName";
+        crDeathMasterDetails
+                .add(MasterDetail.builder().name(CrDeathConstants.HOSPITAL_LIST).filter(filterCode).build());
+
+
+        final String filterCodePlaceMaster = "$.[?(@.active==true)].code";
+         crDeathMasterDetails
+                    .add(MasterDetail.builder().name(CrDeathConstants.DEATH_PLACE).filter(filterCodePlaceMaster).build());
+       
+
+        ModuleDetail crDeathModuleDtls = ModuleDetail.builder().masterDetails(crDeathMasterDetails)
+                .moduleName(CrDeathConstants.BND_MODULE_NAME).build();
+
+               
+         return Arrays.asList(crDeathModuleDtls);
+    }
+
     
+    /**
+     * Creates request to search Gender Type in mdms
+     * 
+     * @return MDMS request for DeathPlace master
+     */
+    // private ModuleDetail getDeathPlaceRequest() {
+
+    //     // master details for crDeath module
+    //     List<MasterDetail> crDeathMasterDetails = new ArrayList<>();
+
+    //     // filter to only get code field from master data    
+    //     final String filterCode = "$.[?(@.active==true)].code";
+    //     crDeathMasterDetails
+    //             .add(MasterDetail.builder().name(CrDeathConstants.DEATH_PLACE).filter(filterCode).build());
+       
+
+    //     ModuleDetail crDeathModuleDtls = ModuleDetail.builder().masterDetails(crDeathMasterDetails)
+    //             .moduleName(CrDeathConstants.DEATH_PLACE_MODULE_NAME).build();
+
+       
+    //     return crDeathModuleDtls;
+    // }
 }

@@ -45,7 +45,6 @@ public class CrDeathService {
        // validatorService.validateCreate(request);
 
        // validate mdms data
-        //  Object mdmsData = util.mDMSCall(request.getRequestInfo(), request.getDeathCertificateDtls().get(0).getTenantId());
         Object mdmsData = util.mDMSCall(request.getRequestInfo(), request.getDeathCertificateDtls().get(0).getTenantId());
          
          /********************************************* */

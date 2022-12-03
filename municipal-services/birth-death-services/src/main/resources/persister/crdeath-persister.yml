@@ -8,8 +8,8 @@ serviceMaps:
     isTransaction: true
     queryMaps:
 
-    - query: INSERT INTO public.eg_death_dtls(id, registrationunit, tenantid, correct_death_date_known, dateofdeath, time_of_death, timeofdeath_unit, date_of_death_1, time_of_death_1, timeofdeath_unit1, deceased_identified, deceased_title, deceased_firstname_en, deceased_firstname_ml, deceased_middlename_en, deceased_middlename_ml, deceased_lastname_en, deceased_lastname_ml, deceased_aadhar_submitted, deceased_aadhar_number, deceased_gender, age, age_unit, dateofbirth, death_place, death_place_type, death_place_inst_id, death_place_office_name, death_place_other_ml, death_place_other_en, informant_title, informant_name_en, informant_name_ml, informant_aadhar_submitted, informant_aadhar_no, informant_mobile_no, general_remarks, application_status, submitted_on, created_by, createdtime, lastmodifiedby, lastmodifiedtime, place_burial, place_burial_institution_type, place_burial_institution_name, registration_no, ip_no, op_no, male_dependent_type, male_dependent_title, male_dependent_name_en, male_dependent_name_ml, male_dependent_aadharno, male_dependent_mobileno, male_dependent_mailid, female_dependent_type, female_dependent_title, female_dependent_name_en, female_dependent_name_ml, female_dependent_aadharno, female_dependent_mobileno, female_dependent_mailid,application_no)
-               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+    - query: INSERT INTO public.eg_death_dtls(id, registrationunit, tenantid, correct_death_date_known, dateofdeath, time_of_death, timeofdeath_unit, date_of_death_to, time_of_death_to, timeofdeath_unit_to, deceased_identified, deceased_title, deceased_firstname_en, deceased_firstname_ml, deceased_middlename_en, deceased_middlename_ml, deceased_lastname_en, deceased_lastname_ml, deceased_aadhar_number, deceased_gender, age, age_unit, dateofbirth, death_place, death_place_inst_type, death_place_inst_id, death_place_office_name, death_place_other_ml, death_place_other_en, informant_title, informant_name_en, informant_name_ml, informant_aadhar_submitted, informant_aadhar_no, informant_mobile_no, general_remarks, application_status, submitted_on, created_by, createdtime, lastmodifiedby, lastmodifiedtime, place_burial, place_burial_institution_type, place_burial_institution_name, registration_no, ip_no, op_no, male_dependent_type, male_dependent_title, male_dependent_name_en, male_dependent_name_ml, male_dependent_aadharno, male_dependent_mobileno, male_dependent_mailid, female_dependent_type, female_dependent_title, female_dependent_name_en, female_dependent_name_ml, female_dependent_aadharno, female_dependent_mobileno, female_dependent_mailid,application_no)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
      
      
      
@@ -50,8 +50,6 @@ serviceMaps:
       - jsonPath: $.deathCertificateDtls.*.deceasedLastNameEn
 
       - jsonPath: $.deathCertificateDtls.*.deceasedLastNameMl
-
-      - jsonPath: $.deathCertificateDtls.*.deceasedAadharSubmitted
 
       - jsonPath: $.deathCertificateDtls.*.deceasedAadharNumber
       
