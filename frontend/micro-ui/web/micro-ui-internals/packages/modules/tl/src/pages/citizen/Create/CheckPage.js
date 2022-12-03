@@ -146,24 +146,24 @@ const CheckPage = ({ onSubmit, value }) => {
             <StatusTable>
               <div className="row">
                 <div className="col-md-4" ><CardLabel>{`${t("TL_LICENSING_INSTITUTION_TYPE")}`}</CardLabel>
-                  <CardText style={{ fontSize: "15px", Colour: "black" }}>{t(TradeDetails?.LicensingUnitType?.name)}</CardText>
+                  <CardText style={{ fontSize: "15px", Colour: "black" }}>{t(TradeDetails?.LicensingInstitutionType?.name)}</CardText>
                 </div>
                 <div className="col-md-4" ><CardLabel>{`${t("TL_LICENSING_INSTITUTION_ID")}`}</CardLabel>
-                  <CardText style={{ fontSize: "15px", Colour: "black" }}>{t(TradeDetails?.LicenseUnitID)}</CardText>
+                  <CardText style={{ fontSize: "15px", Colour: "black" }}>{t(TradeDetails?.LicensingInstitutionID)}</CardText>
                 </div>
                 <div className="col-md-4" ><CardLabel>{`${t("TL_LICENSING_INSTITUTION_NAME")}`}</CardLabel>
-                  <CardText style={{ fontSize: "15px", Colour: "black" }}>{t(TradeDetails?.LicenseUnitName)}</CardText>
+                  <CardText style={{ fontSize: "15px", Colour: "black" }}>{t(TradeDetails?.LicensingInstitutionName)}</CardText>
                 </div>
               </div>
               <div className="row">
                 <div className="col-md-4" ><CardLabel>{`${t("TL_LICENSING_INSTITUTION_ADDRESS")}`}</CardLabel>
-                  <CardText style={{ fontSize: "15px", Colour: "black" }}>{t(TradeDetails.Zonal.name)}</CardText>
+                  <CardText style={{ fontSize: "15px", Colour: "black" }}>{t(TradeDetails.LicensingInstitutionAddress)}</CardText>
                 </div>
                 <div className="col-md-4" ><CardLabel>{`${t("TL_LOCALIZATION_MOBILE_NO")}`}</CardLabel>
-                  <CardText style={{ fontSize: "15px", Colour: "black" }}>{t(TradeDetails.WardNo.name)}</CardText>
+                  <CardText style={{ fontSize: "15px", Colour: "black" }}>{t(TradeDetails.InstitutionMobileNo)}</CardText>
                 </div>
                 <div className="col-md-4" ><CardLabel>{`${t("TL_LOCALIZATION_EMAIL_ID")}`}</CardLabel>
-                  <CardText style={{ fontSize: "15px", Colour: "black" }}>{t(TradeDetails.StreetName)}</CardText>
+                  <CardText style={{ fontSize: "15px", Colour: "black" }}>{t(TradeDetails.InstitutionEmailID)}</CardText>
                 </div>
               </div>
               <div className="row">
@@ -246,24 +246,24 @@ const CheckPage = ({ onSubmit, value }) => {
             <StatusTable>
               <div className="row">
                 <div className="col-md-4" ><CardLabel>{`${t("TL_LICENSEE_DESIGNATION")}`}</CardLabel>
-                  <CardText style={{ fontSize: "15px", Colour: "black" }}>{t(TradeDetails.LandMark)}</CardText>
+                  <CardText style={{ fontSize: "15px", Colour: "black" }}>{t(address.IndividualDesignation)}</CardText>
                 </div>
                 <div className="col-md-4" ><CardLabel>{`${t("TL_LICENSEE_AADHAR_NO")}`}</CardLabel>
-                  <CardText style={{ fontSize: "15px", Colour: "black" }}>{t(TradeDetails.IndividualAadharNo)}</CardText>
+                  <CardText style={{ fontSize: "15px", Colour: "black" }}>{t(address.IndividualAadharNo)}</CardText>
                 </div>
                 <div className="col-md-4" ><CardLabel>{`${t("TL_LICENSEE_NAME")}`}</CardLabel>
-                  <CardText style={{ fontSize: "15px", Colour: "black" }}>{t(TradeDetails.IndividualName)}&nbsp;&nbsp;{<ActionButton jumpTo={`${routeLink}/units-details`} />}</CardText>
+                  <CardText style={{ fontSize: "15px", Colour: "black" }}>{t(address.IndividualName)}</CardText>
                 </div>
               </div>
               <div className="row">
                 <div className="col-md-4" ><CardLabel>{`${t("TL_LOCALIZATION_MOBILE_NO")}`}</CardLabel>
-                  <CardText style={{ fontSize: "15px", Colour: "black" }}>{t(TradeDetails.IndividualMobNo)}</CardText>
+                  <CardText style={{ fontSize: "15px", Colour: "black" }}>{t(address.IndividualMobNo)}</CardText>
                 </div>
                 <div className="col-md-4" ><CardLabel>{`${t("TL_LOCALIZATION_EMAIL_ID")}`}</CardLabel>
-                  <CardText style={{ fontSize: "15px", Colour: "black" }}>{t(TradeDetails.IndividualEmailID)}</CardText>
+                  <CardText style={{ fontSize: "15px", Colour: "black" }}>{t(address.IndividualEmailID)}</CardText>
                 </div>
                 <div className="col-md-4" ><CardLabel>{`${t("TL_LICENSEE_ADDRESS")}`}</CardLabel>
-                  <CardText style={{ fontSize: "15px", Colour: "black" }}>{t(TradeDetails.IndividualAddress)}{<ActionButton jumpTo={`${routeLink}/units-details`} />}</CardText>
+                  <CardText style={{ fontSize: "15px", Colour: "black" }}>{t(address.IndividualAddress)}&nbsp;&nbsp;{<ActionButton jumpTo={`${routeLink}/units-details`} />}</CardText>
                 </div>
               </div>
             </StatusTable>
@@ -405,14 +405,14 @@ const CheckPage = ({ onSubmit, value }) => {
               </div>
             </div>
             <StatusTable>              
-              <div className="row">
+              {/* <div className="row">
                 <div className="col-md-6" ><CardLabel>{`${t("TL_LOCALIZATION_ZONAL_OFFICE")}`}</CardLabel>
                   <CardText style={{ fontSize: "15px", Colour: "black" }}>{t(TradeDetails.ZonalBuilding)}</CardText>
                 </div>
                 <div className="col-md-6" ><CardLabel>{`${t("TL_LOCALIZATION_WARD_NO")}`}</CardLabel>
                   <CardText style={{ fontSize: "15px", Colour: "black" }}>{t(TradeDetails.WardNoBuilding)}</CardText>
                 </div>
-              </div>
+              </div> */}
               <div className="row">                
                 <div className="col-md-6" ><CardLabel>{`${t("TL_LOCALIZATION_DOOR_NO")}`}</CardLabel>
                   <CardText style={{ fontSize: "15px", Colour: "black" }}>{t(TradeDetails.DoorNoBuild)}</CardText>

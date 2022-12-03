@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { CardLabel, TextInput, Dropdown } from "@egovernments/digit-ui-react-components";
-import { FormStep, RadioOrSelect, RadioButtons,LabelFieldPair  } from "@egovernments/digit-ui-react-components";
+import { FormStep, RadioOrSelect, RadioButtons, LabelFieldPair } from "@egovernments/digit-ui-react-components";
 import Timeline from "../components/TLTimeline";
 import SelectLand from "./SelectLand";
 
@@ -133,7 +133,7 @@ const SelectStructureType = ({ t, config, onSelect, userType, formData }) => {
         setValue2(naturetype);
         setActivity(cmbStructure.filter((cmbStructure) => cmbStructure.maincode.includes(naturetype)));
         if (naturetype === "LAND") {
-          setValue3(formData?.TradeDetails?.ResurveyedLand ? formData?.TradeDetails?.ResurveyedLand.code:null);
+          setValue3(formData?.TradeDetails?.ResurveyedLand ? formData?.TradeDetails?.ResurveyedLand.code : null);
           // setisInitialRendercombo(true);
         }
       }
@@ -163,65 +163,65 @@ const SelectStructureType = ({ t, config, onSelect, userType, formData }) => {
   function goNext() {
     sessionStorage.setItem("PlaceOfActivity", setPlaceofActivity.code);
     sessionStorage.setItem("StructureType", StructureType.name);
-    if(value2 === "LAND"){
+    if (value2 === "LAND") {
       sessionStorage.setItem("ResurveyedLand", ResurveyedLand.code);
       sessionStorage.setItem("BlockNo", BlockNo);
       sessionStorage.setItem("SurveyNo", SurveyNo);
       sessionStorage.setItem("SubDivNo", SubDivNo);
       sessionStorage.setItem("PartitionNo", PartitionNo);
-      sessionStorage.setItem("ZonalBuilding", null);
-      sessionStorage.setItem("WardNoBuilding", null);
+      // sessionStorage.setItem("ZonalBuilding", null);
+      // sessionStorage.setItem("WardNoBuilding", null);
       sessionStorage.setItem("DoorNoBuild", '');
       sessionStorage.setItem("DoorSubBuild", '');
       sessionStorage.setItem("VechicleNo", '');
       sessionStorage.setItem("VesselNo", '');
-      onSelect(config.key, { StructureType, setPlaceofActivity, ResurveyedLand, BlockNo, SurveyNo, SubDivNo, PartitionNo,ZonalBuilding,WardNoBuilding,DoorNoBuild,DoorSubBuild,VechicleNo,VesselNo });
+      onSelect(config.key, { StructureType, setPlaceofActivity, ResurveyedLand, BlockNo, SurveyNo, SubDivNo, PartitionNo, ZonalBuilding, WardNoBuilding, DoorNoBuild, DoorSubBuild, VechicleNo, VesselNo });
 
-    } else if(value2 === "BUIL"){
-      sessionStorage.setItem("ResurveyedLand", null);
+    } else if (value2 === "BUIL") {
+      sessionStorage.setItem("ResurveyedLand", false);
       sessionStorage.setItem("BlockNo", '');
       sessionStorage.setItem("SurveyNo", '');
       sessionStorage.setItem("SubDivNo", '');
       sessionStorage.setItem("PartitionNo", '');
-      sessionStorage.setItem("ZonalBuilding", ZonalBuilding.name);
-      sessionStorage.setItem("WardNoBuilding", WardNo.name);
+      // sessionStorage.setItem("ZonalBuilding", ZonalBuilding.name);
+      // sessionStorage.setItem("WardNoBuilding", WardNo.name);
       sessionStorage.setItem("DoorNoBuild", DoorNoBuild);
       sessionStorage.setItem("DoorSubBuild", DoorSubBuild);
       sessionStorage.setItem("VechicleNo", '');
       sessionStorage.setItem("VesselNo", '');
-      onSelect(config.key, { StructureType, setPlaceofActivity, ResurveyedLand, BlockNo, SurveyNo, SubDivNo, PartitionNo,ZonalBuilding,WardNoBuilding,DoorNoBuild,DoorSubBuild,VechicleNo,VesselNo });
+      onSelect(config.key, { StructureType, setPlaceofActivity, ResurveyedLand, BlockNo, SurveyNo, SubDivNo, PartitionNo, ZonalBuilding, WardNoBuilding, DoorNoBuild, DoorSubBuild, VechicleNo, VesselNo });
 
-    } else if(value2 === "VEHI"){
-      sessionStorage.setItem("ResurveyedLand", null);
+    } else if (value2 === "VEHI") {
+      sessionStorage.setItem("ResurveyedLand", false);
       sessionStorage.setItem("BlockNo", '');
       sessionStorage.setItem("SurveyNo", '');
       sessionStorage.setItem("SubDivNo", '');
       sessionStorage.setItem("PartitionNo", '');
-      sessionStorage.setItem("ZonalBuilding", null);
-      sessionStorage.setItem("WardNoBuilding", null);
+      // sessionStorage.setItem("ZonalBuilding", null);
+      // sessionStorage.setItem("WardNoBuilding", null);
       sessionStorage.setItem("DoorNoBuild", '');
       sessionStorage.setItem("DoorSubBuild", '');
       sessionStorage.setItem("VechicleNo", VechicleNo);
       sessionStorage.setItem("VesselNo", '');
-      onSelect(config.key, { StructureType, setPlaceofActivity, ResurveyedLand, BlockNo, SurveyNo, SubDivNo, PartitionNo,ZonalBuilding,WardNoBuilding,DoorNoBuild,DoorSubBuild,VechicleNo,VesselNo });
+      onSelect(config.key, { StructureType, setPlaceofActivity, ResurveyedLand, BlockNo, SurveyNo, SubDivNo, PartitionNo, ZonalBuilding, WardNoBuilding, DoorNoBuild, DoorSubBuild, VechicleNo, VesselNo });
 
-    } else if(value2 === "VEHI"){
-      sessionStorage.setItem("ResurveyedLand", null);
+    } else if (value2 === "WATE") {
+      sessionStorage.setItem("ResurveyedLand", false);
       sessionStorage.setItem("BlockNo", '');
       sessionStorage.setItem("SurveyNo", '');
       sessionStorage.setItem("SubDivNo", '');
       sessionStorage.setItem("PartitionNo", '');
-      sessionStorage.setItem("ZonalBuilding", null);
-      sessionStorage.setItem("WardNoBuilding", null);
+      // sessionStorage.setItem("ZonalBuilding", null);
+      // sessionStorage.setItem("WardNoBuilding", null);
       sessionStorage.setItem("DoorNoBuild", '');
       sessionStorage.setItem("DoorSubBuild", '');
       sessionStorage.setItem("VechicleNo", '');
       sessionStorage.setItem("VesselNo", VesselNo);
-      onSelect(config.key, { StructureType, setPlaceofActivity, ResurveyedLand, BlockNo, SurveyNo, SubDivNo, PartitionNo,ZonalBuilding,WardNoBuilding,DoorNoBuild,DoorSubBuild,VechicleNo,VesselNo });
+      onSelect(config.key, { StructureType, setPlaceofActivity, ResurveyedLand, BlockNo, SurveyNo, SubDivNo, PartitionNo, ZonalBuilding, WardNoBuilding, DoorNoBuild, DoorSubBuild, VechicleNo, VesselNo });
 
     }
-    
-    
+
+
   }
   return (
     <React.Fragment>
@@ -232,8 +232,8 @@ const SelectStructureType = ({ t, config, onSelect, userType, formData }) => {
           </div>
         </div>
         <div className="row">
-          <div className="col-md-6" ><CardLabel>{`${t("TL_LOCALIZATION_PLACE_ACTVITY")}`}</CardLabel> 
-          <Dropdown t={t} optionKey="code" isMandatory={config.isMandatory} option={cmbPlace} selected={setPlaceofActivity} select={selectPlaceofactivity} disabled={isEdit} />
+          <div className="col-md-6" ><CardLabel>{`${t("TL_LOCALIZATION_PLACE_ACTVITY")}`}</CardLabel>
+            <Dropdown t={t} optionKey="code" isMandatory={config.isMandatory} option={cmbPlace} selected={setPlaceofActivity} select={selectPlaceofactivity} disabled={isEdit} />
           </div>
           <div className="col-md-6" ><CardLabel>{`${t("TL_LOCALIZATION_NATURE_STRUCTURE")}`}</CardLabel>
             <Dropdown t={t} optionKey="name" isMandatory={config.isMandatory} option={activities} selected={StructureType} select={selectStructuretype} disabled={isEdit}
@@ -243,11 +243,11 @@ const SelectStructureType = ({ t, config, onSelect, userType, formData }) => {
         {value2 === "LAND" && (
           <div>
             <div className="row"><div className="col-md-12" >
-            <LabelFieldPair style={{ display: "flex" }}><CardLabel>{`${t("TL_RESURVEY_LAND")}`}</CardLabel>
-            <RadioButtons t={t} optionsKey="i18nKey" isMandatory={config.isMandatory} options={menu} selectedOption={ResurveyedLand} onSelect={selectResurveyedLand} disabled={isEdit} style={{ marginTop:"-8px",paddingLeft:"5px" ,height:"25px"}} /> 
-            </LabelFieldPair></div>
+              <LabelFieldPair style={{ display: "flex" }}><CardLabel>{`${t("TL_RESURVEY_LAND")}`}</CardLabel>
+                <RadioButtons t={t} optionsKey="i18nKey" isMandatory={config.isMandatory} options={menu} selectedOption={ResurveyedLand} onSelect={selectResurveyedLand} disabled={isEdit} style={{ marginTop: "-8px", paddingLeft: "5px", height: "25px" }} />
+              </LabelFieldPair></div>
             </div>
-            
+
             {value3 === "YES" && (
               <div> <div className="row"><div className="col-md-12" ><h1 className="headingh1" ><span style={{ background: "#fff", padding: "0 10px" }}>{`${t("TL_RESURVEY_LAN_DETAILS")}*`}</span>   </h1> </div>
               </div>
@@ -291,18 +291,19 @@ const SelectStructureType = ({ t, config, onSelect, userType, formData }) => {
               <div className="col-md-12" ><h1 className="headingh1" ><span style={{ background: "#fff", padding: "0 10px" }}>{`${t("TL_BUILDING_HEADER")}*`}</span> </h1>
               </div>
             </div>
-            <div className="row"> <div className="col-md-6" ><CardLabel>{`${t("TL_LOCALIZATION_ZONAL_OFFICE")}`}</CardLabel>
-              <Dropdown t={t} optionKey="name" isMandatory={config.isMandatory} option={cmbZonal[0]} selected={ZonalBuilding} select={setSelectZonalOffice} disabled={isEdit}  {...(validation = { isRequired: true, title: t("TL_INVALID_ZONAL_NAME") })} /> </div>
-              <div className="col-md-6" ><CardLabel>{`${t("TL_LOCALIZATION_WARD_NO")}`}</CardLabel>   
-              <Dropdown t={t} optionKey="name" isMandatory={config.isMandatory} option={wards} selected={WardNoBuilding} select={setSelectWard} disabled={isEdit} {...(validation = { isRequired: true, title: t("TL_INVALID_WARD_NO") })} /> 
-              </div> 
-              <div className="col-md-6" ><CardLabel>{`${t("TL_LOCALIZATION_DOOR_NO")}`}</CardLabel>   
-              <TextInput t={t} isMandatory={false} type={"text"} optionKey="i18nKey" name="DoorNoBuild" value={DoorNoBuild} onChange={setSelectDoorNoBuild} disable={isEdit} {...(validation = { pattern: "^[a-zA-Z-.`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_TRADE_NAME") })} /> 
-              </div> 
-              <div className="col-md-6" ><CardLabel>{`${t("TL_LOCALIZATION_DOOR_NO_SUB")}`}</CardLabel>   
-              <TextInput t={t} isMandatory={false} type={"text"} optionKey="i18nKey" name="DoorSubBuild" value={DoorSubBuild} onChange={setSelectDoorSubBuild} disable={isEdit}       {...(validation = { pattern: "^[a-zA-Z-.`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_TRADE_NAME") })} /> 
-              </div>    
+            <div className="row"> 
+              {/* <div className="col-md-6" ><CardLabel>{`${t("TL_LOCALIZATION_ZONAL_OFFICE")}`}</CardLabel>
+                <Dropdown t={t} optionKey="name" isMandatory={config.isMandatory} option={cmbZonal[0]} selected={ZonalBuilding} select={setSelectZonalOffice} disabled={isEdit}  {...(validation = { isRequired: true, title: t("TL_INVALID_ZONAL_NAME") })} /> </div>
+              <div className="col-md-6" ><CardLabel>{`${t("TL_LOCALIZATION_WARD_NO")}`}</CardLabel>
+                <Dropdown t={t} optionKey="name" isMandatory={config.isMandatory} option={wards} selected={WardNoBuilding} select={setSelectWard} disabled={isEdit} {...(validation = { pattern: "^[a-zA-Z-.`' ]*$",isRequired: true, title: t("TL_INVALID_WARD_NO") })} />
+              </div> */}
+              <div className="col-md-6" ><CardLabel>{`${t("TL_LOCALIZATION_DOOR_NO")}`}</CardLabel>
+                <TextInput t={t} isMandatory={false} type={"text"} optionKey="i18nKey" name="DoorNoBuild" value={DoorNoBuild} onChange={setSelectDoorNoBuild} disable={isEdit} {...(validation = { pattern: "^[a-zA-Z-.0-9`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_TRADE_NAME") })} />
               </div>
+              <div className="col-md-6" ><CardLabel>{`${t("TL_LOCALIZATION_DOOR_NO_SUB")}`}</CardLabel>
+                <TextInput t={t} isMandatory={false} type={"text"} optionKey="i18nKey" name="DoorSubBuild" value={DoorSubBuild} onChange={setSelectDoorSubBuild} disable={isEdit}       {...(validation = { pattern: "^[a-zA-Z-0-9`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_TRADE_NAME") })} />
+              </div>
+            </div>
           </div>)}
         {value2 === "VEHI" && (
           <div>

@@ -94,14 +94,6 @@ const SelectLicenseeIndividualDetails = ({ t, config, onSelect, userType, formDa
               </div>
             </div>
             <div className="row">
-              <div className="col-md-6" ><CardLabel>{`${t("TL_LICENSEE_AADHAR_NO")}`}</CardLabel>
-                <TextInput t={t} isMandatory={false} type={"text"} optionKey="i18nKey" name="IndividualAadharNo" value={IndividualAadharNo} onChange={setSelectIndividualAadharNo} disable={isEdit} placeholder={`${t("TL_LICENSEE_AADHAR_NO")}`} {...(validation = { pattern: "^[a-zA-Z-.0-9`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_SUBDIVISION_NO") })} />
-              </div>
-              <div className="col-md-6" ><CardLabel>{`${t("TL_LICENSEE_NAME")}`}</CardLabel>
-                <TextInput t={t} isMandatory={false} type={"text"} optionKey="i18nKey" name="IndividualName" value={IndividualName} onChange={setSelectIndividualName} disable={isEdit} placeholder={`${t("TL_LICENSEE_NAME")}`} {...(validation = { pattern: "^[a-zA-Z-.0-9`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_SUBDIVISION_NO") })} />
-              </div>
-            </div>
-            <div className="row">
               <div className="col-md-12" ><CardLabel>{`${t("TL_LICENSEE_ADDRESS")}`}</CardLabel>
                 <TextArea t={t} isMandatory={false} type={"text"} optionKey="i18nKey" name="IndividualAddress" value={IndividualAddress} onChange={setSelectIndividualAddress} disable={isEdit} placeholder={`${t("TL_LICENSEE_ADDRESS")}`} {...(validation = { pattern: "^[a-zA-Z-.0-9`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_SUBDIVISION_NO") })} />
               </div>
