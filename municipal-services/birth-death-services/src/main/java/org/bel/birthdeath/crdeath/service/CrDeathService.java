@@ -5,15 +5,21 @@ import java.util.List;
 import org.bel.birthdeath.crdeath.config.CrDeathConfiguration;
 import org.bel.birthdeath.crdeath.enrichment.CrDeathEnrichment;
 import org.bel.birthdeath.crdeath.kafka.producer.CrDeathProducer;
+import org.bel.birthdeath.crdeath.repository.CrDeathRepository;
 import org.bel.birthdeath.crdeath.util.CrDeathMdmsUtil;
+import org.bel.birthdeath.crdeath.validators.CrDeathValidator;
 import org.bel.birthdeath.crdeath.validators.MDMSValidator;
 import org.bel.birthdeath.crdeath.web.models.CrDeathDtl;
 import org.bel.birthdeath.crdeath.web.models.CrDeathDtlRequest;
+import org.bel.birthdeath.crdeath.web.models.CrDeathSearchCriteria;
+import org.egov.common.contract.request.RequestInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+
+import io.micrometer.core.ipc.http.HttpSender.Request;
 
 /**
      * Creates CrDeathService
@@ -29,20 +35,24 @@ public class CrDeathService {
     private final CrDeathEnrichment enrichmentService;
     private final CrDeathMdmsUtil util;
     private final MDMSValidator mdmsValidator;
+    private final CrDeathValidator validatorService;
+    private final CrDeathRepository repository;
 
     @Autowired
     CrDeathService(CrDeathProducer producer,CrDeathConfiguration deathConfig,
-                CrDeathEnrichment enrichmentService,CrDeathMdmsUtil util,MDMSValidator mdmsValidator){
+                CrDeathEnrichment enrichmentService,CrDeathMdmsUtil util,MDMSValidator mdmsValidator,
+                CrDeathValidator validatorService,CrDeathRepository repository){
         this.producer = producer;
         this.deathConfig = deathConfig;
         this.enrichmentService = enrichmentService;
         this.util = util;
         this.mdmsValidator = mdmsValidator;
+        this.validatorService = validatorService;
+        this.repository = repository;
     }
     
     public List<CrDeathDtl> create(CrDeathDtlRequest request) {
-        // validate request
-       // validatorService.validateCreate(request);
+      
 
        // validate mdms data
         Object mdmsData = util.mDMSCall(request.getRequestInfo(), request.getDeathCertificateDtls().get(0).getTenantId());
@@ -60,6 +70,9 @@ public class CrDeathService {
 
 
             /********************************************** */
+              // validate request
+             validatorService.validateCreate(request,mdmsData);
+
             mdmsValidator.validateMDMSData(request,mdmsData);
 
          // enrich request
@@ -71,6 +84,9 @@ public class CrDeathService {
 
         return request.getDeathCertificateDtls();
     }
-
-    
+    //Rakhi S on 05.12.2022
+    public List<CrDeathDtl> search(CrDeathSearchCriteria criteria, RequestInfo requestInfo) {
+		// validatorService.validateSearch(requestInfo, criteria);
+		return repository.getDeathApplication(criteria);
+	}
 }
