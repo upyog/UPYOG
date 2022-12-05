@@ -750,9 +750,10 @@ config:
         
   #dx
   
-  - name: "builds/upyog/dx-services/pt-services-dx"
+  - name: builds/upyog/dx-services/pt-services-dx
     build:
-      - work-dir: "dx-services/pt-services-dx"
-        image-name: "pt-services-dx"
-        dockerfile: "build/maven/Dockerfile"
-
+      - work-dir: dx-services/pt-services-dx
+        image-name: pt-services-dx
+        dockerfile: build/maven/Dockerfile
+        
+   
