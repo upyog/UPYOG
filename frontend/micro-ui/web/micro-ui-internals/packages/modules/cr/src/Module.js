@@ -21,6 +21,12 @@ import InformationDeath1 from "../src/pageComponents/deathComponents/Information
 import AddressOfDecesed from "./pageComponents/deathComponents/AddressOfDecesed";
 import OutSideIndia from "./pageComponents/deathComponents/OutSideIndia";
 import FamilyInformation from "./pageComponents/deathComponents/FamilyInformation";
+import PlaceOfDeath from "./pageComponents/deathComponents/PlaceOfDeath";
+import PlaceOfDeathHome from "./pageComponents/deathComponents/PlaceOfDeathHome";
+import PlaceOfDeathHospital from "./pageComponents/deathComponents/PlaceOfDeathHospital";
+import PlaceOfDeathInstitution from "./pageComponents/deathComponents/PlaceOfDeathInstitution";
+import PlaceOfDeathOther from "./pageComponents/deathComponents/PlaceOfDeathOther";
+import PlaceOfDeathVehicle from "./pageComponents/deathComponents/PlaceOfDeathVehicle";
 
 
 // import TLSelectGeolocation from "../src/pageComponents/TLSelectGeolocation";
@@ -142,6 +148,13 @@ const componentsToRegister = {
   AddressOfDecesed,
   OutSideIndia,
   FamilyInformation,
+  PlaceOfDeath,
+  PlaceOfDeathHome,
+  PlaceOfDeathHospital,
+  PlaceOfDeathInstitution,
+  PlaceOfDeathOther,
+  PlaceOfDeathVehicle,
+  
   // SelectLand,
   // SelectBuilding,
   // SelectBusinessCategory,
