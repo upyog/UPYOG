@@ -21,7 +21,6 @@ import InformationDeath1 from "../src/pageComponents/deathComponents/Information
 import AddressOfDecesed from "./pageComponents/deathComponents/AddressOfDecesed";
 import OutSideIndia from "./pageComponents/deathComponents/OutSideIndia";
 import FamilyInformation from "./pageComponents/deathComponents/FamilyInformation";
-import AdressOutside from "./pageComponents/deathComponents/AdressOutside";
 import AdressInside from "./pageComponents/deathComponents/AdressInside";
 // import TLSelectGeolocation from "../src/pageComponents/TLSelectGeolocation";
 // import TLSelectAddress from "./pageComponents/TLSelectAddress";
@@ -142,7 +141,6 @@ const componentsToRegister = {
   AddressOfDecesed,
   OutSideIndia,
   FamilyInformation,
-  AdressOutside,
   AdressInside,
   // SelectLand,
   // SelectBuilding,

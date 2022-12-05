@@ -3,6 +3,7 @@ import { FormStep, CardLabel, TextInput, Dropdown, DatePicker, NewRadioButton } 
 import { useTranslation } from "react-i18next";
 import AdressOutside from "./AdressOutside";
 import AdressInside from "./AdressInside" ;
+import OutSideIndia from "./OutSideIndia";
 
 
 const AddressOfDecesed = ({ config, onSelect, userType, formData }) => {
@@ -75,6 +76,7 @@ const AddressOfDecesed = ({ config, onSelect, userType, formData }) => {
             <div className="inside">
               <button  onClick={outsideHandler}> 
               <NewRadioButton />
+              
               </button>
               <p>Outside India</p>
             </div>
@@ -84,7 +86,7 @@ const AddressOfDecesed = ({ config, onSelect, userType, formData }) => {
                <AdressInside />
             )}
             {outside && (
-                <AdressOutside />
+                <OutSideIndia />
             )}
         </div>
           
