@@ -42,7 +42,7 @@ const PlaceOfDeathVehicle = ({ config, onSelect, userType, formData }) => {
     <React.Fragment>
       {window.location.href.includes("/citizen") ? <Timeline /> : null}
       <FormStep t={t} config={config} onSelect={goNext} onSkip={onSkip} isDisabled={!CommencementDate}>
-        <header className="tittle">Place Of Death Other </header>
+        <header className="tittle">Place Of Death Vechicle </header>
         <div className="row">    
         <div className="col-md-12 col-lg-12" > 
         <div className="col-md-5" > 
@@ -50,7 +50,7 @@ const PlaceOfDeathVehicle = ({ config, onSelect, userType, formData }) => {
         </div>
         <div className="col-md-2" > 
         <h1 className="headingh1" >
-            <span>Birth Vehicle</span>
+            <span>Death Vehicle</span>
         </h1>
         </div>
         <div className="col-md-5" > 
