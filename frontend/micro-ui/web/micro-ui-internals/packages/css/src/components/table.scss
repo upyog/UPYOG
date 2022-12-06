@@ -6,10 +6,10 @@
       padding: 20px 18px;
       @apply font-bold align-middle text-left;
       &:first-child {
-        min-width: 256px;
+        min-width: 100px;
       }
       &:nth-child(2) {
-        min-width: 200px;
+        min-width: 150px;
       }
     }
   }
