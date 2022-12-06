@@ -23,7 +23,7 @@
     "@egovernments/digit-ui-module-pt":"1.5.4",
     "@egovernments/digit-ui-module-receipts":"1.5.4",
     "@egovernments/digit-ui-module-tl":"1.5.4",
-    "@egovernments/digit-ui-module-cr":"1.0.0",
+    "@egovernments/digit-ui-module-cr":"1.5.1",
     "@egovernments/digit-ui-module-noc":"1.5.4", 
     "@egovernments/digit-ui-react-components":"1.5.4",
     "babel-loader": "8.1.0",
