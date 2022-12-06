@@ -103,7 +103,8 @@ const Home = () => {
   ) : (
     <div className="HomePageWrapper">
       <div className="BannerWithSearch">
-        <img src={"https://s3.ap-south-1.amazonaws.com/egov-qa-assets/app-banner-web.jpg"} />
+        <img src={""} alt="Banner Image" />
+        
         <div className="Search">
           <StandaloneSearchBar placeholder={t("CS_COMMON_SEARCH_PLACEHOLDER")} />
         </div>
