@@ -103,7 +103,8 @@ const Home = () => {
   ) : (
     <div className="HomePageWrapper">
       <div className="BannerWithSearch">
-        <img src={""} alt="Banner Image" />
+        {/* <img src={""} alt="Banner Image" style={{backgroundColor:"#e3e3e3"}}/> */}
+        <div style={{backgroundColor:"#e3e3e3",height:"30vh"}}></div>
         
         <div className="Search">
           <StandaloneSearchBar placeholder={t("CS_COMMON_SEARCH_PLACEHOLDER")} />
