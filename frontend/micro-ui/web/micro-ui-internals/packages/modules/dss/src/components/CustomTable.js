@@ -254,7 +254,7 @@ const CustomTable = ({ data={}, onSearch, setChartData,setChartDenomination }) =
           if (response?.responseData?.drillDownChartId !== "none" && filter !== undefined) {
             return (
               <span
-                style={{ color: "#F47738", cursor: "pointer" }}
+                style={{ color: "#a82227", cursor: "pointer" }}
                 onClick={() => getDrilldownCharts(cellValue, filter?.key, t(`DSS_HEADER_${Digit.Utils.locale.getTransformedLocale(plot?.name)}`))}
               >
                 {t(`DSS_TB_${Digit.Utils.locale.getTransformedLocale(cellValue)}`)}

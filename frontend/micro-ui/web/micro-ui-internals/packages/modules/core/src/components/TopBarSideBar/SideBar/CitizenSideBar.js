@@ -48,7 +48,7 @@ const Profile = ({ info, stateName, t }) => {
 
   return (
     <div className="profile-section">
-      <div className="imageloader imageloader-loaded">
+      {/* <div className="imageloader imageloader-loaded">
         <img
           className="img-responsive img-circle img-Profile"
           src={profilePic ? profilePic : defaultImage}
@@ -60,7 +60,7 @@ const Profile = ({ info, stateName, t }) => {
       </div>
       <div id="profile-location" className="label-container loc-Profile">
         <div className="label-text"> {info?.mobileNumber} </div>
-      </div>
+      </div> */}
       {info?.emailId && (
         <div id="profile-emailid" className="label-container loc-Profile">
           <div className="label-text"> {info.emailId} </div>
@@ -115,8 +115,9 @@ export const CitizenSideBar = ({ isOpen, isMobile, toggleSidebar, onLogout, isEm
   let menuItems = [...SideBarMenu(t, closeSidebar, redirectToLoginPage, isEmployee)];
   let profileItem;
   if (isFetched && user && user.access_token) {
-    profileItem = <Profile info={user?.info} stateName={stateInfo?.name} t={t} />;
+    profileItem = "";
     menuItems = menuItems.filter((item) => item?.id !== "login-btn");
+    console.log("menuItems",menuItems)
     menuItems = [
       ...menuItems,
       {

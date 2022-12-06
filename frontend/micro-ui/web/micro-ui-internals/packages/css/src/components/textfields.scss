@@ -8,6 +8,8 @@
 
 .employee-card-input {
   @apply mb-lg pl-sm outline-none block border w-full h-10 border-input-border border-solid bg-white leading-10 text-form-field text-text-primary;
+margin-bottom: 16px !important;
+height: 2.0rem !important;
 }
 .employee-card-input--front {
   width: fit-content !important;
@@ -78,6 +80,12 @@
 
 .citizen-card-input {
   @apply mb-lg pl-sm outline-none block border w-full h-10 border-input-border border-solid bg-white leading-10 text-form-field text-text-primary;
+
+}
+.citizen-card-input{
+  height:2rem !important;
+  margin-bottom: 16px !important;
+  line-height: 2.0rem !important;
 }
 
 .citizen-card-input--front {

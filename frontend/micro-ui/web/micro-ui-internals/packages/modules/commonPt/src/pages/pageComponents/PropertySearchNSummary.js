@@ -92,11 +92,11 @@ const PropertySearchNSummary = ({ config, onSelect, userType, formData, setError
         </div>
       </LabelFieldPair>
       <span onClick={() => history.push(`/digit-ui/employee/commonpt/search?redirectToUrl=${redirectBackUrl}`, { ...state })}>
-        <LinkButton label={t("CPT_SEARCH_PROPERTY")} style={{ color: "#f47738", display: "inline-block" }} />
+        <LinkButton label={t("CPT_SEARCH_PROPERTY")} style={{ color: "#a82227", display: "inline-block" }} />
       </span>
       &nbsp; | &nbsp;
       <span onClick={() => history.push(`/digit-ui/employee/commonpt/new-application?redirectToUrl=${redirectBackUrl}`, { ...state })}>
-        <LinkButton label={t("CPT_CREATE_PROPERTY")} style={{ color: "#f47738", display: "inline-block" }} />
+        <LinkButton label={t("CPT_CREATE_PROPERTY")} style={{ color: "#a82227", display: "inline-block" }} />
       </span>
       {propertyDetails && propertyDetails?.Properties.length ? (
         <React.Fragment>
@@ -129,7 +129,7 @@ const PropertySearchNSummary = ({ config, onSelect, userType, formData, setError
           <Link to={`/digit-ui/employee/commonpt/view-property?propertyId=${propertyId}&tenantId=${tenantId}&from=${window.location.pathname?.includes("employee/tl/new-application")
         ?"ES_TITLE_NEW_TRADE_LICESE_APPLICATION"
         :"WF_EMPLOYEE_NEWTL_RENEWAL_SUBMIT_BUTTON"}`}>
-            <LinkButton label={t("CPT_COMPLETE_PROPERTY_DETAILS")} style={{ color: "#f47738", textAlign: "Left" }} />
+            <LinkButton label={t("CPT_COMPLETE_PROPERTY_DETAILS")} style={{ color: "#a82227", textAlign: "Left" }} />
           </Link>
         </React.Fragment>
       ) : null}
