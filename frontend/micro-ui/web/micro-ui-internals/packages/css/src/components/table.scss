@@ -6,10 +6,10 @@
       padding: 20px 18px;
       @apply font-bold align-middle text-left;
       &:first-child {
-        min-width: 256px;
+        min-width: 100px;
       }
       &:nth-child(2) {
-        min-width: 200px;
+        min-width: 150px;
       }
     }
   }
@@ -88,7 +88,7 @@
     td:first-child {
       position: sticky;
       background: #fff;
-      color: #f47738;
+      color:#a82227;
       left: 0;
       border-right: 1px solid #b1b4b6;
     }

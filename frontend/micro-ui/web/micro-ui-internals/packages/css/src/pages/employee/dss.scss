@@ -26,12 +26,12 @@ margin-right:25px;
 
 .dss-switch-tab-selected{
   /* Revenue */
-  border-bottom: 3px solid #f47738;
+  border-bottom: 3px solid #a82227;
   font-family: Roboto;
   font-style: normal;
   font-weight: 500;
   font-size: 22px;
-  color: #f47738;
+  color: #a82227;
   padding: 7px 24px;
 
 }
@@ -110,7 +110,9 @@ padding: 8px 24px;
 
 .dss-input-active-border{
 --border-opacity: 1;
-border: 1px solid #f47738 !important;
-border-color: rgba(244, 119, 56, var(--border-opacity));
+border: 1px solid #a82227 !important;
 }
 
+.employeeCustomCard .card-count{
+  padding-right: 0px;
+}
