@@ -11,25 +11,29 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Schema(description = "Collection of audit related fields used by most models")
-
+@Schema(description = "Audit details")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 public class AuditDetails {
+
+    @Schema(type = "string", format = "uuid", description = "Created by user id")
     @Size(max = 64)
     @JsonProperty("createdBy")
     private String createdBy;
 
+    @Schema(type = "int", format = "int64", description = "Created time  in milliseconds")
+    @JsonProperty("createdTime")
+    private Long createdTime;
+
+    @Schema(type = "string", format = "uuid", description = "Last modified user id")
     @Size(max = 64)
     @JsonProperty("lastModifiedBy")
     private String lastModifiedBy;
 
-    @JsonProperty("createdTime")
-    private Long createdTime;
-
+    @Schema(type = "int", format = "int64", description = "Last modified time in milliseconds")
     @JsonProperty("lastModifiedTime")
     private Long lastModifiedTime;
 }

@@ -1,79 +1,87 @@
 package org.egov.filemgmnt.service;
 
-import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.commons.collections4.CollectionUtils;
-import org.egov.filemgmnt.config.FilemgmntConfiguration;
+import org.egov.common.contract.request.RequestInfo;
+import org.egov.filemgmnt.config.FMConfiguration;
 import org.egov.filemgmnt.enrichment.ApplicantPersonalEnrichment;
 import org.egov.filemgmnt.kafka.Producer;
 import org.egov.filemgmnt.repository.ApplicantPersonalRepository;
+import org.egov.filemgmnt.util.MdmsUtil;
 import org.egov.filemgmnt.validators.ApplicantPersonalValidator;
 import org.egov.filemgmnt.web.models.ApplicantPersonal;
 import org.egov.filemgmnt.web.models.ApplicantPersonalRequest;
 import org.egov.filemgmnt.web.models.ApplicantPersonalSearchCriteria;
+import org.egov.filemgmnt.workflow.WorkflowIntegrator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ApplicantPersonalService {
 
-    private final Producer producer;
-    private final FilemgmntConfiguration filemgmntConfig;
-    private final ApplicantPersonalValidator validatorService;
-    private final ApplicantPersonalEnrichment enrichmentService;
-    private final ApplicantPersonalRepository repository;
+	private final ApplicantPersonalValidator validatorService;
+	private final ApplicantPersonalEnrichment enrichmentService;
+	private final ApplicantPersonalRepository repository;
+	private final Producer producer;
+	private final MdmsUtil mdmsUtil;
+	private final FMConfiguration filemgmntConfig;
+	private final WorkflowIntegrator wfIntegrator;
 
-    @Autowired
-    ApplicantPersonalService(ApplicantPersonalValidator validatorService, ApplicantPersonalEnrichment enrichmentService,
-                             ApplicantPersonalRepository repository, Producer producer,
-                             FilemgmntConfiguration filemgmntConfig) {
-        this.validatorService = validatorService;
-        this.enrichmentService = enrichmentService;
-        this.repository = repository;
-        this.producer = producer;
-        this.filemgmntConfig = filemgmntConfig;
-    }
+	@Autowired
+	ApplicantPersonalService(ApplicantPersonalValidator validatorService, ApplicantPersonalEnrichment enrichmentService,
+			ApplicantPersonalRepository repository, Producer producer, MdmsUtil mdmsUtil,
+			FMConfiguration filemgmntConfig, WorkflowIntegrator wfIntegrator) {
+		this.validatorService = validatorService;
+		this.enrichmentService = enrichmentService;
+		this.repository = repository;
+		this.producer = producer;
+		this.mdmsUtil = mdmsUtil;
+		this.filemgmntConfig = filemgmntConfig;
+		this.wfIntegrator = wfIntegrator;
+	}
 
-    public List<ApplicantPersonal> create(ApplicantPersonalRequest request) {
-        // validate request
-        validatorService.validateCreate(request);
+	public List<ApplicantPersonal> create(ApplicantPersonalRequest request) {
+		String tenantId = request.getApplicantPersonals().get(0).getTenantId();
 
-        // enrich request
-        enrichmentService.enrichCreate(request);
+		// validate mdms data
+		Object mdmsData = mdmsUtil.mdmsCall(request.getRequestInfo(), tenantId);
 
-        producer.push(filemgmntConfig.getSaveApplicantPersonalTopic(), request);
+		// validate request
+		validatorService.validateCreate(request, mdmsData);
 
-        return request.getApplicantPersonals();
-    }
+		// enrich request
+		enrichmentService.enrichCreate(request);
 
-    public List<ApplicantPersonal> search(ApplicantPersonalSearchCriteria criteria) {
+		producer.push(filemgmntConfig.getSaveApplicantPersonalTopic(), request);
 
-        if (CollectionUtils.isEmpty(criteria.getIds())) {
-//            throw new GlobalException(ErrorCodes.APPLICANT_PERSONAL_INVALID_SEARCH_CRITERIA,
-//                    "At least one applicant id is required.");
-        }
+		wfIntegrator.callWorkFlow(request);
 
-        return repository.getApplicantPersonals(criteria);
-    }
+		return request.getApplicantPersonals();
 
-    public List<ApplicantPersonal> update(ApplicantPersonalRequest request) {
+	}
 
-        List<String> ids = new LinkedList<>();
-        request.getApplicantPersonals()
-               .forEach(personal -> ids.add(personal.getId()));
+	public List<ApplicantPersonal> update(ApplicantPersonalRequest request) {
 
-        // search database
-        List<ApplicantPersonal> searchResult = repository.getApplicantPersonals(ApplicantPersonalSearchCriteria.builder()
-                                                                                                               .ids(ids)
-                                                                                                               .build());
-        // validate request
-        validatorService.validateUpdate(request, searchResult);
+		String id = request.getApplicantPersonals().get(0).getId();
 
-        enrichmentService.enrichUpdate(request);
+		// search database
+		List<ApplicantPersonal> searchResult = repository
+				.getApplicantPersonals(ApplicantPersonalSearchCriteria.builder().id(id).build());
 
-        producer.push(filemgmntConfig.getSaveApplicantPersonalTopic(), request);
+		// validate request
+		validatorService.validateUpdate(request, searchResult);
 
-        return request.getApplicantPersonals();
-    }
+		enrichmentService.enrichUpdate(request);
+
+		wfIntegrator.callWorkFlow(request);
+
+		producer.push(filemgmntConfig.getUpdateApplicantPersonalTopic(), request);
+
+		return request.getApplicantPersonals();
+	}
+
+	public List<ApplicantPersonal> search(ApplicantPersonalSearchCriteria criteria, RequestInfo requestInfo) {
+		validatorService.validateSearch(requestInfo, criteria);
+		return repository.getApplicantPersonals(criteria);
+	}
 }

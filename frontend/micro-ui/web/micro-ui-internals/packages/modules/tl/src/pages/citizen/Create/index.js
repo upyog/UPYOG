@@ -114,7 +114,7 @@ const CreateTradeLicence = ({ parentRoute }) => {
   let skipenanbledOb = newConfig?.filter(obj => obj?.body?.some(com => com.component === "CPTCreateProperty"))?.[0];
   let skipenabled = skipenanbledOb?.body?.filter((ob) => ob?.component === "CPTCreateProperty")?.[0]?.isSkipEnabled;
   sessionStorage.setItem("skipenabled",skipenabled);
-  config.indexRoute = "TradeName";
+  config.indexRoute = "units-details";
 
   const CheckPage = Digit?.ComponentRegistryService?.getComponent("TLCheckPage");
   const TLAcknowledgement = Digit?.ComponentRegistryService?.getComponent("TLAcknowledgement");

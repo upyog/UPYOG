@@ -102,6 +102,12 @@ const Urls = {
     update: "/tl-services/v1/_update",
     billingslab: "/tl-calculator/billingslab/_search",
   },
+  cr: {
+    create: "/cr-services/v1/_create",
+    search: "/cr-services/v1/_search",
+    download_pdf: "/egov-pdf/download/CR/",
+    update: "/cr-services/v1/_update",
+  },
   receipts: {
     receipt_download: "/egov-pdf/download/PAYMENT/consolidatedreceipt",
     payments: "/collection-services/payments",

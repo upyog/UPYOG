@@ -12,13 +12,13 @@
 @import "react-date-range/dist/theme/default.css";
 
 @import "./components/loader.scss";
-
 @import "./components/body.scss";
 @import "./components/navbar.scss";
 @import "./components/card.scss";
 @import "./components/buttons.scss";
 @import "./components/radiobtn.scss";
 @import "./components/selectdropdown.scss";
+@import "./components/selectdropdowncustom.scss";
 @import "./components/textfields.scss";
 @import "./components/bannercomponents.scss";
 @import "./components/datewrap.scss";
@@ -89,6 +89,9 @@
 @import "./pages/employee/oldMobileInbox.scss";
 @import "./pages/employee/dss.scss";
 @import "./pages/employee/iframe.scss";
+@import "./pages/employee/cr-employee.scss";
+@import "./pages/employee/fileflow.scss";
+@import "./pages/employee/tl.scss";
 
 @import "./pages/citizen/payment/payment-type.scss";
 @import "./pages/citizen/container.scss";
@@ -99,6 +102,7 @@
 @import "./pages/citizen/SurveyList.scss";
 @import "./pages/citizen/updatePropertyNumber.scss";
 @import "./pages/citizen/citizenDocument.scss";
+@import "./pages/citizen/FormUi.scss";
 @import "./pages/employee/surveys.scss";
 
 .display-none{
@@ -499,7 +503,7 @@ input[type="number"] {
   width: 100vw;
   height: 100vh;
   font-size: 16px;
-  font-family: sans-serif;
+  font-family: monospace;
   display: flex;
   justify-content: center;
   align-items: center;

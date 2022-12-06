@@ -18,10 +18,10 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 @Configuration
 class JsonMapperConfiguration {
 
-    private final FilemgmntConfiguration filemgmntConfig;
+    private final FMConfiguration filemgmntConfig;
 
     @Autowired
-    JsonMapperConfiguration(FilemgmntConfiguration filemgmntConfig) {
+    JsonMapperConfiguration(FMConfiguration filemgmntConfig) {
         this.filemgmntConfig = filemgmntConfig;
     }
 

@@ -117,6 +117,23 @@ import useTradeLicenseBillingslab from "./tl/useTradeLicenseBillingslab";
 import useTLMDMS from "./tl/useMDMS";
 import useTLSearch from "./tl/useSearch";
 
+import useTenantsCR from "./cr/useTenants";
+import useCivilRegistrationMDMS from "./cr/useCivilRegistrationMDMS";
+// import useTLDocumentSearch from "./tl/useTLDocumentSearch";
+import useCivilRegistrationAPI from "./cr/useCivilRegistrationAPI";
+// import useTradeLicenseSearch from "./tl/useTradeLicenseSearch";
+// import { useTLSearchApplication, useTLApplicationDetails } from "./tl/useTLsearchApplication";
+// import useTLPaymentHistory from "./tl/userPaymentHistory";
+import useCRApplicationDetail from "./cr/useApplicationDetail";
+import useCRApplicationActions from "./cr/useApplicationActions";
+// import useTLFetchBill from "./tl/useFetchBill";
+
+import useCRGenderMDMS from "./cr/useCRGenderMDMS";
+// import useTLInbox from "./tl/useInbox";
+// import useTradeLicenseBillingslab from "./tl/useTradeLicenseBillingslab";
+import useCRMDMS from "./cr/useMDMS";
+import useCRSearch from "./cr/useSearch";
+
 import useHRMSSearch from "./hrms/useHRMSsearch";
 import useHrmsMDMS from "./hrms/useHRMSMDMS";
 import useHRMSCreate from "./hrms/useHRMScreate";
@@ -291,7 +308,16 @@ const tl = {
   useFetchBill: useTLFetchBill,
   useTLApplicationDetails,
 };
-
+const cr = {
+  useTenants: useTenantsCR,
+  useCivilRegistrationMDMS,
+  useCivilRegistrationAPI,
+  useCRGenderMDMS,
+  useMDMS: useCRSearch,
+  useSearch: useCRSearch,
+  useApplicationDetail: useCRApplicationDetail,
+  useApplicationActions: useCRApplicationActions,
+};
 const receipts = {
   useReceiptsMDMS,
   useReceiptsSearch,
@@ -402,6 +428,7 @@ const Hooks = {
   mcollect,
   hrms,
   tl,
+  cr,
   receipts,
   obps,
   events,

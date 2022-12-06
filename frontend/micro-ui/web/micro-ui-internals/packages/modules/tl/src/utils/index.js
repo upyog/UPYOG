@@ -292,78 +292,91 @@ export const gettradeupdateaccessories = (data) => {
 }
 
 export const convertToTrade = (data = {}) => {
- 
   let Financialyear = sessionStorage.getItem("CurrentFinancialYear");
   const formdata = {
     Licenses: [
       {
         action: "INITIATE",
         applicationType: "NEW",
-        commencementDate: Date.parse(data?.TradeDetails?.CommencementDate),
-        financialYear: Financialyear ? Financialyear : "2021-22",
+        commencementDate: Date.parse(data?.owners?.CommencementDate),
+        financialYear: Financialyear ? Financialyear : "2022-23",
         licenseType: "PERMANENT",
         tenantId: Digit.ULBService.getCitizenCurrentTenant(),
-        // data?.address?.city?.code,
         tradeLicenseDetail: {
           channel:"CITIZEN",
           address: {
-            city: !data?.cpt ? data?.address?.city?.code : data?.cpt?.details?.address?.city?.code,
-            // sessionStorage.getItem(Digit.CITIZEN.COMMON.HOME.CITY.code),
-            // !data?.cpt ? data?.address?.city?.code : data?.cpt?.details?.address?.city?.code,
-            locality: {
-              // code: !data?.cpt ? data?.address?.locality?.code : data?.cpt?.details?.address?.locality?.code,
-              code: data.address.WardNo.wardno,
-            },
             tenantId:Digit.ULBService.getCitizenCurrentTenant(),
-            //  data?.tenantId,
-            pincode: null,
-            // !data?.cpt ? data?.address?.pincode :  data?.cpt?.details?.address?.pincode,
-            doorNo: !data?.cpt ? data?.address?.doorNo : data?.cpt?.details?.address?.doorNo,
-            street: !data?.cpt ? data?.address?.street : data?.cpt?.details?.address?.street,
-            landmark: !data?.cpt ? data?.address?.landmark : data?.cpt?.details?.address?.landmark,
+            pincode:null,
+            doorNo: data?.TradeDetails?.DoorNoBuild+data?.TradeDetails?.DoorSubBuild,
+            street:data?.TradeDetails?.StreetName,
+            landmark:data?.TradeDetails?.LandMark,
+            zonalid:data?.TradeDetails?.Zonal.code,
+            wardid:data?.TradeDetails?.WardNo.code,
+            wardno:data?.TradeDetails?.WardNo.wardno,
+            circledivisionid:data?.TradeDetails?.Zonal.code,
+            contactno:data?.TradeDetails?.MobileNo,
+            email:data?.TradeDetails?.EmailID,
           },
           applicationDocuments: null,
-          accessories: data?.TradeDetails?.accessories ? getaccessories(data) : null,
-          owners: getownerarray(data),
-          ...(data?.ownershipCategory?.code.includes("INSTITUTIONAL") && {institution: {
-            designation: data?.owners?.owners?.[0]?.designation,
-            ContactNo: data?.owners?.owners?.[0]?.altContactNumber,
-            mobileNumber: data?.owners?.owners?.[0]?.mobilenumber,
-            instituionName: data?.owners?.owners?.[0]?.institutionName,
-            name: data?.owners?.owners?.[0]?.name,
-           }}),
-          // ...data?.owners.owners?.[0]?.designation && data?.owners.owners?.[0]?.designation !== "" ? { institution: {
-          //   designation: data?.owners.owners?.[0]?.designation
-          // }} : {},
-          // structureType: data?.TradeDetails?.StructureType?.code !=="IMMOVABLE" ? data?.TradeDetails?.VehicleType?.code : data?.TradeDetails?.BuildingType?.code,
-          structureType: data?.TradeDetails?.setPlaceofActivity.code,
-          subOwnerShipCategory: data?.owners.owners?.[0]?.subOwnerShipCategory?.code ? data?.owners.owners?.[0]?.subOwnerShipCategory?.code : data?.ownershipCategory?.code,
-          tradeUnits: gettradeunits(data),
-          // additionalDetail: {
-          //   propertyId: "PG-PT-2022-09-14-006185",
-          //   // !data?.cpt ? "" :data?.cpt?.details?.propertyId,
-          // },
+          owners: [
+            {
+              mobileNumber: data?.address?.IndividualMobNo,
+              name: data?.address?.IndividualName,
+              fatherOrHusbandName: null,
+              dob: null,
+              gender: null,
+              permanentAddress: data?.address?.IndividualAddress,
+              emailId: data?.address?.IndividualEmailID,
+              aadhaarNumber: data?.address?.IndividualAadharNo,
+              ownerType: data?.address?.OwnProperty.code =="YES" ? "OWN" :"RENT",
+              consentAgreementPlace: data?.address?.OwnerConsentPlace,
+              consentAgreementDate: Date.parse(data?.address?.OwnerConsentDateStart),
+              consentAgreementEndDate: Date.parse(data?.address?.OwnerConsentDateEnd),
+            }
+          ],
+          structureType: data?.TradeDetails?.StructureType.maincode,
+          institution: {
+            name:data?.address?.IndividualName,
+            type:"CITIZEN",
+            designation:data?.address?.IndividualDesignation,
+            active:true,
+            instituionName:data?.TradeDetails?.LicensingInstitutionName,
+            contactNo:data?.TradeDetails?.InstitutionMobileNo,
+            organisationregistrationno:data?.TradeDetails?.LicensingInstitutionID,
+            address:data?.TradeDetails?.LicensingInstitutionAddress,
+            natureOfInstitution:data?.TradeDetails?.LicensingInstitutionType.code,
+            email:data?.TradeDetails?.InstitutionEmailID,            
+          },
+          tradeUnits: [
+            {
+              tradeType: data?.TradeDetails[0]?.tradesubtype.code,
+            }
+          ],
           structurePlace: [
             {
-              structurePlaceSubType: data?.TradeDetails?.StructureType.code,
+              isResurveyed: data?.TradeDetails?.ResurveyedLand =="YES" ? false:true,
               blockNo: data?.TradeDetails?.setPlaceofActivity.code =="LAND" ? data?.TradeDetails?.BlockNo:null,
               surveyNo: data?.TradeDetails?.setPlaceofActivity.code =="LAND" ? data?.TradeDetails?.SurveyNo:null,
-              subDivisionNo: data?.TradeDetails?.setPlaceofActivity.code =="LAND" ? data?.TradeDetails?.SurveyNo:null,
-              zonalcode: data?.TradeDetails?.setPlaceofActivity.code =="BUILDING" ? data.address.Zonal.code:null,
-              wardcode: data?.TradeDetails?.setPlaceofActivity.code =="BUILDING" ? data.address.WardNo.code:null,
-              wardNo: data?.TradeDetails?.setPlaceofActivity.code =="BUILDING" ? data.address.WardNo.wardno:null,
-              doorNo: data?.TradeDetails?.setPlaceofActivity.code =="BUILDING" ? data.address.DoorNoBuild.DoorNoBuild:null,
-              doorNoSub: data?.TradeDetails?.setPlaceofActivity.code =="BUILDING" ? data.address.DoorSubBuild.DoorSubBuild:null,
-              vehicleNo: data?.TradeDetails?.setPlaceofActivity.code =="VEHICLE" ? data.address.VechicleNo.VechicleNo:null,
-              vesselNo: data?.TradeDetails?.setPlaceofActivity.code =="WATER" ? data.address.WaterDet.WaterDet:null,
+              subDivisionNo: data?.TradeDetails?.setPlaceofActivity.code =="LAND" ? data?.TradeDetails?.SubDivNo:null,
+              partitionNo: data?.TradeDetails?.setPlaceofActivity.code =="LAND" ? data?.TradeDetails?.PartitionNo:null,
+              doorNo: data?.TradeDetails?.setPlaceofActivity.code =="BUILDING" ? data.TradeDetails.DoorNoBuild:null,
+              doorNoSub: data?.TradeDetails?.setPlaceofActivity.code =="BUILDING" ? data.TradeDetails.DoorSubBuild:null,
+              vehicleNo: data?.TradeDetails?.setPlaceofActivity.code =="VEHICLE" ? data.TradeDetails.VechicleNo:null,
+              vesselNo: data?.TradeDetails?.setPlaceofActivity.code =="WATER" ? data.TradeDetails.VesselNo:null,
             }
           ],
           businessSector: data?.TradeDetails?.setSector.code, 
           capitalInvestment: data?.TradeDetails?.CapitalAmount,
-          enterpriseType: data?.TradeDetails?.enterpriseType
+          enterpriseType: data?.TradeDetails?.enterpriseType,
+          licenseUnitType: data?.TradeDetails?.LicensingUnitType.code,
+          licenseUnitId: data?.TradeDetails?.LicenseUnitID,
+          structurePlaceSubType: data?.TradeDetails?.StructureType.code,
+          customDetailType: data?.TradeDetails[0]?.units?.unit,
+          businessActivityDesc:data?.TradeDetails[0]?.units?.uom,
+          licenseeType:data?.TradeDetails?.LicenseeType.code
         },
         
-        tradeName: data?.TradeDetails?.TradeName,
+        tradeName: data?.TradeDetails?.LicenseUnitName,
         wfDocuments: [],
         applicationDocuments: [],
         workflowCode: "NewTL",

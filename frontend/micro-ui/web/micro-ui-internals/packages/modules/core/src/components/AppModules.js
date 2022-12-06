@@ -34,7 +34,7 @@ export const AppModules = ({ stateCode, userType, modules, appTenants }) => {
   });
 
   return (
-    <div className="ground-container">
+    <div className="file-manager-content">
       <Switch>
         {appRoutes}
         <Route path={`${path}/login`}>

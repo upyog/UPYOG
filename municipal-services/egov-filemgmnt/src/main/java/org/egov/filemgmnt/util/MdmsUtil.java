@@ -1,6 +1,7 @@
 package org.egov.filemgmnt.util;
 
-import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -13,8 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-
-import com.jayway.jsonpath.JsonPath;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -37,43 +36,49 @@ public class MdmsUtil {
     @Value("${egov.mdms.module.name}")
     private String moduleName;
 
-    public Integer fetchRegistrationChargesFromMdms(RequestInfo requestInfo, String tenantId) {
-        StringBuilder uri = new StringBuilder();
-        uri.append(mdmsHost)
-           .append(mdmsUrl);
-        MdmsCriteriaReq mdmsCriteriaReq = getMdmsRequestForCategoryList(requestInfo, tenantId);
+    public Object mdmsCall(RequestInfo requestInfo, String tenantId) {
+        MdmsCriteriaReq mdmsCriteriaReq = getMdmsRequest(requestInfo, tenantId);
 
-        Integer rate = 0;
+        String mdmsUri = String.format("%s%s", mdmsHost, mdmsUrl);
+        Object result = null;
         try {
-            Object response = restTemplate.postForObject(uri.toString(), mdmsCriteriaReq, Map.class);
-            rate = JsonPath.read(response, "$.MdmsRes.VTR.RegistrationCharges.[0].amount");
+            result = restTemplate.postForObject(mdmsUri, mdmsCriteriaReq, Map.class);
         } catch (Exception e) {
             log.error("Exception occurred while fetching category lists from mdms: ", e);
         }
-        // log.info(ulbToCategoryListMap.toString());
-        return rate;
+
+        return result;
     }
 
-    private MdmsCriteriaReq getMdmsRequestForCategoryList(RequestInfo requestInfo, String tenantId) {
-        MasterDetail masterDetail = new MasterDetail();
-        masterDetail.setName(masterName);
-        List<MasterDetail> masterDetailList = new ArrayList<>();
-        masterDetailList.add(masterDetail);
+    private MdmsCriteriaReq getMdmsRequest(RequestInfo requestInfo, String tenantId) {
 
-        ModuleDetail moduleDetail = new ModuleDetail();
-        moduleDetail.setMasterDetails(masterDetailList);
-        moduleDetail.setModuleName(moduleName);
-        List<ModuleDetail> moduleDetailList = new ArrayList<>();
-        moduleDetailList.add(moduleDetail);
+        List<ModuleDetail> moduleDetails = new LinkedList<>();
+        moduleDetails.addAll(getFMModuleDetails());
 
-        MdmsCriteria mdmsCriteria = new MdmsCriteria();
-        mdmsCriteria.setTenantId(tenantId.split("\\.")[0]);
-        mdmsCriteria.setModuleDetails(moduleDetailList);
+        MdmsCriteria mdmsCriteria = MdmsCriteria.builder()
+                                                .moduleDetails(moduleDetails)
+                                                .tenantId(tenantId)
+                                                .build();
 
-        MdmsCriteriaReq mdmsCriteriaReq = new MdmsCriteriaReq();
-        mdmsCriteriaReq.setMdmsCriteria(mdmsCriteria);
-        mdmsCriteriaReq.setRequestInfo(requestInfo);
+        return MdmsCriteriaReq.builder()
+                              .mdmsCriteria(mdmsCriteria)
+                              .requestInfo(requestInfo)
+                              .build();
+    }
 
-        return mdmsCriteriaReq;
+    public List<ModuleDetail> getFMModuleDetails() {
+        // master details for FM module
+        List<MasterDetail> fmMasterDetails = Collections.singletonList(MasterDetail.builder()
+                                                                                   .name(FMConstants.FM_MDMS_FILE_SERVICE_SUBTYPE)
+                                                                                   .build());
+
+        ModuleDetail fmModuleDetail = ModuleDetail.builder()
+                                                  .masterDetails(fmMasterDetails)
+                                                  .moduleName(FMConstants.FILEMANAGEMENT_MODULE)
+                                                  .build();
+
+        // return Arrays.asList(fmModuleDetail);
+        return Collections.singletonList(fmModuleDetail);
+
     }
 }

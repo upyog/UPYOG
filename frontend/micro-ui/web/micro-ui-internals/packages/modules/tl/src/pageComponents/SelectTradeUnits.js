@@ -1,4 +1,4 @@
-import { CardLabel, Dropdown, FormStep, LinkButton, Loader, RadioButtons, RadioOrSelect, TextInput } from "@egovernments/digit-ui-react-components";
+import { CardLabel, Dropdown, FormStep, LinkButton, Loader, RadioButtons, RadioOrSelect, TextInput,TextArea } from "@egovernments/digit-ui-react-components";
 import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
 import Timeline from "../components/TLTimeline";
@@ -9,12 +9,11 @@ const SelectTradeUnits = ({ t, config, onSelect, userType, formData }) => {
   const [TradeCategory, setTradeCategory] = useState("");
   const [TradeType, setTradeType] = useState(formData?.TadeDetails?.Units?.TradeType || "");
   const [TradeSubType, setTradeSubType] = useState(formData?.TadeDetails?.Units?.TradeSubType || "");
-  const [UnitOfMeasure, setUnitOfMeasure] = useState(formData?.TadeDetails?.Units?.UnitOfMeasure || "");
-  const [UomValue, setUomValue] = useState(formData?.TadeDetails?.Units?.UomValue || "");
+  const [CustomType, setCustomType] = useState(formData?.TadeDetails?.Units?.CustomType || "");
+  const [BusinessActivity, setBusinessActivity] = useState(formData?.TadeDetails?.Units?.BusinessActivity || "");
   const [fields, setFeilds] = useState(
     (formData?.TradeDetails && formData?.TradeDetails?.units) || [{ tradecategory: "", tradetype: "", tradesubtype: "", unit: null, uom: null }]
   );
-
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();
 
@@ -96,38 +95,52 @@ const SelectTradeUnits = ({ t, config, onSelect, userType, formData }) => {
     let units = [...fields];
     units[i].tradesubtype = value;
     setTradeSubType(value);
-    if (value == null) {
-      units[i].unit = null;
-      setUnitOfMeasure(null);
-    }
-    Array.from(document.querySelectorAll("input")).forEach((input) => (input.value = ""));
-    value &&
-      Data &&
-      Data.TradeLicense &&
-      Data.TradeLicense.TradeType.map((ob) => {
-        if (value.code === ob.code) {
-          units[i].unit = ob.uom;
-          setUnitOfMeasure(ob.uom);
-          // setFeilds(units);
-        }
-      });
+    // if (value == null) {
+    //   units[i].unit = null;
+    //   setUnitOfMeasure(null);
+    // }
+    // Array.from(document.querySelectorAll("input")).forEach((input) => (input.value = ""));
+    // value &&
+    //   Data &&
+    //   Data.TradeLicense &&
+    //   Data.TradeLicense.TradeType.map((ob) => {
+    //     if (value.code === ob.code) {
+    //       units[i].unit = ob.uom;
+    //       setUnitOfMeasure(ob.uom);
+    //       // setFeilds(units);
+    //     }
+    //   });
     setFeilds(units);
   }
-  function selectUnitOfMeasure(i, e) {
+  // function selectUnitOfMeasure(i, e) {
+  //   let units = [...fields];
+  //   units[i].unit = e.target.value;
+  //   setUnitOfMeasure(e.target.value);
+  //   setFeilds(units);
+  // }
+  // function selectUomValue(i, e) {
+  //   let units = [...fields];
+  //   units[i].uom = e.target.value;
+  //   setUomValue(e.target.value);
+  //   setFeilds(units);
+  // }
+  function selectCustomType(i, e) {
+    
     let units = [...fields];
     units[i].unit = e.target.value;
-    setUnitOfMeasure(e.target.value);
+    setCustomType(e.target.value);
     setFeilds(units);
   }
-  function selectUomValue(i, e) {
+  function selectBusinessActivity(i, e) {
     let units = [...fields];
     units[i].uom = e.target.value;
-    setUomValue(e.target.value);
+    setBusinessActivity(e.target.value);
     setFeilds(units);
   }
 
   const goNext = () => {
-    let units = formData.TradeDetails.Units;
+    let units = fields;
+    // formData.TradeDetails.Units;    
     let unitsdata;
 
     unitsdata = { ...units, units: fields };
@@ -138,134 +151,47 @@ const SelectTradeUnits = ({ t, config, onSelect, userType, formData }) => {
   return (
     <React.Fragment>
       {window.location.href.includes("/citizen") ? <Timeline /> : null}
-      {isLoading ? (
-        <Loader />
-      ) : (
-        <FormStep
-          config={config}
-          onSelect={goNext}
-          onSkip={onSkip}
-          t={t}
-          isDisabled={!fields[0].tradecategory || !fields[0].tradetype || !fields[0].tradesubtype}
-        >
+      {isLoading ? ( <Loader />) : (
+        <FormStep config={config} onSelect={goNext} onSkip={onSkip} t={t} isDisabled={!fields[0].tradecategory || !fields[0].tradetype || !fields[0].tradesubtype || !fields[0].unit || !fields[0].uom } >
           {fields.map((field, index) => {
             return (
-              <div key={`${field}-${index}`}>
-                <div
-                  style={{
-                    border: "solid",
-                    borderRadius: "5px",
-                    padding: "10px",
-                    paddingTop: "20px",
-                    marginTop: "10px",
-                    borderColor: "#f3f3f3",
-                    background: "#FAFAFA",
-                  }}
-                >
-                  <CardLabel>{`${t("TL_NEW_TRADE_DETAILS_TRADE_CAT_LABEL")}*`}</CardLabel>
-                  <LinkButton
-                    label={
-                      <div>
-                        <span>
-                          <svg
-                            style={{ float: "right", position: "relative", bottom: "32px" }}
-                            width="24"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              d="M1 16C1 17.1 1.9 18 3 18H11C12.1 18 13 17.1 13 16V4H1V16ZM14 1H10.5L9.5 0H4.5L3.5 1H0V3H14V1Z"
-                              fill={!(fields.length == 1) ? "#494848" : "#FAFAFA"}
-                            />
-                          </svg>
-                        </span>
+              <div key={`${field}-${index}`}>                
+                <div style={{ borderRadius: "5px", borderColor: "#f3f3f3", background: "white", display:"flow-root", }} >
+                    <div className="row">    
+                      <div className="col-md-12" ><h1 className="headingh1" ><span style={{background:"#fff",padding:"0 10px" }}>{`${t("TL_TRADE_UNITS_TEXT")}*`}</span></h1>
+                      </div>        
+                    </div>
+                    <div className="row">
+                      {!isLoading ? (
+                      <div className="col-md-4" ><CardLabel>{`${t("TL_NEW_TRADE_DETAILS_TRADE_CAT_LABEL")}*`}</CardLabel>
+                        <Dropdown t={t} option={TradeCategoryMenu} optionKey="i18nKey" name={`TradeCategory-${index}`} value={field?.tradecategory} selected={field?.tradecategory} select={(e) => selectTradeCategory(index, e)} placeholder={`${t("TL_NEW_TRADE_DETAILS_TRADE_CAT_LABEL")}*`} />
                       </div>
-                    }
-                    style={{ width: "100px", display: "inline" }}
-                    onClick={(e) => handleRemove(index)}
-                  />
-                  {!isLoading ? (
-                    <Dropdown
-                      t={t}
-                      option={TradeCategoryMenu}
-                      optionKey="i18nKey"
-                      name={`TradeCategory-${index}`}
-                      value={field?.tradecategory}
-                      selected={field?.tradecategory}
-                      select={(e) => selectTradeCategory(index, e)}
-                      labelKey=""
-                      optionCardStyles={{maxHeight:"125px",overflow:"scroll"}}
-
-                      // isPTFlow={true}
-                    />
-                  ) : (
-                    <Loader />
-                  )}
-                  <CardLabel>{`${t("TL_NEW_TRADE_DETAILS_TRADE_TYPE_LABEL")}*`}</CardLabel>
-                  <Dropdown
-                    t={t}
-                    optionKey="i18nKey"
-                    isMandatory={config.isMandatory}
-                    option={getTradeTypeMenu(field?.tradecategory)}
-                    selected={field?.tradetype}
-                    select={(e) => selectTradeType(index, e)}
-                    optionCardStyles={{maxHeight:"125px",overflow:"scroll"}}
-
-                    
-                  />
-                  <CardLabel>{`${t("TL_NEW_TRADE_DETAILS_TRADE_SUBTYPE_LABEL")}*`}</CardLabel>
-                    <Dropdown
-                      t={t}
-                      optionKey="i18nKey"
-                      isMandatory={config.isMandatory}
-                      option={sortDropdownNames(getTradeSubTypeMenu(field?.tradetype), "i18nKey", t)}
-                      selected={field?.tradesubtype}
-                      optionCardStyles={{maxHeight:"125px",overflow:"scroll"}}
-                      select={(e) => selectTradeSubType(index, e)}
-                    />
-                  {/* <CardLabel>{`${t("TL_UNIT_OF_MEASURE_LABEL")}`}</CardLabel>
-                  <TextInput
-                    style={{ background: "#FAFAFA" }}
-                    t={t}
-                    type={"text"}
-                    isMandatory={false}
-                    optionKey="i18nKey"
-                    name="UnitOfMeasure"
-                    //value={UnitOfMeasure}
-                    value={field?.unit}
-                    onChange={(e) => selectUnitOfMeasure(index, e)}
-                    disable={true}
-                  />
-                  <CardLabel>{`${t("TL_NEW_TRADE_DETAILS_UOM_VALUE_LABEL")}${!field.unit ? "" : "*"}`}</CardLabel> */}
-                  {/* <TextInput
-                    style={{ background: "#FAFAFA" }}
-                    t={t}
-                    type={"text"}
-                    isMandatory={false}
-                    optionKey="i18nKey"
-                    name="UomValue"
-                    //value={UomValue}
-                    value={field?.uom}
-                    onChange={(e) => selectUomValue(index, e)}
-                    disable={!field.unit}
-                    {...(validation = {
-                      isRequired: true,
-                      pattern: "[0-9]+",
-                      type: "text",
-                      title: t("TL_WRONG_UOM_VALUE_ERROR"),
-                    })}
-                  /> */}
+                      ) : (
+                        <Loader />
+                      )}
+                       <div className="col-md-4" >
+                       <CardLabel>{`${t("TL_NEW_TRADE_DETAILS_TRADE_TYPE_LABEL")}*`}</CardLabel>
+                        <Dropdown t={t} optionKey="i18nKey" isMandatory={config.isMandatory} option={getTradeTypeMenu(field?.tradecategory)} selected={field?.tradetype} select={(e) => selectTradeType(index, e)} placeholder={`${t("TL_NEW_TRADE_DETAILS_TRADE_TYPE_LABEL")}*`} />
+                       </div>
+                       <div className="col-md-4" >                  
+                        <CardLabel>{`${t("TL_NEW_TRADE_DETAILS_TRADE_SUBTYPE_LABEL")}*`}</CardLabel>
+                          <Dropdown t={t} optionKey="i18nKey" isMandatory={config.isMandatory} option={sortDropdownNames(getTradeSubTypeMenu(field?.tradetype), "i18nKey", t)} selected={field?.tradesubtype} select={(e) => selectTradeSubType(index, e)} placeholder={`${t("TL_NEW_TRADE_DETAILS_TRADE_SUBTYPE_LABEL")}*`} />
+                      </div>
+                    </div>
+                    <div className="row">                      
+                      <div className="col-md-6">
+                        <CardLabel>{`${t("TL_CUSTOM_DETAILED_TYPE_LABEL")}`}</CardLabel>
+                        <TextInput t={t} type={"text"} isMandatory={config.isMandatory} optionKey="i18nKey" name="CustomType" value={field?.unit} onChange={(e) => selectCustomType(index, e)} placeholder={`${t("TL_CUSTOM_DETAILED_TYPE_LABEL")}`} />
+                      </div>
+                      <div className="col-md-6">
+                        <CardLabel>{`${t("TL_BUSINESS_ACTIVITY_LABEL")}`}</CardLabel> 
+                        <TextArea t={t} type={"text"} isMandatory={config.isMandatory} optionKey="i18nKey" placeHolder={`${t("TL_BUSINESS_ACTIVITY_LABEL")}`} name="BusinessActivity" value={field?.uom} onChange={(e) => selectBusinessActivity(index, e)} {...(validation = { isRequired: true, type: "text", title: t("TL_WRONG_UOM_VALUE_ERROR"),})} placeholder={`${t("TL_BUSINESS_ACTIVITY_LABEL")}`} />
+                      </div>
+                    </div>
                 </div>
               </div>
             );
           })}
-          <div style={{ justifyContent: "center", display: "flex", paddingBottom: "15px", color: "#FF8C00" }}>
-            <button type="button" style={{ paddingTop: "10px" }} onClick={() => handleAdd()}>
-              {`${t("TL_ADD_MORE_TRADE_UNITS")}`}
-            </button>
-          </div>
         </FormStep>
       )}
     </React.Fragment>

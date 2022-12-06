@@ -1,0 +1,168 @@
+body {
+    background-color: #F4F1EC;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    color: #2B2F3E !important;
+}
+
+.inbox-btn-container .file-wrapper .file:hover {
+    border-color: #ffffff00 !important;
+    box-shadow: 0px 8px 16px rgb(70 70 70 / 30%) !important;
+}
+
+.inbox-btn-container .file-wrapper .file {
+    padding: 10px 20px;
+    background-color: #FF543D;
+    border: 1px solid #FF543D;
+    color: #fff;
+    min-width: 200px;
+    border-radius: .8rem !important;
+}
+
+.badge-sla {
+    padding: 5px 15px;
+    font-size: 100%;
+}
+
+.card {
+    border-radius: 1.6rem !important;
+}
+
+.file {
+    border: 1px solid #edf2f9;
+    padding: 16px;
+    margin-right: 15px;
+    margin-bottom: 15px;
+    display: inline-block;
+    background-color: #fff;
+    min-width: 270px;
+    border-radius: 0.8rem;
+}
+
+.card-li {
+    color: #2b2f3e;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-left: 0px;
+    padding-right: 0px;
+    border: none;
+    border-top: 1px solid #ccc;
+    background-color: transparent;
+    border-radius: 0px !important;
+    padding: 0.5rem 0rem;
+}
+
+
+.card-li.justify-content-start {
+    justify-content: flex-start;
+    border: none;
+}
+
+.list-group-item-action.card-li:not(.active):hover,
+.list-group-item-action.card-li:not(.active):focus {
+    color: #2a2a2a;
+    background-color: transparent;
+}
+
+.file .list-group {
+    min-height: 155px;
+}
+
+.file .media.align-items-center {
+    min-height: 58px;
+}
+
+@media only screen and (max-width: 767px) {
+    .file {
+        min-width: 100%;
+    }
+}
+
+.btn-brand {
+    background-color: #fe7a51;
+    border-color: #fe7a51;
+    color: #fff;
+}
+
+.btn-brand:hover,
+.btn-brand:focus {
+    color: #fff;
+    background-color: #d86542;
+    border-color: #d86542;
+}
+
+.datepicker-to-align {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
+}
+
+.file-manager-wrapper .file-manager-content {
+    position: relative;
+    width: calc(100%);
+    height: calc(100vh - 187px);
+    float: right;
+}
+
+.file-manager-wrapper {
+    border-radius: 1.6rem !important;
+}
+
+.tl-application .file {
+    min-width: auto;
+}
+
+.form-control,
+.select2-container .select2-choice {
+    border: 1px solid #c9cccf;
+}
+
+.input-group-text {
+    background-color: #ededed;
+    border: 1px solid #c9cccf;
+}
+
+.input-group button {
+    border-top-left-radius: 0px;
+    border-bottom-left-radius: 0px;
+}
+
+.btn-primary {
+    background-color: #fe7a51;
+    border-color: #fe7a51;
+    color: #fff;
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+    color: #fff;
+    background-color: #e76d47;
+    border-color: #e76d47;
+}
+
+.btn-primary:not([disabled]):not(.disabled):active:active,
+.btn-primary:not([disabled]):not(.disabled).active:active {
+    color: #fff;
+    background-color: #e76d47;
+    border-color: #e76d47;
+}
+
+
+
+@media only screen and (max-width: 992px) {
+    .page-container .main-content.citizen-ui {
+        padding: 10px;
+    }
+
+    .inbox-btn-container .file-wrapper .file {
+        min-width: 100%;
+    }
+}
