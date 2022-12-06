@@ -3,7 +3,7 @@ import { FormStep, CardLabel, TextInput, Dropdown, DatePicker } from "@egovernme
 import Timeline from "../../components/CRTimeline";
 import { useTranslation } from "react-i18next";
 
-const FamilyInformation = ({ config, onSelect, userType, formData }) => {
+const FamilyInformationBirth = ({ config, onSelect, userType, formData }) => {
   const stateId = Digit.ULBService.getStateId();
   const { t } = useTranslation();
   let validation = {};
@@ -35,13 +35,13 @@ const FamilyInformation = ({ config, onSelect, userType, formData }) => {
   }
 
   const goNext = () => {
-    sessionStorage.setItem("PlaceOfActivity", setPlaceofActivity.code);
+    // sessionStorage.setItem("PlaceOfActivity", setPlaceofActivity.code);
     onSelect(config.key, { setPlaceofActivity });
   };
   return (
     <React.Fragment>
       {window.location.href.includes("/citizen") ? <Timeline /> : null}
-      <FormStep t={t} config={config} onSelect={goNext} onSkip={onSkip} isDisabled={!CommencementDate}>
+      <FormStep t={t} config={config} onSelect={goNext} onSkip={onSkip} >
         <header className="tittle">Family Details </header>
 
     <div className="row">    
@@ -199,4 +199,4 @@ const FamilyInformation = ({ config, onSelect, userType, formData }) => {
     </React.Fragment>
   );
 };
-export default FamilyInformation;
+export default FamilyInformationBirth;

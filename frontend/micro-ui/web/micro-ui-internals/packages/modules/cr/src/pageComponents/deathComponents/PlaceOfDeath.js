@@ -4,10 +4,13 @@ import Timeline from "../../components/CRTimeline";
 import { useTranslation } from "react-i18next";
 
 const PlaceOfDeath = ({ config, onSelect, userType, formData }) => {
+
+ 
+  
   const stateId = Digit.ULBService.getStateId();
   const { t } = useTranslation();
   let validation = {};
-  const { data: place = {}, isLoad } = Digit.Hooks.tl.useTradeLicenseMDMS(stateId, "TradeLicense", "PlaceOfActivity");
+  const { data: place = {}, isLoad } = Digit.Hooks.cr.useCivilRegistrationMDMS(stateId, "birth-death-service", "PlaceMaster");
   const [setPlaceofActivity, setSelectedPlaceofActivity] = useState(formData?.TradeDetails?.setPlaceofActivity);
   const isEdit = window.location.href.includes("/edit-application/") || window.location.href.includes("renew-trade");
   const [TradeName, setTradeName] = useState(null);
@@ -15,8 +18,8 @@ const PlaceOfDeath = ({ config, onSelect, userType, formData }) => {
   let naturetypecmbvalue = null;
   let cmbPlace = [];
   place &&
-    place["TradeLicense"] &&
-    place["TradeLicense"].PlaceOfActivity.map((ob) => {
+    place["birth-death-service"] &&
+    place["birth-death-service"].PlaceMaster.map((ob) => {
       cmbPlace.push(ob);
     });
 
@@ -35,13 +38,14 @@ const PlaceOfDeath = ({ config, onSelect, userType, formData }) => {
   }
 
   const goNext = () => {
-    sessionStorage.setItem("PlaceOfActivity", setPlaceofActivity.code);
+    console.log("testtt ");
+    // sessionStorage.setItem("PlaceOfActivity", setPlaceofActivity.code);
     onSelect(config.key, { setPlaceofActivity });
   };
   return (
     <React.Fragment>
       {window.location.href.includes("/citizen") ? <Timeline /> : null}
-      <FormStep t={t} config={config} onSelect={goNext} onSkip={onSkip} isDisabled={!CommencementDate}>
+      <FormStep t={t} config={config} onSelect={goNext} onSkip={onSkip} >
         <header className="tittle">Place Of Death </header>
 
     <div className="row">    
@@ -72,10 +76,8 @@ const PlaceOfDeath = ({ config, onSelect, userType, formData }) => {
                 select={selectPlaceofactivity}
                 disabled={isEdit}
             />
-           
         </div>       
     </div> 
-         
       </FormStep>
     </React.Fragment>
   );

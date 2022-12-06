@@ -38,8 +38,9 @@ const AddressOfDecesed = ({ config, onSelect, userType, formData }) => {
   }
 
   const goNext = () => {
+    console.log("test");
     // sessionStorage.setItem("PlaceOfActivity", setPlaceofActivity.code);
-    // onSelect(config.key, { setPlaceofActivity });
+    onSelect(config.key, { setPlaceofActivity });
   };
 
   const [inside, setInside] = useState(true);
@@ -55,7 +56,7 @@ const AddressOfDecesed = ({ config, onSelect, userType, formData }) => {
   return (
     <React.Fragment>
       {window.location.href.includes("/citizen") ? <Timeline /> : null}
-      <FormStep t={t} config={config} onSelect={goNext} onSkip={onSkip} isDisabled={!CommencementDate}>
+      <FormStep t={t} config={config} onSelect={goNext} onSkip={onSkip} >
         <header className="tittle">AdressOfDeceased</header>
         <div className="maindeath">
           <div className="radios">
@@ -76,7 +77,6 @@ const AddressOfDecesed = ({ config, onSelect, userType, formData }) => {
             <div className="inside">
               <button  onClick={outsideHandler}> 
               <NewRadioButton />
-              
               </button>
               <p>Outside India</p>
             </div>

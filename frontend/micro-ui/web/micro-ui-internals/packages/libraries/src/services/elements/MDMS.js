@@ -643,6 +643,66 @@ const getRentalDetailsCategoryCriteria = (tenantId, moduleCode) => ({
     ],
   },
 });
+const getCRGenderList = (tenantId, moduleCode) => ({
+  details: {
+    tenantId: tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "GenderType",
+          },
+        ],
+      },
+    ],
+  },
+});
+const getCRPlaceOfDeathList = (tenantId, moduleCode) => ({
+  details: {
+    tenantId: tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "PlaceMaster",
+          },
+        ],
+      },
+    ],
+  },
+});
+const getCRNationalityList = (tenantId, moduleCode) => ({
+  details: {
+    tenantId: tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "Country",
+          },
+        ],
+      },
+    ],
+  },
+});
+const getCRTalukList = (tenantId, moduleCode) => ({
+  details: {
+    tenantId: tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "mtaluk",
+          },
+        ],
+      },
+    ],
+  },
+});
 
 const getChargeSlabsCategoryCriteria = (tenantId, moduleCode) => ({
   details: {
@@ -1443,6 +1503,18 @@ export const MdmsService = {
     const cacheSetting = getCacheSetting(mdmsDetails.details.moduleDetails[0].moduleName);
     PersistantStorage.set(key, responseValue, cacheSetting.cacheTimeInSecs);
     return responseValue;
+  },
+  getCRNationlity: (tenantId, moduleCode) => {
+    return MdmsService.getDataByCriteria(tenantId, getCRNationalityList(tenantId, moduleCode), moduleCode);
+  },
+  getCRPlaceOfDeath: (tenantId, moduleCode) => {
+    return MdmsService.getDataByCriteria(tenantId, getCRPlaceOfDeathList(tenantId, moduleCode), moduleCode);
+  },
+  getCRGender: (tenantId, moduleCode) => {
+    return MdmsService.getDataByCriteria(tenantId, getCRGenderList(tenantId, moduleCode), moduleCode);
+  },
+  getCRTaluk: (tenantId, moduleCode) => {
+    return MdmsService.getDataByCriteria(tenantId, getCRTalukList(tenantId, moduleCode), moduleCode);
   },
   getServiceDefs: (tenantId, moduleCode) => {
     return MdmsService.getDataByCriteria(tenantId, getModuleServiceDefsCriteria(tenantId, moduleCode), moduleCode);

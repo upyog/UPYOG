@@ -9,9 +9,13 @@ const AdressInside = ({ config, onSelect, userType, formData }) => {
   const { t } = useTranslation();
   let validation = {};
   const { data: place = {}, isLoad } = Digit.Hooks.tl.useTradeLicenseMDMS(stateId, "TradeLicense", "PlaceOfActivity");
+  const { data: taluk = {}, istalukLoad } = Digit.Hooks.cr.useCivilRegistrationMDMS(stateId, "common-masters", "mtaluk");
   const [setPlaceofActivity, setSelectedPlaceofActivity] = useState(formData?.TradeDetails?.setPlaceofActivity);
+  const [setTaluk,setSelectTaluk] = useState(formData?.DeathDetails?.setTaluk);
+
   const isEdit = window.location.href.includes("/edit-application/") || window.location.href.includes("renew-trade");
   const [TradeName, setTradeName] = useState(null);
+
   const [CommencementDate, setCommencementDate] = useState();
   let naturetypecmbvalue = null;
   let cmbPlace = [];
@@ -19,6 +23,12 @@ const AdressInside = ({ config, onSelect, userType, formData }) => {
     place["TradeLicense"] &&
     place["TradeLicense"].PlaceOfActivity.map((ob) => {
       cmbPlace.push(ob);
+    });
+  let cmbtaluk = [];
+  taluk &&
+    taluk["common-masters"] &&
+    taluk["common-masters"].mtaluk.map((ob) => {
+      cmbtaluk.push(ob);
     });
 
   const onSkip = () => onSelect();
@@ -34,217 +44,227 @@ const AdressInside = ({ config, onSelect, userType, formData }) => {
   function selectCommencementDate(value) {
     setCommencementDate(value);
   }
-  return (
-    <div className="maindiv">
-    <div className="inner">
-      <CardLabel>{t("houseno")}</CardLabel>
-      <TextInput
-        t={t}
-        isMandatory={false}
-        type={"text"}
-        optionKey="i18nKey"
-        name="First Name"
-        value={TradeName}
-        onChange={setSelectTradeName}
-        disable={isEdit}
-        {...(validation = { pattern: "^[a-zA-Z-.`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_TRADE_NAME") })}
-      />
-    </div>
-    <div className="inner">
-      <CardLabel>{t("res_assc_no")}</CardLabel>
-      <TextInput
-        t={t}
-        isMandatory={false}
-        type={"text"}
-        optionKey="i18nKey"
-        name="First Name"
-        value={TradeName}
-        onChange={setSelectTradeName}
-        disable={isEdit}
-        {...(validation = { pattern: "^[a-zA-Z-.`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_TRADE_NAME") })}
-      />
-    </div>
-    <div className="inner">
-      <CardLabel>{t("house_ml")}</CardLabel>
-      <TextInput
-        t={t}
-        isMandatory={false}
-        type={"text"}
-        optionKey="i18nKey"
-        name="First Name"
-        value={TradeName}
-        onChange={setSelectTradeName}
-        disable={isEdit}
-        {...(validation = { pattern: "^[a-zA-Z-.`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_TRADE_NAME") })}
-      />
-    </div>
-    <div className="inner">
-      <CardLabel>{t("house_en")}</CardLabel>
-      <TextInput
-        t={t}
-        isMandatory={false}
-        type={"text"}
-        optionKey="i18nKey"
-        name="First Name"
-        value={TradeName}
-        onChange={setSelectTradeName}
-        disable={isEdit}
-        {...(validation = { pattern: "^[a-zA-Z-.`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_TRADE_NAME") })}
-      />
-    </div>
-    <div className="inner">
-      <CardLabel>{t("street_ml")}</CardLabel>
-      <TextInput
-        t={t}
-        isMandatory={false}
-        type={"text"}
-        optionKey="i18nKey"
-        name="First Name"
-        value={TradeName}
-        onChange={setSelectTradeName}
-        disable={isEdit}
-        {...(validation = { pattern: "^[a-zA-Z-.`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_TRADE_NAME") })}
-      />
-    </div>
-    <div className="inner">
-      <CardLabel>{t("street_en")}</CardLabel>
-      <TextInput
-        t={t}
-        isMandatory={false}
-        type={"text"}
-        optionKey="i18nKey"
-        name="First Name"
-        value={TradeName}
-        onChange={setSelectTradeName}
-        disable={isEdit}
-        {...(validation = { pattern: "^[a-zA-Z-.`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_TRADE_NAME") })}
-      />
-    </div>
-    <div className="inner">
-      <CardLabel>{t("locality_ml")}</CardLabel>
-      <Dropdown
-        t={t}
-        optionKey="code"
-        isMandatory={false}
-        option={cmbPlace}
-        selected={setPlaceofActivity}
-        select={selectPlaceofactivity}
-        disabled={isEdit}
-      />
-    </div>
-    <div className="inner">
-      <CardLabel>{t("locality_ml")}</CardLabel>
-      <TextInput
-        t={t}
-        isMandatory={false}
-        type={"text"}
-        optionKey="i18nKey"
-        name="First Name"
-        value={TradeName}
-        onChange={setSelectTradeName}
-        disable={isEdit}
-        {...(validation = { pattern: "^[a-zA-Z-.`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_TRADE_NAME") })}
-      />
-    </div>
+  const goNext = () => {
+    sessionStorage.setItem("PlaceOfActivity", setPlaceofActivity.code);
+    onSelect(config.key, { setPlaceofActivity });
+  };
 
-    <div className="inner">
-      <CardLabel>{t("locality_ml")}</CardLabel>
-      <TextInput
-        t={t}
-        isMandatory={false}
-        type={"text"}
-        optionKey="i18nKey"
-        name="First Name"
-        value={TradeName}
-        onChange={setSelectTradeName}
-        disable={isEdit}
-        {...(validation = { pattern: "^[a-zA-Z-.`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_TRADE_NAME") })}
-      />
-    </div>
-    <div className="inner">
-      <CardLabel>{t("cityml")}</CardLabel>
-      <TextInput
-        t={t}
-        isMandatory={false}
-        type={"text"}
-        optionKey="i18nKey"
-        name="First Name"
-        value={TradeName}
-        onChange={setSelectTradeName}
-        disable={isEdit}
-        {...(validation = { pattern: "^[a-zA-Z-.`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_TRADE_NAME") })}
-      />
-    </div>
-    <div className="inner">
-      <CardLabel>{t("cityml")}</CardLabel>
-      <TextInput
-        style={{ width: "94%" }}
-        t={t}
-        isMandatory={false}
-        type={"text"}
-        optionKey="i18nKey"
-        name="First Name"
-        value={TradeName}
-        onChange={setSelectTradeName}
-        disable={isEdit}
-        {...(validation = { pattern: "^[a-zA-Z-.`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_TRADE_NAME") })}
-      />
-    </div>
-    <div className="inner">
-      <CardLabel>{t("ward_id")}</CardLabel>
-      <Dropdown
-        t={t}
-        optionKey="code"
-        isMandatory={false}
-        option={cmbPlace}
-        selected={setPlaceofActivity}
-        select={selectPlaceofactivity}
-        disabled={isEdit}
-      />
-    </div>
-    <div className="inner">
-      <CardLabel>{t("taluk_id")}</CardLabel>
-      <Dropdown
-        t={t}
-        optionKey="code"
-        isMandatory={false}
-        option={cmbPlace}
-        selected={setPlaceofActivity}
-        select={selectPlaceofactivity}
-        disabled={isEdit}
-      />
-    </div>
-    <div className="inner">
-      <CardLabel>{t("village_id")}</CardLabel>
-      <TextInput
-        style={{ width: "94%" }}
-        t={t}
-        isMandatory={false}
-        type={"text"}
-        optionKey="i18nKey"
-        name="First Name"
-        value={TradeName}
-        onChange={setSelectTradeName}
-        disable={isEdit}
-        {...(validation = { pattern: "^[a-zA-Z-.`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_TRADE_NAME") })}
-      />
-    </div>
-    <div className="inner">
-      <CardLabel>{t("poid")}</CardLabel>
-      <TextInput
-        style={{ width: "94%" }}
-        t={t}
-        isMandatory={false}
-        type={"text"}
-        optionKey="i18nKey"
-        name="First Name"
-        value={TradeName}
-        onChange={setSelectTradeName}
-        disable={isEdit}
-        {...(validation = { pattern: "^[a-zA-Z-.`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_TRADE_NAME") })}
-      />
-    </div>
-  </div>
-    );
+  return (
+    <React.Fragment>
+      {window.location.href.includes("/citizen") ? <Timeline /> : null}
+      <FormStep t={t} config={config} onSelect={goNext} onSkip={onSkip} isDisabled={!CommencementDate}>
+        <div className="maindiv">
+          <div className="inner">
+            <CardLabel>{t("houseno")}</CardLabel>
+            <TextInput
+              t={t}
+              isMandatory={false}
+              type={"text"}
+              optionKey="i18nKey"
+              name="First Name"
+              value={TradeName}
+              onChange={setSelectTradeName}
+              disable={isEdit}
+              {...(validation = { pattern: "^[a-zA-Z-.`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_TRADE_NAME") })}
+            />
+          </div>
+          <div className="inner">
+            <CardLabel>{t("res_assc_no")}</CardLabel>
+            <TextInput
+              t={t}
+              isMandatory={false}
+              type={"text"}
+              optionKey="i18nKey"
+              name="First Name"
+              value={TradeName}
+              onChange={setSelectTradeName}
+              disable={isEdit}
+              {...(validation = { pattern: "^[a-zA-Z-.`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_TRADE_NAME") })}
+            />
+          </div>
+          <div className="inner">
+            <CardLabel>{t("house_ml")}</CardLabel>
+            <TextInput
+              t={t}
+              isMandatory={false}
+              type={"text"}
+              optionKey="i18nKey"
+              name="First Name"
+              value={TradeName}
+              onChange={setSelectTradeName}
+              disable={isEdit}
+              {...(validation = { pattern: "^[a-zA-Z-.`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_TRADE_NAME") })}
+            />
+          </div>
+          <div className="inner">
+            <CardLabel>{t("house_en")}</CardLabel>
+            <TextInput
+              t={t}
+              isMandatory={false}
+              type={"text"}
+              optionKey="i18nKey"
+              name="First Name"
+              value={TradeName}
+              onChange={setSelectTradeName}
+              disable={isEdit}
+              {...(validation = { pattern: "^[a-zA-Z-.`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_TRADE_NAME") })}
+            />
+          </div>
+          <div className="inner">
+            <CardLabel>{t("street_ml")}</CardLabel>
+            <TextInput
+              t={t}
+              isMandatory={false}
+              type={"text"}
+              optionKey="i18nKey"
+              name="First Name"
+              value={TradeName}
+              onChange={setSelectTradeName}
+              disable={isEdit}
+              {...(validation = { pattern: "^[a-zA-Z-.`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_TRADE_NAME") })}
+            />
+          </div>
+          <div className="inner">
+            <CardLabel>{t("street_en")}</CardLabel>
+            <TextInput
+              t={t}
+              isMandatory={false}
+              type={"text"}
+              optionKey="i18nKey"
+              name="First Name"
+              value={TradeName}
+              onChange={setSelectTradeName}
+              disable={isEdit}
+              {...(validation = { pattern: "^[a-zA-Z-.`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_TRADE_NAME") })}
+            />
+          </div>
+          <div className="inner">
+            <CardLabel>{t("locality_ml")}</CardLabel>
+            <Dropdown
+              t={t}
+              optionKey="code"
+              isMandatory={false}
+              option={cmbPlace}
+              selected={setPlaceofActivity}
+              select={selectPlaceofactivity}
+              disabled={isEdit}
+            />
+          </div>
+          <div className="inner">
+            <CardLabel>{t("locality_ml")}</CardLabel>
+            <TextInput
+              t={t}
+              isMandatory={false}
+              type={"text"}
+              optionKey="i18nKey"
+              name="First Name"
+              value={TradeName}
+              onChange={setSelectTradeName}
+              disable={isEdit}
+              {...(validation = { pattern: "^[a-zA-Z-.`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_TRADE_NAME") })}
+            />
+          </div>
+
+          <div className="inner">
+            <CardLabel>{t("locality_ml")}</CardLabel>
+            <TextInput
+              t={t}
+              isMandatory={false}
+              type={"text"}
+              optionKey="i18nKey"
+              name="First Name"
+              value={TradeName}
+              onChange={setSelectTradeName}
+              disable={isEdit}
+              {...(validation = { pattern: "^[a-zA-Z-.`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_TRADE_NAME") })}
+            />
+          </div>
+          <div className="inner">
+            <CardLabel>{t("cityml")}</CardLabel>
+            <TextInput
+              t={t}
+              isMandatory={false}
+              type={"text"}
+              optionKey="i18nKey"
+              name="First Name"
+              value={TradeName}
+              onChange={setSelectTradeName}
+              disable={isEdit}
+              {...(validation = { pattern: "^[a-zA-Z-.`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_TRADE_NAME") })}
+            />
+          </div>
+          <div className="inner">
+            <CardLabel>{t("cityml")}</CardLabel>
+            <TextInput
+              style={{ width: "94%" }}
+              t={t}
+              isMandatory={false}
+              type={"text"}
+              optionKey="i18nKey"
+              name="First Name"
+              value={TradeName}
+              onChange={setSelectTradeName}
+              disable={isEdit}
+              {...(validation = { pattern: "^[a-zA-Z-.`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_TRADE_NAME") })}
+            />
+          </div>
+          <div className="inner">
+            <CardLabel>{t("ward_id")}</CardLabel>
+            <Dropdown
+              t={t}
+              optionKey="code"
+              isMandatory={false}
+              option={cmbPlace}
+              selected={setPlaceofActivity}
+              select={selectPlaceofactivity}
+              disabled={isEdit}
+            />
+          </div>
+          <div className="inner">
+            <CardLabel>{t("taluk_id")}</CardLabel>
+            <Dropdown
+              t={t}
+              optionKey="code"
+              isMandatory={false}
+              option={cmbtaluk}
+              selected={setTaluk}
+              select={setSelectTaluk}
+              disabled={isEdit}
+            />
+          </div>
+          <div className="inner">
+            <CardLabel>{t("village_id")}</CardLabel>
+            <TextInput
+              style={{ width: "94%" }}
+              t={t}
+              isMandatory={false}
+              type={"text"}
+              optionKey="i18nKey"
+              name="First Name"
+              value={TradeName}
+              onChange={setSelectTradeName}
+              disable={isEdit}
+              {...(validation = { pattern: "^[a-zA-Z-.`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_TRADE_NAME") })}
+            />
+          </div>
+          <div className="inner">
+            <CardLabel>{t("poid")}</CardLabel>
+            <TextInput
+              style={{ width: "94%" }}
+              t={t}
+              isMandatory={false}
+              type={"text"}
+              optionKey="i18nKey"
+              name="First Name"
+              value={TradeName}
+              onChange={setSelectTradeName}
+              disable={isEdit}
+              {...(validation = { pattern: "^[a-zA-Z-.`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_TRADE_NAME") })}
+            />
+          </div>
+        </div>
+      </FormStep>
+    </React.Fragment>
+  );
 };
 export default AdressInside;

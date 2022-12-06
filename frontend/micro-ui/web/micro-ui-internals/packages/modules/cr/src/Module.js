@@ -20,7 +20,7 @@ import InformationDeath from "../src/pageComponents/deathComponents/InformationD
 import InformationDeath1 from "../src/pageComponents/deathComponents/InformationDeath1";
 import AddressOfDecesed from "./pageComponents/deathComponents/AddressOfDecesed";
 import OutSideIndia from "./pageComponents/deathComponents/OutSideIndia";
-import FamilyInformation from "./pageComponents/deathComponents/FamilyInformation";
+import FamilyInformationBirth from "./pageComponents/deathComponents/FamilyInformationBIrth";
 import PlaceOfDeath from "./pageComponents/deathComponents/PlaceOfDeath";
 import PlaceOfDeathHome from "./pageComponents/deathComponents/PlaceOfDeathHome";
 import PlaceOfDeathHospital from "./pageComponents/deathComponents/PlaceOfDeathHospital";
@@ -147,7 +147,7 @@ const componentsToRegister = {
   InformationDeath1,
   AddressOfDecesed,
   OutSideIndia,
-  FamilyInformation,
+  FamilyInformationBirth,
   PlaceOfDeath,
   PlaceOfDeathHome,
   PlaceOfDeathHospital,
