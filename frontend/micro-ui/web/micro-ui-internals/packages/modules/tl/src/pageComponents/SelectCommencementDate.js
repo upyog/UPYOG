@@ -21,6 +21,7 @@ const SelectCommencementDate = ({ t, config, onSelect, userType, formData }) => 
     sessionStorage.setItem("LicensePeriod", LicensePeriod);
     onSelect(config.key, { CommencementDate,LicensePeriod,documents });
   }
+  console.log(formData);
   return (
     <React.Fragment>
     {window.location.href.includes("/citizen") ? <Timeline currentStep={3} /> : null}

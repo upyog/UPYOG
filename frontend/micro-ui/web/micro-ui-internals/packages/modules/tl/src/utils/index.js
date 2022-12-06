@@ -298,7 +298,7 @@ export const convertToTrade = (data = {}) => {
       {
         action: "INITIATE",
         applicationType: "NEW",
-        commencementDate: Date.parse(data?.TradeDetails?.CommencementDate),
+        commencementDate: Date.parse(data?.owners?.CommencementDate),
         financialYear: Financialyear ? Financialyear : "2022-23",
         licenseType: "PERMANENT",
         tenantId: Digit.ULBService.getCitizenCurrentTenant(),
