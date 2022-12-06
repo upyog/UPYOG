@@ -14,8 +14,6 @@ const SelectTradeAddress = ({ t, config, onSelect, userType, formData }) => {
   const [wards, setFilterWard] = useState(0);
   const [isInitialRender, setIsInitialRender] = useState(true);
   const isEdit = window.location.href.includes("/edit-application/") || window.location.href.includes("renew-trade");
-  // console.log(formData?.address.Zonal);
-  // console.log(formData?.address.WardNo);
   let cmbZonal = [];
   let cmbWard = [];
   let code =null;

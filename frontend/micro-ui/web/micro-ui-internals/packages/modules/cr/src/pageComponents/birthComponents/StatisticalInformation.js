@@ -61,7 +61,7 @@ const StatisticalInformation = ({ config, onSelect, userType, formData }) => {
     </div>
     <div className="row">
         <div className="col-md-6" >
-            <CardLabel>{t("Weight of the Child")}</CardLabel>
+            <CardLabel>{t("CR_BIRTH_WEIGHT")}</CardLabel>
             <TextInput       
                 t={t}
                 isMandatory={false}
@@ -76,7 +76,7 @@ const StatisticalInformation = ({ config, onSelect, userType, formData }) => {
            
         </div>
         <div className="col-md-6" >
-            <CardLabel>{t("Height of the Child")}</CardLabel>
+            <CardLabel>{t("CR_BIRTH_HEIGHT")}</CardLabel>
             <TextInput       
                 t={t}
                 isMandatory={false}
@@ -92,7 +92,7 @@ const StatisticalInformation = ({ config, onSelect, userType, formData }) => {
     </div>
     <div className="row"> 
     <div className="col-md-6 " >
-            <CardLabel>{`${t("Religion")}`}</CardLabel>
+            <CardLabel>{`${t("CS_COMMON_RELIGION")}`}</CardLabel>
             <Dropdown
                 t={t}
                 optionKey="code"
@@ -104,7 +104,7 @@ const StatisticalInformation = ({ config, onSelect, userType, formData }) => {
             />
         </div>         
         <div className="col-md-6 " >
-            <CardLabel>{`${t("Duration of Pregnancy in Weeks")}`}</CardLabel>
+            <CardLabel>{`${t("CR_PREGNANCY_DURATION")}`}</CardLabel>
             <Dropdown
                 t={t}
                 optionKey="code"
@@ -120,7 +120,7 @@ const StatisticalInformation = ({ config, onSelect, userType, formData }) => {
               
     <div className="row">    
         <div className="col-md-6" > 
-            <CardLabel>{`${t("Nature of medical Attention")}`}</CardLabel>
+            <CardLabel>{`${t("CR_NATURE_OF_MEDICAL_ATTENTION")}`}</CardLabel>
             <Dropdown
                 t={t}
                 optionKey="code"
@@ -132,7 +132,7 @@ const StatisticalInformation = ({ config, onSelect, userType, formData }) => {
             />
         </div>
         <div className="col-md-6" > 
-            <CardLabel>{`${t("Nature of medical Attention Sub")}`}</CardLabel>
+            <CardLabel>{`${t("CR_NATURE_OF_MEDICAL_ATTENTION_SUB")}`}</CardLabel>
             <Dropdown
                 t={t}
                 optionKey="code"
@@ -146,7 +146,7 @@ const StatisticalInformation = ({ config, onSelect, userType, formData }) => {
     </div>     
     <div className="row">    
         <div className="col-md-6" > 
-            <CardLabel>{`${t("Delivery Methord")}`}</CardLabel>
+            <CardLabel>{`${t("CR_DELIVERY_METHORD")}`}</CardLabel>
             <Dropdown
                 t={t}
                 optionKey="code"
@@ -158,7 +158,7 @@ const StatisticalInformation = ({ config, onSelect, userType, formData }) => {
             />
         </div>
         <div className="col-md-6" > 
-            <CardLabel>{`${t("Delivery Methord Sub")}`}</CardLabel>
+            <CardLabel>{`${t("CR_DELIVERY_METHORD_SUB")}`}</CardLabel>
             <Dropdown
                 t={t}
                 optionKey="code"

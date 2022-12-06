@@ -62,7 +62,7 @@ const PlaceofBirth = ({ config, onSelect, userType, formData }) => {
     
     <div className="row">    
         <div className="col-md-4" > 
-            <CardLabel>{`${t("Building No")}`}</CardLabel>
+            <CardLabel>{`${t("CR_BUILDING_NO")}`}</CardLabel>
             <TextInput       
             t={t}
             isMandatory={false}
@@ -76,7 +76,7 @@ const PlaceofBirth = ({ config, onSelect, userType, formData }) => {
             />
         </div>
         <div className="col-md-4" >
-            <CardLabel>{`${t("Res.Association No")}`}</CardLabel>
+            <CardLabel>{`${t("CR_RES_ASSOCIATION_NO")}`}</CardLabel>
             <TextInput       
             t={t}
             isMandatory={false}
@@ -90,7 +90,7 @@ const PlaceofBirth = ({ config, onSelect, userType, formData }) => {
             />
         </div>
         <div className="col-md-4" >
-            <CardLabel>{`${t("House No")}`}</CardLabel>
+            <CardLabel>{`${t("CR_HOUSE_NO")}`}</CardLabel>
             <TextInput       
             t={t}
             isMandatory={false}
@@ -106,7 +106,7 @@ const PlaceofBirth = ({ config, onSelect, userType, formData }) => {
     </div>
     <div className="row">    
         <div className="col-md-6" > 
-            <CardLabel>{`${t("House Name  (English)")}`}</CardLabel>
+            <CardLabel>{`${t("CR_HOUSE_NAME")}`}</CardLabel>
             <TextInput       
             t={t}
             isMandatory={false}
@@ -120,7 +120,7 @@ const PlaceofBirth = ({ config, onSelect, userType, formData }) => {
             />
         </div>
         <div className="col-md-6" >
-            <CardLabel>{`${t("House Name (Malayalam)")}`}</CardLabel>
+            <CardLabel>{`${t("CR_HOUSE_NAME")}`}</CardLabel>
             <TextInput       
             t={t}
             isMandatory={false}
@@ -137,7 +137,7 @@ const PlaceofBirth = ({ config, onSelect, userType, formData }) => {
 
     <div className="row">    
         <div className="col-md-6">
-            <CardLabel>{`${t("LocalBody Name (English)")}`}</CardLabel>
+            <CardLabel>{`${t("CS_COMMON_LB_NAME")}`}</CardLabel>
             <TextInput       
             t={t}
             isMandatory={false}
@@ -151,7 +151,7 @@ const PlaceofBirth = ({ config, onSelect, userType, formData }) => {
             />  
         </div>
         <div className="col-md-6" > 
-            <CardLabel>{`${t("LocalBody Name (Malayalam)")}`}</CardLabel>
+            <CardLabel>{`${t("CS_COMMON_LB_NAME")}`}</CardLabel>
             <TextInput       
             t={t}
             isMandatory={false}
@@ -167,7 +167,7 @@ const PlaceofBirth = ({ config, onSelect, userType, formData }) => {
     </div>
     <div className="row">
         <div className="col-md-4" >
-           <CardLabel>{`${t("Ward")}`}</CardLabel>
+           <CardLabel>{`${t("CS_COMMON_WARD")}`}</CardLabel>
             <Dropdown
                 t={t}
                 optionKey="code"
@@ -179,7 +179,7 @@ const PlaceofBirth = ({ config, onSelect, userType, formData }) => {
                 />
         </div>
         <div className="col-md-4" >
-        <CardLabel>{`${t("Village")}`}</CardLabel>
+        <CardLabel>{`${t("CS_COMMON_VILLAGE")}`}</CardLabel>
             <Dropdown
                 t={t}
                 optionKey="code"
@@ -191,7 +191,7 @@ const PlaceofBirth = ({ config, onSelect, userType, formData }) => {
                 />
         </div>
         <div className="col-md-4" >
-        <CardLabel>{`${t("Thaluk")}`}</CardLabel>
+        <CardLabel>{`${t("CS_COMMON_TALUK")}`}</CardLabel>
             <Dropdown
                 t={t}
                 optionKey="code"
@@ -205,7 +205,7 @@ const PlaceofBirth = ({ config, onSelect, userType, formData }) => {
     </div>
     <div className="row">    
         <div className="col-md-4" > 
-            <CardLabel>{`${t("City (English)")}`}</CardLabel>
+            <CardLabel>{`${t("CR_CITY")}`}</CardLabel>
             <TextInput       
             t={t}
             isMandatory={false}
@@ -219,7 +219,7 @@ const PlaceofBirth = ({ config, onSelect, userType, formData }) => {
             />
         </div>
         <div className="col-md-4" >
-            <CardLabel>{`${t("City (Malayalam)")}`}</CardLabel>
+            <CardLabel>{`${t("CR_CITY")}`}</CardLabel>
             <TextInput       
             t={t}
             isMandatory={false}
@@ -233,7 +233,7 @@ const PlaceofBirth = ({ config, onSelect, userType, formData }) => {
             />
         </div>
         <div className="col-md-4" >
-        <CardLabel>{`${t("District")}`}</CardLabel>
+        <CardLabel>{`${t("CS_COMMON_DISTRICT")}`}</CardLabel>
             <Dropdown
                 t={t}
                 optionKey="code"
@@ -247,7 +247,7 @@ const PlaceofBirth = ({ config, onSelect, userType, formData }) => {
     </div>
     <div className="row">    
         <div className="col-md-6" > 
-            <CardLabel>{`${t("Post Ofiice")}`}</CardLabel>
+            <CardLabel>{`${t("CS_COMMON_POST_OFFICE")}`}</CardLabel>
             <TextInput       
             t={t}
             isMandatory={false}
@@ -261,7 +261,7 @@ const PlaceofBirth = ({ config, onSelect, userType, formData }) => {
             />
         </div>
         <div className="col-md-6" >
-            <CardLabel>{`${t("Pincode")}`}</CardLabel>
+            <CardLabel>{`${t("CS_COMMON_PIN_CODE")}`}</CardLabel>
             <TextInput       
             t={t}
             isMandatory={false}
@@ -277,7 +277,7 @@ const PlaceofBirth = ({ config, onSelect, userType, formData }) => {
     </div>
     <div className="row">
         <div className="col-md-6" >
-            <CardLabel>{`${t("State")}`}</CardLabel>
+            <CardLabel>{`${t("CS_COMMON_STATE")}`}</CardLabel>
             <Dropdown
                 t={t}
                 optionKey="code"
@@ -289,7 +289,7 @@ const PlaceofBirth = ({ config, onSelect, userType, formData }) => {
                 />
         </div> 
         <div className="col-md-6" >
-            <CardLabel>{`${t("Country")}`}</CardLabel>
+            <CardLabel>{`${t("CS_COMMON_COUNTRY")}`}</CardLabel>
             <Dropdown
                 t={t}
                 optionKey="code"

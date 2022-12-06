@@ -226,7 +226,7 @@ export const newConfig = [
     ]
   },
   {
-    head: "ES_NEW_APPLICATION_PROPERTY_ASSESSMENT",
+    head: "Birth Routing",
     body: [
       {
         type: "component",
@@ -235,11 +235,11 @@ export const newConfig = [
         component: "ChildDetails",
         texts: {
           // headerCaption: "TL_STRUCTURE_TYPE",
-          header: "TL_STRUCTURE_TYPE_HEADER",
+          header: "Child Information",
           // cardText: "TL_STRUCTURE_TYPE_TEXT",
           submitBarLabel: "CS_COMMON_NEXT",
         },
-        key: "CRDetails",
+        key: "ChildDetails",
         withoutLabel: true,
         hideInEmployee: true,
         nextStep:"mother-details",        

@@ -4,8 +4,9 @@ import { FormStep, RadioOrSelect, RadioButtons } from "@egovernments/digit-ui-re
 import Timeline from "../components/TLTimeline";
 
 const SelectCommencementDate = ({ t, config, onSelect, userType, formData }) => {
-  const [CommencementDate, setCommencementDate] = useState(formData?.TradeDetails?.CommencementDate);
-  const [LicensePeriod, setLicensePeriod] = useState(formData.TradeDetails?.LicensePeriod);
+  const [CommencementDate, setCommencementDate] = useState(formData?.owners?.CommencementDate);
+  const [LicensePeriod, setLicensePeriod] = useState(formData.owners?.LicensePeriod);
+  const [documents, setdocuments] = useState(formData.owners?.documents);
   const isEdit = window.location.href.includes("/edit-application/")||window.location.href.includes("renew-trade");
   let validation = {};
   const onSkip = () => onSelect();
@@ -18,7 +19,7 @@ const SelectCommencementDate = ({ t, config, onSelect, userType, formData }) => 
   function goNext() {
     sessionStorage.setItem("CommencementDate", CommencementDate);   
     sessionStorage.setItem("LicensePeriod", LicensePeriod);
-    onSelect(config.key, { CommencementDate,LicensePeriod });
+    onSelect(config.key, { CommencementDate,LicensePeriod,documents });
   }
   return (
     <React.Fragment>

@@ -61,7 +61,7 @@ const BirthPlace = ({ config, onSelect, userType, formData }) => {
     </div>
     <div className="row">
         <div className="col-md-6" >
-            <CardLabel>{t("Birth Place")}</CardLabel>
+            <CardLabel>{t("CR_BIRTH_PLACE")}</CardLabel>
             <Dropdown
                 t={t}
                 optionKey="code"
@@ -76,7 +76,7 @@ const BirthPlace = ({ config, onSelect, userType, formData }) => {
     </div>
     <div className="row">             
         <div className="col-md-12 " >
-            <CardLabel>{`${t("Description")}`}</CardLabel>
+            <CardLabel>{`${t("CR_DESCRIPTION")}`}</CardLabel>
             <TextArea       
                 t={t}
                 isMandatory={false}

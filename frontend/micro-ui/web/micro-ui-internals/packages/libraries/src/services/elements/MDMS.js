@@ -1142,6 +1142,14 @@ const TLGenderType = (MdmsRes) => {
     };
   });
 };
+const CRGenderType = (MdmsRes) => {
+  MdmsRes["common-masters"].GenderType.filter((GenderType) => GenderType.active).map((genders) => {
+    return {
+      ...genders,
+      i18nKey: `CR_GENDER_${genders.code}`,
+    };
+  });
+};
 
 const PTGenderType = (MdmsRes) => {
   MdmsRes["common-masters"].GenderType.filter((GenderType) => GenderType.active).map((formGender) => {
@@ -1320,6 +1328,8 @@ const transformResponse = (type, MdmsRes, moduleCode, tenantId) => {
       return getGenderType(MdmsRes);
     case "TLGendertype":
       return TLGenderType(MdmsRes);
+    case "CRGenderType":
+        return CRGenderType(MdmsRes);
     case "PTGenderType":
       return PTGenderType(MdmsRes);
     case "HRGenderType":
@@ -1613,6 +1623,10 @@ export const MdmsService = {
   },
 
   TLGenderType: (tenantId, moduleCode, type) => {
+    return MdmsService.getDataByCriteria(tenantId, getGenderTypeList(tenantId, moduleCode, type), moduleCode);
+  },
+
+  CRGenderType: (tenantId, moduleCode, type) => {
     return MdmsService.getDataByCriteria(tenantId, getGenderTypeList(tenantId, moduleCode, type), moduleCode);
   },
 

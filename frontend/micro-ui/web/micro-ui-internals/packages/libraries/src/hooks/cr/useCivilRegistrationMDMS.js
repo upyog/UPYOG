@@ -2,7 +2,10 @@ import { MdmsService } from "../../services/elements/MDMS";
 import { useQuery } from "react-query";
 
 const useCivilRegistrationMDMS = (tenantId, moduleCode, type, filter, config = {}) => {
-  
+
+  const useCRGender = () => {
+    return useQuery("TL_DOCUMENTS", () => MdmsService.getCRGender(tenantId, moduleCode, type), config);
+  };
   const useTLDocuments = () => {
     return useQuery("TL_DOCUMENTS", () => MdmsService.getTLDocumentRequiredScreen(tenantId, moduleCode, type), config);
   };
@@ -117,6 +120,8 @@ const useCivilRegistrationMDMS = (tenantId, moduleCode, type, filter, config = {
   };
 
   switch (type) {
+    case "CRGender":
+      return useCRGender();
     case "TLDocuments":
       return useTLDocuments();
     case "StructureType":

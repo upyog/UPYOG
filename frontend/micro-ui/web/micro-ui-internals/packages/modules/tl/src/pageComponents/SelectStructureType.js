@@ -140,26 +140,6 @@ const SelectStructureType = ({ t, config, onSelect, userType, formData }) => {
     }
   }, [activities, isInitialRender]);
 
-  // useEffect(() => {
-
-  //   if (isInitialRendercombo) {
-  //     if(value3){
-  //       setisInitialRendercombo(false);
-  //       setValue3(value3.code);
-  //     }
-  //   }
-  // }, [isInitialRendercombo]);
-  // useEffect(() => {
-
-  //   if (isInitialRenderRadio) {
-  //     if(LicenseeType){
-  //       setIsInitialRenderRadio(false);
-  //       setValue2(LicenseeType.code);
-  //     }
-  //   }
-  // }, [isInitialRender]);
-
-  console.log(value3);
   function goNext() {
     sessionStorage.setItem("PlaceOfActivity", setPlaceofActivity.code);
     sessionStorage.setItem("StructureType", StructureType.name);

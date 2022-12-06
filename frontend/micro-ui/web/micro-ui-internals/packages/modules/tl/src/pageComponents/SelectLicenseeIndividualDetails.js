@@ -32,7 +32,6 @@ const SelectLicenseeIndividualDetails = ({ t, config, onSelect, userType, formDa
   function setSelectIndividualEmailID(e) {
     setIndividualEmailID(e.target.value);
   }
- console.log(formData.address?.IndividualAadharNo);
   function goNext() {
     sessionStorage.setItem("IndividualDesignation", IndividualDesignation);
     sessionStorage.setItem("IndividualAadharNo", IndividualAadharNo);

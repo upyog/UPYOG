@@ -307,13 +307,13 @@ export const convertToTrade = (data = {}) => {
           address: {
             tenantId:Digit.ULBService.getCitizenCurrentTenant(),
             pincode:null,
-            doorNo:data?.TradeDetails?.DoorNoBuild+data?.TradeDetails?.DoorSubBuild,
+            doorNo: data?.TradeDetails?.DoorNoBuild+data?.TradeDetails?.DoorSubBuild,
             street:data?.TradeDetails?.StreetName,
             landmark:data?.TradeDetails?.LandMark,
             zonalid:data?.TradeDetails?.Zonal.code,
             wardid:data?.TradeDetails?.WardNo.code,
             wardno:data?.TradeDetails?.WardNo.wardno,
-            circledivisionid:TradeDetails?.Zonal.code,
+            circledivisionid:data?.TradeDetails?.Zonal.code,
             contactno:data?.TradeDetails?.MobileNo,
             email:data?.TradeDetails?.EmailID,
           },
@@ -354,7 +354,7 @@ export const convertToTrade = (data = {}) => {
           ],
           structurePlace: [
             {
-              isResurveyed: data?.TradeDetails?.ResurveyedLand.code =="YES" ? false:true,
+              isResurveyed: data?.TradeDetails?.ResurveyedLand =="YES" ? false:true,
               blockNo: data?.TradeDetails?.setPlaceofActivity.code =="LAND" ? data?.TradeDetails?.BlockNo:null,
               surveyNo: data?.TradeDetails?.setPlaceofActivity.code =="LAND" ? data?.TradeDetails?.SurveyNo:null,
               subDivisionNo: data?.TradeDetails?.setPlaceofActivity.code =="LAND" ? data?.TradeDetails?.SubDivNo:null,
@@ -372,7 +372,8 @@ export const convertToTrade = (data = {}) => {
           licenseUnitId: data?.TradeDetails?.LicenseUnitID,
           structurePlaceSubType: data?.TradeDetails?.StructureType.code,
           customDetailType: data?.TradeDetails[0]?.units?.unit,
-          businessActivityDesc: data?.TradeDetails[0]?.units?.uom,
+          businessActivityDesc:data?.TradeDetails[0]?.units?.uom,
+          licenseeType:data?.TradeDetails?.LicenseeType.code
         },
         
         tradeName: data?.TradeDetails?.LicenseUnitName,

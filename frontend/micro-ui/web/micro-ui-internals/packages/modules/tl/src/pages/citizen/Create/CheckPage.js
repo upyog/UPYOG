@@ -47,7 +47,6 @@ const CheckPage = ({ onSubmit, value }) => {
   const history = useHistory();
   const match = useRouteMatch();
   const { TradeDetails, address, owners, propertyType, subtype, pitType, pitDetail, isEditProperty, cpt } = value;
-  // console.log(TradeDetails);
   function getdate(date) {
     let newdate = Date.parse(date);
     return `${new Date(newdate).getDate().toString() + "/" + (new Date(newdate).getMonth() + 1).toString() + "/" + new Date(newdate).getFullYear().toString()
@@ -59,7 +58,6 @@ const CheckPage = ({ onSubmit, value }) => {
     routeLink = `${getPath(match.path, match.params)}`;
     routeLink = routeLink.replace("/check", "");
   }
-  console.log(value);
   return (
     <React.Fragment>
       {window.location.href.includes("/citizen") ? <Timeline currentStep={4} /> : null}

@@ -128,7 +128,7 @@ import useCRApplicationDetail from "./cr/useApplicationDetail";
 import useCRApplicationActions from "./cr/useApplicationActions";
 // import useTLFetchBill from "./tl/useFetchBill";
 
-// import useTLGenderMDMS from "./tl/useTLGenderMDMS";
+import useCRGenderMDMS from "./cr/useCRGenderMDMS";
 // import useTLInbox from "./tl/useInbox";
 // import useTradeLicenseBillingslab from "./tl/useTradeLicenseBillingslab";
 import useCRMDMS from "./cr/useMDMS";
@@ -312,6 +312,7 @@ const cr = {
   useTenants: useTenantsCR,
   useCivilRegistrationMDMS,
   useCivilRegistrationAPI,
+  useCRGenderMDMS,
   useMDMS: useCRSearch,
   useSearch: useCRSearch,
   useApplicationDetail: useCRApplicationDetail,

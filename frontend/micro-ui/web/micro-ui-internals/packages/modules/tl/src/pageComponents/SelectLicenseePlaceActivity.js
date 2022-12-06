@@ -58,7 +58,6 @@ const SelectLicenseePlaceActivity = ({ t, config, onSelect, userType, formData }
       }
     }
   }, [isInitialRenderRadio]);
-  console.log(formData);
   function goNext() {
     sessionStorage.setItem("OwnProperty", OwnProperty.code);
     sessionStorage.setItem("OwnerAadharNo", OwnerAadharNo);

@@ -62,7 +62,7 @@ const InstitutionDetails = ({ config, onSelect, userType, formData }) => {
     
     <div className="row">
        <div className="col-md-6" >
-           <CardLabel>{`${t("Institution Type")}`}</CardLabel>
+           <CardLabel>{`${t("CR_INSTITUTION_TYPE")}`}</CardLabel>
             <Dropdown
                 t={t}
                 optionKey="code"
@@ -74,7 +74,7 @@ const InstitutionDetails = ({ config, onSelect, userType, formData }) => {
                 />
         </div> 
         <div className="col-md-6" >
-        <CardLabel>{`${t("Institution Id")}`}</CardLabel>
+        <CardLabel>{`${t("CR_INSTITUTION_ID")}`}</CardLabel>
             <Dropdown
                 t={t}
                 optionKey="code"
@@ -88,7 +88,7 @@ const InstitutionDetails = ({ config, onSelect, userType, formData }) => {
     </div>
     <div className="row">    
         <div className="col-md-6" > 
-            <CardLabel>{`${t("Officer")}`}</CardLabel>
+            <CardLabel>{`${t("CR_SIGNED_OFFICER")}`}</CardLabel>
             <TextInput       
             t={t}
             isMandatory={false}
@@ -102,7 +102,7 @@ const InstitutionDetails = ({ config, onSelect, userType, formData }) => {
             />
         </div>
         <div className="col-md-6" >
-            <CardLabel>{`${t("Designation")}`}</CardLabel>
+            <CardLabel>{`${t("CR_SIGNED_OFFICER_DESIGNATION")}`}</CardLabel>
             <TextInput       
             t={t}
             isMandatory={false}
@@ -118,7 +118,7 @@ const InstitutionDetails = ({ config, onSelect, userType, formData }) => {
     </div>   
     <div className="row">    
        <div className="col-md-6">
-            <CardLabel>{`${t("Mobile No")}`}</CardLabel>
+            <CardLabel>{`${t("CR_MOBILE_NO")}`}</CardLabel>
             <TextInput       
             t={t}
             isMandatory={false}
@@ -132,7 +132,7 @@ const InstitutionDetails = ({ config, onSelect, userType, formData }) => {
             />  
         </div>
         <div className="col-md-6" > 
-            <CardLabel>{`${t("Aadhaar No")}`}</CardLabel>
+            <CardLabel>{`${t("CS_COMMON_AADHAAR")}`}</CardLabel>
             <TextInput       
             t={t}
             isMandatory={false}

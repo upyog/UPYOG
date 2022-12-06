@@ -40,7 +40,6 @@ const SelectBusinessCategory = ({ t, config, onSelect, userType, formData, }) =>
     sessionStorage.setItem("CapitalAmount", CapitalAmount);   
     if(sessionStorage.getItem("CapitalAmount")){
       cmbSectorFileterData.push((cmbSector.filter( (cmbSector) => cmbSector.code.includes(setSector.code))));
-      console.log(cmbSectorFileterData);      
         cmbSectorFileterData[0].forEach(element => {
           if(parseFloat(CapitalAmount) >= parseFloat(element.investmentFrom) && parseFloat(CapitalAmount) <= parseFloat(element.investmentTo))
           { 

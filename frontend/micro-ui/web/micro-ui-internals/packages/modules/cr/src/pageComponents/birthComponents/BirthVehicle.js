@@ -61,7 +61,7 @@ const BirthVehicle = ({ config, onSelect, userType, formData }) => {
     </div>
     <div className="row">
         <div className="col-md-4" >
-            <CardLabel>{t("Driver Name ")}</CardLabel>
+            <CardLabel>{t("CR_DRIVER_NAME")}</CardLabel>
             <TextInput       
                 t={t}
                 isMandatory={false}
@@ -76,7 +76,7 @@ const BirthVehicle = ({ config, onSelect, userType, formData }) => {
            
         </div>
         <div className="col-md-4" >
-        <CardLabel>{t("Moble No")}</CardLabel>
+        <CardLabel>{t("CR_MOBLE_NO")}</CardLabel>
             <TextInput       
                 t={t}
                 isMandatory={false}
@@ -90,7 +90,7 @@ const BirthVehicle = ({ config, onSelect, userType, formData }) => {
             />
         </div>
         <div className="col-md-4 " >
-            <CardLabel>{`${t("Aadhar No")}`}</CardLabel>
+            <CardLabel>{`${t("CS_COMMON_AADHAAR")}`}</CardLabel>
             <TextInput       
                 t={t}
                 isMandatory={false}
@@ -107,7 +107,7 @@ const BirthVehicle = ({ config, onSelect, userType, formData }) => {
          
     <div className="row">    
         <div className="col-md-6" > 
-        <CardLabel>{`${t("Vehicle Type")}`}</CardLabel>
+        <CardLabel>{`${t("CR_VEHICLE_TYPE")}`}</CardLabel>
             <TextInput       
                 t={t}
                 isMandatory={false}
@@ -122,7 +122,7 @@ const BirthVehicle = ({ config, onSelect, userType, formData }) => {
         </div>
          
         <div className="col-md-6" > 
-        <CardLabel>{`${t("Registration No")}`}</CardLabel>
+        <CardLabel>{`${t("CR_VEHICLE_REGISTRATION_NO")}`}</CardLabel>
             <TextInput       
                 t={t}
                 isMandatory={false}
@@ -139,7 +139,7 @@ const BirthVehicle = ({ config, onSelect, userType, formData }) => {
 
     <div className="row">    
         <div className="col-md-6" > 
-        <CardLabel>{`${t("Vehicle From")}`}</CardLabel>
+        <CardLabel>{`${t("CR_VEHICLE_FROM")}`}</CardLabel>
             <TextInput       
                 t={t}
                 isMandatory={false}
@@ -153,7 +153,7 @@ const BirthVehicle = ({ config, onSelect, userType, formData }) => {
             />
         </div>
         <div className="col-md-6" > 
-        <CardLabel>{`${t("Vehicle To")}`}</CardLabel>
+        <CardLabel>{`${t("CR_VEHICLE_FROM")}`}</CardLabel>
             <TextInput       
                 t={t}
                 isMandatory={false}
@@ -170,7 +170,7 @@ const BirthVehicle = ({ config, onSelect, userType, formData }) => {
   
     <div className="row">    
         <div className="col-md-6" > 
-        <CardLabel>{`${t("Ward")}`}</CardLabel>
+        <CardLabel>{`${t("CS_COMMON_WARD")}`}</CardLabel>
         <Dropdown
                 t={t}
                 optionKey="code"
@@ -182,7 +182,7 @@ const BirthVehicle = ({ config, onSelect, userType, formData }) => {
             />
         </div>
         <div className="col-md-6" > 
-        <CardLabel>{`${t("Admitted Hospital")}`}</CardLabel>
+        <CardLabel>{`${t("CR_ADMITTED_HOSPITAL")}`}</CardLabel>
             <TextInput       
                 t={t}
                 isMandatory={false}

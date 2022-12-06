@@ -14,7 +14,6 @@ const SelectTradeUnits = ({ t, config, onSelect, userType, formData }) => {
   const [fields, setFeilds] = useState(
     (formData?.TradeDetails && formData?.TradeDetails?.units) || [{ tradecategory: "", tradetype: "", tradesubtype: "", unit: null, uom: null }]
   );
-  console.log(formData);
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();
 
@@ -140,7 +139,6 @@ const SelectTradeUnits = ({ t, config, onSelect, userType, formData }) => {
   }
 
   const goNext = () => {
-    console.log(formData);
     let units = fields;
     // formData.TradeDetails.Units;    
     let unitsdata;

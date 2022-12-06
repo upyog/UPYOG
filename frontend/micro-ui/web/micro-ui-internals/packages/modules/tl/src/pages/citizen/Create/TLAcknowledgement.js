@@ -39,15 +39,15 @@ const TLAcknowledgement = ({ data, onSuccess }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const isRenewTrade = !window.location.href.includes("renew-trade")
   const mutation = Digit.Hooks.tl.useTradeLicenseAPI(
-    data?.cpt?.details?.address?.tenantId ? data?.cpt?.details?.address?.tenantId : tenantId,
+    data?.cpt?.details?.address?.tenantId ? data?.cpt?.details?.address?.tenantId : data?.tenantId,
     isRenewTrade
   );
   const mutation1 = Digit.Hooks.tl.useTradeLicenseAPI(
-    data?.cpt?.details?.address?.tenantId ? data?.cpt?.details?.address?.tenantId : tenantId,
+    data?.cpt?.details?.address?.tenantId ? data?.cpt?.details?.address?.tenantId : data?.tenantId,
     false
   );
   const mutation2 = Digit.Hooks.tl.useTradeLicenseAPI(
-    data?.cpt?.details?.address?.tenantId ? data?.cpt?.details?.address?.tenantId : tenantId,
+    data?.cpt?.details?.address?.tenantId ? data?.cpt?.details?.address?.tenantId : data?.tenantId,
     false
   );
   const isEdit = window.location.href.includes("renew-trade");
@@ -62,7 +62,7 @@ const TLAcknowledgement = ({ data, onSuccess }) => {
     const onSuccessedit = () => {
       setMutationHappened(true);
     };
-    try {
+    // try {
       let tenantId1 = data?.cpt?.details?.address?.tenantId ? data?.cpt?.details?.address?.tenantId : tenantId;
       data.tenantId = tenantId1;
       if (!resubmit) {
@@ -104,20 +104,20 @@ const TLAcknowledgement = ({ data, onSuccess }) => {
         })
 
       }
-    } catch (err) {
-    }
+    // } catch (err) {
+    // }
   }, [fydata]);
 
   useEffect(() => {
     if (mutation.isSuccess || (mutation1.isSuccess && isEdit && !isDirectRenewal)) {
-      try {
+      // try {
         let Licenses = !isEdit ? convertToUpdateTrade(mutation.data, data) : convertToUpdateTrade(mutation1.data, data);
         mutation2.mutate(Licenses, {
           onSuccess,
         });
-      }
-      catch (er) {
-      }
+      // }
+      // catch (er) {
+      // }
     }
   }, [mutation.isSuccess, mutation1.isSuccess]);
 

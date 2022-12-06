@@ -165,7 +165,6 @@ const SelectLicensee = ({ t, config, onSelect, userType, formData }) => {
     }
       
   }
-  // console.log(formData.TradeDetails?.Zonal.name);
   return (
     <React.Fragment>
     {window.location.href.includes("/citizen") ? <Timeline /> : null}
