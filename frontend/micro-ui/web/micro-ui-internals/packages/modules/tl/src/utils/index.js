@@ -338,14 +338,14 @@ export const convertToTrade = (data = {}) => {
           institution: {
             name:data?.address?.IndividualName,
             type:"CITIZEN",
-            designation:data?.address?.IndividualDesignation,
+            designation:data?.TradeDetails?.LicenseeType.code =="INSTITUTION" ? data?.address?.IndividualDesignation:null,
             active:true,
-            instituionName:data?.TradeDetails?.LicensingInstitutionName,
-            contactNo:data?.TradeDetails?.InstitutionMobileNo,
-            organisationregistrationno:data?.TradeDetails?.LicensingInstitutionID,
-            address:data?.TradeDetails?.LicensingInstitutionAddress,
-            natureOfInstitution:data?.TradeDetails?.LicensingInstitutionType.code,
-            email:data?.TradeDetails?.InstitutionEmailID,            
+            instituionName:data?.TradeDetails?.LicenseeType.code =="INSTITUTION" ? data?.TradeDetails?.LicensingInstitutionName:null,
+            contactNo:data?.TradeDetails?.LicenseeType.code =="INSTITUTION" ? data?.TradeDetails?.InstitutionMobileNo:null,
+            organisationregistrationno:data?.TradeDetails?.LicenseeType.code =="INSTITUTION" ? data?.TradeDetails?.LicensingInstitutionID:null,
+            address:data?.TradeDetails?.LicenseeType.code =="INSTITUTION" ? data?.TradeDetails?.LicensingInstitutionAddress:null,
+            natureOfInstitution:data?.TradeDetails?.LicenseeType.code =="INSTITUTION" ? data?.TradeDetails?.LicensingInstitutionType.code:null,
+            email:data?.TradeDetails?.LicenseeType.code =="INSTITUTION" ? data?.TradeDetails?.InstitutionEmailID:null,            
           },
           tradeUnits: [
             {
