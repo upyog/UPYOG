@@ -703,6 +703,21 @@ const getCRTalukList = (tenantId, moduleCode) => ({
     ],
   },
 });
+const getCRTitleList = (tenantId, moduleCode) => ({
+  details: {
+    tenantId: tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "Title",
+          },
+        ],
+      },
+    ],
+  },
+});
 
 const getChargeSlabsCategoryCriteria = (tenantId, moduleCode) => ({
   details: {
@@ -1516,6 +1531,10 @@ export const MdmsService = {
   getCRTaluk: (tenantId, moduleCode) => {
     return MdmsService.getDataByCriteria(tenantId, getCRTalukList(tenantId, moduleCode), moduleCode);
   },
+  getCRTitle: (tenantId, moduleCode) => {
+    return MdmsService.getDataByCriteria(tenantId, getCRTitleList(tenantId, moduleCode), moduleCode);
+  },
+  /////////crmdms
   getServiceDefs: (tenantId, moduleCode) => {
     return MdmsService.getDataByCriteria(tenantId, getModuleServiceDefsCriteria(tenantId, moduleCode), moduleCode);
   },

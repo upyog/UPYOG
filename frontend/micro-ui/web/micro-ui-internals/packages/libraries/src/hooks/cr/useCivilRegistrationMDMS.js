@@ -14,6 +14,9 @@ const useCivilRegistrationMDMS = (tenantId, moduleCode, type, filter, config = {
   const useCRTaluk = () => {
     return useQuery("CR_Taluk", () => MdmsService.getCRTaluk(tenantId, moduleCode, type), config);
   };
+  const useCRTitle = () => {
+    return useQuery("CR_Title", () => MdmsService.getCRTitle(tenantId, moduleCode, type), config);
+  };
   const useTLDocuments = () => {
     return useQuery("TL_DOCUMENTS", () => MdmsService.getTLDocumentRequiredScreen(tenantId, moduleCode, type), config);
   };
@@ -143,6 +146,8 @@ const useCivilRegistrationMDMS = (tenantId, moduleCode, type, filter, config = {
       return useCRNationality();
     case "mtaluk":
       return useCRTaluk();
+    case "Title":
+      return useCRTitle();
     case "TLDocuments":
       return useTLDocuments();
     case "StructureType":
