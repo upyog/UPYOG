@@ -38,8 +38,8 @@ window.Digit.ComponentRegistryService.setupRegistry({
   ReceiptsModule,
   CRModule, 
   CRLinks,
-  DFMModule,
-  DFMLinks
+  // DFMModule,
+  // DFMLinks
 });
 
 
@@ -57,7 +57,7 @@ initEngagementComponents();
 // initWSComponents();
 initCommonPTComponents();
 initCustomisationComponents();
-initDFMComponents();
+// initDFMComponents();
 const moduleReducers = (initData) => ({
   pgr: PGRReducers(initData),
 });

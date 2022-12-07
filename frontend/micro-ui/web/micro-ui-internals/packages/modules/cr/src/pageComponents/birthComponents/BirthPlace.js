@@ -13,14 +13,15 @@ const BirthPlace = ({ config, onSelect, userType, formData }) => {
   const [BirthPlaceDescription, setBirthPlaceDeccription] = useState(formData?.BirthPlace?.BirthPlaceDescription);
   const isEdit = window.location.href.includes("/edit-application/") || window.location.href.includes("renew-trade");
   let menu = [];
+  Menu &&
+  Menu["birth-death-service"] &&
+  Menu["birth-death-service"].PlaceMaster.map((ob) => {
+    menu.push(ob);
+  });
   // Menu &&
   //   Menu.map((PlaceMaster) => {
   //     menu.push({ i18nKey: `CR_BIRTH_PLACE_${PlaceMaster.code}`, code: `${PlaceMaster.code}` });
-  //   });
-  Menu &&
-  ((ob) => {
-    menu.push(ob);
-  });
+  // });
   console.log(menu);  
   const onSkip = () => onSelect();
 
