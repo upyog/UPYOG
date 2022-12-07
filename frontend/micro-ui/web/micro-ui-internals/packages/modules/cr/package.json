@@ -1,6 +1,6 @@
 {
   "name": "@egovernments/digit-ui-module-cr",
-  "version": "1.5.4",
+  "version": "1.0.0",
   "license": "MIT",
   "description": "Digit Civil Registration Module",
   "main": "dist/index.js",
