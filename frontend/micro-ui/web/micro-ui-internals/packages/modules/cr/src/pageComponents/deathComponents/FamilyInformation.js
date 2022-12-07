@@ -42,26 +42,30 @@ const FamilyInformation = ({ config, onSelect, userType, formData }) => {
     <React.Fragment>
       {window.location.href.includes("/citizen") ? <Timeline /> : null}
       <FormStep t={t} config={config} onSelect={goNext} onSkip={onSkip} isDisabled={!CommencementDate}>
-        <header className="tittle">Family Details </header>
-
-    <div className="row">    
-        <div className="col-md-12 col-lg-12" > 
-            <div className="col-md-5" > 
-                <hr className="aligncss"></hr>
-            </div>
-            <div className="col-md-2" > 
+          
+    <div className="row">
+        <div className="col-md-12" >
             <h1 className="headingh1" >
-                <span> Name of Father or Husband</span>
+                <span style={{ background: "#fff", padding: "0 10px" }}>{`${t("Details of Father or Husband")}`}
+                </span> 
             </h1>
-            </div>
-            <div className="col-md-5" > 
-                <hr className="aligncss"></hr>
-            </div>
-        </div>        
+        </div>
     </div>
  
     <div className="row">    
-        <div className="col-md-4" >
+        <div className="col-md-3" >
+            <CardLabel>{`${t("Father or Husband")}`}</CardLabel>
+            <Dropdown
+               t={t}
+               optionKey="code"
+               isMandatory={false}
+               option={cmbPlace}
+               selected={setPlaceofActivity}
+               select={selectPlaceofactivity}
+               disabled={isEdit}
+            />
+        </div>
+        <div className="col-md-3" >
             <CardLabel>{`${t("Tittle")}`}</CardLabel>
             <Dropdown
                t={t}
@@ -73,7 +77,7 @@ const FamilyInformation = ({ config, onSelect, userType, formData }) => {
                disabled={isEdit}
             />
         </div>
-        <div className="col-md-4" >
+        <div className="col-md-3" >
             <CardLabel>{`${t("Name (English)")}`}</CardLabel>
             <TextInput       
             t={t}
@@ -87,7 +91,7 @@ const FamilyInformation = ({ config, onSelect, userType, formData }) => {
             {...(validation = { pattern: "^[a-zA-Z-.`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_TRADE_NAME") })}
             />
         </div>
-        <div className="col-md-4" > 
+        <div className="col-md-3" > 
             <CardLabel>{`${t(" Name (Malayalam)")}`}</CardLabel>
             <TextInput       
             t={t}
@@ -120,21 +124,15 @@ const FamilyInformation = ({ config, onSelect, userType, formData }) => {
         </div>
     </div> 
   
-    <div className="row">    
-        <div className="col-md-12 col-lg-12" > 
-            <div className="col-md-5" > 
-                <hr className="aligncss"></hr>
-            </div>
-            <div className="col-md-2" > 
+    <div className="row">
+        <div className="col-md-12" >
             <h1 className="headingh1" >
-                <span> Name of Mother</span>
+                <span style={{ background: "#fff", padding: "0 10px" }}>{`${t("Details of Mother")}`}
+                </span> 
             </h1>
-            </div>
-            <div className="col-md-5" > 
-                <hr className="aligncss"></hr>
-            </div>
-        </div>        
+        </div>
     </div>
+ 
  
     <div className="row">    
         <div className="col-md-4" >

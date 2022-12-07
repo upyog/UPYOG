@@ -43,22 +43,15 @@ const PlaceOfDeathInstitution = ({ config, onSelect, userType, formData }) => {
       {window.location.href.includes("/citizen") ? <Timeline /> : null}
       <FormStep t={t} config={config} onSelect={goNext} onSkip={onSkip} isDisabled={!CommencementDate}>
       <header className="tittle">Place Of Death Institution </header>
-      <div className="row">    
-        <div className="col-md-12 col-lg-12" > 
-        <div className="col-md-5" > 
-            <hr className="aligncss"></hr>
+      
+    <div className="row">
+        <div className="col-md-12" >
+            <h1 className="headingh1" >
+                <span style={{ background: "#fff", padding: "0 10px" }}>{`${t("Place Of Death Institution")}`}
+                </span> 
+            </h1>
         </div>
-        <div className="col-md-2" > 
-        <h1 className="headingh1" >
-            <span> Place Of Death Institution </span>
-        </h1>
-        </div>
-        <div className="col-md-5" > 
-            <hr className="aligncss"></hr>
-        </div>
-        </div>        
-    </div>    
-    
+    </div>
     <div className="row">
        <div className="col-md-6" >
            <CardLabel>{`${t("Institution Type")}`}</CardLabel>

@@ -42,22 +42,16 @@ const InformationDeath = ({ config, onSelect, userType, formData }) => {
     <React.Fragment>
       {window.location.href.includes("/citizen") ? <Timeline /> : null}
       <FormStep t={t} config={config} onSelect={goNext} onSkip={onSkip} isDisabled={!CommencementDate}>
-        <header className="tittle">Information Deceased </header>
-        <div className="row">    
-        <div className="col-md-12 col-lg-12" > 
-            <div className="col-md-5" > 
-                <hr className="aligncss"></hr>
+        {/* <header className="tittle">Information Deceased </header> */}
+        <div className="row">
+            <div className="col-md-12" >
+                <h1 className="headingh1" >
+                    <span style={{ background: "#fff", padding: "0 10px" }}>{`${t("Date of Death")}`}
+                    </span> 
+                </h1>
             </div>
-            <div className="col-md-2" > 
-            <h1 className="headingh1" >
-                <span> Date of Death</span>
-            </h1>
-            </div>
-            <div className="col-md-5" > 
-                <hr className="aligncss"></hr>
-            </div>
-        </div>        
-    </div>
+        </div>
+      
     <div className="row">
         <div className="col-md-6" >
             <CardLabel>{t("Date of Death")}</CardLabel>
@@ -203,23 +197,30 @@ const InformationDeath = ({ config, onSelect, userType, formData }) => {
             />            
         </div>
       </div>
-    <div className="row">    
-        <div className="col-md-12 col-lg-12" > 
-        <div className="col-md-5" > 
-            <hr className="aligncss"></hr>
+    
+    <div className="row">
+        <div className="col-md-12" >
+            <h1 className="headingh1" >
+                <span style={{ background: "#fff", padding: "0 10px" }}>{`${t("Name of Deceased")}`}
+                </span> 
+            </h1>
         </div>
-        <div className="col-md-2" > 
-        <h1 className="headingh1" >
-            <span> Name of Deceased</span>
-        </h1>
-        </div>
-        <div className="col-md-5" > 
-            <hr className="aligncss"></hr>
-        </div>
-        </div>        
     </div>
-    <div className="row">    
-        <div className="col-md-4" > 
+
+    <div className="row"> 
+        <div className="col-md-3" > 
+            <CardLabel>{`${t("Tittle")}`}</CardLabel>
+            <Dropdown
+                t={t}
+                optionKey="code"
+                isMandatory={false}
+                option={cmbPlace}
+                selected={setPlaceofActivity}
+                select={selectPlaceofactivity}
+                disabled={isEdit}
+            />
+        </div>  
+        <div className="col-md-3" > 
             <CardLabel>{`${t("First Name (English)")}`}</CardLabel>
             <TextInput       
             t={t}
@@ -233,7 +234,7 @@ const InformationDeath = ({ config, onSelect, userType, formData }) => {
             {...(validation = { pattern: "^[a-zA-Z-.`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_TRADE_NAME") })}
             />
         </div>
-        <div className="col-md-4" >
+        <div className="col-md-3" >
             <CardLabel>{`${t("Middle Name (English)")}`}</CardLabel>
             <TextInput       
             t={t}
@@ -247,7 +248,7 @@ const InformationDeath = ({ config, onSelect, userType, formData }) => {
             {...(validation = { pattern: "^[a-zA-Z-.`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_TRADE_NAME") })}
             />
         </div>
-        <div className="col-md-4" >
+        <div className="col-md-3" >
             <CardLabel>{`${t("Last Name (English)")}`}</CardLabel>
             <TextInput       
             t={t}
@@ -262,8 +263,20 @@ const InformationDeath = ({ config, onSelect, userType, formData }) => {
             />
         </div>
     </div>
-    <div className="row">    
-        <div className="col-md-4" > 
+    <div className="row">  
+        <div className="col-md-3" > 
+            <CardLabel>{`${t("Tittle")}`}</CardLabel>
+            <Dropdown
+                t={t}
+                optionKey="code"
+                isMandatory={false}
+                option={cmbPlace}
+                selected={setPlaceofActivity}
+                select={selectPlaceofactivity}
+                disabled={isEdit}
+            />
+        </div>    
+        <div className="col-md-3" > 
             <CardLabel>{`${t("First Name (Malayalam)")}`}</CardLabel>
             <TextInput       
             t={t}
@@ -277,7 +290,7 @@ const InformationDeath = ({ config, onSelect, userType, formData }) => {
             {...(validation = { pattern: "^[a-zA-Z-.`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_TRADE_NAME") })}
             />
         </div>
-        <div className="col-md-4" >
+        <div className="col-md-3" >
             <CardLabel>{`${t("Middle Name (Malayalam)")}`}</CardLabel>
             <TextInput       
             t={t}
@@ -291,7 +304,7 @@ const InformationDeath = ({ config, onSelect, userType, formData }) => {
             {...(validation = { pattern: "^[a-zA-Z-.`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_TRADE_NAME") })}
             />
         </div>
-        <div className="col-md-4">
+        <div className="col-md-3">
             <CardLabel>{`${t("Last Name (Malayalam)")}`}</CardLabel>
             <TextInput       
             t={t}
@@ -339,21 +352,16 @@ const InformationDeath = ({ config, onSelect, userType, formData }) => {
             />  
         </div>
     </div>     
-    <div className="row">    
-        <div className="col-md-12 col-lg-12" > 
-        <div className="col-md-5" > 
-            <hr className="aligncss"></hr>
+   
+    <div className="row">
+        <div className="col-md-12" >
+            <h1 className="headingh1" >
+                <span style={{ background: "#fff", padding: "0 10px" }}>{`${t("Aadhar of Deceased")}`}
+                </span> 
+            </h1>
         </div>
-        <div className="col-md-2" > 
-        <h1 className="headingh1" >
-            <span> Aadhar of Deceased</span>
-        </h1>
-        </div>
-        <div className="col-md-5" > 
-            <hr className="aligncss"></hr>
-        </div>
-        </div>        
     </div>
+    
     <div className="row">    
         <div className="col-md-12" > 
            <CardLabel>{t("Aadhar No")}</CardLabel>
@@ -370,20 +378,13 @@ const InformationDeath = ({ config, onSelect, userType, formData }) => {
             />  
         </div>
     </div>    
-    <div className="row">    
-        <div className="col-md-12 col-lg-12" > 
-        <div className="col-md-5" > 
-            <hr className="aligncss"></hr>
+    <div className="row">
+        <div className="col-md-12" >
+            <h1 className="headingh1" >
+                <span style={{ background: "#fff", padding: "0 10px" }}>{`${t("Passport Details of Deceased")}`}
+                </span> 
+            </h1>
         </div>
-        <div className="col-md-2" > 
-        <h1 className="headingh1" >
-            <span>Passport Details of Deceased </span>
-        </h1>
-        </div>
-        <div className="col-md-5" > 
-            <hr className="aligncss"></hr>
-        </div>
-        </div>        
     </div>
  
     <div className="row">    

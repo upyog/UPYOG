@@ -43,24 +43,17 @@ const PlaceOfDeathVehicle = ({ config, onSelect, userType, formData }) => {
       {window.location.href.includes("/citizen") ? <Timeline /> : null}
       <FormStep t={t} config={config} onSelect={goNext} onSkip={onSkip} isDisabled={!CommencementDate}>
         <header className="tittle">Place Of Death Vechicle </header>
-        <div className="row">    
-        <div className="col-md-12 col-lg-12" > 
-        <div className="col-md-5" > 
-            <hr className="aligncss"></hr>
+        <div className="row">
+        <div className="col-md-12" >
+            <h1 className="headingh1" >
+                <span style={{ background: "#fff", padding: "0 10px" }}>{`${t("Place Of Death Vechicle")}`}
+                </span> 
+            </h1>
         </div>
-        <div className="col-md-2" > 
-        <h1 className="headingh1" >
-            <span>Death Vehicle</span>
-        </h1>
-        </div>
-        <div className="col-md-5" > 
-            <hr className="aligncss"></hr>
-        </div>
-        </div>        
     </div>
     <div className="row">
-        <div className="col-md-4" >
-            <CardLabel>{t("Driver Name ")}</CardLabel>
+        <div className="col-md-6" >
+            <CardLabel>{t("Driver Name(in English) ")}</CardLabel>
             <TextInput       
                 t={t}
                 isMandatory={false}
@@ -74,8 +67,39 @@ const PlaceOfDeathVehicle = ({ config, onSelect, userType, formData }) => {
             />
            
         </div>
+        <div className="col-md-6" >
+            <CardLabel>{t("Driver Name(in Malayalam) ")}</CardLabel>
+            <TextInput       
+                t={t}
+                isMandatory={false}
+                type={"text"}
+                optionKey="i18nKey"
+                name="TradeName"
+                value={TradeName}
+                onChange={setSelectTradeName}
+                disable={isEdit}
+                {...(validation = { pattern: "^[a-zA-Z-.`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_TRADE_NAME") })}
+            />
+           
+        </div>
+        </div>
+        <div className="row">
         <div className="col-md-4" >
         <CardLabel>{t("Moble No")}</CardLabel>
+            <TextInput       
+                t={t}
+                isMandatory={false}
+                type={"text"}
+                optionKey="i18nKey"
+                name="TradeName"
+                value={TradeName}
+                onChange={setSelectTradeName}
+                disable={isEdit}
+                {...(validation = { pattern: "^[a-zA-Z-.`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_TRADE_NAME") })}
+            />
+        </div>
+        <div className="col-md-4" >
+        <CardLabel>{t("Age")}</CardLabel>
             <TextInput       
                 t={t}
                 isMandatory={false}
@@ -195,7 +219,36 @@ const PlaceOfDeathVehicle = ({ config, onSelect, userType, formData }) => {
             />
         </div>
     </div>
-
+    <div className="row">
+         <div className="col-md-6" >
+          <CardLabel>{`${t("Other Details (in English)")}`}</CardLabel>
+            <TextArea       
+            t={t}
+            isMandatory={false}
+            type={"text"}
+            optionKey="i18nKey"
+            name="TradeName"
+            value={TradeName}
+            onChange={setSelectTradeName}
+            disable={isEdit}
+            {...(validation = { pattern: "^[a-zA-Z-.`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_TRADE_NAME") })}
+            />
+        </div>
+         <div className="col-md-6" >
+         <CardLabel>{`${t("Other Details (in Malayalam)")}`}</CardLabel>
+            <TextArea       
+            t={t}
+            isMandatory={false}
+            type={"text"}
+            optionKey="i18nKey"
+            name="TradeName"
+            value={TradeName}
+            onChange={setSelectTradeName}
+            disable={isEdit}
+            {...(validation = { pattern: "^[a-zA-Z-.`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_TRADE_NAME") })}
+            />
+        </div> 
+    </div>    
 
       </FormStep>
     </React.Fragment>

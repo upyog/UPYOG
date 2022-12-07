@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { FormStep, CardLabel, TextInput, Dropdown, DatePicker } from "@egovernments/digit-ui-react-components";
+import { FormStep, CardLabel, TextInput, Dropdown, DatePicker, TextArea, NewRadioButton,  } from "@egovernments/digit-ui-react-components";
 import Timeline from "../../components/CRTimeline";
 import { useTranslation } from "react-i18next";
 
-const PlaceOfDeath = ({ config, onSelect, userType, formData }) => {
+const StatisticalInfo = ({ config, onSelect, userType, formData }) => {
   const stateId = Digit.ULBService.getStateId();
   const { t } = useTranslation();
   let validation = {};
@@ -42,35 +42,40 @@ const PlaceOfDeath = ({ config, onSelect, userType, formData }) => {
     <React.Fragment>
       {window.location.href.includes("/citizen") ? <Timeline /> : null}
       <FormStep t={t} config={config} onSelect={goNext} onSkip={onSkip} isDisabled={!CommencementDate}>
-        <header className="tittle">Place Of Death </header>
+        <header className="tittle">Statistical Information </header>
+        
+        <div className="row">
+        <div className="col-md-12" >
+            <h1 className="headingh1" >
+                <span style={{ background: "#fff", padding: "0 10px" }}>{`${t("Town or Village of Residence of The Deceased")}`}
+                </span> 
+            </h1>
+        </div>
+        </div> 
+        <div className="row">    
+        <div className="col-md-12" > 
+           <CardLabel>{t("Type of place of Deceased ")}</CardLabel>             
+        </div>
+        </div>
+        <div className="row">
+        <div className="col-md-12" >
+            <h1 className="headingh1" >
+                <span style={{ background: "#fff", padding: "0 10px" }}>{`${t("Religion")}`}
+                </span> 
+            </h1>
+        </div>
+        </div>
 
         <div className="row">
         <div className="col-md-12" >
             <h1 className="headingh1" >
-                <span style={{ background: "#fff", padding: "0 10px" }}>{`${t("Place Of Death")}`}
+                <span style={{ background: "#fff", padding: "0 10px" }}>{`${t("Occupation of the Deceased")}`}
                 </span> 
             </h1>
         </div>
-        </div>    
- 
-    <div className="row">
-        <div className="col-md-6" >
-            <CardLabel>{t("Death Place")}</CardLabel>
-            <Dropdown
-                t={t}
-                optionKey="code"
-                isMandatory={false}
-                option={cmbPlace}
-                selected={setPlaceofActivity}
-                select={selectPlaceofactivity}
-                disabled={isEdit}
-            />
-           
-        </div>       
-    </div> 
-         
+        </div>
       </FormStep>
     </React.Fragment>
   );
 };
-export default PlaceOfDeath;
+export default StatisticalInfo;
