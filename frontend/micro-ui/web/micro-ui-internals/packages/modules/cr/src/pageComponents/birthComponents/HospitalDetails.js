@@ -7,38 +7,65 @@ const HospitalDetails = ({ config, onSelect, userType, formData }) => {
   const stateId = Digit.ULBService.getStateId();
   const { t } = useTranslation();
   let validation = {};
-  const { data: place = {}, isLoad } = Digit.Hooks.tl.useTradeLicenseMDMS(stateId, "TradeLicense", "PlaceOfActivity");
-  const [setPlaceofActivity, setSelectedPlaceofActivity] = useState(formData?.TradeDetails?.setPlaceofActivity);
-  const isEdit = window.location.href.includes("/edit-application/")||window.location.href.includes("renew-trade");
-  const [TradeName, setTradeName] = useState(null);
-  const [CommencementDate, setCommencementDate] = useState();
-  let naturetypecmbvalue =null;
-  let cmbPlace = [];
-  place &&
-  place["TradeLicense"] &&
-  place["TradeLicense"].PlaceOfActivity.map((ob) => {
-        cmbPlace.push(ob);
+  // const { data: place = {}, isLoad } = Digit.Hooks.tl.useTradeLicenseMDMS(stateId, "TradeLicense", "PlaceOfActivity");
+  const {data: Menu} = Digit.Hooks.cr.useCRGenderMDMS(stateId, "common-masters", "HospitalName","SignedOfficerName", "SignedOfficerDesignation");
+  // const {data: Menu} = Digit.Hooks.cr.useCRGenderMDMS(stateId, "common-masters", "SignedOfficerName");
+  // const {data: Menu} = Digit.Hooks.cr.useCRGenderMDMS(stateId, "common-masters", "SignedOfficerDesignation");
+  const [HospitalName, selectHospitalName] = useState(formData?.HospitalDetails?.HospitalName);
+  const [SignedOfficerName, selectSignedOfficerName] = useState(formData?.HospitalDetails?.SignedOfficerName);
+  const [SignedOfficerDesignation, selectSignedOfficerDesignation] = useState(formData?.HospitalDetails?.SignedOfficerDesignation);
+  const [SignedOfficerAadharNo, setSignedOfficerAadharNo] = useState(formData?.HospitalDetails?.SignedOfficerAadharNo);
+  const [SignedOfficerMobileNo, setSignedOfficerMobileNo] = useState(formData?.HospitalDetails?.SignedOfficerMobileNo);
+  // const [setPlaceofActivity, setSelectedPlaceofActivity] = useState(formData?.TradeDetails?.setPlaceofActivity);
+  // const isEdit = window.location.href.includes("/edit-application/")||window.location.href.includes("renew-trade");
+  // const [TradeName, setTradeName] = useState(null);
+  // const [CommencementDate, setCommencementDate] = useState();
+  let menu = [];
+    Menu &&
+    Menu.map((ge) => {
+      menu.push({ i18nKey: `CR_HOSPITAL_${hospitalDetails.code}`, code: `${hospitalDetails.code}`, value: `${hospitalDetails.code}` });
+      menu.push({ i18nKey: `CR_SIGNED_OFFICER_${SignedOfficerNameDetails.code}`, code: `${SignedOfficerNameDetails.code}`, value: `${SignedOfficerNameDetails.code}` });
+      menu.push({ i18nKey: `CR_SIGNED_OFFICER_DESIGNATION_${SignedOfficerDesignationDetails.code}`, code: `${SignedOfficerDesignationDetails.code}`, value: `${SignedOfficerDesignationDetails.code}` });
     });
+    
 
   const onSkip = () => onSelect();
 
-  function selectPlaceofactivity(value) {
-    naturetypecmbvalue=value.code.substring(0, 4);
-    setSelectedPlaceofActivity(value);    
-  }
+  function setselectHospitalName(value) {
+    selectHospitalName(value);
+}
+function setselectSignedOfficerName(value) {
+    selectSignedOfficerName(value);
+}
+function setselectSignedOfficerDesignation(value) {
+  selectSignedOfficerDesignation(value);
+}
+function setSelectSignedOfficerAadharNo(e) {
+  setSignedOfficerAadharNo(e.target.value);
+}
+function setSelectSignedOfficerMobileNo(e) {
+  setSignedOfficerMobileNo(e.target.value);
+}
+  // function selectPlaceofactivity(value) {
+  //   naturetypecmbvalue=value.code.substring(0, 4);
+  //   setSelectedPlaceofActivity(value);    
+  // }
   
-  function setSelectTradeName(e) {
-    setTradeName(e.target.value);
-  }
-  function selectCommencementDate(value) {
-    setCommencementDate(value);
-  }
-  
- 
+  // function setSelectTradeName(e) {
+  //   setTradeName(e.target.value);
+  // }
+  // function selectCommencementDate(value) {
+  //   setCommencementDate(value);
+  // }
   const goNext = () => {
-    sessionStorage.setItem("PlaceOfActivity", setPlaceofActivity.code);   
-    onSelect(config.key, { setPlaceofActivity });
-  }
+    sessionStorage.setItem("HospitalName","SignedOfficerName" ,"SignedOfficerDesignation","SignedOfficerAadharNo","SignedOfficerMobileNo",setHospitalName.code,setSignedOfficerName.code,setSignedOfficerDesignation.code,setSignedOfficerAadharNo.code,setSignedOfficerMobileNo.code);
+    onSelect(config.key, { HospitalName,SignedOfficerName,SignedOfficerDesignation,SignedOfficerAadharNo,SignedOfficerMobileNo });
+}
+ 
+  // const goNext = () => {
+  //   sessionStorage.setItem("PlaceOfActivity", setPlaceofActivity.code);   
+  //   onSelect(config.key, { setPlaceofActivity });
+  // }
   return (
     <React.Fragment>
     {window.location.href.includes("/citizen") ? <Timeline /> : null}
@@ -51,21 +78,22 @@ const HospitalDetails = ({ config, onSelect, userType, formData }) => {
                 t={t}
                 optionKey="code"
                 isMandatory={false}
-                option={cmbPlace}
-                selected={setPlaceofActivity}
-                select={selectPlaceofactivity}
+                option={menu}
+                selected={HospitalName}
+                select={setselectHospitalName}
                 disabled={isEdit}
                 />
         </div> 
+        
         <div className="col-md-6" >
         <CardLabel>{`${t("CR_SIGNED_OFFICER")}`}</CardLabel>
             <Dropdown
                 t={t}
                 optionKey="code"
                 isMandatory={false}
-                option={cmbPlace}
-                selected={setPlaceofActivity}
-                select={selectPlaceofactivity}
+                option={menu}
+                selected={SignedOfficerName}
+                select={setselectSignedOfficerName}
                 disabled={isEdit}
                 />
         </div>        
@@ -77,9 +105,9 @@ const HospitalDetails = ({ config, onSelect, userType, formData }) => {
                 t={t}
                 optionKey="code"
                 isMandatory={false}
-                option={cmbPlace}
-                selected={setPlaceofActivity}
-                select={selectPlaceofactivity}
+                option={menu}
+                selected={SignedOfficerDesignation}
+                select={setselectSignedOfficerDesignation}
                 disabled={isEdit}
                 />
         </div>       
@@ -90,13 +118,14 @@ const HospitalDetails = ({ config, onSelect, userType, formData }) => {
             isMandatory={false}
             type={"text"}
             optionKey="i18nKey"
-            name="TradeName"
-            value={TradeName}
-            onChange={setSelectTradeName}
+            name="SignedOfficerAadharNo"
+            value={SignedOfficerAadharNo}
+            onChange={setSelectSignedOfficerAadharNo}
             disable={isEdit}
             {...(validation = { pattern: "^[a-zA-Z-.`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_TRADE_NAME") })}
             />
         </div>
+
         <div className="col-md-4">
             <CardLabel>{`${t("CR_MOBILE_NO")}`}</CardLabel>
             <TextInput       
@@ -104,9 +133,9 @@ const HospitalDetails = ({ config, onSelect, userType, formData }) => {
             isMandatory={false}
             type={"text"}
             optionKey="i18nKey"
-            name="TradeName"
-            value={TradeName}
-            onChange={setSelectTradeName}
+            name="SignedOfficerMobileNo"
+            value={SignedOfficerMobileNo}
+            onChange={setSelectSignedOfficerMobileNo}
             disable={isEdit}
             {...(validation = { pattern: "^[a-zA-Z-.`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_TRADE_NAME") })}
             />  

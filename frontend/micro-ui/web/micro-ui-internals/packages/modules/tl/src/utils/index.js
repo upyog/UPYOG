@@ -354,7 +354,7 @@ export const convertToTrade = (data = {}) => {
           ],
           structurePlace: [
             {
-              isResurveyed: data?.TradeDetails?.ResurveyedLand =="YES" ? false:true,
+              isResurveyed:data?.TradeDetails?.setPlaceofActivity.code =="LAND" && data?.TradeDetails?.ResurveyedLand =="YES" ? false:true,
               blockNo: data?.TradeDetails?.setPlaceofActivity.code =="LAND" ? data?.TradeDetails?.BlockNo:null,
               surveyNo: data?.TradeDetails?.setPlaceofActivity.code =="LAND" ? data?.TradeDetails?.SurveyNo:null,
               subDivisionNo: data?.TradeDetails?.setPlaceofActivity.code =="LAND" ? data?.TradeDetails?.SubDivNo:null,

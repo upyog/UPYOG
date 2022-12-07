@@ -65,7 +65,21 @@ const initRequestBody = (tenantId) => ({
     ],
   },
 });
-
+const getCRPlaceMasterList = (tenantId, moduleCode) => ({
+  details: {
+    tenantId: tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "PlaceMaster",
+          },
+        ],
+      },
+    ],
+  },
+});
 const getCriteria = (tenantId, moduleDetails) => {
   return {
     MdmsCriteria: {
@@ -1453,6 +1467,9 @@ export const MdmsService = {
     const cacheSetting = getCacheSetting(mdmsDetails.details.moduleDetails[0].moduleName);
     PersistantStorage.set(key, responseValue, cacheSetting.cacheTimeInSecs);
     return responseValue;
+  },
+  getCRPlaceMaster: (tenantId, moduleCode) => {
+    return MdmsService.getDataByCriteria(tenantId, getCRPlaceMasterList(tenantId, moduleCode), moduleCode);
   },
   getServiceDefs: (tenantId, moduleCode) => {
     return MdmsService.getDataByCriteria(tenantId, getModuleServiceDefsCriteria(tenantId, moduleCode), moduleCode);
