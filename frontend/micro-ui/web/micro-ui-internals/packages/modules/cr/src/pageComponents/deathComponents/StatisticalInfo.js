@@ -57,6 +57,7 @@ const StatisticalInfo = ({ config, onSelect, userType, formData }) => {
            <CardLabel>{t("Type of place of Deceased ")}</CardLabel>             
         </div>
         </div>
+
         <div className="row">
         <div className="col-md-12" >
             <h1 className="headingh1" >
@@ -65,6 +66,20 @@ const StatisticalInfo = ({ config, onSelect, userType, formData }) => {
             </h1>
         </div>
         </div>
+        <div className="row">
+        <div className="col-md-6" >
+            <CardLabel>{t("Religion")}</CardLabel>
+            <Dropdown
+                t={t}
+                optionKey="code"
+                isMandatory={false}
+                option={cmbPlace}
+                selected={setPlaceofActivity}
+                select={selectPlaceofactivity}
+                disabled={isEdit}
+            />
+        </div>       
+    </div> 
 
         <div className="row">
         <div className="col-md-12" >
@@ -74,6 +89,10 @@ const StatisticalInfo = ({ config, onSelect, userType, formData }) => {
             </h1>
         </div>
         </div>
+
+
+
+
       </FormStep>
     </React.Fragment>
   );
