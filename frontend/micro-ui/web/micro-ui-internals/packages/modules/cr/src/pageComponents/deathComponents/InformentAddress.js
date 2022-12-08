@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { FormStep, CardLabel, TextInput, Dropdown, DatePicker } from "@egovernments/digit-ui-react-components";
+import { FormStep, CardLabel, TextInput, Dropdown, DatePicker, TextArea } from "@egovernments/digit-ui-react-components";
 import Timeline from "../../components/CRTimeline";
 import { useTranslation } from "react-i18next";
 
-const PlaceOfDeathHome = ({ config, onSelect, userType, formData }) => {
+const InformentAddress = ({ config, onSelect, userType, formData }) => {
   const stateId = Digit.ULBService.getStateId();
   const { t } = useTranslation();
   let validation = {};
@@ -42,20 +42,26 @@ const PlaceOfDeathHome = ({ config, onSelect, userType, formData }) => {
     <React.Fragment>
       {window.location.href.includes("/citizen") ? <Timeline /> : null}
       <FormStep t={t} config={config} onSelect={goNext} onSkip={onSkip} isDisabled={!CommencementDate}>
-        <header className="tittle">Place Of Death Home </header>
-        
-        <div className="row">
-        <div className="col-md-12" >
-            <h1 className="headingh1" >
-                <span style={{ background: "#fff", padding: "0 10px" }}>{`${t("Place Of Death Home")}`}
-                </span> 
-            </h1>
-        </div>
-        </div>         
-    
-        <div className="row">
+        <header className="tittle">Informent Address </header>
+        <div className="row">    
+        <div className="col-md-12 col-lg-12" > 
+          <div className="col-md-4 " > 
+              <hr className="aligncss"></hr>
+          </div>
+          <div className="col-md-4 " > 
+          <h1 className="headingh1" >
+              <span>Address</span>
+          </h1>
+          </div>
+          <div className="col-md-4" > 
+              <hr className="aligncss"></hr>
+          </div>
+          
+        </div>        
+    </div>
+    <div className="row">
         <div className="col-md-6" >
-            <CardLabel>{t("CR_BUILDING_NO")}</CardLabel>
+            <CardLabel>{t("Building No")}</CardLabel>
             <TextInput       
                 t={t}
                 isMandatory={false}
@@ -69,7 +75,7 @@ const PlaceOfDeathHome = ({ config, onSelect, userType, formData }) => {
             />    
         </div> 
         <div className="col-md-6" >
-            <CardLabel>{t("CR_HOUSE_NO")}</CardLabel>
+            <CardLabel>{t("House No")}</CardLabel>
             <TextInput       
                 t={t}
                 isMandatory={false}
@@ -85,7 +91,7 @@ const PlaceOfDeathHome = ({ config, onSelect, userType, formData }) => {
     </div>
     <div className="row">
         <div className="col-md-6" >
-            <CardLabel>{t("CR_LOCALITY_EN")}</CardLabel>
+            <CardLabel>{t("Locality (English)")}</CardLabel>
             <TextInput       
                 t={t}
                 isMandatory={false}
@@ -99,7 +105,7 @@ const PlaceOfDeathHome = ({ config, onSelect, userType, formData }) => {
             />    
         </div> 
         <div className="col-md-6" >
-            <CardLabel>{t("CR_LOCALITY_ML")}</CardLabel>
+            <CardLabel>{t("Locality (Malayalam)")}</CardLabel>
             <TextInput       
                 t={t}
                 isMandatory={false}
@@ -115,7 +121,7 @@ const PlaceOfDeathHome = ({ config, onSelect, userType, formData }) => {
     </div>  
     <div className="row">
         <div className="col-md-6" >
-            <CardLabel>{t("CR_CITY_EN")}</CardLabel>
+            <CardLabel>{t("City (English)")}</CardLabel>
             <TextInput       
                 t={t}
                 isMandatory={false}
@@ -129,7 +135,7 @@ const PlaceOfDeathHome = ({ config, onSelect, userType, formData }) => {
             />    
         </div> 
         <div className="col-md-6" >
-            <CardLabel>{t("CR_CITY_ML")}</CardLabel>
+            <CardLabel>{t("City (Malayalam)")}</CardLabel>
             <TextInput       
                 t={t}
                 isMandatory={false}
@@ -145,7 +151,7 @@ const PlaceOfDeathHome = ({ config, onSelect, userType, formData }) => {
     </div>  
     <div className="row">
         <div className="col-md-6" >
-            <CardLabel>{t("CS_COMMON_VILLAGE")}</CardLabel>
+            <CardLabel>{t("Village")}</CardLabel>
             <Dropdown
                 t={t}
                 optionKey="code"
@@ -157,7 +163,7 @@ const PlaceOfDeathHome = ({ config, onSelect, userType, formData }) => {
             />
         </div> 
         <div className="col-md-6" >
-            <CardLabel>{t("CS_COMMON_LB_NAME")}</CardLabel>
+            <CardLabel>{t("Tenand")}</CardLabel>
             <Dropdown
                 t={t}
                 optionKey="code"
@@ -171,7 +177,7 @@ const PlaceOfDeathHome = ({ config, onSelect, userType, formData }) => {
     </div>       
     <div className="row">
         <div className="col-md-6" >
-            <CardLabel>{t("CS_COMMON_TALUK")}</CardLabel>
+            <CardLabel>{t("Taluk")}</CardLabel>
             <Dropdown
                 t={t}
                 optionKey="code"
@@ -183,7 +189,7 @@ const PlaceOfDeathHome = ({ config, onSelect, userType, formData }) => {
             />
         </div> 
         <div className="col-md-6" >
-            <CardLabel>{t("CS_COMMON_DISTRICT")}</CardLabel>
+            <CardLabel>{t("District")}</CardLabel>
             <Dropdown
                 t={t}
                 optionKey="code"
@@ -197,7 +203,7 @@ const PlaceOfDeathHome = ({ config, onSelect, userType, formData }) => {
     </div>     
     <div className="row">
         <div className="col-md-6" >
-            <CardLabel>{t("CS_COMMON_POST_OFFICE")}</CardLabel>
+            <CardLabel>{t("Post Office")}</CardLabel>
             <Dropdown
                 t={t}
                 optionKey="code"
@@ -209,7 +215,7 @@ const PlaceOfDeathHome = ({ config, onSelect, userType, formData }) => {
             />
         </div> 
         <div className="col-md-6" >
-            <CardLabel>{t("CS_COMMON_PIN_CODE")}</CardLabel>
+            <CardLabel>{t("Pin Code")}</CardLabel>
             <TextInput       
                 t={t}
                 isMandatory={false}
@@ -223,9 +229,9 @@ const PlaceOfDeathHome = ({ config, onSelect, userType, formData }) => {
             />         
         </div>           
     </div>   
-    
+   
       </FormStep>
     </React.Fragment>
   );
 };
-export default PlaceOfDeathHome;
+export default InformentAddress;
