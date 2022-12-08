@@ -12,6 +12,7 @@ const FamilyInformationBirth = ({ config, onSelect, userType, formData }) => {
 
   const [setPlaceofActivity, setSelectedPlaceofActivity] = useState(formData?.TradeDetails?.setPlaceofActivity);
   const [setTitle, setSelectedTitle] = useState(formData?.DeathDetails?.setTitle);
+  const [setTitleB, setSelectedTitleB] = useState(formData?.DeathDetails?.setTitle);
 
   const isEdit = window.location.href.includes("/edit-application/") || window.location.href.includes("renew-trade");
   const [TradeName, setTradeName] = useState(null);
@@ -40,7 +41,10 @@ const FamilyInformationBirth = ({ config, onSelect, userType, formData }) => {
     naturetypecmbvalue = value.code.substring(0, 4);
     setSelectedTitle(value);
   }
-
+  function selectTitleB(value) {
+    naturetypecmbvalue = value.code.substring(0, 4);
+    setSelectedTitleB(value);
+  }
 
   function setSelectTradeName(e) {
     setTradeName(e.target.value);
@@ -156,11 +160,11 @@ const FamilyInformationBirth = ({ config, onSelect, userType, formData }) => {
             <CardLabel>{`${t("Tittle")}`}</CardLabel>
             <Dropdown
               t={t}
-              optionKey="code"
+              optionKey="name"
               isMandatory={false}
-              option={cmbPlace}
-              selected={setPlaceofActivity}
-              select={selectPlaceofactivity}
+              option={cmbTitle}
+              selected={setTitleB}
+              select={selectTitleB}
               disabled={isEdit}
             />
           </div>

@@ -17,6 +17,13 @@ const useCivilRegistrationMDMS = (tenantId, moduleCode, type, filter, config = {
   const useCRTitle = () => {
     return useQuery("CR_Title", () => MdmsService.getCRTitle(tenantId, moduleCode, type), config);
   };
+  const useCRWard = () => {
+    return useQuery("CR_WARD", () => MdmsService.getCRWard(tenantId, moduleCode, type), config);
+  };
+  const useCRReligion = () => {
+    return useQuery("CR_RELIGION", () => MdmsService.getCRReligion(tenantId, moduleCode, type), config);
+  };
+  ////////////////////////////////////////////////////////////////////death
   const useTLDocuments = () => {
     return useQuery("TL_DOCUMENTS", () => MdmsService.getTLDocumentRequiredScreen(tenantId, moduleCode, type), config);
   };
@@ -148,6 +155,10 @@ const useCivilRegistrationMDMS = (tenantId, moduleCode, type, filter, config = {
       return useCRTaluk();
     case "Title":
       return useCRTitle();
+    case "Title":
+      return useCRWard();
+    case "Religion":
+      return useCRReligion();
     case "TLDocuments":
       return useTLDocuments();
     case "StructureType":

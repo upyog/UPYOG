@@ -9,7 +9,9 @@ const InformationDeath = ({ config, onSelect, userType, formData }) => {
   let validation = {};
   const { data: place = {}, isLoad } = Digit.Hooks.cr.useCivilRegistrationMDMS(stateId, "common-masters", "GenderType");
   const { data: Nation = {}, isNationLoad } = Digit.Hooks.cr.useCivilRegistrationMDMS(stateId, "common-masters", "Country");
+  // const { data: religion = {}, isReligionLoad } = Digit.Hooks.cr.useCivilRegistrationMDMS(stateId, "common-masters", "Religion");
 
+  // const [setReligion, setSelectedReligion] = useState(formData?.TradeDetails?.setReligion);
   const [setCountry, setSelectedCountry] = useState(formData?.TradeDetails?.setCountry);
   const [setPlaceofActivity, setSelectedPlaceofActivity] = useState(formData?.DeathDetails?.setPlaceofActivity);
   const isEdit = window.location.href.includes("/edit-application/") || window.location.href.includes("renew-trade");
@@ -26,13 +28,19 @@ const InformationDeath = ({ config, onSelect, userType, formData }) => {
     place["common-masters"] &&
     place["common-masters"].GenderType.map((ob) => {
       cmbPlace.push(ob);
-    });  
+    });
   let cmbNation = [];
   Nation &&
     Nation["common-masters"] &&
     Nation["common-masters"].Country.map((ob) => {
-        cmbNation.push(ob);
+      cmbNation.push(ob);
     });
+  // let cmbreligion = [];
+  // religion &&
+  //   religion["common-masters"] &&
+  //   religion["common-masters"].religion.map((ob) => {
+  //     cmbreligion.push(ob);
+  //   });
 
   const onSkip = () => onSelect();
 
@@ -40,6 +48,11 @@ const InformationDeath = ({ config, onSelect, userType, formData }) => {
     naturetypecmbvalue = value.code.substring(0, 4);
     setSelectedPlaceofActivity(value);
   }
+
+  // function selectReligion(value) {
+  //   naturetypecmbvalue = value.code.substring(0, 4);
+  //   setSelectedReligion(value);
+  // }
 
   function setSelectTradeName(e) {
     setTradeName(e.target.value);
@@ -441,13 +454,13 @@ const InformationDeath = ({ config, onSelect, userType, formData }) => {
           <div className="col-md-4">
             <CardLabel>{t("Religion")}</CardLabel>
             <Dropdown
-              t={t}
-              optionKey="code"
-              isMandatory={false}
-              option={cmbPlace}
-              selected={setPlaceofActivity}
-              select={selectPlaceofactivity}
-              disabled={isEdit}
+               t={t}
+               optionKey="code"
+               isMandatory={false}
+               option={cmbPlace}
+               selected={setPlaceofActivity}
+               select={selectPlaceofactivity}
+               disabled={isEdit}
             />
           </div>
         </div>

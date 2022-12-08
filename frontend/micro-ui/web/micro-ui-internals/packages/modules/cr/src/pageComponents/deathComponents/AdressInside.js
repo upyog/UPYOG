@@ -10,7 +10,11 @@ const AdressInside = ({ config, onSelect, userType, formData }) => {
   let validation = {};
   const { data: place = {}, isLoad } = Digit.Hooks.tl.useTradeLicenseMDMS(stateId, "TradeLicense", "PlaceOfActivity");
   const { data: taluk = {}, istalukLoad } = Digit.Hooks.cr.useCivilRegistrationMDMS(stateId, "common-masters", "mtaluk");
+  const { data: ward = {}, iswardLoad } = Digit.Hooks.cr.useCivilRegistrationMDMS(stateId, "common-masters", "mtaluk");
+
   const [setPlaceofActivity, setSelectedPlaceofActivity] = useState(formData?.TradeDetails?.setPlaceofActivity);
+  const [setWardid, setSelectedWardId] = useState(formData?.TradeDetails?.setWardid);
+
   const [setTaluk, setSelectTaluk] = useState(formData?.DeathDetails?.setTaluk);
 
   const isEdit = window.location.href.includes("/edit-application/") || window.location.href.includes("renew-trade");
@@ -36,6 +40,10 @@ const AdressInside = ({ config, onSelect, userType, formData }) => {
   function selectPlaceofactivity(value) {
     naturetypecmbvalue = value.code.substring(0, 4);
     setSelectedPlaceofActivity(value);
+  }
+  function selectWardid(value) {
+    naturetypecmbvalue = value.code.substring(0, 4);
+    setSelectedWardId(value);
   }
 
   function setSelectTradeName(e) {
@@ -83,7 +91,7 @@ const AdressInside = ({ config, onSelect, userType, formData }) => {
               type={"text"}
               optionKey="i18nKey"
               name="houseNo"
-              value={TradeName}
+              // value={TradeName}
               onChange={onChange}
               disable={isEdit}
               autoComplete="{false}"
@@ -286,11 +294,11 @@ const AdressInside = ({ config, onSelect, userType, formData }) => {
         </div>
       </FormStep>
       {/* /////////////////////////////////////////////////////////////////// */}
-      <div className="maindiv">
-        <hr className="aligncss"></hr>
-        <div className="check">
-          <label htmlFor="checkbox">Same as Above</label>
-          <input type="checkbox" value="false" name="checkbox" onChange={() => setCheck(!check)} />
+      <hr className="aligncss"></hr>
+      <div className="check">
+        <label htmlFor="checkbox">Same as Above</label>
+        <input type="checkbox" value="false" name="checkbox" onChange={() => setCheck(!check)} />
+        <div className="maindiv">
           <div className="inner">
             <CardLabel>{t("houseno")}</CardLabel>
             <TextInput
@@ -303,6 +311,7 @@ const AdressInside = ({ config, onSelect, userType, formData }) => {
               // value={TradeName}
               onChange={onChange}
               disable={isEdit}
+              autoComplete="{false}"
               {...(validation = { pattern: "^[a-zA-Z-.`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_TRADE_NAME") })}
             />
           </div>
@@ -443,8 +452,8 @@ const AdressInside = ({ config, onSelect, userType, formData }) => {
               optionKey="code"
               isMandatory={false}
               option={cmbPlace}
-              selected={setPlaceofActivity}
-              select={selectPlaceofactivity}
+              selected={setWardid}
+              select={selectWardid}
               onChange={onChange}
               disabled={isEdit}
               name="wardId"
