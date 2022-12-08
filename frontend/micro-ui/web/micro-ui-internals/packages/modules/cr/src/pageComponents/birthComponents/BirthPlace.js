@@ -18,10 +18,6 @@ const BirthPlace = ({ config, onSelect, userType, formData }) => {
   Menu["birth-death-service"].PlaceMaster.map((ob) => {
     menu.push(ob);
   });
-  // Menu &&
-  //   Menu.map((PlaceMaster) => {
-  //     menu.push({ i18nKey: `CR_BIRTH_PLACE_${PlaceMaster.code}`, code: `${PlaceMaster.code}` });
-  // });
   console.log(menu);  
   const onSkip = () => onSelect();
 
@@ -39,7 +35,7 @@ const BirthPlace = ({ config, onSelect, userType, formData }) => {
   return (
     <React.Fragment>
       {window.location.href.includes("/employee") ? <Timeline /> : null}
-      <FormStep t={t} config={config} onSelect={goNext} onSkip={onSkip} isDisabled={!menu}>
+      <FormStep t={t} config={config} onSelect={goNext} onSkip={onSkip} isDisabled={!BirthPlace || !BirthPlaceDescription}>
         <div className="row">
           <div className="col-md-12" ><h1 className="headingh1" ><span style={{ background: "#fff", padding: "0 10px" }}>{`${t("CR_BIRTH_PLACE")}`}</span> </h1>
           </div>

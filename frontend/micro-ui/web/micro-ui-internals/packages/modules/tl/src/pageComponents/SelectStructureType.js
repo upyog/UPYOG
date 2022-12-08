@@ -242,7 +242,7 @@ const SelectStructureType = ({ t, config, onSelect, userType, formData }) => {
                     <TextInput t={t} isMandatory={false} type={"text"} optionKey="i18nKey" name="SubDivNo" value={SubDivNo} onChange={setSelectSubDivNo} disable={isEdit}     {...(validation = { pattern: "^[a-zA-Z-.0-9`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_SUBDIVISION_NO") })} />
                   </div>
                   <div className="col-md-3" > <CardLabel>{`${t("TL_LOCALIZATION_PARTITION_NO")}`}</CardLabel>
-                    <TextInput t={t} isMandatory={false} type={"text"} optionKey="i18nKey" name="PartitionNo" value={PartitionNo} onChange={setSelectPartitionNo} disable={isEdit}     {...(validation = { pattern: "^[a-zA-Z-.0-9`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_SUBDIVISION_NO") })} />
+                    <TextInput t={t} isMandatory={false} type={"text"} optionKey="i18nKey" name="PartitionNo" value={PartitionNo} onChange={setSelectPartitionNo} disable={isEdit}     {...(validation = { pattern: "^[a-zA-Z-.0-9`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_PARTITION_NO") })} />
                   </div>
                 </div>
               </div>)}
@@ -278,10 +278,10 @@ const SelectStructureType = ({ t, config, onSelect, userType, formData }) => {
                 <Dropdown t={t} optionKey="name" isMandatory={config.isMandatory} option={wards} selected={WardNoBuilding} select={setSelectWard} disabled={isEdit} {...(validation = { pattern: "^[a-zA-Z-.`' ]*$",isRequired: true, title: t("TL_INVALID_WARD_NO") })} />
               </div> */}
               <div className="col-md-6" ><CardLabel>{`${t("TL_LOCALIZATION_DOOR_NO")}`}</CardLabel>
-                <TextInput t={t} isMandatory={false} type={"text"} optionKey="i18nKey" name="DoorNoBuild" value={DoorNoBuild} onChange={setSelectDoorNoBuild} disable={isEdit} {...(validation = { pattern: "^[a-zA-Z-.0-9`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_TRADE_NAME") })} />
+                <TextInput t={t} isMandatory={false} type={"text"} optionKey="i18nKey" name="DoorNoBuild" value={DoorNoBuild} onChange={setSelectDoorNoBuild} disable={isEdit} {...(validation = { pattern: "^[a-zA-Z-.0-9`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_DOOR_NO") })} />
               </div>
               <div className="col-md-6" ><CardLabel>{`${t("TL_LOCALIZATION_DOOR_NO_SUB")}`}</CardLabel>
-                <TextInput t={t} isMandatory={false} type={"text"} optionKey="i18nKey" name="DoorSubBuild" value={DoorSubBuild} onChange={setSelectDoorSubBuild} disable={isEdit}       {...(validation = { pattern: "^[a-zA-Z-0-9`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_TRADE_NAME") })} />
+                <TextInput t={t} isMandatory={false} type={"text"} optionKey="i18nKey" name="DoorSubBuild" value={DoorSubBuild} onChange={setSelectDoorSubBuild} disable={isEdit}       {...(validation = { pattern: "^[a-zA-Z-0-9`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_DOOR_NO_SUB") })} />
               </div>
             </div>
           </div>)}
@@ -293,7 +293,7 @@ const SelectStructureType = ({ t, config, onSelect, userType, formData }) => {
             </div>
             <div className="row">
               <div className="col-md-12" ><CardLabel>{`${t("TL_VECHICLE_NO")}`}</CardLabel>
-                <TextInput t={t} isMandatory={false} type={"text"} optionKey="i18nKey" name="VechicleNo" value={VechicleNo} onChange={setSelectVechicleno} disable={isEdit}     {...(validation = { pattern: "^[a-zA-Z-.0-9`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_TRADE_NAME") })} /> </div>    </div>
+                <TextInput t={t} isMandatory={false} type={"text"} optionKey="i18nKey" name="VechicleNo" value={VechicleNo} onChange={setSelectVechicleno} disable={isEdit}     {...(validation = { pattern: "^[a-zA-Z-.0-9`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_VECHICLE_NO") })} /> </div>    </div>
           </div>)}
         {value2 === "WATE" && (
           <div>
@@ -303,7 +303,7 @@ const SelectStructureType = ({ t, config, onSelect, userType, formData }) => {
             </div>
             <div className="row">
               <div className="col-md-12" ><CardLabel>{`${t("TL_VESSEL_NO")}`}</CardLabel>
-                <TextInput t={t} isMandatory={false} type={"text"} optionKey="i18nKey" name="VesselNo" value={VesselNo} onChange={setSelectVesselNo} disable={isEdit}     {...(validation = { pattern: "^[a-zA-Z-.0-9`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_TRADE_NAME") })} /> </div>    </div>
+                <TextInput t={t} isMandatory={false} type={"text"} optionKey="i18nKey" name="VesselNo" value={VesselNo} onChange={setSelectVesselNo} disable={isEdit}     {...(validation = { pattern: "^[a-zA-Z-.0-9`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_VESSEL_NO") })} /> </div>    </div>
           </div>)}
 
       </FormStep>

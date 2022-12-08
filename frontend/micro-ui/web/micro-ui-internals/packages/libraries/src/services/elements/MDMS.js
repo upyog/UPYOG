@@ -80,6 +80,21 @@ const getCRPlaceMasterList = (tenantId, moduleCode) => ({
     ],
   },
 });
+const getCRHospitalMasterList = (tenantId, moduleCode) => ({
+  details: {
+    tenantId: tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "hospitalList",
+          },
+        ],
+      },
+    ],
+  },
+});
 const getCriteria = (tenantId, moduleDetails) => {
   return {
     MdmsCriteria: {
@@ -1470,6 +1485,10 @@ export const MdmsService = {
   },
   getCRPlaceMaster: (tenantId, moduleCode) => {
     return MdmsService.getDataByCriteria(tenantId, getCRPlaceMasterList(tenantId, moduleCode), moduleCode);
+  },
+  getCRHospitalMaster: (tenantId, moduleCode) => {
+    console.log("Jetheesh2" + tenantId + moduleCode);
+    return MdmsService.getDataByCriteria(tenantId, getCRHospitalMasterList(tenantId, moduleCode), moduleCode);
   },
   getServiceDefs: (tenantId, moduleCode) => {
     return MdmsService.getDataByCriteria(tenantId, getModuleServiceDefsCriteria(tenantId, moduleCode), moduleCode);

@@ -3,11 +3,12 @@ import { useQuery } from "react-query";
 
 const useCivilRegistrationMDMS = (tenantId, moduleCode, type, filter, config = {}) => {
 
-  const useCRGender = () => {
-    return useQuery("TL_DOCUMENTS", () => MdmsService.getCRGender(tenantId, moduleCode, type), config);
-  };
   const useCRPlaceMaster = () => {
     return useQuery("CR_PLACEMASTER", () => MdmsService.getCRPlaceMaster(tenantId, moduleCode,), config);
+  };
+  const useCRHospital = () => {
+    console.log("Jetheesh1");
+    return useQuery("CR_HOSPITALMASTER", () => MdmsService.getCRHospitalMaster(tenantId, moduleCode,), config);
   };
   const useTLDocuments = () => {
     return useQuery("TL_DOCUMENTS", () => MdmsService.getTLDocumentRequiredScreen(tenantId, moduleCode, type), config);
@@ -123,10 +124,10 @@ const useCivilRegistrationMDMS = (tenantId, moduleCode, type, filter, config = {
   };
 
   switch (type) {
-    case "CRGender":
-      return useCRGender(); 
     case "PlaceMaster":
       return useCRPlaceMaster();    
+    case "hospitalList":
+      return useCRHospital(); 
     case "TLDocuments":
       return useTLDocuments();
     case "StructureType":

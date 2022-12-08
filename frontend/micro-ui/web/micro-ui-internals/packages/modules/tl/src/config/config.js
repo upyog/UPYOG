@@ -479,7 +479,7 @@ export const newConfig = [
         isMandatory: true,
         component: "SelectProofIdentity",
         texts: {
-          headerCaption: "TL_OWNERS_DETAILS",
+          headerCaption: "",
           header: "TL_PROOF_IDENTITY_HEADER",
           cardText: "",
           submitBarLabel: "CS_COMMON_NEXT",
@@ -496,7 +496,7 @@ export const newConfig = [
         isMandatory: true,
         component: "SelectOwnershipProof",
         texts: {
-          headerCaption: "TL_OWNERS_DETAILS",
+          headerCaption: "",
           header: "TL_OWNERSHIP_DOCUMENT",
           cardText: "",
           submitBarLabel: "CS_COMMON_NEXT",
@@ -512,7 +512,7 @@ export const newConfig = [
         component: "Proof",
         withoutLabel: true,
         texts: {
-            headerCaption: "TL_OWNERS_DETAILS",
+            headerCaption: "",
             header: "TL_OWNERS_PHOTOGRAPH_HEADER",
             cardText: "",
             nextText: "CS_COMMON_NEXT",
