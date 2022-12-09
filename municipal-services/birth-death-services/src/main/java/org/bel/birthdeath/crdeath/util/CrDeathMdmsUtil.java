@@ -18,7 +18,11 @@ import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-
+/**
+     * Creates CrDeathService
+     * Rakhi S IKM
+     * 
+     */
 @Component
 public class CrDeathMdmsUtil {
 
@@ -135,7 +139,35 @@ public class CrDeathMdmsUtil {
         final String filterCodePlaceMaster = "$.[?(@.active==true)].code";
          crDeathMasterDetails
                     .add(MasterDetail.builder().name(CrDeathConstants.DEATH_PLACE).filter(filterCodePlaceMaster).build());
+        //Rakhi S on 07.12.2022 DeathCause main validation
+        final String filterCodeDeathCauseMain = "$.[?(@.active==true)].code";
+         crDeathMasterDetails
+                    .add(MasterDetail.builder().name(CrDeathConstants.DEATH_CAUSE_MAIN).filter(filterCodeDeathCauseMain).build());
+                    
+        final String filterCodeDeathCauseSub = "$.[?(@.active==true)].code";
+                    crDeathMasterDetails
+                               .add(MasterDetail.builder().name(CrDeathConstants.DEATH_CAUSE_SUB).filter(filterCodeDeathCauseSub).build());
+
+        final String filterCodeMaleDependentType = "$.[?(@.active==true)].code";
+                               crDeathMasterDetails
+                                          .add(MasterDetail.builder().name(CrDeathConstants.MALE_DEPENDENT_TYPE).filter(filterCodeMaleDependentType).build());
        
+
+        final String filterCodeFemaleDependentType = "$.[?(@.active==true)].code";
+                                          crDeathMasterDetails
+                                                     .add(MasterDetail.builder().name(CrDeathConstants.FEMALE_DEPENDENT_TYPE).filter(filterCodeFemaleDependentType).build());
+
+        final String filterCodeAgeUnit = "$.[?(@.active==true)].code";
+                                          crDeathMasterDetails
+                                                     .add(MasterDetail.builder().name(CrDeathConstants.AGE_UNIT).filter(filterCodeAgeUnit).build());
+
+        final String filterCodeMedicalAttention = "$.[?(@.active==true)].code";
+                                           crDeathMasterDetails
+                                                     .add(MasterDetail.builder().name(CrDeathConstants.MEDICAL_ATTENTION_TYPE).filter(filterCodeMedicalAttention).build());
+
+        final String filterCodeProfession = "$.[?(@.active==true)].code";
+                                           crDeathMasterDetails
+                                                        .add(MasterDetail.builder().name(CrDeathConstants.PROFESSION).filter(filterCodeProfession).build());
 
         ModuleDetail crDeathModuleDtls = ModuleDetail.builder().masterDetails(crDeathMasterDetails)
                 .moduleName(CrDeathConstants.BND_MODULE_NAME).build();

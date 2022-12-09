@@ -37,7 +37,6 @@ public class CrDeathRepository {
         String query = queryBuilder.getDeathSearchQuery(criteria, preparedStmtValues, Boolean.FALSE);
         System.out.println("RakhiQuery" + query);
         List<CrDeathDtl> result = jdbcTemplate.query(query, preparedStmtValues.toArray(), rowMapper);
-
         return result; // NOPMD
     }
 }

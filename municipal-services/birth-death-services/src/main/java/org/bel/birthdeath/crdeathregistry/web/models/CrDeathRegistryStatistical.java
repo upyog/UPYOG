@@ -26,65 +26,70 @@ import javax.validation.constraints.Size;
 @Builder
 public class CrDeathRegistryStatistical {
 
+    
     @Size(max = 64)
     @JsonProperty("id")
     private String id;
 
-    @JsonProperty("death_dtl_id")
+    @JsonProperty("deathDtlId")
     private String deathDtlId ; 
 
-    @JsonProperty("residencelocalbody")
-    private String residenceLocalbody;
+    @JsonProperty("residenceLocalBody")
+    private String residenceLocalBody;
 
-    @JsonProperty("residence_place_type")
+    @JsonProperty("residencePlaceType")
     private String residencePlaceType;
 
-    @JsonProperty("residencedistrict")
+    @JsonProperty("residenceDistrict")
     private String residenceDistrict;
 
-    @JsonProperty("residencestate")
+    @JsonProperty("residenceState")
     private String residenceState;
 
     @JsonProperty("religion")
     private String religion;
 
-    @JsonProperty("religion_other")
+    @JsonProperty("religionOther")
     private String religionOther;
 
     @JsonProperty("occupation")
     private String occupation;
 
-    @JsonProperty("occupation_other")
+    @JsonProperty("occupationOther")
     private String occupationOther;
 
-    @JsonProperty("medical_attention_type")
+    @JsonProperty("medicalAttentionType")
     private String medicalAttentionType;
 
-    @JsonProperty("death_medically_certified")
+    @JsonProperty("deathMedicallyCertified")
     private Integer deathMedicallyCertified;
 
-    @JsonProperty("death_cause_main")
+    @JsonProperty("deathCauseMain")
     private String deathCauseMain;
 
-    @JsonProperty("death_cause_sub")
+    @JsonProperty("deathCauseSub")
     private String deathCauseSub;
 
-    @JsonProperty("death_cause_other")
+    @JsonProperty("deathCauseOther")
     private String deathCauseOther;
 
-    @JsonProperty("death_during_delivery")
+    @JsonProperty("deathDuringDelivery")
     private Integer deathDuringDelivery;
 
-    @JsonProperty("smoking_num_years")
-    private String smokingNumYears;
+    @JsonProperty("smokingNumYears")
+    private Integer smokingNumYears;
 
-    @JsonProperty("tobacco_num_years")
-    private String tobaccoNumYears;
+    @JsonProperty("tobaccoNumYears")
+    private Integer tobaccoNumYears;
 
-    @JsonProperty("arecanut_num_years")
-    private String arecanutNumYears;
+    @JsonProperty("arecanutNumYears")
+    private Integer arecanutNumYears;
 
-    @JsonProperty("alcohol_num_years")
-    private String alcoholNumYears;
+    @JsonProperty("alcoholNumYears")
+    private Integer alcoholNumYears;
+
+    //Rakhi S on 07.12.2022
+    @JsonProperty("nationality")
+    private String nationality;
     
 }

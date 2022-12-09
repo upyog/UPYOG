@@ -102,5 +102,15 @@ public class CrDeathAddress {
     @JsonProperty("postofficeNameMl")
     private String postofficeNameMl ;
 
+    //RAkhi S on 08.12.2022
+    @JsonProperty("locationType")
+    private String locationType ;
+
+    @JsonProperty("houeNameMl")
+    private String houeNameMl ;
+
+    @JsonProperty("houeNameEn")
+    private String houeNameEn ;
+
     
 }

@@ -259,25 +259,6 @@ public class CrDeathDtl {
     @JsonProperty("femaleDependentMailId")
     private String  femaleDependentMailId ;
 
-    @JsonProperty("auditDetails")
-    private AuditDetails auditDetails;    
-
-    @JsonProperty("statisticalInfo")
-    private CrDeathStatistical statisticalInfo;
-
-    @JsonProperty("addressInfo")
-    @Valid
-    private List<CrDeathAddressInfo>  addressInfo;
-
-    public CrDeathDtl addCrDeathDtl(CrDeathAddressInfo crDeathAddressInfo) {
-        if (addressInfo == null) {
-            addressInfo = new ArrayList<>();
-        }
-        addressInfo.add(crDeathAddressInfo);
-
-        return this;
-    }
-
     @Size(max = 64)
     @JsonProperty("deathApplicationNo")
     private String deathApplicationNo = null;
@@ -345,5 +326,29 @@ public class CrDeathDtl {
     @JsonProperty("deseasedPassportNo")
     private String  deseasedPassportNo ;
    
-   
+    //Rakhi S on 08.12.2022
+    @Size(max = 64)
+    @JsonProperty("fileNo")
+    private String  fileNo ;
+
+    @JsonProperty("auditDetails")
+    private AuditDetails auditDetails;    
+
+    @JsonProperty("statisticalInfo")
+    private CrDeathStatistical statisticalInfo;
+
+    @JsonProperty("addressInfo")
+    @Valid
+    private List<CrDeathAddressInfo>  addressInfo;
+
+    public CrDeathDtl addCrDeathDtl(CrDeathAddressInfo crDeathAddressInfo) {
+        if (addressInfo == null) {
+            addressInfo = new ArrayList<>();
+        }
+        addressInfo.add(crDeathAddressInfo);
+
+        return this;
+    }
+
+  
 }
