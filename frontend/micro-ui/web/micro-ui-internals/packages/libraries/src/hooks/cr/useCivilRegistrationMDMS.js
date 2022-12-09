@@ -2,9 +2,8 @@ import { MdmsService } from "../../services/elements/MDMS";
 import { useQuery } from "react-query";
 
 const useCivilRegistrationMDMS = (tenantId, moduleCode, type, filter, config = {}) => {
-
   const useCRPlaceMaster = () => {
-    return useQuery("CR_PLACEMASTER", () => MdmsService.getCRPlaceMaster(tenantId, moduleCode,), config);
+    return useQuery("CR_PLACEMASTER", () => MdmsService.getCRPlaceMaster(tenantId, moduleCode), config);
   };
   const useCRHospital = () => {
     return useQuery("CR_HOSPITALMASTER", () => MdmsService.getCRHospitalMaster(tenantId, moduleCode,), config);
@@ -28,7 +27,18 @@ const useCivilRegistrationMDMS = (tenantId, moduleCode, type, filter, config = {
     return useQuery("CR_WARD", () => MdmsService.getCRWard(tenantId, moduleCode, type), config);
   };
   const useCRReligion = () => {
-    return useQuery("CR_RELIGION", () => MdmsService.getCRReligion(tenantId, moduleCode, type), config);
+    return useQuery("CR_RELIGION", () => MdmsService.getCRReligion(tenantId, moduleCode), config);
+  };
+  //////institution-type
+  const useCRInstitution = () => {
+    return useQuery("CR_INSTITUTION", () => MdmsService.getCRInstitution(tenantId, moduleCode), config);
+  };
+  /////institution-id
+  const useCRInstitutionId = () => {
+    return useQuery("CR_INSTITUTION_ID", () => MdmsService.getCRInstitutionId(tenantId, moduleCode), config);
+  };
+  const useCROtherPlace = () => {
+    return useQuery("CR_OTHER_PLACE", () => MdmsService.getCROtherPlace(tenantId, moduleCode), config);
   };
   const useCRVillage = () => {
     return useQuery("CR_VILLAGE", () => MdmsService.getCRVillage(tenantId, moduleCode, type), config);
@@ -159,9 +169,10 @@ const useCivilRegistrationMDMS = (tenantId, moduleCode, type, filter, config = {
 
   switch (type) {
     case "PlaceMaster":
-      return useCRPlaceMaster();    
+      return useCRPlaceMaster();
     case "hospitalList":
-      return useCRHospital(); 
+      return useCRHospital();
+    case "PlaceMaster":
       return usePLaceOfDeath();
     case "GenderType":
       return useCRGender();
@@ -183,6 +194,12 @@ const useCivilRegistrationMDMS = (tenantId, moduleCode, type, filter, config = {
       return useCRWard();
     case "Religion":
       return useCRReligion();
+    case "InstitutionType":
+      return useCRInstitution();
+    case "Institution":
+      return useCRInstitutionId();
+    case "OtherBithPlace":
+      return useCROtherPlace();
     case "TLDocuments":
       return useTLDocuments();
     case "StructureType":
