@@ -672,6 +672,96 @@ const getRentalDetailsCategoryCriteria = (tenantId, moduleCode) => ({
     ],
   },
 });
+const getCRGenderList = (tenantId, moduleCode) => ({
+  details: {
+    tenantId: tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "GenderType",
+          },
+        ],
+      },
+    ],
+  },
+});
+const getCRPlaceOfDeathList = (tenantId, moduleCode) => ({
+  details: {
+    tenantId: tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "PlaceMaster",
+          },
+        ],
+      },
+    ],
+  },
+});
+const getCRNationalityList = (tenantId, moduleCode) => ({
+  details: {
+    tenantId: tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "Country",
+          },
+        ],
+      },
+    ],
+  },
+});
+const getCRTalukList = (tenantId, moduleCode) => ({
+  details: {
+    tenantId: tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "mtaluk",
+          },
+        ],
+      },
+    ],
+  },
+});
+const getCRReligionlist = (tenantId, moduleCode) => ({
+  details: {
+    tenantId: tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "Religion",
+          },
+        ],
+      },
+    ],
+  },
+});
+const getCRTitleList = (tenantId, moduleCode) => ({
+  details: {
+    tenantId: tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "Title",
+          },
+        ],
+      },
+    ],
+  },
+});
 
 const getChargeSlabsCategoryCriteria = (tenantId, moduleCode) => ({
   details: {
@@ -1490,6 +1580,32 @@ export const MdmsService = {
     console.log("Jetheesh2" + tenantId + moduleCode);
     return MdmsService.getDataByCriteria(tenantId, getCRHospitalMasterList(tenantId, moduleCode), moduleCode);
   },
+
+  getCRNationlity: (tenantId, moduleCode) => {
+    return MdmsService.getDataByCriteria(tenantId, getCRNationalityList(tenantId, moduleCode), moduleCode);
+  },
+  getCRPlaceOfDeath: (tenantId, moduleCode) => {
+    return MdmsService.getDataByCriteria(tenantId, getCRPlaceOfDeathList(tenantId, moduleCode), moduleCode);
+  },
+  getCRGender: (tenantId, moduleCode) => {
+    return MdmsService.getDataByCriteria(tenantId, getCRGenderList(tenantId, moduleCode), moduleCode);
+  },
+  getCRTaluk: (tenantId, moduleCode) => {
+    return MdmsService.getDataByCriteria(tenantId, getCRTalukList(tenantId, moduleCode), moduleCode);
+  },
+  getCRTitle: (tenantId, moduleCode) => {
+    return MdmsService.getDataByCriteria(tenantId, getCRTitleList(tenantId, moduleCode), moduleCode);
+  },
+  getCRTitle: (tenantId, moduleCode) => {
+    return MdmsService.getDataByCriteria(tenantId, getCRTitleList(tenantId, moduleCode), moduleCode);
+  },
+  getCRWard: (tenantId, moduleCode) => {
+    return MdmsService.getDataByCriteria(tenantId, getCRWardList(tenantId, moduleCode), moduleCode);
+  },
+  getCRReligion: (tenantId, moduleCode) => {
+    return MdmsService.getDataByCriteria(tenantId, getCRReligionlist(tenantId, moduleCode), moduleCode);
+  },
+  /////////crmdms
   getServiceDefs: (tenantId, moduleCode) => {
     return MdmsService.getDataByCriteria(tenantId, getModuleServiceDefsCriteria(tenantId, moduleCode), moduleCode);
   },
