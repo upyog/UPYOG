@@ -8,16 +8,24 @@ const PlaceOfDeathOther = ({ config, onSelect, userType, formData }) => {
   const { t } = useTranslation();
   let validation = {};
   const { data: place = {}, isLoad } = Digit.Hooks.tl.useTradeLicenseMDMS(stateId, "TradeLicense", "PlaceOfActivity");
+  const { data: otherplace = {}, isotherLoad } = Digit.Hooks.cr.useCivilRegistrationMDMS(stateId, "birth-death-service", "OtherBithPlace");
+
   const [setPlaceofActivity, setSelectedPlaceofActivity] = useState(formData?.TradeDetails?.setPlaceofActivity);
   const isEdit = window.location.href.includes("/edit-application/") || window.location.href.includes("renew-trade");
   const [TradeName, setTradeName] = useState(null);
-  const [CommencementDate, setCommencementDate] = useState();
+
   let naturetypecmbvalue = null;
   let cmbPlace = [];
   place &&
     place["TradeLicense"] &&
     place["TradeLicense"].PlaceOfActivity.map((ob) => {
       cmbPlace.push(ob);
+    });
+    let cmbOtherplace = [];
+    otherplace &&
+    otherplace["birth-death-service"] &&
+    otherplace["birth-death-service"].OtherBithPlace.map((ob) => {
+      cmbOtherplace.push(ob);
     });
 
   const onSkip = () => onSelect();
@@ -43,7 +51,6 @@ const PlaceOfDeathOther = ({ config, onSelect, userType, formData }) => {
       {window.location.href.includes("/citizen") ? <Timeline /> : null}
       <FormStep t={t} config={config} onSelect={goNext} onSkip={onSkip} >
         <header className="tittle">Place Of Death Other </header>
-
     <div className="row">
       <div className="col-md-12" >
           <h1 className="headingh1" >
@@ -57,9 +64,9 @@ const PlaceOfDeathOther = ({ config, onSelect, userType, formData }) => {
             <CardLabel>{`${t("Other Place")}`}</CardLabel>
             <Dropdown
                 t={t}
-                optionKey="code"
+                optionKey="name"
                 isMandatory={false}
-                option={cmbPlace}
+                option={cmbOtherplace}
                 selected={setPlaceofActivity}
                 select={selectPlaceofactivity}
                 disabled={isEdit}
@@ -108,7 +115,6 @@ const PlaceOfDeathOther = ({ config, onSelect, userType, formData }) => {
             />
         </div> 
     </div>    
-
       </FormStep>
     </React.Fragment>
   );

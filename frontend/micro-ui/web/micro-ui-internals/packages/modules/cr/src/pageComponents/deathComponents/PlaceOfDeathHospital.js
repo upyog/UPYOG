@@ -8,6 +8,10 @@ const PlaceOfDeathHospital = ({ config, onSelect, userType, formData }) => {
   const { t } = useTranslation();
   let validation = {};
   const { data: place = {}, isLoad } = Digit.Hooks.tl.useTradeLicenseMDMS(stateId, "TradeLicense", "PlaceOfActivity");
+  const { data: hospital = {}, isLoading } = Digit.Hooks.cr.useCivilRegistrationMDMS(stateId, "birth-death-service", "hospitalList");
+  const [SignedOfficerName, selectSignedOfficerName] = useState(formData?.HospitalDetails?.SignedOfficerName);
+
+  const [HospitalName, selectHospitalName] = useState(formData?.HospitalDetails?.HospitalName);
   const [setPlaceofActivity, setSelectedPlaceofActivity] = useState(formData?.TradeDetails?.setPlaceofActivity);
   const isEdit = window.location.href.includes("/edit-application/") || window.location.href.includes("renew-trade");
   const [TradeName, setTradeName] = useState(null);
@@ -19,9 +23,22 @@ const PlaceOfDeathHospital = ({ config, onSelect, userType, formData }) => {
     place["TradeLicense"].PlaceOfActivity.map((ob) => {
       cmbPlace.push(ob);
     });
+    let cmbhospital = [];
+  hospital &&
+  hospital["birth-death-service"] &&
+  hospital["birth-death-service"].hospitalList.map((ob) => {    
+    cmbhospital.push(ob);
+  });
+
 
   const onSkip = () => onSelect();
 
+  function setselectHospitalName(value) {
+    selectHospitalName(value);
+  }
+  function setselectSignedOfficerName(value) {
+    selectSignedOfficerName(value);
+  }
   function selectPlaceofactivity(value) {
     naturetypecmbvalue = value.code.substring(0, 4);
     setSelectedPlaceofActivity(value);
@@ -57,25 +74,23 @@ const PlaceOfDeathHospital = ({ config, onSelect, userType, formData }) => {
             <div className="col-md-6" >
              <CardLabel>{`${t("Name of Hospital")}`}</CardLabel>
             <Dropdown
-                t={t}
-                optionKey="code"
-                isMandatory={false}
-                option={cmbPlace}
-                selected={setPlaceofActivity}
-                select={selectPlaceofactivity}
-                disabled={isEdit}
+                 t={t}
+                 optionKey="hospitalName"
+                 isMandatory={false}
+                 option={cmbhospital}
+                 selected={HospitalName}
+                 select={setselectHospitalName}
                 />
          </div> 
          <div className="col-md-6" >
             <CardLabel>{`${t("Signed Officer")}`}</CardLabel>
             <Dropdown
                 t={t}
-                optionKey="code"hospital-details-death
+                optionKey="hospitalName"
                 isMandatory={false}
-                option={cmbPlace}
-                selected={setPlaceofActivity}
-                select={selectPlaceofactivity}
-                disabled={isEdit}
+                option={cmbhospital}
+                selected={SignedOfficerName}
+                select={setselectSignedOfficerName}
                 />
          </div>        
     </div>
