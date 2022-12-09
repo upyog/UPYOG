@@ -151,6 +151,7 @@ const SelectTradeUnits = ({ t, config, onSelect, userType, formData }) => {
   return (
     <React.Fragment>
       {window.location.href.includes("/citizen") ? <Timeline /> : null}
+      {window.location.href.includes("/employee") ? <Timeline /> : null}
       {isLoading ? ( <Loader />) : (
         <FormStep config={config} onSelect={goNext} onSkip={onSkip} t={t} isDisabled={!fields[0].tradecategory || !fields[0].tradetype || !fields[0].tradesubtype || !fields[0].unit || !fields[0].uom } >
           {fields.map((field, index) => {

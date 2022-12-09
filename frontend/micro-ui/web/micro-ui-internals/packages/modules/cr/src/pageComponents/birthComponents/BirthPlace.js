@@ -8,7 +8,6 @@ const BirthPlace = ({ config, onSelect, userType, formData }) => {
   const { t } = useTranslation();
   let validation = {};
   const { data: Menu={} } = Digit.Hooks.cr.useCivilRegistrationMDMS(stateId, "birth-death-service", "PlaceMaster");
-  // console.log(Menu["birth-death-service"]);  
   const [BirthPlace, selectBirthPlace] = useState(formData?.BirthPlace?.BirthPlace);
   const [BirthPlaceDescription, setBirthPlaceDeccription] = useState(formData?.BirthPlace?.BirthPlaceDescription);
   const isEdit = window.location.href.includes("/edit-application/") || window.location.href.includes("renew-trade");
@@ -43,13 +42,13 @@ const BirthPlace = ({ config, onSelect, userType, formData }) => {
         <div className="row">
           <div className="col-md-6" >
             <CardLabel>{t("CR_BIRTH_PLACE")}</CardLabel>
-            <Dropdown t={t} optionKey="code" isMandatory={false} option={menu} selected={BirthPlace} select={setselectBirthPlace} disabled={isEdit} />
+            <Dropdown t={t} optionKey="code" isMandatory={false} option={menu} selected={BirthPlace} select={setselectBirthPlace} disabled={isEdit} placeholder={`${t("CR_BIRTH_PLACE")}`} />
           </div>
         </div>
         <div className="row">
           <div className="col-md-6 " >
             <CardLabel>{`${t("CR_DESCRIPTION")}`}</CardLabel>
-            <TextArea t={t} isMandatory={false} type={"text"} optionKey="i18nKey" name="BirthPlaceDescription" value={BirthPlaceDescription} onChange={setSelectBirthPlaceDeccription} disable={isEdit} {...(validation = { pattern: "^[a-zA-Z-.`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_TRADE_NAME") })} />
+            <TextArea t={t} isMandatory={false} type={"text"} optionKey="i18nKey" name="BirthPlaceDescription" value={BirthPlaceDescription} onChange={setSelectBirthPlaceDeccription} disable={isEdit} placeholder={`${t("CR_DESCRIPTION")}`} {...(validation = { pattern: "^[a-zA-Z-.`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_TRADE_NAME") })} />
           </div>
         </div>
 

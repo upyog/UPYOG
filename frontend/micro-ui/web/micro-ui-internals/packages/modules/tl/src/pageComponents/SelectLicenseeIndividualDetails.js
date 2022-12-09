@@ -44,6 +44,7 @@ const SelectLicenseeIndividualDetails = ({ t, config, onSelect, userType, formDa
   return (
     <React.Fragment>
       {window.location.href.includes("/citizen") ? <Timeline currentStep={1} /> : null}
+      {window.location.href.includes("/employee") ? <Timeline currentStep={1} /> : null}
       <FormStep t={t} config={config} onSelect={goNext} onSkip={onSkip} isDisabled={!IndividualAadharNo} >
 
         {formData.TradeDetails?.LicenseeType.code === "INDIVIDUAL" && (

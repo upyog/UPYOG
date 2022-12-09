@@ -297,7 +297,7 @@ export const newConfig = [
         component: "FatherInformation",
         texts: {
           headerCaption: "",
-          header: "",
+          header: "Father's Information",
           cardText: "",
           submitBarLabel: "CS_COMMON_NEXT",
           skipText: "",

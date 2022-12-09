@@ -77,6 +77,7 @@ const SelectProofIdentity = ({ t, config, onSelect, userType, formData }) => {
   return (
     <React.Fragment>
     {window.location.href.includes("/citizen") ? <Timeline currentStep={3}/> : null}
+    {window.location.href.includes("/employee") ? <Timeline currentStep={3} /> : null}
     <FormStep config={config} onSelect={handleSubmit} onSkip={onSkip} t={t} isDisabled={!uploadedFile || error}>
       <CardLabelDesc style={{ fontWeight: "unset" }}>{t(`TL_UPLOAD_RESTRICTIONS_TYPES`)}</CardLabelDesc>
       <CardLabelDesc style={{ fontWeight: "unset" }}> {t(`TL_UPLOAD_RESTRICTIONS_SIZE`)}</CardLabelDesc>

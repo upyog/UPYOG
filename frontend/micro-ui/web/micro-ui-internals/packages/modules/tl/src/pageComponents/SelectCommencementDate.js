@@ -25,6 +25,8 @@ const SelectCommencementDate = ({ t, config, onSelect, userType, formData }) => 
   return (
     <React.Fragment>
     {window.location.href.includes("/citizen") ? <Timeline currentStep={3} /> : null}
+    {window.location.href.includes("/employee") ? <Timeline currentStep={3} /> : null}
+
     <FormStep t={t} config={config} onSelect={goNext} onSkip={onSkip} isDisabled={!CommencementDate}>
         <div className="row">    
           <div className="col-md-12" ><h1 className="headingh1" ><span style={{background:"#fff",padding:"0 10px" }}>{`${t("TL_LICENSE_DECLARATION")}*`}</span></h1>

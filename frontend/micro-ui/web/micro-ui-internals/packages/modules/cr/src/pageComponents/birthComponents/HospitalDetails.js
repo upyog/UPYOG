@@ -58,25 +58,23 @@ const HospitalDetails = ({ config, onSelect, userType, formData }) => {
         </div>
         <div className="row">
           <div className="col-md-4" ><CardLabel>{`${t("CR_HOSPITAL")}`}</CardLabel>
-            <Dropdown t={t} optionKey="hospitalName" isMandatory={false} option={cmbhospital} selected={HospitalName} select={setselectHospitalName} />
+            <Dropdown t={t} optionKey="hospitalName" isMandatory={false} option={cmbhospital} selected={HospitalName} select={setselectHospitalName} placeholder={`${t("CR_HOSPITAL")}`} />
           </div>
           <div className="col-md-4" >
             <CardLabel>{`${t("CR_SIGNED_OFFICER")}`}</CardLabel>
-            <Dropdown t={t} optionKey="hospitalName" isMandatory={false} option={cmbhospital} selected={SignedOfficerName} select={setselectSignedOfficerName} />
+            <Dropdown t={t} optionKey="hospitalName" isMandatory={false} option={cmbhospital} selected={SignedOfficerName} select={setselectSignedOfficerName} placeholder={`${t("CR_SIGNED_OFFICER")}`} />
           </div>
           <div className="col-md-4" >
             <CardLabel>{`${t("CR_SIGNED_OFFICER_DESIGNATION")}`}</CardLabel>
-            <Dropdown t={t} optionKey="hospitalName" isMandatory={false} option={cmbhospital} selected={SignedOfficerDesignation} select={setselectSignedOfficerDesignation} />
+            <Dropdown t={t} optionKey="hospitalName" isMandatory={false} option={cmbhospital} selected={SignedOfficerDesignation} select={setselectSignedOfficerDesignation} placeholder={`${t("CR_SIGNED_OFFICER_DESIGNATION")}`} />
           </div>
         </div>
-        <div className="row">
-          
+        <div className="row">          
           <div className="col-md-6" > <CardLabel>{`${t("CS_COMMON_AADHAAR")}`}</CardLabel>
-            <TextInput t={t} isMandatory={false} type={"text"} optionKey="i18nKey" name="SignedOfficerAadharNo" value={SignedOfficerAadharNo} onChange={setSelectSignedOfficerAadharNo} {...(validation = { pattern: "^[0-9`' ]*$", isRequired: true,maxLength:12,minLength:12, type: "number", title: t("TL_INVALID_TRADE_NAME") })} />
+            <TextInput t={t} isMandatory={false} type={"text"} optionKey="i18nKey" name="SignedOfficerAadharNo" value={SignedOfficerAadharNo} onChange={setSelectSignedOfficerAadharNo} placeholder={`${t("CS_COMMON_AADHAAR")}`} {...(validation = { pattern: "^([0-9]){12}$", isRequired: true, type: "text", title: t("TL_INVALID_TRADE_NAME") })} />
           </div>
-
           <div className="col-md-6"> <CardLabel>{`${t("CR_MOBILE_NO")}`}</CardLabel>
-            <TextInput t={t} isMandatory={false} type={"text"} optionKey="i18nKey" name="SignedOfficerMobileNo" value={SignedOfficerMobileNo} onChange={setSelectSignedOfficerMobileNo} {...(validation = { pattern: "[6-9]{1}[0-9]{9}",type: "tel", isRequired: true,maxLength:10,minLength:10, title: t("TL_INVALID_TRADE_NAME") })} />
+            <TextInput t={t} isMandatory={false} type={"text"} optionKey="i18nKey" name="SignedOfficerMobileNo" value={SignedOfficerMobileNo} onChange={setSelectSignedOfficerMobileNo} placeholder={`${t("CR_MOBILE_NO")}`} {...(validation = { pattern: "^[0-9]{10}$",type: "text", isRequired: true, title: t("CR_INVALID_MOBILE_NO") })} />
           </div>
         </div>
 

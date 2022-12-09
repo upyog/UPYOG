@@ -10,8 +10,6 @@ const Address = ({ config, onSelect, userType, formData }) => {
     const { data: Taluk={} } = Digit.Hooks.cr.useCivilRegistrationMDMS(stateId, "common-masters", "mtaluk");
     const { data: Village={} } = Digit.Hooks.cr.useCivilRegistrationMDMS(stateId, "common-masters", "Village");
     const { data: District={} } = Digit.Hooks.cr.useCivilRegistrationMDMS(stateId, "common-masters", "District");
-
-    const [setPlaceofActivity, setSelectedPlaceofActivity] = useState(formData?.TradeDetails?.setPlaceofActivity);
     const isEdit = window.location.href.includes("/edit-application/") || window.location.href.includes("renew-trade");
     const [PresentBuldingNo, setPresentBuldingNo] = useState(formData?.AddressDetails?.PresentBuldingNo);
     const [PresentHouseNo, setPresentHouseNo] = useState(formData?.AddressDetails?.PresentHouseNo);
@@ -65,17 +63,6 @@ const Address = ({ config, onSelect, userType, formData }) => {
         setPresentBuldingNo(e.target.value);
         if(isPrsentAddress){
             setPermanentBuldingNo(PresentBuldingNo);
-            setPermanentHouseNo(PresentHouseNo);
-            setPermanentLocalityNameEn(PresentLocalityNameEn);
-            setPermanentLocalityNameMl(PresentLocalityNameMl);
-            setPermanentCityNameEn(PresentCityNameEn);
-            setPermanentCityNameMl(PresentCityNameMl);
-            setPermanentVillage(PresentVillage);
-            setPermanentLBName(PresentLBName);
-            setPermanentDistrict(PresentDistrict);
-            setPermanentTaluk(PresentTaluk);
-            setPermanentPostOffice(PresentPostOffice);
-            setPermanentPincode(PresentPincode);
         }
     }
     function setSelectPresentHouseNo(e) {
@@ -223,8 +210,7 @@ const Address = ({ config, onSelect, userType, formData }) => {
         sessionStorage.setItem("PresentDistrict", PresentDistrict.code);
         sessionStorage.setItem("PresentTaluk", PresentTaluk.code);
         sessionStorage.setItem("PresentPostOffice", PresentPostOffice.code);
-        sessionStorage.setItem("PresentPincode", PresentPincode.code);
-      
+        sessionStorage.setItem("PresentPincode", PresentPincode.code);      
         sessionStorage.setItem("PermanentBuldingNo", PermanentBuldingNo);
         sessionStorage.setItem("PermanentHouseNo", PermanentHouseNo);
         sessionStorage.setItem("PermanentLocalityNameEn", PermanentLocalityNameEn);
@@ -237,7 +223,6 @@ const Address = ({ config, onSelect, userType, formData }) => {
         sessionStorage.setItem("PermanentTaluk", PermanentTaluk.code);
         sessionStorage.setItem("PermanentPostOffice", PermanentPostOffice.code);
         sessionStorage.setItem("PermanentPincode", PermanentPincode.code);
-
         onSelect(config.key, { PresentBuldingNo,PresentHouseNo,PresentLocalityNameEn,
         PresentLocalityNameMl,PresentCityNameEn,PresentCityNameMl,PresentVillage,PresentLBName,PresentDistrict,PresentTaluk,PresentPostOffice,PresentPincode,
         PermanentBuldingNo,PermanentHouseNo,PermanentLocalityNameEn,PermanentLocalityNameMl,PermanentCityNameEn,PermanentCityNameMl,PermanentVillage,PermanentLBName,
@@ -253,56 +238,56 @@ const Address = ({ config, onSelect, userType, formData }) => {
                 </div>
                 <div className="row">
                     <div className="col-md-6" ><CardLabel>{t("CR_BUILDING_NO")}</CardLabel>
-                        <TextInput t={t} isMandatory={false} type={"text"} optionKey="i18nKey" name="PresentBuldingNo" value={PresentBuldingNo}  onChange={setSelectPresentBuldingNo} disable={isEdit}  {...(validation = { pattern: "^[a-zA-Z-.`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_TRADE_NAME") })} />
+                        <TextInput t={t} isMandatory={false} type={"text"} optionKey="i18nKey" name="PresentBuldingNo" value={PresentBuldingNo}  onChange={setSelectPresentBuldingNo} disable={isEdit} placeholder={`${t("CR_BUILDING_NO")}`}  {...(validation = { pattern: "^[a-zA-Z-.0-9`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_TRADE_NAME") })} />
                     </div>
                     <div className="col-md-6" ><CardLabel>{t("CR_HOUSE_NO")}</CardLabel>
-                        <TextInput t={t} isMandatory={false} type={"text"} optionKey="i18nKey" name="PresentHouseNo" value={PresentHouseNo} onChange={setSelectPresentHouseNo} disable={isEdit}  {...(validation = { pattern: "^[a-zA-Z-.`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_TRADE_NAME") })} />
+                        <TextInput t={t} isMandatory={false} type={"text"} optionKey="i18nKey" name="PresentHouseNo" value={PresentHouseNo} onChange={setSelectPresentHouseNo} disable={isEdit} placeholder={`${t("CR_HOUSE_NO")}`} {...(validation = { pattern: "^[a-zA-Z-.0-9`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_TRADE_NAME") })} />
                     </div>
                 </div>
                 <div className="row">
                     <div className="col-md-6" ><CardLabel>{t("CR_LOCALITY_EN")}</CardLabel>
-                        <TextInput t={t} isMandatory={false} type={"text"} optionKey="i18nKey" name="PresentLocalityNameEn" value={PresentLocalityNameEn} onChange={setSelectPresentLocalityNameEn} disable={isEdit}    {...(validation = { pattern: "^[a-zA-Z-.`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_TRADE_NAME") })} />
+                        <TextInput t={t} isMandatory={false} type={"text"} optionKey="i18nKey" name="PresentLocalityNameEn" value={PresentLocalityNameEn} onChange={setSelectPresentLocalityNameEn} disable={isEdit} placeholder={`${t("CR_LOCALITY_EN")}`} {...(validation = { pattern: "^[a-zA-Z-.`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_TRADE_NAME") })} />
                     </div>
                     <div className="col-md-6" ><CardLabel>{t("CR_LOCALITY_ML")}</CardLabel>
-                        <TextInput t={t} isMandatory={false} type={"text"} optionKey="i18nKey" name="PresentLocalityNameMl" value={PresentLocalityNameMl} onChange={setSelectPresentLocalityNameMl} disable={isEdit}    {...(validation = { pattern: "^[a-zA-Z-.`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_TRADE_NAME") })} />
+                        <TextInput t={t} isMandatory={false} type={"text"} optionKey="i18nKey" name="PresentLocalityNameMl" value={PresentLocalityNameMl} onChange={setSelectPresentLocalityNameMl} disable={isEdit}  placeholder={`${t("CR_LOCALITY_ML")}`}  {...(validation = { pattern: "^[a-zA-Z-.`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_TRADE_NAME") })} />
                     </div>
                 </div>
                 <div className="row">
                     <div className="col-md-6" ><CardLabel>{t("CR_CITY_EN")}</CardLabel>
-                        <TextInput t={t} isMandatory={false} type={"text"} optionKey="i18nKey" name="PresentCityNameEn" value={PresentCityNameEn} onChange={setSelectPresentCityNameEn} disable={isEdit}    {...(validation = { pattern: "^[a-zA-Z-.`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_TRADE_NAME") })} />
+                        <TextInput t={t} isMandatory={false} type={"text"} optionKey="i18nKey" name="PresentCityNameEn" value={PresentCityNameEn} onChange={setSelectPresentCityNameEn} disable={isEdit}  placeholder={`${t("CR_CITY_EN")}`}  {...(validation = { pattern: "^[a-zA-Z-.`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_TRADE_NAME") })} />
                     </div>
                     <div className="col-md-6" ><CardLabel>{t("CR_CITY_ML")}</CardLabel>
-                        <TextInput t={t} isMandatory={false} type={"text"} optionKey="i18nKey" name="PresentCityNameMl" value={PresentCityNameMl} onChange={setSelectPresentCityNameMl} disable={isEdit}    {...(validation = { pattern: "^[a-zA-Z-.`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_TRADE_NAME") })} />
+                        <TextInput t={t} isMandatory={false} type={"text"} optionKey="i18nKey" name="PresentCityNameMl" value={PresentCityNameMl} onChange={setSelectPresentCityNameMl} disable={isEdit}  placeholder={`${t("CR_CITY_ML")}`}  {...(validation = { pattern: "^[a-zA-Z-.`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_TRADE_NAME") })} />
                     </div>
                 </div>
                 <div className="row">
                     <div className="col-md-6" ><CardLabel>{t("CS_COMMON_VILLAGE")}</CardLabel>
-                        <Dropdown t={t} optionKey="name" isMandatory={false} option={cmbVillage} selected={PresentVillage} select={setSelectPresentVillage} disabled={isEdit} />
+                        <Dropdown t={t} optionKey="name" isMandatory={false} option={cmbVillage} selected={PresentVillage} select={setSelectPresentVillage} disabled={isEdit} placeholder={`${t("CS_COMMON_VILLAGE")}`} />
                     </div>
                     <div className="col-md-6" ><CardLabel>{t("CS_COMMON_LB_NAME")}</CardLabel>
-                        <Dropdown t={t} optionKey="code" isMandatory={false} option={cmbTaluk} selected={PresentLBName} select={setSelectPresentLBName} disabled={isEdit} />
+                        <Dropdown t={t} optionKey="code" isMandatory={false} option={cmbTaluk} selected={PresentLBName} select={setSelectPresentLBName} disabled={isEdit} placeholder={`${t("CS_COMMON_LB_NAME")}`} />
                     </div>
                 </div>
                 <div className="row">
                     <div className="col-md-6" ><CardLabel>{t("CS_COMMON_TALUK")}</CardLabel>
-                        <Dropdown t={t} optionKey="name" isMandatory={false} option={cmbTaluk} selected={PresentTaluk} select={setSelectPresentTaluk} disabled={isEdit} />
+                        <Dropdown t={t} optionKey="name" isMandatory={false} option={cmbTaluk} selected={PresentTaluk} select={setSelectPresentTaluk} disabled={isEdit} placeholder={`${t("CS_COMMON_TALUK")}`} />
                     </div>
                     <div className="col-md-6" ><CardLabel>{t("CS_COMMON_DISTRICT")}</CardLabel>
-                        <Dropdown t={t} optionKey="name" isMandatory={false} option={cmbDistrict} selected={PresentDistrict} select={setSelectPresentDistrict} disabled={isEdit} />
+                        <Dropdown t={t} optionKey="name" isMandatory={false} option={cmbDistrict} selected={PresentDistrict} select={setSelectPresentDistrict} disabled={isEdit} placeholder={`${t("CS_COMMON_DISTRICT")}`} />
                     </div>
                 </div>
                 <div className="row">
                     <div className="col-md-6" ><CardLabel>{t("CS_COMMON_POST_OFFICE")}</CardLabel>
-                        <Dropdown t={t} optionKey="name" isMandatory={false} option={cmbDistrict} selected={PresentPostOffice} select={setSelectPresentPostOffice} disabled={isEdit} />
+                        <Dropdown t={t} optionKey="name" isMandatory={false} option={cmbDistrict} selected={PresentPostOffice} select={setSelectPresentPostOffice} disabled={isEdit} placeholder={`${t("CS_COMMON_POST_OFFICE")}`} />
                     </div>
                     <div className="col-md-6" ><CardLabel>{t("CS_COMMON_PIN_CODE")}</CardLabel>
-                        <TextInput t={t} isMandatory={false} type={"text"} optionKey="i18nKey" name="PresentPincode" value={PresentPincode} onChange={setSelectPresentPincode} disable={isEdit}    {...(validation = { pattern: "^[a-zA-Z-.`' ]*$", isRequired: true, type: "number",maxLength:6,minLength:6, title: t("TL_INVALID_TRADE_NAME") })} />
+                        <TextInput t={t} isMandatory={false} type={"text"} optionKey="i18nKey" name="PresentPincode" value={PresentPincode} onChange={setSelectPresentPincode} disable={isEdit}  placeholder={`${t("CS_COMMON_PIN_CODE")}`}  {...(validation = { pattern: "^[0-9]{6}$", isRequired: true, type: "text", title: t("TL_INVALID_TRADE_NAME") })} />
                     </div>
                 </div>
                 <div className="row">
                     <div className="col-md-12" >
                         {/* <CardLabel>{`${t("CR_GENDER")}`}</CardLabel> */}
-                        <CheckBox label={t("Permanent Address is Same as Present Address")} onInputChange={setSameAsPresent} onChange={setSameAsPresent} value={isPrsentAddress} checked={isPrsentAddress} />
+                        <CheckBox label={t("Permanent Address is Same as Present Address")} onChange={setSameAsPresent} value={isPrsentAddress} checked={isPrsentAddress} />
                     </div>
                 </div>
                 <div className="row">
@@ -311,10 +296,10 @@ const Address = ({ config, onSelect, userType, formData }) => {
                 </div>
                 <div className="row">
                     <div className="col-md-6" ><CardLabel>{t("CR_BUILDING_NO")}</CardLabel>
-                        <TextInput t={t} isMandatory={false} type={"text"} optionKey="i18nKey" name="PermanentBuldingNo" value={PermanentBuldingNo} onChange={setSelectPermanentBuldingNo} disable={isEdit}    {...(validation = { pattern: "^[a-zA-Z-.`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_TRADE_NAME") })} />
+                        <TextInput t={t} isMandatory={false} type={"text"} optionKey="i18nKey" name="PermanentBuldingNo" value={PermanentBuldingNo} onChange={setSelectPermanentBuldingNo} disable={isEdit}    {...(validation = { pattern: "^[a-zA-Z-.0-9`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_TRADE_NAME") })} />
                     </div>
                     <div className="col-md-6" ><CardLabel>{t("CR_HOUSE_NO")}</CardLabel>
-                        <TextInput t={t} isMandatory={false} type={"text"} optionKey="i18nKey" name="PermanentHouseNo" value={PermanentHouseNo} onChange={setSelectPermanentHouseNo} disable={isEdit}    {...(validation = { pattern: "^[a-zA-Z-.`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_TRADE_NAME") })} />
+                        <TextInput t={t} isMandatory={false} type={"text"} optionKey="i18nKey" name="PermanentHouseNo" value={PermanentHouseNo} onChange={setSelectPermanentHouseNo} disable={isEdit}    {...(validation = { pattern: "^[a-zA-Z-.0-9`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_TRADE_NAME") })} />
                     </div>
                 </div>
                 <div className="row">
@@ -354,7 +339,7 @@ const Address = ({ config, onSelect, userType, formData }) => {
                         <Dropdown t={t} optionKey="name" isMandatory={false} option={cmbDistrict} selected={PermanentPostOffice} select={setSelectPermanentPostOffice} disabled={isEdit} />
                     </div>
                     <div className="col-md-6" ><CardLabel>{t("CS_COMMON_PIN_CODE")}</CardLabel>
-                        <TextInput t={t} isMandatory={false} type={"text"} optionKey="i18nKey" name="PermanentPincode" value={PermanentPincode} onChange={setSelectPermanentPincode} disable={isEdit}    {...(validation = { pattern: "^[a-zA-Z-.`' ]*$", isRequired: true, type: "number",maxLength:6,minLength:6, title: t("TL_INVALID_TRADE_NAME") })} />
+                        <TextInput t={t} isMandatory={false} type={"text"} optionKey="i18nKey" name="PermanentPincode" value={PermanentPincode} onChange={setSelectPermanentPincode} disable={isEdit}    {...(validation = { pattern: "^[0-9]{6}$", isRequired: true, type: "text", title: t("TL_INVALID_TRADE_NAME") })} />
                     </div>
                 </div>
             </FormStep>

@@ -53,6 +53,7 @@ const SelectBusinessCategory = ({ t, config, onSelect, userType, formData, }) =>
   return (
     <React.Fragment>
     {window.location.href.includes("/citizen") ? <Timeline currentStep={2} /> : null}
+    {window.location.href.includes("/employee") ? <Timeline currentStep={2} /> : null}
     <FormStep t={t} config={config} onSelect={goNext} onSkip={onSkip} isDisabled={!setSector}>
         <div className="row">    
           <div className="col-md-12" ><h1 className="headingh1" ><span style={{background:"#fff",padding:"0 10px" }}>{`${t("TL_BUISINESS_HEADER_MSG")}*`}</span> </h1>

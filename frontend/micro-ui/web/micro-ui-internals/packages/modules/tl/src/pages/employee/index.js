@@ -152,7 +152,8 @@ const EmployeeApp = ({ path, url, userType }) => {
 
   const locationCheck = window.location.href.includes("employee/tl/new-application") || window.location.href.includes("employee/tl/response") || window.location.href.includes("employee/tl/edit-application-details") || window.location.href.includes("employee/tl/renew-application-details");
 
-  const NewApplication = Digit?.ComponentRegistryService?.getComponent('TLNewApplication');
+  // const NewApplication = Digit?.ComponentRegistryService?.getComponent('TLNewApplication');
+  const NewApplication = Digit?.ComponentRegistryService?.getComponent('TLCreateTradeLicence');
   const ReNewApplication = Digit?.ComponentRegistryService?.getComponent('TLReNewApplication');
   const Response = Digit?.ComponentRegistryService?.getComponent('TLResponse');
   const Search = Digit?.ComponentRegistryService?.getComponent('TLSearch');

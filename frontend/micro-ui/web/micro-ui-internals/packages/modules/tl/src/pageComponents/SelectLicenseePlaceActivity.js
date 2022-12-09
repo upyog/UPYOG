@@ -72,6 +72,7 @@ const SelectLicenseePlaceActivity = ({ t, config, onSelect, userType, formData }
   return (
     <React.Fragment>
     {window.location.href.includes("/citizen") ? <Timeline currentStep={2} /> : null}
+    {window.location.href.includes("/employee") ? <Timeline currentStep={3} /> : null}
     <FormStep t={t} config={config} onSelect={goNext} onSkip={onSkip} isDisabled={!OwnProperty} >
     <LabelFieldPair style={{ display: "flex" }}><CardLabel>{`${t("TL_PLACE_MSG")}`}</CardLabel>
       <RadioButtons t={t} optionsKey="i18nKey" isMandatory={config.isMandatory} options={menu} selectedOption={OwnProperty} onSelect={setSelectOwnProperty} style={{ marginTop:"-8px",paddingLeft:"5px" ,height:"25px"}} /> 
