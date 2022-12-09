@@ -762,6 +762,51 @@ const getCRTitleList = (tenantId, moduleCode) => ({
     ],
   },
 });
+const getCRInstitutionList = (tenantId, moduleCode) => ({
+  details: {
+    tenantId: tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "InstitutionType",
+          },
+        ],
+      },
+    ],
+  },
+});
+const getCROtherPlaceList = (tenantId, moduleCode) => ({
+  details: {
+    tenantId: tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "OtherBithPlace",
+          },
+        ],
+      },
+    ],
+  },
+});
+const getCRInstitutionIdList = (tenantId, moduleCode) => ({
+  details: {
+    tenantId: tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "Institution",
+          },
+        ],
+      },
+    ],
+  },
+});
 
 const getChargeSlabsCategoryCriteria = (tenantId, moduleCode) => ({
   details: {
@@ -1604,6 +1649,15 @@ export const MdmsService = {
   },
   getCRReligion: (tenantId, moduleCode) => {
     return MdmsService.getDataByCriteria(tenantId, getCRReligionlist(tenantId, moduleCode), moduleCode);
+  },
+  getCRInstitution: (tenantId, moduleCode) => {
+    return MdmsService.getDataByCriteria(tenantId, getCRInstitutionList(tenantId, moduleCode), moduleCode);
+  },
+  getCRInstitutionId: (tenantId, moduleCode) => {
+    return MdmsService.getDataByCriteria(tenantId, getCRInstitutionIdList(tenantId, moduleCode), moduleCode);
+  },
+  getCROtherPlace: (tenantId, moduleCode) => {
+    return MdmsService.getDataByCriteria(tenantId, getCROtherPlaceList(tenantId, moduleCode), moduleCode);
   },
   /////////crmdms
   getServiceDefs: (tenantId, moduleCode) => {
