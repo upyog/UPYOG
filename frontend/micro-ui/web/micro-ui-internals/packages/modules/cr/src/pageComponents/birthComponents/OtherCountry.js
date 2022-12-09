@@ -48,7 +48,7 @@ const OtherCountry = ({ config, onSelect, userType, formData }) => {
     
     <div className="row">    
         <div className="col-md-6" > 
-            <CardLabel>{`${t("Informant Name")}`}</CardLabel>
+            <CardLabel>{`${t("CR_INFORMANT_NAME")}`}</CardLabel>
             <TextInput       
             t={t}
             isMandatory={false}
@@ -62,7 +62,7 @@ const OtherCountry = ({ config, onSelect, userType, formData }) => {
             />
         </div>
         <div className="col-md-6" >
-            <CardLabel>{`${t("Description")}`}</CardLabel>
+            <CardLabel>{`${t("CR_DESCRIPTION")}`}</CardLabel>
             <TextInput       
             t={t}
             isMandatory={false}
@@ -78,7 +78,7 @@ const OtherCountry = ({ config, onSelect, userType, formData }) => {
     </div>
     <div className="row">    
         <div className="col-md-12" > 
-            <CardLabel>{`${t("Address")}`}</CardLabel>
+            <CardLabel>{`${t("CR_ADDRESS")}`}</CardLabel>
             <TextArea       
             t={t}
             isMandatory={false}
@@ -95,7 +95,7 @@ const OtherCountry = ({ config, onSelect, userType, formData }) => {
 
    <div className="row"> 
         <div className="col-md-4" >
-            <CardLabel>{`${t("Mobile")}`}</CardLabel>
+            <CardLabel>{`${t("CR_MOBLE_NO")}`}</CardLabel>
             <TextInput       
             t={t}
             isMandatory={false}
@@ -109,7 +109,7 @@ const OtherCountry = ({ config, onSelect, userType, formData }) => {
             />
         </div>   
         <div className="col-md-4" > 
-            <CardLabel>{`${t("Aadhaar No")}`}</CardLabel>
+            <CardLabel>{`${t("CS_COMMON_AADHAAR")}`}</CardLabel>
             <TextInput       
             t={t}
             isMandatory={false}

@@ -62,6 +62,7 @@ export const TLSearch = {
     if (propertyDetails && propertyDetails?.Properties.length) {
       propertyAddress = getAddress(propertyDetails?.Properties[0]?.address, t);
     }
+    // console.log("response"+response?);
     let employeeResponse = [];
     const tradedetails = {
       title: "TL_COMMON_TR_DETAILS",

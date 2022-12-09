@@ -39,15 +39,15 @@ const TLAcknowledgement = ({ data, onSuccess }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const isRenewTrade = !window.location.href.includes("renew-trade")
   const mutation = Digit.Hooks.tl.useTradeLicenseAPI(
-    data?.cpt?.details?.address?.tenantId ? data?.cpt?.details?.address?.tenantId : tenantId,
+    data?.cpt?.details?.address?.tenantId ? data?.cpt?.details?.address?.tenantId : data?.tenantId,
     isRenewTrade
   );
   const mutation1 = Digit.Hooks.tl.useTradeLicenseAPI(
-    data?.cpt?.details?.address?.tenantId ? data?.cpt?.details?.address?.tenantId : tenantId,
+    data?.cpt?.details?.address?.tenantId ? data?.cpt?.details?.address?.tenantId : data?.tenantId,
     false
   );
   const mutation2 = Digit.Hooks.tl.useTradeLicenseAPI(
-    data?.cpt?.details?.address?.tenantId ? data?.cpt?.details?.address?.tenantId : tenantId,
+    data?.cpt?.details?.address?.tenantId ? data?.cpt?.details?.address?.tenantId : data?.tenantId,
     false
   );
   const isEdit = window.location.href.includes("renew-trade");

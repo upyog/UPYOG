@@ -40,7 +40,6 @@ const SelectBusinessCategory = ({ t, config, onSelect, userType, formData, }) =>
     sessionStorage.setItem("CapitalAmount", CapitalAmount);   
     if(sessionStorage.getItem("CapitalAmount")){
       cmbSectorFileterData.push((cmbSector.filter( (cmbSector) => cmbSector.code.includes(setSector.code))));
-      console.log(cmbSectorFileterData);      
         cmbSectorFileterData[0].forEach(element => {
           if(parseFloat(CapitalAmount) >= parseFloat(element.investmentFrom) && parseFloat(CapitalAmount) <= parseFloat(element.investmentTo))
           { 
@@ -64,7 +63,7 @@ const SelectBusinessCategory = ({ t, config, onSelect, userType, formData, }) =>
             <Dropdown t={t} optionKey="name" isMandatory={config.isMandatory} option={menu} selected={setSector} select={selectSector}  {...(validation = { isRequired: true, title: t("TL_INVALID_SECTOR_NAME") })} />
           </div>
           <div className="col-md-6" ><CardLabel>{`${t("TL_LOCALIZATION_CAPITAL_AMOUNT")}`}</CardLabel>
-          <TextInput t={t} isMandatory={false} type={"text"} optionKey="i18nKey" name="CapitalAmount" value={CapitalAmount} onChange={selectedsetCapitalAmount} {...(validation = { pattern: "^[0-9 ]*$", isRequired: true, type: "text", title: t("TL_INVALID_CAPITAL_AMOUNT") })} />
+          <TextInput t={t} isMandatory={false}  optionKey="i18nKey" name="CapitalAmount" value={CapitalAmount} onChange={selectedsetCapitalAmount} {...(validation = { pattern: "^([0-9])$", isRequired: true, type: "number", title: t("TL_INVALID_CAPITAL_AMOUNT") })} />
           </div>
         </div>    
         <div className="row">

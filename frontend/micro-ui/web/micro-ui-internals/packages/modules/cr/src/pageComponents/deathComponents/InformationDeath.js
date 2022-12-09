@@ -76,8 +76,8 @@ const InformationDeath = ({ config, onSelect, userType, formData }) => {
   }
 
   const goNext = () => {
-    sessionStorage.setItem("PlaceOfActivity", setPlaceofActivity.code);
-    onSelect(config.key, { setPlaceofActivity });
+    // sessionStorage.setItem("PlaceOfActivity", setPlaceofActivity.code);
+    // onSelect(config.key, { setPlaceofActivity });
   };
   return (
     <React.Fragment>

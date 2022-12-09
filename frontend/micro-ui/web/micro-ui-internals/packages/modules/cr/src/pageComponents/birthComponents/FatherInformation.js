@@ -63,7 +63,7 @@ const FatherInformation = ({ config, onSelect, userType, formData }) => {
     
     <div className="row">    
         <div className="col-md-4" > 
-            <CardLabel>{`${t("First Name (English)")}`}</CardLabel>
+            <CardLabel>{`${t("CR_FIRST_NAME")}`}</CardLabel>
             <TextInput       
             t={t}
             isMandatory={false}
@@ -77,7 +77,7 @@ const FatherInformation = ({ config, onSelect, userType, formData }) => {
             />
         </div>
         <div className="col-md-4" >
-            <CardLabel>{`${t("Middle Name (English)")}`}</CardLabel>
+            <CardLabel>{`${t("CR_MIDDLE_NAME")}`}</CardLabel>
             <TextInput       
             t={t}
             isMandatory={false}
@@ -91,7 +91,7 @@ const FatherInformation = ({ config, onSelect, userType, formData }) => {
             />
         </div>
         <div className="col-md-4" >
-            <CardLabel>{`${t("Last Name (English)")}`}</CardLabel>
+            <CardLabel>{`${t("CR_LAST_NAME")}`}</CardLabel>
             <TextInput       
             t={t}
             isMandatory={false}
@@ -107,7 +107,7 @@ const FatherInformation = ({ config, onSelect, userType, formData }) => {
     </div>
     <div className="row">    
         <div className="col-md-4" > 
-            <CardLabel>{`${t("First Name (Malayalam)")}`}</CardLabel>
+            <CardLabel>{`${t("CR_FIRST_NAME")}`}</CardLabel>
             <TextInput       
             t={t}
             isMandatory={false}
@@ -121,7 +121,7 @@ const FatherInformation = ({ config, onSelect, userType, formData }) => {
             />
         </div>
         <div className="col-md-4" >
-            <CardLabel>{`${t("Middle Name (Malayalam)")}`}</CardLabel>
+            <CardLabel>{`${t("CR_MIDDLE_NAME")}`}</CardLabel>
             <TextInput       
             t={t}
             isMandatory={false}
@@ -135,7 +135,7 @@ const FatherInformation = ({ config, onSelect, userType, formData }) => {
             />
         </div>
         <div className="col-md-4">
-            <CardLabel>{`${t("Last Name (Malayalam)")}`}</CardLabel>
+            <CardLabel>{`${t("CR_LAST_NAME")}`}</CardLabel>
             <TextInput       
             t={t}
             isMandatory={false}
@@ -152,7 +152,7 @@ const FatherInformation = ({ config, onSelect, userType, formData }) => {
 
     <div className="row">    
         <div className="col-md-4" > 
-            <CardLabel>{`${t("Aadhaar No")}`}</CardLabel>
+            <CardLabel>{`${t("CS_COMMON_AADHAAR")}`}</CardLabel>
             <TextInput       
             t={t}
             isMandatory={false}
@@ -166,7 +166,7 @@ const FatherInformation = ({ config, onSelect, userType, formData }) => {
             />
         </div>
         <div className="col-md-4" >
-            <CardLabel>{`${t("Email")}`}</CardLabel>
+            <CardLabel>{`${t("CR_EMAIL")}`}</CardLabel>
             <TextInput       
             t={t}
             isMandatory={false}
@@ -180,7 +180,7 @@ const FatherInformation = ({ config, onSelect, userType, formData }) => {
             />
         </div>
         <div className="col-md-4" >
-            <CardLabel>{`${t("Mobile")}`}</CardLabel>
+            <CardLabel>{`${t("CR_MOBILE_NO")}`}</CardLabel>
             <TextInput       
             t={t}
             isMandatory={false}
@@ -196,7 +196,7 @@ const FatherInformation = ({ config, onSelect, userType, formData }) => {
     </div>
     <div className="row">
         <div className="col-md-4" >
-        <CardLabel>{`${t("Education")}`}</CardLabel>
+        <CardLabel>{`${t("CR_EDUCATION")}`}</CardLabel>
             <Dropdown
                 t={t}
                 optionKey="code"
@@ -208,7 +208,7 @@ const FatherInformation = ({ config, onSelect, userType, formData }) => {
                 />
         </div>
         <div className="col-md-4" >
-        <CardLabel>{`${t("Education Subject")}`}</CardLabel>
+        <CardLabel>{`${t("CR_EDUCATION_SUBJECT")}`}</CardLabel>
             <Dropdown
                 t={t}
                 optionKey="code"
@@ -220,7 +220,7 @@ const FatherInformation = ({ config, onSelect, userType, formData }) => {
                 />
         </div>
         <div className="col-md-4" >
-            <CardLabel>{`${t("Proffessional")}`}</CardLabel>
+            <CardLabel>{`${t("CR_PROFESSIONAL")}`}</CardLabel>
             <Dropdown
                 t={t}
                 optionKey="code"

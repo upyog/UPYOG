@@ -212,13 +212,13 @@ const CheckPage = ({ onSubmit, value }) => {
             </div>
             <StatusTable >
               <div className="row">
-                <div className="col-md-4" ><CardLabel>{`${t("TL_LICENSEE_AADHAR_NO")}`}</CardLabel>
+                <div className="col-md-4" ><CardLabel>{`${t("TL_AADHAR_NO")}`}</CardLabel>
                   <CardText style={{ fontSize: "15px", Colour: "black" }}>{t(address.IndividualAadharNo)}</CardText>
                 </div>
-                <div className="col-md-4" ><CardLabel>{`${t("TL_LICENSEE_NAME")}`}</CardLabel>
+                <div className="col-md-4" ><CardLabel>{`${t("TL_NAME")}`}</CardLabel>
                   <CardText style={{ fontSize: "15px", Colour: "black" }}>{t(address.IndividualName)}</CardText>
                 </div>
-                <div className="col-md-4" ><CardLabel>{`${t("TL_LICENSEE_ADDRESS")}`}</CardLabel>
+                <div className="col-md-4" ><CardLabel>{`${t("TL_ADDRESS")}`}</CardLabel>
                   <CardText style={{ fontSize: "15px", Colour: "black" }}>{t(address.IndividualAddress)}</CardText>
                 </div>
               </div>
@@ -246,10 +246,10 @@ const CheckPage = ({ onSubmit, value }) => {
                 <div className="col-md-4" ><CardLabel>{`${t("TL_LICENSEE_DESIGNATION")}`}</CardLabel>
                   <CardText style={{ fontSize: "15px", Colour: "black" }}>{t(address.IndividualDesignation)}</CardText>
                 </div>
-                <div className="col-md-4" ><CardLabel>{`${t("TL_LICENSEE_AADHAR_NO")}`}</CardLabel>
+                <div className="col-md-4" ><CardLabel>{`${t("TL_AADHAR_NO")}`}</CardLabel>
                   <CardText style={{ fontSize: "15px", Colour: "black" }}>{t(address.IndividualAadharNo)}</CardText>
                 </div>
-                <div className="col-md-4" ><CardLabel>{`${t("TL_LICENSEE_NAME")}`}</CardLabel>
+                <div className="col-md-4" ><CardLabel>{`${t("TL_NAME")}`}</CardLabel>
                   <CardText style={{ fontSize: "15px", Colour: "black" }}>{t(address.IndividualName)}</CardText>
                 </div>
               </div>
@@ -260,7 +260,7 @@ const CheckPage = ({ onSubmit, value }) => {
                 <div className="col-md-4" ><CardLabel>{`${t("TL_LOCALIZATION_EMAIL_ID")}`}</CardLabel>
                   <CardText style={{ fontSize: "15px", Colour: "black" }}>{t(address.IndividualEmailID)}</CardText>
                 </div>
-                <div className="col-md-4" ><CardLabel>{`${t("TL_LICENSEE_ADDRESS")}`}</CardLabel>
+                <div className="col-md-4" ><CardLabel>{`${t("TL_ADDRESS")}`}</CardLabel>
                   <CardText style={{ fontSize: "15px", Colour: "black" }}>{t(address.IndividualAddress)}&nbsp;&nbsp;{<ActionButton jumpTo={`${routeLink}/units-details`} />}</CardText>
                 </div>
               </div>

@@ -63,7 +63,7 @@ const AddressOutsideIndia = ({ config, onSelect, userType, formData }) => {
     
     <div className="row">
         <div className="col-md-6" >
-            <CardLabel>{t("Address 1 (English)")}</CardLabel>
+            <CardLabel>{t("CR_ADDRESS_1")}</CardLabel>
             <TextInput       
                 t={t}
                 isMandatory={false}
@@ -77,7 +77,7 @@ const AddressOutsideIndia = ({ config, onSelect, userType, formData }) => {
             />    
         </div> 
         <div className="col-md-6" >
-            <CardLabel>{t("Address 1 (Malayalam)")}</CardLabel>
+            <CardLabel>{t("CR_ADDRESS_1")}</CardLabel>
             <TextInput       
                 t={t}
                 isMandatory={false}
@@ -93,7 +93,7 @@ const AddressOutsideIndia = ({ config, onSelect, userType, formData }) => {
     </div>
     <div className="row">
         <div className="col-md-6" >
-            <CardLabel>{t("Address 2 (English)")}</CardLabel>
+            <CardLabel>{t("CR_ADDRESS_2")}</CardLabel>
             <TextInput       
                 t={t}
                 isMandatory={false}
@@ -107,7 +107,7 @@ const AddressOutsideIndia = ({ config, onSelect, userType, formData }) => {
             />    
         </div> 
         <div className="col-md-6" >
-            <CardLabel>{t("Address 2 (Malayalam)")}</CardLabel>
+            <CardLabel>{t("CR_ADDRESS_1")}</CardLabel>
             <TextInput       
                 t={t}
                 isMandatory={false}
@@ -123,7 +123,7 @@ const AddressOutsideIndia = ({ config, onSelect, userType, formData }) => {
     </div>
     <div className="row">
         <div className="col-md-6" >
-            <CardLabel>{t("Locality (English)")}</CardLabel>
+            <CardLabel>{t("CR_LOCALITY")}</CardLabel>
             <TextInput       
                 t={t}
                 isMandatory={false}
@@ -137,7 +137,7 @@ const AddressOutsideIndia = ({ config, onSelect, userType, formData }) => {
             />    
         </div> 
         <div className="col-md-6" >
-            <CardLabel>{t("Locality (Malayalam)")}</CardLabel>
+            <CardLabel>{t("CR_LOCALITY")}</CardLabel>
             <TextInput       
                 t={t}
                 isMandatory={false}
@@ -153,7 +153,7 @@ const AddressOutsideIndia = ({ config, onSelect, userType, formData }) => {
     </div>  
     <div className="row">
         <div className="col-md-6" >
-            <CardLabel>{t("State/Region/Province (English)")}</CardLabel>
+            <CardLabel>{t("CR_STATE_REGION_PROVINCE")}</CardLabel>
             <TextInput       
                 t={t}
                 isMandatory={false}
@@ -167,7 +167,7 @@ const AddressOutsideIndia = ({ config, onSelect, userType, formData }) => {
             />    
         </div> 
         <div className="col-md-6" >
-            <CardLabel>{t("State/Region/Province (Malayalam)")}</CardLabel>
+            <CardLabel>{t("CR_STATE_REGION_PROVINCE")}</CardLabel>
             <TextInput       
                 t={t}
                 isMandatory={false}
@@ -183,7 +183,7 @@ const AddressOutsideIndia = ({ config, onSelect, userType, formData }) => {
     </div>  
     <div className="row">
         <div className="col-md-6" >
-            <CardLabel>{t("Country")}</CardLabel>
+            <CardLabel>{t("CR_COUNTRY")}</CardLabel>
             <TextInput       
                 t={t}
                 isMandatory={false}

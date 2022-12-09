@@ -58,7 +58,6 @@ const SelectLicenseePlaceActivity = ({ t, config, onSelect, userType, formData }
       }
     }
   }, [isInitialRenderRadio]);
-  console.log(formData);
   function goNext() {
     sessionStorage.setItem("OwnProperty", OwnProperty.code);
     sessionStorage.setItem("OwnerAadharNo", OwnerAadharNo);
@@ -85,23 +84,23 @@ const SelectLicenseePlaceActivity = ({ t, config, onSelect, userType, formData }
         </div>
         <div className="row">
           <div className="col-md-4" ><CardLabel>{`${t("TL_OWNER_AADHAR_NO")}`}</CardLabel>
-            <TextInput t={t} isMandatory={false} type={"text"} optionKey="i18nKey" name="OwnerAadharNo" value={OwnerAadharNo} onChange={setSelectOwnerAadharNo}   disable={isEdit}   {...(validation = { pattern: "^[a-zA-Z-.0-9`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_SUBDIVISION_NO") })} />
+            <TextInput t={t} isMandatory={false} optionKey="i18nKey" name="OwnerAadharNo" value={OwnerAadharNo} onChange={setSelectOwnerAadharNo}   disable={isEdit}   {...(validation = { pattern: "^([0-9]){12}$", isRequired: true, type: "text", title: t("TL_INVALID_OWNER_AADHAR_NO") })} />
           </div>
           <div className="col-md-4" ><CardLabel>{`${t("TL_OWNER_NAME")}`}</CardLabel>
-            <TextInput t={t} isMandatory={false} type={"text"} optionKey="i18nKey" name="OwnerName" value={OwnerName} onChange={setSelectOwnerName}   disable={isEdit}   {...(validation = { pattern: "^[a-zA-Z-.0-9`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_SUBDIVISION_NO") })} />
+            <TextInput t={t} isMandatory={false} type={"text"} optionKey="i18nKey" name="OwnerName" value={OwnerName} onChange={setSelectOwnerName}   disable={isEdit}   {...(validation = { pattern: "^[a-zA-Z-.0-9`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_OWNER_NAME") })} />
           </div>
           <div className="col-md-4" ><CardLabel>{`${t("TL_LOCALIZATION_MOBILE_NO")}`}</CardLabel> 
-          <TextInput t={t} isMandatory={false} type={"text"} optionKey="i18nKey" name="OwnerMobileNo" value={OwnerMobileNo} onChange={setSelectOwnerMobileNo} disable={isEdit} placeholder={`${t("TL_LOCALIZATION_MOBILE_NO")}`} {...(validation = { pattern: "[6-9]{1}[0-9]{9}",type: "tel", isRequired: true, type: "text", title: t("TL_INVALID_SUBDIVISION_NO") })} />
+          <TextInput t={t} isMandatory={false} type={"text"} optionKey="i18nKey" name="OwnerMobileNo" value={OwnerMobileNo} onChange={setSelectOwnerMobileNo} disable={isEdit} placeholder={`${t("TL_LOCALIZATION_MOBILE_NO")}`} {...(validation = { pattern: "^[0-9]{10}$",type: "text", isRequired: true, title: t("TL_INVALID_MOBILE_NO") })} />
           </div>        
         </div>
         <div className="row">
           <div className="col-md-12" ><CardLabel>{`${t("TL_OWNER_ADDRESS")}`}</CardLabel>
-            <TextArea t={t} isMandatory={false} type={"text"} optionKey="i18nKey" name="OwnerAddress" value={OwnerAddress} onChange={setSelectOwnerAddress} disable={isEdit} {...(validation = { pattern: "^[a-zA-Z-.0-9`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_SUBDIVISION_NO") })} />
+            <TextArea t={t} isMandatory={false} type={"text"} optionKey="i18nKey" name="OwnerAddress" value={OwnerAddress} onChange={setSelectOwnerAddress} disable={isEdit} {...(validation = { pattern: "^[a-zA-Z-.0-9`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_OWNER_ADDRESS") })} />
           </div>
         </div>
         <div className="row">
           <div className="col-md-4" ><CardLabel>{`${t("TL_OWNER_CONSENT_PLACE")}`}</CardLabel> 
-          <TextInput t={t} isMandatory={false} type={"text"} optionKey="i18nKey" name="OwnerConsentPlace" value={OwnerConsentPlace} onChange={setSelectOwnerConsentPlace} disable={isEdit} {...(validation = { pattern: "^[a-zA-Z-.0-9`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_SUBDIVISION_NO") })} />
+          <TextInput t={t} isMandatory={false} type={"text"} optionKey="i18nKey" name="OwnerConsentPlace" value={OwnerConsentPlace} onChange={setSelectOwnerConsentPlace} disable={isEdit} {...(validation = { pattern: "^[a-zA-Z-.0-9`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_OWNER_CONSENT_PLACE") })} />
           </div>
           <div className="col-md-4" ><CardLabel>{t("TL_OWNER_CONSENT_DATE_START")}</CardLabel>
             <DatePicker date={OwnerConsentDateStart} name="OwnerConsentDateStart" onChange={selectOwnerConsentDateStart} disabled={isEdit} />

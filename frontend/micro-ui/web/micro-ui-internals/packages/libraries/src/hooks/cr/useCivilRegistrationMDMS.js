@@ -2,6 +2,14 @@ import { MdmsService } from "../../services/elements/MDMS";
 import { useQuery } from "react-query";
 
 const useCivilRegistrationMDMS = (tenantId, moduleCode, type, filter, config = {}) => {
+
+  const useCRPlaceMaster = () => {
+    return useQuery("CR_PLACEMASTER", () => MdmsService.getCRPlaceMaster(tenantId, moduleCode,), config);
+  };
+  const useCRHospital = () => {
+    console.log("Jetheesh1");
+    return useQuery("CR_HOSPITALMASTER", () => MdmsService.getCRHospitalMaster(tenantId, moduleCode,), config);
+  };
   const usePLaceOfDeath = () => {
     return useQuery("CR_PLACE_DEATH", () => MdmsService.getCRPlaceOfDeath(tenantId, moduleCode, type), config);
   };
@@ -146,6 +154,9 @@ const useCivilRegistrationMDMS = (tenantId, moduleCode, type, filter, config = {
 
   switch (type) {
     case "PlaceMaster":
+      return useCRPlaceMaster();    
+    case "hospitalList":
+      return useCRHospital(); 
       return usePLaceOfDeath();
     case "GenderType":
       return useCRGender();

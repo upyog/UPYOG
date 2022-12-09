@@ -4,8 +4,9 @@ import { FormStep, RadioOrSelect, RadioButtons } from "@egovernments/digit-ui-re
 import Timeline from "../components/TLTimeline";
 
 const SelectCommencementDate = ({ t, config, onSelect, userType, formData }) => {
-  const [CommencementDate, setCommencementDate] = useState(formData?.TradeDetails?.CommencementDate);
-  const [LicensePeriod, setLicensePeriod] = useState(formData.TradeDetails?.LicensePeriod);
+  const [CommencementDate, setCommencementDate] = useState(formData?.owners?.CommencementDate);
+  const [LicensePeriod, setLicensePeriod] = useState(formData.owners?.LicensePeriod);
+  const [documents, setdocuments] = useState(formData.owners?.documents);
   const isEdit = window.location.href.includes("/edit-application/")||window.location.href.includes("renew-trade");
   let validation = {};
   const onSkip = () => onSelect();
@@ -18,8 +19,9 @@ const SelectCommencementDate = ({ t, config, onSelect, userType, formData }) => 
   function goNext() {
     sessionStorage.setItem("CommencementDate", CommencementDate);   
     sessionStorage.setItem("LicensePeriod", LicensePeriod);
-    onSelect(config.key, { CommencementDate,LicensePeriod });
+    onSelect(config.key, { CommencementDate,LicensePeriod,documents });
   }
+  console.log(formData);
   return (
     <React.Fragment>
     {window.location.href.includes("/citizen") ? <Timeline currentStep={3} /> : null}
@@ -33,7 +35,7 @@ const SelectCommencementDate = ({ t, config, onSelect, userType, formData }) => 
             <DatePicker date={CommencementDate} name="CommencementDate" onChange={selectCommencementDate} disabled={isEdit} />
           </div>
           <div className="col-md-6" ><CardLabel>{`${t("TL_LICENSE_PERIOD")}`}</CardLabel>
-            <TextInput t={t} isMandatory={false} type={"text"} optionKey="i18nKey" name="LicensePeriod" value={LicensePeriod} onChange={setSelectLicensePeriod} disable={isEdit} {...(validation = { pattern: "^[a-zA-Z-.0-9`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_SUBDIVISION_NO") })} />
+            <TextInput t={t} isMandatory={false} type={"text"} optionKey="i18nKey" name="LicensePeriod" value={LicensePeriod} onChange={setSelectLicensePeriod} disable={isEdit} {...(validation = { pattern: "^[a-zA-Z-.0-9`' ]*$", isRequired: true, type: "text", title: t("TL_INVALID_LICENSE_PERIOD") })} />
           </div>
         </div>
         <div className="row">    

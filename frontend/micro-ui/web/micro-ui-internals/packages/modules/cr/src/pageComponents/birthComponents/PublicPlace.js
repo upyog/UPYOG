@@ -73,7 +73,7 @@ const PublicPlace = ({ config, onSelect, userType, formData }) => {
             />
         </div>
         <div className="col-md-4" >
-            <CardLabel>{`${t("Informant Name")}`}</CardLabel>
+            <CardLabel>{`${t("CR_INFORMANT_NAME")}`}</CardLabel>
             <TextInput       
             t={t}
             isMandatory={false}
@@ -87,7 +87,7 @@ const PublicPlace = ({ config, onSelect, userType, formData }) => {
             />
         </div>
         <div className="col-md-4" >
-            <CardLabel>{`${t("Ward")}`}</CardLabel>
+            <CardLabel>{`${t("CS_COMMON_WARD")}`}</CardLabel>
             <Dropdown
                 t={t}
                 optionKey="code"
@@ -102,7 +102,7 @@ const PublicPlace = ({ config, onSelect, userType, formData }) => {
     </div>
     <div className="row">    
         <div className="col-md-12" >
-            <CardLabel>{`${t("Informant Address")}`}</CardLabel>
+            <CardLabel>{`${t("CR_ADDRESS")}`}</CardLabel>
             <TextArea       
             t={t}
             isMandatory={false}
@@ -120,7 +120,7 @@ const PublicPlace = ({ config, onSelect, userType, formData }) => {
     <div className="row">    
          
         <div className="col-md-12" >
-            <CardLabel>{`${t("Place Description")}`}</CardLabel>
+            <CardLabel>{`${t("CR_DESCRIPTION")}`}</CardLabel>
             <TextArea       
             t={t}
             isMandatory={false}

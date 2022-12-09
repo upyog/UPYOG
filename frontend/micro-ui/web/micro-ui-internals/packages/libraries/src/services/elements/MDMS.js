@@ -65,7 +65,36 @@ const initRequestBody = (tenantId) => ({
     ],
   },
 });
-
+const getCRPlaceMasterList = (tenantId, moduleCode) => ({
+  details: {
+    tenantId: tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "PlaceMaster",
+          },
+        ],
+      },
+    ],
+  },
+});
+const getCRHospitalMasterList = (tenantId, moduleCode) => ({
+  details: {
+    tenantId: tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "hospitalList",
+          },
+        ],
+      },
+    ],
+  },
+});
 const getCriteria = (tenantId, moduleDetails) => {
   return {
     MdmsCriteria: {
@@ -1232,6 +1261,14 @@ const TLGenderType = (MdmsRes) => {
     };
   });
 };
+const CRGenderType = (MdmsRes) => {
+  MdmsRes["common-masters"].GenderType.filter((GenderType) => GenderType.active).map((genders) => {
+    return {
+      ...genders,
+      i18nKey: `CR_GENDER_${genders.code}`,
+    };
+  });
+};
 
 const PTGenderType = (MdmsRes) => {
   MdmsRes["common-masters"].GenderType.filter((GenderType) => GenderType.active).map((formGender) => {
@@ -1410,6 +1447,8 @@ const transformResponse = (type, MdmsRes, moduleCode, tenantId) => {
       return getGenderType(MdmsRes);
     case "TLGendertype":
       return TLGenderType(MdmsRes);
+    case "CRGenderType":
+        return CRGenderType(MdmsRes);
     case "PTGenderType":
       return PTGenderType(MdmsRes);
     case "HRGenderType":
@@ -1534,6 +1573,14 @@ export const MdmsService = {
     PersistantStorage.set(key, responseValue, cacheSetting.cacheTimeInSecs);
     return responseValue;
   },
+  getCRPlaceMaster: (tenantId, moduleCode) => {
+    return MdmsService.getDataByCriteria(tenantId, getCRPlaceMasterList(tenantId, moduleCode), moduleCode);
+  },
+  getCRHospitalMaster: (tenantId, moduleCode) => {
+    console.log("Jetheesh2" + tenantId + moduleCode);
+    return MdmsService.getDataByCriteria(tenantId, getCRHospitalMasterList(tenantId, moduleCode), moduleCode);
+  },
+
   getCRNationlity: (tenantId, moduleCode) => {
     return MdmsService.getDataByCriteria(tenantId, getCRNationalityList(tenantId, moduleCode), moduleCode);
   },
@@ -1728,6 +1775,10 @@ export const MdmsService = {
   },
 
   TLGenderType: (tenantId, moduleCode, type) => {
+    return MdmsService.getDataByCriteria(tenantId, getGenderTypeList(tenantId, moduleCode, type), moduleCode);
+  },
+
+  CRGenderType: (tenantId, moduleCode, type) => {
     return MdmsService.getDataByCriteria(tenantId, getGenderTypeList(tenantId, moduleCode, type), moduleCode);
   },
 
