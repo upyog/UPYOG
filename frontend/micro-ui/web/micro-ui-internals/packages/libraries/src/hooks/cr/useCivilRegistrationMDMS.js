@@ -179,6 +179,10 @@ const useCivilRegistrationMDMS = (tenantId, moduleCode, type, filter, config = {
       return useCRVillage();
     case "District":
       return useCRDistrict();  
+    case "Title":
+      return useCRWard();
+    case "Religion":
+      return useCRReligion();
     case "TLDocuments":
       return useTLDocuments();
     case "StructureType":

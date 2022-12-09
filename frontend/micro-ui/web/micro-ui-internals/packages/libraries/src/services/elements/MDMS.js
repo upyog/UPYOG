@@ -1607,10 +1607,8 @@ export const MdmsService = {
     return MdmsService.getDataByCriteria(tenantId, getCRPlaceMasterList(tenantId, moduleCode), moduleCode);
   },
   getCRHospitalMaster: (tenantId, moduleCode) => {
-    console.log("Jetheesh2" + tenantId + moduleCode);
     return MdmsService.getDataByCriteria(tenantId, getCRHospitalMasterList(tenantId, moduleCode), moduleCode);
   },
-
   getCRNationlity: (tenantId, moduleCode) => {
     return MdmsService.getDataByCriteria(tenantId, getCRNationalityList(tenantId, moduleCode), moduleCode);
   },
