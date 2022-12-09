@@ -140,7 +140,7 @@ const ChildDetails = ({ config, onSelect, userType, formData }) => {
                         <Dropdown t={t} optionKey="code" isMandatory={false} option={menu} selected={Gender} select={setselectGender} disabled={isEdit} />
                     </div>
                     <div className="col-md-4"> <CardLabel>{`${t("Aadhar No")}`}</CardLabel>
-                        <TextInput t={t} isMandatory={false} type={"text"} optionKey="i18nKey" name="ChildAadharNo" value={ChildAadharNo} onChange={setSelectChildAadharNo} disable={isEdit} {...(validation = { pattern: "^[0-9`' ]*$", isRequired: true,maxLength:12,minLength:12, type: "text", title: t("TL_INVALID_SUBDIVISION_NO") })} />
+                        <TextInput t={t} isMandatory={false} type={"text"} optionKey="i18nKey" name="ChildAadharNo" value={ChildAadharNo} onChange={setSelectChildAadharNo} disable={isEdit} {...(validation = {pattern: "^([0-9]){12}$", isRequired: true, type: "text", title: t("TL_INVALID_AADHAR_NO") })} />
                     </div>
                 </div>
                 <div className="row">
