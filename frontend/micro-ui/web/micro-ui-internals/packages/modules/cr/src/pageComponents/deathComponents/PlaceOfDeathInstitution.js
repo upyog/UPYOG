@@ -35,13 +35,13 @@ const PlaceOfDeathInstitution = ({ config, onSelect, userType, formData }) => {
   }
 
   const goNext = () => {
-    sessionStorage.setItem("PlaceOfActivity", setPlaceofActivity.code);
+    // sessionStorage.setItem("PlaceOfActivity", setPlaceofActivity.code);
     onSelect(config.key, { setPlaceofActivity });
   };
   return (
     <React.Fragment>
       {window.location.href.includes("/citizen") ? <Timeline /> : null}
-      <FormStep t={t} config={config} onSelect={goNext} onSkip={onSkip} isDisabled={!CommencementDate}>
+      <FormStep t={t} config={config} onSelect={goNext} onSkip={onSkip} >
       <header className="tittle">Place Of Death Institution </header>
       
     <div className="row">

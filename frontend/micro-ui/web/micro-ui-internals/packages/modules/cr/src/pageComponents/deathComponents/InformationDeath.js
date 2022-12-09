@@ -9,7 +9,10 @@ const InformationDeath = ({ config, onSelect, userType, formData }) => {
   let validation = {};
   const { data: place = {}, isLoad } = Digit.Hooks.cr.useCivilRegistrationMDMS(stateId, "common-masters", "GenderType");
   const { data: Nation = {}, isNationLoad } = Digit.Hooks.cr.useCivilRegistrationMDMS(stateId, "common-masters", "Country");
+  const { data: title = {}, istitleLoad } = Digit.Hooks.cr.useCivilRegistrationMDMS(stateId, "common-masters", "Title");
+
   // const { data: religion = {}, isReligionLoad } = Digit.Hooks.cr.useCivilRegistrationMDMS(stateId, "common-masters", "Religion");
+  const [setTitle, setSelectedTitle] = useState(formData?.DeathDetails?.setTitle);
 
   // const [setReligion, setSelectedReligion] = useState(formData?.TradeDetails?.setReligion);
   const [setCountry, setSelectedCountry] = useState(formData?.TradeDetails?.setCountry);
@@ -32,6 +35,12 @@ const InformationDeath = ({ config, onSelect, userType, formData }) => {
     Nation["common-masters"].Country.map((ob) => {
       cmbNation.push(ob);
     });
+    let cmbTitle = [];
+    title &&
+    title["common-masters"] &&
+    title["common-masters"].Title.map((ob) => {
+      cmbTitle.push(ob);
+    });
   // let cmbreligion = [];
   // religion &&
   //   religion["common-masters"] &&
@@ -44,6 +53,14 @@ const InformationDeath = ({ config, onSelect, userType, formData }) => {
   function selectPlaceofactivity(value) {
     naturetypecmbvalue = value.code.substring(0, 4);
     setSelectedPlaceofActivity(value);
+  }
+  function selectTitle(value) {
+    naturetypecmbvalue = value.code.substring(0, 4);
+    setSelectedTitle(value);
+  }
+  function selectCountry(value) {
+    naturetypecmbvalue = value.code.substring(0, 4);
+    setSelectedCountry(value);
   }
 
   // function selectReligion(value) {
@@ -65,7 +82,8 @@ const InformationDeath = ({ config, onSelect, userType, formData }) => {
   return (
     <React.Fragment>
       {window.location.href.includes("/citizen") ? <Timeline /> : null}
-      <FormStep t={t} config={config} onSelect={goNext} onSkip={onSkip} isDisabled={!CommencementDate}>
+      <FormStep t={t} config={config} onSelect={goNext} onSkip={onSkip}>
+    {/* //    isDisabled={!CommencementDate} */}
         {/* <header className="tittle">Information Deceased </header> */}
         <div className="row">
             <div className="col-md-12" >
@@ -235,13 +253,13 @@ const InformationDeath = ({ config, onSelect, userType, formData }) => {
         <div className="col-md-3" > 
             <CardLabel>{`${t("Tittle")}`}</CardLabel>
             <Dropdown
-                t={t}
-                optionKey="code"
-                isMandatory={false}
-                option={cmbPlace}
-                selected={setPlaceofActivity}
-                select={selectPlaceofactivity}
-                disabled={isEdit}
+                 t={t}
+                 optionKey="name"
+                 isMandatory={false}
+                 option={cmbTitle}
+                 selected={setTitle}
+                 select={selectTitle}
+                 disabled={isEdit}
             />
         </div>  
         <div className="col-md-3" > 
@@ -430,11 +448,11 @@ const InformationDeath = ({ config, onSelect, userType, formData }) => {
            <CardLabel>{t("Nationality")}</CardLabel>
            <Dropdown
                t={t}
-               optionKey="code"
+               optionKey="name"
                isMandatory={false}
-               option={cmbPlace}
-               selected={setPlaceofActivity}
-               select={selectPlaceofactivity}
+               option={cmbNation}
+               selected={setCountry}
+               select={selectCountry}
                disabled={isEdit}
             />
         </div>
