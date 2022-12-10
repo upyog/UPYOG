@@ -1,5 +1,5 @@
 import { Banner, Card, CardText, LinkButton, Loader, SubmitBar } from "@egovernments/digit-ui-react-components";
-import React, { useEffect } from "react";
+import React, { useEffect,useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { convertToEditTrade, convertToResubmitTrade, convertToTrade, convertToUpdateTrade, stringToBoolean } from "../../../utils";
@@ -56,13 +56,15 @@ const TLAcknowledgement = ({ data, onSuccess }) => {
   const stateId = Digit.ULBService.getStateId();
   const { isLoading, data: fydata = {} } = Digit.Hooks.tl.useTradeLicenseMDMS(stateId, "egf-master", "FinancialYear");
   let isDirectRenewal = sessionStorage.getItem("isDirectRenewal") ? stringToBoolean(sessionStorage.getItem("isDirectRenewal")) : null;
-
+  const [isInitialRender, setIsInitialRender] = useState(true);
 
   useEffect(() => {
+    if (isInitialRender) {
     const onSuccessedit = () => {
       setMutationHappened(true);
     };
-    // try {
+    try {
+      setIsInitialRender(false);
       let tenantId1 = data?.cpt?.details?.address?.tenantId ? data?.cpt?.details?.address?.tenantId : tenantId;
       data.tenantId = tenantId1;
       if (!resubmit) {
@@ -104,20 +106,21 @@ const TLAcknowledgement = ({ data, onSuccess }) => {
         })
 
       }
-    // } catch (err) {
-    // }
-  }, [fydata]);
+    } catch (err) {
+    }
+  }
+  }, [fydata,isInitialRender]);
 
   useEffect(() => {
     if (mutation.isSuccess || (mutation1.isSuccess && isEdit && !isDirectRenewal)) {
-      // try {
+      try {
         let Licenses = !isEdit ? convertToUpdateTrade(mutation.data, data) : convertToUpdateTrade(mutation1.data, data);
         mutation2.mutate(Licenses, {
           onSuccess,
         });
-      // }
-      // catch (er) {
-      // }
+      }
+      catch (er) {
+      }
     }
   }, [mutation.isSuccess, mutation1.isSuccess]);
 

@@ -24,7 +24,7 @@
   .select {
     margin-bottom: 20px;
     @apply relative block w-full h-10 border border-solid border-input-border;
-  
+    border-radius: 5px;
     border: 1px solid #c9cccf;
    
     &:hover {

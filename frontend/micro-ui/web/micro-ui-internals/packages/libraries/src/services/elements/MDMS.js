@@ -65,7 +65,36 @@ const initRequestBody = (tenantId) => ({
     ],
   },
 });
-
+const getCRPlaceMasterList = (tenantId, moduleCode) => ({
+  details: {
+    tenantId: tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "PlaceMaster",
+          },
+        ],
+      },
+    ],
+  },
+});
+const getCRHospitalMasterList = (tenantId, moduleCode) => ({
+  details: {
+    tenantId: tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "hospitalList",
+          },
+        ],
+      },
+    ],
+  },
+});
 const getCriteria = (tenantId, moduleDetails) => {
   return {
     MdmsCriteria: {
@@ -637,6 +666,171 @@ const getRentalDetailsCategoryCriteria = (tenantId, moduleCode) => ({
         masterDetails: [
           {
             name: "RentalDetails",
+          },
+        ],
+      },
+    ],
+  },
+});
+const getCRGenderList = (tenantId, moduleCode) => ({
+  details: {
+    tenantId: tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "GenderType",
+          },
+        ],
+      },
+    ],
+  },
+});
+const getCRPlaceOfDeathList = (tenantId, moduleCode) => ({
+  details: {
+    tenantId: tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "PlaceMaster",
+          },
+        ],
+      },
+    ],
+  },
+});
+const getCRNationalityList = (tenantId, moduleCode) => ({
+  details: {
+    tenantId: tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "Country",
+          },
+        ],
+      },
+    ],
+  },
+});
+const getCRTalukList = (tenantId, moduleCode) => ({
+  details: {
+    tenantId: tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "mtaluk",
+          },
+        ],
+      },
+    ],
+  },
+});
+const getCRReligionlist = (tenantId, moduleCode) => ({
+  details: {
+    tenantId: tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "Religion",
+          },
+        ],
+      },
+    ],
+  },
+});
+const getCRVillagelist = (tenantId, moduleCode) => ({
+  details: {
+    tenantId: tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "Village",
+          },
+        ],
+      },
+    ],
+  },
+});
+const getCRDistrictlist = (tenantId, moduleCode) => ({
+  details: {
+    tenantId: tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "District",
+          },
+        ],
+      },
+    ],
+  },
+});
+const getCRTitleList = (tenantId, moduleCode) => ({
+  details: {
+    tenantId: tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "Title",
+          },
+        ],
+      },
+    ],
+  },
+});
+const getCRInstitutionList = (tenantId, moduleCode) => ({
+  details: {
+    tenantId: tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "InstitutionType",
+          },
+        ],
+      },
+    ],
+  },
+});
+const getCROtherPlaceList = (tenantId, moduleCode) => ({
+  details: {
+    tenantId: tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "OtherBithPlace",
+          },
+        ],
+      },
+    ],
+  },
+});
+const getCRInstitutionIdList = (tenantId, moduleCode) => ({
+  details: {
+    tenantId: tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "Institution",
           },
         ],
       },
@@ -1454,6 +1648,52 @@ export const MdmsService = {
     PersistantStorage.set(key, responseValue, cacheSetting.cacheTimeInSecs);
     return responseValue;
   },
+  getCRPlaceMaster: (tenantId, moduleCode) => {
+    return MdmsService.getDataByCriteria(tenantId, getCRPlaceMasterList(tenantId, moduleCode), moduleCode);
+  },
+  getCRHospitalMaster: (tenantId, moduleCode) => {
+    return MdmsService.getDataByCriteria(tenantId, getCRHospitalMasterList(tenantId, moduleCode), moduleCode);
+  },
+  getCRNationlity: (tenantId, moduleCode) => {
+    return MdmsService.getDataByCriteria(tenantId, getCRNationalityList(tenantId, moduleCode), moduleCode);
+  },
+  getCRPlaceOfDeath: (tenantId, moduleCode) => {
+    return MdmsService.getDataByCriteria(tenantId, getCRPlaceOfDeathList(tenantId, moduleCode), moduleCode);
+  },
+  getCRGender: (tenantId, moduleCode) => {
+    return MdmsService.getDataByCriteria(tenantId, getCRGenderList(tenantId, moduleCode), moduleCode);
+  },
+  getCRTaluk: (tenantId, moduleCode) => {
+    return MdmsService.getDataByCriteria(tenantId, getCRTalukList(tenantId, moduleCode), moduleCode);
+  },
+  getCRTitle: (tenantId, moduleCode) => {
+    return MdmsService.getDataByCriteria(tenantId, getCRTitleList(tenantId, moduleCode), moduleCode);
+  },
+  getCRTitle: (tenantId, moduleCode) => {
+    return MdmsService.getDataByCriteria(tenantId, getCRTitleList(tenantId, moduleCode), moduleCode);
+  },
+  getCRWard: (tenantId, moduleCode) => {
+    return MdmsService.getDataByCriteria(tenantId, getCRWardList(tenantId, moduleCode), moduleCode);
+  },
+  getCRReligion: (tenantId, moduleCode) => {
+    return MdmsService.getDataByCriteria(tenantId, getCRReligionlist(tenantId, moduleCode), moduleCode);
+  },
+  getCRVillage: (tenantId, moduleCode) => {
+    return MdmsService.getDataByCriteria(tenantId, getCRVillagelist(tenantId, moduleCode), moduleCode);
+  },
+  getCRDistrict: (tenantId, moduleCode) => {
+    return MdmsService.getDataByCriteria(tenantId, getCRDistrictlist(tenantId, moduleCode), moduleCode);
+  },
+  getCRInstitution: (tenantId, moduleCode) => {
+    return MdmsService.getDataByCriteria(tenantId, getCRInstitutionList(tenantId, moduleCode), moduleCode);
+  },
+  getCRInstitutionId: (tenantId, moduleCode) => {
+    return MdmsService.getDataByCriteria(tenantId, getCRInstitutionIdList(tenantId, moduleCode), moduleCode);
+  },
+  getCROtherPlace: (tenantId, moduleCode) => {
+    return MdmsService.getDataByCriteria(tenantId, getCROtherPlaceList(tenantId, moduleCode), moduleCode);
+  },
+  /////////crmdms
   getServiceDefs: (tenantId, moduleCode) => {
     return MdmsService.getDataByCriteria(tenantId, getModuleServiceDefsCriteria(tenantId, moduleCode), moduleCode);
   },
@@ -1666,3 +1906,4 @@ export const MdmsService = {
     return MdmsService.getDataByCriteria(tenantId, getFSMReceivedPaymentTypeCriteria(tenantId, moduleCode, type), moduleCode);
   }
 };
+

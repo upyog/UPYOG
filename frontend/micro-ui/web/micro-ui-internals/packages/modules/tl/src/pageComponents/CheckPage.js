@@ -40,6 +40,7 @@ const getPath = (path, params) => {
     });
   return path;
 };
+
 const CheckPage = ({ onSubmit, value }) => {
   let isEdit = window.location.href.includes("renew-trade");
   const { t } = useTranslation();
@@ -57,8 +58,6 @@ const CheckPage = ({ onSubmit, value }) => {
     routeLink = `${getPath(match.path, match.params)}`;
     routeLink = routeLink.replace("/check", "");
   }
-  console.log(value);
-
   return (
     <React.Fragment>
       {window.location.href.includes("/citizen") ? <Timeline currentStep={4} /> : null}
@@ -213,13 +212,13 @@ const CheckPage = ({ onSubmit, value }) => {
             </div>
             <StatusTable >
               <div className="row">
-                <div className="col-md-4" ><CardLabel>{`${t("TL_LICENSEE_AADHAR_NO")}`}</CardLabel>
+                <div className="col-md-4" ><CardLabel>{`${t("TL_AADHAR_NO")}`}</CardLabel>
                   <CardText style={{ fontSize: "15px", Colour: "black" }}>{t(address.IndividualAadharNo)}</CardText>
                 </div>
-                <div className="col-md-4" ><CardLabel>{`${t("TL_LICENSEE_NAME")}`}</CardLabel>
+                <div className="col-md-4" ><CardLabel>{`${t("TL_NAME")}`}</CardLabel>
                   <CardText style={{ fontSize: "15px", Colour: "black" }}>{t(address.IndividualName)}</CardText>
                 </div>
-                <div className="col-md-4" ><CardLabel>{`${t("TL_LICENSEE_ADDRESS")}`}</CardLabel>
+                <div className="col-md-4" ><CardLabel>{`${t("TL_ADDRESS")}`}</CardLabel>
                   <CardText style={{ fontSize: "15px", Colour: "black" }}>{t(address.IndividualAddress)}</CardText>
                 </div>
               </div>
@@ -247,10 +246,10 @@ const CheckPage = ({ onSubmit, value }) => {
                 <div className="col-md-4" ><CardLabel>{`${t("TL_LICENSEE_DESIGNATION")}`}</CardLabel>
                   <CardText style={{ fontSize: "15px", Colour: "black" }}>{t(address.IndividualDesignation)}</CardText>
                 </div>
-                <div className="col-md-4" ><CardLabel>{`${t("TL_LICENSEE_AADHAR_NO")}`}</CardLabel>
+                <div className="col-md-4" ><CardLabel>{`${t("TL_AADHAR_NO")}`}</CardLabel>
                   <CardText style={{ fontSize: "15px", Colour: "black" }}>{t(address.IndividualAadharNo)}</CardText>
                 </div>
-                <div className="col-md-4" ><CardLabel>{`${t("TL_LICENSEE_NAME")}`}</CardLabel>
+                <div className="col-md-4" ><CardLabel>{`${t("TL_NAME")}`}</CardLabel>
                   <CardText style={{ fontSize: "15px", Colour: "black" }}>{t(address.IndividualName)}</CardText>
                 </div>
               </div>
@@ -261,7 +260,7 @@ const CheckPage = ({ onSubmit, value }) => {
                 <div className="col-md-4" ><CardLabel>{`${t("TL_LOCALIZATION_EMAIL_ID")}`}</CardLabel>
                   <CardText style={{ fontSize: "15px", Colour: "black" }}>{t(address.IndividualEmailID)}</CardText>
                 </div>
-                <div className="col-md-4" ><CardLabel>{`${t("TL_LICENSEE_ADDRESS")}`}</CardLabel>
+                <div className="col-md-4" ><CardLabel>{`${t("TL_ADDRESS")}`}</CardLabel>
                   <CardText style={{ fontSize: "15px", Colour: "black" }}>{t(address.IndividualAddress)}&nbsp;&nbsp;{<ActionButton jumpTo={`${routeLink}/units-details`} />}</CardText>
                 </div>
               </div>
@@ -272,7 +271,7 @@ const CheckPage = ({ onSubmit, value }) => {
           <div>
             <StatusTable >
               <div className="row">
-                <div className="col-md-12" ><CardLabel>{`${t("TL_PLACE_MSG")}`} : {t(address.OwnProperty.code)}</CardLabel>
+                <div className="col-md-4" ><CardLabel>{`${t("TL_PLACE_MSG")}`} : {t(address.OwnProperty.code)}</CardLabel>
                   {/* <CardText style={{ fontSize: "15px", Colour: "black" }}>{t(address.OwnProperty.code)}</CardText> */}
                 </div>
               </div>
@@ -479,10 +478,10 @@ const CheckPage = ({ onSubmit, value }) => {
         <StatusTable >
           <div className="row">
             <div className="col-md-6" ><CardLabel style={{ lineHeight: "auto" }}>{`${t("TL_NEW_TRADE_DETAILS_TRADE_COMM_DATE_LABEL")}`}</CardLabel>
-              <CardText style={{ fontSize: "15px", Colour: "black" }}>{t(owners.CommencementDate)}</CardText>
+              <CardText style={{ fontSize: "15px", Colour: "black" }}>{t(TradeDetails.CommencementDate)}</CardText>
             </div>
             <div className="col-md-6" ><CardLabel style={{ lineHeight: "auto" }}>{`${t("TL_LICENSE_PERIOD")}`}</CardLabel>
-              <CardText style={{ fontSize: "15px", Colour: "black" }}>{t(owners.LicensePeriod)}&nbsp;&nbsp;{<ActionButton jumpTo={`${routeLink}/units-details`} />}</CardText>
+              <CardText style={{ fontSize: "15px", Colour: "black" }}>{t(TradeDetails.LicensePeriod)}&nbsp;&nbsp;{<ActionButton jumpTo={`${routeLink}/units-details`} />}</CardText>
             </div>
           </div>
         </StatusTable>
