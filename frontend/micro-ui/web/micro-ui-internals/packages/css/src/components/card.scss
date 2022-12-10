@@ -65,7 +65,8 @@
   display: flow-root;
   .card-header {
     @apply text-text-primary text-heading-xl font-bold font-rc align-middle text-left mb-md;
-    font-size: 30px!important;
+    font-size: 25px!important;
+    line-height: 15px!important;
   }
 
   .card-sub-header,
@@ -191,7 +192,7 @@
 
     .card-header {
       @apply text-heading-xl-dt;
-      font-size: 30px!important;
+      font-size: 25px!important;
     }
 
     .card-sub-header {
@@ -222,7 +223,7 @@
 
     .card-header {
       @apply text-heading-xl-dt;
-      font-size: 30px!important;
+      font-size: 25px!important;
     }
 
     .card-sub-header {

@@ -11,6 +11,7 @@ import { initLibraries } from "@egovernments/digit-ui-libraries";
 import { HRMSModule ,initHRMSComponents  } from "@egovernments/digit-ui-module-hrms";
 import { TLModule, TLLinks,initTLComponents } from "@egovernments/digit-ui-module-tl";
 import { CRModule, CRLinks,initCRComponents } from "@egovernments/digit-ui-module-cr";
+// import { DFMModule, DFMLinks,initDFMComponents } from "@egovernments/digit-ui-module-cr";
 import { initReceiptsComponents, ReceiptsModule } from "@egovernments/digit-ui-module-receipts";
 import { initOBPSComponents } from "@egovernments/digit-ui-module-obps";
 import { initNOCComponents } from "@egovernments/digit-ui-module-noc";
@@ -36,7 +37,9 @@ window.Digit.ComponentRegistryService.setupRegistry({
   TLLinks,
   ReceiptsModule,
   CRModule, 
-  CRLinks
+  CRLinks,
+  // DFMModule,
+  // DFMLinks
 });
 
 
@@ -54,7 +57,7 @@ initEngagementComponents();
 // initWSComponents();
 initCommonPTComponents();
 initCustomisationComponents();
-
+// initDFMComponents();
 const moduleReducers = (initData) => ({
   pgr: PGRReducers(initData),
 });
