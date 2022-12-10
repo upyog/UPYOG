@@ -10,8 +10,6 @@ const Address = ({ config, onSelect, userType, formData }) => {
     const { data: Taluk={} } = Digit.Hooks.cr.useCivilRegistrationMDMS(stateId, "common-masters", "mtaluk");
     const { data: Village={} } = Digit.Hooks.cr.useCivilRegistrationMDMS(stateId, "common-masters", "Village");
     const { data: District={} } = Digit.Hooks.cr.useCivilRegistrationMDMS(stateId, "common-masters", "District");
-
-    const [setPlaceofActivity, setSelectedPlaceofActivity] = useState(formData?.TradeDetails?.setPlaceofActivity);
     const isEdit = window.location.href.includes("/edit-application/") || window.location.href.includes("renew-trade");
     const [PresentBuldingNo, setPresentBuldingNo] = useState(formData?.AddressDetails?.PresentBuldingNo);
     const [PresentHouseNo, setPresentHouseNo] = useState(formData?.AddressDetails?.PresentHouseNo);

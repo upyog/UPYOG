@@ -40,7 +40,6 @@ const getPath = (path, params) => {
     });
   return path;
 };
-
 const CheckPage = ({ onSubmit, value }) => {
   let isEdit = window.location.href.includes("renew-trade");
   const { t } = useTranslation();
@@ -58,6 +57,8 @@ const CheckPage = ({ onSubmit, value }) => {
     routeLink = `${getPath(match.path, match.params)}`;
     routeLink = routeLink.replace("/check", "");
   }
+  console.log(value);
+
   return (
     <React.Fragment>
       {window.location.href.includes("/citizen") ? <Timeline currentStep={4} /> : null}
@@ -271,7 +272,7 @@ const CheckPage = ({ onSubmit, value }) => {
           <div>
             <StatusTable >
               <div className="row">
-                <div className="col-md-4" ><CardLabel>{`${t("TL_PLACE_MSG")}`} : {t(address.OwnProperty.code)}</CardLabel>
+                <div className="col-md-12" ><CardLabel>{`${t("TL_PLACE_MSG")}`} : {t(address.OwnProperty.code)}</CardLabel>
                   {/* <CardText style={{ fontSize: "15px", Colour: "black" }}>{t(address.OwnProperty.code)}</CardText> */}
                 </div>
               </div>
@@ -478,10 +479,10 @@ const CheckPage = ({ onSubmit, value }) => {
         <StatusTable >
           <div className="row">
             <div className="col-md-6" ><CardLabel style={{ lineHeight: "auto" }}>{`${t("TL_NEW_TRADE_DETAILS_TRADE_COMM_DATE_LABEL")}`}</CardLabel>
-              <CardText style={{ fontSize: "15px", Colour: "black" }}>{t(TradeDetails.CommencementDate)}</CardText>
+              <CardText style={{ fontSize: "15px", Colour: "black" }}>{t(owners.CommencementDate)}</CardText>
             </div>
             <div className="col-md-6" ><CardLabel style={{ lineHeight: "auto" }}>{`${t("TL_LICENSE_PERIOD")}`}</CardLabel>
-              <CardText style={{ fontSize: "15px", Colour: "black" }}>{t(TradeDetails.LicensePeriod)}&nbsp;&nbsp;{<ActionButton jumpTo={`${routeLink}/units-details`} />}</CardText>
+              <CardText style={{ fontSize: "15px", Colour: "black" }}>{t(owners.LicensePeriod)}&nbsp;&nbsp;{<ActionButton jumpTo={`${routeLink}/units-details`} />}</CardText>
             </div>
           </div>
         </StatusTable>

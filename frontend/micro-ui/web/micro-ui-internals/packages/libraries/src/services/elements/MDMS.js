@@ -1683,6 +1683,7 @@ export const MdmsService = {
   },
   getCRDistrict: (tenantId, moduleCode) => {
     return MdmsService.getDataByCriteria(tenantId, getCRDistrictlist(tenantId, moduleCode), moduleCode);
+  },
   getCRInstitution: (tenantId, moduleCode) => {
     return MdmsService.getDataByCriteria(tenantId, getCRInstitutionList(tenantId, moduleCode), moduleCode);
   },

@@ -68,7 +68,7 @@ const SelectLicenseeIndividualDetails = ({ t, config, onSelect, userType, formDa
             </div>
             <div className="row">
               <div className="col-md-6" ><CardLabel>{`${t("TL_LOCALIZATION_MOBILE_NO")}`}</CardLabel>
-                <TextInput t={t} isMandatory={false} type={"text"} optionKey="i18nKey" name="IndividualMobNo" value={IndividualMobNo} onChange={setSelectIndividualMobNo} disable={isEdit} placeholder={`${t("TL_LOCALIZATION_MOBILE_NO")}`} {...(validation = { pattern: "[6-9]{1}[0-9]{9}", type: "tel", isRequired: true,maxLength:11,minLength:10, title: t("TL_INVALID_MOBILE_NO") })} />
+                <TextInput t={t} isMandatory={false} type={"text"} optionKey="i18nKey" name="IndividualMobNo" value={IndividualMobNo} onChange={setSelectIndividualMobNo} disable={isEdit} placeholder={`${t("TL_LOCALIZATION_MOBILE_NO")}`} {...(validation = { pattern: "^[0-9]{10}$",type: "text", isRequired: true, title: t("TL_INVALID_MOBILE_NO") })} />
               </div>
               <div className="col-md-6" ><CardLabel>{`${t("TL_LOCALIZATION_EMAIL_ID")}`}</CardLabel>
                 <TextInput t={t} isMandatory={false} type="email" optionKey="i18nKey" name="IndividualEmailID" value={IndividualEmailID} onChange={setSelectIndividualEmailID} disable={isEdit} placeholder={`${t("TL_LOCALIZATION_EMAIL_ID")}`} {...(validation = { isRequired: true, title: t("TL_INVALID_EMAIL_ID") })} />
@@ -100,7 +100,7 @@ const SelectLicenseeIndividualDetails = ({ t, config, onSelect, userType, formDa
             </div>
             <div className="row">
               <div className="col-md-6" ><CardLabel>{`${t("TL_LOCALIZATION_MOBILE_NO")}`}</CardLabel>
-                <TextInput t={t} isMandatory={false} type={"text"} optionKey="i18nKey" name="IndividualMobNo" value={IndividualMobNo} onChange={setSelectIndividualMobNo} disable={isEdit} placeholder={`${t("TL_LOCALIZATION_MOBILE_NO")}`} {...(validation = { pattern: "[6-9]{1}[0-9]{9}", type: "tel", isRequired: true,maxLength:11,minLength:10, title: t("TL_INVALID_MOBILE_NO") })} />
+                <TextInput t={t} isMandatory={false} type={"text"} optionKey="i18nKey" name="IndividualMobNo" value={IndividualMobNo} onChange={setSelectIndividualMobNo} disable={isEdit} placeholder={`${t("TL_LOCALIZATION_MOBILE_NO")}`} {...(validation = { pattern: "^[0-9]{10}$",type: "text", isRequired: true, title: t("TL_INVALID_MOBILE_NO") })} />
               </div>
               <div className="col-md-6" ><CardLabel>{`${t("TL_LOCALIZATION_EMAIL_ID")}`}</CardLabel>
                 <TextInput t={t} isMandatory={false} type="email" optionKey="i18nKey" name="IndividualEmailID" value={IndividualEmailID} onChange={setSelectIndividualEmailID} disable={isEdit} placeholder={`${t("TL_LOCALIZATION_EMAIL_ID")}`} {...(validation = { isRequired: true, title: t("TL_INVALID_EMAIL_ID") })} />
