@@ -1,0 +1,971 @@
+  serviceMaps:
+    serviceName: birth-death-services
+    mappings:
+      - version: 1.0
+        description: Persists save birth details in kl_register_birth_details  table
+        fromTopic: save-birth-register-topic
+        isTransaction: true
+        queryMaps:
+          - query: INSERT INTO public.kl_register_birth_details(id, dateofreport, dateofbirth, timeofbirth, am_pm, firstname_en, firstname_ml, middlename_en,
+              middlename_ml, lastname_en, lastname_ml, tenantid, gender, remarks_en, remarks_ml, aadharno, createdtime, createdby, lastmodifiedtime,
+              lastmodifiedby, esign_user_code, esign_user_desig_code, is_adopted, is_abandoned, is_multiple_birth, is_father_info_missing,
+              is_mother_info_missing, no_of_alive_birth, ot_passportno, registrationno, registration_status, registration_date)
+              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+            basePath: RegisterBirthDetails.*
+            jsonMaps:
+              - jsonPath: $.RegisterBirthDetails.*.id
+
+              - jsonPath: $.RegisterBirthDetails.*.dateofreport
+
+              - jsonPath: $.RegisterBirthDetails.*.dateofbirth
+
+              - jsonPath: $.RegisterBirthDetails.*.timeofbirth
+
+              - jsonPath: $.RegisterBirthDetails.*.am_pm
+
+              - jsonPath: $.RegisterBirthDetails.*.firstname_en
+
+              - jsonPath: $.RegisterBirthDetails.*.firstname_ml
+
+              - jsonPath: $.RegisterBirthDetails.*.middlename_en
+
+              - jsonPath: $.RegisterBirthDetails.*.middlename_ml
+
+              - jsonPath: $.RegisterBirthDetails.*.lastname_en
+
+              - jsonPath: $.RegisterBirthDetails.*.lastname_ml
+
+              - jsonPath: $.RegisterBirthDetails.*.tenantid
+
+              - jsonPath: $.RegisterBirthDetails.*.gender
+
+              - jsonPath: $.RegisterBirthDetails.*.remarks_en
+
+              - jsonPath: $.RegisterBirthDetails.*.remarks_ml
+
+              - jsonPath: $.RegisterBirthDetails.*.aadharno
+
+              - jsonPath: $.RegisterBirthDetails.*.auditDetails.createdTime
+
+              - jsonPath: $.RegisterBirthDetails.*.auditDetails.createdBy
+
+              - jsonPath: $.RegisterBirthDetails.*.auditDetails.lastModifiedTime
+
+              - jsonPath: $.RegisterBirthDetails.*.auditDetails.lastModifiedBy
+
+              - jsonPath: $.RegisterBirthDetails.*.esign_user_code
+
+              - jsonPath: $.RegisterBirthDetails.*.esign_user_desig_code
+
+              - jsonPath: $.RegisterBirthDetails.*.is_adopted
+
+              - jsonPath: $.RegisterBirthDetails.*.is_abandoned
+
+              - jsonPath: $.RegisterBirthDetails.*.is_multiple_birth
+
+              - jsonPath: $.RegisterBirthDetails.*.is_father_info_missing
+
+              - jsonPath: $.RegisterBirthDetails.*.is_mother_info_missing
+
+              - jsonPath: $.RegisterBirthDetails.*.no_of_alive_birth
+
+              - jsonPath: $.RegisterBirthDetails.*.ot_passportno
+
+              - jsonPath: $.RegisterBirthDetails.*.registrationno
+
+              - jsonPath: $.RegisterBirthDetails.*.registration_status
+
+              - jsonPath: $.RegisterBirthDetails.*.registration_date
+
+          - query: INSERT INTO public.kl_register_birth_father_information(id, firstname_en, firstname_ml, middlename_en, middlename_ml, lastname_en, lastname_ml, aadharno,
+              ot_passportno, emailid, mobileno, createdtime, createdby, lastmodifiedtime, lastmodifiedby, birthdtlid) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+            basePath: RegisterBirthDetails.*.registerBirthFather
+            jsonMaps:
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthFather.id
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthFather.firstname_en
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthFather.firstname_ml
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthFather.middlename_en
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthFather.middlename_ml
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthFather.lastname_en
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthFather.lastname_ml
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthFather.aadharno
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthFather.ot_passportno
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthFather.emailid
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthFather.mobileno
+
+              - jsonPath: $.RegisterBirthDetails.*.auditDetails.createdTime
+
+              - jsonPath: $.RegisterBirthDetails.*.auditDetails.createdBy
+
+              - jsonPath: $.RegisterBirthDetails.*.auditDetails.lastModifiedTime
+
+              - jsonPath: $.RegisterBirthDetails.*.auditDetails.lastModifiedBy
+
+              - jsonPath: $.RegisterBirthDetails.*.id
+
+          - query: INSERT INTO public.kl_register_birth_mother_information(id, firstname_en, firstname_ml, middlename_en, middlename_ml, lastname_en, lastname_ml, aadharno,
+              ot_passportno, emailid, mobileno, createdtime, createdby, lastmodifiedtime, lastmodifiedby, birthdtlid) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+            basePath: RegisterBirthDetails.*.registerBirthMother
+            jsonMaps:
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthMother.id
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthMother.firstname_en
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthMother.firstname_ml
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthMother.middlename_en
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthMother.middlename_ml
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthMother.lastname_en
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthMother.lastname_ml
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthMother.aadharno
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthMother.ot_passportno
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthMother.emailid
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthMother.mobileno
+
+              - jsonPath: $.RegisterBirthDetails.*.auditDetails.createdTime
+
+              - jsonPath: $.RegisterBirthDetails.*.auditDetails.createdBy
+
+              - jsonPath: $.RegisterBirthDetails.*.auditDetails.lastModifiedTime
+
+              - jsonPath: $.RegisterBirthDetails.*.auditDetails.lastModifiedBy
+
+              - jsonPath: $.RegisterBirthDetails.*.id
+
+          - query: INSERT INTO public.kl_register_birth_place(id, birthdtlid, placeofbirthid, hospitalid, vehicletypeid, vehicle_registration_no,
+              vehicle_from_en, vehicle_to_en, vehicle_from_ml, vehicle_to_ml, vehicle_other_en, vehicle_other_ml, vehicle_admit_hospital_en,
+              vehicle_admit_hospital_ml, public_place_id, ho_householder_en, ho_householder_ml, ho_buildingno, ho_res_asso_no, ho_houseno,
+              ho_housename_en, ho_housename_ml, ho_locality_en, ho_locality_ml, ho_villageid, ho_talukid, ho_districtid, ho_city_en, ho_city_ml,
+              ho_stateid, ho_poid, ho_pinno, ho_countryid, ward_id, oth_details_en, oth_details_ml, institution_type_id, institution_id,
+              auth_officer_id, auth_officer_desig_id, oth_auth_officer_name, oth_auth_officer_desig, informantsname_en, informantsname_ml,
+              informantsaddress_en, informantsaddress_ml, informants_mobileno, informants_aadhaar_no, createdtime, createdby,
+              lastmodifiedtime, lastmodifiedby) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 
+              ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+            basePath: RegisterBirthDetails.*.registerBirthPlace
+            jsonMaps:
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.id
+
+              - jsonPath: $.RegisterBirthDetails.*.id
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.placeofbirthid
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.hospitalid
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.vehicletypeid
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.vehicle_registration_no
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.vehicle_from_en
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.vehicle_to_en
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.vehicle_from_ml
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.vehicle_to_ml
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.vehicle_other_en
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.vehicle_other_ml
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.vehicle_admit_hospital_en
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.vehicle_admit_hospital_ml
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.public_place_id
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.ho_householder_en
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.ho_householder_ml
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.ho_buildingno
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.ho_res_asso_no
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.ho_houseno
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.ho_housename_en
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.ho_housename_ml
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.ho_locality_en
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.ho_locality_ml
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.ho_villageid
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.ho_talukid
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.ho_districtid
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.ho_city_en
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.ho_city_ml
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.ho_stateid
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.ho_poid
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.ho_pinno
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.ho_countryid
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.ward_id
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.oth_details_en
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.oth_details_ml
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.institution_type_id
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.institution_id
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.auth_officer_id
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.auth_officer_desig_id
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.oth_auth_officer_name
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.oth_auth_officer_desig
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.informantsname_en
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.informantsname_ml
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.informantsaddress_en
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.informantsaddress_ml
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.informants_mobileno
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.informants_aadhaar_no
+
+              - jsonPath: $.RegisterBirthDetails.*.auditDetails.createdTime
+
+              - jsonPath: $.RegisterBirthDetails.*.auditDetails.createdBy
+
+              - jsonPath: $.RegisterBirthDetails.*.auditDetails.lastModifiedTime
+
+              - jsonPath: $.RegisterBirthDetails.*.auditDetails.lastModifiedBy
+
+          - query: INSERT INTO public.kl_register_birth_permanent_address(id, resdnce_addr_type, buildingno, houseno, res_asso_no, housename_en, housename_ml,
+              ot_address1_en, ot_address1_ml, ot_address2_en, ot_address2_ml, locality_en, locality_ml, city_en, city_ml, villageid, tenantid, talukid,
+              districtid, stateid, poid, pinno, ot_state_region_province_en, ot_state_region_province_ml, countryid, createdby, createdtime,
+              lastmodifiedby, lastmodifiedtime, birthdtlid, same_as_permanent) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+            basePath: RegisterBirthDetails.*.registerBirthPermanent
+            jsonMaps:
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPermanent.id
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPermanent.resdnce_addr_type
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPermanent.buildingno
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPermanent.houseno
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPermanent.res_asso_no
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPermanent.housename_en
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPermanent.housename_ml
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPermanent.ot_address1_en
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPermanent.ot_address1_ml
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPermanent.ot_address2_en
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPermanent.ot_address2_ml
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPermanent.locality_en
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPermanent.locality_ml
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPermanent.city_en
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPermanent.city_ml
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPermanent.villageid
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPermanent.tenantid
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPermanent.talukid
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPermanent.districtid
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPermanent.stateid
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPermanent.poid
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPermanent.pinno
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPermanent.ot_state_region_province_en
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPermanent.ot_state_region_province_ml
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPermanent.countryid
+
+              - jsonPath: $.RegisterBirthDetails.*.auditDetails.createdBy
+
+              - jsonPath: $.RegisterBirthDetails.*.auditDetails.createdTime
+
+              - jsonPath: $.RegisterBirthDetails.*.auditDetails.lastModifiedBy
+
+              - jsonPath: $.RegisterBirthDetails.*.auditDetails.lastModifiedTime
+
+              - jsonPath: $.RegisterBirthDetails.*.id
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPermanent.same_as_permanent
+
+          - query: INSERT INTO public.kl_register_birth_present_address(id, resdnce_addr_type, buildingno, houseno, res_asso_no, housename_en, housename_ml,
+              ot_address1_en, ot_address1_ml, ot_address2_en, ot_address2_ml, locality_en, locality_ml, city_en, city_ml, villageid, tenantid, talukid,
+              districtid, stateid, poid, pinno, ot_state_region_province_en, ot_state_region_province_ml, countryid, createdby, createdtime, lastmodifiedby,
+              lastmodifiedtime, birthdtlid) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+            basePath: RegisterBirthDetails.*.registerBirthPresent
+            jsonMaps:
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPresent.id
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPresent.resdnce_addr_type
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPresent.buildingno
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPresent.houseno
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPresent.res_asso_no
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPresent.housename_en
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPresent.housename_ml
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPresent.ot_address1_en
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPresent.ot_address1_ml
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPresent.ot_address2_en
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPresent.ot_address2_ml
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPresent.locality_en
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPresent.locality_ml
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPresent.city_en
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPresent.city_ml
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPresent.villageid
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPresent.tenantid
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPresent.talukid
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPresent.districtid
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPresent.stateid
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPresent.poid
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPresent.pinno
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPresent.ot_state_region_province_en
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPresent.ot_state_region_province_ml
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPresent.countryid
+
+              - jsonPath: $.RegisterBirthDetails.*.auditDetails.createdBy
+
+              - jsonPath: $.RegisterBirthDetails.*.auditDetails.createdTime
+
+              - jsonPath: $.RegisterBirthDetails.*.auditDetails.lastModifiedBy
+
+              - jsonPath: $.RegisterBirthDetails.*.auditDetails.lastModifiedTime
+
+              - jsonPath: $.RegisterBirthDetails.*.id
+
+
+          - query: INSERT INTO public.kl_register_birth_statitical_information(id, weight_of_child, duration_of_pregnancy_in_week, nature_of_medical_attention,
+              way_of_pregnancy, delivery_method, deliverytypeothers_en, deliverytypeothers_ml, religionid, father_nationalityid, father_educationid,
+              father_education_subid, father_proffessionid, mother_educationid, mother_education_subid, mother_proffessionid, mother_nationalityid,
+              mother_age_marriage, mother_age_delivery, mother_no_of_birth_given, mother_order_of_cur_delivery, mother_order_cur_child, mother_maritalstatusid,
+              mother_unmarried, mother_res_lbid, mother_res_no_of_years, mother_res_lb_code_id, mother_res_place_type_id, mother_res_lb_type_id,
+              mother_res_district_id, mother_res_state_id, mother_res_country_id, mother_resdnce_addr_type, mother_resdnce_tenant, mother_resdnce_placetype,
+              mother_resdnce_place_en, mother_resdnce_place_ml, mother_resdnce_lbtype, mother_resdnce_district, mother_resdnce_state, mother_resdnce_country,
+              birthdtlid, createdby, createdtime, lastmodifiedtime, lastmodifiedby) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+            basePath: RegisterBirthDetails.*.registerBirthStatitical
+            jsonMaps:
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.id
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.weight_of_child
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.duration_of_pregnancy_in_week
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.nature_of_medical_attention
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.way_of_pregnancy
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.delivery_method
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.deliverytypeothers_en
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.deliverytypeothers_ml
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.religionid
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.father_nationalityid
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.father_educationid
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.father_education_subid
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.father_proffessionid
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.mother_educationid
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.mother_education_subid
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.mother_proffessionid
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.mother_nationalityid
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.mother_age_marriage
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.mother_age_delivery
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.mother_no_of_birth_given
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.mother_order_of_cur_delivery
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.mother_order_cur_child
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.mother_maritalstatusid
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.mother_unmarried
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.mother_res_lbid
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.mother_res_no_of_years
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.mother_res_lb_code
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.mother_res_place_type_id
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.mother_res_lb_type_id
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.mother_res_district_id
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.mother_res_state_id
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.mother_res_country_id
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.mother_resdnce_addr_type
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.mother_resdnce_tenentid
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.mother_resdnce_placetype
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.mother_resdnce_place_en
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.mother_resdnce_place_ml
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.mother_resdnce_lbtype
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.mother_resdnce_districtid
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.mother_resdnce_stateid
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.mother_resdnce_countryid
+
+              - jsonPath: $.RegisterBirthDetails.*.id
+
+              - jsonPath: $.RegisterBirthDetails.*.auditDetails.createdBy
+
+              - jsonPath: $.RegisterBirthDetails.*.auditDetails.createdTime
+
+              - jsonPath: $.RegisterBirthDetails.*.auditDetails.lastModifiedTime
+
+              - jsonPath: $.RegisterBirthDetails.*.auditDetails.lastModifiedBy
+
+
+      - version: 1.0
+        description: Persists update register birth details in kl_register_birth_details  table
+        fromTopic: update-birth-register-topic
+        isTransaction: true
+        queryMaps:
+          - query: UPDATE public.kl_register_birth_details SET dateofreport=?, dateofbirth=?, timeofbirth=?, am_pm=?, firstname_en=?, firstname_ml=?,
+              middlename_en=?, middlename_ml=?, lastname_en=?, lastname_ml=?, tenantid=?, gender=?, remarks_en=?, remarks_ml=?, aadharno=?, lastmodifiedtime=?,
+              lastmodifiedby=?, esign_user_code=?, esign_user_desig_code=?, is_adopted=?, is_abandoned=?, is_multiple_birth=?, is_father_info_missing=?,
+              is_mother_info_missing=?, no_of_alive_birth=?, ot_passportno=?, registration_status=? WHERE id=?;
+
+            basePath: RegisterBirthDetails.*
+            jsonMaps:
+
+              - jsonPath: $.RegisterBirthDetails.*.dateofreport
+
+              - jsonPath: $.RegisterBirthDetails.*.dateofbirth
+
+              - jsonPath: $.RegisterBirthDetails.*.timeofbirth
+
+              - jsonPath: $.RegisterBirthDetails.*.am_pm
+
+              - jsonPath: $.RegisterBirthDetails.*.firstname_en
+
+              - jsonPath: $.RegisterBirthDetails.*.firstname_ml
+
+              - jsonPath: $.RegisterBirthDetails.*.middlename_en
+
+              - jsonPath: $.RegisterBirthDetails.*.middlename_ml
+
+              - jsonPath: $.RegisterBirthDetails.*.lastname_en
+
+              - jsonPath: $.RegisterBirthDetails.*.lastname_ml
+
+              - jsonPath: $.RegisterBirthDetails.*.tenantid
+
+              - jsonPath: $.RegisterBirthDetails.*.gender
+
+              - jsonPath: $.RegisterBirthDetails.*.remarks_en
+
+              - jsonPath: $.RegisterBirthDetails.*.remarks_ml
+
+              - jsonPath: $.RegisterBirthDetails.*.aadharno
+
+              - jsonPath: $.RegisterBirthDetails.*.auditDetails.lastModifiedTime
+
+              - jsonPath: $.RegisterBirthDetails.*.auditDetails.lastModifiedBy
+
+              - jsonPath: $.RegisterBirthDetails.*.esign_user_code
+
+              - jsonPath: $.RegisterBirthDetails.*.esign_user_desig_code
+
+              - jsonPath: $.RegisterBirthDetails.*.is_adopted
+
+              - jsonPath: $.RegisterBirthDetails.*.is_abandoned
+
+              - jsonPath: $.RegisterBirthDetails.*.is_multiple_birth
+
+              - jsonPath: $.RegisterBirthDetails.*.is_father_info_missing
+
+              - jsonPath: $.RegisterBirthDetails.*.is_mother_info_missing
+
+              - jsonPath: $.RegisterBirthDetails.*.no_of_alive_birth
+
+              - jsonPath: $.RegisterBirthDetails.*.ot_passportno
+
+              - jsonPath: $.RegisterBirthDetails.*.registration_status
+
+              - jsonPath: $.RegisterBirthDetails.*.id
+
+          - query: UPDATE public.kl_register_birth_place SET placeofbirthid=?, hospitalid=?, vehicletypeid=?, vehicle_registration_no=?, vehicle_from_en=?,
+              vehicle_to_en=?, vehicle_from_ml=?, vehicle_to_ml=?, vehicle_other_en=?, vehicle_other_ml=?, vehicle_admit_hospital_en=?, vehicle_admit_hospital_ml=?,
+              public_place_id=?, ho_householder_en=?, ho_householder_ml=?, ho_buildingno=?, ho_res_asso_no=?, ho_houseno=?, ho_housename_en=?, ho_housename_ml=?,
+              ho_locality_en=?, ho_locality_ml=?, ho_villageid=?, ho_talukid=?, ho_districtid=?, ho_city_en=?, ho_city_ml=?, ho_stateid=?, ho_poid=?, ho_pinno=?,
+              ho_countryid=?, ward_id=?, oth_details_en=?, oth_details_ml=?, institution_type_id=?, institution_id=?, auth_officer_id=?, auth_officer_desig_id=?,
+              oth_auth_officer_name=?, oth_auth_officer_desig=?, informantsname_en=?, informantsname_ml=?, informantsaddress_en=?, informantsaddress_ml=?,
+              informants_mobileno=?, informants_aadhaar_no=?, lastmodifiedtime=?, lastmodifiedby=? WHERE birthdtlid=?;
+
+            basePath: RegisterBirthDetails.*.registerBirthPlace
+            jsonMaps:
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.placeofbirthid
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.hospitalid
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.vehicletypeid
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.vehicle_registration_no
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.vehicle_from_en
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.vehicle_to_en
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.vehicle_from_ml
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.vehicle_to_ml
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.vehicle_other_en
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.vehicle_other_ml
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.vehicle_admit_hospital_en
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.vehicle_admit_hospital_ml
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.public_place_id
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.ho_householder_en
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.ho_householder_ml
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.ho_buildingno
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.ho_res_asso_no
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.ho_houseno
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.ho_housename_en
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.ho_housename_ml
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.ho_locality_en
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.ho_locality_ml
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.ho_villageid
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.ho_talukid
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.ho_districtid
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.ho_city_en
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.ho_city_ml
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.ho_stateid
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.ho_poid
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.ho_pinno
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.ho_countryid
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.ward_id
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.oth_details_en
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.oth_details_ml
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.institution_type_id
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.institution_id
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.auth_officer_id
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.auth_officer_desig_id
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.oth_auth_officer_name
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.oth_auth_officer_desig
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.informantsname_en
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.informantsname_ml
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.informantsaddress_en
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.informantsaddress_ml
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.informants_mobileno
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPlace.informants_aadhaar_no
+
+              - jsonPath: $.RegisterBirthDetails.*.auditDetails.lastModifiedTime
+
+              - jsonPath: $.RegisterBirthDetails.*.auditDetails.lastModifiedBy
+
+              - jsonPath: $.RegisterBirthDetails.*.id
+
+
+          - query: UPDATE public.kl_register_birth_father_information SET firstname_en=?, firstname_ml=?, middlename_en=?, middlename_ml=?, lastname_en=?, lastname_ml=?,
+              aadharno=?, ot_passportno=?, emailid=?, mobileno=?, lastmodifiedtime=?, lastmodifiedby=? WHERE birthdtlid=?;
+            basePath: RegisterBirthDetails.*.registerBirthFather
+            jsonMaps:
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthFather.firstname_en
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthFather.firstname_ml
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthFather.middlename_en
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthFather.middlename_ml
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthFather.lastname_en
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthFather.lastname_ml
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthFather.aadharno
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthFather.ot_passportno
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthFather.emailid
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthFather.mobileno
+
+              - jsonPath: $.RegisterBirthDetails.*.auditDetails.lastModifiedTime
+
+              - jsonPath: $.RegisterBirthDetails.*.auditDetails.lastModifiedBy
+
+              - jsonPath: $.RegisterBirthDetails.*.id
+
+          - query: UPDATE public.kl_register_birth_mother_information SET firstname_en=?, firstname_ml=?, middlename_en=?, middlename_ml=?, lastname_en=?, lastname_ml=?,
+              aadharno=?, ot_passportno=?, emailid=?, mobileno=?, lastmodifiedtime=?, lastmodifiedby=? WHERE birthdtlid=?;
+            basePath: RegisterBirthDetails.*.registerBirthMother
+            jsonMaps:
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthMother.firstname_en
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthMother.firstname_ml
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthMother.middlename_en
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthMother.middlename_ml
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthMother.lastname_en
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthMother.lastname_ml
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthMother.aadharno
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthMother.ot_passportno
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthMother.emailid
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthMother.mobileno
+
+              - jsonPath: $.RegisterBirthDetails.*.auditDetails.lastModifiedTime
+
+              - jsonPath: $.RegisterBirthDetails.*.auditDetails.lastModifiedBy
+
+              - jsonPath: $.RegisterBirthDetails.*.id
+
+
+          - query: UPDATE public.kl_register_birth_permanent_address SET resdnce_addr_type=?, buildingno=?, houseno=?, res_asso_no=?, housename_en=?, housename_ml=?,
+              ot_address1_en=?, ot_address1_ml=?, ot_address2_en=?, ot_address2_ml=?, locality_en=?, locality_ml=?, city_en=?, city_ml=?, villageid=?,
+              tenantid=?, talukid=?, districtid=?, stateid=?, poid=?, pinno=?, ot_state_region_province_en=?, ot_state_region_province_ml=?, countryid=?,
+              lastmodifiedby=?, lastmodifiedtime=?, same_as_permanent=? WHERE birthdtlid=?;
+
+            basePath: RegisterBirthDetails.*.registerBirthPermanent
+            jsonMaps:
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPermanent.resdnce_addr_type
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPermanent.buildingno
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPermanent.houseno
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPermanent.res_asso_no
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPermanent.housename_en
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPermanent.housename_ml
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPermanent.ot_address1_en
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPermanent.ot_address1_ml
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPermanent.ot_address2_en
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPermanent.ot_address2_ml
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPermanent.locality_en
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPermanent.locality_ml
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPermanent.city_en
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPermanent.city_ml
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPermanent.villageid
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPermanent.tenantid
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPermanent.talukid
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPermanent.districtid
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPermanent.stateid
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPermanent.poid
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPermanent.pinno
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPermanent.ot_state_region_province_en
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPermanent.ot_state_region_province_ml
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPermanent.countryid
+
+              - jsonPath: $.RegisterBirthDetails.*.auditDetails.lastModifiedBy
+
+              - jsonPath: $.RegisterBirthDetails.*.auditDetails.lastModifiedTime
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPermanent.same_as_permanent
+
+              - jsonPath: $.RegisterBirthDetails.*.id
+
+
+          - query: UPDATE public.kl_register_birth_present_address SET resdnce_addr_type=?, buildingno=?, houseno=?, res_asso_no=?, housename_en=?, housename_ml=?,
+              ot_address1_en=?, ot_address1_ml=?, ot_address2_en=?, ot_address2_ml=?, locality_en=?, locality_ml=?, city_en=?, city_ml=?, villageid=?,
+              tenantid=?, talukid=?, districtid=?, stateid=?, poid=?, pinno=?, ot_state_region_province_en=?, ot_state_region_province_ml=?, countryid=?,
+              lastmodifiedby=?, lastmodifiedtime=? WHERE birthdtlid=?;
+            basePath: RegisterBirthDetails.*.registerBirthPresent
+            jsonMaps:
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPresent.resdnce_addr_type
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPresent.buildingno
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPresent.houseno
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPresent.res_asso_no
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPresent.housename_en
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPresent.housename_ml
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPresent.ot_address1_en
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPresent.ot_address1_ml
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPresent.ot_address2_en
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPresent.ot_address2_ml
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPresent.locality_en
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPresent.locality_ml
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPresent.city_en
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPresent.city_ml
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPresent.villageid
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPresent.tenantid
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPresent.talukid
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPresent.districtid
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPresent.stateid
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPresent.poid
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPresent.pinno
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPresent.ot_state_region_province_en
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPresent.ot_state_region_province_ml
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthPresent.countryid
+
+              - jsonPath: $.RegisterBirthDetails.*.auditDetails.lastModifiedBy
+
+              - jsonPath: $.RegisterBirthDetails.*.auditDetails.lastModifiedTime
+
+              - jsonPath: $.RegisterBirthDetails.*.id
+
+
+          - query: UPDATE public.kl_register_birth_statitical_information SET weight_of_child=?, duration_of_pregnancy_in_week=?, nature_of_medical_attention=?,
+              way_of_pregnancy=?, delivery_method=?, deliverytypeothers_en=?, deliverytypeothers_ml=?, religionid=?, father_nationalityid=?,
+              father_educationid=?, father_education_subid=?, father_proffessionid=?, mother_educationid=?, mother_education_subid=?, mother_proffessionid=?,
+              mother_nationalityid=?, mother_age_marriage=?, mother_age_delivery=?, mother_no_of_birth_given=?, mother_order_of_cur_delivery=?,
+              mother_order_cur_child=?, mother_maritalstatusid=?, mother_unmarried=?, mother_res_lbid=?, mother_res_no_of_years=?, mother_res_lb_code_id=?,
+              mother_res_place_type_id=?, mother_res_lb_type_id=?, mother_res_district_id=?, mother_res_state_id=?, mother_res_country_id=?,
+              mother_resdnce_addr_type=?, mother_resdnce_tenant=?, mother_resdnce_placetype=?, mother_resdnce_place_en=?, mother_resdnce_place_ml=?,
+              mother_resdnce_lbtype=?, mother_resdnce_district=?, mother_resdnce_state=?, mother_resdnce_country=?, lastmodifiedtime=?,
+              lastmodifiedby=? WHERE birthdtlid=?;
+
+            basePath: RegisterBirthDetails.*.registerBirthStatitical
+            jsonMaps:
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.weight_of_child
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.duration_of_pregnancy_in_week
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.nature_of_medical_attention
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.way_of_pregnancy
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.delivery_method
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.deliverytypeothers_en
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.deliverytypeothers_ml
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.religionid
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.father_nationalityid
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.father_educationid
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.father_education_subid
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.father_proffessionid
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.mother_educationid
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.mother_education_subid
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.mother_proffessionid
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.mother_nationalityid
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.mother_age_marriage
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.mother_age_delivery
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.mother_no_of_birth_given
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.mother_order_of_cur_delivery
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.mother_order_cur_child
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.mother_maritalstatusid
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.mother_unmarried
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.mother_res_lbid
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.mother_res_no_of_years
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.mother_res_lb_code
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.mother_res_place_type_id
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.mother_res_lb_type_id
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.mother_res_district_id
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.mother_res_state_id
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.mother_res_country_id
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.mother_resdnce_addr_type
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.mother_resdnce_tenentid
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.mother_resdnce_placetype
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.mother_resdnce_place_en
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.mother_resdnce_place_ml
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.mother_resdnce_lbtype
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.mother_resdnce_districtid
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.mother_resdnce_stateid
+
+              - jsonPath: $.RegisterBirthDetails.*.registerBirthStatitical.mother_resdnce_countryid
+
+              - jsonPath: $.RegisterBirthDetails.*.auditDetails.lastModifiedTime
+
+              - jsonPath: $.RegisterBirthDetails.*.auditDetails.lastModifiedBy
+
+              - jsonPath: $.RegisterBirthDetails.*.id

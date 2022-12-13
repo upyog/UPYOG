@@ -1,9 +1,9 @@
 package org.ksmart.birth.crbirth.repository.rowmapper;
 
+import org.ksmart.birth.common.model.AuditDetails;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
-import org.ksmart.birth.common.model.AuditDetails;
 
 interface BaseRowMapper {
 

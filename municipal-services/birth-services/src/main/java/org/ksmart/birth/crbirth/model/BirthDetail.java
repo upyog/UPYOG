@@ -13,7 +13,6 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class BirthDetail {
-
     @Size(max = 64)
     @JsonProperty("id")
     private String id;

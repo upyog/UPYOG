@@ -39,7 +39,7 @@ public class BirthRegisterRowMapper implements ResultSetExtractor<List<RegisterB
                         .isMultipleBirth(Boolean.valueOf(rs.getString("is_multiple_birth")))
                         .isFatherInfoMissing(Boolean.valueOf(rs.getString("is_father_info_missing")))
                         .isMotherInfoMissing(Boolean.valueOf(rs.getString("is_mother_info_missing")))
-                        //.noOfAliveBirth(Integer.valueOf(rs.getString("no_of_alive_birth")))
+                        .noOfAliveBirth(Integer.parseInt(rs.getString("no_of_alive_birth")))
                         .multipleBirthDetId(rs.getString("multiplebirthdetid"))
                         .isBornOutside(Boolean.valueOf(rs.getString("is_born_outside")))
                         .otPassportNo(rs.getString("ot_passportno"))
