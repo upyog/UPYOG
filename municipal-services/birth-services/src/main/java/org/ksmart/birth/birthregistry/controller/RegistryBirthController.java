@@ -2,14 +2,12 @@ package org.ksmart.birth.birthregistry.controller;
 
 import lombok.extern.slf4j.Slf4j;
 
-import org.ksmart.birth.birth.certmodel.BirthCertResponse;
-import org.ksmart.birth.birth.certmodel.BirthCertificate;
+
 import org.ksmart.birth.birthregistry.model.RegisterBirthDetail;
 import org.ksmart.birth.birthregistry.model.RegisterBirthDetailsRequest;
 import org.ksmart.birth.birthregistry.model.RegisterBirthResponse;
 import org.ksmart.birth.birthregistry.model.RegisterBirthSearchCriteria;
 import org.ksmart.birth.birthregistry.service.RegisterBirthService;
-import org.ksmart.birth.common.contract.RequestInfoWrapper;
 import org.ksmart.birth.utils.ResponseInfoFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
