@@ -1,5 +1,5 @@
 serviceMaps:
-  serviceName: birth-death-services
+  serviceName: birth-services
   mappings:
       - version: 1.0
         description: Persists birthCertificate details in eg_birth_dtls  table
@@ -90,7 +90,7 @@ serviceMaps:
         isTransaction: true
         queryMaps:
 
-          - query: INSERT INTO public.eg_birth_cert_request (id, birthcertificateno, createdby, createdtime, birthdtlid, filestoreid, lastmodifiedtime, lastmodifiedby, status, additionaldetail, embeddedurl, dateofissue, source) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+          - query: INSERT INTO public.eg_birth_certificate_request (id, registrationno, createdby, createdtime, registrydetailsid, lastmodifiedtime, lastmodifiedby, filestoreid, status, additionaldetail, embeddedurl, dateofissue, tenantid) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
             basePath: birthCertificate
             jsonMaps:
               - jsonPath: $.birthCertificate.id
@@ -103,11 +103,11 @@ serviceMaps:
 
               - jsonPath: $.birthCertificate.birthDtlId
 
-              - jsonPath: $.birthCertificate.filestoreid
-
               - jsonPath: $.birthCertificate.auditDetails.lastModifiedTime
 
               - jsonPath: $.birthCertificate.auditDetails.lastModifiedBy
+
+              - jsonPath: $.birthCertificate.filestoreid
 
               - jsonPath: $.birthCertificate.applicationStatus
 

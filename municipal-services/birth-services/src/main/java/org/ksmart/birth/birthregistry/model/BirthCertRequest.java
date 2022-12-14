@@ -1,5 +1,5 @@
 
-package org.ksmart.birth.birth.certmodel;
+package org.ksmart.birth.birthregistry.model;
 
 import org.egov.common.contract.request.RequestInfo;
 

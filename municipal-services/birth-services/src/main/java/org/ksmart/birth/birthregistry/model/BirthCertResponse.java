@@ -1,7 +1,5 @@
 
-package org.ksmart.birth.death.certmodel;
-
-import java.util.List;
+package org.ksmart.birth.birthregistry.model;
 
 import org.egov.common.contract.response.ResponseInfo;
 
@@ -13,19 +11,29 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class DeathCertApplnResponse {
+public class BirthCertResponse {
 
   @JsonProperty("responseInfo")
   private ResponseInfo responseInfo = null;
 
-  @JsonProperty("applications")
-  private List<DeathCertAppln> applications;
+  @JsonProperty("birthCertificate")
+  private List<BirthCertificate> birthCertificates = null;
   
+  @JsonProperty("filestoreId")
+  private String filestoreId;
+  
+  @JsonProperty("consumerCode")
+  private String consumerCode;
+  
+  @JsonProperty("tenantId")
+  private String tenantId;
 
 }

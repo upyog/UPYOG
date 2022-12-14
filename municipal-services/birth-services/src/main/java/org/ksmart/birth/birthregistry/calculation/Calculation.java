@@ -1,12 +1,13 @@
-package org.ksmart.birth.death.calculation;
+package org.ksmart.birth.birthregistry.calculation;
 
 import java.util.List;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+
+import org.ksmart.birth.birthregistry.model.BirthCertificate;
 import org.ksmart.birth.common.calculation.TaxHeadEstimate;
-import org.ksmart.birth.death.certmodel.DeathCertificate;
 import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -27,11 +28,11 @@ import lombok.Setter;
 @Builder
 public class Calculation {
 
-	@JsonProperty("deathCertificateNo")
-	private String deathCertificateNo = null;
+	@JsonProperty("birthCertificateNo")
+	private String birthCertificateNo = null;
 
-	@JsonProperty("deathCertificate")
-	private DeathCertificate deathCertificate = null;
+	@JsonProperty("birthCertificate")
+	private BirthCertificate birthCertificate = null;
 
 	@NotNull
 	@JsonProperty("tenantId")

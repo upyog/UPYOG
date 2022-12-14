@@ -1,11 +1,10 @@
-package org.ksmart.birth.death.certmodel;
+package org.ksmart.birth.birthregistry.model;
 
 import java.sql.Timestamp;
 import java.util.List;
 
 import org.ksmart.birth.common.model.Amount;
 import org.ksmart.birth.common.model.AuditDetails;
-import org.ksmart.birth.death.calculation.Calculation;
 import org.egov.common.contract.request.User;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -17,13 +16,14 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+//import org.ksmart.birth.birthregistry.calculation.Calculation;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class DeathCertificate {
+public class BirthCertificate {
 
   @JsonProperty("citizen")
 
@@ -41,9 +41,9 @@ public class DeathCertificate {
 
   private String businessService = null;
 
-  @JsonProperty("deathCertificateNo")
+  @JsonProperty("birthCertificateNo")
 
-  private String deathCertificateNo = null;
+  private String birthCertificateNo = null;
 
   @JsonProperty("additionalDetail")
 
@@ -59,15 +59,15 @@ public class DeathCertificate {
   @JsonProperty("taxPeriodTo")
   private Long taxPeriodTo = null;
 
-  @JsonProperty("calculation")
-  private Calculation calculation;
-  
+//  @JsonProperty("calculation")
+//  private  Calcu calculation;
+
   @JsonProperty("amount")
   private List<Amount> amount;
 
-  @JsonProperty("deathDtlId")
+  @JsonProperty("birthDtlId")
 
-  private String deathDtlId = null;
+  private String birthDtlId = null;
   
   @JsonProperty("filestoreid")
 
@@ -80,8 +80,8 @@ public class DeathCertificate {
   @JsonProperty("gender")
   private String gender = null;
 
-  @JsonProperty("age")
-  private Long age = null;
+  @JsonProperty("birthPlace")
+  private String birthPlace = null;
 
   @JsonProperty("state")
   private String state = null;
@@ -138,11 +138,9 @@ public class DeathCertificate {
   
   private Long dateofissue;
 
-  private Timestamp dateofdeath;
+  private Timestamp dateofbirth;
 
   private Timestamp dateofreport;
-
-  private String placeofdeath;
 
   private String year;
 }

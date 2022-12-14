@@ -1,4 +1,4 @@
-package org.ksmart.birth.birth.service;
+package org.ksmart.birth.birthregistry.service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -8,8 +8,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import org.ksmart.birth.birth.certmodel.BirthCertRequest;
-import org.ksmart.birth.birth.certmodel.BirthCertificate;
+import org.ksmart.birth.birthregistry.model.BirthCertRequest;
+import org.ksmart.birth.birthregistry.model.BirthCertificate;
 import org.ksmart.birth.common.Idgen.IdResponse;
 import org.ksmart.birth.common.model.Amount;
 import org.ksmart.birth.common.model.AuditDetails;
@@ -111,10 +111,10 @@ public class EnrichmentService {
 		amount.setTaxHeadCode(BirthDeathConstants.BIRTH_CERT_FEE);
 		amount.setAmount(new BigDecimal(50));
 		amounts.add(amount);
-		birthCert.setAmount(amounts);
+		//birthCert.setAmount(amounts);
 		birthCert.setCitizen(birthCertRequest.getRequestInfo().getUserInfo());
-		birthCert.setTaxPeriodFrom(System.currentTimeMillis());
-		birthCert.setTaxPeriodTo(System.currentTimeMillis()+86400000);
+//		birthCert.setTaxPeriodFrom(System.currentTimeMillis());
+//		birthCert.setTaxPeriodTo(System.currentTimeMillis()+86400000);
 	}
 
 }

@@ -1,5 +1,5 @@
 serviceMaps:
-  serviceName: birth-death-services
+  serviceName: birth-services
   mappings:
     - version: 1.0
       description: Persists save birth details in kl_birth_details  table

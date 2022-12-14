@@ -142,5 +142,9 @@ public class RegisterBirthDetail {
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails;
 
+    private Long dateofissue;
+
+    private String embeddedUrl;
+
 
 }

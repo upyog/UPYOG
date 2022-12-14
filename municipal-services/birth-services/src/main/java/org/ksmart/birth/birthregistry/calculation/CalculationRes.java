@@ -1,4 +1,4 @@
-package org.ksmart.birth.birth.calculation;
+package org.ksmart.birth.birthregistry.calculation;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;

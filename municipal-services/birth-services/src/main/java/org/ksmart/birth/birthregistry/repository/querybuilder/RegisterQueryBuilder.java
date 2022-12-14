@@ -45,12 +45,12 @@ public class RegisterQueryBuilder extends BaseRegBuilder {
             .append("kstat.mother_resdnce_addr_type, kstat.mother_resdnce_tenant, kstat.mother_resdnce_placetype, kstat.mother_resdnce_place_en,")
             .append("kstat.mother_resdnce_place_ml, kstat.mother_resdnce_lbtype, kstat.mother_resdnce_district, kstat.mother_resdnce_state,")
             .append("kstat.mother_resdnce_country, kstat.birthdtlid, kstat.createdby, kstat.createdtime, kstat.lastmodifiedtime, kstat.lastmodifiedby")
-            .append(" FROM public.kl_register_birth_details krbd")
-            .append(" LEFT JOIN kl_register_birth_place kbp ON kbp.birthdtlid = krbd.id LEFT JOIN kl_register_birth_father_information kbfi ON kbfi.birthdtlid = krbd.id")
-            .append(" LEFT JOIN kl_register_birth_mother_information kbmi ON kbmi.birthdtlid = krbd.id")
-            .append(" LEFT JOIN kl_register_birth_permanent_address kperad ON kperad.birthdtlid = krbd.id")
-            .append(" LEFT JOIN kl_register_birth_permanent_address_audit kpreadd ON kpreadd.birthdtlid = krbd.id")
-            .append(" LEFT JOIN kl_register_birth_statitical_information kstat ON kstat.birthdtlid = krbd.id").toString();
+            .append(" FROM public.eg_register_birth_details krbd")
+            .append(" LEFT JOIN eg_register_birth_place kbp ON kbp.birthdtlid = krbd.id LEFT JOIN eg_register_birth_father_information kbfi ON kbfi.birthdtlid = krbd.id")
+            .append(" LEFT JOIN eg_register_birth_mother_information kbmi ON kbmi.birthdtlid = krbd.id")
+            .append(" LEFT JOIN eg_register_birth_permanent_address kperad ON kperad.birthdtlid = krbd.id")
+            .append(" LEFT JOIN eg_register_birth_present_address kpreadd ON kpreadd.birthdtlid = krbd.id")
+            .append(" LEFT JOIN eg_register_birth_statitical_information kstat ON kstat.birthdtlid = krbd.id").toString();
 
 
     public String getRegBirthApplicationSearchQuery(@NotNull RegisterBirthSearchCriteria criteria,

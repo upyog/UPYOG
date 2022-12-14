@@ -1,12 +1,12 @@
   serviceMaps:
-    serviceName: birth-death-services
+    serviceName: birth-services
     mappings:
       - version: 1.0
-        description: Persists save birth details in kl_register_birth_details  table
+        description: Persists save birth details in eg_register_birth_details  table
         fromTopic: save-birth-register-topic
         isTransaction: true
         queryMaps:
-          - query: INSERT INTO public.kl_register_birth_details(id, dateofreport, dateofbirth, timeofbirth, am_pm, firstname_en, firstname_ml, middlename_en,
+          - query: INSERT INTO public.eg_register_birth_details(id, dateofreport, dateofbirth, timeofbirth, am_pm, firstname_en, firstname_ml, middlename_en,
               middlename_ml, lastname_en, lastname_ml, tenantid, gender, remarks_en, remarks_ml, aadharno, createdtime, createdby, lastmodifiedtime,
               lastmodifiedby, esign_user_code, esign_user_desig_code, is_adopted, is_abandoned, is_multiple_birth, is_father_info_missing,
               is_mother_info_missing, no_of_alive_birth, ot_passportno, registrationno, registration_status, registration_date)
@@ -77,7 +77,7 @@
 
               - jsonPath: $.RegisterBirthDetails.*.registration_date
 
-          - query: INSERT INTO public.kl_register_birth_father_information(id, firstname_en, firstname_ml, middlename_en, middlename_ml, lastname_en, lastname_ml, aadharno,
+          - query: INSERT INTO public.eg_register_birth_father_information(id, firstname_en, firstname_ml, middlename_en, middlename_ml, lastname_en, lastname_ml, aadharno,
               ot_passportno, emailid, mobileno, createdtime, createdby, lastmodifiedtime, lastmodifiedby, birthdtlid) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
             basePath: RegisterBirthDetails.*.registerBirthFather
             jsonMaps:
@@ -114,7 +114,7 @@
 
               - jsonPath: $.RegisterBirthDetails.*.id
 
-          - query: INSERT INTO public.kl_register_birth_mother_information(id, firstname_en, firstname_ml, middlename_en, middlename_ml, lastname_en, lastname_ml, aadharno,
+          - query: INSERT INTO public.eg_register_birth_mother_information(id, firstname_en, firstname_ml, middlename_en, middlename_ml, lastname_en, lastname_ml, aadharno,
               ot_passportno, emailid, mobileno, createdtime, createdby, lastmodifiedtime, lastmodifiedby, birthdtlid) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
             basePath: RegisterBirthDetails.*.registerBirthMother
             jsonMaps:
@@ -150,7 +150,7 @@
 
               - jsonPath: $.RegisterBirthDetails.*.id
 
-          - query: INSERT INTO public.kl_register_birth_place(id, birthdtlid, placeofbirthid, hospitalid, vehicletypeid, vehicle_registration_no,
+          - query: INSERT INTO public.eg_register_birth_place(id, birthdtlid, placeofbirthid, hospitalid, vehicletypeid, vehicle_registration_no,
               vehicle_from_en, vehicle_to_en, vehicle_from_ml, vehicle_to_ml, vehicle_other_en, vehicle_other_ml, vehicle_admit_hospital_en,
               vehicle_admit_hospital_ml, public_place_id, ho_householder_en, ho_householder_ml, ho_buildingno, ho_res_asso_no, ho_houseno,
               ho_housename_en, ho_housename_ml, ho_locality_en, ho_locality_ml, ho_villageid, ho_talukid, ho_districtid, ho_city_en, ho_city_ml,
@@ -265,7 +265,7 @@
 
               - jsonPath: $.RegisterBirthDetails.*.auditDetails.lastModifiedBy
 
-          - query: INSERT INTO public.kl_register_birth_permanent_address(id, resdnce_addr_type, buildingno, houseno, res_asso_no, housename_en, housename_ml,
+          - query: INSERT INTO public.eg_register_birth_permanent_address(id, resdnce_addr_type, buildingno, houseno, res_asso_no, housename_en, housename_ml,
               ot_address1_en, ot_address1_ml, ot_address2_en, ot_address2_ml, locality_en, locality_ml, city_en, city_ml, villageid, tenantid, talukid,
               districtid, stateid, poid, pinno, ot_state_region_province_en, ot_state_region_province_ml, countryid, createdby, createdtime,
               lastmodifiedby, lastmodifiedtime, birthdtlid, same_as_permanent) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
@@ -333,7 +333,7 @@
 
               - jsonPath: $.RegisterBirthDetails.*.registerBirthPermanent.same_as_permanent
 
-          - query: INSERT INTO public.kl_register_birth_present_address(id, resdnce_addr_type, buildingno, houseno, res_asso_no, housename_en, housename_ml,
+          - query: INSERT INTO public.eg_register_birth_present_address(id, resdnce_addr_type, buildingno, houseno, res_asso_no, housename_en, housename_ml,
               ot_address1_en, ot_address1_ml, ot_address2_en, ot_address2_ml, locality_en, locality_ml, city_en, city_ml, villageid, tenantid, talukid,
               districtid, stateid, poid, pinno, ot_state_region_province_en, ot_state_region_province_ml, countryid, createdby, createdtime, lastmodifiedby,
               lastmodifiedtime, birthdtlid) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
@@ -400,7 +400,7 @@
               - jsonPath: $.RegisterBirthDetails.*.id
 
 
-          - query: INSERT INTO public.kl_register_birth_statitical_information(id, weight_of_child, duration_of_pregnancy_in_week, nature_of_medical_attention,
+          - query: INSERT INTO public.eg_register_birth_statitical_information(id, weight_of_child, duration_of_pregnancy_in_week, nature_of_medical_attention,
               way_of_pregnancy, delivery_method, deliverytypeothers_en, deliverytypeothers_ml, religionid, father_nationalityid, father_educationid,
               father_education_subid, father_proffessionid, mother_educationid, mother_education_subid, mother_proffessionid, mother_nationalityid,
               mother_age_marriage, mother_age_delivery, mother_no_of_birth_given, mother_order_of_cur_delivery, mother_order_cur_child, mother_maritalstatusid,
@@ -504,11 +504,11 @@
 
 
       - version: 1.0
-        description: Persists update register birth details in kl_register_birth_details  table
+        description: Persists update register birth details in eg_register_birth_details  table
         fromTopic: update-birth-register-topic
         isTransaction: true
         queryMaps:
-          - query: UPDATE public.kl_register_birth_details SET dateofreport=?, dateofbirth=?, timeofbirth=?, am_pm=?, firstname_en=?, firstname_ml=?,
+          - query: UPDATE public.eg_register_birth_details SET dateofreport=?, dateofbirth=?, timeofbirth=?, am_pm=?, firstname_en=?, firstname_ml=?,
               middlename_en=?, middlename_ml=?, lastname_en=?, lastname_ml=?, tenantid=?, gender=?, remarks_en=?, remarks_ml=?, aadharno=?, lastmodifiedtime=?,
               lastmodifiedby=?, esign_user_code=?, esign_user_desig_code=?, is_adopted=?, is_abandoned=?, is_multiple_birth=?, is_father_info_missing=?,
               is_mother_info_missing=?, no_of_alive_birth=?, ot_passportno=?, registration_status=? WHERE id=?;
@@ -572,7 +572,7 @@
 
               - jsonPath: $.RegisterBirthDetails.*.id
 
-          - query: UPDATE public.kl_register_birth_place SET placeofbirthid=?, hospitalid=?, vehicletypeid=?, vehicle_registration_no=?, vehicle_from_en=?,
+          - query: UPDATE public.eg_register_birth_place SET placeofbirthid=?, hospitalid=?, vehicletypeid=?, vehicle_registration_no=?, vehicle_from_en=?,
               vehicle_to_en=?, vehicle_from_ml=?, vehicle_to_ml=?, vehicle_other_en=?, vehicle_other_ml=?, vehicle_admit_hospital_en=?, vehicle_admit_hospital_ml=?,
               public_place_id=?, ho_householder_en=?, ho_householder_ml=?, ho_buildingno=?, ho_res_asso_no=?, ho_houseno=?, ho_housename_en=?, ho_housename_ml=?,
               ho_locality_en=?, ho_locality_ml=?, ho_villageid=?, ho_talukid=?, ho_districtid=?, ho_city_en=?, ho_city_ml=?, ho_stateid=?, ho_poid=?, ho_pinno=?,
@@ -682,7 +682,7 @@
               - jsonPath: $.RegisterBirthDetails.*.id
 
 
-          - query: UPDATE public.kl_register_birth_father_information SET firstname_en=?, firstname_ml=?, middlename_en=?, middlename_ml=?, lastname_en=?, lastname_ml=?,
+          - query: UPDATE public.eg_register_birth_father_information SET firstname_en=?, firstname_ml=?, middlename_en=?, middlename_ml=?, lastname_en=?, lastname_ml=?,
               aadharno=?, ot_passportno=?, emailid=?, mobileno=?, lastmodifiedtime=?, lastmodifiedby=? WHERE birthdtlid=?;
             basePath: RegisterBirthDetails.*.registerBirthFather
             jsonMaps:
@@ -713,7 +713,7 @@
 
               - jsonPath: $.RegisterBirthDetails.*.id
 
-          - query: UPDATE public.kl_register_birth_mother_information SET firstname_en=?, firstname_ml=?, middlename_en=?, middlename_ml=?, lastname_en=?, lastname_ml=?,
+          - query: UPDATE public.eg_register_birth_mother_information SET firstname_en=?, firstname_ml=?, middlename_en=?, middlename_ml=?, lastname_en=?, lastname_ml=?,
               aadharno=?, ot_passportno=?, emailid=?, mobileno=?, lastmodifiedtime=?, lastmodifiedby=? WHERE birthdtlid=?;
             basePath: RegisterBirthDetails.*.registerBirthMother
             jsonMaps:
@@ -745,7 +745,7 @@
               - jsonPath: $.RegisterBirthDetails.*.id
 
 
-          - query: UPDATE public.kl_register_birth_permanent_address SET resdnce_addr_type=?, buildingno=?, houseno=?, res_asso_no=?, housename_en=?, housename_ml=?,
+          - query: UPDATE public.eg_register_birth_permanent_address SET resdnce_addr_type=?, buildingno=?, houseno=?, res_asso_no=?, housename_en=?, housename_ml=?,
               ot_address1_en=?, ot_address1_ml=?, ot_address2_en=?, ot_address2_ml=?, locality_en=?, locality_ml=?, city_en=?, city_ml=?, villageid=?,
               tenantid=?, talukid=?, districtid=?, stateid=?, poid=?, pinno=?, ot_state_region_province_en=?, ot_state_region_province_ml=?, countryid=?,
               lastmodifiedby=?, lastmodifiedtime=?, same_as_permanent=? WHERE birthdtlid=?;
@@ -810,7 +810,7 @@
               - jsonPath: $.RegisterBirthDetails.*.id
 
 
-          - query: UPDATE public.kl_register_birth_present_address SET resdnce_addr_type=?, buildingno=?, houseno=?, res_asso_no=?, housename_en=?, housename_ml=?,
+          - query: UPDATE public.eg_register_birth_present_address SET resdnce_addr_type=?, buildingno=?, houseno=?, res_asso_no=?, housename_en=?, housename_ml=?,
               ot_address1_en=?, ot_address1_ml=?, ot_address2_en=?, ot_address2_ml=?, locality_en=?, locality_ml=?, city_en=?, city_ml=?, villageid=?,
               tenantid=?, talukid=?, districtid=?, stateid=?, poid=?, pinno=?, ot_state_region_province_en=?, ot_state_region_province_ml=?, countryid=?,
               lastmodifiedby=?, lastmodifiedtime=? WHERE birthdtlid=?;
@@ -872,7 +872,7 @@
               - jsonPath: $.RegisterBirthDetails.*.id
 
 
-          - query: UPDATE public.kl_register_birth_statitical_information SET weight_of_child=?, duration_of_pregnancy_in_week=?, nature_of_medical_attention=?,
+          - query: UPDATE public.eg_register_birth_statitical_information SET weight_of_child=?, duration_of_pregnancy_in_week=?, nature_of_medical_attention=?,
               way_of_pregnancy=?, delivery_method=?, deliverytypeothers_en=?, deliverytypeothers_ml=?, religionid=?, father_nationalityid=?,
               father_educationid=?, father_education_subid=?, father_proffessionid=?, mother_educationid=?, mother_education_subid=?, mother_proffessionid=?,
               mother_nationalityid=?, mother_age_marriage=?, mother_age_delivery=?, mother_no_of_birth_given=?, mother_order_of_cur_delivery=?,

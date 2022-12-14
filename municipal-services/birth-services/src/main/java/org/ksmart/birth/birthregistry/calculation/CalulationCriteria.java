@@ -1,10 +1,10 @@
-package org.ksmart.birth.birth.calculation;
+package org.ksmart.birth.birthregistry.calculation;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.ksmart.birth.birth.certmodel.BirthCertificate;
+import org.ksmart.birth.birthregistry.model.BirthCertificate;
 import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonProperty;

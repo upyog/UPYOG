@@ -2,13 +2,14 @@ package org.ksmart.birth.birthregistry.repository;
 
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
+import org.ksmart.birth.birthregistry.model.BirthCertRequest;
 import org.ksmart.birth.birthregistry.enrichment.RegisterBirthDetailsEnrichment;
+import org.ksmart.birth.birthregistry.model.BirthPdfRegisterRequest;
 import org.ksmart.birth.birthregistry.model.RegisterBirthDetail;
 import org.ksmart.birth.birthregistry.model.RegisterBirthDetailsRequest;
 import org.ksmart.birth.birthregistry.model.RegisterBirthSearchCriteria;
 import org.ksmart.birth.birthregistry.repository.querybuilder.RegisterQueryBuilder;
 import org.ksmart.birth.birthregistry.repository.rowmapper.BirthRegisterRowMapper;
-import org.ksmart.birth.common.contract.BirthPdfApplicationRequest;
 import org.ksmart.birth.common.contract.EgovPdfResp;
 import org.ksmart.birth.common.producer.BndProducer;
 import org.ksmart.birth.config.BirthDeathConfiguration;
@@ -66,39 +67,45 @@ public class RegisterBirthRepository {
         return result;
     }
 
-    public List<RegisterBirthDetail> saveRegisterBirthCert(RegisterBirthDetailsRequest request) {
-        registerBirthDetailsEnrichment.enrichCreate(request);
+    public void saveRegisterBirthCert(BirthCertRequest request) {
+       // registerBirthDetailsEnrichment.enrichCreate(request);
         producer.push(config.getSaveBirthApplicationTopic(), request);
-        return request.getRegisterBirthDetails();
+        //return request.getRegisterBirthDetails();
     }
 
-    public EgovPdfResp saveBirthCertPdf(BirthPdfApplicationRequest pdfApplicationRequest) {
+    public EgovPdfResp saveBirthCertPdf(BirthPdfRegisterRequest pdfApplicationRequest) {
         EgovPdfResp result= new EgovPdfResp();
 //		try {
         SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
         pdfApplicationRequest.getBirthCertificate().forEach(cert-> {
             String uiHost = config.getUiAppHost();
             String birthCertPath = config.getBirthCertLink();
+            System.out.println(cert.getId());
+            System.out.println(cert.getTenantId());
+            System.out.println(cert.getRegistrationNo());
+            System.out.println(cert.getGender());
             birthCertPath = birthCertPath.replace("$id",cert.getId());
-            birthCertPath = birthCertPath.replace("$tenantId",cert.getTenantid());
-            birthCertPath = birthCertPath.replace("$regNo",cert.getRegistrationno());
-            birthCertPath = birthCertPath.replace("$dateofbirth",format.format(cert.getDateofbirth()));
+            birthCertPath = birthCertPath.replace("$tenantId",cert.getTenantId());
+            birthCertPath = birthCertPath.replace("$regNo",cert.getRegistrationNo());
+            birthCertPath = birthCertPath.replace("$dateofbirth",format.format(cert.getDateOfBirth()));
             birthCertPath = birthCertPath.replace("$gender",cert.getGender().toString());
-            birthCertPath = birthCertPath.replace("$birthcertificateno",cert.getBirthcertificateno());
+            birthCertPath = birthCertPath.replace("$birthcertificateno",cert.getRegistrationNo());
             String finalPath = uiHost + birthCertPath;
             cert.setEmbeddedUrl(getShortenedUrl(finalPath));
         });
         log.info(new Gson().toJson(pdfApplicationRequest));
 
-        BirthPdfApplicationRequest req = BirthPdfApplicationRequest.builder()
+        BirthPdfRegisterRequest req = BirthPdfRegisterRequest.builder()
                 .birthCertificate(pdfApplicationRequest.getBirthCertificate())
                 .requestInfo(pdfApplicationRequest.getRequestInfo()).build();
+        System.out.println(pdfApplicationRequest.getBirthCertificate().get(0).getAadharNo());
         pdfApplicationRequest.getBirthCertificate().forEach(cert-> {
             String uiHost = config.getEgovPdfHost();
             String birthCertPath = config.getEgovPdfBirthEndPoint();
-            String tenantId = cert.getTenantid().split("\\.")[0];
+            String tenantId = cert.getTenantId().split("\\.")[0];
             birthCertPath = birthCertPath.replace("$tenantId",tenantId);
             String pdfFinalPath = uiHost + birthCertPath;
+            System.out.println(pdfFinalPath);
             EgovPdfResp response = restTemplate.postForObject(pdfFinalPath, req, EgovPdfResp.class);
             if (response != null && CollectionUtils.isEmpty(response.getFilestoreIds())) {
                 throw new CustomException("EMPTY_FILESTORE_IDS_FROM_PDF_SERVICE",

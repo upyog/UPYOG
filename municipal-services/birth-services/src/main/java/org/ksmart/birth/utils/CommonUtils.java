@@ -1,9 +1,9 @@
 package org.ksmart.birth.utils;
 
 
-import org.ksmart.birth.birth.model.EgBirthDtl;
+import org.ksmart.birth.birthregistry.model.RegisterBirthDetail;
 import org.ksmart.birth.common.model.AuditDetails;
-import org.ksmart.birth.death.model.EgDeathDtl;
+//import org.ksmart.birth.death.model.EgDeathDtl;
 import org.springframework.stereotype.Component;
 
 import lombok.Getter;
@@ -66,45 +66,45 @@ public class CommonUtils {
 		return fullAddress.toString();
 	}
 	
-	public void maskAndShowLast4Chars(EgBirthDtl birthDtl) {
-		if(null!=birthDtl.getBirthFatherInfo().getAadharno())
-			birthDtl.getBirthFatherInfo().setAadharno(birthDtl.getBirthFatherInfo().getAadharno().replaceAll(BirthDeathConstants.REPLACE_CONT, BirthDeathConstants.REPLACE_CONT_ASTERICK));
-		if(null!=birthDtl.getBirthMotherInfo().getAadharno())
-			birthDtl.getBirthMotherInfo().setAadharno(birthDtl.getBirthMotherInfo().getAadharno().replaceAll(BirthDeathConstants.REPLACE_CONT, BirthDeathConstants.REPLACE_CONT_ASTERICK));
+	public void maskAndShowLast4Chars(RegisterBirthDetail birthDtl) {
+		if(null!=birthDtl.getRegisterBirthFather().getAadharNo())
+			birthDtl.getRegisterBirthFather().setAadharNo(birthDtl.getRegisterBirthFather().getAadharNo().replaceAll(BirthDeathConstants.REPLACE_CONT, BirthDeathConstants.REPLACE_CONT_ASTERICK));
+		if(null!=birthDtl.getRegisterBirthMother().getAadharNo())
+			birthDtl.getRegisterBirthMother().setAadharNo(birthDtl.getRegisterBirthMother().getAadharNo().replaceAll(BirthDeathConstants.REPLACE_CONT, BirthDeathConstants.REPLACE_CONT_ASTERICK));
 		
-		if(null!=birthDtl.getBirthFatherInfo().getMobileno())
-			birthDtl.getBirthFatherInfo().setMobileno(birthDtl.getBirthFatherInfo().getMobileno().replaceAll(BirthDeathConstants.REPLACE_CONT, BirthDeathConstants.REPLACE_CONT_ASTERICK));
-		if(null!=birthDtl.getBirthMotherInfo().getMobileno())
-			birthDtl.getBirthMotherInfo().setMobileno(birthDtl.getBirthMotherInfo().getMobileno().replaceAll(BirthDeathConstants.REPLACE_CONT, BirthDeathConstants.REPLACE_CONT_ASTERICK));
+		if(null!=birthDtl.getRegisterBirthFather().getMobileNo())
+			birthDtl.getRegisterBirthFather().setMobileNo(birthDtl.getRegisterBirthFather().getMobileNo().replaceAll(BirthDeathConstants.REPLACE_CONT, BirthDeathConstants.REPLACE_CONT_ASTERICK));
+		if(null!=birthDtl.getRegisterBirthMother().getMobileNo())
+			birthDtl.getRegisterBirthMother().setMobileNo(birthDtl.getRegisterBirthMother().getMobileNo().replaceAll(BirthDeathConstants.REPLACE_CONT, BirthDeathConstants.REPLACE_CONT_ASTERICK));
 		
-		if(null!=birthDtl.getBirthFatherInfo().getEmailid())
-			birthDtl.getBirthFatherInfo().setEmailid(birthDtl.getBirthFatherInfo().getEmailid().replaceAll(BirthDeathConstants.REPLACE_CONT, BirthDeathConstants.REPLACE_CONT_ASTERICK));
-		if(null!=birthDtl.getBirthMotherInfo().getEmailid())
-			birthDtl.getBirthMotherInfo().setEmailid(birthDtl.getBirthMotherInfo().getEmailid().replaceAll(BirthDeathConstants.REPLACE_CONT, BirthDeathConstants.REPLACE_CONT_ASTERICK));
+		if(null!=birthDtl.getRegisterBirthFather().getEmailId())
+			birthDtl.getRegisterBirthFather().setEmailId(birthDtl.getRegisterBirthFather().getEmailId().replaceAll(BirthDeathConstants.REPLACE_CONT, BirthDeathConstants.REPLACE_CONT_ASTERICK));
+		if(null!=birthDtl.getRegisterBirthMother().getEmailId())
+			birthDtl.getRegisterBirthMother().setEmailId(birthDtl.getRegisterBirthMother().getEmailId().replaceAll(BirthDeathConstants.REPLACE_CONT, BirthDeathConstants.REPLACE_CONT_ASTERICK));
 	}
 	
-	public void maskAndShowLast4Chars(EgDeathDtl deathDtl) {
-		if(null!=deathDtl.getAadharno())
-			deathDtl.setAadharno(deathDtl.getAadharno().replaceAll(BirthDeathConstants.REPLACE_CONT, BirthDeathConstants.REPLACE_CONT_ASTERICK));
-		if(null!=deathDtl.getDeathFatherInfo().getAadharno())
-			deathDtl.getDeathFatherInfo().setAadharno(deathDtl.getDeathFatherInfo().getAadharno().replaceAll(BirthDeathConstants.REPLACE_CONT, BirthDeathConstants.REPLACE_CONT_ASTERICK));
-		if(null!=deathDtl.getDeathMotherInfo().getAadharno())
-			deathDtl.getDeathMotherInfo().setAadharno(deathDtl.getDeathMotherInfo().getAadharno().replaceAll(BirthDeathConstants.REPLACE_CONT, BirthDeathConstants.REPLACE_CONT_ASTERICK));
-		if(null!=deathDtl.getDeathSpouseInfo().getAadharno())
-			deathDtl.getDeathSpouseInfo().setAadharno(deathDtl.getDeathSpouseInfo().getAadharno().replaceAll(BirthDeathConstants.REPLACE_CONT, BirthDeathConstants.REPLACE_CONT_ASTERICK));
-		
-		if(null!=deathDtl.getDeathFatherInfo().getMobileno())
-			deathDtl.getDeathFatherInfo().setMobileno(deathDtl.getDeathFatherInfo().getMobileno().replaceAll(BirthDeathConstants.REPLACE_CONT, BirthDeathConstants.REPLACE_CONT_ASTERICK));
-		if(null!=deathDtl.getDeathMotherInfo().getMobileno())
-			deathDtl.getDeathMotherInfo().setMobileno(deathDtl.getDeathMotherInfo().getMobileno().replaceAll(BirthDeathConstants.REPLACE_CONT, BirthDeathConstants.REPLACE_CONT_ASTERICK));
-		if(null!=deathDtl.getDeathSpouseInfo().getMobileno())
-			deathDtl.getDeathSpouseInfo().setMobileno(deathDtl.getDeathSpouseInfo().getMobileno().replaceAll(BirthDeathConstants.REPLACE_CONT, BirthDeathConstants.REPLACE_CONT_ASTERICK));
-		
-		if(null!=deathDtl.getDeathFatherInfo().getEmailid())
-			deathDtl.getDeathFatherInfo().setEmailid(deathDtl.getDeathFatherInfo().getEmailid().replaceAll(BirthDeathConstants.REPLACE_CONT, BirthDeathConstants.REPLACE_CONT_ASTERICK));
-		if(null!=deathDtl.getDeathMotherInfo().getEmailid())
-			deathDtl.getDeathMotherInfo().setEmailid(deathDtl.getDeathMotherInfo().getEmailid().replaceAll(BirthDeathConstants.REPLACE_CONT, BirthDeathConstants.REPLACE_CONT_ASTERICK));
-		if(null!=deathDtl.getDeathSpouseInfo().getEmailid())
-			deathDtl.getDeathSpouseInfo().setEmailid(deathDtl.getDeathSpouseInfo().getEmailid().replaceAll(BirthDeathConstants.REPLACE_CONT, BirthDeathConstants.REPLACE_CONT_ASTERICK));
-	}
+//	public void maskAndShowLast4Chars(EgDeathDtl deathDtl) {
+//		if(null!=deathDtl.getAadharno())
+//			deathDtl.setAadharno(deathDtl.getAadharno().replaceAll(BirthDeathConstants.REPLACE_CONT, BirthDeathConstants.REPLACE_CONT_ASTERICK));
+//		if(null!=deathDtl.getDeathFatherInfo().getAadharno())
+//			deathDtl.getDeathFatherInfo().setAadharno(deathDtl.getDeathFatherInfo().getAadharno().replaceAll(BirthDeathConstants.REPLACE_CONT, BirthDeathConstants.REPLACE_CONT_ASTERICK));
+//		if(null!=deathDtl.getDeathMotherInfo().getAadharno())
+//			deathDtl.getDeathMotherInfo().setAadharno(deathDtl.getDeathMotherInfo().getAadharno().replaceAll(BirthDeathConstants.REPLACE_CONT, BirthDeathConstants.REPLACE_CONT_ASTERICK));
+//		if(null!=deathDtl.getDeathSpouseInfo().getAadharno())
+//			deathDtl.getDeathSpouseInfo().setAadharno(deathDtl.getDeathSpouseInfo().getAadharno().replaceAll(BirthDeathConstants.REPLACE_CONT, BirthDeathConstants.REPLACE_CONT_ASTERICK));
+//
+//		if(null!=deathDtl.getDeathFatherInfo().getMobileno())
+//			deathDtl.getDeathFatherInfo().setMobileno(deathDtl.getDeathFatherInfo().getMobileno().replaceAll(BirthDeathConstants.REPLACE_CONT, BirthDeathConstants.REPLACE_CONT_ASTERICK));
+//		if(null!=deathDtl.getDeathMotherInfo().getMobileno())
+//			deathDtl.getDeathMotherInfo().setMobileno(deathDtl.getDeathMotherInfo().getMobileno().replaceAll(BirthDeathConstants.REPLACE_CONT, BirthDeathConstants.REPLACE_CONT_ASTERICK));
+//		if(null!=deathDtl.getDeathSpouseInfo().getMobileno())
+//			deathDtl.getDeathSpouseInfo().setMobileno(deathDtl.getDeathSpouseInfo().getMobileno().replaceAll(BirthDeathConstants.REPLACE_CONT, BirthDeathConstants.REPLACE_CONT_ASTERICK));
+//
+//		if(null!=deathDtl.getDeathFatherInfo().getEmailid())
+//			deathDtl.getDeathFatherInfo().setEmailid(deathDtl.getDeathFatherInfo().getEmailid().replaceAll(BirthDeathConstants.REPLACE_CONT, BirthDeathConstants.REPLACE_CONT_ASTERICK));
+//		if(null!=deathDtl.getDeathMotherInfo().getEmailid())
+//			deathDtl.getDeathMotherInfo().setEmailid(deathDtl.getDeathMotherInfo().getEmailid().replaceAll(BirthDeathConstants.REPLACE_CONT, BirthDeathConstants.REPLACE_CONT_ASTERICK));
+//		if(null!=deathDtl.getDeathSpouseInfo().getEmailid())
+//			deathDtl.getDeathSpouseInfo().setEmailid(deathDtl.getDeathSpouseInfo().getEmailid().replaceAll(BirthDeathConstants.REPLACE_CONT, BirthDeathConstants.REPLACE_CONT_ASTERICK));
+//	}
 }
