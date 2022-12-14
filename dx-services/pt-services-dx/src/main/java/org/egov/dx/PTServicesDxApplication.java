@@ -46,9 +46,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.context.annotation.Import;
 import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.ComponentScan;
+
 
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class }) 
-@Component
+@ComponentScan
 @Import(TracerConfiguration.class)
 public class PTServicesDxApplication {
 
