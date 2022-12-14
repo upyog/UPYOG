@@ -80,10 +80,10 @@ public class RegisterBirthRepository {
         pdfApplicationRequest.getBirthCertificate().forEach(cert-> {
             String uiHost = config.getUiAppHost();
             String birthCertPath = config.getBirthCertLink();
-            System.out.println(cert.getId());
-            System.out.println(cert.getTenantId());
-            System.out.println(cert.getRegistrationNo());
-            System.out.println(cert.getGender());
+//            System.out.println(cert.getId());
+//            System.out.println(cert.getTenantId());
+//            System.out.println(cert.getRegistrationNo());
+//            System.out.println(cert.getGender());
             birthCertPath = birthCertPath.replace("$id",cert.getId());
             birthCertPath = birthCertPath.replace("$tenantId",cert.getTenantId());
             birthCertPath = birthCertPath.replace("$regNo",cert.getRegistrationNo());

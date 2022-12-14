@@ -146,5 +146,7 @@ public class RegisterBirthDetail {
 
     private String embeddedUrl;
 
+    private String certId;
+
 
 }

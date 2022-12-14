@@ -57,13 +57,6 @@ public class RegisterBirthService {
             birthCertificate.setDateofbirth(new Timestamp(regDetail.get(0).getDateOfBirth()) );
             birthCertificate.setDateofreport(new Timestamp(regDetail.get(0).getRegistrationDate()));
 
-
-        Date datetest=new Date(1346524199000l);
-        SimpleDateFormat df2 = new SimpleDateFormat("dd/MM/yyyy");
-        String dateText = df2.format(datetest);
-        System.out.println("dateText");
-        System.out.println(dateText);
-
             SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
             String date = format.format(regDetail.get(0).getDateOfReport());
             String datestr = date.split("-")[2];
@@ -72,11 +65,10 @@ public class RegisterBirthService {
                 throw new CustomException("Invalid_Input", "Error in processing data");
             enrichmentService.enrichCreateRequest(birthCertRequest);
             enrichmentService.setIdgenIds(birthCertRequest);
-            //regDetail.get(0).setR(birthCertRequest.getBirthCertificate().getBirthCertificateNo());
-        System.out.println("getDateOfReport()");
-        System.out.println(date);
-        System.out.println(datestr);
+            System.out.println(birthCertRequest.getBirthCertificate().getBirthCertificateNo());
+            regDetail.get(0).setCertId(birthCertRequest.getBirthCertificate().getId());
             BirthPdfRegisterRequest applicationRequest = BirthPdfRegisterRequest.builder().requestInfo(requestInfo).birthCertificate(regDetail).build();
+            System.out.println(applicationRequest.getBirthCertificate().get(0).getAadharNo());
             EgovPdfResp pdfResp = repository.saveBirthCertPdf(applicationRequest);
             birthCertificate.setEmbeddedUrl(applicationRequest.getBirthCertificate().get(0).getEmbeddedUrl());
             birthCertificate.setDateofissue(applicationRequest.getBirthCertificate().get(0).getDateofissue());
