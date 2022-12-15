@@ -130,7 +130,6 @@ public class DataExchangeController {
 			     byte[] targetArray = buffer.toByteArray();
 			     return targetArray.toString();
 
-			       
 
 			    } catch (NullPointerException npe) {
 			      System.out.println("FAILED.\n[" + npe.getMessage() + "]\n");
