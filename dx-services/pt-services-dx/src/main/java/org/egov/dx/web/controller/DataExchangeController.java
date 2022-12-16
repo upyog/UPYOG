@@ -41,41 +41,37 @@
 package org.egov.dx.web.controller;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.net.URLConnection;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
-import java.net.ConnectException;
-
 
 import javax.validation.Valid;
 
-import org.apache.commons.io.FileUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.dx.service.PaymentService;
 import org.egov.dx.service.UserService;
+import org.egov.dx.web.models.DocDetails;
 import org.egov.dx.web.models.Payment;
 import org.egov.dx.web.models.PaymentSearchCriteria;
+import org.egov.dx.web.models.PullURIRequestPOJO;
 import org.egov.dx.web.models.RequestInfoWrapper;
 import org.egov.dx.web.models.UserResponse;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.google.common.io.ByteStreams;
-import com.jayway.jsonpath.JsonPath;
-
-import okhttp3.Response;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.security.AnyTypePermission;
+import com.thoughtworks.xstream.security.NoTypePermission;
+import com.thoughtworks.xstream.security.NullPermission;
+import com.thoughtworks.xstream.security.PrimitiveTypePermission;
 
 @RestController
 @RequestMapping("/dataexchange")
@@ -87,14 +83,25 @@ public class DataExchangeController {
 	@Autowired
     private UserService userService;
 	
-	@RequestMapping(path = {"/_searchReceipt"}, method = RequestMethod.POST)
-    @ResponseBody
+	@RequestMapping(path = {"/_searchReceipt"}, method = RequestMethod.POST ,consumes = {MediaType.APPLICATION_XML_VALUE})
+    @ResponseBody()
     public String search(@Valid @RequestBody String requestBody) throws IOException
      {
+		
+		XStream xstream = new XStream();
+		xstream .addPermission(NoTypePermission.NONE); //forbid everything
+		xstream .addPermission(NullPermission.NULL);   // allow "null"
+		xstream .addPermission(PrimitiveTypePermission.PRIMITIVES);
+		xstream .addPermission(AnyTypePermission.ANY);
+        //xstream.processAnnotations(DocDetails.class);
+        xstream.processAnnotations(PullURIRequestPOJO.class);
+		Object obj=xstream.fromXML(requestBody);
+		ObjectMapper om=new ObjectMapper();
+		PullURIRequestPOJO pojo=om.convertValue(obj, PullURIRequestPOJO.class);
     	String encoded=null;
 		PaymentSearchCriteria criteria = new PaymentSearchCriteria();
-        criteria.setTenantId("pg."+JsonPath.read(requestBody, "$.City").toString());
-        criteria.setConsumerCodes(Collections.singleton(JsonPath.read(requestBody, "$.PropertyID").toString()));
+        criteria.setTenantId("pg."+pojo.getDocDetails().getCity());
+        criteria.setConsumerCodes(Collections.singleton(pojo.getDocDetails().getPropertyId()));
         RequestInfo request=new RequestInfo();
         request.setApiId("Rainmaker");
         request.setMsgId("1670564653696|en_IN");
