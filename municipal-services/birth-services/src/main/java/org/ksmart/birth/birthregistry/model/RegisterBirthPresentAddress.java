@@ -120,4 +120,6 @@ public class RegisterBirthPresentAddress {
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails;
 
+    private String fullAddress;
+
 }

@@ -1,0 +1,612 @@
+{
+  "key": "birth-certificate",
+  "config": {
+    "defaultStyle": {
+      "font": "Cambay"
+    },
+    "content": [
+      {
+        "style": "ws-head",
+        "table": {
+          "widths": ["20%", "60%", "20%"],
+          "body": [
+            [
+              {
+                "stack": [
+                  {
+                    "text": "No .1",
+                    "style": "appendix-header-serialNo"
+                  }
+                ]
+              },
+              {
+                "stack": [
+                  {
+                    "text": "FORM No.5",
+                    "style":"appendix-header-body"
+                  },
+                  {
+                    "text": "(See Rule 8)",
+                    "style":"appendix-header-body"
+                  },
+                  {
+                    "text": "കേരള സർക്കാർ",
+                    "style":"appendix-header-body"
+                  },
+                  {
+                    "text": "GOVERNMENT OF KERALA",
+                    "style":"appendix-header-body"
+                  },
+                  {
+                    "text": "നഗരകാര്യ വകുപ്പ്",
+                    "style":"appendix-header-body",
+                    "margin": [0, 0, 0, 0]
+                  },
+                  {
+                    "text": "DEPARTMENT OF URBAN AFFAIRS",
+                    "style":"appendix-header-body",
+                    "margin": [0, 0, 0, 0]
+                  }
+                ]
+              },
+              {
+                "stack": [
+                  {
+                    "text": "Form-5",
+                    "style": "appendix-header-formNo"
+                  }
+                ]
+              }
+            ]
+          ]
+        },
+        "layout": "noBorders"
+      },
+      {
+        "style": "ws-head",
+        "table": {
+          "widths": ["*"],
+          "body": [
+            [
+              {
+                "text": "Name of Local Body issuing Certificate : Thiruvananthapuram Corporation",
+                "style": "title-header"
+              }
+            ]
+          ]
+        },
+        "layout": "noBorders"
+      },{
+        "style": "ws-head",
+        "table": {
+          "widths": ["*"],
+          "body": [
+            [
+              {
+                "text": "ജനന സർട്ടിഫിക്കറ്റ്",
+                "style": "title-header"
+              },
+              {
+                "text": " ",
+                "width": "1%"
+              },
+              {
+                "text": "BIRTH CERTIFICATE",
+                "style": "title-header"
+              },
+              {
+                "text": " ",
+                "width": "1%"
+              },
+              {
+                "text": "(Issued Under Section 12)",
+                "style": "title-header"
+              }
+            ]
+          ]
+        },
+        "layout": "noBorders"
+      },
+      {
+        "style": "ws-head",
+        "table": {
+          "widths": ["*"],
+          "body": [
+            [
+              {
+                "columns": [
+                  {
+                    "text": "(1967-ലെ ജനന-മരണ രജിസ്‌ട്രേഷൻ ആക്ടിലെ 12-ാം വകുപ്പും 1999-ലെ കേരള ജനന-മരണ രജിസ്ട്രേഷന് ചട്ടങ്ങളിലെ 8-ാംചാട്ടവും അനുസരിച്ചു നൽകുന്നത്.)",
+                    "style": "rule-header"
+                  }
+                ]
+
+              }
+            ]
+          ]
+        },
+        "layout": "noBorders"
+      },
+      {
+        "style": "ws-head",
+        "table": {
+          "widths": ["*"],
+          "body": [
+            [
+              {
+                "columns": [
+                  {
+                    "text": "(Issued Under Section 12/17 of the Registration of Births and Deaths Act, 1969 and Rule8/13 the Testing Registration of Births and Deaths Rules,1999)",
+                    "style": "rule-header"
+                  }
+                ]
+
+              }
+            ]
+          ]
+        },
+        "layout": "noBorders"
+      },
+      {
+        "style": "ws-head",
+        "table": {
+          "widths": ["*"],
+          "body": [
+            [
+              {
+                "columns": [
+                  {
+                    "text": ["താഴെ പറയുന്ന വിവരങ്ങൾ കേരള  സംസ്‌ഥാനത്തിലെ തിരുവനന്തപുരം ജില്ലയിലെ തിരുവനന്തപുരം താലൂക്കിലെ തിരുവനന്തപുരം കോർപ്പറേഷൻ -ലെ ( തദേശസ്ഥാപനം) അസ്സൽ ജനന രജിസ്റ്ററിൽ നിന്ന് എടുത്തിട്ടുള്ളവയാണെന്ന് സാക്ഷ്യപ്പെടുത്തുന്നു ."],
+                    "style": "rule-body_multiLang"
+                  }
+                ]
+              }
+            ]
+          ]
+        },
+        "layout": "noBorders"
+      },
+
+      {
+        "style": "ws-head",
+        "table": {
+          "widths": ["*"],
+          "body": [
+            [
+              {
+                "columns": [
+                  {
+                    "text": "This is to certify that the following information has been taken from the original record of birth which is the register for (local area/localbody) Thiruvananthapuram Corporation of Taluk Thiruvananthapuram of District Thiruvananthapuram of State Kerala.",
+                    "style": "rule-body_multiLang"
+                  }
+                ]
+              }
+            ]
+          ]
+        },
+        "layout": "noBorders"
+      },
+
+      {
+        "style": "ws-head",
+        "table": {
+          "widths": ["*"],
+          "body": [
+            [
+              {
+                "columns": [
+                  {
+                    "text": "പേര്/NAME: {{name}}",
+                    "width": "49%",
+                    "style": "details-body"
+                  },
+                  {
+                    "text": " ",
+                    "width": "1%"
+                  },
+                  {
+                    "text": "ആൺ/പെൺ/SEX: {{gender}}",
+                    "style": "details-body"
+                  }
+                ]
+              }
+            ],
+            [
+              {
+                "columns": [
+                  {
+                    "text": "ജനന തീയതി/DATE OF BIRTH: {{dob}}",
+                    "width": "49%",
+                    "style": "details-body"
+                  },
+                  {
+                    "text": " ",
+                    "width": "1%"
+                  },
+                  {
+                    "text": "ജനന സ്ഥലം/PLACE OF BIRTH: {{placeOfBirth}}",
+                    "style": "details-body"
+                  }
+                ]
+              }
+            ],
+            [ {
+              "columns": [
+                {
+                  "text": "മാതാവിന്റെ പേര്/NAME OF MOTHER: {{motherName}}",
+                  "width": "49%",
+                  "style": "details-body"
+                },
+                {
+                  "text": " ",
+                  "width": "1%"
+                },
+                {
+                  "text": "പിതാവിന്റെ പേര്/NAME OF FATHER: {{fatherName}}",
+                  "style": "details-body"
+                }
+              ]
+            }],
+
+            [ {
+              "columns": [
+                {
+                  "text": "കുട്ടിയുടെ ജനന സമയത്ത് മാതാപിതാക്കളുടെ മേൽവിലാസം: {{childAddress}}",
+                  "width": "49%",
+                  "style": "details-body"
+                },
+                {
+                  "text": " ",
+                  "width": "1%"
+                },
+                {
+                  "text": "ADDRESS OF PARENTS AT THE TIME OF BIRTH OF THE CHILD: {{childAddress}}",
+                  "width": "49%",
+                  "style": "details-body"
+                },
+                {
+                  "text": " ",
+                  "width": "1%"
+                },
+                {
+                  "text": "മാതാപിതാക്കളുടെ സ്ഥിരമായ മേൽവിലാസം: {{parentsAddress}}",
+                  "style": "details-body"
+                },
+                {
+                  "text": " ",
+                  "width": "1%"
+                },
+                {
+                  "text": "PERMANENT ADDRESS OF PARENTS: {{parentsAddress}}",
+                  "style": "details-body"
+                }
+              ]
+            }
+
+            ],
+            [
+              {
+                "columns": [
+                  {
+                    "text": "രജിസ്ട്രേഷൻ നമ്പർ/REGISTRATION NUMBER: {{registrationNo}}",
+                    "width": "49%",
+                    "style": "details-body"
+                  }
+                ]
+              }
+            ],
+            [
+              {
+                "columns": [
+                  {
+                    "text": "അഭിപ്രായകുറിപ്പ്/REMARKS (IF ANY): {{remarks}}",
+                    "width": "49%",
+                    "style": "details-body"
+                  }
+                ]
+              }
+            ],
+            [
+              {
+                "columns": [
+                  {
+                    "text": "നൽകുന്ന തീയതി/DATE OF ISSUE: {{issueDate}}",
+                    "width": "49%",
+                    "style": "details-body"
+                  }
+                ]
+              }
+            ],
+            [
+              {
+                "columns": [
+                  {
+                    "text": " ",
+                    "width": "49%"
+                  },
+                  {
+                    "text": " ",
+                    "width": "1%"
+                  },
+                  {
+                    "text": "നൽകുന്ന അധികാരിയുടെ മേൽവിലാസം/Address of the issuing authority",
+                    "style": "details-body",
+                    "margin": [0, -5, 0, 0]
+                  }
+                ]
+              }
+            ]
+
+          ]
+        },
+        "layout": "noBorders"
+      },
+      {
+        "style": "ws-head",
+        "table": {
+          "widths": ["*"],
+          "body": [
+            [
+              {
+                "image": "{{qr_code_image}}",
+                "width": 70,
+                "height": 70,
+                "style": "qr-code"
+              }
+            ]
+          ]
+        },
+        "layout": "noBorders"
+      },
+      {
+        "style": "ws-head",
+        "table": {
+          "widths": ["*"],
+          "body": [
+            [
+              {
+                "text": "ENSURE REGISTRATION OF EVERY BIRTH AND DEATH.",
+                "style": "footer"
+              }
+            ]
+          ]
+        },
+        "layout": "noBorders"
+      },
+      {
+        "style": "ws-head",
+        "table": {
+          "widths": ["*"],
+          "body": [
+            [
+              {
+                "text": "ഓരോ ജനനവും മരണവും രജിസ്റ്റർ ചെയ്തുവെന്ന് ഉറപ്പുവരുത്തുക.",
+                "style": "footer"
+              }
+            ]
+          ]
+        },
+        "layout": "noBorders"
+      },{
+        "style": "ws-head",
+        "table": {
+          "widths": ["*"],
+          "body": [
+            [
+              {
+                "text": "This certificate is computer generated and does not require any Seal/Signature in original The Govt. vide G.O.(Ms) No.202/2012/LSGD dated 25/07/2012 has approved this certificate as a valid document for all official purposes Authenticity of this certificate can be verified at www.cr.lsgkerala.gov.in. The Key Number is unique to each event.,      Software developed and supported by Information Kerala Mission                    Certificate printed before the last updated date is invalid",
+                "style": "footer"
+              }
+            ]
+          ]
+        },
+        "layout": "noBorders"
+      }
+    ],
+    "styles": {
+      "pdf-header": {
+        "fillColor": "#F2F2F2",
+        "margin": [-70, -41, -81, 10]
+      },
+      "appendix-header": {
+        "color": "#000000",
+        "bold": true,
+        "fontSize": 9,
+        "fontWeight": 400,
+        "alignment": "center"
+      },
+      "appendix-header-emblem": {
+        "color": "#000000",
+        "alignment": "center",
+        "margin": [0, -30, 0, 0]
+      },
+      "instruction-body": {
+        "color": "#000000",
+        "bold": false,
+        "fontSize": 7,
+        "fontWeight": 400,
+        "alignment": "center",
+        "margin": [0, -20, 0, 0]
+      },
+      "qr-code": {
+        "color": "#000000",
+        "alignment": "left",
+        "margin": [0, 0, 0, 0]
+      },
+      "footer": {
+        "color": "#000000",
+        "alignment": "left",
+        "margin": [
+          0,
+          30,
+          0,
+          0
+        ]
+      },
+      "title-header": {
+        "color": "#004d00",
+        "bold": true,
+        "fontSize": 14,
+        "alignment": "center",
+        "margin": [0, -1, 0, 0]
+      },
+      "title-header_multiLang": {
+        "color": "#004d00",
+        "bold": true,
+        "fontSize": 15,
+        "alignment": "center",
+        "margin": [0, 0, 0, -10]
+      },
+      "appendix-header-serialNo": {
+        "color": "#000000",
+        "bold": false,
+        "fontSize": 8,
+        "fontWeight": 400,
+        "margin": [0, -5, 0, 0]
+      },
+      "appendix-header-formNo": {
+        "color": "#000000",
+        "bold": false,
+        "fontSize": 8,
+        "fontWeight": 400,
+        "margin": [20, -5, 0, 0]
+      },
+      "rule-header": {
+        "color": "#000000",
+        "bold": false,
+        "fontSize": 10,
+        "fontWeight": 400,
+        "margin": [0, 0, 0, 3]
+      },
+      "rule-header_multiLang": {
+        "color": "#000000",
+        "bold": false,
+        "fontSize": 11,
+        "fontWeight": 400,
+        "margin": [0, 0, 0, -1]
+      },
+      "rule-body": {
+        "color": "#000000",
+        "bold": false,
+        "fontSize": 10,
+        "fontWeight": 400,
+        "margin": [0, 0, 0, 0]
+      },
+      "rule-body_multiLang": {
+        "color": "#000000",
+        "bold": false,
+        "fontSize": 11,
+        "fontWeight": 400,
+        "margin": [0, 0, 0, 0]
+      },
+      "details-body": {
+        "color": "#000000",
+        "bold": false,
+        "fontSize": 11,
+        "fontWeight": 400,
+        "margin": [0, 5, 0, 0]
+      },
+      "appendix-header-body": {
+        "color": "#000099",
+        "bold": true,
+        "fontSize": 9,
+        "fontWeight": 400,
+        "alignment": "center"
+      },
+      "receipt-value-down-sub": {
+        "color": "#000000",
+        "bold": false,
+        "fontSize": 11,
+        "fontWeight": 400,
+        "alignment": "left",
+        "margin": [0, 0, 0, 5]
+      },
+      "receipt-value-down-rec": {
+        "color": "#000000",
+        "bold": false,
+        "fontSize": 13,
+        "fontWeight": 400,
+        "alignment": "left",
+        "margin": [0, 0, 0, 0]
+      },
+      "receipt-value-down": {
+        "color": "#000000",
+        "bold": false,
+        "fontSize": 13,
+        "fontWeight": 400,
+        "alignment": "left",
+        "margin": [-8, 0, 0, 5]
+      },
+      "pdf-application-no-value": {
+        "fontSize": 12,
+        "font": "Roboto",
+        "italics": true,
+        "margin": [-18, 8, 0, 0],
+        "color": "#484848"
+      },
+      "pdf-header-text": {
+        "color": "#484848",
+        "fontSize": 20,
+        "bold": true,
+        "letterSpacing": 0.74,
+        "margin": [0, 0, 0, 5]
+      },
+      "pdf-header-sub-text": {
+        "color": "#484848",
+        "fontSize": 15,
+        "letterSpacing": 0.6
+      },
+      "pdf-application-no": {
+        "fontSize": 12,
+        "bold": true,
+        "margin": [-18, 8, 0, 0],
+        "color": "#484848"
+      },
+      "pdf-card-title": {
+        "fontSize": 11,
+        "bold": true,
+        "margin": [-18, 16, 8, 8],
+        "color": "#484848",
+        "fontWeight": 500
+      },
+      "pdf-card-no-title": {
+        "fontSize": 11,
+        "bold": true,
+        "color": "#484848",
+        "fontWeight": 500
+      },
+      "pdf-table-card-white": {
+        "fillColor": "white",
+        "fontSize": 7,
+        "color": "#484848",
+        "margin": [-20, -2, -8, -8]
+      },
+      "pdf-table-card": {
+        "fillColor": "#F2F2F2",
+        "fontSize": 7,
+        "color": "#484848",
+        "margin": [-20, -2, -8, -8]
+      },
+      "pdf-card-key": {
+        "color": "rgba(0, 0, 0, 0.54)",
+        "fontSize": 8,
+        "margin": [0, 1, 0, 0]
+      },
+      "pdf-card-sub-header": {
+        "color": "rgba(0, 0, 0, 0.94)",
+        "fontSize": 9,
+        "bold": true,
+        "margin": [0, 3, 0, 0]
+      },
+      "pdf-card-value": {
+        "fontSize": 10,
+        "color": "rgba(0, 0, 0, 0.87)",
+        "margin": [0, 0, 0, 1]
+      },
+      "pdf-head-qr-code": {
+        "fillColor": "#F2F2F2",
+        "margin": [-70, -41, -81, 0]
+      }
+    }
+  }
+}

@@ -1,17 +1,13 @@
-package org.ksmart.birth.birthadoption.enrichment;
+package org.ksmart.birth.birthcorrection.enrichment.birth;
 
-import lombok.extern.apachecommons.CommonsLog;
 import org.apache.commons.collections4.CollectionUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
 import org.egov.tracer.model.CustomException;
-import org.ksmart.birth.birthadoption.model.AdoptionDetail;
-import org.ksmart.birth.birthadoption.model.adoption.AdoptionRequest;
-import org.ksmart.birth.birthregistry.model.RegisterBirthDetailsRequest;
+import org.ksmart.birth.birthcorrection.enrichment.BaseEnrichment;
 import org.ksmart.birth.common.model.AuditDetails;
 import org.ksmart.birth.common.repository.IdGenRepository;
 import org.ksmart.birth.config.BirthDeathConfiguration;
-import org.ksmart.birth.crbirth.enrichment.BaseEnrichment;
 import org.ksmart.birth.crbirth.model.BirthDetail;
 import org.ksmart.birth.crbirth.model.BirthDetailsRequest;
 import org.ksmart.birth.utils.enums.ErrorCodes;
@@ -22,60 +18,57 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.UUID;
 
+
 @Component
-public class AdoptionEnrichment implements BaseEnrichment {
+public class BirthDetailsCorrectionEnrichment implements BaseEnrichment {
+
     @Autowired
     BirthDeathConfiguration config;
 
     @Autowired
     IdGenRepository idGenRepository;
 
-    public void enrichCreate(AdoptionRequest request) {
+    public void enrichCreate(BirthDetailsRequest request) {
+
         RequestInfo requestInfo = request.getRequestInfo();
         User userInfo = requestInfo.getUserInfo();
         AuditDetails auditDetails = buildAuditDetails(userInfo.getUuid(), Boolean.TRUE);
-        request.getAdoptionDetails().forEach(adoption -> {
-            adoption.setId(UUID.randomUUID().toString());
+        request.getBirthDetails().forEach(birth -> {
 
-            adoption.setAuditDetails(auditDetails);
+            birth.setId(UUID.randomUUID().toString());
 
-            adoption.getBirthPlace().setId(UUID.randomUUID().toString());
+            birth.setAuditDetails(auditDetails);
 
-            adoption.getBirthFatherInfo().setId(UUID.randomUUID().toString());
+            birth.getBirthPlace().setId(UUID.randomUUID().toString());
 
-            adoption.getBirthMotherInfo().setId(UUID.randomUUID().toString());
+            birth.getBirthFatherInfo().setId(UUID.randomUUID().toString());
 
-            adoption.getBirthPermanentAddress().setId(UUID.randomUUID().toString());
+            birth.getBirthMotherInfo().setId(UUID.randomUUID().toString());
 
-            adoption.getBirthPresentAddress().setId(UUID.randomUUID().toString());
+            birth.getBirthPermanentAddress().setId(UUID.randomUUID().toString());
 
-            adoption.getBirthStatisticalInformation().setId(UUID.randomUUID().toString());
+            birth.getBirthPresentAddress().setId(UUID.randomUUID().toString());
 
-            adoption.getAdoptionFatherInfo().setId(UUID.randomUUID().toString());
-
-            adoption.getAdoptionMotherInfo().setId(UUID.randomUUID().toString());
-
-            adoption.getAdoptionPermanentAddress().setId(UUID.randomUUID().toString());
-
-            adoption.getAdoptionPresentAddress().setId(UUID.randomUUID().toString());
+            birth.getBirthStatisticalInformation().setId(UUID.randomUUID().toString());
         });
-
         setApplicationNumbers(request);
         setFileNumbers(request);
         setRegistrationNumber(request);
     }
 
-    public void enrichUpdate(AdoptionRequest request) {
+    public void enrichUpdate(BirthDetailsRequest request) {
+
         RequestInfo requestInfo = request.getRequestInfo();
         User userInfo = requestInfo.getUserInfo();
         AuditDetails auditDetails = buildAuditDetails(userInfo.getUuid(), Boolean.FALSE);
-        request.getAdoptionDetails()
+
+        request.getBirthDetails()
                 .forEach(birth -> birth.setAuditDetails(auditDetails));
     }
 
-    private void setApplicationNumbers(AdoptionRequest request) {
+    private void setApplicationNumbers(BirthDetailsRequest request) {
         RequestInfo requestInfo = request.getRequestInfo();
-        List<AdoptionDetail> birthDetails = request.getAdoptionDetails();
+        List<BirthDetail> birthDetails = request.getBirthDetails();
         String tenantId = birthDetails.get(0)
                 .getTenantId();
         List<String> filecodes = getIds(requestInfo,
@@ -86,36 +79,37 @@ public class AdoptionEnrichment implements BaseEnrichment {
         validateFileCodes(filecodes, birthDetails.size());
 
         ListIterator<String> itr = filecodes.listIterator();
-        request.getAdoptionDetails()
+        request.getBirthDetails()
                 .forEach(birth -> {
                     birth.setApplicationNo(itr.next());
+
                 });
     }
 
-    private void setFileNumbers(AdoptionRequest request) {
+    private void setFileNumbers(BirthDetailsRequest request) {
         RequestInfo requestInfo = request.getRequestInfo();
-        List<AdoptionDetail> birthDetails = request.getAdoptionDetails();
+        List<BirthDetail> birthDetails = request.getBirthDetails();
         String tenantId = birthDetails.get(0)
                 .getTenantId();
 
         List<String> filecodes = getIds(requestInfo,
-                tenantId,
-                config.getBirthFileNumberName(),
-                config.getBirthFileNumberFormat(),
-                birthDetails.size());
+                        tenantId,
+                        config.getBirthFileNumberName(),
+                        config.getBirthFileNumberFormat(),
+                        birthDetails.size());
         validateFileCodes(filecodes, birthDetails.size());
         Long currentTime = Long.valueOf(System.currentTimeMillis());
         ListIterator<String> itr = filecodes.listIterator();
-        request.getAdoptionDetails()
+        request.getBirthDetails()
                 .forEach(birth -> {
                     birth.setFmFileNo(itr.next());
                     birth.setFileDate(currentTime);
                 });
     }
 
-    private void setRegistrationNumber(AdoptionRequest request) {
+    private void setRegistrationNumber(BirthDetailsRequest request) {
         RequestInfo requestInfo = request.getRequestInfo();
-        List<AdoptionDetail> birthDetails = request.getAdoptionDetails();
+        List<BirthDetail> birthDetails = request.getBirthDetails();
         String tenantId = birthDetails.get(0)
                 .getTenantId();
 
@@ -127,7 +121,7 @@ public class AdoptionEnrichment implements BaseEnrichment {
         validateFileCodes(filecodes, birthDetails.size());
         Long currentTime = Long.valueOf(System.currentTimeMillis());
         ListIterator<String> itr = filecodes.listIterator();
-        request.getAdoptionDetails()
+        request.getBirthDetails()
                 .forEach(birth -> {
                     birth.setRegistrationNo(itr.next());
                     birth.setRegistrationDate(currentTime);
@@ -135,7 +129,7 @@ public class AdoptionEnrichment implements BaseEnrichment {
     }
 
     private List<String> getIds(RequestInfo requestInfo, String tenantId, String idKey, String idformat,
-                                int count) {
+                                      int count) {
         return idGenRepository.getIdList(requestInfo, tenantId, idKey, idformat, count);
     }
 

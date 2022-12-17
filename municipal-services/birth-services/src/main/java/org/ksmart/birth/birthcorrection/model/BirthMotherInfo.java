@@ -1,16 +1,16 @@
-package org.ksmart.birth.birthregistry.model;
+package org.ksmart.birth.birthcorrection.model;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
-import org.ksmart.birth.common.model.AuditDetails;
 
 import javax.validation.constraints.Size;
+
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-
-public class RegisterBirthFatherInfo {
+public class BirthMotherInfo {
 
     @Size(max = 64)
     @JsonProperty("id")
@@ -44,9 +44,9 @@ public class RegisterBirthFatherInfo {
     @JsonProperty("aadharno")
     private String aadharNo;
 
-    @Size(max = 100)
+    @Size(max = 64)
     @JsonProperty("ot_passportno")
-    private String otPassportNo;
+    private String passportNo;
 
     @Size(max = 300)
     @JsonProperty("emailid")
@@ -59,9 +59,5 @@ public class RegisterBirthFatherInfo {
     @Size(max = 64)
     @JsonProperty("birthdtlid")
     private String birthDtlId;
-
-    private String fullName;
-
-    private String aadharno;
 
 }

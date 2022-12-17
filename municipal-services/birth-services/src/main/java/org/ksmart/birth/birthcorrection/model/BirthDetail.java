@@ -1,22 +1,20 @@
-package org.ksmart.birth.birthadoption.model;
+package org.ksmart.birth.birthcorrection.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
-import org.ksmart.birth.birthadoption.model.adoption.AdoptionFatherInfo;
-import org.ksmart.birth.birthadoption.model.adoption.AdoptionMotherInfo;
-import org.ksmart.birth.birthadoption.model.adoption.AdoptionPermanentAddress;
-import org.ksmart.birth.birthadoption.model.adoption.AdoptionPresentAddress;
-import org.ksmart.birth.birthadoption.model.birth.*;
 import org.ksmart.birth.common.model.AuditDetails;
+import org.ksmart.birth.crbirth.model.BirthStatisticalInformation;
 
 import javax.validation.constraints.Size;
+import java.util.List;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class AdoptionDetail {
+public class BirthDetail {
+
     @Size(max = 64)
     @JsonProperty("id")
     private String id;
@@ -85,7 +83,7 @@ public class AdoptionDetail {
     @JsonProperty("esign_user_desig_code")
     private String esignUserDesigCode;
 
-    @JsonProperty("is_adopted")
+     @JsonProperty("is_adopted")
     private Boolean isAdopted;
 
     @JsonProperty("is_abandoned")
@@ -105,7 +103,7 @@ public class AdoptionDetail {
 
     @Size(max = 64)
     @JsonProperty("multiplebirthdetid")
-    private String multipleBirthDetailsId;
+    private String multipleBirthDeeailsIid;
 
     @JsonProperty("is_born_outside")
     private Boolean isBornOutside;
@@ -151,53 +149,18 @@ public class AdoptionDetail {
     @JsonProperty("action")
     private String action;
 
+    @JsonProperty("assignee")
+    private List<String> assignee;
+
+    private String comment;
+
+
+    @JsonProperty("WfDocuments")
+    private String WfDocuments;
+
     @Size(max = 64)
     @JsonProperty("status")
     private String status;
-
-    @Size(max = 1000)
-    @JsonProperty("a_firstname_en")
-    private String adoptFirstNameEn;
-
-    @Size(max = 1000)
-    @JsonProperty("adopt_firstname_ml")
-    private String adoptFirstNameMl;
-
-    @Size(max = 1000)
-    @JsonProperty("adopt_middlename_en")
-    private String adoptMiddleNameEn;
-
-    @Size(max = 1000)
-    @JsonProperty("adopt_middlename_ml")
-    private String adoptMiddleNameMl;
-
-    @Size(max = 1000)
-    @JsonProperty("adopt_lastname_en")
-    private String adoptLastNameEn;
-
-    @Size(max = 1000)
-    @JsonProperty("adopt_lastname_ml")
-    private String adoptLastNameMl;
-
-    @Size(max = 64)
-    @JsonProperty("adopt_deed_order_no")
-    private String adoptDeedOrderNo;
-
-    @JsonProperty("adopt_dateoforder_deed")
-    private Long adoptDateOfOrderDeed;
-
-    @Size(max = 1000)
-    @JsonProperty("adopt_issuing_auththority")
-    private String adoptIssuingAuththority;
-
-    @JsonProperty("adopt_has_agency")
-    private Boolean adoptHasAgency;
-
-    @JsonProperty("adopt_agency_name")
-    private String adoptAgencyName;
-
-    @JsonProperty("adopt_agency_address")
-    private String adoptAgencyAddress;
 
     @JsonProperty("birthPlace")
     private BirthPlace birthPlace;
@@ -217,18 +180,10 @@ public class AdoptionDetail {
     @JsonProperty("birthStatistical")
     private BirthStatisticalInformation birthStatisticalInformation;
 
-    @JsonProperty("adoptionMother")
-    private AdoptionMotherInfo adoptionMotherInfo;
-
-    @JsonProperty("adoptionFather")
-    private AdoptionFatherInfo adoptionFatherInfo;
-
-    @JsonProperty("adoptionPermanentAddress")
-    private AdoptionPermanentAddress adoptionPermanentAddress;
-
-    @JsonProperty("adoptionPresentAddress")
-    private AdoptionPresentAddress adoptionPresentAddress;
-
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails;
+
+
+
 }
+

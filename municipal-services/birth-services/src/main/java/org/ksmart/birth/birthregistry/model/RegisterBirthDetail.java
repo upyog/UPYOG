@@ -142,11 +142,32 @@ public class RegisterBirthDetail {
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails;
 
+
+
+    /// for PDF SERVICE
+
+    private String fullName;
+    private String embeddedUrl;
+    private String dateofbirth;
+    private String genderStr;
+
+    private String registrationno;
+    private String dateofreport;
     private Long dateofissue;
 
-    private String embeddedUrl;
+    private Long remarks;
+
+
 
     private String certId;
+
+
+
+
+
+    private String placeofbirth;
+
+    private String certificateType;
 
 
 }

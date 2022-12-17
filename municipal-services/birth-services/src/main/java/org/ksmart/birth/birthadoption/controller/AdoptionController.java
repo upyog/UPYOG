@@ -24,17 +24,17 @@ public class AdoptionController {
         this.responseInfoFactory = responseInfoFactory;
     }
 
-//    @PostMapping(value = { "/_create"})
-//    public ResponseEntity<?> saveAdoptionDetails(@RequestBody AdoptionRequest request) {
-//        List<AdoptionDetail> adoptionDetails = adoptionService.saveAdoptionDetails(request);
-//        return new ResponseEntity<>(adoptionDetails, HttpStatus.OK);
-//    }
+    @PostMapping(value = { "/_create"})
+    public ResponseEntity<?> saveAdoptionDetails(@RequestBody AdoptionRequest request) {
+        List<AdoptionDetail> adoptionDetails = adoptionService.saveAdoptionDetails(request);
+        return new ResponseEntity<>(adoptionDetails, HttpStatus.OK);
+    }
 
-//    @PostMapping(value = { "/_update"})
-//    public ResponseEntity<?> updateRegisterBirthDetails(@RequestBody RegisterBirthDetailsRequest request) {
-//        List<RegisterBirthDetail> registerBirthDetails = adoptionService.updateRegisterBirthDetails(request);
-//        return new ResponseEntity<>(registerBirthDetails, HttpStatus.OK);
-//    }
+    @PostMapping(value = { "/_update"})
+    public ResponseEntity<?> updateRegisterBirthDetails(@RequestBody AdoptionRequest request) {
+        List<AdoptionDetail> registerBirthDetails = adoptionService.updateAdoptionDetails(request);
+        return new ResponseEntity<>(registerBirthDetails, HttpStatus.OK);
+    }
 //
 //    @PostMapping(value = { "/_search"})
 //    public ResponseEntity<RegisterBirthResponse> listByHospitalId(@RequestBody RegisterBirthDetailsRequest request,

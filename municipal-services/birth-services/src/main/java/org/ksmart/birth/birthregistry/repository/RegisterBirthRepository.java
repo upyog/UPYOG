@@ -98,7 +98,7 @@ public class RegisterBirthRepository {
         BirthPdfRegisterRequest req = BirthPdfRegisterRequest.builder()
                 .birthCertificate(pdfApplicationRequest.getBirthCertificate())
                 .requestInfo(pdfApplicationRequest.getRequestInfo()).build();
-        System.out.println(pdfApplicationRequest.getBirthCertificate().get(0).getAadharNo());
+        System.out.println(pdfApplicationRequest.getBirthCertificate().get(0).getFirstNameEn());
         pdfApplicationRequest.getBirthCertificate().forEach(cert-> {
             String uiHost = config.getEgovPdfHost();
             String birthCertPath = config.getEgovPdfBirthEndPoint();

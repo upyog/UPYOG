@@ -9,7 +9,7 @@ public interface BirthRegStatInfoRowMapper {
     default RegisterBirthStatiticalInformation getRegBirthStatisticalInfo(ResultSet rs) throws SQLException {
         return RegisterBirthStatiticalInformation.builder()
                 .id(rs.getString("id"))
-                .weightOfChild(Long.valueOf(rs.getString("weight_of_child")))
+                //.weightOfChild(Long.valueOf(rs.getString("weight_of_child")))
                 .durationOfPregnancyInWeek(Integer.valueOf(rs.getString("duration_of_pregnancy_in_week")))
                 .natureOfMedicalAttention(rs.getString("nature_of_medical_attention"))
                 .wayOfPregnancy(rs.getString("way_of_pregnancy"))

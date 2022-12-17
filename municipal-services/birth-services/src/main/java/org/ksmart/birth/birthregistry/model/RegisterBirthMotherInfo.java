@@ -60,7 +60,8 @@ public class RegisterBirthMotherInfo {
     @JsonProperty("birthdtlid")
     private String birthDtlId;
 
-    @JsonProperty("auditDetails")
-    private AuditDetails auditDetails;
+    private String fullName;
+
+    private String aadharno;
 
 }

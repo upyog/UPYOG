@@ -34,7 +34,7 @@ public class BirthApplication {
 
     public Docket apis()
     {
-        return new Docket(DocumentationType.SWAGGER_2).select().apis(RequestHandlerSelectors.basePackage("org.bel.birthdeath")).build();
+        return new Docket(DocumentationType.SWAGGER_2).select().apis(RequestHandlerSelectors.basePackage("org.ksmart.birth")).build();
 
     }
 	@Bean

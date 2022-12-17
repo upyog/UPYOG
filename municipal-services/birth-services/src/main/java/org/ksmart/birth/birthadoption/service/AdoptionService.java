@@ -18,8 +18,11 @@ public class AdoptionService {
         this.adoptionRepository = adoptionRepository;
     }
 
-//    public List<AdoptionDetail> saveAdoptionDetails(AdoptionRequest request) {
-//        return adoptionRepository.saveRegisterBirthDetails(request);
-//    }
+    public List<AdoptionDetail> saveAdoptionDetails(AdoptionRequest request) {
+        return adoptionRepository.saveAdoptionDetails(request);
+    }
 
+    public List<AdoptionDetail> updateAdoptionDetails(AdoptionRequest request) {
+        return adoptionRepository.updateAdoptionDetails(request);
+    }
 }

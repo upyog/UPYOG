@@ -1,24 +1,20 @@
-package org.ksmart.birth.birthregistry.model;
+package org.ksmart.birth.birthcorrection.model;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
-import org.ksmart.birth.common.model.AuditDetails;
 
 import javax.validation.constraints.Size;
+
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-
-public class RegisterBirthPermanentAddress {
+public class BirthPermanentAddress {
 
     @Size(max = 64)
     @JsonProperty("id")
     private String id;
-
-    @Size(max = 200)
-    @JsonProperty("resdnce_addr_type")
-    private String resdnceAddrType;
 
     @Size(max = 200)
     @JsonProperty("buildingno")
@@ -119,20 +115,6 @@ public class RegisterBirthPermanentAddress {
     @JsonProperty("same_as_permanent")
     private Integer sameAsPermanent;
 
-    @JsonProperty("auditDetails")
-    private AuditDetails auditDetails;
-
-    private String fullAddress;
-
-    private String city;
-
-    private String streetname;
-
-    private String tehsil;
-
-    private String district;
-
-    private String state;
-
-
 }
+
+

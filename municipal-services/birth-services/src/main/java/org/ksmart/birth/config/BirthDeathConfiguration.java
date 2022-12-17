@@ -63,6 +63,12 @@ public class BirthDeathConfiguration {
     @Value("${persister.update.birth.topic}")
     private String updateBirthTopic;
 
+    @Value("${persister.save.adoption.topic}")
+    private String saveBirthAdoptionTopic;
+
+    @Value("${persister.update.adoption.topic}")
+    private String updateBirthAdoptionTopic;
+
     @Value("${persister.save.birth.application.topic}")
     private String saveBirthApplicationTopic;
 

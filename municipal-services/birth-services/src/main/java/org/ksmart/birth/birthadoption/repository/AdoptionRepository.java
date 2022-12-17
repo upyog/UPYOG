@@ -35,9 +35,15 @@ public class AdoptionRepository {
         this.birthRegisterRowMapper = birthRegisterRowMapper;
     }
 
-//    public List<AdoptionDetail> saveAdoptionDetails(AdoptionRequest request) {
-//        birthDetailsEnrichment.enrichCreate(request);
-//        producer.push(birthDeathConfiguration.getSaveBirthApplicationTopic(), request);
-//        return request.getBirthDetails();
-//    }
+    public List<AdoptionDetail> saveAdoptionDetails(AdoptionRequest request) {
+        adoptionEnrichment.enrichCreate(request);
+        producer.push(birthDeathConfiguration.getSaveBirthAdoptionTopic(), request);
+        return request.getAdoptionDetails();
+    }
+
+    public List<AdoptionDetail> updateAdoptionDetails(AdoptionRequest request) {
+        adoptionEnrichment.enrichUpdate(request);
+        producer.push(birthDeathConfiguration.getUpdateBirthAdoptionTopic(), request);
+        return request.getAdoptionDetails();
+    }
 }
