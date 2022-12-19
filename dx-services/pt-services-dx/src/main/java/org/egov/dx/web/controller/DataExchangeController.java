@@ -44,20 +44,27 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.List;
 
 import javax.validation.Valid;
 
+import org.apache.commons.io.IOUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.dx.service.PaymentService;
 import org.egov.dx.service.UserService;
-import org.egov.dx.web.models.DocDetails;
+import org.egov.dx.web.models.DocDetailsResponse;
+import org.egov.dx.web.models.IssuedTo;
 import org.egov.dx.web.models.Payment;
 import org.egov.dx.web.models.PaymentSearchCriteria;
+import org.egov.dx.web.models.Person;
 import org.egov.dx.web.models.PullURIRequestPOJO;
+import org.egov.dx.web.models.PullURIResponsePOJO;
 import org.egov.dx.web.models.RequestInfoWrapper;
 import org.egov.dx.web.models.UserResponse;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -73,6 +80,7 @@ import com.thoughtworks.xstream.security.NoTypePermission;
 import com.thoughtworks.xstream.security.NullPermission;
 import com.thoughtworks.xstream.security.PrimitiveTypePermission;
 
+
 @RestController
 @RequestMapping("/dataexchange")
 public class DataExchangeController {
@@ -83,7 +91,7 @@ public class DataExchangeController {
 	@Autowired
     private UserService userService;
 	
-	@RequestMapping(path = {"/_searchReceipt"}, method = RequestMethod.POST ,consumes = {MediaType.APPLICATION_XML_VALUE})
+	@RequestMapping(path = {"/_searchReceipt"}, method = RequestMethod.POST ,consumes = {MediaType.APPLICATION_XML_VALUE},produces = {"application/xml","text/xml"})
     @ResponseBody()
     public String search(@Valid @RequestBody String requestBody) throws IOException
      {
@@ -106,12 +114,23 @@ public class DataExchangeController {
         request.setApiId("Rainmaker");
         request.setMsgId("1670564653696|en_IN");
         RequestInfoWrapper requestInfoWrapper=new RequestInfoWrapper();
-        requestInfoWrapper.setRequestInfo(request);
-        UserResponse userResponse=userService.getUser();
+        UserResponse userResponse =new UserResponse();
+        try {
+        	userResponse=userService.getUser();
+        	}
+        catch(Exception e)
+        {
+        	
+        }
         request.setAuthToken(userResponse.getAuthToken());
         request.setUserInfo(userResponse.getUser());
+        requestInfoWrapper.setRequestInfo(request);
 		List<Payment> payments = paymentService.getPayments(criteria, requestInfoWrapper);
 		System.out.println("payments are:" + (!payments.isEmpty()?payments.get(0):"No payments fould"));
+		PullURIResponsePOJO model= new PullURIResponsePOJO();
+	     
+	    
+	      
 		if(!payments.isEmpty()){ 
 				
 		 String o=paymentService.getFilestore(criteria, requestInfoWrapper,
@@ -135,7 +154,23 @@ public class DataExchangeController {
 
 			     buffer.flush();
 			     byte[] targetArray = buffer.toByteArray();
-			     return targetArray.toString();
+			     //byte[] sourceBytes = IOUtils.toByteArray(is1)
+
+			     String encodedString = Base64.getEncoder().encodeToString(targetArray); 
+			     
+			     model.setResponseStatus("1");
+			     
+			     DocDetailsResponse docDetailsResponse=new DocDetailsResponse();
+			     IssuedTo issuedTo=new IssuedTo();
+			     List<Person> persons= new ArrayList<Person>();
+			     issuedTo.setPersons(persons);
+			     docDetailsResponse.setURI(null);
+			     docDetailsResponse.setIssuedTo(issuedTo);
+			     docDetailsResponse.setDataContent(encodedString);
+			     model.setDocDetails(docDetailsResponse);
+			       
+			    
+			     //return targetArray.toString();
 
 
 			    } catch (NullPointerException npe) {
@@ -145,9 +180,22 @@ public class DataExchangeController {
 		else
 		{
 			encoded="No payments found for this payment Id";
+			model.setResponseStatus("1");
 		}
+		
+		
 			
-		return encoded;   
+        xstream = new XStream();
+		xstream .addPermission(NoTypePermission.NONE); //forbid everything
+		xstream .addPermission(NullPermission.NULL);   // allow "null"
+		xstream .addPermission(PrimitiveTypePermission.PRIMITIVES);
+		xstream .addPermission(AnyTypePermission.ANY);
+        //xstream.processAnnotations(DocDetails.class);
+        xstream.processAnnotations(PullURIResponsePOJO.class);
+        JSONObject jsonObj = new JSONObject( model );
+        xstream.toXML(model);
+        
+		return xstream.toXML(model);   
     }
 	
 }

@@ -2,7 +2,6 @@ package org.egov.dx.service;
 
 import org.egov.dx.repository.Repository;
 import org.egov.dx.util.Configurations;
-import org.egov.dx.web.models.User;
 import org.egov.dx.web.models.UserResponse;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
