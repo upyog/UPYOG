@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @EqualsAndHashCode
-@XStreamAlias("PullDocResponse")
+@XStreamAlias("PullURIResponse")
 
 public class PullURIResponsePOJO {
 
