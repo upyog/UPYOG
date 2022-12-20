@@ -1,13 +1,11 @@
 package org.egov.dx.web.models;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlValue;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,11 +18,21 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @EqualsAndHashCode
-@XStreamAlias("IssuedTo")
+@XStreamAlias("ResponseStatus")
 
-public class IssuedTo {
+public class ResponseStatus {
 	
-	@XStreamAlias("Persons")
-    private List<Person> persons=new ArrayList<Person>();
-	
+	 @XStreamAsAttribute
+	    private String ts;
+	    	
+	    @XStreamAsAttribute
+	    private String txn;
+	    
+	    @XStreamAsAttribute
+	    private String Status;
+	    
+	    @XmlValue
+	    private String value;
+
+	   
 }
