@@ -21,6 +21,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <lombok.version>1.18.22</lombok.version>
     <commons-lang-version>2.6</commons-lang-version>
+    <Export-Package>org.egov.dx.web.models.*,!org.egov.dx.web.models.PullURIRequestPOJO</Export-Package>
   </properties>
   <dependencies>
     <dependency>
@@ -85,11 +86,7 @@
       <groupId>com.fasterxml.jackson.datatype</groupId>
       <artifactId>jackson-datatype-jsr310</artifactId>
     </dependency>
- <dependency>
-    <groupId>org.codehaus.mojo</groupId>
-    <artifactId>jaxb2-maven-plugin</artifactId>
-    <version>2.5.0</version>
-</dependency>
+
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
@@ -154,10 +151,6 @@
               <groupId>org.projectlombok</groupId>
               <artifactId>lombok</artifactId>
             </exclude>
-            <exclude>
-              <groupId>org.springframework.boot</groupId>
-              <artifactId>spring-boot-devtools</artifactId>
-            </exclude>
           </excludes>
         </configuration>
       </plugin>
@@ -193,7 +186,7 @@
 					<namespace>Digit</namespace>
 					<debug>true</debug>
 					<outputKind>module</outputKind>
-				</configuration>
+					</configuration>
 			</plugin>
       
       

@@ -44,14 +44,16 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collections;
 import java.util.List;
 
 import javax.validation.Valid;
+import javax.xml.bind.JAXBException;
 
-import org.apache.commons.io.IOUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.dx.service.PaymentService;
 import org.egov.dx.service.UserService;
@@ -63,8 +65,8 @@ import org.egov.dx.web.models.Person;
 import org.egov.dx.web.models.PullURIRequestPOJO;
 import org.egov.dx.web.models.PullURIResponsePOJO;
 import org.egov.dx.web.models.RequestInfoWrapper;
+import org.egov.dx.web.models.ResponseStatus;
 import org.egov.dx.web.models.UserResponse;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -93,19 +95,20 @@ public class DataExchangeController {
 	
 	@RequestMapping(path = {"/_searchReceipt"}, method = RequestMethod.POST ,consumes = {MediaType.APPLICATION_XML_VALUE},produces = {"application/xml","text/xml"})
     @ResponseBody()
-    public String search(@Valid @RequestBody String requestBody) throws IOException
+    public String search(@Valid @RequestBody String requestBody) throws IOException, JAXBException
      {
-		
+	
 		XStream xstream = new XStream();
 		xstream .addPermission(NoTypePermission.NONE); //forbid everything
 		xstream .addPermission(NullPermission.NULL);   // allow "null"
 		xstream .addPermission(PrimitiveTypePermission.PRIMITIVES);
 		xstream .addPermission(AnyTypePermission.ANY);
-        //xstream.processAnnotations(DocDetails.class);
+        //xstream.processAnnotations(DocDetailsResponse.class);
         xstream.processAnnotations(PullURIRequestPOJO.class);
-		Object obj=xstream.fromXML(requestBody);
+      Object obj=xstream.fromXML(requestBody);
 		ObjectMapper om=new ObjectMapper();
 		PullURIRequestPOJO pojo=om.convertValue(obj, PullURIRequestPOJO.class);
+pojo.setTxn((requestBody.split("txn=\"")[1]).split("\"")[0]);
     	String encoded=null;
 		PaymentSearchCriteria criteria = new PaymentSearchCriteria();
         criteria.setTenantId("pg."+pojo.getDocDetails().getCity());
@@ -158,9 +161,18 @@ public class DataExchangeController {
 
 			     String encodedString = Base64.getEncoder().encodeToString(targetArray); 
 			     
-			     model.setResponseStatus("1");
-			     
+			     //model.setResponseStatus("1");
+			     ResponseStatus responseStatus=new ResponseStatus();
+			     responseStatus.setStatus("1");
+			     DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");  
+			     LocalDateTime now = LocalDateTime.now();  
+			     responseStatus.setTs(dtf.format(now));
+			     responseStatus.setTxn(pojo.getTxn());
+			     responseStatus.setValue("1");
+			     model.setResponseStatus(responseStatus);
+			 
 			     DocDetailsResponse docDetailsResponse=new DocDetailsResponse();
+			    // model.setTs(pojo.getTs());
 			     IssuedTo issuedTo=new IssuedTo();
 			     List<Person> persons= new ArrayList<Person>();
 			     issuedTo.setPersons(persons);
@@ -180,7 +192,7 @@ public class DataExchangeController {
 		else
 		{
 			encoded="No payments found for this payment Id";
-			model.setResponseStatus("1");
+			//model.setResponseStatus("1");
 		}
 		
 		
@@ -192,7 +204,6 @@ public class DataExchangeController {
 		xstream .addPermission(AnyTypePermission.ANY);
         //xstream.processAnnotations(DocDetails.class);
         xstream.processAnnotations(PullURIResponsePOJO.class);
-        JSONObject jsonObj = new JSONObject( model );
         xstream.toXML(model);
         
 		return xstream.toXML(model);   
