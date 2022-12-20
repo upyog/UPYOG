@@ -168,7 +168,6 @@ pojo.setTxn((requestBody.split("txn=\"")[1]).split("\"")[0]);
 			     LocalDateTime now = LocalDateTime.now();  
 			     responseStatus.setTs(dtf.format(now));
 			     responseStatus.setTxn(pojo.getTxn());
-			     responseStatus.setValue("1");
 			     model.setResponseStatus(responseStatus);
 			 
 			     DocDetailsResponse docDetailsResponse=new DocDetailsResponse();
@@ -179,6 +178,8 @@ pojo.setTxn((requestBody.split("txn=\"")[1]).split("\"")[0]);
 			     docDetailsResponse.setURI(null);
 			     docDetailsResponse.setIssuedTo(issuedTo);
 			     docDetailsResponse.setDataContent(encodedString);
+			     docDetailsResponse.setDocContent(encodedString);
+
 			     model.setDocDetails(docDetailsResponse);
 			       
 			    
