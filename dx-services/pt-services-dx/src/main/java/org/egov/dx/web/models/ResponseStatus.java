@@ -31,8 +31,6 @@ public class ResponseStatus {
 	    @XStreamAsAttribute
 	    private String Status;
 	    
-	    @XmlValue
-	    private String value;
 
 	   
 }
