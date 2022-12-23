@@ -1,11 +1,9 @@
 package org.egov.dx.web.models;
 
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,14 +17,17 @@ import lombok.NoArgsConstructor;
 @Builder
 @EqualsAndHashCode
 @XmlRootElement
-@XStreamAlias("PullURIResponse")
-public class PullURIResponsePOJO {
+@XStreamAlias("PullDocRequest")
+public class PullDocRequest {
 
-	@XStreamAlias("ResponseStatus")
-	private ResponseStatus responseStatus;
+    @XStreamAlias("DocDetails")
+    private PullURIDocRequest docDetails;
     
-	@XStreamAlias("DocDetails")
-    private DocDetailsResponse docDetails;
+    @XmlAttribute
+    @XStreamAlias("ts")
+    private String ts;
     
-     
+    @XmlAttribute
+    @XStreamAlias("txn")
+    private String txn;
 }
