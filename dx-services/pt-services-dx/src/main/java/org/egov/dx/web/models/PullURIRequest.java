@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode
 @XmlRootElement
 @XStreamAlias("PullURIRequest")
-public class PullURIRequestPOJO {
+public class PullURIRequest {
 
     @XStreamAlias("DocDetails")
     private DocDetailsRequest docDetails;

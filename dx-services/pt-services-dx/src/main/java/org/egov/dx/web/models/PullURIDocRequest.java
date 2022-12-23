@@ -1,7 +1,6 @@
 package org.egov.dx.web.models;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.validation.constraints.Size;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
@@ -9,7 +8,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Data
 @NoArgsConstructor
@@ -17,20 +18,22 @@ import lombok.NoArgsConstructor;
 @Builder
 @EqualsAndHashCode
 @XStreamAlias("DocDetails")
-
-public class DocDetailsResponse {
-	
-	@XStreamAlias("IssuedTo")
-    private IssuedTo issuedTo;
+public class PullURIDocRequest {
 	
 	@XStreamAlias("URI")
     private String URI;
 	
+	@XStreamAlias("DigiLockerId")
+    private String digiLockerId;
 	
-	@XStreamAlias("DocContent")
-    private String docContent;
+	@XStreamAlias("UID")
+    private String UID;
 	
-	@XStreamAlias("DataContent")
-    private String dataContent;
+    @Size(max=64)
+    @XStreamAlias("FullName")
+    private String FullName;
+
+    @XStreamAlias("DOB")
+    private String DOB;
      
 }
