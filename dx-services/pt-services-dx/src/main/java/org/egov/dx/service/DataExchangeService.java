@@ -111,7 +111,6 @@ public class DataExchangeService {
 		if(!payments.isEmpty()){ 
 			
 			String o=paymentService.getFilestore(requestInfoWrapper,
-					 payments.get(0).getPaymentDetails().get(0).getReceiptNumber(),
 					 payments.get(0).getFileStoreId()).toString();
 			 
 			 if(o!=null)
@@ -150,7 +149,7 @@ public class DataExchangeService {
 				     List<Person> persons= new ArrayList<Person>();
 				     issuedTo.setPersons(persons);
 				     docDetailsResponse.setURI(DIGILOCKER_ISSUER_ID.concat("-").concat(DIGILOCKER_DOCTYPE).concat("-").concat("@").
-				    		 concat(payments.get(0).getFileStoreId()).concat("%").concat(payments.get(0).getPaymentDetails().get(0).getReceiptNumber()));
+				    		 concat(payments.get(0).getFileStoreId()));
 				     docDetailsResponse.setIssuedTo(issuedTo);
 				     docDetailsResponse.setDataContent(encodedString);
 				     docDetailsResponse.setDocContent(encodedString);
@@ -225,8 +224,7 @@ public class DataExchangeService {
 		PullDocResponse model= new PullDocResponse();
 			
 		 String o=paymentService.getFilestore(requestInfoWrapper,
-				 searchCriteria.getURI().split("@")[1].split("%")[1],
-				 searchCriteria.getURI().split("@")[1].split("%")[0]).toString();
+				 searchCriteria.getURI().split("@")[1]).toString();
 		 
 		 if(o!=null)
 			 {

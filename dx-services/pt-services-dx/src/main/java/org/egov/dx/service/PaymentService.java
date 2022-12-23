@@ -60,7 +60,7 @@ public class PaymentService {
 	}
 
 	public Object getFilestore(RequestInfoWrapper requestInfoWrapper,
-			String receiptNumber, String fileStoreId) throws IOException {
+			 String fileStoreId) throws IOException {
 		
 		StringBuilder host=new StringBuilder().append(configurations.getFilestoreHost()).append(configurations.getFilstoreSearchEndpoint())
 				.append(fileStoreId);
