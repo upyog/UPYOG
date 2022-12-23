@@ -111,7 +111,6 @@ public class DataExchangeService {
 		if(!payments.isEmpty()){ 
 			
 			String o=paymentService.getFilestore(requestInfoWrapper,
-					 payments.get(0).getPaymentDetails().get(0).getReceiptNumber(),
 					 payments.get(0).getFileStoreId()).toString();
 			 
 			 if(o!=null)
@@ -225,7 +224,6 @@ public class DataExchangeService {
 		PullDocResponse model= new PullDocResponse();
 			
 		 String o=paymentService.getFilestore(requestInfoWrapper,
-				 searchCriteria.getURI().split("@")[1].split("%")[1],
 				 searchCriteria.getURI().split("@")[1].split("%")[0]).toString();
 		 
 		 if(o!=null)
