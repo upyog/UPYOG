@@ -2,6 +2,7 @@ package org.ksmart.birth.birthregistry.repository;
 
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.common.protocol.types.Field;
 import org.ksmart.birth.birthregistry.model.BirthCertRequest;
 import org.ksmart.birth.birthregistry.enrichment.RegisterBirthDetailsEnrichment;
 import org.ksmart.birth.birthregistry.model.BirthPdfRegisterRequest;
@@ -49,8 +50,15 @@ public class RegisterBirthRepository {
         this.restTemplate = restTemplate;
     }
     public List<RegisterBirthDetail> saveRegisterBirthDetails(RegisterBirthDetailsRequest request) {
+        Boolean isAdopted = false;
         registerBirthDetailsEnrichment.enrichCreate(request);
-        producer.push(config.getSaveBirthRegisterTopic(), request);
+        request.getRegisterBirthDetails().forEach(register -> {
+            if (register.getIsAdopted()) {
+                producer.push(config.getSaveBirthRegisterTopic(), request);
+            } else {
+                producer.push(config.getSaveBirthRegisterTopic(), request);
+            }
+        });
         return request.getRegisterBirthDetails();
     }
 

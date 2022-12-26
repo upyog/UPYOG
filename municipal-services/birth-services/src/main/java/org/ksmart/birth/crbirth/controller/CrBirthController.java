@@ -2,6 +2,7 @@ package org.ksmart.birth.crbirth.controller;
 
 
 import lombok.extern.slf4j.Slf4j;
+import org.ksmart.birth.common.contract.BirthResponse;
 import org.ksmart.birth.crbirth.model.BirthApplicationResponse;
 import org.ksmart.birth.crbirth.model.BirthApplicationSearchCriteria;
 import org.ksmart.birth.crbirth.model.BirthDetail;
@@ -31,10 +32,14 @@ public class CrBirthController {
     }
 
     @PostMapping(value = { "/_create"})
-    public ResponseEntity<?> saveBirthDetails(@RequestBody BirthDetailsRequest request) {
+    public ResponseEntity<BirthApplicationResponse> saveBirthDetails(@RequestBody BirthDetailsRequest request) {
         List<BirthDetail> birthDetails = crBirthService.saveBirthDetails(request);
-        return new ResponseEntity<>(birthDetails, HttpStatus.OK);
+        BirthApplicationResponse response = BirthApplicationResponse.builder().birthDetails(birthDetails).responseInfo(
+                        responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), true))
+                .build();
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
 
     @PostMapping(value = { "/_update"})
     public ResponseEntity<?> updateBirthDetails(@RequestBody BirthDetailsRequest request) {

@@ -1,0 +1,521 @@
+openapi: "1.0.0"
+info:
+  version: 1.0.0
+  title: eGov Birth Service
+  description: API for Create, Update , Select
+  contact:
+    name: IKM
+    email: mail.ikm@kerala.gov.in
+
+paths:
+
+  /cr/birth/_create:
+    post:
+      summary: Create birth details.
+      requestBody:
+        description: The request body can contain an array of birth request to support bulk insert.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EncryptionRequest'
+            example:
+              {
+                "BirthDetails": [
+                  {
+                    "WfDocuments": "string",
+                    "aadharno": "string",
+                    "action": "string",
+                    "am_pm": "string",
+                    "applicationno": "string",
+                    "applicationtype": "string",
+                    "assignee": [
+                      "string"
+                    ],
+                    "auditDetails": {
+                      "createdBy": "string",
+                      "createdTime": 0,
+                      "lastModifiedBy": "string",
+                      "lastModifiedTime": 0
+                    },
+                    "birthFather": {
+                      "aadharno": "string",
+                      "birthdtlid": "string",
+                      "emailid": "string",
+                      "firstname_en": "string",
+                      "firstname_ml": "string",
+                      "id": "string",
+                      "lastname_en": "string",
+                      "lastname_ml": "string",
+                      "middlename_en": "string",
+                      "middlename_ml": "string",
+                      "mobileno": "string",
+                      "ot_passportno": "string"
+                    },
+                    "birthMother": {
+                      "aadharno": "string",
+                      "birthdtlid": "string",
+                      "emailid": "string",
+                      "firstname_en": "string",
+                      "firstname_ml": "string",
+                      "id": "string",
+                      "lastname_en": "string",
+                      "lastname_ml": "string",
+                      "middlename_en": "string",
+                      "middlename_ml": "string",
+                      "mobileno": "string",
+                      "ot_passportno": "string"
+                    },
+                    "birthPermanent": {
+                      "birthdtlid": "string",
+                      "buildingno": "string",
+                      "city_en": "string",
+                      "city_ml": "string",
+                      "countryid": "string",
+                      "districtid": "string",
+                      "housename_en": "string",
+                      "housename_ml": "string",
+                      "houseno": "string",
+                      "id": "string",
+                      "locality_en": "string",
+                      "locality_ml": "string",
+                      "ot_address1_en": "string",
+                      "ot_address1_ml": "string",
+                      "ot_address2_en": "string",
+                      "ot_address2_ml": "string",
+                      "ot_state_region_province_en": "string",
+                      "ot_state_region_province_ml": "string",
+                      "pinno": "string",
+                      "poid": "string",
+                      "res_asso_no": "string",
+                      "same_as_permanent": 0,
+                      "stateid": "string",
+                      "talukid": "string",
+                      "tenantid": "string",
+                      "villageid": "string"
+                    },
+                    "birthPlace": {
+                      "auth_officer_desig_id": "string",
+                      "auth_officer_id": "string",
+                      "birthdtlid": "string",
+                      "ho_buildingno": "string",
+                      "ho_city_en": "string",
+                      "ho_city_ml": "string",
+                      "ho_countryid": "string",
+                      "ho_districtid": "string",
+                      "ho_householder_en": "string",
+                      "ho_householder_ml": "string",
+                      "ho_houseno": "string",
+                      "ho_locality_en": "string",
+                      "ho_locality_ml": "string",
+                      "ho_pinno": "string",
+                      "ho_poid": "string",
+                      "ho_res_asso_no": "string",
+                      "ho_stateid": "string",
+                      "ho_talukid": "string",
+                      "ho_villageid": "string",
+                      "hospitalid": "string",
+                      "housename_en": "string",
+                      "housename_ml": "string",
+                      "id": "string",
+                      "informants_aadhaar_no": "string",
+                      "informants_mobileno": "string",
+                      "informantsaddress_en": "string",
+                      "informantsaddress_ml": "string",
+                      "informantsname_en": "string",
+                      "informantsname_ml": "string",
+                      "institution_id": "string",
+                      "institution_type_id": "string",
+                      "oth_auth_officer_desig": "string",
+                      "oth_auth_officer_name": "string",
+                      "oth_details_en": "string",
+                      "oth_details_ml": "string",
+                      "placeofbirthid": "string",
+                      "public_place_id": "string",
+                      "vehicle_admit_hospital_en": "string",
+                      "vehicle_admit_hospital_ml": "string",
+                      "vehicle_from_en": "string",
+                      "vehicle_from_ml": "string",
+                      "vehicle_other_en": "string",
+                      "vehicle_other_ml": "string",
+                      "vehicle_registration_no": "string",
+                      "vehicle_to_en": "string",
+                      "vehicle_to_ml": "string",
+                      "vehicletypeid": "string",
+                      "ward_id": "string"
+                    },
+                    "birthPresent": {
+                      "birthdtlid": "string",
+                      "buildingno": "string",
+                      "city_en": "string",
+                      "city_ml": "string",
+                      "countryid": "string",
+                      "districtid": "string",
+                      "housename_en": "string",
+                      "housename_ml": "string",
+                      "houseno": "string",
+                      "id": "string",
+                      "locality_en": "string",
+                      "locality_ml": "string",
+                      "ot_address1_en": "string",
+                      "ot_address1_ml": "string",
+                      "ot_address2_en": "string",
+                      "ot_address2_ml": "string",
+                      "ot_state_region_province_en": "string",
+                      "ot_state_region_province_ml": "string",
+                      "pinno": "string",
+                      "poid": "string",
+                      "res_asso_no": "string",
+                      "stateid": "string",
+                      "talukid": "string",
+                      "tenantid": "string",
+                      "villageid": "string"
+                    },
+                    "birthStatistical": {
+                      "birthdtlid": "string",
+                      "delivery_method": "string",
+                      "deliverytypeothers_en": "string",
+                      "deliverytypeothers_ml": "string",
+                      "duration_of_pregnancy_in_week": 0,
+                      "father_education_subid": "string",
+                      "father_educationid": "string",
+                      "father_nationalityid": "string",
+                      "father_proffessionid": "string",
+                      "height_of_child": 0,
+                      "id": "string",
+                      "mother_age_delivery": 0,
+                      "mother_age_marriage": 0,
+                      "mother_dateofbirth": 0,
+                      "mother_dateofmarriage": 0,
+                      "mother_education_subid": "string",
+                      "mother_educationid": "string",
+                      "mother_maritalstatusid": "string",
+                      "mother_nationalityid": "string",
+                      "mother_no_of_birth_given": 0,
+                      "mother_no_of_children_alive": 0,
+                      "mother_proffessionid": "string",
+                      "mother_res_country_id": 0,
+                      "mother_res_district_id": 0,
+                      "mother_res_lb_code": 0,
+                      "mother_res_lb_type_id": 0,
+                      "mother_res_lbid": 0,
+                      "mother_res_place_type_id": 0,
+                      "mother_res_state_id": 0,
+                      "mother_resdnce_addr_type": "string",
+                      "mother_resdnce_countryid": "string",
+                      "mother_resdnce_districtid": "string",
+                      "mother_resdnce_lbtype": "string",
+                      "mother_resdnce_place_en": "string",
+                      "mother_resdnce_place_ml": "string",
+                      "mother_resdnce_placetype": "string",
+                      "mother_resdnce_stateid": "string",
+                      "mother_resdnce_tenentid": "string",
+                      "mother_unmarried": 0,
+                      "nature_of_medical_attention": "string",
+                      "religionid": "string",
+                      "way_of_pregnancy": "string",
+                      "weight_of_child": 0
+                    },
+                    "businessservice": "string",
+                    "comment": "string",
+                    "dateofbirth": 0,
+                    "dateofreport": 0,
+                    "esign_user_code": "string",
+                    "esign_user_desig_code": "string",
+                    "file_date": 0,
+                    "firstname_en": "string",
+                    "firstname_ml": "string",
+                    "fm_fileno": "string",
+                    "gender": 0,
+                    "id": "string",
+                    "is_abandoned": true,
+                    "is_adopted": true,
+                    "is_born_outside": true,
+                    "is_father_info_missing": true,
+                    "is_mother_info_missing": true,
+                    "is_multiple_birth": true,
+                    "lastname_en": "string",
+                    "lastname_ml": "string",
+                    "middlename_en": "string",
+                    "middlename_ml": "string",
+                    "multiplebirthdetid": "string",
+                    "no_of_alive_birth": 0,
+                    "ot_dateofarrival": 0,
+                    "ot_passportno": "string",
+                    "registration_date": 0,
+                    "registrationno": "string",
+                    "remarks_en": "string",
+                    "remarks_ml": "string",
+                    "status": "string",
+                    "tenantid": "string",
+                    "timeofbirth": 0,
+                    "workflowcode": "string"
+                  }
+                ],
+                "Count": 0,
+                "ResponseInfo": {
+                  "apiId": "string",
+                  "msgId": "string",
+                  "resMsgId": "string",
+                  "status": "string",
+                  "ts": 0,
+                  "ver": "string"
+                }
+              }
+      responses:
+        '200':
+          description: The returned birth details will have the same structure as the input value.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+              example:
+
+
+
+      tags:
+        - Crypto
+
+  /crypto/v1/_decrypt:
+    post:
+      summary: Decrypts the given input value/s OR values of the object.
+      requestBody:
+        description: Input to a decryption request may be an simple string OR an array OR a JSON Object. Every Object/Array will be navigated through to find simple strings, and those strings will be decrypted.
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+            example:
+              [
+                [
+                  "896077|I/8Xwqr5MwB6UucEP8/Q5wiCHpbaNqGE",
+                  "896077|I+gMx6TjN0BcLxudEiYQKIDKtSlmpJY="
+                ],
+                {
+                  "userObject1": {
+                    "mobileNumber": "395551|eSfiPrQ1UK07d0SupYQYqbr2QFNOWSuYJYcU",
+                    "name": "395551|CnCzaK1ADfnx+4FINXIQ9zjnUs1ieAtz"
+                  }
+                }
+              ]
+
+      responses:
+        '200':
+          description: The response to a decryption request will have the same structure as the input.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+              example:
+                [
+                  [
+                    "Personal",
+                    "Private"
+                  ],
+                  {
+                    "userObject1": {
+                      "mobileNumber": "98989121234",
+                      "name": "John Doe"
+                    }
+                  }
+                ]
+
+
+      tags:
+        - Crypto
+
+
+  /crypto/v1/_sign:
+    post:
+      tags:
+        - Crypto
+      summary: Provide signature for a given value.
+      requestBody:
+        description: Request contains tenant id and the value that needs to be signed.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignRequest'
+      responses:
+        '200':
+          description: Response contains the value that has been signed and the value of signature.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SignResponse'
+
+  /crypto/v1/_verify:
+    post:
+      tags:
+        - Crypto
+      summary: Check if the signature is correct for the provided value.
+      requestBody:
+        description: Request contains the value and its signature.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerifyRequest'
+      responses:
+        '200':
+          description: Response returns if the provided signature is correct for the given value.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VerifyResponse'
+
+  /crypto/v1/_rotatekey:
+    post:
+      tags:
+        - Crypto
+      summary: Deactivate the keys for the given tenant and generate new keys. It will deactivate both symmetric and asymmetric keys for the provided tenant.
+      requestBody:
+        description: Request has the name of the tenant for which the key needs to be rotated.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RotateKeyRequest'
+      responses:
+        '200':
+          description: Acknowldgement if the operation was successful.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RotateKeyResponse'
+
+
+components:
+  schemas:
+
+    EncReqObject:
+      type: object
+      description: EncrReqObject contains data to be encrypted and meta-data required to perform the encryption.
+      properties:
+        tenantId:
+          type: string
+          description: Encryption Key will be decided based on tenant id.
+        type:
+          type: string
+          description: Method to be used for encryption ( AES / RSA )
+          enum:
+            - Important
+            - Normal
+        value:
+          type: array
+          description: Value/s to be encrypted. Can be a string or object or array
+          items: {}
+          example: ["Personal", "Private"]
+
+      example:
+        tenantId: "pb.jalandhar"
+        type: "Important"
+        value: {
+          "key": "secret"
+        }
+
+
+
+    EncryptionRequest:
+      type: object
+      description: An encryption request can contain multiple EncReqObject. This will help to encrypt bulk requests which may have different tenant-id and/or method ( AES / RSA ).
+      properties:
+        encryptionRequests:
+          type: array
+          items:
+            $ref: '#/components/schemas/EncReqObject'
+      example:
+        {
+          "encryptionRequests": [
+            {
+              "tenantId": "pb.amritsar",
+              "type": "Important",
+              "value": {
+                "key": "secret"
+              }
+            }
+          ]
+        }
+
+    SignRequest:
+      type: object
+      description: A Sign request containing tenant id and the string value to be signed.
+      properties:
+        tenantId:
+          type: string
+          description: The key used for signing will be determined based on tenant id.
+        value:
+          type: string
+          description: The value to be signed.
+      example:
+        {
+          "tenantId": "pb.amritsar",
+          "value": "claim"
+        }
+
+    SignResponse:
+      type: object
+      description: Response to sign api containing the actual value and its corresponding signature.
+      properties:
+        value:
+          type: string
+          description: The value that came with request.
+        signature:
+          type: string
+          description: The signature generated for the above value.
+      example:
+        {
+          "value": "claim",
+          "signature": "436958|JLXQk7KP0y1nU3YHKLe0aq7EJp1iPEfNcIrbsgBh2u2U9aLCYfr8tVWGPud7JNQ5uiKJ1gTMFgzGU4XfTwUZDENHQ6mpFOhxH+LVVggj9QmDZk629ce2X7ju4aHuX6WDBx9/bxHstE8r5F47sP7f6ryY52HDQ5D5/8b7SX3WkkE="
+        }
+
+    VerifyRequest:
+      type: object
+      description: A Verify request containing the value and its corresponding signature.
+      properties:
+        value:
+          type: string
+          description: The claim to be verified
+        signature:
+          type: string
+          description: The signature for the claim
+      example:
+        {
+          "value": "claim",
+          "signature": "436958|JLXQk7KP0y1nU3YHKLe0aq7EJp1iPEfNcIrbsgBh2u2U9aLCYfr8tVWGPud7JNQ5uiKJ1gTMFgzGU4XfTwUZDENHQ6mpFOhxH+LVVggj9QmDZk629ce2X7ju4aHuX6WDBx9/bxHstE8r5F47sP7f6ryY52HDQ5D5/8b7SX3WkkE="
+        }
+
+    VerifyResponse:
+      type: object
+      description: Response to the verify api containing if the signature was correct for the input claim
+      properties:
+        verified:
+          type: boolean
+          description: This will be true if the signature is correct according to the claim, otherwise false.
+      example:
+        {
+          "verified": true
+        }
+
+    RotateKeyRequest:
+      type: object
+      description: A request to rotate key for a given tenant
+      properties:
+        tenantId:
+          type: string
+          description: The tenantId for which the key needs to be changed.
+      example:
+        {
+          "tenantId": "pb.amritsar"
+        }
+
+    RotateKeyResponse:
+      type: object
+      description: An acknowledgement if the key rotation request was successful.
+      properties:
+        acknowledged:
+          type: boolean
+          description: Acknowledgement if the operation was successful.

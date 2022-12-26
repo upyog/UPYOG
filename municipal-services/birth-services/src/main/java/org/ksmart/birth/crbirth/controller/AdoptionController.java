@@ -1,4 +1,4 @@
-package org.ksmart.birth.birthadoption.controller;
+package org.ksmart.birth.crbirth.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.ksmart.birth.birthadoption.model.AdoptionDetail;
