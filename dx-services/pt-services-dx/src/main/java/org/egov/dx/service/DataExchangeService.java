@@ -148,7 +148,7 @@ public class DataExchangeService {
 				     IssuedTo issuedTo=new IssuedTo();
 				     List<Person> persons= new ArrayList<Person>();
 				     issuedTo.setPersons(persons);
-				     docDetailsResponse.setURI(DIGILOCKER_ISSUER_ID.concat("-").concat(DIGILOCKER_DOCTYPE).concat("-").concat("@").
+				     docDetailsResponse.setURI(DIGILOCKER_ISSUER_ID.concat("-").concat(DIGILOCKER_DOCTYPE).concat("-").
 				    		 concat(payments.get(0).getFileStoreId()));
 				     docDetailsResponse.setIssuedTo(issuedTo);
 				     docDetailsResponse.setDataContent(encodedString);
@@ -224,7 +224,7 @@ public class DataExchangeService {
 		PullDocResponse model= new PullDocResponse();
 			
 		 String o=paymentService.getFilestore(requestInfoWrapper,
-				 searchCriteria.getURI().split("@")[1]).toString();
+				 searchCriteria.getURI().split("-")[2]).toString();
 		 
 		 if(o!=null)
 			 {
