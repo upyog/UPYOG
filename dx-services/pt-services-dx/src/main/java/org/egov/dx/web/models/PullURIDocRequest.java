@@ -35,5 +35,8 @@ public class PullURIDocRequest {
 
     @XStreamAlias("DOB")
     private String DOB;
+    
+    @XStreamAlias("GENDER")
+    private String gender;
      
 }
