@@ -104,7 +104,7 @@ public class DataExchangeController {
 			searchCriteria.setCity(pojo.getDocDetails().getCity());
 			//searchCriteria.setOrigin(httpServetRequest.getRequestURL().toString());
 			searchCriteria.setOrigin("https://apisetu.gov.in");
-			log.info("Request URL is",httpServetRequest.getRequestURL().toString());
+			log.info("Request URL is",httpServetRequest);
 			searchCriteria.setTxn(pojo.getTxn());
 			searchCriteria.setDocType(pojo.getDocDetails().getDocType());
 	
