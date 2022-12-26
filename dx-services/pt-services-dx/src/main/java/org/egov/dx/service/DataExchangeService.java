@@ -223,8 +223,19 @@ public class DataExchangeService {
 		
 		PullDocResponse model= new PullDocResponse();
 			
+		String[] urlArray=searchCriteria.getURI().split("-");
+		int len=urlArray.length;
+		String filestoreId="";
+		for(int i=2;i<len;i++)
+		{
+			if(i==(len-1))
+				filestoreId=filestoreId.concat(urlArray[i]);
+			else
+				filestoreId=filestoreId.concat(urlArray[i]).concat("-");
+
+		}
 		 String o=paymentService.getFilestore(requestInfoWrapper,
-				 searchCriteria.getURI().split("-")[2]).toString();
+				 filestoreId).toString();
 		 
 		 if(o!=null)
 			 {
