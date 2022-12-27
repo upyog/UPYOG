@@ -78,7 +78,7 @@ public class MdmsUtil {
 
         List<MasterDetail> crMasterDetails = new LinkedList<>();
 
-        //
+        //Add Module Profession
         List<MasterDetail> masterProfession = Collections.singletonList(MasterDetail.builder()
                                                                                     .name(BirthConstants.CR_MDMS_PROFESSION)
                                                                                     .build());
