@@ -99,12 +99,12 @@ public class MdmsValidator {
                                                                        + " codes from MDMS"));
         }
 
-//        if (masterData.get(BirthConstants.CR_MDMS_QUALIFICATION) == null) {
-//            throw new CustomException(Collections.singletonMap(MDMS_DATA_ERROR.getCode(),
-//                    "Unable to fetch "
-//                            + BirthConstants.CR_MDMS_QUALIFICATION
-//                            + " codes from MDMS"));
-//        }
+        if (masterData.get(BirthConstants.CR_MDMS_QUALIFICATION) == null) {
+            throw new CustomException(Collections.singletonMap(MDMS_DATA_ERROR.getCode(),
+                    "Unable to fetch "
+                            + BirthConstants.CR_MDMS_QUALIFICATION
+                            + " codes from MDMS"));
+        }
     }
 
     private void validateCommonMasterData(Map<String, Object> masterData) {
