@@ -9,10 +9,10 @@ import java.util.Map;
 //import org.egov.filemgmnt.web.models.ApplicantPersonal;
 //import org.egov.filemgmnt.web.models.ApplicantPersonalRequest;
 import org.ksmart.birth.config.BirthDeathConfiguration;
-import org.ksmart.birth.crbirth.model.BirthDetailsRequest;
+import org.ksmart.birth.birthapplication.model.birth.BirthDetailsRequest;
 import org.ksmart.birth.utils.BirthDeathConstants;
 import org.egov.tracer.model.CustomException;
-import org.ksmart.birth.crbirth.model.BirthDetail;
+import org.ksmart.birth.birthapplication.model.BirthApplicationDetail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -55,7 +55,7 @@ public class WorkflowIntegrator {
      */
     public  void callWorkFlow(BirthDetailsRequest request) {
 
-        BirthDetail currentFile = request.getBirthDetails().get(0);
+        BirthApplicationDetail currentFile = request.getBirthDetails().get(0);
         String wfTenantId = currentFile.getTenantId();
         String businessServiceFromMDMS = currentFile.getBusinessService();
 
@@ -65,7 +65,7 @@ public class WorkflowIntegrator {
 
         JSONArray array = new JSONArray();
 
-        for (BirthDetail birth : request.getBirthDetails()) {
+        for (BirthApplicationDetail birth : request.getBirthDetails()) {
             if (businessServiceFromMDMS.equals(BirthDeathConstants.BUSINESS_SERVICE_BND) || !request.getBirthDetails()
                     .get(0).getAction().equalsIgnoreCase(BirthDeathConstants.TRIGGER_NOWORKFLOW)) {
 

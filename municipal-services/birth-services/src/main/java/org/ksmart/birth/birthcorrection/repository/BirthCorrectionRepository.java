@@ -4,12 +4,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.ksmart.birth.birthcorrection.enrichment.birth.BirthDetailsCorrectionEnrichment;
 import org.ksmart.birth.common.producer.BndProducer;
 import org.ksmart.birth.config.BirthDeathConfiguration;
-import org.ksmart.birth.crbirth.enrichment.birth.BirthDetailsEnrichment;
-import org.ksmart.birth.crbirth.model.BirthApplicationSearchCriteria;
-import org.ksmart.birth.crbirth.model.BirthDetail;
-import org.ksmart.birth.crbirth.model.BirthDetailsRequest;
-import org.ksmart.birth.crbirth.repository.querybuilder.BirthApplicationQueryBuilder;
-import org.ksmart.birth.crbirth.repository.rowmapper.BirthApplicationRowMapper;
+import org.ksmart.birth.birthapplication.model.birth.BirthApplicationSearchCriteria;
+import org.ksmart.birth.birthapplication.model.BirthApplicationDetail;
+import org.ksmart.birth.birthapplication.model.birth.BirthDetailsRequest;
+import org.ksmart.birth.birthapplication.repository.querybuilder.BirthApplicationQueryBuilder;
+import org.ksmart.birth.birthapplication.repository.rowmapper.BirthApplicationRowMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -40,23 +39,23 @@ public class BirthCorrectionRepository {
         this.producer = producer;
     }
 
-    public List<BirthDetail> saveBirthDetails(BirthDetailsRequest request) {
+    public List<BirthApplicationDetail> saveBirthDetails(BirthDetailsRequest request) {
         birthDetailsCorrectionEnrichment.enrichCreate(request);
         producer.push(birthDeathConfiguration.getSaveBirthApplicationTopic(), request);
         return request.getBirthDetails();
     }
 
 
-    public List<BirthDetail> updateBirthDetails(BirthDetailsRequest request) {
+    public List<BirthApplicationDetail> updateBirthDetails(BirthDetailsRequest request) {
         birthDetailsCorrectionEnrichment.enrichUpdate(request);
         producer.push(birthDeathConfiguration.getUpdateBirthApplicationTopic(), request);
         return request.getBirthDetails();
     }
 
-    public List<BirthDetail> searchBirthDetails(BirthApplicationSearchCriteria criteria) {
+    public List<BirthApplicationDetail> searchBirthDetails(BirthApplicationSearchCriteria criteria) {
         List<Object> preparedStmtValues = new ArrayList<>();
         String query = birthQueryBuilder.getBirthApplicationSearchQuery(criteria, preparedStmtValues, Boolean.FALSE);
-        List<BirthDetail> result = jdbcTemplate.query(query, preparedStmtValues.toArray(), birthApplicationRowMapper);
+        List<BirthApplicationDetail> result = jdbcTemplate.query(query, preparedStmtValues.toArray(), birthApplicationRowMapper);
         return result;
     }
 }

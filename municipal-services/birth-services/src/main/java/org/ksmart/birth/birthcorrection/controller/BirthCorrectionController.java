@@ -3,10 +3,10 @@ package org.ksmart.birth.birthcorrection.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.ksmart.birth.birthcorrection.service.BirthCorrectionService;
-import org.ksmart.birth.crbirth.model.BirthApplicationResponse;
-import org.ksmart.birth.crbirth.model.BirthApplicationSearchCriteria;
-import org.ksmart.birth.crbirth.model.BirthDetail;
-import org.ksmart.birth.crbirth.model.BirthDetailsRequest;
+import org.ksmart.birth.birthapplication.model.birth.BirthApplicationResponse;
+import org.ksmart.birth.birthapplication.model.birth.BirthApplicationSearchCriteria;
+import org.ksmart.birth.birthapplication.model.BirthApplicationDetail;
+import org.ksmart.birth.birthapplication.model.birth.BirthDetailsRequest;
 import org.ksmart.birth.utils.ResponseInfoFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -32,20 +32,20 @@ public class BirthCorrectionController {
 
     @PostMapping(value = { "/_create"})
     public ResponseEntity<?> saveBirthDetails(@RequestBody BirthDetailsRequest request) {
-        List<BirthDetail> birthDetails = birthCorrectionService.saveBirthDetails(request);
+        List<BirthApplicationDetail> birthDetails = birthCorrectionService.saveBirthDetails(request);
         return new ResponseEntity<>(birthDetails, HttpStatus.OK);
     }
 
     @PostMapping(value = { "/_update"})
     public ResponseEntity<?> updateBirthDetails(@RequestBody BirthDetailsRequest request) {
-        List<BirthDetail> birthDetails = birthCorrectionService.updateBirthDetails(request);
+        List<BirthApplicationDetail> birthDetails = birthCorrectionService.updateBirthDetails(request);
         return new ResponseEntity<>(birthDetails, HttpStatus.OK);
     }
 
     @PostMapping(value = { "/_search"})
     public ResponseEntity<BirthApplicationResponse> listByHospitalId(@RequestBody BirthDetailsRequest request,
                                               @Valid @ModelAttribute BirthApplicationSearchCriteria criteria) {
-        List<BirthDetail> birthDetails = birthCorrectionService.searchBirthDetails(criteria);
+        List<BirthApplicationDetail> birthDetails = birthCorrectionService.searchBirthDetails(criteria);
         BirthApplicationResponse response = BirthApplicationResponse.builder()
                 .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(),
                         Boolean.TRUE))

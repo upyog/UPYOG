@@ -1,6 +1,6 @@
 package org.ksmart.birth.birthcorrection.repository.rowmapper;
 
-import org.ksmart.birth.crbirth.model.BirthStatisticalInformation;
+import org.ksmart.birth.birthapplication.model.birth.BirthStatisticalInformation;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

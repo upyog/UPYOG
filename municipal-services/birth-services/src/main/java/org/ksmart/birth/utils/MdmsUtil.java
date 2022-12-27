@@ -35,29 +35,38 @@ public class MdmsUtil {
     @Value("${egov.mdms.module.name}")
     private String moduleName;
 
-    public Object mdmsCall(RequestInfo requestInfo, String tenantId) {
-        MdmsCriteriaReq mdmsCriteriaReq = getMdmsRequest(requestInfo, tenantId);
+    public Object mdmsCall(RequestInfo requestInfo) {
+        // Call MDMS microservice with MdmsCriteriaReq as params
+
+        MdmsCriteriaReq mdmsCriteriaReq = getMdmsRequest(requestInfo);
 
         String mdmsUri = String.format("%s%s", mdmsHost, mdmsUrl);
         Object result = null;
         try {
             result = restTemplate.postForObject(mdmsUri, mdmsCriteriaReq, Map.class);
         } catch (Exception e) {
-            log.error("Exception occurred while fetching category lists from mdms: ", e);
+            log.error("Exception occurred while fetching MDMS data: ", e);
         }
         return result;
     }
 
-    private MdmsCriteriaReq getMdmsRequest(RequestInfo requestInfo, String tenantId) {
+    private MdmsCriteriaReq getMdmsRequest(RequestInfo requestInfo) {
 
         List<ModuleDetail> moduleDetails = new LinkedList<>();
+
+        //Add all modules of birth-death services
         moduleDetails.addAll(getCRModuleDetails());
+
+        //Add all modules of common services
+        moduleDetails.addAll(getCommonModuleDetails());
+
+        //Prepare MDMS Criteria wih all modules in birth-death services and common services
 
         MdmsCriteria mdmsCriteria = MdmsCriteria.builder()
                                                 .moduleDetails(moduleDetails)
-                                                .tenantId(tenantId)
+                                                .tenantId(BirthConstants.CR_MDMS_TENANT)
                                                 .build();
-
+        //Return MDMS criteria request for calling  MDMS microservice
         return MdmsCriteriaReq.builder()
                               .mdmsCriteria(mdmsCriteria)
                               .requestInfo(requestInfo)
@@ -66,16 +75,50 @@ public class MdmsUtil {
 
     public List<ModuleDetail> getCRModuleDetails() {
         // master details for CR module
-        List<MasterDetail> crMasterDetails = Collections.singletonList(MasterDetail.builder()
-                                                                                   .name(BirthConstants.CR_MDMS_PROFESSION)
-                                                                                   .build());
 
+        List<MasterDetail> crMasterDetails = new LinkedList<>();
+
+        //
+        List<MasterDetail> masterProfession = Collections.singletonList(MasterDetail.builder()
+                                                                                    .name(BirthConstants.CR_MDMS_PROFESSION)
+                                                                                    .build());
+        crMasterDetails.addAll(masterProfession);
+
+        // Add Module Qualification
+        List<MasterDetail> masterQualification = Collections.singletonList(MasterDetail.builder()
+                                                                                       .name(BirthConstants.CR_MDMS_QUALIFICATION)
+                                                                                       .build());
+        crMasterDetails.addAll(masterQualification);
+
+
+
+        //Add masters to modules
         ModuleDetail crModuleDetail = ModuleDetail.builder()
                                                   .masterDetails(crMasterDetails)
                                                   .moduleName(BirthConstants.CR_MDMS_MODULE)
                                                   .build();
 
         return Collections.singletonList(crModuleDetail);
+
+    }
+
+    public List<ModuleDetail> getCommonModuleDetails() {
+        // master details for Common module
+
+        List<MasterDetail> commonMasterDetails = new LinkedList<>();
+
+        List<MasterDetail> masterReligion = Collections.singletonList(MasterDetail.builder()
+                                                                                  .name(BirthConstants.COMMON_MDMS_RELIGION)
+                                                                                  .build());
+
+        commonMasterDetails.addAll(masterReligion);
+
+        ModuleDetail commonModuleDetail = ModuleDetail.builder()
+                                                      .masterDetails(commonMasterDetails)
+                                                      .moduleName(BirthConstants.COMMON_MDMS_MODULE)
+                                                      .build();
+
+        return Collections.singletonList(commonModuleDetail);
 
     }
 }

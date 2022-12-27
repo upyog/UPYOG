@@ -2,9 +2,8 @@ package org.ksmart.birth.birthregistry.repository;
 
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.kafka.common.protocol.types.Field;
 import org.ksmart.birth.birthregistry.model.BirthCertRequest;
-import org.ksmart.birth.birthregistry.enrichment.RegisterBirthDetailsEnrichment;
+import org.ksmart.birth.birthregistry.enrichment.RegisterBirthEnrichment;
 import org.ksmart.birth.birthregistry.model.BirthPdfRegisterRequest;
 import org.ksmart.birth.birthregistry.model.RegisterBirthDetail;
 import org.ksmart.birth.birthregistry.model.RegisterBirthDetailsRequest;
@@ -32,13 +31,13 @@ public class RegisterBirthRepository {
     private final BndProducer producer;
     private final BirthDeathConfiguration config;
     private final JdbcTemplate jdbcTemplate;
-    private final RegisterBirthDetailsEnrichment registerBirthDetailsEnrichment;
+    private final RegisterBirthEnrichment registerBirthDetailsEnrichment;
     private final BirthRegisterRowMapper birthRegisterRowMapper;
     private final RegisterQueryBuilder registerQueryBuilder;
     private final RestTemplate restTemplate;
 
     @Autowired
-    RegisterBirthRepository(JdbcTemplate jdbcTemplate, RegisterBirthDetailsEnrichment registerBirthDetailsEnrichment,
+    RegisterBirthRepository(JdbcTemplate jdbcTemplate, RegisterBirthEnrichment registerBirthDetailsEnrichment,
                       BirthDeathConfiguration birthDeathConfiguration, BndProducer producer, RegisterQueryBuilder registerQueryBuilder,
                       BirthRegisterRowMapper birthRegisterRowMapper, RestTemplate restTemplate ) {
         this.jdbcTemplate = jdbcTemplate;

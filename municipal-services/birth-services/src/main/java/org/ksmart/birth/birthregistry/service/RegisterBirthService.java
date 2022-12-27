@@ -42,17 +42,13 @@ public class RegisterBirthService {
         return repository.searchRegisterBirthDetails(criteria);
     }
     public BirthCertificate download(RegisterBirthSearchCriteria criteria, RequestInfo requestInfo) {
-       // try {
+        try {
             BirthCertificate birthCertificate = new BirthCertificate();
             //birthCertificate.setSource(criteria.getSource().toString());
             birthCertificate.setBirthDtlId(criteria.getId());
             birthCertificate.setTenantId(criteria.getTenantId());
             BirthCertRequest birthCertRequest = BirthCertRequest.builder().birthCertificate(birthCertificate).requestInfo(requestInfo).build();
             List<RegisterBirthDetail> regDetail = repository.searchRegisterBirthDetails(criteria);
-        System.out.println("############################");
-            System.out.println(regDetail.get(0).getAadharNo());
-        System.out.println(regDetail.get(0).getFirstNameEn());
-        System.out.println("############################");
             birthCertificate.setBirthPlace(regDetail.get(0).getRegisterBirthPlace().getHospitalId());
             birthCertificate.setGender(regDetail.get(0).getGender().toString());
             birthCertificate.setWard(regDetail.get(0).getRegisterBirthPlace().getWardId());
@@ -82,10 +78,10 @@ public class RegisterBirthService {
             birthCertificate.setApplicationStatus(BirthCertificate.StatusEnum.FREE_DOWNLOAD);
             repository.saveRegisterBirthCert(birthCertRequest);
             return birthCertificate;
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            throw new CustomException("DOWNLOAD_ERROR", "Error in Downloading Certificate");
-//        }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new CustomException("DOWNLOAD_ERROR", "Error in Downloading Certificate");
+        }
     }
 
 

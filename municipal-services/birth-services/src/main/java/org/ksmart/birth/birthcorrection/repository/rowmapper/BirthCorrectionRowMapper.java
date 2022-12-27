@@ -1,6 +1,6 @@
 package org.ksmart.birth.birthcorrection.repository.rowmapper;
 
-import org.ksmart.birth.crbirth.model.BirthDetail;
+import org.ksmart.birth.birthapplication.model.BirthApplicationDetail;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
@@ -10,15 +10,15 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 @Component
-public class BirthCorrectionRowMapper implements ResultSetExtractor<List<BirthDetail>>, BaseRowMapper, BirthPlaceRowMapper,
+public class BirthCorrectionRowMapper implements ResultSetExtractor<List<BirthApplicationDetail>>, BaseRowMapper, BirthPlaceRowMapper,
         BirthFatherInfoRowMapper, BirthMotherInfoRowMapper, BirthPermanentAddressRowMapper,
         BirthPresentAddressRowMapper,BirthStatInfoRowMapper  {
 
     @Override
-    public List<BirthDetail> extractData(ResultSet rs) throws SQLException, DataAccessException { //how to handle null
-        List<BirthDetail> result = new ArrayList<>();
+    public List<BirthApplicationDetail> extractData(ResultSet rs) throws SQLException, DataAccessException { //how to handle null
+        List<BirthApplicationDetail> result = new ArrayList<>();
         while (rs.next()) {
-            result.add(BirthDetail.builder()
+            result.add(BirthApplicationDetail.builder()
                     .id(rs.getString("id"))
                     .dateOfReport(Long.valueOf(rs.getLong("dateofreport")))
                     .dateOfBirth(Long.valueOf(rs.getLong("dateofbirth")))

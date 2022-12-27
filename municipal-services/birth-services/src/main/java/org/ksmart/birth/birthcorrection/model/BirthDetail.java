@@ -3,7 +3,7 @@ package org.ksmart.birth.birthcorrection.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import org.ksmart.birth.common.model.AuditDetails;
-import org.ksmart.birth.crbirth.model.BirthStatisticalInformation;
+import org.ksmart.birth.birthapplication.model.birth.BirthStatisticalInformation;
 
 import javax.validation.constraints.Size;
 import java.util.List;

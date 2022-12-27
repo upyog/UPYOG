@@ -1,7 +1,7 @@
 package org.ksmart.birth.birthcorrection.repository.querybuilder;
 
 
-import org.ksmart.birth.crbirth.model.BirthApplicationSearchCriteria;
+import org.ksmart.birth.birthapplication.model.birth.BirthApplicationSearchCriteria;
 import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;

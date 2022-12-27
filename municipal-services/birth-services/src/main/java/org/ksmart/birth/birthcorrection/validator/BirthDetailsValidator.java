@@ -2,7 +2,7 @@ package org.ksmart.birth.birthcorrection.validator;
 
 import org.egov.tracer.model.CustomException;
 import org.ksmart.birth.config.BirthDeathConfiguration;
-import org.ksmart.birth.crbirth.model.BirthDetailsRequest;
+import org.ksmart.birth.birthapplication.model.birth.BirthDetailsRequest;
 import org.ksmart.birth.utils.enums.ErrorCodes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;

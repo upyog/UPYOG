@@ -8,8 +8,8 @@ import org.ksmart.birth.birthcorrection.enrichment.BaseEnrichment;
 import org.ksmart.birth.common.model.AuditDetails;
 import org.ksmart.birth.common.repository.IdGenRepository;
 import org.ksmart.birth.config.BirthDeathConfiguration;
-import org.ksmart.birth.crbirth.model.BirthDetail;
-import org.ksmart.birth.crbirth.model.BirthDetailsRequest;
+import org.ksmart.birth.birthapplication.model.BirthApplicationDetail;
+import org.ksmart.birth.birthapplication.model.birth.BirthDetailsRequest;
 import org.ksmart.birth.utils.enums.ErrorCodes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -68,7 +68,7 @@ public class BirthDetailsCorrectionEnrichment implements BaseEnrichment {
 
     private void setApplicationNumbers(BirthDetailsRequest request) {
         RequestInfo requestInfo = request.getRequestInfo();
-        List<BirthDetail> birthDetails = request.getBirthDetails();
+        List<BirthApplicationDetail> birthDetails = request.getBirthDetails();
         String tenantId = birthDetails.get(0)
                 .getTenantId();
         List<String> filecodes = getIds(requestInfo,
@@ -88,7 +88,7 @@ public class BirthDetailsCorrectionEnrichment implements BaseEnrichment {
 
     private void setFileNumbers(BirthDetailsRequest request) {
         RequestInfo requestInfo = request.getRequestInfo();
-        List<BirthDetail> birthDetails = request.getBirthDetails();
+        List<BirthApplicationDetail> birthDetails = request.getBirthDetails();
         String tenantId = birthDetails.get(0)
                 .getTenantId();
 
@@ -109,7 +109,7 @@ public class BirthDetailsCorrectionEnrichment implements BaseEnrichment {
 
     private void setRegistrationNumber(BirthDetailsRequest request) {
         RequestInfo requestInfo = request.getRequestInfo();
-        List<BirthDetail> birthDetails = request.getBirthDetails();
+        List<BirthApplicationDetail> birthDetails = request.getBirthDetails();
         String tenantId = birthDetails.get(0)
                 .getTenantId();
 
