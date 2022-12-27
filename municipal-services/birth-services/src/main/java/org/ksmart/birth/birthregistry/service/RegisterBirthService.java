@@ -42,7 +42,7 @@ public class RegisterBirthService {
         return repository.searchRegisterBirthDetails(criteria);
     }
     public BirthCertificate download(RegisterBirthSearchCriteria criteria, RequestInfo requestInfo) {
-        try {
+       // try {
             BirthCertificate birthCertificate = new BirthCertificate();
             //birthCertificate.setSource(criteria.getSource().toString());
             birthCertificate.setBirthDtlId(criteria.getId());
@@ -78,10 +78,10 @@ public class RegisterBirthService {
             birthCertificate.setApplicationStatus(BirthCertificate.StatusEnum.FREE_DOWNLOAD);
             repository.saveRegisterBirthCert(birthCertRequest);
             return birthCertificate;
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new CustomException("DOWNLOAD_ERROR", "Error in Downloading Certificate");
-        }
+//         } catch (Exception e) {
+//             e.printStackTrace();
+//             throw new CustomException("DOWNLOAD_ERROR", "Error in Downloading Certificate");
+//         }
     }
 
 
