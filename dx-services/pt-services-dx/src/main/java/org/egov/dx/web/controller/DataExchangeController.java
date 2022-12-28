@@ -84,7 +84,7 @@ public class DataExchangeController {
     @ResponseBody()
     public String search(@Valid @RequestBody String requestBody, HttpServletRequest httpServletRequest) throws IOException, JAXBException
     { 
-		String origin = URI.create(httpServetRequest.getRequestURL().toString()).getHost();		
+		String origin = URI.create(httpServletRequest.getRequestURL().toString()).getHost();		
 		System.out.println("Request Origin Code -->" + " URI.create(httpServetRequest.getRequestURL().toString()).getHost();");
 	    	System.out.println("Request Origin --> " + origin);
 	    
