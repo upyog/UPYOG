@@ -84,7 +84,7 @@ public class DataExchangeController {
     @ResponseBody()
     public String search(@Valid @RequestBody String requestBody, HttpServletRequest httpServletRequest) throws IOException, JAXBException
     { 
-		Enumeration<String> origins = httpServetRequest.getHeaders("Origin");		
+		Enumeration<String> origins = httpServletRequest.getHeaders("Origin");		
 		System.out.println("Request Origin Code -->" + " httpServetRequest.getHeaders(\"Origin\");");
 	    	System.out.println("Request Origin --> " + origins);
 	    
