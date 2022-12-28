@@ -20,6 +20,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.view.RedirectView;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+
 
 @RestController
 public class ShortenController {
@@ -32,6 +35,19 @@ public class ShortenController {
 
     @RequestMapping(value = "/shortener", method=RequestMethod.POST, consumes = {"application/json"})
     public String shortenUrl(@RequestBody @Valid final ShortenRequest shortenRequest) throws Exception {
+        //    /********************************************* */
+
+         try {
+            ObjectMapper mapper = new ObjectMapper();
+            Object obj = shortenRequest;
+            mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+           System.out.println("shortenRequest: "+ mapper.writeValueAsString(obj));
+    }catch(Exception e) {
+        // log.error("Exception while fetching from searcher: ",e);
+    }
+
+
+    /********************************************** */
         String longUrl = shortenRequest.getUrl();
         if (URLValidator.INSTANCE.validateURL(longUrl)) {
             String shortenedUrl = urlConverterService.shortenURL(shortenRequest);
