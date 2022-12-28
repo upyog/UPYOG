@@ -308,7 +308,7 @@ public class DataExchangeService {
 		xstream .addPermission(PrimitiveTypePermission.PRIMITIVES);
 		xstream .addPermission(AnyTypePermission.ANY);
         //xstream.processAnnotations(DocDetails.class);
-        xstream.processAnnotations(PullURIResponse.class);
+        xstream.processAnnotations(PullDocResponse.class);
         xstream.toXML(model);
         
 		return xstream.toXML(model);   
