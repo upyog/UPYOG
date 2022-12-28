@@ -3,6 +3,8 @@ import static org.egov.dx.util.PTServiceDXConstants.DIGILOCKER_DOCTYPE;
 import static org.egov.dx.util.PTServiceDXConstants.DIGILOCKER_ISSUER_ID;
 import static org.egov.dx.util.PTServiceDXConstants.DIGILOCKER_ORIGIN_NOT_SUPPORTED;
 import static org.egov.dx.util.PTServiceDXConstants.ORIGIN;
+import static org.egov.dx.util.PTServiceDXConstants.EXCEPTION_TEXT_VALIDATION;
+
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -36,7 +38,10 @@ import com.thoughtworks.xstream.security.NoTypePermission;
 import com.thoughtworks.xstream.security.NullPermission;
 import com.thoughtworks.xstream.security.PrimitiveTypePermission;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
+@Slf4j
 public class DataExchangeService {
 
 	@Autowired
@@ -281,9 +286,8 @@ public class DataExchangeService {
 		     responseStatus.setTs(dtf.format(now));
 		     responseStatus.setTxn(searchCriteria.getTxn());
 		     model.setResponseStatus(responseStatus);
-		 
 		     DocDetailsResponse docDetailsResponse=new DocDetailsResponse();
-		    // model.setTs(pojo.getTs());
+		     log.info(EXCEPTION_TEXT_VALIDATION);
 		     IssuedTo issuedTo=new IssuedTo();
 		     List<Person> persons= new ArrayList<Person>();
 		     issuedTo.setPersons(persons);
