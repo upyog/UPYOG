@@ -45,6 +45,7 @@ public class PTServiceDXConstants {
 	
 	public static final String DIGILOCKER_ORIGIN_NOT_SUPPORTED = "REQUEST IS NOT FROM SUPPORTED ORIGIN";
 
+	public static final String EXCEPTION_TEXT_VALIDATION = "Either no payment found or  input payer name/mobile is not matching with latest payment details of this property id";
 
 	/*
 	 * exceptions

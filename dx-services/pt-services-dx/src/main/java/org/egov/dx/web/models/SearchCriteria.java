@@ -25,5 +25,9 @@ public class SearchCriteria {
     private String receiptNumber;
     
     private String docType;
+    
+    private String payerName;
+    
+    private String mobile;
 
 }

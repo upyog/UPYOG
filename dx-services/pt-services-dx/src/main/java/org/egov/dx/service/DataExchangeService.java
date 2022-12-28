@@ -3,6 +3,8 @@ import static org.egov.dx.util.PTServiceDXConstants.DIGILOCKER_DOCTYPE;
 import static org.egov.dx.util.PTServiceDXConstants.DIGILOCKER_ISSUER_ID;
 import static org.egov.dx.util.PTServiceDXConstants.DIGILOCKER_ORIGIN_NOT_SUPPORTED;
 import static org.egov.dx.util.PTServiceDXConstants.ORIGIN;
+import static org.egov.dx.util.PTServiceDXConstants.EXCEPTION_TEXT_VALIDATION;
+
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -16,8 +18,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.egov.common.contract.request.RequestInfo;
-import org.egov.dx.repository.Repository;
-import org.egov.dx.util.Configurations;
 import org.egov.dx.web.models.DocDetailsResponse;
 import org.egov.dx.web.models.IssuedTo;
 import org.egov.dx.web.models.Payment;
@@ -31,16 +31,17 @@ import org.egov.dx.web.models.SearchCriteria;
 import org.egov.dx.web.models.UserResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.security.AnyTypePermission;
 import com.thoughtworks.xstream.security.NoTypePermission;
 import com.thoughtworks.xstream.security.NullPermission;
 import com.thoughtworks.xstream.security.PrimitiveTypePermission;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
+@Slf4j
 public class DataExchangeService {
 
 	@Autowired
@@ -94,18 +95,17 @@ public class DataExchangeService {
 		PullURIResponse model= new PullURIResponse();
 	       
 	 
-		if(!payments.isEmpty()){ 
+		if(!payments.isEmpty() && validateRequest(searchCriteria,payments.get(0))){ 
 			
-			String o=paymentService.getFilestore(requestInfoWrapper,
-					 payments.get(0).getFileStoreId()).toString();
-			 
-			 if(o!=null)
-				 {
+			
+					String o=paymentService.getFilestore(requestInfoWrapper,payments.get(0).getFileStoreId()).toString();
+			 		if(o!=null)
+			 		{
 				 	String path=o.split("url=")[1];
 				 	System.out.println("opening connection");
 				 	String pdfPath=path.substring(0,path.length()-3);
 				 	URL url1 =new URL(pdfPath);
-			 try {
+				 	try {
 
 				     // Read the PDF from the URL and save to a local file
 				     InputStream is1 = url1.openStream();
@@ -149,6 +149,7 @@ public class DataExchangeService {
 			    }
 			  }	
 		} 
+		
 		else
 		{
 			ResponseStatus responseStatus=new ResponseStatus();
@@ -285,9 +286,8 @@ public class DataExchangeService {
 		     responseStatus.setTs(dtf.format(now));
 		     responseStatus.setTxn(searchCriteria.getTxn());
 		     model.setResponseStatus(responseStatus);
-		 
 		     DocDetailsResponse docDetailsResponse=new DocDetailsResponse();
-		    // model.setTs(pojo.getTs());
+		     log.info(EXCEPTION_TEXT_VALIDATION);
 		     IssuedTo issuedTo=new IssuedTo();
 		     List<Person> persons= new ArrayList<Person>();
 		     issuedTo.setPersons(persons);
@@ -308,12 +308,22 @@ public class DataExchangeService {
 		xstream .addPermission(PrimitiveTypePermission.PRIMITIVES);
 		xstream .addPermission(AnyTypePermission.ANY);
         //xstream.processAnnotations(DocDetails.class);
-        xstream.processAnnotations(PullURIResponse.class);
+        xstream.processAnnotations(PullDocResponse.class);
         xstream.toXML(model);
         
 		return xstream.toXML(model);   
 
 	}
 
- 
+		Boolean validateRequest(SearchCriteria searchCriteria, Payment payment)
+		{
+			if(!searchCriteria.getPayerName().equals(payment.getPayerName()))
+					return false;
+			else if(!searchCriteria.getMobile().equals(payment.getMobileNumber()))
+					return false;
+			else
+				return true;
+			
+			
+		}
 }
