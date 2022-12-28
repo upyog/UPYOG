@@ -171,8 +171,6 @@
 				<configuration>
 					<jsonLibrary>jackson2</jsonLibrary>
 					<classes>
-						<class>org.egov.dx.web.models.PaymentRequest</class>
-						<class>org.egov.dx.web.models.PaymentResponse</class>
 						<class>org.egov.dx.web.models.PaymentSearchCriteria</class>
 						<class>org.egov.dx.web.models.RequestInfoWrapper</class>
 						<class>org.egov.dx.web.models.UserResponse</class>

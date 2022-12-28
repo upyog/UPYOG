@@ -1,10 +1,8 @@
 package org.egov.dx.service;
-import static org.egov.dx.util.CalculatorConstants.DIGILOCKER_ISSUER_ID;
-import static org.egov.dx.util.CalculatorConstants.DIGILOCKER_ORIGIN_NOT_SUPPORTED;
-import static org.egov.dx.util.CalculatorConstants.DIGILOCKER_DOCTYPE;
-import static org.egov.dx.util.CalculatorConstants.ORIGIN;
-
-
+import static org.egov.dx.util.PTServiceDXConstants.DIGILOCKER_DOCTYPE;
+import static org.egov.dx.util.PTServiceDXConstants.DIGILOCKER_ISSUER_ID;
+import static org.egov.dx.util.PTServiceDXConstants.DIGILOCKER_ORIGIN_NOT_SUPPORTED;
+import static org.egov.dx.util.PTServiceDXConstants.ORIGIN;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -44,18 +42,6 @@ import com.thoughtworks.xstream.security.PrimitiveTypePermission;
 
 @Service
 public class DataExchangeService {
-
-	@Autowired
-	private Repository repository;
-
-	@Autowired
-	private ObjectMapper mapper;
-
-	@Autowired
-	private RestTemplate restTemplate;
-
-	@Autowired
-	private Configurations configurations;
 
 	@Autowired
     private PaymentService paymentService;
