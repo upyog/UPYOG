@@ -111,7 +111,8 @@ public class DataExchangeController {
 			log.info("Request URL is",URI.create(httpServletRequest.getRequestURL().toString()).getHost());
 			searchCriteria.setTxn(pojo.getTxn());
 			searchCriteria.setDocType(pojo.getDocDetails().getDocType());
-	
+			searchCriteria.setPayerName(pojo.getDocDetails().getFullName());
+			searchCriteria.setMobile(pojo.getDocDetails().getMobile());
 			encodedString=dataExchangeService.searchPullURIRequest(searchCriteria);
 		}
 		else

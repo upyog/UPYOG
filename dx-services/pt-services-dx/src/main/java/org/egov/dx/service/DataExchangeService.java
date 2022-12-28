@@ -16,8 +16,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.egov.common.contract.request.RequestInfo;
-import org.egov.dx.repository.Repository;
-import org.egov.dx.util.Configurations;
 import org.egov.dx.web.models.DocDetailsResponse;
 import org.egov.dx.web.models.IssuedTo;
 import org.egov.dx.web.models.Payment;
@@ -31,9 +29,7 @@ import org.egov.dx.web.models.SearchCriteria;
 import org.egov.dx.web.models.UserResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.security.AnyTypePermission;
 import com.thoughtworks.xstream.security.NoTypePermission;
@@ -94,18 +90,17 @@ public class DataExchangeService {
 		PullURIResponse model= new PullURIResponse();
 	       
 	 
-		if(!payments.isEmpty()){ 
+		if(!payments.isEmpty() && validateRequest(searchCriteria,payments.get(0))){ 
 			
-			String o=paymentService.getFilestore(requestInfoWrapper,
-					 payments.get(0).getFileStoreId()).toString();
-			 
-			 if(o!=null)
-				 {
+			
+					String o=paymentService.getFilestore(requestInfoWrapper,payments.get(0).getFileStoreId()).toString();
+			 		if(o!=null)
+			 		{
 				 	String path=o.split("url=")[1];
 				 	System.out.println("opening connection");
 				 	String pdfPath=path.substring(0,path.length()-3);
 				 	URL url1 =new URL(pdfPath);
-			 try {
+				 	try {
 
 				     // Read the PDF from the URL and save to a local file
 				     InputStream is1 = url1.openStream();
@@ -149,6 +144,7 @@ public class DataExchangeService {
 			    }
 			  }	
 		} 
+		
 		else
 		{
 			ResponseStatus responseStatus=new ResponseStatus();
@@ -315,5 +311,15 @@ public class DataExchangeService {
 
 	}
 
- 
+		Boolean validateRequest(SearchCriteria searchCriteria, Payment payment)
+		{
+			if(!searchCriteria.getPayerName().equals(payment.getPayerName()))
+					return false;
+			else if(!searchCriteria.getMobile().equals(payment.getMobileNumber()))
+					return false;
+			else
+				return true;
+			
+			
+		}
 }
