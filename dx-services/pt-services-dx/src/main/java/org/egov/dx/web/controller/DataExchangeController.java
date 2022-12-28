@@ -85,9 +85,6 @@ public class DataExchangeController {
     @ResponseBody()
     public String search(@Valid @RequestBody String requestBody, HttpServletRequest httpServletRequest) throws IOException, JAXBException
     { 
-		String origins = httpServletRequest.getHeader("Origin");		
-		System.out.println("Request Origin Code -->" + " httpServletRequest.getHeader(\"Origin\");");
-	   	 System.out.println("Request Origin --> " + origins);
 	    
 		XStream xstream = new XStream();
 		xstream .addPermission(NoTypePermission.NONE); 
