@@ -87,7 +87,7 @@ public class DataExchangeController {
     { 
 		Enumeration<String> origins = httpServletRequest.getHeaders("Origin");		
 		System.out.println("Request Origin Code -->" + " httpServetRequest.getHeaders(\"Origin\");");
-	    	System.out.println("Request Origin --> " + origins);
+	    	System.out.println("Request Origin --> " + origins.nextElement());
 	    
 		XStream xstream = new XStream();
 		xstream .addPermission(NoTypePermission.NONE); 
