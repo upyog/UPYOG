@@ -41,6 +41,7 @@
 package org.egov.dx.web.controller;
 
 import java.io.IOException;
+import java.net.URI;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -51,8 +52,10 @@ import org.egov.dx.web.models.PullDocRequest;
 import org.egov.dx.web.models.PullURIRequest;
 import org.egov.dx.web.models.SearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -79,8 +82,8 @@ public class DataExchangeController {
 	
 	@RequestMapping(path = {"/_searchReceipt"}, method = RequestMethod.POST ,consumes = {MediaType.APPLICATION_XML_VALUE},produces = {"application/xml","text/xml"})
     @ResponseBody()
-    public String search(HttpServletRequest httpServetRequest,@Valid @RequestBody String requestBody) throws IOException, JAXBException
-     {
+    public String search(@Valid @RequestBody String requestBody, HttpServletRequest httpServletRequest) throws IOException, JAXBException
+    { 
 
 		XStream xstream = new XStream();
 		xstream .addPermission(NoTypePermission.NONE); 
@@ -96,6 +99,7 @@ public class DataExchangeController {
 		String encodedString=null;
 		if(requestBody.contains("PullURIRequest"))
 		{
+			log.info("In Pull URI Request");
 	        xstream.processAnnotations(PullURIRequest.class);
 	        obj=xstream.fromXML(requestBody);
 			pojo=om.convertValue(obj, PullURIRequest.class);
@@ -103,8 +107,8 @@ public class DataExchangeController {
 			searchCriteria.setPropertyId(pojo.getDocDetails().getPropertyId());
 			searchCriteria.setCity(pojo.getDocDetails().getCity());
 			//searchCriteria.setOrigin(httpServetRequest.getRequestURL().toString());
-			searchCriteria.setOrigin("https://apisetu.gov.in");
-			log.info("Request URL is",httpServetRequest);
+			searchCriteria.setOrigin("https://partners.digitallocker.gov.in");
+			log.info("Request URL is",URI.create(httpServletRequest.getRequestURL().toString()).getHost());
 			searchCriteria.setTxn(pojo.getTxn());
 			searchCriteria.setDocType(pojo.getDocDetails().getDocType());
 	
@@ -112,13 +116,14 @@ public class DataExchangeController {
 		}
 		else
 		{
+			log.info("In Pull Doc Request");
 			xstream.processAnnotations(PullDocRequest.class);
 	        obj=xstream.fromXML(requestBody);
 			pojoDoc=om.convertValue(obj, PullDocRequest.class);
 			pojoDoc.setTxn((requestBody.split("txn=\"")[1]).split("\"")[0]);
 			//searchCriteria.setOrigin(httpServetRequest.getRequestURL().toString());
-			searchCriteria.setOrigin("https://apisetu.gov.in");
-			log.info("Request URL is",httpServetRequest.getRequestURL().toString());
+			searchCriteria.setOrigin("https://partners.digitallocker.gov.in");
+			log.info("Request URL is",URI.create(httpServletRequest.getRequestURL().toString()).getHost());
 			searchCriteria.setURI(pojoDoc.getDocDetails().getURI());
 			searchCriteria.setTxn(pojoDoc.getTxn());
 		

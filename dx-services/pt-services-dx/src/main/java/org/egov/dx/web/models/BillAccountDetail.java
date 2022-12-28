@@ -3,7 +3,6 @@ package org.egov.dx.web.models;
 import java.math.BigDecimal;
 
 import javax.validation.constraints.Size;
-import javax.xml.crypto.KeySelector.Purpose;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -16,9 +15,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-/**
- * BillAccountDetail
- */
 @Setter
 @Getter
 @ToString
@@ -28,44 +24,41 @@ import lombok.ToString;
 @EqualsAndHashCode
 public class BillAccountDetail {
 
-    @Size(max=64)
-    @JsonProperty("id")
-    private String id = null;
+	@Size(max = 64)
+	@JsonProperty("id")
+	private String id;
 
-    @Size(max=64)
-    @JsonProperty("tenantId")
-    private String tenantId = null;
+	@Size(max = 64)
+	@JsonProperty("tenantId")
+	private String tenantId;
 
-    @Size(max=64)
-    @JsonProperty("billDetailId")
-    private String billDetailId = null;
+	@Size(max = 64)
+	@JsonProperty("billDetailId")
+	private String billDetailId;
 
-    @Size(max=64)
-    @JsonProperty("demandDetailId")
-    private String demandDetailId = null;
+	@Size(max = 64)
+	@JsonProperty("demandDetailId")
+	private String demandDetailId;
 
-    @JsonProperty("order")
-    private Integer order = null;
+	@JsonProperty("order")
+	private Integer order;
 
-    @JsonProperty("amount")
-    private BigDecimal amount = null;
+	@JsonProperty("amount")
+	private BigDecimal amount;
 
-    @JsonProperty("adjustedAmount")
-    private BigDecimal adjustedAmount = null;
+	@JsonProperty("adjustedAmount")
+	private BigDecimal adjustedAmount;
 
-    @JsonProperty("isActualDemand")
-    private Boolean isActualDemand = null;
+	@JsonProperty("isActualDemand")
+	private Boolean isActualDemand;
 
-    @Size(max=64)
-    @JsonProperty("taxHeadCode")
-    private String taxHeadCode = null;
+	@Size(max = 64)
+	@JsonProperty("taxHeadCode")
+	private String taxHeadCode;
 
-    @JsonProperty("additionalDetails")
-    private JsonNode additionalDetails = null;
+	@JsonProperty("additionalDetails")
+	private JsonNode additionalDetails;
 
-    @JsonProperty("purpose")
-    private Purpose purpose = null;
-
-    @JsonProperty("auditDetails")
-    private AuditDetails auditDetails;
+	@JsonProperty("auditDetails")
+	private AuditDetails auditDetails;
 }

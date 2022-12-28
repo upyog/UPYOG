@@ -5,6 +5,8 @@ import java.math.BigDecimal;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.validator.constraints.SafeHtml;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -27,10 +29,13 @@ public class PaymentDetail {
     private String id;
 
     @Size(max=64)
+    private String paymentId;
+
+    @SafeHtml
+    @Size(max=64)
     @JsonProperty("tenantId")
     private String tenantId;
 
-    @NotNull
     @JsonProperty("totalDue")
     private BigDecimal totalDue;
 
@@ -42,14 +47,22 @@ public class PaymentDetail {
     @JsonProperty("receiptNumber")
     private String receiptNumber;
 
+    @SafeHtml
+    @Size(max=64)
+    @JsonProperty("manualReceiptNumber")
+    private String manualReceiptNumber;
+    
+    @JsonProperty("manualReceiptDate")
+    private Long manualReceiptDate;
+
     @JsonProperty("receiptDate")
     private Long receiptDate = null;
 
+    @SafeHtml
     @JsonProperty("receiptType")
     private String receiptType = null;
 
-    @NotNull
-    @Size(max=64)
+    @SafeHtml
     @JsonProperty("businessService")
     private String businessService;
 

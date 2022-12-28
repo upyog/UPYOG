@@ -1,7 +1,5 @@
 package org.egov.dx.service;
 
-import org.egov.dx.repository.Repository;
-import org.egov.dx.util.Configurations;
 import org.egov.dx.web.models.UserResponse;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,22 +12,11 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
 public class UserService {
-
-	@Autowired
-    private Repository repository;
-
-	@Autowired
-    private ObjectMapper mapper;
-
-    @Autowired
-    private Configurations configurations;
 
     @Value("${user.service.host}")
     private String userHost;

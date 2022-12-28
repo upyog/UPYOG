@@ -3,10 +3,6 @@ package org.egov.dx.web.models;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 import lombok.AllArgsConstructor;

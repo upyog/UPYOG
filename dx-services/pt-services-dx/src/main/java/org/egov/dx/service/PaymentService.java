@@ -1,12 +1,12 @@
 package org.egov.dx.service;
-import static org.egov.dx.util.CalculatorConstants.BUSINESSSERVICES_FIELD_FOR_SEARCH_URL;
-import static org.egov.dx.util.CalculatorConstants.BUSINESSSERVICE_FIELD_FOR_FILESTORE_SEARCH_URL;
-import static org.egov.dx.util.CalculatorConstants.CONSUMER_CODE_SEARCH_FIELD_NAME_PAYMENT;
-import static org.egov.dx.util.CalculatorConstants.PROPERTY_TAX_SERVICE_CODE;
-import static org.egov.dx.util.CalculatorConstants.RECEIPTNUMBER_FIELD_FOR_SEARCH_URL;
-import static org.egov.dx.util.CalculatorConstants.SEPARATER;
-import static org.egov.dx.util.CalculatorConstants.TENANT_ID_FIELD_FOR_SEARCH_URL;
-import static org.egov.dx.util.CalculatorConstants.URL_PARAMS_SEPARATER;
+import static org.egov.dx.util.PTServiceDXConstants.BUSINESSSERVICES_FIELD_FOR_SEARCH_URL;
+import static org.egov.dx.util.PTServiceDXConstants.BUSINESSSERVICE_FIELD_FOR_FILESTORE_SEARCH_URL;
+import static org.egov.dx.util.PTServiceDXConstants.CONSUMER_CODE_SEARCH_FIELD_NAME_PAYMENT;
+import static org.egov.dx.util.PTServiceDXConstants.PROPERTY_TAX_SERVICE_CODE;
+import static org.egov.dx.util.PTServiceDXConstants.RECEIPTNUMBER_FIELD_FOR_SEARCH_URL;
+import static org.egov.dx.util.PTServiceDXConstants.SEPARATER;
+import static org.egov.dx.util.PTServiceDXConstants.TENANT_ID_FIELD_FOR_SEARCH_URL;
+import static org.egov.dx.util.PTServiceDXConstants.URL_PARAMS_SEPARATER;
 
 import java.io.IOException;
 import java.util.List;
