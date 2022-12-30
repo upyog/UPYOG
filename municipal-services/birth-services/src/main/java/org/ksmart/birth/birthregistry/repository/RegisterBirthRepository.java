@@ -87,10 +87,6 @@ public class RegisterBirthRepository {
         pdfApplicationRequest.getBirthCertificate().forEach(cert-> {
             String uiHost = config.getUiAppHost();
             String birthCertPath = config.getBirthCertLink();
-//            System.out.println(cert.getId());
-//            System.out.println(cert.getTenantId());
-//            System.out.println(cert.getRegistrationNo());
-//            System.out.println(cert.getGender());
             birthCertPath = birthCertPath.replace("$id",cert.getId());
             birthCertPath = birthCertPath.replace("$tenantId",cert.getTenantId());
             birthCertPath = birthCertPath.replace("$regNo",cert.getRegistrationNo());
@@ -99,6 +95,7 @@ public class RegisterBirthRepository {
             birthCertPath = birthCertPath.replace("$birthcertificateno",cert.getRegistrationNo());
             String finalPath = uiHost + birthCertPath;
             cert.setEmbeddedUrl(getShortenedUrl(finalPath));
+            System.out.println(finalPath);
         });
         log.info(new Gson().toJson(pdfApplicationRequest));
 
@@ -112,7 +109,7 @@ public class RegisterBirthRepository {
             String tenantId = cert.getTenantId().split("\\.")[0];
             birthCertPath = birthCertPath.replace("$tenantId",tenantId);
             String pdfFinalPath = uiHost + birthCertPath;
-            System.out.println(pdfFinalPath);
+           // System.out.println(pdfFinalPath);
             EgovPdfResp response = restTemplate.postForObject(pdfFinalPath, req, EgovPdfResp.class);
             if (response != null && CollectionUtils.isEmpty(response.getFilestoreIds())) {
                 throw new CustomException("EMPTY_FILESTORE_IDS_FROM_PDF_SERVICE",

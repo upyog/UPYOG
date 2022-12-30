@@ -96,6 +96,16 @@ var fontDescriptors = {
   BalooPaaji:{
     normal: "src/fonts/BalooPaaji2-Regular.ttf",
     bold: "src/fonts/BalooPaaji2-Bold.ttf"
+  },
+  Times:{
+    normal: "src/fonts/TimesNewRoman-Regular.ttf",
+    bold: "src/fonts/TimesNewRoman-Bold.ttf",
+    italics: "src/fonts/TimesNewRoman-Italic.ttf",
+    bolditalics: "src/fonts/TimesNewRoman-BoldItalic.ttf",
+  },
+  NotoSansMalayalam:{
+    normal: "src/fonts/NotoSansMalayalam-Regular.ttf",
+    bold: "src/fonts/NotoSansMalayalam-Bold.ttf"
   }
 };
 
@@ -103,7 +113,8 @@ var defaultFontMapping = {
   en_IN: 'default',
   hi_IN: 'default',
   pn_IN: 'BalooPaaji',
-  od_IN: 'BalooBhaina'
+  od_IN: 'BalooBhaina',
+  ml_IN: 'NotoSansMalayalam'
 }
 
 const printer = new pdfMakePrinter(fontDescriptors);

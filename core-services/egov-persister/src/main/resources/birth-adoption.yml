@@ -249,7 +249,7 @@ serviceMaps:
 
 
         - query: INSERT INTO public.eg_birth_father_information(id, firstname_en, firstname_ml, middlename_en, middlename_ml, lastname_en, lastname_ml, 
-                 aadharno, ot_passportno, emailid, mobileno, createdtime, createdby, lastmodifiedtime, lastmodifiedby, birthdtlid) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+                 aadharno, ot_passportno, emailid, mobileno, createdtime, createdby, lastmodifiedtime, lastmodifiedby, birthdtlid,bio_adopt) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?);
           basePath: AdoptionDetails.*.birthFather
           jsonMaps:
 
@@ -285,9 +285,11 @@ serviceMaps:
 
             - jsonPath: $.AdoptionDetails.*.id
 
+            - jsonPath: $.AdoptionDetails.*.bio_adopt
+
 
         - query: INSERT INTO public.eg_birth_mother_information(id, firstname_en, firstname_ml, middlename_en, middlename_ml, lastname_en, lastname_ml, aadharno, 
-                 ot_passportno, emailid, mobileno, createdtime, createdby, lastmodifiedtime, lastmodifiedby, birthdtlid) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+                 ot_passportno, emailid, mobileno, createdtime, createdby, lastmodifiedtime, lastmodifiedby, birthdtlid,bio_adopt) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?);
 
           basePath: AdoptionDetails.*.birthMother
           jsonMaps:
@@ -323,10 +325,13 @@ serviceMaps:
 
             - jsonPath: $.AdoptionDetails.*.id
 
+            - jsonPath: $.AdoptionDetails.*.bio_adopt
+
+
         - query: INSERT INTO public.eg_birth_permanent_address(id, resdnce_addr_type, buildingno, houseno, res_asso_no, housename_en, housename_ml, 
                 ot_address1_en, ot_address1_ml, ot_address2_en, ot_address2_ml, locality_en, locality_ml, city_en, city_ml, villageid, tenantid, talukid, 
                 districtid, stateid, poid, pinno, ot_state_region_province_en, ot_state_region_province_ml, countryid, createdby, createdtime, lastmodifiedby, 
-                lastmodifiedtime, birthdtlid, same_as_permanent) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+                lastmodifiedtime, birthdtlid, same_as_permanent, bio_adopt) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?);
           basePath: AdoptionDetails.*.birthPermanent
           jsonMaps:
             - jsonPath: $.AdoptionDetails.*.birthPermanent.id
@@ -391,11 +396,13 @@ serviceMaps:
 
             - jsonPath: $.AdoptionDetails.*.birthPermanent.same_as_permanent
 
+            - jsonPath: $.AdoptionDetails.*.bio_adopt
+
 
         - query: INSERT INTO public.eg_birth_present_address(id, resdnce_addr_type, buildingno, houseno, res_asso_no, housename_en, housename_ml, ot_address1_en, 
                  ot_address1_ml, ot_address2_en, ot_address2_ml, locality_en, locality_ml, city_en, city_ml, villageid, tenantid, talukid, districtid, stateid, 
                  poid, pinno, ot_state_region_province_en, ot_state_region_province_ml, countryid, createdby, createdtime, lastmodifiedby, 
-                 lastmodifiedtime, birthdtlid) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+                 lastmodifiedtime, birthdtlid, bio_adopt) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: AdoptionDetails.*.birthPresent
           jsonMaps:
             - jsonPath: $.AdoptionDetails.*.birthPresent.id
@@ -458,9 +465,11 @@ serviceMaps:
 
             - jsonPath: $.AdoptionDetails.*.id
 
+            - jsonPath: $.AdoptionDetails.*.bio_adopt
+
 
         - query: INSERT INTO public.eg_birth_mother_information(id, firstname_en, firstname_ml, middlename_en, middlename_ml, lastname_en, lastname_ml, aadharno,
-            ot_passportno, emailid, mobileno, createdtime, createdby, lastmodifiedtime, lastmodifiedby, birthdtlid) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+            ot_passportno, emailid, mobileno, createdtime, createdby, lastmodifiedtime, lastmodifiedby, birthdtlid, bio_adopt) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
           basePath: AdoptionDetails.*.adoptionMother
           jsonMaps:
@@ -496,6 +505,185 @@ serviceMaps:
 
             - jsonPath: $.AdoptionDetails.*.id
 
+            - jsonPath: $.AdoptionDetails.*.bio_adopt
+
+        - query: INSERT INTO public.eg_birth_father_information(id, firstname_en, firstname_ml, middlename_en, middlename_ml, lastname_en, lastname_ml, aadharno,
+            ot_passportno, emailid, mobileno, createdtime, createdby, lastmodifiedtime, lastmodifiedby, birthdtlid, bio_adopt) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+          basePath: AdoptionDetails.*.adoptionMother
+          jsonMaps:
+            - jsonPath: $.AdoptionDetails.*.adoptionFather.id
+
+            - jsonPath: $.AdoptionDetails.*.adoptionFather.firstname_en
+
+            - jsonPath: $.AdoptionDetails.*.adoptionFather.firstname_ml
+
+            - jsonPath: $.AdoptionDetails.*.adoptionFather.middlename_en
+
+            - jsonPath: $.AdoptionDetails.*.adoptionFather.middlename_ml
+
+            - jsonPath: $.AdoptionDetails.*.adoptionFather.lastname_en
+
+            - jsonPath: $.AdoptionDetails.*.adoptionFather.lastname_ml
+
+            - jsonPath: $.AdoptionDetails.*.adoptionFather.aadharno
+
+            - jsonPath: $.AdoptionDetails.*.adoptionFather.ot_passportno
+
+            - jsonPath: $.AdoptionDetails.*.adoptionFather.emailid
+
+            - jsonPath: $.AdoptionDetails.*.adoptionFather.mobileno
+
+            - jsonPath: $.AdoptionDetails.*.adoptionFather.createdTime
+
+            - jsonPath: $.AdoptionDetails.*.adoptionFather.createdBy
+
+            - jsonPath: $.AdoptionDetails.*.adoptionFather.lastModifiedTime
+
+            - jsonPath: $.AdoptionDetails.*.adoptionFather.lastModifiedBy
+
+            - jsonPath: $.AdoptionDetails.*.id
+
+            - jsonPath: $.AdoptionDetails.*.bio_adopt
+
+        - query: INSERT INTO public.eg_birth_permanent_address(id, resdnce_addr_type, buildingno, houseno, res_asso_no, housename_en, housename_ml,
+            ot_address1_en, ot_address1_ml, ot_address2_en, ot_address2_ml, locality_en, locality_ml, city_en, city_ml, villageid, tenantid, talukid,
+            districtid, stateid, poid, pinno, ot_state_region_province_en, ot_state_region_province_ml, countryid, createdby, createdtime, lastmodifiedby,
+            lastmodifiedtime, birthdtlid, same_as_permanent, bio_adopt) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?);
+          basePath: AdoptionDetails.*.birthPermanent
+          jsonMaps:
+            - jsonPath: $.AdoptionDetails.*.adoptionPermanentAddress.id
+
+            - jsonPath: $.AdoptionDetails.*.adoptionPermanentAddress.resdnce_addr_type
+
+            - jsonPath: $.AdoptionDetails.*.adoptionPermanentAddress.buildingno
+
+            - jsonPath: $.AdoptionDetails.*.adoptionPermanentAddress.houseno
+
+            - jsonPath: $.AdoptionDetails.*.adoptionPermanentAddress.res_asso_no
+
+            - jsonPath: $.AdoptionDetails.*.adoptionPermanentAddress.housename_en
+
+            - jsonPath: $.AdoptionDetails.*.adoptionPermanentAddress.housename_ml
+
+            - jsonPath: $.AdoptionDetails.*.adoptionPermanentAddress.ot_address1_en
+
+            - jsonPath: $.AdoptionDetails.*.adoptionPermanentAddress.ot_address1_ml
+
+            - jsonPath: $.AdoptionDetails.*.adoptionPermanentAddress.ot_address2_en
+
+            - jsonPath: $.AdoptionDetails.*.adoptionPermanentAddress.ot_address2_ml
+
+            - jsonPath: $.AdoptionDetails.*.adoptionPermanentAddress.locality_en
+
+            - jsonPath: $.AdoptionDetails.*.adoptionPermanentAddress.locality_ml
+
+            - jsonPath: $.AdoptionDetails.*.adoptionPermanentAddress.city_en
+
+            - jsonPath: $.AdoptionDetails.*.adoptionPermanentAddress.city_ml
+
+            - jsonPath: $.AdoptionDetails.*.adoptionPermanentAddress.villageid
+
+            - jsonPath: $.AdoptionDetails.*.adoptionPermanentAddress.tenantid
+
+            - jsonPath: $.AdoptionDetails.*.adoptionPermanentAddress.talukid
+
+            - jsonPath: $.AdoptionDetails.*.birthPermanent.districtid
+
+            - jsonPath: $.AdoptionDetails.*.adoptionPermanentAddress.stateid
+
+            - jsonPath: $.AdoptionDetails.*.adoptionPermanentAddress.poid
+
+            - jsonPath: $.AdoptionDetails.*.adoptionPermanentAddress.pinno
+
+            - jsonPath: $.AdoptionDetails.*.adoptionPermanentAddress.ot_state_region_province_ml
+
+            - jsonPath: $.AdoptionDetails.*.adoptionPermanentAddress.ot_state_region_province_en
+
+            - jsonPath: $.AdoptionDetails.*.adoptionPermanentAddress.countryid
+
+            - jsonPath: $.AdoptionDetails.*.auditDetails.createdBy
+
+            - jsonPath: $.AdoptionDetails.*.auditDetails.createdTime
+
+            - jsonPath: $.AdoptionDetails.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.AdoptionDetails.*.auditDetails.lastModifiedTime
+
+            - jsonPath: $.AdoptionDetails.*.id
+
+            - jsonPath: $.AdoptionDetails.*.adoptionPermanentAddress.same_as_permanent
+
+            - jsonPath: $.AdoptionDetails.*.bio_adopt
+
+
+        - query: INSERT INTO public.eg_birth_present_address(id, resdnce_addr_type, buildingno, houseno, res_asso_no, housename_en, housename_ml, ot_address1_en,
+            ot_address1_ml, ot_address2_en, ot_address2_ml, locality_en, locality_ml, city_en, city_ml, villageid, tenantid, talukid, districtid, stateid,
+            poid, pinno, ot_state_region_province_en, ot_state_region_province_ml, countryid, createdby, createdtime, lastmodifiedby,
+            lastmodifiedtime, birthdtlid, bio_adopt) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+          basePath: AdoptionDetails.*.birthPresent
+          jsonMaps:
+            - jsonPath: $.AdoptionDetails.*.adoptionPresentAddress.id
+
+            - jsonPath: $.AdoptionDetails.*.adoptionPresentAddress.resdnce_addr_type
+
+            - jsonPath: $.AdoptionDetails.*.adoptionPresentAddress.buildingno
+
+            - jsonPath: $.AdoptionDetails.*.adoptionPresentAddress.houseno
+
+            - jsonPath: $.AdoptionDetails.*.adoptionPresentAddress.res_asso_no
+
+            - jsonPath: $.AdoptionDetails.*.adoptionPresentAddress.housename_en
+
+            - jsonPath: $.AdoptionDetails.*.adoptionPresentAddress.housename_ml
+
+            - jsonPath: $.AdoptionDetails.*.adoptionPresentAddress.ot_address1_en
+
+            - jsonPath: $.AdoptionDetails.*.adoptionPresentAddress.ot_address1_ml
+
+            - jsonPath: $.AdoptionDetails.*.adoptionPresentAddress.ot_address2_en
+
+            - jsonPath: $.AdoptionDetails.*.adoptionPresentAddress.ot_address2_ml
+
+            - jsonPath: $.AdoptionDetails.*.adoptionPresentAddress.locality_en
+
+            - jsonPath: $.AdoptionDetails.*.adoptionPresentAddress.locality_ml
+
+            - jsonPath: $.AdoptionDetails.*.adoptionPresentAddress.city_en
+
+            - jsonPath: $.AdoptionDetails.*.adoptionPresentAddress.city_ml
+
+            - jsonPath: $.AdoptionDetails.*.adoptionPresentAddress.villageid
+
+            - jsonPath: $.AdoptionDetails.*.adoptionPresentAddress.tenantid
+
+            - jsonPath: $.AdoptionDetails.*.adoptionPresentAddress.talukid
+
+            - jsonPath: $.AdoptionDetails.*.adoptionPresentAddress.districtid
+
+            - jsonPath: $.AdoptionDetails.*.adoptionPresentAddress.stateid
+
+            - jsonPath: $.AdoptionDetails.*.adoptionPresentAddress.poid
+
+            - jsonPath: $.AdoptionDetails.*.adoptionPresentAddress.pinno
+
+            - jsonPath: $.AdoptionDetails.*.adoptionPresentAddress.ot_state_region_province_en
+
+            - jsonPath: $.AdoptionDetails.*.adoptionPresentAddress.ot_state_region_province_ml
+
+            - jsonPath: $.AdoptionDetails.*.adoptionPresentAddress.countryid
+
+            - jsonPath: $.AdoptionDetails.*.auditDetails.createdBy
+
+            - jsonPath: $.AdoptionDetails.*.auditDetails.createdTime
+
+            - jsonPath: $.AdoptionDetails.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.AdoptionDetails.*.auditDetails.lastModifiedTime
+
+            - jsonPath: $.AdoptionDetails.*.id
+
+            - jsonPath: $.AdoptionDetails.*.bio_adopt
 
         - query: INSERT INTO public.eg_birth_statitical_information(id, weight_of_child, duration_of_pregnancy_in_week, nature_of_medical_attention,
                 way_of_pregnancy, delivery_method, deliverytypeothers_en, deliverytypeothers_ml, religionid, father_nationalityid, father_educationid,

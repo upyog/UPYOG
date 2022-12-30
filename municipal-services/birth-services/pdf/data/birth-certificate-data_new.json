@@ -1,0 +1,755 @@
+{
+  "key": "birth-certificate",
+  "DataConfigs": {
+    "serviceName": "rainmaker-common",
+    "version": "1.0.0",
+    "baseKeyPath": "$.BirthCertificate.*",
+    "entityIdPath":"$.id",
+    "isCommonTableBorderRequired": true,
+    "mappings": [
+      {
+        "topic": "common-pdf-generation-3",
+        "mappings": [
+          {
+            "direct": [
+              {
+                "variable": "logokerala",
+                "url":"https://ulb-logos.s3.ap-south-1.amazonaws.com/kerala_logo.jpg",
+                "type":"image"
+              },
+              {
+                "variable": "logobirth",
+                "url": "https://ulb-logos.s3.ap-south-1.amazonaws.com/birth_death_logo.jpg",
+                "type":"image"
+              },
+              {
+                "variable": "name",
+                "value": {
+                  "path": "$.fullName"
+                },
+                "type":"setEmpty"
+              },
+              {
+                "variable": "embeddedUrl",
+                "value": {
+                  "path": "$.embeddedUrl"
+                }
+              },
+              {
+                "variable": "dob",
+                "value": {
+                  "path": "$.dateOfBirth"
+                },
+                "type": "date"
+              },
+              {
+                "variable": "gender",
+                "value": {
+                  "path": "$.genderStr"
+                },
+                "type":"setEmpty"
+              },
+              {
+                "variable": "registrationNo",
+                "value": {
+                  "path": "$.registrationNo"
+                },
+                "type":"setEmpty"
+              },
+              {
+                "variable": "tenantId",
+                "value": {
+                  "path": "$.tenantId"
+                },
+                "type":"setEmpty"
+              },
+              {
+                "variable": "registration_date",
+                "value": {
+                  "path": "$.dateOfReport"
+                },
+                "type": "date"
+              },
+              {
+                "variable": "updatedOn",
+                "value": {
+                  "path": "$.dateofissue"
+                },
+                "type": "date"
+              },
+              {
+                "variable": "fatherName",
+                "value": {
+                  "path": "$.birthFatherInfo.fullName"
+                },
+                "type":"setEmpty"
+              },
+              {
+                "variable": "motherName",
+                "value": {
+                  "path": "$.birthMotherInfo.fullName"
+                },
+                "type":"setEmpty"
+              },
+              {
+                "variable": "childAddress",
+                "value": {
+                  "path": "$.birthPresentaddr.fullAddress"
+                },
+                "type":"setEmpty"
+              },
+              {
+                "variable": "parentsAddress",
+                "value": {
+                  "path": "$.birthPermaddr.fullAddress"
+                },
+                "type":"setEmpty"
+              },
+              {
+                "variable": "parentsCity",
+                "value": {
+                  "path": "$.birthPermaddr.cityEn"
+                },
+                "type":"setEmpty"
+              },
+              {
+                "variable": "parentsStreet",
+                "value": {
+                  "path": "$.birthPermaddr.localityEn"
+                },
+                "type":"setEmpty"
+              },
+              {
+                "variable": "parentsTehsil",
+                "value": {
+                  "path": "$.birthPermaddr.talukId"
+                },
+                "type":"setEmpty"
+              },
+              {
+                "variable": "parentsDistrict",
+                "value": {
+                  "path": "$.birthPermaddr.districtId"
+                },
+                "type":"setEmpty"
+              },
+              {
+                "variable": "year",
+                "value": {
+                  "path": "$.dateOfReport"
+                },
+                "type": "date",
+                "format": "YYYY"
+              },
+              {
+                "variable": "fatherUid",
+                "value": {
+                  "path": "$.birthFatherInfo.aadharNo"
+                },
+                "type":"setEmpty"
+              },
+              {
+                "variable": "parentsState",
+                "value": {
+                  "path": "$.birthPermaddr.stateId"
+                },
+                "type":"setEmpty"
+              },
+              {
+                "variable": "motherUid",
+                "value": {
+                  "path": "$.birthMotherInfo.aadharNo"
+                },
+                "type":"setEmpty"
+              },
+              {
+                "variable": "remarks",
+                "value": {
+                  "path": "$.remarksEn"
+                },
+                "type":"setEmpty"
+              },
+              {
+                "variable": "placeOfBirth",
+                "value": {
+                  "path": "$.placeofbirth"
+                },
+                "type":"setEmpty"
+              },
+              {
+                "variable": "issueDate",
+                "value": {
+                  "path": "$.dateofissue"
+                },
+                "type": "date"
+              },
+
+              {
+                "variable": "certificateType",
+                "value": {
+                  "path": "$.certificateType"
+                },
+                "type":"setEmpty"
+              },
+              {
+                "variable": "tenant",
+                "value": {
+                  "path": "$.tenantId"
+                },
+                "type": "setEmpty",
+                "localisation":{
+                  "required":true,
+                  "module":"rainmaker-common",
+                  "locale":"en_IN"
+                }
+              },
+
+              {
+                "variable": "tenantMl",
+                "value": {
+                  "path": "$.tenantId"
+                },
+                "type": "setEmpty",
+                "localisation":{
+                  "required":true,
+                  "prefix": "TENANTS_TENANT_",
+                  "module":"rainmaker-common",
+                  "locale":"ml_IN"
+                }
+              },
+
+              {
+                "variable": "childName",
+                "value": {
+                  "path": "PDF_BIRTH_CHILD_NAME"
+                },
+                "type": "label",
+                "localisation":{
+                  "required":true,
+                  "prefix": null,
+                  "module":"rainmaker-pdf",
+                  "locale":"en_IN"
+                }
+              },
+              {
+                "variable": "childNameMl",
+                "value": {
+                  "path": "PDF_BIRTH_CHILD_NAME_ML"
+                },
+                "type": "label",
+                "localisation":{
+                  "required":true,
+                  "prefix": null,
+                  "module":"rainmaker-pdf",
+                  "locale":"en_IN"
+                }
+              },
+              {
+                "variable": "childSex",
+                "value": {
+                  "path": "PDF_BIRTH_CHILD_SEX"
+                },
+                "type": "label",
+                "localisation":{
+                  "required":true,
+                  "prefix": null,
+                  "module":"rainmaker-pdf",
+                  "locale":"en_IN"
+                }
+              },
+              {
+                "variable": "dateOfBirth",
+                "value": {
+                  "path": "PDF_BIRTH_DATE_OF_BIRTH"
+                },
+                "type": "label",
+                "localisation":{
+                  "required":true,
+                  "prefix": null,
+                  "module":"rainmaker-pdf",
+                  "locale":"en_IN"
+                }
+              },
+              {
+                "variable": "placeOfBirth",
+                "value": {
+                  "path": "PDF_BIRTH_PLACE_OF_BIRTH"
+                },
+                "type": "label",
+                "localisation":{
+                  "required":true,
+                  "prefix": null,
+                  "module":"rainmaker-pdf",
+                  "locale":"en_IN"
+                }
+              },
+              {
+                "variable": "nameOfMother",
+                "value": {
+                  "path": "PDF_BIRTH_NAME_OF_MOTHER"
+                },
+                "type": "label",
+                "localisation":{
+                  "required":true,
+                  "prefix": null,
+                  "module":"rainmaker-pdf",
+                  "locale":"en_IN"
+                }
+              },
+              {
+                "variable": "nameOfFather",
+                "value": {
+                  "path": "PDF_BIRTH_NAME_OF_FATHER"
+                },
+                "type": "label",
+                "localisation":{
+                  "required":true,
+                  "prefix": null,
+                  "module":"rainmaker-pdf",
+                  "locale":"en_IN"
+                }
+              },
+              {
+                "variable": "presentAddress",
+                "value": {
+                  "path": "PDF_BIRTH_PRESENT_ADDRESS"
+                },
+                "type": "label",
+                "localisation":{
+                  "required":true,
+                  "prefix": null,
+                  "module":"rainmaker-pdf",
+                  "locale":"en_IN"
+                }
+              },
+              {
+                "variable": "permanentAddress",
+                "value": {
+                  "path": "PDF_BIRTH_PERMANENT_ADDRESS"
+                },
+                "type": "label",
+                "localisation":{
+                  "required":true,
+                  "prefix": null,
+                  "module":"rainmaker-pdf",
+                  "locale":"en_IN"
+                }
+              },
+              {
+                "variable": "registrationNoLabel",
+                "value": {
+                  "path": "PDF_BIRTH_REGISTRATION_NUMBER"
+                },
+                "type": "label",
+                "localisation":{
+                  "required":true,
+                  "prefix": null,
+                  "module":"rainmaker-pdf",
+                  "locale":"en_IN"
+                }
+              },
+              {
+                "variable": "registrationNoLabelMl",
+                "value": {
+                  "path": "PDF_BIRTH_REGISTRATION_NUMBER"
+                },
+                "type": "label",
+                "localisation":{
+                  "required":true,
+                  "prefix": null,
+                  "module":"rainmaker-pdf",
+                  "locale":"ml_IN"
+                }
+              },
+              {
+                "variable": "registrationDateLabel",
+                "value": {
+                  "path": "PDF_BIRTH_DATE_OF_REGISTRATION"
+                },
+                "type": "label",
+                "localisation":{
+                  "required":true,
+                  "prefix": null,
+                  "module":"rainmaker-pdf",
+                  "locale":"en_IN"
+                }
+              },
+              {
+                "variable": "registrationDateLabelMl",
+                "value": {
+                  "path": "PDF_BIRTH_DATE_OF_REGISTRATION"
+                },
+                "type": "label",
+                "localisation":{
+                  "required":true,
+                  "prefix": null,
+                  "module":"rainmaker-pdf",
+                  "locale":"ml_IN"
+                }
+              },
+              {
+                "variable": "remarks",
+                "value": {
+                  "path": "PDF_BIRTH_REMARKS"
+                },
+                "type": "label",
+                "localisation":{
+                  "required":true,
+                  "prefix": null,
+                  "module":"rainmaker-pdf",
+                  "locale":"en_IN"
+                }
+              },
+              {
+                "variable": "dateOfIssue",
+                "value": {
+                  "path": "PDF_BIRTH_DATE_OF_ISSUE"
+                },
+                "type": "label",
+                "localisation":{
+                  "required":true,
+                  "prefix": null,
+                  "module":"rainmaker-pdf",
+                  "locale":"en_IN"
+                }
+              },
+              {
+                "variable": "addressOfIssuingAuthority",
+                "value": {
+                  "path": "PDF_BIRTH_ADDRESS_OF_THE_ISSUING_AUTHORITY"
+                },
+                "type": "label",
+                "localisation":{
+                  "required":true,
+                  "prefix": null,
+                  "module":"rainmaker-pdf",
+                  "locale":"en_IN"
+                }
+              },
+              {
+                "variable": "ensureRegistration",
+                "value": {
+                  "path": "PDF_BIRTH_ENSURE_REGISTRATION_OF_EVERY_BIRTH_AND_DEATH"
+                },
+                "type": "label",
+                "localisation":{
+                  "required":true,
+                  "prefix": null,
+                  "module":"rainmaker-pdf",
+                  "locale":"en_IN"
+                }
+              },
+              {
+                "variable": "ensureRegistrationMl",
+                "value": {
+                  "path": "PDF_BIRTH_ENSURE_REGISTRATION_OF_EVERY_BIRTH_AND_DEATH"
+                },
+                "type": "label",
+                "localisation":{
+                  "required":true,
+                  "prefix": null,
+                  "module":"rainmaker-pdf",
+                  "locale":"ml_IN"
+                }
+              },
+              {
+                "variable": "govtOfKerala",
+                "value": {
+                  "path": "PDF_BIRTH_GOVERNMENT_OF_KERALA"
+                },
+                "type": "label",
+                "localisation":{
+                  "required":true,
+                  "prefix": null,
+                  "module":"rainmaker-pdf",
+                  "locale":"en_IN"
+                }
+              },
+              {
+                "variable": "govtOfKeralaMl",
+                "value": {
+                  "path": "PDF_BIRTH_GOVERNMENT_OF_KERALA"
+                },
+                "type": "label",
+                "localisation":{
+                  "required":true,
+                  "prefix": null,
+                  "module":"rainmaker-pdf",
+                  "locale":"ml_IN"
+                }
+              },
+              {
+                "variable": "deptUrbanAffairs",
+                "value": {
+                  "path": "PDF_BIRTH_DEPARTMENT_OF_URBAN_AFFAIRS"
+                },
+                "type": "label",
+                "localisation":{
+                  "required":true,
+                  "prefix": null,
+                  "module":"rainmaker-pdf",
+                  "locale":"en_IN"
+                }
+              },
+              {
+                "variable": "deptUrbanAffairsMl",
+                "value": {
+                  "path": "PDF_BIRTH_DEPARTMENT_OF_URBAN_AFFAIRS"
+                },
+                "type": "label",
+                "localisation":{
+                  "required":true,
+                  "prefix": null,
+                  "module":"rainmaker-pdf",
+                  "locale":"ml_IN"
+                }
+              },
+              {
+                "variable": "certify",
+                "value": {
+                  "path": "PDF_BIRTH_THIS_IS_TO_CERTIFY_THAT"
+                },
+                "type": "label",
+                "localisation":{
+                  "required":true,
+                  "prefix": null,
+                  "module":"rainmaker-pdf",
+                  "locale":"en_IN"
+                }
+              },
+              {
+                "variable": "certifyMl",
+                "value": {
+                  "path": "PDF_BIRTH_THIS_IS_TO_CERTIFY_THAT"
+                },
+                "type": "label",
+                "localisation":{
+                  "required":true,
+                  "prefix": null,
+                  "module":"rainmaker-pdf",
+                  "locale":"ml_IN"
+                }
+              },
+              {
+                "variable": "issueUnderSection12",
+                "value": {
+                  "path": "PDF_BIRTH_ISSUED_UNDER_SECTION_12"
+                },
+                "type": "label",
+                "localisation":{
+                  "required":true,
+                  "prefix": null,
+                  "module":"rainmaker-pdf",
+                  "locale":"en_IN"
+                }
+              },
+              {
+                "variable": "rule8",
+                "value": {
+                  "path": "PDF_BIRTH_LAST_RULE_8"
+                },
+                "type": "label",
+                "localisation":{
+                  "required":true,
+                  "prefix": null,
+                  "module":"rainmaker-pdf",
+                  "locale":"en_IN"
+                }
+              },
+              {
+                "variable": "issueUnderSection121969",
+                "value": {
+                  "path": "PDF_BIRTH_ISSUED_UNDER_SECTION_12_1969"
+                },
+                "type": "label",
+                "localisation":{
+                  "required":true,
+                  "prefix": null,
+                  "module":"rainmaker-pdf",
+                  "locale":"en_IN"
+                }
+              },
+              {
+                "variable": "issueUnderSection121969ML",
+                "value": {
+                  "path": "PDF_BIRTH_ISSUED_UNDER_SECTION_12_1969"
+                },
+                "type": "label",
+                "localisation":{
+                  "required":true,
+                  "prefix": null,
+                  "module":"rainmaker-pdf",
+                  "locale":"ml_IN"
+                }
+              },
+              {
+                "variable": "birthCertificate",
+                "value": {
+                  "path": "PDF_BIRTH_BIRTH_CERTIFICATE"
+                },
+                "type": "label",
+                "localisation":{
+                  "required":true,
+                  "prefix": null,
+                  "module":"rainmaker-pdf",
+                  "locale":"en_IN"
+                }
+              },
+              {
+                "variable": "birthCertificateMl",
+                "value": {
+                  "path": "PDF_BIRTH_BIRTH_CERTIFICATE"
+                },
+                "type": "label",
+                "localisation":{
+                  "required":true,
+                  "prefix": null,
+                  "module":"rainmaker-pdf",
+                  "locale":"ml_IN"
+                }
+              },
+              {
+                "variable": "nameOfLb",
+                "value": {
+                  "path": "PDF_BIRTH_NAME_OF_LOCAL_GOVERNMENT_ISSUING_CERTIFICATE"
+                },
+                "type": "label",
+                "localisation":{
+                  "required":true,
+                  "prefix": null,
+                  "module":"rainmaker-pdf",
+                  "locale":"en_IN"
+                }
+              },
+              {
+                "variable": "nameOfLbMl",
+                "value": {
+                  "path": "PDF_BIRTH_NAME_OF_LOCAL_GOVERNMENT_ISSUING_CERTIFICATE"
+                },
+                "type": "label",
+                "localisation":{
+                  "required":true,
+                  "prefix": null,
+                  "module":"rainmaker-pdf",
+                  "locale":"ml_IN"
+                }
+              },
+              {
+                "variable": "keyNo",
+                "value": {
+                  "path": "PDF_BIRTH_KEY_NO"
+                },
+                "type": "label",
+                "localisation":{
+                  "required":true,
+                  "prefix": null,
+                  "module":"rainmaker-pdf",
+                  "locale":"en_IN"
+                }
+              },
+              {
+                "variable": "form5",
+                "value": {
+                  "path": "PDF_BIRTH_FORM_NO_5"
+                },
+                "type": "label",
+                "localisation":{
+                  "required":true,
+                  "prefix": null,
+                  "module":"rainmaker-pdf",
+                  "locale":"en_IN"
+                }
+              },
+              {
+                "variable": "computerGenerated",
+                "value": {
+                  "path": "PDF_BIRTH_COMPUTER_GENERATED"
+                },
+                "type": "label",
+                "localisation":{
+                  "required":true,
+                  "prefix": null,
+                  "module":"rainmaker-pdf",
+                  "locale":"en_IN"
+                }
+              },
+              {
+                "variable": "validDocument",
+                "value": {
+                  "path": "PDF_BIRTH_VALID_DOCUMENT_FOR_ALL_OFFICIAL_PURPOSES"
+                },
+                "type": "label",
+                "localisation":{
+                  "required":true,
+                  "prefix": null,
+                  "module":"rainmaker-pdf",
+                  "locale":"en_IN"
+                }
+              },
+              {
+                "variable": "authenticity",
+                "value": {
+                  "path": "PDF_BIRTH_AUTHENTICITY_OF_THIS_CERTIFICATE"
+                },
+                "type": "label",
+                "localisation":{
+                  "required":true,
+                  "prefix": null,
+                  "module":"rainmaker-pdf",
+                  "locale":"en_IN"
+                }
+              },
+              {
+                "variable": "ikm",
+                "value": {
+                  "path": "PDF_BIRTH_SOFTWARE_BY_INFORMATION_KERALA_MISSION"
+                },
+                "type": "label",
+                "localisation":{
+                  "required":true,
+                  "prefix": null,
+                  "module":"rainmaker-pdf",
+                  "locale":"en_IN"
+                }
+              },
+              {
+                "variable": "printedInvalid",
+                "value": {
+                  "path": "PDF_BIRTH_CERTIFICATE_PRINTED_BEFORE_THE_LAST_UPDATED_DATE_IS_INVALID"
+                },
+                "type": "label",
+                "localisation":{
+                  "required":true,
+                  "prefix": null,
+                  "module":"rainmaker-pdf",
+                  "locale":"en_IN"
+                }
+              },
+              {
+                "variable": "updatedOn",
+                "value": {
+                  "path": "PDF_BIRTH_LAST_UPDATED_ON"
+                },
+                "type": "label",
+                "localisation":{
+                  "required":true,
+                  "prefix": null,
+                  "module":"rainmaker-pdf",
+                  "locale":"en_IN"
+                }
+              }
+            ]
+          },
+          {
+            "qrcodeConfig": [
+              {
+                "variable": "qr_code_image",
+                "value":"$.embeddedUrl"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

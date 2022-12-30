@@ -65,7 +65,7 @@ public class RegisterBirthService {
                 throw new CustomException("Invalid_Input", "Error in processing data");
             enrichmentService.enrichCreateRequest(birthCertRequest);
             enrichmentService.setIdgenIds(birthCertRequest);
-            System.out.println(birthCertRequest.getBirthCertificate().getBirthCertificateNo());
+          //  System.out.println(birthCertRequest.getBirthCertificate().getBirthCertificateNo());
         //birtDtls.get(0).setBirthcertificateno(birthCertRequest.getBirthCertificate().getBirthCertificateNo());
             regDetail.get(0).setCertId(birthCertRequest.getBirthCertificate().getBirthCertificateNo());
         System.out.println( regDetail.get(0).getCertId());
@@ -78,10 +78,11 @@ public class RegisterBirthService {
             birthCertificate.setApplicationStatus(BirthCertificate.StatusEnum.FREE_DOWNLOAD);
             repository.saveRegisterBirthCert(birthCertRequest);
             return birthCertificate;
-//         } catch (Exception e) {
-//             e.printStackTrace();
-//             throw new CustomException("DOWNLOAD_ERROR", "Error in Downloading Certificate");
-//         }
+
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            throw new CustomException("DOWNLOAD_ERROR", "Error in Downloading Certificate");
+//        }
     }
 
 
