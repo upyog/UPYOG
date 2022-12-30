@@ -2,9 +2,8 @@ package org.egov.dx.service;
 import static org.egov.dx.util.PTServiceDXConstants.DIGILOCKER_DOCTYPE;
 import static org.egov.dx.util.PTServiceDXConstants.DIGILOCKER_ISSUER_ID;
 import static org.egov.dx.util.PTServiceDXConstants.DIGILOCKER_ORIGIN_NOT_SUPPORTED;
-import static org.egov.dx.util.PTServiceDXConstants.ORIGIN;
 import static org.egov.dx.util.PTServiceDXConstants.EXCEPTION_TEXT_VALIDATION;
-
+import static org.egov.dx.util.PTServiceDXConstants.ORIGIN;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -18,11 +17,19 @@ import java.util.Collections;
 import java.util.List;
 
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.dx.web.models.Address;
+import org.egov.dx.web.models.Certificate;
+import org.egov.dx.web.models.CertificateData;
+import org.egov.dx.web.models.CertificateForData;
 import org.egov.dx.web.models.DocDetailsResponse;
+import org.egov.dx.web.models.IssuedBy;
 import org.egov.dx.web.models.IssuedTo;
+import org.egov.dx.web.models.Organization;
 import org.egov.dx.web.models.Payment;
+import org.egov.dx.web.models.PaymentForReceipt;
 import org.egov.dx.web.models.PaymentSearchCriteria;
 import org.egov.dx.web.models.Person;
+import org.egov.dx.web.models.PropertyTaxReceipt;
 import org.egov.dx.web.models.PullDocResponse;
 import org.egov.dx.web.models.PullURIResponse;
 import org.egov.dx.web.models.RequestInfoWrapper;
@@ -93,8 +100,11 @@ public class DataExchangeService {
 		List<Payment> payments = paymentService.getPayments(criteria, requestInfoWrapper);
 		System.out.println("payments are:" + (!payments.isEmpty()?payments.get(0):"No payments found"));
 		PullURIResponse model= new PullURIResponse();
-	       
-	 
+		XStream xstream = new XStream();   
+		xstream .addPermission(NoTypePermission.NONE); //forbid everything
+		xstream .addPermission(NullPermission.NULL);   // allow "null"
+		xstream .addPermission(PrimitiveTypePermission.PRIMITIVES);
+		xstream .addPermission(AnyTypePermission.ANY);
 		if(!payments.isEmpty() && validateRequest(searchCriteria,payments.get(0))){ 
 			
 			
@@ -137,7 +147,17 @@ public class DataExchangeService {
 				     docDetailsResponse.setURI(DIGILOCKER_ISSUER_ID.concat("-").concat(DIGILOCKER_DOCTYPE).concat("-").
 				    		 concat(payments.get(0).getFileStoreId()));
 				     docDetailsResponse.setIssuedTo(issuedTo);
-				     //docDetailsResponse.setDataContent(encodedString);
+
+			    	 Certificate certificate=new Certificate();
+
+				     if(searchCriteria.getDocType().equals("PRTAX"))
+				     {
+				    	 
+				    	 certificate=populateCertificate(payments.get(0));
+				    					    	 
+				     }
+				     docDetailsResponse.setDataContent(Base64.getEncoder().encodeToString( xstream.toXML(certificate).getBytes()));
+
 				     docDetailsResponse.setDocContent(encodedString);
 
 				     model.setDocDetails(docDetailsResponse);
@@ -173,15 +193,7 @@ public class DataExchangeService {
 
 		}
 		
-		
-			
-        XStream xstream = new XStream();
-		xstream .addPermission(NoTypePermission.NONE); //forbid everything
-		xstream .addPermission(NullPermission.NULL);   // allow "null"
-		xstream .addPermission(PrimitiveTypePermission.PRIMITIVES);
-		xstream .addPermission(AnyTypePermission.ANY);
-        //xstream.processAnnotations(DocDetails.class);
-        xstream.processAnnotations(PullURIResponse.class);
+	    xstream.processAnnotations(PullURIResponse.class);
         xstream.toXML(model);
         
 		return xstream.toXML(model);   
@@ -325,5 +337,67 @@ public class DataExchangeService {
 				return true;
 			
 			
+		}
+		
+		Certificate populateCertificate(Payment payment)
+		{
+			Certificate certificate=new Certificate();
+			 certificate.setLanguage("99");
+	    	 certificate.setName("Property Tax Receipt");
+	    	 certificate.setType("PRTAX");
+	    	 certificate.setNumber("");
+	    	 certificate.setPrevNumber("");
+	    	 certificate.setExpiryDate("");
+	    	 certificate.setValidFromDate("");
+	    	 certificate.setIssuedAt("");
+	    	 certificate.setIssueDate("");
+	    	 certificate.setStatus("A");
+	    	 
+	    	 IssuedBy issuedBy=new IssuedBy();
+	    	 Organization organization=new Organization();
+	    	 organization.setName("");
+	    	 organization.setType("SG");
+	    	 Address address=new Address();
+	    	 address.setCountry("IN");
+	    	 organization.setAddress(address);
+	    	 issuedBy.setOrganisation(organization);
+	    	 certificate.setIssuedBy(issuedBy);
+	    	 
+	    	 IssuedTo issuedTo=new IssuedTo();
+	    	 Person person = new Person();
+	    	 person.setAddress(address);
+	    	 person.setPhoto("");
+	    	 certificate.setIssuedTo(issuedTo);
+	    	 
+	    	 CertificateData certificateData=new CertificateData();
+	    	 CertificateForData certificateForData=new CertificateForData();
+	    	 certificateData.setCertificate(certificateForData);
+	    	 
+	    	 PropertyTaxReceipt propertyTaxReceipt=new PropertyTaxReceipt();
+	    	 propertyTaxReceipt.setPaymentDate(payment.getPaymentDetails().get(0).getReceiptDate().toString());
+	    	 propertyTaxReceipt.setServicetype(payment.getPaymentDetails().get(0).getBusinessService());
+	    	 propertyTaxReceipt.setReceiptNo(payment.getPaymentDetails().get(0).getReceiptNumber());
+	    	 propertyTaxReceipt.setPropertyID(payment.getPaymentDetails().get(0).getBill().getConsumerCode());
+	    	 propertyTaxReceipt.setOwnerName(payment.getPayerName());
+	    	 propertyTaxReceipt.setOwnerContact(payment.getMobileNumber());
+	    	 propertyTaxReceipt.setPaymentstatus(payment.getPaymentStatus().toString());
+	    	 PaymentForReceipt paymentForReceipt=new PaymentForReceipt();
+	    	 paymentForReceipt.setPaymentMode(payment.getPaymentMode().toString());
+	    	 String billingPeriod=
+	    			 (payment.getPaymentDetails().get(0).getBill().getBillDetails().get(0).getFromPeriod().toString()).concat("-").
+	    			 concat(payment.getPaymentDetails().get(0).getBill().getBillDetails().get(0).getToPeriod().toString());
+	    	 paymentForReceipt.setBillingPeriod(billingPeriod);
+	    	 paymentForReceipt.setPropertyTaxAmount(payment.getTotalDue().toString());
+	    	 paymentForReceipt.setPaidAmount(payment.getTotalAmountPaid().toString());
+	    	 paymentForReceipt.setPendingAmount((payment.getTotalDue().subtract(payment.getTotalAmountPaid())).toString());
+	    	 paymentForReceipt.setExcessAmount("");
+	    	 paymentForReceipt.setTransactionID(payment.getTransactionNumber());
+	    	 paymentForReceipt.setG8ReceiptDate(payment.getPaymentDetails().get(0).getManualReceiptNumber());
+	    	 paymentForReceipt.setG8ReceiptNo(payment.getPaymentDetails().get(0).getManualReceiptDate().toString());
+	    	     	 
+	    	 propertyTaxReceipt.setPaymentForReceipt(paymentForReceipt);
+	    	 certificateData.setPropertyTaxReceipt(propertyTaxReceipt);
+	    	 certificate.setCertificateData(certificateData);
+	    	 return certificate;
 		}
 }
