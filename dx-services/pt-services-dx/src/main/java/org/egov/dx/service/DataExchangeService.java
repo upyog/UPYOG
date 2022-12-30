@@ -147,6 +147,7 @@ public class DataExchangeService {
 				     docDetailsResponse.setURI(DIGILOCKER_ISSUER_ID.concat("-").concat(DIGILOCKER_DOCTYPE).concat("-").
 				    		 concat(payments.get(0).getFileStoreId()));
 				     docDetailsResponse.setIssuedTo(issuedTo);
+
 			    	 Certificate certificate=new Certificate();
 
 				     if(searchCriteria.getDocType().equals("PRTAX"))
@@ -156,6 +157,7 @@ public class DataExchangeService {
 				    					    	 
 				     }
 				     docDetailsResponse.setDataContent(Base64.getEncoder().encodeToString( xstream.toXML(certificate).getBytes()));
+
 				     docDetailsResponse.setDocContent(encodedString);
 
 				     model.setDocDetails(docDetailsResponse);
@@ -184,7 +186,7 @@ public class DataExchangeService {
 		     issuedTo.setPersons(persons);
 		     docDetailsResponse.setURI(null);
 		     docDetailsResponse.setIssuedTo(issuedTo);
-		     docDetailsResponse.setDataContent("");
+		     //docDetailsResponse.setDataContent("");
 		     docDetailsResponse.setDocContent("");
 
 		     model.setDocDetails(docDetailsResponse);
@@ -274,7 +276,7 @@ public class DataExchangeService {
 			     issuedTo.setPersons(persons);
 			     docDetailsResponse.setURI(null);
 			     docDetailsResponse.setIssuedTo(issuedTo);
-			     docDetailsResponse.setDataContent(encodedString);
+			     //docDetailsResponse.setDataContent(encodedString);
 			     docDetailsResponse.setDocContent(encodedString);
 
 			     model.setDocDetails(docDetailsResponse);
@@ -303,7 +305,7 @@ public class DataExchangeService {
 		     issuedTo.setPersons(persons);
 		     docDetailsResponse.setURI(null);
 		     docDetailsResponse.setIssuedTo(issuedTo);
-		     docDetailsResponse.setDataContent("");
+		     //docDetailsResponse.setDataContent("");
 		     docDetailsResponse.setDocContent("");
 
 		     model.setDocDetails(docDetailsResponse);

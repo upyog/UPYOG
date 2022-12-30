@@ -69,12 +69,13 @@ const EmployeeApp = ({
                  <div className="login-logo-wrapper">
               <div className="logoNiua">
                 <div style={{display:"flex",flexDirection:"column",width:"100%",height:"100%"}}>
-              <img src="https://i.postimg.cc/d1nSHQ1K/UPYOG-Logo-removebg-preview.png" style={{"position":"relative", zIndex:"999",width:"15%",height:"15%",marginLeft:"auto",marginRight:"auto",marginTop:"15px"}}/>
+              <img src="https://in-egov-assets.s3.ap-south-1.amazonaws.com/images/UPYOG-Logo2.png" style={{"position":"relative", zIndex:"999",width:"15%",height:"15%",marginLeft:"auto",marginRight:"auto",marginTop:"15px"}}/>
         
               </div>
                 </div>
                 <div className="loginConference">
-                  <img id="login-conference-table" src="https://i.postimg.cc/dt1C7cXf/Banner-Image-1-removebg-preview.png" ></img>
+                  {/* <img id="login-conference-table" src="https://i.postimg.cc/dt1C7cXf/Banner-Image-1-removebg-preview.png" ></img> */}
+                  <div id="login-conference-table"></div>
                   <div className="login-banner-wrapper">
                     {window.innerWidth >950?<div className="psuedo-banner"><span>U</span>rban <span>P</span>latform for<br />
                       deliver<span>Y</span> of <span>O</span>nline<br />
@@ -85,13 +86,13 @@ const EmployeeApp = ({
                 </div>
                 </div>
               <picture>
-                <source id="backgroung-login" media="(min-width: 950px)" srcset="https://i.postimg.cc/PrVjVmDf/Banner-Image-Desktop.png" style={{"position":"absolute","height":"100%","width":"100%"}} />
-                  <source media="(min-width: 250px)" srcset="https://i.postimg.cc/MpF64xnV/Banner-Background-for-Mobile-App.png" />
-                    <img src="https://i.postimg.cc/PrVjVmDf/Banner-Image-Desktop.png" alt="imagealttext" style={{"position":"absolute","height":"100%","width":"100%"}}/>
+                <source id="backgroung-login" media="(min-width: 950px)" srcset="https://in-egov-assets.s3.ap-south-1.amazonaws.com/images/employee-login.png" style={{"position":"absolute","height":"100%","width":"100%"}} />
+                  <source media="(min-width: 250px)" srcset="https://in-egov-assets.s3.ap-south-1.amazonaws.com/images/employee-mobile-login.png" />
+                    <img src="https://in-egov-assets.s3.ap-south-1.amazonaws.com/images/employee-login.png" alt="imagealttext" style={{"position":"absolute","height":"100%","width":"100%"}}/>
                     </picture>
-              {/* <img class="image" id="main-img" src="https://i.postimg.cc/PrVjVmDf/Banner-Image-Desktop.png" /> */}
+              {/* <img class="image" id="main-img" src="https://in-egov-assets.s3.ap-south-1.amazonaws.com/images/employee-login.png" /> */}
               {/* <img class="image" id="main-img" src="https://i.postimg.cc/9Q7jT6Dd/Banner-Image-2.png" /> */}
-                {/* <img id="backgroung-login" src="https://i.postimg.cc/PrVjVmDf/Banner-Image-Desktop.png" style={{"position":"absolute","height":"100%","width":"100%"}}></img> */}
+                {/* <img id="backgroung-login" src="https://in-egov-assets.s3.ap-south-1.amazonaws.com/images/employee-login.png" style={{"position":"absolute","height":"100%","width":"100%"}}></img> */}
             <Switch>
               <Route path={`${path}/user/login`}>
                 <EmployeeLogin />
