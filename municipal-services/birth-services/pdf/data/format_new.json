@@ -4,6 +4,20 @@
     "defaultStyle": {
       "font": "Cambay"
     },
+    "watermark": {
+      "text": "IKM",
+      "color": "gery",
+      "opacity": 0.1,
+      "bold": true,
+      "italics": false,
+      "content": [
+        {
+          "image": "{{logokerala}}",
+          "width": "100%",
+          "height": "100%"
+        }
+      ]
+    },
     "content": [
       {
         "style": "ws-head",
@@ -400,7 +414,7 @@
       },
       "appendix-header-body-ml": {
         "color": "#000099",
-        "font": "NotoSansMalayalam",
+        "font": "Meera",
         "fontSize": 9,
         "fontWeight": 400,
         "alignment": "center"
@@ -412,7 +426,7 @@
       },
       "main-body-style_ml": {
         "color": "#000000",
-        "font": "NotoSansMalayalam",
+        "font": "Meera",
         "fontSize": 8,
         "alignment": "center"
       },
