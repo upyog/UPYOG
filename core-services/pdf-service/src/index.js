@@ -106,6 +106,9 @@ var fontDescriptors = {
   NotoSansMalayalam:{
     normal: "src/fonts/NotoSansMalayalam-Regular.ttf",
     bold: "src/fonts/NotoSansMalayalam-Bold.ttf"
+  },
+  Meera:{
+    normal: "src/fonts/Meera.ttf"
   }
 };
 
@@ -114,7 +117,7 @@ var defaultFontMapping = {
   hi_IN: 'default',
   pn_IN: 'BalooPaaji',
   od_IN: 'BalooBhaina',
-  ml_IN: 'NotoSansMalayalam'
+  ml_IN: 'Meera'
 }
 
 const printer = new pdfMakePrinter(fontDescriptors);

@@ -249,7 +249,7 @@ serviceMaps:
 
 
         - query: INSERT INTO public.eg_birth_father_information(id, firstname_en, firstname_ml, middlename_en, middlename_ml, lastname_en, lastname_ml, 
-                 aadharno, ot_passportno, emailid, mobileno, createdtime, createdby, lastmodifiedtime, lastmodifiedby, birthdtlid,bio_adopt) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?);
+                 aadharno, ot_passportno, emailid, mobileno, createdtime, createdby, lastmodifiedtime, lastmodifiedby, birthdtlid, bio_adopt) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?);
           basePath: AdoptionDetails.*.birthFather
           jsonMaps:
 
@@ -289,7 +289,7 @@ serviceMaps:
 
 
         - query: INSERT INTO public.eg_birth_mother_information(id, firstname_en, firstname_ml, middlename_en, middlename_ml, lastname_en, lastname_ml, aadharno, 
-                 ot_passportno, emailid, mobileno, createdtime, createdby, lastmodifiedtime, lastmodifiedby, birthdtlid,bio_adopt) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?);
+                 ot_passportno, emailid, mobileno, createdtime, createdby, lastmodifiedtime, lastmodifiedby, birthdtlid, bio_adopt) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?);
 
           basePath: AdoptionDetails.*.birthMother
           jsonMaps:
@@ -1024,7 +1024,7 @@ serviceMaps:
               - jsonPath: $.AdoptionDetails.*.id
 
           - query: UPDATE public.eg_birth_father_information SET firstname_en=?, firstname_ml=?, middlename_en=?, middlename_ml=?, lastname_en=?, lastname_ml=?,
-              aadharno=?, ot_passportno=?, emailid=?, mobileno=?, lastmodifiedtime=?, lastmodifiedby=? WHERE birthdtlid=?;
+              aadharno=?, ot_passportno=?, emailid=?, mobileno=?, lastmodifiedtime=?, lastmodifiedby=?, bio_adopt=? WHERE birthdtlid=?;
             basePath: AdoptionDetails.*.birthFather
             jsonMaps:
 
@@ -1052,11 +1052,13 @@ serviceMaps:
 
               - jsonPath: $.AdoptionDetails.*.auditDetails.lastModifiedBy
 
+              - jsonPath: $.AdoptionDetails.*.bio_adopt
+
               - jsonPath: $.AdoptionDetails.*.id
 
 
           - query: UPDATE public.eg_birth_mother_information SET firstname_en=?, firstname_ml=?, middlename_en=?, middlename_ml=?, lastname_en=?, lastname_ml=?,
-              aadharno=?, ot_passportno=?, emailid=?, mobileno=?, lastmodifiedtime=?, lastmodifiedby=? WHERE birthdtlid=?;
+              aadharno=?, ot_passportno=?, emailid=?, mobileno=?, lastmodifiedtime=?, lastmodifiedby=?, bio_adopt=? WHERE birthdtlid=?;
 
             basePath: AdoptionDetails.*.birthMother
             jsonMaps:
@@ -1085,12 +1087,14 @@ serviceMaps:
 
               - jsonPath: $.AdoptionDetails.*.auditDetails.lastModifiedBy
 
+              - jsonPath: $.AdoptionDetails.*.bio_adopt
+
               - jsonPath: $.AdoptionDetails.*.id
 
           - query: UPDATE public.eg_birth_permanent_address SET resdnce_addr_type=?, buildingno=?, houseno=?, res_asso_no=?, housename_en=?, housename_ml=?,
               ot_address1_en=?, ot_address1_ml=?, ot_address2_en=?, ot_address2_ml=?, locality_en=?, locality_ml=?, city_en=?, city_ml=?, villageid=?,
               tenantid=?, talukid=?, districtid=?, stateid=?, poid=?, pinno=?, ot_state_region_province_en=?, ot_state_region_province_ml=?, countryid=?,
-              lastmodifiedby=?, lastmodifiedtime=?, same_as_permanent=? WHERE birthdtlid=?;
+              lastmodifiedby=?, lastmodifiedtime=?, same_as_permanent=?, bio_adopt=? WHERE birthdtlid=?;
             basePath: AdoptionDetails.*.birthPermanent
             jsonMaps:
 
@@ -1148,6 +1152,8 @@ serviceMaps:
 
               - jsonPath: $.AdoptionDetails.*.birthPermanent.same_as_permanent
 
+              - jsonPath: $.AdoptionDetails.*.bio_adopt
+
               - jsonPath: $.AdoptionDetails.*.id
 
 
@@ -1155,7 +1161,7 @@ serviceMaps:
           - query: UPDATE public.eg_birth_present_address SET resdnce_addr_type=?, buildingno=?, houseno=?, res_asso_no=?, housename_en=?, housename_ml=?,
               ot_address1_en=?, ot_address1_ml=?, ot_address2_en=?, ot_address2_ml=?, locality_en=?, locality_ml=?, city_en=?, city_ml=?, villageid=?,
               tenantid=?, talukid=?, districtid=?, stateid=?, poid=?, pinno=?, ot_state_region_province_en=?, ot_state_region_province_ml=?, countryid=?,
-              lastmodifiedby=?, lastmodifiedtime=? WHERE birthdtlid=?;
+              lastmodifiedby=?, lastmodifiedtime=?, bio_adopt=? WHERE birthdtlid=?;
             basePath: AdoptionDetails.*.birthPresent
             jsonMaps:
 
@@ -1210,6 +1216,8 @@ serviceMaps:
               - jsonPath: $.AdoptionDetails.*.auditDetails.lastModifiedBy
 
               - jsonPath: $.AdoptionDetails.*.auditDetails.lastModifiedTime
+
+              - jsonPath: $.AdoptionDetails.*.bio_adopt
 
               - jsonPath: $.AdoptionDetails.*.id
 
@@ -1311,8 +1319,8 @@ serviceMaps:
 
               - jsonPath: $.AdoptionDetails.*.id
 
-          - query: UPDATE public.eg_birth_adoption_father_information SET firstname_en=?, firstname_ml=?, middlename_en=?, middlename_ml=?, lastname_en=?,
-              lastname_ml=?, aadharno=?, ot_passportno=?, emailid=?, mobileno=?, lastmodifiedtime=?, lastmodifiedby=? WHERE birthdtlid=?;
+          - query: UPDATE public.eg_birth_father_information SET firstname_en=?, firstname_ml=?, middlename_en=?, middlename_ml=?, lastname_en=?,
+              lastname_ml=?, aadharno=?, ot_passportno=?, emailid=?, mobileno=?, lastmodifiedtime=?, lastmodifiedby=?, bio_adopt=? WHERE birthdtlid=?;
 
             basePath: AdoptionDetails.*.adoptionFather
             jsonMaps:
@@ -1341,11 +1349,13 @@ serviceMaps:
 
               - jsonPath: $.AdoptionDetails.*.auditDetails.lastModifiedBy
 
+              - jsonPath: $.AdoptionDetails.*.bio_adopt
+
               - jsonPath: $.AdoptionDetails.*.id
 
 
-          - query: UPDATE public.eg_birth_adoption_mother_information SET firstname_en=?, firstname_ml=?, middlename_en=?, middlename_ml=?, lastname_en=?,
-              lastname_ml=?, aadharno=?, ot_passportno=?, emailid=?, mobileno=?, lastmodifiedtime=?, lastmodifiedby=? WHERE birthdtlid=?;
+          - query: UPDATE public.eg_birth_mother_information SET firstname_en=?, firstname_ml=?, middlename_en=?, middlename_ml=?, lastname_en=?,
+              lastname_ml=?, aadharno=?, ot_passportno=?, emailid=?, mobileno=?, lastmodifiedtime=?, lastmodifiedby=?, bio_adopt=? WHERE birthdtlid=?;
 
             basePath: AdoptionDetails.*.adoptionMother
             jsonMaps:
@@ -1374,12 +1384,14 @@ serviceMaps:
 
               - jsonPath: $.AdoptionDetails.*.auditDetails.lastModifiedBy
 
+              - jsonPath: $.AdoptionDetails.*.bio_adopt
+
               - jsonPath: $.AdoptionDetails.*.id
 
-          - query: UPDATE public.eg_birth_adoption_permanent_address SET resdnce_addr_type=?, buildingno=?, houseno=?, res_asso_no=?, housename_en=?, housename_ml=?,
+          - query: UPDATE public.eg_birth_permanent_address SET resdnce_addr_type=?, buildingno=?, houseno=?, res_asso_no=?, housename_en=?, housename_ml=?,
               ot_address1_en=?, ot_address1_ml=?, ot_address2_en=?, ot_address2_ml=?, locality_en=?, locality_ml=?, city_en=?, city_ml=?, villageid=?,
               tenantid=?, talukid=?, districtid=?, stateid=?, poid=?, pinno=?, ot_state_region_province_en=?, ot_state_region_province_ml=?, countryid=?,
-              lastmodifiedby=?, lastmodifiedtime=?, same_as_permanent=? WHERE birthdtlid=?;
+              lastmodifiedby=?, lastmodifiedtime=?, same_as_permanent=?, bio_adopt=? WHERE birthdtlid=?;
             basePath: AdoptionDetails.*.adoptionPermanentAddress
             jsonMaps:
 
@@ -1437,13 +1449,15 @@ serviceMaps:
 
               - jsonPath: $.AdoptionDetails.*.adoptionPermanentAddress.same_as_permanent
 
+              - jsonPath: $.AdoptionDetails.*.bio_adopt
+
               - jsonPath: $.AdoptionDetails.*.id
 
 
-          - query: UPDATE public.eg_birth_adoption_present_address SET resdnce_addr_type=?, buildingno=?, houseno=?, res_asso_no=?, housename_en=?, housename_ml=?,
+          - query: UPDATE public.eg_birth_present_address SET resdnce_addr_type=?, buildingno=?, houseno=?, res_asso_no=?, housename_en=?, housename_ml=?,
               ot_address1_en=?, ot_address1_ml=?, ot_address2_en=?, ot_address2_ml=?, locality_en=?, locality_ml=?, city_en=?, city_ml=?, villageid=?,
               tenantid=?, talukid=?, districtid=?, stateid=?, poid=?, pinno=?, ot_state_region_province_en=?, ot_state_region_province_ml=?, countryid=?,
-              lastmodifiedby=?, lastmodifiedtime=? WHERE birthdtlid=?;
+              lastmodifiedby=?, lastmodifiedtime=?, bio_adopt=? WHERE birthdtlid=?;
             basePath: AdoptionDetails.*.adoptionPresentAddress
             jsonMaps:
 
@@ -1498,6 +1512,8 @@ serviceMaps:
               - jsonPath: $.AdoptionDetails.*.auditDetails.lastModifiedBy
 
               - jsonPath: $.AdoptionDetails.*.auditDetails.lastModifiedTime
+
+              - jsonPath: $.AdoptionDetails.*.bio_adopt
 
               - jsonPath: $.AdoptionDetails.*.id
 

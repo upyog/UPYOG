@@ -78,7 +78,7 @@ public class MdmsUtil {
 
         List<MasterDetail> crMasterDetails = new LinkedList<>();
 
-        //Add Module Profession
+        //
         List<MasterDetail> masterProfession = Collections.singletonList(MasterDetail.builder()
                                                                                     .name(BirthConstants.CR_MDMS_PROFESSION)
                                                                                     .build());
@@ -90,6 +90,29 @@ public class MdmsUtil {
                                                                                        .build());
         crMasterDetails.addAll(masterQualification);
 
+        // Add Module Institution
+        List<MasterDetail> masterInstitution = Collections.singletonList(MasterDetail.builder()
+                                                                                     .name(BirthConstants.COMMON_MDMS_INSTITUTION)
+                                                                                     .build());
+        crMasterDetails.addAll(masterInstitution);
+
+        // Add Module Medical Attention Type
+        List<MasterDetail> masterMedicalAttentionType = Collections.singletonList(MasterDetail.builder()
+                                                                                              .name(BirthConstants.COMMON_MDMS_MEDICAL_ATTENTION_TYPE)
+                                                                                              .build());
+        crMasterDetails.addAll(masterMedicalAttentionType);
+
+        // Add Module InstitutionType
+        List<MasterDetail> masterInstitutionType = Collections.singletonList(MasterDetail.builder()
+                                                                                         .name(BirthConstants.CR_MDMS_INSTITUTIONTYPE)
+                                                                                         .build());
+        crMasterDetails.addAll(masterInstitutionType);
+
+        // Add Module DeliveryMethod
+        List<MasterDetail> masterDeliveryMethod = Collections.singletonList(MasterDetail.builder()
+                                                                                        .name(BirthConstants.CR_MDMS_DELIVERYMETHOD)
+                                                                                        .build());
+        crMasterDetails.addAll(masterDeliveryMethod);
 
 
         //Add masters to modules
@@ -106,12 +129,69 @@ public class MdmsUtil {
         // master details for Common module
 
         List<MasterDetail> commonMasterDetails = new LinkedList<>();
-
+        // Add Module Religion
         List<MasterDetail> masterReligion = Collections.singletonList(MasterDetail.builder()
                                                                                   .name(BirthConstants.COMMON_MDMS_RELIGION)
                                                                                   .build());
 
         commonMasterDetails.addAll(masterReligion);
+        // Add Module Taluk
+        List<MasterDetail> masterTaluk = Collections.singletonList(MasterDetail.builder()
+                                                                               .name(BirthConstants
+                                                                               .COMMON_MDMS_TALUK).build());
+
+        commonMasterDetails.addAll(masterTaluk);
+        // Add Module State
+        List<MasterDetail> masterState = Collections.singletonList(MasterDetail.builder()
+                                                                               .name(BirthConstants
+                                                                                .COMMON_MDMS_STATE).build());
+        commonMasterDetails.addAll(masterState);
+        // Add Module Country
+        List<MasterDetail> masterCountry = Collections.singletonList(MasterDetail.builder()
+                                                                                 .name(BirthConstants
+                                                                                 .COMMON_MDMS_COUNTRY).build());
+        commonMasterDetails.addAll(masterCountry);
+
+
+        // Add Module Village
+
+        List<MasterDetail> masterVillage = Collections.singletonList(MasterDetail.builder()
+                                                                                 .name(BirthConstants.COMMON_MDMS_VILLAGE)
+                                                                                 .build());
+
+        commonMasterDetails.addAll(masterVillage);
+
+        // Add Module District
+
+        List<MasterDetail> masterDistrict = Collections.singletonList(MasterDetail.builder()
+                                                                                  .name(BirthConstants.COMMON_MDMS_DISTRICT)
+                                                                                  .build());
+
+        commonMasterDetails.addAll(masterDistrict);
+
+        // Add Module Postoffice
+
+        List<MasterDetail> masterPostOffice = Collections.singletonList(MasterDetail.builder()
+                                                                                    .name(BirthConstants.COMMON_MDMS_POSTOFFICE)
+                                                                                    .build());
+
+        commonMasterDetails.addAll(masterPostOffice);
+
+        // Add Module LbType
+
+        List<MasterDetail> masterLbType = Collections.singletonList(MasterDetail.builder()
+                                                                                .name(BirthConstants.COMMON_MDMS_LBTYPE)
+                                                                                .build());
+
+        commonMasterDetails.addAll(masterLbType);
+
+        // Add Module PlaceMaster
+
+        List<MasterDetail> masterBirthPlace = Collections.singletonList(MasterDetail.builder()
+                                                                                    .name(BirthConstants.COMMON_MDMS_PLACEMASTER)
+                                                                                    .build());
+
+        commonMasterDetails.addAll(masterBirthPlace);
 
         ModuleDetail commonModuleDetail = ModuleDetail.builder()
                                                       .masterDetails(commonMasterDetails)

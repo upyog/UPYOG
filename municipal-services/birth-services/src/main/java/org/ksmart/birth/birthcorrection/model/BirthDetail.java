@@ -154,7 +154,6 @@ public class BirthDetail {
 
     private String comment;
 
-
     @JsonProperty("WfDocuments")
     private String WfDocuments;
 
