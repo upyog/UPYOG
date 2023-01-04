@@ -35,7 +35,7 @@ public interface BirthPermanentAddressRowMapper {
                 .otStateRegionProvinceMl(rs.getString("ot_state_region_province_ml"))
                 .countryId(rs.getString("countryid"))
                 .birthDtlId(rs.getString("birthdtlid"))
-                .sameAsPermanent(Integer.valueOf(rs.getString("same_as_permanent")))
+                .sameAsPermanent(rs.getInt("same_as_permanent"))
                 .build();
     }
 }

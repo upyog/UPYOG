@@ -9,7 +9,7 @@ import java.util.List;
 @Component
 public class BirthApplicationQueryBuilder extends BaseBirthQuery {
     private static final String QUERY = new StringBuilder()
-            .append("SELECT ebd.id,	ebd.dateofreport,	ebd.dateofbirth,	ebd.timeofbirth,	ebd.am_pm,	ebd.firstname_en,	ebd.firstname_ml,	ebd.middlename_en,")
+            .append("SELECT ebd.id,ebd.dateofreport,ebd.dateofbirth,ebd.timeofbirth,ebd.am_pm,ebd.firstname_en,ebd.firstname_ml,ebd.middlename_en,")
             .append("ebd.middlename_ml, ebd.lastname_en, ebd.lastname_ml, ebd.tenantid, ebd.gender, ebd.remarks_en, ebd.remarks_ml, ebd.aadharno,")
             .append("ebd.esign_user_code, ebd.esign_user_desig_code, ebd.is_adopted, ebd.is_abandoned, ebd.is_multiple_birth, ebd.is_father_info_missing,")
             .append("ebd.is_mother_info_missing, ebd.no_of_alive_birth, ebd.multiplebirthdetid, ebd.is_born_outside, ebd.ot_passportno, ebd.ot_dateofarrival,")
