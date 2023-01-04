@@ -105,12 +105,13 @@ var fontDescriptors = {
   },
   NotoSansMalayalam:{
     normal: "src/fonts/NotoSansMalayalam-Regular.ttf",
-    bold: "src/fonts/NotoSansMalayalam-Bold.ttf",
-    italics: "src/fonts/NotoSansMalayalam-Regular.ttf",
-    bolditalics: "src/fonts/NotoSansMalayalam-Bold.ttf"
+    bold: "src/fonts/NotoSansMalayalam-Bold.ttf"
   },
   Meera:{
     normal: "src/fonts/Meera.ttf"
+    bold: "src/fonts/Meera.ttf",
+    italics: "src/fonts/Meera.ttf",
+    bolditalics: "src/fonts/Meera.ttf",
   }
 };
 

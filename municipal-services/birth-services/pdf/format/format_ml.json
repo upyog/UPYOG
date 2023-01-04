@@ -1,0 +1,40 @@
+{
+  "key": "birth-certificate",
+  "config": {
+    "defaultStyle": {
+      "font": "Meera"
+    },
+    "watermark": {
+      "text": "IKM DEMO",
+      "color": "gery",
+      "opacity": 0.1,
+      "content": [
+        "https://ulb-logos.s3.ap-south-1.amazonaws.com/kerala_logo.jpg"
+      ]
+    },
+    "content": [
+      {
+        "style": "ws-head",
+        "table": {
+          "widths": [
+            "20%",
+            "60%",
+            "20%"
+          ],
+          "body": [
+            [
+              {
+                "stack": [
+                  {
+                    "text": "{{childNameMl}}/{{childName}}"
+                  }
+                ]
+              }
+            ]
+          ]
+        },
+        "layout": "noBorders"
+      }
+    ]
+  }
+}

@@ -265,7 +265,7 @@
               {
                 "variable": "childNameMl",
                 "value": {
-                  "path": "PDF_BIRTH_CHILD_NAME"
+                  "path": "PDF_BIRTH_CHILD_NAME_ML"
                 },
                 "type": "label",
                 "localisation":{
@@ -291,7 +291,7 @@
               {
                 "variable": "childSexMl",
                 "value": {
-                  "path": "PDF_BIRTH_CHILD_SEX"
+                  "path": "PDF_BIRTH_CHILD_SEX_ML"
                 },
                 "type": "label",
                 "localisation":{
@@ -317,7 +317,7 @@
               {
                 "variable": "dateOfBirthMl",
                 "value": {
-                  "path": "PDF_BIRTH_DATE_OF_BIRTH"
+                  "path": "PDF_BIRTH_DATE_OF_BIRTH_ML"
                 },
                 "type": "label",
                 "localisation":{
@@ -343,7 +343,7 @@
               {
                 "variable": "placeOfBirthLabelMl",
                 "value": {
-                  "path": "PDF_BIRTH_PLACE_OF_BIRTH"
+                  "path": "PDF_BIRTH_PLACE_OF_BIRTH_ML"
                 },
                 "type": "label",
                 "localisation":{
@@ -369,7 +369,7 @@
               {
                 "variable": "nameOfMotherMl",
                 "value": {
-                  "path": "PDF_BIRTH_NAME_OF_MOTHER"
+                  "path": "PDF_BIRTH_NAME_OF_MOTHER_ML"
                 },
                 "type": "label",
                 "localisation":{
@@ -395,7 +395,7 @@
               {
                 "variable": "nameOfFatherMl",
                 "value": {
-                  "path": "PDF_BIRTH_NAME_OF_FATHER"
+                  "path": "PDF_BIRTH_NAME_OF_FATHER_ML"
                 },
                 "type": "label",
                 "localisation":{
@@ -421,7 +421,7 @@
               {
                 "variable": "presentAddressLabelMl",
                 "value": {
-                  "path": "PDF_BIRTH_PRESENT_ADDRESS"
+                  "path": "PDF_BIRTH_PRESENT_ADDRESS_ML"
                 },
                 "type": "label",
                 "localisation":{
@@ -447,7 +447,7 @@
               {
                 "variable": "permanentAddressLabelMl",
                 "value": {
-                  "path": "PDF_BIRTH_PERMANENT_ADDRESS"
+                  "path": "PDF_BIRTH_PERMANENT_ADDRESS_ML"
                 },
                 "type": "label",
                 "localisation":{
@@ -473,7 +473,7 @@
               {
                 "variable": "registrationNoLabelMl",
                 "value": {
-                  "path": "PDF_BIRTH_REGISTRATION_NUMBER"
+                  "path": "PDF_BIRTH_REGISTRATION_NUMBER_ML"
                 },
                 "type": "label",
                 "localisation":{
@@ -499,7 +499,7 @@
               {
                 "variable": "registrationDateLabelMl",
                 "value": {
-                  "path": "PDF_BIRTH_DATE_OF_REGISTRATION"
+                  "path": "PDF_BIRTH_DATE_OF_REGISTRATION_ML"
                 },
                 "type": "label",
                 "localisation":{
@@ -525,7 +525,7 @@
               {
                 "variable": "remarksLabelMl",
                 "value": {
-                  "path": "PDF_BIRTH_REMARKS"
+                  "path": "PDF_BIRTH_REMARKS_ML"
                 },
                 "type": "label",
                 "localisation":{
@@ -551,7 +551,7 @@
               {
                 "variable": "dateOfIssueMl",
                 "value": {
-                  "path": "PDF_BIRTH_DATE_OF_ISSUE"
+                  "path": "PDF_BIRTH_DATE_OF_ISSUE_ML"
                 },
                 "type": "label",
                 "localisation":{
@@ -577,7 +577,7 @@
               {
                 "variable": "addressOfIssuingAuthorityMl",
                 "value": {
-                  "path": "PDF_BIRTH_ADDRESS_OF_THE_ISSUING_AUTHORITY"
+                  "path": "PDF_BIRTH_ADDRESS_OF_THE_ISSUING_AUTHORITY_ML"
                 },
                 "type": "label",
                 "localisation":{
@@ -603,7 +603,7 @@
               {
                 "variable": "ensureRegistrationMl",
                 "value": {
-                  "path": "PDF_BIRTH_ENSURE_REGISTRATION_OF_EVERY_BIRTH_AND_DEATH"
+                  "path": "PDF_BIRTH_ENSURE_REGISTRATION_OF_EVERY_BIRTH_AND_DEATH_ML"
                 },
                 "type": "label",
                 "localisation":{
@@ -629,7 +629,7 @@
               {
                 "variable": "govtOfKeralaMl",
                 "value": {
-                  "path": "PDF_BIRTH_GOVERNMENT_OF_KERALA"
+                  "path": "PDF_BIRTH_GOVERNMENT_OF_KERALA_ML"
                 },
                 "type": "label",
                 "localisation":{
@@ -655,7 +655,7 @@
               {
                 "variable": "deptUrbanAffairsMl",
                 "value": {
-                  "path": "PDF_BIRTH_DEPARTMENT_OF_URBAN_AFFAIRS"
+                  "path": "PDF_BIRTH_DEPARTMENT_OF_URBAN_AFFAIRS_ML"
                 },
                 "type": "label",
                 "localisation":{
@@ -681,7 +681,7 @@
               {
                 "variable": "certifyMl",
                 "value": {
-                  "path": "PDF_BIRTH_THIS_IS_TO_CERTIFY_THAT"
+                  "path": "PDF_BIRTH_THIS_IS_TO_CERTIFY_THAT_ML"
                 },
                 "type": "label",
                 "localisation":{
@@ -733,7 +733,7 @@
               {
                 "variable": "issueUnderSection121969ML",
                 "value": {
-                  "path": "PDF_BIRTH_ISSUED_UNDER_SECTION_12_1969"
+                  "path": "PDF_BIRTH_ISSUED_UNDER_SECTION_12_1969_ML"
                 },
                 "type": "label",
                 "localisation":{
@@ -759,7 +759,7 @@
               {
                 "variable": "birthCertificateMl",
                 "value": {
-                  "path": "PDF_BIRTH_BIRTH_CERTIFICATE"
+                  "path": "PDF_BIRTH_BIRTH_CERTIFICATE_ML"
                 },
                 "type": "label",
                 "localisation":{
@@ -785,7 +785,7 @@
               {
                 "variable": "nameOfLbMl",
                 "value": {
-                  "path": "PDF_BIRTH_NAME_OF_LOCAL_GOVERNMENT_ISSUING_CERTIFICATE"
+                  "path": "PDF_BIRTH_NAME_OF_LOCAL_GOVERNMENT_ISSUING_CERTIFICATE_ML"
                 },
                 "type": "label",
                 "localisation":{
