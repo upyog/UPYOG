@@ -62,6 +62,8 @@ public class RegisterBirthMotherInfo {
 
     private String fullName;
 
+    private String fullNameMl;
+
     private String aadharno;
 
 }

@@ -134,5 +134,9 @@ public class RegisterBirthPermanentAddress {
 
     private String state;
 
+    private String permanentAddress;
+
+    private String permanentAddressMl;
+
 
 }

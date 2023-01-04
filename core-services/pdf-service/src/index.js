@@ -98,14 +98,16 @@ var fontDescriptors = {
     bold: "src/fonts/BalooPaaji2-Bold.ttf"
   },
   Times:{
-    normal: "src/fonts/TimesNewRoman-Regular.ttf",
+    normal: "src/fonts/TimesNewRoman.ttf",
     bold: "src/fonts/TimesNewRoman-Bold.ttf",
     italics: "src/fonts/TimesNewRoman-Italic.ttf",
     bolditalics: "src/fonts/TimesNewRoman-BoldItalic.ttf",
   },
   NotoSansMalayalam:{
     normal: "src/fonts/NotoSansMalayalam-Regular.ttf",
-    bold: "src/fonts/NotoSansMalayalam-Bold.ttf"
+    bold: "src/fonts/NotoSansMalayalam-Bold.ttf",
+    italics: "src/fonts/NotoSansMalayalam-Regular.ttf",
+    bolditalics: "src/fonts/NotoSansMalayalam-Bold.ttf"
   },
   Meera:{
     normal: "src/fonts/Meera.ttf"

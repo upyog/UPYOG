@@ -5,17 +5,11 @@
       "font": "Cambay"
     },
     "watermark": {
-      "text": "IKM",
+      "text": "IKM DEMO",
       "color": "gery",
       "opacity": 0.1,
-      "bold": true,
-      "italics": false,
       "content": [
-        {
-          "image": "{{logokerala}}",
-          "width": "100%",
-          "height": "100%"
-        }
+        "https://ulb-logos.s3.ap-south-1.amazonaws.com/kerala_logo.jpg"
       ]
     },
     "content": [
@@ -149,6 +143,85 @@
           "body": [
             [
               {
+                "stack": [
+                  {
+                    "text": "{{birthCertificate}}",
+                    "style": "title-header"
+                  },
+                  {
+                    "text": "{{birthCertificateMl}}",
+                    "style": "title-header"
+                  },
+                  {
+                    "text": "{{issueUnderSection12}}",
+                    "style": "rule-body_multiLang"
+                  }
+                ]
+              }
+            ]
+          ]
+        },
+        "layout": "noBorders"
+      },
+      {
+        "style": "ws-head",
+        "table": {
+          "widths": [
+            "*"
+          ],
+          "body": [
+            [
+              {
+                "stack": [
+                  {
+                    "text": "{{issueUnderSection121969}}",
+                    "style": "rule-header"
+                  },
+                  {
+                    "text": "{{issueUnderSection121969ML}}",
+                    "style": "rule-header"
+                  }
+                ]
+              }
+            ]
+          ]
+        },
+        "layout": "noBorders"
+      },
+      {
+        "style": "ws-head",
+        "table": {
+          "widths": [
+            "*"
+          ],
+          "body": [
+            [
+              {
+                "stack": [
+                  {
+                    "text": "{{certify}}",
+                    "style": "rule-header"
+                  },
+                  {
+                    "text": "{{certifyMl}}",
+                    "style": "rule-header"
+                  }
+                ]
+              }
+            ]
+          ]
+        },
+        "layout": "noBorders"
+      },
+      {
+        "style": "ws-head",
+        "table": {
+          "widths": [
+            "*"
+          ],
+          "body": [
+            [
+              {
                 "columns": [
                   {
                     "text": "{{childNameMl}}",
@@ -169,7 +242,7 @@
                     "width": "1%"
                   },
                   {
-                    "text": "{{name}}",
+                    "text": "{{name}} / {{nameMl}}",
                     "style": "details-body"
                   }
                 ]
@@ -197,7 +270,7 @@
                     "width": "1%"
                   },
                   {
-                    "text": "{{name}}",
+                    "text": "{{gender}}",
                     "style": "details-body"
                   }
                 ]
@@ -225,7 +298,7 @@
                     "width": "1%"
                   },
                   {
-                    "text": "{{name}}",
+                    "text": "{{dob}}",
                     "style": "details-body"
                   }
                 ]
@@ -235,7 +308,7 @@
               {
                 "columns": [
                   {
-                    "text": "{{placeOfBirthMl}}",
+                    "text": "{{placeOfBirthLabelMl}}",
                     "width": "15%",
                     "style": "details-body"
                   },
@@ -244,7 +317,7 @@
                     "width": "1%"
                   },
                   {
-                    "text": "{{placeOfBirth}} ",
+                    "text": "{{placeOfBirthLabel}} ",
                     "width": "19%",
                     "style": "details-body"
                   },
@@ -263,7 +336,7 @@
               {
                 "columns": [
                   {
-                    "text": "{{nameOfMother}}",
+                    "text": "{{nameOfMotherMl}}",
                     "width": "15%",
                     "style": "details-body"
                   },
@@ -272,7 +345,7 @@
                     "width": "1%"
                   },
                   {
-                    "text": "{{nameOfMotherMl}} ",
+                    "text": "{{nameOfMother}} ",
                     "width": "19%",
                     "style": "details-body"
                   },
@@ -281,7 +354,7 @@
                     "width": "1%"
                   },
                   {
-                    "text": "{{name}}",
+                    "text": "{{motherName}}/{{motherNameMl}}",
                     "style": "details-body"
                   }
                 ]
@@ -309,7 +382,7 @@
                     "width": "1%"
                   },
                   {
-                    "text": "{{name}}",
+                    "text": "{{fatherName}}/{{fatherNameMl}}",
                     "style": "details-body"
                   }
                 ]
@@ -319,7 +392,63 @@
               {
                 "columns": [
                   {
-                    "text": "{{registrationNoLabel}} / {{registrationNoLabelMl}}: {{registrationNo}}",
+                    "text": "{{presentAddressLabelMl}}",
+                    "width": "15%",
+                    "style": "details-body"
+                  },
+                  {
+                    "text": " /",
+                    "width": "1%"
+                  },
+                  {
+                    "text": "{{presentAddressLabel}} ",
+                    "width": "19%",
+                    "style": "details-body"
+                  },
+                  {
+                    "text": "  :",
+                    "width": "1%"
+                  },
+                  {
+                    "text": "{{presentAddressMl}}/{{presentAddress}}",
+                    "style": "details-body"
+                  }
+                ]
+              }
+            ],
+            [
+              {
+                "columns": [
+                  {
+                    "text": "{{permanentAddressLabelMl}}",
+                    "width": "15%",
+                    "style": "details-body"
+                  },
+                  {
+                    "text": " /",
+                    "width": "1%"
+                  },
+                  {
+                    "text": "{{permanentAddressLabel}} ",
+                    "width": "19%",
+                    "style": "details-body"
+                  },
+                  {
+                    "text": "  :",
+                    "width": "1%"
+                  },
+                  {
+                    "text": "{{presentAddressMl}}/{{parentsAddress}}",
+                    "style": "details-body"
+                  }
+                ]
+              }
+            ],
+            [
+              {
+                "columns": [
+                  {
+                    "text": "{{registrationNoLabelMl}} / {{registrationNoLabel}}: {{registrationNo}}",
                     "width": "49%",
                     "style": "details-body"
                   },
@@ -328,7 +457,82 @@
                     "width": "1%"
                   },
                   {
-                    "text": "{{registrationDateLabel}} / {{registrationDateLabelMl}} {{registration_date}}",
+                    "text": "{{registrationDateLabelMl}} / {{registrationDateLabel}} {{registrationNo}}",
+                    "style": "details-body"
+                  }
+                ]
+              }
+            ],
+            [
+              {
+                "columns": [
+                  {
+                    "text": "{{remarksLabelMl}}",
+                    "width": "15%",
+                    "style": "details-body"
+                  },
+                  {
+                    "text": " /",
+                    "width": "1%"
+                  },
+                  {
+                    "text": "{{remarksLabel}} ",
+                    "width": "19%",
+                    "style": "details-body"
+                  },
+                  {
+                    "text": "  :",
+                    "width": "1%"
+                  },
+                  {
+                    "text": "{{remarks}}",
+                    "style": "details-body"
+                  }
+                ]
+              }
+            ],
+            [
+              {
+                "columns": [
+                  {
+                    "text": "{{dateOfIssueMl}} / {{dateOfIssue}}: {{dateofissue}}",
+                    "width": "49%",
+                    "style": "details-body"
+                  },
+                  {
+                    "text": " ",
+                    "width": "1%"
+                  },
+                  {
+                    "text": "{{updatedOn}} :{{registration_date}}",
+                    "style": "details-body"
+                  }
+                ]
+              }
+            ],
+            [
+              {
+                "columns": [
+                  {
+                    "text": "{{addressOfIssuingAuthorityMl}}",
+                    "width": "15%",
+                    "style": "details-body"
+                  },
+                  {
+                    "text": " /",
+                    "width": "1%"
+                  },
+                  {
+                    "text": "{{addressOfIssuingAuthority}} ",
+                    "width": "19%",
+                    "style": "details-body"
+                  },
+                  {
+                    "text": "  :",
+                    "width": "1%"
+                  },
+                  {
+                    "text": "{{name}}",
                     "style": "details-body"
                   }
                 ]
@@ -414,9 +618,8 @@
       },
       "appendix-header-body-ml": {
         "color": "#000099",
-        "font": "Meera",
+        "fontName": "Meera",
         "fontSize": 9,
-        "fontWeight": 400,
         "alignment": "center"
       },
       "main-body-style": {
@@ -426,7 +629,7 @@
       },
       "main-body-style_ml": {
         "color": "#000000",
-        "font": "Meera",
+        "fontName": "Meera",
         "fontSize": 8,
         "alignment": "center"
       },
@@ -478,12 +681,14 @@
       },
       "footer": {
         "color": "#000000",
-        "alignment": "center"
+        "alignment": "center",
+        "fontSize": 7
       },
       "footer-red": {
         "color": "#FF0000",
-        "fontSize": 9,
-        "alignment": "center"
+        "fontSize": 7,
+        "alignment": "center",
+        "italics": true
       },
       "body-font": {
         "color": "#000000",
@@ -499,7 +704,7 @@
       "title-header": {
         "color": "#000000",
         "bold": true,
-        "fontSize": 12,
+        "fontSize": 9,
         "alignment": "center",
         "margin": [
           0,
@@ -547,7 +752,7 @@
       "rule-header": {
         "color": "#000000",
         "bold": false,
-        "fontSize": 10,
+        "fontSize": 8,
         "fontWeight": 400,
         "margin": [
           0,
@@ -583,7 +788,7 @@
       "rule-body_multiLang": {
         "color": "#000000",
         "bold": false,
-        "fontSize": 11,
+        "fontSize": 8,
         "fontWeight": 400,
         "margin": [
           0,
@@ -595,19 +800,19 @@
       "details-bodyRight": {
         "color": "#000000",
         "bold": false,
-        "fontSize": 9,
+        "fontSize": 7,
         "alignment": "right"
       },
       "details-bodyLeft": {
         "color": "#000000",
         "bold": false,
-        "fontSize": 9,
+        "fontSize": 7,
         "alignment": "left"
       },
       "details-body": {
         "color": "#000000",
         "bold": false,
-        "fontSize": 9,
+        "fontSize": 7,
         "alignment": "center"
       },
       "appendix-header-body": {
@@ -773,6 +978,9 @@
           -81,
           0
         ]
+      },
+      "pdf-watermark": {
+        "link": "https://ulb-logos.s3.ap-south-1.amazonaws.com/kerala_logo.jpg"
       }
     }
   }

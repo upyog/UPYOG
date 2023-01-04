@@ -62,6 +62,7 @@ public class RegisterBirthFatherInfo {
 
     private String fullName;
 
+    private String fullNameMl;
     private String aadharno;
 
 }

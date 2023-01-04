@@ -45,12 +45,12 @@ public class BirthApplicationQueryBuilder extends BaseBirthQuery {
             .append("estat.mother_resdnce_addr_type, estat.mother_resdnce_tenant, estat.mother_resdnce_placetype, estat.mother_resdnce_place_en,")
             .append("estat.mother_resdnce_place_ml, estat.mother_resdnce_lbtype, estat.mother_resdnce_district, estat.mother_resdnce_state,")
             .append("estat.mother_resdnce_country, estat.birthdtlid, estat.createdby, estat.createdtime, estat.lastmodifiedtime, estat.lastmodifiedby")
-            .append(" FROM public.kl_birth_details ebd")
-            .append(" LEFT JOIN kl_birth_place ebp ON ebp.birthdtlid = ebd.id LEFT JOIN kl_birth_father_information ebfi ON ebfi.birthdtlid = ebd.id")
-            .append(" LEFT JOIN kl_birth_mother_information ebmi ON ebmi.birthdtlid = ebd.id")
-            .append(" LEFT JOIN kl_birth_permanent_address eperad ON eperad.birthdtlid = ebd.id")
-            .append(" LEFT JOIN kl_birth_present_address epreadd ON epreadd.birthdtlid = ebd.id")
-            .append(" LEFT JOIN kl_birth_statitical_information estat ON estat.birthdtlid = ebd.id").toString();
+            .append(" FROM public.eg_birth_details ebd")
+            .append(" LEFT JOIN eg_birth_place ebp ON ebp.birthdtlid = ebd.id LEFT JOIN eg_birth_father_information ebfi ON ebfi.birthdtlid = ebd.id")
+            .append(" LEFT JOIN eg_birth_mother_information ebmi ON ebmi.birthdtlid = ebd.id")
+            .append(" LEFT JOIN eg_birth_permanent_address eperad ON eperad.birthdtlid = ebd.id")
+            .append(" LEFT JOIN eg_birth_present_address epreadd ON epreadd.birthdtlid = ebd.id")
+            .append(" LEFT JOIN eg_birth_statitical_information estat ON estat.birthdtlid = ebd.id").toString();
 
     public String getBirthApplicationSearchQuery(@NotNull BirthApplicationSearchCriteria criteria,
                                                  @NotNull List<Object> preparedStmtValues, Boolean isCount) {

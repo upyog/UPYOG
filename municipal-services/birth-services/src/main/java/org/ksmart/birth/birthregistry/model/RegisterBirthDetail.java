@@ -147,6 +147,7 @@ public class RegisterBirthDetail {
     /// for PDF SERVICE
 
     private String fullName;
+    private String fullNameMl;
     private String embeddedUrl;
     private String dateofbirth;
     private String genderStr;

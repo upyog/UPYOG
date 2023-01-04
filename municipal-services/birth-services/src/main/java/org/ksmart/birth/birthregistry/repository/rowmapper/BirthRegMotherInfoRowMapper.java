@@ -21,6 +21,7 @@ public interface BirthRegMotherInfoRowMapper {
                 .mobileNo(rs.getString("mobileno"))
                 .birthDtlId(rs.getString("birthdtlid"))
                 .fullName(rs.getString("firstname_en")+" "+rs.getString("middlename_en")+" "+rs.getString("lastname_en"))
+                .fullName(rs.getString("firstname_ml")+" "+rs.getString("middlename_ml")+" "+rs.getString("lastname_ml"))
                 .build();
     }
 }

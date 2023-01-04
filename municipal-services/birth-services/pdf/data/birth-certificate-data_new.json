@@ -231,7 +231,7 @@
               {
                 "variable": "childNameMl",
                 "value": {
-                  "path": "PDF_BIRTH_CHILD_NAME_ML"
+                  "path": "PDF_BIRTH_CHILD_NAME"
                 },
                 "type": "label",
                 "localisation": {
@@ -252,6 +252,19 @@
                   "prefix": null,
                   "module": "rainmaker-pdf",
                   "locale": "en_IN"
+                }
+              },
+              {
+                "variable": "childSexMl",
+                "value": {
+                  "path": "PDF_BIRTH_CHILD_SEX"
+                },
+                "type": "label",
+                "localisation": {
+                  "required": true,
+                  "prefix": null,
+                  "module": "rainmaker-pdf",
+                  "locale": "ml_IN"
                 }
               },
               {

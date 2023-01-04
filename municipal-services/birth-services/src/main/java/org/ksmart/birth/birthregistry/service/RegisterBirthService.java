@@ -64,7 +64,7 @@ public class RegisterBirthService {
             if (regDetail.size() > 1)
                 throw new CustomException("Invalid_Input", "Error in processing data");
             enrichmentService.enrichCreateRequest(birthCertRequest);
-            enrichmentService.setIdgenIds(birthCertRequest);
+            //enrichmentService.setIdgenIds(birthCertRequest);
           //  System.out.println(birthCertRequest.getBirthCertificate().getBirthCertificateNo());
         //birtDtls.get(0).setBirthcertificateno(birthCertRequest.getBirthCertificate().getBirthCertificateNo());
             regDetail.get(0).setCertId(birthCertRequest.getBirthCertificate().getBirthCertificateNo());

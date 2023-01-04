@@ -45,6 +45,7 @@ public class BirthRegisterRowMapper implements ResultSetExtractor<List<RegisterB
                         .isBornOutside(Boolean.valueOf(rs.getString("is_born_outside")))
                         .otPassportNo(rs.getString("ot_passportno"))
                         .fullName(rs.getString("firstname_en")+" "+rs.getString("middlename_en")+" "+rs.getString("lastname_en"))
+                        .fullNameMl(rs.getString("firstname_ml")+" "+rs.getString("middlename_ml")+" "+rs.getString("lastname_ml"))
                         //.dateOfArrival(Long.valueOf(rs.getString("ot_dateofarrival")))
                         .registrationNo(rs.getString("registrationno"))
                         .registrationDate(Long.valueOf(rs.getString("registration_date")))
