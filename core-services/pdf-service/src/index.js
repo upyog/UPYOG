@@ -116,10 +116,7 @@ var fontDescriptors = {
 
 var defaultFontMapping = {
   en_IN: 'default',
-  hi_IN: 'default',
-  pn_IN: 'BalooPaaji',
-  od_IN: 'BalooBhaina',
-  ml_IN: 'Meera'
+  ml_IN: 'default'
 }
 
 const printer = new pdfMakePrinter(fontDescriptors);
