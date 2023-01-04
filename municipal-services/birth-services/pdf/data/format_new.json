@@ -2,7 +2,7 @@
   "key": "birth-certificate",
   "config": {
     "defaultStyle": {
-      "font": "Cambay"
+      "font": "Meera"
     },
     "watermark": {
       "text": "IKM DEMO",
@@ -618,7 +618,6 @@
       },
       "appendix-header-body-ml": {
         "color": "#000099",
-        "fontName": "Meera",
         "fontSize": 9,
         "alignment": "center"
       },
@@ -629,7 +628,6 @@
       },
       "main-body-style_ml": {
         "color": "#000000",
-        "fontName": "Meera",
         "fontSize": 8,
         "alignment": "center"
       },

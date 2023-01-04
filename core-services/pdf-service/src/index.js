@@ -108,7 +108,7 @@ var fontDescriptors = {
     bold: "src/fonts/NotoSansMalayalam-Bold.ttf"
   },
   Meera:{
-    normal: "src/fonts/Meera.ttf"
+    normal: "src/fonts/Meera.ttf",
     bold: "src/fonts/Meera.ttf",
     italics: "src/fonts/Meera.ttf",
     bolditalics: "src/fonts/Meera.ttf",
