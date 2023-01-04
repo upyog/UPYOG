@@ -40,14 +40,14 @@ public class PaymentService {
 	private Configurations configurations;
 
 
-	public List<Payment> getPayments(PaymentSearchCriteria criteria, RequestInfoWrapper requestInfoWrapper) {
-		StringBuilder url = getPaymentSearchUrl(criteria);
+	public List<Payment> getPayments(PaymentSearchCriteria criteria, String docType,RequestInfoWrapper requestInfoWrapper) {
+		StringBuilder url = getPaymentSearchUrl(criteria,docType);
 		return mapper.convertValue(repository.fetchResult(url, requestInfoWrapper), PaymentResponse.class).getPayments();
 	}
 
 
-	public StringBuilder getPaymentSearchUrl(PaymentSearchCriteria criteria) {
-
+	public StringBuilder getPaymentSearchUrl(PaymentSearchCriteria criteria, String docType) {
+		String moduleName=getModule(docType);
 
 		return new StringBuilder().append(configurations.getCollectionServiceHost())
 				.append(configurations.getPaymentSearchEndpoint()).append(URL_PARAMS_SEPARATER)
@@ -56,7 +56,16 @@ public class PaymentService {
 				.append(StringUtils.join(criteria.getConsumerCodes(),","))
 				.append(SEPARATER)
 				.append(BUSINESSSERVICES_FIELD_FOR_SEARCH_URL)
-				.append(PROPERTY_TAX_SERVICE_CODE);
+				.append(moduleName);
+	}
+	
+	public String getModule(String docType)
+	{
+		if(docType.equals("PRTAX"))
+				return "PT";
+		
+		return "PT";
+				
 	}
 
 	public Object getFilestore(RequestInfoWrapper requestInfoWrapper,
@@ -70,16 +79,18 @@ public class PaymentService {
 	}
 
 
-	public StringBuilder getFilestoreSearchUrl(PaymentSearchCriteria criteria, String receiptNumber) {
-		return new StringBuilder().append(configurations.getPdfServiceHost())
-				.append(configurations.getPdfSearchEndpoint()).append(URL_PARAMS_SEPARATER)
-				.append(TENANT_ID_FIELD_FOR_SEARCH_URL).append(criteria.getTenantId())
-				.append(SEPARATER).append(RECEIPTNUMBER_FIELD_FOR_SEARCH_URL)
-				.append(receiptNumber)
-				.append(SEPARATER)
-				.append(BUSINESSSERVICE_FIELD_FOR_FILESTORE_SEARCH_URL)
-				.append(PROPERTY_TAX_SERVICE_CODE);
-	}
+//	public StringBuilder getFilestoreSearchUrl(PaymentSearchCriteria criteria,String docType, String receiptNumber) {
+//		String moduleName=getModule(docType);
+//
+//		return new StringBuilder().append(configurations.getPdfServiceHost())
+//				.append(configurations.getPdfSearchEndpoint()).append(URL_PARAMS_SEPARATER)
+//				.append(TENANT_ID_FIELD_FOR_SEARCH_URL).append(criteria.getTenantId())
+//				.append(SEPARATER).append(RECEIPTNUMBER_FIELD_FOR_SEARCH_URL)
+//				.append(receiptNumber)
+//				.append(SEPARATER)
+//				.append(BUSINESSSERVICE_FIELD_FOR_FILESTORE_SEARCH_URL)
+//				.append(moduleName);
+//	}
 
 
 }
