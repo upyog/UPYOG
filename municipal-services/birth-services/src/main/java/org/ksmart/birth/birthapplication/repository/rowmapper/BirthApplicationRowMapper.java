@@ -20,9 +20,9 @@ public class BirthApplicationRowMapper implements ResultSetExtractor<List<BirthA
         while (rs.next()) {
             result.add(BirthApplicationDetail.builder()
                     .id(rs.getString("id"))
-                    .dateOfReport(Long.valueOf(rs.getLong("dateofreport")))
-                    .dateOfBirth(Long.valueOf(rs.getLong("dateofbirth")))
-                    .timeOfBirth(Long.valueOf(rs.getLong("timeofbirth")))
+                    .dateOfReport(rs.getLong("dateofreport"))
+                    .dateOfBirth(rs.getLong("dateofbirth"))
+                    .timeOfBirth(rs.getLong("timeofbirth"))
                     .ampm(rs.getString("am_pm"))
                     .firstNameEn(rs.getString("firstname_en"))
                     .firstNameMl(rs.getString("firstname_ml"))
@@ -65,7 +65,6 @@ public class BirthApplicationRowMapper implements ResultSetExtractor<List<BirthA
                     .auditDetails(getAuditDetails(rs))
                     .build());
         }
-
         return result;
     }
 }

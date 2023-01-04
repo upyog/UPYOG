@@ -18,9 +18,9 @@ public class BirthRegisterRowMapper implements ResultSetExtractor<List<RegisterB
             while (rs.next()) {
                 result.add(RegisterBirthDetail.builder()
                         .id(rs.getString("id"))
-                        .dateOfReport(Long.valueOf(rs.getLong("dateofreport")))
-                        .dateOfBirth(Long.valueOf(rs.getLong("dateofbirth")))
-                        .timeOfBirth(Long.valueOf(rs.getLong("timeofbirth")))
+                        .dateOfReport(rs.getLong("dateofreport"))
+                        .dateOfBirth(rs.getLong("dateofbirth"))
+                        .timeOfBirth(rs.getLong("timeofbirth"))
                         .ampm(rs.getString("am_pm"))
                         .firstNameEn(rs.getString("firstname_en"))
                         .firstNameMl(rs.getString("firstname_ml"))
