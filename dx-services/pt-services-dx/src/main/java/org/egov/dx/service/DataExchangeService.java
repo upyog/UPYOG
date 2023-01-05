@@ -27,6 +27,7 @@ import org.egov.dx.web.models.IssuedTo;
 import org.egov.dx.web.models.Organization;
 import org.egov.dx.web.models.Payment;
 import org.egov.dx.web.models.PaymentForReceipt;
+import org.egov.dx.web.models.PaymentRequest;
 import org.egov.dx.web.models.PaymentSearchCriteria;
 import org.egov.dx.web.models.Person;
 import org.egov.dx.web.models.PropertyTaxReceipt;
@@ -106,10 +107,25 @@ public class DataExchangeService {
 		xstream .addPermission(PrimitiveTypePermission.PRIMITIVES);
 		xstream .addPermission(AnyTypePermission.ANY);
 		if(!payments.isEmpty() && validateRequest(searchCriteria,payments.get(0))){ 
+			String o=null;
+			String filestore=null;
+			if(payments.get(0).getFileStoreId() != null) {
+				filestore=payments.get(0).getFileStoreId();
+				o=paymentService.getFilestore(requestInfoWrapper,payments.get(0).getFileStoreId()).toString();
+			}
+			else
+			{
+				List<Payment> latestPayment=new ArrayList<Payment>();
+				latestPayment.add(payments.get(0));
+				PaymentRequest paymentRequest=new PaymentRequest();
+				paymentRequest.setPayment(latestPayment);
+				paymentRequest.setRequestInfo(requestInfoWrapper.getRequestInfo());
+				filestore=paymentService.createPDF(paymentRequest);
+				o=paymentService.getFilestore(requestInfoWrapper,filestore).toString();
 			
+			}
+				if(o!=null)
 			
-					String o=paymentService.getFilestore(requestInfoWrapper,payments.get(0).getFileStoreId()).toString();
-			 		if(o!=null)
 			 		{
 				 	String path=o.split("url=")[1];
 				 	System.out.println("opening connection");
@@ -145,7 +161,7 @@ public class DataExchangeService {
 				     List<Person> persons= new ArrayList<Person>();
 				     issuedTo.setPersons(persons);
 				     docDetailsResponse.setURI(DIGILOCKER_ISSUER_ID.concat("-").concat(DIGILOCKER_DOCTYPE).concat("-").
-				    		 concat(payments.get(0).getFileStoreId()));
+				    		 concat(filestore));
 				     docDetailsResponse.setIssuedTo(issuedTo);
 
 			    	 Certificate certificate=new Certificate();

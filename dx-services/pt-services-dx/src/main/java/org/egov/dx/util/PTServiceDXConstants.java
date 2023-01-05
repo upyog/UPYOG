@@ -29,6 +29,15 @@ public class PTServiceDXConstants {
 	public static final String SEPARATER = "&";
 
 	public static final String CONSUMER_CODE_SEARCH_FIELD_NAME_PAYMENT = "consumerCodes=";
+	
+	public static final String KEY = "key=";
+	
+	public static final String PDF_KEY_PT = "property-receipt";
+	
+	public static final String STATE_TENANT = "pg";
+
+
+
 
 	//public static final String DIGILOCKER_ISSUER_ID = "upyog.niua.org";
 	
