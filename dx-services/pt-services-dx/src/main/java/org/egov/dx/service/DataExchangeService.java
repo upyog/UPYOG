@@ -97,7 +97,7 @@ public class DataExchangeService {
         request.setAuthToken(userResponse.getAuthToken());
         request.setUserInfo(userResponse.getUser());
         requestInfoWrapper.setRequestInfo(request);
-		List<Payment> payments = paymentService.getPayments(criteria, requestInfoWrapper);
+		List<Payment> payments = paymentService.getPayments(criteria,searchCriteria.getDocType(), requestInfoWrapper);
 		System.out.println("payments are:" + (!payments.isEmpty()?payments.get(0):"No payments found"));
 		PullURIResponse model= new PullURIResponse();
 		XStream xstream = new XStream();   
@@ -154,6 +154,8 @@ public class DataExchangeService {
 				     {
 				    	 
 				    	 certificate=populateCertificate(payments.get(0));
+				 	     xstream.processAnnotations(Certificate.class);
+
 				    					    	 
 				     }
 				     docDetailsResponse.setDataContent(Base64.getEncoder().encodeToString( xstream.toXML(certificate).getBytes()));
