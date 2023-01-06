@@ -3,7 +3,7 @@ package org.ksmart.birth.birthapplication.validator;
 import org.egov.tracer.model.CustomException;
 import org.ksmart.birth.birthapplication.model.BirthApplicationDetail;
 import org.ksmart.birth.birthapplication.model.birth.BirthDetailsRequest;
-import org.ksmart.birth.config.BirthDeathConfiguration;
+import org.ksmart.birth.config.BirthConfiguration;
 import org.ksmart.birth.utils.enums.ErrorCodes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -15,12 +15,12 @@ import static org.ksmart.birth.utils.enums.ErrorCodes.BIRTH_DETAILS_REQUIRED;
 @Component
 public class MultipleBirthApplicationValidator {
 
-    private final BirthDeathConfiguration bndCofig;
+    private final BirthConfiguration bndCofig;
     private final MdmsValidator mdmsValidator;
 
 
     @Autowired
-    MultipleBirthApplicationValidator(BirthDeathConfiguration bndCofig, MdmsValidator mdmsValidator) {
+    MultipleBirthApplicationValidator(BirthConfiguration bndCofig, MdmsValidator mdmsValidator) {
 
         this.bndCofig = bndCofig;
 

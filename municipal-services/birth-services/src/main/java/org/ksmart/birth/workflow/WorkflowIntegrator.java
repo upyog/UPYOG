@@ -8,7 +8,7 @@ import java.util.Map;
 //import org.egov.filemgmnt.util.FMConstants;
 //import org.egov.filemgmnt.web.models.ApplicantPersonal;
 //import org.egov.filemgmnt.web.models.ApplicantPersonalRequest;
-import org.ksmart.birth.config.BirthDeathConfiguration;
+import org.ksmart.birth.config.BirthConfiguration;
 import org.ksmart.birth.birthapplication.model.birth.BirthDetailsRequest;
 import org.ksmart.birth.utils.BirthDeathConstants;
 import org.egov.tracer.model.CustomException;
@@ -33,11 +33,11 @@ public class WorkflowIntegrator {
 
 
 
-    private   final BirthDeathConfiguration bndConfig;
+    private   final BirthConfiguration bndConfig;
     private   final RestTemplate restTemplate;
 
     @Autowired
-    public WorkflowIntegrator(RestTemplate restTemplate, BirthDeathConfiguration bndConfig) {
+    public WorkflowIntegrator(RestTemplate restTemplate, BirthConfiguration bndConfig) {
         this.restTemplate = restTemplate;
         this.bndConfig = bndConfig;
 

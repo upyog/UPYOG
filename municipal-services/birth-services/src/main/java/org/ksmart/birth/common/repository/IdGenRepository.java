@@ -2,9 +2,7 @@ package org.ksmart.birth.common.repository;
 
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -12,15 +10,13 @@ import org.ksmart.birth.common.Idgen.IdGenerationRequest;
 import org.ksmart.birth.common.Idgen.IdGenerationResponse;
 import org.ksmart.birth.common.Idgen.IdRequest;
 import org.ksmart.birth.common.Idgen.IdResponse;
-import org.ksmart.birth.config.BirthDeathConfiguration;
+import org.ksmart.birth.config.BirthConfiguration;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
-import org.egov.tracer.model.ServiceCallException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 @Repository
@@ -30,7 +26,7 @@ public class IdGenRepository {
     private RestTemplate restTemplate;
 
 	@Autowired
-    private BirthDeathConfiguration config;
+    private BirthConfiguration config;
 
     @Autowired
     @Qualifier("objectMapperBnd")

@@ -42,9 +42,9 @@ public class RegisterBirthService {
         return repository.searchRegisterBirthDetails(criteria);
     }
     public BirthCertificate download(RegisterBirthSearchCriteria criteria, RequestInfo requestInfo) {
-       // try {
+//        try {
             BirthCertificate birthCertificate = new BirthCertificate();
-            //birthCertificate.setSource(criteria.getSource().toString());
+//            birthCertificate.setSource(criteria.getSource().toString());
             birthCertificate.setBirthDtlId(criteria.getId());
             birthCertificate.setTenantId(criteria.getTenantId());
             BirthCertRequest birthCertRequest = BirthCertRequest.builder().birthCertificate(birthCertificate).requestInfo(requestInfo).build();
@@ -54,9 +54,11 @@ public class RegisterBirthService {
             birthCertificate.setWard(regDetail.get(0).getRegisterBirthPlace().getWardId());
             birthCertificate.setState(regDetail.get(0).getRegisterBirthPermanent().getStateId());
             birthCertificate.setDistrict(regDetail.get(0).getRegisterBirthPermanent().getDistrictId());
+            birthCertificate.setBirthCertificateNo(regDetail.get(0).getRegistrationNo().toString());
             birthCertificate.setDateofbirth(new Timestamp(regDetail.get(0).getDateOfBirth()) );
             birthCertificate.setDateofreport(new Timestamp(regDetail.get(0).getRegistrationDate()));
-
+            birthCertificate.setTenantId(regDetail.get(0).getTenantId());
+            System.out.println(regDetail.get(0).getTenantId());
             SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
             String date = format.format(regDetail.get(0).getDateOfReport());
             String datestr = date.split("-")[2];
@@ -64,21 +66,15 @@ public class RegisterBirthService {
             if (regDetail.size() > 1)
                 throw new CustomException("Invalid_Input", "Error in processing data");
             enrichmentService.enrichCreateRequest(birthCertRequest);
-            //enrichmentService.setIdgenIds(birthCertRequest);
-          //  System.out.println(birthCertRequest.getBirthCertificate().getBirthCertificateNo());
-        //birtDtls.get(0).setBirthcertificateno(birthCertRequest.getBirthCertificate().getBirthCertificateNo());
             regDetail.get(0).setCertId(birthCertRequest.getBirthCertificate().getBirthCertificateNo());
-        System.out.println( regDetail.get(0).getCertId());
             BirthPdfRegisterRequest pdfRegisterRequest = BirthPdfRegisterRequest.builder().requestInfo(requestInfo).birthCertificate(regDetail).build();
-            System.out.println(pdfRegisterRequest.getBirthCertificate().get(0).getRemarksEn());
             EgovPdfResp pdfResp = repository.saveBirthCertPdf(pdfRegisterRequest);
             birthCertificate.setEmbeddedUrl(pdfRegisterRequest.getBirthCertificate().get(0).getEmbeddedUrl());
-            birthCertificate.setDateofissue(pdfRegisterRequest.getBirthCertificate().get(0).getDateofissue());
+            birthCertificate.setDateofissue(pdfRegisterRequest.getBirthCertificate().get(0).getRegistrationDate());
             birthCertificate.setFilestoreid(pdfResp.getFilestoreIds().get(0));
             birthCertificate.setApplicationStatus(BirthCertificate.StatusEnum.FREE_DOWNLOAD);
             repository.saveRegisterBirthCert(birthCertRequest);
             return birthCertificate;
-
 //        } catch (Exception e) {
 //            e.printStackTrace();
 //            throw new CustomException("DOWNLOAD_ERROR", "Error in Downloading Certificate");

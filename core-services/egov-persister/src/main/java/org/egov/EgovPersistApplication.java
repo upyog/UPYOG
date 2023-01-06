@@ -62,6 +62,7 @@ public class EgovPersistApplication {
 
     public List<String> getFilesInFolder(String baseFolderPath,List<String> fileTypes) {
         File folder = new File(baseFolderPath);
+        System.out.println(folder);
 
         if (!folder.exists()) {
             throw new RuntimeException("The folder doesn't exist - " + baseFolderPath);

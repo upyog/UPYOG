@@ -2,7 +2,7 @@ serviceMaps:
   serviceName: birth-services
   mappings:
     - version: 1.0
-      description: Persists save birth details in kl_birth_details  table
+      description: Persists save birth details in eg_birth_details  table
       fromTopic: save-birth-application-topic
       isTransaction: true
       queryMaps:

@@ -15,7 +15,7 @@ import org.ksmart.birth.common.model.Amount;
 import org.ksmart.birth.common.model.AuditDetails;
 import org.ksmart.birth.common.repository.IdGenRepository;
 import org.ksmart.birth.common.repository.ServiceRequestRepository;
-import org.ksmart.birth.config.BirthDeathConfiguration;
+import org.ksmart.birth.config.BirthConfiguration;
 import org.ksmart.birth.utils.CommonUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.mdms.model.MasterDetail;
@@ -40,7 +40,7 @@ public class EnrichmentService {
     IdGenRepository idGenRepository;
 	
 	@Autowired
-    BirthDeathConfiguration config;
+    BirthConfiguration config;
 	
 	@Autowired
     ServiceRequestRepository serviceRequestRepository;

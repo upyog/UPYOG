@@ -26,35 +26,41 @@ public class BirthApplicationController {
 
     @Autowired
     BirthApplicationController(BirthApplicationService crBirthService, ResponseInfoFactory responseInfoFactory) {
-        this.crBirthService = crBirthService;
-        this.responseInfoFactory = responseInfoFactory;
+        this.crBirthService=crBirthService;
+        this.responseInfoFactory=responseInfoFactory;
     }
 
-    @PostMapping(value = { "/_create"})
+    @PostMapping(value = {"/_create"})
     public ResponseEntity<BirthApplicationResponse> saveBirthDetails(@RequestBody BirthDetailsRequest request) {
-        List<BirthApplicationDetail> birthDetails = crBirthService.saveBirthDetails(request);
-        BirthApplicationResponse response = BirthApplicationResponse.builder().birthDetails(birthDetails).responseInfo(
-                        responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), true))
-                .build();
+        List<BirthApplicationDetail> birthDetails=crBirthService.saveBirthDetails(request);
+        BirthApplicationResponse response=BirthApplicationResponse.builder()
+                                                                  .birthDetails(birthDetails)
+                                                                  .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(),
+                                                                                                                                                 true))
+                                                                 .build();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
 
-    @PostMapping(value = { "/_update"})
-    public ResponseEntity<?> updateBirthDetails(@RequestBody BirthDetailsRequest request) {
-        List<BirthApplicationDetail> birthDetails = crBirthService.updateBirthDetails(request);
-        return new ResponseEntity<>(birthDetails, HttpStatus.OK);
+    @PostMapping(value = {"/_update"})
+    public ResponseEntity<BirthApplicationResponse> updateBirthDetails(@RequestBody BirthDetailsRequest request) {
+        List<BirthApplicationDetail> birthDetails=crBirthService.updateBirthDetails(request);
+        BirthApplicationResponse response=BirthApplicationResponse.builder()
+                                                                  .birthDetails(birthDetails)
+                                                                  .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(),
+                                                                                                                                                 true))
+                                                                 .build();
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PostMapping(value = { "/_search"})
-    public ResponseEntity<BirthApplicationResponse> listByHospitalId(@RequestBody BirthDetailsRequest request,
-                                              @Valid @ModelAttribute BirthApplicationSearchCriteria criteria) {
-        List<BirthApplicationDetail> birthDetails = crBirthService.searchBirthDetails(criteria);
-        BirthApplicationResponse response = BirthApplicationResponse.builder()
-                .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(),
-                        Boolean.TRUE))
-                .birthDetails(birthDetails)
-                .build();
+    @PostMapping(value = {"/_search"})
+    public ResponseEntity<BirthApplicationResponse> listByHospitalId(@RequestBody BirthDetailsRequest request, @Valid @ModelAttribute BirthApplicationSearchCriteria criteria) {
+        List<BirthApplicationDetail> birthDetails=crBirthService.searchBirthDetails(criteria);
+        BirthApplicationResponse response=BirthApplicationResponse.builder()
+                                                                  .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(),
+                                                                                                                                                 Boolean.TRUE))
+                                                                  .birthDetails(birthDetails)
+                                                                  .build();
         return ResponseEntity.ok(response);
     }
 

@@ -1,6 +1,6 @@
 package org.ksmart.birth.birthapplication.validator;
 
-import org.ksmart.birth.config.BirthDeathConfiguration;
+import org.ksmart.birth.config.BirthConfiguration;
 import org.ksmart.birth.birthapplication.model.BirthApplicationDetail;
 import org.ksmart.birth.birthapplication.model.birth.BirthDetailsRequest;
 import org.ksmart.birth.utils.enums.ErrorCodes;
@@ -14,11 +14,11 @@ import static org.ksmart.birth.utils.enums.ErrorCodes.BIRTH_DETAILS_REQUIRED;
 
 @Component
 public class BirthApplicationValidator {
-    private final BirthDeathConfiguration bndCofig;
+    private final BirthConfiguration bndCofig;
     private final MdmsValidator mdmsValidator;
 
     @Autowired
-    BirthApplicationValidator(BirthDeathConfiguration bndCofig, MdmsValidator mdmsValidator) {
+    BirthApplicationValidator(BirthConfiguration bndCofig, MdmsValidator mdmsValidator) {
 
         this.bndCofig = bndCofig;
 

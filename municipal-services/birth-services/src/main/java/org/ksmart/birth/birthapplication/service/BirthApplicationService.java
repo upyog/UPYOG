@@ -37,14 +37,17 @@ public class BirthApplicationService {
 
     public List<BirthApplicationDetail> saveBirthDetails(BirthDetailsRequest request) {
 
-
          //validate mdms data
         Object mdmsData = mdmsUtil.mdmsCall(request.getRequestInfo());
 
         // validate request
         applicationValidator.validateCreate(request, mdmsData);
 
-        //  workflowIntegrator.callWorkFlow(request);
+        //WorkFlow Integration
+        /*
+        workflowIntegrator.callWorkFlow(request);
+        */
+
         return repository.saveBirthDetails(request);
     }
 

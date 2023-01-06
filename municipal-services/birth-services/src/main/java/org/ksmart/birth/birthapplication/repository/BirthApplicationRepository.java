@@ -2,7 +2,7 @@ package org.ksmart.birth.birthapplication.repository;
 
 import lombok.extern.slf4j.Slf4j;
 import org.ksmart.birth.common.producer.BndProducer;
-import org.ksmart.birth.config.BirthDeathConfiguration;
+import org.ksmart.birth.config.BirthConfiguration;
 import org.ksmart.birth.birthapplication.enrichment.birth.BirthDetailsEnrichment;
 import org.ksmart.birth.birthapplication.model.birth.BirthApplicationSearchCriteria;
 import org.ksmart.birth.birthapplication.model.BirthApplicationDetail;
@@ -21,7 +21,7 @@ import java.util.List;
 public class BirthApplicationRepository {
 
     private final BndProducer producer;
-    private final BirthDeathConfiguration birthDeathConfiguration;
+    private final BirthConfiguration birthDeathConfiguration;
     private final JdbcTemplate jdbcTemplate;
     private final BirthApplicationQueryBuilder birthQueryBuilder;
     private final BirthApplicationRowMapper birthApplicationRowMapper;
@@ -30,7 +30,7 @@ public class BirthApplicationRepository {
     @Autowired
     BirthApplicationRepository(JdbcTemplate jdbcTemplate, BirthApplicationQueryBuilder birthQueryBuilder,
                                BirthApplicationRowMapper birthApplicationRowMapper, BirthDetailsEnrichment birthDetailsEnrichment,
-                               BirthDeathConfiguration birthDeathConfiguration, BndProducer producer) {
+                               BirthConfiguration birthDeathConfiguration, BndProducer producer) {
         this.jdbcTemplate = jdbcTemplate;
         this.birthQueryBuilder = birthQueryBuilder;
         this.birthApplicationRowMapper = birthApplicationRowMapper;

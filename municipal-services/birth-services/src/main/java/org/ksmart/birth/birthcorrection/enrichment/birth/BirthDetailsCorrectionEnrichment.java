@@ -7,7 +7,7 @@ import org.egov.tracer.model.CustomException;
 import org.ksmart.birth.birthcorrection.enrichment.BaseEnrichment;
 import org.ksmart.birth.common.model.AuditDetails;
 import org.ksmart.birth.common.repository.IdGenRepository;
-import org.ksmart.birth.config.BirthDeathConfiguration;
+import org.ksmart.birth.config.BirthConfiguration;
 import org.ksmart.birth.birthapplication.model.BirthApplicationDetail;
 import org.ksmart.birth.birthapplication.model.birth.BirthDetailsRequest;
 import org.ksmart.birth.utils.enums.ErrorCodes;
@@ -23,7 +23,7 @@ import java.util.UUID;
 public class BirthDetailsCorrectionEnrichment implements BaseEnrichment {
 
     @Autowired
-    BirthDeathConfiguration config;
+    BirthConfiguration config;
 
     @Autowired
     IdGenRepository idGenRepository;

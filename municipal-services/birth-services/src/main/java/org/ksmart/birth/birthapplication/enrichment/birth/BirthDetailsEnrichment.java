@@ -3,7 +3,7 @@ package org.ksmart.birth.birthapplication.enrichment.birth;
 import org.apache.commons.collections4.CollectionUtils;
 import org.ksmart.birth.common.model.AuditDetails;
 import org.ksmart.birth.common.repository.IdGenRepository;
-import org.ksmart.birth.config.BirthDeathConfiguration;
+import org.ksmart.birth.config.BirthConfiguration;
 import org.ksmart.birth.birthapplication.enrichment.BaseEnrichment;
 import org.ksmart.birth.birthapplication.model.BirthApplicationDetail;
 import org.ksmart.birth.birthapplication.model.birth.BirthDetailsRequest;
@@ -23,7 +23,7 @@ import java.util.UUID;
 public class BirthDetailsEnrichment implements BaseEnrichment {
 
     @Autowired
-    BirthDeathConfiguration config;
+    BirthConfiguration config;
 
     @Autowired
     IdGenRepository idGenRepository;

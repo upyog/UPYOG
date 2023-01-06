@@ -1,0 +1,69 @@
+serviceMaps:
+  serviceName: birth-services
+  mappings:
+    - version: 1.0
+      description: Persists birthCertificate details in eg_birth_certificate_request  table
+      fromTopic: save-birth-cert-topic
+      isTransaction: true
+      queryMaps:
+
+        - query: INSERT INTO public.eg_birth_certificate_request (id, registrationno, createdby, createdtime, registrydetailsid, lastmodifiedtime, lastmodifiedby, filestoreid, status, additionaldetail, embeddedurl, dateofissue, tenantid) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+          basePath: birthCertificate
+          jsonMaps:
+            - jsonPath: $.birthCertificate.id
+
+            - jsonPath: $.birthCertificate.birthCertificateNo
+
+            - jsonPath: $.birthCertificate.auditDetails.createdBy
+
+            - jsonPath: $.birthCertificate.auditDetails.createdTime
+
+            - jsonPath: $.birthCertificate.birthDtlId
+
+            - jsonPath: $.birthCertificate.auditDetails.lastModifiedTime
+
+            - jsonPath: $.birthCertificate.auditDetails.lastModifiedBy
+
+            - jsonPath: $.birthCertificate.filestoreid
+
+            - jsonPath: $.birthCertificate.applicationStatus
+
+            - jsonPath: $.birthCertificate.additionalDetail
+              type: JSON
+              dbType: JSONB
+
+            - jsonPath: $.birthCertificate.embeddedUrl
+
+            - jsonPath: $.birthCertificate.dateofissue
+
+            - jsonPath: $.birthCertificate.source
+
+    - version: 1.0
+      description: Update birthCertificate details in eg_birth_certificate_request  table
+      fromTopic: update-birth-cert-topic
+      isTransaction: true
+      queryMaps:
+
+        - query: INSERT INTO eg_birth_certificate_request_audit SELECT * FROM eg_birth_certificate_request WHERE id = ?;
+          basePath: birthCertificate
+          jsonMaps:
+
+            - jsonPath: $.birthCertificate.id
+
+        - query: UPDATE eg_birth_certificate_request SET status = ?, filestoreid =?, embeddedurl = ? ,dateofissue =?, lastmodifiedby = ?,  lastmodifiedtime = ? WHERE id=?;
+          basePath: birthCertificate
+          jsonMaps:
+
+            - jsonPath: $.birthCertificate.applicationStatus
+
+            - jsonPath: $.birthCertificate.filestoreid
+
+            - jsonPath: $.birthCertificate.embeddedUrl
+
+            - jsonPath: $.birthCertificate.dateofissue
+
+            - jsonPath: $.birthCertificate.auditDetails.lastModifiedBy
+
+            - jsonPath: $.birthCertificate.auditDetails.lastModifiedTime
+
+            - jsonPath: $.birthCertificate.id

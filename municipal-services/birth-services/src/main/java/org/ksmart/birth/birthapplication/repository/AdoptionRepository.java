@@ -7,7 +7,7 @@ import org.ksmart.birth.birthapplication.model.adoption.AdoptionRequest;
 import org.ksmart.birth.birthregistry.repository.querybuilder.RegisterQueryBuilder;
 import org.ksmart.birth.birthregistry.repository.rowmapper.BirthRegisterRowMapper;
 import org.ksmart.birth.common.producer.BndProducer;
-import org.ksmart.birth.config.BirthDeathConfiguration;
+import org.ksmart.birth.config.BirthConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -18,7 +18,7 @@ import java.util.List;
 @Repository
 public class AdoptionRepository {
     private final BndProducer producer;
-    private final BirthDeathConfiguration birthDeathConfiguration;
+    private final BirthConfiguration birthDeathConfiguration;
     private final JdbcTemplate jdbcTemplate;
     private final AdoptionEnrichment adoptionEnrichment;
     private final BirthRegisterRowMapper birthRegisterRowMapper;
@@ -26,7 +26,7 @@ public class AdoptionRepository {
 
     @Autowired
     AdoptionRepository(JdbcTemplate jdbcTemplate, AdoptionEnrichment adoptionEnrichment,
-                       BirthDeathConfiguration birthDeathConfiguration, BndProducer producer,
+                       BirthConfiguration birthDeathConfiguration, BndProducer producer,
                        RegisterQueryBuilder registerQueryBuilder, BirthRegisterRowMapper birthRegisterRowMapper) {
         this.jdbcTemplate = jdbcTemplate;
         this.adoptionEnrichment = adoptionEnrichment;

@@ -5,7 +5,7 @@ import java.util.List;
 import org.ksmart.birth.common.calculation.demand.models.Demand;
 import org.ksmart.birth.common.calculation.demand.models.DemandRequest;
 import org.ksmart.birth.common.calculation.demand.models.DemandResponse;
-import org.ksmart.birth.config.BirthDeathConfiguration;
+import org.ksmart.birth.config.BirthConfiguration;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,7 @@ public class DemandRepository {
     private ServiceRequestRepository serviceRequestRepository;
 
     @Autowired
-    private BirthDeathConfiguration config;
+    private BirthConfiguration config;
 
     @Autowired
     @Qualifier("objectMapperBnd")

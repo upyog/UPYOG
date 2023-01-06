@@ -26,31 +26,24 @@ import lombok.Setter;
 public class BirthCertificate {
 
   @JsonProperty("citizen")
-
   private User citizen = null;
 
   @JsonProperty("id")
-
   private String id = null;
 
   @JsonProperty("tenantId")
-
-  private String tenantId = null;
+  private String tenantId;
 
   @JsonProperty("businessService")
-
   private String businessService = null;
 
   @JsonProperty("birthCertificateNo")
-
   private String birthCertificateNo = null;
 
   @JsonProperty("additionalDetail")
-
   private Object additionalDetail = null;
 
   @JsonProperty("source")
-
   private String source = null;
   
   @JsonProperty("taxPeriodFrom")
@@ -66,15 +59,12 @@ public class BirthCertificate {
   private List<Amount> amount;
 
   @JsonProperty("birthDtlId")
-
   private String birthDtlId = null;
   
   @JsonProperty("filestoreid")
-
   private String filestoreid = null;
 
   @JsonProperty("auditDetails")
-
   private AuditDetails auditDetails = null;
 
   @JsonProperty("gender")

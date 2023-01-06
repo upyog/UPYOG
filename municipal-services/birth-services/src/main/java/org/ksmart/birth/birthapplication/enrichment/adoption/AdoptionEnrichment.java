@@ -9,7 +9,7 @@ import org.ksmart.birth.birthapplication.model.adoption.AdoptionRequest;
 import org.ksmart.birth.birthapplication.enrichment.BaseEnrichment;
 import org.ksmart.birth.common.model.AuditDetails;
 import org.ksmart.birth.common.repository.IdGenRepository;
-import org.ksmart.birth.config.BirthDeathConfiguration;
+import org.ksmart.birth.config.BirthConfiguration;
 import org.ksmart.birth.utils.enums.ErrorCodes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -21,7 +21,7 @@ import java.util.UUID;
 @Component
 public class AdoptionEnrichment implements BaseEnrichment {
     @Autowired
-    BirthDeathConfiguration config;
+    BirthConfiguration config;
 
     @Autowired
     IdGenRepository idGenRepository;

@@ -1,19 +1,19 @@
 package org.ksmart.birth.birthcorrection.validator;
 
 import org.egov.tracer.model.CustomException;
-import org.ksmart.birth.config.BirthDeathConfiguration;
+import org.ksmart.birth.config.BirthConfiguration;
 import org.ksmart.birth.birthapplication.model.birth.BirthDetailsRequest;
 import org.ksmart.birth.utils.enums.ErrorCodes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
 public class BirthDetailsValidator {
-    private final BirthDeathConfiguration bndCofig;
+    private final BirthConfiguration bndCofig;
 
 
 
     @Autowired
-    public BirthDetailsValidator(BirthDeathConfiguration bndCofig) {
+    public BirthDetailsValidator(BirthConfiguration bndCofig) {
         this.bndCofig = bndCofig;
     }
 

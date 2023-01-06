@@ -16,7 +16,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Builder
 @Component
-public class BirthDeathConfiguration {
+public class BirthConfiguration {
 
 
     //Idgen Config
@@ -57,11 +57,11 @@ public class BirthDeathConfiguration {
     private String birthRegisNumberFormat;
 
     //Persister Config
-    @Value("${persister.save.birth.topic}")
-    private String saveBirthTopic;
+    @Value("${persister.save.birth.cert.topic}")
+    private String saveBirthCertificateTopic;
 
-    @Value("${persister.update.birth.topic}")
-    private String updateBirthTopic;
+    @Value("${persister.update.birth.cert.topic}")
+    private String updateBirthCertificateTopic;
 
     @Value("${persister.save.adoption.topic}")
     private String saveBirthAdoptionTopic;
@@ -81,20 +81,6 @@ public class BirthDeathConfiguration {
     @Value("${persister.update.birth.register.topic}")
     private String updateBirthRegisterTopic;
 
-    @Value("${egov.idgen.deathapplnum.name}")
-    private String deathApplNumberIdgenName;
-
-    @Value("${egov.idgen.deathapplnum.format}")
-    private String deathApplNumberIdgenFormat;
-
-
-    //Persister Config
-    @Value("${persister.save.death.topic}")
-    private String saveDeathTopic;
-
-    @Value("${persister.update.death.topic}")
-    private String updateDeathTopic;
-    
     //MDMS
     @Value("${egov.mdms.host}")
     private String mdmsHost;
