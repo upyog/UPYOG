@@ -69,5 +69,17 @@
   "bugs": {
     "url": "https://github.com/egovernments/core-services/issues"
   },
+  "background": {
+          
+             "image": "https://ulb-logos.s3.ap-south-1.amazonaws.com/kerala_logo.jpg",
+                "width": 200,
+              "opacity": 0.05,
+              "absolutePosition": { "x": "150", "y": "250" }
+    
+                      },
+  "back-ground":{
+    "type"="image",
+    "url":"https://ulb-logos.s3.ap-south-1.amazonaws.com/kerala_logo.jpg"
+  },
   "homepage": "https://github.com/egovernments/core-services/blob/master/README.md"
 }
