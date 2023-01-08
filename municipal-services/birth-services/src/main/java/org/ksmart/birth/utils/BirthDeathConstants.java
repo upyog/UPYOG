@@ -165,7 +165,7 @@ public class BirthDeathConstants {
 	public static final String UPDATE_ERROR_MESSAGE = "UPDATE_ERROR";
 
 	// workflow integrator
-	public static final String BUSINESS_SERVICE_BND = "bnd21days";
+	public static final String BUSINESS_SERVICE_BND = "21days";
 
 	public static final String TENANTIDKEY = "tenantId";
 
@@ -199,7 +199,7 @@ public class BirthDeathConstants {
 
 	public static final String TRIGGER_NOWORKFLOW = "NOWORKFLOW";
 
-	///// KSAMRT
+	///// KSMART
 
 
 
