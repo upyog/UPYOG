@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import org.ksmart.birth.birthapplication.model.birth.*;
 import org.ksmart.birth.common.model.AuditDetails;
+import org.ksmart.birth.common.model.Document;
 
 import javax.validation.constraints.Size;
 import java.util.List;
@@ -155,8 +156,8 @@ public class BirthApplicationDetail {
     private String comment;
 
 
-    @JsonProperty("WfDocuments")
-    private String WfDocuments;
+    @JsonProperty("wfDocuments")
+    private List<Document>  wfDocuments;
 
     @Size(max = 64)
     @JsonProperty("status")

@@ -37,7 +37,7 @@ public interface BirthRegPerAddRowMapper {
                 .permanentAddress(rs.getString("per_housename_en")==null?"":rs.getString("per_housename_en")+", "
                                  +rs.getString("per_res_asso_no")==null?"":rs.getString("per_res_asso_no")+", "
                                  +rs.getString("per_poid")==null?"":rs.getString("per_poid")+", "
-                                 +rs.getString("per_districtid")==null?"":rs.getString("dper_istrictid")+", "
+                                 +rs.getString("per_districtid")==null?"":rs.getString("per_districtid")+", "
                                  +rs.getString("per_stateid")==null?"":rs.getString("per_stateid")+", "
                                  +rs.getString("per_countryid")==null?"":rs.getString("per_countryid"))
 

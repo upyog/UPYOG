@@ -8,18 +8,18 @@ import java.sql.SQLException;
 public interface BirthMotherInfoRowMapper {
     default BirthMotherInfo getBirthMotherInfo(ResultSet rs) throws SQLException {
         return BirthMotherInfo.builder()
-                .id(rs.getString("id"))
-                .firstNameEn(rs.getString("firstname_en"))
-                .firstNameMl(rs.getString("firstname_ml"))
-                .middleNameEn(rs.getString("middlename_en"))
-                .middleNameMl(rs.getString("middlename_ml"))
-                .lastNameEn(rs.getString("lastname_en"))
-                .lastNameMl(rs.getString("lastname_ml"))
-                .aadharNo(rs.getString("aadharno"))
-                .passportNo(rs.getString("ot_passportno"))
-                .emailId(rs.getString("emailid"))
-                .mobileNo(rs.getString("mobileno"))
-                .birthDtlId(rs.getString("birthdtlid"))
+                .id(rs.getString("mo_id"))
+                .firstNameEn(rs.getString("mo_firstname_en"))
+                .firstNameMl(rs.getString("mo_firstname_ml"))
+                .middleNameEn(rs.getString("mo_middlename_en"))
+                .middleNameMl(rs.getString("mo_middlename_ml"))
+                .lastNameEn(rs.getString("mo_lastname_en"))
+                .lastNameMl(rs.getString("mo_lastname_ml"))
+                .aadharNo(rs.getString("mo_aadharno"))
+                .passportNo(rs.getString("mo_ot_passportno"))
+                .emailId(rs.getString("mo_emailid"))
+                .mobileNo(rs.getString("mo_mobileno"))
+                .birthDtlId(rs.getString("mo_birthdtlid"))
                 .build();
     }
 }
