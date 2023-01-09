@@ -54,9 +54,9 @@ public class BirthApplicationService {
     public List<BirthApplicationDetail> updateBirthDetails(BirthDetailsRequest request) {
         
         
-        wfIntegrator.callWorkFlow(request);
+         workflowIntegrator.callWorkFlow(request);
         
-        return repository.saveBirthDetails(request);
+        return repository.updateBirthDetails(request);
 
     }
 
