@@ -45,7 +45,7 @@
               {
                 "variable": "dob",
                 "value": {
-                  "path": "$.dateOfBirth"
+                  "path": "$.dateofbirthstr"
                 },
                 "type": "date"
               },
@@ -66,7 +66,7 @@
               {
                 "variable": "registrationDate",
                 "value": {
-                  "path": "$.registration_date"
+                  "path": "$.registration_date_str"
                 },
                 "type": "date"
               },
@@ -80,56 +80,56 @@
               {
                 "variable": "fatherName",
                 "value": {
-                  "path": "$.registerBirthFather.fullName"
+                  "path": "$.registerBirthFather.father_fullname"
                 },
                 "type":"setEmpty"
               },
               {
                 "variable": "fatherNameMl",
                 "value": {
-                  "path": "$.registerBirthFather.fullNameMl"
+                  "path": "$.registerBirthFather.father_fullname_ml"
                 },
                 "type":"setEmpty"
               },
               {
                 "variable": "motherName",
                 "value": {
-                  "path": "$.registerBirthMother.fullName"
+                  "path": "$.registerBirthMother.mother_fullname"
                 },
                 "type":"setEmpty"
               },
               {
                 "variable": "motherNameMl",
                 "value": {
-                  "path": "$.registerBirthMother.fullNameMl"
+                  "path": "$.registerBirthMother.mother_fullname_ml"
                 },
                 "type":"setEmpty"
               },
               {
                 "variable": "presentAddress",
                 "value": {
-                  "path": "$.registerBirthPresent.fullAddress"
+                  "path": "$.registerBirthPresent.presentAddress"
                 },
                 "type":"setEmpty"
               },
               {
                 "variable": "presentAddressMl",
                 "value": {
-                  "path": "$.registerBirthPresent.fullAddressMl"
-                },
-                "type":"setEmpty"
-              },
-              {
-                "variable": "parentsAddress",
-                "value": {
-                  "path": "$.registerBirthPermanent.fullAddress"
+                  "path": "$.registerBirthPresent.presentAddressMl"
                 },
                 "type":"setEmpty"
               },
               {
                 "variable": "registerBirthPermanent",
                 "value": {
-                  "path": "$.birthPermaddr.fullAddressMl"
+                  "path": "$.registerBirthPermanent.permanentAddressMl"
+                },
+                "type":"setEmpty"
+              },
+              {
+                "variable": "registerBirthPermanentMl",
+                "value": {
+                  "path": "$.registerBirthPermanent.permanentAddressMl"
                 },
                 "type":"setEmpty"
               },
@@ -181,7 +181,14 @@
               {
                 "variable": "remarks",
                 "value": {
-                  "path": "$.remarksEn"
+                  "path": "$.remarks_en"
+                },
+                "type":"setEmpty"
+              },
+              {
+                "variable": "remarksMl",
+                "value": {
+                  "path": "$.remarks_ml"
                 },
                 "type":"setEmpty"
               },
@@ -205,14 +212,14 @@
                 "value": {
                   "path": "$.esign_user_code"
                 },
-                "type": "date"
+                "type": "setEmpty"
               },
               {
                 "variable": "esignOfficerDesign",
                 "value": {
                   "path": "$.esign_user_desig_code"
                 },
-                "type": "date"
+                "type": "setEmpty"
               },
 
               {

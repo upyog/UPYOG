@@ -64,9 +64,12 @@ public class RegisterBirthMotherInfo {
     private String bioAdopt;
 
 
-    private String fullName;
-
-    private String fullNameMl;
+    @Size(max = 64)
+    @JsonProperty("mother_fullname")
+    private String motherFullName;
+    @Size(max = 64)
+    @JsonProperty("mother_fullname_ml")
+    private String motherFullNameMl;
 
     private String aadharno;
 

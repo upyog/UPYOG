@@ -65,10 +65,10 @@ public class RegisterBirthFatherInfo {
 
     @Size(max = 64)
     @JsonProperty("father_fullname")
-    private String fullName;
+    private String fatherFullName;
     @Size(max = 64)
     @JsonProperty("father_fullname_ml")
-    private String fullNameMl;
+    private String fatherFullNameMl;
     private String aadharno;
 
 }

@@ -4,6 +4,8 @@ import lombok.*;
 import org.ksmart.birth.common.model.AuditDetails;
 
 import javax.validation.constraints.Size;
+import java.util.Date;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -18,6 +20,9 @@ public class RegisterBirthDetail {
 
     @JsonProperty("dateofreport")
     private Long dateOfReport;
+
+    @JsonProperty("dateofbirthstr")
+    private String dobStr;
 
     @JsonProperty("dateofbirth")
     private Long dateOfBirth;
@@ -121,6 +126,9 @@ public class RegisterBirthDetail {
     @JsonProperty("registration_date")
     private Long registrationDate;
 
+    @JsonProperty("registration_date_str")
+    private String registrationDateStr;
+
     @JsonProperty("registerBirthPlace")
     private RegisterBirthPlace registerBirthPlace;
 
@@ -139,37 +147,18 @@ public class RegisterBirthDetail {
     @JsonProperty("registerBirthStatitical")
     private RegisterBirthStatiticalInformation registerBirthStatitical;
 
-
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails;
-
-
-
     /// for PDF SERVICE
-
     private String fullName;
     private String fullNameMl;
     private String embeddedUrl;
     private String dateofbirth;
-    //private String genderStr;
-
     private String registrationno;
     private String dateofreport;
     private Long dateofissue;
-
     private Long remarks;
-
-
-
     private String certId;
-
-
-
-
-
     private String placeofbirth;
-
     private String certificateType;
-
-
 }

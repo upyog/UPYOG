@@ -35,4 +35,5 @@ public class AuditDetails {
   @Valid
   private Long lastModifiedTime = null;
 
+
 }

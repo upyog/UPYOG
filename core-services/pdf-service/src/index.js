@@ -112,6 +112,12 @@ var fontDescriptors = {
     bold: "src/fonts/Meera.ttf",
     italics: "src/fonts/Meera.ttf",
     bolditalics: "src/fonts/Meera.ttf",
+  },
+  Thumba:{
+    normal: "src/fonts/THUMBA.ttf",
+    bold: "src/fonts/THUMBA-Bold.ttf",
+    italics: "src/fonts/THUMBA_ITALIC.ttf",
+    bolditalics: "src/fonts/THUMBA-BoldItalic.ttf",
   }
 };
 

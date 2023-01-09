@@ -33,17 +33,29 @@ public interface BirthRegPreAddRowMapper {
                                         .otStateRegionProvinceMl(rs.getString("pres_ot_state_region_province_ml"))
                                         .countryId(rs.getString("pres_countryid"))
                                         .birthDtlId(rs.getString("pres_birthdtlid"))
-                                        .presentAddress(rs.getString("pres_res_asso_no"))
-//                                                +rs.getString("pres_poid")==null?"":rs.getString("pres_poid")+", "
-//                                                +rs.getString("pres_districtid")==null?"":rs.getString("pres_districtid")+", "
-//                                                +rs.getString("pres_stateid")==null?"":rs.getString("pres_stateid")+", "
-//                                                +rs.getString("pres_countryid")==null?"":rs.getString("pres_countryid")+", ")
-                                        .presentAddressMl(rs.getString("pres_housename_ml")==null?"":rs.getString("pres_housename_ml")+", "
-                                                +rs.getString("pres_res_asso_no")==null?"":rs.getString("pres_res_asso_no")+", "
-                                                +rs.getString("pres_poid")==null?"":rs.getString("pres_poid")+", "
-                                                +rs.getString("pres_districtid")==null?"":rs.getString("pres_districtid")+", "
-                                                +rs.getString("pres_stateid")==null?"":rs.getString("pres_stateid")+", "
-                                                +rs.getString("pres_stateid")==null?"":rs.getString("pres_stateid")+", ")
+                .presentAddress(new StringBuilder().append(rs.getString("pres_housename_en")==null?"":rs.getString("pres_housename_en"))
+                        .append(", ")
+                        .append(rs.getString("pres_res_asso_no")==null?"":rs.getString("pres_res_asso_no"))
+                        .append(", ")
+                        .append(rs.getString("pres_poid")==null?"":rs.getString("pres_poid"))
+                        .append(", ")
+                        .append(rs.getString("pres_districtid")==null?"":rs.getString("pres_districtid"))
+                        .append(", ")
+                        .append(rs.getString("pres_stateid")==null?"":rs.getString("pres_stateid"))
+                        .append(", ")
+                        .append(rs.getString("pres_countryid")==null?"":rs.getString("pres_countryid")).toString())
+                .presentAddressMl(new StringBuilder().append(rs.getString("pres_housename_ml")==null?"":rs.getString("pres_housename_ml"))
+                        .append(", ")
+                        .append(rs.getString("pres_res_asso_no")==null?"":rs.getString("pres_res_asso_no"))
+                        .append(", ")
+                        .append(rs.getString("pres_poid")==null?"":rs.getString("pres_poid"))
+                        .append(", ")
+                        .append(rs.getString("pres_districtid")==null?"":rs.getString("pres_districtid"))
+                        .append(", ")
+                        .append(rs.getString("pres_stateid")==null?"":rs.getString("pres_stateid"))
+                        .append(", ")
+                        .append(rs.getString("pres_countryid")==null?"":rs.getString("pres_countryid")).toString())
+
                                         .build();
     }
 }

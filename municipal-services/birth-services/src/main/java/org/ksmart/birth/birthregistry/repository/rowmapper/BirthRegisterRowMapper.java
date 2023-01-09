@@ -7,7 +7,10 @@ import org.springframework.stereotype.Component;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 @Component
 public class BirthRegisterRowMapper implements ResultSetExtractor<List<RegisterBirthDetail>>,BaseRegRowMapper,BirthRegPlaceRowMapper,
@@ -15,10 +18,14 @@ public class BirthRegisterRowMapper implements ResultSetExtractor<List<RegisterB
         @Override
         public List<RegisterBirthDetail> extractData(ResultSet rs) throws SQLException, DataAccessException { //how to handle null
             List<RegisterBirthDetail> result = new ArrayList<>();
+            DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
             while (rs.next()) {
+                Date regDate = new Date(rs.getLong("registration_date"));
+                Date dobDate = new Date(rs.getLong("dateofbirth"));
                 result.add(RegisterBirthDetail.builder()
                         .id(rs.getString("id"))
                         .dateOfReport(rs.getLong("dateofreport"))
+                        .dobStr(formatter.format(dobDate))
                         .dateOfBirth(rs.getLong("dateofbirth"))
                         .timeOfBirth(rs.getLong("timeofbirth"))
                         .ampm(rs.getString("am_pm"))
@@ -55,6 +62,7 @@ public class BirthRegisterRowMapper implements ResultSetExtractor<List<RegisterB
                         .registerBirthPresent(getRegBirthPresentAddress(rs))
                         .registerBirthStatitical(getRegBirthStatisticalInfo(rs))
                         .auditDetails(getAuditDetails(rs))
+                        .registrationDateStr(formatter.format(regDate))
                         .build());
             }
 

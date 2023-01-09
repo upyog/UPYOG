@@ -315,7 +315,7 @@
                     "width": "1%"
                   },
                   {
-                    "text": "{{motherName}}/{{motherNameMl}}",
+                    "text": "{{motherNameMl}}/{{motherName}}",
                     "style": "details-body"
                   }
                 ]
@@ -334,7 +334,7 @@
                     "width": "1%"
                   },
                   {
-                    "text": "{{fatherName}}/{{fatherNameMl}}",
+                    "text": "{{fatherNameMl}}/{{fatherName}}",
                     "style": "details-body"
                   }
                 ]
@@ -394,7 +394,7 @@
                     "width": "1%"
                   },
                   {
-                    "text": "{{presentAddressMl}}",
+                    "text": "{{registerBirthPermanentMl}}",
                     "style": "details-body"
                   }
                 ]
@@ -414,7 +414,7 @@
                     "width": "1%"
                   },
                   {
-                    "text": "{{parentsAddress}}",
+                    "text": "{{registerBirthPermanent}}",
                     "style": "details-body"
                   }
                 ]
@@ -433,7 +433,7 @@
                     "width": "1%"
                   },
                   {
-                    "text": "{{registrationDateLabel}} {{registrationNo}}",
+                    "text": "{{registrationDateLabel}} {{registrationDate}}",
                     "style": "details-body"
                   }
                 ]
@@ -444,7 +444,7 @@
                 "columns": [
 
                   {
-                    "text": "{{remarksLabel}} ",
+                    "text": "{{remarksLabelMl}}/{{remarksLabel}} ",
                     "width": "49%",
                     "style": "details-body"
                   },
@@ -453,7 +453,7 @@
                     "width": "1%"
                   },
                   {
-                    "text": "{{remarks}}",
+                    "text": "{{remarksMl}}{{remarks}}",
                     "style": "details-body"
                   }
                 ]
@@ -463,7 +463,7 @@
               {
                 "columns": [
                   {
-                    "text": "{{dateOfIssue}}: {{dateofissue}}",
+                    "text": "{{dateOfIssue}}: {{registrationDate}}",
                     "width": "49%",
                     "style": "details-body"
                   },
@@ -472,7 +472,7 @@
                     "width": "1%"
                   },
                   {
-                    "text": "{{updatedOn}} :{{registration_date}}",
+                    "text": "{{updatedOn}} :{{registrationDate}}",
                     "style": "details-body"
                   }
                 ]
@@ -492,7 +492,7 @@
                     "width": "1%"
                   },
                   {
-                    "text": "{{name}}",
+                    "text": "{{esignOfficer}} {{esignOfficerDesign}}",
                     "style": "details-body"
                   }
                 ]
@@ -517,24 +517,7 @@
                     "width": 100,
                     "height": 100,
                     "style": "qr-code"
-                  },
-
-                  [
-                    {
-                      "stack": [
-                        {
-                          "text": "{{ensureRegistration}}",
-                          "style": "details-body-center-bottom"
-                        },
-                        {
-                          "text": "{{ensureRegistrationMl}}",
-                          "style": "details-body-center-bottom"
-                        }
-                      ]
-                    }
-                    ]
-
-
+                  }
                 ]
               }
             ]
@@ -552,6 +535,14 @@
             [
               {
                 "stack": [
+                  {
+                    "text": "{{ensureRegistration}}",
+                    "style": "details-body-center"
+                  },
+                  {
+                    "text": "{{ensureRegistrationMl}}",
+                    "style": "details-body-center"
+                  },
                   {
                     "text": "{{computerGenerated}}",
                     "style": "details-body-center"

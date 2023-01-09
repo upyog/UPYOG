@@ -23,7 +23,7 @@ public class RegisterQueryBuilder extends BaseRegBuilder {
             .append("kbp.informantsname_ml, kbp.informantsaddress_en, kbp.informantsaddress_ml, kbp.informants_mobileno, kbp.informants_aadhaar_no, ")
             .append("kbp.createdtime, kbp.createdby, kbp.lastmodifiedtime, kbp.lastmodifiedby,")
             .append("kbfi.firstname_en as father_fn, kbfi.firstname_ml as father_fn_ml, kbfi.middlename_en as father_mn, kbfi.middlename_ml  as father_mn_ml , ")
-            .append("kbfi.lastname_en  as father_ln, kbfi.lastname_ml  as father_mn_ml, kbfi.aadharno  as fa_aadh,")
+            .append("kbfi.lastname_en  as father_ln, kbfi.lastname_en  as father_ln_ml, kbfi.aadharno  as fa_aadh,")
             .append("kbfi.ot_passportno as fa_pass, kbfi.emailid as fa_email, kbfi.mobileno as fa_mob, kbfi.createdtime, kbfi.createdby, kbfi.lastmodifiedtime, kbfi.lastmodifiedby,")
             .append("kbfi.birthdtlid, kbmi.firstname_en  as mother_fn, kbmi.firstname_ml  as mother_fn_ml, kbmi.middlename_en as mother_mn, kbmi.middlename_ml as mother_mn_ml, kbmi.lastname_en as mother_ln, kbmi.lastname_ml as mother_ln_ml,")
             .append("kbmi.aadharno  as mo_aadh, kbmi.ot_passportno  as mo_pass, kbmi.emailid  as mo_email, kbmi.mobileno  as mo_mob, kbmi.createdtime, kbmi.createdby, kbmi.lastmodifiedtime, kbmi.lastmodifiedby,")

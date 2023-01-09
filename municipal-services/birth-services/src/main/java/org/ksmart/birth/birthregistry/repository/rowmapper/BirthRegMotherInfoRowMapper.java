@@ -20,8 +20,24 @@ public interface BirthRegMotherInfoRowMapper {
                 .emailId(rs.getString("mo_email"))
                 .mobileNo(rs.getString("mo_mob"))
                 .birthDtlId(rs.getString("birthdtlid"))
-                .fullName(rs.getString("mother_fn")+" "+rs.getString("mother_mn")+" "+rs.getString("mother_ln"))
-                .fullName(rs.getString("mother_fn_ml")+" "+rs.getString("mother_mn_ml")+" "+rs.getString("mother_ln_ml"))
+                .motherFullName(new StringBuilder().append(rs.getString("mother_fn")==null?"":rs.getString("mother_fn"))
+                                                    .append(" ")
+                                                    .append(rs.getString("mother_mn")==null?"":rs.getString("mother_mn"))
+                                                    .append(" ")
+                                                    .append(rs.getString("mother_ln")==null?"":rs.getString("mother_ln")).toString())
+                .motherFullNameMl(new StringBuilder().append(rs.getString("mother_fn_ml")==null?"":rs.getString("mother_fn_ml"))
+                                                    .append(" ")
+                                                    .append(rs.getString("mother_mn_ml")==null?"":rs.getString("mother_mn_ml"))
+                                                    .append(" ")
+                                                    .append(rs.getString("mother_ln_ml")==null?"":rs.getString("mother_ln_ml")).toString())
+
+
+//                .fullName(rs.getString("mother_fn")==null?"":rs.getString("mother_fn")+" "
+//                +rs.getString("mother_mn")==null?"":rs.getString("mother_mn")+" "
+//                +rs.getString("mother_ln")==null?"":rs.getString("mother_ln"))
+//                .fullNameMl(rs.getString("mother_fn_ml")==null?"":rs.getString("mother_mn_ml")+" "
+//                        +rs.getString("mother_mn_ml")==null?"":rs.getString("father_mn_ml")+" "
+//                        +rs.getString("mother_ln_ml")==null?"":rs.getString("mother_ln_ml"))
                 .build();
     }
 }

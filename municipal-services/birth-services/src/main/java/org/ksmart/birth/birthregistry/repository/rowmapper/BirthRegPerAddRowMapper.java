@@ -34,19 +34,29 @@ public interface BirthRegPerAddRowMapper {
                 .countryId(rs.getString("per_countryid"))
                 .birthDtlId(rs.getString("per_birthdtlid"))
                 .sameAsPermanent(rs.getInt("per_same_as_permanent"))
-                .permanentAddress(rs.getString("per_housename_en")==null?"":rs.getString("per_housename_en")+", "
-                                 +rs.getString("per_res_asso_no")==null?"":rs.getString("per_res_asso_no")+", "
-                                 +rs.getString("per_poid")==null?"":rs.getString("per_poid")+", "
-                                 +rs.getString("per_districtid")==null?"":rs.getString("per_districtid")+", "
-                                 +rs.getString("per_stateid")==null?"":rs.getString("per_stateid")+", "
-                                 +rs.getString("per_countryid")==null?"":rs.getString("per_countryid"))
+                .permanentAddress(new StringBuilder().append(rs.getString("per_housename_en")==null?"":rs.getString("per_housename_en"))
+                        .append(", ")
+                        .append(rs.getString("per_res_asso_no")==null?"":rs.getString("per_res_asso_no"))
+                        .append(", ")
+                        .append(rs.getString("per_poid")==null?"":rs.getString("per_poid"))
+                        .append(", ")
+                        .append(rs.getString("per_districtid")==null?"":rs.getString("per_districtid"))
+                        .append(", ")
+                        .append(rs.getString("per_stateid")==null?"":rs.getString("per_stateid"))
+                        .append(", ")
+                        .append(rs.getString("per_countryid")==null?"":rs.getString("per_countryid")).toString())
+                .permanentAddressMl(new StringBuilder().append(rs.getString("per_housename_ml")==null?"":rs.getString("per_housename_ml"))
+                        .append(", ")
+                        .append(rs.getString("per_res_asso_no")==null?"":rs.getString("per_res_asso_no"))
+                        .append(", ")
+                        .append(rs.getString("per_poid")==null?"":rs.getString("per_poid"))
+                        .append(", ")
+                        .append(rs.getString("per_districtid")==null?"":rs.getString("per_districtid"))
+                        .append(", ")
+                        .append(rs.getString("per_stateid")==null?"":rs.getString("per_stateid"))
+                        .append(", ")
+                        .append(rs.getString("per_countryid")==null?"":rs.getString("per_countryid")).toString())
 
-                .permanentAddress(rs.getString("per_housename_ml")==null?"":rs.getString("per_housename_ml")+", "
-                                  +rs.getString("per_res_asso_no")==null?"":rs.getString("per_res_asso_no")+", "
-                                  +rs.getString("per_poid")==null?"":rs.getString("per_poid")+", "
-                                  +rs.getString("per_districtid")==null?"":rs.getString("per_districtid")+", "
-                                  +rs.getString("per_stateid")==null?"":rs.getString("per_stateid")+", "
-                                  +rs.getString("per_countryid")==null?"":rs.getString("per_countryid"))
                 .build();
     }
 }
