@@ -44,8 +44,8 @@ public class BirthApplicationService {
         //applicationValidator.validateCreate(request, mdmsData);
 
         //WorkFlow Integration
-        
-        workflowIntegrator.callWorkFlow(request);
+
+        //workflowIntegrator.callWorkFlow(request);
         
 
         return repository.saveBirthDetails(request);
