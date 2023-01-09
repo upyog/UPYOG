@@ -55,7 +55,8 @@ public class BirthApplicationService {
         
         
         wfIntegrator.callWorkFlow(request);
-        return repository.updateBirthDetails(request);
+        
+        return repository.saveBirthDetails(request);
 
     }
 
