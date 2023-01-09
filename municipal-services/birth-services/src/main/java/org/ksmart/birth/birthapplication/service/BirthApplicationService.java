@@ -53,6 +53,10 @@ public class BirthApplicationService {
 
     public List<BirthApplicationDetail> updateBirthDetails(BirthDetailsRequest request) {
         return repository.updateBirthDetails(request);
+        
+        wfIntegrator.callWorkFlow(request);
+
+        return request.updateBirthDetails();
     }
 
     public List<BirthApplicationDetail> searchBirthDetails(BirthApplicationSearchCriteria criteria) {
