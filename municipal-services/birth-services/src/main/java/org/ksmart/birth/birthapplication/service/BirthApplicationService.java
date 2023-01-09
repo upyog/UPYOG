@@ -45,7 +45,7 @@ public class BirthApplicationService {
 
         //WorkFlow Integration
 
-        //workflowIntegrator.callWorkFlow(request);
+        workflowIntegrator.callWorkFlow(request);
         
 
         return repository.saveBirthDetails(request);
