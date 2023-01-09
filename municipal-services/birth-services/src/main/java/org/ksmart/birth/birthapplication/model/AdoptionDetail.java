@@ -62,8 +62,9 @@ public class AdoptionDetail {
     @JsonProperty("tenantid")
     private String tenantId;
 
+    @Size(max = 1000)
     @JsonProperty("gender")
-    private Integer gender;
+    private String gender;
 
     @Size(max = 2500)
     @JsonProperty("remarks_en")

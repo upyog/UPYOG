@@ -8,34 +8,42 @@ import java.sql.SQLException;
 public interface BirthRegPreAddRowMapper {
     default RegisterBirthPresentAddress getRegBirthPresentAddress(ResultSet rs) throws SQLException {
         return RegisterBirthPresentAddress.builder()
-                                        .id(rs.getString("id"))
-                                        //.re(rs.getString("resdnce_addr_type"))
-                                        .buildingNo(rs.getString("buildingno"))
-                                        .houseNo(rs.getString("houseno"))
-                                        .resAssoNo(rs.getString("res_asso_no"))
-                                        .houseNameEn(rs.getString("housename_en"))
-                                        .houseNameMl(rs.getString("housename_ml"))
-                                        .otAddress1En(rs.getString("ot_address1_en"))
-                                        .otAddress1Ml(rs.getString("ot_address1_ml"))
-                                        .otAddress2En(rs.getString("ot_address2_en"))
-                                        .otAddress2Ml(rs.getString("ot_address2_ml"))
-                                        .localityEn(rs.getString("locality_en"))
-                                        .localityMl(rs.getString("locality_ml"))
-                                        .cityEn(rs.getString("city_en"))
-                                        .cityMl(rs.getString("city_ml"))
-                                        .villageId(rs.getString("villageid"))
-                                        .tenantId(rs.getString("tenantid"))
-                                        .talukId(rs.getString("talukid"))
-                                        .districtId(rs.getString("districtid"))
-                                        .stateId(rs.getString("stateid"))
-                                        .poId(rs.getString("poid"))
-                                        .pinNo(rs.getString("pinno"))
-                                        .otStateRegionProvinceEn(rs.getString("ot_state_region_province_en"))
-                                        .otStateRegionProvinceMl(rs.getString("ot_state_region_province_ml"))
-                                        .countryId(rs.getString("countryid"))
-                                        .birthDtlId(rs.getString("birthdtlid"))
-                                        .presentAddress(rs.getString("housename_en")+rs.getString("res_asso_no")+rs.getString("poid")+rs.getString("districtid")+rs.getString("stateid")+rs.getString("countryid"))
-                                        .presentAddressMl(rs.getString("housename_ml")+rs.getString("res_asso_no")+rs.getString("poid")+rs.getString("districtid")+rs.getString("stateid")+rs.getString("countryid"))
+                                        .id(rs.getString("pres_id"))
+                                        .buildingNo(rs.getString("pres_buildingno"))
+                                        .houseNo(rs.getString("pres_houseno"))
+                                        .resAssoNo(rs.getString("pres_res_asso_no"))
+                                        .houseNameEn(rs.getString("pres_housename_en"))
+                                        .houseNameMl(rs.getString("pres_housename_ml"))
+                                        .otAddress1En(rs.getString("pres_ot_address1_en"))
+                                        .otAddress1Ml(rs.getString("pres_ot_address1_ml"))
+                                        .otAddress2En(rs.getString("pres_ot_address2_en"))
+                                        .otAddress2Ml(rs.getString("pres_ot_address2_ml"))
+                                        .localityEn(rs.getString("pres_locality_en"))
+                                        .localityMl(rs.getString("pres_locality_ml"))
+                                        .cityEn(rs.getString("pres_city_en"))
+                                        .cityMl(rs.getString("pres_city_ml"))
+                                        .villageId(rs.getString("pres_villageid"))
+                                        .tenantId(rs.getString("pres_tenantid"))
+                                        .talukId(rs.getString("pres_talukid"))
+                                        .districtId(rs.getString("pres_districtid"))
+                                        .stateId(rs.getString("pres_stateid"))
+                                        .poId(rs.getString("pres_poid"))
+                                        .pinNo(rs.getString("pres_pinno"))
+                                        .otStateRegionProvinceEn(rs.getString("pres_ot_state_region_province_en"))
+                                        .otStateRegionProvinceMl(rs.getString("pres_ot_state_region_province_ml"))
+                                        .countryId(rs.getString("pres_countryid"))
+                                        .birthDtlId(rs.getString("pres_birthdtlid"))
+                                        .presentAddress(rs.getString("pres_res_asso_no"))
+//                                                +rs.getString("pres_poid")==null?"":rs.getString("pres_poid")+", "
+//                                                +rs.getString("pres_districtid")==null?"":rs.getString("pres_districtid")+", "
+//                                                +rs.getString("pres_stateid")==null?"":rs.getString("pres_stateid")+", "
+//                                                +rs.getString("pres_countryid")==null?"":rs.getString("pres_countryid")+", ")
+                                        .presentAddressMl(rs.getString("pres_housename_ml")==null?"":rs.getString("pres_housename_ml")+", "
+                                                +rs.getString("pres_res_asso_no")==null?"":rs.getString("pres_res_asso_no")+", "
+                                                +rs.getString("pres_poid")==null?"":rs.getString("pres_poid")+", "
+                                                +rs.getString("pres_districtid")==null?"":rs.getString("pres_districtid")+", "
+                                                +rs.getString("pres_stateid")==null?"":rs.getString("pres_stateid")+", "
+                                                +rs.getString("pres_stateid")==null?"":rs.getString("pres_stateid")+", ")
                                         .build();
     }
 }

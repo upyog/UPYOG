@@ -48,8 +48,6 @@ public class BirthDetailsCorrectionEnrichment implements BaseEnrichment {
             birth.getBirthPermanentAddress().setId(UUID.randomUUID().toString());
 
             birth.getBirthPresentAddress().setId(UUID.randomUUID().toString());
-
-            birth.getBirthStatisticalInformation().setId(UUID.randomUUID().toString());
         });
         setApplicationNumbers(request);
         setFileNumbers(request);

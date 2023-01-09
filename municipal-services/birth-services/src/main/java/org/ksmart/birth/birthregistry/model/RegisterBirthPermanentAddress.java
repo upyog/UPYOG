@@ -1,6 +1,7 @@
 package org.ksmart.birth.birthregistry.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
+import org.apache.kafka.common.protocol.types.Field;
 import org.ksmart.birth.common.model.AuditDetails;
 
 import javax.validation.constraints.Size;
@@ -118,6 +119,21 @@ public class RegisterBirthPermanentAddress {
 
     @JsonProperty("same_as_permanent")
     private Integer sameAsPermanent;
+    @Size(max = 64)
+    @JsonProperty("bio_adopt")
+    private String bioAdopt;
+
+    @Size(max = 250)
+    @JsonProperty("res_asso_no_ml")
+    private String resAssoNoMl;
+
+    @Size(max = 250)
+    @JsonProperty("streetname_en")
+    private String streetNameEn;
+
+    @Size(max = 250)
+    @JsonProperty("streetname_ml")
+    private String streetNameMl;
 
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails;

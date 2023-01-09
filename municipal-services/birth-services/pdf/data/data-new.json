@@ -52,7 +52,7 @@
               {
                 "variable": "gender",
                 "value": {
-                  "path": "$.genderStr"
+                  "path": "$.gender"
                 },
                 "type":"setEmpty"
               },
@@ -80,54 +80,54 @@
               {
                 "variable": "fatherName",
                 "value": {
-                  "path": "$.birthFatherInfo.fullName"
+                  "path": "$.registerBirthFather.fullName"
                 },
                 "type":"setEmpty"
               },
               {
                 "variable": "fatherNameMl",
                 "value": {
-                  "path": "$.birthFatherInfo.fullNameMl"
+                  "path": "$.registerBirthFather.fullNameMl"
                 },
                 "type":"setEmpty"
               },
               {
                 "variable": "motherName",
                 "value": {
-                  "path": "$.birthMotherInfo.fullName"
+                  "path": "$.registerBirthMother.fullName"
                 },
                 "type":"setEmpty"
               },
               {
                 "variable": "motherNameMl",
                 "value": {
-                  "path": "$.birthMotherInfo.fullNameMl"
+                  "path": "$.registerBirthMother.fullNameMl"
                 },
                 "type":"setEmpty"
               },
               {
                 "variable": "presentAddress",
                 "value": {
-                  "path": "$.birthPresentaddr.fullAddress"
+                  "path": "$.registerBirthPresent.fullAddress"
                 },
                 "type":"setEmpty"
               },
               {
                 "variable": "presentAddressMl",
                 "value": {
-                  "path": "$.birthPresentaddr.fullAddressMl"
+                  "path": "$.registerBirthPresent.fullAddressMl"
                 },
                 "type":"setEmpty"
               },
               {
                 "variable": "parentsAddress",
                 "value": {
-                  "path": "$.birthPermaddr.fullAddress"
+                  "path": "$.registerBirthPermanent.fullAddress"
                 },
                 "type":"setEmpty"
               },
               {
-                "variable": "parentsAddressMl",
+                "variable": "registerBirthPermanent",
                 "value": {
                   "path": "$.birthPermaddr.fullAddressMl"
                 },
@@ -230,8 +230,8 @@
                 "type": "setEmpty",
                 "localisation":{
                   "required":true,
-                  "module":"rainmaker-common",
-                  "locale":"en_IN"
+                  "prefix": "TENANT_TENANTS",
+                  "module":"rainmaker-common"
                 }
               },
 
@@ -243,9 +243,8 @@
                 "type": "setEmpty",
                 "localisation":{
                   "required":true,
-                  "prefix": "TENANTS_TENANT_",
-                  "module":"rainmaker-common",
-                  "locale":"ml_IN"
+                  "prefix": "TENANT_TENANTS_ML",
+                  "module":"rainmaker-common"
                 }
               },
 

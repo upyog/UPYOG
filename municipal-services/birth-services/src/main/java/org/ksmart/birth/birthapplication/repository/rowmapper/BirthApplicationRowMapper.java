@@ -31,7 +31,7 @@ public class BirthApplicationRowMapper implements ResultSetExtractor<List<BirthA
                     .lastNameEn(rs.getString("lastname_en"))
                     .lastNameMl(rs.getString("lastname_ml"))
                     .tenantId(rs.getString("tenantid"))
-                    .gender(Integer.valueOf(rs.getString("gender")))
+                    .gender(rs.getString("gender"))
                     .remarksEn(rs.getString("remarks_en"))
                     .remarksMl(rs.getString("aadharno"))
                     .esignUserCode(rs.getString("esign_user_code"))

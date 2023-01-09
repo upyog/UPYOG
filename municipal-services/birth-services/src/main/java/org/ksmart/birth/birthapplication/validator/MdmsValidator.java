@@ -224,6 +224,7 @@ public class MdmsValidator {
                     }
 
                     if (CollectionUtils.isEmpty(professionCodes) || !professionCodes.contains(professionCodeFather)) {
+
                         errorMap.put(CR_MDMS_PROFESSION, "The Profession code '" + professionCodeFather + "' does not exists");
                     }
 

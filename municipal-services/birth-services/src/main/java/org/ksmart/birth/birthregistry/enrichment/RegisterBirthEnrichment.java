@@ -20,7 +20,7 @@ public class RegisterBirthEnrichment implements BaseEnrichment {
         request.getRegisterBirthDetails().forEach(register -> {
 
             register.setId(UUID.randomUUID().toString());
-
+            register.setRegistrationDate(System.currentTimeMillis());
             register.setAuditDetails(auditDetails);
 
             register.getRegisterBirthPlace().setId(UUID.randomUUID().toString());

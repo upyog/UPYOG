@@ -119,9 +119,25 @@ public class RegisterBirthPresentAddress {
 
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails;
+    @Size(max = 64)
+    @JsonProperty("bio_adopt")
+    private String bioAdopt;
 
+    @Size(max = 250)
+    @JsonProperty("res_asso_no_ml")
+    private String resAssoNoMl;
+
+    @Size(max = 250)
+    @JsonProperty("streetname_en")
+    private String streetNameEn;
+
+
+    @Size(max = 250)
+    @JsonProperty("streetname_ml")
+    private String streetNameMl;
+    @Size(max = 2500)
     private String presentAddress;
-
+    @Size(max = 2500)
     private String presentAddressMl;
 
 }

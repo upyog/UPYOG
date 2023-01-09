@@ -57,8 +57,9 @@ public class RegisterBirthDetail {
     @JsonProperty("tenantid")
     private String tenantId;
 
+    @Size(max = 1000)
     @JsonProperty("gender")
-    private Integer gender;
+    private String gender;
 
     @Size(max = 2500)
     @JsonProperty("remarks_en")
@@ -150,7 +151,7 @@ public class RegisterBirthDetail {
     private String fullNameMl;
     private String embeddedUrl;
     private String dateofbirth;
-    private String genderStr;
+    //private String genderStr;
 
     private String registrationno;
     private String dateofreport;

@@ -83,7 +83,7 @@ public class RegisterBirthRepository {
 
     public EgovPdfResp saveBirthCertPdf(BirthPdfRegisterRequest pdfApplicationRequest) {
         EgovPdfResp result=new EgovPdfResp();
-//        try {
+        try {
             SimpleDateFormat format=new SimpleDateFormat("dd-MM-yyyy");
             pdfApplicationRequest.getBirthCertificate()
                     .forEach(cert -> {
@@ -119,10 +119,10 @@ public class RegisterBirthRepository {
                         }
                         result.setFilestoreIds(response.getFilestoreIds());
                     });
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            throw new CustomException("PDF_ERROR", "Error in generating PDF");
-//        }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new CustomException("PDF_ERROR", "Error in generating PDF");
+        }
         return result;
     }
 
