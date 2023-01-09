@@ -194,7 +194,7 @@ serviceMaps:
 
 
         - query: INSERT INTO public.eg_birth_father_information (id, firstname_en, firstname_ml, middlename_en, middlename_ml, lastname_en, lastname_ml, aadharno, emailid, mobileno, 
-                 birthdtlid, createdtime, createdby, lastmodifiedtime, lastmodifiedby) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+                 birthdtlid, createdtime, createdby, lastmodifiedtime, lastmodifiedby, bio_adopt) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: BirthDetails.*.birthFather
           jsonMaps:
 
@@ -228,9 +228,11 @@ serviceMaps:
 
             - jsonPath: $.BirthDetails.*.auditDetails.lastModifiedBy
 
+            - jsonPath: $.BirthDetails.*.birthFather.bio_adopt
+
 
         - query: INSERT INTO public.eg_birth_mother_information(id, firstname_en, firstname_ml, middlename_en, middlename_ml, lastname_en, lastname_ml, aadharno, emailid, mobileno, birthdtlid, 
-                 createdtime, createdby, lastmodifiedtime, lastmodifiedby) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+                 createdtime, createdby, lastmodifiedtime, lastmodifiedby, bio_adopt) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
           basePath: BirthDetails.*.birthMother
           jsonMaps:
@@ -262,11 +264,13 @@ serviceMaps:
 
             - jsonPath: $.BirthDetails.*.auditDetails.lastModifiedTime
 
-            - jsonPath: $.BirthDetails.*.auditDetails.lastModifiedBy
+            - jsonPath: $.BirthDetails.*.auditDetails.lastModifiedBy,
+
+            - jsonPath: $.BirthDetails.*.birthMother.bio_adopt
 
         - query: INSERT INTO public.eg_birth_permanent_address(id, buildingno, houseno, res_asso_no, housename_en, housename_ml, ot_address1_en, ot_address1_ml, ot_address2_en, ot_address2_ml, 
                  locality_en, locality_ml, city_en, city_ml, villageid, tenantid, talukid, districtid, stateid, poid, pinno, countryid, birthdtlid, same_as_permanent, createdtime, createdby, 
-                 lastmodifiedtime, lastmodifiedby) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+                 lastmodifiedtime, lastmodifiedby, bio_adopt,) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
           basePath: BirthDetails.*.birthPermanent
           jsonMaps:
@@ -326,10 +330,18 @@ serviceMaps:
 
             - jsonPath: $.BirthDetails.*.auditDetails.lastModifiedBy
 
+            - jsonPath: $.BirthDetails.*.birthPermanent.bio_adopt
+
+            - jsonPath: $.BirthDetails.*.birthPermanent.res_asso_no_ml
+
+            - jsonPath: $.BirthDetails.*.birthPermanent.streetname_en
+
+            - jsonPath: $.BirthDetails.*.birthPermanent.streetname_ml
+
 
         - query: INSERT INTO public.eg_birth_present_address(id, buildingno, houseno, res_asso_no, housename_en, housename_ml, ot_address1_en, ot_address1_ml, ot_address2_en, ot_address2_ml, locality_en, 
-                 locality_ml, city_en, city_ml, villageid, tenantid, talukid, districtid, stateid, poid, pinno, countryid, birthdtlid, createdtime, createdby, lastmodifiedtime, lastmodifiedby) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+                 locality_ml, city_en, city_ml, villageid, tenantid, talukid, districtid, stateid, poid, pinno, countryid, birthdtlid, createdtime, createdby, lastmodifiedtime, lastmodifiedby, bio_adopt, res_asso_no_ml, streetname_en, streetname_ml) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: BirthDetails.*.birthPresent
           jsonMaps:
             - jsonPath: $.BirthDetails.*.birthPresent.id
@@ -385,6 +397,14 @@ serviceMaps:
             - jsonPath: $.BirthDetails.*.auditDetails.lastModifiedTime
 
             - jsonPath: $.BirthDetails.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.BirthDetails.*.birthPresent.bio_adopt
+
+            - jsonPath: $.BirthDetails.*.birthPresent.res_asso_no_ml
+
+            - jsonPath: $.BirthDetails.*.birthPresent.streetname_en
+
+            - jsonPath: $.BirthDetails.*.birthPresent.streetname_ml
 
 
         - query: INSERT INTO public.eg_birth_statitical_information(id, weight_of_child, duration_of_pregnancy_in_week, nature_of_medical_attention, way_of_pregnancy,
