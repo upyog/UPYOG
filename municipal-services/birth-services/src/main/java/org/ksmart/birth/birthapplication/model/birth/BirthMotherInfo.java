@@ -60,4 +60,8 @@ public class BirthMotherInfo {
     @JsonProperty("birthdtlid")
     private String birthDtlId;
 
+    @Size(max = 64)
+    @JsonProperty("bio_adopt")
+    private String bioAdopt;
+
 }

@@ -115,6 +115,10 @@ public class BirthPermanentAddress {
     @JsonProperty("same_as_permanent")
     private Integer sameAsPermanent;
 
+    @Size(max = 64)
+    @JsonProperty("bio_adopt")
+    private String bioAdopt;
+
 }
 
 
