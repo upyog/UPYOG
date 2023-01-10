@@ -1,10 +1,10 @@
 package org.egov.dx.service;
 import static org.egov.dx.util.PTServiceDXConstants.BUSINESSSERVICES_FIELD_FOR_SEARCH_URL;
-import static org.egov.dx.util.PTServiceDXConstants.BUSINESSSERVICE_FIELD_FOR_FILESTORE_SEARCH_URL;
 import static org.egov.dx.util.PTServiceDXConstants.CONSUMER_CODE_SEARCH_FIELD_NAME_PAYMENT;
-import static org.egov.dx.util.PTServiceDXConstants.PROPERTY_TAX_SERVICE_CODE;
-import static org.egov.dx.util.PTServiceDXConstants.RECEIPTNUMBER_FIELD_FOR_SEARCH_URL;
+import static org.egov.dx.util.PTServiceDXConstants.KEY;
+import static org.egov.dx.util.PTServiceDXConstants.PDF_KEY_PT;
 import static org.egov.dx.util.PTServiceDXConstants.SEPARATER;
+import static org.egov.dx.util.PTServiceDXConstants.STATE_TENANT;
 import static org.egov.dx.util.PTServiceDXConstants.TENANT_ID_FIELD_FOR_SEARCH_URL;
 import static org.egov.dx.util.PTServiceDXConstants.URL_PARAMS_SEPARATER;
 
@@ -14,7 +14,9 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.dx.repository.Repository;
 import org.egov.dx.util.Configurations;
+import org.egov.dx.web.models.FileStoreResponse;
 import org.egov.dx.web.models.Payment;
+import org.egov.dx.web.models.PaymentRequest;
 import org.egov.dx.web.models.PaymentResponse;
 import org.egov.dx.web.models.PaymentSearchCriteria;
 import org.egov.dx.web.models.RequestInfoWrapper;
@@ -76,6 +78,16 @@ public class PaymentService {
 
 		return restTemplate.getForObject(host.toString(),Object.class);
 
+	}
+
+	public String createPDF(PaymentRequest paymentRequest) {
+		StringBuilder url = new StringBuilder().append(configurations.getPdfServiceHost())
+				.append(configurations.getPdfServiceCreate())
+				.append(URL_PARAMS_SEPARATER)
+				.append(TENANT_ID_FIELD_FOR_SEARCH_URL).append(STATE_TENANT)
+				.append(SEPARATER).append(KEY)
+				.append(PDF_KEY_PT);
+		return mapper.convertValue(repository.fetchResult(url, paymentRequest), FileStoreResponse.class).getFilestoreIds().get(0);
 	}
 
 

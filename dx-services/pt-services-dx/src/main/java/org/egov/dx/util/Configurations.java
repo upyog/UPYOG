@@ -23,7 +23,7 @@ public class Configurations {
 	private String	PaymentSearchEndpoint;
 	
 	@Value("${egov.pdf.host}")
-	private String pdfServiceHost;
+	private String egovPDFServiceHost;
 		
 	@Value("${egov.pdf.search.endpoint}")
 	private String	PdfSearchEndpoint;
@@ -33,4 +33,12 @@ public class Configurations {
 		
 	@Value("${egov.filestore.search.endpoint}")
 	private String	filstoreSearchEndpoint;
+
+	@Value("${egov.services.hostname}")
+	private String	pdfServiceHost;
+	
+	@Value("${egov.pdf.service.create}")
+	private String	pdfServiceCreate;
+	
+	
 }
