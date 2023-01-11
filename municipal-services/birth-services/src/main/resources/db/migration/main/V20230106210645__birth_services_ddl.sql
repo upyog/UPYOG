@@ -4,11 +4,7 @@ ALTER COLUMN gender TYPE character varying(20) COLLATE pg_catalog."default";
 ALTER TABLE public.eg_birth_details_audit
 ALTER COLUMN gender TYPE character varying(20) COLLATE pg_catalog."default";
 
-#ALTER TABLE public.eg_register_birth_details
-#ALTER COLUMN gender TYPE character varying(20) COLLATE pg_catalog."default";
 
-#ALTER TABLE public.eg_register_birth_details_audit
-#ALTER COLUMN gender TYPE character varying(20) COLLATE pg_catalog."default";
 
 DROP TABLE public.eg_birth_adoption_father_information,
     public.eg_birth_adoption_father_information_audit,
