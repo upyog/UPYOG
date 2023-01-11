@@ -45,10 +45,10 @@ public class BirthApplicationService {
 
         //WorkFlow Integration
 
-        workflowIntegrator.callWorkFlow(request);
-        
+        List<BirthApplicationDetail> bd= repository.saveBirthDetails(request);
 
-        return repository.saveBirthDetails(request);
+        workflowIntegrator.callWorkFlow(request);
+        return  bd;
     }
 
     public List<BirthApplicationDetail> updateBirthDetails(BirthDetailsRequest request) {
