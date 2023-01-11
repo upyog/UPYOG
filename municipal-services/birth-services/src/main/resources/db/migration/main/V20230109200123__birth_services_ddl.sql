@@ -1,5 +1,0 @@
--- ALTER TABLE public.eg_register_birth_statitical_information_audit
--- ADD COLUMN mother_dob bigint;
---
--- ALTER TABLE public.eg_birth_statitical_information_audit
--- ADD COLUMN mother_dob bigint;
