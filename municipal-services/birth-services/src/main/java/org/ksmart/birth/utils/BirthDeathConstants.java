@@ -185,7 +185,7 @@ public class BirthDeathConstants {
 
 	public static final String UUIDKEY = "uuid";
 
-	public static final String BNDMODULENAMEVALUE = "BND";
+	public static final String BNDMODULENAMEVALUE = "birth-services";
 
 	public static final String WORKFLOWREQUESTARRAYKEY = "ProcessInstances";
 
