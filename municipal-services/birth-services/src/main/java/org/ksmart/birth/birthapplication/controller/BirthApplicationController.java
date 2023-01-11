@@ -32,6 +32,7 @@ public class BirthApplicationController {
 
     @PostMapping(value = {"/_create"})
     public ResponseEntity<BirthApplicationResponse> saveBirthDetails(@RequestBody BirthDetailsRequest request) {
+         System.out.println("controller Request"+ request.getRequestInfo());
         List<BirthApplicationDetail> birthDetails=crBirthService.saveBirthDetails(request);
         BirthApplicationResponse response=BirthApplicationResponse.builder()
                                                                   .birthDetails(birthDetails)
