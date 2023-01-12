@@ -104,7 +104,7 @@ public class BirthApplicationDetail {
 
     @Size(max = 64)
     @JsonProperty("multiplebirthdetid")
-    private String multipleBirthDeeailsIid;
+    private String multipleBirthDetailsIid;
 
     @JsonProperty("is_born_outside")
     private Boolean isBornOutside;

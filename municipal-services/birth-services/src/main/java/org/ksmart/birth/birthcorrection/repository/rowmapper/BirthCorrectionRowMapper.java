@@ -36,7 +36,7 @@ public class BirthCorrectionRowMapper implements ResultSetExtractor<List<BirthAp
                     .remarksMl(rs.getString("aadharno"))
                     .esignUserCode(rs.getString("esign_user_code"))
                     .esignUserDesigCode(rs.getString("esign_user_desig_code"))
-                    .multipleBirthDeeailsIid(rs.getString("multiplebirthdetid"))
+                    .multipleBirthDetailsIid(rs.getString("multiplebirthdetid"))
                     .isBornOutside(Boolean.valueOf(rs.getString("is_born_outside")))
                     .passportNo(rs.getString("ot_passportno"))
                     //.dateOfArrival(Long.valueOf(rs.getString("ot_dateofarrival")))

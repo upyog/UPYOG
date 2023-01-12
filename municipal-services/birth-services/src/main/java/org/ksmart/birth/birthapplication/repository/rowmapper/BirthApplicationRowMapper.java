@@ -42,7 +42,7 @@ public class BirthApplicationRowMapper implements ResultSetExtractor<List<BirthA
                     .isFatherInfoMissing(Boolean.valueOf(rs.getString("ba_is_father_info_missing")))
                     .isMotherInfoMissing(Boolean.valueOf(rs.getString("ba_is_mother_info_missing")))
                     .noOfAliveBirth(rs.getInt("ba_no_of_alive_birth"))
-                    .multipleBirthDeeailsIid(rs.getString("ba_multiplebirthdetid"))
+                    .multipleBirthDetailsIid(rs.getString("ba_multiplebirthdetid"))
                     .isBornOutside(rs.getBoolean("ba_is_born_outside"))
                     .passportNo(rs.getString("ba_ot_passportno"))
                     .dateOfArrival(rs.getLong("ba_ot_dateofarrival"))
