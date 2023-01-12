@@ -1,7 +1,6 @@
 package org.ksmart.birth;
 
 import java.util.TimeZone;
-
 import javax.annotation.PostConstruct;
 
 import org.egov.encryption.config.EncryptionConfiguration;
