@@ -7,11 +7,18 @@ import org.ksmart.birth.birthapplication.model.birth.BirthDetailsRequest;
 import org.ksmart.birth.birthapplication.repository.BirthApplicationRepository;
 import org.ksmart.birth.birthapplication.validator.BirthApplicationValidator;
 import org.ksmart.birth.birthapplication.validator.MdmsValidator;
+import org.ksmart.birth.birthregistry.model.BirthCertificate;
+import org.ksmart.birth.birthregistry.model.RegisterBirthDetail;
+import org.ksmart.birth.birthregistry.model.RegisterBirthDetailsRequest;
+import org.ksmart.birth.birthregistry.model.RegisterBirthSearchCriteria;
+import org.ksmart.birth.birthregistry.service.RegisterBirthService;
 import org.ksmart.birth.utils.MdmsUtil;
 import org.ksmart.birth.workflow.WorkflowIntegrator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 @Slf4j
@@ -21,7 +28,6 @@ public class BirthApplicationService {
     private final WorkflowIntegrator workflowIntegrator;
     private final MdmsUtil mdmsUtil;
     private final MdmsValidator mdmsValidator;
-
     private final BirthApplicationValidator applicationValidator;
 
     @Autowired
@@ -43,16 +49,16 @@ public class BirthApplicationService {
         // validate request
         //applicationValidator.validateCreate(request, mdmsData);
 
+        //call save
+        List<BirthApplicationDetail> birthApplicationDetails= repository.saveBirthDetails(request);
+
         //WorkFlow Integration
-
-        List<BirthApplicationDetail> bd= repository.saveBirthDetails(request);
-
         workflowIntegrator.callWorkFlow(request);
-        return  bd;
+
+        return  birthApplicationDetails;
     }
 
     public List<BirthApplicationDetail> updateBirthDetails(BirthDetailsRequest request) {
-        
         
          workflowIntegrator.callWorkFlow(request);
         

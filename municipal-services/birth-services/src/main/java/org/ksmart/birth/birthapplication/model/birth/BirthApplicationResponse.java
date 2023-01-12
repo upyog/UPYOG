@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import org.egov.common.contract.response.ResponseInfo;
 import org.ksmart.birth.birthapplication.model.BirthApplicationDetail;
+import org.ksmart.birth.birthregistry.model.BirthCertificate;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
@@ -26,6 +27,11 @@ public class BirthApplicationResponse {
     @JsonProperty("BirthDetails")
     @Valid
     private List<BirthApplicationDetail> birthDetails;
+
+    @JsonProperty("BirthCertificate")
+    @Valid
+    private BirthCertificate birthCertificate;
+
 
     @JsonProperty("Count")
     private int count;
