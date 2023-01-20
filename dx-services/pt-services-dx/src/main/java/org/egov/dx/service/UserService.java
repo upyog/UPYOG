@@ -1,5 +1,6 @@
 package org.egov.dx.service;
 
+import org.egov.dx.util.Configurations;
 import org.egov.dx.web.models.UserResponse;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,12 +19,13 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class UserService {
 
-    @Value("${user.service.host}")
-    private String userHost;
-    
+      
     @Autowired
     private RestTemplate restTemplate;
 
+    @Autowired
+	private Configurations configurations;
+    
     public UserResponse getUser() {
     	 log.info("Fetch access token for register with login flow");
          try {
@@ -41,7 +43,7 @@ public class UserService {
 
              HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map,
                      headers);
-             UserResponse userResponse= restTemplate.postForEntity(userHost + "/user/oauth/token", request, UserResponse.class).getBody();
+             UserResponse userResponse= restTemplate.postForEntity(configurations.getUserHost() + configurations.getUserSearchEndPoint(), request, UserResponse.class).getBody();
             return userResponse;
              
          } catch (Exception e) {
