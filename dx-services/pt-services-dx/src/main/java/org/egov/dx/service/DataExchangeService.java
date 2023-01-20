@@ -17,6 +17,8 @@ import java.util.Collections;
 import java.util.List;
 
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.request.User;
+import org.egov.dx.util.Configurations;
 import org.egov.dx.web.models.Address;
 import org.egov.dx.web.models.Certificate;
 import org.egov.dx.web.models.CertificateData;
@@ -38,6 +40,7 @@ import org.egov.dx.web.models.ResponseStatus;
 import org.egov.dx.web.models.SearchCriteria;
 import org.egov.dx.web.models.UserResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.stereotype.Service;
 
 import com.thoughtworks.xstream.XStream;
@@ -57,6 +60,9 @@ public class DataExchangeService {
 	
 	@Autowired
     private UserService userService;
+	
+	@Autowired
+	private Configurations configurations;
 	
 	public String searchPullURIRequest(SearchCriteria  searchCriteria) throws IOException {
 		
@@ -87,26 +93,33 @@ public class DataExchangeService {
         request.setApiId("Rainmaker");
         request.setMsgId("1670564653696|en_IN");
         RequestInfoWrapper requestInfoWrapper=new RequestInfoWrapper();
-        UserResponse userResponse =new UserResponse();
-        try {
-        	userResponse=userService.getUser();
-        	}
-        catch(Exception e)
-        {
-        	
-        }
-        request.setAuthToken(userResponse.getAuthToken());
-        request.setUserInfo(userResponse.getUser());
+//        UserResponse userResponse =new UserResponse();
+//        try {
+//        	userResponse=userService.getUser();
+//        	}
+//        catch(Exception e)
+//        {
+//        	
+//        }
+        User userInfo = User.builder()
+                .uuid(configurations.getAuthTokenVariable())
+                .type("SYSTEM")
+                .roles(Collections.emptyList()).id(0L).build();
+
+        request = new RequestInfo("", "", 0L, "", "", "", "", "", "", userInfo);
+        //request.setAuthToken(userResponse.getAuthToken());
+        //request.setUserInfo(userResponse.getUser());
         requestInfoWrapper.setRequestInfo(request);
 		List<Payment> payments = paymentService.getPayments(criteria,searchCriteria.getDocType(), requestInfoWrapper);
-		System.out.println("payments are:" + (!payments.isEmpty()?payments.get(0):"No payments found"));
+		log.info("Payments found are:---",((!payments.isEmpty()?payments.get(0):"No payments found")));
 		PullURIResponse model= new PullURIResponse();
 		XStream xstream = new XStream();   
 		xstream .addPermission(NoTypePermission.NONE); //forbid everything
 		xstream .addPermission(NullPermission.NULL);   // allow "null"
 		xstream .addPermission(PrimitiveTypePermission.PRIMITIVES);
 		xstream .addPermission(AnyTypePermission.ANY);
-		if(!payments.isEmpty() && validateRequest(searchCriteria,payments.get(0))){ 
+		if((!payments.isEmpty() && configurations.getValidationFlag().toUpperCase().equals("TRUE") && validateRequest(searchCriteria,payments.get(0)))
+				|| (!payments.isEmpty() && configurations.getValidationFlag().toUpperCase().equals("FALSE"))){ 
 			String o=null;
 			String filestore=null;
 			if(payments.get(0).getFileStoreId() != null) {
@@ -128,7 +141,6 @@ public class DataExchangeService {
 			
 			 		{
 				 	String path=o.split("url=")[1];
-				 	System.out.println("opening connection");
 				 	String pdfPath=path.substring(0,path.length()-3);
 				 	URL url1 =new URL(pdfPath);
 				 	try {
@@ -183,7 +195,8 @@ public class DataExchangeService {
 
 			 }
 			 catch (NullPointerException npe) {
-			      System.out.println("FAILED.\n[" + npe.getMessage() + "]\n");
+			      log.error(npe.getMessage());
+			      log.info("Error Occured",npe.getMessage());
 			    }
 			  }	
 		} 
@@ -206,7 +219,7 @@ public class DataExchangeService {
 		     docDetailsResponse.setIssuedTo(issuedTo);
 		     //docDetailsResponse.setDataContent("");
 		     docDetailsResponse.setDocContent("");
-
+		     log.info(EXCEPTION_TEXT_VALIDATION);
 		     model.setDocDetails(docDetailsResponse);
 
 		}
@@ -226,16 +239,22 @@ public class DataExchangeService {
         request.setApiId("Rainmaker");
         request.setMsgId("1670564653696|en_IN");
         RequestInfoWrapper requestInfoWrapper=new RequestInfoWrapper();
-        UserResponse userResponse =new UserResponse();
-        try {
-        	userResponse=userService.getUser();
-        	}
-        catch(Exception e)
-        {
-        	
-        }
-        request.setAuthToken(userResponse.getAuthToken());
-        request.setUserInfo(userResponse.getUser());
+//        UserResponse userResponse =new UserResponse();
+//        try {
+//        	userResponse=userService.getUser();
+//        	}
+//        catch(Exception e)
+//        {
+//        	
+//        }
+        User userInfo = User.builder()
+                .uuid(configurations.getAuthTokenVariable())
+                .type("SYSTEM")
+                .roles(Collections.emptyList()).id(0L).build();
+
+        request = new RequestInfo("", "", 0L, "", "", "", "", "", "", userInfo);
+        //request.setAuthToken(userResponse.getAuthToken());
+        //request.setUserInfo(userResponse.getUser());
         requestInfoWrapper.setRequestInfo(request);
 		
 		PullDocResponse model= new PullDocResponse();
@@ -257,7 +276,6 @@ public class DataExchangeService {
 		 if(o!=null)
 			 {
 			 String path=o.split("url=")[1];
-		 System.out.println("opening connection");
 		 String pdfPath=path.substring(0,path.length()-3);
 		 URL url1 =new URL(pdfPath);
 		 try {
@@ -304,8 +322,8 @@ public class DataExchangeService {
 
 
 			    } catch (NullPointerException npe) {
-			      System.out.println("FAILED.\n[" + npe.getMessage() + "]\n");
-			    }
+			    	log.error(npe.getMessage());
+				      log.info("Error Occured",npe.getMessage());			    }
 			  }	
 		else
 		{

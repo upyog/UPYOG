@@ -26,6 +26,9 @@ import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Service
 public class PaymentService {
 
@@ -72,7 +75,7 @@ public class PaymentService {
 
 	public Object getFilestore(RequestInfoWrapper requestInfoWrapper,
 			 String fileStoreId) throws IOException {
-		
+		log.info("fetching document from filestore id::::");
 		StringBuilder host=new StringBuilder().append(configurations.getFilestoreHost()).append(configurations.getFilstoreSearchEndpoint())
 				.append(fileStoreId);
 
