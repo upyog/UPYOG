@@ -162,7 +162,6 @@ public class BirthStatisticalInformation {
     @Size(max = 64)
     @JsonProperty("mother_resdnce_countryid")
     private String motherResdnceCountryId;
-
     @Size(max = 64)
     @JsonProperty("birthdtlid")
     private String birthDtlId;

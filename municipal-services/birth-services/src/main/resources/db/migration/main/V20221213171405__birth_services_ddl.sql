@@ -16,7 +16,12 @@ CREATE TABLE IF NOT EXISTS public.eg_birth_certificate_request
     additionaldetail jsonb,
     embeddedurl character varying(64) COLLATE pg_catalog."default",
     dateofissue bigint,
-    tenantid character varying(64) COLLATE pg_catalog."default"
+    tenantid character varying(64) COLLATE pg_catalog."default",
+    CONSTRAINT eg_birth_certificate_request_pkey PRIMARY KEY (id),
+    CONSTRAINT eg_birth_certificate_request_fkey FOREIGN KEY (registrydetailsid)
+    REFERENCES public.eg_register_birth_details (id) MATCH SIMPLE
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
     );
 
 CREATE INDEX IF NOT EXISTS idx_eg_birth_certificate_request_registrationno

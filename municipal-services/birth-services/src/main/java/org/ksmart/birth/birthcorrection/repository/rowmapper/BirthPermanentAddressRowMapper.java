@@ -10,9 +10,7 @@ public interface BirthPermanentAddressRowMapper {
     default BirthPermanentAddress getBirthPermanentAddress(ResultSet rs) throws SQLException {
         return BirthPermanentAddress.builder()
                 .id(rs.getString("id"))
-                //.re(rs.getString("resdnce_addr_type"))
-                .buildingNo(rs.getString("buildingno"))
-                .houseNo(rs.getString("houseno"))
+                .resdnceAddrType(rs.getString("resdnce_addr_type"))
                 .resAssoNo(rs.getString("res_asso_no"))
                 .houseNameEn(rs.getString("housename_en"))
                 .houseNameMl(rs.getString("housename_ml"))
@@ -20,10 +18,6 @@ public interface BirthPermanentAddressRowMapper {
                 .otAddress1Ml(rs.getString("ot_address1_ml"))
                 .otAddress2En(rs.getString("ot_address2_en"))
                 .otAddress2Ml(rs.getString("ot_address2_ml"))
-                .localityEn(rs.getString("locality_en"))
-                .localityMl(rs.getString("locality_ml"))
-                .cityEn(rs.getString("city_en"))
-                .cityMl(rs.getString("city_ml"))
                 .villageId(rs.getString("villageid"))
                 .tenantId(rs.getString("tenantid"))
                 .talukId(rs.getString("talukid"))
@@ -35,7 +29,7 @@ public interface BirthPermanentAddressRowMapper {
                 .otStateRegionProvinceMl(rs.getString("ot_state_region_province_ml"))
                 .countryId(rs.getString("countryid"))
                 .birthDtlId(rs.getString("birthdtlid"))
-                .sameAsPermanent(Integer.valueOf(rs.getString("same_as_permanent")))
+                .sameAsPresent(Integer.valueOf(rs.getString("same_as_present")))
                 .build();
     }
 }

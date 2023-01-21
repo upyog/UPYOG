@@ -43,7 +43,6 @@ public class BirthApplicationController {
 
     @PostMapping(value = {"/_create"})
     public ResponseEntity<BirthApplicationResponse> saveBirthDetails(@RequestBody BirthDetailsRequest request) {
-         System.out.println("controller Request"+ request.getRequestInfo());
         List<BirthApplicationDetail> birthDetails=crBirthService.saveBirthDetails(request);
         BirthApplicationResponse response=BirthApplicationResponse.builder()
                                                                   .birthDetails(birthDetails)
@@ -85,5 +84,21 @@ public class BirthApplicationController {
                                                                   .build();
         return ResponseEntity.ok(response);
     }
+
+//    @PostMapping(value = { "/_getfilestoreid"})
+//    public ResponseEntity<BirthCertResponse> getfilestoreid(@RequestBody RequestInfoWrapper requestInfoWrapper,
+//                                                            @Valid @ModelAttribute SearchCriteria criteria) {
+//
+//        BirthCertificate birthCert = birthService.getBirthCertReqByConsumerCode(criteria,requestInfoWrapper.getRequestInfo());
+//        BirthCertResponse response = BirthCertResponse.builder().filestoreId(birthCert.getFilestoreid()).tenantId(criteria.getTenantId()).responseInfo(
+//                        responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true))
+//                .build();
+//        if(null!=birthCert.getFilestoreid()) {
+//            birthCert.setBirthCertificateNo(criteria.getConsumerCode());
+//            birthService.updateDownloadStatus(BirthCertRequest.builder().birthCertificate(birthCert).requestInfo(requestInfoWrapper.getRequestInfo()).build());
+//        }
+//        return new ResponseEntity<>(response, HttpStatus.OK);
+//    }
+
 
 }

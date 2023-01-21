@@ -49,8 +49,6 @@ public class MdmsValidator {
         List<String> lBTypeCodes = getLbTypeCode(mdmsData);
         List<String> birthPlaceCodes = getBirthPlaceCode(mdmsData);
 
-
-
         Map<String, String> errorMap = new ConcurrentHashMap<>();
         request.getBirthDetails()
                 .forEach(birth -> {

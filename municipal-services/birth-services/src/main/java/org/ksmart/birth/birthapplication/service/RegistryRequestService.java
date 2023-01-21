@@ -73,13 +73,9 @@ public class RegistryRequestService {
         registerBirthPlace.setHoHousenNo(requestBirthReq.getBirthDetails().get(0).getBirthPlace().getHoHousenNo());
         registerBirthPlace.setHouseNameEn(requestBirthReq.getBirthDetails().get(0).getBirthPlace().getHouseNameEn());
         registerBirthPlace.setHouseNameMl(requestBirthReq.getBirthDetails().get(0).getBirthPlace().getHouseNameMl());
-        registerBirthPlace.setHoLocalityEn(requestBirthReq.getBirthDetails().get(0).getBirthPlace().getHoLocalityEn());
-        registerBirthPlace.setHoLocalityMl(requestBirthReq.getBirthDetails().get(0).getBirthPlace().getHoLocalityMl());
         registerBirthPlace.setHoVillageId(requestBirthReq.getBirthDetails().get(0).getBirthPlace().getHoVillageId());
         registerBirthPlace.setHoTalukId(requestBirthReq.getBirthDetails().get(0).getBirthPlace().getHoTalukId());
         registerBirthPlace.setHoDistrictId(requestBirthReq.getBirthDetails().get(0).getBirthPlace().getHoDistrictId());
-        registerBirthPlace.setHoCityEn(requestBirthReq.getBirthDetails().get(0).getBirthPlace().getHoCityEn());
-        registerBirthPlace.setHoCityMl(requestBirthReq.getBirthDetails().get(0).getBirthPlace().getHoCityMl());
         registerBirthPlace.setHoStateId(requestBirthReq.getBirthDetails().get(0).getBirthPlace().getHoStateId());
         registerBirthPlace.setHoPoId(requestBirthReq.getBirthDetails().get(0).getBirthPlace().getHoPoId());
         registerBirthPlace.setHoPinNo(requestBirthReq.getBirthDetails().get(0).getBirthPlace().getHoPinNo());
@@ -118,7 +114,6 @@ public class RegistryRequestService {
 
     private RegisterBirthPermanentAddress createRegisterBirthPermanentAddress(BirthDetailsRequest requestBirthReq) {
         RegisterBirthPermanentAddress registerBirthPermanentAddress = new RegisterBirthPermanentAddress();
-        registerBirthPermanentAddress.setPermanentAddress(requestBirthReq.getBirthDetails().get(0).getBirthPermanentAddress().getHouseNo());
 
         return registerBirthPermanentAddress;
     }

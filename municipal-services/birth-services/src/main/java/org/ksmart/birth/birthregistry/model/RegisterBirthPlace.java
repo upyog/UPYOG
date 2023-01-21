@@ -100,14 +100,6 @@ public class RegisterBirthPlace {
     @JsonProperty("housename_ml")
     private String houseNameMl;
 
-    @Size(max = 2000)
-    @JsonProperty("ho_locality_en")
-    private String hoLocalityEn;
-
-    @Size(max = 2000)
-    @JsonProperty("ho_locality_ml")
-    private String hoLocalityMl;
-
     @Size(max = 64)
     @JsonProperty("ho_villageid")
     private String hoVillageId;
@@ -119,14 +111,6 @@ public class RegisterBirthPlace {
     @Size(max = 64)
     @JsonProperty("ho_districtid")
     private String hoDistrictId;
-
-    @Size(max = 2000)
-    @JsonProperty("ho_city_en")
-    private String hoCityEn;
-
-    @Size(max = 2000)
-    @JsonProperty("ho_city_ml")
-    private String hoCityMl;
 
     @Size(max = 64)
     @JsonProperty("ho_stateid")
@@ -204,7 +188,24 @@ public class RegisterBirthPlace {
     @JsonProperty("informants_aadhaar_no")
     private String informantsAadhaarNo;
 
-    @JsonProperty("auditDetails")
-    private AuditDetails auditDetails;
+
+    @JsonProperty("ho_doorno")
+    private Boolean hoDoorno;
+
+    @Size(max = 10)
+    @JsonProperty("ho_subno")
+    private String hoSubno;
+
+    @Size(max = 1000)
+    @JsonProperty("vehicle_haltplace")
+    private String vehicleHaltplace;
+
+    @Size(max = 64)
+    @JsonProperty("vehicle_hospitalid")
+    private String vehicleHospitalid;
+
+    @Size(max = 64)
+    @JsonProperty("informant_addressline2")
+    private String informantAddressline2;
 
 }

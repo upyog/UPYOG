@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS public.eg_birth_details_audit
     lastname_en character varying(200) COLLATE pg_catalog."default",
     lastname_ml character varying(200) COLLATE pg_catalog."default",
     tenantid character varying(64) COLLATE pg_catalog."default" NOT NULL,
-    gender smallint NOT NULL,
+    gender  character varying(20) COLLATE pg_catalog."default",
     remarks_en character varying(2500) COLLATE pg_catalog."default",
     remarks_ml character varying(2500) COLLATE pg_catalog."default",
     aadharno character varying(15) COLLATE pg_catalog."default",
@@ -225,10 +225,6 @@ CREATE TABLE IF NOT EXISTS public.eg_birth_permanent_address_audit
     ot_address1_ml character varying(2500) COLLATE pg_catalog."default",
     ot_address2_en character varying(2500) COLLATE pg_catalog."default",
     ot_address2_ml character varying(2500) COLLATE pg_catalog."default",
-    locality_en character varying(2500) COLLATE pg_catalog."default",
-    locality_ml character varying(2500) COLLATE pg_catalog."default",
-    city_en character varying(2500) COLLATE pg_catalog."default",
-    city_ml character varying(2500) COLLATE pg_catalog."default",
     villageid character varying(64) COLLATE pg_catalog."default",
     tenantid character varying(64) COLLATE pg_catalog."default",
     talukid character varying(64) COLLATE pg_catalog."default",
@@ -244,7 +240,7 @@ CREATE TABLE IF NOT EXISTS public.eg_birth_permanent_address_audit
     lastmodifiedby character varying(64) COLLATE pg_catalog."default",
     lastmodifiedtime bigint,
     birthdtlid character varying(64) COLLATE pg_catalog."default",
-    same_as_permanent integer
+    same_as_present integer
     );
 
 -- FUNCTION: public.process_eg_birth_permanent_address_audit()
@@ -307,13 +303,9 @@ CREATE TABLE IF NOT EXISTS public.eg_birth_place_audit
     ho_houseno character varying(200) COLLATE pg_catalog."default",
     ho_housename_en character varying(2000) COLLATE pg_catalog."default",
     ho_housename_ml character varying(2000) COLLATE pg_catalog."default",
-    ho_locality_en character varying(2500) COLLATE pg_catalog."default",
-    ho_locality_ml character varying(2500) COLLATE pg_catalog."default",
     ho_villageid character varying(64) COLLATE pg_catalog."default",
     ho_talukid character varying(64) COLLATE pg_catalog."default",
     ho_districtid character varying(64) COLLATE pg_catalog."default",
-    ho_city_en character varying(2000) COLLATE pg_catalog."default",
-    ho_city_ml character varying(2000) COLLATE pg_catalog."default",
     ho_stateid character varying(64) COLLATE pg_catalog."default",
     ho_poid character varying(2000) COLLATE pg_catalog."default",
     ho_pinno character varying(10) COLLATE pg_catalog."default",
@@ -385,10 +377,6 @@ CREATE TABLE IF NOT EXISTS public.eg_birth_present_address_audit
     ot_address1_ml character varying(2500) COLLATE pg_catalog."default",
     ot_address2_en character varying(2500) COLLATE pg_catalog."default",
     ot_address2_ml character varying(2500) COLLATE pg_catalog."default",
-    locality_en character varying(2500) COLLATE pg_catalog."default",
-    locality_ml character varying(2500) COLLATE pg_catalog."default",
-    city_en character varying(2500) COLLATE pg_catalog."default",
-    city_ml character varying(2500) COLLATE pg_catalog."default",
     villageid character varying(64) COLLATE pg_catalog."default",
     tenantid character varying(64) COLLATE pg_catalog."default",
     talukid character varying(64) COLLATE pg_catalog."default",

@@ -17,13 +17,9 @@ public class BirthPresentAddress {
     @JsonProperty("id")
     private String id;
 
-    @Size(max = 200)
-    @JsonProperty("buildingno")
-    private String buildingNo;
-
-    @Size(max = 200)
-    @JsonProperty("houseno")
-    private String houseNo;
+    @Size(max = 64)
+    @JsonProperty("resdnce_addr_type")
+    private String resdnceAddrType;
 
     @Size(max = 250)
     @JsonProperty("res_asso_no")
@@ -52,22 +48,6 @@ public class BirthPresentAddress {
     @Size(max = 2500)
     @JsonProperty("ot_address2_ml")
     private String otAddress2Ml;
-
-    @Size(max = 2500)
-    @JsonProperty("locality_en")
-    private String localityEn;
-
-    @Size(max = 2500)
-    @JsonProperty("locality_ml")
-    private String localityMl;
-
-    @Size(max = 2500)
-    @JsonProperty("city_en")
-    private String cityEn;
-
-    @Size(max = 2500)
-    @JsonProperty("city_ml")
-    private String cityMl;
 
     @Size(max = 64)
     @JsonProperty("villageid")
@@ -117,5 +97,30 @@ public class BirthPresentAddress {
     @JsonProperty("bio_adopt")
     private String bioAdopt;
 
+    @Size(max = 1000)
+    @JsonProperty("res_asso_no_ml")
+    private String resAssoNoMl;
 
+    @Size(max = 1000)
+    @JsonProperty("taluk_name")
+    private String talukName;
+
+    @Size(max = 1000)
+    @JsonProperty("village_name")
+    private String villageName;
+
+    @Size(max = 64)
+    @JsonProperty("ward_code")
+    private String wardCode;
+
+    @JsonProperty("doorno")
+    private String doorNo;
+
+    @Size(max = 10)
+    @JsonProperty("subno")
+    private String subNo;
+
+    @Size(max = 10)
+    @JsonProperty("ot_zipcode")
+    private String otZipcode;
 }
