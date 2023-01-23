@@ -12,6 +12,7 @@ import org.ksmart.birth.birthregistry.model.BirthCertificate;
 import org.ksmart.birth.birthregistry.model.RegisterBirthDetail;
 import org.ksmart.birth.birthregistry.model.RegisterBirthDetailsRequest;
 import org.ksmart.birth.birthregistry.model.RegisterBirthSearchCriteria;
+import org.ksmart.birth.birthregistry.service.MdmsDataService;
 import org.ksmart.birth.birthregistry.service.RegisterBirthService;
 import org.ksmart.birth.utils.BirthConstants;
 import org.ksmart.birth.utils.MdmsUtil;
@@ -30,60 +31,45 @@ public class BirthApplicationService {
     private final BirthApplicationRepository repository;
     private final WorkflowIntegrator workflowIntegrator;
     private final MdmsUtil mdmsUtil;
+
+    private final MdmsDataService mdmsDataService;
     private final MdmsValidator mdmsValidator;
     private final BirthApplicationValidator applicationValidator;
 
     @Autowired
     BirthApplicationService(BirthApplicationRepository repository, WorkflowIntegrator workflowIntegrator, MdmsUtil mdmsUtil,
-                            MdmsValidator mdmsValidator, BirthApplicationValidator applicationValidator) {
+                            MdmsValidator mdmsValidator, BirthApplicationValidator applicationValidator, MdmsDataService mdmsDataService) {
         this.repository = repository;
         this.workflowIntegrator = workflowIntegrator;
         this.mdmsUtil = mdmsUtil;
         this.mdmsValidator = mdmsValidator;
         this.applicationValidator = applicationValidator;
-    }
-    private Map<String, Object> getTenantData(Object mdmsData) {
-        return JsonPath.read(mdmsData, BirthConstants.MDMS_TENANT_JSONPATH);
-    }
-    private List<String> getTenantCodes(Object mdmsData) {
-        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_TENANTS_CODE_JSONPATH);
+        this.mdmsDataService = mdmsDataService;
     }
 
-    private List<String> getTenantDistCodes(Object mdmsData) {
-        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_TENANTS_DIST_CODE_JSONPATH);
-    }
 
     public List<BirthApplicationDetail> saveBirthDetails(BirthDetailsRequest request) {
 
          //validate mdms data
         Object mdmsData = mdmsUtil.mdmsCall(request.getRequestInfo());
 
-        Map<String, Object> masterTenantData = getTenantData(mdmsData);
-
-
-        List<String> tenantCode = getTenantCodes(mdmsData);
-        System.out.println(tenantCode.get(0));
-
-        List<String> tenantDistCode = getTenantDistCodes(mdmsData);
-        System.out.println(tenantDistCode.get(0));
-
-
         // validate request
-       // applicationValidator.validateCreate(request, mdmsData);
+        applicationValidator.validateCreate(request, mdmsData);
 
         //call save
-        List<BirthApplicationDetail> birthApplicationDetails = null;
-                //= repository.saveBirthDetails(request);
+        List<BirthApplicationDetail> birthApplicationDetails =  repository.saveBirthDetails(request);
 
         //WorkFlow Integration
-       // workflowIntegrator.callWorkFlow(request);
+        workflowIntegrator.callWorkFlow(request);
 
         return  birthApplicationDetails;
     }
 
     public List<BirthApplicationDetail> updateBirthDetails(BirthDetailsRequest request) {
         
-      //   workflowIntegrator.callWorkFlow(request);
+        workflowIntegrator.callWorkFlow(request);
+
+        //mdmsDataService,
         
         return repository.updateBirthDetails(request);
 

@@ -1,9 +1,13 @@
 package org.ksmart.birth.birthregistry.repository.rowmapper;
 
+import com.jayway.jsonpath.JsonPath;
 import org.ksmart.birth.birthregistry.model.RegisterBirthPermanentAddress;
+import org.ksmart.birth.utils.BirthConstants;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
+import java.util.Map;
 
 public interface BirthRegPerAddRowMapper {
     default RegisterBirthPermanentAddress getRegBirthPermanentAddress(ResultSet rs) throws SQLException {
@@ -28,29 +32,30 @@ public interface BirthRegPerAddRowMapper {
                 .countryId(rs.getString("per_countryid"))
                 .birthDtlId(rs.getString("per_birthdtlid"))
                 .sameAsPresent(rs.getInt("per_same_as_present"))
-                .permanentAddress(new StringBuilder().append(rs.getString("per_housename_en")==null?"":rs.getString("per_housename_en"))
+                .permanentAddress(new StringBuilder().append(rs.getString("per_housename_en") == null ? "" : rs.getString("per_housename_en"))
                         .append(", ")
-                        .append(rs.getString("per_res_asso_no")==null?"":rs.getString("per_res_asso_no"))
+                        .append(rs.getString("per_res_asso_no") == null ? "" : rs.getString("per_res_asso_no"))
                         .append(", ")
-                        .append(rs.getString("per_poid")==null?"":rs.getString("per_poid"))
+                        .append(rs.getString("per_poid") == null ? "" : rs.getString("per_poid"))
                         .append(", ")
-                        .append(rs.getString("per_districtid")==null?"":rs.getString("per_districtid"))
+                        .append(rs.getString("per_districtid") == null ? "" : rs.getString("per_districtid"))
                         .append(", ")
-                        .append(rs.getString("per_stateid")==null?"":rs.getString("per_stateid"))
+                        .append(rs.getString("per_stateid") == null ? "" : rs.getString("per_stateid"))
                         .append(", ")
-                        .append(rs.getString("per_countryid")==null?"":rs.getString("per_countryid")).toString())
-                .permanentAddressMl(new StringBuilder().append(rs.getString("per_housename_ml")==null?"":rs.getString("per_housename_ml"))
+                        .append(rs.getString("per_countryid") == null ? "" : rs.getString("per_countryid")).toString())
+                .permanentAddressMl(new StringBuilder().append(rs.getString("per_housename_ml") == null ? "" : rs.getString("per_housename_ml"))
                         .append(", ")
-                        .append(rs.getString("per_res_asso_no")==null?"":rs.getString("per_res_asso_no"))
+                        .append(rs.getString("per_res_asso_no") == null ? "" : rs.getString("per_res_asso_no"))
                         .append(", ")
-                        .append(rs.getString("per_poid")==null?"":rs.getString("per_poid"))
+                        .append(rs.getString("per_poid") == null ? "" : rs.getString("per_poid"))
                         .append(", ")
-                        .append(rs.getString("per_districtid")==null?"":rs.getString("per_districtid"))
+                        .append(rs.getString("per_districtid") == null ? "" : rs.getString("per_districtid"))
                         .append(", ")
-                        .append(rs.getString("per_stateid")==null?"":rs.getString("per_stateid"))
+                        .append(rs.getString("per_stateid") == null ? "" : rs.getString("per_stateid"))
                         .append(", ")
-                        .append(rs.getString("per_countryid")==null?"":rs.getString("per_countryid")).toString())
+                        .append(rs.getString("per_countryid") == null ? "" : rs.getString("per_countryid")).toString())
 
                 .build();
     }
 }
+

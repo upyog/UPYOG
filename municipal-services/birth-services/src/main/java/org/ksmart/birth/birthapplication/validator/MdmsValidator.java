@@ -38,7 +38,7 @@ public class MdmsValidator {
         validateTenantMasterData(masterTenantData);
 
         List<String> tenantCode = getTenantCodes(mdmsData);
-        System.out.println(tenantCode.get(0));
+
 
         List<String> professionCodes = getProfessionCodes(mdmsData);
         List<String> religionCodes = getReligionCodes(mdmsData);
@@ -450,6 +450,8 @@ public class MdmsValidator {
     private List<String> getTenantCodes(Object mdmsData) {
         return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_TENANTS_CODE_JSONPATH);
     }
+
+
     // CR MASTERS
     private List<String> getProfessionCodes(Object mdmsData) {
         return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_PROFESSION_CODE_JSONPATH);
