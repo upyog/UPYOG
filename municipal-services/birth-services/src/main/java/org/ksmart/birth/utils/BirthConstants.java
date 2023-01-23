@@ -8,9 +8,14 @@ public class BirthConstants {
 
     public static final String  COMMON_MDMS_MODULE = "common-masters";
 
+    public static final String  TENANTS_MODULE = "tenant";
+
     public static final String CR_MDMS_BIRTH_JSONPATH = "$.MdmsRes.birth-death-service";
 
     public static final String MDMS_COMMON_JSONPATH = "$.MdmsRes.common-masters";
+
+    public static final String MDMS_TENANT_JSONPATH = "$.MdmsRes.tenant";
+    public static final String CR_MDMS_TENANTS = "tenants";
 
     public static final String CR_MDMS_QUALIFICATION = "Qualification";
 
@@ -41,6 +46,10 @@ public class BirthConstants {
     public static final String CR_MDMS_INSTITUTIONTYPE = "InstitutionType";
 
     public static final String CR_MDMS_DELIVERYMETHOD = "DeliveryMethod";
+
+    public static final String CR_MDMS_TENANTS_CODE_JSONPATH = "$.MdmsRes.tenant.tenants[*].code";
+
+    public static final String CR_MDMS_TENANTS_DIST_CODE_JSONPATH = "$.MdmsRes.tenant.tenants[*].city.distCodeStr";
 
     public static final String CR_MDMS_PROFESSION_CODE_JSONPATH = "$.MdmsRes.birth-death-service.Profession[*].code";
 

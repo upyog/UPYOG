@@ -62,7 +62,9 @@ public class BirthApplicationController {
             List<RegisterBirthDetail> registerBirthDetails =  registerBirthService.saveRegisterBirthDetails(registerBirthDetailsRequest);
             RegisterBirthSearchCriteria criteria = new RegisterBirthSearchCriteria();
             criteria.setTenantId(registerBirthDetails.get(0).getTenantId());
-            criteria.setRegistrationNo(registerBirthDetails.get(0).getRegistrationNo());
+            System.out.println(criteria.getTenantId());
+
+            criteria.setRegistrationNo(registerBirthDetails.get(0).getRegistrationNo()); System.out.println(registerBirthDetails.get(0).getRegistrationNo());
             birthCertificate = registerBirthService.download(criteria,request.getRequestInfo());
         }
         BirthApplicationResponse response=BirthApplicationResponse.builder()

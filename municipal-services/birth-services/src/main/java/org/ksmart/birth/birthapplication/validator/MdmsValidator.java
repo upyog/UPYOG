@@ -30,8 +30,15 @@ public class MdmsValidator {
         Map<String, Object> masterBirthData = getBirthMasterData(mdmsData);
         validateBirthMasterData(masterBirthData);
 
+
         Map<String, Object> masterCommonData = getCommonMasterData(mdmsData);
         validateCommonMasterData(masterCommonData);
+
+        Map<String, Object> masterTenantData = getTenantData(mdmsData);
+        validateTenantMasterData(masterTenantData);
+
+        List<String> tenantCode = getTenantCodes(mdmsData);
+        System.out.println(tenantCode.get(0));
 
         List<String> professionCodes = getProfessionCodes(mdmsData);
         List<String> religionCodes = getReligionCodes(mdmsData);
@@ -369,6 +376,20 @@ public class MdmsValidator {
         return JsonPath.read(mdmsData, BirthConstants.MDMS_COMMON_JSONPATH);
     }
 
+    private Map<String, Object> getTenantData(Object mdmsData) {
+        return JsonPath.read(mdmsData, BirthConstants.MDMS_TENANT_JSONPATH);
+    }
+
+    private void validateTenantMasterData(Map<String, Object> masterData) {
+        if (masterData.get(BirthConstants.CR_MDMS_TENANTS) == null) {
+            throw new CustomException(Collections.singletonMap(MDMS_DATA_ERROR.getCode(),
+                    "Unable to fetch "
+                            + BirthConstants.CR_MDMS_TENANTS
+                            + " codes from MDMS"));
+        }
+
+    }
+
     private void validateBirthMasterData(Map<String, Object> masterData) {
         if (masterData.get(BirthConstants.CR_MDMS_PROFESSION) == null) {
             throw new CustomException(Collections.singletonMap(MDMS_DATA_ERROR.getCode(),
@@ -425,7 +446,10 @@ public class MdmsValidator {
                             + " codes from MDMS"));
         }
     }
-
+    //Tenant
+    private List<String> getTenantCodes(Object mdmsData) {
+        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_TENANTS_CODE_JSONPATH);
+    }
     // CR MASTERS
     private List<String> getProfessionCodes(Object mdmsData) {
         return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_PROFESSION_CODE_JSONPATH);

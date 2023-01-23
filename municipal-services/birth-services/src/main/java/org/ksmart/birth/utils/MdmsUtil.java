@@ -29,11 +29,9 @@ public class MdmsUtil {
     @Value("${egov.mdms.search.endpoint}")
     private String mdmsUrl;
 
-//    @Value("${egov.mdms.master.name}")
-//    private String masterName;
-
     @Value("${egov.mdms.module.name}")
     private String moduleName;
+
 
     public Object mdmsCall(RequestInfo requestInfo) {
         // Call MDMS microservice with MdmsCriteriaReq as params
@@ -59,6 +57,8 @@ public class MdmsUtil {
 
         //Add all modules of common services
         moduleDetails.addAll(getCommonModuleDetails());
+
+        moduleDetails.addAll(getTenantModuleDetails());
 
         //Prepare MDMS Criteria wih all modules in birth-death services and common services
 
@@ -199,6 +199,25 @@ public class MdmsUtil {
                                                       .build();
 
         return Collections.singletonList(commonModuleDetail);
+
+    }
+
+    public List<ModuleDetail> getTenantModuleDetails() {
+        // master details for Tenant module
+        moduleName = "tenant";
+        List<MasterDetail> tenantDetails = new LinkedList<>();
+        // Add Module Religion
+        List<MasterDetail> masterTenants = Collections.singletonList(MasterDetail.builder()
+                                                                                  .name(BirthConstants.CR_MDMS_TENANTS)
+                                                                                  .build());
+        tenantDetails.addAll(masterTenants);
+
+        ModuleDetail tenantModuleDetail = ModuleDetail.builder()
+                                                      .masterDetails(tenantDetails)
+                                                      .moduleName(BirthConstants.TENANTS_MODULE)
+                                                      .build();
+
+        return Collections.singletonList(tenantModuleDetail);
 
     }
 }
