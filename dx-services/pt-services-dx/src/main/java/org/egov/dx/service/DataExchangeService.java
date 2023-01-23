@@ -38,9 +38,7 @@ import org.egov.dx.web.models.PullURIResponse;
 import org.egov.dx.web.models.RequestInfoWrapper;
 import org.egov.dx.web.models.ResponseStatus;
 import org.egov.dx.web.models.SearchCriteria;
-import org.egov.dx.web.models.UserResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.stereotype.Service;
 
 import com.thoughtworks.xstream.XStream;
@@ -103,8 +101,8 @@ public class DataExchangeService {
 //        }
         User userInfo = User.builder()
                 .uuid(configurations.getAuthTokenVariable())
-                .type("SYSTEM")
-                .roles(Collections.emptyList()).id(0L).build();
+                .type("EMPLOYEE")
+                .roles(Collections.emptyList()).id(0L).tenantId("pg.".concat(searchCriteria.getCity())).build();
 
         request = new RequestInfo("", "", 0L, "", "", "", "", "", "", userInfo);
         //request.setAuthToken(userResponse.getAuthToken());
@@ -131,7 +129,8 @@ public class DataExchangeService {
 				List<Payment> latestPayment=new ArrayList<Payment>();
 				latestPayment.add(payments.get(0));
 				PaymentRequest paymentRequest=new PaymentRequest();
-				paymentRequest.setPayment(latestPayment);
+				paymentRequest.setPayments(latestPayment);
+				//requestInfoWrapper.getRequestInfo().setMsgId("1674457280493|en_IN");
 				paymentRequest.setRequestInfo(requestInfoWrapper.getRequestInfo());
 				filestore=paymentService.createPDF(paymentRequest);
 				o=paymentService.getFilestore(requestInfoWrapper,filestore).toString();
