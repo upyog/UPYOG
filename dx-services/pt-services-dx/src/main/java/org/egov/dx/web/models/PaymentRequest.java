@@ -22,11 +22,11 @@ public class PaymentRequest {
     @NotNull
     @Valid
     @JsonProperty("RequestInfo")
-    private RequestInfo requestInfo;
+    private RequestInfo RequestInfo;
 
     @NotNull
     @Valid
     @JsonProperty("Payments")
-    private List<Payment> payment;
+    private List<Payment> Payments;
 
 }
