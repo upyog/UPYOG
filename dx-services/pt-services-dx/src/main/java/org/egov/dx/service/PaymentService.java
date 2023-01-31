@@ -73,8 +73,7 @@ public class PaymentService {
 				
 	}
 
-	public Object getFilestore(RequestInfoWrapper requestInfoWrapper,
-			 String fileStoreId) throws IOException {
+	public Object getFilestore(String fileStoreId) throws IOException {
 		log.info("fetching document from filestore id::::");
 		StringBuilder host=new StringBuilder().append(configurations.getFilestoreHost()).append(configurations.getFilstoreSearchEndpoint())
 				.append(fileStoreId);
