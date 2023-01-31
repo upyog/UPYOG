@@ -129,7 +129,7 @@ public class DataExchangeService {
 			String filestore=null;
 			if(payments.get(0).getFileStoreId() != null) {
 				filestore=payments.get(0).getFileStoreId();
-				o=paymentService.getFilestore(requestInfoWrapper,payments.get(0).getFileStoreId()).toString();
+				o=paymentService.getFilestore(payments.get(0).getFileStoreId()).toString();
 			}
 			else
 			{
@@ -140,7 +140,7 @@ public class DataExchangeService {
 				//requestInfoWrapper.getRequestInfo().setMsgId("1674457280493|en_IN");
 				paymentRequest.setRequestInfo(requestInfoWrapper.getRequestInfo());
 				filestore=paymentService.createPDF(paymentRequest);
-				o=paymentService.getFilestore(requestInfoWrapper,filestore).toString();
+				o=paymentService.getFilestore(filestore).toString();
 			
 			}
 				if(o!=null)
@@ -240,29 +240,7 @@ public class DataExchangeService {
 
 	public String searchForDigiLockerDocRequest(SearchCriteria  searchCriteria) throws IOException
 	{
-		
-        RequestInfo request=new RequestInfo();
-        request.setApiId("Rainmaker");
-        request.setMsgId("1670564653696|en_IN");
-        RequestInfoWrapper requestInfoWrapper=new RequestInfoWrapper();
-//        UserResponse userResponse =new UserResponse();
-//        try {
-//        	userResponse=userService.getUser();
-//        	}
-//        catch(Exception e)
-//        {
-//        	
-//        }
-        User userInfo = User.builder()
-                .uuid(configurations.getAuthTokenVariable())
-                .type("SYSTEM")
-                .roles(Collections.emptyList()).id(0L).build();
-
-        request = new RequestInfo("", "", 0L, "", "", "", "", "", "", userInfo);
-        //request.setAuthToken(userResponse.getAuthToken());
-        //request.setUserInfo(userResponse.getUser());
-        requestInfoWrapper.setRequestInfo(request);
-		
+			
 		PullDocResponse model= new PullDocResponse();
 			
 		String[] urlArray=searchCriteria.getURI().split("-");
@@ -276,8 +254,7 @@ public class DataExchangeService {
 				filestoreId=filestoreId.concat(urlArray[i]).concat("-");
 
 		}
-		 String o=paymentService.getFilestore(requestInfoWrapper,
-				 filestoreId).toString();
+		 String o=paymentService.getFilestore(filestoreId).toString();
 		 
 		 if(o!=null)
 			 {
