@@ -109,15 +109,22 @@ public class DataExchangeService {
         //request.setUserInfo(userResponse.getUser());
         requestInfoWrapper.setRequestInfo(request);
 		List<Payment> payments = paymentService.getPayments(criteria,searchCriteria.getDocType(), requestInfoWrapper);
-		log.info("Payments found are:---",((!payments.isEmpty()?payments.get(0):"No payments found")));
+		log.info("Payments found are:---" + ((!payments.isEmpty()?payments.size():"No payments found")));
 		PullURIResponse model= new PullURIResponse();
 		XStream xstream = new XStream();   
 		xstream .addPermission(NoTypePermission.NONE); //forbid everything
 		xstream .addPermission(NullPermission.NULL);   // allow "null"
 		xstream .addPermission(PrimitiveTypePermission.PRIMITIVES);
 		xstream .addPermission(AnyTypePermission.ANY);
+		log.info("Name to search is " +searchCriteria.getPayerName());
+		log.info("Mobile to search is " +searchCriteria.getMobile());
+		if(!payments.isEmpty()) {
+		log.info("Name in latest payment is " +payments.get(0).getPayerName());
+		log.info("Mobile in latest payment is " +payments.get(0).getMobileNumber());
+		}
 		if((!payments.isEmpty() && configurations.getValidationFlag().toUpperCase().equals("TRUE") && validateRequest(searchCriteria,payments.get(0)))
 				|| (!payments.isEmpty() && configurations.getValidationFlag().toUpperCase().equals("FALSE"))){ 
+			log.info("Payment object is not null and validations passed!!!");
 			String o=null;
 			String filestore=null;
 			if(payments.get(0).getFileStoreId() != null) {

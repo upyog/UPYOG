@@ -109,7 +109,7 @@ public class DataExchangeController {
 			searchCriteria.setCity(pojo.getDocDetails().getCity());
 			//searchCriteria.setOrigin(httpServetRequest.getRequestURL().toString());
 			searchCriteria.setOrigin("https://partners.digitallocker.gov.in");
-			log.info("Request URL is",URI.create(httpServletRequest.getRequestURL().toString()).getHost());
+			log.info("Request URL is "+ URI.create(httpServletRequest.getRequestURL().toString()).getHost());
 			searchCriteria.setTxn(pojo.getTxn());
 			searchCriteria.setDocType(pojo.getDocDetails().getDocType());
 			searchCriteria.setPayerName(pojo.getDocDetails().getFullName());
@@ -125,7 +125,7 @@ public class DataExchangeController {
 			pojoDoc.setTxn((requestBody.split("txn=\"")[1]).split("\"")[0]);
 			//searchCriteria.setOrigin(httpServetRequest.getRequestURL().toString());
 			searchCriteria.setOrigin("https://partners.digitallocker.gov.in");
-			log.info("Request URL is",URI.create(httpServletRequest.getRequestURL().toString()).getHost());
+			log.info("Request URL is "+URI.create(httpServletRequest.getRequestURL().toString()).getHost());
 			searchCriteria.setURI(pojoDoc.getDocDetails().getURI());
 			searchCriteria.setTxn(pojoDoc.getTxn());
 		
