@@ -84,9 +84,13 @@ public class RegisterBirthPlace {
     @JsonProperty("ho_buildingno")
     private String hoBuildingNo;
 
-    @Size(max = 200)
+    @Size(max = 1000)
     @JsonProperty("ho_res_asso_no")
     private String hoResAssoNo;
+
+    @Size(max = 1000)
+    @JsonProperty("ho_res_asso_no_ml")
+    private String hoResAssoNoMl;
 
     @Size(max = 200)
     @JsonProperty("ho_houseno")
@@ -207,5 +211,24 @@ public class RegisterBirthPlace {
     @Size(max = 64)
     @JsonProperty("informant_addressline2")
     private String informantAddressline2;
+
+    @Size(max = 1000)
+    @JsonProperty("ho_main_place_en")
+    private String hoMainPlaceEn;
+
+    @Size(max = 1000)
+    @JsonProperty("ho_main_place_ml")
+    private String hoMainPlaceMl;
+
+    @Size(max = 2000)
+    @JsonProperty("ho_street_locality_area_en")
+    private String hoStreetLocalityAreaEn;
+
+    @Size(max = 2000)
+    @JsonProperty("ho_street_locality_area_ml")
+    private String hoStreetLocalityAreaMl;
+    private String placeDetailsEn;
+
+    private String placeDetailsMl;
 
 }

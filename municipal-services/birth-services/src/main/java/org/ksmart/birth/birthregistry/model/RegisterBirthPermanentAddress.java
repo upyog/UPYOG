@@ -103,9 +103,6 @@ public class RegisterBirthPermanentAddress {
     @JsonProperty("res_asso_no_ml")
     private String resAssoNoMl;
 
-    @JsonProperty("auditDetails")
-    private AuditDetails auditDetails;
-
     @Size(max = 1000)
     @JsonProperty("taluk_name")
     private String talukName;
@@ -129,6 +126,20 @@ public class RegisterBirthPermanentAddress {
     @JsonProperty("ot_zipcode")
     private String otZipcode;
 
+    @Size(max = 1000)
+    @JsonProperty("main_place_en")
+    private String mainPlaceEn;
+
+    @Size(max = 1000)
+    @JsonProperty("street_locality_area_en")
+    private String streetLocalityAreaEn;
+
+    @Size(max = 1000)
+    @JsonProperty("main_place_ml")
+    private String mainPlaceMl;
+    @Size(max = 1000)
+    @JsonProperty("street_locality_area_ml")
+    private String streetLocalityAreaMl;
     private String fullAddress;
 
     private String city;

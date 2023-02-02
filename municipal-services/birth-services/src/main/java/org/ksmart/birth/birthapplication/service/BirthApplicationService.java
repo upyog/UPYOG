@@ -31,7 +31,6 @@ public class BirthApplicationService {
     private final BirthApplicationRepository repository;
     private final WorkflowIntegrator workflowIntegrator;
     private final MdmsUtil mdmsUtil;
-
     private final MdmsDataService mdmsDataService;
     private final MdmsValidator mdmsValidator;
     private final BirthApplicationValidator applicationValidator;
@@ -67,9 +66,9 @@ public class BirthApplicationService {
 
     public List<BirthApplicationDetail> updateBirthDetails(BirthDetailsRequest request) {
         
-        workflowIntegrator.callWorkFlow(request);
+     //   workflowIntegrator.callWorkFlow(request);
 
-        //mdmsDataService,
+        mdmsDataService.getPdfDataForMaster(request.getRequestInfo());
         
         return repository.updateBirthDetails(request);
 

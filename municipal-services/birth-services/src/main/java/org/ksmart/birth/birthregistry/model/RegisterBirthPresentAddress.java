@@ -125,6 +125,21 @@ public class RegisterBirthPresentAddress {
     @JsonProperty("ot_zipcode")
     private String otZipcode;
 
+    @Size(max = 1000)
+    @JsonProperty("main_place_en")
+    private String mainPlaceEn;
+
+    @Size(max = 1000)
+    @JsonProperty("street_locality_area_en")
+    private String streetLocalityAreaEn;
+
+    @Size(max = 1000)
+    @JsonProperty("main_place_ml")
+    private String mainPlaceMl;
+    @Size(max = 1000)
+    @JsonProperty("street_locality_area_ml")
+    private String streetLocalityAreaMl;
+
     @Size(max = 2500)
     private String presentAddress;
     @Size(max = 2500)

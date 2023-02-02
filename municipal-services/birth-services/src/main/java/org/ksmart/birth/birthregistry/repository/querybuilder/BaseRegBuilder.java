@@ -4,6 +4,9 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -52,6 +55,25 @@ public class BaseRegBuilder {
             addWhereClause(paramValues, query);
             query.append(column)
                     .append("=? ");
+            paramValues.add(value);
+        }
+    }
+
+    void addDateToLongFilter(String column, LocalDate value, StringBuilder query, List<Object> paramValues) {
+        if (value != null) {
+            Instant instant = value.atStartOfDay(ZoneId.systemDefault()).toInstant();
+            addWhereClause(paramValues, query);
+            query.append(column)
+                    .append("=? ");
+            paramValues.add(instant.toEpochMilli());
+        }
+    }
+
+    void addLikeFilter(final String column, final String value, final StringBuilder query, final List<Object> paramValues) {
+        if (StringUtils.isNotBlank(value)) {
+            addWhereClause(paramValues, query);
+            query.append(column)
+                    .append("LIKE ?% ");
             paramValues.add(value);
         }
     }

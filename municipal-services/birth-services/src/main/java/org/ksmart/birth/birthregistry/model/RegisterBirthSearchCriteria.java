@@ -1,9 +1,13 @@
 package org.ksmart.birth.birthregistry.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 import javax.validation.Valid;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 @Data
 @Getter
 @Setter
@@ -40,7 +44,15 @@ public class RegisterBirthSearchCriteria {
     @JsonProperty("limit")
     private Integer limit;
 
-    @JsonProperty("dateOfBirth")
+    @JsonFormat(pattern = "dd/MM/yyyy")
+    @JsonProperty("dob")
     @Valid
-    private String dateOfBirth;
+    private LocalDate dob;
+    @JsonProperty("mother")
+    @Valid
+    private String nameOfMother;
+
+    @JsonProperty("sex")
+    @Valid
+    private String gender;
 }

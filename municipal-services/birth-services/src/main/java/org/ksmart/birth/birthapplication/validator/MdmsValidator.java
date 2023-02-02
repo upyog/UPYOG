@@ -59,7 +59,17 @@ public class MdmsValidator {
         Map<String, String> errorMap = new ConcurrentHashMap<>();
         request.getBirthDetails()
                 .forEach(birth -> {
-                    String professionCodeFather = birth.getBirthStatisticalInformation().getFatherProffessionId();
+                   if( birth.getIsFatherInfoMissing() == false ||  birth.getIsFatherInfoMissing() == null){
+                       String professionCodeFather = birth.getBirthStatisticalInformation().getFatherProffessionId();
+                       if (log.isDebugEnabled()) {
+                           log.debug("Father Profession code : \n{}", professionCodeFather);
+                       }
+                       if (CollectionUtils.isEmpty(professionCodes) || !professionCodes.contains(professionCodeFather)) {
+
+                           errorMap.put(CR_MDMS_PROFESSION, "The Profession code '" + professionCodeFather + "' does not exists");
+                       }
+                   }
+
                     String professionCodeMother = birth.getBirthStatisticalInformation().getMotherProffessionId();
                     String religionCode = birth.getBirthStatisticalInformation().getReligionId();
                     String qualificationCodeMother= birth.getBirthStatisticalInformation().getMotherEducationId();
@@ -95,9 +105,7 @@ public class MdmsValidator {
 
 
 
-                    if (log.isDebugEnabled()) {
-                        log.debug("Father Profession code : \n{}", professionCodeFather);
-                    }
+
 
                     if (log.isDebugEnabled()) {
                         log.debug("Mother Profession code : \n{}", professionCodeMother);
@@ -228,10 +236,7 @@ public class MdmsValidator {
                         log.debug("place of birth code : \n{}", birthPlaceCode);
                     }
 
-                    if (CollectionUtils.isEmpty(professionCodes) || !professionCodes.contains(professionCodeFather)) {
 
-                        errorMap.put(CR_MDMS_PROFESSION, "The Profession code '" + professionCodeFather + "' does not exists");
-                    }
 
                     if (CollectionUtils.isEmpty(professionCodes) || !professionCodes.contains(professionCodeMother)) {
                         errorMap.put(CR_MDMS_PROFESSION, "The Profession code '" + professionCodeMother + "' does not exists");

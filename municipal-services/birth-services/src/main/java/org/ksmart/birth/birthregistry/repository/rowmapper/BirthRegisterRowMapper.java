@@ -1,10 +1,10 @@
 package org.ksmart.birth.birthregistry.repository.rowmapper;
 
 import org.ksmart.birth.birthregistry.model.RegisterBirthDetail;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DateFormat;
@@ -12,9 +12,21 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+
 @Component
-public class BirthRegisterRowMapper implements ResultSetExtractor<List<RegisterBirthDetail>>,BaseRegRowMapper,BirthRegPlaceRowMapper,
-    BirthRegFatherInfoRowMapper, BirthRegMotherInfoRowMapper, BirthRegPerAddRowMapper, BirthRegPreAddRowMapper,BirthRegStatInfoRowMapper {
+public class BirthRegisterRowMapper implements ResultSetExtractor<List<RegisterBirthDetail>>,BaseRegRowMapper,
+    BirthRegFatherInfoRowMapper, BirthRegMotherInfoRowMapper, BirthRegStatInfoRowMapper {
+
+    private final BirthRegPerAddRowMapper birthRegPerAddRowMapper;
+    private final BirthRegPreAddRowMapper birthRegPreAddRowMapper;
+    private final BirthRegPlaceRowMapper birthRegPlaceRowMapper;
+    @Autowired
+    BirthRegisterRowMapper(BirthRegPerAddRowMapper birthRegPerAddRowMapper, BirthRegPreAddRowMapper birthRegPreAddRowMapper,  BirthRegPlaceRowMapper birthRegPlaceRowMapper) {
+        this.birthRegPerAddRowMapper = birthRegPerAddRowMapper;
+        this.birthRegPreAddRowMapper = birthRegPreAddRowMapper;
+        this.birthRegPlaceRowMapper = birthRegPlaceRowMapper;
+    }
         @Override
         public List<RegisterBirthDetail> extractData(ResultSet rs) throws SQLException, DataAccessException { //how to handle null
             List<RegisterBirthDetail> result = new ArrayList<>();
@@ -55,17 +67,16 @@ public class BirthRegisterRowMapper implements ResultSetExtractor<List<RegisterB
                         .fullNameMl(rs.getString("firstname_ml")+" "+rs.getString("middlename_ml")+" "+rs.getString("lastname_ml"))
                         .registrationNo(rs.getString("registrationno"))
                         .registrationDate(rs.getLong("registration_date"))
-                        .registerBirthPlace(getRegBirthPlace(rs))
+                        .registerBirthPlace(birthRegPlaceRowMapper.getRegBirthPlace(rs))
                         .registerBirthFather(getRegBirthFatherInfo(rs))
                         .registerBirthMother(getRegBirthMotherInfo(rs))
-                        .registerBirthPermanent(getRegBirthPermanentAddress(rs))
-                        .registerBirthPresent(getRegBirthPresentAddress(rs))
+                        .registerBirthPermanent(birthRegPerAddRowMapper.getRegBirthPermanentAddress(rs))
+                        .registerBirthPresent(birthRegPreAddRowMapper.getRegBirthPresentAddress(rs))
                         .registerBirthStatitical(getRegBirthStatisticalInfo(rs))
                         .auditDetails(getAuditDetails(rs))
                         .registrationDateStr(formatter.format(regDate))
                         .build());
             }
-
             return result;
         }
 }

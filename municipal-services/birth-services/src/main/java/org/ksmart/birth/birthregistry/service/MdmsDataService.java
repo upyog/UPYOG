@@ -11,6 +11,7 @@ import org.ksmart.birth.workflow.WorkflowIntegrator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -42,4 +43,17 @@ public class MdmsDataService {
     private List<String> getTenantDistCodes(Object mdmsData) {
         return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_TENANTS_DIST_CODE_JSONPATH);
     }
+
+
+    private void getTenantDistCodeForCurrentTenant(Object mdmsData) {
+        List<String> tenantCodes = getTenantCodes(mdmsData);
+        Iterator<String> iteratorTenants = tenantCodes.iterator();
+        while (iteratorTenants.hasNext()){
+            if(iteratorTenants.next().contains("kl.cochin")){
+                System.out.println(tenantCodes.get(0));
+            }
+        }
+    }
+
+
 }
