@@ -103,10 +103,6 @@ public class MdmsValidator {
                     String lBTypeCode = birth.getBirthStatisticalInformation().getMotherResdnceLbType();
                     String birthPlaceCode = birth.getBirthPlace().getPlaceOfBirthId();
 
-
-
-
-
                     if (log.isDebugEnabled()) {
                         log.debug("Mother Profession code : \n{}", professionCodeMother);
                     }

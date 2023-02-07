@@ -31,19 +31,18 @@ public class BirthApplicationService {
     private final BirthApplicationRepository repository;
     private final WorkflowIntegrator workflowIntegrator;
     private final MdmsUtil mdmsUtil;
-    private final MdmsDataService mdmsDataService;
     private final MdmsValidator mdmsValidator;
     private final BirthApplicationValidator applicationValidator;
 
     @Autowired
     BirthApplicationService(BirthApplicationRepository repository, WorkflowIntegrator workflowIntegrator, MdmsUtil mdmsUtil,
-                            MdmsValidator mdmsValidator, BirthApplicationValidator applicationValidator, MdmsDataService mdmsDataService) {
+                            MdmsValidator mdmsValidator, BirthApplicationValidator applicationValidator) {
         this.repository = repository;
         this.workflowIntegrator = workflowIntegrator;
         this.mdmsUtil = mdmsUtil;
         this.mdmsValidator = mdmsValidator;
         this.applicationValidator = applicationValidator;
-        this.mdmsDataService = mdmsDataService;
+
     }
 
 
@@ -68,8 +67,6 @@ public class BirthApplicationService {
         
      //   workflowIntegrator.callWorkFlow(request);
 
-        mdmsDataService.getPdfDataForMaster(request.getRequestInfo());
-        
         return repository.updateBirthDetails(request);
 
     }

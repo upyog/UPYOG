@@ -3,7 +3,6 @@ package org.ksmart.birth.birthregistry.service;
 import lombok.extern.slf4j.Slf4j;
 import org.ksmart.birth.birthregistry.model.BirthCertRequest;
 import org.ksmart.birth.birthregistry.model.BirthCertificate;
-import org.ksmart.birth.birthregistry.service.EnrichmentService;
 import org.ksmart.birth.birthregistry.model.BirthPdfRegisterRequest;
 import org.ksmart.birth.birthregistry.model.RegisterBirthDetail;
 import org.ksmart.birth.birthregistry.model.RegisterBirthDetailsRequest;
@@ -13,22 +12,30 @@ import org.ksmart.birth.birthregistry.repository.RegisterBirthRepository;
 import org.ksmart.birth.common.contract.EgovPdfResp;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
+import org.ksmart.birth.utils.MdmsUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 @Slf4j
 @Service
 public class RegisterBirthService {
-    @Autowired
-    RegisterBirthRepository repository;
+    private final RegisterBirthRepository repository;
+    private final EnrichmentService enrichmentService;
+
+    private final MdmsUtil mdmsUtil;
+
+    private final MdmsDataService mdmsDataService;
 
     @Autowired
-    EnrichmentService enrichmentService;
-
+    RegisterBirthService(RegisterBirthRepository repository, EnrichmentService enrichmentService, MdmsUtil mdmsUtil, MdmsDataService mdmsDataService) {
+        this.repository = repository;
+        this.enrichmentService = enrichmentService;
+        this.mdmsUtil = mdmsUtil;
+        this.mdmsDataService = mdmsDataService;
+    }
 
     public List<RegisterBirthDetail> saveRegisterBirthDetails(RegisterBirthDetailsRequest request) {
         return repository.saveRegisterBirthDetails(request);
@@ -38,8 +45,12 @@ public class RegisterBirthService {
         return repository.updateRegisterBirthDetails(request);
     }
 
-    public List<RegisterBirthDetail> searchRegisterBirthDetails(RegisterBirthSearchCriteria criteria) {
-        return repository.searchRegisterBirthDetails(criteria);
+    public List<RegisterBirthDetail> searchRegisterBirthDetails(RegisterBirthSearchCriteria criteria, RequestInfo requestInfo)  {
+
+        List<RegisterBirthDetail>  registerBirthDetails = repository.searchRegisterBirthDetails(criteria);
+        mdmsDataService.setTenantDetails(registerBirthDetails, requestInfo);
+        mdmsDataService.setLocationDetails(registerBirthDetails, requestInfo);
+        return registerBirthDetails;
     }
     public BirthCertificate download(RegisterBirthSearchCriteria criteria, RequestInfo requestInfo) {
 //        try {
@@ -48,7 +59,7 @@ public class RegisterBirthService {
             birthCertificate.setBirthDtlId(criteria.getId());
             birthCertificate.setTenantId(criteria.getTenantId());
             BirthCertRequest birthCertRequest = BirthCertRequest.builder().birthCertificate(birthCertificate).requestInfo(requestInfo).build();
-            List<RegisterBirthDetail> regDetail = repository.searchRegisterBirthDetails(criteria);
+            List<RegisterBirthDetail> regDetail = searchRegisterBirthDetails(criteria, requestInfo);
             birthCertificate.setBirthPlace(regDetail.get(0).getRegisterBirthPlace().getHospitalId());
             birthCertificate.setGender(regDetail.get(0).getGender().toString());
             birthCertificate.setWard(regDetail.get(0).getRegisterBirthPlace().getWardId());

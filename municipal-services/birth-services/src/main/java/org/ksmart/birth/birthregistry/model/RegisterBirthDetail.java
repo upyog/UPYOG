@@ -161,4 +161,8 @@ public class RegisterBirthDetail {
     private String certId;
     private String placeofbirth;
     private String certificateType;
+    private String tenantTaluk;
+    private String tenantDistrict;
+    private String tenantLbType;
+    private String tenantState;
 }

@@ -10,6 +10,7 @@ import org.ksmart.birth.birthregistry.model.RegisterBirthDetailsRequest;
 import org.ksmart.birth.birthregistry.model.RegisterBirthSearchCriteria;
 import org.ksmart.birth.birthregistry.repository.querybuilder.RegisterQueryBuilder;
 import org.ksmart.birth.birthregistry.repository.rowmapper.BirthRegisterRowMapper;
+import org.ksmart.birth.common.services.MdmsTenantService;
 import org.ksmart.birth.common.contract.EgovPdfResp;
 import org.ksmart.birth.common.producer.BndProducer;
 import org.ksmart.birth.config.BirthConfiguration;
@@ -38,7 +39,9 @@ public class RegisterBirthRepository {
     private final RestTemplate restTemplate;
 
     @Autowired
-    RegisterBirthRepository(JdbcTemplate jdbcTemplate, RegisterBirthEnrichment registerBirthDetailsEnrichment, BirthConfiguration birthDeathConfiguration, BndProducer producer, RegisterQueryBuilder registerQueryBuilder, BirthRegisterRowMapper birthRegisterRowMapper, RestTemplate restTemplate) {
+    RegisterBirthRepository(JdbcTemplate jdbcTemplate, RegisterBirthEnrichment registerBirthDetailsEnrichment,
+                            BirthConfiguration birthDeathConfiguration, BndProducer producer, RegisterQueryBuilder registerQueryBuilder,
+                            BirthRegisterRowMapper birthRegisterRowMapper, RestTemplate restTemplate) {
         this.jdbcTemplate=jdbcTemplate;
         this.registerBirthDetailsEnrichment=registerBirthDetailsEnrichment;
         this.config=birthDeathConfiguration;

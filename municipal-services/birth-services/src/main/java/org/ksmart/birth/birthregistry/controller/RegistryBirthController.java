@@ -1,5 +1,6 @@
 package org.ksmart.birth.birthregistry.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;
 
 
@@ -45,7 +46,8 @@ public class RegistryBirthController {
 
     @PostMapping(value = {"/_search"})
     public ResponseEntity<RegisterBirthResponse> listByHospitalId(@RequestBody RegisterBirthDetailsRequest request, @Valid @ModelAttribute RegisterBirthSearchCriteria criteria) {
-        List<RegisterBirthDetail> registerBirthDetail=registerBirthService.searchRegisterBirthDetails(criteria);
+
+        List<RegisterBirthDetail> registerBirthDetail=registerBirthService.searchRegisterBirthDetails(criteria, request.getRequestInfo());
         RegisterBirthResponse response=RegisterBirthResponse.builder()
                 .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), Boolean.TRUE))
                 .registerDetails(registerBirthDetail)

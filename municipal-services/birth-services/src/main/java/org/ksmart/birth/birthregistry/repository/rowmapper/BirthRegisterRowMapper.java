@@ -21,6 +21,7 @@ public class BirthRegisterRowMapper implements ResultSetExtractor<List<RegisterB
     private final BirthRegPerAddRowMapper birthRegPerAddRowMapper;
     private final BirthRegPreAddRowMapper birthRegPreAddRowMapper;
     private final BirthRegPlaceRowMapper birthRegPlaceRowMapper;
+
     @Autowired
     BirthRegisterRowMapper(BirthRegPerAddRowMapper birthRegPerAddRowMapper, BirthRegPreAddRowMapper birthRegPreAddRowMapper,  BirthRegPlaceRowMapper birthRegPlaceRowMapper) {
         this.birthRegPerAddRowMapper = birthRegPerAddRowMapper;

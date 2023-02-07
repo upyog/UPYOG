@@ -31,7 +31,6 @@ public class MdmsUtil {
         // Call MDMS microservice with MdmsCriteriaReq as params
 
         MdmsCriteriaReq mdmsCriteriaReq = getMdmsRequest(requestInfo);
-
         String mdmsUri = String.format("%s%s", mdmsHost, mdmsUrl);
         Object result = null;
         try {
@@ -40,59 +39,6 @@ public class MdmsUtil {
             log.error("Exception occurred while fetching MDMS data: ", e);
         }
         return result;
-    }
-
-    /**
-     * Makes call to the MDMS service to fetch the MDMS Boundary data.
-     *
-     * @param requestInfo
-     * @param tenantId
-     * @return
-     */
-    public MdmsResponse fetchMDMSDataLoc(RequestInfo requestInfo, String tenantId) {
-        StringBuilder uri = new StringBuilder();
-//		String stateLevelTenant = "kl";
-        MdmsCriteriaReq request = prepareMDMSRequestLoc(uri, requestInfo, tenantId);
-        System.out.println("request to mdms" + request);
-        MdmsResponse response = null;
-        try {
-            response = restTemplate.postForObject(uri.toString(), request, MdmsResponse.class);
-        }catch(Exception e) {
-            log.info("Exception while fetching from MDMS: ",e);
-            log.info("Request: "+ request);
-        }
-        return response;
-    }
-
-    /**
-     * Prepares request for MDMS in order to fetch all the required masters for Boundary Data.
-     *
-     * @param uri
-     * @param requestInfo
-     * @param tenantId
-     * @return
-     */
-    public MdmsCriteriaReq prepareMDMSRequestLoc(StringBuilder uri, RequestInfo requestInfo, String tenantId) {
-        Map<String, List<String>> mapOfModulesAndMasters = new HashMap<>();
-        String[] egovLoccation = {BirthConstants.CR_MDMS_TENANT_BOUNDARY_CODE};
-        mapOfModulesAndMasters.put(BirthConstants.CR_MDMS_EGOV_LOCATION_MASTERS_CODE, Arrays.asList(egovLoccation));
-        List<ModuleDetail> moduleDetails = new ArrayList<>();
-        for(String module: mapOfModulesAndMasters.keySet()) {
-            ModuleDetail moduleDetail = new ModuleDetail();
-            moduleDetail.setModuleName(module);
-            List<MasterDetail> masterDetails = new ArrayList<>();
-            for(String master: mapOfModulesAndMasters.get(module)) {
-                MasterDetail masterDetail=null;
-                masterDetail = MasterDetail.builder().name(master).build();
-                masterDetails.add(masterDetail);
-            }
-            moduleDetail.setMasterDetails(masterDetails);
-            moduleDetails.add(moduleDetail);
-        }
-        uri.append(mdmsHost).append(mdmsUrl);
-        MdmsCriteria mdmsCriteria = MdmsCriteria.builder().tenantId(tenantId).moduleDetails(moduleDetails).build();
-        return MdmsCriteriaReq.builder().requestInfo(requestInfo).mdmsCriteria(mdmsCriteria).build();
-
     }
 
     private MdmsCriteriaReq getMdmsRequest(RequestInfo requestInfo) {
@@ -253,7 +199,7 @@ public class MdmsUtil {
         // master details for Tenant module
         moduleName = "tenant";
         List<MasterDetail> tenantDetails = new LinkedList<>();
-        // Add Module Religion
+
         List<MasterDetail> masterTenants = Collections.singletonList(MasterDetail.builder()
                                                                                   .name(BirthConstants.CR_MDMS_TENANTS)
                                                                                   .build());
@@ -262,6 +208,7 @@ public class MdmsUtil {
         ModuleDetail tenantModuleDetail = ModuleDetail.builder()
                                                       .masterDetails(tenantDetails)
                                                       .moduleName(BirthConstants.TENANTS_MODULE)
+
                                                       .build();
 
         return Collections.singletonList(tenantModuleDetail);

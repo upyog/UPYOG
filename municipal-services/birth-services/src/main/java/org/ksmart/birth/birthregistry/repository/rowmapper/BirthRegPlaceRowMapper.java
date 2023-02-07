@@ -1,12 +1,17 @@
 package org.ksmart.birth.birthregistry.repository.rowmapper;
 
 import org.ksmart.birth.birthregistry.model.RegisterBirthPlace;
+import org.ksmart.birth.birthregistry.service.MdmsDataService;
+import org.ksmart.birth.utils.MdmsUtil;
+import org.ksmart.birth.utils.ResponseInfoFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import static org.ksmart.birth.utils.BirthConstants.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 @Component
 public class BirthRegPlaceRowMapper {
+
     public RegisterBirthPlace getRegBirthPlace(ResultSet rs) throws SQLException {
         return RegisterBirthPlace.builder()
                 .id(rs.getString("id"))
@@ -67,8 +72,9 @@ public class BirthRegPlaceRowMapper {
                 .build();
     }
 
-    private String getPlaceDetailsEn(ResultSet rs) throws SQLException {System.out.println(rs.getString("placeofbirthid"));
+    private String getPlaceDetailsEn(ResultSet rs) throws SQLException {
         String address = "";
+
         if(rs.getString("placeofbirthid").contains(BIRTH_PLACE_HOSPITAL)) {
             address = new StringBuilder()
                     .append(rs.getString("hospitalid") == null ? "" : rs.getString("hospitalid")+',').toString();
