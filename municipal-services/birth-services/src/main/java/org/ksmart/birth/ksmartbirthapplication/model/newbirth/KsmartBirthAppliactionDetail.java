@@ -2,7 +2,7 @@ package org.ksmart.birth.ksmartbirthapplication.model.newbirth;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
-import org.apache.kafka.common.protocol.types.Field;
+import org.ksmart.birth.common.model.AuditDetails;
 import org.ksmart.birth.common.model.Document;
 
 import javax.validation.constraints.Size;
@@ -168,56 +168,6 @@ public class KsmartBirthAppliactionDetail {
     @Size(max = 64)
     @JsonProperty("deliveryMethods")
     private String delivery_method;
-    ///////////////////////////////////
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     @Size(max = 64)
     @JsonProperty("esign_user_code")
     private String esignUserCode;
@@ -243,7 +193,7 @@ public class KsmartBirthAppliactionDetail {
 
     @Size(max = 64)
     @JsonProperty("filenumber")
-    private String fileumbero;
+    private String fileNumber;
 
     @JsonProperty("file_date")
     private Long fileDate;
@@ -275,4 +225,7 @@ public class KsmartBirthAppliactionDetail {
     @Size(max = 64)
     @JsonProperty("status")
     private String status;
+
+    @JsonProperty("auditDetails")
+    private AuditDetails auditDetails;
 }

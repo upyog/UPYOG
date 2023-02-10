@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS public.eg_birth_initiator
 (
-    id character varying(64) COLLATE pg_catalog."default" NOT NULL
+    id character varying(64) COLLATE pg_catalog."default" NOT NULL,
     birthdtlid character varying(64) COLLATE pg_catalog."default" NOT NULL,
     initiator_name character varying(1000) COLLATE pg_catalog."default",
     initiator_institution character varying(64) COLLATE pg_catalog."default",
@@ -9,7 +9,6 @@ CREATE TABLE IF NOT EXISTS public.eg_birth_initiator
     initiator_address character varying(2000) COLLATE pg_catalog."default",
     is_declared boolean,
     declaration_id character varying(64) COLLATE pg_catalog."default",
-    createdby character varying(45) COLLATE pg_catalog."default",
     aadharno character varying(15) COLLATE pg_catalog."default",
     mobileno character varying(12) COLLATE pg_catalog."default",
     createdby character varying(45) COLLATE pg_catalog."default",
@@ -21,7 +20,7 @@ CREATE TABLE IF NOT EXISTS public.eg_birth_initiator
     REFERENCES public.eg_birth_details (id) MATCH SIMPLE
     ON UPDATE CASCADE
     ON DELETE CASCADE
-    )
+    );
 
 ALTER TABLE IF EXISTS public.eg_birth_initiator_information
     OWNER to postgres;
@@ -37,14 +36,13 @@ CREATE INDEX IF NOT EXISTS idx_eg_birth_initiator_birthdtlid
 
 CREATE TABLE IF NOT EXISTS public.eg_birth_initiator_audit
 (
-    id character varying(64) COLLATE pg_catalog."default" NOT NULL
+    id character varying(64) COLLATE pg_catalog."default" NOT NULL,
     birthdtlid character varying(64) COLLATE pg_catalog."default" NOT NULL,
     initiator_name character varying(1000) COLLATE pg_catalog."default",
     initiator_institution character varying(64) COLLATE pg_catalog."default",
     initiator_inst_desig character varying(64) COLLATE pg_catalog."default",
     relation character varying(64) COLLATE pg_catalog."default",
     initiator_address character varying(2000) COLLATE pg_catalog."default",
-    createdby character varying(45) COLLATE pg_catalog."default",
     aadharno character varying(15) COLLATE pg_catalog."default",
     mobileno character varying(12) COLLATE pg_catalog."default",
     is_declared boolean,

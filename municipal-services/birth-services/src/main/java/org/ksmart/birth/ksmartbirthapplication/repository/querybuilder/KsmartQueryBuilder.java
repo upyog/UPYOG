@@ -1,4 +1,4 @@
-package org.ksmart.birth.ksmartbirthapplication.enrichment.querybuilder;
+package org.ksmart.birth.ksmartbirthapplication.repository.querybuilder;
 
 import org.ksmart.birth.common.repository.builder.BaseQueryBuilder;
 

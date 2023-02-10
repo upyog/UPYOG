@@ -19,11 +19,11 @@ public class KsmartBirthDetailsRequest {
 
     @JsonProperty("ChildDetails")
     @Valid
-    private List<KsmartBirthAppliactionDetail> birthDetails;
+    private List<KsmartBirthAppliactionDetail> ksmartBirthDetails;
 
     public KsmartBirthDetailsRequest addKsmartBirthDetails(KsmartBirthAppliactionDetail birthDetail) {
-        if (birthDetails == null) {
-            birthDetails = null;
+        if (ksmartBirthDetails == null) {
+            ksmartBirthDetails = null;
         }
         return this;
     }
