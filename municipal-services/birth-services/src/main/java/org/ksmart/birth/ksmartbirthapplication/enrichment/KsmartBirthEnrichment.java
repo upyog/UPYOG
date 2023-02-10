@@ -40,7 +40,7 @@ public class KsmartBirthEnrichment implements BaseEnrichment {
 
             birth.setAuditDetails(auditDetails);
 
-//            birth.getBirthPlace().setId(UUID.randomUUID().toString());
+            birth.setBirthUuid(UUID.randomUUID().toString());
 //
 //            birth.getBirthFatherInfo().setId(UUID.randomUUID().toString());
 //
@@ -50,7 +50,7 @@ public class KsmartBirthEnrichment implements BaseEnrichment {
 //
 //            birth.getBirthPresentAddress().setId(UUID.randomUUID().toString());
 //
-//            birth.getBirthStatisticalInformation().setId(UUID.randomUUID().toString());
+            birth.setBirthStatisticsUuid(UUID.randomUUID().toString());
         });
         setApplicationNumbers(request);
         setFileNumbers(request);
