@@ -5,8 +5,6 @@ import org.ksmart.birth.birthregistry.model.RegisterBirthSearchCriteria;
 import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;
-import java.time.Instant;
-import java.time.ZoneId;
 import java.util.List;
 
 @Component

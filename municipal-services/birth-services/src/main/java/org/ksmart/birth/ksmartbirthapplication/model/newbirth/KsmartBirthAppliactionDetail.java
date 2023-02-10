@@ -19,7 +19,6 @@ public class KsmartBirthAppliactionDetail {
     private String id;
     @JsonProperty("childDOB")
     private Long dateOfBirth;
-
     @JsonProperty("birthDateTime")
     private Long timeOfBirth;
     @Size(max = 64)
