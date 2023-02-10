@@ -50,7 +50,7 @@ public class KsmartBirthAppliactionDetail {
     @JsonProperty("childLastNameMl")
     private String lastNameMl;
 
-
+///////////////////////////////////
 
 
     @Size(max = 64)
