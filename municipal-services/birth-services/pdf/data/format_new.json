@@ -6,7 +6,7 @@
     },
     "watermark": {
       "text": "IKM DEMO",
-      "color": "gery",
+      "color": "grey",
       "opacity": 0.1,
       "content": [
         "https://ulb-logos.s3.ap-south-1.amazonaws.com/kerala_logo.jpg"
@@ -205,7 +205,7 @@
                     "style": "rule-header"
                   },
                   {
-                    "text": "താഴെ പറയുന്ന വിവരങ്ങൾ {{statecodeml}} സംസ്\u200Cഥാനത്തിലെ {{distcodeml}} ജില്ലയിലെ {{talukcodeml}}ൂക്കിലെ {{tenantMl}} {{lbtypecodeml}} {{certifyMl}}.",
+                    "text": "താഴെ പറയുന്ന വിവരങ്ങൾ {{statecodeMl}} സംസ്ഥാനത്തിലെ  {{distcodeMl}} ജില്ലയിലെ {{talukcodeMl}}ൂക്കിലെ {{tenantMl}} {{lbtypecodeMl}} {{certifyMl}}.",
                     "style": "rule-header"
                   }
                 ]
@@ -275,7 +275,7 @@
                     "width": "1%"
                   },
                   {
-                    "text": "{{dob}}",
+                    "text": "{{dateofbirthstr}}",
                     "style": "details-body"
                   }
                 ]
@@ -295,7 +295,7 @@
                     "width": "1%"
                   },
                   {
-                    "text": "{{name}}",
+                    "text": "{{placeDetailsMl}}/{{placeOfBirthEn}}",
                     "style": "details-body"
                   }
                 ]
@@ -433,7 +433,7 @@
                     "width": "1%"
                   },
                   {
-                    "text": "{{registrationDateLabel}} {{registrationDate}}",
+                    "text": "{{registrationDateLabel}} {{registration_date_str}}",
                     "style": "details-body"
                   }
                 ]
@@ -444,7 +444,7 @@
                 "columns": [
 
                   {
-                    "text": "{{remarksLabelMl}}/{{remarksLabel}} ",
+                    "text": "{{remarksLabel}} ",
                     "width": "49%",
                     "style": "details-body"
                   },
@@ -463,7 +463,7 @@
               {
                 "columns": [
                   {
-                    "text": "{{dateOfIssue}}: {{registrationDate}}",
+                    "text": "{{dateOfIssue}}: {{registration_date_str}}",
                     "width": "49%",
                     "style": "details-body"
                   },
@@ -472,7 +472,7 @@
                     "width": "1%"
                   },
                   {
-                    "text": "{{updatedOn}} :{{registrationDate}}",
+                    "text": "{{updatedOn}} :{{registration_date_str}}",
                     "style": "details-body"
                   }
                 ]
@@ -492,7 +492,7 @@
                     "width": "1%"
                   },
                   {
-                    "text": "{{esignOfficer}} {{esignOfficerDesign}}",
+                    "text": "{{esignOfficerDesign}} {{tenant}} {{lbtypecode}} ",
                     "style": "details-body"
                   }
                 ]

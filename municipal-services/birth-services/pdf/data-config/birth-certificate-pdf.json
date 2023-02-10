@@ -132,7 +132,7 @@
                   "path": "$.registerBirthPermanent.permanentAddressMl"
                 },
                 "type":"setEmpty"
-              }
+              },
               {
                 "variable": "year",
                 "value": {
@@ -167,7 +167,7 @@
               {
                 "variable": "placeOfBirthEn",
                 "value": {
-                  "path": "$.placeDetailsEn"
+                  "path": "$.registerBirthPlace.placeDetailsEn"
                 },
                 "type":"setEmpty"
               },
@@ -317,7 +317,6 @@
                 "type": "setEmpty",
                 "localisation":{
                   "required":true,
-                  "postfix": "_ML",
                   "module":"rainmaker-pdf"
                 }
               },
@@ -592,19 +591,6 @@
                   "prefix": null,
                   "module":"rainmaker-pdf",
                   "locale":"en_IN"
-                }
-              },
-              {
-                "variable": "remarksLabelMl",
-                "value": {
-                  "path": "PDF_BIRTH_REMARKS_ML"
-                },
-                "type": "label",
-                "localisation":{
-                  "required":true,
-                  "prefix": null,
-                  "module":"rainmaker-pdf",
-                  "locale":"ml_IN"
                 }
               },
               {

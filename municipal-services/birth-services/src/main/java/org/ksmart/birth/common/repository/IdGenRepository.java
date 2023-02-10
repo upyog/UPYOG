@@ -2,10 +2,13 @@ package org.ksmart.birth.common.repository;
 
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.egov.tracer.model.ServiceCallException;
 import org.ksmart.birth.common.Idgen.IdGenerationRequest;
 import org.ksmart.birth.common.Idgen.IdGenerationResponse;
 import org.ksmart.birth.common.Idgen.IdRequest;
@@ -17,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 @Repository
@@ -43,15 +47,15 @@ public class IdGenRepository {
         }
         IdGenerationRequest req = IdGenerationRequest.builder().idRequests(reqList).requestInfo(requestInfo).build();
         IdGenerationResponse response = null;
-//        try {
+        try {
             response = restTemplate.postForObject( config.getIdGenHost()+ config.getIdGenPath(), req, IdGenerationResponse.class);
-//        } catch (HttpClientErrorException e) {
-//            throw new ServiceCallException(e.getResponseBodyAsString());
-//        } catch (Exception e) {
-//            Map<String, String> map = new HashMap<>();
-//            map.put(e.getCause().getClass().getName(),e.getMessage());
-//            throw new CustomException(map);
-//        }
+        } catch (HttpClientErrorException e) {
+            throw new ServiceCallException(e.getResponseBodyAsString());
+        } catch (Exception e) {
+            Map<String, String> map = new HashMap<>();
+            map.put(e.getCause().getClass().getName(),e.getMessage());
+            throw new CustomException(map);
+        }
         return response;
     }
 

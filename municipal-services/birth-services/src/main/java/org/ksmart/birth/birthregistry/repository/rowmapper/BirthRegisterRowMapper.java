@@ -64,8 +64,8 @@ public class BirthRegisterRowMapper implements ResultSetExtractor<List<RegisterB
                         .multipleBirthDetId(rs.getString("multiplebirthdetid"))
                         .isBornOutside(rs.getBoolean("is_born_outside"))
                         .otPassportNo(rs.getString("ot_passportno"))
-                        .fullName(rs.getString("firstname_en")+" "+rs.getString("middlename_en")+" "+rs.getString("lastname_en"))
-                        .fullNameMl(rs.getString("firstname_ml")+" "+rs.getString("middlename_ml")+" "+rs.getString("lastname_ml"))
+                        .fullName(getFullNameEn(rs))
+                        .fullNameMl(getFullNameEn(rs))
                         .registrationNo(rs.getString("registrationno"))
                         .registrationDate(rs.getLong("registration_date"))
                         .registerBirthPlace(birthRegPlaceRowMapper.getRegBirthPlace(rs))
@@ -73,11 +73,27 @@ public class BirthRegisterRowMapper implements ResultSetExtractor<List<RegisterB
                         .registerBirthMother(getRegBirthMotherInfo(rs))
                         .registerBirthPermanent(birthRegPerAddRowMapper.getRegBirthPermanentAddress(rs))
                         .registerBirthPresent(birthRegPreAddRowMapper.getRegBirthPresentAddress(rs))
-                        .registerBirthStatitical(getRegBirthStatisticalInfo(rs))
+                        //.registerBirthStatitical(getRegBirthStatisticalInfo(rs))
                         .auditDetails(getAuditDetails(rs))
                         .registrationDateStr(formatter.format(regDate))
                         .build());
             }
             return result;
         }
+
+    private String getFullNameEn(ResultSet rs) throws SQLException {
+        String fullName = new StringBuilder()
+                .append(rs.getString("firstname_en") == null ? "" : rs.getString("firstname_en")+',')
+                .append(rs.getString("middlename_en") == null ? "" : rs.getString("middlename_en")+',')
+                .append(rs.getString("lastname_en") == null ? "" : rs.getString("lastname_en")+',').toString();
+        return fullName;
+    }
+
+    private String getFullNameMl(ResultSet rs) throws SQLException {
+        String fullName = new StringBuilder()
+                .append(rs.getString("firstname_ml") == null ? "" : rs.getString("firstname_ml")+',')
+                .append(rs.getString("middlename_ml") == null ? "" : rs.getString("middlename_ml")+',')
+                .append(rs.getString("lastname_ml") == null ? "" : rs.getString("lastname_ml")+',').toString();
+        return fullName;
+    }
 }

@@ -4,7 +4,6 @@ import lombok.*;
 import org.ksmart.birth.common.model.AuditDetails;
 
 import javax.validation.constraints.Size;
-import java.util.Date;
 
 @Getter
 @Setter
@@ -128,6 +127,10 @@ public class RegisterBirthDetail {
 
     @JsonProperty("registration_date_str")
     private String registrationDateStr;
+
+    @Size(max = 64)
+    @JsonProperty("ack_no")
+    private String ackNumber;
 
     @JsonProperty("registerBirthPlace")
     private RegisterBirthPlace registerBirthPlace;

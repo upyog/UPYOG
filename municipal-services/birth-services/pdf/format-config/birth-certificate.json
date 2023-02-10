@@ -205,7 +205,7 @@
                     "style": "rule-header"
                   },
                   {
-                    "text": "താഴെ പറയുന്ന വിവരങ്ങൾ {{statecodeMl}} സംസ്\u200Cഥാനത്തിലെ {{distcodeMl}} ജില്ലയിലെ {{talukcodeMl}}ൂക്കിലെ {{tenantMl}} {{lbtypecodeMl}} {{certifyMl}}.",
+                    "text": "താഴെ പറയുന്ന വിവരങ്ങൾ {{statecodeMl}} സംസ്ഥാനത്തിലെ {{distcodeMl}} ജില്ലയിലെ {{talukcodeMl}}ൂക്കിലെ {{tenantMl}} {{lbtypecodeMl}} {{certifyMl}}.",
                     "style": "rule-header"
                   }
                 ]
@@ -444,7 +444,7 @@
                 "columns": [
 
                   {
-                    "text": "{{remarksLabelMl}}/{{remarksLabel}} ",
+                    "text": "{{remarksLabel}} ",
                     "width": "49%",
                     "style": "details-body"
                   },
@@ -453,7 +453,7 @@
                     "width": "1%"
                   },
                   {
-                    "text": "{{remarksMl}}{{remarks}}",
+                    "text": "{{remarksMl}}/{{remarks}}",
                     "style": "details-body"
                   }
                 ]
@@ -854,6 +854,7 @@
         ]
       },
       "pdf-header-sub-text": {
+
         "color": "#484848",
         "fontSize": 15,
         "letterSpacing": 0.6
