@@ -6,11 +6,11 @@ serviceMaps:
       fromTopic: save-birth-application-topic
       isTransaction: true
       queryMaps:
-        - query: INSERT INTO public.eg_birth_details(id, dateofreport, dateofbirth, timeofbirth, am_pm, firstname_en, firstname_ml, middlename_en, middlename_ml, lastname_en, lastname_ml,
-                tenantid, gender, remarks_en, remarks_ml, aadharno, esign_user_code, esign_user_desig_code, is_adopted, is_abandoned, is_multiple_birth,
-                is_father_info_missing, is_mother_info_missing, no_of_alive_birth, multiplebirthdetid, is_born_outside, ot_passportno, ot_dateofarrival,
-                applicationtype, businessservice, workflowcode, fm_fileno, file_date, file_status, applicationno, registrationno, registration_date, action,
-                status, createdtime, createdby, lastmodifiedtime, lastmodifiedby)
+        - query: INSERT INTO public.eg_birth_details(id,dateofreport,dateofbirth,timeofbirth,am_pm,firstname_en,firstname_ml,middlename_en,middlename_ml,lastname_en,lastname_ml,tenantid,
+                gender,remarks_en,remarks_ml,aadharno,esign_user_code,esign_user_desig_code,is_adopted,is_abandoned,is_multiple_birth,is_father_info_missing,is_mother_info_missing,no_of_alive_birth,
+                multiplebirthdetid,is_born_outside,ot_passportno,ot_dateofarrival,applicationtype,businessservice,workflowcode,fm_fileno,file_date,file_status,applicationno,registrationno,registration_date,
+                action,status, createdtime, createdby, lastmodifiedtime, lastmodifiedby) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
+
           basePath: BirthDetails.*
           jsonMaps:
             - jsonPath: $.BirthDetails.*.id

@@ -1,8 +1,6 @@
 package org.ksmart.birth.ksmartbirthapplication.controller;
 
-import org.ksmart.birth.birthregistry.model.RegisterBirthDetail;
-import org.ksmart.birth.birthregistry.model.RegisterBirthDetailsRequest;
-import org.ksmart.birth.birthregistry.service.RegisterBirthService;
+import lombok.extern.slf4j.Slf4j;
 import org.ksmart.birth.ksmartbirthapplication.model.newbirth.KsmartBirthAppliactionDetail;
 import org.ksmart.birth.ksmartbirthapplication.model.newbirth.KsmartBirthDetailsRequest;
 import org.ksmart.birth.ksmartbirthapplication.service.KsmartBirthService;
@@ -10,13 +8,16 @@ import org.ksmart.birth.utils.ResponseInfoFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-@Controller
+@Slf4j
+@RestController
+@RequestMapping("/ksmart/birth")
 public class KsmartBirthController {
     private final ResponseInfoFactory responseInfoFactory;
     private final KsmartBirthService ksmartBirthService;
@@ -28,7 +29,7 @@ public class KsmartBirthController {
     }
 
 
-    @PostMapping(value = {"/_create"})
+    @PostMapping(value = {"/createbirth"})
     public ResponseEntity<?> saveRegisterBirthDetails(@RequestBody KsmartBirthDetailsRequest request) {
         List<KsmartBirthAppliactionDetail> registerBirthDetails=ksmartBirthService.saveKsmartBirthDetails(request);
         return new ResponseEntity<>(registerBirthDetails, HttpStatus.OK);
