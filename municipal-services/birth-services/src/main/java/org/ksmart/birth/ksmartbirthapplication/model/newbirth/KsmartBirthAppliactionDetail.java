@@ -81,6 +81,9 @@ public class KsmartBirthAppliactionDetail {
     @JsonProperty("wardNameMl")
     private String wardNameMl;
     @Size(max = 64)
+    @JsonProperty("wardNumber")
+    private String wardNumber;
+    @Size(max = 64)
     @JsonProperty("ho_housename_en")
     private String adrsHouseNameEn;
     @Size(max = 64)
