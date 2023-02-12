@@ -107,27 +107,27 @@ serviceMaps:
                       createdtime, createdby, lastmodifiedtime, lastmodifiedby)
                       VALUES (?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?);
 
-          basePath: ChildDetails.*.
+          basePath: ChildDetails.*
           jsonMaps:
                 - jsonPath: $.ChildDetails.*.id
 
                 - jsonPath: $.ChildDetails.*.id
 
-                - jsonPath: $.ChildDetails.*.birthPlace.birthPlace
+                - jsonPath: $.ChildDetails.*.birthPlace.placeofBirthId
 
-                - jsonPath: $.ChildDetails.*.birthPlace.hospitalCode
+                - jsonPath: $.ChildDetails.*.birthPlace.hospitalId
 
-                - jsonPath: $.ChildDetails.*.birthPlace.vehicletypeid
+                - jsonPath: $.ChildDetails.*.birthPlace.vehicleTypeid
 
-                - jsonPath: $.ChildDetails.*.birthPlace.vehicle_registration_no
+                - jsonPath: $.ChildDetails.*.birthPlace.vehicleRegistrationNo
 
-                - jsonPath: $.ChildDetails.*.birthPlace.vehicle_from_en
+                - jsonPath: $.ChildDetails.*.birthPlace.vehicleFromEn
 
-                - jsonPath: $.ChildDetails.*.birthPlace.vehicle_to_en
+                - jsonPath: $.ChildDetails.*.birthPlace.vehicleToEn
 
-                - jsonPath: $.ChildDetails.*.birthPlace.vehicle_from_ml
+                - jsonPath: $.ChildDetails.*.birthPlace.vehicleFromMl
 
-                - jsonPath: $.ChildDetails.*.birthPlace.vehicle_to_ml
+                - jsonPath: $.ChildDetails.*.birthPlace.vehicleToMl
 
                 - jsonPath: $.ChildDetails.*.birthPlace.vehicle_other_en
 
@@ -137,7 +137,7 @@ serviceMaps:
 
                 - jsonPath: $.ChildDetails.*.birthPlace.vehicle_admit_hospital_ml
 
-                - jsonPath: $.ChildDetails.*.birthPlace.public_place_id
+                - jsonPath: $.ChildDetails.*.birthPlace.placeofBirthId
 
                 - jsonPath: $.ChildDetails.*.birthPlace.ho_householder_en
 
@@ -145,9 +145,9 @@ serviceMaps:
 
                 - jsonPath: $.ChildDetails.*.birthPlace.ho_res_asso_no
 
-                - jsonPath: $.ChildDetails.*.birthPlace.ho_housename_en
+                - jsonPath: $.ChildDetails.*.birthPlace.adrsHouseNameMl
 
-                - jsonPath: $.ChildDetails.*.birthPlace.ho_housename_ml
+                - jsonPath: $.ChildDetails.*.birthPlace.adrsLocalityNameEn
 
                 - jsonPath: $.ChildDetails.*.birthPlace.ho_villageid
 
@@ -157,9 +157,9 @@ serviceMaps:
 
                 - jsonPath: $.ChildDetails.*.birthPlace.ho_stateid
 
-                - jsonPath: $.ChildDetails.*.birthPlace.ho_poid
+                - jsonPath: $.ChildDetails.*.birthPlace.adrsPostOffice
 
-                - jsonPath: $.ChildDetails.*.birthPlace.ho_pinno
+                - jsonPath: $.ChildDetails.*.birthPlace.adrsPincode
 
                 - jsonPath: $.ChildDetails.*.birthPlace.ho_countryid
 
@@ -429,9 +429,9 @@ serviceMaps:
                   birthdtlid, createdtime, createdby, lastmodifiedtime, lastmodifiedby) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
                   ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
-          basePath: ChildDetails.*.birthStatistical
+          basePath: ChildDetails.*
           jsonMaps:
-                  - jsonPath: $.ChildDetails.*.birthStatistical.id
+                  - jsonPath: $.ChildDetails.*.id
 
                   - jsonPath: $.ChildDetails.*.birthStatistical.weight_of_child
 
