@@ -34,4 +34,9 @@ public class KsmartBirthController {
         List<KsmartBirthAppliactionDetail> registerBirthDetails=ksmartBirthService.saveKsmartBirthDetails(request);
         return new ResponseEntity<>(registerBirthDetails, HttpStatus.OK);
     }
+    @PostMapping(value = { "/_update"})
+    public ResponseEntity<?> updateMarriageDetails(@RequestBody KsmartBirthDetailsRequest request) {
+        List<KsmartBirthAppliactionDetail> registerBirthDetails = ksmartBirthService.updateKsmartBirthDetails(request);
+        return new ResponseEntity<>(registerBirthDetails, HttpStatus.OK);
+    }
 }

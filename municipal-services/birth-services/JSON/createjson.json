@@ -97,6 +97,7 @@
         "fatherEmail": "fatherEmail",
         "fatherBioAdopt": "BIOLOGICAL"
       },
+<<<<<<< HEAD
       "InitiatorinfoDetails": {
         "relation": "relation",
         "initiatorNameEn": "initiatorNameEn",
@@ -106,6 +107,16 @@
         "initiatorAddress": "initiatorAddress",
         "isInitiatorDeclaration": true,
         "isCaretaker": true
+=======
+      "InformarHosInstDetails":
+      {
+        "infomantFirstNameEn":"infomantFirstNameEn",
+        "infomantAadhar":"infomantAadhar",
+        "infomantMobile":"123586234712",
+        "informerDesi":"informerDesi",
+        "informerAddress":"informerAddress",
+        "isDeclarationInfo":"isDeclarationInfo"
+>>>>>>> 285ed851bf (ksmart-model)
       }
     }
   ]

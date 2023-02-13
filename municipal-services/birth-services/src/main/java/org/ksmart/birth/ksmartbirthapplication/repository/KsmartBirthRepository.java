@@ -35,4 +35,9 @@ public class KsmartBirthRepository {
         return request.getKsmartBirthDetails();
     }
 
+    public List<KsmartBirthAppliactionDetail> updateKsmartBirthDetails(KsmartBirthDetailsRequest request) {
+        ksmartBirthEnrichment.enrichUpdate(request);
+        producer.push(birthDeathConfiguration.getUpdateKsmartBirthApplicationTopic(), request);
+        return request.getKsmartBirthDetails();
+    }
 }

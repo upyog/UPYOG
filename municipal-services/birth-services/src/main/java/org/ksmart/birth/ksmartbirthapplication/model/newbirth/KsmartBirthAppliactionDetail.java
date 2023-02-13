@@ -231,6 +231,24 @@ public class KsmartBirthAppliactionDetail {
     @Size(max = 64)
     @JsonProperty("status")
     private String status;
+    @Size(max = 2500)
+    @JsonProperty("remarks_en")
+    private String remarksEn;
+
+    @Size(max = 2500)
+    @JsonProperty("remarks_ml")
+    private String remarksMl;
+
+    @Size(max = 20)
+    @JsonProperty("am_pm")
+    private String ampm;
+
+    @JsonProperty("dateofreport")
+    private Long dateOfReport;
+
+    @Size(max = 64)
+    @JsonProperty("fm_fileno")
+    private String fmFileNo;
 
     @Size(max = 64)
     @JsonProperty("birthPlaceUuid")
@@ -249,6 +267,9 @@ public class KsmartBirthAppliactionDetail {
 
     @JsonProperty("InitiatorinfoDetails")
     private KsmartInitiatorDetail initiatorDetails;
+
+    @JsonProperty("InformarHosInstDetails")
+    private KsmartInformatDetail informatDetail;
 
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails;

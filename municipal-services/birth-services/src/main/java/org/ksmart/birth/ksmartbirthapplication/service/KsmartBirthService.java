@@ -24,4 +24,7 @@ public class KsmartBirthService {
     public List<KsmartBirthAppliactionDetail> saveKsmartBirthDetails(KsmartBirthDetailsRequest request) {
         return repository.saveKsmartBirthDetails(request);
     }
+
+    public List<KsmartBirthAppliactionDetail> updateKsmartBirthDetails(KsmartBirthDetailsRequest request) {
+        return repository.updateKsmartBirthDetails(request);    }
 }
