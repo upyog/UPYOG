@@ -205,7 +205,7 @@
                     "style": "rule-header"
                   },
                   {
-                    "text": "താഴെ പറയുന്ന വിവരങ്ങൾ {{statecodeMl}} സംസ്ഥാനത്തിലെ {{distcodeMl}} ജില്ലയിലെ {{talukcodeMl}}ൂക്കിലെ {{tenantMl}} {{lbtypecodeMl}} {{certifyMl}}.",
+                    "text": "താഴെ പറയുന്ന വിവരങ്ങൾ {{statecodeMl}} സംസ്ഥാനത്തിലെ {{distcodeMl}} ജില്ലയിലെ {{talukcodeMl}}താലൂക്കിലെ  {{tenantMl}} {{lbtypecodeMl}} {{certifyMl}}.",
                     "style": "rule-header"
                   }
                 ]

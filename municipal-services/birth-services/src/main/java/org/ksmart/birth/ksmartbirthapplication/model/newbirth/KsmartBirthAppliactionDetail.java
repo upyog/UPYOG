@@ -2,6 +2,7 @@ package org.ksmart.birth.ksmartbirthapplication.model.newbirth;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
+import org.ksmart.birth.birthapplication.model.birth.BirthMotherInfo;
 import org.ksmart.birth.common.model.AuditDetails;
 import org.ksmart.birth.common.model.Document;
 
@@ -50,30 +51,36 @@ public class KsmartBirthAppliactionDetail {
     private String lastNameMl;
 
     @Size(max = 64)
-    @JsonProperty("public_place_id")
+    @JsonProperty("birthPlace")
     private String placeofBirthId;
+
     @Size(max = 64)
-    @JsonProperty("hospitalid")
+    @JsonProperty("hospitalCode")
     private String hospitalId;
     @Size(max = 64)
-    @JsonProperty("institution_type_id")
+    @JsonProperty("hospitalName")
+    private String hospitalName;
+    @Size(max = 64)
+    @JsonProperty("hospitalNameMl")
+    private String hospitalNameMl;
+    @Size(max = 64)
+    @JsonProperty("institutionTypeCode")
     private String institutionTypeId;
     @Size(max = 64)
     @JsonProperty("institution")
     private String institution;
-
     @Size(max = 64)
     @JsonProperty("institutionNameCode")
     private String institutionNameCode;
     @Size(max = 64)
     @JsonProperty("institutionId")
-    private String institution_id;
+    private String institutionId;
     @Size(max = 64)
     @JsonProperty("institutionIdMl")
     private String institutionIdMl;
     @Size(max = 64)
-    @JsonProperty("wardId")
-    private String ward_id;
+    @JsonProperty("wardNo")
+    private String wardId;
     @Size(max = 64)
     @JsonProperty("wardNameEn")
     private String wardNameEn;
@@ -83,54 +90,53 @@ public class KsmartBirthAppliactionDetail {
     @Size(max = 64)
     @JsonProperty("wardNumber")
     private String wardNumber;
-    @Size(max = 64)
-    @JsonProperty("ho_housename_en")
-    private String adrsHouseNameEn;
-    @Size(max = 64)
-    @JsonProperty("ho_housename_ml")
-    private String adrsHouseNameMl;
-    @Size(max = 64)
-    @JsonProperty("ho_locality_en")
-    private String adrsLocalityNameEn;
-    @Size(max = 64)
-    @JsonProperty("ho_locality_ml")
-    private String adrsLocalityNameMl;
-    @Size(max = 64)
-    @JsonProperty("street_locality_area_en")
-    private String adrsStreetNameEn;
-    @Size(max = 64)
-    @JsonProperty("street_locality_area_ml")
-    private String adrsStreetNameMl;
-    @Size(max = 64)
-    @JsonProperty("ho_poid")
-    private String adrsPostOffice;
-    @Size(max = 64)
-    @JsonProperty("ho_pinno")
-    private String adrsPincode;
-
-    @Size(max = 64)
-    @JsonProperty("vehicletypeid")
-    private String vehicleTypeid;
     @Size(max = 2000)
-    @JsonProperty("vehicle_haltplace")
+    @JsonProperty("adrsHouseNameEn")
+    private String adrsHouseNameEn;
+    @Size(max = 2000)
+    @JsonProperty("adrsHouseNameMl")
+    private String adrsHouseNameMl;
+    @Size(max = 2000)
+    @JsonProperty("adrsLocalityNameEn")
+    private String adrsLocalityNameEn;
+    @Size(max = 2000)
+    @JsonProperty("adrsLocalityNameMl")
+    private String adrsLocalityNameMl;
+    @Size(max = 2000)
+    @JsonProperty("adrsStreetNameEn")
+    private String adrsStreetNameEn;
+    @Size(max = 2000)
+    @JsonProperty("adrsStreetNameMl")
+    private String adrsStreetNameMl;
+    @Size(max = 2000)
+    @JsonProperty("adrsPostOffice")
+    private String adrsPostOffice;
+    @Size(max = 10)
+    @JsonProperty("adrsPincode")
+    private String adrsPincode;
+    @Size(max = 64)
+    @JsonProperty("vehicleType")
+    private String vehicleTypeid;
+    @Size(max = 64)
+    @JsonProperty("vehicleHaltPlace")
     private String vehicleHaltplace;
     @Size(max = 2000)
     @JsonProperty("vehicleHaltPlaceMl")
     private String vehicleHaltPlaceMl;
     @Size(max = 64)
-    @JsonProperty("vehicle_registration_no")
+    @JsonProperty("vehicleRegistrationNo")
     private String vehicleRegistrationNo;
-    @Size(max = 1000)
-    @JsonProperty("vehicle_from_en")
+    @Size(max = 64)
+    @JsonProperty("vehicleFromEn")
     private String vehicleFromEn;
     @Size(max = 1000)
-    @JsonProperty("vehicle_to_en")
+    @JsonProperty("vehicleToEn")
     private String vehicleToEn;
     @Size(max = 1000)
-    @JsonProperty("vehicle_from_ml")
+    @JsonProperty("vehicleFromMl")
     private String vehicleFromMl;
     @Size(max = 1000)
-    @JsonProperty("vehicle_to_ml")
+    @JsonProperty("vehicleToMl")
     private String vehicleToMl;
     @Size(max = 64)
     @JsonProperty("setadmittedHospitalEn")
@@ -158,16 +164,16 @@ public class KsmartBirthAppliactionDetail {
     private String publicPlaceDecpEn;
     @Size(max = 64)
     @JsonProperty("birthWeight")
-    private String weight_of_child;
+    private double birthWeight;
     @Size(max = 64)
     @JsonProperty("pregnancyDuration")
-    private String duration_of_pregnancy_in_week;
+    private Integer pregnancyDuration;
     @Size(max = 64)
     @JsonProperty("medicalAttensionSub")
     private String medicalAttensionSub;
     @Size(max = 64)
     @JsonProperty("deliveryMethods")
-    private String delivery_method;
+    private String deliveryMethods;
     @Size(max = 64)
     @JsonProperty("esign_user_code")
     private String esignUserCode;
@@ -227,12 +233,16 @@ public class KsmartBirthAppliactionDetail {
     private String status;
 
     @Size(max = 64)
-    @JsonProperty("birthUuid")
-    private String birthUuid;
+    @JsonProperty("birthPlaceUuid")
+    private String birthPlaceUuid;
 
     @Size(max = 64)
     @JsonProperty("birthStatisticsUuid")
     private String birthStatisticsUuid;
+
+    @JsonProperty("ParentsDetails")
+    private KsmartBirthParentDetail parentsDetails;
+
 
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails;
