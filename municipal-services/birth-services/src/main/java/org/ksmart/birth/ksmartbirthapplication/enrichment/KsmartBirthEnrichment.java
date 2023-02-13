@@ -51,6 +51,8 @@ public class KsmartBirthEnrichment implements BaseEnrichment {
 //            birth.getBirthPresentAddress().setId(UUID.randomUUID().toString());
 //
             birth.setBirthStatisticsUuid(UUID.randomUUID().toString());
+
+            birth.setBirthInitiatorUuid(UUID.randomUUID().toString());
         });
         setApplicationNumbers(request);
         setFileNumbers(request);

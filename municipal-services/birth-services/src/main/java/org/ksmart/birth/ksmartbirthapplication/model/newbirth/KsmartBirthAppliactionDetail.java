@@ -237,12 +237,18 @@ public class KsmartBirthAppliactionDetail {
     private String birthPlaceUuid;
 
     @Size(max = 64)
+    @JsonProperty("birthInitiatorUuid")
+    private String birthInitiatorUuid;
+
+    @Size(max = 64)
     @JsonProperty("birthStatisticsUuid")
     private String birthStatisticsUuid;
 
     @JsonProperty("ParentsDetails")
     private KsmartBirthParentDetail parentsDetails;
 
+    @JsonProperty("InitiatorinfoDetails")
+    private KsmartInitiatorDetail initiatorDetails;
 
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails;

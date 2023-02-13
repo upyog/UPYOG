@@ -50,6 +50,7 @@ public class BirthDetailsEnrichment implements BaseEnrichment {
             birth.getBirthPresentAddress().setId(UUID.randomUUID().toString());
 
             birth.getBirthStatisticalInformation().setId(UUID.randomUUID().toString());
+
         });
         setApplicationNumbers(request);
         setFileNumbers(request);

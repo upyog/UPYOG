@@ -96,6 +96,16 @@
         "fatherMobile": "fatherMobile",
         "fatherEmail": "fatherEmail",
         "fatherBioAdopt": "BIOLOGICAL"
+      },
+      "InitiatorinfoDetails": {
+        "relation": "relation",
+        "initiatorNameEn": "initiatorNameEn",
+        "initiatorAadhar": 999999999999,
+        "initiatorMobile": 1234567890,
+        "initiatorDesi": "initiatorDesi",
+        "initiatorAddress": "initiatorAddress",
+        "isInitiatorDeclaration": true,
+        "isCaretaker": true
       }
     }
   ]
