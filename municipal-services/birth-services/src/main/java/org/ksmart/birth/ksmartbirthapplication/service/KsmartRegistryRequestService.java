@@ -1,8 +1,10 @@
-package org.ksmart.birth.birthapplication.service;
+package org.ksmart.birth.ksmartbirthapplication.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.ksmart.birth.birthapplication.model.birth.BirthDetailsRequest;
-import org.ksmart.birth.birthregistry.model.*;
+import org.ksmart.birth.birthregistry.model.RegisterBirthDetail;
+import org.ksmart.birth.birthregistry.model.RegisterBirthDetailsRequest;
+import org.ksmart.birth.ksmartbirthapplication.model.newbirth.KsmartBirthDetailsRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.LinkedList;
@@ -10,54 +12,54 @@ import java.util.List;
 
 @Slf4j
 @Service
-public class RegistryRequestService {
-    public RegisterBirthDetailsRequest createRegistryRequest(BirthDetailsRequest requestBirthReq){
+public class KsmartRegistryRequestService {
+    public RegisterBirthDetailsRequest createRegistryRequest(KsmartBirthDetailsRequest requestKsmartBirthReq){
         RegisterBirthDetailsRequest request = new RegisterBirthDetailsRequest();
         List<RegisterBirthDetail> registerBirthDetails =  new LinkedList<>();
         RegisterBirthDetail registerBirthDetail = new RegisterBirthDetail();
-        registerBirthDetail.setDateOfReport(requestBirthReq.getBirthDetails().get(0).getDateOfReport());
-        registerBirthDetail.setDateOfBirth(requestBirthReq.getBirthDetails().get(0).getDateOfBirth());
-        registerBirthDetail.setDateOfReport(requestBirthReq.getBirthDetails().get(0).getDateOfReport());
-        registerBirthDetail.setDateOfBirth(requestBirthReq.getBirthDetails().get(0).getDateOfBirth());
-        registerBirthDetail.setTimeOfBirth(requestBirthReq.getBirthDetails().get(0).getTimeOfBirth());
-        registerBirthDetail.setAmpm(requestBirthReq.getBirthDetails().get(0).getAmpm());
-        registerBirthDetail.setFirstNameEn(requestBirthReq.getBirthDetails().get(0).getFirstNameEn());
-        registerBirthDetail.setFirstNameMl(requestBirthReq.getBirthDetails().get(0).getFirstNameMl());
-        registerBirthDetail.setMiddleNameEn(requestBirthReq.getBirthDetails().get(0).getMiddleNameEn());
-        registerBirthDetail.setMiddleNameMl(requestBirthReq.getBirthDetails().get(0).getMiddleNameMl());
-        registerBirthDetail.setLastNameEn(requestBirthReq.getBirthDetails().get(0).getLastNameEn());
-        registerBirthDetail.setLastNameMl(requestBirthReq.getBirthDetails().get(0).getLastNameMl());
-        registerBirthDetail.setTenantId(requestBirthReq.getBirthDetails().get(0).getTenantId());
-        registerBirthDetail.setGender(requestBirthReq.getBirthDetails().get(0).getGender());
-        registerBirthDetail.setRemarksEn(requestBirthReq.getBirthDetails().get(0).getRemarksEn());
-        registerBirthDetail.setRemarksMl(requestBirthReq.getBirthDetails().get(0).getRemarksMl());
-        registerBirthDetail.setAadharNo(requestBirthReq.getBirthDetails().get(0).getAadharNo());
-        registerBirthDetail.setEsignUserCode(requestBirthReq.getBirthDetails().get(0).getEsignUserCode());
-        registerBirthDetail.setEsignUserDesigCode(requestBirthReq.getBirthDetails().get(0).getEsignUserDesigCode());
-        registerBirthDetail.setIsAdopted(requestBirthReq.getBirthDetails().get(0).getIsAdopted());
-        registerBirthDetail.setIsAbandoned(requestBirthReq.getBirthDetails().get(0).getIsAbandoned());
-        registerBirthDetail.setIsMultipleBirth(requestBirthReq.getBirthDetails().get(0).getIsMultipleBirth());
-        registerBirthDetail.setIsFatherInfoMissing(requestBirthReq.getBirthDetails().get(0).getIsFatherInfoMissing());
-        registerBirthDetail.setIsMotherInfoMissing(requestBirthReq.getBirthDetails().get(0).getIsMotherInfoMissing());
-        registerBirthDetail.setNoOfAliveBirth(requestBirthReq.getBirthDetails().get(0).getNoOfAliveBirth());
-        registerBirthDetail.setMultipleBirthDetId(requestBirthReq.getBirthDetails().get(0).getMultipleBirthDetailsIid());
-        registerBirthDetail.setIsBornOutside(requestBirthReq.getBirthDetails().get(0).getIsBornOutside());
-        registerBirthDetail.setOtPassportNo(requestBirthReq.getBirthDetails().get(0).getPassportNo());
-        registerBirthDetail.setRegistrationNo(requestBirthReq.getBirthDetails().get(0).getRegistrationNo());
+        //registerBirthDetail.setDateOfReport(requestKsmartBirthReq.getKsmartBirthDetails().get(0).getDateOfReport());
+        registerBirthDetail.setDateOfBirth(requestKsmartBirthReq.getKsmartBirthDetails().get(0).getDateOfBirth());
+       // registerBirthDetail.setDateOfReport(requestKsmartBirthReq.getKsmartBirthDetails().get(0).getDateOfReport());
+        registerBirthDetail.setDateOfBirth(requestKsmartBirthReq.getKsmartBirthDetails().get(0).getDateOfBirth());
+        registerBirthDetail.setTimeOfBirth(requestKsmartBirthReq.getKsmartBirthDetails().get(0).getTimeOfBirth());
+        //registerBirthDetail.setAmpm(requestKsmartBirthReq.getKsmartBirthDetails().get(0).getAmpm());
+        registerBirthDetail.setFirstNameEn(requestKsmartBirthReq.getKsmartBirthDetails().get(0).getFirstNameEn());
+        registerBirthDetail.setFirstNameMl(requestKsmartBirthReq.getKsmartBirthDetails().get(0).getFirstNameMl());
+        registerBirthDetail.setMiddleNameEn(requestKsmartBirthReq.getKsmartBirthDetails().get(0).getMiddleNameEn());
+        registerBirthDetail.setMiddleNameMl(requestKsmartBirthReq.getKsmartBirthDetails().get(0).getMiddleNameMl());
+        registerBirthDetail.setLastNameEn(requestKsmartBirthReq.getKsmartBirthDetails().get(0).getLastNameEn());
+        registerBirthDetail.setLastNameMl(requestKsmartBirthReq.getKsmartBirthDetails().get(0).getLastNameMl());
+        registerBirthDetail.setTenantId(requestKsmartBirthReq.getKsmartBirthDetails().get(0).getTenantId());
+        registerBirthDetail.setGender(requestKsmartBirthReq.getKsmartBirthDetails().get(0).getGender());
+//        registerBirthDetail.setRemarksEn(requestKsmartBirthReq.getKsmartBirthDetails().get(0).getRemarksEn());
+//        registerBirthDetail.setRemarksMl(requestKsmartBirthReq.getKsmartBirthDetails().get(0).getRemarksMl());
+        registerBirthDetail.setAadharNo(requestKsmartBirthReq.getKsmartBirthDetails().get(0).getAadharNo());
+        registerBirthDetail.setEsignUserCode(requestKsmartBirthReq.getKsmartBirthDetails().get(0).getEsignUserCode());
+        registerBirthDetail.setEsignUserDesigCode(requestKsmartBirthReq.getKsmartBirthDetails().get(0).getEsignUserDesigCode());
+//        registerBirthDetail.setIsAdopted(requestKsmartBirthReq.getKsmartBirthDetails().get(0).getIsAdopted());
+//        registerBirthDetail.setIsAbandoned(requestKsmartBirthReq.getKsmartBirthDetails().get(0).getIsAbandoned());
+//        registerBirthDetail.setIsMultipleBirth(requestKsmartBirthReq.getKsmartBirthDetails().get(0).getIsMultipleBirth());
+//        registerBirthDetail.setIsFatherInfoMissing(requestKsmartBirthReq.getKsmartBirthDetails().get(0).getIsFatherInfoMissing());
+//        registerBirthDetail.setIsMotherInfoMissing(requestKsmartBirthReq.getKsmartBirthDetails().get(0).getIsMotherInfoMissing());
+//        registerBirthDetail.setNoOfAliveBirth(requestKsmartBirthReq.getKsmartBirthDetails().get(0).getNoOfAliveBirth());
+//        registerBirthDetail.setMultipleBirthDetId(requestKsmartBirthReq.getKsmartBirthDetails().get(0).getMultipleBirthDetailsIid());
+//        registerBirthDetail.setIsBornOutside(requestKsmartBirthReq.getKsmartBirthDetails().get(0).getIsBornOutside());
+//        registerBirthDetail.setOtPassportNo(requestKsmartBirthReq.getKsmartBirthDetails().get(0).getPassportNo());
+        registerBirthDetail.setRegistrationNo(requestKsmartBirthReq.getKsmartBirthDetails().get(0).getRegistrationNo());
         registerBirthDetail.setRegistrationStatus("ACTIVE");
-        registerBirthDetail.setRegistrationDate(requestBirthReq.getBirthDetails().get(0).getRegistrationDate());
-        registerBirthDetail.setRegisterBirthPlace(createBirthPlace(requestBirthReq));
-        registerBirthDetail.setRegisterBirthFather(createFatherInfor(requestBirthReq));
-        registerBirthDetail.setRegisterBirthMother(createMotherInfor(requestBirthReq));
-        registerBirthDetail.setRegisterBirthPermanent(createRegisterBirthPermanentAddress(requestBirthReq));
-        registerBirthDetail.setRegisterBirthPresent(createRegisterBirthPresentAddress(requestBirthReq));
-        registerBirthDetail.setRegisterBirthStatitical(createRegisterBirthStatiticalInformation(requestBirthReq));
+        registerBirthDetail.setRegistrationDate(requestKsmartBirthReq.getKsmartBirthDetails().get(0).getRegistrationDate());
+//        registerBirthDetail.setRegisterBirthPlace(createBirthPlace(requestKsmartBirthReq));
+//        registerBirthDetail.setRegisterBirthFather(createFatherInfor(requestKsmartBirthReq));
+//        registerBirthDetail.setRegisterBirthMother(createMotherInfor(requestKsmartBirthReq));
+//        registerBirthDetail.setRegisterBirthPermanent(createRegisterBirthPermanentAddress(requestKsmartBirthReq));
+//        registerBirthDetail.setRegisterBirthPresent(createRegisterBirthPresentAddress(requestKsmartBirthReq));
+//        registerBirthDetail.setRegisterBirthStatitical(createRegisterBirthStatiticalInformation(requestKsmartBirthReq));
         registerBirthDetails.add(registerBirthDetail);
-        request.setRequestInfo(requestBirthReq.getRequestInfo());
+        request.setRequestInfo(requestKsmartBirthReq.getRequestInfo());
         request.setRegisterBirthDetails(registerBirthDetails);
         return  request;
     }
-    private RegisterBirthPlace createBirthPlace(BirthDetailsRequest requestBirthReq) {
+    /*  private RegisterBirthPlace createBirthPlace(BirthDetailsRequest requestBirthReq) {
         RegisterBirthPlace registerBirthPlace = new RegisterBirthPlace();
         registerBirthPlace.setPlaceOfBirthId(requestBirthReq.getBirthDetails().get(0).getBirthPlace().getPlaceOfBirthId());
         registerBirthPlace.setHospitalId(requestBirthReq.getBirthDetails().get(0).getBirthPlace().getHospitalId());
@@ -221,6 +223,5 @@ public class RegistryRequestService {
         registerBirthStatiticalInformation.setMotherResdnceCountryId(requestBirthReq.getBirthDetails().get(0).getBirthStatisticalInformation().getMotherResdnceCountryId());
         return registerBirthStatiticalInformation;
     }
-
+*/
 }
-
