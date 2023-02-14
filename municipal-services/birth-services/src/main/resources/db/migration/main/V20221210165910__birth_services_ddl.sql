@@ -45,10 +45,6 @@ CREATE TABLE IF NOT EXISTS public.eg_birth_details_audit
     registration_date bigint,
     action character varying(64) COLLATE pg_catalog."default",
     status character varying(64) COLLATE pg_catalog."default",
-    createdtime bigint,
-    createdby character varying(64) COLLATE pg_catalog."default",
-    lastmodifiedtime bigint,
-    lastmodifiedby character varying(64) COLLATE pg_catalog."default",
     adopt_firstname_en character varying(200) COLLATE pg_catalog."default",
     adopt_firstname_ml character varying(200) COLLATE pg_catalog."default",
     adopt_middlename_en character varying(200) COLLATE pg_catalog."default",
@@ -60,7 +56,11 @@ CREATE TABLE IF NOT EXISTS public.eg_birth_details_audit
     adopt_issuing_auththority character varying(64) COLLATE pg_catalog."default",
     adopt_has_agency boolean,
     adopt_agency_name character varying(2000) COLLATE pg_catalog."default",
-    adopt_agency_address character varying(5000) COLLATE pg_catalog."default"
+    adopt_agency_address character varying(5000) COLLATE pg_catalog."default",
+    createdby character varying(64) COLLATE pg_catalog."default",
+    createdtime bigint,
+    lastmodifiedby character varying(64) COLLATE pg_catalog."default",
+    lastmodifiedtime bigint
     );
 
 -- FUNCTION: public.process_eg_birth_details_audit()
@@ -508,14 +508,14 @@ CREATE TABLE IF NOT EXISTS public.eg_birth_statitical_information_audit
     mother_resdnce_district character varying(64) COLLATE pg_catalog."default",
     mother_resdnce_state character varying(64) COLLATE pg_catalog."default",
     mother_resdnce_country character varying(64) COLLATE pg_catalog."default",
-    birthdtlid character varying(64) COLLATE pg_catalog."default",
-    createdby character varying(64) COLLATE pg_catalog."default",
-    createdtime bigint,
-    lastmodifiedtime bigint,
-    lastmodifiedby character varying(64) COLLATE pg_catalog."default",
+    birthdtlid character varying(64) COLLATE pg_catalog."default" NOT NULL,
     mother_order_of_cur_delivery integer,
     mother_order_cur_child integer,
-    mother_res_no_of_years integer
+    mother_res_no_of_years integer,
+    createdby character varying(45) COLLATE pg_catalog."default",
+    createdtime bigint,
+    lastmodifiedby character varying(45) COLLATE pg_catalog."default",
+    lastmodifiedtime bigint
     );
 
 -- FUNCTION: public.process_eg_birth_statitical_information_audit()
