@@ -217,9 +217,9 @@ serviceMaps:
 
                   - jsonPath: $.ChildDetails.*.ParentsDetails.fatherUuid
 
-                  - jsonPath: $.ChildDetails.*.ParentsDetails.motherFirstNameEn
+                  - jsonPath: $.ChildDetails.*.ParentsDetails.fatherFirstNameEn
 
-                  - jsonPath: $.ChildDetails.*.ParentsDetails.firstname_ml
+                  - jsonPath: $.ChildDetails.*.ParentsDetails.fatherFirstNameMl
 
                   - jsonPath: $.ChildDetails.*.ParentsDetails.fatherAadhar
 
@@ -543,7 +543,6 @@ serviceMaps:
 
           basePath: ChildDetails.*
           jsonMaps:
-
             - jsonPath: $.ChildDetails.*.dateofreport
 
             - jsonPath: $.ChildDetails.*.childDOB
@@ -619,5 +618,9 @@ serviceMaps:
             - jsonPath: $.ChildDetails.*.action
 
             - jsonPath: $.ChildDetails.*.status
+
+            - jsonPath: $.ChildDetails.*.auditDetails.lastModifiedTime
+
+            - jsonPath: $.ChildDetails.*.auditDetails.lastModifiedBy
 
             - jsonPath: $.ChildDetails.*.id

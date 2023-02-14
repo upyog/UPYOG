@@ -28,7 +28,6 @@ public class KsmartBirthController {
         this.responseInfoFactory=responseInfoFactory;
     }
 
-
     @PostMapping(value = {"/createbirth"})
     public ResponseEntity<?> saveRegisterBirthDetails(@RequestBody KsmartBirthDetailsRequest request) {
         List<KsmartBirthAppliactionDetail> registerBirthDetails=ksmartBirthService.saveKsmartBirthDetails(request);
