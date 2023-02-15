@@ -55,9 +55,9 @@ serviceMaps:
 
             - jsonPath: $.ChildDetails.*.is_multiple_birth
 
-            - jsonPath: $.ChildDetails.*.is_father_info_missing
+            - jsonPath: $.ChildDetails.*.ParentsDetails.isfatherInfo
 
-            - jsonPath: $.ChildDetails.*.is_mother_info_missing
+            - jsonPath: $.ChildDetails.*.ParentsDetails.ismotherInfo
 
             - jsonPath: $.ChildDetails.*.no_of_alive_birth
 

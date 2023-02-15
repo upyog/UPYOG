@@ -2,9 +2,9 @@ package org.ksmart.birth.ksmartbirthapplication.model.newbirth;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
-import org.ksmart.birth.birthapplication.model.birth.BirthMotherInfo;
 import org.ksmart.birth.common.model.AuditDetails;
 import org.ksmart.birth.common.model.Document;
+import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.Size;
 import java.util.List;
