@@ -2,6 +2,7 @@ package org.ksmart.birth.ksmartbirthapplication.repository.querybuilder;
 
 
 import org.ksmart.birth.birthapplication.model.birth.BirthApplicationSearchCriteria;
+import org.ksmart.birth.ksmartbirthapplication.model.newbirth.KsmartBirthApplicationSearchCriteria;
 import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;
@@ -76,7 +77,7 @@ public class KsmartBirthApplicationQueryBuilder extends KsmartBaseBirthQuery {
             .append(" LEFT JOIN eg_birth_present_address epreadd ON epreadd.birthdtlid = ebd.id AND epreadd.bio_adopt='BIOLOGICAL'")
             .append(" LEFT JOIN eg_birth_statitical_information estat ON estat.birthdtlid = ebd.id").toString();
 
-    public String getBirthApplicationSearchQuery(@NotNull BirthApplicationSearchCriteria criteria,
+    public String getBirthApplicationSearchQuery(@NotNull KsmartBirthApplicationSearchCriteria criteria,
                                                  @NotNull List<Object> preparedStmtValues, Boolean isCount) {
         StringBuilder query = new StringBuilder(QUERY);
 
@@ -85,6 +86,10 @@ public class KsmartBirthApplicationQueryBuilder extends KsmartBaseBirthQuery {
         addFilter("ebd.applicationno", criteria.getApplicationNo(), query, preparedStmtValues);
         addFilter("ebd.registrationno", criteria.getRegistrationNo(), query, preparedStmtValues);
         addFilter("ebd.fm_fileno", criteria.getFileCode(), query, preparedStmtValues);
+        addFilter("ebp.hospitalid", criteria.getHospitalId(), query, preparedStmtValues);
+        addFilter("ebp.institution_id", criteria.getInstitutionId(), query, preparedStmtValues);
+        addFilter("ebp.ebp.ward_id", criteria.getWardCode(), query, preparedStmtValues);
+
 
         addDateRangeFilter("ebd.dateofreport",
                 criteria.getFromDate(),

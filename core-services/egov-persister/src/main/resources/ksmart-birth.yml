@@ -81,11 +81,7 @@ serviceMaps:
 
             - jsonPath: $.ChildDetails.*.file_status
 
-<<<<<<< HEAD
-            - jsonPath: $.ChildDetails.*.applicationno
-=======
-                - jsonPath: $.ChildDetails.*.applicationNumber
->>>>>>> 54bad9cffc (git)
+            - jsonPath: $.ChildDetails.*.applicationNumber
 
             - jsonPath: $.ChildDetails.*.registrationno
 
