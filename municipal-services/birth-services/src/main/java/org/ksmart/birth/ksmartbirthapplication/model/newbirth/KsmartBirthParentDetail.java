@@ -2,6 +2,7 @@ package org.ksmart.birth.ksmartbirthapplication.model.newbirth;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
+import org.ksmart.birth.common.model.AuditDetails;
 
 import javax.validation.constraints.Size;
 
@@ -78,5 +79,13 @@ public class KsmartBirthParentDetail {
     @Size(max = 64)
     @JsonProperty("fatherEmail")
     private String familyEmailid;
+    @Size(max = 64)
+    @JsonProperty("fatherPassport")
+    private String fatherPassport;
+    @Size(max = 64)
+    @JsonProperty("motherPassport")
+    private String motherPassport;
+    @JsonProperty("auditDetails")
+    private AuditDetails auditDetails;
 
 }

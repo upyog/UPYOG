@@ -100,4 +100,9 @@ public class BirthApplicationQueryBuilder extends BaseBirthQuery {
         return query.toString();
     }
 
+    public String getNextIDQuery() {
+        StringBuilder query = new StringBuilder("select fn_next_id(?,?,?,?)");
+        return query.toString();
+    }
+
 }

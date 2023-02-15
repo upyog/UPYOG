@@ -15,6 +15,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Repository
@@ -58,4 +59,5 @@ public class BirthApplicationRepository {
         List<BirthApplicationDetail> result = jdbcTemplate.query(query, preparedStmtValues.toArray(), birthApplicationRowMapper);
         return result;
     }
+
 }

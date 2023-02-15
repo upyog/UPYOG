@@ -1,6 +1,7 @@
 package org.ksmart.birth.ksmartbirthapplication.repository;
 
 import lombok.extern.slf4j.Slf4j;
+import org.ksmart.birth.birthapplication.repository.querybuilder.BirthApplicationQueryBuilder;
 import org.ksmart.birth.common.producer.BndProducer;
 import org.ksmart.birth.config.BirthConfiguration;
 import org.ksmart.birth.ksmartbirthapplication.enrichment.KsmartBirthEnrichment;
@@ -19,14 +20,17 @@ public class KsmartBirthRepository {
     private final  KsmartBirthEnrichment ksmartBirthEnrichment;
     private final BirthConfiguration birthDeathConfiguration;
     private final JdbcTemplate jdbcTemplate;
+    private final BirthApplicationQueryBuilder queryBuilder;
+
 
     @Autowired
-    KsmartBirthRepository(JdbcTemplate jdbcTemplate, KsmartBirthEnrichment ksmartBirthEnrichment,
-                               BirthConfiguration birthDeathConfiguration, BndProducer producer) {
+    KsmartBirthRepository(JdbcTemplate jdbcTemplate, KsmartBirthEnrichment ksmartBirthEnrichment, BirthConfiguration birthDeathConfiguration,
+                          BndProducer producer, BirthApplicationQueryBuilder queryBuilder) {
         this.jdbcTemplate = jdbcTemplate;
         this.ksmartBirthEnrichment = ksmartBirthEnrichment;
         this.birthDeathConfiguration = birthDeathConfiguration;
         this.producer = producer;
+        this.queryBuilder = queryBuilder;
     }
 
     public List<KsmartBirthAppliactionDetail> saveKsmartBirthDetails(KsmartBirthDetailsRequest request) {
@@ -40,4 +44,7 @@ public class KsmartBirthRepository {
         producer.push(birthDeathConfiguration.getUpdateKsmartBirthApplicationTopic(), request);
         return request.getKsmartBirthDetails();
     }
+
+
+
 }

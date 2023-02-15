@@ -205,7 +205,7 @@ public class KsmartBirthAppliactionDetail {
     private Long fileDate;
 
     @Size(max = 64)
-    @JsonProperty("applicationnumber")
+    @JsonProperty("applicationNumber")
     private String applicationNo;
 
     @Size(max = 64)

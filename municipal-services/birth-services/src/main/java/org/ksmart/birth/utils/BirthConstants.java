@@ -64,5 +64,25 @@ public class BirthConstants {
     public static final String INVALID_TENANT_ID_MDMS_KEY = "INVALID TENANTID";
     public static final String INVALID_TENANT_ID_MDMS_MSG = "No data found for this tenantID";
 
+    public static final String LB_TYPE_CORPORATION = "LB_TYPE_CORPORATION";
+
+    public static final String LB_TYPE_MUNICIPALITY = "LB_TYPE_MUNICIPALITY";
+
+    public static final String LB_TYPE_CORPORATION_CAPTION = "C";
+
+    public static final String LB_TYPE_MUNICIPALITY_CAPTION = "M";
+
+    public static final String APP_NUMBER_CAPTION = "AK";
+
+    public static final String FILE_NUMBER_CAPTION = "FM";
+
+    public static final String REGY_NUMBER_CAPTION = "RG";
+
+    public static final String CERT_NUMBER_CAPTION = "CT";
+
+    public static final String FUN_MODULE_NEW = "CRBRNR";
+
+    public static final String STATE_CODE = "KL";
+
 
 }

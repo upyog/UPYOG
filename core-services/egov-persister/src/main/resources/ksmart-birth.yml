@@ -81,7 +81,11 @@ serviceMaps:
 
             - jsonPath: $.ChildDetails.*.file_status
 
+<<<<<<< HEAD
             - jsonPath: $.ChildDetails.*.applicationno
+=======
+                - jsonPath: $.ChildDetails.*.applicationNumber
+>>>>>>> 54bad9cffc (git)
 
             - jsonPath: $.ChildDetails.*.registrationno
 
@@ -535,16 +539,16 @@ serviceMaps:
       fromTopic: ksmart-update-birth-application-topic
       isTransaction: true
       queryMaps:
-        - query: UPDATE public.eg_birth_details SET  dateofreport=?, dateofbirth=?, timeofbirth=?, am_pm=?, firstname_en=?, firstname_ml=?,
-            middlename_en=?, middlename_ml=?, lastname_en=?, lastname_ml=?, tenantid=?, gender=?, remarks_en=?, remarks_ml=?, aadharno=?, esign_user_code=?,
-            esign_user_desig_code=?, is_adopted=?, is_abandoned=?, is_multiple_birth=?, is_father_info_missing=?, is_mother_info_missing=?, no_of_alive_birth=?,
-            multiplebirthdetid=?, is_born_outside=?, ot_passportno=?, ot_dateofarrival=?, applicationtype=?, businessservice=?, workflowcode=?, fm_fileno=?,
-            file_date=?, file_status=?, applicationno=?, registrationno=?, registration_date=?, action=?, status=? ,lastModifiedTime=?,lastModifiedBy=? WHERE id=?;
+
+        - query: UPDATE public.eg_birth_details SET  dateofbirth=?, timeofbirth=?, am_pm=?, firstname_en=?, firstname_ml=?,
+                  middlename_en=?, middlename_ml=?, lastname_en=?, lastname_ml=?, tenantid=?, gender=?, aadharno=?, esign_user_code=?,
+                  esign_user_desig_code=?, is_father_info_missing=?, is_mother_info_missing=?, is_born_outside=?, ot_passportno=?, ot_dateofarrival=?, 
+                  applicationtype=?, businessservice=?, workflowcode=?, fm_fileno=?,
+                  file_date=?, file_status=?, applicationno=?, registrationno=?, registration_date=?, action=?, status=?,  lastmodifiedby=?,lastmodifiedtime=? WHERE id=?;
+
 
           basePath: ChildDetails.*
           jsonMaps:
-            - jsonPath: $.ChildDetails.*.dateofreport
-
             - jsonPath: $.ChildDetails.*.childDOB
 
             - jsonPath: $.ChildDetails.*.birthDateTime
@@ -567,29 +571,15 @@ serviceMaps:
 
             - jsonPath: $.ChildDetails.*.gender
 
-            - jsonPath: $.ChildDetails.*.remarks_en
-
-            - jsonPath: $.ChildDetails.*.remarks_ml
-
             - jsonPath: $.ChildDetails.*.childAadharNo
 
             - jsonPath: $.ChildDetails.*.esign_user_code
 
             - jsonPath: $.ChildDetails.*.esign_user_desig_code
 
-            - jsonPath: $.ChildDetails.*.is_adopted
-
-            - jsonPath: $.ChildDetails.*.is_abandoned
-
-            - jsonPath: $.ChildDetails.*.is_multiple_birth
-
             - jsonPath: $.ChildDetails.*.is_father_info_missing
 
             - jsonPath: $.ChildDetails.*.is_mother_info_missing
-
-            - jsonPath: $.ChildDetails.*.no_of_alive_birth
-
-            - jsonPath: $.ChildDetails.*.multiplebirthdetid
 
             - jsonPath: $.ChildDetails.*.is_born_outside
 
@@ -618,6 +608,162 @@ serviceMaps:
             - jsonPath: $.ChildDetails.*.action
 
             - jsonPath: $.ChildDetails.*.status
+
+            - jsonPath: $.ChildDetails.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.ChildDetails.*.auditDetails.lastModifiedTime
+
+            - jsonPath: $.ChildDetails.*.id
+
+        - query: UPDATE public.eg_birth_place SET placeofbirthid=?, hospitalid=?, vehicletypeid=?, vehicle_registration_no=?, vehicle_from_en=?, vehicle_to_en=?,
+            vehicle_from_ml=?, vehicle_to_ml=?, vehicle_other_en=?, vehicle_other_ml=?, vehicle_admit_hospital_en=?, vehicle_admit_hospital_ml=?,
+            public_place_id=?, ho_householder_en=?, ho_householder_ml=?, ho_res_asso_no=?, ho_housename_en=?,ho_housename_ml=?, ho_villageid=?, ho_talukid=?,
+            ho_districtid=?, ho_stateid=?, ho_poid=?, ho_pinno=?, ho_countryid=?, ward_id=?,oth_details_en=?, oth_details_ml=?, institution_type_id=?, institution_id=?,
+            auth_officer_id=?, auth_officer_desig_id=?,oth_auth_officer_name=?, oth_auth_officer_desig=?, informantsname_en=?, informantsname_ml=?, informantsaddress_en=?,
+            informantsaddress_ml=?, informants_mobileno=?, informants_aadhaar_no=?, ho_doorno=?, ho_subno=?, vehicle_haltplace=?, vehicle_hospitalid=?,
+            informant_addressline2=?, ho_res_asso_no_ml=?, ho_main_place_en=?, ho_street_locality_area_en=?, ho_main_place_ml=?, ho_street_locality_area_ml=?,lastmodifiedtime=?, lastmodifiedby=?
+            WHERE  birthdtlid=?;
+
+          basePath: ChildDetails.*
+          jsonMaps:
+
+            - jsonPath: $.ChildDetails.*.birthPlace
+
+            - jsonPath: $.ChildDetails.*.hospitalCode
+
+            - jsonPath: $.ChildDetails.*.vehicleType
+
+            - jsonPath: $.ChildDetails.*.vehicleRegistrationNo
+
+            - jsonPath: $.ChildDetails.*.vehicleFromEn
+
+            - jsonPath: $.ChildDetails.*.vehicleToEn
+
+            - jsonPath: $.ChildDetails.*.vehicleFromMl
+
+            - jsonPath: $.ChildDetails.*.vehicleToMl
+
+            - jsonPath: $.ChildDetails.*.vehicle_other_en
+
+            - jsonPath: $.ChildDetails.*.vehicle_other_ml
+
+            - jsonPath: $.ChildDetails.*.vehicle_admit_hospital_en
+
+            - jsonPath: $.ChildDetails.*.vehicle_admit_hospital_ml
+
+            - jsonPath: $.ChildDetails.*.publicPlaceType
+
+            - jsonPath: $.ChildDetails.*.adrsHouseNameEn
+
+            - jsonPath: $.ChildDetails.*.adrsHouseNameMl
+
+            - jsonPath: $.ChildDetails.*.ho_res_asso_no
+
+            - jsonPath: $.ChildDetails.*.adrsHouseNameEn
+
+            - jsonPath: $.ChildDetails.*.adrsHouseNameMl
+
+            - jsonPath: $.ChildDetails.*.ho_villageid
+
+            - jsonPath: $.ChildDetails.*.ho_talukid
+
+            - jsonPath: $.ChildDetails.*.ho_districtid
+
+            - jsonPath: $.ChildDetails.*.ho_stateid
+
+            - jsonPath: $.ChildDetails.*.ho_poid
+
+            - jsonPath: $.ChildDetails.*.ho_pinno
+
+            - jsonPath: $.ChildDetails.*.ho_countryid
+
+            - jsonPath: $.ChildDetails.*.wardNo
+
+            - jsonPath: $.ChildDetails.*.oth_details_en
+
+            - jsonPath: $.ChildDetails.*.oth_details_ml
+
+            - jsonPath: $.ChildDetails.*.institutionTypeCode
+
+            - jsonPath: $.ChildDetails.*.institutionId
+
+            - jsonPath: $.ChildDetails.*.auth_officer_id
+
+            - jsonPath: $.ChildDetails.*.auth_officer_desig_id
+
+            - jsonPath: $.ChildDetails.*.oth_auth_officer_name
+
+            - jsonPath: $.ChildDetails.*.oth_auth_officer_desig
+
+            - jsonPath: $.ChildDetails.*.InformarHosInstDetails.infomantFirstNameEn
+
+            - jsonPath: $.ChildDetails.*.InformarHosInstDetails.informantsname_ml
+
+            - jsonPath: $.ChildDetails.*.InformarHosInstDetails.informerAddress
+
+            - jsonPath: $.ChildDetails.*.InformarHosInstDetails.informantsaddress_ml
+
+            - jsonPath: $.ChildDetails.*.InformarHosInstDetails.infomantMobile
+
+            - jsonPath: $.ChildDetails.*.InformarHosInstDetails.infomantAadhar
+
+            - jsonPath: $.ChildDetails.*.ho_doorno
+
+            - jsonPath: $.ChildDetails.*.ho_subno
+
+            - jsonPath: $.ChildDetails.*.vehicleHaltPlaceMl
+
+            - jsonPath: $.ChildDetails.*.vehicle_hospitalid
+
+            - jsonPath: $.ChildDetails.*.informant_addressline2
+
+            - jsonPath: $.ChildDetails.*.ho_res_asso_no_ml
+
+            - jsonPath: $.ChildDetails.*.auditDetails.ho_main_place_en
+
+            - jsonPath: $.ChildDetails.*.ho_street_locality_area_en
+
+            - jsonPath: $.ChildDetails.*.ho_main_place_ml
+
+            - jsonPath: $.ChildDetails.*.ho_street_locality_area_ml
+
+            - jsonPath: $.ChildDetails.*.auditDetails.lastModifiedTime
+
+            - jsonPath: $.ChildDetails.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.ChildDetails.*.id
+
+
+        - query: UPDATE public.eg_birth_father_information SET firstname_en=?, firstname_ml=?, aadharno=?, ot_passportno=?,  lastmodifiedtime=?, lastmodifiedby=? WHERE birthdtlid=?;
+          basePath: ChildDetails.*.ParentsDetails
+          jsonMaps:
+
+            - jsonPath: $.ChildDetails.*.ParentsDetails.firstname_en
+
+            - jsonPath: $.ChildDetails.*.ParentsDetails.firstname_ml
+
+            - jsonPath: $.ChildDetails.*.ParentsDetails.fatherAadhar
+
+            - jsonPath: $.ChildDetails.*.ParentsDetails.fatherPassport
+
+            - jsonPath: $.ChildDetails.*.auditDetails.lastModifiedTime
+
+            - jsonPath: $.ChildDetails.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.ChildDetails.*.id
+
+        - query: UPDATE public.eg_birth_mother_information SET firstname_en=?, firstname_ml=?,  aadharno=?, ot_passportno=?,  lastmodifiedtime=?, lastmodifiedby=?, bio_adopt=? WHERE birthdtlid=?;
+
+          basePath: ChildDetails.*.ParentsDetails
+          jsonMaps:
+
+            - jsonPath: $.ChildDetails.*.ParentsDetails.motherFirstNameEn
+
+            - jsonPath: $.ChildDetails.*.ParentsDetails.motherFirstNameMl
+
+            - jsonPath: $.ChildDetails.*.ParentsDetails.motherAadhar
+
+            - jsonPath: $.ChildDetails.*.ParentsDetails.motherPassport
 
             - jsonPath: $.ChildDetails.*.auditDetails.lastModifiedTime
 
