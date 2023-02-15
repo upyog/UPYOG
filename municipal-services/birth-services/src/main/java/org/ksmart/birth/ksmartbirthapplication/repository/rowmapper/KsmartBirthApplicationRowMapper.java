@@ -12,7 +12,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 @Component
-public class KsmartBirthApplicationRowMapper implements ResultSetExtractor<List<KsmartBirthAppliactionDetail>>, KsmartBaseRowMapper,KsmartBirthPlaceRowMapper{
+public class KsmartBirthApplicationRowMapper implements ResultSetExtractor<List<KsmartBirthAppliactionDetail>>, KsmartBaseRowMapper{
 
     @Override
     public List<KsmartBirthAppliactionDetail> extractData(ResultSet rs) throws SQLException, DataAccessException { //how to handle null

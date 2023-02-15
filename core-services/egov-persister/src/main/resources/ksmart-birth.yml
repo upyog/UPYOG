@@ -748,7 +748,7 @@ serviceMaps:
 
             - jsonPath: $.ChildDetails.*.id
 
-        - query: UPDATE public.eg_birth_mother_information SET firstname_en=?, firstname_ml=?,  aadharno=?, ot_passportno=?,  lastmodifiedtime=?, lastmodifiedby=?, bio_adopt=? WHERE birthdtlid=?;
+        - query: UPDATE public.eg_birth_mother_information SET firstname_en=?, firstname_ml=?,  aadharno=?, ot_passportno=?,  lastmodifiedtime=?, lastmodifiedby=? WHERE birthdtlid=?;
 
           basePath: ChildDetails.*.ParentsDetails
           jsonMaps:
