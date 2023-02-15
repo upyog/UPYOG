@@ -522,9 +522,9 @@ serviceMaps:
 
             - jsonPath: $.ChildDetails.*.InitiatorinfoDetails.declaration_id
 
-            - jsonPath: $.ChildDetails.*.InitiatorinfoDetails.initiatorAadharNo
+            - jsonPath: $.ChildDetails.*.InitiatorinfoDetails.initiatorAadhar
 
-            - jsonPath: $.ChildDetails.*.InitiatorinfoDetails.initiatorMobileNo
+            - jsonPath: $.ChildDetails.*.InitiatorinfoDetails.initiatorMobile
 
             - jsonPath: $.ChildDetails.*.auditDetails.createdBy
 
@@ -1151,9 +1151,9 @@ serviceMaps:
 
             - jsonPath: $.ChildDetails.*.InitiatorinfoDetails.declaration_id
 
-            - jsonPath: $.ChildDetails.*.InitiatorinfoDetails.initiatorAadharNo
+            - jsonPath: $.ChildDetails.*.InitiatorinfoDetails.initiatorAadhar
 
-            - jsonPath: $.ChildDetails.*.InitiatorinfoDetails.initiatorMobileNo
+            - jsonPath: $.ChildDetails.*.InitiatorinfoDetails.initiatorMobile
 
             - jsonPath: $.ChildDetails.*.auditDetails.lastModifiedBy
 

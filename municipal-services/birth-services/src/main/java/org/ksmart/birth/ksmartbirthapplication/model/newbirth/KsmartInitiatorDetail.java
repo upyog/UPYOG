@@ -23,11 +23,11 @@ public class KsmartInitiatorDetail {
     private String initiatorNameEn;
 
     @Size(max = 15)
-    @JsonProperty("initiatorAadharNo")
+    @JsonProperty("initiatorAadhar")
     private String initiatorAadharNo;
 
     @Size(max = 12)
-    @JsonProperty("initiatorMobileNo")
+    @JsonProperty("initiatorMobile")
     private String initiatorMobileNo;
 
     @Size(max = 64)
