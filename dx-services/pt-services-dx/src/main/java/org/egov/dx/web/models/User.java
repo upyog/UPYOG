@@ -228,5 +228,10 @@ public class User   {
 
                 return Objects.hash(uuid, name, mobileNumber);
         }
+
+		public static Object builder() {
+			// TODO Auto-generated method stub
+			return null;
+		}
 }
 
