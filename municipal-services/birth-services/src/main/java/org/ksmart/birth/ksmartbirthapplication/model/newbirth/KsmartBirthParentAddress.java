@@ -145,10 +145,6 @@ public class KsmartBirthParentAddress {
     @JsonProperty("presentOutSideIndiaAdressMlB")
     private String presentOutSideIndiaAdressMlB;
 
-    @Size(max = 1000)
-    @JsonProperty("presentOutSideIndiaLocalityMl")
-    private String presentOutSideIndiaLocalityMl;
-
     @Size(max = 2500)
     @JsonProperty("presentOutSideIndiaProvinceEn")
     private String presentOutSideIndiaProvinceEn;
