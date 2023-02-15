@@ -1,591 +1,339 @@
-
 package org.ksmart.birth.ksmartbirthapplication.model.newbirth;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
+import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.Size;
-
-//public class KsmartBirthParentAddress {
-//
-////    @Size(max = 64)
-////    @JsonProperty("presentAddresscountry")
-////    private String presentCountryid;
-////
-////    @Size(max = 64)
-////    @JsonProperty("presentAddressstatename")
-////    private String presentStateid;
-////
-////    @Size(max = 64)
-////    @JsonProperty("presentInsidekeralalbname")
-////    private String presentInTenantid;
-////
-////    @Size(max = 64)
-////    @JsonProperty("presentInsidekeraladistrict")
-////    private String presentInDistrictid;
-////
-////    @Size(max = 64)
-////    @JsonProperty("presentInsidekeralataluk")
-////    private String presentInTalukName;
-////
-////    @Size(max = 64)
-////    @JsonProperty("presentInsidekeralavillage")
-////    private String presentInVillageName;
-////
-////    @Size(max = 64)
-////    @JsonProperty("presentInsidekeralalocalitynameen")
-////    private String presentInMainPlaceEn;
-////
-////    @Size(max = 64)
-////    @JsonProperty("presentInsidekeralastreetnameen")
-////    private String presentInStreetLocalityAreaEn;
-////
-////    @Size(max = 64)
-////    @JsonProperty("presentInsidekeralahousenameen")
-////    private String presentInHousenameEn;
-////
-////    @Size(max = 64)
-////    @JsonProperty("presentInsidekeralalocalitynameml")
-////    private String presentInMainPlaceMl;
-////
-////    @Size(max = 64)
-////    @JsonProperty("presentInsidekeralastreetnameml")
-////    private String presentInStreetLocalityAreaMl;
-////
-////    @Size(max = 64)
-////    @JsonProperty("presentInsidekeralahousenameml")
-////    private String presentInHousenameMl;
-////
-////    @Size(max = 64)
-////    @JsonProperty("presentInsidekeralapincode")
-////    private String presentInPinno;
-////
-////    @Size(max = 64)
-////    @JsonProperty("presentInsidekeralapostoffice")
-////    private String presentInPoid;
-////
-////    @Size(max = 64)
-////    @JsonProperty("presentOutsidekeraladistrict")
-////    private String presentDistrictid;
-////
-////    @Size(max = 64)
-////    @JsonProperty("presentOutsidekeralataluk")
-////    private String presentTalukName;
-////
-////    @Size(max = 64)
-////    @JsonProperty("presentOutsidekeralavillage")
-////    private String presentVillageName;
-////
-////    @Size(max = 64)
-////    @JsonProperty("presentOutsidekeralacityvilgeen")
-////    private String present;
-////
-////    @Size(max = 64)
-////    @JsonProperty("presentOutsidekeralacityvilgeml")
-////    private String present;
-////
-////    @Size(max = 64)
-////    @JsonProperty("presentOutsidekeralapincode")
-////    private String presentPinno;
-////
-////    @Size(max = 64)
-////    @JsonProperty("presentOutsidekeralapostoffice")
-////    private String presentPoid;
-////
-////    @Size(max = 64)
-////    @JsonProperty("presentOutsidekeralalocalitynameen")
-////    private String present;
-////
-////    @Size(max = 64)
-////    @JsonProperty("presentOutsidekeralastreetnameen")
-////    private String presentStreetLocalityAreaEn;
-////
-////    @Size(max = 64)
-////    @JsonProperty("presentOutsidekeralahousenameen")
-////    private String presentHousenameEn;
-////
-////    @Size(max = 64)
-////    @JsonProperty("presentOutsidekeralalocalitynameml")
-////    private String presentMainPlaceMl;
-////
-////    @Size(max = 64)
-////    @JsonProperty("presentOutsidekeralastreetnameml")
-////    private String presentStreetLocalityAreaMl;
-////
-////    @Size(max = 64)
-////    @JsonProperty("presentOutsidekeralahousenameml")
-////    private String presentHousenameMl;
-////
-////    @Size(max = 64)
-////    @JsonProperty("presentAdrscitytown")
-////    private String present;
-////
-////    @Size(max = 64)
-////    @JsonProperty("presentOutsidecountry")
-////    private String presentCountryid;
-////
-////    @Size(max = 64)
-////    @JsonProperty("presentProvinceen")
-////    private String presentOtStateRegionProvinceEn;
-////
-////    @Size(max = 64)
-////    @JsonProperty("presentPostcode")
-////    private String presentOtZipcode;
-////
-////    @Size(max = 64)
-////    @JsonProperty("presentIscitytownvillage")
-////    private String present;
-////
-////    @Size(max = 64)
-////    @JsonProperty("presentAddresslinetwoen")
-////    private String presentOtAddress2En;
-////
-////    @Size(max = 64)
-////    @JsonProperty("presentAddresslinetwoml")
-////    private String presentOtAddress2Ml;
-////
-////    @Size(max = 64)
-////    @JsonProperty("presentAddresslineoneen")
-////    private String presentOtAddress1En;
-////
-////    @Size(max = 64)
-////    @JsonProperty("presentAddresslineoneml")
-////    private String presentOtAddress1Ml;
-////
-////    @Size(max = 64)
-////    @JsonProperty("permanantAddresscountry")
-////    private String permanantCountryid;
-////
-////    @Size(max = 64)
-////    @JsonProperty("permanantAddressstatename")
-////    private String permanantStateid;
-////
-////    @Size(max = 64)
-////    @JsonProperty("permanantInsidekeralalbname")
-////    private String permanantTenantid;
-////
-////    @Size(max = 64)
-////    @JsonProperty("permanantInsidekeraladistrict")
-////    private String permanantDistrictid;
-////
-////    @Size(max = 64)
-////    @JsonProperty("permanantInsidekeralataluk")
-////    private String permanantTalukName;
-////
-////    @Size(max = 64)
-////    @JsonProperty("permanantInsidekeralavillage")
-////    private String permanantVillageName;
-////
-////    @Size(max = 64)
-////    @JsonProperty("permanantInsidekeralalocalitynameen")
-////    private String permanantMainPlaceEn;
-////
-////    @Size(max = 64)
-////    @JsonProperty("permanantInsidekeralastreetnameen")
-////    private String permanantStreetLocalityAreaEn;
-////
-////    @Size(max = 64)
-////    @JsonProperty("permanantInsidekeralahousenameen")
-////    private String permanantHousenameEn;
-////
-////    @Size(max = 64)
-////    @JsonProperty("permanantInsidekeralalocalitynameml")
-////    private String permanantMainPlaceMl;
-////
-////    @Size(max = 64)
-////    @JsonProperty("permanantInsidekeralastreetnameml")
-////    private String permanantStreetLocalityAreaMl;
-////
-////    @Size(max = 64)
-////    @JsonProperty("permanantInsidekeralahousenameml")
-////    private String permanantHousenameMl;
-////
-////    @Size(max = 64)
-////    @JsonProperty("permanantInsidekeralapincode")
-////    private String permanantPinno;
-////
-////    @Size(max = 64)
-////    @JsonProperty("permanantInsidekeralapostoffice")
-////    private String permanantPoid;
-////
-////    @Size(max = 64)
-////    @JsonProperty("permanantOutsidekeraladistrict")
-////    private String permanantDistrictid;
-////
-////    @Size(max = 64)
-////    @JsonProperty("permanantOutsidekeralataluk")
-////    private String permanantTalukName;
-////
-////    @Size(max = 64)
-////    @JsonProperty("permanantOutsidekeralavillage")
-////    private String permanantVillageName;
-////
-////    @Size(max = 64)
-////    @JsonProperty("permanantOutsidekeralacityvilgeen")
-////    private String permanant;
-////
-////    @Size(max = 64)
-////    @JsonProperty("permanantOutsidekeralacityvilgeml")
-////    private String permanant;
-////
-////    @Size(max = 64)
-////    @JsonProperty("permanantOutsidekeralapincode")
-////    private String permanantPinno;
-////
-////    @Size(max = 64)
-////    @JsonProperty("permanantOutsidekeralapostoffice")
-////    private String permanantPoid;
-////
-////    @Size(max = 64)
-////    @JsonProperty("permanantOutsidekeralalocalitynameen")
-////    private String permanant;
-////
-////    @Size(max = 64)
-////    @JsonProperty("permanantOutsidekeralastreetnameen")
-////    private String permanantStreetLocalityAreaEn;
-////
-////    @Size(max = 64)
-////    @JsonProperty("permanantOutsidekeralahousenameen")
-////    private String permanantHousenameEn;
-////
-////    @Size(max = 64)
-////    @JsonProperty("permanantOutsidekeralalocalitynameml")
-////    private String permanantMainPlaceMl;
-////
-////    @Size(max = 64)
-////    @JsonProperty("permanantOutsidekeralastreetnameml")
-////    private String permanantStreetLocalityAreaMl;
-////
-////    @Size(max = 64)
-////    @JsonProperty("permanantOutsidekeralahousenameml")
-////    private String permanantHousenameMl;
-////
-////    @Size(max = 64)
-////    @JsonProperty("permanantAdrscitytown")
-////    private String permanant;
-////
-////    @Size(max = 64)
-////    @JsonProperty("permanantOutsidecountry")
-////    private String permanantCountryid;
-////
-////    @Size(max = 64)
-////    @JsonProperty("permanantProvinceen")
-////    private String permanantOtStateRegionProvinceEn;
-////
-////    @Size(max = 64)
-////    @JsonProperty("permanantPostcode")
-////    private String permanantOtZipcode;
-////
-////    @Size(max = 64)
-////    @JsonProperty("permanantIscitytownvillage")
-////    private String permanant;
-////
-////    @Size(max = 64)
-////    @JsonProperty("permanantAddresslinetwoen")
-////    private String permanantOtAddress2En;
-////
-////    @Size(max = 64)
-////    @JsonProperty("permanantAddresslinetwoml")
-////    private String permanantOtAddress2Ml;
-////
-////    @Size(max = 64)
-////    @JsonProperty("permanantAddresslineoneen")
-////    private String permanantOtAddress1En;
-////
-////    @Size(max = 64)
-////    @JsonProperty("permanantAddresslineoneml")
-////    private String permanantOtAddress1Ml;
-//
-//}
-
+@Validated
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class KsmartBirthParentAddress {
 
-//    @Size(max = 64)
-//    @JsonProperty("presentAddresscountry")
-//    private String presentCountryid;
-//
-//    @Size(max = 64)
-//    @JsonProperty("presentAddressstatename")
-//    private String presentStateid;
-//
-//    @Size(max = 64)
-//    @JsonProperty("presentInsidekeralalbname")
-//    private String presentInTenantid;
-//
-//    @Size(max = 64)
-//    @JsonProperty("presentInsidekeraladistrict")
-//    private String presentInDistrictid;
-//
-//    @Size(max = 64)
-//    @JsonProperty("presentInsidekeralataluk")
-//    private String presentInTalukName;
-//
-//    @Size(max = 64)
-//    @JsonProperty("presentInsidekeralavillage")
-//    private String presentInVillageName;
-//
-//    @Size(max = 64)
-//    @JsonProperty("presentInsidekeralalocalitynameen")
-//    private String presentInMainPlaceEn;
-//
-//    @Size(max = 64)
-//    @JsonProperty("presentInsidekeralastreetnameen")
-//    private String presentInStreetLocalityAreaEn;
-//
-//    @Size(max = 64)
-//    @JsonProperty("presentInsidekeralahousenameen")
-//    private String presentInHousenameEn;
-//
-//    @Size(max = 64)
-//    @JsonProperty("presentInsidekeralalocalitynameml")
-//    private String presentInMainPlaceMl;
-//
-//    @Size(max = 64)
-//    @JsonProperty("presentInsidekeralastreetnameml")
-//    private String presentInStreetLocalityAreaMl;
-//
-//    @Size(max = 64)
-//    @JsonProperty("presentInsidekeralahousenameml")
-//    private String presentInHousenameMl;
-//
-//    @Size(max = 64)
-//    @JsonProperty("presentInsidekeralapincode")
-//    private String presentInPinno;
-//
-//    @Size(max = 64)
-//    @JsonProperty("presentInsidekeralapostoffice")
-//    private String presentInPoid;
-//
-//    @Size(max = 64)
-//    @JsonProperty("presentOutsidekeraladistrict")
-//    private String presentDistrictid;
-//
-//    @Size(max = 64)
-//    @JsonProperty("presentOutsidekeralataluk")
-//    private String presentTalukName;
-//
-//    @Size(max = 64)
-//    @JsonProperty("presentOutsidekeralavillage")
-//    private String presentVillageName;
-//
-//    @Size(max = 64)
-//    @JsonProperty("presentOutsidekeralacityvilgeen")
-//    private String present;
-//
-//    @Size(max = 64)
-//    @JsonProperty("presentOutsidekeralacityvilgeml")
-//    private String present;
-//
-//    @Size(max = 64)
-//    @JsonProperty("presentOutsidekeralapincode")
-//    private String presentPinno;
-//
-//    @Size(max = 64)
-//    @JsonProperty("presentOutsidekeralapostoffice")
-//    private String presentPoid;
-//
-//    @Size(max = 64)
-//    @JsonProperty("presentOutsidekeralalocalitynameen")
-//    private String present;
-//
-//    @Size(max = 64)
-//    @JsonProperty("presentOutsidekeralastreetnameen")
-//    private String presentStreetLocalityAreaEn;
-//
-//    @Size(max = 64)
-//    @JsonProperty("presentOutsidekeralahousenameen")
-//    private String presentHousenameEn;
-//
-//    @Size(max = 64)
-//    @JsonProperty("presentOutsidekeralalocalitynameml")
-//    private String presentMainPlaceMl;
-//
-//    @Size(max = 64)
-//    @JsonProperty("presentOutsidekeralastreetnameml")
-//    private String presentStreetLocalityAreaMl;
-//
-//    @Size(max = 64)
-//    @JsonProperty("presentOutsidekeralahousenameml")
-//    private String presentHousenameMl;
-//
-//    @Size(max = 64)
-//    @JsonProperty("presentAdrscitytown")
-//    private String present;
-//
-//    @Size(max = 64)
-//    @JsonProperty("presentOutsidecountry")
-//    private String presentCountryid;
-//
-//    @Size(max = 64)
-//    @JsonProperty("presentProvinceen")
-//    private String presentOtStateRegionProvinceEn;
-//
-//    @Size(max = 64)
-//    @JsonProperty("presentPostcode")
-//    private String presentOtZipcode;
-//
-//    @Size(max = 64)
-//    @JsonProperty("presentIscitytownvillage")
-//    private String present;
-//
-//    @Size(max = 64)
-//    @JsonProperty("presentAddresslinetwoen")
-//    private String presentOtAddress2En;
-//
-//    @Size(max = 64)
-//    @JsonProperty("presentAddresslinetwoml")
-//    private String presentOtAddress2Ml;
-//
-//    @Size(max = 64)
-//    @JsonProperty("presentAddresslineoneen")
-//    private String presentOtAddress1En;
-//
-//    @Size(max = 64)
-//    @JsonProperty("presentAddresslineoneml")
-//    private String presentOtAddress1Ml;
-//
-//    @Size(max = 64)
-//    @JsonProperty("permanantAddresscountry")
-//    private String permanantCountryid;
-//
-//    @Size(max = 64)
-//    @JsonProperty("permanantAddressstatename")
-//    private String permanantStateid;
-//
-//    @Size(max = 64)
-//    @JsonProperty("permanantInsidekeralalbname")
-//    private String permanantTenantid;
-//
-//    @Size(max = 64)
-//    @JsonProperty("permanantInsidekeraladistrict")
-//    private String permanantDistrictid;
-//
-//    @Size(max = 64)
-//    @JsonProperty("permanantInsidekeralataluk")
-//    private String permanantTalukName;
-//
-//    @Size(max = 64)
-//    @JsonProperty("permanantInsidekeralavillage")
-//    private String permanantVillageName;
-//
-//    @Size(max = 64)
-//    @JsonProperty("permanantInsidekeralalocalitynameen")
-//    private String permanantMainPlaceEn;
-//
-//    @Size(max = 64)
-//    @JsonProperty("permanantInsidekeralastreetnameen")
-//    private String permanantStreetLocalityAreaEn;
-//
-//    @Size(max = 64)
-//    @JsonProperty("permanantInsidekeralahousenameen")
-//    private String permanantHousenameEn;
-//
-//    @Size(max = 64)
-//    @JsonProperty("permanantInsidekeralalocalitynameml")
-//    private String permanantMainPlaceMl;
-//
-//    @Size(max = 64)
-//    @JsonProperty("permanantInsidekeralastreetnameml")
-//    private String permanantStreetLocalityAreaMl;
-//
-//    @Size(max = 64)
-//    @JsonProperty("permanantInsidekeralahousenameml")
-//    private String permanantHousenameMl;
-//
-//    @Size(max = 64)
-//    @JsonProperty("permanantInsidekeralapincode")
-//    private String permanantPinno;
-//
-//    @Size(max = 64)
-//    @JsonProperty("permanantInsidekeralapostoffice")
-//    private String permanantPoid;
-//
-//    @Size(max = 64)
-//    @JsonProperty("permanantOutsidekeraladistrict")
-//    private String permanantDistrictid;
-//
-//    @Size(max = 64)
-//    @JsonProperty("permanantOutsidekeralataluk")
-//    private String permanantTalukName;
-//
-//    @Size(max = 64)
-//    @JsonProperty("permanantOutsidekeralavillage")
-//    private String permanantVillageName;
-//
-//    @Size(max = 64)
-//    @JsonProperty("permanantOutsidekeralacityvilgeen")
-//    private String permanant;
-//
-//    @Size(max = 64)
-//    @JsonProperty("permanantOutsidekeralacityvilgeml")
-//    private String permanant;
-//
-//    @Size(max = 64)
-//    @JsonProperty("permanantOutsidekeralapincode")
-//    private String permanantPinno;
-//
-//    @Size(max = 64)
-//    @JsonProperty("permanantOutsidekeralapostoffice")
-//    private String permanantPoid;
-//
-//    @Size(max = 64)
-//    @JsonProperty("permanantOutsidekeralalocalitynameen")
-//    private String permanant;
-//
-//    @Size(max = 64)
-//    @JsonProperty("permanantOutsidekeralastreetnameen")
-//    private String permanantStreetLocalityAreaEn;
-//
-//    @Size(max = 64)
-//    @JsonProperty("permanantOutsidekeralahousenameen")
-//    private String permanantHousenameEn;
-//
-//    @Size(max = 64)
-//    @JsonProperty("permanantOutsidekeralalocalitynameml")
-//    private String permanantMainPlaceMl;
-//
-//    @Size(max = 64)
-//    @JsonProperty("permanantOutsidekeralastreetnameml")
-//    private String permanantStreetLocalityAreaMl;
-//
-//    @Size(max = 64)
-//    @JsonProperty("permanantOutsidekeralahousenameml")
-//    private String permanantHousenameMl;
-//
-//    @Size(max = 64)
-//    @JsonProperty("permanantAdrscitytown")
-//    private String permanant;
-//
-//    @Size(max = 64)
-//    @JsonProperty("permanantOutsidecountry")
-//    private String permanantCountryid;
-//
-//    @Size(max = 64)
-//    @JsonProperty("permanantProvinceen")
-//    private String permanantOtStateRegionProvinceEn;
-//
-//    @Size(max = 64)
-//    @JsonProperty("permanantPostcode")
-//    private String permanantOtZipcode;
-//
-//    @Size(max = 64)
-//    @JsonProperty("permanantIscitytownvillage")
-//    private String permanant;
-//
-//    @Size(max = 64)
-//    @JsonProperty("permanantAddresslinetwoen")
-//    private String permanantOtAddress2En;
-//
-//    @Size(max = 64)
-//    @JsonProperty("permanantAddresslinetwoml")
-//    private String permanantOtAddress2Ml;
-//
-//    @Size(max = 64)
-//    @JsonProperty("permanantAddresslineoneen")
-//    private String permanantOtAddress1En;
-//
-//    @Size(max = 64)
-//    @JsonProperty("permanantAddresslineoneml")
-//    private String permanantOtAddress1Ml;
+    @Size(max = 64)
+    @JsonProperty("presentaddressCountry")
+    private String countryid;
+
+    @Size(max = 64)
+    @JsonProperty("presentaddressStateName")
+    private String stateid;
+
+    @Size(max = 64)
+    @JsonProperty("presentInsideKeralaLBName")
+    private String presentInsideKeralaLBName;
+
+    @Size(max = 64)
+    @JsonProperty("presentInsideKeralaDistrict")
+    private String presentInsideKeralaDistrict;
+
+    @Size(max = 64)
+    @JsonProperty("presentInsideKeralaTaluk")
+    private String presentInsideKeralaTaluk;
+
+    @Size(max = 64)
+    @JsonProperty("presentInsideKeralaVillage")
+    private String presentInsideKeralaVillage;
+
+    @Size(max = 1000)
+    @JsonProperty("presentInsideKeralaLocalityNameEn")
+    private String presentInsideKeralaLocalityNameEn;
+
+    @Size(max = 2000)
+    @JsonProperty("presentInsideKeralaStreetNameEn")
+    private String presentInsideKeralaStreetNameEn;
+
+    @Size(max = 2500)
+    @JsonProperty("presentInsideKeralaHouseNameEn")
+    private String presentInsideKeralaHouseNameEn;
+
+    @Size(max = 1000)
+    @JsonProperty("presentInsideKeralaLocalityNameMl")
+    private String presentInsideKeralaLocalityNameMl;
+
+    @Size(max = 2000)
+    @JsonProperty("presentInsideKeralaStreetNameMl")
+    private String presentInsideKeralaStreetNameMl;
+
+    @Size(max = 2500)
+    @JsonProperty("presentInsideKeralaHouseNameMl")
+    private String presentInsideKeralaHouseNameMl;
+
+    @Size(max = 10)
+    @JsonProperty("presentInsideKeralaPincode")
+    private String presentInsideKeralaPincode;
+
+    @Size(max = 64)
+    @JsonProperty("presentInsideKeralaPostOffice")
+    private String presentInsideKeralaPostOffice;
+
+    @Size(max = 64)
+    @JsonProperty("presentWardNo")
+    private String presentWardNo;
+
+    @Size(max = 64)
+    @JsonProperty("presentOutsideKeralaDistrict")
+    private String presentOutsideKeralaDistrict;
+
+    @Size(max = 1000)
+    @JsonProperty("presentOutsideKeralaTaluk")
+    private String presentOutsideKeralaTalukName;
+
+    @Size(max = 1000)
+    @JsonProperty("presentOutsideKeralaVillage")
+    private String presentOutsideKeralaVillageName;
+
+
+    @Size(max = 64)
+    @JsonProperty("presentOutsideKeralaCityVilgeEn")
+    private String presentOutsideKeralaCityVilgeEn;
+
+    @Size(max = 64)
+    @JsonProperty("presentOutsideKeralaPincode")
+    private String presentOutsideKeralaPincode;
+    @Size(max = 64)
+    @JsonProperty("presentOutsideKeralaPostOfficeEn")
+    private String presentOutsideKeralaPostOfficeEn;
+
+    @Size(max = 64)
+    @JsonProperty("presentOutsideKeralaPostOfficeMl")
+    private String presentOutsideKeralaPostOfficeMl;
+
+    @Size(max = 1000)
+    @JsonProperty("presentOutsideKeralaLocalityNameEn")
+    private String presentOutsideKeralaLocalityNameEn;
+
+    @Size(max = 2000)
+    @JsonProperty("presentOutsideKeralaStreetNameEn")
+    private String presentOutsideKeralaStreetNameEn;
+
+    @Size(max = 2500)
+    @JsonProperty("presentOutsideKeralaHouseNameEn")
+    private String presentOutsideKeralaHouseNameEn;
+
+    @Size(max = 1000)
+    @JsonProperty("presentOutsideKeralaLocalityNameMl")
+    private String presentOutsideKeralaLocalityNameMl;
+
+    @Size(max = 2000)
+    @JsonProperty("presentOutsideKeralaStreetNameMl")
+    private String presentOutsideKeralaStreetNameMl;
+
+
+    @Size(max = 2500)
+    @JsonProperty("presentOutsideKeralaHouseNameMl")
+    private String presentOutsideKeralaHouseNameMl;
+
+    @Size(max = 2500)
+    @JsonProperty("presentOutSideIndiaAdressEn")
+    private String presentOutSideIndiaAdressEn;
+
+
+    @Size(max = 2500)
+    @JsonProperty("presentOutSideIndiaAdressMl")
+    private String presentOutSideIndiaAdressMl;
+
+
+    @Size(max = 2500)
+    @JsonProperty("presentOutSideIndiaAdressEnB")
+    private String presentOutSideIndiaAdressEnB;
+
+
+    @Size(max = 2500)
+    @JsonProperty("presentOutSideIndiaAdressMlB")
+    private String presentOutSideIndiaAdressMlB;
+
+    @Size(max = 1000)
+    @JsonProperty("presentOutSideIndiaLocalityMl")
+    private String presentOutSideIndiaLocalityMl;
+
+    @Size(max = 2500)
+    @JsonProperty("presentOutSideIndiaProvinceEn")
+    private String presentOutSideIndiaProvinceEn;
+
+    @Size(max = 2500)
+    @JsonProperty("presentOutSideIndiaProvinceMl")
+    private String presentOutSideIndiaProvinceMl;
+
+    @Size(max = 64)
+    @JsonProperty("presentOutSideCountry")
+    private String presentOutSideCountry;
+
+
+    @JsonProperty("isPrsentAddress")
+    private String isPrsentAddress;
+
+    @Size(max = 1000)
+    @JsonProperty("permtaddressCountry")
+    private String permtaddressCountry;
+
+    @Size(max = 64)
+    @JsonProperty("permtaddressStateName")
+    private String permtaddressStateName;
+
+    @Size(max = 64)
+    @JsonProperty("permntInKeralaAdrLBName")
+    private String permntInKeralaAdrLBName;
+
+    @Size(max = 64)
+    @JsonProperty("permntInKeralaAdrDistrict")
+    private String permntInKeralaAdrDistrict;
+
+    @Size(max = 64)
+    @JsonProperty("permntInKeralaAdrTaluk")
+    private String permntInKeralaAdrTaluk;
+
+    @Size(max = 64)
+    @JsonProperty("permntInKeralaAdrVillage")
+    private String permntInKeralaAdrVillage;
+
+    @Size(max = 1000)
+    @JsonProperty("permntInKeralaAdrLocalityNameEn")
+    private String permntInKeralaAdrLocalityNameEn;
+
+    @Size(max = 2000)
+    @JsonProperty("permntInKeralaAdrStreetNameEn")
+    private String permntInKeralaAdrStreetNameEn;
+
+    @Size(max = 2500)
+    @JsonProperty("permntInKeralaAdrHouseNameEn")
+    private String permntInKeralaAdrHouseNameEn;
+    @Size(max = 2500)
+    @JsonProperty("permntInKeralaAdrLocalityNameMl")
+    private String permntInKeralaAdrLocalityNameMl;
+
+    @Size(max = 2500)
+    @JsonProperty("permntInKeralaAdrStreetNameMl")
+    private String permntInKeralaAdrStreetNameMl;
+
+    @Size(max = 64)
+    @JsonProperty("permntInKeralaAdrPincode")
+    private String permntInKeralaAdrPincode;
+
+    @Size(max = 64)
+    @JsonProperty("permntInKeralaAdrPostOffice")
+    private String permntInKeralaAdrPostOffice;
+
+    @Size(max = 64)
+    @JsonProperty("permntInKeralaWardNo")
+    private String permntInKeralaWardNo;
+
+    @Size(max = 64)
+    @JsonProperty("permntOutsideKeralaDistrict")
+    private String permntOutsideKeralaDistrict;
+
+    @Size(max = 1000)
+    @JsonProperty("permntOutsideKeralaTaluk")
+    private String permntOutsideKeralaTaluk;
+
+    @Size(max = 1000)
+    @JsonProperty("permntOutsideKeralaVillage")
+    private String permntOutsideKeralaVillage;
+
+    @Size(max = 64)
+    @JsonProperty("permntOutsideKeralaPincode")
+    private String permntOutsideKeralaPincode;
+
+    @Size(max = 1000)
+    @JsonProperty("permntOutsideKeralaLocalityNameEn")
+    private String permntOutsideKeralaLocalityNameEn;
+
+    @Size(max = 2000)
+    @JsonProperty("permntOutsideKeralaStreetNameEn")
+    private String permntOutsideKeralaStreetNameEn;
+
+    @Size(max = 2500)
+    @JsonProperty("permntOutsideKeralaHouseNameEn")
+    private String permntOutsideKeralaHouseNameEn;
+
+    @Size(max = 1000)
+    @JsonProperty("permntOutsideKeralaLocalityNameMl")
+    private String permntOutsideKeralaLocalityNameMl;
+
+    @Size(max = 2000)
+    @JsonProperty("permntOutsideKeralaStreetNameMl")
+    private String permntOutsideKeralaStreetNameMl;
+
+    @Size(max = 2500)
+    @JsonProperty("permntOutsideKeralaHouseNameMl")
+    private String permntOutsideKeralaHouseNameMl;
+
+    @Size(max = 64)
+    @JsonProperty("permntOutsideKeralaPostOfficeEn")
+    private String permntOutsideKeralaPostOfficeEn;
+
+    @Size(max = 64)
+    @JsonProperty("permntOutsideKeralaPostOfficeMl")
+    private String permntOutsideKeralaPostOfficeMl;
+
+    @Size(max = 2500)
+    @JsonProperty("PermntOutsideIndiaLineoneEn")
+    private String PermntOutsideIndiaLineoneEn;
+
+    @Size(max = 2500)
+    @JsonProperty("PermntOutsideIndiaLineoneMl")
+    private String PermntOutsideIndiaLineoneMl;
+
+    @Size(max = 2500)
+    @JsonProperty("PermntOutsideIndiaLinetwoEn")
+    private String PermntOutsideIndiaLinetwoEn;
+
+    @Size(max = 2500)
+    @JsonProperty("PermntOutsideIndiaLinetwoMl")
+    private String PermntOutsideIndiaLinetwoMl;
+
+    @Size(max = 2500)
+    @JsonProperty("PermntOutsideIndiaprovinceEn")
+    private String PermntOutsideIndiaprovinceEn;
+
+    @Size(max = 1000)
+    @JsonProperty("PermntOutsideIndiaVillage")
+    private String PermntOutsideIndiaVillage;
+
+    @Size(max = 64)
+    @JsonProperty("PermntOutsideIndiaCityTown")
+    private String PermntOutsideIndiaCityTown;
+
+    @Size(max = 10)
+    @JsonProperty("PermanentOutsideIndiaPostCode")
+    private String PermanentOutsideIndiaPostCode;
+
+    @Size(max = 64)
+    @JsonProperty("PermntOutsideIndiaCountry")
+    private String PermntOutsideIndiaCountry;
+
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

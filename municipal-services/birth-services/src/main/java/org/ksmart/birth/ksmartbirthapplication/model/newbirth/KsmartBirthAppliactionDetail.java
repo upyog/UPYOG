@@ -261,6 +261,9 @@ public class KsmartBirthAppliactionDetail {
     @Size(max = 64)
     @JsonProperty("birthStatisticsUuid")
     private String birthStatisticsUuid;
+    @Size(max = 64)
+    @JsonProperty("addressUuid")
+    private String addressUuid;
 
     @JsonProperty("ParentsDetails")
     private KsmartBirthParentDetail parentsDetails;
@@ -268,6 +271,8 @@ public class KsmartBirthAppliactionDetail {
     @JsonProperty("InitiatorinfoDetails")
     private KsmartInitiatorDetail initiatorDetails;
 
+    @JsonProperty("AddressBirthDetails")
+    private KsmartBirthParentAddress parentAddress;
     @JsonProperty("InformarHosInstDetails")
     private KsmartInformatDetail informatDetail;
 
