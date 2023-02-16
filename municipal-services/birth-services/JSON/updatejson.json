@@ -1,5 +1,4 @@
-#https://ksmart-dev.lsgkerala.gov.in/birth-services/ksmart/birth/createbirth
-
+#https://ksmart-dev.lsgkerala.gov.in/birth-services/ksmart/birth/updatebirth
 {
   "RequestInfo": {
     "apiId": "Rainmaker",
@@ -19,6 +18,7 @@
   },
   "ChildDetails": [
     {
+      "id":"25303670-aa7e-45ec-bba1-c52a5ee0fd21",
       "childDOB": 1671235200000,
       "birthDateTime": 1515,
       "gender": "MALE",
@@ -99,17 +99,6 @@
         "fatherEmail": "fatherEmail",
         "fatherBioAdopt": "BIOLOGICAL"
       },
-
-      "InitiatorinfoDetails": {
-        "relation": "relation",
-        "initiatorNameEn": "initiatorNameEn",
-        "initiatorAadhar": 999999999999,
-        "initiatorMobile": 1234567890,
-        "initiatorDesi": "initiatorDesi",
-        "initiatorAddress": "initiatorAddress",
-        "isInitiatorDeclaration": true,
-        "isCaretaker": true
-
       "InformarHosInstDetails":
       {
         "infomantFirstNameEn":"infomantFirstNameEn",
@@ -118,8 +107,7 @@
         "informerDesi":"informerDesi",
         "informerAddress":"informerAddress",
         "isDeclarationInfo":"isDeclarationInfo"
-
       }
-      }
+    }
   ]
 }

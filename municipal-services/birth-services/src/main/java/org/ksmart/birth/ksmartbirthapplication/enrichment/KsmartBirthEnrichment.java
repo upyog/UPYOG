@@ -124,6 +124,8 @@ public class KsmartBirthEnrichment implements BaseEnrichment {
                             birth.getParentAddress().setHouseNameNoEnPresent(birth.getParentAddress().getPresentInsideKeralaHouseNameEn());
                             birth.getParentAddress().setHouseNameNoMlPresent(birth.getParentAddress().getPresentInsideKeralaHouseNameMl());
                             birth.getParentAddress().setPinNoPresent(birth.getParentAddress().getPresentInsideKeralaPincode());
+                            birth.getParentAddress().setVillageNamePresent(null);
+
                         } else{
                             birth.getParentAddress().setCountryIdPresent(birth.getParentAddress().getPresentaddressCountry());
 
@@ -172,6 +174,7 @@ public class KsmartBirthEnrichment implements BaseEnrichment {
                             birth.getParentAddress().setHouseNameNoMlPermanent(birth.getParentAddress().getPermntInKeralaAdrHouseNameMl());
 
                             birth.getParentAddress().setPinNoPermanent(birth.getParentAddress().getPermntInKeralaAdrPincode());
+                            birth.getParentAddress().setVillageNamePermanent(null);
                         }else{
                             birth.getParentAddress().setCountryIdPermanent(birth.getParentAddress().getPermtaddressCountry());
 
@@ -189,11 +192,13 @@ public class KsmartBirthEnrichment implements BaseEnrichment {
                             birth.getParentAddress().setHouseNameNoMlPermanent(birth.getParentAddress().getPermntOutsideKeralaHouseNameMl());
 
                             birth.getParentAddress().setPinNoPermanent(birth.getParentAddress().getPermntOutsideKeralaPincode());
+                            birth.getParentAddress().setVillageNamePermanent(birth.getParentAddress().getPermntOutsideKeralaVillage());
+
                         }
 
                     } else{
-                        birth.getParentAddress().setCountryIdPresent(birth.getParentAddress().getPermntOutsideIndiaCountry());
-                        birth.getParentAddress().setVillageNamePresent(birth.getParentAddress().getPresentOutSideIndiaadrsVillage());
+                        birth.getParentAddress().setCountryIdPermanent(birth.getParentAddress().getPermntOutsideIndiaCountry());
+                        birth.getParentAddress().setVillageNamePermanent(birth.getParentAddress().getPermntOutsideIndiaVillage());
                     }
                 });
     }

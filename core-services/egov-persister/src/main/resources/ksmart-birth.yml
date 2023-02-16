@@ -103,8 +103,8 @@ serviceMaps:
             vehicle_other_en, vehicle_other_ml, vehicle_admit_hospital_en, vehicle_admit_hospital_ml, public_place_id, ho_householder_en, ho_householder_ml, ho_res_asso_no,
             ho_housename_en, ho_housename_ml, ho_villageid, ho_talukid, ho_districtid, ho_stateid, ho_poid, ho_pinno, ho_countryid, ward_id, oth_details_en, oth_details_ml, institution_type_id,
             institution_id, auth_officer_id, auth_officer_desig_id, oth_auth_officer_name, oth_auth_officer_desig, informantsname_en, informantsname_ml, informantsaddress_en, informantsaddress_ml,
-            informants_mobileno, informants_aadhaar_no, ho_doorno, vehicle_haltplace, vehicle_hospitalid, informant_addressline2, createdtime, createdby, lastmodifiedtime, lastmodifiedby)
-            VALUES (?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?);
+            informants_mobileno, informants_aadhaar_no, ho_doorno, vehicle_haltplace_en, vehicle_hospitalid, informant_addressline2, createdtime, createdby, lastmodifiedtime, lastmodifiedby)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
           basePath: ChildDetails.*
           jsonMaps:
@@ -261,48 +261,51 @@ serviceMaps:
 
             - jsonPath: $.ChildDetails.*.ParentsDetails.motherBioAdopt
 
-        - query: INSERT INTO public.eg_birth_permanent_address(id, res_asso_no, housename_en, housename_ml, ot_address1_en, ot_address1_ml, ot_address2_en, ot_address2_ml,
-            villageid, tenantid, talukid, districtid, stateid, poid, pinno, countryid, birthdtlid, same_as_present, createdtime, createdby,
-            lastmodifiedtime, lastmodifiedby, bio_adopt, res_asso_no_ml, taluk_name, village_name, ward_code, doorno, subno, ot_zipcode,family_emailid, family_mobileno)
-            VALUES (?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?, ?,  ?, ?);
+        - query: INSERT INTO public.eg_birth_permanent_address(id, res_asso_no, housename_no_en, housename_no_ml, ot_address1_en, ot_address1_ml, ot_address2_en, ot_address2_ml,ot_state_region_province_en,
+            villageid, tenantid, talukid, districtid, stateid, poid, pinno, countryid, birthdtlid, same_as_present, createdtime, createdby, lastmodifiedtime,
+            lastmodifiedby, bio_adopt, res_asso_no_ml, taluk_name, village_name, ward_code, doorno, subno, locality_en, locality_ml, street_name_en,
+            street_name_ml, ot_zipcode,family_emailid, family_mobileno, postoffice_en, postoffice_ml)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,  ?, ?, ?, ?, ?, ?,?, ?, ?);
 
-          basePath: ChildDetails.*.birthPermanent
+          basePath: ChildDetails.*.AddressBirthDetails
           jsonMaps:
-            - jsonPath: $.ChildDetails.*.birthPermanent.id
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.permanentUuid
 
-            - jsonPath: $.ChildDetails.*.birthPermanent.res_asso_no
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.res_asso_no
 
-            - jsonPath: $.ChildDetails.*.birthPermanent.housename_en
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.houseNameNoEnPermanent
 
-            - jsonPath: $.ChildDetails.*.birthPermanent.housename_ml
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.houseNameNoMlPermanent
 
-            - jsonPath: $.ChildDetails.*.birthPermanent.ot_address1_en
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.PermntOutsideIndiaLineoneEn
 
-            - jsonPath: $.ChildDetails.*.birthPermanent.ot_address1_ml
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.PermntOutsideIndiaLineoneMl
 
-            - jsonPath: $.ChildDetails.*.birthPermanent.ot_address2_en
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.PermntOutsideIndiaLinetwoEn
 
-            - jsonPath: $.ChildDetails.*.birthPermanent.ot_address2_ml
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.PermntOutsideIndiaLinetwoMl
 
-            - jsonPath: $.ChildDetails.*.birthPermanent.villageid
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.PermntOutsideIndiaprovinceEn
 
-            - jsonPath: $.ChildDetails.*.birthPermanent.tenantid
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.permntInKeralaAdrVillage
 
-            - jsonPath: $.ChildDetails.*.birthPermanent.talukid
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.permntInKeralaAdrLBName
 
-            - jsonPath: $.ChildDetails.*.birthPermanent.districtid
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.permntInKeralaAdrTaluk
 
-            - jsonPath: $.ChildDetails.*.birthPermanent.stateid
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.districtIdPermanent
 
-            - jsonPath: $.ChildDetails.*.birthPermanent.poid
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.stateIdPermanent
 
-            - jsonPath: $.ChildDetails.*.birthPermanent.pinno
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.poNoPermanent
 
-            - jsonPath: $.ChildDetails.*.birthPermanent.countryid
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.pinNoPermanent
+
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.countryIdPermanent
 
             - jsonPath: $.ChildDetails.*.id
 
-            - jsonPath: $.ChildDetails.*.birthPermanent.same_as_present
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.isPrsentAddress
 
             - jsonPath: $.ChildDetails.*.auditDetails.createdTime
 
@@ -312,64 +315,80 @@ serviceMaps:
 
             - jsonPath: $.ChildDetails.*.auditDetails.lastModifiedBy
 
-            - jsonPath: $.ChildDetails.*.birthPermanent.bio_adopt
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.bio_adopt
 
-            - jsonPath: $.ChildDetails.*.birthPermanent.res_asso_no_ml
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.res_asso_no_ml
 
-            - jsonPath: $.ChildDetails.*.birthPermanent.taluk_name
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.permntOutsideKeralaTaluk
 
-            - jsonPath: $.ChildDetails.*.birthPermanent.village_name
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.villageNamePermanent
 
-            - jsonPath: $.ChildDetails.*.birthPermanent.ward_code
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.permntInKeralaWardNo
 
-            - jsonPath: $.ChildDetails.*.birthPermanent.doorno
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.doorno
 
-            - jsonPath: $.ChildDetails.*.birthPermanent.subno
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.subno
 
-            - jsonPath: $.ChildDetails.*.birthPermanent.ot_zipcode
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.localityEnPermanent
+
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.localityMlPermanent
+
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.streetNameEnPermanent
+
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.streetNameMlPermanent
+
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.PermanentOutsideIndiaPostCode
 
             - jsonPath: $.ChildDetails.*.ParentsDetails.fatherEmail
 
             - jsonPath: $.ChildDetails.*.ParentsDetails.fatherMobile
 
+            - jsonPath: $.ChildDetails.*.ParentsDetails.permntOutsideKeralaPostOfficeEn
 
-        - query: INSERT INTO public.eg_birth_present_address(id, res_asso_no, housename_en, housename_ml, ot_address1_en, ot_address1_ml, ot_address2_en, ot_address2_ml,
-            villageid, tenantid, talukid, districtid, stateid, poid, pinno, countryid, birthdtlid, createdtime, createdby, lastmodifiedtime, lastmodifiedby,
-            bio_adopt, res_asso_no_ml, taluk_name, village_name, ward_code, doorno, sub_no, ot_zipcode)
-            VALUES (?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?);
-          basePath: ChildDetails.*.birthPresent
+            - jsonPath: $.ChildDetails.*.ParentsDetails.permntOutsideKeralaPostOfficeMl
+
+
+        - query: INSERT INTO public.eg_birth_present_address(id, res_asso_no, housename_no_en, housename_no_ml, ot_address1_en, ot_address1_ml, ot_address2_en, ot_address2_ml,
+            ot_state_region_province_en, ot_state_region_province_ml, villageid, tenantid, talukid, districtid, stateid, poid, pinno, countryid, birthdtlid, createdtime, createdby, lastmodifiedtime, lastmodifiedby,
+            bio_adopt, res_asso_no_ml, taluk_name, village_name, ward_code, doorno, subno, locality_en, locality_ml, street_name_en,street_name_ml, ot_zipcode)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+          basePath: ChildDetails.*.AddressBirthDetails
           jsonMaps:
-            - jsonPath: $.ChildDetails.*.birthPresent.id
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.presentUuid
 
-            - jsonPath: $.ChildDetails.*.birthPresent.res_asso_no
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.res_asso_no
 
-            - jsonPath: $.ChildDetails.*.birthPresent.housename_en
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.houseNameNoEnPresent
 
-            - jsonPath: $.ChildDetails.*.birthPresent.housename_ml
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.houseNameNoMlPresent
 
-            - jsonPath: $.ChildDetails.*.birthPresent.ot_address1_en
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.presentOutSideIndiaAdressEn
 
-            - jsonPath: $.ChildDetails.*.birthPresent.ot_address1_ml
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.presentOutSideIndiaAdressMl
 
-            - jsonPath: $.ChildDetails.*.birthPresent.ot_address2_en
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.presentOutSideIndiaAdressEnB
 
-            - jsonPath: $.ChildDetails.*.birthPresent.ot_address2_ml
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.presentOutSideIndiaAdressMlB
 
-            - jsonPath: $.ChildDetails.*.birthPresent.villageid
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.presentOutSideIndiaProvinceEn
 
-            - jsonPath: $.ChildDetails.*.birthPresent.tenantid
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.presentOutSideIndiaProvinceMl
 
-            - jsonPath: $.ChildDetails.*.birthPresent.talukid
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.presentInsideKeralaVillage
 
-            - jsonPath: $.ChildDetails.*.birthPresent.districtid
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.presentInsideKeralaLBName
 
-            - jsonPath: $.ChildDetails.*.birthPresent.stateid
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.presentInsideKeralaTaluk
 
-            - jsonPath: $.ChildDetails.*.birthPresent.poid
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.districtIdPresent
 
-            - jsonPath: $.ChildDetails.*.birthPresent.pinno
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.stateIdPresent
 
-            - jsonPath: $.ChildDetails.*.birthPresent.countryid
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.poNoPresent
+
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.pinNoPresent
+
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.countryIdPresent
 
             - jsonPath: $.ChildDetails.*.id
 
@@ -381,21 +400,29 @@ serviceMaps:
 
             - jsonPath: $.ChildDetails.*.auditDetails.lastModifiedBy
 
-            - jsonPath: $.ChildDetails.*.birthPresent.bio_adopt
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.bio_adopt
 
-            - jsonPath: $.ChildDetails.*.birthPresent.res_asso_no_ml
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.res_asso_no_ml
 
-            - jsonPath: $.ChildDetails.*.birthPermanent.taluk_name
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.presentOutsideKeralaTaluk
 
-            - jsonPath: $.ChildDetails.*.birthPermanent.village_name
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.villageNamePresent
 
-            - jsonPath: $.ChildDetails.*.birthPermanent.ward_code
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.presentWardNo
 
-            - jsonPath: $.ChildDetails.*.birthPermanent.doorno
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.doorno
 
-            - jsonPath: $.ChildDetails.*.birthPermanent.subno
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.subno
 
-            - jsonPath: $.ChildDetails.*.birthPermanent.ot_zipcode
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.localityEnPresent
+
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.localityMlPresent
+
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.streetNameEnPresent
+
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.streetNameMlPresent
+
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.ot_zipcode
 
         - query: INSERT INTO public.eg_birth_statitical_information(id, weight_of_child, duration_of_pregnancy_in_week, nature_of_medical_attention, way_of_pregnancy,
             delivery_method, deliverytypeothers_en, deliverytypeothers_ml, religionid, father_nationalityid, father_educationid, father_education_subid,
@@ -537,10 +564,10 @@ serviceMaps:
       queryMaps:
 
         - query: UPDATE public.eg_birth_details SET  dateofbirth=?, timeofbirth=?, am_pm=?, firstname_en=?, firstname_ml=?,
-                  middlename_en=?, middlename_ml=?, lastname_en=?, lastname_ml=?, tenantid=?, gender=?, aadharno=?, esign_user_code=?,
-                  esign_user_desig_code=?, is_father_info_missing=?, is_mother_info_missing=?, is_born_outside=?, ot_passportno=?, ot_dateofarrival=?, 
-                  applicationtype=?, businessservice=?, workflowcode=?, fm_fileno=?,
-                  file_date=?, file_status=?, applicationno=?, registrationno=?, registration_date=?, action=?, status=?,  lastmodifiedby=?,lastmodifiedtime=? WHERE id=?;
+            middlename_en=?, middlename_ml=?, lastname_en=?, lastname_ml=?, tenantid=?, gender=?, aadharno=?, esign_user_code=?,
+            esign_user_desig_code=?, is_father_info_missing=?, is_mother_info_missing=?, is_born_outside=?, ot_passportno=?, ot_dateofarrival=?,
+            applicationtype=?, businessservice=?, workflowcode=?, fm_fileno=?,
+            file_date=?, file_status=?, applicationno=?, registrationno=?, registration_date=?, action=?, status=?,  lastmodifiedby=?,lastmodifiedtime=? WHERE id=?;
 
 
           basePath: ChildDetails.*
@@ -616,8 +643,8 @@ serviceMaps:
             public_place_id=?, ho_householder_en=?, ho_householder_ml=?, ho_res_asso_no=?, ho_housename_en=?,ho_housename_ml=?, ho_villageid=?, ho_talukid=?,
             ho_districtid=?, ho_stateid=?, ho_poid=?, ho_pinno=?, ho_countryid=?, ward_id=?,oth_details_en=?, oth_details_ml=?, institution_type_id=?, institution_id=?,
             auth_officer_id=?, auth_officer_desig_id=?,oth_auth_officer_name=?, oth_auth_officer_desig=?, informantsname_en=?, informantsname_ml=?, informantsaddress_en=?,
-            informantsaddress_ml=?, informants_mobileno=?, informants_aadhaar_no=?, ho_doorno=?, ho_subno=?, vehicle_haltplace=?, vehicle_hospitalid=?,
-            informant_addressline2=?, ho_res_asso_no_ml=?, ho_main_place_en=?, ho_street_locality_area_en=?, ho_main_place_ml=?, ho_street_locality_area_ml=?,lastmodifiedtime=?, lastmodifiedby=?
+            informantsaddress_ml=?, informants_mobileno=?, informants_aadhaar_no=?, ho_doorno=?, ho_subno=?, vehicle_haltplace_en=?, vehicle_hospitalid=?,
+            informant_addressline2=?, ho_res_asso_no_ml=?, lastmodifiedtime=?, lastmodifiedby=?
             WHERE  birthdtlid=?;
 
           basePath: ChildDetails.*
@@ -715,14 +742,6 @@ serviceMaps:
 
             - jsonPath: $.ChildDetails.*.ho_res_asso_no_ml
 
-            - jsonPath: $.ChildDetails.*.auditDetails.ho_main_place_en
-
-            - jsonPath: $.ChildDetails.*.ho_street_locality_area_en
-
-            - jsonPath: $.ChildDetails.*.ho_main_place_ml
-
-            - jsonPath: $.ChildDetails.*.ho_street_locality_area_ml
-
             - jsonPath: $.ChildDetails.*.auditDetails.lastModifiedTime
 
             - jsonPath: $.ChildDetails.*.auditDetails.lastModifiedBy
@@ -767,203 +786,63 @@ serviceMaps:
 
             - jsonPath: $.ChildDetails.*.id
 
-        - query: UPDATE public.eg_birth_place SET  placeofbirthid=?, hospitalid=?, vehicletypeid=?, vehicle_registration_no=?, vehicle_from_en=?, vehicle_to_en=?, vehicle_from_ml=?, vehicle_to_ml=?,
-                 vehicle_other_en=?, vehicle_other_ml=?, vehicle_admit_hospital_en=?, vehicle_admit_hospital_ml=?, public_place_id=?, ho_householder_en=?, ho_householder_ml=?, ho_res_asso_no=?,
-                 ho_housename_en=?, ho_housename_ml=?, ho_villageid=?, ho_talukid=?, ho_districtid=?, ho_stateid=?, ho_poid=?, ho_pinno=?, ho_countryid=?, ward_id=?, oth_details_en=?, oth_details_ml=?, institution_type_id=?,
-                 institution_id=?, auth_officer_id=?, auth_officer_desig_id=?, oth_auth_officer_name=?, oth_auth_officer_desig=?, informantsname_en=?, informantsname_ml=?, informantsaddress_en=?, informantsaddress_ml=?,
-                 informants_mobileno=?, informants_aadhaar_no=?, ho_doorno=?, vehicle_haltplace=?, vehicle_hospitalid=?, informant_addressline2=?,  lastmodifiedtime=?, lastmodifiedby=? WHERE birthdtlid=?;
 
-          basePath: ChildDetails.*
+        - query: UPDATE public.eg_birth_permanent_address SET  housename_no_en=?, housename_no_ml=?, ot_address1_en=?, ot_address1_ml=?,
+            ot_address2_en=?, ot_address2_ml=?, ot_state_region_province_en=?, villageid=?, tenantid=?, talukid=?, ward_code=?,
+            districtid=?, stateid=?, poid=?, pinno=?, countryid=?, bio_adopt=?, taluk_name=?, same_as_present=?, locality_en=?, locality_ml=?,
+            street_name_en=?, street_name_ml=?, ot_zipcode=?, lastmodifiedby=?, lastmodifiedtime=?, family_emailid=?, family_mobileno=?, postoffice_en=?,
+            postoffice_ml=?, village_name=? WHERE birthdtlid=?;
+
+          basePath: ChildDetails.*.AddressBirthDetails
           jsonMaps:
 
-              - jsonPath: $.ChildDetails.*.birthPlace
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.houseNameNoEnPermanent
 
-              - jsonPath: $.ChildDetails.*.hospitalCode
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.houseNameNoMlPermanent
 
-              - jsonPath: $.ChildDetails.*.vehicleType
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.PermntOutsideIndiaLineoneEn
 
-              - jsonPath: $.ChildDetails.*.vehicleRegistrationNo
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.PermntOutsideIndiaLineoneMl
 
-              - jsonPath: $.ChildDetails.*.vehicleFromEn
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.PermntOutsideIndiaLinetwoEn
 
-              - jsonPath: $.ChildDetails.*.vehicleToEn
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.PermntOutsideIndiaLinetwoMl
 
-              - jsonPath: $.ChildDetails.*.vehicleFromMl
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.PermntOutsideIndiaprovinceEn
 
-              - jsonPath: $.ChildDetails.*.vehicleToMl
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.permntInKeralaAdrVillage
 
-              - jsonPath: $.ChildDetails.*.vehicle_other_en
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.permntInKeralaAdrLBName
 
-              - jsonPath: $.ChildDetails.*.vehicle_other_ml
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.permntInKeralaAdrTaluk
 
-              - jsonPath: $.ChildDetails.*.setadmittedHospitalEn
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.permntInKeralaWardNo
 
-              - jsonPath: $.ChildDetails.*.vehicle_admit_hospital_ml
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.districtIdPermanent
 
-              - jsonPath: $.ChildDetails.*.publicPlaceType
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.stateIdPermanent
 
-              - jsonPath: $.ChildDetails.*.adrsHouseNameEn
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.poNoPermanent
 
-              - jsonPath: $.ChildDetails.*.adrsHouseNameMl
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.pinNoPermanent
 
-              - jsonPath: $.ChildDetails.*.ho_res_asso_no
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.countryIdPermanent
 
-              - jsonPath: $.ChildDetails.*.adrsHouseNameMl
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.bio_adopt
 
-              - jsonPath: $.ChildDetails.*.adrsLocalityNameEn
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.permntOutsideKeralaTaluk
 
-              - jsonPath: $.ChildDetails.*.ho_villageid
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.isPrsentAddress
 
-              - jsonPath: $.ChildDetails.*.ho_talukid
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.localityEnPermanent
 
-              - jsonPath: $.ChildDetails.*.ho_districtid
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.localityMlPermanent
 
-              - jsonPath: $.ChildDetails.*.ho_stateid
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.streetNameEnPermanent
 
-              - jsonPath: $.ChildDetails.*.adrsPostOffice
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.streetNameMlPermanent
 
-              - jsonPath: $.ChildDetails.*.adrsPincode
-
-              - jsonPath: $.ChildDetails.*.ho_countryid
-
-              - jsonPath: $.ChildDetails.*.wardNo
-
-              - jsonPath: $.ChildDetails.*.oth_details_en
-
-              - jsonPath: $.ChildDetails.*.oth_details_ml
-
-              - jsonPath: $.ChildDetails.*.institutionTypeCode
-
-              - jsonPath: $.ChildDetails.*.institutionId
-
-              - jsonPath: $.ChildDetails.*.auth_officer_id
-
-              - jsonPath: $.ChildDetails.*.auth_officer_desig_id
-
-              - jsonPath: $.ChildDetails.*.oth_auth_officer_name
-
-              - jsonPath: $.ChildDetails.*.oth_auth_officer_desig
-
-              - jsonPath: $.ChildDetails.*.InformarHosInstDetails.infomantFirstNameEn
-
-              - jsonPath: $.ChildDetails.*.InformarHosInstDetails.informantsname_ml
-
-              - jsonPath: $.ChildDetails.*.InformarHosInstDetails.informerAddress
-
-              - jsonPath: $.ChildDetails.*.InformarHosInstDetails.informantsaddress_ml
-
-              - jsonPath: $.ChildDetails.*.InformarHosInstDetails.infomantMobile
-
-              - jsonPath: $.ChildDetails.*.InformarHosInstDetails.infomantAadhar
-
-              - jsonPath: $.ChildDetails.*.ho_doorno
-
-              - jsonPath: $.ChildDetails.*.vehicleHaltPlaceMl
-
-              - jsonPath: $.ChildDetails.*.vehicle_hospitalid
-
-              - jsonPath: $.ChildDetails.*.informant_addressline2
-
-              - jsonPath: $.ChildDetails.*.auditDetails.lastModifiedTime
-
-              - jsonPath: $.ChildDetails.*.auditDetails.lastModifiedBy
-
-              - jsonPath: $.ChildDetails.*.id
-        - query: UPDATE public.eg_birth_father_information SET firstname_en=?, firstname_ml=?, aadharno=?, bio_adopt=?, lastmodifiedby=?, lastmodifiedtime=?
-            WHERE birthdtlid=?;
-          basePath: ChildDetails.*.ParentsDetails
-          jsonMaps:
-
-            - jsonPath: $.ChildDetails.*.ParentsDetails.fatherFirstNameEn
-
-            - jsonPath: $.ChildDetails.*.ParentsDetails.firstname_ml
-
-            - jsonPath: $.ChildDetails.*.ParentsDetails.fatherAadhar
-
-            - jsonPath: $.ChildDetails.*.ParentsDetails.fatherBioAdopt
-
-            - jsonPath: $.ChildDetails.*.auditDetails.lastModifiedBy
-
-            - jsonPath: $.ChildDetails.*.auditDetails.lastModifiedTime
-
-            - jsonPath: $.ChildDetails.*.id
-
-
-        - query: UPDATE public.eg_birth_mother_information SET firstname_en=?, firstname_ml=?, aadharno=?, bio_adopt=?, lastmodifiedby=?, lastmodifiedtime=?
-                    WHERE birthdtlid=?;
-
-          basePath: ChildDetails.*.ParentsDetails
-          jsonMaps:
-
-            - jsonPath: $.ChildDetails.*.ParentsDetails.motherFirstNameEn
-
-            - jsonPath: $.ChildDetails.*.ParentsDetails.motherFirstNameMl
-
-            - jsonPath: $.ChildDetails.*.ParentsDetails.motherAadhar
-
-            - jsonPath: $.ChildDetails.*.ParentsDetails.motherBioAdopt
-
-            - jsonPath: $.ChildDetails.*.auditDetails.lastModifiedBy
-
-            - jsonPath: $.ChildDetails.*.auditDetails.lastModifiedTime
-
-            - jsonPath: $.ChildDetails.*.id
-
-        - query: UPDATE public.eg_birth_permanent_address SET res_asso_no=?, res_asso_no_ml=?, housename_no_en=?, housename_no_ml=?, ot_address1_en=?,
-            ot_address1_ml=?, ot_address2_en=?, ot_address2_ml=?, ot_zipcode=?, villageid=?, village_name=?, tenantid=?, talukid=?, taluk_name=?,
-            ward_code=?, doorno=?, subno=?, districtid=?, stateid=?, poid=?, pinno=?, countryid=?, bio_adopt=?, same_as_present=?,lastmodifiedby=?,
-            lastmodifiedtime=?, family_emailid=?, family_mobileno=? WHERE birthdtlid=?;
-
-          basePath: ChildDetails.*.birthPermanent
-          jsonMaps:
-
-            - jsonPath: $.ChildDetails.*.birthPermanent.res_asso_no
-
-            - jsonPath: $.ChildDetails.*.birthPermanent.res_asso_no_ml
-
-            - jsonPath: $.ChildDetails.*.birthPermanent.housename_en
-
-            - jsonPath: $.ChildDetails.*.birthPermanent.housename_ml
-
-            - jsonPath: $.ChildDetails.*.birthPermanent.ot_address1_en
-
-            - jsonPath: $.ChildDetails.*.birthPermanent.ot_address1_ml
-
-            - jsonPath: $.ChildDetails.*.birthPermanent.ot_address2_en
-
-            - jsonPath: $.ChildDetails.*.birthPermanent.ot_address2_ml
-
-            - jsonPath: $.ChildDetails.*.birthPermanent.ot_zipcode
-
-            - jsonPath: $.ChildDetails.*.birthPermanent.villageid
-
-            - jsonPath: $.ChildDetails.*.birthPermanent.village_name
-
-            - jsonPath: $.ChildDetails.*.birthPermanent.tenantid
-
-            - jsonPath: $.ChildDetails.*.birthPermanent.talukid
-
-            - jsonPath: $.ChildDetails.*.birthPermanent.taluk_name
-
-            - jsonPath: $.ChildDetails.*.birthPermanent.ward_code
-
-            - jsonPath: $.ChildDetails.*.birthPermanent.doorno
-
-            - jsonPath: $.ChildDetails.*.birthPermanent.subno
-
-            - jsonPath: $.ChildDetails.*.birthPermanent.districtid
-
-            - jsonPath: $.ChildDetails.*.birthPermanent.stateid
-
-            - jsonPath: $.ChildDetails.*.birthPermanent.poid
-
-            - jsonPath: $.ChildDetails.*.birthPermanent.pinno
-
-            - jsonPath: $.ChildDetails.*.birthPermanent.countryid
-
-            - jsonPath: $.ChildDetails.*.birthPermanent.bio_adopt
-
-            - jsonPath: $.ChildDetails.*.birthPermanent.same_as_present
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.PermanentOutsideIndiaPostCode
 
             - jsonPath: $.ChildDetails.*.auditDetails.lastModifiedBy
 
@@ -973,65 +852,79 @@ serviceMaps:
 
             - jsonPath: $.ChildDetails.*.ParentsDetails.fatherMobile
 
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.permntOutsideKeralaPostOfficeEn
+
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.permntOutsideKeralaPostOfficeMl
+
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.villageNamePermanent
+
             - jsonPath: $.ChildDetails.*.id
 
 
-        - query: UPDATE public.eg_birth_present_address SET res_asso_no=?, res_asso_no_ml=?, housename_no_en=?, housename_no_ml=?, ot_address1_en=?,
-            ot_address1_ml=?, ot_address2_en=?, ot_address2_ml=?, ot_zipcode=?, villageid=?, village_name=?, tenantid=?, talukid=?, taluk_name=?,
-            ward_code=?, doorno=?, subno=?, districtid=?, stateid=?, poid=?, pinno=?, countryid=?, bio_adopt=?, lastmodifiedby=?, lastmodifiedtime=?
-            WHERE birthdtlid=?;
-          basePath: ChildDetails.*.birthPresent
+        - query: UPDATE public.eg_birth_present_address SET housename_no_en=?, housename_no_ml=?, ot_address1_en=?,
+            ot_address1_ml=?, ot_address2_en=?, ot_address2_ml=?, ot_state_region_province_en=?, ot_state_region_province_ml=?, villageid=?, tenantid=?,
+            talukid=?, districtid=?, stateid=?, poid=?, pinno=?, countryid=?, bio_adopt=?, taluk_name=?, village_name=?, ward_code=?, 
+            locality_en=?, locality_ml=?, street_name_en=?, street_name_ml=?, lastmodifiedby=?, lastmodifiedtime=?, ot_zipcode=?, postoffice_en=?, postoffice_ml=? WHERE birthdtlid=?;
+          basePath: ChildDetails.*.AddressBirthDetails
           jsonMaps:
 
-            - jsonPath: $.ChildDetails.*.birthPresent.res_asso_no
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.houseNameNoEnPresent
 
-            - jsonPath: $.ChildDetails.*.birthPresent.res_asso_no_ml
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.houseNameNoMlPresent
 
-            - jsonPath: $.ChildDetails.*.birthPresent.housename_en
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.presentOutSideIndiaAdressEn
 
-            - jsonPath: $.ChildDetails.*.birthPresent.housename_ml
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.presentOutSideIndiaAdressMl
 
-            - jsonPath: $.ChildDetails.*.birthPresent.ot_address1_en
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.presentOutSideIndiaAdressEnB
 
-            - jsonPath: $.ChildDetails.*.birthPresent.ot_address1_ml
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.presentOutSideIndiaAdressMlB
 
-            - jsonPath: $.ChildDetails.*.birthPresent.ot_address2_en
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.presentOutSideIndiaProvinceEn
 
-            - jsonPath: $.ChildDetails.*.birthPresent.ot_address2_ml
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.presentOutSideIndiaProvinceMl
 
-            - jsonPath: $.ChildDetails.*.birthPermanent.ot_zipcode
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.presentInsideKeralaVillage
 
-            - jsonPath: $.ChildDetails.*.birthPresent.villageid
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.presentInsideKeralaLBName
 
-            - jsonPath: $.ChildDetails.*.birthPermanent.village_name
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.presentInsideKeralaTaluk
 
-            - jsonPath: $.ChildDetails.*.birthPresent.tenantid
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.districtIdPresent
 
-            - jsonPath: $.ChildDetails.*.birthPresent.talukid
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.stateIdPresent
 
-            - jsonPath: $.ChildDetails.*.birthPermanent.taluk_name
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.poNoPresent
 
-            - jsonPath: $.ChildDetails.*.birthPermanent.ward_code
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.pinNoPresent
 
-            - jsonPath: $.ChildDetails.*.birthPermanent.doorno
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.countryIdPresent
 
-            - jsonPath: $.ChildDetails.*.birthPermanent.subno
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.bio_adopt
 
-            - jsonPath: $.ChildDetails.*.birthPresent.districtid
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.presentOutsideKeralaTaluk
 
-            - jsonPath: $.ChildDetails.*.birthPresent.stateid
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.villageNamePresent
 
-            - jsonPath: $.ChildDetails.*.birthPresent.poid
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.presentWardNo
 
-            - jsonPath: $.ChildDetails.*.birthPresent.pinno
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.localityEnPresent
 
-            - jsonPath: $.ChildDetails.*.birthPresent.countryid
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.localityMlPresent
 
-            - jsonPath: $.ChildDetails.*.birthPresent.bio_adopt
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.streetNameEnPresent
+
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.streetNameMlPresent
 
             - jsonPath: $.ChildDetails.*.auditDetails.lastModifiedBy
 
             - jsonPath: $.ChildDetails.*.auditDetails.lastModifiedTime
+
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.poNoPresent
+
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.presentOutsideKeralaPostOfficeEn
+
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.presentOutsideKeralaPostOfficeMl
 
             - jsonPath: $.ChildDetails.*.id
 
@@ -1042,7 +935,7 @@ serviceMaps:
             mother_no_of_birth_given=?, mother_maritalstatusid=?, mother_unmarried=?,mother_res_lbid=?, mother_res_lb_code_id=?, mother_res_place_type_id=?, mother_res_lb_type_id=?,
             mother_res_district_id=?, mother_res_state_id=?, mother_res_country_id=?, mother_resdnce_addr_type=?, mother_resdnce_tenant=?, mother_resdnce_placetype=?,
             mother_resdnce_place_en=?, mother_resdnce_place_ml=?, mother_resdnce_lbtype=?, mother_resdnce_district=?, mother_resdnce_state=?, mother_resdnce_country=?,
-             lastmodifiedtime=?, lastmodifiedby=? WHERE birthdtlid=?;
+            lastmodifiedtime=?, lastmodifiedby=? WHERE birthdtlid=?;
 
           basePath: ChildDetails.*
           jsonMaps:

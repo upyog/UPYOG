@@ -1,9 +1,15 @@
 package org.ksmart.birth.birthregistry.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.*;
 
 import javax.validation.constraints.Size;
 
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class RegisterCertificateData {
 
     @Size(max = 64)
