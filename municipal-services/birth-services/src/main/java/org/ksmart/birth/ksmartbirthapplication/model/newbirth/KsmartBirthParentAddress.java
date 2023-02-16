@@ -164,7 +164,7 @@ public class KsmartBirthParentAddress {
     private String presentOutSideCountry;
 
     @JsonProperty("isPrsentAddress")
-    private String isPrsentAddress;
+    private Integer isPrsentAddress;
 
     @Size(max = 1000)
     @JsonProperty("presentOutSideIndiaadrsVillage")

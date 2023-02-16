@@ -1,9 +1,14 @@
 package org.ksmart.birth.ksmartbirthapplication.model.newbirth;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.*;
 
 import javax.validation.constraints.Size;
-
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class KsmartInformatDetail {
     @Size(max = 1000)
     @JsonProperty("infomantFirstNameEn")

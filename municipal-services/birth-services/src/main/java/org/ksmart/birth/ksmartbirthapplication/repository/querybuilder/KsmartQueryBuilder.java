@@ -1,8 +1,8 @@
 package org.ksmart.birth.ksmartbirthapplication.repository.querybuilder;
 
-import org.ksmart.birth.birthapplication.model.birth.BirthApplicationSearchCriteria;
-import org.ksmart.birth.common.repository.builder.BaseQueryBuilder;
+import org.ksmart.birth.ksmartbirthapplication.model.newbirth.KsmartBirthApplicationSearchCriteria;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
@@ -76,8 +76,8 @@ public class KsmartQueryBuilder extends KsmartBaseBirthQuery {
             .append(" LEFT JOIN eg_birth_present_address epreadd ON epreadd.birthdtlid = ebd.id AND epreadd.bio_adopt='BIOLOGICAL'")
             .append(" LEFT JOIN eg_birth_statitical_information estat ON estat.birthdtlid = ebd.id").toString();
 
-    public String getBirthApplicationSearchQuery(@NotNull BirthApplicationSearchCriteria criteria,
-                                                 @NotNull List<Object> preparedStmtValues, Boolean isCount) {
+    public String getKsmartBirthApplicationSearchQuery(@Valid KsmartBirthApplicationSearchCriteria criteria,
+                                                       @NotNull List<Object> preparedStmtValues, Boolean isCount) {
         StringBuilder query = new StringBuilder(QUERY);
 
         addFilter("ebd.id", criteria.getId(), query, preparedStmtValues);
