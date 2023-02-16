@@ -55,7 +55,6 @@ public class KsmartBirthEnrichment implements BaseEnrichment {
         });
         setApplicationNumbers(request);
         setFileNumbers(request);
-        setRegistrationNumber(request);
         setPresentAddress(request);
         setPermanentAddress(request);
     }
@@ -67,6 +66,9 @@ public class KsmartBirthEnrichment implements BaseEnrichment {
         AuditDetails auditDetails = buildAuditDetails(userInfo.getUuid(), Boolean.FALSE);
         request.getKsmartBirthDetails()
                 .forEach(birth -> birth.setAuditDetails(auditDetails));
+        setRegistrationNumber(request);
+        setPresentAddress(request);
+        setPermanentAddress(request);
     }
 
     private void setApplicationNumbers(KsmartBirthDetailsRequest request) {
@@ -95,8 +97,10 @@ public class KsmartBirthEnrichment implements BaseEnrichment {
         String id = generator.setIDGenerator(request, BirthConstants.FUN_MODULE_NEW,BirthConstants.REGY_NUMBER_CAPTION);
         request.getKsmartBirthDetails()
                 .forEach(birth -> {
-                    birth.setRegistrationNo(id);
-                    birth.setRegistrationDate(currentTime);
+                    if((birth.getStatus() == "APPROVED") && (birth.getAction() == "APPROVE")) {
+                        birth.setRegistrationNo(id);
+                        birth.setRegistrationDate(currentTime);
+                    }
                 });
     }
 
