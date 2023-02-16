@@ -198,10 +198,10 @@ public class KsmartBirthAppliactionDetail {
     private String workFlowCode;
 
     @Size(max = 64)
-    @JsonProperty("filenumber")
+    @JsonProperty("fileNumber")
     private String fileNumber;
 
-    @JsonProperty("file_date")
+    @JsonProperty("fileDate")
     private Long fileDate;
 
     @Size(max = 64)
@@ -212,7 +212,7 @@ public class KsmartBirthAppliactionDetail {
     @JsonProperty("registrationno")
     private String registrationNo;
 
-    @JsonProperty("registration_date")
+    @JsonProperty("registrationDate")
     private Long registrationDate;
 
     @Size(max = 64)

@@ -76,6 +76,7 @@ public class RegisterQueryBuilder extends BaseRegBuilder {
         addFilter("krbd.registrationno", criteria.getRegistrationNo(), query, preparedStmtValues);
         addDateRangeFilter("krbd.dateofreport", criteria.getFromDate(), criteria.getToDate(), query, preparedStmtValues);
         addDateRangeFilter("krbd.file_date", criteria.getFromDateReg(), criteria.getToDateReg(), query, preparedStmtValues);
+        System.out.println(query.toString());
         return query.toString();
     }
 
