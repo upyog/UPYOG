@@ -97,7 +97,7 @@
         "fatherEmail": "fatherEmail",
         "fatherBioAdopt": "BIOLOGICAL"
       },
-<<<<<<< HEAD
+
       "InitiatorinfoDetails": {
         "relation": "relation",
         "initiatorNameEn": "initiatorNameEn",
@@ -107,7 +107,7 @@
         "initiatorAddress": "initiatorAddress",
         "isInitiatorDeclaration": true,
         "isCaretaker": true
-=======
+
       "InformarHosInstDetails":
       {
         "infomantFirstNameEn":"infomantFirstNameEn",
@@ -116,8 +116,86 @@
         "informerDesi":"informerDesi",
         "informerAddress":"informerAddress",
         "isDeclarationInfo":"isDeclarationInfo"
->>>>>>> 285ed851bf (ksmart-model)
+
+      },"AddressBirthDetails":
+        {
+          "permtaddressCountry":"permtaddressCountry",
+          "countryIdPermanent":"countryIdPermanent",
+          "stateIdPermanent":"stateIdPermanent",
+          "permntInKeralaAdrLBName":"permntInKeralaAdrLBName",
+          "districtIdPermanent":"districtIdPermanent",
+          "permntInKeralaAdrTaluk":"permntInKeralaAdrTaluk",
+          "permntInKeralaAdrVillage":"permntInKeralaAdrVillage",
+          "localityEnPermanent":"localityEnPermanent",
+          "localityMlPermanent":"localityMlPermanent",
+          "streetNameEnPermanent":"streetNameEnPermanent",
+          "streetNameMlPermanent":"streetNameMlPermanent",
+          "villageNamePermanent":"villageNamePermanent",
+          "permntInKeralaAdrHouseNameEn":"permntInKeralaAdrHouseNameEn",
+          "permntInKeralaAdrHouseNameMl":"permntInKeralaAdrHouseNameMl",
+          "permntInKeralaAdrPincode":"permntInKeralaAdrPincode",
+          "permntInKeralaAdrPostOffice":"permntInKeralaAdrPostOffice",
+          "permntInKeralaWardNo":"permntInKeralaWardNo",
+          "permntOutsideKeralaDistrict":"permntOutsideKeralaDistrict",
+          "permntOutsideKeralaTaluk":"permntOutsideKeralaTaluk",
+          "permntOutsideKeralaVillage":"permntOutsideKeralaVillage",
+          "permntOutsideKeralaPincode":"prmPincode",
+          "permntOutsideKeralaLocalityNameEn":"permntOutsideKeralaLocalityNameEn",
+          "permntOutsideKeralaStreetNameEn":"permntOutsideKeralaStreetNameEn",
+          "permntOutsideKeralaHouseNameEn":"permntOutsideKeralaHouseNameEn",
+          "permntOutsideKeralaLocalityNameMl":"permntOutsideKeralaLocalityNameMl",
+          "permntOutsideKeralaStreetNameMl":"permntOutsideKeralaStreetNameMl",
+          "permntOutsideKeralaHouseNameMl":"permntOutsideKeralaHouseNameMl",
+          "permntOutsideKeralaPostOfficeEn":"permntOutsideKeralaPostOfficeEn",
+          "permntOutsideKeralaPostOfficeMl":"permntOutsideKeralaPostOfficeMl",
+          "PermntOutsideIndiaLineoneEn":"PermntOutsideIndiaLineoneEn",
+          "PermntOutsideIndiaLineoneMl":"PermntOutsideIndiaLineoneMl",
+          "PermntOutsideIndiaLinetwoEn":"PermntOutsideIndiaLinetwoEn",
+          "PermntOutsideIndiaLinetwoMl":"PermntOutsideIndiaLinetwoMl",
+          "PermntOutsideIndiaprovinceEn":"PermntOutsideIndiaprovinceEn",
+          "PermntOutsideIndiaVillage":"PermntOutsideIndiaVillage",
+          "PermntOutsideIndiaCityTown":"PermntOutsideIndiaCityTown",
+          "PermanentOutsideIndiaPostCode":"outCode",
+          "PermntOutsideIndiaCountry":"PermntOutsideIndiaCountry",
+          "stateIdPresent":"stateIdPresent",
+          "presentaddressCountry":"presentaddressCountry",
+          "countryIdPresent":"countryIdPresent",
+          "presentInsideKeralaLBName":"presentInsideKeralaLBName",
+          "presentInsideKeralaDistrict":"presentInsideKeralaDistrict",
+          "presentInsideKeralaTaluk":"presentInsideKeralaTaluk",
+          "presentInsideKeralaVillage":"presentInsideKeralaVillage",
+          "presentInsideKeralaLocalityNameEn":"presentInsideKeralaLocalityNameEn",
+          "presentInsideKeralaStreetNameEn":"presentInsideKeralaStreetNameEn",
+          "presentInsideKeralaHouseNameEn":"presentInsideKeralaHouseNameEn",
+          "presentInsideKeralaLocalityNameMl":"presentInsideKeralaLocalityNameMl",
+          "presentInsideKeralaStreetNameMl":"presentInsideKeralaStreetNameMl",
+          "presentInsideKeralaHouseNameMl":"presentInsideKeralaHouseNameMl",
+          "presentInsideKeralaPincode":"presentInsideKeralaPincode",
+          "presentInsideKeralaPostOffice":"presentInsideKeralaPostOffice",
+          "presentWardNo":"presentWardNo",
+          "presentOutsideKeralaDistrict":"presentOutsideKeralaDistrict",
+          "presentOutsideKeralaTaluk":"presentOutsideKeralaTaluk",
+          "presentOutsideKeralaVillage":"presentOutsideKeralaVillage",
+          "presentOutsideKeralaCityVilgeEn":"presentOutsideKeralaCityVilgeEn",
+          "presentOutsideKeralaPincode":"presentOutsideKeralaPincode",
+          "presentOutsideKeralaPostOfficeEn":"presentOutsideKeralaPostOfficeEn",
+          "presentOutsideKeralaPostOfficeMl":"presentOutsideKeralaPostOfficeMl",
+          "presentOutsideKeralaLocalityNameEn":"presentOutsideKeralaLocalityNameEn",
+          "presentOutsideKeralaStreetNameEn":"presentOutsideKeralaStreetNameEn",
+          "presentOutsideKeralaHouseNameEn":"presentOutsideKeralaHouseNameEn",
+          "presentOutsideKeralaLocalityNameMl":"presentOutsideKeralaLocalityNameMl",
+          "presentOutsideKeralaStreetNameMl":"presentOutsideKeralaStreetNameMl",
+          "presentOutsideKeralaHouseNameMl":"presentOutsideKeralaHouseNameMl",
+          "presentOutSideIndiaAdressEn":"presentOutSideIndiaAdressEn",
+          "presentOutSideIndiaAdressMl":"presentOutSideIndiaAdressMl",
+          "presentOutSideIndiaAdressEnB":"presentOutSideIndiaAdressEnB",
+          "presentOutSideIndiaAdressMlB":"presentOutSideIndiaAdressMlB",
+          "presentOutSideIndiaProvinceEn":"presentOutSideIndiaProvinceEn",
+          "presentOutSideIndiaProvinceMl":"presentOutSideIndiaProvinceMl",
+          "presentOutSideCountry":"presentOutSideCountry",
+          "presentOutSideIndiaadrsVillage":"presentOutSideIndiaadrsVillage",
+          "presentOutSideIndiaadrsCityTown":"presentOutSideIndiaadrsCityTown"
+        }
       }
-    }
   ]
 }
