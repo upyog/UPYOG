@@ -145,9 +145,15 @@ public class KsmartBirthParentAddress {
     @JsonProperty("presentOutSideIndiaAdressMlB")
     private String presentOutSideIndiaAdressMlB;
 
+
     @Size(max = 2500)
     @JsonProperty("presentOutSideIndiaProvinceEn")
     private String presentOutSideIndiaProvinceEn;
+
+
+    @Size(max = 1000)
+    @JsonProperty("presentOutSideIndiaLocalityMl")
+    private String presentOutSideIndiaLocalityMl;
 
     @Size(max = 2500)
     @JsonProperty("presentOutSideIndiaProvinceMl")
@@ -160,7 +166,18 @@ public class KsmartBirthParentAddress {
     @JsonProperty("isPrsentAddress")
     private String isPrsentAddress;
 
+    @Size(max = 1000)
+    @JsonProperty("presentOutSideIndiaadrsVillage")
+    private String presentOutSideIndiaadrsVillage;
+
+    @Size(max = 64)
+    @JsonProperty("presentOutSideIndiaadrsCityTown")
+    private String presentOutSideIndiaadrsCityTown;
+
     ////Db Fields//////
+    @Size(max = 64)
+    @JsonProperty("presentUuid")
+    private String presentUuid;
 
     @Size(max = 64)
     @JsonProperty("countryIdPresent")
@@ -201,6 +218,14 @@ public class KsmartBirthParentAddress {
     @Size(max = 1000)
     @JsonProperty("houseNameNoMlPresent")
     private String houseNameNoMlPresent;
+
+    @Size(max = 1000)
+    @JsonProperty("villageNamePresent")
+    private String villageNamePresent;
+
+    @Size(max = 10)
+    @JsonProperty("poNoPresent")
+    private String poNoPresent;
 
 ////Permanant
     @Size(max = 1000)
@@ -245,6 +270,10 @@ public class KsmartBirthParentAddress {
     @Size(max = 2500)
     @JsonProperty("permntInKeralaAdrStreetNameMl")
     private String permntInKeralaAdrStreetNameMl;
+
+    @Size(max = 2500)
+    @JsonProperty("permntInKeralaAdrHouseNameMl")
+    private String permntInKeralaAdrHouseNameMl;
 
     @Size(max = 64)
     @JsonProperty("permntInKeralaAdrPincode")
@@ -344,45 +373,57 @@ public class KsmartBirthParentAddress {
 
 
     ////Db Fields//////
-    @Size(max = 64)
-    @JsonProperty("countryIdPermanant")
-    private String countryIdPermanant;
 
     @Size(max = 64)
-    @JsonProperty("stateIdPermanant")
-    private String stateIdPermanant;
+    @JsonProperty("permanentUuid")
+    private String permanentUuid;
+    @Size(max = 64)
+    @JsonProperty("countryIdPermanent")
+    private String countryIdPermanent;
 
     @Size(max = 64)
-    @JsonProperty("districtIdPermanant")
-    private String districtIdPermanant;
+    @JsonProperty("stateIdPermanent")
+    private String stateIdPermanent;
 
     @Size(max = 64)
-    @JsonProperty("pinNoPermanant")
-    private String pinNoPermanant;
+    @JsonProperty("districtIdPermanent")
+    private String districtIdPermanent;
+
+    @Size(max = 64)
+    @JsonProperty("pinNoPermanent")
+    private String pinNoPermanent;
 
     @Size(max = 1000)
-    @JsonProperty("localityEnPermanant")
-    private String localityEnPermanant;
+    @JsonProperty("localityEnPermanent")
+    private String localityEnPermanent;
 
     @Size(max = 1000)
-    @JsonProperty("localityMlPermanant")
-    private String localityMlPermanant;
+    @JsonProperty("localityMlPermanent")
+    private String localityMlPermanent;
 
     @Size(max = 1000)
-    @JsonProperty("streetNameEnPermanant")
-    private String streetNameEnPermanant;
+    @JsonProperty("streetNameEnPermanent")
+    private String streetNameEnPermanent;
 
     @Size(max = 1000)
-    @JsonProperty("streetNameMlPermanant")
-    private String streetNameMlPermanant;
+    @JsonProperty("streetNameMlPermanent")
+    private String streetNameMlPermanent;
 
     @Size(max = 1000)
-    @JsonProperty("houseNameNoEnPermanant")
-    private String houseNameNoEnPermanant;
+    @JsonProperty("houseNameNoEnPermanent")
+    private String houseNameNoEnPermanent;
 
     @Size(max = 1000)
-    @JsonProperty("houseNameNoMlPermanant")
-    private String houseNameNoMlPermanant;
+    @JsonProperty("houseNameNoMlPermanent")
+    private String houseNameNoMlPermanent;
+
+    @Size(max = 1000)
+    @JsonProperty("villageNamePermanent")
+    private String villageNamePermanent;
+
+    @Size(max = 10)
+    @JsonProperty("poNoPermanent")
+    private String poNoPermanent;
 
 
 

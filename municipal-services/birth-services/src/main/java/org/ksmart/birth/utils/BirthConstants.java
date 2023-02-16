@@ -84,5 +84,9 @@ public class BirthConstants {
 
     public static final String STATE_CODE = "KL";
 
+    public static final String COUNTRY_CODE = "STATE_INDIA";
+
+    public static final String STATE_CODE_SMALL = "kl";
+
 
 }
