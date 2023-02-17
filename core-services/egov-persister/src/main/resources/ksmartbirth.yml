@@ -435,21 +435,21 @@ serviceMaps:
           jsonMaps:
             - jsonPath: $.ChildDetails.*.birthStatistical.id
 
-            - jsonPath: $.ChildDetails.*.birthStatistical.weight_of_child
+            - jsonPath: $.ChildDetails.*.birthWeight
 
-            - jsonPath: $.ChildDetails.*.birthStatistical.duration_of_pregnancy_in_week
+            - jsonPath: $.ChildDetails.*.pregnancyDuration
 
-            - jsonPath: $.ChildDetails.*.birthStatistical.nature_of_medical_attention
+            - jsonPath: $.ChildDetails.*.medicalAttensionSub
 
             - jsonPath: $.ChildDetails.*.birthStatistical.way_of_pregnancy
 
-            - jsonPath: $.ChildDetails.*.birthStatistical.delivery_method
+            - jsonPath: $.ChildDetails.*.deliveryMethods
 
             - jsonPath: $.ChildDetails.*.birthStatistical.deliverytypeothers_en
 
             - jsonPath: $.ChildDetails.*.birthStatistical.deliverytypeothers_ml
 
-            - jsonPath: $.ChildDetails.*.birthStatistical.religionid
+            - jsonPath: $.ChildDetails.*.birthStatistical.Religion
 
             - jsonPath: $.ChildDetails.*.birthStatistical.father_nationalityid
 

@@ -432,6 +432,10 @@ public class KsmartBirthParentAddress {
     @JsonProperty("poNoPermanent")
     private String poNoPermanent;
 
+    @Size(max = 64)
+    @JsonProperty("bio_adopt")
+    private String bioAdopt;
+
 
 
 }

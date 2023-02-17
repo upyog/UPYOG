@@ -29,6 +29,7 @@ public class BirthCetificateRowMapper implements ResultSetExtractor<List<Registe
                     .id(rs.getString("id"))
                     .dateOfReport(rs.getLong("dateofreport"))
                     .dobStr(formatter.format(dobDate))
+                    .registrationDateStr(formatter.format(regDate))
                     .dateOfBirth(rs.getLong("dateofbirth"))
                     .fullName(getFullNameEn(rs))
                     .fullNameMl(getFullNameMl(rs))

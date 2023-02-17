@@ -22,6 +22,9 @@ public class RegisterCertificateData {
     @JsonProperty("dateofbirthstr")
     private String dobStr;
 
+    @JsonProperty("registrationDateStr")
+    private String registrationDateStr;
+
     @JsonProperty("dateofbirth")
     private Long dateOfBirth;
 

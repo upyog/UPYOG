@@ -315,7 +315,7 @@ serviceMaps:
 
             - jsonPath: $.ChildDetails.*.auditDetails.lastModifiedBy
 
-            - jsonPath: $.ChildDetails.*.AddressBirthDetails.presentBioAdopt
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.bio_adopt
 
             - jsonPath: $.ChildDetails.*.AddressBirthDetails.res_asso_no_ml
 
@@ -400,7 +400,7 @@ serviceMaps:
 
             - jsonPath: $.ChildDetails.*.auditDetails.lastModifiedBy
 
-            - jsonPath: $.ChildDetails.*.AddressBirthDetails.permanentBioAdopt
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.bio_adopt
 
             - jsonPath: $.ChildDetails.*.AddressBirthDetails.res_asso_no_ml
 
