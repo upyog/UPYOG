@@ -16,7 +16,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 @Component
-public class KsmartBirthApplicationRowMapper implements ResultSetExtractor<List<KsmartBirthAppliactionDetail>>, KsmartBaseRowMapper,KsmartBirthParentDetailRowMapper,KsmartInformatDetailsRowMapper,KsmartInitiatorDetailsRowMapper{
+public class KsmartBirthApplicationRowMapper implements ResultSetExtractor<List<KsmartBirthAppliactionDetail>>, KsmartBaseRowMapper,KsmartBirthParentDetailRowMapper,KsmartInformatDetailsRowMapper,KsmartBirthParentAddressRowMapper{
 
     @Override
     public List<KsmartBirthAppliactionDetail> extractData(ResultSet rs) throws SQLException, DataAccessException { //how to handle null
@@ -59,6 +59,7 @@ public class KsmartBirthApplicationRowMapper implements ResultSetExtractor<List<
                     .adrsStreetNameEn(rs.getString("pla_ho_street_name_en"))
                     .adrsStreetNameMl(rs.getString("pla_ho_street_name_ml"))
                     .vehicleHaltplace(rs.getString("pla_vehicleHaltplace"))
+                    .vehicleHaltPlaceMl(rs.getString("pla_vehicleHaltplace_ml"))
                     .vehicleFromMl(rs.getString("pla_vehicleFromMl"))
                     .vehicleTypeid(rs.getString("pla_vehicleTypeid"))
                     .vehicleFromEn(rs.getString("pla_vehicleFromEn"))
@@ -70,37 +71,20 @@ public class KsmartBirthApplicationRowMapper implements ResultSetExtractor<List<
                     .setadmittedHospitalEn(rs.getString("pla_setadmittedHospitalEn"))
                     .publicPlaceDecpEn(rs.getString("pla_publicPlaceDecpEn"))
                     .publicPlaceType(rs.getString("publicPlaceType"))
-                    .localityNameEn(rs.getString("pla_localityNameEn"))
-                    .localityNameMl(rs.getString("pla_localityNameMl"))
-                    .streetNameEn(rs.getString("pla_streetNameEn"))
-                    .streetNameMl(rs.getString("pla_streetNameMl"))
                     .birthWeight(rs.getDouble("stat_birthWeight"))
                     .pregnancyDuration(rs.getInt("stat_pregnancyDuration"))
-                    .medicalAttensionSub(rs.getString("stat_medicalAttensionSub"))
-                    .deliveryMethods(rs.getString("stat_deliveryMethods"))
-                    .esignUserCode(rs.getString("ba_esign_user_code"))
+                    .medicalAttensionSub(rs.getString("stat_nature_of_medical_attention"))
+                    .deliveryMethods(rs.getString("stat_delivery_method"))
                     .esignUserDesigCode(rs.getString("ba_esign_user_desig_code"))
                     .tenantId(rs.getString("ba_tenantid"))
                     .applicationType(rs.getString("ba_applicationtype"))
                     .businessService(rs.getString("ba_businessservice"))
                     .workFlowCode(rs.getString("ba_workflowcode"))
-                    .fileNumber(rs.getString("ba_fileNumber"))
-                    .fileDate(rs.getLong("ba_file_date"))
-                    .applicationNo(rs.getString("ba_applicationno"))
-                    .registrationNo(rs.getString("ba_registrationno"))
-                    .registrationDate(rs.getLong("ba_registration_date"))
-                    .action(rs.getString("ba_action"))
-                    .status(rs.getString("ba_status"))
-                    .fmFileNo(rs.getString("ba_fm_fileno"))
+                    .registrationNo(rs.getString("pla_vehicleRegistrationNo"))
                     .ampm(rs.getString("ba_am_pm"))
                     .remarksEn(rs.getString("ba_remarks_en"))
                     .remarksMl(rs.getString("ba_aadharno"))
-                    .birthInitiatorUuid(rs.getString("ba_birthInitiatorUuid"))
-                    .birthPlaceUuid(rs.getString("ba_birthPlaceUuid"))
-                    .birthStatisticsUuid(rs.getString("ba_birthStatisticsUuid"))
-                    .addressUuid(rs.getString("ba_addressUuid"))
-                    .comment(rs.getString("ba_comment"))
-                   // .isAdopted(Boolean.valueOf(rs.getString("ba_is_adopted")))
+                    // .isAdopted(Boolean.valueOf(rs.getString("ba_is_adopted")))
                   //  .isAbandoned(Boolean.valueOf(rs.getString("ba_is_abandoned")))
                   //  .isMultipleBirth(Boolean.valueOf(rs.getString("ba_is_multiple_birth")))
                   //  .isFatherInfoMissing(Boolean.valueOf(rs.getString("ba_is_father_info_missing")))
@@ -114,7 +98,8 @@ public class KsmartBirthApplicationRowMapper implements ResultSetExtractor<List<
                     .auditDetails(getAuditDetails(rs))
                     .parentsDetails(KsmartBirthParentDetail(rs))
                     .informatDetail(getKsmartInformatDetail(rs))
-                    .initiatorDetails(getKsmartInitiatorDetail(rs))
+//                    .initiatorDetails(getKsmartInitiatorDetail(rs))
+                    .parentAddress(getKsmartBirthParentAddress(rs))
                     .build());
         }
         return result;

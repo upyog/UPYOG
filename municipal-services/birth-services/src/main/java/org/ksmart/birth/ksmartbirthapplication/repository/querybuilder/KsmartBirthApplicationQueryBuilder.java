@@ -13,7 +13,7 @@ public class KsmartBirthApplicationQueryBuilder extends KsmartBaseBirthQuery {
             .append("ebd.firstname_ml as ba_firstname_ml,ebd.middlename_en as ba_middlename_en,ebd.middlename_ml as ba_middlename_ml,ebd.lastname_en as ba_lastname_en,ebd.lastname_ml as ba_lastname_ml,")
             .append("ebd.tenantid as ba_tenantid,ebd.gender as ba_gender,ebd.remarks_en as ba_remarks_en,ebd.remarks_ml as ba_remarks_ml,ebd.aadharno as ba_aadharno,ebd.esign_user_code as ba_esign_user_code,")
             .append("ebd.esign_user_desig_code as ba_esign_user_desig_code,ebd.is_adopted as ba_is_adopted,ebd.is_abandoned as ba_is_abandoned,ebd.is_multiple_birth as ba_is_multiple_birth,")
-            .append(" ebd.is_father_info_missing as ba_is_father_info_missing,ebd.is_mother_info_missing as ba_is_mother_info_missing,ebd.no_of_alive_birth as ba_no_of_alive_birth,ebd.multiplebirthdetid as ba_multiplebirthdetid,")
+            .append(" ebd.is_father_info_missing as ba_is_father_info_missing,ebd.is_mother_info_missing as ba_is_mother_info_missing,ebd.no_of_alive_birth as ba_no_of_alive_birth,ebd.multiplebirthdetid as ba_multiplebirthdetid, ")
             .append(" ebd.is_born_outside as ba_is_born_outside,ebd.ot_passportno as ba_ot_passportno,ebd.ot_dateofarrival as ba_ot_dateofarrival,ebd.applicationtype as ba_applicationtype,ebd.businessservice as ba_businessservice,")
             .append("ebd.workflowcode as ba_workflowcode,ebd.fm_fileno as ba_fm_fileno,ebd.file_date as ba_file_date,ebd.file_status as ba_file_status,ebd.applicationno as ba_applicationno,ebd.registrationno as ba_registrationno,")
             .append("ebd.registration_date as ba_registration_date,ebd.action as ba_action,ebd.status as ba_status,ebd.createdtime,ebd.createdby,ebd.lastmodifiedtime ,")
@@ -21,7 +21,7 @@ public class KsmartBirthApplicationQueryBuilder extends KsmartBaseBirthQuery {
             .append("ebd.adopt_middlename_ml as ba_adopt_middlename_ml,ebd.adopt_lastname_en as ba_adopt_lastname_en,ebd.adopt_lastname_ml as ba_adopt_lastname_ml,ebd.adopt_deed_order_no as ba_adopt_deed_order_no,")
             .append("ebd.adopt_dateoforder_deed as ba_adopt_dateoforder_deed,ebd.adopt_issuing_auththority as ba_adopt_issuing_auththority,ebd.adopt_has_agency as ba_adopt_has_agency,ebd.adopt_agency_name as ba_adopt_agency_name,")
             .append("ebd.adopt_agency_address as ba_adopt_agency_address,ebfi.id as fa_id,ebfi.firstname_en as fa_firstname_en,ebfi.firstname_ml as fa_firstname_ml,ebfi.middlename_en as fa_middlename_en,")
-            .append("ebfi.middlename_ml as fa_middlename_ml,ebfi.lastname_en as fa_lastname_en,ebfi.lastname_ml as fa_lastname_ml,ebfi.aadharno as fa_aadharno,ebfi.ot_passportno as fa_ot_passportno,ebfi.emailid as fa_emailid,")
+            .append("ebfi.middlename_ml as fa_middlename_ml,ebfi.lastname_en as fa_lastname_en,ebfi.lastname_ml as fa_lastname_ml,ebfi.aadharno as fa_aadharno,ebfi.ot_passportno as fa_ot_passportno,ebfi.emailid as fa_familyEmailid,family_mobileno as fa_familyMobileNo,")
             .append("ebfi.mobileno as fa_mobileno,ebfi.createdtime,ebfi.createdby,ebfi.lastmodifiedtime,ebfi.lastmodifiedby,")
             .append("ebfi.birthdtlid as fa_birthdtlid,ebfi.bio_adopt as fa_bio_adopt,ebmi.id as mo_id,ebmi.firstname_en as mo_firstname_en,ebmi.firstname_ml as mo_firstname_ml,ebmi.middlename_en as mo_middlename_en,")
             .append("ebmi.middlename_ml as mo_middlename_ml,ebmi.lastname_en as mo_lastname_en,ebmi.lastname_ml as mo_lastname_ml,ebmi.aadharno as mo_aadharno,ebmi.ot_passportno as mo_ot_passportno,ebmi.emailid as mo_emailid,")
@@ -36,12 +36,12 @@ public class KsmartBirthApplicationQueryBuilder extends KsmartBaseBirthQuery {
             .append("eperad.taluk_name as per_taluk_name, eperad.village_name as per_village_name, eperad.ward_code as per_ward_code, eperad.doorno as per_doorno, eperad.subno as per_subno , eperad.ot_zipcode as per_ot_zipcode, eperad.locality_en as per_locality_en,")
             .append("eperad.street_name_en as per_street_name_en, eperad.locality_ml as per_locality_ml, eperad.street_name_ml as per_street_name_ml,")
             .append("ebp.id as pla_id,ebp.birthdtlid as pla_birthdtlid,ebp.placeofbirthid as pla_placeofbirthid,ebp.hospitalid as pla_hospitalid,ebp.vehicletypeid as pla_vehicletypeid,")
-            .append("ebp.vehicle_registration_no as pla_vehicle_registration_no,ebp.vehicle_from_en as pla_vehicle_from_en,ebp.vehicle_to_en as pla_vehicle_to_en,ebp.vehicle_from_ml as pla_vehicle_from_ml,")
-            .append("ebp.vehicle_to_ml as pla_vehicle_to_ml,ebp.vehicle_other_en as pla_vehicle_other_en,ebp.vehicle_other_ml as pla_vehicle_other_ml,ebp.vehicle_admit_hospital_en as pla_vehicle_admit_hospital_en,")
-            .append("ebp.vehicle_admit_hospital_ml as pla_vehicle_admit_hospital_ml,ebp.public_place_id as pla_public_place_id,ebp.ho_householder_en as pla_ho_householder_en,ebp.ho_householder_ml as pla_ho_householder_ml,")
+            .append("ebp.vehicle_registration_no as pla_vehicleRegistrationNo,ebp.vehicle_from_en as pla_vehicleFromEn,ebp.vehicle_to_en as pla_vehicleToEn,ebp.vehicle_from_ml as pla_vehicleFromMl,vehicle_desc as pla_vehicleDesDetailsEn,")
+            .append("ebp.vehicle_to_ml as pla_vehicleToMl,ebp.vehicle_other_en as pla_vehicle_other_en,ebp.vehicle_other_ml as pla_vehicle_other_ml,ebp.vehicle_admit_hospital_en as pla_setadmittedHospitalEn,")
+            .append("ebp.vehicle_admit_hospital_ml as pla_vehicle_admit_hospital_ml,ebp.public_place_id as publicPlaceType,ebp.ho_householder_en as pla_ho_householder_en,ebp.ho_householder_ml as pla_ho_householder_ml,")
             .append("ebp.ho_buildingno as pla_ho_buildingno,ebp.ho_res_asso_no as pla_ho_res_asso_no,ebp.ho_houseno as pla_ho_houseno,ebp.ho_housename_en as pla_ho_housename_en,ebp.ho_housename_ml as pla_ho_housename_ml,")
             .append("ebp.ho_villageid as pla_ho_villageid,ebp.ho_talukid as pla_ho_talukid,ebp.ho_districtid as pla_ho_districtid,ebp.ho_locality_en as pla_ho_locality_en, ebp.ho_locality_ml as pla_ho_locality_ml,")
-            .append("ebp.ho_street_name_en as pla_ho_street_name_en, ebp.ho_street_name_ml as pla_ho_street_name_ml,")
+            .append("ebp.ho_street_name_en as pla_ho_street_name_en, ebp.ho_street_name_ml as pla_ho_street_name_ml,vehicle_haltplace_en as pla_vehicleHaltplace,vehicle_haltplace_ml as pla_vehicleHaltplace_ml,public_place_desc as pla_publicPlaceDecpEn,")
             .append("ebp.ho_stateid as pla_ho_stateid,ebp.ho_poid as pla_ho_poid,ebp.ho_pinno as pla_ho_pinno,ebp.ho_countryid as pla_ho_countryid,")
             .append("ebp.ward_id as pla_ward_id,ebp.oth_details_en as pla_oth_details_en,ebp.oth_details_ml as pla_oth_details_ml,ebp.institution_type_id as pla_institution_type_id,ebp.institution_id as pla_institution_id,")
             .append("ebp.auth_officer_id as pla_auth_officer_id,ebp.auth_officer_desig_id as pla_auth_officer_desig_id,ebp.oth_auth_officer_name as pla_oth_auth_officer_name,")
@@ -56,9 +56,9 @@ public class KsmartBirthApplicationQueryBuilder extends KsmartBaseBirthQuery {
             .append("epreadd.ot_state_region_province_ml as pres_ot_state_region_province_ml,epreadd.countryid as pres_countryid,epreadd.createdby,epreadd.createdtime,")
             .append("epreadd.lastmodifiedby,epreadd.lastmodifiedtime ,epreadd.birthdtlid as pres_birthdtlid,epreadd.bio_adopt as pres_bio_adopt,epreadd.res_asso_no_ml as pres_res_asso_no_ml,")
             .append("epreadd.taluk_name as pres_taluk_name, epreadd.village_name as pres_village_name, epreadd.ward_code as pres_ward_code, epreadd.doorno as pres_doorno, epreadd.subno as pres_subno , epreadd.ot_zipcode as pres_ot_zipcode, epreadd.locality_en as pres_locality_en,")
-            .append("epreadd.street_name_en as pres_street_name_en, epreadd.locality_ml as pres_locality_ml, epreadd.street_name_ml as pres_street_name_ml,")
-            .append("estat.id as stat_id,estat.weight_of_child as stat_weight_of_child,")
-            .append("estat.duration_of_pregnancy_in_week as stat_duration_of_pregnancy_in_week,estat.nature_of_medical_attention as stat_nature_of_medical_attention,estat.way_of_pregnancy as stat_way_of_pregnancy,")
+            .append("epreadd.street_name_en as pres_street_name_en, epreadd.locality_ml as pres_locality_ml, epreadd.street_name_ml as pres_street_name_ml, ")
+            .append("estat.id as stat_id,estat.weight_of_child as stat_birthWeight,")
+            .append("estat.duration_of_pregnancy_in_week as stat_pregnancyDuration,estat.nature_of_medical_attention as stat_nature_of_medical_attention,estat.way_of_pregnancy as stat_way_of_pregnancy,")
             .append("estat.delivery_method as stat_delivery_method,estat.deliverytypeothers_en as stat_deliverytypeothers_en,estat.deliverytypeothers_ml as stat_deliverytypeothers_ml,estat.religionid as stat_religionid,")
             .append("estat.father_nationalityid as stat_father_nationalityid,estat.father_educationid as stat_father_educationid,estat.father_education_subid as stat_father_education_subid,")
             .append("estat.father_proffessionid as stat_father_proffessionid,estat.mother_educationid as stat_mother_educationid,estat.mother_education_subid as stat_mother_education_subid,")
@@ -103,6 +103,7 @@ public class KsmartBirthApplicationQueryBuilder extends KsmartBaseBirthQuery {
                 criteria.getToDateFile(),
                 query,
                 preparedStmtValues);
+        System.out.println(query);
         return query.toString();
     }
 

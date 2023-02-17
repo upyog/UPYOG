@@ -248,6 +248,10 @@ public class KsmartBirthParentAddress {
     private String permntInKeralaAdrDistrict;
 
     @Size(max = 64)
+    @JsonProperty("permntOutsideKeralaCityVilgeEn")
+    private String permntOutsideKeralaCityVilgeEn;
+
+    @Size(max = 64)
     @JsonProperty("permntInKeralaAdrTaluk")
     private String permntInKeralaAdrTaluk;
 

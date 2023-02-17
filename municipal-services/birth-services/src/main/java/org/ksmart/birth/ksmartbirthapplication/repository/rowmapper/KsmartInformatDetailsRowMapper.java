@@ -11,12 +11,10 @@ public interface KsmartInformatDetailsRowMapper {
         default KsmartInformatDetail getKsmartInformatDetail(ResultSet rs) throws SQLException {
             return KsmartInformatDetail.builder()
 
-                    .isDeclarationInfo(rs.getString("info_isDeclarationInfo"))
-                    .informerAddress(rs.getString("info_informerAddress"))
-                    .infomantMobile(rs.getString("info_infomantMobile"))
-                    .infomantAadhar(rs.getString("info_"))
-                    .infomantFirstNameEn(rs.getString("info_infomantFirstNameEn"))
-                    .informerDesi(rs.getString("info_informerDesi"))
+                    .informerAddress(rs.getString("pla_informantsaddress_en"))
+                    .infomantMobile(rs.getString("pla_informants_mobileno"))
+                    .infomantAadhar(rs.getString("pla_informants_aadhaar_no"))
+                    .infomantFirstNameEn(rs.getString("pla_informantsname_en"))
                     .build();
         }
 }
