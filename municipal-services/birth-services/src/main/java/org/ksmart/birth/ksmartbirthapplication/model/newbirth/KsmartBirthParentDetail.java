@@ -85,6 +85,14 @@ public class KsmartBirthParentDetail {
     @Size(max = 64)
     @JsonProperty("motherPassport")
     private String motherPassport;
+    @Size(max = 64)
+    @JsonProperty("motherBioAdopt")
+    private String motherBioAdopt;
+
+    @Size(max = 64)
+    @JsonProperty("fatherBioAdopt")
+    private String fatherBioAdopt;
+
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails;
 

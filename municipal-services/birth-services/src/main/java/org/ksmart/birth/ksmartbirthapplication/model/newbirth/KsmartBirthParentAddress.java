@@ -433,8 +433,12 @@ public class KsmartBirthParentAddress {
     private String poNoPermanent;
 
     @Size(max = 64)
-    @JsonProperty("bio_adopt")
-    private String bioAdopt;
+    @JsonProperty("bioAdoptPermanent")
+    private String bioAdoptPermanent;
+
+    @Size(max = 64)
+    @JsonProperty("bioAdoptPresent")
+    private String bioAdoptPresent;
 
 
 
