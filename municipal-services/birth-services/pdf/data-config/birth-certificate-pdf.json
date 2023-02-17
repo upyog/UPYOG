@@ -80,56 +80,56 @@
               {
                 "variable": "fatherName",
                 "value": {
-                  "path": "$.registerBirthFather.father_fullname"
+                  "path": "$.fatherDetails"
                 },
                 "type":"setEmpty"
               },
               {
                 "variable": "fatherNameMl",
                 "value": {
-                  "path": "$.registerBirthFather.father_fullname_ml"
+                  "path": "$.fatherDetailsMl"
                 },
                 "type":"setEmpty"
               },
               {
                 "variable": "motherName",
                 "value": {
-                  "path": "$.registerBirthMother.mother_fullname"
+                  "path": "$.motherDetails"
                 },
                 "type":"setEmpty"
               },
               {
                 "variable": "motherNameMl",
                 "value": {
-                  "path": "$.registerBirthMother.mother_fullname_ml"
+                  "path": "$.motherDetailsMl"
                 },
                 "type":"setEmpty"
               },
               {
                 "variable": "presentAddress",
                 "value": {
-                  "path": "$.registerBirthPresent.presentAddress"
+                  "path": "$.presentAddDetails"
                 },
                 "type":"setEmpty"
               },
               {
                 "variable": "presentAddressMl",
                 "value": {
-                  "path": "$.registerBirthPresent.presentAddressMl"
+                  "path": "$.presentAddDetailsMl"
                 },
                 "type":"setEmpty"
               },
               {
                 "variable": "registerBirthPermanent",
                 "value": {
-                  "path": "$.registerBirthPermanent.permanentAddressMl"
+                  "path": "$.permenantAddDetails"
                 },
                 "type":"setEmpty"
               },
               {
                 "variable": "registerBirthPermanentMl",
                 "value": {
-                  "path": "$.registerBirthPermanent.permanentAddressMl"
+                  "path": "$.permenantAddDetailsMl"
                 },
                 "type":"setEmpty"
               },
@@ -167,7 +167,7 @@
               {
                 "variable": "placeOfBirthEn",
                 "value": {
-                  "path": "$.registerBirthPlace.placeDetailsEn"
+                  "path": "$.placeDetails"
                 },
                 "type":"setEmpty"
               },
@@ -188,7 +188,7 @@
               {
                 "variable": "esignOfficerDesign",
                 "value": {
-                  "path": "$.esign_user_desig_code"
+                  "path": "$.registar"
                 },
                 "type": "setEmpty"
               },
@@ -197,6 +197,13 @@
                 "variable": "certificateType",
                 "value": {
                   "path": "$.certificateType"
+                },
+                "type":"setEmpty"
+              },
+              {
+                "variable": "keyAckNo",
+                "value": {
+                  "path": "$.ackNo"
                 },
                 "type":"setEmpty"
               },
@@ -320,6 +327,7 @@
                   "module":"rainmaker-pdf"
                 }
               },
+              ,
               {
                 "variable": "childName",
                 "value": {

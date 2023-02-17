@@ -26,7 +26,7 @@
               {
                 "stack": [
                   {
-                    "text": "{{keyNo}}",
+                    "text": "{{keyNo}}: {{keyAckNo}}",
                     "style": "appendix-header-serialNo"
                   }
                 ]
@@ -491,7 +491,7 @@
                     "width": "1%"
                   },
                   {
-                    "text": "{{esignOfficerDesign}} {{tenant}} {{lbtypecode}} ",
+                    "text": "{{esignOfficerDesign}}  {{lbtypecode}} ",
                     "style": "details-body"
                   }
                 ]
