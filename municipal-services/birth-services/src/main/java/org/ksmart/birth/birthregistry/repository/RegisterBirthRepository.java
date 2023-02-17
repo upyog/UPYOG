@@ -2,13 +2,11 @@ package org.ksmart.birth.birthregistry.repository;
 
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
-import org.ksmart.birth.birthregistry.model.BirthCertRequest;
+import org.ksmart.birth.birthregistry.model.*;
 import org.ksmart.birth.birthregistry.enrichment.RegisterBirthEnrichment;
-import org.ksmart.birth.birthregistry.model.BirthPdfRegisterRequest;
-import org.ksmart.birth.birthregistry.model.RegisterBirthDetail;
-import org.ksmart.birth.birthregistry.model.RegisterBirthDetailsRequest;
-import org.ksmart.birth.birthregistry.model.RegisterBirthSearchCriteria;
+import org.ksmart.birth.birthregistry.repository.querybuilder.CertificateQueryBuilder;
 import org.ksmart.birth.birthregistry.repository.querybuilder.RegisterQueryBuilder;
+import org.ksmart.birth.birthregistry.repository.rowmapper.BirthCetificateRowMapper;
 import org.ksmart.birth.birthregistry.repository.rowmapper.BirthRegisterRowMapper;
 import org.ksmart.birth.common.services.MdmsTenantService;
 import org.ksmart.birth.common.contract.EgovPdfResp;
@@ -36,12 +34,14 @@ public class RegisterBirthRepository {
     private final RegisterBirthEnrichment registerBirthDetailsEnrichment;
     private final BirthRegisterRowMapper birthRegisterRowMapper;
     private final RegisterQueryBuilder registerQueryBuilder;
+    private final CertificateQueryBuilder certificateQueryBuilder;
     private final RestTemplate restTemplate;
+    private final BirthCetificateRowMapper birthCetificateRowMapper;
 
     @Autowired
-    RegisterBirthRepository(JdbcTemplate jdbcTemplate, RegisterBirthEnrichment registerBirthDetailsEnrichment,
+    RegisterBirthRepository(JdbcTemplate jdbcTemplate, RegisterBirthEnrichment registerBirthDetailsEnrichment,BirthCetificateRowMapper birthCetificateRowMapper,
                             BirthConfiguration birthDeathConfiguration, BndProducer producer, RegisterQueryBuilder registerQueryBuilder,
-                            BirthRegisterRowMapper birthRegisterRowMapper, RestTemplate restTemplate) {
+                            BirthRegisterRowMapper birthRegisterRowMapper, RestTemplate restTemplate, CertificateQueryBuilder certificateQueryBuilder) {
         this.jdbcTemplate=jdbcTemplate;
         this.registerBirthDetailsEnrichment=registerBirthDetailsEnrichment;
         this.config=birthDeathConfiguration;
@@ -49,6 +49,8 @@ public class RegisterBirthRepository {
         this.registerQueryBuilder=registerQueryBuilder;
         this.birthRegisterRowMapper=birthRegisterRowMapper;
         this.restTemplate=restTemplate;
+        this.certificateQueryBuilder = certificateQueryBuilder;
+        this.birthCetificateRowMapper = birthCetificateRowMapper;
     }
 
     public List<RegisterBirthDetail> saveRegisterBirthDetails(RegisterBirthDetailsRequest request) {
@@ -75,6 +77,14 @@ public class RegisterBirthRepository {
         List<Object> preparedStmtValues=new ArrayList<>();
         String query=registerQueryBuilder.getRegBirthApplicationSearchQuery(criteria, preparedStmtValues, Boolean.FALSE);
         List<RegisterBirthDetail> result=jdbcTemplate.query(query, preparedStmtValues.toArray(), birthRegisterRowMapper);
+        System.out.println(query);
+        return result;
+    }
+
+    public List<RegisterCertificateData> searchRegisterCert(RegisterBirthSearchCriteria criteria) {
+        List<Object> preparedStmtValues=new ArrayList<>();
+        String query=certificateQueryBuilder.getRegBirthApplicationSearchQuery(criteria, preparedStmtValues, Boolean.FALSE);
+        List<RegisterCertificateData> result=jdbcTemplate.query(query, preparedStmtValues.toArray(), birthCetificateRowMapper);
         System.out.println(query);
         return result;
     }

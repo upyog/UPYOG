@@ -1,18 +1,28 @@
 package org.ksmart.birth.birthregistry.repository.querybuilder;
 
 import org.ksmart.birth.birthregistry.model.RegisterBirthSearchCriteria;
+import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
-
+@Component
 public class CertificateQueryBuilder extends BaseRegBuilder {
     private static final String QUERY=new StringBuilder().append("SELECT krbd.id, krbd.dateofreport, krbd.dateofbirth, krbd.firstname_en, krbd.firstname_ml, krbd.middlename_en, krbd.middlename_ml,")
             .append("krbd.lastname_en, krbd.lastname_ml, krbd.tenantid, krbd.gender, krbd.remarks_en, krbd.remarks_ml, krbd.aadharno, krbd.esign_user_code,")
             .append("krbd.esign_user_desig_code, krbd.is_adopted,  krbd.registrationno, krbd.registration_date, krbd.ack_no, kbfi.firstname_en, kbfi.firstname_ml,")
             .append("kbmi.firstname_en, kbmi.firstname_ml, kperad.housename_no_en as per_housename_en, kperad.locality_en as per_locality_en,")
-            .append("kperad.street_name_en as per_street_name_en, kperad.pinno as per_pinno, kperad.poid as per_poid, kperad.districtid as per_dist,")
-            .append("kperad.stateid as per_dist,kperad.countryid as per_country, kpread.housename_no_en, kpread.locality_en, kpread.street_name_en,")
-            .append("kpread.pinno, kpread.poid, kpread.districtid, kpread.countryid, kbp.placeofbirthid, kbp.hospitalid, kbp.public_place_id,")
+            .append("kpread.housename_no_ml as pres_housename_no_ml,kpread.ot_address1_en as pres_ot_address1_en,")
+            .append("kpread.ot_address1_ml as pres_ot_address1_ml,kpread.ot_address2_en as pres_ot_address2_en,kpread.ot_address2_ml as pres_ot_address2_ml,")
+            .append("kpread.districtid as pres_districtid,kpread.stateid as pres_stateid,kpread.poid as pres_poid,kpread.pinno as pres_pinno,kpread.ot_state_region_province_en as pres_ot_state_region_province_en,")
+            .append("kpread.ot_state_region_province_ml as pres_ot_state_region_province_ml,kpread.countryid as pres_countryid")
+            .append("kpread.ot_zipcode as pres_ot_zipcode, kpread.locality_en as pres_locality_en,kpread.street_name_en as pres_street_name_en, kpread.locality_ml as pres_locality_ml, kpread.street_name_ml as pres_street_name_ml,")
+            .append("eperad.housename_no_ml as per_housename_no_ml,eperad.ot_address1_en as per_ot_address1_en,")
+            .append("eperad.ot_address1_ml as per_ot_address1_ml,eperad.ot_address2_en as per_ot_address2_en,eperad.ot_address2_ml as per_ot_address2_ml,")
+            .append("eperad.districtid as per_districtid,eperad.stateid as per_stateid,eperad.poid as per_poid,eperad.pinno as per_pinno,eperad.ot_state_region_province_en as per_ot_state_region_province_en,")
+            .append("eperad.ot_state_region_province_ml as per_ot_state_region_province_ml,eperad.countryid as per_countryid")
+            .append("eperad.ot_zipcode as per_ot_zipcode, eperad.locality_en as per_locality_en,")
+            .append("eperad.street_name_en as per_street_name_en, eperad.locality_ml as per_locality_ml, eperad.street_name_ml as per_street_name_ml,")
+            .append("kbp.placeofbirthid, kbp.hospitalid, kbp.public_place_id,")
             .append("kbp.institution_type_id, kbp.institution_id, kbp.vehicletypeid, kbp.vehicle_registration_no, kbp.vehicle_from_en, kbp.vehicle_to_en,")
             .append("kbp.vehicle_from_ml, kbp.vehicle_to_ml,kbp.vehicle_other_en, kbp.vehicle_other_ml, kbp.vehicle_admit_hospital_en, kbp.vehicle_admit_hospital_ml,")
             .append("kbp.ho_householder_en, kbp.ho_householder_ml, kbp.ho_locality_en, kbp.ho_locality_ml, kbp.ho_street_name_en,")

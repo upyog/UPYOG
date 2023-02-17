@@ -55,6 +55,18 @@ public class RegistryBirthController {
         return ResponseEntity.ok(response);
     }
 
+    @PostMapping(value = {"/searchcert"})
+    public ResponseEntity<RegisterCertificateRespose> getCertData(@RequestBody RegisterBirthDetailsRequest request, @Valid @ModelAttribute RegisterBirthSearchCriteria criteria) {
+
+        List<RegisterCertificateData> registerBirthDetail=registerBirthService.searchRegisterForCert(criteria, request.getRequestInfo());
+        RegisterCertificateRespose response=RegisterCertificateRespose.builder()
+                .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), Boolean.TRUE))
+                .registerBirthCerts(registerBirthDetail)
+                .build();
+        return ResponseEntity.ok(response);
+    }
+
+
     @PostMapping(value = {"/_download"})
     public ResponseEntity<BirthCertResponse> download(@RequestBody RequestInfoWrapper requestInfoWrapper, @Valid @ModelAttribute RegisterBirthSearchCriteria criteria) {
         BirthCertificate birthCert=registerBirthService.download(criteria, requestInfoWrapper.getRequestInfo());

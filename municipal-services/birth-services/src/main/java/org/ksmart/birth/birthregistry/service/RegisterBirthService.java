@@ -1,12 +1,7 @@
 package org.ksmart.birth.birthregistry.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.ksmart.birth.birthregistry.model.BirthCertRequest;
-import org.ksmart.birth.birthregistry.model.BirthCertificate;
-import org.ksmart.birth.birthregistry.model.BirthPdfRegisterRequest;
-import org.ksmart.birth.birthregistry.model.RegisterBirthDetail;
-import org.ksmart.birth.birthregistry.model.RegisterBirthDetailsRequest;
-import org.ksmart.birth.birthregistry.model.RegisterBirthSearchCriteria;
+import org.ksmart.birth.birthregistry.model.*;
 import org.ksmart.birth.birthregistry.repository.RegisterBirthRepository;
 
 import org.ksmart.birth.common.contract.EgovPdfResp;
@@ -48,6 +43,14 @@ public class RegisterBirthService {
     public List<RegisterBirthDetail> searchRegisterBirthDetails(RegisterBirthSearchCriteria criteria, RequestInfo requestInfo)  {
 
         List<RegisterBirthDetail>  registerBirthDetails = repository.searchRegisterBirthDetails(criteria);
+//        mdmsDataService.setTenantDetails(registerBirthDetails, requestInfo);
+//        mdmsDataService.setLocationDetails(registerBirthDetails, requestInfo);
+        return registerBirthDetails;
+    }
+
+    public List<RegisterCertificateData> searchRegisterForCert(RegisterBirthSearchCriteria criteria, RequestInfo requestInfo)  {
+
+        List<RegisterCertificateData>  registerBirthDetails = repository.searchRegisterCert(criteria);
         mdmsDataService.setTenantDetails(registerBirthDetails, requestInfo);
         mdmsDataService.setLocationDetails(registerBirthDetails, requestInfo);
         return registerBirthDetails;

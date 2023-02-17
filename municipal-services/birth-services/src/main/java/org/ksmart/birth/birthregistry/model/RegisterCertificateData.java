@@ -30,25 +30,15 @@ public class RegisterCertificateData {
     private String firstNameEn;
 
     @Size(max = 1000)
-    @JsonProperty("firstname_ml")
-    private String firstNameMl;
-
+    @JsonProperty("fullName")
+    private String fullName;
     @Size(max = 1000)
-    @JsonProperty("middlename_en")
-    private String middleNameEn;
+    @JsonProperty("fullNameMl")
+    private String fullNameMl;
 
-    @Size(max = 1000)
-    @JsonProperty("middlename_ml")
-    private String middleNameMl;
-
-    @Size(max = 1000)
-    @JsonProperty("lastname_en")
-    private String lastNameEn;
-
-    @Size(max = 1000)
-    @JsonProperty("lastname_ml")
-    private String lastNameMl;
-
+    @Size(max = 64)
+    @JsonProperty("ackNo")
+    private String ackNo;
     @Size(max = 64)
     @JsonProperty("tenantid")
     private String tenantId;
@@ -77,48 +67,56 @@ public class RegisterCertificateData {
     private Boolean isAdopted;
 
     @Size(max = 64)
-    @JsonProperty("placeofbirthid")
-    private String placeOfBirthId;
+    @JsonProperty("placeDetails")
+    private String placeDetails;
 
     @Size(max = 2500)
-    @JsonProperty("hospitalDetails")
-    private String hospitalDetails;
+    @JsonProperty("placeDetailsMl")
+    private String placeDetailsMl;
 
-    @Size(max = 2500)
-    @JsonProperty("institutionDetails")
-    private String institutionDetails;
+//    @Size(max = 64)
+//    @JsonProperty("placeofbirthid")
+//    private String placeOfBirthId;
+//
+//    @Size(max = 2500)
+//    @JsonProperty("hospitalDetails")
+//    private String hospitalDetails;
+//
+//    @Size(max = 2500)
+//    @JsonProperty("institutionDetails")
+//    private String institutionDetails;
+//
+//    @Size(max = 2500)
+//    @JsonProperty("homeDetails")
+//    private String homeDetails;
+//
+//    @Size(max = 2500)
+//    @JsonProperty("vehicleDetails")
+//    private String vehicleDetails;
+//
+//    @Size(max = 2500)
+//    @JsonProperty("publicDetails")
+//    private String publicDetails;
 
-    @Size(max = 2500)
-    @JsonProperty("homeDetails")
-    private String homeDetails;
-
-    @Size(max = 2500)
-    @JsonProperty("vehicleDetails")
-    private String vehicleDetails;
-
-    @Size(max = 2500)
-    @JsonProperty("publicDetails")
-    private String publicDetails;
-
-    @Size(max = 2500)
-    @JsonProperty("hospitalDetailsMl")
-    private String hospitalDetailsMl;
-
-    @Size(max = 2500)
-    @JsonProperty("institutionDetailsMl")
-    private String institutionDetailsMl;
-
-    @Size(max = 2500)
-    @JsonProperty("homeDetailsMl")
-    private String homeDetailsMl;
-
-    @Size(max = 2500)
-    @JsonProperty("vehicleDetailsMl")
-    private String vehicleDetailsMl;
-
-    @Size(max = 2500)
-    @JsonProperty("publicDetailsMl")
-    private String publicDetailsMl;
+//    @Size(max = 2500)
+//    @JsonProperty("hospitalDetailsMl")
+//    private String hospitalDetailsMl;
+//
+//    @Size(max = 2500)
+//    @JsonProperty("institutionDetailsMl")
+//    private String institutionDetailsMl;
+//
+//    @Size(max = 2500)
+//    @JsonProperty("homeDetailsMl")
+//    private String homeDetailsMl;
+//
+//    @Size(max = 2500)
+//    @JsonProperty("vehicleDetailsMl")
+//    private String vehicleDetailsMl;
+//
+//    @Size(max = 2500)
+//    @JsonProperty("publicDetailsMl")
+//    private String publicDetailsMl;
 
     @Size(max = 2500)
     @JsonProperty("motherDetails")
@@ -151,4 +149,20 @@ public class RegisterCertificateData {
     @Size(max = 2500)
     @JsonProperty("presentAddDetailsMl")
     private String presentAddDetailsMl;
+
+    @Size(max = 1000)
+    @JsonProperty("tenantLbType")
+    private String tenantLbType;
+
+    @Size(max = 1000)
+    @JsonProperty("tenantDistrict")
+    private String tenantDistrict;
+
+    @Size(max = 1000)
+    @JsonProperty("tenantTaluk")
+    private String tenantTaluk;
+
+    @Size(max = 1000)
+    @JsonProperty("tenantState")
+    private String tenantState;
 }
