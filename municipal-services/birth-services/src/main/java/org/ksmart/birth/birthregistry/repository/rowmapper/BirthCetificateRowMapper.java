@@ -1,6 +1,5 @@
 package org.ksmart.birth.birthregistry.repository.rowmapper;
 
-import org.ksmart.birth.birthregistry.model.RegisterBirthDetail;
 import org.ksmart.birth.birthregistry.model.RegisterCertificateData;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
@@ -48,7 +47,7 @@ public class BirthCetificateRowMapper implements ResultSetExtractor<List<Registe
                     .permenantAddDetails(getPermanentAddressEnByResidenceType(rs))
                     .permenantAddDetailsMl(getPermanentAddressMlByResidenceType(rs))
                     .presentAddDetails(getPresentAddressEnByResidenceType(rs))
-                    .permenantAddDetailsMl(getPresentAddressMlByResidenceType(rs))
+                    .presentAddDetailsMl(getPresentAddressMlByResidenceType(rs))
                     .build());
         }
         return result;
