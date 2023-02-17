@@ -351,8 +351,8 @@ public class KsmartBirthParentAddress {
     private String permntOutsideIndiaLineoneMl;
 
     @Size(max = 2500)
-    @JsonProperty("PermntOutsideIndiaLinetwoEn")
-    private String PermntOutsideIndiaLinetwoEn;
+    @JsonProperty("permntOutsideIndiaLinetwoEn")
+    private String permntOutsideIndiaLinetwoEn;
 
     @Size(max = 2500)
     @JsonProperty("permntOutsideIndiaLinetwoMl")
