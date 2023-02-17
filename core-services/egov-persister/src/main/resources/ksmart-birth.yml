@@ -305,7 +305,7 @@ serviceMaps:
 
             - jsonPath: $.ChildDetails.*.id
 
-            - jsonPath: $.ChildDetails.*.AddressBirthDetails.isPrsentAddress
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.isPrsentAddressInt
 
             - jsonPath: $.ChildDetails.*.auditDetails.createdTime
 
@@ -315,7 +315,7 @@ serviceMaps:
 
             - jsonPath: $.ChildDetails.*.auditDetails.lastModifiedBy
 
-            - jsonPath: $.ChildDetails.*.AddressBirthDetails.bio_adopt
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.presentBioAdopt
 
             - jsonPath: $.ChildDetails.*.AddressBirthDetails.res_asso_no_ml
 
@@ -400,7 +400,7 @@ serviceMaps:
 
             - jsonPath: $.ChildDetails.*.auditDetails.lastModifiedBy
 
-            - jsonPath: $.ChildDetails.*.AddressBirthDetails.bio_adopt
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.permanentBioAdopt
 
             - jsonPath: $.ChildDetails.*.AddressBirthDetails.res_asso_no_ml
 

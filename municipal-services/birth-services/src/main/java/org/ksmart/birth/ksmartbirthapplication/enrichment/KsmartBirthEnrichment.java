@@ -107,8 +107,10 @@ public class KsmartBirthEnrichment implements BaseEnrichment {
     private void setPresentAddress(KsmartBirthDetailsRequest request) {
         request.getKsmartBirthDetails()
                 .forEach(birth -> {
+                    if(birth.getParentAddress().getPresentaddressCountry()!= null && birth.getParentAddress().getPresentaddressStateName()!= null) {
                     if (birth.getParentAddress().getPresentaddressCountry().contains(BirthConstants.COUNTRY_CODE)) {
-                        if(birth.getParentAddress().getPresentaddressStateName().contains(BirthConstants.STATE_CODE_SMALL)) {
+                        if (birth.getParentAddress().getPresentaddressStateName().contains(BirthConstants.STATE_CODE_SMALL)) {
+
                             birth.getParentAddress().setCountryIdPresent(birth.getParentAddress().getPresentaddressCountry());
 
                             birth.getParentAddress().setStateIdPresent(birth.getParentAddress().getPresentaddressStateName());
@@ -126,7 +128,7 @@ public class KsmartBirthEnrichment implements BaseEnrichment {
                             birth.getParentAddress().setPinNoPresent(birth.getParentAddress().getPresentInsideKeralaPincode());
                             birth.getParentAddress().setVillageNamePresent(null);
 
-                        } else{
+                        } else {
                             birth.getParentAddress().setCountryIdPresent(birth.getParentAddress().getPresentaddressCountry());
 
                             birth.getParentAddress().setStateIdPresent(birth.getParentAddress().getPresentaddressStateName());
@@ -147,59 +149,71 @@ public class KsmartBirthEnrichment implements BaseEnrichment {
                             birth.getParentAddress().setPinNoPresent(birth.getParentAddress().getPresentOutsideKeralaPincode());
 
                         }
-                    } else{
-                        birth.getParentAddress().setCountryIdPresent(birth.getParentAddress().getPresentOutSideCountry());
-                        birth.getParentAddress().setVillageNamePresent(birth.getParentAddress().getPresentOutSideIndiaadrsVillage());
+                    }
+                    }
+                    if(birth.getParentAddress().getPresentOutSideCountry() != null) {System.out.println("outside");
+                        System.out.println(birth.getParentAddress().getPresentOutSideCountry());
+                        if (birth.getParentAddress().getPresentOutSideCountry().contains(BirthConstants.COUNTRY_CODE)) {
+                            birth.getParentAddress().setCountryIdPresent(birth.getParentAddress().getPresentOutSideCountry());
+                            birth.getParentAddress().setVillageNamePresent(birth.getParentAddress().getPresentOutSideIndiaadrsVillage());
+                        }
                     }
                 });
     }
     private void setPermanentAddress(KsmartBirthDetailsRequest request) {
         request.getKsmartBirthDetails()
                 .forEach(birth -> {
-                    if (birth.getParentAddress().getPermtaddressCountry().contains(BirthConstants.COUNTRY_CODE)) {
-                        if (birth.getParentAddress().getPermtaddressStateName().contains(BirthConstants.STATE_CODE_SMALL)) {
-                            birth.getParentAddress().setCountryIdPermanent(birth.getParentAddress().getPermtaddressCountry());
+                    birth.getParentAddress().setIsPrsentAddressInt(birth.getParentAddress().getIsPrsentAddress()==true?1:0);
+                    if(birth.getParentAddress().getPermtaddressCountry()!= null && birth.getParentAddress().getPermtaddressStateName()!= null) {
+                        if (birth.getParentAddress().getPermtaddressCountry().contains(BirthConstants.COUNTRY_CODE)) {
+                            if (birth.getParentAddress().getPermtaddressStateName().contains(BirthConstants.STATE_CODE_SMALL)) {
+                                birth.getParentAddress().setCountryIdPermanent(birth.getParentAddress().getPermtaddressCountry());
 
-                            birth.getParentAddress().setStateIdPermanent(birth.getParentAddress().getPermtaddressStateName());
+                                birth.getParentAddress().setStateIdPermanent(birth.getParentAddress().getPermtaddressStateName());
 
-                            birth.getParentAddress().setDistrictIdPermanent(birth.getParentAddress().getPermntInKeralaAdrDistrict());
+                                birth.getParentAddress().setDistrictIdPermanent(birth.getParentAddress().getPermntInKeralaAdrDistrict());
 
-                            birth.getParentAddress().setLocalityEnPermanent(birth.getParentAddress().getPermntInKeralaAdrLocalityNameEn());
-                            birth.getParentAddress().setLocalityMlPermanent(birth.getParentAddress().getPermntInKeralaAdrLocalityNameMl());
+                                birth.getParentAddress().setLocalityEnPermanent(birth.getParentAddress().getPermntInKeralaAdrLocalityNameEn());
+                                birth.getParentAddress().setLocalityMlPermanent(birth.getParentAddress().getPermntInKeralaAdrLocalityNameMl());
 
-                            birth.getParentAddress().setStreetNameEnPermanent(birth.getParentAddress().getPermntInKeralaAdrStreetNameEn());
-                            birth.getParentAddress().setStreetNameMlPermanent(birth.getParentAddress().getPermntInKeralaAdrStreetNameMl());
+                                birth.getParentAddress().setStreetNameEnPermanent(birth.getParentAddress().getPermntInKeralaAdrStreetNameEn());
+                                birth.getParentAddress().setStreetNameMlPermanent(birth.getParentAddress().getPermntInKeralaAdrStreetNameMl());
 
-                            birth.getParentAddress().setHouseNameNoEnPermanent(birth.getParentAddress().getPermntInKeralaAdrHouseNameEn());
-                            birth.getParentAddress().setHouseNameNoMlPermanent(birth.getParentAddress().getPermntInKeralaAdrHouseNameMl());
+                                birth.getParentAddress().setHouseNameNoEnPermanent(birth.getParentAddress().getPermntInKeralaAdrHouseNameEn());
+                                birth.getParentAddress().setHouseNameNoMlPermanent(birth.getParentAddress().getPermntInKeralaAdrHouseNameMl());
 
-                            birth.getParentAddress().setPinNoPermanent(birth.getParentAddress().getPermntInKeralaAdrPincode());
-                            birth.getParentAddress().setVillageNamePermanent(null);
-                        }else{
-                            birth.getParentAddress().setCountryIdPermanent(birth.getParentAddress().getPermtaddressCountry());
+                                birth.getParentAddress().setPinNoPermanent(birth.getParentAddress().getPermntInKeralaAdrPincode());
+                                birth.getParentAddress().setVillageNamePermanent(null);
+                            } else {
+                                birth.getParentAddress().setCountryIdPermanent(birth.getParentAddress().getPermtaddressCountry());
 
-                            birth.getParentAddress().setStateIdPermanent(birth.getParentAddress().getPermtaddressStateName());
+                                birth.getParentAddress().setStateIdPermanent(birth.getParentAddress().getPermtaddressStateName());
 
-                            birth.getParentAddress().setDistrictIdPermanent(birth.getParentAddress().getPermntOutsideKeralaDistrict());
+                                birth.getParentAddress().setDistrictIdPermanent(birth.getParentAddress().getPermntOutsideKeralaDistrict());
 
-                            birth.getParentAddress().setLocalityEnPermanent(birth.getParentAddress().getPermntOutsideKeralaLocalityNameEn());
-                            birth.getParentAddress().setLocalityMlPermanent(birth.getParentAddress().getPermntOutsideKeralaLocalityNameMl());
+                                birth.getParentAddress().setLocalityEnPermanent(birth.getParentAddress().getPermntOutsideKeralaLocalityNameEn());
+                                birth.getParentAddress().setLocalityMlPermanent(birth.getParentAddress().getPermntOutsideKeralaLocalityNameMl());
 
-                            birth.getParentAddress().setStreetNameEnPermanent(birth.getParentAddress().getPermntOutsideKeralaStreetNameEn());
-                            birth.getParentAddress().setStreetNameMlPermanent(birth.getParentAddress().getPermntOutsideKeralaStreetNameMl());
+                                birth.getParentAddress().setStreetNameEnPermanent(birth.getParentAddress().getPermntOutsideKeralaStreetNameEn());
+                                birth.getParentAddress().setStreetNameMlPermanent(birth.getParentAddress().getPermntOutsideKeralaStreetNameMl());
 
-                            birth.getParentAddress().setHouseNameNoEnPermanent(birth.getParentAddress().getPermntOutsideKeralaHouseNameEn());
-                            birth.getParentAddress().setHouseNameNoMlPermanent(birth.getParentAddress().getPermntOutsideKeralaHouseNameMl());
+                                birth.getParentAddress().setHouseNameNoEnPermanent(birth.getParentAddress().getPermntOutsideKeralaHouseNameEn());
+                                birth.getParentAddress().setHouseNameNoMlPermanent(birth.getParentAddress().getPermntOutsideKeralaHouseNameMl());
 
-                            birth.getParentAddress().setPinNoPermanent(birth.getParentAddress().getPermntOutsideKeralaPincode());
-                            birth.getParentAddress().setVillageNamePermanent(birth.getParentAddress().getPermntOutsideKeralaVillage());
+                                birth.getParentAddress().setPinNoPermanent(birth.getParentAddress().getPermntOutsideKeralaPincode());
+                                birth.getParentAddress().setVillageNamePermanent(birth.getParentAddress().getPermntOutsideKeralaVillage());
+
+                            }
 
                         }
-
-                    } else{
-                        birth.getParentAddress().setCountryIdPermanent(birth.getParentAddress().getPermntOutsideIndiaCountry());
-                        birth.getParentAddress().setVillageNamePermanent(birth.getParentAddress().getPermntOutsideIndiaVillage());
                     }
+                    if(birth.getParentAddress().getPermntOutsideIndiaCountry()!= null){
+                        if(birth.getParentAddress().getPermntOutsideIndiaCountry().contains(BirthConstants.COUNTRY_CODE)){
+                            birth.getParentAddress().setCountryIdPermanent(birth.getParentAddress().getPermntOutsideIndiaCountry());
+                            birth.getParentAddress().setVillageNamePermanent(birth.getParentAddress().getPermntOutsideIndiaVillage());
+                        }
+                    }
+
                 });
     }
 }

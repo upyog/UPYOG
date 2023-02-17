@@ -164,7 +164,7 @@ public class KsmartBirthParentAddress {
     private String presentOutSideCountry;
 
     @JsonProperty("isPrsentAddress")
-    private Integer isPrsentAddress;
+    private Boolean isPrsentAddress;
 
     @Size(max = 1000)
     @JsonProperty("presentOutSideIndiaadrsVillage")
@@ -175,6 +175,9 @@ public class KsmartBirthParentAddress {
     private String presentOutSideIndiaadrsCityTown;
 
     ////Db Fields//////
+
+    @JsonProperty("isPrsentAddressInt")
+    private Integer isPrsentAddressInt;
     @Size(max = 64)
     @JsonProperty("presentUuid")
     private String presentUuid;
@@ -336,40 +339,40 @@ public class KsmartBirthParentAddress {
     private String permntOutsideKeralaPostOfficeMl;
 
     @Size(max = 2500)
-    @JsonProperty("PermntOutsideIndiaLineoneEn")
-    private String PermntOutsideIndiaLineoneEn;
+    @JsonProperty("permntOutsideIndiaLineoneEn")
+    private String permntOutsideIndiaLineoneEn;
 
     @Size(max = 2500)
-    @JsonProperty("PermntOutsideIndiaLineoneMl")
-    private String PermntOutsideIndiaLineoneMl;
+    @JsonProperty("permntOutsideIndiaLineoneMl")
+    private String permntOutsideIndiaLineoneMl;
 
     @Size(max = 2500)
     @JsonProperty("PermntOutsideIndiaLinetwoEn")
     private String PermntOutsideIndiaLinetwoEn;
 
     @Size(max = 2500)
-    @JsonProperty("PermntOutsideIndiaLinetwoMl")
-    private String PermntOutsideIndiaLinetwoMl;
+    @JsonProperty("permntOutsideIndiaLinetwoMl")
+    private String permntOutsideIndiaLinetwoMl;
 
     @Size(max = 2500)
-    @JsonProperty("PermntOutsideIndiaprovinceEn")
-    private String PermntOutsideIndiaprovinceEn;
+    @JsonProperty("permntOutsideIndiaprovinceEn")
+    private String permntOutsideIndiaprovinceEn;
 
     @Size(max = 1000)
-    @JsonProperty("PermntOutsideIndiaVillage")
-    private String PermntOutsideIndiaVillage;
+    @JsonProperty("permntOutsideIndiaVillage")
+    private String permntOutsideIndiaVillage;
 
     @Size(max = 64)
-    @JsonProperty("PermntOutsideIndiaCityTown")
-    private String PermntOutsideIndiaCityTown;
+    @JsonProperty("permntOutsideIndiaCityTown")
+    private String permntOutsideIndiaCityTown;
 
     @Size(max = 10)
-    @JsonProperty("PermanentOutsideIndiaPostCode")
-    private String PermanentOutsideIndiaPostCode;
+    @JsonProperty("permanentOutsideIndiaPostCode")
+    private String permanentOutsideIndiaPostCode;
 
     @Size(max = 64)
-    @JsonProperty("PermntOutsideIndiaCountry")
-    private String PermntOutsideIndiaCountry;
+    @JsonProperty("permntOutsideIndiaCountry")
+    private String permntOutsideIndiaCountry;
 
 
     ////Db Fields//////
