@@ -28,7 +28,8 @@ public class KsmartBirthService {
     }
 
     public List<KsmartBirthAppliactionDetail> updateKsmartBirthDetails(KsmartBirthDetailsRequest request) {
-        return repository.updateKsmartBirthDetails(request);    }
+        return repository.updateKsmartBirthDetails(request);
+    }
 
     public List<KsmartBirthAppliactionDetail> searchKsmartBirthDetails(@Valid KsmartBirthApplicationSearchCriteria criteria) {
         return repository.searchKsmartBirthDetails(criteria);

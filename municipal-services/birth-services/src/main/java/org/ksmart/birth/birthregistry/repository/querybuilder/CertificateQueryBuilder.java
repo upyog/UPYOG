@@ -9,7 +9,7 @@ import java.util.List;
 public class CertificateQueryBuilder extends BaseRegBuilder {
     private static final String QUERY=new StringBuilder().append("SELECT krbd.id, krbd.dateofreport, krbd.dateofbirth, krbd.firstname_en, krbd.firstname_ml, krbd.middlename_en, krbd.middlename_ml,")
             .append("krbd.lastname_en, krbd.lastname_ml, krbd.tenantid, krbd.gender, krbd.remarks_en, krbd.remarks_ml, krbd.aadharno, krbd.esign_user_code,")
-            .append("krbd.esign_user_desig_code, krbd.is_adopted,  krbd.registrationno, krbd.registration_date, krbd.ack_no, kbfi.firstname_en as father_name, kbfi.firstname_ml as father_name_ml,")
+            .append("krbd.esign_user_desig_code, krbd.is_adopted,krbd.registrationno, krbd.registration_date, krbd.ack_no, kbfi.firstname_en as father_name, kbfi.firstname_ml as father_name_ml,")
             .append("kbmi.firstname_en as mother_name, kbmi.firstname_ml as mother_name_ml, kperad.housename_no_en as per_housename_en, kperad.locality_en as per_locality_en,")
             .append("kpread.housename_no_ml as pres_housename_no_ml,kpread.ot_address1_en as pres_ot_address1_en,")
             .append("kpread.ot_address1_ml as pres_ot_address1_ml,kpread.ot_address2_en as pres_ot_address2_en,kpread.ot_address2_ml as pres_ot_address2_ml,")

@@ -43,7 +43,7 @@ public class BirthCetificateRowMapper implements ResultSetExtractor<List<Registe
                     .motherDetailsMl(rs.getString("mother_name_ml"))
                     .registrationNo(rs.getString("registrationno"))
                     .registrationDate(rs.getLong("registration_date"))
-                            .currentDate(formatter.format(new Date()).toString())
+                    .currentDate(formatter.format(new Date()).toString())
                     .registarDetails(getRegistar(rs))
                     .placeDetails(getPlaceDetailsEn(rs))
                     .placeDetailsMl(getPlaceDetailsMl(rs))

@@ -60,6 +60,7 @@ public class KsmartBirthRepository {
         List<Object> preparedStmtValues = new ArrayList<>();
         String query = birthQueryBuilder.getKsmartBirthApplicationSearchQuery(criteria, preparedStmtValues, Boolean.FALSE);
         List<KsmartBirthAppliactionDetail> result = jdbcTemplate.query(query, preparedStmtValues.toArray(), ksmartBirthApplicationRowMapper);
+
         return result;
     }
 }
