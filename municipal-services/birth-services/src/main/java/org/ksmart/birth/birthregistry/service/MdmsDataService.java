@@ -11,6 +11,7 @@ import org.ksmart.birth.birthregistry.model.RegisterBirthDetail;
 import org.ksmart.birth.birthregistry.model.RegisterCertificateData;
 import org.ksmart.birth.common.services.MdmsLocationService;
 import org.ksmart.birth.common.services.MdmsTenantService;
+import org.ksmart.birth.ksmartbirthapplication.model.newbirth.KsmartBirthAppliactionDetail;
 import org.ksmart.birth.utils.BirthConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -197,6 +198,30 @@ public class MdmsDataService {
                     }
                 });
         return registerBirthDetails;
+    }
+
+    public List<KsmartBirthAppliactionDetail> setKsmartLocationDetails(List<KsmartBirthAppliactionDetail> ksmartBirthAppliactionDetail, RequestInfo requestInfo) {
+        ksmartBirthAppliactionDetail
+                .forEach(register -> {
+                    Object mdmsData = mdmsLocCall(requestInfo, register.getTenantId());
+
+                    if(register.getPlaceofBirthId().contains(BIRTH_PLACE_HOSPITAL)){
+                        String placeEn = mdmsLocationService.getHospitalAddressEn(mdmsData, register.getHospitalId());
+                        String placeMl = mdmsLocationService.getHospitalNameMl(mdmsData, register.getHospitalId());
+                        register.setHospitalName(placeEn);
+                        register.setHospitalNameMl(placeMl);
+
+                    }
+                    else if(register.getPlaceofBirthId().contains(BIRTH_PLACE_INSTITUTION)) {
+                        String placeEn = mdmsLocationService.getInstitutionNameEn(mdmsData, register.getInstitutionNameCode());
+                        String placeMl = mdmsLocationService.getHospitalNameMl(mdmsData, register.getInstitutionNameCode());
+                        register.setInstitution(placeEn);
+                        register.setInstitutionIdMl(placeMl);
+                    } else{
+
+                    }
+                });
+        return ksmartBirthAppliactionDetail;
     }
 
 

@@ -42,10 +42,11 @@ public class KsmartBirthService {
     }
 
     public List<KsmartBirthAppliactionDetail> updateKsmartBirthDetails(KsmartBirthDetailsRequest request) {
+        workflowIntegrator.callWorkFlow(request);
         return repository.updateKsmartBirthDetails(request);
     }
 
-    public List<KsmartBirthAppliactionDetail> searchKsmartBirthDetails(@Valid KsmartBirthApplicationSearchCriteria criteria) {
-        return repository.searchKsmartBirthDetails(criteria);
+    public List<KsmartBirthAppliactionDetail> searchKsmartBirthDetails(KsmartBirthDetailsRequest request,KsmartBirthApplicationSearchCriteria criteria) {
+        return repository.searchKsmartBirthDetails(request,criteria);
     }
 }

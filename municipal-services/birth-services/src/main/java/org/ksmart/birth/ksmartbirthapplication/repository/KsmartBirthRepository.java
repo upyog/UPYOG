@@ -1,6 +1,7 @@
 package org.ksmart.birth.ksmartbirthapplication.repository;
 
 import lombok.extern.slf4j.Slf4j;
+import org.ksmart.birth.birthregistry.service.MdmsDataService;
 import org.ksmart.birth.common.producer.BndProducer;
 import org.ksmart.birth.config.BirthConfiguration;
 import org.ksmart.birth.ksmartbirthapplication.enrichment.KsmartBirthEnrichment;
@@ -27,21 +28,21 @@ public class KsmartBirthRepository {
     private final BirthConfiguration birthDeathConfiguration;
     private final JdbcTemplate jdbcTemplate;
     private final KsmartBirthApplicationQueryBuilder birthQueryBuilder;
-
     private final KsmartBirthApplicationRowMapper ksmartBirthApplicationRowMapper;
+    private final  MdmsDataService mdmsDataService;
 
 
     @Autowired
     KsmartBirthRepository(JdbcTemplate jdbcTemplate, KsmartBirthEnrichment ksmartBirthEnrichment, BirthConfiguration birthDeathConfiguration,
-                          BndProducer producer, KsmartBirthApplicationQueryBuilder birthQueryBuilder, KsmartBirthApplicationRowMapper ksmartBirthApplicationRowMapper) {
+                          BndProducer producer, KsmartBirthApplicationQueryBuilder birthQueryBuilder, KsmartBirthApplicationRowMapper ksmartBirthApplicationRowMapper,
+                          MdmsDataService mdmsDataService) {
         this.jdbcTemplate = jdbcTemplate;
         this.ksmartBirthEnrichment = ksmartBirthEnrichment;
         this.birthDeathConfiguration = birthDeathConfiguration;
         this.producer = producer;
         this.birthQueryBuilder = birthQueryBuilder;
-
-
         this.ksmartBirthApplicationRowMapper = ksmartBirthApplicationRowMapper;
+        this.mdmsDataService = mdmsDataService;
     }
 
     public List<KsmartBirthAppliactionDetail> saveKsmartBirthDetails(KsmartBirthDetailsRequest request) {
@@ -57,11 +58,14 @@ public class KsmartBirthRepository {
     }
 
 
-    public List<KsmartBirthAppliactionDetail> searchKsmartBirthDetails(@Valid KsmartBirthApplicationSearchCriteria criteria) {
+    public List<KsmartBirthAppliactionDetail> searchKsmartBirthDetails(KsmartBirthDetailsRequest request, KsmartBirthApplicationSearchCriteria criteria) {
         List<Object> preparedStmtValues = new ArrayList<>();
         String query = birthQueryBuilder.getKsmartBirthApplicationSearchQuery(criteria, preparedStmtValues, Boolean.FALSE);
         List<KsmartBirthAppliactionDetail> result = jdbcTemplate.query(query, preparedStmtValues.toArray(), ksmartBirthApplicationRowMapper);
         result.forEach(birth -> {
+            if(birth.getPlaceofBirthId()!=null){
+                mdmsDataService.setKsmartLocationDetails(result, request.getRequestInfo());
+            }
             if (birth.getParentAddress().getCountryIdPermanent() != null && birth.getParentAddress().getStateIdPermanent() != null) {
                 if (birth.getParentAddress().getCountryIdPermanent().contains(BirthConstants.COUNTRY_CODE)) {
                     if (birth.getParentAddress().getStateIdPermanent().contains(BirthConstants.STATE_CODE_SMALL)) {

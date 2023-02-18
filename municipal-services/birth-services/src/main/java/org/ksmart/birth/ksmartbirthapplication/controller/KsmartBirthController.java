@@ -58,7 +58,7 @@ public class KsmartBirthController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
     @PostMapping(value = { "/updatebirth"})
-    public ResponseEntity<?> updateMarriageDetails(@RequestBody KsmartBirthDetailsRequest request) {
+    public ResponseEntity<?> updateRegisterBirthDetails(@RequestBody KsmartBirthDetailsRequest request) {
         BirthCertificate birthCertificate = new BirthCertificate();
         List<KsmartBirthAppliactionDetail> birthApplicationDetails=ksmartBirthService.updateKsmartBirthDetails(request);
         //Download certificate when Approved
@@ -69,7 +69,7 @@ public class KsmartBirthController {
             criteria.setTenantId(registerBirthDetails.get(0).getTenantId());
             System.out.println(criteria.getTenantId());
 
-            criteria.setRegistrationNo(registerBirthDetails.get(0).getRegistrationNo()); System.out.println(registerBirthDetails.get(0).getRegistrationNo());
+            criteria.setRegistrationNo(registerBirthDetails.get(0).getRegistrationNo());
             birthCertificate = registerBirthService.download(criteria,request.getRequestInfo());
         }
         KsmartBirthApplicationResponse response=KsmartBirthApplicationResponse.builder()
@@ -79,23 +79,10 @@ public class KsmartBirthController {
                 .birthCertificate(birthCertificate)
                 .build();
         return new ResponseEntity<>(response, HttpStatus.OK);
-
-//
-//
-//
-//
-//
-//
-//        List<KsmartBirthAppliactionDetail> registerBirthDetails = ksmartBirthService.updateKsmartBirthDetails(request);
-//        KsmartBirthApplicationResponse response=KsmartBirthApplicationResponse.builder()
-//                                                                              .ksmartBirthDetails(registerBirthDetails)
-//                                                                              .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(),true))
-//                                                                              .build();
-//        return new ResponseEntity<>(response, HttpStatus.OK);
     }
     @PostMapping(value = {"/searchbirth"})
-    public ResponseEntity<KsmartBirthApplicationSearchResponse> listByHospitalId(@RequestBody KsmartBirthDetailsRequest request, @Valid @ModelAttribute KsmartBirthApplicationSearchCriteria criteria) {
-        List<KsmartBirthAppliactionDetail> birthDetails=ksmartBirthService.searchKsmartBirthDetails(criteria);
+    public ResponseEntity<KsmartBirthApplicationSearchResponse> searchKsmartBirth(@RequestBody KsmartBirthDetailsRequest request, @Valid @ModelAttribute KsmartBirthApplicationSearchCriteria criteria) {
+        List<KsmartBirthAppliactionDetail> birthDetails=ksmartBirthService.searchKsmartBirthDetails(request, criteria);
         KsmartBirthApplicationSearchResponse response=KsmartBirthApplicationSearchResponse.builder()
                                                                               .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), Boolean.TRUE))
                                                                               .ksmartBirthDetails(birthDetails)

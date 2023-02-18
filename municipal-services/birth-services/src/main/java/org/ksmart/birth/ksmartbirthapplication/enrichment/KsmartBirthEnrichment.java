@@ -4,6 +4,7 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
 import org.ksmart.birth.birthapplication.enrichment.BaseEnrichment;
 import org.ksmart.birth.birthapplication.repository.querybuilder.BirthApplicationQueryBuilder;
+import org.ksmart.birth.birthregistry.service.MdmsDataService;
 import org.ksmart.birth.common.model.AuditDetails;
 import org.ksmart.birth.config.BirthConfiguration;
 import org.ksmart.birth.ksmartbirthapplication.model.newbirth.KsmartBirthDetailsRequest;
@@ -28,6 +29,9 @@ public class KsmartBirthEnrichment implements BaseEnrichment {
     @Autowired
     IDGenerator generator;
 
+    @Autowired
+    MdmsDataService mdmsDataService;
+
     public void enrichCreate(KsmartBirthDetailsRequest request) {
 
         RequestInfo requestInfo = request.getRequestInfo();
@@ -36,8 +40,10 @@ public class KsmartBirthEnrichment implements BaseEnrichment {
         request.getKsmartBirthDetails().forEach(birth -> {
 
             birth.setId(UUID.randomUUID().toString());
-
             birth.setAuditDetails(auditDetails);
+            if(birth.getPlaceofBirthId() != null || !birth.getPlaceofBirthId().isEmpty()){
+                mdmsDataService.setKsmartLocationDetails(request.getKsmartBirthDetails(), request.getRequestInfo());
+            }
 
             birth.setBirthPlaceUuid(UUID.randomUUID().toString());
             birth.getParentsDetails().setFatherUuid(UUID.randomUUID().toString());
