@@ -56,21 +56,21 @@ public class RegisterBirthService {
         return registerBirthDetails;
     }
     public BirthCertificate download(RegisterBirthSearchCriteria criteria, RequestInfo requestInfo) {
-//        try {
+        try {
             BirthCertificate birthCertificate = new BirthCertificate();
 //            birthCertificate.setSource(criteria.getSource().toString());
             birthCertificate.setBirthDtlId(criteria.getId());
             birthCertificate.setTenantId(criteria.getTenantId());
             BirthCertRequest birthCertRequest = BirthCertRequest.builder().birthCertificate(birthCertificate).requestInfo(requestInfo).build();
-            List<RegisterBirthDetail> regDetail = searchRegisterBirthDetails(criteria, requestInfo);
-            birthCertificate.setBirthPlace(regDetail.get(0).getRegisterBirthPlace().getHospitalId());
+            List<RegisterCertificateData> regDetail = searchRegisterForCert(criteria, requestInfo);
+            birthCertificate.setBirthPlace(regDetail.get(0).getPlaceDetails());
             birthCertificate.setGender(regDetail.get(0).getGender().toString());
-            birthCertificate.setWard(regDetail.get(0).getRegisterBirthPlace().getWardId());
-            birthCertificate.setState(regDetail.get(0).getRegisterBirthPermanent().getStateId());
-            birthCertificate.setDistrict(regDetail.get(0).getRegisterBirthPermanent().getDistrictId());
+            birthCertificate.setWard(regDetail.get(0).getWardId());
+            birthCertificate.setState(regDetail.get(0).getTenantState());
+            birthCertificate.setDistrict(regDetail.get(0).getTenantDistrict());
             birthCertificate.setBirthCertificateNo(regDetail.get(0).getRegistrationNo().toString());
             birthCertificate.setDateofbirth(new Timestamp(regDetail.get(0).getDateOfBirth()) );
-            birthCertificate.setDateofreport(new Timestamp(regDetail.get(0).getRegistrationDate()));
+            birthCertificate.setDateofreport(new Timestamp(regDetail.get(0).getDateOfReport()));
             birthCertificate.setTenantId(regDetail.get(0).getTenantId());
             SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
             String date = format.format(regDetail.get(0).getDateOfReport());
@@ -88,10 +88,10 @@ public class RegisterBirthService {
             birthCertificate.setApplicationStatus(BirthCertificate.StatusEnum.FREE_DOWNLOAD);
             repository.saveRegisterBirthCert(birthCertRequest);
             return birthCertificate;
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            throw new CustomException("DOWNLOAD_ERROR", "Error in Downloading Certificate");
-//        }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new CustomException("DOWNLOAD_ERROR", "Error in Downloading Certificate");
+        }
     }
 
 

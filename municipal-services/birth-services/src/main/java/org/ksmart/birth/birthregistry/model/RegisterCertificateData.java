@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 import javax.validation.constraints.Size;
+import java.util.Date;
 
 @Getter
 @Setter
@@ -50,6 +51,10 @@ public class RegisterCertificateData {
     @JsonProperty("gender")
     private String gender;
 
+    @Size(max = 1000)
+    @JsonProperty("wardId")
+    private String wardId;
+
     @Size(max = 2500)
     @JsonProperty("remarks_en")
     private String remarksEn;
@@ -72,6 +77,22 @@ public class RegisterCertificateData {
     @Size(max = 64)
     @JsonProperty("placeDetails")
     private String placeDetails;
+
+    @Size(max = 64)
+    @JsonProperty("registrationno")
+    private String registrationNo;
+
+    @Size(max = 64)
+    @JsonProperty("certId")
+    private String certId;
+    @Size(max = 2500)
+    @JsonProperty("embeddedUrl")
+    private String embeddedUrl;
+    @JsonProperty("registrationDate")
+    private Long registrationDate;
+
+    @JsonProperty("currentDate")
+    private String currentDate;
 
     @Size(max = 2500)
     @JsonProperty("placeDetailsMl")
