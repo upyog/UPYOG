@@ -93,9 +93,6 @@ public class KsmartBirthParentDetail {
     private String motherMaritalStatus;
     @JsonProperty("ageMarriageStatusHide")// if marriaed true
     private Boolean ageMarriageStatusHide;
-
-
-
     @Size(max = 64)
     @JsonProperty("fatherBioAdopt")
     private String fatherBioAdopt;
