@@ -54,7 +54,7 @@ public class BirthApplicationController {
 
     @PostMapping(value = {"/_update"})
     public ResponseEntity<BirthApplicationResponse> updateBirthDetails(@RequestBody BirthDetailsRequest request) {
-        BirthCertificate birthCertificate = new BirthCertificate();
+        BirthCertificate birthCertificate = null;
         List<BirthApplicationDetail> birthApplicationDetails=crBirthService.updateBirthDetails(request);
         //Download certificate when Approved
         if((birthApplicationDetails.get(0).getStatus() == "APPROVED") && (birthApplicationDetails.get(0).getAction() == "APPROVE")){
@@ -62,7 +62,6 @@ public class BirthApplicationController {
             List<RegisterBirthDetail> registerBirthDetails =  registerBirthService.saveRegisterBirthDetails(registerBirthDetailsRequest);
             RegisterBirthSearchCriteria criteria = new RegisterBirthSearchCriteria();
             criteria.setTenantId(registerBirthDetails.get(0).getTenantId());
-            System.out.println(criteria.getTenantId());
 
             criteria.setRegistrationNo(registerBirthDetails.get(0).getRegistrationNo()); System.out.println(registerBirthDetails.get(0).getRegistrationNo());
             birthCertificate = registerBirthService.download(criteria,request.getRequestInfo());

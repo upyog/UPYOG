@@ -10,6 +10,8 @@ import java.util.Map;
 //import org.egov.filemgmnt.web.models.ApplicantPersonalRequest;
 import org.ksmart.birth.config.BirthConfiguration;
 import org.ksmart.birth.birthapplication.model.birth.BirthDetailsRequest;
+import org.ksmart.birth.ksmartbirthapplication.model.newbirth.KsmartBirthAppliactionDetail;
+import org.ksmart.birth.ksmartbirthapplication.model.newbirth.KsmartBirthDetailsRequest;
 import org.ksmart.birth.utils.BirthDeathConstants;
 import org.egov.tracer.model.CustomException;
 import org.ksmart.birth.birthapplication.model.BirthApplicationDetail;
@@ -53,9 +55,9 @@ public class WorkflowIntegrator {
      *
      * @param request the {@link BirthDetailsRequest}
      */
-    public  void callWorkFlow(BirthDetailsRequest request) {
+    public  void callWorkFlow(KsmartBirthDetailsRequest request) {
 
-        BirthApplicationDetail currentFile = request.getBirthDetails().get(0);
+        KsmartBirthAppliactionDetail currentFile = request.getKsmartBirthDetails().get(0);
         String wfTenantId = currentFile.getTenantId();
         String businessServiceFromMDMS = currentFile.getBusinessService();
 
@@ -65,8 +67,8 @@ public class WorkflowIntegrator {
 
         JSONArray array = new JSONArray();
 
-        for (BirthApplicationDetail birth : request.getBirthDetails()) {
-            if (businessServiceFromMDMS.equals(BirthDeathConstants.BUSINESS_SERVICE_BND) || !request.getBirthDetails()
+        for (KsmartBirthAppliactionDetail birth : request.getKsmartBirthDetails()) {
+            if (businessServiceFromMDMS.equals(BirthDeathConstants.BUSINESS_SERVICE_BND) || !request.getKsmartBirthDetails()
                     .get(0).getAction().equalsIgnoreCase(BirthDeathConstants.TRIGGER_NOWORKFLOW)) {
 
                 JSONObject obj = new JSONObject();
@@ -148,7 +150,7 @@ public class WorkflowIntegrator {
             });
             // setting the status back to TL object from wf response
 
-                  request.getBirthDetails().forEach(
+                  request.getKsmartBirthDetails().forEach(
                     bndObj -> bndObj.setStatus(idStatusMap.get(bndObj.getApplicationNo())));
 
         }

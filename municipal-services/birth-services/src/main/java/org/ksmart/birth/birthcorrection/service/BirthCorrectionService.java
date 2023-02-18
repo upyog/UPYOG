@@ -24,7 +24,7 @@ public class BirthCorrectionService {
 
     public List<BirthApplicationDetail> saveBirthDetails(BirthDetailsRequest request) {
 
-        WorkflowIntegrator.callWorkFlow(request);
+       // WorkflowIntegrator.callWorkFlow(request);
         return repository.saveBirthDetails(request);
     }
 

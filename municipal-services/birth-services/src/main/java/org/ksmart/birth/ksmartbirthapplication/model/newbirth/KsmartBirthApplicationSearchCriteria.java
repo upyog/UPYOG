@@ -19,7 +19,7 @@ public class KsmartBirthApplicationSearchCriteria {
     @JsonProperty("id")
     private String id; // birthapplicant id
 
-    @JsonProperty("applicationNo")
+    @JsonProperty("applicationNumber")
     private String applicationNo;
 
     @JsonProperty("registrationNo")
