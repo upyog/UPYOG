@@ -11,10 +11,7 @@ import org.ksmart.birth.birthregistry.model.RegisterBirthDetail;
 import org.ksmart.birth.birthregistry.model.RegisterBirthDetailsRequest;
 import org.ksmart.birth.birthregistry.model.RegisterBirthSearchCriteria;
 import org.ksmart.birth.birthregistry.service.RegisterBirthService;
-import org.ksmart.birth.ksmartbirthapplication.model.newbirth.KsmartBirthAppliactionDetail;
-import org.ksmart.birth.ksmartbirthapplication.model.newbirth.KsmartBirthApplicationResponse;
-import org.ksmart.birth.ksmartbirthapplication.model.newbirth.KsmartBirthApplicationSearchCriteria;
-import org.ksmart.birth.ksmartbirthapplication.model.newbirth.KsmartBirthDetailsRequest;
+import org.ksmart.birth.ksmartbirthapplication.model.newbirth.*;
 import org.ksmart.birth.ksmartbirthapplication.service.KsmartBirthService;
 import org.ksmart.birth.ksmartbirthapplication.service.KsmartRegistryRequestService;
 import org.ksmart.birth.utils.ResponseInfoFactory;
@@ -97,9 +94,9 @@ public class KsmartBirthController {
 //        return new ResponseEntity<>(response, HttpStatus.OK);
     }
     @PostMapping(value = {"/searchbirth"})
-    public ResponseEntity<KsmartBirthApplicationResponse> listByHospitalId(@RequestBody KsmartBirthDetailsRequest request, @Valid @ModelAttribute KsmartBirthApplicationSearchCriteria criteria) {
+    public ResponseEntity<KsmartBirthApplicationSearchResponse> listByHospitalId(@RequestBody KsmartBirthDetailsRequest request, @Valid @ModelAttribute KsmartBirthApplicationSearchCriteria criteria) {
         List<KsmartBirthAppliactionDetail> birthDetails=ksmartBirthService.searchKsmartBirthDetails(criteria);
-        KsmartBirthApplicationResponse response=KsmartBirthApplicationResponse.builder()
+        KsmartBirthApplicationSearchResponse response=KsmartBirthApplicationSearchResponse.builder()
                                                                               .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), Boolean.TRUE))
                                                                               .ksmartBirthDetails(birthDetails)
                                                                               .build();

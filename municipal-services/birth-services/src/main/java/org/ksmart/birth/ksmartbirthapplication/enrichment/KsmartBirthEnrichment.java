@@ -84,7 +84,6 @@ public class KsmartBirthEnrichment implements BaseEnrichment {
         request.getKsmartBirthDetails()
                 .forEach(birth -> {
                     birth.setApplicationNo(id);
-                    birth.setApplicationType("ACTIVE");
                     birth.setDateOfReport(currentTime);
                 });
     }
