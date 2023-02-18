@@ -11,13 +11,13 @@ public class CertificateQueryBuilder extends BaseRegBuilder {
             .append("krbd.lastname_en, krbd.lastname_ml, krbd.tenantid, krbd.gender, krbd.remarks_en, krbd.remarks_ml, krbd.aadharno, krbd.esign_user_code,")
             .append("krbd.esign_user_desig_code, krbd.is_adopted,krbd.registrationno, krbd.registration_date, krbd.ack_no, kbfi.firstname_en as father_name, kbfi.firstname_ml as father_name_ml,")
             .append("kbmi.firstname_en as mother_name, kbmi.firstname_ml as mother_name_ml, kperad.housename_no_en as per_housename_en, kperad.locality_en as per_locality_en,")
-            .append("kpread.housename_no_ml as pres_housename_no_ml,kpread.ot_address1_en as pres_ot_address1_en,")
+            .append("kpread.housename_no_ml as pres_housename_ml,kpread.ot_address1_en as pres_ot_address1_en,")
             .append("kpread.ot_address1_ml as pres_ot_address1_ml,kpread.ot_address2_en as pres_ot_address2_en,kpread.ot_address2_ml as pres_ot_address2_ml,")
             .append("kpread.districtid as pres_districtid,kpread.stateid as pres_stateid,kpread.poid as pres_poid,kpread.pinno as pres_pinno,kpread.ot_state_region_province_en as pres_ot_state_region_province_en,")
             .append("kpread.ot_state_region_province_ml as pres_ot_state_region_province_ml,kpread.countryid as pres_countryid,")
             .append("kpread.ot_zipcode as pres_ot_zipcode, kpread.locality_en as pres_locality_en, kpread.street_name_en as pres_street_name_en, kpread.locality_ml as pres_locality_ml, ")
-            .append("kpread.street_name_ml as pres_street_name_ml,kperad.housename_no_ml as per_housename_no_ml,kperad.ot_address1_en as per_ot_address1_en,")
-            .append("kperad.housename_no_ml as per_housename_no_ml,kperad.ot_address1_en as per_ot_address1_en,")
+            .append("kpread.street_name_ml as pres_street_name_ml,kperad.housename_no_ml as per_housename_ml,kperad.ot_address1_en as per_ot_address1_en,")
+            .append("kperad.housename_no_ml as per_housename_ml,kperad.ot_address1_en as per_ot_address1_en,")
             .append("kperad.ot_address1_ml as per_ot_address1_ml,kperad.ot_address2_en as per_ot_address2_en,kperad.ot_address2_ml as per_ot_address2_ml,")
             .append("kperad.districtid as per_districtid,kperad.stateid as per_stateid,kperad.poid as per_poid,kperad.pinno as per_pinno,kperad.ot_state_region_province_en as per_ot_state_region_province_en,")
             .append("kperad.ot_state_region_province_ml as per_ot_state_region_province_ml,kperad.countryid as per_countryid,")
@@ -45,6 +45,7 @@ public class CertificateQueryBuilder extends BaseRegBuilder {
         addFilter("krbd.registrationno", criteria.getRegistrationNo(), query, preparedStmtValues);
         addDateRangeFilter("krbd.dateofreport", criteria.getFromDate(), criteria.getToDate(), query, preparedStmtValues);
         addDateRangeFilter("krbd.file_date", criteria.getFromDateReg(), criteria.getToDateReg(), query, preparedStmtValues);
+        addFilter("krbd.ack_no", criteria.getAckNo(), query, preparedStmtValues);
         return query.toString();
     }
 }

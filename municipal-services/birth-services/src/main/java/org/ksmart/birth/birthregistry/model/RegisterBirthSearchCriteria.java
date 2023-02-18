@@ -20,6 +20,8 @@ public class RegisterBirthSearchCriteria {
 
     @JsonProperty("id")
     private String id; // birthapplicant id
+    @JsonProperty("ackNo")
+    private String ackNo;
 
     @JsonProperty("registrationNo")
     private String registrationNo;

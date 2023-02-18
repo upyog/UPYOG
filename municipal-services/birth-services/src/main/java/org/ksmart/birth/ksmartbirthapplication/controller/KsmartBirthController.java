@@ -32,10 +32,6 @@ public class KsmartBirthController {
     private final RegisterBirthService registerBirthService;
     private final KsmartRegistryRequestService registryReq;
     private final RegistryRequestService registryRequestService;
-
-
-
-
     @Autowired
     KsmartBirthController(KsmartBirthService ksmartBirthService, ResponseInfoFactory responseInfoFactory,
                           RegisterBirthService registerBirthService, KsmartRegistryRequestService registryReq,

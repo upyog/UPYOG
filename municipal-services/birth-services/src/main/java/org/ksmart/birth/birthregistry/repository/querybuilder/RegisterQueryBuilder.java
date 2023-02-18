@@ -47,15 +47,6 @@ public class RegisterQueryBuilder extends BaseRegBuilder {
             .append("kpreadd.birthdtlid as pres_birthdtlid,kpreadd.bio_adopt as pres_bio_adopt,kpreadd.res_asso_no_ml as pres_res_asso_no_ml,")
             .append("kpreadd.taluk_name as pres_taluk_name, kpreadd.village_name as pres_village_name, kpreadd.ward_code as pres_ward_code, kpreadd.doorno as pres_doorno, kpreadd.subno as pres_subno , kpreadd.ot_zipcode as pres_ot_zipcode, kpreadd.locality_en as pres_locality_en,")
             .append("kpreadd.street_name_en as pres_street_name_en, kpreadd.locality_ml as pres_locality_ml, kpreadd.street_name_ml as pres_street_name_ml")
-//            .append("kstat.weight_of_child, kstat.duration_of_pregnancy_in_week, kstat.nature_of_medical_attention, kstat.way_of_pregnancy,")
-//            .append("kstat.delivery_method, kstat.deliverytypeothers_en, kstat.deliverytypeothers_ml, kstat.religionid, kstat.father_nationalityid,")
-//            .append("kstat.father_educationid, kstat.father_education_subid, kstat.father_proffessionid, kstat.mother_educationid, kstat.mother_education_subid,")
-//            .append("kstat.mother_proffessionid, kstat.mother_nationalityid, kstat.mother_age_marriage, kstat.mother_age_delivery, kstat.mother_no_of_birth_given,")
-//            .append("kstat.mother_maritalstatusid, kstat.mother_unmarried, kstat.mother_res_lbid, kstat.mother_res_lb_code_id, kstat.mother_res_place_type_id,")
-//            .append("kstat.mother_res_lb_type_id, kstat.mother_res_district_id, kstat.mother_res_state_id, kstat.mother_res_country_id,")
-//            .append("kstat.mother_resdnce_addr_type, kstat.mother_resdnce_tenant, kstat.mother_resdnce_placetype, kstat.mother_resdnce_place_en,")
-//            .append("kstat.mother_resdnce_place_ml, kstat.mother_resdnce_lbtype, kstat.mother_resdnce_district, kstat.mother_resdnce_state,")
-//            .append("kstat.mother_resdnce_country, kstat.birthdtlid, kstat.createdby, kstat.createdtime, kstat.lastmodifiedtime, kstat.lastmodifiedby")
             .append(" FROM public.eg_register_birth_details krbd ")
             .append(" LEFT JOIN eg_register_birth_place kbp ON kbp.birthdtlid = krbd.id ")
             .append(" LEFT JOIN eg_register_birth_father_information kbfi ON kbfi.birthdtlid = krbd.id AND kbfi.bio_adopt='BIOLOGICAL'")
@@ -76,7 +67,6 @@ public class RegisterQueryBuilder extends BaseRegBuilder {
         addFilter("krbd.registrationno", criteria.getRegistrationNo(), query, preparedStmtValues);
         addDateRangeFilter("krbd.dateofreport", criteria.getFromDate(), criteria.getToDate(), query, preparedStmtValues);
         addDateRangeFilter("krbd.file_date", criteria.getFromDateReg(), criteria.getToDateReg(), query, preparedStmtValues);
-        System.out.println(query.toString());
         return query.toString();
     }
 
