@@ -11,7 +11,7 @@ public class CertificateQueryBuilder extends BaseRegBuilder {
             .append("krbd.lastname_en, krbd.lastname_ml, krbd.tenantid, krbd.gender, krbd.remarks_en, krbd.remarks_ml, krbd.aadharno, krbd.esign_user_code,")
             .append("krbd.esign_user_desig_code, krbd.is_adopted,krbd.registrationno, krbd.registration_date, krbd.ack_no, kbfi.firstname_en as father_name, kbfi.firstname_ml as father_name_ml,")
             .append("kbmi.firstname_en as mother_name, kbmi.firstname_ml as mother_name_ml, kperad.housename_no_en as per_housename_en, kperad.locality_en as per_locality_en,")
-            .append("kpread.housename_no_ml as pres_housename_ml,kpread.ot_address1_en as pres_ot_address1_en,")
+            .append("kpread.housename_no_ml as pres_housename_ml,kpread.housename_no_en as pres_housename_en,kpread.ot_address1_en as pres_ot_address1_en,")
             .append("kpread.ot_address1_ml as pres_ot_address1_ml,kpread.ot_address2_en as pres_ot_address2_en,kpread.ot_address2_ml as pres_ot_address2_ml,")
             .append("kpread.districtid as pres_districtid,kpread.stateid as pres_stateid,kpread.poid as pres_poid,kpread.pinno as pres_pinno,kpread.ot_state_region_province_en as pres_ot_state_region_province_en,")
             .append("kpread.ot_state_region_province_ml as pres_ot_state_region_province_ml,kpread.countryid as pres_countryid,")
