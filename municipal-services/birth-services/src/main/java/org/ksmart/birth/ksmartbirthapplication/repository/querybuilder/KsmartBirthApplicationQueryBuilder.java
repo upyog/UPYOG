@@ -84,7 +84,7 @@ public class KsmartBirthApplicationQueryBuilder extends KsmartBaseBirthQuery {
 
         addFilter("ebd.id", criteria.getId(), query, preparedStmtValues);
         addFilter("ebd.tenantid", criteria.getTenantId(), query, preparedStmtValues);
-        addFilter("ebd.applicationno", criteria.getApplicationNo(), query, preparedStmtValues);
+        addFilter("ebd.applicationno", criteria.getApplicationNumber(), query, preparedStmtValues);
         addFilter("ebd.registrationno", criteria.getRegistrationNo(), query, preparedStmtValues);
         addFilter("ebd.fm_fileno", criteria.getFileCode(), query, preparedStmtValues);
         addFilter("ebp.hospitalid", criteria.getHospitalId(), query, preparedStmtValues);
