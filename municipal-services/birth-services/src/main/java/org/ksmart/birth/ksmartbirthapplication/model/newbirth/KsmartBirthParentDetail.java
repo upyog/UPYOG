@@ -88,6 +88,13 @@ public class KsmartBirthParentDetail {
     @Size(max = 64)
     @JsonProperty("motherBioAdopt")
     private String motherBioAdopt;
+    @Size(max = 64)
+    @JsonProperty("motherMaritalStatus")
+    private String motherMaritalStatus;
+    @JsonProperty("ageMarriageStatusHide")// if marriaed true
+    private Boolean ageMarriageStatusHide;
+
+
 
     @Size(max = 64)
     @JsonProperty("fatherBioAdopt")

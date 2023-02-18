@@ -276,6 +276,10 @@ public class KsmartBirthAppliactionDetail {
     @JsonProperty("InformarHosInstDetails")
     private KsmartInformatDetail informatDetail;
 
+
+    @JsonProperty("isAdopted")
+    private Boolean isAdopted;
+
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails;
 }
