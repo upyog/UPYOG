@@ -101,6 +101,7 @@ public class KsmartBirthController {
                                                                               .ksmartBirthDetails(birthDetails)
                                                                               .build();
 
+
         return ResponseEntity.ok(response);
     }
 }
