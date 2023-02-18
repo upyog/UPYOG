@@ -106,7 +106,6 @@ public class WorkflowIntegrator {
             workFlowRequest.put(BirthDeathConstants.REQUESTINFOKEY, request.getRequestInfo());
             workFlowRequest.put(BirthDeathConstants.WORKFLOWREQUESTARRAYKEY, array);
             String response = null;
-            System.out.println("workflow Check  :" + workFlowRequest);
             log.info("workflow integrator request " + workFlowRequest);
 
             try {
@@ -138,7 +137,6 @@ public class WorkflowIntegrator {
              * on success result from work-flow read the data and set the status back to TL
              * object
              */
-            System.out.println("response Check  :" + response);
             DocumentContext responseContext = JsonPath.parse(response);
             List<Map<String, Object>> responseArray = responseContext.read(BirthDeathConstants.PROCESSINSTANCESJOSNKEY);
             Map<String, String> idStatusMap = new HashMap<>();
