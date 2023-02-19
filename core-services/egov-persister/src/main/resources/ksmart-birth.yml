@@ -75,11 +75,11 @@ serviceMaps:
 
             - jsonPath: $.ChildDetails.*.workflowcode
 
-            - jsonPath: $.ChildDetails.*.filenumber
+            - jsonPath: $.ChildDetails.*.fileNumber
 
-            - jsonPath: $.ChildDetails.*.file_date
+            - jsonPath: $.ChildDetails.*.fileDate
 
-            - jsonPath: $.ChildDetails.*.file_status
+            - jsonPath: $.ChildDetails.*.fileStatus
 
             - jsonPath: $.ChildDetails.*.applicationNumber
 
@@ -616,11 +616,11 @@ serviceMaps:
 
             - jsonPath: $.ChildDetails.*.workflowcode
 
-            - jsonPath: $.ChildDetails.*.fm_fileno
+            - jsonPath: $.ChildDetails.*.fileNumber
 
-            - jsonPath: $.ChildDetails.*.file_date
+            - jsonPath: $.ChildDetails.*.fileDate
 
-            - jsonPath: $.ChildDetails.*.file_status
+            - jsonPath: $.ChildDetails.*.fileStatus
 
             - jsonPath: $.ChildDetails.*.applicationno
 

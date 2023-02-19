@@ -101,6 +101,7 @@ public class KsmartBirthEnrichment implements BaseEnrichment {
                 .forEach(birth -> {
                     birth.setFileNumber(id);
                     birth.setFileDate(currentTime);
+                    birth.setFileStatus("ACTIVE");
                 });
     }
 

@@ -204,6 +204,9 @@ public class KsmartBirthAppliactionDetail {
     @JsonProperty("fileDate")
     private Long fileDate;
 
+    @JsonProperty("fileStatus")
+    private String fileStatus;
+
     @Size(max = 64)
     @JsonProperty("applicationNumber")
     private String applicationNo;
@@ -247,10 +250,6 @@ public class KsmartBirthAppliactionDetail {
     private Long dateOfReport;
 
     @Size(max = 64)
-    @JsonProperty("fm_fileno")
-    private String fmFileNo;
-
-    @Size(max = 64)
     @JsonProperty("birthPlaceUuid")
     private String birthPlaceUuid;
 
@@ -261,10 +260,6 @@ public class KsmartBirthAppliactionDetail {
     @Size(max = 64)
     @JsonProperty("birthStatisticsUuid")
     private String birthStatisticsUuid;
-    @Size(max = 64)
-    @JsonProperty("addressUuid")
-    private String addressUuid;
-
     @JsonProperty("ParentsDetails")
     private KsmartBirthParentDetail parentsDetails;
 

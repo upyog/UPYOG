@@ -99,8 +99,13 @@ public class KsmartBirthApplicationRowMapper implements ResultSetExtractor<List<
                     .status(rs.getString("ba_status"))
                     .auditDetails(getAuditDetails(rs))
                     .parentsDetails(KsmartBirthParentDetail(rs))
+                    .birthStatisticsUuid(rs.getString("stat_id"))
+                    .birthPlaceUuid(rs.getString("pla_id"))
+                    .fileNumber(rs.getString("ba_fm_fileno"))
+                    .fileDate(rs.getLong("ba_file_date"))
+                    .fileStatus(rs.getString("ba_file_status"))
                     .informatDetail(getKsmartInformatDetail(rs))
-//                    .initiatorDetails(getKsmartInitiatorDetail(rs))
+///                    .initiatorDetails(getKsmartInitiatorDetail(rs))
                     .parentAddress(getKsmartBirthParentAddress(rs))
                     .build());
         }

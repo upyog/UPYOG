@@ -55,6 +55,8 @@ public interface KsmartBirthParentAddressRowMapper {
                 .permntOutsideIndiaLinetwoMl(rs.getString("per_ot_address2_ml"))
                 .permntOutsideIndiaprovinceEn(rs.getString("per_ot_state_region_province_en"))
                 .permanentOutsideIndiaPostCode(rs.getString("per_ot_zipcode"))
+                .presentUuid(rs.getString("pres_id"))
+                .permanentUuid(rs.getString("per_id"))
                 .build();
 
     }
