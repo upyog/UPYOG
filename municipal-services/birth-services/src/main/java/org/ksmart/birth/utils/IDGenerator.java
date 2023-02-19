@@ -2,9 +2,9 @@ package org.ksmart.birth.utils;
 
 
 import lombok.extern.slf4j.Slf4j;
-import org.ksmart.birth.birthapplication.repository.querybuilder.BirthApplicationQueryBuilder;
 import org.ksmart.birth.common.services.MdmsTenantService;
 import org.ksmart.birth.ksmartbirthapplication.model.newbirth.KsmartBirthDetailsRequest;
+import org.ksmart.birth.ksmartbirthapplication.repository.querybuilder.KsmartBirthApplicationQueryBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
@@ -18,12 +18,12 @@ public class IDGenerator {
     private final MdmsUtil mdmsUtil;
     private final MdmsTenantService mdmsTenantService;
     private final JdbcTemplate jdbcTemplate;
-    private final BirthApplicationQueryBuilder queryBuilder;
+    private final KsmartBirthApplicationQueryBuilder queryBuilder;
 
 
     @Autowired
     public IDGenerator(MdmsUtil mdmsUtil, MdmsTenantService mdmsTenantService,
-                       JdbcTemplate jdbcTemplate, BirthApplicationQueryBuilder queryBuilder) {
+                       JdbcTemplate jdbcTemplate, KsmartBirthApplicationQueryBuilder queryBuilder) {
         this.mdmsTenantService = mdmsTenantService;
         this.mdmsUtil = mdmsUtil;
         this.jdbcTemplate = jdbcTemplate;

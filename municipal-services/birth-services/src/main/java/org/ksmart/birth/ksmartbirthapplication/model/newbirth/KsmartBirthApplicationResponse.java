@@ -3,7 +3,6 @@ package org.ksmart.birth.ksmartbirthapplication.model.newbirth;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import org.egov.common.contract.response.ResponseInfo;
-import org.ksmart.birth.birthapplication.model.BirthApplicationDetail;
 import org.ksmart.birth.birthregistry.model.BirthCertificate;
 import org.springframework.validation.annotation.Validated;
 

@@ -4,17 +4,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-//import org.egov.filemgmnt.config.FMConfiguration;
-//import org.egov.filemgmnt.util.FMConstants;
-//import org.egov.filemgmnt.web.models.ApplicantPersonal;
-//import org.egov.filemgmnt.web.models.ApplicantPersonalRequest;
 import org.ksmart.birth.config.BirthConfiguration;
-import org.ksmart.birth.birthapplication.model.birth.BirthDetailsRequest;
 import org.ksmart.birth.ksmartbirthapplication.model.newbirth.KsmartBirthAppliactionDetail;
 import org.ksmart.birth.ksmartbirthapplication.model.newbirth.KsmartBirthDetailsRequest;
 import org.ksmart.birth.utils.BirthDeathConstants;
 import org.egov.tracer.model.CustomException;
-import org.ksmart.birth.birthapplication.model.BirthApplicationDetail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;

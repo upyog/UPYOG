@@ -1,6 +1,5 @@
 package org.ksmart.birth.ksmartbirthapplication.repository.rowmapper;
 
-import org.ksmart.birth.birthapplication.model.birth.BirthFatherInfo;
 import org.ksmart.birth.ksmartbirthapplication.model.newbirth.KsmartBirthParentDetail;
 
 import java.sql.ResultSet;

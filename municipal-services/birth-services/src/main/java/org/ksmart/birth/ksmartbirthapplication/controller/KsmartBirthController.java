@@ -1,11 +1,6 @@
 package org.ksmart.birth.ksmartbirthapplication.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import org.ksmart.birth.birthapplication.model.BirthApplicationDetail;
-import org.ksmart.birth.birthapplication.model.birth.BirthApplicationResponse;
-import org.ksmart.birth.birthapplication.model.birth.BirthApplicationSearchCriteria;
-import org.ksmart.birth.birthapplication.model.birth.BirthDetailsRequest;
-import org.ksmart.birth.birthapplication.service.RegistryRequestService;
 import org.ksmart.birth.birthregistry.model.BirthCertificate;
 import org.ksmart.birth.birthregistry.model.RegisterBirthDetail;
 import org.ksmart.birth.birthregistry.model.RegisterBirthDetailsRequest;
@@ -31,16 +26,13 @@ public class KsmartBirthController {
     private final KsmartBirthService ksmartBirthService;
     private final RegisterBirthService registerBirthService;
     private final KsmartRegistryRequestService registryReq;
-    private final RegistryRequestService registryRequestService;
     @Autowired
     KsmartBirthController(KsmartBirthService ksmartBirthService, ResponseInfoFactory responseInfoFactory,
-                          RegisterBirthService registerBirthService, KsmartRegistryRequestService registryReq,
-                          RegistryRequestService registryRequestService) {
+                          RegisterBirthService registerBirthService, KsmartRegistryRequestService registryReq) {
         this.ksmartBirthService=ksmartBirthService;
         this.responseInfoFactory=responseInfoFactory;
         this.registerBirthService = registerBirthService;
         this.registryReq = registryReq;
-        this.registryRequestService = registryRequestService;
     }
 
     @PostMapping(value = {"/createbirth"})

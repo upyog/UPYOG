@@ -1,7 +1,5 @@
 package org.ksmart.birth.ksmartbirthapplication.repository.querybuilder;
 
-
-import org.ksmart.birth.birthapplication.model.birth.BirthApplicationSearchCriteria;
 import org.ksmart.birth.ksmartbirthapplication.model.newbirth.KsmartBirthApplicationSearchCriteria;
 import org.springframework.stereotype.Component;
 
@@ -104,6 +102,10 @@ public class KsmartBirthApplicationQueryBuilder extends KsmartBaseBirthQuery {
                 query,
                 preparedStmtValues);
         System.out.println(query);
+        return query.toString();
+    }
+    public String getNextIDQuery() {
+        StringBuilder query = new StringBuilder("select fn_next_birth_id(?,?,?,?)");
         return query.toString();
     }
 

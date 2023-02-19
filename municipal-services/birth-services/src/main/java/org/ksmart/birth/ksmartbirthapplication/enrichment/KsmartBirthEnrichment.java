@@ -2,8 +2,6 @@ package org.ksmart.birth.ksmartbirthapplication.enrichment;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
-import org.ksmart.birth.birthapplication.enrichment.BaseEnrichment;
-import org.ksmart.birth.birthapplication.repository.querybuilder.BirthApplicationQueryBuilder;
 import org.ksmart.birth.birthregistry.service.MdmsDataService;
 import org.ksmart.birth.common.model.AuditDetails;
 import org.ksmart.birth.config.BirthConfiguration;
@@ -22,9 +20,6 @@ public class KsmartBirthEnrichment implements BaseEnrichment {
     BirthConfiguration config;
     @Autowired
     JdbcTemplate jdbcTemplate;
-
-    @Autowired
-    BirthApplicationQueryBuilder birthApplicationQueryBuilder;
 
     @Autowired
     IDGenerator generator;

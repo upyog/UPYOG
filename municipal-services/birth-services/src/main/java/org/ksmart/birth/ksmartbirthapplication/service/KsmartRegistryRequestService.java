@@ -1,7 +1,6 @@
 package org.ksmart.birth.ksmartbirthapplication.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.ksmart.birth.birthapplication.model.birth.BirthDetailsRequest;
 import org.ksmart.birth.birthregistry.model.RegisterBirthDetail;
 import org.ksmart.birth.birthregistry.model.RegisterBirthDetailsRequest;
 import org.ksmart.birth.ksmartbirthapplication.model.newbirth.KsmartBirthDetailsRequest;

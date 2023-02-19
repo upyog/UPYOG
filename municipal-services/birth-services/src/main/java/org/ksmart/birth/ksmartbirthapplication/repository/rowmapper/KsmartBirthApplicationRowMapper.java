@@ -1,16 +1,11 @@
 package org.ksmart.birth.ksmartbirthapplication.repository.rowmapper;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import org.ksmart.birth.birthapplication.model.BirthApplicationDetail;
-import org.ksmart.birth.birthapplication.repository.rowmapper.*;
-import org.ksmart.birth.common.model.AuditDetails;
-import org.ksmart.birth.common.model.Document;
 import org.ksmart.birth.ksmartbirthapplication.model.newbirth.*;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
 
-import javax.validation.constraints.Size;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;

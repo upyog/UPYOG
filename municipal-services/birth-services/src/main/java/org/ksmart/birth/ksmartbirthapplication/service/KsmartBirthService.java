@@ -1,6 +1,5 @@
 package org.ksmart.birth.ksmartbirthapplication.service;
 
-import org.ksmart.birth.birthapplication.model.BirthApplicationDetail;
 import org.ksmart.birth.ksmartbirthapplication.model.newbirth.KsmartBirthAppliactionDetail;
 import org.ksmart.birth.ksmartbirthapplication.model.newbirth.KsmartBirthApplicationSearchCriteria;
 import org.ksmart.birth.ksmartbirthapplication.model.newbirth.KsmartBirthDetailsRequest;

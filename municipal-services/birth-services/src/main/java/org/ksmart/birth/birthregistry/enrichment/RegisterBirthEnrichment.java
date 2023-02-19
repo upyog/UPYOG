@@ -2,9 +2,9 @@ package org.ksmart.birth.birthregistry.enrichment;
 
 import org.ksmart.birth.birthregistry.model.RegisterBirthDetailsRequest;
 import org.ksmart.birth.common.model.AuditDetails;
-import org.ksmart.birth.birthapplication.enrichment.BaseEnrichment;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
+import org.ksmart.birth.ksmartbirthapplication.enrichment.BaseEnrichment;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
