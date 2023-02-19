@@ -277,15 +277,15 @@ serviceMaps:
 
             - jsonPath: $.ChildDetails.*.AddressBirthDetails.houseNameNoMlPermanent
 
-            - jsonPath: $.ChildDetails.*.AddressBirthDetails.PermntOutsideIndiaLineoneEn
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.permntOutsideIndiaLineoneEn
 
-            - jsonPath: $.ChildDetails.*.AddressBirthDetails.PermntOutsideIndiaLineoneMl
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.permntOutsideIndiaLineoneMl
 
-            - jsonPath: $.ChildDetails.*.AddressBirthDetails.PermntOutsideIndiaLinetwoEn
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.permntOutsideIndiaLinetwoEn
 
-            - jsonPath: $.ChildDetails.*.AddressBirthDetails.PermntOutsideIndiaLinetwoMl
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.permntOutsideIndiaLinetwoMl
 
-            - jsonPath: $.ChildDetails.*.AddressBirthDetails.PermntOutsideIndiaprovinceEn
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.permntOutsideIndiaprovinceEn
 
             - jsonPath: $.ChildDetails.*.AddressBirthDetails.permntInKeralaAdrVillage
 
@@ -337,7 +337,7 @@ serviceMaps:
 
             - jsonPath: $.ChildDetails.*.AddressBirthDetails.streetNameMlPermanent
 
-            - jsonPath: $.ChildDetails.*.AddressBirthDetails.PermanentOutsideIndiaPostCode
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.permanentOutsideIndiaPostCode
 
             - jsonPath: $.ChildDetails.*.ParentsDetails.fatherEmail
 
