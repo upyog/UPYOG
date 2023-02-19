@@ -149,7 +149,7 @@ public class WorkflowIntegrator {
             // setting the status back to TL object from wf response
 
                   request.getKsmartBirthDetails().forEach(
-                    bndObj -> bndObj.setStatus(idStatusMap.get(bndObj.getApplicationNo())));
+                    bndObj -> bndObj.setApplicationStatus(idStatusMap.get(bndObj.getApplicationNo())));
 
         }
 

@@ -96,7 +96,7 @@ public class KsmartBirthApplicationRowMapper implements ResultSetExtractor<List<
                     .applicationType(rs.getString("ba_applicationtype"))
                     .workFlowCode(rs.getString("ba_workflowcode"))
                     .action(rs.getString("ba_action"))
-                    .status(rs.getString("ba_status"))
+                    .applicationStatus(rs.getString("ba_status"))
                     .auditDetails(getAuditDetails(rs))
                     .parentsDetails(KsmartBirthParentDetail(rs))
                     .birthStatisticsUuid(rs.getString("stat_id"))

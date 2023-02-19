@@ -110,7 +110,7 @@ public class KsmartBirthEnrichment implements BaseEnrichment {
         String id = generator.setIDGenerator(request, BirthConstants.FUN_MODULE_NEW,BirthConstants.REGY_NUMBER_CAPTION);
         request.getKsmartBirthDetails()
                 .forEach(birth -> {
-                    if((birth.getStatus() == "APPROVED") && (birth.getAction() == "APPROVE")) {
+                    if((birth.getApplicationStatus() == "APPROVED") && (birth.getAction() == "APPROVE")) {
                         birth.setRegistrationNo(id);
                         birth.setRegistrationDate(currentTime);
                     }
@@ -181,9 +181,15 @@ public class KsmartBirthEnrichment implements BaseEnrichment {
                         if (birth.getParentAddress().getPermtaddressCountry() != null && birth.getParentAddress().getPermtaddressStateName() != null) {
                             if (birth.getParentAddress().getPermtaddressCountry().contains(BirthConstants.COUNTRY_CODE)) {
                                 if (birth.getParentAddress().getPermtaddressStateName().contains(BirthConstants.STATE_CODE_SMALL)) {
-                                    birth.getParentAddress().setCountryIdPermanent(birth.getParentAddress().getPermtaddressCountry());
+                                    if(birth.getParentAddress().getIsPrsentAddress()){
+                                        birth.getParentAddress().setCountryIdPermanent(birth.getParentAddress().getCountryIdPresent());
+                                        birth.getParentAddress().setStateIdPermanent(birth.getParentAddress().getStateIdPresent());
 
-                                    birth.getParentAddress().setStateIdPermanent(birth.getParentAddress().getPermtaddressStateName());
+                                    } else{
+                                        birth.getParentAddress().setCountryIdPermanent(birth.getParentAddress().getPermtaddressCountry());
+
+                                        birth.getParentAddress().setStateIdPermanent(birth.getParentAddress().getPermtaddressStateName());
+                                    }
 
                                     birth.getParentAddress().setDistrictIdPermanent(birth.getParentAddress().getPermntInKeralaAdrDistrict());
 

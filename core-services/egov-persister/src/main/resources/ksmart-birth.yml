@@ -89,7 +89,7 @@ serviceMaps:
 
             - jsonPath: $.ChildDetails.*.action
 
-            - jsonPath: $.ChildDetails.*.status
+            - jsonPath: $.ChildDetails.*.applicationStatus
 
             - jsonPath: $.ChildDetails.*.auditDetails.createdTime
 
