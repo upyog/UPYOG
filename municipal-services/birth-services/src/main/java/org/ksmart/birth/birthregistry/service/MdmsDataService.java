@@ -213,8 +213,8 @@ public class MdmsDataService {
 
                     }
                     else if(register.getPlaceofBirthId().contains(BIRTH_PLACE_INSTITUTION)) {
-                        String placeEn = mdmsLocationService.getInstitutionNameEn(mdmsData, register.getInstitutionNameCode());
-                        String placeMl = mdmsLocationService.getHospitalNameMl(mdmsData, register.getInstitutionNameCode());
+                        String placeEn = mdmsLocationService.getInstitutionNameEn(mdmsData, register.getInstitutionId());
+                        String placeMl = mdmsLocationService.getHospitalNameMl(mdmsData, register.getInstitutionId());
                         register.setInstitution(placeEn);
                         register.setInstitutionIdMl(placeMl);
                     } else{

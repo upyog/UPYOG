@@ -69,9 +69,7 @@ public class KsmartBirthAppliactionDetail {
     @Size(max = 64)
     @JsonProperty("institution")
     private String institution;
-    @Size(max = 64)
-    @JsonProperty("institutionNameCode")
-    private String institutionNameCode;
+
     @Size(max = 64)
     @JsonProperty("institutionId")
     private String institutionId;
