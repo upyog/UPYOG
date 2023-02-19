@@ -230,7 +230,7 @@ public class KsmartBirthAppliactionDetail {
     private List<Document> wfDocuments;
 
     @Size(max = 64)
-    @JsonProperty("applicationStapplicationStatusatus")
+    @JsonProperty("applicationStatus")
     private String applicationStatus;
     @Size(max = 2500)
     @JsonProperty("remarks_en")
