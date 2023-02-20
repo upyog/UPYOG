@@ -268,7 +268,7 @@
               {
                 "variable": "lbtypecodeMl",
                 "value": {
-                  "path": "$.tenantLbTypeMl"
+                  "path": "$.tenantLbType"
                 },
                 "type": "setEmpty",
                 "localisation":{

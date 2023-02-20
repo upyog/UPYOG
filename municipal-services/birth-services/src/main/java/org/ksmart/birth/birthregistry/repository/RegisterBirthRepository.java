@@ -58,11 +58,7 @@ public class RegisterBirthRepository {
         registerBirthDetailsEnrichment.enrichCreate(request);
         request.getRegisterBirthDetails()
                 .forEach(register -> {
-                    if (register.getIsAdopted()) {
-                        producer.push(config.getSaveBirthRegisterTopic(), request);
-                    } else {
-                        producer.push(config.getSaveBirthRegisterTopic(), request);
-                    }
+                                        producer.push(config.getSaveBirthRegisterTopic(), request);
                 });
         return request.getRegisterBirthDetails();
     }
