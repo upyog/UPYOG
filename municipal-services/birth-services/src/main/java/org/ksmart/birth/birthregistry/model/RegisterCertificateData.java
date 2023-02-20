@@ -98,50 +98,6 @@ public class RegisterCertificateData {
     @JsonProperty("placeDetailsMl")
     private String placeDetailsMl;
 
-//    @Size(max = 64)
-//    @JsonProperty("placeofbirthid")
-//    private String placeOfBirthId;
-//
-//    @Size(max = 2500)
-//    @JsonProperty("hospitalDetails")
-//    private String hospitalDetails;
-//
-//    @Size(max = 2500)
-//    @JsonProperty("institutionDetails")
-//    private String institutionDetails;
-//
-//    @Size(max = 2500)
-//    @JsonProperty("homeDetails")
-//    private String homeDetails;
-//
-//    @Size(max = 2500)
-//    @JsonProperty("vehicleDetails")
-//    private String vehicleDetails;
-//
-//    @Size(max = 2500)
-//    @JsonProperty("publicDetails")
-//    private String publicDetails;
-
-//    @Size(max = 2500)
-//    @JsonProperty("hospitalDetailsMl")
-//    private String hospitalDetailsMl;
-//
-//    @Size(max = 2500)
-//    @JsonProperty("institutionDetailsMl")
-//    private String institutionDetailsMl;
-//
-//    @Size(max = 2500)
-//    @JsonProperty("homeDetailsMl")
-//    private String homeDetailsMl;
-//
-//    @Size(max = 2500)
-//    @JsonProperty("vehicleDetailsMl")
-//    private String vehicleDetailsMl;
-//
-//    @Size(max = 2500)
-//    @JsonProperty("publicDetailsMl")
-//    private String publicDetailsMl;
-
     @Size(max = 2500)
     @JsonProperty("motherDetails")
     private String motherDetails;
@@ -177,6 +133,10 @@ public class RegisterCertificateData {
     @Size(max = 1000)
     @JsonProperty("tenantLbType")
     private String tenantLbType;
+
+    @Size(max = 1000)
+    @JsonProperty("tenantLbTypeMl")
+    private String tenantLbTypeMl;
 
     @Size(max = 1000)
     @JsonProperty("tenantDistrict")

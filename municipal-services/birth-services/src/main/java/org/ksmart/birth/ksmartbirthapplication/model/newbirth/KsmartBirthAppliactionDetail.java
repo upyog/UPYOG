@@ -210,7 +210,7 @@ public class KsmartBirthAppliactionDetail {
     private String applicationNo;
 
     @Size(max = 64)
-    @JsonProperty("registrationno")
+    @JsonProperty("registrationNo")
     private String registrationNo;
 
     @JsonProperty("registrationDate")
@@ -268,8 +268,6 @@ public class KsmartBirthAppliactionDetail {
     private KsmartBirthParentAddress parentAddress;
     @JsonProperty("InformarHosInstDetails")
     private KsmartInformatDetail informatDetail;
-
-
     @JsonProperty("isAdopted")
     private Boolean isAdopted;
 

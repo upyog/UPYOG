@@ -247,7 +247,7 @@
                     "width": "1%"
                   },
                   {
-                    "text": "{{gender}}",
+                    "text": "{{gender}}/ {{genderMl}}",
                     "style": "details-body"
                   }
                 ]
