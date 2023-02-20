@@ -9,5 +9,6 @@ public interface IComputedField<T> {
 
     public void set(AggregateRequestDto requestDto, String postAggrTheoryName);
     public void add(T data, List<String> fields, String newField,JsonNode chartNode );
+    public void subtract(T data, List<String> fields, String newField,JsonNode chartNode );
 
 }
