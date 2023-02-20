@@ -171,7 +171,7 @@ public class KsmartBirthEnrichment implements BaseEnrichment {
     private void setPermanentAddress(KsmartBirthDetailsRequest request) {
         request.getKsmartBirthDetails()
                 .forEach(birth -> {
-                    if (birth.getParentAddress() != null) {
+                    if (birth.getParentAddress() != null && birth.getParentAddress().getIsPrsentAddress() != null)  {
                         birth.getParentAddress().setIsPrsentAddressInt(birth.getParentAddress().getIsPrsentAddress() == true ? 1 : 0);
                         if (birth.getParentAddress().getPermtaddressCountry() != null && birth.getParentAddress().getPermtaddressStateName() != null) {
                             if (birth.getParentAddress().getPermtaddressCountry().contains(BirthConstants.COUNTRY_CODE)) {

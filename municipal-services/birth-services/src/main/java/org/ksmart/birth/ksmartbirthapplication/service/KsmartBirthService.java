@@ -4,6 +4,7 @@ import org.ksmart.birth.ksmartbirthapplication.model.newbirth.KsmartBirthAppliac
 import org.ksmart.birth.ksmartbirthapplication.model.newbirth.KsmartBirthApplicationSearchCriteria;
 import org.ksmart.birth.ksmartbirthapplication.model.newbirth.KsmartBirthDetailsRequest;
 import org.ksmart.birth.ksmartbirthapplication.repository.KsmartBirthRepository;
+import org.ksmart.birth.ksmartbirthapplication.validator.KsmartBirthApplicationValidator;
 import org.ksmart.birth.utils.MdmsUtil;
 import org.ksmart.birth.workflow.WorkflowIntegrator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,19 +18,22 @@ public class KsmartBirthService {
     private final KsmartBirthRepository repository;
     private final WorkflowIntegrator workflowIntegrator;
     private final MdmsUtil mdmsUtil;
+    private final KsmartBirthApplicationValidator validator;
 
     @Autowired
-    KsmartBirthService(KsmartBirthRepository repository, MdmsUtil mdmsUtil, WorkflowIntegrator workflowIntegrator) {
+    KsmartBirthService(KsmartBirthRepository repository, MdmsUtil mdmsUtil, WorkflowIntegrator workflowIntegrator,
+                       KsmartBirthApplicationValidator validator) {
         this.repository = repository;
         this.mdmsUtil = mdmsUtil;
         this.workflowIntegrator  = workflowIntegrator;
+        this.validator = validator;
     }
 
     public List<KsmartBirthAppliactionDetail> saveKsmartBirthDetails(KsmartBirthDetailsRequest request) {
         Object mdmsData = mdmsUtil.mdmsCall(request.getRequestInfo());
 
         // validate request
-        //applicationValidator.validateCreate(request, mdmsData);
+        validator.validateCreate(request, mdmsData);
 
         //call save
         List<KsmartBirthAppliactionDetail> birthApplicationDetails =  repository.saveKsmartBirthDetails(request);

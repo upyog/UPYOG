@@ -8,7 +8,8 @@ import org.ksmart.birth.ksmartbirthapplication.model.newbirth.KsmartBirthDetails
 import org.ksmart.birth.utils.BirthConstants;
 import org.ksmart.birth.utils.BirthUtils;
 import org.springframework.stereotype.Component;
-
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -57,18 +58,46 @@ public class KsmartMdmsValidator {
         List<String> birthPlaceCodes = getBirthPlaceCode(mdmsData);
 
         Map<String, String> errorMap = new ConcurrentHashMap<>();
-//        request.getKsmartBirthDetails()
-//                .forEach(birth -> {
-//                   if( birth.getIsFatherInfoMissing() == false ||  birth.getIsFatherInfoMissing() == null){
-//                       String professionCodeFather = birth.getBirthStatisticalInformation().getFatherProffessionId();
-//                       if (log.isDebugEnabled()) {
-//                           log.debug("Father Profession code : \n{}", professionCodeFather);
-//                       }
-//                       if (CollectionUtils.isEmpty(professionCodes) || !professionCodes.contains(professionCodeFather)) {
-//
-//                           errorMap.put(CR_MDMS_PROFESSION, "The Profession code '" + professionCodeFather + "' does not exists");
-//                       }
-//                   }
+        request.getKsmartBirthDetails()
+                .forEach(birth -> {
+                   if( birth.getParentsDetails().getIsMotherInfoMissing() == false){
+                       String professionCodeFather = birth.getParentsDetails().getFatherProffessionid();
+                       if (log.isDebugEnabled()) {
+                           log.debug("Father Profession code : \n{}", professionCodeFather);
+                       }
+                       if (CollectionUtils.isEmpty(professionCodes) || !professionCodes.contains(professionCodeFather)) {
+
+                           errorMap.put(CR_MDMS_PROFESSION, "The Profession code '" + professionCodeFather + "' does not exists");
+                       }
+
+                       String fatherNationalityCode=birth.getParentsDetails().getFatherNationalityid();
+                   }
+                    if( birth.getParentsDetails().getIsMotherInfoMissing() == null) {
+                        String professionCodeMother = birth.getParentsDetails().getMotherProffessionid();
+                        if (log.isDebugEnabled()) {
+                            log.debug("Father Profession code : \n{}", professionCodeMother);
+                        }
+                        if (CollectionUtils.isEmpty(professionCodes) || !professionCodes.contains(professionCodeMother)) {
+
+                            errorMap.put(CR_MDMS_PROFESSION, "The Profession code '" + professionCodeMother + "' does not exists");
+                        }
+
+                        String qualificationCodeMother = birth.getParentsDetails().getMotherEducationid();
+
+                        if (log.isDebugEnabled()) {
+                            log.debug("Mother Qualification code : \n{}", qualificationCodeMother);
+                        }
+
+                        if (CollectionUtils.isEmpty(qualificationCodes) || !qualificationCodes.contains(qualificationCodeMother)) {
+                            errorMap.put(CR_MDMS_QUALIFICATION, "The Education code '" + qualificationCodeMother + "' does not exists");
+                        }
+
+                        String motherNationalityCode=birth.getParentsDetails().getMotherNationalityid();
+
+                        if (log.isDebugEnabled()) {
+                            log.debug("mother Nationality Code: \n{}", motherNationalityCode);
+                        }
+                    }
 //
 //                    String professionCodeMother = birth.getBirthStatisticalInformation().getMotherProffessionId();
 //                    String religionCode = birth.getBirthStatisticalInformation().getReligionId();
@@ -362,7 +391,7 @@ public class KsmartMdmsValidator {
 //                    if (CollectionUtils.isEmpty(birthPlaceCodes) || !birthPlaceCodes.contains(birthPlaceCode)) {
 //                        errorMap.put(COMMON_MDMS_PLACEMASTER, "The Birth Place code '" + birthPlaceCode + "' does not exists");
 //                    }
-//                });
+                });
 
         if (MapUtils.isNotEmpty(errorMap)) {
             throw new CustomException(errorMap);

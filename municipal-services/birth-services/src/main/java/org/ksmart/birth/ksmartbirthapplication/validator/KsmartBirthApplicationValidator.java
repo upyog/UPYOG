@@ -28,7 +28,7 @@ public class KsmartBirthApplicationValidator {
     /**
      * Validate abirth details create request.
      *
-     * @param request the {@link BirthDetailsRequest}
+     * @param request the {@link KsmartBirthDetailsRequest}
      */
     public void validateCreate(KsmartBirthDetailsRequest request, Object mdmsData) {
         List<KsmartBirthAppliactionDetail> applicantPersonals = request.getKsmartBirthDetails();
