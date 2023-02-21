@@ -48,7 +48,7 @@ public class SubtractiveComputedField implements IComputedField<Data> {
                 difference = computeHelper.compute(aggregateRequestDto,difference );
             }
 
-            logger.error("IN Subtraction method,difference is coming as " + difference);
+            logger.info("IN Subtraction method,difference is coming as " + difference);
             data.getPlots().add(new Plot(newField, difference, dataType));
 
         } catch (Exception e) {
