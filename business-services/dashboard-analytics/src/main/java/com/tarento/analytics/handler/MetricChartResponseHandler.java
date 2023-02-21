@@ -208,6 +208,17 @@ public class MetricChartResponseHandler implements IResponseHandler{
                 else
                         throw new CustomException("INVALID_NUMBER_OF_OPERANDS", "Subtraction operation can be performed only with 2 operands.");
         }
+            
+            if (action.equals("percentageG")){
+                if (totalValues.size() == 2) {
+                        if (totalValues.get(1) != 0)
+                                data.setHeaderValue(((totalValues.get(1) - totalValues.get(0))*100)/totalValues.get(0));
+                        else
+                                data.setHeaderValue(Double.valueOf(1));
+                }
+                else
+                        throw new CustomException("INVALID_NUMBER_OF_OPERANDS", "Percentage Growth operation can be performed only with 2 operands.");
+        }
             data.setPlots( Arrays.asList(latestDateplot,lastUpdatedTime));
             request.getResponseRecorder().put(visualizationCode, request.getModuleLevel(), data);
             dataList.add(data);
