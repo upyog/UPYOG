@@ -1,0 +1,4 @@
+ALTER TABLE eg_register_birth_statitical_information ALTER COLUMN weight_of_child DROP NOT NULL;
+ALTER TABLE eg_register_birth_statitical_information ALTER COLUMN duration_of_pregnancy_in_week DROP NOT NULL;
+ALTER TABLE eg_register_birth_statitical_information_audit ALTER COLUMN weight_of_child DROP NOT NULL;
+ALTER TABLE eg_register_birth_statitical_information_audit ALTER COLUMN duration_of_pregnancy_in_week DROP NOT NULL;

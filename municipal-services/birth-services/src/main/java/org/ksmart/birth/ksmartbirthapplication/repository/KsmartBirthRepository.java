@@ -47,6 +47,7 @@ public class KsmartBirthRepository {
 
     public List<KsmartBirthAppliactionDetail> saveKsmartBirthDetails(KsmartBirthDetailsRequest request) {
         ksmartBirthEnrichment.enrichCreate(request);
+
         producer.push(birthDeathConfiguration.getSaveKsmartBirthApplicationTopic(), request);
         return request.getKsmartBirthDetails();
     }
