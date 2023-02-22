@@ -105,10 +105,10 @@ public class KsmartBirthEnrichment implements BaseEnrichment {
         String id = generator.setIDGenerator(request, BirthConstants.FUN_MODULE_NEW,BirthConstants.REGY_NUMBER_CAPTION);
         request.getKsmartBirthDetails()
                 .forEach(birth -> {
-                    if((birth.getApplicationStatus() == "APPROVED") && (birth.getAction() == "APPROVE")) {
+                    //if((birth.getApplicationStatus() == "APPROVED") && (birth.getAction() == "APPROVE")) {
                         birth.setRegistrationNo(id);
                         birth.setRegistrationDate(currentTime);
-                    }
+                   // }
                 });
     }
 

@@ -33,19 +33,19 @@ public class KsmartBirthService {
         Object mdmsData = mdmsUtil.mdmsCall(request.getRequestInfo());
 
         // validate request
-        validator.validateCreate(request, mdmsData);
+      //  validator.validateCreate(request, mdmsData);
 
         //call save
         List<KsmartBirthAppliactionDetail> birthApplicationDetails =  repository.saveKsmartBirthDetails(request);
 
         //WorkFlow Integration
-        workflowIntegrator.callWorkFlow(request);
+       // workflowIntegrator.callWorkFlow(request);
 
         return birthApplicationDetails;
     }
 
     public List<KsmartBirthAppliactionDetail> updateKsmartBirthDetails(KsmartBirthDetailsRequest request) {
-        workflowIntegrator.callWorkFlow(request);
+       // workflowIntegrator.callWorkFlow(request);
         return repository.updateKsmartBirthDetails(request);
     }
 

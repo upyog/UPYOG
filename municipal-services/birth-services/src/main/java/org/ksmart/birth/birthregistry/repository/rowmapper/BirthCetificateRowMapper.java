@@ -18,7 +18,7 @@ import static org.ksmart.birth.utils.BirthConstants.BIRTH_PLACE_OTHERS_COUNTRY;
 @Component
 public class BirthCetificateRowMapper implements ResultSetExtractor<List<RegisterCertificateData>> {
     @Override
-    public List<RegisterCertificateData> extractData(ResultSet rs) throws SQLException, DataAccessException { //how to handle null
+    public List<RegisterCertificateData> extractData(ResultSet rs) throws SQLException, DataAccessException {
         List<RegisterCertificateData> result = new ArrayList<>();
         DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         while (rs.next()) {

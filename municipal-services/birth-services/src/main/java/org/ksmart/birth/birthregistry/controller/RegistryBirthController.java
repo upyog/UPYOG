@@ -30,20 +30,16 @@ public class RegistryBirthController {
         this.registerBirthService=registerBirthService;
         this.responseInfoFactory=responseInfoFactory;
     }
-
-
     @PostMapping(value = {"/_create"})
     public ResponseEntity<?> saveRegisterBirthDetails(@RequestBody RegisterBirthDetailsRequest request) {
         List<RegisterBirthDetail> registerBirthDetails=registerBirthService.saveRegisterBirthDetails(request);
         return new ResponseEntity<>(registerBirthDetails, HttpStatus.OK);
     }
-
     @PostMapping(value = {"/_update"})
     public ResponseEntity<?> updateRegisterBirthDetails(@RequestBody RegisterBirthDetailsRequest request) {
         List<RegisterBirthDetail> registerBirthDetails=registerBirthService.updateRegisterBirthDetails(request);
         return new ResponseEntity<>(registerBirthDetails, HttpStatus.OK);
     }
-
     @PostMapping(value = {"/_search"})
     public ResponseEntity<RegisterBirthResponse> listByHospitalId(@RequestBody RegisterBirthDetailsRequest request, @Valid @ModelAttribute RegisterBirthSearchCriteria criteria) {
 
@@ -54,7 +50,6 @@ public class RegistryBirthController {
                 .build();
         return ResponseEntity.ok(response);
     }
-
     @PostMapping(value = {"/searchcert"})
     public ResponseEntity<RegisterCertificateRespose> getCertData(@RequestBody RegisterBirthDetailsRequest request, @Valid @ModelAttribute RegisterBirthSearchCriteria criteria) {
 
@@ -65,8 +60,6 @@ public class RegistryBirthController {
                 .build();
         return ResponseEntity.ok(response);
     }
-
-
     @PostMapping(value = {"/_download"})
     public ResponseEntity<BirthCertResponse> download(@RequestBody RequestInfoWrapper requestInfoWrapper, @Valid @ModelAttribute RegisterBirthSearchCriteria criteria) {
         BirthCertificate birthCert=registerBirthService.download(criteria, requestInfoWrapper.getRequestInfo());

@@ -832,7 +832,7 @@ serviceMaps:
 
             - jsonPath: $.ChildDetails.*.AddressBirthDetails.permntOutsideKeralaTaluk
 
-            - jsonPath: $.ChildDetails.*.AddressBirthDetails.isPrsentAddress
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.isPrsentAddressInt
 
             - jsonPath: $.ChildDetails.*.AddressBirthDetails.localityEnPermanent
 
