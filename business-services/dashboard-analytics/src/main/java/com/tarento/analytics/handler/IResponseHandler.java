@@ -86,6 +86,8 @@ public interface IResponseHandler {
 	
 	public static final String DIVISION = "division";
 
+	public static final String DIVISION = "division";
+
 	/**
 	 * Translate the consolidated/aggregated response
 	 *
