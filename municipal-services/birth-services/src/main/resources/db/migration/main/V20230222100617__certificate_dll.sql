@@ -1,6 +1,6 @@
 ALTER TABLE eg_birth_certificate_request
-    ALTER COLUMN registrationno character varying(64) COLLATE pg_catalog."default",
-     ALTER COLUMN status character varying(64) COLLATE pg_catalog."default";
+    ALTER COLUMN registrationno  TYPE character varying(64) COLLATE pg_catalog."default",
+     ALTER COLUMN status TYPE character varying(64) COLLATE pg_catalog."default";
 
 CREATE TABLE IF NOT EXISTS public.eg_birth_certificate_request_audit
 (
