@@ -24,22 +24,23 @@ export const SelectPaymentType = (props) => {
   const { state = {} } = useLocation();
   const userInfo = Digit.UserService.getUser();
   const [showToast, setShowToast] = useState(null);
-  const { tenantId: __tenantId, authorization, workflow: wrkflow } = Digit.Hooks.useQueryParams();
+  const { tenantId: __tenantId, authorization, workflow: wrkflow , consumerCode : connectionNo } = Digit.Hooks.useQueryParams();
   const paymentAmount = state?.paymentAmount;
   const { t } = useTranslation();
   const history = useHistory();
-
   const { pathname, search } = useLocation();
   // const menu = ["AXIS"];
-  const { consumerCode, businessService } = useParams();
+  let { consumerCode, businessService } = useParams();
   const tenantId = state?.tenantId || __tenantId || Digit.ULBService.getCurrentTenantId();
   const stateTenant = Digit.ULBService.getStateId();
   const { control, handleSubmit } = useForm();
   const { data: menu, isLoading } = Digit.Hooks.useCommonMDMS(stateTenant, "DIGIT-UI", "PaymentGateway");
   const { data: paymentdetails, isLoading: paymentLoading } = Digit.Hooks.useFetchPayment(
-    { tenantId: tenantId, consumerCode: wrkflow === "WNS" ? stringReplaceAll(consumerCode, "+", "/") : consumerCode, businessService },
+    { tenantId: tenantId, consumerCode: wrkflow === "WNS" ? connectionNo : consumerCode, businessService },
     {}
   );
+  if (window.location.href.includes("ISWSCON") || wrkflow === "WNS") consumerCode = decodeURIComponent(consumerCode);
+  if( wrkflow === "WNS") consumerCode = stringReplaceAll(consumerCode,"+","/")
   useEffect(() => {
     if (paymentdetails?.Bill && paymentdetails.Bill.length == 0) {
       setShowToast({ key: true, label: "CS_BILL_NOT_FOUND" });
@@ -55,11 +56,11 @@ export const SelectPaymentType = (props) => {
   const onSubmit = async (d) => {
     const filterData = {
       Transaction: {
-        tenantId: tenantId,
+        tenantId: billDetails?.tenantId,
         txnAmount: paymentAmount || billDetails.totalAmount,
         module: businessService,
         billId: billDetails.id,
-        consumerCode: wrkflow === "WNS" ? stringReplaceAll(consumerCode, "+", "/") : consumerCode,
+        consumerCode: consumerCode,
         productInfo: "Common Payment",
         gateway: d?.paymentType || "AXIS",
         taxAndPayments: [
@@ -69,14 +70,14 @@ export const SelectPaymentType = (props) => {
           },
         ],
         user: {
-          name: name || userInfo?.info?.name,
-          mobileNumber: mobileNumber || userInfo?.info?.mobileNumber,
-          tenantId: tenantId,
+          name: name || userInfo?.info?.name || billDetails?.payerName,
+          mobileNumber: mobileNumber || userInfo?.info?.mobileNumber || billDetails?.mobileNumber,
+          tenantId: billDetails?.tenantId,
         },
         // success
-        callbackUrl: window.location.href.includes("mcollect")
-          ? `${window.location.protocol}//${window.location.host}/digit-ui/citizen/payment/success/${businessService}/${consumerCode}/${tenantId}?workflow=mcollect`
-          : `${window.location.protocol}//${window.location.host}/digit-ui/citizen/payment/success/${businessService}/${consumerCode}/${tenantId}`,
+        callbackUrl: window.location.href.includes("mcollect") || wrkflow === "WNS"
+          ? `${window.location.protocol}//${window.location.host}/digit-ui/citizen/payment/success/${businessService}/${wrkflow === "WNS"? encodeURIComponent(consumerCode):consumerCode}/${tenantId}?workflow=${wrkflow === "WNS"? wrkflow : "mcollect"}`
+          : `${window.location.protocol}//${window.location.host}/digit-ui/citizen/payment/success/${businessService}/${wrkflow === "WNS"? encodeURIComponent(consumerCode):consumerCode}/${tenantId}`,
         additionalDetails: {
           isWhatsapp: false,
         },
@@ -84,7 +85,7 @@ export const SelectPaymentType = (props) => {
     };
 
     try {
-      const data = await Digit.PaymentService.createCitizenReciept(tenantId, filterData);
+      const data = await Digit.PaymentService.createCitizenReciept(billDetails?.tenantId, filterData);
       const redirectUrl = data?.Transaction?.redirectUrl;
       if (d?.paymentType == "AXIS") {
         window.location = redirectUrl;
@@ -188,7 +189,7 @@ export const SelectPaymentType = (props) => {
         <Card>
           <div className="payment-amount-info" style={{ marginBottom: "26px" }}>
             <CardLabel className="dark">{t("PAYMENT_CS_TOTAL_AMOUNT_DUE")}</CardLabel>
-            <CardSectionHeader> ₹ {paymentAmount || billDetails?.totalAmount}</CardSectionHeader>
+            <CardSectionHeader> ₹ { paymentAmount !== undefined ? Number(paymentAmount).toFixed(2) : Number(billDetails?.totalAmount).toFixed(2)}</CardSectionHeader>
           </div>
           <CardLabel>{t("PAYMENT_CS_SELECT_METHOD")}</CardLabel>
           {menu?.length && (
