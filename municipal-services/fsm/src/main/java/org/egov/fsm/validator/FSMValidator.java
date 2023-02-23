@@ -6,7 +6,6 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
@@ -93,11 +92,11 @@ public class FSMValidator {
 			
 		} else if (fsmRequest.getRequestInfo().getUserInfo().getType().equalsIgnoreCase(FSMConstants.EMPLOYEE)) {
 			User applicant = fsm.getCitizen();
-//			if (applicant == null || StringUtils.isEmpty(applicant.getName())
-//					|| StringUtils.isEmpty(applicant.getMobileNumber())) {
-//				throw new CustomException(FSMErrorConstants.INVALID_APPLICANT_ERROR,
-//						"Applicant Name and mobile number mandatory");
-//			}
+			if (applicant == null || StringUtils.isEmpty(applicant.getName())
+					|| StringUtils.isEmpty(applicant.getMobileNumber())) {
+				throw new CustomException(FSMErrorConstants.INVALID_APPLICANT_ERROR,
+						"Applicant Name and mobile number mandatory");
+			}
 			
 			//validateVehicleType(fsmRequest);
 			validateVehicleCapacity(fsmRequest);
