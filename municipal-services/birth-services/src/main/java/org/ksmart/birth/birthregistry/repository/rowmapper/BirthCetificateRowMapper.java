@@ -83,10 +83,10 @@ public class BirthCetificateRowMapper implements ResultSetExtractor<List<Registe
         if(rs.getString("placeofbirthid") != null) {
             if (rs.getString("placeofbirthid").contains(BIRTH_PLACE_HOSPITAL)) {
                 address = new StringBuilder()
-                        .append(rs.getString("hospitalid") == null ? "" : rs.getString("hospitalid") + ',').toString();
+                        .append(rs.getString("hospitalid") == null ? "" : rs.getString("hospitalid")).toString();
             } else if (rs.getString("placeofbirthid").contains(BIRTH_PLACE_INSTITUTION)) {
                 address = new StringBuilder()
-                        .append(rs.getString("institution_id") == null ? "" : rs.getString("institution_id") + ',').toString();
+                        .append(rs.getString("institution_id") == null ? "" : rs.getString("institution_id")).toString();
             } else if (rs.getString("placeofbirthid").contains(BIRTH_PLACE_HOME)) {
                 address = new StringBuilder()
                         .append(rs.getString("ho_housename_en") == null ? "" : rs.getString("ho_housename_en") + ',')

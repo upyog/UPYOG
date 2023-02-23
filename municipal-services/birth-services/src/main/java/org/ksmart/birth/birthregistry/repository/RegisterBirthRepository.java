@@ -80,6 +80,7 @@ public class RegisterBirthRepository {
     public List<RegisterCertificateData> searchRegisterCert(RegisterBirthSearchCriteria criteria) {
         List<Object> preparedStmtValues=new ArrayList<>();
         String query=certificateQueryBuilder.getRegBirthApplicationSearchQuery(criteria, preparedStmtValues, Boolean.FALSE);
+        System.out.println(query);
         List<RegisterCertificateData> result=jdbcTemplate.query(query, preparedStmtValues.toArray(), birthCetificateRowMapper);
         return result;
     }

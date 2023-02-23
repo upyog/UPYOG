@@ -171,16 +171,15 @@ public class MdmsDataService {
         return registerBirthDetails;
     }
 
-    public List<RegisterCertificateData> setLocationDetails(List<RegisterCertificateData> registerBirthDetails, RequestInfo requestInfo) {
+    public List<RegisterCertificateData>  setLocationDetails(List<RegisterCertificateData> registerBirthDetails, RequestInfo requestInfo) {
         registerBirthDetails
                 .forEach(register -> {
                     Object mdmsData = mdmsLocCall(requestInfo, register.getTenantId());
 
                     if(register.getPlaceDetails().contains(BIRTH_PLACE_HOSPITAL)){
-                        String placeEn = mdmsLocationService.getHospitalAddressEn(mdmsData, register.getPlaceDetails())+", "
-                                +mdmsLocationService.getHospitalAddressEn(mdmsData, register.getPlaceDetails());
-                        String placeMl = mdmsLocationService.getHospitalNameMl(mdmsData, register.getPlaceDetails())+" , "
-                                +mdmsLocationService.getHospitalAddressMl(mdmsData, register.getPlaceDetails());
+                        System.out.println(register.getPlaceDetails());
+                        String placeEn = mdmsLocationService.getHospitalNameEn(mdmsData, register.getPlaceDetails());
+                        String placeMl = mdmsLocationService.getHospitalNameMl(mdmsData, register.getPlaceDetails());
                         register.setPlaceDetails(placeEn);
                         register.setPlaceDetailsMl(placeMl);
 
