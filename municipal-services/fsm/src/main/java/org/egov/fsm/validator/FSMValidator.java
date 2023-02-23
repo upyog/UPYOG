@@ -18,7 +18,7 @@ import org.egov.fsm.service.DSOService;
 import org.egov.fsm.util.FSMAuditUtil;
 import org.egov.fsm.util.FSMConstants;
 import org.egov.fsm.util.FSMErrorConstants;
-import org.egov.fsm.util.FSMToFSMAuditUtilConverter;s
+import org.egov.fsm.util.FSMToFSMAuditUtilConverter;
 import org.egov.fsm.web.model.FSM;
 import org.egov.fsm.web.model.FSMAuditSearchCriteria;
 import org.egov.fsm.web.model.FSMRequest;
