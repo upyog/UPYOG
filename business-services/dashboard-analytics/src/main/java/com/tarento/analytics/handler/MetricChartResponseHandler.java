@@ -216,6 +216,16 @@ public class MetricChartResponseHandler implements IResponseHandler{
                         else
                                 data.setHeaderValue(Double.valueOf(totalValues.get(1)));
                 }
+                else if (totalValues.size() == 16) {
+                
+                    data.setHeaderValue(((totalValues.get(1)+totalValues.get(0)+totalValues.get(2)+totalValues.get(3)+totalValues.get(4)+totalValues.get(5)+totalValues.get(6)+totalValues.get(7))*100)/(totalValues.get(8)+totalValues.get(9)+totalValues.get(10)+totalValues.get(11)+totalValues.get(12)+totalValues.get(13)+totalValues.get(14)+totalValues.get(15)));
+
+            }
+                else if (totalValues.size() == 14) {
+                    
+                    data.setHeaderValue(((totalValues.get(1)+totalValues.get(0)+totalValues.get(2)+totalValues.get(3)+totalValues.get(4)+totalValues.get(5)+totalValues.get(6))*100)/(totalValues.get(7)+totalValues.get(8)+totalValues.get(9)+totalValues.get(10)+totalValues.get(11)+totalValues.get(12)+totalValues.get(13)));
+
+            }
                 else
                         throw new CustomException("INVALID_NUMBER_OF_OPERANDS", "Percentage Growth operation can be performed only with 2 operands.");
         }
