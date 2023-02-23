@@ -177,7 +177,6 @@ public class MdmsDataService {
                     Object mdmsData = mdmsLocCall(requestInfo, register.getTenantId());
 
                     if(register.getPlaceDetails().contains(BIRTH_PLACE_HOSPITAL)){
-                        System.out.println(register.getPlaceDetails());
                         String placeEn = mdmsLocationService.getHospitalNameEn(mdmsData, register.getPlaceDetails());
                         String placeMl = mdmsLocationService.getHospitalNameMl(mdmsData, register.getPlaceDetails());
                         register.setPlaceDetails(placeEn);
@@ -189,7 +188,6 @@ public class MdmsDataService {
                                 +mdmsLocationService.getInstitutionNameMl(mdmsData, register.getPlaceDetails());
                         String placeMl = mdmsLocationService.getHospitalNameMl(mdmsData, register.getPlaceDetails())+" , "
                                 +mdmsLocationService.getHospitalAddressMl(mdmsData, register.getPlaceDetails());
-                        System.out.println(placeEn);
                         register.setPlaceDetails(placeEn);
                         register.setPlaceDetailsMl(placeMl);
                     } else{
@@ -222,6 +220,8 @@ public class MdmsDataService {
                 });
         return ksmartBirthAppliactionDetail;
     }
+
+
 
 
 }
