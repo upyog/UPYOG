@@ -162,7 +162,7 @@ const FstpServiceRequest = () => {
           onSort={handleSort}
           sortParams={sortParams}
         />
-        <span className="link" style={{ margin: "8px" }}>
+        {/* <span className="link" style={{ margin: "8px" }}>
           <Link
             to={{
               pathname: "/digit-ui/employee/fsm/fstp/new-vehicle-entry/",
@@ -170,7 +170,7 @@ const FstpServiceRequest = () => {
           >
             {t("ES_FSM_FSTP_NEW_ENTRY")}
           </Link>
-        </span>
+        </span> */}
       </div>
     );
   } else {
@@ -198,7 +198,7 @@ const FstpServiceRequest = () => {
           isPaginationRequired={false}
           searchParams={filterParam}
         />
-        <span className="link" style={{ margin: "294px", padding: "2px" }}>
+        {/* <span className="link" style={{ margin: "294px", padding: "2px" }}>
           <Link
             to={{
               pathname: "/digit-ui/employee/fsm/fstp/new-vehicle-entry/",
@@ -206,7 +206,7 @@ const FstpServiceRequest = () => {
           >
             {t("ES_FSM_FSTP_NEW_ENTRY")}
           </Link>
-        </span>
+        </span> */}
       </div>
     );
   }
