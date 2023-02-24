@@ -10,7 +10,6 @@ import lombok.Getter;
 @Component
 @Getter
 public class CommonUtils {
-	
 
     /**
      * Method to return auditDetails for create/update flows
