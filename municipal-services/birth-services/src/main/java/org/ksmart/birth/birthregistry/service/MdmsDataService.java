@@ -80,6 +80,20 @@ public class MdmsDataService {
         return result;
     }
 
+    public Object mdmsCommonCall(RequestInfo requestInfo) {
+        // Call MDMS microservice with MdmsCriteriaReq as params
+
+        MdmsCriteriaReq mdmsCriteriaReq = getTenantRequest(requestInfo);
+        String mdmsUri = String.format("%s%s", mdmsHost, mdmsUrl);
+        Object result = null;
+        try {
+            result = restTemplate.postForObject(mdmsUri, mdmsCriteriaReq, Map.class);
+        } catch (Exception e) {
+            log.error("Exception occurred while fetching MDMS data: ", e);
+        }
+        return result;
+    }
+
     private MdmsCriteriaReq getLocRequest(RequestInfo requestInfo, String tenantId) {
 
         List<ModuleDetail> moduleDetails = new LinkedList<>();
@@ -108,6 +122,23 @@ public class MdmsDataService {
         MdmsCriteria mdmsCriteria = MdmsCriteria.builder()
                                                 .moduleDetails(moduleDetails)
                                                 .tenantId(BirthConstants.CR_MDMS_TENANT)
+                                                .build();
+
+        return MdmsCriteriaReq.builder()
+                              .mdmsCriteria(mdmsCriteria)
+                              .requestInfo(requestInfo)
+                              .build();
+    }
+
+    private MdmsCriteriaReq getCommonRequest(RequestInfo requestInfo) {
+
+        List<ModuleDetail> moduleDetails = new LinkedList<>();
+
+        moduleDetails.addAll(getTenantModuleDetails());
+
+        MdmsCriteria mdmsCriteria = MdmsCriteria.builder()
+                                                .moduleDetails(moduleDetails)
+                                                .tenantId(BirthConstants.COMMON_MDMS_MODULE)
                                                 .build();
 
         return MdmsCriteriaReq.builder()
@@ -159,23 +190,62 @@ public class MdmsDataService {
         return Collections.singletonList(tenantModuleDetail);
 
     }
-    public List<RegisterCertificateData> setTenantDetails(List<RegisterCertificateData> registerBirthDetails, RequestInfo requestInfo) {
+    public List<ModuleDetail> getCommonModuleDetails() {
+        // master details for Tenant module
+        moduleName = "tenant";
+        List<MasterDetail> commonMasterDetails = new LinkedList<>();
+
+        // Add Module Taluk
+        List<MasterDetail> masterTaluk = Collections.singletonList(MasterDetail.builder()
+                .name(BirthConstants
+                        .COMMON_MDMS_TALUK).build());
+
+        commonMasterDetails.addAll(masterTaluk);
+
+        // Add Module State
+        List<MasterDetail> masterState = Collections.singletonList(MasterDetail.builder()
+                .name(BirthConstants
+                        .COMMON_MDMS_STATE).build());
+        commonMasterDetails.addAll(masterState);
+
+        // Add Module Country
+        List<MasterDetail> masterCountry = Collections.singletonList(MasterDetail.builder()
+                .name(BirthConstants
+                        .COMMON_MDMS_COUNTRY).build());
+        commonMasterDetails.addAll(masterCountry);
+
+        // Add Module Postoffice
+        List<MasterDetail> masterPostOffice = Collections.singletonList(MasterDetail.builder()
+                .name(BirthConstants.COMMON_MDMS_POSTOFFICE)
+                .build());
+
+        commonMasterDetails.addAll(masterPostOffice);
+
+        // Add Module LbType
+        List<MasterDetail> masterLbType = Collections.singletonList(MasterDetail.builder()
+                .name(BirthConstants.COMMON_MDMS_LBTYPE)
+                .build());
+
+        commonMasterDetails.addAll(masterLbType);
+        ModuleDetail tenantModuleDetail = ModuleDetail.builder()
+                                                      .masterDetails(commonMasterDetails)
+                                                      .moduleName(BirthConstants.COMMON_MDMS_MODULE)
+                                                      .build();
+
+        return Collections.singletonList(tenantModuleDetail);
+
+    }
+    public void setTenantDetails(List<RegisterCertificateData> registerBirthDetails, Object  mdmsData) {
         registerBirthDetails
                 .forEach(register -> {
-                    Object mdmsData = mdmsTenantCall(requestInfo);
                     register.setTenantLbType(mdmsTenantService.getTenantLbType(mdmsData, register.getTenantId()));
                     register.setTenantDistrict(mdmsTenantService.getTenantDistrict(mdmsData, register.getTenantId()));
                     register.setTenantTaluk(mdmsTenantService.getTenantTaluk(mdmsData, register.getTenantId()));
                     register.setTenantState(mdmsTenantService.getTenantState(mdmsData, register.getTenantId()));
                 });
-        return registerBirthDetails;
     }
 
-    public List<RegisterCertificateData>  setLocationDetails(List<RegisterCertificateData> registerBirthDetails, RequestInfo requestInfo) {
-        registerBirthDetails
-                .forEach(register -> {
-                    Object mdmsData = mdmsLocCall(requestInfo, register.getTenantId());
-
+    public void setBirthPlaceDetails(RegisterCertificateData register, Object  mdmsData) {
                     if(register.getPlaceDetails().contains(BIRTH_PLACE_HOSPITAL)){
                         String placeEn = mdmsLocationService.getHospitalNameEn(mdmsData, register.getPlaceDetails());
                         String placeMl = mdmsLocationService.getHospitalNameMl(mdmsData, register.getPlaceDetails());
@@ -190,35 +260,22 @@ public class MdmsDataService {
                                 +mdmsLocationService.getHospitalAddressMl(mdmsData, register.getPlaceDetails());
                         register.setPlaceDetails(placeEn);
                         register.setPlaceDetailsMl(placeMl);
-                    } else{
-
-                    }
-                });
-        return registerBirthDetails;
+                    } else{}
     }
 
-    public List<KsmartBirthAppliactionDetail> setKsmartLocationDetails(List<KsmartBirthAppliactionDetail> ksmartBirthAppliactionDetail, RequestInfo requestInfo) {
-        ksmartBirthAppliactionDetail
-                .forEach(register -> {
-                    Object mdmsData = mdmsLocCall(requestInfo, register.getTenantId());
-
-                    if(register.getPlaceofBirthId().contains(BIRTH_PLACE_HOSPITAL)){
-                        String placeEn = mdmsLocationService.getHospitalAddressEn(mdmsData, register.getHospitalId());
-                        String placeMl = mdmsLocationService.getHospitalNameMl(mdmsData, register.getHospitalId());
-                        register.setHospitalName(placeEn);
-                        register.setHospitalNameMl(placeMl);
-
-                    }
-                    else if(register.getPlaceofBirthId().contains(BIRTH_PLACE_INSTITUTION)) {
-                        String placeEn = mdmsLocationService.getInstitutionNameEn(mdmsData, register.getInstitutionId());
-                        String placeMl = mdmsLocationService.getHospitalNameMl(mdmsData, register.getInstitutionId());
-                        register.setInstitution(placeEn);
-                        register.setInstitutionIdMl(placeMl);
-                    } else{
-
-                    }
-                });
-        return ksmartBirthAppliactionDetail;
+    public void setKsmartLocationDetails(KsmartBirthAppliactionDetail register,  Object mdmsData) {
+         if (register.getPlaceofBirthId().contains(BIRTH_PLACE_HOSPITAL)) {
+            String placeEn = mdmsLocationService.getHospitalAddressEn(mdmsData, register.getHospitalId());
+            String placeMl = mdmsLocationService.getHospitalNameMl(mdmsData, register.getHospitalId());
+            register.setHospitalName(placeEn);
+            register.setHospitalNameMl(placeMl);
+        } else if (register.getPlaceofBirthId().contains(BIRTH_PLACE_INSTITUTION)) {
+            String placeEn = mdmsLocationService.getInstitutionNameEn(mdmsData, register.getInstitutionId());
+            String placeMl = mdmsLocationService.getHospitalNameMl(mdmsData, register.getInstitutionId());
+            register.setInstitution(placeEn);
+            register.setInstitutionIdMl(placeMl);
+        } else {
+        }
     }
 
 

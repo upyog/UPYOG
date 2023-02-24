@@ -12,6 +12,7 @@ import org.ksmart.birth.ksmartbirthapplication.repository.querybuilder.KsmartBir
 import org.ksmart.birth.ksmartbirthapplication.repository.querybuilder.KsmartQueryBuilder;
 import org.ksmart.birth.ksmartbirthapplication.repository.rowmapper.KsmartBirthApplicationRowMapper;
 import org.ksmart.birth.utils.BirthConstants;
+import org.ksmart.birth.utils.MdmsUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -30,12 +31,14 @@ public class KsmartBirthRepository {
     private final KsmartBirthApplicationQueryBuilder birthQueryBuilder;
     private final KsmartBirthApplicationRowMapper ksmartBirthApplicationRowMapper;
     private final  MdmsDataService mdmsDataService;
+    private final  MdmsUtil mdmsUtil;
+
 
 
     @Autowired
     KsmartBirthRepository(JdbcTemplate jdbcTemplate, KsmartBirthEnrichment ksmartBirthEnrichment, BirthConfiguration birthDeathConfiguration,
                           BndProducer producer, KsmartBirthApplicationQueryBuilder birthQueryBuilder, KsmartBirthApplicationRowMapper ksmartBirthApplicationRowMapper,
-                          MdmsDataService mdmsDataService) {
+                          MdmsDataService mdmsDataService, MdmsUtil mdmsUtil) {
         this.jdbcTemplate = jdbcTemplate;
         this.ksmartBirthEnrichment = ksmartBirthEnrichment;
         this.birthDeathConfiguration = birthDeathConfiguration;
@@ -43,11 +46,11 @@ public class KsmartBirthRepository {
         this.birthQueryBuilder = birthQueryBuilder;
         this.ksmartBirthApplicationRowMapper = ksmartBirthApplicationRowMapper;
         this.mdmsDataService = mdmsDataService;
+        this.mdmsUtil = mdmsUtil;
     }
 
     public List<KsmartBirthAppliactionDetail> saveKsmartBirthDetails(KsmartBirthDetailsRequest request) {
         ksmartBirthEnrichment.enrichCreate(request);
-
         producer.push(birthDeathConfiguration.getSaveKsmartBirthApplicationTopic(), request);
         return request.getKsmartBirthDetails();
     }
@@ -65,7 +68,8 @@ public class KsmartBirthRepository {
         List<KsmartBirthAppliactionDetail> result = jdbcTemplate.query(query, preparedStmtValues.toArray(), ksmartBirthApplicationRowMapper);
         result.forEach(birth -> {
             if(birth.getPlaceofBirthId()!=null){
-                mdmsDataService.setKsmartLocationDetails(result, request.getRequestInfo());
+                Object mdmsData = mdmsUtil.mdmsCallForLocation(request.getRequestInfo(), birth.getTenantId());
+                mdmsDataService.setKsmartLocationDetails(birth, mdmsData);
             }
             if (birth.getParentAddress().getCountryIdPermanent() != null && birth.getParentAddress().getStateIdPermanent() != null) {
                 if (birth.getParentAddress().getCountryIdPermanent().contains(BirthConstants.COUNTRY_CODE)) {

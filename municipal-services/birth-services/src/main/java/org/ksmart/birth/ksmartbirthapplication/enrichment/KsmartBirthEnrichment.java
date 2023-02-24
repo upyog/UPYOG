@@ -8,6 +8,7 @@ import org.ksmart.birth.config.BirthConfiguration;
 import org.ksmart.birth.ksmartbirthapplication.model.newbirth.KsmartBirthDetailsRequest;
 import org.ksmart.birth.utils.BirthConstants;
 import org.ksmart.birth.utils.IDGenerator;
+import org.ksmart.birth.utils.MdmsUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
@@ -16,14 +17,12 @@ import java.util.*;
 
 @Component
 public class KsmartBirthEnrichment implements BaseEnrichment {
+//    @Autowired
+//    BirthConfiguration config;
     @Autowired
-    BirthConfiguration config;
-    @Autowired
-    JdbcTemplate jdbcTemplate;
-
+   MdmsUtil mdmsUtil;
     @Autowired
     IDGenerator generator;
-
     @Autowired
     MdmsDataService mdmsDataService;
 
@@ -37,9 +36,9 @@ public class KsmartBirthEnrichment implements BaseEnrichment {
             birth.setId(UUID.randomUUID().toString());
             birth.setAuditDetails(auditDetails);
             if(birth.getPlaceofBirthId() != null || !birth.getPlaceofBirthId().isEmpty()){
-                mdmsDataService.setKsmartLocationDetails(request.getKsmartBirthDetails(), request.getRequestInfo());
+                Object mdmsData = mdmsUtil.mdmsCallForLocation(request.getRequestInfo(), birth.getTenantId());
+                mdmsDataService.setKsmartLocationDetails(birth, mdmsData);
             }
-
             birth.setBirthPlaceUuid(UUID.randomUUID().toString());
             birth.getParentsDetails().setFatherUuid(UUID.randomUUID().toString());
             birth.getParentsDetails().setMotherUuid(UUID.randomUUID().toString());
