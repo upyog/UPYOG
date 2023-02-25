@@ -1,4 +1,4 @@
-package org.ksmart.birth.ksmartbirthapplication.enrichment;
+package org.ksmart.birth.common.enrichment;
 
 import org.ksmart.birth.common.model.AuditDetails;
 

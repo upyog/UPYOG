@@ -3,6 +3,7 @@ package org.ksmart.birth.ksmartbirthapplication.enrichment;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
 import org.ksmart.birth.birthregistry.service.MdmsDataService;
+import org.ksmart.birth.common.enrichment.BaseEnrichment;
 import org.ksmart.birth.common.model.AuditDetails;
 import org.ksmart.birth.config.BirthConfiguration;
 import org.ksmart.birth.ksmartbirthapplication.model.newbirth.KsmartBirthDetailsRequest;

@@ -58,7 +58,7 @@ public class RegisterBirthRepository {
         registerBirthDetailsEnrichment.enrichCreate(request);
         request.getRegisterBirthDetails()
                 .forEach(register -> {
-                                        producer.push(config.getSaveBirthRegisterTopic(), request);
+                    producer.push(config.getSaveBirthRegisterTopic(), request);
                 });
         return request.getRegisterBirthDetails();
     }

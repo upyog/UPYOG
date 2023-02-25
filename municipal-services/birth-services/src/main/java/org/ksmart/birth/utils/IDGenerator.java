@@ -71,7 +71,7 @@ public class IDGenerator {
         preparedStmtValues.add(Year);
         String query = queryBuilder.getNextIDQuery();
         List<Map<String, Object>> nextID = jdbcTemplate.queryForList(query, preparedStmtValues.toArray());
-        String finalid = String.valueOf(nextID.get(0).get("fn_next_birth_id"));
+        String finalid = String.valueOf(nextID.get(0).get("fn_next_id"));
         return finalid;
     }
 }

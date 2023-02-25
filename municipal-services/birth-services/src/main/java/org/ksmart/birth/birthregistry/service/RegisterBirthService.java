@@ -41,7 +41,6 @@ public class RegisterBirthService {
     }
 
     public List<RegisterBirthDetail> searchRegisterBirthDetails(RegisterBirthSearchCriteria criteria, RequestInfo requestInfo)  {
-
         List<RegisterBirthDetail>  registerBirthDetails = repository.searchRegisterBirthDetails(criteria);
 //        mdmsDataService.setTenantDetails(registerBirthDetails, requestInfo);
 //        mdmsDataService.setLocationDetails(registerBirthDetails, requestInfo);
@@ -50,11 +49,11 @@ public class RegisterBirthService {
 
     public List<RegisterCertificateData> searchRegisterForCert(RegisterBirthSearchCriteria criteria, RequestInfo requestInfo)  {
         Object mdmsData = mdmsUtil.mdmsCall(requestInfo);
-
         List<RegisterCertificateData>  registerBirthDetails = repository.searchRegisterCert(criteria);
-        mdmsDataService.setTenantDetails(registerBirthDetails, mdmsData);
         registerBirthDetails
                 .forEach(register -> {
+                    mdmsDataService.setTenantDetails(registerBirthDetails, mdmsData);
+                   // mdmsDataService.setPresentAddressDetailsEn(registerBirthDetails, mdmsData);
                     Object mdmsLocData = mdmsUtil.mdmsCallForLocation(requestInfo, register.getTenantId());
                     mdmsDataService.setBirthPlaceDetails(register, mdmsLocData);
                 });

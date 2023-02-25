@@ -66,7 +66,10 @@ public class StorageController {
 		String fileName=resource.getFileName().substring(resource.getFileName().lastIndexOf('/')+1,resource.getFileName().length());
 		return ResponseEntity.ok()
 				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" +fileName  + "\"")
-				.header(HttpHeaders.CONTENT_TYPE, resource.getContentType()).body(resource.getResource());
+				.header(HttpHeaders.CONTENT_TYPE, resource.getContentType())
+				.header(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "*")
+				.header(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, "GET, OPTIONS, HEAD, PUT, POST")
+				.body(resource.getResource());
 	}
 
 	@GetMapping("/metadata")
