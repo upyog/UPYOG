@@ -1,7 +1,9 @@
 package org.ksmart.birth.birthregistry.repository.querybuilder;
 
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
@@ -12,6 +14,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 @Component
 public class BaseRegBuilder {
+    @Value("${egov.bnd.default.limit}")
+    private Integer defaultBndLimit;
+
+    @Value("${egov.bnd.default.offset}")
+    private Integer defaultOffset;
     void addDateRangeFilter(String column, Long startDate, Long endDate, StringBuilder query,
                             List<Object> paramValues) {
 
@@ -91,4 +98,54 @@ public class BaseRegBuilder {
                 .stream()
                 .collect(Collectors.joining(", "));
     }
+
+    void addOrderClause(StringBuilder orderBy) {
+        if (orderBy.length() == 0) {
+            orderBy.append(" ORDER BY ");
+        } else {
+            orderBy.append(" ");
+        }
+    }
+
+    void addOrderByColumns(String column, String valueSort, StringBuilder orderBy){
+        addOrderClause(orderBy);
+        if(!StringUtils.isEmpty(column)){
+            addOrderClause(orderBy);
+            orderBy.append(column).append(", ");
+            addAscDesc(valueSort, orderBy);
+        }
+    }
+    void addOrderToQuery(StringBuilder orderBy, StringBuilder query){
+        if (orderBy.length() > 0) {
+            query.append(StringUtils.stripEnd(orderBy.toString(), ","));
+        }
+    }
+
+    void addAscDesc(String valueSort, StringBuilder query){
+        if(StringUtils.isEmpty(valueSort))
+            query.append(" ");
+        else if(valueSort == "ASC")
+            query.append(" ASC ");
+        else
+            query.append(" DESC ");
+    }
+
+     void addLimitAndOffset(Integer offset, Integer limit, StringBuilder query, final List<Object> paramValues) {
+        // prepare Offset
+         if (offset == null) {
+             query.append(" OFFSET ? ");
+             paramValues.add(defaultOffset);
+         } else {
+             query.append(" OFFSET ? ");
+             paramValues.add(offset);
+         }
+         // prepare limit
+         if (limit == null) {
+             query.append(" LIMIT ? ");
+             paramValues.add(defaultBndLimit);
+         } else{
+             query.append(" LIMIT ? ");
+             paramValues.add(limit);
+         }
+     }
 }

@@ -168,4 +168,7 @@ public class RegisterBirthDetail {
     private String tenantDistrict;
     private String tenantLbType;
     private String tenantState;
+
+
+
 }

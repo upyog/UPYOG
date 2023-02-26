@@ -149,4 +149,92 @@ public class RegisterCertificateData {
     @Size(max = 1000)
     @JsonProperty("tenantState")
     private String tenantState;
+
+    @Size(max = 64)
+    @JsonProperty("perCountry")
+    private String perCountry;
+
+    @Size(max = 64)
+    @JsonProperty("perState")
+    private String perState;
+
+    @Size(max = 64)
+    @JsonProperty("perDistrict")
+    private String perDistrict;
+
+    @Size(max = 64)
+    @JsonProperty("perPostOffice")
+    private String perPostOffice;
+    @Size(max = 1000)
+    @JsonProperty("perLocalityEn")
+    private String perLocalityEn;
+
+    @Size(max = 1000)
+    @JsonProperty("perLocalityMl")
+    private String perLocalityMl;
+
+
+    @Size(max = 1000)
+    @JsonProperty("perStreetEn")
+    private String perStreetEn;
+
+    @Size(max = 1000)
+    @JsonProperty("perStreetMl")
+    private String perStreetMl;
+
+    @Size(max = 1000)
+    @JsonProperty("perHouseEn")
+    private String perHouseEn;
+
+    @Size(max = 1000)
+    @JsonProperty("perHouseMl")
+    private String perHouseMl;
+    @Size(max = 64)
+    @JsonProperty("presCountry")
+    private String presCountry;
+
+    @Size(max = 64)
+    @JsonProperty("presState")
+    private String presState;
+
+    @Size(max = 64)
+    @JsonProperty("presDistrict")
+    private String presDistrict;
+
+    @Size(max = 64)
+    @JsonProperty("presPostOffice")
+    private String presPostOffice;
+    @Size(max = 1000)
+    @JsonProperty("presLocalityEn")
+    private String presLocalityEn;
+
+    @Size(max = 1000)
+    @JsonProperty("presLocalityMl")
+    private String presLocalityMl;
+
+
+    @Size(max = 1000)
+    @JsonProperty("presStreetEn")
+    private String presStreetEn;
+
+    @Size(max = 1000)
+    @JsonProperty("presStreetMl")
+    private String presStreetMl;
+
+    @Size(max = 1000)
+    @JsonProperty("presHouseEn")
+    private String presHouseEn;
+
+    @Size(max = 1000)
+    @JsonProperty("presHouseMl")
+    private String presHouseMl;
+
+
+    @JsonProperty("limit")
+    private Integer limit;
+
+    @JsonProperty("offset")
+    private Integer offset;
+
+
 }

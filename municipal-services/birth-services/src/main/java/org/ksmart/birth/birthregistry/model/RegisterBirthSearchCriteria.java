@@ -57,4 +57,23 @@ public class RegisterBirthSearchCriteria {
     @JsonProperty("sex")
     @Valid
     private String gender;
+    @JsonProperty("sortBy")
+    private SortBy sortBy;
+
+    @JsonProperty("sortOrder")
+    private SortOrder sortOrder;
+
+    public enum SortOrder {
+        ASC,
+        DESC
+    }
+
+    public enum SortBy {
+        ackNo,
+        dob,
+        registrationNo,
+        mother,
+        gender,
+        tenantId
+    }
 }

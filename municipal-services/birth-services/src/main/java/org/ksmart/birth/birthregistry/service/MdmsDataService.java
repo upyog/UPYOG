@@ -43,14 +43,13 @@ public class MdmsDataService {
 
         this.mdmsLocationService = mdmsLocationService;
     }
-    public void setTenantDetails(List<RegisterCertificateData> registerBirthDetails, Object  mdmsData) {
-        registerBirthDetails
-                .forEach(register -> {
+    public void setTenantDetails(RegisterCertificateData register, Object  mdmsData) {
+
                     register.setTenantLbType(mdmsTenantService.getTenantLbType(mdmsData, register.getTenantId()));
                     register.setTenantDistrict(mdmsTenantService.getTenantDistrict(mdmsData, register.getTenantId()));
                     register.setTenantTaluk(mdmsTenantService.getTenantTaluk(mdmsData, register.getTenantId()));
                     register.setTenantState(mdmsTenantService.getTenantState(mdmsData, register.getTenantId()));
-                });
+
     }
 
     public void setBirthPlaceDetails(RegisterCertificateData register, Object  mdmsData) {

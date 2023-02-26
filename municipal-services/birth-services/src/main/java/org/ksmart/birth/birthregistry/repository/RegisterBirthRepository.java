@@ -8,7 +8,6 @@ import org.ksmart.birth.birthregistry.repository.querybuilder.CertificateQueryBu
 import org.ksmart.birth.birthregistry.repository.querybuilder.RegisterQueryBuilder;
 import org.ksmart.birth.birthregistry.repository.rowmapper.BirthCetificateRowMapper;
 import org.ksmart.birth.birthregistry.repository.rowmapper.BirthRegisterRowMapper;
-import org.ksmart.birth.common.services.MdmsTenantService;
 import org.ksmart.birth.common.contract.EgovPdfResp;
 import org.ksmart.birth.common.producer.BndProducer;
 import org.ksmart.birth.config.BirthConfiguration;

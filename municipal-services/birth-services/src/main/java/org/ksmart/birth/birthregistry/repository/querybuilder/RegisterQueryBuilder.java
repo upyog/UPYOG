@@ -3,6 +3,7 @@ package org.ksmart.birth.birthregistry.repository.querybuilder;
 
 import org.ksmart.birth.birthregistry.model.RegisterBirthSearchCriteria;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
@@ -10,7 +11,7 @@ import java.util.List;
 @Component
 public class RegisterQueryBuilder extends BaseRegBuilder {
     private static final String QUERY=new StringBuilder().append("SELECT krbd.id,	krbd.dateofreport,	krbd.dateofbirth,	krbd.timeofbirth,	krbd.am_pm,	krbd.firstname_en,	krbd.firstname_ml,	krbd.middlename_en,")
-            .append("krbd.middlename_ml,	krbd.lastname_en,	krbd.lastname_ml,	krbd.tenantid,	krbd.gender,	krbd.remarks_en,	krbd.remarks_ml,	krbd.aadharno,")
+            .append("krbd.middlename_ml,	krbd.lastname_en,	krbd.lastname_ml,	krbd.tenantid,	krbd.gender,	krbd.remarks_en,	krbd.remarks_ml,	krbd.aadharno, krbd.ack_no,")
             .append("krbd.createdtime,	krbd.createdby,	krbd.lastmodifiedtime,	krbd.lastmodifiedby,	krbd.esign_user_code,	krbd.esign_user_desig_code,	krbd.is_adopted,")
             .append("krbd.is_abandoned,	krbd.is_multiple_birth,	krbd.is_father_info_missing,	krbd.is_mother_info_missing,	krbd.no_of_alive_birth,	krbd.multiplebirthdetid,")
             .append("krbd.ot_passportno,	krbd.registrationno,	krbd.registration_status,	krbd.registration_date,	krbd.is_born_outside,	krbd.ot_dateofarrival, kbfi.id,")
@@ -58,8 +59,10 @@ public class RegisterQueryBuilder extends BaseRegBuilder {
 
 
     public String getRegBirthApplicationSearchQuery(@NotNull RegisterBirthSearchCriteria criteria, @NotNull List<Object> preparedStmtValues, Boolean isCount) {
-        StringBuilder query=new StringBuilder(QUERY);
+        StringBuilder query = new StringBuilder(QUERY);
+        StringBuilder orderBy = new StringBuilder();
         addFilter("krbd.id", criteria.getId(), query, preparedStmtValues);
+        addFilter("krbd.ack_no", criteria.getAckNo(), query, preparedStmtValues);
         addFilter("krbd.tenantid", criteria.getTenantId(), query, preparedStmtValues);
         addLikeFilter("kbmi.firstname_en", criteria.getNameOfMother(), query, preparedStmtValues);
         addFilter("krbd.gender", criteria.getGender(), query, preparedStmtValues);
@@ -67,8 +70,22 @@ public class RegisterQueryBuilder extends BaseRegBuilder {
         addFilter("krbd.registrationno", criteria.getRegistrationNo(), query, preparedStmtValues);
         addDateRangeFilter("krbd.dateofreport", criteria.getFromDate(), criteria.getToDate(), query, preparedStmtValues);
         addDateRangeFilter("krbd.file_date", criteria.getFromDateReg(), criteria.getToDateReg(), query, preparedStmtValues);
+        if (StringUtils.isEmpty(criteria.getSortBy()))
+            addOrderByColumns("krbd.createdtime","ASC", orderBy);
+        else if (criteria.getSortBy() == RegisterBirthSearchCriteria.SortBy.dob)
+            addOrderByColumns("krbd.dateofbirth",criteria.getSortOrder().toString(), orderBy);
+        else if (criteria.getSortBy() == RegisterBirthSearchCriteria.SortBy.ackNo)
+            addOrderByColumns("krbd.ack_no",criteria.getSortOrder().toString(),orderBy);
+        else if (criteria.getSortBy() == RegisterBirthSearchCriteria.SortBy.mother)
+            addOrderByColumns("kbmi.firstname_en",criteria.getSortOrder().toString(), orderBy);
+        else if (criteria.getSortBy() == RegisterBirthSearchCriteria.SortBy.gender)
+            addOrderByColumns("krbd.gender",criteria.getSortOrder().toString(), orderBy);
+        else if (criteria.getSortBy() == RegisterBirthSearchCriteria.SortBy.registrationNo)
+            addOrderByColumns("krbd.registrationno",criteria.getSortOrder().toString(), orderBy);
+        else if (criteria.getSortBy() == RegisterBirthSearchCriteria.SortBy.tenantId)
+            addOrderByColumns("krbd.tenantid",criteria.getSortOrder().toString(), orderBy);
+        addOrderToQuery(orderBy, query);
+        addLimitAndOffset(criteria.getOffset(),criteria.getLimit(), query, preparedStmtValues);
         return query.toString();
     }
-
-
 }

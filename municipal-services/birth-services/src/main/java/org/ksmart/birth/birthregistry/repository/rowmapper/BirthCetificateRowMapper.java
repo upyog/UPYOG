@@ -1,6 +1,11 @@
 package org.ksmart.birth.birthregistry.repository.rowmapper;
 
 import org.ksmart.birth.birthregistry.model.RegisterCertificateData;
+import org.ksmart.birth.birthregistry.repository.RegisterBirthRepository;
+import org.ksmart.birth.birthregistry.service.EnrichmentService;
+import org.ksmart.birth.birthregistry.service.MdmsDataService;
+import org.ksmart.birth.utils.MdmsUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
@@ -17,6 +22,14 @@ import static org.ksmart.birth.utils.BirthConstants.*;
 import static org.ksmart.birth.utils.BirthConstants.BIRTH_PLACE_OTHERS_COUNTRY;
 @Component
 public class BirthCetificateRowMapper implements ResultSetExtractor<List<RegisterCertificateData>> {
+    private final MdmsUtil mdmsUtil;
+    private final MdmsDataService mdmsDataService;
+
+    @Autowired
+    BirthCetificateRowMapper( MdmsUtil mdmsUtil, MdmsDataService mdmsDataService) {
+        this.mdmsUtil = mdmsUtil;
+        this.mdmsDataService = mdmsDataService;
+    }
     @Override
     public List<RegisterCertificateData> extractData(ResultSet rs) throws SQLException, DataAccessException {
         List<RegisterCertificateData> result = new ArrayList<>();
@@ -47,10 +60,31 @@ public class BirthCetificateRowMapper implements ResultSetExtractor<List<Registe
                     .registarDetails(getRegistar(rs))
                     .placeDetails(getPlaceDetailsEn(rs))
                     .placeDetailsMl(getPlaceDetailsMl(rs))
-                    .permenantAddDetails(getPermanentAddressEnByResidenceType(rs))
+                     .permenantAddDetails(getPermanentAddressEnByResidenceType(rs))
                     .permenantAddDetailsMl(getPermanentAddressMlByResidenceType(rs))
                     .presentAddDetails(getPresentAddressEnByResidenceType(rs))
                     .presentAddDetailsMl(getPresentAddressMlByResidenceType(rs))
+
+//                    .perCountry(rs.getString("per_countryid"))
+//                    .perState(rs.getString("per_stateid"))
+//                    .perDistrict(rs.getString("per_districtid"))
+//                    .perPostOffice(rs.getString("per_poid"))
+//                    .perLocalityEn(rs.getString("per_locality_en"))
+//                    .perLocalityMl(rs.getString("per_locality_ml"))
+//                    .perStreetEn(rs.getString("per_street_name_en"))
+//                    .perStreetMl(rs.getString("per_street_name_ml"))
+//                    .perHouseEn(rs.getString("per_housename_en"))
+//                    .perHouseMl(rs.getString("per_housename_ml"))
+//                    .presCountry(rs.getString("pres_countryid"))
+//                    .presState(rs.getString("pres_stateid"))
+//                    .presDistrict(rs.getString("pres_districtid"))
+//                    .presPostOffice(rs.getString("pres_poid"))
+//                    .presLocalityEn(rs.getString("pres_locality_en"))
+//                    .presLocalityMl(rs.getString("pres_locality_ml"))
+//                    .presStreetEn(rs.getString("pres_street_name_en"))
+//                    .presStreetMl(rs.getString("pres_street_name_ml"))
+//                    .presHouseEn(rs.getString("pres_housename_en"))
+//                    .presHouseMl(rs.getString("pres_housename_ml"))
                     .build());
         }
         return result;

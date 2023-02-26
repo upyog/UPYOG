@@ -52,8 +52,8 @@ public class RegisterBirthService {
         List<RegisterCertificateData>  registerBirthDetails = repository.searchRegisterCert(criteria);
         registerBirthDetails
                 .forEach(register -> {
-                    mdmsDataService.setTenantDetails(registerBirthDetails, mdmsData);
-                   // mdmsDataService.setPresentAddressDetailsEn(registerBirthDetails, mdmsData);
+                    mdmsDataService.setTenantDetails(register, mdmsData);
+                    mdmsDataService.setPresentAddressDetailsEn(register, mdmsData);
                     Object mdmsLocData = mdmsUtil.mdmsCallForLocation(requestInfo, register.getTenantId());
                     mdmsDataService.setBirthPlaceDetails(register, mdmsLocData);
                 });
