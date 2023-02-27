@@ -64,6 +64,7 @@ public class BirthRegisterRowMapper implements ResultSetExtractor<List<RegisterB
                         .multipleBirthDetId(rs.getString("multiplebirthdetid"))
                         .isBornOutside(rs.getBoolean("is_born_outside"))
                         .otPassportNo(rs.getString("ot_passportno"))
+                        .ackNumber(rs.getString("ack_no"))
                         .fullName(getFullNameEn(rs))
                         .fullNameMl(getFullNameEn(rs))
                         .registrationNo(rs.getString("registrationno"))
@@ -83,17 +84,17 @@ public class BirthRegisterRowMapper implements ResultSetExtractor<List<RegisterB
 
     private String getFullNameEn(ResultSet rs) throws SQLException {
         String fullName = new StringBuilder()
-                .append(rs.getString("firstname_en") == null ? "" : rs.getString("firstname_en")+',')
-                .append(rs.getString("middlename_en") == null ? "" : rs.getString("middlename_en")+',')
-                .append(rs.getString("lastname_en") == null ? "" : rs.getString("lastname_en")+',').toString();
+                .append(rs.getString("firstname_en") == null ? "" : rs.getString("firstname_en")+" ")
+                .append(rs.getString("middlename_en") == null ? "" : rs.getString("middlename_en")+" ")
+                .append(rs.getString("lastname_en") == null ? "" : rs.getString("lastname_en")).toString();
         return fullName;
     }
 
     private String getFullNameMl(ResultSet rs) throws SQLException {
         String fullName = new StringBuilder()
-                .append(rs.getString("firstname_ml") == null ? "" : rs.getString("firstname_ml")+',')
-                .append(rs.getString("middlename_ml") == null ? "" : rs.getString("middlename_ml")+',')
-                .append(rs.getString("lastname_ml") == null ? "" : rs.getString("lastname_ml")+',').toString();
+                .append(rs.getString("firstname_ml") == null ? "" : rs.getString("firstname_ml")+" ")
+                .append(rs.getString("middlename_ml") == null ? "" : rs.getString("middlename_ml")+" ")
+                .append(rs.getString("lastname_ml") == null ? "" : rs.getString("lastname_ml")).toString();
         return fullName;
     }
 }

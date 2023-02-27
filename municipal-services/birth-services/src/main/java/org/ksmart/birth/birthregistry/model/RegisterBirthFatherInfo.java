@@ -62,13 +62,8 @@ public class RegisterBirthFatherInfo {
     @Size(max = 64)
     @JsonProperty("bio_adopt")
     private String bioAdopt;
-
-    @Size(max = 64)
-    @JsonProperty("father_fullname")
-    private String fatherFullName;
-    @Size(max = 64)
-    @JsonProperty("father_fullname_ml")
-    private String fatherFullNameMl;
+    @Size(max = 15)
+    @JsonProperty("aadharno")
     private String aadharno;
 
 }

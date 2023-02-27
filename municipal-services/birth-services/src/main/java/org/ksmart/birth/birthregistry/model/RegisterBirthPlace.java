@@ -29,6 +29,14 @@ public class RegisterBirthPlace {
     private String hospitalId;
 
     @Size(max = 64)
+    @JsonProperty("institution_type_id")
+    private String institutionTypeId;
+
+    @Size(max = 64)
+    @JsonProperty("institution_id")
+    private String institutionId;
+
+    @Size(max = 64)
     @JsonProperty("vehicletypeid")
     private String vehicleTypeId;
 
@@ -81,18 +89,6 @@ public class RegisterBirthPlace {
     private String hoHouseHolderMl;
 
     @Size(max = 200)
-    @JsonProperty("ho_buildingno")
-    private String hoBuildingNo;
-
-    @Size(max = 1000)
-    @JsonProperty("ho_res_asso_no")
-    private String hoResAssoNo;
-
-    @Size(max = 1000)
-    @JsonProperty("ho_res_asso_no_ml")
-    private String hoResAssoNoMl;
-
-    @Size(max = 200)
     @JsonProperty("ho_houseno")
     private String hoHousenNo;
 
@@ -143,15 +139,6 @@ public class RegisterBirthPlace {
     @Size(max = 2000)
     @JsonProperty("oth_details_ml")
     private String othDetailsMl;
-
-    @Size(max = 64)
-    @JsonProperty("institution_type_id")
-    private String institutionTypeId;
-
-    @Size(max = 64)
-    @JsonProperty("institution_id")
-    private String institutionId;
-
     @Size(max = 64)
     @JsonProperty("auth_officer_id")
     private String authOfficerId;
@@ -191,18 +178,12 @@ public class RegisterBirthPlace {
     @Size(max = 20)
     @JsonProperty("informants_aadhaar_no")
     private String informantsAadhaarNo;
-
-
-    @JsonProperty("ho_doorno")
-    private Boolean hoDoorno;
-
-    @Size(max = 10)
-    @JsonProperty("ho_subno")
-    private String hoSubno;
-
     @Size(max = 1000)
-    @JsonProperty("vehicle_haltplace")
-    private String vehicleHaltplace;
+    @JsonProperty("vehicle_haltplace_en")
+    private String vehicleHaltplaceEn;
+    @Size(max = 1000)
+    @JsonProperty("vehicle_haltplace_ml")
+    private String vehicleHaltplaceMl;
 
     @Size(max = 64)
     @JsonProperty("vehicle_hospitalid")
@@ -213,22 +194,27 @@ public class RegisterBirthPlace {
     private String informantAddressline2;
 
     @Size(max = 1000)
-    @JsonProperty("ho_main_place_en")
-    private String hoMainPlaceEn;
+    @JsonProperty("ho_locality_en")
+    private String hoLocalityEn;
 
     @Size(max = 1000)
-    @JsonProperty("ho_main_place_ml")
-    private String hoMainPlaceMl;
+    @JsonProperty("ho_locality_ml")
+    private String hoLocalityMl;
 
     @Size(max = 2000)
-    @JsonProperty("ho_street_locality_area_en")
-    private String hoStreetLocalityAreaEn;
+    @JsonProperty("ho_street_name_en")
+    private String hoStreetEn;
 
     @Size(max = 2000)
-    @JsonProperty("ho_street_locality_area_ml")
-    private String hoStreetLocalityAreaMl;
-    private String placeDetailsEn;
+    @JsonProperty("ho_street_name_ml")
+    private String hoStreetMl;
 
-    private String placeDetailsMl;
+    @Size(max = 2000)
+    @JsonProperty("vehicle_desc")
+    private String vehicleDesc;
+
+    @Size(max = 2000)
+    @JsonProperty("public_place_desc")
+    private String publicPlaceDesc;
 
 }

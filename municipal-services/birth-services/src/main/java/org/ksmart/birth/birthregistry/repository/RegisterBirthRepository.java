@@ -78,8 +78,11 @@ public class RegisterBirthRepository {
 
     public List<RegisterCertificateData> searchRegisterCert(RegisterBirthSearchCriteria criteria) {
         List<Object> preparedStmtValues=new ArrayList<>();
-        String query=certificateQueryBuilder.getRegBirthApplicationSearchQuery(criteria, preparedStmtValues, Boolean.FALSE);
-        List<RegisterCertificateData> result=jdbcTemplate.query(query, preparedStmtValues.toArray(), birthCetificateRowMapper);
+        List<RegisterCertificateData> result= null;
+        String query=registerQueryBuilder.getRegBirthApplicationSearchQuery(criteria, preparedStmtValues, Boolean.FALSE);
+        List<RegisterBirthDetail> resultSearch=jdbcTemplate.query(query, preparedStmtValues.toArray(), birthRegisterRowMapper);
+        System.out.println(query);
+        //List<RegisterCertificateData> result=jdbcTemplate.query(query, preparedStmtValues.toArray(), birthCetificateRowMapper);
         return result;
     }
 

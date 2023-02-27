@@ -3,6 +3,7 @@ package org.ksmart.birth.birthregistry.repository.querybuilder;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.kafka.common.protocol.types.Field;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -111,23 +112,25 @@ public class BaseRegBuilder {
         addOrderClause(orderBy);
         if(!StringUtils.isEmpty(column)){
             addOrderClause(orderBy);
-            orderBy.append(column).append(", ");
+            orderBy.append(column);
             addAscDesc(valueSort, orderBy);
         }
     }
     void addOrderToQuery(StringBuilder orderBy, StringBuilder query){
         if (orderBy.length() > 0) {
-            query.append(StringUtils.stripEnd(orderBy.toString(), ","));
+            String orderByStr = orderBy.toString().trim();
+            orderByStr = orderByStr.substring(0, orderByStr.length() - 1);
+            query.append(orderByStr);
         }
     }
 
     void addAscDesc(String valueSort, StringBuilder query){
         if(StringUtils.isEmpty(valueSort))
-            query.append(" ");
+            query.append(", ");
         else if(valueSort == "ASC")
-            query.append(" ASC ");
+            query.append(" ASC, ");
         else
-            query.append(" DESC ");
+            query.append(" DESC, ");
     }
 
      void addLimitAndOffset(Integer offset, Integer limit, StringBuilder query, final List<Object> paramValues) {

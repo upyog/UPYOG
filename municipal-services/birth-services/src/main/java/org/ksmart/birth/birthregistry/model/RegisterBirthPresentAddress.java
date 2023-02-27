@@ -16,14 +16,6 @@ public class RegisterBirthPresentAddress {
     @JsonProperty("id")
     private String id;
 
-    @Size(max = 200)
-    @JsonProperty("resdnce_addr_type")
-    private String resdnceAddrType;
-
-    @Size(max = 250)
-    @JsonProperty("res_asso_no")
-    private String resAssoNo;
-
     @Size(max = 2500)
     @JsonProperty("housename_en")
     private String houseNameEn;
@@ -98,10 +90,6 @@ public class RegisterBirthPresentAddress {
     @JsonProperty("bio_adopt")
     private String bioAdopt;
 
-    @Size(max = 250)
-    @JsonProperty("res_asso_no_ml")
-    private String resAssoNoMl;
-
     @Size(max = 1000)
     @JsonProperty("taluk_name")
     private String talukName;
@@ -110,39 +98,31 @@ public class RegisterBirthPresentAddress {
     @JsonProperty("village_name")
     private String villageName;
 
-    @Size(max = 64)
-    @JsonProperty("ward_code")
-    private String wardCode;
-
-    @JsonProperty("doorno")
-    private String doorNo;
-
-    @Size(max = 10)
-    @JsonProperty("subno")
-    private String subNo;
-
     @Size(max = 10)
     @JsonProperty("ot_zipcode")
     private String otZipcode;
 
     @Size(max = 1000)
-    @JsonProperty("main_place_en")
-    private String mainPlaceEn;
+    @JsonProperty("locality_en")
+    private String localityEn;
 
     @Size(max = 1000)
-    @JsonProperty("street_locality_area_en")
-    private String streetLocalityAreaEn;
+    @JsonProperty("street_name_en")
+    private String streetNameEn;
 
     @Size(max = 1000)
-    @JsonProperty("main_place_ml")
-    private String mainPlaceMl;
+    @JsonProperty("locality_ml")
+    private String localityMl;
     @Size(max = 1000)
-    @JsonProperty("street_locality_area_ml")
-    private String streetLocalityAreaMl;
+    @JsonProperty("street_name_ml")
+    private String streetNameMl;
 
-    @Size(max = 2500)
-    private String presentAddress;
-    @Size(max = 2500)
-    private String presentAddressMl;
+    @Size(max = 1000)
+    @JsonProperty("postoffice_en")
+    private String postofficeEn;
+
+    @Size(max = 1000)
+    @JsonProperty("postoffice_ml")
+    private String postofficeMl;
 
 }

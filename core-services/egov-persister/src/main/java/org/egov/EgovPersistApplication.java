@@ -123,7 +123,6 @@ public class EgovPersistApplication {
                             mappings.add(mapping);
                             mappingsMap.put(mapping.getFromTopic(), mappings);
                         }
-
                     }
                 } catch (JsonParseException e) {
                     log.error("Failed to parse yaml file: " + configPath, e);
