@@ -35,14 +35,15 @@ public class MdmsDataService {
 
     private final MdmsLocationService mdmsLocationService;
 
+    private final KsmartAddressService ksmartAddressService;
+
     @Autowired
-    MdmsDataService(RestTemplate restTemplate, MdmsTenantService mdmsTenantService, MdmsLocationService mdmsLocationService) {
+    MdmsDataService(RestTemplate restTemplate, MdmsTenantService mdmsTenantService, MdmsLocationService mdmsLocationService, KsmartAddressService ksmartAddressService) {
 
         this.restTemplate = restTemplate;
-
         this.mdmsTenantService = mdmsTenantService;
-
         this.mdmsLocationService = mdmsLocationService;
+        this.ksmartAddressService = ksmartAddressService;
     }
     public void setTenantDetails(RegisterCertificateData registerCert, Object  mdmsData) {
         String lbCode = mdmsTenantService.getTenantLbType(mdmsData, registerCert.getTenantId());
@@ -77,34 +78,25 @@ public class MdmsDataService {
         }
     }
 
-    public void setPresentAddressDetailsEn(RegisterCertificateData register, Object  mdmsData) {
-//        if(register.getBirthPlaceId().contains(BIRTH_PLACE_HOSPITAL)){
-//            String placeEn = mdmsLocationService.getHospitalNameEn(mdmsData, register.getPlaceDetails());
-//            String placeMl = mdmsLocationService.getHospitalNameMl(mdmsData, register.getPlaceDetails());
-//            register.setPlaceDetails(placeEn);
-//            register.setPlaceDetailsMl(placeMl);
-//
-//        }
-    }
-
-    public void setPremananttAddressDetailsEn(RegisterCertificateData register, Object  mdmsData) {
-        if (register.getPlaceDetails().contains(BIRTH_PLACE_HOSPITAL)) {
-            String placeEn = mdmsLocationService.getHospitalNameEn(mdmsData, register.getPlaceDetails());
-            String placeMl = mdmsLocationService.getHospitalNameMl(mdmsData, register.getPlaceDetails());
-            register.setPlaceDetails(placeEn);
-            register.setPlaceDetailsMl(placeMl);
-
-        } else if (register.getPlaceDetails().contains(BIRTH_PLACE_INSTITUTION)) {
-            String placeEn = mdmsLocationService.getInstitutionNameEn(mdmsData, register.getPlaceDetails()) + ", "
-                    + mdmsLocationService.getInstitutionNameMl(mdmsData, register.getPlaceDetails());
-            String placeMl = mdmsLocationService.getHospitalNameMl(mdmsData, register.getPlaceDetails()) + " , "
-                    + mdmsLocationService.getHospitalAddressMl(mdmsData, register.getPlaceDetails());
-            register.setPlaceDetails(placeEn);
-            register.setPlaceDetailsMl(placeMl);
-        } else {
+    public void setPresentAddressDetailsEn(RegisterBirthDetail register,RegisterCertificateData registerCert, Object  mdmsData) {
+        if (register.getRegisterBirthPresent().getCountryId().contains(COUNTRY_CODE)) {
+            ksmartAddressService.getAddressInsideCountryPresentEn(register, registerCert, mdmsData);
+            ksmartAddressService.getAddressInsideCountryPresentMl(register, registerCert, mdmsData);
+        } else{
+            ksmartAddressService.getAddressOutsideCountryPresentEn(register, registerCert, mdmsData);
+            ksmartAddressService.getAddressOutsideCountryPresentMl(register, registerCert, mdmsData);
         }
     }
 
+    public void setPremananttAddressDetailsEn(RegisterBirthDetail register,RegisterCertificateData registerCert, Object  mdmsData) {
+        if (register.getRegisterBirthPresent().getCountryId().contains(COUNTRY_CODE)) {
+            ksmartAddressService.getAddressInsideCountryPermanentEn(register, registerCert, mdmsData);
+            ksmartAddressService.getAddressInsideCountryPermanentMl(register, registerCert, mdmsData);
+        } else{
+            ksmartAddressService.getAddressOutsideCountryPermanentEn(register, registerCert, mdmsData);
+            ksmartAddressService.getAddressOutsideCountryPermanentMl(register, registerCert, mdmsData);
+        }
+    }
 
     public void setKsmartLocationDetails(KsmartBirthAppliactionDetail register,  Object mdmsData) {
          if (register.getPlaceofBirthId().contains(BIRTH_PLACE_HOSPITAL)) {

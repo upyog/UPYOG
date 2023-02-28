@@ -56,7 +56,7 @@ public class BirthCertService {
         registerCertificateData.setBirthPlaceHospitalId(register.getRegisterBirthPlace().getHospitalId());
         registerCertificateData.setBirthPlaceInstitutionId(register.getRegisterBirthPlace().getInstitutionId());
         mdmsDataService.setTenantDetails(registerCertificateData, mdmsData);
-       // mdmsDataService.setPresentAddressDetailsEn(register, registerCertificateData, mdmsData);
+        mdmsDataService.setPresentAddressDetailsEn(register, registerCertificateData, mdmsData);
         Object mdmsLocData = mdmsUtil.mdmsCallForLocation(requestInfo, registerCertificateData.getTenantId());
         mdmsDataService.setBirthPlaceDetails(registerCertificateData, mdmsLocData);
         return registerCertificateData;
