@@ -2,6 +2,7 @@ package org.ksmart.birth.birthregistry.service;
 
 
 import lombok.extern.slf4j.Slf4j;
+import org.ksmart.birth.birthregistry.model.RegisterBirthDetail;
 import org.ksmart.birth.birthregistry.model.RegisterCertificateData;
 import org.ksmart.birth.common.services.MdmsLocationService;
 import org.ksmart.birth.common.services.MdmsTenantService;
@@ -43,60 +44,65 @@ public class MdmsDataService {
 
         this.mdmsLocationService = mdmsLocationService;
     }
-    public void setTenantDetails(RegisterCertificateData register, Object  mdmsData) {
-
-                    register.setTenantLbType(mdmsTenantService.getTenantLbType(mdmsData, register.getTenantId()));
-                    register.setTenantDistrict(mdmsTenantService.getTenantDistrict(mdmsData, register.getTenantId()));
-                    register.setTenantTaluk(mdmsTenantService.getTenantTaluk(mdmsData, register.getTenantId()));
-                    register.setTenantState(mdmsTenantService.getTenantState(mdmsData, register.getTenantId()));
-
+    public void setTenantDetails(RegisterCertificateData registerCert, Object  mdmsData) {
+        String lbCode = mdmsTenantService.getTenantLbType(mdmsData, registerCert.getTenantId());
+        registerCert.setTenantLbType(mdmsTenantService.getLbTypeNameEn(mdmsData,lbCode));
+        registerCert.setTenantLbTypeMl(mdmsTenantService.getLbTypeNameMl(mdmsData,lbCode));
+        String distCode = mdmsTenantService.getTenantLbType(mdmsData, registerCert.getTenantId());
+        registerCert.setTenantDistrict(mdmsTenantService.getDistrictNameEn(mdmsData, distCode));
+        registerCert.setTenantDistrictMl(mdmsTenantService.getDistrictNameMl(mdmsData, distCode));
+        String talukCode = mdmsTenantService.getTenantTaluk(mdmsData, registerCert.getTenantId());
+        registerCert.setTenantTaluk(mdmsTenantService.getTalukNameEn(mdmsData, talukCode));
+        registerCert.setTenantTalukMl(mdmsTenantService.getTalukNameMl(mdmsData, talukCode));
+        String stateCode = mdmsTenantService.getTenantState(mdmsData, registerCert.getTenantId());
+        registerCert.setTenantState(mdmsTenantService.getStateNameEn(mdmsData, stateCode));
+        registerCert.setTenantStateMl(mdmsTenantService.getStateNameMl(mdmsData, stateCode));
     }
 
     public void setBirthPlaceDetails(RegisterCertificateData register, Object  mdmsData) {
-                    if(register.getPlaceDetails().contains(BIRTH_PLACE_HOSPITAL)){
-                        String placeEn = mdmsLocationService.getHospitalNameEn(mdmsData, register.getPlaceDetails());
-                        String placeMl = mdmsLocationService.getHospitalNameMl(mdmsData, register.getPlaceDetails());
-                        register.setPlaceDetails(placeEn);
-                        register.setPlaceDetailsMl(placeMl);
+        if (register.getBirthPlaceId().contains(BIRTH_PLACE_HOSPITAL)) {
+            String placeEn = mdmsLocationService.getHospitalNameEn(mdmsData, register.getBirthPlaceHospitalId());
+            String placeMl = mdmsLocationService.getHospitalNameMl(mdmsData, register.getBirthPlaceHospitalId());
+            register.setPlaceDetails(placeEn);
+            register.setPlaceDetailsMl(placeMl);
 
-                    }
-                    else if(register.getPlaceDetails().contains(BIRTH_PLACE_INSTITUTION)) {
-                        String placeEn = mdmsLocationService.getInstitutionNameEn(mdmsData, register.getPlaceDetails())+", "
-                                +mdmsLocationService.getInstitutionNameMl(mdmsData, register.getPlaceDetails());
-                        String placeMl = mdmsLocationService.getHospitalNameMl(mdmsData, register.getPlaceDetails())+" , "
-                                +mdmsLocationService.getHospitalAddressMl(mdmsData, register.getPlaceDetails());
-                        register.setPlaceDetails(placeEn);
-                        register.setPlaceDetailsMl(placeMl);
-                    } else{}
+        } else if (register.getBirthPlaceId().contains(BIRTH_PLACE_INSTITUTION)) {
+            String placeEn = mdmsLocationService.getInstitutionNameEn(mdmsData, register.getBirthPlaceInstitutionId()) + ", "
+                    + mdmsLocationService.getInstitutionAddressEn(mdmsData, register.getBirthPlaceInstitutionId());
+            String placeMl = mdmsLocationService.getInstitutionNameMl(mdmsData, register.getPlaceDetails()) + " , "
+                    + mdmsLocationService.getInstitutionAddressMl(mdmsData, register.getPlaceDetails());
+            register.setPlaceDetails(placeEn);
+            register.setPlaceDetailsMl(placeMl);
+        } else {
+        }
     }
 
     public void setPresentAddressDetailsEn(RegisterCertificateData register, Object  mdmsData) {
-        if(register.getPlaceDetails().contains(BIRTH_PLACE_HOSPITAL)){
-            String placeEn = mdmsLocationService.getHospitalNameEn(mdmsData, register.getPlaceDetails());
-            String placeMl = mdmsLocationService.getHospitalNameMl(mdmsData, register.getPlaceDetails());
-            register.setPlaceDetails(placeEn);
-            register.setPlaceDetailsMl(placeMl);
-
-        }
-
+//        if(register.getBirthPlaceId().contains(BIRTH_PLACE_HOSPITAL)){
+//            String placeEn = mdmsLocationService.getHospitalNameEn(mdmsData, register.getPlaceDetails());
+//            String placeMl = mdmsLocationService.getHospitalNameMl(mdmsData, register.getPlaceDetails());
+//            register.setPlaceDetails(placeEn);
+//            register.setPlaceDetailsMl(placeMl);
+//
+//        }
     }
 
     public void setPremananttAddressDetailsEn(RegisterCertificateData register, Object  mdmsData) {
-        if(register.getPlaceDetails().contains(BIRTH_PLACE_HOSPITAL)){
+        if (register.getPlaceDetails().contains(BIRTH_PLACE_HOSPITAL)) {
             String placeEn = mdmsLocationService.getHospitalNameEn(mdmsData, register.getPlaceDetails());
             String placeMl = mdmsLocationService.getHospitalNameMl(mdmsData, register.getPlaceDetails());
             register.setPlaceDetails(placeEn);
             register.setPlaceDetailsMl(placeMl);
 
-        }
-        else if(register.getPlaceDetails().contains(BIRTH_PLACE_INSTITUTION)) {
-            String placeEn = mdmsLocationService.getInstitutionNameEn(mdmsData, register.getPlaceDetails())+", "
-                    +mdmsLocationService.getInstitutionNameMl(mdmsData, register.getPlaceDetails());
-            String placeMl = mdmsLocationService.getHospitalNameMl(mdmsData, register.getPlaceDetails())+" , "
-                    +mdmsLocationService.getHospitalAddressMl(mdmsData, register.getPlaceDetails());
+        } else if (register.getPlaceDetails().contains(BIRTH_PLACE_INSTITUTION)) {
+            String placeEn = mdmsLocationService.getInstitutionNameEn(mdmsData, register.getPlaceDetails()) + ", "
+                    + mdmsLocationService.getInstitutionNameMl(mdmsData, register.getPlaceDetails());
+            String placeMl = mdmsLocationService.getHospitalNameMl(mdmsData, register.getPlaceDetails()) + " , "
+                    + mdmsLocationService.getHospitalAddressMl(mdmsData, register.getPlaceDetails());
             register.setPlaceDetails(placeEn);
             register.setPlaceDetailsMl(placeMl);
-        } else{}
+        } else {
+        }
     }
 
 

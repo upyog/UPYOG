@@ -13,23 +13,26 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 @Slf4j
 @Service
 public class RegisterBirthService {
     private final RegisterBirthRepository repository;
     private final EnrichmentService enrichmentService;
-
+    private final BirthCertService birthCertService;
     private final MdmsUtil mdmsUtil;
 
     private final MdmsDataService mdmsDataService;
 
     @Autowired
-    RegisterBirthService(RegisterBirthRepository repository, EnrichmentService enrichmentService, MdmsUtil mdmsUtil, MdmsDataService mdmsDataService) {
+    RegisterBirthService(RegisterBirthRepository repository, EnrichmentService enrichmentService,
+                         MdmsUtil mdmsUtil, MdmsDataService mdmsDataService, BirthCertService birthCertService) {
         this.repository = repository;
         this.enrichmentService = enrichmentService;
         this.mdmsUtil = mdmsUtil;
         this.mdmsDataService = mdmsDataService;
+        this.birthCertService = birthCertService;
     }
 
     public List<RegisterBirthDetail> saveRegisterBirthDetails(RegisterBirthDetailsRequest request) {
@@ -42,22 +45,18 @@ public class RegisterBirthService {
 
     public List<RegisterBirthDetail> searchRegisterBirthDetails(RegisterBirthSearchCriteria criteria, RequestInfo requestInfo)  {
         List<RegisterBirthDetail>  registerBirthDetails = repository.searchRegisterBirthDetails(criteria);
-//        mdmsDataService.setTenantDetails(registerBirthDetails, requestInfo);
-//        mdmsDataService.setLocationDetails(registerBirthDetails, requestInfo);
         return registerBirthDetails;
     }
 
-    public List<RegisterCertificateData> searchRegisterForCert(RegisterBirthSearchCriteria criteria, RequestInfo requestInfo)  {
-        Object mdmsData = mdmsUtil.mdmsCall(requestInfo);
-        List<RegisterCertificateData>  registerBirthDetails = repository.searchRegisterCert(criteria);
-        registerBirthDetails
+    public List<RegisterCertificateData> searchRegisterForCert(RegisterBirthSearchCriteria criteria, RequestInfo requestInfo) {
+        List<RegisterBirthDetail> registerDetails = repository.searchRegisterBirthDetails(criteria);
+        List<RegisterCertificateData> registerCertDetails = new ArrayList<>();
+        registerDetails
                 .forEach(register -> {
-                    mdmsDataService.setTenantDetails(register, mdmsData);
-                    mdmsDataService.setPresentAddressDetailsEn(register, mdmsData);
-                    Object mdmsLocData = mdmsUtil.mdmsCallForLocation(requestInfo, register.getTenantId());
-                    mdmsDataService.setBirthPlaceDetails(register, mdmsLocData);
+                    RegisterCertificateData registerForCertificate = birthCertService.setCertificateDetails(register, requestInfo);
+                    registerCertDetails.add(registerForCertificate);
                 });
-        return registerBirthDetails;
+        return registerCertDetails;
     }
     public BirthCertificate download(RegisterBirthSearchCriteria criteria, RequestInfo requestInfo) {
         try {
@@ -69,7 +68,7 @@ public class RegisterBirthService {
             List<RegisterCertificateData> regDetail = searchRegisterForCert(criteria, requestInfo);
             birthCertificate.setBirthPlace(regDetail.get(0).getPlaceDetails());
             birthCertificate.setGender(regDetail.get(0).getGender().toString());
-            birthCertificate.setWard(regDetail.get(0).getWardId());
+         //   birthCertificate.setWard(regDetail.get(0).getWardId());
             birthCertificate.setState(regDetail.get(0).getTenantState());
             birthCertificate.setDistrict(regDetail.get(0).getTenantDistrict());
             birthCertificate.setBirthCertificateNo(regDetail.get(0).getRegistrationNo().toString());

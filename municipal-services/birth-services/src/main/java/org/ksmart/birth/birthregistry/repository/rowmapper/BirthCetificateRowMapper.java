@@ -39,10 +39,10 @@ public class BirthCetificateRowMapper implements ResultSetExtractor<List<Registe
             Date dobDate = new Date(rs.getLong("dateofbirth"));
             result.add(RegisterCertificateData.builder()
                     .id(rs.getString("id"))
-                    .dateOfReport(rs.getLong("dateofreport"))
+//                    .dateOfReport(rs.getLong("dateofreport"))
                     .dobStr(formatter.format(dobDate))
                     .registrationDateStr(formatter.format(regDate))
-                    .dateOfBirth(rs.getLong("dateofbirth"))
+//                    .dateOfBirth(rs.getLong("dateofbirth"))
                     .fullName(getFullNameEn(rs))
                     .fullNameMl(getFullNameMl(rs))
                     .ackNo(rs.getString("ack_no"))

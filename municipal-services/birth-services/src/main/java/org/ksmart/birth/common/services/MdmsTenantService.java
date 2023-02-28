@@ -23,6 +23,10 @@ public class MdmsTenantService {
         return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_TENANTS_CODE_JSONPATH);
     }
 
+    private List<String> getLbTypeCodes(Object mdmsData) {
+        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_LBTYPE_CODE_JSONPATH);
+    }
+
     private List<String> getTalukCodes(Object mdmsData) {
         return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_TALUK_CODE_JSONPATH);
     }
@@ -80,6 +84,11 @@ public class MdmsTenantService {
         int index = tenants.indexOf(tenantId);
         return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_TENANTS_JSONPATH+"["+index+"].city.code");
     }
+    public String getLbTypeNameEn(Object mdmsData, String code) {
+        List<String> tenants  = getLbTypeCodes(mdmsData);
+        int index = tenants.indexOf(code);
+        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_LBTYPE_JSONPATH+"["+index+"].name");
+    }
     public String getPostOfficeNameEn(Object mdmsData, String code) {
         List<String> tenants  = getTalukCodes(mdmsData);
         int index = tenants.indexOf(code);
@@ -108,6 +117,13 @@ public class MdmsTenantService {
         List<String> tenants  = getCountryCodes(mdmsData);
         int index = tenants.indexOf(code);
         return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_COUNTRY_JSONPATH+"["+index+"].name");
+    }
+    public String getLbTypeNameMl(Object mdmsData, String code) {
+        List<String> tenants  = getLbTypeCodes(mdmsData);
+        System.out.println(code);
+        int index = tenants.indexOf(code);
+        System.out.println(index);
+        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_LBTYPE_JSONPATH+"["+index+"].namelocal");
     }
     public String getPostOfficeNameMl(Object mdmsData, String code) {
         List<String> tenants  = getTalukCodes(mdmsData);

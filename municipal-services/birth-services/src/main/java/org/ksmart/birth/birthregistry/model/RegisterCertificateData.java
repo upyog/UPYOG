@@ -20,6 +20,9 @@ public class RegisterCertificateData {
     @JsonProperty("dateofreport")
     private Long dateOfReport;
 
+    @JsonProperty("dateofreportStr")
+    private String dateOfReportStr;
+
     @JsonProperty("dateofbirthstr")
     private String dobStr;
 
@@ -28,10 +31,6 @@ public class RegisterCertificateData {
 
     @JsonProperty("dateofbirth")
     private Long dateOfBirth;
-
-    @Size(max = 1000)
-    @JsonProperty("firstname_en")
-    private String firstNameEn;
 
     @Size(max = 1000)
     @JsonProperty("fullName")
@@ -51,10 +50,6 @@ public class RegisterCertificateData {
     @JsonProperty("gender")
     private String gender;
 
-    @Size(max = 1000)
-    @JsonProperty("wardId")
-    private String wardId;
-
     @Size(max = 2500)
     @JsonProperty("remarks_en")
     private String remarksEn;
@@ -73,6 +68,19 @@ public class RegisterCertificateData {
 
     @JsonProperty("is_adopted")
     private Boolean isAdopted;
+
+    @Size(max = 64)
+    @JsonProperty("birthPlaceId")
+    private String birthPlaceId;
+
+    @Size(max = 64)
+    @JsonProperty("birthPlaceHospitalId")
+    private String birthPlaceHospitalId;
+
+    @Size(max = 64)
+    @JsonProperty("birthPlaceInstitutionlId")
+    private String birthPlaceInstitutionId;
+
 
     @Size(max = 64)
     @JsonProperty("placeDetails")
@@ -143,12 +151,22 @@ public class RegisterCertificateData {
     private String tenantDistrict;
 
     @Size(max = 1000)
+    @JsonProperty("tenantDistrictMl")
+    private String tenantDistrictMl;
+
+    @Size(max = 1000)
     @JsonProperty("tenantTaluk")
     private String tenantTaluk;
+    @Size(max = 1000)
+    @JsonProperty("tenantTalukMl")
+    private String tenantTalukMl;
 
     @Size(max = 1000)
     @JsonProperty("tenantState")
     private String tenantState;
+    @Size(max = 1000)
+    @JsonProperty("tenantStateMl")
+    private String tenantStateMl;
 
     @Size(max = 64)
     @JsonProperty("perCountry")

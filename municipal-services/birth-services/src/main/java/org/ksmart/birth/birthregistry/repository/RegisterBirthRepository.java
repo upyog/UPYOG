@@ -76,15 +76,15 @@ public class RegisterBirthRepository {
         return result;
     }
 
-    public List<RegisterCertificateData> searchRegisterCert(RegisterBirthSearchCriteria criteria) {
-        List<Object> preparedStmtValues=new ArrayList<>();
-        List<RegisterCertificateData> result= null;
-        String query=registerQueryBuilder.getRegBirthApplicationSearchQuery(criteria, preparedStmtValues, Boolean.FALSE);
-        List<RegisterBirthDetail> resultSearch=jdbcTemplate.query(query, preparedStmtValues.toArray(), birthRegisterRowMapper);
-        System.out.println(query);
-        //List<RegisterCertificateData> result=jdbcTemplate.query(query, preparedStmtValues.toArray(), birthCetificateRowMapper);
-        return result;
-    }
+//    public List<RegisterCertificateData> searchRegisterCert(RegisterBirthSearchCriteria criteria) {
+//        List<Object> preparedStmtValues=new ArrayList<>();
+//        List<RegisterCertificateData> result= null;
+//        String query=registerQueryBuilder.getRegBirthApplicationSearchQuery(criteria, preparedStmtValues, Boolean.FALSE);
+//        List<RegisterBirthDetail> resultSearch=jdbcTemplate.query(query, preparedStmtValues.toArray(), birthRegisterRowMapper);
+//        System.out.println(query);
+//        //List<RegisterCertificateData> result=jdbcTemplate.query(query, preparedStmtValues.toArray(), birthCetificateRowMapper);
+//        return result;
+//    }
 
     public void saveRegisterBirthCert(BirthCertRequest request) {
 //         registerBirthDetailsEnrichment.enrichCreate(request);
@@ -103,7 +103,7 @@ public class RegisterBirthRepository {
                         birthCertPath=birthCertPath.replace("$id", cert.getId());
                         birthCertPath=birthCertPath.replace("$tenantId", cert.getTenantId());
                         birthCertPath=birthCertPath.replace("$regNo", cert.getRegistrationNo());
-                        birthCertPath=birthCertPath.replace("$dateofbirth", format.format(cert.getDateOfBirth()));
+                        birthCertPath=birthCertPath.replace("$dateofbirth", cert.getDobStr());
                         birthCertPath=birthCertPath.replace("$gender", cert.getGender().toString());
                         birthCertPath=birthCertPath.replace("$birthcertificateno", cert.getRegistrationNo());
                         String finalPath=uiHost + birthCertPath;
