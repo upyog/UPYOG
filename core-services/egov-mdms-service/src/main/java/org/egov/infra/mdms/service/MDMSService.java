@@ -27,15 +27,14 @@ public class MDMSService {
 
         Map<String, Map<String, Map<String, JSONArray>>> tenantIdMap = MDMSApplicationRunnerImpl.getTenantMap();
         
-        log.info("tenantIdMap######"+tenantIdMap.toString());
-
         String tenantId = mdmsCriteriaReq.getMdmsCriteria().getTenantId();
-
+        log.info("Mdms search tenant id::"+tenantId);
+        if(tenantId.equals("pb"))
+        	tenantId="pg";
         Map<String, Map<String, JSONArray>> stateLevel = null;
         Map<String, Map<String, JSONArray>> ulbLevel = null;
-        log.info("Mdms search tenant id::"+tenantId);
         tenantIdMap.entrySet().forEach(t -> {
-        	log.info("Key::::"+t.getKey()+":::value::"+t.getValue().toString());
+        	log.info("Key::::"+t.getKey());
         });
         if (tenantId.contains(".")) {
             String array[] = tenantId.split("\\.");
