@@ -22,14 +22,21 @@ import net.minidev.json.JSONArray;
 @Slf4j
 public class MDMSService {
     public Map<String, Map<String, JSONArray>> searchMaster(MdmsCriteriaReq mdmsCriteriaReq) {
+    	
+    	log.info("mdmsCriteriaReq*******"+mdmsCriteriaReq.toString());
 
         Map<String, Map<String, Map<String, JSONArray>>> tenantIdMap = MDMSApplicationRunnerImpl.getTenantMap();
+        
+        log.info("tenantIdMap######"+tenantIdMap.toString());
 
         String tenantId = mdmsCriteriaReq.getMdmsCriteria().getTenantId();
 
         Map<String, Map<String, JSONArray>> stateLevel = null;
         Map<String, Map<String, JSONArray>> ulbLevel = null;
-
+        log.info("Mdms search tenant id::"+tenantId);
+        tenantIdMap.entrySet().forEach(t -> {
+        	log.info("Key::::"+t.getKey()+":::value::"+t.getValue().toString());
+        });
         if (tenantId.contains(".")) {
             String array[] = tenantId.split("\\.");
             stateLevel = tenantIdMap.get(array[0]);
