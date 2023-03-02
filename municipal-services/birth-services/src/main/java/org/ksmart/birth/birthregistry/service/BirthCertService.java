@@ -69,7 +69,7 @@ public class BirthCertService {
         registerCertificateData.setBirthPlaceId(register.getRegisterBirthPlace().getPlaceOfBirthId());
         registerCertificateData.setBirthPlaceHospitalId(register.getRegisterBirthPlace().getHospitalId());
         registerCertificateData.setBirthPlaceInstitutionId(register.getRegisterBirthPlace().getInstitutionId());
-        registerCertificateData.setRegistarDetails("Registar");
+        registerCertificateData.setRegistarDetails("Registrar of Births and Deaths");
         mdmsDataService.setTenantDetails(registerCertificateData, mdmsData);
         mdmsDataService.setPresentAddressDetailsEn(register, registerCertificateData, mdmsData);
         mdmsDataService.setPremananttAddressDetailsEn(register, registerCertificateData, mdmsData);
