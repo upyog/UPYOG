@@ -90,8 +90,10 @@ public class KsmartBirthApplicationQueryBuilder extends KsmartBaseBirthQuery {
         addFilter("ebp.hospitalid", criteria.getHospitalId(), query, preparedStmtValues);
         addFilter("ebp.institution_id", criteria.getInstitutionId(), query, preparedStmtValues);
         addFilter("ebp.ebp.ward_id", criteria.getWardCode(), query, preparedStmtValues);
+        addFilter("eebd.gender", criteria.getGender(), query, preparedStmtValues);
         addDateRangeFilter("ebd.dateofreport", criteria.getFromDate(),  criteria.getToDate(), query, preparedStmtValues);
-        addDateRangeFilter("ebd.file_date",  criteria.getFromDateFile(), criteria.getToDateFile(), query, preparedStmtValues);
+        addDateRangeFilter("ebd.dateofbirth",  criteria.getDateOfBirthFrom(), criteria.getDateOfBirthTo(),query, preparedStmtValues);
+        addDateRangeFilter("ebd.fm_fileno",  criteria.getFromDateFile(), criteria.getToDateFile(), query, preparedStmtValues);
 
         if (StringUtils.isEmpty(criteria.getSortBy()))
             addOrderByColumns("ebd.createdtime",null, orderBy);
@@ -111,6 +113,11 @@ public class KsmartBirthApplicationQueryBuilder extends KsmartBaseBirthQuery {
             addOrderByColumns("ebp.hospitalid",criteria.getSortOrder(), orderBy);
         else if (criteria.getSortBy() == KsmartBirthApplicationSearchCriteria.SortBy.institutionId)
             addOrderByColumns("ebp.institution_id",criteria.getSortOrder(), orderBy);
+        else if (criteria.getSortBy() == KsmartBirthApplicationSearchCriteria.SortBy.wardCode)
+            addOrderByColumns("ebp.ward_id",criteria.getSortOrder(), orderBy);
+
+
+
         addOrderToQuery(orderBy, query);
         addLimitAndOffset(criteria.getOffset(),criteria.getLimit(), query, preparedStmtValues);
         return query.toString();

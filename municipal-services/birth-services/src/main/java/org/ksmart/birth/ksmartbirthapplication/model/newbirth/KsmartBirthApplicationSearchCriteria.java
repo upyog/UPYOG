@@ -43,6 +43,12 @@ public class KsmartBirthApplicationSearchCriteria {
 
     @JsonProperty("aadhaarNo")
     private String aadhaarNo;
+    @JsonProperty("dateOfBirthFrom")
+    @Valid
+    private Long dateOfBirthFrom;
+    @JsonProperty("dateOfBirthTo")
+    @Valid
+    private Long dateOfBirthTo;
 
     @JsonProperty("dateOfBirth")
     @Valid
@@ -88,7 +94,6 @@ public class KsmartBirthApplicationSearchCriteria {
         applicationNumber,
         dateOfBirth,
         registrationNo,
-        sex,
         wardCode,
         institutionId,
         hospitalId,

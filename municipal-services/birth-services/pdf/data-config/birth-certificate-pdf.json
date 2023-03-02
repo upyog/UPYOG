@@ -616,6 +616,19 @@
                 }
               },
               {
+                "variable": "nameOfLbMl",
+                "value": {
+                  "path": "PDF_BIRTH_NAME_OF_LOCAL_GOVERNMENT_ISSUING_CERTIFICATE_ML"
+                },
+                "type": "label",
+                "localisation":{
+                  "required":true,
+                  "prefix": null,
+                  "module":"rainmaker-common",
+                  "locale":"en_IN"
+                }
+              },
+              {
                 "variable": "keyNo",
                 "value": {
                   "path": "PDF_BIRTH_KEY_NO"
