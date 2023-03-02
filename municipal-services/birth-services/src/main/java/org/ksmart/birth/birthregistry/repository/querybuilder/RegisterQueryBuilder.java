@@ -71,6 +71,7 @@ public class RegisterQueryBuilder extends BaseRegBuilder {
         addFilter("krbd.registrationno", criteria.getRegistrationNo(), query, preparedStmtValues);
         addDateRangeFilter("krbd.dateofreport", criteria.getFromDate(), criteria.getToDate(), query, preparedStmtValues);
         addDateRangeFilter("krbd.file_date", criteria.getFromDateReg(), criteria.getToDateReg(), query, preparedStmtValues);
+
         if (StringUtils.isEmpty(criteria.getSortBy()))
             addOrderByColumns("krbd.createdtime",null, orderBy);
         else if (criteria.getSortBy() == RegisterBirthSearchCriteria.SortBy.dob)
