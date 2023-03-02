@@ -2,6 +2,7 @@ package org.ksmart.birth.ksmartbirthapplication.model.newbirth;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
+import org.ksmart.birth.birthregistry.model.RegisterBirthSearchCriteria;
 
 import javax.validation.Valid;
 
@@ -43,12 +44,6 @@ public class KsmartBirthApplicationSearchCriteria {
     @JsonProperty("aadhaarNo")
     private String aadhaarNo;
 
-    @JsonProperty("offset")
-    private Integer offset;
-
-    @JsonProperty("limit")
-    private Integer limit;
-
     @JsonProperty("dateOfBirth")
     @Valid
     private String dateOfBirth;
@@ -61,8 +56,45 @@ public class KsmartBirthApplicationSearchCriteria {
     @Valid
     private String institutionId;
 
+    @JsonProperty("mother")
+    @Valid
+    private String nameOfMother;
+
+    @JsonProperty("sex")
+    @Valid
+    private String gender;
+
     @JsonProperty("wardCode")
     @Valid
     private String wardCode;
+
+    @JsonProperty("offset")
+    private Integer offset;
+
+    @JsonProperty("limit")
+    private Integer limit;
+    @JsonProperty("sortBy")
+    private SortBy sortBy;
+
+    @JsonProperty("sortOrder")
+    private SortOrder sortOrder;
+
+    public enum SortOrder {
+        ASC,
+        DESC
+    }
+
+    public enum SortBy {
+        applicationNumber,
+        dateOfBirth,
+        registrationNo,
+        sex,
+        wardCode,
+        institutionId,
+        hospitalId,
+        mother,
+        gender,
+        tenantId
+    }
 
 }

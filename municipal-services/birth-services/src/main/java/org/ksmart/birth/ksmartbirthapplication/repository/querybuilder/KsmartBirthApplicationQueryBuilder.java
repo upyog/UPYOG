@@ -1,7 +1,9 @@
 package org.ksmart.birth.ksmartbirthapplication.repository.querybuilder;
 
+import org.ksmart.birth.birthregistry.model.RegisterBirthSearchCriteria;
 import org.ksmart.birth.ksmartbirthapplication.model.newbirth.KsmartBirthApplicationSearchCriteria;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
@@ -79,7 +81,7 @@ public class KsmartBirthApplicationQueryBuilder extends KsmartBaseBirthQuery {
     public String getKsmartBirthApplicationSearchQuery(@NotNull KsmartBirthApplicationSearchCriteria criteria,
                                                  @NotNull List<Object> preparedStmtValues, Boolean isCount) {
         StringBuilder query = new StringBuilder(QUERY);
-
+        StringBuilder orderBy = new StringBuilder();
         addFilter("ebd.id", criteria.getId(), query, preparedStmtValues);
         addFilter("ebd.tenantid", criteria.getTenantId(), query, preparedStmtValues);
         addFilter("ebd.applicationno", criteria.getApplicationNumber(), query, preparedStmtValues);
@@ -88,20 +90,29 @@ public class KsmartBirthApplicationQueryBuilder extends KsmartBaseBirthQuery {
         addFilter("ebp.hospitalid", criteria.getHospitalId(), query, preparedStmtValues);
         addFilter("ebp.institution_id", criteria.getInstitutionId(), query, preparedStmtValues);
         addFilter("ebp.ebp.ward_id", criteria.getWardCode(), query, preparedStmtValues);
+        addDateRangeFilter("ebd.dateofreport", criteria.getFromDate(),  criteria.getToDate(), query, preparedStmtValues);
+        addDateRangeFilter("ebd.file_date",  criteria.getFromDateFile(), criteria.getToDateFile(), query, preparedStmtValues);
 
-
-        addDateRangeFilter("ebd.dateofreport",
-                criteria.getFromDate(),
-                criteria.getToDate(),
-                query,
-                preparedStmtValues);
-
-        addDateRangeFilter("ebd.file_date",
-                criteria.getFromDateFile(),
-                criteria.getToDateFile(),
-                query,
-                preparedStmtValues);
-        System.out.println(query);
+        if (StringUtils.isEmpty(criteria.getSortBy()))
+            addOrderByColumns("ebd.createdtime",null, orderBy);
+        else if (criteria.getSortBy() == KsmartBirthApplicationSearchCriteria.SortBy.dateOfBirth)
+            addOrderByColumns("ebd.dateofbirth",criteria.getSortOrder(), orderBy);
+        else if (criteria.getSortBy() == KsmartBirthApplicationSearchCriteria.SortBy.applicationNumber)
+            addOrderByColumns("ebd.applicationno",criteria.getSortOrder(),orderBy);
+        else if (criteria.getSortBy() == KsmartBirthApplicationSearchCriteria.SortBy.mother)
+            addOrderByColumns("ebmi.firstname_en",criteria.getSortOrder(), orderBy);
+        else if (criteria.getSortBy() == KsmartBirthApplicationSearchCriteria.SortBy.gender)
+            addOrderByColumns("ebd.gender",criteria.getSortOrder(), orderBy);
+        else if (criteria.getSortBy() == KsmartBirthApplicationSearchCriteria.SortBy.registrationNo)
+            addOrderByColumns("ebd.registrationno",criteria.getSortOrder(), orderBy);
+        else if (criteria.getSortBy() == KsmartBirthApplicationSearchCriteria.SortBy.tenantId)
+            addOrderByColumns("ebd.tenantid",criteria.getSortOrder(), orderBy);
+        else if (criteria.getSortBy() == KsmartBirthApplicationSearchCriteria.SortBy.hospitalId)
+            addOrderByColumns("ebp.hospitalid",criteria.getSortOrder(), orderBy);
+        else if (criteria.getSortBy() == KsmartBirthApplicationSearchCriteria.SortBy.institutionId)
+            addOrderByColumns("ebp.institution_id",criteria.getSortOrder(), orderBy);
+        addOrderToQuery(orderBy, query);
+        addLimitAndOffset(criteria.getOffset(),criteria.getLimit(), query, preparedStmtValues);
         return query.toString();
     }
     public String getNextIDQuery() {

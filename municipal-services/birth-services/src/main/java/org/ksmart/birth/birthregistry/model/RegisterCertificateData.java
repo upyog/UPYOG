@@ -176,6 +176,6 @@ public class RegisterCertificateData {
     @JsonProperty("tenantStateMl")
     private String tenantStateMl;
     @Size(max = 1000)
-    @JsonProperty("esignOfficerDesign")
-    private String esignOfficerDesign;
+    @JsonProperty("wardCode")
+    private String wardCode;
 }

@@ -72,19 +72,19 @@ public class RegisterQueryBuilder extends BaseRegBuilder {
         addDateRangeFilter("krbd.dateofreport", criteria.getFromDate(), criteria.getToDate(), query, preparedStmtValues);
         addDateRangeFilter("krbd.file_date", criteria.getFromDateReg(), criteria.getToDateReg(), query, preparedStmtValues);
         if (StringUtils.isEmpty(criteria.getSortBy()))
-            addOrderByColumns("krbd.createdtime","ASC", orderBy);
+            addOrderByColumns("krbd.createdtime",null, orderBy);
         else if (criteria.getSortBy() == RegisterBirthSearchCriteria.SortBy.dob)
-            addOrderByColumns("krbd.dateofbirth",criteria.getSortOrder().toString(), orderBy);
+            addOrderByColumns("krbd.dateofbirth",criteria.getSortOrder(), orderBy);
         else if (criteria.getSortBy() == RegisterBirthSearchCriteria.SortBy.ackNo)
-            addOrderByColumns("krbd.ack_no",criteria.getSortOrder().toString(),orderBy);
+            addOrderByColumns("krbd.ack_no",criteria.getSortOrder(),orderBy);
         else if (criteria.getSortBy() == RegisterBirthSearchCriteria.SortBy.mother)
-            addOrderByColumns("kbmi.firstname_en",criteria.getSortOrder().toString(), orderBy);
+            addOrderByColumns("kbmi.firstname_en",criteria.getSortOrder(), orderBy);
         else if (criteria.getSortBy() == RegisterBirthSearchCriteria.SortBy.gender)
-            addOrderByColumns("krbd.gender",criteria.getSortOrder().toString(), orderBy);
+            addOrderByColumns("krbd.gender",criteria.getSortOrder(), orderBy);
         else if (criteria.getSortBy() == RegisterBirthSearchCriteria.SortBy.registrationNo)
-            addOrderByColumns("krbd.registrationno",criteria.getSortOrder().toString(), orderBy);
+            addOrderByColumns("krbd.registrationno",criteria.getSortOrder(), orderBy);
         else if (criteria.getSortBy() == RegisterBirthSearchCriteria.SortBy.tenantId)
-            addOrderByColumns("krbd.tenantid",criteria.getSortOrder().toString(), orderBy);
+            addOrderByColumns("krbd.tenantid",criteria.getSortOrder(), orderBy);
         addOrderToQuery(orderBy, query);
         addLimitAndOffset(criteria.getOffset(),criteria.getLimit(), query, preparedStmtValues);
         return query.toString();

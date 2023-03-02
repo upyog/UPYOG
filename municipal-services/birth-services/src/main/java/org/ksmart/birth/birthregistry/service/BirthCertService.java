@@ -46,6 +46,7 @@ public class BirthCertService {
         registerCertificateData.setId(register.getId());
         registerCertificateData.setDateOfBirth(register.getDateOfBirth());
         registerCertificateData.setDobStrWord(dobInWords);
+        registerCertificateData.setWardCode(register.getRegisterBirthPlace().getWardId());
         registerCertificateData.setDateOfReport(register.getDateOfReport());
         registerCertificateData.setRegistrationDate(register.getRegistrationDate());
         registerCertificateData.setCurrentDate(formatter.format(curDate));

@@ -69,7 +69,7 @@ public class RegisterBirthService {
             if(regDetail.size() > 0) {
                 birthCertificate.setBirthPlace(regDetail.get(0).getPlaceDetails());
                 birthCertificate.setGender(regDetail.get(0).getGenderEn().toString());
-                //   birthCertificate.setWard(regDetail.get(0).getWardId());
+                birthCertificate.setWard(regDetail.get(0).getWardCode());
                 birthCertificate.setState(regDetail.get(0).getTenantState());
                 birthCertificate.setDistrict(regDetail.get(0).getTenantDistrict());
                 birthCertificate.setBirthCertificateNo(regDetail.get(0).getRegistrationNo().toString());

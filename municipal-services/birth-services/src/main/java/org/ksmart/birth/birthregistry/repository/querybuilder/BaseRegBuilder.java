@@ -4,6 +4,7 @@ package org.ksmart.birth.birthregistry.repository.querybuilder;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.common.protocol.types.Field;
+import org.ksmart.birth.birthregistry.model.RegisterBirthSearchCriteria;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -108,7 +109,7 @@ public class BaseRegBuilder {
         }
     }
 
-    void addOrderByColumns(String column, String valueSort, StringBuilder orderBy){
+    void addOrderByColumns(String column, RegisterBirthSearchCriteria.SortOrder valueSort, StringBuilder orderBy){
         addOrderClause(orderBy);
         if(!StringUtils.isEmpty(column)){
             addOrderClause(orderBy);
@@ -124,10 +125,10 @@ public class BaseRegBuilder {
         }
     }
 
-    void addAscDesc(String valueSort, StringBuilder query){
-        if(StringUtils.isEmpty(valueSort))
-            query.append(", ");
-        else if(valueSort == "ASC")
+    void addAscDesc(RegisterBirthSearchCriteria.SortOrder valueSort, StringBuilder query){
+        if(valueSort == null)
+            query.append("ASC , ");
+        else if(valueSort == RegisterBirthSearchCriteria.SortOrder.ASC)
             query.append(" ASC, ");
         else
             query.append(" DESC, ");

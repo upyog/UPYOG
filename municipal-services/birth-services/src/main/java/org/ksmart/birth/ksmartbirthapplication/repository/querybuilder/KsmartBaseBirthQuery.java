@@ -2,6 +2,9 @@ package org.ksmart.birth.ksmartbirthapplication.repository.querybuilder;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.ksmart.birth.birthregistry.model.RegisterBirthSearchCriteria;
+import org.ksmart.birth.ksmartbirthapplication.model.newbirth.KsmartBirthApplicationSearchCriteria;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
@@ -10,6 +13,11 @@ import java.util.stream.Collectors;
 
 @Component
 public class KsmartBaseBirthQuery {
+    @Value("${egov.bnd.default.limit}")
+    private Integer defaultBndLimit;
+
+    @Value("${egov.bnd.default.offset}")
+    private Integer defaultOffset;
     void addDateRangeFilter(String column, Long startDate, Long endDate, StringBuilder query,
                             List<Object> paramValues) {
 
@@ -70,4 +78,59 @@ public class KsmartBaseBirthQuery {
                 .stream()
                 .collect(Collectors.joining(", "));
     }
+
+
+    void addOrderClause(StringBuilder orderBy) {
+        if (orderBy.length() == 0) {
+            orderBy.append(" ORDER BY ");
+        } else {
+            orderBy.append(" ");
+        }
+    }
+
+    void addOrderByColumns(String column, KsmartBirthApplicationSearchCriteria.SortOrder valueSort, StringBuilder orderBy){
+        addOrderClause(orderBy);
+        if(!StringUtils.isEmpty(column)){
+            addOrderClause(orderBy);
+            orderBy.append(column);
+            addAscDesc(valueSort, orderBy);
+        }
+    }
+    void addOrderToQuery(StringBuilder orderBy, StringBuilder query){
+        if (orderBy.length() > 0) {
+            String orderByStr = orderBy.toString().trim();
+            orderByStr = orderByStr.substring(0, orderByStr.length() - 1);
+            query.append(orderByStr);
+        }
+    }
+
+    void addAscDesc(KsmartBirthApplicationSearchCriteria.SortOrder valueSort, StringBuilder query){
+        if(valueSort == null)
+            query.append("ASC , ");
+        else if(valueSort == KsmartBirthApplicationSearchCriteria.SortOrder.ASC)
+            query.append(" ASC, ");
+        else
+            query.append(" DESC, ");
+    }
+
+    void addLimitAndOffset(Integer offset, Integer limit, StringBuilder query, final List<Object> paramValues) {
+        // prepare Offset
+        if (offset == null) {
+            query.append(" OFFSET ? ");
+            paramValues.add(defaultOffset);
+        } else {
+            query.append(" OFFSET ? ");
+            paramValues.add(offset);
+        }
+        // prepare limit
+        if (limit == null) {
+            query.append(" LIMIT ? ");
+            paramValues.add(defaultBndLimit);
+        } else{
+            query.append(" LIMIT ? ");
+            paramValues.add(limit);
+        }
+    }
+
+
 }
