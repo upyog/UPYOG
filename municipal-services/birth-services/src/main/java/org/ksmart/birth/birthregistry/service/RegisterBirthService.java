@@ -43,7 +43,7 @@ public class RegisterBirthService {
         return repository.updateRegisterBirthDetails(request);
     }
 
-    public List<RegisterBirthDetail> searchRegisterBirthDetails(RegisterBirthSearchCriteria criteria, RequestInfo requestInfo)  {
+    public List<RegisterBirthDetail> searchRegisterBirthDetails(RegisterBirthSearchCriteria criteria)  {
         List<RegisterBirthDetail>  registerBirthDetails = repository.searchRegisterBirthDetails(criteria);
         return registerBirthDetails;
     }
@@ -68,7 +68,7 @@ public class RegisterBirthService {
             List<RegisterCertificateData> regDetail = searchRegisterForCert(criteria, requestInfo);
             if(regDetail.size() > 0) {
                 birthCertificate.setBirthPlace(regDetail.get(0).getPlaceDetails());
-                birthCertificate.setGender(regDetail.get(0).getGender().toString());
+                birthCertificate.setGender(regDetail.get(0).getGenderEn().toString());
                 //   birthCertificate.setWard(regDetail.get(0).getWardId());
                 birthCertificate.setState(regDetail.get(0).getTenantState());
                 birthCertificate.setDistrict(regDetail.get(0).getTenantDistrict());

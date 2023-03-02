@@ -1,8 +1,6 @@
 package org.ksmart.birth.birthregistry.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;
-
 
 import org.ksmart.birth.birthregistry.model.*;
 import org.ksmart.birth.birthregistry.model.BirthCertificate;
@@ -41,9 +39,9 @@ public class RegistryBirthController {
         return new ResponseEntity<>(registerBirthDetails, HttpStatus.OK);
     }
     @PostMapping(value = {"/_search"})
-    public ResponseEntity<RegisterBirthResponse> listByHospitalId(@RequestBody RegisterBirthDetailsRequest request, @Valid @ModelAttribute RegisterBirthSearchCriteria criteria) {
+    public ResponseEntity<RegisterBirthResponse> listByHospitalId(@RequestBody RequestInfoWrapper request, @Valid @ModelAttribute RegisterBirthSearchCriteria criteria) {
 
-        List<RegisterBirthDetail> registerBirthDetail=registerBirthService.searchRegisterBirthDetails(criteria, request.getRequestInfo());
+        List<RegisterBirthDetail> registerBirthDetail=registerBirthService.searchRegisterBirthDetails(criteria);
         RegisterBirthResponse response=RegisterBirthResponse.builder()
                 .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), Boolean.TRUE))
                 .registerDetails(registerBirthDetail)
@@ -51,7 +49,7 @@ public class RegistryBirthController {
         return ResponseEntity.ok(response);
     }
     @PostMapping(value = {"/searchcert"})
-    public ResponseEntity<RegisterCertificateRespose> getCertData(@RequestBody RegisterBirthDetailsRequest request, @Valid @ModelAttribute RegisterBirthSearchCriteria criteria) {
+    public ResponseEntity<RegisterCertificateRespose> getCertData(@RequestBody RequestInfoWrapper request, @Valid @ModelAttribute RegisterBirthSearchCriteria criteria) {
 
         List<RegisterCertificateData> registerBirthDetail=registerBirthService.searchRegisterForCert(criteria, request.getRequestInfo());
         RegisterCertificateRespose response=RegisterCertificateRespose.builder()

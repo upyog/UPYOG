@@ -1,23 +1,13 @@
 package org.ksmart.birth.common.services;
 
 import com.jayway.jsonpath.JsonPath;
-import org.apache.coyote.RequestInfo;
-import org.ksmart.birth.birthregistry.model.RegisterBirthDetail;
 import org.ksmart.birth.utils.BirthConstants;
-import org.ksmart.birth.utils.MdmsUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 public class MdmsTenantService {
-    private final MdmsUtil mdmsUtil;
-
-    @Autowired
-    MdmsTenantService(MdmsUtil mdmsUtil) {
-        this.mdmsUtil = mdmsUtil;
-    }
 
     private List<String> getTenantCodes(Object mdmsData) {
         return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_TENANTS_CODE_JSONPATH);
@@ -95,6 +85,11 @@ public class MdmsTenantService {
         return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_POSTOFFICE_JSONPATH+"["+index+"].name");
     }
 
+    public String getPostOfficePinCode(Object mdmsData, String code) {
+        List<String> tenants  = getTalukCodes(mdmsData);
+        int index = tenants.indexOf(code);
+        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_POSTOFFICE_JSONPATH+"["+index+"].pincode");
+    }
     public String getTalukNameEn(Object mdmsData, String code) {
         List<String> tenants  = getTalukCodes(mdmsData);
         int index = tenants.indexOf(code);
@@ -120,9 +115,7 @@ public class MdmsTenantService {
     }
     public String getLbTypeNameMl(Object mdmsData, String code) {
         List<String> tenants  = getLbTypeCodes(mdmsData);
-        System.out.println(code);
         int index = tenants.indexOf(code);
-        System.out.println(index);
         return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_LBTYPE_JSONPATH+"["+index+"].namelocal");
     }
     public String getPostOfficeNameMl(Object mdmsData, String code) {

@@ -247,7 +247,7 @@
                     "width": "1%"
                   },
                   {
-                    "text": "{{gender}}/ {{genderMl}}",
+                    "text": "{{genderMl}}/ {{genderEn}}",
                     "style": "details-body"
                   }
                 ]
@@ -258,7 +258,7 @@
                 "columns": [
 
                   {
-                    "text": "{{dateOfBirth}} ",
+                    "text": "{{dateOfBirth}}",
                     "width": "49%",
                     "style": "details-body"
                   },
@@ -267,7 +267,7 @@
                     "width": "1%"
                   },
                   {
-                    "text": "{{dob}}",
+                    "text": "{{dob}} /{{dobInWords}} ",
                     "style": "details-body"
                   }
                 ]
@@ -483,7 +483,7 @@
                     "width": "1%"
                   },
                   {
-                    "text": "{{esignOfficerDesign}}  {{lbtypecode}} ",
+                    "text": "{{registar}} {{tenant}} {{lbtypecode}} ",
                     "style": "details-body"
                   }
                 ]

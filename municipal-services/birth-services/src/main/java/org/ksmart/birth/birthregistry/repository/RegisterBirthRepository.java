@@ -72,7 +72,6 @@ public class RegisterBirthRepository {
         List<Object> preparedStmtValues=new ArrayList<>();
         String query=registerQueryBuilder.getRegBirthApplicationSearchQuery(criteria, preparedStmtValues, Boolean.FALSE);
         List<RegisterBirthDetail> result=jdbcTemplate.query(query, preparedStmtValues.toArray(), birthRegisterRowMapper);
-        System.out.println(query);
         return result;
     }
 
@@ -104,7 +103,7 @@ public class RegisterBirthRepository {
                         birthCertPath=birthCertPath.replace("$tenantId", cert.getTenantId());
                         birthCertPath=birthCertPath.replace("$regNo", cert.getRegistrationNo());
                         birthCertPath=birthCertPath.replace("$dateofbirth", cert.getDobStr());
-                        birthCertPath=birthCertPath.replace("$gender", cert.getGender().toString());
+                        birthCertPath=birthCertPath.replace("$gender", cert.getGenderEn().toString());
                         birthCertPath=birthCertPath.replace("$birthcertificateno", cert.getRegistrationNo());
                         String finalPath=uiHost + birthCertPath;
                         cert.setEmbeddedUrl(getShortenedUrl(finalPath));

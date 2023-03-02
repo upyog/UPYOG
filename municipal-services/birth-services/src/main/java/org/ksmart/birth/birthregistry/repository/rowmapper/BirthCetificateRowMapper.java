@@ -47,7 +47,7 @@ public class BirthCetificateRowMapper implements ResultSetExtractor<List<Registe
                     .fullNameMl(getFullNameMl(rs))
                     .ackNo(rs.getString("ack_no"))
                     .tenantId(rs.getString("tenantid"))
-                    .gender(rs.getString("gender"))
+                    .genderEn(rs.getString("gender"))
                     .remarksEn(rs.getString("remarks_en"))
                     .remarksMl(rs.getString("remarks_ml"))
                     .fatherDetails(rs.getString("father_name"))

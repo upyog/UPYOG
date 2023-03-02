@@ -26,6 +26,9 @@ public class RegisterCertificateData {
     @JsonProperty("dateofbirthstr")
     private String dobStr;
 
+    @JsonProperty("dateofbirthWord")
+    private String dobStrWord;
+
     @JsonProperty("registrationDateStr")
     private String registrationDateStr;
 
@@ -47,8 +50,12 @@ public class RegisterCertificateData {
     private String tenantId;
 
     @Size(max = 1000)
-    @JsonProperty("gender")
-    private String gender;
+    @JsonProperty("genderEn")
+    private String genderEn;
+
+    @Size(max = 1000)
+    @JsonProperty("genderMl")
+    private String genderMl;
 
     @Size(max = 2500)
     @JsonProperty("remarks_en")
@@ -164,7 +171,11 @@ public class RegisterCertificateData {
     @Size(max = 1000)
     @JsonProperty("tenantState")
     private String tenantState;
+
     @Size(max = 1000)
     @JsonProperty("tenantStateMl")
     private String tenantStateMl;
+    @Size(max = 1000)
+    @JsonProperty("esignOfficerDesign")
+    private String esignOfficerDesign;
 }

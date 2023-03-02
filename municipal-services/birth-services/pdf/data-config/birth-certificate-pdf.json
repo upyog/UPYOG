@@ -50,16 +50,27 @@
                 "type": "date"
               },
               {
+                "variable": "dobInWords",
+                "value": {
+                  "path": "$.dateofbirthWord"
+                },
+                "type": "date"
+              },
+              {
                 "variable": "gender",
                 "value": {
-                  "path": "$.gender"
+                  "path": "$.genderEn"
                 },
-                "type":"setEmpty"
+                "type":"setEmpty",
+                "localisation":{
+                  "required":true,
+                  "module":"rainmaker-common"
+                }
               },
               {
                 "variable": "genderMl",
                 "value": {
-                  "path": "$.tenantLbTypeMl"
+                  "path": "$.genderMl"
                 },
                 "type": "setEmpty",
                 "localisation":{
@@ -67,18 +78,7 @@
                   "module":"rainmaker-common"
                 }
               },
-              {
-                "variable": "gender",
-                "value": {
-                  "path": "$.gender"
-                },
-                "type":"setEmpty",
-                "localisation":{
-                  "required":true,
-                  "postfix": "_ML",
-                  "module":"rainmaker-common"
-                }
-              },
+
               {
                 "variable": "registrationNo",
                 "value": {
@@ -133,48 +133,28 @@
                 "value": {
                   "path": "$.presentAddDetails"
                 },
-                "type":"setEmpty",
-                "localisation":{
-                "required":true,
-                "module":"rainmaker-common",
-                "locale":"en_IN"
-              }
+                "type":"setEmpty"
               },
               {
                 "variable": "presentAddressMl",
                 "value": {
                   "path": "$.presentAddDetailsMl"
                 },
-                "type":"setEmpty",
-                "localisation":{
-                  "required":true,
-                  "module":"rainmaker-common",
-                  "locale":"en_IN"
-                }
+                "type":"setEmpty"
               },
               {
                 "variable": "registerBirthPermanent",
                 "value": {
                   "path": "$.permenantAddDetails"
                 },
-                "type":"setEmpty",
-                "localisation":{
-                  "required":true,
-                  "module":"rainmaker-common",
-                  "locale":"en_IN"
-                }
+                "type":"setEmpty"
               },
               {
                 "variable": "registerBirthPermanentMl",
                 "value": {
                   "path": "$.permenantAddDetailsMl"
                 },
-                "type":"setEmpty",
-                "localisation":{
-                  "required":true,
-                  "module":"rainmaker-common",
-                  "locale":"en_IN"
-                }
+                "type":"setEmpty"
               },
               {
                 "variable": "currentDate",
@@ -228,7 +208,7 @@
                 "type": "date"
               },
               {
-                "variable": "esignOfficerDesign",
+                "variable": "registar",
                 "value": {
                   "path": "$.registar"
                 },
@@ -281,104 +261,59 @@
                 "value": {
                   "path": "$.tenantLbType"
                 },
-                "type": "setEmpty",
-                "localisation":{
-                  "required":true,
-                  "module":"rainmaker-common",
-                  "locale":"en_IN"
-                }
+                "type": "setEmpty"
               },
               {
                 "variable": "lbtypecodeMl",
                 "value": {
-                  "path": "$.tenantLbType"
+                  "path": "$.tenantLbTypeMl"
                 },
-                "type": "setEmpty",
-                "localisation":{
-                  "required":true,
-                  "postfix": "_ML",
-                  "module":"rainmaker-common",
-                  "locale":"en_IN"
-                }
+                "type": "setEmpty"
               },
               {
                 "variable": "talukcode",
                 "value": {
                   "path": "$.tenantTaluk"
                 },
-                "type": "setEmpty",
-                "localisation":{
-                  "required":true,
-                  "module":"rainmaker-common",
-                  "locale":"en_IN"
-                }
+                "type": "setEmpty"
               },
 
               {
                 "variable": "talukcodeMl",
                 "value": {
-                  "path": "$.tenantTaluk"
+                  "path": "$.tenantTalukMl"
                 },
-                "type": "setEmpty",
-                "localisation":{
-                  "required":true,
-                  "postfix": "_ML",
-                  "module":"rainmaker-common",
-                  "locale":"en_IN"
-                }
+                "type": "setEmpty"
               },
               {
                 "variable": "distcode",
                 "value": {
                   "path": "$.tenantDistrict"
                 },
-                "type": "setEmpty",
-                "localisation":{
-                  "required":true,
-                  "module":"rainmaker-common",
-                  "locale":"en_IN"
-                }
+                "type": "setEmpty"
               },
 
               {
                 "variable": "distcodeMl",
                 "value": {
-                  "path": "$.tenantDistrict"
+                  "path": "$.tenantDistrictMl"
                 },
-                "type": "setEmpty",
-                "localisation":{
-                  "required":true,
-                  "postfix": "_ML",
-                  "module":"rainmaker-common",
-                  "locale":"en_IN"
-                }
+                "type": "setEmpty"
               },
               {
                 "variable": "statecode",
                 "value": {
                   "path": "$.tenantState"
                 },
-                "type": "setEmpty",
-                "localisation":{
-                  "required":true,
-                  "postfix": "_ML",
-                  "module":"rainmaker-common",
-                  "locale":"en_IN"
-                }
+                "type": "setEmpty"
               },
 
               {
                 "variable": "statecodeMl",
                 "value": {
-                  "path": "$.tenantState"
+                  "path": "$.tenantStateMl"
                 },
-                "type": "setEmpty",
-                "localisation":{
-                  "required":true,
-                  "postfix": "_ML",
-                  "module":"rainmaker-common",
-                  "locale":"en_IN"
-                }
+                "type": "setEmpty"
               },
               {
                 "variable": "childName",
