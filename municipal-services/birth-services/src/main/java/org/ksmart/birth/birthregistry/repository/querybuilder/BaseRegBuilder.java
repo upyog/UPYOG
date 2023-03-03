@@ -127,7 +127,7 @@ public class BaseRegBuilder {
 
     void addAscDesc(RegisterBirthSearchCriteria.SortOrder valueSort, StringBuilder query){
         if(valueSort == null)
-            query.append("ASC , ");
+            query.append(" ASC, ");
         else if(valueSort == RegisterBirthSearchCriteria.SortOrder.ASC)
             query.append(" ASC, ");
         else
