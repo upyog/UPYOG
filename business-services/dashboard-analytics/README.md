@@ -1,5 +1,4 @@
 
-
 # dashboard-analytics
 
 
@@ -9,8 +8,6 @@ DSS Analytics Module is used to return aggregated data from elastic search index
 The analytics service creates/wraps queries based on the configuration provided and executes it on the elastic search to fetch the aggregated data.
 This aggregated data is then transformed to AggregateDTO by Response Handlers. AggregateDTO contains list of object called Plots. This plot object are created based on the chart type defined in the configuration. The module also provides functionality to compare the data with previous time period,which can be configured 
 by defining insight in the chartAPI configuration for the required chart.
-
-
 
 
 ### Project Structure 
@@ -32,8 +29,8 @@ by defining insight in the chartAPI configuration for the required chart.
 
 
 ### Resources
-- Granular details about the API's can be found in the [swagger api definition](https://raw.githubusercontent.com/egovernments/DIGIT-OSS/doc-patch/business-services/Docs/dss-dashboard/DSS%20Analytics%20Dashboard%20YAML%20Spec%201.0.0.yaml)
-- Postman collection for all the API's can be found in the [postman collection](https://www.getpostman.com/collections/0894f347322bed5bea1a)
+- Granular details about the API's can be found in the [swagger api definition](https://raw.githubusercontent.com/upyog/UPYOG/master/business-services/Docs/dss-dashboard/DSS%20Analytics%20Dashboard%20YAML%20Spec%201.0.0.yaml)
+- Postman collection for all the API's can be found in the [postman collection](https://api.postman.com/collections/23419225-27e44c83-6e4b-4308-b231-1fb02ccb57eb?access_key=PMAT-01GTKJBA7MF0KNQJ8MJ4WAF9G1)
 
 
 ## Build & Run
@@ -47,6 +44,3 @@ by defining insight in the chartAPI configuration for the required chart.
 
 
 - Elastic search database to fetch data from index.
-
-
-
