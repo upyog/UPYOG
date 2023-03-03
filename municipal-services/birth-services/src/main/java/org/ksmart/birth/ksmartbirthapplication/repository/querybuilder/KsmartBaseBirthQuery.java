@@ -126,7 +126,7 @@ public class KsmartBaseBirthQuery {
 
     void addAscDesc(KsmartBirthApplicationSearchCriteria.SortOrder valueSort, StringBuilder query){
         if(valueSort == null)
-            query.append("ASC , ");
+            query.append(" ASC , ");
         else if(valueSort == KsmartBirthApplicationSearchCriteria.SortOrder.ASC)
             query.append(" ASC, ");
         else
