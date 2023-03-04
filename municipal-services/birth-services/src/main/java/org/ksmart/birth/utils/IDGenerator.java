@@ -3,8 +3,8 @@ package org.ksmart.birth.utils;
 
 import lombok.extern.slf4j.Slf4j;
 import org.ksmart.birth.common.services.MdmsTenantService;
-import org.ksmart.birth.ksmartbirthapplication.model.newbirth.KsmartBirthDetailsRequest;
-import org.ksmart.birth.ksmartbirthapplication.repository.querybuilder.KsmartBirthApplicationQueryBuilder;
+import org.ksmart.birth.newbirth.repository.querybuilder.NewBirthQueryBuilder;
+import org.ksmart.birth.web.model.newbirth.NewBirthDetailRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
@@ -18,12 +18,12 @@ public class IDGenerator {
     private final MdmsUtil mdmsUtil;
     private final MdmsTenantService mdmsTenantService;
     private final JdbcTemplate jdbcTemplate;
-    private final KsmartBirthApplicationQueryBuilder queryBuilder;
+    private final NewBirthQueryBuilder queryBuilder;
 
 
     @Autowired
     public IDGenerator(MdmsUtil mdmsUtil, MdmsTenantService mdmsTenantService,
-                       JdbcTemplate jdbcTemplate, KsmartBirthApplicationQueryBuilder queryBuilder) {
+                       JdbcTemplate jdbcTemplate, NewBirthQueryBuilder queryBuilder) {
         this.mdmsTenantService = mdmsTenantService;
         this.mdmsUtil = mdmsUtil;
         this.jdbcTemplate = jdbcTemplate;
@@ -35,9 +35,9 @@ public class IDGenerator {
      *
      * @param request KsmartBirthDetailsRequest which is to be created
      */
-    public String setIDGenerator(KsmartBirthDetailsRequest request, String moduleCode, String idType) {
+    public String setIDGenerator(NewBirthDetailRequest request, String moduleCode, String idType) {
         int Year = Calendar.getInstance().get(Calendar.YEAR);
-        String tenantId = request.getKsmartBirthDetails().get(0).getTenantId();
+        String tenantId = request.getNewBirthDetails().get(0).getTenantId();
         String nextID = getNewID(tenantId, Year, moduleCode, idType);
 
         // mdms call for tenand idgencode and lbtypecode

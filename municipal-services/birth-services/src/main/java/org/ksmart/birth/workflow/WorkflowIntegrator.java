@@ -5,10 +5,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.ksmart.birth.config.BirthConfiguration;
-import org.ksmart.birth.ksmartbirthapplication.model.newbirth.KsmartBirthAppliactionDetail;
-import org.ksmart.birth.ksmartbirthapplication.model.newbirth.KsmartBirthDetailsRequest;
 import org.ksmart.birth.utils.BirthDeathConstants;
 import org.egov.tracer.model.CustomException;
+import org.ksmart.birth.web.model.newbirth.NewBirthApplication;
+import org.ksmart.birth.web.model.newbirth.NewBirthDetailRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -47,11 +47,11 @@ public class WorkflowIntegrator {
      *
      * and sets the resultant status from wf-response back to file details object
      *
-     * @param request the {@link BirthDetailsRequest}
+     * @param request the {@link NewBirthDetailRequest}
      */
-    public  void callWorkFlow(KsmartBirthDetailsRequest request) {
+    public  void callWorkFlow(NewBirthDetailRequest request) {
 
-        KsmartBirthAppliactionDetail currentFile = request.getKsmartBirthDetails().get(0);
+        NewBirthApplication currentFile = request.getNewBirthDetails().get(0);
         String wfTenantId = currentFile.getTenantId();
         String businessServiceFromMDMS = currentFile.getBusinessService();
 
@@ -61,8 +61,8 @@ public class WorkflowIntegrator {
 
         JSONArray array = new JSONArray();
 
-        for (KsmartBirthAppliactionDetail birth : request.getKsmartBirthDetails()) {
-            if (businessServiceFromMDMS.equals(BirthDeathConstants.BUSINESS_SERVICE_BND) || !request.getKsmartBirthDetails()
+        for (NewBirthApplication birth : request.getNewBirthDetails()) {
+            if (businessServiceFromMDMS.equals(BirthDeathConstants.BUSINESS_SERVICE_BND) || !request.getNewBirthDetails()
                     .get(0).getAction().equalsIgnoreCase(BirthDeathConstants.TRIGGER_NOWORKFLOW)) {
 
                 JSONObject obj = new JSONObject();
@@ -142,7 +142,7 @@ public class WorkflowIntegrator {
             });
             // setting the status back to TL object from wf response
 
-                  request.getKsmartBirthDetails().forEach(
+                  request.getNewBirthDetails().forEach(
                     bndObj -> bndObj.setApplicationStatus(idStatusMap.get(bndObj.getApplicationNo())));
 
         }

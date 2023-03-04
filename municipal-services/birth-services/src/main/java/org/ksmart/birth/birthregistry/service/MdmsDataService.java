@@ -6,13 +6,11 @@ import org.ksmart.birth.birthregistry.model.RegisterBirthDetail;
 import org.ksmart.birth.birthregistry.model.RegisterCertificateData;
 import org.ksmart.birth.common.services.MdmsLocationService;
 import org.ksmart.birth.common.services.MdmsTenantService;
-import org.ksmart.birth.ksmartbirthapplication.model.newbirth.KsmartBirthAppliactionDetail;
+import org.ksmart.birth.web.model.newbirth.NewBirthApplication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.*;
 
 import static org.ksmart.birth.utils.BirthConstants.*;
 
@@ -98,7 +96,7 @@ public class MdmsDataService {
         }
     }
 
-    public void setKsmartLocationDetails(KsmartBirthAppliactionDetail register,  Object mdmsData) {
+    public void setKsmartLocationDetails(NewBirthApplication register, Object mdmsData) {
          if (register.getPlaceofBirthId().contains(BIRTH_PLACE_HOSPITAL)) {
             String placeEn = mdmsLocationService.getHospitalAddressEn(mdmsData, register.getHospitalId());
             String placeMl = mdmsLocationService.getHospitalNameMl(mdmsData, register.getHospitalId());
@@ -113,7 +111,7 @@ public class MdmsDataService {
         }
     }
 
-    public void setKsmartTenantDetails(KsmartBirthAppliactionDetail register,  Object mdmsData) {
+    public void setKsmartTenantDetails(NewBirthApplication register,  Object mdmsData) {
 //        if (register.getPlaceofBirthId().contains(BIRTH_PLACE_HOSPITAL)) {
 //            String placeEn = mdmsLocationService.getHospitalAddressEn(mdmsData, register.getHospitalId());
 //            String placeMl = mdmsLocationService.getHospitalNameMl(mdmsData, register.getHospitalId());

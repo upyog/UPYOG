@@ -14,7 +14,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.ksmart.birth.ksmartbirthapplication.model.newbirth.KsmartBirthAppliactionDetail;
+import org.ksmart.birth.web.model.newbirth.NewBirthApplication;
 
 
 @Getter
@@ -31,7 +31,7 @@ public class BirthResponse   {
 
         @JsonProperty("birthDetails")
         @Valid
-        private List<KsmartBirthAppliactionDetail> birthDetails = null;
+        private List<NewBirthApplication> birthDetails = null;
 
 }
 
