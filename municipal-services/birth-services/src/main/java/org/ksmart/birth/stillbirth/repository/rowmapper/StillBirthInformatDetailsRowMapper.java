@@ -6,7 +6,7 @@ import org.ksmart.birth.web.model.InformatDetail;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public interface AdoptionInformatDetailsRowMapper {
+public interface StillBirthInformatDetailsRowMapper {
         default InformatDetail getKsmartInformatDetail(ResultSet rs) throws SQLException {
             return InformatDetail.builder()
 

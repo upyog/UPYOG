@@ -10,7 +10,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 @Component
-public class AdoptionApplicationRowMapper implements ResultSetExtractor<List<NewBirthApplication>>, AdoptionBaseRowMapper, AdoptionParentDetailRowMapper, AdoptionInformatDetailsRowMapper, AdoptionParentAddressRowMapper {
+public class BirthOutsideApplicationRowMapper implements ResultSetExtractor<List<NewBirthApplication>>, BirthOutsideBaseRowMapper, BirthOutsideParentDetailRowMapper, BirthOutsideInformatDetailsRowMapper, BirthOutsideParentAddressRowMapper {
 
     @Override
     public List<NewBirthApplication> extractData(ResultSet rs) throws SQLException, DataAccessException { //how to handle null

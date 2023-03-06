@@ -13,15 +13,15 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class AdoptionService {
+public class BirthOutsideService {
     private final NewBirthRepository repository;
     private final WorkflowIntegrator workflowIntegrator;
     private final MdmsUtil mdmsUtil;
     private final NewBirthApplicationValidator validator;
 
     @Autowired
-    AdoptionService(NewBirthRepository repository, MdmsUtil mdmsUtil, WorkflowIntegrator workflowIntegrator,
-                    NewBirthApplicationValidator validator) {
+    BirthOutsideService(NewBirthRepository repository, MdmsUtil mdmsUtil, WorkflowIntegrator workflowIntegrator,
+                        NewBirthApplicationValidator validator) {
         this.repository = repository;
         this.mdmsUtil = mdmsUtil;
         this.workflowIntegrator  = workflowIntegrator;

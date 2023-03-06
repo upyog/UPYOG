@@ -21,7 +21,7 @@ import java.util.List;
 
 @Slf4j
 @Repository
-public class KsmartBirthRepository {
+public class NewBirthRepository {
     private final BndProducer producer;
     private final NewBirthEnrichment ksmartBirthEnrichment;
     private final BirthConfiguration birthDeathConfiguration;
@@ -34,9 +34,9 @@ public class KsmartBirthRepository {
 
 
     @Autowired
-    KsmartBirthRepository(JdbcTemplate jdbcTemplate, NewBirthEnrichment ksmartBirthEnrichment, BirthConfiguration birthDeathConfiguration,
-                          BndProducer producer, NewBirthQueryBuilder birthQueryBuilder, KsmartBirthApplicationRowMapper ksmartBirthApplicationRowMapper,
-                          MdmsDataService mdmsDataService, MdmsUtil mdmsUtil) {
+    NewBirthRepository(JdbcTemplate jdbcTemplate, NewBirthEnrichment ksmartBirthEnrichment, BirthConfiguration birthDeathConfiguration,
+                       BndProducer producer, NewBirthQueryBuilder birthQueryBuilder, KsmartBirthApplicationRowMapper ksmartBirthApplicationRowMapper,
+                       MdmsDataService mdmsDataService, MdmsUtil mdmsUtil) {
         this.jdbcTemplate = jdbcTemplate;
         this.ksmartBirthEnrichment = ksmartBirthEnrichment;
         this.birthDeathConfiguration = birthDeathConfiguration;

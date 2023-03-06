@@ -13,12 +13,12 @@ import java.util.List;
 
 import static org.ksmart.birth.utils.enums.ErrorCodes.BIRTH_DETAILS_REQUIRED;
 @Component
-public class AdoptionApplicationValidator {
+public class StillBirthApplicationValidator {
     private final BirthConfiguration bndConfig;
-    private final AdoptionMdmsValidator mdmsValidator;
+    private final StillBirthMdmsValidator mdmsValidator;
 
     @Autowired
-    AdoptionApplicationValidator(BirthConfiguration bndConfig, AdoptionMdmsValidator mdmsValidator) {
+    StillBirthApplicationValidator(BirthConfiguration bndConfig, StillBirthMdmsValidator mdmsValidator) {
 
         this.bndConfig = bndConfig;
 

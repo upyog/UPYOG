@@ -39,7 +39,7 @@ public class BirthOutSideCountryController {
         this.registryReq = registryReq;
     }
 
-    @PostMapping(value = {"/createadoption"})
+    @PostMapping(value = {"/createbirthoutside"})
     public ResponseEntity<?> saveRegisterBirthDetails(@RequestBody NewBirthDetailRequest request) {
         List<NewBirthApplication> registerBirthDetails=ksmartBirthService.saveKsmartBirthDetails(request);
         NewBirthResponse response= NewBirthResponse.builder()
@@ -49,7 +49,7 @@ public class BirthOutSideCountryController {
                                                                               .build();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-    @PostMapping(value = { "/updateadoption"})
+    @PostMapping(value = { "/updatebirthoutside"})
     public ResponseEntity<?> updateRegisterBirthDetails(@RequestBody NewBirthDetailRequest request) {
         BirthCertificate birthCertificate = new BirthCertificate();
         List<NewBirthApplication> birthApplicationDetails=ksmartBirthService.updateKsmartBirthDetails(request);
@@ -70,7 +70,7 @@ public class BirthOutSideCountryController {
                 .build();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-    @PostMapping(value = {"/searchadoption"})
+    @PostMapping(value = {"/searchbirthoutside"})
     public ResponseEntity<NewBirthSearchResponse> searchKsmartBirth(@RequestBody NewBirthDetailRequest request, @Valid @ModelAttribute SearchCriteria criteria) {
         List<NewBirthApplication> birthDetails=ksmartBirthService.searchKsmartBirthDetails(request, criteria);
         NewBirthSearchResponse response=NewBirthSearchResponse.builder()

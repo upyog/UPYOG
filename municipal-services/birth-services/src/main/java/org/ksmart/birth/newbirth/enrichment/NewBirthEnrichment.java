@@ -1,13 +1,19 @@
 package org.ksmart.birth.newbirth.enrichment;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
+import org.egov.tracer.model.CustomException;
 import org.ksmart.birth.birthregistry.service.MdmsDataService;
 import org.ksmart.birth.common.enrichment.BaseEnrichment;
 import org.ksmart.birth.common.model.AuditDetails;
+import org.ksmart.birth.common.repository.IdGenRepository;
+import org.ksmart.birth.config.BirthConfiguration;
 import org.ksmart.birth.utils.BirthConstants;
 import org.ksmart.birth.utils.IDGenerator;
 import org.ksmart.birth.utils.MdmsUtil;
+import org.ksmart.birth.utils.enums.ErrorCodes;
+import org.ksmart.birth.web.model.newbirth.NewBirthApplication;
 import org.ksmart.birth.web.model.newbirth.NewBirthDetailRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -16,14 +22,17 @@ import java.util.*;
 
 @Component
 public class NewBirthEnrichment implements BaseEnrichment {
-//    @Autowired
-//    BirthConfiguration config;
+    @Autowired
+    BirthConfiguration config;
     @Autowired
    MdmsUtil mdmsUtil;
     @Autowired
     IDGenerator generator;
     @Autowired
     MdmsDataService mdmsDataService;
+    @Autowired
+    IdGenRepository idGenRepository;
+
 
     public void enrichCreate(NewBirthDetailRequest request) {
 
@@ -72,44 +81,109 @@ public class NewBirthEnrichment implements BaseEnrichment {
         AuditDetails auditDetails = buildAuditDetails(userInfo.getUuid(), Boolean.FALSE);
         request.getNewBirthDetails()
                 .forEach(birth -> birth.setAuditDetails(auditDetails));
+
         setRegistrationNumber(request);
         setPresentAddress(request);
         setPermanentAddress(request);
     }
 
+//    private void setApplicationNumbers(NewBirthDetailRequest request) {
+//        Long currentTime = Long.valueOf(System.currentTimeMillis());
+//        String id = generator.setIDGenerator(request, BirthConstants.FUN_MODULE_NEW,BirthConstants.APP_NUMBER_CAPTION);
+//        request.getNewBirthDetails()
+//                .forEach(birth -> {
+//                    birth.setApplicationNo(id);
+//                    birth.setDateOfReport(currentTime);
+//                });
+//    }
+//
+//    private void setFileNumbers(NewBirthDetailRequest request) {
+//        Long currentTime = Long.valueOf(System.currentTimeMillis());
+//        String id = generator.setIDGenerator(request, BirthConstants.FUN_MODULE_NEW,BirthConstants.FILE_NUMBER_CAPTION);
+//        request.getNewBirthDetails()
+//                .forEach(birth -> {
+//                    birth.setFileNumber(id);
+//                    birth.setFileDate(currentTime);
+//                    birth.setFileStatus("ACTIVE");
+//                });
+//    }
+//
+//    private void setRegistrationNumber(NewBirthDetailRequest request) {
+//        Long currentTime = Long.valueOf(System.currentTimeMillis());
+//        String id = generator.setIDGenerator(request, BirthConstants.FUN_MODULE_NEW,BirthConstants.REGY_NUMBER_CAPTION);
+//        request.getNewBirthDetails()
+//                .forEach(birth -> {
+//                    if((birth.getApplicationStatus() == "APPROVED") && (birth.getAction() == "APPROVE")) {
+//                        birth.setRegistrationNo(id);
+//                        birth.setRegistrationDate(currentTime);
+//                    }
+//                });
+//    }
     private void setApplicationNumbers(NewBirthDetailRequest request) {
-        Long currentTime = Long.valueOf(System.currentTimeMillis());
-        String id = generator.setIDGenerator(request, BirthConstants.FUN_MODULE_NEW,BirthConstants.APP_NUMBER_CAPTION);
+        RequestInfo requestInfo = request.getRequestInfo();
+        List<NewBirthApplication> birthDetails = request.getNewBirthDetails();
+        String tenantId = birthDetails.get(0)
+                .getTenantId();
+        List<String> filecodes = getIds(requestInfo,
+                tenantId,
+                config.getBirthApplNumberIdName(),
+                request.getNewBirthDetails().get(0).getApplicationType(),
+                "AKNO",
+                birthDetails.size());
+        validateFileCodes(filecodes, birthDetails.size());
+
+        ListIterator<String> itr = filecodes.listIterator();
         request.getNewBirthDetails()
                 .forEach(birth -> {
-                    birth.setApplicationNo(id);
-                    birth.setDateOfReport(currentTime);
+                    birth.setApplicationNo(itr.next());
                 });
     }
 
     private void setFileNumbers(NewBirthDetailRequest request) {
+        RequestInfo requestInfo = request.getRequestInfo();
+        List<NewBirthApplication> birthDetails = request.getNewBirthDetails();
+        String tenantId = birthDetails.get(0)
+                .getTenantId();
+
+        List<String> filecodes = getIds(requestInfo,
+                tenantId,
+                config.getBirthFileNumberName(),
+                request.getNewBirthDetails().get(0).getFileNumber(),
+                "FM",
+                birthDetails.size());
+        validateFileCodes(filecodes, birthDetails.size());
         Long currentTime = Long.valueOf(System.currentTimeMillis());
-        String id = generator.setIDGenerator(request, BirthConstants.FUN_MODULE_NEW,BirthConstants.FILE_NUMBER_CAPTION);
+        ListIterator<String> itr = filecodes.listIterator();
         request.getNewBirthDetails()
                 .forEach(birth -> {
-                    birth.setFileNumber(id);
+                    birth.setFileNumber(itr.next());
                     birth.setFileDate(currentTime);
-                    birth.setFileStatus("ACTIVE");
                 });
     }
 
     private void setRegistrationNumber(NewBirthDetailRequest request) {
+        RequestInfo requestInfo = request.getRequestInfo();
+        List<NewBirthApplication> birthDetails = request.getNewBirthDetails();
+        String tenantId = birthDetails.get(0)
+                .getTenantId();
+
+        List<String> filecodes = getIds(requestInfo,
+                tenantId,
+                config.getBirthRegisNumberName(),
+                request.getNewBirthDetails().get(0).getRegistrationNo(),
+                "REG",
+                birthDetails.size());
+        validateFileCodes(filecodes, birthDetails.size());
         Long currentTime = Long.valueOf(System.currentTimeMillis());
-        String id = generator.setIDGenerator(request, BirthConstants.FUN_MODULE_NEW,BirthConstants.REGY_NUMBER_CAPTION);
+        ListIterator<String> itr = filecodes.listIterator();
         request.getNewBirthDetails()
                 .forEach(birth -> {
-                    if((birth.getApplicationStatus() == "APPROVED") && (birth.getAction() == "APPROVE")) {
-                        birth.setRegistrationNo(id);
+                    if((birth.getApplicationStatus() == "APPROVED" && birth.getAction() == "APPROVE")) {
+                        birth.setRegistrationNo(itr.next());
                         birth.setRegistrationDate(currentTime);
                     }
                 });
     }
-
     private void setPresentAddress(NewBirthDetailRequest request) {
         request.getNewBirthDetails()
                 .forEach(birth -> {
@@ -227,5 +301,18 @@ public class NewBirthEnrichment implements BaseEnrichment {
                         }
                     }
                 });
+    }
+    private List<String> getIds(RequestInfo requestInfo, String tenantId, String idName, String moduleCode, String  fnType, int count) {
+        return idGenRepository.getIdList(requestInfo, tenantId, idName, moduleCode, fnType, count);
+    }
+    private void validateFileCodes(List<String> fileCodes, int count) {
+        if (CollectionUtils.isEmpty(fileCodes)) {
+            throw new CustomException(ErrorCodes.IDGEN_ERROR.getCode(), "No file code(s) returned from idgen service");
+        }
+
+        if (fileCodes.size() != count) {
+            throw new CustomException(ErrorCodes.IDGEN_ERROR.getCode(),
+                    "The number of file code(s) returned by idgen service is not equal to the request count");
+        }
     }
 }

@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 import java.util.UUID;
 
 @Component
-public class AdoptionEnrichment implements BaseEnrichment {
+public class BirthOutsideEnrichment implements BaseEnrichment {
 //    @Autowired
 //    BirthConfiguration config;
     @Autowired

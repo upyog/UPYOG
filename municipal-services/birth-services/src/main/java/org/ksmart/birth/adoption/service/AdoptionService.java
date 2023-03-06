@@ -1,7 +1,7 @@
 package org.ksmart.birth.adoption.service;
 
-import org.ksmart.birth.newbirth.repository.KsmartBirthRepository;
-import org.ksmart.birth.newbirth.validator.KsmartBirthApplicationValidator;
+import org.ksmart.birth.newbirth.repository.NewBirthRepository;
+import org.ksmart.birth.newbirth.validator.NewBirthApplicationValidator;
 import org.ksmart.birth.utils.MdmsUtil;
 import org.ksmart.birth.web.model.SearchCriteria;
 import org.ksmart.birth.web.model.newbirth.NewBirthApplication;
@@ -14,14 +14,14 @@ import java.util.List;
 
 @Service
 public class AdoptionService {
-    private final KsmartBirthRepository repository;
+    private final NewBirthRepository repository;
     private final WorkflowIntegrator workflowIntegrator;
     private final MdmsUtil mdmsUtil;
-    private final KsmartBirthApplicationValidator validator;
+    private final NewBirthApplicationValidator validator;
 
     @Autowired
-    AdoptionService(KsmartBirthRepository repository, MdmsUtil mdmsUtil, WorkflowIntegrator workflowIntegrator,
-                    KsmartBirthApplicationValidator validator) {
+    AdoptionService(NewBirthRepository repository, MdmsUtil mdmsUtil, WorkflowIntegrator workflowIntegrator,
+                    NewBirthApplicationValidator validator) {
         this.repository = repository;
         this.mdmsUtil = mdmsUtil;
         this.workflowIntegrator  = workflowIntegrator;

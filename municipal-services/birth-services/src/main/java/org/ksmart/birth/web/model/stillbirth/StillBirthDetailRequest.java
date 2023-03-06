@@ -14,17 +14,17 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class NewBirthDetailRequest {
+public class StillBirthDetailRequest {
     @JsonProperty("RequestInfo")
     private RequestInfo requestInfo;
 
     @JsonProperty("ChildDetails")
     @Valid
-    private List<NewBirthApplication> newBirthDetails;
+    private List<StillBirthApplication> birthDetails;
 
-    public NewBirthDetailRequest addKsmartBirthDetails(NewBirthApplication birthDetail) {
-        if (newBirthDetails == null) {
-            newBirthDetails = null;
+    public StillBirthDetailRequest addKsmartBirthDetails(StillBirthApplication birthDetail) {
+        if (birthDetails == null) {
+            birthDetails = null;
         }
         return this;
     }

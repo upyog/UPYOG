@@ -5,7 +5,7 @@ import org.ksmart.birth.common.model.AuditDetails;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-interface AdoptionBaseRowMapper {
+interface BirthOutsideBaseRowMapper {
 
     default AuditDetails getAuditDetails(ResultSet rs) throws SQLException {
         return AuditDetails.builder()

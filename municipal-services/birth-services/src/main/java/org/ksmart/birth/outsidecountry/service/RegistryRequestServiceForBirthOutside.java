@@ -10,7 +10,7 @@ import java.util.List;
 
 @Slf4j
 @Service
-public class RegistryRequestServiceForAdoption {
+public class RegistryRequestServiceForBirthOutside {
     public RegisterBirthDetailsRequest createRegistryRequest(NewBirthDetailRequest requestKsmartBirthReq) {
         RegisterBirthDetailsRequest request = new RegisterBirthDetailsRequest();
         List<RegisterBirthDetail> registerBirthDetails = new LinkedList<>();

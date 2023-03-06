@@ -54,24 +54,24 @@ public class EnrichmentService {
         birthCert.setId(UUID.randomUUID().toString());
     }
 
-    private List<String> getIdList(RequestInfo requestInfo, String tenantId, String idKey,
-                                   String idformat, int count) {
-        List<IdResponse> idResponses = idGenRepository.getId(requestInfo, tenantId, idKey, idformat, count).getIdResponses();
+//    private List<String> getIdList(RequestInfo requestInfo, String tenantId, String idKey,
+//                                   String idformat, int count) {
+//        List<IdResponse> idResponses = idGenRepository.getId(requestInfo, tenantId, idKey, idformat, count).getIdResponses();
+//
+//        if (CollectionUtils.isEmpty(idResponses))
+//            throw new CustomException("IDGEN ERROR", "No ids returned from idgen Service");
+//
+//        return idResponses.stream()
+//                .map(IdResponse::getId).collect(Collectors.toList());
+//    }
 
-        if (CollectionUtils.isEmpty(idResponses))
-            throw new CustomException("IDGEN ERROR", "No ids returned from idgen Service");
-
-        return idResponses.stream()
-                .map(IdResponse::getId).collect(Collectors.toList());
-    }
-
-    public void setIdgenIds(BirthCertRequest request) {
-        RequestInfo requestInfo = request.getRequestInfo();
-        String tenantId = request.getBirthCertificate().getTenantId();
-        BirthCertificate birthCert = request.getBirthCertificate();
-        String applNo = getIdList(requestInfo, tenantId, config.getBirthApplNumberIdgenName(), config.getBirthApplNumberIdgenFormat(), 1).get(0);
-        birthCert.setBirthCertificateNo(applNo);
-    }
+//    public void setIdgenIds(BirthCertRequest request) {
+//        RequestInfo requestInfo = request.getRequestInfo();
+//        String tenantId = request.getBirthCertificate().getTenantId();
+//        BirthCertificate birthCert = request.getBirthCertificate();
+//        String applNo = getIdList(requestInfo, tenantId, config.getBirthApplNumberIdgenName(), config.getBirthApplNumberIdgenFormat(), 1).get(0);
+//        birthCert.setBirthCertificateNo(applNo);
+//    }
 
 	public void setGLCode(BirthCertRequest request) {
 		RequestInfo requestInfo = request.getRequestInfo();

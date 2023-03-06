@@ -5,7 +5,7 @@ import org.ksmart.birth.web.model.ParentsDetail;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public interface AdoptionParentDetailRowMapper {
+public interface StillBirthParentDetailRowMapper {
     default ParentsDetail KsmartBirthParentDetail(ResultSet rs) throws SQLException {
         return ParentsDetail.builder()
                 .fatherUuid(rs.getString("fa_id"))

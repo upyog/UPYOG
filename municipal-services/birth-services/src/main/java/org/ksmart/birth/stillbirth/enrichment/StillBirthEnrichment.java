@@ -9,13 +9,14 @@ import org.ksmart.birth.utils.BirthConstants;
 import org.ksmart.birth.utils.IDGenerator;
 import org.ksmart.birth.utils.MdmsUtil;
 import org.ksmart.birth.web.model.newbirth.NewBirthDetailRequest;
+import org.ksmart.birth.web.model.stillbirth.StillBirthDetailRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
 @Component
-public class AdoptionEnrichment implements BaseEnrichment {
+public class StillBirthEnrichment implements BaseEnrichment {
 //    @Autowired
 //    BirthConfiguration config;
     @Autowired
@@ -25,18 +26,18 @@ public class AdoptionEnrichment implements BaseEnrichment {
     @Autowired
     MdmsDataService mdmsDataService;
 
-    public void enrichCreate(NewBirthDetailRequest request) {
+    public void enrichCreate(StillBirthDetailRequest request) {
 
         RequestInfo requestInfo = request.getRequestInfo();
         User userInfo = requestInfo.getUserInfo();
         AuditDetails auditDetails = buildAuditDetails(userInfo.getUuid(), Boolean.TRUE);
-        request.getNewBirthDetails().forEach(birth -> {
+        request.getBirthDetails().forEach(birth -> {
 
             birth.setId(UUID.randomUUID().toString());
             birth.setAuditDetails(auditDetails);
             if(birth.getPlaceofBirthId() != null || !birth.getPlaceofBirthId().isEmpty()){
                 Object mdmsData = mdmsUtil.mdmsCallForLocation(request.getRequestInfo(), birth.getTenantId());
-                mdmsDataService.setKsmartLocationDetails(birth, mdmsData);
+                mdmsDataService.setStillLocationDetails(birth, mdmsData);
             }
             birth.setBirthPlaceUuid(UUID.randomUUID().toString());
             birth.getParentsDetails().setFatherUuid(UUID.randomUUID().toString());
@@ -65,32 +66,32 @@ public class AdoptionEnrichment implements BaseEnrichment {
         setPermanentAddress(request);
     }
 
-    public void enrichUpdate(NewBirthDetailRequest request) {
+    public void enrichUpdate(StillBirthDetailRequest request) {
 
         RequestInfo requestInfo = request.getRequestInfo();
         User userInfo = requestInfo.getUserInfo();
         AuditDetails auditDetails = buildAuditDetails(userInfo.getUuid(), Boolean.FALSE);
-        request.getNewBirthDetails()
+        request.getBirthDetails()
                 .forEach(birth -> birth.setAuditDetails(auditDetails));
         setRegistrationNumber(request);
         setPresentAddress(request);
         setPermanentAddress(request);
     }
 
-    private void setApplicationNumbers(NewBirthDetailRequest request) {
+    private void setApplicationNumbers(StillBirthDetailRequest request) {
         Long currentTime = Long.valueOf(System.currentTimeMillis());
-        String id = generator.setIDGenerator(request, BirthConstants.FUN_MODULE_NEW,BirthConstants.APP_NUMBER_CAPTION);
-        request.getNewBirthDetails()
+        String id = generator.setIDGeneratorStill(request, BirthConstants.FUN_MODULE_NEW,BirthConstants.APP_NUMBER_CAPTION);
+        request.getBirthDetails()
                 .forEach(birth -> {
                     birth.setApplicationNo(id);
                     birth.setDateOfReport(currentTime);
                 });
     }
 
-    private void setFileNumbers(NewBirthDetailRequest request) {
+    private void setFileNumbers(StillBirthDetailRequest request) {
         Long currentTime = Long.valueOf(System.currentTimeMillis());
-        String id = generator.setIDGenerator(request, BirthConstants.FUN_MODULE_NEW,BirthConstants.FILE_NUMBER_CAPTION);
-        request.getNewBirthDetails()
+        String id = generator.setIDGeneratorStill(request, BirthConstants.FUN_MODULE_NEW,BirthConstants.FILE_NUMBER_CAPTION);
+        request.getBirthDetails()
                 .forEach(birth -> {
                     birth.setFileNumber(id);
                     birth.setFileDate(currentTime);
@@ -98,10 +99,10 @@ public class AdoptionEnrichment implements BaseEnrichment {
                 });
     }
 
-    private void setRegistrationNumber(NewBirthDetailRequest request) {
+    private void setRegistrationNumber(StillBirthDetailRequest request) {
         Long currentTime = Long.valueOf(System.currentTimeMillis());
-        String id = generator.setIDGenerator(request, BirthConstants.FUN_MODULE_NEW,BirthConstants.REGY_NUMBER_CAPTION);
-        request.getNewBirthDetails()
+        String id = generator.setIDGeneratorStill(request, BirthConstants.FUN_MODULE_NEW,BirthConstants.REGY_NUMBER_CAPTION);
+        request.getBirthDetails()
                 .forEach(birth -> {
                     if((birth.getApplicationStatus() == "APPROVED") && (birth.getAction() == "APPROVE")) {
                         birth.setRegistrationNo(id);
@@ -110,8 +111,8 @@ public class AdoptionEnrichment implements BaseEnrichment {
                 });
     }
 
-    private void setPresentAddress(NewBirthDetailRequest request) {
-        request.getNewBirthDetails()
+    private void setPresentAddress(StillBirthDetailRequest request) {
+        request.getBirthDetails()
                 .forEach(birth -> {
                     if (birth.getParentAddress() != null) {
                         if (birth.getParentAddress().getPresentaddressCountry() != null && birth.getParentAddress().getPresentaddressStateName() != null) {
@@ -166,8 +167,8 @@ public class AdoptionEnrichment implements BaseEnrichment {
                     }
                 });
     }
-    private void setPermanentAddress(NewBirthDetailRequest request) {
-        request.getNewBirthDetails()
+    private void setPermanentAddress(StillBirthDetailRequest request) {
+        request.getBirthDetails()
                 .forEach(birth -> {
                     if (birth.getParentAddress() != null && birth.getParentAddress().getIsPrsentAddress() != null)  {
                         birth.getParentAddress().setIsPrsentAddressInt(birth.getParentAddress().getIsPrsentAddress() == true ? 1 : 0);

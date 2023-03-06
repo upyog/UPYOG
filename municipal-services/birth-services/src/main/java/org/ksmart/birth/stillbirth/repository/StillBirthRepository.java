@@ -7,11 +7,16 @@ import org.ksmart.birth.config.BirthConfiguration;
 import org.ksmart.birth.newbirth.enrichment.NewBirthEnrichment;
 import org.ksmart.birth.newbirth.repository.querybuilder.NewBirthQueryBuilder;
 import org.ksmart.birth.newbirth.repository.rowmapper.KsmartBirthApplicationRowMapper;
+import org.ksmart.birth.stillbirth.enrichment.StillBirthEnrichment;
+import org.ksmart.birth.stillbirth.repository.querybuilder.StillBirthQueryBuilder;
+import org.ksmart.birth.stillbirth.repository.rowmapper.StillBirthApplicationRowMapper;
 import org.ksmart.birth.utils.BirthConstants;
 import org.ksmart.birth.utils.MdmsUtil;
 import org.ksmart.birth.web.model.SearchCriteria;
 import org.ksmart.birth.web.model.newbirth.NewBirthApplication;
 import org.ksmart.birth.web.model.newbirth.NewBirthDetailRequest;
+import org.ksmart.birth.web.model.stillbirth.StillBirthApplication;
+import org.ksmart.birth.web.model.stillbirth.StillBirthDetailRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -21,53 +26,46 @@ import java.util.List;
 
 @Slf4j
 @Repository
-public class AdoptionRepository {
+public class StillBirthRepository {
     private final BndProducer producer;
-    private final NewBirthEnrichment newBirthEnrichment;
+    private final StillBirthEnrichment enrichment;
     private final BirthConfiguration birthDeathConfiguration;
     private final JdbcTemplate jdbcTemplate;
-    private final NewBirthQueryBuilder birthQueryBuilder;
-    private final KsmartBirthApplicationRowMapper ksmartBirthApplicationRowMapper;
+    private final StillBirthQueryBuilder queryBuilder;
+    private final StillBirthApplicationRowMapper rowMapper;
     private final  MdmsDataService mdmsDataService;
     private final  MdmsUtil mdmsUtil;
-
-
-
     @Autowired
-    AdoptionRepository(JdbcTemplate jdbcTemplate, NewBirthEnrichment newBirthEnrichment, BirthConfiguration birthDeathConfiguration,
-                       BndProducer producer, NewBirthQueryBuilder birthQueryBuilder, KsmartBirthApplicationRowMapper ksmartBirthApplicationRowMapper,
-                       MdmsDataService mdmsDataService, MdmsUtil mdmsUtil) {
+    StillBirthRepository(JdbcTemplate jdbcTemplate,  StillBirthEnrichment enrichment, BirthConfiguration birthDeathConfiguration,
+                         BndProducer producer, StillBirthQueryBuilder queryBuilder, StillBirthApplicationRowMapper rowMapper,
+                         MdmsDataService mdmsDataService, MdmsUtil mdmsUtil) {
         this.jdbcTemplate = jdbcTemplate;
-        this.newBirthEnrichment = newBirthEnrichment;
+        this.enrichment = enrichment;
         this.birthDeathConfiguration = birthDeathConfiguration;
         this.producer = producer;
-        this.birthQueryBuilder = birthQueryBuilder;
-        this.ksmartBirthApplicationRowMapper = ksmartBirthApplicationRowMapper;
+        this.queryBuilder = queryBuilder;
+        this.rowMapper = rowMapper;
         this.mdmsDataService = mdmsDataService;
         this.mdmsUtil = mdmsUtil;
     }
-
-    public List<NewBirthApplication> saveKsmartBirthDetails(NewBirthDetailRequest request) {
-        newBirthEnrichment.enrichCreate(request);
+    public List<StillBirthApplication> saveKsmartBirthDetails(StillBirthDetailRequest request) {
+        enrichment.enrichCreate(request);
         producer.push(birthDeathConfiguration.getSaveBirthAdoptionTopic(), request);
-        return request.getNewBirthDetails();
+        return request.getBirthDetails();
     }
-
-    public List<NewBirthApplication> updateKsmartBirthDetails(NewBirthDetailRequest request) {
-        newBirthEnrichment.enrichUpdate(request);
+    public List<StillBirthApplication> updateKsmartBirthDetails(StillBirthDetailRequest request) {
+        enrichment.enrichUpdate(request);
         producer.push(birthDeathConfiguration.getUpdateBirthAdoptionTopic(), request);
-        return request.getNewBirthDetails();
+        return request.getBirthDetails();
     }
-
-
-    public List<NewBirthApplication> searchKsmartBirthDetails(NewBirthDetailRequest request, SearchCriteria criteria) {
+    public List<StillBirthApplication> searchStillBirthDetails(StillBirthDetailRequest request, SearchCriteria criteria) {
         List<Object> preparedStmtValues = new ArrayList<>();
-        String query = birthQueryBuilder.getNewBirthApplicationSearchQuery(criteria, preparedStmtValues, Boolean.FALSE);
-        List<NewBirthApplication> result = jdbcTemplate.query(query, preparedStmtValues.toArray(), ksmartBirthApplicationRowMapper);
+        String query = queryBuilder.getNewBirthApplicationSearchQuery(criteria, preparedStmtValues, Boolean.FALSE);
+        List<StillBirthApplication> result = jdbcTemplate.query(query, preparedStmtValues.toArray(), rowMapper);
         result.forEach(birth -> {
             if(birth.getPlaceofBirthId()!=null){
                 Object mdmsData = mdmsUtil.mdmsCallForLocation(request.getRequestInfo(), birth.getTenantId());
-                mdmsDataService.setKsmartLocationDetails(birth, mdmsData);
+                mdmsDataService.setStillLocationDetails(birth, mdmsData);
             }
             if (birth.getParentAddress().getCountryIdPermanent() != null && birth.getParentAddress().getStateIdPermanent() != null) {
                 if (birth.getParentAddress().getCountryIdPermanent().contains(BirthConstants.COUNTRY_CODE)) {

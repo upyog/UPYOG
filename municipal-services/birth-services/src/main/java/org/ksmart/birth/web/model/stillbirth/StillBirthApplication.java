@@ -17,7 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class NewBirthApplication {
+public class StillBirthApplication {
     @Size(max = 64)
     @JsonProperty("id")
     private String id;

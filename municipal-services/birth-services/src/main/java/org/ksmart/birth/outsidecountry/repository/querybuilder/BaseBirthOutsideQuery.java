@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-public class BaseAdoptionQuery {
+public class BaseBirthOutsideQuery {
     @Value("${egov.bnd.default.limit}")
     private Integer defaultBndLimit;
 

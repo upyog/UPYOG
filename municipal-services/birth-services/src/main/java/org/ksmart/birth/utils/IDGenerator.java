@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.ksmart.birth.common.services.MdmsTenantService;
 import org.ksmart.birth.newbirth.repository.querybuilder.NewBirthQueryBuilder;
 import org.ksmart.birth.web.model.newbirth.NewBirthDetailRequest;
+import org.ksmart.birth.web.model.stillbirth.StillBirthDetailRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
@@ -59,6 +60,33 @@ public class IDGenerator {
                                                 .append(idgenCode)
                                                 .append("-")
                                                 .append(BirthConstants.STATE_CODE).toString();
+        return idGenerated;
+    }
+
+    public String setIDGeneratorStill(StillBirthDetailRequest request, String moduleCode, String idType) {
+        int Year = Calendar.getInstance().get(Calendar.YEAR);
+        String tenantId = request.getBirthDetails().get(0).getTenantId();
+        String nextID = getNewID(tenantId, Year, moduleCode, idType);
+
+        // mdms call for tenand idgencode and lbtypecode
+        Object mdmsData = mdmsUtil.mdmsCall(request.getRequestInfo());
+
+        String idgenCode = mdmsTenantService.getTenantIdGenCode(mdmsData,tenantId);
+        String lbTypeCode = mdmsTenantService.getTenantLetterCode(mdmsData,tenantId);
+
+        String idGenerated = new StringBuilder().append(idType)
+                .append("-")
+                .append(nextID)
+                .append("-")
+                .append(String.valueOf(Year))
+                .append("-")
+                .append(moduleCode)
+                .append("-")
+                .append(lbTypeCode.charAt(0))
+                .append("-")
+                .append(idgenCode)
+                .append("-")
+                .append(BirthConstants.STATE_CODE).toString();
         return idGenerated;
     }
 

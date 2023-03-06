@@ -1,11 +1,14 @@
 package org.ksmart.birth.stillbirth.service;
 
-import org.ksmart.birth.newbirth.repository.KsmartBirthRepository;
-import org.ksmart.birth.newbirth.validator.KsmartBirthApplicationValidator;
+import org.ksmart.birth.newbirth.repository.NewBirthRepository;
+import org.ksmart.birth.newbirth.validator.NewBirthApplicationValidator;
+import org.ksmart.birth.stillbirth.repository.StillBirthRepository;
 import org.ksmart.birth.utils.MdmsUtil;
 import org.ksmart.birth.web.model.SearchCriteria;
 import org.ksmart.birth.web.model.newbirth.NewBirthApplication;
 import org.ksmart.birth.web.model.newbirth.NewBirthDetailRequest;
+import org.ksmart.birth.web.model.stillbirth.StillBirthApplication;
+import org.ksmart.birth.web.model.stillbirth.StillBirthDetailRequest;
 import org.ksmart.birth.workflow.WorkflowIntegrator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,41 +16,41 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class AdoptionService {
-    private final KsmartBirthRepository repository;
+public class StillBirthService {
+    private final StillBirthRepository repository;
     private final WorkflowIntegrator workflowIntegrator;
     private final MdmsUtil mdmsUtil;
-    private final KsmartBirthApplicationValidator validator;
+    private final NewBirthApplicationValidator validator;
 
     @Autowired
-    AdoptionService(KsmartBirthRepository repository, MdmsUtil mdmsUtil, WorkflowIntegrator workflowIntegrator,
-                    KsmartBirthApplicationValidator validator) {
+    StillBirthService(StillBirthRepository repository, MdmsUtil mdmsUtil, WorkflowIntegrator workflowIntegrator,
+                      NewBirthApplicationValidator validator) {
         this.repository = repository;
         this.mdmsUtil = mdmsUtil;
         this.workflowIntegrator  = workflowIntegrator;
         this.validator = validator;
     }
 
-    public List<NewBirthApplication> saveKsmartBirthDetails(NewBirthDetailRequest request) {
+    public List<StillBirthApplication> saveKsmartBirthDetails(StillBirthDetailRequest request) {
         Object mdmsData = mdmsUtil.mdmsCall(request.getRequestInfo());
 
         // validate request
         //validator.validateCreate(request, mdmsData);
 
         //call save
-        List<NewBirthApplication> birthApplicationDetails =  repository.saveKsmartBirthDetails(request);
+        List<StillBirthApplication> birthApplicationDetails =  repository.saveKsmartBirthDetails(request);
 
         //WorkFlow Integration
       //  workflowIntegrator.callWorkFlow(request);
         return birthApplicationDetails;
     }
 
-    public List<NewBirthApplication> updateKsmartBirthDetails(NewBirthDetailRequest request) {
+    public List<StillBirthApplication> updateKsmartBirthDetails(StillBirthDetailRequest request) {
     //    workflowIntegrator.callWorkFlow(request);
         return repository.updateKsmartBirthDetails(request);
     }
 
-    public List<NewBirthApplication> searchKsmartBirthDetails(NewBirthDetailRequest request, SearchCriteria criteria) {
-        return repository.searchKsmartBirthDetails(request,criteria);
+    public List<StillBirthApplication> searchKsmartBirthDetails(StillBirthDetailRequest request, SearchCriteria criteria) {
+        return repository.searchStillBirthDetails(request,criteria);
     }
 }

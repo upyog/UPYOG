@@ -15,14 +15,14 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class NewBirthSearchResponse {
+public class StillBirthSearchResponse {
     @JsonProperty("ResponseInfo")
     private ResponseInfo responseInfo;
 
     @JsonProperty("ChildDetails")
     @Valid
-    private List<NewBirthApplication> newBirthDetails;
-    public NewBirthSearchResponse addKsmartBirthSearchApplication(NewBirthApplication birthDetail) {
+    private List<StillBirthApplication> newBirthDetails;
+    public StillBirthSearchResponse addKsmartBirthSearchApplication(StillBirthApplication birthDetail) {
         if (newBirthDetails == null) {
             newBirthDetails = new ArrayList<>();
         }

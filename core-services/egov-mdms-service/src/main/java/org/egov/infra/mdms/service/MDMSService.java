@@ -33,11 +33,13 @@ public class MDMSService {
         if (tenantId.contains(".")) {
             String array[] = tenantId.split("\\.");
             stateLevel = tenantIdMap.get(array[0]);
+
             ulbLevel = tenantIdMap.get(tenantId);
             if (ulbLevel == null)
                 throw new CustomException("Invalid_tenantId.MdmsCriteria.tenantId", "Invalid Tenant Id");
         } else {
             stateLevel = tenantIdMap.get(tenantId);
+
             if (stateLevel == null)
                 throw new CustomException("Invalid_tenantId.MdmsCriteria.tenantId", "Invalid Tenant Id");
         }

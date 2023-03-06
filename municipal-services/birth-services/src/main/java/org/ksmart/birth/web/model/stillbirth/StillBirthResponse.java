@@ -18,28 +18,23 @@ import java.util.List;
 @Builder
 
 
-public class NewBirthResponse {
+public class StillBirthResponse {
 
     @JsonProperty("ResponseInfo")
     private ResponseInfo responseInfo;
 
     @JsonProperty("ChildDetails")
     @Valid
-    private List<NewBirthApplication> ksmartBirthDetails;
+    private List<StillBirthApplication> birthDetails;
 
-    @JsonProperty("BirthCertificate")
-    @Valid
-    private BirthCertificate birthCertificate;
-
-
-    @JsonProperty("Count")
+   @JsonProperty("Count")
     private int count;
 
-    public NewBirthResponse addBirthApplication(NewBirthApplication birthDetail) {
-        if (ksmartBirthDetails == null) {
-            ksmartBirthDetails = new ArrayList<>();
+    public StillBirthResponse addBirthApplication(StillBirthApplication birthDetail) {
+        if (birthDetails == null) {
+            birthDetails = new ArrayList<>();
         }
-        ksmartBirthDetails.add(birthDetail);
+        birthDetails.add(birthDetail);
         return this;
     }
 }

@@ -1,7 +1,7 @@
 package org.ksmart.birth.newbirth.service;
 
-import org.ksmart.birth.newbirth.repository.KsmartBirthRepository;
-import org.ksmart.birth.newbirth.validator.KsmartBirthApplicationValidator;
+import org.ksmart.birth.newbirth.repository.NewBirthRepository;
+import org.ksmart.birth.newbirth.validator.NewBirthApplicationValidator;
 import org.ksmart.birth.utils.MdmsUtil;
 import org.ksmart.birth.web.model.SearchCriteria;
 import org.ksmart.birth.web.model.newbirth.NewBirthApplication;
@@ -14,14 +14,14 @@ import java.util.List;
 
 @Service
 public class NewBirthService {
-    private final KsmartBirthRepository repository;
+    private final NewBirthRepository repository;
     private final WorkflowIntegrator workflowIntegrator;
     private final MdmsUtil mdmsUtil;
-    private final KsmartBirthApplicationValidator validator;
+    private final NewBirthApplicationValidator validator;
 
     @Autowired
-    NewBirthService(KsmartBirthRepository repository, MdmsUtil mdmsUtil, WorkflowIntegrator workflowIntegrator,
-                    KsmartBirthApplicationValidator validator) {
+    NewBirthService(NewBirthRepository repository, MdmsUtil mdmsUtil, WorkflowIntegrator workflowIntegrator,
+                    NewBirthApplicationValidator validator) {
         this.repository = repository;
         this.mdmsUtil = mdmsUtil;
         this.workflowIntegrator  = workflowIntegrator;
@@ -32,7 +32,7 @@ public class NewBirthService {
         Object mdmsData = mdmsUtil.mdmsCall(request.getRequestInfo());
 
         // validate request
-        //validator.validateCreate(request, mdmsData);
+      //  validator.validateCreate(request, mdmsData);
 
         //call save
         List<NewBirthApplication> birthApplicationDetails =  repository.saveKsmartBirthDetails(request);

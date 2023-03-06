@@ -6,14 +6,14 @@ import org.ksmart.birth.birthregistry.model.RegisterBirthDetail;
 import org.ksmart.birth.birthregistry.model.RegisterBirthDetailsRequest;
 import org.ksmart.birth.birthregistry.model.RegisterBirthSearchCriteria;
 import org.ksmart.birth.birthregistry.service.RegisterBirthService;
-import org.ksmart.birth.newbirth.service.NewBirthService;
 import org.ksmart.birth.newbirth.service.RegistryRequestService;
+import org.ksmart.birth.stillbirth.service.RegistryRequestServiceForStillBirth;
+import org.ksmart.birth.stillbirth.service.StillBirthService;
 import org.ksmart.birth.utils.ResponseInfoFactory;
 import org.ksmart.birth.web.model.SearchCriteria;
-import org.ksmart.birth.web.model.newbirth.NewBirthApplication;
-import org.ksmart.birth.web.model.newbirth.NewBirthDetailRequest;
-import org.ksmart.birth.web.model.newbirth.NewBirthResponse;
-import org.ksmart.birth.web.model.newbirth.NewBirthSearchResponse;
+import org.ksmart.birth.web.model.stillbirth.StillBirthApplication;
+import org.ksmart.birth.web.model.stillbirth.StillBirthDetailRequest;
+import org.ksmart.birth.web.model.stillbirth.StillBirthResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,32 +27,31 @@ import java.util.List;
 @RequestMapping("/ksmart/birth")
 public class StillBirthController {
     private final ResponseInfoFactory responseInfoFactory;
-    private final NewBirthService ksmartBirthService;
+    private final StillBirthService stillBirthService;
     private final RegisterBirthService registerBirthService;
-    private final RegistryRequestService registryReq;
+    private final RegistryRequestServiceForStillBirth registryReq;
     @Autowired
-    StillBirthController(NewBirthService ksmartBirthService, ResponseInfoFactory responseInfoFactory,
-                         RegisterBirthService registerBirthService, RegistryRequestService registryReq) {
-        this.ksmartBirthService=ksmartBirthService;
+    StillBirthController(StillBirthService stillBirthService, ResponseInfoFactory responseInfoFactory,
+                         RegisterBirthService registerBirthService, RegistryRequestServiceForStillBirth registryReq) {
+        this.stillBirthService=stillBirthService;
         this.responseInfoFactory=responseInfoFactory;
         this.registerBirthService = registerBirthService;
         this.registryReq = registryReq;
     }
 
-    @PostMapping(value = {"/createadoption"})
-    public ResponseEntity<?> saveRegisterBirthDetails(@RequestBody NewBirthDetailRequest request) {
-        List<NewBirthApplication> registerBirthDetails=ksmartBirthService.saveKsmartBirthDetails(request);
-        NewBirthResponse response= NewBirthResponse.builder()
-                                                                              .ksmartBirthDetails(registerBirthDetails)
-                                                                              .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(),
-                                                                                    true))
-                                                                              .build();
+    @PostMapping(value = {"/createstillbirth"})
+    public ResponseEntity<?> saveRegisterBirthDetails(@RequestBody StillBirthDetailRequest request) {
+        List<StillBirthApplication> birthDetails=stillBirthService.saveKsmartBirthDetails(request);
+        StillBirthResponse response= StillBirthResponse.builder()
+                                                        .birthDetails(birthDetails)
+                                                        .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(),true))
+                                                        .build();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-    @PostMapping(value = { "/updateadoption"})
-    public ResponseEntity<?> updateRegisterBirthDetails(@RequestBody NewBirthDetailRequest request) {
+    @PostMapping(value = { "/updatestillbirth"})
+    public ResponseEntity<?> updateRegisterBirthDetails(@RequestBody StillBirthDetailRequest request) {
         BirthCertificate birthCertificate = new BirthCertificate();
-        List<NewBirthApplication> birthApplicationDetails=ksmartBirthService.updateKsmartBirthDetails(request);
+        List<StillBirthApplication> birthApplicationDetails=stillBirthService.updateKsmartBirthDetails(request);
         //Download certificate when Approved
         if((birthApplicationDetails.get(0).getApplicationStatus() == "APPROVED" && birthApplicationDetails.get(0).getAction() == "APPROVE")){
             RegisterBirthDetailsRequest registerBirthDetailsRequest = registryReq.createRegistryRequest(request);
@@ -62,23 +61,20 @@ public class StillBirthController {
             criteria.setRegistrationNo(registerBirthDetails.get(0).getRegistrationNo());
             birthCertificate = registerBirthService.download(criteria,request.getRequestInfo());
         }
-        NewBirthResponse response=NewBirthResponse.builder()
-                .ksmartBirthDetails(birthApplicationDetails)
+        StillBirthResponse response=StillBirthResponse.builder()
+                .birthDetails(birthApplicationDetails)
                 .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(),
                         true))
-                .birthCertificate(birthCertificate)
                 .build();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-    @PostMapping(value = {"/searchadoption"})
-    public ResponseEntity<NewBirthSearchResponse> searchKsmartBirth(@RequestBody NewBirthDetailRequest request, @Valid @ModelAttribute SearchCriteria criteria) {
-        List<NewBirthApplication> birthDetails=ksmartBirthService.searchKsmartBirthDetails(request, criteria);
-        NewBirthSearchResponse response=NewBirthSearchResponse.builder()
-                                                                              .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), Boolean.TRUE))
-                                                                              .newBirthDetails(birthDetails)
-                                                                              .build();
-
-
+    @PostMapping(value = {"/searchstillbirth"})
+    public ResponseEntity<StillBirthResponse> searchKsmartBirth(@RequestBody StillBirthDetailRequest request, @Valid @ModelAttribute SearchCriteria criteria) {
+        List<StillBirthApplication> birthDetails=stillBirthService.searchKsmartBirthDetails(request, criteria);
+        StillBirthResponse response=StillBirthResponse.builder()
+                                                      .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), Boolean.TRUE))
+                                                      .birthDetails(birthDetails)
+                                                      .build();
         return ResponseEntity.ok(response);
     }
 }

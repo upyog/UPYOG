@@ -74,8 +74,10 @@ public class MDMSApplicationRunnerImpl {
     }
 
     public void readFiles(String baseFolderPath, LinkedList<String> errorList) {
+        System.out.println(baseFolderPath);
         File folder = new File(baseFolderPath);
         File[] listOfFiles = folder.listFiles();
+        System.out.println(listOfFiles);
         if (listOfFiles != null) {
             for (File file : listOfFiles) {
                 if (file.isFile()) {
@@ -88,6 +90,7 @@ public class MDMSApplicationRunnerImpl {
                             || fileExtension.equalsIgnoreCase("yml")
                     ) {
                         log.debug("Reading file....:- " + file.getAbsolutePath());
+                        System.out.println(file.getAbsolutePath());
                         try {
                             Map<String, Object> jsonMap = objectMapper.readValue(file, new TypeReference<Map<String, Object>>() {
                                 @Override
@@ -124,6 +127,7 @@ public class MDMSApplicationRunnerImpl {
         while (masterKeyIterator.hasNext()) {
             masterName = masterKeyIterator.next();
             try {
+                System.out.println(masterName);
                 masterDataJsonArray = JsonPath.read(objectMapper.writeValueAsString(map.get(masterName)),
                         "$");
             } catch (JsonProcessingException e) {

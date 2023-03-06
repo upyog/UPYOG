@@ -20,7 +20,7 @@ import static org.ksmart.birth.utils.enums.ErrorCodes.MDMS_DATA_ERROR;
 
 @Component
 @Slf4j
-public class KsmartMdmsValidator {
+public class NewMdmsValidator {
 
     public void validateMdmsData(NewBirthDetailRequest request, Object mdmsData) {
 
