@@ -1,14 +1,14 @@
-package org.ksmart.birth.newbirth.validator;
+package org.ksmart.birth.outsidecountry.validator;
 
 import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.egov.tracer.model.CustomException;
 import org.ksmart.birth.utils.BirthConstants;
 import org.ksmart.birth.utils.BirthUtils;
 import org.ksmart.birth.web.model.newbirth.NewBirthDetailRequest;
 import org.springframework.stereotype.Component;
-import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -20,7 +20,7 @@ import static org.ksmart.birth.utils.enums.ErrorCodes.MDMS_DATA_ERROR;
 
 @Component
 @Slf4j
-public class KsmartMdmsValidator {
+public class AdoptionMdmsValidator {
 
     public void validateMdmsData(NewBirthDetailRequest request, Object mdmsData) {
 
