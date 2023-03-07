@@ -2,7 +2,7 @@
 
 This document will walk you through the dependencies of this service and how to set it up locally
 
-- To setup the egov-idgen service in your local system, clone the [Core Service repository](https://github.com/egovernments/core-services).
+- To setup the ID Generation Service (egov-idgen) in your local system, clone the [Core Service Repository](https://github.com/upyog/UPYOG/tree/master/core-services).
 
 ## Dependencies
 
@@ -17,7 +17,7 @@ This document will walk you through the dependencies of this service and how to 
 
 ## Running Locally
 
-To run the IdGen services in your local system, you need to port forward below services
+To run the ID Generation services in your local system, you need to port forward below services
 
 ```bash
 function kgpt(){kubectl get pods -n egov --selector=app=$1 --no-headers=true | head -n1 | awk '{print $1}'}
