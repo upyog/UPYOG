@@ -14,10 +14,10 @@ UPYOG focuses on inclusion and is designed on the principle of enhancing both pl
 
 
 ## Some of the UPYOG Platform/Features
-<img src="https://egov-images.s3.ap-south-1.amazonaws.com/DIGIT+-+Features.png" width="1000">
+<img src="https://nugp-assets.s3.ap-south-1.amazonaws.com/nugp+asset/UPYOG_Features.png" width="1000">
 
 ## Tech Overview
-<img src="https://egov-images.s3.ap-south-1.amazonaws.com/DIGIT+-+TechStack.png" width="1000">
+<img src="https://nugp-assets.s3.ap-south-1.amazonaws.com/nugp+asset/UPYOG_TechStack.png" width="1000">
 
 
 ### UPYOG Code is open sources under License [UPYOG CODE, COPYRIGHT AND CONTRIBUTION LICENSE TERMS](https://upyog.niua.org/employee/Upyog%20Code%20and%20Copyright%20License_v1.pdf)
