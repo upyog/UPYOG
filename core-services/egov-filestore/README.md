@@ -1,26 +1,23 @@
-
-# <eGov-Filestore>
+# File Store Service (egov-filestore)
 
 Filestore provides file upload capability for all the rest of the modules in the Digit suite.
 
 ### DB UML Diagram
 
-
-
+N/A
 
 ### Service Dependencies
 
-
+N/A
 
 ### Swagger API Contract
-- Please refer to the [Swagger API contarct](https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/filestore-service-contract.yml) for Filestore service to understand the structure of APIs and to have visualization of all internal APIs.
-
+- Please refer to the [Swagger APU Contract](https://editor.swagger.io/?url=https://raw.githubusercontent.com/upyog/UPYOG/master/core-services/docs/filestore-service-contract.yml#!/) for Filestore service to understand the structure of APIs and to have visualization of all internal APIs.
 
 
 
 ## Service Details
 
-File uploader for the egov suite. The service can be configured to provide upload and download for files. The Application uses one of the following filestore services Aws-s3/Azure/Minio/file system to save the files. 
+File uploader for the UPYOG Portal. The service can be configured to provide upload and download for files. The Application uses one of the following filestore services Aws-s3/Azure/Minio/file system to save the files. 
 
 The application will start successfully only when atleast one of the config of azure/aws/minio is enabled as mentioned in the local setup.
 
