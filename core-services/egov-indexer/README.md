@@ -58,7 +58,7 @@ c) `POST /_legacyindex`
 This is to run LegacyIndex job to index data from DB. In the request body the URL of the service which would be called by indexer service to pick data, must be mentioned.
 
 
-> Note: In legacy indexing and for collection-service record LiveIndex kafka-connect is used to do part of pushing record to elastic search. For more details please refer [Reindexing jobs to push records to alstic search](https://upyog-docs.gitbook.io/upyog-v-1.0/upyog-1/platform/configure-upyog/qa-automation/kafka-consumer-producer-approach/reindexing-jobs-to-push-records-to-elastic-search)
+> Note: In legacy indexing and for collection-service record LiveIndex kafka-connect is used to do part of pushing record to elastic search. For more details please refer [Reindexing jobs to push records to elastic search](https://upyog-docs.gitbook.io/upyog-v-1.0/upyog-1/platform/configure-upyog/qa-automation/kafka-consumer-producer-approach/reindexing-jobs-to-push-records-to-elastic-search)
 
 ### Kafka Consumers
 - The service uses consumers for topics defined in index configs to read data which is to be indexed.
