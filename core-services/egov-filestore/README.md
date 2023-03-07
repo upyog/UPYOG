@@ -11,7 +11,7 @@ N/A
 N/A
 
 ### Swagger API Contract
-- Please refer to the [Swagger APU Contract](https://editor.swagger.io/?url=https://raw.githubusercontent.com/upyog/UPYOG/master/core-services/docs/filestore-service-contract.yml#!/) for Filestore service to understand the structure of APIs and to have visualization of all internal APIs.
+- Please refer to the [Swagger API Contract](https://editor.swagger.io/?url=https://raw.githubusercontent.com/upyog/UPYOG/master/core-services/docs/filestore-service-contract.yml#!/) for Filestore service to understand the structure of APIs and to have visualization of all internal APIs.
 
 
 
