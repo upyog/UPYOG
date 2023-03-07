@@ -2,7 +2,7 @@
 
 This document will walk you through the dependencies of this service and how to set it up locally
 
-- To setup the notification mail service in your local system, clone the [Core Service repository](https://github.com/egovernments/core-services).
+- To setup the notification mail service in your local system, clone the [Core Service Repository](https://github.com/upyog/UPYOG/tree/master/core-services).
 
 ## Dependencies
 
@@ -23,7 +23,7 @@ To run the notification mail services locally, update below listed properties in
 mail.enabled= #Controls if the mail notification to enabled. Default value is true.
 mail.sender.username= #Senders email ID
 mail.sender.password=#Senders pasdsword
-egov.localization.host=#The host value of the server for localization API (eg: https://egov-micro-qa.egovernments.org/citizen/)
-egov.user.host=#The host value of the server for User service (eg: https://egov-micro-qa.egovernments.org/citizen/)
+egov.localization.host=#The host value of the server for localization API (eg: https://localhost:8088/citizen/)
+egov.user.host=#The host value of the server for User service (eg: https://localhost:8088/citizen/)
 email.subject=#The subject for the email.
 ```
