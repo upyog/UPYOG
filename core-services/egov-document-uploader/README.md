@@ -52,7 +52,7 @@ Upon deleting any document, that document is soft deleted from the records i.e. 
 
 4. /egov-document-uploader/egov-du/document/_delete - Soft deletes an existing document from the database i.e. it makes the document inactive. It takes the DocumentEntity that needs to be deleted in the request body along with RequestInfo object.
 
-**`Postman collection`** :- [DOCUMENT UPLOADER UPDATED COLLECTION](https://api.postman.com/collections/23419225-5925fb70-25f3-45ad-b141-218f9b400e54?access_key=PMAT-01GPJZ6DC1D57W79PEF2MMNRSD)
+**`Postman collection`** :- [DOCUMENT UPLOADER COLLECTION](https://api.postman.com/collections/23419225-5925fb70-25f3-45ad-b141-218f9b400e54?access_key=PMAT-01GPJZ6DC1D57W79PEF2MMNRSD)
 
 
 
