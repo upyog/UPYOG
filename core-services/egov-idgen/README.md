@@ -1,4 +1,4 @@
-# ID Gen Service (egov-idgen)
+# ID Generation Service (egov-idgen)
 
 The ID Gen service generates new id based on the id formats passed. The application exposes a Rest API to take in requests and provide the ids in response in the requested format. 
 
