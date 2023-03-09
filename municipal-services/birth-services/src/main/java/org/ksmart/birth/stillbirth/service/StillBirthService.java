@@ -39,7 +39,7 @@ public class StillBirthService {
         List<StillBirthApplication> birthApplicationDetails =  repository.saveBirthDetails(request);
 
         //WorkFlow Integration
-        //workflowIntegrator.callWorkFlow(request);
+        workflowIntegrator.callWorkFlow(request);
         return birthApplicationDetails;
     }
 

@@ -38,7 +38,7 @@ public class NewBirthService {
         List<NewBirthApplication> birthApplicationDetails =  repository.saveKsmartBirthDetails(request);
 
         //WorkFlow Integration
-      //  workflowIntegrator.callWorkFlow(request);
+        workflowIntegrator.callWorkFlow(request);
         return birthApplicationDetails;
     }
 
