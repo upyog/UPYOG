@@ -1,6 +1,6 @@
 # Local Setup
 
-This document will walk you through the dependencies of eGov-Searcher and how to set it up locally
+This document will walk you through the dependencies of Generic Search Provider Service (egov-searcher) and how to set it up locally
 
 ## Dependencies
 
