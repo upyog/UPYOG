@@ -9,7 +9,7 @@ serviceMaps:
         - query: INSERT INTO public.eg_birth_details(id,dateofreport,dateofbirth,timeofbirth,am_pm,firstname_en,firstname_ml,middlename_en,middlename_ml,lastname_en,lastname_ml,tenantid,
             gender,remarks_en,remarks_ml,aadharno,esign_user_code,esign_user_desig_code,is_adopted,is_abandoned,is_multiple_birth,is_father_info_missing,is_mother_info_missing,no_of_alive_birth,
             multiplebirthdetid,is_born_outside,ot_passportno,ot_dateofarrival,applicationtype,businessservice,workflowcode,fm_fileno,file_date,file_status,applicationno,registrationno,registration_date,
-            action,status, createdtime, createdby, lastmodifiedtime, lastmodifiedby) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
+            action,status, createdtime, createdby, lastmodifiedtime, lastmodifiedby, is_stillbirth) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
 
           basePath: ChildDetails.*
           jsonMaps:
@@ -98,6 +98,8 @@ serviceMaps:
             - jsonPath: $.ChildDetails.*.auditDetails.lastModifiedTime
 
             - jsonPath: $.ChildDetails.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.ChildDetails.*.isStill
 
         - query: INSERT INTO public.eg_birth_place(id,birthdtlid,placeofbirthid,hospitalid,public_place_id,institution_type_id,institution_id,vehicletypeid,vehicle_registration_no,vehicle_from_en,vehicle_to_en,vehicle_from_ml,
             vehicle_to_ml,vehicle_admit_hospital_en,ho_householder_en,ho_locality_en,ho_locality_ml,ho_street_name_en,ho_street_name_ml,ho_housename_en,ho_housename_ml,ho_villageid,
@@ -420,12 +422,12 @@ serviceMaps:
 
             - jsonPath: $.ChildDetails.*.AddressBirthDetails.presentInsideKeralaPincode
 
-        - query: INSERT INTO public.eg_birth_statitical_information(id,weight_of_child,duration_of_pregnancy_in_week,nature_of_medical_attention,delivery_method,religionid,father_nationalityid,
+        - query: INSERT INTO public.eg_birth_statitical_information(id,weight_of_child,duration_of_pregnancy_in_week,nature_of_medical_attention,delivery_method,cause_of_foetal_death,religionid,father_nationalityid,
             father_educationid,father_proffessionid,mother_educationid,mother_proffessionid,mother_nationalityid,mother_age_marriage,mother_age_delivery,mother_no_of_birth_given,
             mother_maritalstatusid,mother_unmarried,mother_res_lbid,mother_res_lb_code_id,mother_res_place_type_id,mother_res_lb_type_id,mother_res_district_id,mother_res_state_id,
             mother_res_country_id,mother_resdnce_addr_type,mother_resdnce_tenant,mother_resdnce_placetype,mother_resdnce_place_en,mother_resdnce_place_ml,mother_resdnce_lbtype,
             mother_resdnce_district,mother_resdnce_state,mother_resdnce_country,birthdtlid,mother_order_of_cur_delivery,mother_order_cur_child,mother_res_no_of_years,createdby,
-            createdtime,lastmodifiedby,lastmodifiedtime) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
+            createdtime,lastmodifiedby,lastmodifiedtime) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
 
           basePath: ChildDetails.*
           jsonMaps:
@@ -438,6 +440,8 @@ serviceMaps:
             - jsonPath: $.ChildDetails.*.medicalAttensionSub
 
             - jsonPath: $.ChildDetails.*.deliveryMethods
+
+            - jsonPath: $.ChildDetails.*.causeFoetalDeath
 
             - jsonPath: $.ChildDetails.*.ParentsDetails.Religion
 

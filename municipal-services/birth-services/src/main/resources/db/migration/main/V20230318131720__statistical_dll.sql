@@ -7,7 +7,7 @@ ALTER TABLE eg_birth_place
             DROP COLUMN informantsname_en,
             DROP COLUMN informantsname_ml;
 ALTER TABLE eg_birth_place_audit
-            ADD COLUMN is_inform_declare boolean,
+            ADD COLUMN is_inform_declare boolean
             DROP COLUMN informantsname_en,
             DROP COLUMN informantsname_ml;
 

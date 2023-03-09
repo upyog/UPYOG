@@ -10,7 +10,6 @@ import org.ksmart.birth.common.model.AuditDetails;
 import org.ksmart.birth.common.repository.IdGenRepository;
 import org.ksmart.birth.config.BirthConfiguration;
 import org.ksmart.birth.utils.BirthConstants;
-import org.ksmart.birth.utils.IDGenerator;
 import org.ksmart.birth.utils.MdmsUtil;
 import org.ksmart.birth.utils.enums.ErrorCodes;
 import org.ksmart.birth.web.model.newbirth.NewBirthApplication;
@@ -26,8 +25,6 @@ public class NewBirthEnrichment implements BaseEnrichment {
     BirthConfiguration config;
     @Autowired
    MdmsUtil mdmsUtil;
-    @Autowired
-    IDGenerator generator;
     @Autowired
     MdmsDataService mdmsDataService;
     @Autowired

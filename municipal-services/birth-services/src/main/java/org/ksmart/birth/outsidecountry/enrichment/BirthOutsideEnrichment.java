@@ -1,31 +1,39 @@
 package org.ksmart.birth.outsidecountry.enrichment;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
+import org.egov.tracer.model.CustomException;
 import org.ksmart.birth.birthregistry.service.MdmsDataService;
 import org.ksmart.birth.common.enrichment.BaseEnrichment;
 import org.ksmart.birth.common.model.AuditDetails;
+import org.ksmart.birth.common.repository.IdGenRepository;
+import org.ksmart.birth.config.BirthConfiguration;
 import org.ksmart.birth.utils.BirthConstants;
-import org.ksmart.birth.utils.IDGenerator;
 import org.ksmart.birth.utils.MdmsUtil;
+import org.ksmart.birth.utils.enums.ErrorCodes;
+import org.ksmart.birth.web.model.newbirth.NewBirthApplication;
 import org.ksmart.birth.web.model.newbirth.NewBirthDetailRequest;
+import org.ksmart.birth.web.model.outsidecountry.BirthOutsideApplication;
+import org.ksmart.birth.web.model.outsidecountry.BirthOutsideDetailRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+import java.util.ListIterator;
 import java.util.UUID;
 
 @Component
 public class BirthOutsideEnrichment implements BaseEnrichment {
-//    @Autowired
-//    BirthConfiguration config;
+    @Autowired
+    BirthConfiguration config;
     @Autowired
    MdmsUtil mdmsUtil;
     @Autowired
-    IDGenerator generator;
-    @Autowired
     MdmsDataService mdmsDataService;
-
-    public void enrichCreate(NewBirthDetailRequest request) {
+    @Autowired
+    IdGenRepository idGenRepository;
+    public void enrichCreate(BirthOutsideDetailRequest request) {
 
         RequestInfo requestInfo = request.getRequestInfo();
         User userInfo = requestInfo.getUserInfo();
@@ -36,7 +44,7 @@ public class BirthOutsideEnrichment implements BaseEnrichment {
             birth.setAuditDetails(auditDetails);
             if(birth.getPlaceofBirthId() != null || !birth.getPlaceofBirthId().isEmpty()){
                 Object mdmsData = mdmsUtil.mdmsCallForLocation(request.getRequestInfo(), birth.getTenantId());
-                mdmsDataService.setKsmartLocationDetails(birth, mdmsData);
+                mdmsDataService.setOutLocationDetails(birth, mdmsData);
             }
             birth.setBirthPlaceUuid(UUID.randomUUID().toString());
             birth.getParentsDetails().setFatherUuid(UUID.randomUUID().toString());
@@ -65,7 +73,7 @@ public class BirthOutsideEnrichment implements BaseEnrichment {
         setPermanentAddress(request);
     }
 
-    public void enrichUpdate(NewBirthDetailRequest request) {
+    public void enrichUpdate(BirthOutsideDetailRequest request) {
 
         RequestInfo requestInfo = request.getRequestInfo();
         User userInfo = requestInfo.getUserInfo();
@@ -77,40 +85,72 @@ public class BirthOutsideEnrichment implements BaseEnrichment {
         setPermanentAddress(request);
     }
 
-    private void setApplicationNumbers(NewBirthDetailRequest request) {
-        Long currentTime = Long.valueOf(System.currentTimeMillis());
-        String id = generator.setIDGenerator(request, BirthConstants.FUN_MODULE_NEW,BirthConstants.APP_NUMBER_CAPTION);
+    private void setApplicationNumbers(BirthOutsideDetailRequest request) {
+        RequestInfo requestInfo = request.getRequestInfo();
+        List<BirthOutsideApplication> birthDetails = request.getNewBirthDetails();
+        String tenantId = birthDetails.get(0)
+                .getTenantId();
+        List<String> filecodes = getIds(requestInfo,
+                tenantId,
+                config.getBirthApplNumberIdName(),
+                request.getNewBirthDetails().get(0).getApplicationType(),
+                "APPL",
+                birthDetails.size());
+        validateFileCodes(filecodes, birthDetails.size());
+
+        ListIterator<String> itr = filecodes.listIterator();
         request.getNewBirthDetails()
                 .forEach(birth -> {
-                    birth.setApplicationNo(id);
-                    birth.setDateOfReport(currentTime);
+                    birth.setApplicationNo(itr.next());
                 });
     }
 
-    private void setFileNumbers(NewBirthDetailRequest request) {
+    private void setFileNumbers(BirthOutsideDetailRequest request) {
+        RequestInfo requestInfo = request.getRequestInfo();
+        List<BirthOutsideApplication> birthDetails = request.getNewBirthDetails();
+        String tenantId = birthDetails.get(0)
+                .getTenantId();
+
+        List<String> filecodes = getIds(requestInfo,
+                tenantId,
+                config.getBirthFileNumberName(),
+                request.getNewBirthDetails().get(0).getApplicationType(),
+                "FILE",
+                birthDetails.size());
+        validateFileCodes(filecodes, birthDetails.size());
         Long currentTime = Long.valueOf(System.currentTimeMillis());
-        String id = generator.setIDGenerator(request, BirthConstants.FUN_MODULE_NEW,BirthConstants.FILE_NUMBER_CAPTION);
+        ListIterator<String> itr = filecodes.listIterator();
         request.getNewBirthDetails()
                 .forEach(birth -> {
-                    birth.setFileNumber(id);
+                    birth.setFileNumber(itr.next());
                     birth.setFileDate(currentTime);
-                    birth.setFileStatus("ACTIVE");
                 });
     }
 
-    private void setRegistrationNumber(NewBirthDetailRequest request) {
+    private void setRegistrationNumber(BirthOutsideDetailRequest request) {
+        RequestInfo requestInfo = request.getRequestInfo();
+        List<BirthOutsideApplication> birthDetails = request.getNewBirthDetails();
+        String tenantId = birthDetails.get(0)
+                .getTenantId();
+
+        List<String> filecodes = getIds(requestInfo,
+                tenantId,
+                config.getBirthRegisNumberName(),
+                request.getNewBirthDetails().get(0).getApplicationType(),
+                "REG",
+                birthDetails.size());
+        validateFileCodes(filecodes, birthDetails.size());
         Long currentTime = Long.valueOf(System.currentTimeMillis());
-        String id = generator.setIDGenerator(request, BirthConstants.FUN_MODULE_NEW,BirthConstants.REGY_NUMBER_CAPTION);
+        ListIterator<String> itr = filecodes.listIterator();
         request.getNewBirthDetails()
                 .forEach(birth -> {
-                    if((birth.getApplicationStatus() == "APPROVED") && (birth.getAction() == "APPROVE")) {
-                        birth.setRegistrationNo(id);
+                    if((birth.getApplicationStatus() == "APPROVED" && birth.getAction() == "APPROVE")) {
+                        birth.setRegistrationNo(itr.next());
                         birth.setRegistrationDate(currentTime);
                     }
                 });
     }
-
-    private void setPresentAddress(NewBirthDetailRequest request) {
+    private void setPresentAddress(BirthOutsideDetailRequest request) {
         request.getNewBirthDetails()
                 .forEach(birth -> {
                     if (birth.getParentAddress() != null) {
@@ -166,7 +206,7 @@ public class BirthOutsideEnrichment implements BaseEnrichment {
                     }
                 });
     }
-    private void setPermanentAddress(NewBirthDetailRequest request) {
+    private void setPermanentAddress(BirthOutsideDetailRequest request) {
         request.getNewBirthDetails()
                 .forEach(birth -> {
                     if (birth.getParentAddress() != null && birth.getParentAddress().getIsPrsentAddress() != null)  {
@@ -227,5 +267,29 @@ public class BirthOutsideEnrichment implements BaseEnrichment {
                         }
                     }
                 });
+    }
+    private void setPlaceOfBirth(NewBirthDetailRequest request) {
+        request.getNewBirthDetails()
+                .forEach(birth -> {
+                });
+    }
+    private void setStatisticalInfo(NewBirthDetailRequest request) {
+        request.getNewBirthDetails()
+                .forEach(birth -> {
+                });
+
+    }
+    private List<String> getIds(RequestInfo requestInfo, String tenantId, String idName, String moduleCode, String  fnType, int count) {
+        return idGenRepository.getIdList(requestInfo, tenantId, idName, moduleCode, fnType, count);
+    }
+    private void validateFileCodes(List<String> fileCodes, int count) {
+        if (CollectionUtils.isEmpty(fileCodes)) {
+            throw new CustomException(ErrorCodes.IDGEN_ERROR.getCode(), "No file code(s) returned from idgen service");
+        }
+
+        if (fileCodes.size() != count) {
+            throw new CustomException(ErrorCodes.IDGEN_ERROR.getCode(),
+                    "The number of file code(s) returned by idgen service is not equal to the request count");
+        }
     }
 }

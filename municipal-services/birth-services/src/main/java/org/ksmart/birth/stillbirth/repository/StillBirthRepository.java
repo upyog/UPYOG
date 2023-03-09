@@ -43,14 +43,14 @@ public class StillBirthRepository {
         this.mdmsDataService = mdmsDataService;
         this.mdmsUtil = mdmsUtil;
     }
-    public List<StillBirthApplication> saveKsmartBirthDetails(StillBirthDetailRequest request) {
+    public List<StillBirthApplication> saveBirthDetails(StillBirthDetailRequest request) {
         enrichment.enrichCreate(request);
-        producer.push(birthDeathConfiguration.getSaveBirthAdoptionTopic(), request);
+        producer.push(birthDeathConfiguration.getSaveKsmartBirthApplicationTopic(), request);
         return request.getBirthDetails();
     }
-    public List<StillBirthApplication> updateKsmartBirthDetails(StillBirthDetailRequest request) {
+    public List<StillBirthApplication> updateBirthDetails(StillBirthDetailRequest request) {
         enrichment.enrichUpdate(request);
-        producer.push(birthDeathConfiguration.getUpdateBirthAdoptionTopic(), request);
+        producer.push(birthDeathConfiguration.getSaveKsmartBirthApplicationTopic(), request);
         return request.getBirthDetails();
     }
     public List<StillBirthApplication> searchStillBirthDetails(StillBirthDetailRequest request, SearchCriteria criteria) {

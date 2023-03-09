@@ -1,4 +1,4 @@
-package org.ksmart.birth.web.model.stillbirth;
+package org.ksmart.birth.web.model.outsidecountry;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
@@ -9,7 +9,6 @@ import org.ksmart.birth.web.model.InitiatorDetail;
 import org.ksmart.birth.web.model.ParentAddress;
 import org.ksmart.birth.web.model.ParentsDetail;
 
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.List;
 
@@ -18,7 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class StillBirthApplication {
+public class BirthOutsideApplication {
     @Size(max = 64)
     @JsonProperty("id")
     private String id;
@@ -54,7 +53,6 @@ public class StillBirthApplication {
     @JsonProperty("childLastNameMl")
     private String lastNameMl;
 
-    @NotNull
     @Size(max = 64)
     @JsonProperty("birthPlace")
     private String placeofBirthId;
@@ -177,12 +175,6 @@ public class StillBirthApplication {
     @Size(max = 64)
     @JsonProperty("deliveryMethods")
     private String deliveryMethods;
-
-    @NotNull
-    @Size(max = 64)
-    @JsonProperty("causeFoetalDeath")
-    private String causeFoetalDeath;
-
     @Size(max = 64)
     @JsonProperty("esign_user_code")
     private String esignUserCode;
@@ -190,17 +182,27 @@ public class StillBirthApplication {
     @Size(max = 64)
     @JsonProperty("esign_user_desig_code")
     private String esignUserDesigCode;
-
-    @NotNull
     @Size(max = 64)
     @JsonProperty("tenantid")
     private String tenantId;
+    @Size(max = 64)
+    @JsonProperty("villageid")
+    private String villageid;
 
-    @NotNull
+    @Size(max = 64)
+    @JsonProperty("talukid")
+    private String talukid;
+
+    @Size(max = 64)
+    @JsonProperty("districtid")
+    private String districtid;
+
+    @Size(max = 64)
+    @JsonProperty("countryid")
+    private String countryid;
     @Size(max = 64)
     @JsonProperty("applicationtype")
     private String applicationType;
-
 
     @Size(max = 64)
     @JsonProperty("businessservice")
@@ -283,9 +285,6 @@ public class StillBirthApplication {
     private ParentAddress parentAddress;
     @JsonProperty("InformarHosInstDetails")
     private InformatDetail informatDetail;
-
-    @JsonProperty("isStill")
-    private Boolean isStill;
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails;
 }

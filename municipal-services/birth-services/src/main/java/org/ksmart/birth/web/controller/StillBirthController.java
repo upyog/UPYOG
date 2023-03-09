@@ -40,8 +40,8 @@ public class StillBirthController {
     }
 
     @PostMapping(value = {"/createstillbirth"})
-    public ResponseEntity<?> saveRegisterBirthDetails(@RequestBody StillBirthDetailRequest request) {
-        List<StillBirthApplication> birthDetails=stillBirthService.saveKsmartBirthDetails(request);
+    public ResponseEntity<?> saveBirthDetails(@RequestBody StillBirthDetailRequest request) {
+        List<StillBirthApplication> birthDetails=stillBirthService.saveBirthDetails(request);
         StillBirthResponse response= StillBirthResponse.builder()
                                                         .birthDetails(birthDetails)
                                                         .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(),true))
@@ -49,9 +49,9 @@ public class StillBirthController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
     @PostMapping(value = { "/updatestillbirth"})
-    public ResponseEntity<?> updateRegisterBirthDetails(@RequestBody StillBirthDetailRequest request) {
+    public ResponseEntity<?> updateBirthDetails(@RequestBody StillBirthDetailRequest request) {
         BirthCertificate birthCertificate = new BirthCertificate();
-        List<StillBirthApplication> birthApplicationDetails=stillBirthService.updateKsmartBirthDetails(request);
+        List<StillBirthApplication> birthApplicationDetails=stillBirthService.updateBirthDetails(request);
         //Download certificate when Approved
         if((birthApplicationDetails.get(0).getApplicationStatus() == "APPROVED" && birthApplicationDetails.get(0).getAction() == "APPROVE")){
             RegisterBirthDetailsRequest registerBirthDetailsRequest = registryReq.createRegistryRequest(request);

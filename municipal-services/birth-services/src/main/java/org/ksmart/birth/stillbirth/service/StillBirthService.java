@@ -29,23 +29,23 @@ public class StillBirthService {
         this.validator = validator;
     }
 
-    public List<StillBirthApplication> saveKsmartBirthDetails(StillBirthDetailRequest request) {
+    public List<StillBirthApplication> saveBirthDetails(StillBirthDetailRequest request) {
         Object mdmsData = mdmsUtil.mdmsCall(request.getRequestInfo());
 
         // validate request
         //validator.validateCreate(request, mdmsData);
 
         //call save
-        List<StillBirthApplication> birthApplicationDetails =  repository.saveKsmartBirthDetails(request);
+        List<StillBirthApplication> birthApplicationDetails =  repository.saveBirthDetails(request);
 
         //WorkFlow Integration
-        workflowIntegrator.callWorkFlow(request);
+        //workflowIntegrator.callWorkFlow(request);
         return birthApplicationDetails;
     }
 
-    public List<StillBirthApplication> updateKsmartBirthDetails(StillBirthDetailRequest request) {
+    public List<StillBirthApplication> updateBirthDetails(StillBirthDetailRequest request) {
         workflowIntegrator.callWorkFlow(request);
-        return repository.updateKsmartBirthDetails(request);
+        return repository.updateBirthDetails(request);
     }
 
     public List<StillBirthApplication> searchKsmartBirthDetails(StillBirthDetailRequest request, SearchCriteria criteria) {

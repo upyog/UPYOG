@@ -94,33 +94,6 @@ public class CommonQueryBuilder {
 	public String getQueryIntiator() {
 		return QUERY_INTIATOR;
 	}
-//*************************************To DELETE**********************************////
-
-//    private static final String QUERY_MASTER = "SELECT * FROM eg_birth_death_hospitals bdtl";
-//
-//    private static void addClauseIfRequired(List<Object> values, StringBuilder queryString) {
-//        if (values.isEmpty())
-//            queryString.append(" WHERE ");
-//        else {
-//            queryString.append(" AND");
-//        }
-//    }
-//
-//
-//	public String getHospitalDtls(String teantId, List<Object> preparedStmtList) {
-//		StringBuilder builder = new StringBuilder(QUERY_MASTER);
-//
-//		if (teantId != null) {
-//			addClauseIfRequired(preparedStmtList, builder);
-//			builder.append(" tenantid=? ");
-//			preparedStmtList.add(teantId);
-//		}
-//		return builder.toString();
-//	}
-
-	//*************************************To DELETE**********************************////
-
-
 
 }
 

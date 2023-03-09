@@ -6,7 +6,6 @@ import org.ksmart.birth.birthregistry.service.MdmsDataService;
 import org.ksmart.birth.common.enrichment.BaseEnrichment;
 import org.ksmart.birth.common.model.AuditDetails;
 import org.ksmart.birth.utils.BirthConstants;
-import org.ksmart.birth.utils.IDGenerator;
 import org.ksmart.birth.utils.MdmsUtil;
 import org.ksmart.birth.web.model.newbirth.NewBirthDetailRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +19,6 @@ public class AdoptionEnrichment implements BaseEnrichment {
 //    BirthConfiguration config;
     @Autowired
    MdmsUtil mdmsUtil;
-    @Autowired
-    IDGenerator generator;
     @Autowired
     MdmsDataService mdmsDataService;
 
@@ -78,36 +75,36 @@ public class AdoptionEnrichment implements BaseEnrichment {
     }
 
     private void setApplicationNumbers(NewBirthDetailRequest request) {
-        Long currentTime = Long.valueOf(System.currentTimeMillis());
-        String id = generator.setIDGenerator(request, BirthConstants.FUN_MODULE_NEW,BirthConstants.APP_NUMBER_CAPTION);
-        request.getNewBirthDetails()
-                .forEach(birth -> {
-                    birth.setApplicationNo(id);
-                    birth.setDateOfReport(currentTime);
-                });
+//        Long currentTime = Long.valueOf(System.currentTimeMillis());
+//        String id = generator.setIDGenerator(request, BirthConstants.FUN_MODULE_NEW,BirthConstants.APP_NUMBER_CAPTION);
+//        request.getNewBirthDetails()
+//                .forEach(birth -> {
+//                    birth.setApplicationNo(id);
+//                    birth.setDateOfReport(currentTime);
+//                });
     }
 
     private void setFileNumbers(NewBirthDetailRequest request) {
-        Long currentTime = Long.valueOf(System.currentTimeMillis());
-        String id = generator.setIDGenerator(request, BirthConstants.FUN_MODULE_NEW,BirthConstants.FILE_NUMBER_CAPTION);
-        request.getNewBirthDetails()
-                .forEach(birth -> {
-                    birth.setFileNumber(id);
-                    birth.setFileDate(currentTime);
-                    birth.setFileStatus("ACTIVE");
-                });
+//        Long currentTime = Long.valueOf(System.currentTimeMillis());
+//        String id = generator.setIDGenerator(request, BirthConstants.FUN_MODULE_NEW,BirthConstants.FILE_NUMBER_CAPTION);
+//        request.getNewBirthDetails()
+//                .forEach(birth -> {
+//                    birth.setFileNumber(id);
+//                    birth.setFileDate(currentTime);
+//                    birth.setFileStatus("ACTIVE");
+//                });
     }
 
     private void setRegistrationNumber(NewBirthDetailRequest request) {
-        Long currentTime = Long.valueOf(System.currentTimeMillis());
-        String id = generator.setIDGenerator(request, BirthConstants.FUN_MODULE_NEW,BirthConstants.REGY_NUMBER_CAPTION);
-        request.getNewBirthDetails()
-                .forEach(birth -> {
-                    if((birth.getApplicationStatus() == "APPROVED") && (birth.getAction() == "APPROVE")) {
-                        birth.setRegistrationNo(id);
-                        birth.setRegistrationDate(currentTime);
-                    }
-                });
+//        Long currentTime = Long.valueOf(System.currentTimeMillis());
+//        String id = generator.setIDGenerator(request, BirthConstants.FUN_MODULE_NEW,BirthConstants.REGY_NUMBER_CAPTION);
+//        request.getNewBirthDetails()
+//                .forEach(birth -> {
+//                    if((birth.getApplicationStatus() == "APPROVED") && (birth.getAction() == "APPROVE")) {
+//                        birth.setRegistrationNo(id);
+//                        birth.setRegistrationDate(currentTime);
+//                    }
+//                });
     }
 
     private void setPresentAddress(NewBirthDetailRequest request) {
