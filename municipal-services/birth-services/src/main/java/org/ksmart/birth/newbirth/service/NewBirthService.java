@@ -38,12 +38,12 @@ public class NewBirthService {
         List<NewBirthApplication> birthApplicationDetails =  repository.saveKsmartBirthDetails(request);
 
         //WorkFlow Integration
-       // workflowIntegrator.callWorkFlow(request);
+        workflowIntegrator.callWorkFlow(request);
         return birthApplicationDetails;
     }
 
     public List<NewBirthApplication> updateKsmartBirthDetails(NewBirthDetailRequest request) {
-        //workflowIntegrator.callWorkFlow(request);
+        workflowIntegrator.callWorkFlow(request);
         return repository.updateKsmartBirthDetails(request);
     }
 

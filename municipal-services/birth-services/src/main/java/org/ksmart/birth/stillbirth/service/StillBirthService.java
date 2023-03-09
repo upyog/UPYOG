@@ -44,7 +44,7 @@ public class StillBirthService {
     }
 
     public List<StillBirthApplication> updateBirthDetails(StillBirthDetailRequest request) {
-      //  workflowIntegrator.callWorkFlow(request);
+        workflowIntegrator.callWorkFlow(request);
         return repository.updateBirthDetails(request);
     }
 
