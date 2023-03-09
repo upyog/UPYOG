@@ -193,7 +193,6 @@ public class NewBirthEnrichment implements BaseEnrichment {
                         if (birth.getParentAddress().getPresentaddressCountry() != null && birth.getParentAddress().getPresentaddressStateName() != null) {
                             if (birth.getParentAddress().getPresentaddressCountry().contains(BirthConstants.COUNTRY_CODE)) {
                                 if (birth.getParentAddress().getPresentaddressStateName().contains(BirthConstants.STATE_CODE_SMALL)) {
-
                                     birth.getParentAddress().setCountryIdPresent(birth.getParentAddress().getPresentaddressCountry());
 
                                     birth.getParentAddress().setStateIdPresent(birth.getParentAddress().getPresentaddressStateName());
@@ -209,7 +208,7 @@ public class NewBirthEnrichment implements BaseEnrichment {
                                     birth.getParentAddress().setHouseNameNoEnPresent(birth.getParentAddress().getPresentInsideKeralaHouseNameEn());
                                     birth.getParentAddress().setHouseNameNoMlPresent(birth.getParentAddress().getPresentInsideKeralaHouseNameMl());
                                     birth.getParentAddress().setPinNoPresent(birth.getParentAddress().getPresentInsideKeralaPincode());
-                                    birth.getParentAddress().setVillageNamePresent(null);
+                                    birth.getParentAddress().setVillageNamePresent(birth.getParentAddress().getPresentInsideKeralaPostOffice());
 
                                 } else {
                                     birth.getParentAddress().setCountryIdPresent(birth.getParentAddress().getPresentaddressCountry());
@@ -272,7 +271,8 @@ public class NewBirthEnrichment implements BaseEnrichment {
                                     birth.getParentAddress().setHouseNameNoMlPermanent(birth.getParentAddress().getPermntInKeralaAdrHouseNameMl());
 
                                     birth.getParentAddress().setPinNoPermanent(birth.getParentAddress().getPermntInKeralaAdrPincode());
-                                    birth.getParentAddress().setVillageNamePermanent(null);
+                                    birth.getParentAddress().setVillageNamePermanent(birth.getParentAddress().getPermntInKeralaAdrVillage());
+                                    birth.getParentAddress().setPoNoPermanent(birth.getParentAddress().getPermntInKeralaAdrPostOffice());
                                 } else {
                                     birth.getParentAddress().setCountryIdPermanent(birth.getParentAddress().getPermtaddressCountry());
 

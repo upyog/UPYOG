@@ -29,29 +29,29 @@ public class CommonQueryBuilder {
 
 	private static final String QUERY_MOTER_INFO = new StringBuilder().append("ebmi.id as mo_id,ebmi.firstname_en as mo_firstname_en,ebmi.firstname_ml as mo_firstname_ml,ebmi.aadharno as mo_aadharno,ebmi.birthdtlid as mo_birthdtlid,ebmi.bio_adopt as mo_bio_adopt").toString();
 
-	private static final String QUERY_PERMANANT_ADDRESS = new StringBuilder().append("eperad.id as per_id,eperad.housename_no_en as per_housename_no_en,eperad.housename_no_ml as per_housename_no_ml,eperad.ot_address1_en as per_ot_address1_en,")
-			.append("eperad.ot_address1_ml as per_ot_address1_ml,eperad.ot_address2_en as per_ot_address2_en,")
-			.append("eperad.ot_address2_ml as per_ot_address2_ml,eperad.villageid as per_villageid,eperad.tenantid as per_tenantid,eperad.talukid as per_talukid,")
-			.append("eperad.districtid as per_districtid,eperad.stateid as per_stateid,eperad.poid as per_poid,eperad.pinno as per_pinno,eperad.ot_state_region_province_en as per_ot_state_region_province_en,")
-			.append("eperad.ot_state_region_province_ml as per_ot_state_region_province_ml,eperad.countryid as per_countryid,eperad.createdby,")
-			.append("eperad.birthdtlid as per_birthdtlid,eperad.same_as_present as per_same_as_present,eperad.bio_adopt as per_bio_adopt,eperad.res_asso_no_ml as per_res_asso_no_ml,")
-			.append("eperad.taluk_name as per_taluk_name, eperad.village_name as per_village_name, eperad.ward_code as per_ward_code,eperad.ot_zipcode as per_ot_zipcode, eperad.locality_en as per_locality_en,")
-			.append("eperad.street_name_en as per_street_name_en, eperad.locality_ml as per_locality_ml, eperad.street_name_ml as per_street_name_ml,")
-			.append("ebp.public_street_name_ml as pla_public_street_name_ml").toString();
+	private static final String QUERY_PERMANANT_ADDRESS = new StringBuilder().append("eperad.id as per_id,eperad.housename_no_en as per_housename_no_en,")
+			.append("eperad.housename_no_ml as per_housename_no_ml,eperad.ot_address1_en as per_ot_address1_en,eperad.ot_address1_ml as per_ot_address1_ml,eperad.ot_address2_en as per_ot_address2_en,")
+			.append("eperad.ot_address2_ml as per_ot_address2_ml,eperad.ot_state_region_province_en as per_ot_state_region_province_en,eperad.ot_state_region_province_ml as per_ot_state_region_province_ml,")
+			.append("eperad.ot_zipcode as per_ot_zipcode,eperad.villageid as per_villageid,eperad.village_name as per_village_name,eperad.tenantid as per_tenantid,eperad.talukid as per_talukid,")
+			.append("eperad.taluk_name as per_taluk_name,eperad.ward_code as per_ward_code,eperad.locality_en as per_locality_en,")
+			.append("eperad.locality_ml as per_locality_ml,eperad.street_name_en as per_street_name_en,eperad.street_name_ml as per_street_name_ml,eperad.districtid as per_districtid,")
+			.append("eperad.stateid as per_stateid,eperad.poid as per_poid,eperad.pinno as per_pinno,eperad.countryid as per_countryid,eperad.birthdtlid as per_birthdtlid,")
+			.append("eperad.bio_adopt as per_bio_adopt,eperad.same_as_present as per_same_as_present,eperad.family_emailid as per_family_emailid,eperad.family_mobileno as per_family_mobileno,")
+			.append("eperad.postoffice_en as per_postoffice_en,eperad.postoffice_ml as per_postoffice_ml").toString();
 
 
-	private static final String QUERY_PRESENT_ADDRESS = new StringBuilder().append("epreadd.id as pres_id,epreadd.housename_no_en as pres_housename_no_en,epreadd.housename_no_ml as pres_housename_no_ml,epreadd.ot_address1_en as pres_ot_address1_en,")
-			.append("epreadd.ot_address1_ml as pres_ot_address1_ml,epreadd.ot_address2_en as pres_ot_address2_en,epreadd.ot_address2_ml as pres_ot_address2_ml,")
-			.append("epreadd.villageid as pres_villageid,epreadd.tenantid as pres_tenantid,epreadd.talukid as pres_talukid,")
-			.append("epreadd.districtid as pres_districtid,epreadd.stateid as pres_stateid,epreadd.poid as pres_poid,epreadd.pinno as pres_pinno,epreadd.ot_state_region_province_en as pres_ot_state_region_province_en,")
-			.append("epreadd.ot_state_region_province_ml as pres_ot_state_region_province_ml,epreadd.countryid as pres_countryid,")
-			.append("epreadd.birthdtlid as pres_birthdtlid,epreadd.bio_adopt as pres_bio_adopt,epreadd.res_asso_no_ml as pres_res_asso_no_ml,")
-			.append("epreadd.taluk_name as pres_taluk_name, epreadd.village_name as pres_village_name, epreadd.ward_code as pres_ward_code, epreadd.doorno as pres_doorno, epreadd.subno as pres_subno,")
-			.append("epreadd.ot_zipcode as pres_ot_zipcode, epreadd.locality_en as pres_locality_en,")
-			.append("epreadd.street_name_en as pres_street_name_en, epreadd.locality_ml as pres_locality_ml, epreadd.street_name_ml as pres_street_name_ml").toString();
+	private static final String QUERY_PRESENT_ADDRESS = new StringBuilder().append("epreadd.id as pres_id,epreadd.housename_no_en as pres_housename_no_en,")
+			.append("epreadd.housename_no_ml as pres_housename_no_ml,epreadd.ot_address1_en as pres_ot_address1_en,epreadd.ot_address1_ml as pres_ot_address1_ml,epreadd.ot_address2_en as pres_ot_address2_en,")
+			.append("epreadd.ot_address2_ml as pres_ot_address2_ml,epreadd.ot_state_region_province_en as pres_ot_state_region_province_en,epreadd.ot_state_region_province_ml as pres_ot_state_region_province_ml,")
+			.append("epreadd.ot_zipcode as pres_ot_zipcode,epreadd.villageid as pres_villageid,epreadd.village_name as pres_village_name,epreadd.tenantid as pres_tenantid,epreadd.talukid as pres_talukid,")
+			.append("epreadd.taluk_name as pres_taluk_name,epreadd.ward_code as pres_ward_code,epreadd.locality_en as pres_locality_en,")
+			.append("epreadd.locality_ml as pres_locality_ml,epreadd.street_name_en as pres_street_name_en,epreadd.street_name_ml as pres_street_name_ml,epreadd.districtid as pres_districtid,")
+			.append("epreadd.stateid as pres_stateid,epreadd.poid as pres_poid,epreadd.pinno as pres_pinno,epreadd.countryid as pres_countryid,epreadd.birthdtlid as pres_birthdtlid,")
+			.append("epreadd.bio_adopt as pres_bio_adopt,epreadd.postoffice_en as pres_postoffice_en,epreadd.postoffice_ml as pres_postoffice_ml").toString();
 
 
-	private static final String QUERY_STATISTICAL_INFO = new StringBuilder().append("estat.id as stat_id,estat.weight_of_child as stat_weight_of_child,estat.duration_of_pregnancy_in_week as stat_duration_of_pregnancy_in_week,estat.nature_of_medical_attention as stat_nature_of_medical_attention,")
+	private static final String QUERY_STATISTICAL_INFO = new StringBuilder().append("estat.id as stat_id,estat.weight_of_child as stat_weight_of_child,")
+			.append("estat.duration_of_pregnancy_in_week as stat_duration_of_pregnancy_in_week,estat.nature_of_medical_attention as stat_nature_of_medical_attention,")
             .append("estat.delivery_method as stat_delivery_method,estat.religionid as stat_religionid,estat.father_nationalityid as stat_father_nationalityid,estat.father_educationid as stat_father_educationid,")
             .append("estat.father_proffessionid as stat_father_proffessionid,estat.mother_educationid as stat_mother_educationid,estat.mother_proffessionid as stat_mother_proffessionid," )
             .append("estat.mother_nationalityid as stat_mother_nationalityid,estat.mother_age_marriage as stat_mother_age_marriage,estat.mother_age_delivery as stat_mother_age_delivery," )
