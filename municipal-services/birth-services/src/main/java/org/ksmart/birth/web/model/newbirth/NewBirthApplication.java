@@ -285,11 +285,6 @@ public class NewBirthApplication {
     private ParentAddress parentAddress;
     @JsonProperty("InformarHosInstDetails")
     private InformatDetail informatDetail;
-
-    @JsonProperty("isFatherInfoMissing")
-    private Boolean isFatherInfoMissing;
-    @JsonProperty("isMotherInfoMissing")
-    private Boolean isMotherInfoMissing;
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails;
 }
