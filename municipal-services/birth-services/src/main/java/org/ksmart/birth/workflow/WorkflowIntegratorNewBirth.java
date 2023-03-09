@@ -25,7 +25,7 @@ import net.minidev.json.JSONObject;
 
 @Service
 @Slf4j
-public class WorkflowIntegrator {
+public class WorkflowIntegratorNewBirth {
 
 
 
@@ -33,7 +33,7 @@ public class WorkflowIntegrator {
     private   final RestTemplate restTemplate;
 
     @Autowired
-    public WorkflowIntegrator(RestTemplate restTemplate, BirthConfiguration bndConfig) {
+    public WorkflowIntegratorNewBirth(RestTemplate restTemplate, BirthConfiguration bndConfig) {
         this.restTemplate = restTemplate;
         this.bndConfig = bndConfig;
 

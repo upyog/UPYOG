@@ -176,6 +176,10 @@ public class StillBirthApplication {
     @JsonProperty("deliveryMethods")
     private String deliveryMethods;
     @Size(max = 64)
+    @JsonProperty("causeFoetalDeath")
+    private String causeFoetalDeath;
+
+    @Size(max = 64)
     @JsonProperty("esign_user_code")
     private String esignUserCode;
 
@@ -271,9 +275,8 @@ public class StillBirthApplication {
     private ParentAddress parentAddress;
     @JsonProperty("InformarHosInstDetails")
     private InformatDetail informatDetail;
-    @JsonProperty("isAdopted")
-    private Boolean isAdopted;
-
+    @JsonProperty("isStill")
+    private Boolean isStill;
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails;
 }

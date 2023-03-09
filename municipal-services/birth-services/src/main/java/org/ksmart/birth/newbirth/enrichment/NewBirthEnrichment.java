@@ -70,8 +70,10 @@ public class NewBirthEnrichment implements BaseEnrichment {
         });
         setApplicationNumbers(request);
         setFileNumbers(request);
+        setPlaceOfBirth(request);
         setPresentAddress(request);
         setPermanentAddress(request);
+        setStatisticalInfo(request);
     }
 
     public void enrichUpdate(NewBirthDetailRequest request) {
@@ -80,9 +82,12 @@ public class NewBirthEnrichment implements BaseEnrichment {
         User userInfo = requestInfo.getUserInfo();
         AuditDetails auditDetails = buildAuditDetails(userInfo.getUuid(), Boolean.FALSE);
         request.getNewBirthDetails()
-                .forEach(birth -> birth.setAuditDetails(auditDetails));
-
-        setRegistrationNumber(request);
+                .forEach(birth -> {
+                    birth.setAuditDetails(auditDetails);
+                    if ((birth.getApplicationStatus() == "APPROVED" && birth.getAction() == "APPROVE")) {
+                        setRegistrationNumber(request);
+                    }
+                });
         setPresentAddress(request);
         setPermanentAddress(request);
     }
@@ -128,7 +133,7 @@ public class NewBirthEnrichment implements BaseEnrichment {
                 tenantId,
                 config.getBirthApplNumberIdName(),
                 request.getNewBirthDetails().get(0).getApplicationType(),
-                "AKNO",
+                "APPL",
                 birthDetails.size());
         validateFileCodes(filecodes, birthDetails.size());
 
@@ -148,8 +153,8 @@ public class NewBirthEnrichment implements BaseEnrichment {
         List<String> filecodes = getIds(requestInfo,
                 tenantId,
                 config.getBirthFileNumberName(),
-                request.getNewBirthDetails().get(0).getFileNumber(),
-                "FM",
+                request.getNewBirthDetails().get(0).getApplicationType(),
+                "FILE",
                 birthDetails.size());
         validateFileCodes(filecodes, birthDetails.size());
         Long currentTime = Long.valueOf(System.currentTimeMillis());
@@ -170,7 +175,7 @@ public class NewBirthEnrichment implements BaseEnrichment {
         List<String> filecodes = getIds(requestInfo,
                 tenantId,
                 config.getBirthRegisNumberName(),
-                request.getNewBirthDetails().get(0).getRegistrationNo(),
+                request.getNewBirthDetails().get(0).getApplicationType(),
                 "REG",
                 birthDetails.size());
         validateFileCodes(filecodes, birthDetails.size());
@@ -301,6 +306,17 @@ public class NewBirthEnrichment implements BaseEnrichment {
                         }
                     }
                 });
+    }
+    private void setPlaceOfBirth(NewBirthDetailRequest request) {
+        request.getNewBirthDetails()
+                .forEach(birth -> {
+                });
+    }
+    private void setStatisticalInfo(NewBirthDetailRequest request) {
+        request.getNewBirthDetails()
+                .forEach(birth -> {
+                });
+
     }
     private List<String> getIds(RequestInfo requestInfo, String tenantId, String idName, String moduleCode, String  fnType, int count) {
         return idGenRepository.getIdList(requestInfo, tenantId, idName, moduleCode, fnType, count);

@@ -6,7 +6,7 @@ import org.ksmart.birth.common.producer.BndProducer;
 import org.ksmart.birth.config.BirthConfiguration;
 import org.ksmart.birth.newbirth.enrichment.NewBirthEnrichment;
 import org.ksmart.birth.newbirth.repository.querybuilder.NewBirthQueryBuilder;
-import org.ksmart.birth.newbirth.repository.rowmapper.KsmartBirthApplicationRowMapper;
+import org.ksmart.birth.newbirth.repository.rowmapper.BirthApplicationRowMapper;
 import org.ksmart.birth.utils.BirthConstants;
 import org.ksmart.birth.utils.MdmsUtil;
 import org.ksmart.birth.web.model.SearchCriteria;
@@ -27,7 +27,7 @@ public class AdoptionRepository {
     private final BirthConfiguration birthDeathConfiguration;
     private final JdbcTemplate jdbcTemplate;
     private final NewBirthQueryBuilder birthQueryBuilder;
-    private final KsmartBirthApplicationRowMapper ksmartBirthApplicationRowMapper;
+    private final BirthApplicationRowMapper ksmartBirthApplicationRowMapper;
     private final  MdmsDataService mdmsDataService;
     private final  MdmsUtil mdmsUtil;
 
@@ -35,7 +35,7 @@ public class AdoptionRepository {
 
     @Autowired
     AdoptionRepository(JdbcTemplate jdbcTemplate, NewBirthEnrichment newBirthEnrichment, BirthConfiguration birthDeathConfiguration,
-                       BndProducer producer, NewBirthQueryBuilder birthQueryBuilder, KsmartBirthApplicationRowMapper ksmartBirthApplicationRowMapper,
+                       BndProducer producer, NewBirthQueryBuilder birthQueryBuilder, BirthApplicationRowMapper ksmartBirthApplicationRowMapper,
                        MdmsDataService mdmsDataService, MdmsUtil mdmsUtil) {
         this.jdbcTemplate = jdbcTemplate;
         this.newBirthEnrichment = newBirthEnrichment;

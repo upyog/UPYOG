@@ -185,7 +185,21 @@ public class NewBirthApplication {
     @Size(max = 64)
     @JsonProperty("tenantid")
     private String tenantId;
+    @Size(max = 64)
+    @JsonProperty("villageid")
+    private String villageid;
 
+    @Size(max = 64)
+    @JsonProperty("talukid")
+    private String talukid;
+
+    @Size(max = 64)
+    @JsonProperty("districtid")
+    private String districtid;
+
+    @Size(max = 64)
+    @JsonProperty("countryid")
+    private String countryid;
     @Size(max = 64)
     @JsonProperty("applicationtype")
     private String applicationType;
@@ -271,9 +285,11 @@ public class NewBirthApplication {
     private ParentAddress parentAddress;
     @JsonProperty("InformarHosInstDetails")
     private InformatDetail informatDetail;
-    @JsonProperty("isAdopted")
-    private Boolean isAdopted;
 
+    @JsonProperty("isFatherInfoMissing")
+    private Boolean isFatherInfoMissing;
+    @JsonProperty("isMotherInfoMissing")
+    private Boolean isMotherInfoMissing;
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails;
 }

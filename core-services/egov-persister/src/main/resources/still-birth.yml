@@ -2,14 +2,14 @@ serviceMaps:
   serviceName: birth-services
   mappings:
     - version: 1.0
-      description: Persists save birth details in eg_birth_details  table
-      fromTopic: ksmart-save-birth-application-topic
+      description: Persists save still birth details in eg_birth_details  table
+      fromTopic: save-still-birth-application-topic
       isTransaction: true
       queryMaps:
         - query: INSERT INTO public.eg_birth_details(id,dateofreport,dateofbirth,timeofbirth,am_pm,firstname_en,firstname_ml,middlename_en,middlename_ml,lastname_en,lastname_ml,tenantid,
-            gender,remarks_en,remarks_ml,aadharno,esign_user_code,esign_user_desig_code,is_adopted,is_abandoned,is_multiple_birth,is_father_info_missing,is_mother_info_missing,no_of_alive_birth,
+            gender,remarks_en,remarks_ml,aadharno,esign_user_code,esign_user_desig_code,is_sill_birth,is_father_info_missing,is_mother_info_missing,no_of_alive_birth,
             multiplebirthdetid,is_born_outside,ot_passportno,ot_dateofarrival,applicationtype,businessservice,workflowcode,fm_fileno,file_date,file_status,applicationno,registrationno,registration_date,
-            action,status, createdtime, createdby, lastmodifiedtime, lastmodifiedby) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
+            action,status, createdtime, createdby, lastmodifiedtime, lastmodifiedby) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
 
           basePath: ChildDetails.*
           jsonMaps:
@@ -49,11 +49,7 @@ serviceMaps:
 
             - jsonPath: $.ChildDetails.*.esign_user_desig_code
 
-            - jsonPath: $.ChildDetails.*.is_adopted
-
-            - jsonPath: $.ChildDetails.*.is_abandoned
-
-            - jsonPath: $.ChildDetails.*.is_multiple_birth
+            - jsonPath: $.ChildDetails.*.isStill
 
             - jsonPath: $.ChildDetails.*.ParentsDetails.isfatherInfo
 
@@ -101,10 +97,10 @@ serviceMaps:
 
         - query: INSERT INTO public.eg_birth_place(id,birthdtlid,placeofbirthid,hospitalid,public_place_id,institution_type_id,institution_id,vehicletypeid,vehicle_registration_no,vehicle_from_en,vehicle_to_en,vehicle_from_ml,
             vehicle_to_ml,vehicle_admit_hospital_en,ho_householder_en,ho_locality_en,ho_locality_ml,ho_street_name_en,ho_street_name_ml,ho_housename_en,ho_housename_ml,ho_villageid,
-            ho_talukid,ho_districtid,ho_stateid,ho_poid,ho_pinno,ho_countryid,ward_id,auth_officer_id,auth_officer_desig_id,oth_auth_officer_name,oth_auth_officer_desig,
-            informants_mobileno,informants_aadhaar_no,vehicle_haltplace_en,vehicle_hospitalid,createdby,createdtime,lastmodifiedby,lastmodifiedtime,vehicle_haltplace_ml,
+            ho_talukid,ho_districtid,ho_stateid,ho_poid,ho_pinno,ho_countryid,ward_id,auth_officer_id,auth_officer_desig_id,oth_auth_officer_name,oth_auth_officer_desig,informantsname_en,
+            informantsaddress_en,informants_mobileno,informants_aadhaar_no,vehicle_haltplace_en,vehicle_hospitalid,createdby,createdtime,lastmodifiedby,lastmodifiedtime,vehicle_haltplace_ml,
             vehicle_desc,public_place_desc,public_locality_en,public_locality_ml,public_street_name_en,public_street_name_ml)
-            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
+            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
 
           basePath: ChildDetails.*
           jsonMaps:
@@ -176,9 +172,13 @@ serviceMaps:
 
             - jsonPath: $.ChildDetails.*.auth_officer_desig_id
 
+            - jsonPath: $.ChildDetails.*.oth_auth_officer_name
+
+            - jsonPath: $.ChildDetails.*.oth_auth_officer_desig
+
             - jsonPath: $.ChildDetails.*.InformarHosInstDetails.infomantFirstNameEn
 
-            - jsonPath: $.ChildDetails.*.informerDesi
+            - jsonPath: $.ChildDetails.*.InformarHosInstDetails.informantsname_ml
 
             - jsonPath: $.ChildDetails.*.InformarHosInstDetails.informerAddress
 
@@ -547,15 +547,15 @@ serviceMaps:
             - jsonPath: $.ChildDetails.*.auditDetails.lastModifiedTime
 
     - version: 1.0
-      description: Persists update birth details in eg_birth_details  table
-      fromTopic: ksmart-update-birth-application-topic
+      description: Persists update still birth details in eg_birth_details  table
+      fromTopic:  save-still-birth-application-topic
       isTransaction: true
       queryMaps:
 
         - query: UPDATE public.eg_birth_details SET  dateofbirth=?, timeofbirth=?, am_pm=?, firstname_en=?, firstname_ml=?,
             middlename_en=?, middlename_ml=?, lastname_en=?, lastname_ml=?, tenantid=?, gender=?, aadharno=?, esign_user_code=?,
             esign_user_desig_code=?, is_father_info_missing=?, is_mother_info_missing=?, is_born_outside=?, ot_passportno=?, ot_dateofarrival=?,
-            applicationtype=?, businessservice=?, workflowcode=?, fm_fileno=?, file_date=?, file_status=?, applicationno=?,  registrationno=?, 
+            applicationtype=?, businessservice=?, workflowcode=?, fm_fileno=?, file_date=?, file_status=?, applicationno=?,  registrationno=?,
             registration_date=?, action=?, status=?,  lastmodifiedby=?, lastmodifiedtime=? WHERE id=?;
 
 
@@ -852,7 +852,7 @@ serviceMaps:
 
         - query: UPDATE public.eg_birth_present_address SET housename_no_en=?, housename_no_ml=?, ot_address1_en=?,
             ot_address1_ml=?, ot_address2_en=?, ot_address2_ml=?, ot_state_region_province_en=?, ot_state_region_province_ml=?, villageid=?, tenantid=?,
-            talukid=?, districtid=?, stateid=?, poid=?, pinno=?, countryid=?, bio_adopt=?, taluk_name=?, village_name=?, ward_code=?, 
+            talukid=?, districtid=?, stateid=?, poid=?, pinno=?, countryid=?, bio_adopt=?, taluk_name=?, village_name=?, ward_code=?,
             locality_en=?, locality_ml=?, street_name_en=?, street_name_ml=?, lastmodifiedby=?, lastmodifiedtime=?, ot_zipcode=?, postoffice_en=?, postoffice_ml=? WHERE birthdtlid=?;
           basePath: ChildDetails.*.AddressBirthDetails
           jsonMaps:

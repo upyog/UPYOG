@@ -101,13 +101,12 @@ serviceMaps:
 
 
 
-        - query: INSERT INTO public.eg_birth_place(id, birthdtlid, placeofbirthid, hospitalid, vehicletypeid, vehicle_registration_no, vehicle_from_en, vehicle_to_en, vehicle_from_ml, vehicle_to_ml, 
-                 vehicle_other_en, vehicle_other_ml, vehicle_admit_hospital_en, vehicle_admit_hospital_ml, public_place_id, ho_householder_en, ho_householder_ml, ho_res_asso_no, 
-                 ho_housename_en, ho_housename_ml, ho_villageid, ho_talukid, ho_districtid, ho_stateid, ho_poid, ho_pinno, 
-                ho_countryid, ward_id, oth_details_en, oth_details_ml, institution_type_id, institution_id, auth_officer_id, auth_officer_desig_id, oth_auth_officer_name, oth_auth_officer_desig, 
-                informantsname_en, informantsname_ml, informantsaddress_en, informantsaddress_ml, informants_mobileno, informants_aadhaar_no, ho_doorno, ho_subno, vehicle_haltplace, vehicle_hospitalid, informant_addressline2,
-                createdtime, createdby, lastmodifiedtime, lastmodifiedby) 
-                VALUES (?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?,	?);
+        - query: INSERT INTO public.eg_birth_place(id,birthdtlid,placeofbirthid,hospitalid,public_place_id,institution_type_id,institution_id,vehicletypeid,vehicle_registration_no,vehicle_from_en,vehicle_to_en,vehicle_from_ml,
+                vehicle_to_ml,vehicle_admit_hospital_en,ho_householder_en,ho_locality_en,ho_locality_ml,ho_street_name_en,ho_street_name_ml,ho_housename_en,ho_housename_ml,ho_villageid,
+                ho_talukid,ho_districtid,ho_stateid,ho_poid,ho_pinno,ho_countryid,ward_id,auth_officer_id,auth_officer_desig_id,oth_auth_officer_name,oth_auth_officer_desig,informantsname_en,
+                informantsaddress_en,informants_mobileno,informants_aadhaar_no,vehicle_haltplace_en,vehicle_hospitalid,createdby,createdtime,lastmodifiedby,lastmodifiedtime,vehicle_haltplace_ml,
+                vehicle_desc,public_place_desc,public_locality_en,public_locality_ml,public_street_name_en,public_street_name_ml) 
+                VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
 
           basePath: BirthDetails.*.birthPlace
           jsonMaps:
@@ -115,41 +114,43 @@ serviceMaps:
 
             - jsonPath: $.BirthDetails.*.id
 
-            - jsonPath: $.BirthDetails.*.birthPlace.placeofbirthid
+            - jsonPath: $.BirthDetails.*.birthPlace.birthPlace
 
-            - jsonPath: $.BirthDetails.*.birthPlace.hospitalid
+            - jsonPath: $.BirthDetails.*.birthPlace.hospitalCode
 
-            - jsonPath: $.BirthDetails.*.birthPlace.vehicletypeid
+            - jsonPath: $.BirthDetails.*.birthPlace.publicPlaceType
 
-            - jsonPath: $.BirthDetails.*.birthPlace.vehicle_registration_no
+            - jsonPath: $.BirthDetails.*.birthPlace.institutionTypeCode
 
-            - jsonPath: $.BirthDetails.*.birthPlace.vehicle_from_en
+            - jsonPath: $.BirthDetails.*.birthPlace.institutionId
 
-            - jsonPath: $.BirthDetails.*.birthPlace.vehicle_to_en
+            - jsonPath: $.BirthDetails.*.birthPlace.vehicleType
 
-            - jsonPath: $.BirthDetails.*.birthPlace.vehicle_from_ml
+            - jsonPath: $.BirthDetails.*.birthPlace.vehicleRegistrationNo
 
-            - jsonPath: $.BirthDetails.*.birthPlace.vehicle_to_ml
+            - jsonPath: $.BirthDetails.*.birthPlace.vehicleFromEn
 
-            - jsonPath: $.BirthDetails.*.birthPlace.vehicle_other_en
+            - jsonPath: $.BirthDetails.*.birthPlace.vehicleToEn
 
-            - jsonPath: $.BirthDetails.*.birthPlace.vehicle_other_ml
+            - jsonPath: $.BirthDetails.*.birthPlace.vehicleFromMl
 
-            - jsonPath: $.BirthDetails.*.birthPlace.vehicle_admit_hospital_en
+            - jsonPath: $.BirthDetails.*.birthPlace.vehicleToMl
 
-            - jsonPath: $.BirthDetails.*.birthPlace.vehicle_admit_hospital_ml
+            - jsonPath: $.BirthDetails.*.birthPlace.setadmittedHospitalEn
 
-            - jsonPath: $.BirthDetails.*.birthPlace.public_place_id
+            - jsonPath: $.BirthDetails.*.birthPlace.infomantFirstNameEn
 
-            - jsonPath: $.BirthDetails.*.birthPlace.ho_householder_en
+            - jsonPath: $.BirthDetails.*.birthPlace.adrsLocalityNameEn
 
-            - jsonPath: $.BirthDetails.*.birthPlace.ho_householder_ml
+            - jsonPath: $.BirthDetails.*.birthPlace.adrsLocalityNameMl
 
-            - jsonPath: $.BirthDetails.*.birthPlace.ho_res_asso_no
+            - jsonPath: $.BirthDetails.*.birthPlace.adrsStreetNameEn
 
-            - jsonPath: $.BirthDetails.*.birthPlace.ho_housename_en
+            - jsonPath: $.BirthDetails.*.birthPlace.adrsStreetNameMl
 
-            - jsonPath: $.BirthDetails.*.birthPlace.ho_housename_ml
+            - jsonPath: $.BirthDetails.*.birthPlace.adrsHouseNameEn
+
+            - jsonPath: $.BirthDetails.*.birthPlace.adrsHouseNameMl
 
             - jsonPath: $.BirthDetails.*.birthPlace.ho_villageid
 
@@ -159,60 +160,55 @@ serviceMaps:
 
             - jsonPath: $.BirthDetails.*.birthPlace.ho_stateid
 
-            - jsonPath: $.BirthDetails.*.birthPlace.ho_poid
+            - jsonPath: $.BirthDetails.*.birthPlace.adrsPostOffice
 
-            - jsonPath: $.BirthDetails.*.birthPlace.ho_pinno
+            - jsonPath: $.BirthDetails.*.birthPlace.adrsPincode
 
             - jsonPath: $.BirthDetails.*.birthPlace.ho_countryid
 
-            - jsonPath: $.BirthDetails.*.birthPlace.ward_id
-
-            - jsonPath: $.BirthDetails.*.birthPlace.oth_details_en
-
-            - jsonPath: $.BirthDetails.*.birthPlace.oth_details_ml
-
-            - jsonPath: $.BirthDetails.*.birthPlace.institution_type_id
-
-            - jsonPath: $.BirthDetails.*.birthPlace.institution_id
+            - jsonPath: $.BirthDetails.*.birthPlace.wardNumber
 
             - jsonPath: $.BirthDetails.*.birthPlace.auth_officer_id
 
-            - jsonPath: $.BirthDetails.*.birthPlace.auth_officer_desig_id
+            - jsonPath: $.BirthDetails.*.InformarHosInstDetails.informerDesi
 
-            - jsonPath: $.BirthDetails.*.birthPlace.oth_auth_officer_name
+            - jsonPath: $.BirthDetails.*.InformarHosInstDetails.infomantFirstNameEn
 
-            - jsonPath: $.BirthDetails.*.birthPlace.oth_auth_officer_desig
+            - jsonPath: $.BirthDetails.*.InformarHosInstDetails.informerDesi
 
-            - jsonPath: $.BirthDetails.*.birthPlace.informantsname_en
+            - jsonPath: $.BirthDetails.*.InformarHosInstDetails.infomantFirstNameEn
 
-            - jsonPath: $.BirthDetails.*.birthPlace.informantsname_ml
+            - jsonPath: $.BirthDetails.*.InformarHosInstDetails.informerAddress
 
-            - jsonPath: $.BirthDetails.*.birthPlace.informantsaddress_en
+            - jsonPath: $.BirthDetails.*.InformarHosInstDetails.infomantMobile
 
-            - jsonPath: $.BirthDetails.*.birthPlace.informantsaddress_ml
+            - jsonPath: $.BirthDetails.*.InformarHosInstDetails.infomantAadhar
 
-            - jsonPath: $.BirthDetails.*.birthPlace.informants_mobileno
-
-            - jsonPath: $.BirthDetails.*.birthPlace.informants_aadhaar_no
-
-            - jsonPath: $.BirthDetails.*.birthPlace.ho_doorno
-
-            - jsonPath: $.BirthDetails.*.birthPlace.ho_subno
-
-            - jsonPath: $.BirthDetails.*.birthPlace.vehicle_haltplace
+            - jsonPath: $.BirthDetails.*.birthPlace.vehicleDesDetailsEn
 
             - jsonPath: $.BirthDetails.*.birthPlace.vehicle_hospitalid
 
-            - jsonPath: $.BirthDetails.*.birthPlace.informant_addressline2
+            - jsonPath: $.BirthDetails.*.auditDetails.createdBy
 
             - jsonPath: $.BirthDetails.*.auditDetails.createdTime
 
-            - jsonPath: $.BirthDetails.*.auditDetails.createdBy
+            - jsonPath: $.BirthDetails.*.auditDetails.lastModifiedBy
 
             - jsonPath: $.BirthDetails.*.auditDetails.lastModifiedTime
 
-            - jsonPath: $.BirthDetails.*.auditDetails.lastModifiedBy
+            - jsonPath: $.BirthDetails.*.birthPlace.vehicleHaltPlaceMl
 
+            - jsonPath: $.BirthDetails.*.birthPlace.vehicleDesDetailsEn
+
+            - jsonPath: $.BirthDetails.*.birthPlace.publicPlaceDecpEn
+
+            - jsonPath: $.BirthDetails.*.birthPlace.localityNameEn
+
+            - jsonPath: $.BirthDetails.*.birthPlace.localityNameMl
+
+            - jsonPath: $.BirthDetails.*.birthPlace.streetNameEn
+
+            - jsonPath: $.BirthDetails.*.birthPlace.streetNameMl
 
 
         - query: INSERT INTO public.eg_birth_father_information (id, firstname_en, firstname_ml, middlename_en, middlename_ml, lastname_en, lastname_ml, aadharno, emailid, mobileno, 
@@ -467,7 +463,7 @@ serviceMaps:
 
             - jsonPath: $.BirthDetails.*.birthStatistical.mother_nationalityid
 
-            - jsonPath: $.BirthDetails.*.birthStatistical.mother_age_marriage
+            - jsonPath: $.BirthDetails.*.birthStatistical.motherMarriageAge
 
             - jsonPath: $.BirthDetails.*.birthStatistical.mother_age_delivery
 

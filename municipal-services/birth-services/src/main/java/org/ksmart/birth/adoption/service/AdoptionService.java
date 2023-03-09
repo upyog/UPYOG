@@ -6,7 +6,7 @@ import org.ksmart.birth.utils.MdmsUtil;
 import org.ksmart.birth.web.model.SearchCriteria;
 import org.ksmart.birth.web.model.newbirth.NewBirthApplication;
 import org.ksmart.birth.web.model.newbirth.NewBirthDetailRequest;
-import org.ksmart.birth.workflow.WorkflowIntegrator;
+import org.ksmart.birth.workflow.WorkflowIntegratorNewBirth;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,12 +15,12 @@ import java.util.List;
 @Service
 public class AdoptionService {
     private final NewBirthRepository repository;
-    private final WorkflowIntegrator workflowIntegrator;
+    private final WorkflowIntegratorNewBirth workflowIntegrator;
     private final MdmsUtil mdmsUtil;
     private final NewBirthApplicationValidator validator;
 
     @Autowired
-    AdoptionService(NewBirthRepository repository, MdmsUtil mdmsUtil, WorkflowIntegrator workflowIntegrator,
+    AdoptionService(NewBirthRepository repository, MdmsUtil mdmsUtil, WorkflowIntegratorNewBirth workflowIntegrator,
                     NewBirthApplicationValidator validator) {
         this.repository = repository;
         this.mdmsUtil = mdmsUtil;

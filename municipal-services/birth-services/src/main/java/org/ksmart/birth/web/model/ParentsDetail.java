@@ -91,7 +91,7 @@ public class ParentsDetail {
     @Size(max = 64)
     @JsonProperty("motherMaritalStatus")
     private String motherMaritalStatus;
-    @JsonProperty("ageMarriageStatusHide")// if marriaed true
+    @JsonProperty("ageMarriageStatusHide")// if married true
     private Boolean ageMarriageStatusHide;
     @Size(max = 64)
     @JsonProperty("fatherBioAdopt")
