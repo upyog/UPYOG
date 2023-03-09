@@ -1,6 +1,6 @@
 # Local Setup
 
-To setup the egov-workflow-v2 service in your local system, clone the [Core Service repository](https://github.com/egovernments/core-services).
+To setup the Workflow Service (egov-workflow-v2) in your local system, clone the [Core Service Repository](https://github.com/upyog/UPYOG/tree/master/core-services).
 
 ## Dependencies
 
@@ -15,7 +15,7 @@ To setup the egov-workflow-v2 service in your local system, clone the [Core Serv
 
 ## Running Locally
 
-To run the egov-workflow-v2 services locally, you need to port forward below services locally
+To run the Workflow Service (egov-workflow-v2) locally, you need to port forward below services locally
 
 ```bash
 function kgpt(){kubectl get pods -n egov --selector=app=$1 --no-headers=true | head -n1 | awk '{print $1}'}
