@@ -134,7 +134,7 @@ e) `process/_search`
 
 This method search the list of transition performed on the application.
 
-**`Postman collection`** :-[Postman COllection](https://api.postman.com/collections/23419225-458f052c-e18c-43ad-a35d-eb74015a8298?access_key=PMAT-01GQEZREV0XJ9D1MSMTBS4J8RV)
+**`Postman collection`** :- [Postman Collection](https://api.postman.com/collections/23419225-458f052c-e18c-43ad-a35d-eb74015a8298?access_key=PMAT-01GQEZREV0XJ9D1MSMTBS4J8RV)
 
 
 ### Kafka Consumers
