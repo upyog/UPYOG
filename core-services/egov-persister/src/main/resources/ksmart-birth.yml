@@ -101,12 +101,12 @@ serviceMaps:
 
             - jsonPath: $.ChildDetails.*.isStill
 
-        - query: INSERT INTO public.eg_birth_place(id,birthdtlid,placeofbirthid,hospitalid,public_place_id,institution_type_id,institution_id,vehicletypeid,vehicle_registration_no,vehicle_from_en,vehicle_to_en,vehicle_from_ml,
-            vehicle_to_ml,vehicle_admit_hospital_en,ho_householder_en,ho_locality_en,ho_locality_ml,ho_street_name_en,ho_street_name_ml,ho_housename_en,ho_housename_ml,ho_villageid,
-            ho_talukid,ho_districtid,ho_stateid,ho_poid,ho_pinno,ho_countryid,ward_id,auth_officer_id,auth_officer_desig_id,oth_auth_officer_name,oth_auth_officer_desig,
+        - query: INSERT INTO public.eg_birth_place(id,birthdtlid,placeofbirthid,hospitalid,public_place_id,institution_type_id,institution_id,vehicletypeid,vehicle_registration_no,vehicle_from_en,
+            vehicle_to_en,vehicle_from_ml, vehicle_to_ml,vehicle_admit_hospital_en,ho_householder_en,ho_locality_en,ho_locality_ml,ho_street_name_en,ho_street_name_ml,ho_housename_en,ho_housename_ml,ho_villageid,
+            ho_talukid,ho_districtid,ho_stateid,ho_poid,ho_pinno,ho_countryid,ward_id,auth_officer_id,auth_officer_desig_id,oth_auth_officer_name,oth_auth_officer_desig, informantsaddress_en,
             informants_mobileno,informants_aadhaar_no,vehicle_haltplace_en,vehicle_hospitalid,createdby,createdtime,lastmodifiedby,lastmodifiedtime,vehicle_haltplace_ml,
             vehicle_desc,public_place_desc,public_locality_en,public_locality_ml,public_street_name_en,public_street_name_ml)
-            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
+            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
 
           basePath: ChildDetails.*
           jsonMaps:
@@ -117,6 +117,12 @@ serviceMaps:
             - jsonPath: $.ChildDetails.*.birthPlace
 
             - jsonPath: $.ChildDetails.*.hospitalCode
+
+            - jsonPath: $.ChildDetails.*.publicPlaceType
+
+            - jsonPath: $.ChildDetails.*.institutionTypeCode
+
+            - jsonPath: $.ChildDetails.*.institutionId
 
             - jsonPath: $.ChildDetails.*.vehicleType
 
@@ -130,25 +136,21 @@ serviceMaps:
 
             - jsonPath: $.ChildDetails.*.vehicleToMl
 
-            - jsonPath: $.ChildDetails.*.vehicle_other_en
+            - jsonPath: $.ChildDetails.*.vehicle_admit_hospital_en
 
-            - jsonPath: $.ChildDetails.*.vehicle_other_ml
+            - jsonPath: $.ChildDetails.*.ho_householder_en
 
-            - jsonPath: $.ChildDetails.*.setadmittedHospitalEn
+            - jsonPath: $.ChildDetails.*.adrsLocalityNameEn
 
-            - jsonPath: $.ChildDetails.*.vehicle_admit_hospital_ml
+            - jsonPath: $.ChildDetails.*.adrsLocalityNameMl
 
-            - jsonPath: $.ChildDetails.*.publicPlaceType
+            - jsonPath: $.ChildDetails.*.adrsStreetNameEn
+
+            - jsonPath: $.ChildDetails.*.adrsStreetNameMl
 
             - jsonPath: $.ChildDetails.*.adrsHouseNameEn
 
             - jsonPath: $.ChildDetails.*.adrsHouseNameMl
-
-            - jsonPath: $.ChildDetails.*.ho_res_asso_no
-
-            - jsonPath: $.ChildDetails.*.adrsHouseNameMl
-
-            - jsonPath: $.ChildDetails.*.adrsLocalityNameEn
 
             - jsonPath: $.ChildDetails.*.ho_villageid
 
@@ -166,45 +168,45 @@ serviceMaps:
 
             - jsonPath: $.ChildDetails.*.wardNo
 
-            - jsonPath: $.ChildDetails.*.oth_details_en
-
-            - jsonPath: $.ChildDetails.*.oth_details_ml
-
-            - jsonPath: $.ChildDetails.*.institutionTypeCode
-
-            - jsonPath: $.ChildDetails.*.institutionId
-
-            - jsonPath: $.ChildDetails.*.auth_officer_id
-
-            - jsonPath: $.ChildDetails.*.auth_officer_desig_id
-
             - jsonPath: $.ChildDetails.*.InformarHosInstDetails.infomantFirstNameEn
 
-            - jsonPath: $.ChildDetails.*.informerDesi
+            - jsonPath: $.ChildDetails.*.InformarHosInstDetails.informerDesi
+
+            - jsonPath: $.ChildDetails.*.InformarHosInstDetails.oth_auth_officer_name
+
+            - jsonPath: $.ChildDetails.*.InformarHosInstDetails.oth_auth_officer_desig
 
             - jsonPath: $.ChildDetails.*.InformarHosInstDetails.informerAddress
-
-            - jsonPath: $.ChildDetails.*.InformarHosInstDetails.informantsaddress_ml
 
             - jsonPath: $.ChildDetails.*.InformarHosInstDetails.infomantMobile
 
             - jsonPath: $.ChildDetails.*.InformarHosInstDetails.infomantAadhar
 
-            - jsonPath: $.ChildDetails.*.ho_doorno
+            - jsonPath: $.ChildDetails.*.vehicleHaltPlaceEn
 
-            - jsonPath: $.ChildDetails.*.vehicleHaltPlaceMl
-
-            - jsonPath: $.ChildDetails.*.vehicle_hospitalid
-
-            - jsonPath: $.ChildDetails.*.informant_addressline2
-
-            - jsonPath: $.ChildDetails.*.auditDetails.createdTime
+            - jsonPath: $.ChildDetails.*.setadmittedHospitalEn
 
             - jsonPath: $.ChildDetails.*.auditDetails.createdBy
 
-            - jsonPath: $.ChildDetails.*.auditDetails.lastModifiedTime
+            - jsonPath: $.ChildDetails.*.auditDetails.createdTime
 
             - jsonPath: $.ChildDetails.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.ChildDetails.*.auditDetails.lastModifiedTime
+
+            - jsonPath: $.ChildDetails.*.vehicleHaltPlaceMl
+
+            - jsonPath: $.ChildDetails.*.vehicleDesDetailsEn
+
+            - jsonPath: $.ChildDetails.*.publicPlaceDecpEn
+
+            - jsonPath: $.ChildDetails.*.localityNameEn
+
+            - jsonPath: $.ChildDetails.*.localityNameMl
+
+            - jsonPath: $.ChildDetails.*.streetNameEn
+
+            - jsonPath: $.ChildDetails.*.streetNameMl
 
 
 
@@ -556,11 +558,12 @@ serviceMaps:
       isTransaction: true
       queryMaps:
 
-        - query: UPDATE public.eg_birth_details SET  dateofbirth=?, timeofbirth=?, am_pm=?, firstname_en=?, firstname_ml=?,
-            middlename_en=?, middlename_ml=?, lastname_en=?, lastname_ml=?, tenantid=?, gender=?, aadharno=?, esign_user_code=?,
-            esign_user_desig_code=?, is_father_info_missing=?, is_mother_info_missing=?, is_born_outside=?, ot_passportno=?, ot_dateofarrival=?,
-            applicationtype=?, businessservice=?, workflowcode=?, fm_fileno=?, file_date=?, file_status=?, applicationno=?,  registrationno=?, 
-            registration_date=?, action=?, status=?,  lastmodifiedby=?, lastmodifiedtime=? WHERE id=?;
+        - query: UPDATE public.eg_birth_details SET dateofbirth=?, timeofbirth=?, am_pm=?, firstname_en=?, firstname_ml=?, middlename_en=?, middlename_ml=?,
+              lastname_en=?, lastname_ml=?, tenantid=?, gender=?, aadharno=?, esign_user_code=?, esign_user_desig_code=?,
+              is_multiple_birth=?, is_father_info_missing=?, is_mother_info_missing=?, no_of_alive_birth=?, multiplebirthdetid=?, is_born_outside=?,
+              ot_passportno=?, ot_dateofarrival=?, applicationtype=?, businessservice=?, workflowcode=?, fm_fileno=?, file_date=?, file_status=?,
+              applicationno=?, registrationno=?, registration_date=?, action=?, status=?, lastmodifiedby=?,
+              lastmodifiedtime=? WHERE id=?;
 
 
           basePath: ChildDetails.*
@@ -593,9 +596,15 @@ serviceMaps:
 
             - jsonPath: $.ChildDetails.*.esign_user_desig_code
 
+            - jsonPath: $.ChildDetails.*.is_multiple_birth
+
             - jsonPath: $.ChildDetails.*.isfatherInfo
 
             - jsonPath: $.ChildDetails.*.ismotherInfo
+
+            - jsonPath: $.ChildDetails.*.no_of_alive_birth
+
+            - jsonPath: $.ChildDetails.*.multiplebirthdetid
 
             - jsonPath: $.ChildDetails.*.is_born_outside
 
@@ -631,21 +640,26 @@ serviceMaps:
 
             - jsonPath: $.ChildDetails.*.id
 
-        - query: UPDATE public.eg_birth_place SET placeofbirthid=?, hospitalid=?, vehicletypeid=?, vehicle_registration_no=?, vehicle_from_en=?, vehicle_to_en=?,
-            vehicle_from_ml=?, vehicle_to_ml=?, vehicle_other_en=?, vehicle_other_ml=?, vehicle_admit_hospital_en=?, vehicle_admit_hospital_ml=?,
-            public_place_id=?, ho_householder_en=?, ho_householder_ml=?, ho_res_asso_no=?, ho_housename_en=?,ho_housename_ml=?, ho_villageid=?, ho_talukid=?,
-            ho_districtid=?, ho_stateid=?, ho_poid=?, ho_pinno=?, ho_countryid=?, ward_id=?,oth_details_en=?, oth_details_ml=?, institution_type_id=?, institution_id=?,
-            auth_officer_id=?, auth_officer_desig_id=?,oth_auth_officer_name=?, oth_auth_officer_desig=?, informantsname_en=?, informantsname_ml=?, informantsaddress_en=?,
-            informantsaddress_ml=?, informants_mobileno=?, informants_aadhaar_no=?, ho_doorno=?, ho_subno=?, vehicle_haltplace_en=?, vehicle_hospitalid=?,
-            informant_addressline2=?, ho_res_asso_no_ml=?, lastmodifiedtime=?, lastmodifiedby=?
-            WHERE  birthdtlid=?;
+        - query: UPDATE public.eg_birth_place SET placeofbirthid=?, hospitalid=?, public_place_id=?, institution_type_id=?, institution_id=?, vehicletypeid=?, vehicle_registration_no=?, 
+                vehicle_from_en=?, vehicle_to_en=?, vehicle_from_ml=?, vehicle_to_ml=?, vehicle_admit_hospital_en=?, ho_householder_en=?, ho_householder_ml=?, ho_locality_en=?, 
+                ho_locality_ml=?, ho_street_name_en=?, 
+                ho_street_name_ml=?, ho_housename_en=?, ho_housename_ml=?, ho_villageid=?, ho_talukid=?, ho_districtid=?, ho_stateid=?, ho_poid=?, ho_pinno=?, 
+                ho_countryid=?, ward_id=?, auth_officer_id=?, auth_officer_desig_id=?, oth_auth_officer_name=?, oth_auth_officer_desig=?, 
+                informantsaddress_en=?, informants_mobileno=?, informants_aadhaar_no=?, vehicle_haltplace_en=?, vehicle_hospitalid=?, 
+                lastmodifiedby=?, lastmodifiedtime=?, vehicle_haltplace_ml=?, vehicle_desc=?, public_place_desc=?, 
+                public_locality_en=?, public_locality_ml=?, public_street_name_en=?, public_street_name_ml=?  WHERE  birthdtlid=?;
 
           basePath: ChildDetails.*
           jsonMaps:
-
             - jsonPath: $.ChildDetails.*.birthPlace
 
             - jsonPath: $.ChildDetails.*.hospitalCode
+
+            - jsonPath: $.ChildDetails.*.publicPlaceType
+
+            - jsonPath: $.ChildDetails.*.institutionTypeCode
+
+            - jsonPath: $.ChildDetails.*.institutionId
 
             - jsonPath: $.ChildDetails.*.vehicleType
 
@@ -659,21 +673,19 @@ serviceMaps:
 
             - jsonPath: $.ChildDetails.*.vehicleToMl
 
-            - jsonPath: $.ChildDetails.*.vehicle_other_en
-
-            - jsonPath: $.ChildDetails.*.vehicle_other_ml
-
             - jsonPath: $.ChildDetails.*.vehicle_admit_hospital_en
 
-            - jsonPath: $.ChildDetails.*.vehicle_admit_hospital_ml
+            - jsonPath: $.ChildDetails.*.ho_householder_en
 
-            - jsonPath: $.ChildDetails.*.publicPlaceType
+            - jsonPath: $.ChildDetails.*.ho_householder_ml
 
-            - jsonPath: $.ChildDetails.*.adrsHouseNameEn
+            - jsonPath: $.ChildDetails.*.adrsLocalityNameEn
 
-            - jsonPath: $.ChildDetails.*.adrsHouseNameMl
+            - jsonPath: $.ChildDetails.*.adrsLocalityNameMl
 
-            - jsonPath: $.ChildDetails.*.ho_res_asso_no
+            - jsonPath: $.ChildDetails.*.adrsStreetNameEn
+
+            - jsonPath: $.ChildDetails.*.adrsStreetNameMl
 
             - jsonPath: $.ChildDetails.*.adrsHouseNameEn
 
@@ -687,57 +699,50 @@ serviceMaps:
 
             - jsonPath: $.ChildDetails.*.ho_stateid
 
-            - jsonPath: $.ChildDetails.*.ho_poid
+            - jsonPath: $.ChildDetails.*.adrsPostOffice
 
-            - jsonPath: $.ChildDetails.*.ho_pinno
+            - jsonPath: $.ChildDetails.*.adrsPincode
 
             - jsonPath: $.ChildDetails.*.ho_countryid
 
             - jsonPath: $.ChildDetails.*.wardNo
 
-            - jsonPath: $.ChildDetails.*.oth_details_en
-
-            - jsonPath: $.ChildDetails.*.oth_details_ml
-
-            - jsonPath: $.ChildDetails.*.institutionTypeCode
-
-            - jsonPath: $.ChildDetails.*.institutionId
-
-            - jsonPath: $.ChildDetails.*.auth_officer_id
-
-            - jsonPath: $.ChildDetails.*.auth_officer_desig_id
-
-            - jsonPath: $.ChildDetails.*.oth_auth_officer_name
-
-            - jsonPath: $.ChildDetails.*.oth_auth_officer_desig
-
             - jsonPath: $.ChildDetails.*.InformarHosInstDetails.infomantFirstNameEn
 
-            - jsonPath: $.ChildDetails.*.InformarHosInstDetails.informantsname_ml
+            - jsonPath: $.ChildDetails.*.InformarHosInstDetails.informerDesi
+
+            - jsonPath: $.ChildDetails.*.InformarHosInstDetails.oth_auth_officer_name
+
+            - jsonPath: $.ChildDetails.*.InformarHosInstDetails.oth_auth_officer_desig
 
             - jsonPath: $.ChildDetails.*.InformarHosInstDetails.informerAddress
-
-            - jsonPath: $.ChildDetails.*.InformarHosInstDetails.informantsaddress_ml
 
             - jsonPath: $.ChildDetails.*.InformarHosInstDetails.infomantMobile
 
             - jsonPath: $.ChildDetails.*.InformarHosInstDetails.infomantAadhar
 
-            - jsonPath: $.ChildDetails.*.ho_doorno
+            - jsonPath: $.ChildDetails.*.vehicleHaltPlaceEn
 
-            - jsonPath: $.ChildDetails.*.ho_subno
+            - jsonPath: $.ChildDetails.*.setadmittedHospitalEn
 
-            - jsonPath: $.ChildDetails.*.vehicleHaltPlaceMl
-
-            - jsonPath: $.ChildDetails.*.vehicle_hospitalid
-
-            - jsonPath: $.ChildDetails.*.informant_addressline2
-
-            - jsonPath: $.ChildDetails.*.ho_res_asso_no_ml
+            - jsonPath: $.ChildDetails.*.auditDetails.lastModifiedBy
 
             - jsonPath: $.ChildDetails.*.auditDetails.lastModifiedTime
 
-            - jsonPath: $.ChildDetails.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.ChildDetails.*.vehicleHaltPlaceMl
+
+            - jsonPath: $.ChildDetails.*.vehicleDesDetailsEn
+
+            - jsonPath: $.ChildDetails.*.publicPlaceDecpEn
+
+            - jsonPath: $.ChildDetails.*.localityNameEn
+
+            - jsonPath: $.ChildDetails.*.localityNameMl
+
+            - jsonPath: $.ChildDetails.*.streetNameEn
+
+            - jsonPath: $.ChildDetails.*.streetNameMl
 
             - jsonPath: $.ChildDetails.*.id
 
@@ -922,13 +927,13 @@ serviceMaps:
             - jsonPath: $.ChildDetails.*.id
 
 
-        - query: UPDATE public.eg_birth_statitical_information SET  weight_of_child=?, duration_of_pregnancy_in_week=?, nature_of_medical_attention=?, way_of_pregnancy=?,
-            delivery_method=?, deliverytypeothers_en=?, deliverytypeothers_ml=?, religionid=?, father_nationalityid=?, father_educationid=?, father_education_subid=?,
+        - query: UPDATE public.eg_birth_statitical_information SET  weight_of_child=?, duration_of_pregnancy_in_week=?, nature_of_medical_attention=?, cause_of_foetal_death=?,
+            delivery_method=?, religionid=?, father_nationalityid=?, father_educationid=?, father_education_subid=?,
             father_proffessionid=?, mother_educationid=?, mother_education_subid=?, mother_proffessionid=?, mother_nationalityid=?, mother_age_marriage=?, mother_age_delivery=?,
             mother_no_of_birth_given=?, mother_maritalstatusid=?, mother_unmarried=?,mother_res_lbid=?, mother_res_lb_code_id=?, mother_res_place_type_id=?, mother_res_lb_type_id=?,
             mother_res_district_id=?, mother_res_state_id=?, mother_res_country_id=?, mother_resdnce_addr_type=?, mother_resdnce_tenant=?, mother_resdnce_placetype=?,
             mother_resdnce_place_en=?, mother_resdnce_place_ml=?, mother_resdnce_lbtype=?, mother_resdnce_district=?, mother_resdnce_state=?, mother_resdnce_country=?,
-            lastmodifiedtime=?, lastmodifiedby=? WHERE birthdtlid=?;
+            mother_order_of_cur_delivery=?,mother_order_cur_child=?,mother_res_no_of_years=?,lastmodifiedtime=?, lastmodifiedby=? WHERE birthdtlid=?;
 
           basePath: ChildDetails.*
           jsonMaps:
@@ -939,13 +944,9 @@ serviceMaps:
 
             - jsonPath: $.ChildDetails.*.medicalAttensionSub
 
-            - jsonPath: $.ChildDetails.*.way_of_pregnancy
+            - jsonPath: $.ChildDetails.*.causeFoetalDeath
 
             - jsonPath: $.ChildDetails.*.deliveryMethods
-
-            - jsonPath: $.ChildDetails.*.deliverytypeothers_en
-
-            - jsonPath: $.ChildDetails.*.deliverytypeothers_ml
 
             - jsonPath: $.ChildDetails.*.ParentsDetails.Religion
 
@@ -1006,6 +1007,12 @@ serviceMaps:
             - jsonPath: $.ChildDetails.*.birthStatistical.mother_resdnce_stateid
 
             - jsonPath: $.ChildDetails.*.birthStatistical.mother_resdnce_countryid
+
+            - jsonPath: $.ChildDetails.*.ParentsDetails.mother_order_of_cur_delivery
+
+            - jsonPath: $.ChildDetails.*.ParentsDetails.orderofChildren
+
+            - jsonPath: $.ChildDetails.*.ParentsDetails.mother_res_no_of_years
 
             - jsonPath: $.ChildDetails.*.auditDetails.lastModifiedTime
 
