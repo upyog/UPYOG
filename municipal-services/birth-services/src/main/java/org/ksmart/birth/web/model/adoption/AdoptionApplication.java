@@ -261,6 +261,7 @@ public class AdoptionApplication {
     @Size(max = 64)
     @JsonProperty("birthStatisticsUuid")
     private String birthStatisticsUuid;
+    
     @JsonProperty("ParentsDetails")
     private ParentsDetail parentsDetails;
 
@@ -269,10 +270,81 @@ public class AdoptionApplication {
 
     @JsonProperty("AddressBirthDetails")
     private ParentAddress parentAddress;
+    
     @JsonProperty("InformarHosInstDetails")
     private InformatDetail informatDetail;
+    
     @JsonProperty("isAdopted")
     private Boolean isAdopted;
+   
+    /////////////////////Adoption filelds////////////////////////////////// 
+    
+    @Size(max = 64)
+    @JsonProperty("adoptfirstnameen")
+    private String adoptFirstNameEn;
+    
+    @Size(max = 64)
+    @JsonProperty("adoptfirstnameml")
+    private String adoptFirstNameMl;
+    
+    @Size(max = 64)
+    @JsonProperty("adoptmiddlenameen")
+    private String adoptMiddleNameEn;
+    
+    @Size(max = 64)
+    @JsonProperty("adoptmiddlenameml")
+    private String adoptMiddleNameMl;
+    
+    @Size(max = 64)
+    @JsonProperty("adoptlastnameen")
+    private String adoptLastNameEn;
+    
+    @Size(max = 64)
+    @JsonProperty("adoptlastnameml")
+    private String adoptLastNameMl;
+    
+    @Size(max = 64)
+    @JsonProperty("adoptdeedorderno")
+    private String adoptDeedOrderNo;
+    
+    
+    @JsonProperty("adoptdateoforderdeed")
+    private Long adoptDateoforderDeed;
+    
+    @Size(max = 64)
+    @JsonProperty("adoptissuingauththority")
+    private String adoptIssuingAuththority;
+    
+    @Size(max = 64)
+    @JsonProperty("adopthasagency")
+    private Boolean adoptHasAgency;
+    
+    @Size(max = 64)
+    @JsonProperty("adoptagencyname")
+    private String adoptAgencyName;
+    
+    @Size(max = 2500)
+    @JsonProperty("adoptagencyaddress")
+    private String adoptAgencyAddress;
+    
+    @Size(max = 64)
+    @JsonProperty("adoptdecreeorderno")
+    private String adoptDecreeOrderNo;
+    
+    
+    @JsonProperty("adoptdateoforderdecree")
+    private Long adoptDateoforderDecree;
+    
+    @Size(max = 64)
+    @JsonProperty("adoptagencycontactperson")
+    private String adoptAgencyContactPerson;
+    
+    @Size(max = 64)
+    @JsonProperty("adoptagencycontactpersonmobileno")
+    private String adoptAgencyContactPersonMobileno;
+    
+    //////////////////////////////////////////////////////////////
+    
 
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails;

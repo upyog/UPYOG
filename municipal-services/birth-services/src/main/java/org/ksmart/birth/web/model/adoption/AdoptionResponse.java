@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import org.egov.common.contract.response.ResponseInfo;
 import org.ksmart.birth.birthregistry.model.BirthCertificate;
-import org.ksmart.birth.web.model.newbirth.NewBirthApplication;
+import org.ksmart.birth.web.model.adoption.AdoptionApplication;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
@@ -24,9 +24,9 @@ public class AdoptionResponse {
     @JsonProperty("ResponseInfo")
     private ResponseInfo responseInfo;
 
-    @JsonProperty("ChildDetails")
+    @JsonProperty("ChildDetailsAdoption")
     @Valid
-    private List<NewBirthApplication> ksmartBirthDetails;
+    private List<AdoptionApplication> adoptionDetails;
 
     @JsonProperty("BirthCertificate")
     @Valid
@@ -36,11 +36,11 @@ public class AdoptionResponse {
     @JsonProperty("Count")
     private int count;
 
-    public AdoptionResponse addBirthApplication(NewBirthApplication birthDetail) {
-        if (ksmartBirthDetails == null) {
-            ksmartBirthDetails = new ArrayList<>();
+    public AdoptionResponse addAdoptionApplication(AdoptionApplication newAdoption) {
+        if (adoptionDetails == null) {
+        	adoptionDetails = new ArrayList<>();
         }
-        ksmartBirthDetails.add(birthDetail);
+        adoptionDetails.add(newAdoption);
         return this;
     }
 }

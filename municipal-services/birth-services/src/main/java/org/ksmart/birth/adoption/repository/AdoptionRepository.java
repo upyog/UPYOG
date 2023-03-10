@@ -4,14 +4,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.ksmart.birth.birthregistry.service.MdmsDataService;
 import org.ksmart.birth.common.producer.BndProducer;
 import org.ksmart.birth.config.BirthConfiguration;
-import org.ksmart.birth.newbirth.enrichment.NewBirthEnrichment;
-import org.ksmart.birth.newbirth.repository.querybuilder.NewBirthQueryBuilder;
-import org.ksmart.birth.newbirth.repository.rowmapper.BirthApplicationRowMapper;
+ 
+import org.ksmart.birth.adoption.enrichment.AdoptionEnrichment;
+import org.ksmart.birth.adoption.repository.querybuilder.AdoptionQueryBuilder;
+import org.ksmart.birth.adoption.repository.rowmapper.AdoptionApplicationRowMapper;
+ 
 import org.ksmart.birth.utils.BirthConstants;
 import org.ksmart.birth.utils.MdmsUtil;
 import org.ksmart.birth.web.model.SearchCriteria;
-import org.ksmart.birth.web.model.newbirth.NewBirthApplication;
-import org.ksmart.birth.web.model.newbirth.NewBirthDetailRequest;
+import org.ksmart.birth.web.model.adoption.AdoptionApplication;
+import org.ksmart.birth.web.model.adoption.AdoptionDetailRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -23,51 +25,53 @@ import java.util.List;
 @Repository
 public class AdoptionRepository {
     private final BndProducer producer;
-    private final NewBirthEnrichment newBirthEnrichment;
+    private final AdoptionEnrichment adoptionEnrichment;
     private final BirthConfiguration birthDeathConfiguration;
     private final JdbcTemplate jdbcTemplate;
-    private final NewBirthQueryBuilder birthQueryBuilder;
-    private final BirthApplicationRowMapper ksmartBirthApplicationRowMapper;
+ 
+    private final AdoptionQueryBuilder adoptionQueryBuilder;
+    private final AdoptionApplicationRowMapper adoptionApplicationRowMapper;
+ 
     private final  MdmsDataService mdmsDataService;
     private final  MdmsUtil mdmsUtil;
 
 
 
-    @Autowired
-    AdoptionRepository(JdbcTemplate jdbcTemplate, NewBirthEnrichment newBirthEnrichment, BirthConfiguration birthDeathConfiguration,
-                       BndProducer producer, NewBirthQueryBuilder birthQueryBuilder, BirthApplicationRowMapper ksmartBirthApplicationRowMapper,
+    @Autowired 
+    AdoptionRepository(JdbcTemplate jdbcTemplate, AdoptionEnrichment adoptionEnrichment, BirthConfiguration birthDeathConfiguration,
+                       BndProducer producer, AdoptionQueryBuilder adoptionQueryBuilder, AdoptionApplicationRowMapper adoptionApplicationRowMapper, 
                        MdmsDataService mdmsDataService, MdmsUtil mdmsUtil) {
         this.jdbcTemplate = jdbcTemplate;
-        this.newBirthEnrichment = newBirthEnrichment;
+        this.adoptionEnrichment = adoptionEnrichment;
         this.birthDeathConfiguration = birthDeathConfiguration;
         this.producer = producer;
-        this.birthQueryBuilder = birthQueryBuilder;
-        this.ksmartBirthApplicationRowMapper = ksmartBirthApplicationRowMapper;
+        this.adoptionQueryBuilder = adoptionQueryBuilder;
+        this.adoptionApplicationRowMapper = adoptionApplicationRowMapper;
         this.mdmsDataService = mdmsDataService;
         this.mdmsUtil = mdmsUtil;
     }
 
-    public List<NewBirthApplication> saveKsmartBirthDetails(NewBirthDetailRequest request) {
-        newBirthEnrichment.enrichCreate(request);
+    public List<AdoptionApplication> saveAdoptionDetails(AdoptionDetailRequest request) {
+    	adoptionEnrichment.enrichCreate(request);
         producer.push(birthDeathConfiguration.getSaveBirthAdoptionTopic(), request);
-        return request.getNewBirthDetails();
+        return request.getAdoptionDetails();
     }
 
-    public List<NewBirthApplication> updateKsmartBirthDetails(NewBirthDetailRequest request) {
-        newBirthEnrichment.enrichUpdate(request);
+    public List<AdoptionApplication> updateKsmartBirthDetails(AdoptionDetailRequest request) {
+    	adoptionEnrichment.enrichUpdate(request);
         producer.push(birthDeathConfiguration.getUpdateBirthAdoptionTopic(), request);
-        return request.getNewBirthDetails();
+        return request.getAdoptionDetails();
     }
 
 
-    public List<NewBirthApplication> searchKsmartBirthDetails(NewBirthDetailRequest request, SearchCriteria criteria) {
+    public List<AdoptionApplication> searchKsmartBirthDetails(AdoptionDetailRequest request, SearchCriteria criteria) {
         List<Object> preparedStmtValues = new ArrayList<>();
-        String query = birthQueryBuilder.getNewBirthApplicationSearchQuery(criteria, preparedStmtValues, Boolean.FALSE);
-        List<NewBirthApplication> result = jdbcTemplate.query(query, preparedStmtValues.toArray(), ksmartBirthApplicationRowMapper);
+        String query = adoptionQueryBuilder.getAdoptionSearchQuery(criteria, preparedStmtValues, Boolean.FALSE);
+        List<AdoptionApplication> result = jdbcTemplate.query(query, preparedStmtValues.toArray(), adoptionApplicationRowMapper);
         result.forEach(birth -> {
             if(birth.getPlaceofBirthId()!=null){
                 Object mdmsData = mdmsUtil.mdmsCallForLocation(request.getRequestInfo(), birth.getTenantId());
-                mdmsDataService.setKsmartLocationDetails(birth, mdmsData);
+                mdmsDataService.setAdoptionLocationDetails(birth, mdmsData);
             }
             if (birth.getParentAddress().getCountryIdPermanent() != null && birth.getParentAddress().getStateIdPermanent() != null) {
                 if (birth.getParentAddress().getCountryIdPermanent().contains(BirthConstants.COUNTRY_CODE)) {

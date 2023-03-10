@@ -1,6 +1,6 @@
 package org.ksmart.birth.adoption.repository.rowmapper;
 
-import org.ksmart.birth.web.model.newbirth.NewBirthApplication;
+import org.ksmart.birth.web.model.adoption.AdoptionApplication;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
@@ -10,14 +10,14 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 @Component
-public class AdoptionApplicationRowMapper implements ResultSetExtractor<List<NewBirthApplication>>, AdoptionBaseRowMapper, AdoptionParentDetailRowMapper, AdoptionInformatDetailsRowMapper, AdoptionParentAddressRowMapper {
+public class AdoptionApplicationRowMapper implements ResultSetExtractor<List<AdoptionApplication>>, AdoptionBaseRowMapper, AdoptionParentDetailRowMapper, AdoptionInformatDetailsRowMapper, AdoptionParentAddressRowMapper {
 
     @Override
-    public List<NewBirthApplication> extractData(ResultSet rs) throws SQLException, DataAccessException { //how to handle null
-        List<NewBirthApplication> result = new ArrayList<>();
+    public List<AdoptionApplication> extractData(ResultSet rs) throws SQLException, DataAccessException { //how to handle null
+        List<AdoptionApplication> result = new ArrayList<>();
 
         while (rs.next()) {
-            result.add(NewBirthApplication.builder()
+            result.add(AdoptionApplication.builder()
                     .id(rs.getString("ba_id"))
                     .dateOfReport(rs.getLong("ba_dateofreport"))
                     .dateOfBirth(rs.getLong("ba_dateofbirth"))

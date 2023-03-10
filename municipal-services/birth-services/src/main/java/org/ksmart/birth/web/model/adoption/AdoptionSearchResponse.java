@@ -3,7 +3,7 @@ package org.ksmart.birth.web.model.adoption;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import org.egov.common.contract.response.ResponseInfo;
-import org.ksmart.birth.web.model.newbirth.NewBirthApplication;
+import org.ksmart.birth.web.model.adoption.AdoptionApplication;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
@@ -22,12 +22,12 @@ public class AdoptionSearchResponse {
 
     @JsonProperty("ChildDetails")
     @Valid
-    private List<NewBirthApplication> newBirthDetails;
-    public AdoptionSearchResponse addKsmartBirthSearchApplication(NewBirthApplication birthDetail) {
-        if (newBirthDetails == null) {
-            newBirthDetails = new ArrayList<>();
+    private List<AdoptionApplication> AdoptionDetails;
+    public AdoptionSearchResponse addKsmartBirthSearchApplication(AdoptionApplication adoptionDetail) {
+        if (AdoptionDetails == null) {
+        	AdoptionDetails = new ArrayList<>();
         }
-        newBirthDetails.add(birthDetail);
+        AdoptionDetails.add(adoptionDetail);
         return this;
     }
 }

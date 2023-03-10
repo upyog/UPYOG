@@ -77,7 +77,7 @@ public class AdoptionQueryBuilder extends BaseAdoptionQuery {
             .append(" LEFT JOIN eg_birth_present_address epreadd ON epreadd.birthdtlid = ebd.id AND epreadd.bio_adopt='BIOLOGICAL'")
             .append(" LEFT JOIN eg_birth_statitical_information estat ON estat.birthdtlid = ebd.id").toString();
 
-    public String getNewBirthApplicationSearchQuery(@NotNull SearchCriteria criteria,
+    public String getAdoptionSearchQuery(@NotNull SearchCriteria criteria,
                                                  @NotNull List<Object> preparedStmtValues, Boolean isCount) {
         StringBuilder query = new StringBuilder(QUERY);
         StringBuilder orderBy = new StringBuilder();

@@ -6,6 +6,7 @@ import org.ksmart.birth.birthregistry.model.RegisterBirthDetail;
 import org.ksmart.birth.birthregistry.model.RegisterCertificateData;
 import org.ksmart.birth.common.services.MdmsLocationService;
 import org.ksmart.birth.common.services.MdmsTenantService;
+import org.ksmart.birth.web.model.adoption.AdoptionApplication;
 import org.ksmart.birth.web.model.newbirth.NewBirthApplication;
 import org.ksmart.birth.web.model.outsidecountry.BirthOutsideApplication;
 import org.ksmart.birth.web.model.stillbirth.StillBirthApplication;
@@ -112,6 +113,21 @@ public class MdmsDataService {
         } else {
         }
     }
+    public void setAdoptionLocationDetails(AdoptionApplication register, Object mdmsData) {
+        if (register.getPlaceofBirthId().contains(BIRTH_PLACE_HOSPITAL)) {
+           String placeEn = mdmsLocationService.getHospitalAddressEn(mdmsData, register.getHospitalId());
+           String placeMl = mdmsLocationService.getHospitalNameMl(mdmsData, register.getHospitalId());
+           register.setHospitalName(placeEn);
+           register.setHospitalNameMl(placeMl);
+       } else if (register.getPlaceofBirthId().contains(BIRTH_PLACE_INSTITUTION)) {
+           String placeEn = mdmsLocationService.getInstitutionNameEn(mdmsData, register.getInstitutionId());
+           String placeMl = mdmsLocationService.getHospitalNameMl(mdmsData, register.getInstitutionId());
+           register.setInstitution(placeEn);
+           register.setInstitutionIdMl(placeMl);
+       } else {
+       }
+   }
+    
 
     public void setStillLocationDetails(StillBirthApplication register, Object mdmsData) {
         if (register.getPlaceofBirthId().contains(BIRTH_PLACE_HOSPITAL)) {
