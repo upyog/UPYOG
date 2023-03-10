@@ -2,7 +2,7 @@
 ### API Gateway
 API Gateway provides a unified interface for a set of microservices so that clients do not need to know about all the details of microservices internals.
 
-Digit uses Zuul as an edge service that proxies requests to multiple back-end services. It provides a unified “front door” to our ecosystem.
+UPYOG uses Zuul as an edge service that proxies requests to multiple back-end services. It provides a unified “front door” to our ecosystem.
 This allows any browser, mobile app or other user interface to consume underlying services.
 
 ### DB UML Diagram
@@ -10,14 +10,15 @@ This allows any browser, mobile app or other user interface to consume underlyin
 - NA
 
 ### Service Dependencies
-- egov-accesscontrol
-- egov-user
+- Access Control Service (egov-accesscontrol)
+- User Service (egov-user)
 
 ### Swagger API Contract
 
 - NA
+
 ## Service Details
-**DIGIT** uses **Netflix ZUUL** as API Gateway.
+**UPYOG** uses **Netflix ZUUL** as API Gateway.
 
 **Functionality**
 - Provides easier API interface to clients
