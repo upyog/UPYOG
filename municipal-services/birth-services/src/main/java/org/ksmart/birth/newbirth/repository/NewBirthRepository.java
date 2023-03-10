@@ -91,7 +91,7 @@ public class NewBirthRepository {
 
                         birth.getParentAddress().setPermntInKeralaAdrPincode(birth.getParentAddress().getPinNoPermanent());
 
-                        birth.getParentAddress().setPermntInKeralaAdrPostOffice(birth.getParentAddress().getPoNoPermanent());
+                        birth.getParentAddress().setPermntInKeralaAdrPostOffice(birth.getParentAddress().getPermntInKeralaAdrPostOffice());
 
                     }
                     else{
@@ -123,9 +123,9 @@ public class NewBirthRepository {
 
                         birth.getParentAddress().setPresentaddressStateName(birth.getParentAddress().getStateIdPresent());
 
-                        birth.getParentAddress().setPresentaddressCountry(birth.getParentAddress().getDistrictIdPresent());
-
                         birth.getParentAddress().setPresentInsideKeralaDistrict(birth.getParentAddress().getDistrictIdPresent());
+
+                        birth.getParentAddress().setPresentInsideKeralaLBName(birth.getParentAddress().getPermntInKeralaAdrLBName());
 
                         birth.getParentAddress().setPresentInsideKeralaVillage(birth.getParentAddress().getVillageNamePresent());
 
@@ -140,7 +140,7 @@ public class NewBirthRepository {
 
                         birth.getParentAddress().setPresentInsideKeralaPincode(birth.getParentAddress().getPinNoPresent());
 
-                        birth.getParentAddress().setPresentInsideKeralaPostOffice(birth.getParentAddress().getPoNoPresent());
+                        birth.getParentAddress().setPresentInsideKeralaPostOffice(birth.getParentAddress().getPresentInsideKeralaPostOffice());
 
                     }
 

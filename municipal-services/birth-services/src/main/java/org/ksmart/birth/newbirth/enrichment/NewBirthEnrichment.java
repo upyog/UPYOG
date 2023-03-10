@@ -207,8 +207,9 @@ public class NewBirthEnrichment implements BaseEnrichment {
 
                                     birth.getParentAddress().setHouseNameNoEnPresent(birth.getParentAddress().getPresentInsideKeralaHouseNameEn());
                                     birth.getParentAddress().setHouseNameNoMlPresent(birth.getParentAddress().getPresentInsideKeralaHouseNameMl());
+
                                     birth.getParentAddress().setPinNoPresent(birth.getParentAddress().getPresentInsideKeralaPincode());
-                                    birth.getParentAddress().setVillageNamePresent(birth.getParentAddress().getPresentInsideKeralaPostOffice());
+                                    birth.getParentAddress().setVillageNamePresent(birth.getParentAddress().getPresentOutsideKeralaVillageName());
 
                                 } else {
                                     birth.getParentAddress().setCountryIdPresent(birth.getParentAddress().getPresentaddressCountry());
@@ -255,7 +256,6 @@ public class NewBirthEnrichment implements BaseEnrichment {
 
                                     } else{
                                         birth.getParentAddress().setCountryIdPermanent(birth.getParentAddress().getPermtaddressCountry());
-
                                         birth.getParentAddress().setStateIdPermanent(birth.getParentAddress().getPermtaddressStateName());
                                     }
 

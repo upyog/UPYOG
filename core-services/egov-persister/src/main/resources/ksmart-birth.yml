@@ -261,17 +261,15 @@ serviceMaps:
 
             - jsonPath: $.ChildDetails.*.ParentsDetails.motherBioAdopt
 
-        - query: INSERT INTO public.eg_birth_permanent_address(id, res_asso_no, housename_no_en, housename_no_ml, ot_address1_en, ot_address1_ml, ot_address2_en, ot_address2_ml,ot_state_region_province_en,
+        - query: INSERT INTO public.eg_birth_permanent_address(id, housename_no_en, housename_no_ml, ot_address1_en, ot_address1_ml, ot_address2_en, ot_address2_ml,ot_state_region_province_en,
             villageid, tenantid, talukid, districtid, stateid, poid, pinno, countryid, birthdtlid, same_as_present, createdtime, createdby, lastmodifiedtime,
-            lastmodifiedby, bio_adopt, res_asso_no_ml, taluk_name, village_name, ward_code, doorno, subno, locality_en, locality_ml, street_name_en,
+            lastmodifiedby, bio_adopt, taluk_name, village_name, ward_code, locality_en, locality_ml, street_name_en,
             street_name_ml, ot_zipcode,family_emailid, family_mobileno, postoffice_en, postoffice_ml)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,  ?, ?, ?, ?, ?, ?,?, ?, ?);
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,  ?, ?, ?, ?, ?, ?);
 
           basePath: ChildDetails.*.AddressBirthDetails
           jsonMaps:
             - jsonPath: $.ChildDetails.*.AddressBirthDetails.permanentUuid
-
-            - jsonPath: $.ChildDetails.*.AddressBirthDetails.res_asso_no
 
             - jsonPath: $.ChildDetails.*.AddressBirthDetails.houseNameNoEnPermanent
 
@@ -297,9 +295,9 @@ serviceMaps:
 
             - jsonPath: $.ChildDetails.*.AddressBirthDetails.stateIdPermanent
 
-            - jsonPath: $.ChildDetails.*.AddressBirthDetails.permntInKeralaAdrPincode
-
             - jsonPath: $.ChildDetails.*.AddressBirthDetails.permntInKeralaAdrPostOffice
+
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.permntInKeralaAdrPincode
 
             - jsonPath: $.ChildDetails.*.AddressBirthDetails.countryIdPermanent
 
@@ -317,17 +315,11 @@ serviceMaps:
 
             - jsonPath: $.ChildDetails.*.AddressBirthDetails.bioAdoptPermanent
 
-            - jsonPath: $.ChildDetails.*.AddressBirthDetails.res_asso_no_ml
-
             - jsonPath: $.ChildDetails.*.AddressBirthDetails.permntOutsideKeralaTaluk
 
             - jsonPath: $.ChildDetails.*.AddressBirthDetails.villageNamePermanent
 
             - jsonPath: $.ChildDetails.*.AddressBirthDetails.permntInKeralaWardNo
-
-            - jsonPath: $.ChildDetails.*.AddressBirthDetails.doorno
-
-            - jsonPath: $.ChildDetails.*.AddressBirthDetails.subno
 
             - jsonPath: $.ChildDetails.*.AddressBirthDetails.localityEnPermanent
 
@@ -348,15 +340,13 @@ serviceMaps:
             - jsonPath: $.ChildDetails.*.ParentsDetails.permntOutsideKeralaPostOfficeMl
 
 
-        - query: INSERT INTO public.eg_birth_present_address(id, res_asso_no, housename_no_en, housename_no_ml, ot_address1_en, ot_address1_ml, ot_address2_en, ot_address2_ml,
+        - query: INSERT INTO public.eg_birth_present_address(id, housename_no_en, housename_no_ml, ot_address1_en, ot_address1_ml, ot_address2_en, ot_address2_ml,
             ot_state_region_province_en, ot_state_region_province_ml, villageid, tenantid, talukid, districtid, stateid, poid, pinno, countryid, birthdtlid, createdtime, createdby, lastmodifiedtime, lastmodifiedby,
-            bio_adopt, res_asso_no_ml, taluk_name, village_name, ward_code, doorno, subno, locality_en, locality_ml, street_name_en,street_name_ml, ot_zipcode)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+            bio_adopt, taluk_name, village_name, ward_code, locality_en, locality_ml, street_name_en,street_name_ml, ot_zipcode)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: ChildDetails.*.AddressBirthDetails
           jsonMaps:
             - jsonPath: $.ChildDetails.*.AddressBirthDetails.presentUuid
-
-            - jsonPath: $.ChildDetails.*.AddressBirthDetails.res_asso_no
 
             - jsonPath: $.ChildDetails.*.AddressBirthDetails.houseNameNoEnPresent
 
@@ -402,17 +392,11 @@ serviceMaps:
 
             - jsonPath: $.ChildDetails.*.AddressBirthDetails.bioAdoptPresent
 
-            - jsonPath: $.ChildDetails.*.AddressBirthDetails.res_asso_no_ml
-
             - jsonPath: $.ChildDetails.*.AddressBirthDetails.presentOutsideKeralaTaluk
 
             - jsonPath: $.ChildDetails.*.AddressBirthDetails.villageNamePresent
 
             - jsonPath: $.ChildDetails.*.AddressBirthDetails.presentWardNo
-
-            - jsonPath: $.ChildDetails.*.AddressBirthDetails.doorno
-
-            - jsonPath: $.ChildDetails.*.AddressBirthDetails.subno
 
             - jsonPath: $.ChildDetails.*.AddressBirthDetails.localityEnPresent
 
@@ -422,7 +406,7 @@ serviceMaps:
 
             - jsonPath: $.ChildDetails.*.AddressBirthDetails.streetNameMlPresent
 
-            - jsonPath: $.ChildDetails.*.AddressBirthDetails.presentInsideKeralaPincode
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.presentOutsideKeralaPincode
 
         - query: INSERT INTO public.eg_birth_statitical_information(id,weight_of_child,duration_of_pregnancy_in_week,nature_of_medical_attention,delivery_method,cause_of_foetal_death,religionid,father_nationalityid,
             father_educationid,father_proffessionid,mother_educationid,mother_proffessionid,mother_nationalityid,mother_age_marriage,mother_age_delivery,mother_no_of_birth_given,

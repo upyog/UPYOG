@@ -90,8 +90,8 @@ public class BirthApplicationRowMapper implements ResultSetExtractor<List<NewBir
     }
 
     private Boolean isChildNameEntered(String name) {
-        if(name == null) return false;
-        else return true;
+        if(name == null) return true;
+        else return false;
     }
 }
 
