@@ -122,7 +122,7 @@ serviceMaps:
 
             - jsonPath: $.ChildDetails.*.institutionTypeCode
 
-            - jsonPath: $.ChildDetails.*.institutionId
+            - jsonPath: $.ChildDetails.*.institutionNameCode
 
             - jsonPath: $.ChildDetails.*.vehicleType
 
@@ -182,7 +182,7 @@ serviceMaps:
 
             - jsonPath: $.ChildDetails.*.InformarHosInstDetails.infomantAadhar
 
-            - jsonPath: $.ChildDetails.*.vehicleHaltPlaceEn
+            - jsonPath: $.ChildDetails.*.vehicleHaltPlace
 
             - jsonPath: $.ChildDetails.*.setadmittedHospitalEn
 

@@ -23,7 +23,7 @@ public class CommonQueryBuilder {
 			.append("ebp.informants_mobileno as pla_informants_mobileno,ebp.informants_aadhaar_no as pla_informants_aadhaar_no,ebp.is_inform_declare as pla_is_inform_declare,")
 			.append("ebp.vehicle_haltplace_en as pla_vehicle_haltplace_en,ebp.vehicle_hospitalid as pla_vehicle_hospitalid,")
 			.append("ebp.vehicle_haltplace_ml as pla_vehicle_haltplace_ml,ebp.vehicle_desc as pla_vehicle_desc,")
-			.append("ebp.public_place_desc as pla_public_place_desc,ebp.public_locality_en as pla_public_locality_en,ebp.public_locality_ml as pla_public_locality_ml,ebp.public_street_name_en as pla_public_street_name_en").toString();
+			.append("ebp.public_place_desc as pla_public_place_desc,ebp.public_locality_en as pla_public_locality_en,ebp.public_locality_ml as pla_public_locality_ml,ebp.public_street_name_en as pla_public_street_name_en,ebp.public_street_name_ml as pla_public_street_name_ml").toString();
 	private static final String QUERY_FATER_INFO = new StringBuilder().append("ebfi.id as fa_id,ebfi.firstname_en as fa_firstname_en,ebfi.firstname_ml as fa_firstname_ml,")
 			.append("ebfi.aadharno as fa_aadharno,ebfi.birthdtlid as fa_birthdtlid,ebfi.bio_adopt as fa_bio_adopt").toString();
 

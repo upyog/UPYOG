@@ -61,6 +61,12 @@ public class MdmsLocationService {
         return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_INSTITUTIONS_CODES_JSONPATH+"["+index+"].institutionNamelocal");
     }
 
+    public String getInstitutionType(Object mdmsData, String institutionId) {
+        List<String> tenants  = getInstitutionCode(mdmsData);
+        int index = tenants.indexOf(institutionId);
+        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_INSTITUTIONS_CODES_JSONPATH+"["+index+"].placeofEventCodeNew");
+    }
+
     public String getInstitutionAddressEn(Object mdmsData, String institutionId) {
         List<String> tenants  = getInstitutionCode(mdmsData);
         int index = tenants.indexOf(institutionId);

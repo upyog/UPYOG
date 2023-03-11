@@ -158,6 +158,12 @@ public class MdmsUtil {
                                                                                          .build());
         crMasterDetails.addAll(masterInstitutionType);
 
+        // Add Module InstitutionTypePlaceOfEvent
+        List<MasterDetail> masterPlaceOfEventInstitutionType = Collections.singletonList(MasterDetail.builder()
+                                                                                                     .name(BirthConstants.CR_MDMS_PLACE_INSTITUTION_TYPE)
+                                                                                                     .build());
+        crMasterDetails.addAll(masterPlaceOfEventInstitutionType);
+
         // Add Module DeliveryMethod
         List<MasterDetail> masterDeliveryMethod = Collections.singletonList(MasterDetail.builder()
                                                                                         .name(BirthConstants.CR_MDMS_DELIVERYMETHOD)

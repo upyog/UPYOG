@@ -33,6 +33,10 @@ public class MdmsTenantService {
         return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_COUNTRY_CODE_JSONPATH);
     }
 
+    private List<String> getInstType(Object mdmsData) {
+        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_INST_TYPE_CODE_JSONPATH);
+    }
+
     public String getTenantName(Object mdmsData, String tenantId) {
         List<String> tenants  = getTenantCodes(mdmsData);
         int index = tenants.indexOf(tenantId);
@@ -145,5 +149,11 @@ public class MdmsTenantService {
         List<String> tenants  = getCountryCodes(mdmsData);
         int index = tenants.indexOf(code);
         return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_COUNTRY_JSONPATH+"["+index+"].namelocal");
+    }
+
+    public String getInstitutionTypeName(Object mdmsData, String code) {
+        List<String> tenants  = getInstType(mdmsData);
+        int index = tenants.indexOf(code);
+        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_INST_TYPE_JSONPATH+"["+index+"].name");
     }
 }

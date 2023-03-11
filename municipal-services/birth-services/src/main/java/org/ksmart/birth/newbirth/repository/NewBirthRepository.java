@@ -69,6 +69,8 @@ public class NewBirthRepository {
             if(birth.getPlaceofBirthId()!=null){
                 Object mdmsData = mdmsUtil.mdmsCallForLocation(request.getRequestInfo(), birth.getTenantId());
                 mdmsBirthService.setLocationDetails(birth, mdmsData);
+                Object mdmsDataComm = mdmsUtil.mdmsCall(request.getRequestInfo());
+                mdmsBirthService.setInstitutionDetails(birth, mdmsDataComm);
             }
             if (birth.getParentAddress().getCountryIdPermanent() != null && birth.getParentAddress().getStateIdPermanent() != null) {
                 if (birth.getParentAddress().getCountryIdPermanent().contains(BirthConstants.COUNTRY_CODE)) {

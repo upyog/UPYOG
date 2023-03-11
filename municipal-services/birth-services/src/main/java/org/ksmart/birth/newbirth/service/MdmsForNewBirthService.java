@@ -31,27 +31,33 @@ public class MdmsForNewBirthService {
     }
 
     public void setLocationDetails(NewBirthApplication birth, Object mdmsData) {
+        if (birth.getWardId() != null) {
+            String wardEn = mdmsLocationService.getWardNameEn(mdmsData, birth.getWardId());
+            String wardMl = mdmsLocationService.getWardNameMl(mdmsData, birth.getWardId());
+            String wardNo = mdmsLocationService.getWardNo(mdmsData, birth.getWardId());
+            birth.setWardNameEn(wardEn);
+            birth.setWardNameMl(wardMl);
+            birth.setWardNumber(wardNo);
+        }
         if (birth.getPlaceofBirthId().contains(BIRTH_PLACE_HOSPITAL)) {
             String placeEn = mdmsLocationService.getHospitalAddressEn(mdmsData, birth.getHospitalId());
             String placeMl = mdmsLocationService.getHospitalNameMl(mdmsData, birth.getHospitalId());
             birth.setHospitalName(placeEn);
             birth.setHospitalNameMl(placeMl);
         } else if (birth.getPlaceofBirthId().contains(BIRTH_PLACE_INSTITUTION)) {
-            String placeEn = mdmsLocationService.getInstitutionNameEn(mdmsData, birth.getInstitutionId());
-            String placeMl = mdmsLocationService.getHospitalNameMl(mdmsData, birth.getInstitutionId());
-            birth.setInstitution(placeEn);
+            String placeEn = mdmsLocationService.getInstitutionNameEn(mdmsData, birth.getInstitutionNameCode());
+            String placeMl = mdmsLocationService.getInstitutionNameMl(mdmsData, birth.getInstitutionNameCode());
+            birth.setInstitutionId(placeEn);
             birth.setInstitutionIdMl(placeMl);
-        } else if (birth.getPlaceofBirthId().contains(BIRTH_PLACE_HOME)) {
-            String placeEn = mdmsLocationService.getWardNameEn(mdmsData, birth.getWardId());
-            String placeMl = mdmsLocationService.getWardNameMl(mdmsData, birth.getWardId());
-            String wardNo = mdmsLocationService.getWardNo(mdmsData, birth.getWardId());
-            birth.setWardNameEn(placeEn);
-            birth.setWardNameMl(placeMl);
-            birth.setWardNumber(wardNo);
-        }else {
-        }
+        }else { }
     }
 
+    public void setInstitutionDetails(NewBirthApplication birth, Object  mdmsData) {
+        if (birth.getPlaceofBirthId().contains(BIRTH_PLACE_INSTITUTION)) {
+            String placeInstType = mdmsTenantService.getInstitutionTypeName(mdmsData, birth.getInstitutionTypeId());
+            birth.setInstitution(placeInstType);
+        }
+    }
 
     public void setTenantDetails(NewBirthApplication birth, Object  mdmsData) {
         String lbType = mdmsTenantService.getTenantLbType(mdmsData, birth.getTenantId());
