@@ -10,7 +10,7 @@ import org.ksmart.birth.utils.MdmsUtil;
 import org.ksmart.birth.web.model.adoption.AdoptionDetailRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.ksmart.birth.utils.IDGenerator;
+
 import java.util.UUID;
 
 @Component
@@ -20,8 +20,6 @@ public class AdoptionEnrichment implements BaseEnrichment {
     MdmsUtil mdmsUtil;
     @Autowired
     MdmsDataService mdmsDataService;
-    @Autowired
-    IDGenerator generator;
 
     public void enrichCreate(AdoptionDetailRequest request) {
 
@@ -34,7 +32,7 @@ public class AdoptionEnrichment implements BaseEnrichment {
             birth.setAuditDetails(auditDetails);
             if(birth.getPlaceofBirthId() != null || !birth.getPlaceofBirthId().isEmpty()){
                 Object mdmsData = mdmsUtil.mdmsCallForLocation(request.getRequestInfo(), birth.getTenantId());
-                mdmsDataService.setAdoptionLocationDetails(birth, mdmsData);
+               // mdmsDataService.setKsmartLocationDetails(birth, mdmsData);
             }
             birth.setBirthPlaceUuid(UUID.randomUUID().toString());
             birth.getParentsDetails().setFatherUuid(UUID.randomUUID().toString());
@@ -70,49 +68,13 @@ public class AdoptionEnrichment implements BaseEnrichment {
         AuditDetails auditDetails = buildAuditDetails(userInfo.getUuid(), Boolean.FALSE);
         request.getAdoptionDetails()
                 .forEach(birth -> birth.setAuditDetails(auditDetails));
-        setRegistrationNumber(request);
+      //  setRegistrationNumber(request);
         setPresentAddress(request);
         setPermanentAddress(request);
     }
 
  
 
- 
-
- 
-    private void setApplicationNumbers(AdoptionDetailRequest request) {
-        Long currentTime = Long.valueOf(System.currentTimeMillis());
-        String id = generator.setIDGeneratorAdoption(request, BirthConstants.FUN_MODULE_NEW,BirthConstants.APP_NUMBER_CAPTION);
-        request.getAdoptionDetails()
-                .forEach(birth -> {
-                    birth.setApplicationNo(id);
-                    birth.setDateOfReport(currentTime);
-                });
-    }
-
-    private void setFileNumbers(AdoptionDetailRequest request) {
-        Long currentTime = Long.valueOf(System.currentTimeMillis());
-        String id = generator.setIDGeneratorAdoption(request, BirthConstants.FUN_MODULE_NEW,BirthConstants.FILE_NUMBER_CAPTION);
-        request.getAdoptionDetails()
-                .forEach(birth -> {
-                    birth.setFileNumber(id);
-                    birth.setFileDate(currentTime);
-                    birth.setFileStatus("ACTIVE");
-                });
-    }
-
-    private void setRegistrationNumber(AdoptionDetailRequest request) {
-        Long currentTime = Long.valueOf(System.currentTimeMillis());
-        String id = generator.setIDGeneratorAdoption(request, BirthConstants.FUN_MODULE_NEW,BirthConstants.REGY_NUMBER_CAPTION);
-        request.getAdoptionDetails()
-                .forEach(birth -> {
-                    if((birth.getApplicationStatus() == "APPROVED") && (birth.getAction() == "APPROVE")) {
-                        birth.setRegistrationNo(id);
-                        birth.setRegistrationDate(currentTime);
-                    }
-                });
- 
-    }
 
     private void setPresentAddress(AdoptionDetailRequest request) {
         request.getAdoptionDetails()

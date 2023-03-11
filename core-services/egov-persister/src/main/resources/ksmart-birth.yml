@@ -471,7 +471,7 @@ serviceMaps:
 
             - jsonPath: $.ChildDetails.*.ParentsDetails.mother_resdnce_tenant
 
-            - jsonPath: $.ChildDetails.*.ParentsDetails.mother_resdnce_placetype
+            - jsonPath: $.ChildDetails.*.ParentsDetails.townOrVillagePresent
 
             - jsonPath: $.ChildDetails.*.ParentsDetails.mother_resdnce_place_en
 
@@ -977,7 +977,7 @@ serviceMaps:
 
             - jsonPath: $.ChildDetails.*.birthStatistical.mother_resdnce_tenentid
 
-            - jsonPath: $.ChildDetails.*.birthStatistical.mother_resdnce_placetype
+            - jsonPath: $.ChildDetails.*.birthStatistical.permntOutsideKeralaCityVilgeEn
 
             - jsonPath: $.ChildDetails.*.birthStatistical.mother_resdnce_place_en
 

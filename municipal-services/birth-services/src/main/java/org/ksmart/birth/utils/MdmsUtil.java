@@ -115,6 +115,11 @@ public class MdmsUtil {
                 .build());
         crMasterDetails.addAll(masterInstitution);
 
+        List<MasterDetail> masterBoundary = Collections.singletonList(MasterDetail.builder()
+                .name(BirthConstants.LOCATION_MDMS_BOUNDARY)
+                .build());
+        crMasterDetails.addAll(masterBoundary);
+
         ModuleDetail crModuleDetail = ModuleDetail.builder()
                 .masterDetails(crMasterDetails)
                 .moduleName(BirthConstants.LOCATION_MDMS_MODULE)

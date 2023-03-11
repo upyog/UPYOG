@@ -20,6 +20,7 @@ public class BirthConstants {
     public static final String COMMON_MDMS_INSTITUTION= "Institution";
     public static final String LOCATION_MDMS_HOSPITAL = "hospitalList";
     public static final String LOCATION_MDMS_INSTITUTION = "institutionList";
+    public static final String LOCATION_MDMS_BOUNDARY = "TenantBoundary";
     public static final String COMMON_MDMS_MEDICAL_ATTENTION_TYPE= "MedicalAttentionType";
     public static final String COMMON_MDMS_VILLAGE = "Village";
     public static final String COMMON_MDMS_DISTRICT = "District";
@@ -33,7 +34,8 @@ public class BirthConstants {
     public static final String CR_MDMS_HOSPITALS_CODE_JSONPATH = "$.MdmsRes.egov-location.hospitalList[*].code";
     public static final String CR_MDMS_HOSPITALS_CODES_JSONPATH = "$.MdmsRes.egov-location.hospitalList";
     public static final String CR_MDMS_INSTITUTIONS_CODE_JSONPATH = "$.MdmsRes.egov-location.institutionList[*].code";
-    public static final String CR_MDMS_BOUNDARY_CODE_JSONPATH = "$.MdmsRes.egov-location.TenantBoundary[*].code";
+    public static final String CR_MDMS_BOUNDARY_CODE_JSONPATH = "$.MdmsRes.egov-location.TenantBoundary[*].boundary.children[*].children[*].code";
+    public static final String CR_MDMS_BOUNDARY_CODES_JSONPATH = "$.MdmsRes.egov-location.TenantBoundary[*].boundary.children[*].children[*]";
     public static final String CR_MDMS_INSTITUTIONS_CODES_JSONPATH = "$.MdmsRes.egov-location.institutionList";
     public static final String CR_MDMS_TENANTS_DIST_CODE_JSONPATH = "$.MdmsRes.tenant.tenants[*].city.distCodeStr";
     public static final String CR_MDMS_PROFESSION_CODE_JSONPATH = "$.MdmsRes.birth-death-service.Profession[*].code";
@@ -64,6 +66,8 @@ public class BirthConstants {
     public static final String BIRTH_PLACE_VEHICLE = "VEHICLE";
     public static final String BIRTH_PLACE_PUBLIC = "PUBLIC_PLACES";
     public static final String BIRTH_PLACE_OTHERS_COUNTRY = "OTHERS_COUNTRY";
+
+
     public static final String CR_MDMS_TENANT_BOUNDARY_CODE = "TenantBoundary";
     public static final String CR_MDMS_EGOV_LOCATION_MASTERS_CODE = "egov-location";
 
@@ -74,7 +78,7 @@ public class BirthConstants {
     public static final String LB_TYPE_CORPORATION = "LB_TYPE_CORPORATION";
 
     public static final String LB_TYPE_MUNICIPALITY = "LB_TYPE_MUNICIPALITY";
-
+    public static final String LB_TYPE_GP = "LB_TYPE_GRAMA_PANCHAYAT";
     public static final String LB_TYPE_CORPORATION_CAPTION = "C";
 
     public static final String LB_TYPE_MUNICIPALITY_CAPTION = "M";

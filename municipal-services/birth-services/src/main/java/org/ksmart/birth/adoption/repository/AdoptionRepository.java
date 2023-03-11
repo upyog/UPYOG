@@ -71,7 +71,7 @@ public class AdoptionRepository {
         result.forEach(birth -> {
             if(birth.getPlaceofBirthId()!=null){
                 Object mdmsData = mdmsUtil.mdmsCallForLocation(request.getRequestInfo(), birth.getTenantId());
-                mdmsDataService.setAdoptionLocationDetails(birth, mdmsData);
+               // mdmsDataService.setKsmartLocationDetails(birth, mdmsData);
             }
             if (birth.getParentAddress().getCountryIdPermanent() != null && birth.getParentAddress().getStateIdPermanent() != null) {
                 if (birth.getParentAddress().getCountryIdPermanent().contains(BirthConstants.COUNTRY_CODE)) {

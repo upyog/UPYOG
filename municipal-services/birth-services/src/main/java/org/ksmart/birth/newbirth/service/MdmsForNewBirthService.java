@@ -1,2 +1,65 @@
-package org.ksmart.birth.newbirth.service;public class MdmsForNewBirth {
+package org.ksmart.birth.newbirth.service;
+
+import lombok.extern.slf4j.Slf4j;
+import org.ksmart.birth.birthregistry.model.RegisterCertificateData;
+import org.ksmart.birth.birthregistry.service.KsmartAddressService;
+import org.ksmart.birth.common.services.MdmsLocationService;
+import org.ksmart.birth.common.services.MdmsTenantService;
+import org.ksmart.birth.web.model.newbirth.NewBirthApplication;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import static org.ksmart.birth.utils.BirthConstants.*;
+@Slf4j
+@Service
+public class MdmsForNewBirthService {
+
+    private RestTemplate restTemplate;
+    private final MdmsTenantService mdmsTenantService;
+
+    private final MdmsLocationService mdmsLocationService;
+
+    private final KsmartAddressService ksmartAddressService;
+    @Autowired
+    MdmsForNewBirthService(RestTemplate restTemplate, MdmsTenantService mdmsTenantService, MdmsLocationService mdmsLocationService, KsmartAddressService ksmartAddressService) {
+
+        this.restTemplate = restTemplate;
+        this.mdmsTenantService = mdmsTenantService;
+        this.mdmsLocationService = mdmsLocationService;
+        this.ksmartAddressService = ksmartAddressService;
+    }
+
+    public void setLocationDetails(NewBirthApplication birth, Object mdmsData) {
+        if (birth.getPlaceofBirthId().contains(BIRTH_PLACE_HOSPITAL)) {
+            String placeEn = mdmsLocationService.getHospitalAddressEn(mdmsData, birth.getHospitalId());
+            String placeMl = mdmsLocationService.getHospitalNameMl(mdmsData, birth.getHospitalId());
+            birth.setHospitalName(placeEn);
+            birth.setHospitalNameMl(placeMl);
+        } else if (birth.getPlaceofBirthId().contains(BIRTH_PLACE_INSTITUTION)) {
+            String placeEn = mdmsLocationService.getInstitutionNameEn(mdmsData, birth.getInstitutionId());
+            String placeMl = mdmsLocationService.getHospitalNameMl(mdmsData, birth.getInstitutionId());
+            birth.setInstitution(placeEn);
+            birth.setInstitutionIdMl(placeMl);
+        } else if (birth.getPlaceofBirthId().contains(BIRTH_PLACE_HOME)) {
+            String placeEn = mdmsLocationService.getWardNameEn(mdmsData, birth.getWardId());
+            String placeMl = mdmsLocationService.getWardNameMl(mdmsData, birth.getWardId());
+            String wardNo = mdmsLocationService.getWardNo(mdmsData, birth.getWardId());
+            birth.setWardNameEn(placeEn);
+            birth.setWardNameMl(placeMl);
+            birth.setWardNumber(wardNo);
+        }else {
+        }
+    }
+
+
+    public void setTenantDetails(NewBirthApplication birth, Object  mdmsData) {
+        String lbType = mdmsTenantService.getTenantLbType(mdmsData, birth.getTenantId());
+        if (lbType.contains(LB_TYPE_CORPORATION) || lbType.contains(LB_TYPE_MUNICIPALITY) ) {
+            birth.getParentAddress().setTownOrVillagePresent("TOWN");
+        } else if(lbType.contains(LB_TYPE_GP)) {
+            birth.getParentAddress().setTownOrVillagePresent("VILLAGE");
+        } else{}
+    }
+
 }
