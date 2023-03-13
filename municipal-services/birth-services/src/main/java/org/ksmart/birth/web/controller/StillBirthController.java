@@ -24,7 +24,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/ksmart/birth")
+@RequestMapping("/cr")
 public class StillBirthController {
     private final ResponseInfoFactory responseInfoFactory;
     private final StillBirthService stillBirthService;
