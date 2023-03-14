@@ -68,9 +68,20 @@ public class BaseRegBuilder {
         }
     }
 
-    void addDateToLongFilter(String column, LocalDate value, StringBuilder query, List<Object> paramValues) {
+    void addLongFilter(String column, Long value, StringBuilder query, List<Object> paramValues) {
+        if (value != null)  {
+            addWhereClause(paramValues, query);
+            query.append(column)
+                    .append("=? ");
+            paramValues.add(value);
+        }
+    }
+
+    void addDateToLongFilter(String column, String value, StringBuilder query, List<Object> paramValues) {
         if (value != null) {
-            Instant instant = value.atStartOfDay(ZoneId.systemDefault()).toInstant();
+            String strDate = "2015-08-04";
+            LocalDate valueLocal = LocalDate.parse(strDate);
+            Instant instant = valueLocal.atStartOfDay(ZoneId.systemDefault()).toInstant();
             addWhereClause(paramValues, query);
             query.append(column)
                     .append("=? ");
@@ -82,8 +93,8 @@ public class BaseRegBuilder {
         if (StringUtils.isNotBlank(value)) {
             addWhereClause(paramValues, query);
             query.append(column)
-                    .append(" LIKE ?% ");
-            paramValues.add(value);
+                    .append(" LIKE ? ");
+            paramValues.add(value+"%");
         }
     }
 

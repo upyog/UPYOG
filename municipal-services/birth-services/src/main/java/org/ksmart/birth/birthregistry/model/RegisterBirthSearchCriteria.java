@@ -31,6 +31,11 @@ public class RegisterBirthSearchCriteria {
 
     @JsonProperty("registrationNo")
     private String registrationNo;
+
+    @JsonProperty("registrationDate")
+    private Long registrationDate;
+    @JsonProperty("birthDate")
+    private Long birthDate;
     @JsonProperty("fromDate")
     private Long fromDate; // report date
 
@@ -51,25 +56,18 @@ public class RegisterBirthSearchCriteria {
 
     @JsonProperty("limit")
     private Integer limit;
-
-    @JsonFormat(pattern = "dd/MM/yyyy")
-    @JsonProperty("dob")
-    @Valid
-    private LocalDate dob;
     @JsonProperty("nameOfMother")
     @Valid
     private String nameOfMother;
     @JsonProperty("hospitalId")
     @Valid
     private String hospitalId;
-
     @JsonProperty("institutionId")
     @Valid
     private String institutionId;
     @JsonProperty("sex")
     @Valid
     private String gender;
-
     @JsonProperty("wardCode")
     @Valid
     private String wardCode;
@@ -86,7 +84,8 @@ public class RegisterBirthSearchCriteria {
 
     public enum SortBy {
         ackNo,
-        dob,
+        registrationDate,
+        birthDate,
         registrationNo,
         mother,
         gender,

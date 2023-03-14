@@ -30,6 +30,8 @@ public interface BirthParentDetailRowMapper {
                 .motherMaritalStatus(rs.getString("stat_mother_maritalstatusid"))
                 .familyMobileNo(rs.getString("per_family_mobileno"))
                 .familyEmailid(rs.getString("per_family_emailid"))
+                .isFatherInfoMissing(rs.getBoolean("ba_is_father_info_missing"))
+                .isMotherInfoMissing(rs.getBoolean("ba_is_mother_info_missing"))
                 .build();
     }
 

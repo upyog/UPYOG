@@ -11,11 +11,11 @@ import java.util.List;
 
 @Component
 public class RegisterQueryBuilder extends BaseRegBuilder {
-    private static final String QUERY=new StringBuilder().append("SELECT krbd.id,	krbd.dateofreport,	krbd.dateofbirth,	krbd.timeofbirth,	krbd.am_pm,	krbd.firstname_en,	krbd.firstname_ml,	krbd.middlename_en,")
-            .append("krbd.middlename_ml,	krbd.lastname_en,	krbd.lastname_ml,	krbd.tenantid,	krbd.gender,	krbd.remarks_en,	krbd.remarks_ml,	krbd.aadharno, krbd.ack_no,")
-            .append("krbd.createdtime,	krbd.createdby,	krbd.lastmodifiedtime,	krbd.lastmodifiedby,	krbd.esign_user_code,	krbd.esign_user_desig_code,	krbd.is_adopted,")
-            .append("krbd.is_abandoned,	krbd.is_multiple_birth,	krbd.is_father_info_missing,	krbd.is_mother_info_missing,	krbd.no_of_alive_birth,	krbd.multiplebirthdetid,")
-            .append("krbd.ot_passportno,	krbd.registrationno,	krbd.registration_status,	krbd.registration_date,	krbd.is_born_outside,	krbd.ot_dateofarrival, kbfi.id,")
+    private static final String QUERY=new StringBuilder().append("SELECT krbd.id,krbd.dateofreport,krbd.dateofbirth,krbd.timeofbirth,krbd.am_pm,krbd.firstname_en,krbd.firstname_ml,krbd.middlename_en,")
+            .append("krbd.middlename_ml,krbd.lastname_en,krbd.lastname_ml,krbd.tenantid,krbd.gender,krbd.remarks_en,krbd.remarks_ml,krbd.aadharno, krbd.ack_no,")
+            .append("krbd.createdtime,krbd.createdby,krbd.lastmodifiedtime,krbd.lastmodifiedby,krbd.esign_user_code,krbd.esign_user_desig_code,krbd.is_adopted,")
+            .append("krbd.is_abandoned,krbd.is_multiple_birth,krbd.is_father_info_missing,krbd.is_mother_info_missing,krbd.no_of_alive_birth,krbd.multiplebirthdetid,")
+            .append("krbd.ot_passportno,krbd.registrationno,krbd.registration_status,krbd.registration_date,krbd.is_born_outside,krbd.ot_dateofarrival, kbfi.id,")
 
             //Birthplace
             .append("kbp.id,kbp.birthdtlid,kbp.placeofbirthid,kbp.hospitalid,kbp.public_place_id,kbp.institution_type_id,kbp.institution_id,kbp.vehicletypeid,kbp.vehicle_registration_no,kbp.vehicle_from_en," )
@@ -68,20 +68,23 @@ public class RegisterQueryBuilder extends BaseRegBuilder {
         addFilter("krbd.tenantid", criteria.getTenantId(), query, preparedStmtValues);
         addLikeFilter("kbmi.firstname_en", criteria.getNameOfMother(), query, preparedStmtValues);
         addFilter("krbd.gender", criteria.getGender(), query, preparedStmtValues);
-        addDateToLongFilter("krbd.dateofbirth", criteria.getDob(), query, preparedStmtValues);
+        addLongFilter("krbd.dateofbirth", criteria.getBirthDate(), query, preparedStmtValues);
+        addLongFilter("krbd.registration_date", criteria.getRegistrationDate(), query, preparedStmtValues);
         addFilter("krbd.registrationno", criteria.getRegistrationNo(), query, preparedStmtValues);
         addDateRangeFilter("krbd.dateofreport", criteria.getFromDate(), criteria.getToDate(), query, preparedStmtValues);
         addDateRangeFilter("krbd.file_date", criteria.getFromDateReg(), criteria.getToDateReg(), query, preparedStmtValues);
         addFilter("ebp.hospitalid", criteria.getHospitalId(), query, preparedStmtValues);
         addFilter("ebp.institution_id", criteria.getInstitutionId(), query, preparedStmtValues);
         addFilter("ebp.ward_id", criteria.getWardCode(), query, preparedStmtValues);
-        addFilter("krbd.firstname_en", criteria.getChildName(), query, preparedStmtValues);
-        addFilter("kbfi.firstname_en", criteria.getNameOfFather(), query, preparedStmtValues);
+        addLikeFilter("krbd.firstname_en", criteria.getChildName(), query, preparedStmtValues);
+        addLikeFilter("kbfi.firstname_en", criteria.getNameOfFather(), query, preparedStmtValues);
 
         if (StringUtils.isEmpty(criteria.getSortBy()))
             addOrderByColumns("krbd.createdtime",null, orderBy);
-        else if (criteria.getSortBy() == RegisterBirthSearchCriteria.SortBy.dob)
+        else if (criteria.getSortBy() == RegisterBirthSearchCriteria.SortBy.birthDate)
             addOrderByColumns("krbd.dateofbirth",criteria.getSortOrder(), orderBy);
+        else if (criteria.getSortBy() == RegisterBirthSearchCriteria.SortBy.registrationDate)
+            addOrderByColumns("krbd.registration_date",criteria.getSortOrder(), orderBy);
         else if (criteria.getSortBy() == RegisterBirthSearchCriteria.SortBy.ackNo)
             addOrderByColumns("krbd.ack_no",criteria.getSortOrder(),orderBy);
         else if (criteria.getSortBy() == RegisterBirthSearchCriteria.SortBy.mother)

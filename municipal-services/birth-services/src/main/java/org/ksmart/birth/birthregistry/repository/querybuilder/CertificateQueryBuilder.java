@@ -2,6 +2,7 @@ package org.ksmart.birth.birthregistry.repository.querybuilder;
 
 import org.ksmart.birth.birthregistry.model.RegisterBirthSearchCriteria;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
@@ -37,15 +38,54 @@ public class CertificateQueryBuilder extends BaseRegBuilder {
 
     public String getRegBirthApplicationSearchQuery(@NotNull RegisterBirthSearchCriteria criteria, @NotNull List<Object> preparedStmtValues, Boolean isCount) {
         StringBuilder query=new StringBuilder(QUERY);
+        StringBuilder orderBy = new StringBuilder();
         addFilter("krbd.id", criteria.getId(), query, preparedStmtValues);
+        addFilter("krbd.ack_no", criteria.getAckNo(), query, preparedStmtValues);
         addFilter("krbd.tenantid", criteria.getTenantId(), query, preparedStmtValues);
         addLikeFilter("kbmi.firstname_en", criteria.getNameOfMother(), query, preparedStmtValues);
         addFilter("krbd.gender", criteria.getGender(), query, preparedStmtValues);
-        addDateToLongFilter("krbd.dateofbirth", criteria.getDob(), query, preparedStmtValues);
+        addLongFilter("krbd.dateofbirth", criteria.getBirthDate(), query, preparedStmtValues);
+        addLongFilter("krbd.registration_date", criteria.getRegistrationDate(), query, preparedStmtValues);
         addFilter("krbd.registrationno", criteria.getRegistrationNo(), query, preparedStmtValues);
         addDateRangeFilter("krbd.dateofreport", criteria.getFromDate(), criteria.getToDate(), query, preparedStmtValues);
         addDateRangeFilter("krbd.file_date", criteria.getFromDateReg(), criteria.getToDateReg(), query, preparedStmtValues);
-        addFilter("krbd.ack_no", criteria.getAckNo(), query, preparedStmtValues);
+        addFilter("ebp.hospitalid", criteria.getHospitalId(), query, preparedStmtValues);
+        addFilter("ebp.institution_id", criteria.getInstitutionId(), query, preparedStmtValues);
+        addFilter("ebp.ward_id", criteria.getWardCode(), query, preparedStmtValues);
+        addLikeFilter("krbd.firstname_en", criteria.getChildName(), query, preparedStmtValues);
+        addLikeFilter("kbfi.firstname_en", criteria.getNameOfFather(), query, preparedStmtValues);
+
+        if (StringUtils.isEmpty(criteria.getSortBy()))
+            addOrderByColumns("krbd.createdtime",null, orderBy);
+        else if (criteria.getSortBy() == RegisterBirthSearchCriteria.SortBy.birthDate)
+            addOrderByColumns("krbd.dateofbirth",criteria.getSortOrder(), orderBy);
+        else if (criteria.getSortBy() == RegisterBirthSearchCriteria.SortBy.ackNo)
+            addOrderByColumns("krbd.ack_no",criteria.getSortOrder(),orderBy);
+        else if (criteria.getSortBy() == RegisterBirthSearchCriteria.SortBy.mother)
+            addOrderByColumns("kbmi.firstname_en",criteria.getSortOrder(), orderBy);
+        else if (criteria.getSortBy() == RegisterBirthSearchCriteria.SortBy.gender)
+            addOrderByColumns("krbd.gender",criteria.getSortOrder(), orderBy);
+        else if (criteria.getSortBy() == RegisterBirthSearchCriteria.SortBy.registrationNo)
+            addOrderByColumns("krbd.registrationno",criteria.getSortOrder(), orderBy);
+        else if (criteria.getSortBy() == RegisterBirthSearchCriteria.SortBy.hospitalId)
+            addOrderByColumns("ebp.hospitalid",criteria.getSortOrder(), orderBy);
+        else if (criteria.getSortBy() == RegisterBirthSearchCriteria.SortBy.institutionId)
+            addOrderByColumns("ebp.institution_id",criteria.getSortOrder(), orderBy);
+        else if (criteria.getSortBy() == RegisterBirthSearchCriteria.SortBy.wardCode)
+            addOrderByColumns("ebp.ward_id",criteria.getSortOrder(), orderBy);
+        else if (criteria.getSortBy() == RegisterBirthSearchCriteria.SortBy.tenantId)
+            addOrderByColumns("krbd.tenantid",criteria.getSortOrder(), orderBy);
+        else if (criteria.getSortBy() == RegisterBirthSearchCriteria.SortBy.childName)
+            addOrderByColumns("krbd.firstname_en",criteria.getSortOrder(), orderBy);
+        else if (criteria.getSortBy() == RegisterBirthSearchCriteria.SortBy.nameOfFather)
+            addOrderByColumns("kbfi.firstname_en",criteria.getSortOrder(), orderBy);
+        else if (criteria.getSortBy() == RegisterBirthSearchCriteria.SortBy.birthDate)
+            addOrderByColumns(" krbd.dateofbirth",criteria.getSortOrder(), orderBy);
+        else if (criteria.getSortBy() == RegisterBirthSearchCriteria.SortBy.registrationDate)
+            addOrderByColumns(" krbd.registration_date",criteria.getSortOrder(), orderBy);
+
+        addOrderToQuery(orderBy, query);
+        addLimitAndOffset(criteria.getOffset(),criteria.getLimit(), query, preparedStmtValues);
         return query.toString();
     }
 }

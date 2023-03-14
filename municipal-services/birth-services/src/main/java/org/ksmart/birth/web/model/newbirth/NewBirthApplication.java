@@ -245,39 +245,30 @@ public class NewBirthApplication {
 
     @JsonProperty("assignee")
     private List<String> assignee;
-
     private String comment;
-
 
     @JsonProperty("wfDocuments")
     private List<Document> wfDocuments;
-
     @Size(max = 64)
     @JsonProperty("applicationStatus")
     private String applicationStatus;
     @Size(max = 2500)
     @JsonProperty("remarks_en")
     private String remarksEn;
-
     @Size(max = 2500)
     @JsonProperty("remarks_ml")
     private String remarksMl;
-
     @Size(max = 20)
     @JsonProperty("am_pm")
     private String ampm;
-
     @JsonProperty("dateofreport")
     private Long dateOfReport;
-
     @Size(max = 64)
     @JsonProperty("birthPlaceUuid")
     private String birthPlaceUuid;
-
     @Size(max = 64)
     @JsonProperty("birthInitiatorUuid")
     private String birthInitiatorUuid;
-
     @Size(max = 64)
     @JsonProperty("birthStatisticsUuid")
     private String birthStatisticsUuid;
