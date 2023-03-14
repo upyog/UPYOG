@@ -9,7 +9,7 @@ import org.ksmart.birth.web.model.SearchCriteria;
  
 import org.ksmart.birth.web.model.adoption.AdoptionApplication;
 import org.ksmart.birth.web.model.adoption.AdoptionDetailRequest;
-//import org.ksmart.birth.workflow.WorkflowIntegrator;
+import org.ksmart.birth.workflow.WorkflowIntegratorAdoption;
  
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,27 +20,27 @@ import java.util.List;
 public class AdoptionService {
  
     private final AdoptionRepository repository;
-//    private final WorkflowIntegrator workflowIntegrator;
+    private final WorkflowIntegratorAdoption workflowIntegrator;
  
     private final MdmsUtil mdmsUtil;
     private final AdoptionApplicationValidator validator;
 
     @Autowired 
-    AdoptionService(AdoptionRepository repository, MdmsUtil mdmsUtil,
-//    		WorkflowIntegrator workflowIntegrator,
+    AdoptionService(AdoptionRepository repository, MdmsUtil mdmsUtil,  		
+    		WorkflowIntegratorAdoption workflowIntegrator,
     		AdoptionApplicationValidator validator) {
  
         this.repository = repository;
         this.mdmsUtil = mdmsUtil;
-//        this.workflowIntegrator  = workflowIntegrator;
+        this.workflowIntegrator  = workflowIntegrator;
         this.validator = validator;
     }
 
     public List<AdoptionApplication> saveAdoptionDetails(AdoptionDetailRequest request) {
         Object mdmsData = mdmsUtil.mdmsCall(request.getRequestInfo());
-
+        Object mdmsDataLoc = mdmsUtil.mdmsCallForLocation(request.getRequestInfo(), request.getAdoptionDetails().get(0).getTenantId());
         // validate request
-        //validator.validateCreate(request, mdmsData);
+        validator.validateCreate(request, mdmsData,mdmsDataLoc);
 
         //call save
         List<AdoptionApplication> adoptionDetails =  repository.saveAdoptionDetails(request);

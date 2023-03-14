@@ -1,25 +1,39 @@
 package org.ksmart.birth.adoption.enrichment;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
+import org.egov.tracer.model.CustomException;
 import org.ksmart.birth.birthregistry.service.MdmsDataService;
 import org.ksmart.birth.common.enrichment.BaseEnrichment;
 import org.ksmart.birth.common.model.AuditDetails;
 import org.ksmart.birth.utils.BirthConstants;
 import org.ksmart.birth.utils.MdmsUtil;
+import org.ksmart.birth.utils.enums.ErrorCodes;
+import org.ksmart.birth.web.model.adoption.AdoptionApplication;
 import org.ksmart.birth.web.model.adoption.AdoptionDetailRequest;
+ 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+ 
+ 
+import org.ksmart.birth.config.BirthConfiguration;
+import org.ksmart.birth.common.repository.IdGenRepository;
 
-import java.util.UUID;
+import java.util.*;
 
 @Component
 public class AdoptionEnrichment implements BaseEnrichment {
 
+	@Autowired
+	BirthConfiguration config;
     @Autowired
     MdmsUtil mdmsUtil;
+    @Autowired 
+    MdmsDataService mdmsDataService;     
     @Autowired
-    MdmsDataService mdmsDataService;
+    IdGenRepository idGenRepository;
+ 
 
     public void enrichCreate(AdoptionDetailRequest request) {
 
@@ -39,23 +53,23 @@ public class AdoptionEnrichment implements BaseEnrichment {
             birth.getParentsDetails().setMotherUuid(UUID.randomUUID().toString());
             if(birth.getParentsDetails() != null) {
                 if(!birth.getParentsDetails().getIsFatherInfoMissing()){
-                    birth.getParentsDetails().setFatherBioAdopt("BIOLOGICAL");
+                    birth.getParentsDetails().setFatherBioAdopt("ADOPT");
                 }
                 if(!birth.getParentsDetails().getIsMotherInfoMissing()){
-                    birth.getParentsDetails().setMotherBioAdopt("BIOLOGICAL");
+                    birth.getParentsDetails().setMotherBioAdopt("ADOPT");
                 }
             }
             if(birth.getParentAddress() != null) {
                 birth.getParentAddress().setPermanentUuid(UUID.randomUUID().toString());
                 birth.getParentAddress().setPresentUuid(UUID.randomUUID().toString());
-                birth.getParentAddress().setBioAdoptPermanent("BIOLOGICAL");
-                birth.getParentAddress().setBioAdoptPresent("BIOLOGICAL");
+                birth.getParentAddress().setBioAdoptPermanent("ADOPT");
+                birth.getParentAddress().setBioAdoptPresent("ADOPT");
             }
             birth.setBirthStatisticsUuid(UUID.randomUUID().toString());
             birth.setBirthInitiatorUuid(UUID.randomUUID().toString());
 
         });
-//        setApplicationNumbers(request);
+        setApplicationNumbers(request);
 //        setFileNumbers(request);
         setPresentAddress(request);
         setPermanentAddress(request);
@@ -67,14 +81,34 @@ public class AdoptionEnrichment implements BaseEnrichment {
         User userInfo = requestInfo.getUserInfo();
         AuditDetails auditDetails = buildAuditDetails(userInfo.getUuid(), Boolean.FALSE);
         request.getAdoptionDetails()
-                .forEach(birth -> birth.setAuditDetails(auditDetails));
-      //  setRegistrationNumber(request);
+                .forEach(birth -> birth.setAuditDetails(auditDetails)); 
+      //  setRegistrationNumber(request); 
         setPresentAddress(request);
         setPermanentAddress(request);
     }
-
  
 
+ 
+    private void setApplicationNumbers(AdoptionDetailRequest request) {
+        RequestInfo requestInfo = request.getRequestInfo();
+        List<AdoptionApplication> adoptionDetails = request.getAdoptionDetails();
+        String tenantId = adoptionDetails.get(0)
+                .getTenantId();
+        List<String> filecodes = getIds(requestInfo,
+                tenantId,
+                config.getAdoptionAckIdName(),
+                request.getAdoptionDetails().get(0).getApplicationType(),
+                "APPL",
+                adoptionDetails.size());
+        validateFileCodes(filecodes, adoptionDetails.size());
+
+        ListIterator<String> itr = filecodes.listIterator();
+        request.getAdoptionDetails()
+                .forEach(adoption -> {
+                	adoption.setApplicationNo(itr.next());
+                });
+    }
+ 
 
     private void setPresentAddress(AdoptionDetailRequest request) {
         request.getAdoptionDetails()
@@ -193,5 +227,18 @@ public class AdoptionEnrichment implements BaseEnrichment {
                         }
                     }
                 });
+    }
+    private List<String> getIds(RequestInfo requestInfo, String tenantId, String idName, String moduleCode, String  fnType, int count) {
+        return idGenRepository.getIdList(requestInfo, tenantId, idName, moduleCode, fnType, count);
+    }
+    private void validateFileCodes(List<String> fileCodes, int count) {
+        if (CollectionUtils.isEmpty(fileCodes)) {
+            throw new CustomException(ErrorCodes.IDGEN_ERROR.getCode(), "No file code(s) returned from idgen service");
+        }
+
+        if (fileCodes.size() != count) {
+            throw new CustomException(ErrorCodes.IDGEN_ERROR.getCode(),
+                    "The number of file code(s) returned by idgen service is not equal to the request count");
+        }
     }
 }

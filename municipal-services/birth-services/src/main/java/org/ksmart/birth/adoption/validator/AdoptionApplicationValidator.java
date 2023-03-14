@@ -3,8 +3,8 @@ package org.ksmart.birth.adoption.validator;
 import org.egov.tracer.model.CustomException;
 import org.ksmart.birth.config.BirthConfiguration;
 import org.ksmart.birth.utils.enums.ErrorCodes;
-import org.ksmart.birth.web.model.newbirth.NewBirthApplication;
-import org.ksmart.birth.web.model.newbirth.NewBirthDetailRequest;
+import org.ksmart.birth.web.model.adoption.*;
+ 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -26,23 +26,23 @@ public class AdoptionApplicationValidator {
     }
 
     /**
-     * Validate abirth details create request.
+     * Validate a adoption details create request.
      *
-     * @param request the {@link NewBirthApplication}
+     * @param request the {@link adoption details}
      */
-    public void validateCreate(NewBirthDetailRequest request, Object mdmsData) {
-        List<NewBirthApplication> applicantPersonals = request.getNewBirthDetails();
-        if (CollectionUtils.isEmpty(request.getNewBirthDetails())) {
+    public void validateCreate(AdoptionDetailRequest request, Object mdmsData,Object mdmsDataLoc) {
+        List<AdoptionApplication> adoption = request.getAdoptionDetails();
+        if (CollectionUtils.isEmpty(request.getAdoptionDetails())) {
             throw new CustomException(ErrorCodes.BIRTH_DETAILS_REQUIRED.getCode(),
                     "Birth details is required.");
         }
 
-        if (applicantPersonals.size() > 1) { // NOPMD
+        if (adoption.size() > 1) { // NOPMD
             throw new CustomException(BIRTH_DETAILS_REQUIRED.getCode(),
                     "Supports only single Birth  application create request.");
         }
 
-        mdmsValidator.validateMdmsData(request, mdmsData);
+        mdmsValidator.validateMdmsData(request, mdmsData,mdmsDataLoc);
     }
 
 }

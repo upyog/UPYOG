@@ -41,6 +41,10 @@ public class BirthConfiguration {
 
     @Value("${egov.idgen.birthapp.name}")
     private String birthApplNumberIdName;
+    
+    @Value("${egov.idgen.adoptionack.name}")
+    private String adoptionAckIdName;
+    
 
     @Value("${egov.idgen.birthapp.format}")
     private String birthApplNumberIdFormat;

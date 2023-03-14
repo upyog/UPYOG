@@ -7,7 +7,7 @@ import org.apache.commons.collections4.MapUtils;
 import org.egov.tracer.model.CustomException;
 import org.ksmart.birth.utils.BirthConstants;
 import org.ksmart.birth.utils.BirthUtils;
-import org.ksmart.birth.web.model.newbirth.NewBirthDetailRequest;
+import org.ksmart.birth.web.model.adoption.*;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
@@ -22,7 +22,7 @@ import static org.ksmart.birth.utils.enums.ErrorCodes.MDMS_DATA_ERROR;
 @Slf4j
 public class AdoptionMdmsValidator {
 
-    public void validateMdmsData(NewBirthDetailRequest request, Object mdmsData) {
+    public void validateMdmsData(AdoptionDetailRequest request, Object mdmsData,Object mdmsDataLoc) {
 
         if (log.isDebugEnabled()) {
             log.debug("MDMS master data \n {}", BirthUtils.toJson(mdmsData));
@@ -48,7 +48,7 @@ public class AdoptionMdmsValidator {
         List<String> talukCodes = getTaulkCodes(mdmsData);
         List<String> stateCodes = getStateCodes(mdmsData);
         List<String> countryCodes = getCountryCodes(mdmsData);
-        List<String> instCodes = getInstitutionCodes(mdmsData);
+        List<String> instCodes = getInstitutionCodes(mdmsDataLoc);
         List<String> medicalCodes = getMedicalCodes(mdmsData);
         List<String> villageCodes = getVillageCode(mdmsData);
         List<String> districtCodes = getDistrictCode(mdmsData);
@@ -59,7 +59,7 @@ public class AdoptionMdmsValidator {
         List<String> birthPlaceCodes = getBirthPlaceCode(mdmsData);
 
         Map<String, String> errorMap = new ConcurrentHashMap<>();
-        request.getNewBirthDetails()
+        request.getAdoptionDetails()
                 .forEach(birth -> {
                     if(birth.getParentAddress() != null) {
                         String religionCode = birth.getParentsDetails().getReligionId();
@@ -499,13 +499,13 @@ public class AdoptionMdmsValidator {
                             + BirthConstants.CR_MDMS_QUALIFICATION
                             + " codes from MDMS"));
         }
-
-        if (masterData.get(BirthConstants.COMMON_MDMS_INSTITUTION) == null) {
-            throw new CustomException(Collections.singletonMap(MDMS_DATA_ERROR.getCode(),
-                    "Unable to fetch "
-                            + BirthConstants.COMMON_MDMS_INSTITUTION
-                            + " codes from MDMS"));
-        }
+//System.out.println("master  :"+masterData);
+//        if (masterData.get(BirthConstants.COMMON_MDMS_INSTITUTION) == null) {
+//            throw new CustomException(Collections.singletonMap(MDMS_DATA_ERROR.getCode(),
+//                    "Unable to fetch "
+//                            + BirthConstants.COMMON_MDMS_INSTITUTION
+//                            + " codes from MDMS"));
+//        }
 
         if (masterData.get(BirthConstants.COMMON_MDMS_MEDICAL_ATTENTION_TYPE) == null) {
             throw new CustomException(Collections.singletonMap(MDMS_DATA_ERROR.getCode(),
@@ -579,7 +579,8 @@ public class AdoptionMdmsValidator {
         return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_COUNTRY_CODE_JSONPATH);
     }
     private List<String> getInstitutionCodes(Object mdmsData) {
-        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_INSTITUTION_CODE_JSONPATH);
+    	
+        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_INSTITUTIONS_CODE_JSONPATH);
     }
     private List<String> getMedicalCodes(Object mdmsData) {
         return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_MEDICAL_ATTENTION_TYPE_CODE_JSONPATH);
