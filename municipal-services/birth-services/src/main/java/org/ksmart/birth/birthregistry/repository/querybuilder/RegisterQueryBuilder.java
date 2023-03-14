@@ -2,6 +2,7 @@ package org.ksmart.birth.birthregistry.repository.querybuilder;
 
 
 import org.ksmart.birth.birthregistry.model.RegisterBirthSearchCriteria;
+import org.ksmart.birth.web.model.SearchCriteria;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -71,6 +72,10 @@ public class RegisterQueryBuilder extends BaseRegBuilder {
         addFilter("krbd.registrationno", criteria.getRegistrationNo(), query, preparedStmtValues);
         addDateRangeFilter("krbd.dateofreport", criteria.getFromDate(), criteria.getToDate(), query, preparedStmtValues);
         addDateRangeFilter("krbd.file_date", criteria.getFromDateReg(), criteria.getToDateReg(), query, preparedStmtValues);
+        addFilter("ebp.hospitalid", criteria.getHospitalId(), query, preparedStmtValues);
+        addFilter("ebp.institution_id", criteria.getInstitutionId(), query, preparedStmtValues);
+        addFilter("ebp.ebp.ward_id", criteria.getWardCode(), query, preparedStmtValues);
+
 
         if (StringUtils.isEmpty(criteria.getSortBy()))
             addOrderByColumns("krbd.createdtime",null, orderBy);
@@ -84,8 +89,15 @@ public class RegisterQueryBuilder extends BaseRegBuilder {
             addOrderByColumns("krbd.gender",criteria.getSortOrder(), orderBy);
         else if (criteria.getSortBy() == RegisterBirthSearchCriteria.SortBy.registrationNo)
             addOrderByColumns("krbd.registrationno",criteria.getSortOrder(), orderBy);
+        else if (criteria.getSortBy() == RegisterBirthSearchCriteria.SortBy.hospitalId)
+            addOrderByColumns("ebp.hospitalid",criteria.getSortOrder(), orderBy);
+        else if (criteria.getSortBy() == RegisterBirthSearchCriteria.SortBy.institutionId)
+            addOrderByColumns("ebp.institution_id",criteria.getSortOrder(), orderBy);
+        else if (criteria.getSortBy() == RegisterBirthSearchCriteria.SortBy.wardCode)
+            addOrderByColumns("ebp.ward_id",criteria.getSortOrder(), orderBy);
         else if (criteria.getSortBy() == RegisterBirthSearchCriteria.SortBy.tenantId)
             addOrderByColumns("krbd.tenantid",criteria.getSortOrder(), orderBy);
+
         addOrderToQuery(orderBy, query);
         addLimitAndOffset(criteria.getOffset(),criteria.getLimit(), query, preparedStmtValues);
         return query.toString();

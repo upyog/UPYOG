@@ -82,7 +82,7 @@ public class BaseRegBuilder {
         if (StringUtils.isNotBlank(value)) {
             addWhereClause(paramValues, query);
             query.append(column)
-                    .append("LIKE ?% ");
+                    .append(" LIKE ?% ");
             paramValues.add(value);
         }
     }

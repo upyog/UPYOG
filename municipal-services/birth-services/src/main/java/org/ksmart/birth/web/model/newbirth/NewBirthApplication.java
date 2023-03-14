@@ -25,6 +25,9 @@ public class NewBirthApplication {
     private Long dateOfBirth;
     @JsonProperty("birthDateTime")
     private Long timeOfBirth;
+
+    @JsonProperty("am_pm")
+    private Long am_pm;
     @Size(max = 64)
     @JsonProperty("gender")
     private String gender;

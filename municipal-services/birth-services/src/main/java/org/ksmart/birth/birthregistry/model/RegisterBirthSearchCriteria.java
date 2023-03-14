@@ -53,10 +53,20 @@ public class RegisterBirthSearchCriteria {
     @JsonProperty("mother")
     @Valid
     private String nameOfMother;
+    @JsonProperty("hospitalId")
+    @Valid
+    private String hospitalId;
 
+    @JsonProperty("institutionId")
+    @Valid
+    private String institutionId;
     @JsonProperty("sex")
     @Valid
     private String gender;
+
+    @JsonProperty("wardCode")
+    @Valid
+    private String wardCode;
     @JsonProperty("sortBy")
     private SortBy sortBy;
 
@@ -74,6 +84,9 @@ public class RegisterBirthSearchCriteria {
         registrationNo,
         mother,
         gender,
-        tenantId
+        tenantId,
+        institutionId,
+        hospitalId,
+        wardCode
     }
 }
