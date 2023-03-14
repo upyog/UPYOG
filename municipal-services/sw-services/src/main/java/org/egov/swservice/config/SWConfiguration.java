@@ -223,7 +223,7 @@ public class SWConfiguration {
     @Value("${egov.sewerage.connection.document.access.audit.kafka.topic}")
     private String documentAuditTopic;
 
-    @Value("${egov.billing.service.host}")
+    @Value("${egov.billingservice.host}")
     private String billingServiceHost;
 
     @Value("${egov.fetch.bill.endpoint}")
