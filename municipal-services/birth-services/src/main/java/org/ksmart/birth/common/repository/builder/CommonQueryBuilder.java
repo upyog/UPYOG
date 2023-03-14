@@ -51,7 +51,7 @@ public class CommonQueryBuilder {
 
 
 	private static final String QUERY_STATISTICAL_INFO = new StringBuilder().append("estat.id as stat_id,estat.weight_of_child as stat_weight_of_child,")
-			.append("estat.duration_of_pregnancy_in_week as stat_duration_of_pregnancy_in_week,estat.nature_of_medical_attention as stat_nature_of_medical_attention,")
+			.append("estat.duration_of_pregnancy_in_week as stat_duration_of_pregnancy_in_week,estat.nature_of_medical_attention as stat_nature_of_medical_attention,estat.cause_of_foetal_death as stat_cause_of_foetal_death,")
             .append("estat.delivery_method as stat_delivery_method,estat.religionid as stat_religionid,estat.father_nationalityid as stat_father_nationalityid,estat.father_educationid as stat_father_educationid,")
             .append("estat.father_proffessionid as stat_father_proffessionid,estat.mother_educationid as stat_mother_educationid,estat.mother_proffessionid as stat_mother_proffessionid," )
             .append("estat.mother_nationalityid as stat_mother_nationalityid,estat.mother_age_marriage as stat_mother_age_marriage,estat.mother_age_delivery as stat_mother_age_delivery," )

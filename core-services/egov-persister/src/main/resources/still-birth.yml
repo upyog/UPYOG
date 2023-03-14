@@ -1,0 +1,1034 @@
+serviceMaps:
+  serviceName: birth-services
+  mappings:
+    - version: 1.0
+      description: Persists save birth details in eg_birth_details  table
+      fromTopic: save-still-birth-application-topic
+      isTransaction: true
+      queryMaps:
+        - query: INSERT INTO public.eg_birth_details(id,dateofreport,dateofbirth,timeofbirth,am_pm,firstname_en,firstname_ml,middlename_en,middlename_ml,lastname_en,lastname_ml,tenantid,
+            gender,remarks_en,remarks_ml,aadharno,esign_user_code,esign_user_desig_code,is_adopted,is_abandoned,is_multiple_birth,is_father_info_missing,is_mother_info_missing,no_of_alive_birth,
+            multiplebirthdetid,is_born_outside,ot_passportno,ot_dateofarrival,applicationtype,businessservice,workflowcode,fm_fileno,file_date,file_status,applicationno,registrationno,registration_date,
+            action,status, createdtime, createdby, lastmodifiedtime, lastmodifiedby, is_stillbirth) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
+
+          basePath: StillBirthChildDetails.*
+          jsonMaps:
+            - jsonPath: $.StillBirthChildDetails.*.id
+
+            - jsonPath: $.StillBirthChildDetails.*.dateofreport
+
+            - jsonPath: $.StillBirthChildDetails.*.childDOB
+
+            - jsonPath: $.StillBirthChildDetails.*.birthDateTime
+
+            - jsonPath: $.StillBirthChildDetails.*.am_pm
+
+            - jsonPath: $.StillBirthChildDetails.*.childFirstNameEn
+
+            - jsonPath: $.StillBirthChildDetails.*.childFirstNameMl
+
+            - jsonPath: $.StillBirthChildDetails.*.childMiddleNameEn
+
+            - jsonPath: $.StillBirthChildDetails.*.childMiddleNameMl
+
+            - jsonPath: $.StillBirthChildDetails.*.childLastNameEn
+
+            - jsonPath: $.StillBirthChildDetails.*.childLastNameMl
+
+            - jsonPath: $.StillBirthChildDetails.*.tenantid
+
+            - jsonPath: $.StillBirthChildDetails.*.gender
+
+            - jsonPath: $.StillBirthChildDetails.*.remarks_en
+
+            - jsonPath: $.StillBirthChildDetails.*.remarks_ml
+
+            - jsonPath: $.StillBirthChildDetails.*.childAadharNo
+
+            - jsonPath: $.StillBirthChildDetails.*.esign_user_code
+
+            - jsonPath: $.StillBirthChildDetails.*.esign_user_desig_code
+
+            - jsonPath: $.StillBirthChildDetails.*.is_adopted
+
+            - jsonPath: $.StillBirthChildDetails.*.is_abandoned
+
+            - jsonPath: $.StillBirthChildDetails.*.is_multiple_birth
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthParentsDetails.isfatherInfo
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthParentsDetails.ismotherInfo
+
+            - jsonPath: $.StillBirthChildDetails.*.no_of_alive_birth
+
+            - jsonPath: $.StillBirthChildDetails.*.multiplebirthdetid
+
+            - jsonPath: $.StillBirthChildDetails.*.is_born_outside
+
+            - jsonPath: $.StillBirthChildDetails.*.ot_passportno
+
+            - jsonPath: $.StillBirthChildDetails.*.ot_dateofarrival
+
+            - jsonPath: $.StillBirthChildDetails.*.applicationtype
+
+            - jsonPath: $.StillBirthChildDetails.*.businessservice
+
+            - jsonPath: $.StillBirthChildDetails.*.workflowcode
+
+            - jsonPath: $.StillBirthChildDetails.*.fileNumber
+
+            - jsonPath: $.StillBirthChildDetails.*.fileDate
+
+            - jsonPath: $.StillBirthChildDetails.*.fileStatus7
+
+            - jsonPath: $.StillBirthChildDetails.*.applicationNumber
+
+            - jsonPath: $.StillBirthChildDetails.*.registrationno
+
+            - jsonPath: $.StillBirthChildDetails.*.registration_date
+
+            - jsonPath: $.StillBirthChildDetails.*.action
+
+            - jsonPath: $.StillBirthChildDetails.*.applicationStatus
+
+            - jsonPath: $.StillBirthChildDetails.*.auditDetails.createdTime
+
+            - jsonPath: $.StillBirthChildDetails.*.auditDetails.createdBy
+
+            - jsonPath: $.StillBirthChildDetails.*.auditDetails.lastModifiedTime
+
+            - jsonPath: $.StillBirthChildDetails.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.StillBirthChildDetails.*.isStill
+
+        - query: INSERT INTO public.eg_birth_place(id,birthdtlid,placeofbirthid,hospitalid,public_place_id,institution_type_id,institution_id,vehicletypeid,vehicle_registration_no,vehicle_from_en,
+            vehicle_to_en,vehicle_from_ml, vehicle_to_ml,vehicle_admit_hospital_en,ho_householder_en,ho_locality_en,ho_locality_ml,ho_street_name_en,ho_street_name_ml,ho_housename_en,ho_housename_ml,ho_villageid,
+            ho_talukid,ho_districtid,ho_stateid,ho_poid,ho_pinno,ho_countryid,ward_id,auth_officer_id,auth_officer_desig_id,oth_auth_officer_name,oth_auth_officer_desig, informantsaddress_en,
+            informants_mobileno,informants_aadhaar_no,vehicle_haltplace_en,vehicle_hospitalid,createdby,createdtime,lastmodifiedby,lastmodifiedtime,vehicle_haltplace_ml,
+            vehicle_desc,public_place_desc,public_locality_en,public_locality_ml,public_street_name_en,public_street_name_ml)
+            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
+
+          basePath: StillBirthChildDetails.*
+          jsonMaps:
+            - jsonPath: $.StillBirthChildDetails.*.birthPlaceUuid
+
+            - jsonPath: $.StillBirthChildDetails.*.id
+
+            - jsonPath: $.StillBirthChildDetails.*.birthPlace
+
+            - jsonPath: $.StillBirthChildDetails.*.hospitalCode
+
+            - jsonPath: $.StillBirthChildDetails.*.publicPlaceType
+
+            - jsonPath: $.StillBirthChildDetails.*.institutionTypeCode
+
+            - jsonPath: $.StillBirthChildDetails.*.institutionNameCode
+
+            - jsonPath: $.StillBirthChildDetails.*.vehicleType
+
+            - jsonPath: $.StillBirthChildDetails.*.vehicleRegistrationNo
+
+            - jsonPath: $.StillBirthChildDetails.*.vehicleFromEn
+
+            - jsonPath: $.StillBirthChildDetails.*.vehicleToEn
+
+            - jsonPath: $.StillBirthChildDetails.*.vehicleFromMl
+
+            - jsonPath: $.StillBirthChildDetails.*.vehicleToMl
+
+            - jsonPath: $.StillBirthChildDetails.*.vehicle_admit_hospital_en
+
+            - jsonPath: $.StillBirthChildDetails.*.ho_householder_en
+
+            - jsonPath: $.StillBirthChildDetails.*.adrsLocalityNameEn
+
+            - jsonPath: $.StillBirthChildDetails.*.adrsLocalityNameMl
+
+            - jsonPath: $.StillBirthChildDetails.*.adrsStreetNameEn
+
+            - jsonPath: $.StillBirthChildDetails.*.adrsStreetNameMl
+
+            - jsonPath: $.StillBirthChildDetails.*.adrsHouseNameEn
+
+            - jsonPath: $.StillBirthChildDetails.*.adrsHouseNameMl
+
+            - jsonPath: $.StillBirthChildDetails.*.ho_villageid
+
+            - jsonPath: $.StillBirthChildDetails.*.ho_talukid
+
+            - jsonPath: $.StillBirthChildDetails.*.ho_districtid
+
+            - jsonPath: $.StillBirthChildDetails.*.ho_stateid
+
+            - jsonPath: $.StillBirthChildDetails.*.adrsPostOffice
+
+            - jsonPath: $.StillBirthChildDetails.*.adrsPincode
+
+            - jsonPath: $.StillBirthChildDetails.*.ho_countryid
+
+            - jsonPath: $.StillBirthChildDetails.*.wardNo
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthInformarHosInstDetails.infomantFirstNameEn
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthInformarHosInstDetails.informerDesi
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthInformarHosInstDetails.oth_auth_officer_name
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthInformarHosInstDetails.oth_auth_officer_desig
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthInformarHosInstDetails.informerAddress
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthInformarHosInstDetails.infomantMobile
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthInformarHosInstDetails.infomantAadhar
+
+            - jsonPath: $.StillBirthChildDetails.*.vehicleHaltPlace
+
+            - jsonPath: $.StillBirthChildDetails.*.setadmittedHospitalEn
+
+            - jsonPath: $.StillBirthChildDetails.*.auditDetails.createdBy
+
+            - jsonPath: $.StillBirthChildDetails.*.auditDetails.createdTime
+
+            - jsonPath: $.StillBirthChildDetails.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.StillBirthChildDetails.*.auditDetails.lastModifiedTime
+
+            - jsonPath: $.StillBirthChildDetails.*.vehicleHaltPlaceMl
+
+            - jsonPath: $.StillBirthChildDetails.*.vehicleDesDetailsEn
+
+            - jsonPath: $.StillBirthChildDetails.*.publicPlaceDecpEn
+
+            - jsonPath: $.StillBirthChildDetails.*.localityNameEn
+
+            - jsonPath: $.StillBirthChildDetails.*.localityNameMl
+
+            - jsonPath: $.StillBirthChildDetails.*.streetNameEn
+
+            - jsonPath: $.StillBirthChildDetails.*.streetNameMl
+
+
+
+        - query: INSERT INTO public.eg_birth_father_information (id, firstname_en, firstname_ml,  aadharno, birthdtlid, createdtime, createdby, lastmodifiedtime, lastmodifiedby, bio_adopt)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+          basePath: StillBirthChildDetails.*.StillBirthParentsDetails
+          jsonMaps:
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthParentsDetails.fatherUuid
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthParentsDetails.fatherFirstNameEn
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthParentsDetails.fatherFirstNameMl
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthParentsDetails.fatherAadhar
+
+            - jsonPath: $.StillBirthChildDetails.*.id
+
+            - jsonPath: $.StillBirthChildDetails.*.auditDetails.createdTime
+
+            - jsonPath: $.StillBirthChildDetails.*.auditDetails.createdBy
+
+            - jsonPath: $.StillBirthChildDetails.*.auditDetails.lastModifiedTime
+
+            - jsonPath: $.StillBirthChildDetails.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthParentsDetails.fatherBioAdopt
+
+
+        - query: INSERT INTO public.eg_birth_mother_information(id, firstname_en, firstname_ml, aadharno, birthdtlid, createdtime, createdby, lastmodifiedtime, lastmodifiedby, bio_adopt)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+          basePath: StillBirthChildDetails.*.StillBirthParentsDetails
+          jsonMaps:
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthParentsDetails.motherUuid
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthParentsDetails.motherFirstNameEn
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthParentsDetails.motherFirstNameMl
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthParentsDetails.motherAadhar
+
+            - jsonPath: $.StillBirthChildDetails.*.id
+
+            - jsonPath: $.StillBirthChildDetails.*.auditDetails.createdTime
+
+            - jsonPath: $.StillBirthChildDetails.*.auditDetails.createdBy
+
+            - jsonPath: $.StillBirthChildDetails.*.auditDetails.lastModifiedTime
+
+            - jsonPath: $.StillBirthChildDetails.*.auditDetails.lastModifiedBy,
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthParentsDetails.motherBioAdopt
+
+        - query: INSERT INTO public.eg_birth_permanent_address(id, housename_no_en, housename_no_ml, ot_address1_en, ot_address1_ml, ot_address2_en, ot_address2_ml,ot_state_region_province_en,
+            villageid, tenantid, talukid, districtid, stateid, poid, pinno, countryid, birthdtlid, same_as_present, createdtime, createdby, lastmodifiedtime,
+            lastmodifiedby, bio_adopt, taluk_name, village_name, ward_code, locality_en, locality_ml, street_name_en,
+            street_name_ml, ot_zipcode,family_emailid, family_mobileno, postoffice_en, postoffice_ml)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,  ?, ?, ?, ?, ?, ?);
+
+          basePath: StillBirthChildDetails.*.AddressBirthDetails
+          jsonMaps:
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.permanentUuid
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.houseNameNoEnPermanent
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.houseNameNoMlPermanent
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.permntOutsideIndiaLineoneEn
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.permntOutsideIndiaLineoneMl
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.permntOutsideIndiaLinetwoEn
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.permntOutsideIndiaLinetwoMl
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.permntOutsideIndiaprovinceEn
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.permntInKeralaAdrVillage
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.permntInKeralaAdrLBName
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.permntInKeralaAdrTaluk
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.districtIdPermanent
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.stateIdPermanent
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.permntInKeralaAdrPostOffice
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.permntInKeralaAdrPincode
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.countryIdPermanent
+
+            - jsonPath: $.StillBirthChildDetails.*.id
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.isPrsentAddressInt
+
+            - jsonPath: $.StillBirthChildDetails.*.auditDetails.createdTime
+
+            - jsonPath: $.StillBirthChildDetails.*.auditDetails.createdBy
+
+            - jsonPath: $.StillBirthChildDetails.*.auditDetails.lastModifiedTime
+
+            - jsonPath: $.StillBirthChildDetails.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.bioAdoptPermanent
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.permntOutsideKeralaTaluk
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.villageNamePermanent
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.permntInKeralaWardNo
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.localityEnPermanent
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.localityMlPermanent
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.streetNameEnPermanent
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.streetNameMlPermanent
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.permanentOutsideIndiaPostCode
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthParentsDetails.fatherEmail
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthParentsDetails.fatherMobile
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthParentsDetails.permntOutsideKeralaPostOfficeEn
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthParentsDetails.permntOutsideKeralaPostOfficeMl
+
+
+        - query: INSERT INTO public.eg_birth_present_address(id, housename_no_en, housename_no_ml, ot_address1_en, ot_address1_ml, ot_address2_en, ot_address2_ml,
+            ot_state_region_province_en, ot_state_region_province_ml, villageid, tenantid, talukid, districtid, stateid, poid, pinno, countryid, birthdtlid, createdtime, createdby, lastmodifiedtime, lastmodifiedby,
+            bio_adopt, taluk_name, village_name, ward_code, locality_en, locality_ml, street_name_en,street_name_ml, ot_zipcode)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+          basePath: StillBirthChildDetails.*.AddressBirthDetails
+          jsonMaps:
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.presentUuid
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.houseNameNoEnPresent
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.houseNameNoMlPresent
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.presentOutSideIndiaAdressEn
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.presentOutSideIndiaAdressMl
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.presentOutSideIndiaAdressEnB
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.presentOutSideIndiaAdressMlB
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.presentOutSideIndiaProvinceEn
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.presentOutSideIndiaProvinceMl
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.presentInsideKeralaVillage
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.presentInsideKeralaLBName
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.presentInsideKeralaTaluk
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.districtIdPresent
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.stateIdPresent
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.presentInsideKeralaPostOffice
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.presentInsideKeralaPincode
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.countryIdPresent
+
+            - jsonPath: $.StillBirthChildDetails.*.id
+
+            - jsonPath: $.StillBirthChildDetails.*.auditDetails.createdTime
+
+            - jsonPath: $.StillBirthChildDetails.*.auditDetails.createdBy
+
+            - jsonPath: $.StillBirthChildDetails.*.auditDetails.lastModifiedTime
+
+            - jsonPath: $.StillBirthChildDetails.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.bioAdoptPresent
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.presentOutsideKeralaTaluk
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.villageNamePresent
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.presentWardNo
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.localityEnPresent
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.localityMlPresent
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.streetNameEnPresent
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.streetNameMlPresent
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.presentOutsideKeralaPincode
+
+        - query: INSERT INTO public.eg_birth_statitical_information(id,weight_of_child,duration_of_pregnancy_in_week,nature_of_medical_attention,delivery_method,cause_of_foetal_death,religionid,father_nationalityid,
+            father_educationid,father_proffessionid,mother_educationid,mother_proffessionid,mother_nationalityid,mother_age_marriage,mother_age_delivery,mother_no_of_birth_given,
+            mother_maritalstatusid,mother_unmarried,mother_res_lbid,mother_res_lb_code_id,mother_res_place_type_id,mother_res_lb_type_id,mother_res_district_id,mother_res_state_id,
+            mother_res_country_id,mother_resdnce_addr_type,mother_resdnce_tenant,mother_resdnce_placetype,mother_resdnce_place_en,mother_resdnce_place_ml,mother_resdnce_lbtype,
+            mother_resdnce_district,mother_resdnce_state,mother_resdnce_country,birthdtlid,mother_order_of_cur_delivery,mother_order_cur_child,mother_res_no_of_years,createdby,
+            createdtime,lastmodifiedby,lastmodifiedtime) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
+
+          basePath: StillBirthChildDetails.*
+          jsonMaps:
+            - jsonPath: $.StillBirthChildDetails.*.birthStatisticsUuid
+
+            - jsonPath: $.StillBirthChildDetails.*.birthWeight
+
+            - jsonPath: $.StillBirthChildDetails.*.pregnancyDuration
+
+            - jsonPath: $.StillBirthChildDetails.*.medicalAttensionSub
+
+            - jsonPath: $.StillBirthChildDetails.*.deliveryMethods
+
+            - jsonPath: $.StillBirthChildDetails.*.causeFoetalDeath
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthParentsDetails.Religion
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthParentsDetails.fatherNationality
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthParentsDetails.fatherEducation
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthParentsDetails.fatherProfession
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthParentsDetails.motherEducation
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthParentsDetails.motherProfession
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthParentsDetails.motherNationality
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthParentsDetails.motherMarriageAge
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthParentsDetails.motherMarriageBirth
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthParentsDetails.orderofChildren
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthParentsDetails.motherMaritalStatus
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthParentsDetails.mother_unmarried
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthParentsDetails.mother_res_lbid
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthParentsDetails.mother_res_lb_code_id
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthParentsDetails.mother_res_place_type_id
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthParentsDetails.mother_res_lb_type_id
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthParentsDetails.mother_res_district_id
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthParentsDetails.mother_res_state_id
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthParentsDetails.mother_res_country_id
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthParentsDetails.mother_resdnce_addr_type
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthParentsDetails.mother_resdnce_tenant
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthParentsDetails.townOrVillagePresent
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthParentsDetails.mother_resdnce_place_en
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthParentsDetails.mother_resdnce_place_ml
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthParentsDetails.mother_resdnce_lbtype
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthParentsDetails.mother_resdnce_district
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthParentsDetails.mother_resdnce_state
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthParentsDetails.mother_resdnce_country
+
+            - jsonPath: $.StillBirthChildDetails.*.id
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthParentsDetails.mother_order_of_cur_delivery
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthParentsDetails.orderofChildren
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthParentsDetails.mother_res_no_of_years
+
+            - jsonPath: $.StillBirthChildDetails.*.auditDetails.createdBy
+
+            - jsonPath: $.StillBirthChildDetails.*.auditDetails.createdTime
+
+            - jsonPath: $.StillBirthChildDetails.*.auditDetails.lastModifiedBy
+            - jsonPath: $.StillBirthChildDetails.*.auditDetails.lastModifiedTime
+
+        - query: INSERT INTO public.eg_birth_initiator(
+            id, birthdtlid, initiator_name, initiator_institution, initiator_inst_desig, relation, initiator_address, is_declared, declaration_id,
+            aadharno, mobileno, createdby, createdtime, lastmodifiedby, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+          basePath: StillBirthChildDetails.*.StillBirthInitiatorDetails
+          jsonMaps:
+
+            - jsonPath: $.StillBirthChildDetails.*.birthInitiatorUuid
+
+            - jsonPath: $.StillBirthChildDetails.*.id
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthInitiatorDetails.initiatorNameEn
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthInitiatorDetails.initiator_institution
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthInitiatorDetails.initiatorDesi
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthInitiatorDetails.relation
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthInitiatorDetails.initiatorAddress
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthInitiatorDetails.isInitiatorDeclaration
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthInitiatorDetails.declaration_id
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthInitiatorDetails.initiatorAadhar
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthInitiatorDetails.initiatorMobile
+
+            - jsonPath: $.StillBirthChildDetails.*.auditDetails.createdBy
+
+            - jsonPath: $.StillBirthChildDetails.*.auditDetails.createdTime
+
+            - jsonPath: $.StillBirthChildDetails.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.StillBirthChildDetails.*.auditDetails.lastModifiedTime
+
+    - version: 1.0
+      description: Persists update birth details in eg_birth_details  table
+      fromTopic: update-still-birth-application-topic
+      isTransaction: true
+      queryMaps:
+
+        - query: UPDATE public.eg_birth_details SET dateofbirth=?, timeofbirth=?, am_pm=?, firstname_en=?, firstname_ml=?, middlename_en=?, middlename_ml=?,
+            lastname_en=?, lastname_ml=?, tenantid=?, gender=?, aadharno=?, esign_user_code=?, esign_user_desig_code=?,
+            is_multiple_birth=?, is_father_info_missing=?, is_mother_info_missing=?, no_of_alive_birth=?, multiplebirthdetid=?, is_born_outside=?,
+            ot_passportno=?, ot_dateofarrival=?, applicationtype=?, businessservice=?, workflowcode=?, fm_fileno=?, file_date=?, file_status=?,
+            applicationno=?, registrationno=?, registration_date=?, action=?, status=?, lastmodifiedby=?,
+            lastmodifiedtime=? WHERE id=?;
+
+
+          basePath: StillBirthChildDetails.*
+          jsonMaps:
+            - jsonPath: $.StillBirthChildDetails.*.childDOB
+
+            - jsonPath: $.StillBirthChildDetails.*.birthDateTime
+
+            - jsonPath: $.StillBirthChildDetails.*.am_pm
+
+            - jsonPath: $.StillBirthChildDetails.*.childFirstNameEn
+
+            - jsonPath: $.StillBirthChildDetails.*.childFirstNameMl
+
+            - jsonPath: $.StillBirthChildDetails.*.childMiddleNameEn
+
+            - jsonPath: $.StillBirthChildDetails.*.childMiddleNameMl
+
+            - jsonPath: $.StillBirthChildDetails.*.childLastNameEn
+
+            - jsonPath: $.StillBirthChildDetails.*.childLastNameMl
+
+            - jsonPath: $.StillBirthChildDetails.*.tenantid
+
+            - jsonPath: $.StillBirthChildDetails.*.gender
+
+            - jsonPath: $.StillBirthChildDetails.*.childAadharNo
+
+            - jsonPath: $.StillBirthChildDetails.*.esign_user_code
+
+            - jsonPath: $.StillBirthChildDetails.*.esign_user_desig_code
+
+            - jsonPath: $.StillBirthChildDetails.*.is_multiple_birth
+
+            - jsonPath: $.StillBirthChildDetails.*.isfatherInfo
+
+            - jsonPath: $.StillBirthChildDetails.*.ismotherInfo
+
+            - jsonPath: $.StillBirthChildDetails.*.no_of_alive_birth
+
+            - jsonPath: $.StillBirthChildDetails.*.multiplebirthdetid
+
+            - jsonPath: $.StillBirthChildDetails.*.is_born_outside
+
+            - jsonPath: $.StillBirthChildDetails.*.ot_passportno
+
+            - jsonPath: $.StillBirthChildDetails.*.ot_dateofarrival
+
+            - jsonPath: $.StillBirthChildDetails.*.applicationtype
+
+            - jsonPath: $.StillBirthChildDetails.*.businessservice
+
+            - jsonPath: $.StillBirthChildDetails.*.workflowcode
+
+            - jsonPath: $.StillBirthChildDetails.*.fileNumber
+
+            - jsonPath: $.StillBirthChildDetails.*.fileDate
+
+            - jsonPath: $.StillBirthChildDetails.*.fileStatus
+
+            - jsonPath: $.StillBirthChildDetails.*.applicationNumber
+
+            - jsonPath: $.StillBirthChildDetails.*.registrationNo
+
+            - jsonPath: $.StillBirthChildDetails.*.registrationDate
+
+            - jsonPath: $.StillBirthChildDetails.*.action
+
+            - jsonPath: $.StillBirthChildDetails.*.applicationStatus
+
+            - jsonPath: $.StillBirthChildDetails.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.StillBirthChildDetails.*.auditDetails.lastModifiedTime
+
+            - jsonPath: $.StillBirthChildDetails.*.id
+
+        - query: UPDATE public.eg_birth_place SET placeofbirthid=?, hospitalid=?, public_place_id=?, institution_type_id=?, institution_id=?, vehicletypeid=?, vehicle_registration_no=?,
+            vehicle_from_en=?, vehicle_to_en=?, vehicle_from_ml=?, vehicle_to_ml=?, vehicle_admit_hospital_en=?, ho_householder_en=?, ho_householder_ml=?, ho_locality_en=?,
+            ho_locality_ml=?, ho_street_name_en=?, ho_street_name_ml=?, ho_housename_en=?, ho_housename_ml=?, ho_villageid=?, ho_talukid=?, ho_districtid=?, ho_stateid=?, ho_poid=?, ho_pinno=?,
+            ho_countryid=?, ward_id=?, auth_officer_id=?, auth_officer_desig_id=?, oth_auth_officer_name=?, oth_auth_officer_desig=?,
+            informantsaddress_en=?, informants_mobileno=?, informants_aadhaar_no=?, vehicle_haltplace_en=?, vehicle_hospitalid=?,
+            lastmodifiedby=?, lastmodifiedtime=?, vehicle_haltplace_ml=?, vehicle_desc=?, public_place_desc=?,
+            public_locality_en=?, public_locality_ml=?, public_street_name_en=?, public_street_name_ml=?  WHERE  birthdtlid=?;
+
+          basePath: StillBirthChildDetails.*
+          jsonMaps:
+            - jsonPath: $.StillBirthChildDetails.*.birthPlace
+
+            - jsonPath: $.StillBirthChildDetails.*.hospitalCode
+
+            - jsonPath: $.StillBirthChildDetails.*.publicPlaceType
+
+            - jsonPath: $.StillBirthChildDetails.*.institutionTypeCode
+
+            - jsonPath: $.StillBirthChildDetails.*.institutionId
+
+            - jsonPath: $.StillBirthChildDetails.*.vehicleType
+
+            - jsonPath: $.StillBirthChildDetails.*.vehicleRegistrationNo
+
+            - jsonPath: $.StillBirthChildDetails.*.vehicleFromEn
+
+            - jsonPath: $.StillBirthChildDetails.*.vehicleToEn
+
+            - jsonPath: $.StillBirthChildDetails.*.vehicleFromMl
+
+            - jsonPath: $.StillBirthChildDetails.*.vehicleToMl
+
+            - jsonPath: $.StillBirthChildDetails.*.vehicle_admit_hospital_en
+
+            - jsonPath: $.StillBirthChildDetails.*.ho_householder_en
+
+            - jsonPath: $.StillBirthChildDetails.*.ho_householder_ml
+
+            - jsonPath: $.StillBirthChildDetails.*.adrsLocalityNameEn
+
+            - jsonPath: $.StillBirthChildDetails.*.adrsLocalityNameMl
+
+            - jsonPath: $.StillBirthChildDetails.*.adrsStreetNameEn
+
+            - jsonPath: $.StillBirthChildDetails.*.adrsStreetNameMl
+
+            - jsonPath: $.StillBirthChildDetails.*.adrsHouseNameEn
+
+            - jsonPath: $.StillBirthChildDetails.*.adrsHouseNameMl
+
+            - jsonPath: $.StillBirthChildDetails.*.ho_villageid
+
+            - jsonPath: $.StillBirthChildDetails.*.ho_talukid
+
+            - jsonPath: $.StillBirthChildDetails.*.ho_districtid
+
+            - jsonPath: $.StillBirthChildDetails.*.ho_stateid
+
+            - jsonPath: $.StillBirthChildDetails.*.adrsPostOffice
+
+            - jsonPath: $.StillBirthChildDetails.*.adrsPincode
+
+            - jsonPath: $.StillBirthChildDetails.*.ho_countryid
+
+            - jsonPath: $.StillBirthChildDetails.*.wardNo
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthInformarHosInstDetails.infomantFirstNameEn
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthInformarHosInstDetails.informerDesi
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthInformarHosInstDetails.oth_auth_officer_name
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthInformarHosInstDetails.oth_auth_officer_desig
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthInformarHosInstDetails.informerAddress
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthInformarHosInstDetails.infomantMobile
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthInformarHosInstDetails.infomantAadhar
+
+            - jsonPath: $.StillBirthChildDetails.*.vehicleHaltPlaceEn
+
+            - jsonPath: $.StillBirthChildDetails.*.setadmittedHospitalEn
+
+            - jsonPath: $.StillBirthChildDetails.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.StillBirthChildDetails.*.auditDetails.lastModifiedTime
+
+
+            - jsonPath: $.StillBirthChildDetails.*.vehicleHaltPlaceMl
+
+            - jsonPath: $.StillBirthChildDetails.*.vehicleDesDetailsEn
+
+            - jsonPath: $.StillBirthChildDetails.*.publicPlaceDecpEn
+
+            - jsonPath: $.StillBirthChildDetails.*.localityNameEn
+
+            - jsonPath: $.StillBirthChildDetails.*.localityNameMl
+
+            - jsonPath: $.StillBirthChildDetails.*.streetNameEn
+
+            - jsonPath: $.StillBirthChildDetails.*.streetNameMl
+
+            - jsonPath: $.StillBirthChildDetails.*.id
+
+
+        - query: UPDATE public.eg_birth_father_information SET firstname_en=?, firstname_ml=?, aadharno=?, ot_passportno=?,  lastmodifiedtime=?, lastmodifiedby=? WHERE birthdtlid=?;
+          basePath: StillBirthChildDetails.*.StillBirthParentsDetails
+          jsonMaps:
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthParentsDetails.firstname_en
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthParentsDetails.firstname_ml
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthParentsDetails.fatherAadhar
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthParentsDetails.fatherPassport
+
+            - jsonPath: $.StillBirthChildDetails.*.auditDetails.lastModifiedTime
+
+            - jsonPath: $.StillBirthChildDetails.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.StillBirthChildDetails.*.id
+
+        - query: UPDATE public.eg_birth_mother_information SET firstname_en=?, firstname_ml=?,  aadharno=?, ot_passportno=?,  lastmodifiedtime=?, lastmodifiedby=? WHERE birthdtlid=?;
+
+          basePath: StillBirthChildDetails.*.StillBirthParentsDetails
+          jsonMaps:
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthParentsDetails.motherFirstNameEn
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthParentsDetails.motherFirstNameMl
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthParentsDetails.motherAadhar
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthParentsDetails.motherPassport
+
+            - jsonPath: $.StillBirthChildDetails.*.auditDetails.lastModifiedTime
+
+            - jsonPath: $.StillBirthChildDetails.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.StillBirthChildDetails.*.id
+
+
+        - query: UPDATE public.eg_birth_permanent_address SET  housename_no_en=?, housename_no_ml=?, ot_address1_en=?, ot_address1_ml=?,
+            ot_address2_en=?, ot_address2_ml=?, ot_state_region_province_en=?, villageid=?, tenantid=?, talukid=?, ward_code=?,
+            districtid=?, stateid=?, poid=?, pinno=?, countryid=?, bio_adopt=?, taluk_name=?, same_as_present=?, locality_en=?, locality_ml=?,
+            street_name_en=?, street_name_ml=?, ot_zipcode=?, lastmodifiedby=?, lastmodifiedtime=?, family_emailid=?, family_mobileno=?, postoffice_en=?,
+            postoffice_ml=?, village_name=? WHERE birthdtlid=?;
+
+          basePath: StillBirthChildDetails.*.AddressBirthDetails
+          jsonMaps:
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.houseNameNoEnPermanent
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.houseNameNoMlPermanent
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.PermntOutsideIndiaLineoneEn
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.PermntOutsideIndiaLineoneMl
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.PermntOutsideIndiaLinetwoEn
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.PermntOutsideIndiaLinetwoMl
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.PermntOutsideIndiaprovinceEn
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.permntInKeralaAdrVillage
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.permntInKeralaAdrLBName
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.permntInKeralaAdrTaluk
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.permntInKeralaWardNo
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.districtIdPermanent
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.stateIdPermanent
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.poNoPermanent
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.pinNoPermanent
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.countryIdPermanent
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.bio_adopt
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.permntOutsideKeralaTaluk
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.isPrsentAddressInt
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.localityEnPermanent
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.localityMlPermanent
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.streetNameEnPermanent
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.streetNameMlPermanent
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.PermanentOutsideIndiaPostCode
+
+            - jsonPath: $.StillBirthChildDetails.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.StillBirthChildDetails.*.auditDetails.lastModifiedTime
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthParentsDetails.fatherEmail
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthParentsDetails.fatherMobile
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.permntOutsideKeralaPostOfficeEn
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.permntOutsideKeralaPostOfficeMl
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.villageNamePermanent
+
+            - jsonPath: $.StillBirthChildDetails.*.id
+
+
+        - query: UPDATE public.eg_birth_present_address SET housename_no_en=?, housename_no_ml=?, ot_address1_en=?,
+            ot_address1_ml=?, ot_address2_en=?, ot_address2_ml=?, ot_state_region_province_en=?, ot_state_region_province_ml=?, villageid=?, tenantid=?,
+            talukid=?, districtid=?, stateid=?, poid=?, pinno=?, countryid=?, bio_adopt=?, taluk_name=?, village_name=?, ward_code=?,
+            locality_en=?, locality_ml=?, street_name_en=?, street_name_ml=?, lastmodifiedby=?, lastmodifiedtime=?, ot_zipcode=?, postoffice_en=?, postoffice_ml=? WHERE birthdtlid=?;
+          basePath: StillBirthChildDetails.*.AddressBirthDetails
+          jsonMaps:
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.houseNameNoEnPresent
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.houseNameNoMlPresent
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.presentOutSideIndiaAdressEn
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.presentOutSideIndiaAdressMl
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.presentOutSideIndiaAdressEnB
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.presentOutSideIndiaAdressMlB
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.presentOutSideIndiaProvinceEn
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.presentOutSideIndiaProvinceMl
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.presentInsideKeralaVillage
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.presentInsideKeralaLBName
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.presentInsideKeralaTaluk
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.districtIdPresent
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.stateIdPresent
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.poNoPresent
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.pinNoPresent
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.countryIdPresent
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.bio_adopt
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.presentOutsideKeralaTaluk
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.villageNamePresent
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.presentWardNo
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.localityEnPresent
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.localityMlPresent
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.streetNameEnPresent
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.streetNameMlPresent
+
+            - jsonPath: $.StillBirthChildDetails.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.StillBirthChildDetails.*.auditDetails.lastModifiedTime
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.poNoPresent
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.presentOutsideKeralaPostOfficeEn
+
+            - jsonPath: $.StillBirthChildDetails.*.AddressBirthDetails.presentOutsideKeralaPostOfficeMl
+
+            - jsonPath: $.StillBirthChildDetails.*.id
+
+
+        - query: UPDATE public.eg_birth_statitical_information SET  weight_of_child=?, duration_of_pregnancy_in_week=?, nature_of_medical_attention=?, cause_of_foetal_death=?,
+            delivery_method=?, religionid=?, father_nationalityid=?, father_educationid=?, father_education_subid=?,
+            father_proffessionid=?, mother_educationid=?, mother_education_subid=?, mother_proffessionid=?, mother_nationalityid=?, mother_age_marriage=?, mother_age_delivery=?,
+            mother_no_of_birth_given=?, mother_maritalstatusid=?, mother_unmarried=?,mother_res_lbid=?, mother_res_lb_code_id=?, mother_res_place_type_id=?, mother_res_lb_type_id=?,
+            mother_res_district_id=?, mother_res_state_id=?, mother_res_country_id=?, mother_resdnce_addr_type=?, mother_resdnce_tenant=?, mother_resdnce_placetype=?,
+            mother_resdnce_place_en=?, mother_resdnce_place_ml=?, mother_resdnce_lbtype=?, mother_resdnce_district=?, mother_resdnce_state=?, mother_resdnce_country=?,
+            mother_order_of_cur_delivery=?,mother_order_cur_child=?,mother_res_no_of_years=?,lastmodifiedtime=?, lastmodifiedby=? WHERE birthdtlid=?;
+
+          basePath: StillBirthChildDetails.*
+          jsonMaps:
+
+            - jsonPath: $.StillBirthChildDetails.*.birthWeight
+
+            - jsonPath: $.StillBirthChildDetails.*.pregnancyDuration
+
+            - jsonPath: $.StillBirthChildDetails.*.medicalAttensionSub
+
+            - jsonPath: $.StillBirthChildDetails.*.causeFoetalDeath
+
+            - jsonPath: $.StillBirthChildDetails.*.deliveryMethods
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthParentsDetails.Religion
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthParentsDetails.fatherNationality
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthParentsDetails.fatherEducation
+
+            - jsonPath: $.StillBirthChildDetails.*.birthStatistical.father_education_subid
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthParentsDetails.fatherProfession
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthParentsDetails.motherEducation
+
+            - jsonPath: $.StillBirthChildDetails.*.birthStatistical.mother_education_subid
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthParentsDetails.motherProfession
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthParentsDetails.motherNationality
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthParentsDetails.motherMarriageAge
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthParentsDetails.motherMarriageBirth
+
+            - jsonPath: $.StillBirthChildDetails.*.birthStatistical.mother_no_of_birth_given
+
+            - jsonPath: $.StillBirthChildDetails.*.birthStatistical.mother_maritalstatusid
+
+            - jsonPath: $.StillBirthChildDetails.*.birthStatistical.mother_unmarried
+
+            - jsonPath: $.StillBirthChildDetails.*.birthStatistical.mother_res_lbid
+
+            - jsonPath: $.StillBirthChildDetails.*.birthStatistical.mother_res_lb_code
+
+            - jsonPath: $.StillBirthChildDetails.*.birthStatistical.mother_res_place_type_id
+
+            - jsonPath: $.StillBirthChildDetails.*.birthStatistical.mother_res_lb_type_id
+
+            - jsonPath: $.StillBirthChildDetails.*.birthStatistical.mother_res_district_id
+
+            - jsonPath: $.StillBirthChildDetails.*.birthStatistical.mother_res_state_id
+
+            - jsonPath: $.StillBirthChildDetails.*.birthStatistical.mother_res_country_id
+
+            - jsonPath: $.StillBirthChildDetails.*.birthStatistical.mother_resdnce_addr_type
+
+            - jsonPath: $.StillBirthChildDetails.*.birthStatistical.mother_resdnce_tenentid
+
+            - jsonPath: $.StillBirthChildDetails.*.birthStatistical.permntOutsideKeralaCityVilgeEn
+
+            - jsonPath: $.StillBirthChildDetails.*.birthStatistical.mother_resdnce_place_en
+
+            - jsonPath: $.StillBirthChildDetails.*.birthStatistical.mother_resdnce_place_ml
+
+            - jsonPath: $.StillBirthChildDetails.*.birthStatistical.mother_resdnce_lbtype
+
+            - jsonPath: $.StillBirthChildDetails.*.birthStatistical.mother_resdnce_districtid
+
+            - jsonPath: $.StillBirthChildDetails.*.birthStatistical.mother_resdnce_stateid
+
+            - jsonPath: $.StillBirthChildDetails.*.birthStatistical.mother_resdnce_countryid
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthParentsDetails.mother_order_of_cur_delivery
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthParentsDetails.orderofChildren
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthParentsDetails.mother_res_no_of_years
+
+            - jsonPath: $.StillBirthChildDetails.*.auditDetails.lastModifiedTime
+
+            - jsonPath: $.StillBirthChildDetails.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.StillBirthChildDetails.*.id
+
+
+        - query: UPDATE public.eg_birth_initiator SET initiator_name=?, initiator_institution=?, initiator_inst_desig=?, relation=?, initiator_address=?,
+            is_declared=?, declaration_id=?, aadharno=?, mobileno=?, lastmodifiedby=?, lastmodifiedtime=? WHERE birthdtlid=?;
+          basePath: StillBirthChildDetails.*.StillBirthInitiatorDetails
+          jsonMaps:
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthInitiatorDetails.initiatorNameEn
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthInitiatorDetails.initiator_institution
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthInitiatorDetails.initiatorDesi
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthInitiatorDetails.relation
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthInitiatorDetails.initiatorAddress
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthInitiatorDetails.isInitiatorDeclaration
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthInitiatorDetails.declaration_id
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthInitiatorDetails.initiatorAadhar
+
+            - jsonPath: $.StillBirthChildDetails.*.StillBirthInitiatorDetails.initiatorMobile
+
+            - jsonPath: $.StillBirthChildDetails.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.StillBirthChildDetails.*.auditDetails.lastModifiedTime
+
+            - jsonPath: $.StillBirthChildDetails.*.id

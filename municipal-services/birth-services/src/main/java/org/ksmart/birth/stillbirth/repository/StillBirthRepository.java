@@ -45,12 +45,12 @@ public class StillBirthRepository {
     }
     public List<StillBirthApplication> saveBirthDetails(StillBirthDetailRequest request) {
         enrichment.enrichCreate(request);
-        producer.push(birthDeathConfiguration.getSaveKsmartBirthApplicationTopic(), request);
+        producer.push(birthDeathConfiguration.getSaveStillBirthTopic(), request);
         return request.getBirthDetails();
     }
     public List<StillBirthApplication> updateBirthDetails(StillBirthDetailRequest request) {
         enrichment.enrichUpdate(request);
-        producer.push(birthDeathConfiguration.getSaveKsmartBirthApplicationTopic(), request);
+        producer.push(birthDeathConfiguration.getUpdateStillBirthTopic(), request);
         return request.getBirthDetails();
     }
     public List<StillBirthApplication> searchStillBirthDetails(StillBirthDetailRequest request, SearchCriteria criteria) {

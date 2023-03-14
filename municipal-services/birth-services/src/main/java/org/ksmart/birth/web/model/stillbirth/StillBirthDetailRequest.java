@@ -18,7 +18,7 @@ public class StillBirthDetailRequest {
     @JsonProperty("RequestInfo")
     private RequestInfo requestInfo;
 
-    @JsonProperty("ChildDetails")
+    @JsonProperty("StillBirthChildDetails")
     @Valid
     private List<StillBirthApplication> birthDetails;
 

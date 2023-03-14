@@ -23,7 +23,7 @@ public class StillBirthResponse {
     @JsonProperty("ResponseInfo")
     private ResponseInfo responseInfo;
 
-    @JsonProperty("ChildDetails")
+    @JsonProperty("StillBirthChildDetails")
     @Valid
     private List<StillBirthApplication> birthDetails;
 

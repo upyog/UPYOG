@@ -73,11 +73,11 @@ public class BirthConfiguration {
     @Value("${persister.update.adoption.topic}")
     private String updateBirthAdoptionTopic;
 
-    @Value("${persister.save.birth.application.topic}")
-    private String saveBirthApplicationTopic;
+    @Value("${persister.save.still.birth.topic}")
+    private String saveStillBirthTopic;
 
-    @Value("${persister.update.birth.application.topic}")
-    private String updateBirthApplicationTopic;
+    @Value("${persister.update.still.birth.topic}")
+    private String updateStillBirthTopic;
 
     @Value("${persister.ksmart.save.birth.topic}")
     private String saveKsmartBirthApplicationTopic;

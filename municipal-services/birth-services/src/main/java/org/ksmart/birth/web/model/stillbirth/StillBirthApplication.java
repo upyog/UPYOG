@@ -26,6 +26,7 @@ public class StillBirthApplication {
     private Long dateOfBirth;
     @JsonProperty("birthDateTime")
     private Long timeOfBirth;
+
     @Size(max = 64)
     @JsonProperty("gender")
     private String gender;
@@ -54,7 +55,6 @@ public class StillBirthApplication {
     @JsonProperty("childLastNameMl")
     private String lastNameMl;
 
-    @NotNull
     @Size(max = 64)
     @JsonProperty("birthPlace")
     private String placeofBirthId;
@@ -71,10 +71,13 @@ public class StillBirthApplication {
     @Size(max = 64)
     @JsonProperty("institutionTypeCode")
     private String institutionTypeId;
+
     @Size(max = 64)
     @JsonProperty("institution")
     private String institution;
-
+    @Size(max = 64)
+    @JsonProperty("institutionNameCode")
+    private String institutionNameCode;
     @Size(max = 64)
     @JsonProperty("institutionId")
     private String institutionId;
@@ -177,12 +180,6 @@ public class StillBirthApplication {
     @Size(max = 64)
     @JsonProperty("deliveryMethods")
     private String deliveryMethods;
-
-    @NotNull
-    @Size(max = 64)
-    @JsonProperty("causeFoetalDeath")
-    private String causeFoetalDeath;
-
     @Size(max = 64)
     @JsonProperty("esign_user_code")
     private String esignUserCode;
@@ -190,17 +187,27 @@ public class StillBirthApplication {
     @Size(max = 64)
     @JsonProperty("esign_user_desig_code")
     private String esignUserDesigCode;
-
-    @NotNull
     @Size(max = 64)
     @JsonProperty("tenantid")
     private String tenantId;
+    @Size(max = 64)
+    @JsonProperty("villageid")
+    private String villageid;
 
-    @NotNull
+    @Size(max = 64)
+    @JsonProperty("talukid")
+    private String talukid;
+
+    @Size(max = 64)
+    @JsonProperty("districtid")
+    private String districtid;
+
+    @Size(max = 64)
+    @JsonProperty("countryid")
+    private String countryid;
     @Size(max = 64)
     @JsonProperty("applicationtype")
     private String applicationType;
-
 
     @Size(max = 64)
     @JsonProperty("businessservice")
@@ -237,51 +244,46 @@ public class StillBirthApplication {
 
     @JsonProperty("assignee")
     private List<String> assignee;
-
     private String comment;
-
 
     @JsonProperty("wfDocuments")
     private List<Document> wfDocuments;
-
     @Size(max = 64)
     @JsonProperty("applicationStatus")
     private String applicationStatus;
     @Size(max = 2500)
     @JsonProperty("remarks_en")
     private String remarksEn;
-
     @Size(max = 2500)
     @JsonProperty("remarks_ml")
     private String remarksMl;
-
     @Size(max = 20)
     @JsonProperty("am_pm")
     private String ampm;
-
     @JsonProperty("dateofreport")
     private Long dateOfReport;
-
     @Size(max = 64)
     @JsonProperty("birthPlaceUuid")
     private String birthPlaceUuid;
-
     @Size(max = 64)
     @JsonProperty("birthInitiatorUuid")
     private String birthInitiatorUuid;
-
     @Size(max = 64)
     @JsonProperty("birthStatisticsUuid")
     private String birthStatisticsUuid;
-    @JsonProperty("ParentsDetails")
+    @NotNull
+    @Size(max = 64)
+    @JsonProperty("causeFoetalDeath")
+    private String causeFoetalDeath;
+    @JsonProperty("StillBirthParentsDetails")
     private ParentsDetail parentsDetails;
 
-    @JsonProperty("InitiatorinfoDetails")
+    @JsonProperty("StillBirthInitiatorDetails")
     private InitiatorDetail initiatorDetails;
 
     @JsonProperty("AddressBirthDetails")
     private ParentAddress parentAddress;
-    @JsonProperty("InformarHosInstDetails")
+    @JsonProperty("StillBirthInformarHosInstDetails")
     private InformatDetail informatDetail;
 
     @JsonProperty("isStill")
