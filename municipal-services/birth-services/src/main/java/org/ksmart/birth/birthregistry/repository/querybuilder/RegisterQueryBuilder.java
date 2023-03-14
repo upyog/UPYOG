@@ -74,8 +74,9 @@ public class RegisterQueryBuilder extends BaseRegBuilder {
         addDateRangeFilter("krbd.file_date", criteria.getFromDateReg(), criteria.getToDateReg(), query, preparedStmtValues);
         addFilter("ebp.hospitalid", criteria.getHospitalId(), query, preparedStmtValues);
         addFilter("ebp.institution_id", criteria.getInstitutionId(), query, preparedStmtValues);
-        addFilter("ebp.ebp.ward_id", criteria.getWardCode(), query, preparedStmtValues);
-
+        addFilter("ebp.ward_id", criteria.getWardCode(), query, preparedStmtValues);
+        addFilter("krbd.firstname_en", criteria.getChildName(), query, preparedStmtValues);
+        addFilter("kbfi.firstname_en", criteria.getNameOfFather(), query, preparedStmtValues);
 
         if (StringUtils.isEmpty(criteria.getSortBy()))
             addOrderByColumns("krbd.createdtime",null, orderBy);
@@ -97,6 +98,10 @@ public class RegisterQueryBuilder extends BaseRegBuilder {
             addOrderByColumns("ebp.ward_id",criteria.getSortOrder(), orderBy);
         else if (criteria.getSortBy() == RegisterBirthSearchCriteria.SortBy.tenantId)
             addOrderByColumns("krbd.tenantid",criteria.getSortOrder(), orderBy);
+        else if (criteria.getSortBy() == RegisterBirthSearchCriteria.SortBy.childName)
+            addOrderByColumns("krbd.firstname_en",criteria.getSortOrder(), orderBy);
+        else if (criteria.getSortBy() == RegisterBirthSearchCriteria.SortBy.nameOfFather)
+            addOrderByColumns("kbfi.firstname_en",criteria.getSortOrder(), orderBy);
 
         addOrderToQuery(orderBy, query);
         addLimitAndOffset(criteria.getOffset(),criteria.getLimit(), query, preparedStmtValues);

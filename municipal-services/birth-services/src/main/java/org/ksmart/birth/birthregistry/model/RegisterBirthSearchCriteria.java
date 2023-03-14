@@ -22,6 +22,12 @@ public class RegisterBirthSearchCriteria {
     private String id; // birthapplicant id
     @JsonProperty("ackNo")
     private String ackNo;
+    @JsonProperty("childName")
+    private String childName;
+
+    @JsonProperty("nameOfFather")
+    @Valid
+    private String nameOfFather;
 
     @JsonProperty("registrationNo")
     private String registrationNo;
@@ -50,7 +56,7 @@ public class RegisterBirthSearchCriteria {
     @JsonProperty("dob")
     @Valid
     private LocalDate dob;
-    @JsonProperty("mother")
+    @JsonProperty("nameOfMother")
     @Valid
     private String nameOfMother;
     @JsonProperty("hospitalId")
@@ -87,6 +93,8 @@ public class RegisterBirthSearchCriteria {
         tenantId,
         institutionId,
         hospitalId,
-        wardCode
+        wardCode,
+        childName,
+        nameOfFather
     }
 }
