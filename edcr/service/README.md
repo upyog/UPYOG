@@ -1,5 +1,5 @@
-# eGov Development Control Regulations
-  Module used to scrutinize the building plan diagrams which are in the .dxf file format. It will extract data from from dxf file and will validate against ULB rules and will generate the scrutiny report in the pdf format, the scrutiny report contains the rules which are passing and failing.
+# Development Control Regulations
+  Module used to scrutinize the building plan diagrams which are in the .dxf file format. It will extract data from from dxf file and will validate against ULB rules and will generate the scrutiny report in the PDF format, the scrutiny report contains the rules which are passing and failing.
 
 
 
@@ -8,27 +8,27 @@ This section contains steps that are involved in build and deploy the applicatio
 FAQ related to various deployment and development issues are discussed [here][FAQ]
 
 ## Setup with auto installer
-* Clone the eGov repository.
+* Clone the UPYOG repository.
 ```bash
 $ mkdir -p ${HOME}/egovgithub && cd egovgithub
-$ git clone  -b master --single-branch  git@github.com:egovernments/eGov-dcr-service.git
+$ git clone  -b master --single-branch  git@github.com:upyog/UPYOG.git
 ```
 * First time setup which will install the stacks, build the source code, and deploys the artifact to Wildfly
 ```bash
-$ cd ${HOME}/egovgithub/eGov-dcr-service && make all
+$ cd ${HOME}/egovgithub/UPYOG/edcr/service && make all
 ```
 -----
-* To install the prerequisites eGov DCR Service stacks
+* To install the prerequisites DCR Service stacks
 ```bash
-$ cd ${HOME}/egovgithub/egov-dcr-service &&  make install
+$ cd ${HOME}/egovgithub/UPYOG/edcr/service &&  make install
 ```
 * To build the source code base
 ```bash
-$ cd ${HOME}/egovgithub/eGov-dcr-service && make build
+$ cd ${HOME}/egovgithub/UPYOG/edcr/service && make build
 ```
 * To deploy the artifact to WILDFLY
 ```bash
-$ cd ${HOME}/egovgithub/eGov-dcr-service && make deploy
+$ cd ${HOME}/egovgithub/UPYOG/edcr/service && make deploy
 ```
 
 ## Manual Setup Instruction
@@ -53,11 +53,11 @@ $ id -un
 ```
 
 #### Building Source
-1. Clone the eGov repository.
+1. Clone the UPYOG repository.
 ```bash
 $ mkdir egovgithub
 $ cd egovgithub
-$ git clone git@github.com:egovernments/eGov-dcr-service.git
+$ git clone git@github.com:upyog/UPYOG.git
 ```
 2. Change directory back to `<CLONED_REPO_DIR>/egov`
 
@@ -69,7 +69,7 @@ $ git clone git@github.com:egovernments/eGov-dcr-service.git
 
 #### Redis Server Setup
 
-By default eGov suit uses embedded redis server (work only in Linux & OSx), to make eGov suit works in Windows OS or if you want to run redis server as standalone then follow the installation steps below.
+By default UPYOG uses embedded redis server (work only in Linux & OSx), to make eGov suit works in Windows OS or if you want to run redis server as standalone then follow the installation steps below.
  
 1. Installing redis server on Linux
  
@@ -161,7 +161,7 @@ By default eGov suit uses embedded redis server (work only in Linux & OSx), to m
 
 6. Monitor the logs and in case of successful deployment, just hit `http://localhost:<YOUR_HTTP_PORT>/edcr/rest/dcr/scrutinize` from your postman.
 
-8. Download postman collection from https://github.com/egovernments/eGov-dcr-service/blob/master/egov/egov-edcr/Postman/eDcr%20Collection.postman_collectionv.1.json and import into your local postman and use for testing.
+8. Download postman collection from https://raw.githubusercontent.com/upyog/UPYOG/master/edcr/service/egov/egov-edcr/Postman/eDcr%20Collection.postman_collectionv.1.json and import into your local postman and use for testing.
 
 ### Setup Multitenancy Locally
 1. The state is configured by adding property tenant.{domain_name}=schema_name (state_name) in egov-erp-override.properties.
@@ -170,7 +170,7 @@ By default eGov suit uses embedded redis server (work only in Linux & OSx), to m
 
 3. Each ULB can be configured by adding an entry like tenant.{domain_name}=schema_name (city_name) in egov-erp-override.properties file. 
 
-5. In the state schema, the state_name passed in the request and city code in the state.eg_table must be the same. Example, In the request tenant id is pb.amritsar, then in the state schema city table, the city code value should be pb. For other schema this change is not required.
+5. In the state schema, the state_name passed in the request and city code in the state.eg_table must be the same. Example, In the request tenant id is pg.citya, then in the state schema city table, the city code value should be pg. For other schema this change is not required.
 
 5. Insert data into eg_city, in the city table domain URL value should be the same as configured tenant domain_name in the egov-erp-override.properties.
 
@@ -184,7 +184,7 @@ By default eGov suit uses embedded redis server (work only in Linux & OSx), to m
 
 * One should not use the city domain URL to scrutinize or fetch plan if used that way, the response will be empty.
 
-* The tenantId used should follow {state_name.city_name} naming convention, then the state_name passed in the request and city code in the state schema must be the same, ex, In the request tenant id is pb.amritsar, then in the state schema city table, the city code value should be pb  .
+* The tenantId used should follow {state_name.city_name} naming convention, then the state_name passed in the request and city code in the state schema must be the same, ex, In the request tenant id is pg.citya, then in the state schema city table, the city code value should be pg  .
 
 This section is to be referred only if you want the application to run using any ip address or domain name.
 
@@ -194,20 +194,20 @@ This section is to be referred only if you want the application to run using any
 
 ###### 2. To access the application using domain name:
 
-* Have an entry in eg_city table in database with domain name (for ex: domainurl= "www.egovbpa.org") to access application using domain name.
-* Add the entry in hosts file of your system with details as 172.16.2.164    www.egovbpa.org (This needs to be done both in server machine as well as the machines in which the application needs to be accessed since this is not a public domain).
-* Access the application  using an url http://www.egovbpa.org:8080/edcr/rest/dcr/scrutinize where www.egovbpa.org is the domain name and 8080 is the port of the machine where application server is running.
+* Have an entry in eg_city table in database with domain name (for ex: domainurl= "www.upyogbpa.org") to access application using domain name.
+* Add the entry in hosts file of your system with details as 172.16.2.164    www.upyogbpa.org (This needs to be done both in server machine as well as the machines in which the application needs to be accessed since this is not a public domain).
+* Access the application  using an url http://www.upyogbpa.org:8080/edcr/rest/dcr/scrutinize where www.upyogbpa.org is the domain name and 8080 is the port of the machine where application server is running.
 
 ### Download Sample Postman Collection
- https://github.com/egovernments/eGov-dcr-service/blob/master/egov/egov-edcr/Postman/eDcr%20Collection.postman_collectionv.1.json
+ https://raw.githubusercontent.com/upyog/UPYOG/master/edcr/service/egov/egov-edcr/Postman/eDcr%20Collection.postman_collectionv.1.json
 
 ## Developer Guide
-This section gives more details regarding developing and contributing to eGov suit.
+This section gives more details regarding developing and contributing to UPYOG Portal.
 
 #### Repository Structure
-`egov` - folder contains all the source code of eGov opensource projects
+`UPYOG` - folder contains all the source code of UPYOG projects
 #### Check out sources
-`git clone git@github.com:egovernments/eGov-dcr-service.git` or `https://github.com/egovernments/eGov-dcr-service.git`
+`git clone git@github.com:upyog/UPYOG.git` or `https://github.com/upyog/UPYOG.git`
 #### Prerequisites
 
 * Install your favorite IDE for java project. Recommended Eclipse or IntelliJ IDEA
