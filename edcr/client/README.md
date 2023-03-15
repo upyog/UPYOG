@@ -3,27 +3,27 @@ This section contains steps that are involved in build and deploy the applicatio
 FAQ related to various deployment and development issues are discussed [here][FAQ]
 
 ## Setup with auto installer
-* Clone the eGov repository.
+* Clone the UPYOG repository.
 ```bash
 $ mkdir -p ${HOME}/egovgithub && cd egovgithub
-$ git clone  -b master --single-branch  git@github.com:egovernments/eGov-dcr-service.git
+$ git clone -b master --single-branch  git@github.com:upyog/UPYOG.git
 ```
 * First time setup which will install the stacks, build the source code, and deploys the artifact to Wildfly
 ```bash
-$ cd ${HOME}/egovgithub/eGov-dcr-service && make all
+$ cd ${HOME}/egovgithub/UPYOG/edcr/client && make all
 ```
 -----
-* To install the prerequisites eGov DCR Service Client stacks
+* To install the prerequisites DCR Service Client stacks
 ```bash
-$ cd ${HOME}/egovgithub/egov-dcr-client &&  make install
+$ cd ${HOME}/egovgithub/UPYOG/edcr/client &&  make install
 ```
 * To build the source code base
 ```bash
-$ cd ${HOME}/egovgithub/egov-dcr-client && make build
+$ cd ${HOME}/egovgithub/UPYOG/edcr/client && make build
 ```
 * To deploy the artifact to WILDFLY
 ```bash
-$ cd ${HOME}/egovgithub/egov-dcr-client && make deploy
+$ cd ${HOME}/egovgithub/UPYOG/edcr/client && make deploy
 ```
 
 ## Manual Setup Instruction
@@ -47,13 +47,13 @@ $ id -un
 ```
 
 #### Building Source
-1. Clone the eGov repository.
+1. Clone the UPYOG repository.
 ```bash
 $ mkdir egovgithub
 $ cd egovgithub
-$ git clone https://github.com/egovernments/egov-dcr-client.git
+$ git clone https://github.com/upyog/UPYOG.git
 ```
-2. Change directory back to `<CLONED_REPO_DIR>/egov`
+2. Change directory back to `<CLONED_REPO_DIR>/edcr/client/egov`
 
 3. Run the following commands, this will cleans, compiles, tests, migrates database and generates ear artifact along with jars and wars appropriately
 
@@ -63,7 +63,7 @@ $ git clone https://github.com/egovernments/egov-dcr-client.git
 
 #### Redis Server Setup
 
-By default eGov suit uses embedded redis server (work only in Linux & OSx), to make eGov suit works in Windows OS or if you want to run redis server as standalone then follow the installation steps below.
+By default UPYOG uses embedded redis server (work only in Linux & OSx), to make eGov suit works in Windows OS or if you want to run redis server as standalone then follow the installation steps below.
  
 1. Installing redis server on Linux
  
@@ -183,7 +183,7 @@ Always start the wildfly server with the below command to access the application
 This section gives more details regarding developing and contributing to eGov suit.
 
 #### Repository Structure
-`egov` - folder contains all the source code of eGov opensource projects
+`egov` - folder contains all the source code of UPYOG opensource projects
 #### Check out sources
 `git clone git@github.com:egovernments/egov-dcr-client.git` or `https://github.com/egovernments/egov-dcr-client.git`
 #### Prerequisites
