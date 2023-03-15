@@ -25,7 +25,7 @@ public class StillBirthApplicationRowMapper implements ResultSetExtractor<List<S
                     .timeOfBirth(rs.getLong("ba_timeofbirth"))
                     .gender(rs.getString("ba_gender"))
                     .aadharNo(rs.getString("ba_aadharno"))
-                    .isChildName(isChildNameEntered(rs.getString("ba_firstname_en").trim()))
+                    .isChildName(isChildNameEntered(rs.getString("ba_firstname_en")))
                     .firstNameEn(rs.getString("ba_firstname_en"))
                     .firstNameMl(rs.getString("ba_firstname_ml"))
                     .middleNameEn(rs.getString("ba_middlename_en"))
@@ -99,8 +99,14 @@ public class StillBirthApplicationRowMapper implements ResultSetExtractor<List<S
 
 
     private Boolean isChildNameEntered(String name) {
-        if(name == null) return true;
-        else return false;
+        if(name != null){
+            name = name.trim();
+            if(name.isEmpty()){
+                return true;
+            } else{
+                return false;
+            }
+        } else return false;
     }
 }
 

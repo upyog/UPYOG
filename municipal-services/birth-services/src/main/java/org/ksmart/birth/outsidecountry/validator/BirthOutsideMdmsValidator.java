@@ -48,7 +48,6 @@ public class BirthOutsideMdmsValidator {
         List<String> talukCodes = getTaulkCodes(mdmsData);
         List<String> stateCodes = getStateCodes(mdmsData);
         List<String> countryCodes = getCountryCodes(mdmsData);
-        List<String> instCodes = getInstitutionCodes(mdmsData);
         List<String> medicalCodes = getMedicalCodes(mdmsData);
         List<String> villageCodes = getVillageCode(mdmsData);
         List<String> districtCodes = getDistrictCode(mdmsData);
@@ -500,12 +499,12 @@ public class BirthOutsideMdmsValidator {
                             + " codes from MDMS"));
         }
 
-        if (masterData.get(BirthConstants.COMMON_MDMS_INSTITUTION) == null) {
-            throw new CustomException(Collections.singletonMap(MDMS_DATA_ERROR.getCode(),
-                    "Unable to fetch "
-                            + BirthConstants.COMMON_MDMS_INSTITUTION
-                            + " codes from MDMS"));
-        }
+//        if (masterData.get(BirthConstants.COMMON_MDMS_INSTITUTION) == null) {
+//            throw new CustomException(Collections.singletonMap(MDMS_DATA_ERROR.getCode(),
+//                    "Unable to fetch "
+//                            + BirthConstants.COMMON_MDMS_INSTITUTION
+//                            + " codes from MDMS"));
+//        }
 
         if (masterData.get(BirthConstants.COMMON_MDMS_MEDICAL_ATTENTION_TYPE) == null) {
             throw new CustomException(Collections.singletonMap(MDMS_DATA_ERROR.getCode(),
@@ -578,9 +577,9 @@ public class BirthOutsideMdmsValidator {
     private List<String> getCountryCodes(Object mdmsData) {
         return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_COUNTRY_CODE_JSONPATH);
     }
-    private List<String> getInstitutionCodes(Object mdmsData) {
-        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_INSTITUTION_CODE_JSONPATH);
-    }
+//    private List<String> getInstitutionCodes(Object mdmsData) {
+//        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_INSTITUTION_CODE_JSONPATH);
+//    }
     private List<String> getMedicalCodes(Object mdmsData) {
         return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_MEDICAL_ATTENTION_TYPE_CODE_JSONPATH);
     }

@@ -5,6 +5,8 @@ import org.ksmart.birth.config.BirthConfiguration;
 import org.ksmart.birth.utils.enums.ErrorCodes;
 import org.ksmart.birth.web.model.newbirth.NewBirthApplication;
 import org.ksmart.birth.web.model.newbirth.NewBirthDetailRequest;
+import org.ksmart.birth.web.model.stillbirth.StillBirthApplication;
+import org.ksmart.birth.web.model.stillbirth.StillBirthDetailRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -30,9 +32,9 @@ public class StillBirthApplicationValidator {
      *
      * @param request the {@link NewBirthApplication}
      */
-    public void validateCreate(NewBirthDetailRequest request, Object mdmsData) {
-        List<NewBirthApplication> applicantPersonals = request.getNewBirthDetails();
-        if (CollectionUtils.isEmpty(request.getNewBirthDetails())) {
+    public void validateCreate(StillBirthDetailRequest request, Object mdmsData) {
+        List<StillBirthApplication> applicantPersonals = request.getBirthDetails();
+        if (CollectionUtils.isEmpty(request.getBirthDetails())) {
             throw new CustomException(ErrorCodes.BIRTH_DETAILS_REQUIRED.getCode(),
                     "Birth details is required.");
         }

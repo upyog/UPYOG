@@ -32,7 +32,7 @@ public class NewBirthService {
         Object mdmsData = mdmsUtil.mdmsCall(request.getRequestInfo());
 
         // validate request
-      //  validator.validateCreate(request, mdmsData);
+        validator.validateCreate(request, mdmsData);
 
         //call save
         List<NewBirthApplication> birthApplicationDetails =  repository.saveKsmartBirthDetails(request);

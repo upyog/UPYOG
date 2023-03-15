@@ -17,7 +17,7 @@ public class BirthConstants {
     public static final String COMMON_MDMS_TALUK = "Taluk";
     public static final String COMMON_MDMS_STATE = "State";
     public static final String COMMON_MDMS_COUNTRY = "Country";
-    public static final String COMMON_MDMS_INSTITUTION= "Institution";
+    //public static final String COMMON_MDMS_INSTITUTION= "Institution";
     public static final String LOCATION_MDMS_HOSPITAL = "hospitalList";
     public static final String LOCATION_MDMS_INSTITUTION = "institutionList";
     public static final String LOCATION_MDMS_BOUNDARY = "TenantBoundary";
@@ -50,7 +50,7 @@ public class BirthConstants {
     public static final String CR_MDMS_COUNTRY_JSONPATH = "$.MdmsRes.common-masters.Country";
     public static final String CR_MDMS_INST_TYPE_CODE_JSONPATH = "$.MdmsRes.birth-death-service.InstitutionTypePlaceOfEvent[*].code";
     public static final String CR_MDMS_INST_TYPE_JSONPATH = "$.MdmsRes.birth-death-service.InstitutionTypePlaceOfEvent";
-    public static final String CR_MDMS_INSTITUTION_CODE_JSONPATH = "$.MdmsRes.birth-death-service.Institution[*].code";
+//    public static final String CR_MDMS_INSTITUTION_CODE_JSONPATH = "$.MdmsRes.birth-death-service.Institution[*].code";
     public static final String CR_MDMS_MEDICAL_ATTENTION_TYPE_CODE_JSONPATH = "$.MdmsRes.birth-death-service.MedicalAttentionType[*].code";
     public static final String CR_MDMS_VILLAGE_CODE_JSONPATH = "$.MdmsRes.common-masters.Village[*].code";
     public static final String CR_MDMS_DISTRICT_CODE_JSONPATH = "$.MdmsRes.common-masters.District[*].code";

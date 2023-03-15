@@ -48,7 +48,6 @@ public class NewMdmsValidator {
         List<String> talukCodes = getTaulkCodes(mdmsData);
         List<String> stateCodes = getStateCodes(mdmsData);
         List<String> countryCodes = getCountryCodes(mdmsData);
-        List<String> instCodes = getInstitutionCodes(mdmsData);
         List<String> medicalCodes = getMedicalCodes(mdmsData);
         List<String> villageCodes = getVillageCode(mdmsData);
         List<String> districtCodes = getDistrictCode(mdmsData);
@@ -151,14 +150,6 @@ public class NewMdmsValidator {
                             errorMap.put(COMMON_MDMS_COUNTRY, "The Country code Present'" + countryCodesPresent + "' does not exists");
                         }
 
-                        String countryCodesPermanent = birth.getParentAddress().getPermtaddressCountry();
-                        if (log.isDebugEnabled()) {
-                            log.debug("Country code Permanent: \n{}", countryCodesPermanent);
-                        }
-                        if (CollectionUtils.isEmpty(countryCodes) || !countryCodes.contains(countryCodesPermanent)) {
-                            errorMap.put(COMMON_MDMS_COUNTRY, "The Country code Permanent'" + countryCodesPermanent + "' does not exists");
-                        }
-
                         // state code  present
                         String stateCodesPresent = birth.getParentAddress().getPresentaddressStateName();
                         if (log.isDebugEnabled()) {
@@ -167,19 +158,28 @@ public class NewMdmsValidator {
                         if (CollectionUtils.isEmpty(stateCodes) || !stateCodes.contains(stateCodesPresent)) {
                             errorMap.put(COMMON_MDMS_STATE, "The State code Present'" + stateCodesPresent + "' does not exists");
                         }
+                        if (!birth.getParentAddress().getIsPrsentAddress()) {
+                            String countryCodesPermanent = birth.getParentAddress().getPermtaddressCountry();
+                            if (log.isDebugEnabled()) {
+                                log.debug("Country code Permanent: \n{}", countryCodesPermanent);
+                            }
+                            if (CollectionUtils.isEmpty(countryCodes) || !countryCodes.contains(countryCodesPermanent)) {
+                                errorMap.put(COMMON_MDMS_COUNTRY, "The Country code Permanent'" + countryCodesPermanent + "' does not exists");
+                            }
 
-                        // state code  permanent
-                        String stateCodesPermanent = birth.getParentAddress().getPermtaddressStateName();
-                        if (log.isDebugEnabled()) {
-                            log.debug("State code Permanent: \n{}", stateCodesPermanent);
-                        }
-                        if (CollectionUtils.isEmpty(stateCodes) || !stateCodes.contains(stateCodesPermanent)) {
-                            errorMap.put(COMMON_MDMS_STATE, "The State code Permanent'" + stateCodesPermanent + "' does not exists");
+                            // state code  permanent
+                            String stateCodesPermanent = birth.getParentAddress().getPermtaddressStateName();
+                            if (log.isDebugEnabled()) {
+                                log.debug("State code Permanent: \n{}", stateCodesPermanent);
+                            }
+                            if (CollectionUtils.isEmpty(stateCodes) || !stateCodes.contains(stateCodesPermanent)) {
+                                errorMap.put(COMMON_MDMS_STATE, "The State code Permanent'" + stateCodesPermanent + "' does not exists");
+                            }
                         }
 
                         if (countryCodesPresent.contains(COUNTRY_CODE)) {
                             if (stateCodesPresent.contains(STATE_CODE_SMALL)) {
-
+//district
                                 String districtInKeralaCodePresent = birth.getParentAddress().getPresentInsideKeralaDistrict();
                                 if (log.isDebugEnabled()) {
                                     log.debug("District code : \n{}", districtInKeralaCodePresent);
@@ -196,11 +196,11 @@ public class NewMdmsValidator {
                                 if (CollectionUtils.isEmpty(districtCodes) || !districtCodes.contains(districtInKeralaCodePermanent)) {
                                     errorMap.put(COMMON_MDMS_DISTRICT, "The District code '" + districtInKeralaCodePermanent + "' does not exists");
                                 }
-
+//taluk
                                 String talukCodePresent = birth.getParentAddress().getPresentInsideKeralaTaluk();
-                                                    if (log.isDebugEnabled()) {
-                        log.debug("Taulk code Present: \n{}", talukCodePresent);
-                    }
+                                if (log.isDebugEnabled()) {
+                                    log.debug("Taulk code Present: \n{}", talukCodePresent);
+                                }
                                 if (CollectionUtils.isEmpty(talukCodes) || !talukCodes.contains(talukCodePresent)) {
                                     errorMap.put(COMMON_MDMS_TALUK, "The Taulk code Present'" + talukCodePresent + "' does not exists");
                                 }
@@ -211,17 +211,18 @@ public class NewMdmsValidator {
                                     log.debug("Taulk code Permanent: \n{}", talukCodePermanent);
                                 }
 
-                    if (CollectionUtils.isEmpty(talukCodes) || !talukCodes.contains(talukCodePermanent)) {
-                        errorMap.put(COMMON_MDMS_TALUK, "The Taulk code Permanent'" + talukCodePermanent + "' does not exists");
-                    }
+                                if (CollectionUtils.isEmpty(talukCodes) || !talukCodes.contains(talukCodePermanent)) {
+                                    errorMap.put(COMMON_MDMS_TALUK, "The Taulk code Permanent'" + talukCodePermanent + "' does not exists");
+                                }
+                                //village
                                 String villageCodePresent = birth.getParentAddress().getPresentInsideKeralaVillage();
-                                       if (log.isDebugEnabled()) {
-                        log.debug("Village code : \n{}", villageCodePresent);
-                    }
+                                if (log.isDebugEnabled()) {
+                                    log.debug("Village code : \n{}", villageCodePresent);
+                                }
 
-                                                       if (CollectionUtils.isEmpty(villageCodes) || !villageCodes.contains(villageCodePresent)) {
-                        errorMap.put(COMMON_MDMS_VILLAGE, "The Village code '" + villageCodePresent + "' does not exists");
-                    }
+                                if (CollectionUtils.isEmpty(villageCodes) || !villageCodes.contains(villageCodePresent)) {
+                                    errorMap.put(COMMON_MDMS_VILLAGE, "The Village code '" + villageCodePresent + "' does not exists");
+                                }
 
 
                                 String villageCodePermanent = birth.getParentAddress().getPermntInKeralaAdrVillage();
@@ -231,14 +232,15 @@ public class NewMdmsValidator {
                                 if (CollectionUtils.isEmpty(villageCodes) || !villageCodes.contains(villageCodePermanent)) {
                                     errorMap.put(COMMON_MDMS_VILLAGE, "The Village code '" + villageCodePermanent + "' does not exists");
                                 }
+                                //post office
                                 String postOfficeCodePresent = birth.getParentAddress().getPresentInsideKeralaPostOffice();
-                                                    if (log.isDebugEnabled()) {
-                        log.debug("Postoffice code : \n{}", postOfficeCodePresent);
-                    }
+                                if (log.isDebugEnabled()) {
+                                    log.debug("Postoffice code : \n{}", postOfficeCodePresent);
+                                }
 
-                                                    if (CollectionUtils.isEmpty(postOfficeCodes) || !postOfficeCodes.contains(postOfficeCodePresent)) {
-                        errorMap.put(COMMON_MDMS_POSTOFFICE, "The Postoffice code '" + postOfficeCodePresent + "' does not exists");
-                    }
+                                if (CollectionUtils.isEmpty(postOfficeCodes) || !postOfficeCodes.contains(postOfficeCodePresent)) {
+                                    errorMap.put(COMMON_MDMS_POSTOFFICE, "The Postoffice code '" + postOfficeCodePresent + "' does not exists");
+                                }
 
                                 String postOfficeCodePermanent = birth.getParentAddress().getPermntInKeralaAdrPostOffice();
                                 if (log.isDebugEnabled()) {
@@ -591,12 +593,12 @@ public class NewMdmsValidator {
                             + " codes from MDMS"));
         }
 
-        if (masterData.get(BirthConstants.COMMON_MDMS_INSTITUTION) == null) {
-            throw new CustomException(Collections.singletonMap(MDMS_DATA_ERROR.getCode(),
-                    "Unable to fetch "
-                            + BirthConstants.COMMON_MDMS_INSTITUTION
-                            + " codes from MDMS"));
-        }
+//        if (masterData.get(BirthConstants.COMMON_MDMS_INSTITUTION) == null) {
+//            throw new CustomException(Collections.singletonMap(MDMS_DATA_ERROR.getCode(),
+//                    "Unable to fetch "
+//                            + BirthConstants.COMMON_MDMS_INSTITUTION
+//                            + " codes from MDMS"));
+//        }
 
         if (masterData.get(BirthConstants.COMMON_MDMS_MEDICAL_ATTENTION_TYPE) == null) {
             throw new CustomException(Collections.singletonMap(MDMS_DATA_ERROR.getCode(),
@@ -669,9 +671,9 @@ public class NewMdmsValidator {
     private List<String> getCountryCodes(Object mdmsData) {
         return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_COUNTRY_CODE_JSONPATH);
     }
-    private List<String> getInstitutionCodes(Object mdmsData) {
-        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_INSTITUTION_CODE_JSONPATH);
-    }
+//    private List<String> getInstitutionCodes(Object mdmsData) {
+//        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_INSTITUTION_CODE_JSONPATH);
+//    }
     private List<String> getMedicalCodes(Object mdmsData) {
         return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_MEDICAL_ATTENTION_TYPE_CODE_JSONPATH);
     }

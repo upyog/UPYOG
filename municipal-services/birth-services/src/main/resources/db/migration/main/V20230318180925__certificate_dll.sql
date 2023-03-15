@@ -1,7 +1,3 @@
-ALTER TABLE eg_birth_certificate_request
-        ADD applicationid character varying(64),
-        ADD ack_no character varying(64);
-
 ALTER TABLE eg_birth_certificate_request_audit
         ADD applicationid character varying(64),
         ADD ack_no character varying(64);

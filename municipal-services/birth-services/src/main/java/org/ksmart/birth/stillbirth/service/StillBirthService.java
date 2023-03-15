@@ -2,6 +2,7 @@ package org.ksmart.birth.stillbirth.service;
 
 import org.ksmart.birth.newbirth.validator.NewBirthApplicationValidator;
 import org.ksmart.birth.stillbirth.repository.StillBirthRepository;
+import org.ksmart.birth.stillbirth.validator.StillBirthApplicationValidator;
 import org.ksmart.birth.utils.MdmsUtil;
 import org.ksmart.birth.web.model.SearchCriteria;
 import org.ksmart.birth.web.model.stillbirth.StillBirthApplication;
@@ -18,11 +19,11 @@ public class StillBirthService {
     private final StillBirthRepository repository;
     private final WorkflowIntegratorStillBirth workflowIntegrator;
     private final MdmsUtil mdmsUtil;
-    private final NewBirthApplicationValidator validator;
+    private final StillBirthApplicationValidator validator;
 
     @Autowired
     StillBirthService(StillBirthRepository repository, MdmsUtil mdmsUtil, WorkflowIntegratorStillBirth workflowIntegrator,
-                      NewBirthApplicationValidator validator) {
+                      StillBirthApplicationValidator validator) {
         this.repository = repository;
         this.mdmsUtil = mdmsUtil;
         this.workflowIntegrator  = workflowIntegrator;
@@ -33,7 +34,7 @@ public class StillBirthService {
         Object mdmsData = mdmsUtil.mdmsCall(request.getRequestInfo());
 
         // validate request
-        //validator.validateCreate(request, mdmsData);
+        validator.validateCreate(request, mdmsData);
 
         //call save
         List<StillBirthApplication> birthApplicationDetails =  repository.saveBirthDetails(request);
