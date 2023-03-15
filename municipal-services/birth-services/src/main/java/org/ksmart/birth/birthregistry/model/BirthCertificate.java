@@ -16,6 +16,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import javax.validation.constraints.Size;
 //import org.ksmart.birth.birthregistry.calculation.Calculation;
 
 @Getter
@@ -36,9 +38,11 @@ public class BirthCertificate {
 
   @JsonProperty("businessService")
   private String businessService = null;
+  @JsonProperty("registrtionNo")
+  private String registrtionNo = null;
 
   @JsonProperty("birthCertificateNo")
-  private String birthCertificateNo = null;
+  private String birthCertificateNo;
 
   @JsonProperty("additionalDetail")
   private Object additionalDetail = null;
@@ -52,14 +56,20 @@ public class BirthCertificate {
   @JsonProperty("taxPeriodTo")
   private Long taxPeriodTo = null;
 
-//  @JsonProperty("calculation")
-//  private  Calcu calculation;
-
   @JsonProperty("amount")
   private List<Amount> amount;
 
-  @JsonProperty("birthDtlId")
-  private String birthDtlId = null;
+  @JsonProperty("registrtionId")
+  private String registrtionId = null;
+
+    @Size(max = 64)
+    @JsonProperty("applicationId")
+    private String applicationId;
+
+    @Size(max = 64)
+    @JsonProperty("applicationNumber")
+    private String applicationNumber;
+
   
   @JsonProperty("filestoreid")
   private String filestoreid = null;

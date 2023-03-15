@@ -19,6 +19,7 @@ public class RegistryRequestService {
         List<RegisterBirthDetail> registerBirthDetails = new LinkedList<>();
         RegisterBirthDetail registerBirthDetail = new RegisterBirthDetail();
         registerBirthDetail.setDateOfReport(requestKsmartBirthReq.getNewBirthDetails().get(0).getDateOfReport());
+        registerBirthDetail.setApplicationId(requestKsmartBirthReq.getNewBirthDetails().get(0).getId());
         registerBirthDetail.setDateOfBirth(requestKsmartBirthReq.getNewBirthDetails().get(0).getDateOfBirth());
         registerBirthDetail.setDateOfReport(requestKsmartBirthReq.getNewBirthDetails().get(0).getDateOfReport());
         registerBirthDetail.setDateOfBirth(requestKsmartBirthReq.getNewBirthDetails().get(0).getDateOfBirth());
@@ -44,6 +45,7 @@ public class RegistryRequestService {
 //        registerBirthDetail.setIsBornOutside(requestKsmartBirthReq.getNewBirthDetails().get(0).getIsBornOutside());
 //        registerBirthDetail.setOtPassportNo(requestKsmartBirthReq.getNewBirthDetails().get(0).getPassportNo());
         registerBirthDetail.setRegistrationNo(requestKsmartBirthReq.getNewBirthDetails().get(0).getRegistrationNo());
+        registerBirthDetail.setApplicationType(requestKsmartBirthReq.getNewBirthDetails().get(0).getApplicationType());
         registerBirthDetail.setRegistrationStatus("ACTIVE");
         registerBirthDetail.setRegistrationDate(requestKsmartBirthReq.getNewBirthDetails().get(0).getRegistrationDate());
         registerBirthDetail.setRegisterBirthPlace(createBirthPlace(requestKsmartBirthReq));
@@ -113,7 +115,6 @@ public class RegistryRequestService {
     private RegisterBirthMotherInfo createMotherInfor(NewBirthDetailRequest requestBirthReq) {
         RegisterBirthMotherInfo registerBirthMotherInfo = new RegisterBirthMotherInfo();
         registerBirthMotherInfo.setFirstNameEn(requestBirthReq.getNewBirthDetails().get(0).getParentsDetails().getFirstNameEn());
-
         registerBirthMotherInfo.setFirstNameMl(requestBirthReq.getNewBirthDetails().get(0).getParentsDetails().getFirstNameMl());
 
 //        registerBirthMotherInfo.setMiddleNameEn(requestBirthReq.getNewBirthDetails().get(0).getBirthMotherInfo().getMiddleNameEn());
@@ -130,7 +131,7 @@ public class RegistryRequestService {
     private RegisterBirthFatherInfo createFatherInfor(NewBirthDetailRequest requestBirthReq) {
         RegisterBirthFatherInfo registerBirthFatherInfo = new RegisterBirthFatherInfo();
         registerBirthFatherInfo.setFirstNameEn(requestBirthReq.getNewBirthDetails().get(0).getParentsDetails().getFatherFirstNameEn());
-        registerBirthFatherInfo.setFirstNameMl(requestBirthReq.getNewBirthDetails().get(0).getParentsDetails().getFirstNameMl());
+        registerBirthFatherInfo.setFirstNameMl(requestBirthReq.getNewBirthDetails().get(0).getParentsDetails().getFatherFirstNameMl());
 //        registerBirthFatherInfo.setMiddleNameEn(requestBirthReq.getNewBirthDetails().get(0).getParentsDetails().getMiddleNameEn());
 //        registerBirthFatherInfo.setMiddleNameMl(requestBirthReq.getNewBirthDetails().get(0).getParentsDetails().getMiddleNameMl());
 //        registerBirthFatherInfo.setLastNameEn(requestBirthReq.getNewBirthDetails().get(0).getParentsDetails().getLastNameEn());

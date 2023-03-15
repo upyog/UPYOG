@@ -132,6 +132,14 @@ public class RegisterBirthDetail {
     @JsonProperty("ack_no")
     private String ackNumber;
 
+    @Size(max = 64)
+    @JsonProperty("applicationId")
+    private String applicationId;
+
+    @Size(max = 64)
+    @JsonProperty("applicationType")
+    private String applicationType;
+
     @JsonProperty("registerBirthPlace")
     private RegisterBirthPlace registerBirthPlace;
 

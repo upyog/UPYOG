@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import org.ksmart.birth.birthregistry.model.*;
 import org.ksmart.birth.birthregistry.enrichment.RegisterBirthEnrichment;
-import org.ksmart.birth.birthregistry.repository.querybuilder.CertificateQueryBuilder;
 import org.ksmart.birth.birthregistry.repository.querybuilder.RegisterQueryBuilder;
 import org.ksmart.birth.birthregistry.repository.rowmapper.BirthCetificateRowMapper;
 import org.ksmart.birth.birthregistry.repository.rowmapper.BirthRegisterRowMapper;
@@ -33,14 +32,14 @@ public class RegisterBirthRepository {
     private final RegisterBirthEnrichment registerBirthDetailsEnrichment;
     private final BirthRegisterRowMapper birthRegisterRowMapper;
     private final RegisterQueryBuilder registerQueryBuilder;
-    private final CertificateQueryBuilder certificateQueryBuilder;
+  //  private final CertificateQueryBuilder certificateQueryBuilder;
     private final RestTemplate restTemplate;
     private final BirthCetificateRowMapper birthCetificateRowMapper;
 
     @Autowired
     RegisterBirthRepository(JdbcTemplate jdbcTemplate, RegisterBirthEnrichment registerBirthDetailsEnrichment,BirthCetificateRowMapper birthCetificateRowMapper,
                             BirthConfiguration birthDeathConfiguration, BndProducer producer, RegisterQueryBuilder registerQueryBuilder,
-                            BirthRegisterRowMapper birthRegisterRowMapper, RestTemplate restTemplate, CertificateQueryBuilder certificateQueryBuilder) {
+                            BirthRegisterRowMapper birthRegisterRowMapper, RestTemplate restTemplate) {
         this.jdbcTemplate=jdbcTemplate;
         this.registerBirthDetailsEnrichment=registerBirthDetailsEnrichment;
         this.config=birthDeathConfiguration;
@@ -48,7 +47,7 @@ public class RegisterBirthRepository {
         this.registerQueryBuilder=registerQueryBuilder;
         this.birthRegisterRowMapper=birthRegisterRowMapper;
         this.restTemplate=restTemplate;
-        this.certificateQueryBuilder = certificateQueryBuilder;
+       // this.certificateQueryBuilder = certificateQueryBuilder;
         this.birthCetificateRowMapper = birthCetificateRowMapper;
     }
 
@@ -74,6 +73,13 @@ public class RegisterBirthRepository {
         List<RegisterBirthDetail> result=jdbcTemplate.query(query, preparedStmtValues.toArray(), birthRegisterRowMapper);
         return result;
     }
+
+//    public List<BirthCertificate> searchBirthCertificate(RegisterBirthSearchCriteria criteria) {
+//        List<Object> preparedStmtValues=new ArrayList<>();
+//        String query=registerQueryBuilder.getRegBirthApplicationSearchQuery(criteria, preparedStmtValues, Boolean.FALSE);
+//        List<RegisterBirthDetail> result=jdbcTemplate.query(query, preparedStmtValues.toArray(), birthRegisterRowMapper);
+//        return result;
+//    }
 
 //    public List<RegisterCertificateData> searchRegisterCert(RegisterBirthSearchCriteria criteria) {
 //        List<Object> preparedStmtValues=new ArrayList<>();

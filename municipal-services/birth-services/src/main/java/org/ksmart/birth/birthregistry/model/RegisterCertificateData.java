@@ -98,6 +98,10 @@ public class RegisterCertificateData {
     private String registrationNo;
 
     @Size(max = 64)
+    @JsonProperty("applicationId")
+    private String applicationId;
+
+    @Size(max = 64)
     @JsonProperty("certId")
     private String certId;
     @Size(max = 2500)

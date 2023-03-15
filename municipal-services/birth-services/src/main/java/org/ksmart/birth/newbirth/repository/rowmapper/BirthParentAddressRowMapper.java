@@ -60,7 +60,7 @@ public interface BirthParentAddressRowMapper {
                 .permntOutsideKeralaCityVilgeEn(rs.getString("stat_mother_resdnce_placetype"))
                 .permntOutsideKeralaPostOfficeEn(rs.getString("per_postoffice_en"))
                 .permntOutsideKeralaPostOfficeMl(rs.getString("per_postoffice_ml"))
-
+                .isPrsentAddress(rs.getInt("per_same_as_present")==1?true:false)
 
                 .permntOutsideIndiaLineoneEn(rs.getString("per_ot_address1_en"))
                 .permntOutsideIndiaLineoneMl(rs.getString("per_ot_address1_ml"))

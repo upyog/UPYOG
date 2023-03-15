@@ -62,12 +62,15 @@ public class RegisterBirthService {
         try {
             BirthCertificate birthCertificate = new BirthCertificate();
             //birthCertificate.setSource(criteria.getSource().toString());
-            birthCertificate.setBirthDtlId(criteria.getId());
-            birthCertificate.setTenantId(criteria.getTenantId());
+           // birthCertificate.setApplicationId(criteria.getId());
+            //birthCertificate.setTenantId(criteria.getTenantId());
             BirthCertRequest birthCertRequest = BirthCertRequest.builder().birthCertificate(birthCertificate).requestInfo(requestInfo).build();
             List<RegisterCertificateData> regDetail = searchRegisterForCert(criteria, requestInfo);
             if(regDetail.size() > 0) {
                 birthCertificate.setBirthPlace(regDetail.get(0).getPlaceDetails());
+                birthCertificate.setRegistrtionId(regDetail.get(0).getId());
+                birthCertificate.setApplicationId(regDetail.get(0).getApplicationId());
+                birthCertificate.setApplicationNumber(regDetail.get(0).getAckNo());
                 birthCertificate.setGender(regDetail.get(0).getGenderEn().toString());
                 birthCertificate.setWard(regDetail.get(0).getWardCode());
                 birthCertificate.setState(regDetail.get(0).getTenantState());
@@ -76,10 +79,12 @@ public class RegisterBirthService {
                 birthCertificate.setDateofbirth(new Timestamp(regDetail.get(0).getDateOfBirth()) );
                 birthCertificate.setDateofreport(new Timestamp(regDetail.get(0).getDateOfReport()));
                 birthCertificate.setTenantId(regDetail.get(0).getTenantId());
+          //      birthCertificate.setBirthCertificateNo(enrichmentService.se);
                 SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
                 String date = format.format(regDetail.get(0).getDateOfReport());
                 String datestr = date.split("-")[2];
                 birthCertificate.setYear(datestr);
+                System.out.println(regDetail.size());
                 if (regDetail.size() > 1)
                     throw new CustomException("Invalid_Input", "Error in processing data");
                 enrichmentService.enrichCreateRequest(birthCertRequest);

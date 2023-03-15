@@ -64,7 +64,7 @@ public class RegisterQueryBuilder extends BaseRegBuilder {
         StringBuilder query = new StringBuilder(QUERY);
         StringBuilder orderBy = new StringBuilder();
         addFilter("krbd.id", criteria.getId(), query, preparedStmtValues);
-        addFilter("krbd.ack_no", criteria.getAckNo(), query, preparedStmtValues);
+        addFilter("krbd.ack_no", criteria.getApplicationNumber(), query, preparedStmtValues);
         addFilter("krbd.tenantid", criteria.getTenantId(), query, preparedStmtValues);
         addLikeFilter("kbmi.firstname_en", criteria.getNameOfMother(), query, preparedStmtValues);
         addFilter("krbd.gender", criteria.getGender(), query, preparedStmtValues);
@@ -73,9 +73,9 @@ public class RegisterQueryBuilder extends BaseRegBuilder {
         addFilter("krbd.registrationno", criteria.getRegistrationNo(), query, preparedStmtValues);
         addDateRangeFilter("krbd.dateofreport", criteria.getFromDate(), criteria.getToDate(), query, preparedStmtValues);
         addDateRangeFilter("krbd.file_date", criteria.getFromDateReg(), criteria.getToDateReg(), query, preparedStmtValues);
-        addFilter("ebp.hospitalid", criteria.getHospitalId(), query, preparedStmtValues);
-        addFilter("ebp.institution_id", criteria.getInstitutionId(), query, preparedStmtValues);
-        addFilter("ebp.ward_id", criteria.getWardCode(), query, preparedStmtValues);
+        addFilter("kbp.hospitalid", criteria.getHospitalId(), query, preparedStmtValues);
+        addFilter("kbp.institution_id", criteria.getInstitutionId(), query, preparedStmtValues);
+        addFilter("kbp.ward_id", criteria.getWardCode(), query, preparedStmtValues);
         addLikeFilter("krbd.firstname_en", criteria.getChildName(), query, preparedStmtValues);
         addLikeFilter("kbfi.firstname_en", criteria.getNameOfFather(), query, preparedStmtValues);
 
@@ -85,20 +85,20 @@ public class RegisterQueryBuilder extends BaseRegBuilder {
             addOrderByColumns("krbd.dateofbirth",criteria.getSortOrder(), orderBy);
         else if (criteria.getSortBy() == RegisterBirthSearchCriteria.SortBy.registrationDate)
             addOrderByColumns("krbd.registration_date",criteria.getSortOrder(), orderBy);
-        else if (criteria.getSortBy() == RegisterBirthSearchCriteria.SortBy.ackNo)
+        else if (criteria.getSortBy() == RegisterBirthSearchCriteria.SortBy.applicationNumber)
             addOrderByColumns("krbd.ack_no",criteria.getSortOrder(),orderBy);
-        else if (criteria.getSortBy() == RegisterBirthSearchCriteria.SortBy.mother)
+        else if (criteria.getSortBy() == RegisterBirthSearchCriteria.SortBy.nameOfMother)
             addOrderByColumns("kbmi.firstname_en",criteria.getSortOrder(), orderBy);
         else if (criteria.getSortBy() == RegisterBirthSearchCriteria.SortBy.gender)
             addOrderByColumns("krbd.gender",criteria.getSortOrder(), orderBy);
         else if (criteria.getSortBy() == RegisterBirthSearchCriteria.SortBy.registrationNo)
             addOrderByColumns("krbd.registrationno",criteria.getSortOrder(), orderBy);
         else if (criteria.getSortBy() == RegisterBirthSearchCriteria.SortBy.hospitalId)
-            addOrderByColumns("ebp.hospitalid",criteria.getSortOrder(), orderBy);
+            addOrderByColumns("kbp.hospitalid",criteria.getSortOrder(), orderBy);
         else if (criteria.getSortBy() == RegisterBirthSearchCriteria.SortBy.institutionId)
-            addOrderByColumns("ebp.institution_id",criteria.getSortOrder(), orderBy);
+            addOrderByColumns("kbp.institution_id",criteria.getSortOrder(), orderBy);
         else if (criteria.getSortBy() == RegisterBirthSearchCriteria.SortBy.wardCode)
-            addOrderByColumns("ebp.ward_id",criteria.getSortOrder(), orderBy);
+            addOrderByColumns("kbp.ward_id",criteria.getSortOrder(), orderBy);
         else if (criteria.getSortBy() == RegisterBirthSearchCriteria.SortBy.tenantId)
             addOrderByColumns("krbd.tenantid",criteria.getSortOrder(), orderBy);
         else if (criteria.getSortBy() == RegisterBirthSearchCriteria.SortBy.childName)

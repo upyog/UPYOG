@@ -20,8 +20,8 @@ public class RegisterBirthSearchCriteria {
 
     @JsonProperty("id")
     private String id; // birthapplicant id
-    @JsonProperty("ackNo")
-    private String ackNo;
+    @JsonProperty("applicationNumber")
+    private String applicationNumber;
     @JsonProperty("childName")
     private String childName;
 
@@ -65,7 +65,7 @@ public class RegisterBirthSearchCriteria {
     @JsonProperty("institutionId")
     @Valid
     private String institutionId;
-    @JsonProperty("sex")
+    @JsonProperty("gender")
     @Valid
     private String gender;
     @JsonProperty("wardCode")
@@ -83,11 +83,11 @@ public class RegisterBirthSearchCriteria {
     }
 
     public enum SortBy {
-        ackNo,
+        applicationNumber,
         registrationDate,
         birthDate,
         registrationNo,
-        mother,
+        nameOfMother,
         gender,
         tenantId,
         institutionId,

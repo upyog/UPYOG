@@ -54,6 +54,7 @@ public class BirthCertService {
         registerCertificateData.setRegistrationDateStr(formatter.format(regDate));
         registerCertificateData.setDateOfReportStr(formatter.format(reportDate));
         registerCertificateData.setRegistrationNo(register.getRegistrationNo());
+        registerCertificateData.setApplicationId(register.getApplicationId());
         registerCertificateData.setFullName(register.getFullName());
         registerCertificateData.setFullNameMl(register.getFullNameMl());
         registerCertificateData.setGenderEn(register.getGender());

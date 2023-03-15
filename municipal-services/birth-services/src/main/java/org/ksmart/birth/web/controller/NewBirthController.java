@@ -57,10 +57,13 @@ public class NewBirthController {
         if((birthApplicationDetails.get(0).getApplicationStatus() == "APPROVED" && birthApplicationDetails.get(0).getAction() == "APPROVE")){
             RegisterBirthDetailsRequest registerBirthDetailsRequest = registryReq.createRegistryRequest(request);
             List<RegisterBirthDetail> registerBirthDetails =  registerBirthService.saveRegisterBirthDetails(registerBirthDetailsRequest);
+
+            /**** Dowload after update
             RegisterBirthSearchCriteria criteria = new RegisterBirthSearchCriteria();
             criteria.setTenantId(registerBirthDetails.get(0).getTenantId());
             criteria.setRegistrationNo(registerBirthDetails.get(0).getRegistrationNo());
             birthCertificate = registerBirthService.download(criteria,request.getRequestInfo());
+             *******/
         }
         NewBirthResponse response=NewBirthResponse.builder()
                 .ksmartBirthDetails(birthApplicationDetails)
@@ -77,8 +80,6 @@ public class NewBirthController {
                                                                               .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), Boolean.TRUE))
                                                                               .newBirthDetails(birthDetails)
                                                                               .build();
-
-
         return ResponseEntity.ok(response);
     }
 }
