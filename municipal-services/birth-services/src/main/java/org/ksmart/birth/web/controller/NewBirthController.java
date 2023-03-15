@@ -77,9 +77,9 @@ public class NewBirthController {
     public ResponseEntity<NewBirthSearchResponse> searchKsmartBirth(@RequestBody NewBirthDetailRequest request, @Valid @ModelAttribute SearchCriteria criteria) {
         List<NewBirthApplication> birthDetails=ksmartBirthService.searchKsmartBirthDetails(request, criteria);
         NewBirthSearchResponse response=NewBirthSearchResponse.builder()
-                                                                              .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), Boolean.TRUE))
-                                                                              .newBirthDetails(birthDetails)
-                                                                              .build();
+                                                              .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), Boolean.TRUE))
+                                                              .newBirthDetails(birthDetails)
+                                                              .build();
         return ResponseEntity.ok(response);
     }
 }

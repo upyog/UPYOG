@@ -2,6 +2,7 @@ package org.ksmart.birth.newbirth.repository.querybuilder;
 
 import org.ksmart.birth.common.repository.builder.CommonQueryBuilder;
 import org.ksmart.birth.web.model.SearchCriteria;
+import org.ksmart.birth.web.model.newbirth.NewBirthDetailRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -25,12 +26,12 @@ public class NewBirthQueryBuilder extends NewBaseBirthQuery {
             .append(" LEFT JOIN eg_birth_permanent_address eperad ON eperad.birthdtlid = ebd.id AND eperad.bio_adopt='BIOLOGICAL'")
             .append(" LEFT JOIN eg_birth_present_address epreadd ON epreadd.birthdtlid = ebd.id AND epreadd.bio_adopt='BIOLOGICAL'")
             .append(" LEFT JOIN eg_birth_statitical_information estat ON estat.birthdtlid = ebd.id")
-            .append(" LEFT JOIN eg_birth_initiator ini ON ini.birthdtlid = ebd.id").toString();
+            .append(" LEFT JOIN eg_birth_initiator ini ON ini.birthdtlid = ebd.id ").toString();
 
-    public String getNewBirthApplicationSearchQuery(@NotNull SearchCriteria criteria,
+    public String getNewBirthApplicationSearchQuery(@NotNull SearchCriteria criteria, NewBirthDetailRequest request,
                                                  @NotNull List<Object> preparedStmtValues, Boolean isCount) {
-
         StringBuilder query = new StringBuilder(QUERY);
+        StringBuilder orderBy = new StringBuilder();
         query.append(",").append(commonQueryBuilder.getQueryPlaceOfEvent())
                 .append(",")
                 .append(commonQueryBuilder.getQueryFaterInfo())
@@ -46,19 +47,22 @@ public class NewBirthQueryBuilder extends NewBaseBirthQuery {
                 .append(commonQueryBuilder.getQueryIntiator())
                 .append(QUERYCONDITION).toString();
 
-        StringBuilder orderBy = new StringBuilder();
-        addFilter("ebd.id", criteria.getId(), query, preparedStmtValues);
-        addFilter("ebd.tenantid", criteria.getTenantId(), query, preparedStmtValues);
-        addFilter("ebd.applicationno", criteria.getApplicationNumber(), query, preparedStmtValues);
-        addFilter("ebd.registrationno", criteria.getRegistrationNo(), query, preparedStmtValues);
-        addFilter("ebd.fm_fileno", criteria.getFileCode(), query, preparedStmtValues);
-        addFilter("ebp.hospitalid", criteria.getHospitalId(), query, preparedStmtValues);
-        addFilter("ebp.institution_id", criteria.getInstitutionId(), query, preparedStmtValues);
-        addFilter("ebp.ebp.ward_id", criteria.getWardCode(), query, preparedStmtValues);
-        addFilter("eebd.gender", criteria.getGender(), query, preparedStmtValues);
-        addDateRangeFilter("ebd.dateofreport", criteria.getFromDate(),  criteria.getToDate(), query, preparedStmtValues);
-        addDateRangeFilter("ebd.dateofbirth",  criteria.getDateOfBirthFrom(), criteria.getDateOfBirthTo(),query, preparedStmtValues);
-        addDateRangeFilter("ebd.fm_fileno",  criteria.getFromDateFile(), criteria.getToDateFile(), query, preparedStmtValues);
+            addFilter("ebd.id", criteria.getId(), query, preparedStmtValues);
+            addFilter("ebd.tenantid", criteria.getTenantId(), query, preparedStmtValues);
+            addFilter("ebd.applicationno", criteria.getApplicationNumber(), query, preparedStmtValues);
+            addFilter("ebd.registrationno", criteria.getRegistrationNo(), query, preparedStmtValues);
+            addFilter("ebd.fm_fileno", criteria.getFileCode(), query, preparedStmtValues);
+            addFilter("ebp.hospitalid", criteria.getHospitalId(), query, preparedStmtValues);
+            addFilter("ebp.institution_id", criteria.getInstitutionId(), query, preparedStmtValues);
+            addFilter("ebp.ebp.ward_id", criteria.getWardCode(), query, preparedStmtValues);
+            addFilter("eebd.gender", criteria.getGender(), query, preparedStmtValues);
+            addDateRangeFilter("ebd.dateofreport", criteria.getFromDate(),  criteria.getToDate(), query, preparedStmtValues);
+            addDateRangeFilter("ebd.dateofbirth",  criteria.getDateOfBirthFrom(), criteria.getDateOfBirthTo(),query, preparedStmtValues);
+            addDateRangeFilter("ebd.fm_fileno",  criteria.getFromDateFile(), criteria.getToDateFile(), query, preparedStmtValues);
+        if(preparedStmtValues.size() == 0) {
+            addFilter("ebd.createdby", request.getRequestInfo().getUserInfo().getUuid(), query, preparedStmtValues);
+            addFilter("ebd.status", "INITIATED", query, preparedStmtValues);
+        }
 
         if (StringUtils.isEmpty(criteria.getSortBy()))
             addOrderByColumns("ebd.createdtime",null, orderBy);
