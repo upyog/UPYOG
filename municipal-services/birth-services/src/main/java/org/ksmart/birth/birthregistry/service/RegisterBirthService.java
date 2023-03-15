@@ -68,7 +68,7 @@ public class RegisterBirthService {
             List<RegisterCertificateData> regDetail = searchRegisterForCert(criteria, requestInfo);
             if(regDetail.size() > 0) {
                 birthCertificate.setBirthPlace(regDetail.get(0).getPlaceDetails());
-                birthCertificate.setRegistrtionId(regDetail.get(0).getId());
+                birthCertificate.setRegistrationId(regDetail.get(0).getId());
                 birthCertificate.setApplicationId(regDetail.get(0).getApplicationId());
                 birthCertificate.setApplicationNumber(regDetail.get(0).getAckNo());
                 birthCertificate.setGender(regDetail.get(0).getGenderEn().toString());

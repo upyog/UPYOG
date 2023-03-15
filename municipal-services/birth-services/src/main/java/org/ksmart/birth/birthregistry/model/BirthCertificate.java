@@ -59,8 +59,8 @@ public class BirthCertificate {
   @JsonProperty("amount")
   private List<Amount> amount;
 
-  @JsonProperty("registrtionId")
-  private String registrtionId = null;
+  @JsonProperty("registrationId")
+  private String registrationId = null;
 
     @Size(max = 64)
     @JsonProperty("applicationId")

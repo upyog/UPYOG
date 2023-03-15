@@ -7,7 +7,7 @@ serviceMaps:
       isTransaction: true
       queryMaps:
 
-        - query: INSERT INTO public.eg_birth_certificate_request (id, registrationno, createdby, createdtime, registrydetailsid, lastmodifiedtime, lastmodifiedby, 
+        - query: INSERT INTO public.eg_birth_certificate_request (id, registrationno, registrydetailsid, createdby, createdtime,lastmodifiedtime, lastmodifiedby, 
                 filestoreid, status, additionaldetail, embeddedurl, dateofissue, tenantid,applicationid, ack_no, certificateno) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: birthCertificate
           jsonMaps:
@@ -15,11 +15,11 @@ serviceMaps:
 
             - jsonPath: $.birthCertificate.registrtionNo
 
+            - jsonPath: $.birthCertificate.registrationId
+
             - jsonPath: $.birthCertificate.auditDetails.createdBy
 
             - jsonPath: $.birthCertificate.auditDetails.createdTime
-
-            - jsonPath: $.birthCertificate.applicationId
 
             - jsonPath: $.birthCertificate.auditDetails.lastModifiedTime
 
