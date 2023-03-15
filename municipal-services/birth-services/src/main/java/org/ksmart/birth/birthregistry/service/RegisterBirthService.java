@@ -61,9 +61,6 @@ public class RegisterBirthService {
     public BirthCertificate download(RegisterBirthSearchCriteria criteria, RequestInfo requestInfo) {
         try {
             BirthCertificate birthCertificate = new BirthCertificate();
-            //birthCertificate.setSource(criteria.getSource().toString());
-           // birthCertificate.setApplicationId(criteria.getId());
-            //birthCertificate.setTenantId(criteria.getTenantId());
             BirthCertRequest birthCertRequest = BirthCertRequest.builder().birthCertificate(birthCertificate).requestInfo(requestInfo).build();
             List<RegisterCertificateData> regDetail = searchRegisterForCert(criteria, requestInfo);
             if(regDetail.size() > 0) {
@@ -84,7 +81,6 @@ public class RegisterBirthService {
                 String date = format.format(regDetail.get(0).getDateOfReport());
                 String datestr = date.split("-")[2];
                 birthCertificate.setYear(datestr);
-                System.out.println(regDetail.size());
                 if (regDetail.size() > 1)
                     throw new CustomException("Invalid_Input", "Error in processing data");
                 enrichmentService.enrichCreateRequest(birthCertRequest);
