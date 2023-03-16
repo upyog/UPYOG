@@ -1,6 +1,9 @@
 package org.ksmart.birth.newbirth.repository;
 
 import lombok.extern.slf4j.Slf4j;
+import org.ksmart.birth.birthregistry.model.RegisterBirthDetail;
+import org.ksmart.birth.birthregistry.model.RegisterBirthDetailsRequest;
+import org.ksmart.birth.birthregistry.repository.rowmapperforapplication.RegisterRowMapperForApp;
 import org.ksmart.birth.birthregistry.service.MdmsDataService;
 import org.ksmart.birth.common.producer.BndProducer;
 import org.ksmart.birth.config.BirthConfiguration;
@@ -31,13 +34,14 @@ public class NewBirthRepository {
     private final BirthApplicationRowMapper ksmartBirthApplicationRowMapper;
     private final MdmsForNewBirthService mdmsBirthService;
     private final  MdmsUtil mdmsUtil;
+    private final RegisterRowMapperForApp registerRowMapperForApp;
 
 
 
     @Autowired
     NewBirthRepository(JdbcTemplate jdbcTemplate, NewBirthEnrichment ksmartBirthEnrichment, BirthConfiguration birthDeathConfiguration,
                        BndProducer producer, NewBirthQueryBuilder birthQueryBuilder, BirthApplicationRowMapper ksmartBirthApplicationRowMapper,
-                       MdmsForNewBirthService mdmsBirthService, MdmsUtil mdmsUtil) {
+                       MdmsForNewBirthService mdmsBirthService, MdmsUtil mdmsUtil, RegisterRowMapperForApp registerRowMapperForApp) {
         this.jdbcTemplate = jdbcTemplate;
         this.ksmartBirthEnrichment = ksmartBirthEnrichment;
         this.birthDeathConfiguration = birthDeathConfiguration;
@@ -46,6 +50,7 @@ public class NewBirthRepository {
         this.ksmartBirthApplicationRowMapper = ksmartBirthApplicationRowMapper;
         this.mdmsBirthService = mdmsBirthService;
         this.mdmsUtil = mdmsUtil;
+        this.registerRowMapperForApp = registerRowMapperForApp;
     }
 
     public List<NewBirthApplication> saveKsmartBirthDetails(NewBirthDetailRequest request) {
@@ -59,7 +64,30 @@ public class NewBirthRepository {
         producer.push(birthDeathConfiguration.getUpdateKsmartBirthApplicationTopic(), request);
         return request.getNewBirthDetails();
     }
+//
+//    public String getBirthQuery(SearchCriteria criteria) {
+//        List<Object> preparedStmtValues = new ArrayList<>();
+//        String query = birthQueryBuilder.getNewBirthApplicationSearchQuery(criteria, preparedStmtValues, Boolean.FALSE);
+//        return query;
+//    }
+public RegisterBirthDetailsRequest searchBirthDetailsForRegister(NewBirthDetailRequest requestApplication) {
+    List<Object> preparedStmtValues = new ArrayList<>();
+    RegisterBirthDetailsRequest request = new RegisterBirthDetailsRequest();
+    RegisterBirthDetail register = new RegisterBirthDetail();
+    SearchCriteria criteria = new SearchCriteria();
+    if(requestApplication.getNewBirthDetails().size() > 0) {
+        criteria.setApplicationNumber(requestApplication.getNewBirthDetails().get(0).getApplicationNo());
+        criteria.setTenantId(requestApplication.getNewBirthDetails().get(0).getTenantId());
 
+        String query = birthQueryBuilder.getApplicationSearchQueryForRegistry(criteria, preparedStmtValues);
+        List<RegisterBirthDetail> result = jdbcTemplate.query(query, preparedStmtValues.toArray(), registerRowMapperForApp);
+    }
+    return request;
+//    List<NewBirthApplication> result = new ArrayList<>();
+//    List<NewBirthApplication> result = jdbcTemplate.query(query, preparedStmtValues.toArray(), ksmartBirthApplicationRowMapper);
+//    String query = birthQueryBuilder.getNewBirthApplicationSearchQuery(criteria, request, preparedStmtValues, Boolean.FALSE);
+//    List<NewBirthApplication> result = jdbcTemplate.query(query, preparedStmtValues.toArray(), ksmartBirthApplicationRowMapper);
+}
 
     public List<NewBirthApplication> searchKsmartBirthDetails(NewBirthDetailRequest request, SearchCriteria criteria) {
         List<Object> preparedStmtValues = new ArrayList<>();

@@ -4,18 +4,15 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
 import org.egov.tracer.model.CustomException;
-import org.ksmart.birth.birthregistry.service.MdmsDataService;
 import org.ksmart.birth.common.enrichment.BaseEnrichment;
 import org.ksmart.birth.common.model.AuditDetails;
 import org.ksmart.birth.common.repository.IdGenRepository;
 import org.ksmart.birth.common.services.MdmsTenantService;
 import org.ksmart.birth.config.BirthConfiguration;
-import org.ksmart.birth.newbirth.service.MdmsForNewBirthService;
 import org.ksmart.birth.stillbirth.service.MdmsForStillBirthService;
 import org.ksmart.birth.utils.BirthConstants;
 import org.ksmart.birth.utils.MdmsUtil;
 import org.ksmart.birth.utils.enums.ErrorCodes;
-import org.ksmart.birth.web.model.newbirth.NewBirthDetailRequest;
 import org.ksmart.birth.web.model.stillbirth.StillBirthApplication;
 import org.ksmart.birth.web.model.stillbirth.StillBirthDetailRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +21,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Component
 public class StillBirthEnrichment implements BaseEnrichment {
@@ -42,8 +40,14 @@ public class StillBirthEnrichment implements BaseEnrichment {
 
         RequestInfo requestInfo = request.getRequestInfo();
         User userInfo = requestInfo.getUserInfo();
+       AtomicReference<String> tenantId = null;
         AuditDetails auditDetails = buildAuditDetails(userInfo.getUuid(), Boolean.TRUE);
-        setPlaceOfBirth(request, auditDetails);
+        request.getBirthDetails()
+                .forEach(birth -> {
+                    tenantId.set(birth.getTenantId());
+                    birth.setIsStill(true);
+                        });
+        setPlaceOfBirth(request, tenantId.toString(), auditDetails);
         setApplicationNumbers(request);
         setFileNumbers(request);
         //setPlaceOfBirth(request);
@@ -271,14 +275,16 @@ public class StillBirthEnrichment implements BaseEnrichment {
                     }
                 });
     }
-    private void setPlaceOfBirth(StillBirthDetailRequest request, AuditDetails auditDetails) {
+    private void setPlaceOfBirth(StillBirthDetailRequest request, String tenantId, AuditDetails auditDetails) {
+        Object mdmsData = mdmsUtil.mdmsCallForLocation(request.getRequestInfo(), tenantId);
+        Object mdmsDataComm = mdmsUtil.mdmsCall(request.getRequestInfo());
         request.getBirthDetails().forEach(birth -> {
             birth.setId(UUID.randomUUID().toString());
             birth.setAuditDetails(auditDetails);
             if(birth.getPlaceofBirthId() != null || !birth.getPlaceofBirthId().isEmpty()){
-                Object mdmsData = mdmsUtil.mdmsCallForLocation(request.getRequestInfo(), birth.getTenantId());
+
                 mdmsBirthService.setLocationDetails(birth, mdmsData);
-                Object mdmsDataComm = mdmsUtil.mdmsCall(request.getRequestInfo());
+
                 mdmsBirthService.setInstitutionDetails(birth, mdmsDataComm);
             }
             birth.setBirthPlaceUuid(UUID.randomUUID().toString());

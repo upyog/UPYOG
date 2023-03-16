@@ -56,7 +56,7 @@ public class BirthApplicationRowMapper implements ResultSetExtractor<List<NewBir
                     .vehicleToMl(rs.getString("pla_vehicle_to_ml"))
                     .vehicleRegistrationNo(rs.getString("pla_vehicle_registration_no"))
                     .vehicleDesDetailsEn(rs.getString("pla_vehicle_desc"))
-                    .setadmittedHospitalEn(rs.getString("pla_vehicle_admit_hospital_en"))
+                    .setadmittedHospitalEn(rs.getString("pla_vehicle_hospitalid"))
                     .publicPlaceDecpEn(rs.getString("pla_public_place_desc"))
                     .publicPlaceType(rs.getString("pla_public_place_id"))
                     .localityNameEn(rs.getString("pla_public_locality_en"))

@@ -5,15 +5,59 @@ import lombok.extern.slf4j.Slf4j;
 import org.ksmart.birth.birthregistry.model.RegisterBirthDetail;
 import org.ksmart.birth.birthregistry.model.RegisterBirthDetailsRequest;
 import org.ksmart.birth.birthregistry.model.*;
+import org.ksmart.birth.common.producer.BndProducer;
+import org.ksmart.birth.config.BirthConfiguration;
+import org.ksmart.birth.newbirth.enrichment.NewBirthEnrichment;
+import org.ksmart.birth.newbirth.repository.NewBirthRepository;
+import org.ksmart.birth.newbirth.repository.querybuilder.NewBirthQueryBuilder;
+import org.ksmart.birth.newbirth.repository.rowmapper.BirthApplicationRowMapper;
+import org.ksmart.birth.utils.MdmsUtil;
+import org.ksmart.birth.web.model.SearchCriteria;
+import org.ksmart.birth.web.model.newbirth.NewBirthApplication;
 import org.ksmart.birth.web.model.newbirth.NewBirthDetailRequest;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 @Slf4j
 @Service
 public class RegistryRequestService {
+    private final NewBirthRepository repository;
+    @Autowired
+    RegistryRequestService(NewBirthRepository repository) {
+        this.repository = repository;
+    }
+
+
+    public RegisterBirthDetailsRequest createRegistryRequestNew(NewBirthDetailRequest request) {///Work to get req to Register
+        return repository.searchBirthDetailsForRegister(request);
+    }
+//        List<Object> preparedStmtValues = new ArrayList<>();
+//        RegisterBirthDetailsRequest request = new RegisterBirthDetailsRequest();
+//        SearchCriteria criteria = new SearchCriteria();
+//        if(requestApplication.getNewBirthDetails().size() > 0) {
+//            criteria.setApplicationNumber(requestApplication.getNewBirthDetails().get(0).getApplicationNo());
+//            criteria.setTenantId(requestApplication.getNewBirthDetails().get(0).getTenantId());
+//            String query = birthQueryBuilder.getApplicationSearchQueryForRegistry(criteria, preparedStmtValues);
+//        }
+//        List<NewBirthApplication> result = new ArrayList<>();
+//        List<NewBirthApplication> result = jdbcTemplate.query(query, preparedStmtValues.toArray(), ksmartBirthApplicationRowMapper);
+//        while (rs.next()) {
+//            result.add(NewBirthApplication.builder()
+//
+//        return request;
+//
+//    }
+
+
+
+
+
+
     public RegisterBirthDetailsRequest createRegistryRequest(NewBirthDetailRequest requestKsmartBirthReq) {
         RegisterBirthDetailsRequest request = new RegisterBirthDetailsRequest();
         List<RegisterBirthDetail> registerBirthDetails = new LinkedList<>();
