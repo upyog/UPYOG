@@ -65,8 +65,6 @@ public class NewBirthRepository {
     }
     public RegisterBirthDetailsRequest searchBirthDetailsForRegister(NewBirthDetailRequest requestApplication) {
         List<Object> preparedStmtValues = new ArrayList<>();
-        RegisterBirthDetailsRequest request = new RegisterBirthDetailsRequest();
-        RegisterBirthDetail register = new RegisterBirthDetail();
         SearchCriteria criteria = new SearchCriteria();
         List<RegisterBirthDetail> result = null;
         if (requestApplication.getNewBirthDetails().size() > 0) {
@@ -84,11 +82,11 @@ public class NewBirthRepository {
 
     public List<NewBirthApplication> searchKsmartBirthDetails(NewBirthDetailRequest request, SearchCriteria criteria) {
         List<Object> preparedStmtValues = new ArrayList<>();
-        Object mdmsData = mdmsUtil.mdmsCallForLocation(request.getRequestInfo(), criteria.getTenantId());
         Object mdmsDataComm = mdmsUtil.mdmsCall(request.getRequestInfo());
         String query = birthQueryBuilder.getNewBirthApplicationSearchQuery(criteria, request, preparedStmtValues, Boolean.FALSE);
         List<NewBirthApplication> result = jdbcTemplate.query(query, preparedStmtValues.toArray(), ksmartBirthApplicationRowMapper);
         result.forEach(birth -> {
+            Object mdmsData = mdmsUtil.mdmsCallForLocation(request.getRequestInfo(), birth.getTenantId());
             if (birth.getPlaceofBirthId() != null) {
                 mdmsBirthService.setLocationDetails(birth, mdmsData);
                 mdmsBirthService.setInstitutionDetails(birth, mdmsDataComm);
@@ -96,7 +94,7 @@ public class NewBirthRepository {
             if (birth.getParentAddress().getCountryIdPermanent() != null && birth.getParentAddress().getStateIdPermanent() != null) {
                 if (birth.getParentAddress().getCountryIdPermanent().contains(BirthConstants.COUNTRY_CODE)) {
                     if (birth.getParentAddress().getStateIdPermanent().contains(BirthConstants.STATE_CODE_SMALL)) {
-                        mdmsBirthService.setTenantDetails(birth, mdmsData);
+                        mdmsBirthService.setTenantDetails(birth, mdmsDataComm);
                         birth.getParentAddress().setPermtaddressCountry(birth.getParentAddress().getCountryIdPermanent());
 
                         birth.getParentAddress().setPermtaddressStateName(birth.getParentAddress().getStateIdPermanent());

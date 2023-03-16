@@ -2,6 +2,7 @@ package org.ksmart.birth.stillbirth.repository.querybuilder;
 
 import org.ksmart.birth.common.repository.builder.CommonQueryBuilder;
 import org.ksmart.birth.web.model.SearchCriteria;
+import org.ksmart.birth.web.model.stillbirth.StillBirthDetailRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -27,7 +28,7 @@ public class StillBirthQueryBuilder extends BaseStillBirthQuery {
             .append(" LEFT JOIN eg_birth_statitical_information estat ON estat.birthdtlid = ebd.id")
             .append(" LEFT JOIN eg_birth_initiator ini ON ini.birthdtlid = ebd.id").toString();
 
-    public String getNewBirthApplicationSearchQuery(@NotNull SearchCriteria criteria,
+    public String getNewBirthApplicationSearchQuery(@NotNull SearchCriteria criteria, StillBirthDetailRequest request,
                                                     @NotNull List<Object> preparedStmtValues, Boolean isCount) {
 
         StringBuilder query = new StringBuilder(QUERY);
