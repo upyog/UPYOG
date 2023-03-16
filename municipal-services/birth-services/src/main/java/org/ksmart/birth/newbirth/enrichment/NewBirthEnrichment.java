@@ -16,6 +16,7 @@ import org.ksmart.birth.utils.MdmsUtil;
 import org.ksmart.birth.utils.enums.ErrorCodes;
 import org.ksmart.birth.web.model.newbirth.NewBirthApplication;
 import org.ksmart.birth.web.model.newbirth.NewBirthDetailRequest;
+import org.ksmart.birth.web.model.stillbirth.StillBirthApplication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -36,11 +37,14 @@ public class NewBirthEnrichment implements BaseEnrichment {
 
 
     public void enrichCreate(NewBirthDetailRequest request) {
-
+        String tenantId = null;
         RequestInfo requestInfo = request.getRequestInfo();
         User userInfo = requestInfo.getUserInfo();
         AuditDetails auditDetails = buildAuditDetails(userInfo.getUuid(), Boolean.TRUE);
-        setPlaceOfBirth(request, auditDetails);
+        for (NewBirthApplication birth : request.getNewBirthDetails()) {
+            tenantId = birth.getTenantId();
+        }
+        setPlaceOfBirth(request, tenantId, auditDetails);
         setApplicationNumbers(request);
         setFileNumbers(request);
         //setPlaceOfBirth(request);
@@ -300,14 +304,14 @@ public class NewBirthEnrichment implements BaseEnrichment {
                     }
                 });
     }
-    private void setPlaceOfBirth(NewBirthDetailRequest request, AuditDetails auditDetails) {
+    private void setPlaceOfBirth(NewBirthDetailRequest request, String trnantId, AuditDetails auditDetails) {
+        Object mdmsData = mdmsUtil.mdmsCallForLocation(request.getRequestInfo(), trnantId);
+        Object mdmsDataComm = mdmsUtil.mdmsCall(request.getRequestInfo());
         request.getNewBirthDetails().forEach(birth -> {
             birth.setId(UUID.randomUUID().toString());
             birth.setAuditDetails(auditDetails);
             if(birth.getPlaceofBirthId() != null || !birth.getPlaceofBirthId().isEmpty()){
-                Object mdmsData = mdmsUtil.mdmsCallForLocation(request.getRequestInfo(), birth.getTenantId());
                 mdmsBirthService.setLocationDetails(birth, mdmsData);
-                Object mdmsDataComm = mdmsUtil.mdmsCall(request.getRequestInfo());
                 mdmsBirthService.setInstitutionDetails(birth, mdmsDataComm);
             }
             birth.setBirthPlaceUuid(UUID.randomUUID().toString());

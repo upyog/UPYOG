@@ -37,17 +37,15 @@ public class StillBirthEnrichment implements BaseEnrichment {
     IdGenRepository idGenRepository;
 
     public void enrichCreate(StillBirthDetailRequest request) {
-
+        String tenantId = null;
         RequestInfo requestInfo = request.getRequestInfo();
         User userInfo = requestInfo.getUserInfo();
-       AtomicReference<String> tenantId = null;
         AuditDetails auditDetails = buildAuditDetails(userInfo.getUuid(), Boolean.TRUE);
-        request.getBirthDetails()
-                .forEach(birth -> {
-                    tenantId.set(birth.getTenantId());
-                    birth.setIsStill(true);
-                        });
-        setPlaceOfBirth(request, tenantId.toString(), auditDetails);
+        for (StillBirthApplication birth : request.getBirthDetails()) {
+            tenantId = birth.getTenantId();
+            birth.setIsStill(true);
+        }
+        setPlaceOfBirth(request, tenantId, auditDetails);
         setApplicationNumbers(request);
         setFileNumbers(request);
         //setPlaceOfBirth(request);

@@ -91,19 +91,18 @@ public RegisterBirthDetailsRequest searchBirthDetailsForRegister(NewBirthDetailR
 
     public List<NewBirthApplication> searchKsmartBirthDetails(NewBirthDetailRequest request, SearchCriteria criteria) {
         List<Object> preparedStmtValues = new ArrayList<>();
+        Object mdmsData = mdmsUtil.mdmsCallForLocation(request.getRequestInfo(), criteria.getTenantId());
+        Object mdmsDataComm = mdmsUtil.mdmsCall(request.getRequestInfo());
         String query = birthQueryBuilder.getNewBirthApplicationSearchQuery(criteria, request, preparedStmtValues, Boolean.FALSE);
         List<NewBirthApplication> result = jdbcTemplate.query(query, preparedStmtValues.toArray(), ksmartBirthApplicationRowMapper);
         result.forEach(birth -> {
             if(birth.getPlaceofBirthId()!=null){
-                Object mdmsData = mdmsUtil.mdmsCallForLocation(request.getRequestInfo(), birth.getTenantId());
                 mdmsBirthService.setLocationDetails(birth, mdmsData);
-                Object mdmsDataComm = mdmsUtil.mdmsCall(request.getRequestInfo());
                 mdmsBirthService.setInstitutionDetails(birth, mdmsDataComm);
             }
             if (birth.getParentAddress().getCountryIdPermanent() != null && birth.getParentAddress().getStateIdPermanent() != null) {
                 if (birth.getParentAddress().getCountryIdPermanent().contains(BirthConstants.COUNTRY_CODE)) {
                     if (birth.getParentAddress().getStateIdPermanent().contains(BirthConstants.STATE_CODE_SMALL)) {
-                        Object mdmsData = mdmsUtil.mdmsCall(request.getRequestInfo());
                         mdmsBirthService.setTenantDetails(birth, mdmsData);
                         birth.getParentAddress().setPermtaddressCountry(birth.getParentAddress().getCountryIdPermanent());
 
