@@ -58,12 +58,12 @@ public class NewBirthController {
             RegisterBirthDetailsRequest registerBirthDetailsRequest = registryReq.createRegistryRequest(request);
             List<RegisterBirthDetail> registerBirthDetails =  registerBirthService.saveRegisterBirthDetails(registerBirthDetailsRequest);
 
-            /**** Dowload after update
+           //Dowload after update
             RegisterBirthSearchCriteria criteria = new RegisterBirthSearchCriteria();
             criteria.setTenantId(registerBirthDetails.get(0).getTenantId());
             criteria.setRegistrationNo(registerBirthDetails.get(0).getRegistrationNo());
             birthCertificate = registerBirthService.download(criteria,request.getRequestInfo());
-             *******/
+
         }
         NewBirthResponse response=NewBirthResponse.builder()
                 .ksmartBirthDetails(birthApplicationDetails)

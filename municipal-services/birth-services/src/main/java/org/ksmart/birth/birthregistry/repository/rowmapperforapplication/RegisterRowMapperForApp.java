@@ -19,13 +19,13 @@ public class RegisterRowMapperForApp implements ResultSetExtractor<List<Register
 
     private final RegisterPermanentAddressRowMapperForApp birthRegPerAddRowMapper;
     private final RegisterPresentAddressRowMapperForApp birthRegPreAddRowMapper;
-    private final BirthRegPlaceRowMapper birthRegPlaceRowMapper;
+    private final RegisterPlaceRowMapperForApp regPlaceRowMapper;
 
     @Autowired
-    RegisterRowMapperForApp(RegisterPermanentAddressRowMapperForApp birthRegPerAddRowMapper, RegisterPresentAddressRowMapperForApp birthRegPreAddRowMapper, BirthRegPlaceRowMapper birthRegPlaceRowMapper) {
+    RegisterRowMapperForApp(RegisterPermanentAddressRowMapperForApp birthRegPerAddRowMapper, RegisterPresentAddressRowMapperForApp birthRegPreAddRowMapper, RegisterPlaceRowMapperForApp regPlaceRowMapper) {
         this.birthRegPerAddRowMapper = birthRegPerAddRowMapper;
         this.birthRegPreAddRowMapper = birthRegPreAddRowMapper;
-        this.birthRegPlaceRowMapper = birthRegPlaceRowMapper;
+        this.regPlaceRowMapper = regPlaceRowMapper;
     }
 
 
@@ -35,10 +35,10 @@ public class RegisterRowMapperForApp implements ResultSetExtractor<List<Register
             while (rs.next()) {
                 result.add(RegisterBirthDetail.builder()
                         .dateOfReport(rs.getLong("ba_dateofreport"))
-                        .dateOfBirth(rs.getLong("pla_dateofbirth"))
-                        .timeOfBirth(rs.getLong("pla_timeofbirth"))
-                        .ampm(rs.getString("pla_am_pm"))
-                        .firstNameEn(rs.getString("pla_firstname_en"))
+                        .dateOfBirth(rs.getLong("ba_dateofbirth"))
+                        .timeOfBirth(rs.getLong("ba_timeofbirth"))
+                        .ampm(rs.getString("ba_am_pm"))
+                        .firstNameEn(rs.getString("ba_firstname_en"))
                         .firstNameMl(rs.getString("ba_firstname_ml"))
                         .middleNameEn(rs.getString("ba_middlename_en"))
                         .middleNameMl(rs.getString("ba_middlename_ml"))
@@ -51,24 +51,24 @@ public class RegisterRowMapperForApp implements ResultSetExtractor<List<Register
                         .remarksMl(rs.getString("ba_remarks_ml"))
                         .esignUserCode(rs.getString("ba_esign_user_code"))
                         .esignUserDesigCode(rs.getString("ba_esign_user_desig_code"))
-                        .isAdopted(rs.getBoolean("ba_is_adopted"))
-                        .isAbandoned(rs.getBoolean("ba_is_abandoned"))
-                        .isMultipleBirth(rs.getBoolean("ba_is_multiple_birth"))
+                        //.isAdopted(rs.getBoolean("ba_is_adopted"))
+                        //.isAbandoned(rs.getBoolean("ba_is_abandoned"))
+                        //.isMultipleBirth(rs.getBoolean("ba_is_multiple_birth"))
                         .isFatherInfoMissing(rs.getBoolean("ba_is_father_info_missing"))
                         .isMotherInfoMissing(rs.getBoolean("ba_is_mother_info_missing"))
-                        .noOfAliveBirth(Integer.parseInt(rs.getString("ba_no_of_alive_birth")))
-                        .multipleBirthDetId(rs.getString("ba_multiplebirthdetid"))
-                        .isBornOutside(rs.getBoolean("ba_is_born_outside"))
-                        .otPassportNo(rs.getString("ba_ot_passportno"))
+                        //.noOfAliveBirth(Integer.parseInt(rs.getString("ba_no_of_alive_birth")))
+                        //.multipleBirthDetId(rs.getString("ba_multiplebirthdetid"))
+                        //.isBornOutside(rs.getBoolean("ba_is_born_outside"))
+                        //.otPassportNo(rs.getString("ba_ot_passportno"))
                         .ackNumber(rs.getString("ba_applicationno"))
                         .registrationNo(rs.getString("ba_registrationno"))
                         .registrationDate(rs.getLong("ba_registration_date"))
-                        .registerBirthPlace(birthRegPlaceRowMapper.getRegBirthPlace(rs))
+                        .registerBirthPlace(regPlaceRowMapper.getRegAppPlace(rs))
                         .registerBirthFather(getRegBirthFatherInfo(rs))
                         .registerBirthMother(getRegBirthMotherInfo(rs))
                         .registerBirthPermanent(birthRegPerAddRowMapper.getRegBirthPermanentAddress(rs))
                         .registerBirthPresent(birthRegPreAddRowMapper.getRegBirthPresentAddress(rs))
-                        //.registerBirthStatitical(getRegBirthStatisticalInfo(rs))
+                        .registerBirthStatitical(getRegBirthStatisticalInfo(rs))
                         .auditDetails(getAuditDetails(rs))
                         .build());
             }

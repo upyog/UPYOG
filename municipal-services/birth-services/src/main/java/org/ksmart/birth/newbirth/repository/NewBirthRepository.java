@@ -33,9 +33,8 @@ public class NewBirthRepository {
     private final NewBirthQueryBuilder birthQueryBuilder;
     private final BirthApplicationRowMapper ksmartBirthApplicationRowMapper;
     private final MdmsForNewBirthService mdmsBirthService;
-    private final  MdmsUtil mdmsUtil;
+    private final MdmsUtil mdmsUtil;
     private final RegisterRowMapperForApp registerRowMapperForApp;
-
 
 
     @Autowired
@@ -64,30 +63,24 @@ public class NewBirthRepository {
         producer.push(birthDeathConfiguration.getUpdateKsmartBirthApplicationTopic(), request);
         return request.getNewBirthDetails();
     }
-//
-//    public String getBirthQuery(SearchCriteria criteria) {
-//        List<Object> preparedStmtValues = new ArrayList<>();
-//        String query = birthQueryBuilder.getNewBirthApplicationSearchQuery(criteria, preparedStmtValues, Boolean.FALSE);
-//        return query;
-//    }
-public RegisterBirthDetailsRequest searchBirthDetailsForRegister(NewBirthDetailRequest requestApplication) {
-    List<Object> preparedStmtValues = new ArrayList<>();
-    RegisterBirthDetailsRequest request = new RegisterBirthDetailsRequest();
-    RegisterBirthDetail register = new RegisterBirthDetail();
-    SearchCriteria criteria = new SearchCriteria();
-    if(requestApplication.getNewBirthDetails().size() > 0) {
-        criteria.setApplicationNumber(requestApplication.getNewBirthDetails().get(0).getApplicationNo());
-        criteria.setTenantId(requestApplication.getNewBirthDetails().get(0).getTenantId());
+    public RegisterBirthDetailsRequest searchBirthDetailsForRegister(NewBirthDetailRequest requestApplication) {
+        List<Object> preparedStmtValues = new ArrayList<>();
+        RegisterBirthDetailsRequest request = new RegisterBirthDetailsRequest();
+        RegisterBirthDetail register = new RegisterBirthDetail();
+        SearchCriteria criteria = new SearchCriteria();
+        List<RegisterBirthDetail> result = null;
+        if (requestApplication.getNewBirthDetails().size() > 0) {
+            criteria.setApplicationNumber(requestApplication.getNewBirthDetails().get(0).getApplicationNo());
+            criteria.setTenantId(requestApplication.getNewBirthDetails().get(0).getTenantId());
 
-        String query = birthQueryBuilder.getApplicationSearchQueryForRegistry(criteria, preparedStmtValues);
-        List<RegisterBirthDetail> result = jdbcTemplate.query(query, preparedStmtValues.toArray(), registerRowMapperForApp);
+            String query = birthQueryBuilder.getApplicationSearchQueryForRegistry(criteria, preparedStmtValues);
+            result = jdbcTemplate.query(query, preparedStmtValues.toArray(), registerRowMapperForApp);
+
+        }
+        return RegisterBirthDetailsRequest.builder()
+                .requestInfo(requestApplication.getRequestInfo())
+                .registerBirthDetails(result).build();
     }
-    return request;
-//    List<NewBirthApplication> result = new ArrayList<>();
-//    List<NewBirthApplication> result = jdbcTemplate.query(query, preparedStmtValues.toArray(), ksmartBirthApplicationRowMapper);
-//    String query = birthQueryBuilder.getNewBirthApplicationSearchQuery(criteria, request, preparedStmtValues, Boolean.FALSE);
-//    List<NewBirthApplication> result = jdbcTemplate.query(query, preparedStmtValues.toArray(), ksmartBirthApplicationRowMapper);
-}
 
     public List<NewBirthApplication> searchKsmartBirthDetails(NewBirthDetailRequest request, SearchCriteria criteria) {
         List<Object> preparedStmtValues = new ArrayList<>();
@@ -96,7 +89,7 @@ public RegisterBirthDetailsRequest searchBirthDetailsForRegister(NewBirthDetailR
         String query = birthQueryBuilder.getNewBirthApplicationSearchQuery(criteria, request, preparedStmtValues, Boolean.FALSE);
         List<NewBirthApplication> result = jdbcTemplate.query(query, preparedStmtValues.toArray(), ksmartBirthApplicationRowMapper);
         result.forEach(birth -> {
-            if(birth.getPlaceofBirthId()!=null){
+            if (birth.getPlaceofBirthId() != null) {
                 mdmsBirthService.setLocationDetails(birth, mdmsData);
                 mdmsBirthService.setInstitutionDetails(birth, mdmsDataComm);
             }
@@ -121,7 +114,7 @@ public RegisterBirthDetailsRequest searchBirthDetailsForRegister(NewBirthDetailR
 
                         birth.getParentAddress().setPermntInKeralaAdrPostOffice(birth.getParentAddress().getPoNoPermanent());
 
-                    }else{
+                    } else {
                         birth.getParentAddress().setPermtaddressCountry(birth.getParentAddress().getCountryIdPermanent());
 
                         birth.getParentAddress().setPermtaddressStateName(birth.getParentAddress().getStateIdPermanent());
@@ -139,12 +132,12 @@ public RegisterBirthDetailsRequest searchBirthDetailsForRegister(NewBirthDetailR
                         birth.getParentAddress().setPermntOutsideKeralaHouseNameMl(birth.getParentAddress().getHouseNameNoMlPermanent());
 
                     }
-                }else{
+                } else {
                     birth.getParentAddress().setPermntOutsideIndiaCountry(birth.getParentAddress().getCountryIdPermanent());
                     birth.getParentAddress().setPermntOutsideKeralaVillage(birth.getParentAddress().getVillageNamePermanent());
                 }
             }
-            if(birth.getParentAddress().getCountryIdPresent()!=null && birth.getParentAddress().getStateIdPresent()!=null) {
+            if (birth.getParentAddress().getCountryIdPresent() != null && birth.getParentAddress().getStateIdPresent() != null) {
                 if (birth.getParentAddress().getCountryIdPresent().contains(BirthConstants.COUNTRY_CODE)) {
                     if (birth.getParentAddress().getStateIdPresent().contains(BirthConstants.STATE_CODE_SMALL)) {
 
@@ -173,7 +166,7 @@ public RegisterBirthDetailsRequest searchBirthDetailsForRegister(NewBirthDetailR
 
                         birth.getParentAddress().setPresentInsideKeralaPostOffice(birth.getParentAddress().getPresentInsideKeralaPostOffice());
 
-                    }else{
+                    } else {
                         birth.getParentAddress().setPresentaddressCountry(birth.getParentAddress().getCountryIdPresent());
 
                         birth.getParentAddress().setPresentaddressStateName(birth.getParentAddress().getStateIdPresent());
@@ -196,7 +189,7 @@ public RegisterBirthDetailsRequest searchBirthDetailsForRegister(NewBirthDetailR
                         birth.getParentAddress().setPresentOutsideKeralaCityVilgeEn(birth.getParentAddress().getTownOrVillagePresent());
 
                     }
-                } else{
+                } else {
                     birth.getParentAddress().setPresentOutSideCountry(birth.getParentAddress().getCountryIdPresent());
                     birth.getParentAddress().setPresentOutSideIndiaadrsVillage(birth.getParentAddress().getVillageNamePresent());
                     birth.getParentAddress().setPresentOutSideIndiaadrsCityTown(birth.getParentAddress().getTownOrVillagePresent());
