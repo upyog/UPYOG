@@ -49,6 +49,7 @@ public class AdoptionMdmsValidator {
         List<String> stateCodes = getStateCodes(mdmsData);
         List<String> countryCodes = getCountryCodes(mdmsData);
         List<String> instCodes = getInstitutionCodes(mdmsDataLoc);
+        List<String> hospCodes =getHospitalCodes(mdmsDataLoc);
         List<String> medicalCodes = getMedicalCodes(mdmsData);
         List<String> villageCodes = getVillageCode(mdmsData);
         List<String> districtCodes = getDistrictCode(mdmsData);
@@ -166,6 +167,13 @@ public class AdoptionMdmsValidator {
 
 
                     }
+                    String hospCode= birth.getHospitalId(); 
+                    System.out.println("hosp hospCodes "+hospCodes);
+                    System.out.println("hosp code "+hospCode);
+                    if (CollectionUtils.isEmpty(hospCodes) || !hospCodes.contains(hospCode)) {
+                      errorMap.put(COMMON_MDMS_HOSPITAL, "The Hospital code '" + hospCode + "' does not exists");
+                  }
+                    
 //                    //
 //                    String talukCodePresent= birth.getBirthPresentAddress().getTalukId();
 //                    String talukCodePermanent= birth.getBirthPermanentAddress().getTalukId();
@@ -578,10 +586,14 @@ public class AdoptionMdmsValidator {
     private List<String> getCountryCodes(Object mdmsData) {
         return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_COUNTRY_CODE_JSONPATH);
     }
-    private List<String> getInstitutionCodes(Object mdmsData) {
-    	
+    private List<String> getInstitutionCodes(Object mdmsData) {    	
         return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_INSTITUTIONS_CODE_JSONPATH);
     }
+    
+    private List<String> getHospitalCodes(Object mdmsData) {
+        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_HOSPITALS_CODE_JSONPATH);
+    }
+    
     private List<String> getMedicalCodes(Object mdmsData) {
         return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_MEDICAL_ATTENTION_TYPE_CODE_JSONPATH);
     }

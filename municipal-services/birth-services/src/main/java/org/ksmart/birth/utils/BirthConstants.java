@@ -17,7 +17,10 @@ public class BirthConstants {
     public static final String COMMON_MDMS_TALUK = "Taluk";
     public static final String COMMON_MDMS_STATE = "State";
     public static final String COMMON_MDMS_COUNTRY = "Country";
-    //public static final String COMMON_MDMS_INSTITUTION= "Institution";
+ 
+    public static final String COMMON_MDMS_INSTITUTION= "Institution";
+    public static final String COMMON_MDMS_HOSPITAL= "Hospital";
+ 
     public static final String LOCATION_MDMS_HOSPITAL = "hospitalList";
     public static final String LOCATION_MDMS_INSTITUTION = "institutionList";
     public static final String LOCATION_MDMS_BOUNDARY = "TenantBoundary";

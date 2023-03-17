@@ -1,57 +1,20 @@
 ALTER TABLE eg_birth_details
  ADD COLUMN adopt_decree_order_no character varying(64),
-<<<<<<< HEAD
- ADD COLUMN adopt_dateoforder_decree bigint,
- ADD COLUMN adopt_agency_contact_person  character varying(64) ,
- ADD COLUMN adopt_agency_contact_person_mobileno character varying(12);
-
-ALTER TABLE eg_birth_details_audit
- ADD COLUMN adopt_decree_order_no character varying(64),
- ADD COLUMN adopt_dateoforder_decree bigint,
- ADD COLUMN adopt_agency_contact_person  character varying(64) ,
- ADD COLUMN adopt_agency_contact_person_mobileno character varying(12);
-=======
  ADD COLUMN adopt_dateoforder_decree bigint,    
  ADD COLUMN adopt_agency_contact_person  character varying(64) ,
- ADD COLUMN adopt_agency_contact_person_mobileno character varying(12);
- 
- ALTER TABLE eg_birth_details_audit
-
- DROP COLUMN adopt_firstname_en,
- DROP COLUMN adopt_firstname_ml  ,    
- DROP COLUMN adopt_middlename_en   ,
- DROP COLUMN adopt_middlename_ml   ,
- DROP COLUMN adopt_lastname_en  ,
- DROP COLUMN adopt_lastname_ml  ;
- 
- ALTER TABLE eg_birth_details
-
- DROP COLUMN adopt_firstname_en,
- DROP COLUMN adopt_firstname_ml  ,    
- DROP COLUMN adopt_middlename_en   ,
- DROP COLUMN adopt_middlename_ml   ,
- DROP COLUMN adopt_lastname_en  ,
- DROP COLUMN adopt_lastname_ml  ;
+ ADD COLUMN adopt_agency_contact_person_mobileno character varying(12),
+ ADD COLUMN old_birth_reg_no character varying(64);
  
  
  ALTER TABLE eg_birth_details_audit
-
  ADD COLUMN adopt_decree_order_no character varying(64),
  ADD COLUMN adopt_dateoforder_decree bigint,    
  ADD COLUMN adopt_agency_contact_Person  character varying(64) ,
- ADD COLUMN adopt_agency_contact_Person_mobileno character varying(12) ;
- 
- 
- ALTER TABLE eg_birth_details 
-
+ ADD COLUMN adopt_agency_contact_Person_mobileno character varying(12) ,
  ADD COLUMN old_birth_reg_no character varying(64);
  
- ALTER TABLE eg_birth_details_audit 
-
- ADD COLUMN old_birth_reg_no character varying(64);
  
  ALTER TABLE eg_register_birth_details 
-
  ADD COLUMN    old_birth_reg_no character varying(64),
  ADD COLUMN    adopt_deed_order_no character varying(64),
  ADD COLUMN    adopt_dateoforder_deed bigint,
@@ -63,10 +26,8 @@ ALTER TABLE eg_birth_details_audit
  ADD COLUMN    adopt_dateoforder_decree bigint,
  ADD COLUMN    adopt_agency_contact_person character varying(64),
  ADD COLUMN   adopt_agency_contact_person_mobileno character varying(12) ;
-	
  
  ALTER TABLE eg_register_birth_details_audit 
-
  ADD COLUMN    old_birth_reg_no character varying(64),
  ADD COLUMN    adopt_deed_order_no character varying(64),
  ADD COLUMN    adopt_dateoforder_deed bigint,
@@ -78,4 +39,21 @@ ALTER TABLE eg_birth_details_audit
  ADD COLUMN    adopt_dateoforder_decree bigint,
  ADD COLUMN    adopt_agency_contact_person character varying(64),
  ADD COLUMN    adopt_agency_contact_person_mobileno character varying(12) ;
->>>>>>> 4e877134b6 (adoption)
+ 
+ 
+ ALTER TABLE eg_birth_details_audit
+ DROP COLUMN adopt_firstname_en,
+ DROP COLUMN adopt_firstname_ml  ,    
+ DROP COLUMN adopt_middlename_en   ,
+ DROP COLUMN adopt_middlename_ml   ,
+ DROP COLUMN adopt_lastname_en  ,
+ DROP COLUMN adopt_lastname_ml  ;
+ 
+ ALTER TABLE eg_birth_details
+ DROP COLUMN adopt_firstname_en,
+ DROP COLUMN adopt_firstname_ml  ,    
+ DROP COLUMN adopt_middlename_en   ,
+ DROP COLUMN adopt_middlename_ml   ,
+ DROP COLUMN adopt_lastname_en  ,
+ DROP COLUMN adopt_lastname_ml  ;
+ 

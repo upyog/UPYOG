@@ -99,7 +99,6 @@ public class MdmsDataService {
         }
     }
 
-
     public void setKsmartLocationDetails(NewBirthApplication register, Object mdmsData) {
          if (register.getPlaceofBirthId().contains(BIRTH_PLACE_HOSPITAL)) {
             String placeEn = mdmsLocationService.getHospitalAddressEn(mdmsData, register.getHospitalId());
@@ -129,29 +128,6 @@ public class MdmsDataService {
        }
    }
     
-
-//    public void setKsmartLocationDetails(NewBirthApplication register, Object mdmsData) {
-//         if (register.getPlaceofBirthId().contains(BIRTH_PLACE_HOSPITAL)) {
-//            String placeEn = mdmsLocationService.getHospitalAddressEn(mdmsData, register.getHospitalId());
-//            String placeMl = mdmsLocationService.getHospitalNameMl(mdmsData, register.getHospitalId());
-//            register.setHospitalName(placeEn);
-//            register.setHospitalNameMl(placeMl);
-//        } else if (register.getPlaceofBirthId().contains(BIRTH_PLACE_INSTITUTION)) {
-//            String placeEn = mdmsLocationService.getInstitutionNameEn(mdmsData, register.getInstitutionId());
-//            String placeMl = mdmsLocationService.getHospitalNameMl(mdmsData, register.getInstitutionId());
-//            register.setInstitution(placeEn);
-//            register.setInstitutionIdMl(placeMl);
-//        } else if (register.getPlaceofBirthId().contains(BIRTH_PLACE_HOME)) {
-//             String placeEn = mdmsLocationService.getWardNameEn(mdmsData, register.getWardId());
-//             String placeMl = mdmsLocationService.getWardNameMl(mdmsData, register.getWardId());
-//             String wardNo = mdmsLocationService.getWardNo(mdmsData, register.getWardId());
-//             register.setWardNameEn(placeEn);
-//             register.setWardNameMl(placeMl);
-//             register.setWardNumber(wardNo);
-//         }else {
-//        }
-//    }
-
 
     public void setStillLocationDetails(StillBirthApplication register, Object mdmsData) {
         if (register.getPlaceofBirthId().contains(BIRTH_PLACE_HOSPITAL)) {

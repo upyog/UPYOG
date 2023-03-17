@@ -72,7 +72,9 @@ public class AdoptionApplication {
     @Size(max = 64)
     @JsonProperty("institution")
     private String institution;
-
+    @Size(max = 64)
+    @JsonProperty("institutionNameCode")
+    private String institutionNameCode;
     @Size(max = 64)
     @JsonProperty("institutionId")
     private String institutionId;
@@ -280,28 +282,9 @@ public class AdoptionApplication {
     /////////////////////Adoption filelds////////////////////////////////// 
     
     @Size(max = 64)
-    @JsonProperty("adoptfirstnameen")
-    private String adoptFirstNameEn;
-    
-    @Size(max = 64)
-    @JsonProperty("adoptfirstnameml")
-    private String adoptFirstNameMl;
-    
-    @Size(max = 64)
-    @JsonProperty("adoptmiddlenameen")
-    private String adoptMiddleNameEn;
-    
-    @Size(max = 64)
-    @JsonProperty("adoptmiddlenameml")
-    private String adoptMiddleNameMl;
-    
-    @Size(max = 64)
-    @JsonProperty("adoptlastnameen")
-    private String adoptLastNameEn;
-    
-    @Size(max = 64)
-    @JsonProperty("adoptlastnameml")
-    private String adoptLastNameMl;
+    @JsonProperty("oldregistrationno")
+    private String oldRegistrationNo;
+ 
     
     @Size(max = 64)
     @JsonProperty("adoptdeedorderno")
