@@ -2,12 +2,14 @@ package org.ksmart.birth.web.model.newbirth;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
+import org.ksmart.birth.common.calculation.demand.models.Demand;
 import org.ksmart.birth.common.model.AuditDetails;
 import org.ksmart.birth.common.model.Document;
 import org.ksmart.birth.web.model.ParentAddress;
 import org.ksmart.birth.web.model.ParentsDetail;
 import org.ksmart.birth.web.model.InformatDetail;
 import org.ksmart.birth.web.model.InitiatorDetail;
+import org.ksmart.birth.common.calculation.demand.models.Demand;
 
 import javax.validation.constraints.Size;
 import java.util.List;
@@ -280,6 +282,8 @@ public class NewBirthApplication {
     private ParentAddress parentAddress;
     @JsonProperty("InformarHosInstDetails")
     private InformatDetail informatDetail;
+    @JsonProperty("Demand")
+    private Demand demand;
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails;
 }
