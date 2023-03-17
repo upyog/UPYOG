@@ -2,7 +2,7 @@
 
 This document will walk you through the dependencies of this service and how to set it up locally
 
-- To setup the bpa-service in your local system, clone the [municipal-services repository](https://github.com/egovernments/municipal-services).
+- To setup the bpa-service in your local system, clone the [UPYOG Repository](https://github.com/upyog/UPYOG.git) and navigate to the municipal-services folder.
 
 ## Dependencies
 
