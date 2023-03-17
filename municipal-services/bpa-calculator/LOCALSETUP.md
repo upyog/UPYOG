@@ -8,11 +8,11 @@ This document will walk you through the dependencies of this service and how to 
 
 ### Infra Dependency
 
-- [] Postgres DB
+- [ ] Postgres DB
 - [ ] Redis
 - [ ] Elasticsearch
 - [X] Kafka
-  - [] Consumer
+  - [ ] Consumer
   - [X] Producer
 
 ## Running Locally
