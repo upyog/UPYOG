@@ -46,14 +46,14 @@ All the details and configurations on the services are explained in the document
 
 ### Kafka Consumers
 
-`update-challan` : eChallan consumer listens to this topic to get the updated data
-`save-challan` : eChallan consumer listens to this topic to get the eChallan data
-`egov.collection.payment-cancel` : eChallan consumer listen to this topic and get data when the receipt is cancelled.
+- `update-challan` : eChallan consumer listens to this topic to get the updated data
+- `save-challan` : eChallan consumer listens to this topic to get the eChallan data
+- `egov.collection.payment-cancel` : eChallan consumer listen to this topic and get data when the receipt is cancelled.
 
 ### Kafka Producers
 
-`save-challan` : echallan-services sends data to this topic to push entries to the database table.
-`update-challan` : echallan-services sends data to this topic to update the entries to the database table.
-`egov.collection.payment-create` : Service sends data to this topic when the payments is triggered.
-`egov.core.notification.sms` : This topic is used to send the sms notification
-`persist-user-events-async` : Service uses this topic to save the event notification
+- `save-challan` : echallan-services sends data to this topic to push entries to the database table.
+- `update-challan` : echallan-services sends data to this topic to update the entries to the database table.
+- `egov.collection.payment-create` : Service sends data to this topic when the payments is triggered.
+- `egov.core.notification.sms` : This topic is used to send the sms notification
+- `persist-user-events-async` : Service uses this topic to save the event notification
