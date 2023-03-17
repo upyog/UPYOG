@@ -16,9 +16,9 @@ To update the modules run *install-dep.sh* script this will pull all the updates
 ###### Module wise reference docs
 Module | Reference Docs
 ------ | --------------
-PGR | https://upyog-docs.gitbook.io/upyog-v-1.0/upyog-1/platform/customize-upyog/upyog-ui-implementation-development-guidelines-and-faqs/pgr-ui-implementation-guidelines-and-faqs
-FSM | https://upyog-docs.gitbook.io/upyog-v-1.0/upyog-1/platform/customize-upyog/upyog-ui-implementation-development-guidelines-and-faqs/fsm-ui-implementation-guidelines-and-faqs
-UPYOG Services | https://upyog-docs.gitbook.io/upyog-v-1.0/upyog-1/platform/configure-upyog/configuring-upyog-service-stack
+PGR | [PGR: UI Implementation - Guidelines & FAQs](https://upyog-docs.gitbook.io/upyog-v-1.0/upyog-1/platform/customize-upyog/upyog-ui-implementation-development-guidelines-and-faqs/pgr-ui-implementation-guidelines-and-faqs)
+FSM | [FSM: UI Implementation - Guidelines & FAQs](https://upyog-docs.gitbook.io/upyog-v-1.0/upyog-1/platform/customize-upyog/upyog-ui-implementation-development-guidelines-and-faqs/fsm-ui-implementation-guidelines-and-faqs)
+UPYOG Services | [UPYOG Service Stack](https://upyog-docs.gitbook.io/upyog-v-1.0/upyog-1/platform/configure-upyog/configuring-upyog-service-stack)
 
 ###### Dependencies and their references
 1. https://www.npmjs.com/package/react-query
