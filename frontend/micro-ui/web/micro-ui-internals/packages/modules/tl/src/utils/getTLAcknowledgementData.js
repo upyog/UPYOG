@@ -120,7 +120,6 @@ const getAddressDetails = (application, t) => {
 };
 
 const getPTAcknowledgementData = async (application, tenantInfo, t) => {
-  console.log( getTradeDetails(application, t),"application111");
   const filesArray = application?.tradeLicenseDetail?.applicationDocuments?.map((value) => value?.fileStoreId);
   let res;
   if (filesArray) {
