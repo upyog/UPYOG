@@ -1,6 +1,6 @@
-# echallan-calculator
+# eChallan Calculator Service (echallan-calculator)
 
-This service is used to calculate the echallan amount based on the details present in echallan request. This module is designed in such way that it can be used to serve echallan for different type of service. 
+This service is used to calculate the challan amount based on the details present in echallan request. This module is designed in such way that it can be used to serve echallan for different type of service. 
 
 ### DB UML Diagram
 
@@ -8,20 +8,20 @@ This service is used to calculate the echallan amount based on the details prese
 
 ### Service Dependencies
 
-- echallan-service
-- billing-service
-- egov-mdms-service
+- eChallan  Service (echallan-service)
+- Billing Service (billing-service)
+- MDM Service (egov-mdms-service)
 
 ### Swagger API Contract
 
 Link to the swagger API contract yaml and editor link like below
 
-https://editor.swagger.io/?url=https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/municipal-services/docs/e-Challan-v1.0.0.yaml#!/
+https://editor.swagger.io/?url=https://raw.githubusercontent.com/upyog/UPYOG/master/municipal-services/docs/e-Challan-v1.0.0.yaml#!/
 
 ## Service Details
 
-eChallan calculator application is used to calculate the eChallan Fees based on the data mentioned in echallan creation. Based on tax amount mentioned in echallan, demand is created.
-Once the demand is created, it calls billing-services API to generate the fees.
+eChallan calculator application is used to calculate the challan Fees based on the data mentioned in echallan creation. Based on tax amount mentioned in echallan, demand is created.
+Once the demand is created, it calls billing service API to generate the fees.
 
 ### API Details
 
