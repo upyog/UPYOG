@@ -4,6 +4,8 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class BirthDeathConstants {
+	public static final String TAX_MASTER_JSONPATH_CODE = "$.MdmsRes.BillingService.TaxHeadMaster[?(@.code==\"{}\")]";
+	public static final String TAX_MASTER = "TaxHeadMaster";
 	public static final String GL_CODE_JSONPATH_CODE = "$.MdmsRes.BillingService.GLCode[?(@.code==\"{}\")]";
 
 	public static final String GL_CODE = "glcode";

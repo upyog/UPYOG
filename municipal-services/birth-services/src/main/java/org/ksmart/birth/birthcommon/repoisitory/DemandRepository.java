@@ -1,10 +1,11 @@
-package org.ksmart.birth.common.repository;
+package org.ksmart.birth.birthcommon.repoisitory;
 
 import java.util.List;
 
-import org.ksmart.birth.common.calculation.demand.models.Demand;
-import org.ksmart.birth.common.calculation.demand.models.DemandRequest;
-import org.ksmart.birth.common.calculation.demand.models.DemandResponse;
+import org.ksmart.birth.birthcommon.model.demand.Demand;
+import org.ksmart.birth.birthcommon.model.demand.DemandRequest;
+import org.ksmart.birth.birthcommon.model.demand.DemandResponse;
+import org.ksmart.birth.common.repository.ServiceRequestRepository;
 import org.ksmart.birth.config.BirthConfiguration;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;

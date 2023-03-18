@@ -22,6 +22,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
+import static org.ksmart.birth.utils.BirthConstants.STATUS_APPROVED;
+import static org.ksmart.birth.utils.BirthConstants.WF_APPROVE;
+
 @Slf4j
 @RestController
 @RequestMapping("/cr")
@@ -54,15 +57,15 @@ public class NewBirthController {
         BirthCertificate birthCertificate = new BirthCertificate();
         List<NewBirthApplication> birthApplicationDetails=ksmartBirthService.updateKsmartBirthDetails(request);
         //Download certificate when Approved
-        if((birthApplicationDetails.get(0).getApplicationStatus() == "APPROVED" && birthApplicationDetails.get(0).getAction() == "APPROVE")){
+        if((birthApplicationDetails.get(0).getApplicationStatus() == STATUS_APPROVED && birthApplicationDetails.get(0).getAction() == WF_APPROVE)){
             RegisterBirthDetailsRequest registerBirthDetailsRequest = registryReq.createRegistryRequest(request);
             List<RegisterBirthDetail> registerBirthDetails =  registerBirthService.saveRegisterBirthDetails(registerBirthDetailsRequest);
 
            //Dowload after update
-            RegisterBirthSearchCriteria criteria = new RegisterBirthSearchCriteria();
-            criteria.setTenantId(registerBirthDetails.get(0).getTenantId());
-            criteria.setRegistrationNo(registerBirthDetails.get(0).getRegistrationNo());
-            birthCertificate = registerBirthService.download(criteria,request.getRequestInfo());
+//            RegisterBirthSearchCriteria criteria = new RegisterBirthSearchCriteria();
+//            criteria.setTenantId(registerBirthDetails.get(0).getTenantId());
+//            criteria.setRegistrationNo(registerBirthDetails.get(0).getRegistrationNo());
+//            birthCertificate = registerBirthService.download(criteria,request.getRequestInfo());
 
         }
         NewBirthResponse response=NewBirthResponse.builder()

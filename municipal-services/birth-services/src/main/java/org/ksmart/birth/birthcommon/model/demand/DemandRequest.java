@@ -37,16 +37,17 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.ksmart.birth.common.calculation.demand.models;
+package org.ksmart.birth.birthcommon.model.demand;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.egov.common.contract.response.ResponseInfo;
+import org.egov.common.contract.request.RequestInfo;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,14 +55,15 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class DemandResponse {
+public class DemandRequest {
 
-	@JsonProperty("ResponseInfo")
+	@NotNull
+	@JsonProperty("RequestInfo")
 	@Valid
-	private ResponseInfo responseInfo;
-
+	private RequestInfo requestInfo;
+	
+	@Valid
+	@NotNull
 	@JsonProperty("Demands")
-	@Valid
 	private List<Demand> demands = new ArrayList<>();
-
 }

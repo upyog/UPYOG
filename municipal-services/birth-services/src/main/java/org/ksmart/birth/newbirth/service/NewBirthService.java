@@ -1,5 +1,7 @@
 package org.ksmart.birth.newbirth.service;
 
+import org.ksmart.birth.birthcommon.model.demand.Demand;
+import org.ksmart.birth.birthcommon.services.DemandService;
 import org.ksmart.birth.newbirth.repository.NewBirthRepository;
 import org.ksmart.birth.newbirth.validator.NewBirthApplicationValidator;
 import org.ksmart.birth.utils.MdmsUtil;
@@ -10,7 +12,10 @@ import org.ksmart.birth.workflow.WorkflowIntegratorNewBirth;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import static org.ksmart.birth.utils.BirthConstants.STATUS_FOR_PAYMENT;
 
 @Service
 public class NewBirthService {
@@ -18,14 +23,16 @@ public class NewBirthService {
     private final WorkflowIntegratorNewBirth workflowIntegrator;
     private final MdmsUtil mdmsUtil;
     private final NewBirthApplicationValidator validator;
+    private final DemandService demandService;
 
     @Autowired
     NewBirthService(NewBirthRepository repository, MdmsUtil mdmsUtil, WorkflowIntegratorNewBirth workflowIntegrator,
-                    NewBirthApplicationValidator validator) {
+                    NewBirthApplicationValidator validator,  DemandService demandService) {
         this.repository = repository;
         this.mdmsUtil = mdmsUtil;
         this.workflowIntegrator  = workflowIntegrator;
         this.validator = validator;
+        this.demandService = demandService;
     }
 
     public List<NewBirthApplication> saveKsmartBirthDetails(NewBirthDetailRequest request) {
@@ -39,6 +46,19 @@ public class NewBirthService {
 
         //WorkFlow Integration
         workflowIntegrator.callWorkFlow(request);
+
+        //Demand Creation
+        birthApplicationDetails.forEach(birth->{
+            if(birth.getApplicationStatus() == STATUS_FOR_PAYMENT){
+                List<Demand> demands = new ArrayList<>();
+                Demand demand = new Demand();
+                demand.setTenantId(birth.getTenantId());
+                demand.setConsumerCode(birth.getApplicationNo());
+                demands.add(demand);
+                birth.setDemands(demandService.saveDemandDetails(demands,request.getRequestInfo()));
+            }
+        });
+
         return birthApplicationDetails;
     }
 

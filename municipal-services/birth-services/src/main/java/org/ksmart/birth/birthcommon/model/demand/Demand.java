@@ -1,4 +1,4 @@
-package org.ksmart.birth.common.calculation.demand.models;
+package org.ksmart.birth.birthcommon.model.demand;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;

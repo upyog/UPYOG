@@ -106,4 +106,16 @@ public class BirthConstants {
     public static final String STATE_CODE_SMALL = "kl";
 
 
+    ///Application Status
+
+    public static final String STATUS_APPROVED = "APPROVED";
+    public static final String STATUS_FOR_PAYMENT = "PENDINGPAYMENT";
+
+    //WF Action
+    public static final String WF_APPROVE = "APPROVE";
+
+    public static final String GL_CODE = "glcode";
+
+    public static final String GL_CODE_MASTER = "GLCode";
+
 }
