@@ -90,7 +90,6 @@ public class PropertyDetail   {
         private String usage;
 
         @NotNull
-        @Min(1)
         @JsonProperty("noOfFloors")
         private Long noOfFloors;
 
