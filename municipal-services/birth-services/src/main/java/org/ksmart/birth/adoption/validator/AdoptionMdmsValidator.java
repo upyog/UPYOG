@@ -1,14 +1,18 @@
 package org.ksmart.birth.adoption.validator;
 
 import com.jayway.jsonpath.JsonPath;
+
+import io.micrometer.core.instrument.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.poi.util.StringUtil;
 import org.egov.tracer.model.CustomException;
 import org.ksmart.birth.utils.BirthConstants;
 import org.ksmart.birth.utils.BirthUtils;
 import org.ksmart.birth.web.model.adoption.*;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
 import java.util.Collections;
 import java.util.List;
@@ -62,6 +66,11 @@ public class AdoptionMdmsValidator {
         Map<String, String> errorMap = new ConcurrentHashMap<>();
         request.getAdoptionDetails()
                 .forEach(birth -> {
+//                	if(birth.getPregnancyDuration() == null) {
+//                		  errorMap.put(BIRTH_DURATION, "Duration of pregnancy required");
+//                	}
+//                	 
+                	  
                     if(birth.getParentAddress() != null) {
                         String religionCode = birth.getParentsDetails().getReligionId();
                         if (log.isDebugEnabled()) {
@@ -71,13 +80,13 @@ public class AdoptionMdmsValidator {
                         errorMap.put(COMMON_MDMS_RELIGION, "The Religion code '" + religionCode + "' does not exists");
                     }
 
-
-                        if (birth.getParentsDetails().getIsMotherInfoMissing() == false) {
+                        System.out.println("master  :"+birth.getParentsDetails().getIsFatherInfoMissing());
+                        if (birth.getParentsDetails().getIsFatherInfoMissing() == false) {
                             String professionCodeFather = birth.getParentsDetails().getFatherProffessionid();
                             if (log.isDebugEnabled()) {
                                 log.debug("Father Profession code : \n{}", professionCodeFather);
                             }
-                            if (CollectionUtils.isEmpty(professionCodes) || !professionCodes.contains(professionCodeFather)) {
+                            if (CollectionUtils.isEmpty(professionCodes) ||   !professionCodes.contains(professionCodeFather)) {
 
                                 errorMap.put(CR_MDMS_PROFESSION, "The Profession code '" + professionCodeFather + "' does not exists");
                             }
@@ -101,7 +110,7 @@ public class AdoptionMdmsValidator {
                             }
                         }
 
-                        if (birth.getParentsDetails().getIsMotherInfoMissing() == null) {
+                        if (birth.getParentsDetails().getIsMotherInfoMissing() == false) {
                             String professionCodeMother = birth.getParentsDetails().getMotherProffessionid();
                             if (log.isDebugEnabled()) {
                                 log.debug("Father Profession code : \n{}", professionCodeMother);
@@ -141,6 +150,31 @@ public class AdoptionMdmsValidator {
                         }
 
                     }
+                    System.out.println("master  :"+birth.getPlaceofBirthId());
+                    if(birth.getPlaceofBirthId().contains(BIRTH_PLACE_HOSPITAL)) {
+                    	
+                    	 String hospCode= birth.getHospitalId();   
+                    	 if (log.isDebugEnabled()) {
+                             log.debug("Hospital code : \n{}", hospCode);
+	                         if (CollectionUtils.isEmpty(hospCodes) || !hospCodes.contains(hospCode)) {
+	                           errorMap.put(COMMON_MDMS_HOSPITAL, "The Hospital code '" + hospCode + "' does not exists");
+	                        }
+                    	 }                       
+                         
+                     
+
+                    }
+                  
+                    if(birth.getPlaceofBirthId().contains(BIRTH_PLACE_HOME)) {
+                        String postOfficeCodePlace = birth.getAdrsPostOffice();
+                        if (log.isDebugEnabled()) {
+                            log.debug("Postoffice code : \n{}", postOfficeCodePlace);
+                            if (CollectionUtils.isEmpty(postOfficeCodes) || !postOfficeCodes.contains(postOfficeCodePlace)) {
+                                errorMap.put(COMMON_MDMS_POSTOFFICE, "The Postoffice code '" + postOfficeCodePlace + "' does not exists");
+                            }
+                        }
+
+                    }
 
                     if(birth.getParentAddress() != null) {
                         String talukCodePresent = birth.getParentAddress().getPresentInsideKeralaTaluk();
@@ -167,13 +201,18 @@ public class AdoptionMdmsValidator {
 
 
                     }
-                    String hospCode= birth.getHospitalId(); 
-                    System.out.println("hosp hospCodes "+hospCodes);
-                    System.out.println("hosp code "+hospCode);
-                    if (CollectionUtils.isEmpty(hospCodes) || !hospCodes.contains(hospCode)) {
-                      errorMap.put(COMMON_MDMS_HOSPITAL, "The Hospital code '" + hospCode + "' does not exists");
-                  }
                     
+                    
+                    //MDMS CODE VALIDATION START //////////////////////////////////////////////////////////////////
+                   
+                    String birthPlaceCode = birth.getPlaceofBirthId();
+                    if (CollectionUtils.isEmpty(birthPlaceCodes) || !birthPlaceCodes.contains(birthPlaceCode)) {
+                      errorMap.put(COMMON_MDMS_PLACEMASTER, "The Birth Place code '" + birthPlaceCode + "' does not exists");
+                  }
+//                    String institutionCode= birth.getInstitutionNameCode();
+//                    if (CollectionUtils.isEmpty(instCodes) || !instCodes.contains(institutionCode)) {
+//                      errorMap.put(COMMON_MDMS_INSTITUTION, "The Institution code '" + institutionCode + "' does not exists");
+//                  }
 //                    //
 //                    String talukCodePresent= birth.getBirthPresentAddress().getTalukId();
 //                    String talukCodePermanent= birth.getBirthPermanentAddress().getTalukId();
