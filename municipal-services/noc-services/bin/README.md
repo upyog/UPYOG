@@ -1,22 +1,16 @@
-
-
-# eGov Bulding Plan Approval
-
-
+# Bulding Plan Approval
 
 Module is used to apply for Buildin Plan Approval as well as Bulding Plan Occupancy Certificate.
 
 ### Building Plan Approval Flow
 - Create
    - Bulidling Plan Approval application with bpa-services/v1/bpa/_create api.
-   - The response contains the BPA object with its assigned applicationNumber  and application Fee Genrated.
+   - The response contains the BPA object with its assigned applicationNumber and application Fee Generated.
 - Update
    -  On created BPA multiple assessments can be done by calling the bpa-servcies/v1bpa//_update api.
     - Validations are carried out to verify the authenticity of the request and genrate applciation fee which will be paid by the architect and gets approval number genrated on approval .
 - Search
    -  BPA can be searched based on several search parameters as detailed in the swagger yaml [[ Resources ](#resources)] .
-
-
 
 
 ### Project Structure 
@@ -35,8 +29,8 @@ Module is used to apply for Buildin Plan Approval as well as Bulding Plan Occupa
 
 
 ### Resources
-- Granular details about the API's can be found in the [swagger api definition](https://app.swaggerhub.com/apis/egov-foundation/Building-plan/1.0.0#/BPA)
-- Postman collection for all the API's can be found in the [postman collection](https://drive.google.com/open?id=1O7ybVCLwwpF0cHlNFJqh6PNwLw13QFJg)
+- Granular details about the API's can be found in the [Swagger API definition](https://editor.swagger.io/?url=https://raw.githubusercontent.com/upyog/UPYOG/master/municipal-services/docs/bpa/bpa-service.yaml#!/)
+- 
 
 
 ## Build & Run
@@ -59,10 +53,10 @@ Module is used to apply for Buildin Plan Approval as well as Bulding Plan Occupa
 
 - BPA calculator module to calculate tax for the given property.
 
-- MDMS service to verify master data
+- MDM service to verify master data
 
 - User Service to create users of the property owners
 
-- SMSNotification Service to send notifications related to registration and payment
+- SMS Notification Service to send notifications related to registration and payment
 
 - ECCR Service
