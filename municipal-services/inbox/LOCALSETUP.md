@@ -1,6 +1,6 @@
 # Local Setup
 
-To setup the inbox in your local system, clone the [Muncipal Service repository](https://github.com/egovernments/municipal-services).
+To setup the Inbox Service (inbox) in your local system, clone the [UPYOG Repository](https://github.com/upyog/UPYOG) and navigate to the municipal-services.
 
 ## Dependencies
 
@@ -14,7 +14,7 @@ To setup the inbox in your local system, clone the [Muncipal Service repository]
 
 ## Running Locally
 
-To run the inbox localy, you need to port forward below services locally
+To run the Inbox Service (inbox) locally, you need to port forward below services locally
 
 ```bash
 egov-workflow-v2
@@ -23,7 +23,7 @@ egov-searcher
 Municipal service for which inbox config is defined
 ```
 
-To run the inbox locally, update below listed properties in `application.properties` prior to running the project:
+To run the Inbox Service (inbox) locally, update below listed properties in `application.properties` prior to running the project:
 
 ```ini
 service.search.mapping=
