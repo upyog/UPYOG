@@ -1,20 +1,22 @@
-# SW-Calculator Service
+# Sewerage Calculator Service (sw-calculator)
+
 This module created to manage the bill calculation for the registered sewerage service connections in the system.
 
 ### DB UML Diagram
+
 - To Do
 
 ### Service Dependencies
-- egov-mdms service
-- property-service
-- egov-persister
-- sw-service
-- egov-user
-- egov-workflow-v2
+- MDM Service (egov-mdms service)
+- Property Service (property-service)
+- Persister Service (egov-persister)
+- Sewerage Service (sw-service)
+- User Service (egov-user)
+- Workflow Service (egov-workflow-v2)
 
 ### Swagger API Contract
 
-- Please refer to the [Swagger API contarct](https://editor.swagger.io/?url=https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/municipal-services/docs/water-sewerage-services.yaml#!/) to understand the structure of APIs and to have visualization of all internal APIs.
+- Please refer to the [Swagger API Contract](https://editor.swagger.io/?url=https://raw.githubusercontent.com/upyog/UPYOG/master/municipal-services/docs/water-sewerage-services.yaml#!/) to understand the structure of APIs and to have visualization of all internal APIs.
 
 ## Service Details
 
