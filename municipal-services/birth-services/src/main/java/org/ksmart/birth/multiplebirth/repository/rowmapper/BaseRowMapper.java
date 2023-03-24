@@ -1,11 +1,11 @@
-package org.ksmart.birth.outsidecountry.repository.rowmapper;
+package org.ksmart.birth.multiplebirth.repository.rowmapper;
 
 import org.ksmart.birth.common.model.AuditDetails;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-interface BirthOutsideBaseRowMapper {
+interface BaseRowMapper {
 
     default AuditDetails getAuditDetails(ResultSet rs) throws SQLException {
         return AuditDetails.builder()

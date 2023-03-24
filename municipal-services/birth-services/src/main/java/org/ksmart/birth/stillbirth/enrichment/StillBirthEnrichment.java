@@ -21,7 +21,6 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicReference;
 
 @Component
 public class StillBirthEnrichment implements BaseEnrichment {

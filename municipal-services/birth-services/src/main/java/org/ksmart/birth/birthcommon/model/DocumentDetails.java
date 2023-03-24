@@ -28,22 +28,18 @@ public class DocumentDetails {
     @SafeHtml
     @JsonProperty("id")
     private String id;
-
     @Size(max=64)
     @SafeHtml
     @JsonProperty("tenantId")
     private String tenantId = null;
-
     @Size(max=2500)
     @SafeHtml
     @JsonProperty("documentName")
     private String documentName = null;
-
     @Size(max=64)
     @SafeHtml
     @JsonProperty("documentType")
     private String documentType = null;
-
     @SafeHtml
     @JsonProperty("documentLink")
     private String documentLink= null;
@@ -54,21 +50,16 @@ public class DocumentDetails {
     @SafeHtml
     @JsonProperty("fileStoreId")
     private String fileStoreId = null;
-
     @JsonProperty("fileType")
     private String fileType;
-
     @JsonProperty("fileSize")
     private Long fileSize;
-
     @Size(max=64)
     @SafeHtml
     @JsonProperty("documentUid")
     private String documentUid;
-
     @JsonProperty("active")
     private Boolean active;
-
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails = null;
 

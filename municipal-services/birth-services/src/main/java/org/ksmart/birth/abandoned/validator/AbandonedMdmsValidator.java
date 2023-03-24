@@ -557,39 +557,39 @@ public class AbandonedMdmsValidator {
     }
 
     private Map<String, Object> getBirthMasterData(Object mdmsData) {
-        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_BIRTH_JSONPATH);
+        return JsonPath.read(mdmsData, CR_MDMS_BIRTH_JSONPATH);
     }
 
     private Map<String, Object> getCommonMasterData(Object mdmsData) {
-        return JsonPath.read(mdmsData, BirthConstants.MDMS_COMMON_JSONPATH);
+        return JsonPath.read(mdmsData, MDMS_COMMON_JSONPATH);
     }
 
     private Map<String, Object> getTenantData(Object mdmsData) {
-        return JsonPath.read(mdmsData, BirthConstants.MDMS_TENANT_JSONPATH);
+        return JsonPath.read(mdmsData, MDMS_TENANT_JSONPATH);
     }
 
     private void validateTenantMasterData(Map<String, Object> masterData) {
-        if (masterData.get(BirthConstants.CR_MDMS_TENANTS) == null) {
+        if (masterData.get(CR_MDMS_TENANTS) == null) {
             throw new CustomException(Collections.singletonMap(MDMS_DATA_ERROR.getCode(),
                     "Unable to fetch "
-                            + BirthConstants.CR_MDMS_TENANTS
+                            + CR_MDMS_TENANTS
                             + " codes from MDMS"));
         }
 
     }
 
     private void validateBirthMasterData(Map<String, Object> masterData) {
-        if (masterData.get(BirthConstants.CR_MDMS_PROFESSION) == null) {
+        if (masterData.get(CR_MDMS_PROFESSION) == null) {
             throw new CustomException(Collections.singletonMap(MDMS_DATA_ERROR.getCode(),
                     "Unable to fetch "
-                            + BirthConstants.CR_MDMS_PROFESSION
+                            + CR_MDMS_PROFESSION
                             + " codes from MDMS"));
         }
 
-        if (masterData.get(BirthConstants.CR_MDMS_QUALIFICATION) == null) {
+        if (masterData.get(CR_MDMS_QUALIFICATION) == null) {
             throw new CustomException(Collections.singletonMap(MDMS_DATA_ERROR.getCode(),
                     "Unable to fetch "
-                            + BirthConstants.CR_MDMS_QUALIFICATION
+                            + CR_MDMS_QUALIFICATION
                             + " codes from MDMS"));
         }
 
@@ -600,10 +600,10 @@ public class AbandonedMdmsValidator {
 //                            + " codes from MDMS"));
 //        }
 
-        if (masterData.get(BirthConstants.COMMON_MDMS_MEDICAL_ATTENTION_TYPE) == null) {
+        if (masterData.get(COMMON_MDMS_MEDICAL_ATTENTION_TYPE) == null) {
             throw new CustomException(Collections.singletonMap(MDMS_DATA_ERROR.getCode(),
                     "Unable to fetch "
-                            + BirthConstants.COMMON_MDMS_MEDICAL_ATTENTION_TYPE
+                            + COMMON_MDMS_MEDICAL_ATTENTION_TYPE
                             + " codes from MDMS"));
         }
     }
@@ -612,89 +612,89 @@ public class AbandonedMdmsValidator {
         if (masterData.get(COMMON_MDMS_RELIGION) == null) {
             throw new CustomException(Collections.singletonMap(MDMS_DATA_ERROR.getCode(),
                     "Unable to fetch "
-                            + BirthConstants.COMMON_MDMS_RELIGION
+                            + COMMON_MDMS_RELIGION
                             + " codes from MDMS"));
         }
         if (masterData.get(COMMON_MDMS_TALUK) == null) {
             throw new CustomException(Collections.singletonMap(MDMS_DATA_ERROR.getCode(),
                     "Unable to fetch "
-                            + BirthConstants.COMMON_MDMS_TALUK
+                            + COMMON_MDMS_TALUK
                             + " codes from MDMS"));
         }
         if (masterData.get(COMMON_MDMS_STATE) == null) {
             throw new CustomException(Collections.singletonMap(MDMS_DATA_ERROR.getCode(),
                     "Unable to fetch "
-                            + BirthConstants.COMMON_MDMS_STATE
+                            + COMMON_MDMS_STATE
                             + " codes from MDMS"));
         }
         if (masterData.get(COMMON_MDMS_COUNTRY) == null) {
             throw new CustomException(Collections.singletonMap(MDMS_DATA_ERROR.getCode(),
                     "Unable to fetch "
-                            + BirthConstants.COMMON_MDMS_COUNTRY
+                            + COMMON_MDMS_COUNTRY
                             + " codes from MDMS"));
         }
     }
     //Tenant
     private List<String> getTenantCodes(Object mdmsData) {
-        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_TENANTS_CODE_JSONPATH);
+        return JsonPath.read(mdmsData, CR_MDMS_TENANTS_CODE_JSONPATH);
     }
 
 
     // CR MASTERS
     private List<String> getProfessionCodes(Object mdmsData) {
-        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_PROFESSION_CODE_JSONPATH);
+        return JsonPath.read(mdmsData, CR_MDMS_PROFESSION_CODE_JSONPATH);
     }
 
     private List<String> getQualificationCode(Object mdmsData) {
-        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_QUALIFICATION_CODE_JSONPATH);
+        return JsonPath.read(mdmsData, CR_MDMS_QUALIFICATION_CODE_JSONPATH);
     }
 
     private List<String> getInstitutionTypeCode(Object mdmsData) {
-        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_INTITUTIONTYPE_CODE_JSONPATH);
+        return JsonPath.read(mdmsData, CR_MDMS_INTITUTIONTYPE_CODE_JSONPATH);
     }
     private List<String> getdeliveryMethodCode(Object mdmsData) {
-        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_DELIVERYMETHOD_CODE_JSONPATH);
+        return JsonPath.read(mdmsData, CR_MDMS_DELIVERYMETHOD_CODE_JSONPATH);
     }
 
     // COMMON MASTERS
 
     private List<String> getReligionCodes(Object mdmsData) {
-        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_RELIGION_CODE_JSONPATH);
+        return JsonPath.read(mdmsData, CR_MDMS_RELIGION_CODE_JSONPATH);
     }
     private List<String> getTaulkCodes(Object mdmsData) {
-        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_TALUK_CODE_JSONPATH);
+        return JsonPath.read(mdmsData, CR_MDMS_TALUK_CODE_JSONPATH);
     }
     private List<String> getStateCodes(Object mdmsData) {
-        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_STATE_CODE_JSONPATH);
+        return JsonPath.read(mdmsData, CR_MDMS_STATE_CODE_JSONPATH);
     }
 
     private List<String> getCountryCodes(Object mdmsData) {
-        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_COUNTRY_CODE_JSONPATH);
+        return JsonPath.read(mdmsData, CR_MDMS_COUNTRY_CODE_JSONPATH);
     }
 //    private List<String> getInstitutionCodes(Object mdmsData) {
 //        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_INSTITUTION_CODE_JSONPATH);
 //    }
     private List<String> getMedicalCodes(Object mdmsData) {
-        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_MEDICAL_ATTENTION_TYPE_CODE_JSONPATH);
+        return JsonPath.read(mdmsData, CR_MDMS_MEDICAL_ATTENTION_TYPE_CODE_JSONPATH);
     }
 
     private List<String> getVillageCode(Object mdmsData) {
-        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_VILLAGE_CODE_JSONPATH);
+        return JsonPath.read(mdmsData, CR_MDMS_VILLAGE_CODE_JSONPATH);
     }
 
     private List<String> getDistrictCode(Object mdmsData) {
-        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_DISTRICT_CODE_JSONPATH);
+        return JsonPath.read(mdmsData, CR_MDMS_DISTRICT_CODE_JSONPATH);
     }
 
     private List<String> getPostOfficeCode(Object mdmsData) {
-        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_POSTOFFICE_CODE_JSONPATH);
+        return JsonPath.read(mdmsData, CR_MDMS_POSTOFFICE_CODE_JSONPATH);
     }
 
     private List<String> getLbTypeCode(Object mdmsData) {
-        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_LBTYPE_CODE_JSONPATH);
+        return JsonPath.read(mdmsData, CR_MDMS_LBTYPE_CODE_JSONPATH);
     }
 
     private List<String> getBirthPlaceCode(Object mdmsData) {
-        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_PLACEMASTER_CODE_JSONPATH);
+        return JsonPath.read(mdmsData, CR_MDMS_PLACEMASTER_CODE_JSONPATH);
     }
 }

@@ -897,7 +897,7 @@ serviceMaps:
 
             - jsonPath: $.ChildDetails.*.auditDetails.lastModifiedTime
 
-            - jsonPath: $.ChildDetails.*.AddressBirthDetails.poNoPresent
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.presentOutsideKeralaPincode
 
             - jsonPath: $.ChildDetails.*.AddressBirthDetails.presentOutsideKeralaPostOfficeEn
 

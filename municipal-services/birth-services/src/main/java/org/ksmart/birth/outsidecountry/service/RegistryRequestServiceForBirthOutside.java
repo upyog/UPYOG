@@ -43,12 +43,12 @@ public class RegistryRequestServiceForBirthOutside {
         registerBirthDetail.setRegistrationNo(requestKsmartBirthReq.getNewBirthDetails().get(0).getRegistrationNo());
         registerBirthDetail.setRegistrationStatus("ACTIVE");
         registerBirthDetail.setRegistrationDate(requestKsmartBirthReq.getNewBirthDetails().get(0).getRegistrationDate());
-        registerBirthDetail.setRegisterBirthPlace(createBirthPlace(requestKsmartBirthReq));
-        registerBirthDetail.setRegisterBirthFather(createFatherInfor(requestKsmartBirthReq));
-        registerBirthDetail.setRegisterBirthMother(createMotherInfor(requestKsmartBirthReq));
-        registerBirthDetail.setRegisterBirthPermanent(createRegisterBirthPermanentAddress(requestKsmartBirthReq));
-        registerBirthDetail.setRegisterBirthPresent(createRegisterBirthPresentAddress(requestKsmartBirthReq));
-        registerBirthDetail.setRegisterBirthStatitical(createRegisterBirthStatiticalInformation(requestKsmartBirthReq, registerBirthDetail));
+//        registerBirthDetail.setRegisterBirthPlace(createBirthPlace(requestKsmartBirthReq));
+//        registerBirthDetail.setRegisterBirthFather(createFatherInfor(requestKsmartBirthReq));
+//        registerBirthDetail.setRegisterBirthMother(createMotherInfor(requestKsmartBirthReq));
+//        registerBirthDetail.setRegisterBirthPermanent(createRegisterBirthPermanentAddress(requestKsmartBirthReq));
+//        registerBirthDetail.setRegisterBirthPresent(createRegisterBirthPresentAddress(requestKsmartBirthReq));
+//        registerBirthDetail.setRegisterBirthStatitical(createRegisterBirthStatiticalInformation(requestKsmartBirthReq, registerBirthDetail));
         registerBirthDetails.add(registerBirthDetail);
         request.setRequestInfo(requestKsmartBirthReq.getRequestInfo());
         request.setRegisterBirthDetails(registerBirthDetails);

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import org.egov.common.contract.response.ResponseInfo;
 import org.ksmart.birth.birthregistry.model.BirthCertificate;
-import org.ksmart.birth.web.model.adoption.AdoptionApplication;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;

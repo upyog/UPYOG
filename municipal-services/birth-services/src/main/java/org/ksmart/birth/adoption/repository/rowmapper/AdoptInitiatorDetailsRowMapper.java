@@ -1,7 +1,6 @@
 package org.ksmart.birth.adoption.repository.rowmapper;
 import org.ksmart.birth.web.model.InitiatorDetail;
 
-import javax.validation.constraints.Size;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 public interface AdoptInitiatorDetailsRowMapper {

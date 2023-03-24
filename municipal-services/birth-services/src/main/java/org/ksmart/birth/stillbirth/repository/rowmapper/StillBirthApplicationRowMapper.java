@@ -1,6 +1,5 @@
 package org.ksmart.birth.stillbirth.repository.rowmapper;
 
-import org.ksmart.birth.web.model.newbirth.NewBirthApplication;
 import org.ksmart.birth.web.model.stillbirth.StillBirthApplication;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;

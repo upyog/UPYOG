@@ -1,4 +1,4 @@
-package org.ksmart.birth.web.model.outsidecountry;
+package org.ksmart.birth.web.model.bornoutside;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
@@ -14,15 +14,15 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class BirthOutsideDetailRequest {
+public class BornOutsideDetailRequest {
     @JsonProperty("RequestInfo")
     private RequestInfo requestInfo;
 
     @JsonProperty("ChildDetails")
     @Valid
-    private List<BirthOutsideApplication> newBirthDetails;
+    private List<BornOutsideApplication> newBirthDetails;
 
-    public BirthOutsideDetailRequest addKsmartBirthDetails(BirthOutsideApplication birthDetail) {
+    public BornOutsideDetailRequest addBirthDetails(BornOutsideApplication birthDetail) {
         if (newBirthDetails == null) {
             newBirthDetails = null;
         }

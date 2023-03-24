@@ -2,7 +2,6 @@ package org.ksmart.birth.abandoned.validator;
 
 import org.egov.tracer.model.CustomException;
 import org.ksmart.birth.config.BirthConfiguration;
-import org.ksmart.birth.utils.enums.ErrorCodes;
 import org.ksmart.birth.web.model.newbirth.NewBirthApplication;
 import org.ksmart.birth.web.model.newbirth.NewBirthDetailRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +32,7 @@ public class AbandonedApplicationValidator {
     public void validateCreate(NewBirthDetailRequest request, Object mdmsData) {
         List<NewBirthApplication> applicantPersonals = request.getNewBirthDetails();
         if (CollectionUtils.isEmpty(request.getNewBirthDetails())) {
-            throw new CustomException(ErrorCodes.BIRTH_DETAILS_REQUIRED.getCode(),
+            throw new CustomException(BIRTH_DETAILS_REQUIRED.getCode(),
                     "Birth details is required.");
         }
 

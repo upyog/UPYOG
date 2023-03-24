@@ -10,7 +10,7 @@ import org.apache.poi.util.StringUtil;
 import org.egov.tracer.model.CustomException;
 import org.ksmart.birth.utils.BirthConstants;
 import org.ksmart.birth.utils.BirthUtils;
-import org.ksmart.birth.web.model.adoption.*;
+import org.ksmart.birth.web.model.adoption.AdoptionDetailRequest;
 import org.springframework.stereotype.Component;
  
 
@@ -26,7 +26,7 @@ import static org.ksmart.birth.utils.enums.ErrorCodes.MDMS_DATA_ERROR;
 @Slf4j
 public class AdoptionMdmsValidator {
 
-    public void validateMdmsData(AdoptionDetailRequest request, Object mdmsData,Object mdmsDataLoc) {
+    public void validateMdmsData(AdoptionDetailRequest request, Object mdmsData, Object mdmsDataLoc) {
 
         if (log.isDebugEnabled()) {
             log.debug("MDMS master data \n {}", BirthUtils.toJson(mdmsData));

@@ -1,7 +1,6 @@
 package org.ksmart.birth.adoption.repository.rowmapper;
 
 import org.ksmart.birth.web.model.adoption.AdoptionApplication;
-import org.ksmart.birth.web.model.newbirth.NewBirthApplication;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;

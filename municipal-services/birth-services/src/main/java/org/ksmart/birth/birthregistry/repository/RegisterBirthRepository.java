@@ -2,8 +2,8 @@ package org.ksmart.birth.birthregistry.repository;
 
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
-import org.ksmart.birth.birthregistry.model.*;
 import org.ksmart.birth.birthregistry.enrichment.RegisterBirthEnrichment;
+import org.ksmart.birth.birthregistry.model.*;
 import org.ksmart.birth.birthregistry.repository.querybuilder.RegisterQueryBuilder;
 import org.ksmart.birth.birthregistry.repository.rowmapper.BirthCetificateRowMapper;
 import org.ksmart.birth.birthregistry.repository.rowmapper.BirthRegisterRowMapper;

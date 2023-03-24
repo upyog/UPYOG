@@ -3,7 +3,6 @@ package org.ksmart.birth.web.model.abandoned;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import org.egov.common.contract.response.ResponseInfo;
-import org.ksmart.birth.web.model.stillbirth.StillBirthApplication;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;

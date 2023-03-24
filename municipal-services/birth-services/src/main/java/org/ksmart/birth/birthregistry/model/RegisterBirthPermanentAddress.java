@@ -1,7 +1,6 @@
 package org.ksmart.birth.birthregistry.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
-import org.apache.kafka.common.protocol.types.Field;
 import org.ksmart.birth.common.model.AuditDetails;
 
 import javax.validation.constraints.Size;

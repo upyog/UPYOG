@@ -2,7 +2,6 @@ package org.ksmart.birth.common.services;
 
 import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
-import org.egov.common.contract.request.RequestInfo;
 import org.ksmart.birth.utils.BirthConstants;
 import org.springframework.stereotype.Component;
 

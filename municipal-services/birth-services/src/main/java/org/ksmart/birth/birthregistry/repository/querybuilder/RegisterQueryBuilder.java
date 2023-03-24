@@ -2,7 +2,6 @@ package org.ksmart.birth.birthregistry.repository.querybuilder;
 
 
 import org.ksmart.birth.birthregistry.model.RegisterBirthSearchCriteria;
-import org.ksmart.birth.web.model.SearchCriteria;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 

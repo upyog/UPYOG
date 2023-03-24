@@ -12,10 +12,9 @@ import org.ksmart.birth.config.BirthConfiguration;
 import org.ksmart.birth.utils.BirthConstants;
 import org.ksmart.birth.utils.MdmsUtil;
 import org.ksmart.birth.utils.enums.ErrorCodes;
-import org.ksmart.birth.web.model.newbirth.NewBirthApplication;
 import org.ksmart.birth.web.model.newbirth.NewBirthDetailRequest;
-import org.ksmart.birth.web.model.outsidecountry.BirthOutsideApplication;
-import org.ksmart.birth.web.model.outsidecountry.BirthOutsideDetailRequest;
+import org.ksmart.birth.web.model.bornoutside.BornOutsideApplication;
+import org.ksmart.birth.web.model.bornoutside.BornOutsideDetailRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -24,7 +23,7 @@ import java.util.ListIterator;
 import java.util.UUID;
 
 @Component
-public class BirthOutsideEnrichment implements BaseEnrichment {
+public class BornOutsideEnrichment implements BaseEnrichment {
     @Autowired
     BirthConfiguration config;
     @Autowired
@@ -33,7 +32,7 @@ public class BirthOutsideEnrichment implements BaseEnrichment {
     MdmsDataService mdmsDataService;
     @Autowired
     IdGenRepository idGenRepository;
-    public void enrichCreate(BirthOutsideDetailRequest request) {
+    public void enrichCreate(BornOutsideDetailRequest request) {
 
         RequestInfo requestInfo = request.getRequestInfo();
         User userInfo = requestInfo.getUserInfo();
@@ -73,7 +72,7 @@ public class BirthOutsideEnrichment implements BaseEnrichment {
         setPermanentAddress(request);
     }
 
-    public void enrichUpdate(BirthOutsideDetailRequest request) {
+    public void enrichUpdate(BornOutsideDetailRequest request) {
 
         RequestInfo requestInfo = request.getRequestInfo();
         User userInfo = requestInfo.getUserInfo();
@@ -85,9 +84,9 @@ public class BirthOutsideEnrichment implements BaseEnrichment {
         setPermanentAddress(request);
     }
 
-    private void setApplicationNumbers(BirthOutsideDetailRequest request) {
+    private void setApplicationNumbers(BornOutsideDetailRequest request) {
         RequestInfo requestInfo = request.getRequestInfo();
-        List<BirthOutsideApplication> birthDetails = request.getNewBirthDetails();
+        List<BornOutsideApplication> birthDetails = request.getNewBirthDetails();
         String tenantId = birthDetails.get(0)
                 .getTenantId();
         List<String> filecodes = getIds(requestInfo,
@@ -105,9 +104,9 @@ public class BirthOutsideEnrichment implements BaseEnrichment {
                 });
     }
 
-    private void setFileNumbers(BirthOutsideDetailRequest request) {
+    private void setFileNumbers(BornOutsideDetailRequest request) {
         RequestInfo requestInfo = request.getRequestInfo();
-        List<BirthOutsideApplication> birthDetails = request.getNewBirthDetails();
+        List<BornOutsideApplication> birthDetails = request.getNewBirthDetails();
         String tenantId = birthDetails.get(0)
                 .getTenantId();
 
@@ -127,9 +126,9 @@ public class BirthOutsideEnrichment implements BaseEnrichment {
                 });
     }
 
-    private void setRegistrationNumber(BirthOutsideDetailRequest request) {
+    private void setRegistrationNumber(BornOutsideDetailRequest request) {
         RequestInfo requestInfo = request.getRequestInfo();
-        List<BirthOutsideApplication> birthDetails = request.getNewBirthDetails();
+        List<BornOutsideApplication> birthDetails = request.getNewBirthDetails();
         String tenantId = birthDetails.get(0)
                 .getTenantId();
 
@@ -150,7 +149,7 @@ public class BirthOutsideEnrichment implements BaseEnrichment {
                     }
                 });
     }
-    private void setPresentAddress(BirthOutsideDetailRequest request) {
+    private void setPresentAddress(BornOutsideDetailRequest request) {
         request.getNewBirthDetails()
                 .forEach(birth -> {
                     if (birth.getParentAddress() != null) {
@@ -206,7 +205,7 @@ public class BirthOutsideEnrichment implements BaseEnrichment {
                     }
                 });
     }
-    private void setPermanentAddress(BirthOutsideDetailRequest request) {
+    private void setPermanentAddress(BornOutsideDetailRequest request) {
         request.getNewBirthDetails()
                 .forEach(birth -> {
                     if (birth.getParentAddress() != null && birth.getParentAddress().getIsPrsentAddress() != null)  {

@@ -21,11 +21,11 @@ public class AbandonedRequest {
 
     @JsonProperty("AbandonedDetails")
     @Valid
-    private List<AbandonedApplication> newBirthDetails;
+    private List<AbandonedApplication> birthDetails;
 
-    public AbandonedRequest addKsmartBirthDetails(NewBirthApplication birthDetail) {
-        if (newBirthDetails == null) {
-            newBirthDetails = null;
+    public AbandonedRequest addBirthDetails(AbandonedApplication birthDetail) {
+        if (birthDetails == null) {
+            birthDetails = null;
         }
         return this;
     }

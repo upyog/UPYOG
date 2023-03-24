@@ -168,7 +168,7 @@ public class NewBirthApplication {
     @Size(max = 64)
     @JsonProperty("publicPlaceDecpEn")
     private String publicPlaceDecpEn;
-    @Size(max = 64)
+
     @JsonProperty("birthWeight")
     private double birthWeight;
     @Size(max = 64)

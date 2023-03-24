@@ -3,8 +3,8 @@ package org.ksmart.birth.birthregistry.repository.querybuilder;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.kafka.common.protocol.types.Field;
 import org.ksmart.birth.birthregistry.model.RegisterBirthSearchCriteria;
+import org.ksmart.birth.web.model.SearchCriteria;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 

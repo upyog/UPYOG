@@ -3,7 +3,6 @@ package org.ksmart.birth.birthregistry.controller;
 import lombok.extern.slf4j.Slf4j;
 
 import org.ksmart.birth.birthregistry.model.*;
-import org.ksmart.birth.birthregistry.model.BirthCertificate;
 import org.ksmart.birth.birthregistry.service.RegisterBirthService;
 import org.ksmart.birth.common.contract.RequestInfoWrapper;
 import org.ksmart.birth.utils.ResponseInfoFactory;

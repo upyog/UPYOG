@@ -4,14 +4,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.ksmart.birth.birthregistry.service.MdmsDataService;
 import org.ksmart.birth.common.producer.BndProducer;
 import org.ksmart.birth.config.BirthConfiguration;
-import org.ksmart.birth.newbirth.enrichment.NewBirthEnrichment;
-import org.ksmart.birth.newbirth.repository.querybuilder.NewBirthQueryBuilder;
-import org.ksmart.birth.newbirth.repository.rowmapper.BirthApplicationRowMapper;
+import org.ksmart.birth.outsidecountry.enrichment.BornOutsideEnrichment;
+import org.ksmart.birth.outsidecountry.repository.querybuilder.BornOutsideQueryBuilder;
+import org.ksmart.birth.outsidecountry.repository.rowmapper.BornOutsideApplicationRowMapper;
 import org.ksmart.birth.utils.BirthConstants;
 import org.ksmart.birth.utils.MdmsUtil;
 import org.ksmart.birth.web.model.SearchCriteria;
+import org.ksmart.birth.web.model.bornoutside.BornOutsideApplication;
+import org.ksmart.birth.web.model.bornoutside.BornOutsideDetailRequest;
 import org.ksmart.birth.web.model.newbirth.NewBirthApplication;
-import org.ksmart.birth.web.model.newbirth.NewBirthDetailRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -21,49 +22,49 @@ import java.util.List;
 
 @Slf4j
 @Repository
-public class BirthOutsideRepository {
+public class BornOutsideRepository {
     private final BndProducer producer;
-    private final NewBirthEnrichment newBirthEnrichment;
+    private final BornOutsideEnrichment enrichment;
     private final BirthConfiguration birthDeathConfiguration;
     private final JdbcTemplate jdbcTemplate;
-    private final NewBirthQueryBuilder birthQueryBuilder;
-    private final BirthApplicationRowMapper ksmartBirthApplicationRowMapper;
+    private final BornOutsideQueryBuilder queryBuilder;
+    private final BornOutsideApplicationRowMapper rowMapper;
     private final  MdmsDataService mdmsDataService;
     private final  MdmsUtil mdmsUtil;
 
 
 
     @Autowired
-    BirthOutsideRepository(JdbcTemplate jdbcTemplate, NewBirthEnrichment newBirthEnrichment, BirthConfiguration birthDeathConfiguration,
-                           BndProducer producer, NewBirthQueryBuilder birthQueryBuilder, BirthApplicationRowMapper ksmartBirthApplicationRowMapper,
-                           MdmsDataService mdmsDataService, MdmsUtil mdmsUtil) {
+    BornOutsideRepository(JdbcTemplate jdbcTemplate, BornOutsideEnrichment enrichment, BirthConfiguration birthDeathConfiguration,
+                          BndProducer producer, BornOutsideQueryBuilder queryBuilder, BornOutsideApplicationRowMapper rowMapper,
+                          MdmsDataService mdmsDataService, MdmsUtil mdmsUtil) {
         this.jdbcTemplate = jdbcTemplate;
-        this.newBirthEnrichment = newBirthEnrichment;
+        this.enrichment = enrichment;
         this.birthDeathConfiguration = birthDeathConfiguration;
         this.producer = producer;
-        this.birthQueryBuilder = birthQueryBuilder;
-        this.ksmartBirthApplicationRowMapper = ksmartBirthApplicationRowMapper;
+        this.queryBuilder = queryBuilder;
+        this.rowMapper = rowMapper;
         this.mdmsDataService = mdmsDataService;
         this.mdmsUtil = mdmsUtil;
     }
 
-    public List<NewBirthApplication> saveKsmartBirthDetails(NewBirthDetailRequest request) {
-        newBirthEnrichment.enrichCreate(request);
+    public List<BornOutsideApplication> saveBirthApplication(BornOutsideDetailRequest request) {
+        enrichment.enrichCreate(request);
         producer.push(birthDeathConfiguration.getSaveBirthAdoptionTopic(), request);
         return request.getNewBirthDetails();
     }
 
-    public List<NewBirthApplication> updateKsmartBirthDetails(NewBirthDetailRequest request) {
-        newBirthEnrichment.enrichUpdate(request);
+    public List<BornOutsideApplication> updateBirthApplication(BornOutsideDetailRequest request) {
+        enrichment.enrichUpdate(request);
         producer.push(birthDeathConfiguration.getUpdateBirthAdoptionTopic(), request);
         return request.getNewBirthDetails();
     }
 
 
-    public List<NewBirthApplication> searchKsmartBirthDetails(NewBirthDetailRequest request, SearchCriteria criteria) {
+    public List<BornOutsideApplication> searchKsmartBirthDetails(BornOutsideDetailRequest request, SearchCriteria criteria) {
         List<Object> preparedStmtValues = new ArrayList<>();
-        String query = birthQueryBuilder.getNewBirthApplicationSearchQuery(criteria, request,preparedStmtValues, Boolean.FALSE);
-        List<NewBirthApplication> result = jdbcTemplate.query(query, preparedStmtValues.toArray(), ksmartBirthApplicationRowMapper);
+        String query = queryBuilder.getNewBirthApplicationSearchQuery(criteria, request,preparedStmtValues, Boolean.FALSE);
+        List<BornOutsideApplication> result = jdbcTemplate.query(query, preparedStmtValues.toArray(), rowMapper);
         result.forEach(birth -> {
             if(birth.getPlaceofBirthId()!=null){
                 Object mdmsData = mdmsUtil.mdmsCallForLocation(request.getRequestInfo(), birth.getTenantId());

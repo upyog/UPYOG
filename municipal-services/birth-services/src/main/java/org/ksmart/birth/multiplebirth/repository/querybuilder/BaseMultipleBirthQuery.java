@@ -1,4 +1,4 @@
-package org.ksmart.birth.outsidecountry.repository.querybuilder;
+package org.ksmart.birth.multiplebirth.repository.querybuilder;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-public class BaseBirthOutsideQuery {
+public class BaseMultipleBirthQuery {
     @Value("${egov.bnd.default.limit}")
     private Integer defaultBndLimit;
 
@@ -101,7 +101,7 @@ public class BaseBirthOutsideQuery {
 
     void addOrderClause(StringBuilder orderBy) {
         if (orderBy.length() == 0) {
-            orderBy.append(" ORDER BY ");
+            orderBy.append("   ORDER BY ");
         } else {
             orderBy.append(" ");
         }

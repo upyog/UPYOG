@@ -5,7 +5,7 @@ import org.ksmart.birth.web.model.ParentAddress;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public interface BirthOutsideParentAddressRowMapper {
+public interface BornOutsideParentAddressRowMapper {
     default ParentAddress getKsmartBirthParentAddress(ResultSet rs) throws SQLException {
         return ParentAddress.builder()
                 .countryIdPresent(rs.getString("pres_countryid"))

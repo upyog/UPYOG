@@ -12,7 +12,6 @@ import javax.validation.constraints.Size;
 @NoArgsConstructor
 @Builder
 public class ParentsDetail {
-
     @Size(max = 64)
     @JsonProperty("motherUuid")
     private String motherUuid;
@@ -96,7 +95,9 @@ public class ParentsDetail {
     @Size(max = 64)
     @JsonProperty("fatherBioAdopt")
     private String fatherBioAdopt;
-
+    @Size(max = 2500)
+    @JsonProperty("addressOfMother")
+    private String addressOfMother;
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails;
 
