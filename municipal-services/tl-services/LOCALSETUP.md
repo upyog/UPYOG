@@ -1,6 +1,6 @@
 # Local Setup
 
-To setup the tl-services in your local system, clone the [Muncipal Service repository](https://github.com/egovernments/municipal-services).
+To setup the Trade License Service (tl-services) in your local system, clone the [UPYOG Repository](https://github.com/upyog/UPYOG) and navigate to the municipal-services.
 
 ## Dependencies
 
@@ -15,7 +15,7 @@ To setup the tl-services in your local system, clone the [Muncipal Service repos
 
 ## Running Locally
 
-To run the th-services locally, you need to port forward below services locally
+To run the Trade License Service (tl-services) locally, you need to port forward below services locally
 
 ```bash
 function kgpt(){kubectl get pods -n egov --selector=app=$1 --no-headers=true | head -n1 | awk '{print $1}'}
@@ -29,7 +29,7 @@ kubectl port-forward -n egov $(kgpt egov-url-shortening) 8093:8080 &
 kubectl port-forward -n egov $(kgpt egov-mdms-service) 8094:8080 
 ```
 
-To run the th-services locally, update below listed properties in `application.properties` prior to running the project:
+To run the Trade License Service (tl-services) locally, update below listed properties in `application.properties` prior to running the project:
 
 ```ini
 egov.location.host : Location service host
