@@ -563,7 +563,7 @@ serviceMaps:
 
     - version: 1.0
       description: Persists update birth details in eg_birth_details  table
-      fromTopic: ksmart-update-birth-application-topic
+      fromTopic: update-birth-adoption-topic
       isTransaction: true
       queryMaps:
 
