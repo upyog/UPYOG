@@ -26,9 +26,6 @@ import net.minidev.json.JSONObject;
 @Service
 @Slf4j
 public class WorkflowIntegratorNewBirth {
-
-
-
     private   final BirthConfiguration bndConfig;
     private   final RestTemplate restTemplate;
 
@@ -140,7 +137,7 @@ public class WorkflowIntegratorNewBirth {
                 idStatusMap.put(instanceContext.read(BirthDeathConstants.BUSINESSIDJOSNKEY),
                         instanceContext.read(BirthDeathConstants.STATUSJSONKEY));
             });
-            // setting the status back to TL object from wf response
+            // setting the status back to BND object from wf response
 
                   request.getNewBirthDetails().forEach(
                     bndObj -> bndObj.setApplicationStatus(idStatusMap.get(bndObj.getApplicationNo())));

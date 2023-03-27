@@ -1,5 +1,7 @@
 package org.ksmart.birth.newbirth.service;
 
+import org.apache.commons.lang3.StringUtils;
+import org.egov.tracer.model.CustomException;
 import org.ksmart.birth.birthcommon.model.demand.Demand;
 import org.ksmart.birth.birthcommon.services.DemandService;
 import org.ksmart.birth.newbirth.repository.NewBirthRepository;
@@ -38,6 +40,8 @@ public class NewBirthService {
     public List<NewBirthApplication> saveKsmartBirthDetails(NewBirthDetailRequest request) {
         Object mdmsData = mdmsUtil.mdmsCall(request.getRequestInfo());
 
+
+
         // validate request
         validator.validateCreate(request, mdmsData);
 
@@ -62,10 +66,14 @@ public class NewBirthService {
     }
 
     public List<NewBirthApplication> updateKsmartBirthDetails(NewBirthDetailRequest request) {
+
+        Object mdmsData = mdmsUtil.mdmsCall(request.getRequestInfo());
+        // validate request
+        validator.validateCreate(request, mdmsData);
+
         //search application exist
 
-
-
+        validator.validateUpdate(request, mdmsData);
         workflowIntegrator.callWorkFlow(request);
         return repository.updateKsmartBirthDetails(request);
     }
