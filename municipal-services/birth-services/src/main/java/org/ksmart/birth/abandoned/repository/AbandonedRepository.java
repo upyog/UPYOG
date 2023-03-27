@@ -58,13 +58,13 @@ public class AbandonedRepository {
 
     public List<AbandonedApplication> saveBirthDetails(AbandonedRequest request) {
         enrichment.enrichCreate(request);
-        producer.push(birthDeathConfiguration.getSaveKsmartBirthApplicationTopic(), request);
+        producer.push(birthDeathConfiguration.getSaveAbandonedBirthTopic(), request);
         return request.getBirthDetails();
     }
 
     public List<AbandonedApplication> updateBirthDetails(AbandonedRequest request) {
         enrichment.enrichUpdate(request);
-        producer.push(birthDeathConfiguration.getUpdateKsmartBirthApplicationTopic(), request);
+        producer.push(birthDeathConfiguration.getUpdateAbandonedBirthTopic(), request);
         return request.getBirthDetails();
     }
     public RegisterBirthDetailsRequest searchBirthDetailsForRegister(NewBirthDetailRequest requestApplication) {

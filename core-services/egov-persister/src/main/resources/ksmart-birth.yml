@@ -406,7 +406,7 @@ serviceMaps:
 
             - jsonPath: $.ChildDetails.*.AddressBirthDetails.streetNameMlPresent
 
-            - jsonPath: $.ChildDetails.*.AddressBirthDetails.presentOutsideKeralaPincode
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.presentOutsideIndiaPostCode
 
         - query: INSERT INTO public.eg_birth_statitical_information(id,weight_of_child,duration_of_pregnancy_in_week,nature_of_medical_attention,delivery_method,cause_of_foetal_death,religionid,father_nationalityid,
             father_educationid,father_proffessionid,mother_educationid,mother_proffessionid,mother_nationalityid,mother_age_marriage,mother_age_delivery,mother_no_of_birth_given,

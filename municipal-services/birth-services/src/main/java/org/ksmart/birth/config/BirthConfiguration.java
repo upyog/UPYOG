@@ -79,6 +79,18 @@ public class BirthConfiguration {
     @Value("${persister.update.still.birth.topic}")
     private String updateStillBirthTopic;
 
+    @Value("${persister.save.abandoned.birth.topic}")
+    private String saveAbandonedBirthTopic;
+
+    @Value("${persister.update.abandoned.birth.topic}")
+    private String updateAbandonedBirthTopic;
+
+    @Value("${persister.save.born.outside.birth.topic}")
+    private String saveBornOutsideTopic;
+
+    @Value("${persister.update.born.outside.birth.topic}")
+    private String updateBornOutsideTopic;
+
     @Value("${persister.ksmart.save.birth.topic}")
     private String saveKsmartBirthApplicationTopic;
 

@@ -22,6 +22,10 @@ public class NewBirthApplication {
     @Size(max = 64)
     @JsonProperty("id")
     private String id;
+
+    @JsonProperty("dateofreport")
+    private Long dateOfReport;
+
     @JsonProperty("childDOB")
     private Long dateOfBirth;
     @JsonProperty("birthDateTime")
@@ -168,7 +172,6 @@ public class NewBirthApplication {
     @Size(max = 64)
     @JsonProperty("publicPlaceDecpEn")
     private String publicPlaceDecpEn;
-
     @JsonProperty("birthWeight")
     private double birthWeight;
     @Size(max = 64)
@@ -183,7 +186,6 @@ public class NewBirthApplication {
     @Size(max = 64)
     @JsonProperty("esign_user_code")
     private String esignUserCode;
-
     @Size(max = 64)
     @JsonProperty("esign_user_desig_code")
     private String esignUserDesigCode;
@@ -193,15 +195,12 @@ public class NewBirthApplication {
     @Size(max = 64)
     @JsonProperty("villageid")
     private String villageid;
-
     @Size(max = 64)
     @JsonProperty("talukid")
     private String talukid;
-
     @Size(max = 64)
     @JsonProperty("districtid")
     private String districtid;
-
     @Size(max = 64)
     @JsonProperty("countryid")
     private String countryid;
@@ -212,7 +211,6 @@ public class NewBirthApplication {
     @Size(max = 64)
     @JsonProperty("businessservice")
     private String businessService;
-
     @Size(max = 64)
     @JsonProperty("workflowcode")
     private String workFlowCode;
@@ -260,8 +258,6 @@ public class NewBirthApplication {
     @Size(max = 20)
     @JsonProperty("am_pm")
     private String ampm;
-    @JsonProperty("dateofreport")
-    private Long dateOfReport;
     @Size(max = 64)
     @JsonProperty("birthPlaceUuid")
     private String birthPlaceUuid;

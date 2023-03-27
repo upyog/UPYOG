@@ -42,6 +42,9 @@ public class SearchCriteria {
 
     @JsonProperty("aadhaarNo")
     private String aadhaarNo;
+
+    @JsonProperty("applicationType")
+    private String applicationType;
     @JsonProperty("dateOfBirthFrom")
     @Valid
     private Long dateOfBirthFrom;
@@ -90,6 +93,7 @@ public class SearchCriteria {
     }
 
     public enum SortBy {
+        applicationType,
         applicationNumber,
         dateOfBirth,
         registrationNo,

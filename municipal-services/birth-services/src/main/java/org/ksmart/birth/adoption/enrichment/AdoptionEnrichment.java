@@ -36,13 +36,15 @@ public class AdoptionEnrichment implements BaseEnrichment {
  
 
     public void enrichCreate(AdoptionDetailRequest request) {
-
+        Date date = new Date();
+        long doreport = date.getTime();
         RequestInfo requestInfo = request.getRequestInfo();
         User userInfo = requestInfo.getUserInfo();
         AuditDetails auditDetails = buildAuditDetails(userInfo.getUuid(), Boolean.TRUE);
         request.getAdoptionDetails().forEach(birth -> {
 
             birth.setId(UUID.randomUUID().toString());
+            birth.setDateOfReport(doreport);
             birth.setAuditDetails(auditDetails);
             if(birth.getPlaceofBirthId() != null || !birth.getPlaceofBirthId().isEmpty()){
                 Object mdmsData = mdmsUtil.mdmsCallForLocation(request.getRequestInfo(), birth.getTenantId());

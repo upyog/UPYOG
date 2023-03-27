@@ -18,7 +18,7 @@ public class BornOutsideDetailRequest {
     @JsonProperty("RequestInfo")
     private RequestInfo requestInfo;
 
-    @JsonProperty("ChildDetails")
+    @JsonProperty("BornOutsideChildDetails")
     @Valid
     private List<BornOutsideApplication> newBirthDetails;
 

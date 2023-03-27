@@ -1,21 +1,17 @@
-package org.ksmart.birth.newbirth.repository;
+package org.ksmart.birth.bornoutside.repository;
 
 import lombok.extern.slf4j.Slf4j;
-import org.ksmart.birth.birthregistry.model.RegisterBirthDetail;
-import org.ksmart.birth.birthregistry.model.RegisterBirthDetailsRequest;
-import org.ksmart.birth.birthregistry.repository.rowmapperforapplication.RegisterRowMapperForApp;
 import org.ksmart.birth.birthregistry.service.MdmsDataService;
 import org.ksmart.birth.common.producer.BndProducer;
 import org.ksmart.birth.config.BirthConfiguration;
-import org.ksmart.birth.newbirth.enrichment.NewBirthEnrichment;
-import org.ksmart.birth.newbirth.repository.querybuilder.NewBirthQueryBuilder;
-import org.ksmart.birth.newbirth.repository.rowmapper.BirthApplicationRowMapper;
-import org.ksmart.birth.newbirth.service.MdmsForNewBirthService;
+import org.ksmart.birth.bornoutside.enrichment.BornOutsideEnrichment;
+import org.ksmart.birth.bornoutside.repository.querybuilder.BornOutsideQueryBuilder;
+import org.ksmart.birth.bornoutside.repository.rowmapper.BornOutsideApplicationRowMapper;
 import org.ksmart.birth.utils.BirthConstants;
 import org.ksmart.birth.utils.MdmsUtil;
 import org.ksmart.birth.web.model.SearchCriteria;
-import org.ksmart.birth.web.model.newbirth.NewBirthApplication;
-import org.ksmart.birth.web.model.newbirth.NewBirthDetailRequest;
+import org.ksmart.birth.web.model.bornoutside.BornOutsideApplication;
+import org.ksmart.birth.web.model.bornoutside.BornOutsideDetailRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -25,82 +21,64 @@ import java.util.List;
 
 @Slf4j
 @Repository
-public class NewBirthRepository {
+public class BornOutsideRepository {
     private final BndProducer producer;
-    private final NewBirthEnrichment ksmartBirthEnrichment;
+    private final BornOutsideEnrichment enrichment;
     private final BirthConfiguration birthDeathConfiguration;
     private final JdbcTemplate jdbcTemplate;
-    private final NewBirthQueryBuilder birthQueryBuilder;
-    private final BirthApplicationRowMapper ksmartBirthApplicationRowMapper;
-    private final MdmsForNewBirthService mdmsBirthService;
-    private final MdmsUtil mdmsUtil;
-    private final RegisterRowMapperForApp registerRowMapperForApp;
+    private final BornOutsideQueryBuilder queryBuilder;
+    private final BornOutsideApplicationRowMapper rowMapper;
+    private final  MdmsDataService mdmsDataService;
+    private final  MdmsUtil mdmsUtil;
+
 
 
     @Autowired
-    NewBirthRepository(JdbcTemplate jdbcTemplate, NewBirthEnrichment ksmartBirthEnrichment, BirthConfiguration birthDeathConfiguration,
-                       BndProducer producer, NewBirthQueryBuilder birthQueryBuilder, BirthApplicationRowMapper ksmartBirthApplicationRowMapper,
-                       MdmsForNewBirthService mdmsBirthService, MdmsUtil mdmsUtil, RegisterRowMapperForApp registerRowMapperForApp) {
+    BornOutsideRepository(JdbcTemplate jdbcTemplate, BornOutsideEnrichment enrichment, BirthConfiguration birthDeathConfiguration,
+                          BndProducer producer, BornOutsideQueryBuilder queryBuilder, BornOutsideApplicationRowMapper rowMapper,
+                          MdmsDataService mdmsDataService, MdmsUtil mdmsUtil) {
         this.jdbcTemplate = jdbcTemplate;
-        this.ksmartBirthEnrichment = ksmartBirthEnrichment;
+        this.enrichment = enrichment;
         this.birthDeathConfiguration = birthDeathConfiguration;
         this.producer = producer;
-        this.birthQueryBuilder = birthQueryBuilder;
-        this.ksmartBirthApplicationRowMapper = ksmartBirthApplicationRowMapper;
-        this.mdmsBirthService = mdmsBirthService;
+        this.queryBuilder = queryBuilder;
+        this.rowMapper = rowMapper;
+        this.mdmsDataService = mdmsDataService;
         this.mdmsUtil = mdmsUtil;
-        this.registerRowMapperForApp = registerRowMapperForApp;
     }
 
-    public List<NewBirthApplication> saveKsmartBirthDetails(NewBirthDetailRequest request) {
-        ksmartBirthEnrichment.enrichCreate(request);
-        producer.push(birthDeathConfiguration.getSaveKsmartBirthApplicationTopic(), request);
+    public List<BornOutsideApplication> saveBirthApplication(BornOutsideDetailRequest request) {
+        enrichment.enrichCreate(request);
+        producer.push(birthDeathConfiguration.getSaveBornOutsideTopic(), request);
         return request.getNewBirthDetails();
     }
 
-    public List<NewBirthApplication> updateKsmartBirthDetails(NewBirthDetailRequest request) {
-        ksmartBirthEnrichment.enrichUpdate(request);
-        producer.push(birthDeathConfiguration.getUpdateKsmartBirthApplicationTopic(), request);
+    public List<BornOutsideApplication> updateBirthApplication(BornOutsideDetailRequest request) {
+        enrichment.enrichUpdate(request);
+        producer.push(birthDeathConfiguration.getUpdateBornOutsideTopic(), request);
         return request.getNewBirthDetails();
     }
-    public RegisterBirthDetailsRequest searchBirthDetailsForRegister(NewBirthDetailRequest requestApplication) {
+
+
+    public List<BornOutsideApplication> searchKsmartBirthDetails(BornOutsideDetailRequest request, SearchCriteria criteria) {
         List<Object> preparedStmtValues = new ArrayList<>();
-        SearchCriteria criteria = new SearchCriteria();
-        List<RegisterBirthDetail> result = null;
-        if (requestApplication.getNewBirthDetails().size() > 0) {
-            criteria.setApplicationNumber(requestApplication.getNewBirthDetails().get(0).getApplicationNo());
-            criteria.setTenantId(requestApplication.getNewBirthDetails().get(0).getTenantId());
-
-            String query = birthQueryBuilder.getApplicationSearchQueryForRegistry(criteria, preparedStmtValues);
-            result = jdbcTemplate.query(query, preparedStmtValues.toArray(), registerRowMapperForApp);
-
-        }
-        return RegisterBirthDetailsRequest.builder()
-                .requestInfo(requestApplication.getRequestInfo())
-                .registerBirthDetails(result).build();
-    }
-
-    public List<NewBirthApplication> searchKsmartBirthDetails(NewBirthDetailRequest request, SearchCriteria criteria) {
-        List<Object> preparedStmtValues = new ArrayList<>();
-        Object mdmsDataComm = mdmsUtil.mdmsCall(request.getRequestInfo());
-        String query = birthQueryBuilder.getNewBirthApplicationSearchQuery(criteria, request, preparedStmtValues, Boolean.FALSE);
-        System.out.println(query);
-        List<NewBirthApplication> result = jdbcTemplate.query(query, preparedStmtValues.toArray(), ksmartBirthApplicationRowMapper);
+        String query = queryBuilder.getNewBirthApplicationSearchQuery(criteria, request,preparedStmtValues, Boolean.FALSE);
+        List<BornOutsideApplication> result = jdbcTemplate.query(query, preparedStmtValues.toArray(), rowMapper);
         result.forEach(birth -> {
-            Object mdmsData = mdmsUtil.mdmsCallForLocation(request.getRequestInfo(), birth.getTenantId());
-            if (birth.getPlaceofBirthId() != null) {
-                mdmsBirthService.setLocationDetails(birth, mdmsData);
-                mdmsBirthService.setInstitutionDetails(birth, mdmsDataComm);
+            if(birth.getPlaceofBirthId()!=null){
+                Object mdmsData = mdmsUtil.mdmsCallForLocation(request.getRequestInfo(), birth.getTenantId());
+                //mdmsDataService.setKsmartLocationDetails(birth, mdmsData);
             }
             if (birth.getParentAddress().getCountryIdPermanent() != null && birth.getParentAddress().getStateIdPermanent() != null) {
                 if (birth.getParentAddress().getCountryIdPermanent().contains(BirthConstants.COUNTRY_CODE)) {
                     if (birth.getParentAddress().getStateIdPermanent().contains(BirthConstants.STATE_CODE_SMALL)) {
-                        mdmsBirthService.setTenantDetails(birth, mdmsDataComm);
                         birth.getParentAddress().setPermtaddressCountry(birth.getParentAddress().getCountryIdPermanent());
 
                         birth.getParentAddress().setPermtaddressStateName(birth.getParentAddress().getStateIdPermanent());
 
                         birth.getParentAddress().setPermntInKeralaAdrDistrict(birth.getParentAddress().getDistrictIdPermanent());
+
+                        birth.getParentAddress().setPermntInKeralaAdrVillage(birth.getParentAddress().getVillageNamePermanent());
 
                         birth.getParentAddress().setPermntInKeralaAdrLocalityNameEn(birth.getParentAddress().getLocalityEnPermanent());
                         birth.getParentAddress().setPermntInKeralaAdrLocalityNameMl(birth.getParentAddress().getLocalityMlPermanent());
@@ -111,15 +89,17 @@ public class NewBirthRepository {
                         birth.getParentAddress().setPermntInKeralaAdrHouseNameEn(birth.getParentAddress().getHouseNameNoEnPermanent());
                         birth.getParentAddress().setPermntInKeralaAdrHouseNameMl(birth.getParentAddress().getHouseNameNoMlPermanent());
 
+                        birth.getParentAddress().setPermntInKeralaAdrPincode(birth.getParentAddress().getPinNoPermanent());
+
                         birth.getParentAddress().setPermntInKeralaAdrPostOffice(birth.getParentAddress().getPoNoPermanent());
 
-                    } else {
-                        birth.getParentAddress().setPermtaddressCountry(birth.getParentAddress().getCountryIdPermanent());
-
-                        birth.getParentAddress().setPermtaddressStateName(birth.getParentAddress().getStateIdPermanent());
+                    }
+                    else{
                         birth.getParentAddress().setPermntOutsideKeralaDistrict(birth.getParentAddress().getDistrictIdPermanent());
 
                         birth.getParentAddress().setPermntOutsideKeralaVillage(birth.getParentAddress().getVillageNamePermanent());
+
+                        birth.getParentAddress().setPermntOutsideKeralaPincode(birth.getParentAddress().getPinNoPermanent());
 
                         birth.getParentAddress().setPermntOutsideKeralaLocalityNameEn(birth.getParentAddress().getLocalityEnPermanent());
                         birth.getParentAddress().setPermntOutsideKeralaLocalityNameMl(birth.getParentAddress().getLocalityMlPermanent());
@@ -130,13 +110,12 @@ public class NewBirthRepository {
                         birth.getParentAddress().setPermntOutsideKeralaHouseNameEn(birth.getParentAddress().getHouseNameNoEnPermanent());
                         birth.getParentAddress().setPermntOutsideKeralaHouseNameMl(birth.getParentAddress().getHouseNameNoMlPermanent());
 
+
+
                     }
-                } else {
-                    birth.getParentAddress().setPermntOutsideIndiaCountry(birth.getParentAddress().getCountryIdPermanent());
-                    birth.getParentAddress().setPermntOutsideKeralaVillage(birth.getParentAddress().getVillageNamePermanent());
                 }
             }
-            if (birth.getParentAddress().getCountryIdPresent() != null && birth.getParentAddress().getStateIdPresent() != null) {
+            if(birth.getParentAddress().getCountryIdPresent()!=null && birth.getParentAddress().getStateIdPresent()!=null) {
                 if (birth.getParentAddress().getCountryIdPresent().contains(BirthConstants.COUNTRY_CODE)) {
                     if (birth.getParentAddress().getStateIdPresent().contains(BirthConstants.STATE_CODE_SMALL)) {
 
@@ -144,11 +123,11 @@ public class NewBirthRepository {
 
                         birth.getParentAddress().setPresentaddressStateName(birth.getParentAddress().getStateIdPresent());
 
+                        birth.getParentAddress().setPresentaddressCountry(birth.getParentAddress().getDistrictIdPresent());
+
                         birth.getParentAddress().setPresentInsideKeralaDistrict(birth.getParentAddress().getDistrictIdPresent());
 
-                        birth.getParentAddress().setPresentInsideKeralaLBName(birth.getParentAddress().getPermntInKeralaAdrLBName());
-
-                        //birth.getParentAddress().setPresentInsideKeralaVillage(birth.getParentAddress().getVillageNamePresent());
+                        birth.getParentAddress().setPresentInsideKeralaVillage(birth.getParentAddress().getVillageNamePresent());
 
                         birth.getParentAddress().setPresentInsideKeralaLocalityNameEn(birth.getParentAddress().getLocalityEnPresent());
                         birth.getParentAddress().setPresentInsideKeralaLocalityNameMl(birth.getParentAddress().getLocalityMlPresent());
@@ -161,15 +140,11 @@ public class NewBirthRepository {
 
                         birth.getParentAddress().setPresentInsideKeralaPincode(birth.getParentAddress().getPinNoPresent());
 
-                        //birth.getParentAddress().setPresentOutsideKeralaCityVilgeEn(birth.getParentAddress().getTownOrVillagePresent());
+                        birth.getParentAddress().setPresentInsideKeralaPostOffice(birth.getParentAddress().getPoNoPresent());
 
-                        birth.getParentAddress().setPresentInsideKeralaPostOffice(birth.getParentAddress().getPresentInsideKeralaPostOffice());
+                    }
 
-                    } else {
-                        birth.getParentAddress().setPresentaddressCountry(birth.getParentAddress().getCountryIdPresent());
-
-                        birth.getParentAddress().setPresentaddressStateName(birth.getParentAddress().getStateIdPresent());
-
+                    else{
                         birth.getParentAddress().setPresentOutsideKeralaDistrict(birth.getParentAddress().getDistrictIdPresent());
 
                         birth.getParentAddress().setPresentOutsideKeralaVillageName(birth.getParentAddress().getVillageNamePresent());
@@ -185,13 +160,7 @@ public class NewBirthRepository {
                         birth.getParentAddress().setPresentOutsideKeralaHouseNameEn(birth.getParentAddress().getHouseNameNoEnPresent());
                         birth.getParentAddress().setPresentOutsideKeralaHouseNameMl(birth.getParentAddress().getHouseNameNoMlPresent());
 
-                        birth.getParentAddress().setPresentOutsideKeralaCityVilgeEn(birth.getParentAddress().getTownOrVillagePresent());
-
                     }
-                } else {
-                    birth.getParentAddress().setPresentOutSideCountry(birth.getParentAddress().getCountryIdPresent());
-                    birth.getParentAddress().setPresentOutSideIndiaadrsVillage(birth.getParentAddress().getVillageNamePresent());
-                    birth.getParentAddress().setPresentOutSideIndiaadrsCityTown(birth.getParentAddress().getTownOrVillagePresent());
                 }
             }
         });

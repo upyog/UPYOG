@@ -74,7 +74,13 @@ public class BornOutsideApplication {
     @Size(max = 64)
     @JsonProperty("wardNumber")
     private String wardNumber;
+    @Size(max = 1000)
+    @JsonProperty("outsideBirthPlaceEn")
+    private String outsideBirthPlaceEn;
 
+    @Size(max = 1000)
+    @JsonProperty("outsideBirthPlaceMl")
+    private String outsideBirthPlaceMl;
     @Size(max = 1000)
     @JsonProperty("provinceEn")
     private String provinceEn;
@@ -84,7 +90,7 @@ public class BornOutsideApplication {
     private String provinceMl;
 
     @Size(max = 1000)
-    @JsonProperty("cityTown")
+    @JsonProperty("cityTownEn")
     private String cityTown;
 
     @Size(max = 1000)
@@ -98,10 +104,6 @@ public class BornOutsideApplication {
     @Size(max = 1000)
     @JsonProperty("country")
     private String country;
-
-    @Size(max = 1000)
-    @JsonProperty("outsideBirthPlace")
-    private String outsideBirthPlace;
     @Size(max = 64)
     @JsonProperty("esign_user_code")
     private String esignUserCode;
@@ -186,9 +188,9 @@ public class BornOutsideApplication {
 
     @JsonProperty("Demands")
     private List<Demand> demands;
-    @JsonProperty("ParentsDetails")
+    @JsonProperty("BornOutsideParentsDetails")
     private ParentsDetail parentsDetails;
-    @JsonProperty("AddressBirthDetails")
+    @JsonProperty("BornOutsideAddressBirthDetails")
     private ParentAddress parentAddress;
     @JsonProperty("BornOutsideStaticInfn")
     private BornOutsideStatInfo bornOutsideStaticInformant;

@@ -1,6 +1,8 @@
 package org.ksmart.birth.web.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.ksmart.birth.abandoned.service.AbandonedService;
+import org.ksmart.birth.abandoned.service.RegistryRequestServiceForAbandoned;
 import org.ksmart.birth.adoption.service.AdoptionService;
 import org.ksmart.birth.adoption.service.RegistryRequestServiceForAdoption;
 import org.ksmart.birth.birthregistry.model.BirthCertificate;
@@ -10,6 +12,10 @@ import org.ksmart.birth.birthregistry.model.RegisterBirthSearchCriteria;
 import org.ksmart.birth.birthregistry.service.RegisterBirthService;
 import org.ksmart.birth.utils.ResponseInfoFactory;
 import org.ksmart.birth.web.model.SearchCriteria;
+import org.ksmart.birth.web.model.abandoned.AbandonedApplication;
+import org.ksmart.birth.web.model.abandoned.AbandonedRequest;
+import org.ksmart.birth.web.model.abandoned.AbandonedResponse;
+import org.ksmart.birth.web.model.abandoned.AbandonedSearchResponse;
 import org.ksmart.birth.web.model.adoption.AdoptionApplication;
 import org.ksmart.birth.web.model.adoption.AdoptionDetailRequest;
 import org.ksmart.birth.web.model.adoption.AdoptionResponse;
@@ -27,58 +33,61 @@ import java.util.List;
 @RequestMapping("/cr")
 public class AbandonedController {
     private final ResponseInfoFactory responseInfoFactory;
-    private final AdoptionService adoptionService;
+    private final AbandonedService abandonedService;
     private final RegisterBirthService registerBirthService;
-    private final RegistryRequestServiceForAdoption registryReq;
+    private final RegistryRequestServiceForAbandoned registryReq;
+
     @Autowired
-    AbandonedController(AdoptionService adoptionService, ResponseInfoFactory responseInfoFactory,
-                        RegisterBirthService registerBirthService, RegistryRequestServiceForAdoption registryReq) {
-        this.adoptionService=adoptionService;
-        this.responseInfoFactory=responseInfoFactory;
+    AbandonedController(AbandonedService abandonedService, ResponseInfoFactory responseInfoFactory,
+                        RegisterBirthService registerBirthService, RegistryRequestServiceForAbandoned registryReq) {
+        this.abandonedService = abandonedService;
+        this.responseInfoFactory = responseInfoFactory;
         this.registerBirthService = registerBirthService;
         this.registryReq = registryReq;
     }
 
     @PostMapping(value = {"/createabandoned"})
-    public ResponseEntity<?> saveAbandonedDetails(@RequestBody AdoptionDetailRequest request) {
-        List<AdoptionApplication> registerAdoptionDetails=adoptionService.saveAdoptionDetails(request);
-        AdoptionResponse response= AdoptionResponse.builder()
-                                                                              .adoptionDetails(registerAdoptionDetails)
-                                                                              .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(),
-                                                                                    true))
-                                                                              .build();
+    public ResponseEntity<?> saveAbandonedDetails(@RequestBody AbandonedRequest request) {
+        List<AbandonedApplication> details = abandonedService.saveKsmartBirthDetails(request);
+        AbandonedResponse response = AbandonedResponse.builder()
+                                                      .birthDetails(details)
+                                                      .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(),
+                                                            true))
+                                                      .build();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-    @PostMapping(value = { "/updateabandoned"})
-    public ResponseEntity<?> updateAbandonedDetails(@RequestBody AdoptionDetailRequest request) {
+
+    @PostMapping(value = {"/updateabandoned"})
+    public ResponseEntity<?> updateAbandonedDetails(@RequestBody AbandonedRequest request) {
         BirthCertificate birthCertificate = new BirthCertificate();
-        List<AdoptionApplication> adoptionApplicationDetails=adoptionService.updateAdoptionBirthDetails(request);
+        List<AbandonedApplication> adoptionApplicationDetails = abandonedService.updateKsmartBirthDetails(request);
         //Download certificate when Approved
-        if((adoptionApplicationDetails.get(0).getApplicationStatus() == "APPROVED" && adoptionApplicationDetails.get(0).getAction() == "APPROVE")){
+        if ((adoptionApplicationDetails.get(0).getApplicationStatus() == "APPROVED" && adoptionApplicationDetails.get(0).getAction() == "APPROVE")) {
             RegisterBirthDetailsRequest registerBirthDetailsRequest = registryReq.createRegistryRequest(request);
-            List<RegisterBirthDetail> registerBirthDetails =  registerBirthService.saveRegisterBirthDetails(registerBirthDetailsRequest);
+            List<RegisterBirthDetail> registerBirthDetails = registerBirthService.saveRegisterBirthDetails(registerBirthDetailsRequest);
             RegisterBirthSearchCriteria criteria = new RegisterBirthSearchCriteria();
-            criteria.setTenantId(registerBirthDetails.get(0).getTenantId());
-            criteria.setRegistrationNo(registerBirthDetails.get(0).getRegistrationNo());
-            birthCertificate = registerBirthService.download(criteria,request.getRequestInfo());
+            criteria.setTenantId(registerBirthDetails.get(0)
+                                                     .getTenantId());
+            criteria.setRegistrationNo(registerBirthDetails.get(0)
+                                                           .getRegistrationNo());
+            birthCertificate = registerBirthService.download(criteria, request.getRequestInfo());
         }
-        AdoptionResponse response=AdoptionResponse.builder()
-                .adoptionDetails(adoptionApplicationDetails)
-                .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(),
-                        true))
-                .birthCertificate(birthCertificate)
-                .build();
+        AbandonedResponse response = AbandonedResponse.builder()
+                                                      .birthDetails(adoptionApplicationDetails)
+                                                      .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(),
+                                                            true))
+                                                      .birthCertificate(birthCertificate)
+                                                      .build();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
     @PostMapping(value = {"/searchabandoned"})
-    public ResponseEntity<AdoptionSearchResponse> searchAbandonedDetails(@RequestBody AdoptionDetailRequest request, @Valid @ModelAttribute SearchCriteria criteria) {
-        List<AdoptionApplication> adoptionDetails=adoptionService.searchKsmartBirthDetails(request, criteria);
-        AdoptionSearchResponse response=AdoptionSearchResponse.builder()
-                                                                              .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), Boolean.TRUE))
-                                                                              .AdoptionDetails(adoptionDetails)
-                                                                              .build();
-
-
+    public ResponseEntity<AbandonedSearchResponse> searchAbandonedDetails(@RequestBody AbandonedRequest request, @Valid @ModelAttribute SearchCriteria criteria) {
+        List<AbandonedApplication> adoptionDetails = abandonedService.searchKsmartBirthDetails(request, criteria);
+        AbandonedSearchResponse response = AbandonedSearchResponse.builder()
+                                                                  .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), Boolean.TRUE))
+                                                                  .newBirthDetails(adoptionDetails)
+                                                                  .build();
         return ResponseEntity.ok(response);
     }
 }

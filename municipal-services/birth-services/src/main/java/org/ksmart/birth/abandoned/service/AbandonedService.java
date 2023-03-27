@@ -1,13 +1,18 @@
 package org.ksmart.birth.abandoned.service;
 
+import org.ksmart.birth.abandoned.repository.AbandonedRepository;
+import org.ksmart.birth.abandoned.validator.AbandonedApplicationValidator;
 import org.ksmart.birth.birthcommon.model.demand.Demand;
 import org.ksmart.birth.birthcommon.services.DemandService;
 import org.ksmart.birth.newbirth.repository.NewBirthRepository;
 import org.ksmart.birth.newbirth.validator.NewBirthApplicationValidator;
 import org.ksmart.birth.utils.MdmsUtil;
 import org.ksmart.birth.web.model.SearchCriteria;
+import org.ksmart.birth.web.model.abandoned.AbandonedApplication;
+import org.ksmart.birth.web.model.abandoned.AbandonedRequest;
 import org.ksmart.birth.web.model.newbirth.NewBirthApplication;
 import org.ksmart.birth.web.model.newbirth.NewBirthDetailRequest;
+import org.ksmart.birth.workflow.WorkflowIntegratorAbandoned;
 import org.ksmart.birth.workflow.WorkflowIntegratorNewBirth;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,15 +24,15 @@ import static org.ksmart.birth.utils.BirthConstants.STATUS_FOR_PAYMENT;
 
 @Service
 public class AbandonedService {
-    private final NewBirthRepository repository;
-    private final WorkflowIntegratorNewBirth workflowIntegrator;
+    private final AbandonedRepository repository;
+    private final WorkflowIntegratorAbandoned workflowIntegrator;
     private final MdmsUtil mdmsUtil;
-    private final NewBirthApplicationValidator validator;
+    private final AbandonedApplicationValidator validator;
     private final DemandService demandService;
 
     @Autowired
-    AbandonedService(NewBirthRepository repository, MdmsUtil mdmsUtil, WorkflowIntegratorNewBirth workflowIntegrator,
-                     NewBirthApplicationValidator validator, DemandService demandService) {
+    AbandonedService(AbandonedRepository repository, MdmsUtil mdmsUtil, WorkflowIntegratorAbandoned workflowIntegrator,
+                     AbandonedApplicationValidator validator, DemandService demandService) {
         this.repository = repository;
         this.mdmsUtil = mdmsUtil;
         this.workflowIntegrator  = workflowIntegrator;
@@ -35,17 +40,17 @@ public class AbandonedService {
         this.demandService = demandService;
     }
 
-    public List<NewBirthApplication> saveKsmartBirthDetails(NewBirthDetailRequest request) {
+    public List<AbandonedApplication> saveKsmartBirthDetails(AbandonedRequest request) {
         Object mdmsData = mdmsUtil.mdmsCall(request.getRequestInfo());
 
         // validate request
-        validator.validateCreate(request, mdmsData);
+       // validator.validateCreate(request, mdmsData);
 
         //call save
-        List<NewBirthApplication> birthApplicationDetails =  repository.saveKsmartBirthDetails(request);
+        List<AbandonedApplication> birthApplicationDetails =  repository.saveBirthDetails(request);
 
         //WorkFlow Integration
-        workflowIntegrator.callWorkFlow(request);
+        //workflowIntegrator.callWorkFlow(request);
 
         //Demand Creation
         birthApplicationDetails.forEach(birth->{
@@ -55,19 +60,19 @@ public class AbandonedService {
                 demand.setTenantId(birth.getTenantId());
                 demand.setConsumerCode(birth.getApplicationNo());
                 demands.add(demand);
-                birth.setDemands(demandService.saveDemandDetails(demands,request.getRequestInfo()));
+               // birth.setDemands(demandService.saveDemandDetails(demands,request.getRequestInfo()));
             }
         });
 
         return birthApplicationDetails;
     }
 
-    public List<NewBirthApplication> updateKsmartBirthDetails(NewBirthDetailRequest request) {
+    public List<AbandonedApplication> updateKsmartBirthDetails(AbandonedRequest request) {
         workflowIntegrator.callWorkFlow(request);
-        return repository.updateKsmartBirthDetails(request);
+        return repository.updateBirthDetails(request);
     }
 
-    public List<NewBirthApplication> searchKsmartBirthDetails(NewBirthDetailRequest request, SearchCriteria criteria) {
-        return repository.searchKsmartBirthDetails(request,criteria);
+    public List<AbandonedApplication> searchKsmartBirthDetails(AbandonedRequest request, SearchCriteria criteria) {
+        return repository.searchBirthDetails(request,criteria);
     }
 }
