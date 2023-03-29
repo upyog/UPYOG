@@ -61,7 +61,7 @@ serviceMaps:
             - jsonPath: $.BornOutsideChildDetails.*.birthPlaceUuid
             - jsonPath: $.BornOutsideChildDetails.*.id
             - jsonPath: $.BornOutsideChildDetails.*.placeofbirthid
-            - jsonPath: $.BornOutsideChildDetails.*.permntInKeralaWardNo
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideAddressBirthDetails.permntInKeralaWardNo
             - jsonPath: $.BornOutsideChildDetails.*.outsideBirthPlaceEn
             - jsonPath: $.BornOutsideChildDetails.*.outsideBirthPlaceMl
             - jsonPath: $.BornOutsideChildDetails.*.provinceEn
@@ -307,7 +307,7 @@ serviceMaps:
           basePath: BornOutsideChildDetails.*
           jsonMaps:
              - jsonPath: $.BornOutsideChildDetails.*.placeofbirthid
-             - jsonPath: $.BornOutsideChildDetails.*.permntInKeralaWardNo
+             - jsonPath: $.BornOutsideChildDetails.*.BornOutsideAddressBirthDetails.permntInKeralaWardNo
              - jsonPath: $.BornOutsideChildDetails.*.outsideBirthPlaceEn
              - jsonPath: $.BornOutsideChildDetails.*.outsideBirthPlaceMl
              - jsonPath: $.BornOutsideChildDetails.*.provinceEn

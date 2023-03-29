@@ -1,30 +1,30 @@
-package org.ksmart.birth.newbirth.repository.rowmapper;
+package org.ksmart.birth.birthnac.repository.rowmapper;
 
-import org.ksmart.birth.web.model.newbirth.NewBirthApplication;
+import org.ksmart.birth.web.model.adoption.AdoptionApplication;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
-
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 @Component
-public class BirthApplicationRowMapper implements ResultSetExtractor<List<NewBirthApplication>>, BaseRowMapper, BirthParentDetailRowMapper, InformatDetailsRowMapper, BirthParentAddressRowMapper, InitiatorDetailsRowMapper {
+public class NacApplicationRowMapper implements ResultSetExtractor<List<AdoptionApplication>>, NacBaseRowMapper, NacParentDetailRowMapper, NacInformatDetailsRowMapper, NacParentAddressRowMapper, NacInitiatorDetailsRowMapper {
 
     @Override
-    public List<NewBirthApplication> extractData(ResultSet rs) throws SQLException, DataAccessException { //how to handle null
-        List<NewBirthApplication> result = new ArrayList<>();
+    public List<AdoptionApplication> extractData(ResultSet rs) throws SQLException, DataAccessException { //how to handle null
+        List<AdoptionApplication> result = new ArrayList<>();
+
         while (rs.next()) {
-            result.add(NewBirthApplication.builder()
+            result.add(AdoptionApplication.builder()
                     .id(rs.getString("ba_id"))
                     .dateOfReport(rs.getLong("ba_dateofreport"))
                     .dateOfBirth(rs.getLong("ba_dateofbirth"))
                     .timeOfBirth(rs.getLong("ba_timeofbirth"))
                     .gender(rs.getString("ba_gender"))
                     .aadharNo(rs.getString("ba_aadharno"))
-                    .isChildName(isChildNameEntered(rs.getString("ba_firstname_en")))
+                    .isChildName(isChildNameEntered(rs.getString("ba_firstname_en").trim()))
                     .firstNameEn(rs.getString("ba_firstname_en"))
                     .firstNameMl(rs.getString("ba_firstname_ml"))
                     .middleNameEn(rs.getString("ba_middlename_en"))
@@ -55,7 +55,7 @@ public class BirthApplicationRowMapper implements ResultSetExtractor<List<NewBir
                     .vehicleToMl(rs.getString("pla_vehicle_to_ml"))
                     .vehicleRegistrationNo(rs.getString("pla_vehicle_registration_no"))
                     .vehicleDesDetailsEn(rs.getString("pla_vehicle_desc"))
-                    .setadmittedHospitalEn(rs.getString("pla_vehicle_hospitalid"))
+                    .setadmittedHospitalEn(rs.getString("pla_vehicle_admit_hospital_en"))
                     .publicPlaceDecpEn(rs.getString("pla_public_place_desc"))
                     .publicPlaceType(rs.getString("pla_public_place_id"))
                     .localityNameEn(rs.getString("pla_public_locality_en"))
@@ -87,7 +87,7 @@ public class BirthApplicationRowMapper implements ResultSetExtractor<List<NewBir
                     .fileNumber(rs.getString("ba_fm_fileno"))
                     .fileDate(rs.getLong("ba_file_date"))
                     .fileStatus(rs.getString("ba_file_status"))
-                    .informatDetail(getInformatDetail(rs))
+                    .informatDetail(getInformantDetail(rs))
                     .initiatorDetails(getInitiatorDetail(rs))
                     .parentAddress(getKsmartBirthParentAddress(rs))
                     .build());
@@ -95,14 +95,8 @@ public class BirthApplicationRowMapper implements ResultSetExtractor<List<NewBir
         return result;
     }
     private Boolean isChildNameEntered(String name) {
-        if(name != null){
-            name = name.trim();
-            if(name.isEmpty()){
-                return true;
-            } else{
-                return false;
-            }
-        } else return false;
+        if(name == null) return true;
+        else return false;
     }
 }
 

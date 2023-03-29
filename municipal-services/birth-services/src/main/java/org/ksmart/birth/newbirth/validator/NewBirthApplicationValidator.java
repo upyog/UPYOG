@@ -49,6 +49,16 @@ public class NewBirthApplicationValidator {
                     "Tenant id is required for create request.");
         }
 
+        if (birthApplications.get(0).getDateOfBirth() == null) {
+            throw new CustomException(INVALID_CREATE.getCode(),
+                    "Date of birth is required for create request.");
+        }
+
+        if (StringUtils.isBlank(birthApplications.get(0).getPlaceofBirthId())) {
+            throw new CustomException(INVALID_CREATE.getCode(),
+                    "Place of birth id is required for create request.");
+        }
+
         if (StringUtils.isBlank(birthApplications.get(0).getApplicationType())) {
             throw new CustomException(INVALID_CREATE.getCode(),
                     "Application type is required for create request.");
