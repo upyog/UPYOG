@@ -65,11 +65,7 @@ public class RegistryRequestServiceCorrection {
         registerBirthDetail.setGender(requestKsmartBirthReq.getCorrectionDetails().get(0).getGender());
         registerBirthDetail.setAadharNo(requestKsmartBirthReq.getCorrectionDetails().get(0).getAadharNo());
         registerBirthDetail.setEsignUserCode(requestKsmartBirthReq.getCorrectionDetails().get(0).getEsignUserCode());
-        registerBirthDetail.setEsignUserDesigCode(requestKsmartBirthReq.getCorrectionDetails().get(0).getEsignUserDesigCode());;
-//        registerBirthDetail.setNoOfAliveBirth(requestKsmartBirthReq.getCorrectionDetails().get(0).getNoOfAliveBirth());
-//        registerBirthDetail.setMultipleBirthDetId(requestKsmartBirthReq.getCorrectionDetails().get(0).getMultipleBirthDetailsIid());
-//        registerBirthDetail.setIsBornOutside(requestKsmartBirthReq.getCorrectionDetails().get(0).getIsBornOutside());
-//        registerBirthDetail.setOtPassportNo(requestKsmartBirthReq.getCorrectionDetails().get(0).getPassportNo());
+        registerBirthDetail.setEsignUserDesigCode(requestKsmartBirthReq.getCorrectionDetails().get(0).getEsignUserDesigCode());
         registerBirthDetail.setRegistrationNo(requestKsmartBirthReq.getCorrectionDetails().get(0).getRegistrationNo());
         registerBirthDetail.setApplicationType(requestKsmartBirthReq.getCorrectionDetails().get(0).getApplicationType());
         registerBirthDetail.setRegistrationStatus("ACTIVE");

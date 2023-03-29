@@ -18,6 +18,10 @@ public class CorrectionApplication {
     @Size(max = 64)
     @JsonProperty("id")
     private String id;
+
+    @Size(max = 64)
+    @JsonProperty("registerid")
+    private String registerId;
     @JsonProperty("dateofreport")
     private Long dateOfReport;
     @JsonProperty("childDOB")

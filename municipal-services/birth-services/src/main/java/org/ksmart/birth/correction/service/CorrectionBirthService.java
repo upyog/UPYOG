@@ -64,18 +64,18 @@ public class CorrectionBirthService {
         return application;
     }
 
-//    public List<NewBirthApplication> updateKsmartBirthDetails(CorrectionRequest request) {
-//
-//        Object mdmsData = mdmsUtil.mdmsCall(request.getRequestInfo());
-//        // validate request
-//        validator.validateCreate(request, mdmsData);
-//
-//        //search application exist
-//
-//        validator.validateUpdate(request, mdmsData);
-//        workflowIntegrator.callWorkFlow(request);
-//        return repository.updateKsmartBirthDetails(request);
-//    }
+    public List<CorrectionApplication> updateKsmartBirthDetails(CorrectionRequest request) {
+
+        Object mdmsData = mdmsUtil.mdmsCall(request.getRequestInfo());
+        // validate request
+        validator.validateCreate(request, mdmsData);
+
+        //search application exist
+
+        validator.validateUpdate(request, mdmsData);
+        workflowIntegrator.callWorkFlow(request);
+        return repository.updateKsmartBirthDetails(request);
+    }
 //
 //    public List<NewBirthApplication> searchKsmartBirthDetails(CorrectionRequest request, SearchCriteria criteria) {
 //        return repository.searchKsmartBirthDetails(request,criteria);

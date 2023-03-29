@@ -45,40 +45,49 @@ public class CorrectionBirthApplicationValidator {
             throw new CustomException(BIRTH_DETAILS_REQUIRED.getCode(),
                     "Supports only single Birth  correction application create request.");
         }
+        if (StringUtils.isBlank(birthApplications.get(0).getRegisterId())) {
+            throw new CustomException(INVALID_CREATE.getCode(),
+                    "Register id is required for create correction request.");
+        }
+
+        if (StringUtils.isBlank(birthApplications.get(0).getRegistrationNo())) {
+            throw new CustomException(INVALID_CREATE.getCode(),
+                    "Registration number is required for create correction request.");
+        }
 
         if (StringUtils.isBlank(birthApplications.get(0).getTenantId())) {
             throw new CustomException(INVALID_CREATE.getCode(),
-                    "Tenant id is required for create request.");
+                    "Tenant id is required for create correction request.");
         }
 
         if (birthApplications.get(0).getDateOfBirth() == null) {
             throw new CustomException(INVALID_CREATE.getCode(),
-                    "Date of birth is required for create request.");
+                    "Date of birth is required for create correction request.");
         }
 
         if (StringUtils.isBlank(birthApplications.get(0).getPlaceofBirthId())) {
             throw new CustomException(INVALID_CREATE.getCode(),
-                    "Place of birth id is required for create request.");
+                    "Place of birth id is required for create correction brequest.");
         }
 
         if (StringUtils.isBlank(birthApplications.get(0).getApplicationType())) {
             throw new CustomException(INVALID_CREATE.getCode(),
-                    "Application type is required for create request.");
+                    "Application type is required for create correction request.");
         }
 
         if (StringUtils.isBlank(birthApplications.get(0).getBusinessService())) {
             throw new CustomException(INVALID_CREATE.getCode(),
-                    "Bussiness service is required for create request.");
+                    "Bussiness service is required for create correction request.");
         }
 
         if (StringUtils.isBlank(birthApplications.get(0).getWorkFlowCode())) {
             throw new CustomException(INVALID_CREATE.getCode(),
-                    "Workflow code is required for create request.");
+                    "Workflow code is required for create correction request.");
         }
 
         if (StringUtils.isBlank(birthApplications.get(0).getAction())) {
             throw new CustomException(INVALID_CREATE.getCode(),
-                    "Workflow action is required for create request.");
+                    "Workflow action is required for create correction request.");
         }
 
         mdmsValidator.validateMdmsData(request, mdmsData);
@@ -93,7 +102,17 @@ public class CorrectionBirthApplicationValidator {
 
         if (birthApplications.size() > 1) { // NOPMD
             throw new CustomException(BIRTH_DETAILS_REQUIRED.getCode(),
-                    "Supports only single application create request.");
+                    "Supports only single application update request.");
+        }
+
+        if (StringUtils.isBlank(birthApplications.get(0).getRegisterId())) {
+            throw new CustomException(INVALID_CREATE.getCode(),
+                    "Register id is required for update correction request.");
+        }
+
+        if (StringUtils.isBlank(birthApplications.get(0).getRegistrationNo())) {
+            throw new CustomException(INVALID_CREATE.getCode(),
+                    "Registration number is required for update correction request.");
         }
 
         if (StringUtils.isBlank(birthApplications.get(0).getTenantId())) {
