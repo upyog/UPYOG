@@ -46,7 +46,7 @@ public class AdoptionService {
         List<AdoptionApplication> adoptionDetails =  repository.saveAdoptionDetails(request);
 
         //WorkFlow Integration
-      //  workflowIntegrator.callWorkFlow(request);
+        workflowIntegrator.callWorkFlow(request);
         return adoptionDetails;
     }
 

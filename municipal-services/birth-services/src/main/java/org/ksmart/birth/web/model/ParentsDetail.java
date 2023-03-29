@@ -15,16 +15,15 @@ public class ParentsDetail {
     @Size(max = 64)
     @JsonProperty("motherUuid")
     private String motherUuid;
-    @Size(max = 64)
+    @Size(max = 2000)
     @JsonProperty("motherFirstNameEn")
     private String firstNameEn;
-    @Size(max = 64)
+    @Size(max = 2000)
     @JsonProperty("motherFirstNameMl")
     private String firstNameMl;
     @Size(max = 64)
     @JsonProperty("motherAadhar")
     private String motherAadhar;
-    @Size(max = 64)
     @JsonProperty("motherMarriageAge")
     private Integer motherAgeMarriage;
     @Size(max = 64)
