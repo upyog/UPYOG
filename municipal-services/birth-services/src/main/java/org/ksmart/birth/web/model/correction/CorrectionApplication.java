@@ -1,6 +1,7 @@
 package org.ksmart.birth.web.model.correction;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.*;
 import org.ksmart.birth.birthcommon.model.demand.Demand;
 import org.ksmart.birth.common.model.AuditDetails;
 import org.ksmart.birth.common.model.Document;
@@ -8,7 +9,11 @@ import org.ksmart.birth.web.model.ParentAddress;
 
 import javax.validation.constraints.Size;
 import java.util.List;
-
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class CorrectionApplication {
     @Size(max = 64)
     @JsonProperty("id")
@@ -41,11 +46,9 @@ public class CorrectionApplication {
     @Size(max = 64)
     @JsonProperty("childLastNameMl")
     private String lastNameMl;
-
     @Size(max = 64)
     @JsonProperty("birthPlace")
     private String placeofBirthId;
-
     @Size(max = 64)
     @JsonProperty("hospitalCode")
     private String hospitalId;
@@ -58,7 +61,6 @@ public class CorrectionApplication {
     @Size(max = 64)
     @JsonProperty("institutionTypeCode")
     private String institutionTypeId;
-
     @Size(max = 64)
     @JsonProperty("institution")
     private String institution;
@@ -131,28 +133,28 @@ public class CorrectionApplication {
     @Size(max = 1000)
     @JsonProperty("vehicleToMl")
     private String vehicleToMl;
-    @Size(max = 64)
+    @Size(max = 1000)
     @JsonProperty("setadmittedHospitalEn")
     private String setadmittedHospitalEn;
-    @Size(max = 64)
+    @Size(max = 1000)
     @JsonProperty("vehicleDesDetailsEn")
     private String vehicleDesDetailsEn;
     @Size(max = 64)
     @JsonProperty("publicPlaceType")
     private String publicPlaceType;
-    @Size(max = 64)
+    @Size(max = 1000)
     @JsonProperty("localityNameEn")
     private String localityNameEn;
-    @Size(max = 64)
+    @Size(max = 1000)
     @JsonProperty("localityNameMl")
     private String localityNameMl;
-    @Size(max = 64)
+    @Size(max = 1000)
     @JsonProperty("streetNameEn")
     private String streetNameEn;
-    @Size(max = 64)
+    @Size(max = 1000)
     @JsonProperty("streetNameMl")
     private String streetNameMl;
-    @Size(max = 64)
+    @Size(max = 1000)
     @JsonProperty("publicPlaceDecpEn")
     private String publicPlaceDecpEn;
     @Size(max = 64)
@@ -179,61 +181,43 @@ public class CorrectionApplication {
     @Size(max = 64)
     @JsonProperty("applicationtype")
     private String applicationType;
-
     @Size(max = 64)
     @JsonProperty("businessservice")
     private String businessService;
     @Size(max = 64)
     @JsonProperty("workflowcode")
     private String workFlowCode;
-
     @Size(max = 64)
     @JsonProperty("fileNumber")
     private String fileNumber;
-
     @JsonProperty("fileDate")
     private Long fileDate;
-
     @JsonProperty("fileStatus")
     private String fileStatus;
-
     @Size(max = 64)
     @JsonProperty("applicationNumber")
     private String applicationNo;
-
     @Size(max = 64)
     @JsonProperty("registrationNo")
     private String registrationNo;
-
     @JsonProperty("registrationDate")
     private Long registrationDate;
-
     @Size(max = 64)
     @JsonProperty("action")
     private String action;
-
     @JsonProperty("assignee")
     private List<String> assignee;
     private String comment;
-
     @JsonProperty("wfDocuments")
     private List<Document> wfDocuments;
     @Size(max = 64)
     @JsonProperty("applicationStatus")
     private String applicationStatus;
-    @Size(max = 2500)
-    @JsonProperty("remarks_en")
-    private String remarksEn;
-    @Size(max = 2500)
-    @JsonProperty("remarks_ml")
-    private String remarksMl;
-    @Size(max = 20)
-    @JsonProperty("am_pm")
-    private String ampm;
     @Size(max = 64)
     @JsonProperty("birthPlaceUuid")
     private String birthPlaceUuid;
 
+// Mother Details
     @Size(max = 64)
     @JsonProperty("motherUuid")
     private String motherUuid;
@@ -243,9 +227,13 @@ public class CorrectionApplication {
     @Size(max = 2000)
     @JsonProperty("motherFirstNameMl")
     private String motherFirstNameMl;
+
     @Size(max = 64)
     @JsonProperty("motherAadhar")
     private String motherAadhar;
+
+//Father Details
+
     @Size(max = 64)
     @JsonProperty("fatherUuid")
     private String fatherUuid;
@@ -258,6 +246,8 @@ public class CorrectionApplication {
     @Size(max = 2000)
     @JsonProperty("fatherFirstNameMl")
     private String fatherFirstNameMl;
+
+
     @JsonProperty("AddressBirthDetails")
     private ParentAddress parentAddress;
     @JsonProperty("Demands")
