@@ -1,4 +1,4 @@
-package org.ksmart.birth.birthregistry.repository.rowmapperforapplication;
+package org.ksmart.birth.birthregistry.repository.rowmapperforcorrectionapplication;
 
 import org.ksmart.birth.birthregistry.model.RegisterBirthPlace;
 import org.springframework.stereotype.Component;
@@ -7,11 +7,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 @Component
-public class RegisterPlaceRowMapperForApp {
+public class RegisterPlaceRowMapperForCorr {
 
     public RegisterBirthPlace getRegAppPlace(ResultSet rs) throws SQLException {
         return RegisterBirthPlace.builder()
-                .birthDtlId(rs.getString("pla_birthdtlid"))
+//                .birthDtlId(rs.getString("pla_birthdtlid"))
                 .placeOfBirthId(rs.getString("pla_placeofbirthid"))
                 .hospitalId(rs.getString("pla_hospitalid"))
                 .vehicleTypeId(rs.getString("pla_vehicletypeid"))

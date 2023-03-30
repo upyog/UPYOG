@@ -1,4 +1,4 @@
-package org.ksmart.birth.birthregistry.repository.rowmapperforapplication;
+package org.ksmart.birth.birthregistry.repository.rowmapperfornewapplication;
 
 import org.ksmart.birth.birthregistry.model.RegisterBirthStatiticalInformation;
 
