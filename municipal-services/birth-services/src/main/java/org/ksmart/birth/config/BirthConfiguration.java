@@ -169,6 +169,12 @@ public class BirthConfiguration {
 
     @Value("${egov.pdf.deathcert.createEndPoint}")
     private String	egovPdfDeathEndPoint;
+    
+    @Value("${persister.save.nac.topic}")
+    private String saveBirthNacTopic;
+
+    @Value("${persister.update.nac.topic}")
+    private String updateBirthNacTopic;
 
 
 

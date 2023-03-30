@@ -40,7 +40,7 @@ public class AdoptionService {
         Object mdmsData = mdmsUtil.mdmsCall(request.getRequestInfo());
         Object mdmsDataLoc = mdmsUtil.mdmsCallForLocation(request.getRequestInfo(), request.getAdoptionDetails().get(0).getTenantId());
         // validate request
-        //validator.validateCreate(request, mdmsData,mdmsDataLoc);
+        validator.validateCreate(request, mdmsData,mdmsDataLoc);
 
         //call save
         List<AdoptionApplication> adoptionDetails =  repository.saveAdoptionDetails(request);

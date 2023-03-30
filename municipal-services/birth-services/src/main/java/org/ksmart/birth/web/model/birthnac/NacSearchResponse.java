@@ -19,14 +19,14 @@ public class NacSearchResponse {
     @JsonProperty("ResponseInfo")
     private ResponseInfo responseInfo;
 
-    @JsonProperty("ChildDetails")
+    @JsonProperty("nacDetails")
     @Valid
-    private List<NacApplication> AdoptionDetails;
-    public NacSearchResponse addKsmartBirthSearchApplication(NacApplication adoptionDetail) {
-        if (AdoptionDetails == null) {
-        	AdoptionDetails = new ArrayList<>();
+    private List<NacApplication> nacDetails;
+    public NacSearchResponse addKsmartBirthSearchApplication(NacApplication nacDetail) {
+        if (nacDetails == null) {
+        	nacDetails = new ArrayList<>();
         }
-        AdoptionDetails.add(adoptionDetail);
+        nacDetails.add(nacDetail);
         return this;
     }
 }

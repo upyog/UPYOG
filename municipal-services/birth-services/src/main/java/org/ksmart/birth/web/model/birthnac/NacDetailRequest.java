@@ -18,13 +18,13 @@ public class NacDetailRequest {
     @JsonProperty("RequestInfo")
     private RequestInfo requestInfo;
 
-    @JsonProperty("AdoptionDetails")
+    @JsonProperty("NacDetails")
     @Valid
-    private List<NacApplication> adoptionDetails;
+    private List<NacApplication> nacDetails;
 
-    public NacDetailRequest addAdoptionBirth(NacApplication adoptionDetail) {
-        if (adoptionDetails == null) {
-        	adoptionDetails = null;
+    public NacDetailRequest addAdoptionBirth(NacApplication nacDetail) {
+        if (nacDetails == null) {
+        	nacDetails = null;
         }
         return this;
     }

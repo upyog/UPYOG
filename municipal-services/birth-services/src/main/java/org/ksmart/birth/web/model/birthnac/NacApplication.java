@@ -3,9 +3,8 @@ package org.ksmart.birth.web.model.birthnac;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import org.ksmart.birth.common.model.AuditDetails;
-import org.ksmart.birth.common.model.Document;
-import org.ksmart.birth.web.model.InformatDetail;
-import org.ksmart.birth.web.model.InitiatorDetail;
+import org.ksmart.birth.common.model.Document; 
+import org.ksmart.birth.web.model.birthnac.NacApplicantDetail;
 import org.ksmart.birth.web.model.ParentAddress;
 import org.ksmart.birth.web.model.ParentsDetail;
 
@@ -256,77 +255,28 @@ public class NacApplication {
     @JsonProperty("birthPlaceUuid")
     private String birthPlaceUuid;
 
-    @Size(max = 64)
-    @JsonProperty("birthInitiatorUuid")
-    private String birthInitiatorUuid;
-
-    @Size(max = 64)
-    @JsonProperty("birthStatisticsUuid")
-    private String birthStatisticsUuid;
+//    @Size(max = 64)
+//    @JsonProperty("birthInitiatorUuid")
+//    private String birthInitiatorUuid;
+//
+//    @Size(max = 64)
+//    @JsonProperty("birthStatisticsUuid")
+//    private String birthStatisticsUuid;
     
     @JsonProperty("ParentsDetails")
     private ParentsDetail parentsDetails;
 
-    @JsonProperty("InitiatorinfoDetails")
-    private InitiatorDetail initiatorDetails;
+    @JsonProperty("ApplicantDetails")
+    private NacApplicantDetail applicantDetails;
+    
+    @JsonProperty("OtherChildren")
+    private NacOtherChildren otherChildrenDetails;
 
     @JsonProperty("AddressBirthDetails")
     private ParentAddress parentAddress;
     
-    @JsonProperty("InformarHosInstDetails")
-    private InformatDetail informatDetail;
-    
-    @JsonProperty("isAdopted")
-    private Boolean isAdopted;
-   
-    /////////////////////Adoption filelds////////////////////////////////// 
-    
-    @Size(max = 64)
-    @JsonProperty("oldregistrationno")
-    private String oldRegistrationNo;
  
     
-    @Size(max = 64)
-    @JsonProperty("adoptdeedorderno")
-    private String adoptDeedOrderNo;
-    
-    
-    @JsonProperty("adoptdateoforderdeed")
-    private Long adoptDateoforderDeed;
-    
-    @Size(max = 64)
-    @JsonProperty("adoptissuingauththority")
-    private String adoptIssuingAuththority;
-    
-    @Size(max = 64)
-    @JsonProperty("adopthasagency")
-    private Boolean adoptHasAgency;
-    
-    @Size(max = 64)
-    @JsonProperty("adoptagencyname")
-    private String adoptAgencyName;
-    
-    @Size(max = 2500)
-    @JsonProperty("adoptagencyaddress")
-    private String adoptAgencyAddress;
-    
-    @Size(max = 64)
-    @JsonProperty("adoptdecreeorderno")
-    private String adoptDecreeOrderNo;
-    
-    
-    @JsonProperty("adoptdateoforderdecree")
-    private Long adoptDateoforderDecree;
-    
-    @Size(max = 64)
-    @JsonProperty("adoptagencycontactperson")
-    private String adoptAgencyContactPerson;
-    
-    @Size(max = 64)
-    @JsonProperty("adoptagencycontactpersonmobileno")
-    private String adoptAgencyContactPersonMobileno;
-    
-    //////////////////////////////////////////////////////////////
     
 
     @JsonProperty("auditDetails")

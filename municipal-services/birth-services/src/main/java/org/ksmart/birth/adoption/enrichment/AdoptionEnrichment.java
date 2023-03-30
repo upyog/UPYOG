@@ -46,6 +46,7 @@ public class AdoptionEnrichment implements BaseEnrichment {
             birth.setId(UUID.randomUUID().toString());
             birth.setDateOfReport(doreport);
             birth.setAuditDetails(auditDetails);
+            birth.setIsAdopted(true);
             if(birth.getPlaceofBirthId() != null || !birth.getPlaceofBirthId().isEmpty()){
                 Object mdmsData = mdmsUtil.mdmsCallForLocation(request.getRequestInfo(), birth.getTenantId());
                // mdmsDataService.setKsmartLocationDetails(birth, mdmsData);

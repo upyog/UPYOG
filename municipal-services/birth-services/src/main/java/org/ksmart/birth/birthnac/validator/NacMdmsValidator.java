@@ -7,7 +7,7 @@ import org.apache.commons.collections4.MapUtils;
 import org.egov.tracer.model.CustomException;
 import org.ksmart.birth.utils.BirthConstants;
 import org.ksmart.birth.utils.BirthUtils;
-import org.ksmart.birth.web.model.adoption.AdoptionDetailRequest;
+import org.ksmart.birth.web.model.birthnac.NacDetailRequest;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
@@ -22,7 +22,7 @@ import static org.ksmart.birth.utils.enums.ErrorCodes.MDMS_DATA_ERROR;
 @Slf4j
 public class NacMdmsValidator {
 
-    public void validateMdmsData(AdoptionDetailRequest request, Object mdmsData, Object mdmsDataLoc) {
+    public void validateMdmsData(NacDetailRequest request, Object mdmsData, Object mdmsDataLoc) {
 
         if (log.isDebugEnabled()) {
             log.debug("MDMS master data \n {}", BirthUtils.toJson(mdmsData));
@@ -60,7 +60,7 @@ public class NacMdmsValidator {
         List<String> birthPlaceCodes = getBirthPlaceCode(mdmsData);
 
         Map<String, String> errorMap = new ConcurrentHashMap<>();
-        request.getAdoptionDetails()
+        request.getNacDetails()
                 .forEach(birth -> {
 //                	if(birth.getPregnancyDuration() == null) {
 //                		  errorMap.put(BIRTH_DURATION, "Duration of pregnancy required");

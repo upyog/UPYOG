@@ -1,6 +1,6 @@
 package org.ksmart.birth.birthnac.repository.rowmapper;
 
-import org.ksmart.birth.web.model.adoption.AdoptionApplication;
+import org.ksmart.birth.web.model.birthnac.NacApplication;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
@@ -10,14 +10,14 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 @Component
-public class NacApplicationRowMapper implements ResultSetExtractor<List<AdoptionApplication>>, NacBaseRowMapper, NacParentDetailRowMapper, NacInformatDetailsRowMapper, NacParentAddressRowMapper, NacInitiatorDetailsRowMapper {
+public class NacApplicationRowMapper implements ResultSetExtractor<List<NacApplication>>, NacBaseRowMapper, NacParentDetailRowMapper, NacInformatDetailsRowMapper, NacParentAddressRowMapper, NacInitiatorDetailsRowMapper {
 
     @Override
-    public List<AdoptionApplication> extractData(ResultSet rs) throws SQLException, DataAccessException { //how to handle null
-        List<AdoptionApplication> result = new ArrayList<>();
+    public List<NacApplication> extractData(ResultSet rs) throws SQLException, DataAccessException { //how to handle null
+        List<NacApplication> result = new ArrayList<>();
 
         while (rs.next()) {
-            result.add(AdoptionApplication.builder()
+            result.add(NacApplication.builder()
                     .id(rs.getString("ba_id"))
                     .dateOfReport(rs.getLong("ba_dateofreport"))
                     .dateOfBirth(rs.getLong("ba_dateofbirth"))
@@ -82,13 +82,13 @@ public class NacApplicationRowMapper implements ResultSetExtractor<List<Adoption
                     .applicationStatus(rs.getString("ba_status"))
                     .auditDetails(getAuditDetails(rs))
                     .parentsDetails(KsmartBirthParentDetail(rs))
-                    .birthStatisticsUuid(rs.getString("stat_id"))
+//                    .birthStatisticsUuid(rs.getString("stat_id"))
                     .birthPlaceUuid(rs.getString("pla_id"))
                     .fileNumber(rs.getString("ba_fm_fileno"))
                     .fileDate(rs.getLong("ba_file_date"))
                     .fileStatus(rs.getString("ba_file_status"))
-                    .informatDetail(getInformantDetail(rs))
-                    .initiatorDetails(getInitiatorDetail(rs))
+//                    .informatDetail(getInformantDetail(rs))
+//                    .initiatorDetails(getInitiatorDetail(rs))
                     .parentAddress(getKsmartBirthParentAddress(rs))
                     .build());
         }

@@ -12,8 +12,8 @@ import org.ksmart.birth.config.BirthConfiguration;
 import org.ksmart.birth.utils.BirthConstants;
 import org.ksmart.birth.utils.MdmsUtil;
 import org.ksmart.birth.utils.enums.ErrorCodes;
-import org.ksmart.birth.web.model.adoption.AdoptionApplication;
-import org.ksmart.birth.web.model.adoption.AdoptionDetailRequest;
+import org.ksmart.birth.web.model.birthnac.NacApplication;
+import org.ksmart.birth.web.model.birthnac.NacDetailRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -35,13 +35,13 @@ public class NacEnrichment implements BaseEnrichment {
     IdGenRepository idGenRepository;
  
 
-    public void enrichCreate(AdoptionDetailRequest request) {
+    public void enrichCreate(NacDetailRequest request) {
         Date date = new Date();
         long doreport = date.getTime();
         RequestInfo requestInfo = request.getRequestInfo();
         User userInfo = requestInfo.getUserInfo();
         AuditDetails auditDetails = buildAuditDetails(userInfo.getUuid(), Boolean.TRUE);
-        request.getAdoptionDetails().forEach(birth -> {
+        request.getNacDetails().forEach(birth -> {
 
             birth.setId(UUID.randomUUID().toString());
             birth.setDateOfReport(doreport);
@@ -51,6 +51,8 @@ public class NacEnrichment implements BaseEnrichment {
                // mdmsDataService.setKsmartLocationDetails(birth, mdmsData);
             }
             birth.setBirthPlaceUuid(UUID.randomUUID().toString());
+            birth.getApplicantDetails().setId(UUID.randomUUID().toString());
+            birth.getOtherChildrenDetails().setId(UUID.randomUUID().toString());
             birth.getParentsDetails().setFatherUuid(UUID.randomUUID().toString());
             birth.getParentsDetails().setMotherUuid(UUID.randomUUID().toString());
             if(birth.getParentsDetails() != null) {
@@ -67,9 +69,6 @@ public class NacEnrichment implements BaseEnrichment {
                 birth.getParentAddress().setBioAdoptPermanent("ADOPT");
                 birth.getParentAddress().setBioAdoptPresent("ADOPT");
             }
-            birth.setBirthStatisticsUuid(UUID.randomUUID().toString());
-            birth.setBirthInitiatorUuid(UUID.randomUUID().toString());
-
         });
         setApplicationNumbers(request);
 //        setFileNumbers(request);
@@ -77,12 +76,12 @@ public class NacEnrichment implements BaseEnrichment {
         setPermanentAddress(request);
     }
 
-    public void enrichUpdate(AdoptionDetailRequest request) {
+    public void enrichUpdate(NacDetailRequest request) {
 
         RequestInfo requestInfo = request.getRequestInfo();
         User userInfo = requestInfo.getUserInfo();
         AuditDetails auditDetails = buildAuditDetails(userInfo.getUuid(), Boolean.FALSE);
-        request.getAdoptionDetails()
+        request.getNacDetails()
                 .forEach(birth -> birth.setAuditDetails(auditDetails)); 
       //  setRegistrationNumber(request); 
         setPresentAddress(request);
@@ -91,29 +90,29 @@ public class NacEnrichment implements BaseEnrichment {
  
 
  
-    private void setApplicationNumbers(AdoptionDetailRequest request) {
+    private void setApplicationNumbers(NacDetailRequest request) {
         RequestInfo requestInfo = request.getRequestInfo();
-        List<AdoptionApplication> adoptionDetails = request.getAdoptionDetails();
-        String tenantId = adoptionDetails.get(0)
+        List<NacApplication> nacDetails = request.getNacDetails();
+        String tenantId = nacDetails.get(0)
                 .getTenantId();
         List<String> filecodes = getIds(requestInfo,
                 tenantId,
                 config.getAdoptionAckIdName(),
-                request.getAdoptionDetails().get(0).getApplicationType(),
+                request.getNacDetails().get(0).getApplicationType(),
                 "APPL",
-                adoptionDetails.size());
-        validateFileCodes(filecodes, adoptionDetails.size());
+                nacDetails.size());
+        validateFileCodes(filecodes, nacDetails.size());
 
         ListIterator<String> itr = filecodes.listIterator();
-        request.getAdoptionDetails()
+        request.getNacDetails()
                 .forEach(adoption -> {
                 	adoption.setApplicationNo(itr.next());
                 });
     }
  
 
-    private void setPresentAddress(AdoptionDetailRequest request) {
-        request.getAdoptionDetails()
+    private void setPresentAddress(NacDetailRequest request) {
+        request.getNacDetails()
                 .forEach(birth -> {
                     if (birth.getParentAddress() != null) {
                         if (birth.getParentAddress().getPresentaddressCountry() != null && birth.getParentAddress().getPresentaddressStateName() != null) {
@@ -168,8 +167,8 @@ public class NacEnrichment implements BaseEnrichment {
                     }
                 });
     }
-    private void setPermanentAddress(AdoptionDetailRequest request) {
-        request.getAdoptionDetails()
+    private void setPermanentAddress(NacDetailRequest request) {
+        request.getNacDetails()
                 .forEach(birth -> {
                     if (birth.getParentAddress() != null && birth.getParentAddress().getIsPrsentAddress() != null)  {
                         birth.getParentAddress().setIsPrsentAddressInt(birth.getParentAddress().getIsPrsentAddress() == true ? 1 : 0);

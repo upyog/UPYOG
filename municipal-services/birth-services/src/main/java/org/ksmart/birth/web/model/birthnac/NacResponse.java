@@ -23,23 +23,23 @@ public class NacResponse {
     @JsonProperty("ResponseInfo")
     private ResponseInfo responseInfo;
 
-    @JsonProperty("ChildDetailsAdoption")
+    @JsonProperty("nacDetails")
     @Valid
-    private List<NacApplication> adoptionDetails;
+    private List<NacApplication> nacDetails;
 
-    @JsonProperty("BirthCertificate")
-    @Valid
-    private BirthCertificate birthCertificate;
+//    @JsonProperty("BirthCertificate")
+//    @Valid
+//    private BirthCertificate birthCertificate;
 
 
     @JsonProperty("Count")
     private int count;
 
-    public NacResponse addAdoptionApplication(NacApplication newAdoption) {
-        if (adoptionDetails == null) {
-        	adoptionDetails = new ArrayList<>();
+    public NacResponse addNac(NacApplication newNac) {
+        if (nacDetails == null) {
+        	nacDetails = new ArrayList<>();
         }
-        adoptionDetails.add(newAdoption);
+        nacDetails.add(newNac);
         return this;
     }
 }

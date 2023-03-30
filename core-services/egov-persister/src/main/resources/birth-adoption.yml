@@ -6,14 +6,15 @@ serviceMaps:
       fromTopic: save-birth-adoption-topic
       isTransaction: true
       queryMaps:
-        - query: INSERT INTO public.eg_birth_details(id,dateofreport,dateofbirth,timeofbirth,am_pm,firstname_en,firstname_ml,middlename_en,middlename_ml,lastname_en,lastname_ml,tenantid,
-            gender,remarks_en,remarks_ml,aadharno,esign_user_code,esign_user_desig_code,is_adopted,is_abandoned,is_multiple_birth,is_father_info_missing,is_mother_info_missing,no_of_alive_birth,
-            multiplebirthdetid,is_born_outside,ot_passportno,ot_dateofarrival,applicationtype,businessservice,workflowcode,fm_fileno,file_date,file_status,applicationno,registrationno,registration_date,
+        - query: INSERT INTO public.eg_birth_details(id,dateofreport,dateofbirth,timeofbirth,am_pm,firstname_en,firstname_ml,middlename_en,middlename_ml,
+            lastname_en,lastname_ml,tenantid,
+            gender,remarks_en,remarks_ml,aadharno,esign_user_code,esign_user_desig_code,is_adopted,is_abandoned,is_multiple_birth,is_father_info_missing,is_mother_info_missing,
+            applicationtype,businessservice,workflowcode,fm_fileno,file_date,file_status,applicationno,registrationno,registration_date,
             action,status, createdtime, createdby, lastmodifiedtime, lastmodifiedby,           
             adopt_deed_order_no,adopt_dateoforder_deed,adopt_issuing_auththority,adopt_has_agency,adopt_agency_name,adopt_agency_address,
             adopt_decree_order_no,adopt_dateoforder_decree,adopt_agency_contact_person,adopt_agency_contact_person_mobileno,old_birth_reg_no) 
             VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,
-             ?,?,?,?,?,?,?,?,?,?);
+             ?,?,?,?,?);
 
           basePath: AdoptionDetails.*
           jsonMaps:
@@ -61,17 +62,7 @@ serviceMaps:
 
             - jsonPath: $.AdoptionDetails.*.ParentsDetails.isfatherInfo
 
-            - jsonPath: $.AdoptionDetails.*.ParentsDetails.ismotherInfo
-
-            - jsonPath: $.AdoptionDetails.*.no_of_alive_birth
-
-            - jsonPath: $.AdoptionDetails.*.multiplebirthdetid
-
-            - jsonPath: $.AdoptionDetails.*.is_born_outside
-
-            - jsonPath: $.AdoptionDetails.*.ot_passportno
-
-            - jsonPath: $.AdoptionDetails.*.ot_dateofarrival
+            - jsonPath: $.AdoptionDetails.*.ParentsDetails.ismotherInfo            
 
             - jsonPath: $.AdoptionDetails.*.applicationtype
 
@@ -83,7 +74,7 @@ serviceMaps:
 
             - jsonPath: $.AdoptionDetails.*.fileDate
 
-            - jsonPath: $.AdoptionDetails.*.fileStatus7
+            - jsonPath: $.AdoptionDetails.*.fileStatus
 
             - jsonPath: $.AdoptionDetails.*.applicationNumber
 
@@ -562,94 +553,115 @@ serviceMaps:
             - jsonPath: $.AdoptionDetails.*.auditDetails.lastModifiedTime
 
     - version: 1.0
-      description: Persists update birth details in eg_birth_details  table
-      fromTopic: update-adoption-application-topic
+      description: Persists update birth adoption details in eg_birth_details  table
+      fromTopic: update-birth-adoption-topic
       isTransaction: true
       queryMaps:
+          - query: UPDATE public.eg_birth_details SET dateofreport=?, dateofbirth=?, timeofbirth=?, am_pm=?, firstname_en=?, firstname_ml=?, middlename_en=?,
+              middlename_ml=?, lastname_en=?, lastname_ml=?, tenantid=?, gender=?, remarks_en=?, remarks_ml=?, aadharno=?, esign_user_code=?,
+              esign_user_desig_code=?, is_adopted=?, is_abandoned=?, is_multiple_birth=?, is_father_info_missing=?, is_mother_info_missing=?,
+              applicationtype=?, businessservice=?,
+              workflowcode=?, fm_fileno=?, file_date=?, file_status=?, applicationno=?, registrationno=?, registration_date=?, action=?, status=?,
+              lastmodifiedtime=?, lastmodifiedby=?, adopt_deed_order_no=?, adopt_dateoforder_deed=?, adopt_issuing_auththority=?, adopt_has_agency=?,
+              adopt_agency_name=?, adopt_agency_address=? ,
+               adopt_decree_order_no=?,adopt_dateoforder_decree=?,adopt_agency_contact_person=?,adopt_agency_contact_person_mobileno=?
+              WHERE id=?;
 
-        - query: UPDATE public.eg_birth_details SET dateofbirth=?, timeofbirth=?, am_pm=?, firstname_en=?, firstname_ml=?, middlename_en=?, middlename_ml=?,
-              lastname_en=?, lastname_ml=?, tenantid=?, gender=?, aadharno=?, esign_user_code=?, esign_user_desig_code=?,
-              is_multiple_birth=?, is_father_info_missing=?, is_mother_info_missing=?, no_of_alive_birth=?, multiplebirthdetid=?, is_born_outside=?,
-              ot_passportno=?, ot_dateofarrival=?, applicationtype=?, businessservice=?, workflowcode=?, fm_fileno=?, file_date=?, file_status=?,
-              applicationno=?, registrationno=?, registration_date=?, action=?, status=?, lastmodifiedby=?,
-              lastmodifiedtime=? WHERE id=?;
+            basePath: AdoptionDetails.*
+            jsonMaps:
+            
+              - jsonPath: $.AdoptionDetails.*.dateofreport
 
+              - jsonPath: $.AdoptionDetails.*.childDOB
 
-          basePath: AdoptionDetails.*
-          jsonMaps:
-            - jsonPath: $.AdoptionDetails.*.childDOB
+              - jsonPath: $.AdoptionDetails.*.birthDateTime
 
-            - jsonPath: $.AdoptionDetails.*.birthDateTime
+              - jsonPath: $.AdoptionDetails.*.am_pm     
 
-            - jsonPath: $.AdoptionDetails.*.am_pm
+              - jsonPath: $.AdoptionDetails.*.childFirstNameEn
 
-            - jsonPath: $.AdoptionDetails.*.childFirstNameEn
+              - jsonPath: $.AdoptionDetails.*.childFirstNameMl
 
-            - jsonPath: $.AdoptionDetails.*.childFirstNameMl
+              - jsonPath: $.AdoptionDetails.*.childMiddleNameEn
 
-            - jsonPath: $.AdoptionDetails.*.childMiddleNameEn
+              - jsonPath: $.AdoptionDetails.*.childMiddleNameMl
 
-            - jsonPath: $.AdoptionDetails.*.childMiddleNameMl
+              - jsonPath: $.AdoptionDetails.*.childLastNameEn
 
-            - jsonPath: $.AdoptionDetails.*.childLastNameEn
+              - jsonPath: $.AdoptionDetails.*.childLastNameMl
 
-            - jsonPath: $.AdoptionDetails.*.childLastNameMl
+              - jsonPath: $.AdoptionDetails.*.tenantid
 
-            - jsonPath: $.AdoptionDetails.*.tenantid
+              - jsonPath: $.AdoptionDetails.*.gender
 
-            - jsonPath: $.AdoptionDetails.*.gender
+              - jsonPath: $.AdoptionDetails.*.remarks_en
 
-            - jsonPath: $.AdoptionDetails.*.childAadharNo
+              - jsonPath: $.AdoptionDetails.*.remarks_ml
 
-            - jsonPath: $.AdoptionDetails.*.esign_user_code
+              - jsonPath: $.AdoptionDetails.*.childAadharNo
 
-            - jsonPath: $.AdoptionDetails.*.esign_user_desig_code
+              - jsonPath: $.AdoptionDetails.*.esign_user_code
 
-            - jsonPath: $.AdoptionDetails.*.is_multiple_birth
+              - jsonPath: $.AdoptionDetails.*.esign_user_desig_code
 
-            - jsonPath: $.AdoptionDetails.*.isfatherInfo
+              - jsonPath: $.AdoptionDetails.*.is_adopted
 
-            - jsonPath: $.AdoptionDetails.*.ismotherInfo
+              - jsonPath: $.AdoptionDetails.*.is_abandoned
 
-            - jsonPath: $.AdoptionDetails.*.no_of_alive_birth
+              - jsonPath: $.AdoptionDetails.*.is_multiple_birth
 
-            - jsonPath: $.AdoptionDetails.*.multiplebirthdetid
+              - jsonPath: $.AdoptionDetails.*.ParentsDetails.isfatherInfo
 
-            - jsonPath: $.AdoptionDetails.*.is_born_outside
+              - jsonPath: $.AdoptionDetails.*.ParentsDetails.ismotherInfo            
 
-            - jsonPath: $.AdoptionDetails.*.ot_passportno
+              - jsonPath: $.AdoptionDetails.*.applicationtype
 
-            - jsonPath: $.AdoptionDetails.*.ot_dateofarrival
+              - jsonPath: $.AdoptionDetails.*.businessservice
 
-            - jsonPath: $.AdoptionDetails.*.applicationtype
+              - jsonPath: $.AdoptionDetails.*.workflowcode
 
-            - jsonPath: $.AdoptionDetails.*.businessservice
+              - jsonPath: $.AdoptionDetails.*.fileNumber
 
-            - jsonPath: $.AdoptionDetails.*.workflowcode
+              - jsonPath: $.AdoptionDetails.*.fileDate
 
-            - jsonPath: $.AdoptionDetails.*.fileNumber
+              - jsonPath: $.AdoptionDetails.*.fileStatus
 
-            - jsonPath: $.AdoptionDetails.*.fileDate
+              - jsonPath: $.AdoptionDetails.*.applicationNumber
 
-            - jsonPath: $.AdoptionDetails.*.fileStatus
+              - jsonPath: $.AdoptionDetails.*.registrationno
 
-            - jsonPath: $.AdoptionDetails.*.applicationNumber
+              - jsonPath: $.AdoptionDetails.*.registration_date
 
-            - jsonPath: $.AdoptionDetails.*.registrationNo
+              - jsonPath: $.AdoptionDetails.*.action
 
-            - jsonPath: $.AdoptionDetails.*.registrationDate
+              - jsonPath: $.AdoptionDetails.*.applicationStatus
 
-            - jsonPath: $.AdoptionDetails.*.action
+              - jsonPath: $.AdoptionDetails.*.auditDetails.lastModifiedTime
 
-            - jsonPath: $.AdoptionDetails.*.applicationStatus
+              - jsonPath: $.AdoptionDetails.*.auditDetails.lastModifiedBy              
 
-            - jsonPath: $.AdoptionDetails.*.auditDetails.lastModifiedBy
+              - jsonPath: $.AdoptionDetails.*.adoptdeedorderno
+           
+              - jsonPath: $.AdoptionDetails.*.adoptdateoforderdeed
+           
+              - jsonPath: $.AdoptionDetails.*.adoptissuingauththority
+           
+              - jsonPath: $.AdoptionDetails.*.adopthasagency
+           
+              - jsonPath: $.AdoptionDetails.*.adoptagencyname
+           
+              - jsonPath: $.AdoptionDetails.*.adoptagencyaddress 
+            
+              - jsonPath: $.AdoptionDetails.*.adoptdecreeorderno 
+             
+              - jsonPath: $.AdoptionDetails.*.adoptdateoforderdecree 
+              
+              - jsonPath: $.AdoptionDetails.*.adoptagencycontactperson 
+            
+              - jsonPath: $.AdoptionDetails.*.adoptagencycontactpersonmobileno 
 
-            - jsonPath: $.AdoptionDetails.*.auditDetails.lastModifiedTime
-
-            - jsonPath: $.AdoptionDetails.*.id
-
-        - query: UPDATE public.eg_birth_place SET placeofbirthid=?, hospitalid=?, public_place_id=?, institution_type_id=?, institution_id=?, vehicletypeid=?, vehicle_registration_no=?, 
+              - jsonPath: $.AdoptionDetails.*.id
+          - query: UPDATE public.eg_birth_place SET placeofbirthid=?, hospitalid=?, public_place_id=?, institution_type_id=?, institution_id=?, vehicletypeid=?, vehicle_registration_no=?, 
                 vehicle_from_en=?, vehicle_to_en=?, vehicle_from_ml=?, vehicle_to_ml=?, vehicle_admit_hospital_en=?, ho_householder_en=?, ho_householder_ml=?, ho_locality_en=?, 
                 ho_locality_ml=?, ho_street_name_en=?, ho_street_name_ml=?, ho_housename_en=?, ho_housename_ml=?, ho_villageid=?, ho_talukid=?, ho_districtid=?, ho_stateid=?, ho_poid=?, ho_pinno=?, 
                 ho_countryid=?, ward_id=?, auth_officer_id=?, auth_officer_desig_id=?, oth_auth_officer_name=?, oth_auth_officer_desig=?, 
@@ -657,8 +669,8 @@ serviceMaps:
                 lastmodifiedby=?, lastmodifiedtime=?, vehicle_haltplace_ml=?, vehicle_desc=?, public_place_desc=?, 
                 public_locality_en=?, public_locality_ml=?, public_street_name_en=?, public_street_name_ml=?  WHERE  birthdtlid=?;
 
-          basePath: AdoptionDetails.*
-          jsonMaps:
+            basePath: AdoptionDetails.*
+            jsonMaps:
             - jsonPath: $.AdoptionDetails.*.birthPlace
 
             - jsonPath: $.AdoptionDetails.*.hospitalCode
@@ -755,9 +767,9 @@ serviceMaps:
             - jsonPath: $.AdoptionDetails.*.id
 
 
-        - query: UPDATE public.eg_birth_father_information SET firstname_en=?, firstname_ml=?, aadharno=?, ot_passportno=?,  lastmodifiedtime=?, lastmodifiedby=? WHERE birthdtlid=?;
-          basePath: AdoptionDetails.*.ParentsDetails
-          jsonMaps:
+          - query: UPDATE public.eg_birth_father_information SET firstname_en=?, firstname_ml=?, aadharno=?, ot_passportno=?,  lastmodifiedtime=?, lastmodifiedby=? WHERE birthdtlid=?;
+            basePath: AdoptionDetails.*.ParentsDetails
+            jsonMaps:
 
             - jsonPath: $.AdoptionDetails.*.ParentsDetails.firstname_en
 
@@ -773,10 +785,10 @@ serviceMaps:
 
             - jsonPath: $.AdoptionDetails.*.id
 
-        - query: UPDATE public.eg_birth_mother_information SET firstname_en=?, firstname_ml=?,  aadharno=?, ot_passportno=?,  lastmodifiedtime=?, lastmodifiedby=? WHERE birthdtlid=?;
+          - query: UPDATE public.eg_birth_mother_information SET firstname_en=?, firstname_ml=?,  aadharno=?, ot_passportno=?,  lastmodifiedtime=?, lastmodifiedby=? WHERE birthdtlid=?;
 
-          basePath: AdoptionDetails.*.ParentsDetails
-          jsonMaps:
+            basePath: AdoptionDetails.*.ParentsDetails
+            jsonMaps:
 
             - jsonPath: $.AdoptionDetails.*.ParentsDetails.motherFirstNameEn
 
@@ -793,14 +805,14 @@ serviceMaps:
             - jsonPath: $.AdoptionDetails.*.id
 
 
-        - query: UPDATE public.eg_birth_permanent_address SET  housename_no_en=?, housename_no_ml=?, ot_address1_en=?, ot_address1_ml=?,
-            ot_address2_en=?, ot_address2_ml=?, ot_state_region_province_en=?, villageid=?, tenantid=?, talukid=?, ward_code=?,
-            districtid=?, stateid=?, poid=?, pinno=?, countryid=?, bio_adopt=?, taluk_name=?, same_as_present=?, locality_en=?, locality_ml=?,
-            street_name_en=?, street_name_ml=?, ot_zipcode=?, lastmodifiedby=?, lastmodifiedtime=?, family_emailid=?, family_mobileno=?, postoffice_en=?,
-            postoffice_ml=?, village_name=? WHERE birthdtlid=?;
+          - query: UPDATE public.eg_birth_permanent_address SET  housename_no_en=?, housename_no_ml=?, ot_address1_en=?, ot_address1_ml=?,
+                   ot_address2_en=?, ot_address2_ml=?, ot_state_region_province_en=?, villageid=?, tenantid=?, talukid=?, ward_code=?,
+                   districtid=?, stateid=?, poid=?, pinno=?, countryid=?, bio_adopt=?, taluk_name=?, same_as_present=?, locality_en=?, locality_ml=?,
+                   street_name_en=?, street_name_ml=?, ot_zipcode=?, lastmodifiedby=?, lastmodifiedtime=?, family_emailid=?, family_mobileno=?, postoffice_en=?,
+                   postoffice_ml=?, village_name=? WHERE birthdtlid=?;
 
-          basePath: AdoptionDetails.*.AddressBirthDetails
-          jsonMaps:
+            basePath: AdoptionDetails.*.AddressBirthDetails
+            jsonMaps:
 
             - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.houseNameNoEnPermanent
 
@@ -867,12 +879,12 @@ serviceMaps:
             - jsonPath: $.AdoptionDetails.*.id
 
 
-        - query: UPDATE public.eg_birth_present_address SET housename_no_en=?, housename_no_ml=?, ot_address1_en=?,
-            ot_address1_ml=?, ot_address2_en=?, ot_address2_ml=?, ot_state_region_province_en=?, ot_state_region_province_ml=?, villageid=?, tenantid=?,
-            talukid=?, districtid=?, stateid=?, poid=?, pinno=?, countryid=?, bio_adopt=?, taluk_name=?, village_name=?, ward_code=?, 
-            locality_en=?, locality_ml=?, street_name_en=?, street_name_ml=?, lastmodifiedby=?, lastmodifiedtime=?, ot_zipcode=?, postoffice_en=?, postoffice_ml=? WHERE birthdtlid=?;
-          basePath: AdoptionDetails.*.AddressBirthDetails
-          jsonMaps:
+          - query: UPDATE public.eg_birth_present_address SET housename_no_en=?, housename_no_ml=?, ot_address1_en=?,
+                   ot_address1_ml=?, ot_address2_en=?, ot_address2_ml=?, ot_state_region_province_en=?, ot_state_region_province_ml=?, villageid=?, tenantid=?,
+                   talukid=?, districtid=?, stateid=?, poid=?, pinno=?, countryid=?, bio_adopt=?, taluk_name=?, village_name=?, ward_code=?, 
+                   locality_en=?, locality_ml=?, street_name_en=?, street_name_ml=?, lastmodifiedby=?, lastmodifiedtime=?, ot_zipcode=?, postoffice_en=?, postoffice_ml=? WHERE birthdtlid=?;
+            basePath: AdoptionDetails.*.AddressBirthDetails
+            jsonMaps:
 
             - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.houseNameNoEnPresent
 
@@ -935,16 +947,16 @@ serviceMaps:
             - jsonPath: $.AdoptionDetails.*.id
 
 
-        - query: UPDATE public.eg_birth_statitical_information SET  weight_of_child=?, duration_of_pregnancy_in_week=?, nature_of_medical_attention=?, cause_of_foetal_death=?,
-            delivery_method=?, religionid=?, father_nationalityid=?, father_educationid=?, father_education_subid=?,
-            father_proffessionid=?, mother_educationid=?, mother_education_subid=?, mother_proffessionid=?, mother_nationalityid=?, mother_age_marriage=?, mother_age_delivery=?,
-            mother_no_of_birth_given=?, mother_maritalstatusid=?, mother_unmarried=?,mother_res_lbid=?, mother_res_lb_code_id=?, mother_res_place_type_id=?, mother_res_lb_type_id=?,
-            mother_res_district_id=?, mother_res_state_id=?, mother_res_country_id=?, mother_resdnce_addr_type=?, mother_resdnce_tenant=?, mother_resdnce_placetype=?,
-            mother_resdnce_place_en=?, mother_resdnce_place_ml=?, mother_resdnce_lbtype=?, mother_resdnce_district=?, mother_resdnce_state=?, mother_resdnce_country=?,
-            mother_order_of_cur_delivery=?,mother_order_cur_child=?,mother_res_no_of_years=?,lastmodifiedtime=?, lastmodifiedby=? WHERE birthdtlid=?;
+          - query: UPDATE public.eg_birth_statitical_information SET  weight_of_child=?, duration_of_pregnancy_in_week=?, nature_of_medical_attention=?, cause_of_foetal_death=?,
+                   delivery_method=?, religionid=?, father_nationalityid=?, father_educationid=?, father_education_subid=?,
+                   father_proffessionid=?, mother_educationid=?, mother_education_subid=?, mother_proffessionid=?, mother_nationalityid=?, mother_age_marriage=?, mother_age_delivery=?,
+                   mother_no_of_birth_given=?, mother_maritalstatusid=?, mother_unmarried=?,mother_res_lbid=?, mother_res_lb_code_id=?, mother_res_place_type_id=?, mother_res_lb_type_id=?,
+                   mother_res_district_id=?, mother_res_state_id=?, mother_res_country_id=?, mother_resdnce_addr_type=?, mother_resdnce_tenant=?, mother_resdnce_placetype=?,
+                   mother_resdnce_place_en=?, mother_resdnce_place_ml=?, mother_resdnce_lbtype=?, mother_resdnce_district=?, mother_resdnce_state=?, mother_resdnce_country=?,
+                   mother_order_of_cur_delivery=?,mother_order_cur_child=?,mother_res_no_of_years=?,lastmodifiedtime=?, lastmodifiedby=? WHERE birthdtlid=?;
 
-          basePath: AdoptionDetails.*
-          jsonMaps:
+            basePath: AdoptionDetails.*
+            jsonMaps:
 
             - jsonPath: $.AdoptionDetails.*.birthWeight
 
@@ -1029,10 +1041,10 @@ serviceMaps:
             - jsonPath: $.AdoptionDetails.*.id
 
 
-        - query: UPDATE public.eg_birth_initiator SET initiator_name=?, initiator_institution=?, initiator_inst_desig=?, relation=?, initiator_address=?,
-            is_declared=?, declaration_id=?, aadharno=?, mobileno=?, lastmodifiedby=?, lastmodifiedtime=? WHERE birthdtlid=?;
-          basePath: AdoptionDetails.*.InitiatorinfoDetails
-          jsonMaps:
+          - query: UPDATE public.eg_birth_initiator SET initiator_name=?, initiator_institution=?, initiator_inst_desig=?, relation=?, initiator_address=?,
+                   is_declared=?, declaration_id=?, aadharno=?, mobileno=?, lastmodifiedby=?, lastmodifiedtime=? WHERE birthdtlid=?;
+            basePath: AdoptionDetails.*.InitiatorinfoDetails
+            jsonMaps:
 
             - jsonPath: $.AdoptionDetails.*.InitiatorinfoDetails.initiatorNameEn
 

@@ -1,0 +1,861 @@
+serviceMaps:
+  serviceName: birth-services
+  mappings:
+    - version: 1.0
+      description: Persists save birth details in eg_birth_details  table
+      fromTopic: save-birth-nac-topic
+      isTransaction: true
+      queryMaps:
+        - query: INSERT INTO public.eg_birth_details(id,dateofreport,dateofbirth,timeofbirth,am_pm,firstname_en,firstname_ml,middlename_en,middlename_ml,lastname_en,lastname_ml,tenantid,gender,remarks_en,remarks_ml,aadharno,esign_user_code,esign_user_desig_code,
+                 is_father_info_missing,is_mother_info_missing,applicationtype,businessservice,workflowcode,fm_fileno,file_date,file_status,applicationno,registrationno,registration_date,
+                 action,status, createdtime, createdby, lastmodifiedtime, lastmodifiedby) 
+                 VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
+            
+          basePath: NacDetails.*
+          jsonMaps:
+            - jsonPath: $.NacDetails.*.id
+
+            - jsonPath: $.NacDetails.*.dateofreport
+
+            - jsonPath: $.NacDetails.*.childDOB
+
+            - jsonPath: $.NacDetails.*.birthDateTime
+
+            - jsonPath: $.NacDetails.*.am_pm
+
+            - jsonPath: $.NacDetails.*.childFirstNameEn
+
+            - jsonPath: $.NacDetails.*.childFirstNameMl
+
+            - jsonPath: $.NacDetails.*.childMiddleNameEn
+
+            - jsonPath: $.NacDetails.*.childMiddleNameMl
+
+            - jsonPath: $.NacDetails.*.childLastNameEn
+
+            - jsonPath: $.NacDetails.*.childLastNameMl
+
+            - jsonPath: $.NacDetails.*.tenantid
+
+            - jsonPath: $.NacDetails.*.gender
+
+            - jsonPath: $.NacDetails.*.remarks_en
+
+            - jsonPath: $.NacDetails.*.remarks_ml
+
+            - jsonPath: $.NacDetails.*.childAadharNo
+
+            - jsonPath: $.NacDetails.*.esign_user_code
+
+            - jsonPath: $.NacDetails.*.esign_user_desig_code         
+
+            - jsonPath: $.NacDetails.*.ParentsDetails.isfatherInfo
+
+            - jsonPath: $.NacDetails.*.ParentsDetails.ismotherInfo
+           
+            - jsonPath: $.NacDetails.*.applicationtype
+
+            - jsonPath: $.NacDetails.*.businessservice
+
+            - jsonPath: $.NacDetails.*.workflowcode
+
+            - jsonPath: $.NacDetails.*.fileNumber
+
+            - jsonPath: $.NacDetails.*.fileDate
+
+            - jsonPath: $.NacDetails.*.fileStatus7
+
+            - jsonPath: $.NacDetails.*.applicationNumber
+
+            - jsonPath: $.NacDetails.*.registrationno
+
+            - jsonPath: $.NacDetails.*.registration_date
+
+            - jsonPath: $.NacDetails.*.action
+
+            - jsonPath: $.NacDetails.*.applicationStatus
+
+            - jsonPath: $.NacDetails.*.auditDetails.createdTime
+
+            - jsonPath: $.NacDetails.*.auditDetails.createdBy
+
+            - jsonPath: $.NacDetails.*.auditDetails.lastModifiedTime
+
+            - jsonPath: $.NacDetails.*.auditDetails.lastModifiedBy         
+            
+         
+            
+
+        - query: INSERT INTO public.eg_birth_place(id,birthdtlid,placeofbirthid,hospitalid,public_place_id,institution_type_id,institution_id,vehicletypeid,vehicle_registration_no,vehicle_from_en,
+            vehicle_to_en,vehicle_from_ml, vehicle_to_ml,vehicle_admit_hospital_en,ho_householder_en,ho_locality_en,ho_locality_ml,ho_street_name_en,ho_street_name_ml,ho_housename_en,ho_housename_ml,ho_villageid,
+            ho_talukid,ho_districtid,ho_stateid,ho_poid,ho_pinno,ho_countryid,ward_id,auth_officer_id,auth_officer_desig_id,oth_auth_officer_name,oth_auth_officer_desig, informantsaddress_en,
+            informants_mobileno,informants_aadhaar_no,vehicle_haltplace_en,vehicle_hospitalid,createdby,createdtime,lastmodifiedby,lastmodifiedtime,vehicle_haltplace_ml,
+            vehicle_desc,public_place_desc,public_locality_en,public_locality_ml,public_street_name_en,public_street_name_ml)
+            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
+
+          basePath: NacDetails.*
+          jsonMaps:
+            - jsonPath: $.NacDetails.*.birthPlaceUuid
+
+            - jsonPath: $.NacDetails.*.id
+
+            - jsonPath: $.NacDetails.*.birthPlace
+
+            - jsonPath: $.NacDetails.*.hospitalCode
+
+            - jsonPath: $.NacDetails.*.publicPlaceType
+
+            - jsonPath: $.NacDetails.*.institutionTypeCode
+
+            - jsonPath: $.NacDetails.*.institutionNameCode
+
+            - jsonPath: $.NacDetails.*.vehicleType
+
+            - jsonPath: $.NacDetails.*.vehicleRegistrationNo
+
+            - jsonPath: $.NacDetails.*.vehicleFromEn
+
+            - jsonPath: $.NacDetails.*.vehicleToEn
+
+            - jsonPath: $.NacDetails.*.vehicleFromMl
+
+            - jsonPath: $.NacDetails.*.vehicleToMl
+
+            - jsonPath: $.NacDetails.*.vehicle_admit_hospital_en
+
+            - jsonPath: $.NacDetails.*.ho_householder_en
+
+            - jsonPath: $.NacDetails.*.adrsLocalityNameEn
+
+            - jsonPath: $.NacDetails.*.adrsLocalityNameMl
+
+            - jsonPath: $.NacDetails.*.adrsStreetNameEn
+
+            - jsonPath: $.NacDetails.*.adrsStreetNameMl
+
+            - jsonPath: $.NacDetails.*.adrsHouseNameEn
+
+            - jsonPath: $.NacDetails.*.adrsHouseNameMl
+
+            - jsonPath: $.NacDetails.*.ho_villageid
+
+            - jsonPath: $.NacDetails.*.ho_talukid
+
+            - jsonPath: $.NacDetails.*.ho_districtid
+
+            - jsonPath: $.NacDetails.*.ho_stateid
+
+            - jsonPath: $.NacDetails.*.adrsPostOffice
+
+            - jsonPath: $.NacDetails.*.adrsPincode
+
+            - jsonPath: $.NacDetails.*.ho_countryid
+
+            - jsonPath: $.NacDetails.*.wardNo
+
+            - jsonPath: $.NacDetails.*.InformarHosInstDetails.infomantFirstNameEn
+
+            - jsonPath: $.NacDetails.*.InformarHosInstDetails.informerDesi
+
+            - jsonPath: $.NacDetails.*.InformarHosInstDetails.oth_auth_officer_name
+
+            - jsonPath: $.NacDetails.*.InformarHosInstDetails.oth_auth_officer_desig
+
+            - jsonPath: $.NacDetails.*.InformarHosInstDetails.informerAddress
+
+            - jsonPath: $.NacDetails.*.InformarHosInstDetails.infomantMobile
+
+            - jsonPath: $.NacDetails.*.InformarHosInstDetails.infomantAadhar
+
+            - jsonPath: $.NacDetails.*.vehicleHaltPlace
+
+            - jsonPath: $.NacDetails.*.setadmittedHospitalEn
+
+            - jsonPath: $.NacDetails.*.auditDetails.createdBy
+
+            - jsonPath: $.NacDetails.*.auditDetails.createdTime
+
+            - jsonPath: $.NacDetails.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.NacDetails.*.auditDetails.lastModifiedTime
+
+            - jsonPath: $.NacDetails.*.vehicleHaltPlaceMl
+
+            - jsonPath: $.NacDetails.*.vehicleDesDetailsEn
+
+            - jsonPath: $.NacDetails.*.publicPlaceDecpEn
+
+            - jsonPath: $.NacDetails.*.localityNameEn
+
+            - jsonPath: $.NacDetails.*.localityNameMl
+
+            - jsonPath: $.NacDetails.*.streetNameEn
+
+            - jsonPath: $.NacDetails.*.streetNameMl
+
+
+
+        - query: INSERT INTO public.eg_birth_father_information (id, firstname_en, firstname_ml,  aadharno, birthdtlid, createdtime, createdby, lastmodifiedtime, lastmodifiedby, bio_adopt)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+          basePath: NacDetails.*.ParentsDetails
+          jsonMaps:
+
+            - jsonPath: $.NacDetails.*.ParentsDetails.fatherUuid
+
+            - jsonPath: $.NacDetails.*.ParentsDetails.fatherFirstNameEn
+
+            - jsonPath: $.NacDetails.*.ParentsDetails.fatherFirstNameMl
+
+            - jsonPath: $.NacDetails.*.ParentsDetails.fatherAadhar
+
+            - jsonPath: $.NacDetails.*.id
+
+            - jsonPath: $.NacDetails.*.auditDetails.createdTime
+
+            - jsonPath: $.NacDetails.*.auditDetails.createdBy
+
+            - jsonPath: $.NacDetails.*.auditDetails.lastModifiedTime
+
+            - jsonPath: $.NacDetails.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.NacDetails.*.ParentsDetails.fatherBioAdopt
+
+
+        - query: INSERT INTO public.eg_birth_mother_information(id, firstname_en, firstname_ml, aadharno, birthdtlid, createdtime, createdby, lastmodifiedtime, lastmodifiedby, bio_adopt)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+          basePath: NacDetails.*.ParentsDetails
+          jsonMaps:
+            - jsonPath: $.NacDetails.*.ParentsDetails.motherUuid
+
+            - jsonPath: $.NacDetails.*.ParentsDetails.motherFirstNameEn
+
+            - jsonPath: $.NacDetails.*.ParentsDetails.motherFirstNameMl
+
+            - jsonPath: $.NacDetails.*.ParentsDetails.motherAadhar
+
+            - jsonPath: $.NacDetails.*.id
+
+            - jsonPath: $.NacDetails.*.auditDetails.createdTime
+
+            - jsonPath: $.NacDetails.*.auditDetails.createdBy
+
+            - jsonPath: $.NacDetails.*.auditDetails.lastModifiedTime
+
+            - jsonPath: $.NacDetails.*.auditDetails.lastModifiedBy,
+
+            - jsonPath: $.NacDetails.*.ParentsDetails.motherBioAdopt
+
+        - query: INSERT INTO public.eg_birth_permanent_address(id, housename_no_en, housename_no_ml, ot_address1_en, ot_address1_ml, ot_address2_en, ot_address2_ml,ot_state_region_province_en,
+            villageid, tenantid, talukid, districtid, stateid, poid, pinno, countryid, birthdtlid, same_as_present, createdtime, createdby, lastmodifiedtime,
+            lastmodifiedby, bio_adopt, taluk_name, village_name, ward_code, locality_en, locality_ml, street_name_en,
+            street_name_ml, ot_zipcode,family_emailid, family_mobileno, postoffice_en, postoffice_ml)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,  ?, ?, ?, ?, ?, ?);
+
+          basePath: NacDetails.*.AddressBirthDetails
+          jsonMaps:
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.permanentUuid
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.houseNameNoEnPermanent
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.houseNameNoMlPermanent
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.permntOutsideIndiaLineoneEn
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.permntOutsideIndiaLineoneMl
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.permntOutsideIndiaLinetwoEn
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.permntOutsideIndiaLinetwoMl
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.permntOutsideIndiaprovinceEn
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.permntInKeralaAdrVillage
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.permntInKeralaAdrLBName
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.permntInKeralaAdrTaluk
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.districtIdPermanent
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.stateIdPermanent
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.permntInKeralaAdrPostOffice
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.permntInKeralaAdrPincode
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.countryIdPermanent
+
+            - jsonPath: $.NacDetails.*.id
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.isPrsentAddressInt
+
+            - jsonPath: $.NacDetails.*.auditDetails.createdTime
+
+            - jsonPath: $.NacDetails.*.auditDetails.createdBy
+
+            - jsonPath: $.NacDetails.*.auditDetails.lastModifiedTime
+
+            - jsonPath: $.NacDetails.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.bioAdoptPermanent
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.permntOutsideKeralaTaluk
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.villageNamePermanent
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.permntInKeralaWardNo
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.localityEnPermanent
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.localityMlPermanent
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.streetNameEnPermanent
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.streetNameMlPermanent
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.permanentOutsideIndiaPostCode
+
+            - jsonPath: $.NacDetails.*.ParentsDetails.fatherEmail
+
+            - jsonPath: $.NacDetails.*.ParentsDetails.fatherMobile
+
+            - jsonPath: $.NacDetails.*.ParentsDetails.permntOutsideKeralaPostOfficeEn
+
+            - jsonPath: $.NacDetails.*.ParentsDetails.permntOutsideKeralaPostOfficeMl
+
+
+        - query: INSERT INTO public.eg_birth_present_address(id, housename_no_en, housename_no_ml, ot_address1_en, ot_address1_ml, ot_address2_en, ot_address2_ml,
+            ot_state_region_province_en, ot_state_region_province_ml, villageid, tenantid, talukid, districtid, stateid, poid, pinno, countryid, birthdtlid, createdtime, createdby, lastmodifiedtime, lastmodifiedby,
+            bio_adopt, taluk_name, village_name, ward_code, locality_en, locality_ml, street_name_en,street_name_ml, ot_zipcode)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+          basePath: NacDetails.*.AddressBirthDetails
+          jsonMaps:
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.presentUuid
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.houseNameNoEnPresent
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.houseNameNoMlPresent
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.presentOutSideIndiaAdressEn
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.presentOutSideIndiaAdressMl
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.presentOutSideIndiaAdressEnB
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.presentOutSideIndiaAdressMlB
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.presentOutSideIndiaProvinceEn
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.presentOutSideIndiaProvinceMl
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.presentInsideKeralaVillage
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.presentInsideKeralaLBName
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.presentInsideKeralaTaluk
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.districtIdPresent
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.stateIdPresent
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.presentInsideKeralaPostOffice
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.presentInsideKeralaPincode
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.countryIdPresent
+
+            - jsonPath: $.NacDetails.*.id
+
+            - jsonPath: $.NacDetails.*.auditDetails.createdTime
+
+            - jsonPath: $.NacDetails.*.auditDetails.createdBy
+
+            - jsonPath: $.NacDetails.*.auditDetails.lastModifiedTime
+
+            - jsonPath: $.NacDetails.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.bioAdoptPresent
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.presentOutsideKeralaTaluk
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.villageNamePresent
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.presentWardNo
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.localityEnPresent
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.localityMlPresent
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.streetNameEnPresent
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.streetNameMlPresent
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.presentOutsideKeralaPincode
+
+       
+        - query: INSERT INTO public.eg_birth_applicant(
+            id, birthdtlid, name_en, address_en, aadharno, mobileno, is_declared,declaration_id,is_esigned,createdby, createdtime, lastmodifiedby, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+          basePath: NacDetails.*.ApplicantDetails
+          jsonMaps:
+
+            - jsonPath: $.NacDetails.*.ApplicantDetails.id
+
+            - jsonPath: $.NacDetails.*.id
+
+            - jsonPath: $.NacDetails.*.ApplicantDetails.applicantNameEn
+
+            - jsonPath: $.NacDetails.*.ApplicantDetails.applicantAddressEn
+
+            - jsonPath: $.NacDetails.*.ApplicantDetails.aadharNo
+
+            - jsonPath: $.NacDetails.*.ApplicantDetails.mobileNo
+
+            - jsonPath: $.NacDetails.*.ApplicantDetails.isDeclared
+
+            - jsonPath: $.NacDetails.*.ApplicantDetails.declarationId
+
+            - jsonPath: $.NacDetails.*.ApplicantDetails.isEsigned            
+
+            - jsonPath: $.NacDetails.*.auditDetails.createdBy
+
+            - jsonPath: $.NacDetails.*.auditDetails.createdTime
+
+            - jsonPath: $.NacDetails.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.NacDetails.*.auditDetails.lastModifiedTime
+                        
+        - query: INSERT INTO public.eg_birth_children_born(
+            id, birthdtlid, child_name_en, child_name_ml, sex, order_of_birth, dob,is_alive,createdby, createdtime, lastmodifiedby, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+          basePath: NacDetails.*.OtherChildren
+          jsonMaps:
+
+            - jsonPath: $.NacDetails.*.OtherChildren.id
+
+            - jsonPath: $.NacDetails.*.id
+
+            - jsonPath: $.NacDetails.*.OtherChildren.childNameEn
+
+            - jsonPath: $.NacDetails.*.OtherChildren.childNameMl
+
+            - jsonPath: $.NacDetails.*.OtherChildren.sex
+
+            - jsonPath: $.NacDetails.*.OtherChildren.orderOfBirth
+
+            - jsonPath: $.NacDetails.*.OtherChildren.dob
+
+            - jsonPath: $.NacDetails.*.OtherChildren.isAlive                
+
+            - jsonPath: $.NacDetails.*.auditDetails.createdBy
+
+            - jsonPath: $.NacDetails.*.auditDetails.createdTime
+
+            - jsonPath: $.NacDetails.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.NacDetails.*.auditDetails.lastModifiedTime
+
+    - version: 1.0
+      description: Persists update birth details in eg_birth_details  table
+      fromTopic: update-birth-nac-topic
+      isTransaction: true
+      queryMaps:
+
+        - query: UPDATE public.eg_birth_details SET dateofbirth=?, timeofbirth=?, am_pm=?, firstname_en=?, firstname_ml=?, middlename_en=?, middlename_ml=?,
+              lastname_en=?, lastname_ml=?, tenantid=?, gender=?, aadharno=?, esign_user_code=?, esign_user_desig_code=?,
+              is_multiple_birth=?, is_father_info_missing=?, is_mother_info_missing=?, no_of_alive_birth=?, multiplebirthdetid=?, is_born_outside=?,
+              ot_passportno=?, ot_dateofarrival=?, applicationtype=?, businessservice=?, workflowcode=?, fm_fileno=?, file_date=?, file_status=?,
+              applicationno=?, registrationno=?, registration_date=?, action=?, status=?, lastmodifiedby=?,
+              lastmodifiedtime=? WHERE id=?;
+
+
+          basePath: NacDetails.*
+          jsonMaps:
+            - jsonPath: $.NacDetails.*.childDOB
+
+            - jsonPath: $.NacDetails.*.birthDateTime
+
+            - jsonPath: $.NacDetails.*.am_pm
+
+            - jsonPath: $.NacDetails.*.childFirstNameEn
+
+            - jsonPath: $.NacDetails.*.childFirstNameMl
+
+            - jsonPath: $.NacDetails.*.childMiddleNameEn
+
+            - jsonPath: $.NacDetails.*.childMiddleNameMl
+
+            - jsonPath: $.NacDetails.*.childLastNameEn
+
+            - jsonPath: $.NacDetails.*.childLastNameMl
+
+            - jsonPath: $.NacDetails.*.tenantid
+
+            - jsonPath: $.NacDetails.*.gender
+
+            - jsonPath: $.NacDetails.*.childAadharNo
+
+            - jsonPath: $.NacDetails.*.esign_user_code
+
+            - jsonPath: $.NacDetails.*.esign_user_desig_code
+
+            - jsonPath: $.NacDetails.*.is_multiple_birth
+
+            - jsonPath: $.NacDetails.*.isfatherInfo
+
+            - jsonPath: $.NacDetails.*.ismotherInfo
+
+            - jsonPath: $.NacDetails.*.no_of_alive_birth
+
+            - jsonPath: $.NacDetails.*.multiplebirthdetid
+
+            - jsonPath: $.NacDetails.*.is_born_outside
+
+            - jsonPath: $.NacDetails.*.ot_passportno
+
+            - jsonPath: $.NacDetails.*.ot_dateofarrival
+
+            - jsonPath: $.NacDetails.*.applicationtype
+
+            - jsonPath: $.NacDetails.*.businessservice
+
+            - jsonPath: $.NacDetails.*.workflowcode
+
+            - jsonPath: $.NacDetails.*.fileNumber
+
+            - jsonPath: $.NacDetails.*.fileDate
+
+            - jsonPath: $.NacDetails.*.fileStatus
+
+            - jsonPath: $.NacDetails.*.applicationNumber
+
+            - jsonPath: $.NacDetails.*.registrationNo
+
+            - jsonPath: $.NacDetails.*.registrationDate
+
+            - jsonPath: $.NacDetails.*.action
+
+            - jsonPath: $.NacDetails.*.applicationStatus
+
+            - jsonPath: $.NacDetails.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.NacDetails.*.auditDetails.lastModifiedTime
+
+            - jsonPath: $.NacDetails.*.id
+
+        - query: UPDATE public.eg_birth_place SET placeofbirthid=?, hospitalid=?, public_place_id=?, institution_type_id=?, institution_id=?, vehicletypeid=?, vehicle_registration_no=?, 
+                vehicle_from_en=?, vehicle_to_en=?, vehicle_from_ml=?, vehicle_to_ml=?, vehicle_admit_hospital_en=?, ho_householder_en=?, ho_householder_ml=?, ho_locality_en=?, 
+                ho_locality_ml=?, ho_street_name_en=?, ho_street_name_ml=?, ho_housename_en=?, ho_housename_ml=?, ho_villageid=?, ho_talukid=?, ho_districtid=?, ho_stateid=?, ho_poid=?, ho_pinno=?, 
+                ho_countryid=?, ward_id=?, auth_officer_id=?, auth_officer_desig_id=?, oth_auth_officer_name=?, oth_auth_officer_desig=?, 
+                informantsaddress_en=?, informants_mobileno=?, informants_aadhaar_no=?, vehicle_haltplace_en=?, vehicle_hospitalid=?, 
+                lastmodifiedby=?, lastmodifiedtime=?, vehicle_haltplace_ml=?, vehicle_desc=?, public_place_desc=?, 
+                public_locality_en=?, public_locality_ml=?, public_street_name_en=?, public_street_name_ml=?  WHERE  birthdtlid=?;
+
+          basePath: NacDetails.*
+          jsonMaps:
+            - jsonPath: $.NacDetails.*.birthPlace
+
+            - jsonPath: $.NacDetails.*.hospitalCode
+
+            - jsonPath: $.NacDetails.*.publicPlaceType
+
+            - jsonPath: $.NacDetails.*.institutionTypeCode
+
+            - jsonPath: $.NacDetails.*.institutionId
+
+            - jsonPath: $.NacDetails.*.vehicleType
+
+            - jsonPath: $.NacDetails.*.vehicleRegistrationNo
+
+            - jsonPath: $.NacDetails.*.vehicleFromEn
+
+            - jsonPath: $.NacDetails.*.vehicleToEn
+
+            - jsonPath: $.NacDetails.*.vehicleFromMl
+
+            - jsonPath: $.NacDetails.*.vehicleToMl
+
+            - jsonPath: $.NacDetails.*.vehicle_admit_hospital_en
+
+            - jsonPath: $.NacDetails.*.ho_householder_en
+
+            - jsonPath: $.NacDetails.*.ho_householder_ml
+
+            - jsonPath: $.NacDetails.*.adrsLocalityNameEn
+
+            - jsonPath: $.NacDetails.*.adrsLocalityNameMl
+
+            - jsonPath: $.NacDetails.*.adrsStreetNameEn
+
+            - jsonPath: $.NacDetails.*.adrsStreetNameMl
+
+            - jsonPath: $.NacDetails.*.adrsHouseNameEn
+
+            - jsonPath: $.NacDetails.*.adrsHouseNameMl
+
+            - jsonPath: $.NacDetails.*.ho_villageid
+
+            - jsonPath: $.NacDetails.*.ho_talukid
+
+            - jsonPath: $.NacDetails.*.ho_districtid
+
+            - jsonPath: $.NacDetails.*.ho_stateid
+
+            - jsonPath: $.NacDetails.*.adrsPostOffice
+
+            - jsonPath: $.NacDetails.*.adrsPincode
+
+            - jsonPath: $.NacDetails.*.ho_countryid
+
+            - jsonPath: $.NacDetails.*.wardNo
+
+            - jsonPath: $.NacDetails.*.InformarHosInstDetails.infomantFirstNameEn
+
+            - jsonPath: $.NacDetails.*.InformarHosInstDetails.informerDesi
+
+            - jsonPath: $.NacDetails.*.InformarHosInstDetails.oth_auth_officer_name
+
+            - jsonPath: $.NacDetails.*.InformarHosInstDetails.oth_auth_officer_desig
+
+            - jsonPath: $.NacDetails.*.InformarHosInstDetails.informerAddress
+
+            - jsonPath: $.NacDetails.*.InformarHosInstDetails.infomantMobile
+
+            - jsonPath: $.NacDetails.*.InformarHosInstDetails.infomantAadhar
+
+            - jsonPath: $.NacDetails.*.vehicleHaltPlaceEn
+
+            - jsonPath: $.NacDetails.*.setadmittedHospitalEn
+
+            - jsonPath: $.NacDetails.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.NacDetails.*.auditDetails.lastModifiedTime
+
+
+            - jsonPath: $.NacDetails.*.vehicleHaltPlaceMl
+
+            - jsonPath: $.NacDetails.*.vehicleDesDetailsEn
+
+            - jsonPath: $.NacDetails.*.publicPlaceDecpEn
+
+            - jsonPath: $.NacDetails.*.localityNameEn
+
+            - jsonPath: $.NacDetails.*.localityNameMl
+
+            - jsonPath: $.NacDetails.*.streetNameEn
+
+            - jsonPath: $.NacDetails.*.streetNameMl
+
+            - jsonPath: $.NacDetails.*.id
+
+
+        - query: UPDATE public.eg_birth_father_information SET firstname_en=?, firstname_ml=?, aadharno=?, ot_passportno=?,  lastmodifiedtime=?, lastmodifiedby=? WHERE birthdtlid=?;
+          basePath: NacDetails.*.ParentsDetails
+          jsonMaps:
+
+            - jsonPath: $.NacDetails.*.ParentsDetails.firstname_en
+
+            - jsonPath: $.NacDetails.*.ParentsDetails.firstname_ml
+
+            - jsonPath: $.NacDetails.*.ParentsDetails.fatherAadhar
+
+            - jsonPath: $.NacDetails.*.ParentsDetails.fatherPassport
+
+            - jsonPath: $.NacDetails.*.auditDetails.lastModifiedTime
+
+            - jsonPath: $.NacDetails.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.NacDetails.*.id
+
+        - query: UPDATE public.eg_birth_mother_information SET firstname_en=?, firstname_ml=?,  aadharno=?, ot_passportno=?,  lastmodifiedtime=?, lastmodifiedby=? WHERE birthdtlid=?;
+
+          basePath: NacDetails.*.ParentsDetails
+          jsonMaps:
+
+            - jsonPath: $.NacDetails.*.ParentsDetails.motherFirstNameEn
+
+            - jsonPath: $.NacDetails.*.ParentsDetails.motherFirstNameMl
+
+            - jsonPath: $.NacDetails.*.ParentsDetails.motherAadhar
+
+            - jsonPath: $.NacDetails.*.ParentsDetails.motherPassport
+
+            - jsonPath: $.NacDetails.*.auditDetails.lastModifiedTime
+
+            - jsonPath: $.NacDetails.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.NacDetails.*.id
+
+
+        - query: UPDATE public.eg_birth_permanent_address SET  housename_no_en=?, housename_no_ml=?, ot_address1_en=?, ot_address1_ml=?,
+            ot_address2_en=?, ot_address2_ml=?, ot_state_region_province_en=?, villageid=?, tenantid=?, talukid=?, ward_code=?,
+            districtid=?, stateid=?, poid=?, pinno=?, countryid=?, bio_adopt=?, taluk_name=?, same_as_present=?, locality_en=?, locality_ml=?,
+            street_name_en=?, street_name_ml=?, ot_zipcode=?, lastmodifiedby=?, lastmodifiedtime=?, family_emailid=?, family_mobileno=?, postoffice_en=?,
+            postoffice_ml=?, village_name=? WHERE birthdtlid=?;
+
+          basePath: NacDetails.*.AddressBirthDetails
+          jsonMaps:
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.houseNameNoEnPermanent
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.houseNameNoMlPermanent
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.PermntOutsideIndiaLineoneEn
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.PermntOutsideIndiaLineoneMl
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.PermntOutsideIndiaLinetwoEn
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.PermntOutsideIndiaLinetwoMl
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.PermntOutsideIndiaprovinceEn
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.permntInKeralaAdrVillage
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.permntInKeralaAdrLBName
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.permntInKeralaAdrTaluk
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.permntInKeralaWardNo
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.districtIdPermanent
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.stateIdPermanent
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.poNoPermanent
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.pinNoPermanent
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.countryIdPermanent
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.bio_adopt
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.permntOutsideKeralaTaluk
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.isPrsentAddressInt
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.localityEnPermanent
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.localityMlPermanent
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.streetNameEnPermanent
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.streetNameMlPermanent
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.PermanentOutsideIndiaPostCode
+
+            - jsonPath: $.NacDetails.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.NacDetails.*.auditDetails.lastModifiedTime
+
+            - jsonPath: $.NacDetails.*.ParentsDetails.fatherEmail
+
+            - jsonPath: $.NacDetails.*.ParentsDetails.fatherMobile
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.permntOutsideKeralaPostOfficeEn
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.permntOutsideKeralaPostOfficeMl
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.villageNamePermanent
+
+            - jsonPath: $.NacDetails.*.id
+
+
+        - query: UPDATE public.eg_birth_present_address SET housename_no_en=?, housename_no_ml=?, ot_address1_en=?,
+            ot_address1_ml=?, ot_address2_en=?, ot_address2_ml=?, ot_state_region_province_en=?, ot_state_region_province_ml=?, villageid=?, tenantid=?,
+            talukid=?, districtid=?, stateid=?, poid=?, pinno=?, countryid=?, bio_adopt=?, taluk_name=?, village_name=?, ward_code=?, 
+            locality_en=?, locality_ml=?, street_name_en=?, street_name_ml=?, lastmodifiedby=?, lastmodifiedtime=?, ot_zipcode=?, postoffice_en=?, postoffice_ml=? WHERE birthdtlid=?;
+          basePath: NacDetails.*.AddressBirthDetails
+          jsonMaps:
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.houseNameNoEnPresent
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.houseNameNoMlPresent
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.presentOutSideIndiaAdressEn
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.presentOutSideIndiaAdressMl
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.presentOutSideIndiaAdressEnB
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.presentOutSideIndiaAdressMlB
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.presentOutSideIndiaProvinceEn
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.presentOutSideIndiaProvinceMl
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.presentInsideKeralaVillage
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.presentInsideKeralaLBName
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.presentInsideKeralaTaluk
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.districtIdPresent
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.stateIdPresent
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.poNoPresent
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.pinNoPresent
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.countryIdPresent
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.bio_adopt
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.presentOutsideKeralaTaluk
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.villageNamePresent
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.presentWardNo
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.localityEnPresent
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.localityMlPresent
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.streetNameEnPresent
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.streetNameMlPresent
+
+            - jsonPath: $.NacDetails.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.NacDetails.*.auditDetails.lastModifiedTime
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.poNoPresent
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.presentOutsideKeralaPostOfficeEn
+
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.presentOutsideKeralaPostOfficeMl
+
+            - jsonPath: $.NacDetails.*.id
+
+
+        
+
+
+        - query: UPDATE public.eg_birth_applicant SET initiator_name=?, initiator_institution=?, initiator_inst_desig=?, relation=?, initiator_address=?,
+            is_declared=?, declaration_id=?, aadharno=?, mobileno=?, lastmodifiedby=?, lastmodifiedtime=? WHERE birthdtlid=?;
+          basePath: NacDetails.*.InitiatorinfoDetails
+          jsonMaps:
+
+            - jsonPath: $.NacDetails.*.InitiatorinfoDetails.initiatorNameEn
+
+            - jsonPath: $.NacDetails.*.InitiatorinfoDetails.initiator_institution
+
+            - jsonPath: $.NacDetails.*.InitiatorinfoDetails.initiatorDesi
+
+            - jsonPath: $.NacDetails.*.InitiatorinfoDetails.relation
+
+            - jsonPath: $.NacDetails.*.InitiatorinfoDetails.initiatorAddress
+
+            - jsonPath: $.NacDetails.*.InitiatorinfoDetails.isInitiatorDeclaration
+
+            - jsonPath: $.NacDetails.*.InitiatorinfoDetails.declaration_id
+
+            - jsonPath: $.NacDetails.*.InitiatorinfoDetails.initiatorAadhar
+
+            - jsonPath: $.NacDetails.*.InitiatorinfoDetails.initiatorMobile
+
+            - jsonPath: $.NacDetails.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.NacDetails.*.auditDetails.lastModifiedTime
+
+            - jsonPath: $.NacDetails.*.id
