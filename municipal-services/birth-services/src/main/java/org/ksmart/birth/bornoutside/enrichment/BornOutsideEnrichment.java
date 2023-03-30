@@ -5,6 +5,7 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
 import org.egov.tracer.model.CustomException;
 import org.ksmart.birth.birthregistry.service.MdmsDataService;
+import org.ksmart.birth.bornoutside.service.MdmsForBornOutsideService;
 import org.ksmart.birth.common.enrichment.BaseEnrichment;
 import org.ksmart.birth.common.model.AuditDetails;
 import org.ksmart.birth.common.repository.IdGenRepository;
@@ -12,6 +13,7 @@ import org.ksmart.birth.config.BirthConfiguration;
 import org.ksmart.birth.utils.BirthConstants;
 import org.ksmart.birth.utils.MdmsUtil;
 import org.ksmart.birth.utils.enums.ErrorCodes;
+import org.ksmart.birth.web.model.newbirth.NewBirthApplication;
 import org.ksmart.birth.web.model.newbirth.NewBirthDetailRequest;
 import org.ksmart.birth.web.model.bornoutside.BornOutsideApplication;
 import org.ksmart.birth.web.model.bornoutside.BornOutsideDetailRequest;
@@ -30,48 +32,60 @@ public class BornOutsideEnrichment implements BaseEnrichment {
     @Autowired
    MdmsUtil mdmsUtil;
     @Autowired
-    MdmsDataService mdmsDataService;
+    MdmsForBornOutsideService mdmsDataService;
     @Autowired
     IdGenRepository idGenRepository;
     public void enrichCreate(BornOutsideDetailRequest request) {
         Date date = new Date();
+        String tenantId = null;
         long doreport = date.getTime();
         RequestInfo requestInfo = request.getRequestInfo();
         User userInfo = requestInfo.getUserInfo();
         AuditDetails auditDetails = buildAuditDetails(userInfo.getUuid(), Boolean.TRUE);
-        request.getNewBirthDetails().forEach(birth -> {
-            birth.setId(UUID.randomUUID().toString());
+        for (BornOutsideApplication birth : request.getNewBirthDetails()) {
+            tenantId = birth.getTenantId();
             birth.setDateOfReport(doreport);
-            birth.setAuditDetails(auditDetails);
-            if(birth.getPlaceofBirthId() != null || !birth.getPlaceofBirthId().isEmpty()){
-                Object mdmsData = mdmsUtil.mdmsCallForLocation(request.getRequestInfo(), birth.getTenantId());
-                mdmsDataService.setOutLocationDetails(birth, mdmsData);
-            }
-            birth.setBirthPlaceUuid(UUID.randomUUID().toString());
-            birth.getParentsDetails().setFatherUuid(UUID.randomUUID().toString());
-            birth.getParentsDetails().setMotherUuid(UUID.randomUUID().toString());
-            if(birth.getParentsDetails() != null) {
-                if(!birth.getParentsDetails().getIsFatherInfoMissing()){
-                    birth.getParentsDetails().setFatherBioAdopt("BIOLOGICAL");
-                }
-                if(!birth.getParentsDetails().getIsMotherInfoMissing()){
-                    birth.getParentsDetails().setMotherBioAdopt("BIOLOGICAL");
-                }
-            }
-            if(birth.getParentAddress() != null) {
-                birth.getParentAddress().setPermanentUuid(UUID.randomUUID().toString());
-                birth.getParentAddress().setPresentUuid(UUID.randomUUID().toString());
-                birth.getParentAddress().setBioAdoptPermanent("BIOLOGICAL");
-                birth.getParentAddress().setBioAdoptPresent("BIOLOGICAL");
-            }
-            birth.setBirthStatisticsUuid(UUID.randomUUID().toString());
-            birth.setBirthInitiatorUuid(UUID.randomUUID().toString());
+        }
 
-        });
+//        for (BornOutsideApplication birth : request.getNewBirthDetails()) {
+//            birth.setId(UUID.randomUUID().toString());
+//            tenantId = birth.getTenantId();
+//            birth.setDateOfReport(doreport);
+//            birth.setIsBornOutside(birth.getIsBornOutside());
+//            birth.setAuditDetails(auditDetails);
+//            if(birth.getPlaceofBirthId() != null || !birth.getPlaceofBirthId().isEmpty()){
+//                Object mdmsData = mdmsUtil.mdmsCallForLocation(request.getRequestInfo(), birth.getTenantId());
+//                mdmsDataService.setOutLocationDetails(birth, mdmsData);
+//            }
+//            setPlaceOfBirth(request, tenantId, auditDetails);
+//            birth.setBirthPlaceUuid(UUID.randomUUID().toString());
+//            birth.getParentsDetails().setFatherUuid(UUID.randomUUID().toString());
+//            birth.getParentsDetails().setMotherUuid(UUID.randomUUID().toString());
+//            if(birth.getParentsDetails() != null) {
+//                if(!birth.getParentsDetails().getIsFatherInfoMissing()){
+//                    birth.getParentsDetails().setFatherBioAdopt("BIOLOGICAL");
+//                }
+//                if(!birth.getParentsDetails().getIsMotherInfoMissing()){
+//                    birth.getParentsDetails().setMotherBioAdopt("BIOLOGICAL");
+//                }
+//            }
+//            if(birth.getParentAddress() != null) {
+//                birth.getParentAddress().setPermanentUuid(UUID.randomUUID().toString());
+//                birth.getParentAddress().setPresentUuid(UUID.randomUUID().toString());
+//                birth.getParentAddress().setBioAdoptPermanent("BIOLOGICAL");
+//                birth.getParentAddress().setBioAdoptPresent("BIOLOGICAL");
+//            }
+//            birth.setBirthStatisticsUuid(UUID.randomUUID().toString());
+//            birth.setBirthInitiatorUuid(UUID.randomUUID().toString());
+//
+//        }
+
+        setPlaceOfBirth(request, tenantId, auditDetails);
         setApplicationNumbers(request);
         setFileNumbers(request);
         setPresentAddress(request);
         setPermanentAddress(request);
+        setStatisticalInfo(request);
     }
 
     public void enrichUpdate(BornOutsideDetailRequest request) {
@@ -151,6 +165,7 @@ public class BornOutsideEnrichment implements BaseEnrichment {
                     }
                 });
     }
+
     private void setPresentAddress(BornOutsideDetailRequest request) {
         request.getNewBirthDetails()
                 .forEach(birth -> {
@@ -269,12 +284,31 @@ public class BornOutsideEnrichment implements BaseEnrichment {
                     }
                 });
     }
-    private void setPlaceOfBirth(NewBirthDetailRequest request) {
-        request.getNewBirthDetails()
-                .forEach(birth -> {
-                });
+
+    private void setPlaceOfBirth(BornOutsideDetailRequest request, String tenantId, AuditDetails auditDetails) {
+        Object mdmsData = mdmsUtil.mdmsCallForLocation(request.getRequestInfo(), tenantId);
+        request.getNewBirthDetails().forEach(birth -> {
+            birth.setId(UUID.randomUUID().toString());
+            birth.setAuditDetails(auditDetails);
+            birth.setIsBornOutside(true);
+            if(birth.getPlaceofBirthId() != null || !birth.getPlaceofBirthId().isEmpty()){
+                mdmsDataService.setLocationDetails(birth, mdmsData);
+            }
+            birth.setBirthPlaceUuid(UUID.randomUUID().toString());
+            birth.getParentsDetails().setFatherUuid(UUID.randomUUID().toString());
+            birth.getParentsDetails().setMotherUuid(UUID.randomUUID().toString());
+            if(birth.getParentsDetails() != null) {
+                if(!birth.getParentsDetails().getIsFatherInfoMissing()){
+                    birth.getParentsDetails().setFatherBioAdopt("BIOLOGICAL");
+                }
+                if(!birth.getParentsDetails().getIsMotherInfoMissing()){
+                    birth.getParentsDetails().setMotherBioAdopt("BIOLOGICAL");
+                }
+            }
+        });
     }
-    private void setStatisticalInfo(NewBirthDetailRequest request) {
+
+    private void setStatisticalInfo(BornOutsideDetailRequest request) {
         request.getNewBirthDetails()
                 .forEach(birth -> {
                 });

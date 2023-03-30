@@ -7,6 +7,7 @@ import org.apache.commons.collections4.MapUtils;
 import org.egov.tracer.model.CustomException;
 import org.ksmart.birth.utils.BirthConstants;
 import org.ksmart.birth.utils.BirthUtils;
+import org.ksmart.birth.web.model.bornoutside.BornOutsideDetailRequest;
 import org.ksmart.birth.web.model.newbirth.NewBirthDetailRequest;
 import org.springframework.stereotype.Component;
 
@@ -22,7 +23,7 @@ import static org.ksmart.birth.utils.enums.ErrorCodes.MDMS_DATA_ERROR;
 @Slf4j
 public class BirthOutsideMdmsValidator {
 
-    public void validateMdmsData(NewBirthDetailRequest request, Object mdmsData) {
+    public void validateMdmsData(BornOutsideDetailRequest request, Object mdmsData) {
 
         if (log.isDebugEnabled()) {
             log.debug("MDMS master data \n {}", BirthUtils.toJson(mdmsData));
@@ -129,16 +130,7 @@ public class BirthOutsideMdmsValidator {
                             }
                         }
                     }
-                    if(birth.getPlaceofBirthId().contains(BIRTH_PLACE_HOME)) {
-                        String postOfficeCodePlace = birth.getAdrsPostOffice();
-                        if (log.isDebugEnabled()) {
-                            log.debug("Postoffice code : \n{}", postOfficeCodePlace);
-                            if (CollectionUtils.isEmpty(postOfficeCodes) || !postOfficeCodes.contains(postOfficeCodePlace)) {
-                                errorMap.put(COMMON_MDMS_POSTOFFICE, "The Postoffice code '" + postOfficeCodePlace + "' does not exists");
-                            }
-                        }
 
-                    }
 
                     if(birth.getParentAddress() != null) {
                         String talukCodePresent = birth.getParentAddress().getPresentInsideKeralaTaluk();

@@ -14,20 +14,21 @@ import java.util.List;
 public class BornOutsideQueryBuilder extends BaseBornOutsideQuery {
     @Autowired
     CommonQueryBuilder commonQueryBuilder;
-    private static final String QUERY = new StringBuilder().append("SELECt ebd.id as ba_id,ebd.dateofreport as ba_dateofreport,ebd.dateofbirth as ba_dateofbirth,ebd.timeofbirth as ba_timeofbirth,ebd.am_pm as ba_am_pm,ebd.firstname_en as ba_firstname_en,")
-            .append("ebd.firstname_ml as ba_firstname_ml,ebd.middlename_en as ba_middlename_en,ebd.middlename_ml as ba_middlename_ml,ebd.lastname_en as ba_lastname_en,ebd.lastname_ml as ba_lastname_ml,")
-            .append("ebd.tenantid as ba_tenantid,ebd.gender as ba_gender,ebd.remarks_en as ba_remarks_en,ebd.remarks_ml as ba_remarks_ml,ebd.aadharno as ba_aadharno,ebd.esign_user_code as ba_esign_user_code,")
-            .append("ebd.esign_user_desig_code as ba_esign_user_desig_code,ebd.is_father_info_missing as ba_is_father_info_missing,ebd.is_mother_info_missing as ba_is_mother_info_missing,")
-            .append("ebd.applicationtype as ba_applicationtype,ebd.businessservice as ba_businessservice,ebd.workflowcode as ba_workflowcode,ebd.fm_fileno as ba_fm_fileno,")
-            .append("ebd.file_date as ba_file_date,ebd.file_status as ba_file_status,ebd.applicationno as ba_applicationno,ebd.registrationno as ba_registrationno,")
-            .append("ebd.registration_date as ba_registration_date,ebd.action as ba_action,ebd.status as ba_status,ebd.createdtime,ebd.createdby,ebd.lastmodifiedtime,ebd.lastmodifiedby").toString();
-
-   private static final String QUERYCONDITION = new StringBuilder().append(" FROM public.eg_birth_details ebd LEFT JOIN eg_birth_place ebp ON ebp.birthdtlid = ebd.id LEFT JOIN eg_birth_father_information ebfi ON ebfi.birthdtlid = ebd.id AND ebfi.bio_adopt='BIOLOGICAL'")
-            .append(" LEFT JOIN eg_birth_mother_information ebmi ON ebmi.birthdtlid = ebd.id AND ebmi.bio_adopt='BIOLOGICAL'")
-            .append(" LEFT JOIN eg_birth_permanent_address eperad ON eperad.birthdtlid = ebd.id AND eperad.bio_adopt='BIOLOGICAL'")
-            .append(" LEFT JOIN eg_birth_present_address epreadd ON epreadd.birthdtlid = ebd.id AND epreadd.bio_adopt='BIOLOGICAL'")
-            .append(" LEFT JOIN eg_birth_statitical_information estat ON estat.birthdtlid = ebd.id")
-            .append(" LEFT JOIN eg_birth_initiator ini ON ini.birthdtlid = ebd.id ").toString();
+    private static final String QUERY = "";
+//    private static final String QUERY = new StringBuilder().append("SELECt ebd.id as ba_id,ebd.dateofreport as ba_dateofreport,ebd.dateofbirth as ba_dateofbirth,ebd.timeofbirth as ba_timeofbirth,ebd.am_pm as ba_am_pm,ebd.firstname_en as ba_firstname_en,")
+//            .append("ebd.firstname_ml as ba_firstname_ml,ebd.middlename_en as ba_middlename_en,ebd.middlename_ml as ba_middlename_ml,ebd.lastname_en as ba_lastname_en,ebd.lastname_ml as ba_lastname_ml,")
+//            .append("ebd.tenantid as ba_tenantid,ebd.gender as ba_gender,ebd.remarks_en as ba_remarks_en,ebd.remarks_ml as ba_remarks_ml,ebd.aadharno as ba_aadharno,ebd.esign_user_code as ba_esign_user_code,")
+//            .append("ebd.esign_user_desig_code as ba_esign_user_desig_code,ebd.is_father_info_missing as ba_is_father_info_missing,ebd.is_mother_info_missing as ba_is_mother_info_missing,")
+//            .append("ebd.applicationtype as ba_applicationtype,ebd.businessservice as ba_businessservice,ebd.workflowcode as ba_workflowcode,ebd.fm_fileno as ba_fm_fileno,")
+//            .append("ebd.file_date as ba_file_date,ebd.file_status as ba_file_status,ebd.applicationno as ba_applicationno,ebd.registrationno as ba_registrationno,")
+//            .append("ebd.registration_date as ba_registration_date,ebd.action as ba_action,ebd.status as ba_status,ebd.createdtime,ebd.createdby,ebd.lastmodifiedtime,ebd.lastmodifiedby").toString();
+//
+//   private static final String QUERYCONDITION = new StringBuilder().append(" FROM public.eg_birth_details ebd LEFT JOIN eg_birth_place ebp ON ebp.birthdtlid = ebd.id LEFT JOIN eg_birth_father_information ebfi ON ebfi.birthdtlid = ebd.id AND ebfi.bio_adopt='BIOLOGICAL'")
+//            .append(" LEFT JOIN eg_birth_mother_information ebmi ON ebmi.birthdtlid = ebd.id AND ebmi.bio_adopt='BIOLOGICAL'")
+//            .append(" LEFT JOIN eg_birth_permanent_address eperad ON eperad.birthdtlid = ebd.id AND eperad.bio_adopt='BIOLOGICAL'")
+//            .append(" LEFT JOIN eg_birth_present_address epreadd ON epreadd.birthdtlid = ebd.id AND epreadd.bio_adopt='BIOLOGICAL'")
+//            .append(" LEFT JOIN eg_birth_statitical_information estat ON estat.birthdtlid = ebd.id")
+//            .append(" LEFT JOIN eg_birth_initiator ini ON ini.birthdtlid = ebd.id ").toString();
 
     public String getNewBirthApplicationSearchQuery(@NotNull SearchCriteria criteria, BornOutsideDetailRequest request,
                                                     @NotNull List<Object> preparedStmtValues, Boolean isCount) {
@@ -46,7 +47,11 @@ public class BornOutsideQueryBuilder extends BaseBornOutsideQuery {
     }
     public StringBuilder prepareSearchQuery() {
         StringBuilder query = new StringBuilder(QUERY);
-        query.append(",").append(commonQueryBuilder.getQueryPlaceOfEvent())
+        query.append(commonQueryBuilder.getQueryMain())
+                .append(",")
+                .append(commonQueryBuilder.getQueryPlaceOfEvent())
+                .append(",")
+                .append(commonQueryBuilder.getQueryPlaceOfEvent())
                 .append(",")
                 .append(commonQueryBuilder.getQueryFaterInfo())
                 .append(",")
@@ -59,7 +64,7 @@ public class BornOutsideQueryBuilder extends BaseBornOutsideQuery {
                 .append(commonQueryBuilder.getQueryStat())
                 .append(",")
                 .append(commonQueryBuilder.getQueryIntiator())
-                .append(QUERYCONDITION).toString();
+                .append(commonQueryBuilder.getQueryCondition()).toString();
         return query;
     }
 
@@ -72,7 +77,8 @@ public class BornOutsideQueryBuilder extends BaseBornOutsideQuery {
         addFilter("ebp.hospitalid", criteria.getHospitalId(), query, preparedStmtValues);
         addFilter("ebp.institution_id", criteria.getInstitutionId(), query, preparedStmtValues);
         addFilter("ebp.ebp.ward_id", criteria.getWardCode(), query, preparedStmtValues);
-        addFilter("eebd.gender", criteria.getGender(), query, preparedStmtValues);
+        addFilter("ebd.gender", criteria.getGender(), query, preparedStmtValues);
+        addFilter("ebd.applicationtype", criteria.getApplicationType(), query, preparedStmtValues);
         addDateRangeFilter("ebd.dateofreport", criteria.getFromDate(),  criteria.getToDate(), query, preparedStmtValues);
         addDateRangeFilter("ebd.dateofbirth",  criteria.getDateOfBirthFrom(), criteria.getDateOfBirthTo(),query, preparedStmtValues);
         addDateRangeFilter("ebd.fm_fileno",  criteria.getFromDateFile(), criteria.getToDateFile(), query, preparedStmtValues);
@@ -109,6 +115,8 @@ public class BornOutsideQueryBuilder extends BaseBornOutsideQuery {
             addOrderByColumns("ebp.institution_id",criteria.getSortOrder(), orderBy);
         else if (criteria.getSortBy() == SearchCriteria.SortBy.wardCode)
             addOrderByColumns("ebp.ward_id",criteria.getSortOrder(), orderBy);
+        else if (criteria.getSortBy() == SearchCriteria.SortBy.applicationType)
+            addOrderByColumns("ebp.applicationtype",criteria.getSortOrder(), orderBy);
         addOrderToQuery(orderBy, query);
         addLimitAndOffset(criteria.getOffset(),criteria.getLimit(), query, preparedStmtValues);
         return query;

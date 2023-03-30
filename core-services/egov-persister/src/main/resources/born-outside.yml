@@ -33,7 +33,7 @@ serviceMaps:
             - jsonPath: $.BornOutsideChildDetails.*.esign_user_desig_code
             - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.ismotherInfo
             - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.isfatherInfo
-            - jsonPath: $.BornOutsideChildDetails.*.is_born_outside
+            - jsonPath: $.BornOutsideChildDetails.*.isBornOutside
             - jsonPath: $.BornOutsideChildDetails.*.childPassportNo
             - jsonPath: $.BornOutsideChildDetails.*.childArrivalDate
             - jsonPath: $.BornOutsideChildDetails.*.applicationtype
@@ -79,7 +79,7 @@ serviceMaps:
             - jsonPath: $.BornOutsideChildDetails.*.auditDetails.createdTime
             - jsonPath: $.BornOutsideChildDetails.*.auditDetails.lastModifiedBy
             - jsonPath: $.BornOutsideChildDetails.*.auditDetails.lastModifiedTime
-            - jsonPath: $.BornOutsideChildDetails.*.is_born_outside
+            - jsonPath: $.BornOutsideChildDetails.*.isBornOutside
 
         - query: INSERT INTO public.eg_birth_father_information (id, firstname_en, firstname_ml,  aadharno, birthdtlid, ot_passportno, createdtime, createdby, lastmodifiedtime, lastmodifiedby, bio_adopt)
                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);

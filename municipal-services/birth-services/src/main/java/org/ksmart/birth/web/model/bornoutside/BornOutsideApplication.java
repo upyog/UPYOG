@@ -185,7 +185,8 @@ public class BornOutsideApplication {
     @Size(max = 64)
     @JsonProperty("birthStatisticsUuid")
     private String birthStatisticsUuid;
-
+    @JsonProperty("isBornOutside")
+    private Boolean isBornOutside;
     @JsonProperty("Demands")
     private List<Demand> demands;
     @JsonProperty("BornOutsideParentsDetails")
