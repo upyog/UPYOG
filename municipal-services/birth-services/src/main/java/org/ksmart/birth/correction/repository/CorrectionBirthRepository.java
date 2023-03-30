@@ -53,13 +53,13 @@ public class CorrectionBirthRepository {
 
     public List<CorrectionApplication> saveKsmartBirthDetails(CorrectionRequest request) {
         enrichment.enrichCreate(request);
-        producer.push(birthDeathConfiguration.getSaveKsmartBirthApplicationTopic(), request);
+        producer.push(birthDeathConfiguration.getSaveCorrectionBirthTopic(), request);
         return request.getCorrectionDetails();
     }
 
     public List<CorrectionApplication> updateKsmartBirthDetails(CorrectionRequest request) {
         enrichment.enrichUpdate(request);
-        producer.push(birthDeathConfiguration.getUpdateKsmartBirthApplicationTopic(), request);
+        producer.push(birthDeathConfiguration.getUpdateCorrectionBirthTopic(), request);
         return request.getCorrectionDetails();
     }
     public RegisterBirthDetailsRequest searchBirthDetailsForRegister(CorrectionRequest requestApplication) {
