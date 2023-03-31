@@ -38,7 +38,9 @@ Please refer to the [Swagget API Contract](https://editor.swagger.io/?url=https:
 2. /national-dashboard/masterdata/_ingest - Takes RequestInfo and Data in request body. Data has all the parameters related to the record being inserted.
 
 
-**`Postman collection`** :- https://www.getpostman.com/collections/87684b592bf51e3556d1
+**`Postman collection`** :-
+
+You can access from [here](https://api.postman.com/collections/23419225-ba51e32e-77a3-4455-a0c5-3bb1dfdfd291?access_key=PMAT-01GWVA47JJXA82AD1MB78SZNX1)
 
 
 
