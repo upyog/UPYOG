@@ -36,7 +36,11 @@ public class BirthCertService {
         if(register.getDateOfBirth() != null){
             dobDate = new Date(register.getDateOfBirth());
             String[] dobAry = formatter.format(dobDate).split("/");
-            dobInWords = numberConverter.numberToWordConverter(dobAry[0].toCharArray())+"/"+new SimpleDateFormat("MMMM").format(dobDate) +"/"+numberConverter.numberToWordConverter(dobAry[2].toCharArray());
+            try {
+                dobInWords = numberConverter.numberToWordConverter(dobAry[0].toCharArray()) + "/" + new SimpleDateFormat("MMMM").format(dobDate) + "/" + numberConverter.numberToWordConverter(dobAry[2].toCharArray());
+            } catch(Exception e) {
+
+            }
             //System.out.println(dobInWords);
         }
 
@@ -52,6 +56,7 @@ public class BirthCertService {
         registerCertificateData.setRegistrationDateStr(formatter.format(regDate));
         registerCertificateData.setDateOfReportStr(formatter.format(reportDate));
         registerCertificateData.setRegistrationNo(register.getRegistrationNo());
+        registerCertificateData.setApplicationType(register.getApplicationType());
         registerCertificateData.setApplicationId(register.getApplicationId());
         registerCertificateData.setFullName(register.getFullName());
         registerCertificateData.setFullNameMl(register.getFullNameMl());

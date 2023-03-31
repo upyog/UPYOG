@@ -182,4 +182,8 @@ public class RegisterCertificateData {
     @Size(max = 1000)
     @JsonProperty("wardCode")
     private String wardCode;
+
+    @Size(max = 45)
+    @JsonProperty("applicationType")
+    private String applicationType;
 }

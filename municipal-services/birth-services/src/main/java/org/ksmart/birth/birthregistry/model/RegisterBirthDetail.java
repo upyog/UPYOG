@@ -140,6 +140,9 @@ public class RegisterBirthDetail {
     @JsonProperty("applicationType")
     private String applicationType;
 
+    @JsonProperty("childArrivalDate")
+    private Long childArrivalDate;
+
     @JsonProperty("registerBirthPlace")
     private RegisterBirthPlace registerBirthPlace;
 

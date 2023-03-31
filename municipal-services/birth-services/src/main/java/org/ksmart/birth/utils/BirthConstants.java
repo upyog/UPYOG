@@ -114,6 +114,19 @@ public class BirthConstants {
     //WF Action
     public static final String WF_APPROVE = "APPROVE";
 
+    //Registration Status
+    public static final String REG_STATUS_ACTIVE = "ACTIVE";
+
+    //Registration Status
+    public static final String REG_STATUS_CANCEL = "CANCEL";
+
+    // Unique numbers
+
+    public static final String APPLICATION_NO = "APPL";
+    public static final String FILE_NO = "FILE";
+    public static final String REGISTRATION_NO = "REG";
+    public static final String CERTIFICATE_NO = "CERT";
+
     public static final String GL_CODE = "glcode";
 
     public static final String GL_CODE_MASTER = "GLCode";

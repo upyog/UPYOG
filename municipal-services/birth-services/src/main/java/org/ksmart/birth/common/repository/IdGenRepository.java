@@ -61,7 +61,7 @@ public class IdGenRepository {
         return response;
     }
 
-    public IdGenerationResponse getId(RequestInfo requestInfo, String tenantId, String idName, String moduleCode, String  fnType, int count) {
+    public String getId(RequestInfo requestInfo, String tenantId, String idName, String moduleCode, String  fnType, int count) {
 
         List<IdRequest> reqList = new ArrayList<>();
         for (int i = 0; i < count; i++) {
@@ -82,7 +82,7 @@ public class IdGenRepository {
             map.put(e.getCause().getClass().getName(),e.getMessage());
             throw new CustomException(map);
         }
-        return response;
+        return response.getIdResponses().get(0).getId();
     }
 
 

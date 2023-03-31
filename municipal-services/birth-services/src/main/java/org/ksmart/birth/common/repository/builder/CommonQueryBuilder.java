@@ -12,14 +12,19 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class CommonQueryBuilder {
 	private static final String QUERY = new StringBuilder().append("SELECt ebd.id as ba_id,ebd.dateofreport as ba_dateofreport,ebd.dateofbirth as ba_dateofbirth,ebd.timeofbirth as ba_timeofbirth,")
-			.append("ebd.am_pm as ba_am_pm,ebd.firstname_en as ba_firstname_en,")
-			.append("ebd.firstname_ml as ba_firstname_ml,ebd.middlename_en as ba_middlename_en,ebd.middlename_ml as ba_middlename_ml,ebd.lastname_en as ba_lastname_en,ebd.lastname_ml as ba_lastname_ml,")
-			.append("ebd.tenantid as ba_tenantid,ebd.gender as ba_gender,ebd.remarks_en as ba_remarks_en,ebd.remarks_ml as ba_remarks_ml,ebd.aadharno as ba_aadharno,ebd.esign_user_code as ba_esign_user_code,")
-			.append("ebd.esign_user_desig_code as ba_esign_user_desig_code,ebd.is_father_info_missing as ba_is_father_info_missing,ebd.is_mother_info_missing as ba_is_mother_info_missing,")
-			.append("ebd.no_of_alive_birth as ba_no_of_alive_birth, ebd.multiplebirthdetid as ba_multiplebirthdetid, ebd.is_born_outside as ba_is_born_outside, ebd.ot_passportno as ba_ot_passportno, ebd.ot_dateofarrival as ba_ot_dateofarrival,")
-			.append("ebd.applicationtype as ba_applicationtype,ebd.businessservice as ba_businessservice,ebd.workflowcode as ba_workflowcode,ebd.fm_fileno as ba_fm_fileno,")
-			.append("ebd.file_date as ba_file_date,ebd.file_status as ba_file_status,ebd.applicationno as ba_applicationno,ebd.registrationno as ba_registrationno,")
-			.append("ebd.registration_date as ba_registration_date,ebd.action as ba_action,ebd.status as ba_status,ebd.createdtime,ebd.createdby,ebd.lastmodifiedtime,ebd.lastmodifiedby").toString();
+			.append("ebd.am_pm as ba_am_pm,ebd.firstname_en as ba_firstname_en,ebd.firstname_ml as ba_firstname_ml,ebd.middlename_en as ba_middlename_en,ebd.middlename_ml as ba_middlename_ml,")
+			.append("ebd.lastname_en as ba_lastname_en,ebd.lastname_ml as ba_lastname_ml,ebd.tenantid as ba_tenantid,ebd.gender as ba_gender,ebd.remarks_en as ba_remarks_en,ebd.remarks_ml as ba_remarks_ml,")
+			.append("ebd.aadharno as ba_aadharno,ebd.esign_user_code as ba_esign_user_code,ebd.esign_user_desig_code as ba_esign_user_desig_code,ebd.is_adopted as ba_is_adopted,ebd.is_abandoned as ba_is_abandoned,")
+			.append("ebd.is_multiple_birth as ba_is_multiple_birth,ebd.is_father_info_missing as ba_is_father_info_missing,ebd.is_mother_info_missing as ba_is_mother_info_missing,")
+			.append("ebd.no_of_alive_birth as ba_no_of_alive_birth,ebd.multiplebirthdetid as ba_multiplebirthdetid,ebd.is_born_outside as ba_is_born_outside,ebd.ot_passportno as ba_ot_passportno,")
+			.append("ebd.ot_dateofarrival as ba_ot_dateofarrival,ebd.applicationtype as ba_applicationtype,ebd.businessservice as ba_businessservice,ebd.workflowcode as ba_workflowcode,")
+			.append("ebd.fm_fileno as ba_fm_fileno,ebd.file_date as ba_file_date,ebd.file_status as ba_file_status,ebd.applicationno as ba_applicationno,ebd.registrationno as ba_registrationno,")
+			.append("ebd.registration_date as ba_registration_date,ebd.action as ba_action,ebd.status as ba_status,ebd.adopt_firstname_en as ba_adopt_firstname_en,ebd.adopt_firstname_ml as ba_adopt_firstname_ml,")
+			.append("ebd.adopt_middlename_en as ba_adopt_middlename_en,ebd.adopt_middlename_ml as ba_adopt_middlename_ml,ebd.adopt_lastname_en as ba_adopt_lastname_en,ebd.adopt_lastname_ml as ba_adopt_lastname_ml,")
+			.append("ebd.adopt_deed_order_no as ba_adopt_deed_order_no,ebd.adopt_dateoforder_deed as ba_adopt_dateoforder_deed,ebd.adopt_issuing_auththority as ba_adopt_issuing_auththority,")
+			.append("ebd.adopt_has_agency as ba_adopt_has_agency,ebd.adopt_agency_name as ba_adopt_agency_name,ebd.adopt_agency_address as ba_adopt_agency_address,ebd.is_stillbirth as ba_is_stillbirth,")
+			.append("ebd.adopt_decree_order_no as ba_adopt_decree_order_no,ebd.adopt_dateoforder_decree as ba_adopt_dateoforder_decree,ebd.adopt_agency_contact_person as ba_adopt_agency_contact_person,")
+			.append("ebd.adopt_agency_contact_person_mobileno as ba_adopt_agency_contact_person_mobileno,ebd.createdtime,ebd.createdby,ebd.lastmodifiedtime,ebd.lastmodifiedby").toString();
 
 	private static final String QUERYCONDITION = new StringBuilder().append(" FROM public.eg_birth_details ebd LEFT JOIN eg_birth_place ebp ON ebp.birthdtlid = ebd.id LEFT JOIN eg_birth_father_information ebfi ON ebfi.birthdtlid = ebd.id AND ebfi.bio_adopt='BIOLOGICAL'")
 			.append(" LEFT JOIN eg_birth_mother_information ebmi ON ebmi.birthdtlid = ebd.id AND ebmi.bio_adopt='BIOLOGICAL'")

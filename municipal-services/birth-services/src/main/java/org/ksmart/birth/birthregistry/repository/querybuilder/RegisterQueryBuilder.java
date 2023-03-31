@@ -14,7 +14,7 @@ public class RegisterQueryBuilder extends BaseRegBuilder {
             .append("krbd.middlename_ml,krbd.lastname_en,krbd.lastname_ml,krbd.tenantid,krbd.gender,krbd.remarks_en,krbd.remarks_ml,krbd.aadharno, krbd.ack_no,")
             .append("krbd.createdtime,krbd.createdby,krbd.lastmodifiedtime,krbd.lastmodifiedby,krbd.esign_user_code,krbd.esign_user_desig_code,krbd.is_adopted,")
             .append("krbd.is_abandoned,krbd.is_multiple_birth,krbd.is_father_info_missing,krbd.is_mother_info_missing,krbd.no_of_alive_birth,krbd.multiplebirthdetid,")
-            .append("krbd.ot_passportno,krbd.registrationno,krbd.registration_status,krbd.registration_date,krbd.is_born_outside,krbd.ot_dateofarrival, ack_no, is_migrated, migrated_date, applicationid, applicationtype,")
+            .append("krbd.ot_passportno,krbd.registrationno,krbd.registration_status,krbd.registration_date,krbd.is_born_outside,krbd.ot_dateofarrival, krbd.ack_no, krbd.is_migrated, krbd.migrated_date, krbd.applicationid, krbd.applicationtype,")
 
             //Birthplace
             .append("kbfi.id,kbp.id,kbp.birthdtlid,kbp.placeofbirthid,kbp.hospitalid,kbp.public_place_id,kbp.institution_type_id,kbp.institution_id,kbp.vehicletypeid,kbp.vehicle_registration_no,kbp.vehicle_from_en," )
@@ -25,7 +25,7 @@ public class RegisterQueryBuilder extends BaseRegBuilder {
             .append("kbp.informantsname_ml,kbp.informantsaddress_en,kbp.informantsaddress_ml,kbp.informants_mobileno,kbp.informants_aadhaar_no,kbp.is_born_outside,kbp.vehicle_haltplace_en,kbp.vehicle_hospitalid,")
             .append("kbp.informant_addressline2,kbp.createdby,kbp.createdtime,kbp.lastmodifiedby,kbp.lastmodifiedtime,kbp.mig_chvackno,kbp.vehicle_haltplace_ml,kbp.vehicle_desc,kbp.public_place_desc,")
             .append("kbp.public_locality_en, kbp.public_locality_ml, kbp.public_street_name_en, kbp.public_street_name_ml, kbp.ot_birth_place_en, kbp.ot_birth_place_ml, kbp.ot_address1_en, kbp.ot_address1_ml," )
-            .append(" kbp.ot_address2_en,kbp.ot_address2_ml, kbp.ot_state_region_province_en, kbp.ot_state_region_province_ml, kbp.ot_zipcode, kbp.ot_country, kbp.ot_town_village_en, kbp.ot_town_village_ml")
+            .append(" kbp.ot_address2_en,kbp.ot_address2_ml, kbp.ot_state_region_province_en, kbp.ot_state_region_province_ml, kbp.ot_zipcode, kbp.ot_country, kbp.ot_town_village_en, kbp.ot_town_village_ml,")
 
             // Father Information
             .append("kbfi.firstname_en as father_fn, kbfi.firstname_ml as father_fn_ml, kbfi.aadharno  as fa_aadh,kbfi.ot_passportno as fa_pass, ")

@@ -29,7 +29,7 @@ public class BirthRegisterRowMapper implements ResultSetExtractor<List<RegisterB
         this.birthRegPlaceRowMapper = birthRegPlaceRowMapper;
     }
         @Override
-        public List<RegisterBirthDetail> extractData(ResultSet rs) throws SQLException, DataAccessException { //how to handle null
+        public List<RegisterBirthDetail> extractData(ResultSet rs) throws SQLException, DataAccessException {
             List<RegisterBirthDetail> result = new ArrayList<>();
             DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
             while (rs.next()) {
@@ -69,12 +69,13 @@ public class BirthRegisterRowMapper implements ResultSetExtractor<List<RegisterB
                         .fullNameMl(getFullNameEn(rs))
                         .registrationNo(rs.getString("registrationno"))
                         .registrationDate(rs.getLong("registration_date"))
+                        .applicationType(rs.getString("applicationtype"))
+                        .applicationId(rs.getString("applicationid"))
                         .registerBirthPlace(birthRegPlaceRowMapper.getRegBirthPlace(rs))
                         .registerBirthFather(getRegBirthFatherInfo(rs))
                         .registerBirthMother(getRegBirthMotherInfo(rs))
                         .registerBirthPermanent(birthRegPerAddRowMapper.getRegBirthPermanentAddress(rs))
                         .registerBirthPresent(birthRegPreAddRowMapper.getRegBirthPresentAddress(rs))
-                        //.registerBirthStatitical(getRegBirthStatisticalInfo(rs))
                         .auditDetails(getAuditDetails(rs))
                         .registrationDateStr(formatter.format(regDate))
                         .build());

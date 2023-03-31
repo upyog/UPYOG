@@ -20,6 +20,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.*;
 
+import static org.ksmart.birth.utils.BirthConstants.*;
+
 @Component
 public class NewBirthEnrichment implements BaseEnrichment {
     @Autowired
@@ -61,9 +63,9 @@ public class NewBirthEnrichment implements BaseEnrichment {
         request.getNewBirthDetails()
                 .forEach(birth -> {
                     birth.setAuditDetails(auditDetails);
-                    if ((birth.getApplicationStatus() == "APPROVED" && birth.getAction() == "APPROVE")) {
+                   // if ((birth.getApplicationStatus() == STATUS_APPROVED && birth.getAction() == WF_APPROVE)) {
                         setRegistrationNumber(request);
-                    }
+                   // }
                 });
         setPresentAddress(request);
         setPermanentAddress(request);
@@ -77,7 +79,7 @@ public class NewBirthEnrichment implements BaseEnrichment {
                 tenantId,
                 config.getBirthApplNumberIdName(),
                 request.getNewBirthDetails().get(0).getApplicationType(),
-                "APPL",
+                APPLICATION_NO,
                 birthDetails.size());
         validateFileCodes(filecodes, birthDetails.size());
 
@@ -98,7 +100,7 @@ public class NewBirthEnrichment implements BaseEnrichment {
                 tenantId,
                 config.getBirthFileNumberName(),
                 request.getNewBirthDetails().get(0).getApplicationType(),
-                "FILE",
+                FILE_NO,
                 birthDetails.size());
         validateFileCodes(filecodes, birthDetails.size());
         Long currentTime = Long.valueOf(System.currentTimeMillis());
@@ -120,17 +122,17 @@ public class NewBirthEnrichment implements BaseEnrichment {
                 tenantId,
                 config.getBirthRegisNumberName(),
                 request.getNewBirthDetails().get(0).getApplicationType(),
-                "REG",
+                REGISTRATION_NO,
                 birthDetails.size());
         validateFileCodes(filecodes, birthDetails.size());
         Long currentTime = Long.valueOf(System.currentTimeMillis());
         ListIterator<String> itr = filecodes.listIterator();
         request.getNewBirthDetails()
                 .forEach(birth -> {
-                    if((birth.getApplicationStatus() == "APPROVED" && birth.getAction() == "APPROVE")) {
+                   //  if ((birth.getApplicationStatus() == STATUS_APPROVED && birth.getAction() == WF_APPROVE)) {
                         birth.setRegistrationNo(itr.next());
                         birth.setRegistrationDate(currentTime);
-                    }
+                  //  }
                 });
     }
     private void setPresentAddress(NewBirthDetailRequest request) {

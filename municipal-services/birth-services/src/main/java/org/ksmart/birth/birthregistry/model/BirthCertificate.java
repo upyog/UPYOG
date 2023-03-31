@@ -92,7 +92,11 @@ public class BirthCertificate {
   @JsonProperty("district")
   private String district = null;
 
-  public enum StatusEnum {
+    @Size(max = 45)
+    @JsonProperty("applicationType")
+    private String applicationType;
+
+    public enum StatusEnum {
 	  ACTIVE("ACTIVE"),
 	  
 	  CANCELLED("CANCELLED"),

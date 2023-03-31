@@ -75,7 +75,7 @@ serviceMaps:
 
             - jsonPath: $.ChildDetails.*.fileDate
 
-            - jsonPath: $.ChildDetails.*.fileStatus7
+            - jsonPath: $.ChildDetails.*.fileStatus
 
             - jsonPath: $.ChildDetails.*.applicationNumber
 

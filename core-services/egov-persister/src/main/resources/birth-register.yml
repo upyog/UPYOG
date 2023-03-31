@@ -9,8 +9,9 @@
           - query: INSERT INTO public.eg_register_birth_details(id, dateofreport, dateofbirth, timeofbirth, am_pm, firstname_en, firstname_ml, middlename_en,
               middlename_ml, lastname_en, lastname_ml, tenantid, gender, remarks_en, remarks_ml, aadharno, createdtime, createdby, lastmodifiedtime,
               lastmodifiedby, esign_user_code, esign_user_desig_code, is_adopted, is_abandoned, is_multiple_birth, is_father_info_missing,
-              is_mother_info_missing, no_of_alive_birth, ot_passportno, registrationno, registration_status, registration_date)
-              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+              is_mother_info_missing, no_of_alive_birth, ot_passportno, registrationno, registration_status, registration_date,
+              is_born_outside, ot_dateofarrival, ack_no, applicationid, applicationtype)
+              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?);
             basePath: RegisterBirthDetails.*
             jsonMaps:
               - jsonPath: $.RegisterBirthDetails.*.id
@@ -76,6 +77,18 @@
               - jsonPath: $.RegisterBirthDetails.*.registration_status
 
               - jsonPath: $.RegisterBirthDetails.*.registration_date
+
+              - jsonPath: $.RegisterBirthDetails.*.is_born_outside
+
+              - jsonPath: $.RegisterBirthDetails.*.childArrivalDate
+
+              - jsonPath: $.RegisterBirthDetails.*.ack_no
+
+              - jsonPath: $.RegisterBirthDetails.*.applicationId
+
+              - jsonPath: $.RegisterBirthDetails.*.applicationType
+
+
 
           - query: INSERT INTO public.eg_register_birth_father_information(id, firstname_en, firstname_ml, middlename_en, middlename_ml, lastname_en, lastname_ml, aadharno, ot_passportno, 
                   emailid, mobileno, createdtime, createdby, lastmodifiedtime, lastmodifiedby, birthdtlid, bio_adopt) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);

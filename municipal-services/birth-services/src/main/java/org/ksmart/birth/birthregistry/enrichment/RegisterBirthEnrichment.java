@@ -1,7 +1,9 @@
 package org.ksmart.birth.birthregistry.enrichment;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.kafka.common.protocol.types.Field;
 import org.egov.tracer.model.CustomException;
+import org.ksmart.birth.birthregistry.model.BirthCertificate;
 import org.ksmart.birth.birthregistry.model.RegisterBirthDetailsRequest;
 import org.ksmart.birth.common.enrichment.BaseEnrichment;
 import org.ksmart.birth.common.model.AuditDetails;
@@ -18,6 +20,10 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.UUID;
+
+import static org.ksmart.birth.utils.BirthConstants.CERTIFICATE_NO;
+import static org.ksmart.birth.utils.BirthConstants.REG_STATUS_ACTIVE;
+
 @Component
 public class RegisterBirthEnrichment implements BaseEnrichment {
     @Autowired
@@ -34,6 +40,7 @@ public class RegisterBirthEnrichment implements BaseEnrichment {
 
             register.setId(UUID.randomUUID().toString());
             register.setRegistrationDate(System.currentTimeMillis());
+            register.setRegistrationStatus(REG_STATUS_ACTIVE);
             register.setAuditDetails(auditDetails);
 
             register.getRegisterBirthPlace().setId(UUID.randomUUID().toString());
@@ -61,32 +68,26 @@ public class RegisterBirthEnrichment implements BaseEnrichment {
                 .forEach(personal -> personal.setAuditDetails(auditDetails));
     }
 
-    private void setCertificateNumber(NewBirthDetailRequest request) {
-        RequestInfo requestInfo = request.getRequestInfo();
-        List<NewBirthApplication> birthDetails = request.getNewBirthDetails();
-        String tenantId = birthDetails.get(0)
-                .getTenantId();
-
-        List<String> filecodes = getIds(requestInfo,
+    public void setCertificateNumber(BirthCertificate birthCertificate, RequestInfo requestInfo) {
+        String tenantId = birthCertificate.getTenantId();
+        String certCode = getId(requestInfo,
                 tenantId,
                 config.getBirthRegisNumberName(),
-                request.getNewBirthDetails().get(0).getApplicationType(),
-                "REG",
-                birthDetails.size());
-        validateFileCodes(filecodes, birthDetails.size());
+                birthCertificate.getApplicationType(),
+                CERTIFICATE_NO,
+                1);
+        //validateFileCodes(certCode, 1);
         Long currentTime = Long.valueOf(System.currentTimeMillis());
-        ListIterator<String> itr = filecodes.listIterator();
-        request.getNewBirthDetails()
-                .forEach(birth -> {
-                    if((birth.getApplicationStatus() == "APPROVED" && birth.getAction() == "APPROVE")) {
-                        birth.setRegistrationNo(itr.next());
-                        birth.setRegistrationDate(currentTime);
-                    }
-                });
+      //  ListIterator<String> itr = filecodes.listIterator();
+        birthCertificate.setBirthCertificateNo(certCode);
     }
 
     private List<String> getIds(RequestInfo requestInfo, String tenantId, String idName, String moduleCode, String  fnType, int count) {
         return idGenRepository.getIdList(requestInfo, tenantId, idName, moduleCode, fnType, count);
+    }
+
+    private String getId(RequestInfo requestInfo, String tenantId, String idName, String moduleCode, String  fnType, int count) {
+        return idGenRepository.getId(requestInfo, tenantId, idName, moduleCode, fnType, count);
     }
     private void validateFileCodes(List<String> fileCodes, int count) {
         if (CollectionUtils.isEmpty(fileCodes)) {
