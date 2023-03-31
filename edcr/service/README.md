@@ -1,11 +1,8 @@
 # Development Control Regulations
   Module used to scrutinize the building plan diagrams which are in the .dxf file format. It will extract data from from dxf file and will validate against ULB rules and will generate the scrutiny report in the PDF format, the scrutiny report contains the rules which are passing and failing.
 
-
-
 ## User Guide
 This section contains steps that are involved in build and deploy the application.
-FAQ related to various deployment and development issues are discussed [here][FAQ]
 
 ## Setup with auto installer
 * Clone the UPYOG repository.
@@ -41,6 +38,7 @@ $ cd ${HOME}/egovgithub/UPYOG/edcr/service && make deploy
 * Install [Git 2.8.3][Git]
 * Install [JDK 8 update 112 or higher][JDK8 build]
 * Install [Postman 8.7.0][Postman]
+
 #### Database Setup
 1. Create a database and user in postgres
 2. Create the schema's called `state` & `generic`
@@ -206,8 +204,10 @@ This section gives more details regarding developing and contributing to UPYOG P
 
 #### Repository Structure
 `UPYOG` - folder contains all the source code of UPYOG projects
+
 #### Check out sources
 `git clone git@github.com:upyog/UPYOG.git` or `https://github.com/upyog/UPYOG.git`
+
 #### Prerequisites
 
 * Install your favorite IDE for java project. Recommended Eclipse or IntelliJ IDEA
@@ -267,7 +267,6 @@ Browser:-
 
 [Git]: https://git-scm.com/downloads
 [JDK8 build]: http://www.oracle.com/technetwork/java/javase/downloads
-[eGov Opensource JIRA]: http://issues.egovernments.org
 [Wildfly Customized]: https://devops.egovernments.org/Downloads/wildfly/wildfly-11.0.0.Final.zip
 [Eclipse Photon]: https://www.eclipse.org/downloads/packages/release/photon/r
 [Spring Profiles]: http://docs.spring.io/spring/docs/current/spring-framework-reference/html/beans.html#beans-environment
@@ -276,12 +275,8 @@ Browser:-
 [PostgreSQL]: http://www.postgresql.org/download/
 [Maven]: http://maven.apache.org/download.cgi
 [GPL]: http://www.gnu.org/licenses/
-[FAQ]:https://digit-discuss.atlassian.net/wiki/spaces/FAQ/overview
-[GHPAGE]:https://egovernments.org/solutions.php
 [versioneye]:https://www.versioneye.com/user/projects/5a0e82590fb24f00104d87b2
 [versioneye img]:https://www.versioneye.com/user/projects/5a0e82590fb24f00104d87b2/badge.svg?style=flat-square
 [codacy]:https://www.codacy.com/app/egovernments/eGov
 [codacy img]:https://api.codacy.com/project/badge/Grade/8e3a009a64a44d1a9d75f78261272987
 [Postman]:https://www.postman.com/downloads/
-
-
