@@ -59,7 +59,7 @@ public class CorrectionController {
         BirthCertificate birthCertificate = new BirthCertificate();
         List<CorrectionApplication> birthApplicationDetails=correctionService.updateKsmartBirthDetails(request);
         //Download certificate when Approved
-        if((birthApplicationDetails.get(0).getApplicationStatus() == STATUS_APPROVED && birthApplicationDetails.get(0).getAction() == WF_APPROVE)){
+        if((birthApplicationDetails.get(0).getApplicationStatus().equals(STATUS_APPROVED) && birthApplicationDetails.get(0).getAction().equals(WF_APPROVE))){
             RegisterBirthDetailsRequest registerBirthDetailsRequest = registryReq.createRegistryRequestNew(request);
             List<RegisterBirthDetail> registerBirthDetails =  registerBirthService.updateRegisterBirthDetails(registerBirthDetailsRequest);
 

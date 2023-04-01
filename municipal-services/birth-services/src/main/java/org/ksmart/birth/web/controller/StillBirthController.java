@@ -53,7 +53,7 @@ public class StillBirthController {
         BirthCertificate birthCertificate = new BirthCertificate();
         List<StillBirthApplication> birthApplicationDetails=stillBirthService.updateBirthDetails(request);
         //Download certificate when Approved
-        if((birthApplicationDetails.get(0).getApplicationStatus() == "APPROVED" && birthApplicationDetails.get(0).getAction() == "APPROVE")){
+        if((birthApplicationDetails.get(0).getApplicationStatus().equals("APPROVED") && birthApplicationDetails.get(0).getAction().equals("APPROVE"))){
             RegisterBirthDetailsRequest registerBirthDetailsRequest = registryReq.createRegistryRequest(request);
             List<RegisterBirthDetail> registerBirthDetails =  registerBirthService.saveRegisterBirthDetails(registerBirthDetailsRequest);
 //            RegisterBirthSearchCriteria criteria = new RegisterBirthSearchCriteria();

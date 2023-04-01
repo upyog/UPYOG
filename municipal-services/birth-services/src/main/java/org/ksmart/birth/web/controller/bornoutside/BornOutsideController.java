@@ -2,7 +2,10 @@ package org.ksmart.birth.web.controller.bornoutside;
 
 import lombok.extern.slf4j.Slf4j;
 import org.ksmart.birth.birthregistry.model.BirthCertificate;
+import org.ksmart.birth.birthregistry.model.RegisterBirthDetail;
+import org.ksmart.birth.birthregistry.model.RegisterBirthDetailsRequest;
 import org.ksmart.birth.birthregistry.service.RegisterBirthService;
+import org.ksmart.birth.bornoutside.service.RegistryRequestServiceForBirthOutside;
 import org.ksmart.birth.newbirth.service.RegistryRequestService;
 import org.ksmart.birth.bornoutside.service.BornOutsideService;
 import org.ksmart.birth.utils.ResponseInfoFactory;
@@ -18,6 +21,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
+import static org.ksmart.birth.utils.BirthConstants.STATUS_APPROVED;
+import static org.ksmart.birth.utils.BirthConstants.WF_APPROVE;
+
 @Slf4j
 @RestController
 @RequestMapping("/cr")
@@ -25,11 +31,11 @@ public class BornOutsideController {
     private final ResponseInfoFactory responseInfoFactory;
     private final BornOutsideService birthService;
     private final RegisterBirthService registerBirthService;
-    private final RegistryRequestService registryReq;
+    private final RegistryRequestServiceForBirthOutside registryReq;
 
     @Autowired
     BornOutsideController(BornOutsideService birthService, ResponseInfoFactory responseInfoFactory,
-                          RegisterBirthService registerBirthService, RegistryRequestService registryReq) {
+                          RegisterBirthService registerBirthService, RegistryRequestServiceForBirthOutside registryReq) {
         this.birthService = birthService;
         this.responseInfoFactory = responseInfoFactory;
         this.registerBirthService = registerBirthService;
@@ -52,14 +58,14 @@ public class BornOutsideController {
         BirthCertificate birthCertificate = new BirthCertificate();
         List<BornOutsideApplication> birthApplicationDetails = birthService.updateBirthApplication(request);
         //Download certificate when Approved
-//        if ((birthApplicationDetails.get(0).getApplicationStatus() == "APPROVED" && birthApplicationDetails.get(0).getAction() == "APPROVE")) {
-//            RegisterBirthDetailsRequest registerBirthDetailsRequest = registryReq.createRegistryRequest(request);
-//            List<RegisterBirthDetail> registerBirthDetails = registerBirthService.saveRegisterBirthDetails(registerBirthDetailsRequest);
+        if ((birthApplicationDetails.get(0).getApplicationStatus().equals(STATUS_APPROVED) && birthApplicationDetails.get(0).getAction().equals(WF_APPROVE))) {
+            RegisterBirthDetailsRequest registerBirthDetailsRequest = registryReq.createRegistryRequest(request);
+            List<RegisterBirthDetail> registerBirthDetails = registerBirthService.saveRegisterBirthDetails(registerBirthDetailsRequest);
 //            RegisterBirthSearchCriteria criteria = new RegisterBirthSearchCriteria();
 //            criteria.setTenantId(registerBirthDetails.get(0).getTenantId());
 //            criteria.setRegistrationNo(registerBirthDetails.get(0).getRegistrationNo());
 //            birthCertificate = registerBirthService.download(criteria, request.getRequestInfo());
-//        }
+        }
         BornOutsideResponse response = BornOutsideResponse.builder()
                 .birthDetails(birthApplicationDetails)
                 .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(),true))

@@ -31,7 +31,6 @@ public class NewMdmsValidator {
         Map<String, Object> masterBirthData = getBirthMasterData(mdmsData);
         validateBirthMasterData(masterBirthData);
 
-
         Map<String, Object> masterCommonData = getCommonMasterData(mdmsData);
         validateCommonMasterData(masterCommonData);
 

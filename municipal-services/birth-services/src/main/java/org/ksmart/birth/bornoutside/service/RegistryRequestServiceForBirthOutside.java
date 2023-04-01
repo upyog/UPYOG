@@ -2,6 +2,7 @@ package org.ksmart.birth.bornoutside.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.ksmart.birth.birthregistry.model.*;
+import org.ksmart.birth.web.model.bornoutside.BornOutsideDetailRequest;
 import org.ksmart.birth.web.model.newbirth.NewBirthDetailRequest;
 import org.springframework.stereotype.Service;
 
@@ -11,7 +12,7 @@ import java.util.List;
 @Slf4j
 @Service
 public class RegistryRequestServiceForBirthOutside {
-    public RegisterBirthDetailsRequest createRegistryRequest(NewBirthDetailRequest requestKsmartBirthReq) {
+    public RegisterBirthDetailsRequest createRegistryRequest(BornOutsideDetailRequest requestKsmartBirthReq) {
         RegisterBirthDetailsRequest request = new RegisterBirthDetailsRequest();
         List<RegisterBirthDetail> registerBirthDetails = new LinkedList<>();
         RegisterBirthDetail registerBirthDetail = new RegisterBirthDetail();
