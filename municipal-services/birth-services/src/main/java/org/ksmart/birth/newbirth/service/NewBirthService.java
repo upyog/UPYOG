@@ -69,7 +69,7 @@ public class NewBirthService {
 
         Object mdmsData = mdmsUtil.mdmsCall(request.getRequestInfo());
         // validate request
-        validator.validateCreate(request, mdmsData);
+        validator.validateUpdate(request, mdmsData);
 
         //search application exist
 

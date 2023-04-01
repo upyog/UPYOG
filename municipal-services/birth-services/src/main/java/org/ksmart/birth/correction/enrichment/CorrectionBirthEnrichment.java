@@ -111,11 +111,11 @@ public class CorrectionBirthEnrichment implements BaseEnrichment {
         String tenantId = birthDetails.get(0)
                 .getTenantId();
         List<String> filecodes = getIds(requestInfo,
-                tenantId,
-                config.getBirthApplNumberIdName(),
-                request.getCorrectionDetails().get(0).getApplicationType(),
-                "APPL",
-                birthDetails.size());
+                                        tenantId,
+                                        config.getBirthApplNumberIdName(),
+                                        request.getCorrectionDetails().get(0).getApplicationType(),
+                                        "APPL",
+                                        birthDetails.size());
         validateFileCodes(filecodes, birthDetails.size());
 
         ListIterator<String> itr = filecodes.listIterator();
