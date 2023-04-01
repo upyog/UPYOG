@@ -21,9 +21,7 @@ public class NewBirthApplicationValidator {
 
     @Autowired
     NewBirthApplicationValidator(BirthConfiguration bndConfig, NewMdmsValidator mdmsValidator) {
-
         this.bndConfig = bndConfig;
-
         this.mdmsValidator = mdmsValidator;
     }
 

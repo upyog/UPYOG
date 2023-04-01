@@ -39,15 +39,10 @@ public class NewBirthService {
 
     public List<NewBirthApplication> saveKsmartBirthDetails(NewBirthDetailRequest request) {
         Object mdmsData = mdmsUtil.mdmsCall(request.getRequestInfo());
-
-
-
         // validate request
         validator.validateCreate(request, mdmsData);
-
         //call save
         List<NewBirthApplication> birthApplicationDetails =  repository.saveKsmartBirthDetails(request);
-
         //WorkFlow Integration
         workflowIntegrator.callWorkFlow(request);
 
@@ -66,15 +61,12 @@ public class NewBirthService {
     }
 
     public List<NewBirthApplication> updateKsmartBirthDetails(NewBirthDetailRequest request) {
-
         Object mdmsData = mdmsUtil.mdmsCall(request.getRequestInfo());
         // validate request
         validator.validateUpdate(request, mdmsData);
-
         //search application exist
-
         validator.validateUpdate(request, mdmsData);
-      //  workflowIntegrator.callWorkFlow(request);
+        workflowIntegrator.callWorkFlow(request);
         return repository.updateKsmartBirthDetails(request);
     }
 

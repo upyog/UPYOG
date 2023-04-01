@@ -32,13 +32,10 @@ public class StillBirthService {
 
     public List<StillBirthApplication> saveBirthDetails(StillBirthDetailRequest request) {
         Object mdmsData = mdmsUtil.mdmsCall(request.getRequestInfo());
-
         // validate request
         validator.validateCreate(request, mdmsData);
-
         //call save
         List<StillBirthApplication> birthApplicationDetails =  repository.saveBirthDetails(request);
-
         //WorkFlow Integration
         workflowIntegrator.callWorkFlow(request);
         return birthApplicationDetails;
