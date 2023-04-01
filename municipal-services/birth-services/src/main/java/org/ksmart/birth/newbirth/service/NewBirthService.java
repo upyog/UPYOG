@@ -60,7 +60,16 @@ public class NewBirthService {
         return birthApplicationDetails;
     }
 
-    public List<NewBirthApplication> updateKsmartBirthDetails(NewBirthDetailRequest request) {
+    public List<NewBirthApplication> updateBirthDetails(NewBirthDetailRequest request) {
+        Object mdmsData = mdmsUtil.mdmsCall(request.getRequestInfo());
+        // validate request
+        validator.validateUpdate(request, mdmsData);
+        //search application exist
+        validator.validateUpdate(request, mdmsData);
+        return repository.updateKsmartBirthDetails(request);
+    }
+
+    public List<NewBirthApplication> editBirthDetails(NewBirthDetailRequest request) {
         Object mdmsData = mdmsUtil.mdmsCall(request.getRequestInfo());
         // validate request
         validator.validateUpdate(request, mdmsData);

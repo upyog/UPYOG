@@ -63,9 +63,9 @@ public class NewBirthEnrichment implements BaseEnrichment {
         request.getNewBirthDetails()
                 .forEach(birth -> {
                     birth.setAuditDetails(auditDetails);
-                   // if ((birth.getApplicationStatus() == STATUS_APPROVED && birth.getAction() == WF_APPROVE)) {
+                    if ((birth.getApplicationStatus() == STATUS_APPROVED && birth.getAction() == WF_APPROVE)) {
                         setRegistrationNumber(request);
-                   // }
+                    }
                 });
         setPresentAddress(request);
         setPermanentAddress(request);
@@ -129,10 +129,10 @@ public class NewBirthEnrichment implements BaseEnrichment {
         ListIterator<String> itr = filecodes.listIterator();
         request.getNewBirthDetails()
                 .forEach(birth -> {
-                   //  if ((birth.getApplicationStatus() == STATUS_APPROVED && birth.getAction() == WF_APPROVE)) {
+                     if ((birth.getApplicationStatus() == STATUS_APPROVED && birth.getAction() == WF_APPROVE)) {
                         birth.setRegistrationNo(itr.next());
                         birth.setRegistrationDate(currentTime);
-                  //  }
+                    }
                 });
     }
     private void setPresentAddress(NewBirthDetailRequest request) {

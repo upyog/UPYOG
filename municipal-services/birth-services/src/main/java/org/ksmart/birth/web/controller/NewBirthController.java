@@ -55,7 +55,7 @@ public class NewBirthController {
     @PostMapping(value = { "/updatebirth"})
     public ResponseEntity<?> updateRegisterBirthDetails(@RequestBody NewBirthDetailRequest request) {
         BirthCertificate birthCertificate = new BirthCertificate();
-        List<NewBirthApplication> birthApplicationDetails=ksmartBirthService.updateKsmartBirthDetails(request);
+        List<NewBirthApplication> birthApplicationDetails=ksmartBirthService.updateBirthDetails(request);
         //Download certificate when Approved
         if((birthApplicationDetails.get(0).getApplicationStatus().equals(STATUS_APPROVED) && birthApplicationDetails.get(0).getAction().equals(WF_APPROVE))){
             RegisterBirthDetailsRequest registerBirthDetailsRequest = registryReq.createRegistryRequestNew(request);
@@ -73,6 +73,29 @@ public class NewBirthController {
                 .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(),
                         true))
                 .birthCertificate(birthCertificate)
+                .build();
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PostMapping(value = { "/editbirth"})
+    public ResponseEntity<?> editBirthDetails(@RequestBody NewBirthDetailRequest request) {
+        List<NewBirthApplication> birthApplicationDetails=ksmartBirthService.editBirthDetails(request);
+//        //Download certificate when Approved
+//        if((birthApplicationDetails.get(0).getApplicationStatus().equals(STATUS_APPROVED) && birthApplicationDetails.get(0).getAction().equals(WF_APPROVE))){
+//            RegisterBirthDetailsRequest registerBirthDetailsRequest = registryReq.createRegistryRequestNew(request);
+//            List<RegisterBirthDetail> registerBirthDetails =  registerBirthService.saveRegisterBirthDetails(registerBirthDetailsRequest);
+//
+//            //Dowload after update
+////            RegisterBirthSearchCriteria criteria = new RegisterBirthSearchCriteria();
+////            criteria.setTenantId(registerBirthDetails.get(0).getTenantId());
+////            criteria.setApplicationNumber(registerBirthDetails.get(0).getAckNumber());
+////            birthCertificate = registerBirthService.download(criteria,request.getRequestInfo());
+//
+//        }
+        NewBirthResponse response=NewBirthResponse.builder()
+                .ksmartBirthDetails(birthApplicationDetails)
+                .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(),
+                        true))
                 .build();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
