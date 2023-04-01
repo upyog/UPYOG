@@ -8,17 +8,19 @@ import org.ksmart.birth.birthregistry.service.RegisterBirthService;
 import org.ksmart.birth.correction.service.CorrectionBirthService;
 import org.ksmart.birth.correction.service.RegistryRequestServiceCorrection;
 import org.ksmart.birth.utils.ResponseInfoFactory;
+import org.ksmart.birth.web.model.SearchCriteria;
 import org.ksmart.birth.web.model.correction.CorrectionApplication;
 import org.ksmart.birth.web.model.correction.CorrectionRequest;
 import org.ksmart.birth.web.model.correction.CorrectionResponse;
+import org.ksmart.birth.web.model.newbirth.NewBirthApplication;
+import org.ksmart.birth.web.model.newbirth.NewBirthDetailRequest;
+import org.ksmart.birth.web.model.newbirth.NewBirthSearchResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 import static org.ksmart.birth.utils.BirthConstants.STATUS_APPROVED;
@@ -58,7 +60,7 @@ public class CorrectionController {
         List<CorrectionApplication> birthApplicationDetails=correctionService.updateKsmartBirthDetails(request);
         //Download certificate when Approved
         if((birthApplicationDetails.get(0).getApplicationStatus() == STATUS_APPROVED && birthApplicationDetails.get(0).getAction() == WF_APPROVE)){
-            RegisterBirthDetailsRequest registerBirthDetailsRequest = registryReq.createRegistryRequest(request);
+            RegisterBirthDetailsRequest registerBirthDetailsRequest = registryReq.createRegistryRequestNew(request);
             List<RegisterBirthDetail> registerBirthDetails =  registerBirthService.updateRegisterBirthDetails(registerBirthDetailsRequest);
 
             //Dowload after update
@@ -75,5 +77,15 @@ public class CorrectionController {
                 .birthCertificate(birthCertificate)
                 .build();
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PostMapping(value = {"/searchbirthcorrection"})
+    public ResponseEntity<CorrectionResponse> searchKsmartBirth(@RequestBody CorrectionRequest request, @Valid @ModelAttribute SearchCriteria criteria) {
+        List<CorrectionApplication> birthDetails=correctionService.searcCorrectionDetails(request, criteria);
+        CorrectionResponse response=CorrectionResponse.builder()
+                .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), Boolean.TRUE))
+                .correctionDetails(birthDetails)
+                .build();
+        return ResponseEntity.ok(response);
     }
 }

@@ -27,7 +27,7 @@ public class RegisterPresentAddressRowMapperForApp {
                 .otStateRegionProvinceEn(rs.getString("pres_ot_state_region_province_en"))
                 .otStateRegionProvinceMl(rs.getString("pres_ot_state_region_province_ml"))
                 .countryId(rs.getString("pres_countryid"))
-                .birthDtlId(rs.getString("pres_birthdtlid"))
+               // .birthDtlId(rs.getString("pres_birthdtlid"))
                 .bioAdopt(rs.getString("pres_bio_adopt"))
                 .talukName(rs.getString("pres_taluk_name"))
                 .villageName(rs.getString("pres_village_name"))

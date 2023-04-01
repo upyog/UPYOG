@@ -1,13 +1,14 @@
 package org.ksmart.birth.correction.repository.rowmapper;
 
 import org.ksmart.birth.web.model.ParentAddress;
+import org.ksmart.birth.web.model.correction.CorrectionAddress;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public interface CorrectionParentAddressRowMapper {
-    default ParentAddress getKsmartBirthParentAddress(ResultSet rs) throws SQLException {
-        return ParentAddress.builder()
+    default CorrectionAddress getCorrectionParentAddress(ResultSet rs) throws SQLException {
+        return CorrectionAddress.builder()
                 .countryIdPresent(rs.getString("pres_countryid"))
                 .stateIdPresent(rs.getString("pres_stateid"))
                 .districtIdPresent(rs.getString("pres_districtid"))
@@ -19,16 +20,11 @@ public interface CorrectionParentAddressRowMapper {
                 .streetNameMlPresent(rs.getString("pres_street_name_ml"))
                 .houseNameNoEnPresent(rs.getString("pres_housename_no_en"))
                 .houseNameNoMlPresent(rs.getString("pres_housename_no_ml"))
-                .villageNamePresent(rs.getString("pres_village_name"))
                 .presentInsideKeralaLBName(rs.getString("pres_tenantid"))
-                .presentInsideKeralaTaluk(rs.getString("pres_talukid"))
                 .presentInsideKeralaPostOffice(rs.getString("pres_poid"))
-                .presentInsideKeralaVillage(rs.getString("pres_villageid"))
                 .presentWardNo(rs.getString("pres_ward_code"))
                 .presentOutsideKeralaPostOfficeEn(rs.getString("pres_postoffice_en"))
                 .presentOutsideKeralaPostOfficeMl(rs.getString("pres_postoffice_ml"))
-                .presentOutsideKeralaTalukName(rs.getString("pres_taluk_name"))
-                .townOrVillagePresent(rs.getString("stat_mother_resdnce_placetype"))
 
 
                 .presentOutSideIndiaAdressEn(rs.getString("pres_ot_address1_en"))
@@ -37,7 +33,6 @@ public interface CorrectionParentAddressRowMapper {
                 .presentOutSideIndiaAdressMlB(rs.getString("pres_ot_address2_ml"))
                 .presentOutSideIndiaProvinceEn(rs.getString("pres_ot_state_region_province_en"))
                 .presentOutSideIndiaProvinceMl(rs.getString("pres_ot_state_region_province_ml"))
-                .presentOutSideIndiaadrsCityTown(rs.getString("stat_mother_resdnce_placetype"))
 
                 .countryIdPermanent(rs.getString("per_countryid"))
                 .stateIdPermanent(rs.getString("per_stateid"))
@@ -53,12 +48,8 @@ public interface CorrectionParentAddressRowMapper {
                 .permntInKeralaAdrPostOffice(rs.getString("per_poid"))
                 .permntInKeralaAdrPincode(rs.getString("per_pinno"))
                 .permntInKeralaAdrLBName(rs.getString("per_tenantid"))
-                .permntInKeralaAdrTaluk(rs.getString("per_talukid"))
-                .permntInKeralaAdrVillage(rs.getString("per_villageid"))
                 .permntInKeralaWardNo(rs.getString("per_ward_code"))
 
-                .permntOutsideKeralaTaluk(rs.getString("per_taluk_name"))
-                .permntOutsideKeralaCityVilgeEn(rs.getString("stat_mother_resdnce_placetype"))
                 .permntOutsideKeralaPostOfficeEn(rs.getString("per_postoffice_en"))
                 .permntOutsideKeralaPostOfficeMl(rs.getString("per_postoffice_ml"))
                 .isPrsentAddress(rs.getInt("per_same_as_present")==1?true:false)

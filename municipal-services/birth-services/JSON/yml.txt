@@ -1,0 +1,675 @@
+  - query: INSERT INTO public.eg_birth_place(id,birthdtlid,placeofbirthid,hospitalid,public_place_id,institution_type_id,institution_id,vehicletypeid,vehicle_registration_no,vehicle_from_en,
+            vehicle_to_en,vehicle_from_ml, vehicle_to_ml,vehicle_admit_hospital_en,ho_householder_en,ho_locality_en,ho_locality_ml,ho_street_name_en,ho_street_name_ml,ho_housename_en,ho_housename_ml,ho_villageid,
+            ho_talukid,ho_districtid,ho_stateid,ho_poid,ho_pinno,ho_countryid,ward_id,auth_officer_id,auth_officer_desig_id,oth_auth_officer_name,oth_auth_officer_desig, informantsaddress_en,
+            informants_mobileno,informants_aadhaar_no,vehicle_haltplace_en,vehicle_hospitalid,createdby,createdtime,lastmodifiedby,lastmodifiedtime,vehicle_haltplace_ml,
+            vehicle_desc,public_place_desc,public_locality_en,public_locality_ml,public_street_name_en,public_street_name_ml)
+            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
+
+          basePath: CorrectionDetails.*
+          jsonMaps:
+            - jsonPath: $.CorrectionDetails.*.birthPlaceUuid
+
+            - jsonPath: $.CorrectionDetails.*.id
+
+            - jsonPath: $.CorrectionDetails.*.birthPlace
+
+            - jsonPath: $.CorrectionDetails.*.hospitalCode
+
+            - jsonPath: $.CorrectionDetails.*.publicPlaceType
+
+            - jsonPath: $.CorrectionDetails.*.institutionTypeCode
+
+            - jsonPath: $.CorrectionDetails.*.institutionNameCode
+
+            - jsonPath: $.CorrectionDetails.*.vehicleType
+
+            - jsonPath: $.CorrectionDetails.*.vehicleRegistrationNo
+
+            - jsonPath: $.CorrectionDetails.*.vehicleFromEn
+
+            - jsonPath: $.CorrectionDetails.*.vehicleToEn
+
+            - jsonPath: $.CorrectionDetails.*.vehicleFromMl
+
+            - jsonPath: $.CorrectionDetails.*.vehicleToMl
+
+            - jsonPath: $.CorrectionDetails.*.vehicle_admit_hospital_en
+
+            - jsonPath: $.CorrectionDetails.*.ho_householder_en
+
+            - jsonPath: $.CorrectionDetails.*.adrsLocalityNameEn
+
+            - jsonPath: $.CorrectionDetails.*.adrsLocalityNameMl
+
+            - jsonPath: $.CorrectionDetails.*.adrsStreetNameEn
+
+            - jsonPath: $.CorrectionDetails.*.adrsStreetNameMl
+
+            - jsonPath: $.CorrectionDetails.*.adrsHouseNameEn
+
+            - jsonPath: $.CorrectionDetails.*.adrsHouseNameMl
+
+            - jsonPath: $.CorrectionDetails.*.ho_villageid
+
+            - jsonPath: $.CorrectionDetails.*.ho_talukid
+
+            - jsonPath: $.CorrectionDetails.*.ho_districtid
+
+            - jsonPath: $.CorrectionDetails.*.ho_stateid
+
+            - jsonPath: $.CorrectionDetails.*.adrsPostOffice
+
+            - jsonPath: $.CorrectionDetails.*.adrsPincode
+
+            - jsonPath: $.CorrectionDetails.*.ho_countryid
+
+            - jsonPath: $.CorrectionDetails.*.wardNo
+
+            - jsonPath: $.CorrectionDetails.*.InformarHosInstDetails.infomantFirstNameEn
+
+            - jsonPath: $.CorrectionDetails.*.InformarHosInstDetails.informerDesi
+
+            - jsonPath: $.CorrectionDetails.*.InformarHosInstDetails.oth_auth_officer_name
+
+            - jsonPath: $.CorrectionDetails.*.InformarHosInstDetails.oth_auth_officer_desig
+
+            - jsonPath: $.CorrectionDetails.*.InformarHosInstDetails.informerAddress
+
+            - jsonPath: $.CorrectionDetails.*.InformarHosInstDetails.infomantMobile
+
+            - jsonPath: $.CorrectionDetails.*.InformarHosInstDetails.infomantAadhar
+
+            - jsonPath: $.CorrectionDetails.*.vehicleHaltPlace
+
+            - jsonPath: $.CorrectionDetails.*.setadmittedHospitalEn
+
+            - jsonPath: $.CorrectionDetails.*.auditDetails.createdBy
+
+            - jsonPath: $.CorrectionDetails.*.auditDetails.createdTime
+
+            - jsonPath: $.CorrectionDetails.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.CorrectionDetails.*.auditDetails.lastModifiedTime
+
+            - jsonPath: $.CorrectionDetails.*.vehicleHaltPlaceMl
+
+            - jsonPath: $.CorrectionDetails.*.vehicleDesDetailsEn
+
+            - jsonPath: $.CorrectionDetails.*.publicPlaceDecpEn
+
+            - jsonPath: $.CorrectionDetails.*.localityNameEn
+
+            - jsonPath: $.CorrectionDetails.*.localityNameMl
+
+            - jsonPath: $.CorrectionDetails.*.streetNameEn
+
+            - jsonPath: $.CorrectionDetails.*.streetNameMl
+
+
+
+        - query: INSERT INTO public.eg_birth_father_information (id, firstname_en, firstname_ml,  aadharno, birthdtlid, createdtime, createdby, lastmodifiedtime, lastmodifiedby, bio_adopt)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+          basePath: CorrectionDetails.*.ParentsDetails
+          jsonMaps:
+
+            - jsonPath: $.CorrectionDetails.*.ParentsDetails.fatherUuid
+
+            - jsonPath: $.CorrectionDetails.*.ParentsDetails.fatherFirstNameEn
+
+            - jsonPath: $.CorrectionDetails.*.ParentsDetails.fatherFirstNameMl
+
+            - jsonPath: $.CorrectionDetails.*.ParentsDetails.fatherAadhar
+
+            - jsonPath: $.CorrectionDetails.*.id
+
+            - jsonPath: $.CorrectionDetails.*.auditDetails.createdTime
+
+            - jsonPath: $.CorrectionDetails.*.auditDetails.createdBy
+
+            - jsonPath: $.CorrectionDetails.*.auditDetails.lastModifiedTime
+
+            - jsonPath: $.CorrectionDetails.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.CorrectionDetails.*.ParentsDetails.fatherBioAdopt
+
+
+        - query: INSERT INTO public.eg_birth_mother_information(id, firstname_en, firstname_ml, aadharno, birthdtlid, createdtime, createdby, lastmodifiedtime, lastmodifiedby, bio_adopt)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+          basePath: CorrectionDetails.*.ParentsDetails
+          jsonMaps:
+            - jsonPath: $.CorrectionDetails.*.ParentsDetails.motherUuid
+
+            - jsonPath: $.CorrectionDetails.*.ParentsDetails.motherFirstNameEn
+
+            - jsonPath: $.CorrectionDetails.*.ParentsDetails.motherFirstNameMl
+
+            - jsonPath: $.CorrectionDetails.*.ParentsDetails.motherAadhar
+
+            - jsonPath: $.CorrectionDetails.*.id
+
+            - jsonPath: $.CorrectionDetails.*.auditDetails.createdTime
+
+            - jsonPath: $.CorrectionDetails.*.auditDetails.createdBy
+
+            - jsonPath: $.CorrectionDetails.*.auditDetails.lastModifiedTime
+
+            - jsonPath: $.CorrectionDetails.*.auditDetails.lastModifiedBy,
+
+            - jsonPath: $.CorrectionDetails.*.ParentsDetails.motherBioAdopt
+
+        - query: INSERT INTO public.eg_birth_permanent_address(id, housename_no_en, housename_no_ml, ot_address1_en, ot_address1_ml, ot_address2_en, ot_address2_ml,ot_state_region_province_en,
+            villageid, tenantid, talukid, districtid, stateid, poid, pinno, countryid, birthdtlid, same_as_present, createdtime, createdby, lastmodifiedtime,
+            lastmodifiedby, bio_adopt, taluk_name, village_name, ward_code, locality_en, locality_ml, street_name_en,
+            street_name_ml, ot_zipcode,family_emailid, family_mobileno, postoffice_en, postoffice_ml)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,  ?, ?, ?, ?, ?, ?);
+
+          basePath: CorrectionDetails.*.AddressBirthDetails
+          jsonMaps:
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.permanentUuid
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.houseNameNoEnPermanent
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.houseNameNoMlPermanent
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.permntOutsideIndiaLineoneEn
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.permntOutsideIndiaLineoneMl
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.permntOutsideIndiaLinetwoEn
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.permntOutsideIndiaLinetwoMl
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.permntOutsideIndiaprovinceEn
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.permntInKeralaAdrVillage
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.permntInKeralaAdrLBName
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.permntInKeralaAdrTaluk
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.districtIdPermanent
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.stateIdPermanent
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.permntInKeralaAdrPostOffice
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.permntInKeralaAdrPincode
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.countryIdPermanent
+
+            - jsonPath: $.CorrectionDetails.*.id
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.isPrsentAddressInt
+
+            - jsonPath: $.CorrectionDetails.*.auditDetails.createdTime
+
+            - jsonPath: $.CorrectionDetails.*.auditDetails.createdBy
+
+            - jsonPath: $.CorrectionDetails.*.auditDetails.lastModifiedTime
+
+            - jsonPath: $.CorrectionDetails.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.bioAdoptPermanent
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.permntOutsideKeralaTaluk
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.villageNamePermanent
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.permntInKeralaWardNo
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.localityEnPermanent
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.localityMlPermanent
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.streetNameEnPermanent
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.streetNameMlPermanent
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.permanentOutsideIndiaPostCode
+
+            - jsonPath: $.CorrectionDetails.*.ParentsDetails.fatherEmail
+
+            - jsonPath: $.CorrectionDetails.*.ParentsDetails.fatherMobile
+
+            - jsonPath: $.CorrectionDetails.*.ParentsDetails.permntOutsideKeralaPostOfficeEn
+
+            - jsonPath: $.CorrectionDetails.*.ParentsDetails.permntOutsideKeralaPostOfficeMl
+
+
+        - query: INSERT INTO public.eg_birth_present_address(id, housename_no_en, housename_no_ml, ot_address1_en, ot_address1_ml, ot_address2_en, ot_address2_ml,
+            ot_state_region_province_en, ot_state_region_province_ml, villageid, tenantid, talukid, districtid, stateid, poid, pinno, countryid, birthdtlid, createdtime, createdby, lastmodifiedtime, lastmodifiedby,
+            bio_adopt, taluk_name, village_name, ward_code, locality_en, locality_ml, street_name_en,street_name_ml, ot_zipcode)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+          basePath: CorrectionDetails.*.AddressBirthDetails
+          jsonMaps:
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.presentUuid
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.houseNameNoEnPresent
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.houseNameNoMlPresent
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.presentOutSideIndiaAdressEn
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.presentOutSideIndiaAdressMl
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.presentOutSideIndiaAdressEnB
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.presentOutSideIndiaAdressMlB
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.presentOutSideIndiaProvinceEn
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.presentOutSideIndiaProvinceMl
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.presentInsideKeralaVillage
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.presentInsideKeralaLBName
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.presentInsideKeralaTaluk
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.districtIdPresent
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.stateIdPresent
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.presentInsideKeralaPostOffice
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.presentInsideKeralaPincode
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.countryIdPresent
+
+            - jsonPath: $.CorrectionDetails.*.id
+
+            - jsonPath: $.CorrectionDetails.*.auditDetails.createdTime
+
+            - jsonPath: $.CorrectionDetails.*.auditDetails.createdBy
+
+            - jsonPath: $.CorrectionDetails.*.auditDetails.lastModifiedTime
+
+            - jsonPath: $.CorrectionDetails.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.bioAdoptPresent
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.presentOutsideKeralaTaluk
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.villageNamePresent
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.presentWardNo
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.localityEnPresent
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.localityMlPresent
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.streetNameEnPresent
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.streetNameMlPresent
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.presentOutsideIndiaPostCode
+
+    - version: 1.0
+      description: Persists update birth details in eg_birth_details  table
+      fromTopic: correction-save-birth-application-topic
+      isTransaction: true
+      queryMaps:
+
+        - query: UPDATE public.eg_birth_details SET dateofbirth=?, timeofbirth=?, am_pm=?, firstname_en=?, firstname_ml=?, middlename_en=?, middlename_ml=?,
+              lastname_en=?, lastname_ml=?, tenantid=?, gender=?, aadharno=?, esign_user_code=?, esign_user_desig_code=?,
+              is_multiple_birth=?, is_father_info_missing=?, is_mother_info_missing=?, no_of_alive_birth=?, multiplebirthdetid=?, is_born_outside=?,
+              ot_passportno=?, ot_dateofarrival=?, applicationtype=?, businessservice=?, workflowcode=?, fm_fileno=?, file_date=?, file_status=?,
+              applicationno=?, registrationno=?, registration_date=?, action=?, status=?, lastmodifiedby=?,
+              lastmodifiedtime=? WHERE id=?;
+
+
+          basePath: CorrectionDetails.*
+          jsonMaps:
+            - jsonPath: $.CorrectionDetails.*.childDOB
+
+            - jsonPath: $.CorrectionDetails.*.birthDateTime
+
+            - jsonPath: $.CorrectionDetails.*.am_pm
+
+            - jsonPath: $.CorrectionDetails.*.childFirstNameEn
+
+            - jsonPath: $.CorrectionDetails.*.childFirstNameMl
+
+            - jsonPath: $.CorrectionDetails.*.childMiddleNameEn
+
+            - jsonPath: $.CorrectionDetails.*.childMiddleNameMl
+
+            - jsonPath: $.CorrectionDetails.*.childLastNameEn
+
+            - jsonPath: $.CorrectionDetails.*.childLastNameMl
+
+            - jsonPath: $.CorrectionDetails.*.tenantid
+
+            - jsonPath: $.CorrectionDetails.*.gender
+
+            - jsonPath: $.CorrectionDetails.*.childAadharNo
+
+            - jsonPath: $.CorrectionDetails.*.esign_user_code
+
+            - jsonPath: $.CorrectionDetails.*.esign_user_desig_code
+
+            - jsonPath: $.CorrectionDetails.*.is_multiple_birth
+
+            - jsonPath: $.CorrectionDetails.*.isfatherInfo
+
+            - jsonPath: $.CorrectionDetails.*.ismotherInfo
+
+            - jsonPath: $.CorrectionDetails.*.no_of_alive_birth
+
+            - jsonPath: $.CorrectionDetails.*.multiplebirthdetid
+
+            - jsonPath: $.CorrectionDetails.*.is_born_outside
+
+            - jsonPath: $.CorrectionDetails.*.ot_passportno
+
+            - jsonPath: $.CorrectionDetails.*.ot_dateofarrival
+
+            - jsonPath: $.CorrectionDetails.*.applicationtype
+
+            - jsonPath: $.CorrectionDetails.*.businessservice
+
+            - jsonPath: $.CorrectionDetails.*.workflowcode
+
+            - jsonPath: $.CorrectionDetails.*.fileNumber
+
+            - jsonPath: $.CorrectionDetails.*.fileDate
+
+            - jsonPath: $.CorrectionDetails.*.fileStatus
+
+            - jsonPath: $.CorrectionDetails.*.applicationNumber
+
+            - jsonPath: $.CorrectionDetails.*.registrationNo
+
+            - jsonPath: $.CorrectionDetails.*.registrationDate
+
+            - jsonPath: $.CorrectionDetails.*.action
+
+            - jsonPath: $.CorrectionDetails.*.applicationStatus
+
+            - jsonPath: $.CorrectionDetails.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.CorrectionDetails.*.auditDetails.lastModifiedTime
+
+            - jsonPath: $.CorrectionDetails.*.id
+
+        - query: UPDATE public.eg_birth_place SET placeofbirthid=?, hospitalid=?, public_place_id=?, institution_type_id=?, institution_id=?, vehicletypeid=?, vehicle_registration_no=?,
+                vehicle_from_en=?, vehicle_to_en=?, vehicle_from_ml=?, vehicle_to_ml=?, vehicle_admit_hospital_en=?, ho_householder_en=?, ho_householder_ml=?, ho_locality_en=?,
+                ho_locality_ml=?, ho_street_name_en=?, ho_street_name_ml=?, ho_housename_en=?, ho_housename_ml=?, ho_villageid=?, ho_talukid=?, ho_districtid=?, ho_stateid=?, ho_poid=?, ho_pinno=?,
+                ho_countryid=?, ward_id=?, auth_officer_id=?, auth_officer_desig_id=?, oth_auth_officer_name=?, oth_auth_officer_desig=?,
+                informantsaddress_en=?, informants_mobileno=?, informants_aadhaar_no=?, vehicle_haltplace_en=?, vehicle_hospitalid=?,
+                lastmodifiedby=?, lastmodifiedtime=?, vehicle_haltplace_ml=?, vehicle_desc=?, public_place_desc=?,
+                public_locality_en=?, public_locality_ml=?, public_street_name_en=?, public_street_name_ml=?  WHERE  birthdtlid=?;
+
+          basePath: CorrectionDetails.*
+          jsonMaps:
+            - jsonPath: $.CorrectionDetails.*.birthPlace
+
+            - jsonPath: $.CorrectionDetails.*.hospitalCode
+
+            - jsonPath: $.CorrectionDetails.*.publicPlaceType
+
+            - jsonPath: $.CorrectionDetails.*.institutionTypeCode
+
+            - jsonPath: $.CorrectionDetails.*.institutionId
+
+            - jsonPath: $.CorrectionDetails.*.vehicleType
+
+            - jsonPath: $.CorrectionDetails.*.vehicleRegistrationNo
+
+            - jsonPath: $.CorrectionDetails.*.vehicleFromEn
+
+            - jsonPath: $.CorrectionDetails.*.vehicleToEn
+
+            - jsonPath: $.CorrectionDetails.*.vehicleFromMl
+
+            - jsonPath: $.CorrectionDetails.*.vehicleToMl
+
+            - jsonPath: $.CorrectionDetails.*.vehicle_admit_hospital_en
+
+            - jsonPath: $.CorrectionDetails.*.ho_householder_en
+
+            - jsonPath: $.CorrectionDetails.*.ho_householder_ml
+
+            - jsonPath: $.CorrectionDetails.*.adrsLocalityNameEn
+
+            - jsonPath: $.CorrectionDetails.*.adrsLocalityNameMl
+
+            - jsonPath: $.CorrectionDetails.*.adrsStreetNameEn
+
+            - jsonPath: $.CorrectionDetails.*.adrsStreetNameMl
+
+            - jsonPath: $.CorrectionDetails.*.adrsHouseNameEn
+
+            - jsonPath: $.CorrectionDetails.*.adrsHouseNameMl
+
+            - jsonPath: $.CorrectionDetails.*.ho_villageid
+
+            - jsonPath: $.CorrectionDetails.*.ho_talukid
+
+            - jsonPath: $.CorrectionDetails.*.ho_districtid
+
+            - jsonPath: $.CorrectionDetails.*.ho_stateid
+
+            - jsonPath: $.CorrectionDetails.*.adrsPostOffice
+
+            - jsonPath: $.CorrectionDetails.*.adrsPincode
+
+            - jsonPath: $.CorrectionDetails.*.ho_countryid
+
+            - jsonPath: $.CorrectionDetails.*.wardNo
+
+            - jsonPath: $.CorrectionDetails.*.InformarHosInstDetails.infomantFirstNameEn
+
+            - jsonPath: $.CorrectionDetails.*.InformarHosInstDetails.informerDesi
+
+            - jsonPath: $.CorrectionDetails.*.InformarHosInstDetails.oth_auth_officer_name
+
+            - jsonPath: $.CorrectionDetails.*.InformarHosInstDetails.oth_auth_officer_desig
+
+            - jsonPath: $.CorrectionDetails.*.InformarHosInstDetails.informerAddress
+
+            - jsonPath: $.CorrectionDetails.*.InformarHosInstDetails.infomantMobile
+
+            - jsonPath: $.CorrectionDetails.*.InformarHosInstDetails.infomantAadhar
+
+            - jsonPath: $.CorrectionDetails.*.vehicleHaltPlaceEn
+
+            - jsonPath: $.CorrectionDetails.*.setadmittedHospitalEn
+
+            - jsonPath: $.CorrectionDetails.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.CorrectionDetails.*.auditDetails.lastModifiedTime
+
+
+            - jsonPath: $.CorrectionDetails.*.vehicleHaltPlaceMl
+
+            - jsonPath: $.CorrectionDetails.*.vehicleDesDetailsEn
+
+            - jsonPath: $.CorrectionDetails.*.publicPlaceDecpEn
+
+            - jsonPath: $.CorrectionDetails.*.localityNameEn
+
+            - jsonPath: $.CorrectionDetails.*.localityNameMl
+
+            - jsonPath: $.CorrectionDetails.*.streetNameEn
+
+            - jsonPath: $.CorrectionDetails.*.streetNameMl
+
+            - jsonPath: $.CorrectionDetails.*.id
+
+
+        - query: UPDATE public.eg_birth_father_information SET firstname_en=?, firstname_ml=?, aadharno=?, ot_passportno=?,  lastmodifiedtime=?, lastmodifiedby=? WHERE birthdtlid=?;
+          basePath: CorrectionDetails.*.ParentsDetails
+          jsonMaps:
+
+            - jsonPath: $.CorrectionDetails.*.ParentsDetails.firstname_en
+
+            - jsonPath: $.CorrectionDetails.*.ParentsDetails.firstname_ml
+
+            - jsonPath: $.CorrectionDetails.*.ParentsDetails.fatherAadhar
+
+            - jsonPath: $.CorrectionDetails.*.ParentsDetails.fatherPassport
+
+            - jsonPath: $.CorrectionDetails.*.auditDetails.lastModifiedTime
+
+            - jsonPath: $.CorrectionDetails.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.CorrectionDetails.*.id
+
+        - query: UPDATE public.eg_birth_mother_information SET firstname_en=?, firstname_ml=?,  aadharno=?, ot_passportno=?,  lastmodifiedtime=?, lastmodifiedby=? WHERE birthdtlid=?;
+
+          basePath: CorrectionDetails.*.ParentsDetails
+          jsonMaps:
+
+            - jsonPath: $.CorrectionDetails.*.ParentsDetails.motherFirstNameEn
+
+            - jsonPath: $.CorrectionDetails.*.ParentsDetails.motherFirstNameMl
+
+            - jsonPath: $.CorrectionDetails.*.ParentsDetails.motherAadhar
+
+            - jsonPath: $.CorrectionDetails.*.ParentsDetails.motherPassport
+
+            - jsonPath: $.CorrectionDetails.*.auditDetails.lastModifiedTime
+
+            - jsonPath: $.CorrectionDetails.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.CorrectionDetails.*.id
+
+
+        - query: UPDATE public.eg_birth_permanent_address SET  housename_no_en=?, housename_no_ml=?, ot_address1_en=?, ot_address1_ml=?,
+            ot_address2_en=?, ot_address2_ml=?, ot_state_region_province_en=?, villageid=?, tenantid=?, talukid=?, ward_code=?,
+            districtid=?, stateid=?, poid=?, pinno=?, countryid=?, taluk_name=?, same_as_present=?, locality_en=?, locality_ml=?,
+            street_name_en=?, street_name_ml=?, ot_zipcode=?, lastmodifiedby=?, lastmodifiedtime=?, family_emailid=?, family_mobileno=?, postoffice_en=?,
+            postoffice_ml=?, village_name=? WHERE birthdtlid=?;
+
+          basePath: CorrectionDetails.*.AddressBirthDetails
+          jsonMaps:
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.houseNameNoEnPermanent
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.houseNameNoMlPermanent
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.PermntOutsideIndiaLineoneEn
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.PermntOutsideIndiaLineoneMl
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.PermntOutsideIndiaLinetwoEn
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.PermntOutsideIndiaLinetwoMl
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.PermntOutsideIndiaprovinceEn
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.permntInKeralaAdrVillage
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.permntInKeralaAdrLBName
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.permntInKeralaAdrTaluk
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.permntInKeralaWardNo
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.districtIdPermanent
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.stateIdPermanent
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.poNoPermanent
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.pinNoPermanent
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.countryIdPermanent
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.permntOutsideKeralaTaluk
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.isPrsentAddressInt
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.localityEnPermanent
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.localityMlPermanent
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.streetNameEnPermanent
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.streetNameMlPermanent
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.PermanentOutsideIndiaPostCode
+
+            - jsonPath: $.CorrectionDetails.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.CorrectionDetails.*.auditDetails.lastModifiedTime
+
+            - jsonPath: $.CorrectionDetails.*.ParentsDetails.fatherEmail
+
+            - jsonPath: $.CorrectionDetails.*.ParentsDetails.fatherMobile
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.permntOutsideKeralaPostOfficeEn
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.permntOutsideKeralaPostOfficeMl
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.villageNamePermanent
+
+            - jsonPath: $.CorrectionDetails.*.id
+
+
+        - query: UPDATE public.eg_birth_present_address SET housename_no_en=?, housename_no_ml=?, ot_address1_en=?,
+            ot_address1_ml=?, ot_address2_en=?, ot_address2_ml=?, ot_state_region_province_en=?, ot_state_region_province_ml=?, villageid=?, tenantid=?,
+            talukid=?, districtid=?, stateid=?, poid=?, pinno=?, countryid=?, taluk_name=?, village_name=?, ward_code=?,
+            locality_en=?, locality_ml=?, street_name_en=?, street_name_ml=?, lastmodifiedby=?, lastmodifiedtime=?, ot_zipcode=?, postoffice_en=?, postoffice_ml=? WHERE birthdtlid=?;
+          basePath: CorrectionDetails.*.AddressBirthDetails
+          jsonMaps:
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.houseNameNoEnPresent
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.houseNameNoMlPresent
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.presentOutSideIndiaAdressEn
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.presentOutSideIndiaAdressMl
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.presentOutSideIndiaAdressEnB
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.presentOutSideIndiaAdressMlB
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.presentOutSideIndiaProvinceEn
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.presentOutSideIndiaProvinceMl
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.presentInsideKeralaVillage
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.presentInsideKeralaLBName
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.presentInsideKeralaTaluk
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.districtIdPresent
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.stateIdPresent
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.poNoPresent
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.pinNoPresent
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.countryIdPresent
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.presentOutsideKeralaTaluk
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.villageNamePresent
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.presentWardNo
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.localityEnPresent
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.localityMlPresent
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.streetNameEnPresent
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.streetNameMlPresent
+
+            - jsonPath: $.CorrectionDetails.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.CorrectionDetails.*.auditDetails.lastModifiedTime
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.presentOutsideKeralaPincode
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.presentOutsideKeralaPostOfficeEn
+
+            - jsonPath: $.CorrectionDetails.*.AddressBirthDetails.presentOutsideKeralaPostOfficeMl
+
+            - jsonPath: $.CorrectionDetails.*.id

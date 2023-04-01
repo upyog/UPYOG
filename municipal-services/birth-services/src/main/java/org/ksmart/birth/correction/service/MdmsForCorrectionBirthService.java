@@ -31,41 +31,41 @@ public class MdmsForCorrectionBirthService {
     }
 
     public void setLocationDetails(CorrectionApplication birth, Object mdmsData) {
-        if (birth.getWardId() != null) {
-            String wardEn = mdmsLocationService.getWardNameEn(mdmsData, birth.getWardId());
-            String wardMl = mdmsLocationService.getWardNameMl(mdmsData, birth.getWardId());
-            String wardNo = mdmsLocationService.getWardNo(mdmsData, birth.getWardId());
-            birth.setWardNameEn(wardEn);
-            birth.setWardNameMl(wardMl);
-            birth.setWardNumber(wardNo);
-        }
-        if (birth.getPlaceofBirthId().contains(BIRTH_PLACE_HOSPITAL)) {
-            String placeEn = mdmsLocationService.getHospitalAddressEn(mdmsData, birth.getHospitalId());
-            String placeMl = mdmsLocationService.getHospitalNameMl(mdmsData, birth.getHospitalId());
-            birth.setHospitalName(placeEn);
-            birth.setHospitalNameMl(placeMl);
-        } else if (birth.getPlaceofBirthId().contains(BIRTH_PLACE_INSTITUTION)) {
-            String placeEn = mdmsLocationService.getInstitutionNameEn(mdmsData, birth.getInstitutionNameCode());
-            String placeMl = mdmsLocationService.getInstitutionNameMl(mdmsData, birth.getInstitutionNameCode());
-            birth.setInstitutionId(placeEn);
-            birth.setInstitutionIdMl(placeMl);
-        }else { }
+//        if (birth.getWardId() != null) {
+//            String wardEn = mdmsLocationService.getWardNameEn(mdmsData, birth.getWardId());
+//            String wardMl = mdmsLocationService.getWardNameMl(mdmsData, birth.getWardId());
+//            String wardNo = mdmsLocationService.getWardNo(mdmsData, birth.getWardId());
+//            birth.setWardNameEn(wardEn);
+//            birth.setWardNameMl(wardMl);
+//            birth.setWardNumber(wardNo);
+//        }
+//        if (birth.getPlaceofBirthId().contains(BIRTH_PLACE_HOSPITAL)) {
+//            String placeEn = mdmsLocationService.getHospitalAddressEn(mdmsData, birth.getHospitalId());
+//            String placeMl = mdmsLocationService.getHospitalNameMl(mdmsData, birth.getHospitalId());
+//            birth.setHospitalName(placeEn);
+//            birth.setHospitalNameMl(placeMl);
+//        } else if (birth.getPlaceofBirthId().contains(BIRTH_PLACE_INSTITUTION)) {
+//            String placeEn = mdmsLocationService.getInstitutionNameEn(mdmsData, birth.getInstitutionNameCode());
+//            String placeMl = mdmsLocationService.getInstitutionNameMl(mdmsData, birth.getInstitutionNameCode());
+//            birth.setInstitutionId(placeEn);
+//            birth.setInstitutionIdMl(placeMl);
+//        }else { }
     }
 
     public void setInstitutionDetails(CorrectionApplication birth, Object  mdmsData) {
-        if (birth.getPlaceofBirthId().contains(BIRTH_PLACE_INSTITUTION)) {
-            String placeInstType = mdmsTenantService.getInstitutionTypeName(mdmsData, birth.getInstitutionTypeId());
-            birth.setInstitution(placeInstType);
-        }
+//        if (birth.getPlaceofBirthId().contains(BIRTH_PLACE_INSTITUTION)) {
+//            String placeInstType = mdmsTenantService.getInstitutionTypeName(mdmsData, birth.getInstitutionTypeId());
+//            birth.setInstitution(placeInstType);
+//        }
     }
 
     public void setTenantDetails(CorrectionApplication birth, Object  mdmsData) {
-        String lbType = mdmsTenantService.getTenantLbType(mdmsData, birth.getTenantId());
-        if (lbType.contains(LB_TYPE_CORPORATION) || lbType.contains(LB_TYPE_MUNICIPALITY) ) {
-            birth.getParentAddress().setTownOrVillagePresent("TOWN");
-        } else if(lbType.contains(LB_TYPE_GP)) {
-            birth.getParentAddress().setTownOrVillagePresent("VILLAGE");
-        } else{}
+//        String lbType = mdmsTenantService.getTenantLbType(mdmsData, birth.getTenantId());
+//        if (lbType.contains(LB_TYPE_CORPORATION) || lbType.contains(LB_TYPE_MUNICIPALITY) ) {
+//            birth.getParentAddress().setTownOrVillagePresent("TOWN");
+//        } else if(lbType.contains(LB_TYPE_GP)) {
+//            birth.getParentAddress().setTownOrVillagePresent("VILLAGE");
+//        } else{}
     }
 
 }

@@ -42,13 +42,13 @@ public class CorrectionBirthService {
         Object mdmsData = mdmsUtil.mdmsCall(request.getRequestInfo());
 
         // validate request
-        validator.validateCreate(request, mdmsData);
+     //   validator.validateCreate(request, mdmsData);
 
         //call save
-        List<CorrectionApplication> application =  repository.saveKsmartBirthDetails(request);
+        List<CorrectionApplication> application =  repository.saveCorrectionBirthDetails(request);
 
         //WorkFlow Integration
-        workflowIntegrator.callWorkFlow(request);
+     //   workflowIntegrator.callWorkFlow(request);
 
         //Demand Creation
         application.forEach(birth->{
@@ -72,12 +72,12 @@ public class CorrectionBirthService {
 
         //search application exist
 
-        validator.validateUpdate(request, mdmsData);
-        workflowIntegrator.callWorkFlow(request);
+        //validator.validateUpdate(request, mdmsData);
+       // workflowIntegrator.callWorkFlow(request);
         return repository.updateKsmartBirthDetails(request);
     }
-//
-//    public List<NewBirthApplication> searchKsmartBirthDetails(CorrectionRequest request, SearchCriteria criteria) {
-//        return repository.searchKsmartBirthDetails(request,criteria);
-//    }
+
+    public List<CorrectionApplication> searcCorrectionDetails(CorrectionRequest request, SearchCriteria criteria) {
+        return repository.searchCorrectionDetails(request,criteria);
+    }
 }

@@ -28,7 +28,7 @@ public class RegisterPermanentAddressRowMapperForApp {
                 .otStateRegionProvinceEn(rs.getString("per_ot_state_region_province_en"))
                 .otStateRegionProvinceMl(rs.getString("per_ot_state_region_province_ml"))
                 .countryId(rs.getString("per_countryid"))
-                .birthDtlId(rs.getString("per_birthdtlid"))
+                //.birthDtlId(rs.getString("per_birthdtlid"))
                 .sameAsPresent(rs.getInt("per_same_as_present"))
                 .bioAdopt(rs.getString("per_bio_adopt"))
                 .talukName(rs.getString("per_taluk_name"))

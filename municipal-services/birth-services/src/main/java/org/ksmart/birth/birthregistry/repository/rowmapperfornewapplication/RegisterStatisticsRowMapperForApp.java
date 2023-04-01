@@ -46,7 +46,7 @@ public interface RegisterStatisticsRowMapperForApp {
                 .motherResdnceDistrictId(rs.getString("stat_mother_resdnce_district"))
                 .motherResdnceStateId(rs.getString("stat_mother_resdnce_state"))
                 .motherResdnceCountryId(rs.getString("stat_mother_resdnce_country"))
-                .birthDtlId(rs.getString("stat_birthdtlid"))
+               // .birthDtlId(rs.getString("stat_birthdtlid"))
                 .build();
     }
 }

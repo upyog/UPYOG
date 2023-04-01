@@ -982,3 +982,4 @@
               - jsonPath: $.RegisterBirthDetails.*.auditDetails.lastModifiedBy
 
               - jsonPath: $.RegisterBirthDetails.*.id
+

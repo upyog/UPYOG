@@ -11,7 +11,7 @@ public class RegisterPlaceRowMapperForApp {
 
     public RegisterBirthPlace getRegAppPlace(ResultSet rs) throws SQLException {
         return RegisterBirthPlace.builder()
-                .birthDtlId(rs.getString("pla_birthdtlid"))
+              //  .birthDtlId(rs.getString("pla_birthdtlid"))
                 .placeOfBirthId(rs.getString("pla_placeofbirthid"))
                 .hospitalId(rs.getString("pla_hospitalid"))
                 .vehicleTypeId(rs.getString("pla_vehicletypeid"))

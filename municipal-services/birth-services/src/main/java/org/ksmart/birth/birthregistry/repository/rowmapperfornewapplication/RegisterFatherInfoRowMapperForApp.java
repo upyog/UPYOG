@@ -12,7 +12,7 @@ public interface RegisterFatherInfoRowMapperForApp {
                 .firstNameMl(rs.getString("fa_firstname_ml"))
                 .aadharNo(rs.getString("fa_aadharno"))
                 .otPassportNo(rs.getString("fa_ot_passportno"))
-                .birthDtlId(rs.getString("fa_birthdtlid"))
+              //  .birthDtlId(rs.getString("fa_birthdtlid"))
                 .bioAdopt(rs.getString("fa_bio_adopt"))
                 .build();
     }

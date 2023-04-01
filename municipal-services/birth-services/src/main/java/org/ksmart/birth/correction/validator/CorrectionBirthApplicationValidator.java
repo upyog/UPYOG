@@ -60,37 +60,7 @@ public class CorrectionBirthApplicationValidator {
                     "Tenant id is required for create correction request.");
         }
 
-        if (birthApplications.get(0).getDateOfBirth() == null) {
-            throw new CustomException(INVALID_CREATE.getCode(),
-                    "Date of birth is required for create correction request.");
-        }
 
-        if (StringUtils.isBlank(birthApplications.get(0).getPlaceofBirthId())) {
-            throw new CustomException(INVALID_CREATE.getCode(),
-                    "Place of birth id is required for create correction brequest.");
-        }
-
-        if (StringUtils.isBlank(birthApplications.get(0).getApplicationType())) {
-            throw new CustomException(INVALID_CREATE.getCode(),
-                    "Application type is required for create correction request.");
-        }
-
-        if (StringUtils.isBlank(birthApplications.get(0).getBusinessService())) {
-            throw new CustomException(INVALID_CREATE.getCode(),
-                    "Bussiness service is required for create correction request.");
-        }
-
-        if (StringUtils.isBlank(birthApplications.get(0).getWorkFlowCode())) {
-            throw new CustomException(INVALID_CREATE.getCode(),
-                    "Workflow code is required for create correction request.");
-        }
-
-        if (StringUtils.isBlank(birthApplications.get(0).getAction())) {
-            throw new CustomException(INVALID_CREATE.getCode(),
-                    "Workflow action is required for create correction request.");
-        }
-
-        mdmsValidator.validateMdmsData(request, mdmsData);
     }
 
     public void validateUpdate(CorrectionRequest request, Object mdmsData) {
