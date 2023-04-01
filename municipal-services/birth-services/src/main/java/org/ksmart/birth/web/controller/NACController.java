@@ -1,12 +1,17 @@
 package org.ksmart.birth.web.controller;
 
 import lombok.extern.slf4j.Slf4j;
+
+ 
 import org.ksmart.birth.birthnac.service.NacService;
 import org.ksmart.birth.web.model.birthnac.NacApplication;
 import org.ksmart.birth.web.model.birthnac.NacDetailRequest;
 import org.ksmart.birth.web.model.birthnac.NacResponse;
 import org.ksmart.birth.web.model.birthnac.NacSearchResponse;
 import org.ksmart.birth.web.model.birthnac.NacSearchCriteria;
+
+import org.ksmart.birth.web.model.birthnac.certificate.CertificateResponse;
+import org.ksmart.birth.web.model.birthnac.certificate.CertificateDetails;
  
 
 import org.ksmart.birth.utils.ResponseInfoFactory;
@@ -38,7 +43,7 @@ public class NACController {
 
     @PostMapping(value = {"/createnac"})
     public ResponseEntity<?> saveAdoptionDetails(@RequestBody NacDetailRequest request) {
-        List<NacApplication> nacDetails=nacService.saveAdoptionDetails(request);
+        List<NacApplication> nacDetails=nacService.saveNacDetails(request);
         NacResponse response= NacResponse.builder()
                                                                               .nacDetails(nacDetails)
                                                                               .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(),
@@ -57,7 +62,7 @@ public class NACController {
             NacSearchCriteria criteria = new NacSearchCriteria();
             criteria.setTenantId(nacApplicationDetails.get(0).getTenantId());
             criteria.setRegistrationNo(nacApplicationDetails.get(0).getRegistrationNo());
-//            nacCertificate = nacService.download(criteria,request);
+//            final List<CertificateDetails>    nacCertificate = nacService.downloadCertificate(request.getRequestInfo(),criteria);
         }
         NacResponse response=NacResponse.builder()
                 .nacDetails(nacApplicationDetails)
@@ -67,15 +72,29 @@ public class NACController {
                 .build();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-//    @PostMapping(value = {"/searchadoption"})
-//    public ResponseEntity<AdoptionSearchResponse> searchKsmartBirth(@RequestBody AdoptionDetailRequest request, @Valid @ModelAttribute SearchCriteria criteria) {
-//        List<AdoptionApplication> adoptionDetails=adoptionService.searchKsmartBirthDetails(request, criteria);
-//        AdoptionSearchResponse response=AdoptionSearchResponse.builder()
-//                                                                              .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), Boolean.TRUE))
-//                                                                              .AdoptionDetails(adoptionDetails)
-//                                                                              .build();
+     
+//    @PostMapping("/_download")
+//    public ResponseEntity<CertificateResponse> downloadCertificate(@RequestBody final NacDetailRequest request,
+//                                                                   @ModelAttribute final NacSearchCriteria searchCriteria) {
 //
-//
-//        return ResponseEntity.ok(response);
+//        final List<CertificateDetails> certificateDetails = nacService.downloadCertificate(request.getRequestInfo(),
+//                                                                                          searchCriteria);
+//        return ResponseEntity.ok(CertificateResponse.builder()
+//                                                    .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(),
+//                                                                                                                        Boolean.TRUE))
+//                                                    .certificateDetails(certificateDetails)
+//                                                    .build());
 //    }
+    
+    @PostMapping(value = {"/searchnac"})
+    public ResponseEntity<NacSearchResponse> searchKsmartBirth(@RequestBody NacDetailRequest request, @Valid @ModelAttribute SearchCriteria criteria) {
+        List<NacApplication> nacDetails=nacService.searchNacDetails(request, criteria);
+        NacSearchResponse response=NacSearchResponse.builder()
+                                                                              .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), Boolean.TRUE))
+                                                                              .nacDetails(nacDetails)
+                                                                              .build();
+
+
+        return ResponseEntity.ok(response);
+    }
 }

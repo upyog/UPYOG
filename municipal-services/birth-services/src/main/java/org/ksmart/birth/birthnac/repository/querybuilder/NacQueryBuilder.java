@@ -27,6 +27,8 @@ public class NacQueryBuilder extends BaseNacQuery {
 	            .append(" LEFT JOIN eg_birth_permanent_address eperad ON eperad.birthdtlid = ebd.id AND eperad.bio_adopt='BIOLOGICAL'")
 	            .append(" LEFT JOIN eg_birth_present_address epreadd ON epreadd.birthdtlid = ebd.id AND epreadd.bio_adopt='BIOLOGICAL'")
 	            .append(" LEFT JOIN eg_birth_statitical_information estat ON estat.birthdtlid = ebd.id")
+	            .append(" LEFT JOIN eg_birth_applicant ebap ON ebap.birthdtlid = ebd.id")
+	            .append(" LEFT JOIN eg_birth_children_born ebcb ON ebcb.birthdtlid = ebd.id")
 	            .append(" LEFT JOIN eg_birth_initiator ini ON ini.birthdtlid = ebd.id").toString();
 
 	 
@@ -62,6 +64,10 @@ public class NacQueryBuilder extends BaseNacQuery {
                 .append(commonQueryBuilder.getQueryStat())
                 .append(",")
                 .append(commonQueryBuilder.getQueryIntiator())
+                .append(",")
+                .append(commonQueryBuilder.getQueryNacApplicant())
+                .append(",")
+                .append(commonQueryBuilder.getQueryOtherChildren())
                 .append(QUERYCONDITION).toString();
         
         StringBuilder orderBy = new StringBuilder();

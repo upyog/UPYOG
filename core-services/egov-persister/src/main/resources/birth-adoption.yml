@@ -514,43 +514,7 @@ serviceMaps:
             - jsonPath: $.AdoptionDetails.*.auditDetails.createdTime
 
             - jsonPath: $.AdoptionDetails.*.auditDetails.lastModifiedBy
-            - jsonPath: $.AdoptionDetails.*.auditDetails.lastModifiedTime
-
-        - query: INSERT INTO public.eg_birth_initiator(
-            id, birthdtlid, initiator_name, initiator_institution, initiator_inst_desig, relation, initiator_address, is_declared, declaration_id,
-            aadharno, mobileno, createdby, createdtime, lastmodifiedby, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
-          basePath: AdoptionDetails.*.InitiatorinfoDetails
-          jsonMaps:
-
-            - jsonPath: $.AdoptionDetails.*.birthInitiatorUuid
-
-            - jsonPath: $.AdoptionDetails.*.id
-
-            - jsonPath: $.AdoptionDetails.*.InitiatorinfoDetails.initiatorNameEn
-
-            - jsonPath: $.AdoptionDetails.*.InitiatorinfoDetails.initiator_institution
-
-            - jsonPath: $.AdoptionDetails.*.InitiatorinfoDetails.initiatorDesi
-
-            - jsonPath: $.AdoptionDetails.*.InitiatorinfoDetails.relation
-
-            - jsonPath: $.AdoptionDetails.*.InitiatorinfoDetails.initiatorAddress
-
-            - jsonPath: $.AdoptionDetails.*.InitiatorinfoDetails.isInitiatorDeclaration
-
-            - jsonPath: $.AdoptionDetails.*.InitiatorinfoDetails.declaration_id
-
-            - jsonPath: $.AdoptionDetails.*.InitiatorinfoDetails.initiatorAadhar
-
-            - jsonPath: $.AdoptionDetails.*.InitiatorinfoDetails.initiatorMobile
-
-            - jsonPath: $.AdoptionDetails.*.auditDetails.createdBy
-
-            - jsonPath: $.AdoptionDetails.*.auditDetails.createdTime
-
-            - jsonPath: $.AdoptionDetails.*.auditDetails.lastModifiedBy
-
-            - jsonPath: $.AdoptionDetails.*.auditDetails.lastModifiedTime
+            - jsonPath: $.AdoptionDetails.*.auditDetails.lastModifiedTime        
 
     - version: 1.0
       description: Persists update birth adoption details in eg_birth_details  table
@@ -561,7 +525,7 @@ serviceMaps:
               middlename_ml=?, lastname_en=?, lastname_ml=?, tenantid=?, gender=?, remarks_en=?, remarks_ml=?, aadharno=?, esign_user_code=?,
               esign_user_desig_code=?, is_adopted=?, is_abandoned=?, is_multiple_birth=?, is_father_info_missing=?, is_mother_info_missing=?,
               applicationtype=?, businessservice=?,
-              workflowcode=?, fm_fileno=?, file_date=?, file_status=?, applicationno=?, registrationno=?, registration_date=?, action=?, status=?,
+              workflowcode=?, fm_fileno=?, file_date=?, file_status=?,  registrationno=?, registration_date=?, action=?, status=?,
               lastmodifiedtime=?, lastmodifiedby=?, adopt_deed_order_no=?, adopt_dateoforder_deed=?, adopt_issuing_auththority=?, adopt_has_agency=?,
               adopt_agency_name=?, adopt_agency_address=? ,
                adopt_decree_order_no=?,adopt_dateoforder_decree=?,adopt_agency_contact_person=?,adopt_agency_contact_person_mobileno=?
@@ -625,9 +589,7 @@ serviceMaps:
               - jsonPath: $.AdoptionDetails.*.fileDate
 
               - jsonPath: $.AdoptionDetails.*.fileStatus
-
-              - jsonPath: $.AdoptionDetails.*.applicationNumber
-
+              
               - jsonPath: $.AdoptionDetails.*.registrationno
 
               - jsonPath: $.AdoptionDetails.*.registration_date
@@ -977,7 +939,7 @@ serviceMaps:
             - jsonPath: $.AdoptionDetails.*.birthStatistical.father_education_subid
 
             - jsonPath: $.AdoptionDetails.*.ParentsDetails.fatherProfession
-
+                        
             - jsonPath: $.AdoptionDetails.*.ParentsDetails.motherEducation
 
             - jsonPath: $.AdoptionDetails.*.birthStatistical.mother_education_subid
@@ -1040,32 +1002,4 @@ serviceMaps:
 
             - jsonPath: $.AdoptionDetails.*.id
 
-
-          - query: UPDATE public.eg_birth_initiator SET initiator_name=?, initiator_institution=?, initiator_inst_desig=?, relation=?, initiator_address=?,
-                   is_declared=?, declaration_id=?, aadharno=?, mobileno=?, lastmodifiedby=?, lastmodifiedtime=? WHERE birthdtlid=?;
-            basePath: AdoptionDetails.*.InitiatorinfoDetails
-            jsonMaps:
-
-            - jsonPath: $.AdoptionDetails.*.InitiatorinfoDetails.initiatorNameEn
-
-            - jsonPath: $.AdoptionDetails.*.InitiatorinfoDetails.initiator_institution
-
-            - jsonPath: $.AdoptionDetails.*.InitiatorinfoDetails.initiatorDesi
-
-            - jsonPath: $.AdoptionDetails.*.InitiatorinfoDetails.relation
-
-            - jsonPath: $.AdoptionDetails.*.InitiatorinfoDetails.initiatorAddress
-
-            - jsonPath: $.AdoptionDetails.*.InitiatorinfoDetails.isInitiatorDeclaration
-
-            - jsonPath: $.AdoptionDetails.*.InitiatorinfoDetails.declaration_id
-
-            - jsonPath: $.AdoptionDetails.*.InitiatorinfoDetails.initiatorAadhar
-
-            - jsonPath: $.AdoptionDetails.*.InitiatorinfoDetails.initiatorMobile
-
-            - jsonPath: $.AdoptionDetails.*.auditDetails.lastModifiedBy
-
-            - jsonPath: $.AdoptionDetails.*.auditDetails.lastModifiedTime
-
-            - jsonPath: $.AdoptionDetails.*.id
+        

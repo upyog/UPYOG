@@ -93,6 +93,14 @@ public class CommonQueryBuilder {
 	private static final String QUERY_INTIATOR = new StringBuilder().append("ini.id as ini_id,ini.birthdtlid as ini_birthdtlid,ini.initiator_name as ini_initiator_name,ini.initiator_institution as ini_initiator_institution,")
 			.append("ini.initiator_inst_desig as ini_initiator_inst_desig,ini.relation as ini_relation,ini.initiator_address as ini_initiator_address,")
 			.append("ini.is_declared as ini_is_declared,ini.declaration_id as ini_declaration_id,ini.aadharno as ini_aadharno,ini.mobileno as ini_mobileno,ini.is_care_taker as ini_is_care_taker,ini.is_esigned as ini_is_esigned").toString();
+	
+	private static final String QUERY_OTHERCH = new StringBuilder().append("ebcb.id as ebcb_id,ebcb.birthdtlid as ebcb_birthdtlid,ebcb.child_name_en as ebcb_child_name_en,ebcb.child_name_ml as ebcb_child_name_ml,")
+			.append("ebcb.sex as ebcb_sex,ebcb.order_of_birth as ebcb_order_of_birth,ebcb.dob as ebcb_dob,")
+			.append("ebcb.is_alive as ebcb_is_alive").toString();
+	
+	private static final String QUERY_NACAPPLICANT = new StringBuilder().append("ebap.id as ebap_id,ebap.birthdtlid as ebap_birthdtlid,ebap.name_en as ebap_name_en,ebap.address_en as ebap_address_en,")
+			.append("ebap.aadharno as ebap_aadharno,ebap.mobileno as ebap_mobileno,ebap.is_declared as ebap_is_declared,")
+			.append("ebap.declaration_id as ebap_declaration_id,ebap.is_esigned as ebap_is_esigned").toString();
 
 	public String getQueryMain() {
 		return QUERY;
@@ -125,6 +133,12 @@ public class CommonQueryBuilder {
 
 	public String getQueryIntiator() {
 		return QUERY_INTIATOR;
+	}
+	public String getQueryNacApplicant() {
+		return QUERY_NACAPPLICANT;
+	}	
+	public String getQueryOtherChildren() {
+		return QUERY_OTHERCH;
 	}
 
 }

@@ -51,8 +51,7 @@ public class AdoptionRepository {
         this.mdmsUtil = mdmsUtil;
     }
 
-    public List<AdoptionApplication> saveAdoptionDetails(AdoptionDetailRequest request) {
-    	adoptionEnrichment.enrichCreate(request);
+    public List<AdoptionApplication> saveAdoptionDetails(AdoptionDetailRequest request) {    	
         producer.push(birthDeathConfiguration.getSaveBirthAdoptionTopic(), request);
         return request.getAdoptionDetails();
     }

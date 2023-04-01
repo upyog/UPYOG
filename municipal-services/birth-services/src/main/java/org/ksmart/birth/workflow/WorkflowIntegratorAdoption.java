@@ -104,7 +104,7 @@ public class WorkflowIntegratorAdoption {
 	            workFlowRequest.put(BirthDeathConstants.WORKFLOWREQUESTARRAYKEY, array);
 	            String response = null;
 	            log.info("workflow integrator request " + workFlowRequest);
-
+ 
 	            try {
 	                response = restTemplate.postForObject(bndConfig.getWfHost().concat(bndConfig.getWfTransitionPath()),
 	                        workFlowRequest, String.class);
@@ -143,10 +143,13 @@ public class WorkflowIntegratorAdoption {
 	                idStatusMap.put(instanceContext.read(BirthDeathConstants.BUSINESSIDJOSNKEY),
 	                        instanceContext.read(BirthDeathConstants.STATUSJSONKEY));
 	            });
+	            System.out.println("Response frm wrkflow :"+response);
+	            System.out.println("Response frm wrkflow responseContext :"+responseContext);
 	            // setting the status back to TL object from wf response
 
 	                  request.getAdoptionDetails().forEach(
 	                    bndObj -> bndObj.setApplicationStatus(idStatusMap.get(bndObj.getApplicationNo())));
+	                  System.out.println("request.getAdoptionDetails()" +request.getAdoptionDetails().get(0).getApplicationStatus());
 
 	        }
 

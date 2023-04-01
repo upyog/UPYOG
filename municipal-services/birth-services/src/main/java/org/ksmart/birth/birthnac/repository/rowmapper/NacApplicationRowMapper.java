@@ -10,7 +10,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 @Component
-public class NacApplicationRowMapper implements ResultSetExtractor<List<NacApplication>>, NacBaseRowMapper, NacParentDetailRowMapper, NacInformatDetailsRowMapper, NacParentAddressRowMapper, NacInitiatorDetailsRowMapper {
+public class NacApplicationRowMapper implements ResultSetExtractor<List<NacApplication>>, NacBaseRowMapper, NacParentDetailRowMapper, NacInformatDetailsRowMapper, NacParentAddressRowMapper,NacApplicantDetailsRowMapper, NacOtherChildrenRowMapper ,NacInitiatorDetailsRowMapper {
 
     @Override
     public List<NacApplication> extractData(ResultSet rs) throws SQLException, DataAccessException { //how to handle null
@@ -87,8 +87,8 @@ public class NacApplicationRowMapper implements ResultSetExtractor<List<NacAppli
                     .fileNumber(rs.getString("ba_fm_fileno"))
                     .fileDate(rs.getLong("ba_file_date"))
                     .fileStatus(rs.getString("ba_file_status"))
-//                    .informatDetail(getInformantDetail(rs))
-//                    .initiatorDetails(getInitiatorDetail(rs))
+                    .applicantDetails(getApplicant(rs))
+                    .otherChildrenDetails(getOtherChildren(rs))
                     .parentAddress(getKsmartBirthParentAddress(rs))
                     .build());
         }

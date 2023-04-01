@@ -267,8 +267,8 @@ public class AdoptionApplication {
     @JsonProperty("ParentsDetails")
     private ParentsDetail parentsDetails;
 
-    @JsonProperty("InitiatorinfoDetails")
-    private InitiatorDetail initiatorDetails;
+//    @JsonProperty("InitiatorinfoDetails")
+//    private InitiatorDetail initiatorDetails;
 
     @JsonProperty("AddressBirthDetails")
     private ParentAddress parentAddress;

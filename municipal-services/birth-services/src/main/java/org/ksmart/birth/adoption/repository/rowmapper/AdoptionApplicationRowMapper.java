@@ -88,7 +88,7 @@ public class AdoptionApplicationRowMapper implements ResultSetExtractor<List<Ado
                     .fileDate(rs.getLong("ba_file_date"))
                     .fileStatus(rs.getString("ba_file_status"))
                     .informatDetail(getInformantDetail(rs))
-                    .initiatorDetails(getInitiatorDetail(rs))
+//                    .initiatorDetails(getInitiatorDetail(rs))
                     .parentAddress(getKsmartBirthParentAddress(rs))
                     .build());
         }

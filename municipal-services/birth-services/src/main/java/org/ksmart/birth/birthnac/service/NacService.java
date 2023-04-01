@@ -1,14 +1,19 @@
 package org.ksmart.birth.birthnac.service;
 
 import org.egov.common.contract.request.RequestInfo;
+import org.ksmart.birth.web.model.birthnac.certificate.CertificateResponse;
+import org.ksmart.birth.web.model.birthnac.certificate.CertificateDetails;
+import org.ksmart.birth.web.model.birthnac.certificate.CertificateRequest;
+import org.ksmart.birth.web.model.birthnac.NacSearchCriteria;
+import org.ksmart.birth.birthnac.service.CertificateService;
+
 import org.egov.tracer.model.CustomException;
 import org.ksmart.birth.birthnac.repository.NacRepository;
 import org.ksmart.birth.birthnac.validator.NacApplicationValidator;
 
 import org.ksmart.birth.birthregistry.model.BirthPdfRegisterRequest;
 import org.ksmart.birth.birthregistry.model.RegisterBirthDetail;
-import org.ksmart.birth.web.model.birthnac.NacSearchCriteria;
-
+ 
 import org.ksmart.birth.common.contract.EgovPdfResp;
 import org.ksmart.birth.utils.MdmsUtil;
 import org.ksmart.birth.web.model.SearchCriteria;
@@ -28,12 +33,13 @@ public class NacService {
  
     private final NacRepository repository;
     private final WorkflowIntegratorNac workflowIntegrator;
+    private final CertificateService certService;
  
     private final MdmsUtil mdmsUtil;
     private final NacApplicationValidator validator;
 
     @Autowired
-    NacService(NacRepository repository, MdmsUtil mdmsUtil,
+    NacService(NacRepository repository, MdmsUtil mdmsUtil,CertificateService certService,
     		WorkflowIntegratorNac workflowIntegrator,
                NacApplicationValidator validator) {
  
@@ -41,9 +47,10 @@ public class NacService {
         this.mdmsUtil = mdmsUtil;
         this.workflowIntegrator  = workflowIntegrator;
         this.validator = validator;
+        this.certService  = certService;
     }
 
-    public List<NacApplication> saveAdoptionDetails(NacDetailRequest request) {
+    public List<NacApplication> saveNacDetails(NacDetailRequest request) {
         Object mdmsData = mdmsUtil.mdmsCall(request.getRequestInfo());
         Object mdmsDataLoc = mdmsUtil.mdmsCallForLocation(request.getRequestInfo(), request.getNacDetails().get(0).getTenantId());
         // validate request
@@ -65,6 +72,17 @@ public class NacService {
     public List<NacApplication> searchNacDetails(NacDetailRequest request, SearchCriteria criteria) {
         return repository.searchNacDetails(request,criteria);
     }
+    
+//     Nac certificate download
+//    public List<CertificateDetails> downloadCertificate(final RequestInfo requestInfo,
+//                                                        final NacSearchCriteria searchCriteria) {
+//        final CertificateRequest request = certService.createCertificateRequest(requestInfo,searchCriteria );       
+//
+//        // producer.push(fmConfig.getSaveApplicantCertificateTopic(), request);
+//
+//        return request.getCertificateDetails();
+//    }
+
     
 //    public List<NacApplication> searchRegisterForCert(NacDetailRequest request, NacSearchCriteria criteria) { 
 //        List<NacApplication> registerDetails = repository.searchNacCertDetails(request,criteria);

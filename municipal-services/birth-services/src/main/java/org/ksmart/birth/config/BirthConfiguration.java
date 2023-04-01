@@ -181,6 +181,9 @@ public class BirthConfiguration {
 
     @Value("${persister.update.nac.topic}")
     private String updateBirthNacTopic;
+    
+    @Value("${egov.bnd.naccert.link}")
+    private String nacCertLink;
 
 
 

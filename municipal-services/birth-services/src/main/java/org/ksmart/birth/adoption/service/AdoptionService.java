@@ -1,5 +1,6 @@
 package org.ksmart.birth.adoption.service;
 
+import org.ksmart.birth.adoption.enrichment.AdoptionEnrichment;
 import org.ksmart.birth.adoption.repository.AdoptionRepository;
 import org.ksmart.birth.adoption.validator.AdoptionApplicationValidator;
 import org.ksmart.birth.utils.MdmsUtil;
@@ -20,16 +21,18 @@ import java.util.List;
 public class AdoptionService {
  
     private final AdoptionRepository repository;
+    private final AdoptionEnrichment adoptionEnrichment;
     private final WorkflowIntegratorAdoption workflowIntegrator;
  
     private final MdmsUtil mdmsUtil;
     private final AdoptionApplicationValidator validator;
 
     @Autowired 
-    AdoptionService(AdoptionRepository repository, MdmsUtil mdmsUtil,  		
+    AdoptionService(AdoptionRepository repository, MdmsUtil mdmsUtil, AdoptionEnrichment adoptionEnrichment,		
     		WorkflowIntegratorAdoption workflowIntegrator,
     		AdoptionApplicationValidator validator) {
  
+    	this.adoptionEnrichment = adoptionEnrichment;
         this.repository = repository;
         this.mdmsUtil = mdmsUtil;
         this.workflowIntegrator  = workflowIntegrator;
@@ -41,17 +44,18 @@ public class AdoptionService {
         Object mdmsDataLoc = mdmsUtil.mdmsCallForLocation(request.getRequestInfo(), request.getAdoptionDetails().get(0).getTenantId());
         // validate request
         validator.validateCreate(request, mdmsData,mdmsDataLoc);
-
-        //call save
-        List<AdoptionApplication> adoptionDetails =  repository.saveAdoptionDetails(request);
+        // Enrich request
+        adoptionEnrichment.enrichCreate(request);
 
         //WorkFlow Integration
         workflowIntegrator.callWorkFlow(request);
+        //call save
+        List<AdoptionApplication> adoptionDetails =  repository.saveAdoptionDetails(request);
         return adoptionDetails;
     }
 
     public List<AdoptionApplication> updateAdoptionBirthDetails(AdoptionDetailRequest request) {
-    	workflowIntegrator.callWorkFlow(request);
+  	workflowIntegrator.callWorkFlow(request);
         return repository.updateKsmartBirthDetails(request);
     }
 

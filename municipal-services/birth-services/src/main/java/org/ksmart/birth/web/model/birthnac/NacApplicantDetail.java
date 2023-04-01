@@ -37,8 +37,8 @@ public class NacApplicantDetail {
     @JsonProperty("declarationId")
     private String declarationId;
     @Size(max = 64)
-    @JsonProperty("")
-    private Boolean is_esigned;
+    @JsonProperty("isEsigned")
+    private Boolean isEsigned;
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails;
 

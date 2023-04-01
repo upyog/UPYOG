@@ -12,7 +12,8 @@ import org.ksmart.birth.utils.MdmsUtil;
 import org.ksmart.birth.utils.enums.ErrorCodes;
 import org.ksmart.birth.web.model.adoption.AdoptionApplication;
 import org.ksmart.birth.web.model.adoption.AdoptionDetailRequest;
- 
+import org.ksmart.birth.web.model.newbirth.NewBirthApplication;
+import org.ksmart.birth.web.model.newbirth.NewBirthDetailRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
  
@@ -84,14 +85,41 @@ public class AdoptionEnrichment implements BaseEnrichment {
         User userInfo = requestInfo.getUserInfo();
         AuditDetails auditDetails = buildAuditDetails(userInfo.getUuid(), Boolean.FALSE);
         request.getAdoptionDetails()
-                .forEach(birth -> birth.setAuditDetails(auditDetails)); 
+        .forEach(birth -> {
+            birth.setAuditDetails(auditDetails);
+            if ((birth.getApplicationStatus() == "APPROVED" && birth.getAction() == "APPROVE")) {
+                setRegistrationNumber(request);
+            }
+        });
       //  setRegistrationNumber(request); 
         setPresentAddress(request);
         setPermanentAddress(request);
     }
  
 
- 
+    private void setRegistrationNumber(AdoptionDetailRequest request) {
+        RequestInfo requestInfo = request.getRequestInfo();
+        List<AdoptionApplication> birthDetails = request.getAdoptionDetails();
+        String tenantId = birthDetails.get(0)
+                .getTenantId();
+
+        List<String> filecodes = getIds(requestInfo,
+                tenantId,
+                config.getBirthRegisNumberName(),
+                request.getAdoptionDetails().get(0).getApplicationType(),
+                "REG",
+                birthDetails.size());
+        validateFileCodes(filecodes, birthDetails.size());
+        Long currentTime = Long.valueOf(System.currentTimeMillis());
+        ListIterator<String> itr = filecodes.listIterator();
+        request.getAdoptionDetails()
+                .forEach(birth -> {
+                    if((birth.getApplicationStatus() == "APPROVED" && birth.getAction() == "APPROVE")) {
+                        birth.setRegistrationNo(itr.next());
+                        birth.setRegistrationDate(currentTime);
+                    }
+                });
+    }
     private void setApplicationNumbers(AdoptionDetailRequest request) {
         RequestInfo requestInfo = request.getRequestInfo();
         List<AdoptionApplication> adoptionDetails = request.getAdoptionDetails();

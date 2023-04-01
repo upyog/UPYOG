@@ -43,8 +43,8 @@ public class AdoptionQueryBuilder extends BaseAdoptionQuery {
                 .append(commonQueryBuilder.getQueryPermanant())
                 .append(",")
                 .append(commonQueryBuilder.getQueryStat())
-                .append(",")
-                .append(commonQueryBuilder.getQueryIntiator())
+//                .append(",")
+//                .append(commonQueryBuilder.getQueryIntiator())
                 .append(QUERYCONDITION).toString();
         
         StringBuilder orderBy = new StringBuilder();
