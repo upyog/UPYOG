@@ -4,6 +4,14 @@ import lombok.extern.slf4j.Slf4j;
 
  
 import org.ksmart.birth.birthnac.service.NacService;
+import org.ksmart.birth.birthnacregistry.service.RegisterNacService;
+import org.ksmart.birth.birthnac.service.RegistryRequestServiceForNac;
+import org.ksmart.birth.birthnacregistry.model.NacCertificate;
+import org.ksmart.birth.birthnacregistry.model.RegisterNac;
+import org.ksmart.birth.birthnacregistry.model.RegisterNacRequest;
+import org.ksmart.birth.birthnacregistry.model.RegisterNacSearchCriteria;
+import org.ksmart.birth.birthregistry.model.BirthCertificate;
+import org.ksmart.birth.birthregistry.model.RegisterBirthDetail;
 import org.ksmart.birth.web.model.birthnac.NacApplication;
 import org.ksmart.birth.web.model.birthnac.NacDetailRequest;
 import org.ksmart.birth.web.model.birthnac.NacResponse;
@@ -32,12 +40,15 @@ import java.util.List;
 public class NACController {
     private final ResponseInfoFactory responseInfoFactory;
     private final NacService nacService;
- 
+    private final RegistryRequestServiceForNac registryReq;
+    private final RegisterNacService  registerNacService;
      
     @Autowired
-    NACController(NacService nacService, ResponseInfoFactory responseInfoFactory) {
+    NACController(NacService nacService, ResponseInfoFactory responseInfoFactory,RegistryRequestServiceForNac registryReq,RegisterNacService  registerNacService) {
         this.nacService=nacService;
         this.responseInfoFactory=responseInfoFactory;
+        this.registryReq=registryReq;
+        this.registerNacService=registerNacService;
       
     }
 
@@ -53,22 +64,22 @@ public class NACController {
     }
     @PostMapping(value = { "/updatenac"})
     public ResponseEntity<?> updateRegisterBirthDetails(@RequestBody NacDetailRequest request) {
-       
+    	 NacCertificate nacCertificate = new NacCertificate();
         List<NacApplication> nacApplicationDetails=nacService.updateAdoptionBirthDetails(request);
         //Download certificate when Approved
         if((nacApplicationDetails.get(0).getApplicationStatus() == "APPROVED" && nacApplicationDetails.get(0).getAction() == "APPROVE")){
-           
-          
-            NacSearchCriteria criteria = new NacSearchCriteria();
+        	RegisterNacRequest registerNacRequest = registryReq.createRegistryRequestNew(request);
+        	   List<RegisterNac> registerBirthDetails =  registerNacService.saveRegisterBirthDetails(registerNacRequest);
+        	   RegisterNacSearchCriteria criteria = new RegisterNacSearchCriteria();
             criteria.setTenantId(nacApplicationDetails.get(0).getTenantId());
             criteria.setRegistrationNo(nacApplicationDetails.get(0).getRegistrationNo());
-//            final List<CertificateDetails>    nacCertificate = nacService.downloadCertificate(request.getRequestInfo(),criteria);
+            	nacCertificate = registerNacService.download(criteria,request.getRequestInfo());
         }
         NacResponse response=NacResponse.builder()
                 .nacDetails(nacApplicationDetails)
                 .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(),
                         true))
-//                .nacCertificate(nacCertificate)
+                .nacCertificate(nacCertificate)
                 .build();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

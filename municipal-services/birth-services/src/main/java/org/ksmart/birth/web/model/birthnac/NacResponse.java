@@ -3,6 +3,7 @@ package org.ksmart.birth.web.model.birthnac;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import org.egov.common.contract.response.ResponseInfo;
+import org.ksmart.birth.birthnacregistry.model.NacCertificate;
 import org.ksmart.birth.birthregistry.model.BirthCertificate;
 import org.springframework.validation.annotation.Validated;
 
@@ -27,9 +28,9 @@ public class NacResponse {
     @Valid
     private List<NacApplication> nacDetails;
 
-//    @JsonProperty("BirthCertificate")
-//    @Valid
-//    private BirthCertificate birthCertificate;
+    @JsonProperty("NacCertificate")
+    @Valid
+    private NacCertificate nacCertificate;
 
 
     @JsonProperty("Count")

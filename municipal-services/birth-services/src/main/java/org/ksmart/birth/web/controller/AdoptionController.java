@@ -54,6 +54,7 @@ public class AdoptionController {
         BirthCertificate birthCertificate = new BirthCertificate();
         List<AdoptionApplication> adoptionApplicationDetails=adoptionService.updateAdoptionBirthDetails(request);
         //Download certificate when Approved
+        System.out.println("getApplicationStatus" +adoptionApplicationDetails.get(0).getApplicationStatus());
         if((adoptionApplicationDetails.get(0).getApplicationStatus().equals("APPROVED")  && adoptionApplicationDetails.get(0).getAction().equals("APPROVE"))){
             RegisterBirthDetailsRequest registerBirthDetailsRequest = registryReq.createRegistryRequest(request);
             List<RegisterBirthDetail> registerBirthDetails =  registerBirthService.saveRegisterBirthDetails(registerBirthDetailsRequest);

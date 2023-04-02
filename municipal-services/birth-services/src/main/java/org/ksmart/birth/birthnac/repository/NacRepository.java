@@ -4,18 +4,23 @@ import lombok.extern.slf4j.Slf4j;
 import org.ksmart.birth.birthnac.enrichment.NacEnrichment;
 import org.ksmart.birth.birthnac.repository.querybuilder.NacQueryBuilder;
 import org.ksmart.birth.birthnac.repository.rowmapper.NacApplicationRowMapper;
+import org.ksmart.birth.birthregistry.model.RegisterBirthDetail;
+import org.ksmart.birth.birthnacregistry.model.RegisterNac;
+import org.ksmart.birth.birthnacregistry.model.RegisterNacRequest;
 import org.ksmart.birth.birthregistry.service.MdmsDataService;
 import org.ksmart.birth.common.producer.BndProducer;
 import org.ksmart.birth.config.BirthConfiguration;
 import org.ksmart.birth.utils.BirthConstants;
 import org.ksmart.birth.utils.MdmsUtil;
 import org.ksmart.birth.web.model.SearchCriteria;
+import org.ksmart.birth.web.model.adoption.AdoptionDetailRequest;
 import org.ksmart.birth.web.model.birthnac.NacApplication; 
 import org.ksmart.birth.web.model.birthnac.NacDetailRequest;
 import org.ksmart.birth.web.model.birthnac.NacSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.ksmart.birth.birthnacregistry.repository.rowmapperfornewapplicationnac.RegisterRowMapperForApp;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,13 +38,14 @@ public class NacRepository {
  
     private final  MdmsDataService mdmsDataService;
     private final  MdmsUtil mdmsUtil;
+    private final RegisterRowMapperForApp registerRowMapperForApp;
 
 
 
     @Autowired
     NacRepository(JdbcTemplate jdbcTemplate, NacEnrichment adoptionEnrichment, BirthConfiguration birthDeathConfiguration,
                   BndProducer producer, NacQueryBuilder nacQueryBuilder, NacApplicationRowMapper nacApplicationRowMapper,
-                  MdmsDataService mdmsDataService, MdmsUtil mdmsUtil) {
+                  MdmsDataService mdmsDataService, MdmsUtil mdmsUtil,RegisterRowMapperForApp registerRowMapperForApp) {
         this.jdbcTemplate = jdbcTemplate;
         this.adoptionEnrichment = adoptionEnrichment;
         this.birthDeathConfiguration = birthDeathConfiguration;
@@ -48,6 +54,7 @@ public class NacRepository {
         this.nacApplicationRowMapper = nacApplicationRowMapper;
         this.mdmsDataService = mdmsDataService;
         this.mdmsUtil = mdmsUtil;
+        this.registerRowMapperForApp = registerRowMapperForApp;
     }
 
     public List<NacApplication> saveNacDetails(NacDetailRequest request) {
@@ -62,7 +69,22 @@ public class NacRepository {
         return request.getNacDetails();
     }
 
-
+    public RegisterNacRequest searchNacDetailsForRegister(NacDetailRequest requestApplication) {
+        List<Object> preparedStmtValues = new ArrayList<>();
+        SearchCriteria criteria = new SearchCriteria();
+        List<RegisterNac> result = null;
+        if (requestApplication.getNacDetails().size() > 0) {
+            criteria.setApplicationNumber(requestApplication.getNacDetails().get(0).getApplicationNo());
+            criteria.setTenantId(requestApplication.getNacDetails().get(0).getTenantId());
+            String query = nacQueryBuilder.getApplicationSearchQueryForRegistry(criteria, preparedStmtValues);
+            result = jdbcTemplate.query(query, preparedStmtValues.toArray(), registerRowMapperForApp);
+        }
+        return RegisterNacRequest.builder()
+                .requestInfo(requestApplication.getRequestInfo())
+                .registernacDetails(result).build();
+    }
+    
+    
     public List<NacApplication> searchNacDetails(NacDetailRequest request, SearchCriteria criteria) {
         List<Object> preparedStmtValues = new ArrayList<>();
         String query = nacQueryBuilder.getNacSearchQuery(criteria, preparedStmtValues, Boolean.FALSE);

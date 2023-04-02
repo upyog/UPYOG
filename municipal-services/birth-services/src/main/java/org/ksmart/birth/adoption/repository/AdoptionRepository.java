@@ -1,6 +1,9 @@
 package org.ksmart.birth.adoption.repository;
 
 import lombok.extern.slf4j.Slf4j;
+
+import org.ksmart.birth.birthregistry.model.RegisterBirthDetail;
+import org.ksmart.birth.birthregistry.model.RegisterBirthDetailsRequest;
 import org.ksmart.birth.birthregistry.service.MdmsDataService;
 import org.ksmart.birth.common.producer.BndProducer;
 import org.ksmart.birth.config.BirthConfiguration;
@@ -8,12 +11,14 @@ import org.ksmart.birth.config.BirthConfiguration;
 import org.ksmart.birth.adoption.enrichment.AdoptionEnrichment;
 import org.ksmart.birth.adoption.repository.querybuilder.AdoptionQueryBuilder;
 import org.ksmart.birth.adoption.repository.rowmapper.AdoptionApplicationRowMapper;
+import org.ksmart.birth.birthregistry.repository.rowmapperfornewapplication.RegisterRowMapperForApp;
  
 import org.ksmart.birth.utils.BirthConstants;
 import org.ksmart.birth.utils.MdmsUtil;
 import org.ksmart.birth.web.model.SearchCriteria;
 import org.ksmart.birth.web.model.adoption.AdoptionApplication;
 import org.ksmart.birth.web.model.adoption.AdoptionDetailRequest;
+import org.ksmart.birth.web.model.newbirth.NewBirthDetailRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -34,13 +39,14 @@ public class AdoptionRepository {
  
     private final  MdmsDataService mdmsDataService;
     private final  MdmsUtil mdmsUtil;
+    private final RegisterRowMapperForApp registerRowMapperForApp;
 
 
 
     @Autowired 
     AdoptionRepository(JdbcTemplate jdbcTemplate, AdoptionEnrichment adoptionEnrichment, BirthConfiguration birthDeathConfiguration,
                        BndProducer producer, AdoptionQueryBuilder adoptionQueryBuilder, AdoptionApplicationRowMapper adoptionApplicationRowMapper, 
-                       MdmsDataService mdmsDataService, MdmsUtil mdmsUtil) {
+                       MdmsDataService mdmsDataService, MdmsUtil mdmsUtil,RegisterRowMapperForApp registerRowMapperForApp) {
         this.jdbcTemplate = jdbcTemplate;
         this.adoptionEnrichment = adoptionEnrichment;
         this.birthDeathConfiguration = birthDeathConfiguration;
@@ -49,6 +55,21 @@ public class AdoptionRepository {
         this.adoptionApplicationRowMapper = adoptionApplicationRowMapper;
         this.mdmsDataService = mdmsDataService;
         this.mdmsUtil = mdmsUtil;
+        this.registerRowMapperForApp = registerRowMapperForApp;
+    }
+    public RegisterBirthDetailsRequest searchBirthDetailsForRegister(AdoptionDetailRequest requestApplication) {
+        List<Object> preparedStmtValues = new ArrayList<>();
+        SearchCriteria criteria = new SearchCriteria();
+        List<RegisterBirthDetail> result = null;
+        if (requestApplication.getAdoptionDetails().size() > 0) {
+            criteria.setApplicationNumber(requestApplication.getAdoptionDetails().get(0).getApplicationNo());
+            criteria.setTenantId(requestApplication.getAdoptionDetails().get(0).getTenantId());
+            String query = adoptionQueryBuilder.getApplicationSearchQueryForRegistry(criteria, preparedStmtValues);
+            result = jdbcTemplate.query(query, preparedStmtValues.toArray(), registerRowMapperForApp);
+        }
+        return RegisterBirthDetailsRequest.builder()
+                .requestInfo(requestApplication.getRequestInfo())
+                .registerBirthDetails(result).build();
     }
 
     public List<AdoptionApplication> saveAdoptionDetails(AdoptionDetailRequest request) {    	
@@ -65,7 +86,7 @@ public class AdoptionRepository {
 
     public List<AdoptionApplication> searchKsmartBirthDetails(AdoptionDetailRequest request, SearchCriteria criteria) {
         List<Object> preparedStmtValues = new ArrayList<>();
-        String query = adoptionQueryBuilder.getAdoptionSearchQuery(criteria, preparedStmtValues, Boolean.FALSE);
+        String query = adoptionQueryBuilder.getAdoptionSearchQuery(criteria, request, preparedStmtValues, Boolean.FALSE);
         List<AdoptionApplication> result = jdbcTemplate.query(query, preparedStmtValues.toArray(), adoptionApplicationRowMapper);
         result.forEach(birth -> {
             if(birth.getPlaceofBirthId()!=null){

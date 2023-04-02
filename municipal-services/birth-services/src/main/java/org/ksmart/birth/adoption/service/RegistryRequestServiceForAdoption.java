@@ -2,8 +2,10 @@ package org.ksmart.birth.adoption.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.ksmart.birth.birthregistry.model.*;
-import org.ksmart.birth.web.model.adoption.AdoptionDetailRequest;
+import org.ksmart.birth.web.model.adoption.AdoptionDetailRequest; 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.ksmart.birth.adoption.repository.AdoptionRepository;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -11,6 +13,18 @@ import java.util.List;
 @Slf4j
 @Service
 public class RegistryRequestServiceForAdoption {
+	private final AdoptionRepository repository;
+	@Autowired
+	RegistryRequestServiceForAdoption(AdoptionRepository repository) {
+        this.repository = repository;
+    }
+
+	
+	public RegisterBirthDetailsRequest createRegistryRequestNew(AdoptionDetailRequest request) {///Work to get req to Register
+        return repository.searchBirthDetailsForRegister(request);
+    }
+	
+	
     public RegisterBirthDetailsRequest createRegistryRequest(AdoptionDetailRequest requestKsmartBirthReq) {
         RegisterBirthDetailsRequest request = new RegisterBirthDetailsRequest();
         List<RegisterBirthDetail> registerBirthDetails = new LinkedList<>();
@@ -140,6 +154,7 @@ public class RegistryRequestServiceForAdoption {
     }
 
     private RegisterBirthPermanentAddress createRegisterBirthPermanentAddress(AdoptionDetailRequest requestBirthReq) {
+    	System.out.println("dddd"+requestBirthReq.getAdoptionDetails().get(0).getParentAddress().getPresentaddressCountry());
         RegisterBirthPermanentAddress registerBirthPermanentAddress = new RegisterBirthPermanentAddress();
 //        registerBirthPermanentAddress.setResAssoNo(requestBirthReq.getNewBirthDetails().get(0).getBirthPermanentAddress().getResAssoNo());
         registerBirthPermanentAddress.setHouseNameEn(requestBirthReq.getAdoptionDetails().get(0).getParentAddress().getHouseNameNoEnPermanent());

@@ -1001,5 +1001,4 @@ serviceMaps:
             - jsonPath: $.AdoptionDetails.*.auditDetails.lastModifiedBy
 
             - jsonPath: $.AdoptionDetails.*.id
-
         

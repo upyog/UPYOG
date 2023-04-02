@@ -5,8 +5,7 @@ import org.ksmart.birth.web.model.birthnac.certificate.CertificateResponse;
 import org.ksmart.birth.web.model.birthnac.certificate.CertificateDetails;
 import org.ksmart.birth.web.model.birthnac.certificate.CertificateRequest;
 import org.ksmart.birth.web.model.birthnac.NacSearchCriteria;
-import org.ksmart.birth.birthnac.service.CertificateService;
-
+ 
 import org.egov.tracer.model.CustomException;
 import org.ksmart.birth.birthnac.repository.NacRepository;
 import org.ksmart.birth.birthnac.validator.NacApplicationValidator;
@@ -33,13 +32,13 @@ public class NacService {
  
     private final NacRepository repository;
     private final WorkflowIntegratorNac workflowIntegrator;
-    private final CertificateService certService;
+  
  
     private final MdmsUtil mdmsUtil;
     private final NacApplicationValidator validator;
 
     @Autowired
-    NacService(NacRepository repository, MdmsUtil mdmsUtil,CertificateService certService,
+    NacService(NacRepository repository, MdmsUtil mdmsUtil, 
     		WorkflowIntegratorNac workflowIntegrator,
                NacApplicationValidator validator) {
  
@@ -47,7 +46,7 @@ public class NacService {
         this.mdmsUtil = mdmsUtil;
         this.workflowIntegrator  = workflowIntegrator;
         this.validator = validator;
-        this.certService  = certService;
+        
     }
 
     public List<NacApplication> saveNacDetails(NacDetailRequest request) {
