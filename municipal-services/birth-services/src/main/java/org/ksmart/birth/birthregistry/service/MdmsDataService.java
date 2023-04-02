@@ -81,20 +81,30 @@ public class MdmsDataService {
     }
 
     public void setPresentAddressDetailsEn(RegisterBirthDetail register,RegisterCertificateData registerCert, Object  mdmsData) {
-        if (register.getRegisterBirthPresent().getCountryId().contains(COUNTRY_CODE)) {
-            ksmartAddressService.getAddressInsideCountryPresentEn(register, registerCert, mdmsData);
-            ksmartAddressService.getAddressInsideCountryPresentMl(register, registerCert, mdmsData);
-        } else{
+        if (!register.getRegisterBirthPresent().getCountryId().isEmpty() || !register.getRegisterBirthPresent().getCountryId().isEmpty()) {
+            if (register.getRegisterBirthPresent().getCountryId().contains(COUNTRY_CODE)) {
+                ksmartAddressService.getAddressInsideCountryPresentEn(register, registerCert, mdmsData);
+                ksmartAddressService.getAddressInsideCountryPresentMl(register, registerCert, mdmsData);
+            } else {
+                ksmartAddressService.getAddressOutsideCountryPresentEn(register, registerCert, mdmsData);
+                ksmartAddressService.getAddressOutsideCountryPresentMl(register, registerCert, mdmsData);
+            }
+        }  else{
             ksmartAddressService.getAddressOutsideCountryPresentEn(register, registerCert, mdmsData);
             ksmartAddressService.getAddressOutsideCountryPresentMl(register, registerCert, mdmsData);
         }
     }
 
     public void setPremananttAddressDetailsEn(RegisterBirthDetail register,RegisterCertificateData registerCert, Object  mdmsData) {
-        if (register.getRegisterBirthPresent().getCountryId().contains(COUNTRY_CODE)) {
-            ksmartAddressService.getAddressInsideCountryPermanentEn(register, registerCert, mdmsData);
-            ksmartAddressService.getAddressInsideCountryPermanentMl(register, registerCert, mdmsData);
-        } else{
+        if (!register.getRegisterBirthPermanent().getCountryId().isEmpty() || !register.getRegisterBirthPermanent().getCountryId().isEmpty()) {
+            if (register.getRegisterBirthPermanent().getCountryId().contains(COUNTRY_CODE)) {
+                ksmartAddressService.getAddressInsideCountryPermanentEn(register, registerCert, mdmsData);
+                ksmartAddressService.getAddressInsideCountryPermanentMl(register, registerCert, mdmsData);
+            } else {
+                ksmartAddressService.getAddressOutsideCountryPermanentEn(register, registerCert, mdmsData);
+                ksmartAddressService.getAddressOutsideCountryPermanentMl(register, registerCert, mdmsData);
+            }
+        }   else{
             ksmartAddressService.getAddressOutsideCountryPermanentEn(register, registerCert, mdmsData);
             ksmartAddressService.getAddressOutsideCountryPermanentMl(register, registerCert, mdmsData);
         }

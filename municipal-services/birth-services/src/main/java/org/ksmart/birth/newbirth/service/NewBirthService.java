@@ -66,20 +66,23 @@ public class NewBirthService {
         validator.validateUpdate(request, mdmsData);
         //search application exist
         validator.validateUpdate(request, mdmsData);
+        if(request.getNewBirthDetails().get(0).getIsWorkflow()) {
+            workflowIntegrator.callWorkFlow(request);
+        }
         return repository.updateKsmartBirthDetails(request);
     }
 
-    public List<NewBirthApplication> editBirthDetails(NewBirthDetailRequest request) {
-        Object mdmsData = mdmsUtil.mdmsCall(request.getRequestInfo());
-        // validate request
-        validator.validateUpdate(request, mdmsData);
-        //search application exist
-        validator.validateUpdate(request, mdmsData);
-        workflowIntegrator.callWorkFlow(request);
-        return repository.updateKsmartBirthDetails(request);
-    }
+//    public List<NewBirthApplication> editBirthDetails(NewBirthDetailRequest request) {
+//        Object mdmsData = mdmsUtil.mdmsCall(request.getRequestInfo());
+//        // validate request
+//        validator.validateUpdate(request, mdmsData);
+//        //search application exist
+//        validator.validateUpdate(request, mdmsData);
+//
+//        return repository.updateKsmartBirthDetails(request);
+//    }
 
     public List<NewBirthApplication> searchKsmartBirthDetails(NewBirthDetailRequest request, SearchCriteria criteria) {
-        return repository.searchKsmartBirthDetails(request,criteria);
+        return repository.searchBirthDetails(request,criteria);
     }
 }

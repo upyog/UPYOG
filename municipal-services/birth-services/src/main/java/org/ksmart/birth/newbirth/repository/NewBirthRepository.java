@@ -77,13 +77,13 @@ public class NewBirthRepository {
                 .registerBirthDetails(result).build();
     }
 
-    public List<NewBirthApplication> searchKsmartBirthDetails(NewBirthDetailRequest request, SearchCriteria criteria) {
+    public List<NewBirthApplication> searchBirthDetails(NewBirthDetailRequest request, SearchCriteria criteria) {
         List<Object> preparedStmtValues = new ArrayList<>();
         Object mdmsDataComm = mdmsUtil.mdmsCall(request.getRequestInfo());
         String query = birthQueryBuilder.getNewBirthApplicationSearchQuery(criteria, request, preparedStmtValues, Boolean.FALSE);
-        System.out.println(query);
         List<NewBirthApplication> result = jdbcTemplate.query(query, preparedStmtValues.toArray(), ksmartBirthApplicationRowMapper);
         result.forEach(birth -> {
+            birth.setIsWorkflow(false);
             Object mdmsData = mdmsUtil.mdmsCallForLocation(request.getRequestInfo(), birth.getTenantId());
             if (birth.getPlaceofBirthId() != null) {
                 mdmsBirthService.setLocationDetails(birth, mdmsData);
@@ -144,9 +144,6 @@ public class NewBirthRepository {
                         birth.getParentAddress().setPresentInsideKeralaDistrict(birth.getParentAddress().getDistrictIdPresent());
 
                         birth.getParentAddress().setPresentInsideKeralaLBName(birth.getParentAddress().getPermntInKeralaAdrLBName());
-
-                        //birth.getParentAddress().setPresentInsideKeralaVillage(birth.getParentAddress().getVillageNamePresent());
-
                         birth.getParentAddress().setPresentInsideKeralaLocalityNameEn(birth.getParentAddress().getLocalityEnPresent());
                         birth.getParentAddress().setPresentInsideKeralaLocalityNameMl(birth.getParentAddress().getLocalityMlPresent());
 
@@ -158,7 +155,6 @@ public class NewBirthRepository {
 
                         birth.getParentAddress().setPresentInsideKeralaPincode(birth.getParentAddress().getPinNoPresent());
 
-                        //birth.getParentAddress().setPresentOutsideKeralaCityVilgeEn(birth.getParentAddress().getTownOrVillagePresent());
 
                         birth.getParentAddress().setPresentInsideKeralaPostOffice(birth.getParentAddress().getPresentInsideKeralaPostOffice());
 
