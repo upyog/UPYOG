@@ -14,7 +14,7 @@ import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
 
 @Component
-public class RegisterRowMapperForApp  implements ResultSetExtractor<List<RegisterNac>>, BaseRegRowMapper{
+public class RegisterRowMapperForNacApp implements ResultSetExtractor<List<RegisterNac>>, BaseRegRowMapper{
 	
 	@Override
     public List<RegisterNac> extractData(ResultSet rs) throws SQLException, DataAccessException { 
@@ -41,5 +41,6 @@ public class RegisterRowMapperForApp  implements ResultSetExtractor<List<Registe
 		 return result;
 	}
 }
+
 
 

@@ -20,10 +20,10 @@ import java.util.Date;
 public class NacCertService {
 	
 	  private final MdmsUtil mdmsUtil;
-	    private final MdmsDataService mdmsDataService;
+	    private final MdmsDataServiceNac mdmsDataService;
 	    private final NumberConverter numberConverter;
 	    @Autowired
-	    NacCertService(MdmsUtil mdmsUtil, MdmsDataService mdmsDataService, NumberConverter numberConverter) {
+	    NacCertService(MdmsUtil mdmsUtil, MdmsDataServiceNac mdmsDataService, NumberConverter numberConverter) {
 	        this.mdmsUtil = mdmsUtil;
 	        this.mdmsDataService = mdmsDataService;
 	        this.numberConverter = numberConverter;

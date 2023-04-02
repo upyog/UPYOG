@@ -12,7 +12,7 @@ import org.springframework.util.StringUtils;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 @Component
-public class NacRegisterQueryBuilder extends BaseRegBuilder{
+public class NacRegisterQueryBuilder extends BaseNacRegBuilder{
 
 	 private static final String QUERYSTR = "";
 	 private static final String NACQUERY = new StringBuilder().append("SELECt ebd.id as ba_id,ebd.dateofreport as ba_dateofreport,ebd.dateofbirth as ba_dateofbirth,ebd.firstname_en as ba_firstname_en,")

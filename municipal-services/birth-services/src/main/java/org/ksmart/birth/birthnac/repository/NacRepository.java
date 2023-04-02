@@ -20,7 +20,7 @@ import org.ksmart.birth.web.model.birthnac.NacSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-import org.ksmart.birth.birthnacregistry.repository.rowmapperfornewapplicationnac.RegisterRowMapperForApp;
+import org.ksmart.birth.birthnacregistry.repository.rowmapperfornewapplicationnac.RegisterRowMapperForNacApp;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,14 +38,14 @@ public class NacRepository {
  
     private final  MdmsDataService mdmsDataService;
     private final  MdmsUtil mdmsUtil;
-    private final RegisterRowMapperForApp registerRowMapperForApp;
+    private final RegisterRowMapperForNacApp registerRowMapperForApp;
 
 
 
     @Autowired
     NacRepository(JdbcTemplate jdbcTemplate, NacEnrichment adoptionEnrichment, BirthConfiguration birthDeathConfiguration,
                   BndProducer producer, NacQueryBuilder nacQueryBuilder, NacApplicationRowMapper nacApplicationRowMapper,
-                  MdmsDataService mdmsDataService, MdmsUtil mdmsUtil,RegisterRowMapperForApp registerRowMapperForApp) {
+                  MdmsDataService mdmsDataService, MdmsUtil mdmsUtil,RegisterRowMapperForNacApp registerRowMapperForApp) {
         this.jdbcTemplate = jdbcTemplate;
         this.adoptionEnrichment = adoptionEnrichment;
         this.birthDeathConfiguration = birthDeathConfiguration;

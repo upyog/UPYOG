@@ -21,13 +21,13 @@ import java.util.List;
 import static org.ksmart.birth.utils.enums.ErrorCodes.*;
 
 @Component
-public class RegistryRequestValidator {
-	
-	   private final BirthConfiguration bndConfig;
+public class RegistryRequestValidatorNac {
+
+	 private final BirthConfiguration bndConfig;
 	    private final NacMdmsValidator mdmsValidator;
 
 	    @Autowired
-	    RegistryRequestValidator(BirthConfiguration bndConfig, NacMdmsValidator mdmsValidator) {
+	    RegistryRequestValidatorNac(BirthConfiguration bndConfig, NacMdmsValidator mdmsValidator) {
 
 	        this.bndConfig = bndConfig;
 
@@ -51,7 +51,7 @@ public class RegistryRequestValidator {
 	            throw new CustomException(BIRTH_DETAILS_REQUIRED.getCode(),
 	                    "Registration exist in the tenant against the given application number.");
 	        }
- 
+
 	        //mdmsValidator.validateMdmsData(request, mdmsData);
 	    }
 
@@ -108,3 +108,4 @@ public class RegistryRequestValidator {
 
 
 }
+

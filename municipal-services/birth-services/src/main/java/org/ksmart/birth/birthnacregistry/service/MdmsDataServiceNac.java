@@ -22,8 +22,8 @@ import static org.ksmart.birth.utils.BirthConstants.*;
 
 @Slf4j
 @Service
-public class MdmsDataService {
-	
+public class MdmsDataServiceNac {
+
 	 private RestTemplate restTemplate;
 
 	    @Value("${egov.mdms.host}")
@@ -42,7 +42,7 @@ public class MdmsDataService {
 //	    private final KsmartAddressService ksmartAddressService;
 
 	    @Autowired
-	    MdmsDataService(RestTemplate restTemplate, MdmsTenantService mdmsTenantService, MdmsLocationService mdmsLocationService
+	    MdmsDataServiceNac(RestTemplate restTemplate, MdmsTenantService mdmsTenantService, MdmsLocationService mdmsLocationService
 	    		 ) {
 
 	        this.restTemplate = restTemplate;
@@ -125,7 +125,7 @@ public class MdmsDataService {
 
 	  
 
- 
+
 	    public void setKsmartTenantDetails(NewBirthApplication register,  Object mdmsData) {
 //	        if (register.getPlaceofBirthId().contains(BIRTH_PLACE_HOSPITAL)) {
 //	            String placeEn = mdmsLocationService.getHospitalAddressEn(mdmsData, register.getHospitalId());

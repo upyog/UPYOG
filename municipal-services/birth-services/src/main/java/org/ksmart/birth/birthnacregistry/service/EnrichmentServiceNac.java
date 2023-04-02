@@ -1,5 +1,6 @@
 package org.ksmart.birth.birthnacregistry.service;
 
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -30,7 +31,7 @@ import org.springframework.stereotype.Service;
 import com.jayway.jsonpath.JsonPath;
 
 @Service
-public class EnrichmentService {
+public class EnrichmentServiceNac {
 
 	@Autowired
     CommonUtils commUtils;
@@ -96,3 +97,4 @@ public class EnrichmentService {
 	}
 
 }
+

@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-public class BaseRegBuilder {
+public class BaseNacRegBuilder {
 	@Value("${egov.bnd.default.limit}")
     private Integer defaultBndLimit;
 

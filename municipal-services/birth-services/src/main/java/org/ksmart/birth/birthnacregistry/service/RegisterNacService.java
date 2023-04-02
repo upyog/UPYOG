@@ -19,9 +19,9 @@ import org.ksmart.birth.birthnacregistry.model.RegisterNac;
 import org.ksmart.birth.birthnacregistry.model.RegisterNacRequest;
 import org.ksmart.birth.birthnacregistry.model.RegisterNacSearchCriteria;
 import org.ksmart.birth.birthnacregistry.service.NacCertService;
-import org.ksmart.birth.birthnacregistry.service.EnrichmentService;
+import org.ksmart.birth.birthnacregistry.service.EnrichmentServiceNac;
 import org.ksmart.birth.birthregistry.service.MdmsDataService;
-import org.ksmart.birth.birthnacregistry.validation.RegistryRequestValidator;
+import org.ksmart.birth.birthnacregistry.validation.RegistryRequestValidatorNac;
 import org.ksmart.birth.common.contract.EgovPdfResp;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
@@ -41,15 +41,15 @@ public class RegisterNacService {
 	 private final RegisterNacRepository repository;
 	    private final RegisterNacEnrichment enrichment;
 
-	    private final EnrichmentService certEnrichment;
+	    private final EnrichmentServiceNac certEnrichment;
 	    private final NacCertService nacCertService;
 	    private final MdmsUtil mdmsUtil;
 
-	    private final RegistryRequestValidator validator;
+	    private final RegistryRequestValidatorNac validator;
 	    private final MdmsDataService mdmsDataService;
 	    @Autowired
-	    RegisterNacService(RegisterNacRepository repository, RegisterNacEnrichment enrichment,RegistryRequestValidator validator,
-	                         MdmsUtil mdmsUtil, MdmsDataService mdmsDataService, NacCertService nacCertService, EnrichmentService certEnrichment) {
+	    RegisterNacService(RegisterNacRepository repository, RegisterNacEnrichment enrichment,RegistryRequestValidatorNac validator,
+	                         MdmsUtil mdmsUtil, MdmsDataService mdmsDataService, NacCertService nacCertService, EnrichmentServiceNac certEnrichment) {
 	        this.repository = repository;
 	        this.enrichment = enrichment;
 	        this.validator = validator;
@@ -60,8 +60,7 @@ public class RegisterNacService {
 	    }
 
 	    public List<RegisterNac> saveRegisterBirthDetails(RegisterNacRequest request) {
-	    	RegisterNacSearchCriteria criteria = new RegisterNacSearchCriteria();
-	        System.out.println("request :"+request);
+	    	RegisterNacSearchCriteria criteria = new RegisterNacSearchCriteria();	        
 	        criteria.setApplicationNumber(request.getRegisternacDetails().get(0).getAckNumber());
 	        criteria.setTenantId(request.getRegisternacDetails().get(0).getTenantid());
 	        List<RegisterNac> registerBirthDetails = searchRegisterNacDetails(criteria);
