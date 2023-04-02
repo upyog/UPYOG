@@ -275,7 +275,9 @@ public class NacApplication {
     @JsonProperty("AddressBirthDetails")
     private ParentAddress parentAddress;
     
- 
+    @Size(max = 64)
+    @JsonProperty("nacorderofChildren")
+    private Integer nacorderofChildren;
     
     
 

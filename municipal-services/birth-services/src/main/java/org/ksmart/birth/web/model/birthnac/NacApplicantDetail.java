@@ -21,6 +21,12 @@ public class NacApplicantDetail {
     @Size(max = 1000)
     @JsonProperty("applicantNameEn")
     private String applicantNameEn;
+    
+     
+    @Size(max = 64)
+    @JsonProperty("careofapplicant")
+    private String careofapplicant;
+    
     @Size(max = 1000)
     @JsonProperty("applicantAddressEn")
     private String applicantAddressEn;
@@ -33,6 +39,13 @@ public class NacApplicantDetail {
     @Size(max = 2500)
     @JsonProperty("isDeclared")
     private Boolean isDeclared;
+    
+    @Size(max = 64)
+    @JsonProperty("isunderstood")
+    private Boolean isunderstood;
+    
+    
+    
     @Size(max = 64)
     @JsonProperty("declarationId")
     private String declarationId;

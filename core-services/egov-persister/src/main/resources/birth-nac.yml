@@ -8,8 +8,8 @@ serviceMaps:
       queryMaps:
         - query: INSERT INTO public.eg_birth_details(id,dateofreport,dateofbirth,timeofbirth,am_pm,firstname_en,firstname_ml,middlename_en,middlename_ml,lastname_en,lastname_ml,tenantid,gender,remarks_en,remarks_ml,aadharno,esign_user_code,esign_user_desig_code,
                  is_father_info_missing,is_mother_info_missing,applicationtype,businessservice,workflowcode,fm_fileno,file_date,file_status,applicationno,registrationno,registration_date,
-                 action,status, createdtime, createdby, lastmodifiedtime, lastmodifiedby) 
-                 VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
+                 action,status, createdtime, createdby, lastmodifiedtime, lastmodifiedby,nac_order_of_child) 
+                 VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
             
           basePath: NacDetails.*
           jsonMaps:
@@ -83,6 +83,7 @@ serviceMaps:
 
             - jsonPath: $.NacDetails.*.auditDetails.lastModifiedBy         
             
+            - jsonPath: $.NacDetails.*.nacorderofChildren           
          
             
 
@@ -395,7 +396,7 @@ serviceMaps:
 
        
         - query: INSERT INTO public.eg_birth_applicant(
-            id, birthdtlid, name_en, address_en, aadharno, mobileno, is_declared,declaration_id,is_esigned,createdby, createdtime, lastmodifiedby, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+            id, birthdtlid, name_en, address_en, aadharno, mobileno, is_declared,declaration_id,is_esigned,createdby, createdtime, lastmodifiedby, lastmodifiedtime,care_of_applicant,Is_understood) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?);
           basePath: NacDetails.*.ApplicantDetails
           jsonMaps:
 
@@ -424,6 +425,10 @@ serviceMaps:
             - jsonPath: $.NacDetails.*.auditDetails.lastModifiedBy
 
             - jsonPath: $.NacDetails.*.auditDetails.lastModifiedTime
+            
+            - jsonPath: $.NacDetails.*.ApplicantDetails.careofapplicant  
+            
+            - jsonPath: $.NacDetails.*.ApplicantDetails.isunderstood  
                         
         - query: INSERT INTO public.eg_birth_children_born(
             id, birthdtlid, child_name_en, child_name_ml, sex, order_of_birth, dob,is_alive,createdby, createdtime, lastmodifiedby, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
@@ -465,7 +470,7 @@ serviceMaps:
               is_multiple_birth=?, is_father_info_missing=?, is_mother_info_missing=?, no_of_alive_birth=?, multiplebirthdetid=?, is_born_outside=?,
               ot_passportno=?, ot_dateofarrival=?, applicationtype=?, businessservice=?, workflowcode=?, fm_fileno=?, file_date=?, file_status=?,
               applicationno=?, registrationno=?, registration_date=?, action=?, status=?, lastmodifiedby=?,
-              lastmodifiedtime=? WHERE id=?;
+              lastmodifiedtime=? ,nac_order_of_child=? WHERE id=?;
 
 
           basePath: NacDetails.*
@@ -539,6 +544,8 @@ serviceMaps:
             - jsonPath: $.NacDetails.*.auditDetails.lastModifiedBy
 
             - jsonPath: $.NacDetails.*.auditDetails.lastModifiedTime
+            
+            - jsonPath: $.NacDetails.*.nacorderofChildren  
 
             - jsonPath: $.NacDetails.*.id
 
@@ -832,7 +839,7 @@ serviceMaps:
 
 
         - query: UPDATE public.eg_birth_applicant SET initiator_name=?, initiator_institution=?, initiator_inst_desig=?, relation=?, initiator_address=?,
-            is_declared=?, declaration_id=?, aadharno=?, mobileno=?, lastmodifiedby=?, lastmodifiedtime=? WHERE birthdtlid=?;
+            is_declared=?, declaration_id=?, aadharno=?, mobileno=?, lastmodifiedby=?, lastmodifiedtime=? ,care_of_applicant=?,Is_understood=? WHERE birthdtlid=?;
           basePath: NacDetails.*.InitiatorinfoDetails
           jsonMaps:
 
@@ -857,5 +864,9 @@ serviceMaps:
             - jsonPath: $.NacDetails.*.auditDetails.lastModifiedBy
 
             - jsonPath: $.NacDetails.*.auditDetails.lastModifiedTime
+            
+            - jsonPath: $.NacDetails.*.ApplicantDetails.careofapplicant  
+            
+            - jsonPath: $.NacDetails.*.ApplicantDetails.isunderstood  
 
             - jsonPath: $.NacDetails.*.id
