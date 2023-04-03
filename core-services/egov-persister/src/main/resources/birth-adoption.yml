@@ -977,7 +977,7 @@ serviceMaps:
             - jsonPath: $.AdoptionDetails.*.birthStatistical.mother_resdnce_tenentid
 
             - jsonPath: $.AdoptionDetails.*.birthStatistical.permntOutsideKeralaCityVilgeEn
-
+            
             - jsonPath: $.AdoptionDetails.*.birthStatistical.mother_resdnce_place_en
 
             - jsonPath: $.AdoptionDetails.*.birthStatistical.mother_resdnce_place_ml
