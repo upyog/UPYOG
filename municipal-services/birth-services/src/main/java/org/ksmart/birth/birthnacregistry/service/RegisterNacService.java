@@ -87,7 +87,7 @@ public class RegisterNacService {
 	        return registerCertDetails;
 	    }
 	    public NacCertificate download(RegisterNacSearchCriteria criteria, RequestInfo requestInfo) {
-//	        try {
+	        try {
 	            NacCertificate nacCertificate = new NacCertificate();
 	            NacCertRequest nacCertRequest = NacCertRequest.builder().nacCertificate(nacCertificate).requestInfo(requestInfo).build();
 	            List<RegisterCertificateData> regDetail = searchRegisterForCert(criteria, requestInfo);
@@ -123,9 +123,9 @@ public class RegisterNacService {
 	                repository.saveRegisterNacCert(nacCertRequest);
 	            }
 	            return nacCertificate;
-//	        } catch (Exception e) {
-//	            e.printStackTrace();
-//	            throw new CustomException("DOWNLOAD_ERROR", "Error in Downloading Certificate");
-//	        }
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	            throw new CustomException("DOWNLOAD_ERROR", "Error in Downloading Certificate");
+	        }
 	    }
 }

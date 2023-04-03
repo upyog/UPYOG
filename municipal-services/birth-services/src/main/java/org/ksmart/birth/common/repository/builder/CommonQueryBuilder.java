@@ -21,7 +21,7 @@ public class CommonQueryBuilder {
 			.append("ebd.fm_fileno as ba_fm_fileno,ebd.file_date as ba_file_date,ebd.file_status as ba_file_status,ebd.applicationno as ba_applicationno,ebd.registrationno as ba_registrationno,")
 			.append("ebd.registration_date as ba_registration_date,ebd.action as ba_action,ebd.status as ba_status,")
 			.append("ebd.adopt_deed_order_no as ba_adopt_deed_order_no,ebd.adopt_dateoforder_deed as ba_adopt_dateoforder_deed,ebd.adopt_issuing_auththority as ba_adopt_issuing_auththority,")
-			.append("ebd.adopt_has_agency as ba_adopt_has_agency,ebd.adopt_agency_name as ba_adopt_agency_name,ebd.adopt_agency_address as ba_adopt_agency_address,ebd.is_stillbirth as ba_is_stillbirth,")
+			.append("ebd.adopt_has_agency as ba_adopt_has_agency,ebd.adopt_agency_name as ba_adopt_agency_name,ebd.adopt_agency_address as ba_adopt_agency_address,ebd.is_stillbirth as ba_is_stillbirth,ebd.is_adopted as ba_is_adopted,")
 			.append("ebd.adopt_decree_order_no as ba_adopt_decree_order_no,ebd.adopt_dateoforder_decree as ba_adopt_dateoforder_decree,ebd.adopt_agency_contact_person as ba_adopt_agency_contact_person,")
 			.append("ebd.adopt_agency_contact_person_mobileno as ba_adopt_agency_contact_person_mobileno,ebd.createdtime,ebd.createdby,ebd.lastmodifiedtime,ebd.lastmodifiedby").toString();
 

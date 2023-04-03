@@ -67,75 +67,7 @@ public class NacMdmsValidator {
 //                	}
 //                	 
                 	  
-                    if(birth.getParentAddress() != null) {
-                        String religionCode = birth.getParentsDetails().getReligionId();
-                        if (log.isDebugEnabled()) {
-                        log.debug("Religion code : \n{}", religionCode);
-                    }
-                        if (CollectionUtils.isEmpty(religionCodes) || !religionCodes.contains(religionCode)) {
-                        errorMap.put(COMMON_MDMS_RELIGION, "The Religion code '" + religionCode + "' does not exists");
-                    }
-
-                        System.out.println("master  :"+birth.getParentsDetails().getIsFatherInfoMissing());
-                        if (birth.getParentsDetails().getIsFatherInfoMissing() == false) {
-                            String professionCodeFather = birth.getParentsDetails().getFatherProffessionid();
-                            if (log.isDebugEnabled()) {
-                                log.debug("Father Profession code : \n{}", professionCodeFather);
-                            }
-                            if (CollectionUtils.isEmpty(professionCodes) ||   !professionCodes.contains(professionCodeFather)) {
-
-                                errorMap.put(CR_MDMS_PROFESSION, "The Profession code '" + professionCodeFather + "' does not exists");
-                            }
-
-                            String qualificationCodeFather = birth.getParentsDetails().getFatherEucationid();
-
-                            if (log.isDebugEnabled()) {
-                                log.debug("Father Qualification code : \n{}", qualificationCodeFather);
-                            }
-
-                            if (CollectionUtils.isEmpty(qualificationCodes) || !qualificationCodes.contains(qualificationCodeFather)) {
-                                errorMap.put(CR_MDMS_QUALIFICATION, "The Education code '" + qualificationCodeFather + "' does not exists");
-                            }
-
-                            String fatherNationalityCode = birth.getParentsDetails().getFatherNationalityid();
-                            if (log.isDebugEnabled()) {
-                                log.debug("father Nationality Code: \n{}", fatherNationalityCode);
-                            }
-                            if (CollectionUtils.isEmpty(countryCodes) || !countryCodes.contains(fatherNationalityCode)) {
-                                errorMap.put(COMMON_MDMS_COUNTRY, "The Father Nationality Code'" + fatherNationalityCode + "' does not exists");
-                            }
-                        }
-
-                        if (birth.getParentsDetails().getIsMotherInfoMissing() == false) {
-                            String professionCodeMother = birth.getParentsDetails().getMotherProffessionid();
-                            if (log.isDebugEnabled()) {
-                                log.debug("Father Profession code : \n{}", professionCodeMother);
-                            }
-                            if (CollectionUtils.isEmpty(professionCodes) || !professionCodes.contains(professionCodeMother)) {
-
-                                errorMap.put(CR_MDMS_PROFESSION, "The Profession code '" + professionCodeMother + "' does not exists");
-                            }
-
-                            String qualificationCodeMother = birth.getParentsDetails().getMotherEducationid();
-
-                            if (log.isDebugEnabled()) {
-                                log.debug("Mother Qualification code : \n{}", qualificationCodeMother);
-                            }
-
-                            if (CollectionUtils.isEmpty(qualificationCodes) || !qualificationCodes.contains(qualificationCodeMother)) {
-                                errorMap.put(CR_MDMS_QUALIFICATION, "The Education code '" + qualificationCodeMother + "' does not exists");
-                            }
-
-                            String motherNationalityCode = birth.getParentsDetails().getMotherNationalityid();
-
-                            if (log.isDebugEnabled()) {
-                                log.debug("mother Nationality Code: \n{}", motherNationalityCode);
-                            }
-                            if (CollectionUtils.isEmpty(countryCodes) || !countryCodes.contains(motherNationalityCode)) {
-                                errorMap.put(COMMON_MDMS_COUNTRY, "The Mother Nationality Code'" + motherNationalityCode + "' does not exists");
-                            }
-                        }
-                    }
+                    
                     if(birth.getPlaceofBirthId().contains(BIRTH_PLACE_HOME)) {
                         String postOfficeCodePlace = birth.getAdrsPostOffice();
                         if (log.isDebugEnabled()) {
@@ -146,7 +78,7 @@ public class NacMdmsValidator {
                         }
 
                     }
-                    System.out.println("master  :"+birth.getPlaceofBirthId());
+                    
                     if(birth.getPlaceofBirthId().contains(BIRTH_PLACE_HOSPITAL)) {
                     	
                     	 String hospCode= birth.getHospitalId();   

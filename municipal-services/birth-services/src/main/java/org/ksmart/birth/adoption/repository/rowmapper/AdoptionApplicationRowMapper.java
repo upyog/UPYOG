@@ -80,6 +80,17 @@ public class AdoptionApplicationRowMapper implements ResultSetExtractor<List<Ado
                     .workFlowCode(rs.getString("ba_workflowcode"))
                     .action(rs.getString("ba_action"))
                     .applicationStatus(rs.getString("ba_status"))
+                    .isAdopted(rs.getBoolean("ba_is_adopted"))
+                    .adoptDeedOrderNo(rs.getString("ba_adopt_deed_order_no"))
+                    .adoptDateoforderDeed(rs.getLong("ba_adopt_dateoforder_deed"))
+                    .adoptIssuingAuththority(rs.getString("ba_adopt_issuing_auththority"))
+                    .adoptHasAgency(rs.getBoolean("ba_adopt_has_agency"))
+                    .adoptAgencyName(rs.getString("ba_adopt_agency_name"))
+                    .adoptAgencyAddress(rs.getString("ba_adopt_agency_address"))
+                    .adoptDecreeOrderNo(rs.getString("ba_adopt_decree_order_no"))
+                    .adoptDateoforderDecree(rs.getLong("ba_adopt_dateoforder_decree"))
+                    .adoptAgencyContactPerson(rs.getString("ba_adopt_agency_contact_person"))
+                    .adoptAgencyContactPersonMobileno(rs.getString("ba_adopt_agency_contact_person_mobileno"))                    
                     .auditDetails(getAuditDetails(rs))
                     .parentsDetails(KsmartBirthParentDetail(rs))
                     .birthStatisticsUuid(rs.getString("stat_id"))
@@ -94,6 +105,11 @@ public class AdoptionApplicationRowMapper implements ResultSetExtractor<List<Ado
         }
         return result;
     }
+    
+    
+    
+    
+    
     private Boolean isChildNameEntered(String name) {
         if(name == null) return true;
         else return false;

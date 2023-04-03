@@ -17,7 +17,7 @@ public class NacPdfRegisterRequest {
 	   @JsonProperty("RequestInfo")
 	    private RequestInfo requestInfo = null;
 
-	    @JsonProperty("BirthCertificate")
+	    @JsonProperty("NacCertificate")
 	    private List<RegisterCertificateData> nacCertificate;
 	
 
