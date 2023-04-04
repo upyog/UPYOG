@@ -13,6 +13,11 @@
           {
             "direct": [
               {
+                "variable": "ashoka",
+                "url":"https://ulb-logos.s3.ap-south-1.amazonaws.com/Lion_emblem.png",
+                "type":"image"
+              },
+              {
                 "variable": "logokerala",
                 "url":"https://ulb-logos.s3.ap-south-1.amazonaws.com/kerala_logo.jpg",
                 "type":"image"

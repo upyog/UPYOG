@@ -57,16 +57,19 @@ public class NewBirthController {
         BirthCertificate birthCertificate = new BirthCertificate();
         List<NewBirthApplication> birthApplicationDetails=ksmartBirthService.updateBirthDetails(request);
         //Download certificate when Approved
-        if((birthApplicationDetails.get(0).getApplicationStatus().equals(STATUS_APPROVED) && birthApplicationDetails.get(0).getAction().equals(WF_APPROVE))){
-            RegisterBirthDetailsRequest registerBirthDetailsRequest = registryReq.createRegistryRequestNew(request);
-            List<RegisterBirthDetail> registerBirthDetails =  registerBirthService.saveRegisterBirthDetails(registerBirthDetailsRequest);
 
-           //Dowload after update
+        if(request.getNewBirthDetails().get(0).getIsWorkflow()) {
+            if ((birthApplicationDetails.get(0).getApplicationStatus().equals(STATUS_APPROVED) && birthApplicationDetails.get(0).getAction().equals(WF_APPROVE))) {
+                RegisterBirthDetailsRequest registerBirthDetailsRequest = registryReq.createRegistryRequestNew(request);
+                List<RegisterBirthDetail> registerBirthDetails = registerBirthService.saveRegisterBirthDetails(registerBirthDetailsRequest);
+
+                //Dowload after update
 //            RegisterBirthSearchCriteria criteria = new RegisterBirthSearchCriteria();
 //            criteria.setTenantId(registerBirthDetails.get(0).getTenantId());
 //            criteria.setApplicationNumber(registerBirthDetails.get(0).getAckNumber());
 //            birthCertificate = registerBirthService.download(criteria,request.getRequestInfo());
 
+            }
         }
         NewBirthResponse response=NewBirthResponse.builder()
                 .ksmartBirthDetails(birthApplicationDetails)
