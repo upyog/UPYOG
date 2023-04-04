@@ -10,6 +10,7 @@ import org.ksmart.birth.common.contract.EgovPdfResp;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.ksmart.birth.utils.MdmsUtil;
+import org.ksmart.birth.utils.enums.ErrorCodes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -107,6 +108,8 @@ public class RegisterBirthService {
                 birthCertificate.setFilestoreid(pdfResp.getFilestoreIds().get(0));
                 birthCertificate.setApplicationStatus(BirthCertificate.StatusEnum.FREE_DOWNLOAD);
                 repository.saveRegisterBirthCert(birthCertRequest);
+            } else{
+                throw new CustomException(ErrorCodes.INVALID_INPUT.getCode(), "Error in processing data");
             }
             return birthCertificate;
         } catch (Exception e) {

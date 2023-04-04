@@ -169,6 +169,8 @@ public class BornOutsideEnrichment implements BaseEnrichment {
     private void setPresentAddress(BornOutsideDetailRequest request) {
         request.getNewBirthDetails()
                 .forEach(birth -> {
+                birth.getParentAddress().setPresentUuid(UUID.randomUUID().toString());
+                birth.getParentAddress().setBioAdoptPresent("BIOLOGICAL");
                     if (birth.getParentAddress() != null) {
                         if (birth.getParentAddress().getPresentaddressCountry() != null && birth.getParentAddress().getPresentaddressStateName() != null) {
                             if (birth.getParentAddress().getPresentaddressCountry().contains(BirthConstants.COUNTRY_CODE)) {
@@ -225,6 +227,8 @@ public class BornOutsideEnrichment implements BaseEnrichment {
     private void setPermanentAddress(BornOutsideDetailRequest request) {
         request.getNewBirthDetails()
                 .forEach(birth -> {
+                    birth.getParentAddress().setPermanentUuid(UUID.randomUUID().toString());
+                    birth.getParentAddress().setBioAdoptPermanent("BIOLOGICAL");
                     if (birth.getParentAddress() != null && birth.getParentAddress().getIsPrsentAddress() != null)  {
                         birth.getParentAddress().setIsPrsentAddressInt(birth.getParentAddress().getIsPrsentAddress() == true ? 1 : 0);
                         if (birth.getParentAddress().getPermtaddressCountry() != null && birth.getParentAddress().getPermtaddressStateName() != null) {
@@ -311,6 +315,8 @@ public class BornOutsideEnrichment implements BaseEnrichment {
     private void setStatisticalInfo(BornOutsideDetailRequest request) {
         request.getNewBirthDetails()
                 .forEach(birth -> {
+                    birth.setBirthStatisticsUuid(UUID.randomUUID().toString());
+            birth.setBirthInitiatorUuid(UUID.randomUUID().toString());
                 });
 
     }
