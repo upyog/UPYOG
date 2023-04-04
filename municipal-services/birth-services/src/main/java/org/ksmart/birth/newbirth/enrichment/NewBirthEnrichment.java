@@ -63,7 +63,7 @@ public class NewBirthEnrichment implements BaseEnrichment {
         request.getNewBirthDetails()
                 .forEach(birth -> {
                     birth.setAuditDetails(auditDetails);
-                    if ((birth.getApplicationStatus() == STATUS_APPROVED && birth.getAction() == WF_APPROVE)) {
+                    if ((birth.getApplicationStatus().equals(STATUS_APPROVED) && birth.getAction().equals(WF_APPROVE))) {
                         setRegistrationNumber(request);
                     }
                 });
@@ -129,7 +129,7 @@ public class NewBirthEnrichment implements BaseEnrichment {
         ListIterator<String> itr = filecodes.listIterator();
         request.getNewBirthDetails()
                 .forEach(birth -> {
-                     if ((birth.getApplicationStatus() == STATUS_APPROVED && birth.getAction() == WF_APPROVE)) {
+                     if ((birth.getApplicationStatus().equals(STATUS_APPROVED) && birth.getAction().equals(WF_APPROVE))) {
                         birth.setRegistrationNo(itr.next());
                         birth.setRegistrationDate(currentTime);
                     }
