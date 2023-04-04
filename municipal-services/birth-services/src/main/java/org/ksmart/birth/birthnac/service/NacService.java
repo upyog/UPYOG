@@ -59,11 +59,11 @@ public class NacService {
         List<NacApplication> nacDetails =  repository.saveNacDetails(request);
 
         //WorkFlow Integration
-//        workflowIntegrator.callWorkFlow(request);
+        workflowIntegrator.callWorkFlow(request);
         return nacDetails;
     }
 
-    public List<NacApplication> updateAdoptionBirthDetails(NacDetailRequest request) {
+    public List<NacApplication> updateNacDetails(NacDetailRequest request) {
         workflowIntegrator.callWorkFlow(request);
         return repository.updateKsmartBirthDetails(request);
     }

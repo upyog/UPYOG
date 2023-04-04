@@ -65,7 +65,7 @@ public class NACController {
     @PostMapping(value = { "/updatenac"})
     public ResponseEntity<?> updateRegisterBirthDetails(@RequestBody NacDetailRequest request) {
     	 NacCertificate nacCertificate = new NacCertificate();
-        List<NacApplication> nacApplicationDetails=nacService.updateAdoptionBirthDetails(request);
+        List<NacApplication> nacApplicationDetails=nacService.updateNacDetails(request);
         //Download certificate when Approved
         if((nacApplicationDetails.get(0).getApplicationStatus() == "APPROVED" && nacApplicationDetails.get(0).getAction() == "APPROVE")){
         	RegisterNacRequest registerNacRequest = registryReq.createRegistryRequestNew(request);
