@@ -74,7 +74,7 @@ public class RegisterBirthService {
         return registerCertDetails;
     }
     public BirthCertificate download(RegisterBirthSearchCriteria criteria, RequestInfo requestInfo) {
-        try {
+//        try {
             BirthCertificate birthCertificate = new BirthCertificate();
             BirthCertRequest birthCertRequest = BirthCertRequest.builder().birthCertificate(birthCertificate).requestInfo(requestInfo).build();
             List<RegisterCertificateData> regDetail = searchRegisterForCert(criteria, requestInfo);
@@ -112,10 +112,10 @@ public class RegisterBirthService {
                 throw new CustomException(ErrorCodes.INVALID_INPUT.getCode(), "Error in processing data");
             }
             return birthCertificate;
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new CustomException("DOWNLOAD_ERROR", "Error in Downloading Certificate");
-        }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            throw new CustomException("DOWNLOAD_ERROR", "Error in Downloading Certificate");
+//        }
     }
 
 
