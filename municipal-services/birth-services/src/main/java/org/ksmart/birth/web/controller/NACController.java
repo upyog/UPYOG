@@ -52,7 +52,7 @@ public class NACController {
       
     }
 
-    @PostMapping(value = {"/createbirthnac"})
+    @PostMapping(value = {"/createnac"})
     public ResponseEntity<?> saveAdoptionDetails(@RequestBody NacDetailRequest request) {
         List<NacApplication> nacDetails=nacService.saveNacDetails(request);
         NacResponse response= NacResponse.builder()
@@ -62,7 +62,7 @@ public class NACController {
                                                                               .build();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-    @PostMapping(value = { "/updatebirthnac"})
+    @PostMapping(value = { "/updatenac"})
     public ResponseEntity<?> updateRegisterBirthDetails(@RequestBody NacDetailRequest request) {
     	 NacCertificate nacCertificate = new NacCertificate();
         List<NacApplication> nacApplicationDetails=nacService.updateNacDetails(request);
@@ -84,7 +84,7 @@ public class NACController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
     
-    @PostMapping(value = {"/searchbirthnac"})
+    @PostMapping(value = {"/searchnac"})
     public ResponseEntity<NacSearchResponse> searchKsmartBirth(@RequestBody NacDetailRequest request, @Valid @ModelAttribute SearchCriteria criteria) {
         List<NacApplication> nacDetails=nacService.searchNacDetails(request, criteria);
         NacSearchResponse response=NacSearchResponse.builder()
