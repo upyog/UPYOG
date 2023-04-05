@@ -109,7 +109,7 @@ public class AdoptionQueryBuilder extends BaseAdoptionQuery {
 	                .append(commonQueryBuilder.getQueryStat())
 //	                .append(",")
 //	                .append(commonQueryBuilder.getQueryIntiator())
-	                .append(commonQueryBuilder.getQueryCondition()).toString();
+	                .append(commonQueryBuilder.getQueryConditionAdptn()).toString();
 	        return query;
 	    }
 	 

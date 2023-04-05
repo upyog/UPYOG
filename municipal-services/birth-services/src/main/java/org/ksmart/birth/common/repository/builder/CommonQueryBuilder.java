@@ -32,6 +32,16 @@ public class CommonQueryBuilder {
 			.append(" LEFT JOIN eg_birth_statitical_information estat ON estat.birthdtlid = ebd.id")
 			.append(" LEFT JOIN eg_birth_initiator ini ON ini.birthdtlid = ebd.id ").toString();
 
+	
+	private static final String QUERYCONDITIONADPTN = new StringBuilder().append(" FROM public.eg_birth_details ebd LEFT JOIN eg_birth_place ebp ON ebp.birthdtlid = ebd.id LEFT JOIN eg_birth_father_information ebfi ON ebfi.birthdtlid = ebd.id AND ebfi.bio_adopt='ADOPT'")
+			.append(" LEFT JOIN eg_birth_mother_information ebmi ON ebmi.birthdtlid = ebd.id AND ebmi.bio_adopt='ADOPT'")
+			.append(" LEFT JOIN eg_birth_permanent_address eperad ON eperad.birthdtlid = ebd.id AND eperad.bio_adopt='ADOPT'")
+			.append(" LEFT JOIN eg_birth_present_address epreadd ON epreadd.birthdtlid = ebd.id AND epreadd.bio_adopt='ADOPT'")
+			.append(" LEFT JOIN eg_birth_statitical_information estat ON estat.birthdtlid = ebd.id")
+			.append(" LEFT JOIN eg_birth_initiator ini ON ini.birthdtlid = ebd.id ").toString();
+
+	
+	
 	private static final String QUERY_PLACE_OF_EVENT = new StringBuilder().append("ebp.id as pla_id,ebp.birthdtlid as pla_birthdtlid,ebp.placeofbirthid as pla_placeofbirthid,ebp.hospitalid as pla_hospitalid,ebp.public_place_id as pla_public_place_id,ebp.institution_type_id as pla_institution_type_id,")
 			.append("ebp.institution_id as pla_institution_id,ebp.vehicletypeid as pla_vehicletypeid,ebp.vehicle_registration_no as pla_vehicle_registration_no,ebp.vehicle_from_en as pla_vehicle_from_en,")
 			.append("ebp.vehicle_to_en as pla_vehicle_to_en,ebp.vehicle_from_ml as pla_vehicle_from_ml,ebp.vehicle_to_ml as pla_vehicle_to_ml,ebp.vehicle_admit_hospital_en as pla_vehicle_admit_hospital_en,")
@@ -108,6 +118,11 @@ public class CommonQueryBuilder {
 	public String getQueryCondition() {
 		return QUERYCONDITION;
 	}
+	
+	public String getQueryConditionAdptn() {
+		return QUERYCONDITIONADPTN;
+	}	
+	
 	public String getQueryPlaceOfEvent() {
 		return QUERY_PLACE_OF_EVENT;
 	}

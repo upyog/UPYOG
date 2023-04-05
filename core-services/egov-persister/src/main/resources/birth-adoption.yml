@@ -952,13 +952,13 @@ serviceMaps:
 
             - jsonPath: $.AdoptionDetails.*.ParentsDetails.motherMarriageBirth
 
-            - jsonPath: $.AdoptionDetails.*.birthStatistical.mother_no_of_birth_given
+            - jsonPath: $.AdoptionDetails.*.ParentsDetails.orderofChildren
 
-            - jsonPath: $.AdoptionDetails.*.birthStatistical.mother_maritalstatusid
+            - jsonPath: $.AdoptionDetails.*.ParentsDetails.motherMaritalStatus
 
-            - jsonPath: $.AdoptionDetails.*.birthStatistical.mother_unmarried
+            - jsonPath: $.AdoptionDetails.*.ParentsDetails.mother_unmarried
 
-            - jsonPath: $.AdoptionDetails.*.birthStatistical.mother_res_lbid
+            - jsonPath: $.AdoptionDetails.*.ParentsDetails.mother_res_lbid
 
             - jsonPath: $.AdoptionDetails.*.birthStatistical.mother_res_lb_code
 
