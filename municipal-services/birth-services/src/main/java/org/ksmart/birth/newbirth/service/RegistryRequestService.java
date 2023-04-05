@@ -28,29 +28,9 @@ public class RegistryRequestService {
         this.repository = repository;
     }
 
-
     public RegisterBirthDetailsRequest createRegistryRequestNew(NewBirthDetailRequest request) {///Work to get req to Register
         return repository.searchBirthDetailsForRegister(request);
     }
-////        List<Object> preparedStmtValues = new ArrayList<>();
-////        RegisterBirthDetailsRequest request = new RegisterBirthDetailsRequest();
-////        SearchCriteria criteria = new SearchCriteria();
-////        if(requestApplication.getNewBirthDetails().size() > 0) {
-////            criteria.setApplicationNumber(requestApplication.getNewBirthDetails().get(0).getApplicationNo());
-////            criteria.setTenantId(requestApplication.getNewBirthDetails().get(0).getTenantId());
-////            String query = birthQueryBuilder.getApplicationSearchQueryForRegistry(criteria, preparedStmtValues);
-////        }
-////        List<NewBirthApplication> result = new ArrayList<>();
-////        List<NewBirthApplication> result = jdbcTemplate.query(query, preparedStmtValues.toArray(), ksmartBirthApplicationRowMapper);
-////        while (rs.next()) {
-////            result.add(NewBirthApplication.builder()
-////
-////        return request;
-////
-////    }
-//
-//
-//
 //
 //
 //

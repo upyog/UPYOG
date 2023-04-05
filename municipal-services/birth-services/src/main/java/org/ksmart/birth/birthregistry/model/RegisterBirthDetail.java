@@ -114,8 +114,8 @@ public class RegisterBirthDetail {
     @JsonProperty("ot_passportno")
     private String otPassportNo;
 
-    @Size(max = 64)
-    @JsonProperty("registrationno")
+    @Size(max = 128)
+    @JsonProperty("registration_no")
     private String registrationNo;
 
     @Size(max = 64)
@@ -168,7 +168,6 @@ public class RegisterBirthDetail {
     private String fullNameMl;
     private String embeddedUrl;
     private String dateofbirth;
-    private String registrationno;
     private String dateofreport;
     private Long dateofissue;
     private Long remarks;

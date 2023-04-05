@@ -59,13 +59,6 @@ public class NewBirthEnrichment implements BaseEnrichment {
         RequestInfo requestInfo = request.getRequestInfo();
         User userInfo = requestInfo.getUserInfo();
         AuditDetails auditDetails = buildAuditDetails(userInfo.getUuid(), Boolean.FALSE);
-        request.getNewBirthDetails()
-                .forEach(birth -> {
-                    birth.setAuditDetails(auditDetails);
-                    if ((birth.getApplicationStatus().equals(STATUS_APPROVED) && birth.getAction().equals(WF_APPROVE))) {
-                        setRegistrationNumber(request);
-                    }
-                });
         setPresentAddress(request);
         setPermanentAddress(request);
     }
@@ -111,27 +104,6 @@ public class NewBirthEnrichment implements BaseEnrichment {
                 });
     }
 
-    private void setRegistrationNumber(NewBirthDetailRequest request) {
-        RequestInfo requestInfo = request.getRequestInfo();
-        List<NewBirthApplication> birthDetails = request.getNewBirthDetails();
-        String tenantId = birthDetails.get(0)
-                .getTenantId();
-
-        List<String> filecodes = getIds(requestInfo,
-                tenantId,
-                config.getBirthRegisNumberName(),
-                request.getNewBirthDetails().get(0).getApplicationType(),
-                REGISTRATION_NO,
-                birthDetails.size());
-        validateFileCodes(filecodes, birthDetails.size());
-        Long currentTime = Long.valueOf(System.currentTimeMillis());
-        ListIterator<String> itr = filecodes.listIterator();
-        request.getNewBirthDetails()
-                .forEach(birth -> {
-                        birth.setRegistrationNo(itr.next());
-                        birth.setRegistrationDate(currentTime);
-                });
-    }
     private void setPresentAddress(NewBirthDetailRequest request) {
 
         request.getNewBirthDetails()

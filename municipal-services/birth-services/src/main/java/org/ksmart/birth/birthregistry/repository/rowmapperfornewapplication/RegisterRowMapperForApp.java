@@ -61,8 +61,6 @@ public class RegisterRowMapperForApp implements ResultSetExtractor<List<Register
                         .isBornOutside(rs.getBoolean("ba_is_born_outside"))
                         .otPassportNo(rs.getString("ba_ot_passportno"))
                         .ackNumber(rs.getString("ba_applicationno"))
-                        .registrationNo(rs.getString("ba_registrationno"))
-                        .registrationDate(rs.getLong("ba_registration_date"))
                         .applicationId(rs.getString("ba_id"))
                         .applicationType(rs.getString("ba_applicationtype"))
                         .registerBirthPlace(regPlaceRowMapper.getRegAppPlace(rs))

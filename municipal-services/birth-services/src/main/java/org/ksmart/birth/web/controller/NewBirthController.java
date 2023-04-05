@@ -1,6 +1,7 @@
 package org.ksmart.birth.web.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.egov.tracer.model.CustomException;
 import org.ksmart.birth.birthregistry.model.BirthCertificate;
 import org.ksmart.birth.birthregistry.model.RegisterBirthDetail;
 import org.ksmart.birth.birthregistry.model.RegisterBirthDetailsRequest;
@@ -24,6 +25,7 @@ import java.util.List;
 
 import static org.ksmart.birth.utils.BirthConstants.STATUS_APPROVED;
 import static org.ksmart.birth.utils.BirthConstants.WF_APPROVE;
+import static org.ksmart.birth.utils.enums.ErrorCodes.REQUIRED;
 
 @Slf4j
 @RestController
@@ -61,16 +63,11 @@ public class NewBirthController {
         //if(request.getNewBirthDetails().get(0).getIsWorkflow()) {
             if ((birthApplicationDetails.get(0).getApplicationStatus().equals(STATUS_APPROVED) && birthApplicationDetails.get(0).getAction().equals(WF_APPROVE))) {
                 RegisterBirthDetailsRequest registerBirthDetailsRequest = registryReq.createRegistryRequestNew(request);
-                List<RegisterBirthDetail> registerBirthDetails = registerBirthService.saveRegisterBirthDetails(registerBirthDetailsRequest);
-
-                //Dowload after update
-//            RegisterBirthSearchCriteria criteria = new RegisterBirthSearchCriteria();
-//            criteria.setTenantId(registerBirthDetails.get(0).getTenantId());
-//            criteria.setApplicationNumber(registerBirthDetails.get(0).getAckNumber());
-//            birthCertificate = registerBirthService.download(criteria,request.getRequestInfo());
-
-           // }
-        }
+                if (registerBirthDetailsRequest.getRegisterBirthDetails().size() == 1) {
+                    registerBirthService.saveRegisterBirthDetails(registerBirthDetailsRequest);
+                }
+            }
+       // }
         NewBirthResponse response=NewBirthResponse.builder()
                 .ksmartBirthDetails(birthApplicationDetails)
                 .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(),

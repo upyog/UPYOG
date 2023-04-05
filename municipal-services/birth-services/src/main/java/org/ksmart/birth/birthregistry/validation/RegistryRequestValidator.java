@@ -51,7 +51,13 @@ public class RegistryRequestValidator {
             throw new CustomException(BIRTH_DETAILS_REQUIRED.getCode(),
                     "Registration exist in the tenant against the given application number.");
         }
-//        if (StringUtils.isBlank(birthApplications.get(0).getTenantId())) {
+//        if (registerDetails.size() > 0) {
+//            if (registerBirthDetails.get(0).getRegistrationNo() == null) {
+//                throw new CustomException(REQUIRED.getCode(),
+//                        "Registration number cannot be null while creating a registry request");
+//            }
+//        }
+            //        if (StringUtils.isBlank(birthApplications.get(0).getTenantId())) {
 //            throw new CustomException(INVALID_CREATE.getCode(),
 //                    "Tenant id is required for create request.");
 //        }

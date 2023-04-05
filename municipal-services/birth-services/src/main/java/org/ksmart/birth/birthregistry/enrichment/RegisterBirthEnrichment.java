@@ -4,6 +4,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.kafka.common.protocol.types.Field;
 import org.egov.tracer.model.CustomException;
 import org.ksmart.birth.birthregistry.model.BirthCertificate;
+import org.ksmart.birth.birthregistry.model.RegisterBirthDetail;
 import org.ksmart.birth.birthregistry.model.RegisterBirthDetailsRequest;
 import org.ksmart.birth.common.enrichment.BaseEnrichment;
 import org.ksmart.birth.common.model.AuditDetails;
@@ -21,8 +22,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.UUID;
 
-import static org.ksmart.birth.utils.BirthConstants.CERTIFICATE_NO;
-import static org.ksmart.birth.utils.BirthConstants.REG_STATUS_ACTIVE;
+import static org.ksmart.birth.utils.BirthConstants.*;
 
 @Component
 public class RegisterBirthEnrichment implements BaseEnrichment {
@@ -31,7 +31,7 @@ public class RegisterBirthEnrichment implements BaseEnrichment {
     @Autowired
     BirthConfiguration config;
     public void enrichCreate(RegisterBirthDetailsRequest request) {
-
+        System.out.println(request.getRegisterBirthDetails().get(0).getRegistrationNo());
         RequestInfo requestInfo = request.getRequestInfo();
         User userInfo = requestInfo.getUserInfo();
         AuditDetails auditDetails = buildAuditDetails(userInfo.getUuid(), Boolean.TRUE);
@@ -42,6 +42,7 @@ public class RegisterBirthEnrichment implements BaseEnrichment {
             register.setRegistrationDate(System.currentTimeMillis());
             register.setRegistrationStatus(REG_STATUS_ACTIVE);
             register.setAuditDetails(auditDetails);
+            setRegistrationNumber(request);
 
             register.getRegisterBirthPlace().setId(UUID.randomUUID().toString());
 
@@ -57,6 +58,23 @@ public class RegisterBirthEnrichment implements BaseEnrichment {
         });
     }
 
+    private void setRegistrationNumber(RegisterBirthDetailsRequest request) {
+        RequestInfo requestInfo = request.getRequestInfo();
+        List<RegisterBirthDetail> birthDetails = request.getRegisterBirthDetails();
+        String tenantId = birthDetails.get(0)
+                .getTenantId();
+
+        List<String> codes = getIds(requestInfo,
+                tenantId,
+                config.getBirthRegisNumberName(),
+                request.getRegisterBirthDetails().get(0).getApplicationType(), REGISTRATION_NO, birthDetails.size());
+        validateFileCodes(codes, birthDetails.size());
+        ListIterator<String> itr = codes.listIterator();
+        request.getRegisterBirthDetails()
+                .forEach(birth -> {
+                    birth.setRegistrationNo(itr.next());
+                });
+    }
     public void enrichUpdate(RegisterBirthDetailsRequest request) {
 
         RequestInfo requestInfo = request.getRequestInfo();

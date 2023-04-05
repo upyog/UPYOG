@@ -72,7 +72,7 @@
 
               - jsonPath: $.RegisterBirthDetails.*.ot_passportno
 
-              - jsonPath: $.RegisterBirthDetails.*.registrationno
+              - jsonPath: $.RegisterBirthDetails.*.registration_no
 
               - jsonPath: $.RegisterBirthDetails.*.registration_status
 
@@ -89,6 +89,20 @@
               - jsonPath: $.RegisterBirthDetails.*.applicationType
 
 
+          - query: UPDATE public.eg_birth_details SET  registrationno=?, registration_date=?,  lastmodifiedby=?,
+              lastmodifiedtime=? WHERE id=?;
+
+            basePath: RegisterBirthDetails.*
+            jsonMaps:
+              - jsonPath: $.RegisterBirthDetails.*.registration_no
+
+              - jsonPath: $.RegisterBirthDetails.*.registration_date
+
+              - jsonPath: $.RegisterBirthDetails.*.auditDetails.lastModifiedBy
+
+              - jsonPath: $.RegisterBirthDetails.*.auditDetails.lastModifiedTime
+
+              - jsonPath: $.RegisterBirthDetails.*.applicationId
 
           - query: INSERT INTO public.eg_register_birth_father_information(id, firstname_en, firstname_ml, middlename_en, middlename_ml, lastname_en, lastname_ml, aadharno, ot_passportno, 
                   emailid, mobileno, createdtime, createdby, lastmodifiedtime, lastmodifiedby, birthdtlid, bio_adopt) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
