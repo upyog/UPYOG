@@ -48,7 +48,7 @@ public class NewBirthService {
 
         //Demand Creation
         birthApplicationDetails.forEach(birth->{
-            if(birth.getApplicationStatus() == STATUS_FOR_PAYMENT){
+            if(birth.getApplicationStatus().equals(STATUS_FOR_PAYMENT)){
                 List<Demand> demands = new ArrayList<>();
                 Demand demand = new Demand();
                 demand.setTenantId(birth.getTenantId());
