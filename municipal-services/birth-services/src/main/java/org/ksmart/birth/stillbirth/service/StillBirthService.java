@@ -42,7 +42,14 @@ public class StillBirthService {
     }
 
     public List<StillBirthApplication> updateBirthDetails(StillBirthDetailRequest request) {
-        workflowIntegrator.callWorkFlow(request);
+        Object mdmsData = mdmsUtil.mdmsCall(request.getRequestInfo());
+        // validate request
+        validator.validateUpdate(request, mdmsData);
+        //search application exist
+        validator.validateUpdate(request, mdmsData);
+        if(request.getBirthDetails().get(0).getIsWorkflow()) {
+            workflowIntegrator.callWorkFlow(request);
+        }
         return repository.updateBirthDetails(request);
     }
 
