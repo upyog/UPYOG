@@ -244,6 +244,7 @@ public class StillBirthApplication {
 
     @JsonProperty("assignee")
     private List<String> assignee;
+
     private String comment;
 
     @JsonProperty("wfDocuments")
@@ -288,6 +289,10 @@ public class StillBirthApplication {
 
     @JsonProperty("isStill")
     private Boolean isStill;
+
+    @Size(max = 64)
+    @JsonProperty("isWorkflow")
+    private Boolean isWorkflow = true;
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails;
 }

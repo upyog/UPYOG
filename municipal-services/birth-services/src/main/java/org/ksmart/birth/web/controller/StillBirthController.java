@@ -22,6 +22,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
+import static org.ksmart.birth.utils.BirthConstants.STATUS_APPROVED;
+import static org.ksmart.birth.utils.BirthConstants.WF_APPROVE;
+
 @Slf4j
 @RestController
 @RequestMapping("/cr")
@@ -52,14 +55,13 @@ public class StillBirthController {
     public ResponseEntity<?> updateBirthDetails(@RequestBody StillBirthDetailRequest request) {
         BirthCertificate birthCertificate = new BirthCertificate();
         List<StillBirthApplication> birthApplicationDetails=stillBirthService.updateBirthDetails(request);
-        //Download certificate when Approved
-        if((birthApplicationDetails.get(0).getApplicationStatus().equals("APPROVED") && birthApplicationDetails.get(0).getAction().equals("APPROVE"))){
-            RegisterBirthDetailsRequest registerBirthDetailsRequest = registryReq.createRegistryRequest(request);
-            List<RegisterBirthDetail> registerBirthDetails =  registerBirthService.saveRegisterBirthDetails(registerBirthDetailsRequest);
-//            RegisterBirthSearchCriteria criteria = new RegisterBirthSearchCriteria();
-//            criteria.setTenantId(registerBirthDetails.get(0).getTenantId());
-//            criteria.setRegistrationNo(registerBirthDetails.get(0).getRegistrationNo());
-//            birthCertificate = registerBirthService.download(criteria,request.getRequestInfo());
+        if(request.getBirthDetails().get(0).getIsWorkflow()) {
+            if ((birthApplicationDetails.get(0).getApplicationStatus().equals(STATUS_APPROVED) && birthApplicationDetails.get(0).getAction().equals(WF_APPROVE))) {
+                RegisterBirthDetailsRequest registerBirthDetailsRequest = registryReq.createRegistryRequestNew(request);
+                if (registerBirthDetailsRequest.getRegisterBirthDetails().size() == 1) {
+                    registerBirthService.saveRegisterBirthDetails(registerBirthDetailsRequest);
+                }
+            }
         }
         StillBirthResponse response=StillBirthResponse.builder()
                 .birthDetails(birthApplicationDetails)

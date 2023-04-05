@@ -17,6 +17,8 @@ import org.ksmart.birth.utils.enums.ErrorCodes;
 import org.ksmart.birth.web.model.SearchCriteria;
 import org.ksmart.birth.web.model.newbirth.NewBirthApplication;
 import org.ksmart.birth.web.model.newbirth.NewBirthDetailRequest;
+import org.ksmart.birth.web.model.stillbirth.StillBirthApplication;
+import org.ksmart.birth.web.model.stillbirth.StillBirthDetailRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -78,6 +80,8 @@ public class NewBirthRepository {
                 .requestInfo(requestApplication.getRequestInfo())
                 .registerBirthDetails(result).build();
     }
+
+
 
     public List<NewBirthApplication> searchBirthDetails(NewBirthDetailRequest request, SearchCriteria criteria) {
         List<Object> preparedStmtValues = new ArrayList<>();

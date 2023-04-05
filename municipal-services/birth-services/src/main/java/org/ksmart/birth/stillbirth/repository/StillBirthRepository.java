@@ -1,6 +1,9 @@
 package org.ksmart.birth.stillbirth.repository;
 
 import lombok.extern.slf4j.Slf4j;
+import org.ksmart.birth.birthregistry.model.RegisterBirthDetail;
+import org.ksmart.birth.birthregistry.model.RegisterBirthDetailsRequest;
+import org.ksmart.birth.birthregistry.repository.rowmapperfornewapplication.RegisterRowMapperForApp;
 import org.ksmart.birth.birthregistry.service.MdmsDataService;
 import org.ksmart.birth.common.producer.BndProducer;
 import org.ksmart.birth.config.BirthConfiguration;
@@ -34,10 +37,12 @@ public class StillBirthRepository {
     private final  MdmsDataService mdmsDataService;
     private final MdmsForStillBirthService mdmsForStillBirthService;
     private final  MdmsUtil mdmsUtil;
+
+    private final RegisterRowMapperForApp registerRowMapperForApp;
     @Autowired
     StillBirthRepository(JdbcTemplate jdbcTemplate,  StillBirthEnrichment enrichment, BirthConfiguration birthDeathConfiguration,
                          BndProducer producer, StillBirthQueryBuilder queryBuilder, StillBirthApplicationRowMapper rowMapper,
-                         MdmsDataService mdmsDataService, MdmsUtil mdmsUtil, MdmsForStillBirthService mdmsForStillBirthService) {
+                         MdmsDataService mdmsDataService, MdmsUtil mdmsUtil, MdmsForStillBirthService mdmsForStillBirthService,RegisterRowMapperForApp registerRowMapperForApp) {
         this.jdbcTemplate = jdbcTemplate;
         this.enrichment = enrichment;
         this.birthDeathConfiguration = birthDeathConfiguration;
@@ -47,6 +52,7 @@ public class StillBirthRepository {
         this.mdmsDataService = mdmsDataService;
         this.mdmsUtil = mdmsUtil;
         this.mdmsForStillBirthService = mdmsForStillBirthService;
+        this.registerRowMapperForApp = registerRowMapperForApp;
     }
     public List<StillBirthApplication> saveBirthDetails(StillBirthDetailRequest request) {
         enrichment.enrichCreate(request);
@@ -57,6 +63,21 @@ public class StillBirthRepository {
         enrichment.enrichUpdate(request);
         producer.push(birthDeathConfiguration.getUpdateStillBirthTopic(), request);
         return request.getBirthDetails();
+    }
+
+    public RegisterBirthDetailsRequest searchStillBirthDetailsForRegister(StillBirthDetailRequest request) {
+        List<Object> preparedStmtValues = new ArrayList<>();
+        SearchCriteria criteria = new SearchCriteria();
+        List<RegisterBirthDetail> result = null;
+        if (request.getBirthDetails().size() > 0) {
+            criteria.setApplicationNumber(request.getBirthDetails().get(0).getApplicationNo());
+            criteria.setTenantId(request.getBirthDetails().get(0).getTenantId());
+            String query = queryBuilder.getApplicationSearchQueryForRegistry(criteria, preparedStmtValues);
+            result = jdbcTemplate.query(query, preparedStmtValues.toArray(), registerRowMapperForApp);
+        }
+        return RegisterBirthDetailsRequest.builder()
+                .requestInfo(request.getRequestInfo())
+                .registerBirthDetails(result).build();
     }
     public List<StillBirthApplication> searchStillBirthDetails(StillBirthDetailRequest request, SearchCriteria criteria) {
         List<Object> preparedStmtValues = new ArrayList<>();

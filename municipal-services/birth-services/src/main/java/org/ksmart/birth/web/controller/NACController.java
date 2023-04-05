@@ -91,8 +91,6 @@ public class NACController {
                                                                               .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), Boolean.TRUE))
                                                                               .nacDetails(nacDetails)
                                                                               .build();
-
-
         return ResponseEntity.ok(response);
     }
 }

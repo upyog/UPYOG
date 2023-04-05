@@ -66,9 +66,9 @@ public class NewBirthService {
         validator.validateUpdate(request, mdmsData);
         //search application exist
         validator.validateUpdate(request, mdmsData);
-      //  if(request.getNewBirthDetails().get(0).getIsWorkflow()) {
+        if(request.getNewBirthDetails().get(0).getIsWorkflow()) {
             workflowIntegrator.callWorkFlow(request);
-       // }
+        }
         return repository.updateKsmartBirthDetails(request);
     }
 
