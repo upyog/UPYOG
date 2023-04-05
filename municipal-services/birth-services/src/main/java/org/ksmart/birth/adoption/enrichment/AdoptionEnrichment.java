@@ -144,7 +144,15 @@ public class AdoptionEnrichment implements BaseEnrichment {
     private void setPresentAddress(AdoptionDetailRequest request) {
         request.getAdoptionDetails()
                 .forEach(birth -> {
+                	
                     if (birth.getParentAddress() != null) {
+                    	if(birth.getParentAddress() != null) {
+                            birth.getParentAddress().setPermanentUuid(UUID.randomUUID().toString());
+                            birth.getParentAddress().setPresentUuid(UUID.randomUUID().toString());
+                            birth.getParentAddress().setBioAdoptPermanent("ADOPT");
+                            birth.getParentAddress().setBioAdoptPresent("ADOPT");
+                        }
+                    	
                         if (birth.getParentAddress().getPresentaddressCountry() != null && birth.getParentAddress().getPresentaddressStateName() != null) {
                             if (birth.getParentAddress().getPresentaddressCountry().contains(BirthConstants.COUNTRY_CODE)) {
                                 if (birth.getParentAddress().getPresentaddressStateName().contains(BirthConstants.STATE_CODE_SMALL)) {
