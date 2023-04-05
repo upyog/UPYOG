@@ -250,15 +250,21 @@ public class AbandonedApplication {
     @JsonProperty("birthInitiatorUuid")
     private String birthInitiatorUuid;
     @Size(max = 64)
+    @JsonProperty("birthCareTakerUuid")
+    private String birthCareTakerUuid;
+    @Size(max = 64)
     @JsonProperty("birthStatisticsUuid")
     private String birthStatisticsUuid;
     @JsonProperty("ParentsDetails")
     private ParentsDetail parentsDetails;
     @JsonProperty("documentDetails")
     private DocumentDetails documentDetails;
-
     @JsonProperty("InitiatorinfoDetails")
     private InitiatorDetail initiatorDetails;
+
+    @JsonProperty("caretakerDetails")
+    private CareTaker caretakerDetails;
+
     @JsonProperty("InformarHosInstDetails")
     private InformatDetail informatDetail;
     @JsonProperty("auditDetails")

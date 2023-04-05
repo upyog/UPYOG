@@ -4,6 +4,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
 import org.egov.tracer.model.CustomException;
+import org.ksmart.birth.abandoned.service.MdmsForAbandonedService;
 import org.ksmart.birth.common.enrichment.BaseEnrichment;
 import org.ksmart.birth.common.model.AuditDetails;
 import org.ksmart.birth.common.repository.IdGenRepository;
@@ -31,7 +32,7 @@ public class AbandonedEnrichment implements BaseEnrichment {
     @Autowired
     MdmsUtil mdmsUtil;
     @Autowired
-    MdmsForNewBirthService mdmsBirthService;
+    MdmsForAbandonedService mdmsBirthService;
     @Autowired
     MdmsTenantService mdmsTenantService;
     @Autowired
@@ -49,7 +50,6 @@ public class AbandonedEnrichment implements BaseEnrichment {
         setPlaceOfBirth(request, tenantId, auditDetails);
         setApplicationNumbers(request);
         setFileNumbers(request);
-        //setPlaceOfBirth(request);
        // setPresentAddress(request);
         //setPermanentAddress(request);
         setStatisticalInfo(request);
@@ -273,33 +273,41 @@ public class AbandonedEnrichment implements BaseEnrichment {
 //                    }
 //                });
 //    }
-    private void setPlaceOfBirth(AbandonedRequest request, String trnantId, AuditDetails auditDetails) {
-        Object mdmsData = mdmsUtil.mdmsCallForLocation(request.getRequestInfo(), trnantId);
-        Object mdmsDataComm = mdmsUtil.mdmsCall(request.getRequestInfo());
-        request.getBirthDetails().forEach(birth -> {
-            birth.setId(UUID.randomUUID().toString());
-            birth.setAuditDetails(auditDetails);
-            if(birth.getPlaceofBirthId() != null || !birth.getPlaceofBirthId().isEmpty()){
-                //mdmsBirthService.setLocationDetails(birth, mdmsData);
-                //mdmsBirthService.setInstitutionDetails(birth, mdmsDataComm);
+private void setPlaceOfBirth(AbandonedRequest request, String trnantId, AuditDetails auditDetails) {
+    Object mdmsData = mdmsUtil.mdmsCallForLocation(request.getRequestInfo(), trnantId);
+    Object mdmsDataComm = mdmsUtil.mdmsCall(request.getRequestInfo());
+    request.getBirthDetails().forEach(birth -> {
+        birth.setId(UUID.randomUUID().toString());
+        birth.setAuditDetails(auditDetails);
+        if(birth.getPlaceofBirthId() != null || !birth.getPlaceofBirthId().isEmpty()){
+            mdmsBirthService.setLocationDetails(birth, mdmsData);
+            mdmsBirthService.setInstitutionDetails(birth, mdmsDataComm);
+        }
+        birth.setBirthPlaceUuid(UUID.randomUUID().toString());
+        birth.getParentsDetails().setFatherUuid(UUID.randomUUID().toString());
+        birth.getParentsDetails().setMotherUuid(UUID.randomUUID().toString());
+        if(birth.getParentsDetails() != null) {
+            if(!birth.getParentsDetails().getIsFatherInfoMissing()){
+                birth.getParentsDetails().setFatherBioAdopt("BIOLOGICAL");
             }
-            birth.setBirthPlaceUuid(UUID.randomUUID().toString());
-            birth.getParentsDetails().setFatherUuid(UUID.randomUUID().toString());
-            birth.getParentsDetails().setMotherUuid(UUID.randomUUID().toString());
-            if(birth.getParentsDetails() != null) {
-                if(!birth.getParentsDetails().getIsFatherInfoMissing()){
-                    birth.getParentsDetails().setFatherBioAdopt("BIOLOGICAL");
-                }
-                if(!birth.getParentsDetails().getIsMotherInfoMissing()){
-                    birth.getParentsDetails().setMotherBioAdopt("BIOLOGICAL");
-                }
+            if(!birth.getParentsDetails().getIsMotherInfoMissing()){
+                birth.getParentsDetails().setMotherBioAdopt("BIOLOGICAL");
             }
-        });
-    }
+        }
+
+
+    });
+}
     private void setStatisticalInfo(AbandonedRequest request) {
         request.getBirthDetails()
                 .forEach(birth -> {
                     birth.setBirthStatisticsUuid(UUID.randomUUID().toString());
+                    if(birth.getCaretakerDetails() != null) {
+                        birth.setBirthCareTakerUuid(UUID.randomUUID().toString());
+                    }
+                    if(birth.getInitiatorDetails() != null) {
+                        birth.setBirthCareTakerUuid(UUID.randomUUID().toString());
+                    }
                     birth.setBirthInitiatorUuid(UUID.randomUUID().toString());
                     Object mdmsData = mdmsUtil.mdmsCall(request.getRequestInfo());
                     // mdmsBirthService.setTenantDetails(birth, mdmsData);//Check/////////

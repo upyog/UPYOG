@@ -4,6 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.ksmart.birth.birthregistry.service.KsmartAddressService;
 import org.ksmart.birth.common.services.MdmsLocationService;
 import org.ksmart.birth.common.services.MdmsTenantService;
+import org.ksmart.birth.web.model.abandoned.AbandonedApplication;
+import org.ksmart.birth.web.model.abandoned.AbandonedRequest;
 import org.ksmart.birth.web.model.newbirth.NewBirthApplication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,7 +31,7 @@ public class MdmsForAbandonedService {
         this.ksmartAddressService = ksmartAddressService;
     }
 
-    public void setLocationDetails(NewBirthApplication birth, Object mdmsData) {
+    public void setLocationDetails(AbandonedApplication birth, Object mdmsData) {
         if (birth.getWardId() != null) {
             String wardEn = mdmsLocationService.getWardNameEn(mdmsData, birth.getWardId());
             String wardMl = mdmsLocationService.getWardNameMl(mdmsData, birth.getWardId());
@@ -51,19 +53,19 @@ public class MdmsForAbandonedService {
         }else { }
     }
 
-    public void setInstitutionDetails(NewBirthApplication birth, Object  mdmsData) {
+    public void setInstitutionDetails(AbandonedApplication birth, Object  mdmsData) {
         if (birth.getPlaceofBirthId().contains(BIRTH_PLACE_INSTITUTION)) {
             String placeInstType = mdmsTenantService.getInstitutionTypeName(mdmsData, birth.getInstitutionTypeId());
             birth.setInstitution(placeInstType);
         }
     }
 
-    public void setTenantDetails(NewBirthApplication birth, Object  mdmsData) {
+    public void setTenantDetails(AbandonedApplication birth, Object  mdmsData) {
         String lbType = mdmsTenantService.getTenantLbType(mdmsData, birth.getTenantId());
         if (lbType.contains(LB_TYPE_CORPORATION) || lbType.contains(LB_TYPE_MUNICIPALITY) ) {
-            birth.getParentAddress().setTownOrVillagePresent("TOWN");
+           // birth.getParentsDetails().setTownOrVillagePresent("TOWN");
         } else if(lbType.contains(LB_TYPE_GP)) {
-            birth.getParentAddress().setTownOrVillagePresent("VILLAGE");
+            //birth.getParentAddress().setTownOrVillagePresent("VILLAGE");
         } else{}
     }
 

@@ -53,16 +53,16 @@ public class AbandonedService {
         //workflowIntegrator.callWorkFlow(request);
 
         //Demand Creation
-        birthApplicationDetails.forEach(birth->{
-            if(birth.getApplicationStatus() == STATUS_FOR_PAYMENT){
-                List<Demand> demands = new ArrayList<>();
-                Demand demand = new Demand();
-                demand.setTenantId(birth.getTenantId());
-                demand.setConsumerCode(birth.getApplicationNo());
-                demands.add(demand);
-               // birth.setDemands(demandService.saveDemandDetails(demands,request.getRequestInfo()));
-            }
-        });
+//        birthApplicationDetails.forEach(birth->{
+//            if(birth.getApplicationStatus() == STATUS_FOR_PAYMENT){
+//                List<Demand> demands = new ArrayList<>();
+//                Demand demand = new Demand();
+//                demand.setTenantId(birth.getTenantId());
+//                demand.setConsumerCode(birth.getApplicationNo());
+//                demands.add(demand);
+//               // birth.setDemands(demandService.saveDemandDetails(demands,request.getRequestInfo()));
+//            }
+//        });
 
         return birthApplicationDetails;
     }

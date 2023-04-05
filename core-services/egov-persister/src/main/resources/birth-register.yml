@@ -89,8 +89,7 @@
               - jsonPath: $.RegisterBirthDetails.*.applicationType
 
 
-          - query: UPDATE public.eg_birth_details SET  registrationno=?, registration_date=?,  lastmodifiedby=?,
-              lastmodifiedtime=? WHERE id=?;
+          - query: UPDATE public.eg_birth_details SET  registrationno=?, registration_date=?,  lastmodifiedby=?, lastmodifiedtime=? WHERE id=?;
 
             basePath: RegisterBirthDetails.*
             jsonMaps:
