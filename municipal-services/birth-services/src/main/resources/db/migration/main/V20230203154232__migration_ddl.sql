@@ -1,5 +1,5 @@
 ALTER TABLE public.eg_register_birth_details
-DROP CONSTRAINT eg_register_birth_details_registrationno_key;
+DROP CONSTRAINT IF EXISTS  eg_register_birth_details_registrationno_key;
 
 ALTER TABLE public.eg_register_birth_details
 ADD COLUMN ack_no character varying(64) COLLATE pg_catalog."default",
