@@ -92,7 +92,7 @@ public class NewBirthRepository {
             throw new CustomException(ErrorCodes.NOT_FOUND.getCode(), "No result found.");
         } else if(result.size() >= 1) {
             result.forEach(birth -> {
-                birth.setIsWorkflow(false);
+                birth.setIsWorkflow(true);
                 Object mdmsData = mdmsUtil.mdmsCallForLocation(request.getRequestInfo(), birth.getTenantId());
                 if (birth.getPlaceofBirthId() != null) {
                     mdmsBirthService.setLocationDetails(birth, mdmsData);

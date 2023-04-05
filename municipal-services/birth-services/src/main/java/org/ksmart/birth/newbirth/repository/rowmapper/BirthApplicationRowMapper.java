@@ -77,7 +77,6 @@ public class BirthApplicationRowMapper implements ResultSetExtractor<List<NewBir
                     .remarksMl(rs.getString("ba_aadharno"))
                     .applicationNo(rs.getString("ba_applicationno"))
                     .applicationType(rs.getString("ba_applicationtype"))
-                    .workFlowCode(rs.getString("ba_workflowcode"))
                     .action(rs.getString("ba_action"))
                     .applicationStatus(rs.getString("ba_status"))
                     .auditDetails(getAuditDetails(rs))

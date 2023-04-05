@@ -86,9 +86,9 @@ public class StillBirthRepository {
         String query = queryBuilder.getNewBirthApplicationSearchQuery(criteria, request, preparedStmtValues, Boolean.FALSE);
         List<StillBirthApplication> result = jdbcTemplate.query(query, preparedStmtValues.toArray(), rowMapper);
         result.forEach(birth -> {
+            birth.setIsWorkflow(true);
             Object mdmsData = mdmsUtil.mdmsCallForLocation(request.getRequestInfo(), birth.getTenantId());
             if (birth.getPlaceofBirthId() != null) {
-
                 mdmsForStillBirthService.setLocationDetails(birth, mdmsData);
                 mdmsForStillBirthService.setInstitutionDetails(birth, mdmsDataComm);
             }

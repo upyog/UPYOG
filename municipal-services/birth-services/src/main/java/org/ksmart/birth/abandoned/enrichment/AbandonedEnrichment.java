@@ -287,9 +287,9 @@ private void setPlaceOfBirth(AbandonedRequest request, String trnantId, AuditDet
         birth.getParentsDetails().setFatherUuid(UUID.randomUUID().toString());
         birth.getParentsDetails().setMotherUuid(UUID.randomUUID().toString());
         if(birth.getParentsDetails() != null) {
-            if(!birth.getParentsDetails().getIsFatherInfoMissing()){
-                birth.getParentsDetails().setFatherBioAdopt("BIOLOGICAL");
-            }
+//            if(!birth.getParentsDetails().getIsFatherInfoMissing()){
+//                birth.getParentsDetails().setFatherBioAdopt("BIOLOGICAL");
+//            }
             if(!birth.getParentsDetails().getIsMotherInfoMissing()){
                 birth.getParentsDetails().setMotherBioAdopt("BIOLOGICAL");
             }
