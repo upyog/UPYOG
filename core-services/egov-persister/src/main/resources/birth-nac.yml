@@ -432,32 +432,32 @@ serviceMaps:
                         
         - query: INSERT INTO public.eg_birth_children_born(
             id, birthdtlid, child_name_en, child_name_ml, sex, order_of_birth, dob,is_alive,createdby, createdtime, lastmodifiedby, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
-          basePath: NacDetails.*.OtherChildren
+          basePath: NacDetails.*.OtherChildren.*
           jsonMaps:
 
-            - jsonPath: $.NacDetails.*.OtherChildren.id
+            - jsonPath: $.NacDetails.*.OtherChildren.*.id
 
             - jsonPath: $.NacDetails.*.id
 
-            - jsonPath: $.NacDetails.*.OtherChildren.childNameEn
+            - jsonPath: $.NacDetails.*.OtherChildren.*.childNameEn
 
-            - jsonPath: $.NacDetails.*.OtherChildren.childNameMl
+            - jsonPath: $.NacDetails.*.OtherChildren.*.childNameMl
 
-            - jsonPath: $.NacDetails.*.OtherChildren.sex
+            - jsonPath: $.NacDetails.*.OtherChildren.*.sex
 
-            - jsonPath: $.NacDetails.*.OtherChildren.orderOfBirth
+            - jsonPath: $.NacDetails.*.OtherChildren.*.nacorderofChildren
 
-            - jsonPath: $.NacDetails.*.OtherChildren.dob
+            - jsonPath: $.NacDetails.*.OtherChildren.*.dob
 
-            - jsonPath: $.NacDetails.*.OtherChildren.isAlive                
+            - jsonPath: $.NacDetails.*.OtherChildren.*.isAlive
 
-            - jsonPath: $.NacDetails.*.auditDetails.createdBy
+            - jsonPath: $.NacDetails.*.OtherChildren.*.auditDetails.createdBy
 
-            - jsonPath: $.NacDetails.*.auditDetails.createdTime
+            - jsonPath: $.NacDetails.*.OtherChildren.*.auditDetails.createdTime
 
-            - jsonPath: $.NacDetails.*.auditDetails.lastModifiedBy
+            - jsonPath: $.NacDetails.*.OtherChildren.*.auditDetails.lastModifiedBy
 
-            - jsonPath: $.NacDetails.*.auditDetails.lastModifiedTime
+            - jsonPath: $.NacDetails.*.OtherChildren.*.auditDetails.lastModifiedTime
 
     - version: 1.0
       description: Persists update birth details in eg_birth_details  table

@@ -270,7 +270,7 @@ public class NacApplication {
     private NacApplicantDetail applicantDetails;
     
     @JsonProperty("OtherChildren")
-    private NacOtherChildren otherChildrenDetails;
+    private List<NacOtherChildren> otherChildrenDetails;
 
     @JsonProperty("AddressBirthDetails")
     private ParentAddress parentAddress;

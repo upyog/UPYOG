@@ -33,7 +33,7 @@ public class NacOtherChildren {
     @Size(max = 12)
     @JsonProperty("sex")
     private String sex;     
-    @JsonProperty("orderOfBirth")
+    @JsonProperty("nacorderofChildren")
     private Integer orderOfBirth;
     @Size(max = 2500)
     @JsonProperty("dob")

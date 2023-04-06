@@ -52,7 +52,11 @@ public class NacEnrichment implements BaseEnrichment {
             }
             birth.setBirthPlaceUuid(UUID.randomUUID().toString());
             birth.getApplicantDetails().setId(UUID.randomUUID().toString());
-            birth.getOtherChildrenDetails().setId(UUID.randomUUID().toString());
+            birth.getOtherChildrenDetails().forEach(
+                    child -> {
+                        child.setId(UUID.randomUUID().toString());
+                    }
+            );
             birth.getParentsDetails().setFatherUuid(UUID.randomUUID().toString());
             birth.getParentsDetails().setMotherUuid(UUID.randomUUID().toString());
 //            if(birth.getParentsDetails() != null) {

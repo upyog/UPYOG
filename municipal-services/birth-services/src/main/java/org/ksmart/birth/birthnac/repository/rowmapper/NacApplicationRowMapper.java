@@ -1,6 +1,8 @@
 package org.ksmart.birth.birthnac.repository.rowmapper;
 
 import org.ksmart.birth.web.model.birthnac.NacApplication;
+import org.ksmart.birth.web.model.birthnac.NacOtherChildren;
+import org.ksmart.birth.web.model.correction.CorrectionField;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
@@ -88,7 +90,7 @@ public class NacApplicationRowMapper implements ResultSetExtractor<List<NacAppli
                     .fileDate(rs.getLong("ba_file_date"))
                     .fileStatus(rs.getString("ba_file_status"))
                     .applicantDetails(getApplicant(rs))
-                    .otherChildrenDetails(getOtherChildren(rs))
+                    .otherChildrenDetails(new ArrayList<NacOtherChildren>())
                     .parentAddress(getKsmartBirthParentAddress(rs))
                     .build());
         }
