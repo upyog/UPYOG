@@ -1,19 +1,8 @@
 package org.ksmart.birth.birthnac.service;
 
-import org.egov.common.contract.request.RequestInfo;
-import org.ksmart.birth.web.model.birthnac.certificate.CertificateResponse;
-import org.ksmart.birth.web.model.birthnac.certificate.CertificateDetails;
-import org.ksmart.birth.web.model.birthnac.certificate.CertificateRequest;
-import org.ksmart.birth.web.model.birthnac.NacSearchCriteria;
- 
-import org.egov.tracer.model.CustomException;
+
 import org.ksmart.birth.birthnac.repository.NacRepository;
 import org.ksmart.birth.birthnac.validator.NacApplicationValidator;
-
-import org.ksmart.birth.birthregistry.model.BirthPdfRegisterRequest;
-import org.ksmart.birth.birthregistry.model.RegisterBirthDetail;
- 
-import org.ksmart.birth.common.contract.EgovPdfResp;
 import org.ksmart.birth.utils.MdmsUtil;
 import org.ksmart.birth.web.model.SearchCriteria;
 import org.ksmart.birth.web.model.birthnac.*;
@@ -21,10 +10,6 @@ import org.ksmart.birth.web.model.birthnac.*;
 import org.ksmart.birth.workflow.WorkflowIntegratorNac;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service

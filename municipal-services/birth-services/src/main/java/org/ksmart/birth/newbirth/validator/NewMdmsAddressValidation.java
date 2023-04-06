@@ -39,18 +39,26 @@ public class NewMdmsAddressValidation {
                         if (CollectionUtils.isEmpty(countryCodes) || !countryCodes.contains(countryCodesPresent)) {
                             errorMap.put(COMMON_MDMS_COUNTRY, "The Country code Present'" + countryCodesPresent + "' does not exists");
                         }
-
                         // Country code  Permanent
-                        String countryCodesPremanent = birth.getParentAddress().getPermtaddressCountry();
-                        if (log.isDebugEnabled()) {
-                            log.debug("Country code Permanent: \n{}", countryCodesPremanent);
+                        if(birth.getParentAddress().getIsPrsentAddress()){
+                            birth.getParentAddress().setPermtaddressCountry(birth.getParentAddress().getPresentaddressCountry());
                         }
-                        if (CollectionUtils.isEmpty(countryCodes) || !countryCodes.contains(countryCodesPremanent)) {
-                            errorMap.put(COMMON_MDMS_COUNTRY, "The Country code Permanent'" + countryCodesPremanent + "' does not exists");
-                        }
+
+                            String countryCodesPremanent = birth.getParentAddress().getPermtaddressCountry();
+                            if (log.isDebugEnabled()) {
+                                log.debug("Country code Permanent: \n{}", countryCodesPremanent);
+                            }
+                            if (CollectionUtils.isEmpty(countryCodes) || !countryCodes.contains(countryCodesPremanent)) {
+                                errorMap.put(COMMON_MDMS_COUNTRY, "The Country code Permanent'" + countryCodesPremanent + "' does not exists");
+                            }
+
 
                         // state code  Present
-                        String stateCodesPresent = birth.getParentAddress().getPresentaddressStateName();
+
+                    if(birth.getParentAddress().getIsPrsentAddress()){
+                        birth.getParentAddress().setPermtaddressStateName(birth.getParentAddress().getPresentaddressStateName());
+                    }
+                    String stateCodesPresent = birth.getParentAddress().getPresentaddressStateName();
                         if (log.isDebugEnabled()) {
                             log.debug("State code Present: \n{}", stateCodesPresent);
                         }
@@ -69,6 +77,7 @@ public class NewMdmsAddressValidation {
 // Present Inside kerala
                         if (countryCodesPresent.contains(COUNTRY_CODE)) {
                             if (stateCodesPresent.contains(STATE_CODE_SMALL)) {
+
 
                                 String tenantCodeCodePresent = birth.getTenantId();
                                 if (log.isDebugEnabled()) {
