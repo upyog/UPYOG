@@ -326,6 +326,9 @@ public class AdoptionApplication {
     @JsonProperty("adoptagencycontactpersonmobileno")
     private String adoptAgencyContactPersonMobileno;
     
+    @Size(max = 64)
+    @JsonProperty("isWorkflow")
+    private Boolean isWorkflow = true;
     //////////////////////////////////////////////////////////////
     
 

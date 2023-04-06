@@ -7,6 +7,7 @@ import java.sql.SQLException;
 
 public interface AdoptionParentAddressRowMapper {
     default ParentAddress getKsmartBirthParentAddress(ResultSet rs) throws SQLException {
+    	System.out.println(" village "+rs.getString("pres_villageid"));
         return ParentAddress.builder()
                 .countryIdPresent(rs.getString("pres_countryid"))
                 .stateIdPresent(rs.getString("pres_stateid"))
@@ -16,6 +17,8 @@ public interface AdoptionParentAddressRowMapper {
                 .localityMlPresent(rs.getString("pres_locality_ml"))
                 .streetNameEnPresent(rs.getString("pres_street_name_en"))
                 .streetNameMlPresent(rs.getString("pres_street_name_ml"))
+                .presentInsideKeralaStreetNameMl(rs.getString("pres_street_name_ml"))
+                .presentInsideKeralaStreetNameEn(rs.getString("pres_street_name_en"))
                 .houseNameNoEnPresent(rs.getString("pres_housename_no_en"))
                 .houseNameNoMlPresent(rs.getString("pres_housename_no_ml"))
                 .villageNamePresent(rs.getString("pres_village_name"))
@@ -34,6 +37,9 @@ public interface AdoptionParentAddressRowMapper {
                 .poNoPermanent(rs.getString("per_pinno"))
                 .presentInsideKeralaLBName(rs.getString("pres_tenantid"))
                 .presentInsideKeralaTaluk(rs.getString("pres_talukid"))
+                .presentInsideKeralaPostOffice(rs.getString("pres_poid"))
+                .presentInsideKeralaVillage(rs.getString("pres_villageid"))
+                .presentWardNo(rs.getString("pres_ward_code"))
                 .presentOutsideKeralaTalukName(rs.getString("pres_taluk_name"))
                 .presentOutsideKeralaCityVilgeEn(rs.getString("stat_mother_resdnce_placetype"))
                 .presentOutSideIndiaAdressEn(rs.getString("pres_ot_address1_en"))
