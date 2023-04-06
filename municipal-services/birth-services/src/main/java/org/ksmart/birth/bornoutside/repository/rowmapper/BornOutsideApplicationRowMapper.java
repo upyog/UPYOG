@@ -60,6 +60,7 @@ public class BornOutsideApplicationRowMapper implements ResultSetExtractor<List<
                     .isBornOutside(rs.getBoolean("pla_is_born_outside"))
                     .parentsDetails(getKsmartBirthParentDetail(rs))
                     .parentAddress(getKsmartBirthParentAddress(rs))
+                    .auditDetails(getAuditDetails(rs))
                     .build());
         }
         return result;

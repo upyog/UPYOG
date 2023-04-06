@@ -5,10 +5,8 @@ import org.egov.tracer.model.CustomException;
 import org.ksmart.birth.birthregistry.model.RegisterBirthDetail;
 import org.ksmart.birth.birthregistry.model.RegisterBirthDetailsRequest;
 import org.ksmart.birth.config.BirthConfiguration;
-import org.ksmart.birth.newbirth.validator.NewMdmsValidator;
 import org.ksmart.birth.utils.enums.ErrorCodes;
 import org.ksmart.birth.web.model.newbirth.NewBirthApplication;
-import org.ksmart.birth.web.model.newbirth.NewBirthDetailRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -20,10 +18,10 @@ import static org.ksmart.birth.utils.enums.ErrorCodes.*;
 @Component
 public class RegistryRequestValidator {
     private final BirthConfiguration bndConfig;
-    private final NewMdmsValidator mdmsValidator;
+    private final MdmsForRegistryValidator mdmsValidator;
 
     @Autowired
-    RegistryRequestValidator(BirthConfiguration bndConfig, NewMdmsValidator mdmsValidator) {
+    RegistryRequestValidator(BirthConfiguration bndConfig, MdmsForRegistryValidator mdmsValidator) {
 
         this.bndConfig = bndConfig;
 
@@ -95,9 +93,9 @@ public class RegistryRequestValidator {
         //mdmsValidator.validateMdmsData(request, mdmsData);
     }
 
-    public void validateUpdate(NewBirthDetailRequest request, Object mdmsData) {
-        List<NewBirthApplication> birthApplications = request.getNewBirthDetails();
-        if (CollectionUtils.isEmpty(request.getNewBirthDetails())) {
+    public void validateUpdate(RegisterBirthDetailsRequest request, Object mdmsData) {
+        List<RegisterBirthDetail> birthApplications = request.getRegisterBirthDetails();
+        if (CollectionUtils.isEmpty(request.getRegisterBirthDetails())) {
             throw new CustomException(ErrorCodes.BIRTH_DETAILS_REQUIRED.getCode(),
                     "Birth details is required.");
         }
@@ -122,25 +120,6 @@ public class RegistryRequestValidator {
                     "Application type is required for update request.");
         }
 
-        if (StringUtils.isBlank(birthApplications.get(0).getBusinessService())) {
-            throw new CustomException(INVALID_UPDATE.getCode(),
-                    "Bussiness service is required for update request.");
-        }
-
-        if (StringUtils.isBlank(birthApplications.get(0).getApplicationNo())) {
-            throw new CustomException(INVALID_UPDATE.getCode(),
-                    "Application number is required for update request.");
-        }
-
-        if (StringUtils.isBlank(birthApplications.get(0).getWorkFlowCode())) {
-            throw new CustomException(INVALID_UPDATE.getCode(),
-                    "Workflow code is required for update request.");
-        }
-
-        if (StringUtils.isBlank(birthApplications.get(0).getAction())) {
-            throw new CustomException(INVALID_UPDATE.getCode(),
-                    "Workflow action is required for update request.");
-        }
 
         mdmsValidator.validateMdmsData(request, mdmsData);
     }

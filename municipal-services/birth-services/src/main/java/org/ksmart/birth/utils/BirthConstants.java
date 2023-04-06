@@ -37,6 +37,8 @@ public class BirthConstants {
     public static final String CR_MDMS_TENANTS_JSONPATH = "$.MdmsRes.tenant.tenants";
     public static final String CR_MDMS_HOSPITALS_CODE_JSONPATH = "$.MdmsRes.egov-location.hospitalList[*].code";
     public static final String CR_MDMS_HOSPITALS_CODES_JSONPATH = "$.MdmsRes.egov-location.hospitalList";
+
+    public static final String CR_MDMS_BIRTH_PLACES_CODE_JSONPATH = "$.MdmsRes.egov-location.PlaceMaster[*].code";
     public static final String CR_MDMS_INSTITUTIONS_CODE_JSONPATH = "$.MdmsRes.egov-location.institutionList[*].code";
     public static final String CR_MDMS_BOUNDARY_CODE_JSONPATH = "$.MdmsRes.egov-location.TenantBoundary[*].boundary.children[*].children[*].code";
     public static final String CR_MDMS_BOUNDARY_CODES_JSONPATH = "$.MdmsRes.egov-location.TenantBoundary[*].boundary.children[*].children[*]";
