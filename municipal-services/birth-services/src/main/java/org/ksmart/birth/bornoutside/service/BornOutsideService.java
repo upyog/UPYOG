@@ -6,6 +6,7 @@ import org.ksmart.birth.utils.MdmsUtil;
 import org.ksmart.birth.web.model.SearchCriteria;
 import org.ksmart.birth.web.model.bornoutside.BornOutsideApplication;
 import org.ksmart.birth.web.model.bornoutside.BornOutsideDetailRequest;
+import org.ksmart.birth.workflow.WorkflowIntegratorBornOutside;
 import org.ksmart.birth.workflow.WorkflowIntegratorNewBirth;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,12 +16,12 @@ import java.util.List;
 @Service
 public class BornOutsideService {
     private final BornOutsideRepository repository;
-    private final WorkflowIntegratorNewBirth workflowIntegrator;
+    private final WorkflowIntegratorBornOutside workflowIntegrator;
     private final MdmsUtil mdmsUtil;
     private final NewBirthApplicationValidator validator;
 
     @Autowired
-    BornOutsideService(BornOutsideRepository repository, MdmsUtil mdmsUtil, WorkflowIntegratorNewBirth workflowIntegrator,
+    BornOutsideService(BornOutsideRepository repository, MdmsUtil mdmsUtil, WorkflowIntegratorBornOutside workflowIntegrator,
                        NewBirthApplicationValidator validator) {
         this.repository = repository;
         this.mdmsUtil = mdmsUtil;
@@ -38,12 +39,12 @@ public class BornOutsideService {
         List<BornOutsideApplication> birthApplicationDetails =  repository.saveBirthApplication(request);
 
         //WorkFlow Integration
-      //  workflowIntegrator.callWorkFlow(request);
+        workflowIntegrator.callWorkFlow(request);
         return birthApplicationDetails;
     }
 
     public List<BornOutsideApplication> updateBirthApplication(BornOutsideDetailRequest request) {
-    //    workflowIntegrator.callWorkFlow(request);
+        workflowIntegrator.callWorkFlow(request);
         return repository.updateBirthApplication(request);
     }
 
