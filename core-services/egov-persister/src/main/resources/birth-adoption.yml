@@ -808,7 +808,7 @@ serviceMaps:
 
             - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.countryIdPermanent
 
-            - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.bio_adopt
+            - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.bioAdoptPermanent
 
             - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.permntOutsideKeralaTaluk
 
@@ -880,7 +880,7 @@ serviceMaps:
 
             - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.countryIdPresent
 
-            - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.bio_adopt
+            - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.bioAdoptPresent
 
             - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.presentOutsideKeralaTaluk
 
