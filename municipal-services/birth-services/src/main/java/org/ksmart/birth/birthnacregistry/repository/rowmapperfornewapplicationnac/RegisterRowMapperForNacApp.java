@@ -14,33 +14,31 @@ import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
 
 @Component
-public class RegisterRowMapperForNacApp implements ResultSetExtractor<List<RegisterNac>>, BaseRegRowMapper{
-	
+public class RegisterRowMapperForNacApp implements ResultSetExtractor<List<RegisterNac>>, BaseRegRowMapper {
+
 	@Override
-    public List<RegisterNac> extractData(ResultSet rs) throws SQLException, DataAccessException { 
+	public List<RegisterNac> extractData(ResultSet rs) throws SQLException, DataAccessException {
 		List<RegisterNac> result = new ArrayList<>();
-		 while (rs.next()) {
-		 
-			 result.add(RegisterNac.builder()
-                     .applicantnameen(rs.getString("ebap_name_en"))
-                     .careofapplicantnameen(rs.getString("ebap_address_en"))
-                     .applicationtype(rs.getString("ba_applicationtype"))
-                     .birthdetailsid(rs.getString("ebap_birthdtlid"))
-                     .childnameen(rs.getString("ba_firstname_en"))
-                     .mothernameen(rs.getString("mo_firstname_en"))
-                     .registrationno(rs.getString("ba_registrationno"))
-                     .birthplaceen(rs.getString("ba_registrationno"))
-                     .birthdistrictid(rs.getString("ba_registrationno"))
-                     .birthvillageid(rs.getString("ba_registrationno"))
-                     .birthstateid(rs.getString("ba_registrationno"))
-                     .dateofbirth(rs.getLong("ba_dateofbirth"))
-                     .tenantid(rs.getString("ba_tenantid"))
-                     .auditDetails(getAuditDetails(rs))
-                     .build());
-		 }
-		 return result;
-	}
+		while (rs.next()) {
+
+			result.add(RegisterNac.builder()
+					.applicantnameen(rs.getString("ebap_name_en"))
+					.careofapplicantnameen(rs.getString("ebap_address_en"))
+					.applicationtype(rs.getString("ba_applicationtype"))
+					.birthdetailsid(rs.getString("ebap_birthdtlid"))
+					.childnameen(rs.getString("ba_firstname_en"))
+					.mothernameen(rs.getString("mo_firstname_en"))
+					.registrationno(rs.getString("ba_registrationno"))
+					.birthplaceen(rs.getString("eperad_locality_en"))
+					.birthdistrictid(rs.getString("eperad_districtid"))
+					.birthtalukid(rs.getString("eperad_talukid"))
+					.birthvillageid(rs.getString("eperad_villageid"))
+					.birthstateid(rs.getString("eperad_stateid"))
+					.dateofbirth(rs.getLong("ba_dateofbirth"))
+					.tenantid(rs.getString("ba_tenantid"))
+					.auditDetails(getAuditDetails(rs))
+					.build());
+		}
+			return result;
+		}
 }
-
-
-

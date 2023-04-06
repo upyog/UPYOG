@@ -91,7 +91,11 @@ public class RegisterNac {
 	    @Size(max = 64)
 	    @JsonProperty("birthvillageid")
 	    private String birthvillageid;
-	    
+
+	   @Size(max = 64)
+	   @JsonProperty("birthtalukid")
+	   private String birthtalukid;
+
 	    @Size(max = 64)
 	    @JsonProperty("applicationtype")
 	    private String applicationtype;

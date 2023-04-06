@@ -109,6 +109,9 @@ public class BirthConfiguration {
     @Value("${persister.update.birth.register.topic}")
     private String updateBirthRegisterTopic;
 
+    @Value("${persister.save.nac.birth.register.topic}")
+    private String saveNacBirthRegisterTopic;
+
     //MDMS
     @Value("${egov.mdms.host}")
     private String mdmsHost;

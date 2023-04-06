@@ -82,7 +82,7 @@ public class RegisterNacRepository {
 	        registerBirthDetailsEnrichment.enrichCreate(request);
 	        request.getRegisternacDetails()
 	                .forEach(register -> {
-	                    producer.push(config.getSaveBirthRegisterTopic(), request);
+	                    producer.push(config.getSaveNacBirthRegisterTopic(), request);
 	                });
 	        return request.getRegisternacDetails();
 	    }
@@ -108,7 +108,7 @@ public class RegisterNacRepository {
 	            pdfApplicationRequest.getNacCertificate()
 	                    .forEach(cert -> {
 	                        String uiHost=config.getUiAppHost();
-	                        String birthCertPath=config.getBirthCertLink();
+	                        String birthCertPath=config.getNacCertLink();
 	                        birthCertPath=birthCertPath.replace("$id", cert.getId());
 	                        birthCertPath=birthCertPath.replace("$tenantId", cert.getTenantId());
 	                        birthCertPath=birthCertPath.replace("$regNo", cert.getRegistrationNo());
