@@ -53,10 +53,10 @@ public class RegisterQueryBuilder extends BaseRegBuilder {
 
             .append(" FROM public.eg_register_birth_details krbd ")
             .append(" LEFT JOIN eg_register_birth_place kbp ON kbp.birthdtlid = krbd.id ")
-            .append(" LEFT JOIN eg_register_birth_father_information kbfi ON kbfi.birthdtlid = krbd.id AND kbfi.bio_adopt='BIOLOGICAL'")
-            .append(" LEFT JOIN eg_register_birth_mother_information kbmi ON kbmi.birthdtlid = krbd.id AND kbmi.bio_adopt='BIOLOGICAL'")
-            .append(" LEFT JOIN eg_register_birth_permanent_address kperad ON kperad.birthdtlid = krbd.id AND kperad.bio_adopt='BIOLOGICAL'")
-            .append(" LEFT JOIN eg_register_birth_present_address kpreadd ON kpreadd.birthdtlid = krbd.id AND kpreadd.bio_adopt='BIOLOGICAL'")
+            .append(" LEFT JOIN eg_register_birth_father_information kbfi ON kbfi.birthdtlid = krbd.id ")
+            .append(" LEFT JOIN eg_register_birth_mother_information kbmi ON kbmi.birthdtlid = krbd.id")
+            .append(" LEFT JOIN eg_register_birth_permanent_address kperad ON kperad.birthdtlid = krbd.id")
+            .append(" LEFT JOIN eg_register_birth_present_address kpreadd ON kpreadd.birthdtlid = krbd.id")
             //.append(" LEFT JOIN eg_register_birth_statitical_information kstat ON kstat.birthdtlid = krbd.id")
             .toString();
 

@@ -66,15 +66,16 @@ public class RegisterBirthService {
     public List<RegisterCertificateData> searchRegisterForCert(RegisterBirthSearchCriteria criteria, RequestInfo requestInfo) {
         List<RegisterBirthDetail> registerDetails = repository.searchRegisterBirthDetails(criteria);
         List<RegisterCertificateData> registerCertDetails = new ArrayList<>();
-        if(registerDetails.size() == 1) {
             registerDetails
                     .forEach(register -> {
-                        RegisterCertificateData registerForCertificate = birthCertService.setCertificateDetails(register, requestInfo);
-                        registerCertDetails.add(registerForCertificate);
+                        if(register == null) {
+                            throw new CustomException(ErrorCodes.INVALID_INPUT.getCode(), "No data found");
+                        } else{
+                            RegisterCertificateData registerForCertificate = birthCertService.setCertificateDetails(register, requestInfo);
+                            registerCertDetails.add(registerForCertificate);
+                        }
+
                     });
-        } else{
-            throw new CustomException(ErrorCodes.INVALID_INPUT.getCode(), "Bad Request");
-        }
         return registerCertDetails;
     }
     public BirthCertificate download(RegisterBirthSearchCriteria criteria, RequestInfo requestInfo) {
@@ -83,6 +84,9 @@ public class RegisterBirthService {
             BirthCertRequest birthCertRequest = BirthCertRequest.builder().birthCertificate(birthCertificate).requestInfo(requestInfo).build();
             List<RegisterCertificateData> regDetail = searchRegisterForCert(criteria, requestInfo);
             if(regDetail.size() == 1) {
+                RegisterCertificateData rcd = regDetail.get(0);
+                if (rcd.getPlaceDetails() == null) birthCertificate.setBirthPlace("");
+                else birthCertificate.setBirthPlace(rcd.getBirthPlaceId());
                 birthCertificate.setBirthPlace(regDetail.get(0).getPlaceDetails());
                 birthCertificate.setRegistrationId(regDetail.get(0).getId());
                 birthCertificate.setApplicationId(regDetail.get(0).getApplicationId());
@@ -101,8 +105,6 @@ public class RegisterBirthService {
                 String date = format.format(regDetail.get(0).getDateOfReport());
                 String datestr = date.split("-")[2];
                 birthCertificate.setYear(datestr);
-                if (regDetail.size() > 1)
-                    throw new CustomException("Invalid_Input", "Error in processing data");
                 certEnrichment.enrichCreateRequest(birthCertRequest);
                 regDetail.get(0).setCertId(birthCertRequest.getBirthCertificate().getBirthCertificateNo());
                 BirthPdfRegisterRequest pdfRegisterRequest = BirthPdfRegisterRequest.builder().requestInfo(requestInfo).birthCertificate(regDetail).build();
@@ -116,7 +118,7 @@ public class RegisterBirthService {
                 throw new CustomException(ErrorCodes.INVALID_INPUT.getCode(), "No data found");
             }
             else{
-                throw new CustomException(ErrorCodes.INVALID_INPUT.getCode(), "Error in processing data");
+                throw new CustomException(ErrorCodes.INVALID_INPUT.getCode(), "Invalid Search");
             }
             return birthCertificate;
         } catch (Exception e) {
