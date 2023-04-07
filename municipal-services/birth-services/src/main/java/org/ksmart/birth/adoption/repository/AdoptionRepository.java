@@ -79,7 +79,7 @@ public class AdoptionRepository {
     }
 
     public List<AdoptionApplication> updateKsmartBirthDetails(AdoptionDetailRequest request) {
-    	adoptionEnrichment.enrichUpdate(request);
+    	
         producer.push(birthDeathConfiguration.getUpdateBirthAdoptionTopic(), request);
         return request.getAdoptionDetails();
     }

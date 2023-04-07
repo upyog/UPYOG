@@ -54,7 +54,7 @@ public class AdoptionController {
         BirthCertificate birthCertificate = new BirthCertificate();
         List<AdoptionApplication> adoptionApplicationDetails=adoptionService.updateAdoptionBirthDetails(request);
         //Download certificate when Approved
-        System.out.println("getApplicationStatus" +adoptionApplicationDetails.get(0).getApplicationStatus());
+        if(request.getAdoptionDetails().get(0).getIsWorkflow()) {
         if((adoptionApplicationDetails.get(0).getApplicationStatus().equals("APPROVED")  && adoptionApplicationDetails.get(0).getAction().equals("APPROVE"))){
             RegisterBirthDetailsRequest registerBirthDetailsRequest = registryReq.createRegistryRequest(request);
             List<RegisterBirthDetail> registerBirthDetails =  registerBirthService.saveRegisterBirthDetails(registerBirthDetailsRequest);
@@ -62,6 +62,7 @@ public class AdoptionController {
             criteria.setTenantId(registerBirthDetails.get(0).getTenantId());
             criteria.setRegistrationNo(registerBirthDetails.get(0).getRegistrationNo());
             birthCertificate = registerBirthService.download(criteria,request.getRequestInfo());
+        }
         }
         AdoptionResponse response=AdoptionResponse.builder()
                 .adoptionDetails(adoptionApplicationDetails)

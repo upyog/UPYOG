@@ -55,7 +55,13 @@ public class AdoptionService {
     }
 
     public List<AdoptionApplication> updateAdoptionBirthDetails(AdoptionDetailRequest request) {
-  	workflowIntegrator.callWorkFlow(request);
+    	
+    	adoptionEnrichment.enrichUpdate(request);
+    	
+    	 if(request.getAdoptionDetails().get(0).getIsWorkflow()) {
+    		 
+    		 workflowIntegrator.callWorkFlow(request);
+    	 }
         return repository.updateKsmartBirthDetails(request);
     }
 
