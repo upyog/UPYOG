@@ -56,10 +56,11 @@ public class NewBirthService {
               // demands.add(demand);
                 //birth.setDemands(demandService.saveDemandDetails(demands,request.getRequestInfo()));
            // }
-       // });
-       // return birthApplicationDetails;
-   // }
-      //Demand Creation Maya commented
+       //});
+        
+        return birthApplicationDetails;
+    }
+      
     public List<NewBirthApplication> updateBirthDetails(NewBirthDetailRequest request) {
         Object mdmsData = mdmsUtil.mdmsCall(request.getRequestInfo());
         // validate request
