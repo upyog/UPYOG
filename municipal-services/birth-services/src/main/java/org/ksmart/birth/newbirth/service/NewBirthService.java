@@ -46,20 +46,20 @@ public class NewBirthService {
         //WorkFlow Integration
         workflowIntegrator.callWorkFlow(request);
 
-        //Demand Creation
-        birthApplicationDetails.forEach(birth->{
-            if(birth.getApplicationStatus().equals(STATUS_FOR_PAYMENT)){
-                List<Demand> demands = new ArrayList<>();
-                Demand demand = new Demand();
-                demand.setTenantId(birth.getTenantId());
-                demand.setConsumerCode(birth.getApplicationNo());
-                demands.add(demand);
-                birth.setDemands(demandService.saveDemandDetails(demands,request.getRequestInfo()));
-            }
-        });
-        return birthApplicationDetails;
-    }
-
+        //Demand Creation Maya commented
+        //birthApplicationDetails.forEach(birth->{
+           // if(birth.getApplicationStatus().equals(STATUS_FOR_PAYMENT)){
+             //   List<Demand> demands = new ArrayList<>();
+              //  Demand demand = new Demand();
+              //  demand.setTenantId(birth.getTenantId());
+              //  demand.setConsumerCode(birth.getApplicationNo());
+              // demands.add(demand);
+                //birth.setDemands(demandService.saveDemandDetails(demands,request.getRequestInfo()));
+           // }
+       // });
+       // return birthApplicationDetails;
+   // }
+      //Demand Creation Maya commented
     public List<NewBirthApplication> updateBirthDetails(NewBirthDetailRequest request) {
         Object mdmsData = mdmsUtil.mdmsCall(request.getRequestInfo());
         // validate request
