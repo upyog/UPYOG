@@ -71,6 +71,12 @@ public class MdmsTenantService {
         return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_TENANTS_JSONPATH+"["+index+"].city.statecode");
     }
 
+    public String getTenantUrl(Object mdmsData, String tenantId) {
+        List<String> tenants  = getTenantCodes(mdmsData);
+        int index = tenants.indexOf(tenantId);
+        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_TENANTS_JSONPATH+"["+index+"].logoId");
+    }
+
     public String getTenantIdGenCode(Object mdmsData, String tenantId) {
         List<String> tenants  = getTenantCodes(mdmsData);
         int index = tenants.indexOf(tenantId);

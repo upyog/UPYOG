@@ -170,6 +170,12 @@ public class MdmsUtil {
                                                                                         .build());
         crMasterDetails.addAll(masterDeliveryMethod);
 
+        // Add Module workflow
+        List<MasterDetail> masterWorkflow = Collections.singletonList(MasterDetail.builder()
+                                                                                  .name(BirthConstants.CR_MDMS_WORKFLOW_NEW)
+                                                                                  .build());
+        crMasterDetails.addAll(masterWorkflow);
+
 
         //Add masters to modules
         ModuleDetail crModuleDetail = ModuleDetail.builder()

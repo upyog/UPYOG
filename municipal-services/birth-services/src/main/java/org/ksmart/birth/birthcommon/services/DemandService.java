@@ -6,6 +6,7 @@ import org.egov.mdms.model.MasterDetail;
 import org.egov.mdms.model.MdmsCriteria;
 import org.egov.mdms.model.MdmsCriteriaReq;
 import org.egov.mdms.model.ModuleDetail;
+import org.ksmart.birth.birthcommon.model.WorkFlowCheck;
 import org.ksmart.birth.birthcommon.model.demand.Demand;
 import org.ksmart.birth.birthcommon.model.demand.DemandDetail;
 import org.ksmart.birth.birthcommon.model.demand.DemandResponse;
@@ -35,17 +36,17 @@ public class DemandService {
     @Autowired
     DemandRepository demandRepository;
 
-    public List<Demand> saveDemandDetails(List<Demand> demands, RequestInfo requestInfo) {
-        demands.forEach(demand -> setDemandParamsLateFee(demand, requestInfo));
+    public List<Demand> saveDemandDetails(List<Demand> demands, RequestInfo requestInfo, WorkFlowCheck wfc) {
+        demands.forEach(demand -> setDemandParamsLateFee(demand, requestInfo, wfc));
         return  demandRepository.saveDemand(requestInfo,demands);
     }
-    public void setDemandParamsLateFee(Demand demand, RequestInfo requestInfo) {
+    public void setDemandParamsLateFee(Demand demand, RequestInfo requestInfo, WorkFlowCheck wfc) {
         demand.setConsumerType("FEE");
         demand.setBusinessService("CR");
         ArrayList<DemandDetail> demandDetails = new ArrayList<>();
         DemandDetail demandDetail=new DemandDetail();
         demandDetail.setTaxHeadMasterCode("CRB_FEES");
-        demandDetail.setTaxAmount(new BigDecimal(12));
+        demandDetail.setTaxAmount(new BigDecimal(wfc.getAmount()));
         demandDetail.setTenantId(demand.getTenantId());
         setGLCode(demandDetail, requestInfo);
         demandDetails.add(demandDetail);

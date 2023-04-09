@@ -113,6 +113,18 @@ public class RegisterCertificateData {
     @JsonProperty("currentDate")
     private String currentDate;
 
+    @JsonProperty("currentDateLong")
+    private Long currentDateLong;
+
+    @JsonProperty("currentTime")
+    private String currentTime;
+
+    @JsonProperty("ReportingDate")
+    private String ReportingDate;
+
+    @JsonProperty("ReportingTime")
+    private String ReportingTime;
+
     @Size(max = 2500)
     @JsonProperty("placeDetailsMl")
     private String placeDetailsMl;
@@ -168,9 +180,14 @@ public class RegisterCertificateData {
     @Size(max = 1000)
     @JsonProperty("tenantTaluk")
     private String tenantTaluk;
+
     @Size(max = 1000)
     @JsonProperty("tenantTalukMl")
     private String tenantTalukMl;
+
+    @Size(max = 1000)
+    @JsonProperty("tenantLogoUrl")
+    private String tenantLogoUrl;
 
     @Size(max = 1000)
     @JsonProperty("tenantState")

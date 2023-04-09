@@ -2,6 +2,7 @@ package org.ksmart.birth.newbirth.service;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.tracer.model.CustomException;
+import org.ksmart.birth.birthcommon.model.WorkFlowCheck;
 import org.ksmart.birth.birthcommon.model.demand.Demand;
 import org.ksmart.birth.birthcommon.services.DemandService;
 import org.ksmart.birth.newbirth.repository.NewBirthRepository;
@@ -27,6 +28,7 @@ public class NewBirthService {
     private final NewBirthApplicationValidator validator;
     private final DemandService demandService;
 
+
     @Autowired
     NewBirthService(NewBirthRepository repository, MdmsUtil mdmsUtil, WorkflowIntegratorNewBirth workflowIntegrator,
                     NewBirthApplicationValidator validator,  DemandService demandService) {
@@ -38,24 +40,28 @@ public class NewBirthService {
     }
 
     public List<NewBirthApplication> saveKsmartBirthDetails(NewBirthDetailRequest request) {
+        WorkFlowCheck wfc = new WorkFlowCheck();
         Object mdmsData = mdmsUtil.mdmsCall(request.getRequestInfo());
         // validate request
-        validator.validateCreate(request, mdmsData);
+
+        validator.validateCreate(request, wfc, mdmsData);
         //call save
-        List<NewBirthApplication> birthApplicationDetails =  repository.saveKsmartBirthDetails(request);
+        List<NewBirthApplication> birthApplicationDetails =  repository.saveKsmartBirthDetails(request, mdmsData);
         //WorkFlow Integration
         workflowIntegrator.callWorkFlow(request);
 
         //Demand Creation Maya commented
         
         birthApplicationDetails.forEach(birth->{
-            if(birth.getApplicationStatus().equals(STATUS_FOR_PAYMENT)){
-                List<Demand> demands = new ArrayList<>();
-                Demand demand = new Demand();
-                demand.setTenantId(birth.getTenantId());
-                demand.setConsumerCode(birth.getApplicationNo());
-               demands.add(demand);
-              birth.setDemands(demandService.saveDemandDetails(demands,request.getRequestInfo()));
+            if(wfc.getPayment()){
+                if(birth.getApplicationStatus().equals(STATUS_FOR_PAYMENT)){
+                    List<Demand> demands = new ArrayList<>();
+                    Demand demand = new Demand();
+                    demand.setTenantId(birth.getTenantId());
+                    demand.setConsumerCode(birth.getApplicationNo());
+                    demands.add(demand);
+                    birth.setDemands(demandService.saveDemandDetails(demands,request.getRequestInfo(), wfc));
+                }
             }
        });
         

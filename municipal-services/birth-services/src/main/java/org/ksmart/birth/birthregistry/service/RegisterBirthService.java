@@ -79,7 +79,7 @@ public class RegisterBirthService {
         return registerCertDetails;
     }
     public BirthCertificate download(RegisterBirthSearchCriteria criteria, RequestInfo requestInfo) {
-        try {
+//        try {
             BirthCertificate birthCertificate = new BirthCertificate();
             BirthCertRequest birthCertRequest = BirthCertRequest.builder().birthCertificate(birthCertificate).requestInfo(requestInfo).build();
             List<RegisterCertificateData> regDetail = searchRegisterForCert(criteria, requestInfo);
@@ -95,7 +95,7 @@ public class RegisterBirthService {
                 birthCertificate.setWard(regDetail.get(0).getWardCode());
                 birthCertificate.setState(regDetail.get(0).getTenantState());
                 birthCertificate.setDistrict(regDetail.get(0).getTenantDistrict());
-                birthCertificate.setDateofbirth(new Timestamp(regDetail.get(0).getDateOfBirth()) );
+                birthCertificate.setDateofbirth(new Timestamp(regDetail.get(0).getDateOfBirth()));
                 birthCertificate.setDateofreport(new Timestamp(regDetail.get(0).getDateOfReport()));
                 birthCertificate.setTenantId(regDetail.get(0).getTenantId());
                 birthCertificate.setApplicationType(regDetail.get(0).getApplicationType());
@@ -121,10 +121,10 @@ public class RegisterBirthService {
                 throw new CustomException(ErrorCodes.INVALID_INPUT.getCode(), "Invalid Search");
             }
             return birthCertificate;
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new CustomException("DOWNLOAD_ERROR", "Error in Downloading Certificate");
-        }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            throw new CustomException("DOWNLOAD_ERROR", "Error in Downloading Certificate");
+//        }
     }
 
 

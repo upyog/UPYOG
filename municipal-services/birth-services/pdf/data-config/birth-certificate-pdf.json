@@ -13,7 +13,7 @@
           {
             "direct": [
               {
-                "variable": "ashoka",
+                "variable": "logoindia",
                 "url":"https://ulb-logos.s3.ap-south-1.amazonaws.com/Lion_emblem.png",
                 "type":"image"
               },
@@ -25,6 +25,11 @@
               {
                 "variable": "logobirth",
                 "url": "https://ulb-logos.s3.ap-south-1.amazonaws.com/birth_death_logo.jpg",
+                "type":"image"
+              },
+              {
+                "variable": "logotenant",
+                "url": "$.tenantLogoUrl",
                 "type":"image"
               },
               {
@@ -254,9 +259,10 @@
                   "path": "$.tenantid"
                 },
                 "type": "setEmpty",
-                "localisation":{
+                "localisation": {
                   "required":true,
-                  "prefix": "TENANT_TENANTS_ML",
+                  "prefix": "TENANT_TENANTS",
+                  "postfix": "_ML",
                   "module":"rainmaker-common",
                   "locale":"en_IN"
                 }
@@ -543,6 +549,19 @@
                 }
               },
               {
+                "variable": "deptUrbanAffairsMl",
+                "value": {
+                  "path": "PDF_BIRTH_DEPARTMENT_OF_URBAN_AFFAIRS_ML"
+                },
+                "type": "label",
+                "localisation":{
+                  "required":true,
+                  "prefix": null,
+                  "module":"rainmaker-common",
+                  "locale":"en_IN"
+                }
+              },
+              {
                 "variable": "certify",
                 "value": {
                   "path": "PDF_BIRTH_THIS_IS_TO_CERTIFY_THAT"
@@ -595,9 +614,35 @@
                 }
               },
               {
+                "variable": "issueUnderSection121969",
+                "value": {
+                  "path": "PDF_BIRTH_ISSUED_UNDER_SECTION_12_1969_ML"
+                },
+                "type": "label",
+                "localisation":{
+                  "required":true,
+                  "prefix": null,
+                  "module":"rainmaker-common",
+                  "locale":"en_IN"
+                }
+              },
+              {
                 "variable": "birthCertificate",
                 "value": {
                   "path": "PDF_BIRTH_BIRTH_CERTIFICATE"
+                },
+                "type": "label",
+                "localisation":{
+                  "required":true,
+                  "prefix": null,
+                  "module":"rainmaker-common",
+                  "locale":"en_IN"
+                }
+              },
+              {
+                "variable": "birthCertificateMl",
+                "value": {
+                  "path": "PDF_BIRTH_BIRTH_CERTIFICATE_ML"
                 },
                 "type": "label",
                 "localisation":{

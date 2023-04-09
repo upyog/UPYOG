@@ -66,7 +66,7 @@ public class BirthRegisterRowMapper implements ResultSetExtractor<List<RegisterB
                         .otPassportNo(rs.getString("ot_passportno"))
                         .ackNumber(rs.getString("ack_no"))
                         .fullName(getFullNameEn(rs))
-                        .fullNameMl(getFullNameEn(rs))
+                        .fullNameMl(getFullNameMl(rs))
                         .registrationNo(rs.getString("registrationno"))
                         .registrationDate(rs.getLong("registration_date"))
                         .applicationType(rs.getString("applicationtype"))

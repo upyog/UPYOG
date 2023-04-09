@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.Date;
 
 @Slf4j
@@ -28,11 +29,24 @@ public class BirthCertService {
     public RegisterCertificateData setCertificateDetails(RegisterBirthDetail register, RequestInfo requestInfo) {
         Object mdmsData = mdmsUtil.mdmsCall(requestInfo);
         DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        DateFormat formatterTime = new SimpleDateFormat("hh:mm");
         Date reportDate = new Date(register.getDateOfReport());
         Date dobDate = null;
+        Date updatedDate = null;
+        String updatedTime = null;
         String dobInWords = "";
+        if(register.getAuditDetails().getLastModifiedTime() == null) {
+            updatedDate = new Date(formatter.format(register.getAuditDetails().getCreatedTime()));
+            updatedTime = formatterTime.format(updatedDate);
+        } else{
+            updatedDate = new Date(formatter.format(register.getAuditDetails().getLastModifiedTime()));
+            updatedTime = formatterTime.format(updatedDate);
+        }
+
         Date regDate = new Date(register.getRegistrationDate());
+        long now = Instant.now().toEpochMilli();
         Date curDate = new Date(formatter.format(new Date()));
+        String curTime = formatterTime.format(curDate);
         if(register.getDateOfBirth() != null){
             dobDate = new Date(register.getDateOfBirth());
             String[] dobAry = formatter.format(dobDate).split("/");
@@ -63,8 +77,8 @@ public class BirthCertService {
         registerCertificateData.setGenderEn(register.getGender());
         registerCertificateData.setGenderMl(register.getGender()+"_ML");
         registerCertificateData.setAckNo(register.getAckNumber());
-        registerCertificateData.setRemarksEn(register.getRemarksEn());
-        registerCertificateData.setRemarksMl(register.getRemarksMl());
+        registerCertificateData.setRemarksEn(register.getRemarksEn()==null?" ":register.getRemarksEn());
+        registerCertificateData.setRemarksMl(register.getRemarksMl()==null?" ":register.getRemarksMl());
         registerCertificateData.setAadharNo(register.getAadharNo());
         registerCertificateData.setFatherDetails(register.getRegisterBirthFather().getFirstNameEn());
         registerCertificateData.setFatherDetailsMl(register.getRegisterBirthFather().getFirstNameMl());
@@ -75,6 +89,10 @@ public class BirthCertService {
         registerCertificateData.setBirthPlaceHospitalId(register.getRegisterBirthPlace().getHospitalId());
         registerCertificateData.setBirthPlaceInstitutionId(register.getRegisterBirthPlace().getInstitutionId());
         registerCertificateData.setRegistarDetails("Registrar of Births and Deaths");
+        registerCertificateData.setCurrentTime(curTime.toString());
+        registerCertificateData.setCurrentDateLong(now);
+        registerCertificateData.setReportingDate(formatter.format(updatedDate));
+        registerCertificateData.setReportingTime(updatedTime);
         mdmsDataService.setTenantDetails(registerCertificateData, mdmsData);
         mdmsDataService.setPresentAddressDetailsEn(register, registerCertificateData, mdmsData);
         mdmsDataService.setPremananttAddressDetailsEn(register, registerCertificateData, mdmsData);

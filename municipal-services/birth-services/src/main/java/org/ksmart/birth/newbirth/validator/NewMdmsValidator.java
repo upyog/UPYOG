@@ -290,6 +290,13 @@ public class NewMdmsValidator {
                             + BirthConstants.COMMON_MDMS_MEDICAL_ATTENTION_TYPE
                             + " codes from MDMS"));
         }
+
+        if (masterData.get(BirthConstants.CR_MDMS_WORKFLOW_NEW) == null) {
+            throw new CustomException(Collections.singletonMap(MDMS_DATA_ERROR.getCode(),
+                    "Unable to fetch "
+                            + BirthConstants.CR_MDMS_WORKFLOW_NEW
+                            + " codes from MDMS"));
+        }
     }
 
     private void validateCommonMasterData(Map<String, Object> masterData) {

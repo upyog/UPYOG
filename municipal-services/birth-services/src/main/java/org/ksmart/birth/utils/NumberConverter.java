@@ -13,12 +13,11 @@ public class NumberConverter {
 
         // Base cases
         if (len == 0) {
-            System.out.println("empty string");
+           // System.out.println("empty string");
             return "";
         }
         if (len > 4) {
-            System.out.println(
-                    "Length more than 4 is not supported");
+            //System.out.println("Length more than 4 is not supported");
             return "";
         }
 

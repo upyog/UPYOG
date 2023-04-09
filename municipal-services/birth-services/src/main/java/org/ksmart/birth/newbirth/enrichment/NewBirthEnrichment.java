@@ -36,7 +36,7 @@ public class NewBirthEnrichment implements BaseEnrichment {
     IdGenRepository idGenRepository;
 
 
-    public void enrichCreate(NewBirthDetailRequest request) {
+    public void enrichCreate(NewBirthDetailRequest request, Object mdmsData) {
         String tenantId = null;
         Date date = new Date();
         long doreport = date.getTime();
@@ -47,7 +47,7 @@ public class NewBirthEnrichment implements BaseEnrichment {
             tenantId = birth.getTenantId();
             birth.setDateOfReport(doreport);
         }
-        setPlaceOfBirth(request, tenantId, auditDetails);
+        setPlaceOfBirth(request, tenantId, mdmsData,auditDetails);
         setApplicationNumbers(request);
         setFileNumbers(request);
         setPresentAddress(request);
@@ -242,9 +242,9 @@ public class NewBirthEnrichment implements BaseEnrichment {
                     }
                 });
     }
-    private void setPlaceOfBirth(NewBirthDetailRequest request, String trnantId, AuditDetails auditDetails) {
+    private void setPlaceOfBirth(NewBirthDetailRequest request, String trnantId, Object mdmsDataComm, AuditDetails auditDetails) {
         Object mdmsData = mdmsUtil.mdmsCallForLocation(request.getRequestInfo(), trnantId);
-        Object mdmsDataComm = mdmsUtil.mdmsCall(request.getRequestInfo());
+//        Object mdmsDataComm = mdmsUtil.mdmsCall(request.getRequestInfo());
         request.getNewBirthDetails().forEach(birth -> {
             birth.setId(UUID.randomUUID().toString());
             birth.setAuditDetails(auditDetails);
@@ -272,7 +272,6 @@ public class NewBirthEnrichment implements BaseEnrichment {
                 .forEach(birth -> {
                     birth.setBirthStatisticsUuid(UUID.randomUUID().toString());
                     birth.setBirthInitiatorUuid(UUID.randomUUID().toString());
-                    Object mdmsData = mdmsUtil.mdmsCall(request.getRequestInfo());
                     // mdmsBirthService.setTenantDetails(birth, mdmsData);//Check/////////
 
                   //  TOWN VILLAGe INSIDE Kerala

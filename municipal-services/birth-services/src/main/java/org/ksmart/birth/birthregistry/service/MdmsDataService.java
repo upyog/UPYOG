@@ -51,7 +51,7 @@ public class MdmsDataService {
         String lbCode = mdmsTenantService.getTenantLbType(mdmsData, registerCert.getTenantId());
         registerCert.setTenantLbType(mdmsTenantService.getLbTypeNameEn(mdmsData,lbCode));
         registerCert.setTenantLbTypeMl(mdmsTenantService.getLbTypeNameMl(mdmsData,lbCode));
-        String distCode = mdmsTenantService.getTenantLbType(mdmsData, registerCert.getTenantId());
+        String distCode = mdmsTenantService.getTenantDistrict(mdmsData, registerCert.getTenantId());
         registerCert.setTenantDistrict(mdmsTenantService.getDistrictNameEn(mdmsData, distCode));
         registerCert.setTenantDistrictMl(mdmsTenantService.getDistrictNameMl(mdmsData, distCode));
         String talukCode = mdmsTenantService.getTenantTaluk(mdmsData, registerCert.getTenantId());
@@ -60,6 +60,8 @@ public class MdmsDataService {
         String stateCode = mdmsTenantService.getTenantState(mdmsData, registerCert.getTenantId());
         registerCert.setTenantState(mdmsTenantService.getStateNameEn(mdmsData, stateCode));
         registerCert.setTenantStateMl(mdmsTenantService.getStateNameMl(mdmsData, stateCode));
+        String logoUrl = mdmsTenantService.getTenantUrl(mdmsData, registerCert.getTenantId());
+        registerCert.setTenantLogoUrl(logoUrl);
     }
 
     public void setBirthPlaceDetails(RegisterCertificateData register, Object  mdmsData) {

@@ -131,7 +131,7 @@ public class StillBirthApplicationValidator {
                     "Workflow action is required for update request.");
         }
 
-        mdmsValidator.validateMdmsData(request, mdmsData);
+        //mdmsValidator.validateMdmsData(request, mdmsData);
     }
 
 }

@@ -33,11 +33,16 @@ public class BirthConstants {
     public static final String CR_MDMS_INSTITUTIONTYPE = "InstitutionType";
     public static final String CR_MDMS_PLACE_INSTITUTION_TYPE = "InstitutionTypePlaceOfEvent";
     public static final String CR_MDMS_DELIVERYMETHOD = "DeliveryMethod";
+    public static final String CR_MDMS_WORKFLOW_NEW = "WorkFlowBirth";
+
     public static final String CR_MDMS_TENANTS_CODE_JSONPATH = "$.MdmsRes.tenant.tenants[*].code";
     public static final String CR_MDMS_TENANTS_JSONPATH = "$.MdmsRes.tenant.tenants";
+
+  //  public static final String CR_MDMS_BIRTH_NEW_WF_CODE_JSONPATH = "$.MdmsRes.birth-death-service.tenants[*].code";
+    public static final String CR_MDMS_BIRTH_NEW_WF_JSONPATH = "$.MdmsRes.birth-death-service.WorkFlowBirth";
+    public static final String CR_MDMS_BIRTH_NEW_WF_APPTYPE_JSONPATH = "$.MdmsRes.birth-death-service.WorkFlowBirth[*].ApplicationType";
     public static final String CR_MDMS_HOSPITALS_CODE_JSONPATH = "$.MdmsRes.egov-location.hospitalList[*].code";
     public static final String CR_MDMS_HOSPITALS_CODES_JSONPATH = "$.MdmsRes.egov-location.hospitalList";
-
     public static final String CR_MDMS_BIRTH_PLACES_CODE_JSONPATH = "$.MdmsRes.common-masters.PlaceMaster[*].code";
     public static final String CR_MDMS_INSTITUTIONS_CODE_JSONPATH = "$.MdmsRes.egov-location.institutionList[*].code";
     public static final String CR_MDMS_BOUNDARY_CODE_JSONPATH = "$.MdmsRes.egov-location.TenantBoundary[*].boundary.children[*].children[*].code";
@@ -47,10 +52,13 @@ public class BirthConstants {
     public static final String CR_MDMS_PROFESSION_CODE_JSONPATH = "$.MdmsRes.birth-death-service.Profession[*].code";
     public static final String CR_MDMS_QUALIFICATION_CODE_JSONPATH = "$.MdmsRes.birth-death-service.Qualification[*].code";
     public static final String CR_MDMS_RELIGION_CODE_JSONPATH = "$.MdmsRes.common-masters.Religion[*].code";
+
     public static final String CR_MDMS_TALUK_CODE_JSONPATH = "$.MdmsRes.common-masters.Taluk[*].code";
     public static final String CR_MDMS_TALUK_JSONPATH = "$.MdmsRes.common-masters.Taluk";
+
     public static final String CR_MDMS_STATE_CODE_JSONPATH = "$.MdmsRes.common-masters.State[*].code";
     public static final String CR_MDMS_STATE_JSONPATH = "$.MdmsRes.common-masters.State";
+
     public static final String CR_MDMS_COUNTRY_CODE_JSONPATH = "$.MdmsRes.common-masters.Country[*].code";
     public static final String CR_MDMS_COUNTRY_JSONPATH = "$.MdmsRes.common-masters.Country";
     public static final String CR_MDMS_INST_TYPE_CODE_JSONPATH = "$.MdmsRes.birth-death-service.InstitutionTypePlaceOfEvent[*].code";

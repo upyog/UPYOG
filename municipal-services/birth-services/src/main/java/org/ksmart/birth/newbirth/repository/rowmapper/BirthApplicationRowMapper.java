@@ -94,14 +94,8 @@ public class BirthApplicationRowMapper implements ResultSetExtractor<List<NewBir
         return result;
     }
     private Boolean isChildNameEntered(String name) {
-        if(name != null){
-            name = name.trim();
-            if(name.isEmpty()){
-                return true;
-            } else{
-                return false;
-            }
-        } else return false;
+        if (name==null) return false;
+        else return true;
     }
 }
 
