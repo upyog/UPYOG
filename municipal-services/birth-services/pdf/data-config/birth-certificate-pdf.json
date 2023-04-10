@@ -23,13 +23,19 @@
                 "type":"image"
               },
               {
+                "variable": "watermark",
+                "url": "https://ulb-logos.s3.ap-south-1.amazonaws.com/kerala_logo.jpg",
+                "type":"image"
+              },
+              {
                 "variable": "logobirth",
                 "url": "https://ulb-logos.s3.ap-south-1.amazonaws.com/birth_death_logo.jpg",
                 "type":"image"
               },
+
               {
                 "variable": "logotenant",
-                "url": "$.tenantLogoUrl",
+                "url": "https://ulb-logos.s3.ap-south-1.amazonaws.com/ernakulam/cochin.jpg",
                 "type":"image"
               },
               {

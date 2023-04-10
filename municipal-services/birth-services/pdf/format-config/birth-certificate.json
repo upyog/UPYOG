@@ -969,7 +969,7 @@
         ]
       },
       "pdf-watermark": {
-        "link": "https://ulb-logos.s3.ap-south-1.amazonaws.com/kerala_logo.jpg"
+        "link": "{{watermark}}"
       }
     }
   }

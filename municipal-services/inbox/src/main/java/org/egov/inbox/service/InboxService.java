@@ -720,7 +720,6 @@ public class InboxService {
 			vehicleResponse = new ArrayList<Map<String,Object>>();
 		}
     	
-    	
     	return vehicleResponse;
     }
     
@@ -736,8 +735,7 @@ public class InboxService {
 		}
 		return resposne;
 	}
-    
-   
+
     private Map<String, String> fetchAppropriateServiceMap(List<String> businessServiceName,String moduleName) {
         StringBuilder appropriateKey = new StringBuilder();
         for (String businessServiceKeys : config.getServiceSearchMapping().keySet()) {
