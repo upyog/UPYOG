@@ -169,8 +169,8 @@ public class NewBirthApplicationValidator {
                 throw new CustomException(INVALID_CREATE.getCode(),
                         "Workflow code from the application request is wrong.");
             }
-
-            if(!wfc.getWorkflowCode().equals(applicationType)) {
+System.out.println(applicationType);
+            if(!wfc.getApplicationType().equals(applicationType)) {
                 throw new CustomException(INVALID_CREATE.getCode(),
                         "Application type from the application request is wrong.");
             }

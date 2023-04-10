@@ -262,7 +262,7 @@
               {
                 "variable": "tenantMl",
                 "value": {
-                  "path": "$.tenantid"
+                  "path": "$.tenantid"+"_ML"
                 },
                 "type": "setEmpty",
                 "localisation": {
