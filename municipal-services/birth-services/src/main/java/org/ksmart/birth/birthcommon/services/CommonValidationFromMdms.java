@@ -12,8 +12,7 @@ import java.util.List;
 @Service
 public class CommonValidationFromMdms {
 
-    public WorkFlowCheck checkValidation(Object mdmsData, String birthPlace, Long dob) {
-        WorkFlowCheck wfc = new WorkFlowCheck();
+    public WorkFlowCheck checkValidation(Object mdmsData, String birthPlace, Long dob, WorkFlowCheck wfc) {
         Calendar calendar = Calendar.getInstance();
         Long currentDate = calendar.getTimeInMillis();
         List<LinkedHashMap<String, Object>> wfLists = JsonPath.read(mdmsData, BirthConstants.CR_MDMS_BIRTH_NEW_WF_JSONPATH + "[*]");
