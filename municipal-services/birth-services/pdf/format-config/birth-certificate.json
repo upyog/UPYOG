@@ -34,7 +34,7 @@
                 "stack": [
                   {
                     "image": "{{logoindia}}",
-                    "width": 40,
+                    "width": 35,
                     "height": 40
                   }
                 ]
@@ -66,8 +66,8 @@
                 "stack": [
                   {
                     "image": "{{logokerala}}",
-                    "width": 70,
-                    "height": 70
+                    "width": 60,
+                    "height": 60
                   }
                 ]
               },
@@ -116,8 +116,8 @@
                 "stack": [
                   {
                     "image": "{{logotenant}}",
-                    "width": 70,
-                    "height": 70
+                    "width": 60,
+                    "height": 60
                   }
                 ]
               }
@@ -442,27 +442,7 @@
               {
                 "columns": [
                   {
-                    "text": "{{registrationNoLabel}}: {{registrationNo}}",
-                    "width": "49%",
-                    "style": "details-body"
-                  },
-                  {
-                    "text": " ",
-                    "width": "1%"
-                  },
-                  {
-                    "text": "{{registrationDateLabel}} {{registrationDateStr}}",
-                    "style": "details-body"
-                  }
-                ]
-              }
-            ],
-            [
-              {
-                "columns": [
-
-                  {
-                    "text": "{{remarksLabel}} ",
+                    "text": "{{registrationNoLabel}} ",
                     "width": "49%",
                     "style": "details-body"
                   },
@@ -471,7 +451,26 @@
                     "width": "1%"
                   },
                   {
-                    "text": "{{remarksMl}}/{{remarks}}",
+                    "text": "{{registrationNo}}",
+                    "style": "details-body"
+                  }
+                ]
+              }
+            ],
+            [
+              {
+                "columns": [
+                  {
+                    "text": "{{registrationDateLabel}} ",
+                    "width": "49%",
+                    "style": "details-body"
+                  },
+                  {
+                    "text": "  :",
+                    "width": "1%"
+                  },
+                  {
+                    "text": "{{registrationDateStr}}",
                     "style": "details-body"
                   }
                 ]

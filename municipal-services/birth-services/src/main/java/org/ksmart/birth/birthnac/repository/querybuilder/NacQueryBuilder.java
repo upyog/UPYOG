@@ -102,7 +102,13 @@ public class NacQueryBuilder extends BaseNacQuery {
 				StringBuilder orderBy = new StringBuilder();
 				addFilter("ebd.id", criteria.getId(), query, preparedStmtValues);
 				addFilter("ebd.tenantid", criteria.getTenantId(), query, preparedStmtValues);
-				addFilter("ebd.applicationno", criteria.getApplicationNumber(), query, preparedStmtValues);
+
+			  if(criteria.getApplicationNumber().contains(",")) {
+				  addFilters("ebd.applicationno", criteria.getApplicationNumber(), query, preparedStmtValues);
+			  } else{
+				  String appNo = criteria.getApplicationNumber().get(0);
+				  addFilter("ebd.applicationno", appNo, query, preparedStmtValues);
+			  }
 				addFilter("ebd.registrationno", criteria.getRegistrationNo(), query, preparedStmtValues);
 				addFilter("ebd.fm_fileno", criteria.getFileCode(), query, preparedStmtValues);
 				addFilter("ebp.hospitalid", criteria.getHospitalId(), query, preparedStmtValues);
@@ -167,7 +173,7 @@ public class NacQueryBuilder extends BaseNacQuery {
 	 public StringBuilder prepareSearchCriteria(@NotNull SearchCriteria criteria, StringBuilder query, @NotNull List<Object> preparedStmtValues) {
 		    addFilter("ebd.id", criteria.getId(), query, preparedStmtValues);
 	        addFilter("ebd.tenantid", criteria.getTenantId(), query, preparedStmtValues);
-	        addFilter("ebd.applicationno", criteria.getApplicationNumber(), query, preparedStmtValues);
+			addFilters("ebd.applicationno", criteria.getApplicationNumber(), query, preparedStmtValues);
 	        addFilter("ebd.registrationno", criteria.getRegistrationNo(), query, preparedStmtValues);        
 	        addDateRangeFilter("ebd.dateofreport", criteria.getFromDate(),  criteria.getToDate(), query, preparedStmtValues);
 	        addDateRangeFilter("ebd.dateofbirth",  criteria.getDateOfBirthFrom(), criteria.getDateOfBirthTo(),query, preparedStmtValues);

@@ -70,9 +70,8 @@ public class AbandonedRepository {
         SearchCriteria criteria = new SearchCriteria();
         List<RegisterBirthDetail> result = null;
         if (requestApplication.getNewBirthDetails().size() > 0) {
-            criteria.setApplicationNumber(requestApplication.getNewBirthDetails().get(0).getApplicationNo());
+            criteria.getApplicationNumber().add(requestApplication.getNewBirthDetails().get(0).getApplicationNo());
             criteria.setTenantId(requestApplication.getNewBirthDetails().get(0).getTenantId());
-
             String query = queryBuilder.getApplicationSearchQueryForRegistry(criteria, preparedStmtValues);
             result = jdbcTemplate.query(query, preparedStmtValues.toArray(), registerRowMapperForApp);
 

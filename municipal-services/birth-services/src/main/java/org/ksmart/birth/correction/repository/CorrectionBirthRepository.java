@@ -67,7 +67,7 @@ public class CorrectionBirthRepository {
         SearchCriteria criteria = new SearchCriteria();
         List<RegisterBirthDetail> result = null;
         if (requestApplication.getCorrectionDetails().size() > 0) {
-            criteria.setApplicationNumber(requestApplication.getCorrectionDetails().get(0).getApplicationNo());
+            criteria.getApplicationNumber().add(requestApplication.getCorrectionDetails().get(0).getApplicationNo());
             criteria.setTenantId(requestApplication.getCorrectionDetails().get(0).getTenantId());
 
             String query = queryBuilder.getApplicationSearchQueryForRegistry(criteria, preparedStmtValues);

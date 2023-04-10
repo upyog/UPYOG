@@ -21,10 +21,7 @@ public class SearchCriteria {
     private String id; // birthapplicant id
 
     @JsonProperty("applicationNumber")
-    private String applicationNumber;
-
-    @JsonProperty("applicationNumbers")
-    private List<String> applicationNumbers;
+    private List<String> applicationNumber;
 
     @JsonProperty("registrationNo")
     private String registrationNo;
