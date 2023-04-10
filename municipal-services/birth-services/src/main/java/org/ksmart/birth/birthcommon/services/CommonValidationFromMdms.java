@@ -1,7 +1,6 @@
 package org.ksmart.birth.birthcommon.services;
 
 import com.jayway.jsonpath.JsonPath;
-import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.ksmart.birth.birthcommon.model.WorkFlowCheck;
 import org.ksmart.birth.utils.BirthConstants;
 import org.springframework.stereotype.Service;
