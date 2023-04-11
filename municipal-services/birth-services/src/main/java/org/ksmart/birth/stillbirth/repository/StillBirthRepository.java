@@ -82,6 +82,7 @@ public class StillBirthRepository {
     public List<StillBirthApplication> searchStillBirthDetails(StillBirthDetailRequest request, SearchCriteria criteria) {
         List<Object> preparedStmtValues = new ArrayList<>();
         Object mdmsDataComm = mdmsUtil.mdmsCall(request.getRequestInfo());
+        criteria.setApplicationType(BirthConstants.FUN_MODULE_STL);
         String query = queryBuilder.getNewBirthApplicationSearchQuery(criteria, request, preparedStmtValues, Boolean.FALSE);
         List<StillBirthApplication> result = jdbcTemplate.query(query, preparedStmtValues.toArray(), rowMapper);
         result.forEach(birth -> {

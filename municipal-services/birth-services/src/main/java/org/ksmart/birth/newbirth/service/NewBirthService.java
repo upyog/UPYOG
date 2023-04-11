@@ -77,10 +77,10 @@ public class NewBirthService {
         if(request.getNewBirthDetails().get(0).getIsWorkflow()) {
             workflowIntegrator.callWorkFlow(request);
         }
-        return repository.updateKsmartBirthDetails(request);
+        return repository.updateKsmartBirthDetails(request, mdmsData);
     }
 
-    public List<NewBirthApplication> searchKsmartBirthDetails(NewBirthDetailRequest request, SearchCriteria criteria) {
+    public List<NewBirthApplication> searchBirthDetails(NewBirthDetailRequest request, SearchCriteria criteria) {
         return repository.searchBirthDetails(request,criteria);
     }
 }

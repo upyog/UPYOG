@@ -177,6 +177,7 @@ public class NacQueryBuilder extends BaseNacQuery {
 	        addFilter("ebd.registrationno", criteria.getRegistrationNo(), query, preparedStmtValues);        
 	        addDateRangeFilter("ebd.dateofreport", criteria.getFromDate(),  criteria.getToDate(), query, preparedStmtValues);
 	        addDateRangeFilter("ebd.dateofbirth",  criteria.getDateOfBirthFrom(), criteria.getDateOfBirthTo(),query, preparedStmtValues);
+		    addFilter("ebd.applicationtype", criteria.getApplicationType(), query, preparedStmtValues);
 	        return query;
 	    }
 

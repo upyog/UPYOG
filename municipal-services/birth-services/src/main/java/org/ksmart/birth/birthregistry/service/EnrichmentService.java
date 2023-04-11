@@ -45,7 +45,7 @@ public class EnrichmentService {
     public void enrichCreateRequest(BirthCertRequest birthCertRequest) {
         RequestInfo requestInfo = birthCertRequest.getRequestInfo();
         String uuid = requestInfo.getUserInfo().getUuid();
-        AuditDetails auditDetails = commUtils.getAuditDetails(uuid, true);
+        AuditDetails auditDetails = commUtils.buildAuditDetails(uuid, true);
         BirthCertificate birthCert = birthCertRequest.getBirthCertificate();
         birthCert.setAuditDetails(auditDetails);
         birthCert.setId(UUID.randomUUID().toString());

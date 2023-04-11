@@ -141,7 +141,7 @@ public class NewBirthQueryBuilder extends NewBaseBirthQuery {
         addFilter("ebp.institution_id", criteria.getInstitutionId(), query, preparedStmtValues);
         addFilter("ebp.ebp.ward_id", criteria.getWardCode(), query, preparedStmtValues);
         addFilter("ebd.gender", criteria.getGender(), query, preparedStmtValues);
-        addFilter("ebd.gender", criteria.getApplicationType(), query, preparedStmtValues);
+        addFilter("ebd.applicationtype", criteria.getApplicationType(), query, preparedStmtValues);
         addDateRangeFilter("ebd.dateofreport", criteria.getFromDate(),  criteria.getToDate(), query, preparedStmtValues);
         addDateRangeFilter("ebd.dateofbirth",  criteria.getDateOfBirthFrom(), criteria.getDateOfBirthTo(),query, preparedStmtValues);
         addDateRangeFilter("ebd.fm_fileno",  criteria.getFromDateFile(), criteria.getToDateFile(), query, preparedStmtValues);

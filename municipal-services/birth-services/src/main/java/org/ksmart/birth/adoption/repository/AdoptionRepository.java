@@ -88,6 +88,7 @@ public class AdoptionRepository {
     public List<AdoptionApplication> searchKsmartBirthDetails(AdoptionDetailRequest request, SearchCriteria criteria) {
         List<Object> preparedStmtValues = new ArrayList<>();
         Object mdmsDataComm = mdmsUtil.mdmsCall(request.getRequestInfo());
+        criteria.setApplicationType(BirthConstants.FUN_MODULE_ADOP);
         String query = adoptionQueryBuilder.getAdoptionSearchQuery(criteria, request, preparedStmtValues, Boolean.FALSE);
         List<AdoptionApplication> result = jdbcTemplate.query(query, preparedStmtValues.toArray(), adoptionApplicationRowMapper);
         if(result.size() == 0){

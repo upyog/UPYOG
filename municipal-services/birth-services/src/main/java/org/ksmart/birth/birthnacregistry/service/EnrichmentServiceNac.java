@@ -48,7 +48,7 @@ public class EnrichmentServiceNac {
     public void enrichCreateRequest(NacCertRequest nacCertRequest) {
         RequestInfo requestInfo = nacCertRequest.getRequestInfo();
         String uuid = requestInfo.getUserInfo().getUuid();
-        AuditDetails auditDetails = commUtils.getAuditDetails(uuid, true);
+        AuditDetails auditDetails = commUtils.buildAuditDetails(uuid, true);
         NacCertificate nacCert = nacCertRequest.getNacCertificate();
         nacCert.setAuditDetails(auditDetails);
         nacCert.setId(UUID.randomUUID().toString());

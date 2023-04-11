@@ -78,7 +78,7 @@ public class NewBirthController {
     }
     @PostMapping(value = {"/searchbirth"})
     public ResponseEntity<NewBirthSearchResponse> searchKsmartBirth(@RequestBody NewBirthDetailRequest request, @Valid @ModelAttribute SearchCriteria criteria) {
-        List<NewBirthApplication> birthDetails=ksmartBirthService.searchKsmartBirthDetails(request, criteria);
+        List<NewBirthApplication> birthDetails=ksmartBirthService.searchBirthDetails(request, criteria);
         NewBirthSearchResponse response=NewBirthSearchResponse.builder()
                                                               .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), Boolean.TRUE))
                                                               .newBirthDetails(birthDetails)

@@ -262,7 +262,7 @@
               {
                 "variable": "tenantMl",
                 "value": {
-                  "path": "$.tenantid"+"_ML"
+                  "path": "$.tenantid"
                 },
                 "type": "setEmpty",
                 "localisation": {
@@ -620,7 +620,7 @@
                 }
               },
               {
-                "variable": "issueUnderSection121969",
+                "variable": "issueUnderSection121969ML",
                 "value": {
                   "path": "PDF_BIRTH_ISSUED_UNDER_SECTION_12_1969_ML"
                 },
