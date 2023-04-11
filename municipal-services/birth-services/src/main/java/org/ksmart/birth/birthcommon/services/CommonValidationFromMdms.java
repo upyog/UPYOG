@@ -26,8 +26,10 @@ public class CommonValidationFromMdms {
                     if (comp <= end && comp >= start) {
                         wfc.setApplicationType(wfLists.get(n).get("ApplicationType").toString());
                         wfc.setWorkflowCode(wfLists.get(n).get("WorkflowCode").toString());
-                        wfc.setPayment(Boolean.getBoolean(wfLists.get(n).get("payment").toString()));
-                        System.out.println(Boolean.getBoolean(wfLists.get(n).get("payment").toString()));
+                        if(wfLists.get(n).get("payment").toString().equals("true"))
+                        wfc.setPayment(true);
+                        else
+                            wfc.setPayment(false);
                         wfc.setAmount(Integer.parseInt(wfLists.get(n).get("amount").toString()));
                         wfc.setActive(Boolean.getBoolean(wfLists.get(n).get("active").toString()));
                     }
