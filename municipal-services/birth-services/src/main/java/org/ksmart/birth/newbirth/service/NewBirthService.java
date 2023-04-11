@@ -51,10 +51,14 @@ public class NewBirthService {
         workflowIntegrator.callWorkFlow(request);
 
         //Demand Creation Maya commented
-        
+
         birthApplicationDetails.forEach(birth->{
-            if(wfc.getPayment()){
+            System.out.println(birth.getApplicationStatus());
+            System.out.println(wfc.getPayment());
+          //  if(wfc.getPayment()){
+
                 if(birth.getApplicationStatus().equals(STATUS_FOR_PAYMENT)){
+                    System.out.println(STATUS_FOR_PAYMENT);
                     List<Demand> demands = new ArrayList<>();
                     Demand demand = new Demand();
                     demand.setTenantId(birth.getTenantId());
@@ -62,7 +66,7 @@ public class NewBirthService {
                     demands.add(demand);
                     birth.setDemands(demandService.saveDemandDetails(demands,request.getRequestInfo(), wfc));
                 }
-            }
+           // }
        });
         
         return birthApplicationDetails;

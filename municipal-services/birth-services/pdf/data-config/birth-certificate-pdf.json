@@ -61,7 +61,7 @@
               {
                 "variable": "dob",
                 "value": {
-                  "path": "$.dateofbirthstr"
+                  "path": "$.dateofbirth"
                 },
                 "type": "date"
               },

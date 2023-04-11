@@ -30,8 +30,9 @@ public class BirthCertService {
     }
     public RegisterCertificateData setCertificateDetails(RegisterBirthDetail register, RequestInfo requestInfo) {
         Object mdmsData = mdmsUtil.mdmsCall(requestInfo);
+        String strDate=null;
 
-        DateTimeFormatter dtDate = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                DateTimeFormatter dtDate = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         DateTimeFormatter dtTime = DateTimeFormatter.ofPattern("HH:mm");
 
         ZonedDateTime zdt = CommonUtils.currentDate();
@@ -56,7 +57,7 @@ public class BirthCertService {
             System.out.println(dobDate);
             System.out.println(res);
             SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-            String strDate= formatter.format(res);
+            strDate= formatter.format(res);
             System.out.println(strDate);
             //System.out.println(dtDate.format((TemporalAccessor) res));
             String[] dobAry = dtDate.format(dobDate).split("/");
@@ -79,7 +80,7 @@ public class BirthCertService {
         registerCertificateData.setRegistrationDate(register.getRegistrationDate());
         registerCertificateData.setCurrentDate(dtDate.format(zdt));
         registerCertificateData.setCurrentTime(dtTime.format(zdt));
-       // registerCertificateData.setDobStr(formatter.format(dobDate));
+        registerCertificateData.setDobStr(strDate);
        // registerCertificateData.setRegistrationDateStr(formatter.format(regDate));
        // registerCertificateData.setDateOfReportStr(formatter.format(reportDate));
         registerCertificateData.setRegistrationNo(register.getRegistrationNo());

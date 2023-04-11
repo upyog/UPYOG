@@ -164,7 +164,7 @@ public class NewBirthApplicationValidator {
                     "Date of birth should be less than or same as  current date.");
         } else {
             wfc = commonValidation.checkValidation(mdmsData, birthPlace, childDob, wfc);
-
+System.out.println(wfc.getPayment());
             if(!wfc.getWorkflowCode().equals(wfCode)) {
                 throw new CustomException(INVALID_CREATE.getCode(),
                         "Workflow code from the application request is wrong.");
