@@ -17,8 +17,8 @@
         "table": {
           "widths": [
             "50%",
-            "60%",
-            "50%"
+            "50%",
+            "40%"
           ],
           "body": [
             [
@@ -35,7 +35,7 @@
                   {
                     "image": "{{logoindia}}",
                     "width": 35,
-                    "height": 40
+                    "height": 35
                   }
                 ]
               },
@@ -66,8 +66,8 @@
                 "stack": [
                   {
                     "image": "{{logokerala}}",
-                    "width": 60,
-                    "height": 60
+                    "width": 40,
+                    "height": 40
                   }
                 ]
               },
@@ -115,9 +115,9 @@
               {
                 "stack": [
                   {
-                    "image": "{{logotenant}}",
-                    "width": 60,
-                    "height": 60
+                    "image": "{{logotenant1}}",
+                    "width": 40,
+                    "height": 40
                   }
                 ]
               }
@@ -164,11 +164,11 @@
                 "stack": [
 
                   {
-                    "text": "{{birthCertificateMl}}",
+                    "text": "{{#bold}}{{birthCertificateMl}}{{/bold}}",
                     "style": "title-header"
                   },
                   {
-                    "text": "{{birthCertificate}}",
+                    "text": "{{#bold}}{{birthCertificate}}{{/bold}}",
                     "style": "title-header"
                   },
 
@@ -293,8 +293,8 @@
                     "width": "1%"
                   },
                   {
-                    "text": "{{dateofbirth}} /{{dobInWords}} ",
-                    "style": "details-body"
+                    "text": "{{dob}} /{{dobInWords}} ",
+                    "style": "details-body-bold"
                   }
                 ]
               }
@@ -470,7 +470,7 @@
                     "width": "1%"
                   },
                   {
-                    "text": "{{registrationDateStr}}",
+                    "text": "{{registrationDate}}",
                     "style": "details-body"
                   }
                 ]
@@ -480,7 +480,7 @@
               {
                 "columns": [
                   {
-                    "text": "{{dateOfIssue}}: {{currentDateLong}}",
+                    "text": "{{dateOfIssue}}: {{currentDate}}",
                     "width": "49%",
                     "style": "details-body"
                   },
@@ -489,7 +489,7 @@
                     "width": "1%"
                   },
                   {
-                    "text": "{{updatedOn}} :{{currentDate}}",
+                    "text": "{{updatedOn}} :{{updatedDate}}",
                     "style": "details-body"
                   }
                 ]
@@ -530,8 +530,8 @@
                 "columns": [
                   {
                     "image": "{{qr_code_image}}",
-                    "width": 100,
-                    "height": 100,
+                    "width": 50,
+                    "height": 50,
                     "style": "qr-code"
                   }
                 ]
@@ -553,27 +553,27 @@
                 "stack": [
                   {
                     "text": "{{ensureRegistration}}",
-                    "style": "details-body-center"
+                    "style": "details-body-center-bottom"
                   },
                   {
                     "text": "{{ensureRegistrationMl}}",
-                    "style": "details-body-center"
+                    "style": "details-body-center-bottom"
                   },
                   {
                     "text": "{{computerGenerated}}",
-                    "style": "details-body-center"
+                    "style": "details-body-center-bottom"
                   },
                   {
                     "text": "{{validDocument}}",
-                    "style": "details-body-center"
+                    "style": "details-body-center-bottom"
                   },
                   {
                     "text": "{{authenticity}}",
-                    "style": "details-body-center"
+                    "style": "details-body-center-bottom"
                   },
                   {
                     "text": "{{ikm}}",
-                    "style": "details-body-center"
+                    "style": "details-body-center-bottom"
                   },
                   {
                     "text": "{{printedInvalid}}",
@@ -665,7 +665,7 @@
       },
       "footer-red": {
         "color": "#FF0000",
-        "fontSize": 10,
+        "fontSize": 7,
         "alignment": "center",
         "italics": true
       },
@@ -784,6 +784,12 @@
         "fontSize": 10,
         "alignment": "left"
       },
+      "details-body-bold": {
+        "color": "#000000",
+        "bold": true,
+        "fontSize": 11,
+        "alignment": "left"
+      },
       "details-body-center": {
         "color": "#000000",
         "bold": false,
@@ -792,8 +798,8 @@
       },
       "details-body-center-bottom": {
         "color": "#000000",
-        "bold": false,
-        "fontSize": 10,
+        "italics": true,
+        "fontSize": 8,
         "alignment": "center",
         "margin": [
           0,

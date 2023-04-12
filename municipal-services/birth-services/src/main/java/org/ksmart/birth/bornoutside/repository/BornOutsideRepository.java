@@ -64,6 +64,7 @@ public class BornOutsideRepository {
         List<Object> preparedStmtValues = new ArrayList<>();
         criteria.setApplicationType(BirthConstants.FUN_MODULE_OSC);
         String query = queryBuilder.getNewBirthApplicationSearchQuery(criteria, request,preparedStmtValues, Boolean.FALSE);
+        System.out.println(query);
         List<BornOutsideApplication> result = jdbcTemplate.query(query, preparedStmtValues.toArray(), rowMapper);
         result.forEach(birth -> {
             if(birth.getPlaceofBirthId()!=null){

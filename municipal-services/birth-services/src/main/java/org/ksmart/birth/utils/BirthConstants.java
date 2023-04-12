@@ -111,7 +111,7 @@ public class BirthConstants {
 
     public static final String FUN_MODULE_NEW = "CRBRNR";
     public static final String FUN_MODULE_STL = "CRBRSB";
-    public static final String FUN_MODULE_OSC= "CRBROB";
+    public static final String FUN_MODULE_OSC= "CRBRBO";
 
     public static final String FUN_MODULE_NAC= "CRBRNC";
     public static final String FUN_MODULE_COR= "CRBRCR";

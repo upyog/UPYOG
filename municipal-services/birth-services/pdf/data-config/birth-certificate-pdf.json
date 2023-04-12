@@ -39,6 +39,13 @@
                 "type":"image"
               },
               {
+                "variable": "logotenant1",
+                "value": {
+                  "url": "$.tenantLogoUrl"
+                },
+                "type":"image"
+              },
+              {
                 "variable": "name",
                 "value": {
                   "path": "$.fullName"
@@ -61,7 +68,7 @@
               {
                 "variable": "dob",
                 "value": {
-                  "path": "$.dateofbirth"
+                  "path": "$.dateofreport"
                 },
                 "type": "date"
               },
@@ -69,8 +76,7 @@
                 "variable": "dobInWords",
                 "value": {
                   "path": "$.dateofbirthWord"
-                },
-                "type": "date"
+                }
               },
               {
                 "variable": "gender",
@@ -105,14 +111,14 @@
               {
                 "variable": "registrationDate",
                 "value": {
-                  "path": "$.registrationDateStr"
+                  "path": "$.registrationDate"
                 },
                 "type": "date"
               },
               {
-                "variable": "updatedOn",
+                "variable": "updatedDate",
                 "value": {
-                  "path": "$.dateofissue"
+                  "path": "$.updatingDate"
                 },
                 "type": "date"
               },
@@ -175,9 +181,9 @@
               {
                 "variable": "currentDate",
                 "value": {
-                  "path": "$.currentDate"
+                  "path": "$.currentDateLong"
                 },
-                "type": "setEmpty"
+                "type": "date"
               },
 
               {
@@ -216,13 +222,7 @@
                 },
                 "type":"setEmpty"
               },
-              {
-                "variable": "issueDate",
-                "value": {
-                  "path": "$.dateofissue"
-                },
-                "type": "date"
-              },
+
               {
                 "variable": "registar",
                 "value": {
