@@ -41,9 +41,9 @@
               {
                 "variable": "logotenant1",
                 "value": {
-                  "url": "$.tenantLogoUrl"
+                  "path": "$.tenantLogoUrl"
                 },
-                "type":"image"
+                "type":"url"
               },
               {
                 "variable": "name",
