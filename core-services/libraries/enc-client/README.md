@@ -1,2 +1,2 @@
-# eGov-Enc-Client-APIs
+# Encryption Client APIs (enc-client)
 

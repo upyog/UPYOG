@@ -1,17 +1,18 @@
-# eGov-Workflow-v2 Service
+# Workflow Service (egov-workflow-v2)
 
 Workflows are a series of steps that moves a process from one state to another state by actions performed by different kind of Actors - Humans, Machines, Time based events etc. to achieve a goal like on boarding an employee, or approve an application or grant a resource etc. The egov-workflow-v2 is a workflow engine which helps in performing this operations seamlessly using a predefined configuration. 
 
 ### DB UML Diagram
+
 - NA
 
 ### Service Dependencies
-- egov-mdms
-- egov-user
+- MDM Service (egov-mdms)
+- User Service (egov-user)
 
 ### Swagger API Contract
 
-Please refer to the [Swagger API contract](https://editor.swagger.io/?url=https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/worfklow-2.0.yml#!/) for egov-workflow-v2 service to understand the structure of APIs and to have visualization of all internal APIs.
+Please refer to the [Swagger API Contract](https://editor.swagger.io/?url=https://raw.githubusercontent.com/upyog/UPYOG/master/core-services/docs/worfklow-2.0.yml#!/) for Workflow Service (egov-workflow-v2) to understand the structure of APIs and to have visualization of all internal APIs.
 
 
 ## Service Details
@@ -44,18 +45,18 @@ Please refer to the [Swagger API contract](https://editor.swagger.io/?url=https:
    -  State
    -  Action
    
-    The top level object is BusinessService, it contains fields describing the workflow and list of States that are part of the workflow. The businessService can be defined at tenant level like pb.amritsar or at state level like pb.  All objects maintains an audit sub object which keeps track of who is creating and updating and the time of it
+    The top level object is BusinessService, it contains fields describing the workflow and list of States that are part of the workflow. The businessService can be defined at tenant level like pg.citya or at state level like pg.  All objects maintains an audit sub object which keeps track of who is creating and updating and the time of it
 ```json
 {
-        "tenantId": "pb.amritsar",
+        "tenantId": "pg.citya",
         "businessService": "PGR",
         "business": "pgr-services",
         "businessServiceSla": 432000000,
         "states": [...]
     }
 ```
-   Each State object is a valid status for the application. The State object contains the information of the state and what actions can be performed on it.
 
+   Each State object is a valid status for the application. The State object contains the information of the state and what actions can be performed on it.
 ```json
 {
         "sla": 36000000,
@@ -68,6 +69,7 @@ Please refer to the [Swagger API contract](https://editor.swagger.io/?url=https:
         "actions": [...]
     }
 ```
+
 The action object is the last object in hierarchy, it defines the name of the action and the roles that can perform the action.
 ```json
 {
@@ -132,10 +134,7 @@ e) `process/_search`
 
 This method search the list of transition performed on the application.
 
-**`Postman collection`** :- https://www.getpostman.com/collections/8552e3de40c819e34190
-
-
-
+**`Postman collection`** :- [Postman Collection](https://api.postman.com/collections/23419225-458f052c-e18c-43ad-a35d-eb74015a8298?access_key=PMAT-01GQEZREV0XJ9D1MSMTBS4J8RV)
 
 
 ### Kafka Consumers

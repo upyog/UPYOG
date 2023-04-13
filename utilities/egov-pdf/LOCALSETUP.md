@@ -1,6 +1,6 @@
 # Local Setup
 
-To setup the egov-pdf service in your local system, clone the [utilities Service repository](https://github.com/egovernments/utilities).
+To setup the PDF Service (egov-pdf) in your local system, clone the [UPYOG Repository](https://github.com/upyog/UPYOG) and navigate to the utilities folder.
 
 ## Dependencies
 
@@ -15,7 +15,7 @@ To setup the egov-pdf service in your local system, clone the [utilities Service
 
 ## Running Locally
 
-- To run the ws-services in local system, you need to port forward below services.
+- To run the PDF Service in local system, you need to port forward below services.
 
 ```bash
  function kgpt(){kubectl get pods -n egov --selector=app=$1 --no-headers=true | head -n1 | awk '{print $1}'}

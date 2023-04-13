@@ -1,17 +1,13 @@
-# DIGIT CityOS reference web apps
+# UPYOG MONO UI
 
-DIGIT (Digital Infrastructure for Governance, Impact & Transformation) is India's largest platform for governance services. Visit https://www.digit.org for more details.
+UPYOG (Urban Platform for deliverY of Online Governance) is India's largest platform for governance services. Visit [UPYOG documentation portal](https://upyog-docs.gitbook.io/upyog-v-1.0/) for more details.
 
 This repository contains the reference responsive web app implementations of core modules for Citizens and Government employees/officers. 
 
 #### License
-These reference apps are released under MIT
+UPYOG Source Code is open sources under License [UPYOG CODE, COPYRIGHT AND CONTRIBUTION LICENSE TERMS](https://upyog.niua.org/employee/Upyog%20Code%20and%20Copyright%20License_v1.pdf)
 
 ## Rainmaker
-
-Rainmaker Structural Diagram:
-
-![alt text](https://raw.githubusercontent.com/egovernments/egov-web-app/rainmaker-v1/web/rainmaker/packages/assets/Rainmaker_structural_diagram.PNG)
 
 ---
 
@@ -107,12 +103,9 @@ This 8 min read article gives idea about setting up material ui in your react ap
 One of the best and comprehensive guide for redux beginners.
 
 ### Created by  
-Murali M
 
 
 ### Updated by  
-Gyan,  
-Sudhanshu Deshmukh,
-Jagan
+
 ---
 
