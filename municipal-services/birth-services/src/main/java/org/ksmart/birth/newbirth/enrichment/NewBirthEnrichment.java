@@ -4,6 +4,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
 import org.egov.tracer.model.CustomException;
+import org.ksmart.birth.birthregistry.service.MdmsDataService;
 import org.ksmart.birth.common.enrichment.BaseEnrichment;
 import org.ksmart.birth.common.model.AuditDetails;
 import org.ksmart.birth.common.repository.IdGenRepository;
@@ -11,41 +12,45 @@ import org.ksmart.birth.common.services.MdmsTenantService;
 import org.ksmart.birth.config.BirthConfiguration;
 import org.ksmart.birth.newbirth.service.MdmsForNewBirthService;
 import org.ksmart.birth.utils.BirthConstants;
+import org.ksmart.birth.utils.CommonUtils;
 import org.ksmart.birth.utils.MdmsUtil;
+import org.ksmart.birth.utils.NumToWordConverter;
 import org.ksmart.birth.utils.enums.ErrorCodes;
 import org.ksmart.birth.web.model.newbirth.NewBirthApplication;
 import org.ksmart.birth.web.model.newbirth.NewBirthDetailRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.*;
 
 import static org.ksmart.birth.utils.BirthConstants.*;
 
 @Component
 public class NewBirthEnrichment implements BaseEnrichment {
-    @Autowired
-    BirthConfiguration config;
-    @Autowired
-   MdmsUtil mdmsUtil;
-    @Autowired
-    MdmsForNewBirthService mdmsBirthService;
-    @Autowired
-    MdmsTenantService mdmsTenantService;
-    @Autowired
-    IdGenRepository idGenRepository;
 
+    private final MdmsUtil mdmsUtil;
+    private final BirthConfiguration config;
+    private final MdmsForNewBirthService mdmsBirthService;
+    private final MdmsTenantService mdmsTenantService;
+    private final IdGenRepository idGenRepository;
 
+    NewBirthEnrichment(MdmsUtil mdmsUtil, BirthConfiguration config, MdmsForNewBirthService mdmsBirthService,
+                       MdmsTenantService mdmsTenantService,IdGenRepository idGenRepository) {
+        this.mdmsUtil = mdmsUtil;
+        this.config = config;
+        this.mdmsBirthService = mdmsBirthService;
+        this.mdmsTenantService = mdmsTenantService;
+        this.idGenRepository = idGenRepository;    }
     public void enrichCreate(NewBirthDetailRequest request, Object mdmsData) {
         String tenantId = null;
-        Date date = new Date();
-        long doreport = date.getTime();
         RequestInfo requestInfo = request.getRequestInfo();
-        User userInfo = requestInfo.getUserInfo();
-        AuditDetails auditDetails = buildAuditDetails(userInfo.getUuid(), Boolean.TRUE);
+        String uuid = requestInfo.getUserInfo().getUuid();
+        AuditDetails auditDetails = CommonUtils.buildAuditDetails(uuid, true);
         for (NewBirthApplication birth : request.getNewBirthDetails()) {
             tenantId = birth.getTenantId();
-            birth.setDateOfReport(doreport);
+            birth.setDateOfReport(CommonUtils.currentDateTime());
         }
         setPlaceOfBirth(request, tenantId, mdmsData,auditDetails);
         setApplicationNumbers(request);
@@ -55,10 +60,16 @@ public class NewBirthEnrichment implements BaseEnrichment {
         setStatisticalInfo(request);
     }
 
-    public void enrichUpdate(NewBirthDetailRequest request) {
+    public void enrichUpdate(NewBirthDetailRequest request, Object mdmsData) {
+        String tenantId = null;
+        for (NewBirthApplication birth : request.getNewBirthDetails()) {
+            tenantId = birth.getTenantId();
+            birth.setDateOfReport(CommonUtils.currentDateTime());
+        }
         RequestInfo requestInfo = request.getRequestInfo();
         User userInfo = requestInfo.getUserInfo();
         AuditDetails auditDetails = buildAuditDetails(userInfo.getUuid(), Boolean.FALSE);
+        setPlaceOfBirth(request, tenantId, mdmsData,auditDetails);
         setPresentAddress(request);
         setPermanentAddress(request);
     }

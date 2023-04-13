@@ -67,7 +67,7 @@ public class CorrectionBirthRepository {
         SearchCriteria criteria = new SearchCriteria();
         List<RegisterBirthDetail> result = null;
         if (requestApplication.getCorrectionDetails().size() > 0) {
-            criteria.setApplicationNumber(requestApplication.getCorrectionDetails().get(0).getApplicationNo());
+            criteria.getApplicationNumber().add(requestApplication.getCorrectionDetails().get(0).getApplicationNo());
             criteria.setTenantId(requestApplication.getCorrectionDetails().get(0).getTenantId());
 
             String query = queryBuilder.getApplicationSearchQueryForRegistry(criteria, preparedStmtValues);
@@ -81,6 +81,7 @@ public class CorrectionBirthRepository {
 
     public List<CorrectionApplication> searchCorrectionDetails(CorrectionRequest request, SearchCriteria criteria) {
         List<Object> preparedStmtValues = new ArrayList<>();
+        criteria.setApplicationType(BirthConstants.FUN_MODULE_COR);
         String query = queryBuilder.getNewBirthApplicationSearchQuery(criteria, request, preparedStmtValues, Boolean.FALSE);
         List<CorrectionApplication> result = jdbcTemplate.query(query, preparedStmtValues.toArray(), rowMapper);
         return result;

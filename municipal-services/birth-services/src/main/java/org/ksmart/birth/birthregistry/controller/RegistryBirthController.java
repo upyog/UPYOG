@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -42,9 +43,9 @@ public class RegistryBirthController {
 
         List<RegisterBirthDetail> registerBirthDetail=registerBirthService.searchRegisterBirthDetails(criteria);
         RegisterBirthResponse response=RegisterBirthResponse.builder()
-                .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), Boolean.TRUE))
-                .registerDetails(registerBirthDetail)
-                .build();
+                                                            .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), Boolean.TRUE))
+                                                            .registerDetails(registerBirthDetail)
+                                                            .build();
         return ResponseEntity.ok(response);
     }
     @PostMapping(value = {"/searchcert"})
@@ -52,19 +53,24 @@ public class RegistryBirthController {
 
         List<RegisterCertificateData> registerBirthDetail=registerBirthService.searchRegisterForCert(criteria, request.getRequestInfo());
         RegisterCertificateRespose response=RegisterCertificateRespose.builder()
-                .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), Boolean.TRUE))
-                .registerBirthCerts(registerBirthDetail)
-                .build();
+                                                                      .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), Boolean.TRUE))
+                                                                      .registerBirthCerts(registerBirthDetail)
+                                                                      .build();
         return ResponseEntity.ok(response);
     }
     @PostMapping(value = {"/_download"})
     public ResponseEntity<BirthCertResponse> download(@RequestBody RequestInfoWrapper requestInfoWrapper, @Valid @ModelAttribute RegisterBirthSearchCriteria criteria) {
         BirthCertificate birthCert=registerBirthService.download(criteria, requestInfoWrapper.getRequestInfo());
         BirthCertResponse response;
+        List<BirthCertificate> birthCertificates = new ArrayList<>();
+        birthCertificates.add(birthCert);
         response=BirthCertResponse.builder()
-                .filestoreId(birthCert.getFilestoreid())
-                .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true))
-                .build();
+                                  .birthCertificates(birthCertificates)
+                                  .tenantId(birthCert.getTenantId())
+                                  .filestoreId(birthCert.getFilestoreid())
+                                  .consumerCode(birthCert.getApplicationNumber())
+                                  .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true))
+                                  .build();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

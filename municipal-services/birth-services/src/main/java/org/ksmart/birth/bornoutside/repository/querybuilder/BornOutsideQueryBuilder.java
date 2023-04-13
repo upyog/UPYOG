@@ -71,7 +71,7 @@ public class BornOutsideQueryBuilder extends BaseBornOutsideQuery {
     public StringBuilder prepareSearchCriteria(@NotNull SearchCriteria criteria, StringBuilder query, @NotNull List<Object> preparedStmtValues) {
         addFilter("ebd.id", criteria.getId(), query, preparedStmtValues);
         addFilter("ebd.tenantid", criteria.getTenantId(), query, preparedStmtValues);
-        addFilter("ebd.applicationno", criteria.getApplicationNumber(), query, preparedStmtValues);
+        addFilters("ebd.applicationno", criteria.getApplicationNumber(), query, preparedStmtValues);
         addFilter("ebd.registrationno", criteria.getRegistrationNo(), query, preparedStmtValues);
         addFilter("ebd.fm_fileno", criteria.getFileCode(), query, preparedStmtValues);
         addFilter("ebp.hospitalid", criteria.getHospitalId(), query, preparedStmtValues);

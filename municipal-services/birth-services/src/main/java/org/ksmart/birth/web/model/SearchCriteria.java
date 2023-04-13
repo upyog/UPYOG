@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @Data
 @Getter
@@ -20,7 +21,7 @@ public class SearchCriteria {
     private String id; // birthapplicant id
 
     @JsonProperty("applicationNumber")
-    private String applicationNumber;
+    private List<String> applicationNumber;
 
     @JsonProperty("registrationNo")
     private String registrationNo;

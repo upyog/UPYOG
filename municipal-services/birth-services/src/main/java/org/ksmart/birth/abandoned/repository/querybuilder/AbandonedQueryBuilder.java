@@ -66,13 +66,14 @@ public class AbandonedQueryBuilder extends BaseAbandonedQuery {
     public StringBuilder prepareSearchCriteria(@NotNull SearchCriteria criteria, StringBuilder query, @NotNull List<Object> preparedStmtValues) {
         addFilter("ebd.id", criteria.getId(), query, preparedStmtValues);
         addFilter("ebd.tenantid", criteria.getTenantId(), query, preparedStmtValues);
-        addFilter("ebd.applicationno", criteria.getApplicationNumber(), query, preparedStmtValues);
+        addFilters("ebd.applicationno", criteria.getApplicationNumber(), query, preparedStmtValues);
         addFilter("ebd.registrationno", criteria.getRegistrationNo(), query, preparedStmtValues);
         addFilter("ebd.fm_fileno", criteria.getFileCode(), query, preparedStmtValues);
         addFilter("ebp.hospitalid", criteria.getHospitalId(), query, preparedStmtValues);
         addFilter("ebp.institution_id", criteria.getInstitutionId(), query, preparedStmtValues);
         addFilter("ebp.ebp.ward_id", criteria.getWardCode(), query, preparedStmtValues);
         addFilter("eebd.gender", criteria.getGender(), query, preparedStmtValues);
+        addFilter("ebd.applicationtype", criteria.getApplicationType(), query, preparedStmtValues);
         addDateRangeFilter("ebd.dateofreport", criteria.getFromDate(),  criteria.getToDate(), query, preparedStmtValues);
         addDateRangeFilter("ebd.dateofbirth",  criteria.getDateOfBirthFrom(), criteria.getDateOfBirthTo(),query, preparedStmtValues);
         addDateRangeFilter("ebd.fm_fileno",  criteria.getFromDateFile(), criteria.getToDateFile(), query, preparedStmtValues);

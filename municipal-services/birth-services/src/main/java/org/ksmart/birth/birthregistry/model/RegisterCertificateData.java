@@ -20,17 +20,17 @@ public class RegisterCertificateData {
     @JsonProperty("dateofreport")
     private Long dateOfReport;
 
-    @JsonProperty("dateofreportStr")
-    private String dateOfReportStr;
-
+//    @JsonProperty("dateofreportStr")
+//    private String dateOfReportStr;
+//
     @JsonProperty("dateofbirthstr")
     private String dobStr;
 
     @JsonProperty("dateofbirthWord")
     private String dobStrWord;
 
-    @JsonProperty("registrationDateStr")
-    private String registrationDateStr;
+    @JsonProperty("registrationDate")
+    private Long registrationDate;
 
     @JsonProperty("dateofbirth")
     private Long dateOfBirth;
@@ -88,6 +88,10 @@ public class RegisterCertificateData {
     @JsonProperty("birthPlaceInstitutionlId")
     private String birthPlaceInstitutionId;
 
+    @Size(max = 64)
+    @JsonProperty("birthPlaceInstitutionlTypeId")
+    private String birthPlaceInstitutionlTypeId;
+
 
     @Size(max = 64)
     @JsonProperty("placeDetails")
@@ -107,8 +111,6 @@ public class RegisterCertificateData {
     @Size(max = 2500)
     @JsonProperty("embeddedUrl")
     private String embeddedUrl;
-    @JsonProperty("registrationDate")
-    private Long registrationDate;
 
     @JsonProperty("currentDate")
     private String currentDate;
@@ -119,11 +121,11 @@ public class RegisterCertificateData {
     @JsonProperty("currentTime")
     private String currentTime;
 
-    @JsonProperty("ReportingDate")
-    private String ReportingDate;
+    @JsonProperty("updatingDate")
+    private Long updatingDate;
 
-    @JsonProperty("ReportingTime")
-    private String ReportingTime;
+    @JsonProperty("updatingTime")
+    private String updatingTime;
 
     @Size(max = 2500)
     @JsonProperty("placeDetailsMl")
@@ -203,4 +205,14 @@ public class RegisterCertificateData {
     @Size(max = 45)
     @JsonProperty("applicationType")
     private String applicationType;
+
+    @Size(max = 1000)
+    @JsonProperty("mainPlaceDetails")
+    private String mainPlaceDetails;
+
+    @Size(max = 1000)
+    @JsonProperty("mainPlaceDetailsMl")
+    private String mainPlaceDetailsMl;
+
+
 }

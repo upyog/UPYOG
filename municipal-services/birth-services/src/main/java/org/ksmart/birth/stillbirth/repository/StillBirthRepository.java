@@ -70,7 +70,7 @@ public class StillBirthRepository {
         SearchCriteria criteria = new SearchCriteria();
         List<RegisterBirthDetail> result = null;
         if (request.getBirthDetails().size() > 0) {
-            criteria.setApplicationNumber(request.getBirthDetails().get(0).getApplicationNo());
+            criteria.getApplicationNumber().add(request.getBirthDetails().get(0).getApplicationNo());
             criteria.setTenantId(request.getBirthDetails().get(0).getTenantId());
             String query = queryBuilder.getApplicationSearchQueryForRegistry(criteria, preparedStmtValues);
             result = jdbcTemplate.query(query, preparedStmtValues.toArray(), registerRowMapperForApp);
@@ -82,6 +82,7 @@ public class StillBirthRepository {
     public List<StillBirthApplication> searchStillBirthDetails(StillBirthDetailRequest request, SearchCriteria criteria) {
         List<Object> preparedStmtValues = new ArrayList<>();
         Object mdmsDataComm = mdmsUtil.mdmsCall(request.getRequestInfo());
+        criteria.setApplicationType(BirthConstants.FUN_MODULE_STL);
         String query = queryBuilder.getNewBirthApplicationSearchQuery(criteria, request, preparedStmtValues, Boolean.FALSE);
         List<StillBirthApplication> result = jdbcTemplate.query(query, preparedStmtValues.toArray(), rowMapper);
         result.forEach(birth -> {

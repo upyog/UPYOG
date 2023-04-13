@@ -4,71 +4,77 @@ import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.ksmart.birth.birthregistry.model.RegisterBirthDetail;
 import org.ksmart.birth.birthregistry.model.RegisterCertificateData;
+import org.ksmart.birth.utils.CommonUtils;
 import org.ksmart.birth.utils.MdmsUtil;
-import org.ksmart.birth.utils.NumberConverter;
+import org.ksmart.birth.utils.NumToWordConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.time.Instant;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAccessor;
 import java.util.Date;
+import java.util.Locale;
 
 @Slf4j
 @Service
 public class BirthCertService {
     private final MdmsUtil mdmsUtil;
     private final MdmsDataService mdmsDataService;
-    private final NumberConverter numberConverter;
     @Autowired
-    BirthCertService(MdmsUtil mdmsUtil, MdmsDataService mdmsDataService, NumberConverter numberConverter) {
+    BirthCertService(MdmsUtil mdmsUtil, MdmsDataService mdmsDataService) {
         this.mdmsUtil = mdmsUtil;
         this.mdmsDataService = mdmsDataService;
-        this.numberConverter = numberConverter;
     }
     public RegisterCertificateData setCertificateDetails(RegisterBirthDetail register, RequestInfo requestInfo) {
         Object mdmsData = mdmsUtil.mdmsCall(requestInfo);
-        DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-        DateFormat formatterTime = new SimpleDateFormat("hh:mm");
-        Date reportDate = new Date(register.getDateOfReport());
-        Date dobDate = null;
-        Date updatedDate = null;
+        String strDate=null;
+
+                DateTimeFormatter dtDate = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        DateTimeFormatter dtTime = DateTimeFormatter.ofPattern("HH:mm");
+
+        ZonedDateTime zdt = CommonUtils.currentDate();
+        System.out.println(zdt.toInstant().toEpochMilli());
+
+        String dobInWords = null;
+
+        Long updatedDate = null;
         String updatedTime = null;
-        String dobInWords = "";
-        if(register.getAuditDetails().getLastModifiedTime() == null) {
-            updatedDate = new Date(formatter.format(register.getAuditDetails().getCreatedTime()));
-            updatedTime = formatterTime.format(updatedDate);
-        } else{
-            updatedDate = new Date(formatter.format(register.getAuditDetails().getLastModifiedTime()));
-            updatedTime = formatterTime.format(updatedDate);
-        }
-
-        Date regDate = new Date(register.getRegistrationDate());
-        long now = Instant.now().toEpochMilli();
-        Date curDate = new Date(formatter.format(new Date()));
-        String curTime = formatterTime.format(curDate);
+//        if(register.getAuditDetails().getLastModifiedTime() == null) {
+//            ZonedDateTime ud = CommonUtils.LongToDate(register.getAuditDetails().getCreatedTime());
+//            updatedDate = dtDate.format(ud);
+//            updatedTime = dtTime.format(ud);
+//        } else{
+//            ZonedDateTime ud = CommonUtils.LongToDate(register.getAuditDetails().getLastModifiedTime());
+//            updatedDate = dtDate.format(ud);
+//            updatedTime = dtTime.format(ud);
+//        }
         if(register.getDateOfBirth() != null){
-            dobDate = new Date(register.getDateOfBirth());
-            String[] dobAry = formatter.format(dobDate).split("/");
+            Date res = new Date(register.getDateOfBirth()) ;
+            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+            strDate= formatter.format(res);
+            String[] dobAry = strDate.split("/");
             try {
-                dobInWords = numberConverter.numberToWordConverter(dobAry[0].toCharArray()) + "/" + new SimpleDateFormat("MMMM").format(dobDate) + "/" + numberConverter.numberToWordConverter(dobAry[2].toCharArray());
+                dobInWords = NumToWordConverter.convertNumber(Long.parseLong(dobAry[0])) + "/" + new SimpleDateFormat("MMMM").format(res) + "/" + NumToWordConverter.convertNumber(Long.parseLong(dobAry[2]));;
             } catch(Exception e) {
-
             }
-            //System.out.println(dobInWords);
         }
 
         RegisterCertificateData registerCertificateData = new RegisterCertificateData();
         registerCertificateData.setId(register.getId());
         registerCertificateData.setDateOfBirth(register.getDateOfBirth());
-        registerCertificateData.setDobStrWord(dobInWords);
+        registerCertificateData.setDobStrWord(dobInWords.toUpperCase());
         registerCertificateData.setWardCode(register.getRegisterBirthPlace().getWardId());
         registerCertificateData.setDateOfReport(register.getDateOfReport());
         registerCertificateData.setRegistrationDate(register.getRegistrationDate());
-        registerCertificateData.setCurrentDate(formatter.format(curDate));
-        registerCertificateData.setDobStr(formatter.format(dobDate));
-        registerCertificateData.setRegistrationDateStr(formatter.format(regDate));
-        registerCertificateData.setDateOfReportStr(formatter.format(reportDate));
+        registerCertificateData.setCurrentDate(dtDate.format(zdt));
+        registerCertificateData.setCurrentTime(dtTime.format(zdt));
+        registerCertificateData.setDobStr(strDate);
+        registerCertificateData.setCurrentDateLong(zdt.toInstant().toEpochMilli());
+//        registerCertificateData.setRegistrationDateStr(register.getRegistrationDate());
+//        registerCertificateData.setDateOfReportStr(strDate);
         registerCertificateData.setRegistrationNo(register.getRegistrationNo());
         registerCertificateData.setApplicationType(register.getApplicationType());
         registerCertificateData.setApplicationId(register.getApplicationId());
@@ -88,11 +94,15 @@ public class BirthCertService {
         registerCertificateData.setBirthPlaceId(register.getRegisterBirthPlace().getPlaceOfBirthId());
         registerCertificateData.setBirthPlaceHospitalId(register.getRegisterBirthPlace().getHospitalId());
         registerCertificateData.setBirthPlaceInstitutionId(register.getRegisterBirthPlace().getInstitutionId());
+        registerCertificateData.setBirthPlaceInstitutionlTypeId(register.getRegisterBirthPlace().getInstitutionTypeId());
         registerCertificateData.setRegistarDetails("Registrar of Births and Deaths");
-        registerCertificateData.setCurrentTime(curTime.toString());
-        registerCertificateData.setCurrentDateLong(now);
-        registerCertificateData.setReportingDate(formatter.format(updatedDate));
-        registerCertificateData.setReportingTime(updatedTime);
+        if(register.getAuditDetails().getLastModifiedTime() == null) {
+            updatedDate = register.getAuditDetails().getCreatedTime();
+        } else{
+            updatedDate = register.getAuditDetails().getLastModifiedTime();
+        }
+        registerCertificateData.setUpdatingDate(updatedDate);
+        registerCertificateData.setUpdatingTime(updatedTime);
         mdmsDataService.setTenantDetails(registerCertificateData, mdmsData);
         mdmsDataService.setPresentAddressDetailsEn(register, registerCertificateData, mdmsData);
         mdmsDataService.setPremananttAddressDetailsEn(register, registerCertificateData, mdmsData);

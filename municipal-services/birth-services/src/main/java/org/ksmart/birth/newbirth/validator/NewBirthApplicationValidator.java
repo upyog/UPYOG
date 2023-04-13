@@ -101,7 +101,7 @@ public class NewBirthApplicationValidator {
                     "Workflow action is required for create request.");
         }
 
-        //  mdmsValidator.validateMdmsData(request, mdmsData);
+          mdmsValidator.validateMdmsData(request, mdmsData);
     }
 
     public void validateUpdate(NewBirthDetailRequest request, Object mdmsData) {
@@ -158,19 +158,16 @@ public class NewBirthApplicationValidator {
     private void validateDob(Long childDob, String birthPlace, String wfCode, String applicationType,Object mdmsData, WorkFlowCheck wfc) {
         Calendar calendar = Calendar.getInstance();
         Long currentDate = calendar.getTimeInMillis();
-
         if (childDob > currentDate) {
             throw new CustomException(INVALID_CREATE.getCode(),
                     "Date of birth should be less than or same as  current date.");
         } else {
-            wfc = commonValidation.checkValidation(mdmsData, birthPlace, childDob);
-
+            wfc = commonValidation.checkValidation(mdmsData, birthPlace, childDob, wfc);
             if(!wfc.getWorkflowCode().equals(wfCode)) {
                 throw new CustomException(INVALID_CREATE.getCode(),
                         "Workflow code from the application request is wrong.");
             }
-
-            if(!wfc.getWorkflowCode().equals(applicationType)) {
+            if(!wfc.getApplicationType().equals(applicationType)) {
                 throw new CustomException(INVALID_CREATE.getCode(),
                         "Application type from the application request is wrong.");
             }

@@ -27,6 +27,7 @@ public class BirthConstants {
     public static final String COMMON_MDMS_MEDICAL_ATTENTION_TYPE= "MedicalAttentionType";
     public static final String COMMON_MDMS_VILLAGE = "Village";
     public static final String COMMON_MDMS_DISTRICT = "District";
+
     public static final String COMMON_MDMS_POSTOFFICE = "PostOffice";
     public static final String COMMON_MDMS_LBTYPE = "LBType";
     public static final String COMMON_MDMS_PLACEMASTER = "PlaceMaster";
@@ -63,6 +64,7 @@ public class BirthConstants {
     public static final String CR_MDMS_COUNTRY_JSONPATH = "$.MdmsRes.common-masters.Country";
     public static final String CR_MDMS_INST_TYPE_CODE_JSONPATH = "$.MdmsRes.birth-death-service.InstitutionTypePlaceOfEvent[*].code";
     public static final String CR_MDMS_INST_TYPE_JSONPATH = "$.MdmsRes.birth-death-service.InstitutionTypePlaceOfEvent";
+
 //    public static final String CR_MDMS_INSTITUTION_CODE_JSONPATH = "$.MdmsRes.birth-death-service.Institution[*].code";
     public static final String CR_MDMS_MEDICAL_ATTENTION_TYPE_CODE_JSONPATH = "$.MdmsRes.birth-death-service.MedicalAttentionType[*].code";
     public static final String CR_MDMS_VILLAGE_CODE_JSONPATH = "$.MdmsRes.common-masters.Village[*].code";
@@ -86,52 +88,39 @@ public class BirthConstants {
 
     public static final String CR_MDMS_TENANT_BOUNDARY_CODE = "TenantBoundary";
     public static final String CR_MDMS_EGOV_LOCATION_MASTERS_CODE = "egov-location";
-
     //error constants
     public static final String INVALID_TENANT_ID_MDMS_KEY = "INVALID TENANTID";
     public static final String INVALID_TENANT_ID_MDMS_MSG = "No data found for this tenantID";
-
     public static final String LB_TYPE_CORPORATION = "LB_TYPE_CORPORATION";
-
     public static final String LB_TYPE_MUNICIPALITY = "LB_TYPE_MUNICIPALITY";
     public static final String LB_TYPE_GP = "LB_TYPE_GRAMA_PANCHAYAT";
     public static final String LB_TYPE_CORPORATION_CAPTION = "C";
-
     public static final String LB_TYPE_MUNICIPALITY_CAPTION = "M";
-
     public static final String APP_NUMBER_CAPTION = "AK";
-
     public static final String FILE_NUMBER_CAPTION = "FM";
-
     public static final String REGY_NUMBER_CAPTION = "RG";
-
     public static final String CERT_NUMBER_CAPTION = "CT";
-
     public static final String FUN_MODULE_NEW = "CRBRNR";
-
+    public static final String FUN_MODULE_STL = "CRBRSB";
+    public static final String FUN_MODULE_OSC= "CRBRBO";
+    public static final String FUN_MODULE_NAC= "CRBRNC";
+    public static final String FUN_MODULE_COR= "CRBRCR";
+    public static final String FUN_MODULE_ADOP= "CRBRAD";
     public static final String STATE_CODE = "KL";
 
     public static final String COUNTRY_CODE = "COUNTRY_INDIA";
 
     public static final String STATE_CODE_SMALL = "kl";
-
-
     ///Application Status
-
     public static final String STATUS_APPROVED = "APPROVED";
     public static final String STATUS_FOR_PAYMENT = "PENDINGPAYMENT";
-
     //WF Action
     public static final String WF_APPROVE = "APPROVE";
-
     //Registration Status
     public static final String REG_STATUS_ACTIVE = "ACTIVE";
-
     //Registration Status
     public static final String REG_STATUS_CANCEL = "CANCEL";
-
     // Unique numbers
-
     public static final String APPLICATION_NO = "APPL";
     public static final String FILE_NO = "FILE";
     public static final String REGISTRATION_NO = "REG";

@@ -49,11 +49,13 @@ public class MdmsForNewBirthService {
             String placeMl = mdmsLocationService.getInstitutionNameMl(mdmsData, birth.getInstitutionNameCode());
             birth.setInstitutionId(placeEn);
             birth.setInstitutionIdMl(placeMl);
+            //setInstitutionDetails(birth, mdmsData);
         }else { }
     }
 
     public void setInstitutionDetails(NewBirthApplication birth, Object  mdmsData) {
         if (birth.getPlaceofBirthId().contains(BIRTH_PLACE_INSTITUTION)) {
+            System.out.println( birth.getInstitutionTypeId());
             String placeInstType = mdmsTenantService.getInstitutionTypeName(mdmsData, birth.getInstitutionTypeId());
             birth.setInstitution(placeInstType);
         }

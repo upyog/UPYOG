@@ -61,8 +61,8 @@ public class NewBirthRepository {
         return request.getNewBirthDetails();
     }
 
-    public List<NewBirthApplication> updateKsmartBirthDetails(NewBirthDetailRequest request) {
-        ksmartBirthEnrichment.enrichUpdate(request);
+    public List<NewBirthApplication> updateKsmartBirthDetails(NewBirthDetailRequest request, Object mdmsData) {
+        ksmartBirthEnrichment.enrichUpdate(request, mdmsData);
         producer.push(birthDeathConfiguration.getUpdateKsmartBirthApplicationTopic(), request);
         return request.getNewBirthDetails();
     }
@@ -71,7 +71,7 @@ public class NewBirthRepository {
         SearchCriteria criteria = new SearchCriteria();
         List<RegisterBirthDetail> result = null;
         if (requestApplication.getNewBirthDetails().size() > 0) {
-            criteria.setApplicationNumber(requestApplication.getNewBirthDetails().get(0).getApplicationNo());
+            criteria.getApplicationNumber().add(requestApplication.getNewBirthDetails().get(0).getApplicationNo());
             criteria.setTenantId(requestApplication.getNewBirthDetails().get(0).getTenantId());
             String query = birthQueryBuilder.getApplicationSearchQueryForRegistry(criteria, preparedStmtValues);
             result = jdbcTemplate.query(query, preparedStmtValues.toArray(), registerRowMapperForApp);
@@ -86,6 +86,7 @@ public class NewBirthRepository {
     public List<NewBirthApplication> searchBirthDetails(NewBirthDetailRequest request, SearchCriteria criteria) {
         List<Object> preparedStmtValues = new ArrayList<>();
         Object mdmsDataComm = mdmsUtil.mdmsCall(request.getRequestInfo());
+        criteria.setApplicationType(BirthConstants.FUN_MODULE_NEW);
         String query = birthQueryBuilder.getNewBirthApplicationSearchQuery(criteria, request, preparedStmtValues, Boolean.FALSE);
         if(preparedStmtValues.size() == 0){
             throw new CustomException(ErrorCodes.NOT_FOUND.getCode(), "No result found.");
@@ -99,7 +100,6 @@ public class NewBirthRepository {
                     Object mdmsData = mdmsUtil.mdmsCallForLocation(request.getRequestInfo(), birth.getTenantId());
                     if (birth.getPlaceofBirthId() != null) {
                         mdmsBirthService.setLocationDetails(birth, mdmsData);
-                        mdmsBirthService.setInstitutionDetails(birth, mdmsData);
                     }
                     if (birth.getParentAddress().getCountryIdPermanent() != null && birth.getParentAddress().getStateIdPermanent() != null) {
                         if (birth.getParentAddress().getCountryIdPermanent().contains(BirthConstants.COUNTRY_CODE)) {
