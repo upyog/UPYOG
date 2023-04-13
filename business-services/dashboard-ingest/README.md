@@ -12,7 +12,8 @@ Dashboard-Ingest module runs as a pipeline and manages to validate, transform an
 
 ### Swagger API Contract
 
-- Please refer to the [Swagger API contarct](https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/business-services/Docs/dss-dashboard/DSS%20Ingest%20YAML%20Spec%201.0.0.yaml) for dashboard-ingest to understand the structure of APIs and to have visualization of all internal APIs.
+- Please refer to the [Swagger API contarct](https://editor.swagger.io/?url=https://raw.githubusercontent.com/upyog/UPYOG/master/business-services/Docs/dss-dashboard/DSS%20Ingest%20YAML%20Spec%201.0.0.yaml) for dashboard-ingest to understand the structure of APIs and to have visualization of all internal APIs.
+
 
 
 ## Service Details
@@ -35,7 +36,7 @@ Below are list of configurations
 
 Topic Context Configuration is an outline to define which data is received on which Kafka Topic. 
 Indexer Service and many other services are sending out data on different Kafka Topics. If the Ingest Service is asked to receive those data and pass it through the pipeline, the context and the version of the data being received has to be set. This configuration is used to identify as in which kafka topic consumed the data and what is the mapping for that.
-[Click here for full configuration](https://github.com/egovernments/configs/blob/master/egov-dss-dashboards/dashboard-ingest/TopicContextConfiguration.json)
+[Click here for full configuration](https://github.com/upyog/upyog-configs/blob/master/configs/egov-dss-dashboards/dashboard-ingest/TopicContextConfiguration.json)
 
 | Parameter Name                    | Description                                                                                                       | 
 | ----------------------------------| ------------------------------------------------------------------------------------------------------------------|
@@ -48,13 +49,16 @@ Indexer Service and many other services are sending out data on different Kafka 
 Validator Schema is a configuration Schema Library from Everit
 By passing the data against this schema, it ensures whether the data abides by the rules and requirements of the schema which has been defined. [Click here for example configuration](https://github.com/egovernments/configs/blob/master/egov-dss-dashboards/dashboard-ingest/validator_transaction_v1.json) 
 
+Validator Schema is a configuration Schema Library from Everit
+By passing the data against this schema, it ensures whether the data abides by the rules and requirements of the schema which has been defined. [Click here for example configuration](https://github.com/upyog/upyog-configs/blob/master/configs/egov-dss-dashboards/dashboard-ingest/validator_transaction_v1.json)
+
 
 
 **JOLT Transformation Schema**
 
 JOLT is a JSON to JSON Transformation Library. In order to change the structure of the data and transform it in a generic way, JOLT has been used. 
 While the transformation schemas are written for each Data Context, the data is transformed against the schema to obtain a transformed data. 
-[Click here for example configuration](https://github.com/egovernments/configs/blob/master/egov-dss-dashboards/dashboard-ingest/transform_collection_v1.json)
+[Click here for example configuration](https://github.com/upyog/upyog-configs/blob/master/configs/egov-dss-dashboards/dashboard-ingest/transform_collection_v1.json)
 
 **Enrichment Domain Configuration** 
 
@@ -62,7 +66,7 @@ This configuration defines and directs the Enrichment Process which the data goe
 
 For example, if the Data which is incoming is belonging to a Collection Module data, then the Collection Domain Config is picked. And the based on the Business Type specified in the data, the right config is picked. 
 In order to enhance the data of Collection, the domain index specified in the configuration is queried with the right arguments and the response data is obtained, transformed and set. 
-[Click here for example configuration](https://github.com/egovernments/configs/blob/master/egov-dss-dashboards/dashboard-ingest/DomainConfig.json)
+[Click here for example configuration](https://github.com/upyog/upyog-configs/blob/master/configs/egov-dss-dashboards/dashboard-ingest/DomainConfig.json)
 
 | Parameter Name                         | Description                                                                                                                                                             | 
 | ---------------------------------------| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -80,12 +84,13 @@ Only those parameters which should be or can be used for an aggregation and repr
 
 In order to do that, we make use of JOLT again and write schemas to keep the required ones and discard the unwanted ones. 
 
-The [configuration](https://github.com/egovernments/configs/blob/master/egov-dss-dashboards/dashboard-ingest/transform_tl_v1.json) is used to transform the data response in the enrichment layer.
+The [configuration](https://github.com/upyog/upyog-configs/blob/master/configs/egov-dss-dashboards/dashboard-ingest/transform_tl_v1.json) is used to transform the data response in the enrichment layer.
+
 
 **JOLT Transformation Schema for collection V2**
 
 JOLT transformation schema for payment-v1 has taken as a use case to explain the context  collection and context version v2. The payment records are processed/transformed with the schema. The schema supports splitting the billing records in a independent new record. So if there are 2 bill items in the collection/payment incoming data then this results into 2 collection records in turn.
-[Click for example configuration](https://github.com/egovernments/configs/blob/master/egov-dss-dashboards/dashboard-ingest/transform_collection_v2.json)
+[Click for example configuration](https://github.com/upyog/upyog-configs/blob/master/configs/egov-dss-dashboards/dashboard-ingest/transform_collection_v2.json)
 
 Here: $i, the variable value that gets incremented for the number of records of paymentDetails 
 $j, the variable value that gets incremented for the number of records of billDetails.

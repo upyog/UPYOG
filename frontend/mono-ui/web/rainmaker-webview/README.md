@@ -1,7 +1,5 @@
 [![Java](https://forthebadge.com/images/badges/made-with-java.svg)](https://github.com/org/Android-SmartWebView)
 
-[![MIT Licence](https://badges.frapsoft.com/os/mit/mit.svg?v=103)](https://opensource.org/licenses/mit-license.php)
-
 # Android Smart WebView
 This project is developed to help you create Hybrid Android applications with just webview. Hybrid app comes in between webview and native forms, with this project you can embed any existing webpage or setup an Offline HTML/CSS/Javascript based project.
 
@@ -68,30 +66,13 @@ COOKIE "long" for longitude
 ```
 
 ## Author
-This project is initially developed by **Ghazi Khan**.
 
-Public Profiles:
-* [Personal Blog](https://org.infeeds.com)
-* [Facebook](https://www.facebook.com/getmgks)
-* [Twitter](https://twitter.com/getmgks)
-
-### Would you like to buy me a cup of coffee?
-#### I'd appreciate even your little contribution to my work, it helps me keep this Open Source updated. If this project helped you or your business and if you feel like donating some bucks, you can Paypal me - getmgks@gmail.com
-
-<a href='https://ko-fi.com/Z8Z4BPQ6' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://az743702.vo.msecnd.net/cdn/kofi2.png?v=0' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
-
-<a href="https://www.patreon.com/bePatron?c=1575504" target="_blank" title="Become a Patron"><img src="https://c5.patreon.com/external/logo/become_a_patron_button.png"></a>
 
 
 ## License
-This project is licensed under the MIT License - see [LICENSE.md](LICENSE.md) file for details or read [MIT license](https://opensource.org/licenses/MIT).
+UPYOG Source Code is open sources under License [UPYOG CODE, COPYRIGHT AND CONTRIBUTION LICENSE TERMS](https://upyog.niua.org/employee/Upyog%20Code%20and%20Copyright%20License_v1.pdf)
 
 
-## Acknowledgment
-Rating method (Android-Rate) used in this app is developed by [hotchemi](https://github.com/hotchemi) and thanks to other programmers who contributed to this project.
-
-Post in Github Repo issues section if you got any problem handling the project and if you want to contribute, you're most welcome to help me make a smarter project than what it is.
-Just drop me a mail at: [getmgks@gmail.com](mailto:getmgks@gmail.com)
 
 **This project on Infeeds - [Android Smart WebView open source to upload files, get GPS locations and more advanced features](https://infeeds.com/d/CODEmgks/25019/android-smart-webview-open-source-upload)**
 

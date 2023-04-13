@@ -1,6 +1,6 @@
 # Local Setup
 
-To setup the fsm in your local system, clone the [Muncipal Service repository](https://github.com/egovernments/municipal-services).
+To setup the Faecal Sludge Management (FSM) in your local system, clone the [UPYOG Repository](https://github.com/upyog/UPYOG) and navigate to the municipal-services.
 
 ## Dependencies
 
@@ -15,7 +15,7 @@ To setup the fsm in your local system, clone the [Muncipal Service repository](h
 
 ## Running Locally
 
-To run the Vendor locally, you need to port forward below services locally
+To run the Vendor Service locally, you need to port forward below services locally
 
 ```bash
 boundary-service
@@ -24,7 +24,7 @@ vehicle
 mdms-service
 ```
 
-To run the Vendor locally, update below listed properties in `application.properties` prior to running the project:
+To run the Vendor Service locally, update below listed properties in `application.properties` prior to running the project:
 
 ```ini
 server.port

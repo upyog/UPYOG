@@ -1,33 +1,34 @@
-# Egov-pdf service
+# PDF Service (egov-pdf)
 
-Egov-pdf service work in between pdf-service and client requesting pdfs. Earlier client used to directly call pdf-service with complete data as json, but with introduction of this new service one can provide just few parameters ex:- applicationnumber, tenantId to this new service to get a pdf. 
+PDF Service work in between pdf-service and client requesting pdfs. Earlier client used to directly call PDF service with complete data as json, but with introduction of this new service one can provide just few parameters ex:- applicationnumber, tenantId to this new service to get a pdf. 
+
 ### DB UML Diagram
 
 - NA
 
 ### Service Dependencies
 
-- egov-mdms-service
-- tl-service
-- Property-service
-- Pdf-service
-- User-service
-- Collection service
-- Billing-service
-- Workflow-service
+- MDMS Service (egov-mdms-service)
+- Trade License Service (tl-service)
+- Property Service (property-service)
+- PDF Service (pdf-service)
+- User Service (user-service)
+- Collection Service (collection service)
+- Billing Service (willing-service)
+- Workflow Service (workflow-service)
 
 
 ### Swagger API Contract
 
-http://editor.swagger.io/?url=https://raw.githubusercontent.com/egovernments/utilities/gopesh67-patch-1/docs/egov-pdf_contract.yml#!/
+https://editor.swagger.io/?url=https://raw.githubusercontent.com/upyog/UPYOG/master/utilities/docs/egov-pdf_contract.yml#!/
 
 ## Service Details
 
-Egov-pdf service is new service being added which can work in between existing pdf-service and client requesting pdfs. Earlier client used to directly call pdf-service with complete data as json, but with introduction of this new service one can provide just few parameters ex:- applicationnumber, tenantId to this new service to get a pdf. The egov-pdf service will take responsibility of getting application data from concerned service and also will do any enrichment if required and then with the data call pdf service to get pdf directly . The service will return pdf binary as response which can be directly downloaded by the client. With this service the existing pdf service endpoints need not be exposed to frontend.
+PDF Service is new service being added which can work in between existing PDF service and client requesting pdfs. Earlier client used to directly call pdf-service with complete data as json, but with introduction of this new service one can provide just few parameters ex:- applicationnumber, tenantId to this new service to get a pdf. The PDF Service will take responsibility of getting application data from concerned service and also will do any enrichment if required and then with the data call pdf service to get pdf directly. The service will return pdf binary as response which can be directly downloaded by the client. With this service the existing pdf service endpoints need not be exposed to frontend.
 
-For any new pdf requirement one new endpoint with validations and logic for getting data for pdf has to be added in the code. With separate endpoint for each pdf we can define access rules per pdf basis. Currently egov-pdf service has endpoint for following pdfs used in our system:-
+For any new pdf requirement one new endpoint with validations and logic for getting data for pdf has to be added in the code. With separate endpoint for each pdf we can define access rules per pdf basis. Currently PDF Service has endpoint for following pdfs used in our system:-
 
-- PT mutationcertificate
+- PT mutation certificate
 - PT bill
 - PT receipt
 - TL receipt
@@ -39,13 +40,13 @@ For any new pdf requirement one new endpoint with validations and logic for gett
 
 **Steps/guidelines for adding support for new pdf:**
 
-- Make sure the config for pdf is added in the PDF-Service.Refer the PDF service [documentatiom](https://digit-discuss.atlassian.net/l/c/f3APeZPF )
+- Make sure the config for pdf is added in the PDF-Service.Refer the PDF service [documentation](https://upyog-docs.gitbook.io/upyog-v-1.0/upyog-1/platform/configure-upyog/configuring-services/customizing-pdf-notices-and-certificates/pdf-generation-service)
 
-- Follow code of [existing supported PDFs](https://github.com/egovernments/utilities/tree/master/egov-pdf/src/routes) and create new endpoint with suitable search parameters for each PDF
+- Follow code of [existing supported PDFs](https://github.com/upyog/UPYOG/tree/master/utilities/egov-pdf/src/routes) and create new endpoint with suitable search parameters for each PDF
 
-- Put parameters validations, module level validations ex:- application status,applicationtype and api error responses with proper error messages and error codes
+- Put parameters validations, module level validations ex:- application status, application type and api error responses with proper error messages and error codes
 
-- Make sure whatever service is used for preparing data for PDF, search call to them by citizen returns citizens own record only, if not then adjust searchcriteria for them by including citizen mobilenumber or uuid to restrict citizen to create pdfs for his record only. If in the requirement itself it is explained that citizen can get PDF for others records also ex:- billgenie bill PDFs then no need for this check
+- Make sure whatever service is used for preparing data for PDF, search call to them by citizen returns citizens own record only, if not then adjust search criteria for them by including citizen mobilenumber or uuid to restrict citizen to create pdfs for his record only. If in the requirement itself it is explained that citizen can get PDF for others records also ex:- billgenie bill PDFs then no need for this check
 
 - Prepare data for pdf by calling required services.
 
@@ -67,7 +68,9 @@ Currently below endpoints are in use for ‘CITIZEN' and 'EMPLOYEE’ roles
 |`/egov-pdf/download/PAYMENT/consolidatedreceipt` | Collection | `consumerCode, tenantId` | yes |
 
 ### Kafka Consumers
+
 NA
 
 ### Kafka Producers
+
 NA

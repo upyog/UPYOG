@@ -1,6 +1,6 @@
 # Local Setup
 
-To setup the echallan-calculator in your local system, clone the [Muncipal Service repository](https://github.com/egovernments/municipal-services).
+To setup the eChallan Calculator Service (echallan-calculator) in your local system, clone the [UPYOG Repository](https://github.com/upyog/UPYOG.git) and navigate to the municipal-services folder.
 
 ## Dependencies
 

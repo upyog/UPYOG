@@ -1,21 +1,22 @@
-# User-OTP Service
+# User OTP Service (user-otp)
 ### User-OTP
-User-OTP service handles the OTP for user registration, user login and password reset for a particular user.
+User OTP service handles the OTP for user registration, user login and password reset for a particular user.
 
 ### DB UML Diagram
 
 - NA
 
 ### Service Dependencies
-- egov-user
-- egov-localization
-- egov-otp
+- User Service (egov-user)
+- Localization Service (egov-localization)
+- OTP Service (egov-otp)
 
 ### Swagger API Contract
+
 - NA
 
 ## Service Details
-The user-otp service send the OTP to user on login request, on password change request and during new user registration.
+The User OTP service send the OTP to user on login request, on password change request and during new user registration.
 
 | Environment Variable                              | Description                                                                                                          |
 | ------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------|

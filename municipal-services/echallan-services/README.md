@@ -1,4 +1,4 @@
-# eChallan-services
+# eChallan Service (echallan-services)
 
 eChallan system enables employees to generate the challans for Adhoc services so that the payment can be recorded into the system along with service-specific details.
 
@@ -8,18 +8,17 @@ eChallan system enables employees to generate the challans for Adhoc services so
 
 ### Service Dependencies
 
-- eChallan-calculator
-- billing-service
-- egov-mdms-service
-- egov-localization
-- egov-idgen
-- egov-user
+- eChallan Calculator Service (eChallan-calculator)
+- Billing Service (billing-service)
+- MDM Service (egov-mdms-service)
+- Localization Service (egov-localization)
+- ID Generation Service (egov-idgen)
+- User Service (egov-user)
 
 ### Swagger API Contract
 
 Link to the swagger API contract yaml and editor link like below
-
-https://editor.swagger.io/?url=https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/municipal-services/docs/e-Challan-v1.0.0.yaml#!/
+https://editor.swagger.io/?url=https://raw.githubusercontent.com/upyog/UPYOG/master/municipal-services/docs/e-Challan-v1.0.0.yaml#!/
 
 
 ## Service Details
@@ -43,18 +42,18 @@ Workflow or Service-specific workflow can be enabled at the challan service leve
 
 ### Reference Document
 
-All the details and configurations on the services are explained in the document `https://digit-discuss.atlassian.net/l/c/18Rgs1cw`
+All the details and configurations on the services are explained in the document [eChallan Service](https://upyog-docs.gitbook.io/upyog-v-1.0/reference-applications/products-and-modules/miscellaneous-collections-misc.-collect./miscellaneous-collections-service-configuration/e-challan-service)
 
 ### Kafka Consumers
 
-`update-challan` : eChallan consumer listens to this topic to get the updated data
-`save-challan` : eChallan consumer listens to this topic to get the eChallan data
-`egov.collection.payment-cancel` : eChallan consumer listen to this topic and get data when the receipt is cancelled.
+- `update-challan` : eChallan consumer listens to this topic to get the updated data
+- `save-challan` : eChallan consumer listens to this topic to get the eChallan data
+- `egov.collection.payment-cancel` : eChallan consumer listen to this topic and get data when the receipt is cancelled.
 
 ### Kafka Producers
 
-`save-challan` : echallan-services sends data to this topic to push entries to the database table.
-`update-challan` : echallan-services sends data to this topic to update the entries to the database table.
-`egov.collection.payment-create` : Service sends data to this topic when the payments is triggered.
-`egov.core.notification.sms` : This topic is used to send the sms notification
-`persist-user-events-async` : Service uses this topic to save the event notification
+- `save-challan` : echallan-services sends data to this topic to push entries to the database table.
+- `update-challan` : echallan-services sends data to this topic to update the entries to the database table.
+- `egov.collection.payment-create` : Service sends data to this topic when the payments is triggered.
+- `egov.core.notification.sms` : This topic is used to send the sms notification
+- `persist-user-events-async` : Service uses this topic to save the event notification

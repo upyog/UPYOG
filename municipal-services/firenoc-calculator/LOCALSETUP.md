@@ -1,6 +1,6 @@
 # Local Setup
 
-To setup the firenoc-calculator in your local system, clone the [Core Service repository](https://github.com/egovernments/core-services).
+To setup the FireNOC Calculator Service (firenoc-calculator) in your local system, clone the [UPYOG Repository](https://github.com/upyog/UPYOG) and navigate to the municipal-services.
 
 ## Dependencies
 
@@ -15,7 +15,7 @@ To setup the firenoc-calculator in your local system, clone the [Core Service re
 
 ## Running Locally
 
-To run the firenoc-calculator services locally, you need to run the below command to port forward below services
+To run the FireNOC Calculator Service (firenoc-calculator) locally, you need to run the below command to port forward below services
 
 ```bash
  function kgpt(){kubectl get pods -n egov --selector=app=$1 --no-headers=true | head -n1 | awk '{print $1}'}

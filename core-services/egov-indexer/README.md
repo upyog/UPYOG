@@ -1,6 +1,6 @@
-# Egov indexer service
+# Indexer Service (egov-indexer)
 
-<p>Egov indexer service runs as a seperate service, This service is designed to perform all the indexing tasks of the egov platform. The service reads records posted on specific kafka topics and picks the corresponding index configuration from the yaml file provided by the respective module. </p>
+<p>Indexer service runs as a seperate service, This service is designed to perform all the indexing tasks of the UPYOG platform. The service reads records posted on specific kafka topics and picks the corresponding index configuration from the yaml file provided by the respective module. </p>
 
 ### DB UML Diagram
 
@@ -8,16 +8,16 @@
 
 ### Service Dependencies
 
-- `egov-mdms-service`: For enriching mdms data if mentioned in config
+- `MDMS Service (egov-mdms-service)`: For enriching mdms data if mentioned in config
 
 
 ### Swagger API Contract
 
-https://editor.swagger.io/?url=https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/indexer-contract.yml#!/
+https://editor.swagger.io/?url=https://raw.githubusercontent.com/upyog/UPYOG/master/core-services/docs/indexer-contract.yml#!/
 
 ## Service Details
 
-Egov indexer service is used in egov platform for all indexing requirements. This service performs three major tasks namely: LiveIndex (indexing the live transaction data), Reindex (indexing data from one index to the othe) and LegacyIndex (indexing legacy data from the DB). For any indexing requirement we have to add a config. There we define source and, destination elastic search index name, custom mappings for data transformation and mappings for data enrichment. Currently following features are supported :-
+Indexer service is used in UPYOG platform for all indexing requirements. This service performs three major tasks namely: LiveIndex (indexing the live transaction data), Reindex (indexing data from one index to the othe) and LegacyIndex (indexing legacy data from the DB). For any indexing requirement we have to add a config. There we define source and, destination elastic search index name, custom mappings for data transformation and mappings for data enrichment. Currently following features are supported :-
 - Multiple indexes of a record posted on a single topic
 - Provision for custom index id
 - Performs both bulk and non-bulk indexing
@@ -25,7 +25,7 @@ Egov indexer service is used in egov platform for all indexing requirements. Thi
 - Performs ES down handling
 
 #### Configurations
-ex:- https://raw.githubusercontent.com/egovernments/configs/master/egov-indexer/property-services.yml
+ex:- https://raw.githubusercontent.com/upyog/upyog-configs/master/configs/egov-indexer/property-services.yml
 
 The different fields used in index config are following:-
 - mappings: List of mappings between topic name and respective index configurations.
@@ -58,7 +58,7 @@ c) `POST /_legacyindex`
 This is to run LegacyIndex job to index data from DB. In the request body the URL of the service which would be called by indexer service to pick data, must be mentioned.
 
 
-> Note: In legacy indexing and for collection-service record LiveIndex kafka-connect is used to do part of pushing record to elastic search. For more details please refer https://digit-discuss.atlassian.net/l/c/mxncnagK
+> Note: In legacy indexing and for collection-service record LiveIndex kafka-connect is used to do part of pushing record to elastic search. For more details please refer [Reindexing jobs to push records to elastic search](https://upyog-docs.gitbook.io/upyog-v-1.0/upyog-1/platform/configure-upyog/qa-automation/kafka-consumer-producer-approach/reindexing-jobs-to-push-records-to-elastic-search)
 
 ### Kafka Consumers
 - The service uses consumers for topics defined in index configs to read data which is to be indexed.

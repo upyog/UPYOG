@@ -32,8 +32,8 @@ by defining insight in the chartAPI configuration for the required chart.
 
 
 ### Resources
-- Granular details about the API's can be found in the [swagger api definition](https://raw.githubusercontent.com/egovernments/DIGIT-OSS/doc-patch/business-services/Docs/dss-dashboard/DSS%20Analytics%20Dashboard%20YAML%20Spec%201.0.0.yaml)
-- Postman collection for all the API's can be found in the [postman collection](https://www.getpostman.com/collections/0894f347322bed5bea1a)
+- Granular details about the API's can be found in the [swagger api definition](https://raw.githubusercontent.com/upyog/UPYOG/master/business-services/Docs/dss-dashboard/DSS%20Analytics%20Dashboard%20YAML%20Spec%201.0.0.yaml)
+- Postman collection for all the API's can be found in the [postman collection](https://api.postman.com/collections/23419225-27e44c83-6e4b-4308-b231-1fb02ccb57eb?access_key=PMAT-01GTKJBA7MF0KNQJ8MJ4WAF9G1)
 
 
 ## Build & Run

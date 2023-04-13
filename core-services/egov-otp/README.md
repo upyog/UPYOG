@@ -1,15 +1,14 @@
 
-# egov-otp Service
+# OTP Service (egov-otp)
 
-OTP Service is a core service that is available on the DIGIT platform.  The service is used to authenticate the user in the platform.
+OTP Service is a core service that is available on the UPYOG platform.  The service is used to authenticate the user in the platform.
 The functionality is exposed via REST API.
 
 
 
 ### DB UML Diagram
 
-- TBD
-
+- 
 
 
 ### Service Dependencies
@@ -17,18 +16,17 @@ The functionality is exposed via REST API.
 - NA
 
 
-
 ### Swagger API Contract
 
 Link to the swagger API contract yaml and editor link like below
 
-https://editor.swagger.io/?url=https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/egov-otp-contract.yml#!/
+https://editor.swagger.io/?url=https://raw.githubusercontent.com/upyog/UPYOG/master/core-services/docs/egov-otp-contract.yml#!/
 
 
 
 ## Service Details
 
-egov-otp is being called internally by user-otp service which fetches mobileNumber and feeds to egov-otp to generate 'n' digit OTP. 
+OTP Service (egov-otp) is being called internally by User OTP Service (user-otp) which fetches mobileNumber and feeds to egov-otp to generate 'n' digit OTP. 
 
 
 
@@ -36,7 +34,7 @@ egov-otp is being called internally by user-otp service which fetches mobileNumb
 
 `BasePath` /egov-otp/v1
 
-Egov-otp service APIs - contains create, validate and search end point
+OTP Service (egov-otp) APIs - contains create, validate and search end point
 
 a) `POST /otp/v1/_create`   - create OTP Configuration this API is internal call from v1/_send end point, this end point present in user-otp service no need of explicity call
 

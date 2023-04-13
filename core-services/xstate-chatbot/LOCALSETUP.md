@@ -1,4 +1,4 @@
-# XState-Chatbot-React-App
+# XState Chatbot React App
 
 This ```react-app``` is provided only to ease the process of dialog development. It should be used only on a developer's local machine when developing any new chat flow. ```nodejs``` should be run as a backend service and tested once on the local machine using postman before deploying the build to the server.
 
@@ -40,5 +40,5 @@ As the react-app will be running in a web browser and not a server, a few of the
 Please modify the following environment variables in [env-variables.js](../nodejs/src/env-variables.js) file before running the app:
  
 1. Disable kafka consumer by marking kafkaConsumerEnabled to be false
-2. In case of hostnames of services, the react-app picks it from the proxy configured in [package.json](./package.json). So configure a common hostname there and replace egovServicesHost - 'https://dev.digit.org/' (and any other hostname that is being used to make an api call) in the env-variables.js with just '/'.
+2. In case of hostnames of services, the react-app picks it from the proxy configured in [package.json](./package.json). So configure a common hostname there and replace egovServicesHost - 'https://upyog.niua.org/' (and any other hostname that is being used to make an api call) in the env-variables.js with just '/'.
 

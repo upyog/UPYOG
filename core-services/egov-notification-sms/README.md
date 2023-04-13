@@ -1,6 +1,6 @@
-# egov-notification-sms service
+# SMS Notification Service (egov-notification-sms)
 
-Notification SMS service consumes SMS from the kafka notification topic and process them to send it to an third party service.
+SMS Notification service consumes SMS from the kafka notification topic and process them to send it to an third party service.
 
 ### DB UML Diagram
 

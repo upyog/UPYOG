@@ -1,6 +1,6 @@
 # Local Setup
 
-To setup the user-otp service in your local system, clone the [Core Service repository](https://github.com/egovernments/core-services).
+To setup the User OTP service (user-otp) in your local system, clone the [Core Service Repository](https://github.com/upyog/UPYOG/tree/master/core-services).
 
 ## Dependencies
 
@@ -15,7 +15,7 @@ To setup the user-otp service in your local system, clone the [Core Service repo
 
 ## Running Locally
 
-To run the user-otp service in your local system, you need to port forward below services
+To run the User OTP service (user-otp) in your local system, you need to port forward below services
 
 ```bash
 function kgpt(){kubectl get pods -n egov --selector=app=$1 --no-headers=true | head -n1 | awk '{print $1}'}

@@ -26,7 +26,7 @@
 
 6. Add lombok extension [Steps to add lombok in Eclipse and Intellij](<https://www.baeldung.com/lombok-ide>)
 
-7. Clone the git repository (https://github.com/egovernments/core-services).
+7. Clone the git repository [Core Service Repository](https://github.com/upyog/UPYOG/tree/master/core-services).
 
 8. Import the module in the respective IDE  [importing in Intellij](<https://www.jetbrains.com/help/idea/maven-support.html#maven_import_project_start>)
 
@@ -74,14 +74,19 @@ egov.services.accesscontrol.host = http://localhost:8090/
 ## Running Locally
 
 1.  Start postgres server on local machine using following command:
+    ```bash
     sudo service postgresql start
-    
+    ```
     ** By default a database named postgres with userName and password as postgres is created during installation. You can use that database directly for running locally. (Default database should be used only for development on local machine) 
 
 2.  Start zookeeper on local machine:
+    ```bash
     bin/zookeeper-server-start.sh config/zookeeper.properties
+    ```
 
 3.  Start kafka server:
+    ```bash
     bin/kafka-server-start.sh config/server.properties 
+    ```
 
-4.  Run the application by running the main file(Java class containing the main() function) from the IDE
+4.  Run the application by running the main file (Java class containing the main() function) from the IDE

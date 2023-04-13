@@ -1,6 +1,6 @@
 
 
-# eGov ApportionService
+# Apportion Service (egov-apportion-service)
 
 
 Module is used to distribute the paid amount among the taxHeads.
@@ -22,8 +22,8 @@ The apportion request and respose are stored for audit using persister
 
 
 ### Service Dependencies
-- egov-mdms
-- egov-persister
+- MDMS Service (egov-mdms)
+- Persister Service (egov-persister)
 
 
 ### Project Structure
@@ -38,12 +38,11 @@ The apportion request and respose are stored for audit using persister
 
 
 ### Resources
-- Granular details about the API's can be found in the [swagger api definition](https://editor.swagger.io/?url=https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/business-services/Docs/egov-apportion-service.yml#!/)
-- Postman collection for all the API's can be found in the [postman collection](https://raw.githubusercontent.com/egovernments/egov-services/core/egov-apportion-service/Apportion.postman_collection.json)
+- Granular details about the API's can be found in the [Swagger API Definition](https://editor.swagger.io/?url=https://raw.githubusercontent.com/upyog/UPYOG/master/business-services/Docs/egov-apportion-service.yml#!/)
+- Postman collection for all the API's can be found in the [Postman Collection](https://raw.githubusercontent.com/upyog/UPYOG/master/business-services/egov-apportion-service/Apportion.postman_collection.json)
 
 
 ## Build & Run
-
 
     mvn clean install
     java -jar target/egov-apportion-service-1.1.1-SNAPSHOT.jar
