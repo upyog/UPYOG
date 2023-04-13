@@ -56,7 +56,7 @@ function escapeRegex(string) {
 var directMapping = exports.directMapping = function () {
   var _ref = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee(req, dataconfig, variableTovalueMap, requestInfo, unregisteredLocalisationCodes) {
     var directArr, localisationCodes, localisationModules, variableToModuleMap, objectOfDirectMapping, i, fun, response, arrayOfOwnerObject, _directArr$i, _directArr$i$format, format, _directArr$i$val, val, variable, _format$scema, scema, j, ownerObject, k, fieldValue, myDate, replaceValue, loc, currentValue, arrayOfBuiltUpDetails, isOrderedList, _directArr$i2, _directArr$i2$format, _format, _directArr$i2$val, _val, _variable, _format$scema2, _scema, _j, arrayOfItems, _k, _fieldValue, _myDate, _replaceValue, p, orderedList, _loc, stringBuildpDetails, code, _myDate2, _replaceValue2, _code, _currentValue, _currentValue2, localisationMap, resposnseMap;
-
+    console.log("inside direct mapping ");
     return _regenerator2.default.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
@@ -71,6 +71,8 @@ var directMapping = exports.directMapping = function () {
 
             objectOfDirectMapping = (0, _commons.getValue)(objectOfDirectMapping, [], "$.DataConfigs.mappings.*.mappings.*.direct.*");
             directArr = objectOfDirectMapping.map(function (item) {
+              console.log("------------------------------------------------");
+              console.log(item);
               return {
                 jPath: item.variable,
                 val: item.value && (0, _commons.getValue)(jp.query(req, item.value.path), "NA", item.value.path),
@@ -136,7 +138,9 @@ var directMapping = exports.directMapping = function () {
             break;
 
           case 25:
+            console.log(" image dataaaaa");
             if (!(directArr[i].type == "image")) {
+              console.log(directArr[i]);
               _context.next = 39;
               break;
             }

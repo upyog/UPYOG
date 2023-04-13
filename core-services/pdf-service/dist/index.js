@@ -156,7 +156,8 @@ var fontDescriptors = {
   },
   Roboto: {
     bold: "src/fonts/Roboto-Bold.ttf",
-    normal: "src/fonts/Roboto-Regular.ttf"
+    normal: "src/fonts/Roboto-Regular.ttf",
+    italics: "src/fonts/Roboto-Italic.ttf",
   },
   BalooBhaina: {
     normal: "src/fonts/BalooBhaina2-Regular.ttf",
@@ -821,7 +822,7 @@ app.listen(serverport, function () {
 var createAndSave = exports.createAndSave = function () {
   var _ref12 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee10(req, res, successCallback, errorCallback) {
     var starttime, topic, key, tenantId, formatconfigNew, dataconfig, userid, requestInfo, documentType, moduleName, formatconfig, valid, _ref13, _ref14, formatConfigByFile, totalobjectcount, entityIds, locale;
-
+    console.log(" inside createAndSave method");
     return _regenerator2.default.wrap(function _callee10$(_context10) {
       while (1) {
         switch (_context10.prev = _context10.next) {

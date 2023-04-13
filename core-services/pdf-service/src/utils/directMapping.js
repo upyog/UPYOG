@@ -44,12 +44,15 @@ export const directMapping = async (
     dataconfig,
     "$.DataConfigs.mappings.*.mappings.*.direct.*"
   );
+  // console.log("Reading direct mapping values---");
   objectOfDirectMapping = getValue(
     objectOfDirectMapping,
     [],
     "$.DataConfigs.mappings.*.mappings.*.direct.*"
   );
+  // console.log("Completed Reading direct mapping values---");
   directArr = objectOfDirectMapping.map(item => {
+    //console.log("item.variable="+item.variable+" item.value="+item.value+" item.url="+item.url+" item.type="+item.type)
     return {
       jPath: item.variable,
       val:
@@ -93,6 +96,14 @@ export const directMapping = async (
       variableTovalueMap[directArr[i].jPath] = fun(directArr[i].val[0]);
     } else if (directArr[i].type == "image") {
       try {
+        // console.log("url ------ > ");
+        // console.log( directArr[i]);
+        if(directArr[i].val!=undefined){
+        console.log( directArr[i].val.length);
+        }
+        if(directArr[i].url==undefined&&directArr[i].val!=undefined&&directArr[i].val.length==1){
+          directArr[i].url=directArr[i].val[0];
+        }
         var response = await axios.get(directArr[i].url, {
           responseType: "arraybuffer"
         });
