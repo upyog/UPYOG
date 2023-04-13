@@ -1,20 +1,20 @@
-# egov-idgen service
+# ID Generation Service (egov-idgen)
 
-The egov-idgen service generates new id based on the id formats passed. The application exposes a Rest API to take in requests and provide the ids in response in the requested format. 
+The ID Gen service generates new id based on the id formats passed. The application exposes a Rest API to take in requests and provide the ids in response in the requested format. 
 
 ### DB UML Diagram
 
-- TBD
+
 
 ### Service Dependencies
 
-- egov-mdms-service
+- MDMS Service (egov-mdms-service)
 
 ### Swagger API Contract
 
 Link to the swagger API contract yaml and editor link like below
 
-https://editor.swagger.io/?url=https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/idgen-contract.yml#!/
+https://editor.swagger.io/?url=https://raw.githubusercontent.com/upyog/UPYOG/master/core-services/docs/idgen-contract.yml#!/
 
 
 ## Service Details
@@ -29,8 +29,7 @@ In case of intellij the plugin can be installed directly, for eclipse the lombok
 
 ## Reference document
 
-Details on every parameters and its significance are mentioned in the document - `https://digit-discuss.atlassian.net/l/c/eH501QE3` 
-
+Details on every parameters and its significance are mentioned in the document - [ID Generation Service](https://upyog-docs.gitbook.io/upyog-v-1.0/upyog-1/platform/configure-upyog/configuring-services/id-generation-service)
 
 ### Kafka Consumers
 

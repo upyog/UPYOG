@@ -1,4 +1,4 @@
-# eGov Encryption Service
+# Encryption Service (egov-enc-service)
 
 Encryption Service is used to secure the data. It provides functionality to encrypt and decrypt data
 
@@ -8,12 +8,12 @@ Encryption Service is used to secure the data. It provides functionality to encr
 
 ### Service Dependencies
 
-- egov-mdms-service
+- MDMS Service (egov-mdms-service)
 
 
 ### Swagger API Contract
 
-https://editor.swagger.io/?url=https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/enc-service-contract.yml#!/
+https://editor.swagger.io/?url=https://raw.githubusercontent.com/upyog/UPYOG/master/core-services/docs/enc-service-contract.yml#!/
 
 ## Service Details
 

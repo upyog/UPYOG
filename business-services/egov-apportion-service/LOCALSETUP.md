@@ -34,4 +34,4 @@ Update below listed properties in `application.properties` before running the pr
 ```
 
 Optionally egov=persister should be ran locally if auditing is required and following config path should be added in it:
- (https://raw.githubusercontent.com/egovernments/configs/master/egov-persister/apportion-persister.yml)
+ (https://raw.githubusercontent.com/upyog/upyog-configs/master/configs/egov-persister/apportion-persister.yml)

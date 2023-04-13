@@ -1,6 +1,6 @@
 # Local Setup
 
-To setup the sw-calculator in your local system, clone the [Muncipal Service repository](https://github.com/egovernments/municipal-services).
+To setup the Sewerage Calculator Service (sw-calculator) in your local system, clone the clone the [UPYOG Repository](https://github.com/upyog/UPYOG) and navigate to the municipal-services.
 
 ## Dependencies
 
@@ -15,7 +15,7 @@ To setup the sw-calculator in your local system, clone the [Muncipal Service rep
 
 ## Running Locally
 
-To run the sw-calculator in local system, you need to port forward below services.
+To run the Sewerage Calculator Service (sw-calculator) in local system, you need to port forward below services.
 
 ```bash
  function kgpt(){kubectl get pods -n egov --selector=app=$1 --no-headers=true | head -n1 | awk '{print $1}'}

@@ -1,7 +1,7 @@
 
 # Persister
-### Egov persister service
-Egov-Persister is a service running independently on seperate server. This service reads the kafka topics and put the messages in DB. We write a yml configuration and put the file path in application.properties.
+### Persister Service (egov-persister)
+Persister Service is a service running independently on seperate server. This service reads the kafka topics and put the messages in DB. We write a yml configuration and put the file path in application.properties.
 
 ### DB UML Diagram
 
@@ -29,7 +29,7 @@ Egov-Persister is a service running independently on seperate server. This servi
 - Supported data types **ARRAY("ARRAY"), STRING("STRING"), INT("INT"),DOUBLE("DOUBLE"), FLOAT("FLOAT"), DATE("DATE"), LONG("LONG"),BOOLEAN("BOOLEAN"),JSONB("JSONB")**
 
 **Sample json which we are posting to kafka**
-- https://github.com/egovernments/egov-services/blob/master/citizen/citizen-persister/kafka-json.json
+- https://github.com/upyog/UPYOG/blob/master/core-services/egov-persister/kafka-json.json
 
 **Persister configuration**
 

@@ -1,6 +1,6 @@
 # Local Setup
 
-To setup the egov-user-event in your local system, clone the [Muncipal Service repository](https://github.com/egovernments/core-services).
+To setup the User Event Service (egov-user-event) in your local system, clone the [UPYOG Repository](https://github.com/upyog/UPYOG.git) and navigate to the municipal-services folder.
 
 ## Dependencies
 
@@ -15,7 +15,7 @@ To setup the egov-user-event in your local system, clone the [Muncipal Service r
 
 ## Running Locally
 
-To run the egov-user-event locally, you need to port forward below services locally
+To run the User Event Service (egov-user-event) locally, you need to port forward below services locally
 
 ```bash
 function kgpt(){kubectl get pods -n egov --selector=app=$1 --no-headers=true | head -n1 | awk '{print $1}'}
