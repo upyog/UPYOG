@@ -1,21 +1,23 @@
-# WS-Services
-This module created to manage WaterService connections against a Property in the system.
+# Water Service (WS-Services)
+
+This module created to manage Water Service connections against a Property in the system.
+
 ### DB UML Diagram
 
 - NA
 
 ### Service Dependencies
-- egov-mdms service
-- property-service
-- egov-idgen
-- egov-persister
-- ws-calculator
-- egov-filestore
-- pdf-service
+- MDMS Service (egov-mdms service)
+- Property Service (property-service)
+- ID Gen Service (egov-idgen)
+- Persister Service (egov-persister)
+- Water Service Calculator (ws-calculator)
+- Filestore Service (egov-filestore)
+- PDF Service (pdf-service)
 
 ### Swagger API Contract
 
-- Please refer to the [Swagger API contarct](https://editor.swagger.io/?url=https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/municipal-services/docs/water-sewerage-services.yaml#!/) for ws-services to understand the structure of APIs and to have visualization of all internal APIs.
+- Please refer to the [Swagger API Contract](https://editor.swagger.io/?url=https://raw.githubusercontent.com/upyog/UPYOG/master/municipal-services/docs/water-sewerage-services.yaml#!/) for ws-services to understand the structure of APIs and to have visualization of all internal APIs.
 
 ## Service Details
 
@@ -45,7 +47,7 @@ b) `_update`
 
 c) `_search`
 
-   -  WaterService Application/Connection  can be searched based on several search parameters as detailed in the swagger yaml [[ Water Sewerage API ](https://app.swaggerhub.com/apis/egov-foundation/Water-Sewerage-1.0/1.0.0#/free)].
+   -  WaterService Application/Connection  can be searched based on several search parameters as detailed in the swagger yaml [[Water Sewerage API](https://github.com/upyog/UPYOG/blob/master/municipal-services/docs/water-sewerage-services.yaml)]
 
 ### Kafka Consumers
 

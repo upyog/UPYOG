@@ -1,8 +1,8 @@
 # micro-ui-internals
 
-DIGIT (Digital Infrastructure for Governance, Impact & Transformation) is India's largest platform for governance services. Visit https://www.digit.org for more details.
+UPYOG (Urban Platform for deliverY of Online Governance) is India's largest platform for governance services. Visit [UPYOG documentation portal](https://upyog-docs.gitbook.io/upyog-v-1.0/) for more details.
 
-This repository contains source code for web implementation of the new Digit UI modules with dependencies and libraries.
+This repository contains source code for web implementation of the UPYOG UI modules with dependencies and libraries.
 
 #### Starting local server
 
@@ -15,9 +15,9 @@ This repository contains source code for web implementation of the new Digit UI 
 
 | Module         | Reference Docs                                                                                               |
 | -------------- | ------------------------------------------------------------------------------------------------------------ |
-| PGR            | https://digit-discuss.atlassian.net/wiki/spaces/EPE/pages/1285587062/PGR+UI+Implementation+-+Guidelines+FAQs |
-| FSM            | https://digit-discuss.atlassian.net/wiki/spaces/EPE/pages/1290567710/FSM+UI+Implementation+-+Guidelines+FAQs |
-| DIGIT Services | https://digit-discuss.atlassian.net/wiki/spaces/DD/pages/647364616/DIGIT+Services                            |
+| PGR            | [PGR: UI Implementation - Guidelines & FAQs](https://upyog-docs.gitbook.io/upyog-v-1.0/upyog-1/platform/customize-upyog/upyog-ui-implementation-development-guidelines-and-faqs/pgr-ui-implementation-guidelines-and-faqs) |
+| FSM            | [FSM: UI Implementation - Guidelines & FAQs](https://upyog-docs.gitbook.io/upyog-v-1.0/upyog-1/platform/customize-upyog/upyog-ui-implementation-development-guidelines-and-faqs/fsm-ui-implementation-guidelines-and-faqs) |
+| UPYOG Services | [UPYOG Service Stack](https://upyog-docs.gitbook.io/upyog-v-1.0/upyog-1/platform/configure-upyog/configuring-upyog-service-stack)                            |
 
 ###### Dependencies and their references
 
@@ -31,4 +31,4 @@ This repository contains source code for web implementation of the new Digit UI 
 
 #### License
 
-These reference apps are released under MIT
+UPYOG Source Code is open sources under License [UPYOG CODE, COPYRIGHT AND CONTRIBUTION LICENSE TERMS](https://upyog.niua.org/employee/Upyog%20Code%20and%20Copyright%20License_v1.pdf)

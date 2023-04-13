@@ -1,6 +1,6 @@
 # Local Setup
 
-To setup the property-service in your local system, clone the git repo(https://github.com/egovernments/municipal-services).
+To setup the Property Service (property-services) in your local system, clone the [UPYOG Repository](https://github.com/upyog/UPYOG) and navigate to the municipal-services.
 
 ## Dependencies
 
