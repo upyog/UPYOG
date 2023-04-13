@@ -16,9 +16,9 @@
         "style": "ws-head",
         "table": {
           "widths": [
-            "50%",
-            "50%",
-            "40%"
+            "46%",
+            "46%",
+            "100%"
           ],
           "body": [
             [
@@ -36,14 +36,6 @@
                     "image": "{{logoindia}}",
                     "width": 35,
                     "height": 35
-                  }
-                ]
-              },
-              {
-                "stack": [
-                  {
-                    "text": "Government of India",
-                    "style": "appendix-header-italic"
                   }
                 ]
               }
@@ -74,6 +66,12 @@
 
               {
                 "stack": [
+              {
+                "text": "Government of India",
+                "style": "pdf-header",
+                "width": 35,
+                "height": 35
+              },
                   {
                     "text": "{{form5}}",
                     "style": "appendix-header-italic"
@@ -115,7 +113,7 @@
               {
                 "stack": [
                   {
-                    "image": "{{logotenant1}}",
+                    "image": "{{logotenant}}",
                     "width": 40,
                     "height": 40
                   }
@@ -137,7 +135,7 @@
               {
                 "stack": [
                   {
-                    "text": "{{nameOfLbMl}} : {{tenantMl}} {{  lbtypecodeMl}}",
+                    "text": "{{nameOfLbMl}} : {{tenantMl}}",
                     "style": "details-body-center"
                   },
                   {
@@ -164,12 +162,14 @@
                 "stack": [
 
                   {
-                    "text": "{{#bold}}{{birthCertificateMl}}{{/bold}}",
-                    "style": "title-header"
+                    "text": "{{birthCertificateMl}}",
+                    "style": "title-header",
+                    "bold": true
                   },
                   {
-                    "text": "{{#bold}}{{birthCertificate}}{{/bold}}",
-                    "style": "title-header"
+                    "text": "{{birthCertificate}}",
+                    "style": "title-header",
+                    "bold": true
                   },
 
                   {
@@ -313,7 +313,7 @@
                     "width": "1%"
                   },
                   {
-                    "text": "{{placeOfBirthMl}}/{{placeOfBirthEn}}",
+                    "text": "{{placeOfBirthMl}}/{{placeOfBirthEn}}{{hospitalMainPlace}}",
                     "style": "details-body"
                   }
                 ]
@@ -573,10 +573,13 @@
                   },
                   {
                     "text": "{{ikm}}",
+                    "italics": true,
                     "style": "details-body-center-bottom"
                   },
                   {
                     "text": "{{printedInvalid}}",
+                    "italics": true,
+
                     "style": "footer-red"
                   }
                 ]
@@ -589,12 +592,16 @@
     ],
     "styles": {
       "pdf-header": {
-        "fillColor": "#F2F2F2",
+        "fillColor": "#000000",
+        "fontSize": 12,
+        "bold": true,
+        "letterSpacing": 0.74,
+        "alignment": "center",
         "margin": [
-          -70,
-          -41,
-          -81,
-          10
+          0,
+          -10,
+          0,
+          0
         ]
       },
       "appendix-header-body-ml": {

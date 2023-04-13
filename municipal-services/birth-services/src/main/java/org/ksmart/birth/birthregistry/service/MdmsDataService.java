@@ -66,16 +66,34 @@ public class MdmsDataService {
 
     public void setBirthPlaceDetails(RegisterCertificateData register, Object  mdmsData) {
         if (register.getBirthPlaceId().contains(BIRTH_PLACE_HOSPITAL)) {
-            String placeEn = mdmsLocationService.getHospitalNameEn(mdmsData, register.getBirthPlaceHospitalId());
-            String placeMl = mdmsLocationService.getHospitalNameMl(mdmsData, register.getBirthPlaceHospitalId());
+            String placeEn =new StringBuilder().append(mdmsLocationService.getHospitalNameEn(mdmsData, register.getBirthPlaceHospitalId()) )
+                                               .append(",")
+                                               .append(mdmsLocationService.getHospitalAddressEn(mdmsData, register.getBirthPlaceHospitalId())==null
+                                                       ?"":mdmsLocationService.getHospitalAddressEn(mdmsData, register.getBirthPlaceHospitalId())).toString();
+            String placeMl =new StringBuilder().append(mdmsLocationService.getHospitalNameMl(mdmsData, register.getBirthPlaceHospitalId()) )
+                                               .append(",")
+                                               .append(mdmsLocationService.getHospitalAddressMl(mdmsData, register.getBirthPlaceHospitalId())==null
+                                                       ?"":mdmsLocationService.getHospitalAddressMl(mdmsData, register.getBirthPlaceHospitalId())).toString();
+
             register.setPlaceDetails(placeEn);
             register.setPlaceDetailsMl(placeMl);
-
         } else if (register.getBirthPlaceId().contains(BIRTH_PLACE_INSTITUTION)) {
-            String placeEn = mdmsLocationService.getInstitutionNameEn(mdmsData, register.getBirthPlaceInstitutionId()) + ", "
-                    + mdmsLocationService.getInstitutionAddressEn(mdmsData, register.getBirthPlaceInstitutionId());
-            String placeMl = mdmsLocationService.getInstitutionNameMl(mdmsData, register.getPlaceDetails()) + " , "
-                    + mdmsLocationService.getInstitutionAddressMl(mdmsData, register.getPlaceDetails());
+            String placeEn =new StringBuilder().append(mdmsLocationService.getInstitutionNameEn(mdmsData, register.getBirthPlaceInstitutionId()) )
+                    .append(",")
+                    .append(mdmsLocationService.getInstitutionTypeEn(mdmsData, register.getBirthPlaceInstitutionlTypeId())==null
+                            ?"":mdmsLocationService.getInstitutionTypeEn(mdmsData, register.getBirthPlaceInstitutionlTypeId()))
+                    .append(",")
+                    .append(mdmsLocationService.getInstitutionAddressEn(mdmsData, register.getBirthPlaceInstitutionId())==null
+                            ?"":mdmsLocationService.getInstitutionAddressEn(mdmsData, register.getBirthPlaceInstitutionId())).toString();
+
+            String placeMl =new StringBuilder().append(mdmsLocationService.getInstitutionNameMl(mdmsData, register.getBirthPlaceInstitutionId()) )
+                    .append(",")
+                    .append(mdmsLocationService.getInstitutionTypeMl(mdmsData, register.getBirthPlaceInstitutionlTypeId())==null
+                            ?"":mdmsLocationService.getInstitutionTypeMl(mdmsData, register.getBirthPlaceInstitutionlTypeId()))
+                    .append(",")
+                    .append(mdmsLocationService.getInstitutionAddressMl(mdmsData, register.getBirthPlaceInstitutionId())==null
+                            ?"":mdmsLocationService.getInstitutionAddressMl(mdmsData, register.getBirthPlaceInstitutionId())).toString();
+
             register.setPlaceDetails(placeEn);
             register.setPlaceDetailsMl(placeMl);
         } else {

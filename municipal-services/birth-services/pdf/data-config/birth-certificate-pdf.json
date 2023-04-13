@@ -11,6 +11,24 @@
         "topic": "common-pdf-generation-3",
         "mappings": [
           {
+            "externalAPI": [
+              {
+                "path": "https://ksmart-dev.lsgkerala.gov.in/egov-mdms-service/v1/_get",
+                "queryParam": "moduleName=tenant&masterName=tenants&tenantId=kl&filter=%5B?(@.code=='{$.tenantid}')%5D",
+                "apiRequest": null,
+                "responseMapping": [
+                  {
+                    "variable": "tenantMl",
+                    "value": "$.MdmsRes.tenant.tenants[0].city.localName"
+                  },
+                  {
+                    "variable": "logotenant",
+                    "value": "$.MdmsRes.tenant.tenants[0].logoId",
+                    "type":"image"
+                  }
+                ]
+              }
+            ],
             "direct": [
               {
                 "variable": "logoindia",
@@ -33,18 +51,7 @@
                 "type":"image"
               },
 
-              {
-                "variable": "logotenant",
-                "url": "https://ulb-logos.s3.ap-south-1.amazonaws.com/ernakulam/cochin.jpg",
-                "type":"image"
-              },
-              {
-                "variable": "logotenant1",
-                "value": {
-                  "path": "$.tenantLogoUrl"
-                },
-                "type":"url"
-              },
+
               {
                 "variable": "name",
                 "value": {
@@ -68,9 +75,10 @@
               {
                 "variable": "dob",
                 "value": {
-                  "path": "$.dateofreport"
+                  "path": "$.dateofbirth"
                 },
-                "type": "date"
+                "type": "date",
+                "format": "DD/MM/YYYY"
               },
               {
                 "variable": "dobInWords",
@@ -259,20 +267,7 @@
                 }
               },
 
-              {
-                "variable": "tenantMl",
-                "value": {
-                  "path": "$.tenantid"
-                },
-                "type": "setEmpty",
-                "localisation": {
-                  "required":true,
-                  "prefix": "TENANT_TENANTS",
-                  "postfix": "_ML",
-                  "module":"rainmaker-common",
-                  "locale":"en_IN"
-                }
-              },
+
               {
                 "variable": "lbtypecode",
                 "value": {
@@ -425,9 +420,35 @@
                 }
               },
               {
+                "variable": "presentAddressLabelMl",
+                "value": {
+                  "path": "PDF_BIRTH_PRESENT_ADDRESS_ML"
+                },
+                "type": "label",
+                "localisation":{
+                  "required":true,
+                  "prefix": null,
+                  "module":"rainmaker-common",
+                  "locale":"en_IN"
+                }
+              },
+              {
                 "variable": "permanentAddressLabel",
                 "value": {
                   "path": "PDF_BIRTH_PERMANENT_ADDRESS"
+                },
+                "type": "label",
+                "localisation":{
+                  "required":true,
+                  "prefix": null,
+                  "module":"rainmaker-common",
+                  "locale":"en_IN"
+                }
+              },
+              {
+                "variable": "permanentAddressLabelMl",
+                "value": {
+                  "path": "PDF_BIRTH_PERMANENT_ADDRESS_ML"
                 },
                 "type": "label",
                 "localisation":{
@@ -519,6 +540,19 @@
                 "variable": "ensureRegistration",
                 "value": {
                   "path": "PDF_BIRTH_ENSURE_REGISTRATION_OF_EVERY_BIRTH_AND_DEATH"
+                },
+                "type": "label",
+                "localisation":{
+                  "required":true,
+                  "prefix": null,
+                  "module":"rainmaker-common",
+                  "locale":"en_IN"
+                }
+              },
+              {
+                "variable": "ensureRegistrationMl",
+                "value": {
+                  "path": "PDF_BIRTH_ENSURE_REGISTRATION_OF_EVERY_BIRTH_AND_DEATH_ML"
                 },
                 "type": "label",
                 "localisation":{

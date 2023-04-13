@@ -94,6 +94,7 @@ public class BirthCertService {
         registerCertificateData.setBirthPlaceId(register.getRegisterBirthPlace().getPlaceOfBirthId());
         registerCertificateData.setBirthPlaceHospitalId(register.getRegisterBirthPlace().getHospitalId());
         registerCertificateData.setBirthPlaceInstitutionId(register.getRegisterBirthPlace().getInstitutionId());
+        registerCertificateData.setBirthPlaceInstitutionlTypeId(register.getRegisterBirthPlace().getInstitutionTypeId());
         registerCertificateData.setRegistarDetails("Registrar of Births and Deaths");
         if(register.getAuditDetails().getLastModifiedTime() == null) {
             updatedDate = register.getAuditDetails().getCreatedTime();

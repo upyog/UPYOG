@@ -88,6 +88,10 @@ public class RegisterCertificateData {
     @JsonProperty("birthPlaceInstitutionlId")
     private String birthPlaceInstitutionId;
 
+    @Size(max = 64)
+    @JsonProperty("birthPlaceInstitutionlTypeId")
+    private String birthPlaceInstitutionlTypeId;
+
 
     @Size(max = 64)
     @JsonProperty("placeDetails")
@@ -201,4 +205,14 @@ public class RegisterCertificateData {
     @Size(max = 45)
     @JsonProperty("applicationType")
     private String applicationType;
+
+    @Size(max = 1000)
+    @JsonProperty("mainPlaceDetails")
+    private String mainPlaceDetails;
+
+    @Size(max = 1000)
+    @JsonProperty("mainPlaceDetailsMl")
+    private String mainPlaceDetailsMl;
+
+
 }

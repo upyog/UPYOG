@@ -20,6 +20,9 @@ public class MdmsLocationService {
         return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_INSTITUTIONS_CODE_JSONPATH);
     }
 
+    private List<String> getInstitutionTypeCode(Object mdmsData) {
+        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_INST_TYPE_CODE_JSONPATH);
+    }
     private List<String> getBoundaryCode(Object mdmsData) {
         return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_BOUNDARY_CODE_JSONPATH);
     }
@@ -39,13 +42,13 @@ public class MdmsLocationService {
     public String getHospitalAddressEn(Object mdmsData, String hospitalId) {
         List<String> hospitals  = getHospitalCode(mdmsData);
         int index = hospitals.indexOf(hospitalId);
-        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_HOSPITALS_CODES_JSONPATH+"["+index+"].address");
+        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_HOSPITALS_CODES_JSONPATH+"["+index+"].mainPlace");
     }
 
     public String getHospitalAddressMl(Object mdmsData, String hospitalId) {
         List<String> tenants  = getHospitalCode(mdmsData);
         int index = tenants.indexOf(hospitalId);
-        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_HOSPITALS_CODES_JSONPATH+"["+index+"].addressLocal");
+        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_HOSPITALS_CODES_JSONPATH+"["+index+"].mainPlaceLocal");
     }
 
     public String getInstitutionNameEn(Object mdmsData, String institutionId) {
@@ -60,22 +63,28 @@ public class MdmsLocationService {
         return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_INSTITUTIONS_CODES_JSONPATH+"["+index+"].institutionNamelocal");
     }
 
-    public String getInstitutionType(Object mdmsData, String institutionId) {
-        List<String> tenants  = getInstitutionCode(mdmsData);
-        int index = tenants.indexOf(institutionId);
-        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_INSTITUTIONS_CODES_JSONPATH+"["+index+"].placeofEventCodeNew");
+    public String getInstitutionTypeEn(Object mdmsData, String institutionTypeId) {
+        List<String> tenants  = getInstitutionTypeCode(mdmsData);
+        int index = tenants.indexOf(institutionTypeId);
+        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_INST_TYPE_JSONPATH+"["+index+"].name");
+    }
+
+    public String getInstitutionTypeMl(Object mdmsData, String institutionTypeId) {
+        List<String> tenants  = getInstitutionTypeCode(mdmsData);
+        int index = tenants.indexOf(institutionTypeId);
+        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_INST_TYPE_JSONPATH+"["+index+"].namelocal");
     }
 
     public String getInstitutionAddressEn(Object mdmsData, String institutionId) {
         List<String> tenants  = getInstitutionCode(mdmsData);
         int index = tenants.indexOf(institutionId);
-        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_INSTITUTIONS_CODES_JSONPATH+"["+index+"].address");
+        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_INSTITUTIONS_CODES_JSONPATH+"["+index+"].mainPlace");
     }
 
     public String getInstitutionAddressMl(Object mdmsData, String institutionId) {
         List<String> tenants  = getInstitutionCode(mdmsData);
         int index = tenants.indexOf(institutionId);
-        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_INSTITUTIONS_CODES_JSONPATH+"["+index+"].addressLocal");
+        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_INSTITUTIONS_CODES_JSONPATH+"["+index+"].mainPlaceLocal");
     }
 
 
