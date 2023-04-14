@@ -157,6 +157,8 @@ public class BillService {
 		/* 
 		 * If no existing bills found then Generate new bill 
 		 */
+		log.info("bills retrieved for fetch bills" + bills.size());
+
 		if (CollectionUtils.isEmpty(bills))
 			return generateBill(billCriteria, requestInfo);
 		
