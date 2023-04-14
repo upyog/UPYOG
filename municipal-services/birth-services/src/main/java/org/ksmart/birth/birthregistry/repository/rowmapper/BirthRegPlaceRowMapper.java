@@ -30,7 +30,7 @@ public class BirthRegPlaceRowMapper {
                 .publicPlaceId(rs.getString("public_place_id"))
                 .hoHouseHolderEn(rs.getString("ho_householder_en"))
                 .hoHouseHolderMl(rs.getString("ho_householder_ml"))
-                .hoHouseHolderEn(rs.getString("ho_housename_en"))
+                .houseNameEn(rs.getString("ho_housename_en"))
                 .houseNameMl(rs.getString("ho_housename_ml"))
                 .hoVillageId(rs.getString("ho_villageid"))
                 .hoTalukId(rs.getString("ho_talukid"))
@@ -66,4 +66,5 @@ public class BirthRegPlaceRowMapper {
                 .publicPlaceDesc(rs.getString("public_place_desc"))
                 .build();
     }
+
 }

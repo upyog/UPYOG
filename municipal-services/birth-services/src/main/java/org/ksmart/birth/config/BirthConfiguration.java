@@ -67,6 +67,9 @@ public class BirthConfiguration {
     @Value("${persister.update.birth.cert.topic}")
     private String updateBirthCertificateTopic;
 
+    @Value("${persister.update.birth.payment.topic}")
+    private String updateBirthPaymentTopic;
+
     @Value("${persister.save.adoption.topic}")
     private String saveBirthAdoptionTopic;
 

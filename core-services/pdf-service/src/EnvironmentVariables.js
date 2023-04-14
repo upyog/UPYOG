@@ -6,7 +6,7 @@ const envVariables = {
     process.env.EGOV_LOCALISATION_SEARCH || "/localization/messages/v2/_search",
   EGOV_FILESTORE_SERVICE_HOST:
     process.env.EGOV_FILESTORE_SERVICE_HOST || "https://ksmart-dev.lsgkerala.gov.in",
-  SERVER_PORT: process.env.SERVER_PORT || 8033,
+  SERVER_PORT: process.env.SERVER_PORT || 8034,
 
   KAFKA_BROKER_HOST: process.env.KAFKA_BROKER_HOST || "localhost:9092",
   KAFKA_CREATE_JOB_TOPIC:

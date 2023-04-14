@@ -15,6 +15,7 @@ import org.ksmart.birth.web.model.newbirth.NewBirthDetailRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 
 import java.lang.reflect.Array;
 import java.util.*;
@@ -104,50 +105,57 @@ public class NewBirthApplicationValidator {
           mdmsValidator.validateMdmsData(request, mdmsData);
     }
 
-    public void validateUpdate(NewBirthDetailRequest request, Object mdmsData) {
+    public void validateUpdate(NewBirthDetailRequest request, NewBirthApplication existing, Object mdmsData, final boolean create) {
+        final String errorCode = create
+                ? ErrorCodes.INVALID_CREATE.getCode()
+                : ErrorCodes.INVALID_UPDATE.getCode();
         List<NewBirthApplication> birthApplications = request.getNewBirthDetails();
         if (CollectionUtils.isEmpty(request.getNewBirthDetails())) {
             throw new CustomException(ErrorCodes.BIRTH_DETAILS_REQUIRED.getCode(),
                     "Birth details is required.");
         }
 
+        if (!ObjectUtils.nullSafeEquals(birthApplications.get(0).getId(), existing.getId())) {
+            throw new CustomException(errorCode, "Invalid birth application.No such application exists");
+        }
+
         if (birthApplications.size() > 1) { // NOPMD
-            throw new CustomException(BIRTH_DETAILS_REQUIRED.getCode(),
+            throw new CustomException(errorCode,
                     "Supports only single application create request.");
         }
 
         if (StringUtils.isBlank(birthApplications.get(0).getTenantId())) {
-            throw new CustomException(INVALID_UPDATE.getCode(),
+            throw new CustomException(errorCode,
                     "Tenant id is required for update request.");
         }
 
         if (StringUtils.isBlank(birthApplications.get(0).getId())) {
-            throw new CustomException(INVALID_UPDATE.getCode(),
+            throw new CustomException(errorCode,
                     "Application id is required for update request.");
         }
 
         if (StringUtils.isBlank(birthApplications.get(0).getApplicationType())) {
-            throw new CustomException(INVALID_UPDATE.getCode(),
+            throw new CustomException(errorCode,
                     "Application type is required for update request.");
         }
 
         if (StringUtils.isBlank(birthApplications.get(0).getBusinessService())) {
-            throw new CustomException(INVALID_UPDATE.getCode(),
-                    "Bussiness service is required for update request.");
+            throw new CustomException(errorCode,
+                    "Business service is required for update request.");
         }
 
         if (StringUtils.isBlank(birthApplications.get(0).getApplicationNo())) {
-            throw new CustomException(INVALID_UPDATE.getCode(),
+            throw new CustomException(errorCode,
                     "Application number is required for update request.");
         }
 
         if (StringUtils.isBlank(birthApplications.get(0).getWorkFlowCode())) {
-            throw new CustomException(INVALID_UPDATE.getCode(),
+            throw new CustomException(errorCode,
                     "Workflow code is required for update request.");
         }
 
         if (StringUtils.isBlank(birthApplications.get(0).getAction())) {
-            throw new CustomException(INVALID_UPDATE.getCode(),
+            throw new CustomException(errorCode,
                     "Workflow action is required for update request.");
         }
 

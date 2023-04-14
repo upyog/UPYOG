@@ -27,7 +27,7 @@ public class RegisterPlaceRowMapperForApp {
                 .publicPlaceId(rs.getString("pla_public_place_id"))
                 .hoHouseHolderEn(rs.getString("pla_ho_householder_en"))
                 //.hoHouseHolderMl(rs.getString("pla_ho_householder_ml"))
-                .hoHouseHolderEn(rs.getString("pla_ho_housename_en"))
+                .houseNameEn(rs.getString("pla_ho_housename_en"))
                 .houseNameMl(rs.getString("pla_ho_housename_ml"))
                 .hoVillageId(rs.getString("pla_ho_villageid"))
                 .hoTalukId(rs.getString("pla_ho_talukid"))
@@ -63,4 +63,5 @@ public class RegisterPlaceRowMapperForApp {
                 .publicPlaceDesc(rs.getString("pla_public_place_desc"))
                 .build();
     }
+
 }
