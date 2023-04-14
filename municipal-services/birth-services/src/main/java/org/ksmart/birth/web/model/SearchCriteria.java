@@ -65,6 +65,14 @@ public class SearchCriteria {
     @Valid
     private String institutionId;
 
+    @JsonProperty("childName")
+    private String childName;
+
+    @JsonProperty("nameOfFather")
+    @Valid
+    private String nameOfFather;
+
+
     @JsonProperty("mother")
     @Valid
     private String nameOfMother;
