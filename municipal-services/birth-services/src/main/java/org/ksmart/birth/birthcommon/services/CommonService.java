@@ -34,18 +34,18 @@ public class CommonService {
         List<CommonPay> commonPays = request.getCommonPays();
         List<CommonPay> commonPayList = new ArrayList<>();
         for (CommonPay birth : commonPays) {
-//            if (birth.getApplicationStatus().equals(STATUS_FOR_PAYMENT) && birth.getIsPaymentSuccess()) {
+            if (birth.getApplicationStatus().equals(STATUS_FOR_PAYMENT) && birth.getIsPaymentSuccess()) {
                 birth.setAction("INITIATE");
                 birth.setApplicationStatus("INITIATED");
                 birth.setHasPayment(true);
                 birth.setAmount(new BigDecimal(10));
                 commonPayList = repository.updatePaymentDetails(request);
-//            } else  if(birth.getApplicationStatus().equals(STATUS_FOR_PAYMENT) && !birth.getIsPaymentSuccess()){
+            } else  if(birth.getApplicationStatus().equals(STATUS_FOR_PAYMENT) && !birth.getIsPaymentSuccess()){
                 birth.setAction("");
                 birth.setApplicationStatus("STATUS_FOR_PAYMENT");
                 birth.setHasPayment(true);
                 birth.setAmount(new BigDecimal(0));
-//            }
+            }
         }
         return commonPayList;
     }
