@@ -140,4 +140,6 @@ public class BirthConstants {
     // Encryption / Decryption
     public static final String Birth_APPLICANT_ENC_KEY = "BirthDetails";
 
+    public static final String NOT_APPLICABLE = "NOT_APPLICABLE";
+
 }

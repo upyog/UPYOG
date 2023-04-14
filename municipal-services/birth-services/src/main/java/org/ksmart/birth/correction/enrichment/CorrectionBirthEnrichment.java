@@ -92,12 +92,14 @@ public class CorrectionBirthEnrichment implements BaseEnrichment {
                     //Present Address
 
                     //Permanent Address
-                    birth.getCorrectionAddress().setPermanentHouseNameEn(registerBirthDetails.get(0).getRegisterBirthPermanent().getHouseNameEn());
-                    birth.getCorrectionAddress().setPermanentHouseNameMl(registerBirthDetails.get(0).getRegisterBirthPermanent().getHouseNameMl());
-                    birth.getCorrectionAddress().setPermanentLocalityNameEn(registerBirthDetails.get(0).getRegisterBirthPermanent().getLocalityEn());
-                    birth.getCorrectionAddress().setPermanentLocalityNameMl(registerBirthDetails.get(0).getRegisterBirthPermanent().getLocalityMl());
-                    birth.getCorrectionAddress().setPermanentStreetNameEn(registerBirthDetails.get(0).getRegisterBirthPermanent().getStreetNameEn());
-                    birth.getCorrectionAddress().setPermanentStreetNameMl(registerBirthDetails.get(0).getRegisterBirthPermanent().getStreetNameMl());
+                    if(birth.getCorrectionAddress() != null) {
+                        birth.getCorrectionAddress().setPermanentHouseNameEn(registerBirthDetails.get(0).getRegisterBirthPermanent().getHouseNameEn());
+                        birth.getCorrectionAddress().setPermanentHouseNameMl(registerBirthDetails.get(0).getRegisterBirthPermanent().getHouseNameMl());
+                        birth.getCorrectionAddress().setPermanentLocalityNameEn(registerBirthDetails.get(0).getRegisterBirthPermanent().getLocalityEn());
+                        birth.getCorrectionAddress().setPermanentLocalityNameMl(registerBirthDetails.get(0).getRegisterBirthPermanent().getLocalityMl());
+                        birth.getCorrectionAddress().setPermanentStreetNameEn(registerBirthDetails.get(0).getRegisterBirthPermanent().getStreetNameEn());
+                        birth.getCorrectionAddress().setPermanentStreetNameMl(registerBirthDetails.get(0).getRegisterBirthPermanent().getStreetNameMl());
+                    }
 
                 });
         detailEnrichment.correctionField(request, registerBirthDetails,auditDetails);

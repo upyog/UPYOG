@@ -2,6 +2,7 @@ package org.ksmart.birth.correction.enrichment;
 
 import org.ksmart.birth.birthregistry.model.RegisterBirthDetail;
 import org.ksmart.birth.common.model.AuditDetails;
+import org.ksmart.birth.utils.BirthConstants;
 import org.ksmart.birth.utils.enums.UpdateRegisterColumn;
 import org.ksmart.birth.web.model.correction.CorrectionRequest;
 import org.springframework.stereotype.Component;
@@ -22,9 +23,13 @@ public class DetailCorrectionEnrichment {
                                     correction.setId(UUID.randomUUID().toString());
                                     correction.setBirthId(birth.getId());
                                     correction.setAuditDetails(auditDetails);
+                                    if(correction.getSpecificCondition() == null){
+                                        correction.setSpecificCondition(BirthConstants.NOT_APPLICABLE);
+                                    }
                                     correction.getCorrectionFieldValue().forEach(
                                             column -> {
                                                 column.setAuditDetails(auditDetails);
+                                                System.out.println(column.getColumn());
                                                 if(column.getColumn().contains(UpdateRegisterColumn.REG_CHILD_DOB.getUiColoumn())) {
                                                     column.setId(UUID.randomUUID().toString());
                                                     column.setBirthId(birth.getId());
@@ -44,7 +49,8 @@ public class DetailCorrectionEnrichment {
                                                     column.setColumnName(UpdateRegisterColumn.REG_CHILD_AADHAAR.getRegTableColumn());
                                                     birth.setFirstNameEn(column.getNewValue());
                                                     column.setOldValue(registerBirthDetails.get(0).getAadharNo());
-                                                } else if(column.getColumn().contains(UpdateRegisterColumn.REG_CHILD_SEX.getUiColoumn())) {
+                                                }
+                                                else if(column.getColumn().contains(UpdateRegisterColumn.REG_CHILD_SEX.getUiColoumn())) {
                                                     column.setId(UUID.randomUUID().toString());
                                                     column.setBirthId(birth.getId());
                                                     column.setCorrectionId(correction.getId());
@@ -188,8 +194,7 @@ public class DetailCorrectionEnrichment {
                                                     column.setColumnName(UpdateRegisterColumn.REG_ADDRESS_PERMANENT_LO_EN.getRegTableColumn());
                                                     birth.setMotherAadhar(column.getNewValue());
                                                     column.setOldValue(registerBirthDetails.get(0).getRegisterBirthPermanent().getLocalityEn());
-                                                }
-                                                else if(column.getColumn().contains(UpdateRegisterColumn.REG_ADDRESS_PERMANENT_LO_ML.getUiColoumn())) {
+                                                } else if(column.getColumn().contains(UpdateRegisterColumn.REG_ADDRESS_PERMANENT_LO_ML.getUiColoumn())) {
                                                     column.setId(UUID.randomUUID().toString());
                                                     column.setBirthId(birth.getId());
                                                     column.setCorrectionId(correction.getId());
