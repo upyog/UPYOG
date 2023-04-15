@@ -188,10 +188,6 @@ public class RegisterCertificateData {
     private String tenantTalukMl;
 
     @Size(max = 1000)
-    @JsonProperty("tenantLogoUrl")
-    private String tenantLogoUrl;
-
-    @Size(max = 1000)
     @JsonProperty("tenantState")
     private String tenantState;
 

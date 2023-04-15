@@ -6,9 +6,9 @@ import org.ksmart.birth.birthregistry.model.RegisterBirthDetail;
 import org.ksmart.birth.birthregistry.model.RegisterBirthDetailsRequest;
 import org.ksmart.birth.birthregistry.repository.rowmapperfornewapplication.RegisterRowMapperForApp;
 import org.ksmart.birth.common.producer.BndProducer;
+import org.ksmart.birth.common.repository.builder.CommonQueryBuilder;
 import org.ksmart.birth.config.BirthConfiguration;
 import org.ksmart.birth.newbirth.enrichment.NewBirthEnrichment;
-import org.ksmart.birth.newbirth.repository.querybuilder.NewBirthQueryBuilder;
 import org.ksmart.birth.newbirth.repository.rowmapper.BirthApplicationRowMapper;
 import org.ksmart.birth.newbirth.service.MdmsForNewBirthService;
 import org.ksmart.birth.utils.BirthConstants;
@@ -17,8 +17,6 @@ import org.ksmart.birth.utils.enums.ErrorCodes;
 import org.ksmart.birth.web.model.SearchCriteria;
 import org.ksmart.birth.web.model.newbirth.NewBirthApplication;
 import org.ksmart.birth.web.model.newbirth.NewBirthDetailRequest;
-import org.ksmart.birth.web.model.stillbirth.StillBirthApplication;
-import org.ksmart.birth.web.model.stillbirth.StillBirthDetailRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -29,11 +27,12 @@ import java.util.List;
 @Slf4j
 @Repository
 public class NewBirthRepository {
+    @Autowired
+    CommonQueryBuilder commonQueryBuilder;
     private final BndProducer producer;
     private final NewBirthEnrichment ksmartBirthEnrichment;
     private final BirthConfiguration birthDeathConfiguration;
     private final JdbcTemplate jdbcTemplate;
-    private final NewBirthQueryBuilder birthQueryBuilder;
     private final BirthApplicationRowMapper ksmartBirthApplicationRowMapper;
     private final MdmsForNewBirthService mdmsBirthService;
     private final MdmsUtil mdmsUtil;
@@ -42,13 +41,12 @@ public class NewBirthRepository {
 
     @Autowired
     NewBirthRepository(JdbcTemplate jdbcTemplate, NewBirthEnrichment ksmartBirthEnrichment, BirthConfiguration birthDeathConfiguration,
-                       BndProducer producer, NewBirthQueryBuilder birthQueryBuilder, BirthApplicationRowMapper ksmartBirthApplicationRowMapper,
+                       BndProducer producer, BirthApplicationRowMapper ksmartBirthApplicationRowMapper,
                        MdmsForNewBirthService mdmsBirthService, MdmsUtil mdmsUtil, RegisterRowMapperForApp registerRowMapperForApp) {
         this.jdbcTemplate = jdbcTemplate;
         this.ksmartBirthEnrichment = ksmartBirthEnrichment;
         this.birthDeathConfiguration = birthDeathConfiguration;
         this.producer = producer;
-        this.birthQueryBuilder = birthQueryBuilder;
         this.ksmartBirthApplicationRowMapper = ksmartBirthApplicationRowMapper;
         this.mdmsBirthService = mdmsBirthService;
         this.mdmsUtil = mdmsUtil;
@@ -73,7 +71,7 @@ public class NewBirthRepository {
         if (requestApplication.getNewBirthDetails().size() > 0) {
             criteria.getApplicationNumber().add(requestApplication.getNewBirthDetails().get(0).getApplicationNo());
             criteria.setTenantId(requestApplication.getNewBirthDetails().get(0).getTenantId());
-            String query = birthQueryBuilder.getApplicationSearchQueryForRegistry(criteria, preparedStmtValues);
+            String query = commonQueryBuilder.getApplicationSearchQueryForRegistry(criteria, preparedStmtValues);
             result = jdbcTemplate.query(query, preparedStmtValues.toArray(), registerRowMapperForApp);
         }
         return RegisterBirthDetailsRequest.builder()
@@ -84,10 +82,15 @@ public class NewBirthRepository {
 
 
     public List<NewBirthApplication> searchBirthDetails(NewBirthDetailRequest request, SearchCriteria criteria) {
+        String uuid = null;
         List<Object> preparedStmtValues = new ArrayList<>();
         Object mdmsDataComm = mdmsUtil.mdmsCall(request.getRequestInfo());
-        criteria.setApplicationType(BirthConstants.FUN_MODULE_NEW);
-        String query = birthQueryBuilder.getNewBirthApplicationSearchQuery(criteria, request, preparedStmtValues, Boolean.FALSE);
+        if(request.getRequestInfo().getUserInfo() != null){
+            uuid = request.getRequestInfo().getUserInfo().getUuid();
+        } else{
+            criteria.setApplicationType(BirthConstants.FUN_MODULE_NEW);
+        }
+        String query = commonQueryBuilder.getBirthApplicationSearchQuery(criteria, uuid, preparedStmtValues, Boolean.FALSE);
         if(preparedStmtValues.size() == 0){
             throw new CustomException(ErrorCodes.NOT_FOUND.getCode(), "No result found.");
         } else{

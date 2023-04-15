@@ -60,11 +60,9 @@ public class MdmsDataService {
         String stateCode = mdmsTenantService.getTenantState(mdmsData, registerCert.getTenantId());
         registerCert.setTenantState(mdmsTenantService.getStateNameEn(mdmsData, stateCode));
         registerCert.setTenantStateMl(mdmsTenantService.getStateNameMl(mdmsData, stateCode));
-        String logoUrl = mdmsTenantService.getTenantUrl(mdmsData, registerCert.getTenantId());
-        registerCert.setTenantLogoUrl(logoUrl);
     }
 
-    public void setBirthPlaceDetails(RegisterCertificateData register, Object  mdmsData) {
+    public void setBirthPlaceDetails(RegisterBirthDetail registerMain, RegisterCertificateData register, Object  mdmsData) {
         if (register.getBirthPlaceId().contains(BIRTH_PLACE_HOSPITAL)) {
             String placeEn =new StringBuilder().append(mdmsLocationService.getHospitalNameEn(mdmsData, register.getBirthPlaceHospitalId()) )
                                                .append(",")
@@ -96,7 +94,22 @@ public class MdmsDataService {
 
             register.setPlaceDetails(placeEn);
             register.setPlaceDetailsMl(placeMl);
-        } else {
+        } else if (register.getBirthPlaceId().contains(BIRTH_PLACE_HOME)) {
+            String placeEn =new StringBuilder().append(register.getPlaceDetails())
+                    .append(",")
+                    .toString();
+            String placeMl =new StringBuilder().append("").toString();
+        }else if (register.getBirthPlaceId().contains(BIRTH_PLACE_VEHICLE)) {
+            String placeEn =new StringBuilder().append("").toString();
+            String placeMl =new StringBuilder().append("").toString();
+        }else if (register.getBirthPlaceId().contains(BIRTH_PLACE_PUBLIC)) {
+            String placeEn =new StringBuilder().append("").toString();
+            String placeMl =new StringBuilder().append("").toString();
+        }else if (register.getBirthPlaceId().contains(BIRTH_PLACE_OTHERS_COUNTRY)) {
+            String placeEn =new StringBuilder().append("").toString();
+            String placeMl =new StringBuilder().append("").toString();
+        }
+        else {
         }
     }
 

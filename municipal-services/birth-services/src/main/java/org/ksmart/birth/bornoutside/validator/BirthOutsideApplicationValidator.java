@@ -56,10 +56,10 @@ public class BirthOutsideApplicationValidator {
                     "Date of birth is required for create request.");
         }
 
-        if (StringUtils.isBlank(birthApplications.get(0).getPlaceofBirthId())) {
-            throw new CustomException(INVALID_CREATE.getCode(),
-                    "Place of birth id is required for create request.");
-        }
+//        if (StringUtils.isBlank(birthApplications.get(0).getPlaceofBirthId())) {
+//            throw new CustomException(INVALID_CREATE.getCode(),
+//                    "Place of birth id is required for create request.");
+//        }
 
         if (StringUtils.isBlank(birthApplications.get(0).getApplicationType())) {
             throw new CustomException(INVALID_CREATE.getCode(),

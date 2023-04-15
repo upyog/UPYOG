@@ -1,5 +1,6 @@
 package org.ksmart.birth.newbirth.service;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.tracer.model.CustomException;
 import org.ksmart.birth.birthcommon.model.WorkFlowCheck;
@@ -14,6 +15,7 @@ import org.ksmart.birth.web.model.newbirth.NewBirthDetailRequest;
 import org.ksmart.birth.workflow.WorkflowIntegratorNewBirth;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -71,16 +73,46 @@ public class NewBirthService {
     public List<NewBirthApplication> updateBirthDetails(NewBirthDetailRequest request) {
         Object mdmsData = mdmsUtil.mdmsCall(request.getRequestInfo());
         // validate request
-        validator.validateUpdate(request, mdmsData);
+
+        final List<NewBirthApplication> newApplication = request.getNewBirthDetails();
+        Assert.notNull(newApplication, "New birth application details must not be null.");
+
+        NewBirthApplication newBirthApplicationExisting = findBirthRequestById(request);
+
         //search application exist
-        validator.validateUpdate(request, mdmsData);
+        validator.validateUpdate(request,  newBirthApplicationExisting, mdmsData, false);
         if(request.getNewBirthDetails().get(0).getIsWorkflow()) {
             workflowIntegrator.callWorkFlow(request);
         }
         return repository.updateKsmartBirthDetails(request, mdmsData);
     }
 
+    private NewBirthApplication findBirthRequestById(final NewBirthDetailRequest request) {
+        if(request.getNewBirthDetails().size() >0){
+            final SearchCriteria searchCriteria = buildSearchCriteria(request.getNewBirthDetails().get(0));
+            final List<NewBirthApplication> application = repository.searchBirthDetails(request,searchCriteria);
+            return CollectionUtils.isNotEmpty(application)
+                    ? application.get(0)
+                    : null;
+        } else{
+            return null;
+        }
+    }
+
     public List<NewBirthApplication> searchBirthDetails(NewBirthDetailRequest request, SearchCriteria criteria) {
         return repository.searchBirthDetails(request,criteria);
+    }
+
+    protected SearchCriteria buildSearchCriteria(final NewBirthApplication application) {
+        SearchCriteria searchCriteria = null;
+
+        if (StringUtils.isNotBlank(application.getId())) {
+            searchCriteria = new SearchCriteria();
+
+            if (StringUtils.isNotBlank(application.getId())) {
+                searchCriteria.setId(application.getId());
+            }
+        }
+        return searchCriteria;
     }
 }

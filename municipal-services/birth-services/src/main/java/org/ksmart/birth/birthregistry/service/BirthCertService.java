@@ -107,7 +107,7 @@ public class BirthCertService {
         mdmsDataService.setPresentAddressDetailsEn(register, registerCertificateData, mdmsData);
         mdmsDataService.setPremananttAddressDetailsEn(register, registerCertificateData, mdmsData);
         Object mdmsLocData = mdmsUtil.mdmsCallForLocation(requestInfo, registerCertificateData.getTenantId());
-        mdmsDataService.setBirthPlaceDetails(registerCertificateData, mdmsLocData);
+        mdmsDataService.setBirthPlaceDetails(register,registerCertificateData, mdmsLocData);
         return registerCertificateData;
 
     }

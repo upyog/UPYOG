@@ -42,7 +42,7 @@ public class CorrectionBirthService {
         Object mdmsData = mdmsUtil.mdmsCall(request.getRequestInfo());
 
         // validate request
-     //   validator.validateCreate(request, mdmsData);
+        validator.validateCreate(request, mdmsData);
 
         //call save
         List<CorrectionApplication> application =  repository.saveCorrectionBirthDetails(request);

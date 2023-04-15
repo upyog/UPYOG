@@ -67,7 +67,7 @@ public class RegisterQueryBuilder extends BaseRegBuilder {
         addFilter("krbd.id", criteria.getId(), query, preparedStmtValues);
         addFilter("krbd.ack_no", criteria.getApplicationNumber(), query, preparedStmtValues);
         addFilter("krbd.tenantid", criteria.getTenantId(), query, preparedStmtValues);
-        addLikeFilter("kbmi.firstname_en", criteria.getNameOfMother(), query, preparedStmtValues);
+        addLikeFilter("LOWER(kbmi.firstname_en)", criteria.getNameOfMother(), query, preparedStmtValues);
         addFilter("krbd.gender", criteria.getGender(), query, preparedStmtValues);
         addLongFilter("krbd.dateofbirth", criteria.getBirthDate(), query, preparedStmtValues);
         addLongFilter("krbd.registration_date", criteria.getRegistrationDate(), query, preparedStmtValues);
@@ -77,8 +77,8 @@ public class RegisterQueryBuilder extends BaseRegBuilder {
         addFilter("kbp.hospitalid", criteria.getHospitalId(), query, preparedStmtValues);
         addFilter("kbp.institution_id", criteria.getInstitutionId(), query, preparedStmtValues);
         addFilter("kbp.ward_id", criteria.getWardCode(), query, preparedStmtValues);
-        addLikeFilter("krbd.firstname_en", criteria.getChildName(), query, preparedStmtValues);
-        addLikeFilter("kbfi.firstname_en", criteria.getNameOfFather(), query, preparedStmtValues);
+        addLikeFilter("LOWER(krbd.firstname_en)", criteria.getChildName(), query, preparedStmtValues);
+        addLikeFilter("LOWER(kbfi.firstname_en)", criteria.getNameOfFather(), query, preparedStmtValues);
 
         if (StringUtils.isEmpty(criteria.getSortBy()))
             addOrderByColumns("krbd.createdtime",null, orderBy);

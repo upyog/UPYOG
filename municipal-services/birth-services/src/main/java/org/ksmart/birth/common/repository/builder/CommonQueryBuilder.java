@@ -2,15 +2,17 @@ package org.ksmart.birth.common.repository.builder;
 
 import java.util.List;
 
-import org.checkerframework.checker.units.qual.A;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.ksmart.birth.web.model.SearchCriteria;
 import org.springframework.stereotype.Component;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.StringUtils;
+
+import javax.validation.constraints.NotNull;
 
 @Slf4j
 @Component
-public class CommonQueryBuilder {
+public class CommonQueryBuilder extends BaseQueryBuilder {
 	private static final String QUERY = new StringBuilder().append("SELECt ebd.id as ba_id,ebd.dateofreport as ba_dateofreport,ebd.dateofbirth as ba_dateofbirth,ebd.timeofbirth as ba_timeofbirth,")
 			.append("ebd.am_pm as ba_am_pm,ebd.firstname_en as ba_firstname_en,ebd.firstname_ml as ba_firstname_ml,ebd.middlename_en as ba_middlename_en,ebd.middlename_ml as ba_middlename_ml,")
 			.append("ebd.lastname_en as ba_lastname_en,ebd.lastname_ml as ba_lastname_ml,ebd.tenantid as ba_tenantid,ebd.gender as ba_gender,ebd.remarks_en as ba_remarks_en,ebd.remarks_ml as ba_remarks_ml,")
@@ -154,6 +156,102 @@ public class CommonQueryBuilder {
 	}	
 	public String getQueryOtherChildren() {
 		return QUERY_OTHERCH;
+	}
+
+
+	public StringBuilder prepareSearchCriteria(@NotNull SearchCriteria criteria, StringBuilder query, @NotNull List<Object> preparedStmtValues) {
+		addFilter("ebd.id", criteria.getId(), query, preparedStmtValues);
+		addFilter("ebd.tenantid", criteria.getTenantId(), query, preparedStmtValues);
+		addFilters("ebd.applicationno", criteria.getApplicationNumber(), query, preparedStmtValues);
+		addFilter("ebd.registrationno", criteria.getRegistrationNo(), query, preparedStmtValues);
+		addFilter("ebd.fm_fileno", criteria.getFileCode(), query, preparedStmtValues);
+		addFilter("ebp.hospitalid", criteria.getHospitalId(), query, preparedStmtValues);
+		addFilter("ebp.institution_id", criteria.getInstitutionId(), query, preparedStmtValues);
+		addFilter("ebp.ebp.ward_id", criteria.getWardCode(), query, preparedStmtValues);
+		addFilter("ebd.gender", criteria.getGender(), query, preparedStmtValues);
+		addFilter("ebd.applicationtype", criteria.getApplicationType(), query, preparedStmtValues);
+		addDateRangeFilter("ebd.dateofreport", criteria.getFromDate(),  criteria.getToDate(), query, preparedStmtValues);
+		addDateRangeFilter("ebd.dateofbirth",  criteria.getDateOfBirthFrom(), criteria.getDateOfBirthTo(),query, preparedStmtValues);
+		addDateRangeFilter("ebd.fm_fileno",  criteria.getFromDateFile(), criteria.getToDateFile(), query, preparedStmtValues);
+		addLikeFilter("LOWER(kbmi.firstname_en)", criteria.getNameOfMother(), query, preparedStmtValues);
+		addLikeFilter("LOWER(krbd.firstname_en)", criteria.getChildName(), query, preparedStmtValues);
+		addLikeFilter("LOWER(kbfi.firstname_en)", criteria.getNameOfFather(), query, preparedStmtValues);
+
+		return query;
+	}
+
+	public StringBuilder prepareSearchCriteriaFromRequest(StringBuilder query, String uuid, @NotNull List<Object> preparedStmtValues) {
+		if(preparedStmtValues.size() == 0 && uuid != null) {
+			addFilter("ebd.createdby", uuid, query, preparedStmtValues);
+			addFilter("ebd.status", "INITIATED", query, preparedStmtValues);
+		}
+		return query;
+	}
+
+	public StringBuilder prepareOrderBy(@NotNull SearchCriteria criteria, StringBuilder query, @NotNull List<Object> preparedStmtValues) {
+		StringBuilder orderBy = new StringBuilder();
+		if (StringUtils.isEmpty(criteria.getSortBy()))
+			addOrderByColumns("ebd.createdtime",null, orderBy);
+		else if (criteria.getSortBy() == SearchCriteria.SortBy.dateOfBirth)
+			addOrderByColumns("ebd.dateofbirth",criteria.getSortOrder(), orderBy);
+		else if (criteria.getSortBy() == SearchCriteria.SortBy.applicationNumber)
+			addOrderByColumns("ebd.applicationno",criteria.getSortOrder(),orderBy);
+		else if (criteria.getSortBy() == SearchCriteria.SortBy.mother)
+			addOrderByColumns("ebmi.firstname_en",criteria.getSortOrder(), orderBy);
+		else if (criteria.getSortBy() == SearchCriteria.SortBy.gender)
+			addOrderByColumns("ebd.gender",criteria.getSortOrder(), orderBy);
+		else if (criteria.getSortBy() == SearchCriteria.SortBy.registrationNo)
+			addOrderByColumns("ebd.registrationno",criteria.getSortOrder(), orderBy);
+		else if (criteria.getSortBy() == SearchCriteria.SortBy.tenantId)
+			addOrderByColumns("ebd.tenantid",criteria.getSortOrder(), orderBy);
+		else if (criteria.getSortBy() == SearchCriteria.SortBy.hospitalId)
+			addOrderByColumns("ebp.hospitalid",criteria.getSortOrder(), orderBy);
+		else if (criteria.getSortBy() == SearchCriteria.SortBy.institutionId)
+			addOrderByColumns("ebp.institution_id",criteria.getSortOrder(), orderBy);
+		else if (criteria.getSortBy() == SearchCriteria.SortBy.wardCode)
+			addOrderByColumns("ebp.ward_id",criteria.getSortOrder(), orderBy);
+		else if (criteria.getSortBy() == SearchCriteria.SortBy.applicationType)
+			addOrderByColumns("ebd.applicationtype",criteria.getSortOrder(), orderBy);
+		addOrderToQuery(orderBy, query);
+		addLimitAndOffset(criteria.getOffset(),criteria.getLimit(), query, preparedStmtValues);
+		return query;
+	}
+
+	public String getBirthApplicationSearchQuery(@NotNull SearchCriteria criteria, String uuid,
+													@NotNull List<Object> preparedStmtValues, Boolean isCount) {
+		StringBuilder query = prepareSearchQuery();
+		prepareSearchCriteria(criteria, query, preparedStmtValues);
+		prepareSearchCriteriaFromRequest(query,uuid,preparedStmtValues);
+		prepareOrderBy(criteria, query, preparedStmtValues);
+		return query.toString();
+	}
+
+	public String getApplicationSearchQueryForRegistry(@NotNull SearchCriteria criteria, @NotNull List<Object> preparedStmtValues) {
+		StringBuilder query = prepareSearchQuery();
+		prepareSearchCriteria(criteria, query, preparedStmtValues);
+		prepareOrderBy(criteria, query, preparedStmtValues);
+		return query.toString();
+	}
+
+	public StringBuilder prepareSearchQuery() {
+		StringBuilder query = new StringBuilder();
+		query.append(getQueryMain())
+				.append(",")
+				.append(getQueryPlaceOfEvent())
+				.append(",")
+				.append(getQueryFaterInfo())
+				.append(",")
+				.append(getQueryMoterInfo())
+				.append(",")
+				.append(getQueryPresent())
+				.append(",")
+				.append(getQueryPermanant())
+				.append(",")
+				.append(getQueryStat())
+				.append(",")
+				.append(getQueryIntiator())
+				.append(getQueryCondition()).toString();
+		return query;
 	}
 
 }

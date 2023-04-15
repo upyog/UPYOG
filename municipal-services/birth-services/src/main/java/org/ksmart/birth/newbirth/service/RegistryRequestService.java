@@ -3,21 +3,10 @@ package org.ksmart.birth.newbirth.service;
 import lombok.extern.slf4j.Slf4j;
 
 import org.ksmart.birth.birthregistry.model.*;
-import org.ksmart.birth.common.producer.BndProducer;
-import org.ksmart.birth.config.BirthConfiguration;
-import org.ksmart.birth.newbirth.enrichment.NewBirthEnrichment;
 import org.ksmart.birth.newbirth.repository.NewBirthRepository;
-import org.ksmart.birth.newbirth.repository.querybuilder.NewBirthQueryBuilder;
-import org.ksmart.birth.newbirth.repository.rowmapper.BirthApplicationRowMapper;
-import org.ksmart.birth.utils.MdmsUtil;
-import org.ksmart.birth.web.model.SearchCriteria;
-import org.ksmart.birth.web.model.newbirth.NewBirthApplication;
 import org.ksmart.birth.web.model.newbirth.NewBirthDetailRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.LinkedList;
-import java.util.List;
 
 @Slf4j
 @Service

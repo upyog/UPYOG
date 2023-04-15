@@ -1,5 +1,6 @@
 package org.ksmart.birth.bornoutside.service;
 
+import org.ksmart.birth.bornoutside.validator.BirthOutsideApplicationValidator;
 import org.ksmart.birth.newbirth.validator.NewBirthApplicationValidator;
 import org.ksmart.birth.bornoutside.repository.BornOutsideRepository;
 import org.ksmart.birth.utils.MdmsUtil;
@@ -18,11 +19,11 @@ public class BornOutsideService {
     private final BornOutsideRepository repository;
     private final WorkflowIntegratorBornOutside workflowIntegrator;
     private final MdmsUtil mdmsUtil;
-    private final NewBirthApplicationValidator validator;
+    private final BirthOutsideApplicationValidator validator;
 
     @Autowired
     BornOutsideService(BornOutsideRepository repository, MdmsUtil mdmsUtil, WorkflowIntegratorBornOutside workflowIntegrator,
-                       NewBirthApplicationValidator validator) {
+                       BirthOutsideApplicationValidator validator) {
         this.repository = repository;
         this.mdmsUtil = mdmsUtil;
         this.workflowIntegrator  = workflowIntegrator;
@@ -33,7 +34,7 @@ public class BornOutsideService {
         Object mdmsData = mdmsUtil.mdmsCall(request.getRequestInfo());
 
         // validate request
-        //validator.validateCreate(request, mdmsData);
+        validator.validateCreate(request, mdmsData);
 
         //call save
         List<BornOutsideApplication> birthApplicationDetails =  repository.saveBirthApplication(request);

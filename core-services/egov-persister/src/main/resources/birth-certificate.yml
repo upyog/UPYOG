@@ -75,3 +75,32 @@ serviceMaps:
             - jsonPath: $.birthCertificate.auditDetails.lastModifiedTime
 
             - jsonPath: $.birthCertificate.id
+
+    - version: 1.0
+      description: Persists update birth details in eg_birth_details  table
+      fromTopic: update-birth-application-payment-topic
+      isTransaction: true
+      queryMaps:
+        - query: INSERT INTO eg_birth_details_audit SELECT * FROM eg_birth_details WHERE applicationno = ?;
+          basePath: PaymentDetails.*
+          jsonMaps:
+                - jsonPath: $.PaymentDetails.*.applicationNumber
+
+        - query: UPDATE public.eg_birth_details SET action=?, status=?, has_payment=?, is_payment_success=?, amount=?, lastmodifiedby=?,  lastmodifiedtime=? WHERE applicationno=?;
+          basePath: PaymentDetails.*
+          jsonMaps:
+                - jsonPath: $.PaymentDetails.*.action
+
+                - jsonPath: $.PaymentDetails.*.applicationStatus
+
+                - jsonPath: $.PaymentDetails.*.hasPayment
+
+                - jsonPath: $.PaymentDetails.*.isPaymentSuccess
+
+                - jsonPath: $.PaymentDetails.*.amount
+
+                - jsonPath: $.PaymentDetails.*.auditDetails.lastModifiedBy
+
+                - jsonPath: $.PaymentDetails.*.auditDetails.lastModifiedTime
+
+                - jsonPath: $.ChildDetails.*.applicationNumber
