@@ -84,7 +84,7 @@ public class BaseQueryBuilder {
             addWhereClause(paramValues, query);
             query.append(column)
                     .append("LIKE ?% ");
-            paramValues.add(value);
+            paramValues.add(value.toLowerCase());
         }
     }
 

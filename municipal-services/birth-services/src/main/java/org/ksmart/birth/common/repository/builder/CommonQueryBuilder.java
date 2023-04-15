@@ -3,7 +3,6 @@ package org.ksmart.birth.common.repository.builder;
 import java.util.List;
 
 import org.ksmart.birth.web.model.SearchCriteria;
-import org.ksmart.birth.web.model.newbirth.NewBirthDetailRequest;
 import org.springframework.stereotype.Component;
 
 import lombok.extern.slf4j.Slf4j;

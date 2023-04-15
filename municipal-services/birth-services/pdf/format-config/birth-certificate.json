@@ -5,11 +5,17 @@
       "font": "Meera"
     },
     "watermark": {
-      "text": "KSMART DEMO",
       "color": "gery",
       "opacity": 0.1,
-      "bold": true,
-      "italics": false
+
+      "link": "https://ulb-logos.s3.ap-south-1.amazonaws.com/kerala_logo.jpg",
+      "image": "src/images/kerala_logo.jpeg"
+    },
+    "background":{"color": "gery",
+      "opacity": 0.1,"image":"src/images/kerala_logo.jpeg",
+      "width": 500,
+      "height": 500,
+      "absolutePosition": {"x": 50, "y": 200}
     },
     "content": [
       {
@@ -67,12 +73,12 @@
 
               {
                 "stack": [
-              {
-                "text": "GOVERNMENT OF INDIA",
-                "style": "pdf-header",
-                "width": 30,
-                "height": 30
-              },
+                  {
+                    "text": "GOVERNMENT OF INDIA",
+                    "style": "pdf-header",
+                    "width": 30,
+                    "height": 30
+                  },
                   {
                     "text": "{{form5}}",
                     "style": "appendix-header-italic"

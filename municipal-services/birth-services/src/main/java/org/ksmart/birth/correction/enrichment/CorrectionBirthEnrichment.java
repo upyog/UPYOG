@@ -67,42 +67,46 @@ public class CorrectionBirthEnrichment implements BaseEnrichment {
         request.getCorrectionDetails()
                 .forEach(birth -> {
                     //child
-                    birth.setDateOfBirth(registerBirthDetails.get(0).getDateOfBirth());
-                    birth.setAadharNo(registerBirthDetails.get(0).getAadharNo());
-                    birth.setGender(registerBirthDetails.get(0).getGender());
-                    birth.setFirstNameEn(registerBirthDetails.get(0).getFirstNameEn());
-                    birth.setFirstNameMl(registerBirthDetails.get(0).getFirstNameMl());
-                    birth.setMiddleNameEn(registerBirthDetails.get(0).getMiddleNameEn());
-                    birth.setMiddleNameMl(registerBirthDetails.get(0).getMiddleNameMl());
-                    birth.setLastNameEn(registerBirthDetails.get(0).getLastNameEn());
-                    birth.setLastNameMl(registerBirthDetails.get(0).getLastNameMl());
+                   if(registerBirthDetails.size() >0) {
+                       birth.setDateOfBirth(registerBirthDetails.get(0).getDateOfBirth());
+                       birth.setAadharNo(registerBirthDetails.get(0).getAadharNo());
+                       birth.setGender(registerBirthDetails.get(0).getGender());
+                       birth.setFirstNameEn(registerBirthDetails.get(0).getFirstNameEn());
+                       birth.setFirstNameMl(registerBirthDetails.get(0).getFirstNameMl());
+                       birth.setMiddleNameEn(registerBirthDetails.get(0).getMiddleNameEn());
+                       birth.setMiddleNameMl(registerBirthDetails.get(0).getMiddleNameMl());
+                       birth.setLastNameEn(registerBirthDetails.get(0).getLastNameEn());
+                       birth.setLastNameMl(registerBirthDetails.get(0).getLastNameMl());
 
-                    //Father Details
-                    birth.setFatherFirstNameEn(registerBirthDetails.get(0).getRegisterBirthFather().getFirstNameEn());
-                    birth.setFatherFirstNameMl(registerBirthDetails.get(0).getRegisterBirthFather().getFirstNameMl());
-                    birth.setFatherAadhar(registerBirthDetails.get(0).getRegisterBirthFather().getAadharNo());
+                       //Father Details
+                       birth.setFatherFirstNameEn(registerBirthDetails.get(0).getRegisterBirthFather().getFirstNameEn());
+                       birth.setFatherFirstNameMl(registerBirthDetails.get(0).getRegisterBirthFather().getFirstNameMl());
+                       birth.setFatherAadhar(registerBirthDetails.get(0).getRegisterBirthFather().getAadharNo());
 
-                    //Mother Details
-                    birth.setMotherfirstNameEn(registerBirthDetails.get(0).getRegisterBirthMother().getFirstNameEn());
-                    birth.setMotherfirstNameMl(registerBirthDetails.get(0).getRegisterBirthMother().getLastNameMl());
-                    birth.setMotherAadhar(registerBirthDetails.get(0).getRegisterBirthMother().getAadharNo());
+                       //Mother Details
+                       birth.setMotherfirstNameEn(registerBirthDetails.get(0).getRegisterBirthMother().getFirstNameEn());
+                       birth.setMotherfirstNameMl(registerBirthDetails.get(0).getRegisterBirthMother().getLastNameMl());
+                       birth.setMotherAadhar(registerBirthDetails.get(0).getRegisterBirthMother().getAadharNo());
 
-                    //Birthplace
+                       //Birthplace
 
-                    //Present Address
+                       //Present Address
 
-                    //Permanent Address
-                    if(birth.getCorrectionAddress() != null) {
-                        birth.getCorrectionAddress().setPermanentHouseNameEn(registerBirthDetails.get(0).getRegisterBirthPermanent().getHouseNameEn());
-                        birth.getCorrectionAddress().setPermanentHouseNameMl(registerBirthDetails.get(0).getRegisterBirthPermanent().getHouseNameMl());
-                        birth.getCorrectionAddress().setPermanentLocalityNameEn(registerBirthDetails.get(0).getRegisterBirthPermanent().getLocalityEn());
-                        birth.getCorrectionAddress().setPermanentLocalityNameMl(registerBirthDetails.get(0).getRegisterBirthPermanent().getLocalityMl());
-                        birth.getCorrectionAddress().setPermanentStreetNameEn(registerBirthDetails.get(0).getRegisterBirthPermanent().getStreetNameEn());
-                        birth.getCorrectionAddress().setPermanentStreetNameMl(registerBirthDetails.get(0).getRegisterBirthPermanent().getStreetNameMl());
-                    }
+                       //Permanent Address
+                       if (birth.getCorrectionAddress() != null) {
+                           birth.getCorrectionAddress().setPermanentHouseNameEn(registerBirthDetails.get(0).getRegisterBirthPermanent().getHouseNameEn());
+                           birth.getCorrectionAddress().setPermanentHouseNameMl(registerBirthDetails.get(0).getRegisterBirthPermanent().getHouseNameMl());
+                           birth.getCorrectionAddress().setPermanentLocalityNameEn(registerBirthDetails.get(0).getRegisterBirthPermanent().getLocalityEn());
+                           birth.getCorrectionAddress().setPermanentLocalityNameMl(registerBirthDetails.get(0).getRegisterBirthPermanent().getLocalityMl());
+                           birth.getCorrectionAddress().setPermanentStreetNameEn(registerBirthDetails.get(0).getRegisterBirthPermanent().getStreetNameEn());
+                           birth.getCorrectionAddress().setPermanentStreetNameMl(registerBirthDetails.get(0).getRegisterBirthPermanent().getStreetNameMl());
+                       }
+                   }
 
                 });
-        detailEnrichment.correctionField(request, registerBirthDetails,auditDetails);
+        if(registerBirthDetails.size() >0) {
+            detailEnrichment.correctionField(request, registerBirthDetails, auditDetails);
+        }
     }
 
     public void enrichUpdate(CorrectionRequest request) {

@@ -50,8 +50,6 @@
                 "url": "https://ulb-logos.s3.ap-south-1.amazonaws.com/birth_death_logo.jpg",
                 "type":"image"
               },
-
-
               {
                 "variable": "name",
                 "value": {
