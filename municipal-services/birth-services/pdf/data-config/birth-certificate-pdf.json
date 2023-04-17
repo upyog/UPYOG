@@ -92,7 +92,9 @@
                 "type":"setEmpty",
                 "localisation":{
                   "required":true,
-                  "module":"rainmaker-common"
+                  "prefix": null,
+                  "module":"rainmaker-common",
+                  "locale":"en_IN"
                 }
               },
               {
@@ -103,7 +105,8 @@
                 "type": "setEmpty",
                 "localisation":{
                   "required":true,
-                  "module":"rainmaker-common"
+                  "module":"rainmaker-common",
+                  "locale":"en_IN"
                 }
               },
 
@@ -826,8 +829,7 @@
             "qrcodeConfig": [
               {
                 "variable": "qr_code_image",
-                "value":"$.embeddedUrl",
-                "type":"image"
+                "value":"{{embeddedUrl}}"
               }
             ]
           }

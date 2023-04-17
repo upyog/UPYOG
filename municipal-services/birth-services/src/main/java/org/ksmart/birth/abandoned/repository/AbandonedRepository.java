@@ -9,9 +9,11 @@ import org.ksmart.birth.birthregistry.model.RegisterBirthDetailsRequest;
 import org.ksmart.birth.birthregistry.repository.rowmapperfornewapplication.RegisterRowMapperForApp;
 import org.ksmart.birth.birthregistry.service.MdmsDataService;
 import org.ksmart.birth.common.producer.BndProducer;
+import org.ksmart.birth.common.repository.builder.CommonQueryBuilder;
 import org.ksmart.birth.config.BirthConfiguration;
 
 import org.ksmart.birth.newbirth.service.MdmsForNewBirthService;
+import org.ksmart.birth.utils.BirthConstants;
 import org.ksmart.birth.utils.MdmsUtil;
 import org.ksmart.birth.web.model.SearchCriteria;
 import org.ksmart.birth.web.model.abandoned.AbandonedApplication;
@@ -31,7 +33,7 @@ public class AbandonedRepository {
     private final AbandonedEnrichment enrichment;
     private final BirthConfiguration birthDeathConfiguration;
     private final JdbcTemplate jdbcTemplate;
-    private final AbandonedQueryBuilder queryBuilder;
+    private final CommonQueryBuilder queryBuilder;
     private final AbandonedApplicationRowMapper rowMapper;
     private final MdmsForNewBirthService mdmsBirthService;
     private final  MdmsDataService mdmsDataService;
@@ -40,7 +42,7 @@ public class AbandonedRepository {
 
     @Autowired
     AbandonedRepository(JdbcTemplate jdbcTemplate, AbandonedEnrichment enrichment, BirthConfiguration birthDeathConfiguration,
-                        BndProducer producer, AbandonedQueryBuilder queryBuilder,  AbandonedApplicationRowMapper rowMapper,
+                        BndProducer producer, CommonQueryBuilder queryBuilder,  AbandonedApplicationRowMapper rowMapper,
                         MdmsDataService mdmsDataService, MdmsUtil mdmsUtil, MdmsForNewBirthService mdmsBirthService,RegisterRowMapperForApp registerRowMapperForApp) {
         this.jdbcTemplate = jdbcTemplate;
         this.enrichment = enrichment;
@@ -83,9 +85,15 @@ public class AbandonedRepository {
 
 
     public List<AbandonedApplication> searchBirthDetails(AbandonedRequest request, SearchCriteria criteria) {
+        String uuid = null;
         List<Object> preparedStmtValues = new ArrayList<>();
         Object mdmsDataComm = mdmsUtil.mdmsCall(request.getRequestInfo());
-        String query = queryBuilder.getNewBirthApplicationSearchQuery(criteria, request, preparedStmtValues, Boolean.FALSE);
+        if(request.getRequestInfo().getUserInfo() != null){
+            uuid = request.getRequestInfo().getUserInfo().getUuid();
+        } else{
+            criteria.setApplicationType(BirthConstants.FUN_MODULE_NEW);
+        }
+        String query = queryBuilder.getBirthApplicationSearchQuery(criteria, uuid, preparedStmtValues, Boolean.FALSE);
         List<AbandonedApplication> result = jdbcTemplate.query(query, preparedStmtValues.toArray(), rowMapper);
         result.forEach(birth -> {
             Object mdmsData = mdmsUtil.mdmsCallForLocation(request.getRequestInfo(), birth.getTenantId());

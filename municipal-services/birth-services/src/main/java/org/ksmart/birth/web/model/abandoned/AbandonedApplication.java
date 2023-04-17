@@ -258,7 +258,7 @@ public class AbandonedApplication {
     @JsonProperty("ParentsDetails")
     private ParentsDetail parentsDetails;
     @JsonProperty("documentDetails")
-    private DocumentDetails documentDetails;
+    private List<DocumentDetails> documentDetails;
     @JsonProperty("InitiatorinfoDetails")
     private InitiatorDetail initiatorDetails;
 

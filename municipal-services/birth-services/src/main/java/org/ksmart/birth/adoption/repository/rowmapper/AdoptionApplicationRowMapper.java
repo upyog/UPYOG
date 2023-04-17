@@ -105,13 +105,8 @@ public class AdoptionApplicationRowMapper implements ResultSetExtractor<List<Ado
         }
         return result;
     }
-    
-    
-    
-    
-    
     private Boolean isChildNameEntered(String name) {
-        if(name == null) return true;
+        if (name==null) return true;
         else return false;
     }
 }

@@ -95,10 +95,13 @@ public class NewBirthRepository {
             throw new CustomException(ErrorCodes.NOT_FOUND.getCode(), "No result found.");
         } else{
             List<NewBirthApplication> result = jdbcTemplate.query(query, preparedStmtValues.toArray(), ksmartBirthApplicationRowMapper);
+
             if(result.size() == 0){
                 throw new CustomException(ErrorCodes.NOT_FOUND.getCode(), "No result found.");
             } else if(result.size() >= 1) {
                 result.forEach(birth -> {
+                    System.out.println(birth.getParentAddress().getPresentInsideKeralaLBName());
+                    System.out.println(birth.getParentAddress().getPermntInKeralaAdrLBName());
                     birth.setIsWorkflow(true);
                     Object mdmsData = mdmsUtil.mdmsCallForLocation(request.getRequestInfo(), birth.getTenantId());
                     if (birth.getPlaceofBirthId() != null) {
@@ -158,7 +161,7 @@ public class NewBirthRepository {
 
                                 birth.getParentAddress().setPresentInsideKeralaDistrict(birth.getParentAddress().getDistrictIdPresent());
 
-                                birth.getParentAddress().setPresentInsideKeralaLBName(birth.getParentAddress().getPermntInKeralaAdrLBName());
+                                birth.getParentAddress().setPresentInsideKeralaLBName(birth.getParentAddress().getPresentInsideKeralaLBName());
                                 birth.getParentAddress().setPresentInsideKeralaLocalityNameEn(birth.getParentAddress().getLocalityEnPresent());
                                 birth.getParentAddress().setPresentInsideKeralaLocalityNameMl(birth.getParentAddress().getLocalityMlPresent());
 
@@ -202,10 +205,14 @@ public class NewBirthRepository {
                             birth.getParentAddress().setPresentOutSideIndiaadrsCityTown(birth.getParentAddress().getTownOrVillagePresent());
                         }
                     }
+                    System.out.println(birth.getParentAddress().getPresentInsideKeralaLBName());
+                    System.out.println(birth.getParentAddress().getPermntInKeralaAdrLBName());
                 });
             }
+
             return result;
         }
+
 
 
 

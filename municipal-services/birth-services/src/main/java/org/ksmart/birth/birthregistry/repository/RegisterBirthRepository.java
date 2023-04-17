@@ -32,7 +32,6 @@ public class RegisterBirthRepository {
     private final RegisterBirthEnrichment registerBirthDetailsEnrichment;
     private final BirthRegisterRowMapper birthRegisterRowMapper;
     private final RegisterQueryBuilder registerQueryBuilder;
-  //  private final CertificateQueryBuilder certificateQueryBuilder;
     private final RestTemplate restTemplate;
     private final BirthCetificateRowMapper birthCetificateRowMapper;
 
@@ -47,7 +46,6 @@ public class RegisterBirthRepository {
         this.registerQueryBuilder=registerQueryBuilder;
         this.birthRegisterRowMapper=birthRegisterRowMapper;
         this.restTemplate=restTemplate;
-       // this.certificateQueryBuilder = certificateQueryBuilder;
         this.birthCetificateRowMapper = birthCetificateRowMapper;
     }
 
@@ -125,8 +123,7 @@ public class RegisterBirthRepository {
                     .forEach(cert -> {
                         String uiHost=config.getEgovPdfHost();
                         String birthCertPath=config.getEgovPdfBirthEndPoint();
-                        String tenantId=cert.getTenantId()
-                                            .split("\\.")[0];
+                        String tenantId=cert.getTenantId().split("\\.")[0];
                         birthCertPath=birthCertPath.replace("$tenantId", tenantId);
                         String pdfFinalPath=uiHost + birthCertPath;
                         EgovPdfResp response=restTemplate.postForObject(pdfFinalPath, req, EgovPdfResp.class);

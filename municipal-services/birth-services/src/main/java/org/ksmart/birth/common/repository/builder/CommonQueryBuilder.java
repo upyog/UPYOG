@@ -13,7 +13,7 @@ import javax.validation.constraints.NotNull;
 @Slf4j
 @Component
 public class CommonQueryBuilder extends BaseQueryBuilder {
-	private static final String QUERY = new StringBuilder().append("SELECt ebd.id as ba_id,ebd.dateofreport as ba_dateofreport,ebd.dateofbirth as ba_dateofbirth,ebd.timeofbirth as ba_timeofbirth,")
+	private static final String QUERY = new StringBuilder().append("SELECT ebd.id as ba_id,ebd.dateofreport as ba_dateofreport,ebd.dateofbirth as ba_dateofbirth,ebd.timeofbirth as ba_timeofbirth,")
 			.append("ebd.am_pm as ba_am_pm,ebd.firstname_en as ba_firstname_en,ebd.firstname_ml as ba_firstname_ml,ebd.middlename_en as ba_middlename_en,ebd.middlename_ml as ba_middlename_ml,")
 			.append("ebd.lastname_en as ba_lastname_en,ebd.lastname_ml as ba_lastname_ml,ebd.tenantid as ba_tenantid,ebd.gender as ba_gender,ebd.remarks_en as ba_remarks_en,ebd.remarks_ml as ba_remarks_ml,")
 			.append("ebd.aadharno as ba_aadharno,ebd.esign_user_code as ba_esign_user_code,ebd.esign_user_desig_code as ba_esign_user_desig_code,ebd.is_adopted as ba_is_adopted,ebd.is_abandoned as ba_is_abandoned,")
