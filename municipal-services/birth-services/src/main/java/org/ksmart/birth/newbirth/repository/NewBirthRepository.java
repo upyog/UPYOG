@@ -101,8 +101,6 @@ public class NewBirthRepository {
                 throw new CustomException(ErrorCodes.NOT_FOUND.getCode(), "No result found.");
             } else if(result.size() >= 1) {
                 result.forEach(birth -> {
-                    System.out.println(birth.getParentAddress().getPresentInsideKeralaLBName());
-                    System.out.println(birth.getParentAddress().getPermntInKeralaAdrLBName());
                     birth.setIsWorkflow(true);
                     Object mdmsData = mdmsUtil.mdmsCallForLocation(request.getRequestInfo(), birth.getTenantId());
                     if (birth.getPlaceofBirthId() != null) {
@@ -206,8 +204,6 @@ public class NewBirthRepository {
                             birth.getParentAddress().setPresentOutSideIndiaadrsCityTown(birth.getParentAddress().getTownOrVillagePresent());
                         }
                     }
-                    System.out.println(birth.getParentAddress().getPresentInsideKeralaLBName());
-                    System.out.println(birth.getParentAddress().getPermntInKeralaAdrLBName());
                 });
             }
 
