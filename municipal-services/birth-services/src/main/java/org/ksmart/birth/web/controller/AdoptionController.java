@@ -22,6 +22,10 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
+import static org.ksmart.birth.utils.BirthConstants.STATUS_APPROVED;
+import static org.ksmart.birth.utils.BirthConstants.WF_APPROVE;
+import static org.ksmart.birth.utils.enums.ErrorCodes.REQUIRED;
+
 @Slf4j
 @RestController
 @RequestMapping("/cr")
@@ -54,15 +58,22 @@ public class AdoptionController {
         BirthCertificate birthCertificate = new BirthCertificate();
         List<AdoptionApplication> adoptionApplicationDetails=adoptionService.updateAdoptionBirthDetails(request);
         //Download certificate when Approved
+        
         if(request.getAdoptionDetails().get(0).getIsWorkflow()) {
-        if((adoptionApplicationDetails.get(0).getApplicationStatus().equals("APPROVED")  && adoptionApplicationDetails.get(0).getAction().equals("APPROVE"))){
-            RegisterBirthDetailsRequest registerBirthDetailsRequest = registryReq.createRegistryRequest(request);
-            List<RegisterBirthDetail> registerBirthDetails =  registerBirthService.saveRegisterBirthDetails(registerBirthDetailsRequest);
-            RegisterBirthSearchCriteria criteria = new RegisterBirthSearchCriteria();
-            criteria.setTenantId(registerBirthDetails.get(0).getTenantId());
-            criteria.setRegistrationNo(registerBirthDetails.get(0).getRegistrationNo());
-            birthCertificate = registerBirthService.download(criteria,request.getRequestInfo());
-        }
+        if((adoptionApplicationDetails.get(0).getApplicationStatus().equals(STATUS_APPROVED)  && adoptionApplicationDetails.get(0).getAction().equals(WF_APPROVE))){
+            RegisterBirthDetailsRequest registerBirthDetailsRequest = registryReq.createRegistryRequestNew(request);
+            
+            if (registerBirthDetailsRequest.getRegisterBirthDetails().size() == 1) {
+                registerBirthService.saveRegisterBirthDetails(registerBirthDetailsRequest);
+            }
+            
+            
+//            List<RegisterBirthDetail> registerBirthDetails =  registerBirthService.saveRegisterBirthDetails(registerBirthDetailsRequest);
+//            RegisterBirthSearchCriteria criteria = new RegisterBirthSearchCriteria();
+//            criteria.setTenantId(registerBirthDetails.get(0).getTenantId());
+//            criteria.setRegistrationNo(registerBirthDetails.get(0).getRegistrationNo());
+//            birthCertificate = registerBirthService.download(criteria,request.getRequestInfo());
+         }
         }
         AdoptionResponse response=AdoptionResponse.builder()
                 .adoptionDetails(adoptionApplicationDetails)
