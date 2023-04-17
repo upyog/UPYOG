@@ -733,9 +733,9 @@ serviceMaps:
             basePath: AdoptionDetails.*.ParentsDetails
             jsonMaps:
 
-            - jsonPath: $.AdoptionDetails.*.ParentsDetails.firstname_en
+            - jsonPath: $.AdoptionDetails.*.ParentsDetails.fatherFirstNameEn
 
-            - jsonPath: $.AdoptionDetails.*.ParentsDetails.firstname_ml
+            - jsonPath: $.AdoptionDetails.*.ParentsDetails.fatherFirstNameMl
 
             - jsonPath: $.AdoptionDetails.*.ParentsDetails.fatherAadhar
 
@@ -874,7 +874,7 @@ serviceMaps:
 
             - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.stateIdPresent
 
-            - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.poNoPresent
+            - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.presentInsideKeralaPostOffice
 
             - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.pinNoPresent
 
