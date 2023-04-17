@@ -114,7 +114,7 @@ public class MdmsDataService {
     }
 
     public void setPresentAddressDetailsEn(RegisterBirthDetail register,RegisterCertificateData registerCert, Object  mdmsData) {
-        if (!register.getRegisterBirthPresent().getCountryId().isEmpty() || !register.getRegisterBirthPresent().getCountryId().isEmpty()) {
+        if (register.getRegisterBirthPresent().getCountryId() != null) {
             if (register.getRegisterBirthPresent().getCountryId().contains(COUNTRY_CODE)) {
                 ksmartAddressService.getAddressInsideCountryPresentEn(register, registerCert, mdmsData);
                 ksmartAddressService.getAddressInsideCountryPresentMl(register, registerCert, mdmsData);
@@ -122,10 +122,11 @@ public class MdmsDataService {
                 ksmartAddressService.getAddressOutsideCountryPresentEn(register, registerCert, mdmsData);
                 ksmartAddressService.getAddressOutsideCountryPresentMl(register, registerCert, mdmsData);
             }
-        }  else{
+        } else {
             ksmartAddressService.getAddressOutsideCountryPresentEn(register, registerCert, mdmsData);
             ksmartAddressService.getAddressOutsideCountryPresentMl(register, registerCert, mdmsData);
         }
+
     }
 
     public void setPremananttAddressDetailsEn(RegisterBirthDetail register,RegisterCertificateData registerCert, Object  mdmsData) {
