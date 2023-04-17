@@ -69,7 +69,8 @@ public class NewBirthRepository {
         SearchCriteria criteria = new SearchCriteria();
         List<RegisterBirthDetail> result = null;
         if (requestApplication.getNewBirthDetails().size() > 0) {
-            criteria.getApplicationNumber().add(requestApplication.getNewBirthDetails().get(0).getApplicationNo());
+            criteria.setId(requestApplication.getNewBirthDetails().get(0).getId());
+           // criteria.getApplicationNumber().add(requestApplication.getNewBirthDetails().get(0).getApplicationNo());
             criteria.setTenantId(requestApplication.getNewBirthDetails().get(0).getTenantId());
             String query = commonQueryBuilder.getApplicationSearchQueryForRegistry(criteria, preparedStmtValues);
             result = jdbcTemplate.query(query, preparedStmtValues.toArray(), registerRowMapperForApp);
