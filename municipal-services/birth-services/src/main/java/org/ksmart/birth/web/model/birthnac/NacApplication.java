@@ -5,6 +5,7 @@ import lombok.*;
 import org.ksmart.birth.common.model.AuditDetails;
 import org.ksmart.birth.common.model.Document; 
 import org.ksmart.birth.web.model.birthnac.NacApplicantDetail;
+import org.ksmart.birth.web.model.DocumentDetails;
 import org.ksmart.birth.web.model.ParentAddress;
 import org.ksmart.birth.web.model.ParentsDetail;
 
@@ -271,6 +272,11 @@ public class NacApplication {
     
     @JsonProperty("OtherChildren")
     private List<NacOtherChildren> otherChildrenDetails;
+    
+    
+    @JsonProperty("BirthNACDocuments")
+    private List<DocumentDetails> documentDetails;
+    
 
     @JsonProperty("AddressBirthDetails")
     private ParentAddress parentAddress;

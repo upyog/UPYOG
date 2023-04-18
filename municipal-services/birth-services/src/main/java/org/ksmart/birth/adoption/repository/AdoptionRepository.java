@@ -62,8 +62,9 @@ public class AdoptionRepository {
         List<Object> preparedStmtValues = new ArrayList<>();
         SearchCriteria criteria = new SearchCriteria();
         List<RegisterBirthDetail> result = null;
-        if (requestApplication.getAdoptionDetails().size() > 0) {
-            criteria.getApplicationNumber().add(requestApplication.getAdoptionDetails().get(0).getApplicationNo());
+        if (requestApplication.getAdoptionDetails().size() > 0) {    
+        	criteria.setId(requestApplication.getAdoptionDetails().get(0).getId());        	
+//            criteria.getApplicationNumber().add(requestApplication.getAdoptionDetails().get(0).getApplicationNo());
             criteria.setTenantId(requestApplication.getAdoptionDetails().get(0).getTenantId());
             String query = adoptionQueryBuilder.getApplicationSearchQueryForRegistry(criteria, preparedStmtValues);
             result = jdbcTemplate.query(query, preparedStmtValues.toArray(), registerRowMapperForApp);

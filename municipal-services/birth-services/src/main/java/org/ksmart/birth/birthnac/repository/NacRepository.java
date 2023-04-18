@@ -65,7 +65,7 @@ public class NacRepository {
 
     public List<NacApplication> updateKsmartBirthDetails(NacDetailRequest request) {
     	adoptionEnrichment.enrichUpdate(request);
-        producer.push(birthDeathConfiguration.getUpdateBirthAdoptionTopic(), request);
+        producer.push(birthDeathConfiguration.getUpdateBirthNacTopic(), request);
         return request.getNacDetails();
     }
 

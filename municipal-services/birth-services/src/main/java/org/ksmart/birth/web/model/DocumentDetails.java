@@ -12,7 +12,7 @@ import javax.validation.constraints.Size;
 /**
  * A Object holds the basic data for a Trade License
  */
-@ApiModel(description = "A Object holds the basic data for a Trade License")
+@ApiModel(description = "A Object holdsdocuments of a birth ")
 @Validated
 @javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2018-09-18T17:06:11.263+05:30")
 
@@ -28,30 +28,47 @@ public class DocumentDetails {
     @SafeHtml
     @JsonProperty("id")
     private String id;
+    
+    @JsonProperty("documentName")
+    private Boolean documentName;
+    
+    @JsonProperty("documentDescription")
+    private Boolean documentDescription;
 
     @JsonProperty("active")
     private Boolean active;
 
-    @Size(max=64)
-    @SafeHtml
+    @Size(max=64)    
     @JsonProperty("tenantId")
     private String tenantId = null;
 
-    @Size(max=64)
-    @SafeHtml
+    @Size(max=64)    
     @JsonProperty("documentType")
-    private String documentType = null;
+    private String documentType;
 
-    @Size(max=64)
-    @SafeHtml
+    @Size(max=64)   
     @JsonProperty("fileStoreId")
     private String fileStoreId = null;
+    
+    @JsonProperty("documentLink")
+    private String documentLink;
+    
+    @JsonProperty("fileType")
+    private String fileType;
+    
+    @JsonProperty("fileSize")
+    private String fileSize; 
+    
+    
 
-    @Size(max=64)
-    @SafeHtml
-    @JsonProperty("documentUid")
-    private String documentUid;
+    @Size(max=64)   
+    @JsonProperty("birthdtlid")
+    private String birthdtlid;
 
+    @Size(max = 64)
+	@JsonProperty("parentBrthDtlId")
+	private String parentBrthDtlId;
+    
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails = null;
 

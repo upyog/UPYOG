@@ -38,12 +38,14 @@ public class NacEnrichment implements BaseEnrichment {
     public void enrichCreate(NacDetailRequest request) {
         Date date = new Date();
         long doreport = date.getTime();
+        String BirthUuid;
         RequestInfo requestInfo = request.getRequestInfo();
         User userInfo = requestInfo.getUserInfo();
         AuditDetails auditDetails = buildAuditDetails(userInfo.getUuid(), Boolean.TRUE);
         request.getNacDetails().forEach(birth -> {
 
             birth.setId(UUID.randomUUID().toString());
+          
             birth.setDateOfReport(doreport);
             birth.setAuditDetails(auditDetails);
             if(birth.getPlaceofBirthId() != null || !birth.getPlaceofBirthId().isEmpty()){
@@ -57,16 +59,18 @@ public class NacEnrichment implements BaseEnrichment {
                         child.setId(UUID.randomUUID().toString());
                     }
             );
+            birth.getDocumentDetails().forEach(
+            		document -> {
+            			document.setId(UUID.randomUUID().toString());
+            			document.setActive(true);
+            			document.setAuditDetails(auditDetails);
+            			document.setBirthdtlid(birth.getId());
+            			document.setParentBrthDtlId(birth.getId());
+            		});
+            
             birth.getParentsDetails().setFatherUuid(UUID.randomUUID().toString());
             birth.getParentsDetails().setMotherUuid(UUID.randomUUID().toString());
-//            if(birth.getParentsDetails() != null) {
-//                if(!birth.getParentsDetails().getIsFatherInfoMissing()){
-//                    birth.getParentsDetails().setFatherBioAdopt("ADOPT");
-//                }
-//                if(!birth.getParentsDetails().getIsMotherInfoMissing()){
-//                    birth.getParentsDetails().setMotherBioAdopt("ADOPT");
-//                }
-//            }
+ 
             if(birth.getParentAddress() != null) {
                 birth.getParentAddress().setPermanentUuid(UUID.randomUUID().toString());
                 birth.getParentAddress().setPresentUuid(UUID.randomUUID().toString());

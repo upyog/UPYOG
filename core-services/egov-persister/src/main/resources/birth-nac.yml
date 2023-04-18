@@ -457,7 +457,42 @@ serviceMaps:
 
             - jsonPath: $.NacDetails.*.OtherChildren.*.auditDetails.lastModifiedBy
 
-            - jsonPath: $.NacDetails.*.OtherChildren.*.auditDetails.lastModifiedTime
+            - jsonPath: $.NacDetails.*.OtherChildren.*.auditDetails.lastModifiedTime           
+            
+        - query: INSERT INTO public.eg_birth_application_document(
+            id, tenantid, document_name, document_type, document_description, filestoreid, document_link,file_type,file_size,birthdtlid,active,createdby, createdtime, lastmodifiedby, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+          basePath: NacDetails.*.BirthNACDocuments.*
+          jsonMaps:
+
+            - jsonPath: $.NacDetails.*.BirthNACDocuments.*.id
+
+            - jsonPath: $.NacDetails.*.tenantid
+
+            - jsonPath: $.NacDetails.*.BirthNACDocuments.*.documentName
+
+            - jsonPath: $.NacDetails.*.BirthNACDocuments.*.documentType
+
+            - jsonPath: $.NacDetails.*.BirthNACDocuments.*.documentDescription
+
+            - jsonPath: $.NacDetails.*.BirthNACDocuments.*.fileStoreId
+
+            - jsonPath: $.NacDetails.*.BirthNACDocuments.*.documentLink
+
+            - jsonPath: $.NacDetails.*.BirthNACDocuments.*.fileType
+            
+            - jsonPath: $.NacDetails.*.BirthNACDocuments.*.fileSize
+            
+            - jsonPath: $.NacDetails.*.BirthNACDocuments.*.parentBrthDtlId
+            
+            - jsonPath: $.NacDetails.*.BirthNACDocuments.*.active
+
+            - jsonPath: $.NacDetails.*.BirthNACDocuments.*.auditDetails.createdBy
+
+            - jsonPath: $.NacDetails.*.BirthNACDocuments.*.auditDetails.createdTime
+
+            - jsonPath: $.NacDetails.*.BirthNACDocuments.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.NacDetails.*.BirthNACDocuments.*.auditDetails.lastModifiedTime
 
     - version: 1.0
       description: Persists update birth details in eg_birth_details  table

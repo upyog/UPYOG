@@ -12,8 +12,8 @@ serviceMaps:
             applicationtype,businessservice,workflowcode,fm_fileno,file_date,file_status,applicationno,registrationno,registration_date,
             action,status, createdtime, createdby, lastmodifiedtime, lastmodifiedby,           
             adopt_deed_order_no,adopt_dateoforder_deed,adopt_issuing_auththority,adopt_has_agency,adopt_agency_name,adopt_agency_address,
-            adopt_decree_order_no,adopt_dateoforder_decree,adopt_agency_contact_person,adopt_agency_contact_person_mobileno,old_birth_reg_no) 
-            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,
+            adopt_decree_order_no,adopt_dateoforder_decree,adopt_agency_contact_person,adopt_agency_contact_person_mobileno,old_birth_reg_no,is_adopted) 
+            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,
              ?,?,?,?,?);
 
           basePath: AdoptionDetails.*
@@ -114,7 +114,9 @@ serviceMaps:
             
             - jsonPath: $.AdoptionDetails.*.adoptagencycontactpersonmobileno 
             
-            - jsonPath: $.AdoptionDetails.*.oldregistrationno          
+            - jsonPath: $.AdoptionDetails.*.oldregistrationno
+            
+            - jsonPath: $.AdoptionDetails.*.isAdopted              
             
 
         - query: INSERT INTO public.eg_birth_place(id,birthdtlid,placeofbirthid,hospitalid,public_place_id,institution_type_id,institution_id,vehicletypeid,vehicle_registration_no,vehicle_from_en,
