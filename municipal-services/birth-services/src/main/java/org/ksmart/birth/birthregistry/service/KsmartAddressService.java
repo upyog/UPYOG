@@ -1,6 +1,7 @@
 package org.ksmart.birth.birthregistry.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.text.CaseUtils;
 import org.ksmart.birth.birthregistry.model.RegisterBirthDetail;
 import org.ksmart.birth.birthregistry.model.RegisterCertificateData;
 import org.ksmart.birth.common.services.MdmsTenantService;
@@ -18,9 +19,9 @@ public class KsmartAddressService {
     public void getAddressOutsideCountryPresentEn(RegisterBirthDetail register, RegisterCertificateData registerCert, Object  mdmsData) {
         String address = "";
         address = new StringBuilder()
-                    .append(register.getRegisterBirthPresent().getOtAddress1En() == null ? "" : register.getRegisterBirthPresent().getOtAddress1En()+", ")
-                    .append(register.getRegisterBirthPresent().getOtAddress2En()== null ? "" : register.getRegisterBirthPresent().getOtAddress2En()+", ")
-                    .append(register.getRegisterBirthPresent().getOtStateRegionProvinceEn() == null ? "" : register.getRegisterBirthPresent().getOtStateRegionProvinceEn()+", ")
+                    .append(register.getRegisterBirthPresent().getOtAddress1En() == null ? "" : CaseUtils.toCamelCase(register.getRegisterBirthPresent().getOtAddress1En(),true)+", ")
+                    .append(register.getRegisterBirthPresent().getOtAddress2En()== null ? "" : CaseUtils.toCamelCase(register.getRegisterBirthPresent().getOtAddress2En(),true)+", ")
+                    .append(register.getRegisterBirthPresent().getOtStateRegionProvinceEn() == null ? "" : CaseUtils.toCamelCase(register.getRegisterBirthPresent().getOtStateRegionProvinceEn(),true)+", ")
                     .append(register.getRegisterBirthPresent().getOtZipcode()  == null ? "" : register.getRegisterBirthPresent().getOtZipcode()+", ")
                     .append(register.getRegisterBirthPresent().getCountryId() == null ? "" :  mdmsTenantService.getCountryNameEn(mdmsData, register.getRegisterBirthPresent().getCountryId())).toString();
         registerCert.setPresentAddDetails(address);
@@ -39,9 +40,9 @@ public class KsmartAddressService {
     public void getAddressOutsideCountryPermanentEn(RegisterBirthDetail register, RegisterCertificateData registerCert, Object  mdmsData) {
         String address = "";
         address = new StringBuilder()
-                .append(register.getRegisterBirthPresent().getOtAddress1En() == null ? "" : register.getRegisterBirthPresent().getOtAddress1En()+", ")
-                .append(register.getRegisterBirthPresent().getOtAddress2En()== null ? "" : register.getRegisterBirthPresent().getOtAddress2En()+", ")
-                .append(register.getRegisterBirthPresent().getOtStateRegionProvinceEn() == null ? "" : register.getRegisterBirthPresent().getOtStateRegionProvinceEn()+", ")
+                .append(register.getRegisterBirthPresent().getOtAddress1En() == null ? "" : CaseUtils.toCamelCase(register.getRegisterBirthPresent().getOtAddress1En(),true)+", ")
+                .append(register.getRegisterBirthPresent().getOtAddress2En()== null ? "" : CaseUtils.toCamelCase(register.getRegisterBirthPresent().getOtAddress2En(),true)+", ")
+                .append(register.getRegisterBirthPresent().getOtStateRegionProvinceEn() == null ? "" : CaseUtils.toCamelCase(register.getRegisterBirthPresent().getOtStateRegionProvinceEn(),true)+", ")
                 .append(register.getRegisterBirthPresent().getOtZipcode()  == null ? "" : register.getRegisterBirthPresent().getOtZipcode()+", ")
                 .append(register.getRegisterBirthPresent().getCountryId() == null ? "" :  mdmsTenantService.getCountryNameEn(mdmsData, register.getRegisterBirthPresent().getCountryId())).toString();
         registerCert.setPermenantAddDetails(address);
@@ -59,9 +60,9 @@ public class KsmartAddressService {
     public void getAddressInsideCountryPresentEn(RegisterBirthDetail register, RegisterCertificateData registerCert, Object  mdmsData) {
         String address = "";
 
-        address = new StringBuilder().append(register.getRegisterBirthPresent().getHouseNameEn() == null ? "" : register.getRegisterBirthPresent().getHouseNameEn()+", ")
-                .append(register.getRegisterBirthPresent().getLocalityEn() == null || register.getRegisterBirthPresent().getLocalityEn().trim() == "" ? "" : register.getRegisterBirthPresent().getLocalityEn()+", ")
-                .append(register.getRegisterBirthPresent().getStreetNameEn() == null || register.getRegisterBirthPresent().getStreetNameEn().trim() == ""? "" : register.getRegisterBirthPresent().getStreetNameEn()+", ")
+        address = new StringBuilder().append(register.getRegisterBirthPresent().getHouseNameEn() == null ? "" : CaseUtils.toCamelCase(register.getRegisterBirthPresent().getHouseNameEn(),true)+", ")
+                .append(register.getRegisterBirthPresent().getLocalityEn() == null || register.getRegisterBirthPresent().getLocalityEn().trim() == "" ? "" : CaseUtils.toCamelCase(register.getRegisterBirthPresent().getLocalityEn(),true)+", ")
+                .append(register.getRegisterBirthPresent().getStreetNameEn() == null || register.getRegisterBirthPresent().getStreetNameEn().trim() == ""? "" : CaseUtils.toCamelCase(register.getRegisterBirthPresent().getStreetNameEn(),true)+", ")
                 .append(register.getRegisterBirthPresent().getPoId() == null ? "" : mdmsTenantService.getPostOfficeNameEn(mdmsData,register.getRegisterBirthPresent().getPoId())+ " "
                                                                                     +mdmsTenantService.getPostOfficePinCode(mdmsData,register.getRegisterBirthPresent().getPoId())+", ")
                 .append(register.getRegisterBirthPresent().getDistrictId() == null ? "" : mdmsTenantService.getDistrictNameEn(mdmsData, register.getRegisterBirthPresent().getDistrictId())+", ")
@@ -85,9 +86,9 @@ public class KsmartAddressService {
 
     public void getAddressInsideCountryPermanentEn(RegisterBirthDetail register, RegisterCertificateData registerCert, Object  mdmsData) {
         String address = "";
-        address = new StringBuilder().append(register.getRegisterBirthPermanent().getHouseNameEn() == null ? "" : register.getRegisterBirthPermanent().getHouseNameEn()+", ")
-                .append(register.getRegisterBirthPermanent().getLocalityEn() == null ? "" : register.getRegisterBirthPermanent().getLocalityEn()+", ")
-                .append(register.getRegisterBirthPermanent().getStreetNameEn() == null ? "" : register.getRegisterBirthPermanent().getStreetNameEn()+", ")
+        address = new StringBuilder().append(register.getRegisterBirthPermanent().getHouseNameEn() == null ? "" : CaseUtils.toCamelCase(register.getRegisterBirthPermanent().getHouseNameEn(),true)+", ")
+                .append(register.getRegisterBirthPermanent().getLocalityEn() == null ? "" : CaseUtils.toCamelCase(register.getRegisterBirthPermanent().getLocalityEn(),true)+", ")
+                .append(register.getRegisterBirthPermanent().getStreetNameEn() == null ? "" : CaseUtils.toCamelCase(register.getRegisterBirthPermanent().getStreetNameEn(),true)+", ")
                 .append(register.getRegisterBirthPermanent().getPoId() == null ? "" : mdmsTenantService.getPostOfficeNameEn(mdmsData,register.getRegisterBirthPermanent().getPoId())+ " "
                         +mdmsTenantService.getPostOfficePinCode(mdmsData,register.getRegisterBirthPermanent().getPoId())+", ")
                 .append(register.getRegisterBirthPermanent().getDistrictId() == null ? "" : mdmsTenantService.getDistrictNameEn(mdmsData, register.getRegisterBirthPermanent().getDistrictId())+", ")

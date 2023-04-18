@@ -31,15 +31,15 @@ public class MdmsForBornOutsideService {
         this.ksmartAddressService = ksmartAddressService;
     }
 
-    public void setLocationDetails(BornOutsideApplication birth, Object mdmsData) {
-        if (birth.getWardId() != null) {
-            String wardEn = mdmsLocationService.getWardNameEn(mdmsData, birth.getWardId());
-            String wardMl = mdmsLocationService.getWardNameMl(mdmsData, birth.getWardId());
-            String wardNo = mdmsLocationService.getWardNo(mdmsData, birth.getWardId());
-            birth.setWardNameEn(wardEn);
-            birth.setWardNameMl(wardMl);
-            birth.setWardNumber(wardNo);
-        }
+//    public void setLocationDetails(BornOutsideApplication birth, Object mdmsData) {
+//        if (birth.getWardId() != null) {
+//            String wardEn = mdmsLocationService.getWardNameEn(mdmsData, birth.getWardId());
+//            String wardMl = mdmsLocationService.getWardNameMl(mdmsData, birth.getWardId());
+//            String wardNo = mdmsLocationService.getWardNo(mdmsData, birth.getWardId());
+//            birth.setWardNameEn(wardEn);
+//            birth.setWardNameMl(wardMl);
+//            birth.setWardNumber(wardNo);
+//        }
 //        if (birth.getPlaceofBirthId().contains(BIRTH_PLACE_HOSPITAL)) {
 //            String placeEn = mdmsLocationService.getHospitalAddressEn(mdmsData, birth.getHospitalId());
 //            String placeMl = mdmsLocationService.getHospitalNameMl(mdmsData, birth.getHospitalId());
@@ -50,11 +50,13 @@ public class MdmsForBornOutsideService {
 //            String placeMl = mdmsLocationService.getInstitutionNameMl(mdmsData, birth.getInstitutionNameCode());
 //            birth.setInstitutionId(placeEn);
 //            birth.setInstitutionIdMl(placeMl);
+//            //setInstitutionDetails(birth, mdmsData);
 //        }else { }
-    }
-
+//    }
+//
 //    public void setInstitutionDetails(BornOutsideApplication birth, Object  mdmsData) {
 //        if (birth.getPlaceofBirthId().contains(BIRTH_PLACE_INSTITUTION)) {
+//            System.out.println( birth.getInstitutionTypeId());
 //            String placeInstType = mdmsTenantService.getInstitutionTypeName(mdmsData, birth.getInstitutionTypeId());
 //            birth.setInstitution(placeInstType);
 //        }
@@ -68,5 +70,4 @@ public class MdmsForBornOutsideService {
             birth.getParentAddress().setTownOrVillagePresent("VILLAGE");
         } else{}
     }
-
 }

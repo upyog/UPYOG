@@ -1,5 +1,6 @@
 package org.ksmart.birth.birthregistry.service;
 
+import org.apache.commons.text.CaseUtils;
 import org.ksmart.birth.birthregistry.model.RegisterBirthDetail;
 import org.ksmart.birth.birthregistry.model.RegisterCertificateData;
 import org.ksmart.birth.common.services.MdmsLocationService;
@@ -36,54 +37,36 @@ public class KsmartBirthPlaceService {
             register.setPlaceDetails(placeEn);
             register.setPlaceDetailsMl(placeMl);
         } else if (register.getBirthPlaceId().contains(BIRTH_PLACE_INSTITUTION)) {
-            String placeEn =new StringBuilder().append(mdmsLocationService.getInstitutionNameEn(mdmsData, register.getBirthPlaceInstitutionId()) )
-                    .append(",")
+            String placeEn =new StringBuilder().append(mdmsLocationService.getInstitutionNameEn(mdmsData, register.getBirthPlaceInstitutionId()) +",")
                     .append(mdmsLocationService.getInstitutionTypeEn(mdmsData, register.getBirthPlaceInstitutionlTypeId())==null
-                            ?"":mdmsLocationService.getInstitutionTypeEn(mdmsData, register.getBirthPlaceInstitutionlTypeId()))
-                    .append(",")
+                            ?"":mdmsLocationService.getInstitutionTypeEn(mdmsData, register.getBirthPlaceInstitutionlTypeId())+",")
                     .append(mdmsLocationService.getInstitutionAddressEn(mdmsData, register.getBirthPlaceInstitutionId())==null
                             ?"":mdmsLocationService.getInstitutionAddressEn(mdmsData, register.getBirthPlaceInstitutionId())).toString();
 
-            String placeMl =new StringBuilder().append(mdmsLocationService.getInstitutionNameMl(mdmsData, register.getBirthPlaceInstitutionId()) )
-                    .append(",")
+            String placeMl =new StringBuilder().append(mdmsLocationService.getInstitutionNameMl(mdmsData, register.getBirthPlaceInstitutionId()) +",")
                     .append(mdmsLocationService.getInstitutionTypeMl(mdmsData, register.getBirthPlaceInstitutionlTypeId())==null
-                            ?"":mdmsLocationService.getInstitutionTypeMl(mdmsData, register.getBirthPlaceInstitutionlTypeId()))
-                    .append(",")
+                            ?"":mdmsLocationService.getInstitutionTypeMl(mdmsData, register.getBirthPlaceInstitutionlTypeId())+",")
                     .append(mdmsLocationService.getInstitutionAddressMl(mdmsData, register.getBirthPlaceInstitutionId())==null
                             ?"":mdmsLocationService.getInstitutionAddressMl(mdmsData, register.getBirthPlaceInstitutionId())).toString();
 
             register.setPlaceDetails(placeEn);
             register.setPlaceDetailsMl(placeMl);
         } else if (register.getBirthPlaceId().contains(BIRTH_PLACE_HOME)) {
-            String placeEn = new StringBuilder().append(registerMain.getRegisterBirthPlace().getHouseNameEn() == null ? "" : registerMain.getRegisterBirthPlace().getHouseNameEn())
-                    .append(",")
-                    .append(registerMain.getRegisterBirthPlace().getHoLocalityEn() == null ? "" : registerMain.getRegisterBirthPlace().getHoLocalityEn())
-                    .append(",")
-                    .append(registerMain.getRegisterBirthPlace().getHoStreetEn() == null ? "" : registerMain.getRegisterBirthPlace().getHoStreetEn())
-                    .append(",")
-                    .append(registerMain.getRegisterBirthPlace().getHoPoId() == null ? "" : mdmsTenantService.getPostOfficeNameEn(mdmsData,registerMain.getRegisterBirthPlace().getHoPoId()))
-                    .append("-")
-                    .append(registerMain.getRegisterBirthPlace().getHoPoId() == null ? "" : mdmsTenantService.getPostOfficePinCode(mdmsData,registerMain.getRegisterBirthPlace().getHoPoId()))
-                    .append(",")
-                    .append(registerMain.getRegisterBirthPlace().getHoDistrictId() == null ? "" : mdmsTenantService.getDistrictNameEn(mdmsData, registerMain.getRegisterBirthPlace().getHoDistrictId()))
-                    .append(",")
-                    .append(registerMain.getRegisterBirthPlace().getHoStateId() == null ? "" : mdmsTenantService.getStateNameEn(mdmsData, registerMain.getRegisterBirthPlace().getHoStateId()))
-                    .append(",")
+            String placeEn = new StringBuilder().append(registerMain.getRegisterBirthPlace().getHouseNameEn() == null ? "" : CaseUtils.toCamelCase(registerMain.getRegisterBirthPlace().getHouseNameEn(),true)+",")
+                    .append(registerMain.getRegisterBirthPlace().getHoLocalityEn() == null ? "" : CaseUtils.toCamelCase(registerMain.getRegisterBirthPlace().getHoLocalityEn(),true)+",")
+                    .append(registerMain.getRegisterBirthPlace().getHoStreetEn() == null ? "" : CaseUtils.toCamelCase(registerMain.getRegisterBirthPlace().getHoStreetEn(),true)+",")
+                    .append(registerMain.getRegisterBirthPlace().getHoPoId() == null ? "" : mdmsTenantService.getPostOfficeNameEn(mdmsData,registerMain.getRegisterBirthPlace().getHoPoId())+",")
+                    .append(registerMain.getRegisterBirthPlace().getHoPoId() == null ? "" : mdmsTenantService.getPostOfficePinCode(mdmsData,registerMain.getRegisterBirthPlace().getHoPoId())+",")
+                    .append(registerMain.getRegisterBirthPlace().getHoDistrictId() == null ? "" : mdmsTenantService.getDistrictNameEn(mdmsData, registerMain.getRegisterBirthPlace().getHoDistrictId())+",")
+                    .append(registerMain.getRegisterBirthPlace().getHoStateId() == null ? "" : mdmsTenantService.getStateNameEn(mdmsData, registerMain.getRegisterBirthPlace().getHoStateId())+",")
                     .append(registerMain.getRegisterBirthPlace().getHoCountryId() == null ? "" :  mdmsTenantService.getCountryNameEn(mdmsData, registerMain.getRegisterBirthPlace().getHoCountryId())).toString();
-            String placeMl =new StringBuilder().append(registerMain.getRegisterBirthPlace().getHouseNameMl() == null ? "" : registerMain.getRegisterBirthPlace().getHouseNameMl())
-                    .append(",")
-                    .append(registerMain.getRegisterBirthPlace().getHoLocalityMl() == null ? "" : registerMain.getRegisterBirthPlace().getHoLocalityMl())
-                    .append(",")
-                    .append(registerMain.getRegisterBirthPlace().getHoStreetMl() == null ? "" : registerMain.getRegisterBirthPlace().getHoStreetMl())
-                    .append(",")
-                    .append(registerMain.getRegisterBirthPlace().getHoPoId() == null ? "" : mdmsTenantService.getPostOfficeNameMl(mdmsData,registerMain.getRegisterBirthPlace().getHoPoId()))
-                    .append("-")
-                    .append(registerMain.getRegisterBirthPlace().getHoPoId() == null ? "" : mdmsTenantService.getPostOfficePinCode(mdmsData,registerMain.getRegisterBirthPlace().getHoPoId()))
-                    .append(",")
-                    .append(registerMain.getRegisterBirthPlace().getHoDistrictId() == null ? "" : mdmsTenantService.getDistrictNameMl(mdmsData, registerMain.getRegisterBirthPlace().getHoDistrictId()))
-                    .append(",")
-                    .append(registerMain.getRegisterBirthPlace().getHoStateId() == null ? "" : mdmsTenantService.getStateNameMl(mdmsData, registerMain.getRegisterBirthPlace().getHoStateId()))
-                    .append(",")
+            String placeMl =new StringBuilder().append(registerMain.getRegisterBirthPlace().getHouseNameMl() == null ? "" : registerMain.getRegisterBirthPlace().getHouseNameMl()+",")
+                    .append(registerMain.getRegisterBirthPlace().getHoLocalityMl() == null ? "" : registerMain.getRegisterBirthPlace().getHoLocalityMl()+",")
+                    .append(registerMain.getRegisterBirthPlace().getHoStreetMl() == null ? "" : registerMain.getRegisterBirthPlace().getHoStreetMl()+",")
+                    .append(registerMain.getRegisterBirthPlace().getHoPoId() == null ? "" : mdmsTenantService.getPostOfficeNameMl(mdmsData,registerMain.getRegisterBirthPlace().getHoPoId())+",")
+                    .append(registerMain.getRegisterBirthPlace().getHoPoId() == null ? "" : mdmsTenantService.getPostOfficePinCode(mdmsData,registerMain.getRegisterBirthPlace().getHoPoId())+",")
+                    .append(registerMain.getRegisterBirthPlace().getHoDistrictId() == null ? "" : mdmsTenantService.getDistrictNameMl(mdmsData, registerMain.getRegisterBirthPlace().getHoDistrictId())+",")
+                    .append(registerMain.getRegisterBirthPlace().getHoStateId() == null ? "" : mdmsTenantService.getStateNameMl(mdmsData, registerMain.getRegisterBirthPlace().getHoStateId())+",")
                     .append(registerMain.getRegisterBirthPlace().getHoCountryId() == null ? "" :  mdmsTenantService.getCountryNameMl(mdmsData, registerMain.getRegisterBirthPlace().getHoCountryId())).toString();
             register.setPlaceDetails(placeEn);
             register.setPlaceDetailsMl(placeMl);
@@ -100,12 +83,28 @@ public class KsmartBirthPlaceService {
                     .append(mdmsLocationService.getHospitalNameMl(mdmsData, registerMain.getRegisterBirthPlace().getVehicleHospitalid())==null
                             ?" ആശുപത്രി":mdmsLocationService.getHospitalNameMl(mdmsData, register.getBirthPlaceHospitalId()))
                     .append("യിലേക്ക് കൊണ്ടുപോകുന്ന മാര്‍ഗ്ഗമദ്ധ്യേ").toString();
+            register.setPlaceDetails(placeEn);
+            register.setPlaceDetailsMl(placeMl);
         }else if (register.getBirthPlaceId().contains(BIRTH_PLACE_PUBLIC)) {
-            String placeEn =new StringBuilder().append("").toString();
-            String placeMl =new StringBuilder().append("").toString();
+            String placeEn = new StringBuilder().append(registerMain.getRegisterBirthPlace().getPublicLocalityEn())
+                    .append(",").append(registerMain.getRegisterBirthPlace().getPublicStreetEn()).toString();
+            String placeMl = new StringBuilder().append(registerMain.getRegisterBirthPlace().getPublicLocalityMl())
+                    .append(",").append(registerMain.getRegisterBirthPlace().getPublicStreetMl()).toString();
+            register.setPlaceDetails(placeEn);
+            register.setPlaceDetailsMl(placeMl);
         }else if (register.getBirthPlaceId().contains(BIRTH_PLACE_OTHERS_COUNTRY)) {
-            String placeEn =new StringBuilder().append("").toString();
-            String placeMl =new StringBuilder().append("").toString();
+            String placeEn = new StringBuilder().append(registerMain.getRegisterBirthPlace().getOtherBirthAddress1En() == null ? "" : CaseUtils.toCamelCase(registerMain.getRegisterBirthPlace().getOtherBirthAddress1En(),true)+",")
+                                               .append(registerMain.getRegisterBirthPlace().getOtherBirthAddress2En() == null ? "" : CaseUtils.toCamelCase(registerMain.getRegisterBirthPlace().getOtherBirthAddress2En(),true)+",")
+                                               .append(registerMain.getRegisterBirthPlace().getOtherBirthProvinceEn() == null ? "" : CaseUtils.toCamelCase(registerMain.getRegisterBirthPlace().getOtherBirthProvinceEn(),true)+",")
+                                               .append(registerMain.getRegisterBirthPlace().getOtherBirthCountry() == null ? "" :  mdmsTenantService.getCountryNameEn(mdmsData, registerMain.getRegisterBirthPlace().getOtherBirthCountry()))
+                                               .toString();
+            String placeMl = new StringBuilder().append(registerMain.getRegisterBirthPlace().getOtherBirthAddress1Ml() == null ? "" : registerMain.getRegisterBirthPlace().getOtherBirthAddress1Ml()+",")
+                                                .append(registerMain.getRegisterBirthPlace().getOtherBirthAddress2Ml() == null ? "" : registerMain.getRegisterBirthPlace().getOtherBirthAddress2Ml()+",")
+                                                .append(registerMain.getRegisterBirthPlace().getOtherBirthProvinceMl() == null ? "" : registerMain.getRegisterBirthPlace().getOtherBirthProvinceMl()+",")
+                                                .append(registerMain.getRegisterBirthPlace().getOtherBirthCountry() == null ? "" :  mdmsTenantService.getCountryNameMl(mdmsData, registerMain.getRegisterBirthPlace().getOtherBirthCountry()))
+                                                .toString();
+            register.setPlaceDetails(placeEn);
+            register.setPlaceDetailsMl(placeMl);
         }
         else {
         }

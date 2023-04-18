@@ -160,6 +160,10 @@ public class BornOutsideApplication {
     @JsonProperty("applicationStatus")
     private String applicationStatus;
 
+    @Size(max = 64)
+    @JsonProperty("isWorkflow")
+    private Boolean isWorkflow = true;
+
     @JsonProperty("assignee")
     private List<String> assignee;
     private String comment;

@@ -23,10 +23,12 @@ import java.util.Locale;
 public class BirthCertService {
     private final MdmsUtil mdmsUtil;
     private final MdmsDataService mdmsDataService;
+    private final KsmartBirthPlaceService ksmartBirthPlace;
     @Autowired
-    BirthCertService(MdmsUtil mdmsUtil, MdmsDataService mdmsDataService) {
+    BirthCertService(MdmsUtil mdmsUtil, MdmsDataService mdmsDataService, KsmartBirthPlaceService ksmartBirthPlace) {
         this.mdmsUtil = mdmsUtil;
         this.mdmsDataService = mdmsDataService;
+        this.ksmartBirthPlace = ksmartBirthPlace;
     }
     public RegisterCertificateData setCertificateDetails(RegisterBirthDetail register, RequestInfo requestInfo) {
         Object mdmsData = mdmsUtil.mdmsCall(requestInfo);
@@ -107,7 +109,7 @@ public class BirthCertService {
         mdmsDataService.setPresentAddressDetailsEn(register, registerCertificateData, mdmsData);
         mdmsDataService.setPremananttAddressDetailsEn(register, registerCertificateData, mdmsData);
         Object mdmsLocData = mdmsUtil.mdmsCallForLocation(requestInfo, registerCertificateData.getTenantId());
-        mdmsDataService.setBirthPlaceDetails(register,registerCertificateData, mdmsLocData);
+        ksmartBirthPlace.setBirthPlaceDetails(register,registerCertificateData, mdmsLocData);
         return registerCertificateData;
 
     }

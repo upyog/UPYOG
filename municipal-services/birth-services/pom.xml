@@ -103,6 +103,11 @@
       <artifactId>p6spy</artifactId>
       <version>${p6spy.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-text</artifactId>
+      <version>1.10.0</version>
+    </dependency>
 	<dependency>
 		<groupId>org.egov</groupId>
 		<artifactId>enc-client</artifactId>

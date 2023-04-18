@@ -46,40 +46,6 @@ public class BornOutsideEnrichment implements BaseEnrichment {
             tenantId = birth.getTenantId();
             birth.setDateOfReport(doreport);
         }
-
-//        for (BornOutsideApplication birth : request.getNewBirthDetails()) {
-//            birth.setId(UUID.randomUUID().toString());
-//            tenantId = birth.getTenantId();
-//            birth.setDateOfReport(doreport);
-//            birth.setIsBornOutside(birth.getIsBornOutside());
-//            birth.setAuditDetails(auditDetails);
-//            if(birth.getPlaceofBirthId() != null || !birth.getPlaceofBirthId().isEmpty()){
-//                Object mdmsData = mdmsUtil.mdmsCallForLocation(request.getRequestInfo(), birth.getTenantId());
-//                mdmsDataService.setOutLocationDetails(birth, mdmsData);
-//            }
-//            setPlaceOfBirth(request, tenantId, auditDetails);
-//            birth.setBirthPlaceUuid(UUID.randomUUID().toString());
-//            birth.getParentsDetails().setFatherUuid(UUID.randomUUID().toString());
-//            birth.getParentsDetails().setMotherUuid(UUID.randomUUID().toString());
-//            if(birth.getParentsDetails() != null) {
-//                if(!birth.getParentsDetails().getIsFatherInfoMissing()){
-//                    birth.getParentsDetails().setFatherBioAdopt("BIOLOGICAL");
-//                }
-//                if(!birth.getParentsDetails().getIsMotherInfoMissing()){
-//                    birth.getParentsDetails().setMotherBioAdopt("BIOLOGICAL");
-//                }
-//            }
-//            if(birth.getParentAddress() != null) {
-//                birth.getParentAddress().setPermanentUuid(UUID.randomUUID().toString());
-//                birth.getParentAddress().setPresentUuid(UUID.randomUUID().toString());
-//                birth.getParentAddress().setBioAdoptPermanent("BIOLOGICAL");
-//                birth.getParentAddress().setBioAdoptPresent("BIOLOGICAL");
-//            }
-//            birth.setBirthStatisticsUuid(UUID.randomUUID().toString());
-//            birth.setBirthInitiatorUuid(UUID.randomUUID().toString());
-//
-//        }
-
         setPlaceOfBirth(request, tenantId, auditDetails);
         setApplicationNumbers(request);
         setFileNumbers(request);
@@ -95,7 +61,6 @@ public class BornOutsideEnrichment implements BaseEnrichment {
         AuditDetails auditDetails = buildAuditDetails(userInfo.getUuid(), Boolean.FALSE);
         request.getNewBirthDetails()
                 .forEach(birth -> birth.setAuditDetails(auditDetails));
-        setRegistrationNumber(request);
         setPresentAddress(request);
         setPermanentAddress(request);
     }
@@ -139,30 +104,6 @@ public class BornOutsideEnrichment implements BaseEnrichment {
                 .forEach(birth -> {
                     birth.setFileNumber(itr.next());
                     birth.setFileDate(currentTime);
-                });
-    }
-
-    private void setRegistrationNumber(BornOutsideDetailRequest request) {
-        RequestInfo requestInfo = request.getRequestInfo();
-        List<BornOutsideApplication> birthDetails = request.getNewBirthDetails();
-        String tenantId = birthDetails.get(0)
-                .getTenantId();
-
-        List<String> filecodes = getIds(requestInfo,
-                tenantId,
-                config.getBirthRegisNumberName(),
-                request.getNewBirthDetails().get(0).getApplicationType(),
-                "REG",
-                birthDetails.size());
-        validateFileCodes(filecodes, birthDetails.size());
-        Long currentTime = Long.valueOf(System.currentTimeMillis());
-        ListIterator<String> itr = filecodes.listIterator();
-        request.getNewBirthDetails()
-                .forEach(birth -> {
-                    if((birth.getApplicationStatus() == "APPROVED" && birth.getAction() == "APPROVE")) {
-                        birth.setRegistrationNo(itr.next());
-                        birth.setRegistrationDate(currentTime);
-                    }
                 });
     }
 
@@ -295,9 +236,6 @@ public class BornOutsideEnrichment implements BaseEnrichment {
             birth.setId(UUID.randomUUID().toString());
             birth.setAuditDetails(auditDetails);
             birth.setIsBornOutside(true);
-            if(birth.getPlaceofBirthId() != null || !birth.getPlaceofBirthId().isEmpty()){
-                mdmsDataService.setLocationDetails(birth, mdmsData);
-            }
             birth.setBirthPlaceUuid(UUID.randomUUID().toString());
             birth.getParentsDetails().setFatherUuid(UUID.randomUUID().toString());
             birth.getParentsDetails().setMotherUuid(UUID.randomUUID().toString());

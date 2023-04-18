@@ -217,4 +217,67 @@ public class RegisterBirthPlace {
     @JsonProperty("public_place_desc")
     private String publicPlaceDesc;
 
+    @Size(max = 1000)
+    @JsonProperty("public_locality_en")
+    private String publicLocalityEn;
+
+    @Size(max = 1000)
+    @JsonProperty("public_locality_ml")
+    private String publicLocalityMl;
+
+    @Size(max = 1000)
+    @JsonProperty("public_street_name_en")
+    private String publicStreetEn;
+
+    @Size(max = 1000)
+    @JsonProperty("public_street_name_ml")
+    private String publicStreetMl;
+
+    @Size(max = 1000)
+    @JsonProperty("ot_birth_place_en")
+    private String otherBirthPlaceEn;
+
+    @Size(max = 1000)
+    @JsonProperty("ot_birth_place_ml")
+    private String otherBirthPlaceMl;
+
+    @Size(max = 2500)
+    @JsonProperty("ot_address1_en")
+    private String otherBirthAddress1En;
+
+    @Size(max = 2500)
+    @JsonProperty("ot_address1_ml")
+    private String otherBirthAddress1Ml;
+
+    @Size(max = 1000)
+    @JsonProperty("ot_zipcode")
+    private String otherZipcode;
+
+    @Size(max = 2500)
+    @JsonProperty("ot_address2_en")
+    private String otherBirthAddress2En;
+
+    @Size(max = 2500)
+    @JsonProperty("ot_address2_ml")
+    private String otherBirthAddress2Ml;
+
+    @Size(max = 1000)
+    @JsonProperty("ot_state_region_province_en")
+    private String otherBirthProvinceEn;
+
+    @Size(max = 1000)
+    @JsonProperty("ot_state_region_province_ml")
+    private String otherBirthProvinceMl;
+
+    @Size(max = 128)
+    @JsonProperty("ot_country")
+    private String otherBirthCountry;
+
+    @Size(max = 1000)
+    @JsonProperty("ot_town_village_en")
+    private String otherBirthVillageEn;
+
+    @Size(max = 1000)
+    @JsonProperty("ot_town_village_ml")
+    private String otherBirthVillageMl;
 }

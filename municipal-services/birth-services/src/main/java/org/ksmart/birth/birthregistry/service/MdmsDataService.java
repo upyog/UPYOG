@@ -62,56 +62,56 @@ public class MdmsDataService {
         registerCert.setTenantStateMl(mdmsTenantService.getStateNameMl(mdmsData, stateCode));
     }
 
-    public void setBirthPlaceDetails(RegisterBirthDetail registerMain, RegisterCertificateData register, Object  mdmsData) {
-        if (register.getBirthPlaceId().contains(BIRTH_PLACE_HOSPITAL)) {
-            String placeEn =new StringBuilder().append(mdmsLocationService.getHospitalNameEn(mdmsData, register.getBirthPlaceHospitalId()) )
-                                               .append(",")
-                                               .append(mdmsLocationService.getHospitalAddressEn(mdmsData, register.getBirthPlaceHospitalId())==null
-                                                       ?"":mdmsLocationService.getHospitalAddressEn(mdmsData, register.getBirthPlaceHospitalId())).toString();
-            String placeMl =new StringBuilder().append(mdmsLocationService.getHospitalNameMl(mdmsData, register.getBirthPlaceHospitalId()) )
-                                               .append(",")
-                                               .append(mdmsLocationService.getHospitalAddressMl(mdmsData, register.getBirthPlaceHospitalId())==null
-                                                       ?"":mdmsLocationService.getHospitalAddressMl(mdmsData, register.getBirthPlaceHospitalId())).toString();
-
-            register.setPlaceDetails(placeEn);
-            register.setPlaceDetailsMl(placeMl);
-        } else if (register.getBirthPlaceId().contains(BIRTH_PLACE_INSTITUTION)) {
-            String placeEn =new StringBuilder().append(mdmsLocationService.getInstitutionNameEn(mdmsData, register.getBirthPlaceInstitutionId()) )
-                    .append(",")
-                    .append(mdmsLocationService.getInstitutionTypeEn(mdmsData, register.getBirthPlaceInstitutionlTypeId())==null
-                            ?"":mdmsLocationService.getInstitutionTypeEn(mdmsData, register.getBirthPlaceInstitutionlTypeId()))
-                    .append(",")
-                    .append(mdmsLocationService.getInstitutionAddressEn(mdmsData, register.getBirthPlaceInstitutionId())==null
-                            ?"":mdmsLocationService.getInstitutionAddressEn(mdmsData, register.getBirthPlaceInstitutionId())).toString();
-
-            String placeMl =new StringBuilder().append(mdmsLocationService.getInstitutionNameMl(mdmsData, register.getBirthPlaceInstitutionId()) )
-                    .append(",")
-                    .append(mdmsLocationService.getInstitutionTypeMl(mdmsData, register.getBirthPlaceInstitutionlTypeId())==null
-                            ?"":mdmsLocationService.getInstitutionTypeMl(mdmsData, register.getBirthPlaceInstitutionlTypeId()))
-                    .append(",")
-                    .append(mdmsLocationService.getInstitutionAddressMl(mdmsData, register.getBirthPlaceInstitutionId())==null
-                            ?"":mdmsLocationService.getInstitutionAddressMl(mdmsData, register.getBirthPlaceInstitutionId())).toString();
-
-            register.setPlaceDetails(placeEn);
-            register.setPlaceDetailsMl(placeMl);
-        } else if (register.getBirthPlaceId().contains(BIRTH_PLACE_HOME)) {
-            String placeEn =new StringBuilder().append(register.getPlaceDetails())
-                    .append(",")
-                    .toString();
-            String placeMl =new StringBuilder().append("").toString();
-        }else if (register.getBirthPlaceId().contains(BIRTH_PLACE_VEHICLE)) {
-            String placeEn =new StringBuilder().append("").toString();
-            String placeMl =new StringBuilder().append("").toString();
-        }else if (register.getBirthPlaceId().contains(BIRTH_PLACE_PUBLIC)) {
-            String placeEn =new StringBuilder().append("").toString();
-            String placeMl =new StringBuilder().append("").toString();
-        }else if (register.getBirthPlaceId().contains(BIRTH_PLACE_OTHERS_COUNTRY)) {
-            String placeEn =new StringBuilder().append("").toString();
-            String placeMl =new StringBuilder().append("").toString();
-        }
-        else {
-        }
-    }
+//    public void setBirthPlaceDetails(RegisterBirthDetail registerMain, RegisterCertificateData register, Object  mdmsData) {
+//        if (register.getBirthPlaceId().contains(BIRTH_PLACE_HOSPITAL)) {
+//            String placeEn =new StringBuilder().append(mdmsLocationService.getHospitalNameEn(mdmsData, register.getBirthPlaceHospitalId()) )
+//                                               .append(",")
+//                                               .append(mdmsLocationService.getHospitalAddressEn(mdmsData, register.getBirthPlaceHospitalId())==null
+//                                                       ?"":mdmsLocationService.getHospitalAddressEn(mdmsData, register.getBirthPlaceHospitalId())).toString();
+//            String placeMl =new StringBuilder().append(mdmsLocationService.getHospitalNameMl(mdmsData, register.getBirthPlaceHospitalId()) )
+//                                               .append(",")
+//                                               .append(mdmsLocationService.getHospitalAddressMl(mdmsData, register.getBirthPlaceHospitalId())==null
+//                                                       ?"":mdmsLocationService.getHospitalAddressMl(mdmsData, register.getBirthPlaceHospitalId())).toString();
+//
+//            register.setPlaceDetails(placeEn);
+//            register.setPlaceDetailsMl(placeMl);
+//        } else if (register.getBirthPlaceId().contains(BIRTH_PLACE_INSTITUTION)) {
+//            String placeEn =new StringBuilder().append(mdmsLocationService.getInstitutionNameEn(mdmsData, register.getBirthPlaceInstitutionId()) )
+//                    .append(",")
+//                    .append(mdmsLocationService.getInstitutionTypeEn(mdmsData, register.getBirthPlaceInstitutionlTypeId())==null
+//                            ?"":mdmsLocationService.getInstitutionTypeEn(mdmsData, register.getBirthPlaceInstitutionlTypeId()))
+//                    .append(",")
+//                    .append(mdmsLocationService.getInstitutionAddressEn(mdmsData, register.getBirthPlaceInstitutionId())==null
+//                            ?"":mdmsLocationService.getInstitutionAddressEn(mdmsData, register.getBirthPlaceInstitutionId())).toString();
+//
+//            String placeMl =new StringBuilder().append(mdmsLocationService.getInstitutionNameMl(mdmsData, register.getBirthPlaceInstitutionId()) )
+//                    .append(",")
+//                    .append(mdmsLocationService.getInstitutionTypeMl(mdmsData, register.getBirthPlaceInstitutionlTypeId())==null
+//                            ?"":mdmsLocationService.getInstitutionTypeMl(mdmsData, register.getBirthPlaceInstitutionlTypeId()))
+//                    .append(",")
+//                    .append(mdmsLocationService.getInstitutionAddressMl(mdmsData, register.getBirthPlaceInstitutionId())==null
+//                            ?"":mdmsLocationService.getInstitutionAddressMl(mdmsData, register.getBirthPlaceInstitutionId())).toString();
+//
+//            register.setPlaceDetails(placeEn);
+//            register.setPlaceDetailsMl(placeMl);
+//        } else if (register.getBirthPlaceId().contains(BIRTH_PLACE_HOME)) {
+//            String placeEn =new StringBuilder().append(register.getPlaceDetails())
+//                    .append(",")
+//                    .toString();
+//            String placeMl =new StringBuilder().append("").toString();
+//        }else if (register.getBirthPlaceId().contains(BIRTH_PLACE_VEHICLE)) {
+//            String placeEn =new StringBuilder().append("").toString();
+//            String placeMl =new StringBuilder().append("").toString();
+//        }else if (register.getBirthPlaceId().contains(BIRTH_PLACE_PUBLIC)) {
+//            String placeEn =new StringBuilder().append("").toString();
+//            String placeMl =new StringBuilder().append("").toString();
+//        }else if (register.getBirthPlaceId().contains(BIRTH_PLACE_OTHERS_COUNTRY)) {
+//            String placeEn =new StringBuilder().append("").toString();
+//            String placeMl =new StringBuilder().append("").toString();
+//        }
+//        else {
+//        }
+//    }
 
     public void setPresentAddressDetailsEn(RegisterBirthDetail register,RegisterCertificateData registerCert, Object  mdmsData) {
         if (register.getRegisterBirthPresent().getCountryId() != null) {

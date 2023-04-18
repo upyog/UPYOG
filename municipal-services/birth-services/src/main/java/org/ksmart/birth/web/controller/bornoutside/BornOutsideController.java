@@ -57,14 +57,11 @@ public class BornOutsideController {
     public ResponseEntity<?> updateBirthApplication(@RequestBody BornOutsideDetailRequest request) {
         BirthCertificate birthCertificate = new BirthCertificate();
         List<BornOutsideApplication> birthApplicationDetails = birthService.updateBirthApplication(request);
-        //Download certificate when Approved
+
+        //Save details to register when Approved
         if ((birthApplicationDetails.get(0).getApplicationStatus().equals(STATUS_APPROVED) && birthApplicationDetails.get(0).getAction().equals(WF_APPROVE))) {
-            RegisterBirthDetailsRequest registerBirthDetailsRequest = registryReq.createRegistryRequest(request);
-            List<RegisterBirthDetail> registerBirthDetails = registerBirthService.saveRegisterBirthDetails(registerBirthDetailsRequest);
-//            RegisterBirthSearchCriteria criteria = new RegisterBirthSearchCriteria();
-//            criteria.setTenantId(registerBirthDetails.get(0).getTenantId());
-//            criteria.setRegistrationNo(registerBirthDetails.get(0).getRegistrationNo());
-//            birthCertificate = registerBirthService.download(criteria, request.getRequestInfo());
+            RegisterBirthDetailsRequest registerBirthDetailsRequest = registryReq.createRegistryRequestNew(request);
+            registerBirthService.saveRegisterBirthDetails(registerBirthDetailsRequest);
         }
         BornOutsideResponse response = BornOutsideResponse.builder()
                 .birthDetails(birthApplicationDetails)
@@ -76,7 +73,7 @@ public class BornOutsideController {
 
     @PostMapping(value = {"/searchbornoutside"})
     public ResponseEntity<BornOutsideResponse> searchKsmartBirth(@RequestBody BornOutsideDetailRequest request, @Valid @ModelAttribute SearchCriteria criteria) {
-        List<BornOutsideApplication> birthDetails = birthService.searchKsmartBirthDetails(request, criteria);
+        List<BornOutsideApplication> birthDetails = birthService.searchBirthDetails(request, criteria);
         BornOutsideResponse response = BornOutsideResponse.builder()
                 .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), Boolean.TRUE))
                 .birthDetails(birthDetails)

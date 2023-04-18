@@ -44,8 +44,16 @@ public class RegistryRequestValidator {
             throw new CustomException(REQUIRED.getCode(),
                     "Supports only single Register  application create request.");
         }
+        if (StringUtils.isBlank(registerDetails.get(0).getAckNumber())) {
+                throw new CustomException(REQUIRED.getCode(),
+                        "Application number cannot be null while creating a registry request");
+        }
+        if (StringUtils.isBlank(registerDetails.get(0).getTenantId())) {
+            throw new CustomException(INVALID_CREATE.getCode(),
+                    "Tenant id is required for create request.");
+        }
 
-        if (registerBirthDetails.size() > 0) {// NOPMD
+        if (registerBirthDetails.size() > 0) {
             throw new CustomException(BIRTH_DETAILS_REQUIRED.getCode(),
                     "Registration exist in the tenant against the given application number.");
         }

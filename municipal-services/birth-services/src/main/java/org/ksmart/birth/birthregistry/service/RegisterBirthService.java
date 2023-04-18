@@ -13,6 +13,7 @@ import org.ksmart.birth.utils.MdmsUtil;
 import org.ksmart.birth.utils.enums.ErrorCodes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -46,6 +47,11 @@ public class RegisterBirthService {
 
     public List<RegisterBirthDetail> saveRegisterBirthDetails(RegisterBirthDetailsRequest request) {
         RegisterBirthSearchCriteria criteria = new RegisterBirthSearchCriteria();
+        if(request.getRegisterBirthDetails().get(0).getAckNumber() == null) {
+            throw new CustomException(ErrorCodes.REQUIRED.getCode(),
+                    "Application number is required.");
+
+        }
         criteria.setApplicationNumber(request.getRegisterBirthDetails().get(0).getAckNumber());
         criteria.setTenantId(request.getRegisterBirthDetails().get(0).getTenantId());
         List<RegisterBirthDetail> registerBirthDetails = searchRegisterBirthDetails(criteria);

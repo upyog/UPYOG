@@ -5,14 +5,16 @@
       "font": "Meera"
     },
     "watermark": {
-      "color": "gery",
+      "text": "KSMART DEMO",
+      "bold": true,
+      "color": "grey",
       "opacity": 0.1,
 
       "link": "https://ulb-logos.s3.ap-south-1.amazonaws.com/kerala_logo.jpg",
       "image": "src/images/kerala-government.png"
     },
     "background":{
-      "color": "gery",
+      "color": "grey",
       "opacity": 0.1,
       "image": "src/images/kerala-government.png",
       "width": 500,
@@ -33,7 +35,7 @@
               {
                 "stack": [
                   {
-                    "text": "{{keyNo}}: {{keyAckNo}}",
+                    "text": "{{keyNo}}   {{keyAckNo}}",
                     "style": "appendix-header-serialNo"
                   }
                 ]
@@ -42,8 +44,14 @@
                 "stack": [
                   {
                     "image": "{{logoindia}}",
-                    "width": 20,
-                    "height": 28
+                    "width": 25,
+                    "height": 33,
+                    "margin": [
+                      10,
+                      0,
+                      10,
+                      -4
+                    ]
                   }
                 ]
               }
@@ -68,7 +76,16 @@
                   {
                     "image": "{{logotenant}}",
                     "width": 50,
-                    "height": 50
+                    "height": 50,
+                    "color": "grey",
+                    "opacity": 0.3,
+                    "margin": [
+                      20,
+                      0,
+                      0,
+                      0
+                    ]
+
                   }
                 ]
               },
@@ -77,7 +94,7 @@
                 "stack": [
                   {
                     "text": "GOVERNMENT OF INDIA",
-                    "style": "pdf-header",
+                    "style": "appendix-header-body",
                     "width": 30,
                     "height": 30
                   },
@@ -89,17 +106,19 @@
                     "text": "{{rule8}}",
                     "style": "main-body-style"
                   },
-                  {
-                    "text": "{{govtOfKerala}}",
-                    "style": "appendix-header-body"
-                  },
+
                   {
                     "text": "{{govtOfKeralaMl}}",
                     "style": "appendix-header-body-ml"
                   },
                   {
-                    "text": "{{deptUrbanAffairs}}",
-                    "style": "appendix-header-body",
+                    "text": "{{govtOfKerala}}",
+                    "style": "appendix-header-body"
+                  },
+
+                  {
+                    "text": "{{deptUrbanAffairsMl}}",
+                    "style": "appendix-header-body-ml",
                     "margin": [
                       0,
                       0,
@@ -108,7 +127,7 @@
                     ]
                   },
                   {
-                    "text": "{{deptUrbanAffairsMl}}",
+                    "text": "{{deptUrbanAffairs}}",
                     "style": "appendix-header-body",
                     "margin": [
                       0,
@@ -125,7 +144,13 @@
                     "opacity": 0.3,
                     "image": "{{logobirth}}",
                     "width": 50,
-                    "height": 50
+                    "height": 50,
+                    "margin": [
+                      40,
+                      0,
+                      0,
+                      0
+                    ]
                   }
                 ]
               }
@@ -145,11 +170,11 @@
               {
                 "stack": [
                   {
-                    "text": "{{nameOfLbMl}} : {{tenantMl}}",
-                    "style": "details-body-center"
+                    "text": "{{nameOfLbMl}} :     {{tenantMl}}",
+                    "style": "details-body-center-ml"
                   },
                   {
-                    "text": "{{nameOfLb}} : {{tenant}} {{  lbtypecode}}",
+                    "text": "{{nameOfLb}} :     {{tenant}} {{  lbtypecode}}",
                     "style": "details-body-center"
                   }
 
@@ -205,7 +230,7 @@
                 "stack": [
                   {
                     "text": "{{issueUnderSection121969ML}}",
-                    "style": "rule-header"
+                    "style": "rule-header-ml"
                   },
                   {
                     "text": "{{issueUnderSection121969}}",
@@ -230,7 +255,7 @@
                 "stack": [
                   {
                     "text": "താഴെ പറയുന്ന വിവരങ്ങൾ {{statecodeMl}} സംസ്ഥാനത്തിലെ {{distcodeMl}} ജില്ലയിലെ {{talukcodeMl}} താലൂക്കിലെ  {{tenantMl}} {{lbtypecodeMl}} {{certifyMl}}.",
-                    "style": "rule-header"
+                    "style": "rule-header-ml"
                   },
                   {
                     "text": "{{certify}} {{tenant}} {{lbtypecode}}  of Taluk  {{talukcode}}  of District {{distcode}} of State {{statecode}}.",
@@ -395,7 +420,7 @@
                   {
                     "text": "{{presentAddressLabel}} ",
                     "width": "49%",
-                    "style": "details-body"
+                    "style": "details-body-times"
                   },
                   {
                     "text": "  :",
@@ -403,7 +428,7 @@
                   },
                   {
                     "text": "{{presentAddress}}",
-                    "style": "details-body"
+                    "style": "details-body-times"
                   }
                 ]
               }
@@ -435,7 +460,7 @@
                   {
                     "text": "{{permanentAddressLabel}} ",
                     "width": "49%",
-                    "style": "details-body"
+                    "style": "details-body-times"
                   },
                   {
                     "text": "  :",
@@ -443,7 +468,7 @@
                   },
                   {
                     "text": "{{registerBirthPermanent}}",
-                    "style": "details-body"
+                    "style": "details-body-times"
                   }
                 ]
               }
@@ -462,7 +487,7 @@
                   },
                   {
                     "text": "{{registrationNo}}",
-                    "style": "details-body"
+                    "style": "details-body-times"
                   }
                 ]
               }
@@ -481,7 +506,7 @@
                   },
                   {
                     "text": "{{registrationDate}}",
-                    "style": "details-body"
+                    "style": "details-body-times"
                   }
                 ]
               }
@@ -500,7 +525,7 @@
                   },
                   {
                     "text": "{{updatedOn}} :{{updatedDate}}",
-                    "style": "details-body"
+                    "style": "details-body-times"
                   }
                 ]
               }
@@ -519,7 +544,7 @@
                   },
                   {
                     "text": "{{registar}} {{tenant}} {{lbtypecode}} ",
-                    "style": "details-body"
+                    "style": "details-body-times"
                   }
                 ]
               }
@@ -607,7 +632,7 @@
       },
       "main-body-style": {
         "color": "#000000",
-        "fontSize": 10,
+        "fontSize": 7,
         "alignment": "center"
       },
       "main-body-style_ml": {
@@ -617,8 +642,11 @@
       },
       "appendix-header-italic": {
         "color": "#000000",
-        "fontSize": 10,
+        "fontSize": 8,
+        "bold": true,
         "fontWeight": 400,
+        "italics": true,
+        "font": "Times",
         "alignment": "center"
       },
       "appendix-header": {
@@ -668,7 +696,7 @@
       },
       "footer-red": {
         "color": "#FF0000",
-        "fontSize": 7,
+        "fontSize": 6,
         "font": "Times",
         "alignment": "center",
         "italics": true
@@ -723,9 +751,10 @@
       },
       "appendix-header-serialNo": {
         "color": "#000000",
-        "bold": false,
-        "fontSize": 10,
-        "fontWeight": 400,
+        "bold": true,
+        "italics": true,
+        "font": "Times",
+        "fontSize": 8,
         "margin": [
           0,
           -5,
@@ -747,14 +776,23 @@
       },
       "rule-header": {
         "color": "#000000",
-        "bold": false,
-        "fontSize": 10,
-        "fontWeight": 400,
+        "fontSize": 7,
+        "font": "Times",
         "margin": [
           0,
           0,
           0,
-          3
+          2
+        ]
+      },
+      "rule-header-ml": {
+        "color": "#000000",
+        "fontSize": 8,
+        "margin": [
+          0,
+          0,
+          0,
+          2
         ]
       },
       "rule-header_multiLang": {
@@ -784,8 +822,8 @@
       "rule-body_multiLang": {
         "color": "#000000",
         "bold": false,
-        "fontSize": 9,
-        "fontWeight": 400,
+        "font": "Times",
+        "fontSize": 8,
         "alignment": "center"
       },
       "details-body-bottom": {
@@ -794,23 +832,37 @@
         "fontSize": 10,
         "alignment": "bottom"
       },
-
+      "details-body-bold": {
+        "color": "#000000",
+        "bold": true,
+        "fontSize": 7,
+        "font": "Times",
+        "alignment": "left"
+      },
       "details-body": {
         "color": "#000000",
         "bold": false,
         "fontSize": 9,
         "alignment": "left"
       },
-      "details-body-bold": {
+      "details-body-times": {
         "color": "#000000",
-        "bold": true,
-        "fontSize": 11,
+        "font": "Times",
+        "fontSize": 78,
         "alignment": "left"
       },
       "details-body-center": {
         "color": "#000000",
         "bold": false,
-        "fontSize": 10,
+        "fontSize": 7,
+        "fontWeight": 100,
+        "font": "Times",
+        "alignment": "center"
+      },
+      "details-body-center-ml": {
+        "color": "#000000",
+        "fontSize": 8,
+        "fontWeight": 100,
         "alignment": "center"
       },
       "details-body-center-bottomML": {
@@ -841,8 +893,8 @@
       "appendix-header-body": {
         "color": "#000000",
         "bold": true,
-        "fontSize": 10,
-        "fontWeight": 400,
+        "fontSize": 8,
+        "font": "Times",
         "alignment": "center"
       },
       "receipt-value-down-sub": {

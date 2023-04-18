@@ -577,6 +577,19 @@
                 }
               },
               {
+                "variable": "govtOfKeralaMl",
+                "value": {
+                  "path": "PDF_BIRTH_GOVERNMENT_OF_KERALA_ML"
+                },
+                "type": "label",
+                "localisation":{
+                  "required":true,
+                  "prefix": null,
+                  "module":"rainmaker-common",
+                  "locale":"en_IN"
+                }
+              },
+              {
                 "variable": "deptUrbanAffairs",
                 "value": {
                   "path": "PDF_BIRTH_DEPARTMENT_OF_URBAN_AFFAIRS"

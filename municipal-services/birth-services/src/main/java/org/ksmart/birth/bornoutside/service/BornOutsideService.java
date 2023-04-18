@@ -49,7 +49,7 @@ public class BornOutsideService {
         return repository.updateBirthApplication(request);
     }
 
-    public List<BornOutsideApplication> searchKsmartBirthDetails(BornOutsideDetailRequest request, SearchCriteria criteria) {
-        return repository.searchKsmartBirthDetails(request,criteria);
+    public List<BornOutsideApplication> searchBirthDetails(BornOutsideDetailRequest request, SearchCriteria criteria) {
+        return repository.searchBirthDetails(request,criteria);
     }
 }
