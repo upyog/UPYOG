@@ -53,6 +53,9 @@ public class AbandonedApplication {
     @JsonProperty("institutionTypeCode")
     private String institutionTypeId;
 
+    @JsonProperty("isWorkflow")
+    private Boolean isWorkflow = true;
+
     @Size(max = 64)
     @JsonProperty("institution")
     private String institution;

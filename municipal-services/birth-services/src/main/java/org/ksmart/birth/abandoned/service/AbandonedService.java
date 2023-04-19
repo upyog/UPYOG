@@ -44,26 +44,12 @@ public class AbandonedService {
         Object mdmsData = mdmsUtil.mdmsCall(request.getRequestInfo());
 
         // validate request
-       // validator.validateCreate(request, mdmsData);
+//        validator.validateCreate(request, mdmsData);
 
         //call save
         List<AbandonedApplication> birthApplicationDetails =  repository.saveBirthDetails(request);
-
-        //WorkFlow Integration
-        //workflowIntegrator.callWorkFlow(request);
-
-        //Demand Creation
-//        birthApplicationDetails.forEach(birth->{
-//            if(birth.getApplicationStatus() == STATUS_FOR_PAYMENT){
-//                List<Demand> demands = new ArrayList<>();
-//                Demand demand = new Demand();
-//                demand.setTenantId(birth.getTenantId());
-//                demand.setConsumerCode(birth.getApplicationNo());
-//                demands.add(demand);
-//               // birth.setDemands(demandService.saveDemandDetails(demands,request.getRequestInfo()));
-//            }
-//        });
-
+//        WorkFlow Integration
+        workflowIntegrator.callWorkFlow(request);
         return birthApplicationDetails;
     }
 

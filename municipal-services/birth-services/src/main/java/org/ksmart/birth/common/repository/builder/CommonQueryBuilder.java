@@ -28,17 +28,19 @@ public class CommonQueryBuilder extends BaseQueryBuilder {
 			.append("ebd.adopt_agency_contact_person_mobileno as ba_adopt_agency_contact_person_mobileno,ebd.createdtime,ebd.createdby,ebd.lastmodifiedtime,ebd.lastmodifiedby").toString();
 
 	private static final String QUERYCONDITION = new StringBuilder().append(" FROM public.eg_birth_details ebd LEFT JOIN eg_birth_place ebp ON ebp.birthdtlid = ebd.id LEFT JOIN eg_birth_father_information ebfi ON ebfi.birthdtlid = ebd.id AND ebfi.bio_adopt='BIOLOGICAL'")
-			.append(" LEFT JOIN eg_birth_mother_information ebmi ON ebmi.birthdtlid = ebd.id AND ebmi.bio_adopt='BIOLOGICAL'")
-			.append(" LEFT JOIN eg_birth_permanent_address eperad ON eperad.birthdtlid = ebd.id AND eperad.bio_adopt='BIOLOGICAL'")
-			.append(" LEFT JOIN eg_birth_present_address epreadd ON epreadd.birthdtlid = ebd.id AND epreadd.bio_adopt='BIOLOGICAL'")
-			.append(" LEFT JOIN eg_birth_statitical_information estat ON estat.birthdtlid = ebd.id")
-			.append(" LEFT JOIN eg_birth_initiator ini ON ini.birthdtlid = ebd.id ").toString();
+																	.append(" LEFT JOIN eg_birth_mother_information ebmi ON ebmi.birthdtlid = ebd.id AND ebmi.bio_adopt='BIOLOGICAL'")
+																	.append(" LEFT JOIN eg_birth_permanent_address eperad ON eperad.birthdtlid = ebd.id AND eperad.bio_adopt='BIOLOGICAL'")
+																	.append(" LEFT JOIN eg_birth_present_address epreadd ON epreadd.birthdtlid = ebd.id AND epreadd.bio_adopt='BIOLOGICAL'")
+																	.append(" LEFT JOIN eg_birth_statitical_information estat ON estat.birthdtlid = ebd.id")
+																	.append(" LEFT JOIN eg_birth_abandoned_care_taker ct ON ct.birthdtlid = ebd.id")
+																	.append(" LEFT JOIN eg_birth_initiator ini ON ini.birthdtlid = ebd.id ").toString();
 
 	
 	private static final String QUERYCONDITIONADPTN = new StringBuilder().append(" FROM public.eg_birth_details ebd LEFT JOIN eg_birth_place ebp ON ebp.birthdtlid = ebd.id LEFT JOIN eg_birth_father_information ebfi ON ebfi.birthdtlid = ebd.id AND ebfi.bio_adopt='ADOPT'")
 			.append(" LEFT JOIN eg_birth_mother_information ebmi ON ebmi.birthdtlid = ebd.id AND ebmi.bio_adopt='ADOPT'")
 			.append(" LEFT JOIN eg_birth_permanent_address eperad ON eperad.birthdtlid = ebd.id AND eperad.bio_adopt='ADOPT'")
 			.append(" LEFT JOIN eg_birth_present_address epreadd ON epreadd.birthdtlid = ebd.id AND epreadd.bio_adopt='ADOPT'")
+			.append(" LEFT JOIN eg_birth_statitical_information estat ON estat.birthdtlid = ebd.id")
 			.append(" LEFT JOIN eg_birth_statitical_information estat ON estat.birthdtlid = ebd.id")
 			.append(" LEFT JOIN eg_birth_initiator ini ON ini.birthdtlid = ebd.id ").toString();
 
@@ -114,6 +116,11 @@ public class CommonQueryBuilder extends BaseQueryBuilder {
 			.append("ebap.aadharno as ebap_aadharno,ebap.mobileno as ebap_mobileno,ebap.is_declared as ebap_is_declared,")
 			.append("ebap.declaration_id as ebap_declaration_id,ebap.is_esigned as ebap_is_esigned").toString();
 
+	private static final String QUERY_CARETAKE_ABAN = new StringBuilder().append("ct.id as ct_id, ct.birthdtlid as ct_birthdtlid, ct.care_taker_name as ct_care_taker_name," )
+																		.append("ct.care_taker_institution as ct_care_taker_institution, ct.care_taker_inst_designation as ct_care_taker_inst_designation,")
+																		.append("ct.care_taker_address as ct_care_taker_address, ct.care_taker_mobileno as ct_care_taker_mobileno").toString();
+
+
 	public String getQueryMain() {
 		return QUERY;
 	}
@@ -157,6 +164,11 @@ public class CommonQueryBuilder extends BaseQueryBuilder {
 	public String getQueryOtherChildren() {
 		return QUERY_OTHERCH;
 	}
+
+	public String getQueryCareTaker() {
+		return QUERY_CARETAKE_ABAN;
+	}
+
 
 
 	public StringBuilder prepareSearchCriteria(@NotNull SearchCriteria criteria, StringBuilder query, @NotNull List<Object> preparedStmtValues) {
@@ -250,6 +262,8 @@ public class CommonQueryBuilder extends BaseQueryBuilder {
 				.append(getQueryStat())
 				.append(",")
 				.append(getQueryIntiator())
+				.append(",")
+				.append(getQueryCareTaker())
 				.append(getQueryCondition()).toString();
 		return query;
 	}

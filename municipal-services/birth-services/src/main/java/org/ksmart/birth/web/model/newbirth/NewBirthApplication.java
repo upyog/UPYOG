@@ -243,9 +243,10 @@ public class NewBirthApplication {
     @JsonProperty("assignee")
     private List<String> assignee;
     private String comment;
-    @Size(max = 64)
+
     @JsonProperty("isWorkflow")
     private Boolean isWorkflow = true;
+
     @JsonProperty("wfDocuments")
     private List<Document> wfDocuments;
     @Size(max = 64)

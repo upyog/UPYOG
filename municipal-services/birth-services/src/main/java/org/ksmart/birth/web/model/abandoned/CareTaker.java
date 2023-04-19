@@ -1,8 +1,14 @@
 package org.ksmart.birth.web.model.abandoned;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.*;
 
 import javax.validation.constraints.Size;
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class CareTaker {
     @Size(max = 1000)
     @JsonProperty("institutionName")

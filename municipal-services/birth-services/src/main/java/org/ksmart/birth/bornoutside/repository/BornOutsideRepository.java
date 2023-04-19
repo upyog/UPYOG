@@ -97,7 +97,7 @@ public class BornOutsideRepository {
         if (request.getRequestInfo().getUserInfo() != null) {
             uuid = request.getRequestInfo().getUserInfo().getUuid();
         } else {
-            criteria.setApplicationType(BirthConstants.FUN_MODULE_NEW);
+            criteria.setApplicationType(BirthConstants.FUN_MODULE_OSC);
         }
         String query = commonQueryBuilder.getBirthApplicationSearchQuery(criteria, uuid, preparedStmtValues, Boolean.FALSE);
         if (preparedStmtValues.size() == 0) {

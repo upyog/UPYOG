@@ -106,6 +106,8 @@ public class BirthConstants {
     public static final String FUN_MODULE_NAC= "CRBRNC";
     public static final String FUN_MODULE_COR= "CRBRCR";
     public static final String FUN_MODULE_ADOP= "CRBRAD";
+    public static final String FUN_MODULE_ABAN= "CRBRAB";
+
     public static final String STATE_CODE = "KL";
 
     public static final String COUNTRY_CODE = "COUNTRY_INDIA";
