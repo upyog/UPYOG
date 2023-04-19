@@ -14,6 +14,7 @@ public interface NacApplicantDetailsRowMapper {
 				.isDeclared(rs.getBoolean("ebap_is_declared"))
 				.declarationId(rs.getString("ebap_declaration_id"))
 				.isEsigned(rs.getBoolean("ebap_is_esigned"))
+				.careofapplicant(rs.getString("ebap_care_of_applicant"))
 				.build();
 		
 	}

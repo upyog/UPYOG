@@ -25,7 +25,7 @@ public class CommonQueryBuilder extends BaseQueryBuilder {
 			.append("ebd.adopt_deed_order_no as ba_adopt_deed_order_no,ebd.adopt_dateoforder_deed as ba_adopt_dateoforder_deed,ebd.adopt_issuing_auththority as ba_adopt_issuing_auththority,")
 			.append("ebd.adopt_has_agency as ba_adopt_has_agency,ebd.adopt_agency_name as ba_adopt_agency_name,ebd.adopt_agency_address as ba_adopt_agency_address,ebd.is_stillbirth as ba_is_stillbirth,ebd.is_adopted as ba_is_adopted,")
 			.append("ebd.adopt_decree_order_no as ba_adopt_decree_order_no,ebd.adopt_dateoforder_decree as ba_adopt_dateoforder_decree,ebd.adopt_agency_contact_person as ba_adopt_agency_contact_person,")
-			.append("ebd.adopt_agency_contact_person_mobileno as ba_adopt_agency_contact_person_mobileno,ebd.createdtime,ebd.createdby,ebd.lastmodifiedtime,ebd.lastmodifiedby").toString();
+			.append("ebd.adopt_agency_contact_person_mobileno as ba_adopt_agency_contact_person_mobileno,ebd.createdtime,ebd.createdby,ebd.lastmodifiedtime,ebd.lastmodifiedby,ebd.nac_order_of_child as ba_nac_order_of_child").toString();
 
 	private static final String QUERYCONDITION = new StringBuilder().append(" FROM public.eg_birth_details ebd LEFT JOIN eg_birth_place ebp ON ebp.birthdtlid = ebd.id LEFT JOIN eg_birth_father_information ebfi ON ebfi.birthdtlid = ebd.id AND ebfi.bio_adopt='BIOLOGICAL'")
 																	.append(" LEFT JOIN eg_birth_mother_information ebmi ON ebmi.birthdtlid = ebd.id AND ebmi.bio_adopt='BIOLOGICAL'")
@@ -124,7 +124,7 @@ public class CommonQueryBuilder extends BaseQueryBuilder {
 	
 	private static final String QUERY_NACAPPLICANT = new StringBuilder().append("ebap.id as ebap_id,ebap.birthdtlid as ebap_birthdtlid,ebap.name_en as ebap_name_en,ebap.address_en as ebap_address_en,")
 			.append("ebap.aadharno as ebap_aadharno,ebap.mobileno as ebap_mobileno,ebap.is_declared as ebap_is_declared,")
-			.append("ebap.declaration_id as ebap_declaration_id,ebap.is_esigned as ebap_is_esigned").toString();
+			.append("ebap.declaration_id as ebap_declaration_id,ebap.is_esigned as ebap_is_esigned,ebap.care_of_applicant as ebap_care_of_applicant").toString();
 	
 	private static final String QUERY_NACDOCUMENTS = new StringBuilder().append("ebad.id as ebad_id,ebad.birthdtlid as ebad_birthdtlid,ebad.document_name as ebad_document_name,ebad.document_type as ebad_document_type,")
 			.append("ebad.document_description as ebad_document_description,ebad.filestoreid as ebad_filestoreid,ebad.document_link as ebad_document_link,")

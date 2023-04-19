@@ -104,6 +104,7 @@ public class NacApplicationRowMapper implements ResultSetExtractor<List<NacAppli
                     .otherChildrenDetails(new ArrayList<NacOtherChildren>())
                     .documentDetails(new ArrayList<DocumentDetails>())
                     .parentAddress(getKsmartBirthParentAddress(rs))
+                    .nacorderofChildren(rs.getInt("ba_nac_order_of_child"))
                     .build();
         	  }
         	  
