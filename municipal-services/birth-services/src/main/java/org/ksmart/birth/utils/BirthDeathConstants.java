@@ -170,6 +170,8 @@ public class BirthDeathConstants {
 	public static final String BUSINESS_SERVICE_BND = "BIRTHHOSP21";
 	
 	public static final String BUSINESS_SERVICE_ADPTN = "ADOPTIONHOME";
+	
+	public static final String BUSINESS_SERVICE_NAC = "NACAPP";
 
 	public static final String TENANTIDKEY = "tenantId";
 

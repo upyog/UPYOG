@@ -56,13 +56,13 @@ public class WorkflowIntegratorNac {
 	        String businessServiceFromMDMS = currentFile.getBusinessService();
 
 	        if (businessServiceFromMDMS == null) {
-	            businessServiceFromMDMS = BirthDeathConstants.BUSINESS_SERVICE_ADPTN;
+	            businessServiceFromMDMS = BirthDeathConstants.BUSINESS_SERVICE_NAC;
 	        }
 
 	        JSONArray array = new JSONArray();
 
 	        for (NacApplication adoption : request.getNacDetails()) {
-	            if (businessServiceFromMDMS.equals(BirthDeathConstants.BUSINESS_SERVICE_ADPTN) || !request.getNacDetails()
+	            if (businessServiceFromMDMS.equals(BirthDeathConstants.BUSINESS_SERVICE_NAC) || !request.getNacDetails()
 	                    .get(0).getAction().equalsIgnoreCase(BirthDeathConstants.TRIGGER_NOWORKFLOW)) {
 
 	                JSONObject obj = new JSONObject();
@@ -101,7 +101,9 @@ public class WorkflowIntegratorNac {
 	            workFlowRequest.put(BirthDeathConstants.WORKFLOWREQUESTARRAYKEY, array);
 	            String response = null;
 	            log.info("workflow integrator request " + workFlowRequest);
-
+System.out.println("workflow "+ workFlowRequest);
+System.out.println("path "+ bndConfig.getWfHost().concat(bndConfig.getWfTransitionPath()));
+ 
 	            try {
 	                response = restTemplate.postForObject(bndConfig.getWfHost().concat(bndConfig.getWfTransitionPath()),
 	                        workFlowRequest, String.class);

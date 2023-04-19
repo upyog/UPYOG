@@ -7,7 +7,7 @@ import java.sql.SQLException;
 
 public interface AdoptionParentAddressRowMapper {
     default ParentAddress getKsmartBirthParentAddress(ResultSet rs) throws SQLException {
-    	System.out.println(" village "+rs.getString("pres_villageid"));
+    	
         return ParentAddress.builder()
                 .countryIdPresent(rs.getString("pres_countryid"))
                 .stateIdPresent(rs.getString("pres_stateid"))

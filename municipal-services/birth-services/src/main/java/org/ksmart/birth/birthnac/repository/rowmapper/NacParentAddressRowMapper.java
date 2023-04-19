@@ -7,6 +7,7 @@ import java.sql.SQLException;
 
 public interface NacParentAddressRowMapper {
     default ParentAddress getKsmartBirthParentAddress(ResultSet rs) throws SQLException {
+    	System.out.println(" pres_poid "+rs.getString("pres_poid"));
         return ParentAddress.builder()
                 .countryIdPresent(rs.getString("pres_countryid"))
                 .stateIdPresent(rs.getString("pres_stateid"))

@@ -221,6 +221,7 @@ public class NacQueryBuilder extends BaseNacQuery {
 				.append(",")
 				.append(commonQueryBuilder.getQueryDocuments())
                 .append(commonQueryBuilder.getQueryConditionNac()).toString();
+        System.out.println("query "+query);
         return query;
     }
 	 

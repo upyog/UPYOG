@@ -208,7 +208,8 @@ public class NacEnrichment implements BaseEnrichment {
                                     birth.getParentAddress().setHouseNameNoMlPermanent(birth.getParentAddress().getPermntInKeralaAdrHouseNameMl());
 
                                     birth.getParentAddress().setPinNoPermanent(birth.getParentAddress().getPermntInKeralaAdrPincode());
-                                    birth.getParentAddress().setVillageNamePermanent(null);
+                                    birth.getParentAddress().setPoNoPermanent(birth.getParentAddress().getPermntInKeralaAdrPostOffice());
+                                    birth.getParentAddress().setVillageNamePermanent(birth.getParentAddress().getPermntInKeralaAdrVillage());
                                 } else {
                                     birth.getParentAddress().setCountryIdPermanent(birth.getParentAddress().getPermtaddressCountry());
 
@@ -226,6 +227,7 @@ public class NacEnrichment implements BaseEnrichment {
                                     birth.getParentAddress().setHouseNameNoMlPermanent(birth.getParentAddress().getPermntOutsideKeralaHouseNameMl());
 
                                     birth.getParentAddress().setPinNoPermanent(birth.getParentAddress().getPermntOutsideKeralaPincode());
+                                    birth.getParentAddress().setPoNoPermanent(birth.getParentAddress().getPermntOutsideKeralaPostOfficeEn());
                                     birth.getParentAddress().setVillageNamePermanent(birth.getParentAddress().getPermntOutsideKeralaVillage());
 
                                 }
