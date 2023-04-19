@@ -30,10 +30,10 @@ public class DocumentDetails {
     private String id;
     
     @JsonProperty("documentName")
-    private Boolean documentName;
+    private String documentName;
     
     @JsonProperty("documentDescription")
-    private Boolean documentDescription;
+    private String documentDescription;
 
     @JsonProperty("active")
     private Boolean active;

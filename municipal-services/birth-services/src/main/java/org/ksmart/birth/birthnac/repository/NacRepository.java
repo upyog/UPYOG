@@ -88,7 +88,7 @@ public class NacRepository {
     public List<NacApplication> searchNacDetails(NacDetailRequest request, SearchCriteria criteria) {
         List<Object> preparedStmtValues = new ArrayList<>();
         criteria.setApplicationType(BirthConstants.FUN_MODULE_NAC);
-        String query = nacQueryBuilder.getNacSearchQuery(criteria, preparedStmtValues, Boolean.FALSE);
+        String query = nacQueryBuilder.getNacSearchQuery(criteria, request, preparedStmtValues, Boolean.FALSE);
         List<NacApplication> result = jdbcTemplate.query(query, preparedStmtValues.toArray(), nacApplicationRowMapper);
         result.forEach(birth -> {
             if(birth.getPlaceofBirthId()!=null){

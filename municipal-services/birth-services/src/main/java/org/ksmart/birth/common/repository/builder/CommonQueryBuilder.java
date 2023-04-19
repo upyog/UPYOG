@@ -43,6 +43,16 @@ public class CommonQueryBuilder extends BaseQueryBuilder {
 			.append(" LEFT JOIN eg_birth_statitical_information estat ON estat.birthdtlid = ebd.id")
 			.append(" LEFT JOIN eg_birth_statitical_information estat ON estat.birthdtlid = ebd.id")
 			.append(" LEFT JOIN eg_birth_initiator ini ON ini.birthdtlid = ebd.id ").toString();
+	
+   private static final String QUERYCONDITIONNAC = new StringBuilder().append(" FROM public.eg_birth_details ebd LEFT JOIN eg_birth_place ebp ON ebp.birthdtlid = ebd.id LEFT JOIN eg_birth_father_information ebfi ON ebfi.birthdtlid = ebd.id AND ebfi.bio_adopt='BIOLOGICAL'")
+	        .append(" LEFT JOIN eg_birth_mother_information ebmi ON ebmi.birthdtlid = ebd.id AND ebmi.bio_adopt='BIOLOGICAL'")
+	        .append(" LEFT JOIN eg_birth_permanent_address eperad ON eperad.birthdtlid = ebd.id AND eperad.bio_adopt='BIOLOGICAL'")
+	        .append(" LEFT JOIN eg_birth_present_address epreadd ON epreadd.birthdtlid = ebd.id AND epreadd.bio_adopt='BIOLOGICAL'")
+	        .append(" LEFT JOIN eg_birth_statitical_information estat ON estat.birthdtlid = ebd.id")
+	        .append(" LEFT JOIN eg_birth_applicant ebap ON ebap.birthdtlid = ebd.id")
+	        .append(" LEFT JOIN eg_birth_children_born ebcb ON ebcb.birthdtlid = ebd.id")
+	        .append(" LEFT JOIN eg_birth_application_document ebad ON ebad.birthdtlid = ebd.id")
+	        .append(" LEFT JOIN eg_birth_initiator ini ON ini.birthdtlid = ebd.id").toString();
 
 	
 	
@@ -115,6 +125,10 @@ public class CommonQueryBuilder extends BaseQueryBuilder {
 	private static final String QUERY_NACAPPLICANT = new StringBuilder().append("ebap.id as ebap_id,ebap.birthdtlid as ebap_birthdtlid,ebap.name_en as ebap_name_en,ebap.address_en as ebap_address_en,")
 			.append("ebap.aadharno as ebap_aadharno,ebap.mobileno as ebap_mobileno,ebap.is_declared as ebap_is_declared,")
 			.append("ebap.declaration_id as ebap_declaration_id,ebap.is_esigned as ebap_is_esigned").toString();
+	
+	private static final String QUERY_NACDOCUMENTS = new StringBuilder().append("ebad.id as ebad_id,ebad.birthdtlid as ebad_birthdtlid,ebad.document_name as ebad_document_name,ebad.document_type as ebad_document_type,")
+			.append("ebad.document_description as ebad_document_description,ebad.filestoreid as ebad_filestoreid,ebad.document_link as ebad_document_link,")
+			.append("ebad.file_type as ebad_file_type,ebad.file_size as ebad_file_size,ebad.active as ebad_active").toString();
 
 	private static final String QUERY_CARETAKE_ABAN = new StringBuilder().append("ct.id as ct_id, ct.birthdtlid as ct_birthdtlid, ct.care_taker_name as ct_care_taker_name," )
 																		.append("ct.care_taker_institution as ct_care_taker_institution, ct.care_taker_inst_designation as ct_care_taker_inst_designation,")
@@ -131,6 +145,10 @@ public class CommonQueryBuilder extends BaseQueryBuilder {
 	public String getQueryConditionAdptn() {
 		return QUERYCONDITIONADPTN;
 	}	
+	public String getQueryConditionNac() {
+		return QUERYCONDITIONNAC;
+	}	
+	
 	
 	public String getQueryPlaceOfEvent() {
 		return QUERY_PLACE_OF_EVENT;
@@ -164,6 +182,10 @@ public class CommonQueryBuilder extends BaseQueryBuilder {
 	public String getQueryOtherChildren() {
 		return QUERY_OTHERCH;
 	}
+	public String getQueryDocuments() {
+		return QUERY_NACDOCUMENTS;
+	}
+	
 
 	public String getQueryCareTaker() {
 		return QUERY_CARETAKE_ABAN;

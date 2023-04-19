@@ -2,6 +2,8 @@ package org.ksmart.birth.web.model.birthnac;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
+
+ 
 import org.ksmart.birth.common.model.AuditDetails;
 import org.ksmart.birth.common.model.Document; 
 import org.ksmart.birth.web.model.birthnac.NacApplicantDetail;
@@ -10,6 +12,8 @@ import org.ksmart.birth.web.model.ParentAddress;
 import org.ksmart.birth.web.model.ParentsDetail;
 
 import javax.validation.constraints.Size;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -272,6 +276,12 @@ public class NacApplication {
     
     @JsonProperty("OtherChildren")
     private List<NacOtherChildren> otherChildrenDetails;
+    public void addOtherChildren(final NacOtherChildren otherchildren) {
+        if (otherChildrenDetails == null) {
+        	otherChildrenDetails = new ArrayList<>();
+        }
+        otherChildrenDetails.add(otherchildren);
+    }
     
     
     @JsonProperty("BirthNACDocuments")
@@ -289,4 +299,6 @@ public class NacApplication {
 
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails;
+    
+  
 }

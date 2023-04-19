@@ -41,6 +41,12 @@ public class NacOtherChildren {
     @Size(max = 64)
     @JsonProperty("isAlive")
     private Boolean isAlive;  
+    
+    @Size(max = 64)
+   	@JsonProperty("parentBrthDtlId")
+   	private String parentBrthDtlId;
+    
+    
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails;
 

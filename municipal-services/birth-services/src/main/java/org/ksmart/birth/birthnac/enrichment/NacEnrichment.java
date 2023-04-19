@@ -57,6 +57,7 @@ public class NacEnrichment implements BaseEnrichment {
             birth.getOtherChildrenDetails().forEach(
                     child -> {
                         child.setId(UUID.randomUUID().toString());
+                        child.setParentBrthDtlId(birth.getId());
                     }
             );
             birth.getDocumentDetails().forEach(
@@ -69,13 +70,15 @@ public class NacEnrichment implements BaseEnrichment {
             		});
             
             birth.getParentsDetails().setFatherUuid(UUID.randomUUID().toString());
+            birth.getParentsDetails().setFatherBioAdopt("BIOLOGICAL");
             birth.getParentsDetails().setMotherUuid(UUID.randomUUID().toString());
+            birth.getParentsDetails().setMotherBioAdopt("BIOLOGICAL");
  
             if(birth.getParentAddress() != null) {
                 birth.getParentAddress().setPermanentUuid(UUID.randomUUID().toString());
                 birth.getParentAddress().setPresentUuid(UUID.randomUUID().toString());
-                birth.getParentAddress().setBioAdoptPermanent("ADOPT");
-                birth.getParentAddress().setBioAdoptPresent("ADOPT");
+                birth.getParentAddress().setBioAdoptPermanent("BIOLOGICAL");
+                birth.getParentAddress().setBioAdoptPresent("BIOLOGICAL");
             }
         });
         setApplicationNumbers(request);
@@ -142,7 +145,7 @@ public class NacEnrichment implements BaseEnrichment {
                                     birth.getParentAddress().setHouseNameNoEnPresent(birth.getParentAddress().getPresentInsideKeralaHouseNameEn());
                                     birth.getParentAddress().setHouseNameNoMlPresent(birth.getParentAddress().getPresentInsideKeralaHouseNameMl());
                                     birth.getParentAddress().setPinNoPresent(birth.getParentAddress().getPresentInsideKeralaPincode());
-                                    birth.getParentAddress().setVillageNamePresent(null);
+                                    birth.getParentAddress().setVillageNamePresent(birth.getParentAddress().getPresentInsideKeralaVillage());
 
                                 } else {
                                     birth.getParentAddress().setCountryIdPresent(birth.getParentAddress().getPresentaddressCountry());

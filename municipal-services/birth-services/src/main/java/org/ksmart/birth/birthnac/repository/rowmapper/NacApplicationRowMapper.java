@@ -1,25 +1,36 @@
 package org.ksmart.birth.birthnac.repository.rowmapper;
 
+ 
+import org.egov.tracer.model.CustomException;
+import org.ksmart.birth.web.model.DocumentDetails;
 import org.ksmart.birth.web.model.birthnac.NacApplication;
 import org.ksmart.birth.web.model.birthnac.NacOtherChildren;
 import org.ksmart.birth.web.model.correction.CorrectionField;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 @Component
 public class NacApplicationRowMapper implements ResultSetExtractor<List<NacApplication>>, NacBaseRowMapper, NacParentDetailRowMapper, NacInformatDetailsRowMapper, NacParentAddressRowMapper,NacApplicantDetailsRowMapper, NacOtherChildrenRowMapper ,NacInitiatorDetailsRowMapper {
 
     @Override
-    public List<NacApplication> extractData(ResultSet rs) throws SQLException, DataAccessException { //how to handle null
-        List<NacApplication> result = new ArrayList<>();
+    public List<NacApplication> extractData(ResultSet rs) throws SQLException, DataAccessException { //how to handle null         
+        Map<String, NacApplication> nacMap = new HashMap<>();    
 
         while (rs.next()) {
-            result.add(NacApplication.builder()
+        	  String currentid = rs.getString("ba_id");
+        	  NacApplication currentNac = nacMap.get(currentid);
+              if (null == currentNac) {
+        	     currentNac = NacApplication.builder()
                     .id(rs.getString("ba_id"))
                     .dateOfReport(rs.getLong("ba_dateofreport"))
                     .dateOfBirth(rs.getLong("ba_dateofbirth"))
@@ -91,15 +102,109 @@ public class NacApplicationRowMapper implements ResultSetExtractor<List<NacAppli
                     .fileStatus(rs.getString("ba_file_status"))
                     .applicantDetails(getApplicant(rs))
                     .otherChildrenDetails(new ArrayList<NacOtherChildren>())
+                    .documentDetails(new ArrayList<DocumentDetails>())
                     .parentAddress(getKsmartBirthParentAddress(rs))
-                    .build());
-        }
-        return result;
+                    .build();
+        	  }
+        	  
+        	   addChildrenToNac(rs,currentNac);
+        	   nacMap.put(currentid, currentNac);
+        	   
+//       result.add(currentNac);
+       }
+        return new ArrayList<>(nacMap.values());
+//        return result;
+    }
+    public void addChildrenToNac(ResultSet rs, NacApplication nac) {
+        setOtherChildrens(rs, nac);
+        setDocuments(rs, nac);
     }
     private Boolean isChildNameEntered(String name) {
         if(name == null) return true;
         else return false;
     }
+    
+    /**
+     * Maps Other children inside a ResultSet to the NacAPplication POJO  .
+     *
+     * @param rs
+     * @param currentNac
+     */
+    public void setOtherChildrens(ResultSet rs, NacApplication currentNac) {
+        try {
+            List<NacOtherChildren> otherChildrens = new ArrayList<>();
+            if (CollectionUtils.isEmpty(currentNac.getOtherChildrenDetails()))
+            	otherChildrens = new ArrayList<NacOtherChildren>();
+            else
+            	otherChildrens = currentNac.getOtherChildrenDetails();
+
+            List<String> ids = otherChildrens.stream().map(NacOtherChildren::getId).collect(Collectors.toList());
+            if (!StringUtils.isEmpty(rs.getString("ebcb_id")) && !ids.contains(rs.getString("ebcb_id"))) {
+               
+            	NacOtherChildren otherChildren = NacOtherChildren.builder()
+            			.id(rs.getString("ebcb_id"))
+                        .childNameEn(rs.getString("ebcb_child_name_en"))
+                        .childNameMl(rs.getString("ebcb_child_name_ml"))
+                        .sex(rs.getString("ebcb_sex"))
+                        .orderOfBirth(rs.getInt("ebcb_order_of_birth"))
+                        .isAlive(rs.getBoolean("ebcb_is_alive"))
+                        .dob(rs.getLong("ebcb_dob"))
+                        .auditDetails(getAuditDetails(rs))
+                        .build();
+
+            	otherChildrens.add(otherChildren);
+            }
+            currentNac.setOtherChildrenDetails(otherChildrens);
+        } catch (Exception e) {
+            
+            throw new CustomException("ROWMAPPER_ERROR", "Error in row mapper while mapping document");
+
+        }
+    }
+    
+    /**
+     * Maps Documents inside a ResultSet to the NacAPplication POJO  .
+     *
+     * @param rs
+     * @param currentNac
+     */
+    public void setDocuments(ResultSet rs, NacApplication currentNac) {
+        try {
+            List<DocumentDetails> Documents = new ArrayList<>();
+            if (CollectionUtils.isEmpty(currentNac.getDocumentDetails()))
+            	Documents = new ArrayList<DocumentDetails>();
+            else
+            	Documents = currentNac.getDocumentDetails();
+
+            List<String> ids = Documents.stream().map(DocumentDetails::getId).collect(Collectors.toList());
+            if (!StringUtils.isEmpty(rs.getString("ebad_id")) && !ids.contains(rs.getString("ebad_id"))) {
+               
+            	DocumentDetails document = DocumentDetails.builder()
+            			.id(rs.getString("ebad_id"))
+                        .documentName(rs.getString("ebad_document_name"))
+                        .documentDescription(rs.getString("ebad_document_description"))
+                        .active(rs.getBoolean("ebad_active"))
+                        .documentType(rs.getString("ebad_document_type"))
+                        .fileStoreId(rs.getString("ebad_filestoreid"))
+                        .documentLink(rs.getString("ebad_document_link"))
+                        .fileType(rs.getString("ebad_file_type"))
+                        .fileSize(rs.getString("ebad_file_size"))
+                        .birthdtlid(rs.getString("ebad_birthdtlid"))
+                        .auditDetails(getAuditDetails(rs))
+                        .build();
+
+            	Documents.add(document);
+            }
+            currentNac.setDocumentDetails(Documents);
+        } catch (Exception e) {
+            
+            throw new CustomException("ROWMAPPER_ERROR", "Error in row mapper while mapping document");
+
+        }
+    }
+    
+
+
 }
 
 
