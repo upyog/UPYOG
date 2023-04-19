@@ -437,7 +437,7 @@ serviceMaps:
 
             - jsonPath: $.NacDetails.*.OtherChildren.*.id
 
-            - jsonPath: $.NacDetails.*.id
+            - jsonPath: $.NacDetails.*.OtherChildren.*.parentBrthDtlId
 
             - jsonPath: $.NacDetails.*.OtherChildren.*.childNameEn
 
