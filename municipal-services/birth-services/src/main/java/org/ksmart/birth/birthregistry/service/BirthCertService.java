@@ -34,12 +34,9 @@ public class BirthCertService {
         Object mdmsData = mdmsUtil.mdmsCall(requestInfo);
         String strDate=null;
 
-                DateTimeFormatter dtDate = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        DateTimeFormatter dtDate = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         DateTimeFormatter dtTime = DateTimeFormatter.ofPattern("HH:mm");
 LocalDate zdt = CommonUtils.currentDate();
-//        ZonedDateTime zdt = CommonUtils.currentDate();
-//        System.out.println(zdt.toInstant().toEpochMilli());
-
         String dobInWords = null;
 
         Long updatedDate = null;
@@ -71,9 +68,9 @@ LocalDate zdt = CommonUtils.currentDate();
         registerCertificateData.setWardCode(register.getRegisterBirthPlace().getWardId());
         registerCertificateData.setDateOfReport(register.getDateOfReport());
         registerCertificateData.setRegistrationDate(register.getRegistrationDate());
-        registerCertificateData.setCurrentDate(dtDate.format(zdt));
-        System.out.println(dtTime.format(zdt));
-        registerCertificateData.setCurrentTime(dtTime.format(zdt));
+        registerCertificateData.setCurrentDate(dtDate.format(CommonUtils.currentDate()));
+//        System.out.println(dtTime.format(zdt));
+        registerCertificateData.setCurrentTime(CommonUtils.currentTime());
         registerCertificateData.setDobStr(strDate);
         registerCertificateData.setCurrentDateLong(CommonUtils.currentDateTime());
 //        registerCertificateData.setRegistrationDateStr(register.getRegistrationDate());

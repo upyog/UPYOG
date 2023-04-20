@@ -515,7 +515,7 @@
               {
                 "columns": [
                   {
-                    "text": "{{dateOfIssue}}: {{currentDate}}",
+                    "text": "{{dateOfIssue}}: {{currentDate}} {{(currentTime)}}",
                     "width": "49%",
                     "style": "details-body"
                   },
