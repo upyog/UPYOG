@@ -28,7 +28,9 @@ public class EmailNotificationListener {
     public void listen(final HashMap<String, Object> record) {
     	//EmailRequest emailRequest = objectMapper.convertValue(record, EmailRequest.class);
         //emailService.sendEmail(emailRequest.getEmail());
-        System.out.println(record);
+        System.out.println("Printing Records for Kakfka Water topic");
+        System.out.println("Recors is ================================"+record);
+
         
     }
     
