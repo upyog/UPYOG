@@ -26,6 +26,7 @@ import org.ksmart.birth.common.contract.EgovPdfResp;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.ksmart.birth.utils.MdmsUtil;
+import org.ksmart.birth.utils.enums.ErrorCodes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -60,7 +61,14 @@ public class RegisterNacService {
 	    }
 
 	    public List<RegisterNac> saveRegisterBirthDetails(RegisterNacRequest request) {
-	    	RegisterNacSearchCriteria criteria = new RegisterNacSearchCriteria();	        
+	    	RegisterNacSearchCriteria criteria = new RegisterNacSearchCriteria();	
+	    	
+	    	 if(request.getRegisternacDetails().get(0).getAckNumber() == null) {
+	             throw new CustomException(ErrorCodes.REQUIRED.getCode(),
+	                     "Application number is required.");
+
+	         }
+	    	 
 	        criteria.setApplicationNumber(request.getRegisternacDetails().get(0).getAckNumber());
 	        criteria.setTenantId(request.getRegisternacDetails().get(0).getTenantid());
 	        List<RegisterNac> registerBirthDetails = searchRegisterNacDetails(criteria);
@@ -83,7 +91,7 @@ public class RegisterNacService {
 	                .forEach(register -> {
 	                    RegisterCertificateData registerForCertificate = nacCertService.setCertificateDetails(register, requestInfo);
 	                    registerCertDetails.add(registerForCertificate);
-	                });
+	                });	         
 	        return registerCertDetails;
 	    }
 	    public NacCertificate download(RegisterNacSearchCriteria criteria, RequestInfo requestInfo) {
@@ -91,9 +99,9 @@ public class RegisterNacService {
 	            NacCertificate nacCertificate = new NacCertificate();
 	            NacCertRequest nacCertRequest = NacCertRequest.builder().nacCertificate(nacCertificate).requestInfo(requestInfo).build();
 	            List<RegisterCertificateData> regDetail = searchRegisterForCert(criteria, requestInfo);
-	            System.out.println("down  "+regDetail);
+	             
 	            if(regDetail.size() == 1) {
-	            	nacCertificate.setBirthPlace(regDetail.get(0).getPlaceDetails());
+	            	nacCertificate.setBirthPlace(regDetail.get(0).getBirthPlaceId());
 	            	nacCertificate.setRegistrationId(regDetail.get(0).getId());
 	            	nacCertificate.setApplicationId(regDetail.get(0).getApplicationId());
 	            	nacCertificate.setApplicationNumber(regDetail.get(0).getAckNo());
@@ -103,7 +111,7 @@ public class RegisterNacService {
 	            	nacCertificate.setDateofbirth(new Timestamp(regDetail.get(0).getDateOfBirth()) );
 	            	nacCertificate.setDateofreport(new Timestamp(regDetail.get(0).getDateOfReport()));
 	            	nacCertificate.setTenantId(regDetail.get(0).getTenantId());
-	            	nacCertificate.setApplicationType(regDetail.get(0).getApplicationType());
+//	            	nacCertificate.setApplicationType(regDetail.get(0).getApplicationType());
 	            	nacCertificate.setRegistrtionNo(regDetail.get(0).getRegistrationNo());
 	                enrichment.setCertificateNumber(nacCertificate,requestInfo);
 	                SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");

@@ -121,6 +121,8 @@ public class BirthConstants {
     public static final String FILE_NO = "FILE";
     public static final String REGISTRATION_NO = "REG";
     public static final String CERTIFICATE_NO = "CERT";
+    public static final String NACMODULE = "CRN";
+     
 
     public static final String GL_CODE = "glcode";
 

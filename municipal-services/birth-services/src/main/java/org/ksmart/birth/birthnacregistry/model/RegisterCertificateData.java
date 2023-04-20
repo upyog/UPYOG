@@ -99,6 +99,9 @@ public class RegisterCertificateData {
 
 	    @JsonProperty("currentDate")
 	    private String currentDate;
+	    
+	    @JsonProperty("currentTime")
+	    private String currentTime;
 
 	    @Size(max = 2500)
 	    @JsonProperty("placeDetailsMl")
@@ -162,4 +165,29 @@ public class RegisterCertificateData {
 	    @JsonProperty("applicationType")
 	    private String applicationType;
 
+	    @Size(max = 45)
+	    @JsonProperty("careofapplicantnameen")
+	    private String careofapplicantnameen;
+	    
+	    @Size(max = 45)
+	    @JsonProperty("applicantnameen")
+	    private String applicantnameen;
+	    
+	    @Size(max = 45)
+	    @JsonProperty("birthplaceen")
+	    private String birthplaceen;
+	    
+	    @Size(max = 45)
+	    @JsonProperty("childnameen")
+	    private String childnameen;
+	    
+	    @Size(max = 45)
+	    @JsonProperty("mothernameen")
+	    private String mothernameen;
+	    
+	    
+	    
+	    
+	    
+	    
 }

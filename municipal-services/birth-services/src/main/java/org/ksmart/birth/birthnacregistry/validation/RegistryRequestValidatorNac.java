@@ -37,6 +37,7 @@ public class RegistryRequestValidatorNac {
 	    
 	    public void validateCreate(RegisterNacRequest request, List<RegisterNac> registerNacDetails) {
 	        List<RegisterNac> registerDetails = request.getRegisternacDetails();
+	        System.out.println( "conf  "+registerDetails.size());
 	        if (CollectionUtils.isEmpty(registerDetails)) {
 	            throw new CustomException(ErrorCodes.REQUIRED.getCode(),
 	                    "Register details is required.");
@@ -47,10 +48,10 @@ public class RegistryRequestValidatorNac {
 	                    "Supports only single Register  application create request.");
 	        }
 
-	        if (registerNacDetails.size() > 0) {// NOPMD
-	            throw new CustomException(BIRTH_DETAILS_REQUIRED.getCode(),
-	                    "Registration exist in the tenant against the given application number.");
-	        }
+//	        if (registerNacDetails.size() > 0) {// NOPMD
+//	            throw new CustomException(BIRTH_DETAILS_REQUIRED.getCode(),
+//	                    "Registration exist in the tenant against the given application number.");
+//	        }
 
 	        //mdmsValidator.validateMdmsData(request, mdmsData);
 	    }

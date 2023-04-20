@@ -73,11 +73,14 @@ public class NacRepository {
         List<Object> preparedStmtValues = new ArrayList<>();
         SearchCriteria criteria = new SearchCriteria();
         List<RegisterNac> result = null;
+        
         if (requestApplication.getNacDetails().size() > 0) {
-            criteria.getApplicationNumber().add(requestApplication.getNacDetails().get(0).getApplicationNo());
+//            criteria.getApplicationNumber().add(requestApplication.getNacDetails().get(0).getApplicationNo());
+        	criteria.setId(requestApplication.getNacDetails().get(0).getId());     
             criteria.setTenantId(requestApplication.getNacDetails().get(0).getTenantId());
             String query = nacQueryBuilder.getApplicationSearchQueryForRegistry(criteria, preparedStmtValues);
             result = jdbcTemplate.query(query, preparedStmtValues.toArray(), registerRowMapperForApp);
+             
         }
         return RegisterNacRequest.builder()
                 .requestInfo(requestApplication.getRequestInfo())

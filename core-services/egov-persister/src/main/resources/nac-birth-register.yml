@@ -1,0 +1,73 @@
+serviceMaps:
+  serviceName: nac-birth-services
+  mappings:
+    - version: 1.0
+      description: Persists nac birth details in eg_birth_nac_registry table
+      fromTopic: save-nac-birth-register-topic
+      isTransaction: true
+      queryMaps:
+        - query: INSERT INTO public.eg_birth_nac_registry(id, registrationno, birthdetailsid, applicant_name_en, care_of_applicant_name_en, child_name_en, mother_name_en, dateofbirth, birth_place_en,
+            birth_districtid, birth_stateid, birth_villageid, birth_talukid, createdby, createdtime, lastmodifiedtime, lastmodifiedby, applicationtype, filestoreid, status, additionaldetail,
+            embeddedurl, dateofissue, tenantid, certificateno,dateofreport,ack_no,registration_date,registration_status)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?,?,?);
+          basePath: RegisterNac.*
+          jsonMaps:
+            - jsonPath: $.RegisterNac.*.id
+
+            - jsonPath: $.RegisterNac.*.registrationno
+
+            - jsonPath: $.RegisterNac.*.birthdetailsid
+
+            - jsonPath: $.RegisterNac.*.applicantnameen
+
+            - jsonPath: $.RegisterNac.*.careofapplicantnameen
+
+            - jsonPath: $.RegisterNac.*.childnameen
+
+            - jsonPath: $.RegisterNac.*.mothernameen
+
+            - jsonPath: $.RegisterNac.*.dateofbirth
+
+            - jsonPath: $.RegisterNac.*.birthplaceen
+
+            - jsonPath: $.RegisterNac.*.birthdistrictid
+
+            - jsonPath: $.RegisterNac.*.birthvillageid
+
+            - jsonPath: $.RegisterNac.*.birthstateid
+
+            - jsonPath: $.RegisterNac.*.birthtalukid
+
+            - jsonPath: $.RegisterNac.*.auditDetails.createdBy
+
+            - jsonPath: $.RegisterNac.*.auditDetails.createdTime
+
+            - jsonPath: $.RegisterNac.*.auditDetails.lastModifiedTime
+
+            - jsonPath: $.RegisterNac.*.auditDetails.lastModifiedBy  
+
+            - jsonPath: $.RegisterNac.*.applicationtype
+
+            - jsonPath: $.RegisterNac.*.filestoreid
+
+            - jsonPath: $.RegisterNac.*.status
+
+            - jsonPath: $.RegisterNac.*.additionaldetail
+
+            - jsonPath: $.RegisterNac.*.embeddedurl
+
+            - jsonPath: $.RegisterNac.*.dateofissue
+
+            - jsonPath: $.RegisterNac.*.tenantid
+
+            - jsonPath: $.RegisterNac.*.certificateno
+            
+            - jsonPath: $.RegisterNac.*.dateofreport
+            
+            - jsonPath: $.RegisterNac.*.ack_no
+            
+            - jsonPath: $.RegisterNac.*.registration_date
+            
+            - jsonPath: $.RegisterNac.*.registration_status
+
+

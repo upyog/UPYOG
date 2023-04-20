@@ -19,9 +19,11 @@ public class RegisterRowMapperForNacApp implements ResultSetExtractor<List<Regis
 	@Override
 	public List<RegisterNac> extractData(ResultSet rs) throws SQLException, DataAccessException {
 		List<RegisterNac> result = new ArrayList<>();
+		
 		while (rs.next()) {
-
+			System.out.println("nac reg 11"+rs.getString("per_locality_en"));
 			result.add(RegisterNac.builder()
+					.dateOfReport(rs.getLong("ba_dateofreport"))
 					.applicantnameen(rs.getString("ebap_name_en"))
 					.careofapplicantnameen(rs.getString("ebap_address_en"))
 					.applicationtype(rs.getString("ba_applicationtype"))
@@ -29,13 +31,14 @@ public class RegisterRowMapperForNacApp implements ResultSetExtractor<List<Regis
 					.childnameen(rs.getString("ba_firstname_en"))
 					.mothernameen(rs.getString("mo_firstname_en"))
 					.registrationno(rs.getString("ba_registrationno"))
-					.birthplaceen(rs.getString("eperad_locality_en"))
-					.birthdistrictid(rs.getString("eperad_districtid"))
-					.birthtalukid(rs.getString("eperad_talukid"))
-					.birthvillageid(rs.getString("eperad_villageid"))
-					.birthstateid(rs.getString("eperad_stateid"))
+					.birthplaceen(rs.getString("per_locality_en"))
+					.birthdistrictid(rs.getString("per_districtid"))
+					.birthtalukid(rs.getString("per_talukid"))
+					.birthvillageid(rs.getString("per_villageid"))
+					.birthstateid(rs.getString("per_stateid"))
 					.dateofbirth(rs.getLong("ba_dateofbirth"))
 					.tenantid(rs.getString("ba_tenantid"))
+				    .ackNumber(rs.getString("ba_applicationno"))
 					.auditDetails(getAuditDetails(rs))
 					.build());
 		}

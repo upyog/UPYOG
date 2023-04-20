@@ -79,7 +79,7 @@ public class RegisterNacRepository {
 	    }
 	    public List<RegisterNac> saveRegisterBirthDetails(RegisterNacRequest request) {
 	        Boolean isAdopted=false;
-	        registerBirthDetailsEnrichment.enrichCreate(request);
+	        registerBirthDetailsEnrichment.enrichCreate(request);	       
 	        request.getRegisternacDetails()
 	                .forEach(register -> {
 	                    producer.push(config.getSaveNacBirthRegisterTopic(), request);
@@ -93,7 +93,7 @@ public class RegisterNacRepository {
 	    }
 	    public List<RegisterNac> searchRegisterNacDetails(RegisterNacSearchCriteria criteria) {
 	        List<Object> preparedStmtValues=new ArrayList<>();
-	        String query=registerQueryBuilder.getApplicationSearchQueryForRegistry(criteria, preparedStmtValues);
+	        String query=registerQueryBuilder.getRegBirthNacApplicationSearchQuery(criteria, preparedStmtValues, Boolean.FALSE);	       
 	        List<RegisterNac> result=jdbcTemplate.query(query, preparedStmtValues.toArray(), nacRegisterRowMapper);
 	        return result;
 	    }
@@ -107,6 +107,7 @@ public class RegisterNacRepository {
 	            SimpleDateFormat format=new SimpleDateFormat("dd-MM-yyyy");
 	            pdfApplicationRequest.getNacCertificate()
 	                    .forEach(cert -> {
+	                     
 	                        String uiHost=config.getUiAppHost();
 	                        String birthCertPath=config.getNacCertLink();
 	                        birthCertPath=birthCertPath.replace("$id", cert.getId());
@@ -127,7 +128,7 @@ public class RegisterNacRepository {
 	            pdfApplicationRequest.getNacCertificate()
 	                    .forEach(cert -> {
 	                        String uiHost=config.getEgovPdfHost();
-	                        String birthCertPath=config.getEgovPdfBirthEndPoint();
+	                        String birthCertPath=config.getEgovPdfBirthNacEndPoint();
 	                        String tenantId=cert.getTenantId()
 	                                            .split("\\.")[0];
 	                        birthCertPath=birthCertPath.replace("$tenantId", tenantId);

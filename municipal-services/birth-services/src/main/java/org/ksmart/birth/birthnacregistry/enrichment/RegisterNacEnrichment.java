@@ -5,7 +5,10 @@ import org.apache.kafka.common.protocol.types.Field;
 import org.egov.tracer.model.CustomException;
  
 import org.ksmart.birth.birthnacregistry.model.NacCertificate;
+import org.ksmart.birth.birthnacregistry.model.RegisterNac;
 import org.ksmart.birth.birthnacregistry.model.RegisterNacRequest;
+import org.ksmart.birth.birthregistry.model.RegisterBirthDetail;
+import org.ksmart.birth.birthregistry.model.RegisterBirthDetailsRequest;
 import org.ksmart.birth.common.enrichment.BaseEnrichment;
 import org.ksmart.birth.common.model.AuditDetails;
 import org.egov.common.contract.request.RequestInfo;
@@ -22,6 +25,8 @@ import java.util.ListIterator;
 import java.util.UUID;
 
 import static org.ksmart.birth.utils.BirthConstants.CERTIFICATE_NO;
+import static org.ksmart.birth.utils.BirthConstants.REGISTRATION_NO;
+import static org.ksmart.birth.utils.BirthConstants.NACMODULE;
 import static org.ksmart.birth.utils.BirthConstants.REG_STATUS_ACTIVE;
 
 @Component
@@ -43,7 +48,7 @@ public class RegisterNacEnrichment implements BaseEnrichment  {
 	            register.setRegistrationDate(System.currentTimeMillis());
 	            register.setRegistrationStatus(REG_STATUS_ACTIVE);
 	            register.setAuditDetails(auditDetails);
-
+	            setRegistrationNumber(request);
 	           
 	        });
 	    }
@@ -58,12 +63,29 @@ public class RegisterNacEnrichment implements BaseEnrichment  {
 	        request.getRegisternacDetails()
 	                .forEach(personal -> personal.setAuditDetails(auditDetails));
 	    }
+	    private void setRegistrationNumber(RegisterNacRequest request) {
+	        RequestInfo requestInfo = request.getRequestInfo();
+	        List<RegisterNac> birthDetails = request.getRegisternacDetails();
+	        String tenantId = birthDetails.get(0)
+	                .getTenantid();
+
+	        List<String> codes = getIds(requestInfo,
+	                tenantId,
+	                config.getBirthRegisNumberName(),
+	                NACMODULE, REGISTRATION_NO, birthDetails.size());
+	        validateFileCodes(codes, birthDetails.size());
+	        ListIterator<String> itr = codes.listIterator();
+	        request.getRegisternacDetails()
+	                .forEach(birth -> {
+	                    birth.setRegistrationno(itr.next());
+	                });
+	    }
 	    public void setCertificateNumber(NacCertificate nacCertificate, RequestInfo requestInfo) {
 	        String tenantId = nacCertificate.getTenantId();
 	        String certCode = getId(requestInfo,
 	                tenantId,
 	                config.getBirthRegisNumberName(),
-	                nacCertificate.getApplicationType(),
+	                NACMODULE,
 	                CERTIFICATE_NO,
 	                1);
 	        //validateFileCodes(certCode, 1);

@@ -22,9 +22,9 @@ public class RegisterNac {
 	    @JsonProperty("registrationno")
 	    private String registrationno;
 	    
-	    @Size(max = 64)
-	    @JsonProperty("RegistrationDate")
-	    private Long RegistrationDate;
+//	    @Size(max = 64)
+//	    @JsonProperty("RegistrationDate")
+//	    private Long RegistrationDate;
 	    
 	    
 	    @JsonProperty("dobStr")
@@ -34,9 +34,9 @@ public class RegisterNac {
 	    private String registrationDateStr;
 	    
 	    
-	    @Size(max = 64)
-	    @JsonProperty("RegistrationStatus")
-	    private String RegistrationStatus;
+//	    @Size(max = 64)
+//	    @JsonProperty("RegistrationStatus")
+//	    private String RegistrationStatus;
 	    
 	    @Size(max = 64)
 	    @JsonProperty("birthdetailsid")
@@ -132,6 +132,19 @@ public class RegisterNac {
 	    @JsonProperty("ack_no")
 	    private String ackNumber;
 	    
+	    @JsonProperty("dateofreport")
+	    private Long dateOfReport;
+	    
+	    @Size(max = 64)
+	    @JsonProperty("registration_status")
+	    private String registrationStatus;
+
+	    @JsonProperty("registration_date")
+	    private Long registrationDate;
+
+	   
+
+	   
 	    
 	    
 	    @JsonProperty("auditDetails")

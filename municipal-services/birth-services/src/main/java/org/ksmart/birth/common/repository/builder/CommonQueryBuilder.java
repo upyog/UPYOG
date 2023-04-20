@@ -53,6 +53,15 @@ public class CommonQueryBuilder extends BaseQueryBuilder {
 	        .append(" LEFT JOIN eg_birth_children_born ebcb ON ebcb.birthdtlid = ebd.id")
 	        .append(" LEFT JOIN eg_birth_application_document ebad ON ebad.birthdtlid = ebd.id")
 	        .append(" LEFT JOIN eg_birth_initiator ini ON ini.birthdtlid = ebd.id").toString();
+   
+   private static final String QUERYCONDITIONNACREGISTRY = new StringBuilder().append(" FROM public.eg_birth_details ebd LEFT JOIN eg_birth_place ebp ON ebp.birthdtlid = ebd.id LEFT JOIN eg_birth_father_information ebfi ON ebfi.birthdtlid = ebd.id ")
+	        .append(" LEFT JOIN eg_birth_mother_information ebmi ON ebmi.birthdtlid = ebd.id ")
+	        .append(" LEFT JOIN eg_birth_permanent_address eperad ON eperad.birthdtlid = ebd.id ")
+	        .append(" LEFT JOIN eg_birth_present_address epreadd ON epreadd.birthdtlid = ebd.id ")
+	        .append(" LEFT JOIN eg_birth_statitical_information estat ON estat.birthdtlid = ebd.id")
+	        .append(" LEFT JOIN eg_birth_applicant ebap ON ebap.birthdtlid = ebd.id")	         
+	        .append(" LEFT JOIN eg_birth_initiator ini ON ini.birthdtlid = ebd.id").toString();
+   
 
 	
 	
@@ -149,7 +158,9 @@ public class CommonQueryBuilder extends BaseQueryBuilder {
 		return QUERYCONDITIONNAC;
 	}	
 	
-	
+	public String getQueryConditionNacReg() {
+		return QUERYCONDITIONNACREGISTRY;
+	}
 	public String getQueryPlaceOfEvent() {
 		return QUERY_PLACE_OF_EVENT;
 	}

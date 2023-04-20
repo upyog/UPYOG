@@ -24,25 +24,30 @@ public class NacRegisterRowMapper  implements ResultSetExtractor<List<RegisterNa
 		List<RegisterNac> result = new ArrayList<>();
 		DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 		 while (rs.next()) {
-			 Date regDate = new Date(rs.getLong("registration_date"));
-			  Date dobDate = new Date(rs.getLong("ba_dateofbirth"));
+			  Date regDate = new Date(rs.getLong("bn_registration_date"));
+			  Date dobDate = new Date(rs.getLong("bn_dateofbirth"));
+			  System.out.println("ack  birth place"+rs.getString("bn_birth_place_en"));
 			 result.add(RegisterNac.builder()
-                     .applicantnameen(rs.getString("ebap_name_en"))
-                     .careofapplicantnameen(rs.getString("ebap_address_en"))
-                     .applicationtype(rs.getString("ba_applicationtype"))
-                     .birthdetailsid(rs.getString("ebap_birthdtlid"))
-                     .childnameen(rs.getString("ba_firstname_en"))
-                     .mothernameen(rs.getString("mo_firstname_en"))
-                     .registrationno(rs.getString("ba_registrationno"))                     
-                     .PlaceOfBirthId(rs.getString("pla_placeofbirthid"))
-                     .HospitalId(rs.getString("pla_hospitalid"))
-                     .InstitutionId(rs.getString("pla_institution_id"))
-                     .birthdistrictid(rs.getString("ba_registrationno"))
-                     .birthvillageid(rs.getString("ba_registrationno"))
-                     .birthstateid(rs.getString("ba_registrationno"))
-                     .dateofbirth(rs.getLong("ba_dateofbirth"))
+					 .id(rs.getString("bn_id"))
+					 .dateOfReport(rs.getLong("bn_dateofreport"))
+                     .applicantnameen(rs.getString("bn_applicant_name_en"))
+                     .careofapplicantnameen(rs.getString("bn_care_of_applicant_name_en"))
+                     .applicationtype(rs.getString("bn_applicationtype"))
+                     .birthdetailsid(rs.getString("bn_birthdetailsid"))
+                     .childnameen(rs.getString("bn_child_name_en"))
+                     .mothernameen(rs.getString("bn_mother_name_en"))
+                     .registrationno(rs.getString("bn_registrationno"))  
+                     .registrationDate(rs.getLong("bn_registration_date"))
+                     .PlaceOfBirthId(rs.getString("bn_birth_place_en"))
+                     .ackNumber(rs.getString("bn_ack_no"))
+//                     .HospitalId(rs.getString("pla_hospitalid"))
+//                     .InstitutionId(rs.getString("pla_institution_id"))
+                     .birthdistrictid(rs.getString("bn_birth_districtid"))
+                     .birthvillageid(rs.getString("bn_birth_villageid"))
+                     .birthstateid(rs.getString("bn_birth_stateid"))
+                     .dateofbirth(rs.getLong("bn_dateofbirth"))
                      .dobStr(formatter.format(dobDate))
-                     .tenantid(rs.getString("ba_tenantid"))
+                     .tenantid(rs.getString("bn_tenantid"))
                      .auditDetails(getAuditDetails(rs))
                      .registrationDateStr(formatter.format(regDate))
                      .build());

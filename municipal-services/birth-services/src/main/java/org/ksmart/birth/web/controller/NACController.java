@@ -32,6 +32,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+
+import static org.ksmart.birth.utils.BirthConstants.STATUS_APPROVED;
+import static org.ksmart.birth.utils.BirthConstants.WF_APPROVE;
+
 import java.util.List;
 
 @Slf4j
@@ -66,14 +70,17 @@ public class NACController {
     public ResponseEntity<?> updateRegisterBirthDetails(@RequestBody NacDetailRequest request) {
     	 NacCertificate nacCertificate = new NacCertificate();
         List<NacApplication> nacApplicationDetails=nacService.updateNacDetails(request);
-        //Download certificate when Approved
-        if((nacApplicationDetails.get(0).getApplicationStatus() == "APPROVED" && nacApplicationDetails.get(0).getAction() == "APPROVE")){
+        //Download certificate when Approved       
+      
+        	 if((nacApplicationDetails.get(0).getApplicationStatus().equals(STATUS_APPROVED)  && nacApplicationDetails.get(0).getAction().equals(WF_APPROVE))){
+        	 
         	RegisterNacRequest registerNacRequest = registryReq.createRegistryRequestNew(request);
         	   List<RegisterNac> registerBirthDetails =  registerNacService.saveRegisterBirthDetails(registerNacRequest);
-        	   RegisterNacSearchCriteria criteria = new RegisterNacSearchCriteria();
-            criteria.setTenantId(nacApplicationDetails.get(0).getTenantId());
-            criteria.setRegistrationNo(nacApplicationDetails.get(0).getRegistrationNo());
-            	nacCertificate = registerNacService.download(criteria,request.getRequestInfo());
+        	   
+//        	   RegisterNacSearchCriteria criteria = new RegisterNacSearchCriteria();
+//            criteria.setTenantId(nacApplicationDetails.get(0).getTenantId());
+//            criteria.setRegistrationNo(nacApplicationDetails.get(0).getRegistrationNo());
+//            	nacCertificate = registerNacService.download(criteria,request.getRequestInfo());
         }
         NacResponse response=NacResponse.builder()
                 .nacDetails(nacApplicationDetails)
