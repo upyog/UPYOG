@@ -26,8 +26,9 @@ public class EmailNotificationListener {
 
     @KafkaListener(topics = "${kafka.topics.notification.mail.name}")
     public void listen(final HashMap<String, Object> record) {
-    	EmailRequest emailRequest = objectMapper.convertValue(record, EmailRequest.class);
-        emailService.sendEmail(emailRequest.getEmail());
+    	//EmailRequest emailRequest = objectMapper.convertValue(record, EmailRequest.class);
+        //emailService.sendEmail(emailRequest.getEmail());
+        System.out.println(record);
         
     }
     
