@@ -62,7 +62,8 @@ public class MdmsService {
             getDefaultMapping();
             logger.error("Loading Mdms service error: "+e.getMessage()+" :: loaded default DDRs");
         }
-        logger.info("ddrTenantMapping = "+ddrTenantMapping);
+        if(logger.isDebugEnabled())
+        	logger.debug("ddrTenantMapping = "+ddrTenantMapping);
     }
 
     public String getDDRNameByCode(String ddrCode){

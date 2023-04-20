@@ -89,7 +89,8 @@ public class MetadataServiceImpl implements MetadataService {
 						//dasboardNodes.forEach(dbNode -> {
 						for(JsonNode dbNode : dasboardNodes){
 							if (dbNode.get(Constants.DashBoardConfig.ID).asText().equalsIgnoreCase(dashboardId)) {
-								logger.info("dbNode: " + dbNode);
+								if(logger.isDebugEnabled())
+									logger.debug("dbNode: " + dbNode);
 								name = dbNode.get(Constants.DashBoardConfig.NAME);
 								id = dbNode.get(Constants.DashBoardConfig.ID);
 
