@@ -1,5 +1,6 @@
 package org.ksmart.birth.common.repository.builder;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.ksmart.birth.utils.BirthConstants;
@@ -229,9 +230,14 @@ public class CommonQueryBuilder extends BaseQueryBuilder {
 	public StringBuilder prepareSearchCriteriaFromRequest(StringBuilder query, String uuid, @NotNull List<Object> preparedStmtValues) {
 		if(preparedStmtValues.size() == 0 && uuid != null) {
 			addFilter("ebd.createdby", uuid, query, preparedStmtValues);
-			addFilter("ebd.status", BirthConstants.STATUS_INITIATED, query, preparedStmtValues);
-			addFilter("ebd.status", BirthConstants.STATUS_FOR_PAYMENT, query, preparedStmtValues);
-			addFilter("ebd.status", BirthConstants.STATUS_CITIZENACTIONREQUIRED, query, preparedStmtValues);
+			List<String> statusList = new ArrayList<>();
+			statusList.add(BirthConstants.STATUS_INITIATED);
+			statusList.add(BirthConstants.STATUS_FOR_PAYMENT);
+			statusList.add(BirthConstants.STATUS_CITIZENACTIONREQUIRED);
+			addFilters("ebd.status", statusList, query, preparedStmtValues);
+//			addFilter("ebd.status", BirthConstants.STATUS_INITIATED, query, preparedStmtValues);
+//			addFilter("ebd.status", BirthConstants.STATUS_FOR_PAYMENT, query, preparedStmtValues);
+//			addFilter("ebd.status", BirthConstants.STATUS_CITIZENACTIONREQUIRED, query, preparedStmtValues);
 		}
 		return query;
 	}
