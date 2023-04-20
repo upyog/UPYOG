@@ -41,7 +41,7 @@ public class NacCertService {
             DateTimeFormatter dtDate = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 		    DateTimeFormatter dtTime = DateTimeFormatter.ofPattern("HH:mm");
 		
-		    ZonedDateTime zdt = CommonUtils.currentDate();
+//		    ZonedDateTime zdt = CommonUtils.currentDate();
 		    
 		
 		    String dobInWords = null;
@@ -74,8 +74,9 @@ public class NacCertService {
 	        registerCertificateData.setApplicantnameen(register.getApplicantnameen());
 	        registerCertificateData.setDateOfReport(register.getDateOfReport());
 	        registerCertificateData.setRegistrationDate(register.getRegistrationDate());
-	        registerCertificateData.setCurrentDate(dtDate.format(zdt));
-	        registerCertificateData.setCurrentTime(dtTime.format(zdt));
+	        registerCertificateData.setCurrentDate(dtDate.format(CommonUtils.currentDate()));
+	        registerCertificateData.setCurrentTime(CommonUtils.currentTime());
+
 	        registerCertificateData.setDobStr(strDate);
 	        registerCertificateData.setBirthplaceen(register.getPlaceOfBirthId());
 	        registerCertificateData.setChildnameen(register.getChildnameen());
