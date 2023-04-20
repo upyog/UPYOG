@@ -246,8 +246,8 @@ public class EnrichmentService {
 				String jsonString = new JSONObject(responseMap).toString();
 			
 				DocumentContext context = JsonPath.using(Configuration.defaultConfiguration()).parse(jsonString);
-				Double	plotArea = Double.valueOf(Double.parseDouble(context.read("edcrDetail[0].planDetail.planInformation.plotArea")));
-				Double	buildingHeight = Double.valueOf(Double.parseDouble(context.read("edcrDetail[0].planDetail.blocks[0].building.buildingHeight")));
+				BigDecimal	plotArea = context.read("edcrDetail[0].planDetail.planInformation.plotArea");
+				BigDecimal	buildingHeight = context.read("edcrDetail[0].planDetail.blocks[0].building.buildingHeight");
 
 			
 				List jsonOutput = JsonPath.read(masterData, BPAConstants.RISKTYPE_COMPUTATION);
