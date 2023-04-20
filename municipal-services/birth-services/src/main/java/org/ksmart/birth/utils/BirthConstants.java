@@ -110,6 +110,8 @@ public class BirthConstants {
     ///Application Status
     public static final String STATUS_APPROVED = "APPROVED";
     public static final String STATUS_FOR_PAYMENT = "PENDINGPAYMENT";
+    public static final String STATUS_INITIATED = "INITIATED";
+    public static final String STATUS_CITIZENACTIONREQUIRED = "CITIZENACTIONREQUIRED";
     //WF Action
     public static final String WF_APPROVE = "APPROVE";
     //Registration Status

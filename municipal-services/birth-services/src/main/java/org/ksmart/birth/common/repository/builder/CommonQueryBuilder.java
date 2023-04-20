@@ -2,6 +2,7 @@ package org.ksmart.birth.common.repository.builder;
 
 import java.util.List;
 
+import org.ksmart.birth.utils.BirthConstants;
 import org.ksmart.birth.web.model.SearchCriteria;
 import org.springframework.stereotype.Component;
 
@@ -228,7 +229,9 @@ public class CommonQueryBuilder extends BaseQueryBuilder {
 	public StringBuilder prepareSearchCriteriaFromRequest(StringBuilder query, String uuid, @NotNull List<Object> preparedStmtValues) {
 		if(preparedStmtValues.size() == 0 && uuid != null) {
 			addFilter("ebd.createdby", uuid, query, preparedStmtValues);
-			addFilter("ebd.status", "INITIATED", query, preparedStmtValues);
+			addFilter("ebd.status", BirthConstants.STATUS_INITIATED, query, preparedStmtValues);
+			addFilter("ebd.status", BirthConstants.STATUS_FOR_PAYMENT, query, preparedStmtValues);
+			addFilter("ebd.status", BirthConstants.STATUS_CITIZENACTIONREQUIRED, query, preparedStmtValues);
 		}
 		return query;
 	}

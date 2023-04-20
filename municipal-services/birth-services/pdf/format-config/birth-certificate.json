@@ -17,8 +17,8 @@
       "color": "grey",
       "opacity": 0.1,
       "image": "src/images/kerala-government.png",
-      "width": 400,
-      "height": 400,
+      "width": 460,
+      "height": 320,
       "absolutePosition": {"x": 75, "y": 250}
     },
     "content": [
@@ -1081,5 +1081,6 @@
         "link": "{{watermark}}"
       }
     }
-  }
+  },
+  "footer": "(function(currentPage, pageCount) { return [{'columns': [{'text': currentPage.toString() + ' of ' + pageCount ,'alignment':'center'}]}] })"
 }
