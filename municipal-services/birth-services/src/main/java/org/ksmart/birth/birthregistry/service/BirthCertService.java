@@ -36,7 +36,6 @@ public class BirthCertService {
 
         DateTimeFormatter dtDate = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         DateTimeFormatter dtTime = DateTimeFormatter.ofPattern("HH:mm");
-LocalDate zdt = CommonUtils.currentDate();
         String dobInWords = null;
 
         Long updatedDate = null;
