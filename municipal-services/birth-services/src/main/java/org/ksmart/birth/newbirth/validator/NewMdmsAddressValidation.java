@@ -17,7 +17,6 @@ import static org.ksmart.birth.utils.BirthConstants.STATE_CODE_SMALL;
 @Component
 @Slf4j
 public class NewMdmsAddressValidation {
-
     public void validateParentDetails(NewBirthDetailRequest request, Object mdmsData, Map<String, String> errorMap) {
         List<String> tenantCode = getTenantCodes(mdmsData);
 

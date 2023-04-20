@@ -201,7 +201,7 @@ public class NewMdmsValidator {
                             //Profession
                             String professionCodeMother = birth.getParentsDetails().getMotherProffessionid();
                             if (log.isDebugEnabled()) {
-                                log.debug("Father Profession code : \n{}", professionCodeMother);
+                                log.debug("Mother Profession code : \n{}", professionCodeMother);
                             }
                             if (CollectionUtils.isEmpty(professionCodes) || !professionCodes.contains(professionCodeMother)) {
 

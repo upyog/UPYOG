@@ -36,9 +36,9 @@ public class BirthCertService {
 
                 DateTimeFormatter dtDate = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         DateTimeFormatter dtTime = DateTimeFormatter.ofPattern("HH:mm");
-
-        ZonedDateTime zdt = CommonUtils.currentDate();
-        System.out.println(zdt.toInstant().toEpochMilli());
+LocalDate zdt = CommonUtils.currentDate();
+//        ZonedDateTime zdt = CommonUtils.currentDate();
+//        System.out.println(zdt.toInstant().toEpochMilli());
 
         String dobInWords = null;
 
@@ -72,9 +72,10 @@ public class BirthCertService {
         registerCertificateData.setDateOfReport(register.getDateOfReport());
         registerCertificateData.setRegistrationDate(register.getRegistrationDate());
         registerCertificateData.setCurrentDate(dtDate.format(zdt));
+        System.out.println(dtTime.format(zdt));
         registerCertificateData.setCurrentTime(dtTime.format(zdt));
         registerCertificateData.setDobStr(strDate);
-        registerCertificateData.setCurrentDateLong(zdt.toInstant().toEpochMilli());
+        registerCertificateData.setCurrentDateLong(CommonUtils.currentDateTime());
 //        registerCertificateData.setRegistrationDateStr(register.getRegistrationDate());
 //        registerCertificateData.setDateOfReportStr(strDate);
         registerCertificateData.setRegistrationNo(register.getRegistrationNo());

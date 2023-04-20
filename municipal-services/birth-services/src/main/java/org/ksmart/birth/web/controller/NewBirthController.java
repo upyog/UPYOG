@@ -48,10 +48,9 @@ public class NewBirthController {
     public ResponseEntity<?> saveRegisterBirthDetails(@RequestBody NewBirthDetailRequest request) {
         List<NewBirthApplication> registerBirthDetails=ksmartBirthService.saveKsmartBirthDetails(request);
         NewBirthResponse response= NewBirthResponse.builder()
-                                                                              .ksmartBirthDetails(registerBirthDetails)
-                                                                              .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(),
-                                                                                    true))
-                                                                              .build();
+                                                   .ksmartBirthDetails(registerBirthDetails)
+                                                   .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), true))
+                                                   .build();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
     @PostMapping(value = { "/updatebirth"})

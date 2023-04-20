@@ -7,7 +7,6 @@ import org.ksmart.birth.utils.enums.ErrorCodes;
 import org.ksmart.birth.web.model.bornoutside.BornOutsideApplication;
 import org.ksmart.birth.web.model.bornoutside.BornOutsideDetailRequest;
 import org.ksmart.birth.web.model.newbirth.NewBirthApplication;
-import org.ksmart.birth.web.model.newbirth.NewBirthDetailRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -56,10 +55,10 @@ public class BirthOutsideApplicationValidator {
                     "Date of birth is required for create request.");
         }
 
-//        if (StringUtils.isBlank(birthApplications.get(0).getPlaceofBirthId())) {
-//            throw new CustomException(INVALID_CREATE.getCode(),
-//                    "Place of birth id is required for create request.");
-//        }
+        if (StringUtils.isBlank(birthApplications.get(0).getPlaceofBirthId())) {
+            throw new CustomException(INVALID_CREATE.getCode(),
+                    "Place of birth id is required for create request.");
+        }
 
         if (StringUtils.isBlank(birthApplications.get(0).getApplicationType())) {
             throw new CustomException(INVALID_CREATE.getCode(),
@@ -117,7 +116,7 @@ public class BirthOutsideApplicationValidator {
 
         if (StringUtils.isBlank(birthApplications.get(0).getBusinessService())) {
             throw new CustomException(INVALID_UPDATE.getCode(),
-                    "Bussiness service is required for update request.");
+                    "Business service is required for update request.");
         }
 
         if (StringUtils.isBlank(birthApplications.get(0).getApplicationNo())) {

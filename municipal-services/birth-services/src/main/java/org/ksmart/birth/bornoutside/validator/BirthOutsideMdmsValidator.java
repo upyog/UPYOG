@@ -201,7 +201,7 @@ public class BirthOutsideMdmsValidator {
                             //Profession
                             String professionCodeMother = birth.getParentsDetails().getMotherProffessionid();
                             if (log.isDebugEnabled()) {
-                                log.debug("Father Profession code : \n{}", professionCodeMother);
+                                log.debug("Mother Profession code : \n{}", professionCodeMother);
                             }
                             if (CollectionUtils.isEmpty(professionCodes) || !professionCodes.contains(professionCodeMother)) {
 
@@ -235,17 +235,17 @@ public class BirthOutsideMdmsValidator {
 
 
 
-    private List<String> getBirthPlaceCodes(Object mdmsData) {
-        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_BIRTH_PLACES_CODE_JSONPATH);
-    }
-
-    private List<String> getInstitutionCodes(Object mdmsData) {
-        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_INSTITUTIONS_CODE_JSONPATH);
-    }
-
-    private List<String> getHospitalCodes(Object mdmsData) {
-        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_HOSPITALS_CODE_JSONPATH);
-    }
+//    private List<String> getBirthPlaceCodes(Object mdmsData) {
+//        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_BIRTH_PLACES_CODE_JSONPATH);
+//    }
+//
+//    private List<String> getInstitutionCodes(Object mdmsData) {
+//        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_INSTITUTIONS_CODE_JSONPATH);
+//    }
+//
+//    private List<String> getHospitalCodes(Object mdmsData) {
+//        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_HOSPITALS_CODE_JSONPATH);
+//    }
 
     private Map<String, Object> getBirthMasterData(Object mdmsData) {
         return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_BIRTH_JSONPATH);

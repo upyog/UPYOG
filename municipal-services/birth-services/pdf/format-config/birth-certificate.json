@@ -18,8 +18,8 @@
       "opacity": 0.1,
       "image": "src/images/kerala-government.png",
       "width": 400,
-      "height": 300,
-      "absolutePosition": {"x": 50, "y": 200}
+      "height": 400,
+      "absolutePosition": {"x": 75, "y": 250}
     },
     "content": [
       {
@@ -170,12 +170,12 @@
               {
                 "stack": [
                   {
-                    "text": "{{nameOfLbMl}} :     {{tenantMl}}",
+                    "text": "{{tenantMl}}",
                     "style": "details-body-center-ml"
                   },
                   {
-                    "text": "{{nameOfLb}} :     {{tenant}} {{  lbtypecode}}",
-                    "style": "details-body-center"
+                    "text": "{{tenant}} {{  lbtypecode}}",
+                    "style": "details-body-center-bold"
                   }
 
                 ]
@@ -254,7 +254,7 @@
               {
                 "stack": [
                   {
-                    "text": "താഴെ പറയുന്ന വിവരങ്ങൾ {{statecodeMl}} സംസ്ഥാനത്തിലെ {{distcodeMl}} ജില്ലയിലെ {{talukcodeMl}} താലൂക്കിലെ  {{tenantMl}} {{lbtypecodeMl}} {{certifyMl}}.",
+                    "text": "താഴെ പറയുന്ന വിവരങ്ങൾ {{statecodeMl}} സംസ്ഥാനത്തിലെ {{distcodeMl}} ജില്ലയിലെ {{talukcodeMl}} താലൂക്കിലെ  {{tenantMl}} {{certifyMl}}.",
                     "style": "rule-header-ml"
                   },
                   {
@@ -328,7 +328,7 @@
                     "width": "1%"
                   },
                   {
-                    "text": "{{dob}} /{{dobInWords}} ",
+                    "text": "{{dob}}  ({{dobInWords}})",
                     "style": "details-body-bold"
                   }
                 ]
@@ -573,7 +573,7 @@
                     "stack": [
                       {
                         "text": "{{ensureRegistration}}",
-                        "style": "details-body-center-bottom"
+                        "style": "details-body-center-bottom-bold"
                       },
                       {
                         "text": "{{ensureRegistrationMl}}",
@@ -848,9 +848,18 @@
       "details-body-times": {
         "color": "#000000",
         "font": "Times",
-        "fontSize": 78,
+        "fontSize": 8,
         "alignment": "left"
       },
+      "details-body-center-bold": {
+        "color": "#000000",
+        "bold": true,
+        "fontSize": 8,
+        "fontWeight": 100,
+        "font": "Times",
+        "alignment": "center"
+      },
+
       "details-body-center": {
         "color": "#000000",
         "bold": false,
@@ -861,8 +870,8 @@
       },
       "details-body-center-ml": {
         "color": "#000000",
-        "fontSize": 8,
-        "fontWeight": 100,
+        "fontSize": 9,
+        "fontWeight": 400,
         "alignment": "center"
       },
       "details-body-center-bottomML": {
@@ -881,6 +890,19 @@
         "color": "#000000",
         "font": "Times",
         "italics": true,
+        "fontSize": 6,
+        "alignment": "center",
+        "margin": [
+          0,
+          0,
+          15,
+          5
+        ]
+      },
+      "details-body-center-bottom-bold": {
+        "color": "#000000",
+        "font": "Times",
+        "bold": true,
         "fontSize": 6,
         "alignment": "center",
         "margin": [

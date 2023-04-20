@@ -45,7 +45,7 @@ public class BornOutsideService {
     }
 
     public List<BornOutsideApplication> updateBirthApplication(BornOutsideDetailRequest request) {
-        workflowIntegrator.callWorkFlow(request);
+      //  workflowIntegrator.callWorkFlow(request);
         return repository.updateBirthApplication(request);
     }
 

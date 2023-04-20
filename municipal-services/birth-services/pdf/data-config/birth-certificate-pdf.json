@@ -629,6 +629,19 @@
                 }
               },
               {
+                "variable": "certifyMl",
+                "value": {
+                  "path": "PDF_BIRTH_THIS_IS_TO_CERTIFY_THAT_ML"
+                },
+                "type": "label",
+                "localisation":{
+                  "required":true,
+                  "prefix": null,
+                  "module":"rainmaker-common",
+                  "locale":"en_IN"
+                }
+              },
+              {
                 "variable": "issueUnderSection12",
                 "value": {
                   "path": "PDF_BIRTH_ISSUED_UNDER_SECTION_12"
@@ -671,6 +684,19 @@
                 "variable": "issueUnderSection121969ML",
                 "value": {
                   "path": "PDF_BIRTH_ISSUED_UNDER_SECTION_12_1969_ML"
+                },
+                "type": "label",
+                "localisation":{
+                  "required":true,
+                  "prefix": null,
+                  "module":"rainmaker-common",
+                  "locale":"en_IN"
+                }
+              },
+              {
+                "variable": "issueUnderSection121969SSecML",
+                "value": {
+                  "path": "PDF_BIRTH_THIS_IS_TO_CERTIFY_THAT_ML"
                 },
                 "type": "label",
                 "localisation":{

@@ -46,7 +46,7 @@ public class NewBirthService {
         Object mdmsData = mdmsUtil.mdmsCall(request.getRequestInfo());
         // validate request
 
-       // validator.validateCreate(request, wfc, mdmsData);
+        validator.validateCreate(request, wfc, mdmsData);
         //call save
         List<NewBirthApplication> birthApplicationDetails =  repository.saveKsmartBirthDetails(request, mdmsData);
         //WorkFlow Integration
@@ -55,6 +55,7 @@ public class NewBirthService {
         //Demand Creation Maya commented
 
         birthApplicationDetails.forEach(birth->{
+            System.out.println(wfc.getPayment());
             if(wfc.getPayment()!=null) {
                 if (wfc.getPayment()) {
                     if (birth.getApplicationStatus().equals(STATUS_FOR_PAYMENT)) {
