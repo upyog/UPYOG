@@ -40,7 +40,7 @@ public class DocumentDetails {
 
     @Size(max=64)    
     @JsonProperty("tenantId")
-    private String tenantId = null;
+    private String tenantId;
 
     @Size(max=64)    
     @JsonProperty("documentType")
@@ -48,7 +48,7 @@ public class DocumentDetails {
 
     @Size(max=64)   
     @JsonProperty("fileStoreId")
-    private String fileStoreId = null;
+    private String fileStoreId;
     
     @JsonProperty("documentLink")
     private String documentLink;
@@ -70,7 +70,7 @@ public class DocumentDetails {
 	private String parentBrthDtlId;
     
     @JsonProperty("auditDetails")
-    private AuditDetails auditDetails = null;
+    private AuditDetails auditDetails;
 
 }
 
