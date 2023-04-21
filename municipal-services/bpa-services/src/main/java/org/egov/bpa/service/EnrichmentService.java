@@ -2,7 +2,6 @@ package org.egov.bpa.service;
 
 import java.math.BigDecimal;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -24,7 +23,6 @@ import org.egov.bpa.validator.MDMSValidator;
 import org.egov.bpa.web.model.AuditDetails;
 import org.egov.bpa.web.model.BPA;
 import org.egov.bpa.web.model.BPARequest;
-
 import org.egov.bpa.web.model.Workflow;
 import org.egov.bpa.web.model.edcr.RequestInfoWrapper;
 import org.egov.bpa.web.model.idgen.IdResponse;
@@ -43,8 +41,6 @@ import org.springframework.util.CollectionUtils;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
-import com.jayway.jsonpath.TypeRef;
-
 
 import lombok.extern.slf4j.Slf4j;
 import net.logstash.logback.encoder.org.apache.commons.lang.StringUtils;
@@ -246,10 +242,10 @@ public class EnrichmentService {
 				String jsonString = new JSONObject(responseMap).toString();
 			
 				DocumentContext context = JsonPath.using(Configuration.defaultConfiguration()).parse(jsonString);
-				log.info(context.read("edcrDetail[0].planDetail.planInformation.plotArea"));
-				String plot = context.read("edcrDetail[0].planDetail.planInformation.plotArea");
-				Double	plotArea = Double.valueOf(plot);
-				Double	buildingHeight = context.read("edcrDetail[0].planDetail.blocks[0].building.buildingHeight");
+				Object plot = context.read("edcrDetail[0].planDetail.planInformation.plotArea");
+				Double	plotArea = Double.valueOf(String.valueOf(plot));
+				Object bldgHgt = context.read("edcrDetail[0].planDetail.blocks[0].building.buildingHeight");
+				Double	buildingHeight = Double.valueOf(String.valueOf(bldgHgt));
 
 			
 				List jsonOutput = JsonPath.read(masterData, BPAConstants.RISKTYPE_COMPUTATION);
