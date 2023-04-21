@@ -235,9 +235,6 @@ public class CommonQueryBuilder extends BaseQueryBuilder {
 			statusList.add(BirthConstants.STATUS_FOR_PAYMENT);
 			statusList.add(BirthConstants.STATUS_CITIZENACTIONREQUIRED);
 			addFilters("ebd.status", statusList, query, preparedStmtValues);
-//			addFilter("ebd.status", BirthConstants.STATUS_INITIATED, query, preparedStmtValues);
-//			addFilter("ebd.status", BirthConstants.STATUS_FOR_PAYMENT, query, preparedStmtValues);
-//			addFilter("ebd.status", BirthConstants.STATUS_CITIZENACTIONREQUIRED, query, preparedStmtValues);
 		}
 		return query;
 	}

@@ -23,31 +23,31 @@ public class KsmartBirthPlaceService {
         this.mdmsTenantService = mdmsTenantService;
     }
 
-    public void setBirthPlaceDetails(RegisterBirthDetail registerMain, RegisterCertificateData register, Object  mdmsData) {
+    public void setBirthPlaceDetails(RegisterBirthDetail registerMain, RegisterCertificateData register, Object  mdmsDataLoc, Object  mdmsData) {
         if (register.getBirthPlaceId().contains(BIRTH_PLACE_HOSPITAL)) {
-            String placeEn =new StringBuilder().append(mdmsLocationService.getHospitalNameEn(mdmsData, register.getBirthPlaceHospitalId()) )
+            String placeEn =new StringBuilder().append(mdmsLocationService.getHospitalNameEn(mdmsDataLoc, register.getBirthPlaceHospitalId()) )
                     .append(",")
-                    .append(mdmsLocationService.getHospitalAddressEn(mdmsData, register.getBirthPlaceHospitalId())==null
-                            ?"":mdmsLocationService.getHospitalAddressEn(mdmsData, register.getBirthPlaceHospitalId())).toString();
-            String placeMl =new StringBuilder().append(mdmsLocationService.getHospitalNameMl(mdmsData, register.getBirthPlaceHospitalId()) )
+                    .append(mdmsLocationService.getHospitalAddressEn(mdmsDataLoc, register.getBirthPlaceHospitalId())==null
+                            ?"":mdmsLocationService.getHospitalAddressEn(mdmsDataLoc, register.getBirthPlaceHospitalId())).toString();
+            String placeMl =new StringBuilder().append(mdmsLocationService.getHospitalNameMl(mdmsDataLoc, register.getBirthPlaceHospitalId()) )
                     .append(",")
-                    .append(mdmsLocationService.getHospitalAddressMl(mdmsData, register.getBirthPlaceHospitalId())==null
-                            ?"":mdmsLocationService.getHospitalAddressMl(mdmsData, register.getBirthPlaceHospitalId())).toString();
+                    .append(mdmsLocationService.getHospitalAddressMl(mdmsDataLoc, register.getBirthPlaceHospitalId())==null
+                            ?"":mdmsLocationService.getHospitalAddressMl(mdmsDataLoc, register.getBirthPlaceHospitalId())).toString();
 
             register.setPlaceDetails(placeEn);
             register.setPlaceDetailsMl(placeMl);
         } else if (register.getBirthPlaceId().contains(BIRTH_PLACE_INSTITUTION)) {
-            String placeEn =new StringBuilder().append(mdmsLocationService.getInstitutionNameEn(mdmsData, register.getBirthPlaceInstitutionId()) +",")
+            String placeEn =new StringBuilder().append(mdmsLocationService.getInstitutionNameEn(mdmsDataLoc, register.getBirthPlaceInstitutionId()) +",")
                     .append(mdmsLocationService.getInstitutionTypeEn(mdmsData, register.getBirthPlaceInstitutionlTypeId())==null
                             ?"":mdmsLocationService.getInstitutionTypeEn(mdmsData, register.getBirthPlaceInstitutionlTypeId())+",")
-                    .append(mdmsLocationService.getInstitutionAddressEn(mdmsData, register.getBirthPlaceInstitutionId())==null
-                            ?"":mdmsLocationService.getInstitutionAddressEn(mdmsData, register.getBirthPlaceInstitutionId())).toString();
+                    .append(mdmsLocationService.getInstitutionAddressEn(mdmsDataLoc, register.getBirthPlaceInstitutionId())==null
+                            ?"":mdmsLocationService.getInstitutionAddressEn(mdmsDataLoc, register.getBirthPlaceInstitutionId())).toString();
 
-            String placeMl =new StringBuilder().append(mdmsLocationService.getInstitutionNameMl(mdmsData, register.getBirthPlaceInstitutionId()) +",")
+            String placeMl =new StringBuilder().append(mdmsLocationService.getInstitutionNameMl(mdmsDataLoc, register.getBirthPlaceInstitutionId()) +",")
                     .append(mdmsLocationService.getInstitutionTypeMl(mdmsData, register.getBirthPlaceInstitutionlTypeId())==null
                             ?"":mdmsLocationService.getInstitutionTypeMl(mdmsData, register.getBirthPlaceInstitutionlTypeId())+",")
-                    .append(mdmsLocationService.getInstitutionAddressMl(mdmsData, register.getBirthPlaceInstitutionId())==null
-                            ?"":mdmsLocationService.getInstitutionAddressMl(mdmsData, register.getBirthPlaceInstitutionId())).toString();
+                    .append(mdmsLocationService.getInstitutionAddressMl(mdmsDataLoc, register.getBirthPlaceInstitutionId())==null
+                            ?"":mdmsLocationService.getInstitutionAddressMl(mdmsDataLoc, register.getBirthPlaceInstitutionId())).toString();
 
             register.setPlaceDetails(placeEn);
             register.setPlaceDetailsMl(placeMl);

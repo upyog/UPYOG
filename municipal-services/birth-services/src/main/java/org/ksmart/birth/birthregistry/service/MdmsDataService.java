@@ -1,6 +1,5 @@
 package org.ksmart.birth.birthregistry.service;
 
-
 import lombok.extern.slf4j.Slf4j;
 import org.ksmart.birth.birthregistry.model.RegisterBirthDetail;
 import org.ksmart.birth.birthregistry.model.RegisterCertificateData;
@@ -130,17 +129,19 @@ public class MdmsDataService {
     }
 
     public void setPremananttAddressDetailsEn(RegisterBirthDetail register,RegisterCertificateData registerCert, Object  mdmsData) {
-        if (!register.getRegisterBirthPermanent().getCountryId().isEmpty() || !register.getRegisterBirthPermanent().getCountryId().isEmpty()) {
-            if (register.getRegisterBirthPermanent().getCountryId().contains(COUNTRY_CODE)) {
-                ksmartAddressService.getAddressInsideCountryPermanentEn(register, registerCert, mdmsData);
-                ksmartAddressService.getAddressInsideCountryPermanentMl(register, registerCert, mdmsData);
+        if(register.getRegisterBirthPermanent() != null && register.getRegisterBirthPermanent().getCountryId() != null) {
+            if (!register.getRegisterBirthPermanent().getCountryId().isEmpty() || !register.getRegisterBirthPermanent().getCountryId().isEmpty()) {
+                if (register.getRegisterBirthPermanent().getCountryId().contains(COUNTRY_CODE)) {
+                    ksmartAddressService.getAddressInsideCountryPermanentEn(register, registerCert, mdmsData);
+                    ksmartAddressService.getAddressInsideCountryPermanentMl(register, registerCert, mdmsData);
+                } else {
+                    ksmartAddressService.getAddressOutsideCountryPermanentEn(register, registerCert, mdmsData);
+                    ksmartAddressService.getAddressOutsideCountryPermanentMl(register, registerCert, mdmsData);
+                }
             } else {
                 ksmartAddressService.getAddressOutsideCountryPermanentEn(register, registerCert, mdmsData);
                 ksmartAddressService.getAddressOutsideCountryPermanentMl(register, registerCert, mdmsData);
             }
-        }   else{
-            ksmartAddressService.getAddressOutsideCountryPermanentEn(register, registerCert, mdmsData);
-            ksmartAddressService.getAddressOutsideCountryPermanentMl(register, registerCert, mdmsData);
         }
     }
 

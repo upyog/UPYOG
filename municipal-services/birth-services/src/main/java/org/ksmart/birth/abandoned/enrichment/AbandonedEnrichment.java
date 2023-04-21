@@ -62,8 +62,6 @@ public class AbandonedEnrichment implements BaseEnrichment {
                 .forEach(birth -> {
                     birth.setAuditDetails(auditDetails);
                 });
-     //   setPresentAddress(request);
-        //setPermanentAddress(request);
     }
     private void setApplicationNumbers(AbandonedRequest request) {
         RequestInfo requestInfo = request.getRequestInfo();

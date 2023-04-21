@@ -28,6 +28,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
+import static org.ksmart.birth.utils.BirthConstants.STATUS_APPROVED;
+import static org.ksmart.birth.utils.BirthConstants.WF_APPROVE;
+
 @Slf4j
 @RestController
 @RequestMapping("/cr")
@@ -61,11 +64,15 @@ public class AbandonedController {
     public ResponseEntity<?> updateAbandonedDetails(@RequestBody AbandonedRequest request) {
         BirthCertificate birthCertificate = new BirthCertificate();
         List<AbandonedApplication> adoptionApplicationDetails = abandonedService.updateKsmartBirthDetails(request);
+
         //Download certificate when Approved
-        if ((adoptionApplicationDetails.get(0).getApplicationStatus() == "APPROVED" && adoptionApplicationDetails.get(0).getAction() == "APPROVE")) {
-            RegisterBirthDetailsRequest registerBirthDetailsRequest = registryReq.createRegistryRequestNew(request);
-            registerBirthService.saveRegisterBirthDetails(registerBirthDetailsRequest);
-            RegisterBirthSearchCriteria criteria = new RegisterBirthSearchCriteria();
+        if(request.getBirthDetails().get(0).getIsWorkflow()) {
+            if ((adoptionApplicationDetails.get(0).getApplicationStatus().equals(STATUS_APPROVED) && adoptionApplicationDetails.get(0).getAction().equals(WF_APPROVE))) {
+                RegisterBirthDetailsRequest registerBirthDetailsRequest = registryReq.createRegistryRequestNew(request);
+                if (registerBirthDetailsRequest.getRegisterBirthDetails().size() == 1) {
+                    registerBirthService.saveRegisterBirthDetails(registerBirthDetailsRequest);
+                }
+            }
         }
         AbandonedResponse response = AbandonedResponse.builder()
                                                       .birthDetails(adoptionApplicationDetails)

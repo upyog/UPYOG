@@ -57,8 +57,8 @@ public class NewBirthController {
     public ResponseEntity<?> updateRegisterBirthDetails(@RequestBody NewBirthDetailRequest request) {
         BirthCertificate birthCertificate = new BirthCertificate();
         List<NewBirthApplication> birthApplicationDetails=ksmartBirthService.updateBirthDetails(request);
-        //Download certificate when Approved
 
+        //Download certificate when Approved
         if(request.getNewBirthDetails().get(0).getIsWorkflow()) {
             if ((birthApplicationDetails.get(0).getApplicationStatus().equals(STATUS_APPROVED) && birthApplicationDetails.get(0).getAction().equals(WF_APPROVE))) {
                 RegisterBirthDetailsRequest registerBirthDetailsRequest = registryReq.createRegistryRequestNew(request);
