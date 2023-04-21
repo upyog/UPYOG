@@ -1,0 +1,106 @@
+serviceMaps:
+  serviceName: birth-services
+  mappings:
+    - version: 1.0
+      description: Persists nacCertificate details in eg_nac_certificate_request  table
+      fromTopic: save-nac-cert-topic
+      isTransaction: true
+      queryMaps:
+
+        - query: INSERT INTO public.eg_nac_certificate_request (id, registrationno, registrydetailsid, createdby, createdtime,lastmodifiedtime, lastmodifiedby, 
+                filestoreid, status, additionaldetail, embeddedurl, dateofissue, tenantid,applicationid, ack_no, certificateno) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+          basePath: nacCertificate
+          jsonMaps:
+            - jsonPath: $.nacCertificate.id
+
+            - jsonPath: $.nacCertificate.registrtionNo
+
+            - jsonPath: $.nacCertificate.registrationId
+
+            - jsonPath: $.nacCertificate.auditDetails.createdBy
+
+            - jsonPath: $.nacCertificate.auditDetails.createdTime
+
+            - jsonPath: $.nacCertificate.auditDetails.lastModifiedTime
+
+            - jsonPath: $.nacCertificate.auditDetails.lastModifiedBy
+
+            - jsonPath: $.nacCertificate.filestoreid
+
+            - jsonPath: $.nacCertificate.applicationStatus
+
+            - jsonPath: $.nacCertificate.additionalDetail
+              type: JSON
+              dbType: JSONB
+
+            - jsonPath: $.nacCertificate.embeddedUrl
+
+            - jsonPath: $.nacCertificate.dateofissue
+
+            - jsonPath: $.nacCertificate.tenantId
+
+            - jsonPath: $.nacCertificate.applicationId
+
+            - jsonPath: $.nacCertificate.applicationNumber
+
+            - jsonPath: $.nacCertificate.nacCertificateNo
+
+
+    - version: 1.0
+      description: Update nacCertificate details in eg_nac_certificate_request  table
+      fromTopic: update-nac-cert-topic
+      isTransaction: true
+      queryMaps:
+
+        - query: INSERT INTO eg_nac_certificate_request_audit SELECT * FROM eg_nac_certificate_request WHERE id = ?;
+          basePath: nacCertificate
+          jsonMaps:
+
+            - jsonPath: $.nacCertificate.id
+
+        - query: UPDATE eg_nac_certificate_request SET status = ?, filestoreid =?, embeddedurl = ? ,dateofissue =?, lastmodifiedby = ?,  lastmodifiedtime = ? WHERE id=?;
+          basePath: nacCertificate
+          jsonMaps:
+
+            - jsonPath: $.nacCertificate.applicationStatus
+
+            - jsonPath: $.nacCertificate.filestoreid
+
+            - jsonPath: $.nacCertificate.embeddedUrl
+
+            - jsonPath: $.nacCertificate.dateofissue
+
+            - jsonPath: $.nacCertificate.auditDetails.lastModifiedBy
+
+            - jsonPath: $.nacCertificate.auditDetails.lastModifiedTime
+
+            - jsonPath: $.nacCertificate.id
+
+    - version: 1.0
+      description: Persists update birth details in eg_birth_details  table
+      fromTopic: update-birth-application-payment-topic
+      isTransaction: true
+      queryMaps:
+        - query: INSERT INTO eg_birth_details_audit SELECT * FROM eg_birth_details WHERE applicationno = ?;
+          basePath: PaymentDetails.*
+          jsonMaps:
+                - jsonPath: $.PaymentDetails.*.applicationNumber
+
+        - query: UPDATE public.eg_birth_details SET action=?, status=?, has_payment=?, is_payment_success=?, amount=?, lastmodifiedby=?,  lastmodifiedtime=? WHERE applicationno=?;
+          basePath: PaymentDetails.*
+          jsonMaps:
+                - jsonPath: $.PaymentDetails.*.action
+
+                - jsonPath: $.PaymentDetails.*.applicationStatus
+
+                - jsonPath: $.PaymentDetails.*.hasPayment
+
+                - jsonPath: $.PaymentDetails.*.isPaymentSuccess
+
+                - jsonPath: $.PaymentDetails.*.amount
+
+                - jsonPath: $.PaymentDetails.*.auditDetails.lastModifiedBy
+
+                - jsonPath: $.PaymentDetails.*.auditDetails.lastModifiedTime
+
+                - jsonPath: $.ChildDetails.*.applicationNumber

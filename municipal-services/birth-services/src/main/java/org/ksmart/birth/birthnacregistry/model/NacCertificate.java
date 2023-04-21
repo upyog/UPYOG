@@ -37,11 +37,12 @@ public class NacCertificate {
 
 	  @JsonProperty("businessService")
 	  private String businessService = null;
+	  
 	  @JsonProperty("registrtionNo")
 	  private String registrtionNo = null;
 
-	  @JsonProperty("birthCertificateNo")
-	  private String birthCertificateNo;
+	  @JsonProperty("nacCertificateNo")
+	  private String nacCertificateNo;
 
 	  @JsonProperty("additionalDetail")
 	  private Object additionalDetail = null;

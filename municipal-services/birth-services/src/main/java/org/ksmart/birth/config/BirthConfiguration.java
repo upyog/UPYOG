@@ -194,6 +194,8 @@ public class BirthConfiguration {
     @Value("${egov.bnd.naccert.link}")
     private String nacCertLink;
 
+    @Value("${persister.save.nac.cert.topic}")
+    private String nacCertSave;
 
 
 }

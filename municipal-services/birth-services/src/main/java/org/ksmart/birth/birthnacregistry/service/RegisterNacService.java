@@ -104,14 +104,12 @@ public class RegisterNacService {
 	            	nacCertificate.setBirthPlace(regDetail.get(0).getBirthPlaceId());
 	            	nacCertificate.setRegistrationId(regDetail.get(0).getId());
 	            	nacCertificate.setApplicationId(regDetail.get(0).getApplicationId());
-	            	nacCertificate.setApplicationNumber(regDetail.get(0).getAckNo());
-//	                birthCertificate.setGender(regDetail.get(0).getGenderEn().toString());
+	            	nacCertificate.setApplicationNumber(regDetail.get(0).getAckNo()); 
 	            	nacCertificate.setWard(regDetail.get(0).getWardCode());
 	            	nacCertificate.setDistrict(regDetail.get(0).getTenantDistrict());
 	            	nacCertificate.setDateofbirth(new Timestamp(regDetail.get(0).getDateOfBirth()) );
 	            	nacCertificate.setDateofreport(new Timestamp(regDetail.get(0).getDateOfReport()));
 	            	nacCertificate.setTenantId(regDetail.get(0).getTenantId());
-//	            	nacCertificate.setApplicationType(regDetail.get(0).getApplicationType());
 	            	nacCertificate.setRegistrtionNo(regDetail.get(0).getRegistrationNo());
 	                enrichment.setCertificateNumber(nacCertificate,requestInfo);
 	                SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
@@ -121,7 +119,7 @@ public class RegisterNacService {
 	                if (regDetail.size() > 1)
 	                    throw new CustomException("Invalid_Input", "Error in processing data");
 	                certEnrichment.enrichCreateRequest(nacCertRequest);
-	                regDetail.get(0).setCertId(nacCertRequest.getNacCertificate().getBirthCertificateNo());
+	                regDetail.get(0).setCertId(nacCertRequest.getNacCertificate().getNacCertificateNo());
 	                NacPdfRegisterRequest pdfRegisterRequest = NacPdfRegisterRequest.builder().requestInfo(requestInfo).nacCertificate(regDetail).build();
 	                EgovPdfResp pdfResp = repository.saveBirthCertPdf(pdfRegisterRequest);
 	                nacCertificate.setEmbeddedUrl(pdfRegisterRequest.getNacCertificate().get(0).getEmbeddedUrl());

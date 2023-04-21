@@ -98,7 +98,7 @@ public class RegisterNacRepository {
 	        return result;
 	    }
 	    public void saveRegisterNacCert(NacCertRequest request) { 
-	        producer.push(config.getSaveBirthCertificateTopic(), request);
+	        producer.push(config.getNacCertSave(), request);
 	       
 	    }
 	    public EgovPdfResp saveBirthCertPdf(NacPdfRegisterRequest pdfApplicationRequest) {

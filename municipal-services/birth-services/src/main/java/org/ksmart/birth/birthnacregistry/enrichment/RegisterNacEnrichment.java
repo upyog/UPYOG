@@ -91,7 +91,7 @@ public class RegisterNacEnrichment implements BaseEnrichment  {
 	        //validateFileCodes(certCode, 1);
 	        Long currentTime = Long.valueOf(System.currentTimeMillis());
 	      //  ListIterator<String> itr = filecodes.listIterator();
-	        nacCertificate.setBirthCertificateNo(certCode);
+	        nacCertificate.setNacCertificateNo(certCode);
 	    }
 	    private String getId(RequestInfo requestInfo, String tenantId, String idName, String moduleCode, String  fnType, int count) {
 	        return idGenRepository.getId(requestInfo, tenantId, idName, moduleCode, fnType, count);
