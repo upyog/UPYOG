@@ -246,9 +246,12 @@ public class EnrichmentService {
 				String jsonString = new JSONObject(responseMap).toString();
 			
 				DocumentContext context = JsonPath.using(Configuration.defaultConfiguration()).parse(jsonString);
-				log.info(context.read("edcrDetail[0].planDetail.planInformation.plotArea"));
-				String plot = context.read("edcrDetail[0].planDetail.planInformation.plotArea");
-				Double	plotArea = Double.valueOf(plot);
+				Object plot = context.read("edcrDetail[0].planDetail.planInformation.plotArea");
+				Object hgt = context.read("edcrDetail[0].planDetail.blocks[0].building.buildingHeight");
+				log.info("Plot area type::::"+plot.getClass());
+				log.info("Building height type::::"+hgt.getClass());
+				log.info("Plot area------>>>>>>>"+ (Double) plot);
+				Double	plotArea = context.read("edcrDetail[0].planDetail.planInformation.plotArea");
 				Double	buildingHeight = context.read("edcrDetail[0].planDetail.blocks[0].building.buildingHeight");
 
 			
