@@ -42,7 +42,7 @@ const PTWFApplicationTimeline = (props) => {
       const caption = {
         date: Digit.DateUtils.ConvertTimestampToDate(props.application?.auditDetails.lastModified),
         name: checkpoint?.assigner?.name,
-        comment: t(checkpoint?.comment),
+        comment: t(checkpoint?.wfComment),
       };
       return <PTWFCaption data={caption} />;
     }
