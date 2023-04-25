@@ -25,6 +25,14 @@ public class ParentAddress {
     @JsonProperty("presentInsideKeralaLBName")
     private String presentInsideKeralaLBName;
 
+    @Size(max = 300)
+    @JsonProperty("presentInsideKeralaLBNameEn")
+    private String presentInsideKeralaLBNameEn;
+
+    @Size(max = 300)
+    @JsonProperty("presentInsideKeralaLBNameMl")
+    private String presentInsideKeralaLBNameMl;
+
     @Size(max = 64)
     @JsonProperty("presentInsideKeralaDistrict")
     private String presentInsideKeralaDistrict;
@@ -69,9 +77,25 @@ public class ParentAddress {
     @JsonProperty("presentInsideKeralaPostOffice")
     private String presentInsideKeralaPostOffice;
 
+    @Size(max = 300)
+    @JsonProperty("presentInsideKeralaPostOfficeEn")
+    private String presentInsideKeralaPostOfficeEn;
+
+    @Size(max = 300)
+    @JsonProperty("presentInsideKeralaPostOfficeMl")
+    private String presentInsideKeralaPostOfficeMl;
+
     @Size(max = 64)
     @JsonProperty("presentWardNo")
     private String presentWardNo;
+
+    @Size(max = 300)
+    @JsonProperty("presentWardNoEn")
+    private String presentWardNoEn;
+
+    @Size(max = 300)
+    @JsonProperty("presentWardNoMl")
+    private String presentWardNoMl;
 
     @Size(max = 64)
     @JsonProperty("presentOutsideKeralaDistrict")
@@ -186,13 +210,37 @@ public class ParentAddress {
     @JsonProperty("countryIdPresent")
     private String countryIdPresent;
 
+    @Size(max = 300)
+    @JsonProperty("countryIdPresentEn")
+    private String countryIdPresentEn;
+
+    @Size(max = 300)
+    @JsonProperty("countryIdPresentMl")
+    private String countryIdPresentMl;
+
     @Size(max = 64)
     @JsonProperty("stateIdPresent")
     private String stateIdPresent;
 
+    @Size(max = 300)
+    @JsonProperty("stateIdPresentEn")
+    private String stateIdPresentEn;
+
+    @Size(max = 300)
+    @JsonProperty("stateIdPresentMl")
+    private String stateIdPresentMl;
+
     @Size(max = 64)
     @JsonProperty("districtIdPresent")
     private String districtIdPresent;
+
+    @Size(max = 300)
+    @JsonProperty("districtIdPresentEn")
+    private String districtIdPresentEn;
+
+    @Size(max = 300)
+    @JsonProperty("districtIdPresentMl")
+    private String districtIdPresentMl;
 
     @Size(max = 64)
     @JsonProperty("pinNoPresent")
@@ -246,6 +294,14 @@ public class ParentAddress {
     @JsonProperty("permntInKeralaAdrLBName")
     private String permntInKeralaAdrLBName;
 
+    @Size(max = 300)
+    @JsonProperty("permntInKeralaAdrLBNameEn")
+    private String permntInKeralaAdrLBNameEn;
+
+    @Size(max = 300)
+    @JsonProperty("permntInKeralaAdrLBNameMl")
+    private String permntInKeralaAdrLBNameMl;
+
     @Size(max = 64)
     @JsonProperty("permntInKeralaAdrDistrict")
     private String permntInKeralaAdrDistrict;
@@ -293,9 +349,25 @@ public class ParentAddress {
     @JsonProperty("permntInKeralaAdrPostOffice")
     private String permntInKeralaAdrPostOffice;
 
+    @Size(max = 300)
+    @JsonProperty("permntInKeralaAdrPostOfficeEn")
+    private String permntInKeralaAdrPostOfficeEn;
+
+    @Size(max = 300)
+    @JsonProperty("permntInKeralaAdrPostOfficeMl")
+    private String permntInKeralaAdrPostOfficeMl;
+
     @Size(max = 64)
     @JsonProperty("permntInKeralaWardNo")
     private String permntInKeralaWardNo;
+
+    @Size(max = 300)
+    @JsonProperty("permntInKeralaWardNoEn")
+    private String permntInKeralaWardNoEn;
+
+    @Size(max = 300)
+    @JsonProperty("permntInKeralaWardNoMl")
+    private String permntInKeralaWardNoMl;
 
     @Size(max = 64)
     @JsonProperty("permntOutsideKeralaDistrict")
@@ -387,17 +459,42 @@ public class ParentAddress {
     @Size(max = 64)
     @JsonProperty("permanentUuid")
     private String permanentUuid;
+
     @Size(max = 64)
     @JsonProperty("countryIdPermanent")
     private String countryIdPermanent;
+
+    @Size(max = 300)
+    @JsonProperty("countryIdPermanentEn")
+    private String countryIdPermanentEn;
+
+    @Size(max = 300)
+    @JsonProperty("countryIdPermanentMl")
+    private String countryIdPermanentMl;
 
     @Size(max = 64)
     @JsonProperty("stateIdPermanent")
     private String stateIdPermanent;
 
+    @Size(max = 300)
+    @JsonProperty("stateIdPermanentEn")
+    private String stateIdPermanentEn;
+
+    @Size(max = 300)
+    @JsonProperty("stateIdPermanentMl")
+    private String stateIdPermanentMl;
+
     @Size(max = 64)
     @JsonProperty("districtIdPermanent")
     private String districtIdPermanent;
+
+    @Size(max = 300)
+    @JsonProperty("districtIdPermanentEn")
+    private String districtIdPermanentEn;
+
+    @Size(max = 300)
+    @JsonProperty("districtIdPermanentMl")
+    private String districtIdPermanentMl;
 
     @Size(max = 64)
     @JsonProperty("pinNoPermanent")

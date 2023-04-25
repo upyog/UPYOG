@@ -55,7 +55,7 @@ public class MdmsForStillBirthService {
 
     public void setInstitutionDetails(StillBirthApplication birth, Object  mdmsData) {
         if (birth.getPlaceofBirthId().contains(BIRTH_PLACE_INSTITUTION)) {
-            String placeInstType = mdmsTenantService.getInstitutionTypeName(mdmsData, birth.getInstitutionTypeId());
+            String placeInstType = mdmsTenantService.getInstitutionTypeNameEn(mdmsData, birth.getInstitutionTypeId());
             birth.setInstitution(placeInstType);
         }
     }

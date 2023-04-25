@@ -63,9 +63,17 @@ public class BirthConstants {
     public static final String CR_MDMS_COUNTRY_CODE_JSONPATH = "$.MdmsRes.common-masters.Country[*].code";
     public static final String CR_MDMS_COUNTRY_JSONPATH = "$.MdmsRes.common-masters.Country";
     public static final String CR_MDMS_INST_TYPE_CODE_JSONPATH = "$.MdmsRes.birth-death-service.InstitutionTypePlaceOfEvent[*].code";
+    public static final String CR_MDMS_VEHI_TYPE_CODE_JSONPATH = "$.MdmsRes.birth-death-service.VehicleType[*].code";
+    public static final String CR_MDMS_PUBLIC_PLACE_TYPE_CODE_JSONPATH = "$.MdmsRes.birth-death-service.OtherBithPlace[*].code";
+    public static final String CR_MDMS_PUBLIC_PLACE_TYPE_JSONPATH = "$.MdmsRes.birth-death-service.OtherBithPlace";
+    public static final String CR_MDMS_PROF_TYPE_JSONPATH = "$.MdmsRes.birth-death-service.Profession";
+    public static final String CR_MDMS_QUAL_TYPE_JSONPATH = "$.MdmsRes.birth-death-service.Qualification";
+    public static final String CR_MDMS_RELIGION_JSONPATH = "$.MdmsRes.birth-death-service.Religion";
+    public static final String CR_MDMS_PROF_TYPE_CODE_JSONPATH = "$.MdmsRes.birth-death-service.Profession[*].code";
+    public static final String CR_MDMS_QUAL_TYPE_CODE_JSONPATH = "$.MdmsRes.birth-death-service.Qualification[*].code";
+    public static final String CR_MDMS_RELIGION_TYPE_CODE_JSONPATH = "$.MdmsRes.birth-death-service.Religion[*].code";
+    public static final String CR_MDMS_VEHI_TYPE_JSONPATH = "$.MdmsRes.birth-death-service.VehicleType";
     public static final String CR_MDMS_INST_TYPE_JSONPATH = "$.MdmsRes.birth-death-service.InstitutionTypePlaceOfEvent";
-
-//    public static final String CR_MDMS_INSTITUTION_CODE_JSONPATH = "$.MdmsRes.birth-death-service.Institution[*].code";
     public static final String CR_MDMS_MEDICAL_ATTENTION_TYPE_CODE_JSONPATH = "$.MdmsRes.birth-death-service.MedicalAttentionType[*].code";
     public static final String CR_MDMS_VILLAGE_CODE_JSONPATH = "$.MdmsRes.common-masters.Village[*].code";
     public static final String CR_MDMS_DISTRICT_CODE_JSONPATH = "$.MdmsRes.common-masters.District[*].code";

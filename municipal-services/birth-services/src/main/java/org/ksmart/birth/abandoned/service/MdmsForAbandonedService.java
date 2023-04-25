@@ -55,7 +55,7 @@ public class MdmsForAbandonedService {
 
     public void setInstitutionDetails(AbandonedApplication birth, Object  mdmsData) {
         if (birth.getPlaceofBirthId().contains(BIRTH_PLACE_INSTITUTION)) {
-            String placeInstType = mdmsTenantService.getInstitutionTypeName(mdmsData, birth.getInstitutionTypeId());
+            String placeInstType = mdmsTenantService.getInstitutionTypeNameEn(mdmsData, birth.getInstitutionTypeId());
             birth.setInstitution(placeInstType);
         }
     }

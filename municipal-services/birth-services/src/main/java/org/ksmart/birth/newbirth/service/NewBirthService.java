@@ -2,7 +2,6 @@ package org.ksmart.birth.newbirth.service;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.egov.tracer.model.CustomException;
 import org.ksmart.birth.birthcommon.model.WorkFlowCheck;
 import org.ksmart.birth.birthcommon.model.demand.Demand;
 import org.ksmart.birth.birthcommon.services.DemandService;
@@ -53,7 +52,6 @@ public class NewBirthService {
         workflowIntegrator.callWorkFlow(request);
 
         //Demand Creation Maya commented
-
         birthApplicationDetails.forEach(birth->{
             System.out.println(wfc.getPayment());
             if(wfc.getPayment()!=null) {

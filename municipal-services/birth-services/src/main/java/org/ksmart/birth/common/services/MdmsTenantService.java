@@ -41,129 +41,198 @@ public class MdmsTenantService {
         return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_INST_TYPE_CODE_JSONPATH);
     }
 
-    public String getTenantName(Object mdmsData, String tenantId) {
-        List<String> tenants  = getTenantCodes(mdmsData);
+    private List<String> getVehicleType(Object mdmsData) {
+        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_VEHI_TYPE_CODE_JSONPATH);
+    }
+
+    private List<String> getPublicPlaceType(Object mdmsData) {
+        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_PUBLIC_PLACE_TYPE_CODE_JSONPATH);
+    }
+
+    private List<String> getQualification(Object mdmsData) {
+        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_QUAL_TYPE_CODE_JSONPATH);
+    }
+
+    private List<String> getProfession(Object mdmsData) {
+        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_PROF_TYPE_CODE_JSONPATH);
+    }
+
+    private List<String> getReligion(Object mdmsData) {
+        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_RELIGION_TYPE_CODE_JSONPATH);
+    }
+
+    private List<String> getNational(Object mdmsData) {
+        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_COUNTRY_CODE_JSONPATH);
+    }
+
+    ///Localized value
+
+    public String getTenantNameEn(Object mdmsData, String tenantId) {
+        List<String> tenants = getTenantCodes(mdmsData);
         int index = tenants.indexOf(tenantId);
-        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_TENANTS_JSONPATH+"["+index+"].name");
+        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_TENANTS_JSONPATH + "[" + index + "].name");
+    }
+
+    public String getTenantNameMl(Object mdmsData, String tenantId) {
+        List<String> tenants = getTenantCodes(mdmsData);
+        int index = tenants.indexOf(tenantId);
+        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_TENANTS_JSONPATH + "[" + index + "].city.localName");
     }
 
     public String getTenantLbType(Object mdmsData, String tenantId) {
-        List<String> tenants  = getTenantCodes(mdmsData);
+        List<String> tenants = getTenantCodes(mdmsData);
         int index = tenants.indexOf(tenantId);
-        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_TENANTS_JSONPATH+"["+index+"].city.lbtypecode");
+        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_TENANTS_JSONPATH + "[" + index + "].city.lbtypecode");
     }
-
     public String getTenantTaluk(Object mdmsData, String tenantId) {
-        List<String> tenants  = getTenantCodes(mdmsData);
+        List<String> tenants = getTenantCodes(mdmsData);
         int index = tenants.indexOf(tenantId);
-        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_TENANTS_JSONPATH+"["+index+"].city.talukcode");
+        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_TENANTS_JSONPATH + "[" + index + "].city.talukcode");
     }
-
     public String getTenantDistrict(Object mdmsData, String tenantId) {
-        List<String> tenants  = getTenantCodes(mdmsData);
+        List<String> tenants = getTenantCodes(mdmsData);
         int index = tenants.indexOf(tenantId);
-        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_TENANTS_JSONPATH+"["+index+"].city.distCodeStr");
+        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_TENANTS_JSONPATH + "[" + index + "].city.distCodeStr");
     }
-
     public String getTenantState(Object mdmsData, String tenantId) {
-        List<String> tenants  = getTenantCodes(mdmsData);
+        List<String> tenants = getTenantCodes(mdmsData);
         int index = tenants.indexOf(tenantId);
-        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_TENANTS_JSONPATH+"["+index+"].city.statecode");
-    }
-
-    public String getTenantUrl(Object mdmsData, String tenantId) {
-        List<String> tenants  = getTenantCodes(mdmsData);
-        int index = tenants.indexOf(tenantId);
-        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_TENANTS_JSONPATH+"["+index+"].logoId");
-    }
-
-    public String getTenantIdGenCode(Object mdmsData, String tenantId) {
-        List<String> tenants  = getTenantCodes(mdmsData);
-        int index = tenants.indexOf(tenantId);
-        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_TENANTS_JSONPATH+"["+index+"].city.idgencode");
-    }
-
-    public String getTenantLetterCode(Object mdmsData, String tenantId) {
-        List<String> tenants  = getTenantCodes(mdmsData);
-        int index = tenants.indexOf(tenantId);
-        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_TENANTS_JSONPATH+"["+index+"].city.code");
+        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_TENANTS_JSONPATH + "[" + index + "].city.statecode");
     }
     public String getLbTypeNameEn(Object mdmsData, String code) {
-        List<String> tenants  = getLbTypeCodes(mdmsData);
-        int index = tenants.indexOf(code);
-        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_LBTYPE_JSONPATH+"["+index+"].name");
+        List<String> lists = getLbTypeCodes(mdmsData);
+        int index = lists.indexOf(code);
+        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_LBTYPE_JSONPATH + "[" + index + "].name");
     }
     public String getPostOfficeNameEn(Object mdmsData, String code) {
-        List<String> tenants  = getPoCodes(mdmsData);
-        int index = tenants.indexOf(code);
-        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_POSTOFFICE_JSONPATH+"["+index+"].name");
+        List<String> lists = getPoCodes(mdmsData);
+        int index = lists.indexOf(code);
+        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_POSTOFFICE_JSONPATH + "[" + index + "].name");
     }
-
     public Integer getPostOfficePinCode(Object mdmsData, String code) {
-        List<String> tenants  = getPoCodes(mdmsData);
-        Integer index = tenants.indexOf(code);
-        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_POSTOFFICE_JSONPATH+"["+index+"].pincode");
+        List<String> lists = getPoCodes(mdmsData);
+        Integer index = lists.indexOf(code);
+        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_POSTOFFICE_JSONPATH + "[" + index + "].pincode");
     }
     public String getTalukNameEn(Object mdmsData, String code) {
-        List<String> tenants  = getTalukCodes(mdmsData);
-        Integer index = tenants.indexOf(code);
-        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_TALUK_JSONPATH+"["+index+"].name");
+        List<String> lists = getTalukCodes(mdmsData);
+        Integer index = lists.indexOf(code);
+        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_TALUK_JSONPATH + "[" + index + "].name");
     }
-
     public String getDistrictNameEn(Object mdmsData, String code) {
-        List<String> tenants  = getDistrictCodes(mdmsData);
-        int index = tenants.indexOf(code);
-        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_DISTRICT_JSONPATH+"["+index+"].name");
+        List<String> lists = getDistrictCodes(mdmsData);
+        int index = lists.indexOf(code);
+        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_DISTRICT_JSONPATH + "[" + index + "].name");
     }
-
     public String getStateNameEn(Object mdmsData, String code) {
-        List<String> tenants  = getStateCodes(mdmsData);
-        int index = tenants.indexOf(code);
-        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_STATE_JSONPATH+"["+index+"].name");
+        List<String> lists = getStateCodes(mdmsData);
+        int index = lists.indexOf(code);
+        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_STATE_JSONPATH + "[" + index + "].name");
     }
-
     public String getCountryNameEn(Object mdmsData, String code) {
-        List<String> tenants  = getCountryCodes(mdmsData);
-        int index = tenants.indexOf(code);
-        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_COUNTRY_JSONPATH+"["+index+"].name");
+        List<String> lists = getCountryCodes(mdmsData);
+        int index = lists.indexOf(code);
+        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_COUNTRY_JSONPATH + "[" + index + "].name");
     }
     public String getLbTypeNameMl(Object mdmsData, String code) {
-        List<String> tenants  = getLbTypeCodes(mdmsData);
-        int index = tenants.indexOf(code);
-        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_LBTYPE_JSONPATH+"["+index+"].namelocal");
+        List<String> lists = getLbTypeCodes(mdmsData);
+        int index = lists.indexOf(code);
+        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_LBTYPE_JSONPATH + "[" + index + "].namelocal");
     }
     public String getPostOfficeNameMl(Object mdmsData, String code) {
-        List<String> tenants  = getTalukCodes(mdmsData);
-        int index = tenants.indexOf(code);
-        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_POSTOFFICE_JSONPATH+"["+index+"].namelocal");
+        List<String> lists = getTalukCodes(mdmsData);
+        int index = lists.indexOf(code);
+        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_POSTOFFICE_JSONPATH + "[" + index + "].namelocal");
     }
     public String getTalukNameMl(Object mdmsData, String code) {
-        List<String> tenants  = getTalukCodes(mdmsData);
-        int index = tenants.indexOf(code);
-        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_TALUK_JSONPATH+"["+index+"].namelocal");
+        List<String> lists = getTalukCodes(mdmsData);
+        int index = lists.indexOf(code);
+        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_TALUK_JSONPATH + "[" + index + "].namelocal");
     }
-
     public String getDistrictNameMl(Object mdmsData, String code) {
-        List<String> tenants  = getDistrictCodes(mdmsData);
-        int index = tenants.indexOf(code);
-        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_DISTRICT_JSONPATH+"["+index+"].namelocal");
+        List<String> lists = getDistrictCodes(mdmsData);
+        int index = lists.indexOf(code);
+        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_DISTRICT_JSONPATH + "[" + index + "].namelocal");
     }
-
     public String getStateNameMl(Object mdmsData, String code) {
-        List<String> tenants  = getStateCodes(mdmsData);
-        int index = tenants.indexOf(code);
-        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_STATE_JSONPATH+"["+index+"].namelocal");
+        List<String> lists = getStateCodes(mdmsData);
+        int index = lists.indexOf(code);
+        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_STATE_JSONPATH + "[" + index + "].namelocal");
     }
-
     public String getCountryNameMl(Object mdmsData, String code) {
-        List<String> tenants  = getCountryCodes(mdmsData);
-        int index = tenants.indexOf(code);
-        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_COUNTRY_JSONPATH+"["+index+"].namelocal");
+        List<String> lists = getCountryCodes(mdmsData);
+        int index = lists.indexOf(code);
+        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_COUNTRY_JSONPATH + "[" + index + "].namelocal");
+    }
+    public String getInstitutionTypeNameEn(Object mdmsData, String code) {
+        List<String> lists = getInstType(mdmsData);
+        int index = lists.indexOf(code);
+        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_INST_TYPE_JSONPATH + "[" + index + "].name");
+    }
+    public String getInstitutionTypeNameMl(Object mdmsData, String code) {
+        List<String> lists = getInstType(mdmsData);
+        int index = lists.indexOf(code);
+        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_INST_TYPE_JSONPATH + "[" + index + "].namelocal");
+    }
+    public String getVehicleTypeEn(Object mdmsData, String code) {
+        List<String> lists = getVehicleType(mdmsData);
+        int index = lists.indexOf(code);
+        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_VEHI_TYPE_JSONPATH + "[" + index + "].name");
+    }
+    public String getVehicleTypeMl(Object mdmsData, String code) {
+        List<String> lists = getVehicleType(mdmsData);
+        int index = lists.indexOf(code);
+        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_VEHI_TYPE_JSONPATH + "[" + index + "].namelocal");
+    }
+    public String getPublicPlaceTypeEn(Object mdmsData, String code) {
+        List<String> lists = getPublicPlaceType(mdmsData);
+        int index = lists.indexOf(code);
+        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_PUBLIC_PLACE_TYPE_JSONPATH + "[" + index + "].name");
+    }
+    public String getPublicPlaceTypeMl(Object mdmsData, String code) {
+        List<String> lists = getPublicPlaceType(mdmsData);
+        int index = lists.indexOf(code);
+        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_PUBLIC_PLACE_TYPE_JSONPATH + "[" + index + "].namelocal");
+    }
+    public String getQualificatioinEn(Object mdmsData, String code) {
+        List<String> lists = getQualification(mdmsData);
+        int index = lists.indexOf(code);
+        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_QUAL_TYPE_JSONPATH + "[" + index + "].name");
+    }
+    public String getQualificatioinMl(Object mdmsData, String code) {
+        List<String> lists = getQualification(mdmsData);
+        int index = lists.indexOf(code);
+        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_QUAL_TYPE_JSONPATH + "[" + index + "].namelocal");
+    }
+    public String getProfessionEn(Object mdmsData, String code) {
+        List<String> lists = getProfession(mdmsData);
+        int index = lists.indexOf(code);
+        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_PROF_TYPE_JSONPATH + "[" + index + "].name");
+    }
+    public String getProfessionMl(Object mdmsData, String code) {
+        List<String> lists = getProfession(mdmsData);
+        int index = lists.indexOf(code);
+        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_PROF_TYPE_JSONPATH + "[" + index + "].namelocal");
+    }
+    public String getNationalityEn(Object mdmsData, String code) {
+        List<String> lists = getCountryCodes(mdmsData);
+        int index = lists.indexOf(code);
+        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_COUNTRY_JSONPATH + "[" + index + "].name");
+    }
+    public String getNationalityMl(Object mdmsData, String code) {
+        List<String> lists = getCountryCodes(mdmsData);
+        int index = lists.indexOf(code);
+        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_COUNTRY_JSONPATH + "[" + index + "].namelocal");
+    }
+    public String getReligionEn(Object mdmsData, String code) {
+        List<String> lists = getReligion(mdmsData);
+        int index = lists.indexOf(code);
+        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_RELIGION_JSONPATH + "[" + index + "].name");
+    }
+    public String getReligionMl(Object mdmsData, String code) {
+        List<String> lists = getReligion(mdmsData);
+        int index = lists.indexOf(code);
+        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_RELIGION_JSONPATH + "[" + index + "].namelocal");
     }
 
-    public String getInstitutionTypeName(Object mdmsData, String code) {
-        List<String> tenants  = getInstType(mdmsData);
-        int index = tenants.indexOf(code);
-        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_INST_TYPE_JSONPATH+"["+index+"].name");
-    }
 }
