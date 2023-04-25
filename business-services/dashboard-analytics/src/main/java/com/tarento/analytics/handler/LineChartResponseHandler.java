@@ -1,22 +1,30 @@
 package com.tarento.analytics.handler;
 
-import java.io.IOException;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
+import static com.tarento.analytics.constant.Constants.JsonPaths.DAYS;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tarento.analytics.helper.ComputedFieldFactory;
-import com.tarento.analytics.helper.IComputedField;
-import com.tarento.analytics.model.ComputedFields;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.tarento.analytics.constant.Constants;
@@ -24,8 +32,9 @@ import com.tarento.analytics.dto.AggregateDto;
 import com.tarento.analytics.dto.AggregateRequestDto;
 import com.tarento.analytics.dto.Data;
 import com.tarento.analytics.dto.Plot;
-
-import static com.tarento.analytics.constant.Constants.JsonPaths.DAYS;
+import com.tarento.analytics.helper.ComputedFieldFactory;
+import com.tarento.analytics.helper.IComputedField;
+import com.tarento.analytics.model.ComputedFields;
 
 /**
  * This handles ES response for single index, multiple index to represent data as line chart
@@ -99,6 +108,8 @@ public class LineChartResponseHandler implements IResponseHandler {
             for(JsonNode aggrNode : aggrNodes) {
                 if (aggrNode.findValues(IResponseHandler.BUCKETS).size() > 0) {
                     ArrayNode buckets = (ArrayNode) aggrNode.findValues(IResponseHandler.BUCKETS).get(0);
+                    logger.info("aggr Node is ====================="+aggrNode);
+                    logger.info("buckets value is ============" + buckets );
                     for(JsonNode bucket : buckets){
                             String bkey = bucket.findValue(IResponseHandler.KEY).asText();
                             String key = getIntervalKey(bkey, Constants.Interval.valueOf(interval));
