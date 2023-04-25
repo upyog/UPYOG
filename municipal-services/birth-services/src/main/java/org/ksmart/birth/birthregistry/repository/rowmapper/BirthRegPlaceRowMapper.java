@@ -13,7 +13,7 @@ public class BirthRegPlaceRowMapper {
 
     public RegisterBirthPlace getRegBirthPlace(ResultSet rs) throws SQLException {
         return RegisterBirthPlace.builder()
-                .id(rs.getString("id"))
+                .id(rs.getString("pla_id"))
                 .birthDtlId(rs.getString("birthdtlid"))
                 .placeOfBirthId(rs.getString("placeofbirthid"))
                 .hospitalId(rs.getString("hospitalid"))
