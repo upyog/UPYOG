@@ -184,6 +184,10 @@ public class LineChartResponseHandler implements IResponseHandler {
         dataList.forEach(data -> {
             appendMissingPlot(plotKeys, data, symbol, isCumulative);
         });
+        
+        dataList.forEach(data -> {
+            SortPlot(plotKeys, data, symbol, isCumulative);
+        });
         return getAggregatedDto(chartNode, dataList, requestDto.getVisualizationCode());
     }
 
