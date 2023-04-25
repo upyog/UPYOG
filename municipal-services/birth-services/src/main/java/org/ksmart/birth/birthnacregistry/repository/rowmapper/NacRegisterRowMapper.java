@@ -13,6 +13,7 @@ import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -23,10 +24,17 @@ public class NacRegisterRowMapper  implements ResultSetExtractor<List<RegisterNa
     public List<RegisterNac> extractData(ResultSet rs) throws SQLException, DataAccessException { 
 		List<RegisterNac> result = new ArrayList<>();
 		DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+		Calendar calenderBefore = Calendar.getInstance(), calenderAfter = Calendar.getInstance();
 		 while (rs.next()) {
 			  Date regDate = new Date(rs.getLong("bn_registration_date"));
 			  Date dobDate = new Date(rs.getLong("bn_dateofbirth"));
-			  System.out.println("ack  birth place"+rs.getString("bn_birth_place_en"));
+			 calenderBefore.setTime(dobDate);
+			 calenderAfter.setTime(dobDate);
+			 calenderBefore.add(Calendar.YEAR, -3);
+			 calenderAfter.add(Calendar.YEAR, 3);
+			 Date beforeDate = calenderBefore.getTime();
+			 Date afterDate = calenderAfter.getTime();
+			 Long currentTime = Long.valueOf(System.currentTimeMillis());
 			 result.add(RegisterNac.builder()
 					 .id(rs.getString("bn_id"))
 					 .dateOfReport(rs.getLong("bn_dateofreport"))
@@ -50,6 +58,8 @@ public class NacRegisterRowMapper  implements ResultSetExtractor<List<RegisterNa
                      .tenantid(rs.getString("bn_tenantid"))
                      .auditDetails(getAuditDetails(rs))
                      .registrationDateStr(formatter.format(regDate))
+					 .period(formatter.format(beforeDate) + " to " + formatter.format(afterDate))
+					 .dateofissue(currentTime)
                      .build());
 		 }
 		 return result;

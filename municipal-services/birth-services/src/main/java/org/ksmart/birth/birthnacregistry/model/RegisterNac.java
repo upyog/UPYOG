@@ -142,6 +142,8 @@ public class RegisterNac {
 	    @JsonProperty("registration_date")
 	    private Long registrationDate;
 
+	    @JsonProperty("period")
+	    private String period;
 	   
 
 	   

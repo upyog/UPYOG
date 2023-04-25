@@ -184,7 +184,10 @@ public class RegisterCertificateData {
 	    @Size(max = 45)
 	    @JsonProperty("mothernameen")
 	    private String mothernameen;
-	    
+
+	    @Size(max = 45)
+	    @JsonProperty("period")
+	    private String period;
 	    
 	    
 	    
