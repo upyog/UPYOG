@@ -114,7 +114,7 @@ public class BaseRegBuilder {
 
     void addOrderClause(StringBuilder orderBy) {
         if (orderBy.length() == 0) {
-            orderBy.append(" ORDER BY ");
+            orderBy.append("  ORDER BY ");
         } else {
             orderBy.append(" ");
         }

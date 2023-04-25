@@ -17,7 +17,7 @@ public class RegisterQueryBuilder extends BaseRegBuilder {
             .append("krbd.ot_passportno,krbd.registrationno,krbd.registration_status,krbd.registration_date,krbd.is_born_outside,krbd.ot_dateofarrival, krbd.ack_no, krbd.is_migrated, krbd.migrated_date, krbd.applicationid, krbd.applicationtype,")
 
             //Birthplace
-            .append("kbfi.id,kbp.id,kbp.birthdtlid,kbp.placeofbirthid,kbp.hospitalid,kbp.public_place_id,kbp.institution_type_id,kbp.institution_id,kbp.vehicletypeid,kbp.vehicle_registration_no,kbp.vehicle_from_en," )
+            .append("kbfi.id as pla_id,kbp.id,kbp.birthdtlid,kbp.placeofbirthid,kbp.hospitalid,kbp.public_place_id,kbp.institution_type_id,kbp.institution_id,kbp.vehicletypeid,kbp.vehicle_registration_no,kbp.vehicle_from_en," )
             .append("kbp.vehicle_to_en,kbp.vehicle_from_ml,kbp.vehicle_to_ml,kbp.vehicle_other_en,kbp.vehicle_other_ml,kbp.vehicle_admit_hospital_en,kbp.vehicle_admit_hospital_ml,kbp.ho_householder_en,")
             .append("kbp.ho_householder_ml,kbp.ho_buildingno,kbp.ho_houseno,kbp.ho_res_asso_no,kbp.ho_res_asso_no_ml,kbp.ho_locality_en,kbp.ho_locality_ml,kbp.ho_street_name_en,kbp.ho_street_name_ml,")
             .append("kbp.ho_doorno,kbp.ho_subno,kbp.ho_housename_en,kbp.ho_housename_ml,kbp.ho_villageid,kbp.ho_talukid,kbp.ho_districtid,kbp.ho_stateid,kbp.ho_poid,kbp.ho_pinno,kbp.ho_countryid,")
@@ -56,7 +56,7 @@ public class RegisterQueryBuilder extends BaseRegBuilder {
             .append(" LEFT JOIN eg_register_birth_father_information kbfi ON kbfi.birthdtlid = krbd.id ")
             .append(" LEFT JOIN eg_register_birth_mother_information kbmi ON kbmi.birthdtlid = krbd.id")
             .append(" LEFT JOIN eg_register_birth_permanent_address kperad ON kperad.birthdtlid = krbd.id")
-            .append(" LEFT JOIN eg_register_birth_present_address kpreadd ON kpreadd.birthdtlid = krbd.id")
+            .append(" LEFT JOIN eg_register_birth_present_address kpreadd ON kpreadd.birthdtlid = krbd.id ")
             //.append(" LEFT JOIN eg_register_birth_statitical_information kstat ON kstat.birthdtlid = krbd.id")
             .toString();
 
@@ -81,7 +81,7 @@ public class RegisterQueryBuilder extends BaseRegBuilder {
         addLikeFilter("LOWER(kbfi.firstname_en)", criteria.getNameOfFather(), query, preparedStmtValues);
 
         if (StringUtils.isEmpty(criteria.getSortBy()))
-            addOrderByColumns("krbd.createdtime",null, orderBy);
+            addOrderByColumns(" krbd.createdtime",null, orderBy);
         else if (criteria.getSortBy() == RegisterBirthSearchCriteria.SortBy.birthDate)
             addOrderByColumns("krbd.dateofbirth",criteria.getSortOrder(), orderBy);
         else if (criteria.getSortBy() == RegisterBirthSearchCriteria.SortBy.registrationDate)

@@ -11,6 +11,7 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.ksmart.birth.utils.MdmsUtil;
 import org.ksmart.birth.utils.enums.ErrorCodes;
+import org.ksmart.birth.web.model.newbirth.NewBirthApplication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -66,6 +67,10 @@ public class RegisterBirthService {
 
     public List<RegisterBirthDetail> searchRegisterBirthDetails(RegisterBirthSearchCriteria criteria)  {
         List<RegisterBirthDetail>  registerBirthDetails = repository.searchRegisterBirthDetails(criteria);
+        return registerBirthDetails;
+    }
+    public List<NewBirthApplication> searchRegisterBirthDetailsAdoption(RegisterBirthSearchCriteria criteria)  {
+        List<NewBirthApplication>  registerBirthDetails = repository.searchRegisterBirthDetailsAdoption(criteria);
         return registerBirthDetails;
     }
 

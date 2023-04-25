@@ -6,6 +6,8 @@ import org.ksmart.birth.birthregistry.model.*;
 import org.ksmart.birth.birthregistry.service.RegisterBirthService;
 import org.ksmart.birth.common.contract.RequestInfoWrapper;
 import org.ksmart.birth.utils.ResponseInfoFactory;
+import org.ksmart.birth.web.model.newbirth.NewBirthApplication;
+import org.ksmart.birth.web.model.newbirth.NewBirthSearchResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -45,6 +47,16 @@ public class RegistryBirthController {
         RegisterBirthResponse response=RegisterBirthResponse.builder()
                                                             .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), Boolean.TRUE))
                                                             .registerDetails(registerBirthDetail)
+                                                            .build();
+        return ResponseEntity.ok(response);
+    }
+    @PostMapping(value = {"/_searchAdoption"})
+    public ResponseEntity<NewBirthSearchResponse> getCertDataAdoption(@RequestBody RequestInfoWrapper request, @Valid @ModelAttribute RegisterBirthSearchCriteria criteria) {
+
+        List<NewBirthApplication> registerBirthDetail=registerBirthService.searchRegisterBirthDetailsAdoption(criteria);
+        NewBirthSearchResponse response=NewBirthSearchResponse.builder()
+                                                            .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), Boolean.TRUE))
+                                                            .newBirthDetails(registerBirthDetail)
                                                             .build();
         return ResponseEntity.ok(response);
     }

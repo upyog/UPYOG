@@ -7,9 +7,13 @@ import org.ksmart.birth.birthregistry.model.*;
 import org.ksmart.birth.birthregistry.repository.querybuilder.RegisterQueryBuilder;
 import org.ksmart.birth.birthregistry.repository.rowmapper.BirthCetificateRowMapper;
 import org.ksmart.birth.birthregistry.repository.rowmapper.BirthRegisterRowMapper;
+
 import org.ksmart.birth.common.contract.EgovPdfResp;
 import org.ksmart.birth.common.producer.BndProducer;
 import org.ksmart.birth.config.BirthConfiguration;
+import org.ksmart.birth.newbirth.repository.rowmapper.BirthApplicationAdoptionRowMapper;
+ 
+import org.ksmart.birth.web.model.newbirth.NewBirthApplication;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -26,6 +30,7 @@ import java.util.List;
 @Slf4j
 @Repository
 public class RegisterBirthRepository {
+	private final BirthApplicationAdoptionRowMapper birthRowMapper;
     private final BndProducer producer;
     private final BirthConfiguration config;
     private final JdbcTemplate jdbcTemplate;
@@ -38,7 +43,7 @@ public class RegisterBirthRepository {
     @Autowired
     RegisterBirthRepository(JdbcTemplate jdbcTemplate, RegisterBirthEnrichment registerBirthDetailsEnrichment,BirthCetificateRowMapper birthCetificateRowMapper,
                             BirthConfiguration birthDeathConfiguration, BndProducer producer, RegisterQueryBuilder registerQueryBuilder,
-                            BirthRegisterRowMapper birthRegisterRowMapper, RestTemplate restTemplate) {
+                            BirthRegisterRowMapper birthRegisterRowMapper, RestTemplate restTemplate,BirthApplicationAdoptionRowMapper birthRowMapper) {
         this.jdbcTemplate=jdbcTemplate;
         this.registerBirthDetailsEnrichment=registerBirthDetailsEnrichment;
         this.config=birthDeathConfiguration;
@@ -47,6 +52,7 @@ public class RegisterBirthRepository {
         this.birthRegisterRowMapper=birthRegisterRowMapper;
         this.restTemplate=restTemplate;
         this.birthCetificateRowMapper = birthCetificateRowMapper;
+        this.birthRowMapper=birthRowMapper;
     }
 
     public List<RegisterBirthDetail> saveRegisterBirthDetails(RegisterBirthDetailsRequest request) {
@@ -69,6 +75,12 @@ public class RegisterBirthRepository {
         List<Object> preparedStmtValues=new ArrayList<>();
         String query=registerQueryBuilder.getRegBirthApplicationSearchQuery(criteria, preparedStmtValues, Boolean.FALSE);
         List<RegisterBirthDetail> result=jdbcTemplate.query(query, preparedStmtValues.toArray(), birthRegisterRowMapper);
+        return result;
+    }
+    public List<NewBirthApplication> searchRegisterBirthDetailsAdoption(RegisterBirthSearchCriteria criteria) {
+        List<Object> preparedStmtValues=new ArrayList<>();
+        String query=registerQueryBuilder.getRegBirthApplicationSearchQuery(criteria, preparedStmtValues, Boolean.FALSE);
+        List<NewBirthApplication> result=jdbcTemplate.query(query, preparedStmtValues.toArray(), birthRowMapper);
         return result;
     }
 

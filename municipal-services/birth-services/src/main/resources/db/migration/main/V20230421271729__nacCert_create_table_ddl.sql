@@ -20,23 +20,16 @@ CREATE TABLE IF NOT EXISTS public.eg_nac_certificate_request
         REFERENCES public.eg_birth_nac_registry (id) MATCH SIMPLE
         ON UPDATE CASCADE
         ON DELETE CASCADE
-)
+);
 
-TABLESPACE pg_default;
- 
--- Index: idx_eg_nac_certificate_request_registrationno
 
--- DROP INDEX IF EXISTS public.idx_eg_nac_certificate_request_registrationno;
 
 CREATE INDEX IF NOT EXISTS idx_eg_nac_certificate_request_registrationno
     ON public.eg_nac_certificate_request USING btree
-    (registrationno COLLATE pg_catalog."default" ASC NULLS LAST)
-    TABLESPACE pg_default;
--- Index: idx_eg_nac_certificate_request_tenantid
+    (registrationno COLLATE pg_catalog."default" ASC NULLS LAST);
 
--- DROP INDEX IF EXISTS public.idx_eg_nac_certificate_request_tenantid;
 
 CREATE INDEX IF NOT EXISTS idx_eg_nac_certificate_request_tenantid
     ON public.eg_nac_certificate_request USING btree
-    (tenantid COLLATE pg_catalog."default" ASC NULLS LAST)
-    TABLESPACE pg_default;
+    (tenantid COLLATE pg_catalog."default" ASC NULLS LAST);
+
