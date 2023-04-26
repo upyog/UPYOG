@@ -217,12 +217,12 @@ public class MdmsTenantService {
     public String getNationalityEn(Object mdmsData, String code) {
         List<String> lists = getCountryCodes(mdmsData);
         int index = lists.indexOf(code);
-        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_COUNTRY_JSONPATH + "[" + index + "].name");
+        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_COUNTRY_JSONPATH + "[" + index + "].nationalityname");
     }
     public String getNationalityMl(Object mdmsData, String code) {
         List<String> lists = getCountryCodes(mdmsData);
         int index = lists.indexOf(code);
-        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_COUNTRY_JSONPATH + "[" + index + "].namelocal");
+        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_COUNTRY_JSONPATH + "[" + index + "].nationalitynamelocal");
     }
     public String getReligionEn(Object mdmsData, String code) {
         List<String> lists = getReligion(mdmsData);
