@@ -280,7 +280,7 @@ public class UserService {
 	public UserDetailResponse userExists(User owner, @Valid RequestInfo requestInfo) {
 
 		UserSearchRequest ownerSearchRequest = new UserSearchRequest();
-		ownerSearchRequest.setTenantId(owner.getTenantId().split("\\.")[0]);
+		ownerSearchRequest.setTenantId(owner.getTenantId());
 		
 		if (!StringUtils.isEmpty(owner.getMobileNumber())) {
 			ownerSearchRequest.setMobileNumber(owner.getMobileNumber());
