@@ -96,6 +96,7 @@ public class StillBirthApplicationRowMapper implements ResultSetExtractor<List<S
         return result;
     }
     private Boolean isChildNameEntered(String name) {
+        if(name.isEmpty()) return true;
         if (name==null) return true;
         else return false;
     }
