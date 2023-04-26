@@ -16,6 +16,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
 import java.util.Date;
 
 @Slf4j
@@ -37,10 +38,17 @@ public class NacCertService {
 	        Object mdmsData = mdmsUtil.mdmsCall(requestInfo);
 	        
 	        String strDate=null;
-
+			DateFormat formatterDate = new SimpleDateFormat("dd/MM/yyyy");
             DateTimeFormatter dtDate = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 		    DateTimeFormatter dtTime = DateTimeFormatter.ofPattern("HH:mm");
-		
+			Calendar calenderBefore = Calendar.getInstance(), calenderAfter = Calendar.getInstance();
+			Date dobDate = new Date(register.getDateofbirth());
+			calenderBefore.setTime(dobDate);
+			calenderAfter.setTime(dobDate);
+			calenderBefore.add(Calendar.YEAR, -3);
+			calenderAfter.add(Calendar.YEAR, 3);
+			Date beforeDate = calenderBefore.getTime();
+			Date afterDate = calenderAfter.getTime();
 //		    ZonedDateTime zdt = CommonUtils.currentDate();
 		    
 		
@@ -78,7 +86,7 @@ public class NacCertService {
 	        registerCertificateData.setCurrentTime(CommonUtils.currentTime());
 
 	        registerCertificateData.setDobStr(strDate);
-	        registerCertificateData.setBirthplaceen(register.getPlaceOfBirthId());
+	        registerCertificateData.setBirthplaceen(register.getBirthplaceen());
 	        registerCertificateData.setChildnameen(register.getChildnameen());
 	        registerCertificateData.setRegistrationNo(register.getRegistrationno());
 	        registerCertificateData.setApplicationType(register.getApplicationtype());
@@ -91,8 +99,9 @@ public class NacCertService {
 //	        registerCertificateData.setFatherDetails(register.getRegisterBirthFather().getFirstNameEn());
 //	        registerCertificateData.setFatherDetailsMl(register.getRegisterBirthFather().getFirstNameMl());
 	        registerCertificateData.setMotherDetails(register.getMothernameen());
-	        registerCertificateData.setBirthPlaceId(register.getBirthplaceen());
+	        registerCertificateData.setBirthPlaceId(register.getPlaceOfBirthId());
 	        registerCertificateData.setTenantId(register.getTenantid());
+			registerCertificateData.setPeriod(formatterDate.format(beforeDate) + " to " + formatterDate.format(afterDate));
 //	        registerCertificateData.setBirthPlaceId(register.getPlaceOfBirthId());
 //	        registerCertificateData.setBirthPlaceHospitalId(register.getHospitalId());
 //	        registerCertificateData.setBirthPlaceInstitutionId(register.getInstitutionId());
