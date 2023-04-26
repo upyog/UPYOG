@@ -694,9 +694,9 @@ serviceMaps:
           basePath: NacDetails.*.ParentsDetails
           jsonMaps:
 
-            - jsonPath: $.NacDetails.*.ParentsDetails.firstname_en
+            - jsonPath: $.NacDetails.*.ParentsDetails.fatherFirstNameEn
 
-            - jsonPath: $.NacDetails.*.ParentsDetails.firstname_ml
+            - jsonPath: $.NacDetails.*.ParentsDetails.fatherFirstNameMl
 
             - jsonPath: $.NacDetails.*.ParentsDetails.fatherAadhar
 
@@ -730,7 +730,7 @@ serviceMaps:
 
         - query: UPDATE public.eg_birth_permanent_address SET  housename_no_en=?, housename_no_ml=?, ot_address1_en=?, ot_address1_ml=?,
             ot_address2_en=?, ot_address2_ml=?, ot_state_region_province_en=?, villageid=?, tenantid=?, talukid=?, ward_code=?,
-            districtid=?, stateid=?, poid=?, pinno=?, countryid=?, bio_adopt=?, taluk_name=?, same_as_present=?, locality_en=?, locality_ml=?,
+            districtid=?, stateid=?, poid=?, pinno=?, countryid=?, taluk_name=?, same_as_present=?, locality_en=?, locality_ml=?,
             street_name_en=?, street_name_ml=?, ot_zipcode=?, lastmodifiedby=?, lastmodifiedtime=?, family_emailid=?, family_mobileno=?, postoffice_en=?,
             postoffice_ml=?, village_name=? WHERE birthdtlid=?;
 
@@ -769,7 +769,7 @@ serviceMaps:
 
             - jsonPath: $.NacDetails.*.AddressBirthDetails.countryIdPermanent
 
-            - jsonPath: $.NacDetails.*.AddressBirthDetails.bio_adopt
+           
 
             - jsonPath: $.NacDetails.*.AddressBirthDetails.permntOutsideKeralaTaluk
 
@@ -804,7 +804,7 @@ serviceMaps:
 
         - query: UPDATE public.eg_birth_present_address SET housename_no_en=?, housename_no_ml=?, ot_address1_en=?,
             ot_address1_ml=?, ot_address2_en=?, ot_address2_ml=?, ot_state_region_province_en=?, ot_state_region_province_ml=?, villageid=?, tenantid=?,
-            talukid=?, districtid=?, stateid=?, poid=?, pinno=?, countryid=?, bio_adopt=?, taluk_name=?, village_name=?, ward_code=?, 
+            talukid=?, districtid=?, stateid=?, poid=?, pinno=?, countryid=?,   taluk_name=?, village_name=?, ward_code=?, 
             locality_en=?, locality_ml=?, street_name_en=?, street_name_ml=?, lastmodifiedby=?, lastmodifiedtime=?, ot_zipcode=?, postoffice_en=?, postoffice_ml=? WHERE birthdtlid=?;
           basePath: NacDetails.*.AddressBirthDetails
           jsonMaps:
@@ -840,8 +840,7 @@ serviceMaps:
             - jsonPath: $.NacDetails.*.AddressBirthDetails.pinNoPresent
 
             - jsonPath: $.NacDetails.*.AddressBirthDetails.countryIdPresent
-
-            - jsonPath: $.NacDetails.*.AddressBirthDetails.bio_adopt
+             
 
             - jsonPath: $.NacDetails.*.AddressBirthDetails.presentOutsideKeralaTaluk
 

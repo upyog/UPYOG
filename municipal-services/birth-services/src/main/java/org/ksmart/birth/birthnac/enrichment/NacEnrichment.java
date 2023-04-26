@@ -100,7 +100,14 @@ public class NacEnrichment implements BaseEnrichment {
                 	  if ((birth.getApplicationStatus() == "APPROVED" && birth.getAction() == "APPROVE")) {
                           setRegistrationNumber(request);
                       }
-                });      
+                	  
+                	  birth.getParentsDetails().setFatherUuid(UUID.randomUUID().toString());
+                      birth.getParentsDetails().setFatherBioAdopt("BIOLOGICAL");
+                      birth.getParentsDetails().setMotherUuid(UUID.randomUUID().toString());
+                      birth.getParentsDetails().setMotherBioAdopt("BIOLOGICAL");
+                });     
+        
+        
       
         setPresentAddress(request);
         setPermanentAddress(request);
@@ -127,6 +134,8 @@ public class NacEnrichment implements BaseEnrichment {
                         birth.setRegistrationNo(itr.next());
                         birth.setRegistrationDate(currentTime);
                     }
+                    
+                    
                 });
     }
  
@@ -155,6 +164,14 @@ public class NacEnrichment implements BaseEnrichment {
         request.getNacDetails()
                 .forEach(birth -> {
                     if (birth.getParentAddress() != null) {
+                    	if(birth.getParentAddress() != null) {
+                            birth.getParentAddress().setPermanentUuid(UUID.randomUUID().toString());
+                            birth.getParentAddress().setPresentUuid(UUID.randomUUID().toString());
+                            birth.getParentAddress().setBioAdoptPermanent("BIOLOGICAL");
+                            birth.getParentAddress().setBioAdoptPresent("BIOLOGICAL");
+                        }
+                    	
+                    	
                         if (birth.getParentAddress().getPresentaddressCountry() != null && birth.getParentAddress().getPresentaddressStateName() != null) {
                             if (birth.getParentAddress().getPresentaddressCountry().contains(BirthConstants.COUNTRY_CODE)) {
                                 if (birth.getParentAddress().getPresentaddressStateName().contains(BirthConstants.STATE_CODE_SMALL)) {
