@@ -93,6 +93,7 @@ public class AbandonedApplicationRowMapper implements ResultSetExtractor<List<Ab
         return result;
     }
     private Boolean isChildNameEntered(String name) {
+        if(name.isEmpty()) return true;
         if (name==null) return true;
         else return false;
     }

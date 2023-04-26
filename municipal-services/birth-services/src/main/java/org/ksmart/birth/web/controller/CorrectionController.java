@@ -61,7 +61,7 @@ public class CorrectionController {
         //Download certificate when Approved
         if((birthApplicationDetails.get(0).getApplicationStatus().equals(STATUS_APPROVED) && birthApplicationDetails.get(0).getAction().equals(WF_APPROVE))){
             RegisterBirthDetailsRequest registerBirthDetailsRequest = registryReq.createRegistryRequestNew(request);
-            List<RegisterBirthDetail> registerBirthDetails =  registerBirthService.updateRegisterBirthDetails(registerBirthDetailsRequest);
+            registerBirthService.updateRegisterBirthDetails(registerBirthDetailsRequest);
 
             //Dowload after update
 //            RegisterBirthSearchCriteria criteria = new RegisterBirthSearchCriteria();

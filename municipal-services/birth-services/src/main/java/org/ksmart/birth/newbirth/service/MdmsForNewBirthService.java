@@ -5,6 +5,7 @@ import org.ksmart.birth.birthregistry.model.RegisterCertificateData;
 import org.ksmart.birth.birthregistry.service.KsmartAddressService;
 import org.ksmart.birth.common.services.MdmsLocationService;
 import org.ksmart.birth.common.services.MdmsTenantService;
+import org.ksmart.birth.web.model.ParentsDetail;
 import org.ksmart.birth.web.model.newbirth.NewBirthApplication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,34 +31,107 @@ public class MdmsForNewBirthService {
         this.ksmartAddressService = ksmartAddressService;
     }
 
-    public void setLocationDetails(NewBirthApplication birth, Object mdmsData) {
+    public void setParentsDetails(ParentsDetail parentsDetail, Object mdmsData) {
+        if (parentsDetail != null) {
+        //Mothers Details
+            parentsDetail.setMotherEducationidEn(mdmsTenantService.getQualificatioinEn(mdmsData, parentsDetail.getMotherEducationid()));
+            parentsDetail.setMotherEducationidMl(mdmsTenantService.getQualificatioinMl(mdmsData, parentsDetail.getMotherEducationid()));
+
+            parentsDetail.setMotherProffessionidEn(mdmsTenantService.getProfessionEn(mdmsData, parentsDetail.getMotherProffessionid()));
+            parentsDetail.setMotherProffessionidMl(mdmsTenantService.getProfessionMl(mdmsData, parentsDetail.getMotherProffessionid()));
+
+            parentsDetail.setMotherNationalityidEn(mdmsTenantService.getNationalityEn(mdmsData, parentsDetail.getMotherNationalityid()));
+            parentsDetail.setMotherNationalityidMl(mdmsTenantService.getNationalityMl(mdmsData, parentsDetail.getMotherNationalityid()));
+//Father Details
+            parentsDetail.setFatherEucationidEn(mdmsTenantService.getQualificatioinEn(mdmsData, parentsDetail.getFatherEucationid()));
+            parentsDetail.setFatherEucationidMl(mdmsTenantService.getQualificatioinMl(mdmsData, parentsDetail.getFatherEucationid()));
+
+            parentsDetail.setFatherProffessionidEn(mdmsTenantService.getProfessionEn(mdmsData, parentsDetail.getFatherProffessionid()));
+            parentsDetail.setFatherProffessionidMl(mdmsTenantService.getProfessionMl(mdmsData, parentsDetail.getFatherProffessionid()));
+
+            parentsDetail.setFatherNationalityidEn(mdmsTenantService.getNationalityEn(mdmsData, parentsDetail.getFatherNationalityid()));
+            parentsDetail.setFatherNationalityidMl(mdmsTenantService.getNationalityMl(mdmsData, parentsDetail.getFatherNationalityid()));
+
+            parentsDetail.setReligionIdEn(mdmsTenantService.getReligionEn(mdmsData, parentsDetail.getReligionId()));
+            parentsDetail.setReligionIdMl(mdmsTenantService.getReligionMl(mdmsData, parentsDetail.getReligionId()));
+        }
+    }
+    public void setLocationDetails(NewBirthApplication birth, Object mdmsDataLoc, Object mdmsData) {
         if (birth.getWardId() != null) {
-            String wardEn = mdmsLocationService.getWardNameEn(mdmsData, birth.getWardId());
-            String wardMl = mdmsLocationService.getWardNameMl(mdmsData, birth.getWardId());
-            String wardNo = mdmsLocationService.getWardNo(mdmsData, birth.getWardId());
+            String wardEn = mdmsLocationService.getWardNameEn(mdmsDataLoc, birth.getWardId());
+            String wardMl = mdmsLocationService.getWardNameMl(mdmsDataLoc, birth.getWardId());
+            String wardNo = mdmsLocationService.getWardNo(mdmsDataLoc, birth.getWardId());
             birth.setWardNameEn(wardEn);
             birth.setWardNameMl(wardMl);
             birth.setWardNumber(wardNo);
         }
         if (birth.getPlaceofBirthId().contains(BIRTH_PLACE_HOSPITAL)) {
-            String placeEn = mdmsLocationService.getHospitalAddressEn(mdmsData, birth.getHospitalId());
-            String placeMl = mdmsLocationService.getHospitalNameMl(mdmsData, birth.getHospitalId());
+            String placeEn = mdmsLocationService.getHospitalAddressEn(mdmsDataLoc, birth.getHospitalId());
+            String placeMl = mdmsLocationService.getHospitalNameMl(mdmsDataLoc, birth.getHospitalId());
             birth.setHospitalName(placeEn);
             birth.setHospitalNameMl(placeMl);
         } else if (birth.getPlaceofBirthId().contains(BIRTH_PLACE_INSTITUTION)) {
-            String placeEn = mdmsLocationService.getInstitutionNameEn(mdmsData, birth.getInstitutionNameCode());
-            String placeMl = mdmsLocationService.getInstitutionNameMl(mdmsData, birth.getInstitutionNameCode());
+            String placeEn = mdmsLocationService.getInstitutionNameEn(mdmsDataLoc, birth.getInstitutionNameCode());
+            String placeMl = mdmsLocationService.getInstitutionNameMl(mdmsDataLoc, birth.getInstitutionNameCode());
             birth.setInstitutionId(placeEn);
             birth.setInstitutionIdMl(placeMl);
-            //setInstitutionDetails(birth, mdmsData);
-        }else { }
+            setInstitutionDetailsEn(birth, mdmsData);
+            setInstitutionDetailsMl(birth, mdmsData);
+        }else if (birth.getPlaceofBirthId().contains(BIRTH_PLACE_HOME)) {
+            //Post Office
+            birth.setAdrsPostOfficeEn(mdmsTenantService.getPostOfficeNameEn(mdmsData, birth.getAdrsPostOffice()));
+            birth.setAdrsPostOfficeMl(mdmsTenantService.getPostOfficeNameEn(mdmsData, birth.getAdrsPostOffice()));
+
+        }else if (birth.getPlaceofBirthId().contains(BIRTH_PLACE_VEHICLE)) {
+            //Vehicle Type
+            birth.setVehicleTypeidEn(mdmsTenantService.getVehicleTypeEn(mdmsData, birth.getVehicleTypeid()));
+            birth.setVehicleTypeidMl(mdmsTenantService.getVehicleTypeMl(mdmsData, birth.getVehicleTypeid()));
+        } else if (birth.getPlaceofBirthId().contains(BIRTH_PLACE_PUBLIC)) {
+            //Public Place Type
+            birth.setPublicPlaceTypeEn(mdmsTenantService.getPublicPlaceTypeEn(mdmsData, birth.getPublicPlaceType()));
+            birth.setPublicPlaceTypeMl(mdmsTenantService.getPublicPlaceTypeMl(mdmsData, birth.getPublicPlaceType()));
+        }
+        else {
+
+        }
     }
 
-    public void setInstitutionDetails(NewBirthApplication birth, Object  mdmsData) {
+    public void setInstitutionDetailsEn(NewBirthApplication birth, Object  mdmsData) {
         if (birth.getPlaceofBirthId().contains(BIRTH_PLACE_INSTITUTION)) {
-            System.out.println( birth.getInstitutionTypeId());
-            String placeInstType = mdmsTenantService.getInstitutionTypeName(mdmsData, birth.getInstitutionTypeId());
+            String placeInstType = mdmsTenantService.getInstitutionTypeNameEn(mdmsData, birth.getInstitutionTypeId());
             birth.setInstitution(placeInstType);
+            birth.setInstitutionTypeEn(placeInstType);
+        }
+    }
+    public void setInstitutionDetailsMl(NewBirthApplication birth, Object  mdmsData) {
+        if (birth.getPlaceofBirthId().contains(BIRTH_PLACE_INSTITUTION)) {
+            String placeInstType = mdmsTenantService.getInstitutionTypeNameMl(mdmsData, birth.getInstitutionTypeId());
+            birth.setInstitutionIdMl(placeInstType);
+        }
+    }
+
+    public void setVehicleTypeEn(NewBirthApplication birth, Object  mdmsData) {
+        if (birth.getPlaceofBirthId().contains(BIRTH_PLACE_VEHICLE)) {
+            String vehicleType = mdmsTenantService.getVehicleTypeEn(mdmsData, birth.getVehicleTypeid());
+            birth.setVehicleTypeidEn(vehicleType);
+        }
+    }
+    public void setVehicleTypeMl(NewBirthApplication birth, Object  mdmsData) {
+        if (birth.getPlaceofBirthId().contains(BIRTH_PLACE_VEHICLE)) {
+            String vehicleType = mdmsTenantService.getVehicleTypeMl(mdmsData, birth.getVehicleTypeid());
+            birth.setVehicleTypeidMl(vehicleType);
+        }
+    }
+    public void setPublicPlaceTypeEn(NewBirthApplication birth, Object  mdmsData) {
+        if (birth.getPlaceofBirthId().contains(BIRTH_PLACE_PUBLIC)) {
+            String vehicleType = mdmsTenantService.getVehicleTypeEn(mdmsData, birth.getVehicleTypeid());
+            birth.setVehicleTypeidEn(vehicleType);
+        }
+    }
+    public void setPublicPlaceTypeMl(NewBirthApplication birth, Object  mdmsData) {
+        if (birth.getPlaceofBirthId().contains(BIRTH_PLACE_PUBLIC)) {
+            String vehicleType = mdmsTenantService.getVehicleTypeMl(mdmsData, birth.getVehicleTypeid());
+            birth.setVehicleTypeidMl(vehicleType);
         }
     }
 

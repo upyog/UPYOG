@@ -32,12 +32,39 @@ public class ParentsDetail {
     @Size(max = 64)
     @JsonProperty("motherEducation")
     private String motherEducationid;
+
+    @Size(max = 300)
+    @JsonProperty("motherEducationEn")
+    private String motherEducationidEn;
+
+    @Size(max = 300)
+    @JsonProperty("motherEducationMl")
+    private String motherEducationidMl;
+
     @Size(max = 64)
     @JsonProperty("motherProfession")
     private String motherProffessionid;
+
+    @Size(max = 300)
+    @JsonProperty("motherProfessionEn")
+    private String motherProffessionidEn;
+
+    @Size(max = 300)
+    @JsonProperty("motherProfessionMl")
+    private String motherProffessionidMl;
+
     @Size(max = 64)
     @JsonProperty("motherNationality")
     private String motherNationalityid;
+
+    @Size(max = 300)
+    @JsonProperty("motherNationalityEn")
+    private String motherNationalityidEn;
+
+    @Size(max = 64)
+    @JsonProperty("motherNationalityMl")
+    private String motherNationalityidMl;
+
     @Size(max = 64)
     @JsonProperty("orderofChildren")
     private Integer motherOrderCurChild;
@@ -62,15 +89,49 @@ public class ParentsDetail {
     @Size(max = 64)
     @JsonProperty("fatherNationality")
     private String fatherNationalityid;
+    @Size(max = 300)
+    @JsonProperty("fatherNationalityEn")
+    private String fatherNationalityidEn;
+    @Size(max = 300)
+    @JsonProperty("fatherNationalityMl")
+    private String fatherNationalityidMl;
+
     @Size(max = 64)
     @JsonProperty("fatherEducation")
     private String fatherEucationid;
+
+    @Size(max = 300)
+    @JsonProperty("fatherEducationEn")
+    private String fatherEucationidEn;
+
+    @Size(max = 300)
+    @JsonProperty("fatherEducationMl")
+    private String fatherEucationidMl;
+
     @Size(max = 64)
     @JsonProperty("fatherProfession")
     private String fatherProffessionid;
+
+    @Size(max = 300)
+    @JsonProperty("fatherProfessionEn")
+    private String fatherProffessionidEn;
+
+    @Size(max = 300)
+    @JsonProperty("fatherProfessionMl")
+    private String fatherProffessionidMl;
+
     @Size(max = 64)
     @JsonProperty("Religion")
     private String religionId;
+
+    @Size(max = 300)
+    @JsonProperty("ReligionEn")
+    private String religionIdEn;
+
+    @Size(max = 300)
+    @JsonProperty("ReligionMl")
+    private String religionIdMl;
+
     @Size(max = 64)
     @JsonProperty("fatherMobile")
     private String familyMobileNo;

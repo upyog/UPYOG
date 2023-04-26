@@ -86,6 +86,12 @@ public class NewBirthApplication {
     @JsonProperty("institutionId")
     private String institutionId;
     @Size(max = 64)
+    @JsonProperty("institutionTypeEn")
+    private String institutionTypeEn;
+    @Size(max = 64)
+    @JsonProperty("institutionTypeMl")
+    private String institutionTypeMl;
+    @Size(max = 64)
     @JsonProperty("institutionIdMl")
     private String institutionIdMl;
     @Size(max = 64)
@@ -118,15 +124,31 @@ public class NewBirthApplication {
     @Size(max = 2000)
     @JsonProperty("adrsStreetNameMl")
     private String adrsStreetNameMl;
-    @Size(max = 2000)
+
+    @Size(max = 128)
     @JsonProperty("adrsPostOffice")
     private String adrsPostOffice;
+
+    @Size(max = 300)
+    @JsonProperty("adrsPostOfficeEn")
+    private String adrsPostOfficeEn;
+
+    @Size(max = 300)
+    @JsonProperty("adrsPostOfficeMl")
+    private String adrsPostOfficeMl;
+
     @Size(max = 10)
     @JsonProperty("adrsPincode")
     private String adrsPincode;
     @Size(max = 64)
     @JsonProperty("vehicleType")
     private String vehicleTypeid;
+    @Size(max = 300)
+    @JsonProperty("vehicleTypeEn")
+    private String vehicleTypeidEn;
+    @Size(max = 300)
+    @JsonProperty("vehicleTypeMl")
+    private String vehicleTypeidMl;
     @Size(max = 64)
     @JsonProperty("vehicleHaltPlace")
     private String vehicleHaltplace;
@@ -157,6 +179,12 @@ public class NewBirthApplication {
     @Size(max = 64)
     @JsonProperty("publicPlaceType")
     private String publicPlaceType;
+    @Size(max = 300)
+    @JsonProperty("publicPlaceTypeEn")
+    private String publicPlaceTypeEn;
+    @Size(max = 300)
+    @JsonProperty("publicPlaceTypeMl")
+    private String publicPlaceTypeMl;
     @Size(max = 64)
     @JsonProperty("localityNameEn")
     private String localityNameEn;
@@ -183,6 +211,12 @@ public class NewBirthApplication {
     @Size(max = 64)
     @JsonProperty("deliveryMethods")
     private String deliveryMethods;
+    @Size(max = 300)
+    @JsonProperty("deliveryMethodsEn")
+    private String deliveryMethodsEn;
+    @Size(max = 300)
+    @JsonProperty("deliveryMethodsMl")
+    private String deliveryMethodsMl;
     @Size(max = 64)
     @JsonProperty("esign_user_code")
     private String esignUserCode;
@@ -192,18 +226,44 @@ public class NewBirthApplication {
     @Size(max = 64)
     @JsonProperty("tenantid")
     private String tenantId;
+    @Size(max = 300)
+    @JsonProperty("tenantidEn")
+    private String tenantIdEn;
+    @Size(max = 300)
+    @JsonProperty("tenantidMl")
+    private String tenantIdMl;
     @Size(max = 64)
     @JsonProperty("villageid")
     private String villageid;
+
+    @Size(max = 300)
+    @JsonProperty("villageidEn")
+    private String villageIdEn;
+
+    @Size(max = 300)
+    @JsonProperty("villageidMl")
+    private String villageIdMl;
+
     @Size(max = 64)
     @JsonProperty("talukid")
     private String talukid;
+
+    @Size(max = 300)
+    @JsonProperty("talukidEn")
+    private String talukIdEn;
+
+    @Size(max = 300)
+    @JsonProperty("talukidMl")
+    private String talukIdMl;
+
     @Size(max = 64)
     @JsonProperty("districtid")
     private String districtid;
+
     @Size(max = 64)
     @JsonProperty("countryid")
     private String countryid;
+
     @Size(max = 64)
     @JsonProperty("applicationtype")
     private String applicationType;
