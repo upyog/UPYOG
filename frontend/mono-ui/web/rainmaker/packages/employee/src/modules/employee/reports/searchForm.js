@@ -526,28 +526,6 @@ class ShowForm extends Component {
       resulturl &&
         commonApiPost(resulturl, {}, { tenantId: tenantId, reportName: this.state.reportName, searchParams }).then(
           function (response) {
-            if (response && response.reportHeader && response.reportData) {
-              if (window.location.pathname.includes("TradeLicenseDailyCollectionReport")) {
-                const ind = response.reportHeader.findIndex((d) => d.name === "username");
-                response.reportHeader[ind].showColumn = false;
-                response.reportData = response.reportData.map((eachArr) => {
-                  eachArr[ind + 1] = `${eachArr[ind + 1]}/${eachArr[ind]}`;
-                  return eachArr;
-                });
-              }
-              let hiddenRows = [];
-
-              response.reportHeader.map((e, i) => {
-                if (!e.showColumn) {
-                  hiddenRows.push(i);
-                }
-              });
-              response.reportHeader = response.reportHeader.filter((e) => e.showColumn);
-              response.reportData = response.reportData.map((ele) =>
-                ele.filter((e, i) => !hiddenRows.includes(i)).map((ele) => (ele == null ? "" : ele))
-              );
-            }
-            hideSpinner();
             pushReportHistory({ tenantId: tenantId, reportName: self.state.reportName, searchParams });
             setReportResult(response);
             showTable(true);
