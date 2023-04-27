@@ -12,6 +12,7 @@
             @apply text-link text-primary-main font-medium cursor-pointer;
         }
     }
+  }
 
     .mainContent{
         @apply flex justify-evenly;
@@ -41,7 +42,14 @@
                 
             }
         }
+      }
+      .ChildOptionName {
+        font-size: 12px;
+        line-height: 14px;
+        padding-top: 1rem;
+      }
     }
+  }
 }
 
 @screen dt{

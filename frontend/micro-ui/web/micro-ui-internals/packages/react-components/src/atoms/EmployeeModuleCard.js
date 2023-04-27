@@ -50,7 +50,6 @@ const EmployeeModuleCard = ({ Icon, moduleName, kpis = [], links = [], isCitizen
   );
 };
 
-
 const ModuleCardFullWidth = ({ moduleName,  links = [], isCitizen = false, className, styles, headerStyle, subHeader, subHeaderLink }) => {
   return (
     <div className={className ? className : "employeeCard card-home customEmployeeCard home-action-cards"} style={styles ? styles : {}}>
