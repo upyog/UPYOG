@@ -12,9 +12,9 @@ serviceMaps:
             applicationtype,businessservice,workflowcode,fm_fileno,file_date,file_status,applicationno,registrationno,registration_date,
             action,status, createdtime, createdby, lastmodifiedtime, lastmodifiedby,           
             adopt_deed_order_no,adopt_dateoforder_deed,adopt_issuing_auththority,adopt_has_agency,adopt_agency_name,adopt_agency_address,
-            adopt_decree_order_no,adopt_dateoforder_decree,adopt_agency_contact_person,adopt_agency_contact_person_mobileno,old_birth_reg_no,is_adopted) 
+            adopt_decree_order_no,adopt_dateoforder_decree,adopt_agency_contact_person,adopt_agency_contact_person_mobileno,old_birth_reg_no) 
             VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,
-             ?,?,?,?,?);
+             ?,?,?,?);
 
           basePath: AdoptionDetails.*
           jsonMaps:
@@ -116,7 +116,7 @@ serviceMaps:
             
             - jsonPath: $.AdoptionDetails.*.oldregistrationno
             
-            - jsonPath: $.AdoptionDetails.*.isAdopted              
+                
             
 
         - query: INSERT INTO public.eg_birth_place(id,birthdtlid,placeofbirthid,hospitalid,public_place_id,institution_type_id,institution_id,vehicletypeid,vehicle_registration_no,vehicle_from_en,
@@ -516,7 +516,42 @@ serviceMaps:
             - jsonPath: $.AdoptionDetails.*.auditDetails.createdTime
 
             - jsonPath: $.AdoptionDetails.*.auditDetails.lastModifiedBy
-            - jsonPath: $.AdoptionDetails.*.auditDetails.lastModifiedTime        
+            - jsonPath: $.AdoptionDetails.*.auditDetails.lastModifiedTime  
+            
+        - query: INSERT INTO public.eg_birth_application_document(
+            id, tenantid, document_name, document_type, document_description, filestoreid, document_link,file_type,file_size,birthdtlid,active,createdby, createdtime, lastmodifiedby, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+          basePath: AdoptionDetails.*.AdoptionDocuments.*
+          jsonMaps:
+
+            - jsonPath: $.AdoptionDetails.*.AdoptionDocuments.*.id
+
+            - jsonPath: $.AdoptionDetails.*.tenantid
+
+            - jsonPath: $.AdoptionDetails.*.AdoptionDocuments.*.documentName
+
+            - jsonPath: $.AdoptionDetails.*.AdoptionDocuments.*.documentType
+
+            - jsonPath: $.AdoptionDetails.*.AdoptionDocuments.*.documentDescription
+
+            - jsonPath: $.AdoptionDetails.*.AdoptionDocuments.*.fileStoreId
+
+            - jsonPath: $.AdoptionDetails.*.AdoptionDocuments.*.documentLink
+
+            - jsonPath: $.AdoptionDetails.*.AdoptionDocuments.*.fileType
+            
+            - jsonPath: $.AdoptionDetails.*.AdoptionDocuments.*.fileSize
+            
+            - jsonPath: $.AdoptionDetails.*.AdoptionDocuments.*.parentBrthDtlId
+            
+            - jsonPath: $.AdoptionDetails.*.AdoptionDocuments.*.active
+
+            - jsonPath: $.AdoptionDetails.*.AdoptionDocuments.*.auditDetails.createdBy
+
+            - jsonPath: $.AdoptionDetails.*.AdoptionDocuments.*.auditDetails.createdTime
+
+            - jsonPath: $.AdoptionDetails.*.AdoptionDocuments.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.AdoptionDetails.*.AdoptionDocuments.*.auditDetails.lastModifiedTime      
 
     - version: 1.0
       description: Persists update birth adoption details in eg_birth_details  table

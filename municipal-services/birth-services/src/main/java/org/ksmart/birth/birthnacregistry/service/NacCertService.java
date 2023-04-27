@@ -91,6 +91,8 @@ public class NacCertService {
 	        registerCertificateData.setRegistrationNo(register.getRegistrationno());
 	        registerCertificateData.setApplicationType(register.getApplicationtype());
 	        registerCertificateData.setMothernameen(register.getMothernameen());
+	        registerCertificateData.setFathernameen(register.getFathernameen());
+	        registerCertificateData.setPermAddress(register.getPermenantAddDetails());
 	        registerCertificateData.setFullName(register.getFullName());
 	        registerCertificateData.setFullNameMl(register.getFullNameMl());
 	       

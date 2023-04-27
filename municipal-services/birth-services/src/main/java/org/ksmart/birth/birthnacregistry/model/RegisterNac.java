@@ -63,6 +63,11 @@ public class RegisterNac {
 	    private String mothernameen;
 	    
 	    @Size(max = 64)
+	    @JsonProperty("fathernameen")
+	    private String fathernameen;
+	    
+	    
+	    @Size(max = 64)
 	    @JsonProperty("birthplaceen")
 	    private String birthplaceen;
 	    
@@ -145,6 +150,10 @@ public class RegisterNac {
 	    @JsonProperty("period")
 	    private String period;
 	   
+	    
+	    @Size(max = 2500)
+	    @JsonProperty("permenantAddDetails")
+	    private String permenantAddDetails;
 
 	   
 	    

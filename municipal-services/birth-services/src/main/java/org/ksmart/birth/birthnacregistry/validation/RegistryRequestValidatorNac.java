@@ -37,7 +37,7 @@ public class RegistryRequestValidatorNac {
 	    
 	    public void validateCreate(RegisterNacRequest request, List<RegisterNac> registerNacDetails) {
 	        List<RegisterNac> registerDetails = request.getRegisternacDetails();
-	        System.out.println( "conf  "+registerDetails.size());
+	         
 	        if (CollectionUtils.isEmpty(registerDetails)) {
 	            throw new CustomException(ErrorCodes.REQUIRED.getCode(),
 	                    "Register details is required.");

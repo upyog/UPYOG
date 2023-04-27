@@ -1,23 +1,35 @@
 package org.ksmart.birth.adoption.repository.rowmapper;
 
+import org.egov.tracer.model.CustomException;
+import org.ksmart.birth.web.model.DocumentDetails;
 import org.ksmart.birth.web.model.adoption.AdoptionApplication;
+import org.ksmart.birth.web.model.birthnac.NacApplication;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 @Component
 public class AdoptionApplicationRowMapper implements ResultSetExtractor<List<AdoptionApplication>>, AdoptionBaseRowMapper, AdoptionParentDetailRowMapper, AdoptionInformatDetailsRowMapper, AdoptionParentAddressRowMapper ,AdoptInitiatorDetailsRowMapper{
 
     @Override
     public List<AdoptionApplication> extractData(ResultSet rs) throws SQLException, DataAccessException { //how to handle null
         List<AdoptionApplication> result = new ArrayList<>();
+        Map<String, AdoptionApplication> AdptnMap = new HashMap<>();   
 
         while (rs.next()) {
-            result.add(AdoptionApplication.builder()
+        	 String currentid = rs.getString("ba_id");
+        	 AdoptionApplication currentAdoption = AdptnMap.get(currentid);
+        	  if (null == currentAdoption) {
+        		  currentAdoption = AdoptionApplication.builder()
                     .id(rs.getString("ba_id"))
                     .dateOfReport(rs.getLong("ba_dateofreport"))
                     .dateOfBirth(rs.getLong("ba_dateofbirth"))
@@ -99,15 +111,57 @@ public class AdoptionApplicationRowMapper implements ResultSetExtractor<List<Ado
                     .fileDate(rs.getLong("ba_file_date"))
                     .fileStatus(rs.getString("ba_file_status"))
                     .informatDetail(getInformantDetail(rs))
-//                    .initiatorDetails(getInitiatorDetail(rs))
+                    .documentDetails(new ArrayList<DocumentDetails>())
                     .parentAddress(getKsmartBirthParentAddress(rs))
-                    .build());
+                    .build();
+        	  }
+        	  addChildrenToAdoption(rs,currentAdoption);
+        	  AdptnMap.put(currentid, currentAdoption);
         }
-        return result;
+        
+        return new ArrayList<>(AdptnMap.values());
+    }
+    public void addChildrenToAdoption(ResultSet rs, AdoptionApplication adoption) {
+       
+        setDocuments(rs, adoption);
     }
     private Boolean isChildNameEntered(String name) {
         if (name==null) return true;
         else return false;
+    }
+    public void setDocuments(ResultSet rs, AdoptionApplication currentAdoption) {
+        try {
+            List<DocumentDetails> Documents = new ArrayList<>();
+            if (CollectionUtils.isEmpty(currentAdoption.getDocumentDetails()))
+            	Documents = new ArrayList<DocumentDetails>();
+            else
+            	Documents = currentAdoption.getDocumentDetails();
+
+            List<String> ids = Documents.stream().map(DocumentDetails::getId).collect(Collectors.toList());
+            if (!StringUtils.isEmpty(rs.getString("ebad_id")) && !ids.contains(rs.getString("ebad_id"))) {
+               
+            	DocumentDetails document = DocumentDetails.builder()
+            			.id(rs.getString("ebad_id"))
+                        .documentName(rs.getString("ebad_document_name"))
+                        .documentDescription(rs.getString("ebad_document_description"))
+                        .active(rs.getBoolean("ebad_active"))
+                        .documentType(rs.getString("ebad_document_type"))
+                        .fileStoreId(rs.getString("ebad_filestoreid"))
+                        .documentLink(rs.getString("ebad_document_link"))
+                        .fileType(rs.getString("ebad_file_type"))
+                        .fileSize(rs.getString("ebad_file_size"))
+                        .birthdtlid(rs.getString("ebad_birthdtlid"))
+                        .auditDetails(getAuditDetails(rs))
+                        .build();
+
+            	Documents.add(document);
+            }
+            currentAdoption.setDocumentDetails(Documents);
+        } catch (Exception e) {
+            
+            throw new CustomException("ROWMAPPER_ERROR", "Error in row mapper while mapping document");
+
+        }
     }
 }
 

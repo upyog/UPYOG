@@ -1,5 +1,7 @@
 package org.ksmart.birth.birthnacregistry.repository.rowmapperfornewapplicationnac;
 
+import static org.ksmart.birth.utils.BirthConstants.COUNTRY_CODE;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -30,6 +32,7 @@ public class RegisterRowMapperForNacApp implements ResultSetExtractor<List<Regis
 					.birthdetailsid(rs.getString("ebap_birthdtlid"))
 					.childnameen(rs.getString("ba_firstname_en"))
 					.mothernameen(rs.getString("mo_firstname_en"))
+					.fathernameen(rs.getString("fa_firstname_en"))
 					.registrationno(rs.getString("ba_registrationno"))
 					.birthplaceen(rs.getString("per_locality_en"))
 					.birthdistrictid(rs.getString("per_districtid"))
@@ -39,9 +42,47 @@ public class RegisterRowMapperForNacApp implements ResultSetExtractor<List<Regis
 					.dateofbirth(rs.getLong("ba_dateofbirth"))
 					.tenantid(rs.getString("ba_tenantid"))
 				    .ackNumber(rs.getString("ba_applicationno"))
+				    .permenantAddDetails(getPermanentAddressEnByResidenceType(rs))
 					.auditDetails(getAuditDetails(rs))
 					.build());
 		}
 			return result;
 		}
+	
+	  private String getPermanentAddressEnByResidenceType(ResultSet rs) throws SQLException {
+	        String address = "";
+	        if(rs.getString("per_countryid") != null) {
+	            if (rs.getString("per_countryid").contains(COUNTRY_CODE)) {
+	                address = new StringBuilder().append(rs.getString("per_housename_en") == null ? "" : rs.getString("per_housename_en"))
+	                        .append(", ")
+	                        .append(rs.getString("per_locality_en") == null ? "" : rs.getString("per_locality_en"))
+	                        .append(", ")
+	                        .append(rs.getString("per_street_name_en") == null ? "" : rs.getString("per_street_name_en"))
+	                        .append(", ")
+	                        .append(rs.getString("per_poid") == null ? "" : rs.getString("per_poid"))
+	                        .append(", ")
+	                        .append(rs.getString("per_pinno") == null ? "" : rs.getString("per_pinno"))
+	                        .append(", ")
+	                        .append(rs.getString("per_districtid") == null ? "" : rs.getString("per_districtid"))
+	                        .append(", ")
+	                        .append(rs.getString("per_stateid") == null ? "" : rs.getString("per_stateid"))
+	                        .append(", ")
+	                        .append(rs.getString("per_countryid") == null ? "" : rs.getString("per_countryid")).toString();
+
+	            } else {
+
+	                address = new StringBuilder()
+	                        .append(rs.getString("per_ot_address1_en") == null ? "" : rs.getString("per_ot_address1_en"))
+	                        .append(", ")
+	                        .append(rs.getString("per_ot_address2_en") == null ? "" : rs.getString("per_ot_address2_en"))
+	                        .append(", ")
+	                        .append(rs.getString("per_ot_state_region_province_en") == null ? "" : rs.getString("per_ot_state_region_province_en"))
+	                        .append(", ")
+	                        .append(rs.getString("per_ot_zipcode") == null ? "" : rs.getString("per_ot_zipcode"))
+	                        .append(", ")
+	                        .append(rs.getString("per_countryid") == null ? "" : rs.getString("per_countryid")).toString();
+	            }
+	        }
+	        return address;
+	    }
 }

@@ -55,6 +55,16 @@ public class AdoptionEnrichment implements BaseEnrichment {
             birth.setBirthPlaceUuid(UUID.randomUUID().toString());
             birth.getParentsDetails().setFatherUuid(UUID.randomUUID().toString());
             birth.getParentsDetails().setMotherUuid(UUID.randomUUID().toString());
+            
+            birth.getDocumentDetails().forEach(
+            		document -> {
+            			document.setId(UUID.randomUUID().toString());
+            			document.setActive(true);
+            			document.setAuditDetails(auditDetails);
+            			document.setBirthdtlid(birth.getId());
+            			document.setParentBrthDtlId(birth.getId());
+            		});
+            
             if(birth.getParentsDetails() != null) {
                 if(!birth.getParentsDetails().getIsFatherInfoMissing()){
                     birth.getParentsDetails().setFatherBioAdopt("ADOPT");

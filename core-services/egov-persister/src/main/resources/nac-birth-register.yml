@@ -8,8 +8,8 @@ serviceMaps:
       queryMaps:
         - query: INSERT INTO public.eg_birth_nac_registry(id, registrationno, birthdetailsid, applicant_name_en, care_of_applicant_name_en, child_name_en, mother_name_en, dateofbirth, birth_place_en,
             birth_districtid, birth_stateid, birth_villageid, birth_talukid, createdby, createdtime, lastmodifiedtime, lastmodifiedby, applicationtype, filestoreid, status, additionaldetail,
-            embeddedurl, dateofissue, tenantid, certificateno,dateofreport,ack_no,registration_date,registration_status)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?,?,?);
+            embeddedurl, dateofissue, tenantid, certificateno,dateofreport,ack_no,registration_date,registration_status,father_name_en,perm_address)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?,?,?, ?, ?);
           basePath: RegisterNac.*
           jsonMaps:
             - jsonPath: $.RegisterNac.*.id
@@ -69,5 +69,9 @@ serviceMaps:
             - jsonPath: $.RegisterNac.*.registration_date
             
             - jsonPath: $.RegisterNac.*.registration_status
+            
+            - jsonPath: $.RegisterNac.*.fathernameen
+            
+            - jsonPath: $.RegisterNac.*.permenantAddDetails
 
 

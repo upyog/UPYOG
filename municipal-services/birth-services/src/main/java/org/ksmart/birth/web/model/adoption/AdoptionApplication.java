@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import org.ksmart.birth.common.model.AuditDetails;
 import org.ksmart.birth.common.model.Document;
+import org.ksmart.birth.web.model.DocumentDetails;
 import org.ksmart.birth.web.model.InformatDetail;
 import org.ksmart.birth.web.model.InitiatorDetail;
 import org.ksmart.birth.web.model.ParentAddress;
@@ -329,6 +330,11 @@ public class AdoptionApplication {
     @Size(max = 64)
     @JsonProperty("isWorkflow")
     private Boolean isWorkflow = true;
+    
+    
+    @JsonProperty("AdoptionDocuments")
+    private List<DocumentDetails> documentDetails;
+    
     //////////////////////////////////////////////////////////////
     
 
