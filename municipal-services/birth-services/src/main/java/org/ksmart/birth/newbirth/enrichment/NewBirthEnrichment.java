@@ -116,7 +116,6 @@ public class NewBirthEnrichment implements BaseEnrichment {
     }
 
     private void setPresentAddress(NewBirthDetailRequest request, Object mdmsData) {
-
         request.getNewBirthDetails()
                 .forEach(birth -> {
                     if (birth.getParentAddress() != null) {
@@ -130,11 +129,11 @@ public class NewBirthEnrichment implements BaseEnrichment {
                         if (birth.getParentAddress().getPresentaddressCountry() != null && birth.getParentAddress().getPresentaddressStateName() != null) {
                             if (birth.getParentAddress().getPresentaddressCountry().contains(BirthConstants.COUNTRY_CODE)) {
                                 if (birth.getParentAddress().getPresentaddressStateName().contains(BirthConstants.STATE_CODE_SMALL)) {
-
                                     birth.getParentAddress().setCountryIdPresent(birth.getParentAddress().getPresentaddressCountry());
-
                                     birth.getParentAddress().setStateIdPresent(birth.getParentAddress().getPresentaddressStateName());
-
+                                    //Pincode
+                                    birth.getParentAddress().setPinNoPresent(birth.getParentAddress().getPresentInsideKeralaPincode());
+                                    //District
                                     birth.getParentAddress().setDistrictIdPresent(birth.getParentAddress().getPresentInsideKeralaDistrict());
                                     //Local Body
                                     birth.getParentAddress().setPresentInsideKeralaLBNameEn(mdmsTenantService.getTenantNameEn(mdmsData, birth.getParentAddress().getPresentInsideKeralaLBName()));
@@ -162,6 +161,8 @@ public class NewBirthEnrichment implements BaseEnrichment {
                                     birth.getParentAddress().setStateIdPresent(birth.getParentAddress().getPresentaddressStateName());
 
                                     birth.getParentAddress().setDistrictIdPresent(birth.getParentAddress().getPresentOutsideKeralaDistrict());
+                                    //Pincode
+                                    birth.getParentAddress().setPinNoPresent(birth.getParentAddress().getPresentOutsideKeralaPincode());
 
                                     birth.getParentAddress().setLocalityEnPresent(birth.getParentAddress().getPresentOutsideKeralaLocalityNameEn());
                                     birth.getParentAddress().setLocalityMlPresent(birth.getParentAddress().getPresentOutsideKeralaLocalityNameMl());
@@ -230,6 +231,8 @@ public class NewBirthEnrichment implements BaseEnrichment {
                                         birth.getParentAddress().setStateIdPermanent(birth.getParentAddress().getPermtaddressStateName());
                                     }
                                     birth.getParentAddress().setDistrictIdPermanent(birth.getParentAddress().getPermntInKeralaAdrDistrict());
+                                    //Pincode
+                                    birth.getParentAddress().setPinNoPermanent(birth.getParentAddress().getPermntInKeralaAdrPincode());
                                     //Local Body
                                     birth.getParentAddress().setPermntInKeralaAdrLBNameEn(mdmsTenantService.getTenantNameEn(mdmsData, birth.getParentAddress().getPermntInKeralaAdrLBName()));
                                     birth.getParentAddress().setPermntInKeralaAdrLBNameMl(mdmsTenantService.getTenantNameMl(mdmsData, birth.getParentAddress().getPermntInKeralaAdrLBName()));
@@ -256,6 +259,7 @@ public class NewBirthEnrichment implements BaseEnrichment {
                                         birth.getParentAddress().setStateIdPermanent(birth.getParentAddress().getPermtaddressStateName());
                                     }
 
+
                                     birth.getParentAddress().setDistrictIdPermanent(birth.getParentAddress().getPermntOutsideKeralaDistrict());
 
                                     birth.getParentAddress().setLocalityEnPermanent(birth.getParentAddress().getPermntOutsideKeralaLocalityNameEn());
@@ -278,7 +282,6 @@ public class NewBirthEnrichment implements BaseEnrichment {
                                     birth.getParentAddress().setCountryIdPermanent(birth.getParentAddress().getPermntOutsideIndiaCountry());
                                     birth.getParentAddress().setVillageNamePermanent(birth.getParentAddress().getPermntOutsideIndiaVillage());
                                     birth.getParentAddress().setTownOrVillagePermanent(birth.getParentAddress().getPermntOutsideIndiaCityTown());
-
                                 }
                             }
                             //Country
@@ -305,7 +308,6 @@ public class NewBirthEnrichment implements BaseEnrichment {
             birth.setAuditDetails(auditDetails);
             if(birth.getPlaceofBirthId() != null || !birth.getPlaceofBirthId().isEmpty()){
                 mdmsBirthService.setLocationDetails(birth, mdmsDataLoc, mdmsData);
-               // mdmsBirthService.setInstitutionDetails(birth, mdmsData);
             }
             birth.setBirthPlaceUuid(UUID.randomUUID().toString());
             birth.getParentsDetails().setFatherUuid(UUID.randomUUID().toString());
@@ -317,12 +319,7 @@ public class NewBirthEnrichment implements BaseEnrichment {
                 if(!birth.getParentsDetails().getIsMotherInfoMissing()){
                     birth.getParentsDetails().setMotherBioAdopt("BIOLOGICAL");
                 }
-
-
-
             }
-
-
         });
     }
     private void setStatisticalInfo(NewBirthDetailRequest request) {
@@ -330,6 +327,7 @@ public class NewBirthEnrichment implements BaseEnrichment {
                 .forEach(birth -> {
                     birth.setBirthStatisticsUuid(UUID.randomUUID().toString());
                     birth.setBirthInitiatorUuid(UUID.randomUUID().toString());
+
                     // mdmsBirthService.setTenantDetails(birth, mdmsData);//Check/////////
 
                   //  TOWN VILLAGe INSIDE Kerala

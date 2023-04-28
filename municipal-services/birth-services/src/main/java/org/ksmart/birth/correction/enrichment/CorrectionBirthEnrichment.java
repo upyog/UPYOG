@@ -79,11 +79,13 @@ public class CorrectionBirthEnrichment implements BaseEnrichment {
                        birth.setLastNameMl(registerBirthDetails.get(0).getLastNameMl());
 
                        //Father Details
+                       birth.setFatherUuid(UUID.randomUUID().toString());
                        birth.setFatherFirstNameEn(registerBirthDetails.get(0).getRegisterBirthFather().getFirstNameEn());
                        birth.setFatherFirstNameMl(registerBirthDetails.get(0).getRegisterBirthFather().getFirstNameMl());
                        birth.setFatherAadhar(registerBirthDetails.get(0).getRegisterBirthFather().getAadharNo());
 
                        //Mother Details
+                       birth.setMotherUuid(UUID.randomUUID().toString());
                        birth.setMotherfirstNameEn(registerBirthDetails.get(0).getRegisterBirthMother().getFirstNameEn());
                        birth.setMotherfirstNameMl(registerBirthDetails.get(0).getRegisterBirthMother().getLastNameMl());
                        birth.setMotherAadhar(registerBirthDetails.get(0).getRegisterBirthMother().getAadharNo());
@@ -94,6 +96,7 @@ public class CorrectionBirthEnrichment implements BaseEnrichment {
 
                        //Permanent Address
                        if (birth.getCorrectionAddress() != null) {
+                           birth.getCorrectionAddress().setPermanentUuid(UUID.randomUUID().toString());
                            birth.getCorrectionAddress().setPermanentHouseNameEn(registerBirthDetails.get(0).getRegisterBirthPermanent().getHouseNameEn());
                            birth.getCorrectionAddress().setPermanentHouseNameMl(registerBirthDetails.get(0).getRegisterBirthPermanent().getHouseNameMl());
                            birth.getCorrectionAddress().setPermanentLocalityNameEn(registerBirthDetails.get(0).getRegisterBirthPermanent().getLocalityEn());

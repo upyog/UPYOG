@@ -133,9 +133,9 @@ private void setPlaceOfBirth(AbandonedRequest request, String trnantId, AuditDet
                     if(birth.getCaretakerDetails() != null) {
                         birth.setBirthCareTakerUuid(UUID.randomUUID().toString());
                     }
-                    if(birth.getInitiatorDetails() != null) {
-                        birth.setBirthCareTakerUuid(UUID.randomUUID().toString());
-                    }
+//                    if(birth.getInitiatorDetails() != null) {
+//                        birth.setBirthCareTakerUuid(UUID.randomUUID().toString());
+//                    }
                     birth.setBirthInitiatorUuid(UUID.randomUUID().toString());
                     Object mdmsData = mdmsUtil.mdmsCall(request.getRequestInfo());
                      mdmsBirthService.setTenantDetails(birth, mdmsData);

@@ -74,7 +74,6 @@ public class ReceiptConsumer {
     }
     
     public void process(HashMap<String, Object> record) {
-
 		try {
 			log.info("Process for object"+ record);
 			PaymentRequest paymentRequest = mapper.convertValue(record, PaymentRequest.class);

@@ -25,10 +25,12 @@ public interface StillBirthParentAddressRowMapper {
                 .presentInsideKeralaPostOffice(rs.getString("pres_poid"))
                 .presentInsideKeralaVillage(rs.getString("pres_villageid"))
                 .presentWardNo(rs.getString("pres_ward_code"))
+
                 .presentOutsideKeralaPostOfficeEn(rs.getString("pres_postoffice_en"))
                 .presentOutsideKeralaPostOfficeMl(rs.getString("pres_postoffice_ml"))
                 .presentOutsideKeralaTalukName(rs.getString("pres_taluk_name"))
                 .townOrVillagePresent(rs.getString("stat_mother_resdnce_placetype"))
+                .presentOutsideKeralaCityVilgeEn(rs.getString("stat_mother_resdnce_placetype"))
 
 
                 .presentOutSideIndiaAdressEn(rs.getString("pres_ot_address1_en"))

@@ -35,7 +35,7 @@ public class StillBirthService {
         // validate request
         validator.validateCreate(request, mdmsData);
         //call save
-        List<StillBirthApplication> birthApplicationDetails =  repository.saveBirthDetails(request);
+        List<StillBirthApplication> birthApplicationDetails =  repository.saveBirthDetails(request, mdmsData);
         //WorkFlow Integration
         workflowIntegrator.callWorkFlow(request);
         return birthApplicationDetails;
@@ -50,7 +50,7 @@ public class StillBirthService {
         if(request.getBirthDetails().get(0).getIsWorkflow()) {
             workflowIntegrator.callWorkFlow(request);
         }
-        return repository.updateBirthDetails(request);
+        return repository.updateBirthDetails(request, mdmsData);
     }
 
     public List<StillBirthApplication> searchKsmartBirthDetails(StillBirthDetailRequest request, SearchCriteria criteria) {

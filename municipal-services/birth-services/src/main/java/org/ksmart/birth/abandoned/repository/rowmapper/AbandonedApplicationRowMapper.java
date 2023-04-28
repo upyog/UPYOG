@@ -86,7 +86,7 @@ public class AbandonedApplicationRowMapper implements ResultSetExtractor<List<Ab
                     .fileDate(rs.getLong("ba_file_date"))
                     .fileStatus(rs.getString("ba_file_status"))
                     .informatDetail(getInformatDetail(rs))
-                    .initiatorDetails(getInitiatorDetail(rs))
+                    //.initiatorDetails(getInitiatorDetail(rs))
                     .caretakerDetails(getCareTakerDetail(rs))
                     .build());
         }

@@ -11,11 +11,9 @@ import org.ksmart.birth.stillbirth.enrichment.StillBirthEnrichment;
 import org.ksmart.birth.stillbirth.repository.querybuilder.StillBirthQueryBuilder;
 import org.ksmart.birth.stillbirth.repository.rowmapper.StillBirthApplicationRowMapper;
 import org.ksmart.birth.stillbirth.service.MdmsForStillBirthService;
-import org.ksmart.birth.stillbirth.service.StillBirthService;
 import org.ksmart.birth.utils.BirthConstants;
 import org.ksmart.birth.utils.MdmsUtil;
 import org.ksmart.birth.web.model.SearchCriteria;
-import org.ksmart.birth.web.model.newbirth.NewBirthApplication;
 import org.ksmart.birth.web.model.stillbirth.StillBirthApplication;
 import org.ksmart.birth.web.model.stillbirth.StillBirthDetailRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,13 +52,13 @@ public class StillBirthRepository {
         this.mdmsForStillBirthService = mdmsForStillBirthService;
         this.registerRowMapperForApp = registerRowMapperForApp;
     }
-    public List<StillBirthApplication> saveBirthDetails(StillBirthDetailRequest request) {
-        enrichment.enrichCreate(request);
+    public List<StillBirthApplication> saveBirthDetails(StillBirthDetailRequest request, Object mdmsData) {
+        enrichment.enrichCreate(request,mdmsData);
         producer.push(birthDeathConfiguration.getSaveStillBirthTopic(), request);
         return request.getBirthDetails();
     }
-    public List<StillBirthApplication> updateBirthDetails(StillBirthDetailRequest request) {
-        enrichment.enrichUpdate(request);
+    public List<StillBirthApplication> updateBirthDetails(StillBirthDetailRequest request, Object mdmsData) {
+        enrichment.enrichUpdate(request, mdmsData);
         producer.push(birthDeathConfiguration.getUpdateStillBirthTopic(), request);
         return request.getBirthDetails();
     }

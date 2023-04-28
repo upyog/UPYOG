@@ -32,6 +32,7 @@ public interface AbandonedMotherDetailRowMapper {
                 .familyEmailid(rs.getString("per_family_emailid"))
                 .isFatherInfoMissing(rs.getBoolean("ba_is_father_info_missing"))
                 .isMotherInfoMissing(rs.getBoolean("ba_is_mother_info_missing"))
+                .addressOfMother(rs.getString("mo_addressofmother"))
                 .build();
     }
 

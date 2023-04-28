@@ -29,6 +29,7 @@ public interface BirthParentAddressRowMapper {
                 .presentOutsideKeralaPostOfficeMl(rs.getString("pres_postoffice_ml"))
                 .presentOutsideKeralaTalukName(rs.getString("pres_taluk_name"))
                 .townOrVillagePresent(rs.getString("stat_mother_resdnce_placetype"))
+                .presentOutsideKeralaCityVilgeEn(rs.getString("stat_mother_resdnce_placetype"))
 
 
                 .presentOutSideIndiaAdressEn(rs.getString("pres_ot_address1_en"))
