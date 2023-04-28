@@ -266,7 +266,8 @@ public class PayGovGateway implements Gateway {
         else
         {
             moduleCode = "MCS001";
-        } 	    
+        } 	
+	log.info("Module::::"+moduleCode);    
         return moduleCode;
     }
 
