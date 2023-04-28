@@ -1,6 +1,6 @@
-# eGov Payment Gateway
+# Payment Gateway Service (egov-pg-service)
 
-Module acts as a liaison between eGov apps and external payment gateways. It facilitates payments, reconciliation of payments and look up of transactions' status'.
+Module acts as a liaison between UPYOG modules services and external payment gateways. It facilitates payments, reconciliation of payments and look up of transactions' status'.
 
 ### DB UML Diagram
 
@@ -8,14 +8,14 @@ Module acts as a liaison between eGov apps and external payment gateways. It fac
 
 ### Service Dependencies
 
-- egov-idgen
-- collection-services
-- egf-master
-- egov-persister
+- ID Generation Service (egov-idgen)
+- Collection Service (collection-services)
+- Finance Master Service (egf-master)
+- Persister Service (egov-persister)
 
 ### Swagger API Contract
 
-- Please refer to the [Swagger API contarct](https://editor.swagger.io/?url=https://raw.githubusercontent.com/egovernments/egov-services/master/core/egov-pg-service/egov-pg-service.yml#!/) for egov-pg service to understand the structure of APIs and to have visualization of all internal APIs.
+- Please refer to the [Swagger API Contract](https://editor.swagger.io/?url=https://raw.githubusercontent.com/upyog/UPYOG/master/core-services/docs/egov-pg-contract.yml#!/) for Payment Gateway Service (egov-pg-service) to understand the structure of APIs and to have visualization of all internal APIs.
 
 
 ## Service Details
@@ -35,7 +35,7 @@ Module acts as a liaison between eGov apps and external payment gateways. It fac
 - web/controllers :- Controllers for the app.
 
 ### Extension
-- Additional gateways can be added by implementing the [Gateway](https://raw.githubusercontent.com/egovernments/egov-services/master/core/egov-pg-service/src/main/java/org/egov/pg/service/Gateway.java) interface.
+- Additional gateways can be added by implementing the [Gateway](https://raw.githubusercontent.com/upyog/UPYOG/master/core-services/egov-pg-service/src/main/java/org/egov/pg/service/Gateway.java) interface.
 
 ### Gateways Supported
 
@@ -45,9 +45,11 @@ Module acts as a liaison between eGov apps and external payment gateways. It fac
 
 - PHONEPE
 
+- PayGov
+
 **Configurable Properties:**
 
-Following are the properties in application.properties file in egov-pg-service has to be added and set with default value after integrating with new payment gateway.
+Following are the properties in application.properties file in Payment Gateway Service (egov-pg-service) has to be added and set with default value after integrating with new payment gateway.
 In the below table properties for AXIS bank payment gateway is shown, same releveant propert needs to be add for other payment gateway.
 
 | Property                          | Remarks                                                  | 
@@ -81,7 +83,7 @@ In the below table properties for AXIS bank payment gateway is shown, same relev
 - `_search`
    -  Transactions can be queried based on several search parameters as detailed in the swagger yaml .
 
-- Postman collection for all the API's can be found in the [postman collection](https://raw.githubusercontent.com/egovernments/egov-services/master/core/egov-pg-service/postman/Egov-PG-Service.postman_collection.json)
+- Postman collection for all the API's can be found in the [postman collection](https://raw.githubusercontent.com/upyog/UPYOG/master/core-services/egov-pg-service/postman/Egov-PG-Service.postman_collection.json)
 
 ### Kafka Consumers
 - NA

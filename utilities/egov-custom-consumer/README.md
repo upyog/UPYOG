@@ -1,4 +1,4 @@
-# egov-custom-consumer service
+# Custom Consumer Service (egov-custom-consumer)
 
 Custom consumer service invokes a co-existence api to clear the auth token present in co-existence finance erp if the user logs out in the rain maker system.
 
@@ -16,7 +16,7 @@ NA
 
 ## Service Details
 
-egov-custom-consumer is a consumer which listens to the res-custom-filter topic, and invokes co-existence rest end ponit to clear the auth token present in the co-existence finance erp.
+Custom Consumer Service (egov-custom-consumer) is a consumer which listens to the res-custom-filter topic, and invokes co-existence rest end ponit to clear the auth token present in the co-existence finance erp.
 
 ### API Details
 

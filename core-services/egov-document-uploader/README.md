@@ -1,19 +1,19 @@
-# eGov Document Uploader service
+# Document Uploader Service (egov-document-uploader)
 
-Document uploader will be used by ULB employees to upload the document which will then be visible to the citizens. In an effort to increase the engagement of citizens with mSeva platform, mSeva is providing this service to enable the citizens to view important documents related to their ULB such as acts, circulars, citizen charters etc.
+Document uploader will be used by ULB employees to upload the document which will then be visible to the citizens. In an effort to increase the engagement of citizens with UPYOG platform, UPYOG is providing this service to enable the citizens to view important documents related to their ULB such as acts, circulars, citizen charters etc.
 
 ### DB UML Diagram
 - NA
 
 ### Service Dependencies
-- egov-mdms
-- egov-idgen
-- egov-localization
-- egov-url-shortener
+- MSMS Service (egov-mdms)
+- ID Generation Service (egov-idgen)
+- Localization Service (egov-localization)
+- URL Shortener Service (egov-url-shortener)
 
 ### Swagger API Contract
 
-Please refer to the [Swagger API contract](https://editor.swagger.io/?url=https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/egov-document-uploader-contract.yml) for egov-document-uploader service to understand the structure of APIs and to have visualization of all internal APIs.
+Please refer to the [Swagger API Contract](https://editor.swagger.io/?url=https://raw.githubusercontent.com/upyog/UPYOG/master/core-services/docs/egov-document-uploader-contract.yml) for egov-document-uploader service to understand the structure of APIs and to have visualization of all internal APIs.
 
 
 ### Functionalities
@@ -44,17 +44,15 @@ Upon deleting any document, that document is soft deleted from the records i.e. 
 
 ### API Details
 
-1. /egov-document-uploader/egov-du/document/_create - Takes RequestInfo and DocumentEntity in request body. Document entity has all the parameters related to the document being inserted.
+1. `/egov-document-uploader/egov-du/document/_create` - Takes RequestInfo and DocumentEntity in request body. Document entity has all the parameters related to the document being inserted.
 
-2. /egov-document-uploader/egov-du/document/_update - Allows editing of attributes related to an already existing document. Searches document based on its uuid and updates attributes.
+2. `/egov-document-uploader/egov-du/document/_update` - Allows editing of attributes related to an already existing document. Searches document based on its uuid and updates attributes.
 
-3. /egov-document-uploader/egov-du/document/_search - Allows searching existing documents in the database. Takes search parameters in the url and RequestInfo in request body.
+3. `/egov-document-uploader/egov-du/document/_search` - Allows searching existing documents in the database. Takes search parameters in the url and RequestInfo in request body.
 
-4. /egov-document-uploader/egov-du/document/_delete - Soft deletes an existing document from the database i.e. it makes the document inactive. It takes the DocumentEntity that needs to be deleted in the request body along with RequestInfo object.
+4. `/egov-document-uploader/egov-du/document/_delete` - Soft deletes an existing document from the database i.e. it makes the document inactive. It takes the DocumentEntity that needs to be deleted in the request body along with RequestInfo object.
 
-**`Postman collection`** :- https://www.getpostman.com/collections/c0774674d0c8c05181a7
-
-
+**`Postman collection`** :- [DOCUMENT UPLOADER COLLECTION](https://api.postman.com/collections/23419225-5925fb70-25f3-45ad-b141-218f9b400e54?access_key=PMAT-01GPJZ6DC1D57W79PEF2MMNRSD)
 
 
 

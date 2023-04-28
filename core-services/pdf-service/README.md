@@ -7,11 +7,11 @@ PDF service is one of the core application which is use to bulk generate the pdf
 - NA
 
 ### Service Dependencies
-- egov-localization
-- egov-filestore
+- Localization Service (egov-localization)
+- Filestore Service (egov-filestore)
 
 ### Swagger API Contract
-Please refer to the  below Swagger API contarct for PDF service to understand the structure of APIs and to have visualization of all internal APIs [Swagger API contract](https://app.swaggerhub.com/apis/eGovernment/pdf-service_ap_is/1.1.0)
+Please refer to the  below Swagger API contarct for PDF service to understand the structure of APIs and to have visualization of all internal APIs [Swagger API Contract](https://editor.swagger.io/?url=https://raw.githubusercontent.com/upyog/UPYOG/master/core-services/pdf-service/pdf-swagger-contract.yml) 
 
 
 ## Service Details
@@ -39,7 +39,7 @@ Please refer to the  below Swagger API contarct for PDF service to understand th
 ### Configuration
 PDF service use two config files for a pdf generation as per requirement
 - Format Config File: It define format as per PDFMake syntax of pdf [Sample format config](https://raw.githubusercontent.com/egovernments/configs/master/pdf-service/format-config/tl-receipt.json).
-- Data Config File : It use to fill format of pdf to prepare final object which will go to PDFMake and will be converted into PDF [Sample data config](https://raw.githubusercontent.com/egovernments/configs/master/pdf-service/data-config/tl-receipt.json).
+- Data Config File : It use to fill format of pdf to prepare final object which will go to PDFMake and will be converted into PDF [Sample data config](https://raw.githubusercontent.com/upyog/upyog-configs/master/configs/pdf-service/data-config/tl-receipt.json).
 
 PDF generation service read these such files at start-up to support PDF generation for all configured module.
 

@@ -1,4 +1,4 @@
-# inbox
+# Inbox Service (inbox)
 
 The inbox service is a aggregation service which aggregates data of municipal services and workflow based on given complex search criteria
 and returns applications and workflow data in paginated manner. The service also returns the total count matching the search criteria.
@@ -8,19 +8,19 @@ and returns applications and workflow data in paginated manner. The service also
 ### Service Dependencies
 
 
-- workflow-v2
-- user-service
-- egov-searcher
+- Workflow Service (workflow-v2)
+- User Service (user-service)
+- Searcher Service (egov-searcher)
 - The Municipal service for which inbox configuration is added
 
 
 ### Swagger API Contract
 
-Link to the swagger API contract [yaml](https://raw.githubusercontent.com/egovernments/municipal-services/master/docs/inbox.yml) and editor link like below
+Link to the swagger API contract [YAML](https://editor.swagger.io/?url=https://raw.githubusercontent.com/upyog/UPYOG/master/municipal-services/docs/inbox.yml#!/) and editor link like below
 
 
 ### Postman Collection
-Link to the postman collection [here](https://www.getpostman.com/collections/5e9f36ddf4b34460287e)
+
 
 
 ## Service Details

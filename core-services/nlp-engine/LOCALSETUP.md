@@ -2,7 +2,7 @@
 
 This document will walk you through the dependencies of this service and how to set it up locally
 
-- To setup the nlp-engine service in your local system, clone the [Core Service repository](https://github.com/egovernments/core-services).
+- To setup the nlp-engine service in your local system, clone the  [Core Service Repository](https://github.com/upyog/UPYOG/tree/master/core-services).
 
 ## Dependencies
 
@@ -17,12 +17,14 @@ This document will walk you through the dependencies of this service and how to 
 
 ## Running Locally
 
-To run the nlp-engine service in local system, follow below steps:
+To run the NLP Engine Service (nlp-engine) in local system, follow below steps:
 
-a) Run the command `pip install -r requirements.txt`
+a) Run the command 
+```ini
+pip install -r requirements.txt
+```
 
 b) You need to port forward below services.
-
 ```bash
  function kgpt(){kubectl get pods -n egov --selector=app=$1 --no-headers=true | head -n1 | awk '{print $1}'}
  kubectl port-forward -n egov $(kgpt egov-mdms-service) 8084:8080 &
@@ -30,7 +32,6 @@ b) You need to port forward below services.
 ``` 
 
 c) Update below listed properties in `application.properties` before running the project:
-
 ```ini
 MDMS_HOST = 'http://localhost:8084/'
 EGOV_LOCATION_HOST = 'http://localhost:8082/'

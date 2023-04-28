@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import Reopen from "./reopen";
 //const GetTranslatedAction = (action, t) => t(`CS_COMMON_${action}`);
 
-const Rejected = ({ action, nextActions, complaintDetails, ComplainMaxIdleTime=3600000, rating, serviceRequestId, reopenDate, isCompleted }) => {
+const Rejected = ({ action, nextActions, rating, serviceRequestId, reopenDate, isCompleted, customChild }) => {
   const { t } = useTranslation();
 
   if (action === "REJECTED") {
@@ -39,8 +39,7 @@ const Rejected = ({ action, nextActions, complaintDetails, ComplainMaxIdleTime=3
     let actions =
       nextActions &&
       nextActions.map((action, index) => {
-        if (action && (action !== "COMMENT") ) {
-          if((action!== "REOPEN" || (action === "REOPEN" && (Date?.now() - complaintDetails?.service?.auditDetails?.lastModifiedTime) < ComplainMaxIdleTime)))
+        if (action && action !== "COMMENT") {
           return (
             <Link key={index} to={`/digit-ui/citizen/pgr/${action.toLowerCase()}/${serviceRequestId}`}>
               <ActionLinks>{t(`CS_COMMON_${action}`)}</ActionLinks>
@@ -48,7 +47,7 @@ const Rejected = ({ action, nextActions, complaintDetails, ComplainMaxIdleTime=3
           );
         }
       });
-    return <CheckPoint isCompleted={isCompleted} label={t(`CS_COMMON_COMPLAINT_REJECTED`)} customChild={<div>{actions}</div>} />;
+    return <CheckPoint isCompleted={isCompleted} label={t(`CS_COMMON_COMPLAINT_REJECTED`)} customChild={<div><div>{customChild}</div><div>{actions}</div></div>} />;
   }
 };
 

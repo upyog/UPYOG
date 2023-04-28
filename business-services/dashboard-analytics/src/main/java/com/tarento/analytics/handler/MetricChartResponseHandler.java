@@ -23,7 +23,6 @@ import com.tarento.analytics.dto.Data;
 import com.tarento.analytics.dto.Plot;
 import com.tarento.analytics.helper.ComputeHelper;
 import com.tarento.analytics.helper.ComputeHelperFactory;
-import com.tarento.analytics.utils.ResponseRecorder;
 
 /**
  * This handles ES response for single index, multiple index to represent single data value
@@ -200,6 +199,49 @@ public class MetricChartResponseHandler implements IResponseHandler{
 					throw new CustomException("INVALID_NUMBER_OF_OPERANDS", "Division operation can be performed only with 2 operands.");
 			}
 			data.setPlots( Arrays.asList(latestDateplot,lastUpdatedTime));
+            if (action.equals("division")){
+                if (totalValues.size() == 2) {
+                        if (totalValues.get(1) != 0)
+                                data.setHeaderValue(totalValues.get(0) / totalValues.get(1));
+                        else
+                                data.setHeaderValue(Double.valueOf(0));
+                }
+                else
+                        throw new CustomException("INVALID_NUMBER_OF_OPERANDS", "Division operation can be performed only with 2 operands.");
+        }
+            
+            if (action.equals("minus")){
+                if (totalValues.size() == 2) {
+                        if (totalValues.get(1) != 0)
+                                data.setHeaderValue(totalValues.get(1) - totalValues.get(0));
+                        else
+                                data.setHeaderValue(Double.valueOf(1));
+                }
+                else
+                        throw new CustomException("INVALID_NUMBER_OF_OPERANDS", "Subtraction operation can be performed only with 2 operands.");
+        }
+            
+            if (action.equals("percentageG")){
+                if (totalValues.size() == 2) {
+                        if (totalValues.get(1) != 0)
+                                data.setHeaderValue(Math.round(((totalValues.get(1) - totalValues.get(0))*100)/totalValues.get(0)));
+                        else
+                                data.setHeaderValue(Double.valueOf(totalValues.get(1)));
+                }
+                else if (totalValues.size() == 16) {
+                
+                    data.setHeaderValue(((totalValues.get(1)+totalValues.get(0)+totalValues.get(2)+totalValues.get(3)+totalValues.get(4)+totalValues.get(5)+totalValues.get(6)+totalValues.get(7))*100)/(totalValues.get(8)+totalValues.get(9)+totalValues.get(10)+totalValues.get(11)+totalValues.get(12)+totalValues.get(13)+totalValues.get(14)+totalValues.get(15)));
+
+            }
+                else if (totalValues.size() == 14) {
+                    
+                    data.setHeaderValue(((totalValues.get(1)+totalValues.get(0)+totalValues.get(2)+totalValues.get(3)+totalValues.get(4)+totalValues.get(5)+totalValues.get(6))*100)/(totalValues.get(7)+totalValues.get(8)+totalValues.get(9)+totalValues.get(10)+totalValues.get(11)+totalValues.get(12)+totalValues.get(13)));
+
+            }
+                else
+                        throw new CustomException("INVALID_NUMBER_OF_OPERANDS", "Percentage Growth operation can be performed only with 2 operands.");
+        }
+            data.setPlots( Arrays.asList(latestDateplot,lastUpdatedTime));
             request.getResponseRecorder().put(visualizationCode, request.getModuleLevel(), data);
             dataList.add(data);
             if(chartNode.get(POST_AGGREGATION_THEORY) != null) { 

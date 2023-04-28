@@ -12,6 +12,7 @@ import { newConfigMutate } from "../../config/Mutate/config";
 import _ from "lodash";
 import get from "lodash/get";
 import { pdfDownloadLink } from "../../utils";
+import { useQueryClient } from "react-query";
 
 const MutationApplicationDetails = ({ propertyId, acknowledgementIds, workflowDetails, mutate}) => {
   const { t } = useTranslation();
@@ -58,7 +59,7 @@ const MutationApplicationDetails = ({ propertyId, acknowledgementIds, workflowDe
     },
     {enabled: acknowledgementIds?true:false}
   );
-
+  const queryClient = useQueryClient();
   const [appDetailsToShow, setAppDetailsToShow] = useState({});
   const [showModal, setShowModal] = useState(false);
   const [selectedAction, setSelectedAction] = useState(null);
@@ -152,6 +153,7 @@ const MutationApplicationDetails = ({ propertyId, acknowledgementIds, workflowDe
           if (isOBPS?.isNoc) {
             history.push(`/digit-ui/employee/noc/response`, { data: data });
           }
+          window.location.reload()
           setShowToast({ key: "success", action: selectedAction });
           setTimeout(closeToast, 5000);
           queryClient.clear();
