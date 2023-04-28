@@ -14,8 +14,8 @@ const BillDetails = ({ paymentRules, businessService }) => {
   const { workflow: wrkflow, tenantId: _tenantId, ConsumerName } = Digit.Hooks.useQueryParams();
   const [bill, setBill] = useState(state?.bill);
   const tenantId = state?.tenantId || _tenantId || Digit.UserService.getUser().info?.tenantId;
-  const propertyId = state?.propertyId;
-  if (wrkflow === "WNS" && consumerCode.includes("?")) consumerCode = consumerCode.substring(0, consumerCode.indexOf("?"));
+  if(wrkflow === "WNS" && consumerCode.includes("?"))
+  consumerCode = consumerCode.substring(0,consumerCode.indexOf("?"))
   const { data, isLoading } = state?.bill
     ? { isLoading: false }
     : Digit.Hooks.useFetchPayment({
@@ -31,20 +31,12 @@ const BillDetails = ({ paymentRules, businessService }) => {
     {data : {uuid:[Useruuid]}},
     { recordId: Useruuid, plainRequestFields: ["mobileNumber"] },
     {
-      enabled: Useruuid ? true : false,
-      cacheTime: 100,
-    },
-  ];
-
-  const { isLoading: isUserLoading, data: userData, revalidate } = Digit.Hooks.useCustomAPIHook(...requestCriteria);
-  
-  const { isLoading: isFSMLoading, isError, error, data: application, error: errorApplication } = Digit.Hooks.fsm.useApplicationDetail(
-    t,
-    tenantId,
-    consumerCode,
-    { enabled: pathname.includes("FSM") ? true : false },
-    "CITIZEN"
-  );
+        enabled: Useruuid ? true : false,
+        cacheTime: 100,
+        
+    }
+]
+const { isLoading : isUserLoading, data: userData, revalidate } = Digit.Hooks.useCustomAPIHook(...requestCriteria);
   let { minAmountPayable, isAdvanceAllowed } = paymentRules;
   minAmountPayable = wrkflow === "WNS" ? 100 : minAmountPayable;
   const billDetails = bill?.billDetails?.sort((a, b) => b.fromPeriod - a.fromPeriod)?.[0] || [];
@@ -148,9 +140,10 @@ const BillDetails = ({ paymentRules, businessService }) => {
         paymentAmount,
         tenantId: billDetails.tenantId,
         name: bill.payerName,
-        mobileNumber: bill.mobileNumber && bill.mobileNumber?.includes("*") ? userData?.user?.[0]?.mobileNumber : bill.mobileNumber,      });
+        mobileNumber: bill.mobileNumber && bill.mobileNumber?.includes("*") ? userData?.user?.[0]?.mobileNumber : bill.mobileNumber,
+      });
     } else {
-      history.push(`/digit-ui/citizen/payment/collect/${businessService}/${consumerCode}`, { paymentAmount, tenantId: billDetails.tenantId, propertyId: propertyId });
+      history.push(`/digit-ui/citizen/payment/collect/${businessService}/${consumerCode}`, { paymentAmount, tenantId: billDetails.tenantId });
     }
   };
 

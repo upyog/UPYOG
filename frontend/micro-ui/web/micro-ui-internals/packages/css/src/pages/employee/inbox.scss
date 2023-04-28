@@ -506,58 +506,6 @@
   }
 }
 
-@screen dt {
-  .groupBill-custom {
-    .custom-group-merge-container {
-      display: flex !important;
-      justify-content: space-between !important;
-      .header {
-        display: flex;
-        align-items: baseline;
-        .logo {
-          margin-right: 1rem;
-          svg {
-            path {
-              fill: #f47738;
-            }
-          }
-        }
-        .h1 {
-          font-size: 24px;
-          line-height: 28px;
-          font-weight: 400;
-          color: #f47738;
-        }
-      }
-    }
-    .inbox-container {
-      .search-container {
-        .search-complaint-container {
-          display: flex;
-          flex-direction: row;
-        }
-        .group-complaint-input-container {
-          width: 33% !important;
-          display: flex;
-          flex-direction: column;
-        }
-      }
-    }
-    .inbox-action-container {
-      display: flex;
-      flex-direction: row-reverse;
-      .clear-search {
-        margin-top: 65px;
-        margin-left: 16px;
-        padding-top: unset !important;
-      }
-      .submit-bar-search {
-        margin-top: 55px !important;
-      }
-    }
-  }
-}
-
 .inboxLinksFSM {
   margin: 0 !important;
 }
@@ -672,14 +620,14 @@ background-size: cover
   tHead {
     tr {
       th {
-        text-align: left;
+        text-align: center;
       }
     }
   }
   tBody {
     tr {
       td {
-        text-align: left;
+        text-align: center;
       }
     }
   }

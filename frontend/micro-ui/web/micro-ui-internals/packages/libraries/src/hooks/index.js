@@ -103,8 +103,6 @@ import useGenderMDMS from "./pt/useGenderMDMS";
 import usePTGenderMDMS from "./pt/usePTGenderMDMS";
 import useMyPropertyPayments from "./pt/useMyPropertyPayments";
 import useGenericViewProperty from "./pt/useGenericViewProperty";
-import useRatingAndFeedbackMDMS from "./pt/useRatingAndFeedbackMDMS";
-import useServiceSearchCF from "./pt/useServiceSearchCF";
 
 import useDssMdms from "./dss/useMDMS";
 import useDashboardConfig from "./dss/useDashboardConfig";
@@ -246,7 +244,6 @@ import useBillAmendmentInbox from "./billAmendment/useInbox";
 import { usePrivacyContext } from "./usePrivacyContext";
 import useToCheckPrivacyEnablement from "./ws/useToCheckPrivacyEnablement";
 import useWSConfigMDMS from "./ws/useWSConfigMDMS";
-import useFeedBackSearch from "./useFeedBackSearch";
 
 const pgr = {
   useComplaintDetails,
@@ -327,8 +324,6 @@ const pt = {
   usePTGenderMDMS,
   useMyPropertyPayments,
   useGenericViewProperty,
-  useRatingAndFeedbackMDMS,
-  useServiceSearchCF,
 };
 
 const dss = {
@@ -518,7 +513,6 @@ const Hooks = {
   useDocumentSearch,
   useTenants,
   useInbox: useTLInbox,
-  useFeedBackSearch,
   useAccessControl,
   useBillSearch,
   useCancelBill,

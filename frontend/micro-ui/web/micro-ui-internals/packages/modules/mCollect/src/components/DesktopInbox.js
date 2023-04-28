@@ -188,7 +188,7 @@ const DesktopInbox = ({ tableConfig, filterComponent, columns, ...props }) => {
   }
 
   return (
-    <div className="inbox-container" style={{overflow: "auto"}}>
+    <div className="inbox-container">
       {!props.isSearch && (
         <div className="filters-container">
           <InboxLinks parentRoute={props.parentRoute} businessService={props.businessService} />

@@ -89,7 +89,6 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
   };
 
   const onForgotPassword = () => {
-    sessionStorage.getItem("User") && sessionStorage.removeItem("User")
     history.push("/digit-ui/employee/user/forgot-password");
   };
 

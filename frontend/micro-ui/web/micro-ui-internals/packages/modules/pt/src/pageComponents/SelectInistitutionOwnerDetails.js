@@ -118,7 +118,7 @@ const SelectInistitutionOwnerDetails = ({ t, config, onSelect, userType, formDat
             disable={isUpdateProperty || isEditProperty}
             {...(validation = {
               isRequired: true,
-              pattern: "^[a-zA-Z_@./()#&+- ]*$",
+              pattern: "^[a-zA-Z-.`' ]*$",
               title: t("PT_NAME_ERROR_MESSAGE"),
             })}
           />

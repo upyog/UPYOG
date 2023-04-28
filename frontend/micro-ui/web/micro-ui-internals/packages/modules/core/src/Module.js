@@ -6,8 +6,6 @@ import { getI18n } from "react-i18next";
 import { Body, Loader } from "@egovernments/digit-ui-react-components";
 import { DigitApp } from "./App";
 import SelectOtp from "./pages/citizen/Login/SelectOtp";
-import AcknowledgementCF from "./components/AcknowledgementCF";
-import CitizenFeedback from "./components/CitizenFeedback";
 
 import getStore from "./redux/store";
 import ErrorBoundary from "./components/ErrorBoundaries";
@@ -110,8 +108,6 @@ export const DigitUI = ({ stateCode, registry, enabledModules, moduleReducers })
 
 const componentsToRegister = {
   SelectOtp,
-  AcknowledgementCF,
-  CitizenFeedback,
 };
 
 export const initCoreComponents = () => {

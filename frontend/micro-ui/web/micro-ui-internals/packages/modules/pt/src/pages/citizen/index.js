@@ -9,7 +9,6 @@ import { PTMyPayments } from "./MyPayments";
 const hideBackButtonConfig = [
   { screenPath: "property/new-application/acknowledgement" },
   { screenPath: "property/edit-application/acknowledgement" },
-  //{ screenPath: "property/feedback-acknowledgement" }
 ];
 
 const App = () => {
