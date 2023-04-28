@@ -1,20 +1,20 @@
-# Egov-HRMS Service
+# HRMS Service (egov-hrms)
 ### HRMS Service
-The objective of HRMS is to provide a service that manages all the employees enrolled onto the system. HRMS provides extensive APIs to create, update and search the employees with attributes like assignments, service history, jurisdiction etc. HRMS can be treated a sub-set of the egov-user service, Every employee created through HRMS will also be created as a user in egov-user. 
+The objective of HRMS is to provide a service that manages all the employees enrolled onto the system. HRMS provides extensive APIs to create, update and search the employees with attributes like assignments, service history, jurisdiction etc. HRMS can be treated a sub-set of the egov-user service, Every employee created through HRMS will also be created as a user in User Service(egov-user). 
 
 ### DB UML Diagram
 
 - NA
 
 ### Service Dependencies
-- egov-user
-- egov-localization
-- egov-idgen
-- egov-mdms
-- egov-filestore
+- User Service (egov-user)
+- Localization Service (egov-localization)
+- ID-generation Service (egov-idgen)
+- MDMS Service (egov-mdms)
+- File Store Service (egov-filestore)
 
 ### Swagger API Contract
-- Please refer to the [Swagger API contarct](https://editor.swagger.io/?url=https://raw.githubusercontent.com/egovernments/business-services/master/Docs/hrms-v1.0.0.yaml#!/) for HRMS service to understand the structure of APIs and to have visualization of all internal APIs.
+- Please refer to the [Swagger API Contract](https://editor.swagger.io/?url=https://raw.githubusercontent.com/upyog/UPYOG/master/business-services/Docs/hrms-v1.0.0.yaml#!/) for HRMS service to understand the structure of APIs and to have visualization of all internal APIs.
 
 
 ## Service Details
@@ -78,7 +78,7 @@ The objective of HRMS is to provide a service that manages all the employees enr
 
 | Environment Variables                     | Description                                                                                                                                               | Value                                             |
 | ----------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------|
-| `egov.hrms.employee.app.link`             | This is the link to the mseva app, which differs based on the environment.                                                                                | https://mseva.lgpunjab.gov.in/employee/user/login |
+| `egov.hrms.employee.app.link`             | This is the link to the UPYOG Portal, which differs based on the environment.                                                                                | https://upyog.niua.org/digit-ui/employee/user/login |
 | `egov.hrms.default.pagination.limit`      | This is the pagination limit on search results of employee search, it can be set to any numeric value without decimals.                                   | 200                                               |
 | `egov.hrms.default.pwd.length`            | This is the length of password to be generated at the time of employee creation. However, please ensure this is in sync with the egov-user pwd policy.    | 10                                                |
 | `open.search.enabled.roles`               | This is a list of Role codes that are allowed to perform an open-search in hrms.                                                                          | SUPERUSER,ADMIN                                   |
@@ -110,3 +110,4 @@ Constraints: a. Open Search is enabled only for a set of users. Currently it is 
     - **save-hrms-employee** :- This topic is used to create new employee in the system.
     - **update-hrms-employee** :- This topic is used to update the existing employee in the systen.
     - **egov.core.notification.sms** :- This topic is used to send noification to the phone number of the employee who has been created in the system.
+

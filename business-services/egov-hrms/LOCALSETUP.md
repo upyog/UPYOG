@@ -1,6 +1,6 @@
 # Local Setup
 
-To setup the egov-hrms service in your local system, clone the [Core Service repository](https://github.com/egovernments/core-services).
+To setup the HRMS Service(egov-hrms) in local system, clone the [Core Service repository](https://github.com/upyog/UPYOG/tree/master/core-services).
 
 ## Dependencies
 
@@ -15,7 +15,7 @@ To setup the egov-hrms service in your local system, clone the [Core Service rep
 
 ## Running Locally
 
-To run the egov-hrms services in local system, you need to port forward below services.
+To run the HRMS Service(egov-hrms) in local system, you need to port forward below services.
 
 ```bash
 function kgpt(){kubectl get pods -n egov --selector=app=$1 --no-headers=true | head -n1 | awk '{print $1}'}

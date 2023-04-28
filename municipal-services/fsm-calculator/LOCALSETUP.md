@@ -2,17 +2,17 @@
 
 This document will walk you through the dependencies of this service and how to set it up locally
 
-- To setup the fsm-calculator in your local system, clone the [municipal-services repository](https://github.com/egovernments/municipal-services).
+- To setup the FSM Calculator Service (fsm-calculator) in your local system, clone the [UPYOG Repository](https://github.com/upyog/UPYOG) and navigate to the municipal-services.
 
 ## Dependencies
 
 ### Infra Dependency
 
-- [] Postgres DB
+- [ ] Postgres DB
 - [ ] Redis
 - [ ] Elasticsearch
 - [X] Kafka
-  - [] Consumer
+  - [ ] Consumer
   - [X] Producer
 
 ## Running Locally
@@ -26,7 +26,7 @@ mdms-service
 fsm
 ```
 
-To run the fsm-calculator locally, update below listed properties in `application.properties` before running the project:
+To run the FSM Calculator Service (fsm-calculator) locally, update below listed properties in `application.properties` before running the project:
 
 ```ini
 server.port

@@ -1,7 +1,7 @@
-# egov-user-event
+# User Event Service (egov-user-event)
 
 The objective of this service is to create a common point to manage all the events generated for the user in the system. 
-Events include updates from multiple applications like PT, PGR, TL etc, events created by the employee addressing the citizen etc. 
+Events include updates from multiple applications like Property Tax, PGR, Trade License etc, events created by the employee addressing the citizen etc. 
 This service provides APIs to create , update and search such events for the user.
 
 ### DB UML Diagram
@@ -10,19 +10,20 @@ This service provides APIs to create , update and search such events for the use
 
 ### Service Dependencies
 
-- egov-mdms-service
-- egov-localization
+- MDM Service (egov-mdms-service)
+- Localization Service (egov-localization)
 
 ### Swagger API Contract
 
 Link to the swagger API contract yaml and editor link like below
 
-https://github.com/egovernments/DIGIT-Dev/blob/master/municipal-services/docs/user-events.yml
+https://editor.swagger.io/?url=https://raw.githubusercontent.com/upyog/UPYOG/master/municipal-services/docs/user-events.yml#!/
+https://github.com/upyog/UPYOG/blob/dev/municipal-services/docs/user-events.yml
 
 
 ## Service Details
 
-This service manages user events on the egov-platform, which means all the events about which the user (essentially citizen) has to be notified are stored and retrieved through this service. 
+This service manages user events on the UPYOG platform, which means all the events about which the user (essentially citizen) has to be notified are stored and retrieved through this service. 
 Events can be created either by an API call or through pushing records to the Kafka Queue.
 
 **Configurable Properties:**
@@ -50,7 +51,7 @@ Following are the properties in application.properties file in egov-user-events 
 
 ### Reference Document
 
-All the details and configurations on the services are explained in the document `https://digit-discuss.atlassian.net/l/c/rMA1ukFc`
+All the details and configurations on the services are explained in the document [User Events Services](https://upyog-docs.gitbook.io/upyog-v-1.0/reference-applications/products-and-modules/events-and-notifications/user-events-services)
 
 ### Kafka Consumers
 

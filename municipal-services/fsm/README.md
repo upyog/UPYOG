@@ -1,4 +1,4 @@
-# fsm
+# Faecal sludge management (fsm)
 
 Faecal sludge management (FSM) is a system that enables citizen to raise a request for septic tank cleaning with there ULB’s directly or reaching out to ULB counter. Citizen can track the application, make a payment for the charges and rate the service. This document contains the details about how to setup the fsm and describes the functionalities it provides.   
 
@@ -9,29 +9,29 @@ Faecal sludge management (FSM) is a system that enables citizen to raise a reque
 
 ### Service Dependencies
 
-- billing-service
-- mdms-service
-- workflow-v2
-- boundary-service
-- user-service
-- idgen-service
-- user-events
-- collection-service
-- notification-service
-- vendor
-- vehicle
-- fsm-calculator
-- egov-url-shortener
-- collection-service
-- pdf-service
+- Billing Service (billing-service)
+- MDM Service (mdms-service)
+- Workflow Service (workflow-v2)
+- Boundary Service (boundary-service)
+- User Service (user-service)
+- ID Generation Service (idgen-service)
+- User Event Service (user-events)
+- Collection Service (collection-service)
+- Notification Service (notification-service)
+- Vendoer Service (vendor)
+- Vehicle Service (vehicle)
+- FSM Calculator Service (fsm-calculator)
+- URL Shortener Service (egov-url-shortener)
+- Collection Service (collection-service)
+- PDF Service (pdf-service)
 
 ### Swagger API Contract
 
-Link to the swagger API contract [yaml](https://raw.githubusercontent.com/egovernments/municipal-services/master/docs/fsm/Fsm_Apply_Contract.yaml) and editor link like below
+Link to the swagger API contract [YAML](https://editor.swagger.io/?url=https://raw.githubusercontent.com/upyog/UPYOG/master/municipal-services/docs/fsm/Fsm_Apply_Contract.yaml#!/) and editor link like below
 
 
 ### Postman Collection
-Link to the postman collection [here](https://www.getpostman.com/collections/8b9eb951a810486f41a4)
+Link to the postman collection [here](https://api.postman.com/collections/23419225-e6643a11-d625-4e0d-9be6-3e33322d2aa3?access_key=PMAT-01GW49YT1843WB8ZS4V94R8BYB)
 
 
 ## Service Details

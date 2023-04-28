@@ -1,18 +1,17 @@
-# Access Control Service
-### Egov Access Control Service
-DIGIT is API based Platform here each api is denoting to a DIGIT resource.
-Access Control Service(ACS) main job is to Authorize end user based on their roles and provide access of the DIGIT platform resources.
+# Access Control Service (egov-accesscontrol)
+UPYOG is API based Platform here each api is denoting to a UPYOG resource.
+Access Control Service(ACS) main job is to Authorize end user based on their roles and provide access of the UPYOG platform resources.
 
 ### DB UML Diagram
 
 - NA
 
 ### Service Dependencies
-- egov-mdms service
+- MDMS Service (egov-mdms)
 
 ### Swagger API Contract
 
-- Please refer to the [Swagger API contarct](https://editor.swagger.io/?url=https://raw.githubusercontent.com/egovernments/egov-services/master/docs/egov-accesscontrol/contracts/v1-0-1.yml#!/) for access control service to understand the structure of APIs and to have visualization of all internal APIs.
+- Please refer to the [Swagger API Contract](https://editor.swagger.io/?url=https://raw.githubusercontent.com/upyog/UPYOG/master/core-services/docs/access-control-contract.yml#/) for access control service to understand the structure of APIs and to have visualization of all internal APIs.
 
 ## Service Details
 
@@ -22,7 +21,7 @@ Access control functionality basically works based on below points:
 
 - **Roles:** Role are assigned to user, a user can hold multiple roles. Roles are defined in MDMS masters.
 
-- **Role-Action:** Role actions are mapping b/w Actions and Roles. Based on Role,Action  mapping access control service identifies applicable action for role.    
+- **Role-Action:** Role actions are mapping b/w Actions and Roles. Based on Role, Action mapping access control service identifies applicable action for role.    
 
 **Feature List V1:**
 - Serve the applicable actions for a user based on user role.
@@ -33,12 +32,12 @@ Access control functionality basically works based on below points:
 - Module tenant mapping validation based on city-tenant master data from MDMS.
 
 **Feature List V1.2(Impacted from user changes):**
-- Actions,Role,& Role-action has to be simplified.(Denormalization)
+- Actions, Role & Role-action has to be simplified.(Denormalization)
 - Support tenant level role-action
 
 For Action-Role mapping following mdms file has to update.
-- [action-test.json](https://raw.githubusercontent.com/egovernments/egov-mdms-data/master/data/pb/ACCESSCONTROL-ACTIONS-TEST/actions-test.json)
-- [roleaction.json](https://raw.githubusercontent.com/egovernments/egov-mdms-data/master/data/pb/ACCESSCONTROL-ROLEACTIONS/roleactions.json)
+- [action-test.json](https://raw.githubusercontent.com/upyog/upyog-mdms-data/master/data/pg/ACCESSCONTROL-ACTIONS-TEST/actions-test.json)
+- [roleaction.json](https://raw.githubusercontent.com/upyog/upyog-mdms-data/master/data/pg/ACCESSCONTROL-ROLEACTIONS/roleactions.json)
 
 In **action-test.json** mdms file, action(url) has to be mention as given below example
 ```json
