@@ -1,6 +1,6 @@
-# Egov url shortening service
+# URL Shortening Service (egov-url-shortening)
 
-The egov-url-shortening service is used to shorten long urls. There may be requirement when we want to avoid sending very long urls to the user ex:- sms, whatsapp etc,
+The URL Shortening Service (egov-url-shortening) is used to shorten long urls. There may be requirement when we want to avoid sending very long urls to the user ex:- sms, whatsapp etc,
 this service compresses the url.
 
 ### DB UML Diagram
@@ -14,14 +14,14 @@ NA
 
 ### Swagger API Contract
 
-http://editor.swagger.io/?url=https://raw.githubusercontent.com/egovernments/core-services/gopesh67-patch-8/docs/url-shortening_contract.yml#!/
+https://editor.swagger.io/?url=https://raw.githubusercontent.com/upyog/UPYOG/master/core-services/docs/url-shortening_contract.yml#!/
 
 ## Service Details
-The egov-url-shortening is used to compress long urls. The converted short urls contains id, which is used by this service to identify and get longer urls. When user opens
-short urls the service gets long url associated with id and redirects user to it.
+The URL Shortening Service is used to compress long urls. The converted short urls contains id, which is used by this service to identify and get longer urls. When user opens short urls the service gets long url associated with id and redirects user to it.
 
 
-#### Configurations
+#### Configurations'
+
 NA
 
 
@@ -35,10 +35,13 @@ Receive long urls and converts them to shorter urls. Shortened urls contains url
 
 b) `GET /{id}`
 
-This shortened urls contains path to this endpoint. The service uses id used in last endpoint to get long url. As response the user is redirected to long url
+This shortened URLs contains path to this endpoint. The service uses id used in last endpoint to get long url. As response the user is redirected to long url
+
 
 ### Kafka Consumers
+
 - NA
 
 ### Kafka Producers
+
 - NA

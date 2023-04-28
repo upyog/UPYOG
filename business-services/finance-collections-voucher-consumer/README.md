@@ -8,11 +8,11 @@ NA
 
 ### Service Dependencies
 
-- egov-mdms-service
-- collection-service
-- egf-instrument
-- egov-user
-- egf-master
+- MDMS Service (egov-mdms-service)
+- Collection Service (collection-service)
+- Instrument Service (egf-instrument)
+- User Service (egov-user)
+- Master Service (egf-master)
 - Finance co existence service
 
 ### Swagger API Contract

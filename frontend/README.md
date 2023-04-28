@@ -1,4 +1,4 @@
-# Starting with Digit-UI Internal Development (Engineering Team) - MICRO-UI
+# Starting with UPYOG-UI Internal Development (Engineering Team) - MICRO-UI
 cd into /micro-ui/web/micro-ui-internals
 In the project directory, you can run:
 ### `yarn install`
@@ -7,7 +7,7 @@ In the project directory, you can run:
 Runs the app in the development mode.\
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
-# Starting with Digit-UI App (Impelmentation Teams) - MICRO-UI
+# Starting with UPOYG-UI App (Impelmentation Teams) - MICRO-UI
 cd into /micro-ui/web
 In the project directory, you can run:
 ### `yarn install`
@@ -71,5 +71,5 @@ Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
     4. NOC
     5. FSM
     6. HRMS
-    7. OBOS
+    7. OBPS
 

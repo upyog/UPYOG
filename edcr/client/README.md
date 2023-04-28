@@ -1,50 +1,29 @@
-# eGov SmartCity eGovernance Suite [![License: MIT](https://img.shields.io/badge/license-MIT-green)](https://github.com/egovernments/frontend/blob/master/LICENSE)
-
-[![Join the chat at https://gitter.im/egovernments/eGov](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/egovernments/eGov?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
-[![Build Status](http://ci.egovernments.org/buildStatus/icon?job=eGov-Github-Develop)](http://ci.egovernments.org/job/eGov-Github-Develop/) [![][codacy img]][codacy] [![][versioneye img]][versioneye]
-
-eGovernments Foundation transforms urban governance with the use of scalable and replicable technology solutions that enable efficient and effective municipal operations, better decision making, and contact-less urban service delivery.
-
-Our comprehensive software products enable Governments to put their resources to efficient use by minimising overheads. We also help bring in transparency, accountability and citizen centricity in the delivery of Government services.
-
-eGovernments Foundation has been in the forefront of implementing eGovernance solutions since 2003. Our products have been serving over 325 ULBs across the country. Our time tested products have impacted the ULBs in a large way. We have also been involved in several eGovernance initiatives in the country.
-
-Our primary business motivator is to increase the footprint of eGovernance across the country and help adoption in as many ULBs as possible. Going opensource with our products is a measure in this direction. It also gives us the ability to tap into the immense talent pool in India for strengthening and improving our cities. Open source also blends well with our ethical fabric of being open and transparent in our business.
-
-#### Issue Tracking
-Report issues via the [eGov Opensource JIRA][].
-#### License
-The eGov suit is released under version 3.0 of the [GPL][].
-#### Powered By
-<a href="https://www.atlassian.com/" target="_blank"><img src="http://downloads.egovernments.org/atlassian.png"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://github.com/" target="_blank"><img src="https://assets-cdn.github.com/images/modules/logos_page/Octocat.png" width="48"></a>
-
 ## User Guide
 This section contains steps that are involved in build and deploy the application.
 FAQ related to various deployment and development issues are discussed [here][FAQ]
 
 ## Setup with auto installer
-* Clone the eGov repository.
+* Clone the UPYOG repository.
 ```bash
 $ mkdir -p ${HOME}/egovgithub && cd egovgithub
-$ git clone  -b master --single-branch  git@github.com:egovernments/eGov-dcr-service.git
+$ git clone -b master --single-branch  git@github.com:upyog/UPYOG.git
 ```
 * First time setup which will install the stacks, build the source code, and deploys the artifact to Wildfly
 ```bash
-$ cd ${HOME}/egovgithub/eGov-dcr-service && make all
+$ cd ${HOME}/egovgithub/UPYOG/edcr/client && make all
 ```
 -----
-* To install the prerequisites eGov DCR Service Client stacks
+* To install the prerequisites DCR Service Client stacks
 ```bash
-$ cd ${HOME}/egovgithub/egov-dcr-client &&  make install
+$ cd ${HOME}/egovgithub/UPYOG/edcr/client &&  make install
 ```
 * To build the source code base
 ```bash
-$ cd ${HOME}/egovgithub/egov-dcr-client && make build
+$ cd ${HOME}/egovgithub/UPYOG/edcr/client && make build
 ```
 * To deploy the artifact to WILDFLY
 ```bash
-$ cd ${HOME}/egovgithub/egov-dcr-client && make deploy
+$ cd ${HOME}/egovgithub/UPYOG/edcr/client && make deploy
 ```
 
 ## Manual Setup Instruction
@@ -68,13 +47,13 @@ $ id -un
 ```
 
 #### Building Source
-1. Clone the eGov repository.
+1. Clone the UPYOG repository.
 ```bash
 $ mkdir egovgithub
 $ cd egovgithub
-$ git clone https://github.com/egovernments/egov-dcr-client.git
+$ git clone https://github.com/upyog/UPYOG.git
 ```
-2. Change directory back to `<CLONED_REPO_DIR>/egov`
+2. Change directory back to `<CLONED_REPO_DIR>/edcr/client/egov`
 
 3. Run the following commands, this will cleans, compiles, tests, migrates database and generates ear artifact along with jars and wars appropriately
 
@@ -84,7 +63,7 @@ $ git clone https://github.com/egovernments/egov-dcr-client.git
 
 #### Redis Server Setup
 
-By default eGov suit uses embedded redis server (work only in Linux & OSx), to make eGov suit works in Windows OS or if you want to run redis server as standalone then follow the installation steps below.
+By default UPYOG uses embedded redis server (work only in Linux & OSx), to make eGov suit works in Windows OS or if you want to run redis server as standalone then follow the installation steps below.
  
 1. Installing redis server on Linux
  
@@ -204,7 +183,7 @@ Always start the wildfly server with the below command to access the application
 This section gives more details regarding developing and contributing to eGov suit.
 
 #### Repository Structure
-`egov` - folder contains all the source code of eGov opensource projects
+`egov` - folder contains all the source code of UPYOG opensource projects
 #### Check out sources
 `git clone git@github.com:egovernments/egov-dcr-client.git` or `https://github.com/egovernments/egov-dcr-client.git`
 #### Prerequisites

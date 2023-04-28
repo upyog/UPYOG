@@ -19,7 +19,8 @@ NA
 
 ### Swagger API Contract
 
-  https://raw.githubusercontent.com/egovernments/business-services/finance_master_readme/Docs/collection-services/V-2-0.yml
+  https://editor.swagger.io/?url=https://raw.githubusercontent.com/upyog/UPYOG/master/business-services/Docs/collection-services/V-2-0.yml#!/
+
 
 ## Service Details
 

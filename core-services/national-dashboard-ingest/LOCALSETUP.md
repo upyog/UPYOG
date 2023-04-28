@@ -1,8 +1,9 @@
 # Local Setup
 
-To setup the national-dashboard-ingest service in your local system, clone the [Core Service repository](https://github.com/egovernments/core-services).
+To setup the national-dashboard-ingest service in your local system, clone the [Core Service Repository](https://github.com/upyog/UPYOG/tree/master/core-services).
 
 ## Dependencies
+
 
 ### Infra Dependency
 

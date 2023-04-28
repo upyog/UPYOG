@@ -1,25 +1,27 @@
-# PGR Service
+# PGR Service (pgr-services)
+
 The objective of this service is to provide a functionality to raise a complaint/grievance by citizen in the system. The progress of complaint/grievance can be tracked by
 the citizen and will be updated by notifications whenever the status of the complaint progresses further.
+
 ### DB UML Diagram
 
 - NA
 
 ### Service Dependencies
-- egov-user
-- egov-localization
-- egov-idgen
-- egov-mdms
-- egov-persister
-- egov-notification-sms
-- egov-notification-mail
-- egov-hrms
-- egov-workflow-v2
-- egov-url-shortening
+- User Service (egov-user)
+- Localization Service (egov-localization)
+- ID Gen Service (egov-idgen)
+- MDM Service (egov-mdms)
+- Persister Service (egov-persister)
+- SMS Notification Service (egov-notification-sms)
+- Mail Notification Service (egov-notification-mail)
+- HRMS Service (egov-hrms)
+- Workflow Service (egov-workflow-v2)
+- URL Shortening Service (egov-url-shortening)
 
 
 ### Swagger API Contract
-- Please refer to the [Swagger API contarct](https://raw.githubusercontent.com/egovernments/municipal-services/master/docs/pgr-services.yml) for PGR service to understand the structure of APIs and to have visualization of all internal APIs.
+- Please refer to the [Swagger API contract](https://raw.githubusercontent.com/upyog/UPYOG/master/municipal-services/docs/pgr-services.yml) for PGR service to understand the structure of APIs and to have visualization of all internal APIs.
 
 
 ## Service Details
@@ -31,13 +33,14 @@ the citizen and will be updated by notifications whenever the status of the comp
 
 **c) Workflow:** The Workflow object contains the action which is to be performed on the complaint and other associated inforamtion like documents and comments given while performing the action.
 
-**d) Citizen:** The Citizen object is of type(class) User  and contains the info about the person who has filed the complaint or on whose behalf the complaint is filled.
+**d) Citizen:** The Citizen object is of type (class) User and contains the info about the person who has filed the complaint or on whose behalf the complaint is filled.
 
 **e) Address:** Captures details of the address of the complaint.
 
 
 
 **Notification:**
+
 - Notification is sent to the phone number of the citizen who has been created in the system. This is an SMS notification.
 
 
@@ -56,6 +59,7 @@ the citizen and will be updated by notifications whenever the status of the comp
 `BasePath` /pgr-services/v2/[API endpoint]
 
 ##### Method
+
 **a) Create Complaint `POST /_create` :** API to create/raise a complaint in the system
 
 **b) Update Complaint `POST /_update` :** API to update the details of complaint.(Used primarily to perform actions on the complaint)

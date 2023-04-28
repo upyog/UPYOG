@@ -1,25 +1,29 @@
-# SW-Services
+# Sewerage Service (sw-services)
+
 This module created to manage Sewerage Service connections against a Property in the system.
 
 ### DB UML Diagram
+
 - To Do
 
 ### Service Dependencies
-- egov-mdms service
-- property-service
-- egov-idgen
-- egov-persister
-- sw-calculator
-- egov-filestore
-- pdf-service
+
+- MDMS Service (egov-mdms service)
+- Property Service (property-service)
+- ID Gen Service (egov-idgen)
+- Persister Service (egov-persister)
+- Sewerage Calculator Service (sw-calculator)
+- Filestore Service (egov-filestore)
+- PDF Service (pdf-service)
 
 ### Swagger API Contract
 
-- Please refer to the [Swagger API contarct](https://github.com/egovernments/municipal-services/blob/master/docs/water-sewerage-services.yaml) for ws-services to understand the structure of APIs and to have visualization of all internal APIs.
+- Please refer to the [Swagger API contract](https://editor.swagger.io/?url=https://raw.githubusercontent.com/upyog/UPYOG/master/municipal-services/docs/water-sewerage-services.yaml#!/) for ws-services to understand the structure of APIs and to have visualization of all internal APIs.
 
 ## Service Details
 
 **Functionality:**
+
 - Apply for sewerage connection.
 - Searching for sewerage connections/application.
 - Can take different action based on state (Workflow) 

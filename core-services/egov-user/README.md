@@ -1,6 +1,6 @@
-# Egov-user service
+# User Service (egov-user)
 
-<p>Egov-user service is used for user data management and providing functionality to login and logout into Digit system </p>
+<p>User Service (egov-user) is used for user data management and providing functionality to login and logout into UPYOG system </p>
 
 ### DB UML Diagram
 
@@ -8,15 +8,15 @@
 
 ### Service Dependencies
 
-- egov-mdms-service
-- egov-enc-service
-- egov-otp
-- egov-filestore
+- MDMS Service (egov-mdms-service)
+- Encryption Service (egov-enc-service)
+- OTP Service (egov-otp)
+- Filestore Service (egov-filestore)
 
 
 ### Swagger API Contract
 
-http://editor.swagger.io/?url=https://raw.githubusercontent.com/egovernments/egov-services/master/docs/egov-user/contracts/v1-1-0.yml#!/
+- https://editor.swagger.io/?url=https://raw.githubusercontent.com/upyog/UPYOG/master/core-services/docs/egov-user-contract.yml#!/
 
 ## Service Details
 
@@ -28,7 +28,7 @@ Feature List:
   - Forgot password
   - Change password
   - User role mapping(Single ulb to  multiple role)
-  - Enable employee to login into DIGIT system based on password.
+  - Enable employee to login into UPYOG system based on password.
 
 - Citizen:
   - Create user
@@ -39,6 +39,7 @@ Feature List:
 
 
 #### Configurations
+
 NA
 
 ### API Details
@@ -46,8 +47,7 @@ NA
 
 a) `POST /citizen/_create`
 
-Create citizen with otp validation. If `citizen.registration.withlogin.enabled` property in applications.properties is `true` then created citizen would be logged in automatically and he
-would get information to access platform services, ex:- auth token, refresh token etc.
+Create citizen with OTP validation. If `citizen.registration.withlogin.enabled` property in applications.properties is `true` then created citizen would be logged in automatically and he would get information to access platform services, ex:- auth token, refresh token etc.
 
 b) `POST /users/_createnovalidate`
 
@@ -68,7 +68,7 @@ End-point to fetch the user details by access-token
 
 f) `POST /users/_updatenovalidate`
 
-End-point to update the user details without otp validations. User's username, type and tenantId are not updated and ignored in update.
+End-point to update the user details without OTP validations. User's username, type and tenantId are not updated and ignored in update.
 
 g) `POST /profile/_update`
 
@@ -80,7 +80,7 @@ End-point to update the password for loggedInUser. The existing password is vali
 
 i) `POST /password/nologin/_update`
 
-End-point to update the password for non logged in user. The otp is validated before updating new password.
+End-point to update the password for non logged in user. The OTP is validated before updating new password.
 
 j) `POST /_logout`
 
@@ -91,9 +91,11 @@ k) `POST /user/oauth/token`
 Endpoint for login. If the user is citizen the login is otp based else it is password based.
 
 
-
 ### Kafka Consumers
+
 NA
 
 ### Kafka Producers
+
 - ```audit_data``` : used in ```kafka.topic.audit``` application property, user service uses this topic for logging user data decryption calls.
+- 
