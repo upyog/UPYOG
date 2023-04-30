@@ -99,7 +99,7 @@ public class NewMdmsValidator {
                     if (log.isDebugEnabled()) {
                         log.debug("Birth place code : \n{}", birthPlace);
                         if (CollectionUtils.isEmpty(placeCodes) || !placeCodes.contains(birthPlace)) {
-                            errorMap.put(COMMON_MDMS_PLACEMASTER, "The Birth Place code '" + birthPlace + "' does not exists");
+                            errorMap.put(CR_MDMS_PLACEMASTER, "The Birth Place code '" + birthPlace + "' does not exists");
                         }
                     }
 
@@ -386,6 +386,6 @@ public class NewMdmsValidator {
     }
 
     private List<String> getBirthPlaceCode(Object mdmsData) {
-        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_PLACEMASTER_CODE_JSONPATH);
+        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_BIRTH_PLACES_CODE_JSONPATH);
     }
 }

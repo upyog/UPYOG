@@ -64,6 +64,14 @@ public class NewBirthApplication {
     private String placeofBirthId;
 
     @Size(max = 64)
+    @JsonProperty("birthPlaceEn")
+    private String placeofBirthIdEn;
+
+    @Size(max = 64)
+    @JsonProperty("birthPlaceMl")
+    private String placeofBirthIdMl;
+
+    @Size(max = 64)
     @JsonProperty("hospitalCode")
     private String hospitalId;
     @Size(max = 64)

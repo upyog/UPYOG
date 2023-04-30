@@ -135,7 +135,7 @@ public class NacMdmsValidator {
                    
                     String birthPlaceCode = birth.getPlaceofBirthId();
                     if (CollectionUtils.isEmpty(birthPlaceCodes) || !birthPlaceCodes.contains(birthPlaceCode)) {
-                      errorMap.put(COMMON_MDMS_PLACEMASTER, "The Birth Place code '" + birthPlaceCode + "' does not exists");
+                      errorMap.put(CR_MDMS_PLACEMASTER, "The Birth Place code '" + birthPlaceCode + "' does not exists");
                   }
 //                    String institutionCode= birth.getInstitutionNameCode();
 //                    if (CollectionUtils.isEmpty(instCodes) || !instCodes.contains(institutionCode)) {
@@ -582,6 +582,6 @@ public class NacMdmsValidator {
     }
 
     private List<String> getBirthPlaceCode(Object mdmsData) {
-        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_PLACEMASTER_CODE_JSONPATH);
+        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_BIRTH_PLACES_CODE_JSONPATH);
     }
 }

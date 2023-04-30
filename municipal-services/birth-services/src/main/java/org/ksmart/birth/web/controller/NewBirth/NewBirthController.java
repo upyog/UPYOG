@@ -1,4 +1,4 @@
-package org.ksmart.birth.web.controller;
+package org.ksmart.birth.web.controller.NewBirth;
 
 import lombok.extern.slf4j.Slf4j;
 import org.egov.tracer.model.CustomException;

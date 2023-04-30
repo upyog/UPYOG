@@ -41,9 +41,28 @@ public class ParentAddress {
     @JsonProperty("presentInsideKeralaTaluk")
     private String presentInsideKeralaTaluk;
 
+    @Size(max = 300)
+    @JsonProperty("presentInsideKeralaTalukEn")
+    private String presentInsideKeralaTalukEn;
+
+
+    @Size(max = 300)
+    @JsonProperty("presentInsideKeralaTalukMl")
+    private String presentInsideKeralaTalukMl;
+
+
     @Size(max = 64)
     @JsonProperty("presentInsideKeralaVillage")
     private String presentInsideKeralaVillage;
+
+    @Size(max = 300)
+    @JsonProperty("presentInsideKeralaVillageEn")
+    private String presentInsideKeralaVillageEn;
+
+    @Size(max = 300)
+    @JsonProperty("presentInsideKeralaVillageMl")
+    private String presentInsideKeralaVillageMl;
+
 
     @Size(max = 1000)
     @JsonProperty("presentInsideKeralaLocalityNameEn")
@@ -314,9 +333,25 @@ public class ParentAddress {
     @JsonProperty("permntInKeralaAdrTaluk")
     private String permntInKeralaAdrTaluk;
 
+    @Size(max = 300)
+    @JsonProperty("permntInKeralaAdrTalukEn")
+    private String permntInKeralaAdrTalukEn;
+
+    @Size(max = 300)
+    @JsonProperty("permntInKeralaAdrTalukMl")
+    private String permntInKeralaAdrTalukMl;
+
     @Size(max = 64)
     @JsonProperty("permntInKeralaAdrVillage")
     private String permntInKeralaAdrVillage;
+
+    @Size(max = 300)
+    @JsonProperty("permntInKeralaAdrVillageEn")
+    private String permntInKeralaAdrVillageEn;
+
+    @Size(max = 300)
+    @JsonProperty("permntInKeralaAdrVillageMl")
+    private String permntInKeralaAdrVillageMl;
 
     @Size(max = 1000)
     @JsonProperty("permntInKeralaAdrLocalityNameEn")

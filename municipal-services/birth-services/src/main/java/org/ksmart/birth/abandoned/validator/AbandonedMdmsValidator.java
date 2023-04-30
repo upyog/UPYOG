@@ -695,6 +695,6 @@ public class AbandonedMdmsValidator {
     }
 
     private List<String> getBirthPlaceCode(Object mdmsData) {
-        return JsonPath.read(mdmsData, CR_MDMS_PLACEMASTER_CODE_JSONPATH);
+        return JsonPath.read(mdmsData, CR_MDMS_BIRTH_PLACES_CODE_JSONPATH);
     }
 }

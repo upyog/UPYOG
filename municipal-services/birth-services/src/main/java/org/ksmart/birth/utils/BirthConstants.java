@@ -30,7 +30,7 @@ public class BirthConstants {
 
     public static final String COMMON_MDMS_POSTOFFICE = "PostOffice";
     public static final String COMMON_MDMS_LBTYPE = "LBType";
-    public static final String COMMON_MDMS_PLACEMASTER = "PlaceMaster";
+    public static final String CR_MDMS_PLACEMASTER = "PlaceMaster";
     public static final String CR_MDMS_INSTITUTIONTYPE = "InstitutionType";
     public static final String CR_MDMS_PLACE_INSTITUTION_TYPE = "InstitutionTypePlaceOfEvent";
     public static final String CR_MDMS_DELIVERYMETHOD = "DeliveryMethod";
@@ -44,7 +44,8 @@ public class BirthConstants {
     public static final String CR_MDMS_BIRTH_NEW_WF_APPTYPE_JSONPATH = "$.MdmsRes.birth-death-service.WorkFlowBirth[*].ApplicationType";
     public static final String CR_MDMS_HOSPITALS_CODE_JSONPATH = "$.MdmsRes.egov-location.hospitalList[*].code";
     public static final String CR_MDMS_HOSPITALS_CODES_JSONPATH = "$.MdmsRes.egov-location.hospitalList";
-    public static final String CR_MDMS_BIRTH_PLACES_CODE_JSONPATH = "$.MdmsRes.common-masters.PlaceMaster[*].code";
+    public static final String CR_MDMS_BIRTH_PLACES_CODE_JSONPATH = "$.MdmsRes.birth-death-service.PlaceMaster[*].code";
+    public static final String CR_MDMS_BIRTH_PLACES_JSONPATH = "$.MdmsRes.birth-death-service.PlaceMaster";
     public static final String CR_MDMS_INSTITUTIONS_CODE_JSONPATH = "$.MdmsRes.egov-location.institutionList[*].code";
     public static final String CR_MDMS_BOUNDARY_CODE_JSONPATH = "$.MdmsRes.egov-location.TenantBoundary[*].boundary.children[*].children[*].code";
     public static final String CR_MDMS_BOUNDARY_CODES_JSONPATH = "$.MdmsRes.egov-location.TenantBoundary[*].boundary.children[*].children[*]";
@@ -78,6 +79,7 @@ public class BirthConstants {
     public static final String CR_MDMS_MEDICAL_ATTENTION_TYPE_JSONPATH = "$.MdmsRes.birth-death-service.AttentionOfDelivery";
 
     public static final String CR_MDMS_VILLAGE_CODE_JSONPATH = "$.MdmsRes.common-masters.Village[*].code";
+    public static final String CR_MDMS_VILLAGE_JSONPATH = "$.MdmsRes.common-masters.Village";
 
     public static final String CR_MDMS_DISTRICT_CODE_JSONPATH = "$.MdmsRes.common-masters.District[*].code";
     public static final String CR_MDMS_DISTRICT_JSONPATH = "$.MdmsRes.common-masters.District";
@@ -90,7 +92,6 @@ public class BirthConstants {
     public static final String CR_MDMS_LBTYPE_JSONPATH = "$.MdmsRes.common-masters.LBType";
 
     public static final String CR_MDMS_LBTYPE_CODE_JSONPATH = "$.MdmsRes.common-masters.LBType[*].code";
-    public static final String CR_MDMS_PLACEMASTER_CODE_JSONPATH = "$.MdmsRes.common-masters.PlaceMaster[*].code";
     public static final String CR_RESIDENCE_PLACE_TYPE_OUTSIDE = "CR_OUTSIDE_INDIA";
     public static final String BIRTH_PLACE_HOSPITAL = "HOSPITAL";
     public static final String BIRTH_PLACE_INSTITUTION = "INSTITUTION";

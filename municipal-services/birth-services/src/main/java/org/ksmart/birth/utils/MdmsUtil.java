@@ -176,6 +176,12 @@ public class MdmsUtil {
                                                                                   .build());
         crMasterDetails.addAll(masterWorkflow);
 
+        // Add Module PlaceMaster
+        List<MasterDetail> masterBirthPlace = Collections.singletonList(MasterDetail.builder()
+                .name(BirthConstants.CR_MDMS_PLACEMASTER)
+                .build());
+        crMasterDetails.addAll(masterBirthPlace);
+
 
         //Add masters to modules
         ModuleDetail crModuleDetail = ModuleDetail.builder()
@@ -239,11 +245,6 @@ public class MdmsUtil {
                                                                                 .build());
         commonMasterDetails.addAll(masterLbType);
 
-        // Add Module PlaceMaster
-        List<MasterDetail> masterBirthPlace = Collections.singletonList(MasterDetail.builder()
-                                                                                    .name(BirthConstants.COMMON_MDMS_PLACEMASTER)
-                                                                                    .build());
-        commonMasterDetails.addAll(masterBirthPlace);
 
         ModuleDetail commonModuleDetail = ModuleDetail.builder()
                                                       .masterDetails(commonMasterDetails)

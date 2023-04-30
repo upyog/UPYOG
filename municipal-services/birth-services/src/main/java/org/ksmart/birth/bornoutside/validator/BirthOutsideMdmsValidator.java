@@ -386,6 +386,6 @@ public class BirthOutsideMdmsValidator {
     }
 
     private List<String> getBirthPlaceCode(Object mdmsData) {
-        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_PLACEMASTER_CODE_JSONPATH);
+        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_BIRTH_PLACES_CODE_JSONPATH);
     }
 }
