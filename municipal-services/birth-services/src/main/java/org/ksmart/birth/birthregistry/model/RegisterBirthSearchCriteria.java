@@ -56,12 +56,14 @@ public class RegisterBirthSearchCriteria {
 
     @JsonProperty("limit")
     private Integer limit;
+
     @JsonProperty("nameOfMother")
-    @Valid
     private String nameOfMother;
+
     @JsonProperty("hospitalId")
     @Valid
     private String hospitalId;
+
     @JsonProperty("institutionId")
     @Valid
     private String institutionId;

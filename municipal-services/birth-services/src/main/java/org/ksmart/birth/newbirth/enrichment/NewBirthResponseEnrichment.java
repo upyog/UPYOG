@@ -37,6 +37,14 @@ public class NewBirthResponseEnrichment {
         } else if(result.size() >= 1) {
             result.forEach(birth -> {
                 birth.setIsWorkflow(true);
+                if(birth.getDeliveryMethods() != null) {
+                    birth.setDeliveryMethodsEn(mdmsTenantService.getDeliveryMethodEn(mdmsData, birth.getDeliveryMethods()));
+                    birth.setDeliveryMethodsMl(mdmsTenantService.getDeliveryMethodMl(mdmsData, birth.getDeliveryMethods()));
+                }
+                if(birth.getMedicalAttensionSub() != null) {
+                    birth.setMedicalAttensionSubEn(mdmsTenantService.getMedicalAttentionEn(mdmsData, birth.getMedicalAttensionSub()));
+                    birth.setMedicalAttensionSubMl(mdmsTenantService.getMedicalAttentionMl(mdmsData, birth.getMedicalAttensionSub()));
+                }
                 Object mdmsDataLoc = mdmsUtil.mdmsCallForLocation(requestInfo, birth.getTenantId());
                 if (birth.getPlaceofBirthId() != null) {
                     mdmsBirthService.setLocationDetails(birth, mdmsDataLoc, mdmsData);

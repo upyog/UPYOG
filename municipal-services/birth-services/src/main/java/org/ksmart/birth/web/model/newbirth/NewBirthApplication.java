@@ -208,6 +208,15 @@ public class NewBirthApplication {
     @Size(max = 64)
     @JsonProperty("medicalAttensionSub")
     private String medicalAttensionSub;
+
+    @Size(max = 300)
+    @JsonProperty("medicalAttensionSubEn")
+    private String medicalAttensionSubEn;
+
+    @Size(max = 300)
+    @JsonProperty("medicalAttensionSubMl")
+    private String medicalAttensionSubMl;
+
     @Size(max = 64)
     @JsonProperty("deliveryMethods")
     private String deliveryMethods;

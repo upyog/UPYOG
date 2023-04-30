@@ -61,8 +61,16 @@ public class MdmsTenantService {
         return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_RELIGION_TYPE_CODE_JSONPATH);
     }
 
-    private List<String> getNational(Object mdmsData) {
+    private List<String> getNationality(Object mdmsData) {
         return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_COUNTRY_CODE_JSONPATH);
+    }
+
+    private List<String> getMedicalAttention(Object mdmsData) {
+        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_MEDICAL_ATTENTION_TYPE_CODE_JSONPATH);
+    }
+
+    private List<String> getDeliveryMethod(Object mdmsData) {
+        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_DELIVERYMETHOD_CODE_JSONPATH);
     }
 
     ///Localized value
@@ -234,5 +242,24 @@ public class MdmsTenantService {
         int index = lists.indexOf(code);
         return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_RELIGION_JSONPATH + "[" + index + "].namelocal");
     }
-
+    public String getMedicalAttentionEn(Object mdmsData, String code) {
+        List<String> lists = getMedicalAttention(mdmsData);
+        int index = lists.indexOf(code);
+        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_MEDICAL_ATTENTION_TYPE_JSONPATH + "[" + index + "].name");
+    }
+    public String getMedicalAttentionMl(Object mdmsData, String code) {
+        List<String> lists = getMedicalAttention(mdmsData);
+        int index = lists.indexOf(code);
+        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_MEDICAL_ATTENTION_TYPE_JSONPATH + "[" + index + "].namelocal");
+    }
+    public String getDeliveryMethodEn(Object mdmsData, String code) {
+        List<String> lists = getDeliveryMethod(mdmsData);
+        int index = lists.indexOf(code);
+        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_DELIVERY_METHOD_JSONPATH + "[" + index + "].name");
+    }
+    public String getDeliveryMethodMl(Object mdmsData, String code) {
+        List<String> lists = getDeliveryMethod(mdmsData);
+        int index = lists.indexOf(code);
+        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_DELIVERY_METHOD_JSONPATH + "[" + index + "].namelocal");
+    }
 }

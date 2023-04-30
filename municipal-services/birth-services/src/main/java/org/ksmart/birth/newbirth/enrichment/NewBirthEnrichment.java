@@ -51,13 +51,16 @@ public class NewBirthEnrichment implements BaseEnrichment {
         for (NewBirthApplication birth : request.getNewBirthDetails()) {
             tenantId = birth.getTenantId();
             birth.setDateOfReport(CommonUtils.currentDateTime());
+
+            birth.setId(UUID.randomUUID().toString());
+            birth.setAuditDetails(auditDetails);
         }
-        setPlaceOfBirth(request, tenantId, mdmsData,auditDetails);
+        setPlaceOfBirth(request, tenantId, mdmsData,auditDetails, true);
         setApplicationNumbers(request);
         setFileNumbers(request);
-        setPresentAddress(request, mdmsData);
-        setPermanentAddress(request, mdmsData);
-        setStatisticalInfo(request);
+        setPresentAddress(request, mdmsData, true);
+        setPermanentAddress(request, mdmsData, true);
+        setStatisticalInfo(request, true);
     }
 
     public void enrichUpdate(NewBirthDetailRequest request, Object mdmsData) {
@@ -69,9 +72,9 @@ public class NewBirthEnrichment implements BaseEnrichment {
         RequestInfo requestInfo = request.getRequestInfo();
         User userInfo = requestInfo.getUserInfo();
         AuditDetails auditDetails = buildAuditDetails(userInfo.getUuid(), Boolean.FALSE);
-        setPlaceOfBirth(request, tenantId, mdmsData,auditDetails);
-        setPresentAddress(request, mdmsData);
-        setPermanentAddress(request, mdmsData);
+        setPlaceOfBirth(request, tenantId, mdmsData,auditDetails, false);
+        setPresentAddress(request, mdmsData, false);
+        setPermanentAddress(request, mdmsData, false);
     }
     private void setApplicationNumbers(NewBirthDetailRequest request) {
         RequestInfo requestInfo = request.getRequestInfo();
@@ -115,11 +118,11 @@ public class NewBirthEnrichment implements BaseEnrichment {
                 });
     }
 
-    private void setPresentAddress(NewBirthDetailRequest request, Object mdmsData) {
+    private void setPresentAddress(NewBirthDetailRequest request, Object mdmsData,  boolean isCreate) {
         request.getNewBirthDetails()
                 .forEach(birth -> {
                     if (birth.getParentAddress() != null) {
-                        if(birth.getParentAddress() != null) {
+                        if(isCreate) {
                             birth.getParentAddress().setPermanentUuid(UUID.randomUUID().toString());
                             birth.getParentAddress().setPresentUuid(UUID.randomUUID().toString());
                             birth.getParentAddress().setBioAdoptPermanent("BIOLOGICAL");
@@ -208,7 +211,7 @@ public class NewBirthEnrichment implements BaseEnrichment {
                     }
                 });
     }
-    private void setPermanentAddress(NewBirthDetailRequest request, Object mdmsData) {
+    private void setPermanentAddress(NewBirthDetailRequest request, Object mdmsData,  boolean isCreate ) {
         request.getNewBirthDetails()
                 .forEach(birth -> {
                     if (birth.getParentAddress() != null && birth.getParentAddress().getIsPrsentAddress() != null)  {
@@ -300,18 +303,18 @@ public class NewBirthEnrichment implements BaseEnrichment {
                     }
                 });
     }
-    private void setPlaceOfBirth(NewBirthDetailRequest request, String trnantId, Object mdmsData, AuditDetails auditDetails) {
+    private void setPlaceOfBirth(NewBirthDetailRequest request, String trnantId, Object mdmsData, AuditDetails auditDetails,  boolean isCreate) {
         Object mdmsDataLoc = mdmsUtil.mdmsCallForLocation(request.getRequestInfo(), trnantId);
 //        Object mdmsDataComm = mdmsUtil.mdmsCall(request.getRequestInfo());
         request.getNewBirthDetails().forEach(birth -> {
-            birth.setId(UUID.randomUUID().toString());
-            birth.setAuditDetails(auditDetails);
             if(birth.getPlaceofBirthId() != null || !birth.getPlaceofBirthId().isEmpty()){
                 mdmsBirthService.setLocationDetails(birth, mdmsDataLoc, mdmsData);
             }
-            birth.setBirthPlaceUuid(UUID.randomUUID().toString());
-            birth.getParentsDetails().setFatherUuid(UUID.randomUUID().toString());
-            birth.getParentsDetails().setMotherUuid(UUID.randomUUID().toString());
+            if(isCreate) {
+                birth.setBirthPlaceUuid(UUID.randomUUID().toString());
+                birth.getParentsDetails().setFatherUuid(UUID.randomUUID().toString());
+                birth.getParentsDetails().setMotherUuid(UUID.randomUUID().toString());
+            }
             if(birth.getParentsDetails() != null) {
                 if(!birth.getParentsDetails().getIsFatherInfoMissing()){
                     birth.getParentsDetails().setFatherBioAdopt("BIOLOGICAL");
@@ -322,11 +325,13 @@ public class NewBirthEnrichment implements BaseEnrichment {
             }
         });
     }
-    private void setStatisticalInfo(NewBirthDetailRequest request) {
+    private void setStatisticalInfo(NewBirthDetailRequest request,boolean  isCreate) {
         request.getNewBirthDetails()
                 .forEach(birth -> {
-                    birth.setBirthStatisticsUuid(UUID.randomUUID().toString());
-                    birth.setBirthInitiatorUuid(UUID.randomUUID().toString());
+                    if(isCreate) {
+                        birth.setBirthStatisticsUuid(UUID.randomUUID().toString());
+                        birth.setBirthInitiatorUuid(UUID.randomUUID().toString());
+                    }
 
                     // mdmsBirthService.setTenantDetails(birth, mdmsData);//Check/////////
 

@@ -1,7 +1,6 @@
 package org.ksmart.birth.newbirth.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.ksmart.birth.birthregistry.model.RegisterCertificateData;
 import org.ksmart.birth.birthregistry.service.KsmartAddressService;
 import org.ksmart.birth.common.services.MdmsLocationService;
 import org.ksmart.birth.common.services.MdmsTenantService;
@@ -66,8 +65,8 @@ public class MdmsForNewBirthService {
             birth.setWardNumber(wardNo);
         }
         if (birth.getPlaceofBirthId().contains(BIRTH_PLACE_HOSPITAL)) {
-            String placeEn = mdmsLocationService.getHospitalAddressEn(mdmsDataLoc, birth.getHospitalId());
-            String placeMl = mdmsLocationService.getHospitalNameMl(mdmsDataLoc, birth.getHospitalId());
+            String placeEn = mdmsLocationService.getHospitalNameEn(mdmsDataLoc, birth.getHospitalId()) +" "+ mdmsLocationService.getHospitalAddressEn(mdmsDataLoc, birth.getHospitalId());
+            String placeMl = mdmsLocationService.getHospitalNameMl(mdmsDataLoc, birth.getHospitalId()) +" "+ mdmsLocationService.getHospitalAddressMl(mdmsDataLoc, birth.getHospitalId());
             birth.setHospitalName(placeEn);
             birth.setHospitalNameMl(placeMl);
         } else if (birth.getPlaceofBirthId().contains(BIRTH_PLACE_INSTITUTION)) {
@@ -84,12 +83,12 @@ public class MdmsForNewBirthService {
 
         }else if (birth.getPlaceofBirthId().contains(BIRTH_PLACE_VEHICLE)) {
             //Vehicle Type
-            birth.setVehicleTypeidEn(mdmsTenantService.getVehicleTypeEn(mdmsData, birth.getVehicleTypeid()));
-            birth.setVehicleTypeidMl(mdmsTenantService.getVehicleTypeMl(mdmsData, birth.getVehicleTypeid()));
+            setVehicleTypeEn(birth, mdmsData);
+            setVehicleTypeMl(birth, mdmsData);
         } else if (birth.getPlaceofBirthId().contains(BIRTH_PLACE_PUBLIC)) {
             //Public Place Type
-            birth.setPublicPlaceTypeEn(mdmsTenantService.getPublicPlaceTypeEn(mdmsData, birth.getPublicPlaceType()));
-            birth.setPublicPlaceTypeMl(mdmsTenantService.getPublicPlaceTypeMl(mdmsData, birth.getPublicPlaceType()));
+            setPublicPlaceTypeEn(birth, mdmsData);
+            setPublicPlaceTypeMl(birth, mdmsData);
         }
         else {
 
@@ -124,13 +123,13 @@ public class MdmsForNewBirthService {
     }
     public void setPublicPlaceTypeEn(NewBirthApplication birth, Object  mdmsData) {
         if (birth.getPlaceofBirthId().contains(BIRTH_PLACE_PUBLIC)) {
-            String vehicleType = mdmsTenantService.getVehicleTypeEn(mdmsData, birth.getVehicleTypeid());
+            String vehicleType = mdmsTenantService.getPublicPlaceTypeEn(mdmsData, birth.getVehicleTypeid());
             birth.setVehicleTypeidEn(vehicleType);
         }
     }
     public void setPublicPlaceTypeMl(NewBirthApplication birth, Object  mdmsData) {
         if (birth.getPlaceofBirthId().contains(BIRTH_PLACE_PUBLIC)) {
-            String vehicleType = mdmsTenantService.getVehicleTypeMl(mdmsData, birth.getVehicleTypeid());
+            String vehicleType = mdmsTenantService.getPublicPlaceTypeMl(mdmsData, birth.getVehicleTypeid());
             birth.setVehicleTypeidMl(vehicleType);
         }
     }
