@@ -21,6 +21,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 import java.util.Collections;
 
 @Configuration
+@EnableRedisRepositories
 public class RedisConfiguration {
 
     @Value("${redis.host.port}")
@@ -42,26 +43,25 @@ public class RedisConfiguration {
 
     @Bean
     JedisConnectionFactory jedisConnectionFactory() {
-        JedisConnectionFactory jedisConFactory
-                = new JedisConnectionFactory();
+        JedisConnectionFactory jedisConFactory  = new JedisConnectionFactory();
         jedisConFactory.setHostName(redisHost);
         jedisConFactory.setPort(redisPort);
         return jedisConFactory;
     }
 
-//    @Bean
-//    public RedisMappingContext keyValueMappingContext() {
-//        return new RedisMappingContext(
-//                new MappingConfiguration(
-//                        new KeyspaceConfiguration(), new MyIndexConfiguration()));
-//    }
-//
-//    public static class MyIndexConfiguration extends IndexConfiguration {
-//        @Override
-//        protected Iterable<IndexDefinition> initialConfiguration() {
-//            return Collections.singleton(new SimpleIndexDefinition("people", "firstname"));
-//        }
-//    }
+    @Bean
+    public RedisMappingContext keyValueMappingContext() {
+        return new RedisMappingContext(
+                new MappingConfiguration(
+                        new NewBirthPartialConfiguration(), new KeyspaceConfiguration()));
+    }
+
+    public static class NewBirthPartialConfiguration extends IndexConfiguration {
+        @Override
+        protected Iterable<IndexDefinition> initialConfiguration() {
+            return Collections.singleton(new SimpleIndexDefinition("NewBirthPartial", "userUUid"));
+        }
+    }
 
 //    @Bean
 //    public JedisConnectionFactory connectionFactory() {

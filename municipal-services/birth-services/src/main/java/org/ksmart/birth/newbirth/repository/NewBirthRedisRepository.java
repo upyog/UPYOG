@@ -16,7 +16,7 @@ public interface NewBirthRedisRepository extends CrudRepository<NewBirthPartial,
 //    @Override
 //    Optional<NewBirthPartial> findById(String s);
 
-    List<NewBirthPartial> findAllByUserUUidEquals(String uid);
+    List<NewBirthPartial> findAllByUserUUid(String uid);
 
     NewBirthPartial findNewBirthPartialByApplicationStatusEquals(String status);
     String delete(Optional<NewBirthPartial> newBirthPartial);

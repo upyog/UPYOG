@@ -31,7 +31,7 @@ public class NewBirthRedisController {
     @GetMapping("/getbyuid/{uid}")
     public List<NewBirthPartial> findByUUid(@PathVariable String uid) {
         List<NewBirthPartial> newBirthPartial = new ArrayList<>();
-        repo.findAllByUserUUidEquals(uid).forEach(newBirthPartial::add);
+        repo.findAllByUserUUid(uid).forEach(newBirthPartial::add);
         System.out.println(newBirthPartial.size());
         return newBirthPartial;
     }
