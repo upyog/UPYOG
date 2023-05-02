@@ -320,6 +320,7 @@ public class NewBirthApplication implements Serializable {
 
     @JsonProperty("assignee")
     private List<String> assignee;
+
     private String comment;
 
     @JsonProperty("isWorkflow")

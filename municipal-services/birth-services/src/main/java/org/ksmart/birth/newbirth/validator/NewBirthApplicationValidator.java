@@ -159,6 +159,11 @@ public class NewBirthApplicationValidator {
                     "Workflow action is required for update request.");
         }
 
+        if (StringUtils.isBlank(birthApplications.get(0).getWardId())) {
+            throw new CustomException(INVALID_UPDATE.getCode(),
+                    "Ward no is required for update request of birthplace details.");
+        }
+
         mdmsValidator.validateMdmsData(request, mdmsData);
     }
 

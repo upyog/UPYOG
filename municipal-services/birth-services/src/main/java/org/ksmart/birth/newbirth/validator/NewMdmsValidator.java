@@ -3,6 +3,7 @@ package org.ksmart.birth.newbirth.validator;
 import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.egov.tracer.model.CustomException;
 import org.ksmart.birth.adoption.validator.AdoptionMdmsValidator;
 import org.ksmart.birth.config.BirthConfiguration;
@@ -21,7 +22,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static org.ksmart.birth.utils.BirthConstants.*;
-import static org.ksmart.birth.utils.enums.ErrorCodes.MDMS_DATA_ERROR;
+import static org.ksmart.birth.utils.enums.ErrorCodes.*;
 
 @Component
 @Slf4j
@@ -111,6 +112,10 @@ public class NewMdmsValidator {
                             if (CollectionUtils.isEmpty(postOfficeCodes) || !postOfficeCodes.contains(postOfficeCodePlace)) {
                                 errorMap.put(COMMON_MDMS_POSTOFFICE, "The Postoffice code  in birth place home'" + postOfficeCodePlace + "' does not exists");
                             }
+                        }
+                        if (StringUtils.isBlank(birth.getWardId())) {
+                            throw new CustomException(INVALID_UPDATE.getCode(),
+                                    "Ward no is required for update request of birthplace details.");
                         }
                     }
 
