@@ -33,13 +33,6 @@ public class BirthApplication {
 
 	@Value("${app.timezone}")
     private String timeZone;
-
-    @Value("${redis.host.port}")
-    private int redisPort;
-
-    @Value("${redis.host.name}")
-    private String redisHost;
-	
 	public static void main(String[] args) {
 		SpringApplication.run(BirthApplication.class, args);
 	}
@@ -68,26 +61,6 @@ public class BirthApplication {
         return converter;
     }
 
-    @Bean
-    public JedisConnectionFactory connectionFactory() {
-        RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration();
-        configuration.setHostName(redisHost);
-        configuration.setPort(redisPort);
-        return new JedisConnectionFactory(configuration);
-    }
-
-    @Bean
-    public RedisTemplate<String, Object> template() {
-        RedisTemplate<String, Object> template = new RedisTemplate<>();
-        template.setConnectionFactory(connectionFactory());
-        template.setKeySerializer(new StringRedisSerializer());
-        template.setHashKeySerializer(new StringRedisSerializer());
-        template.setHashKeySerializer(new JdkSerializationRedisSerializer());
-        template.setValueSerializer(new JdkSerializationRedisSerializer());
-        template.setEnableTransactionSupport(true);
-        template.afterPropertiesSet();
-        return template;
-    }
 	
 	@PostConstruct
     public void initialize() {

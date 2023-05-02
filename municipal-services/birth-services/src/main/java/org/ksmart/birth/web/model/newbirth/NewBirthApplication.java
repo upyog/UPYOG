@@ -11,6 +11,7 @@ import org.ksmart.birth.web.model.InformatDetail;
 import org.ksmart.birth.web.model.InitiatorDetail;
 
 import javax.validation.constraints.Size;
+import java.io.Serializable;
 import java.util.List;
 
 @Getter
@@ -18,7 +19,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class NewBirthApplication {
+public class NewBirthApplication implements Serializable {
     @Size(max = 64)
     @JsonProperty("id")
     private String id;
