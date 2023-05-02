@@ -78,6 +78,10 @@ public class MdmsTenantService {
         return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_DELIVERYMETHOD_CODE_JSONPATH);
     }
 
+    private List<String> getCauseFoetalDeath(Object mdmsData) {
+        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_FOETALDEATH_CODE_JSONPATH);
+    }
+
     ///Localized value
 
     public String getTenantNameEn(Object mdmsData, String tenantId) {
@@ -288,5 +292,15 @@ public class MdmsTenantService {
         List<String> lists = getDeliveryMethod(mdmsData);
         int index = lists.indexOf(code);
         return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_DELIVERY_METHOD_JSONPATH + "[" + index + "].namelocal");
+    }
+    public String getCauseFoetalDeathdEn(Object mdmsData, String code) {
+        List<String> lists = getCauseFoetalDeath(mdmsData);
+        int index = lists.indexOf(code);
+        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_FOETALDEATH_JSONPATH + "[" + index + "].name");
+    }
+    public String getCauseFoetalDeathdMl(Object mdmsData, String code) {
+        List<String> lists = getCauseFoetalDeath(mdmsData);
+        int index = lists.indexOf(code);
+        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_FOETALDEATH_JSONPATH + "[" + index + "].namelocal");
     }
 }

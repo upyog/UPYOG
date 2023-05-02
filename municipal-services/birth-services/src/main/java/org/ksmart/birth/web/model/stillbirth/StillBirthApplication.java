@@ -22,6 +22,10 @@ public class StillBirthApplication {
     @Size(max = 64)
     @JsonProperty("id")
     private String id;
+
+    @JsonProperty("dateofreport")
+    private Long dateOfReport;
+
     @JsonProperty("childDOB")
     private Long dateOfBirth;
     @JsonProperty("birthDateTime")
@@ -60,6 +64,14 @@ public class StillBirthApplication {
     private String placeofBirthId;
 
     @Size(max = 64)
+    @JsonProperty("birthPlaceEn")
+    private String placeofBirthIdEn;
+
+    @Size(max = 64)
+    @JsonProperty("birthPlaceMl")
+    private String placeofBirthIdMl;
+
+    @Size(max = 64)
     @JsonProperty("hospitalCode")
     private String hospitalId;
     @Size(max = 64)
@@ -81,6 +93,12 @@ public class StillBirthApplication {
     @Size(max = 64)
     @JsonProperty("institutionId")
     private String institutionId;
+    @Size(max = 64)
+    @JsonProperty("institutionTypeEn")
+    private String institutionTypeEn;
+    @Size(max = 64)
+    @JsonProperty("institutionTypeMl")
+    private String institutionTypeMl;
     @Size(max = 64)
     @JsonProperty("institutionIdMl")
     private String institutionIdMl;
@@ -114,15 +132,31 @@ public class StillBirthApplication {
     @Size(max = 2000)
     @JsonProperty("adrsStreetNameMl")
     private String adrsStreetNameMl;
-    @Size(max = 2000)
+
+    @Size(max = 128)
     @JsonProperty("adrsPostOffice")
     private String adrsPostOffice;
+
+    @Size(max = 300)
+    @JsonProperty("adrsPostOfficeEn")
+    private String adrsPostOfficeEn;
+
+    @Size(max = 300)
+    @JsonProperty("adrsPostOfficeMl")
+    private String adrsPostOfficeMl;
+
     @Size(max = 10)
     @JsonProperty("adrsPincode")
     private String adrsPincode;
     @Size(max = 64)
     @JsonProperty("vehicleType")
     private String vehicleTypeid;
+    @Size(max = 300)
+    @JsonProperty("vehicleTypeEn")
+    private String vehicleTypeidEn;
+    @Size(max = 300)
+    @JsonProperty("vehicleTypeMl")
+    private String vehicleTypeidMl;
     @Size(max = 64)
     @JsonProperty("vehicleHaltPlace")
     private String vehicleHaltplace;
@@ -153,6 +187,12 @@ public class StillBirthApplication {
     @Size(max = 64)
     @JsonProperty("publicPlaceType")
     private String publicPlaceType;
+    @Size(max = 300)
+    @JsonProperty("publicPlaceTypeEn")
+    private String publicPlaceTypeEn;
+    @Size(max = 300)
+    @JsonProperty("publicPlaceTypeMl")
+    private String publicPlaceTypeMl;
     @Size(max = 64)
     @JsonProperty("localityNameEn")
     private String localityNameEn;
@@ -168,7 +208,6 @@ public class StillBirthApplication {
     @Size(max = 64)
     @JsonProperty("publicPlaceDecpEn")
     private String publicPlaceDecpEn;
-    @Size(max = 64)
     @JsonProperty("birthWeight")
     private double birthWeight;
     @Size(max = 64)
@@ -177,26 +216,62 @@ public class StillBirthApplication {
     @Size(max = 64)
     @JsonProperty("medicalAttensionSub")
     private String medicalAttensionSub;
+
+    @Size(max = 300)
+    @JsonProperty("medicalAttensionSubEn")
+    private String medicalAttensionSubEn;
+
+    @Size(max = 300)
+    @JsonProperty("medicalAttensionSubMl")
+    private String medicalAttensionSubMl;
+
     @Size(max = 64)
     @JsonProperty("deliveryMethods")
     private String deliveryMethods;
+    @Size(max = 300)
+    @JsonProperty("deliveryMethodsEn")
+    private String deliveryMethodsEn;
+    @Size(max = 300)
+    @JsonProperty("deliveryMethodsMl")
+    private String deliveryMethodsMl;
     @Size(max = 64)
     @JsonProperty("esign_user_code")
     private String esignUserCode;
-
     @Size(max = 64)
     @JsonProperty("esign_user_desig_code")
     private String esignUserDesigCode;
     @Size(max = 64)
     @JsonProperty("tenantid")
     private String tenantId;
+    @Size(max = 300)
+    @JsonProperty("tenantidEn")
+    private String tenantIdEn;
+    @Size(max = 300)
+    @JsonProperty("tenantidMl")
+    private String tenantIdMl;
     @Size(max = 64)
     @JsonProperty("villageid")
     private String villageid;
 
+    @Size(max = 300)
+    @JsonProperty("villageidEn")
+    private String villageIdEn;
+
+    @Size(max = 300)
+    @JsonProperty("villageidMl")
+    private String villageIdMl;
+
     @Size(max = 64)
     @JsonProperty("talukid")
     private String talukid;
+
+    @Size(max = 300)
+    @JsonProperty("talukidEn")
+    private String talukIdEn;
+
+    @Size(max = 300)
+    @JsonProperty("talukidMl")
+    private String talukIdMl;
 
     @Size(max = 64)
     @JsonProperty("districtid")
@@ -205,6 +280,7 @@ public class StillBirthApplication {
     @Size(max = 64)
     @JsonProperty("countryid")
     private String countryid;
+
     @Size(max = 64)
     @JsonProperty("applicationtype")
     private String applicationType;
@@ -212,7 +288,6 @@ public class StillBirthApplication {
     @Size(max = 64)
     @JsonProperty("businessservice")
     private String businessService;
-
     @Size(max = 64)
     @JsonProperty("workflowcode")
     private String workFlowCode;
@@ -244,8 +319,10 @@ public class StillBirthApplication {
 
     @JsonProperty("assignee")
     private List<String> assignee;
-
     private String comment;
+
+    @JsonProperty("isWorkflow")
+    private Boolean isWorkflow = true;
 
     @JsonProperty("wfDocuments")
     private List<Document> wfDocuments;
@@ -261,8 +338,6 @@ public class StillBirthApplication {
     @Size(max = 20)
     @JsonProperty("am_pm")
     private String ampm;
-    @JsonProperty("dateofreport")
-    private Long dateOfReport;
     @Size(max = 64)
     @JsonProperty("birthPlaceUuid")
     private String birthPlaceUuid;
@@ -276,6 +351,15 @@ public class StillBirthApplication {
     @Size(max = 64)
     @JsonProperty("causeFoetalDeath")
     private String causeFoetalDeath;
+
+    @Size(max = 300)
+    @JsonProperty("causeFoetalDeathEn")
+    private String causeFoetalDeathEn;
+
+    @Size(max = 300)
+    @JsonProperty("causeFoetalDeathMl")
+    private String causeFoetalDeathMl;
+
     @JsonProperty("StillBirthParentsDetails")
     private ParentsDetail parentsDetails;
 
@@ -290,9 +374,6 @@ public class StillBirthApplication {
     @JsonProperty("isStill")
     private Boolean isStill;
 
-    @Size(max = 64)
-    @JsonProperty("isWorkflow")
-    private Boolean isWorkflow = true;
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails;
 }

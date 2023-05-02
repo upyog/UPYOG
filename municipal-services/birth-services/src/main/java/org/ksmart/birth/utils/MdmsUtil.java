@@ -170,6 +170,13 @@ public class MdmsUtil {
                                                                                         .build());
         crMasterDetails.addAll(masterDeliveryMethod);
 
+        // Add Module CauseFoetalDeath
+        List<MasterDetail> masterCauseFoetalDeath = Collections.singletonList(MasterDetail.builder()
+                .name(BirthConstants.CR_MDMS_FOETAL)
+                .build());
+        crMasterDetails.addAll(masterCauseFoetalDeath);
+
+
         // Add Module workflow
         List<MasterDetail> masterWorkflow = Collections.singletonList(MasterDetail.builder()
                                                                                   .name(BirthConstants.CR_MDMS_WORKFLOW_NEW)

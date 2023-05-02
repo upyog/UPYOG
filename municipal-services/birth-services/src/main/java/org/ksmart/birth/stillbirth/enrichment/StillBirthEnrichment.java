@@ -11,8 +11,10 @@ import org.ksmart.birth.common.services.MdmsTenantService;
 import org.ksmart.birth.config.BirthConfiguration;
 import org.ksmart.birth.stillbirth.service.MdmsForStillBirthService;
 import org.ksmart.birth.utils.BirthConstants;
+import org.ksmart.birth.utils.CommonUtils;
 import org.ksmart.birth.utils.MdmsUtil;
 import org.ksmart.birth.utils.enums.ErrorCodes;
+import org.ksmart.birth.web.model.newbirth.NewBirthApplication;
 import org.ksmart.birth.web.model.newbirth.NewBirthDetailRequest;
 import org.ksmart.birth.web.model.stillbirth.StillBirthApplication;
 import org.ksmart.birth.web.model.stillbirth.StillBirthDetailRequest;
@@ -22,6 +24,9 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.UUID;
+
+import static org.ksmart.birth.utils.BirthConstants.APPLICATION_NO;
+import static org.ksmart.birth.utils.BirthConstants.FILE_NO;
 
 @Component
 public class StillBirthEnrichment implements BaseEnrichment {
@@ -36,40 +41,40 @@ public class StillBirthEnrichment implements BaseEnrichment {
     @Autowired
     IdGenRepository idGenRepository;
 
+
     public void enrichCreate(StillBirthDetailRequest request, Object mdmsData) {
         String tenantId = null;
         RequestInfo requestInfo = request.getRequestInfo();
-        User userInfo = requestInfo.getUserInfo();
-        AuditDetails auditDetails = buildAuditDetails(userInfo.getUuid(), Boolean.TRUE);
+        String uuid = requestInfo.getUserInfo().getUuid();
+        AuditDetails auditDetails = CommonUtils.buildAuditDetails(uuid, true);
         for (StillBirthApplication birth : request.getBirthDetails()) {
             tenantId = birth.getTenantId();
-            birth.setIsStill(true);
+            birth.setDateOfReport(CommonUtils.currentDateTime());
+
+            birth.setId(UUID.randomUUID().toString());
+            birth.setAuditDetails(auditDetails);
         }
-        setPlaceOfBirth(request, tenantId, auditDetails);
+        setPlaceOfBirth(request, tenantId, mdmsData,auditDetails, true);
         setApplicationNumbers(request);
         setFileNumbers(request);
-        //setPlaceOfBirth(request);
-        setPresentAddress(request, mdmsData);
-        setPermanentAddress(request, mdmsData);
-        setStatisticalInfo(request);
+        setPresentAddress(request, mdmsData, true);
+        setPermanentAddress(request, mdmsData, true);
+        setStatisticalInfo(request, true);
     }
 
-
     public void enrichUpdate(StillBirthDetailRequest request, Object mdmsData) {
+        String tenantId = null;
+        for (StillBirthApplication birth : request.getBirthDetails()) {
+            tenantId = birth.getTenantId();
+            birth.setDateOfReport(CommonUtils.currentDateTime());
+        }
         RequestInfo requestInfo = request.getRequestInfo();
         User userInfo = requestInfo.getUserInfo();
         AuditDetails auditDetails = buildAuditDetails(userInfo.getUuid(), Boolean.FALSE);
-        request.getBirthDetails()
-                .forEach(birth -> {
-                    birth.setAuditDetails(auditDetails);
-                    if ((birth.getApplicationStatus() == "APPROVED" && birth.getAction() == "APPROVE")) {
-                        setRegistrationNumber(request);
-                    }
-                });
-        setPresentAddress(request, mdmsData);
-        setPermanentAddress(request, mdmsData);
+        setPlaceOfBirth(request, tenantId, mdmsData,auditDetails, false);
+        setPresentAddress(request, mdmsData, false);
+        setPermanentAddress(request, mdmsData, false);
     }
-
     private void setApplicationNumbers(StillBirthDetailRequest request) {
         RequestInfo requestInfo = request.getRequestInfo();
         List<StillBirthApplication> birthDetails = request.getBirthDetails();
@@ -79,7 +84,7 @@ public class StillBirthEnrichment implements BaseEnrichment {
                 tenantId,
                 config.getBirthApplNumberIdName(),
                 request.getBirthDetails().get(0).getApplicationType(),
-                "APPL",
+                APPLICATION_NO,
                 birthDetails.size());
         validateFileCodes(filecodes, birthDetails.size());
 
@@ -100,7 +105,7 @@ public class StillBirthEnrichment implements BaseEnrichment {
                 tenantId,
                 config.getBirthFileNumberName(),
                 request.getBirthDetails().get(0).getApplicationType(),
-                "FILE",
+                FILE_NO,
                 birthDetails.size());
         validateFileCodes(filecodes, birthDetails.size());
         Long currentTime = Long.valueOf(System.currentTimeMillis());
@@ -112,34 +117,11 @@ public class StillBirthEnrichment implements BaseEnrichment {
                 });
     }
 
-    private void setRegistrationNumber(StillBirthDetailRequest request) {
-        RequestInfo requestInfo = request.getRequestInfo();
-        List<StillBirthApplication> birthDetails = request.getBirthDetails();
-        String tenantId = birthDetails.get(0)
-                .getTenantId();
-
-        List<String> filecodes = getIds(requestInfo,
-                tenantId,
-                config.getBirthRegisNumberName(),
-                request.getBirthDetails().get(0).getApplicationType(),
-                "REG",
-                birthDetails.size());
-        validateFileCodes(filecodes, birthDetails.size());
-        Long currentTime = Long.valueOf(System.currentTimeMillis());
-        ListIterator<String> itr = filecodes.listIterator();
-        request.getBirthDetails()
-                .forEach(birth -> {
-                    if((birth.getApplicationStatus() == "APPROVED" && birth.getAction() == "APPROVE")) {
-                        birth.setRegistrationNo(itr.next());
-                        birth.setRegistrationDate(currentTime);
-                    }
-                });
-    }
-    private void setPresentAddress(StillBirthDetailRequest request, Object mdmsData) {
+    private void setPresentAddress(StillBirthDetailRequest request, Object mdmsData,  boolean isCreate) {
         request.getBirthDetails()
                 .forEach(birth -> {
                     if (birth.getParentAddress() != null) {
-                        if(birth.getParentAddress() != null) {
+                        if(isCreate) {
                             birth.getParentAddress().setPermanentUuid(UUID.randomUUID().toString());
                             birth.getParentAddress().setPresentUuid(UUID.randomUUID().toString());
                             birth.getParentAddress().setBioAdoptPermanent("BIOLOGICAL");
@@ -228,7 +210,7 @@ public class StillBirthEnrichment implements BaseEnrichment {
                     }
                 });
     }
-    private void setPermanentAddress(StillBirthDetailRequest request, Object mdmsData) {
+    private void setPermanentAddress(StillBirthDetailRequest request, Object mdmsData,  boolean isCreate ) {
         request.getBirthDetails()
                 .forEach(birth -> {
                     if (birth.getParentAddress() != null && birth.getParentAddress().getIsPrsentAddress() != null)  {
@@ -320,21 +302,18 @@ public class StillBirthEnrichment implements BaseEnrichment {
                     }
                 });
     }
-    private void setPlaceOfBirth(StillBirthDetailRequest request, String tenantId, AuditDetails auditDetails) {
-        Object mdmsData = mdmsUtil.mdmsCallForLocation(request.getRequestInfo(), tenantId);
-        Object mdmsDataComm = mdmsUtil.mdmsCall(request.getRequestInfo());
+    private void setPlaceOfBirth(StillBirthDetailRequest request, String trnantId, Object mdmsData, AuditDetails auditDetails,  boolean isCreate) {
+        Object mdmsDataLoc = mdmsUtil.mdmsCallForLocation(request.getRequestInfo(), trnantId);
+//        Object mdmsDataComm = mdmsUtil.mdmsCall(request.getRequestInfo());
         request.getBirthDetails().forEach(birth -> {
-            birth.setId(UUID.randomUUID().toString());
-            birth.setAuditDetails(auditDetails);
             if(birth.getPlaceofBirthId() != null || !birth.getPlaceofBirthId().isEmpty()){
-
-                mdmsBirthService.setLocationDetails(birth, mdmsData);
-
-                mdmsBirthService.setInstitutionDetails(birth, mdmsDataComm);
+                mdmsBirthService.setLocationDetails(birth, mdmsDataLoc, mdmsData);
             }
-            birth.setBirthPlaceUuid(UUID.randomUUID().toString());
-            birth.getParentsDetails().setFatherUuid(UUID.randomUUID().toString());
-            birth.getParentsDetails().setMotherUuid(UUID.randomUUID().toString());
+            if(isCreate) {
+                birth.setBirthPlaceUuid(UUID.randomUUID().toString());
+                birth.getParentsDetails().setFatherUuid(UUID.randomUUID().toString());
+                birth.getParentsDetails().setMotherUuid(UUID.randomUUID().toString());
+            }
             if(birth.getParentsDetails() != null) {
                 if(!birth.getParentsDetails().getIsFatherInfoMissing()){
                     birth.getParentsDetails().setFatherBioAdopt("BIOLOGICAL");
@@ -343,20 +322,21 @@ public class StillBirthEnrichment implements BaseEnrichment {
                     birth.getParentsDetails().setMotherBioAdopt("BIOLOGICAL");
                 }
             }
-
-
         });
     }
-    private void setStatisticalInfo(StillBirthDetailRequest request) {
+    private void setStatisticalInfo(StillBirthDetailRequest request,boolean  isCreate) {
         request.getBirthDetails()
                 .forEach(birth -> {
-                    birth.setBirthStatisticsUuid(UUID.randomUUID().toString());
-                    birth.setBirthInitiatorUuid(UUID.randomUUID().toString());
-                    Object mdmsData = mdmsUtil.mdmsCall(request.getRequestInfo());
+                    if(isCreate) {
+                        birth.setBirthStatisticsUuid(UUID.randomUUID().toString());
+                        birth.setBirthInitiatorUuid(UUID.randomUUID().toString());
+                    }
+
                     // mdmsBirthService.setTenantDetails(birth, mdmsData);//Check/////////
 
                     //  TOWN VILLAGe INSIDE Kerala
                 });
+
     }
     private List<String> getIds(RequestInfo requestInfo, String tenantId, String idName, String moduleCode, String  fnType, int count) {
         return idGenRepository.getIdList(requestInfo, tenantId, idName, moduleCode, fnType, count);

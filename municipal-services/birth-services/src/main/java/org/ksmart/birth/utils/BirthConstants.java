@@ -34,6 +34,7 @@ public class BirthConstants {
     public static final String CR_MDMS_INSTITUTIONTYPE = "InstitutionType";
     public static final String CR_MDMS_PLACE_INSTITUTION_TYPE = "InstitutionTypePlaceOfEvent";
     public static final String CR_MDMS_DELIVERYMETHOD = "DeliveryMethod";
+    public static final String CR_MDMS_FOETAL = "FoetalDeath";
     public static final String CR_MDMS_WORKFLOW_NEW = "WorkFlowBirth";
 
     public static final String CR_MDMS_TENANTS_CODE_JSONPATH = "$.MdmsRes.tenant.tenants[*].code";
@@ -89,6 +90,9 @@ public class BirthConstants {
     public static final String CR_MDMS_INTITUTIONTYPE_CODE_JSONPATH = "$.MdmsRes.birth-death-service.InstitutionType[*].code";
     public static final String CR_MDMS_DELIVERYMETHOD_CODE_JSONPATH = "$.MdmsRes.birth-death-service.DeliveryMethod[*].code";
     public static final String CR_MDMS_DELIVERY_METHOD_JSONPATH = "$.MdmsRes.birth-death-service.DeliveryMethod";
+
+    public static final String CR_MDMS_FOETALDEATH_CODE_JSONPATH = "$.MdmsRes.birth-death-service.FoetalDeath[*].code";
+    public static final String CR_MDMS_FOETALDEATH_JSONPATH = "$.MdmsRes.birth-death-service.FoetalDeath";
     public static final String CR_MDMS_LBTYPE_JSONPATH = "$.MdmsRes.common-masters.LBType";
 
     public static final String CR_MDMS_LBTYPE_CODE_JSONPATH = "$.MdmsRes.common-masters.LBType[*].code";

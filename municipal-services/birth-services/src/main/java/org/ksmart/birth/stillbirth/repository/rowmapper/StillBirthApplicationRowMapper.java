@@ -1,5 +1,6 @@
 package org.ksmart.birth.stillbirth.repository.rowmapper;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.ksmart.birth.web.model.stillbirth.StillBirthApplication;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
@@ -96,7 +97,7 @@ public class StillBirthApplicationRowMapper implements ResultSetExtractor<List<S
         return result;
     }
     private Boolean isChildNameEntered(String name) {
-        if(name.isEmpty()) return true;
+       // if(CollectionUtils.isEmpty(name)) return true;
         if (name==null) return true;
         else return false;
     }
