@@ -53,7 +53,6 @@ public class NewBirthService {
 
         //Demand Creation Maya commented
         birthApplicationDetails.forEach(birth->{
-            System.out.println(wfc.getPayment());
             if(wfc.getPayment()!=null) {
                 if (wfc.getPayment()) {
                     if (birth.getApplicationStatus().equals(STATUS_FOR_PAYMENT)) {
