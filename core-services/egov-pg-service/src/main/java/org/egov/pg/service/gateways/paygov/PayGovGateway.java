@@ -222,18 +222,52 @@ public class PayGovGateway implements Gateway {
     }
 
     private String getModuleCode(Transaction transaction) {
-        String moduleCode ="------";
-        if(!StringUtils.isEmpty(transaction.getModule())) {
+        String moduleCode =transaction.getModule();
+        if(!StringUtils.isEmpty(moduleCode)) {
             /*
              * if(transaction.getModule().length() < 6) { moduleCode= transaction.getModule() +
              * moduleCode.substring(transaction.getModule().length()-1); }else { moduleCode =transaction.getModule(); }
              */
-            if (transaction.getModule().equals("BPAREG")) {
+            /*if (transaction.getModule().equals("BPAREG")) {
                 moduleCode = "BPA001";
             } else {
                 moduleCode = transaction.getModule().concat("001").toUpperCase();
+            }*/
+            
+            if (moduleCode.startsWith("PT"))
+            {
+                moduleCode = "PT001";
             }
+            else if (moduleCode.startsWith("SW"))
+            {
+                moduleCode = "SW001";
+            }
+            else if (moduleCode.startsWith("WS"))
+            {
+                moduleCode = "WS001";
+            }
+            else if (moduleCode.startsWith("FSM"))
+            {
+                moduleCode = "FSM001";
+            }
+            else if (moduleCode.startsWith("TL"))
+            {
+                moduleCode = "TL001";
+            }
+            else if (moduleCode.startsWith("BPA"))
+            {
+                moduleCode = "BPA001";
+            }            
+            else
+            {
+                moduleCode = "MCS001";
+            } 		
         }
+        else
+        {
+            moduleCode = "MCS001";
+        } 	
+	log.info("Module::::"+moduleCode);    
         return moduleCode;
     }
 
