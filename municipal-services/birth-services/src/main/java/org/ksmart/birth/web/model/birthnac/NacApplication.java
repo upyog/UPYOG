@@ -62,6 +62,15 @@ public class NacApplication {
     private String placeofBirthId;
 
     @Size(max = 64)
+    @JsonProperty("birthPlaceEn")
+    private String placeofBirthIdEn;
+
+    @Size(max = 64)
+    @JsonProperty("birthPlaceMl")
+    private String placeofBirthIdMl;
+    
+    
+    @Size(max = 64)
     @JsonProperty("hospitalCode")
     private String hospitalId;
     @Size(max = 64)
@@ -85,6 +94,15 @@ public class NacApplication {
     @Size(max = 64)
     @JsonProperty("institutionIdMl")
     private String institutionIdMl;
+    
+    @Size(max = 64)
+    @JsonProperty("institutionTypeEn")
+    private String institutionTypeEn;
+    @Size(max = 64)
+    @JsonProperty("institutionTypeMl")
+    private String institutionTypeMl;
+    
+    
     @Size(max = 64)
     @JsonProperty("wardNo")
     private String wardId;
@@ -118,12 +136,30 @@ public class NacApplication {
     @Size(max = 2000)
     @JsonProperty("adrsPostOffice")
     private String adrsPostOffice;
+    
+    @Size(max = 300)
+    @JsonProperty("adrsPostOfficeEn")
+    private String adrsPostOfficeEn;
+
+    @Size(max = 300)
+    @JsonProperty("adrsPostOfficeMl")
+    private String adrsPostOfficeMl;
+
+    
     @Size(max = 10)
     @JsonProperty("adrsPincode")
     private String adrsPincode;
     @Size(max = 64)
     @JsonProperty("vehicleType")
     private String vehicleTypeid;
+    
+    @Size(max = 300)
+    @JsonProperty("vehicleTypeEn")
+    private String vehicleTypeidEn;
+    @Size(max = 300)
+    @JsonProperty("vehicleTypeMl")
+    private String vehicleTypeidMl;
+    
     @Size(max = 64)
     @JsonProperty("vehicleHaltPlace")
     private String vehicleHaltplace;
@@ -299,6 +335,10 @@ public class NacApplication {
 
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails;
+    
+    @Size(max = 64)
+    @JsonProperty("isWorkflow")
+    private Boolean isWorkflow = true;
     
   
 }
