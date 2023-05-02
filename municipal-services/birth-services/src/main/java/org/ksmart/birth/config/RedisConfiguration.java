@@ -40,7 +40,6 @@ public class RedisConfiguration {
         template.setConnectionFactory(jedisConnectionFactory());
         return template;
     }
-
     @Bean
     JedisConnectionFactory jedisConnectionFactory() {
         JedisConnectionFactory jedisConFactory  = new JedisConnectionFactory();
