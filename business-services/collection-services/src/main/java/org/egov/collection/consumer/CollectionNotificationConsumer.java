@@ -50,7 +50,7 @@ public class CollectionNotificationConsumer{
     public void listen(HashMap<String, Object> record, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic){
         try{
             PaymentRequest req = objectMapper.convertValue(record, PaymentRequest.class);
-            sendNotification(req);
+//             sendNotification(req);
         }catch(Exception e){
             log.error("Exception while reading from the queue: ", e);
         }
