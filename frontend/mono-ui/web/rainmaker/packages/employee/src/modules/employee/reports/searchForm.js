@@ -529,7 +529,7 @@ class ShowForm extends Component {
             if (response && response.reportHeader && response.reportData) {
               if (window.location.pathname.includes("TradeLicenseDailyCollectionReport")) {
                 const ind = response.reportHeader.findIndex((d) => d.name === "username");
-                response.reportHeader[ind].showColumn = false;
+                // response.reportHeader[ind].showColumn = false;
                 response.reportData = response.reportData.map((eachArr) => {
                   eachArr[ind + 1] = `${eachArr[ind + 1]}/${eachArr[ind]}`;
                   return eachArr;
