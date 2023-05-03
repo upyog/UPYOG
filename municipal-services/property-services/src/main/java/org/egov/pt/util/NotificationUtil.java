@@ -385,7 +385,7 @@ public class NotificationUtil {
      * @param url
      */
     public String getShortenedUrl(String url){
-    	
+
         HashMap<String,String> body = new HashMap<>();
         body.put("url",url);
         StringBuilder builder = new StringBuilder(config.getUrlShortnerHost());
@@ -398,7 +398,7 @@ public class NotificationUtil {
         }
         else return res;
     }
-    
+
     /**
     *
     * @param requestInfo

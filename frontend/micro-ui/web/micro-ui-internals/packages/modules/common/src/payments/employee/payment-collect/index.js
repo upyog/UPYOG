@@ -25,9 +25,16 @@ export const CollectPayment = (props) => {
 
   const { data: paymentdetails, isLoading } = Digit.Hooks.useFetchPayment({ tenantId: tenantId, consumerCode, businessService });
   const bill = paymentdetails?.Bill ? paymentdetails?.Bill[0] : {};
-  const { data: applicationData } = Digit.Hooks.fsm.useSearch(tenantId, { applicationNos: consumerCode }, { staleTime: Infinity, enabled: businessService?.toUpperCase()?.includes("FSM") ? true : false });
+  const { data: applicationData } = Digit.Hooks.fsm.useSearch(
+    tenantId,
+    { applicationNos: consumerCode },
+    { staleTime: Infinity, enabled: businessService?.toUpperCase()?.includes("FSM") ? true : false }
+  );
 
   const advanceBill = applicationData?.advanceAmount;
+
+  // const { data: applicationData } = Digit.Hooks.fsm.useSearch(tenantId, { applicationNos: consumerCode }, { staleTime: Infinity });
+  // const advanceBill = applicationData?.advanceAmount;
 
   // const { isLoading: storeLoading, data: store } = Digit.Services.useStore({
   //   stateCode: props.stateCode,
@@ -234,7 +241,7 @@ export const CollectPayment = (props) => {
         {
           label: t("PAYMENT_PAYER_NAME_LABEL"),
           isMandatory: true,
-          disable : selectedPaidBy?.code === "OWNER" && (bill?.payerName || formState?.payerName) ? true : false,
+          disable: selectedPaidBy?.code === "OWNER" && (bill?.payerName || formState?.payerName) ? true : false,
           type: "text",
           populators: {
             name: "payerName",
@@ -257,7 +264,7 @@ export const CollectPayment = (props) => {
               required: true,
               pattern: /^[6-9]\d{9}$/,
             },
-            error: t("PAYMENT_INVALID_MOBILE"),
+            error: t("CORE_COMMON_APPLICANT_MOBILE_NUMBER_INVALID"),
             className: "payment-form-text-input-correction",
           },
         },
@@ -299,7 +306,9 @@ export const CollectPayment = (props) => {
 
   const getFormConfig = () => {
     if (
-      BillDetailsFormConfig({ consumerCode, businessService }, t)[ModuleWorkflow ? (businessService === "SW" && ModuleWorkflow === "WS"? businessService : ModuleWorkflow) : businessService] ||
+      BillDetailsFormConfig({ consumerCode, businessService }, t)[
+        ModuleWorkflow ? (businessService === "SW" && ModuleWorkflow === "WS" ? businessService : ModuleWorkflow) : businessService
+      ] ||
       ModuleWorkflow ||
       businessService === "TL" ||
       businessService.includes("ONE_TIME_FEE")
@@ -308,8 +317,12 @@ export const CollectPayment = (props) => {
     }
     let conf = config.concat(formConfigMap[formState?.paymentMode?.code] || []);
     conf = conf?.concat(cashConfig);
-    return BillDetailsFormConfig({ consumerCode, businessService }, t)[ModuleWorkflow ? (businessService === "SW" && ModuleWorkflow === "WS"? businessService : ModuleWorkflow) : businessService]
-      ? BillDetailsFormConfig({ consumerCode, businessService }, t)[ModuleWorkflow ? (businessService === "SW" && ModuleWorkflow === "WS"? businessService : ModuleWorkflow) : businessService].concat(conf)
+    return BillDetailsFormConfig({ consumerCode, businessService }, t)[
+      ModuleWorkflow ? (businessService === "SW" && ModuleWorkflow === "WS" ? businessService : ModuleWorkflow) : businessService
+    ]
+      ? BillDetailsFormConfig({ consumerCode, businessService }, t)[
+          ModuleWorkflow ? (businessService === "SW" && ModuleWorkflow === "WS" ? businessService : ModuleWorkflow) : businessService
+        ].concat(conf)
       : conf;
   };
   const checkFSM = window.location.href.includes("FSM");
@@ -328,7 +341,7 @@ export const CollectPayment = (props) => {
         onSubmit={onSubmit}
         formState={formState}
         defaultValues={getDefaultValues()}
-        isDisabled={IsDisconnectionFlow ? false : (bill?.totalAmount ? !bill.totalAmount > 0 : true)}
+        isDisabled={IsDisconnectionFlow ? false : bill?.totalAmount ? !bill.totalAmount > 0 : true}
         // isDisabled={BillDetailsFormConfig({ consumerCode }, t)[businessService] ? !}
         onFormValueChange={(setValue, formValue) => {
           if (!isEqual(formValue.paymentMode, selectedPaymentMode)) {
