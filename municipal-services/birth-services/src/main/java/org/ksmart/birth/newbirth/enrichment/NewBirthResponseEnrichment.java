@@ -74,7 +74,7 @@ public class NewBirthResponseEnrichment {
                             birth.getParentAddress().setPermntInKeralaAdrTalukMl(mdmsTenantService.getTalukNameMl(mdmsData, birth.getParentAddress().getPermntInKeralaAdrTaluk()));
 
                             //village
-                            birth.getParentAddress().setPermntInKeralaAdrVillage(birth.getParentAddress().getDistrictIdPermanent());
+                            birth.getParentAddress().setPermntInKeralaAdrVillage(birth.getParentAddress().getPermntInKeralaAdrVillage());
                             birth.getParentAddress().setPermntInKeralaAdrVillageEn(mdmsTenantService.getVillageNameEn(mdmsData, birth.getParentAddress().getPermntInKeralaAdrVillage()));
                             birth.getParentAddress().setPermntInKeralaAdrVillageMl(mdmsTenantService.getVillageNameMl(mdmsData, birth.getParentAddress().getPermntInKeralaAdrVillage()));
 
