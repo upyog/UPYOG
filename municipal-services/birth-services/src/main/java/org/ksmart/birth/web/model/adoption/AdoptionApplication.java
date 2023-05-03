@@ -57,6 +57,14 @@ public class AdoptionApplication {
     @Size(max = 64)
     @JsonProperty("birthPlace")
     private String placeofBirthId;
+    
+    @Size(max = 64)
+    @JsonProperty("birthPlaceEn")
+    private String placeofBirthIdEn;
+
+    @Size(max = 64)
+    @JsonProperty("birthPlaceMl")
+    private String placeofBirthIdMl;
 
     @Size(max = 64)
     @JsonProperty("hospitalCode")
@@ -73,6 +81,12 @@ public class AdoptionApplication {
     @Size(max = 64)
     @JsonProperty("institution")
     private String institution;
+    @Size(max = 64)
+    @JsonProperty("institutionTypeEn")
+    private String institutionTypeEn;
+    @Size(max = 64)
+    @JsonProperty("institutionTypeMl")
+    private String institutionTypeMl;
     @Size(max = 64)
     @JsonProperty("institutionNameCode")
     private String institutionNameCode;
@@ -115,12 +129,25 @@ public class AdoptionApplication {
     @Size(max = 2000)
     @JsonProperty("adrsPostOffice")
     private String adrsPostOffice;
+    @Size(max = 300)
+    @JsonProperty("adrsPostOfficeEn")
+    private String adrsPostOfficeEn;
+
+    @Size(max = 300)
+    @JsonProperty("adrsPostOfficeMl")
+    private String adrsPostOfficeMl;
     @Size(max = 10)
     @JsonProperty("adrsPincode")
     private String adrsPincode;
     @Size(max = 64)
     @JsonProperty("vehicleType")
     private String vehicleTypeid;
+    @Size(max = 300)
+    @JsonProperty("vehicleTypeEn")
+    private String vehicleTypeidEn;
+    @Size(max = 300)
+    @JsonProperty("vehicleTypeMl")
+    private String vehicleTypeidMl;
     @Size(max = 64)
     @JsonProperty("vehicleHaltPlace")
     private String vehicleHaltplace;

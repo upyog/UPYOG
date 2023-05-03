@@ -1,11 +1,13 @@
 package org.ksmart.birth.adoption.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.ksmart.birth.birthregistry.model.RegisterCertificateData;
+ 
 import org.ksmart.birth.birthregistry.service.KsmartAddressService;
 import org.ksmart.birth.common.services.MdmsLocationService;
 import org.ksmart.birth.common.services.MdmsTenantService;
+import org.ksmart.birth.web.model.ParentsDetail;
 import org.ksmart.birth.web.model.adoption.AdoptionApplication;
+ 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -31,42 +33,125 @@ public class MdmsForAdoptionService {
 	        this.ksmartAddressService = ksmartAddressService;
 	    }
 
-	    public void setLocationDetails(AdoptionApplication birth, Object mdmsData) {
-	        if (birth.getWardId() != null) {
-	            String wardEn = mdmsLocationService.getWardNameEn(mdmsData, birth.getWardId());
-	            String wardMl = mdmsLocationService.getWardNameMl(mdmsData, birth.getWardId());
-	            String wardNo = mdmsLocationService.getWardNo(mdmsData, birth.getWardId());
-	            birth.setWardNameEn(wardEn);
-	            birth.setWardNameMl(wardMl);
-	            birth.setWardNumber(wardNo);
+	    public void setLocationDetails(AdoptionApplication adoption, Object mdmsDataLoc, Object mdmsData) {
+	        if (adoption.getWardId() != null) {
+	            String wardEn = mdmsLocationService.getWardNameEn(mdmsDataLoc, adoption.getWardId());
+	            String wardMl = mdmsLocationService.getWardNameMl(mdmsDataLoc, adoption.getWardId());
+	            String wardNo = mdmsLocationService.getWardNo(mdmsDataLoc, adoption.getWardId());
+	            adoption.setWardNameEn(wardEn);
+	            adoption.setWardNameMl(wardMl);
+	            adoption.setWardNumber(wardNo);
 	        }
-	        if (birth.getPlaceofBirthId().contains(BIRTH_PLACE_HOSPITAL)) {
-	            String placeEn = mdmsLocationService.getHospitalAddressEn(mdmsData, birth.getHospitalId());
-	            String placeMl = mdmsLocationService.getHospitalNameMl(mdmsData, birth.getHospitalId());
-	            birth.setHospitalName(placeEn);
-	            birth.setHospitalNameMl(placeMl);
-	        } else if (birth.getPlaceofBirthId().contains(BIRTH_PLACE_INSTITUTION)) {
-	            String placeEn = mdmsLocationService.getInstitutionNameEn(mdmsData, birth.getInstitutionNameCode());
-	            String placeMl = mdmsLocationService.getInstitutionNameMl(mdmsData, birth.getInstitutionNameCode());
-	            birth.setInstitutionId(placeEn);
-	            birth.setInstitutionIdMl(placeMl);
-	        }else { }
+	        if (adoption.getPlaceofBirthId().contains(BIRTH_PLACE_HOSPITAL)) {
+	            String placeEn = mdmsLocationService.getHospitalNameEn(mdmsDataLoc, adoption.getHospitalId()) +" "+ mdmsLocationService.getHospitalAddressEn(mdmsDataLoc, adoption.getHospitalId());
+	            String placeMl = mdmsLocationService.getHospitalNameMl(mdmsDataLoc, adoption.getHospitalId()) +" "+ mdmsLocationService.getHospitalAddressMl(mdmsDataLoc, adoption.getHospitalId());
+	            adoption.setHospitalName(placeEn);
+	            adoption.setHospitalNameMl(placeMl);
+	        } else if (adoption.getPlaceofBirthId().contains(BIRTH_PLACE_INSTITUTION)) {
+	            String placeEn = mdmsLocationService.getInstitutionNameEn(mdmsDataLoc, adoption.getInstitutionNameCode());
+	            String placeMl = mdmsLocationService.getInstitutionNameMl(mdmsDataLoc, adoption.getInstitutionNameCode());
+	            adoption.setInstitutionId(placeEn);
+	            adoption.setInstitutionIdMl(placeMl);
+	            setInstitutionDetailsEn(adoption, mdmsData);
+	            setInstitutionDetailsMl(adoption, mdmsData);
+	        }else if (adoption.getPlaceofBirthId().contains(BIRTH_PLACE_HOME)) {
+	            //Post Office
+	        	adoption.setAdrsPostOfficeEn(mdmsTenantService.getPostOfficeNameEn(mdmsData, adoption.getAdrsPostOffice()));
+	        	adoption.setAdrsPostOfficeMl(mdmsTenantService.getPostOfficeNameEn(mdmsData, adoption.getAdrsPostOffice()));
+
+	        }else if (adoption.getPlaceofBirthId().contains(BIRTH_PLACE_VEHICLE)) {
+	            //Vehicle Type
+	            setVehicleTypeEn(adoption, mdmsData);
+	            setVehicleTypeMl(adoption, mdmsData);
+	        } else if (adoption.getPlaceofBirthId().contains(BIRTH_PLACE_PUBLIC)) {
+	            //Public Place Type
+	            setPublicPlaceTypeEn(adoption, mdmsData);
+	            setPublicPlaceTypeMl(adoption, mdmsData);
+	        }
+	        else {
+
+	        }
+	    }
+	    public void setPublicPlaceTypeEn(AdoptionApplication adoption, Object  mdmsData) {
+	        if (adoption.getPlaceofBirthId().contains(BIRTH_PLACE_PUBLIC)) {
+	            String vehicleType = mdmsTenantService.getPublicPlaceTypeEn(mdmsData, adoption.getVehicleTypeid());
+	            adoption.setVehicleTypeidEn(vehicleType);
+	        }
+	    }
+	    public void setPublicPlaceTypeMl(AdoptionApplication adoption, Object  mdmsData) {
+	        if (adoption.getPlaceofBirthId().contains(BIRTH_PLACE_PUBLIC)) {
+	            String vehicleType = mdmsTenantService.getPublicPlaceTypeMl(mdmsData, adoption.getVehicleTypeid());
+	            adoption.setVehicleTypeidMl(vehicleType);
+	        }
 	    }
 
-	    public void setInstitutionDetails(AdoptionApplication birth, Object  mdmsData) {
-	        if (birth.getPlaceofBirthId().contains(BIRTH_PLACE_INSTITUTION)) {
-	            String placeInstType = mdmsTenantService.getInstitutionTypeNameEn(mdmsData, birth.getInstitutionTypeId());
-	            birth.setInstitution(placeInstType);
+	    
+	    public void setVehicleTypeEn(AdoptionApplication adoption, Object  mdmsData) {
+	        if (adoption.getPlaceofBirthId().contains(BIRTH_PLACE_VEHICLE)) {
+	            String vehicleType = mdmsTenantService.getVehicleTypeEn(mdmsData, adoption.getVehicleTypeid());
+	            adoption.setVehicleTypeidEn(vehicleType);
+	        }
+	    }
+	    public void setVehicleTypeMl(AdoptionApplication adoption, Object  mdmsData) {
+	        if (adoption.getPlaceofBirthId().contains(BIRTH_PLACE_VEHICLE)) {
+	            String vehicleType = mdmsTenantService.getVehicleTypeMl(mdmsData, adoption.getVehicleTypeid());
+	            adoption.setVehicleTypeidMl(vehicleType);
 	        }
 	    }
 
-	    public void setTenantDetails(AdoptionApplication birth, Object  mdmsData) {
-	        String lbType = mdmsTenantService.getTenantLbType(mdmsData, birth.getTenantId());
+	    public void setInstitutionDetailsEn(AdoptionApplication adoption, Object  mdmsData) {
+	        if (adoption.getPlaceofBirthId().contains(BIRTH_PLACE_INSTITUTION)) {
+	            String placeInstType = mdmsTenantService.getInstitutionTypeNameEn(mdmsData, adoption.getInstitutionTypeId());
+	            adoption.setInstitution(placeInstType);
+	            adoption.setInstitutionTypeEn(placeInstType);
+	        }
+	    }
+	    public void setInstitutionDetailsMl(AdoptionApplication adoption, Object  mdmsData) {
+	        if (adoption.getPlaceofBirthId().contains(BIRTH_PLACE_INSTITUTION)) {
+	            String placeInstType = mdmsTenantService.getInstitutionTypeNameMl(mdmsData, adoption.getInstitutionTypeId());
+	            adoption.setInstitutionIdMl(placeInstType);
+	        }
+	    }
+
+	    public void setInstitutionDetails(AdoptionApplication adoption, Object  mdmsData) {
+	        if (adoption.getPlaceofBirthId().contains(BIRTH_PLACE_INSTITUTION)) {
+	            String placeInstType = mdmsTenantService.getInstitutionTypeNameEn(mdmsData, adoption.getInstitutionTypeId());
+	            adoption.setInstitution(placeInstType);
+	        }
+	    }
+
+	    public void setTenantDetails(AdoptionApplication adoption, Object  mdmsData) {
+	        String lbType = mdmsTenantService.getTenantLbType(mdmsData, adoption.getTenantId());
 	        if (lbType.contains(LB_TYPE_CORPORATION) || lbType.contains(LB_TYPE_MUNICIPALITY) ) {
-	            birth.getParentAddress().setTownOrVillagePresent("TOWN");
+	        	adoption.getParentAddress().setTownOrVillagePresent("TOWN");
 	        } else if(lbType.contains(LB_TYPE_GP)) {
-	            birth.getParentAddress().setTownOrVillagePresent("VILLAGE");
+	        	adoption.getParentAddress().setTownOrVillagePresent("VILLAGE");
 	        } else{}
 	    }
 
+	    public void setParentsDetails(ParentsDetail parentsDetail, Object mdmsData) {
+	        if (parentsDetail != null) {
+	        //Mothers Details
+	            parentsDetail.setMotherEducationidEn(mdmsTenantService.getQualificatioinEn(mdmsData, parentsDetail.getMotherEducationid()));
+	            parentsDetail.setMotherEducationidMl(mdmsTenantService.getQualificatioinMl(mdmsData, parentsDetail.getMotherEducationid()));
+
+	            parentsDetail.setMotherProffessionidEn(mdmsTenantService.getProfessionEn(mdmsData, parentsDetail.getMotherProffessionid()));
+	            parentsDetail.setMotherProffessionidMl(mdmsTenantService.getProfessionMl(mdmsData, parentsDetail.getMotherProffessionid()));
+
+	            parentsDetail.setMotherNationalityidEn(mdmsTenantService.getNationalityEn(mdmsData, parentsDetail.getMotherNationalityid()));
+	            parentsDetail.setMotherNationalityidMl(mdmsTenantService.getNationalityMl(mdmsData, parentsDetail.getMotherNationalityid()));
+	//Father Details
+	            parentsDetail.setFatherEucationidEn(mdmsTenantService.getQualificatioinEn(mdmsData, parentsDetail.getFatherEucationid()));
+	            parentsDetail.setFatherEucationidMl(mdmsTenantService.getQualificatioinMl(mdmsData, parentsDetail.getFatherEucationid()));
+
+	            parentsDetail.setFatherProffessionidEn(mdmsTenantService.getProfessionEn(mdmsData, parentsDetail.getFatherProffessionid()));
+	            parentsDetail.setFatherProffessionidMl(mdmsTenantService.getProfessionMl(mdmsData, parentsDetail.getFatherProffessionid()));
+
+	            parentsDetail.setFatherNationalityidEn(mdmsTenantService.getNationalityEn(mdmsData, parentsDetail.getFatherNationalityid()));
+	            parentsDetail.setFatherNationalityidMl(mdmsTenantService.getNationalityMl(mdmsData, parentsDetail.getFatherNationalityid()));
+
+	            parentsDetail.setReligionIdEn(mdmsTenantService.getReligionEn(mdmsData, parentsDetail.getReligionId()));
+	            parentsDetail.setReligionIdMl(mdmsTenantService.getReligionMl(mdmsData, parentsDetail.getReligionId()));
+	        }
+	    }
 	}

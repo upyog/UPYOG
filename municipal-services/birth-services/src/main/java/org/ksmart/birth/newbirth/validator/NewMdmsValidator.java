@@ -113,10 +113,15 @@ public class NewMdmsValidator {
                                 errorMap.put(COMMON_MDMS_POSTOFFICE, "The Postoffice code  in birth place home'" + postOfficeCodePlace + "' does not exists");
                             }
                         }
-                        if (StringUtils.isBlank(birth.getWardId())) {
-                            throw new CustomException(INVALID_UPDATE.getCode(),
-                                    "Ward no is required for update request of birthplace details.");
-                        }
+                        //ward comment
+                        
+                        
+//                        if (StringUtils.isBlank(birth.getWardId())) {
+//                            throw new CustomException(INVALID_UPDATE.getCode(),
+//                                    "Ward no is required for update request of birthplace details.");
+//                        }
+                        
+                        //ward comment
                     }
 
                     // Birthplace Hospital
