@@ -23,8 +23,10 @@ const ApplicationDetails = () => {
   );
 
   const { data: paymentsHistory } = Digit.Hooks.fsm.usePaymentHistory(tenantId, id);
+
   const { data: storeData } = Digit.Hooks.useStore.getInitData();
   const { tenants } = storeData || {};
+
   const [showOptions, setShowOptions] = useState(false);
 
   if (isLoading || !application) {

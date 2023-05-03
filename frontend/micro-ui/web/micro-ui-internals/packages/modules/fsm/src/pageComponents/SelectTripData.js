@@ -23,10 +23,7 @@ const SelectTripData = ({ t, config, onSelect, formData = {}, userType }) => {
 
   const { isLoading: isVehicleMenuLoading, data: vehicleData } = Digit.Hooks.fsm.useMDMS(state, "Vehicle", "VehicleType", { staleTime: Infinity });
 
-  const { data: dsoData, isLoading: isDsoLoading, isSuccess: isDsoSuccess, error: dsoError } = Digit.Hooks.fsm.useDsoSearch(tenantId, {
-    limit: -1,
-    status: "ACTIVE",
-  });
+  const { data: dsoData, isLoading: isDsoLoading, isSuccess: isDsoSuccess, error: dsoError } = Digit.Hooks.fsm.useDsoSearch(tenantId, { limit: -1 });
 
   const [vehicleMenu, setVehicleMenu] = useState([]);
 
@@ -43,6 +40,20 @@ const SelectTripData = ({ t, config, onSelect, formData = {}, userType }) => {
   }, [dsoData, vehicleData]);
 
   const inputs = [
+    {
+      label: "ES_NEW_APPLICATION_PAYMENT_NO_OF_TRIPS",
+      type: "number",
+      name: "noOfTrips",
+      error: t("ES_NEW_APPLICATION_NO_OF_TRIPS_INVALID"),
+      validation: {
+        isRequired: true,
+        min: 1,
+        autoFocus: presentInModifyApplication,
+      },
+      default: formData?.tripData?.noOfTrips,
+      disable: false,
+      isMandatory: true,
+    },
     {
       label: "ES_NEW_APPLICATION_AMOUNT_PER_TRIP",
       type: "text",
@@ -100,7 +111,7 @@ const SelectTripData = ({ t, config, onSelect, formData = {}, userType }) => {
         });
 
         const billSlab = billingDetails?.billingSlab?.length && billingDetails?.billingSlab[0];
-        if (billSlab?.price || billSlab?.price === 0) {
+        if (billSlab?.price) {
           setValue({
             amountPerTrip: billSlab.price,
             amount: billSlab.price * formData.tripData.noOfTrips,
@@ -115,16 +126,30 @@ const SelectTripData = ({ t, config, onSelect, formData = {}, userType }) => {
         }
       }
     })();
-  }, [formData?.propertyType, formData?.subtype, formData?.address?.slum, formData?.tripData?.vehicleType?.capacity, formData?.tripData?.noOfTrips]);
+  }, [formData?.propertyType, formData?.subtype, formData?.address, formData?.tripData?.vehicleType?.capacity, formData?.tripData?.noOfTrips]);
 
   return isVehicleMenuLoading && isDsoLoading ? (
     <Loader />
   ) : (
     <div>
+      <LabelFieldPair>
+        <CardLabel className="card-label-smaller">{t("ES_NEW_APPLICATION_LOCATION_VEHICLE_REQUESTED") + " * "}</CardLabel>
+        <Dropdown
+          className="form-field"
+          isMandatory
+          option={vehicleMenu?.map((vehicle) => ({ ...vehicle, label: vehicle.capacity }))}
+          optionKey="label"
+          id="vehicle"
+          selected={vehicle}
+          select={selectVehicle}
+          t={t}
+          disable={editScreen && applicationData?.applicationStatus != "CREATED" ? true : false}
+        />
+      </LabelFieldPair>
       {inputs?.map((input, index) => (
         <LabelFieldPair key={index}>
           <CardLabel className="card-label-smaller">
-            {t(input.label) + " (₹)"}
+            {t(input.label)}
             {input.isMandatory ? " * " : null}
           </CardLabel>
           <div className="field">
