@@ -1,16 +1,6 @@
-import React, { useState,useEffect } from "react";
+import React, { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
-import {
-  TextInput,
-  Label,
-  SubmitBar,
-  LinkLabel,
-  ActionBar,
-  CloseSvg,
-  DatePicker,
-  CardLabelError,
-  Header,
-} from "@egovernments/digit-ui-react-components";
+import { TextInput, Label, SubmitBar, LinkLabel, ActionBar, CloseSvg, DatePicker, CardLabelError } from "@egovernments/digit-ui-react-components";
 import DropdownStatus from "./DropdownStatus";
 import { useTranslation } from "react-i18next";
 
@@ -27,8 +17,6 @@ const SearchApplication = ({ onSearch, type, onClose, isFstpOperator, searchFiel
   const mobileView = innerWidth <= 640;
   const FSTP = Digit.UserService.hasAccess("FSM_EMP_FSTPO") || false;
   const watchSearch = watch(["applicationNos", "mobileNumber", "fromDate", "toDate"]);
-  const [isReady, setIsReady] = useState(false);
-
 
   const onSubmitInput = (data) => {
     if (!data.mobileNumber) {
@@ -60,23 +48,12 @@ const SearchApplication = ({ onSearch, type, onClose, isFstpOperator, searchFiel
     );
   };
 
-  const searchValidation = () => {
+  const searchValidation = (data) => {
     if (FSTP) return null;
 
-    if (!watchSearch.applicationNos && !watchSearch.mobileNumber && !watchSearch.fromDate && !watchSearch.toDate) {
-      setError(true);
-    } else {
-      setError(false);
-    }
-    
-  }
-
-  useEffect(() => {
-    if (watchSearch.applicationNos || watchSearch.mobileNumber) {
-      searchValidation();
-    }
-  }, [watchSearch.applicationNos, watchSearch.mobileNumber]);
-
+    watchSearch.applicationNos || watchSearch.mobileNumber || (watchSearch.fromDate && watchSearch.toDate) ? setError(false) : setError(true);
+    return watchSearch.applicationNos || watchSearch.mobileNumber || (watchSearch.fromDate && watchSearch.toDate) ? true : false;
+  };
 
   const getFields = (input) => {
     switch (input.type) {
@@ -119,14 +96,10 @@ const SearchApplication = ({ onSearch, type, onClose, isFstpOperator, searchFiel
         );
     }
   };
-  const checkInboxLocation =
-    window.location.href.includes("employee/fsm/inbox") ||
-    window.location.href.includes("employee/fsm/fstp-inbox") ||
-    window.location.href.includes("employee/fsm/fstp-fsm-request");
+
   return (
     <form onSubmit={handleSubmit(onSubmitInput)}>
       <React.Fragment>
-        {!checkInboxLocation ? <Header styles={mobileView ? { marginTop: "10px" } : {}}>{t("ACTION_TEST_SEARCH_FSM_APPLICATION")}</Header> : ""}
         <div className="search-container" style={{ width: "auto", marginLeft: FSTP ? "" : isInboxPage ? "24px" : "revert" }}>
           <div className="search-complaint-container">
             {(type === "mobile" || mobileView) && (
@@ -147,9 +120,7 @@ const SearchApplication = ({ onSearch, type, onClose, isFstpOperator, searchFiel
             <div className={FSTP ? "complaint-input-container for-pt for-search" : "complaint-input-container"} style={{ width: "100%" }}>
               {searchFields?.map((input, index) => (
                 <span key={index} className={index === 0 ? "complaint-input" : "mobile-input"}>
-                  <Label>
-                    {input.label} {input.labelChildren && input.labelChildren}
-                  </Label>
+                  <Label>{input.label}</Label>
                   {getFields(input)}{" "}
                 </span>
               ))}

@@ -87,9 +87,7 @@ export const CollectPayment = (props) => {
     data.paidBy = data.paidBy.code;
 
     if (
-      BillDetailsFormConfig({ consumerCode, businessService }, t)[
-        ModuleWorkflow ? (businessService === "SW" && ModuleWorkflow === "WS" ? businessService : ModuleWorkflow) : businessService
-      ] &&
+      BillDetailsFormConfig({ consumerCode, businessService }, t)[ModuleWorkflow ? (businessService === "SW" && ModuleWorkflow === "WS"? businessService : ModuleWorkflow) : businessService] &&
       !data?.amount?.paymentAllowed
     ) {
       let action =
@@ -126,7 +124,7 @@ export const CollectPayment = (props) => {
         paidBy: data.paidBy,
       },
     };
-    if (advanceBill !== null && applicationData?.applicationStatus === "PENDING_APPL_FEE_PAYMENT" && !applicationData.paymentPreference) {
+    if (advanceBill !== null && applicationData?.applicationStatus === "PENDING_APPL_FEE_PAYMENT") {
       (recieptRequest.Payment.paymentDetails[0].totalAmountPaid = advanceBill),
         (recieptRequest.Payment.totalAmountPaid = advanceBill),
         (recieptRequest.Payment.totalDue = bill.totalAmount);
@@ -184,9 +182,6 @@ export const CollectPayment = (props) => {
       const resposne = await Digit.PaymentService.createReciept(tenantId, recieptRequest);
       queryClient.invalidateQueries();
       history.push(
-        IsDisconnectionFlow ? `${props.basePath}/success/${businessService}/${resposne?.Payments[0]?.paymentDetails[0]?.receiptNumber.replace(/\//g, "%2F")}/${
-          resposne?.Payments[0]?.paymentDetails[0]?.bill?.consumerCode
-        }?IsDisconnectionFlow=${IsDisconnectionFlow}` : 
         `${props.basePath}/success/${businessService}/${resposne?.Payments[0]?.paymentDetails[0]?.receiptNumber.replace(/\//g, "%2F")}/${
           resposne?.Payments[0]?.paymentDetails[0]?.bill?.consumerCode
         }?IsDisconnectionFlow=${IsDisconnectionFlow}`
@@ -230,8 +225,7 @@ export const CollectPayment = (props) => {
                 select={(d) => {
                   if (d.name == paidByMenu[0].name) {
                     props.setValue("payerName", bill?.payerName);
-                    // SM-1953: commenting to resolve showing mobile number when selecting the owner option
-                    // props.setValue("payerMobile", bill?.mobileNumber);
+                    props.setValue("payerMobile", bill?.mobileNumber);
                   } else {
                     props.setValue("payerName", "");
                     props.setValue("payerMobile", "");

@@ -9,7 +9,6 @@ const SelectPaymentType = ({ t, config, onSelect, formData = {}, userType, regis
   const { pathname: url } = useLocation();
   const editScreen = url.includes("/modify-application/");
   const [paymentType, setPaymentType] = useState(null);
-  const [isSlum, setIsSlum] = useState();
 
   const inputs = [
     {
@@ -26,16 +25,10 @@ const SelectPaymentType = ({ t, config, onSelect, formData = {}, userType, regis
       const preFilledPaymentType = paymentData.filter(
         (paymentType) => paymentType.code === (formData?.paymentPreference?.code || formData?.paymentPreference)
       )[0];
-      preFilledPaymentType ? setPaymentType(preFilledPaymentType) : setPaymentType(paymentData.find((i) => i.code === "POST_PAY"));
+      preFilledPaymentType ? setPaymentType(preFilledPaymentType) : setPaymentType(paymentData.find((i) => i.code === "POST_PAY"))
     }
   }, [formData, formData?.paymentPreference?.code, formData?.paymentPreference, paymentData]);
 
-  useEffect(() => {
-    if (formData?.address) {
-      const { slum: slumDetails } = formData.address;
-      slumDetails ? setIsSlum(true) : setIsSlum(false);
-    }
-  }, [formData]);
 
   function selectPaymentType(value) {
     setPaymentType(value);
@@ -46,7 +39,7 @@ const SelectPaymentType = ({ t, config, onSelect, formData = {}, userType, regis
     <div>
       {inputs?.map((input, index) => (
         <React.Fragment key={index}>
-          {formData?.tripData?.amountPerTrip !== 0 && input.type === "RadioButton" && (
+          {input.type === "RadioButton" &&
             <LabelFieldPair>
               <CardLabel className="card-label-smaller">
                 {t(input.label)}
@@ -64,7 +57,7 @@ const SelectPaymentType = ({ t, config, onSelect, formData = {}, userType, regis
                 />
               </div>
             </LabelFieldPair>
-          )}
+          }
         </React.Fragment>
       ))}
     </div>
