@@ -146,7 +146,6 @@ public class NewMdmsAddressValidation {
                                     }
                                 }
 
-
                                 String districtInKeralaCodePermanent = birth.getParentAddress().getPermntInKeralaAdrDistrict();
                                 if (log.isDebugEnabled()) {
                                     log.debug("District code : \n{}", districtInKeralaCodePermanent);
@@ -195,7 +194,6 @@ public class NewMdmsAddressValidation {
 
                     }
                 });
-
     }
 
     private void validateUnicodeMalayalamAlphabet(String value) {

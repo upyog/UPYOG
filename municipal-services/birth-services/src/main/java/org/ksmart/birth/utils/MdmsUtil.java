@@ -172,9 +172,15 @@ public class MdmsUtil {
 
         // Add Module CauseFoetalDeath
         List<MasterDetail> masterCauseFoetalDeath = Collections.singletonList(MasterDetail.builder()
-                .name(BirthConstants.CR_MDMS_FOETAL)
-                .build());
+                                                                                          .name(BirthConstants.CR_MDMS_FOETAL)
+                                                                                          .build());
         crMasterDetails.addAll(masterCauseFoetalDeath);
+
+        // Add Module Vehicle Type
+        List<MasterDetail> masterVehicleType = Collections.singletonList(MasterDetail.builder()
+                                                                                     .name(BirthConstants.CR_MDMS_VEHICLETYPEe)
+                                                                                     .build());
+        crMasterDetails.addAll(masterVehicleType);
 
 
         // Add Module workflow

@@ -35,6 +35,7 @@ public class BirthConstants {
     public static final String CR_MDMS_PLACE_INSTITUTION_TYPE = "InstitutionTypePlaceOfEvent";
     public static final String CR_MDMS_DELIVERYMETHOD = "DeliveryMethod";
     public static final String CR_MDMS_FOETAL = "FoetalDeath";
+    public static final String CR_MDMS_VEHICLETYPEe = "VehicleType";
     public static final String CR_MDMS_WORKFLOW_NEW = "WorkFlowBirth";
 
     public static final String CR_MDMS_TENANTS_CODE_JSONPATH = "$.MdmsRes.tenant.tenants[*].code";
