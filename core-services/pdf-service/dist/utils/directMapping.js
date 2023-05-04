@@ -56,7 +56,7 @@ function escapeRegex(string) {
 var directMapping = exports.directMapping = function () {
   var _ref = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee(req, dataconfig, variableTovalueMap, requestInfo, unregisteredLocalisationCodes) {
     var directArr, localisationCodes, localisationModules, variableToModuleMap, objectOfDirectMapping, i, fun, response, arrayOfOwnerObject, _directArr$i, _directArr$i$format, format, _directArr$i$val, val, variable, _format$scema, scema, j, ownerObject, k, fieldValue, myDate, replaceValue, loc, currentValue, arrayOfBuiltUpDetails, isOrderedList, _directArr$i2, _directArr$i2$format, _format, _directArr$i2$val, _val, _variable, _format$scema2, _scema, _j, arrayOfItems, _k, _fieldValue, _myDate, _replaceValue, p, orderedList, _loc, stringBuildpDetails, code, _myDate2, _replaceValue2, _code, _currentValue, _currentValue2, localisationMap, resposnseMap;
-    console.log("inside direct mapping ");
+
     return _regenerator2.default.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
@@ -68,11 +68,12 @@ var directMapping = exports.directMapping = function () {
             // using jp-jsonpath because loadash can not handele '*'
 
             objectOfDirectMapping = jp.query(dataconfig, "$.DataConfigs.mappings.*.mappings.*.direct.*");
+            // console.log("Reading direct mapping values---");
 
             objectOfDirectMapping = (0, _commons.getValue)(objectOfDirectMapping, [], "$.DataConfigs.mappings.*.mappings.*.direct.*");
+            // console.log("Completed Reading direct mapping values---");
             directArr = objectOfDirectMapping.map(function (item) {
-              console.log("------------------------------------------------");
-              console.log(item);
+              //console.log("item.variable="+item.variable+" item.value="+item.value+" item.url="+item.url+" item.type="+item.type)
               return {
                 jPath: item.variable,
                 val: item.value && (0, _commons.getValue)(jp.query(req, item.value.path), "NA", item.value.path),
@@ -89,7 +90,7 @@ var directMapping = exports.directMapping = function () {
 
           case 8:
             if (!(i < directArr.length)) {
-              _context.next = 153;
+              _context.next = 157;
               break;
             }
 
@@ -112,7 +113,7 @@ var directMapping = exports.directMapping = function () {
             if ((0, _typeof3.default)(directArr[i].val) == "object" && directArr[i].val.length > 0) directArr[i].val = directArr[i].val[0];
 
             variableTovalueMap[directArr[i].jPath] = directArr[i].val;
-            _context.next = 150;
+            _context.next = 154;
             break;
 
           case 16:
@@ -122,7 +123,7 @@ var directMapping = exports.directMapping = function () {
             }
 
             variableTovalueMap[directArr[i].jPath] = externalHost;
-            _context.next = 150;
+            _context.next = 154;
             break;
 
           case 20:
@@ -134,33 +135,40 @@ var directMapping = exports.directMapping = function () {
             fun = Function("type", directArr[i].format);
 
             variableTovalueMap[directArr[i].jPath] = fun(directArr[i].val[0]);
-            _context.next = 150;
+            _context.next = 154;
             break;
 
           case 25:
-            console.log(" image dataaaaa");
             if (!(directArr[i].type == "image")) {
-              console.log(directArr[i]);
-              _context.next = 39;
+              _context.next = 43;
               break;
             }
 
             _context.prev = 26;
-            _context.next = 29;
+
+            console.log("url ------ > ");
+            console.log(directArr[i]);
+            if (directArr[i].val != undefined) {
+              console.log(directArr[i].val.length);
+            }
+            if (directArr[i].url == undefined && directArr[i].val != undefined && directArr[i].val.length == 1) {
+              directArr[i].url = directArr[i].val[0];
+            }
+            _context.next = 33;
             return _axios2.default.get(directArr[i].url, {
               responseType: "arraybuffer"
             });
 
-          case 29:
+          case 33:
             response = _context.sent;
 
             variableTovalueMap[directArr[i].jPath] = "data:" + response.headers["content-type"] + ";base64," + Buffer.from(response.data).toString("base64");
             //  logger.info("loaded image: "+directArr[i].url);
-            _context.next = 37;
+            _context.next = 41;
             break;
 
-          case 33:
-            _context.prev = 33;
+          case 37:
+            _context.prev = 37;
             _context.t0 = _context["catch"](26);
 
             _logger2.default.error(_context.t0.stack || _context.t0);
@@ -168,13 +176,13 @@ var directMapping = exports.directMapping = function () {
               message: "error while loading image from: " + directArr[i].url
             };
 
-          case 37:
-            _context.next = 150;
+          case 41:
+            _context.next = 154;
             break;
 
-          case 39:
+          case 43:
             if (!(directArr[i].type == "array")) {
-              _context.next = 77;
+              _context.next = 81;
               break;
             }
 
@@ -188,9 +196,9 @@ var directMapping = exports.directMapping = function () {
 
             j = 0;
 
-          case 44:
+          case 48:
             if (!(j < val.length)) {
-              _context.next = 74;
+              _context.next = 78;
               break;
             }
 
@@ -198,9 +206,9 @@ var directMapping = exports.directMapping = function () {
             ownerObject = {};
             k = 0;
 
-          case 47:
+          case 51:
             if (!(k < scema.length)) {
-              _context.next = 70;
+              _context.next = 74;
               break;
             }
 
@@ -209,7 +217,7 @@ var directMapping = exports.directMapping = function () {
             fieldValue = fieldValue == null ? "NA" : fieldValue;
 
             if (!(scema[k].type == "date")) {
-              _context.next = 55;
+              _context.next = 59;
               break;
             }
 
@@ -223,20 +231,20 @@ var directMapping = exports.directMapping = function () {
 
               ownerObject[scema[k].variable] = replaceValue;
             }
-            _context.next = 67;
+            _context.next = 71;
             break;
 
-          case 55:
+          case 59:
             if (!(fieldValue !== "NA" && scema[k].localisation && scema[k].localisation.required)) {
-              _context.next = 63;
+              _context.next = 67;
               break;
             }
 
             loc = scema[k].localisation;
-            _context.next = 59;
+            _context.next = 63;
             return (0, _commons.getLocalisationkey)(loc.prefix, fieldValue, loc.isCategoryRequired, loc.isMainTypeRequired, loc.isSubTypeRequired, loc.delimiter);
 
-          case 59:
+          case 63:
             fieldValue = _context.sent;
 
             if (!localisationCodes.includes(fieldValue)) localisationCodes.push(fieldValue);
@@ -245,7 +253,7 @@ var directMapping = exports.directMapping = function () {
 
             variableToModuleMap[scema[k].variable] = loc.module;
 
-          case 63:
+          case 67:
             currentValue = fieldValue;
 
             if ((typeof currentValue === "undefined" ? "undefined" : (0, _typeof3.default)(currentValue)) == "object" && currentValue.length > 0) currentValue = currentValue[0];
@@ -253,28 +261,28 @@ var directMapping = exports.directMapping = function () {
             currentValue = escapeRegex(currentValue);
             ownerObject[scema[k].variable] = currentValue;
 
-          case 67:
-            k++;
-            _context.next = 47;
-            break;
-
-          case 70:
-            arrayOfOwnerObject.push(ownerObject);
-
           case 71:
-            j++;
-            _context.next = 44;
+            k++;
+            _context.next = 51;
             break;
 
           case 74:
-            // set(formatconfig, directArr[i].jPath, arrayOfOwnerObject);
-            variableTovalueMap[directArr[i].jPath] = arrayOfOwnerObject;
-            _context.next = 150;
+            arrayOfOwnerObject.push(ownerObject);
+
+          case 75:
+            j++;
+            _context.next = 48;
             break;
 
-          case 77:
+          case 78:
+            // set(formatconfig, directArr[i].jPath, arrayOfOwnerObject);
+            variableTovalueMap[directArr[i].jPath] = arrayOfOwnerObject;
+            _context.next = 154;
+            break;
+
+          case 81:
             if (!(directArr[i].type == "array-column")) {
-              _context.next = 118;
+              _context.next = 122;
               break;
             }
 
@@ -289,18 +297,18 @@ var directMapping = exports.directMapping = function () {
 
             _j = 0;
 
-          case 83:
+          case 87:
             if (!(_j < _val.length)) {
-              _context.next = 113;
+              _context.next = 117;
               break;
             }
 
             arrayOfItems = [];
             _k = 0;
 
-          case 86:
+          case 90:
             if (!(_k < _scema.length)) {
-              _context.next = 109;
+              _context.next = 113;
               break;
             }
 
@@ -309,7 +317,7 @@ var directMapping = exports.directMapping = function () {
             _fieldValue = _fieldValue == null ? "NA" : _fieldValue;
 
             if (!(_scema[_k].type == "date")) {
-              _context.next = 94;
+              _context.next = 98;
               break;
             }
 
@@ -323,12 +331,12 @@ var directMapping = exports.directMapping = function () {
 
               arrayOfItems.push(_replaceValue);
             }
-            _context.next = 106;
+            _context.next = 110;
             break;
 
-          case 94:
+          case 98:
             if (!(_scema[_k].type == "array-orderedlist" && Array.isArray(_fieldValue))) {
-              _context.next = 98;
+              _context.next = 102;
               break;
             }
 
@@ -341,43 +349,43 @@ var directMapping = exports.directMapping = function () {
               }
               isOrderedList = true;
             }
-            _context.next = 106;
+            _context.next = 110;
             break;
 
-          case 98:
+          case 102:
             if (!(_fieldValue !== "NA" && _scema[_k].localisation && _scema[_k].localisation.required)) {
-              _context.next = 105;
+              _context.next = 109;
               break;
             }
 
             _loc = _scema[_k].localisation;
-            _context.next = 102;
+            _context.next = 106;
             return (0, _commons.getLocalisationkey)(_loc.prefix, _fieldValue, _loc.isCategoryRequired, _loc.isMainTypeRequired, _loc.isSubTypeRequired, _loc.delimiter);
 
-          case 102:
+          case 106:
             _fieldValue = _context.sent;
 
             if (!localisationCodes.includes(_fieldValue)) localisationCodes.push(_fieldValue);
 
             if (!localisationModules.includes(_loc.module)) localisationModules.push(_loc.module);
 
-          case 105:
+          case 109:
             arrayOfItems.push(_fieldValue);
 
-          case 106:
-            _k++;
-            _context.next = 86;
-            break;
-
-          case 109:
-            if (isOrderedList === false) arrayOfBuiltUpDetails.push(arrayOfItems);
-
           case 110:
-            _j++;
-            _context.next = 83;
+            _k++;
+            _context.next = 90;
             break;
 
           case 113:
+            if (isOrderedList === false) arrayOfBuiltUpDetails.push(arrayOfItems);
+
+          case 114:
+            _j++;
+            _context.next = 87;
+            break;
+
+          case 117:
 
             // remove enclosing [ &  ]
             stringBuildpDetails = JSON.stringify(arrayOfBuiltUpDetails).replace("[", "");
@@ -386,19 +394,19 @@ var directMapping = exports.directMapping = function () {
 
             variableTovalueMap[directArr[i].jPath] = stringBuildpDetails;
             // set(formatconfig,directArr[i].jPath,arrayOfBuiltUpDetails);
-            _context.next = 150;
+            _context.next = 154;
             break;
 
-          case 118:
+          case 122:
             if (!(directArr[i].type == "label")) {
-              _context.next = 128;
+              _context.next = 132;
               break;
             }
 
-            _context.next = 121;
+            _context.next = 125;
             return (0, _commons.getLocalisationkey)(directArr[i].localisation.prefix, directArr[i].valJsonPath, directArr[i].localisation.isCategoryRequired, directArr[i].localisation.isMainTypeRequired, directArr[i].localisation.isSubTypeRequired, directArr[i].localisation.delimiter);
 
-          case 121:
+          case 125:
             code = _context.sent;
 
             if (!localisationCodes.includes(code)) localisationCodes.push(code);
@@ -408,12 +416,12 @@ var directMapping = exports.directMapping = function () {
             variableTovalueMap[directArr[i].jPath] = code;
             variableToModuleMap[directArr[i].jPath] = directArr[i].localisation.module;
 
-            _context.next = 150;
+            _context.next = 154;
             break;
 
-          case 128:
+          case 132:
             if (!(directArr[i].type == "date")) {
-              _context.next = 133;
+              _context.next = 137;
               break;
             }
 
@@ -426,21 +434,21 @@ var directMapping = exports.directMapping = function () {
 
               variableTovalueMap[directArr[i].jPath] = _replaceValue2;
             }
-            _context.next = 150;
+            _context.next = 154;
             break;
 
-          case 133:
+          case 137:
             directArr[i].val = (0, _commons.getValue)(directArr[i].val, "NA", directArr[i].valJsonPath);
 
             if (!(directArr[i].val !== "NA" && directArr[i].localisation && directArr[i].localisation.required)) {
-              _context.next = 145;
+              _context.next = 149;
               break;
             }
 
-            _context.next = 137;
+            _context.next = 141;
             return (0, _commons.getLocalisationkey)(directArr[i].localisation.prefix, directArr[i].val, directArr[i].localisation.isCategoryRequired, directArr[i].localisation.isMainTypeRequired, directArr[i].localisation.isSubTypeRequired, directArr[i].localisation.delimiter);
 
-          case 137:
+          case 141:
             _code = _context.sent;
 
 
@@ -454,10 +462,10 @@ var directMapping = exports.directMapping = function () {
 
             variableToModuleMap[directArr[i].jPath] = directArr[i].localisation.module;
 
-            _context.next = 149;
+            _context.next = 153;
             break;
 
-          case 145:
+          case 149:
             _currentValue = directArr[i].val;
 
             if ((typeof _currentValue === "undefined" ? "undefined" : (0, _typeof3.default)(_currentValue)) == "object" && _currentValue.length > 0) _currentValue = _currentValue[0];
@@ -466,7 +474,7 @@ var directMapping = exports.directMapping = function () {
             _currentValue = escapeRegex(_currentValue);
             variableTovalueMap[directArr[i].jPath] = _currentValue;
 
-          case 149:
+          case 153:
             if (directArr[i].uCaseNeeded) {
               _currentValue2 = variableTovalueMap[directArr[i].jPath];
 
@@ -474,37 +482,37 @@ var directMapping = exports.directMapping = function () {
               variableTovalueMap[directArr[i].jPath] = _currentValue2.toUpperCase();
             }
 
-          case 150:
+          case 154:
             i++;
             _context.next = 8;
             break;
 
-          case 153:
+          case 157:
             localisationMap = [];
-            _context.prev = 154;
-            _context.next = 157;
+            _context.prev = 158;
+            _context.next = 161;
             return (0, _commons.findLocalisation)(requestInfo, localisationModules, localisationCodes);
 
-          case 157:
+          case 161:
             resposnseMap = _context.sent;
 
 
             resposnseMap.messages.map(function (item) {
               localisationMap[item.code + "_" + item.module] = item.message;
             });
-            _context.next = 165;
+            _context.next = 169;
             break;
 
-          case 161:
-            _context.prev = 161;
-            _context.t1 = _context["catch"](154);
+          case 165:
+            _context.prev = 165;
+            _context.t1 = _context["catch"](158);
 
             _logger2.default.error(_context.t1.stack || _context.t1);
             throw {
               message: "Error in localisation service call: " + _context.t1.Errors[0].message
             };
 
-          case 165:
+          case 169:
 
             Object.keys(variableTovalueMap).forEach(function (key) {
               if (variableToModuleMap[key] && typeof variableTovalueMap[key] == 'string') {
@@ -542,12 +550,12 @@ var directMapping = exports.directMapping = function () {
               }
             });
 
-          case 166:
+          case 170:
           case "end":
             return _context.stop();
         }
       }
-    }, _callee, undefined, [[26, 33], [154, 161]]);
+    }, _callee, undefined, [[26, 37], [158, 165]]);
   }));
 
   return function directMapping(_x, _x2, _x3, _x4, _x5) {

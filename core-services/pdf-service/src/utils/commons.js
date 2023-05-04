@@ -37,6 +37,8 @@ export const findLocalisation = async (
   } else {
     locale = defaultLocale;
   }
+  console.log(requestInfo)
+  console.log(defaultTenant)
   let statetenantid = get(
     requestInfo,
     "userInfo.tenantId",
@@ -64,9 +66,14 @@ export const findLocalisation = async (
       accept: "application/json, text/plain, */*"
     }
   };
-
+  console.log("localization call");
+  console.log("localization call url=" + url);
+  console.log(request);
+  console.log(headers);
   let responseBody = await axios.post(url,request,headers)
-  .catch((error) => {throw error.response.data });
+  .catch((error) => {
+    console.log(error);
+    throw error.response.data });
   
   return responseBody.data;
 }
@@ -168,5 +175,6 @@ export const convertFooterStringtoFunctionIfExist = (footer) => {
   if (footer != undefined) {
     footer = Function(`'use strict'; return (${footer})`)();
   }
+  console.log(footer)
   return footer;
 };

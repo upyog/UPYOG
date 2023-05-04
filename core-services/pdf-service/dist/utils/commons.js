@@ -66,6 +66,8 @@ var findLocalisation = exports.findLocalisation = function () {
             } else {
               locale = defaultLocale;
             }
+            console.log(requestInfo);
+            console.log(defaultTenant);
             statetenantid = (0, _get2.default)(requestInfo, "userInfo.tenantId", defaultTenant).split(".")[0];
             url = egovLocHost + egovLocSearchCall;
             request = {
@@ -87,16 +89,22 @@ var findLocalisation = exports.findLocalisation = function () {
                 accept: "application/json, text/plain, */*"
               }
             };
-            _context.next = 10;
+
+            console.log("localization call");
+            console.log("localization call url=" + url);
+            console.log(request);
+            console.log(headers);
+            _context.next = 16;
             return _axios2.default.post(url, request, headers).catch(function (error) {
+              console.log(error);
               throw error.response.data;
             });
 
-          case 10:
+          case 16:
             responseBody = _context.sent;
             return _context.abrupt("return", responseBody.data);
 
-          case 12:
+          case 18:
           case "end":
             return _context.stop();
         }
@@ -217,6 +225,7 @@ var convertFooterStringtoFunctionIfExist = exports.convertFooterStringtoFunction
   if (footer != undefined) {
     footer = Function("'use strict'; return (" + footer + ")")();
   }
+  console.log(footer);
   return footer;
 };
 //# sourceMappingURL=commons.js.map
