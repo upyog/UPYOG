@@ -29,7 +29,7 @@
     "@egovernments/digit-ui-module-core": "1.7.0-beta.1",
     "@egovernments/digit-ui-module-engagement": "1.7.0-beta.1",
     "@egovernments/digit-ui-module-dss": "1.7.0-beta.1",
-    "@egovernments/digit-ui-module-fsm": "1.7.0-beta.1",
+    "@egovernments/digit-ui-module-fsm": "1.6.0",
     "@egovernments/digit-ui-module-hrms": "1.7.0-beta.1",
     "@egovernments/digit-ui-module-mcollect": "1.7.0-beta.1",
     "@egovernments/digit-ui-module-commonpt":"1.7.0-beta.1",
