@@ -48,5 +48,8 @@ public class CalculationCriteria   {
 
         @JsonProperty("toDate")
         private Long toDate;
+        
+        @JsonProperty("financialYear")
+        private String financialYear;
 }
 
