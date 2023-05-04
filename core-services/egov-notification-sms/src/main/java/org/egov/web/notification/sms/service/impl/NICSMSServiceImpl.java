@@ -114,7 +114,8 @@ public class NICSMSServiceImpl extends BaseSMSService {
 			final_data += "&pin=" + smsProperties.getPassword();
 
 			String smsBody = sms.getMessage();
-
+			String tem=smsBody.split("#")[1];
+			sms.setTemplateId(tem);
 			if (smsBody.split("#").length > 1) {
 				String templateId = smsBody.split("#")[1];
 
@@ -125,7 +126,7 @@ public class NICSMSServiceImpl extends BaseSMSService {
 				log.info("No template Id, Message Not sent" + smsBody);
 				return;
 			}
-
+			log.info("templte Id:"+ sms.getTemplateId());
 			String message = "" + smsBody;
 			message = URLEncoder.encode(message, "UTF-8");
 
@@ -165,6 +166,7 @@ public class NICSMSServiceImpl extends BaseSMSService {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+			log.error(e.getMessage());
 			log.error("Error occurred while sending SMS to : " + sms.getMobileNumber(), e);
 		}
 	}

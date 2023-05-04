@@ -99,6 +99,8 @@ public class LineChartResponseHandler implements IResponseHandler {
             for(JsonNode aggrNode : aggrNodes) {
                 if (aggrNode.findValues(IResponseHandler.BUCKETS).size() > 0) {
                     ArrayNode buckets = (ArrayNode) aggrNode.findValues(IResponseHandler.BUCKETS).get(0);
+                    logger.info("aggr Node is"+aggrNode);
+                    logger.info("buckets value is ============" + buckets );
                     for(JsonNode bucket : buckets){
                             String bkey = bucket.findValue(IResponseHandler.KEY).asText();
                             String key = getIntervalKey(bkey, Constants.Interval.valueOf(interval));
@@ -181,6 +183,10 @@ public class LineChartResponseHandler implements IResponseHandler {
 
         dataList.forEach(data -> {
             appendMissingPlot(plotKeys, data, symbol, isCumulative);
+        });
+        
+        dataList.forEach(data -> {
+            SortPlot(plotKeys, data, symbol, isCumulative);
         });
         return getAggregatedDto(chartNode, dataList, requestDto.getVisualizationCode());
     }

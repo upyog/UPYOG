@@ -1,5 +1,6 @@
 .CardBasedOptions{
     box-shadow: #32325d14 0px 50px 100px -20px, rgb(0 0 0 / 18%) 0px 30px 60px -30px, #0a254038 0px -2px 6px 0px inset;
+    border-radius: 12px;
     padding: 0px !important;
     @apply bg-white mb-md px-sm py-md mx-sm rounded w-full;
     .headContent{
@@ -50,13 +51,13 @@
 }
 .citizen .ServicesSection .CardBasedOptions:nth-child(odd){
     .employeeCustomCard{
-      background-image: url("https://i.ibb.co/J703cMf/top-red.png");
+      background-image: url("https://in-egov-assets.s3.ap-south-1.amazonaws.com/images/top-red-card.png");
       background-size: cover
     }
   }
   .citizen .ServicesSection .CardBasedOptions:nth-child(even){
     .employeeCustomCard{
-  background-image: url("https://iili.io/H9EGul1.th.png");
+  background-image: url("https://in-egov-assets.s3.ap-south-1.amazonaws.com/images/top-green-card.png");
   background-size: cover
     }
   }

@@ -58,6 +58,7 @@ public class BillRepositoryV2 {
 	public void saveBill(BillRequestV2 billRequest){
 		
 		List<BillV2> bills = billRequest.getBills();
+		log.info("in Bill Save Block !!!", billRequest.getBills().get(0).getConsumerCode());
 		
 		jdbcTemplate.batchUpdate(BillQueryBuilder.INSERT_BILL_QUERY, new BatchPreparedStatementSetter() {
 			
@@ -202,6 +203,7 @@ public class BillRepositoryV2 {
 				.tenantId(updateBillCriteria.getTenantId())
 				.consumerCode(consumerCodes)
 				.build());
+		log.info("bills retrieved from db ",bills.size());
 		
 		if (CollectionUtils.isEmpty(bills))
 			return 0;

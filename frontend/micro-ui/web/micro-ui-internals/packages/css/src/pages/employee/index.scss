@@ -117,9 +117,8 @@
     float: right;
     z-index: 999;
     height: 100%;
-    padding-top: 25vh;
+    padding-top: 35vh;
     margin-right: 2%;
-    font-size: 2vw;
     text-align: right;
     font-family: none;
 }
@@ -166,6 +165,12 @@
 .psuedo-banner span{
   color: #fdd049;
 } 
+.login-banner-wrapper .psuedo-banner{
+  font-size: 2.2rem;
+}
+.login-banner-wrapper .banner-slogan{
+  font-size: 1.5rem;
+}
 .citizen {
   .main {
     padding-top: 82px;
@@ -182,7 +187,7 @@
     color: white;
     margin-top: 80px;
     z-index: 1000;
-    background-image: url(https://iili.io/H9EGul1.th.png), url(https://i.ibb.co/J703cMf/top-red.png);
+    background-image: url(https://in-egov-assets.s3.ap-south-1.amazonaws.com/images/top-green-card.png), url(https://in-egov-assets.s3.ap-south-1.amazonaws.com/images/top-red-card.png);
     background-blend-mode: lighten;
     background-size: cover;
 
@@ -311,7 +316,8 @@
 }
 
 .RightMostTopBarOptions{
-  @apply inline-block float-right;
+  @apply flex float-right;
+  display: flex;
   .EventNotificationWrapper{
     @apply relative cursor-pointer;
     span{
@@ -392,7 +398,7 @@
     }
   }
   #main-img{      
-    content:url("https://i.postimg.cc/PrVjVmDf/Banner-Image-Desktop.png");
+    content:url("https://in-egov-assets.s3.ap-south-1.amazonaws.com/images/employee-login.png");
 } 
   .citizen {
     .main {
@@ -401,6 +407,7 @@
       padding-top: 80px;
       padding-left: 16px;
       min-height: calc(100vh - 48px);
+      margin-bottom: 40px !important;
     }
 
     .center-container {
@@ -419,7 +426,7 @@
   position:relative;
    z-index:1;
    width:75%;
-   height:40%;
+   height:115%;
    margin:12%;
    margin-top:25%
 }
@@ -439,7 +446,7 @@
   font-size: 4vw;
 }
 .banner-slogan{
-  font-size: 3vw;
+  font-size: 3.5vw;
 }
 }
 
@@ -462,7 +469,7 @@
   position:relative;
    z-index:1;
    width:75%;
-   height:40%;
+   height:80%;
    margin:12%;
    margin-top:25%
 }
@@ -474,16 +481,18 @@
     display: flex;
     flex-direction: column;
 }
-.employee .login-banner-wrapper{
-  padding-top: 12vh;
-  font-size: 4vw !important;
+.employee .psuedo-banner{
+  font-size: 1.2rem;
 }
-
+.employee .banner-slogan{
+  font-size: 0.8rem;
+}
 }
 @media only screen and (min-width:300px)
 {
 .employee .card-home{
 height: 220px;
 box-shadow: #32325d14 0px 50px 100px -20px, rgb(0 0 0 / 18%) 0px 30px 60px -30px, #0a254038 0px -2px 6px 0px inset;
+border-radius: 12px;
 }
 }
