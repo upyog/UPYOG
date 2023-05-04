@@ -17,9 +17,21 @@ export const SuccessfulPayment = (props) => {
   );
 
   useEffect(() => {
-    return () => {
+   
+      const fetchData = async () => {
+        const tenantId = Digit.ULBService.getCurrentTenantId();
+        const state = Digit.ULBService.getStateId();
+        const payments = await Digit.PaymentService.getReciept(tenantId, businessService, { receiptNumbers: receiptNumber });
+        let response = { filestoreIds: [payments.Payments[0]?.fileStoreId] };
+        if (!payments.Payments[0]?.fileStoreId) {
+          response = await Digit.PaymentService.generatePdf(state, { Payments: payments.Payments }, generatePdfKey);
+        }
+      }
+    
+      // call the function
+      fetchData()
       queryClient.clear();
-    };
+    
   }, []);
 
   const getMessage = () => t("ES_PAYMENT_COLLECTED");
@@ -39,6 +51,7 @@ export const SuccessfulPayment = (props) => {
   });
 
   const printCertificate = async () => {
+    console.log("printCertificate")
     const tenantId = Digit.ULBService.getCurrentTenantId();
     const state = Digit.ULBService.getStateId();
     const applicationDetails = await Digit.TLService.search({ applicationNumber: consumerCode, tenantId });
@@ -124,6 +137,7 @@ export const SuccessfulPayment = (props) => {
 
 
   const printReciept = async () => {
+    console.log("printReciept")
     const tenantId = Digit.ULBService.getCurrentTenantId();
     const state = Digit.ULBService.getStateId();
     const payments = await Digit.PaymentService.getReciept(tenantId, businessService, { receiptNumbers: receiptNumber });
