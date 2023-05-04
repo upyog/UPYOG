@@ -49,9 +49,11 @@ public interface AdoptionParentAddressRowMapper {
                 .presentOutSideIndiaProvinceEn(rs.getString("pres_ot_state_region_province_en"))
                 .presentOutSideIndiaProvinceMl(rs.getString("pres_ot_state_region_province_ml"))
                 .presentOutSideIndiaadrsCityTown(rs.getString("stat_mother_resdnce_placetype"))
-                //.isPrsentAddress(rs.getInt("per_same_as_present"))
+                
                 .permntInKeralaAdrLBName(rs.getString("per_tenantid"))
                 .permntInKeralaAdrTaluk(rs.getString("per_talukid"))
+                .permntInKeralaAdrPostOffice(rs.getString("per_poid"))
+                .permntInKeralaAdrVillage(rs.getString("per_villageid"))
                 .permntInKeralaWardNo(rs.getString("per_ward_code"))
                 .permntOutsideKeralaTaluk(rs.getString("per_taluk_name"))
                 .permntOutsideKeralaCityVilgeEn(rs.getString("stat_mother_resdnce_placetype"))
