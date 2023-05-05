@@ -46,6 +46,14 @@ public class CommonQueryBuilder extends BaseQueryBuilder {
 			.append(" LEFT JOIN eg_birth_application_document ebad ON ebad.birthdtlid = ebd.id")
 			.append(" LEFT JOIN eg_birth_initiator ini ON ini.birthdtlid = ebd.id ").toString();
 	
+	private static final String QUERYCONDITIONADPTNREGISTRY = new StringBuilder().append(" FROM public.eg_birth_details ebd LEFT JOIN eg_birth_place ebp ON ebp.birthdtlid = ebd.id LEFT JOIN eg_birth_father_information ebfi ON ebfi.birthdtlid = ebd.id AND ebfi.bio_adopt='ADOPT'")
+			.append(" LEFT JOIN eg_birth_mother_information ebmi ON ebmi.birthdtlid = ebd.id AND ebmi.bio_adopt='ADOPT'")
+			.append(" LEFT JOIN eg_birth_permanent_address eperad ON eperad.birthdtlid = ebd.id AND eperad.bio_adopt='ADOPT'")
+			.append(" LEFT JOIN eg_birth_present_address epreadd ON epreadd.birthdtlid = ebd.id AND epreadd.bio_adopt='ADOPT'")
+			.append(" LEFT JOIN eg_birth_statitical_information estat ON estat.birthdtlid = ebd.id")			 
+			.append(" LEFT JOIN eg_birth_initiator ini ON ini.birthdtlid = ebd.id ").toString();
+	
+	
    private static final String QUERYCONDITIONNAC = new StringBuilder().append(" FROM public.eg_birth_details ebd LEFT JOIN eg_birth_place ebp ON ebp.birthdtlid = ebd.id LEFT JOIN eg_birth_father_information ebfi ON ebfi.birthdtlid = ebd.id AND ebfi.bio_adopt='BIOLOGICAL'")
 	        .append(" LEFT JOIN eg_birth_mother_information ebmi ON ebmi.birthdtlid = ebd.id AND ebmi.bio_adopt='BIOLOGICAL'")
 	        .append(" LEFT JOIN eg_birth_permanent_address eperad ON eperad.birthdtlid = ebd.id AND eperad.bio_adopt='BIOLOGICAL'")
@@ -155,7 +163,12 @@ public class CommonQueryBuilder extends BaseQueryBuilder {
 	
 	public String getQueryConditionAdptn() {
 		return QUERYCONDITIONADPTN;
-	}	
+	}
+	
+	public String getQueryConditionAdptnReg() {
+		return QUERYCONDITIONADPTNREGISTRY;
+	}
+	
 	public String getQueryConditionNac() {
 		return QUERYCONDITIONNAC;
 	}	

@@ -60,9 +60,11 @@ public class AdoptionController {
         //Download certificate when Approved
         
         if(request.getAdoptionDetails().get(0).getIsWorkflow()) {
+        	System.out.println("status  :"+adoptionApplicationDetails.get(0).getApplicationStatus());
+        	System.out.println("status  :"+adoptionApplicationDetails.get(0).getAction());
         if((adoptionApplicationDetails.get(0).getApplicationStatus().equals(STATUS_APPROVED)  && adoptionApplicationDetails.get(0).getAction().equals(WF_APPROVE))){
             RegisterBirthDetailsRequest registerBirthDetailsRequest = registryReq.createRegistryRequestNew(request);
-            
+            System.out.println("status  :"+registerBirthDetailsRequest.getRegisterBirthDetails().size());
             if (registerBirthDetailsRequest.getRegisterBirthDetails().size() == 1) {
                 registerBirthService.saveRegisterBirthDetails(registerBirthDetailsRequest);
             }
