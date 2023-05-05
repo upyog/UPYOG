@@ -100,6 +100,14 @@ public class AdoptionEnrichment implements BaseEnrichment {
             if ((birth.getApplicationStatus() == "APPROVED" && birth.getAction() == "APPROVE")) {
                 setRegistrationNumber(request);
             }
+            if(birth.getParentsDetails() != null) {
+                if(!birth.getParentsDetails().getIsFatherInfoMissing()){
+                    birth.getParentsDetails().setFatherBioAdopt("ADOPT");
+                }
+                if(!birth.getParentsDetails().getIsMotherInfoMissing()){
+                    birth.getParentsDetails().setMotherBioAdopt("ADOPT");
+                }
+            }
         });
       //  setRegistrationNumber(request); 
         setPresentAddress(request);
