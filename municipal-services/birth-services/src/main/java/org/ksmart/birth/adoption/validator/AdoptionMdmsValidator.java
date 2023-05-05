@@ -66,12 +66,9 @@ public class AdoptionMdmsValidator {
         Map<String, String> errorMap = new ConcurrentHashMap<>();
         request.getAdoptionDetails()
                 .forEach(birth -> {
-//                	if(birth.getPregnancyDuration() == null) {
-//                		  errorMap.put(BIRTH_DURATION, "Duration of pregnancy required");
-//                	}
-//                	 
+              	 
                 	  
-                    if(birth.getParentAddress() != null) {
+                    if(birth.getParentsDetails() != null) {
                         String religionCode = birth.getParentsDetails().getReligionId();
                         if (log.isDebugEnabled()) {
                         log.debug("Religion code : \n{}", religionCode);
@@ -150,7 +147,7 @@ public class AdoptionMdmsValidator {
                         }
 
                     }
-                    System.out.println("master  :"+birth.getPlaceofBirthId());
+                     
                     if(birth.getPlaceofBirthId().contains(BIRTH_PLACE_HOSPITAL)) {
                     	
                     	 String hospCode= birth.getHospitalId();   
@@ -165,39 +162,107 @@ public class AdoptionMdmsValidator {
 
                     }
                   
-                    if(birth.getPlaceofBirthId().contains(BIRTH_PLACE_HOME)) {
-                        String postOfficeCodePlace = birth.getAdrsPostOffice();
-                        if (log.isDebugEnabled()) {
-                            log.debug("Postoffice code : \n{}", postOfficeCodePlace);
-                            if (CollectionUtils.isEmpty(postOfficeCodes) || !postOfficeCodes.contains(postOfficeCodePlace)) {
-                                errorMap.put(COMMON_MDMS_POSTOFFICE, "The Postoffice code '" + postOfficeCodePlace + "' does not exists");
-                            }
-                        }
-
-                    }
+                 
 
                     if(birth.getParentAddress() != null) {
                         String talukCodePresent = birth.getParentAddress().getPresentInsideKeralaTaluk();
+                        if (log.isDebugEnabled()) {
+                            log.debug("Taulk code Present: \n{}", talukCodePresent);
+                        }
+	                    if (CollectionUtils.isEmpty(talukCodes) || !talukCodes.contains(talukCodePresent)) {
+	                      errorMap.put(COMMON_MDMS_TALUK, "The Taulk code Present'" + talukCodePresent + "' does not exists");
+	                     }
+                        
                         String talukCodePermanent = birth.getParentAddress().getPermntInKeralaAdrTaluk();
+                        
+                        if (log.isDebugEnabled()) {
+                            log.debug("Taulk code Permanent: \n{}", talukCodePermanent);
+                        }
+
+                        if (CollectionUtils.isEmpty(talukCodes) || !talukCodes.contains(talukCodePermanent)) {
+                            errorMap.put(COMMON_MDMS_TALUK, "The Taulk code Permanent'" + talukCodePermanent + "' does not exists");
+                        }
 
                         String villageCodePresent = birth.getParentAddress().getPresentInsideKeralaVillage();
+                        
+                        if (log.isDebugEnabled()) {
+                            log.debug("Village code : \n{}", villageCodePresent);
+                        }     
+                        if (CollectionUtils.isEmpty(villageCodes) || !villageCodes.contains(villageCodePresent)) {
+                            errorMap.put(COMMON_MDMS_VILLAGE, "The Village code '" + villageCodePresent + "' does not exists");
+                        }
+                        
                         String villageCodePermanent = birth.getParentAddress().getPermntInKeralaAdrVillage();
+                        if (log.isDebugEnabled()) {
+                            log.debug("Village code : \n{}", villageCodePermanent);
+                        }  
+                        if (CollectionUtils.isEmpty(villageCodes) || !villageCodes.contains(villageCodePermanent)) {
+                          errorMap.put(COMMON_MDMS_VILLAGE, "The Village code '" + villageCodePermanent + "' does not exists");
+                       }
 
                         String districtInKeralaCodePresent = birth.getParentAddress().getPresentInsideKeralaDistrict();
+                        if (log.isDebugEnabled()) {
+                        	log.debug("District code : \n{}", districtInKeralaCodePresent);
+                        }
+                       if (CollectionUtils.isEmpty(districtCodes) || !districtCodes.contains(districtInKeralaCodePresent)) {
+                    	   errorMap.put(COMMON_MDMS_DISTRICT, "The District code '" + districtInKeralaCodePresent + "' does not exists");
+                       }
                         String districtInKeralaCodePermanent = birth.getParentAddress().getPermntInKeralaAdrDistrict();
+                       if (log.isDebugEnabled()) {
+                    	   log.debug("District code : \n{}", districtInKeralaCodePermanent);
+                       }
+                       if (CollectionUtils.isEmpty(districtCodes) || !districtCodes.contains(districtInKeralaCodePermanent)) {
+                    	  errorMap.put(COMMON_MDMS_DISTRICT, "The District code '" + districtInKeralaCodePermanent + "' does not exists");
+                       }
 
                         String districtOutKeralaCodePresent = birth.getParentAddress().getPresentOutsideKeralaDistrict();
                         String districtOutKeralaCodePermanent = birth.getParentAddress().getPermntOutsideKeralaDistrict();
 
                         String stateCodesPresent = birth.getParentAddress().getPresentaddressStateName();
+	                    if (log.isDebugEnabled()) {
+	                      log.debug("State code Present: \n{}", stateCodesPresent);
+	                    }
+	                    if (CollectionUtils.isEmpty(stateCodes) || !stateCodes.contains(stateCodesPresent)) {
+	                    	errorMap.put(COMMON_MDMS_STATE, "The State code Present'" + stateCodesPresent + "' does not exists");
+	                    }
                         String stateCodesPermanent = birth.getParentAddress().getPermtaddressStateName();
+                        if (log.isDebugEnabled()) {
+                        	log.debug("State code Permanent: \n{}", stateCodesPermanent);
+                        }
+                       if (CollectionUtils.isEmpty(stateCodes) || !stateCodes.contains(stateCodesPermanent)) {
+                    	   errorMap.put(COMMON_MDMS_STATE, "The State code Permanent'" + stateCodesPermanent + "' does not exists");
+                       }
 
                         String countryCodesPresent = birth.getParentAddress().getPresentaddressCountry();
+                        if (log.isDebugEnabled()) {
+                            log.debug("Country code Present: \n{}", countryCodesPresent);
+                        }
+                        if (CollectionUtils.isEmpty(countryCodes) || !countryCodes.contains(countryCodesPresent)) {
+                        	errorMap.put(COMMON_MDMS_COUNTRY, "The Country code Present'" + countryCodesPresent + "' does not exists");
+                        }
                         String countryCodesPermanent = birth.getParentAddress().getPermtaddressCountry();
+                        if (log.isDebugEnabled()) {
+                        	log.debug("Country code Permanent: \n{}", countryCodesPermanent);
+                        }
+                       if (CollectionUtils.isEmpty(countryCodes) || !countryCodes.contains(countryCodesPermanent)) {
+                    	   errorMap.put(COMMON_MDMS_COUNTRY, "The Country code Permanent'" + countryCodesPermanent + "' does not exists");
+                       }
 
 
-                    String postOfficeCodePresent = birth.getParentAddress().getPresentInsideKeralaPostOffice();
-                    String postOfficeCodePermanent = birth.getParentAddress().getPermntInKeralaAdrPostOffice();
+                       String postOfficeCodePresent = birth.getParentAddress().getPresentInsideKeralaPostOffice();
+                       if (log.isDebugEnabled()) {
+                           log.debug("Village code : \n{}", postOfficeCodePresent);
+                       } 
+	                   if (CollectionUtils.isEmpty(postOfficeCodes) || !postOfficeCodes.contains(postOfficeCodePresent)) {
+	                	   errorMap.put(COMMON_MDMS_POSTOFFICE, "The Postoffice code '" + postOfficeCodePresent + "' does not exists");
+	                   }
+                       String postOfficeCodePermanent = birth.getParentAddress().getPermntInKeralaAdrPostOffice();
+                       if (log.isDebugEnabled()) {
+                    	   log.debug("Postoffice code : \n{}", postOfficeCodePermanent);
+                       }
+                       if (CollectionUtils.isEmpty(postOfficeCodes) || !postOfficeCodes.contains(postOfficeCodePermanent)) {
+                    	   errorMap.put(COMMON_MDMS_POSTOFFICE, "The Postoffice code '" + postOfficeCodePermanent + "' does not exists");
+                       }
 
 
                     }

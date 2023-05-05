@@ -80,7 +80,8 @@ public class NacResponseEnrichment {
 	                            //Local Body
 	                            nac.getParentAddress().setPermntInKeralaAdrLBNameEn(mdmsTenantService.getTenantNameEn(mdmsData, nac.getParentAddress().getPermntInKeralaAdrLBName()));
 	                            nac.getParentAddress().setPermntInKeralaAdrLBNameMl(mdmsTenantService.getTenantNameMl(mdmsData, nac.getParentAddress().getPermntInKeralaAdrLBName()));
-
+	                            System.out.println("taluk  "+nac.getParentAddress().getPermntInKeralaAdrLBNameEn());
+	                            System.out.println("taluk  "+mdmsTenantService.getTenantNameMl(mdmsData, nac.getParentAddress().getPermntInKeralaAdrLBName()));
 	                            //Post Office
 	                            nac.getParentAddress().setPermntInKeralaAdrPostOfficeEn(mdmsTenantService.getPostOfficeNameEn(mdmsData, nac.getParentAddress().getPermntInKeralaAdrPostOffice()));
 	                            nac.getParentAddress().setPermntInKeralaAdrPostOfficeMl(mdmsTenantService.getPostOfficeNameMl(mdmsData, nac.getParentAddress().getPermntInKeralaAdrPostOffice()));
@@ -155,9 +156,10 @@ public class NacResponseEnrichment {
 
 	                            //Taluk
 	                           // birth.getParentAddress().setPresentInsideKeralaTaluk(birth.getParentAddress().setPresentInsideKeralaTaluk());
+	                           
 	                            nac.getParentAddress().setPresentInsideKeralaTalukEn(mdmsTenantService.getTalukNameEn(mdmsData, nac.getParentAddress().getPresentInsideKeralaTaluk()));
 	                            nac.getParentAddress().setPresentInsideKeralaTalukMl(mdmsTenantService.getTalukNameMl(mdmsData, nac.getParentAddress().getPresentInsideKeralaTaluk()));
-
+	                           
 	                            //village
 	                            nac.getParentAddress().setPresentInsideKeralaVillageEn(mdmsTenantService.getVillageNameEn(mdmsData, nac.getParentAddress().getPresentInsideKeralaVillage()));
 	                            nac.getParentAddress().setPresentInsideKeralaVillageMl(mdmsTenantService.getVillageNameMl(mdmsData, nac.getParentAddress().getPresentInsideKeralaVillage()));

@@ -257,9 +257,9 @@ serviceMaps:
           jsonMaps:
             - jsonPath: $.NacDetails.*.AddressBirthDetails.permanentUuid
 
-            - jsonPath: $.NacDetails.*.AddressBirthDetails.houseNameNoEnPermanent
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.permntInKeralaAdrHouseNameEn
 
-            - jsonPath: $.NacDetails.*.AddressBirthDetails.houseNameNoMlPermanent
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.permntInKeralaAdrHouseNameMl
 
             - jsonPath: $.NacDetails.*.AddressBirthDetails.permntOutsideIndiaLineoneEn
 
@@ -277,15 +277,15 @@ serviceMaps:
 
             - jsonPath: $.NacDetails.*.AddressBirthDetails.permntInKeralaAdrTaluk
 
-            - jsonPath: $.NacDetails.*.AddressBirthDetails.districtIdPermanent
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.permntInKeralaAdrDistrict
 
-            - jsonPath: $.NacDetails.*.AddressBirthDetails.stateIdPermanent
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.permtaddressStateName
 
             - jsonPath: $.NacDetails.*.AddressBirthDetails.permntInKeralaAdrPostOffice
 
             - jsonPath: $.NacDetails.*.AddressBirthDetails.permntInKeralaAdrPincode
 
-            - jsonPath: $.NacDetails.*.AddressBirthDetails.countryIdPermanent
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.permtaddressCountry
 
             - jsonPath: $.NacDetails.*.id
 
@@ -303,17 +303,17 @@ serviceMaps:
 
             - jsonPath: $.NacDetails.*.AddressBirthDetails.permntOutsideKeralaTaluk
 
-            - jsonPath: $.NacDetails.*.AddressBirthDetails.villageNamePermanent
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.permntOutsideKeralaVillage
 
             - jsonPath: $.NacDetails.*.AddressBirthDetails.permntInKeralaWardNo
 
-            - jsonPath: $.NacDetails.*.AddressBirthDetails.localityEnPermanent
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.permntInKeralaAdrLocalityNameEn
 
-            - jsonPath: $.NacDetails.*.AddressBirthDetails.localityMlPermanent
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.permntInKeralaAdrLocalityNameMl
 
-            - jsonPath: $.NacDetails.*.AddressBirthDetails.streetNameEnPermanent
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.permntInKeralaAdrStreetNameEn
 
-            - jsonPath: $.NacDetails.*.AddressBirthDetails.streetNameMlPermanent
+            - jsonPath: $.NacDetails.*.AddressBirthDetails.permntInKeralaAdrStreetNameMl
 
             - jsonPath: $.NacDetails.*.AddressBirthDetails.permanentOutsideIndiaPostCode
 

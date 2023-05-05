@@ -112,6 +112,24 @@ public class AdoptionQueryBuilder extends BaseAdoptionQuery {
 	                .append(commonQueryBuilder.getQueryConditionAdptn()).toString();
 	        return query;
 	    }
+	 public StringBuilder prepareRegistrySearchQuery() {
+	        StringBuilder query = new StringBuilder(QUERY);
+	        query.append(commonQueryBuilder.getQueryMain())
+	                .append(",")
+	                .append(commonQueryBuilder.getQueryPlaceOfEvent())
+	                .append(",")
+	                .append(commonQueryBuilder.getQueryFaterInfo())
+	                .append(",")
+	                .append(commonQueryBuilder.getQueryMoterInfo())
+	                .append(",")
+	                .append(commonQueryBuilder.getQueryPresent())
+	                .append(",")
+	                .append(commonQueryBuilder.getQueryPermanant())
+	                .append(",")
+	                .append(commonQueryBuilder.getQueryStat())	                
+	                .append(commonQueryBuilder.getQueryConditionAdptnReg()).toString();
+	        return query;
+	    }
 	 
 	 public StringBuilder prepareSearchCriteria(@NotNull SearchCriteria criteria, StringBuilder query, @NotNull List<Object> preparedStmtValues) {
 	        addFilter("ebd.id", criteria.getId(), query, preparedStmtValues);
@@ -175,7 +193,7 @@ public class AdoptionQueryBuilder extends BaseAdoptionQuery {
 			return query.toString();
 	}
     public String getApplicationSearchQueryForRegistry(@NotNull SearchCriteria criteria, @NotNull List<Object> preparedStmtValues) {
-        StringBuilder query = prepareSearchQuery();
+        StringBuilder query = prepareRegistrySearchQuery();
         prepareSearchCriteria(criteria, query, preparedStmtValues);
         prepareOrderBy(criteria, query, preparedStmtValues);
         return query.toString();
