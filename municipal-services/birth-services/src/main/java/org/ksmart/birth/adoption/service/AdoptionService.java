@@ -55,7 +55,11 @@ public class AdoptionService {
     }
 
     public List<AdoptionApplication> updateAdoptionBirthDetails(AdoptionDetailRequest request) {
-    	
+        Object mdmsData = mdmsUtil.mdmsCall(request.getRequestInfo());
+        Object mdmsDataLoc = mdmsUtil.mdmsCallForLocation(request.getRequestInfo(), request.getAdoptionDetails().get(0).getTenantId());
+        // validate request
+        validator.validateUpdate(request, mdmsData,mdmsDataLoc);
+
     	adoptionEnrichment.enrichUpdate(request);
     	
     	 if(request.getAdoptionDetails().get(0).getIsWorkflow()) {
