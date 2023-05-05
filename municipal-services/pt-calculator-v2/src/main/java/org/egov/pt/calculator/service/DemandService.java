@@ -453,7 +453,8 @@ public class DemandService {
 				.filter(t -> demand.getTaxPeriodFrom().compareTo(t.getFromDate()) >= 0
 				&& demand.getTaxPeriodTo().compareTo(t.getToDate()) <= 0)
 		.findAny().orElse(null);
-		
+		log.info("Demand TaxPeriod from and To are :::::::::::::"+demand.getTaxPeriodFrom()+","+demand.getTaxPeriodTo());
+		log.info("Tax Period matching issssss", taxPeriod);
 		if(!(taxPeriod.getFromDate()<= System.currentTimeMillis() && taxPeriod.getToDate() >= System.currentTimeMillis()))
 			isCurrentDemand = true;
 		/*
