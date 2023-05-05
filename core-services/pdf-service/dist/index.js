@@ -156,8 +156,7 @@ var fontDescriptors = {
   },
   Roboto: {
     bold: "src/fonts/Roboto-Bold.ttf",
-    normal: "src/fonts/Roboto-Regular.ttf",
-    italics: "src/fonts/Roboto-Italic.ttf",
+    normal: "src/fonts/Roboto-Regular.ttf"
   },
   BalooBhaina: {
     normal: "src/fonts/BalooBhaina2-Regular.ttf",
@@ -178,16 +177,22 @@ var fontDescriptors = {
     bold: "src/fonts/NotoSansMalayalam-Bold.ttf"
   },
   Meera: {
-    normal: "src/fonts/Meera.ttf"
+    normal: "src/fonts/Meera.ttf",
+    bold: "src/fonts/Meera.ttf",
+    italics: "src/fonts/Meera.ttf",
+    bolditalics: "src/fonts/Meera.ttf"
+  },
+  Thumba: {
+    normal: "src/fonts/THUMBA.ttf",
+    bold: "src/fonts/THUMBA-Bold.ttf",
+    italics: "src/fonts/THUMBA_ITALIC.ttf",
+    bolditalics: "src/fonts/THUMBA-BoldItalic.ttf"
   }
 };
 
 var defaultFontMapping = {
   en_IN: 'default',
-  hi_IN: 'default',
-  pn_IN: 'BalooPaaji',
-  od_IN: 'BalooBhaina',
-  ml_IN: 'Meera'
+  ml_IN: 'default'
 };
 
 var printer = new pdfMakePrinter(fontDescriptors);
@@ -281,6 +286,7 @@ var uploadFiles = function () {
               listDocDefinition.forEach(function (docDefinition) {
                 docDefinition["content"].forEach(function (defn) {
                   var formatobject = JSON.parse(JSON.stringify(formatconfig));
+                  console.log(formatobject);
                   formatobject["content"] = defn;
                   convertedListDocDefinition.push(formatobject);
                 });
@@ -294,6 +300,8 @@ var uploadFiles = function () {
               // in multiple places
               var objectCopy = JSON.parse(JSON.stringify(docDefinition));
               // restoring footer because JSON.stringify destroys function() values
+              console.log("format footer-------");
+              console.log(formatconfig.footer);
               objectCopy.footer = (0, _commons.convertFooterStringtoFunctionIfExist)(formatconfig.footer);
               var doc = printer.createPdfKitDocument(objectCopy);
               var fileNameAppend = "-" + new Date().getTime();
@@ -458,6 +466,9 @@ app.post("/pdf-service/v1/_createnosave", (0, _expressAsyncHandler2.default)(fun
             key = req.query.key;
             tenantId = req.query.tenantId;
             formatconfig = formatConfigMap[key];
+
+            console.log("printing format config--------");
+            console.log(formatconfig);
             dataconfig = dataConfigMap[key];
 
             _logger2.default.info("received createnosave request on key: " + key);
@@ -467,14 +478,14 @@ app.post("/pdf-service/v1/_createnosave", (0, _expressAsyncHandler2.default)(fun
             valid = validateRequest(req, res, key, tenantId, requestInfo);
 
             if (!valid) {
-              _context4.next = 26;
+              _context4.next = 30;
               break;
             }
 
-            _context4.next = 13;
+            _context4.next = 15;
             return prepareBegin(key, req, requestInfo, true, formatconfig, dataconfig);
 
-          case 13:
+          case 15:
             _ref5 = _context4.sent;
             _ref6 = (0, _slicedToArray3.default)(_ref5, 3);
             formatConfigByFile = _ref6[0];
@@ -482,6 +493,8 @@ app.post("/pdf-service/v1/_createnosave", (0, _expressAsyncHandler2.default)(fun
             entityIds = _ref6[2];
 
             // restoring footer function
+            console.log("---footer");
+            console.log(formatconfig.footer);
             formatConfigByFile[0].footer = (0, _commons.convertFooterStringtoFunctionIfExist)(formatconfig.footer);
             doc = printer.createPdfKitDocument(formatConfigByFile[0]);
             fileNameAppend = "-" + new Date().getTime();
@@ -504,12 +517,12 @@ app.post("/pdf-service/v1/_createnosave", (0, _expressAsyncHandler2.default)(fun
             });
             doc.end();
 
-          case 26:
-            _context4.next = 33;
+          case 30:
+            _context4.next = 37;
             break;
 
-          case 28:
-            _context4.prev = 28;
+          case 32:
+            _context4.prev = 32;
             _context4.t0 = _context4["catch"](1);
 
             _logger2.default.error(_context4.t0.stack || _context4.t0);
@@ -518,12 +531,12 @@ app.post("/pdf-service/v1/_createnosave", (0, _expressAsyncHandler2.default)(fun
               message: "some unknown error while creating: " + _context4.t0.message
             });
 
-          case 33:
+          case 37:
           case "end":
             return _context4.stop();
         }
       }
-    }, _callee4, undefined, [[1, 28]]);
+    }, _callee4, undefined, [[1, 32]]);
   }));
 
   return function (_x32, _x33) {
@@ -822,7 +835,7 @@ app.listen(serverport, function () {
 var createAndSave = exports.createAndSave = function () {
   var _ref12 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee10(req, res, successCallback, errorCallback) {
     var starttime, topic, key, tenantId, formatconfigNew, dataconfig, userid, requestInfo, documentType, moduleName, formatconfig, valid, _ref13, _ref14, formatConfigByFile, totalobjectcount, entityIds, locale;
-    console.log(" inside createAndSave method");
+
     return _regenerator2.default.wrap(function _callee10$(_context10) {
       while (1) {
         switch (_context10.prev = _context10.next) {

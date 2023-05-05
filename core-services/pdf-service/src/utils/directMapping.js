@@ -96,8 +96,8 @@ export const directMapping = async (
       variableTovalueMap[directArr[i].jPath] = fun(directArr[i].val[0]);
     } else if (directArr[i].type == "image") {
       try {
-        // console.log("url ------ > ");
-        // console.log( directArr[i]);
+        console.log("url ------ > ");
+        console.log( directArr[i]);
         if(directArr[i].val!=undefined){
         console.log( directArr[i].val.length);
         }

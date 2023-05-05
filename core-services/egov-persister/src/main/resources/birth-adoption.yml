@@ -553,31 +553,36 @@ serviceMaps:
 
             - jsonPath: $.AdoptionDetails.*.AdoptionDocuments.*.auditDetails.lastModifiedTime      
 
+
+
     - version: 1.0
       description: Persists update birth adoption details in eg_birth_details  table
       fromTopic: update-birth-adoption-topic
       isTransaction: true
       queryMaps:
-          - query: UPDATE public.eg_birth_details SET dateofreport=?, dateofbirth=?, timeofbirth=?, am_pm=?, firstname_en=?, firstname_ml=?, middlename_en=?,
-              middlename_ml=?, lastname_en=?, lastname_ml=?, tenantid=?, gender=?, remarks_en=?, remarks_ml=?, aadharno=?, esign_user_code=?,
-              esign_user_desig_code=?, is_adopted=?, is_abandoned=?, is_multiple_birth=?, is_father_info_missing=?, is_mother_info_missing=?,
-              applicationtype=?, businessservice=?,
-              workflowcode=?, fm_fileno=?, file_date=?, file_status=?,  registrationno=?, registration_date=?, action=?, status=?,
-              lastmodifiedtime=?, lastmodifiedby=?, adopt_deed_order_no=?, adopt_dateoforder_deed=?, adopt_issuing_auththority=?, adopt_has_agency=?,
-              adopt_agency_name=?, adopt_agency_address=? ,
-               adopt_decree_order_no=?,adopt_dateoforder_decree=?,adopt_agency_contact_person=?,adopt_agency_contact_person_mobileno=?
-              WHERE id=?;
+          - query: INSERT INTO eg_birth_details_audit SELECT * FROM eg_birth_details WHERE id = ?;
+            basePath: AdoptionDetails.*
+            jsonMaps:
+              - jsonPath: $.AdoptionDetails.*.id
+
+          - query: UPDATE public.eg_birth_details SET  dateofreport=?, dateofbirth=?, timeofbirth=?, am_pm=?, firstname_en=?, firstname_ml=?, middlename_en=?, middlename_ml=?,
+              lastname_en=?, lastname_ml=?, tenantid=?,
+              gender=?, remarks_en=?, remarks_ml=?, aadharno=?, esign_user_code=?, esign_user_desig_code=?, is_adopted=?, is_abandoned=?, is_multiple_birth=?, is_father_info_missing=?, is_mother_info_missing=?,
+              applicationtype=?, businessservice=?, workflowcode=?, fm_fileno=?, file_date=?, file_status=?, applicationno=?, registrationno=?, registration_date=?,
+              action=?, status=?,  lastmodifiedtime=?,  lastmodifiedby=?,
+              adopt_deed_order_no=?, adopt_dateoforder_deed=?, adopt_issuing_auththority=?, adopt_has_agency=?, adopt_agency_name=?, adopt_agency_address=?,
+              adopt_decree_order_no=?, adopt_dateoforder_decree=?, adopt_agency_contact_person=?, adopt_agency_contact_person_mobileno=?, old_birth_reg_no=? where id=?;
 
             basePath: AdoptionDetails.*
             jsonMaps:
-            
+
               - jsonPath: $.AdoptionDetails.*.dateofreport
 
               - jsonPath: $.AdoptionDetails.*.childDOB
 
               - jsonPath: $.AdoptionDetails.*.birthDateTime
 
-              - jsonPath: $.AdoptionDetails.*.am_pm     
+              - jsonPath: $.AdoptionDetails.*.am_pm
 
               - jsonPath: $.AdoptionDetails.*.childFirstNameEn
 
@@ -613,7 +618,7 @@ serviceMaps:
 
               - jsonPath: $.AdoptionDetails.*.ParentsDetails.isfatherInfo
 
-              - jsonPath: $.AdoptionDetails.*.ParentsDetails.ismotherInfo            
+              - jsonPath: $.AdoptionDetails.*.ParentsDetails.ismotherInfo
 
               - jsonPath: $.AdoptionDetails.*.applicationtype
 
@@ -626,7 +631,9 @@ serviceMaps:
               - jsonPath: $.AdoptionDetails.*.fileDate
 
               - jsonPath: $.AdoptionDetails.*.fileStatus
-              
+
+              - jsonPath: $.AdoptionDetails.*.applicationNumber
+
               - jsonPath: $.AdoptionDetails.*.registrationno
 
               - jsonPath: $.AdoptionDetails.*.registration_date
@@ -637,405 +644,437 @@ serviceMaps:
 
               - jsonPath: $.AdoptionDetails.*.auditDetails.lastModifiedTime
 
-              - jsonPath: $.AdoptionDetails.*.auditDetails.lastModifiedBy              
+              - jsonPath: $.AdoptionDetails.*.auditDetails.lastModifiedBy
 
               - jsonPath: $.AdoptionDetails.*.adoptdeedorderno
-           
+
               - jsonPath: $.AdoptionDetails.*.adoptdateoforderdeed
-           
+
               - jsonPath: $.AdoptionDetails.*.adoptissuingauththority
-           
+
               - jsonPath: $.AdoptionDetails.*.adopthasagency
-           
+
               - jsonPath: $.AdoptionDetails.*.adoptagencyname
-           
-              - jsonPath: $.AdoptionDetails.*.adoptagencyaddress 
-            
-              - jsonPath: $.AdoptionDetails.*.adoptdecreeorderno 
-             
-              - jsonPath: $.AdoptionDetails.*.adoptdateoforderdecree 
-              
-              - jsonPath: $.AdoptionDetails.*.adoptagencycontactperson 
-            
-              - jsonPath: $.AdoptionDetails.*.adoptagencycontactpersonmobileno 
+
+              - jsonPath: $.AdoptionDetails.*.adoptagencyaddress
+
+              - jsonPath: $.AdoptionDetails.*.adoptdecreeorderno
+
+              - jsonPath: $.AdoptionDetails.*.adoptdateoforderdecree
+
+              - jsonPath: $.AdoptionDetails.*.adoptagencycontactperson
+
+              - jsonPath: $.AdoptionDetails.*.adoptagencycontactpersonmobileno
+
+              - jsonPath: $.AdoptionDetails.*.oldregistrationno
+              - jsonPath: $.AdoptionDetails.*.id
+
+          - query: INSERT INTO eg_birth_place_audit SELECT * FROM eg_birth_place WHERE birthdtlid = ?;
+            basePath: AdoptionDetails.*
+            jsonMaps:
+              - jsonPath: $.AdoptionDetails.*.id
+
+          - query: UPDATE public.eg_birth_place SET placeofbirthid=?, hospitalid=?, public_place_id=?, institution_type_id=?, institution_id=?, vehicletypeid=?, vehicle_registration_no=?, vehicle_from_en=?,
+              vehicle_to_en=?, vehicle_from_ml=?,  vehicle_to_ml=?, vehicle_admit_hospital_en=?, ho_householder_en=?, ho_locality_en=?, ho_locality_ml=?, ho_street_name_en=?, ho_street_name_ml=?, ho_housename_en=?, ho_housename_ml=?, ho_villageid=?,
+              ho_talukid=?, ho_districtid=?, ho_stateid=?, ho_poid=?, ho_pinno=?, ho_countryid=?, ward_id=?, auth_officer_id=?, auth_officer_desig_id=?, oth_auth_officer_name=?, oth_auth_officer_desig=?,  informantsaddress_en=?,
+              informants_mobileno=?, informants_aadhaar_no=?, vehicle_haltplace_en=?, vehicle_hospitalid=?, lastmodifiedby=?, lastmodifiedtime=?, vehicle_haltplace_ml=?,
+              vehicle_desc=?, public_place_desc=?, public_locality_en=?, public_locality_ml=?, public_street_name_en=?, public_street_name_ml=? where birthdtlid=?;
+            basePath: AdoptionDetails.*
+            jsonMaps:
+
+              - jsonPath: $.AdoptionDetails.*.birthPlace
+
+              - jsonPath: $.AdoptionDetails.*.hospitalCode
+
+              - jsonPath: $.AdoptionDetails.*.publicPlaceType
+
+              - jsonPath: $.AdoptionDetails.*.institutionTypeCode
+
+              - jsonPath: $.AdoptionDetails.*.institutionNameCode
+
+              - jsonPath: $.AdoptionDetails.*.vehicleType
+
+              - jsonPath: $.AdoptionDetails.*.vehicleRegistrationNo
+
+              - jsonPath: $.AdoptionDetails.*.vehicleFromEn
+
+              - jsonPath: $.AdoptionDetails.*.vehicleToEn
+
+              - jsonPath: $.AdoptionDetails.*.vehicleFromMl
+
+              - jsonPath: $.AdoptionDetails.*.vehicleToMl
+
+              - jsonPath: $.AdoptionDetails.*.vehicle_admit_hospital_en
+
+              - jsonPath: $.AdoptionDetails.*.ho_householder_en
+
+              - jsonPath: $.AdoptionDetails.*.adrsLocalityNameEn
+
+              - jsonPath: $.AdoptionDetails.*.adrsLocalityNameMl
+
+              - jsonPath: $.AdoptionDetails.*.adrsStreetNameEn
+
+              - jsonPath: $.AdoptionDetails.*.adrsStreetNameMl
+
+              - jsonPath: $.AdoptionDetails.*.adrsHouseNameEn
+
+              - jsonPath: $.AdoptionDetails.*.adrsHouseNameMl
+
+              - jsonPath: $.AdoptionDetails.*.ho_villageid
+
+              - jsonPath: $.AdoptionDetails.*.ho_talukid
+
+              - jsonPath: $.AdoptionDetails.*.ho_districtid
+
+              - jsonPath: $.AdoptionDetails.*.ho_stateid
+
+              - jsonPath: $.AdoptionDetails.*.adrsPostOffice
+
+              - jsonPath: $.AdoptionDetails.*.adrsPincode
+
+              - jsonPath: $.AdoptionDetails.*.ho_countryid
+
+              - jsonPath: $.AdoptionDetails.*.wardNo
+
+              - jsonPath: $.AdoptionDetails.*.InformarHosInstDetails.infomantFirstNameEn
+
+              - jsonPath: $.AdoptionDetails.*.InformarHosInstDetails.informerDesi
+
+              - jsonPath: $.AdoptionDetails.*.InformarHosInstDetails.oth_auth_officer_name
+
+              - jsonPath: $.AdoptionDetails.*.InformarHosInstDetails.oth_auth_officer_desig
+
+              - jsonPath: $.AdoptionDetails.*.InformarHosInstDetails.informerAddress
+
+              - jsonPath: $.AdoptionDetails.*.InformarHosInstDetails.infomantMobile
+
+              - jsonPath: $.AdoptionDetails.*.InformarHosInstDetails.infomantAadhar
+
+              - jsonPath: $.AdoptionDetails.*.vehicleHaltPlace
+
+              - jsonPath: $.AdoptionDetails.*.setadmittedHospitalEn
+
+              - jsonPath: $.AdoptionDetails.*.auditDetails.lastModifiedBy
+
+              - jsonPath: $.AdoptionDetails.*.auditDetails.lastModifiedTime
+
+              - jsonPath: $.AdoptionDetails.*.vehicleHaltPlaceMl
+
+              - jsonPath: $.AdoptionDetails.*.vehicleDesDetailsEn
+
+              - jsonPath: $.AdoptionDetails.*.publicPlaceDecpEn
+
+              - jsonPath: $.AdoptionDetails.*.localityNameEn
+
+              - jsonPath: $.AdoptionDetails.*.localityNameMl
+
+              - jsonPath: $.AdoptionDetails.*.streetNameEn
+
+              - jsonPath: $.AdoptionDetails.*.streetNameMl
 
               - jsonPath: $.AdoptionDetails.*.id
-          - query: UPDATE public.eg_birth_place SET placeofbirthid=?, hospitalid=?, public_place_id=?, institution_type_id=?, institution_id=?, vehicletypeid=?, vehicle_registration_no=?, 
-                vehicle_from_en=?, vehicle_to_en=?, vehicle_from_ml=?, vehicle_to_ml=?, vehicle_admit_hospital_en=?, ho_householder_en=?, ho_householder_ml=?, ho_locality_en=?, 
-                ho_locality_ml=?, ho_street_name_en=?, ho_street_name_ml=?, ho_housename_en=?, ho_housename_ml=?, ho_villageid=?, ho_talukid=?, ho_districtid=?, ho_stateid=?, ho_poid=?, ho_pinno=?, 
-                ho_countryid=?, ward_id=?, auth_officer_id=?, auth_officer_desig_id=?, oth_auth_officer_name=?, oth_auth_officer_desig=?, 
-                informantsaddress_en=?, informants_mobileno=?, informants_aadhaar_no=?, vehicle_haltplace_en=?, vehicle_hospitalid=?, 
-                lastmodifiedby=?, lastmodifiedtime=?, vehicle_haltplace_ml=?, vehicle_desc=?, public_place_desc=?, 
-                public_locality_en=?, public_locality_ml=?, public_street_name_en=?, public_street_name_ml=?  WHERE  birthdtlid=?;
 
+          - query: INSERT INTO eg_birth_father_information_audit SELECT * FROM eg_birth_father_information WHERE birthdtlid = ?;
             basePath: AdoptionDetails.*
             jsonMaps:
-            - jsonPath: $.AdoptionDetails.*.birthPlace
+              - jsonPath: $.AdoptionDetails.*.id
 
-            - jsonPath: $.AdoptionDetails.*.hospitalCode
-
-            - jsonPath: $.AdoptionDetails.*.publicPlaceType
-
-            - jsonPath: $.AdoptionDetails.*.institutionTypeCode
-
-            - jsonPath: $.AdoptionDetails.*.institutionId
-
-            - jsonPath: $.AdoptionDetails.*.vehicleType
-
-            - jsonPath: $.AdoptionDetails.*.vehicleRegistrationNo
-
-            - jsonPath: $.AdoptionDetails.*.vehicleFromEn
-
-            - jsonPath: $.AdoptionDetails.*.vehicleToEn
-
-            - jsonPath: $.AdoptionDetails.*.vehicleFromMl
-
-            - jsonPath: $.AdoptionDetails.*.vehicleToMl
-
-            - jsonPath: $.AdoptionDetails.*.vehicle_admit_hospital_en
-
-            - jsonPath: $.AdoptionDetails.*.ho_householder_en
-
-            - jsonPath: $.AdoptionDetails.*.ho_householder_ml
-
-            - jsonPath: $.AdoptionDetails.*.adrsLocalityNameEn
-
-            - jsonPath: $.AdoptionDetails.*.adrsLocalityNameMl
-
-            - jsonPath: $.AdoptionDetails.*.adrsStreetNameEn
-
-            - jsonPath: $.AdoptionDetails.*.adrsStreetNameMl
-
-            - jsonPath: $.AdoptionDetails.*.adrsHouseNameEn
-
-            - jsonPath: $.AdoptionDetails.*.adrsHouseNameMl
-
-            - jsonPath: $.AdoptionDetails.*.ho_villageid
-
-            - jsonPath: $.AdoptionDetails.*.ho_talukid
-
-            - jsonPath: $.AdoptionDetails.*.ho_districtid
-
-            - jsonPath: $.AdoptionDetails.*.ho_stateid
-
-            - jsonPath: $.AdoptionDetails.*.adrsPostOffice
-
-            - jsonPath: $.AdoptionDetails.*.adrsPincode
-
-            - jsonPath: $.AdoptionDetails.*.ho_countryid
-
-            - jsonPath: $.AdoptionDetails.*.wardNo
-
-            - jsonPath: $.AdoptionDetails.*.InformarHosInstDetails.infomantFirstNameEn
-
-            - jsonPath: $.AdoptionDetails.*.InformarHosInstDetails.informerDesi
-
-            - jsonPath: $.AdoptionDetails.*.InformarHosInstDetails.oth_auth_officer_name
-
-            - jsonPath: $.AdoptionDetails.*.InformarHosInstDetails.oth_auth_officer_desig
-
-            - jsonPath: $.AdoptionDetails.*.InformarHosInstDetails.informerAddress
-
-            - jsonPath: $.AdoptionDetails.*.InformarHosInstDetails.infomantMobile
-
-            - jsonPath: $.AdoptionDetails.*.InformarHosInstDetails.infomantAadhar
-
-            - jsonPath: $.AdoptionDetails.*.vehicleHaltPlaceEn
-
-            - jsonPath: $.AdoptionDetails.*.setadmittedHospitalEn
-
-            - jsonPath: $.AdoptionDetails.*.auditDetails.lastModifiedBy
-
-            - jsonPath: $.AdoptionDetails.*.auditDetails.lastModifiedTime
-
-
-            - jsonPath: $.AdoptionDetails.*.vehicleHaltPlaceMl
-
-            - jsonPath: $.AdoptionDetails.*.vehicleDesDetailsEn
-
-            - jsonPath: $.AdoptionDetails.*.publicPlaceDecpEn
-
-            - jsonPath: $.AdoptionDetails.*.localityNameEn
-
-            - jsonPath: $.AdoptionDetails.*.localityNameMl
-
-            - jsonPath: $.AdoptionDetails.*.streetNameEn
-
-            - jsonPath: $.AdoptionDetails.*.streetNameMl
-
-            - jsonPath: $.AdoptionDetails.*.id
-
-
-          - query: UPDATE public.eg_birth_father_information SET firstname_en=?, firstname_ml=?, aadharno=?, ot_passportno=?,  lastmodifiedtime=?, lastmodifiedby=? WHERE birthdtlid=?;
+          - query: UPDATE public.eg_birth_father_information SET firstname_en=?,  firstname_ml=?,   aadharno=?,  lastmodifiedtime=?,  lastmodifiedby=?,  bio_adopt=?  where birthdtlid=?;
             basePath: AdoptionDetails.*.ParentsDetails
             jsonMaps:
 
-            - jsonPath: $.AdoptionDetails.*.ParentsDetails.fatherFirstNameEn
+              - jsonPath: $.AdoptionDetails.*.ParentsDetails.fatherFirstNameEn
 
-            - jsonPath: $.AdoptionDetails.*.ParentsDetails.fatherFirstNameMl
+              - jsonPath: $.AdoptionDetails.*.ParentsDetails.fatherFirstNameMl
 
-            - jsonPath: $.AdoptionDetails.*.ParentsDetails.fatherAadhar
+              - jsonPath: $.AdoptionDetails.*.ParentsDetails.fatherAadhar
 
-            - jsonPath: $.AdoptionDetails.*.ParentsDetails.fatherPassport
+              - jsonPath: $.AdoptionDetails.*.auditDetails.lastModifiedTime
 
-            - jsonPath: $.AdoptionDetails.*.auditDetails.lastModifiedTime
+              - jsonPath: $.AdoptionDetails.*.auditDetails.lastModifiedBy
 
-            - jsonPath: $.AdoptionDetails.*.auditDetails.lastModifiedBy
+              - jsonPath: $.AdoptionDetails.*.ParentsDetails.fatherBioAdopt
+              - jsonPath: $.AdoptionDetails.*.id
 
-            - jsonPath: $.AdoptionDetails.*.id
+          - query: INSERT INTO eg_birth_mother_information_audit SELECT * FROM eg_birth_mother_information WHERE birthdtlid = ?;
+            basePath: AdoptionDetails.*
+            jsonMaps:
+              - jsonPath: $.AdoptionDetails.*.id
 
-          - query: UPDATE public.eg_birth_mother_information SET firstname_en=?, firstname_ml=?,  aadharno=?, ot_passportno=?,  lastmodifiedtime=?, lastmodifiedby=? WHERE birthdtlid=?;
+          - query: UPDATE public.eg_birth_mother_information SET firstname_en=?,  firstname_ml=?,  aadharno=?, lastmodifiedtime=?,  lastmodifiedby=?,  bio_adopt=?  where birthdtlid=?
 
             basePath: AdoptionDetails.*.ParentsDetails
             jsonMaps:
+              - jsonPath: $.AdoptionDetails.*.ParentsDetails.motherFirstNameEn
 
-            - jsonPath: $.AdoptionDetails.*.ParentsDetails.motherFirstNameEn
+              - jsonPath: $.AdoptionDetails.*.ParentsDetails.motherFirstNameMl
 
-            - jsonPath: $.AdoptionDetails.*.ParentsDetails.motherFirstNameMl
+              - jsonPath: $.AdoptionDetails.*.ParentsDetails.motherAadhar
 
-            - jsonPath: $.AdoptionDetails.*.ParentsDetails.motherAadhar
+              - jsonPath: $.AdoptionDetails.*.auditDetails.lastModifiedTime
 
-            - jsonPath: $.AdoptionDetails.*.ParentsDetails.motherPassport
+              - jsonPath: $.AdoptionDetails.*.auditDetails.lastModifiedBy,
 
-            - jsonPath: $.AdoptionDetails.*.auditDetails.lastModifiedTime
+              - jsonPath: $.AdoptionDetails.*.ParentsDetails.motherBioAdopt
 
-            - jsonPath: $.AdoptionDetails.*.auditDetails.lastModifiedBy
+              - jsonPath: $.AdoptionDetails.*.id
 
-            - jsonPath: $.AdoptionDetails.*.id
-
-
-          - query: UPDATE public.eg_birth_permanent_address SET  housename_no_en=?, housename_no_ml=?, ot_address1_en=?, ot_address1_ml=?,
-                   ot_address2_en=?, ot_address2_ml=?, ot_state_region_province_en=?, villageid=?, tenantid=?, talukid=?, ward_code=?,
-                   districtid=?, stateid=?, poid=?, pinno=?, countryid=?, bio_adopt=?, taluk_name=?, same_as_present=?, locality_en=?, locality_ml=?,
-                   street_name_en=?, street_name_ml=?, ot_zipcode=?, lastmodifiedby=?, lastmodifiedtime=?, family_emailid=?, family_mobileno=?, postoffice_en=?,
-                   postoffice_ml=?, village_name=? WHERE birthdtlid=?;
-
-            basePath: AdoptionDetails.*.AddressBirthDetails
-            jsonMaps:
-
-            - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.houseNameNoEnPermanent
-
-            - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.houseNameNoMlPermanent
-
-            - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.PermntOutsideIndiaLineoneEn
-
-            - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.PermntOutsideIndiaLineoneMl
-
-            - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.PermntOutsideIndiaLinetwoEn
-
-            - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.PermntOutsideIndiaLinetwoMl
-
-            - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.PermntOutsideIndiaprovinceEn
-
-            - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.permntInKeralaAdrVillage
-
-            - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.permntInKeralaAdrLBName
-
-            - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.permntInKeralaAdrTaluk
-
-            - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.permntInKeralaWardNo
-
-            - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.districtIdPermanent
-
-            - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.stateIdPermanent
-
-            - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.poNoPermanent
-
-            - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.pinNoPermanent
-
-            - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.countryIdPermanent
-
-            - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.bioAdoptPermanent
-
-            - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.permntOutsideKeralaTaluk
-
-            - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.isPrsentAddressInt
-
-            - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.localityEnPermanent
-
-            - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.localityMlPermanent
-
-            - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.streetNameEnPermanent
-
-            - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.streetNameMlPermanent
-
-            - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.PermanentOutsideIndiaPostCode
-
-            - jsonPath: $.AdoptionDetails.*.auditDetails.lastModifiedBy
-
-            - jsonPath: $.AdoptionDetails.*.auditDetails.lastModifiedTime
-
-            - jsonPath: $.AdoptionDetails.*.ParentsDetails.fatherEmail
-
-            - jsonPath: $.AdoptionDetails.*.ParentsDetails.fatherMobile
-
-            - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.permntOutsideKeralaPostOfficeEn
-
-            - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.permntOutsideKeralaPostOfficeMl
-
-            - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.villageNamePermanent
-
-            - jsonPath: $.AdoptionDetails.*.id
-
-
-          - query: UPDATE public.eg_birth_present_address SET housename_no_en=?, housename_no_ml=?, ot_address1_en=?,
-                   ot_address1_ml=?, ot_address2_en=?, ot_address2_ml=?, ot_state_region_province_en=?, ot_state_region_province_ml=?, villageid=?, tenantid=?,
-                   talukid=?, districtid=?, stateid=?, poid=?, pinno=?, countryid=?, bio_adopt=?, taluk_name=?, village_name=?, ward_code=?, 
-                   locality_en=?, locality_ml=?, street_name_en=?, street_name_ml=?, lastmodifiedby=?, lastmodifiedtime=?, ot_zipcode=?, postoffice_en=?, postoffice_ml=? WHERE birthdtlid=?;
-            basePath: AdoptionDetails.*.AddressBirthDetails
-            jsonMaps:
-
-            - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.houseNameNoEnPresent
-
-            - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.houseNameNoMlPresent
-
-            - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.presentOutSideIndiaAdressEn
-
-            - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.presentOutSideIndiaAdressMl
-
-            - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.presentOutSideIndiaAdressEnB
-
-            - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.presentOutSideIndiaAdressMlB
-
-            - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.presentOutSideIndiaProvinceEn
-
-            - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.presentOutSideIndiaProvinceMl
-
-            - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.presentInsideKeralaVillage
-
-            - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.presentInsideKeralaLBName
-
-            - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.presentInsideKeralaTaluk
-
-            - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.districtIdPresent
-
-            - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.stateIdPresent
-
-            - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.presentInsideKeralaPostOffice
-
-            - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.pinNoPresent
-
-            - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.countryIdPresent
-
-            - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.bioAdoptPresent
-
-            - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.presentOutsideKeralaTaluk
-
-            - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.villageNamePresent
-
-            - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.presentWardNo
-
-            - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.localityEnPresent
-
-            - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.localityMlPresent
-
-            - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.streetNameEnPresent
-
-            - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.streetNameMlPresent
-
-            - jsonPath: $.AdoptionDetails.*.auditDetails.lastModifiedBy
-
-            - jsonPath: $.AdoptionDetails.*.auditDetails.lastModifiedTime
-
-            - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.poNoPresent
-
-            - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.presentOutsideKeralaPostOfficeEn
-
-            - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.presentOutsideKeralaPostOfficeMl
-
-            - jsonPath: $.AdoptionDetails.*.id
-
-
-          - query: UPDATE public.eg_birth_statitical_information SET  weight_of_child=?, duration_of_pregnancy_in_week=?, nature_of_medical_attention=?, cause_of_foetal_death=?,
-                   delivery_method=?, religionid=?, father_nationalityid=?, father_educationid=?, father_education_subid=?,
-                   father_proffessionid=?, mother_educationid=?, mother_education_subid=?, mother_proffessionid=?, mother_nationalityid=?, mother_age_marriage=?, mother_age_delivery=?,
-                   mother_no_of_birth_given=?, mother_maritalstatusid=?, mother_unmarried=?,mother_res_lbid=?, mother_res_lb_code_id=?, mother_res_place_type_id=?, mother_res_lb_type_id=?,
-                   mother_res_district_id=?, mother_res_state_id=?, mother_res_country_id=?, mother_resdnce_addr_type=?, mother_resdnce_tenant=?, mother_resdnce_placetype=?,
-                   mother_resdnce_place_en=?, mother_resdnce_place_ml=?, mother_resdnce_lbtype=?, mother_resdnce_district=?, mother_resdnce_state=?, mother_resdnce_country=?,
-                   mother_order_of_cur_delivery=?,mother_order_cur_child=?,mother_res_no_of_years=?,lastmodifiedtime=?, lastmodifiedby=? WHERE birthdtlid=?;
-
+          - query: INSERT INTO eg_birth_permanent_address_audit SELECT * FROM eg_birth_permanent_address WHERE birthdtlid = ?;
             basePath: AdoptionDetails.*
             jsonMaps:
+              - jsonPath: $.AdoptionDetails.*.id
 
-            - jsonPath: $.AdoptionDetails.*.birthWeight
+          - query: UPDATE public.eg_birth_permanent_address SET housename_no_en=?,  housename_no_ml=?,  ot_address1_en=?,  ot_address1_ml=?,  ot_address2_en=?,  ot_address2_ml=?, ot_state_region_province_en=?,
+              villageid=?,  tenantid=?,  talukid=?,  districtid=?,  stateid=?,  poid=?,  pinno=?,  countryid=?,  same_as_present=?, lastmodifiedtime=?,
+              lastmodifiedby=?,  bio_adopt=?,  taluk_name=?,  village_name=?,  ward_code=?,  locality_en=?,  locality_ml=?,  street_name_en=?,
+              street_name_ml=?,  ot_zipcode=?, family_emailid=?,  family_mobileno=?,  postoffice_en=?,  postoffice_ml=?  where birthdtlid=?;
+            basePath: AdoptionDetails.*.AddressBirthDetails
+            jsonMaps:
 
-            - jsonPath: $.AdoptionDetails.*.pregnancyDuration
+              - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.houseNameNoEnPermanent
 
-            - jsonPath: $.AdoptionDetails.*.medicalAttensionSub
+              - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.houseNameNoMlPermanent
 
-            - jsonPath: $.AdoptionDetails.*.causeFoetalDeath
+              - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.permntOutsideIndiaLineoneEn
 
-            - jsonPath: $.AdoptionDetails.*.deliveryMethods
+              - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.permntOutsideIndiaLineoneMl
 
-            - jsonPath: $.AdoptionDetails.*.ParentsDetails.Religion
+              - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.permntOutsideIndiaLinetwoEn
 
-            - jsonPath: $.AdoptionDetails.*.ParentsDetails.fatherNationality
+              - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.permntOutsideIndiaLinetwoMl
 
-            - jsonPath: $.AdoptionDetails.*.ParentsDetails.fatherEducation
+              - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.permntOutsideIndiaprovinceEn
 
-            - jsonPath: $.AdoptionDetails.*.birthStatistical.father_education_subid
+              - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.permntInKeralaAdrVillage
 
-            - jsonPath: $.AdoptionDetails.*.ParentsDetails.fatherProfession
-                        
-            - jsonPath: $.AdoptionDetails.*.ParentsDetails.motherEducation
+              - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.permntInKeralaAdrLBName
 
-            - jsonPath: $.AdoptionDetails.*.birthStatistical.mother_education_subid
+              - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.permntInKeralaAdrTaluk
 
-            - jsonPath: $.AdoptionDetails.*.ParentsDetails.motherProfession
+              - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.districtIdPermanent
 
-            - jsonPath: $.AdoptionDetails.*.ParentsDetails.motherNationality
+              - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.stateIdPermanent
 
-            - jsonPath: $.AdoptionDetails.*.ParentsDetails.motherMarriageAge
+              - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.permntInKeralaAdrPostOffice
 
-            - jsonPath: $.AdoptionDetails.*.ParentsDetails.motherMarriageBirth
+              - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.permntInKeralaAdrPincode
 
-            - jsonPath: $.AdoptionDetails.*.ParentsDetails.orderofChildren
+              - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.countryIdPermanent
 
-            - jsonPath: $.AdoptionDetails.*.ParentsDetails.motherMaritalStatus
+              - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.isPrsentAddressInt
 
-            - jsonPath: $.AdoptionDetails.*.ParentsDetails.mother_unmarried
+              - jsonPath: $.AdoptionDetails.*.auditDetails.lastModifiedTime
 
-            - jsonPath: $.AdoptionDetails.*.ParentsDetails.mother_res_lbid
+              - jsonPath: $.AdoptionDetails.*.auditDetails.lastModifiedBy
 
-            - jsonPath: $.AdoptionDetails.*.birthStatistical.mother_res_lb_code
+              - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.bioAdoptPermanent
 
-            - jsonPath: $.AdoptionDetails.*.birthStatistical.mother_res_place_type_id
+              - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.permntOutsideKeralaTaluk
 
-            - jsonPath: $.AdoptionDetails.*.birthStatistical.mother_res_lb_type_id
+              - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.villageNamePermanent
 
-            - jsonPath: $.AdoptionDetails.*.birthStatistical.mother_res_district_id
+              - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.permntInKeralaWardNo
 
-            - jsonPath: $.AdoptionDetails.*.birthStatistical.mother_res_state_id
+              - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.localityEnPermanent
 
-            - jsonPath: $.AdoptionDetails.*.birthStatistical.mother_res_country_id
+              - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.localityMlPermanent
 
-            - jsonPath: $.AdoptionDetails.*.birthStatistical.mother_resdnce_addr_type
+              - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.streetNameEnPermanent
 
-            - jsonPath: $.AdoptionDetails.*.birthStatistical.mother_resdnce_tenentid
+              - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.streetNameMlPermanent
 
-            - jsonPath: $.AdoptionDetails.*.birthStatistical.permntOutsideKeralaCityVilgeEn
-            
-            - jsonPath: $.AdoptionDetails.*.birthStatistical.mother_resdnce_place_en
+              - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.permanentOutsideIndiaPostCode
 
-            - jsonPath: $.AdoptionDetails.*.birthStatistical.mother_resdnce_place_ml
+              - jsonPath: $.AdoptionDetails.*.ParentsDetails.fatherEmail
 
-            - jsonPath: $.AdoptionDetails.*.birthStatistical.mother_resdnce_lbtype
+              - jsonPath: $.AdoptionDetails.*.ParentsDetails.fatherMobile
 
-            - jsonPath: $.AdoptionDetails.*.birthStatistical.mother_resdnce_districtid
+              - jsonPath: $.AdoptionDetails.*.ParentsDetails.permntOutsideKeralaPostOfficeEn
 
-            - jsonPath: $.AdoptionDetails.*.birthStatistical.mother_resdnce_stateid
+              - jsonPath: $.AdoptionDetails.*.ParentsDetails.permntOutsideKeralaPostOfficeMl
+              - jsonPath: $.AdoptionDetails.*.id
 
-            - jsonPath: $.AdoptionDetails.*.birthStatistical.mother_resdnce_countryid
+          - query: INSERT INTO eg_birth_present_address_audit SELECT * FROM eg_birth_present_address WHERE birthdtlid = ?;
+            basePath: AdoptionDetails.*
+            jsonMaps:
+              - jsonPath: $.AdoptionDetails.*.id
 
-            - jsonPath: $.AdoptionDetails.*.ParentsDetails.mother_order_of_cur_delivery
+          - query: UPDATE public.eg_birth_present_address SET  housename_no_en=?,  housename_no_ml=?,  ot_address1_en=?,  ot_address1_ml=?,  ot_address2_en=?,  ot_address2_ml=?,
+              ot_state_region_province_en=?,  ot_state_region_province_ml=?,  villageid=?,  tenantid=?,  talukid=?,  districtid=?,  stateid=?,  poid=?,  pinno=?,  countryid=?, lastmodifiedtime=?,  lastmodifiedby=?,
+              bio_adopt=?,  taluk_name=?,  village_name=?,  ward_code=?,  locality_en=?,  locality_ml=?,  street_name_en=?, street_name_ml=?,  ot_zipcode=?  where birthdtlid=?;
+            basePath: AdoptionDetails.*.AddressBirthDetails
+            jsonMaps:
 
-            - jsonPath: $.AdoptionDetails.*.ParentsDetails.orderofChildren
+              - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.houseNameNoEnPresent
 
-            - jsonPath: $.AdoptionDetails.*.ParentsDetails.mother_res_no_of_years
+              - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.houseNameNoMlPresent
 
-            - jsonPath: $.AdoptionDetails.*.auditDetails.lastModifiedTime
+              - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.presentOutSideIndiaAdressEn
 
-            - jsonPath: $.AdoptionDetails.*.auditDetails.lastModifiedBy
+              - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.presentOutSideIndiaAdressMl
 
-            - jsonPath: $.AdoptionDetails.*.id
-        
+              - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.presentOutSideIndiaAdressEnB
+
+              - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.presentOutSideIndiaAdressMlB
+
+              - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.presentOutSideIndiaProvinceEn
+
+              - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.presentOutSideIndiaProvinceMl
+
+              - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.presentInsideKeralaVillage
+
+              - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.presentInsideKeralaLBName
+
+              - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.presentInsideKeralaTaluk
+
+              - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.districtIdPresent
+
+              - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.stateIdPresent
+
+              - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.presentInsideKeralaPostOffice
+
+              - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.presentInsideKeralaPincode
+
+              - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.countryIdPresent
+
+              - jsonPath: $.AdoptionDetails.*.auditDetails.lastModifiedTime
+
+              - jsonPath: $.AdoptionDetails.*.auditDetails.lastModifiedBy
+
+              - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.bioAdoptPresent
+
+              - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.presentOutsideKeralaTaluk
+
+              - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.villageNamePresent
+
+              - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.presentWardNo
+
+              - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.localityEnPresent
+
+              - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.localityMlPresent
+
+              - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.streetNameEnPresent
+
+              - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.streetNameMlPresent
+
+              - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.presentOutsideKeralaPincode
+              - jsonPath: $.AdoptionDetails.*.id
+
+          - query: INSERT INTO eg_birth_statitical_information_audit SELECT * FROM eg_birth_statitical_information WHERE birthdtlid = ?;
+            basePath: AdoptionDetails.*
+            jsonMaps:
+              - jsonPath: $.AdoptionDetails.*.id
+
+          - query: UPDATE public.eg_birth_statitical_information SET weight_of_child=?, duration_of_pregnancy_in_week=?, nature_of_medical_attention=?, delivery_method=?, cause_of_foetal_death=?, religionid=?, father_nationalityid=?,
+              father_educationid=?, father_proffessionid=?, mother_educationid=?, mother_proffessionid=?, mother_nationalityid=?, mother_age_marriage=?, mother_age_delivery=?, mother_no_of_birth_given=?,
+              mother_maritalstatusid=?, mother_unmarried=?, mother_res_lbid=?, mother_res_lb_code_id=?, mother_res_place_type_id=?, mother_res_lb_type_id=?, mother_res_district_id=?, mother_res_state_id=?,
+              mother_res_country_id=?, mother_resdnce_addr_type=?, mother_resdnce_tenant=?, mother_resdnce_placetype=?, mother_resdnce_place_en=?, mother_resdnce_place_ml=?, mother_resdnce_lbtype=?,
+              mother_resdnce_district=?, mother_resdnce_state=?, mother_resdnce_country=?, mother_order_of_cur_delivery=?, mother_order_cur_child=?, mother_res_no_of_years=?, lastmodifiedby=?, lastmodifiedtime=?  where birthdtlid=?
+            basePath: AdoptionDetails.*
+            jsonMaps:
+              - jsonPath: $.AdoptionDetails.*.birthWeight
+
+              - jsonPath: $.AdoptionDetails.*.pregnancyDuration
+
+              - jsonPath: $.AdoptionDetails.*.medicalAttensionSub
+
+              - jsonPath: $.AdoptionDetails.*.deliveryMethods
+
+              - jsonPath: $.AdoptionDetails.*.causeFoetalDeath
+
+              - jsonPath: $.AdoptionDetails.*.ParentsDetails.Religion
+
+              - jsonPath: $.AdoptionDetails.*.ParentsDetails.fatherNationality
+
+              - jsonPath: $.AdoptionDetails.*.ParentsDetails.fatherEducation
+
+              - jsonPath: $.AdoptionDetails.*.ParentsDetails.fatherProfession
+
+              - jsonPath: $.AdoptionDetails.*.ParentsDetails.motherEducation
+
+              - jsonPath: $.AdoptionDetails.*.ParentsDetails.motherProfession
+
+              - jsonPath: $.AdoptionDetails.*.ParentsDetails.motherNationality
+
+              - jsonPath: $.AdoptionDetails.*.ParentsDetails.motherMarriageAge
+
+              - jsonPath: $.AdoptionDetails.*.ParentsDetails.motherMarriageBirth
+
+              - jsonPath: $.AdoptionDetails.*.ParentsDetails.orderofChildren
+
+              - jsonPath: $.AdoptionDetails.*.ParentsDetails.motherMaritalStatus
+
+              - jsonPath: $.AdoptionDetails.*.ParentsDetails.mother_unmarried
+
+              - jsonPath: $.AdoptionDetails.*.ParentsDetails.mother_res_lbid
+
+              - jsonPath: $.AdoptionDetails.*.ParentsDetails.mother_res_lb_code_id
+
+              - jsonPath: $.AdoptionDetails.*.ParentsDetails.mother_res_place_type_id
+
+              - jsonPath: $.AdoptionDetails.*.ParentsDetails.mother_res_lb_type_id
+
+              - jsonPath: $.AdoptionDetails.*.ParentsDetails.mother_res_district_id
+
+              - jsonPath: $.AdoptionDetails.*.ParentsDetails.mother_res_state_id
+
+              - jsonPath: $.AdoptionDetails.*.ParentsDetails.mother_res_country_id
+
+              - jsonPath: $.AdoptionDetails.*.ParentsDetails.mother_resdnce_addr_type
+
+              - jsonPath: $.AdoptionDetails.*.ParentsDetails.mother_resdnce_tenant
+
+              - jsonPath: $.AdoptionDetails.*.ParentsDetails.townOrVillagePresent
+
+              - jsonPath: $.AdoptionDetails.*.ParentsDetails.mother_resdnce_place_en
+
+              - jsonPath: $.AdoptionDetails.*.ParentsDetails.mother_resdnce_place_ml
+
+              - jsonPath: $.AdoptionDetails.*.ParentsDetails.mother_resdnce_lbtype
+
+              - jsonPath: $.AdoptionDetails.*.ParentsDetails.mother_resdnce_district
+
+              - jsonPath: $.AdoptionDetails.*.ParentsDetails.mother_resdnce_state
+
+              - jsonPath: $.AdoptionDetails.*.ParentsDetails.mother_resdnce_country
+
+              - jsonPath: $.AdoptionDetails.*.ParentsDetails.mother_order_of_cur_delivery
+
+              - jsonPath: $.AdoptionDetails.*.ParentsDetails.orderofChildren
+
+              - jsonPath: $.AdoptionDetails.*.ParentsDetails.mother_res_no_of_years
+
+              - jsonPath: $.AdoptionDetails.*.auditDetails.lastModifiedBy
+              - jsonPath: $.AdoptionDetails.*.auditDetails.lastModifiedTime
+              - jsonPath: $.AdoptionDetails.*.id
+          - query: INSERT INTO eg_birth_application_document_audit SELECT * FROM eg_birth_application_document WHERE birthdtlid = ?;
+            basePath: AdoptionDetails.*
+            jsonMaps:
+              - jsonPath: $.AdoptionDetails.*.id
+          - query: UPDATE public.eg_birth_application_document SET tenantid=?,  document_name=?,  document_type=?,  document_description=?,  filestoreid=?,  document_link=?, file_type=?, file_size=?, active=?, lastmodifiedby=?,  lastmodifiedtime=? where birthdtlid=?;
+            basePath: AdoptionDetails.*.AdoptionDocuments.*
+            jsonMaps:
+
+              - jsonPath: $.AdoptionDetails.*.tenantid
+
+              - jsonPath: $.AdoptionDetails.*.AdoptionDocuments.*.documentName
+
+              - jsonPath: $.AdoptionDetails.*.AdoptionDocuments.*.documentType
+
+              - jsonPath: $.AdoptionDetails.*.AdoptionDocuments.*.documentDescription
+
+              - jsonPath: $.AdoptionDetails.*.AdoptionDocuments.*.fileStoreId
+
+              - jsonPath: $.AdoptionDetails.*.AdoptionDocuments.*.documentLink
+
+              - jsonPath: $.AdoptionDetails.*.AdoptionDocuments.*.fileType
+
+              - jsonPath: $.AdoptionDetails.*.AdoptionDocuments.*.fileSize
+
+              - jsonPath: $.AdoptionDetails.*.AdoptionDocuments.*.active
+
+              - jsonPath: $.AdoptionDetails.*.AdoptionDocuments.*.auditDetails.lastModifiedBy
+
+              - jsonPath: $.AdoptionDetails.*.AdoptionDocuments.*.auditDetails.lastModifiedTime
+
+              - jsonPath: $.AdoptionDetails.*.AdoptionDocuments.*.parentBrthDtlId

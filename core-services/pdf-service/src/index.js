@@ -261,6 +261,7 @@ const uploadFiles = async (
     listDocDefinition.forEach((docDefinition) => {
       docDefinition["content"].forEach((defn) => {
         var formatobject = JSON.parse(JSON.stringify(formatconfig));
+        console.log(formatobject);
         formatobject["content"] = defn;
         convertedListDocDefinition.push(formatobject);
       });
@@ -274,6 +275,8 @@ const uploadFiles = async (
     // in multiple places
     var objectCopy = JSON.parse(JSON.stringify(docDefinition));
     // restoring footer because JSON.stringify destroys function() values
+    console.log("format footer-------")
+    console.log( formatconfig.footer)
     objectCopy.footer = convertFooterStringtoFunctionIfExist(
       formatconfig.footer
     );
@@ -427,6 +430,8 @@ app.post(
       let key = req.query.key;
       let tenantId = req.query.tenantId;
       var formatconfig = formatConfigMap[key];
+      console.log("printing format config--------")
+      console.log(formatconfig)
       var dataconfig = dataConfigMap[key];
       logger.info("received createnosave request on key: " + key);
       requestInfo = get(req.body, "RequestInfo");
@@ -448,6 +453,8 @@ app.post(
           dataconfig
         );
         // restoring footer function
+        console.log("---footer")
+        console.log(formatconfig.footer)
         formatConfigByFile[0].footer = convertFooterStringtoFunctionIfExist(formatconfig.footer);
         const doc = printer.createPdfKitDocument(formatConfigByFile[0]);
         let fileNameAppend = "-" + new Date().getTime();
