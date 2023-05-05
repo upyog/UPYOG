@@ -593,8 +593,7 @@ public class EstimationService {
 				isPlotMatching = slabAreaFrom < plotSize && slabAreaTo >= plotSize;
 
 			return isPtTypeMatching && isPtSubTypeMatching && isOwnerShipMatching && isSubOwnerShipMatching
-					&& isPlotMatching && isAreaMatching;
-			//&& isPropertyMultiFloored;
+					&& isPlotMatching && isAreaMatching && isPropertyMultiFloored;
 
 		}).collect(Collectors.toList());
 	}
