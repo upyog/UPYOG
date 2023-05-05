@@ -540,6 +540,8 @@ public class EstimationService {
 	private List<BillingSlab> getSlabsFiltered(Property property, String financialYear,RequestInfo requestInfo) {
 
 		PropertyDetail detail = property.getPropertyDetails().get(0);
+		log.info("financial Year in Criteria is" + financialYear);
+		
 		String tenantId = property.getTenantId();
 		String validFrom=financialYear.split("-")[0]+"-04-01";
 		String validTo="20"+financialYear.split("-")[1]+"-03-31";
