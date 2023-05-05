@@ -560,6 +560,11 @@ serviceMaps:
       fromTopic: update-birth-adoption-topic
       isTransaction: true
       queryMaps:
+          - query: INSERT INTO eg_birth_details_audit SELECT * FROM eg_birth_details WHERE id = ?;
+            basePath: AdoptionDetails.*
+            jsonMaps:
+              - jsonPath: $.AdoptionDetails.*.id
+
           - query: UPDATE public.eg_birth_details SET  dateofreport=?, dateofbirth=?, timeofbirth=?, am_pm=?, firstname_en=?, firstname_ml=?, middlename_en=?, middlename_ml=?,
               lastname_en=?, lastname_ml=?, tenantid=?,
               gender=?, remarks_en=?, remarks_ml=?, aadharno=?, esign_user_code=?, esign_user_desig_code=?, is_adopted=?, is_abandoned=?, is_multiple_birth=?, is_father_info_missing=?, is_mother_info_missing=?,
@@ -664,7 +669,10 @@ serviceMaps:
               - jsonPath: $.AdoptionDetails.*.oldregistrationno
               - jsonPath: $.AdoptionDetails.*.id
 
-
+          - query: INSERT INTO eg_birth_place_audit SELECT * FROM eg_birth_place WHERE birthdtlid = ?;
+            basePath: AdoptionDetails.*
+            jsonMaps:
+              - jsonPath: $.AdoptionDetails.*.id
 
           - query: UPDATE public.eg_birth_place SET placeofbirthid=?, hospitalid=?, public_place_id=?, institution_type_id=?, institution_id=?, vehicletypeid=?, vehicle_registration_no=?, vehicle_from_en=?,
               vehicle_to_en=?, vehicle_from_ml=?,  vehicle_to_ml=?, vehicle_admit_hospital_en=?, ho_householder_en=?, ho_locality_en=?, ho_locality_ml=?, ho_street_name_en=?, ho_street_name_ml=?, ho_housename_en=?, ho_housename_ml=?, ho_villageid=?,
@@ -766,7 +774,10 @@ serviceMaps:
 
               - jsonPath: $.AdoptionDetails.*.id
 
-
+          - query: INSERT INTO eg_birth_father_information_audit SELECT * FROM eg_birth_father_information WHERE birthdtlid = ?;
+            basePath: AdoptionDetails.*
+            jsonMaps:
+              - jsonPath: $.AdoptionDetails.*.id
 
           - query: UPDATE public.eg_birth_father_information SET firstname_en=?,  firstname_ml=?,   aadharno=?,  lastmodifiedtime=?,  lastmodifiedby=?,  bio_adopt=?  where birthdtlid=?;
             basePath: AdoptionDetails.*.ParentsDetails
@@ -785,6 +796,10 @@ serviceMaps:
               - jsonPath: $.AdoptionDetails.*.ParentsDetails.fatherBioAdopt
               - jsonPath: $.AdoptionDetails.*.id
 
+          - query: INSERT INTO eg_birth_mother_information_audit SELECT * FROM eg_birth_mother_information WHERE birthdtlid = ?;
+            basePath: AdoptionDetails.*
+            jsonMaps:
+              - jsonPath: $.AdoptionDetails.*.id
 
           - query: UPDATE public.eg_birth_mother_information SET firstname_en=?,  firstname_ml=?,  aadharno=?, lastmodifiedtime=?,  lastmodifiedby=?,  bio_adopt=?  where birthdtlid=?
 
@@ -802,6 +817,11 @@ serviceMaps:
 
               - jsonPath: $.AdoptionDetails.*.ParentsDetails.motherBioAdopt
 
+              - jsonPath: $.AdoptionDetails.*.id
+
+          - query: INSERT INTO eg_birth_permanent_address_audit SELECT * FROM eg_birth_permanent_address WHERE birthdtlid = ?;
+            basePath: AdoptionDetails.*
+            jsonMaps:
               - jsonPath: $.AdoptionDetails.*.id
 
           - query: UPDATE public.eg_birth_permanent_address SET housename_no_en=?,  housename_no_ml=?,  ot_address1_en=?,  ot_address1_ml=?,  ot_address2_en=?,  ot_address2_ml=?, ot_state_region_province_en=?,
@@ -874,6 +894,10 @@ serviceMaps:
               - jsonPath: $.AdoptionDetails.*.ParentsDetails.permntOutsideKeralaPostOfficeMl
               - jsonPath: $.AdoptionDetails.*.id
 
+          - query: INSERT INTO eg_birth_present_address_audit SELECT * FROM eg_birth_present_address WHERE birthdtlid = ?;
+            basePath: AdoptionDetails.*
+            jsonMaps:
+              - jsonPath: $.AdoptionDetails.*.id
 
           - query: UPDATE public.eg_birth_present_address SET  housename_no_en=?,  housename_no_ml=?,  ot_address1_en=?,  ot_address1_ml=?,  ot_address2_en=?,  ot_address2_ml=?,
               ot_state_region_province_en=?,  ot_state_region_province_ml=?,  villageid=?,  tenantid=?,  talukid=?,  districtid=?,  stateid=?,  poid=?,  pinno=?,  countryid=?, lastmodifiedtime=?,  lastmodifiedby=?,
@@ -934,6 +958,11 @@ serviceMaps:
               - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.streetNameMlPresent
 
               - jsonPath: $.AdoptionDetails.*.AddressBirthDetails.presentOutsideKeralaPincode
+              - jsonPath: $.AdoptionDetails.*.id
+
+          - query: INSERT INTO eg_birth_statitical_information_audit SELECT * FROM eg_birth_statitical_information WHERE birthdtlid = ?;
+            basePath: AdoptionDetails.*
+            jsonMaps:
               - jsonPath: $.AdoptionDetails.*.id
 
           - query: UPDATE public.eg_birth_statitical_information SET weight_of_child=?, duration_of_pregnancy_in_week=?, nature_of_medical_attention=?, delivery_method=?, cause_of_foetal_death=?, religionid=?, father_nationalityid=?,
@@ -1018,7 +1047,10 @@ serviceMaps:
               - jsonPath: $.AdoptionDetails.*.auditDetails.lastModifiedBy
               - jsonPath: $.AdoptionDetails.*.auditDetails.lastModifiedTime
               - jsonPath: $.AdoptionDetails.*.id
-
+          - query: INSERT INTO eg_birth_application_document_audit SELECT * FROM eg_birth_application_document WHERE birthdtlid = ?;
+            basePath: AdoptionDetails.*
+            jsonMaps:
+              - jsonPath: $.AdoptionDetails.*.id
           - query: UPDATE public.eg_birth_application_document SET tenantid=?,  document_name=?,  document_type=?,  document_description=?,  filestoreid=?,  document_link=?, file_type=?, file_size=?, active=?, lastmodifiedby=?,  lastmodifiedtime=? where birthdtlid=?;
             basePath: AdoptionDetails.*.AdoptionDocuments.*
             jsonMaps:
