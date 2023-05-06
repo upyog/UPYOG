@@ -123,6 +123,12 @@ public class Payment {
     @Valid
     private String payerId = null;
 
+    
+    @Size(max=64)
+    @JsonProperty("fileStoreId")
+    @Valid
+    private String fileStoreId = null;
+    
     @JsonProperty("paymentStatus")
     @Valid
     private String paymentStatus;
