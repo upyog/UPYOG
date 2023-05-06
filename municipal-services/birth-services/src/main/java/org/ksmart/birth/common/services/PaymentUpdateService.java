@@ -22,6 +22,7 @@ import org.ksmart.birth.web.model.newbirth.NewBirthApplication;
 import org.ksmart.birth.web.model.newbirth.NewBirthDetailRequest;
 import org.ksmart.birth.workflow.WorkflowIntegratorNewBirth;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -45,18 +46,19 @@ public class PaymentUpdateService {
 	
 	private NewBirthEnrichment enrichmentService;
 
-	private ObjectMapper mapper;
+//	@Autowired
+//	private objectMapper mapper;
 	
 	private BirthUtils util;
 	
 	public PaymentUpdateService(NewBirthService newBirthService,BirthConfiguration config, NewBirthRepository repository,
-			WorkflowIntegratorNewBirth wfIntegrator,NewBirthEnrichment enrichmentService,ObjectMapper mapper,BirthUtils util) {
+			WorkflowIntegratorNewBirth wfIntegrator,NewBirthEnrichment enrichmentService, BirthUtils util) {
 		this.newBirthService=newBirthService;
 		this.config=config;
 		this.repository=repository;
 		this.wfIntegrator=wfIntegrator;
 		this.enrichmentService= enrichmentService;
-		this.mapper= mapper;
+//		this.mapper= mapper;
 		this.util=util;
 		
 	}
@@ -74,7 +76,7 @@ public class PaymentUpdateService {
 	 * @param record The incoming message from receipt create consumer
 	 */
 	public void process(HashMap<String, Object> record) {
-
+		ObjectMapper mapper = new ObjectMapper();
 		try {
 			PaymentRequest paymentRequest = mapper.convertValue(record, PaymentRequest.class);
 			RequestInfo requestInfo = paymentRequest.getRequestInfo();
