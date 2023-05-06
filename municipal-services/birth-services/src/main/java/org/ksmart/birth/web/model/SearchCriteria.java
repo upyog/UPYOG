@@ -95,6 +95,12 @@ public class SearchCriteria {
 
     @JsonProperty("sortOrder")
     private SortOrder sortOrder;
+    
+    @JsonProperty("appNumber")
+    private String appNumber;
+    
+    @JsonProperty("BusinessService")
+    private String BusinessService;
 
     public enum SortOrder {
         ASC,

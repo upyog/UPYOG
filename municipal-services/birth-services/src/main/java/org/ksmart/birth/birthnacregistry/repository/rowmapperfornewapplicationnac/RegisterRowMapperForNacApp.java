@@ -53,7 +53,7 @@ public class RegisterRowMapperForNacApp implements ResultSetExtractor<List<Regis
 	        String address = "";
 	        if(rs.getString("per_countryid") != null) {
 	            if (rs.getString("per_countryid").contains(COUNTRY_CODE)) {
-	                address = new StringBuilder().append(rs.getString("per_housename_en") == null ? "" : rs.getString("per_housename_en"))
+	                address = new StringBuilder().append(rs.getString("per_housename_no_en") == null ? "" : rs.getString("per_housename_no_ml"))
 	                        .append(", ")
 	                        .append(rs.getString("per_locality_en") == null ? "" : rs.getString("per_locality_en"))
 	                        .append(", ")

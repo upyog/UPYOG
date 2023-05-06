@@ -204,4 +204,8 @@ public class BirthDeathConstants {
 	public static final String STATUSJSONKEY = "$.state.applicationStatus";
 
 	public static final String TRIGGER_NOWORKFLOW = "NOWORKFLOW";
+	
+	 public static final String ACTION_PAY = "PAY";
+	 
+	 public static final String STATUS_APPROVED = "APPROVED";
 }

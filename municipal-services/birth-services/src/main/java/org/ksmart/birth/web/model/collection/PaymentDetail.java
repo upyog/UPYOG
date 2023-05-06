@@ -1,21 +1,12 @@
-package org.ksmart.birth.common.calculation.collections.models;
-
-import java.math.BigDecimal;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
-import org.ksmart.birth.common.model.AuditDetails;
-
+package org.ksmart.birth.web.model.collection;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
+import lombok.*;
+import org.ksmart.birth.common.model.AuditDetails;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.math.BigDecimal;
 
 
 @Data
@@ -27,70 +18,51 @@ public class PaymentDetail {
 
     @Size(max=64)
     @JsonProperty("id")
-    @Valid
     private String id;
 
-    @Size(max=64)  
-    @JsonProperty("paymentId")
-    @Valid
-    private String paymentId;
-    
     @Size(max=64)
     @JsonProperty("tenantId")
-    @Valid
     private String tenantId;
 
     @JsonProperty("totalDue")
-    @Valid
     private BigDecimal totalDue;
 
     @NotNull
     @JsonProperty("totalAmountPaid")
-    @Valid
     private BigDecimal totalAmountPaid;
 
     @Size(max=64)
     @JsonProperty("receiptNumber")
-    @Valid
     private String receiptNumber;
     
     @Size(max=64)
     @JsonProperty("manualReceiptNumber")
-    @Valid
     private String manualReceiptNumber;
     
     @JsonProperty("manualReceiptDate")
-    @Valid
     private Long manualReceiptDate;
 
     @JsonProperty("receiptDate")
-    @Valid
     private Long receiptDate = null;
 
     @JsonProperty("receiptType")
-    @Valid
     private String receiptType = null;
 
     @JsonProperty("businessService")
-    @Valid
     private String businessService;
 
     @NotNull
     @Size(max=64)
     @JsonProperty("billId")
-    @Valid
     private String billId;
 
     @JsonProperty("bill")
-    @Valid
     private Bill bill;
 
     @JsonProperty("additionalDetails")
-    @Valid
     private JsonNode additionalDetails;
 
     @JsonProperty("auditDetails")
-    @Valid
     private AuditDetails auditDetails;
 
 }

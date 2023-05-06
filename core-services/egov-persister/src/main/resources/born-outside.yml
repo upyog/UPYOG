@@ -202,42 +202,42 @@ serviceMaps:
           basePath: BornOutsideChildDetails.*
           jsonMaps:
             - jsonPath: $.BornOutsideChildDetails.*.birthStatisticsUuid
-            - jsonPath: $.BornOutsideChildDetails.*.birthWeight
-            - jsonPath: $.BornOutsideChildDetails.*.pregnancyDuration
-            - jsonPath: $.BornOutsideChildDetails.*.medicalAttensionSub
-            - jsonPath: $.BornOutsideChildDetails.*.deliveryMethods
-            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideBornOutsideParentsDetails.Religion
-            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideBornOutsideParentsDetails.fatherNationality
-            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideBornOutsideParentsDetails.fatherEducation
-            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideBornOutsideParentsDetails.fatherProfession
-            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideBornOutsideParentsDetails.motherEducation
-            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideBornOutsideParentsDetails.motherProfession
-            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideBornOutsideParentsDetails.motherNationality
-            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideBornOutsideParentsDetails.motherMarriageAge
-            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideBornOutsideParentsDetails.motherMarriageBirth
-            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideBornOutsideParentsDetails.mother_no_of_birth_given
-            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideBornOutsideParentsDetails.motherMaritalStatus
-            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideBornOutsideParentsDetails.mother_unmarried
-            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideAddressBirthDetails.mother_res_lbid
-            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideBornOutsideParentsDetails.mother_res_lb_code_id
-            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideBornOutsideParentsDetails.mother_res_place_type_id
-            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideBornOutsideParentsDetails.mother_res_lb_type_id
-            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideBornOutsideParentsDetails.mother_res_district_id
-            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideBornOutsideParentsDetails.mother_res_state_id
-            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideBornOutsideParentsDetails.mother_res_country_id
-            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideBornOutsideParentsDetails.mother_resdnce_addr_type
-            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideAddressBirthDetails.permntInKeralaAdrLBName
-            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideBornOutsideParentsDetails.townOrVillagePresent
-            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideBornOutsideParentsDetails.mother_resdnce_place_en
-            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideBornOutsideParentsDetails.mother_resdnce_place_ml
-            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideBornOutsideParentsDetails.mother_resdnce_lbtype
-            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideBornOutsideParentsDetails.mother_resdnce_district
-            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideBornOutsideParentsDetails.mother_resdnce_state
-            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideBornOutsideParentsDetails.mother_resdnce_country
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideStaticInfn.birthWeight
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideStaticInfn.pregnancyDuration
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideStaticInfn.medicalAttensionSub
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideStaticInfn.deliveryMethods
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.Religion
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.fatherNationality
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.fatherEducation
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.fatherProfession
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.motherEducation
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.motherProfession
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.motherNationality
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.motherMarriageAge
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.motherMarriageBirth
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.mother_no_of_birth_given
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.motherMaritalStatus
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.mother_unmarried
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.mother_res_lbid
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.mother_res_lb_code_id
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.mother_res_place_type_id
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.mother_res_lb_type_id
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.mother_res_district_id
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.mother_res_state_id
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.mother_res_country_id
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.mother_resdnce_addr_type
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.permntInKeralaAdrLBName
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.townOrVillagePresent
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.mother_resdnce_place_en
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.mother_resdnce_place_ml
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.mother_resdnce_lbtype
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.mother_resdnce_district
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.mother_resdnce_state
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.mother_resdnce_country
             - jsonPath: $.BornOutsideChildDetails.*.id
-            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideBornOutsideParentsDetails.orderofChildren
-            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideBornOutsideParentsDetails.mother_order_cur_child
-            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideBornOutsideParentsDetails.mother_res_no_of_years
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.orderofChildren
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.mother_order_cur_child
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.mother_res_no_of_years
             - jsonPath: $.BornOutsideChildDetails.*.auditDetails.createdBy
             - jsonPath: $.BornOutsideChildDetails.*.auditDetails.createdTime
             - jsonPath: $.BornOutsideChildDetails.*.auditDetails.lastModifiedBy

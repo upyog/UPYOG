@@ -2,6 +2,7 @@ package org.ksmart.birth.newbirth.service;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.egov.common.contract.request.RequestInfo;
 import org.ksmart.birth.birthcommon.model.WorkFlowCheck;
 import org.ksmart.birth.birthcommon.model.demand.Demand;
 import org.ksmart.birth.birthcommon.services.DemandService;
@@ -101,6 +102,9 @@ public class NewBirthService {
 
     public List<NewBirthApplication> searchBirthDetails(NewBirthDetailRequest request, SearchCriteria criteria) {
         return repository.searchBirthDetails(request,criteria);
+    }
+    public List<NewBirthApplication> searchBirth(RequestInfo request, SearchCriteria criteria) {
+        return repository.searchBirth(request,criteria);
     }
 
     protected SearchCriteria buildSearchCriteria(final NewBirthApplication application) {

@@ -98,5 +98,29 @@ public class NewBirthRepository {
 
 
     }
+    
+    public List<NewBirthApplication> searchBirth ( RequestInfo requestInfo, SearchCriteria criteria) {
+        String uuid = null;
+        List<Object> preparedStmtValues = new ArrayList<>();
+
+        if(requestInfo.getUserInfo() != null){
+            uuid = requestInfo.getUserInfo().getUuid();
+        } else{
+            criteria.setApplicationType(BirthConstants.FUN_MODULE_NEW);
+        }
+        String query = commonQueryBuilder.getBirthApplicationSearchQuery(criteria, uuid, preparedStmtValues, Boolean.FALSE);
+        if(preparedStmtValues.size() == 0){
+            throw new CustomException(ErrorCodes.NOT_FOUND.getCode(), "No result found.");
+        } else{
+            List<NewBirthApplication> result = jdbcTemplate.query(query, preparedStmtValues.toArray(), ksmartBirthApplicationRowMapper);
+           
+            responseEnrichment.setNewBirthRequestData(requestInfo, result);
+            return result;
+        }
+
+
+
+
+    }
 }
 

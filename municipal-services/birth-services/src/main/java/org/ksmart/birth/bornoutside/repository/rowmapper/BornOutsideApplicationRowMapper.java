@@ -10,7 +10,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 @Component
-public class BornOutsideApplicationRowMapper implements ResultSetExtractor<List<BornOutsideApplication>>, BornOutsideBaseRowMapper, BornOutsideParentDetailRowMapper, BornOutsideInformatDetailsRowMapper, BornOutsideParentAddressRowMapper {
+public class BornOutsideApplicationRowMapper implements ResultSetExtractor<List<BornOutsideApplication>>, BornOutsideBaseRowMapper, BornOutsideParentDetailRowMapper, BornOutsideInformatDetailsRowMapper, BornOutsideParentAddressRowMapper, BornOutsideStatRowMapper {
 
     @Override
     public List<BornOutsideApplication> extractData(ResultSet rs) throws SQLException, DataAccessException { //how to handle null
@@ -60,6 +60,7 @@ public class BornOutsideApplicationRowMapper implements ResultSetExtractor<List<
                     .isBornOutside(rs.getBoolean("pla_is_born_outside"))
                     .parentsDetails(getKsmartBirthParentDetail(rs))
                     .parentAddress(getKsmartBirthParentAddress(rs))
+                    .bornOutsideStaticInformant(getStatInformation(rs))
                     .auditDetails(getAuditDetails(rs))
                     .build());
         }
