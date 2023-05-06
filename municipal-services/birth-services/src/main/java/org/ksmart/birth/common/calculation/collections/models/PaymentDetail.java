@@ -30,6 +30,11 @@ public class PaymentDetail {
     @Valid
     private String id;
 
+    @Size(max=64)  
+    @JsonProperty("paymentId")
+    @Valid
+    private String paymentId;
+    
     @Size(max=64)
     @JsonProperty("tenantId")
     @Valid
