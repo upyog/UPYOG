@@ -41,7 +41,7 @@ public class MdmsForNewBirthService {
 
             parentsDetail.setMotherNationalityidEn(mdmsTenantService.getNationalityEn(mdmsData, parentsDetail.getMotherNationalityid()));
             parentsDetail.setMotherNationalityidMl(mdmsTenantService.getNationalityMl(mdmsData, parentsDetail.getMotherNationalityid()));
-//Father Details
+            //Father Details
             parentsDetail.setFatherEucationidEn(mdmsTenantService.getQualificatioinEn(mdmsData, parentsDetail.getFatherEucationid()));
             parentsDetail.setFatherEucationidMl(mdmsTenantService.getQualificatioinMl(mdmsData, parentsDetail.getFatherEucationid()));
 

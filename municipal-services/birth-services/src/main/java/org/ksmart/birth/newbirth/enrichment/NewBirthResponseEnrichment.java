@@ -44,9 +44,11 @@ public class NewBirthResponseEnrichment {
                 }
                 Object mdmsDataLoc = mdmsUtil.mdmsCallForLocation(requestInfo, birth.getTenantId());
                 if (birth.getPlaceofBirthId() != null) {
-                    birth.setPlaceofBirthIdEn(mdmsTenantService.getBirthPlaceEn(mdmsData, birth.getPlaceofBirthId()));
-                    birth.setPlaceofBirthIdMl(mdmsTenantService.getBirthPlaceMl(mdmsData, birth.getPlaceofBirthId()));
+                    birth.setCountryidEn(mdmsTenantService.getBirthPlaceEn(mdmsData, birth.getCountryid()));
+                    birth.setCountryidMl(mdmsTenantService.getBirthPlaceMl(mdmsData, birth.getCountryid()));
                     mdmsBirthService.setLocationDetails(birth, mdmsDataLoc, mdmsData);
+                }
+                if(birth.getParentsDetails()!= null) {
                     mdmsBirthService.setParentsDetails(birth.getParentsDetails(), mdmsData);
                 }
                 if (birth.getParentAddress().getCountryIdPermanent() != null && birth.getParentAddress().getStateIdPermanent() != null) {
@@ -217,7 +219,7 @@ public class NewBirthResponseEnrichment {
                         //Country
                         birth.getParentAddress().setPresentOutSideCountry(birth.getParentAddress().getCountryIdPresent());
                         birth.getParentAddress().setCountryIdPresentEn(mdmsTenantService.getCountryNameEn(mdmsData, birth.getParentAddress().getCountryIdPresent()));
-                        birth.getParentAddress().setCountryIdPresentEn(mdmsTenantService.getCountryNameMl(mdmsData, birth.getParentAddress().getCountryIdPresent()));
+                        birth.getParentAddress().setCountryIdPresentMl(mdmsTenantService.getCountryNameMl(mdmsData, birth.getParentAddress().getCountryIdPresent()));
 
                         birth.getParentAddress().setPresentOutSideIndiaadrsVillage(birth.getParentAddress().getVillageNamePresent());
                         birth.getParentAddress().setPresentOutSideIndiaadrsCityTown(birth.getParentAddress().getTownOrVillagePresent());

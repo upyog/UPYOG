@@ -101,9 +101,15 @@ public class BornOutsideApplication {
     @JsonProperty("postCode")
     private String postCode;
 
-    @Size(max = 1000)
+    @Size(max = 64)
     @JsonProperty("country")
     private String country;
+    @Size(max = 300)
+    @JsonProperty("countryEn")
+    private String countryEn;
+    @Size(max = 300)
+    @JsonProperty("countryMl")
+    private String countryMl;
     @Size(max = 64)
     @JsonProperty("esign_user_code")
     private String esignUserCode;

@@ -65,14 +65,6 @@ public class NewBirthApplication implements Serializable {
     private String placeofBirthId;
 
     @Size(max = 64)
-    @JsonProperty("birthPlaceEn")
-    private String placeofBirthIdEn;
-
-    @Size(max = 64)
-    @JsonProperty("birthPlaceMl")
-    private String placeofBirthIdMl;
-
-    @Size(max = 64)
     @JsonProperty("hospitalCode")
     private String hospitalId;
     @Size(max = 64)
@@ -281,6 +273,12 @@ public class NewBirthApplication implements Serializable {
     @Size(max = 64)
     @JsonProperty("countryid")
     private String countryid;
+    @Size(max = 300)
+    @JsonProperty("countryidEn")
+    private String countryidEn;
+    @Size(max = 300)
+    @JsonProperty("countryidMl")
+    private String countryidMl;
 
     @Size(max = 64)
     @JsonProperty("applicationtype")

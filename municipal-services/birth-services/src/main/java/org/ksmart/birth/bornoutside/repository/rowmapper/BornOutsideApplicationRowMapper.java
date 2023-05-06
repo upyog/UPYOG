@@ -10,7 +10,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 @Component
-public class BornOutsideApplicationRowMapper implements ResultSetExtractor<List<BornOutsideApplication>>, BornOutsideBaseRowMapper, BornOutsideParentDetailRowMapper, BornOutsideInformatDetailsRowMapper, BornOutsideParentAddressRowMapper, BornOutsideStatRowMapper {
+public class BornOutsideApplicationRowMapper implements ResultSetExtractor<List<BornOutsideApplication>>, BornOutsideBaseRowMapper,
+        BornOutsideParentDetailRowMapper, BornOutsideParentAddressRowMapper,
+        BornOutsideStatRowMapper {
 
     @Override
     public List<BornOutsideApplication> extractData(ResultSet rs) throws SQLException, DataAccessException { //how to handle null

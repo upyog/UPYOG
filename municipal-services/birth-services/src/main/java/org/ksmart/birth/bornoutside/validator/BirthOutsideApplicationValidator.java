@@ -3,6 +3,7 @@ package org.ksmart.birth.bornoutside.validator;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.tracer.model.CustomException;
 import org.ksmart.birth.config.BirthConfiguration;
+import org.ksmart.birth.utils.BirthConstants;
 import org.ksmart.birth.utils.enums.ErrorCodes;
 import org.ksmart.birth.web.model.bornoutside.BornOutsideApplication;
 import org.ksmart.birth.web.model.bornoutside.BornOutsideDetailRequest;
@@ -54,10 +55,18 @@ public class BirthOutsideApplicationValidator {
             throw new CustomException(INVALID_CREATE.getCode(),
                     "Date of birth is required for create request.");
         }
-
+        if (birthApplications.get(0).getChildArrivalDate() == null) {
+            throw new CustomException(INVALID_CREATE.getCode(),
+                    "Date of birth is required for create request.");
+        }
         if (StringUtils.isBlank(birthApplications.get(0).getPlaceofBirthId())) {
             throw new CustomException(INVALID_CREATE.getCode(),
                     "Place of birth id is required for create request.");
+        } else{
+            if(!birthApplications.get(0).getPlaceofBirthId().equals(BirthConstants.BIRTH_PLACE_OTHERS_COUNTRY)){
+                throw new CustomException(INVALID_CREATE.getCode(),
+                        "Place of birth id should be the code of born outside code.");
+            }
         }
 
         if (StringUtils.isBlank(birthApplications.get(0).getApplicationType())) {
@@ -137,7 +146,6 @@ public class BirthOutsideApplicationValidator {
             throw new CustomException(INVALID_CREATE.getCode(),
                     "Ward no in permanent address is required for create request.");
         }
-
         mdmsValidator.validateMdmsData(request, mdmsData);
     }
 

@@ -60,8 +60,8 @@ serviceMaps:
           jsonMaps:
             - jsonPath: $.BornOutsideChildDetails.*.birthPlaceUuid
             - jsonPath: $.BornOutsideChildDetails.*.id
-            - jsonPath: $.BornOutsideChildDetails.*.placeofbirthid
-            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideAddressBirthDetails.permntInKeralaWardNo
+            - jsonPath: $.BornOutsideChildDetails.*.birthPlace
+            - jsonPath: $.BornOutsideChildDetails.*.wardNo
             - jsonPath: $.BornOutsideChildDetails.*.outsideBirthPlaceEn
             - jsonPath: $.BornOutsideChildDetails.*.outsideBirthPlaceMl
             - jsonPath: $.BornOutsideChildDetails.*.provinceEn
@@ -243,6 +243,8 @@ serviceMaps:
             - jsonPath: $.BornOutsideChildDetails.*.auditDetails.lastModifiedBy
             - jsonPath: $.BornOutsideChildDetails.*.auditDetails.lastModifiedTime
 
+
+
     - version: 1.0
       description: Persists update birth details in eg_birth_details  table
       fromTopic: update-born-outside-application-topic
@@ -253,12 +255,218 @@ serviceMaps:
           jsonMaps:
             - jsonPath: $.BornOutsideChildDetails.*.id
 
-        - query: UPDATE public.eg_birth_details SET action=?,status=?,lastmodifiedby=?,lastmodifiedtime=? WHERE id=?;
+        - query: UPDATE public.eg_birth_details SET dateofreport=?,dateofbirth=?,timeofbirth=?,am_pm=?,firstname_en=?,firstname_ml=?,middlename_en=?,middlename_ml=?,lastname_en=?,
+            lastname_ml=?,gender=?,remarks_en=?,remarks_ml=?,aadharno=?,esign_user_code=?,esign_user_desig_code=?,is_father_info_missing=?,
+            is_mother_info_missing=?,is_born_outside=?,ot_passportno=?,ot_dateofarrival=?,applicationtype=?,businessservice=?,workflowcode=?,fm_fileno=?,
+            file_date=?,file_status=?,applicationno=?,action=?,status=?,lastmodifiedby=?,lastmodifiedtime=? WHERE id=?;
 
           basePath: BornOutsideChildDetails.*
           jsonMaps:
-              - jsonPath: $.BornOutsideChildDetails.*.action
-              - jsonPath: $.BornOutsideChildDetails.*.applicationStatus
-              - jsonPath: $.BornOutsideChildDetails.*.auditDetails.lastModifiedBy
-              - jsonPath: $.BornOutsideChildDetails.*.auditDetails.lastModifiedTime
-              - jsonPath: $.BornOutsideChildDetails.*.id
+            - jsonPath: $.BornOutsideChildDetails.*.dateofreport
+            - jsonPath: $.BornOutsideChildDetails.*.childDOB
+            - jsonPath: $.BornOutsideChildDetails.*.birthDateTime
+            - jsonPath: $.BornOutsideChildDetails.*.am_pm
+            - jsonPath: $.BornOutsideChildDetails.*.childFirstNameEn
+            - jsonPath: $.BornOutsideChildDetails.*.childFirstNameMl
+            - jsonPath: $.BornOutsideChildDetails.*.childMiddleNameEn
+            - jsonPath: $.BornOutsideChildDetails.*.childMiddleNameMl
+            - jsonPath: $.BornOutsideChildDetails.*.childLastNameEn
+            - jsonPath: $.BornOutsideChildDetails.*.childLastNameMl
+            - jsonPath: $.BornOutsideChildDetails.*.gender
+            - jsonPath: $.BornOutsideChildDetails.*.remarks_en
+            - jsonPath: $.BornOutsideChildDetails.*.remarks_ml
+            - jsonPath: $.BornOutsideChildDetails.*.childAadharNo
+            - jsonPath: $.BornOutsideChildDetails.*.esign_user_code
+            - jsonPath: $.BornOutsideChildDetails.*.esign_user_desig_code
+            - jsonPath: $.BornOutsideChildDetails.*.ParentsDetails.ismotherInfo
+            - jsonPath: $.BornOutsideChildDetails.*.ParentsDetails.isfatherInfo
+            - jsonPath: $.BornOutsideChildDetails.*.is_born_outside
+            - jsonPath: $.BornOutsideChildDetails.*.childPassportNo
+            - jsonPath: $.BornOutsideChildDetails.*.childArrivalDate
+            - jsonPath: $.BornOutsideChildDetails.*.applicationtype
+            - jsonPath: $.BornOutsideChildDetails.*.businessservice
+            - jsonPath: $.BornOutsideChildDetails.*.workflowcode
+            - jsonPath: $.BornOutsideChildDetails.*.fileNumber
+            - jsonPath: $.BornOutsideChildDetails.*.fileDate
+            - jsonPath: $.BornOutsideChildDetails.*.fileStatus
+            - jsonPath: $.BornOutsideChildDetails.*.applicationNumber
+            - jsonPath: $.BornOutsideChildDetails.*.action
+            - jsonPath: $.BornOutsideChildDetails.*.applicationStatus
+            - jsonPath: $.BornOutsideChildDetails.*.auditDetails.lastModifiedBy
+            - jsonPath: $.BornOutsideChildDetails.*.auditDetails.lastModifiedTime
+            - jsonPath: $.BornOutsideChildDetails.*.id
+
+        - query: INSERT INTO eg_birth_place_audit SELECT * FROM eg_birth_place WHERE birthdtlid = ?;
+          basePath: BornOutsideChildDetails.*
+          jsonMaps:
+            - jsonPath: $.BornOutsideChildDetails.*.id
+
+
+        - query: UPDATE public.eg_birth_place SET placeofbirthid=?,ward_id=?,ot_birth_place_en=?,ot_birth_place_ml=?,ot_state_region_province_en=?,ot_state_region_province_ml=?,
+            ot_zipcode=?,ot_town_village_en=?,ot_town_village_ml=?,ot_country=?,relation=?,informantsname_en=?,informantsaddress_en=?,
+            informants_mobileno=?,informants_aadhaar_no=?,lastmodifiedby=?,lastmodifiedtime=?  WHERE  birthdtlid=?;
+
+          basePath: BornOutsideChildDetails.*
+          jsonMaps:
+            - jsonPath: $.BornOutsideChildDetails.*.placeofbirthid
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideAddressBirthDetails.permntInKeralaWardNo
+            - jsonPath: $.BornOutsideChildDetails.*.outsideBirthPlaceEn
+            - jsonPath: $.BornOutsideChildDetails.*.outsideBirthPlaceMl
+            - jsonPath: $.BornOutsideChildDetails.*.provinceEn
+            - jsonPath: $.BornOutsideChildDetails.*.provinceMl
+            - jsonPath: $.BornOutsideChildDetails.*.postCode
+            - jsonPath: $.BornOutsideChildDetails.*.cityTownEn
+            - jsonPath: $.BornOutsideChildDetails.*.cityTownMl
+            - jsonPath: $.BornOutsideChildDetails.*.country
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideStaticInfn.relation
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideStaticInfn.informarNameEn
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideStaticInfn.informarAddress
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideStaticInfn.informarMobile
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideStaticInfn.informarAadhar
+            - jsonPath: $.BornOutsideChildDetails.*.auditDetails.lastModifiedBy
+            - jsonPath: $.BornOutsideChildDetails.*.auditDetails.lastModifiedTime
+            - jsonPath: $.BornOutsideChildDetails.*.id
+
+        - query: INSERT INTO eg_birth_father_information_audit SELECT * FROM eg_birth_father_information WHERE birthdtlid = ?;
+          basePath: BornOutsideChildDetails.*
+          jsonMaps:
+            - jsonPath: $.BornOutsideChildDetails.*.id
+
+
+        - query: UPDATE public.eg_birth_father_information SET firstname_en=?, firstname_ml=?, aadharno=?, ot_passportno=?,  lastmodifiedtime=?, lastmodifiedby=? WHERE birthdtlid=?;
+          basePath: BornOutsideChildDetails.*.BornOutsideParentsDetails
+          jsonMaps:
+
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.firstname_en
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.firstname_ml
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.fatherAadhar
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.fatherPassport
+            - jsonPath: $.BornOutsideChildDetails.*.auditDetails.lastModifiedTime
+            - jsonPath: $.BornOutsideChildDetails.*.auditDetails.lastModifiedBy
+            - jsonPath: $.BornOutsideChildDetails.*.id
+
+        - query: INSERT INTO eg_birth_mother_information_audit SELECT * FROM eg_birth_mother_information WHERE birthdtlid = ?;
+          basePath: BornOutsideChildDetails.*
+          jsonMaps:
+            - jsonPath: $.BornOutsideChildDetails.*.id
+
+        - query: UPDATE public.eg_birth_mother_information SET firstname_en=?, firstname_ml=?,  aadharno=?, ot_passportno=?,  lastmodifiedtime=?, lastmodifiedby=? WHERE birthdtlid=?;
+          basePath: BornOutsideChildDetails.*.BornOutsideParentsDetails
+          jsonMaps:
+
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.motherFirstNameEn
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.motherFirstNameMl
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.motherAadhar
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.motherPassport
+            - jsonPath: $.BornOutsideChildDetails.*.auditDetails.lastModifiedTime
+            - jsonPath: $.BornOutsideChildDetails.*.auditDetails.lastModifiedBy
+            - jsonPath: $.BornOutsideChildDetails.*.id
+
+        - query: INSERT INTO eg_birth_permanent_address_audit SELECT * FROM eg_birth_permanent_address WHERE birthdtlid = ?;
+          basePath: BornOutsideChildDetails.*
+          jsonMaps:
+            - jsonPath: $.BornOutsideChildDetails.*.id
+
+
+        - query: UPDATE public.eg_birth_permanent_address SET  housename_no_en=?,housename_no_ml=?,villageid=?,tenantid=?,talukid=?,ward_code=?,locality_en=?,locality_ml=?,
+            street_name_en=?,street_name_ml=?,districtid=?,stateid=?,poid=?,pinno=?,countryid=?,lastmodifiedby=?,lastmodifiedtime=?,family_emailid=?,family_mobileno=? WHERE birthdtlid=?;
+          basePath: BornOutsideChildDetails.*.BornOutsideAddressBirthDetails
+          jsonMaps:
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideAddressBirthDetails.permntInKeralaAdrHouseNameEn
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideAddressBirthDetails.permntInKeralaAdrHouseNameMl
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideAddressBirthDetails.permntInKeralaAdrVillage
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideAddressBirthDetails.permntInKeralaAdrLBName
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideAddressBirthDetails.permntInKeralaAdrTaluk
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideAddressBirthDetails.permntInKeralaWardNo
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideAddressBirthDetails.permntInKeralaAdrLocalityNameEn
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideAddressBirthDetails.permntInKeralaAdrLocalityNameMl
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideAddressBirthDetails.permntInKeralaAdrStreetNameEn
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideAddressBirthDetails.permntInKeralaAdrStreetNameMl
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideAddressBirthDetails.permntInKeralaAdrDistrict
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideAddressBirthDetails.permtaddressStateName
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideAddressBirthDetails.permntInKeralaAdrPostOffice
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideAddressBirthDetails.permntInKeralaAdrPincode
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideAddressBirthDetails.permtaddressCountry
+            - jsonPath: $.BornOutsideChildDetails.*.auditDetails.lastModifiedBy
+            - jsonPath: $.BornOutsideChildDetails.*.auditDetails.lastModifiedTime
+            - jsonPath: $.BornOutsideChildDetails.*.ParentsDetails.fatherEmail
+            - jsonPath: $.BornOutsideChildDetails.*.ParentsDetails.fatherMobile
+            - jsonPath: $.BornOutsideChildDetails.*.id
+
+        - query: INSERT INTO eg_birth_present_address_audit SELECT * FROM eg_birth_present_address WHERE birthdtlid = ?;
+          basePath: BornOutsideChildDetails.*
+          jsonMaps:
+            - jsonPath: $.BornOutsideChildDetails.*.id
+
+
+        - query: UPDATE public.eg_birth_present_address SET ot_address1_en=?,ot_address1_ml=?,ot_address2_en=?,ot_address2_ml=?,ot_state_region_province_en=?,
+            ot_state_region_province_ml=?,ot_zipcode=?,village_name=?,countryid=?,lastmodifiedby=?,lastmodifiedtime=? WHERE birthdtlid=?;
+          basePath: BornOutsideChildDetails.*.BornOutsideAddressBirthDetails
+          jsonMaps:
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideAddressBirthDetails.presentOutSideIndiaAdressEn
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideAddressBirthDetails.presentOutSideIndiaAdressMl
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideAddressBirthDetails.presentOutSideIndiaAdressEnB
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideAddressBirthDetails.presentOutSideIndiaAdressMlB
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideAddressBirthDetails.presentOutSideIndiaProvinceEn
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideAddressBirthDetails.presentOutSideIndiaProvinceMl
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideAddressBirthDetails.presentOutsideIndiaPostCode
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideAddressBirthDetails.presentOutSideIndiaadrsVillage
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideAddressBirthDetails.presentOutSideCountry
+            - jsonPath: $.BornOutsideChildDetails.*.auditDetails.lastModifiedBy
+            - jsonPath: $.BornOutsideChildDetails.*.auditDetails.lastModifiedTime
+            - jsonPath: $.ChildDetails.*.id
+
+        - query: INSERT INTO eg_birth_statitical_information_audit SELECT * FROM eg_birth_statitical_information WHERE birthdtlid = ?;
+          basePath: BornOutsideChildDetails.*
+          jsonMaps:
+            - jsonPath: $.BornOutsideChildDetails.*.id
+
+        - query: UPDATE public.eg_birth_statitical_information SET weight_of_child=?,duration_of_pregnancy_in_week=?,nature_of_medical_attention=?,
+            delivery_method=?,religionid=?,father_nationalityid=?,father_educationid=?,father_proffessionid=?,mother_educationid=?,
+            mother_proffessionid=?,mother_nationalityid=?,mother_age_marriage=?,mother_age_delivery=?,mother_no_of_birth_given=?,
+            mother_maritalstatusid=?,mother_unmarried=?,mother_res_lbid=?,mother_res_lb_code_id=?,
+            mother_res_place_type_id=?,mother_res_lb_type_id=?,mother_res_district_id=?,mother_res_state_id=?,mother_res_country_id=?,
+            mother_resdnce_addr_type=?,mother_resdnce_tenant=?,mother_resdnce_placetype=?,mother_resdnce_place_en=?,mother_resdnce_place_ml=?,
+            mother_resdnce_lbtype=?,mother_resdnce_district=?,mother_resdnce_state=?,mother_resdnce_country=?,mother_order_of_cur_delivery=?,
+            mother_order_cur_child=?,mother_res_no_of_years=?,lastmodifiedby=?,lastmodifiedtime=? WHERE birthdtlid=?;
+
+          basePath: BornOutsideChildDetails.*
+          jsonMaps:
+            - jsonPath: $.BornOutsideChildDetails.*.birthWeight
+            - jsonPath: $.BornOutsideChildDetails.*.pregnancyDuration
+            - jsonPath: $.BornOutsideChildDetails.*.medicalAttensionSub
+            - jsonPath: $.BornOutsideChildDetails.*.deliveryMethods
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.Religion
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.fatherNationality
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.fatherEducation
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.fatherProfession
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.motherEducation
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.motherProfession
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.motherNationality
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.motherMarriageAge
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.motherMarriageBirth
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.mother_no_of_birth_given
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.motherMaritalStatus
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.mother_unmarried
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideAddressBirthDetails.mother_res_lbid
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.mother_res_lb_code_id
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.mother_res_place_type_id
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.mother_res_lb_type_id
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.mother_res_district_id
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.mother_res_state_id
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.mother_res_country_id
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.mother_resdnce_addr_type
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideAddressBirthDetails.permntInKeralaAdrLBName
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.townOrVillagePresent
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.mother_resdnce_place_en
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.mother_resdnce_place_ml
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.mother_resdnce_lbtype
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.mother_resdnce_district
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.mother_resdnce_state
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.mother_resdnce_country
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.orderofChildren
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.mother_order_cur_child
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.mother_res_no_of_years
+            - jsonPath: $.BornOutsideChildDetails.*.auditDetails.lastModifiedBy
+            - jsonPath: $.BornOutsideChildDetails.*.auditDetails.lastModifiedTime
+            - jsonPath: $.BornOutsideChildDetails.*.id

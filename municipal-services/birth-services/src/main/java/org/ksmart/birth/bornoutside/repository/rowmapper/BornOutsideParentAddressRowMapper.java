@@ -10,6 +10,7 @@ public interface BornOutsideParentAddressRowMapper {
         return ParentAddress.builder()
                 //present
                 .countryIdPresent(rs.getString("pres_countryid"))
+                .presentOutSideCountry(rs.getString("pres_countryid"))
                 .presentOutSideIndiaAdressEn(rs.getString("pres_ot_address1_en"))
                 .presentOutSideIndiaAdressMl(rs.getString("pres_ot_address1_ml"))
                 .presentOutSideIndiaAdressEnB(rs.getString("pres_ot_address2_en"))
