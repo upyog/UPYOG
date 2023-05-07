@@ -114,7 +114,7 @@ public class NewBirthRepository {
         } else{
             List<NewBirthApplication> result = jdbcTemplate.query(query, preparedStmtValues.toArray(), ksmartBirthApplicationRowMapper);
            
-            responseEnrichment.setNewBirthRequestData(requestInfo, result);
+//            responseEnrichment.setNewBirthRequestData(requestInfo, result);
             return result;
         }
 
