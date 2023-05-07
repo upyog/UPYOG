@@ -49,6 +49,7 @@ public class WorkflowIntegratorNewBirth {
     public  void callWorkFlow(NewBirthDetailRequest request) {
 
         NewBirthApplication currentFile = request.getNewBirthDetails().get(0);
+        System.out.println(" payment detail currentFile:"+currentFile);
         String wfTenantId = currentFile.getTenantId();
         String businessServiceFromMDMS = currentFile.getBusinessService();
 

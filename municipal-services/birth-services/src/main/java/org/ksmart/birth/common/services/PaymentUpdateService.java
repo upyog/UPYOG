@@ -97,7 +97,7 @@ public class PaymentUpdateService {
 			
 			NewBirthDetailRequest updateRequest = NewBirthDetailRequest.builder().requestInfo(requestInfo)
 					.newBirthDetails(birth).build();
-			
+			System.out.println(" payment detail updateRequest:"+updateRequest);
 			wfIntegrator.callWorkFlow(updateRequest);
 			}
 			
