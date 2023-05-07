@@ -89,7 +89,9 @@ public class PaymentUpdateService {
 			 
 			searchCriteria.setAppNumber(paymentDetail.getBill().getConsumerCode());
 			searchCriteria.setBusinessService(paymentDetail.getBusinessService());
-			
+			System.out.println(" payment detail tenantId:"+tenantId);
+			System.out.println(" payment detail tenantId:"+paymentDetail.getBill().getConsumerCode());
+			System.out.println(" payment detail tenantId:"+paymentDetail.getBusinessService());
 			
 			List<NewBirthApplication> birth = newBirthService.searchBirth(requestInfo,searchCriteria);
 			
