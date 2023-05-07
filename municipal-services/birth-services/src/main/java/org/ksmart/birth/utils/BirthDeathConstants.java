@@ -167,6 +167,14 @@ public class BirthDeathConstants {
 	public static final String UPDATE_ERROR_MESSAGE = "UPDATE_ERROR";
 
 	// workflow integrator
+	
+	public static final String WORKFLOW_HOSP21 = "WFBIRTH21DAYS";
+	
+	public static final String WORKFLOW_HOME21 = "WFBIRTH21DAYSHOME";
+	
+	public static final String WORKFLOW_ACTION_PAY = "PAY";
+	
+	
 	public static final String BUSINESS_SERVICE_BND = "BIRTHHOSP21";
 	
 	public static final String BUSINESS_SERVICE_ADPTN = "ADOPTIONHOME";

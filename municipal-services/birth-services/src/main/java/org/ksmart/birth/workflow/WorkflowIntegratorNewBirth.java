@@ -83,7 +83,15 @@ public class WorkflowIntegratorNewBirth {
                 obj.put(BirthDeathConstants.TENANTIDKEY, wfTenantId);
                 obj.put(BirthDeathConstants.BUSINESSSERVICEKEY, currentFile.getWorkFlowCode());
                 obj.put(BirthDeathConstants.MODULENAMEKEY, BirthDeathConstants.BNDMODULENAMEVALUE);
-                obj.put(BirthDeathConstants.ACTIONKEY, birth.getAction());
+                
+                if((currentFile.getWorkFlowCode() == BirthDeathConstants.WORKFLOW_HOSP21)  || (currentFile.getWorkFlowCode() == BirthDeathConstants.WORKFLOW_HOME21)) {
+                	obj.put(BirthDeathConstants.ACTIONKEY, birth.getAction());
+                }
+                else {
+                	obj.put(BirthDeathConstants.ACTIONKEY,BirthDeathConstants.WORKFLOW_ACTION_PAY);
+                }
+                
+                
                 obj.put(BirthDeathConstants.COMMENTKEY, birth.getComment());
                 if (!CollectionUtils.isEmpty(birth.getAssignee())) {
                     obj.put(BirthDeathConstants.ASSIGNEEKEY, uuidmaps);
