@@ -12,6 +12,7 @@ import org.ksmart.birth.config.BirthConfiguration;
 import org.ksmart.birth.newbirth.enrichment.NewBirthEnrichment;
 import org.ksmart.birth.newbirth.enrichment.NewBirthResponseEnrichment;
 import org.ksmart.birth.newbirth.repository.rowmapper.BirthApplicationRowMapper;
+import org.ksmart.birth.newbirth.repository.rowmapper.BirthApplicationRowMapperForPay;
 import org.ksmart.birth.utils.BirthConstants;
 import org.ksmart.birth.utils.enums.ErrorCodes;
 import org.ksmart.birth.web.model.SearchCriteria;
@@ -35,11 +36,12 @@ public class NewBirthRepository {
     private final BirthConfiguration birthDeathConfiguration;
     private final JdbcTemplate jdbcTemplate;
     private final BirthApplicationRowMapper ksmartBirthApplicationRowMapper;
+    private final BirthApplicationRowMapperForPay ksmartBirthApplicationRowMapperPay;
     private final RegisterRowMapperForApp registerRowMapperForApp;
 
     @Autowired
     NewBirthRepository(JdbcTemplate jdbcTemplate, NewBirthEnrichment ksmartBirthEnrichment, BirthConfiguration birthDeathConfiguration,
-                       BndProducer producer,NewBirthResponseEnrichment responseEnrichment,  BirthApplicationRowMapper ksmartBirthApplicationRowMapper,RegisterRowMapperForApp registerRowMapperForApp) {
+                       BndProducer producer,NewBirthResponseEnrichment responseEnrichment, BirthApplicationRowMapperForPay ksmartBirthApplicationRowMapperPay, BirthApplicationRowMapper ksmartBirthApplicationRowMapper,RegisterRowMapperForApp registerRowMapperForApp) {
         this.jdbcTemplate = jdbcTemplate;
         this.ksmartBirthEnrichment = ksmartBirthEnrichment;
         this.birthDeathConfiguration = birthDeathConfiguration;
@@ -47,6 +49,7 @@ public class NewBirthRepository {
         this.ksmartBirthApplicationRowMapper = ksmartBirthApplicationRowMapper;
         this.responseEnrichment = responseEnrichment;
         this.registerRowMapperForApp = registerRowMapperForApp;
+        this.ksmartBirthApplicationRowMapperPay=ksmartBirthApplicationRowMapperPay;
     }
 
     public List<NewBirthApplication> saveKsmartBirthDetails(NewBirthDetailRequest request, Object mdmsData) {
@@ -112,7 +115,7 @@ public class NewBirthRepository {
         if(preparedStmtValues.size() == 0){
             throw new CustomException(ErrorCodes.NOT_FOUND.getCode(), "No result found.");
         } else{
-            List<NewBirthApplication> result = jdbcTemplate.query(query, preparedStmtValues.toArray(), ksmartBirthApplicationRowMapper);
+            List<NewBirthApplication> result = jdbcTemplate.query(query, preparedStmtValues.toArray(), ksmartBirthApplicationRowMapperPay);
            
 //            responseEnrichment.setNewBirthRequestData(requestInfo, result);
             return result;
