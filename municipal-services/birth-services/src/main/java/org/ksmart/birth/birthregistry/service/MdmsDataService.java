@@ -1,6 +1,7 @@
 package org.ksmart.birth.birthregistry.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.ksmart.birth.birthregistry.model.RegisterBirthDetail;
 import org.ksmart.birth.birthregistry.model.RegisterCertificateData;
 import org.ksmart.birth.common.services.MdmsLocationService;
@@ -13,6 +14,7 @@ import org.ksmart.birth.web.model.stillbirth.StillBirthApplication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
 
 import static org.ksmart.birth.utils.BirthConstants.*;
@@ -113,7 +115,7 @@ public class MdmsDataService {
 //    }
 
     public void setPresentAddressDetailsEn(RegisterBirthDetail register,RegisterCertificateData registerCert, Object  mdmsData) {
-        if (register.getRegisterBirthPresent().getCountryId() != null) {
+        if (!StringUtils.isEmpty(register.getRegisterBirthPresent().getCountryId())) {
             if (register.getRegisterBirthPresent().getCountryId().contains(COUNTRY_CODE)) {
                 ksmartAddressService.getAddressInsideCountryPresentEn(register, registerCert, mdmsData);
                 ksmartAddressService.getAddressInsideCountryPresentMl(register, registerCert, mdmsData);
@@ -122,29 +124,26 @@ public class MdmsDataService {
                 ksmartAddressService.getAddressOutsideCountryPresentMl(register, registerCert, mdmsData);
             }
         } else {
-            ksmartAddressService.getAddressOutsideCountryPresentEn(register, registerCert, mdmsData);
-            ksmartAddressService.getAddressOutsideCountryPresentMl(register, registerCert, mdmsData);
+            ksmartAddressService.getAddressInsideCountryPresentEn(register, registerCert, mdmsData);
+            ksmartAddressService.getAddressInsideCountryPresentEn(register, registerCert, mdmsData);
         }
 
     }
 
     public void setPremananttAddressDetailsEn(RegisterBirthDetail register,RegisterCertificateData registerCert, Object  mdmsData) {
-        if(register.getRegisterBirthPermanent() != null && register.getRegisterBirthPermanent().getCountryId() != null) {
-            if (!register.getRegisterBirthPermanent().getCountryId().isEmpty() || !register.getRegisterBirthPermanent().getCountryId().isEmpty()) {
-                if (register.getRegisterBirthPermanent().getCountryId().contains(COUNTRY_CODE)) {
-                    ksmartAddressService.getAddressInsideCountryPermanentEn(register, registerCert, mdmsData);
-                    ksmartAddressService.getAddressInsideCountryPermanentMl(register, registerCert, mdmsData);
-                } else {
-                    ksmartAddressService.getAddressOutsideCountryPermanentEn(register, registerCert, mdmsData);
-                    ksmartAddressService.getAddressOutsideCountryPermanentMl(register, registerCert, mdmsData);
-                }
+        if (!StringUtils.isEmpty(register.getRegisterBirthPermanent().getCountryId())) {
+            if (register.getRegisterBirthPermanent().getCountryId().contains(COUNTRY_CODE)) {
+                ksmartAddressService.getAddressInsideCountryPermanentEn(register, registerCert, mdmsData);
+                ksmartAddressService.getAddressInsideCountryPermanentMl(register, registerCert, mdmsData);
             } else {
                 ksmartAddressService.getAddressOutsideCountryPermanentEn(register, registerCert, mdmsData);
                 ksmartAddressService.getAddressOutsideCountryPermanentMl(register, registerCert, mdmsData);
             }
+        } else {
+            ksmartAddressService.getAddressInsideCountryPermanentEn(register, registerCert, mdmsData);
+            ksmartAddressService.getAddressInsideCountryPermanentMl(register, registerCert, mdmsData);
         }
     }
-
     public void setKsmartLocationDetails(NewBirthApplication register, Object mdmsData) {
          if (register.getPlaceofBirthId().contains(BIRTH_PLACE_HOSPITAL)) {
             String placeEn = mdmsLocationService.getHospitalAddressEn(mdmsData, register.getHospitalId());

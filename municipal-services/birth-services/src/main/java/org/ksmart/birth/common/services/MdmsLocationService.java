@@ -30,7 +30,7 @@ public class MdmsLocationService {
 
     public String getHospitalNameEn(Object mdmsData, String hospitalId) {
         List<String> hospitals  = getHospitalCode(mdmsData);
-        if (CollectionUtils.isEmpty(hospitals) || !hospitals.contains(hospitalId)) {
+        if (!CollectionUtils.isEmpty(hospitals) || hospitals.contains(hospitalId)) {
             int index = hospitals.indexOf(hospitalId);
             return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_HOSPITALS_CODES_JSONPATH + "[" + index + "].hospitalName");
         }
@@ -41,7 +41,7 @@ public class MdmsLocationService {
 
     public String getHospitalNameMl(Object mdmsData, String hospitalId) {
         List<String> hospitals = getHospitalCode(mdmsData);
-        if (CollectionUtils.isEmpty(hospitals) || !hospitals.contains(hospitalId)) {
+        if (!CollectionUtils.isEmpty(hospitals) || hospitals.contains(hospitalId)) {
             int index = hospitals.indexOf(hospitalId);
             return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_HOSPITALS_CODES_JSONPATH + "[" + index + "].hospitalNamelocal");
         } else {
@@ -51,7 +51,7 @@ public class MdmsLocationService {
 
     public String getHospitalAddressEn(Object mdmsData, String hospitalId) {
         List<String> hospitals = getHospitalCode(mdmsData);
-        if (CollectionUtils.isEmpty(hospitals) || !hospitals.contains(hospitalId)) {
+        if (!CollectionUtils.isEmpty(hospitals) || hospitals.contains(hospitalId)) {
             int index = hospitals.indexOf(hospitalId);
             return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_HOSPITALS_CODES_JSONPATH + "[" + index + "].mainPlace");
         } else {
@@ -61,7 +61,7 @@ public class MdmsLocationService {
 
     public String getHospitalAddressMl(Object mdmsData, String hospitalId) {
         List<String> hospitals = getHospitalCode(mdmsData);
-        if (CollectionUtils.isEmpty(hospitals) || !hospitals.contains(hospitalId)) {
+        if (!CollectionUtils.isEmpty(hospitals) || hospitals.contains(hospitalId)) {
             int index = hospitals.indexOf(hospitalId);
             return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_HOSPITALS_CODES_JSONPATH + "[" + index + "].mainPlaceLocal");
         } else {
@@ -71,7 +71,7 @@ public class MdmsLocationService {
 
     public String getInstitutionNameEn(Object mdmsData, String institutionId) {
         List<String> institutions  = getInstitutionCode(mdmsData);
-        if (CollectionUtils.isEmpty(institutions) || !institutions.contains(institutionId)) {
+        if (!CollectionUtils.isEmpty(institutions) || institutions.contains(institutionId)) {
             int index = institutions.indexOf(institutionId);
             return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_INSTITUTIONS_CODES_JSONPATH + "[" + index + "].institutionName");
         }else {
@@ -81,7 +81,7 @@ public class MdmsLocationService {
 
     public String getInstitutionNameMl(Object mdmsData, String institutionId) {
         List<String> institutions  = getInstitutionCode(mdmsData);
-        if (CollectionUtils.isEmpty(institutions) || !institutions.contains(institutionId)) {
+        if (!CollectionUtils.isEmpty(institutions) || institutions.contains(institutionId)) {
         int index = institutions.indexOf(institutionId);
         return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_INSTITUTIONS_CODES_JSONPATH+"["+index+"].institutionNamelocal");
         }else {
@@ -91,7 +91,7 @@ public class MdmsLocationService {
 
     public String getInstitutionTypeEn(Object mdmsData, String institutionTypeId) {
         List<String> institutions = getInstitutionTypeCode(mdmsData);
-        if (CollectionUtils.isEmpty(institutions) || !institutions.contains(institutionTypeId)) {
+        if (!CollectionUtils.isEmpty(institutions) || institutions.contains(institutionTypeId)) {
             int index = institutions.indexOf(institutionTypeId);
             return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_INST_TYPE_JSONPATH + "[" + index + "].name");
         } else {
@@ -101,7 +101,7 @@ public class MdmsLocationService {
 
     public String getInstitutionTypeMl(Object mdmsData, String institutionTypeId) {
         List<String> institutions = getInstitutionTypeCode(mdmsData);
-        if (CollectionUtils.isEmpty(institutions) || !institutions.contains(institutionTypeId)) {
+        if (!CollectionUtils.isEmpty(institutions) || institutions.contains(institutionTypeId)) {
             int index = institutions.indexOf(institutionTypeId);
             return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_INST_TYPE_JSONPATH + "[" + index + "].namelocal");
         } else {
@@ -111,7 +111,7 @@ public class MdmsLocationService {
 
     public String getInstitutionAddressEn(Object mdmsData, String institutionId) {
         List<String> institutions = getInstitutionCode(mdmsData);
-        if (CollectionUtils.isEmpty(institutions) || !institutions.contains(institutionId)) {
+        if (!CollectionUtils.isEmpty(institutions) || institutions.contains(institutionId)) {
             int index = institutions.indexOf(institutionId);
             return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_INSTITUTIONS_CODES_JSONPATH + "[" + index + "].mainPlace");
         } else {
@@ -121,7 +121,7 @@ public class MdmsLocationService {
 
     public String getInstitutionAddressMl(Object mdmsData, String institutionId) {
         List<String> institutions  = getInstitutionCode(mdmsData);
-        if (CollectionUtils.isEmpty(institutions) || !institutions.contains(institutionId)) {
+        if (!CollectionUtils.isEmpty(institutions) || institutions.contains(institutionId)) {
         int index = institutions.indexOf(institutionId);
         return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_INSTITUTIONS_CODES_JSONPATH+"["+index+"].mainPlaceLocal");
         }else {
