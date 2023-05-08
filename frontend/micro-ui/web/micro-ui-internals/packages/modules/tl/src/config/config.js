@@ -109,7 +109,7 @@ export const newConfig = [
         {
             "type": "component",
             "route": "street",
-            "component": "SelectStreet",
+            "component": "TLSelectStreet",
             "key": "address",
             "withoutLabel": true,
             "hideInEmployee": true,
@@ -145,7 +145,7 @@ export const newConfig = [
         },
         {
             "type": "component",
-            "component": "SelectStreet",
+            "component": "TLSelectStreet",
             "key": "address",
             "withoutLabel": true,
             "hideInCitizen": true,
@@ -179,7 +179,7 @@ export const newConfig = [
         {
             "type": "component",
             "route": "landmark",
-            "component": "SelectLandmark",
+            "component": "TLSelectLandmark",
             "withoutLabel": true,
             "texts": {
                 "headerCaption": "TL_LOCATION_CAPTION",
