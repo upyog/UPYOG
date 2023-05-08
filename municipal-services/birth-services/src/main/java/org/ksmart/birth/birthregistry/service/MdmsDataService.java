@@ -125,7 +125,7 @@ public class MdmsDataService {
             }
         } else {
             ksmartAddressService.getAddressInsideCountryPresentEn(register, registerCert, mdmsData);
-            ksmartAddressService.getAddressInsideCountryPresentEn(register, registerCert, mdmsData);
+            ksmartAddressService.getAddressInsideCountryPresentMl(register, registerCert, mdmsData);
         }
 
     }
