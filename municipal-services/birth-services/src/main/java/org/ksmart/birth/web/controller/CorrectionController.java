@@ -47,10 +47,10 @@ public class CorrectionController {
     public ResponseEntity<?> saveCorrectionBirthDetails(@RequestBody CorrectionRequest request) {
         List<CorrectionApplication> birthDetails=correctionService.saveCorrectionBirthDetails(request);
         CorrectionResponse response= CorrectionResponse.builder()
-                .correctionDetails(birthDetails)
-                .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(),
-                        true))
-                .build();
+                                                        .correctionDetails(birthDetails)
+                                                        .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(),
+                                                                true))
+                                                        .build();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

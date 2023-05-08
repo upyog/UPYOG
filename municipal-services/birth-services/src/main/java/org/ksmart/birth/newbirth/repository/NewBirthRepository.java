@@ -3,6 +3,7 @@ package org.ksmart.birth.newbirth.repository;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
+import org.ksmart.birth.birthcommon.enrichment.RegisterStatisticsEnrichment;
 import org.ksmart.birth.birthregistry.model.RegisterBirthDetail;
 import org.ksmart.birth.birthregistry.model.RegisterBirthDetailsRequest;
 import org.ksmart.birth.birthregistry.repository.rowmapperfornewapplication.RegisterRowMapperForApp;
@@ -38,10 +39,12 @@ public class NewBirthRepository {
     private final BirthApplicationRowMapper ksmartBirthApplicationRowMapper;
     private final BirthApplicationRowMapperForPay ksmartBirthApplicationRowMapperPay;
     private final RegisterRowMapperForApp registerRowMapperForApp;
+    private  final RegisterStatisticsEnrichment registerStatisticsEnrichment;
 
     @Autowired
     NewBirthRepository(JdbcTemplate jdbcTemplate, NewBirthEnrichment ksmartBirthEnrichment, BirthConfiguration birthDeathConfiguration,
-                       BndProducer producer,NewBirthResponseEnrichment responseEnrichment, BirthApplicationRowMapperForPay ksmartBirthApplicationRowMapperPay, BirthApplicationRowMapper ksmartBirthApplicationRowMapper,RegisterRowMapperForApp registerRowMapperForApp) {
+                       BndProducer producer,NewBirthResponseEnrichment responseEnrichment, BirthApplicationRowMapperForPay ksmartBirthApplicationRowMapperPay,
+                       BirthApplicationRowMapper ksmartBirthApplicationRowMapper,RegisterRowMapperForApp registerRowMapperForApp, RegisterStatisticsEnrichment registerStatisticsEnrichment) {
         this.jdbcTemplate = jdbcTemplate;
         this.ksmartBirthEnrichment = ksmartBirthEnrichment;
         this.birthDeathConfiguration = birthDeathConfiguration;
@@ -50,6 +53,7 @@ public class NewBirthRepository {
         this.responseEnrichment = responseEnrichment;
         this.registerRowMapperForApp = registerRowMapperForApp;
         this.ksmartBirthApplicationRowMapperPay=ksmartBirthApplicationRowMapperPay;
+        this.registerStatisticsEnrichment = registerStatisticsEnrichment;
     }
 
     public List<NewBirthApplication> saveKsmartBirthDetails(NewBirthDetailRequest request, Object mdmsData) {
@@ -63,7 +67,7 @@ public class NewBirthRepository {
         producer.push(birthDeathConfiguration.getUpdateKsmartBirthApplicationTopic(), request);
         return request.getNewBirthDetails();
     }
-    public RegisterBirthDetailsRequest searchBirthDetailsForRegister(NewBirthDetailRequest requestApplication) {
+    public RegisterBirthDetailsRequest searchBirthDetailsForRegister(NewBirthDetailRequest requestApplication, Object mdmsData) {
         List<Object> preparedStmtValues = new ArrayList<>();
         SearchCriteria criteria = new SearchCriteria();
         List<RegisterBirthDetail> result = null;
@@ -72,6 +76,7 @@ public class NewBirthRepository {
             criteria.setTenantId(requestApplication.getNewBirthDetails().get(0).getTenantId());
             String query = commonQueryBuilder.getApplicationSearchQueryForRegistry(criteria, preparedStmtValues);
             result = jdbcTemplate.query(query, preparedStmtValues.toArray(), registerRowMapperForApp);
+            registerStatisticsEnrichment.setRegisterStatistics(result.get(0).getRegisterBirthStatitical(), mdmsData, result.get(0).getRegisterBirthPresent().getTenantId());
         }
         return RegisterBirthDetailsRequest.builder()
                 .requestInfo(requestApplication.getRequestInfo())
@@ -117,7 +122,7 @@ public class NewBirthRepository {
         } else{
             List<NewBirthApplication> result = jdbcTemplate.query(query, preparedStmtValues.toArray(), ksmartBirthApplicationRowMapperPay);
            
-//            responseEnrichment.setNewBirthRequestData(requestInfo, result);
+            responseEnrichment.setNewBirthRequestData(requestInfo, result);
             return result;
         }
 

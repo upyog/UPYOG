@@ -2,11 +2,8 @@ package org.ksmart.birth.web.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.ksmart.birth.birthregistry.model.BirthCertificate;
-import org.ksmart.birth.birthregistry.model.RegisterBirthDetail;
 import org.ksmart.birth.birthregistry.model.RegisterBirthDetailsRequest;
-import org.ksmart.birth.birthregistry.model.RegisterBirthSearchCriteria;
 import org.ksmart.birth.birthregistry.service.RegisterBirthService;
-import org.ksmart.birth.newbirth.service.RegistryRequestService;
 import org.ksmart.birth.stillbirth.service.RegistryRequestServiceForStillBirth;
 import org.ksmart.birth.stillbirth.service.StillBirthService;
 import org.ksmart.birth.utils.ResponseInfoFactory;

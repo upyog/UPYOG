@@ -6,6 +6,7 @@ import org.egov.common.contract.request.RequestInfo;
 import org.ksmart.birth.birthcommon.model.WorkFlowCheck;
 import org.ksmart.birth.birthcommon.model.demand.Demand;
 import org.ksmart.birth.birthcommon.services.DemandService;
+import org.ksmart.birth.birthregistry.model.RegisterBirthDetailsRequest;
 import org.ksmart.birth.newbirth.repository.NewBirthRepository;
 import org.ksmart.birth.newbirth.validator.NewBirthApplicationValidator;
 import org.ksmart.birth.utils.MdmsUtil;
@@ -86,6 +87,10 @@ public class NewBirthService {
             workflowIntegrator.callWorkFlow(request);
         }
         return repository.updateKsmartBirthDetails(request, mdmsData);
+    }
+    public RegisterBirthDetailsRequest createRegistryRequest(NewBirthDetailRequest request) {
+        Object mdmsData = mdmsUtil.mdmsCall(request.getRequestInfo());
+        return repository.searchBirthDetailsForRegister(request, mdmsData);
     }
 
     private NewBirthApplication findBirthRequestById(final NewBirthDetailRequest request) {

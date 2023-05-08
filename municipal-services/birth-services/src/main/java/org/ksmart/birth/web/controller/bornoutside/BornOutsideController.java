@@ -2,11 +2,9 @@ package org.ksmart.birth.web.controller.bornoutside;
 
 import lombok.extern.slf4j.Slf4j;
 import org.ksmart.birth.birthregistry.model.BirthCertificate;
-import org.ksmart.birth.birthregistry.model.RegisterBirthDetail;
 import org.ksmart.birth.birthregistry.model.RegisterBirthDetailsRequest;
 import org.ksmart.birth.birthregistry.service.RegisterBirthService;
 import org.ksmart.birth.bornoutside.service.RegistryRequestServiceForBirthOutside;
-import org.ksmart.birth.newbirth.service.RegistryRequestService;
 import org.ksmart.birth.bornoutside.service.BornOutsideService;
 import org.ksmart.birth.utils.ResponseInfoFactory;
 import org.ksmart.birth.web.model.SearchCriteria;
@@ -20,9 +18,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-
-import static org.ksmart.birth.utils.BirthConstants.STATUS_APPROVED;
-import static org.ksmart.birth.utils.BirthConstants.WF_APPROVE;
 
 @Slf4j
 @RestController

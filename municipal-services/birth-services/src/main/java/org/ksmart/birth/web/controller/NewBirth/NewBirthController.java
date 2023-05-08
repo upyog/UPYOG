@@ -1,14 +1,10 @@
 package org.ksmart.birth.web.controller.NewBirth;
 
 import lombok.extern.slf4j.Slf4j;
-import org.egov.tracer.model.CustomException;
 import org.ksmart.birth.birthregistry.model.BirthCertificate;
-import org.ksmart.birth.birthregistry.model.RegisterBirthDetail;
 import org.ksmart.birth.birthregistry.model.RegisterBirthDetailsRequest;
-import org.ksmart.birth.birthregistry.model.RegisterBirthSearchCriteria;
 import org.ksmart.birth.birthregistry.service.RegisterBirthService;
 import org.ksmart.birth.newbirth.service.NewBirthService;
-import org.ksmart.birth.newbirth.service.RegistryRequestService;
 import org.ksmart.birth.utils.ResponseInfoFactory;
 import org.ksmart.birth.web.model.SearchCriteria;
 import org.ksmart.birth.web.model.newbirth.NewBirthApplication;
@@ -25,7 +21,6 @@ import java.util.List;
 
 import static org.ksmart.birth.utils.BirthConstants.STATUS_APPROVED;
 import static org.ksmart.birth.utils.BirthConstants.WF_APPROVE;
-import static org.ksmart.birth.utils.enums.ErrorCodes.REQUIRED;
 
 @Slf4j
 @RestController
@@ -34,14 +29,12 @@ public class NewBirthController {
     private final ResponseInfoFactory responseInfoFactory;
     private final NewBirthService ksmartBirthService;
     private final RegisterBirthService registerBirthService;
-    private final RegistryRequestService registryReq;
     @Autowired
     NewBirthController(NewBirthService ksmartBirthService, ResponseInfoFactory responseInfoFactory,
-                       RegisterBirthService registerBirthService, RegistryRequestService registryReq) {
+                       RegisterBirthService registerBirthService) {
         this.ksmartBirthService=ksmartBirthService;
         this.responseInfoFactory=responseInfoFactory;
         this.registerBirthService = registerBirthService;
-        this.registryReq = registryReq;
     }
 
     @PostMapping(value = {"/createbirth"})
@@ -61,7 +54,7 @@ public class NewBirthController {
         //Download certificate when Approved
         //if(request.getNewBirthDetails().get(0).getIsWorkflow()) {
             if ((birthApplicationDetails.get(0).getApplicationStatus().equals(STATUS_APPROVED) && birthApplicationDetails.get(0).getAction().equals(WF_APPROVE))) {
-                       RegisterBirthDetailsRequest registerBirthDetailsRequest = registryReq.createRegistryRequestNew(request);
+                       RegisterBirthDetailsRequest registerBirthDetailsRequest = ksmartBirthService.createRegistryRequest(request);
                System.out.println(registerBirthDetailsRequest.getRegisterBirthDetails().size());
                 if (registerBirthDetailsRequest.getRegisterBirthDetails().size() == 1) {
                     registerBirthService.saveRegisterBirthDetails(registerBirthDetailsRequest);
