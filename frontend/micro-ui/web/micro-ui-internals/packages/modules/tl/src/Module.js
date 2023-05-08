@@ -30,6 +30,7 @@ import TLWFApplicationTimeline from "./pageComponents/TLWFApplicationTimeline";
 import SelectOtherTradeDetails from "./pageComponents/SelectOtherTradeDetails";
 import TLSelectStreet from "./pageComponents/TLSelectStreet";
 import TLSelectLandmark from "./pageComponents/TLSelectLandMark";
+import TLSelectOwnerAddress from "./pageComponents/TLSelectOwnerAddress";
 
 import TLOwnerDetailsEmployee from "./pageComponents/TLOwnerDetailsEmployee";
 import TLTradeDetailsEmployee from "./pageComponents/TLTradeDetailsEmployee";
@@ -123,6 +124,7 @@ const componentsToRegister = {
   SelectOwnershipProof,
   TLSelectStreet,
   TLSelectLandmark,
+  TLSelectOwnerAddress,
   TLCheckPage,
   TLDocument,
   TLAcknowledgement,

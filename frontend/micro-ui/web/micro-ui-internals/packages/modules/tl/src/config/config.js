@@ -417,7 +417,7 @@ export const newConfig = [
         type: "component",
         route: "owner-address",
         isMandatory: true,
-        component: "SelectOwnerAddress",
+        component: "TLSelectOwnerAddress",
         texts: {
           headerCaption: "TL_OWNERS_DETAILS",
           header: "TL_OWNERS_ADDRESS",
