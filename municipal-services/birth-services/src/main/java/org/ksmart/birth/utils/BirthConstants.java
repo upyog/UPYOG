@@ -104,7 +104,7 @@ public class BirthConstants {
     public static final String BIRTH_PLACE_VEHICLE = "VEHICLE";
     public static final String BIRTH_PLACE_PUBLIC = "PUBLIC_PLACES";
     public static final String BIRTH_PLACE_OTHERS_COUNTRY = "OUTSIDE_COUNTRY";//OUTSIDE_COUNTRY
-
+    public static final String BIRTH_PLACE_OTHERS_MIGRATION = "OTHERS";//OUTSIDE_COUNTRY
 
     public static final String CR_MDMS_TENANT_BOUNDARY_CODE = "TenantBoundary";
     public static final String CR_MDMS_EGOV_LOCATION_MASTERS_CODE = "egov-location";

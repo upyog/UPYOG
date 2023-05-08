@@ -20,94 +20,102 @@ public class KsmartAddressService {
     public void getAddressOutsideCountryPresentEn(RegisterBirthDetail register, RegisterCertificateData registerCert, Object  mdmsData) {
         String address = "";
         address = new StringBuilder()
-                    .append(register.getRegisterBirthPresent().getOtAddress1En() == null ? "" : CaseUtils.toCamelCase(register.getRegisterBirthPresent().getOtAddress1En(),true)+", ")
-                    .append(register.getRegisterBirthPresent().getOtAddress2En()== null ? "" : CaseUtils.toCamelCase(register.getRegisterBirthPresent().getOtAddress2En(),true)+", ")
-                    .append(register.getRegisterBirthPresent().getOtStateRegionProvinceEn() == null ? "" : CaseUtils.toCamelCase(register.getRegisterBirthPresent().getOtStateRegionProvinceEn(),true)+", ")
-                    .append(register.getRegisterBirthPresent().getOtZipcode()  == null ? "" : register.getRegisterBirthPresent().getOtZipcode()+", ")
-                    .append(register.getRegisterBirthPresent().getCountryId() == null ? "" :  mdmsTenantService.getCountryNameEn(mdmsData, register.getRegisterBirthPresent().getCountryId())).toString();
+                    .append(StringUtil.isBlank(register.getRegisterBirthPresent().getOtAddress1En()) ? "" : CaseUtils.toCamelCase(register.getRegisterBirthPresent().getOtAddress1En(),true)+", ")
+                    .append(StringUtil.isBlank(register.getRegisterBirthPresent().getOtAddress2En()) ? "" : CaseUtils.toCamelCase(register.getRegisterBirthPresent().getOtAddress2En(),true)+", ")
+                    .append(StringUtil.isBlank(register.getRegisterBirthPresent().getOtStateRegionProvinceEn()) ? "" : CaseUtils.toCamelCase(register.getRegisterBirthPresent().getOtStateRegionProvinceEn(),true)+", ")
+                    .append(StringUtil.isBlank(register.getRegisterBirthPresent().getOtZipcode()) ? "" : register.getRegisterBirthPresent().getOtZipcode()+", ")
+                    .append(StringUtil.isBlank(register.getRegisterBirthPresent().getCountryId()) ? "" :  mdmsTenantService.getCountryNameEn(mdmsData, register.getRegisterBirthPresent().getCountryId())).toString();
+        address = address.replaceAll(",$", "");
         registerCert.setPresentAddDetails(address);
     }
     public void getAddressOutsideCountryPresentMl(RegisterBirthDetail register, RegisterCertificateData registerCert, Object  mdmsData) {
         String address = "";
         address = new StringBuilder()
-                .append(register.getRegisterBirthPresent().getOtAddress1Ml() == null ? "" : register.getRegisterBirthPresent().getOtAddress1Ml()+", ")
-                .append(register.getRegisterBirthPresent().getOtAddress2Ml()== null ? "" : register.getRegisterBirthPresent().getOtAddress2Ml()+", ")
-                .append(register.getRegisterBirthPresent().getOtStateRegionProvinceMl() == null ? "" : register.getRegisterBirthPresent().getOtStateRegionProvinceMl()+", ")
-                .append(register.getRegisterBirthPresent().getOtZipcode()  == null ? "" : register.getRegisterBirthPresent().getOtZipcode()+", ")
-                .append(register.getRegisterBirthPresent().getCountryId() == null ? "" :  mdmsTenantService.getCountryNameMl(mdmsData, register.getRegisterBirthPresent().getCountryId())).toString();
+                .append(StringUtil.isBlank(register.getRegisterBirthPresent().getOtAddress1Ml()) ? "" : register.getRegisterBirthPresent().getOtAddress1Ml()+", ")
+                .append(StringUtil.isBlank(register.getRegisterBirthPresent().getOtAddress2Ml()) ? "" : register.getRegisterBirthPresent().getOtAddress2Ml()+", ")
+                .append(StringUtil.isBlank(register.getRegisterBirthPresent().getOtStateRegionProvinceMl()) ? "" : register.getRegisterBirthPresent().getOtStateRegionProvinceMl()+", ")
+                .append(StringUtil.isBlank(register.getRegisterBirthPresent().getOtZipcode()) ? "" : register.getRegisterBirthPresent().getOtZipcode()+", ")
+                .append(StringUtil.isBlank(register.getRegisterBirthPresent().getCountryId()) ? "" :  mdmsTenantService.getCountryNameMl(mdmsData, register.getRegisterBirthPresent().getCountryId())).toString();
+        address = address.replaceAll(",$", "");
         registerCert.setPresentAddDetailsMl(address);
     }
 
     public void getAddressOutsideCountryPermanentEn(RegisterBirthDetail register, RegisterCertificateData registerCert, Object  mdmsData) {
         String address = "";
         address = new StringBuilder()
-                .append(register.getRegisterBirthPresent().getOtAddress1En() == null ? "" : CaseUtils.toCamelCase(register.getRegisterBirthPresent().getOtAddress1En(),true)+", ")
-                .append(register.getRegisterBirthPresent().getOtAddress2En()== null ? "" : CaseUtils.toCamelCase(register.getRegisterBirthPresent().getOtAddress2En(),true)+", ")
-                .append(register.getRegisterBirthPresent().getOtStateRegionProvinceEn() == null ? "" : CaseUtils.toCamelCase(register.getRegisterBirthPresent().getOtStateRegionProvinceEn(),true)+", ")
-                .append(register.getRegisterBirthPresent().getOtZipcode()  == null ? "" : register.getRegisterBirthPresent().getOtZipcode()+", ")
-                .append(register.getRegisterBirthPresent().getCountryId() == null ? "" :  mdmsTenantService.getCountryNameEn(mdmsData, register.getRegisterBirthPresent().getCountryId())).toString();
+                .append(StringUtil.isBlank(register.getRegisterBirthPresent().getOtAddress1En()) ? "" : CaseUtils.toCamelCase(register.getRegisterBirthPresent().getOtAddress1En(),true)+", ")
+                .append(StringUtil.isBlank(register.getRegisterBirthPresent().getOtAddress2En()) ? "" : CaseUtils.toCamelCase(register.getRegisterBirthPresent().getOtAddress2En(),true)+", ")
+                .append(StringUtil.isBlank(register.getRegisterBirthPresent().getOtStateRegionProvinceEn()) ? "" : CaseUtils.toCamelCase(register.getRegisterBirthPresent().getOtStateRegionProvinceEn(),true)+", ")
+                .append(StringUtil.isBlank(register.getRegisterBirthPresent().getOtZipcode()) ? "" : register.getRegisterBirthPresent().getOtZipcode()+", ")
+                .append(StringUtil.isBlank(register.getRegisterBirthPresent().getCountryId()) ? "" :  mdmsTenantService.getCountryNameEn(mdmsData, register.getRegisterBirthPresent().getCountryId())).toString();
+        address = address.replaceAll(",$", "");
         registerCert.setPermenantAddDetails(address);
     }
     public void getAddressOutsideCountryPermanentMl(RegisterBirthDetail register, RegisterCertificateData registerCert, Object  mdmsData) {
         String address = "";
         address = new StringBuilder()
-                .append(register.getRegisterBirthPresent().getOtAddress1Ml() == null ? "" : register.getRegisterBirthPresent().getOtAddress1Ml()+", ")
-                .append(register.getRegisterBirthPresent().getOtAddress2Ml()== null ? "" : register.getRegisterBirthPresent().getOtAddress2Ml()+", ")
-                .append(register.getRegisterBirthPresent().getOtStateRegionProvinceMl() == null ? "" : register.getRegisterBirthPresent().getOtStateRegionProvinceMl()+", ")
-                .append(register.getRegisterBirthPresent().getOtZipcode()  == null ? "" : register.getRegisterBirthPresent().getOtZipcode()+", ")
-                .append(register.getRegisterBirthPresent().getCountryId() == null ? "" :  mdmsTenantService.getCountryNameMl(mdmsData, register.getRegisterBirthPresent().getCountryId())).toString();
+                .append(StringUtil.isBlank(register.getRegisterBirthPresent().getOtAddress1Ml()) ? "" : register.getRegisterBirthPresent().getOtAddress1Ml()+", ")
+                .append(StringUtil.isBlank(register.getRegisterBirthPresent().getOtAddress2Ml()) ? "" : register.getRegisterBirthPresent().getOtAddress2Ml()+", ")
+                .append(StringUtil.isBlank(register.getRegisterBirthPresent().getOtStateRegionProvinceMl()) ? "" : register.getRegisterBirthPresent().getOtStateRegionProvinceMl()+", ")
+                .append(StringUtil.isBlank(register.getRegisterBirthPresent().getOtZipcode()) ? "" : register.getRegisterBirthPresent().getOtZipcode()+", ")
+                .append(StringUtil.isBlank(register.getRegisterBirthPresent().getCountryId()) ? "" :  mdmsTenantService.getCountryNameMl(mdmsData, register.getRegisterBirthPresent().getCountryId())).toString();
+        address = address.replaceAll(",$", "");
         registerCert.setPermenantAddDetailsMl(address);
     }
     public void getAddressInsideCountryPresentEn(RegisterBirthDetail register, RegisterCertificateData registerCert, Object  mdmsData) {
         String address = "";
 
-        address = new StringBuilder().append(register.getRegisterBirthPresent().getHouseNameEn() == null ? "" : CaseUtils.toCamelCase(register.getRegisterBirthPresent().getHouseNameEn(),true)+", ")
+        address = new StringBuilder().append(StringUtil.isBlank(register.getRegisterBirthPresent().getHouseNameEn()) ? "" : CaseUtils.toCamelCase(register.getRegisterBirthPresent().getHouseNameEn(),true)+", ")
                 .append(StringUtil.isBlank(register.getRegisterBirthPresent().getLocalityEn()) || register.getRegisterBirthPresent().getLocalityEn().trim() == "" ? "" : CaseUtils.toCamelCase(register.getRegisterBirthPresent().getLocalityEn(),true)+", ")
                 .append(StringUtil.isBlank(register.getRegisterBirthPresent().getStreetNameEn()) || register.getRegisterBirthPresent().getStreetNameEn().trim() == ""? "" : CaseUtils.toCamelCase(register.getRegisterBirthPresent().getStreetNameEn(),true)+", ")
-                .append(register.getRegisterBirthPresent().getPoId() == null ? "" : mdmsTenantService.getPostOfficeNameEn(mdmsData,register.getRegisterBirthPresent().getPoId())+ " "
+                .append(StringUtil.isBlank(register.getRegisterBirthPresent().getPoId()) ? "" : mdmsTenantService.getPostOfficeNameEn(mdmsData,register.getRegisterBirthPresent().getPoId())+ " "
                                                                                     +mdmsTenantService.getPostOfficePinCode(mdmsData,register.getRegisterBirthPresent().getPoId())+", ")
                 .append(StringUtil.isBlank(register.getRegisterBirthPresent().getDistrictId()) ? "" : mdmsTenantService.getDistrictNameEn(mdmsData, register.getRegisterBirthPresent().getDistrictId())+", ")
                 .append(StringUtil.isBlank(register.getRegisterBirthPresent().getStateId()) ? "" : mdmsTenantService.getStateNameEn(mdmsData, register.getRegisterBirthPresent().getStateId())+", ")
                 .append(StringUtil.isBlank(register.getRegisterBirthPresent().getCountryId()) ? "" :  mdmsTenantService.getCountryNameEn(mdmsData, register.getRegisterBirthPresent().getCountryId())).toString();
+        address = address.replaceAll(",$", "");
         registerCert.setPresentAddDetails(address);
     }
 
     public void getAddressInsideCountryPresentMl(RegisterBirthDetail register, RegisterCertificateData registerCert, Object  mdmsData) {
         String address = "";
-        address = new StringBuilder().append(register.getRegisterBirthPresent().getHouseNameMl() == null ? "" : register.getRegisterBirthPresent().getHouseNameMl()+", ")
-                .append(register.getRegisterBirthPresent().getLocalityMl() == null ? "" : register.getRegisterBirthPresent().getLocalityMl()+", ")
-                .append(register.getRegisterBirthPresent().getStreetNameMl() == null ? "" : register.getRegisterBirthPresent().getStreetNameMl()+", ")
-                .append(register.getRegisterBirthPresent().getPoId() == null ? "" : mdmsTenantService.getPostOfficeNameMl(mdmsData,register.getRegisterBirthPresent().getPoId())+ " "
+        address = new StringBuilder().append(StringUtil.isBlank(register.getRegisterBirthPresent().getHouseNameMl()) ? "" : register.getRegisterBirthPresent().getHouseNameMl()+", ")
+                .append(StringUtil.isBlank(register.getRegisterBirthPresent().getLocalityMl())? "" : register.getRegisterBirthPresent().getLocalityMl()+", ")
+                .append(StringUtil.isBlank(register.getRegisterBirthPresent().getStreetNameMl()) ? "" : register.getRegisterBirthPresent().getStreetNameMl()+", ")
+                .append(StringUtil.isBlank(register.getRegisterBirthPresent().getPoId()) ?"" : mdmsTenantService.getPostOfficeNameMl(mdmsData,register.getRegisterBirthPresent().getPoId())+ " "
                         +mdmsTenantService.getPostOfficePinCode(mdmsData,register.getRegisterBirthPresent().getPoId())+", ")
-                .append(register.getRegisterBirthPresent().getDistrictId() == null ? "" : mdmsTenantService.getDistrictNameMl(mdmsData, register.getRegisterBirthPresent().getDistrictId())+", ")
-                .append(register.getRegisterBirthPresent().getStateId() == null ? "" : mdmsTenantService.getStateNameMl(mdmsData, register.getRegisterBirthPresent().getStateId())+", ")
-                .append(register.getRegisterBirthPresent().getCountryId() == null ? "" :  mdmsTenantService.getCountryNameMl(mdmsData, register.getRegisterBirthPresent().getCountryId())).toString();
+                .append(StringUtil.isBlank(register.getRegisterBirthPresent().getDistrictId()) ? "" : mdmsTenantService.getDistrictNameMl(mdmsData, register.getRegisterBirthPresent().getDistrictId())+", ")
+                .append(StringUtil.isBlank(register.getRegisterBirthPresent().getStateId()) ? "" : mdmsTenantService.getStateNameMl(mdmsData, register.getRegisterBirthPresent().getStateId())+", ")
+                .append(StringUtil.isBlank(register.getRegisterBirthPresent().getCountryId()) ? "" :  mdmsTenantService.getCountryNameMl(mdmsData, register.getRegisterBirthPresent().getCountryId())).toString();
+        address = address.replaceAll(",$", "");
         registerCert.setPresentAddDetailsMl(address);
     }
 
     public void getAddressInsideCountryPermanentEn(RegisterBirthDetail register, RegisterCertificateData registerCert, Object  mdmsData) {
         String address = "";
-        address = new StringBuilder().append(register.getRegisterBirthPermanent().getHouseNameEn() == null ? "" : CaseUtils.toCamelCase(register.getRegisterBirthPermanent().getHouseNameEn(),true)+", ")
-                .append(register.getRegisterBirthPermanent().getLocalityEn() == null ? "" : CaseUtils.toCamelCase(register.getRegisterBirthPermanent().getLocalityEn(),true)+", ")
-                .append(register.getRegisterBirthPermanent().getStreetNameEn() == null ? "" : CaseUtils.toCamelCase(register.getRegisterBirthPermanent().getStreetNameEn(),true)+", ")
-                .append(register.getRegisterBirthPermanent().getPoId() == null ? "" : mdmsTenantService.getPostOfficeNameEn(mdmsData,register.getRegisterBirthPermanent().getPoId())+ " "
+        address = new StringBuilder().append(StringUtil.isBlank(register.getRegisterBirthPermanent().getHouseNameEn()) ? "" : register.getRegisterBirthPermanent().getHouseNameEn()+", ")
+                .append(StringUtil.isBlank(register.getRegisterBirthPermanent().getLocalityEn()) ? "" : CaseUtils.toCamelCase(register.getRegisterBirthPermanent().getLocalityEn(),true)+", ")
+                .append(StringUtil.isBlank(register.getRegisterBirthPermanent().getStreetNameEn()) ? "" : CaseUtils.toCamelCase(register.getRegisterBirthPermanent().getStreetNameEn(),true)+", ")
+                .append(StringUtil.isBlank(register.getRegisterBirthPermanent().getPoId()) ? "" : mdmsTenantService.getPostOfficeNameEn(mdmsData,register.getRegisterBirthPermanent().getPoId())+ " "
                         +mdmsTenantService.getPostOfficePinCode(mdmsData,register.getRegisterBirthPermanent().getPoId())+", ")
-                .append(register.getRegisterBirthPermanent().getDistrictId() == null ? "" : mdmsTenantService.getDistrictNameEn(mdmsData, register.getRegisterBirthPermanent().getDistrictId())+", ")
-                .append(register.getRegisterBirthPermanent().getStateId() == null ? "" : mdmsTenantService.getStateNameEn(mdmsData, register.getRegisterBirthPermanent().getStateId())+", ")
-                .append(register.getRegisterBirthPermanent().getCountryId() == null ? "" :  mdmsTenantService.getCountryNameEn(mdmsData, register.getRegisterBirthPermanent().getCountryId())).toString();
+                .append(StringUtil.isBlank(register.getRegisterBirthPermanent().getDistrictId()) ? "" : mdmsTenantService.getDistrictNameEn(mdmsData, register.getRegisterBirthPermanent().getDistrictId())+", ")
+                .append(StringUtil.isBlank(register.getRegisterBirthPermanent().getStateId()) ? "" : mdmsTenantService.getStateNameEn(mdmsData, register.getRegisterBirthPermanent().getStateId())+", ")
+                .append(StringUtil.isBlank(register.getRegisterBirthPermanent().getCountryId()) ? "" :  mdmsTenantService.getCountryNameEn(mdmsData, register.getRegisterBirthPermanent().getCountryId())).toString();
+        address = address.replaceAll(",$", "");
         registerCert.setPermenantAddDetails(address);
     }
 
     public void getAddressInsideCountryPermanentMl(RegisterBirthDetail register, RegisterCertificateData registerCert, Object  mdmsData) {
         String address = "";
-        address = new StringBuilder().append(register.getRegisterBirthPermanent().getHouseNameMl() == null ? "" : register.getRegisterBirthPermanent().getHouseNameMl()+", ")
-                .append(register.getRegisterBirthPermanent().getLocalityMl() == null||register.getRegisterBirthPermanent().getLocalityMl() == "" ? "" : register.getRegisterBirthPermanent().getLocalityMl()+", ")
-                .append(register.getRegisterBirthPermanent().getStreetNameMl() == null||register.getRegisterBirthPermanent().getStreetNameMl() == ""? "" : register.getRegisterBirthPermanent().getStreetNameMl()+", ")
-                .append(register.getRegisterBirthPermanent().getPoId() == null ? "" : mdmsTenantService.getPostOfficeNameMl(mdmsData,register.getRegisterBirthPermanent().getPoId())+ " "
+        address = new StringBuilder().append(StringUtil.isBlank(register.getRegisterBirthPermanent().getHouseNameMl()) ? "" : register.getRegisterBirthPermanent().getHouseNameMl()+", ")
+                .append(StringUtil.isBlank(register.getRegisterBirthPermanent().getLocalityMl()) ||register.getRegisterBirthPermanent().getLocalityMl() == "" ? "" : register.getRegisterBirthPermanent().getLocalityMl()+", ")
+                .append(StringUtil.isBlank(register.getRegisterBirthPermanent().getStreetNameMl()) ||register.getRegisterBirthPermanent().getStreetNameMl() == ""? "" : register.getRegisterBirthPermanent().getStreetNameMl()+", ")
+                .append(StringUtil.isBlank(register.getRegisterBirthPermanent().getPoId()) ? "" : mdmsTenantService.getPostOfficeNameMl(mdmsData,register.getRegisterBirthPermanent().getPoId())+ " "
                         +mdmsTenantService.getPostOfficePinCode(mdmsData,register.getRegisterBirthPermanent().getPoId())+", ")
-                .append(register.getRegisterBirthPermanent().getDistrictId() == null ? "" : mdmsTenantService.getDistrictNameMl(mdmsData, register.getRegisterBirthPermanent().getDistrictId())+", ")
-                .append(register.getRegisterBirthPermanent().getStateId() == null ? "" : mdmsTenantService.getStateNameMl(mdmsData, register.getRegisterBirthPermanent().getStateId())+", ")
-                .append(register.getRegisterBirthPermanent().getCountryId() == null ? "" :  mdmsTenantService.getCountryNameMl(mdmsData, register.getRegisterBirthPermanent().getCountryId())).toString();
+                .append(StringUtil.isBlank(register.getRegisterBirthPermanent().getDistrictId()) ? "" : mdmsTenantService.getDistrictNameMl(mdmsData, register.getRegisterBirthPermanent().getDistrictId())+", ")
+                .append(StringUtil.isBlank(register.getRegisterBirthPermanent().getStateId()) ? "" : mdmsTenantService.getStateNameMl(mdmsData, register.getRegisterBirthPermanent().getStateId())+", ")
+                .append(StringUtil.isBlank(register.getRegisterBirthPermanent().getCountryId()) ? "" :  mdmsTenantService.getCountryNameMl(mdmsData, register.getRegisterBirthPermanent().getCountryId())).toString();
+        address = address.replaceAll(",$", "");
         registerCert.setPermenantAddDetailsMl(address);
     }
 
