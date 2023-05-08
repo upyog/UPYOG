@@ -1,7 +1,5 @@
 package org.ksmart.birth.bornoutside.repository.rowmapper;
 
-
-import org.ksmart.birth.web.model.InformatDetail;
 import org.ksmart.birth.web.model.bornoutside.BornOutsideStatInfo;
 
 import java.sql.ResultSet;

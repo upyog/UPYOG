@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.ksmart.birth.birthregistry.service.KsmartAddressService;
 import org.ksmart.birth.common.services.MdmsLocationService;
 import org.ksmart.birth.common.services.MdmsTenantService;
+import org.ksmart.birth.web.model.ParentAddress;
 import org.ksmart.birth.web.model.ParentsDetail;
 import org.ksmart.birth.web.model.newbirth.NewBirthApplication;
 import org.ksmart.birth.web.model.stillbirth.StillBirthApplication;
@@ -143,6 +144,15 @@ public class MdmsForStillBirthService {
         } else if(lbType.contains(LB_TYPE_GP)) {
             birth.getParentAddress().setTownOrVillagePresent("VILLAGE");
         } else{}
+    }
+
+    public void setLocationForAddressPermanent(ParentAddress parentAddress, Object mdmsDataLoc) {
+        parentAddress.setPermntInKeralaWardNoEn(mdmsLocationService.getWardNameEn(mdmsDataLoc, parentAddress.getPermntInKeralaWardNo()));
+        parentAddress.setPermntInKeralaWardNoMl(mdmsLocationService.getWardNameMl(mdmsDataLoc, parentAddress.getPermntInKeralaWardNo()));
+    }
+    public void setLocationForAddressPresent(ParentAddress parentAddress, Object mdmsDataLoc) {
+        parentAddress.setPresentWardNoEn(mdmsLocationService.getWardNameEn(mdmsDataLoc, parentAddress.getPresentWardNo()));
+        parentAddress.setPresentWardNoMl(mdmsLocationService.getWardNameMl(mdmsDataLoc, parentAddress.getPresentWardNo()));
     }
 
 }

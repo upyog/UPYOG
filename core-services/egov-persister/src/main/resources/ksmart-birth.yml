@@ -368,7 +368,7 @@ serviceMaps:
 
             - jsonPath: $.ChildDetails.*.AddressBirthDetails.stateIdPresent
 
-            - jsonPath: $.ChildDetails.*.AddressBirthDetails.pinNoPresent
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.presentInsideKeralaPostOffice
 
             - jsonPath: $.ChildDetails.*.AddressBirthDetails.pinNoPresent
 

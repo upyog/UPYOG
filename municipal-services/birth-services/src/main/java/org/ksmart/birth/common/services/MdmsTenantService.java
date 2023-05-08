@@ -66,10 +66,6 @@ public class MdmsTenantService {
         return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_RELIGION_TYPE_CODE_JSONPATH);
     }
 
-    private List<String> getNationality(Object mdmsData) {
-        return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_COUNTRY_CODE_JSONPATH);
-    }
-
     private List<String> getMedicalAttention(Object mdmsData) {
         return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_MEDICAL_ATTENTION_TYPE_CODE_JSONPATH);
     }

@@ -23,6 +23,7 @@ public interface BirthParentAddressRowMapper {
                 .presentInsideKeralaLBName(rs.getString("pres_tenantid"))
                 .presentInsideKeralaTaluk(rs.getString("pres_talukid"))
                 .presentInsideKeralaPostOffice(rs.getString("pres_poid"))
+                .presentInsideKeralaPincode(rs.getString("pres_pinno"))
                 .presentInsideKeralaVillage(rs.getString("pres_villageid"))
                 .presentWardNo(rs.getString("pres_ward_code"))
                 .presentOutsideKeralaPostOfficeEn(rs.getString("pres_postoffice_en"))

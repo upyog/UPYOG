@@ -55,6 +55,7 @@ public class NewBirthResponseEnrichment {
                     if (birth.getParentAddress().getCountryIdPermanent().contains(BirthConstants.COUNTRY_CODE)) {
                         if (birth.getParentAddress().getStateIdPermanent().contains(BirthConstants.STATE_CODE_SMALL)) {
                             mdmsBirthService.setTenantDetails(birth, mdmsData);
+                            Object mdmsDataLocPermanent = mdmsUtil.mdmsCallForLocation(requestInfo, birth.getParentAddress().getPermntInKeralaAdrLBName());
                             //Country
                             birth.getParentAddress().setPermtaddressCountry(birth.getParentAddress().getCountryIdPermanent());
                             birth.getParentAddress().setCountryIdPermanentEn(mdmsTenantService.getCountryNameEn(mdmsData, birth.getParentAddress().getCountryIdPermanent()));
@@ -75,7 +76,7 @@ public class NewBirthResponseEnrichment {
                             birth.getParentAddress().setPermntInKeralaAdrTalukEn(mdmsTenantService.getTalukNameEn(mdmsData, birth.getParentAddress().getPermntInKeralaAdrTaluk()));
                             birth.getParentAddress().setPermntInKeralaAdrTalukMl(mdmsTenantService.getTalukNameMl(mdmsData, birth.getParentAddress().getPermntInKeralaAdrTaluk()));
 
-                            //village
+                            //Village
                             birth.getParentAddress().setPermntInKeralaAdrVillage(birth.getParentAddress().getPermntInKeralaAdrVillage());
                             birth.getParentAddress().setPermntInKeralaAdrVillageEn(mdmsTenantService.getVillageNameEn(mdmsData, birth.getParentAddress().getPermntInKeralaAdrVillage()));
                             birth.getParentAddress().setPermntInKeralaAdrVillageMl(mdmsTenantService.getVillageNameMl(mdmsData, birth.getParentAddress().getPermntInKeralaAdrVillage()));
@@ -99,6 +100,9 @@ public class NewBirthResponseEnrichment {
                             birth.getParentAddress().setPermntInKeralaAdrHouseNameMl(birth.getParentAddress().getHouseNameNoMlPermanent());
 
                             birth.getParentAddress().setPermntInKeralaAdrPostOffice(birth.getParentAddress().getPoNoPermanent());
+
+                            //Ward Name
+                            mdmsBirthService.setLocationForAddressPermanent(birth.getParentAddress(), mdmsDataLocPermanent);
 
                         } else {
                             //Country
@@ -140,6 +144,7 @@ public class NewBirthResponseEnrichment {
                 if (birth.getParentAddress().getCountryIdPresent() != null && birth.getParentAddress().getStateIdPresent() != null) {
                     if (birth.getParentAddress().getCountryIdPresent().contains(BirthConstants.COUNTRY_CODE)) {
                         if (birth.getParentAddress().getStateIdPresent().contains(BirthConstants.STATE_CODE_SMALL)) {
+                            Object mdmsDataLocPresent = mdmsUtil.mdmsCallForLocation(requestInfo, birth.getParentAddress().getPresentInsideKeralaLBName());
                             //Country
                             birth.getParentAddress().setPresentaddressCountry(birth.getParentAddress().getCountryIdPresent());
                             birth.getParentAddress().setCountryIdPresentEn(mdmsTenantService.getCountryNameEn(mdmsData, birth.getParentAddress().getCountryIdPresent()));
@@ -183,6 +188,8 @@ public class NewBirthResponseEnrichment {
 
                             birth.getParentAddress().setPresentInsideKeralaPincode(birth.getParentAddress().getPinNoPresent());
                             birth.getParentAddress().setPresentInsideKeralaPostOffice(birth.getParentAddress().getPresentInsideKeralaPostOffice());
+                            //Ward Name
+                            mdmsBirthService.setLocationForAddressPresent(birth.getParentAddress(), mdmsDataLocPresent);
 
                         } else {
                             //Country
