@@ -44,7 +44,7 @@ public class AdoptionApplicationValidator {
                     "Supports only single Birth  application create request.");
         }
 
-        mdmsValidator.validateMdmsData(request, mdmsData,mdmsDataLoc);
+        mdmsValidator.validateMdmsData(request, mdmsData);
     }
 
     public void validateUpdate(AdoptionDetailRequest request, Object mdmsData, Object mdmsDataLoc) {
@@ -63,7 +63,7 @@ public class AdoptionApplicationValidator {
                     "Id is missing..");
         }
 
-        mdmsValidator.validateMdmsData(request, mdmsData,mdmsDataLoc);
+        mdmsValidator.validateMdmsData(request, mdmsData);
     }
 
 }
