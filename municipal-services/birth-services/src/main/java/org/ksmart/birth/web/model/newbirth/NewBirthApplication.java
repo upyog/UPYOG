@@ -5,10 +5,7 @@ import lombok.*;
 import org.ksmart.birth.birthcommon.model.demand.Demand;
 import org.ksmart.birth.common.model.AuditDetails;
 import org.ksmart.birth.common.model.Document;
-import org.ksmart.birth.web.model.ParentAddress;
-import org.ksmart.birth.web.model.ParentsDetail;
-import org.ksmart.birth.web.model.InformatDetail;
-import org.ksmart.birth.web.model.InitiatorDetail;
+import org.ksmart.birth.web.model.*;
 
 import javax.validation.constraints.Size;
 import java.io.Serializable;
@@ -364,6 +361,10 @@ public class NewBirthApplication implements Serializable {
     private InformatDetail informatDetail;
     @JsonProperty("Demands")
     private List<Demand> demands;
+
+    @JsonProperty("Document")
+    private List<DocumentDetails> documentDetails;
+
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails;
 }

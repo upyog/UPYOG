@@ -260,6 +260,7 @@ public class AbandonedApplication {
     private String birthStatisticsUuid;
     @JsonProperty("ParentsDetails")
     private ParentsDetail parentsDetails;
+
     @JsonProperty("documentDetails")
     private List<DocumentDetails> documentDetails;
 

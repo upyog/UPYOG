@@ -530,6 +530,42 @@ serviceMaps:
 
             - jsonPath: $.ChildDetails.*.auditDetails.lastModifiedTime
 
+        - query: INSERT INTO public.eg_birth_application_document(
+            id, tenantid, document_name, document_type, document_description, filestoreid, document_link,file_type,file_size,birthdtlid,active,createdby, createdtime, lastmodifiedby, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+          basePath: AdoptionDetails.*.AdoptionDocuments.
+          jsonMaps:
+
+            - jsonPath: $.ChildDetails.*.Document.*.id
+
+            - jsonPath: $.ChildDetails.*.tenantid
+
+            - jsonPath: $.ChildDetails.*.Document.*.documentName
+
+            - jsonPath: $.ChildDetails.*.Document.*.documentType
+
+            - jsonPath: $.ChildDetails.*.Document.*.documentDescription
+
+            - jsonPath: $.ChildDetails.*.Document.*.fileStoreId
+
+            - jsonPath: $.ChildDetails.*.Document.*.documentLink
+
+            - jsonPath: $.ChildDetails.*.Document.*.fileType
+
+            - jsonPath: $.ChildDetails.*.Document.*.fileSize
+
+            - jsonPath: $.ChildDetails.*.Document.*.parentBrthDtlId
+
+            - jsonPath: $.ChildDetails.*.Document.*.active
+
+            - jsonPath: $.ChildDetails.*.Document.*.auditDetails.createdBy
+
+            - jsonPath: $.ChildDetails.*.Document.*.auditDetails.createdTime
+
+            - jsonPath: $.ChildDetails.*.Document.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.ChildDetails.*.Document.*.auditDetails.lastModifiedTime
+
+
     - version: 1.0
       description: Persists update birth details in eg_birth_details  table
       fromTopic: ksmart-update-birth-application-topic
