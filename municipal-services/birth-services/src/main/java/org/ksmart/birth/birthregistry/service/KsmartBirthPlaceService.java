@@ -86,6 +86,7 @@ public class KsmartBirthPlaceService {
             register.setPlaceDetails(placeEn);
             register.setPlaceDetailsMl(placeMl);
         } else if (register.getBirthPlaceId().contains(BIRTH_PLACE_VEHICLE)) {
+            System.out.println(registerMain.getRegisterBirthPlace().getVehicleHospitalid());
             String placeEn = new StringBuilder().append("On the way to ")
                     .append(mdmsLocationService.getHospitalNameEn(mdmsData, registerMain.getRegisterBirthPlace().getVehicleHospitalid()) == null
                             ? "" : mdmsLocationService.getHospitalNameEn(mdmsData, register.getBirthPlaceHospitalId()))

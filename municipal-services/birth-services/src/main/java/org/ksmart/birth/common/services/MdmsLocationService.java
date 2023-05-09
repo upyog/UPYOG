@@ -3,6 +3,7 @@ package org.ksmart.birth.common.services;
 import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.jsoup.internal.StringUtil;
 import org.ksmart.birth.utils.BirthConstants;
 import org.springframework.stereotype.Component;
 
@@ -29,21 +30,27 @@ public class MdmsLocationService {
     }
 
     public String getHospitalNameEn(Object mdmsData, String hospitalId) {
-        List<String> hospitals  = getHospitalCode(mdmsData);
-        if (!CollectionUtils.isEmpty(hospitals) || hospitals.contains(hospitalId)) {
-            int index = hospitals.indexOf(hospitalId);
-            return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_HOSPITALS_CODES_JSONPATH + "[" + index + "].hospitalName");
-        }
-        else{
-            return  "Not Recorded";
+        if (!StringUtil.isBlank(hospitalId)) {
+            List<String> hospitals = getHospitalCode(mdmsData);
+            if (!CollectionUtils.isEmpty(hospitals) || hospitals.contains(hospitalId)) {
+                int index = hospitals.indexOf(hospitalId);
+                return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_HOSPITALS_CODES_JSONPATH + "[" + index + "].hospitalName");
+            } else {
+                return "Not Recorded";
+            }
+        } else {
+            return "Not Recorded";
         }
     }
-
     public String getHospitalNameMl(Object mdmsData, String hospitalId) {
-        List<String> hospitals = getHospitalCode(mdmsData);
-        if (!CollectionUtils.isEmpty(hospitals) || hospitals.contains(hospitalId)) {
-            int index = hospitals.indexOf(hospitalId);
-            return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_HOSPITALS_CODES_JSONPATH + "[" + index + "].hospitalNamelocal");
+        if (!StringUtil.isBlank(hospitalId)) {
+            List<String> hospitals = getHospitalCode(mdmsData);
+            if (!CollectionUtils.isEmpty(hospitals) || hospitals.contains(hospitalId)) {
+                int index = hospitals.indexOf(hospitalId);
+                return JsonPath.read(mdmsData, BirthConstants.CR_MDMS_HOSPITALS_CODES_JSONPATH + "[" + index + "].hospitalNamelocal");
+            } else {
+                return "Not Recorded";
+            }
         } else {
             return "Not Recorded";
         }
