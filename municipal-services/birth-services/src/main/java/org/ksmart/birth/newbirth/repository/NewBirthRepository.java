@@ -89,9 +89,8 @@ public class NewBirthRepository {
 
         if(request.getRequestInfo().getUserInfo() != null){
             uuid = request.getRequestInfo().getUserInfo().getUuid();
-        } else{
-            criteria.setApplicationType(BirthConstants.FUN_MODULE_NEW);
         }
+        criteria.setApplicationType(BirthConstants.FUN_MODULE_NEW);
         String query = commonQueryBuilder.getBirthApplicationSearchQuery(criteria, uuid, preparedStmtValues, Boolean.FALSE);
         if(preparedStmtValues.size() == 0){
             throw new CustomException(ErrorCodes.NOT_FOUND.getCode(), "No result found.");

@@ -1,5 +1,6 @@
 package org.ksmart.birth.bornoutside.repository.rowmapper;
 
+import org.jsoup.internal.StringUtil;
 import org.ksmart.birth.web.model.bornoutside.BornOutsideApplication;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
@@ -25,6 +26,7 @@ public class BornOutsideApplicationRowMapper implements ResultSetExtractor<List<
                     .dateOfBirth(rs.getLong("ba_dateofbirth"))
                     .timeOfBirth(rs.getLong("ba_timeofbirth"))
                     .ampm(rs.getString("ba_am_pm"))
+                    .isChildName(isChildNameEntered(rs.getString("ba_firstname_en")))
                     .firstNameEn(rs.getString("ba_firstname_en"))
                     .firstNameMl(rs.getString("ba_firstname_ml"))
                     .middleNameEn(rs.getString("ba_middlename_en"))
@@ -69,6 +71,7 @@ public class BornOutsideApplicationRowMapper implements ResultSetExtractor<List<
         return result;
     }
     private Boolean isChildNameEntered(String name) {
+        if(StringUtil.isBlank(name)) return true;
         if (name==null) return true;
         else return false;
     }

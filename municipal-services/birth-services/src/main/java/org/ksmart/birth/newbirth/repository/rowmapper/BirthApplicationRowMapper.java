@@ -1,5 +1,6 @@
 package org.ksmart.birth.newbirth.repository.rowmapper;
 
+import org.jsoup.internal.StringUtil;
 import org.ksmart.birth.web.model.newbirth.NewBirthApplication;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
@@ -95,6 +96,7 @@ public class BirthApplicationRowMapper implements ResultSetExtractor<List<NewBir
     }
     private Boolean isChildNameEntered(String name) {
         //if(name.isEmpty()) return true;
+        if(StringUtil.isBlank(name)) return true;
         if (name==null) return true;
         else return false;
     }

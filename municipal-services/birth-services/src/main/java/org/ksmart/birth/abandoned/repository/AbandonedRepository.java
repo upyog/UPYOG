@@ -83,7 +83,6 @@ public class AbandonedRepository {
             criteria.setTenantId(requestApplication.getBirthDetails().get(0).getTenantId());
             String query = queryBuilder.getApplicationSearchQueryForRegistry(criteria, preparedStmtValues);
             result = jdbcTemplate.query(query, preparedStmtValues.toArray(), registerRowMapperForApp);
-
         }
         return RegisterBirthDetailsRequest.builder()
                 .requestInfo(requestApplication.getRequestInfo())
@@ -95,9 +94,8 @@ public class AbandonedRepository {
        // Object mdmsDataComm = mdmsUtil.mdmsCall(request.getRequestInfo());
         if(request.getRequestInfo().getUserInfo() != null){
             uuid = request.getRequestInfo().getUserInfo().getUuid();
-        } else{
-            criteria.setApplicationType(BirthConstants.FUN_MODULE_ABAN);
         }
+        criteria.setApplicationType(BirthConstants.FUN_MODULE_ABAN);
         String query = commonQueryBuilder.getBirthApplicationSearchQuery(criteria, uuid, preparedStmtValues, Boolean.FALSE);
         if(preparedStmtValues.size() == 0){
             throw new CustomException(ErrorCodes.NOT_FOUND.getCode(), "No result found.");

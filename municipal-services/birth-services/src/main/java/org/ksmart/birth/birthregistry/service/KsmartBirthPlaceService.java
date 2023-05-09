@@ -122,7 +122,7 @@ public class KsmartBirthPlaceService {
             register.setPlaceDetailsMl(placeMl);
         }
         else if(register.getBirthPlaceId().contains(BIRTH_PLACE_OTHERS_MIGRATION)){
-            String placeEn = new StringBuilder().append(registerMain.getRegisterBirthPlace().getOtherBirthPlaceEn()).toString();
+            String placeEn = new StringBuilder().append(registerMain.getRegisterBirthPlace().getOthDetailsEn()).toString();
             register.setPlaceDetails(placeEn);
             register.setPlaceDetailsMl("Not Recorded");
         } else{
