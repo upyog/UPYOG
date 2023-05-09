@@ -21,7 +21,7 @@ public class BirthApplicationAdoptionRowMapper  implements ResultSetExtractor<Li
                     .id(rs.getString("id"))
                     .dateOfReport(rs.getLong("dateofreport"))
                     .dateOfBirth(rs.getLong("dateofbirth"))
-                    .timeOfBirth(rs.getLong("timeofbirth"))
+                    .timeBirth(rs.getLong("timeofbirth"))
                     .gender(rs.getString("gender"))
                     .aadharNo(rs.getString("aadharno"))
                     .isChildName(isChildNameEntered(rs.getString("firstname_en")))

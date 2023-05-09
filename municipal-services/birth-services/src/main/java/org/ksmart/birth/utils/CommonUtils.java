@@ -42,6 +42,13 @@ public static String currentTime() {
 	String formattedString = formatter.format(instance);
 	return formattedString;
 }
+
+//	public static String currentStringToTime(String time) {
+//		//LocalTime instance = LocalTime.now(ZoneId.of("Asia/Kolkata"));
+//		DateTimeFormatter formatter	= DateTimeFormatter.ofPattern("hh:mm");
+//	//	String formattedString = formatter.format(time);
+//		return formattedString;
+//	}
 	public static  LocalDateTime LongToDate(Long dateTime) {
 		LocalDateTime localDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(dateTime), ZoneId.of("Asia/Kolkata"));
 		return localDateTime;

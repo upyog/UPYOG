@@ -39,12 +39,12 @@ public class NewBirthRepository {
     private final BirthApplicationRowMapper ksmartBirthApplicationRowMapper;
     private final BirthApplicationRowMapperForPay ksmartBirthApplicationRowMapperPay;
     private final RegisterRowMapperForApp registerRowMapperForApp;
-    private  final RegisterStatisticsEnrichment registerStatisticsEnrichment;
+    private final RegisterStatisticsEnrichment registerStatisticsEnrichment;
 
     @Autowired
     NewBirthRepository(JdbcTemplate jdbcTemplate, NewBirthEnrichment ksmartBirthEnrichment, BirthConfiguration birthDeathConfiguration,
-                       BndProducer producer,NewBirthResponseEnrichment responseEnrichment, BirthApplicationRowMapperForPay ksmartBirthApplicationRowMapperPay,
-                       BirthApplicationRowMapper ksmartBirthApplicationRowMapper,RegisterRowMapperForApp registerRowMapperForApp, RegisterStatisticsEnrichment registerStatisticsEnrichment) {
+                       BndProducer producer, NewBirthResponseEnrichment responseEnrichment, BirthApplicationRowMapperForPay ksmartBirthApplicationRowMapperPay,
+                       BirthApplicationRowMapper ksmartBirthApplicationRowMapper, RegisterRowMapperForApp registerRowMapperForApp, RegisterStatisticsEnrichment registerStatisticsEnrichment) {
         this.jdbcTemplate = jdbcTemplate;
         this.ksmartBirthEnrichment = ksmartBirthEnrichment;
         this.birthDeathConfiguration = birthDeathConfiguration;
@@ -52,7 +52,7 @@ public class NewBirthRepository {
         this.ksmartBirthApplicationRowMapper = ksmartBirthApplicationRowMapper;
         this.responseEnrichment = responseEnrichment;
         this.registerRowMapperForApp = registerRowMapperForApp;
-        this.ksmartBirthApplicationRowMapperPay=ksmartBirthApplicationRowMapperPay;
+        this.ksmartBirthApplicationRowMapperPay = ksmartBirthApplicationRowMapperPay;
         this.registerStatisticsEnrichment = registerStatisticsEnrichment;
     }
 
@@ -67,6 +67,7 @@ public class NewBirthRepository {
         producer.push(birthDeathConfiguration.getUpdateKsmartBirthApplicationTopic(), request);
         return request.getNewBirthDetails();
     }
+
     public RegisterBirthDetailsRequest searchBirthDetailsForRegister(NewBirthDetailRequest requestApplication, Object mdmsData) {
         List<Object> preparedStmtValues = new ArrayList<>();
         SearchCriteria criteria = new SearchCriteria();
@@ -87,47 +88,52 @@ public class NewBirthRepository {
         String uuid = null;
         List<Object> preparedStmtValues = new ArrayList<>();
 
-        if(request.getRequestInfo().getUserInfo() != null){
+        if (request.getRequestInfo().getUserInfo() != null) {
             uuid = request.getRequestInfo().getUserInfo().getUuid();
         }
         criteria.setApplicationType(BirthConstants.FUN_MODULE_NEW);
         String query = commonQueryBuilder.getBirthApplicationSearchQuery(criteria, uuid, preparedStmtValues, Boolean.FALSE);
-        if(preparedStmtValues.size() == 0){
+        if (preparedStmtValues.size() == 0) {
             throw new CustomException(ErrorCodes.NOT_FOUND.getCode(), "No result found.");
-        } else{
+        } else {
             List<NewBirthApplication> result = jdbcTemplate.query(query, preparedStmtValues.toArray(), ksmartBirthApplicationRowMapper);
             RequestInfo requestInfo = request.getRequestInfo();
             responseEnrichment.setNewBirthRequestData(requestInfo, result);
             return result;
         }
-
-
-
-
     }
-    
-    public List<NewBirthApplication> searchBirth ( RequestInfo requestInfo, SearchCriteria criteria) {
+
+    public List<NewBirthApplication> searchBirth(RequestInfo requestInfo, SearchCriteria criteria) {
         String uuid = null;
         List<Object> preparedStmtValues = new ArrayList<>();
 
-        if(requestInfo.getUserInfo() != null){
+        if (requestInfo.getUserInfo() != null) {
             uuid = requestInfo.getUserInfo().getUuid();
-        } else{
+        } else {
             criteria.setApplicationType(BirthConstants.FUN_MODULE_NEW);
         }
         String query = commonQueryBuilder.getBirthApplicationSearchQuery(criteria, uuid, preparedStmtValues, Boolean.FALSE);
-        if(preparedStmtValues.size() == 0){
+        if (preparedStmtValues.size() == 0) {
             throw new CustomException(ErrorCodes.NOT_FOUND.getCode(), "No result found.");
-        } else{
+        } else {
             List<NewBirthApplication> result = jdbcTemplate.query(query, preparedStmtValues.toArray(), ksmartBirthApplicationRowMapperPay);
-           
+
             responseEnrichment.setNewBirthRequestData(requestInfo, result);
             return result;
         }
-
-
-
-
+    }
+    public List<NewBirthApplication> searchBirthDetailsCommon(NewBirthDetailRequest request, SearchCriteria criteria) {
+        String uuid = null;
+        List<Object> preparedStmtValues = new ArrayList<>();
+        String query = commonQueryBuilder.getBirthApplicationSearchQuery(criteria, uuid, preparedStmtValues, Boolean.FALSE);
+        if (preparedStmtValues.size() == 0) {
+            throw new CustomException(ErrorCodes.NOT_FOUND.getCode(), "No result found.");
+        } else {
+            List<NewBirthApplication> result = jdbcTemplate.query(query, preparedStmtValues.toArray(), ksmartBirthApplicationRowMapper);
+            RequestInfo requestInfo = request.getRequestInfo();
+            responseEnrichment.setNewBirthRequestData(requestInfo, result);
+            return result;
+        }
     }
 }
 

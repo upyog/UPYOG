@@ -22,7 +22,7 @@ public class BirthApplicationRowMapper implements ResultSetExtractor<List<NewBir
                     .id(rs.getString("ba_id"))
                     .dateOfReport(rs.getLong("ba_dateofreport"))
                     .dateOfBirth(rs.getLong("ba_dateofbirth"))
-                    .timeOfBirth(rs.getLong("ba_timeofbirth"))
+                    .timeBirth(rs.getLong("ba_timeofbirth"))
                     .gender(rs.getString("ba_gender"))
                     .aadharNo(rs.getString("ba_aadharno"))
                     .isChildName(isChildNameEntered(rs.getString("ba_firstname_en")))

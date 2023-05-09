@@ -29,7 +29,6 @@ import static org.ksmart.birth.utils.BirthConstants.*;
 
 @Component
 public class NewBirthEnrichment implements BaseEnrichment {
-
     private final MdmsUtil mdmsUtil;
     private final BirthConfiguration config;
     private final MdmsForNewBirthService mdmsBirthService;
@@ -51,6 +50,7 @@ public class NewBirthEnrichment implements BaseEnrichment {
         for (NewBirthApplication birth : request.getNewBirthDetails()) {
             tenantId = birth.getTenantId();
             birth.setDateOfReport(CommonUtils.currentDateTime());
+           // birth.setTimeBirth(CommonUtils.);
 
             birth.setId(UUID.randomUUID().toString());
             birth.setAuditDetails(auditDetails);

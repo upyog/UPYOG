@@ -28,8 +28,6 @@ public class CommonService {
         this.config = config;
         this.repository = repository;
     }
-
-
     public List<CommonPay> updatePaymentWorkflow(CommonPayRequest request) {
         List<CommonPay> commonPays = request.getCommonPays();
         List<CommonPay> commonPayList = new ArrayList<>();

@@ -13,9 +13,12 @@ public class RegisterStatisticsEnrichment {
         this.mdmsTenantService = mdmsTenantService;
     }
     public void setRegisterStatistics(RegisterBirthStatiticalInformation registerStatistics, Object mdmsData, String tenantId) {
-           registerStatistics.setMotherResdnceCountryId(mdmsTenantService.getTenantCountry(mdmsData,tenantId));
-           registerStatistics.setMotherResdnceStateId(mdmsTenantService.getTenantState(mdmsData,tenantId));
-          // registerStatistics.setMotherResdncePlaceType();
+        registerStatistics.setMotherResdnceTenentId(tenantId);
+        registerStatistics.setMotherResdnceCountryId(mdmsTenantService.getTenantCountry(mdmsData, tenantId));
+        registerStatistics.setMotherResdnceStateId(mdmsTenantService.getTenantState(mdmsData, tenantId));
+        registerStatistics.setMotherResdnceLbType(mdmsTenantService.getTenantLbType(mdmsData, tenantId));
+        registerStatistics.setMotherResdnceDistrictId(mdmsTenantService.getTenantLbType(mdmsData, tenantId));
+
     }
 
 }
