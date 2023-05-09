@@ -1,59 +1,48 @@
-package org.ksmart.birth.common.consumer;
-
-import static org.ksmart.birth.utils.BirthDeathConstants.BIRTH_CERT;
-import static org.ksmart.birth.utils.BirthDeathConstants.DEATH_CERT;
-
-import java.util.HashMap;
-import java.util.List;
-
- 
-import org.ksmart.birth.common.calculation.collections.models.PaymentDetail;
-import org.ksmart.birth.common.calculation.collections.models.PaymentRequest;
- 
-import org.ksmart.birth.common.contract.EgovPdfResp;
-import org.ksmart.birth.common.model.AuditDetails;
-import org.ksmart.birth.common.producer.BndProducer;
-import org.ksmart.birth.common.services.PaymentUpdateService;
-import org.ksmart.birth.utils.BirthDeathConstants;
-import org.ksmart.birth.utils.CommonUtils;
-import org.egov.common.contract.request.RequestInfo;
-import org.egov.tracer.model.CustomException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.kafka.support.KafkaHeaders;
-import org.springframework.messaging.handler.annotation.Header;
-import org.springframework.stereotype.Component;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import lombok.extern.slf4j.Slf4j;
-
-
-
-@Slf4j
-@Component
-public class ReceiptConsumer {
-
-    private PaymentUpdateService paymentUpdateService;
-
-//    private PaymentNotificationService paymentNotificationService;
-
-
-    @Autowired
-    public ReceiptConsumer(PaymentUpdateService paymentUpdateService ) {
-        this.paymentUpdateService = paymentUpdateService;
-//        this.paymentNotificationService = paymentNotificationService;
-    }
-
-
-
-    @KafkaListener(topics = {"${kafka.topics.receipt.create}"})
-    public void listenPayments(final HashMap<String, Object> record) {
-        paymentUpdateService.process(record);
-//        paymentNotificationService.process(record);
-    }
-}
+//package org.ksmart.birth.common.consumer;
+//
+//import static org.ksmart.birth.utils.BirthDeathConstants.BIRTH_CERT;
+//import static org.ksmart.birth.utils.BirthDeathConstants.DEATH_CERT;
+//
+//import java.util.HashMap;
+//import java.util.List;
+//
+//import org.ksmart.birth.birth.certmodel.BirthCertRequest;
+//import org.ksmart.birth.birth.certmodel.BirthCertificate;
+//import org.ksmart.birth.birth.certmodel.BirthCertificate.StatusEnum;
+//import org.ksmart.birth.birth.model.EgBirthDtl;
+//import org.ksmart.birth.birth.model.SearchCriteria;
+//import org.ksmart.birth.birth.repository.BirthRepository;
+//import org.ksmart.birth.common.calculation.collections.models.PaymentDetail;
+//import org.ksmart.birth.common.calculation.collections.models.PaymentRequest;
+//import org.ksmart.birth.common.contract.BirthPdfApplicationRequest;
+//import org.ksmart.birth.common.contract.DeathPdfApplicationRequest;
+//import org.ksmart.birth.common.contract.EgovPdfResp;
+//import org.ksmart.birth.common.model.AuditDetails;
+//import org.ksmart.birth.common.producer.BndProducer;
+//import org.ksmart.birth.config.BirthDeathConfiguration;
+//import org.ksmart.birth.death.certmodel.DeathCertRequest;
+//import org.ksmart.birth.death.certmodel.DeathCertificate;
+//import org.ksmart.birth.death.model.EgDeathDtl;
+//import org.ksmart.birth.death.repository.DeathRepository;
+//import org.ksmart.birth.utils.BirthDeathConstants;
+//import org.ksmart.birth.utils.CommonUtils;
+//import org.egov.common.contract.request.RequestInfo;
+//import org.egov.tracer.model.CustomException;
+//import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.beans.factory.annotation.Qualifier;
+//import org.springframework.kafka.annotation.KafkaListener;
+//import org.springframework.kafka.support.KafkaHeaders;
+//import org.springframework.messaging.handler.annotation.Header;
+//import org.springframework.stereotype.Component;
+//
+//import com.fasterxml.jackson.databind.ObjectMapper;
+//
+//import lombok.extern.slf4j.Slf4j;
+//
+//
+//
+//@Slf4j
+//@Component
 //public class ReceiptConsumer {
 //
 //	@Autowired
