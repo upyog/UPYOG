@@ -54,6 +54,9 @@ public class MdmsForNewBirthService {
 
             parentsDetail.setReligionIdEn(mdmsTenantService.getReligionEn(mdmsData, parentsDetail.getReligionId()));
             parentsDetail.setReligionIdMl(mdmsTenantService.getReligionMl(mdmsData, parentsDetail.getReligionId()));
+
+            parentsDetail.setMotherMaritalStatusEn(mdmsTenantService.getMaritalStatusEn(mdmsData, parentsDetail.getMotherMaritalStatus()));
+            parentsDetail.setMotherMaritalStatusMl(mdmsTenantService.getMaritalStatusMl(mdmsData, parentsDetail.getMotherMaritalStatus()));
         }
     }
     public void setLocationDetails(NewBirthApplication birth, Object mdmsDataLoc, Object mdmsData) {

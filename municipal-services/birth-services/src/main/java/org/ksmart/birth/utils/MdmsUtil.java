@@ -195,6 +195,12 @@ public class MdmsUtil {
                 .build());
         crMasterDetails.addAll(masterBirthPlace);
 
+        // Add Module marital status
+        List<MasterDetail> masterMaritalStatus = Collections.singletonList(MasterDetail.builder()
+                .name(BirthConstants.CR_MDMS_MARITAL)
+                .build());
+        crMasterDetails.addAll(masterMaritalStatus);
+
 
         //Add masters to modules
         ModuleDetail crModuleDetail = ModuleDetail.builder()

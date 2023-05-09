@@ -150,6 +150,15 @@ public class ParentsDetail {
     @Size(max = 64)
     @JsonProperty("motherMaritalStatus")
     private String motherMaritalStatus;
+
+    @Size(max = 300)
+    @JsonProperty("motherMaritalStatusEn")
+    private String motherMaritalStatusEn;
+
+    @Size(max = 300)
+    @JsonProperty("motherMaritalStatusMl")
+    private String motherMaritalStatusMl;
+
     @JsonProperty("ageMarriageStatusHide")// if married true
     private Boolean ageMarriageStatusHide;
     @Size(max = 64)

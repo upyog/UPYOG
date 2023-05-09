@@ -16,7 +16,7 @@ serviceMaps:
             - jsonPath: $.BornOutsideChildDetails.*.id
             - jsonPath: $.BornOutsideChildDetails.*.dateofreport
             - jsonPath: $.BornOutsideChildDetails.*.childDOB
-            - jsonPath: $.BornOutsideChildDetails.*.birthDateTime
+            - jsonPath: $.BornOutsideChildDetails.*.birthTime
             - jsonPath: $.BornOutsideChildDetails.*.am_pm
             - jsonPath: $.BornOutsideChildDetails.*.childFirstNameEn
             - jsonPath: $.BornOutsideChildDetails.*.childFirstNameMl
@@ -264,7 +264,7 @@ serviceMaps:
           jsonMaps:
             - jsonPath: $.BornOutsideChildDetails.*.dateofreport
             - jsonPath: $.BornOutsideChildDetails.*.childDOB
-            - jsonPath: $.BornOutsideChildDetails.*.birthDateTime
+            - jsonPath: $.BornOutsideChildDetails.*.birthTime
             - jsonPath: $.BornOutsideChildDetails.*.am_pm
             - jsonPath: $.BornOutsideChildDetails.*.childFirstNameEn
             - jsonPath: $.BornOutsideChildDetails.*.childFirstNameMl

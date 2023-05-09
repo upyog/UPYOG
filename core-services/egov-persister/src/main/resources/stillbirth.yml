@@ -19,7 +19,7 @@ serviceMaps:
 
             - jsonPath: $.StillBirthChildDetails.*.childDOB
 
-            - jsonPath: $.StillBirthChildDetails.*.birthDateTime
+            - jsonPath: $.StillBirthChildDetails.*.birthTime
 
             - jsonPath: $.StillBirthChildDetails.*.am_pm
 
@@ -559,7 +559,7 @@ serviceMaps:
           jsonMaps:
             - jsonPath: $.StillBirthChildDetails.*.childDOB
 
-            - jsonPath: $.StillBirthChildDetails.*.birthDateTime
+            - jsonPath: $.StillBirthChildDetails.*.birthTime
 
             - jsonPath: $.StillBirthChildDetails.*.am_pm
 

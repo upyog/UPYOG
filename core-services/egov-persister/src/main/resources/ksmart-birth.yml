@@ -19,7 +19,7 @@ serviceMaps:
 
             - jsonPath: $.ChildDetails.*.childDOB
 
-            - jsonPath: $.ChildDetails.*.birthDateTime
+            - jsonPath: $.ChildDetails.*.birthTime
 
             - jsonPath: $.ChildDetails.*.am_pm
 
@@ -552,7 +552,7 @@ serviceMaps:
           jsonMaps:
             - jsonPath: $.ChildDetails.*.childDOB
 
-            - jsonPath: $.ChildDetails.*.birthDateTime
+            - jsonPath: $.ChildDetails.*.birthTime
 
             - jsonPath: $.ChildDetails.*.am_pm
 
