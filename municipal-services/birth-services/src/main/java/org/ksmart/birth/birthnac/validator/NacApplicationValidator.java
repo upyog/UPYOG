@@ -42,7 +42,7 @@ public class NacApplicationValidator {
                     "Supports only single Birth  application create request.");
         }
 
-        mdmsValidator.validateMdmsData(request, mdmsData,mdmsDataLoc);
+        mdmsValidator.validateMdmsData(request, mdmsData);
     }
 
 }
