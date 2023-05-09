@@ -205,4 +205,21 @@ public interface IResponseHandler {
 		data.setPlots(sortedMap.values().stream().collect(Collectors.toList()));
 	}
 
+
+default void SortPlot(Set<String> plotKeys, Data data, String symbol, boolean isCumulative) {
+
+	//To maintain the sorted plots list order
+	Map<String, Plot> sortedMap = data.getPlots().stream()
+			.collect(Collectors.toMap(
+					Plot::getName,
+					plot -> plot,
+					(u,v) -> { throw new IllegalStateException(String.format("Duplicate key %s", u)); },
+					LinkedHashMap::new
+			));
+
+	
+	logger.info("after appending missing plots : "+ sortedMap);
+	data.setPlots(sortedMap.values().stream().collect(Collectors.toList()));
+}
+
 }
