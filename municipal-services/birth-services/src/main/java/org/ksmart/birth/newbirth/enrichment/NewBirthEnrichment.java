@@ -136,6 +136,8 @@ public class NewBirthEnrichment implements BaseEnrichment {
                                     birth.getParentAddress().setStateIdPresent(birth.getParentAddress().getPresentaddressStateName());
                                     //Pincode
                                     birth.getParentAddress().setPinNoPresent(birth.getParentAddress().getPresentInsideKeralaPincode());
+                                    System.out.println(birth.getParentAddress().getPresentInsideKeralaPincode());
+                                    System.out.println(birth.getParentAddress().getPinNoPresent());
                                     //District
                                     birth.getParentAddress().setDistrictIdPresent(birth.getParentAddress().getPresentInsideKeralaDistrict());
                                     //Local Body

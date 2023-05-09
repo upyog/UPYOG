@@ -138,9 +138,11 @@ public class MdmsLocationService {
 
 
     public String getWardNameEn(Object mdmsData, String WardId) {
+        System.out.println(WardId);
         List<String> tenants  = getBoundaryCode(mdmsData);
         int index = tenants.indexOf(WardId);
         ArrayList<String> names =  JsonPath.read(mdmsData, BirthConstants.CR_MDMS_BOUNDARY_CODES_JSONPATH+".name");
+        System.out.println(names);
         return names.get(index);
     }
 

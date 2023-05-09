@@ -12,6 +12,7 @@ public interface BirthParentAddressRowMapper {
                 .stateIdPresent(rs.getString("pres_stateid"))
                 .districtIdPresent(rs.getString("pres_districtid"))
                 .poNoPresent(rs.getString("pres_poid"))
+                .pinNoPresent(rs.getString("pres_pinno"))
                 .presentaddressCountry(rs.getString("pres_countryid"))
                 .localityEnPresent(rs.getString("pres_locality_en"))
                 .localityMlPresent(rs.getString("pres_locality_ml"))

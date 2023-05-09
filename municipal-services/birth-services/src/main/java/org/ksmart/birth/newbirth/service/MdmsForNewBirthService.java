@@ -145,10 +145,12 @@ public class MdmsForNewBirthService {
     }
 
     public void setLocationForAddressPermanent(ParentAddress parentAddress, Object mdmsDataLoc) {
+        parentAddress.setPermntInKeralaWardNoText(mdmsLocationService.getWardNo(mdmsDataLoc, parentAddress.getPermntInKeralaWardNo()));
         parentAddress.setPermntInKeralaWardNoEn(mdmsLocationService.getWardNameEn(mdmsDataLoc, parentAddress.getPermntInKeralaWardNo()));
         parentAddress.setPermntInKeralaWardNoMl(mdmsLocationService.getWardNameMl(mdmsDataLoc, parentAddress.getPermntInKeralaWardNo()));
     }
     public void setLocationForAddressPresent(ParentAddress parentAddress, Object mdmsDataLoc) {
+        parentAddress.setPresentWardText(mdmsLocationService.getWardNo(mdmsDataLoc, parentAddress.getPresentWardNo()));
         parentAddress.setPresentWardNoEn(mdmsLocationService.getWardNameEn(mdmsDataLoc, parentAddress.getPresentWardNo()));
         parentAddress.setPresentWardNoMl(mdmsLocationService.getWardNameMl(mdmsDataLoc, parentAddress.getPresentWardNo()));
     }

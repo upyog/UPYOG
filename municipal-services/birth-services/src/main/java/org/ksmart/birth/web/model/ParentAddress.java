@@ -108,6 +108,10 @@ public class ParentAddress {
     @JsonProperty("presentWardNo")
     private String presentWardNo;
 
+    @Size(max = 64)
+    @JsonProperty("presentWardText")
+    private String presentWardText;
+
     @Size(max = 300)
     @JsonProperty("presentWardNoEn")
     private String presentWardNoEn;
@@ -395,6 +399,10 @@ public class ParentAddress {
     @Size(max = 64)
     @JsonProperty("permntInKeralaWardNo")
     private String permntInKeralaWardNo;
+
+    @Size(max = 64)
+    @JsonProperty("permntInKeralaWardNoText")
+    private String permntInKeralaWardNoText;
 
     @Size(max = 300)
     @JsonProperty("permntInKeralaWardNoEn")
