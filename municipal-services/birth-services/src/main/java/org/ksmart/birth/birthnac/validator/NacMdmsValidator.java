@@ -154,17 +154,17 @@ public class NacMdmsValidator {
 	        List<String> countryCodes = getCountryCodes(mdmsData);
 	        request.getNacDetails()
 	                .forEach(birth -> {
-	                    List<String> religionCodes = getReligionCodes(mdmsData);
+//	                    List<String> religionCodes = getReligionCodes(mdmsData);
 	                    if (birth.getParentsDetails() != null) {
 
 	                        // Religion of the family
-	                        String religionCode = birth.getParentsDetails().getReligionId();
-	                        if (log.isDebugEnabled()) {
-	                            log.debug("Religion code : \n{}", religionCode);
-	                        }
-	                        if (CollectionUtils.isEmpty(religionCodes) || !religionCodes.contains(religionCode)) {
-	                            errorMap.put(COMMON_MDMS_RELIGION, "The Religion code '" + religionCode + "' does not exists");
-	                        }
+//	                        String religionCode = birth.getParentsDetails().getReligionId();
+//	                        if (log.isDebugEnabled()) {
+//	                            log.debug("Religion code : \n{}", religionCode);
+//	                        }
+//	                        if (CollectionUtils.isEmpty(religionCodes) || !religionCodes.contains(religionCode)) {
+//	                            errorMap.put(COMMON_MDMS_RELIGION, "The Religion code '" + religionCode + "' does not exists");
+//	                        }
 
 	                        //Father Information
 
