@@ -197,7 +197,7 @@ const CustomAreaChart = ({ xDataKey = "name", yDataKey = getValue, data, setChar
     Object.keys(newPayload).map((key) => {
       newObjArray.push(
         `${key} -${prefix}${
-          payloadObj?.payload?.symbol?.toLowerCase() === "amount" ? getDenominatedValue(value?.denomination, newPayload?.[key]) : newPayload?.[key]
+          payloadObj?.payload?.symbol?.toLowerCase() === "amount" ? getDenominatedValue(value?.denomination, newPayload?.[key])+": Diiference " : newPayload?.[key]
         } ${postfix}`
       );
     });
