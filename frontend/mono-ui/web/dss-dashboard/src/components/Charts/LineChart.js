@@ -61,11 +61,14 @@ class LineChart extends React.Component {
         fill: false
       }
       let tempdataArr = [];
-      let tempdatalabel = [], tempVal = '';
+      let tempdatalabel = [], tempVal = '' , tempValPrevious='';
       tempObj.label = getLocaleLabels(`DSS_${d.headerName}`, strings) || `DSS_${d.headerName}`;
       d.plots.map((d1, i) => {
         tempVal = NFormatterFun(d1.value, d1.symbol, this.props.GFilterData['Denomination']);
         tempVal = (typeof tempVal == 'string') ? parseFloat(tempVal.replace(/,/g, '')) : tempVal;
+		tempValPrevious = i==0?(NFormatterFun('0', 'amount', this.props.GFilterData['Denomination'])):(NFormatterFun(d.plots[i-1], d1.symbol, this.props.GFilterData['Denomination']));
+		tempValPrevious = (typeof tempValPrevious == 'string') ? parseFloat(tempValPrevious.replace(/,/g, '')) : tempValPrevious;
+		tempVal=tempVal.concat(": Difference").concat(tempVal-tempValPrevious);
         tempdataArr.push(tempVal);
         tempdatalabel.push(strings[d1.name] || d1.name);
       })
