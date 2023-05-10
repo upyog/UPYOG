@@ -7,6 +7,7 @@ import org.ksmart.birth.common.model.AuditDetails;
 import org.ksmart.birth.common.model.Document;
 import org.ksmart.birth.web.model.DocumentDetails;
 import org.ksmart.birth.web.model.ParentAddress;
+import org.ksmart.birth.web.model.ParentsDetail;
 
 import javax.validation.constraints.Size;
 import java.util.List;
@@ -111,6 +112,11 @@ public class CorrectionApplication {
     @Size(max = 64)
     @JsonProperty("motherUuid")
     private String motherUuid;
+
+    @Size(max = 64)
+    @JsonProperty("birthPlaceUuid")
+    private String birthPlaceUuid;
+
     @Size(max = 64)
     @JsonProperty("motherAadhar")
     private String motherAadhar;
@@ -126,8 +132,13 @@ public class CorrectionApplication {
 
     @JsonProperty("CorrectionAddress")
     private CorrectionAddress correctionAddress;
+
+    @JsonProperty("CorrectionParentDetails")
+    private ParentsDetail correctionParentDetails;
+
     @JsonProperty("Demands")
     private List<Demand> demands;
+
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails;
 }

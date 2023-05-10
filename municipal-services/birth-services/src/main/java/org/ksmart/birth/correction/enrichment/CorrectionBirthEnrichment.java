@@ -76,6 +76,8 @@ public class CorrectionBirthEnrichment implements BaseEnrichment {
                        birth.setMiddleNameMl(registerBirthDetails.get(0).getMiddleNameMl());
                        birth.setLastNameEn(registerBirthDetails.get(0).getLastNameEn());
                        birth.setLastNameMl(registerBirthDetails.get(0).getLastNameMl());
+                       birth.setRegistrationNo(registerBirthDetails.get(0).getRegistrationNo());
+                       birth.setRegistrationDate(registerBirthDetails.get(0).getRegistrationDate());
 
                        //Father Details
                        birth.setFatherUuid(UUID.randomUUID().toString());
@@ -90,7 +92,6 @@ public class CorrectionBirthEnrichment implements BaseEnrichment {
                        birth.setMotherAadhar(registerBirthDetails.get(0).getRegisterBirthMother().getAadharNo());
 
                        //Birthplace
-
                        //Present Address
 
                        //Permanent Address
