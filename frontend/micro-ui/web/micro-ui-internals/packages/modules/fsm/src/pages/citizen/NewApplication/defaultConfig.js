@@ -1,12 +1,17 @@
 import SelectPropertySubtype from "./SelectPropertySubtype";
 import SelectPropertyType from "./SelectPropertyType";
-import SelectAddress from "./SelectAddress";
-import SelectStreet from "./SelectStreet";
-import SelectLandmark from "./SelectLandmark";
-import SelectPincode from "./SelectPincode";
+// import SelectAddress from "./SelectAddress";
+import FSMSelectAddress from "./FSMSelectAddress";
+// import SelectStreet from "./SelectStreet";
+import FSMSelectStreet from "./FSMSelectStreet";
+// import SelectLandmark from "./SelectLandmark";
+import FSMSelectLandmark from "./FSMSelectLandmark";
+// import SelectPincode from "./SelectPincode";
+import FSMSelectPincode from "./FSMSelectPincode";
 import SelectTankSize from "./SelectTankSize";
 import SelectPitType from "./SelectPitType";
-import SelectGeolocation from "./SelectGeolocation";
+// import SelectGeolocation from "./SelectGeolocation";
+import FSMSelectGeolocation from "./FSMSelectGeolocation";
 
 export const config = {
   routes: [
@@ -36,13 +41,13 @@ export const config = {
     },
     {
       route: "map",
-      component: SelectGeolocation,
+      component: FSMSelectGeolocation,
       nextStep: "pincode",
       hideInEmployee: true,
     },
     {
       route: "pincode",
-      component: SelectPincode,
+      component: FSMSelectPincode,
       groupKey: "ES_NEW_APPLICATION_LOCATION_DETAILS",
       texts: {
         headerCaption: "",
@@ -68,7 +73,7 @@ export const config = {
     },
     {
       route: "address",
-      component: SelectAddress,
+      component: FSMSelectAddress,
       groupKey: "ES_NEW_APPLICATION_LOCATION_DETAILS",
       texts: {
         headerCaption: "CS_FILE_APPLICATION_PROPERTY_LOCATION_LABEL",
@@ -80,7 +85,7 @@ export const config = {
     },
     {
       route: "street",
-      component: SelectStreet,
+      component: FSMSelectStreet,
       groupKey: "ES_NEW_APPLICATION_LOCATION_DETAILS",
       texts: {
         headerCaption: "CS_FILE_APPLICATION_PROPERTY_LOCATION_LABEL",
@@ -113,7 +118,7 @@ export const config = {
     },
     {
       route: "landmark",
-      component: SelectLandmark,
+      component: FSMSelectLandmark,
       groupKey: "ES_NEW_APPLICATION_LOCATION_DETAILS",
       texts: {
         headerCaption: "CS_FILE_APPLICATION_PROPERTY_LOCATION_LABEL",
