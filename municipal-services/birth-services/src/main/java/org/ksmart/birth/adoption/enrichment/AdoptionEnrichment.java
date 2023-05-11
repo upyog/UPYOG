@@ -215,14 +215,13 @@ public class AdoptionEnrichment implements BaseEnrichment {
 
                                 }
                             } else {
-                            	System.out.println("adoption ouside ind"+birth.getParentAddress().getPresentaddressCountry());
-                            	System.out.println("adoption ouside ind"+birth.getParentAddress().getPresentOutSideIndiaadrsCityTown());
+                            	 
                                 if (birth.getParentAddress().getPresentaddressCountry() != null) {
                                     birth.getParentAddress().setCountryIdPresent(birth.getParentAddress().getPresentaddressCountry());
                                     birth.getParentAddress().setVillageNamePresent(birth.getParentAddress().getPresentOutSideIndiaadrsVillage());
                                     birth.getParentsDetails().setTownOrVillagePresent(birth.getParentAddress().getPresentOutSideIndiaadrsCityTown());
                                 }
-                                System.out.println("adoption ouside ind"+ birth.getParentsDetails().getTownOrVillagePresent());
+                                 
                             }
                         }
                     }
