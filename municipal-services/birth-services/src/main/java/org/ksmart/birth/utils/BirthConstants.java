@@ -165,5 +165,7 @@ public class BirthConstants {
     public static final String Birth_APPLICANT_ENC_KEY = "BirthDetails";
 
     public static final String NOT_APPLICABLE = "NOT_APPLICABLE";
+    
+    public static final String FALSE = "false";
 
 }

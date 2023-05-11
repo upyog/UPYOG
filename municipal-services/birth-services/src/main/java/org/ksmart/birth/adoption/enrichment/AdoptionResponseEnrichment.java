@@ -51,7 +51,7 @@ public class AdoptionResponseEnrichment {
 	                    mdmsBirthService.setLocationDetails(adoption, mdmsDataLoc, mdmsData);
 	                    mdmsBirthService.setParentsDetails(adoption.getParentsDetails(), mdmsData);
 	                }
-	                if (adoption.getParentAddress().getCountryIdPermanent() != null && adoption.getParentAddress().getStateIdPermanent() != null) {
+	                if (adoption.getParentAddress().getCountryIdPermanent() != null ) {
 	                    if (adoption.getParentAddress().getCountryIdPermanent().contains(BirthConstants.COUNTRY_CODE)) {
 	                        if (adoption.getParentAddress().getStateIdPermanent().contains(BirthConstants.STATE_CODE_SMALL)) {
 	                            mdmsBirthService.setTenantDetails(adoption, mdmsData);
@@ -138,10 +138,11 @@ public class AdoptionResponseEnrichment {
 	                    	adoption.getParentAddress().setPermntOutsideKeralaVillage(adoption.getParentAddress().getPermntOutsideKeralaVillage());
 	                    }
 	                }
-	                if (adoption.getParentAddress().getCountryIdPresent() != null && adoption.getParentAddress().getStateIdPresent() != null) {
+	                if (adoption.getParentAddress().getCountryIdPresent() != null  ) {
 	                    if (adoption.getParentAddress().getCountryIdPresent().contains(BirthConstants.COUNTRY_CODE)) {
 	                        if (adoption.getParentAddress().getStateIdPresent().contains(BirthConstants.STATE_CODE_SMALL)) {
 	                            //Country
+	                        	 
 	                        	adoption.getParentAddress().setPresentaddressCountry(adoption.getParentAddress().getCountryIdPresent());
 	                        	adoption.getParentAddress().setCountryIdPresentEn(mdmsTenantService.getCountryNameEn(mdmsData, adoption.getParentAddress().getCountryIdPresent()));
 	                        	adoption.getParentAddress().setCountryIdPresentMl(mdmsTenantService.getCountryNameMl(mdmsData, adoption.getParentAddress().getCountryIdPresent()));
@@ -217,13 +218,13 @@ public class AdoptionResponseEnrichment {
 	                        	adoption.getParentAddress().setPresentOutsideKeralaCityVilgeEn(adoption.getParentAddress().getTownOrVillagePresent());
 	                        }
 	                    } else {
-	                        //Country
+	                        //Country	                    	 
 	                    	adoption.getParentAddress().setPresentOutSideCountry(adoption.getParentAddress().getCountryIdPresent());
 	                    	adoption.getParentAddress().setCountryIdPresentEn(mdmsTenantService.getCountryNameEn(mdmsData, adoption.getParentAddress().getCountryIdPresent()));
-	                    	adoption.getParentAddress().setCountryIdPresentEn(mdmsTenantService.getCountryNameMl(mdmsData, adoption.getParentAddress().getCountryIdPresent()));
+	                    	adoption.getParentAddress().setCountryIdPresentMl(mdmsTenantService.getCountryNameMl(mdmsData, adoption.getParentAddress().getCountryIdPresent()));
 
-	                    	adoption.getParentAddress().setPresentOutSideIndiaadrsVillage(adoption.getParentAddress().getPresentOutSideIndiaadrsVillage());
-	                    	adoption.getParentAddress().setPresentOutSideIndiaadrsCityTown(adoption.getParentAddress().getPresentOutSideIndiaadrsCityTown());
+	                    	adoption.getParentAddress().setPresentOutSideIndiaadrsVillage(adoption.getParentAddress().getVillageNamePresent());
+	                    	adoption.getParentAddress().setPresentOutSideIndiaadrsCityTown(adoption.getParentAddress().getTownOrVillagePresent());
 	                    }
 	                }
 	            });

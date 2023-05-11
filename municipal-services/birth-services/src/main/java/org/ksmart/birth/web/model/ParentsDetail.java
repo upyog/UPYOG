@@ -169,5 +169,10 @@ public class ParentsDetail {
     private String addressOfMother;
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails;
+    
+    @Size(max = 1000)
+    @JsonProperty("townOrVillagePresent")
+    private String townOrVillagePresent;
+
 
 }

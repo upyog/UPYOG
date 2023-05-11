@@ -7,12 +7,13 @@ import java.sql.SQLException;
 
 public interface AdoptionParentAddressRowMapper {
     default ParentAddress getKsmartBirthParentAddress(ResultSet rs) throws SQLException {
-    	
+    	 
         return ParentAddress.builder()
                 .countryIdPresent(rs.getString("pres_countryid"))
                 .stateIdPresent(rs.getString("pres_stateid"))
                 .districtIdPresent(rs.getString("pres_districtid"))
                 .pinNoPresent(rs.getString("pres_pinno"))
+                .presentaddressCountry(rs.getString("pres_countryid"))
                 .localityEnPresent(rs.getString("pres_locality_en"))
                 .localityMlPresent(rs.getString("pres_locality_ml"))
                 .streetNameEnPresent(rs.getString("pres_street_name_en"))
@@ -35,6 +36,9 @@ public interface AdoptionParentAddressRowMapper {
                 .presentOutsideKeralaPostOfficeEn(rs.getString("pres_postoffice_en"))
                 .presentOutsideKeralaPostOfficeMl(rs.getString("pres_postoffice_ml"))
                 .presentOutsideKeralaTalukName(rs.getString("pres_taluk_name"))
+                .townOrVillagePresent(rs.getString("stat_mother_resdnce_placetype"))
+                
+                
                 .presentOutsideKeralaCityVilgeEn(rs.getString("stat_mother_resdnce_placetype"))
                 .presentOutSideIndiaAdressEn(rs.getString("pres_ot_address1_en"))
                 .presentOutSideIndiaAdressMl(rs.getString("pres_ot_address1_ml"))

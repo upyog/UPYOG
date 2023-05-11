@@ -132,6 +132,7 @@ public class MdmsForAdoptionService {
 	    public void setParentsDetails(ParentsDetail parentsDetail, Object mdmsData) {
 	        if (parentsDetail != null) {
 	        //Mothers Details
+	         if (parentsDetail.getIsMotherInfoMissing().equals(FALSE)) {
 	            parentsDetail.setMotherEducationidEn(mdmsTenantService.getQualificatioinEn(mdmsData, parentsDetail.getMotherEducationid()));
 	            parentsDetail.setMotherEducationidMl(mdmsTenantService.getQualificatioinMl(mdmsData, parentsDetail.getMotherEducationid()));
 
@@ -140,7 +141,10 @@ public class MdmsForAdoptionService {
 
 	            parentsDetail.setMotherNationalityidEn(mdmsTenantService.getNationalityEn(mdmsData, parentsDetail.getMotherNationalityid()));
 	            parentsDetail.setMotherNationalityidMl(mdmsTenantService.getNationalityMl(mdmsData, parentsDetail.getMotherNationalityid()));
+	     	 }
 	//Father Details
+	            
+	         if (parentsDetail.getIsFatherInfoMissing().equals(FALSE)) {
 	            parentsDetail.setFatherEucationidEn(mdmsTenantService.getQualificatioinEn(mdmsData, parentsDetail.getFatherEucationid()));
 	            parentsDetail.setFatherEucationidMl(mdmsTenantService.getQualificatioinMl(mdmsData, parentsDetail.getFatherEucationid()));
 
@@ -149,6 +153,7 @@ public class MdmsForAdoptionService {
 
 	            parentsDetail.setFatherNationalityidEn(mdmsTenantService.getNationalityEn(mdmsData, parentsDetail.getFatherNationalityid()));
 	            parentsDetail.setFatherNationalityidMl(mdmsTenantService.getNationalityMl(mdmsData, parentsDetail.getFatherNationalityid()));
+	        }
 
 	            parentsDetail.setReligionIdEn(mdmsTenantService.getReligionEn(mdmsData, parentsDetail.getReligionId()));
 	            parentsDetail.setReligionIdMl(mdmsTenantService.getReligionMl(mdmsData, parentsDetail.getReligionId()));

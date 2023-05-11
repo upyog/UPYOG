@@ -13,7 +13,7 @@ public interface AdoptionParentDetailRowMapper {
                   .fatherFirstNameMl(rs.getString("fa_firstname_ml"))
                   .fatherAadharno(rs.getString("fa_aadharno"))
                   .fatherProffessionid(rs.getString("stat_father_proffessionid"))
-                  .fatherEucationid(rs.getString("stat_mother_educationid"))
+                  .fatherEucationid(rs.getString("stat_father_educationid"))
                   .fatherNationalityid(rs.getString("stat_father_nationalityid"))
                   .isFatherInfoMissing(Boolean.valueOf(rs.getString("ba_is_father_info_missing")))
                   .motherAadhar(rs.getString("mo_aadharno"))

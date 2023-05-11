@@ -27,7 +27,7 @@ public class RegisterRowMapperForNacApp implements ResultSetExtractor<List<Regis
 			result.add(RegisterNac.builder()
 					.dateOfReport(rs.getLong("ba_dateofreport"))
 					.applicantnameen(rs.getString("ebap_name_en"))
-					.careofapplicantnameen(rs.getString("ebap_address_en"))
+					.careofapplicantnameen(rs.getString("ebap_care_of_applicant"))
 					.applicationtype(rs.getString("ba_applicationtype"))
 					.birthdetailsid(rs.getString("ebap_birthdtlid"))
 					.childnameen(rs.getString("ba_firstname_en"))
