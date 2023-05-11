@@ -1,19 +1,12 @@
 package org.ksmart.birth.utils;
 
 
-import lombok.Data;
-import org.ksmart.birth.birthregistry.model.RegisterBirthDetail;
 import org.ksmart.birth.common.model.AuditDetails;
-//import org.ksmart.birth.death.model.EgDeathDtl;
 import org.springframework.stereotype.Component;
 
 import lombok.Getter;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 
 @Component
 @Getter
