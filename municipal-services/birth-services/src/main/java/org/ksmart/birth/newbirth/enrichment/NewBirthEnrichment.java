@@ -53,13 +53,13 @@ public class NewBirthEnrichment implements BaseEnrichment {
             tenantId = birth.getTenantId();
             birth.setDateOfReport(CommonUtils.currentDateTime());
             Long currentDate = CommonUtils.currentDateTime();
-            Long birthDateTime = CommonUtils.timeStringToLong(LocalDateTime.parse(birth.getTimeOfBirth()));
-            if (birthDateTime > currentDate) {
-                throw new CustomException(INVALID_CREATE.getCode(),
-                        "Date and time of birth should be less than or same as  current date and time.");
-            } else{
-                birth.setTimeBirth(birthDateTime);
-            }
+//            Long birthDateTime = CommonUtils.timeStringToLong(LocalDateTime.parse(birth.getTimeOfBirth()));
+//            if (birthDateTime > currentDate) {
+//                throw new CustomException(INVALID_CREATE.getCode(),
+//                        "Date and time of birth should be less than or same as  current date and time.");
+//            } else{
+//                birth.setTimeBirth(birthDateTime);
+//            }
             birth.setId(UUID.randomUUID().toString());
             birth.setAuditDetails(auditDetails);
         }

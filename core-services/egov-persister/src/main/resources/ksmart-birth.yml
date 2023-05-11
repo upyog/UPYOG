@@ -532,7 +532,7 @@ serviceMaps:
 
         - query: INSERT INTO public.eg_birth_application_document(
             id, tenantid, document_name, document_type, document_description, filestoreid, document_link,file_type,file_size,birthdtlid,active,createdby, createdtime, lastmodifiedby, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
-          basePath: AdoptionDetails.*.AdoptionDocuments.
+          basePath: ChildDetails.*.Document.
           jsonMaps:
 
             - jsonPath: $.ChildDetails.*.Document.*.id
