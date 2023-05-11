@@ -83,6 +83,10 @@ public class RegisterQueryBuilder extends BaseRegBuilder {
         addLikeFilter("LOWER(krbd.firstname_en)", criteria.getChildName(), query, preparedStmtValues);
         addLikeFilter("LOWER(kbfi.firstname_en)", criteria.getNameOfFather(), query, preparedStmtValues);
 
+        if(criteria.getBirthDate() != null){
+            addDateRangeFilter("krbd.dateofbirth", criteria.getBirthDate(), criteria.getBirthDate()+(1*24*60*60*1000), query, preparedStmtValues);
+        }
+
         if (StringUtils.isEmpty(criteria.getSortBy()))
             addOrderByColumns(" krbd.createdtime",null, orderBy);
         else if (criteria.getSortBy() == RegisterBirthSearchCriteria.SortBy.birthDate)
@@ -117,7 +121,7 @@ public class RegisterQueryBuilder extends BaseRegBuilder {
             return query.toString();
         } else{
             throw new CustomException(NOT_FOUND.getCode(),
-                    "Criteria not given for search.");
+                    "Criteria not given for the search.");
         }
     }
 }

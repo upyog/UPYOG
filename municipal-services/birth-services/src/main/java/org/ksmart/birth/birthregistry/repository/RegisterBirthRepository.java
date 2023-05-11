@@ -76,6 +76,7 @@ public class RegisterBirthRepository {
         List<Object> preparedStmtValues=new ArrayList<>();
         List<RegisterBirthDetail> result;
         String query=registerQueryBuilder.getRegBirthApplicationSearchQuery(criteria, preparedStmtValues, Boolean.FALSE);
+      System.out.println(query);
         if(StringUtils.isEmpty(query)){
             throw new CustomException(NOT_FOUND.getCode(),
                     "No results available for the given criteria.");
