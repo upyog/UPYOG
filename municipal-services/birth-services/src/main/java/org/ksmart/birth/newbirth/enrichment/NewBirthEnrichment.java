@@ -21,11 +21,13 @@ import org.ksmart.birth.web.model.newbirth.NewBirthDetailRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.*;
 
 import static org.ksmart.birth.utils.BirthConstants.*;
+import static org.ksmart.birth.utils.enums.ErrorCodes.INVALID_CREATE;
 
 @Component
 public class NewBirthEnrichment implements BaseEnrichment {
@@ -50,8 +52,14 @@ public class NewBirthEnrichment implements BaseEnrichment {
         for (NewBirthApplication birth : request.getNewBirthDetails()) {
             tenantId = birth.getTenantId();
             birth.setDateOfReport(CommonUtils.currentDateTime());
-           // birth.setTimeBirth(CommonUtils.);
-
+            Long currentDate = CommonUtils.currentDateTime();
+            Long birthDateTime = CommonUtils.timeStringToLong(LocalDateTime.parse(birth.getTimeOfBirth()));
+            if (birthDateTime > currentDate) {
+                throw new CustomException(INVALID_CREATE.getCode(),
+                        "Date and time of birth should be less than or same as  current date and time.");
+            } else{
+                birth.setTimeBirth(birthDateTime);
+            }
             birth.setId(UUID.randomUUID().toString());
             birth.setAuditDetails(auditDetails);
         }
@@ -136,8 +144,7 @@ public class NewBirthEnrichment implements BaseEnrichment {
                                     birth.getParentAddress().setStateIdPresent(birth.getParentAddress().getPresentaddressStateName());
                                     //Pincode
                                     birth.getParentAddress().setPinNoPresent(birth.getParentAddress().getPresentInsideKeralaPincode());
-                                    System.out.println(birth.getParentAddress().getPresentInsideKeralaPincode());
-                                    System.out.println(birth.getParentAddress().getPinNoPresent());
+
                                     //District
                                     birth.getParentAddress().setDistrictIdPresent(birth.getParentAddress().getPresentInsideKeralaDistrict());
                                     //Local Body

@@ -1,6 +1,7 @@
 package org.ksmart.birth.newbirth.repository.rowmapper;
 
 import org.jsoup.internal.StringUtil;
+import org.ksmart.birth.utils.CommonUtils;
 import org.ksmart.birth.web.model.newbirth.NewBirthApplication;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
@@ -23,6 +24,7 @@ public class BirthApplicationRowMapper implements ResultSetExtractor<List<NewBir
                     .dateOfReport(rs.getLong("ba_dateofreport"))
                     .dateOfBirth(rs.getLong("ba_dateofbirth"))
                     .timeBirth(rs.getLong("ba_timeofbirth"))
+                    .timeOfBirth(CommonUtils.timeLongToString(rs.getLong("ba_timeofbirth")))
                     .gender(rs.getString("ba_gender"))
                     .aadharNo(rs.getString("ba_aadharno"))
                     .isChildName(isChildNameEntered(rs.getString("ba_firstname_en")))

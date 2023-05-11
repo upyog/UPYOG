@@ -8,6 +8,7 @@ import org.ksmart.birth.birthcommon.model.WorkFlowCheck;
 import org.ksmart.birth.birthcommon.services.CommonValidationFromMdms;
 import org.ksmart.birth.config.BirthConfiguration;
 import org.ksmart.birth.utils.BirthConstants;
+import org.ksmart.birth.utils.CommonUtils;
 import org.ksmart.birth.utils.MdmsUtil;
 import org.ksmart.birth.utils.enums.ErrorCodes;
 import org.ksmart.birth.web.model.newbirth.NewBirthApplication;
@@ -172,8 +173,8 @@ public class NewBirthApplicationValidator {
 
 
     private void validateDob(Long childDob, String birthPlace, String wfCode, String applicationType,Object mdmsData, WorkFlowCheck wfc) {
-        Calendar calendar = Calendar.getInstance();
-        Long currentDate = calendar.getTimeInMillis();
+       // Calendar calendar = Calendar.getInstance();
+        Long currentDate = CommonUtils.currentDateTime();
         if (childDob > currentDate) {
             throw new CustomException(INVALID_CREATE.getCode(),
                     "Date of birth should be less than or same as  current date.");

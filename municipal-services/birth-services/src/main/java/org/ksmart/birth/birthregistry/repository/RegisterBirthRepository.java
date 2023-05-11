@@ -27,6 +27,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import static org.ksmart.birth.utils.enums.ErrorCodes.NOT_FOUND;
+
 @Slf4j
 @Repository
 public class RegisterBirthRepository {
@@ -56,7 +58,6 @@ public class RegisterBirthRepository {
     }
 
     public List<RegisterBirthDetail> saveRegisterBirthDetails(RegisterBirthDetailsRequest request) {
-        Boolean isAdopted=false;
         registerBirthDetailsEnrichment.enrichCreate(request);
         request.getRegisterBirthDetails()
                 .forEach(register -> {
@@ -73,8 +74,18 @@ public class RegisterBirthRepository {
 
     public List<RegisterBirthDetail> searchRegisterBirthDetails(RegisterBirthSearchCriteria criteria) {
         List<Object> preparedStmtValues=new ArrayList<>();
+        List<RegisterBirthDetail> result;
         String query=registerQueryBuilder.getRegBirthApplicationSearchQuery(criteria, preparedStmtValues, Boolean.FALSE);
-        List<RegisterBirthDetail> result=jdbcTemplate.query(query, preparedStmtValues.toArray(), birthRegisterRowMapper);
+        if(StringUtils.isEmpty(query)){
+            throw new CustomException(NOT_FOUND.getCode(),
+                    "No results available for the given criteria.");
+        } else{
+            result =  jdbcTemplate.query(query, preparedStmtValues.toArray(), birthRegisterRowMapper);
+            if(result.size() == 0)  {
+                throw new CustomException(NOT_FOUND.getCode(),
+                        "No results available for the given criteria.");
+            }
+        }
         return result;
     }
     public List<NewBirthApplication> searchRegisterBirthDetailsAdoption(RegisterBirthSearchCriteria criteria) {

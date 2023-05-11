@@ -1,12 +1,15 @@
 package org.ksmart.birth.birthregistry.repository.querybuilder;
 
 
+import org.egov.tracer.model.CustomException;
 import org.ksmart.birth.birthregistry.model.RegisterBirthSearchCriteria;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
+
+import static org.ksmart.birth.utils.enums.ErrorCodes.NOT_FOUND;
 
 @Component
 public class RegisterQueryBuilder extends BaseRegBuilder {
@@ -107,8 +110,14 @@ public class RegisterQueryBuilder extends BaseRegBuilder {
         else if (criteria.getSortBy() == RegisterBirthSearchCriteria.SortBy.nameOfFather)
             addOrderByColumns("kbfi.firstname_en",criteria.getSortOrder(), orderBy);
 
-        addOrderToQuery(orderBy, query);
-        addLimitAndOffset(criteria.getOffset(),criteria.getLimit(), query, preparedStmtValues);
-        return query.toString();
+
+        if(preparedStmtValues.size() > 0) {
+            addOrderToQuery(orderBy, query);
+            addLimitAndOffset(criteria.getOffset(),criteria.getLimit(), query, preparedStmtValues);
+            return query.toString();
+        } else{
+            throw new CustomException(NOT_FOUND.getCode(),
+                    "Criteria not given for search.");
+        }
     }
 }
