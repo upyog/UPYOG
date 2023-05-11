@@ -121,7 +121,7 @@ public class PayGovGateway implements Gateway {
                 .type("SYSTEM")
                 .roles(Collections.emptyList()).id(0L).build();
 
-        requestInfo = new RequestInfo("", "", 0L, "", "", "", "", "", "", userInfo);
+        requestInfo = new RequestInfo("", "", 0L, "", "", "", "", "", "", null, userInfo);
         this.pgDetailRepository=pgDetailRepository;
     }
 

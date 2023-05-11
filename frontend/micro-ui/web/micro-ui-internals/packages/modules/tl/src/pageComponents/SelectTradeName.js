@@ -1,6 +1,7 @@
 import { CardLabel, CitizenInfoLabel, FormStep, Loader, TextInput } from "@egovernments/digit-ui-react-components";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Timeline from "../components/TLTimeline";
+import { currentFinancialYear } from "../utils";
 
 const SelectTradeName = ({ t, config, onSelect, value, userType, formData }) => {
   let validation = {};
@@ -17,8 +18,28 @@ const SelectTradeName = ({ t, config, onSelect, value, userType, formData }) => 
     setTradeName(e.target.value);
   }
 
+  useEffect(() => {
+    localStorage.setItem("TLAppSubmitEnabled", "true");
+  }, []);
+
   const goNext = () => {
-    sessionStorage.setItem("CurrentFinancialYear", FY);
+    // const getCurrentFinancialYear = () => {
+    //   var today = new Date();
+    //   var curMonth = today.getMonth();
+    //   var fiscalYr = "";
+    //   if (curMonth > 3) {
+    //     var nextYr1 = (today.getFullYear() + 1).toString();
+    //     fiscalYr = today.getFullYear().toString() + "-" + nextYr1;
+    //   } else {
+    //     var nextYr2 = today.getFullYear().toString();
+    //     fiscalYr = (today.getFullYear() - 1).toString() + "-" + nextYr2.slice(-2);
+    //   }
+    //   return fiscalYr;
+    // };
+
+    // sessionStorage.setItem("CurrentFinancialYear", FY);
+    // sessionStorage.setItem("CurrentFinancialYear", getCurrentFinancialYear());
+    sessionStorage.setItem("CurrentFinancialYear", currentFinancialYear());
     onSelect(config.key, { TradeName });
   };
   if (isLoading) {

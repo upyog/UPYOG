@@ -9,13 +9,15 @@ const SearchFormFieldsComponent = ({ formState, Controller, register, control, t
   const userInfos = sessionStorage.getItem("Digit.citizen.userRequestObject");
   const userInfo = userInfos ? JSON.parse(userInfos) : {};
   const userInformation = userInfo?.value?.info;
+  const currentUserPhoneNumber = userInformation?.mobileNumber;
+
   const applicationType = useWatch({ control, name: "applicationType" });
   const oldApplicationType = sessionStorage.getItem("search_application") || "";
   if (oldApplicationType && oldApplicationType != "undefined" && JSON.parse(oldApplicationType)?.code !== applicationType?.code)
     control.setValue("status", "");
   sessionStorage.setItem("search_application", JSON.stringify(applicationType));
   const { applicationTypes, ServiceTypes } = Digit.Hooks.obps.useServiceTypeFromApplicationType({
-    Applicationtype: applicationType?.code || (userInformation?.roles?.filter((ob) => ob.code.includes("BPAREG_") ).length>0 &&  userInformation?.roles?.filter((ob) => ob.code.includes("BPA_") ).length<=0 ?"BPA_STAKEHOLDER_REGISTRATION" :"BUILDING_PLAN_SCRUTINY"),
+    Applicationtype: applicationType?.code || (userInformation?.roles?.filter((ob) => ob.code.includes("BPAREG_") ).length>0 &&  userInformation?.roles?.filter((ob) => ob.code.includes("BPA_") || ob.code.includes("CITIZEN") ).length<=0 ?"BPA_STAKEHOLDER_REGISTRATION" :"BUILDING_PLAN_SCRUTINY"),
     tenantId: stateTenantId,
   });
   const businessServices = "BPA,BPA_LOW,BPA_OC,ARCHITECT,BUILDER,ENGINEER,STRUCTURALENGINEER";
@@ -110,32 +112,36 @@ const SearchFormFieldsComponent = ({ formState, Controller, register, control, t
         <label>{t("BPA_SEARCH_APPLICATION_NO_LABEL")}</label>
         <TextInput name="applicationNo" inputRef={register({})} />
       </SearchField>
-      <SearchField>
-        <label>{t("BPA_APP_MOBILE_NO_SEARCH_PARAM")}</label>
-        <MobileNumber
-          name="mobileNumber"
-          disable={window.location.href.includes("/digit-ui/citizen") ? true : false}
-          inputRef={register({
-            minLength: {
-              value: 10,
-              message: t("CORE_COMMON_MOBILE_ERROR"),
-            },
-            maxLength: {
-              value: 10,
-              message: t("CORE_COMMON_MOBILE_ERROR"),
-            },
-            pattern: {
-              value: /[6789][0-9]{9}/,
-              //type: "tel",
-              message: t("CORE_COMMON_MOBILE_ERROR"),
-            },
-          })}
-          type="number"
-          componentInFront={<div className="employee-card-input employee-card-input--front">+91</div>}
+      {
+        !window.location.href.includes("citizen/obps/search/application") &&
+        <SearchField>
+          <label>{t("BPA_APP_MOBILE_NO_SEARCH_PARAM")}</label>
+          <MobileNumber
+            name="mobileNumber"
+            disable={window.location.href.includes("obps/search/obps-application") ? true : false}
+            inputRef={register({
+              minLength: {
+                value: 10,
+                message: t("CORE_COMMON_MOBILE_ERROR"),
+              },
+              maxLength: {
+                value: 10,
+                message: t("CORE_COMMON_MOBILE_ERROR"),
+              },
+              pattern: {
+                value: /[6789][0-9]{9}/,
+                //type: "tel",
+                message: t("CORE_COMMON_MOBILE_ERROR"),
+              },
+            })}
+            type="number"
+            componentInFront={<div className="employee-card-input employee-card-input--front">+91</div>}
           //maxlength={10}
-        />
-        <CardLabelError>{formState?.errors?.["mobileNumber"]?.message}</CardLabelError>
-      </SearchField>
+          />
+          <CardLabelError>{formState?.errors?.["mobileNumber"]?.message}</CardLabelError>
+        </SearchField>
+      }
+      
       <SearchField>
         <label>{t("BPA_SEARCH_APPLICATION_TYPE_LABEL")}</label>
         <Controller
@@ -174,6 +180,7 @@ const SearchFormFieldsComponent = ({ formState, Controller, register, control, t
           )}
         />
       </SearchField>
+      {window.location.href.includes("citizen/obps/search/application") && <SearchField></SearchField>}
       <SearchField className="submit">
         <SubmitBar label={t("ES_COMMON_SEARCH")} submit />
         <p
@@ -181,7 +188,8 @@ const SearchFormFieldsComponent = ({ formState, Controller, register, control, t
           onClick={() => {
             reset({
               applicationNo: "",
-              mobileNumber: "",
+              mobileNumber: window.location.href.includes("/search/obps-application") ? currentUserPhoneNumber : "",
+              // mobileNumber: "",
               fromDate: "",
               toDate: "",
               status: "",
@@ -189,21 +197,21 @@ const SearchFormFieldsComponent = ({ formState, Controller, register, control, t
               limit: 10,
               sortBy: "commencementDate",
               sortOrder: "DESC",
-              applicationType: userInformation?.roles?.filter((ob) => ob.code.includes("BPAREG_"))?.length <= 0 && userInformation?.roles?.filter((ob) =>(ob.code.includes("BPA_"))).length > 0 ? {
+              applicationType: userInformation?.roles?.filter((ob) => ob.code.includes("BPAREG_"))?.length <= 0 && userInformation?.roles?.filter((ob) =>(ob.code.includes("BPA_") || ob.code.includes("CITIZEN"))).length > 0 ? {
                 code: "BUILDING_PLAN_SCRUTINY",
                 i18nKey: "WF_BPA_BUILDING_PLAN_SCRUTINY",
-              } : userInformation?.roles?.filter((ob) => ob.code.includes("BPAREG_"))?.length > 0 && userInformation?.roles?.filter((ob) =>(ob.code.includes("BPA_"))).length <= 0 ? {
+              } : userInformation?.roles?.filter((ob) => ob.code.includes("BPAREG_"))?.length > 0 && userInformation?.roles?.filter((ob) =>(ob.code.includes("BPA_") || ob.code.includes("CITIZEN"))).length <= 0 ? {
                 code: "BPA_STAKEHOLDER_REGISTRATION",
                 i18nKey: "WF_BPA_BPA_STAKEHOLDER_REGISTRATION",
               } : {
                 code: "BUILDING_PLAN_SCRUTINY",
                 i18nKey: "WF_BPA_BUILDING_PLAN_SCRUTINY",
               },
-              serviceType: userInformation?.roles?.filter((ob) => ob.code.includes("BPAREG_"))?.length <= 0 && userInformation?.roles?.filter((ob) =>(ob.code.includes("BPA_"))).length > 0 ? {
+              serviceType: userInformation?.roles?.filter((ob) => ob.code.includes("BPAREG_"))?.length <= 0 && userInformation?.roles?.filter((ob) =>(ob.code.includes("BPA_") || ob.code.includes("CITIZEN"))).length > 0 ? {
                 applicationType: ["BUILDING_PLAN_SCRUTINY", "BUILDING_OC_PLAN_SCRUTINY"],
                 code: "NEW_CONSTRUCTION",
                 i18nKey: "BPA_SERVICETYPE_NEW_CONSTRUCTION",
-              } : userInformation?.roles?.filter((ob) => ob.code.includes("BPAREG_"))?.length > 0 && userInformation?.roles?.filter((ob) =>(ob.code.includes("BPA_"))).length <= 0 ? /* {
+              } : userInformation?.roles?.filter((ob) => ob.code.includes("BPAREG_"))?.length > 0 && userInformation?.roles?.filter((ob) =>(ob.code.includes("BPA_") || ob.code.includes("CITIZEN"))).length <= 0 ? /* {
                 code: "BPA_STAKEHOLDER_REGISTRATION",
                 applicationType:["BPA_STAKEHOLDER_REGISTRATION"],
                 roles: ["BPAREG_APPROVER","BPAREG_DOC_VERIFIER"],
