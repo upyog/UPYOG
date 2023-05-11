@@ -109,7 +109,7 @@ export const newConfig = [
         {
             "type": "component",
             "route": "street",
-            "component": "SelectStreet",
+            "component": "TLSelectStreet",
             "key": "address",
             "withoutLabel": true,
             "hideInEmployee": true,
@@ -145,7 +145,7 @@ export const newConfig = [
         },
         {
             "type": "component",
-            "component": "SelectStreet",
+            "component": "TLSelectStreet",
             "key": "address",
             "withoutLabel": true,
             "hideInCitizen": true,
@@ -179,7 +179,7 @@ export const newConfig = [
         {
             "type": "component",
             "route": "landmark",
-            "component": "SelectLandmark",
+            "component": "TLSelectLandmark",
             "withoutLabel": true,
             "texts": {
                 "headerCaption": "TL_LOCATION_CAPTION",
@@ -340,7 +340,7 @@ export const newConfig = [
         //nextStep: "property-usage-type",
         nextStep: {
           TL_COMMON_YES: "accessories-details",
-          TL_COMMON_NO: "know-your-property",
+          TL_COMMON_NO: "other-trade-details",
         },
       },
       {
@@ -354,6 +354,23 @@ export const newConfig = [
           header: "TL_TRADE_ACCESSORIES_HEADER",
           cardText: "TL_TRADE_ACCESSORIES_TEXT",
           submitBarLabel: "CS_COMMON_NEXT",
+        },
+        withoutLabel: true,
+        nextStep: "other-trade-details",
+        hideInEmployee: true,
+      },
+      {
+        isMandatory: true,
+        type: "component",
+        route: "other-trade-details",
+        key: "TradeDetails",
+        component: "SelectOtherTradeDetails",
+        texts: {
+          headerCaption: "",
+          header: "TL_OTHER_TRADE_DETAILS_HEADER",
+          cardText: "",
+          submitBarLabel: "CS_COMMON_NEXT",
+          skipText: "CORE_COMMON_SKIP_CONTINUE"
         },
         withoutLabel: true,
         nextStep: "know-your-property",
@@ -400,7 +417,7 @@ export const newConfig = [
         type: "component",
         route: "owner-address",
         isMandatory: true,
-        component: "SelectOwnerAddress",
+        component: "TLSelectOwnerAddress",
         texts: {
           headerCaption: "TL_OWNERS_DETAILS",
           header: "TL_OWNERS_ADDRESS",

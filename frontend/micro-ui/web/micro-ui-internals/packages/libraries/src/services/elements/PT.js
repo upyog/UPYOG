@@ -90,6 +90,46 @@ export const PTService = {
       params: { tenantId },
       auth: true,
     }),
+  PTOpenSearch : ({ tenantId, filters }) =>
+  Request({
+   url: Urls.pt.search,
+   useCache: false,
+   method: "POST",
+   auth: false ,
+   userService: false,
+   params: { tenantId, ...filters },
+ }),
+    cfcreate: (details, tenantId) =>
+        Request({
+          url: Urls.pt.cfcreate,
+          data: details,
+          useCache: false,
+          setTimeParam: false,
+          userService: true,
+          method: "POST",
+          params: {},
+          auth: true,
+        }),
+    cfdefinitionsearch: ({ filters, auth }) =>
+    Request({
+      url: Urls.pt.cfdefinitionsearch,
+      useCache: false,
+      method: "POST",
+      auth: auth === false ? auth : true,
+      userService: auth === false ? auth : true,
+      data: {...filters},
+      //params: { tenantId, ...filters },
+    }),
+    cfsearch: ({ filters, auth }) =>
+    Request({
+      url: Urls.pt.cfsearch,
+      useCache: false,
+      method: "POST",
+      auth: auth === false ? auth : true,
+      userService: auth === false ? auth : true,
+      data: {...filters},
+      //params: { tenantId, ...filters },
+    }),
 };
 
 // export const PTService = {

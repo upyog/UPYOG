@@ -9,11 +9,15 @@ import { PTMyPayments } from "./MyPayments";
 const hideBackButtonConfig = [
   { screenPath: "property/new-application/acknowledgement" },
   { screenPath: "property/edit-application/acknowledgement" },
+  //{ screenPath: "property/feedback-acknowledgement" }
 ];
 
 const App = () => {
   const { path, url, ...match } = useRouteMatch();
   const { t } = useTranslation();
+  const inboxInitialState = {
+    searchParams: {},
+  };
 
   const CreateProperty = Digit?.ComponentRegistryService?.getComponent("PTCreateProperty");
   const EditProperty = Digit?.ComponentRegistryService?.getComponent("PTEditProperty");

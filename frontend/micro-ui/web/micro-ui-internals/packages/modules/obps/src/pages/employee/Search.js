@@ -11,8 +11,8 @@ const Search = ({ path }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const location = useLocation();
   const details = () => {
-    if (userInformation?.roles?.filter((ob) => ob.code.includes("BPAREG_"))?.length <= 0 && userInformation?.roles?.filter((ob) =>(ob.code.includes("BPA_"))).length > 0) return "BUILDING_PLAN_SCRUTINY";
-    if (userInformation?.roles?.filter((ob) => ob.code.includes("BPAREG_"))?.length > 0 && userInformation?.roles?.filter((ob) =>(ob.code.includes("BPA_"))).length <= 0) return "BPA_STAKEHOLDER_REGISTRATION";
+    if (userInformation?.roles?.filter((ob) => ob.code.includes("BPAREG_"))?.length <= 0 && userInformation?.roles?.filter((ob) =>(ob.code.includes("BPA_") || ob.code.includes("CITIZEN"))).length > 0) return "BUILDING_PLAN_SCRUTINY";
+    if (userInformation?.roles?.filter((ob) => ob.code.includes("BPAREG_"))?.length > 0 && userInformation?.roles?.filter((ob) =>(ob.code.includes("BPA_") || ob.code.includes("CITIZEN"))).length <= 0) return "BPA_STAKEHOLDER_REGISTRATION";
     else return "BUILDING_PLAN_SCRUTINY"
   }
   const [selectedType, setSelectedType] = useState(details());
@@ -92,7 +92,7 @@ const Search = ({ path }) => {
       let payload1 = {
         applicationType: "BUILDING_PLAN_SCRUTINY",
         serviceType: "NEW_CONSTRUCTION",
-        ...(window.location.href.includes("/digit-ui/citizen") && {
+        ...(window.location.href.includes("/search/obps-application") && {
           mobileNumber: Digit.UserService.getUser()?.info?.mobileNumber,
         }),
       };

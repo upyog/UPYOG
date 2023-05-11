@@ -19,7 +19,7 @@ const combineResponse = (applications, workflowData) => {
   return applications.map(application => ({
     ...application,
     assignee: workflowInstances[application?.applicationNo]?.assignes?.[0]?.name,
-    sla: convertMillisecondsToDays(workflowInstances[application?.applicationNo].businesssServiceSla),
+    sla: application?.status.match(/^(APPROVED)$/) ? "CS_NA" : convertMillisecondsToDays(workflowInstances[application?.applicationNo].businesssServiceSla),
     state: workflowInstances[application?.applicationNo]?.state?.state,
     action: workflowInstances[application?.applicationNo]?.action
   }))
@@ -30,6 +30,19 @@ const useBPASearch = (tenantId, filters = {}, config = {}) => {
     if (!filters?.limit) filters.limit = 10;
     if (!filters?.offset) filters.offset = 0;
   }
+
+  const userInfos = sessionStorage.getItem("Digit.citizen.userRequestObject");
+  const userInfo = userInfos ? JSON.parse(userInfos) : {};
+  const userInformation = userInfo?.value?.info;
+
+  if (window.location.href.includes("/citizen") && window.location.href.includes("/search")) {
+    if (!filters?.createdBy && !window.location.href.includes("obps-application")) filters.createdBy = userInformation?.uuid;
+    if (!filters?.applicationType) filters.applicationType = "BUILDING_PLAN_SCRUTINY";
+    if (!filters?.serviceType) filters.serviceType = "NEW_CONSTRUCTION";
+  }
+
+  if (window.location.href.includes("/search/obps-application")) filters.mobileNumber = userInformation?.mobileNumber;
+  
   const client = useQueryClient();
   return {...useQuery(['BPA_SEARCH', tenantId, filters], async () => {
     const response = await OBPSService.BPASearch(tenantId, { ...filters });

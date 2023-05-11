@@ -173,12 +173,12 @@ const OwnerForm1 = (_props) => {
     setValue("city",selectedCity);
   },[selectedCity]);
 
-  useEffect(() => {
-    if(!isEdit)
-    TaxHeadMasterFields && TaxHeadMasterFields.length>0 && TaxHeadMasterFields?.map((ob) => {
-      consumerdetail[ob.code] = "";
-    })
-  },[TaxHeadMasterFields])
+  // useEffect(() => {
+  //   if(!isEdit)
+  //   TaxHeadMasterFields && TaxHeadMasterFields.length>0 && TaxHeadMasterFields?.map((ob) => {
+  //     consumerdetail[ob.code] = "";
+  //   })
+  // },[TaxHeadMasterFields])
 
   useEffect(() => {
     if(isEdit && TaxHeadMasterFields && !(formValue[`${formValue?.categoryType?.code?.split(".")[0]}`]))
@@ -287,6 +287,7 @@ const OwnerForm1 = (_props) => {
                   isMandatory
                   className="form-field"
                   selected={props.value}
+                  optionCardStyles={{maxHeight:"960%"}}
                   //errorStyle={(localFormState.touched.financialYear && errors?.financialYear?.message) ? true : false}
                   // disable={financialYearOptions?.length === 1}
                   id="businessService"

@@ -109,7 +109,7 @@ class ShowField extends Component {
 
     const buttons = [
       {
-        text: `<span>${getLocaleLabels("RT_DOWNLOAD_AS","RT_DOWNLOAD_AS")}</span>`,
+        text: `<span style="color:#767676">${getLocaleLabels("RT_DOWNLOAD_AS","RT_DOWNLOAD_AS")}</span>`,
         className: "report-download-button-text",
       },
       {
@@ -122,7 +122,7 @@ class ShowField extends Component {
         footer: true,
         customize: function (doc) {
           doc.content[0].text = [];
-          doc.content[0].text.push({ text: "mSeva System Reports\n\n", bold: true, fontSize: 20 });
+          doc.content[0].text.push({ text: `${getLocaleLabels("RT_HEADER","RT_HEADER")}\n\n`, bold: true, fontSize: 20 });
           doc.content[0].text.push({ text: reportTitle, fontSize: 18 });
         },
         className: "report-pdf-button",

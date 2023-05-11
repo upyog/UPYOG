@@ -187,6 +187,18 @@ public class MetricChartResponseHandler implements IResponseHandler{
        
         try{
             Data data = new Data(chartName, action.equals(PERCENTAGE) && aggrsPaths.size()==2? percentageValue(percentageList, isRoundOff) : (totalValues==null || totalValues.isEmpty())? 0.0 :totalValues.stream().reduce(0.0, Double::sum), symbol);
+			//Logic to perform DIVISION action
+			if (action.equals(DIVISION)){
+				if (totalValues.size() == 2) {
+					if (totalValues.get(1) != 0)
+						data.setHeaderValue(totalValues.get(0) / totalValues.get(1));
+					else
+						data.setHeaderValue(Double.valueOf(0));
+				}
+				else
+					throw new CustomException("INVALID_NUMBER_OF_OPERANDS", "Division operation can be performed only with 2 operands.");
+			}
+			data.setPlots( Arrays.asList(latestDateplot,lastUpdatedTime));
             if (action.equals("division")){
                 if (totalValues.size() == 2) {
                         if (totalValues.get(1) != 0)
