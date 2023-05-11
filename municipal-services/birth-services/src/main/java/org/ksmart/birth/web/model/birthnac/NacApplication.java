@@ -3,7 +3,7 @@ package org.ksmart.birth.web.model.birthnac;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
- 
+import org.ksmart.birth.birthcommon.model.demand.Demand;
 import org.ksmart.birth.common.model.AuditDetails;
 import org.ksmart.birth.common.model.Document; 
 import org.ksmart.birth.web.model.birthnac.NacApplicantDetail;
@@ -339,6 +339,9 @@ public class NacApplication {
     @Size(max = 64)
     @JsonProperty("isWorkflow")
     private Boolean isWorkflow = true;
+    
+    @JsonProperty("Demands")
+    private List<Demand> demands;
     
   
 }

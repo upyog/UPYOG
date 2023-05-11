@@ -1,6 +1,9 @@
 package org.ksmart.birth.birthnac.service;
 
 
+import org.ksmart.birth.birthcommon.model.WorkFlowCheck;
+import org.ksmart.birth.birthcommon.model.demand.Demand;
+import org.ksmart.birth.birthcommon.services.DemandService;
 import org.ksmart.birth.birthnac.repository.NacRepository;
 import org.ksmart.birth.birthnac.validator.NacApplicationValidator;
 import org.ksmart.birth.utils.MdmsUtil;
@@ -10,6 +13,10 @@ import org.ksmart.birth.web.model.birthnac.*;
 import org.ksmart.birth.workflow.WorkflowIntegratorNac;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import static org.ksmart.birth.utils.BirthConstants.STATUS_FOR_PAYMENT;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -17,7 +24,8 @@ public class NacService {
  
     private final NacRepository repository;
     private final WorkflowIntegratorNac workflowIntegrator;
-  
+    private final DemandService demandService;
+
  
     private final MdmsUtil mdmsUtil;
     private final NacApplicationValidator validator;
@@ -25,16 +33,19 @@ public class NacService {
     @Autowired
     NacService(NacRepository repository, MdmsUtil mdmsUtil, 
     		WorkflowIntegratorNac workflowIntegrator,
+    		DemandService demandService,
                NacApplicationValidator validator) {
  
         this.repository = repository;
         this.mdmsUtil = mdmsUtil;
         this.workflowIntegrator  = workflowIntegrator;
         this.validator = validator;
+        this.demandService= demandService;
         
     }
 
     public List<NacApplication> saveNacDetails(NacDetailRequest request) {
+    	WorkFlowCheck wfc = new WorkFlowCheck();
         Object mdmsData = mdmsUtil.mdmsCall(request.getRequestInfo());
         Object mdmsDataLoc = mdmsUtil.mdmsCallForLocation(request.getRequestInfo(), request.getNacDetails().get(0).getTenantId());
         // validate request
@@ -45,6 +56,24 @@ public class NacService {
 
         //WorkFlow Integration
         workflowIntegrator.callWorkFlow(request);
+        
+        //Demand Creation Maya commented
+        nacDetails.forEach(birth->{
+            if(wfc.getPayment()!=null) {
+                if (wfc.getPayment()) {
+                    if (birth.getApplicationStatus().equals(STATUS_FOR_PAYMENT)) {
+                        List<Demand> demands = new ArrayList<>();
+                        Demand demand = new Demand();
+                        demand.setTenantId(birth.getTenantId());
+                        demand.setConsumerCode(birth.getApplicationNo());
+                        demands.add(demand);
+                        birth.setDemands(demandService.saveDemandDetails(demands, request.getRequestInfo(), wfc));
+                    }
+                }
+            }
+       });
+        
+        
         return nacDetails;
     }
 
