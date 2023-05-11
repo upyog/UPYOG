@@ -81,10 +81,10 @@ public class RegisterBirthRepository {
                     "No results available for the given criteria.");
         } else{
             result =  jdbcTemplate.query(query, preparedStmtValues.toArray(), birthRegisterRowMapper);
-            if(result.size() == 0)  {
-                throw new CustomException(NOT_FOUND.getCode(),
-                        "No results available for the given criteria.");
-            }
+//            if(result.size() == 0)  {
+//                throw new CustomException(NOT_FOUND.getCode(),
+//                        "No results available for the given criteria.");
+//            }
         }
         return result;
     }

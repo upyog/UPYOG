@@ -28,6 +28,7 @@ public class StillBirthApplication {
 
     @JsonProperty("childDOB")
     private Long dateOfBirth;
+
     @JsonProperty("birthDateTime")
     private Long timeOfBirth;
 
