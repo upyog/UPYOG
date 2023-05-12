@@ -6,9 +6,7 @@
   "workspaces": [
     "micro-ui-internals/packages/libraries",
     "micro-ui-internals/packages/react-components",
-    "micro-ui-internals/packages/modules/bills",
     "micro-ui-internals/packages/modules/common",
-    "micro-ui-internals/packages/modules/commonPt",
     "micro-ui-internals/packages/modules/core",
     "micro-ui-internals/packages/modules/dss",
     "micro-ui-internals/packages/modules/engagement",
