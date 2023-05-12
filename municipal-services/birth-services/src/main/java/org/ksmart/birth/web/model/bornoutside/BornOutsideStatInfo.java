@@ -25,9 +25,13 @@ public class BornOutsideStatInfo {
     @JsonProperty("informarAadhar")
     private String informarAadhar;
 
-    @Size(max = 12)
+    @Size(max = 2000)
     @JsonProperty("informarAddress")
     private String informarAddress;
+
+    @Size(max = 20)
+    @JsonProperty("informarMobile")
+    private String informarMobile;
 
     @JsonProperty("birthWeight")
     private double birthWeight;

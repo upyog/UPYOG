@@ -10,6 +10,7 @@ public interface BornOutsideStatRowMapper {
             return BornOutsideStatInfo.builder()
                     .informarNameEn(rs.getString("pla_informantsname_en"))
                     .informarAadhar(rs.getString("pla_informants_aadhaar_no"))
+                    .informarMobile(rs.getString("pla_informants_mobileno"))
                     .relation(rs.getString("pla_relation"))
                     .deliveryMethods(rs.getString("stat_delivery_method"))
                     .birthWeight(rs.getDouble("stat_weight_of_child"))
