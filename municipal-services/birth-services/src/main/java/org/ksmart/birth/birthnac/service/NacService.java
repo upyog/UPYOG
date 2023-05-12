@@ -68,6 +68,7 @@ public class NacService {
                         demand.setTenantId(birth.getTenantId());
                         demand.setConsumerCode(birth.getApplicationNo());
                         demands.add(demand);
+                        wfc.setAmount(2);
                         birth.setDemands(demandService.saveDemandDetails(demands, request.getRequestInfo(), wfc));
                     }
 //                }
