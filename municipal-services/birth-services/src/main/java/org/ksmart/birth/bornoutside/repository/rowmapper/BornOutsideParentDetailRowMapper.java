@@ -7,7 +7,6 @@ import java.sql.SQLException;
 
 public interface BornOutsideParentDetailRowMapper {
     default ParentsDetail getKsmartBirthParentDetail(ResultSet rs) throws SQLException {
-        System.out.println(rs.getInt("stat_mother_order_cur_child"));
         return ParentsDetail.builder()
                 .fatherUuid(rs.getString("fa_id"))
                 .fatherFirstNameEn(rs.getString("fa_firstname_en"))

@@ -15,7 +15,7 @@ public interface BornOutsideStatRowMapper {
                     .birthWeight(rs.getDouble("stat_weight_of_child"))
                     .medicalAttensionSub(rs.getString("stat_nature_of_medical_attention"))
                     .pregnancyDuration(rs.getInt("stat_duration_of_pregnancy_in_week"))
-                    .informarAddress(rs.getString("pla_informants_aadhaar_no"))
+                    .informarAddress(rs.getString("pla_informantsaddress_en"))
                     .orderofChildren(rs.getInt("stat_mother_order_cur_child"))
                     .build();
         }

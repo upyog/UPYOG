@@ -221,6 +221,10 @@ public class ParentAddress {
     @JsonProperty("presentOutSideIndiaadrsCityTown")
     private String presentOutSideIndiaadrsCityTown;
 
+    @Size(max = 20)
+    @JsonProperty("presentOutSideIndiaPostCode")
+    private String presentOutSideIndiaPostCode;
+
     ////Db Fields//////
 
     @JsonProperty("isPrsentAddressInt")

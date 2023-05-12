@@ -205,11 +205,6 @@
                     "text": "{{birthCertificate}}",
                     "style": "title-header-Times",
                     "bold": true
-                  },
-
-                  {
-                    "text": "{{issueUnderSection12}}",
-                    "style": "rule-body_multiLang"
                   }
                 ]
               }
@@ -614,7 +609,7 @@
     "styles": {
       "pdf-header": {
         "fillColor": "#000000",
-        "fontSize": 10,
+        "fontSize": 11,
         "bold": true,
         "letterSpacing": 0.74,
         "alignment": "center",
@@ -627,22 +622,22 @@
       },
       "appendix-header-body-ml": {
         "color": "#000000",
-        "fontSize": 11,
+        "fontSize": 12,
         "alignment": "center"
       },
       "main-body-style": {
         "color": "#000000",
-        "fontSize": 7,
+        "fontSize": 8,
         "alignment": "center"
       },
       "main-body-style_ml": {
         "color": "#000000",
-        "fontSize": 10,
+        "fontSize": 11,
         "alignment": "center"
       },
       "appendix-header-italic": {
         "color": "#000000",
-        "fontSize": 8,
+        "fontSize": 9,
         "bold": true,
         "fontWeight": 400,
         "italics": true,
@@ -652,7 +647,7 @@
       "appendix-header": {
         "color": "#000000",
         "bold": true,
-        "fontSize": 10,
+        "fontSize": 11,
         "fontWeight": 400,
         "alignment": "center"
       },
@@ -669,7 +664,7 @@
       "instruction-body": {
         "color": "#000000",
         "bold": false,
-        "fontSize": 10,
+        "fontSize": 11,
         "fontWeight": 400,
         "alignment": "center",
         "margin": [
@@ -692,11 +687,11 @@
       "footer": {
         "color": "#000000",
         "alignment": "center",
-        "fontSize": 10
+        "fontSize": 11
       },
       "footer-red": {
         "color": "#FF0000",
-        "fontSize": 6,
+        "fontSize": 7,
         "font": "Times",
         "alignment": "center",
         "italics": true

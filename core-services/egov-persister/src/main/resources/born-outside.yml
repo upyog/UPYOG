@@ -181,7 +181,7 @@ serviceMaps:
             - jsonPath: $.BornOutsideChildDetails.*.BornOutsideAddressBirthDetails.presentOutSideIndiaAdressMlB
             - jsonPath: $.BornOutsideChildDetails.*.BornOutsideAddressBirthDetails.presentOutSideIndiaProvinceEn
             - jsonPath: $.BornOutsideChildDetails.*.BornOutsideAddressBirthDetails.presentOutSideIndiaProvinceMl
-            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideAddressBirthDetails.presentOutsideIndiaPostCode
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideAddressBirthDetails.presentOutSideIndiaPostCode
             - jsonPath: $.BornOutsideChildDetails.*.BornOutsideAddressBirthDetails.presentOutSideIndiaadrsVillage
             - jsonPath: $.BornOutsideChildDetails.*.BornOutsideAddressBirthDetails.presentOutSideCountry
             - jsonPath: $.BornOutsideChildDetails.*.id
