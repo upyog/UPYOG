@@ -45,6 +45,7 @@ public class BornOutsideStatInfo {
     @Size(max = 64)
     @JsonProperty("deliveryMethods")
     private String deliveryMethods;
+
     @Size(max = 300)
     @JsonProperty("deliveryMethodsEn")
     private String deliveryMethodsEn;
@@ -52,6 +53,10 @@ public class BornOutsideStatInfo {
     @Size(max = 300)
     @JsonProperty("deliveryMethodsMl")
     private String deliveryMethodsMl;
+
+    @Size(max = 64)
+    @JsonProperty("orderofChildren")
+    private Integer orderofChildren;
 
 
 }

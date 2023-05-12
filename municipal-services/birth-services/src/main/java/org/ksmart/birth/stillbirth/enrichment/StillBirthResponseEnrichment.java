@@ -29,6 +29,7 @@ public class StillBirthResponseEnrichment {
         this.mdmsBirthService = mdmsBirthService;
         this.mdmsUtil = mdmsUtil;
     }
+
     public void setNewBirthRequestData(RequestInfo requestInfo, List<StillBirthApplication> result) {
         Object mdmsData = mdmsUtil.mdmsCall(requestInfo);
         if(result.size() == 0){
@@ -50,9 +51,11 @@ public class StillBirthResponseEnrichment {
                 }
                 Object mdmsDataLoc = mdmsUtil.mdmsCallForLocation(requestInfo, birth.getTenantId());
                 if (birth.getPlaceofBirthId() != null) {
-                    birth.setPlaceofBirthIdEn(mdmsTenantService.getBirthPlaceEn(mdmsData, birth.getPlaceofBirthId()));
-                    birth.setPlaceofBirthIdMl(mdmsTenantService.getBirthPlaceMl(mdmsData, birth.getPlaceofBirthId()));
+                    birth.setCountryidEn(mdmsTenantService.getBirthPlaceEn(mdmsData, birth.getCountryid()));
+                    birth.setCountryidMl(mdmsTenantService.getBirthPlaceMl(mdmsData, birth.getCountryid()));
                     mdmsBirthService.setLocationDetails(birth, mdmsDataLoc, mdmsData);
+                }
+                if(birth.getParentsDetails()!= null) {
                     mdmsBirthService.setParentsDetails(birth.getParentsDetails(), mdmsData);
                 }
                 if (birth.getParentAddress().getCountryIdPermanent() != null && birth.getParentAddress().getStateIdPermanent() != null) {
@@ -80,7 +83,7 @@ public class StillBirthResponseEnrichment {
                             birth.getParentAddress().setPermntInKeralaAdrTalukEn(mdmsTenantService.getTalukNameEn(mdmsData, birth.getParentAddress().getPermntInKeralaAdrTaluk()));
                             birth.getParentAddress().setPermntInKeralaAdrTalukMl(mdmsTenantService.getTalukNameMl(mdmsData, birth.getParentAddress().getPermntInKeralaAdrTaluk()));
 
-                            //village
+                            //Village
                             birth.getParentAddress().setPermntInKeralaAdrVillage(birth.getParentAddress().getPermntInKeralaAdrVillage());
                             birth.getParentAddress().setPermntInKeralaAdrVillageEn(mdmsTenantService.getVillageNameEn(mdmsData, birth.getParentAddress().getPermntInKeralaAdrVillage()));
                             birth.getParentAddress().setPermntInKeralaAdrVillageMl(mdmsTenantService.getVillageNameMl(mdmsData, birth.getParentAddress().getPermntInKeralaAdrVillage()));
@@ -164,7 +167,7 @@ public class StillBirthResponseEnrichment {
                             birth.getParentAddress().setDistrictIdPresentMl(mdmsTenantService.getDistrictNameMl(mdmsData, birth.getParentAddress().getDistrictIdPresent()));
 
                             //Taluk
-                           // birth.getParentAddress().setPresentInsideKeralaTaluk(birth.getParentAddress().setPresentInsideKeralaTaluk());
+                            // birth.getParentAddress().setPresentInsideKeralaTaluk(birth.getParentAddress().setPresentInsideKeralaTaluk());
                             birth.getParentAddress().setPresentInsideKeralaTalukEn(mdmsTenantService.getTalukNameEn(mdmsData, birth.getParentAddress().getPresentInsideKeralaTaluk()));
                             birth.getParentAddress().setPresentInsideKeralaTalukMl(mdmsTenantService.getTalukNameMl(mdmsData, birth.getParentAddress().getPresentInsideKeralaTaluk()));
 

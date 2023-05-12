@@ -139,10 +139,10 @@ public class ParentsDetail {
     @JsonProperty("fatherEmail")
     private String familyEmailid;
     @Size(max = 64)
-    @JsonProperty("fatherPassport")
+    @JsonProperty("fatherPassportNo")
     private String fatherPassport;
     @Size(max = 64)
-    @JsonProperty("motherPassport")
+    @JsonProperty("motherPassportNo")
     private String motherPassport;
     @Size(max = 64)
     @JsonProperty("motherBioAdopt")

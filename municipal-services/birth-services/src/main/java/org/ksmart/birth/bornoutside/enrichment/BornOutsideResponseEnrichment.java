@@ -193,7 +193,6 @@ public class BornOutsideResponseEnrichment {
 //
 //                        }
 //                    } else {
-                    System.out.println(birth.getParentAddress().getCountryIdPresent());
                         birth.getParentAddress().setPresentOutSideCountry(birth.getParentAddress().getCountryIdPresent());
                         birth.getParentAddress().setCountryIdPresentEn(mdmsTenantService.getCountryNameEn(mdmsData, birth.getParentAddress().getCountryIdPresent()));
                         birth.getParentAddress().setCountryIdPresentMl(mdmsTenantService.getCountryNameMl(mdmsData, birth.getParentAddress().getCountryIdPresent()));

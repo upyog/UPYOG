@@ -20,9 +20,7 @@ public class MdmsForStillBirthService {
 
     private RestTemplate restTemplate;
     private final MdmsTenantService mdmsTenantService;
-
     private final MdmsLocationService mdmsLocationService;
-
     private final KsmartAddressService ksmartAddressService;
     @Autowired
     MdmsForStillBirthService(RestTemplate restTemplate, MdmsTenantService mdmsTenantService, MdmsLocationService mdmsLocationService, KsmartAddressService ksmartAddressService) {
@@ -44,7 +42,7 @@ public class MdmsForStillBirthService {
 
             parentsDetail.setMotherNationalityidEn(mdmsTenantService.getNationalityEn(mdmsData, parentsDetail.getMotherNationalityid()));
             parentsDetail.setMotherNationalityidMl(mdmsTenantService.getNationalityMl(mdmsData, parentsDetail.getMotherNationalityid()));
-//Father Details
+            //Father Details
             parentsDetail.setFatherEucationidEn(mdmsTenantService.getQualificatioinEn(mdmsData, parentsDetail.getFatherEucationid()));
             parentsDetail.setFatherEucationidMl(mdmsTenantService.getQualificatioinMl(mdmsData, parentsDetail.getFatherEucationid()));
 

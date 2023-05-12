@@ -270,8 +270,6 @@ public class NewBirthEnrichment implements BaseEnrichment {
                                         birth.getParentAddress().setCountryIdPermanent(birth.getParentAddress().getPermtaddressCountry());
                                         birth.getParentAddress().setStateIdPermanent(birth.getParentAddress().getPermtaddressStateName());
                                     }
-
-
                                     birth.getParentAddress().setDistrictIdPermanent(birth.getParentAddress().getPermntOutsideKeralaDistrict());
 
                                     birth.getParentAddress().setLocalityEnPermanent(birth.getParentAddress().getPermntOutsideKeralaLocalityNameEn());
@@ -314,7 +312,6 @@ public class NewBirthEnrichment implements BaseEnrichment {
     }
     private void setPlaceOfBirth(NewBirthDetailRequest request, String trnantId, Object mdmsData, AuditDetails auditDetails,  boolean isCreate) {
         Object mdmsDataLoc = mdmsUtil.mdmsCallForLocation(request.getRequestInfo(), trnantId);
-//        Object mdmsDataComm = mdmsUtil.mdmsCall(request.getRequestInfo());
         request.getNewBirthDetails().forEach(birth -> {
             if(birth.getPlaceofBirthId() != null || !birth.getPlaceofBirthId().isEmpty()){
                 mdmsBirthService.setLocationDetails(birth, mdmsDataLoc, mdmsData);

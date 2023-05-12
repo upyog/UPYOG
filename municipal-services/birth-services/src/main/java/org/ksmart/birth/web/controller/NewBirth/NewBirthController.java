@@ -55,7 +55,6 @@ public class NewBirthController {
         //if(request.getNewBirthDetails().get(0).getIsWorkflow()) {
             if ((birthApplicationDetails.get(0).getApplicationStatus().equals(STATUS_APPROVED) && birthApplicationDetails.get(0).getAction().equals(WF_APPROVE))) {
                        RegisterBirthDetailsRequest registerBirthDetailsRequest = ksmartBirthService.createRegistryRequest(request);
-               System.out.println(registerBirthDetailsRequest.getRegisterBirthDetails().size());
                 if (registerBirthDetailsRequest.getRegisterBirthDetails().size() == 1) {
                     registerBirthService.saveRegisterBirthDetails(registerBirthDetailsRequest);
                 }

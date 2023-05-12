@@ -96,7 +96,7 @@ public class CommonQueryBuilder extends BaseQueryBuilder {
 			.append("ebfi.ot_passportno as fa_ot_passportno, ebfi.aadharno as fa_aadharno,ebfi.birthdtlid as fa_birthdtlid,ebfi.bio_adopt as fa_bio_adopt").toString();
 
 	private static final String QUERY_MOTER_INFO = new StringBuilder().append("ebmi.id as mo_id,ebmi.firstname_en as mo_firstname_en,ebmi.firstname_ml as mo_firstname_ml,")
-			.append("ebfi.ot_passportno as mo_ot_passportno,ebmi.aadharno as mo_aadharno,ebmi.birthdtlid as mo_birthdtlid,ebmi.bio_adopt as mo_bio_adopt, ebmi.addressofmother as mo_addressofmother").toString();
+			.append("ebmi.ot_passportno as mo_ot_passportno,ebmi.aadharno as mo_aadharno,ebmi.birthdtlid as mo_birthdtlid,ebmi.bio_adopt as mo_bio_adopt, ebmi.addressofmother as mo_addressofmother").toString();
 
 	private static final String QUERY_PERMANANT_ADDRESS = new StringBuilder().append("eperad.id as per_id,eperad.housename_no_en as per_housename_no_en,")
 			.append("eperad.housename_no_ml as per_housename_no_ml,eperad.ot_address1_en as per_ot_address1_en,eperad.ot_address1_ml as per_ot_address1_ml,eperad.ot_address2_en as per_ot_address2_en,")

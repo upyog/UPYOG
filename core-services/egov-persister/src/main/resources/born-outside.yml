@@ -235,8 +235,8 @@ serviceMaps:
             - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.mother_resdnce_state
             - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.mother_resdnce_country
             - jsonPath: $.BornOutsideChildDetails.*.id
-            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.orderofChildren
-            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.mother_order_cur_child
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.mother_order_of_cur_delivery
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideStaticInfn.orderofChildren
             - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.mother_res_no_of_years
             - jsonPath: $.BornOutsideChildDetails.*.auditDetails.createdBy
             - jsonPath: $.BornOutsideChildDetails.*.auditDetails.createdTime
@@ -337,10 +337,10 @@ serviceMaps:
           basePath: BornOutsideChildDetails.*.BornOutsideParentsDetails
           jsonMaps:
 
-            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.firstname_en
-            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.firstname_ml
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.fatherFirstNameEn
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.fatherFirstNameMl
             - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.fatherAadhar
-            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.fatherPassport
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.fatherPassportNo
             - jsonPath: $.BornOutsideChildDetails.*.auditDetails.lastModifiedTime
             - jsonPath: $.BornOutsideChildDetails.*.auditDetails.lastModifiedBy
             - jsonPath: $.BornOutsideChildDetails.*.id
@@ -357,7 +357,7 @@ serviceMaps:
             - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.motherFirstNameEn
             - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.motherFirstNameMl
             - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.motherAadhar
-            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.motherPassport
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.motherPassportNo
             - jsonPath: $.BornOutsideChildDetails.*.auditDetails.lastModifiedTime
             - jsonPath: $.BornOutsideChildDetails.*.auditDetails.lastModifiedBy
             - jsonPath: $.BornOutsideChildDetails.*.id
@@ -464,8 +464,8 @@ serviceMaps:
             - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.mother_resdnce_district
             - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.mother_resdnce_state
             - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.mother_resdnce_country
-            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.orderofChildren
-            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.mother_order_cur_child
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideStaticInfn.mother_order_of_cur_delivery
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideStaticInfn.orderofChildren
             - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.mother_res_no_of_years
             - jsonPath: $.BornOutsideChildDetails.*.auditDetails.lastModifiedBy
             - jsonPath: $.BornOutsideChildDetails.*.auditDetails.lastModifiedTime

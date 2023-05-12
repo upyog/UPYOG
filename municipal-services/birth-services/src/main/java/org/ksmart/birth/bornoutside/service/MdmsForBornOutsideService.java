@@ -43,7 +43,6 @@ public class MdmsForBornOutsideService {
 
             parentsDetail.setMotherNationalityidEn(mdmsTenantService.getNationalityEn(mdmsData, parentsDetail.getMotherNationalityid()));
             parentsDetail.setMotherNationalityidMl(mdmsTenantService.getNationalityMl(mdmsData, parentsDetail.getMotherNationalityid()));
-
             //Father Details
             parentsDetail.setFatherEucationidEn(mdmsTenantService.getQualificatioinEn(mdmsData, parentsDetail.getFatherEucationid()));
             parentsDetail.setFatherEucationidMl(mdmsTenantService.getQualificatioinMl(mdmsData, parentsDetail.getFatherEucationid()));
@@ -56,6 +55,9 @@ public class MdmsForBornOutsideService {
 
             parentsDetail.setReligionIdEn(mdmsTenantService.getReligionEn(mdmsData, parentsDetail.getReligionId()));
             parentsDetail.setReligionIdMl(mdmsTenantService.getReligionMl(mdmsData, parentsDetail.getReligionId()));
+
+            parentsDetail.setMotherMaritalStatusEn(mdmsTenantService.getMaritalStatusEn(mdmsData, parentsDetail.getMotherMaritalStatus()));
+            parentsDetail.setMotherMaritalStatusMl(mdmsTenantService.getMaritalStatusMl(mdmsData, parentsDetail.getMotherMaritalStatus()));
         }
     }
     public void setTenantDetails(BornOutsideApplication birth, Object  mdmsData) {

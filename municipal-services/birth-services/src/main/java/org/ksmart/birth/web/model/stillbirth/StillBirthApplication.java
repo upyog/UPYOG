@@ -282,6 +282,14 @@ public class StillBirthApplication {
     @JsonProperty("countryid")
     private String countryid;
 
+
+    @Size(max = 300)
+    @JsonProperty("countryidEn")
+    private String countryidEn;
+    @Size(max = 300)
+    @JsonProperty("countryidMl")
+    private String countryidMl;
+
     @Size(max = 64)
     @JsonProperty("applicationtype")
     private String applicationType;

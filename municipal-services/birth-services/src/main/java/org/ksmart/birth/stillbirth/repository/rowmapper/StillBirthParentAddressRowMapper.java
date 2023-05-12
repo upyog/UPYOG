@@ -12,6 +12,7 @@ public interface StillBirthParentAddressRowMapper {
                 .stateIdPresent(rs.getString("pres_stateid"))
                 .districtIdPresent(rs.getString("pres_districtid"))
                 .poNoPresent(rs.getString("pres_poid"))
+                .pinNoPresent(rs.getString("pres_pinno"))
                 .presentaddressCountry(rs.getString("pres_countryid"))
                 .localityEnPresent(rs.getString("pres_locality_en"))
                 .localityMlPresent(rs.getString("pres_locality_ml"))
@@ -25,6 +26,7 @@ public interface StillBirthParentAddressRowMapper {
                 .presentInsideKeralaPostOffice(rs.getString("pres_poid"))
                 .presentInsideKeralaVillage(rs.getString("pres_villageid"))
                 .presentWardNo(rs.getString("pres_ward_code"))
+                .presentInsideKeralaPincode(rs.getString("pres_pinno"))
 
                 .presentOutsideKeralaPostOfficeEn(rs.getString("pres_postoffice_en"))
                 .presentOutsideKeralaPostOfficeMl(rs.getString("pres_postoffice_ml"))
@@ -45,6 +47,7 @@ public interface StillBirthParentAddressRowMapper {
                 .stateIdPermanent(rs.getString("per_stateid"))
                 .districtIdPermanent(rs.getString("per_districtid"))
                 .poNoPermanent(rs.getString("per_poid"))
+                .pinNoPermanent(rs.getString("per_pinno"))
                 .localityEnPermanent(rs.getString("per_locality_en"))
                 .localityMlPermanent(rs.getString("per_locality_ml"))
                 .streetNameEnPermanent(rs.getString("per_street_name_en"))

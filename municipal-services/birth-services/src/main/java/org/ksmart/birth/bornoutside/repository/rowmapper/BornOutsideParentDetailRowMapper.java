@@ -7,13 +7,16 @@ import java.sql.SQLException;
 
 public interface BornOutsideParentDetailRowMapper {
     default ParentsDetail getKsmartBirthParentDetail(ResultSet rs) throws SQLException {
+        System.out.println(rs.getInt("stat_mother_order_cur_child"));
         return ParentsDetail.builder()
                 .fatherUuid(rs.getString("fa_id"))
                 .fatherFirstNameEn(rs.getString("fa_firstname_en"))
+                .fatherEucationid(rs.getString("stat_father_educationid"))
                 .fatherFirstNameMl(rs.getString("fa_firstname_ml"))
                 .fatherAadharno(rs.getString("fa_aadharno"))
                 .fatherPassport(rs.getString("fa_ot_passportno"))
                 .fatherProffessionid(rs.getString("stat_father_proffessionid"))
+                .fatherNationalityid(rs.getString("stat_father_nationalityid"))
                 .isFatherInfoMissing(Boolean.valueOf(rs.getString("ba_is_father_info_missing")))
                 .motherAadhar(rs.getString("mo_aadharno"))
                 .motherEducationid(rs.getString("stat_mother_educationid"))
@@ -24,7 +27,6 @@ public interface BornOutsideParentDetailRowMapper {
                 .motherProffessionid(rs.getString("stat_mother_proffessionid"))
                 .firstNameEn(rs.getString("mo_firstname_en"))
                 .firstNameMl(rs.getString("mo_firstname_ml"))
-                .isMotherInfoMissing(Boolean.valueOf(rs.getString("ba_is_mother_info_missing")))
                 .religionId(rs.getString("stat_religionid"))
                 .motherOrderCurChild(rs.getInt("stat_mother_order_cur_child"))
                 .motherMaritalStatus(rs.getString("stat_mother_maritalstatusid"))
@@ -32,6 +34,7 @@ public interface BornOutsideParentDetailRowMapper {
                 .familyEmailid(rs.getString("per_family_emailid"))
                 .isFatherInfoMissing(rs.getBoolean("ba_is_father_info_missing"))
                 .isMotherInfoMissing(rs.getBoolean("ba_is_mother_info_missing"))
+
                 .build();
     }
 
