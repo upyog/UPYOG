@@ -33,30 +33,35 @@ public class MdmsForNewBirthService {
 
     public void setParentsDetails(ParentsDetail parentsDetail, Object mdmsData) {
         if (parentsDetail != null) {
-        //Mothers Details
-            parentsDetail.setMotherEducationidEn(mdmsTenantService.getQualificatioinEn(mdmsData, parentsDetail.getMotherEducationid()));
-            parentsDetail.setMotherEducationidMl(mdmsTenantService.getQualificatioinMl(mdmsData, parentsDetail.getMotherEducationid()));
+            if(!parentsDetail.getIsMotherInfoMissing()){
+                //Mothers Details
+                parentsDetail.setMotherEducationidEn(mdmsTenantService.getQualificatioinEn(mdmsData, parentsDetail.getMotherEducationid()));
+                parentsDetail.setMotherEducationidMl(mdmsTenantService.getQualificatioinMl(mdmsData, parentsDetail.getMotherEducationid()));
 
-            parentsDetail.setMotherProffessionidEn(mdmsTenantService.getProfessionEn(mdmsData, parentsDetail.getMotherProffessionid()));
-            parentsDetail.setMotherProffessionidMl(mdmsTenantService.getProfessionMl(mdmsData, parentsDetail.getMotherProffessionid()));
+                parentsDetail.setMotherProffessionidEn(mdmsTenantService.getProfessionEn(mdmsData, parentsDetail.getMotherProffessionid()));
+                parentsDetail.setMotherProffessionidMl(mdmsTenantService.getProfessionMl(mdmsData, parentsDetail.getMotherProffessionid()));
 
-            parentsDetail.setMotherNationalityidEn(mdmsTenantService.getNationalityEn(mdmsData, parentsDetail.getMotherNationalityid()));
-            parentsDetail.setMotherNationalityidMl(mdmsTenantService.getNationalityMl(mdmsData, parentsDetail.getMotherNationalityid()));
-            //Father Details
-            parentsDetail.setFatherEucationidEn(mdmsTenantService.getQualificatioinEn(mdmsData, parentsDetail.getFatherEucationid()));
-            parentsDetail.setFatherEucationidMl(mdmsTenantService.getQualificatioinMl(mdmsData, parentsDetail.getFatherEucationid()));
+                parentsDetail.setMotherNationalityidEn(mdmsTenantService.getNationalityEn(mdmsData, parentsDetail.getMotherNationalityid()));
+                parentsDetail.setMotherNationalityidMl(mdmsTenantService.getNationalityMl(mdmsData, parentsDetail.getMotherNationalityid()));
 
-            parentsDetail.setFatherProffessionidEn(mdmsTenantService.getProfessionEn(mdmsData, parentsDetail.getFatherProffessionid()));
-            parentsDetail.setFatherProffessionidMl(mdmsTenantService.getProfessionMl(mdmsData, parentsDetail.getFatherProffessionid()));
+                parentsDetail.setMotherMaritalStatusEn(mdmsTenantService.getMaritalStatusEn(mdmsData, parentsDetail.getMotherMaritalStatus()));
+                parentsDetail.setMotherMaritalStatusMl(mdmsTenantService.getMaritalStatusMl(mdmsData, parentsDetail.getMotherMaritalStatus()));
+            }
+            if(!parentsDetail.getIsFatherInfoMissing()) {
 
-            parentsDetail.setFatherNationalityidEn(mdmsTenantService.getNationalityEn(mdmsData, parentsDetail.getFatherNationalityid()));
-            parentsDetail.setFatherNationalityidMl(mdmsTenantService.getNationalityMl(mdmsData, parentsDetail.getFatherNationalityid()));
+                //Father Details
+                parentsDetail.setFatherEucationidEn(mdmsTenantService.getQualificatioinEn(mdmsData, parentsDetail.getFatherEucationid()));
+                parentsDetail.setFatherEucationidMl(mdmsTenantService.getQualificatioinMl(mdmsData, parentsDetail.getFatherEucationid()));
+
+                parentsDetail.setFatherProffessionidEn(mdmsTenantService.getProfessionEn(mdmsData, parentsDetail.getFatherProffessionid()));
+                parentsDetail.setFatherProffessionidMl(mdmsTenantService.getProfessionMl(mdmsData, parentsDetail.getFatherProffessionid()));
+
+                parentsDetail.setFatherNationalityidEn(mdmsTenantService.getNationalityEn(mdmsData, parentsDetail.getFatherNationalityid()));
+                parentsDetail.setFatherNationalityidMl(mdmsTenantService.getNationalityMl(mdmsData, parentsDetail.getFatherNationalityid()));
+            }
 
             parentsDetail.setReligionIdEn(mdmsTenantService.getReligionEn(mdmsData, parentsDetail.getReligionId()));
             parentsDetail.setReligionIdMl(mdmsTenantService.getReligionMl(mdmsData, parentsDetail.getReligionId()));
-
-            parentsDetail.setMotherMaritalStatusEn(mdmsTenantService.getMaritalStatusEn(mdmsData, parentsDetail.getMotherMaritalStatus()));
-            parentsDetail.setMotherMaritalStatusMl(mdmsTenantService.getMaritalStatusMl(mdmsData, parentsDetail.getMotherMaritalStatus()));
         }
     }
     public void setLocationDetails(NewBirthApplication birth, Object mdmsDataLoc, Object mdmsData) {

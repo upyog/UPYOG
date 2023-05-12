@@ -21,9 +21,9 @@ public class KsmartAddressService {
     public void getAddressOutsideCountryPresentEn(RegisterBirthDetail register, RegisterCertificateData registerCert, Object  mdmsData) {
         String address = "";
         address = new StringBuilder()
-                    .append(StringUtil.isBlank(register.getRegisterBirthPresent().getOtAddress1En()) ? "" : CaseUtils.toCamelCase(register.getRegisterBirthPresent().getOtAddress1En(),true)+", ")
-                    .append(StringUtil.isBlank(register.getRegisterBirthPresent().getOtAddress2En()) ? "" : CaseUtils.toCamelCase(register.getRegisterBirthPresent().getOtAddress2En(),true)+", ")
-                    .append(StringUtil.isBlank(register.getRegisterBirthPresent().getOtStateRegionProvinceEn()) ? "" : CaseUtils.toCamelCase(register.getRegisterBirthPresent().getOtStateRegionProvinceEn(),true)+", ")
+                    .append(StringUtil.isBlank(register.getRegisterBirthPresent().getOtAddress1En()) ? "" : StringUtils.capitalize(register.getRegisterBirthPresent().getOtAddress1En())+", ")
+                    .append(StringUtil.isBlank(register.getRegisterBirthPresent().getOtAddress2En()) ? "" : StringUtils.capitalize(register.getRegisterBirthPresent().getOtAddress2En())+", ")
+                    .append(StringUtil.isBlank(register.getRegisterBirthPresent().getOtStateRegionProvinceEn()) ? "" : StringUtils.capitalize(register.getRegisterBirthPresent().getOtStateRegionProvinceEn())+", ")
                     .append(StringUtil.isBlank(register.getRegisterBirthPresent().getOtZipcode()) ? "" : register.getRegisterBirthPresent().getOtZipcode()+", ")
                     .append(StringUtil.isBlank(register.getRegisterBirthPresent().getCountryId()) ? "" :  mdmsTenantService.getCountryNameEn(mdmsData, register.getRegisterBirthPresent().getCountryId())).toString();
         if(!StringUtil.isBlank(address)){
