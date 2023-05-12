@@ -68,6 +68,7 @@ public class NacRepository {
     public List<NacApplication> saveNacDetails(NacDetailRequest request) {
     	adoptionEnrichment.enrichCreate(request);
         producer.push(birthDeathConfiguration.getSaveBirthNacTopic(), request);
+        
         return request.getNacDetails();
     }
 

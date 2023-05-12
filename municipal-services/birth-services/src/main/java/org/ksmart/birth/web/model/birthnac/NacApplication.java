@@ -11,6 +11,7 @@ import org.ksmart.birth.web.model.DocumentDetails;
 import org.ksmart.birth.web.model.ParentAddress;
 import org.ksmart.birth.web.model.ParentsDetail;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Size;
 
 import java.util.ArrayList;
@@ -342,6 +343,9 @@ public class NacApplication {
     
     @JsonProperty("Demands")
     private List<Demand> demands;
+    
+    
+
     
   
 }

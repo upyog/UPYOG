@@ -57,13 +57,13 @@ public class NewBirthRepository {
     }
 
     public List<NewBirthApplication> saveKsmartBirthDetails(NewBirthDetailRequest request, Object mdmsData) {
-        ksmartBirthEnrichment.enrichCreate(request, mdmsData);
+//        ksmartBirthEnrichment.enrichCreate(request, mdmsData);
         producer.push(birthDeathConfiguration.getSaveKsmartBirthApplicationTopic(), request);
         return request.getNewBirthDetails();
     }
 
     public List<NewBirthApplication> updateKsmartBirthDetails(NewBirthDetailRequest request, Object mdmsData) {
-        ksmartBirthEnrichment.enrichUpdate(request, mdmsData);
+//        ksmartBirthEnrichment.enrichUpdate(request, mdmsData);
         producer.push(birthDeathConfiguration.getUpdateKsmartBirthApplicationTopic(), request);
         return request.getNewBirthDetails();
     }

@@ -41,6 +41,7 @@ public class DemandRepository {
         StringBuilder url = new StringBuilder(config.getBillingHost());
         url.append(config.getDemandCreateEndpoint());
         DemandRequest request = new DemandRequest(requestInfo,demands);
+        
         Object result = serviceRequestRepository.fetchResult(url,request);
         DemandResponse response = null;
         try{
@@ -49,6 +50,7 @@ public class DemandRepository {
         catch(IllegalArgumentException e){
             throw new CustomException("PARSING ERROR","Failed to parse response of create demand");
         }
+        
         return response.getDemands();
     }
 

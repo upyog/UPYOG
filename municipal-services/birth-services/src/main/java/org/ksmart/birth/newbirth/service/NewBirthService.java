@@ -7,6 +7,7 @@ import org.ksmart.birth.birthcommon.model.WorkFlowCheck;
 import org.ksmart.birth.birthcommon.model.demand.Demand;
 import org.ksmart.birth.birthcommon.services.DemandService;
 import org.ksmart.birth.birthregistry.model.RegisterBirthDetailsRequest;
+import org.ksmart.birth.newbirth.enrichment.NewBirthEnrichment;
 import org.ksmart.birth.newbirth.repository.NewBirthRepository;
 import org.ksmart.birth.newbirth.validator.NewBirthApplicationValidator;
 import org.ksmart.birth.utils.MdmsUtil;
@@ -30,28 +31,37 @@ public class NewBirthService {
     private final MdmsUtil mdmsUtil;
     private final NewBirthApplicationValidator validator;
     private final DemandService demandService;
+    private final NewBirthEnrichment ksmartBirthEnrichment;
 
 
     @Autowired
     NewBirthService(NewBirthRepository repository, MdmsUtil mdmsUtil, WorkflowIntegratorNewBirth workflowIntegrator,
-                    NewBirthApplicationValidator validator,  DemandService demandService) {
+                    NewBirthApplicationValidator validator, NewBirthEnrichment ksmartBirthEnrichment, DemandService demandService) {
         this.repository = repository;
         this.mdmsUtil = mdmsUtil;
         this.workflowIntegrator  = workflowIntegrator;
         this.validator = validator;
         this.demandService = demandService;
+        this.ksmartBirthEnrichment=ksmartBirthEnrichment;
     }
 
     public List<NewBirthApplication> saveKsmartBirthDetails(NewBirthDetailRequest request) {
         WorkFlowCheck wfc = new WorkFlowCheck();
         Object mdmsData = mdmsUtil.mdmsCall(request.getRequestInfo());
+        
         // validate request
-
         validator.validateCreate(request, wfc, mdmsData);
-        //call save
-        List<NewBirthApplication> birthApplicationDetails =  repository.saveKsmartBirthDetails(request, mdmsData);
+        
+        // Enrich request
+        ksmartBirthEnrichment.enrichCreate(request, mdmsData);
+        
+        
         //WorkFlow Integration
         workflowIntegrator.callWorkFlow(request);
+        
+        //call save
+        List<NewBirthApplication> birthApplicationDetails =  repository.saveKsmartBirthDetails(request, mdmsData);
+      
 
         //Demand Creation Maya commented
         birthApplicationDetails.forEach(birth->{
@@ -74,8 +84,8 @@ public class NewBirthService {
       
     public List<NewBirthApplication> updateBirthDetails(NewBirthDetailRequest request) {
         Object mdmsData = mdmsUtil.mdmsCall(request.getRequestInfo());
+        
         // validate request
-
         final List<NewBirthApplication> newApplication = request.getNewBirthDetails();
         Assert.notNull(newApplication, "New birth application details must not be null.");
 
@@ -83,9 +93,15 @@ public class NewBirthService {
 
         //search application exist
         validator.validateUpdate(request,  newBirthApplicationExisting, mdmsData, false);
+        
+        // enrich request
+        ksmartBirthEnrichment.enrichUpdate(request, mdmsData);
+        
+        //call workflow
         if(request.getNewBirthDetails().get(0).getIsWorkflow()) {
             workflowIntegrator.callWorkFlow(request);
         }
+        
         return repository.updateKsmartBirthDetails(request, mdmsData);
     }
     public RegisterBirthDetailsRequest createRegistryRequest(NewBirthDetailRequest request) {

@@ -42,13 +42,16 @@ public class AdoptionService {
     public List<AdoptionApplication> saveAdoptionDetails(AdoptionDetailRequest request) {
         Object mdmsData = mdmsUtil.mdmsCall(request.getRequestInfo());
         Object mdmsDataLoc = mdmsUtil.mdmsCallForLocation(request.getRequestInfo(), request.getAdoptionDetails().get(0).getTenantId());
+        
         // validate request
         validator.validateCreate(request, mdmsData,mdmsDataLoc);
+        
         // Enrich request
         adoptionEnrichment.enrichCreate(request);
 
         //WorkFlow Integration
         workflowIntegrator.callWorkFlow(request);
+        
         //call save
         List<AdoptionApplication> adoptionDetails =  repository.saveAdoptionDetails(request);
         return adoptionDetails;
@@ -57,15 +60,20 @@ public class AdoptionService {
     public List<AdoptionApplication> updateAdoptionBirthDetails(AdoptionDetailRequest request) {
         Object mdmsData = mdmsUtil.mdmsCall(request.getRequestInfo());
         Object mdmsDataLoc = mdmsUtil.mdmsCallForLocation(request.getRequestInfo(), request.getAdoptionDetails().get(0).getTenantId());
+        
         // validate request
         validator.validateUpdate(request, mdmsData,mdmsDataLoc);
 
+       // Enrich request
     	adoptionEnrichment.enrichUpdate(request);
     	
+       //WorkFlow Integration
     	 if(request.getAdoptionDetails().get(0).getIsWorkflow()) {
     		 
     		 workflowIntegrator.callWorkFlow(request);
     	 }
+    	 
+    	//call update
         return repository.updateKsmartBirthDetails(request);
     }
 

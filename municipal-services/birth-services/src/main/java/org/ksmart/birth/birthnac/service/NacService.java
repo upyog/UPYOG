@@ -59,8 +59,9 @@ public class NacService {
         
         //Demand Creation Maya commented
         nacDetails.forEach(birth->{
-            if(wfc.getPayment()!=null) {
-                if (wfc.getPayment()) {
+//            if(wfc.getPayment()!=null) {
+//                if (wfc.getPayment()) {
+        	 
                     if (birth.getApplicationStatus().equals(STATUS_FOR_PAYMENT)) {
                         List<Demand> demands = new ArrayList<>();
                         Demand demand = new Demand();
@@ -69,8 +70,8 @@ public class NacService {
                         demands.add(demand);
                         birth.setDemands(demandService.saveDemandDetails(demands, request.getRequestInfo(), wfc));
                     }
-                }
-            }
+//                }
+//            }
        });
         
         
