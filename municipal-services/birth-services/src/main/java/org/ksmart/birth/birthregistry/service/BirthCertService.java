@@ -35,20 +35,11 @@ public class BirthCertService {
         String strDate=null;
 
         DateTimeFormatter dtDate = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        DateTimeFormatter dtTime = DateTimeFormatter.ofPattern("HH:mm");
         String dobInWords = null;
 
         Long updatedDate = null;
         String updatedTime = null;
-//        if(register.getAuditDetails().getLastModifiedTime() == null) {
-//            ZonedDateTime ud = CommonUtils.LongToDate(register.getAuditDetails().getCreatedTime());
-//            updatedDate = dtDate.format(ud);
-//            updatedTime = dtTime.format(ud);
-//        } else{
-//            ZonedDateTime ud = CommonUtils.LongToDate(register.getAuditDetails().getLastModifiedTime());
-//            updatedDate = dtDate.format(ud);
-//            updatedTime = dtTime.format(ud);
-//        }
+
         if(register.getDateOfBirth() != null){
             Date res = new Date(register.getDateOfBirth()) ;
             SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
@@ -68,12 +59,9 @@ public class BirthCertService {
         registerCertificateData.setDateOfReport(register.getDateOfReport());
         registerCertificateData.setRegistrationDate(register.getRegistrationDate());
         registerCertificateData.setCurrentDate(dtDate.format(CommonUtils.currentDate()));
-//        System.out.println(dtTime.format(zdt));
         registerCertificateData.setCurrentTime(CommonUtils.currentTime());
         registerCertificateData.setDobStr(strDate);
         registerCertificateData.setCurrentDateLong(CommonUtils.currentDateTime());
-//        registerCertificateData.setRegistrationDateStr(register.getRegistrationDate());
-//        registerCertificateData.setDateOfReportStr(strDate);
         registerCertificateData.setRegistrationNo(register.getRegistrationNo());
         registerCertificateData.setApplicationType(register.getApplicationType());
         registerCertificateData.setApplicationId(register.getApplicationId());
@@ -101,7 +89,7 @@ public class BirthCertService {
             updatedDate = register.getAuditDetails().getLastModifiedTime();
         }
         registerCertificateData.setUpdatingDate(updatedDate);
-        registerCertificateData.setUpdatingTime(updatedTime);
+        registerCertificateData.setUpdatingTime(CommonUtils.timeLongToStringhh(updatedDate));
         mdmsDataService.setTenantDetails(registerCertificateData, mdmsData);
         mdmsDataService.setPresentAddressDetailsEn(register, registerCertificateData, mdmsData);
         mdmsDataService.setPremananttAddressDetailsEn(register, registerCertificateData, mdmsData);

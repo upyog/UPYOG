@@ -77,14 +77,4 @@ public class NewBirthController {
                                                               .build();
         return ResponseEntity.ok(response);
     }
-
-    @PostMapping(value = {"/searchbirthcommon"})
-    public ResponseEntity<NewBirthSearchResponse> searchbirthCommon(@RequestBody NewBirthDetailRequest request, @Valid @ModelAttribute SearchCriteria criteria) {
-        List<NewBirthApplication> birthDetails=ksmartBirthService.searchBirthDetailsCommon(request, criteria);
-        NewBirthSearchResponse response=NewBirthSearchResponse.builder()
-                .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), Boolean.TRUE))
-                .newBirthDetails(birthDetails)
-                .build();
-        return ResponseEntity.ok(response);
-    }
 }

@@ -31,7 +31,7 @@ public class CommonUtils {
 //	}
 public static String currentTime() {
 	LocalTime instance = LocalTime.now(ZoneId.of("Asia/Kolkata"));
-	DateTimeFormatter formatter	= DateTimeFormatter.ofPattern("hh:mm");
+	DateTimeFormatter formatter	= DateTimeFormatter.ofPattern("hh:mm a");
 	String formattedString = formatter.format(instance);
 	return formattedString;
 }
@@ -41,6 +41,11 @@ public static String currentTime() {
 	}
 	public static String timeLongToString(Long time) {
 		DateTimeFormatter formatter	= DateTimeFormatter.ofPattern("HH:mm");
+		return formatter.format(LongToDate(time));
+	}
+
+	public static String timeLongToStringhh(Long time) {
+		DateTimeFormatter formatter	= DateTimeFormatter.ofPattern("hh:mm a");
 		return formatter.format(LongToDate(time));
 	}
 

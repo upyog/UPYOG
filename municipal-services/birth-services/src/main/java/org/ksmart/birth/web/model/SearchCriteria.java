@@ -1,5 +1,6 @@
 package org.ksmart.birth.web.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
@@ -102,6 +103,9 @@ public class SearchCriteria {
     @JsonProperty("BusinessService")
     private String BusinessService;
 
+    @JsonProperty("createdBy")
+    @JsonIgnore
+    private List<String> createdBy;
     public enum SortOrder {
         ASC,
         DESC

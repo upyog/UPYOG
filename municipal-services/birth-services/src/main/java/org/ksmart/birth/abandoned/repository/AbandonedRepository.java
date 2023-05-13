@@ -91,12 +91,8 @@ public class AbandonedRepository {
     public List<AbandonedApplication> searchBirthDetails(AbandonedRequest request, SearchCriteria criteria) {
         String uuid = null;
         List<Object> preparedStmtValues = new ArrayList<>();
-       // Object mdmsDataComm = mdmsUtil.mdmsCall(request.getRequestInfo());
-        if(request.getRequestInfo().getUserInfo() != null){
-            uuid = request.getRequestInfo().getUserInfo().getUuid();
-        }
         criteria.setApplicationType(BirthConstants.FUN_MODULE_ABAN);
-        String query = commonQueryBuilder.getBirthApplicationSearchQuery(criteria, uuid, preparedStmtValues, Boolean.FALSE);
+        String query = commonQueryBuilder.getBirthApplicationSearchQuery(criteria, preparedStmtValues, Boolean.FALSE);
         if(preparedStmtValues.size() == 0){
             throw new CustomException(ErrorCodes.NOT_FOUND.getCode(), "No result found.");
         } else{

@@ -55,13 +55,11 @@ public class NewBirthService {
         // Enrich request
         ksmartBirthEnrichment.enrichCreate(request, mdmsData);
         
-        
         //WorkFlow Integration
         workflowIntegrator.callWorkFlow(request);
         
         //call save
         List<NewBirthApplication> birthApplicationDetails =  repository.saveKsmartBirthDetails(request, mdmsData);
-      
 
         //Demand Creation Maya commented
         birthApplicationDetails.forEach(birth->{
@@ -125,9 +123,7 @@ public class NewBirthService {
         return repository.searchBirthDetails(request,criteria);
     }
 
-    public List<NewBirthApplication> searchBirthDetailsCommon(NewBirthDetailRequest request, SearchCriteria criteria) {
-        return repository.searchBirthDetailsCommon(request,criteria);
-    }
+
     public List<NewBirthApplication> searchBirth(RequestInfo request, SearchCriteria criteria) {
         return repository.searchBirth(request,criteria);
     }

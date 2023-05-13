@@ -1,17 +1,17 @@
 package org.ksmart.birth.web.model.birthnac.certificate;
 
-
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import lombok.*;
 import org.ksmart.birth.utils.enums.CertificateStatus;
 import org.ksmart.birth.common.model.AuditDetails;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import io.swagger.v3.oas.annotations.media.Schema;
-
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class CertificateDetails {
 
 	 @Size(max = 64)

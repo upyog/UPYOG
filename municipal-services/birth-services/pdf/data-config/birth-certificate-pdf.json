@@ -132,6 +132,13 @@
                 "type": "date"
               },
               {
+                "variable": "updatingTime",
+                "value": {
+                  "path": "$.updatingTime"
+                },
+                "type": "date"
+              },,
+              {
                 "variable": "fatherName",
                 "value": {
                   "path": "$.fatherDetails"

@@ -39,10 +39,6 @@ public class BornOutsideMdmsAddressValidation {
                         if (CollectionUtils.isEmpty(countryCodes) || !countryCodes.contains(countryCodesPresent)) {
                             errorMap.put(COMMON_MDMS_COUNTRY, "The Country code Present'" + countryCodesPresent + "' does not exists");
                         }
-                        // Country code  Permanent
-//                        if(birth.getParentAddress().getIsPrsentAddress()){
-//                            birth.getParentAddress().setPermtaddressCountry(birth.getParentAddress().getPresentaddressCountry());
-//                        }
 
                             String countryCodesPremanent = birth.getParentAddress().getPermtaddressCountry();
                             if (log.isDebugEnabled()) {
@@ -53,89 +49,17 @@ public class BornOutsideMdmsAddressValidation {
                             }
 
 
-                        // state code  Present
-
-//                    if(birth.getParentAddress().getIsPrsentAddress()){
-//                        birth.getParentAddress().setPermtaddressStateName(birth.getParentAddress().getPresentaddressStateName());
-//                    }
-//                    String stateCodesPresent = birth.getParentAddress().getPresentOutsideS();
-//                        if (log.isDebugEnabled()) {
-//                            log.debug("State code Present: \n{}", stateCodesPresent);
-//                        }
-//                        if (CollectionUtils.isEmpty(stateCodes) || !stateCodes.contains(stateCodesPresent)) {
-//                            errorMap.put(COMMON_MDMS_STATE, "The State code Present'" + stateCodesPresent + "' does not exists");
-//                        }
-
-                        // State code  Permanent
-                        String stateCodesPermanent = birth.getParentAddress().getPermtaddressStateName();
-                        if (log.isDebugEnabled()) {
-                            log.debug("State code Permanent: \n{}", stateCodesPermanent);
-                        }
-                        if (CollectionUtils.isEmpty(stateCodes) || !stateCodes.contains(stateCodesPermanent)) {
-                            errorMap.put(COMMON_MDMS_STATE, "The State code Permanent'" + stateCodesPermanent + "' does not exists");
-                        }
-// Present Inside kerala
-//                        if (countryCodesPresent.contains(COUNTRY_CODE)) {
-//                            if (stateCodesPresent.contains(STATE_CODE_SMALL)) {
-//
-//
-//                                String tenantCodeCodePresent = birth.getTenantId();
-//                                if (log.isDebugEnabled()) {
-//                                    log.debug("Tenant code : \n{}", tenantCodeCodePresent);
-//                                    if (CollectionUtils.isEmpty(tenantCodes) || !tenantCodes.contains(tenantCodeCodePresent)) {
-//                                        errorMap.put(CR_MDMS_TENANTS, "The Tenant code  in Present Address'" + tenantCodeCodePresent + "' does not exists");
-//                                    }
-//                                }
-//
-//                                String districtInKeralaCodePresent = birth.getParentAddress().getPresentInsideKeralaDistrict();
-//                                if (log.isDebugEnabled()) {
-//                                    log.debug("District code : \n{}", districtInKeralaCodePresent);
-//                                }
-//                                if (CollectionUtils.isEmpty(districtCodes) || !districtCodes.contains(districtInKeralaCodePresent)) {
-//                                    errorMap.put(COMMON_MDMS_DISTRICT, "The District code Present '" + districtInKeralaCodePresent + "' does not exists");
-//                                }
-//
-//                                String talukCodePresent = birth.getParentAddress().getPresentInsideKeralaTaluk();
-//                                if (log.isDebugEnabled()) {
-//                                    log.debug("Taulk code Present: \n{}", talukCodePresent);
-//                                }
-//                                if (CollectionUtils.isEmpty(talukCodes) || !talukCodes.contains(talukCodePresent)) {
-//                                    errorMap.put(COMMON_MDMS_TALUK, "The Taulk code Present'" + talukCodePresent + "' does not exists");
-//                                }
-//
-//
-//                                String villageCodePresent = birth.getParentAddress().getPresentInsideKeralaVillage();
-//                                if (log.isDebugEnabled()) {
-//                                    log.debug("Village code : \n{}", villageCodePresent);
-//                                }
-//
-//                                if (CollectionUtils.isEmpty(villageCodes) || !villageCodes.contains(villageCodePresent)) {
-//                                    errorMap.put(COMMON_MDMS_VILLAGE, "The Village code '" + villageCodePresent + "' does not exists");
-//                                }
-//
-//                                String postOfficeCodePresent = birth.getParentAddress().getPresentInsideKeralaPostOffice();
-//                                if (log.isDebugEnabled()) {
-//                                    log.debug("Postoffice code : \n{}", postOfficeCodePresent);
-//                                }
-//
-//                                if (CollectionUtils.isEmpty(postOfficeCodes) || !postOfficeCodes.contains(postOfficeCodePresent)) {
-//                                    errorMap.put(COMMON_MDMS_POSTOFFICE, "The Postoffice code '" + postOfficeCodePresent + "' does not exists");
-//                                }
-//                            } else{  // outside Kerala Present
-//                                String presentOutsideKeralaCodePresent = birth.getParentAddress().getPresentOutsideKeralaDistrict();
-//                                if (log.isDebugEnabled()) {
-//                                    log.debug("District code : \n{}", presentOutsideKeralaCodePresent);
-//                                }
-//                                if (CollectionUtils.isEmpty(districtCodes) || !districtCodes.contains(presentOutsideKeralaCodePresent)) {
-//                                    errorMap.put(COMMON_MDMS_DISTRICT, "The District code '" + presentOutsideKeralaCodePresent + "' does not exists");
-//                                }
-//
-//                            }
-//                        }
-
 // Permanent Inside kerala
 
                         if (countryCodesPremanent.contains(COUNTRY_CODE)) {
+                            // State code  Permanent
+                            String stateCodesPermanent = birth.getParentAddress().getPermtaddressStateName();
+                            if (log.isDebugEnabled()) {
+                                log.debug("State code Permanent: \n{}", stateCodesPermanent);
+                            }
+                            if (CollectionUtils.isEmpty(stateCodes) || !stateCodes.contains(stateCodesPermanent)) {
+                                errorMap.put(COMMON_MDMS_STATE, "The State code Permanent'" + stateCodesPermanent + "' does not exists");
+                            }
                             if (stateCodesPermanent.contains(STATE_CODE_SMALL)) {
 
                                 String tenantCodeCodePermanent = birth.getTenantId();

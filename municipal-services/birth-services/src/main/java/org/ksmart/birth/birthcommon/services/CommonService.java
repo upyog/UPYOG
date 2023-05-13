@@ -6,6 +6,9 @@ import org.ksmart.birth.birthcommon.model.common.CommonPay;
 import org.ksmart.birth.birthcommon.model.common.CommonPayRequest;
 import org.ksmart.birth.birthcommon.repoisitory.CommonRepository;
 import org.ksmart.birth.config.BirthConfiguration;
+import org.ksmart.birth.web.model.SearchCriteria;
+import org.ksmart.birth.web.model.newbirth.NewBirthApplication;
+import org.ksmart.birth.web.model.newbirth.NewBirthDetailRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -46,5 +49,9 @@ public class CommonService {
             }
         }
         return commonPayList;
+    }
+
+    public List<NewBirthApplication> searchBirthDetailsCommon(NewBirthDetailRequest request, SearchCriteria criteria) {
+        return repository.searchBirthDetailsCommon(request,criteria);
     }
 }

@@ -241,17 +241,17 @@ public class CommonQueryBuilder extends BaseQueryBuilder {
 		return query;
 	}
 
-	public StringBuilder prepareSearchCriteriaFromRequest(StringBuilder query, String uuid, @NotNull List<Object> preparedStmtValues) {
-		if(preparedStmtValues.size() == 0 && uuid != null) {
-			addFilter("ebd.createdby", uuid, query, preparedStmtValues);
-			List<String> statusList = new ArrayList<>();
-			statusList.add(BirthConstants.STATUS_INITIATED);
-			statusList.add(BirthConstants.STATUS_FOR_PAYMENT);
-			statusList.add(BirthConstants.STATUS_CITIZENACTIONREQUIRED);
-			addFilters("ebd.status", statusList, query, preparedStmtValues);
-		}
-		return query;
-	}
+//	public StringBuilder prepareSearchCriteriaFromRequest(StringBuilder query, String uuid, @NotNull List<Object> preparedStmtValues) {
+//		if(preparedStmtValues.size() == 0 && uuid != null) {
+//			addFilter("ebd.createdby", uuid, query, preparedStmtValues);
+//			List<String> statusList = new ArrayList<>();
+//			statusList.add(BirthConstants.STATUS_INITIATED);
+//			statusList.add(BirthConstants.STATUS_FOR_PAYMENT);
+//			statusList.add(BirthConstants.STATUS_CITIZENACTIONREQUIRED);
+//			addFilters("ebd.status", statusList, query, preparedStmtValues);
+//		}
+//		return query;
+//	}
 
 	public StringBuilder prepareOrderBy(@NotNull SearchCriteria criteria, StringBuilder query, @NotNull List<Object> preparedStmtValues) {
 		StringBuilder orderBy = new StringBuilder();
@@ -282,14 +282,19 @@ public class CommonQueryBuilder extends BaseQueryBuilder {
 		return query;
 	}
 
-	public String getBirthApplicationSearchQuery(@NotNull SearchCriteria criteria, String uuid,
-													@NotNull List<Object> preparedStmtValues, Boolean isCount) {
+	public String getBirthApplicationSearchQuery(@NotNull SearchCriteria criteria, 	@NotNull List<Object> preparedStmtValues, Boolean isCount) {
 		StringBuilder query = prepareSearchQuery();
 		prepareSearchCriteria(criteria, query, preparedStmtValues);
-		prepareSearchCriteriaFromRequest(query,uuid,preparedStmtValues);
 		prepareOrderBy(criteria, query, preparedStmtValues);
 		return query.toString();
 	}
+
+//	public String getBirthApplicationSearchQueryCommon(@NotNull SearchCriteria criteria, @NotNull List<Object> preparedStmtValues, Boolean isCount) {
+//		StringBuilder query = prepareSearchQuery();
+//		prepareSearchCriteria(criteria, query, preparedStmtValues);
+//		prepareOrderBy(criteria, query, preparedStmtValues);
+//		return query.toString();
+//	}
 
 	public String getApplicationSearchQueryForRegistry(@NotNull SearchCriteria criteria, @NotNull List<Object> preparedStmtValues) {
 		StringBuilder query = prepareSearchQuery();

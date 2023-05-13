@@ -510,7 +510,7 @@
               {
                 "columns": [
                   {
-                    "text": "{{dateOfIssue}}: {{currentDate}} {{()}}",
+                    "text": "{{dateOfIssue}}: {{currentDate}} ({{currentTime}})",
                     "width": "49%",
                     "style": "details-body"
                   },
@@ -519,7 +519,7 @@
                     "width": "1%"
                   },
                   {
-                    "text": "{{updatedOn}} :{{updatedDate}}",
+                    "text": "{{updatedOn}} :{{updatedDate}} ({{updatingTime}})",
                     "style": "details-body-times"
                   }
                 ]
@@ -609,7 +609,7 @@
     "styles": {
       "pdf-header": {
         "fillColor": "#000000",
-        "fontSize": 11,
+        "fontSize": 12,
         "bold": true,
         "letterSpacing": 0.74,
         "alignment": "center",
@@ -622,7 +622,7 @@
       },
       "appendix-header-body-ml": {
         "color": "#000000",
-        "fontSize": 12,
+        "fontSize": 13,
         "alignment": "center"
       },
       "main-body-style": {
@@ -782,7 +782,7 @@
       },
       "rule-header-ml": {
         "color": "#000000",
-        "fontSize": 8,
+        "fontSize": 9,
         "margin": [
           0,
           0,
@@ -1075,7 +1075,7 @@
       "pdf-watermark": {
         "link": "{{watermark}}"
       }
-    }
-  },
-  "footer": "(function(currentPage, pageCount) { return [{'columns': [{'text': currentPage.toString() + ' of ' + pageCount ,'alignment':'center'}]}] })"
+    },
+    "footer": "(function(currentPage, pageCount) { return [{'columns': [{'text': currentPage.toString() + ' of ' + pageCount ,'alignment':'center'}]}] })"
+  }
 }

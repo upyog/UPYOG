@@ -57,24 +57,18 @@ public class StillBirthMdmsAddressValidation {
                     if(birth.getParentAddress().getIsPrsentAddress()){
                         birth.getParentAddress().setPermtaddressStateName(birth.getParentAddress().getPresentaddressStateName());
                     }
-                    String stateCodesPresent = birth.getParentAddress().getPresentaddressStateName();
-                        if (log.isDebugEnabled()) {
-                            log.debug("State code Present: \n{}", stateCodesPresent);
-                        }
-                        if (CollectionUtils.isEmpty(stateCodes) || !stateCodes.contains(stateCodesPresent)) {
-                            errorMap.put(COMMON_MDMS_STATE, "The State code Present'" + stateCodesPresent + "' does not exists");
-                        }
 
-                        // State code  Permanent
-                        String stateCodesPermanent = birth.getParentAddress().getPermtaddressStateName();
-                        if (log.isDebugEnabled()) {
-                            log.debug("State code Permanent: \n{}", stateCodesPermanent);
-                        }
-                        if (CollectionUtils.isEmpty(stateCodes) || !stateCodes.contains(stateCodesPermanent)) {
-                            errorMap.put(COMMON_MDMS_STATE, "The State code Permanent'" + stateCodesPermanent + "' does not exists");
-                        }
+
+
 // Present Inside kerala
                         if (countryCodesPresent.contains(COUNTRY_CODE)) {
+                            String stateCodesPresent = birth.getParentAddress().getPresentaddressStateName();
+                            if (log.isDebugEnabled()) {
+                                log.debug("State code Present: \n{}", stateCodesPresent);
+                            }
+                            if (CollectionUtils.isEmpty(stateCodes) || !stateCodes.contains(stateCodesPresent)) {
+                                errorMap.put(COMMON_MDMS_STATE, "The State code Present'" + stateCodesPresent + "' does not exists");
+                            }
                             if (stateCodesPresent.contains(STATE_CODE_SMALL)) {
 
 
@@ -135,6 +129,14 @@ public class StillBirthMdmsAddressValidation {
 // Permanent Inside kerala
 
                         if (countryCodesPremanent.contains(COUNTRY_CODE)) {
+                            // State code  Permanent
+                            String stateCodesPermanent = birth.getParentAddress().getPermtaddressStateName();
+                            if (log.isDebugEnabled()) {
+                                log.debug("State code Permanent: \n{}", stateCodesPermanent);
+                            }
+                            if (CollectionUtils.isEmpty(stateCodes) || !stateCodes.contains(stateCodesPermanent)) {
+                                errorMap.put(COMMON_MDMS_STATE, "The State code Permanent'" + stateCodesPermanent + "' does not exists");
+                            }
                             if (stateCodesPermanent.contains(STATE_CODE_SMALL)) {
 
                                 String tenantCodeCodePermanent = birth.getTenantId();

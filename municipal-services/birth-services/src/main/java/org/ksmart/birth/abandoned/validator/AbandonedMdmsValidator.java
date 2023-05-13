@@ -158,7 +158,7 @@ public class AbandonedMdmsValidator {
                         if (CollectionUtils.isEmpty(stateCodes) || !stateCodes.contains(stateCodesPresent)) {
                             errorMap.put(COMMON_MDMS_STATE, "The State code Present'" + stateCodesPresent + "' does not exists");
                         }
-                        if (!birth.getParentAddress().getIsPrsentAddress()) {
+                      //  if (!birth.getParentAddress().getIsPrsentAddress()) {
                             String countryCodesPermanent = birth.getParentAddress().getPermtaddressCountry();
                             if (log.isDebugEnabled()) {
                                 log.debug("Country code Permanent: \n{}", countryCodesPermanent);
@@ -167,6 +167,10 @@ public class AbandonedMdmsValidator {
                                 errorMap.put(COMMON_MDMS_COUNTRY, "The Country code Permanent'" + countryCodesPermanent + "' does not exists");
                             }
 
+
+                    //    }
+
+                        if (countryCodesPresent.contains(COUNTRY_CODE)) {
                             // state code  permanent
                             String stateCodesPermanent = birth.getParentAddress().getPermtaddressStateName();
                             if (log.isDebugEnabled()) {
@@ -175,10 +179,8 @@ public class AbandonedMdmsValidator {
                             if (CollectionUtils.isEmpty(stateCodes) || !stateCodes.contains(stateCodesPermanent)) {
                                 errorMap.put(COMMON_MDMS_STATE, "The State code Permanent'" + stateCodesPermanent + "' does not exists");
                             }
-                        }
-
-                        if (countryCodesPresent.contains(COUNTRY_CODE)) {
                             if (stateCodesPresent.contains(STATE_CODE_SMALL)) {
+
 //district
                                 String districtInKeralaCodePresent = birth.getParentAddress().getPresentInsideKeralaDistrict();
                                 if (log.isDebugEnabled()) {

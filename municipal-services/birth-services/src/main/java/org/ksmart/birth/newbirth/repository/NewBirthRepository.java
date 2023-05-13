@@ -88,11 +88,11 @@ public class NewBirthRepository {
         String uuid = null;
         List<Object> preparedStmtValues = new ArrayList<>();
 
-        if (request.getRequestInfo().getUserInfo() != null) {
-            uuid = request.getRequestInfo().getUserInfo().getUuid();
-        }
+//        if (request.getRequestInfo().getUserInfo() != null) {
+//            uuid = request.getRequestInfo().getUserInfo().getUuid();
+//        }
         criteria.setApplicationType(BirthConstants.FUN_MODULE_NEW);
-        String query = commonQueryBuilder.getBirthApplicationSearchQuery(criteria, uuid, preparedStmtValues, Boolean.FALSE);
+        String query = commonQueryBuilder.getBirthApplicationSearchQuery(criteria, preparedStmtValues, Boolean.FALSE);
         if (preparedStmtValues.size() == 0) {
             throw new CustomException(ErrorCodes.NOT_FOUND.getCode(), "No result found.");
         } else {
@@ -106,13 +106,8 @@ public class NewBirthRepository {
     public List<NewBirthApplication> searchBirth(RequestInfo requestInfo, SearchCriteria criteria) {
         String uuid = null;
         List<Object> preparedStmtValues = new ArrayList<>();
-
-        if (requestInfo.getUserInfo() != null) {
-            uuid = requestInfo.getUserInfo().getUuid();
-        } else {
-            criteria.setApplicationType(BirthConstants.FUN_MODULE_NEW);
-        }
-        String query = commonQueryBuilder.getBirthApplicationSearchQuery(criteria, uuid, preparedStmtValues, Boolean.FALSE);
+        criteria.setApplicationType(BirthConstants.FUN_MODULE_NEW);
+        String query = commonQueryBuilder.getBirthApplicationSearchQuery(criteria, preparedStmtValues, Boolean.FALSE);
         if (preparedStmtValues.size() == 0) {
             throw new CustomException(ErrorCodes.NOT_FOUND.getCode(), "No result found.");
         } else {
@@ -122,18 +117,6 @@ public class NewBirthRepository {
             return result;
         }
     }
-    public List<NewBirthApplication> searchBirthDetailsCommon(NewBirthDetailRequest request, SearchCriteria criteria) {
-        String uuid = null;
-        List<Object> preparedStmtValues = new ArrayList<>();
-        String query = commonQueryBuilder.getBirthApplicationSearchQuery(criteria, uuid, preparedStmtValues, Boolean.FALSE);
-        if (preparedStmtValues.size() == 0) {
-            throw new CustomException(ErrorCodes.NOT_FOUND.getCode(), "No result found.");
-        } else {
-            List<NewBirthApplication> result = jdbcTemplate.query(query, preparedStmtValues.toArray(), ksmartBirthApplicationRowMapper);
-            RequestInfo requestInfo = request.getRequestInfo();
-            responseEnrichment.setNewBirthRequestData(requestInfo, result);
-            return result;
-        }
-    }
+
 }
 
