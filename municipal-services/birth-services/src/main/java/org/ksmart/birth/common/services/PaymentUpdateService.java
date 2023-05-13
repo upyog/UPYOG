@@ -10,6 +10,10 @@ import org.egov.common.contract.request.Role;
  
 import org.egov.tracer.model.CustomException;
 import org.json.JSONObject;
+import org.ksmart.birth.birthcommon.model.common.CommonPay;
+import org.ksmart.birth.birthcommon.model.common.CommonPayRequest;
+import org.ksmart.birth.birthcommon.repoisitory.CommonRepository;
+import org.ksmart.birth.birthcommon.services.CommonService;
 import org.ksmart.birth.common.calculation.collections.models.PaymentDetail;
 import org.ksmart.birth.common.calculation.collections.models.PaymentRequest;
 import org.ksmart.birth.config.BirthConfiguration;
@@ -27,12 +31,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static org.ksmart.birth.utils.BirthDeathConstants.*;
+import static org.ksmart.birth.utils.BirthConstants.STATUS_FOR_PAYMENT;
 @Service
 @Slf4j
 public class PaymentUpdateService {
@@ -45,6 +51,8 @@ public class PaymentUpdateService {
 	private WorkflowIntegratorNewBirth wfIntegrator;
 	
 	private NewBirthEnrichment enrichmentService;
+	private CommonService commonService;
+	 private  final CommonRepository commonRepository;
 
 //	@Autowired
 //	private objectMapper mapper;
@@ -52,7 +60,8 @@ public class PaymentUpdateService {
 	private BirthUtils util;
 	
 	public PaymentUpdateService(NewBirthService newBirthService,BirthConfiguration config, NewBirthRepository repository,
-			WorkflowIntegratorNewBirth wfIntegrator,NewBirthEnrichment enrichmentService, BirthUtils util) {
+			WorkflowIntegratorNewBirth wfIntegrator,NewBirthEnrichment enrichmentService, BirthUtils util,CommonService commonService,
+			CommonRepository commonRepository) {
 		this.newBirthService=newBirthService;
 		this.config=config;
 		this.repository=repository;
@@ -60,6 +69,8 @@ public class PaymentUpdateService {
 		this.enrichmentService= enrichmentService;
 //		this.mapper= mapper;
 		this.util=util;
+		this.commonService=commonService;
+		this.commonRepository=commonRepository;
 		
 	}
 	
@@ -89,16 +100,28 @@ public class PaymentUpdateService {
 			 
 			searchCriteria.setAppNumber(paymentDetail.getBill().getConsumerCode());
 			searchCriteria.setBusinessService(paymentDetail.getBusinessService());
-			System.out.println(" payment detail tenantId:"+tenantId);
-			System.out.println(" payment detail tenantId:"+paymentDetail.getBill().getConsumerCode());
-			System.out.println(" payment detail tenantId:"+paymentDetail.getBusinessService());
 			
 			List<NewBirthApplication> birth = newBirthService.searchBirth(requestInfo,searchCriteria);
 			
 			NewBirthDetailRequest updateRequest = NewBirthDetailRequest.builder().requestInfo(requestInfo)
 					.newBirthDetails(birth).build();
-			System.out.println(" payment detail updateRequest:"+updateRequest);
+			
 			wfIntegrator.callWorkFlow(updateRequest);
+			
+			 
+			
+			List<CommonPay>  commonpay  = new ArrayList<>();
+			for (CommonPay commonBirth : commonpay) {
+				commonBirth.setApplicationStatus(STATUS_FOR_PAYMENT);
+				commonBirth.setIsPaymentSuccess(true);			
+				
+			}
+			 
+			CommonPayRequest paymentReq =CommonPayRequest.builder().requestInfo(requestInfo)
+					.commonPays(commonpay).build();
+			commonService.updatePaymentWorkflow(paymentReq);
+		
+			
 			}
 			
 
