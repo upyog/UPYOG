@@ -60,6 +60,10 @@ CREATE TABLE IF NOT EXISTS public.eg_birth_details
     has_payment boolean,
     is_payment_success boolean,
     amount numeric,
+    birthdate date,
+    assignee character varying(128) COLLATE pg_catalog."default",
+    rdo_proceedings_no character varying(250) COLLATE pg_catalog."default",
+    nac_registration_no character varying(250) COLLATE pg_catalog."default",
     CONSTRAINT eg_birth_details_pkey PRIMARY KEY (id),
     CONSTRAINT eg_birth_details_applicationno_key UNIQUE (applicationno),
     CONSTRAINT eg_birth_details_fm_fileno_ukey UNIQUE (fm_fileno, tenantid),
@@ -108,7 +112,8 @@ CREATE INDEX IF NOT EXISTS idx_eg_birth_father_information_birthdtlid
     (birthdtlid COLLATE pg_catalog."default" ASC NULLS LAST)
     TABLESPACE pg_default;
 
-CREATE TABLE IF NOT EXISTS public.eg_birth_initiator (
+CREATE TABLE IF NOT EXISTS public.eg_birth_initiator
+(
     id character varying(64) COLLATE pg_catalog."default" NOT NULL,
     birthdtlid character varying(64) COLLATE pg_catalog."default" NOT NULL,
     initiator_name character varying(1000) COLLATE pg_catalog."default",
@@ -126,6 +131,8 @@ CREATE TABLE IF NOT EXISTS public.eg_birth_initiator (
     lastmodifiedtime bigint,
     is_care_taker boolean,
     is_esigned boolean,
+    initiator character varying(128) COLLATE pg_catalog."default",
+    isguardian boolean,
     CONSTRAINT eg_birth_initiator_pkey PRIMARY KEY (id),
     CONSTRAINT eg_birth_initiator_fkey FOREIGN KEY (birthdtlid)
     REFERENCES public.eg_birth_details (id) MATCH SIMPLE
@@ -233,7 +240,8 @@ CREATE INDEX IF NOT EXISTS idx_eg_birth_permanent_address_info_birthdtlid
     (birthdtlid COLLATE pg_catalog."default" ASC NULLS LAST)
     TABLESPACE pg_default;
 
-CREATE TABLE IF NOT EXISTS public.eg_birth_place (
+CREATE TABLE IF NOT EXISTS public.eg_birth_place
+(
     id character varying(64) COLLATE pg_catalog."default" NOT NULL,
     birthdtlid character varying(64) COLLATE pg_catalog."default" NOT NULL,
     placeofbirthid character varying(64) COLLATE pg_catalog."default",
@@ -314,6 +322,9 @@ CREATE TABLE IF NOT EXISTS public.eg_birth_place (
     ot_country character varying(200) COLLATE pg_catalog."default",
     ot_town_village_en character varying(1000) COLLATE pg_catalog."default",
     ot_town_village_ml character varying(1000) COLLATE pg_catalog."default",
+    hosp_ip_op character varying(10) COLLATE pg_catalog."default",
+    hosp_ip_op_number character varying(64) COLLATE pg_catalog."default",
+    obstetrics_gync_number character varying(128) COLLATE pg_catalog."default",
     CONSTRAINT eg_birth_place_pkey PRIMARY KEY (id),
     CONSTRAINT eg_birth_place_fkey FOREIGN KEY (birthdtlid)
     REFERENCES public.eg_birth_details (id) MATCH SIMPLE
