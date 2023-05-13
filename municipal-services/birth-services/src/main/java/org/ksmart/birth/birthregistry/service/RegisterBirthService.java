@@ -147,33 +147,35 @@ public class RegisterBirthService {
     }
 
     public  BirthCertificate  getBirthCertificate(RegisterBirthSearchCriteria criteria, RequestInfo requestInfo) {
-        List<BirthCertificate> certificates = new ArrayList<>();
         BirthCertificate  birthCertificate = null;
         List<RegisterCertificateData> regDetail = searchRegisterForCert(criteria, requestInfo);
+        System.out.println(regDetail.size());
         if (regDetail.size() == 1) {
             CertificateCriteria certificateCriteria = new CertificateCriteria();
             certificateCriteria.setTenantId(criteria.getTenantId());
             certificateCriteria.setTenantId(criteria.getId());
-            birthCertificate = certificateRepository.searchBirthDetails(certificateCriteria).get(0);
-
-            RegisterCertificateData rcd = regDetail.get(0);
-            if (rcd.getPlaceDetails() == null) birthCertificate.setBirthPlace("");
-            else birthCertificate.setBirthPlace(rcd.getBirthPlaceId());
-            birthCertificate.setBirthPlace(regDetail.get(0).getPlaceDetails());
-            birthCertificate.setGender(regDetail.get(0).getGenderEn().toString());
-            birthCertificate.setWard(regDetail.get(0).getWardCode());
-            birthCertificate.setState(regDetail.get(0).getTenantState());
-            birthCertificate.setDistrict(regDetail.get(0).getTenantDistrict());
-            birthCertificate.setDateofbirth(new Timestamp(regDetail.get(0).getDateOfBirth()));
-            birthCertificate.setDateofreport(new Timestamp(regDetail.get(0).getDateOfReport()));
-            birthCertificate.setTenantId(regDetail.get(0).getTenantId());
-            birthCertificate.setApplicationType(regDetail.get(0).getApplicationType());
-            birthCertificate.setRegistrtionNo(regDetail.get(0).getRegistrationNo());
-            enrichment.setCertificateNumber(birthCertificate, requestInfo);
-            SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
-            String date = format.format(regDetail.get(0).getDateOfReport());
-            String datestr = date.split("-")[2];
-            birthCertificate.setYear(datestr);
+           List<BirthCertificate> birthCertificates = certificateRepository.searchBirthDetails(certificateCriteria);
+           if(birthCertificates.size() == 1) {
+               birthCertificate = birthCertificates.get(0);
+               RegisterCertificateData rcd = regDetail.get(0);
+               if (rcd.getPlaceDetails() == null) birthCertificate.setBirthPlace("");
+               else birthCertificate.setBirthPlace(rcd.getBirthPlaceId());
+               birthCertificate.setBirthPlace(regDetail.get(0).getPlaceDetails());
+               birthCertificate.setGender(regDetail.get(0).getGenderEn().toString());
+               birthCertificate.setWard(regDetail.get(0).getWardCode());
+               birthCertificate.setState(regDetail.get(0).getTenantState());
+               birthCertificate.setDistrict(regDetail.get(0).getTenantDistrict());
+               birthCertificate.setDateofbirth(new Timestamp(regDetail.get(0).getDateOfBirth()));
+               birthCertificate.setDateofreport(new Timestamp(regDetail.get(0).getDateOfReport()));
+               birthCertificate.setTenantId(regDetail.get(0).getTenantId());
+               birthCertificate.setApplicationType(regDetail.get(0).getApplicationType());
+               birthCertificate.setRegistrtionNo(regDetail.get(0).getRegistrationNo());
+               SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
+               String date = format.format(regDetail.get(0).getDateOfReport());
+               String datestr = date.split("-")[2];
+               birthCertificate.setYear(datestr);
+               birthCertificate.setApplicationStatus(BirthCertificate.StatusEnum.FREE_DOWNLOAD);
+           }
 
         }
         return birthCertificate;
