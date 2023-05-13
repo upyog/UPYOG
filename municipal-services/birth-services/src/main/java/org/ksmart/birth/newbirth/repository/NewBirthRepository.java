@@ -112,8 +112,8 @@ public class NewBirthRepository {
             throw new CustomException(ErrorCodes.NOT_FOUND.getCode(), "No result found.");
         } else {
             List<NewBirthApplication> result = jdbcTemplate.query(query, preparedStmtValues.toArray(), ksmartBirthApplicationRowMapperPay);
-
-            responseEnrichment.setNewBirthRequestData(requestInfo, result);
+System.out.println("result "+result);
+//            responseEnrichment.setNewBirthRequestData(requestInfo, result);
             return result;
         }
     }
