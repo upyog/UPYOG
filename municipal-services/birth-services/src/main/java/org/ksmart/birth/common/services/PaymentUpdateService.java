@@ -116,8 +116,7 @@ public class PaymentUpdateService {
 				commonBirth.setIsPaymentSuccess(true);			
 				
 			}
-			 System.out.println("common req "+commonpay.get(0).getApplicationStatus());
-			 System.out.println("common req "+commonpay.get(0).getIsPaymentSuccess());
+		 
 			CommonPayRequest paymentReq =CommonPayRequest.builder().requestInfo(requestInfo)
 					.commonPays(commonpay).build();
 			commonService.updatePaymentWorkflow(paymentReq);
