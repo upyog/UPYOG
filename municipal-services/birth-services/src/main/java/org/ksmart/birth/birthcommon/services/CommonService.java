@@ -40,6 +40,7 @@ public class CommonService {
                 birth.setApplicationStatus("INITIATED");
                 birth.setHasPayment(true);
                 birth.setAmount(new BigDecimal(10));
+                System.out.println("common req "+birth.getAction());
                 commonPayList = repository.updatePaymentDetails(request);
             } else  if(birth.getApplicationStatus().equals(STATUS_FOR_PAYMENT) && !birth.getIsPaymentSuccess()){
                 birth.setAction("");
