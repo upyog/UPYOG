@@ -9,7 +9,8 @@ serviceMaps:
         - query: INSERT INTO public.eg_birth_details(id,dateofreport,dateofbirth,timeofbirth,am_pm,firstname_en,firstname_ml,middlename_en,middlename_ml,lastname_en,lastname_ml,tenantid,
             gender,remarks_en,remarks_ml,aadharno,esign_user_code,esign_user_desig_code,is_multiple_birth,is_father_info_missing,is_mother_info_missing,no_of_alive_birth,
             multiplebirthdetid,is_born_outside,ot_passportno,ot_dateofarrival,applicationtype,businessservice,workflowcode,fm_fileno,file_date,file_status,applicationno,registrationno,registration_date,
-            action,status, createdtime, createdby, lastmodifiedtime, lastmodifiedby) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
+            action,status, createdtime, createdby, lastmodifiedtime, lastmodifiedby,birthdate, assignee, rdo_proceedings_no, nac_registration_no) 
+            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
 
           basePath: ChildDetails.*
           jsonMaps:
@@ -95,12 +96,20 @@ serviceMaps:
 
             - jsonPath: $.ChildDetails.*.auditDetails.lastModifiedBy
 
+            - jsonPath: $.ChildDetails.*.birthdate
+
+            - jsonPath: $.ChildDetails.*.assigneeSingle
+
+            - jsonPath: $.ChildDetails.*.proceedNoRDOBasic
+
+            - jsonPath: $.ChildDetails.*.regNoNACBasic
+
         - query: INSERT INTO public.eg_birth_place(id,birthdtlid,placeofbirthid,hospitalid,public_place_id,institution_type_id,institution_id,vehicletypeid,vehicle_registration_no,vehicle_from_en,
             vehicle_to_en,vehicle_from_ml, vehicle_to_ml,vehicle_admit_hospital_en,ho_householder_en,ho_locality_en,ho_locality_ml,ho_street_name_en,ho_street_name_ml,ho_housename_en,ho_housename_ml,ho_villageid,
             ho_talukid,ho_districtid,ho_stateid,ho_poid,ho_pinno,ho_countryid,ward_id,auth_officer_id,auth_officer_desig_id,oth_auth_officer_name,oth_auth_officer_desig, informantsaddress_en,
             informants_mobileno,informants_aadhaar_no,vehicle_haltplace_en,vehicle_hospitalid,createdby,createdtime,lastmodifiedby,lastmodifiedtime,vehicle_haltplace_ml,
-            vehicle_desc,public_place_desc,public_locality_en,public_locality_ml,public_street_name_en,public_street_name_ml)
-            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
+            vehicle_desc,public_place_desc,public_locality_en,public_locality_ml,public_street_name_en,public_street_name_ml,hosp_ip_op, hosp_ip_op_number, obstetrics_gync_number)
+            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
 
           basePath: ChildDetails.*
           jsonMaps:
@@ -201,6 +210,12 @@ serviceMaps:
             - jsonPath: $.ChildDetails.*.streetNameEn
 
             - jsonPath: $.ChildDetails.*.streetNameMl
+
+            - jsonPath: $.ChildDetails.*.InitiatorinfoDetails.ipopList
+
+            - jsonPath: $.ChildDetails.*.InitiatorinfoDetails.ipopNumber
+
+            - jsonPath: $.ChildDetails.*.InitiatorinfoDetails.obstetricsNumber
 
 
 
@@ -494,9 +509,10 @@ serviceMaps:
             - jsonPath: $.ChildDetails.*.auditDetails.lastModifiedBy
             - jsonPath: $.ChildDetails.*.auditDetails.lastModifiedTime
 
-        - query: INSERT INTO public.eg_birth_initiator(
-            id, birthdtlid, initiator_name, initiator_institution, initiator_inst_desig, relation, initiator_address, is_declared, declaration_id,
-            aadharno, mobileno, createdby, createdtime, lastmodifiedby, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO public.eg_birth_initiator(id, birthdtlid, initiator_name, initiator_institution, initiator_inst_desig, relation, 
+                initiator_address, is_declared, declaration_id,  aadharno, mobileno, createdby, createdtime, lastmodifiedby, lastmodifiedtime, initiator, isguardian) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+
           basePath: ChildDetails.*.InitiatorinfoDetails
           jsonMaps:
 
@@ -530,9 +546,13 @@ serviceMaps:
 
             - jsonPath: $.ChildDetails.*.auditDetails.lastModifiedTime
 
+            - jsonPath: $.ChildDetails.*.InitiatorinfoDetails.initiator
+
+            - jsonPath: $.ChildDetails.*.InitiatorinfoDetails.isGuardian
+
         - query: INSERT INTO public.eg_birth_application_document(
             id, tenantid, document_name, document_type, document_description, filestoreid, document_link,file_type,file_size,birthdtlid,active,createdby, createdtime, lastmodifiedby, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
-          basePath: ChildDetails.*.Document.
+          basePath: ChildDetails.*.Document.*
           jsonMaps:
 
             - jsonPath: $.ChildDetails.*.Document.*.id

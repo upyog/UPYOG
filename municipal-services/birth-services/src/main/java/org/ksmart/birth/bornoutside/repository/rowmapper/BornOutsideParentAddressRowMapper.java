@@ -18,6 +18,7 @@ public interface BornOutsideParentAddressRowMapper {
                 .presentOutSideIndiaProvinceEn(rs.getString("pres_ot_state_region_province_en"))
                 .presentOutSideIndiaProvinceMl(rs.getString("pres_ot_state_region_province_ml"))
                 .presentOutSideIndiaadrsCityTown(rs.getString("stat_mother_resdnce_placetype"))
+                .presentOutSideIndiaadrsVillage(rs.getString("pres_village_name"))
                 .presentOutSideIndiaPostCode(rs.getString("pres_ot_zipcode"))
                 .isPrsentAddress(rs.getBoolean("per_same_as_present"))
 

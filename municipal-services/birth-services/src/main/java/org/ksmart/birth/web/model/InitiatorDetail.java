@@ -15,8 +15,16 @@ import javax.validation.constraints.Size;
 public class InitiatorDetail {
 
     @Size(max = 64)
+    @JsonProperty("initiator")
+    private String initiator;
+
+    @Size(max = 64)
     @JsonProperty("relation")
     private String relation;
+
+    @Size(max = 300)
+    @JsonProperty("initiatorInstitutionName")
+    private String initiatorInstitutionName;
 
     @Size(max = 1000)
     @JsonProperty("initiatorNameEn")
@@ -44,4 +52,18 @@ public class InitiatorDetail {
     @JsonProperty("isCaretaker")
     private Boolean isCaretaker;
 
+    @JsonProperty("isGuardian")
+    private Boolean isGuardian;
+
+    @Size(max = 20)
+    @JsonProperty("ipopList")
+    private String ipopList;
+
+    @Size(max = 200)
+    @JsonProperty("ipopNumber")
+    private String ipopNumber;
+
+    @Size(max = 200)
+    @JsonProperty("obstetricsNumber")
+    private String obstetricsNumber;
 }

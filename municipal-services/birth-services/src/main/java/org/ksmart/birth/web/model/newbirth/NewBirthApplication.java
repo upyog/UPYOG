@@ -349,6 +349,16 @@ public class NewBirthApplication implements Serializable {
     @Size(max = 64)
     @JsonProperty("birthStatisticsUuid")
     private String birthStatisticsUuid;
+
+    @JsonProperty("proceedNoRDOBasic")
+    private String proceedNoRDOBasic;
+
+    @JsonProperty("assigneeSingle")
+    private String assigneeSingle;
+
+    @JsonProperty("regNoNACBasic")
+    private String regNoNACBasic;
+
     @JsonProperty("ParentsDetails")
     private ParentsDetail parentsDetails;
 
@@ -362,7 +372,7 @@ public class NewBirthApplication implements Serializable {
     @JsonProperty("Demands")
     private List<Demand> demands;
 
-    @JsonProperty("Document")
+    @JsonProperty("BirthNACDocuments")
     private List<DocumentDetails> documentDetails;
 
     @JsonProperty("auditDetails")

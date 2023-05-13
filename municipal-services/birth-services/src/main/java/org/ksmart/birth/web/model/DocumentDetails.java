@@ -57,9 +57,13 @@ public class DocumentDetails {
     private String fileType;
     
     @JsonProperty("fileSize")
-    private String fileSize; 
-    
-    
+    private String fileSize;
+
+    @JsonProperty("proceedNoRDO")
+    private String proceedNoRDO;
+
+    @JsonProperty("regNoNAC")
+    private String regNoNAC;
 
     @Size(max=64)   
     @JsonProperty("birthdtlid")

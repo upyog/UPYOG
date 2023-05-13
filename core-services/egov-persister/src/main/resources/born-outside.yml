@@ -457,8 +457,8 @@ serviceMaps:
             - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.mother_res_country_id
             - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.mother_resdnce_addr_type
             - jsonPath: $.BornOutsideChildDetails.*.BornOutsideAddressBirthDetails.permntInKeralaAdrLBName
-            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.townOrVillagePresent
-            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.mother_resdnce_place_en
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideAddressBirthDetails.townOrVillagePresent
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideAddressBirthDetails.presentOutSideIndiaadrsVillage
             - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.mother_resdnce_place_ml
             - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.mother_resdnce_lbtype
             - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.mother_resdnce_district
