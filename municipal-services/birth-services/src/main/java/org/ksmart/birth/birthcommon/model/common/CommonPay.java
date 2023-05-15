@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 public class CommonPay {
     @Size(max = 64)
     @JsonProperty("applicationNumber")
-    private String applicationNo;
+    private String applicationNumber;
 
     private String action;
 

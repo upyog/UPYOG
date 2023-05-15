@@ -120,6 +120,7 @@ public class PaymentUpdateService {
 				  pay.setHasPayment(true);
 				  pay.setAmount(new BigDecimal(10));
 		          pay.setIsPaymentSuccess(true);    
+		          pay.setApplicationNumber(paymentDetail.getBill().getConsumerCode());
 		             
 		            
 			  }

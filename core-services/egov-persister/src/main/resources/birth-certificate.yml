@@ -103,4 +103,4 @@ serviceMaps:
 
                 - jsonPath: $.PaymentDetails.*.auditDetails.lastModifiedTime
 
-                - jsonPath: $.ChildDetails.*.applicationNumber
+                - jsonPath: $.PaymentDetails.*.applicationNumber
