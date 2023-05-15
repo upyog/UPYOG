@@ -71,7 +71,7 @@ const initTokens = (stateCode) => {
  
   const citizenInfo = window.localStorage.getItem("Citizen.user-info")
  
-  const citizenTenantId = stateCode;
+  const citizenTenantId = window.localStorage.getItem("Citizen.tenant-id") || stateCode;
 
   const employeeInfo = window.localStorage.getItem("Employee.user-info");
   const employeeTenantId = window.localStorage.getItem("Employee.tenant-id");
@@ -140,7 +140,7 @@ const initDigitUI = () => {
     },
   };
 
-  const stateCode = "pg";
+  const stateCode = window?.globalConfigs?.getConfig("STATE_LEVEL_TENANT_ID") || "pb";
   initTokens(stateCode);
 
   const registry = window?.Digit.ComponentRegistryService.getRegistry();
