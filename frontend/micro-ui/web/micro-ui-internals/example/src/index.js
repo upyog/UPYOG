@@ -58,7 +58,10 @@ const enabledModules = [
   "NDSS",
   "Bills",
   "SW",
-  "BillAmendment"
+  "BillAmendment",
+  "FireNoc",
+  "Birth",
+  "Death"
 ];
 
 const initTokens = (stateCode) => {
@@ -68,7 +71,7 @@ const initTokens = (stateCode) => {
  
   const citizenInfo = window.localStorage.getItem("Citizen.user-info")
  
-  const citizenTenantId = window.localStorage.getItem("Citizen.tenant-id") || stateCode;
+  const citizenTenantId = stateCode;
 
   const employeeInfo = window.localStorage.getItem("Employee.user-info");
   const employeeTenantId = window.localStorage.getItem("Employee.tenant-id");
@@ -137,7 +140,7 @@ const initDigitUI = () => {
     },
   };
 
-  const stateCode = window?.globalConfigs?.getConfig("STATE_LEVEL_TENANT_ID") || "pb";
+  const stateCode = "pg";
   initTokens(stateCode);
 
   const registry = window?.Digit.ComponentRegistryService.getRegistry();
