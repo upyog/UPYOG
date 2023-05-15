@@ -33,6 +33,8 @@ public class CommonService {
     }
     public List<CommonPay> updatePaymentWorkflow(CommonPayRequest request) {
         List<CommonPay> commonPays = request.getCommonPays();
+        System.out.println("common req "+commonPays.get(0).getApplicationStatus());
+        System.out.println("common req "+commonPays.get(0).getIsPaymentSuccess());
         List<CommonPay> commonPayList = new ArrayList<>();
         for (CommonPay birth : commonPays) {
             if (birth.getApplicationStatus().equals(STATUS_FOR_PAYMENT) && birth.getIsPaymentSuccess()) {
