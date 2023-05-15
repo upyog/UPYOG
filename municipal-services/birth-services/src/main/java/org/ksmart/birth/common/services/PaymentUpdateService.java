@@ -31,6 +31,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -46,22 +47,25 @@ public class PaymentUpdateService {
 	
 	private BirthConfiguration config;
 
-	private NewBirthRepository repository;
+//	private NewBirthRepository repository;
+	
+	private  final CommonRepository repository;
 	
 	private WorkflowIntegratorNewBirth wfIntegrator;
 	
 	private NewBirthEnrichment enrichmentService;
 	private CommonService commonService;
-	 private  final CommonRepository commonRepository;
+	 
+	 private final BirthConfiguration birthDeathConfiguration;
 
 //	@Autowired
 //	private objectMapper mapper;
 	
 	private BirthUtils util;
 	
-	public PaymentUpdateService(NewBirthService newBirthService,BirthConfiguration config, NewBirthRepository repository,
+	public PaymentUpdateService(NewBirthService newBirthService,BirthConfiguration config,  
 			WorkflowIntegratorNewBirth wfIntegrator,NewBirthEnrichment enrichmentService, BirthUtils util,CommonService commonService,
-			CommonRepository commonRepository) {
+			CommonRepository repository, BirthConfiguration birthDeathConfiguration) {
 		this.newBirthService=newBirthService;
 		this.config=config;
 		this.repository=repository;
@@ -70,7 +74,8 @@ public class PaymentUpdateService {
 //		this.mapper= mapper;
 		this.util=util;
 		this.commonService=commonService;
-		this.commonRepository=commonRepository;
+//		this.commonRepository=commonRepository;
+		this.birthDeathConfiguration=birthDeathConfiguration;
 		
 	}
 	
@@ -107,19 +112,24 @@ public class PaymentUpdateService {
 					.newBirthDetails(birth).build();
 			
 			wfIntegrator.callWorkFlow(updateRequest);
-			
+			 List<CommonPay> commonPays =  new ArrayList<>();
+			  for (CommonPay pay : commonPays) {
+		           
+				  pay.setAction("INITIATE");
+				  pay.setApplicationStatus("INITIATED");
+				  pay.setHasPayment(true);
+				  pay.setAmount(new BigDecimal(10));
+		          pay.setIsPaymentSuccess(true);    
+		             
+		            
+			  }
+				CommonPayRequest paymentReq =CommonPayRequest.builder().requestInfo(requestInfo)
+						.commonPays(commonPays).build();
+				  repository.updatePaymentDetails(paymentReq);
+//		    producer.push(birthDeathConfiguration.getUpdateBirthPaymentTopic(), request);
 			 
-			
-			List<CommonPay>  commonpay  = new ArrayList<>();
-			for (CommonPay commonBirth : commonpay) {
-				commonBirth.setApplicationStatus(STATUS_FOR_PAYMENT);
-				commonBirth.setIsPaymentSuccess(true);			
-				
-			}
-		 
-			CommonPayRequest paymentReq =CommonPayRequest.builder().requestInfo(requestInfo)
-					.commonPays(commonpay).build();
-			commonService.updatePaymentWorkflow(paymentReq);
+			 
+			 
 		
 			
 			}

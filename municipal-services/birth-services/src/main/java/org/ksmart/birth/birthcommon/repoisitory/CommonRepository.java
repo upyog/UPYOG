@@ -45,6 +45,7 @@ public class CommonRepository {
     }
     public List<CommonPay> updatePaymentDetails(CommonPayRequest request) {
     	 System.out.println("common req "+birthDeathConfiguration.getUpdateBirthPaymentTopic());
+    	 
         producer.push(birthDeathConfiguration.getUpdateBirthPaymentTopic(), request);
         return request.getCommonPays();
     }
