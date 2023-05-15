@@ -1,5 +1,6 @@
 package org.ksmart.birth.newbirth.repository.rowmapper;
 
+import org.apache.kafka.common.protocol.types.Field;
 import org.jsoup.internal.StringUtil;
 import org.ksmart.birth.utils.CommonUtils;
 import org.ksmart.birth.web.model.newbirth.NewBirthApplication;
@@ -89,6 +90,9 @@ public class BirthApplicationRowMapper implements ResultSetExtractor<List<NewBir
                     .fileNumber(rs.getString("ba_fm_fileno"))
                     .fileDate(rs.getLong("ba_file_date"))
                     .fileStatus(rs.getString("ba_file_status"))
+                    .assignee(getAssignee(rs.getString("ba_assignee")))
+                    .proceedNoRDOBasic(rs.getString("ba_rdo_proceedings_no"))
+                    .regNoNACBasic(rs.getString("ba_nac_registration_no"))
                     .informatDetail(getInformatDetail(rs))
                     .initiatorDetails(getInitiatorDetail(rs))
                     .parentAddress(getKsmartBirthParentAddress(rs))
@@ -101,6 +105,14 @@ public class BirthApplicationRowMapper implements ResultSetExtractor<List<NewBir
         if(StringUtil.isBlank(name)) return true;
         if (name==null) return true;
         else return false;
+    }
+
+    private List<String> getAssignee(String assignee) {
+        List<String> assignees = new ArrayList<>();
+        if(!StringUtil.isBlank(assignee)) {
+            assignees.add(assignee);
+        }
+        return assignees;
     }
 }
 

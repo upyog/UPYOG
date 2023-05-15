@@ -7,6 +7,7 @@ import org.egov.tracer.model.CustomException;
 import org.ksmart.birth.birthregistry.service.MdmsDataService;
 import org.ksmart.birth.common.enrichment.BaseEnrichment;
 import org.ksmart.birth.common.model.AuditDetails;
+import org.ksmart.birth.common.model.Document;
 import org.ksmart.birth.common.repository.IdGenRepository;
 import org.ksmart.birth.common.services.MdmsTenantService;
 import org.ksmart.birth.config.BirthConfiguration;
@@ -16,6 +17,7 @@ import org.ksmart.birth.utils.CommonUtils;
 import org.ksmart.birth.utils.MdmsUtil;
 import org.ksmart.birth.utils.NumToWordConverter;
 import org.ksmart.birth.utils.enums.ErrorCodes;
+import org.ksmart.birth.web.model.DocumentDetails;
 import org.ksmart.birth.web.model.newbirth.NewBirthApplication;
 import org.ksmart.birth.web.model.newbirth.NewBirthDetailRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,6 +64,8 @@ public class NewBirthEnrichment implements BaseEnrichment {
 //            }
             birth.setId(UUID.randomUUID().toString());
             birth.setAuditDetails(auditDetails);
+            List<DocumentDetails> documentDetails = birth.getDocumentDetails();
+            setDocumentDetails(documentDetails, birth,true);
         }
         setPlaceOfBirth(request, tenantId, mdmsData,auditDetails, true);
         setApplicationNumbers(request);
@@ -69,6 +73,7 @@ public class NewBirthEnrichment implements BaseEnrichment {
         setPresentAddress(request, mdmsData, true);
         setPermanentAddress(request, mdmsData, true);
         setStatisticalInfo(request, true);
+
     }
 
     public void enrichUpdate(NewBirthDetailRequest request, Object mdmsData) {
@@ -330,6 +335,16 @@ public class NewBirthEnrichment implements BaseEnrichment {
                 }
             }
         });
+    }
+    private void setDocumentDetails(List<DocumentDetails> documentDetails,NewBirthApplication birth, boolean  isCreate) {
+        if (isCreate) {
+            documentDetails.forEach(docs -> {
+                if(docs.getDocumentType().contains(RDO_PROC_DOC)) {
+                    birth.setProceedNoRDOBasic(docs.getProceedNoRDO());
+                    birth.setRegNoNACBasic(docs.getRegNoNAC());
+                }
+            });
+        }
     }
     private void setStatisticalInfo(NewBirthDetailRequest request,boolean  isCreate) {
         request.getNewBirthDetails()

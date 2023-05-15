@@ -168,4 +168,6 @@ public class BirthConstants {
     
     public static final String FALSE = "false";
 
+    public static final String RDO_PROC_DOC = "CR_RDO_PROCEEDINGS_DOC";
+
 }
