@@ -58,7 +58,10 @@ const enabledModules = [
   "NDSS",
   "Bills",
   "SW",
-  "BillAmendment"
+  "BillAmendment",
+  "FireNoc",
+  "Birth",
+  "Death"
 ];
 
 const initTokens = (stateCode) => {
