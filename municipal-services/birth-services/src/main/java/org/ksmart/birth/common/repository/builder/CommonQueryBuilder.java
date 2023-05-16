@@ -24,8 +24,8 @@ public class CommonQueryBuilder extends BaseQueryBuilder {
 			.append("ebd.adopt_deed_order_no as ba_adopt_deed_order_no,ebd.adopt_dateoforder_deed as ba_adopt_dateoforder_deed,ebd.adopt_issuing_auththority as ba_adopt_issuing_auththority,")
 			.append("ebd.adopt_has_agency as ba_adopt_has_agency,ebd.adopt_agency_name as ba_adopt_agency_name,ebd.adopt_agency_address as ba_adopt_agency_address,ebd.is_stillbirth as ba_is_stillbirth,ebd.is_adopted as ba_is_adopted,")
 			.append("ebd.adopt_decree_order_no as ba_adopt_decree_order_no,ebd.adopt_dateoforder_decree as ba_adopt_dateoforder_decree,ebd.adopt_agency_contact_person as ba_adopt_agency_contact_person,")
-			.append("ebd.adopt_agency_contact_person_mobileno as ba_adopt_agency_contact_person_mobileno,ebd.createdtime,ebd.createdby,ebd.lastmodifiedtime,ebd.lastmodifiedby,ebd.nac_order_of_child as ba_nac_order_of_child")
-			.append("ebd.application_sub_type as  ba_application_sub_type, ebd.has_payment as  ba_has_payment, ebd.is_payment_success as  ba_is_payment_success, ebd.amount as  ba_amount, ebd.birthdate as  ba_amount,")
+			.append("ebd.adopt_agency_contact_person_mobileno as ba_adopt_agency_contact_person_mobileno,ebd.createdtime,ebd.createdby,ebd.lastmodifiedtime,ebd.lastmodifiedby,ebd.nac_order_of_child as ba_nac_order_of_child,")
+			.append("ebd.application_sub_type as  ba_application_sub_type, ebd.has_payment as  ba_has_payment, ebd.is_payment_success as  ba_is_payment_success, ebd.amount as  ba_amount, ebd.birthdate as  ba_birthdate,")
 			.append("ebd.assignee as  ba_assignee, ebd.rdo_proceedings_no as  ba_rdo_proceedings_no, ebd.nac_registration_no as  ba_nac_registration_no").toString();
 
 
@@ -90,8 +90,8 @@ public class CommonQueryBuilder extends BaseQueryBuilder {
 			.append("ebp.ot_birth_place_en as pla_ot_birth_place_en, ebp.ot_birth_place_ml as pla_ot_birth_place_ml, ebp.ot_address1_en as pla_ot_address1_en, ebp.ot_address1_ml as pla_ot_address1_ml," )
 			.append("ebp.ot_address2_en as pla_ot_address2_en, ebp.ot_address2_ml as pla_ot_address2_ml,ebp.ot_state_region_province_en as pla_ot_state_region_province_en, ebp.ot_state_region_province_ml as pla_ot_state_region_province_ml,")
 			.append("ebp.ot_zipcode as pla_ot_zipcode, ebp.is_inform_declare as pla_is_inform_declare, ebp.relation as pla_relation,ebp.informantsname_en as pla_informantsname_en,ebp.is_born_outside as pla_is_born_outside," )
-			.append("ebp.informants_office_name as pla_informants_office_name, ebp.ot_country as pla_ot_country, ebp.ot_town_village_en as pla_ot_town_village_en, ebp.ot_town_village_ml as pla_ot_town_village_ml")
-			.append("ebp.hosp_ip_op as pla_hosp_ip_op, ebp.hosp_ip_op_number as pla_hosp_ip_op_number, ebp.obstetrics_gync_number as pla_obstetrics_gync_number")
+			.append("ebp.informants_office_name as pla_informants_office_name, ebp.ot_country as pla_ot_country, ebp.ot_town_village_en as pla_ot_town_village_en, ebp.ot_town_village_ml as pla_ot_town_village_ml,")
+			.append("ebp.hosp_ip_op as pla_hosp_ip_op, ebp.hosp_ip_op_number as pla_hosp_ip_op_number, ebp.obstetrics_gync_number as pla_obstetrics_gync_number ")
 			.toString();
 	private static final String QUERY_FATER_INFO = new StringBuilder().append("ebfi.id as fa_id,ebfi.firstname_en as fa_firstname_en,ebfi.firstname_ml as fa_firstname_ml,")
 			.append("ebfi.ot_passportno as fa_ot_passportno, ebfi.aadharno as fa_aadharno,ebfi.birthdtlid as fa_birthdtlid,ebfi.bio_adopt as fa_bio_adopt").toString();
@@ -136,7 +136,9 @@ public class CommonQueryBuilder extends BaseQueryBuilder {
 
 	private static final String QUERY_INTIATOR = new StringBuilder().append("ini.id as ini_id,ini.birthdtlid as ini_birthdtlid,ini.initiator_name as ini_initiator_name,ini.initiator_institution as ini_initiator_institution,")
 			.append("ini.initiator_inst_desig as ini_initiator_inst_desig,ini.relation as ini_relation,ini.initiator_address as ini_initiator_address,")
-			.append("ini.is_declared as ini_is_declared,ini.declaration_id as ini_declaration_id,ini.aadharno as ini_aadharno,ini.mobileno as ini_mobileno,ini.is_care_taker as ini_is_care_taker,ini.is_esigned as ini_is_esigned").toString();
+			.append("ini.is_declared as ini_is_declared,ini.declaration_id as ini_declaration_id,ini.aadharno as ini_aadharno,ini.mobileno as ini_mobileno,ini.is_care_taker as ini_is_care_taker,ini.is_esigned as ini_is_esigned,")
+			.append("ini.initiator as ini_initiator, ini.isguardian as ini_isguardian")
+			.toString();
 	
 	private static final String QUERY_OTHERCH = new StringBuilder().append("ebcb.id as ebcb_id,ebcb.birthdtlid as ebcb_birthdtlid,ebcb.child_name_en as ebcb_child_name_en,ebcb.child_name_ml as ebcb_child_name_ml,")
 			.append("ebcb.sex as ebcb_sex,ebcb.order_of_birth as ebcb_order_of_birth,ebcb.dob as ebcb_dob,")

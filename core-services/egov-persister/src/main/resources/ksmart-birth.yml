@@ -601,7 +601,7 @@ serviceMaps:
             lastname_en=?, lastname_ml=?, tenantid=?, gender=?, aadharno=?, esign_user_code=?, esign_user_desig_code=?,is_father_info_missing=?,
             is_mother_info_missing=?, applicationtype=?, businessservice=?, workflowcode=?, fm_fileno=?, file_date=?, file_status=?,
             applicationno=?, registrationno=?, registration_date=?, action=?, status=?, lastmodifiedby=?,
-            lastmodifiedtime=? WHERE id=?;
+            lastmodifiedtime=?, rdo_proceedings_no=?, nac_registration_no=? WHERE id=?;
 
 
           basePath: ChildDetails.*
@@ -664,6 +664,10 @@ serviceMaps:
 
             - jsonPath: $.ChildDetails.*.auditDetails.lastModifiedTime
 
+            - jsonPath: $.ChildDetails.*.proceedNoRDOBasic
+
+            - jsonPath: $.ChildDetails.*.regNoNACBasic
+
             - jsonPath: $.ChildDetails.*.id
 
         - query: INSERT INTO eg_birth_place_audit SELECT * FROM eg_birth_place WHERE birthdtlid = ?;
@@ -678,7 +682,7 @@ serviceMaps:
             ho_countryid=?, ward_id=?, auth_officer_id=?, auth_officer_desig_id=?, oth_auth_officer_name=?, oth_auth_officer_desig=?,
             informantsaddress_en=?, informants_mobileno=?, informants_aadhaar_no=?, vehicle_haltplace_en=?, vehicle_hospitalid=?,
             lastmodifiedby=?, lastmodifiedtime=?, vehicle_haltplace_ml=?, vehicle_desc=?, public_place_desc=?,
-            public_locality_en=?, public_locality_ml=?, public_street_name_en=?, public_street_name_ml=? WHERE  birthdtlid=?;
+            public_locality_en=?, public_locality_ml=?, public_street_name_en=?, public_street_name_ml=?, hosp_ip_op=?, hosp_ip_op_number=?, obstetrics_gync_number=? WHERE  birthdtlid=?;
 
           basePath: ChildDetails.*
           jsonMaps:
@@ -774,6 +778,12 @@ serviceMaps:
             - jsonPath: $.ChildDetails.*.streetNameEn
 
             - jsonPath: $.ChildDetails.*.streetNameMl
+
+            - jsonPath: $.ChildDetails.*.InitiatorinfoDetails.ipopList
+
+            - jsonPath: $.ChildDetails.*.InitiatorinfoDetails.ipopNumber
+
+            - jsonPath: $.ChildDetails.*.InitiatorinfoDetails.obstetricsNumber
 
             - jsonPath: $.ChildDetails.*.id
 
@@ -1084,7 +1094,7 @@ serviceMaps:
 
 
         - query: UPDATE public.eg_birth_initiator SET initiator_name=?, initiator_institution=?, initiator_inst_desig=?, relation=?, initiator_address=?,
-            is_declared=?, declaration_id=?, aadharno=?, mobileno=?, lastmodifiedby=?, lastmodifiedtime=? WHERE birthdtlid=?;
+            is_declared=?, declaration_id=?, aadharno=?, mobileno=?, lastmodifiedby=?, lastmodifiedtime=?, initiator=?, isguardian=? WHERE birthdtlid=?;
           basePath: ChildDetails.*.InitiatorinfoDetails
           jsonMaps:
 
@@ -1109,5 +1119,9 @@ serviceMaps:
             - jsonPath: $.ChildDetails.*.auditDetails.lastModifiedBy
 
             - jsonPath: $.ChildDetails.*.auditDetails.lastModifiedTime
+
+            - jsonPath: $.ChildDetails.*.InitiatorinfoDetails.initiator
+
+            - jsonPath: $.ChildDetails.*.InitiatorinfoDetails.isGuardian
 
             - jsonPath: $.ChildDetails.*.id

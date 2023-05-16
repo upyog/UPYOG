@@ -1,6 +1,8 @@
 package org.ksmart.birth.config;
 
+import org.egov.tracer.config.TracerConfiguration;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Import;
 import org.springframework.stereotype.Component;
 
 import lombok.AllArgsConstructor;
@@ -9,7 +11,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-
+@Import({TracerConfiguration.class})
 @Getter
 @Setter
 @AllArgsConstructor
@@ -196,6 +198,26 @@ public class BirthConfiguration {
 
     @Value("${persister.save.nac.cert.topic}")
     private String nacCertSave;
+
+    //SMS
+    @Value("${kafka.topics.notification.sms}")
+    private String smsNotifTopic;
+
+    @Value("${notification.sms.enabled.forBirth}")
+    private Boolean isBrithSMSEnabled;
+
+    //Localization
+    @Value("${egov.localization.host}")
+    private String localizationHost;
+
+    @Value("${egov.localization.context.path}")
+    private String localizationContextPath;
+
+    @Value("${egov.localization.search.endpoint}")
+    private String localizationSearchEndpoint;
+
+    @Value("${egov.localization.statelevel}")
+    private Boolean isLocalizationStateLevel;
 
 
 }

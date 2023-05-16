@@ -3,9 +3,11 @@ package org.ksmart.birth.utils;
 public class BirthConstants {
 
     public static final String CR_MDMS_TENANT = "kl";
+    //public static final String  MODULE = "birth-services";
     public static final String  CR_MDMS_MODULE = "birth-death-service";
     public static final String  COMMON_MDMS_MODULE = "common-masters";
     public static final String  LOCATION_MDMS_MODULE = "egov-location";
+    public static final String NOTIFICATION_LOCALE = "en_IN";
     public static final String  TENANTS_MODULE = "tenant";
     public static final String CR_MDMS_BIRTH_JSONPATH = "$.MdmsRes.birth-death-service";
     public static final String MDMS_COMMON_JSONPATH = "$.MdmsRes.common-masters";
@@ -31,8 +33,11 @@ public class BirthConstants {
     public static final String COMMON_MDMS_POSTOFFICE = "PostOffice";
     public static final String COMMON_MDMS_LBTYPE = "LBType";
     public static final String CR_MDMS_PLACEMASTER = "PlaceMaster";
-
     public static final String CR_MDMS_MARITAL = "MaritalStatus";
+    public static final String CR_MDMS_INITIATOR= "Initiator";
+    public static final String CR_MDMS_CARETAKER= "CareTakerDesignation";
+    public static final String CR_MDMS_RELATION= "Relation";
+    public static final String CR_MDMS_IPOP= "IPOPList";
     public static final String CR_MDMS_INSTITUTIONTYPE = "InstitutionType";
     public static final String CR_MDMS_PLACE_INSTITUTION_TYPE = "InstitutionTypePlaceOfEvent";
     public static final String CR_MDMS_DELIVERYMETHOD = "DeliveryMethod";
@@ -93,9 +98,16 @@ public class BirthConstants {
     public static final String CR_MDMS_INTITUTIONTYPE_CODE_JSONPATH = "$.MdmsRes.birth-death-service.InstitutionType[*].code";
     public static final String CR_MDMS_DELIVERYMETHOD_CODE_JSONPATH = "$.MdmsRes.birth-death-service.DeliveryMethod[*].code";
     public static final String CR_MDMS_DELIVERY_METHOD_JSONPATH = "$.MdmsRes.birth-death-service.DeliveryMethod";
-
     public static final String CR_MDMS_MARITAL_STATUS_CODE_JSONPATH = "$.MdmsRes.birth-death-service.MaritalStatus[*].code";
     public static final String CR_MDMS_MARITAL_STATUS_JSONPATH = "$.MdmsRes.birth-death-service.MaritalStatus";
+    public static final String CR_MDMS_RELATION_CODE_JSONPATH = "$.MdmsRes.birth-death-service.Relation[*].code";
+    public static final String CR_MDMS_RELATION_JSONPATH = "$.MdmsRes.birth-death-service.Relation";
+    public static final String CR_MDMS_INITIATOR_CODE_JSONPATH = "$.MdmsRes.birth-death-service.Initiator[*].code";
+    public static final String CR_MDMS_INITIATOR_JSONPATH = "$.MdmsRes.birth-death-service.Initiator";
+    public static final String CR_MDMS_CT_CODE_JSONPATH = "$.MdmsRes.birth-death-service.CareTakerDesignation[*].code";
+    public static final String CR_MDMS_CT_JSONPATH = "$.MdmsRes.birth-death-service.CareTakerDesignation";
+    public static final String CR_MDMS_IP_OP_CODE_JSONPATH = "$.MdmsRes.birth-death-service.IPOPList[*].code";
+    public static final String CR_MDMS_IP_OP_JSONPATH = "$.MdmsRes.birth-death-service.IPOPList";
     public static final String CR_MDMS_FOETALDEATH_CODE_JSONPATH = "$.MdmsRes.birth-death-service.FoetalDeath";
     public static final String CR_MDMS_FOETALDEATH_JSONPATH = "$.MdmsRes.birth-death-service.FoetalDeath";
     public static final String CR_MDMS_LBTYPE_JSONPATH = "$.MdmsRes.common-masters.LBType";
@@ -169,5 +181,7 @@ public class BirthConstants {
     public static final String FALSE = "false";
 
     public static final String RDO_PROC_DOC = "CR_RDO_PROCEEDINGS_DOC";
+
+    public static final String INITIATOR_NAME_KEY = "{INITIATOR_NAME}";
 
 }

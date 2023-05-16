@@ -15,6 +15,11 @@ public interface InitiatorDetailsRowMapper {
                 .initiatorMobileNo(rs.getString("ini_mobileno"))
                 .isInitiatorDeclaration(rs.getBoolean("ini_is_declared"))
                 .isCaretaker(rs.getBoolean("ini_is_care_taker"))
+                .initiator(rs.getString("ini_initiator"))
+                .isGuardian(rs.getBoolean("ini_isguardian"))
+                .ipopList(rs.getString("pla_hosp_ip_op"))
+                .ipopNumber(rs.getString("pla_hosp_ip_op_number"))
+                .obstetricsNumber(rs.getString("pla_obstetrics_gync_number"))
                 .build();
     }
 }

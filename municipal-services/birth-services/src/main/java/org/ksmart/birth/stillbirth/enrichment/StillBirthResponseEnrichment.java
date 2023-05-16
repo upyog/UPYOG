@@ -9,12 +9,15 @@ import org.ksmart.birth.stillbirth.service.MdmsForStillBirthService;
 import org.ksmart.birth.utils.BirthConstants;
 import org.ksmart.birth.utils.MdmsUtil;
 import org.ksmart.birth.utils.enums.ErrorCodes;
+import org.ksmart.birth.web.model.InitiatorDetail;
 import org.ksmart.birth.web.model.newbirth.NewBirthApplication;
 import org.ksmart.birth.web.model.stillbirth.StillBirthApplication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+
+import static org.ksmart.birth.utils.BirthConstants.BIRTH_PLACE_HOSPITAL;
 
 @Slf4j
 @Component
@@ -57,6 +60,24 @@ public class StillBirthResponseEnrichment {
                 }
                 if(birth.getParentsDetails()!= null) {
                     mdmsBirthService.setParentsDetails(birth.getParentsDetails(), mdmsData);
+                }
+                if(birth.getInitiatorDetails() != null) {
+                    InitiatorDetail initiatorDetail = birth.getInitiatorDetails();
+                    initiatorDetail.setInitiatorEn(mdmsTenantService.getInitiatorEn(mdmsData, initiatorDetail.getInitiator()));
+                    initiatorDetail.setInitiatorMl(mdmsTenantService.getInitiatorEn(mdmsData, initiatorDetail.getInitiator()));
+
+                    initiatorDetail.setRelationEn(mdmsTenantService.getRelationEn(mdmsData, initiatorDetail.getRelation()));
+                    initiatorDetail.setRelationMl(mdmsTenantService.getRelationMl(mdmsData, initiatorDetail.getRelation()));
+
+                    initiatorDetail.setInitiatorDesiEn(mdmsTenantService.getCareTakerEn(mdmsData, initiatorDetail.getInitiatorDesi()));
+                    initiatorDetail.setInitiatorDesiMl(mdmsTenantService.getCareTakerMl(mdmsData, initiatorDetail.getInitiatorDesi()));
+
+                    if (birth.getPlaceofBirthId() != null) {
+                        if (birth.getPlaceofBirthId().contains(BIRTH_PLACE_HOSPITAL)) {
+                            initiatorDetail.setIpopListEn(mdmsTenantService.getOpIpEn(mdmsData, initiatorDetail.getIpopList()));
+                            initiatorDetail.setIpopListMl(mdmsTenantService.getOpIpMl(mdmsData, initiatorDetail.getIpopList()));
+                        }
+                    }
                 }
                 if (birth.getParentAddress().getCountryIdPermanent() != null && birth.getParentAddress().getStateIdPermanent() != null) {
                     if (birth.getParentAddress().getCountryIdPermanent().contains(BirthConstants.COUNTRY_CODE)) {

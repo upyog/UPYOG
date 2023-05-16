@@ -27,19 +27,18 @@ import java.util.List;
 public class CommonRepository {
     @Autowired
     CommonQueryBuilder commonQueryBuilder;
+
+    @Autowired
+    BirthConfiguration birthDeathConfiguration;
     private final BndProducer producer;
     private final JdbcTemplate jdbcTemplate;
-    private final BirthConfiguration birthDeathConfiguration;
     private final NewBirthResponseEnrichment enrichment;
-
-
     private final BirthApplicationRowMapper rowMapper;
     @Autowired
     CommonRepository(BndProducer producer, JdbcTemplate jdbcTemplate,
-                     BirthConfiguration birthDeathConfiguration,BirthApplicationRowMapper rowMapper, NewBirthResponseEnrichment enrichment){
+                     BirthApplicationRowMapper rowMapper, NewBirthResponseEnrichment enrichment){
         this.producer = producer;
         this.jdbcTemplate = jdbcTemplate;
-        this.birthDeathConfiguration = birthDeathConfiguration;
         this.rowMapper = rowMapper;
         this.enrichment = enrichment;
     }

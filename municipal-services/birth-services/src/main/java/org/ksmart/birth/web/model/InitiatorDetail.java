@@ -18,9 +18,25 @@ public class InitiatorDetail {
     @JsonProperty("initiator")
     private String initiator;
 
+    @Size(max = 300)
+    @JsonProperty("initiatorEn")
+    private String initiatorEn;
+
+    @Size(max = 300)
+    @JsonProperty("initiatorMl")
+    private String initiatorMl;
+
     @Size(max = 64)
     @JsonProperty("relation")
     private String relation;
+
+    @Size(max = 300)
+    @JsonProperty("relationEn")
+    private String relationEn;
+
+    @Size(max = 300)
+    @JsonProperty("relationMl")
+    private String relationMl;
 
     @Size(max = 300)
     @JsonProperty("initiatorInstitutionName")
@@ -42,6 +58,14 @@ public class InitiatorDetail {
     @JsonProperty("initiatorDesi")
     private String initiatorDesi;
 
+    @Size(max = 300)
+    @JsonProperty("initiatorDesiEn")
+    private String initiatorDesiEn;
+
+    @Size(max = 300)
+    @JsonProperty("initiatorDesiMl")
+    private String initiatorDesiMl;
+
     @Size(max = 2000)
     @JsonProperty("initiatorAddress")
     private String initiatorAddress;
@@ -58,6 +82,14 @@ public class InitiatorDetail {
     @Size(max = 20)
     @JsonProperty("ipopList")
     private String ipopList;
+
+    @Size(max = 64)
+    @JsonProperty("ipopListEn")
+    private String ipopListEn;
+
+    @Size(max = 64)
+    @JsonProperty("ipopListMl")
+    private String ipopListMl;
 
     @Size(max = 200)
     @JsonProperty("ipopNumber")

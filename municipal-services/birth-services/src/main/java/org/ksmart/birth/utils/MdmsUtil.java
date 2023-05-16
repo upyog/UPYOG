@@ -201,6 +201,30 @@ public class MdmsUtil {
                 .build());
         crMasterDetails.addAll(masterMaritalStatus);
 
+        // Add Module initiator
+        List<MasterDetail> masterInitiator = Collections.singletonList(MasterDetail.builder()
+                .name(BirthConstants.CR_MDMS_INITIATOR)
+                .build());
+        crMasterDetails.addAll(masterInitiator);
+
+        // Add Module relation
+        List<MasterDetail> masterRelation = Collections.singletonList(MasterDetail.builder()
+                .name(BirthConstants.CR_MDMS_RELATION)
+                .build());
+        crMasterDetails.addAll(masterRelation);
+
+        // Add Module care taker
+        List<MasterDetail> masterCaretaker = Collections.singletonList(MasterDetail.builder()
+                .name(BirthConstants.CR_MDMS_CARETAKER)
+                .build());
+        crMasterDetails.addAll(masterCaretaker);
+
+        // Add Module ip op list
+        List<MasterDetail> masterIpop = Collections.singletonList(MasterDetail.builder()
+                .name(BirthConstants.CR_MDMS_IPOP)
+                .build());
+        crMasterDetails.addAll(masterIpop);
+
 
         //Add masters to modules
         ModuleDetail crModuleDetail = ModuleDetail.builder()
