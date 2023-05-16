@@ -182,7 +182,7 @@ serviceMaps:
             - jsonPath: $.BornOutsideChildDetails.*.BornOutsideAddressBirthDetails.presentOutSideIndiaProvinceEn
             - jsonPath: $.BornOutsideChildDetails.*.BornOutsideAddressBirthDetails.presentOutSideIndiaProvinceMl
             - jsonPath: $.BornOutsideChildDetails.*.BornOutsideAddressBirthDetails.presentOutSideIndiaPostCode
-            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideAddressBirthDetails.presentOutSideIndiaadrsVillage
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideAddressBirthDetails.villageNamePresent
             - jsonPath: $.BornOutsideChildDetails.*.BornOutsideAddressBirthDetails.presentOutSideCountry
             - jsonPath: $.BornOutsideChildDetails.*.id
             - jsonPath: $.BornOutsideChildDetails.*.BornOutsideAddressBirthDetails.bioAdoptPresent
@@ -228,7 +228,7 @@ serviceMaps:
             - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.mother_resdnce_addr_type
             - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.permntInKeralaAdrLBName
             - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.townOrVillagePresent
-            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.mother_resdnce_place_en
+            - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.villageNamePresent
             - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.mother_resdnce_place_ml
             - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.mother_resdnce_lbtype
             - jsonPath: $.BornOutsideChildDetails.*.BornOutsideParentsDetails.mother_resdnce_district
