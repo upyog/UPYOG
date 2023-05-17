@@ -129,8 +129,11 @@ public class PaymentUpdateService implements BaseEnrichment{
 		          pay.setIsPaymentSuccess(true);    
 		          pay.setApplicationNumber(paymentDetail.getBill().getConsumerCode());
 		          pay.setAuditDetails(auditDetails);
+		          commonPays.add(pay);
 		            
 			  }
+			 
+			  
 				CommonPayRequest paymentReq =CommonPayRequest.builder().requestInfo(requestInfo)
 						.commonPays(commonPays).build();
 				
