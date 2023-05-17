@@ -28,11 +28,9 @@ import java.util.List;
 public class RegisterBirthService {
     private final RegisterBirthRepository repository;
     private final RegisterBirthEnrichment enrichment;
-
     private final EnrichmentService certEnrichment;
     private final BirthCertService birthCertService;
     private final MdmsUtil mdmsUtil;
-
     private final RegistryRequestValidator validator;
     private final MdmsDataService mdmsDataService;
     private final CertificateRepository certificateRepository;
@@ -95,7 +93,7 @@ public class RegisterBirthService {
         return registerCertDetails;
     }
     public BirthCertificate download(RegisterBirthSearchCriteria criteria, RequestInfo requestInfo) {
-//        try {
+        try {
             BirthCertificate  birthCertificate = getBirthCertificate(criteria, requestInfo);
             if (birthCertificate == null) {
                 birthCertificate = new BirthCertificate();
@@ -139,10 +137,10 @@ public class RegisterBirthService {
                 }
             }
             return birthCertificate;
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            throw new CustomException("DOWNLOAD_ERROR", "Error in Downloading Certificate");
-//        }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new CustomException("DOWNLOAD_ERROR", "Error in Downloading Certificate");
+        }
 
     }
 
