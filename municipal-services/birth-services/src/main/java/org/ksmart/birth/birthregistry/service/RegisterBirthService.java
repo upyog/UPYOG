@@ -98,7 +98,6 @@ public class RegisterBirthService {
 //        try {
             BirthCertificate  birthCertificate = getBirthCertificate(criteria, requestInfo);
             if (birthCertificate == null) {
-               // System.out.println(birthCertificate.getBirthCertificateNo());
                 birthCertificate = new BirthCertificate();
                 BirthCertRequest birthCertRequest = BirthCertRequest.builder().birthCertificate(birthCertificate).requestInfo(requestInfo).build();
                 List<RegisterCertificateData> regDetail = searchRegisterForCert(criteria, requestInfo);

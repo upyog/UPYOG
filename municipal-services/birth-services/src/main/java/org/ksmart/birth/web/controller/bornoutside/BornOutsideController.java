@@ -19,6 +19,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
+import static org.ksmart.birth.utils.BirthConstants.STATUS_APPROVED;
+import static org.ksmart.birth.utils.BirthConstants.WF_APPROVE;
+
 @Slf4j
 @RestController
 @RequestMapping("/cr")
@@ -54,10 +57,10 @@ public class BornOutsideController {
         List<BornOutsideApplication> birthApplicationDetails = birthService.updateBirthApplication(request);
 
         //Save details to register when Approved
-      //  if ((birthApplicationDetails.get(0).getApplicationStatus().equals(STATUS_APPROVED) && birthApplicationDetails.get(0).getAction().equals(WF_APPROVE))) {
+        if ((birthApplicationDetails.get(0).getApplicationStatus().equals(STATUS_APPROVED) && birthApplicationDetails.get(0).getAction().equals(WF_APPROVE))) {
             RegisterBirthDetailsRequest registerBirthDetailsRequest = registryReq.createRegistryRequestNew(request);
             registerBirthService.saveRegisterBirthDetails(registerBirthDetailsRequest);
-    //    }
+        }
         BornOutsideResponse response = BornOutsideResponse.builder()
                 .birthDetails(birthApplicationDetails)
                 .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(),true))
