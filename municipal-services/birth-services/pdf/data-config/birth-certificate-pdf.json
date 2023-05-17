@@ -137,7 +137,7 @@
                   "path": "$.updatingTime"
                 },
                 "type": "date"
-              },,
+              },
               {
                 "variable": "fatherName",
                 "value": {
