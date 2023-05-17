@@ -1,6 +1,10 @@
 package org.ksmart.birth.web.controller.NewBirth;
 
 import lombok.extern.slf4j.Slf4j;
+
+import org.ksmart.birth.birthcommon.model.common.CommonPay;
+import org.ksmart.birth.birthcommon.model.common.CommonPayRequest;
+import org.ksmart.birth.birthcommon.repoisitory.CommonRepository;
 import org.ksmart.birth.birthregistry.model.BirthCertificate;
 import org.ksmart.birth.birthregistry.model.RegisterBirthDetailsRequest;
 import org.ksmart.birth.birthregistry.service.RegisterBirthService;
@@ -16,7 +20,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+
+
 import javax.validation.Valid;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.ksmart.birth.utils.BirthConstants.STATUS_APPROVED;
@@ -29,12 +38,14 @@ public class NewBirthController {
     private final ResponseInfoFactory responseInfoFactory;
     private final NewBirthService ksmartBirthService;
     private final RegisterBirthService registerBirthService;
+    private  final CommonRepository repository;
     @Autowired
     NewBirthController(NewBirthService ksmartBirthService, ResponseInfoFactory responseInfoFactory,
-                       RegisterBirthService registerBirthService) {
+                       RegisterBirthService registerBirthService,CommonRepository repository) {
         this.ksmartBirthService=ksmartBirthService;
         this.responseInfoFactory=responseInfoFactory;
         this.registerBirthService = registerBirthService;
+        this.repository=repository;
     }
 
     @PostMapping(value = {"/createbirth"})
@@ -77,4 +88,30 @@ public class NewBirthController {
                                                               .build();
         return ResponseEntity.ok(response);
     }
+    
+//    @PostMapping(value = {"/get"})
+//    public void getdet(@RequestBody NewBirthDetailRequest request) {
+//    	
+//   	 List<CommonPay> commonPays =  new ArrayList<>();
+//	 CommonPay pay = new CommonPay();
+//	 
+//           
+//		  pay.setAction("INITIATE");
+//		  pay.setApplicationStatus("INITIATED");
+//		  pay.setHasPayment(true);
+//		  pay.setAmount(new BigDecimal(10));
+//          pay.setIsPaymentSuccess(true);    
+//          pay.setApplicationNumber("KL-KOCHI-C-000710-CRBRNR-2023-FILE");
+////          pay.setAuditDetails(auditDetails);
+//          commonPays.add(pay);
+//            
+// 
+//	 System.out.println("commonPays "+commonPays.get(0).getAction());
+//	  
+// 	CommonPayRequest paymentReq =CommonPayRequest.builder().requestInfo(request.getRequestInfo())
+// 				.commonPays(commonPays).build();
+//		
+// 	repository.updatePaymentDetails(paymentReq);
+//
+//    	}
 }

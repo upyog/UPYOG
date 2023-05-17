@@ -120,7 +120,15 @@ public class PaymentUpdateService implements BaseEnrichment{
 		        
 		        
 			 List<CommonPay> commonPays =  new ArrayList<>();
-			  for (CommonPay pay : commonPays) {
+			 CommonPay pay = new CommonPay();
+			 
+			 
+			 
+//			 pay.builder()
+//			 .action("INITIATE");
+//			 
+//			 
+//			  for (CommonPay pay : commonPays) {
 		           
 				  pay.setAction("INITIATE");
 				  pay.setApplicationStatus("INITIATED");
@@ -131,14 +139,13 @@ public class PaymentUpdateService implements BaseEnrichment{
 		          pay.setAuditDetails(auditDetails);
 		          commonPays.add(pay);
 		            
-			  }
-			 
+//			  }
+			 System.out.println("commonPays "+commonPays.get(0).getAction());
 			  
 				CommonPayRequest paymentReq =CommonPayRequest.builder().requestInfo(requestInfo)
 						.commonPays(commonPays).build();
 				
-				 System.out.println("common req "+paymentReq.getCommonPays().get(0).getAction());
-				 System.out.println("common req "+paymentReq.getCommonPays().get(0).getAuditDetails());
+				 
 				 
 				  repository.updatePaymentDetails(paymentReq);
 //		    producer.push(birthDeathConfiguration.getUpdateBirthPaymentTopic(), request);
