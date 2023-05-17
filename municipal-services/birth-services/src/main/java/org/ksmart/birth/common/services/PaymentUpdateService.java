@@ -72,11 +72,9 @@ public class PaymentUpdateService implements BaseEnrichment{
 		this.config=config;
 		this.repository=repository;
 		this.wfIntegrator=wfIntegrator;
-		this.enrichmentService= enrichmentService;
-//		this.mapper= mapper;
+		this.enrichmentService= enrichmentService; 
 		this.util=util;
-		this.commonService=commonService;
-//		this.commonRepository=commonRepository;
+		this.commonService=commonService; 
 		this.birthDeathConfiguration=birthDeathConfiguration;
 		
 	}
@@ -118,18 +116,9 @@ public class PaymentUpdateService implements BaseEnrichment{
 			  User userInfo = requestInfo.getUserInfo();
 		        AuditDetails auditDetails = buildAuditDetails(userInfo.getUuid(), Boolean.TRUE);
 		        
-		        
+		// Update birth table with status initiated
 			 List<CommonPay> commonPays =  new ArrayList<>();
-			 CommonPay pay = new CommonPay();
-			 
-			 
-			 
-//			 pay.builder()
-//			 .action("INITIATE");
-//			 
-//			 
-//			  for (CommonPay pay : commonPays) {
-		           
+			 CommonPay pay = new CommonPay();		           
 				  pay.setAction("INITIATE");
 				  pay.setApplicationStatus("INITIATED");
 				  pay.setHasPayment(true);
@@ -137,23 +126,12 @@ public class PaymentUpdateService implements BaseEnrichment{
 		          pay.setIsPaymentSuccess(true);    
 		          pay.setApplicationNumber(paymentDetail.getBill().getConsumerCode());
 		          pay.setAuditDetails(auditDetails);
-		          commonPays.add(pay);
-		            
-//			  }
-			 System.out.println("commonPays "+commonPays.get(0).getAction());
-			  
-				CommonPayRequest paymentReq =CommonPayRequest.builder().requestInfo(requestInfo)
-						.commonPays(commonPays).build();
-				
-				 
+		          commonPays.add(pay);	     
+			CommonPayRequest paymentReq =CommonPayRequest.builder().requestInfo(requestInfo)
+						.commonPays(commonPays).build();		
 				 
 				  repository.updatePaymentDetails(paymentReq);
-//		    producer.push(birthDeathConfiguration.getUpdateBirthPaymentTopic(), request);
-			 
-			 
-			 
-		
-			
+		//End	  
 			}
 			
 
