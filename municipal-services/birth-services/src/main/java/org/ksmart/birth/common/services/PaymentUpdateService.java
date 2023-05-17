@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
- 
+import org.egov.common.contract.request.User;
 import org.egov.tracer.model.CustomException;
 import org.json.JSONObject;
 import org.ksmart.birth.birthcommon.model.common.CommonPay;
@@ -16,6 +16,8 @@ import org.ksmart.birth.birthcommon.repoisitory.CommonRepository;
 import org.ksmart.birth.birthcommon.services.CommonService;
 import org.ksmart.birth.common.calculation.collections.models.PaymentDetail;
 import org.ksmart.birth.common.calculation.collections.models.PaymentRequest;
+import org.ksmart.birth.common.enrichment.BaseEnrichment;
+import org.ksmart.birth.common.model.AuditDetails;
 import org.ksmart.birth.config.BirthConfiguration;
 import org.ksmart.birth.newbirth.enrichment.NewBirthEnrichment;
 import org.ksmart.birth.newbirth.repository.NewBirthRepository;
@@ -42,7 +44,7 @@ import static org.ksmart.birth.utils.BirthDeathConstants.*;
 import static org.ksmart.birth.utils.BirthConstants.STATUS_FOR_PAYMENT;
 @Service
 @Slf4j
-public class PaymentUpdateService {
+public class PaymentUpdateService implements BaseEnrichment{
 	private NewBirthService newBirthService;
 	
 	private BirthConfiguration config;
@@ -112,6 +114,11 @@ public class PaymentUpdateService {
 					.newBirthDetails(birth).build();
 			
 			wfIntegrator.callWorkFlow(updateRequest);
+			
+			  User userInfo = requestInfo.getUserInfo();
+		        AuditDetails auditDetails = buildAuditDetails(userInfo.getUuid(), Boolean.TRUE);
+		        
+		        
 			 List<CommonPay> commonPays =  new ArrayList<>();
 			  for (CommonPay pay : commonPays) {
 		           
@@ -121,11 +128,15 @@ public class PaymentUpdateService {
 				  pay.setAmount(new BigDecimal(10));
 		          pay.setIsPaymentSuccess(true);    
 		          pay.setApplicationNumber(paymentDetail.getBill().getConsumerCode());
-		             
+		          pay.setAuditDetails(auditDetails);
 		            
 			  }
 				CommonPayRequest paymentReq =CommonPayRequest.builder().requestInfo(requestInfo)
 						.commonPays(commonPays).build();
+				
+				 System.out.println("common req "+paymentReq.getCommonPays().get(0).getAction());
+				 System.out.println("common req "+paymentReq.getCommonPays().get(0).getAuditDetails());
+				 
 				  repository.updatePaymentDetails(paymentReq);
 //		    producer.push(birthDeathConfiguration.getUpdateBirthPaymentTopic(), request);
 			 

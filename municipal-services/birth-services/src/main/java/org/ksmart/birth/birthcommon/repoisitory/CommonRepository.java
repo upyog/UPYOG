@@ -42,8 +42,7 @@ public class CommonRepository {
         this.rowMapper = rowMapper;
         this.enrichment = enrichment;
     }
-    public List<CommonPay> updatePaymentDetails(CommonPayRequest request) {
-    	 System.out.println("common req "+birthDeathConfiguration.getUpdateBirthPaymentTopic());
+    public List<CommonPay> updatePaymentDetails(CommonPayRequest request) {   
     	 
         producer.push(birthDeathConfiguration.getUpdateBirthPaymentTopic(), request);
         return request.getCommonPays();

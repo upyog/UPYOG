@@ -4,6 +4,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 import javax.validation.constraints.Size;
+
+import org.ksmart.birth.common.model.AuditDetails;
+
 import java.math.BigDecimal;
 @Getter
 @Setter
@@ -26,4 +29,7 @@ public class CommonPay {
     private Boolean isPaymentSuccess;
 
     private BigDecimal amount = BigDecimal.ZERO;
+    
+    @JsonProperty("auditDetails")
+    private AuditDetails auditDetails;
 }
