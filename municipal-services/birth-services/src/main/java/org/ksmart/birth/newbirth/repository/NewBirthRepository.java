@@ -94,7 +94,7 @@ public class NewBirthRepository {
         criteria.setApplicationType(BirthConstants.FUN_MODULE_NEW);
         String query = commonQueryBuilder.getBirthApplicationSearchQuery(criteria, preparedStmtValues, Boolean.FALSE);
         if (preparedStmtValues.size() == 0) {
-            throw new CustomException(ErrorCodes.NOT_FOUND.getCode(), "No result found.");
+            return null;
         } else {
             List<NewBirthApplication> result = jdbcTemplate.query(query, preparedStmtValues.toArray(), ksmartBirthApplicationRowMapper);
             RequestInfo requestInfo = request.getRequestInfo();
