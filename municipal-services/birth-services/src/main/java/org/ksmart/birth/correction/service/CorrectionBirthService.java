@@ -86,7 +86,7 @@ public class CorrectionBirthService {
         //search application exist
 
         //validator.validateUpdate(request, mdmsData);
-       // workflowIntegrator.callWorkFlow(request);
+        workflowIntegrator.callWorkFlow(request);
         return repository.updateKsmartBirthDetails(request);
     }
 
