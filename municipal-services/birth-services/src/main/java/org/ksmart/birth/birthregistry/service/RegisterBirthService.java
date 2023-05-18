@@ -95,8 +95,9 @@ public class RegisterBirthService {
     public BirthCertificate download(RegisterBirthSearchCriteria criteria, RequestInfo requestInfo) {
         try {
             BirthCertificate  birthCertificate = getBirthCertificate(criteria, requestInfo);
+            System.out.println(birthCertificate);
             if (birthCertificate == null) {
-                birthCertificate = new BirthCertificate();
+            birthCertificate = new BirthCertificate();
                 BirthCertRequest birthCertRequest = BirthCertRequest.builder().birthCertificate(birthCertificate).requestInfo(requestInfo).build();
                 List<RegisterCertificateData> regDetail = searchRegisterForCert(criteria, requestInfo);
                 if (regDetail.size() == 1) {
@@ -150,8 +151,9 @@ public class RegisterBirthService {
         System.out.println(regDetail.size());
         if (regDetail.size() == 1) {
             CertificateCriteria certificateCriteria = new CertificateCriteria();
-            certificateCriteria.setTenantId(criteria.getTenantId());
-            certificateCriteria.setTenantId(criteria.getId());
+            certificateCriteria.setTenantId(regDetail.get(0).getTenantId());
+            certificateCriteria.setRegistrationNo(regDetail.get(0).getRegistrationNo());
+            System.out.println(regDetail.get(0).getRegistrationNo());
            List<BirthCertificate> birthCertificates = certificateRepository.searchBirthDetails(certificateCriteria);
            if(birthCertificates.size() == 1) {
                birthCertificate = birthCertificates.get(0);

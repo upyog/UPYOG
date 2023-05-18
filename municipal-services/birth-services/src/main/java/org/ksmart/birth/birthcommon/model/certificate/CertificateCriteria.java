@@ -22,6 +22,9 @@ public class CertificateCriteria {
     @JsonProperty("applicationId")
     private String applicationId;
 
+    @JsonProperty("registrationId")
+    private String registrationId;
+
     @JsonProperty("registrationNo")
     private String registrationNo;
 

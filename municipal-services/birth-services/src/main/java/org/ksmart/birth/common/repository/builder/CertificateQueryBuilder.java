@@ -26,6 +26,7 @@ public class CertificateQueryBuilder extends BaseQueryBuilder {
     public StringBuilder prepareSearchCriteria(@NotNull CertificateCriteria criteria, StringBuilder query, @NotNull List<Object> preparedStmtValues) {
         addFilter("id", criteria.getId(), query, preparedStmtValues);
         addFilter("registrationno", criteria.getRegistrationNo(), query, preparedStmtValues);
+        addFilter("registrydetailsid", criteria.getRegistrationId(), query, preparedStmtValues);
         addFilter("ack_no", criteria.getApplicationNumber(), query, preparedStmtValues);
         return query;
 

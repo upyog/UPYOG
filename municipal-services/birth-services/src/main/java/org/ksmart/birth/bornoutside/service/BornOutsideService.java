@@ -4,14 +4,12 @@ import org.ksmart.birth.birthcommon.model.WorkFlowCheck;
 import org.ksmart.birth.birthcommon.model.demand.Demand;
 import org.ksmart.birth.birthcommon.services.DemandService;
 import org.ksmart.birth.bornoutside.validator.BirthOutsideApplicationValidator;
-import org.ksmart.birth.newbirth.validator.NewBirthApplicationValidator;
 import org.ksmart.birth.bornoutside.repository.BornOutsideRepository;
 import org.ksmart.birth.utils.MdmsUtil;
 import org.ksmart.birth.web.model.SearchCriteria;
 import org.ksmart.birth.web.model.bornoutside.BornOutsideApplication;
 import org.ksmart.birth.web.model.bornoutside.BornOutsideDetailRequest;
 import org.ksmart.birth.workflow.WorkflowIntegratorBornOutside;
-import org.ksmart.birth.workflow.WorkflowIntegratorNewBirth;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
