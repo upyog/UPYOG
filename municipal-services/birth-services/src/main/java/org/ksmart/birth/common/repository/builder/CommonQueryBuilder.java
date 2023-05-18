@@ -72,6 +72,13 @@ public class CommonQueryBuilder extends BaseQueryBuilder {
 	        .append(" LEFT JOIN eg_birth_applicant ebap ON ebap.birthdtlid = ebd.id")	         
 	        .append(" LEFT JOIN eg_birth_initiator ini ON ini.birthdtlid = ebd.id").toString();
    
+	private static final String QUERYCONDITIONCOMMON = new StringBuilder().append(" FROM public.eg_birth_details ebd LEFT JOIN eg_birth_place ebp ON ebp.birthdtlid = ebd.id LEFT JOIN eg_birth_father_information ebfi ON ebfi.birthdtlid = ebd.id  ")
+			.append(" LEFT JOIN eg_birth_mother_information ebmi ON ebmi.birthdtlid = ebd.id  ")
+			.append(" LEFT JOIN eg_birth_permanent_address eperad ON eperad.birthdtlid = ebd.id  ")
+			.append(" LEFT JOIN eg_birth_present_address epreadd ON epreadd.birthdtlid = ebd.id  ")
+			.append(" LEFT JOIN eg_birth_statitical_information estat ON estat.birthdtlid = ebd.id")
+			.append(" LEFT JOIN eg_birth_abandoned_care_taker ct ON ct.birthdtlid = ebd.id")
+			.append(" LEFT JOIN eg_birth_initiator ini ON ini.birthdtlid = ebd.id ").toString();
 
 	
 	
@@ -164,6 +171,9 @@ public class CommonQueryBuilder extends BaseQueryBuilder {
 		return QUERYCONDITION;
 	}
 	
+	public String getQueryConditionCommon() {
+		return QUERYCONDITIONCOMMON;
+	}
 	public String getQueryConditionAdptn() {
 		return QUERYCONDITIONADPTN;
 	}
@@ -292,12 +302,12 @@ public class CommonQueryBuilder extends BaseQueryBuilder {
 		return query.toString();
 	}
 
-//	public String getBirthApplicationSearchQueryCommon(@NotNull SearchCriteria criteria, @NotNull List<Object> preparedStmtValues, Boolean isCount) {
-//		StringBuilder query = prepareSearchQuery();
-//		prepareSearchCriteria(criteria, query, preparedStmtValues);
-//		prepareOrderBy(criteria, query, preparedStmtValues);
-//		return query.toString();
-//	}
+	public String getBirthApplicationSearchQueryCommon(@NotNull SearchCriteria criteria, @NotNull List<Object> preparedStmtValues, Boolean isCount) {
+		StringBuilder query = prepareSearchQueryCommon();
+		prepareSearchCriteria(criteria, query, preparedStmtValues);
+		prepareOrderBy(criteria, query, preparedStmtValues);
+		return query.toString();
+	}
 
 	public String getApplicationSearchQueryForRegistry(@NotNull SearchCriteria criteria, @NotNull List<Object> preparedStmtValues) {
 		StringBuilder query = prepareSearchQuery();
@@ -326,6 +336,29 @@ public class CommonQueryBuilder extends BaseQueryBuilder {
 				.append(",")
 				.append(getQueryCareTaker())
 				.append(getQueryCondition()).toString();
+		return query;
+	}
+	
+	public StringBuilder prepareSearchQueryCommon() {
+		StringBuilder query = new StringBuilder();
+		query.append(getQueryMain())
+				.append(",")
+				.append(getQueryPlaceOfEvent())
+				.append(",")
+				.append(getQueryFaterInfo())
+				.append(",")
+				.append(getQueryMoterInfo())
+				.append(",")
+				.append(getQueryPresent())
+				.append(",")
+				.append(getQueryPermanant())
+				.append(",")
+				.append(getQueryStat())
+				.append(",")
+				.append(getQueryIntiator())
+				.append(",")
+				.append(getQueryCareTaker())
+				.append(getQueryConditionCommon()).toString();
 		return query;
 	}
 

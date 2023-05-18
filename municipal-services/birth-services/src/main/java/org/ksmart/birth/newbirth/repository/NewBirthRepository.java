@@ -104,10 +104,9 @@ public class NewBirthRepository {
     }
 
     public List<NewBirthApplication> searchBirth(RequestInfo requestInfo, SearchCriteria criteria) {
-        String uuid = null;
-        List<Object> preparedStmtValues = new ArrayList<>();
-        criteria.setApplicationType(BirthConstants.FUN_MODULE_NEW);
-        String query = commonQueryBuilder.getBirthApplicationSearchQuery(criteria, preparedStmtValues, Boolean.FALSE);
+      
+        List<Object> preparedStmtValues = new ArrayList<>();        
+        String query = commonQueryBuilder.getBirthApplicationSearchQueryCommon(criteria, preparedStmtValues, Boolean.FALSE);
         if (preparedStmtValues.size() == 0) {
             throw new CustomException(ErrorCodes.NOT_FOUND.getCode(), "No result found.");
         } else {

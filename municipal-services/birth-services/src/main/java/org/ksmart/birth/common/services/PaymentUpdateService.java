@@ -107,7 +107,7 @@ public class PaymentUpdateService implements BaseEnrichment{
 			searchCriteria.setBusinessService(paymentDetail.getBusinessService());
 			
 			List<NewBirthApplication> birth = newBirthService.searchBirth(requestInfo,searchCriteria);
-			
+			System.out.println("birth out"+birth.get(0).getAction());
 			NewBirthDetailRequest updateRequest = NewBirthDetailRequest.builder().requestInfo(requestInfo)
 					.newBirthDetails(birth).build();
 			
