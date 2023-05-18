@@ -30,7 +30,10 @@ public class StillBirthApplication {
     private Long dateOfBirth;
 
     @JsonProperty("birthDateTime")
-    private Long timeOfBirth;
+    private String timeOfBirth;
+
+    @JsonProperty("birthTime")
+    private Long timeBirth;
 
     @Size(max = 64)
     @JsonProperty("gender")
