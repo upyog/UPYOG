@@ -50,18 +50,6 @@ public class CorrectionBirthService {
 
 //        WorkFlow Integration
         workflowIntegrator.callWorkFlow(request);
-
-        //Demand Creation
-//        application.forEach(birth->{
-//            if(birth.getApplicationStatus() == STATUS_FOR_PAYMENT){
-//                List<Demand> demands = new ArrayList<>();
-//                Demand demand = new Demand();
-//                demand.setTenantId(birth.getTenantId());
-//                demand.setConsumerCode(birth.getApplicationNo());
-//                demands.add(demand);
-//                birth.setDemands(demandService.saveDemandDetails(demands,request.getRequestInfo()));
-//            }
-//        });
         application.forEach(birth->{
             if (birth.getApplicationStatus().equals(STATUS_FOR_PAYMENT)) {
                 List<Demand> demands = new ArrayList<>();
