@@ -67,12 +67,10 @@ public class CorrectionBirthRepository {
         SearchCriteria criteria = new SearchCriteria();
         List<RegisterBirthDetail> result = null;
         if (requestApplication.getCorrectionDetails().size() > 0) {
-            criteria.getApplicationNumber().add(requestApplication.getCorrectionDetails().get(0).getApplicationNo());
+            criteria.setId(requestApplication.getCorrectionDetails().get(0).getId());
             criteria.setTenantId(requestApplication.getCorrectionDetails().get(0).getTenantId());
-
             String query = queryBuilder.getApplicationSearchQueryForRegistry(criteria, preparedStmtValues);
             result = jdbcTemplate.query(query, preparedStmtValues.toArray(), registerRowMapperForApp);
-
         }
         return RegisterBirthDetailsRequest.builder()
                 .requestInfo(requestApplication.getRequestInfo())
@@ -84,7 +82,6 @@ public class CorrectionBirthRepository {
         criteria.setApplicationType(BirthConstants.FUN_MODULE_COR);
         String query = queryBuilder.getNewBirthApplicationSearchQuery(criteria, request, preparedStmtValues, Boolean.FALSE);
         List<CorrectionApplication> result = jdbcTemplate.query(query, preparedStmtValues.toArray(), rowMapper);
-
         return result;
     }
 }

@@ -224,7 +224,6 @@ public class CommonQueryBuilder extends BaseQueryBuilder {
 	public String getQueryDocuments() {
 		return QUERY_NACDOCUMENTS;
 	}
-	
 
 	public String getQueryCareTaker() {
 		return QUERY_CARETAKE_ABAN;

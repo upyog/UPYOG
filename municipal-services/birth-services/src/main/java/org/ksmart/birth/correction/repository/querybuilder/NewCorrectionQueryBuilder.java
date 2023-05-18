@@ -27,11 +27,7 @@ public class NewCorrectionQueryBuilder extends NewBaseCorrectionQuery {
                                                                             .append("corchld.register_table_name as ch_register_table_name, corchld.register_column_name as ch_register_column_name,")
                                                                             .append("corchld.new_value as ch_new_value, corchld.old_value as ch_old_value,corchld.correction_id as ch_correction_id, corchld.local_column as ch_local_column").toString();
     private static final String QUERY_CORRECTION_DOCS = new StringBuilder().append("doc.id as do_id, doc.birthdtlid as do_birthdtlid, doc.correction_field_name as do_correction_field_name, doc.document_type as do_document_type, doc.filestoreid as do_filestoreid, doc.active as do_active,doc.correction_id as do_correction_id").toString();
-    private static final String QUERYCONDITION = new StringBuilder().append(" FROM public.eg_birth_details ebd LEFT JOIN eg_birth_place ebp ON ebp.birthdtlid = ebd.id LEFT JOIN eg_birth_father_information ebfi ON ebfi.birthdtlid = ebd.id AND ebfi.bio_adopt='BIOLOGICAL'")
-            .append(" LEFT JOIN eg_birth_mother_information ebmi ON ebmi.birthdtlid = ebd.id AND ebmi.bio_adopt='BIOLOGICAL'")
-            .append(" LEFT JOIN eg_birth_permanent_address eperad ON eperad.birthdtlid = ebd.id AND eperad.bio_adopt='BIOLOGICAL'")
-            .append(" LEFT JOIN eg_birth_present_address epreadd ON epreadd.birthdtlid = ebd.id AND epreadd.bio_adopt='BIOLOGICAL'")
-            .append(" LEFT JOIN eg_birth_correction cor ON cor.birthdtlid = ebd.id")
+    private static final String QUERYCORRECTIONCONDITION = new StringBuilder().append(" LEFT JOIN eg_birth_correction cor ON cor.birthdtlid = ebd.id")
             .append(" LEFT JOIN eg_birth_correction_document doc ON doc.birthdtlid = ebd.id")
             .append(" LEFT JOIN eg_birth_correction_child corchld ON corchld.birthdtlid = ebd.id ").toString();
 
@@ -51,7 +47,7 @@ public class NewCorrectionQueryBuilder extends NewBaseCorrectionQuery {
         return query.toString();
     }
     public StringBuilder prepareSearchQuery() {
-        StringBuilder query = new StringBuilder(QUERY);
+        StringBuilder query = new StringBuilder(commonQueryBuilder.getQueryMain());
         query.append(",").append(commonQueryBuilder.getQueryPlaceOfEvent())
                 .append(",")
                 .append(commonQueryBuilder.getQueryFaterInfo())
@@ -62,12 +58,19 @@ public class NewCorrectionQueryBuilder extends NewBaseCorrectionQuery {
                 .append(",")
                 .append(commonQueryBuilder.getQueryPermanant())
                 .append(",")
+                .append(commonQueryBuilder.getQueryStat())
+                .append(",")
+                .append(commonQueryBuilder.getQueryIntiator())
+                .append(",")
+                .append(commonQueryBuilder.getQueryCareTaker())
+                .append(",")
                 .append(QUERY_CORRECTION)
                 .append(",")
                 .append(QUERY_CORRECTION_CHILD)
                 .append(",")
                 .append(QUERY_CORRECTION_DOCS)
-                .append(QUERYCONDITION).toString();
+                .append(commonQueryBuilder.getQueryConditionCommon())
+                .append(QUERYCORRECTIONCONDITION).toString();
         return query;
     }
 

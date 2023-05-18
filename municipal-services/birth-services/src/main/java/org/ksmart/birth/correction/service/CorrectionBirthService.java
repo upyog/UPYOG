@@ -78,14 +78,12 @@ public class CorrectionBirthService {
     }
 
     public List<CorrectionApplication> updateKsmartBirthDetails(CorrectionRequest request) {
-
         Object mdmsData = mdmsUtil.mdmsCall(request.getRequestInfo());
         // validate request
         validator.validateUpdate(request, mdmsData);
 
         //search application exist
-
-        //validator.validateUpdate(request, mdmsData);
+        validator.validateUpdate(request, mdmsData);
         workflowIntegrator.callWorkFlow(request);
         return repository.updateKsmartBirthDetails(request);
     }
