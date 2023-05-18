@@ -116,7 +116,7 @@ CREATE TABLE IF NOT EXISTS public.eg_register_birth_permanent_address_audit (
     ot_address2_ml character varying(2500) COLLATE pg_catalog."default",
     ot_state_region_province_en character varying(2500) COLLATE pg_catalog."default",
     ot_state_region_province_ml character varying(2500) COLLATE pg_catalog."default",
-    ot_zipcode character varying(50) COLLATE pg_catalog."default",
+    ot_zipcode character varying(10) COLLATE pg_catalog."default",
     villageid character varying(64) COLLATE pg_catalog."default",
     village_name character varying(1000) COLLATE pg_catalog."default",
     tenantid character varying(64) COLLATE pg_catalog."default",
@@ -131,8 +131,8 @@ CREATE TABLE IF NOT EXISTS public.eg_register_birth_permanent_address_audit (
     street_name_ml character varying(2000) COLLATE pg_catalog."default",
     districtid character varying(64) COLLATE pg_catalog."default",
     stateid character varying(64) COLLATE pg_catalog."default",
-    poid character varying(150) COLLATE pg_catalog."default",
-    pinno character varying(50) COLLATE pg_catalog."default",
+    poid character varying(64) COLLATE pg_catalog."default",
+    pinno character varying(10) COLLATE pg_catalog."default",
     countryid character varying(64) COLLATE pg_catalog."default",
     birthdtlid character varying(64) COLLATE pg_catalog."default",
     bio_adopt character varying(64) COLLATE pg_catalog."default",
@@ -145,8 +145,9 @@ CREATE TABLE IF NOT EXISTS public.eg_register_birth_permanent_address_audit (
     family_emailid character varying(300) COLLATE pg_catalog."default",
     family_mobileno character varying(20) COLLATE pg_catalog."default",
     postoffice_en character varying(1000) COLLATE pg_catalog."default",
-    postoffice_ml character varying(1000) COLLATE pg_catalog."default"
-    );
+    postoffice_ml character varying(1000) COLLATE pg_catalog."default",
+    country_name_en character varying(1000) COLLATE pg_catalog."default",
+    country_name_ml character varying(1000) COLLATE pg_catalog."default");
 
 CREATE TABLE IF NOT EXISTS public.eg_register_birth_place_audit (
     id character varying(64) COLLATE pg_catalog."default" NOT NULL,
@@ -259,8 +260,8 @@ CREATE TABLE IF NOT EXISTS public.eg_register_birth_present_address_audit (
     street_name_ml character varying(2000) COLLATE pg_catalog."default",
     districtid character varying(64) COLLATE pg_catalog."default",
     stateid character varying(64) COLLATE pg_catalog."default",
-    poid character varying(150) COLLATE pg_catalog."default",
-    pinno character varying(50) COLLATE pg_catalog."default",
+    poid character varying(64) COLLATE pg_catalog."default",
+    pinno character varying(10) COLLATE pg_catalog."default",
     countryid character varying(64) COLLATE pg_catalog."default",
     birthdtlid character varying(64) COLLATE pg_catalog."default",
     bio_adopt character varying(64) COLLATE pg_catalog."default",
@@ -270,8 +271,9 @@ CREATE TABLE IF NOT EXISTS public.eg_register_birth_present_address_audit (
     lastmodifiedtime bigint,
     mig_chvackno character varying(64) COLLATE pg_catalog."default",
     postoffice_en character varying(1000) COLLATE pg_catalog."default",
-    postoffice_ml character varying(1000) COLLATE pg_catalog."default"
-    );
+    postoffice_ml character varying(1000) COLLATE pg_catalog."default",
+    country_name_en character varying(1000) COLLATE pg_catalog."default",
+    country_name_ml character varying(1000) COLLATE pg_catalog."default");
 
 CREATE TABLE IF NOT EXISTS public.eg_register_birth_statitical_information_audit (
     id character varying(64) COLLATE pg_catalog."default" NOT NULL,

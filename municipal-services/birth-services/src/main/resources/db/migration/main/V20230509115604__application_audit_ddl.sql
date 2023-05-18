@@ -59,11 +59,7 @@ CREATE TABLE IF NOT EXISTS public.eg_birth_details_audit
     application_sub_type character varying(1000) COLLATE pg_catalog."default",
     has_payment boolean,
     is_payment_success boolean,
-    amount numeric,
-    birthdate date,
-    assignee character varying(128) COLLATE pg_catalog."default",
-    rdo_proceedings_no character varying(250) COLLATE pg_catalog."default",
-    nac_registration_no character varying(250) COLLATE pg_catalog."default"
+    amount numeric
     );
 CREATE TABLE IF NOT EXISTS public.eg_birth_father_information_audit
 (
@@ -102,10 +98,7 @@ CREATE TABLE IF NOT EXISTS public.eg_birth_initiator_audit (
     lastmodifiedby character varying(45) COLLATE pg_catalog."default",
     lastmodifiedtime bigint,
     is_care_taker boolean,
-    is_esigned boolean,
-    initiator character varying(128) COLLATE pg_catalog."default",
-    isguardian boolean
-    );
+    is_esigned boolean);
 
 CREATE TABLE IF NOT EXISTS public.eg_birth_mother_information_audit (
     id character varying(64) COLLATE pg_catalog."default" NOT NULL,

@@ -879,7 +879,7 @@ serviceMaps:
 
             - jsonPath: $.ChildDetails.*.AddressBirthDetails.stateIdPermanent
 
-            - jsonPath: $.ChildDetails.*.AddressBirthDetails.poNoPermanent
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.permntInKeralaAdrPostOffice
 
             - jsonPath: $.ChildDetails.*.AddressBirthDetails.pinNoPermanent
 
@@ -954,7 +954,7 @@ serviceMaps:
 
             - jsonPath: $.ChildDetails.*.AddressBirthDetails.stateIdPresent
 
-            - jsonPath: $.ChildDetails.*.AddressBirthDetails.poNoPresent
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.presentInsideKeralaPostOffice
 
             - jsonPath: $.ChildDetails.*.AddressBirthDetails.pinNoPresent
 
