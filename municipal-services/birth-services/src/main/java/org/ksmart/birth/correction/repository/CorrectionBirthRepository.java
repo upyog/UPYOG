@@ -84,6 +84,7 @@ public class CorrectionBirthRepository {
         criteria.setApplicationType(BirthConstants.FUN_MODULE_COR);
         String query = queryBuilder.getNewBirthApplicationSearchQuery(criteria, request, preparedStmtValues, Boolean.FALSE);
         List<CorrectionApplication> result = jdbcTemplate.query(query, preparedStmtValues.toArray(), rowMapper);
+
         return result;
     }
 }

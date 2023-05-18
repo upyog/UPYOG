@@ -75,15 +75,15 @@ public class CorrectionBirthApplicationValidator {
                     "Supports only single application update request.");
         }
 
-        if (StringUtils.isBlank(birthApplications.get(0).getRegisterId())) {
-            throw new CustomException(INVALID_CREATE.getCode(),
-                    "Register id is required for update correction request.");
-        }
-
-        if (StringUtils.isBlank(birthApplications.get(0).getRegistrationNo())) {
-            throw new CustomException(INVALID_CREATE.getCode(),
-                    "Registration number is required for update correction request.");
-        }
+//        if (StringUtils.isBlank(birthApplications.get(0).getRegisterId())) {
+//            throw new CustomException(INVALID_CREATE.getCode(),
+//                    "Register id is required for update correction request.");
+//        }
+//
+//        if (StringUtils.isBlank(birthApplications.get(0).getRegistrationNo())) {
+//            throw new CustomException(INVALID_CREATE.getCode(),
+//                    "Registration number is required for update correction request.");
+//        }
 
         if (StringUtils.isBlank(birthApplications.get(0).getTenantId())) {
             throw new CustomException(INVALID_UPDATE.getCode(),

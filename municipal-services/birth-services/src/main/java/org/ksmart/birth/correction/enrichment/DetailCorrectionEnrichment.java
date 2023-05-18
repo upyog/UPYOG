@@ -29,7 +29,6 @@ public class DetailCorrectionEnrichment {
                                     correction.getCorrectionFieldValue().forEach(
                                             column -> {
                                                 column.setAuditDetails(auditDetails);
-                                                System.out.println(column.getColumn());
                                                 if(column.getColumn().contains(UpdateRegisterColumn.REG_CHILD_DOB.getUiColoumn())) {
                                                     column.setId(UUID.randomUUID().toString());
                                                     column.setBirthId(birth.getId());

@@ -64,8 +64,6 @@ public class CorrectionBirthEnrichment implements BaseEnrichment {
         setFileNumbers(request);
         request.getCorrectionDetails()
                 .forEach(birth -> {
-                    System.out.println(registerBirthDetails.size());
-                    //child
                    if(registerBirthDetails.size() >0) {
                        birth.setDateOfBirth(registerBirthDetails.get(0).getDateOfBirth());
                        birth.setAadharNo(registerBirthDetails.get(0).getAadharNo());

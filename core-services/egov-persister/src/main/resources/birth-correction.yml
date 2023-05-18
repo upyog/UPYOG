@@ -54,9 +54,9 @@ serviceMaps:
 
             - jsonPath: $.CorrectionDetails.*.applicationNumber
 
-            - jsonPath: $.CorrectionDetails.*.registrationno
+            - jsonPath: $.CorrectionDetails.*.registrationNo
 
-            - jsonPath: $.CorrectionDetails.*.registration_date
+            - jsonPath: $.CorrectionDetails.*.registrationDate
 
             - jsonPath: $.CorrectionDetails.*.action
 

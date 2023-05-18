@@ -73,7 +73,6 @@ public class SearchCriteria {
     @Valid
     private String nameOfFather;
 
-
     @JsonProperty("mother")
     @Valid
     private String nameOfMother;
