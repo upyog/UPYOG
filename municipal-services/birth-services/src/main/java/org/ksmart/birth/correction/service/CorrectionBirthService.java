@@ -1,5 +1,6 @@
 package org.ksmart.birth.correction.service;
 
+import org.ksmart.birth.birthcommon.model.WorkFlowCheck;
 import org.ksmart.birth.birthcommon.model.demand.Demand;
 import org.ksmart.birth.birthcommon.services.DemandService;
 import org.ksmart.birth.correction.repository.CorrectionBirthRepository;
@@ -40,7 +41,7 @@ public class CorrectionBirthService {
 
     public List<CorrectionApplication> saveCorrectionBirthDetails(CorrectionRequest request) {
         Object mdmsData = mdmsUtil.mdmsCall(request.getRequestInfo());
-
+        WorkFlowCheck wfc = new WorkFlowCheck();
         // validate request
         validator.validateCreate(request, mdmsData);
 
@@ -61,6 +62,18 @@ public class CorrectionBirthService {
 //                birth.setDemands(demandService.saveDemandDetails(demands,request.getRequestInfo()));
 //            }
 //        });
+        application.forEach(birth->{
+            if (birth.getApplicationStatus().equals(STATUS_FOR_PAYMENT)) {
+                List<Demand> demands = new ArrayList<>();
+                Demand demand = new Demand();
+                demand.setTenantId(birth.getTenantId());
+                demand.setConsumerCode(birth.getApplicationNo());
+                demands.add(demand);
+                wfc.setAmount(5);
+                birth.setDemands(demandService.saveDemandDetails(demands, request.getRequestInfo(), wfc));
+            }
+        });
+
         return application;
     }
 
