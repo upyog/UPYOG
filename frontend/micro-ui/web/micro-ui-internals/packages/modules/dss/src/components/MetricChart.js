@@ -54,6 +54,7 @@ const MetricChartRow = ({ data, setChartDenomination, index }) => {
   });
 
   useEffect(() => {
+    console.log("resss",response)
     if (response) {
       let plots = response?.responseData?.data?.[0]?.plots || null;
       if (plots && Array.isArray(plots) && plots.length > 0 && plots?.every((e) => e.value))
@@ -62,7 +63,21 @@ const MetricChartRow = ({ data, setChartDenomination, index }) => {
           lastUpdatedTime: Digit.DateUtils.ConvertEpochToTimeInHours(plots?.[1]?.value),
         }}));
       index === 0 && setChartDenomination(response?.responseData?.data?.[0]?.headerSymbol);
-    } else {
+       if (response?.responseData?.visualizationCode === "todaysLastYearCollectionv3") {
+
+         const today = new Date();
+         const previousYearDate = new Date(today.getFullYear() - 1, today.getMonth(), today.getDate());
+         const previousYear = previousYearDate.getFullYear();
+         const previousMonth = previousYearDate.getMonth() + 1; // Month is zero-based, so adding 1
+         const previousDay = previousYearDate.getDate();
+         const formattedPreviousYearDate = `${previousDay < 10 ? '0' + previousDay : previousDay}/${previousMonth < 10 ? '0' + previousMonth : previousMonth}/${previousYear}`;
+        setShowDate(oldstate=>({...oldstate,[id]:{
+          todaysDate: formattedPreviousYearDate,
+          lastUpdatedTime: "",
+        }}));
+      }
+    }   
+     else {
       setShowDate({});
     }
   }, [response]);
