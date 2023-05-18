@@ -98,7 +98,11 @@ const CustomAreaChart = ({ xDataKey = "name", yDataKey = getValue, data, setChar
     if (response?.responseData?.data?.length == 1) {
       setmanageChart("Area");
       if (id !== "fsmCapacityUtilization") {
-        return response?.responseData?.data?.[0]?.plots;
+        let data = response?.responseData?.data?.[0]?.plots.map((plot, index) => {
+          return index === 0 ? { ...plot, difference: 0 } : { ...plot, difference: plot.value - response?.responseData?.data?.[0]?.plots[index - 1].value }
+        })
+        console.log(data)
+        return data;
       }
       return response?.responseData?.data?.[0]?.plots.map((plot) => {
         const [month, year] = plot?.name.split("-");
@@ -115,6 +119,7 @@ const CustomAreaChart = ({ xDataKey = "name", yDataKey = getValue, data, setChar
           keys[t(Digit.Utils.locale.getTransformedLocale(ob.headerName))] = t(Digit.Utils.locale.getTransformedLocale(ob.headerName));
           newObj[t(Digit.Utils.locale.getTransformedLocale(ob.headerName))] = ob?.plots[index].value;
         });
+        
         return {
           label: null,
           name: response?.responseData?.data?.[0]?.plots[index].name,
@@ -124,6 +129,7 @@ const CustomAreaChart = ({ xDataKey = "name", yDataKey = getValue, data, setChar
         };
       });
       setKeysArr(Object.values(keys));
+    
       return mergeObj;
     }
   }, [response, totalCapacity]);
@@ -156,7 +162,9 @@ const CustomAreaChart = ({ xDataKey = "name", yDataKey = getValue, data, setChar
 
   const renderTooltip = ({ payload, label, unit }) => {
     let formattedLabel = tickFormatter(label);
+    
     let payloadObj = payload?.[0] || {};
+    console.log("label",payloadObj)
     return (
       <div
         style={{
@@ -170,6 +178,11 @@ const CustomAreaChart = ({ xDataKey = "name", yDataKey = getValue, data, setChar
         {payloadObj?.payload?.symbol?.toLowerCase() === "amount" && (
           <p>{`${formattedLabel} : ${value?.denomination === "Unit" ? " ₹" : ""} ${payloadObj?.value}${
             value?.denomination !== "Unit" ? t(Digit.Utils.locale.getTransformedLocale(`ES_DSS_${value?.denomination}`)) : ""
+          }`}</p>
+        )}
+       {payloadObj?.payload?.symbol?.toLowerCase() === "amount" && (
+          <p>{`Difference: ${value?.denomination === "Unit" ? " ₹" : ""} ${payloadObj?.payload.difference}${
+            value?.denomination !== "Unit" ? t(Digit.Utils.locale.getTransformedLocale(`ES_DSS_${payloadObj.payload.difference?.denomination}`)) : ""
           }`}</p>
         )}
         {payloadObj?.payload?.symbol?.toLowerCase() === "percentage" && <p>{`${formattedLabel} : ${payloadObj?.value} %`}</p>}
@@ -189,6 +202,7 @@ const CustomAreaChart = ({ xDataKey = "name", yDataKey = getValue, data, setChar
         ? t(Digit.Utils.locale.getTransformedLocale(`ES_DSS_${value?.denomination}`))
         : "";
     let newPayload = { ...payloadObj?.payload };
+    console.log("payyy",payload)
     delete newPayload?.label;
     delete newPayload?.strValue;
     delete newPayload?.symbol;

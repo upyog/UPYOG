@@ -79,7 +79,7 @@ const GenericChart = ({
   let headerName = t(Digit.Utils.locale.getTransformedLocale(header));
   return (
     <Card className={`chart-item ${className}`} ReactRef={chart}>
-      <div className={`chartHeader ${showSearch && "column-direction"}`}>
+      <div className={`chartHeader ${showSearch && "column-direction"}`} style={{flexDirection:"column"}}>
         <div>
           {showHeader && (
             <CardLabel className={"dss-header-label"}>
@@ -102,7 +102,7 @@ const GenericChart = ({
               {/* {`${t(header)}`} */}
             </CardLabel>
           )}
-          {subHeader && <p style={{ color: "#505A5F", fontWeight: 700 }}>{subHeader}</p>}
+          { chip.length <2 && subHeader && <p style={{ color: "#505A5F", fontWeight: 700 }}>{subHeader}</p>}
         </div>
         <div className="sideContent">
           {chip && chip.length > 1 && <Chip items={chip} onClick={updateChip} t={t} />}

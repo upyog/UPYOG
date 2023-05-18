@@ -70,6 +70,7 @@ const CustomBarChart = ({
     filters: value?.filters,
   });
   const chartData = useMemo(() => {
+    console.log("chartData",response)
     if (!response) return null;
     setChartDenomination(response?.responseData?.data?.[0]?.headerSymbol);
     const dd = response?.responseData?.data?.map((bar) => {

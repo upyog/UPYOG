@@ -18,6 +18,18 @@ export const SuccessfulPayment = (props) => {
 
   useEffect(() => {
     return () => {
+      const fetchData = async () => {
+        const tenantId = Digit.ULBService.getCurrentTenantId();
+        const state = Digit.ULBService.getStateId();
+        const payments = await Digit.PaymentService.getReciept(tenantId, businessService, { receiptNumbers: receiptNumber });
+        let response = { filestoreIds: [payments.Payments[0]?.fileStoreId] };
+        if (!payments.Payments[0]?.fileStoreId) {
+          response = await Digit.PaymentService.generatePdf(state, { Payments: payments.Payments }, generatePdfKey);
+        }
+      }
+
+      // call the function
+      fetchData()
       queryClient.clear();
     };
   }, []);
