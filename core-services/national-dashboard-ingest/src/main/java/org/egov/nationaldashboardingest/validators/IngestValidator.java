@@ -105,6 +105,9 @@ public class IngestValidator {
         validateStringNotNumeric(ingestData.getUlb());
         validateStringNotNumeric(ingestData.getRegion());
         validateStringNotNumeric(ingestData.getState());
+		
+        ingestData.setState(toCamelCase(ingestData.getState()));
+
 
         Set<String> configuredFieldsForModule = new HashSet<>();
 
@@ -331,4 +334,29 @@ public class IngestValidator {
         if(ingestRequest.getIngestData().size() > applicationProperties.getMaxDataListSize())
             throw new CustomException("EG_DS_INGEST_ERR", "Ingest service supports bulk data ingest requests of max size: " + applicationProperties.getMaxDataListSize());
     }
+	
+	public static String toCamelCase(String str)
+	{
+	    if (str == null || str.isEmpty()) {
+        return str;
+	    }
+		StringBuilder converted = new StringBuilder();
+
+        boolean convertNext = true;
+            
+        for (char ch : str.toCharArray()) {
+        	if (Character.isSpaceChar(ch)){
+            convertNext = true;
+        	} 
+        	else if (convertNext) {
+            ch = Character.toTitleCase(ch);
+            convertNext = false;
+        	} 
+        	else {
+            ch = Character.toLowerCase(ch);
+        	}
+        converted.append(ch);
+        }
+        return converted.toString();
+	}
 }
