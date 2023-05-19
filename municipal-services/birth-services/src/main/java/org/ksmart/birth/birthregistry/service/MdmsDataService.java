@@ -17,6 +17,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import static org.ksmart.birth.utils.BirthConstants.*;
 
 @Slf4j
@@ -39,14 +42,16 @@ public class MdmsDataService {
     private final MdmsLocationService mdmsLocationService;
 
     private final KsmartAddressService ksmartAddressService;
+    private final TcsAddressService tcsAddressService;
 
     @Autowired
-    MdmsDataService(RestTemplate restTemplate, MdmsTenantService mdmsTenantService, MdmsLocationService mdmsLocationService, KsmartAddressService ksmartAddressService) {
-
+    MdmsDataService(RestTemplate restTemplate, MdmsTenantService mdmsTenantService, MdmsLocationService mdmsLocationService,
+                    KsmartAddressService ksmartAddressService, TcsAddressService tcsAddressService) {
         this.restTemplate = restTemplate;
         this.mdmsTenantService = mdmsTenantService;
         this.mdmsLocationService = mdmsLocationService;
         this.ksmartAddressService = ksmartAddressService;
+        this.tcsAddressService = tcsAddressService;
     }
     public void setTenantDetails(RegisterCertificateData registerCert, Object  mdmsData) {
         String lbCode = mdmsTenantService.getTenantLbType(mdmsData, registerCert.getTenantId());
@@ -63,85 +68,65 @@ public class MdmsDataService {
         registerCert.setTenantStateMl(mdmsTenantService.getStateNameMl(mdmsData, stateCode));
     }
 
-//    public void setBirthPlaceDetails(RegisterBirthDetail registerMain, RegisterCertificateData register, Object  mdmsData) {
-//        if (register.getBirthPlaceId().contains(BIRTH_PLACE_HOSPITAL)) {
-//            String placeEn =new StringBuilder().append(mdmsLocationService.getHospitalNameEn(mdmsData, register.getBirthPlaceHospitalId()) )
-//                                               .append(",")
-//                                               .append(mdmsLocationService.getHospitalAddressEn(mdmsData, register.getBirthPlaceHospitalId())==null
-//                                                       ?"":mdmsLocationService.getHospitalAddressEn(mdmsData, register.getBirthPlaceHospitalId())).toString();
-//            String placeMl =new StringBuilder().append(mdmsLocationService.getHospitalNameMl(mdmsData, register.getBirthPlaceHospitalId()) )
-//                                               .append(",")
-//                                               .append(mdmsLocationService.getHospitalAddressMl(mdmsData, register.getBirthPlaceHospitalId())==null
-//                                                       ?"":mdmsLocationService.getHospitalAddressMl(mdmsData, register.getBirthPlaceHospitalId())).toString();
-//
-//            register.setPlaceDetails(placeEn);
-//            register.setPlaceDetailsMl(placeMl);
-//        } else if (register.getBirthPlaceId().contains(BIRTH_PLACE_INSTITUTION)) {
-//            String placeEn =new StringBuilder().append(mdmsLocationService.getInstitutionNameEn(mdmsData, register.getBirthPlaceInstitutionId()) )
-//                    .append(",")
-//                    .append(mdmsLocationService.getInstitutionTypeEn(mdmsData, register.getBirthPlaceInstitutionlTypeId())==null
-//                            ?"":mdmsLocationService.getInstitutionTypeEn(mdmsData, register.getBirthPlaceInstitutionlTypeId()))
-//                    .append(",")
-//                    .append(mdmsLocationService.getInstitutionAddressEn(mdmsData, register.getBirthPlaceInstitutionId())==null
-//                            ?"":mdmsLocationService.getInstitutionAddressEn(mdmsData, register.getBirthPlaceInstitutionId())).toString();
-//
-//            String placeMl =new StringBuilder().append(mdmsLocationService.getInstitutionNameMl(mdmsData, register.getBirthPlaceInstitutionId()) )
-//                    .append(",")
-//                    .append(mdmsLocationService.getInstitutionTypeMl(mdmsData, register.getBirthPlaceInstitutionlTypeId())==null
-//                            ?"":mdmsLocationService.getInstitutionTypeMl(mdmsData, register.getBirthPlaceInstitutionlTypeId()))
-//                    .append(",")
-//                    .append(mdmsLocationService.getInstitutionAddressMl(mdmsData, register.getBirthPlaceInstitutionId())==null
-//                            ?"":mdmsLocationService.getInstitutionAddressMl(mdmsData, register.getBirthPlaceInstitutionId())).toString();
-//
-//            register.setPlaceDetails(placeEn);
-//            register.setPlaceDetailsMl(placeMl);
-//        } else if (register.getBirthPlaceId().contains(BIRTH_PLACE_HOME)) {
-//            String placeEn =new StringBuilder().append(register.getPlaceDetails())
-//                    .append(",")
-//                    .toString();
-//            String placeMl =new StringBuilder().append("").toString();
-//        }else if (register.getBirthPlaceId().contains(BIRTH_PLACE_VEHICLE)) {
-//            String placeEn =new StringBuilder().append("").toString();
-//            String placeMl =new StringBuilder().append("").toString();
-//        }else if (register.getBirthPlaceId().contains(BIRTH_PLACE_PUBLIC)) {
-//            String placeEn =new StringBuilder().append("").toString();
-//            String placeMl =new StringBuilder().append("").toString();
-//        }else if (register.getBirthPlaceId().contains(BIRTH_PLACE_OTHERS_COUNTRY)) {
-//            String placeEn =new StringBuilder().append("").toString();
-//            String placeMl =new StringBuilder().append("").toString();
-//        }
-//        else {
-//        }
-//    }
+    private boolean validateRegistrationDatePresent(RegisterCertificateData registerCert,Long regDate) { //registration_date < '2007-06-01'---->address not available(present_address)
 
-    public void setPresentAddressDetailsEn(RegisterBirthDetail register,RegisterCertificateData registerCert, Object  mdmsData) {
-        if (!StringUtils.isEmpty(register.getRegisterBirthPresent().getCountryId())) {
-            if (register.getRegisterBirthPresent().getCountryId().contains(COUNTRY_CODE)) {
-                ksmartAddressService.getAddressInsideCountryPresentEn(register, registerCert, mdmsData);
-                ksmartAddressService.getAddressInsideCountryPresentMl(register, registerCert, mdmsData);
-            } else {
-                ksmartAddressService.getAddressOutsideCountryPresentEn(register, registerCert, mdmsData);
-                ksmartAddressService.getAddressOutsideCountryPresentMl(register, registerCert, mdmsData);
-            }
-        } else {
-            ksmartAddressService.getAddressInsideCountryPresentEn(register, registerCert, mdmsData);
-            ksmartAddressService.getAddressInsideCountryPresentMl(register, registerCert, mdmsData);
+        if(regDate < 1180636200000L){
+            registerCert.setPresentAddDetails("Not Available");
+            registerCert.setPresentAddDetailsMl("ലഭ്യമല്ല");
+            return  false;
         }
-
+        return  true;
     }
 
-    public void setPremananttAddressDetailsEn(RegisterBirthDetail register,RegisterCertificateData registerCert, Object  mdmsData) {
-        if (!StringUtils.isEmpty(register.getRegisterBirthPermanent().getCountryId())) {
-            if (register.getRegisterBirthPermanent().getCountryId().contains(COUNTRY_CODE)) {
+    private boolean validateRegistrationDatePermanenet(RegisterCertificateData registerCert,Long regDate) { // registration_date > 1999 and registration_date < '2007-06-01'---->address not available(permanent_address)
+        if(regDate > 915129000000L && regDate < 1180636200000L){
+            registerCert.setPermenantAddDetails("Not Available");
+            registerCert.setPermenantAddDetailsMl("ലഭ്യമല്ല");
+            return false;
+        }
+        return true;
+    }
+    public void setPresentAddressDetailsEn(RegisterBirthDetail register,RegisterCertificateData registerCert, Object  mdmsData, Long regDate) {
+        if (registerCert.getAckNo().startsWith(TCS_CODE_1, 0) || registerCert.getAckNo().startsWith(TCS_CODE_2, 0)) {
+            if(register.getRegisterBirthPresent().getHouseNameMl().contains(TCS_ERROR_STR)) {
+                tcsAddressService.trimAddressHouseNamePresent(register.getRegisterBirthPresent().getHouseNameMl(), register, TCS_ERROR_STR);
+            }
+        }
+        if(validateRegistrationDatePresent(registerCert, regDate)) {
+            if (!StringUtils.isEmpty(register.getRegisterBirthPresent().getCountryId())) {
+                if (register.getRegisterBirthPresent().getCountryId().contains(COUNTRY_CODE)) {
+                    ksmartAddressService.getAddressInsideCountryPresentEn(register, registerCert, mdmsData);
+                    ksmartAddressService.getAddressInsideCountryPresentMl(register, registerCert, mdmsData);
+                } else {
+                    ksmartAddressService.getAddressOutsideCountryPresentEn(register, registerCert, mdmsData);
+                    ksmartAddressService.getAddressOutsideCountryPresentMl(register, registerCert, mdmsData);
+                }
+            } else {
+                ksmartAddressService.getAddressInsideCountryPresentEn(register, registerCert, mdmsData);
+                ksmartAddressService.getAddressInsideCountryPresentMl(register, registerCert, mdmsData);
+            }
+        }
+    }
+
+    public void setPremananttAddressDetailsEn(RegisterBirthDetail register,RegisterCertificateData registerCert, Object  mdmsData, Long regDate) {
+        if (registerCert.getAckNo().startsWith(TCS_CODE_1, 0) || registerCert.getAckNo().startsWith(TCS_CODE_2, 0)) {
+            if(register.getRegisterBirthPermanent().getHouseNameMl().contains(TCS_ERROR_STR)) {
+                tcsAddressService.trimAddressHouseNamePermanent(register.getRegisterBirthPermanent().getHouseNameMl(), register, TCS_ERROR_STR);
+            }
+        }
+        if(validateRegistrationDatePermanenet(registerCert, regDate)) {
+            if (!StringUtils.isEmpty(register.getRegisterBirthPermanent().getCountryId())) {
+                if (register.getRegisterBirthPermanent().getCountryId().contains(COUNTRY_CODE)) {
+                    ksmartAddressService.getAddressInsideCountryPermanentEn(register, registerCert, mdmsData);
+                    ksmartAddressService.getAddressInsideCountryPermanentMl(register, registerCert, mdmsData);
+                } else {
+                    ksmartAddressService.getAddressOutsideCountryPermanentEn(register, registerCert, mdmsData);
+                    ksmartAddressService.getAddressOutsideCountryPermanentMl(register, registerCert, mdmsData);
+                }
+            } else {
                 ksmartAddressService.getAddressInsideCountryPermanentEn(register, registerCert, mdmsData);
                 ksmartAddressService.getAddressInsideCountryPermanentMl(register, registerCert, mdmsData);
-            } else {
-                ksmartAddressService.getAddressOutsideCountryPermanentEn(register, registerCert, mdmsData);
-                ksmartAddressService.getAddressOutsideCountryPermanentMl(register, registerCert, mdmsData);
             }
-        } else {
-            ksmartAddressService.getAddressInsideCountryPermanentEn(register, registerCert, mdmsData);
-            ksmartAddressService.getAddressInsideCountryPermanentMl(register, registerCert, mdmsData);
         }
     }
     public void setKsmartLocationDetails(NewBirthApplication register, Object mdmsData) {

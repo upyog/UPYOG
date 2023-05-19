@@ -28,6 +28,8 @@ public class KsmartAddressService {
                     .append(StringUtil.isBlank(register.getRegisterBirthPresent().getCountryId()) ? "" :  mdmsTenantService.getCountryNameEn(mdmsData, register.getRegisterBirthPresent().getCountryId())).toString();
         if(!StringUtil.isBlank(address)){
             address = address.trim().replaceAll(",$", "");
+        } else{
+            address = "Not Recorded";
         }
         registerCert.setPresentAddDetails(address);
     }
@@ -41,6 +43,8 @@ public class KsmartAddressService {
                 .append(StringUtil.isBlank(register.getRegisterBirthPresent().getCountryId()) ? "" :  mdmsTenantService.getCountryNameMl(mdmsData, register.getRegisterBirthPresent().getCountryId())).toString();
         if(!StringUtil.isBlank(address)){
             address = address.trim().replaceAll(",$", "");
+        } else{
+            address = "രേഖപ്പെടുത്തിയിട്ടില്ല";
         }
         registerCert.setPresentAddDetailsMl(address);
     }
@@ -55,6 +59,8 @@ public class KsmartAddressService {
                 .append(StringUtil.isBlank(register.getRegisterBirthPresent().getCountryId()) ? "" :  mdmsTenantService.getCountryNameEn(mdmsData, register.getRegisterBirthPresent().getCountryId())).toString();
         if(!StringUtil.isBlank(address)){
             address = address.trim().replaceAll(",$", "");
+        } else{
+            address = "Not Recorded";
         }
         registerCert.setPermenantAddDetails(address);
     }
@@ -68,6 +74,8 @@ public class KsmartAddressService {
                 .append(StringUtil.isBlank(register.getRegisterBirthPresent().getCountryId()) ? "" :  mdmsTenantService.getCountryNameMl(mdmsData, register.getRegisterBirthPresent().getCountryId())).toString();
         if(!StringUtil.isBlank(address)){
             address = address.trim().replaceAll(",$", "");
+        } else{
+            address = "രേഖപ്പെടുത്തിയിട്ടില്ല";
         }
         registerCert.setPermenantAddDetailsMl(address);
     }
@@ -75,6 +83,7 @@ public class KsmartAddressService {
         String address = "";
 
         address = new StringBuilder().append(StringUtil.isBlank(register.getRegisterBirthPresent().getHouseNameEn()) ? "" : StringUtils.capitalize(register.getRegisterBirthPresent().getHouseNameEn())+", ")
+                .append(StringUtil.isBlank(register.getRegisterBirthPresent().getResAssNoEn()) ? "" : StringUtils.capitalize(register.getRegisterBirthPresent().getResAssNoEn())+", ")
                 .append(StringUtil.isBlank(register.getRegisterBirthPresent().getLocalityEn()) || register.getRegisterBirthPresent().getLocalityEn().trim() == "" ? "" : StringUtils.capitalize(register.getRegisterBirthPresent().getLocalityEn())+", ")
                 .append(StringUtil.isBlank(register.getRegisterBirthPresent().getStreetNameEn()) || register.getRegisterBirthPresent().getStreetNameEn().trim() == ""? "" : StringUtils.capitalize(register.getRegisterBirthPresent().getStreetNameEn())+", ")
                 .append(StringUtil.isBlank(register.getRegisterBirthPresent().getPoId()) ? "" : mdmsTenantService.getPostOfficeNameEn(mdmsData,register.getRegisterBirthPresent().getPoId())+ " "
@@ -84,6 +93,8 @@ public class KsmartAddressService {
                 .append(StringUtil.isBlank(register.getRegisterBirthPresent().getCountryId()) ? "" :  mdmsTenantService.getCountryNameEn(mdmsData, register.getRegisterBirthPresent().getCountryId())).toString();
         if(!StringUtil.isBlank(address)){
             address = address.trim().replaceAll(",$", "");
+        } else{
+            address = "Not Recorded";
         }
         registerCert.setPresentAddDetails(address);
     }
@@ -91,6 +102,7 @@ public class KsmartAddressService {
     public void getAddressInsideCountryPresentMl(RegisterBirthDetail register, RegisterCertificateData registerCert, Object  mdmsData) {
         String address = "";
         address = new StringBuilder().append(StringUtil.isBlank(register.getRegisterBirthPresent().getHouseNameMl()) ? "" : register.getRegisterBirthPresent().getHouseNameMl()+", ")
+                .append(StringUtil.isBlank(register.getRegisterBirthPresent().getResAssNoMl()) ? "" : StringUtils.capitalize(register.getRegisterBirthPresent().getResAssNoMl())+", ")
                 .append(StringUtil.isBlank(register.getRegisterBirthPresent().getLocalityMl())? "" : register.getRegisterBirthPresent().getLocalityMl()+", ")
                 .append(StringUtil.isBlank(register.getRegisterBirthPresent().getStreetNameMl()) ? "" : register.getRegisterBirthPresent().getStreetNameMl()+", ")
                 .append(StringUtil.isBlank(register.getRegisterBirthPresent().getPoId()) ?"" : mdmsTenantService.getPostOfficeNameMl(mdmsData,register.getRegisterBirthPresent().getPoId())+ " "
@@ -100,6 +112,8 @@ public class KsmartAddressService {
                 .append(StringUtil.isBlank(register.getRegisterBirthPresent().getCountryId()) ? "" :  mdmsTenantService.getCountryNameMl(mdmsData, register.getRegisterBirthPresent().getCountryId())).toString();
         if(!StringUtil.isBlank(address)){
             address = address.trim().replaceAll(",$", "");
+        } else{
+            address = "രേഖപ്പെടുത്തിയിട്ടില്ല";
         }
         registerCert.setPresentAddDetailsMl(address);
     }
@@ -107,6 +121,7 @@ public class KsmartAddressService {
     public void getAddressInsideCountryPermanentEn(RegisterBirthDetail register, RegisterCertificateData registerCert, Object  mdmsData) {
         String address = "";
         address = new StringBuilder().append(StringUtil.isBlank(register.getRegisterBirthPermanent().getHouseNameEn()) ? "" : StringUtils.capitalize(register.getRegisterBirthPermanent().getHouseNameEn())+", ")
+                .append(StringUtil.isBlank(register.getRegisterBirthPermanent().getResAssNoEn()) ? "" : StringUtils.capitalize(register.getRegisterBirthPermanent().getResAssNoEn())+", ")
                 .append(StringUtil.isBlank(register.getRegisterBirthPermanent().getLocalityEn()) ? "" : StringUtils.capitalize(register.getRegisterBirthPermanent().getLocalityEn())+", ")
                 .append(StringUtil.isBlank(register.getRegisterBirthPermanent().getStreetNameEn()) ? "" : StringUtils.capitalize(register.getRegisterBirthPermanent().getStreetNameEn())+", ")
                 .append(StringUtil.isBlank(register.getRegisterBirthPermanent().getPoId()) ? "" : mdmsTenantService.getPostOfficeNameEn(mdmsData,register.getRegisterBirthPermanent().getPoId())+ " "
@@ -116,6 +131,8 @@ public class KsmartAddressService {
                 .append(StringUtil.isBlank(register.getRegisterBirthPermanent().getCountryId()) ? "" :  mdmsTenantService.getCountryNameEn(mdmsData, register.getRegisterBirthPermanent().getCountryId())).toString();
         if(!StringUtil.isBlank(address)){
             address = address.trim().replaceAll(",$", "");
+        } else{
+            address = "Not Recorded";
         }
         registerCert.setPermenantAddDetails(address);
     }
@@ -123,6 +140,7 @@ public class KsmartAddressService {
     public void getAddressInsideCountryPermanentMl(RegisterBirthDetail register, RegisterCertificateData registerCert, Object  mdmsData) {
         String address = "";
         address = new StringBuilder().append(StringUtil.isBlank(register.getRegisterBirthPermanent().getHouseNameMl()) ? "" : register.getRegisterBirthPermanent().getHouseNameMl()+", ")
+                .append(StringUtil.isBlank(register.getRegisterBirthPermanent().getResAssNoMl()) ? "" : StringUtils.capitalize(register.getRegisterBirthPermanent().getResAssNoMl())+", ")
                 .append(StringUtil.isBlank(register.getRegisterBirthPermanent().getLocalityMl()) ||register.getRegisterBirthPermanent().getLocalityMl() == "" ? "" : register.getRegisterBirthPermanent().getLocalityMl()+", ")
                 .append(StringUtil.isBlank(register.getRegisterBirthPermanent().getStreetNameMl()) ||register.getRegisterBirthPermanent().getStreetNameMl() == ""? "" : register.getRegisterBirthPermanent().getStreetNameMl()+", ")
                 .append(StringUtil.isBlank(register.getRegisterBirthPermanent().getPoId()) ? "" : mdmsTenantService.getPostOfficeNameMl(mdmsData,register.getRegisterBirthPermanent().getPoId())+ " "
@@ -132,6 +150,8 @@ public class KsmartAddressService {
                 .append(StringUtil.isBlank(register.getRegisterBirthPermanent().getCountryId()) ? "" :  mdmsTenantService.getCountryNameMl(mdmsData, register.getRegisterBirthPermanent().getCountryId())).toString();
         if(!StringUtil.isBlank(address)){
             address = address.trim().replaceAll(",$", "");
+        } else{
+            address = "രേഖപ്പെടുത്തിയിട്ടില്ല";
         }
         registerCert.setPermenantAddDetailsMl(address);
     }

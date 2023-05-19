@@ -249,7 +249,7 @@
               {
                 "stack": [
                   {
-                    "text": "താഴെ പറയുന്ന വിവരങ്ങൾ {{statecodeMl}} സംസ്ഥാനത്തിലെ {{distcodeMl}} ജില്ലയിലെ {{talukcodeMl}} താലൂക്കിലെ  {{tenantMl}} {{certifyMl}}.",
+                    "text": "താഴെ പറയുന്ന വിവരങ്ങൾ കേരള സംസ്ഥാനത്തിലെ {{distcodeMl}} ജില്ലയിലെ {{talukcodeMl}} താലൂക്കിലെ  {{tenantMl}} {{certifyMl}}.",
                     "style": "rule-header-ml"
                   },
                   {
@@ -284,7 +284,7 @@
                     "width": "1%"
                   },
                   {
-                    "text": "{{nameMl}} / {{name}}",
+                    "text": "{{nameMl  }} / {{ name}}",
                     "style": "details-body"
                   }
                 ]
@@ -303,7 +303,7 @@
                     "width": "1%"
                   },
                   {
-                    "text": "{{genderMl}}/ {{gender}}",
+                    "text": "{{genderMl }}/ {{ gender}}",
                     "style": "details-body"
                   }
                 ]
@@ -323,7 +323,7 @@
                     "width": "1%"
                   },
                   {
-                    "text": "{{dob}}  ({{dobInWords}})",
+                    "text": "{{dob }}  ({{ dobInWords}})",
                     "style": "details-body-bold"
                   }
                 ]
@@ -343,7 +343,7 @@
                     "width": "1%"
                   },
                   {
-                    "text": "{{placeOfBirthMl}}/{{placeOfBirthEn}}{{hospitalMainPlace}}",
+                    "text": "{{ placeOfBirthMl }}/{{ placeOfBirthEn }}{{ hospitalMainPlace }}",
                     "style": "details-body"
                   }
                 ]
@@ -363,7 +363,7 @@
                     "width": "1%"
                   },
                   {
-                    "text": "{{motherNameMl}}/{{motherName}}",
+                    "text": "{{motherNameMl }}/{{ motherName}}",
                     "style": "details-body"
                   }
                 ]
@@ -382,7 +382,7 @@
                     "width": "1%"
                   },
                   {
-                    "text": "{{fatherNameMl}}/{{fatherName}}",
+                    "text": "{{fatherNameMl }}/{{ fatherName}}",
                     "style": "details-body"
                   }
                 ]
@@ -510,7 +510,7 @@
               {
                 "columns": [
                   {
-                    "text": "{{dateOfIssue}}: {{currentDate}} ({{currentTime}})",
+                    "text": "{{dateOfIssue}}: {{ currentDate }} ({{currentTime}})",
                     "width": "49%",
                     "style": "details-body"
                   },

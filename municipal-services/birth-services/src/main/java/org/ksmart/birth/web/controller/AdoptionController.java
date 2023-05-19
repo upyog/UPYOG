@@ -89,9 +89,10 @@ public class AdoptionController {
     public ResponseEntity<AdoptionSearchResponse> searchKsmartBirth(@RequestBody AdoptionDetailRequest request, @Valid @ModelAttribute SearchCriteria criteria) {
         List<AdoptionApplication> adoptionDetails=adoptionService.searchKsmartBirthDetails(request, criteria);
         AdoptionSearchResponse response=AdoptionSearchResponse.builder()
-                                                                              .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), Boolean.TRUE))
-                                                                              .AdoptionDetails(adoptionDetails)
-                                                                              .build();
+                                                                .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), Boolean.TRUE))
+                                                                .AdoptionDetails(adoptionDetails)
+                                                                .count(adoptionDetails.size())
+                                                                .build();
 
 
         return ResponseEntity.ok(response);

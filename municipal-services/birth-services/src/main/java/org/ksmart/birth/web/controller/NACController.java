@@ -96,9 +96,10 @@ public class NACController {
     public ResponseEntity<NacSearchResponse> searchKsmartBirth(@RequestBody NacDetailRequest request, @Valid @ModelAttribute SearchCriteria criteria) {
         List<NacApplication> nacDetails=nacService.searchNacDetails(request, criteria);
         NacSearchResponse response=NacSearchResponse.builder()
-                                                                              .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), Boolean.TRUE))
-                                                                              .nacDetails(nacDetails)
-                                                                              .build();
+                .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), Boolean.TRUE))
+                .nacDetails(nacDetails)
+                .count(nacDetails.size())
+                .build();
         return ResponseEntity.ok(response);
     }
 }

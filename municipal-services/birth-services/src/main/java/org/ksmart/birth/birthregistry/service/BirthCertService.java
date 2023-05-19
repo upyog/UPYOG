@@ -33,6 +33,7 @@ public class BirthCertService {
     public RegisterCertificateData setCertificateDetails(RegisterBirthDetail register, RequestInfo requestInfo) {
         Object mdmsData = mdmsUtil.mdmsCall(requestInfo);
         String strDate=null;
+        String regDate=null;
 
         DateTimeFormatter dtDate = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         String dobInWords = null;
@@ -44,13 +45,13 @@ public class BirthCertService {
             Date res = new Date(register.getDateOfBirth()) ;
             SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
             strDate= formatter.format(res);
+            System.out.println(strDate);
             String[] dobAry = strDate.split("/");
             try {
                 dobInWords = NumToWordConverter.convertNumber(Long.parseLong(dobAry[0])) + "/" + new SimpleDateFormat("MMMM").format(res) + "/" + NumToWordConverter.convertNumber(Long.parseLong(dobAry[2]));;
             } catch(Exception e) {
             }
         }
-
         RegisterCertificateData registerCertificateData = new RegisterCertificateData();
         registerCertificateData.setId(register.getId());
         registerCertificateData.setDateOfBirth(register.getDateOfBirth());
@@ -91,8 +92,8 @@ public class BirthCertService {
         registerCertificateData.setUpdatingDate(updatedDate);
         registerCertificateData.setUpdatingTime(CommonUtils.timeLongToStringhh(updatedDate));
         mdmsDataService.setTenantDetails(registerCertificateData, mdmsData);
-        mdmsDataService.setPresentAddressDetailsEn(register, registerCertificateData, mdmsData);
-        mdmsDataService.setPremananttAddressDetailsEn(register, registerCertificateData, mdmsData);
+        mdmsDataService.setPresentAddressDetailsEn(register, registerCertificateData, mdmsData, register.getRegistrationDate());
+        mdmsDataService.setPremananttAddressDetailsEn(register, registerCertificateData, mdmsData, register.getRegistrationDate());
         Object mdmsLocData = mdmsUtil.mdmsCallForLocation(requestInfo, registerCertificateData.getTenantId());
         ksmartBirthPlace.setBirthPlaceDetails(register,registerCertificateData, mdmsLocData,mdmsData);
         return registerCertificateData;

@@ -136,7 +136,7 @@
                 "value": {
                   "path": "$.updatingTime"
                 },
-                "type": "date"
+                "type": "setEmpty"
               },
               {
                 "variable": "fatherName",

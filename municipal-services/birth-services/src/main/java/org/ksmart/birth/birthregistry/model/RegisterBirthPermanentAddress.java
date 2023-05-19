@@ -25,6 +25,14 @@ public class RegisterBirthPermanentAddress {
     private String houseNameMl;
 
     @Size(max = 2500)
+    @JsonProperty("res_asso_no")
+    private String resAssNoEn;
+
+    @Size(max = 2500)
+    @JsonProperty("res_asso_no_ml")
+    private String resAssNoMl;
+
+    @Size(max = 2500)
     @JsonProperty("ot_address1_en")
     private String otAddress1En;
 

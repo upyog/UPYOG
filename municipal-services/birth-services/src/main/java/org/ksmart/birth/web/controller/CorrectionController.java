@@ -85,6 +85,7 @@ public class CorrectionController {
         CorrectionResponse response=CorrectionResponse.builder()
                 .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), Boolean.TRUE))
                 .correctionDetails(birthDetails)
+                .count(birthDetails.size())
                 .build();
         return ResponseEntity.ok(response);
     }

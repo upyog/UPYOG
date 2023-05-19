@@ -22,6 +22,10 @@ public class NewBirthSearchResponse {
     @JsonProperty("ChildDetails")
     @Valid
     private List<NewBirthApplication> newBirthDetails;
+
+    @JsonProperty("Count")
+    private int count;
+
     public NewBirthSearchResponse addKsmartBirthSearchApplication(NewBirthApplication birthDetail) {
         if (newBirthDetails == null) {
             newBirthDetails = new ArrayList<>();

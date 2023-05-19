@@ -37,7 +37,8 @@ public class RegisterQueryBuilder extends BaseRegBuilder {
             .append(" kbmi.firstname_en  as mother_fn, kbmi.firstname_ml  as mother_fn_ml,kbmi.aadharno  as mo_aadh, kbmi.ot_passportno  as mo_pass,")
 
             // Permananent Address
-            .append("kperad.id as per_id,kperad.housename_no_en as per_housename_no_en,kperad.housename_no_ml as per_housename_no_ml,kperad.ot_address1_en as per_ot_address1_en,kperad.ot_address1_ml as per_ot_address1_ml,")
+            .append("kperad.id as per_id,kperad.housename_no_en as per_housename_no_en,kperad.housename_no_ml as per_housename_no_ml, kperad.res_asso_no as per_res_asso_no, kperad.res_asso_no_ml as per_res_asso_no_ml,")
+            .append("kperad.ot_address1_en as per_ot_address1_en,kperad.ot_address1_ml as per_ot_address1_ml,")
             .append("kperad.ot_address2_en as per_ot_address2_en,kperad.ot_address2_ml as per_ot_address2_ml,kperad.ot_state_region_province_en as per_ot_state_region_province_en,")
             .append("kperad.ot_state_region_province_ml as per_ot_state_region_province_ml,kperad.ot_zipcode as per_ot_zipcode,kperad.villageid as per_villageid,kperad.village_name as per_village_name,")
             .append("kperad.tenantid as per_tenantid,kperad.talukid as per_talukid,kperad.taluk_name as per_taluk_name,kperad.locality_en as per_locality_en,kperad.locality_ml as per_locality_ml,")
@@ -46,7 +47,7 @@ public class RegisterQueryBuilder extends BaseRegBuilder {
             .append("kperad.family_emailid as per_family_emailid,kperad.family_mobileno as per_family_mobileno,kperad.postoffice_en as per_postoffice_en,kperad.postoffice_ml as per_postoffice_ml,")
 
             //Present Address
-            .append("kpreadd.id as pres_id,kpreadd.housename_no_en as pres_housename_no_en,kpreadd.housename_no_ml as pres_housename_no_ml,kpreadd.ot_address1_en as pres_ot_address1_en,")
+            .append("kpreadd.id as pres_id,kpreadd.housename_no_en as pres_housename_no_en,kpreadd.housename_no_ml as pres_housename_no_ml,kpreadd.res_asso_no as pres_res_asso_no, kpreadd.res_asso_no_ml as pres_res_asso_no_ml,kpreadd.ot_address1_en as pres_ot_address1_en,")
             .append("kpreadd.ot_address1_ml as pres_ot_address1_ml,kpreadd.ot_address2_en as pres_ot_address2_en,kpreadd.ot_address2_ml as pres_ot_address2_ml,")
             .append("kpreadd.ot_state_region_province_en as pres_ot_state_region_province_en,kpreadd.ot_state_region_province_ml as pres_ot_state_region_province_ml,kpreadd.ot_zipcode as pres_ot_zipcode,")
             .append("kpreadd.villageid as pres_villageid,kpreadd.village_name as pres_village_name,kpreadd.tenantid as pres_tenantid,kpreadd.talukid as pres_talukid,kpreadd.taluk_name as pres_taluk_name,")

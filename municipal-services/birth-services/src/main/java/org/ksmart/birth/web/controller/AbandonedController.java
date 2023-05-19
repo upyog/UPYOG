@@ -89,6 +89,7 @@ public class AbandonedController {
         AbandonedSearchResponse response = AbandonedSearchResponse.builder()
                                                                   .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), Boolean.TRUE))
                                                                   .newBirthDetails(adoptionDetails)
+                                                                  .count(adoptionDetails.size())
                                                                   .build();
         return ResponseEntity.ok(response);
     }

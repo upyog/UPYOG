@@ -13,6 +13,8 @@ public class BirthRegPreAddRowMapper {
                 .id(rs.getString("pres_id"))
                 .houseNameEn(rs.getString("pres_housename_no_en"))
                 .houseNameMl(rs.getString("pres_housename_no_ml"))
+                .resAssNoEn(rs.getString("pres_res_asso_no"))
+                .resAssNoMl(rs.getString("pres_res_asso_no_ml"))
                 .otAddress1En(rs.getString("pres_ot_address1_en"))
                 .otAddress1Ml(rs.getString("pres_ot_address1_ml"))
                 .otAddress2En(rs.getString("pres_ot_address2_en"))

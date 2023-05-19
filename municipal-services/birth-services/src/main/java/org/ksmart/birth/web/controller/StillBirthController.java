@@ -73,6 +73,7 @@ public class StillBirthController {
         StillBirthResponse response=StillBirthResponse.builder()
                                                       .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), Boolean.TRUE))
                                                       .birthDetails(birthDetails)
+                                                      .count(birthDetails.size())
                                                       .build();
         return ResponseEntity.ok(response);
     }

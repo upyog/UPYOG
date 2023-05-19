@@ -22,6 +22,10 @@ public class NacSearchResponse {
     @JsonProperty("nacDetails")
     @Valid
     private List<NacApplication> nacDetails;
+
+    @JsonProperty("Count")
+    private int count;
+
     public NacSearchResponse addKsmartBirthSearchApplication(NacApplication nacDetail) {
         if (nacDetails == null) {
         	nacDetails = new ArrayList<>();

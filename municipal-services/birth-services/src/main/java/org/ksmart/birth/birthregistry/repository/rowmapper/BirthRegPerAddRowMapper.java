@@ -17,6 +17,8 @@ public class BirthRegPerAddRowMapper {
                 .id(rs.getString("per_id"))
                 .houseNameEn(rs.getString("per_housename_no_en"))
                 .houseNameMl(rs.getString("per_housename_no_ml"))
+                .resAssNoEn(rs.getString("per_res_asso_no"))
+                .resAssNoMl(rs.getString("per_res_asso_no_ml"))
                 .otAddress1En(rs.getString("per_ot_address1_en"))
                 .otAddress1Ml(rs.getString("per_ot_address1_ml"))
                 .otAddress2En(rs.getString("per_ot_address2_en"))

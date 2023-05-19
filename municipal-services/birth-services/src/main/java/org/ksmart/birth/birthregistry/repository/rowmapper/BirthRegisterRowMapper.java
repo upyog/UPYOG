@@ -1,5 +1,6 @@
 package org.ksmart.birth.birthregistry.repository.rowmapper;
 
+import org.jsoup.internal.StringUtil;
 import org.ksmart.birth.birthregistry.model.RegisterBirthDetail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -88,7 +89,11 @@ public class BirthRegisterRowMapper implements ResultSetExtractor<List<RegisterB
                 .append(rs.getString("firstname_en") == null ? "" : rs.getString("firstname_en")+" ")
                 .append(rs.getString("middlename_en") == null ? "" : rs.getString("middlename_en")+" ")
                 .append(rs.getString("lastname_en") == null ? "" : rs.getString("lastname_en")).toString();
-        return fullName;
+        if(StringUtil.isBlank(fullName)) {
+            return "Name Not Registered";
+        } else{
+            return fullName;
+        }
     }
 
     private String getFullNameMl(ResultSet rs) throws SQLException {
@@ -96,6 +101,10 @@ public class BirthRegisterRowMapper implements ResultSetExtractor<List<RegisterB
                 .append(rs.getString("firstname_ml") == null ? "" : rs.getString("firstname_ml")+" ")
                 .append(rs.getString("middlename_ml") == null ? "" : rs.getString("middlename_ml")+" ")
                 .append(rs.getString("lastname_ml") == null ? "" : rs.getString("lastname_ml")).toString();
-        return fullName;
+        if(StringUtil.isBlank(fullName)) {
+            return "പേര് രജിസ്റ്റർ ചെയ്തിട്ടില്ല";
+        } else{
+            return fullName;
+        }
     }
 }

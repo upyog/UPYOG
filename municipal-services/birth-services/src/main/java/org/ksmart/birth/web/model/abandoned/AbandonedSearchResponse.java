@@ -22,6 +22,11 @@ public class AbandonedSearchResponse {
     @JsonProperty("AbandonedDetails")
     @Valid
     private List<AbandonedApplication> newBirthDetails;
+
+    @JsonProperty("Count")
+    private int count;
+
+
     public AbandonedSearchResponse addKsmartBirthSearchApplication(AbandonedApplication birthDetail) {
         if (newBirthDetails == null) {
             newBirthDetails = new ArrayList<>();

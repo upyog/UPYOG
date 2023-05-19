@@ -141,6 +141,11 @@ public class BirthConstants {
     public static final String STATE_CODE = "KL";
 
     public static final String COUNTRY_CODE = "COUNTRY_INDIA";
+    public static final String TCS_CODE_1 = "COC";
+    public static final String TCS_CODE_2 = "CoC";
+    public static final String TCS_ERROR_HOSP = "HOSPITAL_";
+
+    public static final String TCS_ERROR_STR = "എറണാകുളം, കേരളം, ഇന്ത്യ";
 
     public static final String STATE_CODE_SMALL = "kl";
     ///Application Status

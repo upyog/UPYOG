@@ -40,8 +40,8 @@ public class KsmartBirthPlaceService {
         } else if (register.getBirthPlaceId().contains(BIRTH_PLACE_INSTITUTION)) {
             String placeEn = "";
             String placeMl = "";
-            if (register.getAckNo().startsWith("COC", 0) || register.getAckNo().startsWith("CoC", 0)) {
-                if (register.getBirthPlaceHospitalId().contains("HOSPITAL_")) {
+            if (register.getAckNo().startsWith(TCS_CODE_1, 0) || register.getAckNo().startsWith(TCS_CODE_2, 0)) {
+                if (register.getBirthPlaceHospitalId().contains(TCS_ERROR_HOSP)) {
                     placeEn = new StringBuilder().append(mdmsLocationService.getHospitalNameEn(mdmsDataLoc, register.getBirthPlaceHospitalId()))
                             .append(",")
                             .append(mdmsLocationService.getHospitalAddressEn(mdmsDataLoc, register.getBirthPlaceHospitalId()) == null

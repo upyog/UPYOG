@@ -27,10 +27,6 @@ public class BornOutsideResponse {
     @Valid
     private List<BornOutsideApplication> birthDetails;
 
-    @JsonProperty("BirthCertificate")
-    @Valid
-    private BirthCertificate birthCertificate;
-
 
     @JsonProperty("Count")
     private int count;

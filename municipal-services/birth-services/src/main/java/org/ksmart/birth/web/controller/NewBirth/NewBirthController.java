@@ -85,6 +85,7 @@ public class NewBirthController {
         NewBirthSearchResponse response=NewBirthSearchResponse.builder()
                                                               .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), Boolean.TRUE))
                                                               .newBirthDetails(birthDetails)
+                                                              .count(birthDetails.size())
                                                               .build();
         return ResponseEntity.ok(response);
     }

@@ -64,7 +64,6 @@ public class BornOutsideController {
         BornOutsideResponse response = BornOutsideResponse.builder()
                 .birthDetails(birthApplicationDetails)
                 .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(),true))
-                .birthCertificate(birthCertificate)
                 .build();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -75,6 +74,7 @@ public class BornOutsideController {
         BornOutsideResponse response = BornOutsideResponse.builder()
                 .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), Boolean.TRUE))
                 .birthDetails(birthDetails)
+                .count(birthDetails.size())
                 .build();
         return ResponseEntity.ok(response);
     }
