@@ -81,10 +81,6 @@ public class RegisterBirthRepository {
                     "No results available for the given criteria.");
         } else{
             result =  jdbcTemplate.query(query, preparedStmtValues.toArray(), birthRegisterRowMapper);
-//            if(result.size() == 0)  {
-//                throw new CustomException(NOT_FOUND.getCode(),
-//                        "No results available for the given criteria.");
-//            }
         }
         return result;
     }
@@ -95,27 +91,8 @@ public class RegisterBirthRepository {
         return result;
     }
 
-//    public List<BirthCertificate> searchBirthCertificate(RegisterBirthSearchCriteria criteria) {
-//        List<Object> preparedStmtValues=new ArrayList<>();
-//        String query=registerQueryBuilder.getRegBirthApplicationSearchQuery(criteria, preparedStmtValues, Boolean.FALSE);
-//        List<RegisterBirthDetail> result=jdbcTemplate.query(query, preparedStmtValues.toArray(), birthRegisterRowMapper);
-//        return result;
-//    }
-
-//    public List<RegisterCertificateData> searchRegisterCert(RegisterBirthSearchCriteria criteria) {
-//        List<Object> preparedStmtValues=new ArrayList<>();
-//        List<RegisterCertificateData> result= null;
-//        String query=registerQueryBuilder.getRegBirthApplicationSearchQuery(criteria, preparedStmtValues, Boolean.FALSE);
-//        List<RegisterBirthDetail> resultSearch=jdbcTemplate.query(query, preparedStmtValues.toArray(), birthRegisterRowMapper);
-//        System.out.println(query);
-//        //List<RegisterCertificateData> result=jdbcTemplate.query(query, preparedStmtValues.toArray(), birthCetificateRowMapper);
-//        return result;
-//    }
-
     public void saveRegisterBirthCert(BirthCertRequest request) {
-//         registerBirthDetailsEnrichment.enrichCreate(request);
         producer.push(config.getSaveBirthCertificateTopic(), request);
-        //return request.getRegisterBirthDetails();
     }
 
     public EgovPdfResp saveBirthCertPdf(BirthPdfRegisterRequest pdfApplicationRequest) {

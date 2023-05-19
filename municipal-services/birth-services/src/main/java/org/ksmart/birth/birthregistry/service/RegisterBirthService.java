@@ -95,7 +95,6 @@ public class RegisterBirthService {
     public BirthCertificate download(RegisterBirthSearchCriteria criteria, RequestInfo requestInfo) {
         try {
             BirthCertificate  birthCertificate = getBirthCertificate(criteria, requestInfo);
-            System.out.println(birthCertificate);
             if (birthCertificate == null) {
             birthCertificate = new BirthCertificate();
                 BirthCertRequest birthCertRequest = BirthCertRequest.builder().birthCertificate(birthCertificate).requestInfo(requestInfo).build();
@@ -148,12 +147,10 @@ public class RegisterBirthService {
     public  BirthCertificate  getBirthCertificate(RegisterBirthSearchCriteria criteria, RequestInfo requestInfo) {
         BirthCertificate  birthCertificate = null;
         List<RegisterCertificateData> regDetail = searchRegisterForCert(criteria, requestInfo);
-        System.out.println(regDetail.size());
         if (regDetail.size() == 1) {
             CertificateCriteria certificateCriteria = new CertificateCriteria();
             certificateCriteria.setTenantId(regDetail.get(0).getTenantId());
             certificateCriteria.setRegistrationNo(regDetail.get(0).getRegistrationNo());
-            System.out.println(regDetail.get(0).getRegistrationNo());
            List<BirthCertificate> birthCertificates = certificateRepository.searchBirthDetails(certificateCriteria);
            if(birthCertificates.size() == 1) {
                birthCertificate = birthCertificates.get(0);
@@ -170,6 +167,7 @@ public class RegisterBirthService {
                birthCertificate.setTenantId(regDetail.get(0).getTenantId());
                birthCertificate.setApplicationType(regDetail.get(0).getApplicationType());
                birthCertificate.setRegistrtionNo(regDetail.get(0).getRegistrationNo());
+               birthCertificate.setApplicationId(regDetail.get(0).getApplicationId());
                SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
                String date = format.format(regDetail.get(0).getDateOfReport());
                String datestr = date.split("-")[2];
