@@ -340,6 +340,7 @@ public class IngestValidator {
 	    if (str == null || str.isEmpty()) {
         return str;
 	    }
+		str = new String (str.trim());
 		StringBuilder converted = new StringBuilder();
 
         boolean convertNext = true;
