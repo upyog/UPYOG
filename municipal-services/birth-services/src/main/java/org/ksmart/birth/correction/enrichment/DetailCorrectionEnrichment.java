@@ -173,7 +173,7 @@ public class DetailCorrectionEnrichment {
                                                     column.setCorrectionFieldName(correction.getCorrectionFieldName());
                                                     column.setTableName(UpdateRegisterColumn.REG_ADDRESS_PERMANENT_HN_EN.getRegTable());
                                                     column.setColumnName(UpdateRegisterColumn.REG_ADDRESS_PERMANENT_HN_EN.getRegTableColumn());
-                                                    birth.setMotherAadhar(column.getNewValue());
+                                                    birth.getCorrectionAddress().setPermanentHouseNameEn(column.getNewValue());
                                                     column.setOldValue(registerBirthDetails.get(0).getRegisterBirthPermanent().getHouseNameEn());
                                                 } else if(column.getColumn().contains(UpdateRegisterColumn.REG_ADDRESS_PERMANENT_HN_ML.getUiColoumn())) {
                                                     column.setId(UUID.randomUUID().toString());
@@ -182,7 +182,7 @@ public class DetailCorrectionEnrichment {
                                                     column.setCorrectionFieldName(correction.getCorrectionFieldName());
                                                     column.setTableName(UpdateRegisterColumn.REG_ADDRESS_PERMANENT_HN_ML.getRegTable());
                                                     column.setColumnName(UpdateRegisterColumn.REG_ADDRESS_PERMANENT_HN_ML.getRegTableColumn());
-                                                    birth.setMotherAadhar(column.getNewValue());
+                                                    birth.getCorrectionAddress().setPermanentHouseNameMl(column.getNewValue());
                                                     column.setOldValue(registerBirthDetails.get(0).getRegisterBirthPermanent().getHouseNameMl());
                                                 } else if(column.getColumn().contains(UpdateRegisterColumn.REG_ADDRESS_PERMANENT_LO_EN.getUiColoumn())) {
                                                     column.setId(UUID.randomUUID().toString());
@@ -191,7 +191,7 @@ public class DetailCorrectionEnrichment {
                                                     column.setCorrectionFieldName(correction.getCorrectionFieldName());
                                                     column.setTableName(UpdateRegisterColumn.REG_ADDRESS_PERMANENT_LO_EN.getRegTable());
                                                     column.setColumnName(UpdateRegisterColumn.REG_ADDRESS_PERMANENT_LO_EN.getRegTableColumn());
-                                                    birth.setMotherAadhar(column.getNewValue());
+                                                    birth.getCorrectionAddress().setPermanentLocalityNameEn(column.getNewValue());
                                                     column.setOldValue(registerBirthDetails.get(0).getRegisterBirthPermanent().getLocalityEn());
                                                 } else if(column.getColumn().contains(UpdateRegisterColumn.REG_ADDRESS_PERMANENT_LO_ML.getUiColoumn())) {
                                                     column.setId(UUID.randomUUID().toString());
@@ -200,7 +200,7 @@ public class DetailCorrectionEnrichment {
                                                     column.setCorrectionFieldName(correction.getCorrectionFieldName());
                                                     column.setTableName(UpdateRegisterColumn.REG_ADDRESS_PERMANENT_LO_ML.getRegTable());
                                                     column.setColumnName(UpdateRegisterColumn.REG_ADDRESS_PERMANENT_LO_ML.getRegTableColumn());
-                                                    birth.setMotherAadhar(column.getNewValue());
+                                                    birth.getCorrectionAddress().setPermanentLocalityNameMl(column.getNewValue());
                                                     column.setOldValue(registerBirthDetails.get(0).getRegisterBirthPermanent().getLocalityMl());
                                                 } else if(column.getColumn().contains(UpdateRegisterColumn.REG_ADDRESS_PERMANENT_STR_EN.getUiColoumn())) {
                                                     column.setId(UUID.randomUUID().toString());
@@ -209,7 +209,7 @@ public class DetailCorrectionEnrichment {
                                                     column.setCorrectionFieldName(correction.getCorrectionFieldName());
                                                     column.setTableName(UpdateRegisterColumn.REG_ADDRESS_PERMANENT_STR_EN.getRegTable());
                                                     column.setColumnName(UpdateRegisterColumn.REG_ADDRESS_PERMANENT_STR_EN.getRegTableColumn());
-                                                    birth.setMotherAadhar(column.getNewValue());
+                                                    birth.getCorrectionAddress().setPermanentStreetNameEn(column.getNewValue());
                                                     column.setOldValue(registerBirthDetails.get(0).getRegisterBirthPermanent().getStreetNameEn());
                                                 } else if(column.getColumn().contains(UpdateRegisterColumn.REG_ADDRESS_PERMANENT_STR_ML.getUiColoumn())) {
                                                     column.setId(UUID.randomUUID().toString());
@@ -218,7 +218,7 @@ public class DetailCorrectionEnrichment {
                                                     column.setCorrectionFieldName(correction.getCorrectionFieldName());
                                                     column.setTableName(UpdateRegisterColumn.REG_ADDRESS_PERMANENT_STR_ML.getRegTable());
                                                     column.setColumnName(UpdateRegisterColumn.REG_ADDRESS_PERMANENT_STR_ML.getRegTableColumn());
-                                                    birth.setMotherAadhar(column.getNewValue());
+                                                    birth.getCorrectionAddress().setPermanentStreetNameMl(column.getNewValue());
                                                     column.setOldValue(registerBirthDetails.get(0).getRegisterBirthPermanent().getStreetNameMl());
                                                 } else{ }
                                             }
