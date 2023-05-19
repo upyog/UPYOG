@@ -86,7 +86,7 @@ public class KsmartAddressService {
                 .append(StringUtil.isBlank(register.getRegisterBirthPresent().getResAssNoEn()) ? "" : StringUtils.capitalize(register.getRegisterBirthPresent().getResAssNoEn())+", ")
                 .append(StringUtil.isBlank(register.getRegisterBirthPresent().getLocalityEn()) || register.getRegisterBirthPresent().getLocalityEn().trim() == "" ? "" : StringUtils.capitalize(register.getRegisterBirthPresent().getLocalityEn())+", ")
                 .append(StringUtil.isBlank(register.getRegisterBirthPresent().getStreetNameEn()) || register.getRegisterBirthPresent().getStreetNameEn().trim() == ""? "" : StringUtils.capitalize(register.getRegisterBirthPresent().getStreetNameEn())+", ")
-                .append(StringUtil.isBlank(register.getRegisterBirthPresent().getPoId()) ? "" : mdmsTenantService.getPostOfficeNameEn(mdmsData,register.getRegisterBirthPresent().getPoId())+ " "
+                .append(StringUtil.isBlank(register.getRegisterBirthPresent().getPoId()) ? register.getRegisterBirthPresent().getPostofficeEn() : mdmsTenantService.getPostOfficeNameEn(mdmsData,register.getRegisterBirthPresent().getPoId())+ " "
                                                                                     +mdmsTenantService.getPostOfficePinCode(mdmsData,register.getRegisterBirthPresent().getPoId())+", ")
                 .append(StringUtil.isBlank(register.getRegisterBirthPresent().getDistrictId()) ? "" : mdmsTenantService.getDistrictNameEn(mdmsData, register.getRegisterBirthPresent().getDistrictId())+", ")
                 .append(StringUtil.isBlank(register.getRegisterBirthPresent().getStateId()) ? "" : mdmsTenantService.getStateNameEn(mdmsData, register.getRegisterBirthPresent().getStateId())+", ")
@@ -105,7 +105,7 @@ public class KsmartAddressService {
                 .append(StringUtil.isBlank(register.getRegisterBirthPresent().getResAssNoMl()) ? "" : StringUtils.capitalize(register.getRegisterBirthPresent().getResAssNoMl())+", ")
                 .append(StringUtil.isBlank(register.getRegisterBirthPresent().getLocalityMl())? "" : register.getRegisterBirthPresent().getLocalityMl()+", ")
                 .append(StringUtil.isBlank(register.getRegisterBirthPresent().getStreetNameMl()) ? "" : register.getRegisterBirthPresent().getStreetNameMl()+", ")
-                .append(StringUtil.isBlank(register.getRegisterBirthPresent().getPoId()) ?"" : mdmsTenantService.getPostOfficeNameMl(mdmsData,register.getRegisterBirthPresent().getPoId())+ " "
+                .append(StringUtil.isBlank(register.getRegisterBirthPresent().getPoId()) ? register.getRegisterBirthPresent().getPostofficeMl() : mdmsTenantService.getPostOfficeNameMl(mdmsData,register.getRegisterBirthPresent().getPoId())+ " "
                         +mdmsTenantService.getPostOfficePinCode(mdmsData,register.getRegisterBirthPresent().getPoId())+", ")
                 .append(StringUtil.isBlank(register.getRegisterBirthPresent().getDistrictId()) ? "" : mdmsTenantService.getDistrictNameMl(mdmsData, register.getRegisterBirthPresent().getDistrictId())+", ")
                 .append(StringUtil.isBlank(register.getRegisterBirthPresent().getStateId()) ? "" : mdmsTenantService.getStateNameMl(mdmsData, register.getRegisterBirthPresent().getStateId())+", ")
@@ -124,7 +124,7 @@ public class KsmartAddressService {
                 .append(StringUtil.isBlank(register.getRegisterBirthPermanent().getResAssNoEn()) ? "" : StringUtils.capitalize(register.getRegisterBirthPermanent().getResAssNoEn())+", ")
                 .append(StringUtil.isBlank(register.getRegisterBirthPermanent().getLocalityEn()) ? "" : StringUtils.capitalize(register.getRegisterBirthPermanent().getLocalityEn())+", ")
                 .append(StringUtil.isBlank(register.getRegisterBirthPermanent().getStreetNameEn()) ? "" : StringUtils.capitalize(register.getRegisterBirthPermanent().getStreetNameEn())+", ")
-                .append(StringUtil.isBlank(register.getRegisterBirthPermanent().getPoId()) ? "" : mdmsTenantService.getPostOfficeNameEn(mdmsData,register.getRegisterBirthPermanent().getPoId())+ " "
+                .append(StringUtil.isBlank(register.getRegisterBirthPermanent().getPoId()) ? register.getRegisterBirthPermanent().getPostofficeEn() : mdmsTenantService.getPostOfficeNameEn(mdmsData,register.getRegisterBirthPermanent().getPoId())+ " "
                         +mdmsTenantService.getPostOfficePinCode(mdmsData,register.getRegisterBirthPermanent().getPoId())+", ")
                 .append(StringUtil.isBlank(register.getRegisterBirthPermanent().getDistrictId()) ? "" : mdmsTenantService.getDistrictNameEn(mdmsData, register.getRegisterBirthPermanent().getDistrictId())+", ")
                 .append(StringUtil.isBlank(register.getRegisterBirthPermanent().getStateId()) ? "" : mdmsTenantService.getStateNameEn(mdmsData, register.getRegisterBirthPermanent().getStateId())+", ")
@@ -143,7 +143,7 @@ public class KsmartAddressService {
                 .append(StringUtil.isBlank(register.getRegisterBirthPermanent().getResAssNoMl()) ? "" : StringUtils.capitalize(register.getRegisterBirthPermanent().getResAssNoMl())+", ")
                 .append(StringUtil.isBlank(register.getRegisterBirthPermanent().getLocalityMl()) ||register.getRegisterBirthPermanent().getLocalityMl() == "" ? "" : register.getRegisterBirthPermanent().getLocalityMl()+", ")
                 .append(StringUtil.isBlank(register.getRegisterBirthPermanent().getStreetNameMl()) ||register.getRegisterBirthPermanent().getStreetNameMl() == ""? "" : register.getRegisterBirthPermanent().getStreetNameMl()+", ")
-                .append(StringUtil.isBlank(register.getRegisterBirthPermanent().getPoId()) ? "" : mdmsTenantService.getPostOfficeNameMl(mdmsData,register.getRegisterBirthPermanent().getPoId())+ " "
+                .append(StringUtil.isBlank(register.getRegisterBirthPermanent().getPoId()) ? register.getRegisterBirthPermanent().getPostofficeMl() : mdmsTenantService.getPostOfficeNameMl(mdmsData,register.getRegisterBirthPermanent().getPoId())+ " "
                         +mdmsTenantService.getPostOfficePinCode(mdmsData,register.getRegisterBirthPermanent().getPoId())+", ")
                 .append(StringUtil.isBlank(register.getRegisterBirthPermanent().getDistrictId()) ? "" : mdmsTenantService.getDistrictNameMl(mdmsData, register.getRegisterBirthPermanent().getDistrictId())+", ")
                 .append(StringUtil.isBlank(register.getRegisterBirthPermanent().getStateId()) ? "" : mdmsTenantService.getStateNameMl(mdmsData, register.getRegisterBirthPermanent().getStateId())+", ")

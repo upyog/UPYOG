@@ -106,7 +106,11 @@ public class NewBirthApplicationValidator {
           mdmsValidator.validateMdmsData(request, mdmsData);
     }
 
-    public void validateUpdate(NewBirthDetailRequest request, NewBirthApplication existing, Object mdmsData, final boolean create) {
+    public void validateUpdate(NewBirthDetailRequest request, NewBirthApplication existing, Object mdmsData, WorkFlowCheck wfc, final boolean create) {
+        Long childDob = 0L;
+        String birthPlace = null;
+        String wfCode = null;
+        String applicationType = null;
         final String errorCode = create
                 ? ErrorCodes.INVALID_CREATE.getCode()
                 : ErrorCodes.INVALID_UPDATE.getCode();
@@ -158,6 +162,19 @@ public class NewBirthApplicationValidator {
         if (StringUtils.isBlank(birthApplications.get(0).getAction())) {
             throw new CustomException(errorCode,
                     "Workflow action is required for update request.");
+        }
+        for (NewBirthApplication birth : birthApplications) {
+            childDob = birth.getDateOfBirth();
+            birthPlace = birth.getPlaceofBirthId();
+            wfCode = birth.getWorkFlowCode();
+            applicationType = birth.getApplicationType();
+
+        }
+        if (childDob == null) {
+            throw new CustomException(INVALID_CREATE.getCode(),
+                    "Date of birth is required for create request.");
+        } else {
+            validateDob(childDob, birthPlace, wfCode,applicationType,mdmsData, wfc);
         }
         //ward comment
 

@@ -1,7 +1,6 @@
 package org.ksmart.birth.birthregistry.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.kafka.common.protocol.types.Field;
 import org.jsoup.internal.StringUtil;
 import org.ksmart.birth.birthregistry.model.RegisterBirthDetail;
 import org.springframework.stereotype.Service;
@@ -20,7 +19,7 @@ public class TcsAddressService {
     public void trimAddressHouseNamePermanent(String houseName, RegisterBirthDetail register, String errorString) {
         if(!StringUtil.isBlank(houseName)){
             if(houseName.contains(errorString)){
-                register.getRegisterBirthPermanent().setHouseNameMl(houseName.replace(errorString, "").trim().replaceAll(",$", ""));
+                register.getRegisterBirthPresent().setHouseNameMl(houseName.replace(errorString, "").trim().replaceAll(",$", ""));
             }
         }
     }

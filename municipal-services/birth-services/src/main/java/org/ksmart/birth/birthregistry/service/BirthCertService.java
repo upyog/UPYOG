@@ -45,7 +45,6 @@ public class BirthCertService {
             Date res = new Date(register.getDateOfBirth()) ;
             SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
             strDate= formatter.format(res);
-            System.out.println(strDate);
             String[] dobAry = strDate.split("/");
             try {
                 dobInWords = NumToWordConverter.convertNumber(Long.parseLong(dobAry[0])) + "/" + new SimpleDateFormat("MMMM").format(res) + "/" + NumToWordConverter.convertNumber(Long.parseLong(dobAry[2]));;

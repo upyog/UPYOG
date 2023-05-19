@@ -81,6 +81,7 @@ public class NewBirthService {
     }
       
     public List<NewBirthApplication> updateBirthDetails(NewBirthDetailRequest request) {
+        WorkFlowCheck wfc = new WorkFlowCheck();
         Object mdmsData = mdmsUtil.mdmsCall(request.getRequestInfo());
         
         // validate request
@@ -90,7 +91,7 @@ public class NewBirthService {
         NewBirthApplication newBirthApplicationExisting = findBirthRequestById(request);
 
         //search application exist
-        validator.validateUpdate(request,  newBirthApplicationExisting, mdmsData, false);
+        validator.validateUpdate(request,  newBirthApplicationExisting, mdmsData,wfc, false);
         
         // enrich request
         ksmartBirthEnrichment.enrichUpdate(request, mdmsData);
