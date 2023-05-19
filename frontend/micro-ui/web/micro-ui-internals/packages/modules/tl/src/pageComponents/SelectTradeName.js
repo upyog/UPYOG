@@ -1,7 +1,6 @@
 import { CardLabel, CitizenInfoLabel, FormStep, Loader, TextInput } from "@egovernments/digit-ui-react-components";
 import React, { useState, useEffect } from "react";
 import Timeline from "../components/TLTimeline";
-import { currentFinancialYear } from "../utils";
 
 const SelectTradeName = ({ t, config, onSelect, value, userType, formData }) => {
   let validation = {};
@@ -12,7 +11,7 @@ const SelectTradeName = ({ t, config, onSelect, value, userType, formData }) => 
   const isEdit = window.location.href.includes("/edit-application/") || window.location.href.includes("renew-trade");
   const { isLoading, data: fydata = {} } = Digit.Hooks.tl.useTradeLicenseMDMS(stateId, "egf-master", "FinancialYear");
 
-  let mdmsFinancialYear = fydata["egf-master"] ? fydata["egf-master"].FinancialYear.filter((y) => y.module === "TL") : [];
+  let mdmsFinancialYear = fydata["egf-master"] ? fydata["egf-master"].FinancialYear.filter(y => y.module === "TL") : [];
   let FY = mdmsFinancialYear && mdmsFinancialYear.length > 0 && mdmsFinancialYear.sort((x, y) => y.endingDate - x.endingDate)[0]?.code;
   function setSelectTradeName(e) {
     setTradeName(e.target.value);
@@ -23,33 +22,38 @@ const SelectTradeName = ({ t, config, onSelect, value, userType, formData }) => 
   }, []);
 
   const goNext = () => {
-    // const getCurrentFinancialYear = () => {
-    //   var today = new Date();
-    //   var curMonth = today.getMonth();
-    //   var fiscalYr = "";
-    //   if (curMonth > 3) {
-    //     var nextYr1 = (today.getFullYear() + 1).toString();
-    //     fiscalYr = today.getFullYear().toString() + "-" + nextYr1;
-    //   } else {
-    //     var nextYr2 = today.getFullYear().toString();
-    //     fiscalYr = (today.getFullYear() - 1).toString() + "-" + nextYr2.slice(-2);
-    //   }
-    //   return fiscalYr;
-    // };
+    const getCurrentFinancialYear = () => {
+      var today = new Date();
+      var curMonth = today.getMonth();
+      var fiscalYr = "";
+      if (curMonth > 3) {
+        var nextYr1 = (today.getFullYear() + 1).toString();
+        fiscalYr = today.getFullYear().toString() + "-" + nextYr1;
+      } else {
+        var nextYr2 = today.getFullYear().toString();
+        fiscalYr = (today.getFullYear() - 1).toString() + "-" + nextYr2.slice(-2);
+      }
+      return fiscalYr;
+    };
 
     // sessionStorage.setItem("CurrentFinancialYear", FY);
-    // sessionStorage.setItem("CurrentFinancialYear", getCurrentFinancialYear());
-    sessionStorage.setItem("CurrentFinancialYear", currentFinancialYear());
+    sessionStorage.setItem("CurrentFinancialYear", getCurrentFinancialYear());
     onSelect(config.key, { TradeName });
   };
   if (isLoading) {
-    return <Loader></Loader>;
+    return <Loader></Loader>
   }
 
   return (
     <React.Fragment>
       {window.location.href.includes("/citizen") ? <Timeline /> : null}
-      <FormStep config={config} onSelect={goNext} onSkip={onSkip} t={t} isDisabled={!TradeName}>
+      <FormStep
+        config={config}
+        onSelect={goNext}
+        onSkip={onSkip}
+        t={t}
+        isDisabled={!TradeName}
+      >
         <CardLabel>{`${t("TL_LOCALIZATION_TRADE_NAME")}`}</CardLabel>
         <TextInput
           t={t}
