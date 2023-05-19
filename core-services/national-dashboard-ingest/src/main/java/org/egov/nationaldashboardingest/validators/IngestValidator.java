@@ -337,27 +337,22 @@ public class IngestValidator {
 	
 	public static String toCamelCase(String str)
 	{
-	    if (str == null || str.isEmpty()) 
-	    {
+	    if (str == null || str.isEmpty()) {
         return str;
 	    }
 		StringBuilder converted = new StringBuilder();
 
         boolean convertNext = true;
             
-        for (char ch : str.toCharArray()) 
-        {
-        	if (Character.isSpaceChar(ch)) 
-        	{
+        for (char ch : str.toCharArray()) {
+        	if (Character.isSpaceChar(ch)){
             convertNext = true;
         	} 
-        	else if (convertNext) 
-        	{
+        	else if (convertNext) {
             ch = Character.toTitleCase(ch);
             convertNext = false;
         	} 
-        	else 
-        	{
+        	else {
             ch = Character.toLowerCase(ch);
         	}
         converted.append(ch);
