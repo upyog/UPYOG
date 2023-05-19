@@ -164,5 +164,5 @@ export const ULBService = {
       });
       return filteredArray;
     }
-  }
+  },
 };

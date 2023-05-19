@@ -90,8 +90,6 @@ import AcknowledgementCF from "@egovernments/digit-ui-module-core/src/components
 // PTAcknowledgementCF from "@egovernments/digit-ui-module-core/src/components/PTAcknowledgementCF";
 //import PTCitizenFeedbackPopUp from "./pageComponents/PTCitizenFeedbackPopUp";
 
-import PTSelectLandmark from "./pageComponents/PTSelectLandmark";
-
 const componentsToRegister = {
   PTLandArea,
   PTCheckPage,
@@ -172,7 +170,6 @@ const componentsToRegister = {
   SelectOtp, // To-do: Temp fix, Need to check why not working if selectOtp module is already imported from core module
   AcknowledgementCF,
   CitizenFeedback,
-  PTSelectLandmark
 };
 
 const addComponentsToRegistry = () => {

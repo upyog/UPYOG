@@ -39,7 +39,7 @@ export const newConfig = [
     body: [
       {
         route: "map",
-        component: "SelectGeolocation",
+        component: "FSMSelectGeolocation",
         nextStep: "pincode",
         hideInEmployee: true,
         key: "address",

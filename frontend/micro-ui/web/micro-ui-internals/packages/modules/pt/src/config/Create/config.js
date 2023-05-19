@@ -62,7 +62,7 @@ export const newConfig =[
                 {
                     "type": "component",
                     "route": "landmark",
-                    "component": "PTSelectLandmark",
+                    "component": "SelectLandmark",
                     "withoutLabel": true,
                     "texts": {
                         "headerCaption": "PT_PROPERTY_LOCATION_CAPTION",

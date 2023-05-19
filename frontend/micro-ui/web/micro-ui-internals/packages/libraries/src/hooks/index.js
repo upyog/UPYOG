@@ -75,6 +75,17 @@ import useConfig from "./fsm/useConfig";
 import useVendorDetail from "./fsm/useVendorDetail";
 import useSlum from "./fsm/useSlum";
 import usePaymentHistory from "./fsm/usePaymentHistory";
+import useVendorCreate from "./fsm/useVendorCreate";
+import useVendorUpdate from "./fsm/useVendorUpdate";
+import useVehicleDetails from "./fsm/useVehicleDetails";
+import useVehicleCreate from "./fsm/useVehicleCreate";
+import useUpdateVehicle from "./fsm/useUpdateVehicle";
+import useDriverSearch from "./fsm/useDriverSearch";
+import useDriverCreate from "./fsm/useDriverCreate";
+import useDriverUpdate from "./fsm/useDriverUpdate";
+import useDriverDetails from "./fsm/useDriverDetails";
+import useVendorSearch from "./fsm/useVendorSearch";
+import useAdvanceBalanceCalulation from "./fsm/useAdvanceBalanceCalculation";
 
 import useEmployeeSearch from "./useEmployeeSearch";
 
@@ -279,7 +290,22 @@ const fsm = {
   useConfig,
   useSlum,
   usePaymentHistory,
+  useVendorCreate,
+  useVendorUpdate,
+  useVehicleDetails,
+  useVehicleCreate,
+  useVendorCreate,
+  useVendorUpdate,
+  useVehicleDetails,
+  useVehicleCreate,
+  useUpdateVehicle,
+  useDriverSearch,
+  useDriverCreate,
+  useDriverUpdate,
+  useDriverDetails,
   useVehicleTripCreate,
+  useVendorSearch,
+  useAdvanceBalanceCalulation,
 };
 
 const pt = {
