@@ -106,7 +106,7 @@ public class IngestValidator {
         validateStringNotNumeric(ingestData.getRegion());
         validateStringNotNumeric(ingestData.getState());
 		
-		String State = toCamelCase(ingestData.getState());
+        ingestData.setState(toCamelCase(ingestData.getState()));
 
 
         Set<String> configuredFieldsForModule = new HashSet<>();
