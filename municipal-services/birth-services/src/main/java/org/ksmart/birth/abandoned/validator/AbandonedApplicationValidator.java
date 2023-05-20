@@ -2,6 +2,8 @@ package org.ksmart.birth.abandoned.validator;
 
 import org.egov.tracer.model.CustomException;
 import org.ksmart.birth.config.BirthConfiguration;
+import org.ksmart.birth.web.model.abandoned.AbandonedApplication;
+import org.ksmart.birth.web.model.abandoned.AbandonedRequest;
 import org.ksmart.birth.web.model.newbirth.NewBirthApplication;
 import org.ksmart.birth.web.model.newbirth.NewBirthDetailRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,9 +31,9 @@ public class AbandonedApplicationValidator {
      *
      * @param request the {@link NewBirthApplication}
      */
-    public void validateCreate(NewBirthDetailRequest request, Object mdmsData) {
-        List<NewBirthApplication> applicantPersonals = request.getNewBirthDetails();
-        if (CollectionUtils.isEmpty(request.getNewBirthDetails())) {
+    public void validateCreate(AbandonedRequest request, Object mdmsData) {
+        List<AbandonedApplication> applicantPersonals = request.getBirthDetails();
+        if (CollectionUtils.isEmpty(request.getBirthDetails())) {
             throw new CustomException(BIRTH_DETAILS_REQUIRED.getCode(),
                     "Birth details is required.");
         }
@@ -41,7 +43,7 @@ public class AbandonedApplicationValidator {
                     "Supports only single Birth  application create request.");
         }
 
-        mdmsValidator.validateMdmsData(request, mdmsData);
+        //mdmsValidator.validateMdmsData(request, mdmsData);
     }
 
 }

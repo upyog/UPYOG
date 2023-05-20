@@ -44,7 +44,7 @@ public class AbandonedService {
         Object mdmsData = mdmsUtil.mdmsCall(request.getRequestInfo());
 
         // validate request
-//        validator.validateCreate(request, mdmsData);
+        validator.validateCreate(request, mdmsData);
 
         //call save
         List<AbandonedApplication> birthApplicationDetails =  repository.saveBirthDetails(request);
