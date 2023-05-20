@@ -38,6 +38,7 @@ public class BirthConstants {
     public static final String CR_MDMS_CARETAKER= "CareTakerDesignation";
     public static final String CR_MDMS_RELATION= "Relation";
     public static final String CR_MDMS_IPOP= "IPOPList";
+    public static final String CR_MDMS_OTHER_BP= "OtherBithPlace";
     public static final String CR_MDMS_INSTITUTIONTYPE = "InstitutionType";
     public static final String CR_MDMS_PLACE_INSTITUTION_TYPE = "InstitutionTypePlaceOfEvent";
     public static final String CR_MDMS_DELIVERYMETHOD = "DeliveryMethod";

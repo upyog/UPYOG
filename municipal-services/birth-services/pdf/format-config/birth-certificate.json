@@ -21,6 +21,8 @@
       "height": 320,
       "absolutePosition": {"x": 75, "y": 250}
     },
+
+    "footer": "(function(currentPage, pageCount) { return {'style': 'ws-head','table': {'widths': ['*'],'body': [[{'stack': [  { 'text': 'Ensure Registration of Every birth and death', 'style': 'details-body-center-bottom-bold'  },  { 'text': 'ഓരോ ജനനവും മരണവും രജിസ്റ്റർ ചെയ്തുവെന്ന് ഉറപ്പുവരുത്തുക', 'style': 'details-body-center-bottomML'  },  { 'text': 'This certificate is computer generated and does not require any Seal/Signature in original.', 'style': 'details-body-center-bottom'  },  { 'text': 'The Govt. vide G.O.(Ms) No.202/2012/LSGD dated 25/07/2012 has approved this certificate as a valid document for all official purposes.', 'style': 'details-body-center-bottom'  },  { 'text': 'Authenticity of this certificate can be verified at https://ksmart.lsgkerala.gov.in. The Key Number is unique to each event.', 'style': 'details-body-center-bottom'  },  { 'text': 'Software developed and supported by Information Kerala Mission.', 'style': 'details-body-center-bottom'  },  { 'text': 'Certificate printed before the last updated date is invalid.', 'style': 'footer-red'  },{'text': currentPage.toString() + ' of ' + pageCount ,'alignment':'center'}]}]]},'layout': 'noBorders','alignment' :'center','margin':[  150,40,100,20  ]} })",
     "content": [
       {
         "style": "ws-head",
@@ -249,7 +251,7 @@
               {
                 "stack": [
                   {
-                    "text": "താഴെ പറയുന്ന വിവരങ്ങൾ കേരള സംസ്ഥാനത്തിലെ {{distcodeMl}} ജില്ലയിലെ {{talukcodeMl}} താലൂക്കിലെ  {{tenantMl}} {{certifyMl}}.",
+                    "text": "താഴെ പറയുന്ന വിവരങ്ങൾ കേരള സംസ്ഥാനത്തിലെ {{distcodeMl}} ജില്ലയിലെ {{talukcodeMl}} താലൂക്കിലെ  {{tenantMl}} {{lbtypecodeMl}} {{certifyMl}}.",
                     "style": "rule-header-ml"
                   },
                   {
@@ -284,7 +286,7 @@
                     "width": "1%"
                   },
                   {
-                    "text": "{{nameMl  }} / {{ name}}",
+                    "text": "{{nameMl   }} / {{  name}}",
                     "style": "details-body"
                   }
                 ]
@@ -303,7 +305,7 @@
                     "width": "1%"
                   },
                   {
-                    "text": "{{genderMl }}/ {{ gender}}",
+                    "text": "{{genderMl  }} / {{  gender}}",
                     "style": "details-body"
                   }
                 ]
@@ -323,7 +325,7 @@
                     "width": "1%"
                   },
                   {
-                    "text": "{{dob }}  ({{ dobInWords}})",
+                    "text": "{{dob  }}  ({{ dobInWords}})",
                     "style": "details-body-bold"
                   }
                 ]
@@ -343,7 +345,7 @@
                     "width": "1%"
                   },
                   {
-                    "text": "{{ placeOfBirthMl }}/{{ placeOfBirthEn }}{{ hospitalMainPlace }}",
+                    "text": "{{ placeOfBirthMl  }} / {{  placeOfBirthEn }}{{  hospitalMainPlace }}",
                     "style": "details-body"
                   }
                 ]
@@ -363,7 +365,7 @@
                     "width": "1%"
                   },
                   {
-                    "text": "{{motherNameMl }}/{{ motherName}}",
+                    "text": "{{motherNameMl}} / {{motherName}}",
                     "style": "details-body"
                   }
                 ]
@@ -382,7 +384,7 @@
                     "width": "1%"
                   },
                   {
-                    "text": "{{fatherNameMl }}/{{ fatherName}}",
+                    "text": "{{fatherNameMl}}  /  {{fatherName}}",
                     "style": "details-body"
                   }
                 ]
@@ -510,7 +512,7 @@
               {
                 "columns": [
                   {
-                    "text": "{{dateOfIssue}}: {{ currentDate }} ({{currentTime}})",
+                    "text": "{{dateOfIssue  }}: {{ currentDate }} ({{currentTime}})",
                     "width": "49%",
                     "style": "details-body"
                   },
@@ -563,40 +565,6 @@
                     "width": 45,
                     "height": 45,
                     "style": "qr-code"
-                  },
-                  {
-                    "stack": [
-                      {
-                        "text": "{{ensureRegistration}}",
-                        "style": "details-body-center-bottom-bold"
-                      },
-                      {
-                        "text": "{{ensureRegistrationMl}}",
-                        "style": "details-body-center-bottomML"
-                      },
-                      {
-                        "text": "{{computerGenerated}}",
-                        "style": "details-body-center-bottom"
-                      },
-                      {
-                        "text": "{{validDocument}}",
-                        "style": "details-body-center-bottom"
-                      },
-                      {
-                        "text": "{{authenticity}}",
-                        "style": "details-body-center-bottom"
-                      },
-                      {
-                        "text": "{{ikm}}",
-                        "italics": true,
-                        "style": "details-body-center-bottom"
-                      },
-                      {
-                        "text": "{{printedInvalid}}",
-                        "italics": true,
-                        "style": "footer-red"
-                      }
-                    ]
                   }
                 ]
               }
@@ -684,11 +652,6 @@
           0
         ]
       },
-      "footer": {
-        "color": "#000000",
-        "alignment": "center",
-        "fontSize": 11
-      },
       "footer-red": {
         "color": "#FF0000",
         "fontSize": 7,
@@ -771,7 +734,7 @@
       },
       "rule-header": {
         "color": "#000000",
-        "fontSize": 7,
+        "fontSize": 8,
         "font": "Times",
         "margin": [
           0,
@@ -873,39 +836,21 @@
         "color": "#000000",
         "italics": true,
         "fontSize": 6,
-        "alignment": "center",
-        "margin": [
-          0,
-          0,
-          15,
-          5
-        ]
+        "alignment": "center"
       },
       "details-body-center-bottom": {
         "color": "#000000",
         "font": "Times",
         "italics": true,
         "fontSize": 6,
-        "alignment": "center",
-        "margin": [
-          0,
-          0,
-          15,
-          5
-        ]
+        "alignment": "center"
       },
       "details-body-center-bottom-bold": {
         "color": "#000000",
         "font": "Times",
         "bold": true,
         "fontSize": 6,
-        "alignment": "center",
-        "margin": [
-          0,
-          0,
-          15,
-          5
-        ]
+        "alignment": "center"
       },
       "appendix-header-body": {
         "color": "#000000",
@@ -1075,7 +1020,6 @@
       "pdf-watermark": {
         "link": "{{watermark}}"
       }
-    },
-    "footer": "(function(currentPage, pageCount) { return [{'columns': [{'text': currentPage.toString() + ' of ' + pageCount ,'alignment':'center'}]}] })"
+    }
   }
 }

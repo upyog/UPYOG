@@ -225,6 +225,14 @@ public class MdmsUtil {
                 .build());
         crMasterDetails.addAll(masterIpop);
 
+        // Add Module ip op list
+        List<MasterDetail> masterOtherBirthPlace = Collections.singletonList(MasterDetail.builder()
+                .name(BirthConstants.CR_MDMS_OTHER_BP)
+                .build());
+        crMasterDetails.addAll(masterOtherBirthPlace);
+
+        crMasterDetails.addAll(masterIpop);
+
 
         //Add masters to modules
         ModuleDetail crModuleDetail = ModuleDetail.builder()
