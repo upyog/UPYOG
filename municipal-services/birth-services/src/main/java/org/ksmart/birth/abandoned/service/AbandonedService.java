@@ -54,8 +54,7 @@ public class AbandonedService {
     }
 
     public List<AbandonedApplication> updateKsmartBirthDetails(AbandonedRequest request) {
-
-//        workflowIntegrator.callWorkFlow(request);
+        workflowIntegrator.callWorkFlow(request);
         return repository.updateBirthDetails(request);
     }
 
