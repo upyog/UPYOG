@@ -311,307 +311,36 @@ serviceMaps:
             - jsonPath: $.AbandonedDetails.*.auditDetails.lastModifiedBy
             - jsonPath: $.AbandonedDetails.*.auditDetails.lastModifiedTime
 
+
     - version: 1.0
       description: Persists update birth details in eg_birth_details  table
       fromTopic: update-abandoned-application-topic
       isTransaction: true
       queryMaps:
-        - query: INSERT INTO eg_birth_details_audit SELECT * FROM eg_birth_details WHERE id = ?;
-          basePath: AbandonedDetails.*
-          jsonMaps:
-               - jsonPath: $.AbandonedDetails.*.id
-        - query: UPDATE public.eg_birth_details SET dateofreport=?,dateofbirth=?,timeofbirth=?,am_pm=?,tenantid=?,
-                 gender=?,remarks_en=?,remarks_ml=?,esign_user_code=?,esign_user_desig_code=?,
-                 applicationtype=?,businessservice=?,workflowcode=?,fm_fileno=?,file_date=?,
-                 file_status=?,applicationno=?,registrationno=?,registration_date=?,action,status=?,
-                 lastmodifiedtime=?, lastmodifiedby=? WHERE id=?;
+        - query:  INSERT INTO eg_birth_details_audit SELECT * FROM eg_birth_details WHERE id = ?;
 
-          basePath: AbandonedDetails.*
-          jsonMaps:
-              - jsonPath: $.AbandonedDetails.*.dateofreport
-
-              - jsonPath: $.AbandonedDetails.*.childDOB
-
-              - jsonPath: $.AbandonedDetails.*.birthDateTime
-
-              - jsonPath: $.AbandonedDetails.*.am_pm
-
-              - jsonPath: $.AbandonedDetails.*.tenantid
-
-              - jsonPath: $.AbandonedDetails.*.gender
-
-              - jsonPath: $.AbandonedDetails.*.remarks_en
-
-              - jsonPath: $.AbandonedDetails.*.remarks_ml
-
-              - jsonPath: $.AbandonedDetails.*.esign_user_code
-
-              - jsonPath: $.AbandonedDetails.*.esign_user_desig_code
-
-              - jsonPath: $.AbandonedDetails.*.applicationtype
-
-              - jsonPath: $.AbandonedDetails.*.businessservice
-
-              - jsonPath: $.AbandonedDetails.*.workflowcode
-
-              - jsonPath: $.AbandonedDetails.*.fileNumber
-
-              - jsonPath: $.AbandonedDetails.*.fileDate
-
-              - jsonPath: $.AbandonedDetails.*.fileStatus
-
-              - jsonPath: $.AbandonedDetails.*.applicationNumber
-
-              - jsonPath: $.AbandonedDetails.*.registrationNo
-
-              - jsonPath: $.AbandonedDetails.*.registrationDate
-
-              - jsonPath: $.AbandonedDetails.*.action
-
-              - jsonPath: $.AbandonedDetails.*.applicationStatus
-
-              - jsonPath: $.AbandonedDetails.*.auditDetails.lastModifiedTime
-
-              - jsonPath: $.AbandonedDetails.*.auditDetails.lastModifiedBy
-
-              - jsonPath: $.AbandonedDetails.*.id
-
-        - query: INSERT INTO eg_birth_place_audit SELECT * FROM eg_birth_place WHERE birthdtlid = ?;
           basePath: AbandonedDetails.*
           jsonMaps:
             - jsonPath: $.AbandonedDetails.*.id
 
-        - query: UPDATE public.eg_birth_place set placeofbirthid=?,hospitalid=?,public_place_id=?,institution_type_id=?,institution_id=?,vehicletypeid=?,vehicle_registration_no=?,vehicle_from_en=?,
-              vehicle_to_en=?,vehicle_from_ml=?, vehicle_to_ml=?,vehicle_admit_hospital_en=?,ho_householder_en=?,ho_locality_en=?,ho_locality_ml=?,ho_street_name_en=?,ho_street_name_ml=?,ho_housename_en=?,ho_housename_ml=?,ho_villageid=?,
-              ho_talukid=?,ho_districtid=?,ho_stateid=?,ho_poid=?,ho_pinno=?,ho_countryid=?,ward_id=?,auth_officer_id=?,auth_officer_desig_id=?,oth_auth_officer_name=?,oth_auth_officer_desig=?, informantsaddress_en=?,
-              informants_mobileno=?,informants_aadhaar_no=?,informantsname_en=?,informants_office_name=?,vehicle_haltplace_en=?,vehicle_hospitalid=?
-            ,lastmodifiedby=?,lastmodifiedtime=?,vehicle_haltplace_ml=?,
-              vehicle_desc=?,public_place_desc=?,public_locality_en=?,public_locality_ml=?,public_street_name_en=?,public_street_name_ml=? where birthdtlid=?;
+        - query: UPDATE public.eg_birth_details SET tenantid=?,  esign_user_code=?, esign_user_desig_code=?,
+              action=?, status=?, lastmodifiedby=?, lastmodifiedtime=? WHERE id=?;
+
 
           basePath: AbandonedDetails.*
           jsonMaps:
-              - jsonPath: $.AbandonedDetails.*.birthPlace
+            - jsonPath: $.AbandonedDetails.*.tenantid
 
-              - jsonPath: $.AbandonedDetails.*.hospitalCode
+            - jsonPath: $.AbandonedDetails.*.esign_user_code
 
-              - jsonPath: $.AbandonedDetails.*.publicPlaceType
+            - jsonPath: $.AbandonedDetails.*.esign_user_desig_code
 
-              - jsonPath: $.AbandonedDetails.*.institutionTypeCode
+            - jsonPath: $.AbandonedDetails.*.action
 
-              - jsonPath: $.AbandonedDetails.*.institutionNameCode
+            - jsonPath: $.AbandonedDetails.*.applicationStatus
 
-              - jsonPath: $.AbandonedDetails.*.vehicleType
+            - jsonPath: $.AbandonedDetails.*.auditDetails.lastModifiedBy
 
-              - jsonPath: $.AbandonedDetails.*.vehicleRegistrationNo
+            - jsonPath: $.AbandonedDetails.*.auditDetails.lastModifiedTime
 
-              - jsonPath: $.AbandonedDetails.*.vehicleFromEn
-
-              - jsonPath: $.AbandonedDetails.*.vehicleToEn
-
-              - jsonPath: $.AbandonedDetails.*.vehicleFromMl
-
-              - jsonPath: $.AbandonedDetails.*.vehicleToMl
-
-              - jsonPath: $.AbandonedDetails.*.vehicle_admit_hospital_en
-
-              - jsonPath: $.AbandonedDetails.*.ho_householder_en
-
-              - jsonPath: $.AbandonedDetails.*.adrsLocalityNameEn
-
-              - jsonPath: $.AbandonedDetails.*.adrsLocalityNameMl
-
-              - jsonPath: $.AbandonedDetails.*.adrsStreetNameEn
-
-              - jsonPath: $.AbandonedDetails.*.adrsStreetNameMl
-
-              - jsonPath: $.AbandonedDetails.*.adrsHouseNameEn
-
-              - jsonPath: $.AbandonedDetails.*.adrsHouseNameMl
-
-              - jsonPath: $.AbandonedDetails.*.ho_villageid
-
-              - jsonPath: $.AbandonedDetails.*.ho_talukid
-
-              - jsonPath: $.AbandonedDetails.*.ho_districtid
-
-              - jsonPath: $.AbandonedDetails.*.ho_stateid
-
-              - jsonPath: $.AbandonedDetails.*.adrsPostOffice
-
-              - jsonPath: $.AbandonedDetails.*.adrsPincode
-
-              - jsonPath: $.AbandonedDetails.*.ho_countryid
-
-              - jsonPath: $.AbandonedDetails.*.wardNo
-
-              - jsonPath: $.AbandonedDetails.*.InformarHosInstDetails.infomantFirstNameEn
-
-              - jsonPath: $.AbandonedDetails.*.InformarHosInstDetails.informerDesi
-
-              - jsonPath: $.AbandonedDetails.*.InformarHosInstDetails.oth_auth_officer_name
-
-              - jsonPath: $.AbandonedDetails.*.InformarHosInstDetails.oth_auth_officer_desig
-
-              - jsonPath: $.AbandonedDetails.*.InformarHosInstDetails.informerAddress
-
-              - jsonPath: $.AbandonedDetails.*.InformarHosInstDetails.infomantMobile
-
-              - jsonPath: $.AbandonedDetails.*.InformarHosInstDetails.infomantAadhar
-
-              - jsonPath: $.AbandonedDetails.*.InformarHosInstDetails.infomantFirstNameEn
-
-              - jsonPath: $.AbandonedDetails.*.InformarHosInstDetails.infomantinstitution
-
-              - jsonPath: $.AbandonedDetails.*.vehicleHaltPlace
-
-              - jsonPath: $.AbandonedDetails.*.setadmittedHospitalEn
-
-              - jsonPath: $.AbandonedDetails.*.auditDetails.lastModifiedBy
-
-              - jsonPath: $.AbandonedDetails.*.auditDetails.lastModifiedTime
-
-              - jsonPath: $.AbandonedDetails.*.vehicleHaltPlaceMl
-
-              - jsonPath: $.AbandonedDetails.*.vehicleDesDetailsEn
-
-              - jsonPath: $.AbandonedDetails.*.publicPlaceDecpEn
-
-              - jsonPath: $.AbandonedDetails.*.localityNameEn
-
-              - jsonPath: $.AbandonedDetails.*.localityNameMl
-
-              - jsonPath: $.AbandonedDetails.*.streetNameEn
-
-              - jsonPath: $.AbandonedDetails.*.streetNameMl
-              - jsonPath: $.AbandonedDetails.*.id
-        - query: INSERT INTO eg_birth_mother_information_audit SELECT * FROM eg_birth_mother_information WHERE birthdtlid = ?;
-          basePath: AbandonedDetails.*
-          jsonMaps:
             - jsonPath: $.AbandonedDetails.*.id
-
-        - query: UPDATE public.eg_birth_mother_information  set firstname_en=?, firstname_ml=?, aadharno=?,  addressofmother=?,
-             lastmodifiedtime=?, lastmodifiedby=?, bio_adopt=? where birthdtlid=?;
-
-          basePath: AbandonedDetails.*.ParentsDetails
-          jsonMaps:
-              - jsonPath: $.AbandonedDetails.*.ParentsDetails.motherFirstNameEn
-
-              - jsonPath: $.AbandonedDetails.*.ParentsDetails.motherFirstNameMl
-
-              - jsonPath: $.AbandonedDetails.*.ParentsDetails.motherAadhar
-
-              - jsonPath: $.AbandonedDetails.*.ParentsDetails.addressOfMother
-
-              - jsonPath: $.AbandonedDetails.*.auditDetails.lastModifiedTime
-
-              - jsonPath: $.AbandonedDetails.*.auditDetails.lastModifiedBy,
-
-              - jsonPath: $.AbandonedDetails.*.ParentsDetails.motherBioAdopt
-
-              - jsonPath: $.AbandonedDetails.*.id
-
-        - query: INSERT INTO eg_birth_statitical_information_audit SELECT * FROM eg_birth_statitical_information WHERE birthdtlid = ?;
-          basePath: AbandonedDetails.*
-          jsonMaps:
-            - jsonPath: $.AbandonedDetails.*.id
-
-        - query: UPDATE public.eg_birth_statitical_information set weight_of_child=?,duration_of_pregnancy_in_week=?,nature_of_medical_attention=?,delivery_method=?,cause_of_foetal_death=?,religionid=?,father_nationalityid=?,
-              father_educationid=?,father_proffessionid=?,mother_educationid=?,mother_proffessionid=?,mother_nationalityid=?,mother_age_marriage=?,mother_age_delivery=?,mother_no_of_birth_given=?,
-              mother_maritalstatusid=?,mother_unmarried=?,mother_res_lbid=?,mother_res_lb_code_id=?,mother_res_place_type_id=?,mother_res_lb_type_id=?,mother_res_district_id=?,mother_res_state_id=?,
-              mother_res_country_id=?,mother_resdnce_addr_type=?,mother_resdnce_tenant=?,mother_resdnce_placetype=?,mother_resdnce_place_en=?,mother_resdnce_place_ml=?,mother_resdnce_lbtype=?,
-              mother_resdnce_district=?,mother_resdnce_state=?,mother_resdnce_country=?,mother_order_of_cur_delivery=?,mother_order_cur_child=?,mother_res_no_of_years=?
-            ,lastmodifiedby=?,lastmodifiedtime=? where birthdtlid=?;
-
-          basePath: AbandonedDetails.*
-          jsonMaps:
-              - jsonPath: $.AbandonedDetails.*.birthWeight
-
-              - jsonPath: $.AbandonedDetails.*.pregnancyDuration
-
-              - jsonPath: $.AbandonedDetails.*.medicalAttensionSub
-
-              - jsonPath: $.AbandonedDetails.*.deliveryMethods
-
-              - jsonPath: $.AbandonedDetails.*.causeFoetalDeath
-
-              - jsonPath: $.AbandonedDetails.*.ParentsDetails.Religion
-
-              - jsonPath: $.AbandonedDetails.*.ParentsDetails.fatherNationality
-
-              - jsonPath: $.AbandonedDetails.*.ParentsDetails.fatherEducation
-
-              - jsonPath: $.AbandonedDetails.*.ParentsDetails.fatherProfession
-
-              - jsonPath: $.AbandonedDetails.*.ParentsDetails.motherEducation
-
-              - jsonPath: $.AbandonedDetails.*.ParentsDetails.motherProfession
-
-              - jsonPath: $.AbandonedDetails.*.ParentsDetails.motherNationality
-
-              - jsonPath: $.AbandonedDetails.*.ParentsDetails.motherMarriageAge
-
-              - jsonPath: $.AbandonedDetails.*.ParentsDetails.motherMarriageBirth
-
-              - jsonPath: $.AbandonedDetails.*.ParentsDetails.orderofChildren
-
-              - jsonPath: $.AbandonedDetails.*.ParentsDetails.motherMaritalStatus
-
-              - jsonPath: $.AbandonedDetails.*.ParentsDetails.mother_unmarried
-
-              - jsonPath: $.AbandonedDetails.*.ParentsDetails.mother_res_lbid
-
-              - jsonPath: $.AbandonedDetails.*.ParentsDetails.mother_res_lb_code_id
-
-              - jsonPath: $.AbandonedDetails.*.ParentsDetails.mother_res_place_type_id
-
-              - jsonPath: $.AbandonedDetails.*.ParentsDetails.mother_res_lb_type_id
-
-              - jsonPath: $.AbandonedDetails.*.ParentsDetails.mother_res_district_id
-
-              - jsonPath: $.AbandonedDetails.*.ParentsDetails.mother_res_state_id
-
-              - jsonPath: $.AbandonedDetails.*.ParentsDetails.mother_res_country_id
-
-              - jsonPath: $.AbandonedDetails.*.ParentsDetails.mother_resdnce_addr_type
-
-              - jsonPath: $.AbandonedDetails.*.ParentsDetails.mother_resdnce_tenant
-
-              - jsonPath: $.AbandonedDetails.*.ParentsDetails.townOrVillagePresent
-
-              - jsonPath: $.AbandonedDetails.*.ParentsDetails.mother_resdnce_place_en
-
-              - jsonPath: $.AbandonedDetails.*.ParentsDetails.mother_resdnce_place_ml
-
-              - jsonPath: $.AbandonedDetails.*.ParentsDetails.mother_resdnce_lbtype
-
-              - jsonPath: $.AbandonedDetails.*.ParentsDetails.mother_resdnce_district
-
-              - jsonPath: $.AbandonedDetails.*.ParentsDetails.mother_resdnce_state
-
-              - jsonPath: $.AbandonedDetails.*.ParentsDetails.mother_resdnce_country
-
-              - jsonPath: $.AbandonedDetails.*.ParentsDetails.mother_order_of_cur_delivery
-
-              - jsonPath: $.AbandonedDetails.*.ParentsDetails.orderofChildren
-
-              - jsonPath: $.AbandonedDetails.*.ParentsDetails.mother_res_no_of_years
-              - jsonPath: $.AbandonedDetails.*.auditDetails.lastModifiedBy
-              - jsonPath: $.AbandonedDetails.*.auditDetails.lastModifiedTime
-              - jsonPath: $.AbandonedDetails.*.id
-
-        - query: INSERT INTO eg_birth_abandoned_care_taker_audit SELECT * FROM eg_birth_abandoned_care_taker WHERE birthdtlid = ?;
-          basePath: AbandonedDetails.*
-          jsonMaps:
-            - jsonPath: $.AbandonedDetails.*.id
-
-        - query: UPDATE public.eg_birth_abandoned_care_taker set care_taker_name=?, care_taker_institution=?, care_taker_inst_designation=?, care_taker_address=?, care_taker_mobileno=?, lastmodifiedby=?, lastmodifiedtime=? where birthdtlid=?;
-          basePath: AbandonedDetails.*.caretakerDetails
-          jsonMaps:
-              - jsonPath: $.AbandonedDetails.*.caretakerDetails.caretakerName
-              - jsonPath: $.AbandonedDetails.*.caretakerDetails.institutionName
-              - jsonPath: $.AbandonedDetails.*.caretakerDetails.caretakerDesignation
-              - jsonPath: $.AbandonedDetails.*.caretakerDetails.caretakerAddress
-              - jsonPath: $.AbandonedDetails.*.caretakerDetails.caretakerMobile
-              - jsonPath: $.AbandonedDetails.*.auditDetails.lastModifiedBy
-              - jsonPath: $.AbandonedDetails.*.auditDetails.lastModifiedTime
-              - jsonPath: $.AbandonedDetails.*.id

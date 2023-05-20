@@ -295,7 +295,7 @@ public class CommonQueryBuilder extends BaseQueryBuilder {
 	}
 
 	public String getBirthApplicationSearchQuery(@NotNull SearchCriteria criteria, 	@NotNull List<Object> preparedStmtValues, Boolean isCount) {
-		StringBuilder query = prepareSearchQuery();
+		StringBuilder query = prepareSearchQueryCommon();
 		prepareSearchCriteria(criteria, query, preparedStmtValues);
 		prepareOrderBy(criteria, query, preparedStmtValues);
 		return query.toString();
@@ -309,7 +309,7 @@ public class CommonQueryBuilder extends BaseQueryBuilder {
 	}
 
 	public String getApplicationSearchQueryForRegistry(@NotNull SearchCriteria criteria, @NotNull List<Object> preparedStmtValues) {
-		StringBuilder query = prepareSearchQuery();
+		StringBuilder query = prepareSearchQueryCommon();
 		prepareSearchCriteria(criteria, query, preparedStmtValues);
 		prepareOrderBy(criteria, query, preparedStmtValues);
 		return query.toString();

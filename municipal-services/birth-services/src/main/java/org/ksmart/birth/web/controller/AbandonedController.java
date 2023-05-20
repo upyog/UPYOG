@@ -66,14 +66,14 @@ public class AbandonedController {
         List<AbandonedApplication> adoptionApplicationDetails = abandonedService.updateKsmartBirthDetails(request);
 
         //Download certificate when Approved
-        //if(request.getBirthDetails().get(0).getIsWorkflow()) {
+//        if(request.getBirthDetails().get(0).getIsWorkflow()) {
             if ((adoptionApplicationDetails.get(0).getApplicationStatus().equals(STATUS_APPROVED) && adoptionApplicationDetails.get(0).getAction().equals(WF_APPROVE))) {
                 RegisterBirthDetailsRequest registerBirthDetailsRequest = registryReq.createRegistryRequestNew(request);
                 if (registerBirthDetailsRequest.getRegisterBirthDetails().size() == 1) {
                     registerBirthService.saveRegisterBirthDetails(registerBirthDetailsRequest);
                 }
             }
-      //  }
+
         AbandonedResponse response = AbandonedResponse.builder()
                                                       .birthDetails(adoptionApplicationDetails)
                                                       .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(),

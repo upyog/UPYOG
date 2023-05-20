@@ -92,7 +92,7 @@ public class AbandonedRepository {
         String uuid = null;
         List<Object> preparedStmtValues = new ArrayList<>();
         criteria.setApplicationType(BirthConstants.FUN_MODULE_ABAN);
-        String query = commonQueryBuilder.getBirthApplicationSearchQuery(criteria, preparedStmtValues, Boolean.FALSE);
+        String query = commonQueryBuilder.getBirthApplicationSearchQueryCommon(criteria, preparedStmtValues, Boolean.FALSE);
         if(preparedStmtValues.size() == 0){
             throw new CustomException(ErrorCodes.NOT_FOUND.getCode(), "No result found.");
         } else{

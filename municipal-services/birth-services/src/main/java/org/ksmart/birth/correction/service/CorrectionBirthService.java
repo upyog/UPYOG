@@ -9,10 +9,7 @@ import org.ksmart.birth.utils.MdmsUtil;
 import org.ksmart.birth.web.model.SearchCriteria;
 import org.ksmart.birth.web.model.correction.CorrectionApplication;
 import org.ksmart.birth.web.model.correction.CorrectionRequest;
-import org.ksmart.birth.web.model.newbirth.NewBirthApplication;
-import org.ksmart.birth.web.model.newbirth.NewBirthDetailRequest;
 import org.ksmart.birth.workflow.WorkflowIntegratorCorrection;
-import org.ksmart.birth.workflow.WorkflowIntegratorNewBirth;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

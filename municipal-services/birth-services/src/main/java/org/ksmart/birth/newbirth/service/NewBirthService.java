@@ -91,7 +91,7 @@ public class NewBirthService {
         NewBirthApplication newBirthApplicationExisting = findBirthRequestById(request);
 
         //search application exist
-        validator.validateUpdate(request,  newBirthApplicationExisting, mdmsData,wfc, false);
+       // validator.validateUpdate(request,  newBirthApplicationExisting, mdmsData,wfc, false);
         
         // enrich request
         ksmartBirthEnrichment.enrichUpdate(request, mdmsData);
