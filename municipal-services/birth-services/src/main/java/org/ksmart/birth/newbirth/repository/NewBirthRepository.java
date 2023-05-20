@@ -85,12 +85,7 @@ public class NewBirthRepository {
     }
 
     public List<NewBirthApplication> searchBirthDetails(NewBirthDetailRequest request, SearchCriteria criteria) {
-        String uuid = null;
         List<Object> preparedStmtValues = new ArrayList<>();
-
-//        if (request.getRequestInfo().getUserInfo() != null) {
-//            uuid = request.getRequestInfo().getUserInfo().getUuid();
-//        }
         criteria.setApplicationType(BirthConstants.FUN_MODULE_NEW);
         String query = commonQueryBuilder.getBirthApplicationSearchQuery(criteria, preparedStmtValues, Boolean.FALSE);
         if (preparedStmtValues.size() == 0) {
