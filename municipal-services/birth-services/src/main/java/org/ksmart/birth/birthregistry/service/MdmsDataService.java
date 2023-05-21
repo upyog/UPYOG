@@ -87,12 +87,16 @@ public class MdmsDataService {
         return true;
     }
     public void setPresentAddressDetailsEn(RegisterBirthDetail register,RegisterCertificateData registerCert, Object  mdmsData, Long regDate) {
+        Boolean newDate = true;
         if (registerCert.getAckNo().startsWith(TCS_CODE_1, 0) || registerCert.getAckNo().startsWith(TCS_CODE_2, 0)) {
             if(register.getRegisterBirthPresent().getHouseNameMl().contains(TCS_ERROR_STR)) {
                 tcsAddressService.trimAddressHouseNamePresent(register.getRegisterBirthPresent().getHouseNameMl(), register, TCS_ERROR_STR);
             }
         }
-        if(validateRegistrationDatePresent(registerCert, regDate)) {
+        if(register.getIsMigrated()){
+            newDate = validateRegistrationDatePresent(registerCert, regDate);
+        }
+        if(newDate) {
             if (!StringUtils.isEmpty(register.getRegisterBirthPresent().getCountryId())) {
                 if (register.getRegisterBirthPresent().getCountryId().contains(COUNTRY_CODE)) {
                     ksmartAddressService.getAddressInsideCountryPresentEn(register, registerCert, mdmsData);
@@ -109,12 +113,16 @@ public class MdmsDataService {
     }
 
     public void setPremananttAddressDetailsEn(RegisterBirthDetail register,RegisterCertificateData registerCert, Object  mdmsData, Long regDate) {
+        Boolean newDate = true;
         if (registerCert.getAckNo().startsWith(TCS_CODE_1, 0) || registerCert.getAckNo().startsWith(TCS_CODE_2, 0)) {
             if(register.getRegisterBirthPermanent().getHouseNameMl().contains(TCS_ERROR_STR)) {
                 tcsAddressService.trimAddressHouseNamePermanent(register.getRegisterBirthPermanent().getHouseNameMl(), register, TCS_ERROR_STR);
             }
         }
-        if(validateRegistrationDatePermanenet(registerCert, regDate)) {
+        if(register.getIsMigrated()){
+            newDate = validateRegistrationDatePermanenet(registerCert, regDate);
+        }
+        if(newDate) {
             if (!StringUtils.isEmpty(register.getRegisterBirthPermanent().getCountryId())) {
                 if (register.getRegisterBirthPermanent().getCountryId().contains(COUNTRY_CODE)) {
                     ksmartAddressService.getAddressInsideCountryPermanentEn(register, registerCert, mdmsData);

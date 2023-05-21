@@ -9,7 +9,8 @@ serviceMaps:
         - query: INSERT INTO public.eg_birth_details(id,dateofreport,dateofbirth,timeofbirth,am_pm,firstname_en,firstname_ml,middlename_en,middlename_ml,lastname_en,lastname_ml,tenantid,
             gender,remarks_en,remarks_ml,aadharno,esign_user_code,esign_user_desig_code,is_adopted,is_abandoned,is_multiple_birth,is_father_info_missing,is_mother_info_missing,no_of_alive_birth,
             multiplebirthdetid,is_born_outside,ot_passportno,ot_dateofarrival,applicationtype,businessservice,workflowcode,fm_fileno,file_date,file_status,applicationno,registrationno,registration_date,
-            action,status, createdtime, createdby, lastmodifiedtime, lastmodifiedby, is_stillbirth) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
+            action,status, createdtime, createdby, lastmodifiedtime, lastmodifiedby, is_stillbirth,birthdate, assignee, rdo_proceedings_no, nac_registration_no, birthtime, birthdate_string) 
+            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
 
           basePath: StillBirthChildDetails.*
           jsonMaps:
@@ -100,6 +101,18 @@ serviceMaps:
             - jsonPath: $.StillBirthChildDetails.*.auditDetails.lastModifiedBy
 
             - jsonPath: $.StillBirthChildDetails.*.isStill
+
+            - jsonPath: $.StillBirthChildDetails.*.birthdate
+
+            - jsonPath: $.StillBirthChildDetails.*.assigneeSingle
+
+            - jsonPath: $.StillBirthChildDetails.*.proceedNoRDOBasic
+
+            - jsonPath: $.StillBirthChildDetails.*.regNoNACBasic
+
+            - jsonPath: $.StillBirthChildDetails.*.birthDateTime
+
+            - jsonPath: $.StillBirthChildDetails.*.birthDateString
 
         - query: INSERT INTO public.eg_birth_place(id,birthdtlid,placeofbirthid,hospitalid,public_place_id,institution_type_id,institution_id,vehicletypeid,vehicle_registration_no,vehicle_from_en,
             vehicle_to_en,vehicle_from_ml, vehicle_to_ml,vehicle_admit_hospital_en,ho_householder_en,ho_locality_en,ho_locality_ml,ho_street_name_en,ho_street_name_ml,ho_housename_en,ho_housename_ml,ho_villageid,
@@ -561,7 +574,8 @@ serviceMaps:
             lastname_en=?, lastname_ml=?, tenantid=?, gender=?, aadharno=?, esign_user_code=?, esign_user_desig_code=?,
             is_multiple_birth=?, is_father_info_missing=?, is_mother_info_missing=?, no_of_alive_birth=?, multiplebirthdetid=?, is_born_outside=?,
             ot_passportno=?, ot_dateofarrival=?, applicationtype=?, businessservice=?, workflowcode=?, fm_fileno=?, file_date=?, file_status=?,
-            applicationno=?, registrationno=?, registration_date=?, action=?, status=?, lastmodifiedby=?, lastmodifiedtime=? WHERE id=?;
+            applicationno=?, registrationno=?, registration_date=?, action=?, status=?, lastmodifiedby=?, lastmodifiedtime=? , rdo_proceedings_no=?, 
+            nac_registration_no=?, birthtime=?, birthdate_string=? WHERE id=?;
 
 
           basePath: StillBirthChildDetails.*
@@ -635,6 +649,14 @@ serviceMaps:
             - jsonPath: $.StillBirthChildDetails.*.auditDetails.lastModifiedBy
 
             - jsonPath: $.StillBirthChildDetails.*.auditDetails.lastModifiedTime
+
+            - jsonPath: $.StillBirthChildDetails.*.proceedNoRDOBasic
+
+            - jsonPath: $.StillBirthChildDetails.*.regNoNACBasic
+
+            - jsonPath: $.StillBirthChildDetails.*.birthDateTime
+
+            - jsonPath: $.StillBirthChildDetails.*.birthDateString
 
             - jsonPath: $.StillBirthChildDetails.*.id
 

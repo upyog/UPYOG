@@ -26,7 +26,7 @@ public class CommonQueryBuilder extends BaseQueryBuilder {
 			.append("ebd.adopt_decree_order_no as ba_adopt_decree_order_no,ebd.adopt_dateoforder_decree as ba_adopt_dateoforder_decree,ebd.adopt_agency_contact_person as ba_adopt_agency_contact_person,")
 			.append("ebd.adopt_agency_contact_person_mobileno as ba_adopt_agency_contact_person_mobileno,ebd.createdtime,ebd.createdby,ebd.lastmodifiedtime,ebd.lastmodifiedby,ebd.nac_order_of_child as ba_nac_order_of_child,")
 			.append("ebd.application_sub_type as  ba_application_sub_type, ebd.has_payment as  ba_has_payment, ebd.is_payment_success as  ba_is_payment_success, ebd.amount as  ba_amount, ebd.birthdate as  ba_birthdate,")
-			.append("ebd.assignee as  ba_assignee, ebd.rdo_proceedings_no as  ba_rdo_proceedings_no, ebd.nac_registration_no as  ba_nac_registration_no").toString();
+			.append("ebd.assignee as  ba_assignee, ebd.rdo_proceedings_no as  ba_rdo_proceedings_no, ebd.nac_registration_no as  ba_nac_registration_no, birthtime as ba_birthtime, birthdate_string as ba_birthdate_string ").toString();
 
 
 	private static final String QUERYCONDITION = new StringBuilder().append(" FROM public.eg_birth_details ebd LEFT JOIN eg_birth_place ebp ON ebp.birthdtlid = ebd.id LEFT JOIN eg_birth_father_information ebfi ON ebfi.birthdtlid = ebd.id AND ebfi.bio_adopt='BIOLOGICAL'")

@@ -25,7 +25,7 @@ public class BirthApplicationRowMapper implements ResultSetExtractor<List<NewBir
                     .dateOfReport(rs.getLong("ba_dateofreport"))
                     .dateOfBirth(rs.getLong("ba_dateofbirth"))
                     .timeBirth(rs.getLong("ba_timeofbirth"))
-                    .timeOfBirth(CommonUtils.timeLongToString(rs.getLong("ba_timeofbirth")))
+                    .timeOfBirth(rs.getString("ba_birthtime"))
                     .gender(rs.getString("ba_gender"))
                     .aadharNo(rs.getString("ba_aadharno"))
                     .isChildName(isChildNameEntered(rs.getString("ba_firstname_en")))
@@ -101,7 +101,6 @@ public class BirthApplicationRowMapper implements ResultSetExtractor<List<NewBir
         return result;
     }
     private Boolean isChildNameEntered(String name) {
-        //if(name.isEmpty()) return true;
         if(StringUtil.isBlank(name)) return true;
         if (name==null) return true;
         else return false;

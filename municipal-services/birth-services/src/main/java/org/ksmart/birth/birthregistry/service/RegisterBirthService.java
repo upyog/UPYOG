@@ -128,8 +128,12 @@ public class RegisterBirthService {
                     birthCertificate.setEmbeddedUrl(pdfRegisterRequest.getBirthCertificate().get(0).getEmbeddedUrl());
                     birthCertificate.setDateofissue(pdfRegisterRequest.getBirthCertificate().get(0).getRegistrationDate());
                     birthCertificate.setFilestoreid(pdfResp.getFilestoreIds().get(0));
-                    birthCertificate.setApplicationStatus(BirthCertificate.StatusEnum.FREE_DOWNLOAD);
+                    birthCertificate.setApplicationStatus(BirthCertificate.StatusEnum.ACTIVE);
                     repository.saveRegisterBirthCert(birthCertRequest);
+
+                    if(!regDetail.get(0).getIsMigrated()) {
+                        regDetail.get(0).setKeyNo(regDetail.get(0).getCertId());
+                    }
                 } else if (regDetail.size() == 0) {
                     throw new CustomException(ErrorCodes.INVALID_INPUT.getCode(), "No data found");
                 } else {

@@ -163,6 +163,9 @@ public class RegisterBirthDetail {
 
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails;
+
+    @JsonProperty("isMigrated")
+    private Boolean isMigrated;
     /// for PDF SERVICE
     private String fullName;
     private String fullNameMl;

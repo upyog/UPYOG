@@ -45,6 +45,11 @@ public class RegisterCertificateData {
     @Size(max = 64)
     @JsonProperty("ackNo")
     private String ackNo;
+
+    @Size(max = 64)
+    @JsonProperty("keyNo")
+    private String keyNo;
+
     @Size(max = 64)
     @JsonProperty("tenantid")
     private String tenantId;
@@ -209,6 +214,9 @@ public class RegisterCertificateData {
     @Size(max = 1000)
     @JsonProperty("mainPlaceDetailsMl")
     private String mainPlaceDetailsMl;
+
+    @JsonProperty("isMigrated")
+    private Boolean isMigrated;
 
 
 }

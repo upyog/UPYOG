@@ -53,6 +53,7 @@ public class BirthCertService {
         }
         RegisterCertificateData registerCertificateData = new RegisterCertificateData();
         registerCertificateData.setId(register.getId());
+        registerCertificateData.setIsMigrated(register.getIsMigrated());
         registerCertificateData.setDateOfBirth(register.getDateOfBirth());
         registerCertificateData.setDobStrWord(dobInWords.toUpperCase());
         registerCertificateData.setWardCode(register.getRegisterBirthPlace().getWardId());
@@ -70,6 +71,9 @@ public class BirthCertService {
         registerCertificateData.setGenderEn(register.getGender());
         registerCertificateData.setGenderMl(register.getGender()+"_ML");
         registerCertificateData.setAckNo(register.getAckNumber());
+        if(registerCertificateData.getIsMigrated()) {
+            registerCertificateData.setKeyNo(register.getAckNumber());
+        }
         registerCertificateData.setRemarksEn(register.getRemarksEn()==null?" ":register.getRemarksEn());
         registerCertificateData.setRemarksMl(register.getRemarksMl()==null?" ":register.getRemarksMl());
         registerCertificateData.setAadharNo(register.getAadharNo());

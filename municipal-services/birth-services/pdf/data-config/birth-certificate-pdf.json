@@ -265,7 +265,7 @@
               {
                 "variable": "keyAckNo",
                 "value": {
-                  "path": "$.ackNo"
+                  "path": "$.keyNo"
                 },
                 "type":"setEmpty"
               },

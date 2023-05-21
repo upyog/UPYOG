@@ -37,7 +37,7 @@
               {
                 "stack": [
                   {
-                    "text": "{{keyNo}}   {{keyAckNo}}",
+                    "text": "{{keyNo }}   {{ keyAckNo}}",
                     "style": "appendix-header-serialNo"
                   }
                 ]

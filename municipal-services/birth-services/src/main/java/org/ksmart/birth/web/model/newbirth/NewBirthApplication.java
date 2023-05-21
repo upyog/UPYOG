@@ -30,6 +30,8 @@ public class NewBirthApplication implements Serializable {
     @JsonProperty("birthDateTime")
     private String timeOfBirth;
 
+    @JsonProperty("birthDateString")
+    private String birthDateString;
 
     @JsonProperty("birthTime")
     private Long timeBirth;

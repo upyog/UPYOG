@@ -320,17 +320,37 @@ public class NewBirthEnrichment implements BaseEnrichment {
         request.getNewBirthDetails().forEach(birth -> {
             if(birth.getPlaceofBirthId() != null || !birth.getPlaceofBirthId().isEmpty()){
                 mdmsBirthService.setLocationDetails(birth, mdmsDataLoc, mdmsData);
+                if(isCreate) {
+                    birth.setBirthPlaceUuid(UUID.randomUUID().toString());
+                }
             }
-            if(isCreate) {
-                birth.setBirthPlaceUuid(UUID.randomUUID().toString());
-                birth.getParentsDetails().setFatherUuid(UUID.randomUUID().toString());
-                birth.getParentsDetails().setMotherUuid(UUID.randomUUID().toString());
-            }
+
             if(birth.getParentsDetails() != null) {
-                if(!birth.getParentsDetails().getIsFatherInfoMissing()){
+                if(isCreate) {
+                    birth.getParentsDetails().setFatherUuid(UUID.randomUUID().toString());
+                    birth.getParentsDetails().setMotherUuid(UUID.randomUUID().toString());
+                }
+                if(birth.getParentsDetails().getIsFatherInfoMissing()){
+                    birth.getParentsDetails().setFatherFirstNameEn(null);
+                    birth.getParentsDetails().setFatherAadharno(null);
+                    birth.getParentsDetails().setFatherEucationid(null);
+                    birth.getParentsDetails().setFatherProffessionid(null);
+                    birth.getParentsDetails().setFatherNationalityid(null);
+                } else{
                     birth.getParentsDetails().setFatherBioAdopt("BIOLOGICAL");
                 }
-                if(!birth.getParentsDetails().getIsMotherInfoMissing()){
+                if(birth.getParentsDetails().getIsMotherInfoMissing()) {
+                    birth.getParentsDetails().setFirstNameEn(null);
+                    birth.getParentsDetails().setFirstNameMl(null);
+                    birth.getParentsDetails().setMotherAadhar(null);
+                    birth.getParentsDetails().setMotherEducationid(null);
+                    birth.getParentsDetails().setMotherProffessionid(null);
+                    birth.getParentsDetails().setMotherNationalityid(null);
+                    birth.getParentsDetails().setMotherMaritalStatus(null);
+                    birth.getParentsDetails().setMotherAgeDelivery(null);
+                    birth.getParentsDetails().setMotherAgeMarriage(null);
+                    birth.getParentsDetails().setMotherOrderCurChild(null);
+                }else{
                     birth.getParentsDetails().setMotherBioAdopt("BIOLOGICAL");
                 }
             }
