@@ -22,7 +22,6 @@ public class CommonValidationFromMdms {
                 String endStr = wfLists.get(n).get("enddateperiod").toString();
                 Long start = Long.parseLong(startStr);
                 Long end = Long.parseLong(endStr);
-                System.out.println(wfLists.get(n).get("BirtPlace"));
                 if (wfLists.get(n).get("BirtPlace") != null) {
                     if (wfLists.get(n).get("BirtPlace").equals(birthPlace)) {
                         if (end > 0L) {

@@ -164,8 +164,7 @@ public class NewMdmsValidator {
                             log.debug("Religion code : \n{}", religionCode);
                         }
                         if (CollectionUtils.isEmpty(religionCodes) || !religionCodes.contains(religionCode)) {
-                            errorMap.put(COMMON_MDMS_RELIGION, "The Religion code '" + religionCode + "' does not exists");
-                        }
+                            errorMap.put(COMMON_MDMS_RELIGION, "The Religion code '" + religionCode + "' does not exists");                        }
 
                         //Father Information
 
