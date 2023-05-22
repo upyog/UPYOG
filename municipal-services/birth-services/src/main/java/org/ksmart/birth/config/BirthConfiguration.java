@@ -222,5 +222,11 @@ public class BirthConfiguration {
     @Value("${egov.localization.statelevel}")
     private Boolean isLocalizationStateLevel;
 
+    @Value("${notification.sms.enabled.forBirth}")
+    private Boolean isBRSMSEnabled;
+
+    @Value("${egov.user.event.notification.enabledForBirth}")
+    private Boolean isUserEventsNotificationEnabledForBirth;
+
 
 }

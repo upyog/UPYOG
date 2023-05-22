@@ -1,5 +1,7 @@
 package org.ksmart.birth.utils;
-
+import java.util.List;
+import java.util.Arrays;
+import java.util.Collections;
 public class BirthConstants {
 
     public static final String CR_MDMS_TENANT = "kl";
@@ -189,5 +191,78 @@ public class BirthConstants {
     public static final String RDO_PROC_DOC = "CR_RDO_PROCEEDINGS_DOC";
 
     public static final String INITIATOR_NAME_KEY = "{INITIATOR_NAME}";
+    
+    // ACTION_STATUS combinations for notification
+
+    public static final String ACTION_STATUS_INITIATED = "INITIATE_PENDINGPAYMENT";
+
+    public static final String ACTION_STATUS_APPLIED = "APPLY_APPLIED";
+    
+    public static final String ACTION_STATUS_APPROVED = "APPROVE_PENDINGPAYMENT";
+    
+    public static final String ACTION_STATUS_REJECTED = "REJECT_REJECTED";
+    
+    public static final String ACTION_STATUS_FIELDINSPECTION = "FORWARD_FIELDINSPECTION";
+    
+    public static final String ACTION_STATUS_PENDINGAPPROVAL = "FORWARD_PENDINGAPPROVAL";
+    
+    public static final String ACTION_SENDBACKTOCITIZEN_FIELDINSPECTION = "SENDBACKTOCITIZEN_CITIZENACTIONREQUIRED";
+    
+    public static final String ACTION_FORWARD_CITIZENACTIONREQUIRED = "FORWARDTOEMPLOYEE_FIELDINSPECTION";
+    
+    public static final String ACTION_CANCEL_CANCELLED = "CANCEL_CANCELLED";
+    
+    public static final String ACTION_STATUS_EXPIRED = "EXPIRE_EXPIRED";
+    
+    public static final String ACTION_STATUS_MANUAL_EXPIRED = "MANUALEXPIRE_MANUALEXPIRED";
+
+    public static final String NOTIFICATION_INITIATED = "tl.en.counter.initiate";
+
+    public static final String NOTIFICATION_APPLIED = "tl.en.counter.submit";
+    
+    public static final String NOTIFICATION_APPROVED = "tl.en.counter.approved";
+    
+    public static final String NOTIFICATION_REJECTED = "tl.en.counter.rejected";
+    
+    public static final String NOTIFICATION_FIELD_INSPECTION = "tl.en.field.inspection";
+    
+    public static final String NOTIFICATION_PENDING_APPROVAL = "tl.en.pending.approval";
+    
+    public static final String NOTIFICATION_SENDBACK_CITIZEN = "tl.en.sendback.citizen";
+    
+    public static final String NOTIFICATION_FORWARD_CITIZEN = "tl.en.forward.citizen";
+    
+    public static final String NOTIFICATION_CANCELLED = "tl.en.counter.cancelled";
+    
+    public static final String NOTIFICATION_EXPIRED = "tl.en.counter.expire";
+    
+    public static final String NOTIFICATION_MANUAL_EXPIRED = "tl.en.counter.manual.expire";
+    
+    public static final String NOTIF_OWNER_NAME_KEY = "{OWNER_NAME}";
+    
+    public static final String MODULE = "egov-user";
+//    		"KSMART_BND_NEW";
+    
+    
+//    public static final List<String> NOTIFICATION_CODES = Collections.unmodifiableList(Arrays.asList(
+//            NOTIFICATION_INITIATED,
+//            NOTIFICATION_APPLIED,
+//            NOTIFICATION_FIELD_INSPECTION,             
+//            NOTIFICATION_APPROVED, NOTIFICATION_REJECTED, NOTIFICATION_CANCELLED,
+//             
+//            NOTIFICATION_SENDBACK_CITIZEN,
+//            NOTIFICATION_FORWARD_CITIZEN,  
+//          
+//             
+//            NOTIFICATION_PENDING_APPROVAL,  
+//            NOTIFICATION_EXPIRED, NOTIFICATION_MANUAL_EXPIRED
+//           ));
+    
+    public static final String NOTIFICATION_INITIATED_TEST = "sms.login.otp.msg";
+    public static final List<String> NOTIFICATION_CODES = Collections.unmodifiableList(Arrays.asList(
+    		NOTIFICATION_INITIATED_TEST
+           ));
 
 }
+
+
