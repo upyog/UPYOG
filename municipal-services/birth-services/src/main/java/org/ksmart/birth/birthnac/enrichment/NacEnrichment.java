@@ -62,15 +62,16 @@ public class NacEnrichment implements BaseEnrichment {
                         child.setParentBrthDtlId(birth.getId());
                     }
             );
-            birth.getDocumentDetails().forEach(
-            		document -> {
-            			document.setId(UUID.randomUUID().toString());
-            			document.setActive(true);
-            			document.setAuditDetails(auditDetails);
-            			document.setBirthdtlid(birth.getId());
-            			document.setParentBrthDtlId(birth.getId());
-            		});
-            
+            if(birth.getDocumentDetails()!=null) {
+                birth.getDocumentDetails().forEach(
+                        document -> {
+                            document.setId(UUID.randomUUID().toString());
+                            document.setActive(true);
+                            document.setAuditDetails(auditDetails);
+                            document.setBirthdtlid(birth.getId());
+                            document.setParentBrthDtlId(birth.getId());
+                        });
+            }
             birth.getParentsDetails().setFatherUuid(UUID.randomUUID().toString());
             birth.getParentsDetails().setFatherBioAdopt("BIOLOGICAL");
             birth.getParentsDetails().setMotherUuid(UUID.randomUUID().toString());
