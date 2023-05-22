@@ -192,7 +192,7 @@ public class NewBirthApplicationValidator {
     private void validateDob(Long childDob, String birthPlace, String wfCode, String applicationType,Object mdmsData, WorkFlowCheck wfc) {
        // Calendar calendar = Calendar.getInstance();
         Long currentDate = CommonUtils.currentDateTime();
-        if (childDob > currentDate) {
+        if (childDob >= currentDate) {
             throw new CustomException(INVALID_CREATE.getCode(),
                     "Date of birth should be less than or same as  current date.");
         } else {

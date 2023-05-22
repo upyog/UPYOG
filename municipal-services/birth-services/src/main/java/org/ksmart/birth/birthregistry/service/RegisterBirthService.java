@@ -123,6 +123,8 @@ public class RegisterBirthService {
                     birthCertificate.setYear(datestr);
                     certEnrichment.enrichCreateRequest(birthCertRequest);
                     regDetail.get(0).setCertId(birthCertRequest.getBirthCertificate().getBirthCertificateNo());
+                    if(!regDetail.get(0).getIsMigrated()) {
+                        regDetail.get(0).setKeyNo(regDetail.get(0).getCertId());                    }
                     BirthPdfRegisterRequest pdfRegisterRequest = BirthPdfRegisterRequest.builder().requestInfo(requestInfo).birthCertificate(regDetail).build();
                     EgovPdfResp pdfResp = repository.saveBirthCertPdf(pdfRegisterRequest);
                     birthCertificate.setEmbeddedUrl(pdfRegisterRequest.getBirthCertificate().get(0).getEmbeddedUrl());
@@ -130,10 +132,6 @@ public class RegisterBirthService {
                     birthCertificate.setFilestoreid(pdfResp.getFilestoreIds().get(0));
                     birthCertificate.setApplicationStatus(BirthCertificate.StatusEnum.ACTIVE);
                     repository.saveRegisterBirthCert(birthCertRequest);
-
-                    if(!regDetail.get(0).getIsMigrated()) {
-                        regDetail.get(0).setKeyNo(regDetail.get(0).getCertId());
-                    }
                 } else if (regDetail.size() == 0) {
                     throw new CustomException(ErrorCodes.INVALID_INPUT.getCode(), "No data found");
                 } else {
