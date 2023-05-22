@@ -197,6 +197,12 @@ public class RegisterCertificateData {
 	    @JsonProperty("permAddress")
 	    private String permAddress;
 	    
+	    @JsonProperty("isBirthNAC")
+	    private Boolean isBirthNAC;
+
+	    @JsonProperty("isBirthNIA")
+	    private Boolean isBirthNIA;
+	    
 	    
 	    
 	    

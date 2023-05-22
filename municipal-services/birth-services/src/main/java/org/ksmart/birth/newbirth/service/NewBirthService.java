@@ -123,8 +123,11 @@ public class NewBirthService {
     public List<NewBirthApplication> searchBirthDetails(NewBirthDetailRequest request, SearchCriteria criteria) {
         return repository.searchBirthDetails(request,criteria);
     }
+    public List<NewBirthApplication> searchBirthDetailsCommon(RequestInfo request, SearchCriteria criteria) {
+        return repository.searchBirth(request,criteria);
+    }
 
-
+    
     public List<NewBirthApplication> searchBirth(RequestInfo request, SearchCriteria criteria) {
         return repository.searchBirth(request,criteria);
     }

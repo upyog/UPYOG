@@ -3,6 +3,7 @@ package org.ksmart.birth.birthnac.repository;
 import lombok.extern.slf4j.Slf4j;
 
 import org.egov.common.contract.request.RequestInfo;
+import org.ksmart.birth.birthcommon.model.common.CommonPay;
 import org.ksmart.birth.birthnac.enrichment.NacEnrichment;
 import org.ksmart.birth.birthnac.enrichment.NacResponseEnrichment;
 import org.ksmart.birth.birthnac.repository.querybuilder.NacQueryBuilder;
@@ -82,7 +83,10 @@ public class NacRepository {
         List<Object> preparedStmtValues = new ArrayList<>();
         SearchCriteria criteria = new SearchCriteria();
         List<RegisterNac> result = null;
-        
+        RegisterNac regNac = new RegisterNac();		 
+        regNac.setIsBirthNAC(requestApplication.getNacDetails().get(0).getIsBirthNAC());
+        regNac.setIsBirthNIA(requestApplication.getNacDetails().get(0).getIsBirthNIA());
+        result.add(regNac);
         if (requestApplication.getNacDetails().size() > 0) {
 //            criteria.getApplicationNumber().add(requestApplication.getNacDetails().get(0).getApplicationNo());
         	criteria.setId(requestApplication.getNacDetails().get(0).getId());     
@@ -91,6 +95,8 @@ public class NacRepository {
             result = jdbcTemplate.query(query, preparedStmtValues.toArray(), registerRowMapperForApp);
              
         }
+        
+        
         return RegisterNacRequest.builder()
                 .requestInfo(requestApplication.getRequestInfo())
                 .registernacDetails(result).build();

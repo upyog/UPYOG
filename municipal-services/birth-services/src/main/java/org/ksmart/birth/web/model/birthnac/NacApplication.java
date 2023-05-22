@@ -341,9 +341,18 @@ public class NacApplication {
     @JsonProperty("isWorkflow")
     private Boolean isWorkflow = true;
     
+    @Size(max = 64)
+    @JsonProperty("isBirthNAC")
+    private Boolean isBirthNAC = true;
+    
+    @Size(max = 64)
+    @JsonProperty("isBirthNIA")
+    private Boolean isBirthNIA = true;
+    
     @JsonProperty("Demands")
     private List<Demand> demands;
     
+   
     
 
     

@@ -41,7 +41,7 @@ public class NacRegisterQueryBuilder extends BaseNacRegBuilder{
 	 private static final String QUERY = new StringBuilder().append("SELECT krbn.id as bn_id,krbn.registrationno as bn_registrationno,krbn.registration_date as bn_registration_date,krbn.registration_status as bn_registration_status,krbn.birthdetailsid as bn_birthdetailsid,krbn.applicant_name_en as bn_applicant_name_en,")
 	            .append("krbn.care_of_applicant_name_en as bn_care_of_applicant_name_en,krbn.child_name_en as bn_child_name_en,krbn.dateofbirth as bn_dateofbirth,krbn.mother_name_en as bn_mother_name_en,krbn.birth_place_en as bn_birth_place_en,krbn.birth_districtid as bn_birth_districtid,krbn.birth_stateid as bn_birth_stateid,krbn.birth_villageid as bn_birth_villageid,krbn.createdby,krbn.createdtime,")
 	            .append("krbn.lastmodifiedtime ,krbn.lastmodifiedby  ,krbn.applicationtype as bn_applicationtype,krbn.filestoreid as bn_filestoreid,krbn.status as bn_status,krbn.additionaldetail as bn_additionaldetail,")
-	            .append("krbn.embeddedurl as bn_embeddedurl,krbn.dateofissue as bn_dateofissue,krbn.tenantid as bn_tenantid,krbn.certificateno as bn_certificateno,krbn.dateofreport as bn_dateofreport,krbn.ack_no as bn_ack_no,krbn.father_name_en as bn_father_name_en,krbn.perm_address as bn_perm_address")
+	            .append("krbn.embeddedurl as bn_embeddedurl,krbn.dateofissue as bn_dateofissue,krbn.tenantid as bn_tenantid,krbn.certificateno as bn_certificateno,krbn.dateofreport as bn_dateofreport,krbn.ack_no as bn_ack_no,krbn.father_name_en as bn_father_name_en,krbn.perm_address as bn_perm_address,krbn.is_nac as isnac,krbn.is_nia as isnia")
 	            .append(" FROM public.eg_birth_nac_registry krbn ").toString();
 	             
 	            

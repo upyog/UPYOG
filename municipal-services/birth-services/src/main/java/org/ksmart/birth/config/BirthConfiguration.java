@@ -183,6 +183,9 @@ public class BirthConfiguration {
     
     @Value("${egov.pdf.nacbirthcert.createEndPoint}")
     private String	egovPdfBirthNacEndPoint;
+    
+    @Value("${egov.pdf.niabirthcert.createEndPoint}")
+    private String	egovPdfBirthNiaEndPoint;
 
     @Value("${egov.pdf.deathcert.createEndPoint}")
     private String	egovPdfDeathEndPoint;

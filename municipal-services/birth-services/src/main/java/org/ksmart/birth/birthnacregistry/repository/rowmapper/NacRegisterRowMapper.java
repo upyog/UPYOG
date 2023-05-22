@@ -60,6 +60,8 @@ public class NacRegisterRowMapper  implements ResultSetExtractor<List<RegisterNa
                      .registrationDateStr(formatter.format(regDate))
 					 .period(formatter.format(beforeDate) + " to " + formatter.format(afterDate))
 					 .dateofissue(currentTime)
+					 .isBirthNAC(rs.getBoolean("isnac"))
+					 .isBirthNIA(rs.getBoolean("isnia"))
                      .build());
 		 }
 		 return result;

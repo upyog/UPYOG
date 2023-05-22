@@ -108,6 +108,8 @@ public class NacCertService {
 //	        registerCertificateData.setBirthPlaceHospitalId(register.getHospitalId());
 //	        registerCertificateData.setBirthPlaceInstitutionId(register.getInstitutionId());
 	        registerCertificateData.setRegistarDetails("Registrar of Births and Deaths");
+	        registerCertificateData.setIsBirthNAC(register.getIsBirthNAC());
+	        registerCertificateData.setIsBirthNIA(register.getIsBirthNIA());
 	        mdmsDataService.setTenantDetails(registerCertificateData, mdmsData);
 	        
 	        Object mdmsLocData = mdmsUtil.mdmsCallForLocation(requestInfo, registerCertificateData.getTenantId());

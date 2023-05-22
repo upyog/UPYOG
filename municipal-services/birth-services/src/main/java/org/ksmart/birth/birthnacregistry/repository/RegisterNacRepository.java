@@ -128,7 +128,15 @@ public class RegisterNacRepository {
 	            pdfApplicationRequest.getNacCertificate()
 	                    .forEach(cert -> {
 	                        String uiHost=config.getEgovPdfHost();
-	                        String birthCertPath=config.getEgovPdfBirthNacEndPoint();
+	                        String birthCertPath= null;
+	                        if(cert.getIsBirthNAC() == true) {
+	                        	 birthCertPath=config.getEgovPdfBirthNacEndPoint();
+	                        }
+	                        else  if(cert.getIsBirthNAC() == true) {
+	                        	 birthCertPath=config.getEgovPdfBirthNiaEndPoint();
+	                        }
+	                        
+	                         
 	                        String tenantId=cert.getTenantId()
 	                                            .split("\\.")[0];
 	                        birthCertPath=birthCertPath.replace("$tenantId", tenantId);

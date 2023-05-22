@@ -156,6 +156,11 @@ public class RegisterNac {
 	    private String permenantAddDetails;
 
 	   
+	    @JsonProperty("isBirthNAC")
+	    private Boolean isBirthNAC ;
+
+	    @JsonProperty("isBirthNIA")
+	    private Boolean isBirthNIA ;
 	    
 	    
 	    @JsonProperty("auditDetails")
