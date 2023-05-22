@@ -12,7 +12,7 @@ const SelectTradeName = ({ t, config, onSelect, value, userType, formData }) => 
   const isEdit = window.location.href.includes("/edit-application/") || window.location.href.includes("renew-trade");
   const { isLoading, data: fydata = {} } = Digit.Hooks.tl.useTradeLicenseMDMS(stateId, "egf-master", "FinancialYear");
 
-  let mdmsFinancialYear = fydata["egf-master"] ? fydata["egf-master"].FinancialYear.filter((y) => y.module === "TL") : [];
+  let mdmsFinancialYear = fydata["egf-master"] ? fydata["egf-master"].FinancialYear.filter(y => y.module === "TL") : [];
   let FY = mdmsFinancialYear && mdmsFinancialYear.length > 0 && mdmsFinancialYear.sort((x, y) => y.endingDate - x.endingDate)[0]?.code;
   function setSelectTradeName(e) {
     setTradeName(e.target.value);
@@ -43,13 +43,19 @@ const SelectTradeName = ({ t, config, onSelect, value, userType, formData }) => 
     onSelect(config.key, { TradeName });
   };
   if (isLoading) {
-    return <Loader></Loader>;
+    return <Loader></Loader>
   }
 
   return (
     <React.Fragment>
       {window.location.href.includes("/citizen") ? <Timeline /> : null}
-      <FormStep config={config} onSelect={goNext} onSkip={onSkip} t={t} isDisabled={!TradeName}>
+      <FormStep
+        config={config}
+        onSelect={goNext}
+        onSkip={onSkip}
+        t={t}
+        isDisabled={!TradeName}
+      >
         <CardLabel>{`${t("TL_LOCALIZATION_TRADE_NAME")}`}</CardLabel>
         <TextInput
           t={t}
