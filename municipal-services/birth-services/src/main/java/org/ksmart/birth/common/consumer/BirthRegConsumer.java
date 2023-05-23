@@ -34,20 +34,7 @@ public class BirthRegConsumer {
 	        } catch (final Exception e) {
 	            log.error("Error while listening to value: " + record + " on topic: " + topic + ": " + e);
 	        }
-//	        if (!request.getNewBirthDetails().isEmpty()) {
-//	            String businessService = tradeLicenseRequest.getLicenses().get(0).getBusinessService();
-//	            if (businessService == null)
-//	                businessService = businessService_TL;
-//	            switch (businessService) {
-//	                case businessService_BPA:
-//	                    try {
-//	                        tradeLicenseService.checkEndStateAndAddBPARoles(tradeLicenseRequest);
-//	                    } catch (final Exception e) {
-//	                        log.error("Error occurred while adding roles for BPA user " + e);
-//	                    }
-//	                    break;
-//	            }
-//	        }
+ 
 	        notificationService.process(request);
 	    }
      

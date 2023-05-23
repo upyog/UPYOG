@@ -63,9 +63,9 @@ public class NotificationUtil {
 				message = getInitiatedMsg(birth, messageTemplate);
 				break;
 
-			case ACTION_STATUS_APPLIED:
-				messageTemplate = getMessageTemplate(NOTIFICATION_APPLIED, localizationMessage);
-				message = getAppliedMsg(birth, messageTemplate);
+			case ACTION_STATUS_PAYMENT:
+				messageTemplate = getMessageTemplate(NOTIFICATION_INITIATED_TEST, localizationMessage);
+				message = getInitiatedMsg(birth, messageTemplate);
 				break;
 
 			/*
@@ -84,33 +84,7 @@ public class NotificationUtil {
 				messageTemplate = getMessageTemplate(NOTIFICATION_REJECTED, localizationMessage);
 				message = getRejectedMsg(birth, messageTemplate);
 				break;
-
-			case ACTION_STATUS_FIELDINSPECTION:
-				messageTemplate = getMessageTemplate(NOTIFICATION_FIELD_INSPECTION, localizationMessage);
-				message = getFieldInspectionMsg(birth, messageTemplate);
-				break;
-
-			case ACTION_STATUS_PENDINGAPPROVAL:
-				messageTemplate = getMessageTemplate(NOTIFICATION_PENDING_APPROVAL, localizationMessage);
-				message = getPendingApprovalMsg(birth, messageTemplate);
-				break;
-
-			case ACTION_SENDBACKTOCITIZEN_FIELDINSPECTION:
-				messageTemplate = getMessageTemplate(NOTIFICATION_SENDBACK_CITIZEN, localizationMessage);
-				message = getCitizenSendBack(birth, messageTemplate);
-				break;
-
-			case ACTION_FORWARD_CITIZENACTIONREQUIRED:
-				messageTemplate = getMessageTemplate(NOTIFICATION_FORWARD_CITIZEN, localizationMessage);
-				message = getCitizenForward(birth, messageTemplate);
-				break;
-
-			case ACTION_CANCEL_CANCELLED:
-				messageTemplate = getMessageTemplate(NOTIFICATION_CANCELLED, localizationMessage);
-				message = getCancelledMsg(birth, messageTemplate);
-				break;
-
-			 
+  
 
 		}
 
@@ -149,8 +123,8 @@ public class NotificationUtil {
 	 * @return customized message for initiate
 	 */
 	private String getInitiatedMsg(NewBirthApplication birth, String message) {
-		// message = message.replace("{1}",license.);
-		message = message.replace("{2}", birth.getFirstNameEn());
+		message = message.replace("{1}",birth.getInitiatorDetails().getInitiatorEn());
+		message = message.replace("{2}", "Birth Registration");
 		message = message.replace("{3}", birth.getApplicationNo());
 
 		return message;

@@ -194,11 +194,13 @@ public class BirthConstants {
     
     // ACTION_STATUS combinations for notification
 
-    public static final String ACTION_STATUS_INITIATED = "INITIATE_PENDINGPAYMENT";
+    public static final String ACTION_STATUS_INITIATED = "INITIATE_INITIATED";
+    
+    public static final String ACTION_STATUS_PAYMENT = "INITIATE_PENDINGPAYMENT";
 
     public static final String ACTION_STATUS_APPLIED = "APPLY_APPLIED";
     
-    public static final String ACTION_STATUS_APPROVED = "APPROVE_PENDINGPAYMENT";
+    public static final String ACTION_STATUS_APPROVED = "APPROVE_APPROVED";
     
     public static final String ACTION_STATUS_REJECTED = "REJECT_REJECTED";
     
@@ -240,8 +242,8 @@ public class BirthConstants {
     
     public static final String NOTIF_OWNER_NAME_KEY = "{OWNER_NAME}";
     
-    public static final String MODULE = "egov-user";
-//    		"KSMART_BND_NEW";
+    public static final String MODULE = "rainmaker-cr";
+//  egov-user  		
     
     
 //    public static final List<String> NOTIFICATION_CODES = Collections.unmodifiableList(Arrays.asList(
@@ -258,7 +260,7 @@ public class BirthConstants {
 //            NOTIFICATION_EXPIRED, NOTIFICATION_MANUAL_EXPIRED
 //           ));
     
-    public static final String NOTIFICATION_INITIATED_TEST = "sms.login.otp.msg";
+    public static final String NOTIFICATION_INITIATED_TEST = "cr.en.counter.approved";
     public static final List<String> NOTIFICATION_CODES = Collections.unmodifiableList(Arrays.asList(
     		NOTIFICATION_INITIATED_TEST
            ));

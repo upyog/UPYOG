@@ -49,24 +49,23 @@ public class BirthNotificationService {
 	}
 
 	/**
-	 * Creates and send the sms based on the tradeLicenseRequest
+	 * Creates and send the sms based on the BirthRequest
 	 * 
-	 * @param request The tradeLicenseRequest listenend on the kafka topic
+	 * @param request The BirthRequest listenend on the kafka topic
 	 */
 	public void process(NewBirthDetailRequest request) {
 		RequestInfo requestInfo = request.getRequestInfo();
-		Map<String, String> mobileNumberToOwner = new HashMap<>();
-		String tenantId = request.getNewBirthDetails().get(0).getTenantId();
-		String action = request.getNewBirthDetails().get(0).getAction();
-		Map<Object, Object> configuredChannelList = new HashMap<>();
-//		List<String> configuredChannelNames = Arrays.asList(new String[]{"SMS","EVENT","EMAIL"});
+//		Map<String, String> mobileNumberToOwner = new HashMap<>();
+//		String tenantId = request.getNewBirthDetails().get(0).getTenantId();
+//		String action = request.getNewBirthDetails().get(0).getAction();
+		Map<Object, Object> configuredChannelList = new HashMap<>(); 
 		Set<String> mobileNumbers = new HashSet<>();
 
 		for (NewBirthApplication birth : request.getNewBirthDetails()) {
 
 			if (birth.getInitiatorDetails().getInitiatorMobileNo() != null)
-//				mobileNumbers.add(birth.getInitiatorDetails().getInitiatorMobileNo());
-				mobileNumbers.add("9747303943");
+				mobileNumbers.add(birth.getInitiatorDetails().getInitiatorMobileNo());
+//				mobileNumbers.add("9747303943");
 
 		}
 
@@ -113,9 +112,8 @@ public class BirthNotificationService {
 			Map<String, String> mobileNumberToOwner = new HashMap<>();
 
 			if (birth.getInitiatorDetails().getInitiatorMobileNo() != null)
-//				mobileNumberToOwner.put(birth.getInitiatorDetails().getInitiatorMobileNo(),
-				mobileNumberToOwner.put("9747303943",
-						"Varsha");
+				mobileNumberToOwner.put(birth.getInitiatorDetails().getInitiatorMobileNo(),birth.getInitiatorDetails().getInitiatorEn());
+//				mobileNumberToOwner.put("9747303943","Varsha");
 
 			smsRequests.addAll(util.createSMSRequest(message, mobileNumberToOwner));
 		}
