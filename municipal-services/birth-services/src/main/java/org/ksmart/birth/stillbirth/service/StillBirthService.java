@@ -7,6 +7,7 @@ import org.ksmart.birth.utils.MdmsUtil;
 import org.ksmart.birth.web.model.SearchCriteria;
 import org.ksmart.birth.web.model.stillbirth.StillBirthApplication;
 import org.ksmart.birth.web.model.stillbirth.StillBirthDetailRequest;
+import org.ksmart.birth.web.model.stillbirth.StillBirthResponse;
 import org.ksmart.birth.web.model.stillbirth.StillBirthSearchResponse;
 import org.ksmart.birth.workflow.WorkflowIntegratorNewBirth;
 import org.ksmart.birth.workflow.WorkflowIntegratorStillBirth;
@@ -54,7 +55,7 @@ public class StillBirthService {
         return repository.updateBirthDetails(request, mdmsData);
     }
 
-    public StillBirthSearchResponse searchKsmartBirthDetails(StillBirthDetailRequest request, SearchCriteria criteria) {
+    public StillBirthResponse searchKsmartBirthDetails(StillBirthDetailRequest request, SearchCriteria criteria) {
         return repository.searchBirthDetails(request,criteria);
     }
 }

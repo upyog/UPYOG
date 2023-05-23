@@ -26,6 +26,7 @@ import org.ksmart.birth.web.model.newbirth.NewBirthDetailRequest;
 import org.ksmart.birth.web.model.newbirth.NewBirthSearchResponse;
 import org.ksmart.birth.web.model.stillbirth.StillBirthApplication;
 import org.ksmart.birth.web.model.stillbirth.StillBirthDetailRequest;
+import org.ksmart.birth.web.model.stillbirth.StillBirthResponse;
 import org.ksmart.birth.web.model.stillbirth.StillBirthSearchResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -110,7 +111,7 @@ public class StillBirthRepository {
             return result;
         }
     }
-    public StillBirthSearchResponse searchBirthDetails(StillBirthDetailRequest request, SearchCriteria criteria) {
+    public StillBirthResponse searchBirthDetails(StillBirthDetailRequest request, SearchCriteria criteria) {
         List<Object> preparedStmtValues = new ArrayList<>();
         criteria.setApplicationType(BirthConstants.FUN_MODULE_STL);
         int cnt = commonQueryBuilder.searchBirthCount(criteria,jdbcTemplate);
@@ -122,9 +123,9 @@ public class StillBirthRepository {
 
             RequestInfo requestInfo = request.getRequestInfo();
             responseEnrichment.setNewBirthRequestData(requestInfo, result);
-            return StillBirthSearchResponse.builder()
+            return StillBirthResponse.builder()
                     .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), Boolean.TRUE))
-                    .newBirthDetails(result)
+                    .birthDetails(result)
                     .count(cnt)
                     .build();
         }

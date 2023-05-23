@@ -69,8 +69,8 @@ public class StillBirthController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
     @PostMapping(value = {"/searchstillbirth"})
-    public ResponseEntity<StillBirthSearchResponse> searchKsmartBirth(@RequestBody StillBirthDetailRequest request, @Valid @ModelAttribute SearchCriteria criteria) {
-        StillBirthSearchResponse response=stillBirthService.searchKsmartBirthDetails(request, criteria);
+    public ResponseEntity<StillBirthResponse> searchKsmartBirth(@RequestBody StillBirthDetailRequest request, @Valid @ModelAttribute SearchCriteria criteria) {
+        StillBirthResponse response=stillBirthService.searchKsmartBirthDetails(request, criteria);
 //        StillBirthResponse response=StillBirthResponse.builder()
 //                                                      .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), Boolean.TRUE))
 //                                                      .birthDetails(birthDetails)
