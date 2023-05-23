@@ -53,19 +53,19 @@ public class NotificationUtil {
 	 *                            The messages from localization
 	 * @return customized message based on tradelicense
 	 */
-	public String getCustomizedMsg(RequestInfo requestInfo, NewBirthApplication birth, String localizationMessage) {
+	public String getCustomizedMsg(RequestInfo requestInfo, String action,String status,String appNo,String name,String appType, String localizationMessage) {
 		String message = null, messageTemplate;
-		String ACTION_STATUS = birth.getAction() + "_" + birth.getApplicationStatus();
+		String ACTION_STATUS = action + "_" + status;
 		switch (ACTION_STATUS) {
 
 			case ACTION_STATUS_INITIATED:
 				messageTemplate = getMessageTemplate(NOTIFICATION_INITIATED_TEST, localizationMessage);
-				message = getInitiatedMsg(birth, messageTemplate);
+				message = getInitiatedMsg(appNo,appType, name,messageTemplate);
 				break;
 
 			case ACTION_STATUS_PAYMENT:
 				messageTemplate = getMessageTemplate(NOTIFICATION_INITIATED_TEST, localizationMessage);
-				message = getInitiatedMsg(birth, messageTemplate);
+				message = getInitiatedMsg(appNo,appType, name,messageTemplate);
 				break;
 
 			/*
@@ -74,16 +74,16 @@ public class NotificationUtil {
 			 * message = getApprovalPendingMsg(license,messageTemplate); break;
 			 */
 
-			case ACTION_STATUS_APPROVED:
-//				BigDecimal amountToBePaid = getAmountToBePaid(requestInfo, birth);
-				messageTemplate = getMessageTemplate(NOTIFICATION_APPROVED, localizationMessage);
-				message = getApprovedMsg(birth,  messageTemplate);
-				break;
-
-			case ACTION_STATUS_REJECTED:
-				messageTemplate = getMessageTemplate(NOTIFICATION_REJECTED, localizationMessage);
-				message = getRejectedMsg(birth, messageTemplate);
-				break;
+//			case ACTION_STATUS_APPROVED:
+////				BigDecimal amountToBePaid = getAmountToBePaid(requestInfo, birth);
+//				messageTemplate = getMessageTemplate(NOTIFICATION_APPROVED, localizationMessage);
+//				message = getApprovedMsg(birth,  messageTemplate);
+//				break;
+//
+//			case ACTION_STATUS_REJECTED:
+//				messageTemplate = getMessageTemplate(NOTIFICATION_REJECTED, localizationMessage);
+//				message = getRejectedMsg(birth, messageTemplate);
+//				break;
   
 
 		}
@@ -122,10 +122,10 @@ public class NotificationUtil {
 	 *                Message from localization for initiate
 	 * @return customized message for initiate
 	 */
-	private String getInitiatedMsg(NewBirthApplication birth, String message) {
-		message = message.replace("{1}",birth.getInitiatorDetails().getInitiatorNameEn());
-		message = message.replace("{2}", "Birth Registration");
-		message = message.replace("{3}", birth.getApplicationNo());
+	private String getInitiatedMsg(String appType,String appNo,String name, String message) {
+		message = message.replace("{1}",name);
+		message = message.replace("{2}", appType);
+		message = message.replace("{3}", appNo);
 
 		return message;
 	}

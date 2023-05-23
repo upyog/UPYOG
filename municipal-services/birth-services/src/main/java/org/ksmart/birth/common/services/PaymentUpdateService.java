@@ -133,7 +133,7 @@ public class PaymentUpdateService implements BaseEnrichment{
 				 
 				  repository.updatePaymentDetails(paymentReq);
 				  
-				  notificationService.process(updateRequest);
+//				  notificationService.process(updateRequest);
 		//End	  
 			}
 			
