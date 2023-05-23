@@ -55,9 +55,7 @@ public class BirthNotificationService {
 	 */
 	public void process(NewBirthDetailRequest request) {
 		RequestInfo requestInfo = request.getRequestInfo();
-//		Map<String, String> mobileNumberToOwner = new HashMap<>();
-//		String tenantId = request.getNewBirthDetails().get(0).getTenantId();
-//		String action = request.getNewBirthDetails().get(0).getAction();
+ 
 		Map<Object, Object> configuredChannelList = new HashMap<>(); 
 		Set<String> mobileNumbers = new HashSet<>();
 
@@ -65,10 +63,10 @@ public class BirthNotificationService {
 
 			if (birth.getInitiatorDetails().getInitiatorMobileNo() != null)
 				mobileNumbers.add(birth.getInitiatorDetails().getInitiatorMobileNo());
-//				mobileNumbers.add("9747303943");
+ 
 
 		}
-
+ 
 		List<SMSRequest> smsRequestsBR = new LinkedList<>();
 		if (null != config.getIsBRSMSEnabled()) {
 			if (config.getIsBRSMSEnabled()) {
@@ -100,21 +98,15 @@ public class BirthNotificationService {
 			Map<Object, Object> configuredChannelList) {
 		String tenantId = request.getNewBirthDetails().get(0).getTenantId();
 		for (NewBirthApplication birth : request.getNewBirthDetails()) {
-
 			String message = null;
-
-			String localizationMessages = util.getLocalizationMessages(tenantId, request.getRequestInfo());
-			message = util.getCustomizedMsg(request.getRequestInfo(), birth, localizationMessages);
-
+			String localizationMessages = util.getLocalizationMessages(tenantId, request.getRequestInfo());			 
+			message = util.getCustomizedMsg(request.getRequestInfo(), birth, localizationMessages);		 
 			if (message == null)
 				continue;
-
 			Map<String, String> mobileNumberToOwner = new HashMap<>();
-
 			if (birth.getInitiatorDetails().getInitiatorMobileNo() != null)
-				mobileNumberToOwner.put(birth.getInitiatorDetails().getInitiatorMobileNo(),birth.getInitiatorDetails().getInitiatorEn());
+				mobileNumberToOwner.put(birth.getInitiatorDetails().getInitiatorMobileNo(),birth.getInitiatorDetails().getInitiatorNameEn());
 //				mobileNumberToOwner.put("9747303943","Varsha");
-
 			smsRequests.addAll(util.createSMSRequest(message, mobileNumberToOwner));
 		}
 	}

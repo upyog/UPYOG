@@ -123,7 +123,7 @@ public class NotificationUtil {
 	 * @return customized message for initiate
 	 */
 	private String getInitiatedMsg(NewBirthApplication birth, String message) {
-		message = message.replace("{1}",birth.getInitiatorDetails().getInitiatorEn());
+		message = message.replace("{1}",birth.getInitiatorDetails().getInitiatorNameEn());
 		message = message.replace("{2}", "Birth Registration");
 		message = message.replace("{3}", birth.getApplicationNo());
 
