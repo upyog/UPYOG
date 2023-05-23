@@ -9,6 +9,7 @@ import org.ksmart.birth.utils.MdmsUtil;
 import org.ksmart.birth.web.model.SearchCriteria;
 import org.ksmart.birth.web.model.bornoutside.BornOutsideApplication;
 import org.ksmart.birth.web.model.bornoutside.BornOutsideDetailRequest;
+import org.ksmart.birth.web.model.bornoutside.BornOutsideResponse;
 import org.ksmart.birth.workflow.WorkflowIntegratorBornOutside;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -66,7 +67,7 @@ public class BornOutsideService {
         return repository.updateBirthApplication(request);
     }
 
-    public List<BornOutsideApplication> searchBirthDetails(BornOutsideDetailRequest request, SearchCriteria criteria) {
+    public BornOutsideResponse searchBirthDetails(BornOutsideDetailRequest request, SearchCriteria criteria) {
         return repository.searchBirthDetails(request,criteria);
     }
 }

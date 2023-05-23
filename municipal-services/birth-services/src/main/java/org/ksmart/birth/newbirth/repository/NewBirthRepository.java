@@ -15,10 +15,12 @@ import org.ksmart.birth.newbirth.enrichment.NewBirthResponseEnrichment;
 import org.ksmart.birth.newbirth.repository.rowmapper.BirthApplicationRowMapper;
 import org.ksmart.birth.newbirth.repository.rowmapper.BirthApplicationRowMapperForPay;
 import org.ksmart.birth.utils.BirthConstants;
+import org.ksmart.birth.utils.ResponseInfoFactory;
 import org.ksmart.birth.utils.enums.ErrorCodes;
 import org.ksmart.birth.web.model.SearchCriteria;
 import org.ksmart.birth.web.model.newbirth.NewBirthApplication;
 import org.ksmart.birth.web.model.newbirth.NewBirthDetailRequest;
+import org.ksmart.birth.web.model.newbirth.NewBirthSearchResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -40,11 +42,13 @@ public class NewBirthRepository {
     private final BirthApplicationRowMapperForPay ksmartBirthApplicationRowMapperPay;
     private final RegisterRowMapperForApp registerRowMapperForApp;
     private final RegisterStatisticsEnrichment registerStatisticsEnrichment;
+    private final ResponseInfoFactory responseInfoFactory;
 
     @Autowired
     NewBirthRepository(JdbcTemplate jdbcTemplate, NewBirthEnrichment ksmartBirthEnrichment, BirthConfiguration birthDeathConfiguration,
                        BndProducer producer, NewBirthResponseEnrichment responseEnrichment, BirthApplicationRowMapperForPay ksmartBirthApplicationRowMapperPay,
-                       BirthApplicationRowMapper ksmartBirthApplicationRowMapper, RegisterRowMapperForApp registerRowMapperForApp, RegisterStatisticsEnrichment registerStatisticsEnrichment) {
+                       BirthApplicationRowMapper ksmartBirthApplicationRowMapper, RegisterRowMapperForApp registerRowMapperForApp,
+                       RegisterStatisticsEnrichment registerStatisticsEnrichment, ResponseInfoFactory responseInfoFactory) {
         this.jdbcTemplate = jdbcTemplate;
         this.ksmartBirthEnrichment = ksmartBirthEnrichment;
         this.birthDeathConfiguration = birthDeathConfiguration;
@@ -54,6 +58,7 @@ public class NewBirthRepository {
         this.registerRowMapperForApp = registerRowMapperForApp;
         this.ksmartBirthApplicationRowMapperPay = ksmartBirthApplicationRowMapperPay;
         this.registerStatisticsEnrichment = registerStatisticsEnrichment;
+        this.responseInfoFactory = responseInfoFactory;
     }
 
     public List<NewBirthApplication> saveKsmartBirthDetails(NewBirthDetailRequest request, Object mdmsData) {
@@ -84,30 +89,35 @@ public class NewBirthRepository {
                 .registerBirthDetails(result).build();
     }
 
-    public List<NewBirthApplication> searchBirthDetails(NewBirthDetailRequest request, SearchCriteria criteria) {
+    public NewBirthSearchResponse searchBirthDetails(NewBirthDetailRequest request, SearchCriteria criteria) {
         List<Object> preparedStmtValues = new ArrayList<>();
         criteria.setApplicationType(BirthConstants.FUN_MODULE_NEW);
-        String query = commonQueryBuilder.getBirthApplicationSearchQuery(criteria, preparedStmtValues, Boolean.FALSE);
-        if (preparedStmtValues.size() == 0) {
+        int cnt = commonQueryBuilder.searchBirthCount(criteria,jdbcTemplate);
+        if (cnt == 0) {
             return null;
         } else {
+            String query = commonQueryBuilder.getBirthApplicationSearchQuery(criteria, preparedStmtValues, Boolean.FALSE);
             List<NewBirthApplication> result = jdbcTemplate.query(query, preparedStmtValues.toArray(), ksmartBirthApplicationRowMapper);
+
             RequestInfo requestInfo = request.getRequestInfo();
             responseEnrichment.setNewBirthRequestData(requestInfo, result);
-            return result;
+            return NewBirthSearchResponse.builder()
+                    .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), Boolean.TRUE))
+                    .newBirthDetails(result)
+                    .count(cnt)
+                    .build();
         }
     }
 
+
+
     public List<NewBirthApplication> searchBirth(RequestInfo requestInfo, SearchCriteria criteria) {
-      
         List<Object> preparedStmtValues = new ArrayList<>();        
         String query = commonQueryBuilder.getBirthApplicationSearchQueryCommon(criteria, preparedStmtValues, Boolean.FALSE);
         if (preparedStmtValues.size() == 0) {
             throw new CustomException(ErrorCodes.NOT_FOUND.getCode(), "No result found.");
         } else {
             List<NewBirthApplication> result = jdbcTemplate.query(query, preparedStmtValues.toArray(), ksmartBirthApplicationRowMapperPay);
-System.out.println("result "+result);
-//            responseEnrichment.setNewBirthRequestData(requestInfo, result);
             return result;
         }
     }

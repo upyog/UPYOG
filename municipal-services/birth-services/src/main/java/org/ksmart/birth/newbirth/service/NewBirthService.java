@@ -14,6 +14,7 @@ import org.ksmart.birth.utils.MdmsUtil;
 import org.ksmart.birth.web.model.SearchCriteria;
 import org.ksmart.birth.web.model.newbirth.NewBirthApplication;
 import org.ksmart.birth.web.model.newbirth.NewBirthDetailRequest;
+import org.ksmart.birth.web.model.newbirth.NewBirthSearchResponse;
 import org.ksmart.birth.workflow.WorkflowIntegratorNewBirth;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -111,7 +112,7 @@ public class NewBirthService {
     private NewBirthApplication findBirthRequestById(final NewBirthDetailRequest request) {
         if(request.getNewBirthDetails().size() >0){
             final SearchCriteria searchCriteria = buildSearchCriteria(request.getNewBirthDetails().get(0));
-            final List<NewBirthApplication> application = repository.searchBirthDetails(request,searchCriteria);
+            final List<NewBirthApplication> application = searchBirthDetailsCommon(request.getRequestInfo(),searchCriteria);
             return CollectionUtils.isNotEmpty(application)
                     ? application.get(0)
                     : null;
@@ -120,7 +121,7 @@ public class NewBirthService {
         }
     }
 
-    public List<NewBirthApplication> searchBirthDetails(NewBirthDetailRequest request, SearchCriteria criteria) {
+    public NewBirthSearchResponse searchBirthDetails(NewBirthDetailRequest request, SearchCriteria criteria) {
         return repository.searchBirthDetails(request,criteria);
     }
     public List<NewBirthApplication> searchBirthDetailsCommon(RequestInfo request, SearchCriteria criteria) {

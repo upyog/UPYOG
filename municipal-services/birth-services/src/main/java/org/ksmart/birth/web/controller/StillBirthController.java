@@ -11,6 +11,7 @@ import org.ksmart.birth.web.model.SearchCriteria;
 import org.ksmart.birth.web.model.stillbirth.StillBirthApplication;
 import org.ksmart.birth.web.model.stillbirth.StillBirthDetailRequest;
 import org.ksmart.birth.web.model.stillbirth.StillBirthResponse;
+import org.ksmart.birth.web.model.stillbirth.StillBirthSearchResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -68,13 +69,13 @@ public class StillBirthController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
     @PostMapping(value = {"/searchstillbirth"})
-    public ResponseEntity<StillBirthResponse> searchKsmartBirth(@RequestBody StillBirthDetailRequest request, @Valid @ModelAttribute SearchCriteria criteria) {
-        List<StillBirthApplication> birthDetails=stillBirthService.searchKsmartBirthDetails(request, criteria);
-        StillBirthResponse response=StillBirthResponse.builder()
-                                                      .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), Boolean.TRUE))
-                                                      .birthDetails(birthDetails)
-                                                      .count(birthDetails.size())
-                                                      .build();
+    public ResponseEntity<StillBirthSearchResponse> searchKsmartBirth(@RequestBody StillBirthDetailRequest request, @Valid @ModelAttribute SearchCriteria criteria) {
+        StillBirthSearchResponse response=stillBirthService.searchKsmartBirthDetails(request, criteria);
+//        StillBirthResponse response=StillBirthResponse.builder()
+//                                                      .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), Boolean.TRUE))
+//                                                      .birthDetails(birthDetails)
+//                                                      .count(birthDetails.size())
+//                                                      .build();
         return ResponseEntity.ok(response);
     }
 }

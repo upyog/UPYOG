@@ -18,11 +18,15 @@ import org.ksmart.birth.stillbirth.repository.rowmapper.StillBirthApplicationRow
 import org.ksmart.birth.stillbirth.service.MdmsForStillBirthService;
 import org.ksmart.birth.utils.BirthConstants;
 import org.ksmart.birth.utils.MdmsUtil;
+import org.ksmart.birth.utils.ResponseInfoFactory;
 import org.ksmart.birth.utils.enums.ErrorCodes;
 import org.ksmart.birth.web.model.SearchCriteria;
 import org.ksmart.birth.web.model.newbirth.NewBirthApplication;
+import org.ksmart.birth.web.model.newbirth.NewBirthDetailRequest;
+import org.ksmart.birth.web.model.newbirth.NewBirthSearchResponse;
 import org.ksmart.birth.web.model.stillbirth.StillBirthApplication;
 import org.ksmart.birth.web.model.stillbirth.StillBirthDetailRequest;
+import org.ksmart.birth.web.model.stillbirth.StillBirthSearchResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -46,13 +50,14 @@ public class StillBirthRepository {
     private final MdmsForStillBirthService mdmsForStillBirthService;
     private final  MdmsUtil mdmsUtil;
     private final StillBirthResponseEnrichment responseEnrichment;
-
     private final RegisterRowMapperForApp registerRowMapperForApp;
+    private final ResponseInfoFactory responseInfoFactory;
     @Autowired
     StillBirthRepository(JdbcTemplate jdbcTemplate,  StillBirthEnrichment enrichment, BirthConfiguration birthDeathConfiguration,
                          BndProducer producer, StillBirthQueryBuilder queryBuilder, StillBirthApplicationRowMapper rowMapper,
                          MdmsDataService mdmsDataService, MdmsUtil mdmsUtil, MdmsForStillBirthService mdmsForStillBirthService,
-                         RegisterRowMapperForApp registerRowMapperForApp, StillBirthResponseEnrichment responseEnrichment) {
+                         RegisterRowMapperForApp registerRowMapperForApp, StillBirthResponseEnrichment responseEnrichment,
+                         ResponseInfoFactory responseInfoFactory) {
         this.jdbcTemplate = jdbcTemplate;
         this.enrichment = enrichment;
         this.birthDeathConfiguration = birthDeathConfiguration;
@@ -64,6 +69,7 @@ public class StillBirthRepository {
         this.mdmsForStillBirthService = mdmsForStillBirthService;
         this.registerRowMapperForApp = registerRowMapperForApp;
         this.responseEnrichment = responseEnrichment;
+        this.responseInfoFactory = responseInfoFactory;
     }
     public List<StillBirthApplication> saveBirthDetails(StillBirthDetailRequest request, Object mdmsData) {
         enrichment.enrichCreate(request,mdmsData);
@@ -90,7 +96,7 @@ public class StillBirthRepository {
                 .requestInfo(request.getRequestInfo())
                 .registerBirthDetails(result).build();
     }
-    public List<StillBirthApplication> searchStillBirthDetails(StillBirthDetailRequest request, SearchCriteria criteria) {
+    public List<StillBirthApplication> searchStillBirthDetails1(StillBirthDetailRequest request, SearchCriteria criteria) {
         String uuid = null;
         List<Object> preparedStmtValues = new ArrayList<>();
         criteria.setApplicationType(BirthConstants.FUN_MODULE_STL);
@@ -102,6 +108,25 @@ public class StillBirthRepository {
             RequestInfo requestInfo = request.getRequestInfo();
             responseEnrichment.setNewBirthRequestData(requestInfo, result);
             return result;
+        }
+    }
+    public StillBirthSearchResponse searchBirthDetails(StillBirthDetailRequest request, SearchCriteria criteria) {
+        List<Object> preparedStmtValues = new ArrayList<>();
+        criteria.setApplicationType(BirthConstants.FUN_MODULE_STL);
+        int cnt = commonQueryBuilder.searchBirthCount(criteria,jdbcTemplate);
+        if (cnt == 0) {
+            return null;
+        } else {
+            String query = commonQueryBuilder.getBirthApplicationSearchQuery(criteria, preparedStmtValues, Boolean.FALSE);
+            List<StillBirthApplication> result = jdbcTemplate.query(query, preparedStmtValues.toArray(), rowMapper);
+
+            RequestInfo requestInfo = request.getRequestInfo();
+            responseEnrichment.setNewBirthRequestData(requestInfo, result);
+            return StillBirthSearchResponse.builder()
+                    .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), Boolean.TRUE))
+                    .newBirthDetails(result)
+                    .count(cnt)
+                    .build();
         }
     }
 }

@@ -20,6 +20,7 @@ import org.ksmart.birth.web.model.adoption.AdoptionApplication;
 import org.ksmart.birth.web.model.adoption.AdoptionDetailRequest;
 import org.ksmart.birth.web.model.adoption.AdoptionResponse;
 import org.ksmart.birth.web.model.adoption.AdoptionSearchResponse;
+import org.ksmart.birth.web.model.newbirth.NewBirthSearchResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -85,12 +86,13 @@ public class AbandonedController {
 
     @PostMapping(value = {"/searchabandoned"})
     public ResponseEntity<AbandonedSearchResponse> searchAbandonedDetails(@RequestBody AbandonedRequest request, @Valid @ModelAttribute SearchCriteria criteria) {
-        List<AbandonedApplication> adoptionDetails = abandonedService.searchKsmartBirthDetails(request, criteria);
-        AbandonedSearchResponse response = AbandonedSearchResponse.builder()
-                                                                  .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), Boolean.TRUE))
-                                                                  .newBirthDetails(adoptionDetails)
-                                                                  .count(adoptionDetails.size())
-                                                                  .build();
+        AbandonedSearchResponse response = abandonedService.searchKsmartBirthDetails(request, criteria);
+//        List<AbandonedApplication> adoptionDetails = abandonedService.searchKsmartBirthDetails(request, criteria);
+//        AbandonedSearchResponse response = AbandonedSearchResponse.builder()
+//                                                                  .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), Boolean.TRUE))
+//                                                                  .newBirthDetails(adoptionDetails)
+//                                                                  .count(adoptionDetails.size())
+//                                                                  .build();
         return ResponseEntity.ok(response);
     }
 }

@@ -1,7 +1,11 @@
 package org.ksmart.birth.common.repository.builder;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import org.ksmart.birth.utils.BirthConstants;
 import org.ksmart.birth.web.model.SearchCriteria;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import lombok.extern.slf4j.Slf4j;
@@ -164,6 +168,8 @@ public class CommonQueryBuilder extends BaseQueryBuilder {
 																		.append("ct.care_taker_address as ct_care_taker_address, ct.care_taker_mobileno as ct_care_taker_mobileno").toString();
 
 
+	private static final String QUERY_COUNT = new StringBuilder().append("SELECT COUNT(*) ").toString();
+
 	public String getQueryMain() {
 		return QUERY;
 	}
@@ -224,9 +230,11 @@ public class CommonQueryBuilder extends BaseQueryBuilder {
 	public String getQueryDocuments() {
 		return QUERY_NACDOCUMENTS;
 	}
-
 	public String getQueryCareTaker() {
 		return QUERY_CARETAKE_ABAN;
+	}
+	public String getCountQuery() {
+		return QUERY_COUNT;
 	}
 
 
@@ -300,6 +308,17 @@ public class CommonQueryBuilder extends BaseQueryBuilder {
 		prepareOrderBy(criteria, query, preparedStmtValues);
 		return query.toString();
 	}
+	public int searchBirthCount(SearchCriteria criteria, JdbcTemplate jdbcTemplate) {
+		List<Object> preparedStmtValues = new ArrayList<>();
+		String queryCnt = getCountSearchQuery(criteria, preparedStmtValues, Boolean.FALSE);
+		return jdbcTemplate.queryForObject(queryCnt,preparedStmtValues.toArray(),Integer.class);
+	}
+	public String getCountSearchQuery(@NotNull SearchCriteria criteria, @NotNull List<Object> preparedStmtValues, Boolean isCount) {
+		StringBuilder query = prepareSearchCountQueryCommon();
+		prepareSearchCriteria(criteria, query, preparedStmtValues);
+		//prepareOrderBy(criteria, query, preparedStmtValues);
+		return query.toString();
+	}
 
 	public String getBirthApplicationSearchQueryCommon(@NotNull SearchCriteria criteria, @NotNull List<Object> preparedStmtValues, Boolean isCount) {
 		StringBuilder query = prepareSearchQueryCommon();
@@ -358,6 +377,12 @@ public class CommonQueryBuilder extends BaseQueryBuilder {
 				.append(",")
 				.append(getQueryCareTaker())
 				.append(getQueryConditionCommon()).toString();
+		return query;
+	}
+
+	public StringBuilder prepareSearchCountQueryCommon() {
+		StringBuilder query = new StringBuilder();
+		query.append(getCountQuery()).append(getQueryConditionCommon()).toString();
 		return query;
 	}
 

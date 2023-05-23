@@ -81,12 +81,12 @@ public class CorrectionController {
 
     @PostMapping(value = {"/searchbirthcorrection"})
     public ResponseEntity<CorrectionResponse> searchKsmartBirth(@RequestBody CorrectionRequest request, @Valid @ModelAttribute SearchCriteria criteria) {
-        List<CorrectionApplication> birthDetails=correctionService.searcCorrectionDetails(request, criteria);
-        CorrectionResponse response=CorrectionResponse.builder()
-                .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), Boolean.TRUE))
-                .correctionDetails(birthDetails)
-                .count(birthDetails.size())
-                .build();
+        CorrectionResponse response=correctionService.searchCorrectionDetails(request, criteria);
+//        CorrectionResponse response=CorrectionResponse.builder()
+//                .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), Boolean.TRUE))
+//                .correctionDetails(birthDetails)
+//                .count(birthDetails.size())
+//                .build();
         return ResponseEntity.ok(response);
     }
 }

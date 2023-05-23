@@ -70,12 +70,12 @@ public class BornOutsideController {
 
     @PostMapping(value = {"/searchbornoutside"})
     public ResponseEntity<BornOutsideResponse> searchKsmartBirth(@RequestBody BornOutsideDetailRequest request, @Valid @ModelAttribute SearchCriteria criteria) {
-        List<BornOutsideApplication> birthDetails = birthService.searchBirthDetails(request, criteria);
-        BornOutsideResponse response = BornOutsideResponse.builder()
-                .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), Boolean.TRUE))
-                .birthDetails(birthDetails)
-                .count(birthDetails.size())
-                .build();
+        BornOutsideResponse response = birthService.searchBirthDetails(request, criteria);
+//        BornOutsideResponse response = BornOutsideResponse.builder()
+//                .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), Boolean.TRUE))
+//                .birthDetails(birthDetails)
+//                .count(birthDetails.size())
+//                .build();
         return ResponseEntity.ok(response);
     }
 }

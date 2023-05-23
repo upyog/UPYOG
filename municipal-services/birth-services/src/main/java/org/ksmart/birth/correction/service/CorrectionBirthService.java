@@ -9,6 +9,7 @@ import org.ksmart.birth.utils.MdmsUtil;
 import org.ksmart.birth.web.model.SearchCriteria;
 import org.ksmart.birth.web.model.correction.CorrectionApplication;
 import org.ksmart.birth.web.model.correction.CorrectionRequest;
+import org.ksmart.birth.web.model.correction.CorrectionResponse;
 import org.ksmart.birth.workflow.WorkflowIntegratorCorrection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -73,7 +74,7 @@ public class CorrectionBirthService {
         return repository.updateKsmartBirthDetails(request);
     }
 
-    public List<CorrectionApplication> searcCorrectionDetails(CorrectionRequest request, SearchCriteria criteria) {
+    public CorrectionResponse searchCorrectionDetails(CorrectionRequest request, SearchCriteria criteria) {
         return repository.searchCorrectionDetails(request,criteria);
     }
 }

@@ -26,7 +26,6 @@ public class SmsUtil {
     @Autowired
     BirthConfiguration config;
     private BndProducer producer;
-
     private ServiceRequestRepository serviceRequestRepository;
     @Autowired
     SmsUtil(BndProducer producer, ServiceRequestRepository serviceRequestRepository) {

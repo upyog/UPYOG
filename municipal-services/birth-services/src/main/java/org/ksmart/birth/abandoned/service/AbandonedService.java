@@ -10,6 +10,8 @@ import org.ksmart.birth.utils.MdmsUtil;
 import org.ksmart.birth.web.model.SearchCriteria;
 import org.ksmart.birth.web.model.abandoned.AbandonedApplication;
 import org.ksmart.birth.web.model.abandoned.AbandonedRequest;
+import org.ksmart.birth.web.model.abandoned.AbandonedResponse;
+import org.ksmart.birth.web.model.abandoned.AbandonedSearchResponse;
 import org.ksmart.birth.web.model.newbirth.NewBirthApplication;
 import org.ksmart.birth.web.model.newbirth.NewBirthDetailRequest;
 import org.ksmart.birth.workflow.WorkflowIntegratorAbandoned;
@@ -58,7 +60,7 @@ public class AbandonedService {
         return repository.updateBirthDetails(request);
     }
 
-    public List<AbandonedApplication> searchKsmartBirthDetails(AbandonedRequest request, SearchCriteria criteria) {
+    public AbandonedSearchResponse searchKsmartBirthDetails(AbandonedRequest request, SearchCriteria criteria) {
         return repository.searchBirthDetails(request,criteria);
     }
 }
