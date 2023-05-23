@@ -80,7 +80,7 @@ public class NacService {
     }
 
     public List<NacApplication> updateNacDetails(NacDetailRequest request) {
-        workflowIntegrator.callWorkFlow(request);
+//        workflowIntegrator.callWorkFlow(request);
         return repository.updateKsmartBirthDetails(request);
     }
 

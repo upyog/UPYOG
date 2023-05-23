@@ -74,7 +74,7 @@ public class NACController {
         //Download certificate when Approved       
       
         	 if((nacApplicationDetails.get(0).getApplicationStatus().equals(STATUS_APPROVED)  && nacApplicationDetails.get(0).getAction().equals(WF_APPROVE))){
-        	 
+        	 System.out.println("nia testing");
         	RegisterNacRequest registerNacRequest = registryReq.createRegistryRequestNew(request);
         	   List<RegisterNac> registerBirthDetails =  registerNacService.saveRegisterBirthDetails(registerNacRequest);
         	   

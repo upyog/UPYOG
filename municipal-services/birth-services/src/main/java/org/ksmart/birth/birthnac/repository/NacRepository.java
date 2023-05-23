@@ -83,23 +83,22 @@ public class NacRepository {
         List<Object> preparedStmtValues = new ArrayList<>();
         SearchCriteria criteria = new SearchCriteria();
         List<RegisterNac> result = null;
-        RegisterNac regNac = new RegisterNac();		 
-        regNac.setIsBirthNAC(requestApplication.getNacDetails().get(0).getIsBirthNAC());
-        regNac.setIsBirthNIA(requestApplication.getNacDetails().get(0).getIsBirthNIA());
-        result.add(regNac);
+ 
+       
         if (requestApplication.getNacDetails().size() > 0) {
-//            criteria.getApplicationNumber().add(requestApplication.getNacDetails().get(0).getApplicationNo());
+ 
         	criteria.setId(requestApplication.getNacDetails().get(0).getId());     
             criteria.setTenantId(requestApplication.getNacDetails().get(0).getTenantId());
             String query = nacQueryBuilder.getApplicationSearchQueryForRegistry(criteria, preparedStmtValues);
-            result = jdbcTemplate.query(query, preparedStmtValues.toArray(), registerRowMapperForApp);
-             
-        }
-        
-        
+            result = jdbcTemplate.query(query, preparedStmtValues.toArray(), registerRowMapperForApp);            
+            result.get(0).setIsBirthNAC(requestApplication.getNacDetails().get(0).getIsBirthNAC());
+            result.get(0).setIsBirthNIA(requestApplication.getNacDetails().get(0).getIsBirthNIA()); 
+        }       
+      
         return RegisterNacRequest.builder()
                 .requestInfo(requestApplication.getRequestInfo())
-                .registernacDetails(result).build();
+                .registernacDetails(result).build();       
+        
     }
     
     

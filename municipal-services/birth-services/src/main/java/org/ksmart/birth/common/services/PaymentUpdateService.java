@@ -64,8 +64,8 @@ public class PaymentUpdateService implements BaseEnrichment{
 //	private objectMapper mapper;
 	
 	private BirthUtils util;
-	
-	public PaymentUpdateService(NewBirthService newBirthService,BirthConfiguration config,  
+	 private BirthNotificationService notificationService;
+	public PaymentUpdateService(NewBirthService newBirthService,BirthConfiguration config,  BirthNotificationService notificationService,  
 			WorkflowIntegratorNewBirth wfIntegrator,NewBirthEnrichment enrichmentService, BirthUtils util,CommonService commonService,
 			CommonRepository repository, BirthConfiguration birthDeathConfiguration) {
 		this.newBirthService=newBirthService;
@@ -76,6 +76,7 @@ public class PaymentUpdateService implements BaseEnrichment{
 		this.util=util;
 		this.commonService=commonService; 
 		this.birthDeathConfiguration=birthDeathConfiguration;
+		this.notificationService=notificationService;
 		
 	}
 	
@@ -107,11 +108,11 @@ public class PaymentUpdateService implements BaseEnrichment{
 			searchCriteria.setBusinessService(paymentDetail.getBusinessService());
 			
 			List<NewBirthApplication> birth = newBirthService.searchBirth(requestInfo,searchCriteria);
-			System.out.println("birth out"+birth.get(0).getAction());
+			 
 			NewBirthDetailRequest updateRequest = NewBirthDetailRequest.builder().requestInfo(requestInfo)
 					.newBirthDetails(birth).build();
 			
-			wfIntegrator.callWorkFlow(updateRequest);
+			 wfIntegrator.callWorkFlow(updateRequest);
 			
 			  User userInfo = requestInfo.getUserInfo();
 		        AuditDetails auditDetails = buildAuditDetails(userInfo.getUuid(), Boolean.TRUE);
@@ -131,6 +132,8 @@ public class PaymentUpdateService implements BaseEnrichment{
 						.commonPays(commonPays).build();		
 				 
 				  repository.updatePaymentDetails(paymentReq);
+				  
+				  notificationService.process(updateRequest);
 		//End	  
 			}
 			
