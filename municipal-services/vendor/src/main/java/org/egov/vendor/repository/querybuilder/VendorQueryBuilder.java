@@ -33,7 +33,6 @@ public class VendorQueryBuilder {
 	private static final String VEHICLE_EXISTS = "SELECT vendor_id FROM eg_vendor_vehicle where vechile_id IN ";
 	private static final String DRIVER_EXISTS = "SELECT vendor_id FROM eg_vendor_driver where driver_id IN ";
 
-	private static final String DRIVER_EXISTS = "SELECT vendor_id FROM eg_vendor_driver where driver_id IN ";
 	private static final String DRIVER_ID = "driver_id";
 	private static final String VEHICLE_ID = "vechile_id";
 	private static final String VENDOR_ID = "vendor_id";
@@ -134,6 +133,7 @@ public class VendorQueryBuilder {
 				builder.append(" vendor.status IN (").append(createQuery(status)).append(")");
 				addToPreparedStatement(preparedStmtList, status);
 			}
+
 		}
 		return addPaginationWrapper(builder.toString(), preparedStmtList, criteria);
 	}
