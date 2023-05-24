@@ -9,8 +9,8 @@
 # -
 
 config:
--   name: builds/digit-ui
+-   name: builds/upyog-ui
     build:
-      - work-dir: frontend/micro-ui/web/
+      - work-dir: frontend/upyog-ui/web/
       dockerfile: web/docker/Dockerfile
-      image-name: digit-ui
+      image-name: upyog-ui
