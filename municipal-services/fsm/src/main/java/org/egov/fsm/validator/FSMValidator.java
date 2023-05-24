@@ -61,10 +61,6 @@ public class FSMValidator {
 	public void validateCreate(FSMRequest fsmRequest, Object mdmsData) {
 		mdmsValidator.validateMdmsData(mdmsData);
 		FSM fsm = fsmRequest.getFsm();
-		
-		if (!StringUtils.isEmpty(fsm.getPaymentPreference())) {
-			validatePaymentPreference(fsm.getPaymentPreference());
-		}
 		if (fsmRequest.getRequestInfo().getUserInfo().getType().equalsIgnoreCase(FSMConstants.CITIZEN)) {
 			validateCitizenDetails(fsm, fsmRequest);
 
@@ -89,18 +85,6 @@ public class FSMValidator {
 		}
 		mdmsValidator.validatePropertyType(fsmRequest.getFsm().getPropertyUsage());
 		validateNoOfTrips(fsmRequest, mdmsData);
-	}
-
-	private void validatePaymentPreference(String paymentPreference) {
-		Map<String, String> errorMap = new HashMap<>();
-
-		if (!paymentPreference.isEmpty()) {
-			errorMap.put(FSMErrorConstants.INVALID_PAYMENT_PREFERENCE, "Payment Preference is invalid");
-		}
-
-		if (!errorMap.isEmpty())
-			throw new CustomException(errorMap);
-
 	}
 
 	private void validateEmployeeData(FSM fsm, FSMRequest fsmRequest, Object mdmsData) {
@@ -310,26 +294,23 @@ public class FSMValidator {
 
 		// SAN-889: Added validation for recevied payment
 		
-		/*SM-2099 :Removed validation for received payment
-		 * 
-		 * if (null != fsmRequest.getWorkflow() && null !=
-		 * fsmRequest.getWorkflow().getAction() &&
-		 * fsmRequest.getWorkflow().getAction().equalsIgnoreCase(FSMConstants.
-		 * WF_ACTION_COMPLETE) && isDsoRole &&
-		 * fsmRequest.getFsm().getAdvanceAmount()!=null) { Map<String, String>
-		 * additionalDetails = new HashMap<>(); try { additionalDetails =
-		 * fsmRequest.getFsm().getAdditionalDetails() != null ? (Map<String, String>)
-		 * fsmRequest.getFsm().getAdditionalDetails() : new HashMap<>(); } catch
-		 * (Exception e) { throw new CustomException(FSMErrorConstants.INVALID_ACTION,
-		 * " Received payment type is mandatory!"); } if (!additionalDetails.isEmpty()
-		 * && additionalDetails.get(FSMConstants.RECEIVED_PAYMENT) == null) throw new
-		 * CustomException(FSMErrorConstants.INVALID_ACTION,
-		 * " Received payment type is mandatory!");
-		 * log.info("additionalDetails.get(\"receivedPayment\"):: " +
-		 * additionalDetails.get(FSMConstants.RECEIVED_PAYMENT));
-		 * mdmsValidator.validateReceivedPaymentType(additionalDetails.get(FSMConstants.
-		 * RECEIVED_PAYMENT)); }
-		 */
+		if (null != fsmRequest.getWorkflow() && null != fsmRequest.getWorkflow().getAction()
+				&& fsmRequest.getWorkflow().getAction().equalsIgnoreCase(FSMConstants.WF_ACTION_COMPLETE)
+				&& isDsoRole && fsmRequest.getFsm().getAdvanceAmount()!=null) {
+			Map<String, String> additionalDetails = new HashMap<>();
+			try {
+				additionalDetails = fsmRequest.getFsm().getAdditionalDetails() != null
+						? (Map<String, String>) fsmRequest.getFsm().getAdditionalDetails()
+						: new HashMap<>();
+			} catch (Exception e) {
+				throw new CustomException(FSMErrorConstants.INVALID_ACTION, " Received payment type is mandatory!");
+			}
+			if (!additionalDetails.isEmpty() && additionalDetails.get(FSMConstants.RECEIVED_PAYMENT) == null)
+				throw new CustomException(FSMErrorConstants.INVALID_ACTION, " Received payment type is mandatory!");
+			log.info("additionalDetails.get(\"receivedPayment\"):: "
+					+ additionalDetails.get(FSMConstants.RECEIVED_PAYMENT));
+			mdmsValidator.validateReceivedPaymentType(additionalDetails.get(FSMConstants.RECEIVED_PAYMENT));
+		}
 		validations(fsmRequest, searchResult, mdmsData, fsm);
 
 	}
@@ -350,8 +331,6 @@ public class FSMValidator {
 		mdmsValidator.validatePropertyType(fsmRequest.getFsm().getPropertyUsage());
 		validateNoOfTrips(fsmRequest, mdmsData);
 		validateTripAmount(fsmRequest, mdmsData);
-		
-		mdmsValidator.validatePaymentPreference(fsm.getPaymentPreference());
 
 //		mdmsValidator.validatePaymentPreference(fsm.getPaymentPreference());
 
@@ -405,6 +384,7 @@ public class FSMValidator {
 					listOfUpdatedParams.remove(property);
 				});
 			}
+
 			if (listOfUpdatedParams.contains(FSMConstants.APPLICATION_STATUS)) {
 				listOfAllowedUpdatableParams.add(FSMConstants.APPLICATION_STATUS);
 			}
@@ -509,6 +489,7 @@ public class FSMValidator {
 			}
 		}
 	}
+
 	/**
 	 * @param fsmRequest
 	 * @param mdmsData

@@ -24,8 +24,6 @@ public class DriverQueryBuilder {
 			+ " result) result_offset " + "limit ? offset ?";
 	private static final String DRIVER_NO_VENDOR_QUERY = " SELECT DISTINCT (driver.id) FROM EG_DRIVER driver LEFT JOIN eg_vendor_driver vendor_driver ON driver.id=vendor_driver.driver_id";
 
-	private static final String DRIVER_SEQ_MOBILE_NUMBER_QUERY = " SELECT nextval";
-
 	public String getDriverSearchQuery(DriverSearchCriteria criteria, List<Object> preparedStmtList) {
 		StringBuilder builder = new StringBuilder(QUERY);
 		if (criteria.getTenantId() != null) {
@@ -66,6 +64,7 @@ public class DriverQueryBuilder {
 				builder.append(" driver.status IN (").append(createQuery(status)).append(")");
 				addToPreparedStatement(preparedStmtList, status);
 			}
+
 		}
 		return addPaginationWrapper(builder.toString(), preparedStmtList, criteria);
 	}
@@ -74,19 +73,19 @@ public class DriverQueryBuilder {
 		int limit = config.getDefaultLimit();
 		int offset = config.getDefaultOffset();
 		String finalQuery = PAGINATION_WRAPPER.replace("{}", query);
-
-		if (criteria.getSortBy() != null) {
+		
+		if (criteria.getSortBy()!=null) {
 			finalQuery = finalQuery.replace("SORT_BY", criteria.getSortBy().toString());
 		} else {
 			finalQuery = finalQuery.replace("SORT_BY", "createdTime");
 		}
-
-		if (criteria.getSortOrder() != null) {
+		
+		if (criteria.getSortOrder()!=null) {
 			finalQuery = finalQuery.replace("SORT_ORDER", criteria.getSortOrder().toString());
 		} else {
 			finalQuery = finalQuery.replace("SORT_ORDER", " DESC ");
 		}
-
+		
 		if (criteria.getLimit() != null && criteria.getLimit() <= config.getMaxSearchLimit())
 			limit = criteria.getLimit();
 
@@ -149,10 +148,4 @@ public class DriverQueryBuilder {
 		return builder.toString();
 	}
 
-	public String getSeqDriverMobileNumber(String seqDriverMobileNumber, List<Object> preparedStmtList) {
-
-		StringBuilder builder = new StringBuilder(DRIVER_SEQ_MOBILE_NUMBER_QUERY);
-		builder.append("('" + seqDriverMobileNumber + "')");
-		return builder.toString();
-	}
 }

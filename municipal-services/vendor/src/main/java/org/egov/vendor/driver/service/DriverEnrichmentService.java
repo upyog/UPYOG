@@ -42,6 +42,7 @@ public class DriverEnrichmentService {
 		Driver driver = driverRequest.getDriver();
 		RequestInfo requestInfo = driverRequest.getRequestInfo();
 		driver.setStatus(Driver.StatusEnum.ACTIVE);
+
 		AuditDetails auditDetails = null;
 		if (requestInfo.getUserInfo() != null && requestInfo.getUserInfo().getUuid() != null) {
 			auditDetails = vendorUtil.getAuditDetails(requestInfo.getUserInfo().getUuid(), true);

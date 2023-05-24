@@ -19,7 +19,6 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
 import org.egov.fsm.billing.models.BillResponse;
 import org.egov.fsm.config.FSMConfiguration;
-import org.egov.fsm.producer.Producer;
 import org.egov.fsm.repository.FSMRepository;
 import org.egov.fsm.service.notification.NotificationService;
 import org.egov.fsm.util.FSMAuditUtil;
@@ -50,7 +49,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
-import org.egov.fsm.service.notification.NotificationService;
 
 import com.jayway.jsonpath.JsonPath;
 
@@ -165,18 +163,17 @@ public class FSMService {
 		List<FSM> fsms = fsmResponse.getFsm();
 
 		String businessServiceName = null;
-
+		
 		if (FSMConstants.FSM_PAYMENT_PREFERENCE_POST_PAY.equalsIgnoreCase(fsmRequest.getFsm().getPaymentPreference()))
 			businessServiceName = FSMConstants.FSM_POST_PAY_BUSINESSSERVICE;
-		else if (FSMConstants.FSM_PAYMENT_PREFERENCE_PRE_PAY
-				.equalsIgnoreCase(fsmRequest.getFsm().getPaymentPreference()))
-			businessServiceName = FSMConstants.FSM_BUSINESSSERVICE;
-		else if (fsm.getAdvanceAmount() == null && fsm.getPaymentPreference() == null)
+		else if (fsm.getAdvanceAmount() == null && fsm.getPaymentPreference()==null)
 			businessServiceName = FSMConstants.FSM_ZERO_PRICE_SERVICE;
 		else if (fsm.getAdvanceAmount().intValue() == 0)
 			businessServiceName = FSMConstants.FSM_LATER_PAY_SERVICE;
 		else if (fsm.getAdvanceAmount().intValue() > 0)
 			businessServiceName = FSMConstants.FSM_ADVANCE_PAY_BUSINESSSERVICE;
+		else
+			businessServiceName = FSMConstants.FSM_BUSINESSSERVICE;
 
 		BusinessService businessService = workflowService.getBusinessService(fsm, fsmRequest.getRequestInfo(),
 				businessServiceName, null);
@@ -405,19 +402,14 @@ public class FSMService {
 		});
 
 		fsmRequest.getWorkflow().setAssignes(uuidList);
-		
-		/** SM-2181 
-		 * 
-		 * if (fsmRequest.getFsm().getPaymentPreference() != null &&
-		 * !(FSMConstants.FSM_PAYMENT_PREFERENCE_POST_PAY
-		 * .equalsIgnoreCase(fsmRequest.getFsm().getPaymentPreference())) &&
-		 * fsmRequest.getFsm().getAdvanceAmount() == null) {
-		 * vehicleTripService.vehicleTripReadyForDisposal(fsmRequest);
-		 * 
-		 * } else
-		 */
+		if (fsmRequest.getFsm().getPaymentPreference() != null
+				&& !(FSMConstants.FSM_PAYMENT_PREFERENCE_POST_PAY
+						.equalsIgnoreCase(fsmRequest.getFsm().getPaymentPreference()))
+				&& fsmRequest.getFsm().getAdvanceAmount() == null) {
+			vehicleTripService.vehicleTripReadyForDisposal(fsmRequest);
 
-		vehicleTripService.updateVehicleTrip(fsmRequest);
+		} else 
+			vehicleTripService.updateVehicleTrip(fsmRequest);
 		
 		RequestInfo requestInfo = fsmRequest.getRequestInfo();
 		BillResponse billResponse = billingService.fetchBill(fsm, requestInfo);
@@ -542,8 +534,7 @@ public class FSMService {
 
 			dsoService.getVendor(vendorSearchCriteria, requestInfo);
 
-		}
-		if (criteria.tenantIdOnly()) {
+		} else if (criteria.tenantIdOnly()) {
 			criteria.setMobileNumber(requestInfo.getUserInfo().getMobileNumber());
 		}
 	}
