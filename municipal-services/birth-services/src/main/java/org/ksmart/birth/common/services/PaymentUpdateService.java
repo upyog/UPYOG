@@ -24,6 +24,8 @@ import org.ksmart.birth.newbirth.repository.NewBirthRepository;
 import org.ksmart.birth.newbirth.service.NewBirthService;
 import org.ksmart.birth.utils.BirthUtils;
 import org.ksmart.birth.web.model.SearchCriteria;
+import org.ksmart.birth.web.model.birthnac.NacApplication;
+import org.ksmart.birth.web.model.birthnac.NacDetailRequest;
 import org.ksmart.birth.web.model.newbirth.NewBirthApplication;
 import org.ksmart.birth.web.model.newbirth.NewBirthDetailRequest;
 import org.ksmart.birth.workflow.WorkflowIntegratorNewBirth;
@@ -109,9 +111,10 @@ public class PaymentUpdateService implements BaseEnrichment{
 			
 			List<NewBirthApplication> birth = newBirthService.searchBirth(requestInfo,searchCriteria);
 			 
+			 
 			NewBirthDetailRequest updateRequest = NewBirthDetailRequest.builder().requestInfo(requestInfo)
 					.newBirthDetails(birth).build();
-			
+		 
 			 wfIntegrator.callWorkFlow(updateRequest);
 			
 			  User userInfo = requestInfo.getUserInfo();
@@ -133,7 +136,11 @@ public class PaymentUpdateService implements BaseEnrichment{
 				 
 				  repository.updatePaymentDetails(paymentReq);
 				  
-//				  notificationService.process(updateRequest);
+				   NacDetailRequest nacRequest= new NacDetailRequest();
+					nacRequest = mapper.convertValue(record, NacDetailRequest.class);
+					
+					
+				  notificationService.process(updateRequest,nacRequest);
 		//End	  
 			}
 			
