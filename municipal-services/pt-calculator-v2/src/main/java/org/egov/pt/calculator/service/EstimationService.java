@@ -555,8 +555,7 @@ public class EstimationService {
 		final String dtlOwnerShipCat = detail.getOwnershipCategory();
 		final String dtlSubOwnerShipCat = detail.getSubOwnershipCategory();
 		final String dtlAreaType = property.getAddress().getLocality().getArea();
-		//final Boolean dtlIsMultiFloored = detail.getNoOfFloors() > 1; //commented by Manvi on 24/03/23
-
+		final Boolean dtlIsMultiFloored = detail.getNoOfFloors() > 1; 
 		return billingSlabs.stream().filter(slab -> {
 
 			Boolean slabMultiFloored = slab.getIsPropertyMultiFloored();
@@ -568,7 +567,7 @@ public class EstimationService {
 			Double  slabAreaFrom = slab.getFromPlotSize();
 			Double  slabAreaTo = slab.getToPlotSize();
 
-			//boolean isPropertyMultiFloored = slabMultiFloored.equals(dtlIsMultiFloored);
+			boolean isPropertyMultiFloored = slabMultiFloored.equals(dtlIsMultiFloored);
 
 			boolean isAreaMatching = slabAreaType.equalsIgnoreCase(dtlAreaType) || all.equalsIgnoreCase(slab.getAreaType());
 
@@ -591,8 +590,7 @@ public class EstimationService {
 				isPlotMatching = slabAreaFrom < plotSize && slabAreaTo >= plotSize;
 
 			return isPtTypeMatching && isPtSubTypeMatching && isOwnerShipMatching && isSubOwnerShipMatching
-					&& isPlotMatching && isAreaMatching; 
-					//&& isPropertyMultiFloored;
+					&& isPlotMatching && isAreaMatching && isPropertyMultiFloored;
 
 		}).collect(Collectors.toList());
 	}
