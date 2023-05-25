@@ -26,7 +26,7 @@ const TLWFApplicationTimeline = (props) => {
       const caption = {
         date: Digit.DateUtils.ConvertTimestampToDate(props.application?.auditDetails.lastModifiedTime),
         name: checkpoint?.assigner?.name,
-        comment: t(checkpoint?.comment),
+        comment: t(checkpoint?.wfComment?.[0]),
       };
       return <TLWFCaption data={caption} />;
     }
