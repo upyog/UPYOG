@@ -19,8 +19,9 @@
     <java.version>1.8</java.version>
     <joda-time-version>2.9.6</joda-time-version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <lombok.version>1.18.8</lombok.version>
+    <lombok.version>1.18.22</lombok.version>
     <commons-lang-version>2.6</commons-lang-version>
+    <Export-Package>org.egov.dx.web.models.*,!org.egov.dx.web.models.PullURIRequestPOJO</Export-Package>
   </properties>
   <dependencies>
     <dependency>
@@ -43,9 +44,19 @@
       <version>2.8.2</version>
     </dependency>
     <dependency>
+  <groupId>com.thoughtworks.xstream</groupId>
+  <artifactId>xstream</artifactId>
+  <version>1.4.19</version>
+</dependency>
+    <dependency>
       <groupId>org.postgresql</groupId>
       <artifactId>postgresql</artifactId>
     </dependency>
+    <dependency>
+    <groupId>com.google.guava</groupId>
+    <artifactId>guava</artifactId>
+    <version>23.5-jre</version> <!-- or 23.5-android for the Android flavor -->
+</dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-jdbc</artifactId>
@@ -75,6 +86,7 @@
       <groupId>com.fasterxml.jackson.datatype</groupId>
       <artifactId>jackson-datatype-jsr310</artifactId>
     </dependency>
+
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
@@ -139,10 +151,6 @@
               <groupId>org.projectlombok</groupId>
               <artifactId>lombok</artifactId>
             </exclude>
-            <exclude>
-              <groupId>org.springframework.boot</groupId>
-              <artifactId>spring-boot-devtools</artifactId>
-            </exclude>
           </excludes>
         </configuration>
       </plugin>
@@ -163,9 +171,10 @@
 				<configuration>
 					<jsonLibrary>jackson2</jsonLibrary>
 					<classes>
-						<class>org.egov.collection.web.contract.PaymentRequest</class>
-						<class>org.egov.collection.web.contract.PaymentResponse</class>
-						<class>org.egov.collection.model.PaymentSearchCriteria</class>
+						<class>org.egov.dx.web.models.PaymentSearchCriteria</class>
+						<class>org.egov.dx.web.models.RequestInfoWrapper</class>
+						<class>org.egov.dx.web.models.UserResponse</class>
+
 					</classes>
 					<customTypeMappings>
 						<customTypeMapping>org.egov.common.contract.request.User:User</customTypeMapping>
@@ -175,7 +184,7 @@
 					<namespace>Digit</namespace>
 					<debug>true</debug>
 					<outputKind>module</outputKind>
-				</configuration>
+					</configuration>
 			</plugin>
       
       
