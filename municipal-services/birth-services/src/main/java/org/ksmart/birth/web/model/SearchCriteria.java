@@ -99,6 +99,10 @@ public class SearchCriteria {
     @JsonProperty("appNumber")
     private String appNumber;
     
+    @JsonProperty("uuid")
+    private String uuid;
+   
+    
     @JsonProperty("BusinessService")
     private String BusinessService;
 

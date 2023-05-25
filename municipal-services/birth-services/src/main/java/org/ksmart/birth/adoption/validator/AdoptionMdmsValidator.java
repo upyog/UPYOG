@@ -109,7 +109,7 @@ public class AdoptionMdmsValidator {
 	                    }
 
 	                    // Birthplace Home
-	                    if (birth.getPlaceofBirthId().contains(BIRTH_PLACE_HOME)) {
+	                    if (birth.getPlaceofBirthId().contains(BIRTH_PLACE_HOME) && (StringUtils.isEmpty(birth.getOldRegistrationNo()) || birth.getOldRegistrationNo() == null)) {
 	                        String postOfficeCodePlace = birth.getAdrsPostOffice();
 	                        if (log.isDebugEnabled()) {
 	                            log.debug("Postoffice code : \n{}", postOfficeCodePlace);
@@ -126,6 +126,7 @@ public class AdoptionMdmsValidator {
 //	                        }
 	                        
 	                        //ward comment
+	                    	
 	                    }
 
 	                    // Birthplace Hospital

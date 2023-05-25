@@ -240,6 +240,7 @@ public class CommonQueryBuilder extends BaseQueryBuilder {
 
 
 	public StringBuilder prepareSearchCriteria(@NotNull SearchCriteria criteria, StringBuilder query, @NotNull List<Object> preparedStmtValues) {
+		addFilter("ebd.createdby", criteria.getUuid(), query, preparedStmtValues);
 		addFilter("ebd.id", criteria.getId(), query, preparedStmtValues);
 		addFilter("ebd.tenantid", criteria.getTenantId(), query, preparedStmtValues);
 		addFilters("ebd.applicationno", criteria.getApplicationNumber(), query, preparedStmtValues);

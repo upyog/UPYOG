@@ -32,7 +32,7 @@ public class BirthRegConsumer {
 	        NewBirthDetailRequest request = new NewBirthDetailRequest();
 	        NacDetailRequest nacRequest= new NacDetailRequest();
 	        String nactopic = "save-birth-nac-topic";
-	        String birthtopic = "persister.ksmart.save.birth.topic";
+	        String birthtopic = "ksmart-save-birth-application-topic";
 	        try {
 	        	 if( topic.equals(birthtopic)) {
 	        	request = mapper.convertValue(record, NewBirthDetailRequest.class);

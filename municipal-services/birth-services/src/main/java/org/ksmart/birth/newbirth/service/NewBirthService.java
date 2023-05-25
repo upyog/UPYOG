@@ -125,7 +125,13 @@ public class NewBirthService {
         return repository.searchBirthDetails(request,criteria);
     }
     public List<NewBirthApplication> searchBirthDetailsCommon(RequestInfo request, SearchCriteria criteria) {
+    	if(!StringUtils.isEmpty(request.getUserInfo().getUuid())) {
+    		criteria.setUuid(request.getUserInfo().getUuid());
         return repository.searchBirth(request,criteria);
+    	}
+    	 else{
+             return null;
+         }
     }
 
     
