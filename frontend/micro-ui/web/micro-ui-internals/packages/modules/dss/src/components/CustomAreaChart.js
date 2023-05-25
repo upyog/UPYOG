@@ -101,7 +101,6 @@ const CustomAreaChart = ({ xDataKey = "name", yDataKey = getValue, data, setChar
         let data = response?.responseData?.data?.[0]?.plots.map((plot, index) => {
           return index === 0 ? { ...plot, difference: 0 } : { ...plot, difference: plot.value - response?.responseData?.data?.[0]?.plots[index - 1].value }
         })
-        console.log(data)
         return data;
       }
       return response?.responseData?.data?.[0]?.plots.map((plot) => {
@@ -162,9 +161,9 @@ const CustomAreaChart = ({ xDataKey = "name", yDataKey = getValue, data, setChar
 
   const renderTooltip = ({ payload, label, unit }) => {
     let formattedLabel = tickFormatter(label);
-    
+
     let payloadObj = payload?.[0] || {};
-    console.log("label",payloadObj)
+    const difference = Object.keys(payloadObj).length !== 0?getDenominatedValue(value.denomination, payloadObj.payload["difference"]):""
     return (
       <div
         style={{
@@ -181,8 +180,8 @@ const CustomAreaChart = ({ xDataKey = "name", yDataKey = getValue, data, setChar
           }`}</p>
         )}
        {payloadObj?.payload?.symbol?.toLowerCase() === "amount" && (
-          <p>{`Difference: ${value?.denomination === "Unit" ? " ₹" : ""} ${payloadObj?.payload.difference}${
-            value?.denomination !== "Unit" ? t(Digit.Utils.locale.getTransformedLocale(`ES_DSS_${payloadObj.payload.difference?.denomination}`)) : ""
+          <p>{`Collection Increased: ${value?.denomination === "Unit" ? " ₹" : ""} ${difference}${
+            value?.denomination !== "Unit" ?  t(Digit.Utils.locale.getTransformedLocale(`ES_DSS_${value?.denomination}`)) : ""
           }`}</p>
         )}
         {payloadObj?.payload?.symbol?.toLowerCase() === "percentage" && <p>{`${formattedLabel} : ${payloadObj?.value} %`}</p>}
@@ -202,7 +201,6 @@ const CustomAreaChart = ({ xDataKey = "name", yDataKey = getValue, data, setChar
         ? t(Digit.Utils.locale.getTransformedLocale(`ES_DSS_${value?.denomination}`))
         : "";
     let newPayload = { ...payloadObj?.payload };
-    console.log("payyy",payload)
     delete newPayload?.label;
     delete newPayload?.strValue;
     delete newPayload?.symbol;
