@@ -14,7 +14,11 @@ const MetricData = ({ t, data, code }) => {
       <p className="heading-m" style={{ textAlign: "right", paddingTop: "0px", whiteSpace: "nowrap" }}>
         {code === "citizenAvgRating" ? (
           <Rating currentRating={Math.round(data?.headerValue * 10) / 10} styles={{ width: "unset" }} starStyles={{ width: "25px" }} />
-        ) : (
+        ) : data?.headerName.includes("AVG") ? (
+          `${Digit.Utils.dss.formatter(data?.headerValue, data?.headerSymbol, "Unit", true)} ${
+            code === "totalSludgeTreated" ? t(`DSS_KL`) : ""
+          }`
+        ):(
           `${Digit.Utils.dss.formatter(data?.headerValue, data?.headerSymbol, value?.denomination, true)} ${
             code === "totalSludgeTreated" ? t(`DSS_KL`) : ""
           }`
