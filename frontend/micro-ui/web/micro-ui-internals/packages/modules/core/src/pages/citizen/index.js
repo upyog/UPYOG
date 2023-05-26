@@ -48,7 +48,7 @@ const Home = ({
 }) => {
   const { isLoading: islinkDataLoading, data: linkData, isFetched: isLinkDataFetched } = Digit.Hooks.useCustomMDMS(
     Digit.ULBService.getStateId(),
-    "ACCESSCONTROL-ACTIONS-TEST",
+    "ACCESSCONTROL-ACTIONS-UPYOG-UI",
     [
       {
         name: "actions-test",
@@ -57,7 +57,7 @@ const Home = ({
     ],
     {
       select: (data) => {
-        const formattedData = data?.["ACCESSCONTROL-ACTIONS-TEST"]?.["actions-test"]
+        const formattedData = data?.["ACCESSCONTROL-ACTIONS-UPYOG-UI"]?.["actions-test"]
           ?.filter((el) => el.enabled === true)
           .reduce((a, b) => {
             a[b.parentModule] = a[b.parentModule]?.length > 0 ? [b, ...a[b.parentModule]] : [b];
