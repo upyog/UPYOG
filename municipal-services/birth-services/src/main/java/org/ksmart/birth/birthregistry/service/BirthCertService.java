@@ -77,8 +77,8 @@ public class BirthCertService {
         registerCertificateData.setRemarksEn(register.getRemarksEn()==null?" ":register.getRemarksEn());
         registerCertificateData.setRemarksMl(register.getRemarksMl()==null?" ":register.getRemarksMl());
         registerCertificateData.setAadharNo(register.getAadharNo());
-        registerCertificateData.setFatherDetails(register.getRegisterBirthFather().getFirstNameEn());
-        registerCertificateData.setFatherDetailsMl(register.getRegisterBirthFather().getFirstNameMl());
+        registerCertificateData.setFatherDetails(register.getRegisterBirthFather().getFirstNameEn()==null?" ":register.getFirstNameEn());
+        registerCertificateData.setFatherDetailsMl(register.getRegisterBirthFather().getFirstNameMl()==null?" ":register.getFirstNameMl());
         registerCertificateData.setMotherDetails(register.getRegisterBirthMother().getFirstNameEn());
         registerCertificateData.setMotherDetailsMl(register.getRegisterBirthMother().getFirstNameMl());
         registerCertificateData.setTenantId(register.getTenantId());

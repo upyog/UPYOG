@@ -30,20 +30,16 @@ public class RegisterBirthService {
     private final RegisterBirthEnrichment enrichment;
     private final EnrichmentService certEnrichment;
     private final BirthCertService birthCertService;
-    private final MdmsUtil mdmsUtil;
     private final RegistryRequestValidator validator;
-    private final MdmsDataService mdmsDataService;
     private final CertificateRepository certificateRepository;
 
     @Autowired
     RegisterBirthService(RegisterBirthRepository repository, RegisterBirthEnrichment enrichment,RegistryRequestValidator validator,
-                         MdmsUtil mdmsUtil, MdmsDataService mdmsDataService, BirthCertService birthCertService,
+                         BirthCertService birthCertService,
                          EnrichmentService certEnrichment, CertificateRepository certificateRepository) {
         this.repository = repository;
         this.enrichment = enrichment;
         this.validator = validator;
-        this.mdmsUtil = mdmsUtil;
-        this.mdmsDataService = mdmsDataService;
         this.birthCertService = birthCertService;
         this.certEnrichment = certEnrichment;
         this.certificateRepository = certificateRepository;

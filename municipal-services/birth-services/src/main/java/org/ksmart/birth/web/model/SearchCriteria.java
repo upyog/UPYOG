@@ -47,6 +47,7 @@ public class SearchCriteria {
 
     @JsonProperty("applicationType")
     private String applicationType;
+
     @JsonProperty("dateOfBirthFrom")
     @Valid
     private Long dateOfBirthFrom;
@@ -69,6 +70,9 @@ public class SearchCriteria {
     @JsonProperty("childName")
     private String childName;
 
+    @JsonProperty("searchType")
+    private String searchType;
+
     @JsonProperty("nameOfFather")
     @Valid
     private String nameOfFather;
@@ -90,6 +94,7 @@ public class SearchCriteria {
 
     @JsonProperty("limit")
     private Integer limit;
+
     @JsonProperty("sortBy")
     private SortBy sortBy;
 
@@ -109,6 +114,7 @@ public class SearchCriteria {
     @JsonProperty("createdBy")
     @JsonIgnore
     private List<String> createdBy;
+
     public enum SortOrder {
         ASC,
         DESC

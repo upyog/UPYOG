@@ -331,7 +331,7 @@
               - jsonPath: $.RegisterBirthDetails.*.registerBirthPermanent.poid
               - jsonPath: $.RegisterBirthDetails.*.registerBirthPermanent.pinno
               - jsonPath: $.RegisterBirthDetails.*.registerBirthPermanent.countryid
-              - jsonPath: $.RegisterBirthDetails.*.registerBirthPermanent.birthdtlid
+              - jsonPath: $.RegisterBirthDetails.*.id
               - jsonPath: $.RegisterBirthDetails.*.registerBirthPermanent.bio_adopt
               - jsonPath: $.RegisterBirthDetails.*.registerBirthPermanent.same_as_present
               - jsonPath: $.RegisterBirthDetails.*.auditDetails.createdBy
@@ -377,7 +377,7 @@
               - jsonPath: $.RegisterBirthDetails.*.registerBirthPresent.poid
               - jsonPath: $.RegisterBirthDetails.*.registerBirthPresent.pinno
               - jsonPath: $.RegisterBirthDetails.*.registerBirthPresent.countryid
-              - jsonPath: $.RegisterBirthDetails.*.registerBirthPresent.birthdtlid
+              - jsonPath: $.RegisterBirthDetails.*.id
               - jsonPath: $.RegisterBirthDetails.*.registerBirthPresent.bio_adopt
               - jsonPath: $.RegisterBirthDetails.*.auditDetails.createdBy
               - jsonPath: $.RegisterBirthDetails.*.auditDetails.createdTime
