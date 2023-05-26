@@ -12,6 +12,7 @@ import org.ksmart.birth.config.BirthConfiguration;
 import org.ksmart.birth.newbirth.enrichment.NewBirthResponseEnrichment;
 import org.ksmart.birth.newbirth.repository.rowmapper.BirthApplicationRowMapper;
 import org.ksmart.birth.utils.enums.ErrorCodes;
+import org.ksmart.birth.utils.enums.SearchCriteriaCodes;
 import org.ksmart.birth.web.model.SearchCriteria;
 import org.ksmart.birth.web.model.newbirth.NewBirthApplication;
 import org.ksmart.birth.web.model.newbirth.NewBirthDetailRequest;
@@ -51,9 +52,13 @@ public class CommonRepository {
     public List<NewBirthApplication> searchBirthDetailsCommon(NewBirthDetailRequest request, SearchCriteria criteria) {
         List<Object> preparedStmtValues = new ArrayList<>();
         List<String> uuids = new ArrayList<>();
-        if (request.getRequestInfo() != null && !StringUtils.isEmpty(request.getRequestInfo().getUserInfo().getUuid())) {
-            uuids.add(request.getRequestInfo().getUserInfo().getUuid());
-            criteria.setCreatedBy(uuids);
+        if(criteria.getSearchType() != null) {
+            if(criteria.getSearchType() == SearchCriteriaCodes.SEARCH_TYPE_MYAPP.getCode()) {
+                if (request.getRequestInfo() != null && !StringUtils.isEmpty(request.getRequestInfo().getUserInfo().getUuid())) {
+                    uuids.add(request.getRequestInfo().getUserInfo().getUuid());
+                    criteria.setCreatedBy(uuids);
+                }
+            }
         }
         String query = commonQueryBuilder.getBirthApplicationSearchQuery(criteria, preparedStmtValues, Boolean.FALSE);
         if (preparedStmtValues.size() == 0) {

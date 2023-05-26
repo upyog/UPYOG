@@ -5,8 +5,8 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum SearchCriteria {
-    SEARCH_TYPE_MYAPP("myApplication"),
+public enum SearchCriteriaCodes {
+    SEARCH_TYPE_MYAPP("MYAPP"),
     SEARCH_TYPE_PAY("PAY");
 
     private String code;

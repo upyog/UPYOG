@@ -3,6 +3,7 @@ package org.ksmart.birth.web.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
+import org.ksmart.birth.utils.enums.SearchCriteriaCodes;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -71,7 +72,7 @@ public class SearchCriteria {
     private String childName;
 
     @JsonProperty("searchType")
-    private String searchType;
+    private String searchType = SearchCriteriaCodes.SEARCH_TYPE_MYAPP.getCode();
 
     @JsonProperty("nameOfFather")
     @Valid
