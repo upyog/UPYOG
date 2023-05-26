@@ -511,6 +511,7 @@ serviceMaps:
             - jsonPath: $.ChildDetails.*.auditDetails.createdTime
 
             - jsonPath: $.ChildDetails.*.auditDetails.lastModifiedBy
+
             - jsonPath: $.ChildDetails.*.auditDetails.lastModifiedTime
 
         - query: INSERT INTO public.eg_birth_initiator(id, birthdtlid, initiator_name, initiator_institution, initiator_inst_desig, relation, 
@@ -932,7 +933,8 @@ serviceMaps:
         - query: UPDATE public.eg_birth_present_address SET housename_no_en=?, housename_no_ml=?, ot_address1_en=?,
             ot_address1_ml=?, ot_address2_en=?, ot_address2_ml=?, ot_state_region_province_en=?, ot_state_region_province_ml=?, villageid=?, tenantid=?,
             talukid=?, districtid=?, stateid=?, poid=?, pinno=?, countryid=?, taluk_name=?, village_name=?, ward_code=?,
-            locality_en=?, locality_ml=?, street_name_en=?, street_name_ml=?, lastmodifiedby=?, lastmodifiedtime=?, ot_zipcode=?, postoffice_en=?, postoffice_ml=? WHERE birthdtlid=?;
+            locality_en=?, locality_ml=?, street_name_en=?, street_name_ml=?, lastmodifiedby=?, lastmodifiedtime=?, ot_zipcode=?, 
+            postoffice_en=?, postoffice_ml=? WHERE birthdtlid=?;
           basePath: ChildDetails.*.AddressBirthDetails
           jsonMaps:
 
@@ -1001,10 +1003,10 @@ serviceMaps:
             - jsonPath: $.ChildDetails.*.id
 
 
-        - query: UPDATE public.eg_birth_statitical_information SET  weight_of_child=?, duration_of_pregnancy_in_week=?, nature_of_medical_attention=?, cause_of_foetal_death=?,
-            delivery_method=?, religionid=?, father_nationalityid=?, father_educationid=?, father_education_subid=?,
-            father_proffessionid=?, mother_educationid=?, mother_education_subid=?, mother_proffessionid=?, mother_nationalityid=?, mother_age_marriage=?, mother_age_delivery=?,
-            mother_no_of_birth_given=?, mother_maritalstatusid=?, mother_unmarried=?,mother_res_lbid=?, mother_res_lb_code_id=?, mother_res_place_type_id=?, mother_res_lb_type_id=?,
+        - query: UPDATE public.eg_birth_statitical_information SET  weight_of_child=?, duration_of_pregnancy_in_week=?, nature_of_medical_attention=?, 
+            cause_of_foetal_death=?, delivery_method=?, religionid=?, father_nationalityid=?, father_educationid=?, father_proffessionid=?, mother_educationid=?, 
+            mother_proffessionid=?, mother_nationalityid=?, mother_age_marriage=?, mother_age_delivery=?,mother_no_of_birth_given=?,mother_maritalstatusid=?,
+            mother_unmarried=?,mother_res_lbid=?, mother_res_lb_code_id=?, mother_res_place_type_id=?, mother_res_lb_type_id=?,
             mother_res_district_id=?, mother_res_state_id=?, mother_res_country_id=?, mother_resdnce_addr_type=?, mother_resdnce_tenant=?, mother_resdnce_placetype=?,
             mother_resdnce_place_en=?, mother_resdnce_place_ml=?, mother_resdnce_lbtype=?, mother_resdnce_district=?, mother_resdnce_state=?, mother_resdnce_country=?,
             mother_order_of_cur_delivery=?,mother_order_cur_child=?,mother_res_no_of_years=?,lastmodifiedtime=?, lastmodifiedby=? WHERE birthdtlid=?;
@@ -1028,13 +1030,9 @@ serviceMaps:
 
             - jsonPath: $.ChildDetails.*.ParentsDetails.fatherEducation
 
-            - jsonPath: $.ChildDetails.*.birthStatistical.father_education_subid
-
             - jsonPath: $.ChildDetails.*.ParentsDetails.fatherProfession
 
             - jsonPath: $.ChildDetails.*.ParentsDetails.motherEducation
-
-            - jsonPath: $.ChildDetails.*.birthStatistical.mother_education_subid
 
             - jsonPath: $.ChildDetails.*.ParentsDetails.motherProfession
 
