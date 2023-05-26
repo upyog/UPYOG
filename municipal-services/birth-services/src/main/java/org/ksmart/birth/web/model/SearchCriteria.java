@@ -52,6 +52,7 @@ public class SearchCriteria {
     @JsonProperty("dateOfBirthFrom")
     @Valid
     private Long dateOfBirthFrom;
+
     @JsonProperty("dateOfBirthTo")
     @Valid
     private Long dateOfBirthTo;

@@ -26,7 +26,7 @@ import java.util.List;
 @Slf4j
 @Repository
 public class CommonRepository {
-    @Autowired
+     @Autowired
     CommonQueryBuilder commonQueryBuilder;
 
     @Autowired
@@ -53,7 +53,7 @@ public class CommonRepository {
         List<Object> preparedStmtValues = new ArrayList<>();
         List<String> uuids = new ArrayList<>();
         if(criteria.getSearchType() != null) {
-            if(criteria.getSearchType() == SearchCriteriaCodes.SEARCH_TYPE_MYAPP.getCode()) {
+            if(criteria.getSearchType() == SearchCriteriaCodes.SEARCH_TYPE_MYAPP.getCode() && criteria.getSearchType() != null) {
                 if (request.getRequestInfo() != null && !StringUtils.isEmpty(request.getRequestInfo().getUserInfo().getUuid())) {
                     uuids.add(request.getRequestInfo().getUserInfo().getUuid());
                     criteria.setCreatedBy(uuids);
