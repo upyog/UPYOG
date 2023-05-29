@@ -60,7 +60,10 @@ const enabledModules = [
   "Reports",
   "Bills",
   "SW",
-  "BillAmendment"
+  "BillAmendment",
+  "FireNoc",
+  "Birth",
+  "Death"
 ];
 window.Digit.ComponentRegistryService.setupRegistry({
   ...paymentConfigs,
