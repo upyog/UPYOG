@@ -378,6 +378,10 @@ public class DemandValidatorV1 {
 					missingIds.add(uuid);
 				else if ("EMPLOYEE".equalsIgnoreCase(payer.getType()))
 					employeeIds.add(uuid);
+				// New code added by Lekshmy Bl
+				else if ("CITIZEN".equalsIgnoreCase(payer.getType()))
+					employeeIds.add(uuid);
+				// New code added by Lekshmy Bl
 				else
 					demand.setPayer(payer);
 
@@ -400,7 +404,6 @@ public class DemandValidatorV1 {
 		if (!CollectionUtils.isEmpty(missingIds))
 			errorMap.put(USER_UUID_NOT_FOUND_KEY,
 					USER_UUID_NOT_FOUND_MSG.replace(USER_UUID_NOT_FOUND_REPLACETEXT, missingIds.toString()));
-		
 	}
 
 	/**
