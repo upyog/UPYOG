@@ -141,7 +141,7 @@ public class PaymentUpdateService implements BaseEnrichment {
 				NacDetailRequest nacRequest = new NacDetailRequest();
 				nacRequest = mapper.convertValue(record, NacDetailRequest.class);
 
-				notificationService.process(updateRequest, nacRequest);
+				//notificationService.process(updateRequest);
 				// End
 			}
 

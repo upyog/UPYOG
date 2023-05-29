@@ -43,6 +43,10 @@ public class RegisterCertificateData {
     private String fullNameMl;
 
     @Size(max = 64)
+    @JsonProperty("childAadharNo")
+    private String childAadharNo;
+
+    @Size(max = 64)
     @JsonProperty("ackNo")
     private String ackNo;
 
@@ -69,10 +73,6 @@ public class RegisterCertificateData {
     @Size(max = 2500)
     @JsonProperty("remarks_ml")
     private String remarksMl;
-
-    @Size(max = 15)
-    @JsonProperty("aadharno")
-    private String aadharNo;
 
     @Size(max = 1000)
     @JsonProperty("registar")
@@ -144,6 +144,10 @@ public class RegisterCertificateData {
     @JsonProperty("motherDetailsMl")
     private String motherDetailsMl;
 
+    @Size(max = 64)
+    @JsonProperty("motherAadharNo")
+    private String motherAadharNo;
+
     @Size(max = 2500)
     @JsonProperty("fatherDetails")
     private String fatherDetails;
@@ -151,6 +155,10 @@ public class RegisterCertificateData {
     @Size(max = 2500)
     @JsonProperty("fatherDetailsMl")
     private String fatherDetailsMl;
+
+    @Size(max = 64)
+    @JsonProperty("fatherAadharNo")
+    private String fatherAadharNo;
 
     @Size(max = 2500)
     @JsonProperty("permenantAddDetails")
@@ -217,6 +225,11 @@ public class RegisterCertificateData {
 
     @JsonProperty("isMigrated")
     private Boolean isMigrated;
+
+
+    @Size(max = 10)
+    @JsonProperty("migratedFrom")
+    private String migratedFrom;
 
 
 }

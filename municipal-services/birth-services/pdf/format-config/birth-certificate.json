@@ -15,7 +15,7 @@
     },
     "pageOrientation": "portrait",
     "pageSize": "A4",
-    "pageMargins": [40, 40, 40, 80],
+    "pageMargins": [40, 40, 40, 90],
     "background":{
       "color": "grey",
       "opacity": 0.1,
@@ -25,7 +25,7 @@
       "absolutePosition": {"x": 75, "y": 250}
     },
 
-    "footer": "(function(currentPage, pageCount) { return {'style': 'ws-head','table': {'widths': ['*'],'heights': '1200', 'body': [[{'stack': [  { 'text': 'Ensure Registration of Every birth and death', 'style': 'details-body-center-bottom-bold'  },  { 'text': 'ഓരോ ജനനവും മരണവും രജിസ്റ്റർ ചെയ്തുവെന്ന് ഉറപ്പുവരുത്തുക', 'style': 'details-body-center-bottomML'  },  { 'text': 'This certificate is computer generated and does not require any Seal/Signature in original.', 'style': 'details-body-center-bottom'  },  { 'text': 'The Govt. vide G.O.(Ms) No.202/2012/LSGD dated 25/07/2012 has approved this certificate as a valid document for all official purposes.', 'style': 'details-body-center-bottom'  },  { 'text': 'Authenticity of this certificate can be verified at https://ksmart.lsgkerala.gov.in. The Key Number is unique to each event.', 'style': 'details-body-center-bottom'  },{ 'text': 'Software developed and supported by Information Kerala Mission.', 'style': 'details-body-center-bottom'  },  { 'text': 'Certificate printed before the last updated date is invalid.', 'style': 'footer-red'  },{'text': currentPage.toString() + ' of ' + pageCount ,'alignment':'center'}]}]]},'layout': 'noBorders','alignment' : 'center','margin':[100,0,50,0]} })",
+    "footer": "(function(currentPage, pageCount) { return {'style': 'ws-head','table': {'widths': ['*'],'heights': '1300', 'body': [[{'stack': [  { 'text': 'Ensure Registration of Every birth and death', 'style': 'details-body-center-bottom-bold'  },  { 'text': 'ഓരോ ജനനവും മരണവും രജിസ്റ്റർ ചെയ്തുവെന്ന് ഉറപ്പുവരുത്തുക', 'style': 'details-body-center-bottomML'  },  { 'text': 'This certificate is computer generated and does not require any Seal/Signature in original.', 'style': 'details-body-center-bottom'  },  { 'text': 'The Govt. vide G.O.(Ms) No.202/2012/LSGD dated 25/07/2012 has approved this certificate as a valid document for all official purposes.', 'style': 'details-body-center-bottom'  },  { 'text': 'Authenticity of this certificate can be verified at https://ksmart.lsgkerala.gov.in. The Key Number is unique to each event.', 'style': 'details-body-center-bottom'  },{ 'text': 'Software developed and supported by Information Kerala Mission.', 'style': 'details-body-center-bottom'  },  { 'text': 'Certificate printed before the last updated date is invalid.', 'style': 'footer-red'  },{'text': currentPage.toString() + ' of ' + pageCount ,'alignment':'center'}]}]]},'layout': 'noBorders','alignment' : 'center','margin':[100,0,50,0]} })",
     "content": [
       {
         "style": "ws-head",
@@ -59,7 +59,18 @@
                     ]
                   }
                 ]
-              }
+              }, {
+              "stack": [
+                {
+                  "text": "{{form5}}",
+                  "style": "appendix-header-italic"
+                },
+                {
+                  "text": "{{rule8}}",
+                  "style": "main-body-style"
+                }
+              ]
+            }
             ]
           ]
         },
@@ -103,14 +114,7 @@
                     "width": 30,
                     "height": 30
                   },
-                  {
-                    "text": "{{form5}}",
-                    "style": "appendix-header-italic"
-                  },
-                  {
-                    "text": "{{rule8}}",
-                    "style": "main-body-style"
-                  },
+
 
                   {
                     "text": "{{govtOfKeralaMl}}",

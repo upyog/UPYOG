@@ -17,7 +17,8 @@ public class RegisterQueryBuilder extends BaseRegBuilder {
             .append("krbd.middlename_ml,krbd.lastname_en,krbd.lastname_ml,krbd.tenantid,krbd.gender,krbd.remarks_en,krbd.remarks_ml,krbd.aadharno, krbd.ack_no,")
             .append("krbd.createdtime,krbd.createdby,krbd.lastmodifiedtime,krbd.lastmodifiedby,krbd.esign_user_code,krbd.esign_user_desig_code,krbd.is_adopted,")
             .append("krbd.is_abandoned,krbd.is_multiple_birth,krbd.is_father_info_missing,krbd.is_mother_info_missing,krbd.no_of_alive_birth,krbd.multiplebirthdetid,")
-            .append("krbd.ot_passportno,krbd.registrationno,krbd.registration_status,krbd.registration_date,krbd.is_born_outside,krbd.ot_dateofarrival, krbd.ack_no, krbd.is_migrated, krbd.migrated_date, krbd.applicationid, krbd.applicationtype,")
+            .append("krbd.ot_passportno,krbd.registrationno,krbd.registration_status,krbd.registration_date,krbd.is_born_outside,krbd.ot_dateofarrival, krbd.ack_no,")
+            .append("krbd.is_migrated, krbd.migrated_date, krbd.applicationid, krbd.applicationtype, krbd.migrated_from")
 
             //Birthplace
             .append("kbfi.id as pla_id,kbp.id,kbp.birthdtlid,kbp.placeofbirthid,kbp.hospitalid,kbp.public_place_id,kbp.institution_type_id,kbp.institution_id,kbp.vehicletypeid,kbp.vehicle_registration_no,kbp.vehicle_from_en," )

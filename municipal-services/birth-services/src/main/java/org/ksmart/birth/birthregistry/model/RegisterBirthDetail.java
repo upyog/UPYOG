@@ -166,6 +166,11 @@ public class RegisterBirthDetail {
 
     @JsonProperty("isMigrated")
     private Boolean isMigrated;
+
+    @Size(max = 10)
+    @JsonProperty("migratedFrom")
+    private String migratedFrom;
+
     /// for PDF SERVICE
     private String fullName;
     private String fullNameMl;

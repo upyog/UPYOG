@@ -1,6 +1,7 @@
 package org.ksmart.birth.birthregistry.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.ksmart.birth.birthregistry.model.RegisterBirthDetail;
 import org.ksmart.birth.birthregistry.model.RegisterCertificateData;
@@ -34,6 +35,9 @@ public class BirthCertService {
         Object mdmsData = mdmsUtil.mdmsCall(requestInfo);
         String strDate=null;
         String regDate=null;
+        String childAadharMasked = null;
+        String motherAadharMasked = null;
+        String fatherAadharMasked = null;
 
         DateTimeFormatter dtDate = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         String dobInWords = null;
@@ -48,7 +52,8 @@ public class BirthCertService {
             String[] dobAry = strDate.split("/");
             try {
                 dobInWords = NumToWordConverter.convertNumber(Long.parseLong(dobAry[0])) + "/" + new SimpleDateFormat("MMMM").format(res) + "/" + NumToWordConverter.convertNumber(Long.parseLong(dobAry[2]));;
-            } catch(Exception e) {
+            } catch (NumberFormatException e) {
+                throw new RuntimeException(e);
             }
         }
         RegisterCertificateData registerCertificateData = new RegisterCertificateData();
@@ -76,7 +81,19 @@ public class BirthCertService {
         }
         registerCertificateData.setRemarksEn(register.getRemarksEn()==null?" ":register.getRemarksEn());
         registerCertificateData.setRemarksMl(register.getRemarksMl()==null?" ":register.getRemarksMl());
-        registerCertificateData.setAadharNo(register.getAadharNo());
+
+        if(register.getAadharNo()!=null) {
+            childAadharMasked = StringUtils.overlay(register.getAadharNo(), StringUtils.repeat("X", register.getAadharNo().length() - 4), 0, register.getAadharNo().length() - 4);
+        }
+        if(register.getRegisterBirthFather().getAadharNo()!=null) {
+            fatherAadharMasked = StringUtils.overlay(register.getRegisterBirthFather().getAadharNo(), StringUtils.repeat("X", register.getRegisterBirthFather().getAadharNo().length() - 4), 0, register.getRegisterBirthFather().getAadharNo().length() - 4);
+        }
+        if(register.getRegisterBirthMother().getAadharNo()!=null) {
+            motherAadharMasked = StringUtils.overlay(register.getRegisterBirthMother().getAadharNo(), StringUtils.repeat("X", register.getRegisterBirthMother().getAadharNo().length() - 4), 0, register.getRegisterBirthMother().getAadharNo().length() - 4);
+        }
+        registerCertificateData.setChildAadharNo(register.getAadharNo()==null?"Not Recorded":childAadharMasked);
+        registerCertificateData.setFatherAadharNo(register.getRegisterBirthFather().getAadharNo()==null?"Not Recorded":fatherAadharMasked);
+        registerCertificateData.setMotherAadharNo(register.getRegisterBirthMother().getAadharNo()==null?"Not Recorded":motherAadharMasked);
         registerCertificateData.setFatherDetails(register.getRegisterBirthFather().getFirstNameEn()==null?"Not Recorded":register.getRegisterBirthFather().getFirstNameEn());
         registerCertificateData.setFatherDetailsMl(register.getRegisterBirthFather().getFirstNameMl()==null?"രേഖപ്പെടുത്തിയിട്ടില്ല":register.getRegisterBirthFather().getFirstNameMl());
         registerCertificateData.setMotherDetails(register.getRegisterBirthMother().getFirstNameEn()==null?"Not Recorded":register.getRegisterBirthMother().getFirstNameEn());
@@ -87,6 +104,7 @@ public class BirthCertService {
         registerCertificateData.setBirthPlaceInstitutionId(register.getRegisterBirthPlace().getInstitutionId());
         registerCertificateData.setBirthPlaceInstitutionlTypeId(register.getRegisterBirthPlace().getInstitutionTypeId());
         registerCertificateData.setRegistarDetails("Registrar of Births and Deaths");
+        registerCertificateData.setMigratedFrom(register.getMigratedFrom());
         if(register.getAuditDetails().getLastModifiedTime() == null) {
             updatedDate = register.getAuditDetails().getCreatedTime();
         } else{

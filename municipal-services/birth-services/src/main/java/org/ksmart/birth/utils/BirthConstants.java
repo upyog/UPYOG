@@ -173,6 +173,9 @@ public class BirthConstants {
     public static final String GL_CODE = "glcode";
 
     public static final String GL_CODE_MASTER = "GLCode";
+    //Migration details
+    public static final String MIGRATED_FROM_TCS = "TCS";
+    public static final String MIGRATED_FROM_SEVANA_CR = "SEVANA";
 
     // Patterns for constraint validations
     public static final String PATTERN_NAME = "^[^\\\\$\\\"<>?\\\\\\\\~`!@#$%^()+={}\\\\[\\\\]*,:;“”‘’]*$";

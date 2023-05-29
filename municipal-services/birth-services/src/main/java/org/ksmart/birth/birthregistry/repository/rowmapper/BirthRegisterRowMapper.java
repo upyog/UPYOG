@@ -73,6 +73,8 @@ public class BirthRegisterRowMapper implements ResultSetExtractor<List<RegisterB
                         .applicationType(rs.getString("applicationtype"))
                         .applicationId(rs.getString("applicationid"))
                         .isMigrated(rs.getBoolean("is_migrated"))
+                        .migratedFrom(rs.getString("migrated_from"))
+
                         .registerBirthPlace(birthRegPlaceRowMapper.getRegBirthPlace(rs))
                         .registerBirthFather(getRegBirthFatherInfo(rs))
                         .registerBirthMother(getRegBirthMotherInfo(rs))
