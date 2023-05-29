@@ -193,10 +193,8 @@ const SearchApplication = ({ onSearch, type, onClose, onTabChange, isFstpOperato
             >
               {searchFields?.map((input, index) => (
                 <span key={index} className={index === 0 ? "complaint-input" : "mobile-input"}>
-                  <Label>
-                    {input.label} {input.labelChildren && input.labelChildren}
-                  </Label>
-                  {getFields(input)}
+                  <Label>{input.label}</Label>
+                  {getFields(input)}{" "}
                 </span>
               ))}
               <div style={{ display: "flex" }}>

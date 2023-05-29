@@ -1,4 +1,4 @@
-# FSM Calculator (fsm-calculator)
+# fsm-calculator
 
 FSM Calculator is a system that enables FSM Admin to create billing slab for the FSM application(s) with different combination of propertyType , slum , tank capacity and etc..
 
@@ -10,21 +10,21 @@ Generates the Demand after calculating the charges for the given application usi
 
 ### Service Dependencies
 
-- Billing Service (billing-service)
-- MDM Service (mdms-service)
-- Workflow Service (workflow-v2)
-- User Service (user-service)
-- Vendor Service (vendor)
-- Vechile Service (vehicle)
+- billing-service
+- mdms-service
+- workflow-v2
+- user-service
+- vendor
+- vehicle
 
 
 ### Swagger API Contract
 
-Link to the swagger API contract [YAML](https://editor.swagger.io/?url=https://raw.githubusercontent.com/upyog/UPYOG/master/municipal-services/docs/fsm/Fsm_Apply_Contract.yaml#!/) and editor link like below
+Link to the swagger API contract [yaml](https://raw.githubusercontent.com/egovernments/municipal-services/master/docs/fsm/Fsm_Apply_Contract.yaml) and editor link like below
 
 
 ### Postman Collection
-Link to the postman collection [here](https://api.postman.com/collections/23419225-e6643a11-d625-4e0d-9be6-3e33322d2aa3?access_key=PMAT-01GW49YT1843WB8ZS4V94R8BYB)
+Link to the postman collection [here](https://www.getpostman.com/collections/8b9eb951a810486f41a4)
 
 
 ## Service Details

@@ -8,20 +8,21 @@ Vehicle Registry is a system that enables ULB Employees to create and search Ven
 
 ### Service Dependencies
 
-- MDMS Service (egov-mdms-service)
-- User Service (egov-user-service)
-- Boundary Service (boundary-service)
-- Vechile Service (vehicle)
+
+- egov-mdms-service
+- egov-user-service
+- boundary-service
+- vehicle
 
 
 
 ### Swagger API Contract
 
-Link to the swagger API contract [YAML](https://editor.swagger.io/?url=https://raw.githubusercontent.com/upyog/UPYOG/master/municipal-services/docs/fsm/Vendor_Registration_Contract.yaml#!/) and editor link
+Link to the swagger API contract [yaml](https://raw.githubusercontent.com/egovernments/municipal-services/master/docs/fsm/Vendor_Registration_Contract.yaml) and editor link like below
 
 
 ### Postman Collection
-Link to the postman collection [here](https://api.postman.com/collections/23419225-17999027-0328-410c-8d3e-a4bcd034b082?access_key=PMAT-01GW90PMEGCF8KZDNYNKPG22ER)
+Link to the postman collection [here](https://www.getpostman.com/collections/2d55f98479499672a23e)
 
 
 ## Service Details
@@ -29,7 +30,9 @@ Link to the postman collection [here](https://api.postman.com/collections/234192
 **Vendor Registry**
 
 - Contains the API's to create,  search Vendor i.e DSO in FSM Case
-  
+
+
+
 
 ### API Details
 

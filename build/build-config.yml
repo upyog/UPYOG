@@ -736,6 +736,12 @@ config:
       - work-dir: frontend/micro-ui/
         dockerfile: frontend/micro-ui/web/docker/Dockerfile
         image-name: digit-ui
+        
+  - name: builds/upyog/frontend/upyog-ui
+    build:
+      - work-dir: frontend/upyog-ui/
+        dockerfile: frontend/upyog-ui/web/docker/Dockerfile
+        image-name: upyog-ui        
 
   - name: builds/upyog/frontend/micro-ui/storybook
     build:
