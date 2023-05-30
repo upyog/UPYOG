@@ -61,8 +61,8 @@ public class MdmsForAdoptionService {
 
 	        }else if (adoption.getPlaceofBirthId().contains(BIRTH_PLACE_VEHICLE)) {
 	            //Vehicle Type
-	            setVehicleTypeEn(adoption, mdmsData);
-	            setVehicleTypeMl(adoption, mdmsData);
+	            setVehicleTypeEn(adoption, mdmsData,mdmsDataLoc);
+	            setVehicleTypeMl(adoption, mdmsData,mdmsDataLoc);
 	        } else if (adoption.getPlaceofBirthId().contains(BIRTH_PLACE_PUBLIC)) {
 	            //Public Place Type
 	            setPublicPlaceTypeEn(adoption, mdmsData);
@@ -86,16 +86,24 @@ public class MdmsForAdoptionService {
 	    }
 
 	    
-	    public void setVehicleTypeEn(AdoptionApplication adoption, Object  mdmsData) {
+	    public void setVehicleTypeEn(AdoptionApplication adoption, Object  mdmsData,Object mdmsDataLoc) {
 	        if (adoption.getPlaceofBirthId().contains(BIRTH_PLACE_VEHICLE)) {
 	            String vehicleType = mdmsTenantService.getVehicleTypeEn(mdmsData, adoption.getVehicleTypeid());
 	            adoption.setVehicleTypeidEn(vehicleType);
+	            
+	            
+	            String admittedHsopEn = mdmsLocationService.getHospitalNameEn(mdmsDataLoc, adoption.getSetadmittedHospitalEn()) +" "+ mdmsLocationService.getHospitalAddressEn(mdmsDataLoc, adoption.getSetadmittedHospitalEn());
+	            adoption.setAdmittedHospitalEn(admittedHsopEn);
+	           
 	        }
 	    }
-	    public void setVehicleTypeMl(AdoptionApplication adoption, Object  mdmsData) {
+	    public void setVehicleTypeMl(AdoptionApplication adoption, Object  mdmsData,Object mdmsDataLoc) {
 	        if (adoption.getPlaceofBirthId().contains(BIRTH_PLACE_VEHICLE)) {
 	            String vehicleType = mdmsTenantService.getVehicleTypeMl(mdmsData, adoption.getVehicleTypeid());
 	            adoption.setVehicleTypeidMl(vehicleType);
+	            
+	            String admittedHsopMl = mdmsLocationService.getHospitalNameMl(mdmsDataLoc, adoption.getSetadmittedHospitalEn()) +" "+ mdmsLocationService.getHospitalAddressMl(mdmsDataLoc, adoption.getSetadmittedHospitalEn());
+	            adoption.setAdmittedHospitalMl(admittedHsopMl);
 	        }
 	    }
 

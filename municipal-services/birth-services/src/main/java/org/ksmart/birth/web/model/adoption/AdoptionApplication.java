@@ -359,6 +359,15 @@ public class AdoptionApplication {
     private Boolean isWorkflow = true;
     
     
+    @Size(max = 64)
+    @JsonProperty("admittedHospitalEn")
+    private String admittedHospitalEn;
+    
+    @Size(max = 64)
+    @JsonProperty("admittedHospitalMl")
+    private String admittedHospitalMl;
+    
+   
     @JsonProperty("AdoptionDocuments")
     private List<DocumentDetails> documentDetails;
     
