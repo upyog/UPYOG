@@ -63,6 +63,16 @@ const Home = ({
             a[b.parentModule] = a[b.parentModule]?.length > 0 ? [b, ...a[b.parentModule]] : [b];
             return a;
           }, {});
+        Object.keys(formattedData).forEach(key => {
+          const value = formattedData[key];
+          value.map((item) => {
+            if (!item["state"]) {
+              item["navigationURL"] = item["navigationURL"].replace("digit-ui", "upyog-ui");
+              item["url"] = item["url"].replace("digit-ui", "upyog-ui");
+              return item
+            }
+          });
+        });
         return formattedData;
       },
     }
