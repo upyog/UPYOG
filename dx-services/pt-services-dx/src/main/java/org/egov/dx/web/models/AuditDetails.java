@@ -38,24 +38,41 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.dx;
+package org.egov.dx.web.models;
 
-import org.egov.tracer.config.TracerConfiguration;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Import;
+import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class }) 
-@ComponentScan
-@Import(TracerConfiguration.class)
-public class PTServicesDxApplication {
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
-	public static void main(String[] args) {
-		SpringApplication.run(PTServicesDxApplication.class);
-	}
+@Builder
+@Setter
+@Getter
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode
+public class AuditDetails {
 
- 
+    @Size(max=64)
+    @JsonProperty("createdBy")
+    private String createdBy = null;
+
+    @JsonProperty("createdTime")
+    private Long createdTime = null;
+
+    @Size(max=64)
+    @JsonProperty("lastModifiedBy")
+    private String lastModifiedBy = null;
+
+    @JsonProperty("lastModifiedTime")
+    private Long lastModifiedTime = null;
+
 }

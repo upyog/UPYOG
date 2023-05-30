@@ -64,23 +64,23 @@ console.log("citizenServicesObj",citizenServicesObj)
     header: t(citizenServicesObj?.headerLabel),
     sideOption: {
       name: t(citizenServicesObj?.sideOption?.name),
-      onClick: () => history.push(citizenServicesObj?.sideOption?.navigationUrl),
+      onClick: () => history.push(citizenServicesObj?.sideOption?.navigationUrl.replace("digit-ui","upyog-ui")),
     },
     options: [
       {
         name: t(citizenServicesObj?.props?.[0]?.label),
         Icon: <ComplaintIcon />,
-        onClick: () => history.push(citizenServicesObj?.props?.[0]?.navigationUrl),
+        onClick: () => history.push(citizenServicesObj?.props?.[0]?.navigationUrl.replace("digit-ui","upyog-ui")),
       },
       {
         name: t(citizenServicesObj?.props?.[1]?.label),
         Icon: <PTIcon className="fill-path-primary-main" />,
-        onClick: () => history.push(citizenServicesObj?.props?.[1]?.navigationUrl),
+        onClick: () => history.push(citizenServicesObj?.props?.[1]?.navigationUrl.replace("digit-ui","upyog-ui")),
       },
       {
         name: t(citizenServicesObj?.props?.[2]?.label),
         Icon: <CaseIcon className="fill-path-primary-main" />,
-        onClick: () => history.push(citizenServicesObj?.props?.[2]?.navigationUrl),
+        onClick: () => history.push(citizenServicesObj?.props?.[2]?.navigationUrl.replace("digit-ui","upyog-ui")),
       },
       // {
       //     name: t("ACTION_TEST_WATER_AND_SEWERAGE"),
@@ -90,7 +90,7 @@ console.log("citizenServicesObj",citizenServicesObj)
       {
         name: t(citizenServicesObj?.props?.[3]?.label),
         Icon: <WSICon />,
-        onClick: () => history.push(citizenServicesObj?.props?.[3]?.navigationUrl),
+        onClick: () => history.push(citizenServicesObj?.props?.[3]?.navigationUrl.replace("digit-ui","upyog-ui")),
       },
     ],
     styles: { display: "flex", flexWrap: "wrap", justifyContent: "flex-start", width: "100%" },
@@ -99,28 +99,28 @@ console.log("citizenServicesObj",citizenServicesObj)
     header: t(infoAndUpdatesObj?.headerLabel),
     sideOption: {
       name: t(infoAndUpdatesObj?.sideOption?.name),
-      onClick: () => history.push(infoAndUpdatesObj?.sideOption?.navigationUrl),
+      onClick: () => history.push(infoAndUpdatesObj?.sideOption?.navigationUrl.replace("digit-ui","upyog-ui")),
     },
     options: [
       {
         name: t(infoAndUpdatesObj?.props?.[0]?.label),
         Icon: <HomeIcon />,
-        onClick: () => history.push(infoAndUpdatesObj?.props?.[0]?.navigationUrl),
+        onClick: () => history.push(infoAndUpdatesObj?.props?.[0]?.navigationUrl.replace("digit-ui","upyog-ui")),
       },
       {
         name: t(infoAndUpdatesObj?.props?.[1]?.label),
         Icon: <Calender />,
-        onClick: () => history.push(infoAndUpdatesObj?.props?.[1]?.navigationUrl),
+        onClick: () => history.push(infoAndUpdatesObj?.props?.[1]?.navigationUrl.replace("digit-ui","upyog-ui")),
       },
       {
         name: t(infoAndUpdatesObj?.props?.[2]?.label),
         Icon: <DocumentIcon />,
-        onClick: () => history.push(infoAndUpdatesObj?.props?.[2]?.navigationUrl),
+        onClick: () => history.push(infoAndUpdatesObj?.props?.[2]?.navigationUrl.replace("digit-ui","upyog-ui")),
       },
       {
         name: t(infoAndUpdatesObj?.props?.[3]?.label),
         Icon: <DocumentIcon />,
-        onClick: () => history.push(infoAndUpdatesObj?.props?.[3]?.navigationUrl),
+        onClick: () => history.push(infoAndUpdatesObj?.props?.[3]?.navigationUrl.replace("digit-ui","upyog-ui")),
       },
       // {
       //     name: t("CS_COMMON_HELP"),
