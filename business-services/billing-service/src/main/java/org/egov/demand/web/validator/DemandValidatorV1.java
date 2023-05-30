@@ -392,7 +392,6 @@ public class DemandValidatorV1 {
 //		if (!CollectionUtils.isEmpty(employeeIds))
 //			errorMap.put(EMPLOYEE_UUID_FOUND_KEY,
 //					EMPLOYEE_UUID_FOUND_MSG.replace(USER_UUID_NOT_FOUND_REPLACETEXT, employeeIds.toString()));
-// New code added by Lekshmy Bl
 
 		if (!CollectionUtils.isEmpty(missingIds))
 			errorMap.put(USER_UUID_NOT_FOUND_KEY,
