@@ -26,7 +26,7 @@ public class CommonValidationFromMdms {
                     if (wfLists.get(n).get("BirtPlace").equals(birthPlace)) {
                         if (end > 0L) {
                             Long comp = currentDate - dob;
-                            if (comp <= end && comp >= start) {
+                            if (comp < end && comp >= start) {
                                 wfc.setApplicationType(wfLists.get(n).get("ApplicationType").toString());
                                 wfc.setWorkflowCode(wfLists.get(n).get("WorkflowCode").toString());
                                 if (wfLists.get(n).get("payment").toString().equals("true"))
