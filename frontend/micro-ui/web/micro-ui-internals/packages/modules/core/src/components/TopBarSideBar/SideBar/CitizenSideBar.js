@@ -162,6 +162,13 @@ export const CitizenSideBar = ({ isOpen, isMobile = false, toggleSidebar, onLogo
   let configEmployeeSideBar = {};
 
   if (!isEmployee) {
+    if(linkData && linkData.FSM){
+      let FSM = [];
+      linkData.FSM.map((ele)=>{
+        ele.id && ele.link && FSM.push(ele)
+      })
+      linkData.FSM = FSM;
+    }
     Object.keys(linkData)
       ?.sort((x, y) => y.localeCompare(x))
       ?.map((key) => {
