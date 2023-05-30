@@ -203,9 +203,9 @@ const Home = ({
             <Login stateCode={stateCode} isUserRegistered={false} />
           </Route>
 
-          <Route path={`${path}/user/profile`}>
+          <PrivateRoute path={`${path}/user/profile`}>
             <UserProfile stateCode={stateCode} userType={"citizen"} cityDetails={cityDetails} />
-          </Route>
+          </PrivateRoute>
 
           <Route path={`${path}/Audit`}>
             <Search/>
