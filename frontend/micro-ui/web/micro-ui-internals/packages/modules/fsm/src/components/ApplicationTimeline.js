@@ -97,7 +97,7 @@ export const ApplicationTimeline = (props) => {
                 state: { tenantId: props.application.tenantId },
               }}
             >
-              <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} />
+              {!window.location.href.includes("citizen/fsm/") && <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} />}
             </Link>
           </div>
         );
