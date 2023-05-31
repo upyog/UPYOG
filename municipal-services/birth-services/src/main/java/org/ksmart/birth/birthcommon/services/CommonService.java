@@ -68,9 +68,9 @@ public class CommonService {
         return repository.searchBirthDetailsCommon(request,criteria);
     }
 
-    public List<String> getHRMSUser(String uuid,String tenantId,String role,String ward, RequestInfo requestInfo) {
+    public List<String> getHRMSUser(String uuid,String tenantId,String role,String ward, String hospital,RequestInfo requestInfo) {
         List<String> userIds;
-        StringBuilder url = getHRMSURIUser(uuid, tenantId, role, ward);
+        StringBuilder url = getHRMSURIUser(uuid, tenantId, role, ward, hospital);
         RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
         Object res = serviceRequestRepository.fetchResult(url, requestInfoWrapper);
         try {
@@ -80,7 +80,7 @@ public class CommonService {
         }
         return userIds;
     }
-    private StringBuilder getHRMSURIUser(String uuid,String tenantId,String role, String ward) {
+    private StringBuilder getHRMSURIUser(String uuid,String tenantId,String role, String ward, String hospitalId) {
 
         StringBuilder url = new StringBuilder(config.getHrmsHost());
         url.append(config.getHrmsContextPath());
@@ -88,8 +88,14 @@ public class CommonService {
         url.append(tenantId);
         url.append("&roles=");
         url.append(role);
-        url.append("&wardcodes=");
-        url.append(ward);
+        if(ward != null) {
+            url.append("&wardcodes=");
+            url.append(ward);
+        }
+        if(hospitalId != null) {
+            url.append("&hospitalcode=");
+            url.append(hospitalId);
+        }
         url.append("&uuid=");
         url.append(uuid);
         return url;

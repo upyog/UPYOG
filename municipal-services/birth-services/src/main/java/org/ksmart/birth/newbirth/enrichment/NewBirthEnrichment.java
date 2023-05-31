@@ -59,15 +59,21 @@ public class NewBirthEnrichment implements BaseEnrichment {
         for (NewBirthApplication birth : request.getNewBirthDetails()) {
             tenantId = birth.getTenantId();
             // account Id set
-            String wardCode = birth.getWardId();
+            String wardCode = null;
             String role;
+            String hospitalId = null;
+            List<String> userId = null;
             if (birth.getPlaceofBirthId() == BIRTH_PLACE_HOSPITAL) {
                 role = HOSP_OPER;
+                hospitalId = birth.getHospitalId();
+                userId = commonService.getHRMSUser(uuid, tenantId, role, null,hospitalId, requestInfo);
             } else {
+                wardCode = birth.getWardId();
                 role = SUB_REG;
+                userId = commonService.getHRMSUser(uuid, tenantId, role, wardCode,null, requestInfo);
             }
 
-            List<String> userId = commonService.getHRMSUser(uuid, tenantId, role, wardCode, requestInfo);
+
             if (!CollectionUtils.isEmpty(userId)) {
                 birth.setAssignee(userId);
             }
