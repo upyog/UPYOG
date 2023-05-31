@@ -216,6 +216,13 @@ public class BirthConfiguration {
     @Value("${egov.localization.context.path}")
     private String localizationContextPath;
 
+    //Hrms
+    @Value("${egov.localization.host}")
+    private String hrmsHost;
+
+    @Value("${egov.hrms.search.endpoint}")
+    private String hrmsContextPath;
+
     @Value("${egov.localization.search.endpoint}")
     private String localizationSearchEndpoint;
 

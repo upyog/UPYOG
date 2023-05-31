@@ -98,7 +98,9 @@ serviceMaps:
 
             - jsonPath: $.ChildDetails.*.birthdate
 
-            - jsonPath: $.ChildDetails.*.assigneeSingle
+            - jsonPath: $.ChildDetails.*.assignee
+              type: JSON
+              dbType: JSONB
 
             - jsonPath: $.ChildDetails.*.proceedNoRDOBasic
 

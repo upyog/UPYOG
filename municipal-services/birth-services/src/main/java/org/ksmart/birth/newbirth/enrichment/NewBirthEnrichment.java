@@ -1,9 +1,11 @@
 package org.ksmart.birth.newbirth.enrichment;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
 import org.egov.tracer.model.CustomException;
+import org.ksmart.birth.birthcommon.services.CommonService;
 import org.ksmart.birth.birthregistry.service.MdmsDataService;
 import org.ksmart.birth.common.enrichment.BaseEnrichment;
 import org.ksmart.birth.common.model.AuditDetails;
@@ -38,14 +40,17 @@ public class NewBirthEnrichment implements BaseEnrichment {
     private final MdmsForNewBirthService mdmsBirthService;
     private final MdmsTenantService mdmsTenantService;
     private final IdGenRepository idGenRepository;
+    private final CommonService commonService;
 
     NewBirthEnrichment(MdmsUtil mdmsUtil, BirthConfiguration config, MdmsForNewBirthService mdmsBirthService,
-                       MdmsTenantService mdmsTenantService,IdGenRepository idGenRepository) {
+                       MdmsTenantService mdmsTenantService,IdGenRepository idGenRepository, CommonService commonService) {
         this.mdmsUtil = mdmsUtil;
         this.config = config;
         this.mdmsBirthService = mdmsBirthService;
         this.mdmsTenantService = mdmsTenantService;
-        this.idGenRepository = idGenRepository;    }
+        this.idGenRepository = idGenRepository;
+        this.commonService = commonService;
+    }
     public void enrichCreate(NewBirthDetailRequest request, Object mdmsData) {
         String tenantId = null;
         RequestInfo requestInfo = request.getRequestInfo();
@@ -53,6 +58,22 @@ public class NewBirthEnrichment implements BaseEnrichment {
         AuditDetails auditDetails = CommonUtils.buildAuditDetails(uuid, true);
         for (NewBirthApplication birth : request.getNewBirthDetails()) {
             tenantId = birth.getTenantId();
+            // account Id set
+            String wardCode = birth.getWardId();
+            String role;
+            if (birth.getPlaceofBirthId() == BIRTH_PLACE_HOSPITAL) {
+                role = HOSP_OPER;
+            } else {
+                role = SUB_REG;
+            }
+
+            List<String> userId = commonService.getHRMSUser(uuid, tenantId, role, wardCode, requestInfo);
+            if (!CollectionUtils.isEmpty(userId)) {
+                birth.setAssignee(userId);
+            }
+
+            ////User Information
+
             birth.setDateOfReport(CommonUtils.currentDateTime());
             Long currentDate = CommonUtils.currentDateTime();
 //            Long birthDateTime = CommonUtils.timeStringToLong(LocalDateTime.parse(birth.getTimeOfBirth()));
@@ -65,7 +86,7 @@ public class NewBirthEnrichment implements BaseEnrichment {
             birth.setId(UUID.randomUUID().toString());
             birth.setAuditDetails(auditDetails);
             List<DocumentDetails> documentDetails = birth.getDocumentDetails();
-            setDocumentDetails(documentDetails, birth,true);
+            setDocumentDetails(documentDetails, birth, true);
         }
         setPlaceOfBirth(request, tenantId, mdmsData,auditDetails, true);
         setApplicationNumbers(request);

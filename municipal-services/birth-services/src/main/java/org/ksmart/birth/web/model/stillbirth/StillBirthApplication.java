@@ -67,6 +67,15 @@ public class StillBirthApplication {
     @JsonProperty("birthPlace")
     private String placeofBirthId;
 
+    @Size(max = 250)
+    @JsonProperty("birthPlaceEn")
+    private String birthPlaceEn;
+
+    @Size(max = 250)
+    @JsonProperty("birthPlaceMl")
+    private String birthPlaceMl;
+
+
     @Size(max = 64)
     @JsonProperty("birthPlaceEn")
     private String placeofBirthIdEn;

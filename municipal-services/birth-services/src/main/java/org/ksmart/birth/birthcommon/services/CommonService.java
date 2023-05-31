@@ -1,21 +1,27 @@
 package org.ksmart.birth.birthcommon.services;
 
+import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
-import org.ksmart.birth.birthcommon.model.WorkFlowCheck;
+import org.egov.common.contract.request.RequestInfo;
+import org.egov.tracer.model.CustomException;
 import org.ksmart.birth.birthcommon.model.common.CommonPay;
 import org.ksmart.birth.birthcommon.model.common.CommonPayRequest;
 import org.ksmart.birth.birthcommon.repoisitory.CommonRepository;
+import org.ksmart.birth.common.contract.RequestInfoWrapper;
+import org.ksmart.birth.common.repository.ServiceRequestRepository;
 import org.ksmart.birth.config.BirthConfiguration;
 import org.ksmart.birth.web.model.SearchCriteria;
 import org.ksmart.birth.web.model.newbirth.NewBirthApplication;
 import org.ksmart.birth.web.model.newbirth.NewBirthDetailRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.ksmart.birth.utils.BirthConstants.HRMS_UUID;
 import static org.ksmart.birth.utils.BirthConstants.STATUS_FOR_PAYMENT;
 
 @Service
@@ -26,10 +32,14 @@ public class CommonService {
 
     private  final CommonRepository repository;
 
+
+    private ServiceRequestRepository serviceRequestRepository;
+
     @Autowired
-    CommonService(BirthConfiguration config, CommonRepository repository) {
+    CommonService(BirthConfiguration config, CommonRepository repository, ServiceRequestRepository serviceRequestRepository) {
         this.config = config;
         this.repository = repository;
+        this.serviceRequestRepository = serviceRequestRepository;
     }
     public List<CommonPay> updatePaymentWorkflow(CommonPayRequest request) {
         List<CommonPay> commonPays = request.getCommonPays();
@@ -56,5 +66,32 @@ public class CommonService {
 
     public List<NewBirthApplication> searchBirthDetailsCommon(NewBirthDetailRequest request, SearchCriteria criteria) {
         return repository.searchBirthDetailsCommon(request,criteria);
+    }
+
+    public List<String> getHRMSUser(String uuid,String tenantId,String role,String ward, RequestInfo requestInfo) {
+        List<String> userIds;
+        StringBuilder url = getHRMSURIUser(uuid, tenantId, role, ward);
+        RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
+        Object res = serviceRequestRepository.fetchResult(url, requestInfoWrapper);
+        try {
+            userIds = JsonPath.read(res, HRMS_UUID);
+        } catch (Exception e) {
+            throw new CustomException("PARSING_ERROR", "Failed to parse HRMS response");
+        }
+        return userIds;
+    }
+    private StringBuilder getHRMSURIUser(String uuid,String tenantId,String role, String ward) {
+
+        StringBuilder url = new StringBuilder(config.getHrmsHost());
+        url.append(config.getHrmsContextPath());
+        url.append("?tenantId=");
+        url.append(tenantId);
+        url.append("&roles=");
+        url.append(role);
+        url.append("&wardcodes=");
+        url.append(ward);
+        url.append("&uuid=");
+        url.append(uuid);
+        return url;
     }
 }

@@ -124,7 +124,8 @@ public class BirthConstants {
     public static final String BIRTH_PLACE_PUBLIC = "PUBLIC_PLACES";
     public static final String BIRTH_PLACE_OTHERS_COUNTRY = "OUTSIDE_COUNTRY";//OUTSIDE_COUNTRY
     public static final String BIRTH_PLACE_OTHERS_MIGRATION = "OTHERS";//OUTSIDE_COUNTRY
-
+    public static final String HOSP_OPER = "HOSPITAL_OPERATOR";
+    public static final String SUB_REG = "BND_SUB_REGISTRAR";
     public static final String CR_MDMS_TENANT_BOUNDARY_CODE = "TenantBoundary";
     public static final String CR_MDMS_EGOV_LOCATION_MASTERS_CODE = "egov-location";
     //error constants
@@ -154,6 +155,7 @@ public class BirthConstants {
     ///Application Status
     public static final String STATUS_APPROVED = "APPROVED";
     public static final String STATUS_FOR_PAYMENT = "PENDINGPAYMENT";
+    public static final String HRMS_UUID = "$.Employees.*.uuid";
     public static final String STATUS_INITIATED = "INITIATED";
     public static final String STATUS_CITIZENACTIONREQUIRED = "CITIZENACTIONREQUIRED";
     //WF Action
