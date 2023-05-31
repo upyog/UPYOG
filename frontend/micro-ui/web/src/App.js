@@ -55,12 +55,15 @@ const enabledModules = [
   "OBPS",
   "NOC",
   "Engagement",
-  "CommonPT",
+  // "CommonPT",
   "WS",
   "Reports",
   "Bills",
   "SW",
-  "BillAmendment"
+  "BillAmendment",
+  "FireNoc",
+  "Birth",
+  "Death"
 ];
 window.Digit.ComponentRegistryService.setupRegistry({
   ...paymentConfigs,
