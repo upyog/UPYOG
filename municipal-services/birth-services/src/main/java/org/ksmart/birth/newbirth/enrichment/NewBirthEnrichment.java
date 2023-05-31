@@ -358,12 +358,14 @@ public class NewBirthEnrichment implements BaseEnrichment {
     }
     private void setDocumentDetails(List<DocumentDetails> documentDetails,NewBirthApplication birth, boolean  isCreate) {
         if (isCreate) {
-            documentDetails.forEach(docs -> {
-                if(docs.getDocumentType().contains(RDO_PROC_DOC)) {
-                    birth.setProceedNoRDOBasic(docs.getProceedNoRDO());
-                    birth.setRegNoNACBasic(docs.getRegNoNAC());
-                }
-            });
+            if(documentDetails != null) {
+                documentDetails.forEach(docs -> {
+                    if (docs.getDocumentType().contains(RDO_PROC_DOC)) {
+                        birth.setProceedNoRDOBasic(docs.getProceedNoRDO());
+                        birth.setRegNoNACBasic(docs.getRegNoNAC());
+                    }
+                });
+            }
         }
     }
     private void setStatisticalInfo(NewBirthDetailRequest request,boolean  isCreate) {

@@ -11,7 +11,6 @@ import org.ksmart.birth.web.model.SearchCriteria;
 import org.ksmart.birth.web.model.stillbirth.StillBirthApplication;
 import org.ksmart.birth.web.model.stillbirth.StillBirthDetailRequest;
 import org.ksmart.birth.web.model.stillbirth.StillBirthResponse;
-import org.ksmart.birth.web.model.stillbirth.StillBirthSearchResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

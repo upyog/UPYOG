@@ -90,7 +90,6 @@ public class NewBirthService {
         Assert.notNull(newApplication, "New birth application details must not be null.");
 
         NewBirthApplication newBirthApplicationExisting = findBirthRequestById(request);
-
         //search application exist
         validator.validateUpdate(request,  newBirthApplicationExisting, mdmsData,wfc, false);
         
@@ -112,7 +111,8 @@ public class NewBirthService {
     private NewBirthApplication findBirthRequestById(final NewBirthDetailRequest request) {
         if(request.getNewBirthDetails().size() >0){
             final SearchCriteria searchCriteria = buildSearchCriteria(request.getNewBirthDetails().get(0));
-            final List<NewBirthApplication> application = searchBirthDetailsCommon(request.getRequestInfo(),searchCriteria);
+            final List<NewBirthApplication> application = searchBirthDetailsUpdate(request.getRequestInfo(),searchCriteria);
+
             return CollectionUtils.isNotEmpty(application)
                     ? application.get(0)
                     : null;
@@ -123,6 +123,13 @@ public class NewBirthService {
 
     public NewBirthSearchResponse searchBirthDetails(NewBirthDetailRequest request, SearchCriteria criteria) {
         return repository.searchBirthDetails(request,criteria);
+    }
+    public List<NewBirthApplication> searchBirthDetailsUpdate(RequestInfo request, SearchCriteria criteria) {
+        if (criteria != null) {
+            return repository.searchBirth(request, criteria);
+        } else {
+            return null;
+        }
     }
     public List<NewBirthApplication> searchBirthDetailsCommon(RequestInfo request, SearchCriteria criteria) {
     	if(!StringUtils.isEmpty(request.getUserInfo().getUuid())) {
