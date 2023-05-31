@@ -63,7 +63,7 @@ public class NewBirthEnrichment implements BaseEnrichment {
             String role;
             String hospitalId = null;
             List<String> userId = null;
-            if (birth.getPlaceofBirthId() == BIRTH_PLACE_HOSPITAL) {
+            if (birth.getPlaceofBirthId().equals(BIRTH_PLACE_HOSPITAL)) {
                 role = HOSP_OPER;
                 hospitalId = birth.getHospitalId();
                 userId = commonService.getHRMSUser(uuid, tenantId, role, null,hospitalId, requestInfo);
