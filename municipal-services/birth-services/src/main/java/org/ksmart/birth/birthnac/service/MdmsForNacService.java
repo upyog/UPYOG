@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.ksmart.birth.birthregistry.service.KsmartAddressService;
 import org.ksmart.birth.common.services.MdmsLocationService;
 import org.ksmart.birth.common.services.MdmsTenantService;
+import org.ksmart.birth.web.model.ParentAddress;
 import org.ksmart.birth.web.model.ParentsDetail;
 import org.ksmart.birth.web.model.birthnac.NacApplication; 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,8 +85,8 @@ public class MdmsForNacService {
 
 	        }else if (nac.getPlaceofBirthId().contains(BIRTH_PLACE_VEHICLE)) {
 	            //Vehicle Type
-	            setVehicleTypeEn(nac, mdmsData);
-	            setVehicleTypeMl(nac, mdmsData);
+	            setVehicleTypeEn(nac, mdmsData,mdmsDataLoc);
+	            setVehicleTypeMl(nac, mdmsData,mdmsDataLoc);
 	        } else if (nac.getPlaceofBirthId().contains(BIRTH_PLACE_PUBLIC)) {
 	            //Public Place Type
 	            setPublicPlaceTypeEn(nac, mdmsData);
@@ -110,28 +111,34 @@ public class MdmsForNacService {
 	        }
 	    }
 
-	    public void setVehicleTypeEn(NacApplication nac, Object  mdmsData) {
+	    public void setVehicleTypeEn(NacApplication nac, Object  mdmsData,Object mdmsDataLoc) {
 	        if (nac.getPlaceofBirthId().contains(BIRTH_PLACE_VEHICLE)) {
 	            String vehicleType = mdmsTenantService.getVehicleTypeEn(mdmsData, nac.getVehicleTypeid());
 	            nac.setVehicleTypeidEn(vehicleType);
+	            
+	            String admittedHsopEn = mdmsLocationService.getHospitalNameEn(mdmsDataLoc, nac.getSetadmittedHospitalEn()) +" "+ mdmsLocationService.getHospitalAddressEn(mdmsDataLoc, nac.getSetadmittedHospitalEn());
+	            nac.setAdmittedHospitalEn(admittedHsopEn);
 	        }
 	    }
-	    public void setVehicleTypeMl(NacApplication nac, Object  mdmsData) {
+	    public void setVehicleTypeMl(NacApplication nac, Object  mdmsData,Object mdmsDataLoc) {
 	        if (nac.getPlaceofBirthId().contains(BIRTH_PLACE_VEHICLE)) {
 	            String vehicleType = mdmsTenantService.getVehicleTypeMl(mdmsData, nac.getVehicleTypeid());
 	            nac.setVehicleTypeidMl(vehicleType);
+	            
+	            String admittedHsopMl = mdmsLocationService.getHospitalNameMl(mdmsDataLoc, nac.getSetadmittedHospitalEn()) +" "+ mdmsLocationService.getHospitalAddressMl(mdmsDataLoc, nac.getSetadmittedHospitalEn());
+	            nac.setAdmittedHospitalMl(admittedHsopMl);
 	        }
 	    }
 	    public void setPublicPlaceTypeEn(NacApplication nac, Object  mdmsData) {
 	        if (nac.getPlaceofBirthId().contains(BIRTH_PLACE_PUBLIC)) {
-	            String vehicleType = mdmsTenantService.getPublicPlaceTypeEn(mdmsData, nac.getVehicleTypeid());
-	            nac.setVehicleTypeidEn(vehicleType);
+	            String publicPlaceType = mdmsTenantService.getPublicPlaceTypeEn(mdmsData, nac.getPublicPlaceType());
+	            nac.setVehicleTypeidEn(publicPlaceType);
 	        }
 	    }
 	    public void setPublicPlaceTypeMl(NacApplication nac, Object  mdmsData) {
 	        if (nac.getPlaceofBirthId().contains(BIRTH_PLACE_PUBLIC)) {
-	            String vehicleType = mdmsTenantService.getPublicPlaceTypeMl(mdmsData, nac.getVehicleTypeid());
-	            nac.setVehicleTypeidMl(vehicleType);
+	            String publicPlaceType = mdmsTenantService.getPublicPlaceTypeMl(mdmsData, nac.getPublicPlaceType());
+	            nac.setPublicPlaceTypeMl(publicPlaceType);
 	        }
 	    }
 
@@ -142,6 +149,16 @@ public class MdmsForNacService {
 	        } else if(lbType.contains(LB_TYPE_GP)) {
 	        	nac.getParentAddress().setTownOrVillagePresent("VILLAGE");
 	        } else{}
+	    }
+	    public void setLocationForAddressPermanent(ParentAddress parentAddress, Object mdmsDataLoc) {
+	        parentAddress.setPermntInKeralaWardNoText(mdmsLocationService.getWardNo(mdmsDataLoc, parentAddress.getPermntInKeralaWardNo()));
+	        parentAddress.setPermntInKeralaWardNoEn(mdmsLocationService.getWardNameEn(mdmsDataLoc, parentAddress.getPermntInKeralaWardNo()));
+	        parentAddress.setPermntInKeralaWardNoMl(mdmsLocationService.getWardNameMl(mdmsDataLoc, parentAddress.getPermntInKeralaWardNo()));
+	    }
+	    public void setLocationForAddressPresent(ParentAddress parentAddress, Object mdmsDataLoc) {
+	        parentAddress.setPresentWardText(mdmsLocationService.getWardNo(mdmsDataLoc, parentAddress.getPresentWardNo()));
+	        parentAddress.setPresentWardNoEn(mdmsLocationService.getWardNameEn(mdmsDataLoc, parentAddress.getPresentWardNo()));
+	        parentAddress.setPresentWardNoMl(mdmsLocationService.getWardNameMl(mdmsDataLoc, parentAddress.getPresentWardNo()));
 	    }
 
 }

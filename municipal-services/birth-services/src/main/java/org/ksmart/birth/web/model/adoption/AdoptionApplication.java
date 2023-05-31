@@ -376,4 +376,12 @@ public class AdoptionApplication {
 
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails;
+    
+    @Size(max = 64)
+    @JsonProperty("publicPlaceTypeEn")
+    private String publicPlaceTypeEn;
+    
+    @Size(max = 64)
+    @JsonProperty("publicPlaceTypeMl")
+    private String publicPlaceTypeMl;
 }

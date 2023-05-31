@@ -352,8 +352,21 @@ public class NacApplication {
     @JsonProperty("Demands")
     private List<Demand> demands;
     
-   
+    @Size(max = 64)
+    @JsonProperty("admittedHospitalEn")
+    private String admittedHospitalEn;
     
+    @Size(max = 64)
+    @JsonProperty("admittedHospitalMl")
+    private String admittedHospitalMl;
+   
+    @Size(max = 64)
+    @JsonProperty("publicPlaceTypeEn")
+    private String publicPlaceTypeEn;
+    
+    @Size(max = 64)
+    @JsonProperty("publicPlaceTypeMl")
+    private String publicPlaceTypeMl;
 
     
   

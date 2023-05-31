@@ -75,14 +75,14 @@ public class MdmsForAdoptionService {
 	    }
 	    public void setPublicPlaceTypeEn(AdoptionApplication adoption, Object  mdmsData) {
 	        if (adoption.getPlaceofBirthId().contains(BIRTH_PLACE_PUBLIC)) {
-	            String vehicleType = mdmsTenantService.getPublicPlaceTypeEn(mdmsData, adoption.getVehicleTypeid());
-	            adoption.setVehicleTypeidEn(vehicleType);
+	            String publicPlaceType = mdmsTenantService.getPublicPlaceTypeEn(mdmsData, adoption.getPublicPlaceType());
+	            adoption.setPublicPlaceTypeEn(publicPlaceType);
 	        }
 	    }
 	    public void setPublicPlaceTypeMl(AdoptionApplication adoption, Object  mdmsData) {
 	        if (adoption.getPlaceofBirthId().contains(BIRTH_PLACE_PUBLIC)) {
-	            String vehicleType = mdmsTenantService.getPublicPlaceTypeMl(mdmsData, adoption.getVehicleTypeid());
-	            adoption.setVehicleTypeidMl(vehicleType);
+	            String publicPlaceType = mdmsTenantService.getPublicPlaceTypeMl(mdmsData, adoption.getPublicPlaceType());
+	            adoption.setPublicPlaceTypeMl(publicPlaceType);
 	        }
 	    }
 

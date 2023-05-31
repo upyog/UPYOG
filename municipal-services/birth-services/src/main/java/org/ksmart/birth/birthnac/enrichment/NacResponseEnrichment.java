@@ -52,6 +52,7 @@ public class NacResponseEnrichment {
 	                    if (nac.getParentAddress().getCountryIdPermanent().contains(BirthConstants.COUNTRY_CODE)) {
 	                        if (nac.getParentAddress().getStateIdPermanent().contains(BirthConstants.STATE_CODE_SMALL)) {
 	                            mdmsBirthService.setTenantDetails(nac, mdmsData);
+	                            Object mdmsDataLocPermanent = mdmsUtil.mdmsCallForLocation(requestInfo, nac.getParentAddress().getPermntInKeralaAdrLBName());
 	                            //Country
 	                            nac.getParentAddress().setPermtaddressCountry(nac.getParentAddress().getCountryIdPermanent());
 	                            nac.getParentAddress().setCountryIdPermanentEn(mdmsTenantService.getCountryNameEn(mdmsData, nac.getParentAddress().getCountryIdPermanent()));
@@ -80,8 +81,7 @@ public class NacResponseEnrichment {
 	                            //Local Body
 	                            nac.getParentAddress().setPermntInKeralaAdrLBNameEn(mdmsTenantService.getTenantNameEn(mdmsData, nac.getParentAddress().getPermntInKeralaAdrLBName()));
 	                            nac.getParentAddress().setPermntInKeralaAdrLBNameMl(mdmsTenantService.getTenantNameMl(mdmsData, nac.getParentAddress().getPermntInKeralaAdrLBName()));
-	                            System.out.println("taluk  "+nac.getParentAddress().getPermntInKeralaAdrLBNameEn());
-	                            System.out.println("taluk  "+mdmsTenantService.getTenantNameMl(mdmsData, nac.getParentAddress().getPermntInKeralaAdrLBName()));
+	                            
 	                            //Post Office
 	                            nac.getParentAddress().setPermntInKeralaAdrPostOfficeEn(mdmsTenantService.getPostOfficeNameEn(mdmsData, nac.getParentAddress().getPermntInKeralaAdrPostOffice()));
 	                            nac.getParentAddress().setPermntInKeralaAdrPostOfficeMl(mdmsTenantService.getPostOfficeNameMl(mdmsData, nac.getParentAddress().getPermntInKeralaAdrPostOffice()));
@@ -98,6 +98,10 @@ public class NacResponseEnrichment {
 
 	                            nac.getParentAddress().setPermntInKeralaAdrPostOffice(nac.getParentAddress().getPermntInKeralaAdrPostOffice());
 	                            nac.getParentAddress().setPermntInKeralaAdrPincode(nac.getParentAddress().getPinNoPermanent());
+	                            
+	                          //Ward Name
+	                            mdmsBirthService.setLocationForAddressPermanent(nac.getParentAddress(), mdmsDataLocPermanent);
+
 
 	                        } else {
 	                            //Country
@@ -139,6 +143,7 @@ public class NacResponseEnrichment {
 	                if (nac.getParentAddress().getCountryIdPresent() != null && nac.getParentAddress().getStateIdPresent() != null) {
 	                    if (nac.getParentAddress().getCountryIdPresent().contains(BirthConstants.COUNTRY_CODE)) {
 	                        if (nac.getParentAddress().getStateIdPresent().contains(BirthConstants.STATE_CODE_SMALL)) {
+	                        	  Object mdmsDataLocPresent = mdmsUtil.mdmsCallForLocation(requestInfo, nac.getParentAddress().getPresentInsideKeralaLBName());
 	                            //Country
 	                        	nac.getParentAddress().setPresentaddressCountry(nac.getParentAddress().getCountryIdPresent());
 	                        	nac.getParentAddress().setCountryIdPresentEn(mdmsTenantService.getCountryNameEn(mdmsData, nac.getParentAddress().getCountryIdPresent()));
@@ -183,6 +188,9 @@ public class NacResponseEnrichment {
 
 	                            nac.getParentAddress().setPresentInsideKeralaPincode(nac.getParentAddress().getPinNoPresent());
 	                            nac.getParentAddress().setPresentInsideKeralaPostOffice(nac.getParentAddress().getPresentInsideKeralaPostOffice());
+	                            
+	                          //Ward Name
+	                            mdmsBirthService.setLocationForAddressPresent(nac.getParentAddress(), mdmsDataLocPresent);
 
 	                        } else {
 	                            //Country
