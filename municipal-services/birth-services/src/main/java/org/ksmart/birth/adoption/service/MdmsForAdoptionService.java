@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.ksmart.birth.birthregistry.service.KsmartAddressService;
 import org.ksmart.birth.common.services.MdmsLocationService;
 import org.ksmart.birth.common.services.MdmsTenantService;
+import org.ksmart.birth.web.model.ParentAddress;
 import org.ksmart.birth.web.model.ParentsDetail;
 import org.ksmart.birth.web.model.adoption.AdoptionApplication;
  
@@ -166,5 +167,15 @@ public class MdmsForAdoptionService {
 	            parentsDetail.setReligionIdEn(mdmsTenantService.getReligionEn(mdmsData, parentsDetail.getReligionId()));
 	            parentsDetail.setReligionIdMl(mdmsTenantService.getReligionMl(mdmsData, parentsDetail.getReligionId()));
 	        }
+	    }
+	    public void setLocationForAddressPermanent(ParentAddress parentAddress, Object mdmsDataLoc) {
+	        parentAddress.setPermntInKeralaWardNoText(mdmsLocationService.getWardNo(mdmsDataLoc, parentAddress.getPermntInKeralaWardNo()));
+	        parentAddress.setPermntInKeralaWardNoEn(mdmsLocationService.getWardNameEn(mdmsDataLoc, parentAddress.getPermntInKeralaWardNo()));
+	        parentAddress.setPermntInKeralaWardNoMl(mdmsLocationService.getWardNameMl(mdmsDataLoc, parentAddress.getPermntInKeralaWardNo()));
+	    }
+	    public void setLocationForAddressPresent(ParentAddress parentAddress, Object mdmsDataLoc) {
+	        parentAddress.setPresentWardText(mdmsLocationService.getWardNo(mdmsDataLoc, parentAddress.getPresentWardNo()));
+	        parentAddress.setPresentWardNoEn(mdmsLocationService.getWardNameEn(mdmsDataLoc, parentAddress.getPresentWardNo()));
+	        parentAddress.setPresentWardNoMl(mdmsLocationService.getWardNameMl(mdmsDataLoc, parentAddress.getPresentWardNo()));
 	    }
 	}

@@ -55,6 +55,7 @@ public class AdoptionResponseEnrichment {
 	                    if (adoption.getParentAddress().getCountryIdPermanent().contains(BirthConstants.COUNTRY_CODE)) {
 	                        if (adoption.getParentAddress().getStateIdPermanent().contains(BirthConstants.STATE_CODE_SMALL)) {
 	                            mdmsBirthService.setTenantDetails(adoption, mdmsData);
+	                            Object mdmsDataLocPermanent = mdmsUtil.mdmsCallForLocation(requestInfo, adoption.getParentAddress().getPermntInKeralaAdrLBName());
 	                            //Country
 	                            adoption.getParentAddress().setPermtaddressCountry(adoption.getParentAddress().getCountryIdPermanent());
 	                            adoption.getParentAddress().setCountryIdPermanentEn(mdmsTenantService.getCountryNameEn(mdmsData, adoption.getParentAddress().getCountryIdPermanent()));
@@ -100,6 +101,10 @@ public class AdoptionResponseEnrichment {
 
 	                            adoption.getParentAddress().setPermntInKeralaAdrPostOffice(adoption.getParentAddress().getPermntInKeralaAdrPostOffice());
 	                            adoption.getParentAddress().setPermntInKeralaAdrPincode(adoption.getParentAddress().getPinNoPermanent());
+	                            
+	                          //Ward Name
+	                            mdmsBirthService.setLocationForAddressPermanent(adoption.getParentAddress(), mdmsDataLocPermanent);
+
 
 	                        } else {
 	                            //Country
@@ -141,6 +146,7 @@ public class AdoptionResponseEnrichment {
 	                if (adoption.getParentAddress().getCountryIdPresent() != null  ) {
 	                    if (adoption.getParentAddress().getCountryIdPresent().contains(BirthConstants.COUNTRY_CODE)) {
 	                        if (adoption.getParentAddress().getStateIdPresent().contains(BirthConstants.STATE_CODE_SMALL)) {
+	                        	  Object mdmsDataLocPresent = mdmsUtil.mdmsCallForLocation(requestInfo, adoption.getParentAddress().getPresentInsideKeralaLBName());
 	                            //Country
 	                        	 
 	                        	adoption.getParentAddress().setPresentaddressCountry(adoption.getParentAddress().getCountryIdPresent());
@@ -185,6 +191,9 @@ public class AdoptionResponseEnrichment {
 
 	                        	adoption.getParentAddress().setPresentInsideKeralaPincode(adoption.getParentAddress().getPinNoPresent());
 	                        	adoption.getParentAddress().setPresentInsideKeralaPostOffice(adoption.getParentAddress().getPresentInsideKeralaPostOffice());
+	                        	
+	                        	 //Ward Name
+	                            mdmsBirthService.setLocationForAddressPresent(adoption.getParentAddress(), mdmsDataLocPresent);
 
 	                        } else {
 	                            //Country
