@@ -58,6 +58,14 @@ public class BillingSlabQueryBuilder {
             queryBuilder.append(" AND usageCategoryMinor = ?");
             preparedStmtList.add(billingSlabSearcCriteria.getUsageCategoryMinor());
         }
+        
+        if (!StringUtils.isEmpty(billingSlabSearcCriteria.getValidFrom()) && !StringUtils.isEmpty(billingSlabSearcCriteria.getValidTo())) {
+
+            queryBuilder.append(" AND validFrom <= ? AND validTo >= ?");
+            preparedStmtList.add(billingSlabSearcCriteria.getValidFrom());
+            preparedStmtList.add(billingSlabSearcCriteria.getValidTo());
+
+        }
     }
 
     /**
