@@ -276,15 +276,17 @@ serviceMaps:
 
             - jsonPath: $.ChildDetails.*.ParentsDetails.motherBioAdopt
 
-        - query: INSERT INTO public.eg_birth_permanent_address(id, housename_no_en, housename_no_ml, ot_address1_en, ot_address1_ml, ot_address2_en, ot_address2_ml,ot_state_region_province_en,
+        - query: INSERT INTO public.eg_birth_permanent_address(id, resdnce_addr_type, housename_no_en, housename_no_ml, ot_address1_en, ot_address1_ml, ot_address2_en, ot_address2_ml,ot_state_region_province_en,
             villageid, tenantid, talukid, districtid, stateid, poid, pinno, countryid, birthdtlid, same_as_present, createdtime, createdby, lastmodifiedtime,
             lastmodifiedby, bio_adopt, taluk_name, village_name, ward_code, locality_en, locality_ml, street_name_en,
             street_name_ml, ot_zipcode,family_emailid, family_mobileno, postoffice_en, postoffice_ml)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,  ?, ?, ?, ?, ?, ?);
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,  ?, ?, ?, ?, ?, ?, ?);
 
           basePath: ChildDetails.*.AddressBirthDetails
           jsonMaps:
             - jsonPath: $.ChildDetails.*.AddressBirthDetails.permanentUuid
+
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.townOrVillagePermanent
 
             - jsonPath: $.ChildDetails.*.AddressBirthDetails.houseNameNoEnPermanent
 
@@ -358,10 +360,12 @@ serviceMaps:
         - query: INSERT INTO public.eg_birth_present_address(id, housename_no_en, housename_no_ml, ot_address1_en, ot_address1_ml, ot_address2_en, ot_address2_ml,
             ot_state_region_province_en, ot_state_region_province_ml, villageid, tenantid, talukid, districtid, stateid, poid, pinno, countryid, birthdtlid, createdtime, createdby, lastmodifiedtime, lastmodifiedby,
             bio_adopt, taluk_name, village_name, ward_code, locality_en, locality_ml, street_name_en,street_name_ml, ot_zipcode)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: ChildDetails.*.AddressBirthDetails
           jsonMaps:
             - jsonPath: $.ChildDetails.*.AddressBirthDetails.presentUuid
+
+            - jsonPath: $.ChildDetails.*.AddressBirthDetails.townOrVillagePresent
 
             - jsonPath: $.ChildDetails.*.AddressBirthDetails.houseNameNoEnPresent
 
@@ -486,7 +490,7 @@ serviceMaps:
 
             - jsonPath: $.ChildDetails.*.ParentsDetails.mother_resdnce_tenant
 
-            - jsonPath: $.ChildDetails.*.ParentsDetails.townOrVillagePresent
+            - jsonPath: $.ChildDetails.*.ParentsDetails.townOrVillagePermanent
 
             - jsonPath: $.ChildDetails.*.ParentsDetails.mother_resdnce_place_en
 

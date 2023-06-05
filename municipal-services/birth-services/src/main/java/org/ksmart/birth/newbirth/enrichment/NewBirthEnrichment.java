@@ -72,14 +72,10 @@ public class NewBirthEnrichment implements BaseEnrichment {
                 role = SUB_REG;
                 userId = commonService.getHRMSUser(uuid, tenantId, role, wardCode,null, requestInfo);
             }
-
-
             if (!CollectionUtils.isEmpty(userId)) {
                 birth.setAssignee(userId);
             }
-
             ////User Information
-
             birth.setDateOfReport(CommonUtils.currentDateTime());
             Long currentDate = CommonUtils.currentDateTime();
 //            Long birthDateTime = CommonUtils.timeStringToLong(LocalDateTime.parse(birth.getTimeOfBirth()));
@@ -100,7 +96,6 @@ public class NewBirthEnrichment implements BaseEnrichment {
         setPresentAddress(request, mdmsData, true);
         setPermanentAddress(request, mdmsData, true);
         setStatisticalInfo(request, true);
-
     }
 
     public void enrichUpdate(NewBirthDetailRequest request, Object mdmsData) {
@@ -296,6 +291,7 @@ public class NewBirthEnrichment implements BaseEnrichment {
 
                                     birth.getParentAddress().setPinNoPermanent(birth.getParentAddress().getPermntInKeralaAdrPincode());
                                     birth.getParentAddress().setPoNoPermanent(birth.getParentAddress().getPermntInKeralaAdrPostOffice());
+
                                     birth.getParentAddress().setTownOrVillagePermanent(birth.getParentAddress().getPermntOutsideKeralaCityVilgeEn());
                                 } else {
                                     if(!birth.getParentAddress().getIsPrsentAddress()){
@@ -316,8 +312,8 @@ public class NewBirthEnrichment implements BaseEnrichment {
                                     birth.getParentAddress().setPinNoPermanent(birth.getParentAddress().getPermntOutsideKeralaPincode());
 
                                     birth.getParentAddress().setVillageNamePermanent(birth.getParentAddress().getPermntOutsideKeralaVillage());
-                                    birth.getParentAddress().setTownOrVillagePermanent(birth.getParentAddress().getPermntOutsideKeralaCityVilgeEn());
 
+                                    birth.getParentAddress().setTownOrVillagePermanent(birth.getParentAddress().getPermntOutsideKeralaCityVilgeEn());
                                 }
                             } else {
                                 if (birth.getParentAddress().getPermntOutsideIndiaCountry() != null) {
@@ -345,13 +341,12 @@ public class NewBirthEnrichment implements BaseEnrichment {
     private void setPlaceOfBirth(NewBirthDetailRequest request, String trnantId, Object mdmsData, AuditDetails auditDetails,  boolean isCreate) {
         Object mdmsDataLoc = mdmsUtil.mdmsCallForLocation(request.getRequestInfo(), trnantId);
         request.getNewBirthDetails().forEach(birth -> {
-            if(birth.getPlaceofBirthId() != null || !birth.getPlaceofBirthId().isEmpty()){
+            if(birth.getPlaceofBirthId() != null || !birth.getPlaceofBirthId().isEmpty()) {
                 mdmsBirthService.setLocationDetails(birth, mdmsDataLoc, mdmsData);
                 if(isCreate) {
                     birth.setBirthPlaceUuid(UUID.randomUUID().toString());
                 }
             }
-
             if(birth.getParentsDetails() != null) {
                 if(isCreate) {
                     birth.getParentsDetails().setFatherUuid(UUID.randomUUID().toString());
@@ -377,7 +372,8 @@ public class NewBirthEnrichment implements BaseEnrichment {
                     birth.getParentsDetails().setMotherAgeDelivery(null);
                     birth.getParentsDetails().setMotherAgeMarriage(null);
                     birth.getParentsDetails().setMotherOrderCurChild(null);
-                }else{
+                }
+                else{
                     birth.getParentsDetails().setMotherBioAdopt("BIOLOGICAL");
                 }
             }
@@ -407,7 +403,6 @@ public class NewBirthEnrichment implements BaseEnrichment {
 
                   //  TOWN VILLAGe INSIDE Kerala
                 });
-
     }
     private List<String> getIds(RequestInfo requestInfo, String tenantId, String idName, String moduleCode, String  fnType, int count) {
         return idGenRepository.getIdList(requestInfo, tenantId, idName, moduleCode, fnType, count);

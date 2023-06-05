@@ -9,7 +9,6 @@ import org.egov.mdms.model.ModuleDetail;
 import org.ksmart.birth.birthcommon.model.WorkFlowCheck;
 import org.ksmart.birth.birthcommon.model.demand.Demand;
 import org.ksmart.birth.birthcommon.model.demand.DemandDetail;
-import org.ksmart.birth.birthcommon.model.demand.DemandResponse;
 import org.ksmart.birth.birthcommon.repoisitory.DemandRepository;
 import org.ksmart.birth.common.repository.ServiceRequestRepository;
 import org.ksmart.birth.config.BirthConfiguration;

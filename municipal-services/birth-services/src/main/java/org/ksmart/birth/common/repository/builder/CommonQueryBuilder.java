@@ -110,7 +110,7 @@ public class CommonQueryBuilder extends BaseQueryBuilder {
 	private static final String QUERY_MOTER_INFO = new StringBuilder().append("ebmi.id as mo_id,ebmi.firstname_en as mo_firstname_en,ebmi.firstname_ml as mo_firstname_ml,")
 			.append("ebmi.ot_passportno as mo_ot_passportno,ebmi.aadharno as mo_aadharno,ebmi.birthdtlid as mo_birthdtlid,ebmi.bio_adopt as mo_bio_adopt, ebmi.addressofmother as mo_addressofmother").toString();
 
-	private static final String QUERY_PERMANANT_ADDRESS = new StringBuilder().append("eperad.id as per_id,eperad.housename_no_en as per_housename_no_en,")
+	private static final String QUERY_PERMANANT_ADDRESS = new StringBuilder().append("eperad.id as per_id,eperad.resdnce_addr_type as per_resdnce_addr_type,eperad.housename_no_en as per_housename_no_en,")
 			.append("eperad.housename_no_ml as per_housename_no_ml,eperad.ot_address1_en as per_ot_address1_en,eperad.ot_address1_ml as per_ot_address1_ml,eperad.ot_address2_en as per_ot_address2_en,")
 			.append("eperad.ot_address2_ml as per_ot_address2_ml,eperad.ot_state_region_province_en as per_ot_state_region_province_en,eperad.ot_state_region_province_ml as per_ot_state_region_province_ml,")
 			.append("eperad.ot_zipcode as per_ot_zipcode,eperad.villageid as per_villageid,eperad.village_name as per_village_name,eperad.tenantid as per_tenantid,eperad.talukid as per_talukid,")
@@ -121,7 +121,7 @@ public class CommonQueryBuilder extends BaseQueryBuilder {
 			.append("eperad.postoffice_en as per_postoffice_en,eperad.postoffice_ml as per_postoffice_ml").toString();
 
 
-	private static final String QUERY_PRESENT_ADDRESS = new StringBuilder().append("epreadd.id as pres_id,epreadd.housename_no_en as pres_housename_no_en,")
+	private static final String QUERY_PRESENT_ADDRESS = new StringBuilder().append("epreadd.id as pres_id,epreadd.resdnce_addr_type as pres_resdnce_addr_type,epreadd.housename_no_en as pres_housename_no_en,")
 			.append("epreadd.housename_no_ml as pres_housename_no_ml,epreadd.ot_address1_en as pres_ot_address1_en,epreadd.ot_address1_ml as pres_ot_address1_ml,epreadd.ot_address2_en as pres_ot_address2_en,")
 			.append("epreadd.ot_address2_ml as pres_ot_address2_ml,epreadd.ot_state_region_province_en as pres_ot_state_region_province_en,epreadd.ot_state_region_province_ml as pres_ot_state_region_province_ml,")
 			.append("epreadd.ot_zipcode as pres_ot_zipcode,epreadd.villageid as pres_villageid,epreadd.village_name as pres_village_name,epreadd.tenantid as pres_tenantid,epreadd.talukid as pres_talukid,")

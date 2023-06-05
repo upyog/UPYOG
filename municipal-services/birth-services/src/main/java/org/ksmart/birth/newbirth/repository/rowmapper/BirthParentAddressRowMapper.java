@@ -30,7 +30,7 @@ public interface BirthParentAddressRowMapper {
                 .presentOutsideKeralaPostOfficeEn(rs.getString("pres_postoffice_en"))
                 .presentOutsideKeralaPostOfficeMl(rs.getString("pres_postoffice_ml"))
                 .presentOutsideKeralaTalukName(rs.getString("pres_taluk_name"))
-                .townOrVillagePresent(rs.getString("stat_mother_resdnce_placetype"))
+                .townOrVillagePresent(rs.getString("pres_resdnce_addr_type"))
                 .presentOutsideKeralaCityVilgeEn(rs.getString("stat_mother_resdnce_placetype"))
 
 
@@ -61,7 +61,7 @@ public interface BirthParentAddressRowMapper {
                 .permntInKeralaWardNo(rs.getString("per_ward_code"))
 
                 .permntOutsideKeralaTaluk(rs.getString("per_taluk_name"))
-                .permntOutsideKeralaCityVilgeEn(rs.getString("stat_mother_resdnce_placetype"))
+                .permntOutsideKeralaCityVilgeEn(rs.getString("per_resdnce_addr_type"))
                 .permntOutsideKeralaPostOfficeEn(rs.getString("per_postoffice_en"))
                 .permntOutsideKeralaPostOfficeMl(rs.getString("per_postoffice_ml"))
                 .isPrsentAddress(rs.getInt("per_same_as_present")==1?true:false)

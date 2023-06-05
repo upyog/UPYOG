@@ -50,7 +50,6 @@ public class ParentAddress {
     @JsonProperty("presentInsideKeralaTalukMl")
     private String presentInsideKeralaTalukMl;
 
-
     @Size(max = 64)
     @JsonProperty("presentInsideKeralaVillage")
     private String presentInsideKeralaVillage;
@@ -300,7 +299,8 @@ public class ParentAddress {
     @Size(max = 1000)
     @JsonProperty("villageNamePresent")
     private String villageNamePresent;
-    @Size(max = 1000)
+
+    @Size(max = 20)
     @JsonProperty("townOrVillagePresent")
     private String townOrVillagePresent;
 
@@ -575,9 +575,10 @@ public class ParentAddress {
     @JsonProperty("villageNamePermanent")
     private String villageNamePermanent;
 
-    @Size(max = 1000)
+    @Size(max = 20)
     @JsonProperty("townOrVillagePermanent")
     private String townOrVillagePermanent;
+
     @Size(max = 10)
     @JsonProperty("poNoPermanent")
     private String poNoPermanent;
