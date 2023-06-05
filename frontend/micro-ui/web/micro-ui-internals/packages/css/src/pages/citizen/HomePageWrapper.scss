@@ -73,14 +73,14 @@
 .HomePageContainer {
   @media (min-width: 780px) {
     display: flex;
-    width: calc(100% - 219px);
+    width: 100% !important;
     height: calc(100%-30px);
   }
 }
 
 .moduleLinkHomePage {
   @media (min-width: 780px) {
-    width: calc(100% - 219px);
+    width: 100%;
   }
   margin-top: -25px;
   img {

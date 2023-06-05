@@ -76,27 +76,13 @@ const EmployeeApp = ({
                 </picture> */}
                  <div className="login-logo-wrapper">
               <div className="logoNiua">
-                <div style={{display:"flex",flexDirection:"column",width:"100%",height:"100%"}}>
-              <img src="https://in-egov-assets.s3.ap-south-1.amazonaws.com/images/UPYOG-Logo2.png" style={{"position":"relative", zIndex:"999",width:"15%",height:"15%",marginLeft:"auto",marginRight:"auto",marginTop:"15px"}}/>
-        
-              </div>
-                </div>
-                <div className="loginConference">
-                  {/* <img id="login-conference-table" src="https://i.postimg.cc/dt1C7cXf/Banner-Image-1-removebg-preview.png" ></img> */}
-                  <div id="login-conference-table"></div>
-                  <div className="login-banner-wrapper">
-                    {window.innerWidth >950?<div className="psuedo-banner"><span>U</span>rban <span>P</span>latform for<br />
-                      deliver<span>Y</span> of <span>O</span>nline<br />
-                      <span>G</span>overnance</div>:<div className="psuedo-banner" style={{textAlign:"center",position:"absolute",width:"100%",bottom:window.innerWidth <700?"55%":window.innerWidth>800&&window.innerWidth<950?"70%":""}}><span>U</span>rban <span>P</span>latform for deliver<span>Y</span><br />of <span>O</span>nline <span>G</span>overnance</div>}
-                  <div className="banner-slogan" style={{position:window.innerWidth <950?"absolute":"",bottom:window.innerWidth <950?"35%":"",textAlign:window.innerWidth <950?"center":"",width:window.innerWidth<950?"100%":""}}>A digital platform for urban<br/>
-                            citizen services</div>
-                  </div>
+                
                 </div>
                 </div>
               <picture>
-                <source id="backgroung-login" media="(min-width: 950px)" srcset="https://in-egov-assets.s3.ap-south-1.amazonaws.com/images/employee-login.png" style={{"position":"absolute","height":"100%","width":"100%"}} />
-                  <source media="(min-width: 250px)" srcset="https://in-egov-assets.s3.ap-south-1.amazonaws.com/images/employee-mobile-login.png" />
-                    <img src="https://in-egov-assets.s3.ap-south-1.amazonaws.com/images/employee-login.png" alt="imagealttext" style={{"position":"absolute","height":"100%","width":"100%"}}/>
+                <source id="backgroung-login" media="(min-width: 950px)" srcset="https://nugp-assets.s3.ap-south-1.amazonaws.com/nugp+asset/Banner+UPYOG+(1920x1080).jpg" style={{"position":"absolute","height":"100%","width":"100%"}} />
+                  <source media="(min-width: 250px)" srcset="https://nugp-assets.s3.ap-south-1.amazonaws.com/nugp+asset/Banner+UPYOG+%28500x900%29.jpg" />
+                    <img src="https://nugp-assets.s3.ap-south-1.amazonaws.com/nugp+asset/Banner+UPYOG+(1920x1080).jpg" alt="imagealttext" style={{"position":"absolute","height":"100%","width":"100%","zIndex":"1","display":window.location.href.includes("user/profile")?"none":""}}/>
                     </picture>
               {/* <img class="image" id="main-img" src="https://in-egov-assets.s3.ap-south-1.amazonaws.com/images/employee-login.png" /> */}
               {/* <img class="image" id="main-img" src="https://i.postimg.cc/9Q7jT6Dd/Banner-Image-2.png" /> */}

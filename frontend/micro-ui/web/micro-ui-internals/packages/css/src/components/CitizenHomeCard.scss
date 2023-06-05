@@ -12,6 +12,11 @@
   }
 
   .links{
+    display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            grid-gap: 1px;
+            gap: 1px;
+        
       @apply text-heading-s text-primary-main;
 
       a{
@@ -23,12 +28,13 @@
 @screen dt{
 
   .citizenAllServiceGrid{
+    display: flex-root !important;
       @apply grid grid-cols-2 gap-4;
     }
 
   .CitizenHomeCard{
      
-      min-width: 40%;
+      min-width: 100%;
       margin-left: 0;
       box-shadow: rgb(50 50 93 / 18%) 0px 50px 100px -20px, rgb(0 0 0 / 16%) 0px 30px 60px -30px, rgb(10 37 64 / 17%) 0px -2px 6px 0px inset;
       @apply inline-block mr-lg p-lg align-top;
@@ -40,7 +46,13 @@
       }
   
       .links{
+        display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            grid-gap: 1px;
+            gap: 1px;
+        
           a{
+            
               @apply pb-md
           }
       }
