@@ -133,13 +133,13 @@ const Home = () => {
   return isLoading ? (
     <Loader />
   ) : (
-    <div className="HomePageContainer">
+    <div className="HomePageContainer" style={{width:"100%"}}>
       {/* <div className="SideBarStatic">
         <StaticCitizenSideBar />
       </div> */}
       <div className="HomePageWrapper">
         {<div className="BannerWithSearch">
-          {isMobile ? <img src={appBannerMobObj?.bannerUrl} /> : <img src={appBannerWebObj?.bannerUrl} />}
+          {isMobile ? <img src={"https://i.ibb.co/sw2P5jy/Standee-UPYOG-Component-100-1.jpg"} /> : <img src={"https://nugp-assets.s3.ap-south-1.amazonaws.com/nugp+asset/Banner+UPYOG+%281920x500%29A.jpg"} />}
           {/* <div className="Search">
             <StandaloneSearchBar placeholder={t("CS_COMMON_SEARCH_PLACEHOLDER")} />
           </div> */}

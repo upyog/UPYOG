@@ -298,7 +298,7 @@
 
         .complaint-input-container {
           /* display: inline-block !important; */
-          display: grid;
+          display: flex-root;
           grid-template-columns: 33.33% 33.33% 33.33%;
 
           &.for-pt {
