@@ -1205,7 +1205,8 @@ class ShowField extends Component {
   };
 
   getReportTitle = (rptName) => {
-    let reportName = rptName || this.state.reportName || "";
+    let { metaData } = this.props;
+    let reportName = rptName || metaData && metaData.reportDetails && metaData.reportDetails.summary || this.state.reportName || "";
     reportName = reportName.toUpperCase();
     let reportTitleArr = reportName && getLocaleLabels(reportName, reportName).split(/(?=[A-Z])/);
     let reportTitle = "";
