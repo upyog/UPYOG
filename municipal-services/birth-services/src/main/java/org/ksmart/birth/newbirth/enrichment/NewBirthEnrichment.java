@@ -157,7 +157,7 @@ public class NewBirthEnrichment implements BaseEnrichment {
         request.getNewBirthDetails()
                 .forEach(birth -> {
                     if (birth.getParentAddress() != null) {
-                        if(isCreate) {
+                        if (isCreate) {
                             birth.getParentAddress().setPermanentUuid(UUID.randomUUID().toString());
                             birth.getParentAddress().setPresentUuid(UUID.randomUUID().toString());
                             birth.getParentAddress().setBioAdoptPermanent("BIOLOGICAL");
