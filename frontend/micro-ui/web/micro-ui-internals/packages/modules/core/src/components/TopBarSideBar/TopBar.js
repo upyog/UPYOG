@@ -75,7 +75,7 @@ const TopBar = ({
   const urlsToDisableNotificationIcon = (pathname) =>
     !!Digit.UserService?.getUser()?.access_token
       ? false
-      : ["/digit-ui/citizen/select-language", "/digit-ui/citizen/select-location"].includes(pathname);
+      : ["/digit-ui/citizen/select-language", "/digit-ui/citizen/"].includes(pathname);
 
   if (CITIZEN) {
     return (
