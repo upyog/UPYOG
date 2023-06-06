@@ -6,6 +6,7 @@
   }
   .ground-container {
     margin-bottom: 56px;
+    margin-left: 0px;
     @apply flex flex-col;
   }
   .card-home {
@@ -470,7 +471,7 @@
 
 @screen dt {
   .d-grid {
-    display: grid;
+    display: flex-root;
     grid-template-columns: 250px 250px 250px 250px;
     column-gap: 10px;
     row-gap: 2px;
@@ -492,6 +493,7 @@
 @media (min-width: 640px) {
   .employee {
     .ground-container {
+      margin-left: 0px !important;
       @apply block ml-md;
     }
     .breadcrumb {
@@ -531,7 +533,6 @@
     .main {
       width: 100%;
       padding-top: 80px;
-      padding-left: 16px;
       min-height: calc(100vh - 48px);
       margin-bottom: 40px !important;
     }

@@ -79,11 +79,11 @@ const GenericChart = ({
   let headerName = t(Digit.Utils.locale.getTransformedLocale(header));
   return (
     <Card className={`chart-item ${className}`} ReactRef={chart}>
-      <div className={`chartHeader ${showSearch && "column-direction"}`}>
+      <div className={`chartHeader ${showSearch && "column-direction"}`} style={{flexDirection:"column"}}>
         <div>
           {showHeader && (
             <CardLabel className={"dss-header-label"}>
-              <span className={`tooltip ${headerName?.length < (isMobile ? 20 : 30) ? "dss-white-pre" : "dss-white-pre-line"}`} style={{whiteSpace:"break-spaces"}}>
+              <span className={`tooltip ${headerName?.length < (isMobile ? 20 : 30) ? "dss-white-pre" : "dss-white-pre-line"}`}>
                 {headerName}
                 {chartDenomination?.toLowerCase() === "amount" && (
                   <span style={{ whiteSpace: "pre" }}> ({t(`DSS_${Digit.Utils.locale.getTransformedLocale(value?.denomination)}`)})</span>
@@ -102,7 +102,7 @@ const GenericChart = ({
               {/* {`${t(header)}`} */}
             </CardLabel>
           )}
-          {subHeader && <p style={{ color: "#505A5F", fontWeight: 700 }}>{subHeader}</p>}
+          { chip.length <2 && subHeader && <p style={{ color: "#505A5F", fontWeight: 700 }}>{subHeader}</p>}
         </div>
         <div className="sideContent">
           {chip && chip.length > 1 && <Chip items={chip} onClick={updateChip} t={t} />}
