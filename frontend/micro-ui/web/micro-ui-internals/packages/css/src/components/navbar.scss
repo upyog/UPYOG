@@ -111,12 +111,12 @@
     padding-right: 16px;
     padding-left: 16px;
     &.active {
-      border-left: 5px solid #f47738;
+      border-left: 5px solid #a82227;
       .menu-label {
-        color: #f47738;
+        color: #a82227;
       }
       .icon {
-        fill: #f47738;
+        fill: #a82227;
       }
     }
 
@@ -177,7 +177,6 @@
 }
 
 .drawer-desktop {
-  overflow: auto;
   .menu-item {
     border: 10px;
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
@@ -220,13 +219,13 @@
       padding-right: 16px;
       padding-left: 16px;
       &.active {
-        border-left: 5px solid #f47738;
+        border-left: 5px solid #a82227;
         padding-left: 11px;
         .menu-label {
-          color: #f47738;
+          color: #a82227;
         }
         .icon {
-          fill: #f47738;
+          fill: #a82227;
         }
       }
 
