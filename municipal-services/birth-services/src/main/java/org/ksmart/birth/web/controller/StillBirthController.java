@@ -52,14 +52,13 @@ public class StillBirthController {
     public ResponseEntity<?> updateBirthDetails(@RequestBody StillBirthDetailRequest request) {
         BirthCertificate birthCertificate = new BirthCertificate();
         List<StillBirthApplication> birthApplicationDetails=stillBirthService.updateBirthDetails(request);
-        if(request.getBirthDetails().get(0).getIsWorkflow()) {
             if ((birthApplicationDetails.get(0).getApplicationStatus().equals(STATUS_APPROVED) && birthApplicationDetails.get(0).getAction().equals(WF_APPROVE))) {
                 RegisterBirthDetailsRequest registerBirthDetailsRequest = registryReq.createRegistryRequestNew(request);
                 if (registerBirthDetailsRequest.getRegisterBirthDetails().size() == 1) {
                     registerBirthService.saveRegisterBirthDetails(registerBirthDetailsRequest);
                 }
             }
-        }
+
         StillBirthResponse response=StillBirthResponse.builder()
                 .birthDetails(birthApplicationDetails)
                 .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(),
