@@ -358,7 +358,7 @@ function ApplicationDetailsContent({
           {detail?.additionalDetails?.redirectUrl && (
             <div style={{ fontSize: "16px", lineHeight: "24px", fontWeight: "400", padding: "10px 0px" }}>
               <Link to={detail?.additionalDetails?.redirectUrl?.url}>
-                <span className="link" style={{ color: "#F47738" }}>
+                <span className="link" style={{ color: "#a82227" }}>
                   {detail?.additionalDetails?.redirectUrl?.title}
                 </span>
               </Link>
