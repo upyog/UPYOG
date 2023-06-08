@@ -19,9 +19,7 @@
   "author": "Abhinav Kushwaha <abhinav.kushwaha@egovernments.org>",
   "license": "MIT",
   "private": true,
-  "engines": {
-    "node": ">=14"
-  },
+  "engines": { "node" : "14.18.1" },
   "scripts": {
     "start": "SKIP_PREFLIGHT_CHECK=true run-s build start:dev",
     "sprint": "SKIP_PREFLIGHT_CHECK=true run-s start:script",

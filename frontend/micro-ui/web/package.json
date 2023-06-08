@@ -3,6 +3,7 @@
   "version": "1.7.0-beta.2",
   "private": true,
   "homepage": "/digit-ui",
+  "engines": { "node" : "14.18.1" },
   "workspaces": [
     "micro-ui-internals/packages/libraries",
     "micro-ui-internals/packages/react-components",
@@ -15,9 +16,6 @@
     "micro-ui-internals/packages/modules/tl",
     "micro-ui-internals/packages/modules/ws"
   ],
-  "engines": {
-    "node": ">=14"
-  },
   "dependencies": {
     "@upyog-niua/upyog-css": "1.0.3",
     "@egovernments/digit-ui-libraries": "1.7.0-beta.2",

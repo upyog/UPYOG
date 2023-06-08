@@ -5,6 +5,7 @@
   "repository": "",
   "license": "egov",
   "private": true,
+  "engines": { "node" : "12.13.0" },
   "scripts": {
     "clean": "lerna clean -f --yes && rm -rf node_modules",
     "reset": "yarn run clean && yarn i",
