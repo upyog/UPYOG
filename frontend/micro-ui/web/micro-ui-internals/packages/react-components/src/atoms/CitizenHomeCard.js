@@ -9,7 +9,7 @@ const CitizenHomeCard = ({ header, links = [], state, Icon, Info, isInfo = false
         <Icon />
       </div>
 
-      <div className="links" style={{display:"grid",gridTemplateColumns:"repeat(4, minmax(0, 1fr))",}}>
+      <div className="links">
         {links.map((e, i) => (
           <div className="linksWrapper">
             <Link key={i} to={{ pathname: e.link, state: e.state }}>
