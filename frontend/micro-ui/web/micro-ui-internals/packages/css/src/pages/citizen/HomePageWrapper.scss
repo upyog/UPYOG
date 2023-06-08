@@ -61,15 +61,18 @@
   .SideBarStatic {
     width: 219px;
     background: #ffffff;
+    margin-top: -24px;
+  }
+}
+@media (max-width: 780px) {
+  .SideBarStatic {
+    width: 219px;
+    background: #ffffff;
+    margin-top: -24px;
     display: none;
   }
 }
 
-@media (max-width: 780px) {
-  .SideBarStatic {
-    display: none;
-  }
-}
 .HomePageContainer {
   @media (min-width: 780px) {
     display: flex;
@@ -80,7 +83,7 @@
 
 .moduleLinkHomePage {
   @media (min-width: 780px) {
-    width: 100%;
+    width: calc(100% - 219px);
   }
   margin-top: -25px;
   img {
@@ -154,6 +157,7 @@
   }
 
   .moduleLinkHomePageModuleLinks {
-    width: 100%;
+    max-width: unset;
+    width:100%
   }
 }
