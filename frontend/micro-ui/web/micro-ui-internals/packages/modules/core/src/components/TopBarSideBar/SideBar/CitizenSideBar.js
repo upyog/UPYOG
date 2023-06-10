@@ -74,14 +74,6 @@ const Profile = ({ info, stateName, t }) => {
 };
 const PoweredBy = () => (
   <div className="digit-footer" style={{ marginBottom: 0 }}>
-    <img
-      alt="Powered by DIGIT"
-      src={window?.globalConfigs?.getConfig?.("DIGIT_FOOTER")}
-      style={{ cursor: "pointer" }}
-      onClick={() => {
-        window.open(window?.globalConfigs?.getConfig?.("DIGIT_HOME_URL"), "_blank").focus();
-      }}
-    />{" "}
   </div>
 );
 
