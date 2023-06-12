@@ -96,7 +96,7 @@
       justify-content: unset;
       margin-bottom: 0;
       .complaint-input-container {
-        display: grid;
+        display: grid !important;
         grid-template-columns: 33.33% 33.33% 33.33%;
       }
       .form-field {
