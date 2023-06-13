@@ -175,7 +175,7 @@ public class EstimationService {
 		if(criteria.getFromDate()==null || criteria.getToDate()==null)
             enrichmentService.enrichDemandPeriod(criteria,assessmentYear,masterMap);
 
-        List<BillingSlab> filteredBillingSlabs = getSlabsFiltered(property, requestInfo);
+        List<BillingSlab> filteredBillingSlabs = getSlabsFiltered(property,criteria.getFinancialYear(),requestInfo);
 
 		Map<String, Map<String, List<Object>>> propertyBasedExemptionMasterMap = new HashMap<>();
 		Map<String, JSONArray> timeBasedExemptionMasterMap = new HashMap<>();
@@ -537,11 +537,15 @@ public class EstimationService {
 	/**
 	 * method to do a first level filtering on the slabs based on the values present in Property detail
 	 */
-	private List<BillingSlab> getSlabsFiltered(Property property, RequestInfo requestInfo) {
+	private List<BillingSlab> getSlabsFiltered(Property property, String financialYear,RequestInfo requestInfo) {
 
 		PropertyDetail detail = property.getPropertyDetails().get(0);
+		log.info("financial Year in Criteria is" + financialYear);
+		
 		String tenantId = property.getTenantId();
-		BillingSlabSearchCriteria slabSearchCriteria = BillingSlabSearchCriteria.builder().tenantId(tenantId).build();
+		String validFrom=financialYear.split("-")[0]+"-04-01";
+		String validTo="20"+financialYear.split("-")[1]+"-03-31";
+		BillingSlabSearchCriteria slabSearchCriteria = BillingSlabSearchCriteria.builder().tenantId(tenantId).validFrom(validFrom).validTo(validTo).build();
 		List<BillingSlab> billingSlabs = billingSlabService.searchBillingSlabs(requestInfo, slabSearchCriteria)
 				.getBillingSlab();
 

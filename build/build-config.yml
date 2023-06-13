@@ -260,6 +260,13 @@ config:
       - work-dir: "core-services/egov-survey-services/src/main/resources/db"
         image-name: "egov-survey-services-db"
 
+  - name: "builds/upyog/core-services/service-request"
+    build:
+      - work-dir: "core-services/service-request"
+        image-name: "service-request"
+        dockerfile: "build/maven/Dockerfile"
+      - work-dir: "core-services/service-request/src/main/resources/db"
+        image-name: "service-request-db"
 
   - name: "builds/upyog/core-services/report"
     build:
@@ -729,6 +736,12 @@ config:
       - work-dir: frontend/micro-ui/
         dockerfile: frontend/micro-ui/web/docker/Dockerfile
         image-name: digit-ui
+        
+  - name: builds/upyog/frontend/upyog-ui
+    build:
+      - work-dir: frontend/upyog-ui/
+        dockerfile: frontend/upyog-ui/web/docker/Dockerfile
+        image-name: upyog-ui        
 
   - name: builds/upyog/frontend/micro-ui/storybook
     build:

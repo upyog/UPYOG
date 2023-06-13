@@ -1,20 +1,22 @@
-# WS-Calculator Service
+# Water Calculator Service (ws-calculator)
+
 This module created to manage the Bill calculation for the registered water service connections in the system.
 
 ### DB UML Diagram
+
 - To Do
 
 ### Service Dependencies
-- egov-mdms service
-- property-service
-- egov-persister
-- ws-service
-- egov-user
-- egov-workflow-v2
+- MDMS Service (egov-mdms service)
+- Property Service (property-service)
+- Persister Service (egov-persister)
+- Water Service (ws-service)
+- User Service (egov-user)
+- Workflow Service (egov-workflow-v2)
 
 ### Swagger API Contract
 
-- Please refer to the [Swagger API contarct](https://github.com/egovernments/municipal-services/blob/master/docs/water-sewerage-services.yaml) to understand the structure of APIs and to have visualization of all internal APIs.
+- Please refer to the [Swagger API Contract](https://editor.swagger.io/?url=https://raw.githubusercontent.com/upyog/UPYOG/master/municipal-services/docs/water-sewerage-services.yaml#!/) to understand the structure of APIs and to have visualization of all internal APIs.
 
 ## Service Details
 

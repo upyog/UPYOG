@@ -44,18 +44,14 @@ import org.egov.tracer.config.TracerConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
-import org.springframework.stereotype.Component;
+
 
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class }) 
-@Component
+@ComponentScan
 @Import(TracerConfiguration.class)
 public class PTServicesDxApplication {
-
-
-    private static final String DATE_FORMAT = "dd-MM-yyyy HH:mm:ss";
-
-	
 
 	public static void main(String[] args) {
 		SpringApplication.run(PTServicesDxApplication.class);

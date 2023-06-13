@@ -1,12 +1,16 @@
 import React, { Fragment } from "react";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
+import { Link, useHistory, useParams } from "react-router-dom";
 import {
+  Header,
   ActionLinks,
+  Card,
   CardSectionHeader,
   ConnectingCheckPoints,
   CheckPoint,
+  KeyNote,
   SubmitBar,
+  LinkButton,
   Loader,
   Rating,
 } from "@egovernments/digit-ui-react-components";
@@ -89,11 +93,11 @@ export const ApplicationTimeline = (props) => {
           <div style={{ marginTop: "24px" }}>
             <Link
               to={{
-                pathname: `/digit-ui/citizen/payment/collect/FSM.TRIP_CHARGES/${props.id}/?tenantId=${props.application.tenantId}`,
+                pathname: `/digit-ui/citizen/payment/my-bills/FSM.TRIP_CHARGES/${props.id}/?tenantId=${props.application.tenantId}`,
                 state: { tenantId: props.application.tenantId },
               }}
             >
-              <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} />
+              {!window.location.href.includes("citizen/fsm/") && <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} />}
             </Link>
           </div>
         );

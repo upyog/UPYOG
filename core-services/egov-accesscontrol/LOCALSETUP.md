@@ -1,6 +1,6 @@
 # Local Setup
 
-To setup the egov-accesscontrol service in your local system, clone the [Core Service repository](https://github.com/egovernments/core-services).
+To setup the egov-accesscontrol service in your local system, clone the [Core Service Repository](https://github.com/upyog/UPYOG/tree/master/core-services).
 
 ## Dependencies
 

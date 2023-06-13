@@ -1,6 +1,5 @@
 # Report Service
-Reporting Service is a service running independently on seperate server. This service loads the report configuration from a yaml file at the run time and provides the report details by using
-couple of APIS.
+Reporting Service is a service running independently on seperate server. This service loads the report configuration from a yaml file at the run time and provides the report details by using couple of APIs.
 
 
 ### DB UML Diagram
@@ -8,11 +7,12 @@ couple of APIS.
 - NA
 
 ### Service Dependencies
-- `egov-enc-service`: used for decryption of user PII data if required
-- `egov-mdms-service`: used by encryption library to load encryption configs
+- Encryption Service `egov-enc-service`: used for decryption of user PII data if required
+- MDMS Service `egov-mdms-service`: used by encryption library to load encryption configs
 
 ### Swagger API Contract
-http://editor.swagger.io/?url=https://raw.githubusercontent.com/egovernments/egov-services/master/docs/reportinfra/contracts/reportinfra-1-0-0.yml#!/
+
+https://editor.swagger.io/?url=https://raw.githubusercontent.com/upyog/UPYOG/master/core-services/docs/report-contract.yml#!/
 
 ## Service Details
 
@@ -22,10 +22,10 @@ http://editor.swagger.io/?url=https://raw.githubusercontent.com/egovernments/ego
 - Reload the configuration at runtime
 
 ### YML configuration
-- All the module yml configurations are located in https://github.com/egovernments/configs/tree/master/reports
+- All the module yml configurations are located in https://github.com/upyog/upyog-configs/tree/master/configs/reports
 
 ### Sample yml configuration :
-- https://raw.githubusercontent.com/egovernments/egov-services/master/docs/citizen/reports/report.yml
+- https://raw.githubusercontent.com/upyog/upyog-configs/master/configs/reports/config/birthcount-reports.yml
 
 
 #### Report Configuration Details:

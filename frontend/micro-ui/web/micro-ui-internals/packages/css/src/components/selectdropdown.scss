@@ -83,7 +83,7 @@
   .options-card {
     width: 100% !important;
     box-shadow: 0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12), 0 5px 5px -3px rgba(0, 0, 0, 0.2);
-    max-height: 400px;
+    max-height: 300px;
     overflow: auto;
     @apply absolute z-20 mt-xs bg-white max-w-full;
 
@@ -101,7 +101,7 @@
   .select {
     @apply flex;
     input {
-      @apply text-center;
+      text-align: left;
     }
   }
   .select-active {
@@ -109,9 +109,10 @@
   }
   .options-card {
     .profile-dropdown--item {
-      justify-content: center;
+      justify-content: left;
     }
   }
+  margin-bottom: 0;
 }
 
 .employee-select-wrap--elipses {

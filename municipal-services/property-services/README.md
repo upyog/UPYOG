@@ -1,6 +1,6 @@
-# Property-Service
+# Property Service (property-services)
 
- Property services creates property and stores in registry on top of which municipal activities like assessment, mutation and amalgamation can be performed. keeps tracks of the properties and the taxes paid for them.
+Property service creates property and stores in registry on top of which municipal activities like assessment, mutation and amalgamation can be performed. keeps tracks of the properties and the taxes paid for them.
 
 ### DB UML Diagram
 
@@ -8,16 +8,16 @@ NA
 
 ### Service Dependencies
 
-- user
-- ID-GEN
-- pt-calculator
-- MDMS
-- Location
-- localisation
+- User Service (user)
+- ID Gen. Service (ID-GEN)
+- Property Tax Calculator Service (pt-calculator)
+- MDM Service (MDMS)
+- Location Service (Location)
+- Localisation Service (localisation)
 
 ### Swagger API Contract
 
-https://raw.githubusercontent.com/egovernments/municipal-services/master/docs/property-services/property-services.yml
+https://editor.swagger.io/?url=https://raw.githubusercontent.com/upyog/UPYOG/master/municipal-services/docs/property-services/property-services.yml#!/
 
 ## Service Details
 

@@ -1,8 +1,4 @@
-
-
-# eGov PropertyTax
-
-
+# PropertyTax
 
 Module is used to register property in the system.
 
@@ -18,8 +14,8 @@ Module is used to register property in the system.
 
 
 
-
 ### Project Structure 
+
 *Packages*
  - config - Contains all the configuration properties related to module
  - service - Consists of all services containing the business logic.
@@ -35,12 +31,12 @@ Module is used to register property in the system.
 
 
 ### Resources
-- Granular details about the API's can be found in the [swagger api definition](https://raw.githubusercontent.com/egovernments/egov-services/master/docs/rainmaker/property-tax/property-service.yml)
-- Postman collection for all the API's can be found in the [postman collection](https://raw.githubusercontent.com/egovernments/egov-services/master/rainmaker/pt-services-v2/pt-services-v2-dev.postman_collection.json)
+
+- Granular details about the API's can be found in the [Swagger API definition](https://raw.githubusercontent.com/upyog/UPYOG/master/municipal-services/docs/property-services/pt-service-v2-contract.yml)
+- Postman collection for all the API's can be found in the [Postman Collection](https://raw.githubusercontent.com/upyog/UPYOG/master/municipal-services/pt-services-v2/pt-services-v2-dev.postman_collection.json)
 
 
 ## Build & Run
-
 
     mvn clean install
     java -jar target/egov-pt-service-v2-0.0.1-SNAPSHOT.jar

@@ -1,18 +1,19 @@
-# Master Data Management service
+# Master Data Management service (egov-mdms-service) or MDM Service
 
-Master Data Management Service is a core service that is made available on the DIGIT platform.  It encapsulates the functionality surrounding Master Data Management.  The service fetches Master Data pertaining to different modules. The functionality is exposed via REST API.
+Master Data Management Service is a core service that is made available on the UPYOG platform.  It encapsulates the functionality surrounding Master Data Management. The service fetches Master Data pertaining to different modules. The functionality is exposed via REST API.
 
 ### DB UML Diagram
 
 - NA
 
 ### Service Dependencies
+
 - NA
 
 ### Swagger API Contract
 
 Please refer to the  below Swagger API contarct for MDMS service to understand the structure of APIs and to have visualization of all internal APIs.
-http://editor.swagger.io/?url=https://raw.githubusercontent.com/egovernments/egov-services/master/docs/mdms/contract/v1-0-0.yml#!/
+https://editor.swagger.io/?url=https://raw.githubusercontent.com/upyog/UPYOG/master/core-services/docs/mdms-contract.yml#!/
 
 
 ## Service Details
@@ -22,9 +23,9 @@ Once the data is stored in the map the same can be retrieved by making an API re
 
 #### Master data management files check in location and details -
 
-1. Data folder parallel to docs (https://github.com/egovernments/egov-mdms-data/tree/master/data/pb). 
+1. Data folder parallel to docs (https://github.com/upyog/upyog-mdms-data/tree/master/data/pg). 
 2. Under data folder there will be a folder `<state>` which is a state specific master folder.
-3. Under `<state>` folder there will `<tenant>` folders where ulb specific master data will be checked in. for example `pb.testing`
+3. Under `<state>` folder there will `<tenant>` folders where ulb specific master data will be checked in. for example `pg.testing`
 4. Each module will have one file each for statewise and ulb wise master data. Keep the file name as module name itself.
 
 ### Sample Config
@@ -33,7 +34,7 @@ Each master has three key parameters `tenantId`, `moduleName`, `masterName`. A s
 
 ```json
 {
-  "tenantId": "pb",
+  "tenantId": "pg",
   "moduleName": "common-masters",
   "OwnerType": [
     {
@@ -52,7 +53,7 @@ Each master has three key parameters `tenantId`, `moduleName`, `masterName`. A s
 }
 ```
 Suppose there are huge data to be store in one config file, the data can be store in seperate files. And these seperated config file data can be use under one master name, if `isMergeAllowed`
-flag is `true` in [mdms-masters-config.json](https://raw.githubusercontent.com/egovernments/punjab-mdms-data/UAT/mdms-masters-config.json)
+flag is `true` in [mdms-masters-config.json](https://raw.githubusercontent.com/upyog/upyog-mdms-data/master/master-config.json)
 ### API Details
 
 `BasePath` /mdms/v1/[API endpoint]

@@ -210,6 +210,8 @@
   .download-button {
     color: #a82227;
     margin-left: 8px;
+    white-space: nowrap;
+
   }
 }
 
@@ -537,7 +539,7 @@ input[type="number"] {
       padding: 8px 24px;
       color: white;
       cursor: pointer;
-      background-color: #f47738;
+      background-color: #a82227;
     }
   }
 }

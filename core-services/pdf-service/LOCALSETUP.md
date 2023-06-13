@@ -1,6 +1,6 @@
 # Local Setup
 
-To setup the PDF-service in your local system, clone the [Core Service repository](https://github.com/egovernments/core-services).
+To setup the PDF-service in your local system, clone the [Core Service Repository](https://github.com/upyog/UPYOG/tree/master/core-services).
 
 ## Dependencies
 
@@ -16,8 +16,10 @@ To setup the PDF-service in your local system, clone the [Core Service repositor
 ## Running Locally
 
 ### Local setup
-1. To setup the PDF-service, clone the [Core Service repository](https://github.com/egovernments/core-services)
-2. Write configuration as per your requirement [Sample data config](https://raw.githubusercontent.com/egovernments/configs/master/pdf-service/data-config/tl-receipt.json) and [Sample format config](https://raw.githubusercontent.com/egovernments/configs/master/pdf-service/format-config/tl-receipt.json).
+1. To setup the PDF-service, clone the [Core Service Repository](https://github.com/upyog/UPYOG/tree/master/core-services)
+2. Write configuration as per your requirement 
+   - [Sample data config](https://raw.githubusercontent.com/upyog/upyog-configs/master/configs/pdf-service/data-config/tl-receipt.json) and 
+   - [Sample format config](https://raw.githubusercontent.com/upyog/upyog-configs/master/configs/pdf-service/data-config/tl-receipt.json). 
 3. In EnvironmentVariable.js file, mention the local file path of data and format configuration file under the variables `DATA_CONFIG_URLS: process.env.DATA_CONFIG_URLS`  and `FORMAT_CONFIG_URLS: process.env.FORMAT_CONFIG_URLS` while mentioning the  file path we have to add `file://` as prefix. If there are multiple file seperate it with `,` .
     
     `DATA_CONFIG_URLS: process.env.DATA_CONFIG_URLS || "file:///home/xyz/Documents/configs/pdf/data/abc-data.json"`

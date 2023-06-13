@@ -1,7 +1,7 @@
 
-# land-services
+# Land Service (land-services)
 
-This service is the major service supporting bpa-services which handles the data of the land like land details, owner information, unit ,address and documents which has the complete information of the land.
+This service is the major service supporting BPA Service (bpa-services) which handles the data of the land like land details, owner information, unit ,address and documents which has the complete information of the land.
 
 ### DB UML Diagram
 
@@ -27,7 +27,7 @@ This service is the major service supporting bpa-services which handles the data
 
 ### Swagger API Contract
 
-- [Swagger API](https://github.com/egovernments/municipal-services/blob/master/docs/bpa/bpa-service.yaml)
+- [Swagger API](https://editor.swagger.io/?url=https://raw.githubusercontent.com/upyog/UPYOG/master/municipal-services/docs/bpa/bpa-service.yaml#!/)
 
 ## Service Details
 

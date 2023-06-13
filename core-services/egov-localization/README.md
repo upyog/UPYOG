@@ -1,10 +1,9 @@
 
-# <Localisation>
+# Localisation Service
 
-This service provides localisation capacity to the Digit suite of services.
+This service provides localisation capacity to the UPYOG application.
 
 ### DB UML Diagram
-
 
 
 
@@ -14,6 +13,7 @@ This service provides localisation capacity to the Digit suite of services.
 
 ### Swagger API Contract
 
+https://editor.swagger.io/?url=https://raw.githubusercontent.com/upyog/UPYOG/master/core-services/docs/localisation-contract.yml#!/
 
 
 

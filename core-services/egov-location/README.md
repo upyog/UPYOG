@@ -1,21 +1,21 @@
-# eGov-Location Service
+# Location Service (egov-location)
 
-An eGov core application which provides location details of the tenant for which the services are being provided.
+The UPYOG core application which provides location details of the tenant for which the services are being provided.
 ### DB UML Diagram
 
 - NA
 
 ### Service Dependencies
-- egov-mdms service
+- `MDMS Service (egov-mdms)`
 
 ### Swagger API Contract
 
-Please refer to the [Swagger API contarct](https://editor.swagger.io/?url=https://raw.githubusercontent.com/egovernments/egov-services/master/docs/egov-location/contracts/v11-0-0.yml#!/) for egov-location service to understand the structure of APIs and to have visualization of all internal APIs.
+Please refer to the [Swagger API Contract](https://editor.swagger.io/?url=https://raw.githubusercontent.com/upyog/UPYOG/master/core-services/docs/egov-location-contract.yml#!/) for Location service to understand the structure of APIs and to have visualization of all internal APIs.
 
 
 ## Service Details
 
-The eGov location information also known as boundary date of ULB’s are defined in  different hierarchies ADMIN/ELECTION hierarchy which is defined by theAdministrators, Revenue hierarchy defined by the Revenue department.
+The Location information also known as boundary date of ULB’s are defined in  different hierarchies ADMIN/ELECTION hierarchy which is defined by the Administrators, Revenue hierarchy defined by the Revenue department.
 
 The election hierarchy has the locations divided into several types like zone, election ward, block, street  and locality. The Revenue hierarchy has the locations divided into zone, ward, block and locality.
 

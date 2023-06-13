@@ -345,7 +345,7 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
             justifyContent: "center",
             alignItems: "center",
             maxWidth: "100%",
-            height: "376px",
+            height: "320px",
             borderRadius: "4px",
             boxShadow: userType === "citizen" ? "" : "1px 1px 4px 0px rgba(0,0,0,0.2)",
             border: `${userType === "citizen" ? "8px" : "24px"} solid #fff`,
@@ -657,6 +657,9 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
               marginRight: windowWidth < 768 ? "16px" : "31px",
               color: "white",
               borderBottom: "1px solid black",
+              cursor:"pointer",
+              "zIndex":"999"
+
             }}
           >
             {t("CORE_COMMON_SAVE")}

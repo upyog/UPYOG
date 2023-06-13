@@ -45,4 +45,7 @@ public class ApplicationProperties {
     @Value("${adaptor.ingest.system.role}")
     private String adaptorIngestSystemRole;
 
+
+
+
 }

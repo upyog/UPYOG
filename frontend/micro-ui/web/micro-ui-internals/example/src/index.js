@@ -54,11 +54,14 @@ const enabledModules = [
   "Engagement",
   "NOC",
   "WS",
-  "CommonPT",
+  // "CommonPT",
   "NDSS",
   "Bills",
   "SW",
-  "BillAmendment"
+  "BillAmendment",
+  "FireNoc",
+  "Birth",
+  "Death"
 ];
 
 const initTokens = (stateCode) => {
