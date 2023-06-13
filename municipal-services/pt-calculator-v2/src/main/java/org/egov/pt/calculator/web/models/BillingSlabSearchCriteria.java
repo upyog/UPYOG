@@ -36,4 +36,10 @@ public class BillingSlabSearchCriteria {
 	@JsonProperty("usageCategoryMinor")
 	public String usageCategoryMinor;
 	
+	@JsonProperty("validFrom")
+	public String validFrom;
+	
+	@JsonProperty("validTo")
+	public String validTo;
+	
 }

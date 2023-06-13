@@ -14,7 +14,13 @@ const MetricData = ({ t, data, code, indexValuesWithStar }) => {
       <p className="heading-m" style={{ textAlign: "right", paddingTop: "0px", whiteSpace: "nowrap" }}>
         {indexValuesWithStar?.includes(code) ? (
           <Rating toolTipText={t("COMMON_RATING_LABEL")} currentRating={Math.round(data?.headerValue * 10) / 10} styles={{ width: "unset", marginBottom:"unset" }} starStyles={{ width: "25px" }} />
-        ) : (
+        ) : data?.headerName.includes("AVG") ? (
+          `${Digit.Utils.dss.formatter(data?.headerValue, data?.headerSymbol, "Unit", true)} ${
+            code === "totalSludgeTreated" ? t(`DSS_KL`) : ""
+          }`
+        ):
+        
+        (
           `${Digit.Utils.dss.formatter(data?.headerValue, data?.headerSymbol, value?.denomination, true, t)} ${
             code === "totalSludgeTreated" ? t(`DSS_KL`) : ""
           }`
@@ -69,7 +75,21 @@ const MetricChartRow = ({ data, setChartDenomination, index, moduleCode, indexVa
           },
         }));
       index === 0 && setChartDenomination(response?.responseData?.data?.[0]?.headerSymbol);
+      if (response?.responseData?.visualizationCode === "todaysLastYearCollectionv3") {
+
+        const today = new Date();
+        const previousYearDate = new Date(today.getFullYear() - 1, today.getMonth(), today.getDate());
+        const previousYear = previousYearDate.getFullYear();
+        const previousMonth = previousYearDate.getMonth() + 1; // Month is zero-based, so adding 1
+        const previousDay = previousYearDate.getDate();
+        const formattedPreviousYearDate = `${previousDay < 10 ? '0' + previousDay : previousDay}/${previousMonth < 10 ? '0' + previousMonth : previousMonth}/${previousYear}`;
+       setShowDate(oldstate=>({...oldstate,[id]:{
+         todaysDate: formattedPreviousYearDate,
+         lastUpdatedTime: "",
+       }}));
+     }
     } else {
+      
       setShowDate({});
     }
   }, [response]);
