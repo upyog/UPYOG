@@ -31,8 +31,8 @@ const TopBar = ({
   // };
   return (
     <div className="navbar">
-      <div className="center-container back-wrapper">
-        <div className="hambuger-back-wrapper">
+      <div className="center-container back-wrapper" style={{display:"flex"}}>
+        <div className="hambuger-back-wrapper" style={{display:"flex",width:"70%"}}>
           {isMobile && <Hamburger handleClick={toggleSidebar} />}
           <a href={window.location.href.includes("citizen")?"/digit-ui/citizen":"/digit-ui/employee"}><img
             className="city"
