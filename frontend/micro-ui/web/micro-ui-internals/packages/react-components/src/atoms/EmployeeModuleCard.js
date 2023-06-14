@@ -51,7 +51,7 @@ import { Link } from "react-router-dom";
 // };
 const EmployeeModuleCard = ({ Icon, moduleName, kpis = [], links = [], isCitizen = false, className, styles, FsmHideCount }) => {
   return (
-    <div className={className ? className : "employeeCard card-home customEmployeeCard"} style={styles ? styles : {}}>
+    <div className={className ? "employeeCard card-home customEmployeeCard" : "employeeCard card-home customEmployeeCard"} style={className ? {} : styles}>
       <div className="employeeCustomCard" style={{ width: "100%", height: "85%", position: "relative" }}>
         <span className="text-employee-card">{moduleName}</span>
         <span className="logo-removeBorderRadiusLogo" style={{ position: "absolute", right: "10%", top: "10%" }}>{Icon}</span>
