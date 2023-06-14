@@ -174,8 +174,7 @@ public class EstimationService {
 
 		if(criteria.getFromDate()==null || criteria.getToDate()==null)
             enrichmentService.enrichDemandPeriod(criteria,assessmentYear,masterMap);
-
-        List<BillingSlab> filteredBillingSlabs = getSlabsFiltered(property,criteria.getFinancialYear(),requestInfo);
+        List<BillingSlab> filteredBillingSlabs = getSlabsFiltered(property,criteria.getFinancialYear()!=null?criteria.getFinancialYear():criteria.getProperty().getPropertyDetails().get(0).getFinancialYear(),requestInfo);
 
 		Map<String, Map<String, List<Object>>> propertyBasedExemptionMasterMap = new HashMap<>();
 		Map<String, JSONArray> timeBasedExemptionMasterMap = new HashMap<>();
