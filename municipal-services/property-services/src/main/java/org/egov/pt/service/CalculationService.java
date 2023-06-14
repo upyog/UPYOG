@@ -11,8 +11,10 @@ import org.egov.pt.web.contracts.PropertyRequest;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 public class CalculationService {
 
     @Autowired
@@ -32,6 +34,7 @@ public class CalculationService {
 			                 .append(config.getCalculationEndpoint());
 
          Map<String, Object> oldPropertyObject = translationService.translate(assessmentRequest, property);
+	     log.info("request for calculator is " + oldPropertyObject.toString());
          Object response = serviceRequestRepository.fetchResult(uri, oldPropertyObject);
          if(response == null)
              throw new CustomException("CALCULATION_ERROR","The calculation object is coming null from calculation service");
