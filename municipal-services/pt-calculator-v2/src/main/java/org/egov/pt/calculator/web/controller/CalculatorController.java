@@ -24,8 +24,11 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import lombok.extern.slf4j.Slf4j;
+
 
 @Controller
+@Slf4j
 @RequestMapping("/propertytax")
 public class CalculatorController {
 
@@ -40,11 +43,15 @@ public class CalculatorController {
 
 	@PostMapping("/_estimate")
 	public ResponseEntity<CalculationRes> getTaxEstimation(@RequestBody @Valid CalculationReq calculationReq) {
+				log.info(calculationReq.toString());
+
 		return new ResponseEntity<>(calculatorService.getTaxCalculation(calculationReq), HttpStatus.OK);
 	}
 
 	@PostMapping("/_calculate")
 	public ResponseEntity<Map<String, Calculation>> generateDemands(@RequestBody @Valid CalculationReq calculationReq) {
+		log.info(calculationReq.toString());
+
 		return new ResponseEntity<>(calculatorService.calculateAndCreateDemand(calculationReq), HttpStatus.OK);
 	}
 	
