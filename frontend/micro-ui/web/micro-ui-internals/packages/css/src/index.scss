@@ -522,6 +522,7 @@ input[type="number"] {
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  position: absolute !important;
   .error-container {
     display: flex;
     width: 400px;
