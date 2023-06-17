@@ -64,7 +64,7 @@ export const callPGService = async (state, dispatch) => {
           taxAndPayments,
           consumerCode: get(billPayload, "Bill[0].billDetails[0].consumerCode"),
           productInfo: "Fire NOC Payment",
-          gateway: "AXIS",
+          gateway: "PAYGOV",
           user : {
             mobileNumber : userMobileNumber,
             name : userName,
