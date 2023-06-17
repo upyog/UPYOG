@@ -79,9 +79,9 @@ const envVariables = {
   EGOV_IDGEN_FN_CERTIFICATE_NO_NAME:
     process.env.EGOV_IDGEN_FN_CERTIFICATE_NO_NAME || "fn.fireNOCNumber",
   EGOV_APPLICATION_FORMATE:
-    process.env.APPLICATION_FORMATE || "PB-FN-[cy:yyyy-MM-dd]-[SEQ_EG_TL_APL]",
+    process.env.APPLICATION_FORMATE || "PG-FN-[cy:yyyy-MM-dd]-[SEQ_EG_TL_APL]",
   EGOV_CIRTIFICATE_FORMATE:
-    process.env.CIRTIFICATE_FORMATE || "PB-FN-[cy:yyyy-MM-dd]-[SEQ_EG_PT_LN]",
+    process.env.CIRTIFICATE_FORMATE || "PG-FN-[cy:yyyy-MM-dd]-[SEQ_EG_PT_LN]",
 
   //mdms service configurations
   EGOV_MDMS_HOST:
@@ -128,7 +128,7 @@ const envVariables = {
     process.env.EGOV_LOCALIZATION_STATE_LEVEL || true,
 
   // default state // IDEA:
-  EGOV_DEFAULT_STATE_ID: process.env.EGOV_DEFAULT_STATE_ID || "pb",
+  EGOV_DEFAULT_STATE_ID: process.env.EGOV_DEFAULT_STATE_ID || "pg",
 
   //pagination configurations
   EGOV_FN_DEFAULT_OFFSET: process.env.EGOV_FN_DEFAULT_OFFSET || 0,
