@@ -12,7 +12,7 @@ import { newConfigMutate } from "../../config/Mutate/config";
 import _ from "lodash";
 import get from "lodash/get";
 import { pdfDownloadLink } from "../../utils";
-
+import { useQuery, useQueryClient } from "react-query";
 const MutationApplicationDetails = ({ propertyId, acknowledgementIds, workflowDetails, mutate}) => {
   const { t } = useTranslation();
   const [displayMenu, setDisplayMenu] = useState(false);
@@ -36,7 +36,7 @@ const MutationApplicationDetails = ({ propertyId, acknowledgementIds, workflowDe
   let property = (properties && properties.length > 0 && properties[0]) || {};
   const application = property;
   sessionStorage.setItem("pt-property", JSON.stringify(application));
-
+  const queryClient = useQueryClient();
   const { isLoading: auditDataLoading, isError: isAuditError, data: auditResponse } = Digit.Hooks.pt.usePropertySearch(
     {
       tenantId,
@@ -152,8 +152,8 @@ const MutationApplicationDetails = ({ propertyId, acknowledgementIds, workflowDe
           if (isOBPS?.isNoc) {
             history.push(`/digit-ui/employee/noc/response`, { data: data });
           }
-          setShowToast({ key: "success", action: selectedAction });
-          setTimeout(closeToast, 5000);
+          // setShowToast({ key: "success", action: selectedAction });
+          // setTimeout(closeToast, 5000);
           queryClient.clear();
           queryClient.refetchQueries("APPLICATION_SEARCH");
         },
