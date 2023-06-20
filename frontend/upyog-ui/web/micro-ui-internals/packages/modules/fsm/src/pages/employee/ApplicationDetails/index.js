@@ -99,7 +99,7 @@ const ApplicationDetails = (props) => {
 
   useEffect(() => {
     switch (selectedAction) {
-      case "SCHEDULE":
+      case DSO && "SCHEDULE":
       case "DSO_ACCEPT":
       case "ACCEPT":
       case "ASSIGN":
@@ -118,7 +118,7 @@ const ApplicationDetails = (props) => {
         return setShowModal(true);
       case "SUBMIT":
       case "FSM_SUBMIT":
-      // case !DSO && "SCHEDULE":
+      case !DSO && "SCHEDULE":
         return history.push("/upyog-ui/employee/fsm/modify-application/" + applicationNumber);
       case "PAY":
       case "FSM_PAY":
@@ -232,7 +232,7 @@ const ApplicationDetails = (props) => {
           <Card className="fsm" style={{ position: "relative" }}>
             {/* {!DSO && (
               <LinkButton
-                label={<span style={{ color: "#f47738", marginLeft: "8px" }}>{t("ES_APPLICATION_DETAILS_VIEW_AUDIT_TRAIL")}</span>}
+                label={<span style={{ color: "#a82227", marginLeft: "8px" }}>{t("ES_APPLICATION_DETAILS_VIEW_AUDIT_TRAIL")}</span>}
                 style={{ position: "absolute", top: 0, right: 20 }}
                 onClick={() => {
                   history.push(props.parentRoute + "/application-audit/" + applicationNumber);

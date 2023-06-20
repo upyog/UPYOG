@@ -123,11 +123,11 @@ const PropertySearchNSummary = ({ config, onSelect, userType, formData, setError
         </div>
       </LabelFieldPair>
       <span onClick={() => history.push(`/upyog-ui/employee/commonpt/search?redirectToUrl=${redirectBackUrl}&${serachParams}`, { ...state })}>
-        <LinkButton label={t("CPT_SEARCH_PROPERTY")} style={{ color: "#f47738", display: "inline-block" }} />
+        <LinkButton label={t("CPT_SEARCH_PROPERTY")} style={{ color: "#a82227", display: "inline-block" }} />
       </span>
       &nbsp; | &nbsp;
       <span onClick={() => history.push(`/upyog-ui/employee/commonpt/new-application?redirectToUrl=${redirectBackUrl}&${serachParams}`, { ...state })}>
-        <LinkButton label={t("CPT_CREATE_PROPERTY")} style={{ color: "#f47738", display: "inline-block" }} />
+        <LinkButton label={t("CPT_CREATE_PROPERTY")} style={{ color: "#a82227", display: "inline-block" }} />
       </span>
       {propertyDetails && propertyDetails?.Properties.length ? (
         <React.Fragment>

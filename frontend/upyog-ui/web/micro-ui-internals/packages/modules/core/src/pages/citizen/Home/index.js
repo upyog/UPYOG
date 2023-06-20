@@ -55,7 +55,7 @@ const Home = () => {
   const whatsAppBannerWebObj = uiHomePage?.whatsAppBannerDesktop;
   const whatsAppBannerMobObj = uiHomePage?.whatsAppBannerMobile;
   const whatsNewSectionObj = uiHomePage?.whatsNewSection;
-console.log("citizenServicesObj",citizenServicesObj)
+
   const handleClickOnWhatsAppBanner = (obj) => {
     window.open(obj?.navigationUrl);
   };
@@ -133,19 +133,19 @@ console.log("citizenServicesObj",citizenServicesObj)
   return isLoading ? (
     <Loader />
   ) : (
-    <div className="HomePageContainer">
+    <div className="HomePageContainer" style={{width:"100%"}}>
       {/* <div className="SideBarStatic">
         <StaticCitizenSideBar />
       </div> */}
       <div className="HomePageWrapper">
         {<div className="BannerWithSearch">
-          {isMobile ? <img src={appBannerMobObj?.bannerUrl} /> : <img src={appBannerWebObj?.bannerUrl} />}
+          {isMobile ? <img src={"https://nugp-assets.s3.ap-south-1.amazonaws.com/nugp+asset/Banner+UPYOG+%281920x500%29B+%282%29.jpg"} /> : <img src={"https://nugp-assets.s3.ap-south-1.amazonaws.com/nugp+asset/Banner+UPYOG+%281920x500%29A.jpg"} />}
           {/* <div className="Search">
             <StandaloneSearchBar placeholder={t("CS_COMMON_SEARCH_PLACEHOLDER")} />
           </div> */}
           <div className="ServicesSection">
           <CardBasedOptions style={{marginTop:"-30px"}} {...allCitizenServicesProps} />
-          <CardBasedOptions style={isMobile ? {} : {marginTop:"-30px"}} {...allInfoAndUpdatesProps} />
+          <CardBasedOptions style={isMobile ? {marginTop:"-30px"} : {marginTop:"-30px"}} {...allInfoAndUpdatesProps} />
         </div>
         </div>}
 
@@ -153,9 +153,9 @@ console.log("citizenServicesObj",citizenServicesObj)
         {(whatsAppBannerMobObj || whatsAppBannerWebObj) && (
           <div className="WhatsAppBanner">
             {isMobile ? (
-              <img src={whatsAppBannerMobObj?.bannerUrl} onClick={() => handleClickOnWhatsAppBanner(whatsAppBannerMobObj)} />
+              <img src={"https://nugp-assets.s3.ap-south-1.amazonaws.com/nugp+asset/Banner+UPYOG+%281920x500%29B+%282%29.jpg"} onClick={() => handleClickOnWhatsAppBanner(whatsAppBannerMobObj)} style={{"width":"100%"}}/>
             ) : (
-              <img src={whatsAppBannerWebObj?.bannerUrl} onClick={() => handleClickOnWhatsAppBanner(whatsAppBannerWebObj)} />
+              <img src={"https://nugp-assets.s3.ap-south-1.amazonaws.com/nugp+asset/Banner+UPYOG+%281920x500%29B+%282%29.jpg"} onClick={() => handleClickOnWhatsAppBanner(whatsAppBannerWebObj)} style={{"width":"100%"}}/>
             )}
           </div>
         )}
