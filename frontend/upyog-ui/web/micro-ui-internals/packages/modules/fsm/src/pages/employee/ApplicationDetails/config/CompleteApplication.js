@@ -2,15 +2,9 @@ import React from "react";
 import { DatePicker } from "@egovernments/digit-ui-react-components";
 import { RadioButtons } from "@egovernments/digit-ui-react-components";
 
-export const configCompleteApplication = ({
-  t,
-  vehicle,
-  vehicleCapacity,
-  noOfTrips,
-  applicationCreatedTime = 0,
-  action,
-  module,
-}) => ({
+
+export const configCompleteApplication = ({ t, vehicle, vehicleCapacity, noOfTrips, applicationCreatedTime = 0, receivedPaymentType, action, module }) => ({
+
   label: {
     heading: `ES_FSM_ACTION_TITLE_${action}`,
     submit: `CS_COMMON_${action}`,
@@ -33,7 +27,7 @@ export const configCompleteApplication = ({
               min: Digit.Utils.date.getDate(applicationCreatedTime),
               max: Digit.Utils.date.getDate(),
             },
-            component: (props, customProps) => <DatePicker onChange={props.onChange} date={props.value} {...customProps} />,
+            component: (props, customProps) => <DatePicker disabled={true} onChange={props.onChange} date={props.value} {...customProps} />,
           },
         },
         {
@@ -120,11 +114,39 @@ export const configCompleteApplication = ({
             validation: {
               required: true,
             },
-            defaultValue: noOfTrips,
+            defaultValue: noOfTrips
             // defaultValue: customizationConfig && Object.keys(customizationConfig).length > 0 ? customizationConfig?.noOfTrips?.default : 1,
           },
           disable: true,
           // disable: customizationConfig ? !customizationConfig?.noOfTrips?.override : true,
+        },
+        module !== "FSM_ZERO_PAY_SERVICE" && {
+          label: "FSM_PAYMENT_RECEIVED",
+          isMandatory: true,
+          type: "custom",
+          populators: {
+            name: "paymentMode",
+            error: t("ES_NEW_APPLICATION_NO_OF_TRIPS_INVALID"),
+            validation: {
+              required: true,
+            },
+            rules: { required: true },
+            customProps: {
+              isMandatory: true,
+              options: receivedPaymentType,
+              optionsKey: "i18nKey",
+              innerStyles: { minWidth: "33%" },
+            },
+            component: (props, customProps) => (
+              <RadioButtons
+                selectedOption={props.value}
+                onSelect={(d) => {
+                  props.onChange(d);
+                }}
+                {...customProps}
+              />
+            ),
+          },
         },
       ],
     },

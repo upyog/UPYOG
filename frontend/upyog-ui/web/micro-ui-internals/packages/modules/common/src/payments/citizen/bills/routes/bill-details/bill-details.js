@@ -38,13 +38,13 @@ const BillDetails = ({ paymentRules, businessService }) => {
 
   const { isLoading: isUserLoading, data: userData, revalidate } = Digit.Hooks.useCustomAPIHook(...requestCriteria);
   
-  const { isLoading: isFSMLoading, isError, error, data: application, error: errorApplication } = Digit.Hooks.fsm.useApplicationDetail(
-    t,
-    tenantId,
-    consumerCode,
-    { enabled: pathname.includes("FSM") ? true : false },
-    "CITIZEN"
-  );
+  // const { isLoading: isFSMLoading, isError, error, data: application, error: errorApplication } = Digit.Hooks.fsm.useApplicationDetail(
+  //   t,
+  //   tenantId,
+  //   consumerCode,
+  //   { enabled: pathname.includes("FSM") ? true : false },
+  //   "CITIZEN"
+  // );
   let { minAmountPayable, isAdvanceAllowed } = paymentRules;
   minAmountPayable = wrkflow === "WNS" ? 100 : minAmountPayable;
   const billDetails = bill?.billDetails?.sort((a, b) => b.fromPeriod - a.fromPeriod)?.[0] || [];

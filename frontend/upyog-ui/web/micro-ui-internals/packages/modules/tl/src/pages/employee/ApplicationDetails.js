@@ -182,8 +182,19 @@ const ApplicationDetails = () => {
             },
           };
         }
-      })
+      });
+
+      workflowDetails?.data?.actionState?.nextActions?.forEach((action) => {
+        if (action?.action === "PAY") {
+          action.redirectionUrll = {
+            pathname: `TL/${applicationDetails?.applicationData?.applicationNumber}/${tenantId}`,
+            state: applicationDetails?.tenantId || tenantId,
+          };
+        }
+      });
   };
+
+
 
   const wfDocs = workflowDetails.data?.timeline?.reduce((acc, { wfDocuments }) => {
     return wfDocuments ? [...acc, ...wfDocuments] : acc;

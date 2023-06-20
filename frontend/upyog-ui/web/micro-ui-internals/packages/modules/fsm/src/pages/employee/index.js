@@ -61,7 +61,7 @@ export const FsmBreadCrumb = ({ location }) => {
       show: isFsm,
     },
     {
-      path: isRegistry ? `/upyog-ui/employee/fsm/registry?selectedTabs=VENDOR` : FSTPO ? "/upyog-ui/employee/fsm/fstp-inbox" : "/upyog-ui/employee",
+      path: isRegistry ? "/upyog-ui/employee/fsm/registry" : FSTPO ? "/upyog-ui/employee/fsm/fstp-inbox" : "/upyog-ui/employee",
       content: isVehicleLog ? t("ES_TITLE_INBOX") : "FSM",
       show: isFsm,
     },
@@ -146,7 +146,7 @@ const EmployeeApp = ({ path, url, userType }) => {
   const moduleForSomeFSMAdmin = FSM_ADMIN
     ? [
         {
-          link: "/upyog-ui/employee/fsm/registry?selectedTabs=VENDOR",
+          link: "/upyog-ui/employee/fsm/registry",
           name: "ES_TITLE_FSM_REGISTRY",
           icon: <AddNewIcon />,
         },
@@ -207,8 +207,7 @@ const EmployeeApp = ({ path, url, userType }) => {
     window.location.href.includes("/employee/fsm/registry") ||
     window.location.href.includes("/employee/fsm/application-details/");
 
-  const desludgingApplicationCheck =
-    window.location.href.includes("/employee/fsm/new-application") || window.location.href.includes("/employee/fsm/modify-application");
+  const desludgingApplicationCheck = window.location.href.includes("/employee/fsm/new-application") || window.location.href.includes("/employee/fsm/modify-application");
   return (
     <Switch>
       <React.Fragment>
