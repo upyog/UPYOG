@@ -1206,21 +1206,22 @@ class ShowField extends Component {
 
   getReportTitle = (rptName) => {
     let { metaData } = this.props;
-    let reportName = rptName || metaData && metaData.reportDetails && metaData.reportDetails.summary || this.state.reportName || "";
+    let reportName = metaData && metaData.reportDetails && metaData.reportDetails.summary || "";
     reportName = reportName.toUpperCase();
-    let reportTitleArr = reportName && getLocaleLabels(reportName, reportName).split(/(?=[A-Z])/);
-    let reportTitle = "";
-    if (reportTitleArr) {
-      reportTitle = reportTitleArr.map((char) => {
-        if (char.length == 1) {
-          reportTitle = char + "";
-        } else {
-          reportTitle = " " + char;
-        }
-        return reportTitle;
-      });
-    }
-    return reportTitle;
+    return reportName
+    // let reportTitleArr = reportName && getLocaleLabels(reportName, reportName).split(/(?=[A-Z])/);
+    // let reportTitle = "";
+    // if (reportTitleArr) {
+    //   reportTitle = reportTitleArr.map((char) => {
+    //     if (char.length == 1) {
+    //       reportTitle = char + "";
+    //     } else {
+    //       reportTitle = " " + char;
+    //     }
+    //     return reportTitle;
+    //   });
+    // }
+    // return reportTitle;
   };
 
   getXlsReportTitle = (rptName) => {
