@@ -25,7 +25,6 @@ export const AppModules = ({ stateCode, userType, modules, appTenants }) => {
   }
 
   const appRoutes = modules.map(({ code, tenants }, index) => {
-    console.log("oathh",path)
     const Module = Digit.ComponentRegistryService.getComponent(`${code}Module`);
     return Module ? (
       <Route key={index} path={`${path}/${code.toLowerCase()}`}>
