@@ -431,7 +431,7 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
                 />
               </LabelFieldPair>
 
-              <LabelFieldPair>
+              {/* <LabelFieldPair>
                 <CardLabel style={editScreen ? { color: "#B1B4B6" } : {}}>{`${t("CORE_COMMON_PROFILE_EMAIL")}`}</CardLabel>
                 <div style={{ width: "100%" }}>
                   <TextInput
@@ -447,7 +447,7 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
                   />
                   {errors?.emailAddress && <CardLabelError> {errors?.emailAddress?.message} </CardLabelError>}
                 </div>
-              </LabelFieldPair>
+              </LabelFieldPair> */}
               
               <button
                 onClick={updateProfile}
@@ -550,7 +550,7 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
                 </div>
               </LabelFieldPair>
               
-              <LabelFieldPair style={{ display: "flex" }}>
+              {/* <LabelFieldPair style={{ display: "flex" }}>
                 <CardLabel className="profile-label-margin" style={editScreen ? { color: "#B1B4B6", width: "300px" } : { width: "300px" }}>{`${t(
                   "CORE_COMMON_PROFILE_EMAIL"
                 )}`}</CardLabel>
@@ -568,7 +568,7 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
                   />
                   {errors?.emailAddress && <CardLabelError> {errors?.emailAddress?.message} </CardLabelError>}
                 </div>
-              </LabelFieldPair>
+              </LabelFieldPair> */}
 
               <LabelFieldPair>
                 <div>
