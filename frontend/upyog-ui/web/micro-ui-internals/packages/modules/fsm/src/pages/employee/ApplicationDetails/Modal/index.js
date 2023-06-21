@@ -63,6 +63,8 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
   const client = useQueryClient();
   const stateCode = Digit.ULBService.getStateId();
 
+  const { data: ReceivedPaymentTypeData, isLoading: receivedPaymentLoad } = Digit.Hooks.fsm.useMDMS(stateCode, "FSM", "ReceivedPaymentType");
+
   const { data: vehicleList, isLoading: isVehicleData, isSuccess: isVehicleDataLoaded } = Digit.Hooks.fsm.useMDMS(
     stateCode,
     "Vehicle",
@@ -129,6 +131,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
   const [pitDetail, setPitDetail] = useState();
   const [fstpoRejectionReason, setFstpoRejectionReason] = useState();
   const [noOfTrips, setNoOfTrips] = useState(null);
+  const [receivedPaymentType, setReceivedPaymentType] = useState(null);
 
   const [defaultValues, setDefautValue] = useState({
     capacity: vehicle?.capacity,
@@ -138,6 +141,12 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
     pitType: applicationData?.sanitationtype,
     pitDetail: applicationData?.pitDetail,
   });
+
+  useEffect(() => {
+    if (!receivedPaymentLoad) {
+      setReceivedPaymentType(ReceivedPaymentTypeData)
+    }
+  }, [receivedPaymentLoad, ReceivedPaymentTypeData]);
 
   useEffect(() => {
     if (isSuccess && isVehicleDataLoaded && applicationData) {
@@ -196,8 +205,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
   useEffect(() => {
     if (isSuccess && isDsoSuccess && applicationData && applicationData.dsoId) {
       const [dso] = dsoData.filter((dso) => dso.id === applicationData.dsoId);
-      const tempList = dso?.vehicles?.filter((vehicle) => vehicle.capacity == applicationData?.vehicleCapacity);
-      const vehicleNoList = tempList.sort((a,b) => (a.registrationNumber > b.registrationNumber ? 1 : -1 ));
+      const vehicleNoList = dso?.vehicles?.filter((vehicle) => vehicle.capacity == applicationData?.vehicleCapacity);
       setVehicleNoList(vehicleNoList);
     }
   }, [isSuccess, isDsoSuccess]);
@@ -245,6 +253,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
     setImageFile(e.target.files);
   }
 
+
   function addCommentToWorkflow(state, workflow, data) {
     workflow.comments = data.comments ? state.code + "~" + data.comments : state.code;
   }
@@ -276,6 +285,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
     if (data.subtype && typeof (data.subtype) === "object") applicationData.propertyUsage = data.subtype.code;
     if (data.subtype && typeof (data.subtype) === "string") applicationData.propertyUsage = data.subtype;
     if (data.noOfTrips) applicationData.noOfTrips = data.noOfTrips;
+    if (data.paymentMode) applicationData.additionalDetails.receivedPayment = data.paymentMode.code;
 
     if (fileStoreId) {
       if (applicationData.pitDetail.additionalDetails && applicationData.pitDetail.additionalDetails.fileStoreId) {
@@ -299,8 +309,6 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
   useEffect(() => {
     switch (action) {
       case "UPDATE":
-      case "SCHEDULE":
-      case "ES_FSM_SCHEDULE":
         setFormValve(true);
         return setConfig(
           configUpdateTrips({
@@ -373,7 +381,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
       case "COMPLETE":
       case "COMPLETED":
         setFormValve(true);
-        return setConfig(configCompleteApplication({ t, vehicle, vehicleCapacity: applicationData?.vehicleCapacity, noOfTrips: applicationData?.noOfTrips, applicationCreatedTime: applicationData?.auditDetails?.createdTime, action, module }));
+        return setConfig(configCompleteApplication({ t, vehicle, vehicleCapacity: applicationData?.vehicleCapacity, noOfTrips: applicationData?.noOfTrips, applicationCreatedTime: applicationData?.auditDetails?.createdTime, receivedPaymentType: ReceivedPaymentTypeData, action, module }));
       case "SUBMIT":
       case "FSM_SUBMIT":
         return history.push("/upyog-ui/employee/fsm/modify-application/" + applicationNumber);
@@ -416,22 +424,22 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
             action,
           })
         );
-      // case "SCHEDULE":
-      // case "ES_FSM_SCHEDULE":
-        // setFormValve(true);
-        // return setConfig(
-          // configScheduleDso({
-            // t,
-            // rejectMenu: Reason?.DeclineReason,
-            // setReason: setDeclineReason,
-            // reason: declineReason,
-            // applicationCreatedTime: applicationData?.auditDetails?.createdTime,
-            // vehicle,
-            // vehicleCapacity: applicationData?.vehicleCapacity,
-            // action,
-            // noOfTrips: applicationData?.noOfTrips
-          // })
-        // );
+      case "SCHEDULE":
+      case "ES_FSM_SCHEDULE":
+        setFormValve(true);
+        return setConfig(
+          configScheduleDso({
+            t,
+            rejectMenu: Reason?.DeclineReason,
+            setReason: setDeclineReason,
+            reason: declineReason,
+            applicationCreatedTime: applicationData?.auditDetails?.createdTime,
+            vehicle,
+            vehicleCapacity: applicationData?.vehicleCapacity,
+            action,
+            noOfTrips: applicationData?.noOfTrips
+          })
+        );
 
       case "PAY":
       case "ADDITIONAL_PAY_REQUEST":

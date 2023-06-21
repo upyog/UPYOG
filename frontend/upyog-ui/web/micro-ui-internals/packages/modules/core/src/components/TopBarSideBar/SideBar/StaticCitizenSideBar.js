@@ -135,6 +135,7 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
   const filteredTenantContact = storeData?.tenants.filter((e) => e.code === tenantId)[0]?.contactNumber || storeData?.tenants[0]?.contactNumber;
 
   let menuItems = [...SideBarMenu(t, showProfilePage, redirectToLoginPage, isEmployee, storeData, tenantId)];
+  console.log("menuItems",menuItems)
 
   menuItems = menuItems.filter((item) => item.element !== "LANGUAGE");
 
@@ -220,6 +221,19 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
         });
       }
     });
+     menuItems= menuItems.map((item,index) =>{
+      console.log("item",item)
+      if(item.hasOwnProperty("link"))
+      {
+        console.log("itemee",item,index)
+        item.link = item.link.replace("digit-ui", "upyog-ui");
+      }
+      
+      
+      return item
+      
+    })
+
 
   return (
     <React.Fragment>
@@ -242,7 +256,7 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
           }}
         >
           {profileItem}
-          <div className="drawer-desktop">
+          <div className="drawer-desktop" style={{"backgroundColor":"white"}}>
             {menuItems?.map((item, index) => (
               <div className={`sidebar-list ${pathname === item?.link || pathname === item?.sidebarURL ? "active" : ""}`} key={index}>
                 <MenuItem item={item} />

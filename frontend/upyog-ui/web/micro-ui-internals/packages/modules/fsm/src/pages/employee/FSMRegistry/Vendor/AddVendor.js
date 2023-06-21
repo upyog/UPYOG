@@ -132,7 +132,7 @@ const AddVendor = ({ parentUrl, heading }) => {
         queryClient.invalidateQueries("DSO_SEARCH");
         setTimeout(() => {
           closeToast();
-          history.push(`/upyog-ui/employee/fsm/registry?selectedTabs=VENDOR`);
+          history.push(`/upyog-ui/employee/fsm/registry`);
         }, 5000);
       },
     });
