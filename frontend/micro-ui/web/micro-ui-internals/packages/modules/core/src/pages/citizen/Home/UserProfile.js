@@ -304,7 +304,7 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
 
   return (
     <div className="user-profile">
-      <section style={{ margin: userType === "citizen" ? "8px" : "24px" }}>
+      <section style={{ margin: userType === "citizen" ? "8px" : "24px",position:"relative" }}>
         {userType === "citizen" ? (
           <BackButton></BackButton>
         ) : (
@@ -572,7 +572,7 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
 
               <LabelFieldPair>
                 <div>
-                  <a style={{ color: "orange", cursor: "default", marginBottom: "5", cursor: "pointer" }} onClick={TogleforPassword}>
+                  <a style={{ color: "#a82227", cursor: "default", marginBottom: "5", cursor: "pointer",position:"relative" }} onClick={TogleforPassword}>
                     {t("CORE_COMMON_CHANGE_PASSWORD")}
                   </a>
                   {changepassword ? (
