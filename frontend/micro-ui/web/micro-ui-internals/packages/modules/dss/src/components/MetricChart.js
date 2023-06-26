@@ -171,6 +171,7 @@ const MetricChart = ({ data, setChartDenomination, moduleCode }) => {
     "nssPtCitizenFeedbackScore",
     "sdssPtCitizenFeedbackScore",
     "sdssOverviewCitizenFeedbackScore",
+    "AvgCitizenRating"
   ];
   return (
     <>
