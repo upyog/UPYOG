@@ -16,13 +16,13 @@ const MetricData = ({ t, data, code, indexValuesWithStar }) => {
           <Rating toolTipText={t("COMMON_RATING_LABEL")} currentRating={Math.round(data?.headerValue * 10) / 10} styles={{ width: "unset", marginBottom:"unset" }} starStyles={{ width: "25px" }} />
         ) : data?.headerName.includes("AVG") ? (
           `${Digit.Utils.dss.formatter(data?.headerValue, data?.headerSymbol, "Unit", true)} ${
-            code === "totalSludgeTreated" ? t(`DSS_KL`) : ""
+             code === "fsmtotalsludgetreated" || code === "totalSludgeTreated" ? t(`DSS_KL`) : ""
           }`
         ):
         
         (
           `${Digit.Utils.dss.formatter(data?.headerValue, data?.headerSymbol, value?.denomination, true, t)} ${
-            code === "totalSludgeTreated" ? t(`DSS_KL`) : ""
+            code === "fsmtotalsludgetreated" || code === "totalSludgeTreated"? t(`DSS_KL`) : ""
           }`
         )}
       </p>
