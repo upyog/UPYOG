@@ -164,7 +164,7 @@ const CustomHorizontalBarChart = ({
               }}
               tickCount={10}
               tickFormatter={tickFormatter}
-              unit={id === "fsmCapacityUtilization" ? "%" : ""}
+              unit={id === "fssmCapacityUtilization"  || id === "fsmCapacityUtilization"? "%" : ""}
               width={getVerticalWidth(layout)}
             />
             <XAxis dataKey={xDataKey} type={xAxisType} tick={{ fontSize: "14px", fill: "#505A5F" }} tickCount={10} tickFormatter={tickFormatter} />
