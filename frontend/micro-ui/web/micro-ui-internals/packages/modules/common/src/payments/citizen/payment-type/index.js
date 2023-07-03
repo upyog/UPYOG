@@ -94,7 +94,7 @@ export const SelectPaymentType = (props) => {
         // new payment gatewayfor UPYOG pay
         try {
 
-          const gatewayParam = redirectUrl
+          var gatewayParam = redirectUrl
             ?.split("?")
             ?.slice(1)
             ?.join("?")
@@ -155,14 +155,42 @@ export const SelectPaymentType = (props) => {
           newForm.submit();
 
 
-          // makePayment(gatewayParam.txURL,formdata);
+          //makePayment(gatewayParam.txURL,formdata);
 
         } catch (e) {
           console.log("Error in payment redirect ", e);
           //window.location = redirectionUrl;
         }
       }
-      window.location = redirectUrl;
+
+      function postForm(path, params, method) {
+        console.log("ffff")
+        method = method || 'post';
+    
+        var form = document.createElement('form');
+        form.setAttribute('method', method);
+        form.setAttribute('action', path);
+    
+        for (var key in params) {
+            if (params.hasOwnProperty(key)) {
+                var hiddenField = document.createElement('input');
+                hiddenField.setAttribute('type', 'hidden');
+                hiddenField.setAttribute('name', key);
+                hiddenField.setAttribute('value', params[key]);
+    
+                form.appendChild(hiddenField);
+            }
+        }
+    
+        document.body.appendChild(form);
+        form.submit();
+    }
+    
+    postForm(gatewayParam.txURL, {});
+    
+
+      console.log("redirectUrl",redirectUrl,gatewayParam.txURL)
+      //window.location = redirectUrl;
     } catch (error) {
       let messageToShow = "CS_PAYMENT_UNKNOWN_ERROR_ON_SERVER";
       if (error.response?.data?.Errors?.[0]) {
