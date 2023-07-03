@@ -129,14 +129,14 @@ public class IngestValidator {
                     throw new CustomException("EG_DS_VALIDATE_ERR", "The metric: " + inputKeyName + " was not configured in field mapping for module: " + ingestData.getModule());
             }
 
-            if(keyNames.size() < configuredFieldsForModule.size()){
-                List<String> absentFields = new ArrayList<>();
-                configuredFieldsForModule.forEach(field -> {
-                    if(!keyNames.contains(field))
-                        absentFields.add(field);
-                });
-                throw new CustomException("EG_DS_VALIDATE_ERR", "Received less number of fields than the number of fields configured in field mapping for module: " + ingestData.getModule() + ". List of absent fields: " + absentFields.toString());
-            }
+//            if(keyNames.size() < configuredFieldsForModule.size()){
+//                List<String> absentFields = new ArrayList<>();
+//                configuredFieldsForModule.forEach(field -> {
+//                    if(!keyNames.contains(field))
+//                        absentFields.add(field);
+//                });
+//                throw new CustomException("EG_DS_VALIDATE_ERR", "Received less number of fields than the number of fields configured in field mapping for module: " + ingestData.getModule() + ". List of absent fields: " + absentFields.toString());
+//            }
 
             keyVsTypeMap.keySet().forEach(key ->{
                 JsonNodeType type = keyVsTypeMap.get(key);
