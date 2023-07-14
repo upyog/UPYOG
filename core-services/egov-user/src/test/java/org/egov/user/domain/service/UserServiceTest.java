@@ -475,7 +475,12 @@ public class UserServiceTest {
         when(userRepository.findAll(any(UserSearchCriteria.class))).thenReturn(Collections.singletonList(domainUser));
         when(encryptionDecryptionUtil.decryptObject(domainUser, "User", User.class, getValidRequestInfo())).thenReturn(domainUser);
         when(userService.encryptPwd(anyString())).thenReturn("P@ssw0rd");
-       RequestInfo requestInfo=getValidRequestInfo();
+      RequestInfo requestInfo=getValidRequestInfo();
+       if( requestInfo == null || requestInfo.getUserInfo() == null)
+       {
+    	org.egov.common.contract.request.User userInfo = org.egov.common.contract.request.User.builder().uuid("no uuid").type("EMPLOYEE").build();
+        requestInfo = RequestInfo.builder().userInfo(userInfo).build();
+       }
         userService.updatePasswordForNonLoggedInUser(request, requestInfo!=null?requestInfo:new RequestInfo());
 
         verify(domainUser).updatePassword("P@ssw0rd");
