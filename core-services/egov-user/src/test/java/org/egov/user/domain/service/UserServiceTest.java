@@ -475,7 +475,8 @@ public class UserServiceTest {
         when(userRepository.findAll(any(UserSearchCriteria.class))).thenReturn(Collections.singletonList(domainUser));
         when(encryptionDecryptionUtil.decryptObject(domainUser, "User", User.class, getValidRequestInfo())).thenReturn(domainUser);
         when(userService.encryptPwd(anyString())).thenReturn("P@ssw0rd");
-        userService.updatePasswordForNonLoggedInUser(request, getValidRequestInfo());
+       RequestInfo requestInfo=getValidRequestInfo();
+        userService.updatePasswordForNonLoggedInUser(request, requestInfo!=null?requestInfo:new RequestInfo());
 
         verify(domainUser).updatePassword("P@ssw0rd");
     }
