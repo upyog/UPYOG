@@ -596,7 +596,7 @@ public class UserServiceTest {
 
     private RequestInfo getValidRequestInfo() {
         List<org.egov.common.contract.request.Role> roles = Collections.singletonList(org.egov.common.contract.request.Role.builder().code("roleCode1").build());
-        org.egov.common.contract.request.User userInfo = org.egov.common.contract.request.User.builder().roles(roles).id((long)123).build();
+        org.egov.common.contract.request.User userInfo = org.egov.common.contract.request.User.builder().roles(roles).id((long)123).uuid("123456789").build();
         return RequestInfo.builder().userInfo(userInfo).build();
     }
 
