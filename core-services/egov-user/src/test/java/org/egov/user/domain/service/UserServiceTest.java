@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.provider.token.TokenStore;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.annotation.PostConstruct;
 import java.util.*;
@@ -36,6 +37,8 @@ import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.spy;
 
 @RunWith(MockitoJUnitRunner.class)
+@Slf4j
+
 public class UserServiceTest {
 
     private static final int DEFAULT_PASSWORD_EXPIRY_IN_DAYS = 90;
@@ -475,13 +478,16 @@ public class UserServiceTest {
         when(userRepository.findAll(any(UserSearchCriteria.class))).thenReturn(Collections.singletonList(domainUser));
         when(encryptionDecryptionUtil.decryptObject(domainUser, "User", User.class, getValidRequestInfo())).thenReturn(domainUser);
         when(userService.encryptPwd(anyString())).thenReturn("P@ssw0rd");
-      RequestInfo requestInfo=getValidRequestInfo();
+        RequestInfo requestInfo=getValidRequestInfo();
+       log.info("Request INfo before______"+requestInfo);
+
        if( requestInfo == null || requestInfo.getUserInfo() == null)
        {
     	org.egov.common.contract.request.User userInfo = org.egov.common.contract.request.User.builder().uuid("no uuid").type("EMPLOYEE").build();
         requestInfo = RequestInfo.builder().userInfo(userInfo).build();
        }
-        userService.updatePasswordForNonLoggedInUser(request, requestInfo!=null?requestInfo:new RequestInfo());
+        log.info("Request INfo______"+requestInfo);
+        userService.updatePasswordForNonLoggedInUser(request, requestInfo);
 
         verify(domainUser).updatePassword("P@ssw0rd");
     }
