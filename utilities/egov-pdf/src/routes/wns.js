@@ -397,7 +397,7 @@ router.post(
       if(req.query.consumerCode)
         consumerCode = req.query.consumerCode;
         
-      if(req.query.consumerCode)
+      if(req.query.propertyId)
         propertyId = req.query.propertyId;
 
       var requestinfo = req.body;
@@ -478,7 +478,7 @@ router.post(
                   true
                 );
           
-                restSewerage = await search_sewerage(
+                restSewerage = await search_sewerage_propertyId(
                     propertyId,
                     tenantId,
                     {RequestInfo:requestinfo.RequestInfo},
