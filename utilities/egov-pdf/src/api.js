@@ -189,17 +189,21 @@ async function search_water_propertyId(propertyId, tenantId, requestinfo, allowC
   var params = {
     tenantId: tenantId,
     propertyId: propertyId,
+    searchType:"CONNECTION"
   };
   if (checkIfCitizen(requestinfo) && allowCitizenTOSearchOthersRecords != true) {
     var mobileNumber = requestinfo.RequestInfo.userInfo.mobileNumber;
     var userName = requestinfo.RequestInfo.userInfo.userName;
     params["mobileNumber"] = mobileNumber || userName;
   }
+
+  logger.info("Params for water Search:::::: " + params);
+
   return await axios({
     method: "post",
     url: url.resolve(config.host.wns, config.paths.water_search),
     data: requestinfo,
-    params,
+    params
   });
 }
 
@@ -225,17 +229,20 @@ async function search_sewerage_propertyId(propertyId, tenantId, requestinfo, all
   var params = {
     tenantId: tenantId,
     propertyId: propertyId,
+    searchType:"CONNECTION"
   };
   if (checkIfCitizen(requestinfo) && allowCitizenTOSearchOthersRecords != true) {
     var mobileNumber = requestinfo.RequestInfo.userInfo.mobileNumber;
     var userName = requestinfo.RequestInfo.userInfo.userName;
     params["mobileNumber"] = mobileNumber || userName;
   }
+  logger.info("Params for sewerage Search:::::: " + params);
+
   return await axios({
     method: "post",
     url: url.resolve(config.host.wns, config.paths.sewerage_search),
     data: requestinfo,
-    params,
+    params
   });
 }
 
