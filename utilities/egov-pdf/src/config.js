@@ -44,6 +44,8 @@ module.exports = {
     process.env.WNS_ONE_TIME_RECEIPT || "ws-onetime-receipt",
     wns_bill:
     process.env.WNS_BILL || "ws-bill",
+	pt_group_bill:
+    process.env.PT_GROUP_BILL || "pt-group-bill",
     birth_certificate:
             process.env.BIRTH_CERTIFICATE || "birth-certificate",
     death_certificate:
