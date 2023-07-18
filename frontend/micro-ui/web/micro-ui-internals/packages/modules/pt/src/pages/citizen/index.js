@@ -31,7 +31,7 @@ const App = () => {
   const PropertyOwnerHistory = Digit?.ComponentRegistryService?.getComponent("PropertyOwnerHistory");
 
   return (
-    <span className={"pt-citizen"}>
+    <span className={"pt-citizen"}style={{width:"100%"}}>
       <Switch>
         <AppContainer>
           {!shouldHideBackButton(hideBackButtonConfig) ? <BackButton>Back</BackButton> : ""}
