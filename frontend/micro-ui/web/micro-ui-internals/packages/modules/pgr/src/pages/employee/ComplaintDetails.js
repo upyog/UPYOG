@@ -66,7 +66,7 @@ const TLCaption = ({ data, comments }) => {
       {comments?.map( e => 
         <div className="TLComments">
           <h3>{t("WF_COMMON_COMMENTS")}</h3>
-          <p>{e}</p>
+          <p style={{overflowX:"scroll"}}>{e}</p>
         </div>
       )}
     </div>
@@ -394,7 +394,7 @@ export const ComplaintDetails = (props) => {
       {comment ? <div>{comment?.map( e => 
         <div className="TLComments">
           <h3>{t("WF_COMMON_COMMENTS")}</h3>
-          <p>{e}</p>
+          <p style={{overflowX:"scroll"}}>{e}</p>
         </div>
       )}</div> : null}
       {checkpoint.status !== "COMPLAINT_FILED" && thumbnailsToShow?.thumbs?.length > 0 ? <div className="TLComments">

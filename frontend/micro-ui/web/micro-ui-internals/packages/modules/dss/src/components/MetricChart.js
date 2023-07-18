@@ -75,7 +75,7 @@ const MetricChartRow = ({ data, setChartDenomination, index, moduleCode, indexVa
           },
         }));
       index === 0 && setChartDenomination(response?.responseData?.data?.[0]?.headerSymbol);
-      if (response?.responseData?.visualizationCode === "todaysLastYearCollectionv3") {
+      if (response?.responseData?.visualizationCode.includes("todaysLastYearCollectionv3")) {
 
         const today = new Date();
         const previousYearDate = new Date(today.getFullYear() - 1, today.getMonth(), today.getDate());
