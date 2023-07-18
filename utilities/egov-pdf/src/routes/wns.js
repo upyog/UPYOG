@@ -425,6 +425,7 @@ router.post(
         isConsolidated: isConsolidated,
         consumerCode: consumerCode,
         jobid: jobid,
+        propertyId: propertyId
       };
 
       try {
@@ -487,6 +488,8 @@ router.post(
 
         restWater = restWater.data.WaterConnection;
         logger.info("Water Connection :::::: " + restWater);
+
+        logger.info("Sewerage Connection :::::: " + restSewerage);
           if(restWater.length>0){
             for(let water of restWater){
               if(water.connectionno){
@@ -534,6 +537,8 @@ router.post(
               water.businessService, {RequestInfo:requestinfo.RequestInfo});
               consolidatedResult.Bill.push(billresponse.data.Bill[0]);
             }
+            logger.info("Total Bills:::::: " + consolidatedResult.Bill.length);
+
         }
         catch (ex) {
           if (ex.response && ex.response.data) logger.error(ex.response.data);
@@ -550,6 +555,8 @@ router.post(
 
             var pdfResponse;
             var pdfkey = config.pdf.pt_group_bill;
+            logger.info("About to call pdf-service with key as  " + pdfkey);
+
             try {
               var billArray = { Bill: consolidatedResult.Bill };
               pdfResponse = await create_pdf(
@@ -558,13 +565,16 @@ router.post(
                 billArray,
                 {RequestInfo:requestinfo.RequestInfo}
               );
+              logger.info("pdfResponse " + pdfResponse);
+
             } catch (ex) {
               let errorMessage;
               if(bussinessService == 'WS')
                 errorMessage = "Failed to generate PDF for water connection bill";
               if(bussinessService == 'WS.ONE_TIME_FEE')
                 errorMessage = "Failed to generate PDF for water one time fees bill"; 
-
+                if(propertyId != null)
+                errorMessage = "Failed to generate PDF PT wise WS Bills"; 
               if (ex.response && ex.response.data) console.log(ex.response.data);
               return renderError(
                 res,
