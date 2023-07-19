@@ -34,13 +34,7 @@ const SelectName = ({ t, config, onSelect, formData = {}, userType, register, er
       componentInFront: <div className="employee-card-input employee-card-input--front">+91</div>,
       isMandatory: true,
     },
-    {
-      label: "COMMON_APPLICANT_GENDER",
-      type: "dropdown",
-      name: "applicantGender",
-      options: genderTypes,
-      isMandatory: false,
-    },
+  
   ];
 
   useEffect(() => {
