@@ -394,6 +394,9 @@ router.post(
       var requestinfo = req.body;
       var restWater;
       var restSewerage;
+      var consolidatedResult = {Bill:[]};
+  var propertyIdSet = [];
+  var connectionnoToPropertyMap = {};
       if(req.query.consumerCode)
         consumerCode = req.query.consumerCode;
         
@@ -471,7 +474,7 @@ router.post(
     }
     else
     {
-      try {
+      try{
         try {
         restWater = await search_water_propertyId(propertyId, tenantId,
                   {RequestInfo:requestinfo.RequestInfo},
@@ -487,33 +490,32 @@ router.post(
            
 
         restWater = restWater.data.WaterConnection;
-        logger.info("Water Connection :::::: " + restWater);
-
-        logger.info("Sewerage Connection :::::: " + restSewerage);
+        logger.info("Water Connection :::::: " + restWater.length)
           if(restWater.length>0){
             for(let water of restWater){
-              if(water.connectionno){
-                if(!connectionnoToPropertyMap[water.property_id]){
-                  connectionnoToPropertyMap[water.property_id] = [];
+              if(water.connectionNo){
+                if(!connectionnoToPropertyMap[water.propertyId]){
+                  connectionnoToPropertyMap[water.propertyId] = [];
                 }
-                  connectionnoToPropertyMap[water.property_id].push(water.connectionno);
+                  connectionnoToPropertyMap[water.propertyId].push(water.connectionNo);
               }
-              if(!propertyIdSet.includes(water.property_id)){
-                propertyIdSet.push(water.property_id);
+              if(!propertyIdSet.includes(water.propertyId)){
+                propertyIdSet.push(water.propertyId);
               }
             }
           }
           restSewerage = restSewerage.data.SewerageConnections;
+          logger.info("Sewerage Connection :::::: " + restSewerage.length);
           if(restSewerage.length>0){
             for(let sewerage of restSewerage){
-              if(sewerage.connectionno){
-                if(!connectionnoToPropertyMap[sewerage.property_id]){
-                  connectionnoToPropertyMap[sewerage.property_id] = [];
+              if(sewerage.connectionNo){
+                if(!connectionnoToPropertyMap[sewerage.propertyId]){
+                  connectionnoToPropertyMap[sewerage.propertyId] = [];
                 }
-                  connectionnoToPropertyMap[sewerage.property_id].push(sewerage.connectionno);
+                  connectionnoToPropertyMap[sewerage.propertyId].push(sewerage.connectionNo);
               }
-              if(!propertyIdSet.includes(sewerage.property_id)){
-                  propertyIdSet.push(sewerage.property_id);
+              if(!propertyIdSet.includes(sewerage.propertyId)){
+                  propertyIdSet.push(sewerage.propertyId);
               }
             }   
           }
@@ -526,15 +528,15 @@ router.post(
         try{
           for(let sewerage of restSewerage){
               var billresponse = await fetch_bill(
-              tenantId, waterBill.consumerCode,
-              waterBill.businessService, {RequestInfo:requestinfo.RequestInfo});
+              tenantId, sewerage.connectionNo,
+              'SW', {RequestInfo:requestinfo.RequestInfo});
               consolidatedResult.Bill.push(billresponse.data.Bill[0]);
             }
 
             for(let water of restWater){
               var billresponse = await fetch_bill(
-              tenantId, water.connectionno,
-              water.businessService, {RequestInfo:requestinfo.RequestInfo});
+              tenantId, water.connectionNo,
+              'WS', {RequestInfo:requestinfo.RequestInfo});
               consolidatedResult.Bill.push(billresponse.data.Bill[0]);
             }
             logger.info("Total Bills:::::: " + consolidatedResult.Bill.length);
@@ -548,11 +550,26 @@ router.post(
 
          
           if (consolidatedResult && consolidatedResult.Bill && consolidatedResult.Bill.length > 0) {
-            let data = propertyDetails[consumerCode];
+            try {
+              consolidatedResult.Bill = consolidatedResult.Bill.filter(function(e){return e});
+              for(let i=0;i<consolidatedResult.Bill.length;i++){
+                let consumerCode = consolidatedResult.Bill[i].consumerCode;
+                let data = propertyDetails[consumerCode];
+                if(data){
+            
             consolidatedResult.Bill[0].propertyUniqueId = data.propertyUniqueId;
             consolidatedResult.Bill[0].propertyAddress = data.propertyAddress;
             consolidatedResult.Bill[0].locality = data.locality;
-
+                }
+              }
+            }
+            catch (ex) {
+              let errorMessage= "Failed to generate PDF"; 
+              if (ex.response && ex.response.data) logger.error(ex.response.data);
+              throw new Error(errorMessage);
+            }
+          
+  
             var pdfResponse;
             var pdfkey = config.pdf.pt_group_bill;
             logger.info("About to call pdf-service with key as  " + pdfkey);
@@ -560,7 +577,7 @@ router.post(
             try {
               var billArray = { Bill: consolidatedResult.Bill };
               pdfResponse = await create_pdf(
-                tenantId,
+                'pg',
                 pdfkey,
                 billArray,
                 {RequestInfo:requestinfo.RequestInfo}
