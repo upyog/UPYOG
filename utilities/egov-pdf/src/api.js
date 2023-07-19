@@ -6,6 +6,7 @@ var logger = require("./logger").logger;
 const { Pool } = require('pg');
 const { log } = require("console");
 
+
 const pool = new Pool({
   user: config.DB_USER,
   host: config.DB_HOST,
@@ -197,7 +198,7 @@ async function search_water_propertyId(propertyId, tenantId, requestinfo, allowC
     params["mobileNumber"] = mobileNumber || userName;
   }
 
-  logger.info("Params for water Search:::::: " + params);
+  logger.info("Params for water Search:::::: " ,params);
 
   return await axios({
     method: "post",
@@ -240,7 +241,7 @@ async function search_sewerage_propertyId(propertyId, tenantId, requestinfo, all
 
   return await axios({
     method: "post",
-    url: url.resolve(config.host.wns, config.paths.sewerage_search),
+    url: url.resolve(config.host.sw, config.paths.sewerage_search),
     data: requestinfo,
     params
   });
@@ -1138,6 +1139,8 @@ module.exports = {
   search_amendment,
   search_water,
   search_sewerage,
+  search_water_propertyId,
+  search_sewerage_propertyId,
   search_waterOpenSearch,
   search_sewerageOpenSearch,
   search_bill_genie_water_bills,
