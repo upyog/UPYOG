@@ -237,7 +237,7 @@ async function search_sewerage_propertyId(propertyId, tenantId, requestinfo, all
     var userName = requestinfo.RequestInfo.userInfo.userName;
     params["mobileNumber"] = mobileNumber || userName;
   }
-  logger.info("Params for sewerage Search:::::: " + params);
+  logger.info("Params for sewerage Search:::::: " , params);
 
   return await axios({
     method: "post",
@@ -330,6 +330,8 @@ async function search_billV2(tenantId, consumerCode, serviceId, requestinfo) {
 
 async function fetch_bill(tenantId, consumerCode, serviceId, requestinfo) {
   //console.log("search_billV2 consumerCode--",consumerCode,"tenantId",tenantId,"serviceId",serviceId);
+ logger.info("In fetch Bill for " + serviceId);
+ 
   return await axios({
     method: "post",
     url: url.resolve(config.host.mcollectBilling, config.paths.fetch_bill),
