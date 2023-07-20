@@ -69,8 +69,8 @@ module.exports = {
     workflow: process.env.EGOV_WORKFLOW_HOST || HOST,
     challan: process.env.EGOV_ECHALLAN_HOST || 'http://echallan-services.egov:8080/',
     mcollectBilling: process.env.EGOV_BILLING_HOST || 'http://billing-service.egov:8080/',
-    wns: process.env.EGOV_WNS_HOST || 'http://ws-services.egov:8080/,
-    sw: process.env.EGOV_WNS_HOST || 'http://sw-services.egov:8080/'
+    wns: process.env.EGOV_WNS_HOST || HOST,
+    sw: process.env.EGOV_WNS_HOST || HOST
   },
   paths: {
     pdf_create: "/pdf-service/v1/_createnosave",
