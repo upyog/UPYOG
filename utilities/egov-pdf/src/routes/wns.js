@@ -573,9 +573,16 @@ router.post(
             var pdfResponse;
             var pdfkey = config.pdf.pt_group_bill;
             logger.info("About to call pdf-service with key as  " + pdfkey);
-
+            var Bills=[];
+            var BillA={};
+            BillA.tenantId=tenantId;
+            BillA.Bill=consolidatedResult.Bill;
+            Bills.push(BillA);
             try {
-              var billArray = { Bill: consolidatedResult.Bill };
+              var billArray = { Bill: Bills };
+              logger.info("Bill Array is");
+              logger.info("Bills "+billArray.Bill.length);
+              logger.info("Bill " +billArray.Bill[0].Bill.length);
               pdfResponse = await create_pdf(
                 'pg',
                 pdfkey,
