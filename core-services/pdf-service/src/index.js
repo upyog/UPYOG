@@ -923,7 +923,7 @@ export const createNoSave = async (
     var bussinessService = get(req, "service");
     var isConsolidated = get(req, "isConsolidated");
     var consumerCode = get(req, "consumerCode");
-    
+    var propertyId=get(req,"propertyId");
 
     logger.info("received createnosave request on key: " + key + " for job id:" + bulkPdfJobId +" totalPdfRecords: "+totalPdfRecords+" currentPdfRecords: "+currentPdfRecords + " size: "+billd.length);
 
@@ -1222,13 +1222,15 @@ const prepareBulk = async (
       let formatObject = JSON.parse(JSON.stringify(formatconfig));
 
       // Multipage pdf, each pdf from new page
-      if (
+      if(key!= "pt-group-bill")
+      {
+      if (formatObjectArrayObject !=null &&
         formatObjectArrayObject.length != 0 &&
         formatObject["content"][0] !== undefined
       ) {
         formatObject["content"][0]["pageBreak"] = "before";
       }
-
+    }
       /////////////////////////////
       formatObject = await handlelogic(
         key,
