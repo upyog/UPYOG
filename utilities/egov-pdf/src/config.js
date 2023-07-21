@@ -1,7 +1,7 @@
 // config.js
 // const env = process.env.NODE_ENV; // 'dev' or 'test'
 
-HOST = process.env.EGOV_HOST;
+HOST = 'https://upyog-test.niua.org';
 
 if (!HOST) {
   console.log("You need to set the HOST variable");
@@ -44,7 +44,7 @@ module.exports = {
     process.env.WNS_ONE_TIME_RECEIPT || "ws-onetime-receipt",
     wns_bill:
     process.env.WNS_BILL || "ws-bill",
-	pt_group_bill:
+    pt_group_bill:
     process.env.PT_GROUP_BILL || "pt-group-bill",
     birth_certificate:
             process.env.BIRTH_CERTIFICATE || "birth-certificate",
@@ -61,8 +61,8 @@ module.exports = {
     mdms: process.env.EGOV_MDMS_HOST || HOST,
     epass: process.env.EGOV_TLSERVICES_HOST || HOST,
     tl: process.env.EGOV_TRADELICENSESERVICES_HOST || HOST,
-    pt: process.env.EGOV_PTSERVICES_HOST || HOST,
-    pdf: process.env.EGOV_PDF_HOST || HOST,
+    pt: process.env.EGOV_PTSERVICES_HOST || 'http://localhost:8084',
+    pdf: process.env.EGOV_PDF_HOST ||'http://localhost:8085',
     user: process.env.EGOV_USER_HOST || HOST,
     payments: process.env.EGOV_PAYMENTS_HOST || HOST,
     bill: process.env.EGOV_SEARCHER_HOST || HOST,
@@ -73,7 +73,7 @@ module.exports = {
     sw: process.env.EGOV_WNS_HOST || HOST
   },
   paths: {
-    pdf_create: "/pdf-service/v1/_createnosave",
+    pdf_create: "/pdf-service/v1/_create",
     epass_search: "/tl-services/v1/_search",
     tl_search: "/tl-services/v1/_search",
     pt_search: "/property-services/property/_search",
