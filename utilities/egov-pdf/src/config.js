@@ -1,8 +1,8 @@
 // config.js
 // const env = process.env.NODE_ENV; // 'dev' or 'test'
 
-HOST = 'https://upyog-test.niua.org';
-
+//HOST = 'https://upyog-test.niua.org';
+HOST = process.env.EGOV_HOST;
 if (!HOST) {
   console.log("You need to set the HOST variable");
   process.exit(1);
@@ -61,8 +61,8 @@ module.exports = {
     mdms: process.env.EGOV_MDMS_HOST || HOST,
     epass: process.env.EGOV_TLSERVICES_HOST || HOST,
     tl: process.env.EGOV_TRADELICENSESERVICES_HOST || HOST,
-    pt: process.env.EGOV_PTSERVICES_HOST || 'http://localhost:8084',
-    pdf: process.env.EGOV_PDF_HOST ||'http://localhost:8085',
+    pt: process.env.EGOV_PTSERVICES_HOST || HOST,
+    pdf: process.env.EGOV_PDF_HOST || HOST,
     user: process.env.EGOV_USER_HOST || HOST,
     payments: process.env.EGOV_PAYMENTS_HOST || HOST,
     bill: process.env.EGOV_SEARCHER_HOST || HOST,
