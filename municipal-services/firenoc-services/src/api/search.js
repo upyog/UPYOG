@@ -90,8 +90,9 @@ export const searchApiResponse = async (request, next = {}) => {
       queryObj.mobileNumber,
       envVariables.EGOV_DEFAULT_STATE_ID
     );
-    // console.log(userSearchResponse);
-    let searchUserUUID = get(userSearchResponse, "user.0.uuid");
+
+    console.log("User Search Response-> " + userSearchResponse);
+    //let searchUserUUID = get(userSearchResponse, "user.0.uuid");
     // if (searchUserUUID) {
     //   // console.log(searchUserUUID);
     var userSearchResponseJson = JSON.parse(JSON.stringify(userSearchResponse));
