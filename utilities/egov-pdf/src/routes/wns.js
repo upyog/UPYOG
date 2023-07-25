@@ -385,9 +385,9 @@ router.post(
   router.post(
     "/wnsgroupbill",
     asyncMiddleware(async function (req, res, next) {
-      var tenantId = req.query.tenantId;
-      var locality = req.query.locality;
-      var bussinessService = req.query.bussinessService;
+      var tenantId=null;
+      var locality=null;
+      var bussinessService=null;
       var isConsolidated = (req.query.isConsolidated != undefined && req.query.isConsolidated.toLowerCase() === 'true' ? true : false)
       var consumerCode = null;
       var propertyId=null;
@@ -397,6 +397,14 @@ router.post(
       var consolidatedResult = {Bill:[]};
   var propertyIdSet = [];
   var connectionnoToPropertyMap = {};
+
+      if(req.query.bussinessService)
+        bussinessService = req.query.bussinessService;
+      if(req.query.tenantId)
+        tenantId = req.query.tenantId;
+      if(req.query.locality)
+        locality = req.query.locality;
+        
       if(req.query.consumerCode)
         consumerCode = req.query.consumerCode;
         
@@ -408,15 +416,16 @@ router.post(
       if (requestinfo == undefined) {
         return renderError(res, "requestinfo can not be null");
       }
-      if (!tenantId || !locality || !bussinessService) {
-        return renderError(
-          res,
-          "Bussiness Service, TenantId and Locality are mandatory to generate the water and sewerage bill"
-        );
-      }
+      
 
       if(propertyId==null){
 
+        if (!tenantId || !locality || !bussinessService) {
+          return renderError(
+            res,
+            "Bussiness Service, TenantId and Locality are mandatory to generate the water and sewerage bill"
+          );
+        }
       var id = uuidv4();
       var jobid = `${config.pdf.wns_bill}-${new Date().getTime()}-${id}`;
 
