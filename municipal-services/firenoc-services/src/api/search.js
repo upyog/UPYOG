@@ -146,7 +146,7 @@ export const searchApiResponse = async (request, next = {}) => {
 
     } else firenocIdQuery = `${firenocIdQuery}'${queryObj.mobileNumber}'`;
 
-    firenocIdQuery = `${firenocIdQuery} )`;
+    //firenocIdQuery = `${firenocIdQuery} )`;
     console.log("Firenoc ID Query -> " + firenocIdQuery);
     const dbResponse = await db.query(firenocIdQuery);
     let firenocIds = [];
