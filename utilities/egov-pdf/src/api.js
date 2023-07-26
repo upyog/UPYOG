@@ -389,6 +389,7 @@ async function getPropertyDeatils(requestinfo,tenantId,propertyIds,connectionnoT
     var propertyAddress="";
     var locality;
     var address = property.address;
+    var owners=property.owners;
     if(address.plotNo)
       propertyAddress = propertyAddress + address.plotNo + ",";
 
@@ -407,7 +408,8 @@ async function getPropertyDeatils(requestinfo,tenantId,propertyIds,connectionnoT
     let result = {
       propertyUniqueId: property.propertyId,
       locality: locality,
-      propertyAddress: propertyAddress
+      propertyAddress: propertyAddress,
+      owners:owners
     };
 
     let connectionList = connectionnoToPropertyMap[property.propertyId];

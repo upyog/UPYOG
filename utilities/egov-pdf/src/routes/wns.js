@@ -565,10 +565,11 @@ router.post(
                 let consumerCode = consolidatedResult.Bill[i].consumerCode;
                 let data = propertyDetails[consumerCode];
                 if(data){
-            
-            consolidatedResult.Bill[0].propertyUniqueId = data.propertyUniqueId;
-            consolidatedResult.Bill[0].propertyAddress = data.propertyAddress;
-            consolidatedResult.Bill[0].locality = data.locality;
+                  consolidatedResult.Bill[0].owners = data.owners;
+                  consolidatedResult.Bill[0].propertyUniqueId = data.propertyUniqueId;
+                  consolidatedResult.Bill[0].propertyAddress = data.propertyAddress;
+                  consolidatedResult.Bill[0].locality = data.locality;
+
                 }
               }
             }
