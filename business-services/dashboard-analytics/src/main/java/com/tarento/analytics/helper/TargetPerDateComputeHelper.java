@@ -1,5 +1,8 @@
 package com.tarento.analytics.helper;
 
+import java.time.LocalDate;
+import java.time.Period;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -9,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.tarento.analytics.dto.AggregateRequestDto;
 import com.tarento.analytics.dto.Data;
 
@@ -41,10 +45,22 @@ public class TargetPerDateComputeHelper implements ComputeHelper {
 				logger.info("End Date after Round Off: " + String.valueOf(eDate));
 		        Long dateDifference = TimeUnit.DAYS.convert((eDate - sDate), TimeUnit.MILLISECONDS);
 		        if(dateDifference == 0l) dateDifference = dateDifference + 1l ;
+		        //Added for multi year 
+		        int len = 1;
+		        if(request.getChartNode() != null && request.getChartNode().findValue("dateRefField").toString() !=null &&  (request.getChartNode().findValue("dateRefField").toString()).equals("\"financialYear.keyword\""))
+				{
+					LocalDate startDate1 = LocalDate.ofEpochDay(sDate / (24* 60 * 60 * 1000 ));
+					LocalDate endDate1 = LocalDate.ofEpochDay(eDate / (24* 60 * 60 * 1000));
+			         int startYear = startDate1.getMonthValue() < 4 ? startDate1.getYear() - 1 : startDate1.getYear();
+			         int endYear = endDate1.getMonthValue() < 4 ? endDate1.getYear() - 1 : endDate1.getYear();
+			         len = endYear - startYear +1;
+				}
+		        //Added for multi year 
+		        
 				for(Data eachData : data) { 
 						Double value = (Double) eachData.getHeaderValue();
 						logger.info("Value is : " + value + " :: Date Difference is : " + dateDifference);
-						value = (value / NUMBER_OF_DAYS) * dateDifference; 
+						value = (value / (NUMBER_OF_DAYS * len)) * dateDifference; 
 						eachData.setHeaderValue(value);
 				}
 			} catch (Exception ex) { 
