@@ -138,20 +138,6 @@ const SearchWaterConnectionIntegrated = ({ tenantId, onSubmit, data, count, resu
           return GetCell(status === "INACTIVE" ? t("WS_NA") : t(`${dueDate}`));
         },
       },
-
-      {
-        Header: t("WS_COMMON_TABLE_COL_ACTION_LABEL"),
-        disableSortBy: true,
-        Cell: ({ row }) => {
-          const amount = row.original?.due;
-
-          if (amount > 0) {
-            return GetCell(getActionItem(row.original?.status, row));
-          } else {
-            return GetCell(t(`${"WS_NA"}`));
-          }
-        },
-      },
     ],
     []
   );
