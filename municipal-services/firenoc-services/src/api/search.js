@@ -90,8 +90,9 @@ export const searchApiResponse = async (request, next = {}) => {
       queryObj.mobileNumber,
       envVariables.EGOV_DEFAULT_STATE_ID
     );
-    // console.log(userSearchResponse);
-    let searchUserUUID = get(userSearchResponse, "user.0.uuid");
+
+    console.log("User Search Response-> " + userSearchResponse);
+    //let searchUserUUID = get(userSearchResponse, "user.0.uuid");
     // if (searchUserUUID) {
     //   // console.log(searchUserUUID);
     var userSearchResponseJson = JSON.parse(JSON.stringify(userSearchResponse));
@@ -99,6 +100,7 @@ export const searchApiResponse = async (request, next = {}) => {
     for (var i = 0; i < userSearchResponseJson.user.length; i++) {
       userUUIDArray.push(userSearchResponseJson.user[i].uuid);
     }
+    console.log("User Search Response uuid-> " + userUUIDArray.length);
 
     let firenocIdQuery = `SELECT FN.uuid as FID FROM eg_fn_firenoc FN JOIN eg_fn_firenocdetail FD ON (FN.uuid = FD.firenocuuid) JOIN eg_fn_owner FO ON (FD.uuid = FO.firenocdetailsuuid) where `;
 
@@ -130,8 +132,9 @@ export const searchApiResponse = async (request, next = {}) => {
         sqlQuery = `${sqlQuery}) AND`;  
     }*/
 
-    firenocIdQuery = `${firenocIdQuery} FO.useruuid in (`;
     if (userUUIDArray.length > 0) {
+      firenocIdQuery = `${firenocIdQuery} FO.useruuid in (`;
+
       for (var j = 0; j < userUUIDArray.length; j++) {
         if (j == 0) {
           firenocIdQuery = `${firenocIdQuery}'${userUUIDArray[j]}'`;
@@ -139,9 +142,11 @@ export const searchApiResponse = async (request, next = {}) => {
           firenocIdQuery = `${firenocIdQuery}, '${userUUIDArray[j]}'`;
         }
       }
+      firenocIdQuery = `${firenocIdQuery} )`;
+
     } else firenocIdQuery = `${firenocIdQuery}'${queryObj.mobileNumber}'`;
 
-    firenocIdQuery = `${firenocIdQuery} )`;
+    //firenocIdQuery = `${firenocIdQuery} )`;
     console.log("Firenoc ID Query -> " + firenocIdQuery);
     const dbResponse = await db.query(firenocIdQuery);
     let firenocIds = [];
