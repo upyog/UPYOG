@@ -23,7 +23,7 @@ const SearchFields = ({ register, control, reset, tenantId, t }) => {
       </SearchField>
 
       <SearchField className="submit">
-        <SubmitBar label={t("WS_SEARCH_CONNECTION_SEARCH_BUTTON")} submit />
+        <SubmitBar label={t("WS_SEARCH_CONNECTION_SEARCH_AND_DOWNLOAD_BUTTON")} submit />
         <p
           onClick={() => {
             reset({
