@@ -120,6 +120,7 @@ export const WSService = {
       auth: true,
       userService: true,
       params: { ...filters },
+      userDownload: true,
     }),
   cancelGroupBill: (filters) =>
     Request({

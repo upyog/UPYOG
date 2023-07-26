@@ -84,7 +84,11 @@ import ModifyApplicationDetails from "./pages/employee/ModifyApplicationDetails"
 import EditDisconnectionApplication from "./pages/employee/EditDisconnectionApplication";
 import EditDisconnectionByConfig from "./pages/employee/EditDisconnectionApplication/EditDisconnectionByConfig";
 import ResubmitDisconnection from "./pages/employee/EditDisconnectionApplication/ResubmitDisconnection";
-
+//import IntegratedBill from "./pages/employee/SearchWaterConnectionIntegrated";
+import SearchWaterConnectionIntegrated from "./pages/employee/SearchWaterConnectionIntegrated";
+import SearchIntegrated from "./pages/employee/SearchIntegrated";
+import SearchWaterConnectionViewIntegrated
+ from "./pages/employee/SearchWaterConnection/SearchWaterConnectionViewIntegrated";
 
 
 const WSModule = ({ stateCode, userType, tenants }) => {
@@ -226,7 +230,10 @@ const componentsToRegister = {
   WSModifyApplicationDetails: ModifyApplicationDetails,
   WSEditDisconnectionApplication: EditDisconnectionApplication,
   WSEditDisconnectionByConfig: EditDisconnectionByConfig,
-  WSResubmitDisconnection: ResubmitDisconnection
+  WSResubmitDisconnection: ResubmitDisconnection,
+  WSSearchWaterConnectionIntegrated:SearchWaterConnectionIntegrated,
+  WSSearchIntegrated:SearchIntegrated,
+  WSSearchWaterConnectionViewIntegrated :SearchWaterConnectionViewIntegrated
 };
 
 export const initWSComponents = () => {
