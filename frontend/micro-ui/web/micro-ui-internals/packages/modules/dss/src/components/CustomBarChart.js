@@ -8,11 +8,13 @@ import NoData from "./NoData";
 import { checkCurrentScreen } from "./DSSCard";
 
 const formatValue = (value, symbol) => {
+  console.log("value",value)
   if (symbol?.toLowerCase() === "percentage") {
     /*   Removed by  percentage formatter.
     const Pformatter = new Intl.NumberFormat("en-IN", { maximumSignificantDigits: 3 });
     return `${Pformatter.format(Number(value).toFixed(2))}`;
     */
+   
     return `${Number(value).toFixed()}`;
   } else {
     return value;
@@ -21,6 +23,16 @@ const formatValue = (value, symbol) => {
 
 const CustomLabel = ({ x, y, name, stroke, value, maxValue }) => {
   const { t } = useTranslation();
+ console.log("name",name,value)
+  for (const key in maxValue) {
+    if (maxValue.hasOwnProperty(key)) {
+      if(maxValue[key] > 100000000)
+      {
+        maxValue[key] = Number((maxValue[key] / 10000000).toFixed(2));
+      }
+      console.log(`${key}: ${maxValue[key]}`);
+    }
+  }
   return (
     <>
       <text
@@ -32,7 +44,7 @@ const CustomLabel = ({ x, y, name, stroke, value, maxValue }) => {
         width="35"
         style={{ fontSize: "medium", textAlign: "right", fontVariantNumeric: "proportional-nums" }}
       >
-        {`${maxValue?.[t(name)]}%`}
+        {`${maxValue?.[t(name)]} Cr`}
       </text>
       <text x={x} y={y} dx={-200} dy={10}>
         {t(`DSS_TB_${Digit.Utils.locale.getTransformedLocale(name)}`)}
