@@ -122,11 +122,11 @@ const PropertySearchNSummary = ({ config, onSelect, userType, formData, setError
           </button>
         </div>
       </LabelFieldPair>
-      <span onClick={() => history.push(`/digit-ui/employee/commonpt/search?redirectToUrl=${redirectBackUrl}&${serachParams}`, { ...state })}>
+      <span onClick={() => history.push("/digit-ui/employee/pt/search")}>
         <LinkButton label={t("CPT_SEARCH_PROPERTY")} style={{ color: "#a82227", display: "inline-block" }} />
       </span>
       &nbsp; | &nbsp;
-      <span onClick={() => history.push(`/digit-ui/employee/commonpt/new-application?redirectToUrl=${redirectBackUrl}&${serachParams}`, { ...state })}>
+      <span onClick={() => history.push("/digit-ui/employee/pt/new-application")}>
         <LinkButton label={t("CPT_CREATE_PROPERTY")} style={{ color: "#a82227", display: "inline-block" }} />
       </span>
       {propertyDetails && propertyDetails?.Properties.length ? (

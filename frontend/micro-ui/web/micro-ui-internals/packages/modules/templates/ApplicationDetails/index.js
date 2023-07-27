@@ -100,7 +100,11 @@ const ApplicationDetails = (props) => {
   };
 
   const submitAction = async (data, nocData = false, isOBPS = {}) => {
-    if(data.BPA.comment.length >0)
+    console.log("submitAction",data)
+   
+   let checkComment =Object.values(data)
+   
+    if(checkComment[0]["comment"])
     {
       setIsEnableLoader(true);
       if (typeof data?.customFunctionToExecute === "function") {
