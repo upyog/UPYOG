@@ -233,7 +233,7 @@ export const mapIDsToList = response => {
   for (var i = 0; i < response.length; i++) {
     result.push(response[i].fid);
   }
-  console.log(result);
+  console.log("Fire NOc Id is"+result);
   return result;
 }
 
