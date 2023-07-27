@@ -159,6 +159,7 @@ export const searchApiResponse = async (request, next = {}) => {
           ? mapIDsToList(dbResponse.rows)
           : [];
     }
+    console.log("firenocIds is " + firenocIds);
 
     if (queryObj.hasOwnProperty("ids")) {
       queryObj.ids.push(...firenocIds);
@@ -169,10 +170,13 @@ export const searchApiResponse = async (request, next = {}) => {
   if (queryObj.hasOwnProperty("ids")) {
     // console.log(queryObj.ids.split(","));
     let ids = queryObj.ids.split(",");
+if(ids.length>0)
+    {
     sqlQuery = `${sqlQuery} FN.uuid IN ( `;
     for (var i = 0; i < ids.length; i++) {
       sqlQuery = `${sqlQuery} '${ids[i]}' `;
       if (i != ids.length - 1) sqlQuery = `${sqlQuery} ,`;
+    }
     }
 
     if (ids.length > 1) sqlQuery = `${sqlQuery} ) AND`;
