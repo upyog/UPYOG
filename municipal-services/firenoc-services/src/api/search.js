@@ -149,6 +149,8 @@ export const searchApiResponse = async (request, next = {}) => {
     //firenocIdQuery = `${firenocIdQuery} )`;
     console.log("Firenoc ID Query -> " + firenocIdQuery);
     const dbResponse = await db.query(firenocIdQuery);
+    //const dbResponse={"rows":[],"err":null};
+
     let firenocIds = [];
     console.log("dbResponse" + JSON.stringify(dbResponse));
     if (dbResponse.err) {
@@ -170,7 +172,7 @@ export const searchApiResponse = async (request, next = {}) => {
   if (queryObj.hasOwnProperty("ids")) {
     // console.log(queryObj.ids.split(","));
     let ids = queryObj.ids.split(",");
-if(ids.length>0)
+if(ids!=null && (ids.length>0 && ids[0]!=''))
     {
     sqlQuery = `${sqlQuery} FN.uuid IN ( `;
     for (var i = 0; i < ids.length; i++) {
