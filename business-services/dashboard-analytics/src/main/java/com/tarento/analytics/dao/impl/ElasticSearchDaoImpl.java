@@ -3,7 +3,10 @@ package com.tarento.analytics.dao.impl;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -13,6 +16,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.TimeZone;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -1278,10 +1282,12 @@ public class ElasticSearchDaoImpl implements ElasticSearchDao {
 					valueList.clear();
 					List<String> years = new ArrayList<>();
 					String finYear = null;
+					
 					long epoch1 = (Long.parseLong(dto.getRequestDate().getStartDate()));
 					long epoch2 =  (Long.parseLong(dto.getRequestDate().getEndDate()));
-					LocalDate startDate1 = LocalDate.ofEpochDay(epoch1 / (24* 60 * 60 * 1000 ));
-					LocalDate endDate1 = LocalDate.ofEpochDay(epoch2 / (24* 60 * 60 * 1000));			         int startYear = startDate1.getMonthValue() < 4 ? startDate1.getYear() - 1 : startDate1.getYear();
+					LocalDate startDate1=Instant.ofEpochMilli(epoch1).atZone(ZoneId.systemDefault()).toLocalDate();
+					LocalDate endDate1=Instant.ofEpochMilli(epoch2).atZone(ZoneId.systemDefault()).toLocalDate();		         
+					int startYear = startDate1.getMonthValue() < 4 ? startDate1.getYear() - 1 : startDate1.getYear();
 			         int endYear = endDate1.getMonthValue() < 4 ? endDate1.getYear() - 1 : endDate1.getYear();			         
 			         for (int year = startYear; year <= endYear; year++) {
 			             finYear = year + "-" + (Integer.toString(year + 1).substring(2));
