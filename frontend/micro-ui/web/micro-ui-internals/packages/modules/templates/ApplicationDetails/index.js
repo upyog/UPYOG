@@ -104,7 +104,7 @@ const ApplicationDetails = (props) => {
    
    let checkComment =Object.values(data)
    
-    if(checkComment[0]["comment"])
+    if(checkComment[0]["comment"].length > 0) 
     {
       setIsEnableLoader(true);
       if (typeof data?.customFunctionToExecute === "function") {
