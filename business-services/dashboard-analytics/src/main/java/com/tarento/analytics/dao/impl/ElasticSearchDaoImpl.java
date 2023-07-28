@@ -3,6 +3,11 @@ package com.tarento.analytics.dao.impl;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -11,6 +16,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.TimeZone;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -1270,10 +1276,43 @@ public class ElasticSearchDaoImpl implements ElasticSearchDao {
 				valueList.add(dto.getRequestDate().getStartDate());
 				valueList.add(dto.getRequestDate().getEndDate());
 				Map<String, List<Object>> queryInnerMap = new HashMap<>();
-
-				if(StringUtils.isNotBlank(filterDateField)) { 
+				// Added by Manvi for differenceofdates
+				if (filterDateField.equals("financialYear.keyword"))
+				{
+					valueList.clear();
+					List<String> years = new ArrayList<>();
+					String finYear = null;
+					
+					long epoch1 = (Long.parseLong(dto.getRequestDate().getStartDate()));
+					long epoch2 =  (Long.parseLong(dto.getRequestDate().getEndDate()));
+					ZoneId zoneid = ZoneId.of("Asia/Kolkata");
+					LocalDate startDate1=Instant.ofEpochMilli(epoch1).atZone(zoneid).toLocalDate();
+					LocalDate endDate1=Instant.ofEpochMilli(epoch2).atZone(zoneid).toLocalDate();
+			        //logger.info("StartDate is: " + startDate1);
+			        //logger.info("EndDate is: " + endDate1);
+					int startYear = startDate1.getMonthValue() < 4 ? startDate1.getYear() - 1 : startDate1.getYear();
+			         int endYear = endDate1.getMonthValue() < 4 ? endDate1.getYear() - 1 : endDate1.getYear();			         
+			         for (int year = startYear; year <= endYear; year++) {
+			             finYear = year + "-" + (Integer.toString(year + 1).substring(2));
+			             years.add(finYear);
+			             valueList.add(finYear);
+			         }
+			         //logger.info("FinancialYear is: " + years);
+			         int len = years.size();
+				        }
+				//Added for differenceofdates	
+				if(StringUtils.isNotBlank(filterDateField) && filterDateField.equals("date") ) { 
 					queryInnerMap.put(filterDateField, valueList);
 					queryMap.put(ElasticProperties.Query.RANGE_CONDITION, queryInnerMap);
+				}
+				else if ((StringUtils.isNotBlank(filterDateField) && filterDateField.equals("financialYear.keyword")) ) { 
+					if (queryMap.containsKey(ElasticProperties.Query.MATCH_CONDITION)) {
+						Map<String, List<Object>> queryInnerMap1 = queryMap
+								.get(ElasticProperties.Query.MATCH_CONDITION);
+						queryInnerMap1.put(filterDateField, valueList);
+						queryMap.put(ElasticProperties.Query.MATCH_CONDITION, queryInnerMap1);
+
+					}
 				}
 			}
 		}
