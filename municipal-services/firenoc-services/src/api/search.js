@@ -148,8 +148,8 @@ export const searchApiResponse = async (request, next = {}) => {
 
     //firenocIdQuery = `${firenocIdQuery} )`;
     console.log("Firenoc ID Query -> " + firenocIdQuery);
-    const dbResponse = await db.query(firenocIdQuery);
-    //const dbResponse={"rows":[],"err":null};
+    //const dbResponse = await db.query(firenocIdQuery);
+    const dbResponse={"rows":[],"err":null};
 
     let firenocIds = [];
     console.log("dbResponse" + JSON.stringify(dbResponse));
@@ -163,16 +163,20 @@ export const searchApiResponse = async (request, next = {}) => {
     }
     console.log("firenocIds is " + firenocIds);
 
+   
     if (queryObj.hasOwnProperty("ids")) {
       queryObj.ids.push(...firenocIds);
     } else {
       queryObj.ids = firenocIds.toString();
     }
+    
   }
+
+
   if (queryObj.hasOwnProperty("ids")) {
     // console.log(queryObj.ids.split(","));
     let ids = queryObj.ids.split(",");
-if(ids!=null && (ids.length>0 && ids[0]!=''))
+    if(ids!=null && (ids.length>0 && ids[0]!=''))
     {
     sqlQuery = `${sqlQuery} FN.uuid IN ( `;
     for (var i = 0; i < ids.length; i++) {
@@ -180,9 +184,13 @@ if(ids!=null && (ids.length>0 && ids[0]!=''))
       if (i != ids.length - 1) sqlQuery = `${sqlQuery} ,`;
     }
     }
+    else 
+    {
+      return response;
+    }
 
     if (ids.length > 1) sqlQuery = `${sqlQuery} ) AND`;
-  }
+    }
 
   if (queryKeys) {
     queryKeys.forEach(item => {
@@ -241,16 +249,16 @@ if(ids!=null && (ids.length>0 && ids[0]!=''))
 }else if(isEmpty(queryObj)){
   sqlQuery = `${sqlQuery}  ) s`;
 }else if(!isEmpty(queryObj)){
-  sqlQuery = `${sqlQuery.substring(0, sqlQuery.length - 3)}  ) s ORDER BY fid `;
+  sqlQuery = `${sqlQuery.substring(0, sqlQuery.length - 3)}) s ORDER BY fid `;
 }
 
   console.log("SQL QUery:" +sqlQuery);
   const dbResponse = await db.query(sqlQuery);
-  //console.log("dbResponse"+JSON.stringify(dbResponse));
+  console.log("dbResponse"+JSON.stringify(dbResponse));
   if (dbResponse.err) {
     console.log(err.stack);
   } else {
-     //console.log(JSON.stringify(dbResponse.rows));
+    console.log(JSON.stringify(dbResponse.rows));
     response.FireNOCs =
       dbResponse.rows && !isEmpty(dbResponse.rows)
         ? await mergeSearchResults(
