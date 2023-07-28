@@ -590,14 +590,6 @@ router.post(
             logger.info("About to call pdf-service with key as  " + pdfkey);
             var Bills=[];
             var BillA={};
-            var tempBill={};
-            if(consolidatedResult.Bill.length==0)
-            {
-              tempBill.owners = [];
-                  consolidatedResult.Bill[0].propertyUniqueId = data.propertyUniqueId;
-                  consolidatedResult.Bill[0].propertyAddress = data.propertyAddress;
-                  consolidatedResult.Bill[0].locality = data.locality;
-            }
             BillA.tenantId=tenantId;
             BillA.Bill=consolidatedResult.Bill;
             Bills.push(BillA);
