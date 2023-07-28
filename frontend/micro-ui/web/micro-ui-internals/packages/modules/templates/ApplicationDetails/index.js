@@ -103,7 +103,11 @@ const ApplicationDetails = (props) => {
     console.log("submitAction",data)
    
    let checkComment =Object.values(data)
-   
+  
+   if(Array.isArray(checkComment[0]))
+   {
+    checkComment=checkComment[0]
+   }
     if(checkComment[0]["comment"].length > 0) 
     {
       setIsEnableLoader(true);
