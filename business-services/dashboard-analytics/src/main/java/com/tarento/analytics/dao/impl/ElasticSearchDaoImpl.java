@@ -1287,7 +1287,7 @@ public class ElasticSearchDaoImpl implements ElasticSearchDao {
 					long epoch2 =  (Long.parseLong(dto.getRequestDate().getEndDate()));
 			        logger.info("epoch1 is: " + epoch1);
 			        logger.info("epoch2 is: " + epoch2);
-					ZoneId zoneid = ZoneId.of("GMT");
+					ZoneId zoneid = ZoneId.of("Asia/Kolkata");
 					LocalDate startDate1=Instant.ofEpochMilli(epoch1).atZone(zoneid).toLocalDate();
 					LocalDate endDate1=Instant.ofEpochMilli(epoch2).atZone(zoneid).toLocalDate();
 			        logger.info("StartDate is: " + startDate1);
