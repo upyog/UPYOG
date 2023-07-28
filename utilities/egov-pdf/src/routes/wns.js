@@ -489,8 +489,11 @@ router.post(
                   {RequestInfo:requestinfo.RequestInfo},
                   true
                 );
-          
-                restSewerage = await search_sewerage_propertyId(
+       
+                restWater = restWater.data.WaterConnection;
+                logger.info("Water Connection :::::: " + restWater.length);
+
+          restSewerage = await search_sewerage_propertyId(
                     propertyId,
                     tenantId,
                     {RequestInfo:requestinfo.RequestInfo},
@@ -498,8 +501,7 @@ router.post(
                   );
            
 
-        restWater = restWater.data.WaterConnection;
-        logger.info("Water Connection :::::: " + restWater.length)
+       
           if(restWater.length>0){
             for(let water of restWater){
               if(water.connectionNo){
@@ -539,6 +541,7 @@ router.post(
               var billresponse = await fetch_bill(
               tenantId, sewerage.connectionNo,
               'SW', {RequestInfo:requestinfo.RequestInfo});
+              if(billresponse.data.Bill[0]!=undefined)
               consolidatedResult.Bill.push(billresponse.data.Bill[0]);
             }
 
@@ -546,9 +549,11 @@ router.post(
               var billresponse = await fetch_bill(
               tenantId, water.connectionNo,
               'WS', {RequestInfo:requestinfo.RequestInfo});
+              logger.info("ddd-----"+billresponse.data.Bill[0]);
+              if(billresponse.data.Bill[0]!=undefined)
               consolidatedResult.Bill.push(billresponse.data.Bill[0]);
             }
-            logger.info("Total Bills:::::: " + consolidatedResult.Bill.length);
+            logger.info("Total Bills:::::: " + (consolidatedResult.Bill && consolidatedResult.Bill[0]!=undefined?consolidatedResult.Bill.length:0));
 
         }
         catch (ex) {
@@ -557,8 +562,8 @@ router.post(
         }
         var propertyDetails = await getPropertyDeatils({RequestInfo:requestinfo.RequestInfo}, tenantId, propertyIdSet, connectionnoToPropertyMap);
 
-         
-          if (consolidatedResult && consolidatedResult.Bill && consolidatedResult.Bill.length > 0) {
+         if(restWater.length>0 || restSewerage.length>0){
+          if (consolidatedResult && consolidatedResult.Bill && consolidatedResult.Bill.length > 0 && consolidatedResult.Bill[0] !=undefined ) {
             try {
               consolidatedResult.Bill = consolidatedResult.Bill.filter(function(e){return e});
               for(let i=0;i<consolidatedResult.Bill.length;i++){
@@ -622,12 +627,17 @@ router.post(
             });
             pdfResponse.data.pipe(res);
           } else {
-            return renderError(res, "There is no bill for this application number");
+            return renderError(res, "There is no bill present for Water or Sewerage Connections associated with this Property Id");
           }
         }
-    
+      
+      else
+      {
+        return renderError(res, "There is no connection associated with this Property Id");
+      }
+      }
       catch (ex) {
-        return renderError(res, `Failed to query bill for water and sewerage application`);
+        return renderError(res, 'Some Unknown error Occured!!'+ex.message);
       }
     }
 
