@@ -15,7 +15,6 @@
     "micro-ui-internals/packages/modules/tl",
     "micro-ui-internals/packages/modules/ws",
     "micro-ui-internals/packages/modules/commonPt",
-    "micro-ui-internals/packages/modules/templates",
     "micro-ui-internals/packages/modules/fsm"
   ],
   "engines": {
