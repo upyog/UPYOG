@@ -44,6 +44,8 @@ module.exports = {
     process.env.WNS_ONE_TIME_RECEIPT || "ws-onetime-receipt",
     wns_bill:
     process.env.WNS_BILL || "ws-bill",
+    pt_group_bill:
+    process.env.PT_GROUP_BILL || "pt-group-bill",
     birth_certificate:
             process.env.BIRTH_CERTIFICATE || "birth-certificate",
     death_certificate:
@@ -67,7 +69,8 @@ module.exports = {
     workflow: process.env.EGOV_WORKFLOW_HOST || HOST,
     challan: process.env.EGOV_ECHALLAN_HOST || 'http://echallan-services.egov:8080/',
     mcollectBilling: process.env.EGOV_BILLING_HOST || 'http://billing-service.egov:8080/',
-    wns: process.env.EGOV_WNS_HOST || HOST
+    wns: process.env.EGOV_WNS_HOST || HOST,
+    sw:  process.env.EGOV_WNS_HOST || HOST
   },
   paths: {
     pdf_create: "/pdf-service/v1/_createnosave",
