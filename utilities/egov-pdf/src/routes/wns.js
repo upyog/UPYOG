@@ -18,6 +18,8 @@ const pool = new Pool({
 var {
   search_water,
   search_sewerage,
+  search_water_propertyId,
+  search_sewerage_propertyId,
   search_waterOpenSearch,
   search_sewerageOpenSearch,
   search_bill_genie_water_bills,
@@ -35,8 +37,6 @@ function renderError(res, errorMessage, errorCode) {
   if (errorCode == undefined) errorCode = 500;
   res.status(errorCode).send({ errorMessage });
 }
-
-
 router.post(
     "/wnsbill",
     asyncMiddleware(async function (req, res, next) {
@@ -385,25 +385,47 @@ router.post(
   router.post(
     "/wnsgroupbill",
     asyncMiddleware(async function (req, res, next) {
-      var tenantId = req.query.tenantId;
-      var locality = req.query.locality;
-      var bussinessService = req.query.bussinessService;
+      var tenantId=null;
+      var locality=null;
+      var bussinessService=null;
       var isConsolidated = (req.query.isConsolidated != undefined && req.query.isConsolidated.toLowerCase() === 'true' ? true : false)
       var consumerCode = null;
+      var propertyId=null;
+      var requestinfo = req.body;
+      var restWater;
+      var restSewerage;
+      var consolidatedResult = {Bill:[]};
+  var propertyIdSet = [];
+  var connectionnoToPropertyMap = {};
+
+      if(req.query.bussinessService)
+        bussinessService = req.query.bussinessService;
+      if(req.query.tenantId)
+        tenantId = req.query.tenantId;
+      if(req.query.locality)
+        locality = req.query.locality;
+        
       if(req.query.consumerCode)
         consumerCode = req.query.consumerCode;
+        
+      if(req.query.propertyId)
+        propertyId = req.query.propertyId;
+
       var requestinfo = req.body;
       
       if (requestinfo == undefined) {
         return renderError(res, "requestinfo can not be null");
       }
-      if (!tenantId || !locality || !bussinessService) {
-        return renderError(
-          res,
-          "Bussiness Service, TenantId and Locality are mandatory to generate the water and sewerage bill"
-        );
-      }
+      
 
+      if(propertyId==null){
+
+        if (!tenantId || !locality || !bussinessService) {
+          return renderError(
+            res,
+            "Bussiness Service, TenantId and Locality are mandatory to generate the water and sewerage bill"
+          );
+        }
       var id = uuidv4();
       var jobid = `${config.pdf.wns_bill}-${new Date().getTime()}-${id}`;
 
@@ -414,7 +436,8 @@ router.post(
         bussinessService: bussinessService,
         isConsolidated: isConsolidated,
         consumerCode: consumerCode,
-        jobid: jobid
+        jobid: jobid,
+        propertyId: propertyId
       };
 
       try {
@@ -457,6 +480,156 @@ router.post(
       } catch (error) {
         return renderError(res, `Failed to query bill for water and sewerage application`);
       }
+    }
+    else
+    {
+      try{
+        try {
+        restWater = await search_water_propertyId(propertyId, tenantId,
+                  {RequestInfo:requestinfo.RequestInfo},
+                  true
+                );
+          
+                restSewerage = await search_sewerage_propertyId(
+                    propertyId,
+                    tenantId,
+                    {RequestInfo:requestinfo.RequestInfo},
+                    true
+                  );
+           
+
+        restWater = restWater.data.WaterConnection;
+        logger.info("Water Connection :::::: " + restWater.length)
+          if(restWater.length>0){
+            for(let water of restWater){
+              if(water.connectionNo){
+                if(!connectionnoToPropertyMap[water.propertyId]){
+                  connectionnoToPropertyMap[water.propertyId] = [];
+                }
+                  connectionnoToPropertyMap[water.propertyId].push(water.connectionNo);
+              }
+              if(!propertyIdSet.includes(water.propertyId)){
+                propertyIdSet.push(water.propertyId);
+              }
+            }
+          }
+          restSewerage = restSewerage.data.SewerageConnections;
+          logger.info("Sewerage Connection :::::: " + restSewerage.length);
+          if(restSewerage.length>0){
+            for(let sewerage of restSewerage){
+              if(sewerage.connectionNo){
+                if(!connectionnoToPropertyMap[sewerage.propertyId]){
+                  connectionnoToPropertyMap[sewerage.propertyId] = [];
+                }
+                  connectionnoToPropertyMap[sewerage.propertyId].push(sewerage.connectionNo);
+              }
+              if(!propertyIdSet.includes(sewerage.propertyId)){
+                  propertyIdSet.push(sewerage.propertyId);
+              }
+            }   
+          }
+        }
+          
+        catch (ex) {
+          if (ex.response && ex.response.data) console.log(ex.response.data);
+          return renderError(res, "Failed to query details of water and sewerage application");
+        }
+        try{
+          for(let sewerage of restSewerage){
+              var billresponse = await fetch_bill(
+              tenantId, sewerage.connectionNo,
+              'SW', {RequestInfo:requestinfo.RequestInfo});
+              consolidatedResult.Bill.push(billresponse.data.Bill[0]);
+            }
+
+            for(let water of restWater){
+              var billresponse = await fetch_bill(
+              tenantId, water.connectionNo,
+              'WS', {RequestInfo:requestinfo.RequestInfo});
+              consolidatedResult.Bill.push(billresponse.data.Bill[0]);
+            }
+            logger.info("Total Bills:::::: " + consolidatedResult.Bill.length);
+
+        }
+        catch (ex) {
+          if (ex.response && ex.response.data) logger.error(ex.response.data);
+          throw new Error('Failed to query bills for water and sewerage connection');
+        }
+        var propertyDetails = await getPropertyDeatils({RequestInfo:requestinfo.RequestInfo}, tenantId, propertyIdSet, connectionnoToPropertyMap);
+
+         
+          if (consolidatedResult && consolidatedResult.Bill && consolidatedResult.Bill.length > 0) {
+            try {
+              consolidatedResult.Bill = consolidatedResult.Bill.filter(function(e){return e});
+              for(let i=0;i<consolidatedResult.Bill.length;i++){
+                let consumerCode = consolidatedResult.Bill[i].consumerCode;
+                let data = propertyDetails[consumerCode];
+                if(data){
+                  consolidatedResult.Bill[0].owners = data.owners;
+                  consolidatedResult.Bill[0].propertyUniqueId = data.propertyUniqueId;
+                  consolidatedResult.Bill[0].propertyAddress = data.propertyAddress;
+                  consolidatedResult.Bill[0].locality = data.locality;
+
+                }
+              }
+            }
+            catch (ex) {
+              let errorMessage= "Failed to generate PDF"; 
+              if (ex.response && ex.response.data) logger.error(ex.response.data);
+              throw new Error(errorMessage);
+            }
+          
+  
+            var pdfResponse;
+            var pdfkey = config.pdf.pt_group_bill;
+            logger.info("About to call pdf-service with key as  " + pdfkey);
+            var Bills=[];
+            var BillA={};
+            BillA.tenantId=tenantId;
+            BillA.Bill=consolidatedResult.Bill;
+            Bills.push(BillA);
+            try {
+              var billArray = { Bill: Bills };
+              logger.info("Bill Array is");
+              logger.info("Bills "+billArray.Bill.length);
+              logger.info("Bill " +billArray.Bill[0].Bill.length);
+              pdfResponse = await create_pdf(
+                'pg',
+                pdfkey,
+                billArray,
+                {RequestInfo:requestinfo.RequestInfo}
+              );
+              logger.info("pdfResponse " + pdfResponse);
+
+            } catch (ex) {
+              let errorMessage;
+              if(bussinessService == 'WS')
+                errorMessage = "Failed to generate PDF for water connection bill";
+              if(bussinessService == 'WS.ONE_TIME_FEE')
+                errorMessage = "Failed to generate PDF for water one time fees bill"; 
+                if(propertyId != null)
+                errorMessage = "Failed to generate PDF PT wise WS Bills"; 
+              if (ex.response && ex.response.data) console.log(ex.response.data);
+              return renderError(
+                res,
+                errorMessage
+              );
+            }
+            var filename = `${pdfkey}_${new Date().getTime()}`;
+            res.writeHead(200, {
+              "Content-Type": "application/pdf",
+              "Content-Disposition": `attachment; filename=${filename}.pdf`,
+            });
+            pdfResponse.data.pipe(res);
+          } else {
+            return renderError(res, "There is no bill for this application number");
+          }
+        }
+    
+      catch (ex) {
+        return renderError(res, `Failed to query bill for water and sewerage application`);
+      }
+    }
 
     })
   );
