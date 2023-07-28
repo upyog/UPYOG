@@ -1,5 +1,8 @@
 package com.tarento.analytics.helper;
 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -8,7 +11,6 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-
 import com.tarento.analytics.dto.AggregateRequestDto;
 import com.tarento.analytics.dto.Data;
 
@@ -41,10 +43,24 @@ public class TargetPerDateComputeHelper implements ComputeHelper {
 				logger.info("End Date after Round Off: " + String.valueOf(eDate));
 		        Long dateDifference = TimeUnit.DAYS.convert((eDate - sDate), TimeUnit.MILLISECONDS);
 		        if(dateDifference == 0l) dateDifference = dateDifference + 1l ;
+		        //Added for multi year 
+		        int len = 1;
+		        if(request.getChartNode() != null && request.getChartNode().findValue("dateRefField").toString() !=null &&  (request.getChartNode().findValue("dateRefField").toString()).equals("\"financialYear.keyword\""))
+				{
+		        	ZoneId zoneid = ZoneId.of("Asia/Kolkata");
+					LocalDate startDate1=Instant.ofEpochMilli(sDate).atZone(zoneid).toLocalDate();
+					LocalDate endDate1=Instant.ofEpochMilli(eDate).atZone(zoneid).toLocalDate();
+			         int startYear = startDate1.getMonthValue() < 4 ? startDate1.getYear() - 1 : startDate1.getYear();
+			         int endYear = endDate1.getMonthValue() < 4 ? endDate1.getYear() - 1 : endDate1.getYear();
+			         len = endYear - startYear +1;
+			         logger.info("Length " +len); 
+				}
+		        //Added for multi year 
+		        
 				for(Data eachData : data) { 
 						Double value = (Double) eachData.getHeaderValue();
 						logger.info("Value is : " + value + " :: Date Difference is : " + dateDifference);
-						value = (value / NUMBER_OF_DAYS) * dateDifference; 
+						value = (value / (NUMBER_OF_DAYS * len)) * dateDifference; 
 						eachData.setHeaderValue(value);
 				}
 			} catch (Exception ex) { 
