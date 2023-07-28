@@ -148,8 +148,8 @@ export const searchApiResponse = async (request, next = {}) => {
 
     //firenocIdQuery = `${firenocIdQuery} )`;
     console.log("Firenoc ID Query -> " + firenocIdQuery);
-    //const dbResponse = await db.query(firenocIdQuery);
-    const dbResponse={"rows":[],"err":null};
+    const dbResponse = await db.query(firenocIdQuery);
+    //const dbResponse={"rows":[],"err":null};
 
     let firenocIds = [];
     console.log("dbResponse" + JSON.stringify(dbResponse));
