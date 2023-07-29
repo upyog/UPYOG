@@ -1285,8 +1285,13 @@ public class ElasticSearchDaoImpl implements ElasticSearchDao {
 					
 					long epoch1 = (Long.parseLong(dto.getRequestDate().getStartDate()));
 					long epoch2 =  (Long.parseLong(dto.getRequestDate().getEndDate()));
-					LocalDate startDate1=Instant.ofEpochMilli(epoch1).atZone(ZoneId.systemDefault()).toLocalDate();
-					LocalDate endDate1=Instant.ofEpochMilli(epoch2).atZone(ZoneId.systemDefault()).toLocalDate();		         
+			        logger.info("epoch1 is: " + epoch1);
+			        logger.info("epoch2 is: " + epoch2);
+					ZoneId zoneid = ZoneId.of("Asia/Kolkata");
+					LocalDate startDate1=Instant.ofEpochMilli(epoch1).atZone(zoneid).toLocalDate();
+					LocalDate endDate1=Instant.ofEpochMilli(epoch2).atZone(zoneid).toLocalDate();
+			        logger.info("StartDate is: " + startDate1);
+			        logger.info("EndDate is: " + endDate1);
 					int startYear = startDate1.getMonthValue() < 4 ? startDate1.getYear() - 1 : startDate1.getYear();
 			         int endYear = endDate1.getMonthValue() < 4 ? endDate1.getYear() - 1 : endDate1.getYear();			         
 			         for (int year = startYear; year <= endYear; year++) {
@@ -1294,6 +1299,7 @@ public class ElasticSearchDaoImpl implements ElasticSearchDao {
 			             years.add(finYear);
 			             valueList.add(finYear);
 			         }
+			         logger.info("FinancialYear is: " + years);
 			         int len = years.size();
 				        }
 				//Added for differenceofdates	

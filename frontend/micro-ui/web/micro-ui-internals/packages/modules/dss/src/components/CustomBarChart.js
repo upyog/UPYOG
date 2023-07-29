@@ -23,16 +23,7 @@ const formatValue = (value, symbol) => {
 
 const CustomLabel = ({ x, y, name, stroke, value, maxValue }) => {
   const { t } = useTranslation();
- console.log("name",name,value)
-  for (const key in maxValue) {
-    if (maxValue.hasOwnProperty(key)) {
-      if(maxValue[key] > 100000000)
-      {
-        maxValue[key] = Number((maxValue[key] / 10000000).toFixed(2));
-      }
-      console.log(`${key}: ${maxValue[key]}`);
-    }
-  }
+
   return (
     <>
       <text
@@ -44,7 +35,7 @@ const CustomLabel = ({ x, y, name, stroke, value, maxValue }) => {
         width="35"
         style={{ fontSize: "medium", textAlign: "right", fontVariantNumeric: "proportional-nums" }}
       >
-        {`${maxValue?.[t(name)]} Cr`}
+        {`${maxValue?.[t(name)]}`}
       </text>
       <text x={x} y={y} dx={-200} dy={10}>
         {t(`DSS_TB_${Digit.Utils.locale.getTransformedLocale(name)}`)}

@@ -1,6 +1,8 @@
 package com.tarento.analytics.helper;
 
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -45,11 +47,13 @@ public class TargetPerDateComputeHelper implements ComputeHelper {
 		        int len = 1;
 		        if(request.getChartNode() != null && request.getChartNode().findValue("dateRefField").toString() !=null &&  (request.getChartNode().findValue("dateRefField").toString()).equals("\"financialYear.keyword\""))
 				{
-					LocalDate startDate1 = LocalDate.ofEpochDay(sDate / (24* 60 * 60 * 1000 ));
-					LocalDate endDate1 = LocalDate.ofEpochDay(eDate / (24* 60 * 60 * 1000));
+		        	ZoneId zoneid = ZoneId.of("Asia/Kolkata");
+					LocalDate startDate1=Instant.ofEpochMilli(sDate).atZone(zoneid).toLocalDate();
+					LocalDate endDate1=Instant.ofEpochMilli(eDate).atZone(zoneid).toLocalDate();
 			         int startYear = startDate1.getMonthValue() < 4 ? startDate1.getYear() - 1 : startDate1.getYear();
 			         int endYear = endDate1.getMonthValue() < 4 ? endDate1.getYear() - 1 : endDate1.getYear();
 			         len = endYear - startYear +1;
+			         logger.info("Length " +len); 
 				}
 		        //Added for multi year 
 		        
