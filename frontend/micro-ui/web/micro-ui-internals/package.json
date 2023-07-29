@@ -13,10 +13,8 @@
     "packages/modules/engagement",
     "packages/modules/pgr",
     "packages/modules/pt",
-    "packages/modules/tl",
     "packages/modules/ws",
-    "packages/modules/commonPt",
-    "packages/modules/fsm"
+    "packages/modules/commonPt"
   ],
   "author": "Abhinav Kushwaha <abhinav.kushwaha@egovernments.org>",
   "license": "MIT",
@@ -56,7 +54,7 @@
     "build:components": "cd packages/react-components && yarn build",
     "build:common": "cd packages/modules/common && yarn build",
     "build:pt": "cd packages/modules/pt && yarn build",
-    "build:commonPt": "cd packages/modules/commonPt && yarn build",
+    "buildD:commonPt": "cd packages/modules/commonPt && yarn build",
     "build:core": "cd packages/modules/core && yarn build",
     "build:pgr": "cd packages/modules/pgr && yarn build",
     "build:fsm": "cd packages/modules/fsm && yarn build",
