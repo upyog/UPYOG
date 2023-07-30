@@ -14,7 +14,9 @@
     "packages/modules/pgr",
     "packages/modules/pt",
     "packages/modules/ws",
-    "packages/modules/commonPt"
+    "packages/modules/tl",
+    "packages/modules/commonPt",
+    "packages/modules/mCollect"
   ],
   "author": "Abhinav Kushwaha <abhinav.kushwaha@egovernments.org>",
   "license": "MIT",
