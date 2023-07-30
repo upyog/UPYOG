@@ -154,15 +154,14 @@ export const SelectPaymentType = (props) => {
           $(document.body).append(newForm);
           newForm.submit();
 
-
-           makePayment(gatewayParam.txURL,formdata);
+          makePayment(gatewayParam.txURL,newForm);
 
         } catch (e) {
           console.log("Error in payment redirect ", e);
           //window.location = redirectionUrl;
         }
       }
-      //window.location = redirectUrl;
+     // window.location = redirectUrl;
     } catch (error) {
       let messageToShow = "CS_PAYMENT_UNKNOWN_ERROR_ON_SERVER";
       if (error.response?.data?.Errors?.[0]) {
