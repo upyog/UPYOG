@@ -13,10 +13,8 @@
     "packages/modules/engagement",
     "packages/modules/pgr",
     "packages/modules/pt",
-    "packages/modules/tl",
     "packages/modules/ws",
-    "packages/modules/commonPt",
-    "packages/modules/fsm"
+    "packages/modules/commonPt"
   ],
   "author": "Abhinav Kushwaha <abhinav.kushwaha@egovernments.org>",
   "license": "MIT",

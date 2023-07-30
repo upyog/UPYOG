@@ -15,6 +15,7 @@ import { useTranslation } from "react-i18next";
 import { Link, useHistory, useParams } from "react-router-dom";
 import PropertyDocument from "../../../pageComponents/PropertyDocument";
 import { getCityLocale, getPropertyTypeLocale, stringReplaceAll } from "../../../utils";
+import ActionModal from "../../../../../templates/ApplicationDetails/Modal/index"
 
 const setBillData = async (tenantId, propertyIds, updatefetchBillData, updateCanFetchBillData) => {
   const assessmentData = await Digit.PTService.assessmentSearch({ tenantId, filters: { propertyIds } });
@@ -41,10 +42,27 @@ const getBillAmount = (fetchBillData = null) => {
 const PropertyInformation = () => {
   const { t } = useTranslation();
   const { propertyIds } = useParams();
-
+const [showModal,setshowModal] = useState(false)
   var isMobile = window.Digit.Utils.browser.isMobile();
   const [enableAudit, setEnableAudit] = useState(false);
-
+const moduleCode="PT"
+const history = useHistory();
+const selectedAction =    {
+  action: "ASSESS_PROPERTY",
+  forcedName: "PT_ASSESS",
+  showFinancialYearsModal: true,
+  customFunctionToExecute: (data) => {
+    //const history = useHistory();
+    delete data.customFunctionToExecute;
+    history.replace({ pathname: `/digit-ui/citizen/pt/assessment-details/${property.propertyId}`, state: { ...data } });
+  },
+  tenantId: Digit.ULBService.getStateId(),
+}
+const { id: applicationNumber } = useParams();
+const [isEnableLoader, setIsEnableLoader] = useState(false);
+const [isWarningPop, setWarningPopUp] = useState(false);
+const businessService="PT"
+const state = Digit.ULBService.getStateId();
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const { data: UpdateNumberConfig } = Digit.Hooks.useCommonMDMS(Digit.ULBService.getStateId(),"PropertyTax",["UpdateNumber"],{
     select: (data) => {
@@ -99,7 +117,10 @@ const PropertyInformation = () => {
       setProperty(property);
     }
   }, [enableAudit, auditData]);
+const handleClick=()=>{
 
+  setshowModal(true)
+}
   sessionStorage.setItem("pt-property", JSON.stringify(property));
   let docs = [];
   docs = property?.documents;
@@ -156,6 +177,102 @@ const PropertyInformation = () => {
     return <LinkButton style={style} label={t("PT_OWNER_HISTORY")} className="check-page-link-button" onClick={routeTo} />;
   };
   const UpdatePropertyNumberComponent = Digit?.ComponentRegistryService?.getComponent("UpdateNumber");
+ 
+  const submitAction = async (data, nocData = false, isOBPS = {}) => {
+
+      setIsEnableLoader(true);
+      if (typeof data?.customFunctionToExecute === "function") {
+        console.log("customFunctionToExecute")
+       
+        data?.customFunctionToExecute({ ...data });
+       
+      }
+      if (nocData !== false && nocMutation) {
+        const nocPrmomises = nocData?.map((noc) => {
+          return nocMutation?.mutateAsync(noc);
+        });
+        try {
+          setIsEnableLoader(true);
+          const values = await Promise.all(nocPrmomises);
+          values &&
+            values.map((ob) => {
+              Digit.SessionStorage.del(ob?.Noc?.[0]?.nocType);
+            });
+        } catch (err) {
+          setIsEnableLoader(false);
+          let errorValue = err?.response?.data?.Errors?.[0]?.code
+            ? t(err?.response?.data?.Errors?.[0]?.code)
+            : err?.response?.data?.Errors?.[0]?.message || err;
+          closeModal();
+          setShowToast({ key: "error", error: { message: errorValue } });
+          setTimeout(closeToast, 5000);
+          return;
+        }
+      }
+      // if (mutate) {
+      //   setIsEnableLoader(true);
+      //   mutate(data, {
+      //     onError: (error, variables) => {
+      //       setIsEnableLoader(false);
+      //       setShowToast({ key: "error", error });
+      //       setTimeout(closeToast, 5000);
+      //     },
+      //     onSuccess: (data, variables) => {
+      //       sessionStorage.removeItem("WS_SESSION_APPLICATION_DETAILS");
+      //       setIsEnableLoader(false);
+      //       if (isOBPS?.bpa) {
+      //         data.selectedAction = selectedAction;
+      //         history.replace(`/digit-ui/employee/obps/response`, { data: data });
+      //       }
+      //       if (isOBPS?.isStakeholder) {
+      //         data.selectedAction = selectedAction;
+      //         history.push(`/digit-ui/employee/obps/stakeholder-response`, { data: data });
+      //       }
+      //       if (isOBPS?.isNoc) {
+      //         history.push(`/digit-ui/employee/noc/response`, { data: data });
+      //       }
+      //       if (data?.Amendments?.length > 0 ){
+      //         //RAIN-6981 instead just show a toast here with appropriate message
+      //       //show toast here and return 
+      //         //history.push("/digit-ui/employee/ws/response-bill-amend", { status: true, state: data?.Amendments?.[0] })
+              
+      //         if(variables?.AmendmentUpdate?.workflow?.action.includes("SEND_BACK")){
+      //           setShowToast({ key: "success", label: t("ES_MODIFYSWCONNECTION_SEND_BACK_UPDATE_SUCCESS")})
+      //         } else if (variables?.AmendmentUpdate?.workflow?.action.includes("RE-SUBMIT")){
+      //           setShowToast({ key: "success", label: t("ES_MODIFYSWCONNECTION_RE_SUBMIT_UPDATE_SUCCESS") })
+      //         } else if (variables?.AmendmentUpdate?.workflow?.action.includes("APPROVE")){
+      //           setShowToast({ key: "success", label: t("ES_MODIFYSWCONNECTION_APPROVE_UPDATE_SUCCESS") })
+      //         }
+      //         else if (variables?.AmendmentUpdate?.workflow?.action.includes("REJECT")){
+      //           setShowToast({ key: "success", label: t("ES_MODIFYWSCONNECTION_REJECT_UPDATE_SUCCESS") })
+      //         }            
+      //         return
+      //       }
+      //       setShowToast({ key: "success", action: selectedAction });
+      //       clearDataDetails && setTimeout(clearDataDetails, 3000);
+      //       setTimeout(closeToast, 5000);
+      //       queryClient.clear();
+      //       queryClient.refetchQueries("APPLICATION_SEARCH");
+      //       //push false status when reject
+            
+      //     },
+      //   });
+      // }
+  
+      closeModal();
+ 
+  };
+  if (isLoading || isEnableLoader) {
+    return <Loader />;
+  }
+  const closeModal = () => {
+    console.log("closeModal")
+    setshowModal(true)
+  };
+
+  const closeWarningPopup = () => {
+    setWarningPopUp(false);
+  };
   return (
     <React.Fragment>
       <Header>{t("PT_PROPERTY_INFORMATION")}</Header>
@@ -298,6 +415,14 @@ const PropertyInformation = () => {
                 </Link>
               </div>
             )}
+            {property?.status === "ACTIVE" && !enableAudit && (
+              <div style={{ marginTop: "1em", bottom: "0px", width: "100%", marginBottom: "1.2em" }}>
+               
+                  {/* <SubmitBar label="Asses Property" onClick={handleClick} /> */}
+                  <button className="submit-bar" type="button" onClick={handleClick} style={{fontFamily:"sans-serif", color:"white","fontSize":"19px"}}>{t("PT_SELF_ASSES_PROPERTY")}</button>
+               
+              </div>
+            )}
           </div>
           {popup && (
             <PopUp className="updatenumber-warper-citizen">
@@ -330,6 +455,23 @@ const PropertyInformation = () => {
               ></UpdatePropertyNumberComponent>
             </PopUp>
           )}
+           {showModal ? (
+            <ActionModal
+              t={t}
+              action={selectedAction}
+              tenantId={tenantId}
+              state={state}
+              id={property.propertyId}
+              applicationDetails={property}
+              applicationData={property}
+              closeModal={closeModal}
+              submitAction={submitAction}
+         
+              businessService={businessService}
+             
+              moduleCode={moduleCode}
+            />
+          ) : null}
         </Card>
       </div>
     </React.Fragment>

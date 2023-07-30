@@ -95,7 +95,7 @@ const AssessmentDetails = () => {
     },
     }
   ); 
-  
+
   const closeToast = () => {
     setShowToast(null);
   };
@@ -115,7 +115,7 @@ const AssessmentDetails = () => {
             setTimeout(closeToast, 5000);
             // queryClient.clear();
             // queryClient.setQueryData(["PT_ASSESSMENT", propertyId, location?.state?.Assessment?.financialYear], true);
-            history.push(`/digit-ui/employee/payment/collect/PT/${propertyId}`);
+            history.push(`/digit-ui/citizen/payment/my-bills/PT/${propertyId}`);
           },
         }
       );
