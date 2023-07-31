@@ -629,13 +629,23 @@ router.post(
             });
             pdfResponse.data.pipe(res);
           } else {
-            return "There is no bill present for Water or Sewerage Connections associated with this Property Id";
+            res.status(201);
+            res.json({
+              ResponseInfo: requestinfo.RequestInfo,
+              message: "There is no bill present for Water or Sewerage Connections associated with this Property Id",
+            });
+           // return "There is no bill present for Water or Sewerage Connections associated with this Property Id";
           }
         }
       
       else
       {
-        return "There is no connection associated with this Property Id";
+        res.status(201);
+        res.json({
+          ResponseInfo: requestinfo.RequestInfo,
+          message: "There is no connection associated with this Property Id",
+        });
+       // return "There is no connection associated with this Property Id";
       }
       }
       catch (ex) {
