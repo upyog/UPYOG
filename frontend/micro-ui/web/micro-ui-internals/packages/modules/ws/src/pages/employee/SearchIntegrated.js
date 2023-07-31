@@ -9,6 +9,7 @@ const SearchIntegrated = ({ path }) => {
   const [payload, setPayload] = useState({});
   const [setLoading, setLoadingState] = useState(false);
   const SWater = Digit.ComponentRegistryService.getComponent("WSSearchWaterConnectionIntegrated");
+  const [propId,setPropId] = useState("")
   //const [businessServ, setBusinessServ] = useState([]);
   const getUrlPathName = window.location.pathname;
   const checkPathName = getUrlPathName.includes("water/search");
@@ -29,7 +30,7 @@ const SearchIntegrated = ({ path }) => {
         setShowToast(false);
       }, 3000);
     } else {
-      downloadIntegratedBill(propertyId)
+      setPropId(propertyId)
       setPayload(
         Object.keys(_data)
           .filter((k) => _data[k])
@@ -64,7 +65,7 @@ const downloadPdf = (blob, fileName) => {
     enabled: !!(payload && Object.keys(payload).length > 0),
   };
 
-  let result1 = Digit.Hooks.ws.useSearchWS({ tenantId, filters: payload, config, bussinessService: "WS", t ,shortAddress:true});
+  let result12 = Digit.Hooks.ws.useSearchWS({ tenantId, filters: payload, config, bussinessService: "WS", t ,shortAddress:true});
   let result = Digit.Hooks.ws.useSearchWS({ tenantId, filters: payload, config, bussinessService: "SW", t ,shortAddress:true});
   
 
@@ -72,41 +73,55 @@ const downloadPdf = (blob, fileName) => {
   // console.log(result2)
 //   let result = Digit.WSService.wnsGroupBill()
 //   console.log(result);
-  const downloadIntegratedBill = async(propertyId) => {
+ const downloadIntegratedBill = async(propertyId) => {
    //console.log("rsult 2",tenantId,_data.propertyId)
-    let result = await Digit.WSService.wnsGroupBill({ propertyId,tenantId });
-    console.log("result22");
-     //downloadPdf(new Blob([result.data], { type: "application/pdf" }), `CHALLAN1234.pdf`);
-     downloadPdf(new Blob([result.data], { type: "application/pdf" }), `IntegratedBill.pdf`);
-    console.log("result", result);
+   let response
+   if(result?.data?.length == 0 &&  result12?.data?.length == 0)
+  {
+  
+     console.log("result no pdf");
+  }
+  else {
+    try {
+      response = await Digit.WSService.wnsGroupBill({ propertyId,tenantId })
+      
+       //downloadPdf(new Blob([result.data], { type: "application/pdf" }), `CHALLAN1234.pdf`);
+       downloadPdf(new Blob([response.data], { type: "application/pdf" }), `IntegratedBill.pdf`);
+    }
+    catch(e){
+console.log("errorrrrrr",e)
+    }
+   
+  }
+    
+    
 }
   const isMobile = window.Digit.Utils.browser.isMobile();
 
  
 
   const getData = () => {
-    if (result?.data?.length == 0 &&  result1?.data?.length == 0) {
+    console.log("aaaaaaaaadsddddd",result,result12)
+    
+    if(result12?.data?.length > 0 || result?.data?.length > 0)
+    {
+      downloadIntegratedBill(propId)
+    }
+    if (result?.data?.length == 0 &&  result12?.data?.length == 0) {
       return { display: "ES_COMMON_NO_DATA" }
-    } else if (result?.data?.length > 0 || result?.data?.length > 0) {
-      return [...result?.data,...result1.data]
+    } else if (result12?.data?.length > 0 || result?.data?.length > 0) {
+     
+      return [...result?.data,...result12.data]
     } else {
       return [];
     }
+    
   }
 
   const isResultsOk = () => {
-    return result?.data?.length > 0 ? true : false;
+    return result12?.data?.length > 0 || result?.data?.length > 0? true : false;
   }
 
-  if(!result?.isLoading)
-    result.data = result?.data?.map((item) => {
-      if (item?.connectionNo?.includes("WS")) {
-        item.service = serviceConfig.WATER;
-      } else if (item?.connectionNo?.includes("SW")) {
-        item.service = serviceConfig.SEWERAGE;
-      }
-      return item;
-    });
 
   return (
     <Fragment>
