@@ -47,6 +47,20 @@ public class ServiceRequestEnrichmentService {
 
     }
 
+    public void updateServiceDefinitionRequest(ServiceDefinitionRequest serviceDefinitionRequest) {
+    	ServiceDefinition serviceDefinition = serviceDefinitionRequest.getServiceDefinition();
+        RequestInfo requestInfo = serviceDefinitionRequest.getRequestInfo();
+        
+        AuditDetails auditDetails = new AuditDetails();
+        auditDetails.setCreatedBy(requestInfo.getUserInfo().getUuid());
+        auditDetails.setLastModifiedBy(requestInfo.getUserInfo().getUuid());
+        auditDetails.setCreatedTime(System.currentTimeMillis());
+        auditDetails.setLastModifiedTime(System.currentTimeMillis());
+        
+        serviceDefinition.setAuditDetails(auditDetails);
+        
+    }
+
     public Map<String, Object> enrichServiceRequest(ServiceRequest serviceRequest) {
         Service service = serviceRequest.getService();
         RequestInfo requestInfo = serviceRequest.getRequestInfo();

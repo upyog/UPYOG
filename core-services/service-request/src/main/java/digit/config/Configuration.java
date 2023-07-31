@@ -51,6 +51,9 @@ public class Configuration {
     @Value("${egov.service.definition.create.topic}")
     private String serviceDefinitionCreateTopic;
 
+    @Value("${egov.service.definition.update.topic}")
+    private String serviceDefinitionUpdateTopic;
+
     @Value("${egov.service.create.topic}")
     private String serviceCreateTopic;
 

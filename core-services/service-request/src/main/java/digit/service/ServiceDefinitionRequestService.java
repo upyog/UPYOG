@@ -67,8 +67,13 @@ public class ServiceDefinitionRequestService {
     public ServiceDefinition updateServiceDefinition(ServiceDefinitionRequest serviceDefinitionRequest) {
 
         // TO DO
+        ServiceDefinition serviceDefinition = serviceDefinitionRequest.getServiceDefinition();
+    	
+    	enrichmentService.updateServiceDefinitionRequest(serviceDefinitionRequest);
+    	
+    	producer.push(config.getServiceDefinitionUpdateTopic(), serviceDefinitionRequest);
 
-        return serviceDefinitionRequest.getServiceDefinition();
+        return serviceDefinition;
     }
 
 }
