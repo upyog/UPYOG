@@ -25,6 +25,7 @@ import com.tarento.analytics.dto.AggregateDto;
 import com.tarento.analytics.dto.AggregateRequestDto;
 import com.tarento.analytics.dto.CummulativeDataRequestDto;
 import com.tarento.analytics.dto.DashboardHeaderDto;
+import com.tarento.analytics.dto.Plot;
 import com.tarento.analytics.dto.RoleDto;
 import com.tarento.analytics.enums.ChartType;
 import com.tarento.analytics.exception.AINException;
@@ -106,7 +107,12 @@ public class TarentoServiceImpl implements ClientService {
 		if(aggrObjectNode.fields().hasNext()){
 			aggregateDto = responseHandler.translate(request, aggrObjectNode);
 		}
-		
+		for(int i=0;i<aggregateDto.getData().size();i++) {
+		String name=aggregateDto.getData().get(i).getPlots().get(0).getName();
+		Double value=aggregateDto.getData().get(i).getPlots().get(0).getValue();
+		Object rank= aggregateDto.getData().get(i).getHeaderValue();
+		logger.info("Data with rank is " +name +value + rank);
+		}
 		if(insightsConfig != null && StringUtils.isNotBlank(insightsConfig.getInsightInterval())) { 
 			continueWithInsight = getInsightsDate(request, insightsConfig.getInsightInterval());
 			if(continueWithInsight) { 
