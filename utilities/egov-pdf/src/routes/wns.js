@@ -37,6 +37,8 @@ function renderError(res, errorMessage, errorCode) {
   if (errorCode == undefined) errorCode = 500;
   res.status(errorCode).send({ errorMessage });
 }
+
+
 router.post(
     "/wnsbill",
     asyncMiddleware(async function (req, res, next) {
@@ -627,13 +629,23 @@ router.post(
             });
             pdfResponse.data.pipe(res);
           } else {
-            return renderError(res, "There is no bill present for Water or Sewerage Connections associated with this Property Id");
+            res.status(201);
+            res.json({
+              ResponseInfo: requestinfo.RequestInfo,
+              message: "There is no bill present for Water or Sewerage Connections associated with this Property Id",
+            });
+           // return "There is no bill present for Water or Sewerage Connections associated with this Property Id";
           }
         }
       
       else
       {
-        return renderError(res, "There is no connection associated with this Property Id");
+        res.status(201);
+        res.json({
+          ResponseInfo: requestinfo.RequestInfo,
+          message: "There is no connection associated with this Property Id",
+        });
+       // return "There is no connection associated with this Property Id";
       }
       }
       catch (ex) {
