@@ -45,7 +45,7 @@ public class RedirectController {
 
     @PostMapping(value = "/transaction/v1/_redirect", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public ResponseEntity<Object> method(@RequestBody MultiValueMap<String, String> formData) {
-        String returnURL = formData.get(returnUrlKey).get(0);
+        String returnURL = formData.get(returnUrlKey).get(0); 
         MultiValueMap<String, String> params = UriComponentsBuilder.fromUriString(returnURL).build().getQueryParams();
 
         /*
@@ -55,9 +55,9 @@ public class RedirectController {
          */
         String gateway = null;
         if(!params.isEmpty()) {
-            List<String> txnId = params.get(PgConstants.PG_TXN_IN_LABEL);
+        	String txnId = returnURL.split(PgConstants.PG_TXN_IN_LABEL)[1];
             TransactionCriteria critria = new TransactionCriteria();
-            critria.setTxnId(txnId.get(0));
+            critria.setTxnId(txnId);
             List<Transaction> transactions = transactionService.getTransactions(critria);
             if(!transactions.isEmpty())
                 gateway = transactions.get(0).getGateway();
@@ -73,7 +73,7 @@ public class RedirectController {
          */
         if(gateway != null && gateway.equalsIgnoreCase("PAYGOV")) {
             StringBuilder redirectURL = new StringBuilder();
-            redirectURL.append(citizenRedirectDomain).append(returnURL);
+            redirectURL.append(returnURL);
             formData.remove(returnUrlKey);
             httpHeaders.setLocation(UriComponentsBuilder.fromHttpUrl(redirectURL.toString())
                     .queryParams(formData).build().encode().toUri());
