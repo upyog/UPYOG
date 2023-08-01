@@ -70,6 +70,9 @@ public class ServiceDefinitionRequestService {
         ServiceDefinition serviceDefinition = serviceDefinitionRequest.getServiceDefinition();
     	
     	enrichmentService.updateServiceDefinitionRequest(serviceDefinitionRequest);
+
+        System.out.println("updated service definition::");
+    	System.out.println(serviceDefinitionRequest.getServiceDefinition());
     	
     	producer.push(config.getServiceDefinitionUpdateTopic(), serviceDefinitionRequest);
 
