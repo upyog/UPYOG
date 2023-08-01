@@ -146,14 +146,14 @@ public class PayGovGateway implements Gateway {
         SimpleDateFormat format = new SimpleDateFormat(TX_DATE_FORMAT);
         Date currentDate = new Date();
         queryMap.put(REQUEST_DATE_TIME_KEY, format.format(currentDate));
-        String returnUrl = transaction.getCallbackUrl().replace(CITIZEN_URL, "");
+        String returnUrl = transaction.getCallbackUrl();
 
         queryMap.put(SERVICE_ID_KEY, getModuleCode(transaction));
-        String domainName =  returnUrl.replaceAll("http(s)?://|www\\.|/.*", "");
-        String citizenReturnURL = returnUrl.split(domainName)[1];
-        log.info("returnUrl::::"+getReturnUrl(citizenReturnURL, REDIRECT_URL));
-        queryMap.put(SUCCESS_URL_KEY, getReturnUrl(citizenReturnURL, REDIRECT_URL));
-        queryMap.put(FAIL_URL_KEY, getReturnUrl(citizenReturnURL, REDIRECT_URL));
+        //String domainName =  returnUrl.replaceAll("http(s)?://|www\\.|/.*", "");
+        //String citizenReturnURL = returnUrl.split(domainName)[1];
+        log.info("returnUrl::::"+getReturnUrl(returnUrl, REDIRECT_URL));
+        queryMap.put(SUCCESS_URL_KEY, getReturnUrl(returnUrl, REDIRECT_URL));
+        queryMap.put(FAIL_URL_KEY, getReturnUrl(returnUrl,REDIRECT_URL));
         StringBuffer userDetail = new StringBuffer();
         if( transaction.getUser()!=null) {
             if(!StringUtils.isEmpty(transaction.getUser().getMobileNumber())) {
