@@ -11,7 +11,7 @@ const SearchWaterConnectionIntegrated = ({ tenantId, onSubmit, data, count, resu
     str = str.replace(/_/g, " ");
     return str;
   };
-
+console.log("dafff",data)
   const convertEpochToDate = (dateEpoch) => {
     if (dateEpoch == null || dateEpoch == undefined || dateEpoch == "") {
       return "NA";
@@ -64,7 +64,50 @@ const SearchWaterConnectionIntegrated = ({ tenantId, onSubmit, data, count, resu
     setValue("offset", getValues("offset") - getValues("limit"));
     handleSubmit(onSubmit)();
   }
-
+  const downloadIntegratedBill =async() => {
+    //console.log("rsult 2",tenantId,_data.propertyId)
+ console.log("integrated",data)
+    if(data?.length >0)
+   {
+   
+    try {
+    let propertyId =data[0].propertyId
+      let response = await Digit.WSService.wnsGroupBill({ propertyId,tenantId })
+      
+       downloadPdf(new Blob([response.data], { type: "application/pdf" }), `IntegratedBill.pdf`);
+    }
+    catch(e){
+console.log("errorrrrrr",e)
+    }
+   }
+   else {
+   alert("NO Pdf")
+    
+   }
+     
+     
+ }
+ const downloadPdf = (blob, fileName) => {
+  if (window.mSewaApp && window.mSewaApp.isMsewaApp() && window.mSewaApp.downloadBase64File) {
+    var reader = new FileReader();
+    reader.readAsDataURL(blob);
+    reader.onloadend = function () {
+      var base64data = reader.result;
+      window.mSewaApp.downloadBase64File(base64data, fileName);
+    };
+  } else {
+    const link = document.createElement("a");
+    // create a blobURI pointing to our Blob
+    link.href = URL.createObjectURL(blob);
+    link.download = fileName;
+    // some browser needs the anchor to be in the doc
+    document.body.append(link);
+    link.click();
+    link.remove();
+    // in case the Blob uses a lot of memory
+    setTimeout(() => URL.revokeObjectURL(link.href), 7000);
+  }
+};
   //need to get from workflow
   const GetCell = (value) => <span className="cell-text">{value}</span>;
   const columns = useMemo(
@@ -200,6 +243,7 @@ const SearchWaterConnectionIntegrated = ({ tenantId, onSubmit, data, count, resu
         </Card>
         // <></>
       ) : resultOk ? (
+        <div>
         <Table
           t={t}
           data={data}
@@ -223,6 +267,8 @@ const SearchWaterConnectionIntegrated = ({ tenantId, onSubmit, data, count, resu
           disableSort={false}
           sortParams={[{ id: getValues("sortBy"), desc: getValues("sortOrder") === "DESC" ? true : false }]}
         />
+        <button className="submit-bar" type="button" onClick={downloadIntegratedBill} style={{fontFamily:"sans-serif", color:"white","fontSize":"19px",marginTop:"10px",float:"right"}}>{t("WS_DOWNLOAD_BILL")}</button>
+        </div>
       ) : null}
     </>
   );
