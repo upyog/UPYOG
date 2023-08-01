@@ -100,34 +100,7 @@ const ApplicationDetails = (props) => {
   };
 
   const submitAction = async (data, nocData = false, isOBPS = {}) => {
-let flag = true
-    console.log("Submit action", data)
-if(data?.Property?.workflow?.comment?.length > 0)
-{
- flag = false
-}
-else if(data?.Licenses?.[0]?.comment?.length >0)
-{
-  flag = false
-}
-else if(data?.WaterConnection?.comment?.length > 0)
-{
-  flag =false
-}
-else if(data?.SewerageConnection?.comment?.length > 0)
-{
-  flag =false
-}
-else if(data?.BPA?.comment?.length > 0)
-{
-  flag= false
-}
 
-if(flag)
-{
-  alert("Please enter the comments")
-}
-else {
     setIsEnableLoader(true);
     if (typeof data?.customFunctionToExecute === "function") {
       data?.customFunctionToExecute({ ...data });
@@ -206,7 +179,7 @@ else {
 
     closeModal();
 
-  }
+  
   };
 
   if (isLoading || isEnableLoader) {
