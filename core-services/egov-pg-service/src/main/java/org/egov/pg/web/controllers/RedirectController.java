@@ -49,18 +49,21 @@ public class RedirectController {
         log.info("formData in redirect::::"+formData);
 
     	String returnURL = formData.get(returnUrlKey).get(0); 
-        MultiValueMap<String, String> params = UriComponentsBuilder.fromUriString(returnURL).build().getQueryParams();
+    	String txnId = formData.get(PgConstants.PG_TXN_IN_LABEL).get(0); 
+
+        //MultiValueMap<String, String> params = UriComponentsBuilder.fromUriString(returnURL).build().getQueryParams();
         log.info("returnUrl in redirect::::"+returnURL);
+        log.info("txn Id"+txnId);
         /*
          * From redirect URL get transaction id.
          * And using transaction id fetch transaction details.
          * And from transaction details get the GATEWAY info.
          */
         String gateway = null;
-        if(!params.isEmpty()) {
-        	 List<String> txnId = params.get(PgConstants.PG_TXN_IN_LABEL);
+        if(txnId!=null) {
+        	 //List<String> txnId = params.get(PgConstants.PG_TXN_IN_LABEL);
              TransactionCriteria critria = new TransactionCriteria();
-             critria.setTxnId(txnId.get(0));
+             critria.setTxnId(txnId);
             List<Transaction> transactions = transactionService.getTransactions(critria);
             if(!transactions.isEmpty())
                 gateway = transactions.get(0).getGateway();
