@@ -47,7 +47,7 @@ public class RedirectController {
     public ResponseEntity<Object> method(@RequestBody MultiValueMap<String, String> formData) {
         String returnURL = formData.get(returnUrlKey).get(0); 
         MultiValueMap<String, String> params = UriComponentsBuilder.fromUriString(returnURL).build().getQueryParams();
-
+        log.info("returnUrl in redirect::::"+returnURL);
         /*
          * From redirect URL get transaction id.
          * And using transaction id fetch transaction details.
