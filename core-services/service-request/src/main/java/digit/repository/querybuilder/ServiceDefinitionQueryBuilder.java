@@ -73,6 +73,8 @@ public class ServiceDefinitionQueryBuilder {
         if(ObjectUtils.isEmpty(serviceDefinitionSearchRequest.getPagination())){
             prepareDefaultPaginationObject(serviceDefinitionSearchRequest);
         }
+        System.out.println("service Definition SearchRequest::");
+    	System.out.println(serviceDefinitionSearchRequest.getPagination());
         addPagination(query, preparedStmtList, serviceDefinitionSearchRequest.getPagination());
 
         return IDS_WRAPPER_QUERY.replace("{HELPER_TABLE}", query.toString());
