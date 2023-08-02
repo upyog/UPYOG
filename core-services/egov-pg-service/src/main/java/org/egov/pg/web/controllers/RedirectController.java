@@ -45,19 +45,25 @@ public class RedirectController {
 
     @PostMapping(value = "/transaction/v1/_redirect", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public ResponseEntity<Object> method(@RequestBody MultiValueMap<String, String> formData) {
-        String returnURL = formData.get(returnUrlKey).get(0); 
-        MultiValueMap<String, String> params = UriComponentsBuilder.fromUriString(returnURL).build().getQueryParams();
+        
+        log.info("formData in redirect::::"+formData);
+
+    	String returnURL = formData.get(returnUrlKey).get(0); 
+    	String txnId = formData.get(PgConstants.PG_TXN_IN_LABEL).get(0); 
+
+        //MultiValueMap<String, String> params = UriComponentsBuilder.fromUriString(returnURL).build().getQueryParams();
         log.info("returnUrl in redirect::::"+returnURL);
+        log.info("txn Id"+txnId);
         /*
          * From redirect URL get transaction id.
          * And using transaction id fetch transaction details.
          * And from transaction details get the GATEWAY info.
          */
         String gateway = null;
-        if(!params.isEmpty()) {
-        	String txnId = returnURL.split(PgConstants.PG_TXN_IN_LABEL)[1];
-            TransactionCriteria critria = new TransactionCriteria();
-            critria.setTxnId(txnId);
+        if(txnId!=null) {
+        	 //List<String> txnId = params.get(PgConstants.PG_TXN_IN_LABEL);
+             TransactionCriteria critria = new TransactionCriteria();
+             critria.setTxnId(txnId);
             List<Transaction> transactions = transactionService.getTransactions(critria);
             if(!transactions.isEmpty())
                 gateway = transactions.get(0).getGateway();
