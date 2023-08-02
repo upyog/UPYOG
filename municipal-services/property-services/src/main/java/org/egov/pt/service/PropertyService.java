@@ -1,5 +1,6 @@
 package org.egov.pt.service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -16,6 +17,7 @@ import org.egov.pt.config.PropertyConfiguration;
 import org.egov.pt.models.OwnerInfo;
 import org.egov.pt.models.Property;
 import org.egov.pt.models.PropertyCriteria;
+import org.egov.pt.models.collection.BillResponse;
 import org.egov.pt.models.enums.CreationReason;
 import org.egov.pt.models.enums.Status;
 import org.egov.pt.models.user.UserDetailResponse;
@@ -43,6 +45,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 public class PropertyService {
+	
+	@Autowired
+	private BillingService billingService;
 	
 	@Autowired
 	private UnmaskingUtil unmaskingUtil;
@@ -142,6 +147,8 @@ public class PropertyService {
 		boolean isRequestForOwnerMutation = CreationReason.MUTATION.equals(request.getProperty().getCreationReason());
 		
 		boolean isNumberDifferent = checkIsRequestForMobileNumberUpdate(request, propertyFromSearch);
+		
+		boolean isRequestForStatusChange=CreationReason.STATUS.equals(request.getProperty().getCreationReason());
 
 		if (isRequestForOwnerMutation)
 			processOwnerMutation(request, propertyFromSearch);
@@ -149,7 +156,26 @@ public class PropertyService {
 			processMobileNumberUpdate(request, propertyFromSearch);
 			
 		else
+		{
+			if(isRequestForStatusChange)
+			{
+				 BillResponse billResponse = billingService.fetchBill(request.getProperty(), request.getRequestInfo());
+			     BigDecimal dueAmount = billResponse.getBill().get(0).getTotalAmount();
+			     log.info("No. of Active Bills==="+ billResponse.getBill().size());
+			     log.info("Amount Due is "+ dueAmount);
+			     if(dueAmount.compareTo(BigDecimal.ZERO)==0)
+			    	 throw new CustomException("EG_PT_ERROR_ACTIVE_BILL_PRESENT",
+								"Clear Pending dues before De-Enumerating the property");
+							
+				else
+			    	 processPropertyUpdate(request, propertyFromSearch); 
+				
+			}
+			else
+			{
 			processPropertyUpdate(request, propertyFromSearch);
+			}
+		}
 
 		request.getProperty().setWorkflow(null);
 
