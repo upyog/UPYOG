@@ -10,11 +10,13 @@
     "packages/modules/common",
     "packages/modules/core",
     "packages/modules/dss",
-    "packages/modules/engagement",
+    "packages/modules/engagement",    
+    "packages/modules/obps",
     "packages/modules/pgr",
     "packages/modules/pt",
     "packages/modules/tl",
-    "packages/modules/ws"
+    "packages/modules/ws",
+    "packages/modules/wms"
   ],
   "author": "Abhinav Kushwaha <abhinav.kushwaha@egovernments.org>",
   "license": "MIT",
@@ -46,6 +48,7 @@
     "dev:engagement": "cd packages/modules/engagement && yarn start",
     "dev:noc": "cd packages/modules/noc && yarn start",
     "dev:ws": "cd packages/modules/ws && yarn start",
+    "dev:wms": "cd packages/modules/wms && yarn start",
     "dev:bills": "cd packages/modules/bills && yarn start",
     "dev:reports": "cd packages/modules/reports && yarn start",
     "dev:example": "cd example && yarn start",
@@ -67,6 +70,7 @@
     "build:engagement": "cd packages/modules/engagement && yarn build",
     "buildD:noc": "cd packages/modules/noc && yarn build",
     "build:ws": "cd packages/modules/ws && yarn build",
+    "build:wms": "cd packages/modules/wms && yarn build",
     "buildD:bills": "cd packages/modules/bills && yarn build",
     "buildR:reports": "cd packages/modules/reports && yarn build",
     "deploy:jenkins": "./scripts/jenkins.sh"

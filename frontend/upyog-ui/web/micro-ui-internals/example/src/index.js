@@ -4,6 +4,7 @@ import ReactDOM from "react-dom";
 import { initLibraries } from "@egovernments/digit-ui-libraries";
 import { PGRReducers } from "@egovernments/digit-ui-module-pgr";
 import { PTModule, PTLinks, PTComponents } from "@egovernments/digit-ui-module-pt";
+ import { WmsModule, initWmsComponents, WMSLinks} from "@egovernments/digit-ui-module-wms";
 import { MCollectModule, MCollectLinks } from "@egovernments/digit-ui-module-mcollect";
 // import { TLModule, TLLinks } from "@egovernments/digit-ui-module-tl";
 import { initFSMComponents } from "@egovernments/digit-ui-module-fsm";
@@ -20,6 +21,7 @@ import { initOBPSComponents } from "@egovernments/digit-ui-module-obps";
 import { initEngagementComponents } from "@egovernments/digit-ui-module-engagement";
 import { initNOCComponents } from "@egovernments/digit-ui-module-noc";
 import { initWSComponents } from "@egovernments/digit-ui-module-ws";
+import { initWMSComponents } from "@egovernments/digit-ui-module-wms";
 import { DigitUI } from "@egovernments/digit-ui-module-core";
 import { initCommonPTComponents } from "@egovernments/digit-ui-module-commonpt";
 import { initBillsComponents, BillsModule } from "@egovernments/digit-ui-module-bills";
@@ -54,6 +56,7 @@ const enabledModules = [
   "Engagement",
   "NOC",
   "WS",
+  "WMS",
   // "CommonPT",
   "NDSS",
   "Bills",
@@ -95,6 +98,7 @@ const initDigitUI = () => {
   window?.Digit.ComponentRegistryService.setupRegistry({
     ...pgrComponents,
     PaymentModule,
+    WMSModule,
     ...paymentConfigs,
     PaymentLinks,
     PTModule,
@@ -105,7 +109,7 @@ const initDigitUI = () => {
     HRMSModule,
     ReceiptsModule,
     BillsModule,
-
+    WMSLinks
     // TLModule,
     // TLLinks,
   });
@@ -122,6 +126,7 @@ const initDigitUI = () => {
   initEngagementComponents();
   initNOCComponents();
   initWSComponents();
+  initWMSComponents();
   initCommonPTComponents();
   initBillsComponents();
 

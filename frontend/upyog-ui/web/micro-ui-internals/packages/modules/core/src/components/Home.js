@@ -7,6 +7,8 @@ import {
   Loader,
   MCollectIcon,
   OBPSIcon,
+
+  WMSIcon,
   PGRIcon,
   PTIcon,
   TLIcon,
@@ -73,6 +75,8 @@ const iconSelector = (code) => {
       return <TLIcon className="fill-path-primary-main" />;
     case "OBPS":
       return <OBPSIcon className="fill-path-primary-main" />;
+    case "WMS":
+      return <WMSIcon className="fill-path-primary-main" />;
     case "Bills":
       return <BillsIcon className="fill-path-primary-main" />;
     default:

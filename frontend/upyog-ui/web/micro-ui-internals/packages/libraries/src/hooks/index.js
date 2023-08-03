@@ -237,6 +237,13 @@ import useDisconnectionWorkflow from "./ws/useDisconnectionWorkflow";
 import useDisConnectionDetails from "./ws/useDisConnectionDetails";
 import useWSModifyDetailsPage from "./ws/useWSModifyDetailsPage";
 
+import useWmsSearch from "./wms/useWMSSearch";
+import useWmsMDMS from "./wms/useWmsMDMS";
+import useWmsCreate from "./wms/useWmsCreate";
+import useWmsUpdate from "./wms/useWmsUpdate";
+import useWmsCount from "./wms/useWmsCount";
+import useWmsGenderMDMS from "./wms/useWmsGender";
+
 import useGetHowItWorksJSON from "./useHowItWorksJSON";
 import useGetFAQsJSON from "./useGetFAQsJSON";
 import useGetDSSFAQsJSON from "./useGetDSSFAQsJSON";
@@ -483,7 +490,14 @@ const ws = {
   useToCheckPrivacyEnablement,
   useWSConfigMDMS: useWSConfigMDMS,
 };
-
+const wms = {
+  useWmsSearch,
+  useWmsMDMS,
+  useWmsCreate,
+  useWmsUpdate,
+  useWmsCount,
+  useWmsGenderMDMS,
+};
 const reports = {
   useReportMeta,
 };
@@ -538,6 +552,7 @@ const Hooks = {
   survey,
   noc,
   ws,
+  wms,
   useCustomMDMS,
   useCustomAPIHook,
   reports,

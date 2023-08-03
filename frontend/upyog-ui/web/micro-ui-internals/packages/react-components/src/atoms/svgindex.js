@@ -703,7 +703,16 @@ const OBPSIcon = ({ className, styles }) => (
     />
   </svg>
 );
-
+const WMSIcon = ({ className, styles }) => (
+  <svg className={className} style={{ ...styles }} width="34" height="30" viewBox="0 0 34 30" fill="#ffffff" xmlns="http://www.w3.org/2000/svg">
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M30.3333 0H3.66659C1.83325 0 0.333252 1.5 0.333252 3.33333V26.6667C0.333252 28.5 1.83325 30 3.66659 30H30.3333C32.1666 30 33.6666 28.5 33.6666 26.6667V3.33333C33.6666 1.5 32.1666 0 30.3333 0ZM13.6666 23.3333H5.33325V20H13.6666V23.3333ZM13.6666 16.6667H5.33325V13.3333H13.6666V16.6667ZM13.6666 10H5.33325V6.66667H13.6666V10ZM21.6999 20L16.9999 15.2667L19.3499 12.9167L21.6999 15.2833L26.9833 10L29.3499 12.3667L21.6999 20Z"
+      fill="#a82227"
+    />
+  </svg>
+);
 const OBPSIconSolidBg = () => (
   <svg width="34" height="30" viewBox="0 0 34 30" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
@@ -1157,6 +1166,7 @@ export {
   PersonIcon,
   PTIcon,
   OBPSIcon,
+  WMSIcon,
   OBPSIconSolidBg,
   CitizenTruck,
   FSMIcon,

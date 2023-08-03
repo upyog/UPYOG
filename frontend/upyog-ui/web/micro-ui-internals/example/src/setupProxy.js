@@ -3,11 +3,11 @@ const { createProxyMiddleware } = require("http-proxy-middleware");
 const createProxy = createProxyMiddleware({
   //target: process.env.REACT_APP_PROXY_API || "https://uat.digit.org",
   // target: process.env.REACT_APP_PROXY_API || "https://qa.digit.org",
-  target: process.env.REACT_APP_PROXY_API || "https://qa.digit.org",
+  target:"",// process.env.REACT_APP_PROXY_API || "http://10.216.36.59",
   changeOrigin: true,
 });
 const assetsProxy = createProxyMiddleware({
-  target: process.env.REACT_APP_PROXY_ASSETS || "https://qa.digit.org",
+  target: "https://upyog-sandbox.niua.org",//process.env.REACT_APP_PROXY_ASSETS || "http://10.216.36.59",
   changeOrigin: true,
 });
 module.exports = function (app) {
@@ -18,8 +18,10 @@ module.exports = function (app) {
     "/localization",
     "/egov-workflow-v2",
     "/pgr-services",
+    "/wms-service",
     "/filestore",
     "/egov-hrms",
+    "/egov-wms",
     "/user-otp",
     "/user",
     "/fsm",
@@ -63,6 +65,7 @@ module.exports = function (app) {
     "/inbox/v1/elastic/_search",
     "/fsm-calculator",
     "/service-request",
+    "/wms",
   ].forEach((location) => app.use(location, createProxy));
   ["/pb-egov-assets"].forEach((location) => app.use(location, assetsProxy));
 };

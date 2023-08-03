@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import {
   PTIcon,
   OBPSIcon,
+  WMSIcon,
   PropertyHouse,
   CaseIcon,
   PGRIcon,
@@ -22,6 +23,7 @@ import {
 const IconsObject = {
   CommonPTIcon: <PTIcon />,
   OBPSIcon: <OBPSIcon />,
+  WMSIcon: <WMSIcon />,
   propertyIcon: <PropertyHouse />,
   TLIcon: <CaseIcon />,
   PGRIcon: <PGRIcon />,
