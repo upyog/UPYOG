@@ -1,0 +1,51 @@
+serviceMaps:
+  serviceName: wms-services
+  mappings:
+    - version: 1.0
+      description: Persists WMS details in tables
+      fromTopic: save-wms-application
+      isTransaction: true
+      queryMaps:
+        - query: INSERT INTO state_sor(sor_id,sor_name,start_date,end_date,chapter,item_no,description_of_item,unit,rate) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
+          basePath: ScheduleOfRateApplication.*
+          jsonMaps:
+            - jsonPath: $.ScheduleOfRateApplication.*.sor_id
+
+            - jsonPath: $.ScheduleOfRateApplication.*.sor_name
+           
+            - jsonPath: $.ScheduleOfRateApplication.*.start_date
+            
+            - jsonPath: $.ScheduleOfRateApplication.*.end_date
+
+            - jsonPath: $.ScheduleOfRateApplication.*.chapter
+            
+            - jsonPath: $.ScheduleOfRateApplication.*.item_no
+            
+            - jsonPath: $.ScheduleOfRateApplication.*.description_of_item
+            
+            - jsonPath: $.ScheduleOfRateApplication.*.unit
+            
+            - jsonPath: $.ScheduleOfRateApplication.*.rate
+
+    - version: 1.0
+      description: Update SOR applications in table
+      fromTopic: update-wms-application
+      isTransaction: true
+      queryMaps:
+        - query: UPDATE state_sor SET chapter = ?,sor_name = ?, rate = ?, end_date = ? WHERE sor_id=?;
+          basePath: ScheduleOfRateApplication.*
+          jsonMaps:
+            - jsonPath: $.ScheduleOfRateApplication.*.chapter
+
+            - jsonPath: $.ScheduleOfRateApplication.*.sor_name
+           
+            - jsonPath: $.ScheduleOfRateApplication.*.rate
+            
+            - jsonPath: $.ScheduleOfRateApplication.*.end_date
+            
+            - jsonPath: $.ScheduleOfRateApplication.*.sor_id
+
+
+
+
+   
