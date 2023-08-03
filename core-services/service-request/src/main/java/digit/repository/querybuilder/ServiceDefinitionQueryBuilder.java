@@ -70,10 +70,13 @@ public class ServiceDefinitionQueryBuilder {
         query.append(ORDERBY_CREATEDTIME);
 
         // Pagination to limit results
+        System.out.println("Pagination before::");
+    	System.out.println(serviceDefinitionSearchRequest.getPagination());
         if(ObjectUtils.isEmpty(serviceDefinitionSearchRequest.getPagination())){
+            System.out.println("here");
             prepareDefaultPaginationObject(serviceDefinitionSearchRequest);
         }
-        System.out.println("service Definition SearchRequest::");
+        System.out.println("Pagination after::");
     	System.out.println(serviceDefinitionSearchRequest.getPagination());
         addPagination(query, preparedStmtList, serviceDefinitionSearchRequest.getPagination());
 
