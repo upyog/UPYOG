@@ -304,20 +304,6 @@ if(chartKey == "xptFyByStatesv3")
             "symbol": "text"
         },
         {
-          "label": null,
-          "name": "2019-20",
-          "value": "",
-          "strValue": null,
-          "symbol": "number"
-      },
-      {
-        "label": null,
-        "name": "2020-21",
-        "value": "",
-        "strValue": null,
-        "symbol": "number"
-    },
-        {
             "label": null,
             "name": "2021-22",
             "value": "",
@@ -334,13 +320,6 @@ if(chartKey == "xptFyByStatesv3")
         {
             "label": null,
             "name": "2023-24",
-            "value": "",
-            "strValue": null,
-            "symbol": "number"
-        },
-        {
-            "label": null,
-            "name": "Total",
             "value": "",
             "strValue": null,
             "symbol": "number"
