@@ -5,6 +5,7 @@ import {Controller } from "react-hook-form";
 import { alphabeticalSortFunctionForTenantsBasedOnName } from "../../../../utils";
 
 const SearchFormFieldsComponents = ({ registerRef, controlSearchForm, searchFormState }) => {
+    console.log(searchFormState,"pppp")
     const { t } = useTranslation()
     const ulbs = Digit.SessionStorage.get("ENGAGEMENT_TENANTS");
     const tenantId = Digit.ULBService.getCurrentTenantId();
