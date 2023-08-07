@@ -54,8 +54,8 @@ public class RestService {
         String url =( indexServiceHost) + index + indexServiceHostSearch;
         HttpHeaders headers = getHttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        //LOGGER.info("Index Name : " + index);
-        //LOGGER.info("Searching ES for Query: " + searchQuery);
+        LOGGER.info("Index Name : " + index);
+        LOGGER.info("Searching ES for Query: " + searchQuery);
         HttpEntity<String> requestEntity = new HttpEntity<>(searchQuery, headers);
         String reqBody = requestEntity.getBody();
         JsonNode responseNode = null;
