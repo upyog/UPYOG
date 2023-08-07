@@ -150,17 +150,21 @@ const HorBarChart = ({ data, setselectState = "" }) => {
 
   const constructChartData = (data) => {
     const currencyFormatter = new Intl.NumberFormat("en-IN", { currency: "INR" });
+    console.log("data: ",data)
+    let index = data?.findIndex(x => x.headerName == "liveUlbsCount");
+
+    console.log(index)
+    data?.splice(index, 1)
     let result = {};
     for (let i = 0; i < data?.length; i++) {
       const row = data[i];
       for (let j = 0; j < row.plots.length; j++) {
         const plot = row.plots[j];
         
-        result[plot.name] = { ...result[plot.name], [t(row.headerName)]:currencyFormatter.format((plot?.value / 10000000).toFixed(2) || 0), name: t(plot.name) };
-        console.log("ploit",result[plot.TotalCollection])
+        result[plot.name] = { ...result[plot.name], [t(row.headerName)]:currencyFormatter.format((plot?.value / 10000000).toFixed(2) || 0), name: t(plot.name) };      
       }
-    }
-    return Object.keys(result).map((key) => {
+    }   
+    return Object.keys(result).map((key) => {      
       return {
         name: key,
         ...result[key],
@@ -168,7 +172,7 @@ const HorBarChart = ({ data, setselectState = "" }) => {
     });
   };
   const renderLegend = (value) => (
-    <span style={{ fontSize: "14px", color: "#505A5F" }}>{t(`DSS_${Digit.Utils.locale.getTransformedLocale(value)}`)}</span>
+    <span style={{ fontSize: "14px", color: "#505A5F" }}>{t(`DSS_${Digit.Utils.locale.getTransformedLocale(value)}`)} (Cr)</span>
   );
   const chartData = useMemo(() => constructChartData(response?.responseData?.data));
 
