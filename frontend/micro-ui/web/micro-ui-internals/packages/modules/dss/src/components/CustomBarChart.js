@@ -38,8 +38,8 @@ const CustomLabel = ({ x, y, name, stroke, value, maxValue }) => {
       <text
         x={x}
         y={y}
-        dx={-55}
-        dy={10}
+        dx={0}
+        dy={30}
         fill={stroke}
         width="35"
         style={{ fontSize: "medium", textAlign: "right", fontVariantNumeric: "proportional-nums" }}
