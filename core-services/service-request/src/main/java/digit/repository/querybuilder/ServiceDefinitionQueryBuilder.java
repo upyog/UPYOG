@@ -39,7 +39,7 @@ public class ServiceDefinitionQueryBuilder {
 
         if(!CollectionUtils.isEmpty(criteria.getCode())){
             addClauseIfRequired(query, preparedStmtList);
-            query.append(" sd.code LIKE ( ").append(createQuery(criteria.getCode())).append("|| '%' )");
+            query.append(" sd.code LIKE ( ").append(createQuery(criteria.getCode())).append(" || '%' )");
             addToPreparedStatement(preparedStmtList, criteria.getCode());
         }
 
