@@ -107,12 +107,12 @@ public class TarentoServiceImpl implements ClientService {
 		if(aggrObjectNode.fields().hasNext()){
 			aggregateDto = responseHandler.translate(request, aggrObjectNode);
 		}
-		for(int i=0;i<aggregateDto.getData().size();i++) {
-		String name=aggregateDto.getData().get(i).getPlots().get(0).getName();
-		Double value=aggregateDto.getData().get(i).getPlots().get(0).getValue();
-		Object rank= aggregateDto.getData().get(i).getHeaderValue();
-		logger.info("Data with rank is " +name +value + rank);
-		}
+//		for(int i=0;i<aggregateDto.getData().size();i++) {
+//		String name=aggregateDto.getData().get(i).getPlots().get(0).getName();
+//		Double value=aggregateDto.getData().get(i).getPlots().get(0).getValue();
+//		Object rank= aggregateDto.getData().get(i).getHeaderValue();
+//		logger.info("Data with rank is " +name +value + rank);
+//		}
 		if(insightsConfig != null && StringUtils.isNotBlank(insightsConfig.getInsightInterval())) { 
 			continueWithInsight = getInsightsDate(request, insightsConfig.getInsightInterval());
 			if(continueWithInsight) { 
@@ -153,10 +153,10 @@ public class TarentoServiceImpl implements ClientService {
 		int randIndexCount = 1;
 		for(JsonNode query : queries) {
 			String module = query.get(Constants.JsonPaths.MODULE).asText();
-			if(request.getModuleLevel().equals(Constants.Modules.HOME_REVENUE) || 
-					request.getModuleLevel().equals(Constants.Modules.HOME_SERVICES) ||
-					query.get(Constants.JsonPaths.MODULE).asText().equals(Constants.Modules.COMMON) ||
-					request.getModuleLevel().equals(module)) {
+//			if(request.getModuleLevel().equals(Constants.Modules.HOME_REVENUE) || 
+//					request.getModuleLevel().equals(Constants.Modules.HOME_SERVICES) ||
+//					query.get(Constants.JsonPaths.MODULE).asText().equals(Constants.Modules.COMMON) ||
+//					request.getModuleLevel().equals(module)) {
 				
 				String indexName = query.get(Constants.JsonPaths.INDEX_NAME).asText();
 				ObjectNode objectNode = queryService.getChartConfigurationQuery(request, query, indexName, interval);
@@ -173,7 +173,7 @@ public class TarentoServiceImpl implements ClientService {
 				}
 				aggrObjectNode.set(Constants.JsonPaths.AGGREGATIONS, nodes);
 
-			}
+			//}
 		}
 	}
 
