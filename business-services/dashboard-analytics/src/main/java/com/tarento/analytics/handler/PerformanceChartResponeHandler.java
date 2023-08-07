@@ -101,11 +101,11 @@ public class PerformanceChartResponeHandler implements IResponseHandler {
         plots.stream().forEach(item -> item.setLabel(plotLabel));
         Comparator<Plot> plotValueComparator = Comparator.comparing(Plot::getValue);
         plots.sort(plotValueComparator.reversed());
-        for(int i=0;i<plots.size();i++) {
-    		String name=plots.get(i).getName();
-    		Double value=plots.get(i).getValue();
-    		logger.info("Data with rank is " +name +value);
-    		}
+//        for(int i=0;i<plots.size();i++) {
+//    		String name=plots.get(i).getName();
+//    		Double value=plots.get(i).getValue();
+//    		logger.info("Data with rank is " +name +value);
+//    		}
         return getAggregatedDto(chartNode, getDataOnPerformingOrder(plots, limit, order, symbol), requestDto.getVisualizationCode());
     }
 
