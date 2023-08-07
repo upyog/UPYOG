@@ -1,26 +1,30 @@
+
 package com.tarento.analytics.service.impl;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.tomcat.util.codec.binary.Base64;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.http.*;
-import org.springframework.stereotype.Component;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestTemplate;
+import static javax.servlet.http.HttpServletRequest.BASIC_AUTH;
+import static org.apache.commons.codec.CharEncoding.US_ASCII;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
-import static javax.servlet.http.HttpServletRequest.BASIC_AUTH;
-import static org.apache.commons.codec.CharEncoding.US_ASCII;
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import org.apache.tomcat.util.codec.binary.Base64;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpClientErrorException;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
 public class RestService {
@@ -59,11 +63,73 @@ public class RestService {
         HttpEntity<String> requestEntity = new HttpEntity<>(searchQuery, headers);
         String reqBody = requestEntity.getBody();
         JsonNode responseNode = null;
-
+        ObjectMapper mapper = new ObjectMapper();
+        if(index.equals("tl-national-dashboard")) {
+        	try {
+				responseNode= mapper.readTree("{\n"
+						+ "  \"took\" : 4,\n"
+						+ "  \"timed_out\" : false,\n"
+						+ "  \"_shards\" : {\n"
+						+ "    \"total\" : 5,\n"
+						+ "    \"successful\" : 5,\n"
+						+ "    \"skipped\" : 0,\n"
+						+ "    \"failed\" : 0\n"
+						+ "  },\n"
+						+ "  \"hits\" : {\n"
+						+ "    \"total\" : 255,\n"
+						+ "    \"max_score\" : 0.0,\n"
+						+ "    \"hits\" : [ ]\n"
+						+ "  },\n"
+						+ "  \"aggregations\" : {\n"
+						+ "    \"AGGR\" : {\n"
+						+ "      \"doc_count\" : 190,\n"
+						+ "      \"Total Collection\" : {\n"
+						+ "        \"value\" : 8.492646033E9\n"
+						+ "      }\n"
+						+ "    }\n"
+						+ "  }\n"
+						+ "}");
+			} catch (JsonProcessingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+        	}
+        if(index.equals("pt-national-dashboard"))
+        {
+        	try {
+				responseNode=mapper.readTree("{\n"
+						+ "  \"took\" : 4,\n"
+						+ "  \"timed_out\" : false,\n"
+						+ "  \"_shards\" : {\n"
+						+ "    \"total\" : 5,\n"
+						+ "    \"successful\" : 5,\n"
+						+ "    \"skipped\" : 0,\n"
+						+ "    \"failed\" : 0\n"
+						+ "  },\n"
+						+ "  \"hits\" : {\n"
+						+ "    \"total\" : 1032188,\n"
+						+ "    \"max_score\" : 0.0,\n"
+						+ "    \"hits\" : [ ]\n"
+						+ "  },\n"
+						+ "  \"aggregations\" : {\n"
+						+ "    \"AGGR\" : {\n"
+						+ "      \"meta\" : { },\n"
+						+ "      \"doc_count\" : 1032188,\n"
+						+ "      \"Total CollectionPT\" : {\n"
+						+ "        \"value\" : 6.447073432E9\n"
+						+ "      }\n"
+						+ "    }\n"
+						+ "  }\n"
+						+ "}");
+			} catch (JsonProcessingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+        }
         try {
-            ResponseEntity<Object> response = retryTemplate.postForEntity(url, requestEntity);
-            responseNode = new ObjectMapper().convertValue(response.getBody(), JsonNode.class);
-            //LOGGER.info("RestTemplate response :- "+responseNode);
+            //ResponseEntity<Object> response = retryTemplate.postForEntity(url, requestEntity);
+            //responseNode = new ObjectMapper().convertValue(response.getBody(), JsonNode.class);
+            LOGGER.info("RestTemplate response :- "+responseNode);
 
         } catch (HttpClientErrorException e) {
             e.printStackTrace();
@@ -158,3 +224,4 @@ public class RestService {
     }
 
 }
+

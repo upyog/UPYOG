@@ -153,10 +153,10 @@ public class TarentoServiceImpl implements ClientService {
 		int randIndexCount = 1;
 		for(JsonNode query : queries) {
 			String module = query.get(Constants.JsonPaths.MODULE).asText();
-			if(request.getModuleLevel().equals(Constants.Modules.HOME_REVENUE) || 
-					request.getModuleLevel().equals(Constants.Modules.HOME_SERVICES) ||
-					query.get(Constants.JsonPaths.MODULE).asText().equals(Constants.Modules.COMMON) ||
-					request.getModuleLevel().equals(module)) {
+//			if(request.getModuleLevel().equals(Constants.Modules.HOME_REVENUE) || 
+//					request.getModuleLevel().equals(Constants.Modules.HOME_SERVICES) ||
+//					query.get(Constants.JsonPaths.MODULE).asText().equals(Constants.Modules.COMMON) ||
+//					request.getModuleLevel().equals(module)) {
 				
 				String indexName = query.get(Constants.JsonPaths.INDEX_NAME).asText();
 				ObjectNode objectNode = queryService.getChartConfigurationQuery(request, query, indexName, interval);
@@ -173,7 +173,7 @@ public class TarentoServiceImpl implements ClientService {
 				}
 				aggrObjectNode.set(Constants.JsonPaths.AGGREGATIONS, nodes);
 
-			}
+			//}
 		}
 	}
 
