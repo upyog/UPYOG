@@ -100,8 +100,11 @@ const ApplicationDetails = (props) => {
   };
 
   const submitAction = async (data, nocData = false, isOBPS = {}) => {
-    if(data.BPA.comment.length >0)
+    if(data?.Property?.workflow?.comment?.length == 0 || data?.Licenses?.[0]?.comment?.length == 0 || data?.WaterConnection?.comment?.length == 0 || data?.SewerageConnection?.comment?.length == 0 || data?.BPA?.comment?.length > 0)
     {
+     alert("Please fill in the comments before submitting")
+    }
+    else{
       setIsEnableLoader(true);
       if (typeof data?.customFunctionToExecute === "function") {
         data?.customFunctionToExecute({ ...data });
@@ -150,21 +153,21 @@ const ApplicationDetails = (props) => {
             if (isOBPS?.isNoc) {
               history.push(`/digit-ui/employee/noc/response`, { data: data });
             }
-            if (data?.Amendments?.length > 0 ){
+            if (data?.Amendments?.length > 0) {
               //RAIN-6981 instead just show a toast here with appropriate message
-            //show toast here and return 
+              //show toast here and return 
               //history.push("/digit-ui/employee/ws/response-bill-amend", { status: true, state: data?.Amendments?.[0] })
-              
-              if(variables?.AmendmentUpdate?.workflow?.action.includes("SEND_BACK")){
-                setShowToast({ key: "success", label: t("ES_MODIFYSWCONNECTION_SEND_BACK_UPDATE_SUCCESS")})
-              } else if (variables?.AmendmentUpdate?.workflow?.action.includes("RE-SUBMIT")){
+  
+              if (variables?.AmendmentUpdate?.workflow?.action.includes("SEND_BACK")) {
+                setShowToast({ key: "success", label: t("ES_MODIFYSWCONNECTION_SEND_BACK_UPDATE_SUCCESS") })
+              } else if (variables?.AmendmentUpdate?.workflow?.action.includes("RE-SUBMIT")) {
                 setShowToast({ key: "success", label: t("ES_MODIFYSWCONNECTION_RE_SUBMIT_UPDATE_SUCCESS") })
-              } else if (variables?.AmendmentUpdate?.workflow?.action.includes("APPROVE")){
+              } else if (variables?.AmendmentUpdate?.workflow?.action.includes("APPROVE")) {
                 setShowToast({ key: "success", label: t("ES_MODIFYSWCONNECTION_APPROVE_UPDATE_SUCCESS") })
               }
-              else if (variables?.AmendmentUpdate?.workflow?.action.includes("REJECT")){
+              else if (variables?.AmendmentUpdate?.workflow?.action.includes("REJECT")) {
                 setShowToast({ key: "success", label: t("ES_MODIFYWSCONNECTION_REJECT_UPDATE_SUCCESS") })
-              }            
+              }
               return
             }
             setShowToast({ key: "success", action: selectedAction });
@@ -173,16 +176,13 @@ const ApplicationDetails = (props) => {
             queryClient.clear();
             queryClient.refetchQueries("APPLICATION_SEARCH");
             //push false status when reject
-            
+  
           },
         });
       }
-  
       closeModal();
     }
-    else {
-      alert("Please fill in the comment details") 
-    } 
+  
   };
 
   if (isLoading || isEnableLoader) {

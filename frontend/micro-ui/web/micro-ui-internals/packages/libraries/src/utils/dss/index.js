@@ -10,6 +10,8 @@ const amountFormatter = (value, denomination, t) => {
       return `₹ ${currencyFormatter.format((value / 10000000).toFixed(2) || 0)} ${t("ES_DSS_CR")}`;
     case "Unit":
       return `₹ ${currencyFormatter.format(value?.toFixed(2) || 0)}`;
+      case "UnitOverview":
+      return `${currencyFormatter.format(value?.toFixed(2) || 0)} %`;
     default:
       return "";
   }

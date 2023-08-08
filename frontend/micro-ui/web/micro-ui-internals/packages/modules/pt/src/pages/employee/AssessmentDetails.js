@@ -95,7 +95,7 @@ const AssessmentDetails = () => {
     },
     }
   ); 
-  
+
   const closeToast = () => {
     setShowToast(null);
   };
@@ -111,11 +111,21 @@ const AssessmentDetails = () => {
           },
           onSuccess: (data, variables) => {
             sessionStorage.setItem("IsPTAccessDone", data?.Assessments?.[0]?.auditDetails?.lastModifiedTime);
+            let user = sessionStorage.getItem("Digit.User")
+            let userType = JSON.parse(user)
             setShowToast({ key: "success", action: { action: "ASSESSMENT" } });
             setTimeout(closeToast, 5000);
+            console.log("useType.value.info.type",userType,typeof(userType))
             // queryClient.clear();
             // queryClient.setQueryData(["PT_ASSESSMENT", propertyId, location?.state?.Assessment?.financialYear], true);
-            history.push(`/digit-ui/employee/payment/collect/PT/${propertyId}`);
+            if(userType?.value?.info?.type == "CITIZEN")
+            {
+              history.push(`/digit-ui/citizen/payment/my-bills/PT/${propertyId}`);
+            }
+            else{
+              proceeedToPay()
+            }
+            
           },
         }
       );

@@ -16,7 +16,7 @@ const PROJECTION_CONFIG = { scale: 280, center: [85.9629, 22.5937] };
 // Red Variants
 const COLOR_RANGE = ["#54D140", "#298CFF", "#a82227", "#D1D1D1"];
 
-const STATUS = ["Live", "UnderImplementation", "OnBoarded", "None"];
+const STATUS = ["Live", "OnBoarded", "None"];
 const DEFAULT_COLOR = "#D1D1D1";
 const key = "DSS_FILTERS";
 
@@ -40,8 +40,6 @@ const getColor = (current) => {
         return COLOR_RANGE[0];
       case "OnBoarded":
         return COLOR_RANGE[1];
-      case "UnderImplementation":
-        return COLOR_RANGE[2];
       case "None":
         return DEFAULT_COLOR;
       default:

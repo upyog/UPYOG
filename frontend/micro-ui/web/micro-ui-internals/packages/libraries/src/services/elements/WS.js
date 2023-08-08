@@ -120,6 +120,27 @@ export const WSService = {
       auth: true,
       userService: true,
       params: { ...filters },
+      userDownload: true,
+    }),
+    wnsSearch: (filters) =>
+    Request({
+      url: Urls.ws.water_search,
+      useCache: false,
+      method: "POST",
+      auth: true,
+      userService: true,
+      params: { ...filters },
+      userDownload: false,
+    }),
+    wnSewrageSearch: (filters) =>
+    Request({
+      url: Urls.ws.sewarage_search,
+      useCache: false,
+      method: "POST",
+      auth: true,
+      userService: true,
+      params: { ...filters },
+      userDownload: false,
     }),
   cancelGroupBill: (filters) =>
     Request({

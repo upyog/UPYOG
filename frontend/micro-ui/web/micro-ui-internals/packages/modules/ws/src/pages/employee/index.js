@@ -66,6 +66,12 @@ const BILLSBreadCrumbs = ({ location }) => {
       isBack: fromScreen && true,
     },
     {
+      path: "/digit-ui/employee/ws/water/wns-search",
+      content: fromScreen ? `${t(fromScreen)} / ${t("WS_SEARCH_INTEGRATED_BILL")}` : t("WS_SEARCH_INTEGRATED_BILL"),
+      show: location.pathname.includes("/water/wns-search") ? true : false,
+      isBack: fromScreen && true,
+    },
+    {
       path: "/digit-ui/employee/ws/sewerage/search-application",
       content: fromScreen ? `${t(fromScreen)} / ${t("WS_SEARCH_APPLICATIONS")}` : t("WS_SEARCH_APPLICATIONS"),
       show: location.pathname.includes("/sewerage/search-application") ? true : false,
@@ -221,6 +227,7 @@ const BILLSBreadCrumbs = ({ location }) => {
   return <div style={window?.location.href.includes("/employee/ws/bill-amendment") || window?.location.href.includes("/employee/ws/response")? {marginLeft:"20px"} : {}}><BreadCrumb crumbs={crumbs}  spanStyle={{ maxWidth: "min-content"}} /></div>;
 };
 const App = ({ path }) => {
+  console.log("ffffff",path)
   const location = useLocation();
 
   const WSDocsRequired = Digit?.ComponentRegistryService?.getComponent("WSDocsRequired");
@@ -247,7 +254,8 @@ const App = ({ path }) => {
   const WSEditDisconnectionApplication = Digit?.ComponentRegistryService?.getComponent("WSEditDisconnectionApplication");
   const WSEditDisconnectionByConfig = Digit?.ComponentRegistryService?.getComponent("WSEditDisconnectionByConfig");
   const WSResubmitDisconnection = Digit?.ComponentRegistryService?.getComponent("WSResubmitDisconnection");
-
+  const WSSearchIntegrated = Digit?.ComponentRegistryService?.getComponent("WSSearchIntegrated");
+  
   const locationCheck = 
   window.location.href.includes("/employee/ws/new-application") || 
   window.location.href.includes("/employee/ws/modify-application") ||
@@ -260,7 +268,8 @@ const App = ({ path }) => {
   window.location.href.includes("/employee/ws/ws-disconnection-response") ||
   window.location.href.includes("/employee/ws/consumption-details") || 
   window.location.href.includes("/employee/ws/edit-disconnection-application") ||
-  window.location.href.includes("/employee/ws/config-by-disconnection-application");
+  window.location.href.includes("/employee/ws/config-by-disconnection-application")||
+ 
   window.location.href.includes("/employee/ws/resubmit-disconnection-application");
   
   
@@ -310,7 +319,8 @@ const App = ({ path }) => {
           <PrivateRoute path={`${path}/disconnection-details`} component={WSGetDisconnectionDetails} />
           <PrivateRoute path={`${path}/water/bill-amendment/inbox`} component={(props) => <WSBillIAmendMentInbox {...props} parentRoute={path} />} />
           <PrivateRoute path={`${path}/sewerage/bill-amendment/inbox`} component={(props) => <WSBillIAmendMentInbox {...props} parentRoute={path} />} />
-
+          <PrivateRoute path={`${path}/water/wns-search`} component={(props) => <WSSearchIntegrated {...props} parentRoute={path} />} />
+          
           {/* <Route path={`${path}/search`} component={SearchConnectionComponent} />
           <Route path={`${path}/search-results`} component={SearchResultsComponent} /> */}
         </div>

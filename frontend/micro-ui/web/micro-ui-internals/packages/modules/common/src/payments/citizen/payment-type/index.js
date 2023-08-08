@@ -78,7 +78,7 @@ export const SelectPaymentType = (props) => {
         // success
         callbackUrl: window.location.href.includes("mcollect") || wrkflow === "WNS"
           ? `${window.location.protocol}//${window.location.host}/digit-ui/citizen/payment/success/${businessService}/${wrkflow === "WNS"? encodeURIComponent(consumerCode):consumerCode}/${tenantId}?workflow=${wrkflow === "WNS"? wrkflow : "mcollect"}`
-          : `${window.location.protocol}//${window.location.host}/digit-ui/citizen/payment/success/${businessService}/${wrkflow === "WNS"? encodeURIComponent(consumerCode):consumerCode}/${tenantId}?propertyId=${propertyId}`,
+          : `${window.location.protocol}//${window.location.host}/digit-ui/citizen/payment/success/${businessService}/${wrkflow === "WNS"? encodeURIComponent(consumerCode):consumerCode}/${tenantId}?propertyId=${consumerCode}`,
         additionalDetails: {
           isWhatsapp: false,
         },
@@ -154,15 +154,14 @@ export const SelectPaymentType = (props) => {
           $(document.body).append(newForm);
           newForm.submit();
 
-
-           makePayment(gatewayParam.txURL,formdata);
+          makePayment(gatewayParam.txURL,newForm);
 
         } catch (e) {
           console.log("Error in payment redirect ", e);
           //window.location = redirectionUrl;
         }
       }
-      //window.location = redirectUrl;
+     // window.location = redirectUrl;
     } catch (error) {
       let messageToShow = "CS_PAYMENT_UNKNOWN_ERROR_ON_SERVER";
       if (error.response?.data?.Errors?.[0]) {

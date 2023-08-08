@@ -279,7 +279,57 @@ const CustomTable = ({ data = {}, onSearch, setChartData, setChartDenomination, 
   };
 
   const tableColumns = useMemo(() => {
-    const columns = response?.responseData?.data?.find((row) => !!row);
+    // const columns = response?.responseData?.data?.find((row) =>!!row);
+let columns=[]
+if(chartKey == "xptFyByStatesv3")
+{
+   columns= {
+    "headerName": "",
+    "headerValue": 5,
+    "headerSymbol": null,
+    "insight": null,
+    "plots": [
+        {
+            "label": "5",
+            "name": "S.N.",
+            "value": null,
+            "strValue": null,
+            "symbol": "text"
+        },
+        {
+            "label": "",
+            "name": "State",
+            "value": null,
+            "strValue": null,
+            "symbol": "text"
+        },
+        {
+            "label": null,
+            "name": "2021-22",
+            "value": "",
+            "strValue": null,
+            "symbol": "number"
+        },
+        {
+            "label": null,
+            "name": "2022-23",
+            "value": "",
+            "strValue": null,
+            "symbol": "number"
+        },
+        {
+            "label": null,
+            "name": "2023-24",
+            "value": "",
+            "strValue": null,
+            "symbol": "number"
+        }
+    ]
+  }
+}
+else {
+ columns = response?.responseData?.data?.find((row) =>!!row);
+}
     return columns?.plots
       ?.filter((plot) => plot?.name !== "TankCapacity")
       .map((plot, index) => ({
