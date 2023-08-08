@@ -33,8 +33,7 @@ const SelectName = ({ t, config, onSelect, formData = {}, userType, register, er
       },
       componentInFront: <div className="employee-card-input employee-card-input--front">+91</div>,
       isMandatory: true,
-    },
-  
+    }
   ];
 
   useEffect(() => {
