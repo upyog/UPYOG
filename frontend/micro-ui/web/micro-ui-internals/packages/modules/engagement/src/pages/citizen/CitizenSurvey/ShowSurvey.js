@@ -21,7 +21,6 @@ const ShowSurvey = ({ location }) => {
   const { data: selecedSurveyData, isLoading } = Digit.Hooks.survey.useSelectedSurveySearch({ServiceCriteria},{})
 
   const queryClient = useQueryClient();
-  console.log(selecedSurveyData,"surveyData")
   useEffect(() => {
     // const onSuccess = () => {
     //   queryClient.clear();
