@@ -13,7 +13,7 @@
     "micro-ui-internals/packages/modules/pgr",
     "micro-ui-internals/packages/modules/pt",
     "micro-ui-internals/packages/modules/tl",
-    "micro-ui-internals/packages/modules/ws"
+    "micro-ui-internals/packages/modules/ws",
     "micro-ui-internals/packages/modules/wms"
   ],
   "engines": {
