@@ -24,7 +24,7 @@ const CustomLabel = ({ x, y, name, stroke, value, maxValue ,data}) => {
   console.log("hhhhhh",maxValue,data)
   const currencyFormatter = new Intl.NumberFormat("en-IN", { currency: "INR" });
   const { t } = useTranslation();
-  let possibleValues = ["pttopPerformingStatesRevenue","ptbottomPerformingStatesRevenue","tltopPerformingStatesRevenue","tlbottomPerformingStatesRevenue","obpstopPerformingStatesRevenue","obpsbottomPerformingStatesRevenue","noctopPerformingStatesRevenue","nocbottomPerformingStatesRevenue","wstopPerformingStatesRevenue","wsbottomPerformingStatesRevenue"]
+  let possibleValues = ["pttopPerformingStatesRevenue","ptbottomPerformingStatesRevenue","tltopPerformingStatesRevenue","tlbottomPerformingStatesRevenue","obpstopPerformingStatesRevenue","obpsbottomPerformingStatesRevenue","noctopPerformingStatesRevenue","nocbottomPerformingStatesRevenue","wstopPerformingStatesRevenue","wsbottomPerformingStatesRevenue","OverviewtopPerformingStates","OverviewbottomPerformingStates"]
 if(data?.tabName == "Revenue" || possibleValues.includes(data?.id))
 {
   console.log("reee",maxValue,name)
@@ -144,7 +144,7 @@ const CustomBarChart = ({
   console.log("Loading chart",data)
   return (
     <Fragment>
-      <ResponsiveContainer width="98%" height={320}>
+      <ResponsiveContainer width="98%" height={420}>
         <BarChart
           width="70%"
           height="100%"
