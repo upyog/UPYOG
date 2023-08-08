@@ -61,74 +61,11 @@ public class RestService {
         LOGGER.info("Index Name : " + index);
         LOGGER.info("Searching ES for Query: " + searchQuery);
         HttpEntity<String> requestEntity = new HttpEntity<>(searchQuery, headers);
-        String reqBody = requestEntity.getBody();
         JsonNode responseNode = null;
-        ObjectMapper mapper = new ObjectMapper();
-        if(index.equals("tl-national-dashboard")) {
-        	try {
-				responseNode= mapper.readTree("{\n"
-						+ "  \"took\" : 4,\n"
-						+ "  \"timed_out\" : false,\n"
-						+ "  \"_shards\" : {\n"
-						+ "    \"total\" : 5,\n"
-						+ "    \"successful\" : 5,\n"
-						+ "    \"skipped\" : 0,\n"
-						+ "    \"failed\" : 0\n"
-						+ "  },\n"
-						+ "  \"hits\" : {\n"
-						+ "    \"total\" : 255,\n"
-						+ "    \"max_score\" : 0.0,\n"
-						+ "    \"hits\" : [ ]\n"
-						+ "  },\n"
-						+ "  \"aggregations\" : {\n"
-						+ "    \"AGGR\" : {\n"
-						+ "      \"doc_count\" : 190,\n"
-						+ "      \"Total Collection\" : {\n"
-						+ "        \"value\" : 8.492646033E9\n"
-						+ "      }\n"
-						+ "    }\n"
-						+ "  }\n"
-						+ "}");
-			} catch (JsonProcessingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-        	}
-        if(index.equals("pt-national-dashboard"))
-        {
-        	try {
-				responseNode=mapper.readTree("{\n"
-						+ "  \"took\" : 4,\n"
-						+ "  \"timed_out\" : false,\n"
-						+ "  \"_shards\" : {\n"
-						+ "    \"total\" : 5,\n"
-						+ "    \"successful\" : 5,\n"
-						+ "    \"skipped\" : 0,\n"
-						+ "    \"failed\" : 0\n"
-						+ "  },\n"
-						+ "  \"hits\" : {\n"
-						+ "    \"total\" : 1032188,\n"
-						+ "    \"max_score\" : 0.0,\n"
-						+ "    \"hits\" : [ ]\n"
-						+ "  },\n"
-						+ "  \"aggregations\" : {\n"
-						+ "    \"AGGR\" : {\n"
-						+ "      \"meta\" : { },\n"
-						+ "      \"doc_count\" : 1032188,\n"
-						+ "      \"Total CollectionPT\" : {\n"
-						+ "        \"value\" : 6.447073432E9\n"
-						+ "      }\n"
-						+ "    }\n"
-						+ "  }\n"
-						+ "}");
-			} catch (JsonProcessingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-        }
+               
         try {
-            //ResponseEntity<Object> response = retryTemplate.postForEntity(url, requestEntity);
-            //responseNode = new ObjectMapper().convertValue(response.getBody(), JsonNode.class);
+            ResponseEntity<Object> response = retryTemplate.postForEntity(url, requestEntity);
+            responseNode = new ObjectMapper().convertValue(response.getBody(), JsonNode.class);
             LOGGER.info("RestTemplate response :- "+responseNode);
 
         } catch (HttpClientErrorException e) {
