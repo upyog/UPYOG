@@ -8,7 +8,6 @@ import NoData from "./NoData";
 import { checkCurrentScreen } from "./DSSCard";
 
 const formatValue = (value, symbol) => {
-  console.log("value",value)
   if (symbol?.toLowerCase() === "percentage") {
     /*   Removed by  percentage formatter.
     const Pformatter = new Intl.NumberFormat("en-IN", { maximumSignificantDigits: 3 });
@@ -21,10 +20,41 @@ const formatValue = (value, symbol) => {
   }
 };
 
-const CustomLabel = ({ x, y, name, stroke, value, maxValue }) => {
+const CustomLabel = ({ x, y, name, stroke, value, maxValue ,data}) => {
+  console.log("hhhhhh",maxValue,data)
+  const currencyFormatter = new Intl.NumberFormat("en-IN", { currency: "INR" });
   const { t } = useTranslation();
-
+  let possibleValues = ["pttopPerformingStatesRevenue","ptbottomPerformingStatesRevenue","tltopPerformingStatesRevenue","tlbottomPerformingStatesRevenue","obpstopPerformingStatesRevenue","obpsbottomPerformingStatesRevenue","noctopPerformingStatesRevenue","nocbottomPerformingStatesRevenue","wstopPerformingStatesRevenue","wsbottomPerformingStatesRevenue"]
+if(data?.tabName == "Revenue" || possibleValues.includes(data?.id))
+{
+  console.log("reee",maxValue,name)
+  Object.keys(maxValue)?.forEach(key => {
+    console.log("ddddd",maxValue[key])
+    if(maxValue[key] > 10000000)
+    maxValue[key] =  `${((maxValue[key] / 1000000000).toFixed(2) || 0)}`;
+  });
   return (
+    <>
+      <text
+        x={x}
+        y={y}
+        dx={0}
+        dy={30}
+        fill={stroke}
+        width="35"
+        style={{ fontSize: "medium", textAlign: "right", fontVariantNumeric: "proportional-nums" }}
+      >
+        {`₹ ${maxValue?.[t(name)]} ${t("ES_DSS_CR")}`}
+      </text>
+      <text x={x} y={y} dx={-200} dy={10}>
+        {t(`DSS_TB_${Digit.Utils.locale.getTransformedLocale(name)}`)}
+      </text>
+    </>
+  );
+}
+else {
+
+return (
     <>
       <text
         x={x}
@@ -42,6 +72,7 @@ const CustomLabel = ({ x, y, name, stroke, value, maxValue }) => {
       </text>
     </>
   );
+}
 };
 const COLORS = { RED: "#00703C", GREEN: "#D4351C", default: "#00703C" };
 
@@ -110,6 +141,7 @@ const CustomBarChart = ({
   if (chartData?.length === 0 || !chartData) {
     return <NoData t={t} />;
   }
+  console.log("Loading chart",data)
   return (
     <Fragment>
       <ResponsiveContainer width="98%" height={320}>
@@ -129,7 +161,7 @@ const CustomBarChart = ({
             dataKey={xDataKey}
             fill={COLORS[fillColor]}
             background={{ fill: "#D6D5D4", radius: 8 }}
-            label={<CustomLabel stroke={COLORS[fillColor]} maxValue={maxValue} />}
+            label={<CustomLabel stroke={COLORS[fillColor]} maxValue={maxValue} data={data}/>}
             radius={[8, 8, 8, 8]}
             isAnimationActive={false}
           />
