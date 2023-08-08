@@ -62,17 +62,53 @@ const NewSurveys = () => {
   const onSubmit = (data) => {
     const { collectCitizenInfo, title, description, tenantIds, fromDate, toDate, fromTime, toTime, questions } = data;
     const mappedQuestions = mapQuestions(questions);
+    let serveyMappedQuestions = [];
+    let userToken = window.localStorage.getItem("token");
+    let userInfo = JSON.parse(window.localStorage.getItem("user-info"));
+    questions && questions.length && questions.map((element,index)=>{
+      serveyMappedQuestions.push({
+        "tenantId": tenantIds?.[0]?.code,
+        "code": element.formConfig.questionStatement,
+        "dataType": "String",
+        "values": null,
+        "required": element.formConfig.required,
+        "isActive": true,
+        "reGex": null,
+        "order": index++,
+        "additionalDetails": {
+          type: element.formConfig.type.i18Key,
+          options: element.formConfig.options || ["NA"]
+        }
+      })
+    })
     const details = {
-      SurveyEntity: {
-        tenantIds: tenantIds.map(({code})=>(code)),
-        title,
-        description,
-        startDate: new Date(`${fromDate} ${fromTime}`).getTime(),
-        endDate: new Date(`${toDate} ${toTime}`).getTime(),
-        questions:mappedQuestions
+      // SurveyEntity: {
+      //   tenantIds: tenantIds.map(({code})=>(code)),
+      //   title,
+      //   description,
+      //   startDate: new Date(`${fromDate} ${fromTime}`).getTime(),
+      //   endDate: new Date(`${toDate} ${toTime}`).getTime(),
+      //   questions:mappedQuestions
+      // },
+
+      ServiceDefinition: {
+        tenantId:tenantIds?.[0]?.code,
+        module:"engagement",
+        code: title,
+        isActive: true,
+        additionalDetails:{
+          title: title,
+          description: description,
+          startDate:  new Date(`${fromDate} ${fromTime}`).getTime(),
+          endDate: new Date(`${toDate} ${toTime}`).getTime(),
+          postedBy: userInfo.name,
+        },
+        clientId:userInfo.uuid,
+        attributes:serveyMappedQuestions
       },
+
     };
-    
+
     try{
       let filters = {tenantIds : tenantIds?.[0]?.code, title : title}
       Digit.Surveys.search(filters).then((ob) => {
