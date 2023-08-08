@@ -22,6 +22,14 @@ const Inbox = ({ parentRoute }) => {
     { code: "INACTIVE", name: `${t("ES_COMMON_INACTIVE")}` }
   ]
 
+  const isActive = (startDate, endDate) => {
+    const currentDate = new Date().getTime();
+    if (startDate < currentDate && currentDate <= endDate) {
+      return true;
+    }
+    return false;
+  };
+
   const searchFormDefaultValues = {
     // tenantIds: tenantId,
     tenantIds:userUlbs[0],
@@ -39,7 +47,14 @@ const Inbox = ({ parentRoute }) => {
     sortOrder: "DESC"
   }
 
+  const ServiceDefinitionCriteria =  {
+    "tenantId": tenantId,
+    "code": [],
+    "module": ["engagement"],
+  }
+
   function formReducer(state, payload) {
+    console.log()
     switch (payload.action) {
       case "mutateSearchForm":
         Digit.SessionStorage.set("CITIZENSURVEY.INBOX", { ...state, searchForm: payload.data })
@@ -50,12 +65,19 @@ const Inbox = ({ parentRoute }) => {
       case "mutateTableForm":
         Digit.SessionStorage.set("CITIZENSURVEY.INBOX", { ...state, tableForm: payload.data })
         return { ...state, tableForm: payload.data };
+      case "mutateSearchDefinationForm":
+        Digit.SessionStorage.set("CITIZENSURVEY.INBOX", { ...state, searchForm: payload.data, ServiceDefinitionCriteria: {"tenantId": tenantId,
+        "code": [payload.data.title],
+        "module": ["engagement"]} })
+        return { ...state, searchForm: payload.data, ServiceDefinitionCriteria: {"tenantId": tenantId,
+        "code": [payload.data.title],
+        "module": ["engagement"]} };
       default:
         break;
     }
   }
   const InboxObjectInSessionStorage = Digit.SessionStorage.get("CITIZENSURVEY.INBOX")
-  
+
   const onSearchFormReset = (setSearchFormValue) => {
     setSearchFormValue("postedBy", "")
     setSearchFormValue("title", "")
@@ -72,18 +94,39 @@ const Inbox = ({ parentRoute }) => {
     return InboxObjectInSessionStorage || {
       filterForm: filterFormDefaultValues,
       searchForm: searchFormDefaultValues,
-      tableForm: tableOrderFormDefaultValues
+      tableForm: tableOrderFormDefaultValues,
+      ServiceDefinitionCriteria:ServiceDefinitionCriteria,
     }
   }
-    , [Object.values(InboxObjectInSessionStorage?.filterForm || {}), Object.values(InboxObjectInSessionStorage?.searchForm || {}), Object.values(InboxObjectInSessionStorage?.tableForm || {})])
+    , [Object.values(InboxObjectInSessionStorage?.ServiceDefinitionCriteria || {}),Object.values(InboxObjectInSessionStorage?.filterForm || {}), Object.values(InboxObjectInSessionStorage?.searchForm || {}), Object.values(InboxObjectInSessionStorage?.tableForm || {})])
 
   const [formState, dispatch] = useReducer(formReducer, formInitValue)
+
   const onPageSizeChange = (e) => {
     dispatch({ action: "mutateTableForm", data: { ...formState.tableForm, limit: e.target.value } })
   }
-
   
-  const { data: { Surveys, TotalCount } = {}, isLoading: isInboxLoading, } = Digit.Hooks.survey.useSurveyInbox(formState)
+  // const { data: { Surveys, TotalCount } = {}, isLoading: isInboxLoading, } = Digit.Hooks.survey.useSurveyInbox(formState)
+  const { data: surveyList, isLoading: isSurveyListLoading } = Digit.Hooks.survey.useCfdefinitionsearch({ServiceDefinitionCriteria:formState.ServiceDefinitionCriteria, Pagination:formState.tableForm})
+  
+  if (surveyList?.ServiceDefinition){
+    surveyList?.ServiceDefinition.map((element,index)=>{
+      element.uuid = element.code;
+      element.tenantIds = null;
+      element.title = element.code;
+      element.status = isActive(element.additionalDetails.startDate,element.additionalDetails.endDate)?"ACTIVE":"INACTIVE";;
+      element.description = element.additionalDetails.description;
+      element.startDate = element.additionalDetails.startDate || null;
+      element.endDate = element.additionalDetails.endDate || null;
+      element.active = true;
+      element.insertQuestionsForUpdate = null;
+      element.postedBy = element.additionalDetails.postedBy || "";
+      element.answersCount = "";
+      element.hasResponded = "";
+
+    })
+  }
+
 
   const PropsForInboxLinks = {
     logoIcon: <DocumentIcon />,
@@ -111,26 +154,30 @@ const Inbox = ({ parentRoute }) => {
     
   const onSearchFormSubmit = (data) => {
     //setting the offset to 0(In case searched from page other than 1)
-    dispatch({ action: "mutateTableForm", data: { ...formState.tableForm, offset:0 } })
+    // dispatch({ action: "mutateTableForm", data: { ...formState.tableForm, offset:0 } })
 
-    data.hasOwnProperty("") ? delete data?.[""] : null
-    dispatch({ action: "mutateSearchForm", data })
+    // data.hasOwnProperty("") ? delete data?.[""] : null
+    // dispatch({ action: "mutateSearchForm", data })
+    // console.log(data,"data")
+    dispatch({ action: "mutateSearchDefinationForm", data });
+
+
   }
-
+  console.log(formState?.ServiceDefinitionCriteria?.code[0],"tttt")
   const onFilterFormSubmit = (data) => {
     data.hasOwnProperty("") ? delete data?.[""] : null
     dispatch({ action: "mutateFilterForm", data })
   }
 
-  const propsForSearchForm = { SearchFormFields, onSearchFormSubmit, searchFormDefaultValues: formState?.searchForm, resetSearchFormDefaultValues: searchFormDefaultValues, onSearchFormReset }
+  const propsForSearchForm = { SearchFormFields, onSearchFormSubmit, searchFormDefaultValues: formState?.ServiceDefinitionCriteria?.code[0], resetSearchFormDefaultValues: searchFormDefaultValues, onSearchFormReset }
 
   const propsForFilterForm = { FilterFormFields, onFilterFormSubmit, filterFormDefaultValues: formState?.filterForm, resetFilterFormDefaultValues: filterFormDefaultValues, onFilterFormReset }
 
-  const propsForInboxTable = useInboxTableConfig({ ...{ parentRoute, onPageSizeChange, formState, totalCount: TotalCount, table: Surveys, noResultsMessage: "CS_SURVEYS_NOT_FOUND", dispatch, inboxStyles:{overflowX:"scroll", overflowY:"hidden"} } })
+  const propsForInboxTable = useInboxTableConfig({ ...{ parentRoute, onPageSizeChange, formState, totalCount: "", table: surveyList?.ServiceDefinition||[], noResultsMessage: "CS_SURVEYS_NOT_FOUND", dispatch, inboxStyles:{overflowX:"scroll", overflowY:"hidden"} } })
 
-  const propsForInboxMobileCards = useInboxMobileCardsData({parentRoute, table:Surveys})
+  const propsForInboxMobileCards = useInboxMobileCardsData({parentRoute, table:surveyList?.ServiceDefinition||[]})
   
-  return <InboxComposer {...{ isInboxLoading, PropsForInboxLinks, ...propsForSearchForm, ...propsForFilterForm, propsForInboxMobileCards, propsForInboxTable, formState }}></InboxComposer>
+  return <InboxComposer {...{ isSurveyListLoading, PropsForInboxLinks, ...propsForSearchForm, ...propsForFilterForm, propsForInboxMobileCards, propsForInboxTable, formState }}></InboxComposer>
 
 }
 
