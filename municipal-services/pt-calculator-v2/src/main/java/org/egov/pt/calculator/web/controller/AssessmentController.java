@@ -1,8 +1,13 @@
 package org.egov.pt.calculator.web.controller;
 
+import java.util.List;
+
 import javax.validation.Valid;
 
+import org.egov.common.contract.response.ResponseInfo;
 import org.egov.pt.calculator.service.AssessmentService;
+import org.egov.pt.calculator.web.models.Assessment;
+import org.egov.pt.calculator.web.models.AssessmentResponse;
 import org.egov.pt.calculator.web.models.CreateAssessmentRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,8 +27,9 @@ public class AssessmentController {
 	@PostMapping("/_jobscheduler")
 	public ResponseEntity<Object> create(@Valid @RequestBody CreateAssessmentRequest assessmentRequest) {
 
-		assessmentService.createAssessmentsForFY(assessmentRequest);
-		return new ResponseEntity<>("Assessments are generated for the configured tenants.", HttpStatus.CREATED);
+		List<Assessment> assessedProperties=assessmentService.createAssessmentsForFY(assessmentRequest);
+        return new ResponseEntity<>(new AssessmentResponse(new ResponseInfo(),assessedProperties), HttpStatus.OK);
+
 	}
 	
 	@PostMapping("/reassess/_job")

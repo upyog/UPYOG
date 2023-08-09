@@ -192,9 +192,8 @@ public class AssessmentService {
 	
 	
 	 @SuppressWarnings("unchecked")
-	public void createAssessmentsForFY(CreateAssessmentRequest assessmentRequest) {
-		Map<String, Map<String, Object>> scheduledTenants = fetchScheduledTenants(assessmentRequest.getRequestInfo());
-		
+	public List<Assessment> createAssessmentsForFY(CreateAssessmentRequest assessmentRequest) {
+		//Map<String, Map<String, Object>> scheduledTenants = fetchScheduledTenants(assessmentRequest.getRequestInfo());
 		//User user = userService.fetchPTAsseessmentUser();
 		RequestInfo requestInfo = assessmentRequest.getRequestInfo();
 		//requestInfo.setUserInfo(user);
@@ -210,6 +209,7 @@ public class AssessmentService {
 			//assessmentRequest.setIsRented(configData.get(CalculatorConstants.IS_RENTED) == null ? true
 			//		: (Boolean) configData.get(CalculatorConstants.IS_RENTED));
 			List<Property> properties = repository.fetchAllActiveProperties(assessmentRequest);
+			List<Assessment> assessedProperties=new ArrayList<Assessment>();
 			for (Property property : properties) {
 				boolean isExists = repository.isAssessmentExists(property.getPropertyId(),
 						assessmentRequest.getAssessmentYear(), property.getTenantId());
@@ -228,6 +228,7 @@ public class AssessmentService {
 						response = restTemplate.postForObject(url, assessmentReq, AssessmentResponse.class);
 						Assessment createdAsessment = response.getAssessments().get(0);
 						repository.saveAssessmentGenerationDetails(createdAsessment, "SUCCESS","Assessment", null);
+						assessedProperties.add(createdAsessment);
 					} catch (HttpClientErrorException e) {
 						repository.saveAssessmentGenerationDetails(assessment, "FAILED","Assessment", e.toString());
 					} catch (Exception e) {
@@ -237,6 +238,7 @@ public class AssessmentService {
 				}
 
 			}
+			return assessedProperties;
 		//}
 
 	}
