@@ -37,7 +37,7 @@ const ResponseEmployee = (props) => {
   const [mutationHappened, setMutationHappened, clear] = Digit.Hooks.useSessionStorage("SOR_WMS_MUTATION_HAPPENED", false);
   const [successData, setsuccessData, clearSuccessData] = Digit.Hooks.useSessionStorage("SOR_WMS_MUTATION_SUCCESS_DATA", false);
   const [errorInfo, setErrorInfo, clearError] = Digit.Hooks.useSessionStorage("SOR_WMS_ERROR_DATA", false);
-  const mutation = state.key === "UPDATE" ? Digit.Hooks.br.useBRUpdate(tenantId) : Digit.Hooks.br.useBRCreate(tenantId);
+  const mutation = state.key === "UPDATE" ? Digit.Hooks.br.useWMSUpdate(tenantId) : Digit.Hooks.br.useWMSCreate(tenantId);
 
   const onError = (error, variables) => {
     setErrorInfo(error?.response?.data?.Errors[0]?.code || 'ERROR');

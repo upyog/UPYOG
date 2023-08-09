@@ -1,6 +1,6 @@
 export const newConfig =[
     {
-        "head": "Birth-Details",
+        "head": "SOR-Details",
         "body": [
          
             {
@@ -17,27 +17,27 @@ export const newConfig =[
               },
               {
                 type: "component",
-                component: "BRSelectPhoneNumber",
-                key: "BRSelectPhoneNumber",
+                component: "WMSSelectPhoneNumber",
+                key: "WMSSelectPhoneNumber",
                 withoutLabel: true,
               },
               {
                 type: "component",
-                component: "BRSelectEmailId",
-                key: "BRSelectEmailId",
+                component: "WMSSelectEmailId",
+                key: "WMSSelectEmailId",
                 withoutLabel: true,
               },
           
               {
                 type: "component",
-                component: "BRSelectAddress",
-                key: "BRSelectAddress",
+                component: "WMSSelectAddress",
+                key: "WMSSelectAddress",
                 withoutLabel: true,
               },
               {
                 type: "component",
-                component: "BRSelectCorrespondenceAddress",
-                key: "BRSelectCorrespondenceAddress",
+                component: "WMSSelectCorrespondenceAddress",
+                key: "WMSSelectCorrespondenceAddress",
                 withoutLabel: true,
               },
         ]

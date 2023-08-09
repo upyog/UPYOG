@@ -2,7 +2,7 @@ import { FormComposer, Loader } from "@egovernments/digit-ui-react-components";
 import React, {  useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
-import { newConfig } from "../../../components/config/config";
+import { newConfig } from "../../../../components/config/config";
 
 const Create = () => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -14,21 +14,10 @@ const Create = () => {
 
     let ScheduleOfRateApplications = [
       {
-/**
- *  "chapter": "string",
-      "description_of_item": "string",
-      "end_date": "string",
-      "item_no": "string",
-      "rate": 0,
-      "sor_id": 0,
-      "sor_name": "string",
-      "start_date": "string",
-      "unit": 0
- */
         ScheduleOfRateApplication: {
           chapter: data?.WmsChapter?.sorChapter,
           description_of_item: data?.WmsDescriptionOfItem?.sorDescriptionOfItem,          
-          item_no: data?.WmsItemNo?sorItemNo,
+          item_no: data?.WmsItemNo?.sorItemNo,
           unit: data?.WmsUnit?.sorUnit,
           rate: data?.WmsRate?.sorRate,
           sor_id: data?.WmsId?.sorId,
@@ -41,7 +30,7 @@ const Create = () => {
       },
     ];
       /* use customiseCreateFormData hook to make some chnages to the Employee object */
-     Digit.WMSService.create(ScheduleOfRateApplications, tenantId).then((result,err)=>{
+     Digit.WMSService.SORApplications.create(ScheduleOfRateApplications, tenantId).then((result,err)=>{
        let getdata = {...data , get: result }
        onSelect("", getdata, "", true);
        console.log("daaaa",getdata);
@@ -50,7 +39,7 @@ const Create = () => {
      console.log("err");
     });
 
-    history.push("/digit-ui/citizen/wms/response");
+    history.push("/digit-ui/citizen/wms/sor/response");
 
     console.log("getting data",ScheduleOfRateApplications)
     

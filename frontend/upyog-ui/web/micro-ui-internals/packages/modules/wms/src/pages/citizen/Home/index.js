@@ -39,7 +39,7 @@ const Home = () => {
      
      
       {
-        name: t("Birth-Registration"),
+        name: t("SOR Application"),
         Icon: <WMSIcon />,
         onClick: () => history.push("/digit-ui/citizen/wms-home"),
       },

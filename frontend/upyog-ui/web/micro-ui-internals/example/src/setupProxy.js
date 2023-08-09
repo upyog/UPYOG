@@ -3,8 +3,8 @@ const { createProxyMiddleware } = require("http-proxy-middleware");
 const createProxy = createProxyMiddleware({
   //target: process.env.REACT_APP_PROXY_API || "https://uat.digit.org",
   // target: process.env.REACT_APP_PROXY_API || "https://qa.digit.org",
-  target:"",// process.env.REACT_APP_PROXY_API || "http://10.216.36.59",
-  changeOrigin: true,
+  target:"https://upyog-sandbox.niua.org",// process.env.REACT_APP_PROXY_API || "http://10.216.36.59",
+  changeOrigin: true,  
 });
 const assetsProxy = createProxyMiddleware({
   target: "https://upyog-sandbox.niua.org",//process.env.REACT_APP_PROXY_ASSETS || "http://10.216.36.59",

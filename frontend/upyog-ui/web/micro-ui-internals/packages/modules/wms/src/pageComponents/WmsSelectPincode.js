@@ -2,7 +2,7 @@ import { FormStep, TextInput, CardLabel, LabelFieldPair, CardLabelError } from "
 import React, { useState, useEffect, Fragment } from "react";
 import { useLocation } from "react-router-dom";
 
-const BRSelectPincode = ({ t, config, onSelect, formData = {}, userType, register, errors, props }) => {
+const WMSSelectPincode = ({ t, config, onSelect, formData = {}, userType, register, errors, props }) => {
   const tenants = Digit.Hooks.fsm.useTenants();
   const [pincode, setPincode] = useState(formData?.address?.pincode || "");
   const [pincodeServicability, setPincodeServicability] = useState(null);
@@ -108,4 +108,4 @@ const BRSelectPincode = ({ t, config, onSelect, formData = {}, userType, registe
   );
 };
 
-export default BRSelectPincode;
+export default WMSSelectPincode;

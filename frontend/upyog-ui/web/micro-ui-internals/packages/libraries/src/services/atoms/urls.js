@@ -1,8 +1,8 @@
 const Urls = {
-  MDMS: `http://10.216.36.59:8094/egov-mdms-service/v1/_search`,
-  WorkFlow: `http://10.216.36.59:9292/egov-workflow-v2/egov-wf/businessservice/_search`,
-  WorkFlowProcessSearch: `http://10.216.36.59:9292/egov-workflow-v2/egov-wf/process/_search`,
-  localization: `http://10.216.36.59:9297/localization/messages/v1/_search`,
+  MDMS: `https://upyog-sandbox.niua.org/egov-mdms-service/v1/_search`,
+  WorkFlow: `https://upyog-sandbox.niua.org/egov-workflow-v2/egov-wf/businessservice/_search`,
+  WorkFlowProcessSearch: `https://upyog-sandbox.niua.org/egov-workflow-v2/egov-wf/process/_search`,
+  localization: `https://upyog-sandbox.niua.org/localization/messages/v1/_search`,
   location: {
     localities: `https://upyog-sandbox.niua.org/egov-location/location/v11/boundarys/_search?hierarchyTypeCode=ADMIN&boundaryType=Locality`,
     revenue_localities: `https://upyog-sandbox.niua.org/egov-location/location/v11/boundarys/_search?hierarchyTypeCode=REVENUE&boundaryType=Locality`,
@@ -17,18 +17,18 @@ const Urls = {
   PGR_Create: `https://upyog-sandbox.niua.org/pgr-services/v2/request/_create`,
   pgr_count: `https://upyog-sandbox.niua.org/pgr-services/v2/request/_count`,
 
-  OTP_Send: "http://10.216.36.59:9295/user-otp/v1/_send",
-  Authenticate: "http://10.216.36.59:8081/user/oauth/token",
-  RegisterUser: "http://10.216.36.59:8081/user/citizen/_create",
-  ChangePassword: "http://10.216.36.59:8081/user/password/nologin/_update",
-  ChangePassword1: "http://10.216.36.59:8081/user/password/_update",
-  UserProfileUpdate: "http://10.216.36.59:8081/user/profile/_update",
+  OTP_Send: "http://localhost:8089/user-otp/v1/_send",
+  Authenticate: "https://upyog-sandbox.niua.org/user/oauth/token",
+  RegisterUser: "https://upyog-sandbox.niua.org/user/citizen/_create",
+  ChangePassword: "https://upyog-sandbox.niua.org/user/password/nologin/_update",
+  ChangePassword1: "https://upyog-sandbox.niua.org/user/password/_update",
+  UserProfileUpdate: "https://upyog-sandbox.niua.org/user/profile/_update",
   EmployeeSearch: "https://upyog-sandbox.niua.org/egov-hrms/employees/_search",
 
   InboxSearch: "https://upyog-sandbox.niua.org/inbox/v1/_search",
 
-  UserSearch: "http://10.216.36.59:8081/user/_search",
-  UserLogout: "http://10.216.36.59:8081/user/_logout",
+  UserSearch: "https://upyog-sandbox.niua.org/user/_search",
+  UserLogout: "https://upyog-sandbox.niua.org/user/_logout",
 
   Shortener: "https://upyog-sandbox.niua.org/egov-url-shortening/shortener",
 
@@ -200,6 +200,41 @@ const Urls = {
   },
   bills: {
     cancelBill: "https://upyog-sandbox.niua.org/billing-service/bill/v2/_cancelbill",
+  },
+  wms:{
+    SchemeMaster:{create:"",search:"",update:"",count:""},
+    SORApplications:{create: "https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/SORApplications",
+    update:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/SORApplications:id",
+    get:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/SORApplications",
+    search:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/SORApplications",
+    delete:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/SORApplications:id"},
+    ProjectMaster:{create:"",search:"",update:"",count:""},
+    Work:{create:"",search:"",update:"",count:""},
+  },
+  
+wms_old:{
+  Scheme_Master:{
+    create: "https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/Scheme_Master",
+    update:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/Scheme_Master:id",
+    get:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/Scheme_Master:id",
+    search:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/Scheme_Master",
+    delete:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/Scheme_Master:id"
+  },
+  Project_Master:{
+    create: "https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/Project_Master",
+    update:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/Project_Master:id",
+    get:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/Project_Master:id",
+    search:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/Project_Master",
+    delete:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/Project_Master:id"
+  },
+  SORApplications:{
+    create: "https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/SORApplications",
+    update:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/SORApplications:id",
+    get:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/SORApplications",
+    search:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/SORApplications",
+    delete:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/SORApplications:id"
+  },
+
   },
   access_control: "https://upyog-sandbox.niua.org/access/v1/actions/mdms/_get",
   billgenie: "https://upyog-sandbox.niua.org/egov-searcher",

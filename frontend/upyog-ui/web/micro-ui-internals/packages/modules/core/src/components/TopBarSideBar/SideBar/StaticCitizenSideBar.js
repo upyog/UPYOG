@@ -251,13 +251,13 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
               "serviceCode": "",
               "code": "",
               "path": "",
-              "navigationURL": "/upyog-ui/citizen/wms/my-applications",
+              "navigationURL": "/upyog-ui/citizen/wms-home",
               "leftIcon": "WMSIcon",
               "rightIcon": "",
               "queryParams": "",
               "sidebar": "digit-ui-links",
               "sidebarURL": "/digit-ui/citizen/wms-home",
-              "link": "/upyog-ui/citizen/wms/my-applications",
+              "link": "/upyog-ui/citizen/wms-home",
               "i18nKey": "Masters"
           },
           {
@@ -324,7 +324,7 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
       "icon": "WMSIcon",
       "link": "/upyog-ui/citizen/wms-home"
   };
-  menuItems.push(tmp);
+  //menuItems.push(tmp);
 
   return (
     <React.Fragment>

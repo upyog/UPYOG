@@ -53,7 +53,7 @@ const Filter = ({ type = "desktop", onClose, onSearch, onFilterChange, searchPar
             </span>
           )}
         </div>
-        <div className="filter-label">{`${t(`BR `)}`}</div>
+        <div className="filter-label">{`${t(`WMS `)}`}</div>
         <Dropdown option={data?.mseva?.EventCategories} optionKey="code" t={t} selected={localSearchParams?.eventCategory} select={val => handleChange({ eventCategory: val })} />
         <DateRange t={t} values={localSearchParams?.range} onFilterChange={handleChange} labelClass="filter-label" />
         {/* <div>

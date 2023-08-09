@@ -1,7 +1,6 @@
 import { Header, ActionBar, SubmitBar, ExternalLinkIcon, Menu, GenericFileIcon, LinkButton } from '@egovernments/digit-ui-react-components';
 import React, { useState , useEffect } from 'react'
 import { useTranslation } from 'react-i18next';
-import { openDocumentLink, openUploadedDocument } from '../../utils';
 import axios from 'axios';
 import { useParams } from "react-router-dom";
 
@@ -14,7 +13,7 @@ const RegisterDetails = ({ location, match, history, }) => {
 
   useEffect(() => {
     (async () => {
-      const result = await axios(`https://62f0e3e5e2bca93cd23f2ada.mockapi.io/birth/${params.id}`);
+      const result = await axios(`https://62f0e3e5e2bca93cd23f2ada.mockapi.io/sor/${params.id}`);
       setData(result.data);
       console.log("gooo" ,result.data);
     })();
@@ -31,7 +30,7 @@ const RegisterDetails = ({ location, match, history, }) => {
     function onActionSelect(action) {
         // setSelectedAction(action);
      
-          history.push(`/digit-ui/employee/br/responseemp`)
+          history.push(`/digit-ui/employee/sor/responseemp`)
     }
 
 
@@ -49,7 +48,7 @@ const RegisterDetails = ({ location, match, history, }) => {
             />
 
                 : null} */}
-            <Header>{t(`Birth-Registration Details`)}</Header>
+            <Header>{t(`Work Management System`)}</Header>
             <div className="notice_and_circular_main gap-ten">
                 <div className="documentDetails_wrapper">
                     {/* <div className="documentDetails_row_items"><p className="documentDetails_title">{`${t('ULB')}:`}</p> <p>{data?.tenantId}</p> </div> */}
@@ -81,7 +80,7 @@ const RegisterDetails = ({ location, match, history, }) => {
             <ActionBar>
         {displayMenu ? (
           <Menu
-            localeKeyPrefix={"BR"}
+            localeKeyPrefix={"WMS"}
             options={['Approve', 'Reject']}
             t={t}
             onSelect={onActionSelect}

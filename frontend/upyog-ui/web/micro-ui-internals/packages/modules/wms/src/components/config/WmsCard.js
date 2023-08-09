@@ -2,7 +2,7 @@ import { PersonIcon, EmployeeModuleCard } from "@egovernments/digit-ui-react-com
 import React from "react";
 import { useTranslation } from "react-i18next";
 
-const BRCard = () => {
+const WMSCard = () => {
   const ADMIN = Digit.Utils.hrmsAccess();
   if (!ADMIN) {
     return null;
@@ -27,7 +27,7 @@ const BRCard = () => {
                 link: `/digit-ui/employee/br/Inbox`
             },
             {
-                label: t("Create Birth-Registration"),
+                label: t("Create SOR Application"),
                 link: `/digit-ui/citizen/br/birth`
             }           
         ]
@@ -36,4 +36,4 @@ const BRCard = () => {
     return <EmployeeModuleCard {...propsForModuleCard} />
 };
 
-export default BRCard;
+export default WMSCard;

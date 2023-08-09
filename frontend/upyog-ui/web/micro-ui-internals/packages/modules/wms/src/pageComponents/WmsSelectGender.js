@@ -2,12 +2,12 @@ import React from "react";
 import { LabelFieldPair, CardLabel, TextInput, CardLabelError, RadioButtons } from "@egovernments/digit-ui-react-components";
 import { useLocation } from "react-router-dom";
 
-const BRSelectGender = ({ t, config, onSelect, formData = {}, userType, register, errors }) => {
+const WMSSelectGender = ({ t, config, onSelect, formData = {}, userType, register, errors }) => {
   const { pathname: url } = useLocation();
 
   const inputs = [
     {
-      label: "BR_GENDER_LABEL",
+      label: "WMS_GENDER_LABEL",
       type: "text",
       name: "gender",
       validation: {
@@ -79,4 +79,4 @@ const BRSelectGender = ({ t, config, onSelect, formData = {}, userType, register
   );
 };
 
-export default BRSelectGender;
+export default WMSSelectGender;

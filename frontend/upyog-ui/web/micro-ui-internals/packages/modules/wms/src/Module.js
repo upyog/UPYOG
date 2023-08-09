@@ -3,28 +3,26 @@ import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useRouteMatch } from "react-router-dom";
 import CitizenApp from "./pages/citizen";
-import Create from "./pages/citizen/create/index";
+import Create from "./pages/citizen/SOR/Create/index";
 import EmployeeApp from "./pages/employee";
-import WmsChapter from "./pageComponents/WmsChapter";
-import WmsDescriptionOfItem from "./pageComponents/WmsDescriptionOfItem";
+import WmsChapter from "./pageComponents/SOR/WmsChapter";
+import WmsDescriptionOfItem from "./pageComponents/SOR/WmsDescriptionOfItem";
 import WMSSelectPhoneNumber from "./pageComponents/WMSSelectPhoneNumber";
 import WMSSelectGender from "./pageComponents/WMSSelectGender";
 import WMSSelectEmailId from "./pageComponents/WMSSelectEmailId";
 import WMSSelectPincode from "./pageComponents/WMSSelectPincode";
 import WmsSelectAddress from "./pageComponents/WMSSelectAddress";
 import SelectCorrespondenceAddress from "./pageComponents/WMSSelectCorrespondenceAddress";
-import SelectDocuments from "./pageComponents/WMSSelectDocuments";
 import WMSCard from "./components/config/WMSCard";
 /* import WMSManageApplication from "./pages/employee/WMSManageApplication";*/
 import RegisterDetails from "./pages/employee/RegisterDetails"; 
-import Response from "./pages/citizen/create/Response";
+import Response from "./pages/citizen/SOR/Create/Response";
 
 const componentsToRegister = {
  Response,
    RegisterDetails,
  /* WMSManageApplication,*/
   WMSCard,
-  SelectDocuments,
   SelectCorrespondenceAddress,
   WmsSelectAddress,
   WMSSelectPincode,
@@ -57,7 +55,7 @@ export const WMSLinks = ({ matchPath, userType }) => {
   const links = [
   
     {
-      link: `${matchPath}/birth`,
+      link: `${matchPath}/sor`,
       i18nKey: t("Create SOR"),
     },
    

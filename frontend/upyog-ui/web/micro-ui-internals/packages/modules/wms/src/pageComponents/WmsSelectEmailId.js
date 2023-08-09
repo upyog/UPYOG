@@ -2,12 +2,12 @@ import React from "react";
 import { LabelFieldPair, CardLabel, TextInput, CardLabelError } from "@egovernments/digit-ui-react-components";
 import { useLocation } from "react-router-dom";
 
-const BRSelectEmailId = ({ t, config, onSelect, formData = {}, userType, register, errors }) => {
+const WMSSelectEmailId = ({ t, config, onSelect, formData = {}, userType, register, errors }) => {
   const { pathname: url } = useLocation();
 
   const inputs = [
     {
-      label: "BR_EMAIL_LABEL",
+      label: "WMS_EMAIL_LABEL",
       type: "email",
       name: "emailId",
       validation: {
@@ -50,4 +50,4 @@ const BRSelectEmailId = ({ t, config, onSelect, formData = {}, userType, registe
   );
 };
 
-export default BRSelectEmailId;
+export default WMSSelectEmailId;
