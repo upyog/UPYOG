@@ -177,6 +177,36 @@ export const SuccessfulPayment = (props) => {
     let response = { filestoreIds: [payments.Payments[0]?.fileStoreId] };
 
     if (!payments.Payments[0]?.fileStoreId) {
+      let assessmentYear="",assessmentYearForReceipt="";
+      let count=0;
+      let toDate,fromDate;
+	  if(payments.Payments[0].paymentDetails[0].businessService=="PT"){
+       
+      payments.Payments[0].paymentDetails[0].bill.billDetails.map(element => {
+
+          if(element.amount >0 || element.amountPaid>0)
+          { count=count+1;
+            toDate=convertEpochToDate(element.toPeriod).split("/")[2];
+            fromDate=convertEpochToDate(element.fromPeriod).split("/")[2];
+            assessmentYear=assessmentYear==""?fromDate+"-"+toDate+"(Rs."+element.amountPaid+")":assessmentYear+","+fromDate+"-"+toDate+"(Rs."+element.amountPaid+")";
+            assessmentYearForReceipt=fromDate+"-"+toDate;
+          }
+    
+          });
+  
+          if(count==0)
+          {
+            let toDate=convertEpochToDate( payloadReceiptDetails.Payments[0].paymentDetails[0].bill.billDetails[0].toPeriod).split("/")[2];
+            let fromDate=convertEpochToDate( payloadReceiptDetails.Payments[0].paymentDetails[0].bill.billDetails[0].fromPeriod).split("/")[2];
+            assessmentYear=assessmentYear==""?fromDate+"-"+toDate:assessmentYear+","+fromDate+"-"+toDate; 
+            assessmentYearForReceipt=fromDate+"-"+toDate;
+          }
+          
+          const details = {
+          "assessmentYears": assessmentYear
+            }
+            payments.Payments[0].paymentDetails[0].additionalDetails=details; 
+        }
       response = await Digit.PaymentService.generatePdf(state, { Payments: payments.Payments }, generatePdfKey);
     }
     const fileStore = await Digit.PaymentService.printReciept(state, { fileStoreIds: response.filestoreIds[0] });

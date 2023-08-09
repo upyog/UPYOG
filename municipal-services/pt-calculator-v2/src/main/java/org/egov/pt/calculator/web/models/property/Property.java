@@ -105,6 +105,8 @@ public class Property extends PropertyInfo{
 		private String acknowldgementNumber;
 		private String oldPropertyId;
 		private StatusEnum status;
+		private String propertyType;
+		private String ownershipCategory;
 		
 		@NotNull
 		@Valid
@@ -159,6 +161,16 @@ public class Property extends PropertyInfo{
 
 		public PropertyBuilder address(Address address){
 			this.address = address;
+			return this;
+		}
+		
+		public PropertyBuilder ownershipCategory(String ownershipCategory){
+			this.ownershipCategory = ownershipCategory;
+			return this;
+		}
+		
+		public PropertyBuilder propertyType(String propertyType){
+			this.propertyType = propertyType;
 			return this;
 		}
 

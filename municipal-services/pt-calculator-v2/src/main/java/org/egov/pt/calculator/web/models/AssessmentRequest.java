@@ -26,4 +26,6 @@ public class AssessmentRequest {
 	private RequestInfo requestInfo;
 	
 	private List<Assessment> assessments;
+	
+	private Assessment assessment;
 }
