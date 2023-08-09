@@ -93,7 +93,19 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
   }, [file]);
 
   function submit(data) {
-    if (!action?.showFinancialYearsModal) {
+    console.log("ddddddd21334254",data,action?.action)
+    if (action?.action == "INACTIVE_PROPERTY"){
+      console.log("dataaaaa123",data)
+      let workflow = { action: "OPEN", comment: data?.comments, businessService:"PT.CREATE", moduleName: "PT" };
+      submitAction({
+        customFunctionToExecute: action?.customFunctionToExecute,
+        Property: {
+          ...applicationData,
+          workflow,
+        },
+      });
+          }
+    else if (!action?.showFinancialYearsModal) {
       let workflow = { action: action?.action, comment: data?.comments, businessService, moduleName: moduleCode };
       workflow["assignes"] = action?.isTerminateState || !selectedApprover ? [] : [selectedApprover];
       if (uploadedFile)
@@ -111,7 +123,8 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
           workflow,
         },
       });
-    } else {
+    } 
+      else {
       submitAction({
         customFunctionToExecute: action?.customFunctionToExecute,
         Assessment: {

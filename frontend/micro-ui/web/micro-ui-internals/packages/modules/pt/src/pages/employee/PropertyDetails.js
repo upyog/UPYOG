@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { useHistory, useParams } from "react-router-dom";
 import ApplicationDetailsTemplate from "../../../../templates/ApplicationDetails";
 import OwnerHistory from "./PropertyMutation/ownerHistory";
+import usePropertyAPI from "../../../../../libraries/src/hooks/pt/usePropertyAPI"
 
 const Close = () => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#FFFFFF">
@@ -201,6 +202,7 @@ const PropertyDetails = () => {
   }, [fetchBillData, appDetailsToShow]);
 
   if (applicationDetails?.applicationData?.status === "ACTIVE") {
+    console.log("application data",applicationDetails)
     workflowDetails = {
       ...workflowDetails,
       data: {
@@ -232,6 +234,31 @@ const PropertyDetails = () => {
                 },
                 tenantId: Digit.ULBService.getStateId(),
               },
+              {
+                action: "INACTIVE_PROPERTY",
+                forcedName: "PT_INACTIVE_PROPERTY",
+                showInactiveYearModel: true,
+                customFunctionToExecute: (data) => {
+                 console.log("application data",data)
+                 delete data.customFunctionToExecute;
+                 usePropertyAPI(data.Property,false)
+                 history.replace({ pathname: `/digit-ui/employee/pt/ptsearch/property-details/${data.Property.propertyId}` });
+                },
+                // redirectionUrl: {
+                 
+                //   state: { workflow: { action: "OPEN", moduleName: "PT", businessService: "PT.CREATE" } },
+                // },
+               // AmountDueForPay: fetchBillData?.Bill[0]?.totalAmount,
+                //isWarningPopUp: !fetchBillData?.Bill[0]?.totalAmount ? true : true,
+                // redirectionUrl: {
+                //   pathname: !fetchBillData?.Bill[0]?.totalAmount
+                //     ? `/digit-ui/employee/pt/property-mutate-docs-required/${applicationNumber}`
+                //     : `/digit-ui/employee/payment/collect/PT/${applicationNumber}`,
+                //   // state: { workflow: { action: "OPEN", moduleName: "PT", businessService } },
+                //   state: null,
+                // },
+                tenantId: Digit.ULBService.getStateId(),
+              },
             ]
             : [],
         },
@@ -240,6 +267,7 @@ const PropertyDetails = () => {
   }
 
   if (appDetailsToShow?.applicationData?.status === "ACTIVE" && PT_CEMP) {
+    console.log("inside PT create `")
     if (businessService == "PT.CREATE") setBusinessService("PT.UPDATE");
     if (!workflowDetails?.data?.actionState?.nextActions?.find((e) => e.action === "UPDATE")) {
       workflowDetails?.data?.actionState?.nextActions?.push({
