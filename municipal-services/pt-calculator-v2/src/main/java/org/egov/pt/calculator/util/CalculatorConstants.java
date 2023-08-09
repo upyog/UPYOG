@@ -336,4 +336,46 @@ public class CalculatorConstants {
 
 	public static final String TAX_PERIOD_SEARCH_FAILED = "EGPT_CALCULATOR_TAX_PERIOD_SEARCH_ERROR";
 	public static final String TAX_PERIOD_SEARCH_FAILED_MSG = "Tax period for current financial year is not present. Please add the tax period details";
+
+public static final String ASSESSMENT_CONFIG_MASTER = "assessmentconfig";
+	
+	public static final String RE_ASSESSMENT_CONFIG_MASTER = "reassessmentconfig";
+
+	public static final String MODULE_TENANT = "tenant";
+	
+	public static final String NO_TENANT_CONFIGURED_FOR_ASSESSMENT_JOB = "No tenant is configured to create assessments";
+
+	public static final String MDMS_ASSESSMENT_JOB_CONFIG_PATH = "$.MdmsRes.tenant.assessmentconfig[?(@.enabled==true)]";
+	
+	public static final String MDMS_RE_ASSESSMENT_JOB_CONFIG_PATH = "$.MdmsRes.tenant.reassessmentconfig";
+
+
+	public static final String FINANCIALYEAR_KEY = "financialyear";
+
+	public static final String LOCALITY_KEY = "locality";
+
+	public static final String PROPERTYTYPE_KEY = "propertytype";
+
+	public static final String TENANT_KEY = "tenant";
+	
+	public static final String IS_RENTED = "isRented";
+
+	public static final String ASSESSMENT_JOB_MDMS_ERROR = "ASSESSMENT_JOB_MDMS_ERROR";
+
+	public static final String ASSESSMENT_JOB_MDMS_ERROR_MSG = "Exception while fetching configured tenants for assessment.";
+
+	public static final String DEFAULTERS_CONFIG_MASTER = "defaultersmsconfig";
+	
+	public static final String MDMS_DEFAULTERS_CONFIG_PATH = "$.MdmsRes.tenant.defaultersmsconfig";
+	
+	public static final String REBATE_DATE_KEY = "rebatedate";
+
+	public static final String NOTIFICATION_MODULENAME = "rainmaker-pt";
+
+	public static final String DUE_SMS_TEMPLATE_CODE = "PT_DUE_SMS";
+
+	public static final String DEFAULT_LOCALE_CODE = "en_IN";
+
+
+
 }
