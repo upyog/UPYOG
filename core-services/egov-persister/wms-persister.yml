@@ -44,6 +44,65 @@ serviceMaps:
             - jsonPath: $.ScheduleOfRateApplication.*.end_date
             
             - jsonPath: $.ScheduleOfRateApplication.*.sor_id
+            
+            
+            
+    - version: 1.0
+      description: Persists scheme details in tables
+      fromTopic: save-scm-application
+      isTransaction: true
+      queryMaps:
+
+        - query: INSERT INTO scheme_master (scheme_id,start_date,end_date,source_of_fund,scheme_name_en,scheme_name_reg,fund,description_of_the_scheme,upload_document) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?);
+          basePath: SchemeApplication.*
+          jsonMaps:
+            - jsonPath: $.SchemeApplication.*.scheme_id
+
+            - jsonPath: $.SchemeApplication.*.start_date
+
+            - jsonPath: $.SchemeApplication.*.end_date
+            
+            - jsonPath: $.SchemeApplication.*.source_of_fund
+
+            - jsonPath: $.SchemeApplication.*.scheme_name_en
+
+            - jsonPath: $.SchemeApplication.*.scheme_name_reg
+
+            - jsonPath: $.SchemeApplication.*.fund
+
+            - jsonPath: $.SchemeApplication.*.description_of_the_scheme
+
+            - jsonPath: $.SchemeApplication.*.upload_document
+            
+       
+       
+      
+    - version: 1.0
+      description: Update Scheme applications in table
+      fromTopic: update-scm-application
+      isTransaction: true
+      queryMaps:
+      
+        - query: UPDATE scheme_master SET source_of_fund = ?,start_date = ?, end_date = ?, fund = ?, description_of_the_scheme = ?, upload_document = ? WHERE scheme_id=?;
+          basePath: SchemeApplication.*
+          jsonMaps:
+            - jsonPath: $.SchemeApplication.*.source_of_fund
+
+            - jsonPath: $.SchemeApplication.*.start_date
+           
+            - jsonPath: $.SchemeApplication.*.end_date
+            
+            - jsonPath: $.SchemeApplication.*.fund
+            
+            - jsonPath: $.SchemeApplication.*.description_of_the_scheme
+            
+            - jsonPath: $.SchemeApplication.*.upload_document
+            
+            - jsonPath: $.SchemeApplication.*.scheme_id
+       
+      
+      
+ 
 
 
 
