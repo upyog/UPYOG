@@ -53,27 +53,56 @@ serviceMaps:
       isTransaction: true
       queryMaps:
 
-        - query: INSERT INTO Scheme_Master (Scheme_ID,Start_Date,End_Date,Source_Of_Fund,Scheme_Name_En,Scheme_Name_Reg,Fund,Description_Of_the_Scheme,Upload_Document) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?);
+        - query: INSERT INTO scheme_master (scheme_id,start_date,end_date,source_of_fund,scheme_name_en,scheme_name_reg,fund,description_of_the_scheme,upload_document) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?);
           basePath: SchemeApplication.*
           jsonMaps:
-            - jsonPath: $.SchemeApplication.*.Scheme_ID
+            - jsonPath: $.SchemeApplication.*.scheme_id
 
-            - jsonPath: $.SchemeApplication.*.Start_Date
+            - jsonPath: $.SchemeApplication.*.start_date
 
-            - jsonPath: $.SchemeApplication.*.End_Date
+            - jsonPath: $.SchemeApplication.*.end_date
             
-            - jsonPath: $.SchemeApplication.*.Source_Of_Fund
+            - jsonPath: $.SchemeApplication.*.source_of_fund
 
-            - jsonPath: $.SchemeApplication.*.Scheme_Name_En
+            - jsonPath: $.SchemeApplication.*.scheme_name_en
 
-            - jsonPath: $.SchemeApplication.*.Scheme_Name_Reg
+            - jsonPath: $.SchemeApplication.*.scheme_name_reg
 
-            - jsonPath: $.SchemeApplication.*.Fund.id
+            - jsonPath: $.SchemeApplication.*.fund
 
-            - jsonPath: $.SchemeApplication.*.Description_Of_the_Scheme.id
+            - jsonPath: $.SchemeApplication.*.description_of_the_scheme
 
-            - jsonPath: $.SchemeApplication.*.Upload_Document
+            - jsonPath: $.SchemeApplication.*.upload_document
+            
+       
+       
+      
+    - version: 1.0
+      description: Update Scheme applications in table
+      fromTopic: update-scm-application
+      isTransaction: true
+      queryMaps:
+      
+        - query: UPDATE scheme_master SET source_of_fund = ?,start_date = ?, end_date = ?, fund = ?, description_of_the_scheme = ?, upload_document = ? WHERE scheme_id=?;
+          basePath: SchemeApplication.*
+          jsonMaps:
+            - jsonPath: $.SchemeApplication.*.source_of_fund
 
+            - jsonPath: $.SchemeApplication.*.start_date
+           
+            - jsonPath: $.SchemeApplication.*.end_date
+            
+            - jsonPath: $.SchemeApplication.*.fund
+            
+            - jsonPath: $.SchemeApplication.*.description_of_the_scheme
+            
+            - jsonPath: $.SchemeApplication.*.upload_document
+            
+            - jsonPath: $.SchemeApplication.*.scheme_id
+       
+      
+      
+ 
 
 
 

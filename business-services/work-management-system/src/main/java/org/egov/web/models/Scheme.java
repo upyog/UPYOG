@@ -21,28 +21,28 @@ import lombok.ToString;
 @ToString
 public class Scheme {
 	
-	@JsonProperty("Scheme_ID")
+	@JsonProperty("scheme_id")
     private Long id;
 	
-	@JsonProperty("Start_Date")
+	@JsonProperty("start_date")
     private String startDate;
-	@JsonProperty("End_Date")
+	@JsonProperty("end_date")
     private String endDate;
 	
 
 	
 	
-	@JsonProperty("Source_Of_Fund")
+	@JsonProperty("source_of_fund")
 	private String sourceOfFund=null;
-	@JsonProperty("Scheme_Name_En")
+	@JsonProperty("scheme_name_en")
 	private String schemeNameEn=null;
-	@JsonProperty("Scheme_Name_Reg")
+	@JsonProperty("scheme_name_reg")
 	private String schemeNameReg=null;
-	@JsonProperty("Fund")
+	@JsonProperty("fund")
 	private String fund=null;
-	@JsonProperty("Description_Of_the_Scheme")
+	@JsonProperty("description_of_the_scheme")
 	private String schemeDescription=null;
-	@JsonProperty("Upload_Document")
+	@JsonProperty("upload_document")
 	private String uploadDocument=null;
 	
 

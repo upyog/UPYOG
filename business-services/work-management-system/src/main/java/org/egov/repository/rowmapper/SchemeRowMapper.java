@@ -31,7 +31,7 @@ public class SchemeRowMapper implements ResultSetExtractor<List<Scheme>> {
                 schemeApplication = Scheme.builder()
                         .id((long) rs.getLong("sSchemeId"))
                         .schemeNameEn(rs.getString("sSchemeName"))
-                        .schemeNameReg(rs.getString("ssorName"))
+                        .schemeNameReg(rs.getString("sSchemeNameReg"))
                         .startDate(rs.getString("sSchemeStartDate"))
                         .endDate(rs.getString("sSchemeEndDate"))
                         .sourceOfFund(rs.getString("sSchemeSourceOfFund"))

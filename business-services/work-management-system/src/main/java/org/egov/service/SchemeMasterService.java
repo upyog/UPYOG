@@ -15,7 +15,9 @@ import org.egov.enrichment.SchemeApplicationEnrichment;
 import org.egov.producer.Producer;
 import org.egov.repository.SchemeMasterRepository;
 import org.egov.validator.WMSSchemeValidator;
+import org.egov.web.models.ScheduleOfRateApplication;
 import org.egov.web.models.Scheme;
+import org.egov.web.models.SchemeApplicationSearchCriteria;
 import org.egov.web.models.SchemeCreationApplication;
 //import org.wms.web.models.SchemeCreationRequest;
 import org.egov.web.models.WMSSchemeRequest;
@@ -107,6 +109,19 @@ public class SchemeMasterService {
 		return schemeMasterRepository.getSchemeById(id);
 		
 		
+	}
+
+	public List<Scheme> searchSchemeApplications(RequestInfo requestInfo,
+			@Valid SchemeApplicationSearchCriteria schemerApplicationSearchCriteria) {
+		// TODO Auto-generated method stub
+		List<ScheduleOfRateApplication> applications = schemeMasterRepository.getApplications(schemerApplicationSearchCriteria);
+
+        // If no applications are found matching the given criteria, return an empty list
+        if(CollectionUtils.isEmpty(applications))
+            return new ArrayList<>();
+		
+		
+		return applications;
 	}
 
 

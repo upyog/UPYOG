@@ -2,6 +2,7 @@ package org.egov.repository;
 
 import org.egov.repository.querybuilder.SchemeQueryBuilder;
 import org.egov.repository.rowmapper.SchemeRowMapper;
+import org.egov.web.models.ScheduleOfRateApplication;
 //import org.wms.repository.querybuilder.SchemeQueryBuilder;
 //import org.wms.repository.rowmapper.BirthApplicationRowMapper;
 //import org.wms.web.models.BirthApplicationSearchCriteria;
@@ -26,6 +27,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import javax.validation.Valid;
+
 
 @Slf4j
 @Repository
@@ -41,15 +44,8 @@ public class SchemeMasterRepository {
     private SchemeRowMapper rowMapper;
     
 
-    public List<Scheme> searchScheme(String keyword){
-    	//String sql = "SELECT * FROM Scheme_Master WHERE (name_en LIKE ? OR name_reg LIKE ?)";
-    	String sql = "SELECT * FROM Scheme_Master WHERE Scheme_Name_En LIKE ? OR Scheme_Name_Reg LIKE ?";
-        
-        //String keywordWithWildcards = "%" + keyword + "%";
-
-        return jdbcTemplate.query(sql, new Object[]{keyword, keyword}, new BeanPropertyRowMapper<>(Scheme.class));
-    }
-
+    
+    //For Update
 	public List<Scheme> updateScheme(SchemeApplicationSearchCriteria searchCriteria){
 		// TODO Auto-generated method stub
 		
@@ -63,35 +59,9 @@ public class SchemeMasterRepository {
         
 			}
 
-	/*
-	 * public boolean updateScheme(Scheme scheme) {
-	 * 
-	 * String sql =
-	 * "UPDATE Scheme_Master SET Scheme_Name_En = ?, Scheme_Name_Reg = ? WHERE Scheme_ID = ?"
-	 * ;
-	 * 
-	 * // Use JdbcTemplate to execute the update query with the required parameters
-	 * int rowsAffected = jdbcTemplate.update(sql, scheme.getSchemeNameEn(),
-	 * scheme.getSchemeNameReg(), scheme.getId());
-	 * 
-	 * // If the number of affected rows is greater than 0, the update was
-	 * successful return rowsAffected > 0;
-	 * 
-	 * 
-	 * }
-	 */
+	
 
-	/*
-	 * public Optional<Scheme> findById(Long id) { String sql =
-	 * "SELECT * FROM Scheme_Master WHERE id = ?";
-	 * 
-	 * // Use JdbcTemplate to execute the query and retrieve the scheme by ID Scheme
-	 * scheme = jdbcTemplate.queryForObject(sql, new Object[]{id}, new
-	 * BeanPropertyRowMapper<>(Scheme.class));
-	 * 
-	 * // Wrap the result in an Optional to handle null values return
-	 * Optional.ofNullable(scheme); }
-	 */
+	
 	
 	// Method to retrieve all schemes
     public List<Scheme> getAllSchemes() {
@@ -104,6 +74,15 @@ public class SchemeMasterRepository {
         String sql = "SELECT * FROM Scheme_Master WHERE Scheme_ID = ?";
         return jdbcTemplate.queryForObject(sql, new Object[]{id}, new BeanPropertyRowMapper<>(Scheme.class));
     }
+   //for searching
+	public List<Scheme> getApplications(
+			@Valid SchemeApplicationSearchCriteria schemerApplicationSearchCriteria) {
+		// TODO Auto-generated method stub
+		List<Object> preparedStmtList = new ArrayList<>();
+        String query = queryBuilder.getSchemeApplicationSearchQuery(schemerApplicationSearchCriteria, preparedStmtList);
+        log.info("Final query: " + query);
+        return jdbcTemplate.query(query,  rowMapper,preparedStmtList.toArray());
+	}
 	
 	
 }

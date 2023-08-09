@@ -17,8 +17,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.egov.service.SchemeMasterService;
 import org.egov.util.ResponseInfoFactory;
 import org.egov.web.models.RequestInfoWrapper;
+import org.egov.web.models.SORApplicationResponse;
+import org.egov.web.models.SORApplicationSearchCriteria;
+import org.egov.web.models.ScheduleOfRateApplication;
 import org.egov.web.models.Scheme;
 import org.egov.web.models.SchemeApplicationResponse;
+import org.egov.web.models.SchemeApplicationSearchCriteria;
 //import org.wms.web.models.SchemeCreationRequest;
 //import org.wms.web.models.SchemeCreationResponse;
 import org.egov.web.models.SchemeCreationApplication;
@@ -92,9 +96,18 @@ public class SchemeApiController {
         
         
     }
+    
+    @RequestMapping(value="/v1/scheme/_search", method = RequestMethod.POST)
+    @ApiOperation(value = "Search Scheme for WMS")
+    public ResponseEntity<SchemeApplicationResponse> v1SchemeSearchPost(@RequestBody RequestInfoWrapper requestInfoWrapper, @Valid @ModelAttribute SchemeApplicationSearchCriteria schemerApplicationSearchCriteria) {
+        List<Scheme> applications = schemeMasterService.searchSchemeApplications(requestInfoWrapper.getRequestInfo(), schemerApplicationSearchCriteria);
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true);
+        SchemeApplicationResponse response = SchemeApplicationResponse.builder().schemeApplications(applications).responseInfo(responseInfo).build();
+        return new ResponseEntity<>(response,HttpStatus.OK);
+    }
 
     @RequestMapping(value="/v1/scheme/_update", method = RequestMethod.POST)
-    @ApiOperation(value = "Upadate SOR for WMS")
+    @ApiOperation(value = "Upadate Scheme for WMS")
     //public ResponseEntity<String> v1SchemeUpdatePost(@RequestBody Scheme scheme) {
         //List<SchemeCreationApplication> applications = schemeMasterService.updateBtApplication(birthRegistrationRequest);
     public ResponseEntity<SchemeApplicationResponse> v1SchemeUpdatePost(@ApiParam(value = "Details for the new Scheme(s) + RequestInfo meta data." ,required=true )  @Valid @RequestBody WMSSchemeRequest schemeRequest) {
