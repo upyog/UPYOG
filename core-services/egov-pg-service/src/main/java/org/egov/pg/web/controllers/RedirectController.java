@@ -79,7 +79,7 @@ public class RedirectController {
          */
         if(gateway != null && gateway.equalsIgnoreCase("PAYGOV")) {
             StringBuilder redirectURL = new StringBuilder();
-            redirectURL.append(citizenRedirectDomain).append(returnURL);
+            redirectURL.append(returnURL);
             formData.remove(returnUrlKey);
             httpHeaders.setLocation(UriComponentsBuilder.fromHttpUrl(redirectURL.toString())
                     .queryParams(formData).build().encode().toUri());
