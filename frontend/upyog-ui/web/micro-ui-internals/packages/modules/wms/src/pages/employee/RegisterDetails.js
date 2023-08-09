@@ -52,29 +52,14 @@ const RegisterDetails = ({ location, match, history, }) => {
             <div className="notice_and_circular_main gap-ten">
                 <div className="documentDetails_wrapper">
                     {/* <div className="documentDetails_row_items"><p className="documentDetails_title">{`${t('ULB')}:`}</p> <p>{data?.tenantId}</p> </div> */}
-                    <div className="documentDetails_row_items"><p className="documentDetails_title">{`${t('Babys First NAME')}:`}</p> <p>{data?.babyFirstName}</p> </div>
-                    <div className="documentDetails_row_items"><p className="documentDetails_title">{`${t('Babys Last NAME')}:`}</p> <p>{t(data?.babyLastName)}</p> </div>
-                    <div className="documentDetails_row_items"><p className="documentDetails_title">{`${t('Father NAME')}:`}</p> <p>{t(data?.fatherName)}</p> </div>
-                    <div className="documentDetails_row_items"><p className="documentDetails_title">{`${t('Mother NAME')}:`}</p> <p>{t(data?.motherName)}</p> </div>
-                    <div className="documentDetails_row_items"><p className="documentDetails_title">{`${t('Doctor NAME')}:`}</p> <p>{t(data?.doctorName)}</p> </div>
-                    <div className="documentDetails_row_items"><p className="documentDetails_title">{`${t('Hospital NAME')}:`}</p> <p>{t(data?.hospitalName)}</p> </div>
-                    <div className="documentDetails_row_items"><p className="documentDetails_title">{`${t('Applicant MobileNumber')}:`}</p> <p>{t(data?.applicantMobileNumber)}</p> </div>
-                    <div className="documentDetails_row_items"><p className="documentDetails_title">{`${t('Correspondence Address')}:`}</p> <p>{t(data?.correspondenceAddress)}</p> </div>
-                    <div className="documentDetails_row_items"><p className="documentDetails_title">{`${t('Correspondence City')}:`}</p> <p>{t(data?.correspondenceCity)}</p> </div>
-                    <div className="documentDetails_row_items"><p className="documentDetails_title">{`${t('Permanent Address')}:`}</p> <p>{t(data?.permanentAddress)}</p> </div>
-                    <div className="documentDetails_row_items"><p className="documentDetails_title">{`${t('Place Of Birth')}:`}</p> <p>{t(data?.placeOfBirth)}</p> </div>
-    
-                    {/* <div className="documentDetails_row_items"><p className="documentDetails_title">{`${t('DCOUMENT_DESCRIPTION')}:`}</p> <p className="documentDetails__description">{details?.description?.length ? details?.description : 'NA'}</p> </div> */}
-                    {/* <div className="documentDetails_row_items"><p className="documentDetails_title">{`${t('ES_COMMON_LINK_LABEL')}:`}</p>
-                        {details?.documentLink ? <LinkButton
-                            label={
-                                <div className="link" onClick={() => openDocumentLink(details?.documentLink, details?.name)}>
-                                    <p>{t(`CE_DOCUMENT_OPEN_LINK`)}</p>
-                                </div>
-                            }
-                        /> : 'NA'}
-                    </div> */}
-                  
+                    <div className="documentDetails_row_items"><p className="documentDetails_title">{`${t('Chapter')}:`}</p> <p>{data?.sorChapter}</p> </div>
+                    <div className="documentDetails_row_items"><p className="documentDetails_title">{`${t('Description Of Item')}:`}</p> <p>{t(data?.sorDescriptionOfItem)}</p> </div>
+                    <div className="documentDetails_row_items"><p className="documentDetails_title">{`${t('Item No')}:`}</p> <p>{t(data?.sorItemNo)}</p> </div>
+                    <div className="documentDetails_row_items"><p className="documentDetails_title">{`${t('Unit')}:`}</p> <p>{t(data?.sorUnit)}</p> </div>
+                    <div className="documentDetails_row_items"><p className="documentDetails_title">{`${t('Rate')}:`}</p> <p>{t(data?.sorRate)}</p> </div>
+                    <div className="documentDetails_row_items"><p className="documentDetails_title">{`${t('NAME')}:`}</p> <p>{t(data?.sorName)}</p> </div>
+                    <div className="documentDetails_row_items"><p className="documentDetails_title">{`${t('Start Date')}:`}</p> <p>{t(data?.sorStartDate)}</p> </div>
+                    <div className="documentDetails_row_items"><p className="documentDetails_title">{`${t('End Date')}:`}</p> <p>{t(data?.sorEndDate)}</p> </div>
                 </div>
             </div>
             <ActionBar>

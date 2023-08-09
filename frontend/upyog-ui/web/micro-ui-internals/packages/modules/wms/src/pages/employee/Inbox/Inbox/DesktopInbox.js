@@ -25,7 +25,7 @@ const {isLoading } = data;
   // Using useEffect to call the API once mounted and set the data
   useEffect(() => {
     (async () => {
-      const result = await axios("https://62f0e3e5e2bca93cd23f2ada.mockapi.io/birth");
+      const result = await axios("https://62f0e3e5e2bca93cd23f2ada.mockapi.io/sor");
       setData(result.data);
       console.log("gooo" ,result.data);
     })();
@@ -39,8 +39,8 @@ const {isLoading } = data;
         type: "ulb",
       },
       {
-        label: t("Baby's NAME"),
-        name: "babyLastName"
+        label: t("Sor's NAME"),
+        name: "sorName"
       }
     ]
   }
@@ -48,8 +48,18 @@ const {isLoading } = data;
   const links = [
     {
       text: t("Create Schedule-Of-Rate"),
+      link: "/digit-ui/citizen/wms/sor/create",
+    },{
+      text: t("View Schedule-Of-Rate"),
+      link: "/digit-ui/citizen/wms/sor/view",
+    },{
+      text: t("Edit Schedule-Of-Rate"),
+      link: "/digit-ui/citizen/wms/sor/edit",
+    },
+    {
+      text: t("List Schedule-Of-Rate"),
       link: "/digit-ui/citizen/wms/sor",
-    }
+    },
   ]
 
 
@@ -70,7 +80,7 @@ const {isLoading } = data;
     // return rows;
     return rows?.filter(row =>
      
-      (searchParams?.babyLastName ? row.original?.babyLastName?.toUpperCase().startsWith(searchParams?.babyLastName.toUpperCase()) : true) 
+      (searchParams?.sorName ? row.original?.sorName?.toUpperCase().startsWith(searchParams?.sorName.toUpperCase()) : true) 
      ) }
 
   const fetchNextPage = useCallback(() => {

@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
 const GetMessage = (type, action, isSuccess, isEmployee, t) => {
-  return t(`BIRTHDAY_RESPONSE_${action ? action : "CREATE"}_${type}${isSuccess ? "" : "_ERROR"}`);
+  return t(`WMS_RESPONSE_${action ? action : "CREATE"}_${type}${isSuccess ? "" : "_ERROR"}`);
 };
 
 const GetActionMessage = (action, isSuccess, isEmployee, t) => {
@@ -37,7 +37,7 @@ const ResponseEmployee = (props) => {
   const [mutationHappened, setMutationHappened, clear] = Digit.Hooks.useSessionStorage("SOR_WMS_MUTATION_HAPPENED", false);
   const [successData, setsuccessData, clearSuccessData] = Digit.Hooks.useSessionStorage("SOR_WMS_MUTATION_SUCCESS_DATA", false);
   const [errorInfo, setErrorInfo, clearError] = Digit.Hooks.useSessionStorage("SOR_WMS_ERROR_DATA", false);
-  const mutation = state.key === "UPDATE" ? Digit.Hooks.br.useWMSUpdate(tenantId) : Digit.Hooks.br.useWMSCreate(tenantId);
+ const mutation = state.key === "UPDATE" ? Digit.Hooks.wms.sor.useWmsSorUpdate(tenantId) : Digit.Hooks.wms.sor.useWmsSorCreate(tenantId);
 
   const onError = (error, variables) => {
     setErrorInfo(error?.response?.data?.Errors[0]?.code || 'ERROR');
