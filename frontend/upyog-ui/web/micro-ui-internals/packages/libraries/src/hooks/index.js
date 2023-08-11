@@ -237,12 +237,14 @@ import useDisconnectionWorkflow from "./ws/useDisconnectionWorkflow";
 import useDisConnectionDetails from "./ws/useDisConnectionDetails";
 import useWSModifyDetailsPage from "./ws/useWSModifyDetailsPage";
 
-import useWmsSearch from "./wms/useWMSSearch";
 import useWmsMDMS from "./wms/useWmsMDMS";
-import useWmsCreate from "./wms/useWmsCreate";
-import useWmsUpdate from "./wms/useWmsUpdate";
-import useWmsCount from "./wms/useWmsCount";
 import useWmsGenderMDMS from "./wms/useWmsGender";
+
+
+import useWmsSorSearch from "./wms/sor/useWmsSorSearch";
+import useWmsSorCount from "./wms/sor/useWmsSorCount";
+import useWmsSorCreate from "./wms/sor/useWmsSorCreate";
+import useWmsSorUpdate from "./wms/sor/useWmsSorUpdate";
 
 import useGetHowItWorksJSON from "./useHowItWorksJSON";
 import useGetFAQsJSON from "./useGetFAQsJSON";
@@ -491,11 +493,13 @@ const ws = {
   useWSConfigMDMS: useWSConfigMDMS,
 };
 const wms = {
-  useWmsSearch,
+  sor:{
+    useWmsSorSearch:useWmsSorSearch,
+    useWmsSorCreate:useWmsSorCreate,
+    useWmsSorUpdate:useWmsSorUpdate,
+    useWmsSorCount:useWmsSorCount
+  },
   useWmsMDMS,
-  useWmsCreate,
-  useWmsUpdate,
-  useWmsCount,
   useWmsGenderMDMS,
 };
 const reports = {

@@ -3,10 +3,10 @@ import Urls from "../atoms/urls";
 import { Request } from "../atoms/Utils/Request";
 
 const WMSService = {
-  Scheme_Master:{
+  SchemeMaster:{
                   search: (tenantId, filters, searchParams) =>
                     Request({
-                      url: Urls.wms.Scheme_Master.search,
+                      url: Urls.wms.SchemeMaster.search,
                       useCache: false,
                       method: "GET",
                       auth: true,
@@ -16,7 +16,7 @@ const WMSService = {
                   create: (data, tenantId) =>
                     Request({
                       data: data,
-                      url: Urls.wms.Scheme_Master.create,
+                      url: Urls.wms.SchemeMaster.create,
                       useCache: false,
                       method: "POST",
                       auth: true,
@@ -26,7 +26,7 @@ const WMSService = {
                   update: (data, tenantId) =>
                     Request({
                       data: data,
-                      url: Urls.wms.Scheme_Master.update,
+                      url: Urls.wms.SchemeMaster.update,
                       useCache: false,
                       method: "PUT",
                       auth: true,
@@ -36,7 +36,7 @@ const WMSService = {
                   delete: (data, tenantId) =>
                     Request({
                       data: data,
-                      url: Urls.wms.Scheme_Master.delete,
+                      url: Urls.wms.SchemeMaster.delete,
                       useCache: false,
                       method: "DELETE",
                       auth: true,
@@ -45,7 +45,7 @@ const WMSService = {
                     }),
                   get: (tenantId) =>
                     Request({
-                      url: Urls.wms.Scheme_Master.get,
+                      url: Urls.wms.SchemeMaster.get,
                       useCache: false,
                       method: "GET",
                       auth: true,
@@ -103,10 +103,10 @@ const WMSService = {
                       params: { tenantId },
                     }),
   },
-  Project_Master:{
+  ProjectMaster:{
                   search: (tenantId, filters, searchParams) =>
                     Request({
-                      url: Urls.wms.Project_Master.search,
+                      url: Urls.wms.ProjectMaster.search,
                       useCache: false,
                       method: "GET",
                       auth: true,
@@ -116,7 +116,7 @@ const WMSService = {
                   create: (data, tenantId) =>
                     Request({
                       data: data,
-                      url: Urls.wms.Project_Master.create,
+                      url: Urls.wms.ProjectMaster.create,
                       useCache: false,
                       method: "POST",
                       auth: true,
@@ -126,7 +126,7 @@ const WMSService = {
                   update: (data, tenantId) =>
                     Request({
                       data: data,
-                      url: Urls.wms.Project_Master.update,
+                      url: Urls.wms.ProjectMaster.update,
                       useCache: false,
                       method: "PUT",
                       auth: true,
@@ -136,7 +136,7 @@ const WMSService = {
                   delete: (data, tenantId) =>
                     Request({
                       data: data,
-                      url: Urls.wms.Project_Master.delete,
+                      url: Urls.wms.ProjectMaster.delete,
                       useCache: false,
                       method: "DELETE",
                       auth: true,
@@ -145,7 +145,7 @@ const WMSService = {
                     }),
                   get: (tenantId) =>
                     Request({
-                      url: Urls.wms.Project_Master.get,
+                      url: Urls.wms.ProjectMaster.get,
                       useCache: false,
                       method: "GET",
                       auth: true,
@@ -202,8 +202,7 @@ const WMSService = {
                       userService: true,
                       params: { tenantId },
                     }),
-  },
-    },
+  }
 };
 
 export default WMSService;

@@ -1,7 +1,6 @@
 import { Header, ActionBar, SubmitBar, ExternalLinkIcon, Menu, GenericFileIcon, LinkButton } from '@egovernments/digit-ui-react-components';
 import React, { useState , useEffect } from 'react'
 import { useTranslation } from 'react-i18next';
-import { openDocumentLink, openUploadedDocument } from '../../utils';
 import axios from 'axios';
 import { useParams } from "react-router-dom";
 
@@ -14,7 +13,7 @@ const RegisterDetails = ({ location, match, history, }) => {
 
   useEffect(() => {
     (async () => {
-      const result = await axios(`https://62f0e3e5e2bca93cd23f2ada.mockapi.io/birth/${params.id}`);
+      const result = await axios(`https://62f0e3e5e2bca93cd23f2ada.mockapi.io/sor/${params.id}`);
       setData(result.data);
       console.log("gooo" ,result.data);
     })();
@@ -31,7 +30,7 @@ const RegisterDetails = ({ location, match, history, }) => {
     function onActionSelect(action) {
         // setSelectedAction(action);
      
-          history.push(`/digit-ui/employee/br/responseemp`)
+          history.push(`/digit-ui/employee/sor/responseemp`)
     }
 
 
@@ -49,39 +48,24 @@ const RegisterDetails = ({ location, match, history, }) => {
             />
 
                 : null} */}
-            <Header>{t(`Birth-Registration Details`)}</Header>
+            <Header>{t(`Work Management System`)}</Header>
             <div className="notice_and_circular_main gap-ten">
                 <div className="documentDetails_wrapper">
                     {/* <div className="documentDetails_row_items"><p className="documentDetails_title">{`${t('ULB')}:`}</p> <p>{data?.tenantId}</p> </div> */}
-                    <div className="documentDetails_row_items"><p className="documentDetails_title">{`${t('Babys First NAME')}:`}</p> <p>{data?.babyFirstName}</p> </div>
-                    <div className="documentDetails_row_items"><p className="documentDetails_title">{`${t('Babys Last NAME')}:`}</p> <p>{t(data?.babyLastName)}</p> </div>
-                    <div className="documentDetails_row_items"><p className="documentDetails_title">{`${t('Father NAME')}:`}</p> <p>{t(data?.fatherName)}</p> </div>
-                    <div className="documentDetails_row_items"><p className="documentDetails_title">{`${t('Mother NAME')}:`}</p> <p>{t(data?.motherName)}</p> </div>
-                    <div className="documentDetails_row_items"><p className="documentDetails_title">{`${t('Doctor NAME')}:`}</p> <p>{t(data?.doctorName)}</p> </div>
-                    <div className="documentDetails_row_items"><p className="documentDetails_title">{`${t('Hospital NAME')}:`}</p> <p>{t(data?.hospitalName)}</p> </div>
-                    <div className="documentDetails_row_items"><p className="documentDetails_title">{`${t('Applicant MobileNumber')}:`}</p> <p>{t(data?.applicantMobileNumber)}</p> </div>
-                    <div className="documentDetails_row_items"><p className="documentDetails_title">{`${t('Correspondence Address')}:`}</p> <p>{t(data?.correspondenceAddress)}</p> </div>
-                    <div className="documentDetails_row_items"><p className="documentDetails_title">{`${t('Correspondence City')}:`}</p> <p>{t(data?.correspondenceCity)}</p> </div>
-                    <div className="documentDetails_row_items"><p className="documentDetails_title">{`${t('Permanent Address')}:`}</p> <p>{t(data?.permanentAddress)}</p> </div>
-                    <div className="documentDetails_row_items"><p className="documentDetails_title">{`${t('Place Of Birth')}:`}</p> <p>{t(data?.placeOfBirth)}</p> </div>
-    
-                    {/* <div className="documentDetails_row_items"><p className="documentDetails_title">{`${t('DCOUMENT_DESCRIPTION')}:`}</p> <p className="documentDetails__description">{details?.description?.length ? details?.description : 'NA'}</p> </div> */}
-                    {/* <div className="documentDetails_row_items"><p className="documentDetails_title">{`${t('ES_COMMON_LINK_LABEL')}:`}</p>
-                        {details?.documentLink ? <LinkButton
-                            label={
-                                <div className="link" onClick={() => openDocumentLink(details?.documentLink, details?.name)}>
-                                    <p>{t(`CE_DOCUMENT_OPEN_LINK`)}</p>
-                                </div>
-                            }
-                        /> : 'NA'}
-                    </div> */}
-                  
+                    <div className="documentDetails_row_items"><p className="documentDetails_title">{`${t('Chapter')}:`}</p> <p>{data?.sorChapter}</p> </div>
+                    <div className="documentDetails_row_items"><p className="documentDetails_title">{`${t('Description Of Item')}:`}</p> <p>{t(data?.sorDescriptionOfItem)}</p> </div>
+                    <div className="documentDetails_row_items"><p className="documentDetails_title">{`${t('Item No')}:`}</p> <p>{t(data?.sorItemNo)}</p> </div>
+                    <div className="documentDetails_row_items"><p className="documentDetails_title">{`${t('Unit')}:`}</p> <p>{t(data?.sorUnit)}</p> </div>
+                    <div className="documentDetails_row_items"><p className="documentDetails_title">{`${t('Rate')}:`}</p> <p>{t(data?.sorRate)}</p> </div>
+                    <div className="documentDetails_row_items"><p className="documentDetails_title">{`${t('NAME')}:`}</p> <p>{t(data?.sorName)}</p> </div>
+                    <div className="documentDetails_row_items"><p className="documentDetails_title">{`${t('Start Date')}:`}</p> <p>{t(data?.sorStartDate)}</p> </div>
+                    <div className="documentDetails_row_items"><p className="documentDetails_title">{`${t('End Date')}:`}</p> <p>{t(data?.sorEndDate)}</p> </div>
                 </div>
             </div>
             <ActionBar>
         {displayMenu ? (
           <Menu
-            localeKeyPrefix={"BR"}
+            localeKeyPrefix={"WMS"}
             options={['Approve', 'Reject']}
             t={t}
             onSelect={onActionSelect}

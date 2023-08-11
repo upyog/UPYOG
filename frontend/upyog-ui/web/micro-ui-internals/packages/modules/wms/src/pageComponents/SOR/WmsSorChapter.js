@@ -1,7 +1,7 @@
 import React from "react";
 import { LabelFieldPair, CardLabel, TextInput, CardLabelError } from "@egovernments/digit-ui-react-components";
 import { useLocation } from "react-router-dom";
-const WmsChapter = ({ t, config, onSelect, formData = {}, userType, register, errors }) => {
+const WmsSorChapter = ({ t, config, onSelect, formData = {}, userType, register, errors }) => {
   const { pathname: url } = useLocation();
   const inputs = [
     {
@@ -50,4 +50,4 @@ const WmsChapter = ({ t, config, onSelect, formData = {}, userType, register, er
   );
 };
 
-export default WmsChapter;
+export default WmsSorChapter;

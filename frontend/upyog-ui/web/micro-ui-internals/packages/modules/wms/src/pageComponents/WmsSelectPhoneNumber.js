@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { CardText, FormStep, CitizenConsentForm, Loader, CheckBox } from "@egovernments/digit-ui-react-components";
 import { Link } from "react-router-dom";
 
-const BRSelectPhoneNumber = ({ t, onSelect, showRegisterLink, mobileNumber, onMobileChange, config, canSubmit }) => {
+const WMSSelectPhoneNumber = ({ t, onSelect, showRegisterLink, mobileNumber, onMobileChange, config, canSubmit }) => {
 
   const [isCheckBox, setIsCheckBox] = useState(false);
   const [isCCFEnabled, setisCCFEnabled] = useState(false);
@@ -84,4 +84,4 @@ const BRSelectPhoneNumber = ({ t, onSelect, showRegisterLink, mobileNumber, onMo
   );
 };
 
-export default BRSelectPhoneNumber;
+export default WMSSelectPhoneNumber;

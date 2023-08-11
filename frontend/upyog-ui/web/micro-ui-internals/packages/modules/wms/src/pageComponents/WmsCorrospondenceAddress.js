@@ -2,11 +2,11 @@ import React from "react";
 import { LabelFieldPair, CardLabel, TextInput, CardLabelError } from "@egovernments/digit-ui-react-components";
 import { useLocation } from "react-router-dom";
 
-const BRCorrespondenceAddress = ({ t, config, onSelect, formData = {}, userType, register, errors }) => {
+const WMSCorrespondenceAddress = ({ t, config, onSelect, formData = {}, userType, register, errors }) => {
   const { pathname: url } = useLocation();
   const inputs = [
     {
-      label: "BR_CORRESPONDENCE_ADDRESS_LABEL",
+      label: "WMS_CORRESPONDENCE_ADDRESS_LABEL",
       type: "text",
       name: "correspondenceAddress",
       validation: {
@@ -51,4 +51,4 @@ const BRCorrespondenceAddress = ({ t, config, onSelect, formData = {}, userType,
   );
 };
 
-export default BRCorrespondenceAddress;
+export default WMSCorrespondenceAddress;

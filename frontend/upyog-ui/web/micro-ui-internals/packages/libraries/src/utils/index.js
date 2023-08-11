@@ -3,7 +3,7 @@ import * as date from "./date";
 import * as dss from "./dss";
 import * as locale from "./locale";
 import * as obps from "./obps";
-import * as br from "./wms";
+import * as wms from "./wms";
 import * as pt from "./pt";
 import * as privacy from "./privacy";
 import PDFUtil, { downloadReceipt ,downloadPDFFromLink,downloadBill ,getFileUrl} from "./pdf";

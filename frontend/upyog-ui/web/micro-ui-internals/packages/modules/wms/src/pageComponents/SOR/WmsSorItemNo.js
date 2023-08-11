@@ -2,7 +2,7 @@ import { FormStep, TextInput, CardLabel, LabelFieldPair, CardLabelError } from "
 import React, { useState, useEffect, Fragment } from "react";
 import { useLocation } from "react-router-dom";
 
-const WmsItemNo = ({ t, config, onSelect, formData = {}, userType, register, errors, props }) => {
+const WmsSorItemNo = ({ t, config, onSelect, formData = {}, userType, register, errors, props }) => {
   const tenants = Digit.Hooks.fsm.useTenants();
   const [itemNo, setItemNo] = useState(formData?.ItemNo || "");
   const [itemNoServicability, setItemNoServicability] = useState(null);
@@ -108,4 +108,4 @@ const WmsItemNo = ({ t, config, onSelect, formData = {}, userType, register, err
   );
 };
 
-export default WmsItemNo;
+export default WmsSorItemNo;

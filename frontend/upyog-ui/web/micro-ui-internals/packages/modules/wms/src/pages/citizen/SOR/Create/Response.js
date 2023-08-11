@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
 const GetMessage = (type, action, isSuccess, isEmployee, t) => {
-  return t(`BIRTHDAY_RESPONSE_${action ? action : "CREATE"}_${type}${isSuccess ? "" : "_ERROR"}`);
+  return t(`SOR_RESPONSE_${action ? action : "CREATE"}_${type}${isSuccess ? "" : "_ERROR"}`);
 };
 
 const GetActionMessage = (action, isSuccess, isEmployee, t) => {
@@ -13,7 +13,7 @@ const GetActionMessage = (action, isSuccess, isEmployee, t) => {
 
 const GetLabel = (action, isSuccess, isEmployee, t) => {
   if (isSuccess) {
-    return t("BR_BIRTHDAY_ID_LABEL");
+    return t("WMS_SOR_ID_LABEL");
   }
   // return GetMessage("LABEL", action, isSuccess, isEmployee, t);
 };
@@ -34,10 +34,10 @@ const Response = (props) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();
   const { state } = props.location;
-  const [mutationHappened, setMutationHappened, clear] = Digit.Hooks.useSessionStorage("BIRTHDAY_BR_MUTATION_HAPPENED", false);
-  const [successData, setsuccessData, clearSuccessData] = Digit.Hooks.useSessionStorage("BIRTHDAY_BR_MUTATION_SUCCESS_DATA", false);
-  const [errorInfo, setErrorInfo, clearError] = Digit.Hooks.useSessionStorage("BIRTHDAY_BR_ERROR_DATA", false);
-  const mutation = state.key === "UPDATE" ? Digit.Hooks.br.useBRUpdate(tenantId) : Digit.Hooks.br.useBRCreate(tenantId);
+  const [mutationHappened, setMutationHappened, clear] = Digit.Hooks.useSessionStorage("SOR_WMS_MUTATION_HAPPENED", false);
+  const [successData, setsuccessData, clearSuccessData] = Digit.Hooks.useSessionStorage("SOR_WMS_MUTATION_SUCCESS_DATA", false);
+  const [errorInfo, setErrorInfo, clearError] = Digit.Hooks.useSessionStorage("SOR_WMS_ERROR_DATA", false);
+  const mutation = state.key === "UPDATE" ? Digit.Hooks.wms.sor.useWmsSorUpdate(tenantId) : Digit.Hooks.wms.sor.useWmsSorCreate(tenantId);
 
   const onError = (error, variables) => {
     setErrorInfo(error?.response?.data?.Errors[0]?.code || 'ERROR');
@@ -76,7 +76,7 @@ const Response = (props) => {
       return mutation?.error?.response?.data?.Errors[0].code||errorInfo;
     } else {
       Digit.SessionStorage.set("isupdate", Math.floor(100000 + Math.random() * 900000));
-      return state.key === "CREATE"?"BR_CREATE_BIRTHDAY_INFO" :"";
+      return state.key === "CREATE"?"WMS_CREATE_SOR_INFO" :"";
     }
   };
     if (mutation.isLoading || (mutation.isIdle && !mutationHappened)) {
