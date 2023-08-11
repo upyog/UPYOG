@@ -1,7 +1,11 @@
 package org.egov.repository;
 
+import org.egov.repository.querybuilder.ProjectQueryBuilder;
 import org.egov.repository.querybuilder.SchemeQueryBuilder;
+import org.egov.repository.rowmapper.ProjectRowMapper;
 import org.egov.repository.rowmapper.SchemeRowMapper;
+import org.egov.web.models.Project;
+import org.egov.web.models.ProjectApplicationSearchCriteria;
 import org.egov.web.models.ScheduleOfRateApplication;
 //import org.wms.repository.querybuilder.SchemeQueryBuilder;
 //import org.wms.repository.rowmapper.BirthApplicationRowMapper;
@@ -32,27 +36,27 @@ import javax.validation.Valid;
 
 @Slf4j
 @Repository
-public class SchemeMasterRepository {
+public class ProjectMasterRepository {
 
 	@Autowired
-    private SchemeQueryBuilder queryBuilder;
+    private ProjectQueryBuilder queryBuilder;
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
     @Autowired
-    private SchemeRowMapper rowMapper;
+    private ProjectRowMapper rowMapper;
     
 
     
     //For Update
-	public List<Scheme> updateScheme(SchemeApplicationSearchCriteria searchCriteria){
+	public List<Project> updateProject(ProjectApplicationSearchCriteria searchCriteria){
 		// TODO Auto-generated method stub
 		
 		
 		
 	        List<Object> preparedStmtList = new ArrayList<>();
-	        String query = queryBuilder.getSchemeApplicationSearchQuery(searchCriteria, preparedStmtList);
+	        String query = queryBuilder.getProjectApplicationSearchQuery(searchCriteria, preparedStmtList);
 	        log.info("Final query: " + query);
 	        return jdbcTemplate.query(query,  rowMapper,preparedStmtList.toArray());
 		
@@ -64,22 +68,22 @@ public class SchemeMasterRepository {
 	
 	
 	// Method to retrieve all schemes
-    public List<Scheme> getAllSchemes() {
-        String sql = "SELECT * FROM Scheme_Master";
-        return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Scheme.class));
+    public List<Project> getAllProject() {
+        String sql = "SELECT * FROM project_master";
+        return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Project.class));
     }
     
  // Method to retrieve a scheme by ID
-    public Scheme getSchemeById(Long id) {
-        String sql = "SELECT * FROM Scheme_Master WHERE Scheme_ID = ?";
-        return jdbcTemplate.queryForObject(sql, new Object[]{id}, new BeanPropertyRowMapper<>(Scheme.class));
+    public Project getProjectById(Long id) {
+        String sql = "SELECT * FROM project_master WHERE project_id  = ?";
+        return jdbcTemplate.queryForObject(sql, new Object[]{id}, new BeanPropertyRowMapper<>(Project.class));
     }
    //for searching
-	public List<Scheme> getApplications(
-			 SchemeApplicationSearchCriteria schemerApplicationSearchCriteria) {
+	public List<Project> getApplications(
+			 ProjectApplicationSearchCriteria projectrApplicationSearchCriteria) {
 		// TODO Auto-generated method stub
 		List<Object> preparedStmtList = new ArrayList<>();
-        String query = queryBuilder.getSchemeApplicationSearchQuery(schemerApplicationSearchCriteria, preparedStmtList);
+        String query = queryBuilder.getProjectApplicationSearchQuery(projectrApplicationSearchCriteria, preparedStmtList);
         log.info("Final query: " + query);
         return jdbcTemplate.query(query,  rowMapper,preparedStmtList.toArray());
 	}

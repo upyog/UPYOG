@@ -22,6 +22,10 @@ public class IdRequest {
 	 @JsonProperty("sorId")
 	  private Integer sorId;
 	 
+	 @JsonProperty("projectNumber")
+	  private String projectNumber;
+	 
+	 
 	 @JsonProperty("format")
 	    private String format;
 }

@@ -99,6 +99,81 @@ serviceMaps:
             - jsonPath: $.SchemeApplication.*.upload_document
             
             - jsonPath: $.SchemeApplication.*.scheme_id
+            
+            
+            
+            
+    - version: 1.0
+      description: Persists project details in tables
+      fromTopic: save-prj-application
+      isTransaction: true
+      queryMaps:
+
+        - query: INSERT INTO project_master (project_id,project_number,source_of_fund,scheme_no,department,project_name_en,project_name_reg,project_description,project_timeline,project_start_date,project_end_date,scheme_name,approval_number,approval_date,status) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?,?,?);
+          basePath: ProjectApplication.*
+          jsonMaps:
+            - jsonPath: $.ProjectApplication.*.project_id
+
+            - jsonPath: $.ProjectApplication.*.project_number
+
+            - jsonPath: $.ProjectApplication.*.source_of_fund
+            
+            - jsonPath: $.ProjectApplication.*.scheme_no
+
+            - jsonPath: $.ProjectApplication.*.department
+
+            - jsonPath: $.ProjectApplication.*.project_name_en
+
+            - jsonPath: $.ProjectApplication.*.project_name_reg
+
+            - jsonPath: $.ProjectApplication.*.project_description
+
+            - jsonPath: $.ProjectApplication.*.project_timeline
+            
+            - jsonPath: $.ProjectApplication.*.project_start_date
+            
+            - jsonPath: $.ProjectApplication.*.project_end_date
+            
+            - jsonPath: $.ProjectApplication.*.scheme_name
+            
+            - jsonPath: $.ProjectApplication.*.approval_number
+            
+            - jsonPath: $.ProjectApplication.*.approval_date
+            
+            - jsonPath: $.ProjectApplication.*.status
+            
+       
+       
+      
+    - version: 1.0
+      description: Update Project applications in table
+      fromTopic: update-prj-application
+      isTransaction: true
+      queryMaps:
+      
+        - query: UPDATE project_master SET source_of_fund = ?,department =?,project_description=?,project_timeline=?,project_start_date = ?, project_end_date = ?, approval_number = ?, approval_date = ?, status = ? WHERE project_id=?;
+          basePath: SchemeApplication.*
+          jsonMaps:
+            - jsonPath: $.SchemeApplication.*.source_of_fund
+            
+            - jsonPath: $.SchemeApplication.*.department
+            
+            - jsonPath: $.SchemeApplication.*.project_description
+            
+            - jsonPath: $.SchemeApplication.*.project_timeline
+
+            - jsonPath: $.SchemeApplication.*.project_start_date
+           
+            - jsonPath: $.SchemeApplication.*.project_end_date
+            
+            - jsonPath: $.SchemeApplication.*.approval_number
+            
+            - jsonPath: $.SchemeApplication.*.approval_date
+            
+            - jsonPath: $.SchemeApplication.*.status
+            
+            - jsonPath: $.SchemeApplication.*.project_id
+
        
       
       

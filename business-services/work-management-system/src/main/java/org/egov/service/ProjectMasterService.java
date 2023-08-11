@@ -10,15 +10,22 @@ import org.egov.common.contract.request.RequestInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.egov.config.ProjectConfiguration;
 import org.egov.config.SchemeConfiguration;
+import org.egov.enrichment.ProjectApplicationEnrichment;
 import org.egov.enrichment.SchemeApplicationEnrichment;
 import org.egov.producer.Producer;
+import org.egov.repository.ProjectMasterRepository;
 import org.egov.repository.SchemeMasterRepository;
+import org.egov.validator.WMSProjectValidator;
 import org.egov.validator.WMSSchemeValidator;
+import org.egov.web.models.Project;
+import org.egov.web.models.ProjectApplicationSearchCriteria;
 import org.egov.web.models.ScheduleOfRateApplication;
 import org.egov.web.models.Scheme;
 import org.egov.web.models.SchemeApplicationSearchCriteria;
 import org.egov.web.models.SchemeCreationApplication;
+import org.egov.web.models.WMSProjectRequest;
 //import org.wms.web.models.SchemeCreationRequest;
 import org.egov.web.models.WMSSchemeRequest;
 
@@ -26,13 +33,13 @@ import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
-public class SchemeMasterService {
+public class ProjectMasterService {
 	
 	@Autowired
-    private WMSSchemeValidator validator;
+    private WMSProjectValidator validator;
 
     @Autowired
-    private SchemeApplicationEnrichment enrichmentUtil;
+    private ProjectApplicationEnrichment enrichmentUtil;
 
     //@Autowired
     //private BirthApplicationValidator birthApplicationValidator;
@@ -41,9 +48,9 @@ public class SchemeMasterService {
     @Autowired
     private Producer producer;
     @Autowired
-    private SchemeConfiguration configuration;
+    private ProjectConfiguration configuration;
     @Autowired
-    private SchemeMasterRepository schemeMasterRepository;
+    private ProjectMasterRepository projectMasterRepository;
 	/*
 	 * @Autowired private UserService userService;
 	 * 
@@ -52,52 +59,52 @@ public class SchemeMasterService {
 	 * @Autowired private CalculationService calculationService;
 	 */
 
-    public List<Scheme> createSchemeRequest( WMSSchemeRequest schemeRequest) {
+    public List<Project> createProjectRequest( WMSProjectRequest projectRequest) {
         
-    	validator.validateSchemeApplication(schemeRequest);
-    	enrichmentUtil.enrichSchemeApplication(schemeRequest);
+    	validator.validateProjectApplication(projectRequest);
+    	enrichmentUtil.enrichProjectApplication(projectRequest);
         // Push the application to the topic for persister to listen and persist
-        producer.push(configuration.getCreateTopic(), schemeRequest);
+        producer.push(configuration.getCreateTopic(), projectRequest);
         //List<SchemeCreationApplication> request=new ArrayList<>();
         // Return the response back to user
         //return schemeRequest.getBirthRegistrationApplications();
         
         //schemeMasterRepository.save(schemeRequest);
-        return schemeRequest.getSchemeApplications();
+        return projectRequest.getProjectApplications();
         
         //return savedScheme;
     }
 
     
-    public List<Scheme> updateSchemeMaster(WMSSchemeRequest schemeRequest) {
-    	List<Scheme> existingApplication = validator.validateApplicationUpdateRequest(schemeRequest);
+    public List<Project> updateProjectMaster(WMSProjectRequest projectRequest) {
+    	List<Project> existingApplication = validator.validateApplicationUpdateRequest(projectRequest);
         // Enrich application upon update
         
-        enrichmentUtil.enrichSchemeApplicationUponUpdate(schemeRequest,existingApplication);
+        enrichmentUtil.enrichProjectApplicationUponUpdate(projectRequest,existingApplication);
         //workflowService.updateWorkflowStatus(birthRegistrationRequest);
         // Just like create request, update request will be handled asynchronously by the persister
-        producer.push(configuration.getUpdateTopic(), schemeRequest);
+        producer.push(configuration.getUpdateTopic(), projectRequest);
 
-        return schemeRequest.getSchemeApplications();
+        return projectRequest.getProjectApplications();
     }
 
-	public List<Scheme> viewScheme() {
-		List<Scheme> optionalScheme = schemeMasterRepository.getAllSchemes();
+	public List<Project> viewProject() {
+		List<Project> optionalProject = projectMasterRepository.getAllProject();
 
         // If the scheme exists, return it; otherwise, return null.
-        return optionalScheme;
+        return optionalProject;
 	}
 
-	public Scheme getSchemeById(Long id) {
-		return schemeMasterRepository.getSchemeById(id);
+	public Project getProjectById(Long id) {
+		return projectMasterRepository.getProjectById(id);
 		
 		
 	}
 
-	public List<Scheme> searchSchemeApplications(RequestInfo requestInfo,
-			 SchemeApplicationSearchCriteria schemerApplicationSearchCriteria) {
+	public List<Project> searchProjectApplications(RequestInfo requestInfo,
+			 ProjectApplicationSearchCriteria projectApplicationSearchCriteria) {
 		// TODO Auto-generated method stub
-		List<Scheme> applications = schemeMasterRepository.getApplications(schemerApplicationSearchCriteria);
+		List<Project> applications = projectMasterRepository.getApplications(projectApplicationSearchCriteria);
 
         // If no applications are found matching the given criteria, return an empty list
         if(CollectionUtils.isEmpty(applications))

@@ -13,9 +13,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.egov.service.ProjectMasterService;
 //import org.wms.service.BirthRegistrationService;
 import org.egov.service.SchemeMasterService;
 import org.egov.util.ResponseInfoFactory;
+import org.egov.web.models.Project;
+import org.egov.web.models.ProjectApplicationResponse;
+import org.egov.web.models.ProjectApplicationSearchCriteria;
 import org.egov.web.models.RequestInfoWrapper;
 import org.egov.web.models.SORApplicationResponse;
 import org.egov.web.models.SORApplicationSearchCriteria;
@@ -26,6 +30,7 @@ import org.egov.web.models.SchemeApplicationSearchCriteria;
 //import org.wms.web.models.SchemeCreationRequest;
 //import org.wms.web.models.SchemeCreationResponse;
 import org.egov.web.models.SchemeCreationApplication;
+import org.egov.web.models.WMSProjectRequest;
 //import org.wms.web.models.SchemeResponse;
 import org.egov.web.models.WMSSchemeRequest;
 
@@ -45,63 +50,57 @@ import lombok.extern.slf4j.Slf4j;
 @ToString
 @Controller
 @RequestMapping("/wms-services")
-public class SchemeApiController {
+public class ProjectApiController {
 	
 	private final ObjectMapper objectMapper;
 
     private final HttpServletRequest request;
 
-    private SchemeMasterService schemeMasterService;
+    private ProjectMasterService projectMasterService;
 
     @Autowired
     private ResponseInfoFactory responseInfoFactory;
 
     @Autowired
-    public SchemeApiController(ObjectMapper objectMapper, HttpServletRequest request, SchemeMasterService schemeMasterService) {
+    public ProjectApiController(ObjectMapper objectMapper, HttpServletRequest request, SchemeMasterService schemeMasterService) {
     	this.objectMapper = objectMapper;
         this.request = request;
-        this.schemeMasterService = schemeMasterService;
+        this.projectMasterService = projectMasterService;
     }
     @ResponseBody
-    @RequestMapping(value="/v1/scheme/_create", method = RequestMethod.POST)
-    @ApiOperation(value = "Create New Scheme for WMS")
-    public ResponseEntity<SchemeApplicationResponse> v1WmsCreatePost(@ApiParam(value = "Details for the new Scheme Application(s) + RequestInfo meta data." ,required=true )  @Valid @RequestBody WMSSchemeRequest schemeRequest) {
+    @RequestMapping(value="/v1/project/_create", method = RequestMethod.POST)
+    @ApiOperation(value = "Create New Project for WMS")
+    public ResponseEntity<ProjectApplicationResponse> v1WmsProjectCreatePost(@ApiParam(value = "Details for the new Project Application(s) + RequestInfo meta data." ,required=true )  @Valid @RequestBody WMSProjectRequest projectRequest) {
         
-    	List<Scheme> applications = schemeMasterService.createSchemeRequest(schemeRequest);
-        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(schemeRequest.getRequestInfo(), true);
+    	List<Project> applications = projectMasterService.createProjectRequest(projectRequest);
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(projectRequest.getRequestInfo(), true);
         //sorRequest.builder().
-        SchemeApplicationResponse response = SchemeApplicationResponse.builder().schemeApplications(applications).responseInfo(responseInfo).build();
+        ProjectApplicationResponse response = ProjectApplicationResponse.builder().projectApplications(applications).responseInfo(responseInfo).build();
         return new ResponseEntity<>(response, HttpStatus.OK);
     	
     	
-    	/*
-		 * boolean isSaved = schemeMasterService.createSchemeRequest(schemeRequest);
-		 * 
-		 * if (isSaved) { return ResponseEntity.ok("Scheme created successfully."); }
-		 * else { return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).
-		 * body("Failed to create the scheme."); }
-		 */
+    	
     }
 
     
     
-    @RequestMapping(value="/v1/scheme/_search", method = RequestMethod.POST)
-    @ApiOperation(value = "Search Scheme for WMS")
-    public ResponseEntity<SchemeApplicationResponse> v1SchemeSearchPost(@RequestBody RequestInfoWrapper requestInfoWrapper, @Valid @ModelAttribute SchemeApplicationSearchCriteria schemerApplicationSearchCriteria) {
-        List<Scheme> applications = schemeMasterService.searchSchemeApplications(requestInfoWrapper.getRequestInfo(), schemerApplicationSearchCriteria);
+    @RequestMapping(value="/v1/project/_search", method = RequestMethod.POST)
+    @ApiOperation(value = "Search Project for WMS")
+    public ResponseEntity<ProjectApplicationResponse> v1ProjectSearchPost(@RequestBody RequestInfoWrapper requestInfoWrapper, @Valid @ModelAttribute ProjectApplicationSearchCriteria projectApplicationSearchCriteria) {
+        List<Project> applications = projectMasterService.searchProjectApplications(requestInfoWrapper.getRequestInfo(), projectApplicationSearchCriteria);
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true);
-        SchemeApplicationResponse response = SchemeApplicationResponse.builder().schemeApplications(applications).responseInfo(responseInfo).build();
+        ProjectApplicationResponse response = ProjectApplicationResponse.builder().projectApplications(applications).responseInfo(responseInfo).build();
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
-    @RequestMapping(value="/v1/scheme/_update", method = RequestMethod.POST)
-    @ApiOperation(value = "Upadate Scheme for WMS")
+    @RequestMapping(value="/v1/project/_update", method = RequestMethod.POST)
+    @ApiOperation(value = "Upadate Project for WMS")
     //public ResponseEntity<String> v1SchemeUpdatePost(@RequestBody Scheme scheme) {
         //List<SchemeCreationApplication> applications = schemeMasterService.updateBtApplication(birthRegistrationRequest);
-    public ResponseEntity<SchemeApplicationResponse> v1SchemeUpdatePost(@ApiParam(value = "Details for the new Scheme(s) + RequestInfo meta data." ,required=true )  @Valid @RequestBody WMSSchemeRequest schemeRequest) {
-        List<Scheme> applications = schemeMasterService.updateSchemeMaster(schemeRequest);
-        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(schemeRequest.getRequestInfo(), true);
-        SchemeApplicationResponse response = SchemeApplicationResponse.builder().schemeApplications(applications).responseInfo(responseInfo).build();
+    public ResponseEntity<ProjectApplicationResponse> v1ProjectUpdatePost(@ApiParam(value = "Details for the new Project(s) + RequestInfo meta data." ,required=true )  @Valid @RequestBody WMSProjectRequest projectRequest) {
+        List<Project> applications = projectMasterService.updateProjectMaster(projectRequest);
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(projectRequest.getRequestInfo(), true);
+        ProjectApplicationResponse response = ProjectApplicationResponse.builder().projectApplications(applications).responseInfo(responseInfo).build();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
     	
@@ -118,12 +117,12 @@ public class SchemeApiController {
 	 * }
 	 */
     
-    @RequestMapping(value = "/v1/scheme/_view", method = RequestMethod.GET)
-    public ResponseEntity<List<Scheme>> v1SchemeViewGet() {
-        List<Scheme> schemes = schemeMasterService.viewScheme();
+    @RequestMapping(value = "/v1/project/_view", method = RequestMethod.GET)
+    public ResponseEntity<List<Project>> v1ProjectViewGet() {
+        List<Project> projects = projectMasterService.viewProject();
 
-        if (!schemes.isEmpty()) {
-            return ResponseEntity.ok(schemes);
+        if (!projects.isEmpty()) {
+            return ResponseEntity.ok(projects);
         } else {
             return ResponseEntity.notFound().build();
         }
