@@ -239,8 +239,6 @@ import useWSModifyDetailsPage from "./ws/useWSModifyDetailsPage";
 
 import useWmsMDMS from "./wms/useWmsMDMS";
 import useWmsGenderMDMS from "./wms/useWmsGender";
-
-
 import useWmsSorSearch from "./wms/sor/useWmsSorSearch";
 import useWmsSorCount from "./wms/sor/useWmsSorCount";
 import useWmsSorCreate from "./wms/sor/useWmsSorCreate";

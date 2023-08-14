@@ -18,10 +18,9 @@ module.exports = function (app) {
     "/localization",
     "/egov-workflow-v2",
     "/pgr-services",
-    "/wms-service",
+    "/wms-services",
     "/filestore",
     "/egov-hrms",
-    "/egov-wms",
     "/user-otp",
     "/user",
     "/fsm",
@@ -65,7 +64,6 @@ module.exports = function (app) {
     "/inbox/v1/elastic/_search",
     "/fsm-calculator",
     "/service-request",
-    "/wms",
   ].forEach((location) => app.use(location, createProxy));
   ["/pb-egov-assets"].forEach((location) => app.use(location, assetsProxy));
 };

@@ -202,7 +202,7 @@ const WMSService = {
                       userService: true,
                       params: { tenantId },
                     }),
-  }
+  },
 };
 
 export default WMSService;
