@@ -33,7 +33,7 @@ public class ProjectRowMapper implements ResultSetExtractor<List<Project>> {
                         .projectId((long) rs.getLong("sProjectId"))
                         .projectNumber(rs.getString("sProjectNumber"))
                         .sourceOfFund(rs.getString("sSchemeSourceOfFund"))
-                        .schemeNo(rs.getString("sSchemeNo"))
+                        .schemeNo(rs.getLong("sSchemeNo"))
                         .department(rs.getString("sDepartment"))
                         .projectNameEn(rs.getString("sProjectNameEn"))
                         .projectNameReg(rs.getString("sProjectNameReg"))

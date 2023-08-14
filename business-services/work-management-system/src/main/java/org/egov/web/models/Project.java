@@ -27,7 +27,7 @@ public class Project {
 	@JsonProperty("source_of_fund")
 	private String sourceOfFund;
 	@JsonProperty("scheme_no")
-	private String schemeNo;
+	private Long schemeNo;
 	@JsonProperty("department")
 	private String department;
 	/*
@@ -53,6 +53,8 @@ public class Project {
 	private String approvalDate;
 	@JsonProperty("status")
 	private String status;
+	@JsonProperty("tenantid")
+	private String tenantId;
 	
 	
 	
