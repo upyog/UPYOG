@@ -9,6 +9,7 @@ import org.egov.util.IdgenUtil;
 import org.egov.web.models.ScheduleOfRateApplication;
 import org.egov.web.models.WMSSORRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +17,12 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Component
 public class SORApplicationEnrichment {
+	
+	@Value("${egov.idgen.sor.idname}")
+    private String idGenName;
+	
+	@Value("${egov.idgen.sor.idformat}")
+    private String idGenFormat;
 
 	@Autowired
 	private IdgenUtil idgenUtil;
@@ -28,9 +35,9 @@ public class SORApplicationEnrichment {
 	SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
 	String date = simpleDateFormat.format(new Date());
 
-	public void enrichSORApplication(WMSSORRequest wmsSORRequest) {
-		//List<String> birthRegistrationIdList = idgenUtil.getIdList(wmsSORRequest.getRequestInfo(), wmsSORRequest.getScheduleOfRateApplications().get(0).getSorId(), "pj.sor.receipt.id", "", wmsSORRequest.getScheduleOfRateApplications().size());
-        //Integer index = 0;
+	public void enrichSORApplication(WMSSORRequest wmsSORRequest) { 
+		List<String> sorIdList = idgenUtil.getIdList(wmsSORRequest.getRequestInfo(), wmsSORRequest.getScheduleOfRateApplications().get(0).getTenantId(), idGenName, idGenFormat, wmsSORRequest.getScheduleOfRateApplications().size());
+        Integer index = 0;
 		for (ScheduleOfRateApplication application : wmsSORRequest.getScheduleOfRateApplications()) {
 			// Enrich audit details
 //	            AuditDetails auditDetails = AuditDetails.builder().createdBy(birthRegistrationRequest.getRequestInfo().getUserInfo().getUuid()).createdTime(System.currentTimeMillis()).lastModifiedBy(birthRegistrationRequest.getRequestInfo().getUserInfo().getUuid()).lastModifiedTime(System.currentTimeMillis()).build();
@@ -38,7 +45,7 @@ public class SORApplicationEnrichment {
 
 			// Enrich UUID
 			application.setSorId((int) Math.floor(Math.random() * (9999 - 1000 + 1) + 1000));
-			//application.setDescOfItem(birthRegistrationIdList.get(index++));
+			application.setSorName(sorIdList.get(index++));
 			application.setStartDate(date);
 			application.setEndDate(date);
 

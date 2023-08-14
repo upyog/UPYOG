@@ -20,7 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Component
 public class IdgenUtil {
 	
-	 @Value("${egov.idgen.host}")
+	 	@Value("${egov.idgen.host}")
 	    private String idGenHost;
 
 	    @Value("${egov.idgen.path}")
@@ -32,10 +32,10 @@ public class IdgenUtil {
 	    @Autowired
 	    private org.egov.repository.ServiceRequestRepository restRepo;
 
-	    public List<String> getIdList(RequestInfo requestInfo, String projectNumber, Integer sorId, String idName, String idformat, Integer count) {
+	    public List<String> getIdList(RequestInfo requestInfo, String tenantId, String idName, String idformat, Integer count) {
 	        List<IdRequest> reqList = new ArrayList<>();
 	        for (int i = 0; i < count; i++) {
-	            reqList.add(IdRequest.builder().idName(idName).sorId(sorId).projectNumber(projectNumber).format(idformat).build());
+	        	reqList.add(IdRequest.builder().idName(idName).format(idformat).tenantId(tenantId).build());
 	        }
 
 	        IdGenerationRequest request = IdGenerationRequest.builder().idRequests(reqList).requestInfo(requestInfo).build();

@@ -19,13 +19,9 @@ public class IdRequest {
 	 @NotNull
 	 private String idName;
 
-	 @JsonProperty("sorId")
-	  private Integer sorId;
-	 
-	 @JsonProperty("projectNumber")
-	  private String projectNumber;
-	 
-	 
+	 @JsonProperty("tenantId")
+	  private String tenantId;
+	 	 
 	 @JsonProperty("format")
 	    private String format;
 }

@@ -21,8 +21,8 @@ public class WMSSORValidator {
 
 	    public void validateSORApplication(WMSSORRequest wmsSORRequest) {
 	    	wmsSORRequest.getScheduleOfRateApplications().forEach(application -> {
-	            if(ObjectUtils.isEmpty(application.getSorName()))
-	                throw new CustomException("EG_WMS_APP_ERR", "SOR Name is mandatory for creating SOR applications");
+	            if(ObjectUtils.isEmpty(application.getTenantId()))
+	                throw new CustomException("EG_WMS_APP_ERR", "tenantId is mandatory for creating SOR applications");
 	        });
 	    }
 

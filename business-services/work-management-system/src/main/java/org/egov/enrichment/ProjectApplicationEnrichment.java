@@ -33,7 +33,7 @@ public class ProjectApplicationEnrichment {
 	String date = simpleDateFormat.format(new Date());
 
 	public void enrichProjectApplication(WMSProjectRequest wmsProjectRequest) {
-		List<String> projectMasterIdList = idgenUtil.getIdList(wmsProjectRequest.getRequestInfo(), wmsProjectRequest.getProjectApplications().get(0).getProjectNumber(),0, "wms.projectnumber","", wmsProjectRequest.getProjectApplications().size());
+		List<String> projectMasterIdList = idgenUtil.getIdList(wmsProjectRequest.getRequestInfo(), wmsProjectRequest.getProjectApplications().get(0).getProjectNumber(),"wms.projectnumber","", wmsProjectRequest.getProjectApplications().size());
         Integer index = 0;
 		for (Project application : wmsProjectRequest.getProjectApplications()) {
 			// Enrich audit details

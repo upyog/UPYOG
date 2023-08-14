@@ -19,6 +19,9 @@ public class ScheduleOfRateApplication {
 	
 	@JsonProperty("sor_id")
 	private Integer sorId = null;
+	
+	@JsonProperty("tenantId")
+    private String tenantId = null;
 
 	@JsonProperty("sor_name")
 	 private String sorName = null;
