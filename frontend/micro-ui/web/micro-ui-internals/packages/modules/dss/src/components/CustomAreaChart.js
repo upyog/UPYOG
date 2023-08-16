@@ -231,6 +231,7 @@ const CustomAreaChart = ({ xDataKey = "name", yDataKey = getValue, data, setChar
   if (isLoading) {
     return <Loader />;
   }
+  console.log("ggggggggg",chartData,id)
   return (
     <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", height: "100%" }}>
       {(id === "fssmCapacityUtilization"  ||id === "fsmCapacityUtilization"  )&& (
