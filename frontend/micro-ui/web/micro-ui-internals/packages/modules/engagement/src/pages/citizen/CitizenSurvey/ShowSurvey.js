@@ -42,13 +42,16 @@ const ShowSurvey = ({ location }) => {
   // if (mutation.isError) return <div>An error occured...</div>;
 
   //questionid in answers uuid in surveys needs to be matched
-  const answers = selecedSurveyData.Service;
+  const answers = selecedSurveyData.Service[0].attributes;
+  console.log(selecedSurveyData.Service,"eeee")
   answers?.map((element)=>{
-    element.uuid = element.attributes[0].id;
-    element.questionId = element.attributes[0].attributeCode;
-    element.answer = [JSON.parse(element.attributes[0].value)];
-    element.citizenId = element.accountId;
+    console.log(element,"element")
+    element.uuid = element.id;
+    element.questionId = element.attributeCode;
+    element.answer = [JSON.parse(element.value)];
+    element.citizenId = selecedSurveyData.Service.accountId;
   })
+  console.log(answers,"answers")
   const formDefaultValues = {};
   answers?.map((ans) => {
     if (ans?.answer.length === 1) formDefaultValues[ans?.questionId] = ans?.answer[0];
