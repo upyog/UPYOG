@@ -62,7 +62,7 @@ public class ProjectApiController {
     private ResponseInfoFactory responseInfoFactory;
 
     @Autowired
-    public ProjectApiController(ObjectMapper objectMapper, HttpServletRequest request, SchemeMasterService schemeMasterService) {
+    public ProjectApiController(ObjectMapper objectMapper, HttpServletRequest request, ProjectMasterService projectMasterService) {
     	this.objectMapper = objectMapper;
         this.request = request;
         this.projectMasterService = projectMasterService;
