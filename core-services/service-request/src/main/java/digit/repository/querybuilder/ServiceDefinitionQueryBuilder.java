@@ -23,6 +23,7 @@ public class ServiceDefinitionQueryBuilder {
     private static final String AND_QUERY = " AND ";
 
     private static final String IDS_WRAPPER_QUERY = " SELECT id FROM ({HELPER_TABLE}) temp ";
+    public static final String SURVEY_COUNT_WRAPPER = " SELECT COUNT(id) FROM ({INTERNAL_QUERY}) AS count ";
     private final String ORDERBY_CREATEDTIME = " ORDER BY sd.createdtime DESC ";
 
     public String getServiceDefinitionsIdsQuery(ServiceDefinitionSearchRequest serviceDefinitionSearchRequest, List<Object> preparedStmtList) {
@@ -70,19 +71,22 @@ public class ServiceDefinitionQueryBuilder {
         query.append(ORDERBY_CREATEDTIME);
 
         // Pagination to limit results
-        System.out.println("Pagination before::");
-    	System.out.println(serviceDefinitionSearchRequest.getPagination());
-        if(ObjectUtils.isEmpty(serviceDefinitionSearchRequest.getPagination())){
-            System.out.println("here");
-            prepareDefaultPaginationObject(serviceDefinitionSearchRequest);
+        // do not paginate query in case of count call.
+        if(!criteria.getIsCountCall()){
+            if(ObjectUtils.isEmpty(serviceDefinitionSearchRequest.getPagination())){
+                prepareDefaultPaginationObject(serviceDefinitionSearchRequest);
+            }
+            addPagination(query, preparedStmtList, serviceDefinitionSearchRequest.getPagination());
         }
-        System.out.println("Pagination after::");
-    	System.out.println(serviceDefinitionSearchRequest.getPagination());
-        addPagination(query, preparedStmtList, serviceDefinitionSearchRequest.getPagination());
 
         return IDS_WRAPPER_QUERY.replace("{HELPER_TABLE}", query.toString());
     }
 
+    public String getSurveyCountQuery(ServiceDefinitionSearchRequest criteria, List<Object> preparedStmtList) {
+        String query = getServiceDefinitionsIdsQuery(criteria, preparedStmtList);
+        return SURVEY_COUNT_WRAPPER.replace("{INTERNAL_QUERY}", query);
+    }
+    
     private void prepareDefaultPaginationObject(ServiceDefinitionSearchRequest serviceDefinitionSearchRequest) {
         Pagination pagination = new Pagination();
         pagination.setOffset(config.getDefaultOffset());

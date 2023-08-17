@@ -4,6 +4,7 @@ import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.ArrayList;
@@ -45,6 +46,9 @@ public class ServiceDefinitionCriteria {
 
     @JsonProperty("clientId")
     private String clientId = null;
+
+    @JsonIgnore
+    private Boolean isCountCall = false;
 
     public ServiceDefinitionCriteria addIdsItem(String idsItem) {
         if (this.ids == null) {

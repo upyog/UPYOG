@@ -95,7 +95,7 @@ public class ServiceDefinitionRequestService {
 
         users = mapper.convertValue(serviceRequestRepository.fetchResult(userUri, userSearchRequest), UserResponse.class).getUser();
 			
-        log.info("users"+ users);
+        log.info("users", users);
         // listOfServiceDefinitions.forEach(serviceDefinition -> {
         //     String id = serviceDefinition.getClientId();
         //     users.forEach(user ->{
@@ -123,6 +123,14 @@ public class ServiceDefinitionRequestService {
     	producer.push(config.getServiceDefinitionUpdateTopic(), serviceDefinitionRequest);
 
         return serviceDefinition;
+    }
+    
+    /**
+     * Fetches total count of surveys in the system based on the search criteria
+     * @param criteria Survey search criteria
+     */
+    public Integer countTotalSurveys(ServiceDefinitionSearchRequest serviceDefinitionSearchRequest) {
+        return serviceDefinitionRequestRepository.fetchTotalSurveyCount(serviceDefinitionSearchRequest);
     }
 
 }
