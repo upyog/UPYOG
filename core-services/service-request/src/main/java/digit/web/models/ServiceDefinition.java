@@ -30,7 +30,7 @@ import lombok.Builder;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ServiceDefinition {
+public class ServiceDefinition implements Comparable<ServiceDefinition> {
     @JsonProperty("id")
     @Size(min = 2, max = 64)
     private String id = null;
@@ -74,6 +74,12 @@ public class ServiceDefinition {
     public ServiceDefinition addAttributesItem(AttributeDefinition attributesItem) {
         this.attributes.add(attributesItem);
         return this;
+    }
+
+    // for sorting response according to create time
+    @Override
+    public int compareTo(ServiceDefinition other) {
+        return Long.compare(this.auditDetails.getCreatedTime(), other.auditDetails.getCreatedTime());
     }
 
 }

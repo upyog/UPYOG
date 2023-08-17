@@ -14,6 +14,8 @@ import lombok.extern.slf4j.Slf4j;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -104,7 +106,7 @@ public class ServiceDefinitionRequestService {
         // });
 
         
-
+        Collections.sort(listOfServiceDefinitions);
         return listOfServiceDefinitions;
     }
 
