@@ -95,6 +95,25 @@ public class PropertyController {
     @PostMapping("/_update")
     public ResponseEntity<PropertyResponse> update(@Valid @RequestBody PropertyRequest propertyRequest) {
 
+    	for(OwnerInfo owner:propertyRequest.getProperty().getOwners())
+    	{
+    		if(!owner.getOwnerType().equals("NONE"))
+    		{
+    			for(Document document:owner.getDocuments())
+    				if(document.getDocumentType().contains("OWNER.SPECIALCATEGORYPROOF"))
+    				{
+    					PropertyCriteria propertyCriteria=new PropertyCriteria();
+    					propertyCriteria.setTenantId(owner.getTenantId());
+    					propertyCriteria.setDocumentNumbers(new HashSet<>(Arrays.asList(document.getDocumentUid())));
+    					List<Property> properties=propertyService.searchProperty(propertyCriteria,propertyRequest.getRequestInfo());
+    					if(!properties.isEmpty())
+    						throw new CustomException(null,"Document numbers added in Owner Information is already present in the system.");
+ 
+    				}
+    				
+    		}
+    	}
+ 
         Property property = propertyService.updateProperty(propertyRequest);
         ResponseInfo resInfo = responseInfoFactory.createResponseInfoFromRequestInfo(propertyRequest.getRequestInfo(), true);
         PropertyResponse response = PropertyResponse.builder()
