@@ -3,6 +3,7 @@ package org.egov.pt.web.controllers;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -10,6 +11,8 @@ import javax.validation.Valid;
 
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.pt.config.PropertyConfiguration;
+import org.egov.pt.models.Document;
+import org.egov.pt.models.OwnerInfo;
 import org.egov.pt.models.Property;
 import org.egov.pt.models.PropertyCriteria;
 import org.egov.pt.models.oldProperty.OldPropertyCriteria;
@@ -61,6 +64,24 @@ public class PropertyController {
     @PostMapping("/_create")
     public ResponseEntity<PropertyResponse> create(@Valid @RequestBody PropertyRequest propertyRequest) {
 
+    	for(OwnerInfo owner:propertyRequest.getProperty().getOwners())
+    	{
+    		if(!owner.getOwnerType().equals("NONE"))
+    		{
+    			for(Document document:owner.getDocuments())
+    				if(document.getDocumentType().contains("OWNER.SPECIALCATEGORYPROOF"))
+    				{
+    					PropertyCriteria propertyCriteria=new PropertyCriteria();
+    					propertyCriteria.setTenantId(owner.getTenantId());
+    					propertyCriteria.setDocumentNumbers(new HashSet<>(Arrays.asList(document.getDocumentUid())));
+    					List<Property> properties=propertyService.searchProperty(propertyCriteria,propertyRequest.getRequestInfo());
+    					if(!properties.isEmpty())
+    						throw new CustomException(null,"Document numbers added in Owner Information is already present in the system.");
+ 
+    				}
+    				
+    		}
+    	}
         Property property = propertyService.createProperty(propertyRequest);
         ResponseInfo resInfo = responseInfoFactory.createResponseInfoFromRequestInfo(propertyRequest.getRequestInfo(), true);
         PropertyResponse response = PropertyResponse.builder()
