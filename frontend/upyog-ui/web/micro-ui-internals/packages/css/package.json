@@ -13,7 +13,7 @@
     "start": "gulp build",
     "build:prod": "NODE_ENV=production gulp build",
     "prepublish": "yarn build:prod",
-    "deploy": "gulp && cp -R svg example && cp -R img example && gh-pages -d example"
+    "deploy": "gulp && cp -R svg work-management-system && cp -R img work-management-system && gh-pages -d work-management-system"
   },
   "browserslist": [
     "> 3%",

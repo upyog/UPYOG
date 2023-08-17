@@ -3,6 +3,8 @@ import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useRouteMatch } from "react-router-dom";
 import CitizenApp from "./pages/citizen";
+import Home from "./pages/citizen/Home";
+
 import Create from "./pages/citizen/SOR/Create/index";
 import EmployeeApp from "./pages/employee";
 import WmsSorChapter from "./pageComponents/SOR/WmsSorChapter";
@@ -12,18 +14,20 @@ import WMSSelectGender from "./pageComponents/WMSSelectGender";
 import WMSSelectEmailId from "./pageComponents/WMSSelectEmailId";
 import WMSSelectPincode from "./pageComponents/WMSSelectPincode";
 import WmsSelectAddress from "./pageComponents/WMSSelectAddress";
-import SelectCorrespondenceAddress from "./pageComponents/WMSSelectCorrespondenceAddress";
-import WMSCard from "./components/config/WMSCard";
+import SelectCorrespondenceAddress from "./pageComponents/SOR/WmsCorrospondenceAddress";
+import WMSCard from "./components/WmsCard";
 /* import WMSManageApplication from "./pages/employee/WMSManageApplication";*/
 import RegisterDetails from "./pages/employee/RegisterDetails"; 
-import Response from "./pages/citizen/SOR/Create/Response";
+import Response from "./pages/citizen/SOR/Response";
 import WmsSorId from "./pageComponents/SOR/WmsSorId";
+import WmsSorUpdate from "./pages/citizen/SOR/Update";
+import WmsSorCreate from "./pages/citizen/SOR/Create";
 
 const componentsToRegister = {
  Response,
    RegisterDetails,
  /* WMSManageApplication,*/
-  WMSCard,
+  WMSCard,  
   SelectCorrespondenceAddress,
   WmsSelectAddress,
   WMSSelectPincode,
@@ -32,7 +36,9 @@ const componentsToRegister = {
   WMSSelectPhoneNumber, 
   WmsSorChapter,
   WmsSorDescriptionOfItem,
-  WMSCreate : Create,
+  Home:Home,
+  WmsSorCreate : WmsSorCreate,
+  WmsSorUpdate : WmsSorUpdate,
   WmsSorId
 };
 
@@ -57,21 +63,21 @@ export const WMSLinks = ({ matchPath, userType }) => {
   const links = [
   
     {
-      link: `${matchPath}/sor`,
-      i18nKey: t("Create SOR"),
+      link: `${matchPath}/sor/home`,
+      i18nKey: t("SOR_HOME"),
     },
     {
-      link: `${matchPath}/sor/:WmsSorId`,
-      i18nKey: t("Update SOR"),
+      link: `${matchPath}/prjmst/home`,
+      i18nKey: t("PRJMST_HOME"),
     },
-   
   ];
 
-  return <CitizenHomeCard header={t("SchedulesOfRate")} links={links} Icon={() => <PTIcon className="fill-path-primary-main" />} />;
+  return <CitizenHomeCard header={t("CITIZEN_SERVICE_WMS")} links={links} Icon={() => <PTIcon className="fill-path-primary-main" />} />;
 };
 
 export const initWMSComponents = () => {
   Object.entries(componentsToRegister).forEach(([key, value]) => {
+    console.log(key);
     Digit.ComponentRegistryService.setComponent(key, value);
   });
 };

@@ -63,6 +63,7 @@ const Home = ({
             a[b.parentModule] = a[b.parentModule]?.length > 0 ? [b, ...a[b.parentModule]] : [b];
             return a;
           }, {});
+        console.log(formattedData);
         Object.keys(formattedData).forEach(key => {
           const value = formattedData[key];
           value.map((item) => {
@@ -99,6 +100,7 @@ const Home = ({
   });
 
   const ModuleLevelLinkHomePages = modules.map(({ code, bannerImage }, index) => {
+    
     let Links = Digit.ComponentRegistryService.getComponent(`${code}Links`) || (() => <React.Fragment />);
     let mdmsDataObj = isLinkDataFetched ? processLinkData(linkData, code, t) : undefined;
 

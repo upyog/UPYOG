@@ -2,9 +2,9 @@ import { FormComposer, Loader } from "@egovernments/digit-ui-react-components";
 import React, {  useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
-import { newConfig } from "../../../../components/config/config";
+import { newConfig } from "../../../../components/config";
 
-const Create = () => {
+const WmsSorCreate = () => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const { t } = useTranslation();
   const history = useHistory();
@@ -66,4 +66,4 @@ const Create = () => {
   );
 };
 
-export default Create;
+export default WmsSorCreate;

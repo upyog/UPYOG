@@ -224,10 +224,10 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
       }
     });
      menuItems= menuItems.map((item,index) =>{
-      console.log("item",item)
+      //console.log("item",item)
       if(item.hasOwnProperty("link"))
       {
-        console.log("itemee",item,index)
+        //console.log("itemee",item,index)
         item.link = item.link.replace("digit-ui", "upyog-ui");
       }
       
