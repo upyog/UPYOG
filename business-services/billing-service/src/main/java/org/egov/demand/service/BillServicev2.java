@@ -51,6 +51,7 @@ import static org.egov.demand.util.Constants.URL_PARAM_SEPERATOR;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
@@ -159,6 +160,9 @@ public class BillServicev2 {
 	private String notifTopicName;
 	
 	private static List<String> ownerPlainRequestFieldsList;
+	
+	
+	private List<String> ADVANCE_ALLOWED_BUSINESS_SERVICES=Arrays.asList("WS","SW");
 	
 	/**
 	 * Cancell bill operation can be carried by this method, based on consumerCodes
@@ -489,7 +493,7 @@ public class BillServicev2 {
 					billAmount = billAmount.add(billDetail.getAmount());
 				}
 				
-				if (billAmount.compareTo(BigDecimal.ZERO) >= 0) {
+				if ((billAmount.compareTo(BigDecimal.ZERO) >= 0) || (billAmount.compareTo(BigDecimal.ZERO) < 0 && ADVANCE_ALLOWED_BUSINESS_SERVICES.contains(demands.get(0).getBusinessService()))) {
 
 					BillV2 bill = BillV2.builder()
 						.auditDetails(util.getAuditDetail(requestInfo))

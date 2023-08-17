@@ -250,7 +250,7 @@ public class PropertyQueryBuilder {
 
 		if(!CollectionUtils.isEmpty(documentNumberList)){
 			addClauseIfRequired(preparedStmtList, builder);
-			builder.append(" owndoc.status='ACTIVE' and owndoc.documentuid  IN ( ").append(createQuery(documentNumberList)).append(" )");
+			builder.append(" property.status='ACTIVE' and owndoc.status='ACTIVE' and owndoc.documentuid  IN ( ").append(createQuery(documentNumberList)).append(" )");
 			addToPreparedStatement(preparedStmtList, documentNumberList);
 		}
 		
