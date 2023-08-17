@@ -235,7 +235,13 @@ public class BillServicev2 {
 		 * If no existing bills found then Generate new bill 
 		 */
 		if (CollectionUtils.isEmpty(bills))
+		{
+			log.info( "If bills are empty" +bills.size());
+			if(!billCriteria.getBusinessService().equalsIgnoreCase("WS") && !billCriteria.getBusinessService().equalsIgnoreCase("SW"))
+			updateDemandsForexpiredBillDetails(billCriteria.getBusinessService(), billCriteria.getConsumerCode(), billCriteria.getTenantId(), requestInfoWrapper);
 			return generateBill(billCriteria, requestInfo);
+		}
+		
 		
 		/*
 		 * Adding consumer-codes of unbilled demands to generate criteria
@@ -369,17 +375,31 @@ public class BillServicev2 {
 		if (billCriteria.getConsumerCode() != null)
 			consumerCodes.addAll(billCriteria.getConsumerCode());
 
-		DemandCriteria demandCriteria = DemandCriteria.builder()
+		DemandCriteria demandCriteria=new DemandCriteria();
+		if(billCriteria.getBusinessService().equalsIgnoreCase("WS") || billCriteria.getBusinessService().equalsIgnoreCase("SW"))
+			demandCriteria = DemandCriteria.builder()
 				.status(org.egov.demand.model.Demand.StatusEnum.ACTIVE.toString())
 				.businessService(billCriteria.getBusinessService())
 				.mobileNumber(billCriteria.getMobileNumber())
 				.tenantId(billCriteria.getTenantId())
 				.email(billCriteria.getEmail())
 				.consumerCode(consumerCodes)
-				.isPaymentCompleted(false)
+				//.isPaymentCompleted(false)
 				.receiptRequired(false)
 				.demandId(demandIds)
 				.build();
+		else
+			demandCriteria = DemandCriteria.builder()
+			.status(org.egov.demand.model.Demand.StatusEnum.ACTIVE.toString())
+			.businessService(billCriteria.getBusinessService())
+			.mobileNumber(billCriteria.getMobileNumber())
+			.tenantId(billCriteria.getTenantId())
+			.email(billCriteria.getEmail())
+			.consumerCode(consumerCodes)
+			.isPaymentCompleted(false)
+			.receiptRequired(false)
+			.demandId(demandIds)
+			.build();
 		
 
 		/* Fetching demands for the given bill search criteria */
@@ -437,7 +457,8 @@ public class BillServicev2 {
 	 */
 	private List<BillV2> prepareBill(List<Demand> demands, RequestInfo requestInfo) {
 
-		
+		log.info("Demand received in prepare Bill are of size "+ demands.size() );
+		log.info("Demands are::"+demands);
 		List<BillV2> bills = new ArrayList<>();
 		User payer = null != demands.get(0).getPayer() ? demands.get(0).getPayer() : new User();
 		if (payer.getUuid() != null)
