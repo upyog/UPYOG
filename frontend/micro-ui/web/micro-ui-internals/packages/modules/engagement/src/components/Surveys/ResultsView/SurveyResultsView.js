@@ -17,7 +17,7 @@ const transformDate = (date) => {
 ]
     return {
         day,
-        date:`${monthNames[month-1]} ${year}`
+        date:date?`${monthNames[month-1]} ${year}`:date
     }
     // return (<p>
     //     <strong>{`${monthNames[month-1]} ${year} ${day}`}</strong>
