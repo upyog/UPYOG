@@ -163,6 +163,7 @@ public class PropertyQueryBuilder {
 					&& null == criteria.getName()
 					&& null == criteria.getDoorNo()
 					&& null == criteria.getOldPropertyId()
+					&& null == criteria.getDocumentNumbers()
 					&& (null == criteria.getFromDate() && null == criteria.getToDate())
 					&& CollectionUtils.isEmpty(criteria.getCreationReason());
 		
@@ -243,6 +244,14 @@ public class PropertyQueryBuilder {
 			addClauseIfRequired(preparedStmtList, builder);
 			builder.append("property.creationreason IN ( ").append(createQuery(creationReasonsList)).append(" )");
 			addToPreparedStatement(preparedStmtList, creationReasonsList);
+		}
+		
+		Set<String> documentNumberList = criteria.getDocumentNumbers();
+
+		if(!CollectionUtils.isEmpty(documentNumberList)){
+			addClauseIfRequired(preparedStmtList, builder);
+			builder.append(" owndoc.status='ACTIVE' and owndoc.documentuid  IN ( ").append(createQuery(documentNumberList)).append(" )");
+			addToPreparedStatement(preparedStmtList, documentNumberList);
 		}
 		
 		if (null != criteria.getLocality()) {

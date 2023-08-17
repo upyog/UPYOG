@@ -57,6 +57,8 @@ public class PropertyCriteria {
 
 	private Set<String> creationReason;
 	
+	private Set<String> documentNumbers;
+	
 	@Builder.Default
 	private Boolean isSearchInternal = false;
 
