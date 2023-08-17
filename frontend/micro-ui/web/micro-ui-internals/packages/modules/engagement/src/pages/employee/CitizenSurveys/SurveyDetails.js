@@ -244,8 +244,6 @@ const SurveyDetails = ({ location, match }) => {
       }
     };
 
-    console.log(details,"details oooo")
-
     try{
       let filters = {tenantIds : tenantIds[0]?.code ? tenantIds[0]?.code : surveyData.tenantId.code, title : title}
       Digit.Surveys.search(filters).then((ob) => {
@@ -288,7 +286,7 @@ const SurveyDetails = ({ location, match }) => {
         
       }
     };
-    history.push("/digit-ui/employee/engagement/surveys/update-response", details);
+    history.push("/digit-ui/employee/engagement/surveys/delete-response", details);
   };
 
   //if we don't send tenantId it violates the not null constraint in the backend...
