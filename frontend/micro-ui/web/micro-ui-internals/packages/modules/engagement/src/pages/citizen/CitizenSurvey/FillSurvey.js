@@ -20,7 +20,7 @@ const transformSurveyResponseData = (data,surveyData) => {
   for (const key in data) {
     questions.push({
       attributeCode: key,
-      value: JSON.stringify(data[key]),
+      value:data[key]===""? "\"NA\"":JSON.stringify(data[key]) || "\"\"" ,
       additionalDetails: {
         questionId: getQuestionID(key,surveyData)
       }
@@ -32,7 +32,6 @@ const transformSurveyResponseData = (data,surveyData) => {
 const getQuestionID = (key,surveyData) =>{
   let questionId = "";
   surveyData.attributes.map((ele)=>{
-    console.log(ele.additionalDetails.code,"ssss")
     if (ele.code === key){
       questionId = ele.id
     }
@@ -81,6 +80,7 @@ const FillSurvey = ({ location }) => {
   const onSubmit = (data) => {
     const user = Digit.UserService.getUser();
     console.log(surveyData,"surveyData");
+    console.log(data,"data")
 
     const details = {
       // AnswerEntity: {
@@ -104,7 +104,6 @@ const FillSurvey = ({ location }) => {
     history.push("/digit-ui/citizen/engagement/surveys/submit-response", details);
   };
 
-  console.log(surveyDataOld,"sad ooo")
 
   if(Object.keys(surveyData)?.length > 0 || isLoadingSurveys)
   return <CitizenSurveyDisplayForm surveyData={surveyData} isSubmitDisabled={showToast? true : false} isLoading={isLoading} onFormSubmit={onSubmit} formDisabled={showToast? true : false} showToast={showToast} />;
