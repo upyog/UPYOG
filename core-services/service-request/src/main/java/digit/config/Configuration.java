@@ -63,4 +63,10 @@ public class Configuration {
     @Value("${egov.max.string.input.size}")
     private Integer maxStringInputSize;
 
+    @Value("${user.service.hostname}")
+	private String userServiceHostName;
+
+	@Value("${user.service.searchpath}")
+	private String userServiceSearchPath;
+
 }

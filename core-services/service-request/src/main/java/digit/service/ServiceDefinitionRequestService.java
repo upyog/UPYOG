@@ -8,10 +8,17 @@ import digit.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import digit.repository.ServiceRequestRepository;
+import lombok.extern.slf4j.Slf4j;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+@Slf4j
 @Service
 public class ServiceDefinitionRequestService {
 
@@ -29,6 +36,12 @@ public class ServiceDefinitionRequestService {
 
     @Autowired
     private Configuration config;
+
+    @Autowired
+	private ObjectMapper mapper;
+
+    @Autowired
+    private ServiceRequestRepository serviceRequestRepository;
 
     public ServiceDefinition createServiceDefinition(ServiceDefinitionRequest serviceDefinitionRequest) {
 
@@ -52,6 +65,7 @@ public class ServiceDefinitionRequestService {
     public List<ServiceDefinition> searchServiceDefinition(ServiceDefinitionSearchRequest serviceDefinitionSearchRequest){
 
         List<ServiceDefinition> listOfServiceDefinitions = serviceDefinitionRequestRepository.getServiceDefinitions(serviceDefinitionSearchRequest);
+        List<User> users = null;
 
         if(CollectionUtils.isEmpty(listOfServiceDefinitions))
             return new ArrayList<>();
@@ -60,6 +74,36 @@ public class ServiceDefinitionRequestService {
             // Restore attribute values to native state
             enrichmentService.setAttributeDefinitionValuesBackToNativeState(serviceDefinition);
         });
+
+        // serch user from client id and enrich the posted by variable.
+        Set<String> clientIds = new HashSet<>();
+
+        // prepare a set of uuids from servicedefinitionrequest to send to user search request
+        listOfServiceDefinitions.forEach(serviceDefinition -> {
+            if (serviceDefinition.getClientId() != null)
+			    clientIds.add(serviceDefinition.getClientId());
+        });
+
+        UserSearchRequest userSearchRequest = null;
+        String userUri = config.getUserServiceHostName()
+				.concat(config.getUserServiceSearchPath());
+
+        userSearchRequest = UserSearchRequest.builder().requestInfo(serviceDefinitionSearchRequest.getRequestInfo())
+					.uuid(clientIds).build();
+
+        users = mapper.convertValue(serviceRequestRepository.fetchResult(userUri, userSearchRequest), UserResponse.class).getUser();
+			
+        log.info("users"+ users);
+        // listOfServiceDefinitions.forEach(serviceDefinition -> {
+        //     String id = serviceDefinition.getClientId();
+        //     users.forEach(user ->{
+        //     if(user.getUuid().equals(id)){
+                
+        //     }
+        // });
+        // });
+
+        
 
         return listOfServiceDefinitions;
     }

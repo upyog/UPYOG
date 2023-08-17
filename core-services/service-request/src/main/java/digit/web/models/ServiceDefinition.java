@@ -44,6 +44,9 @@ public class ServiceDefinition {
     @Size(min = 2, max = 64)
     private String code = null;
 
+    @JsonProperty("postedBy")
+    private String postedBy = null;
+
     @JsonProperty("module")
     @NotNull
     @Size(min = 2, max = 64)
