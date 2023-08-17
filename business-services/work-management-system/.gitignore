@@ -26,5 +26,5 @@
 # Text File #
 *.txt
 
-settings/
-target/
+*.MF
+*.lst
