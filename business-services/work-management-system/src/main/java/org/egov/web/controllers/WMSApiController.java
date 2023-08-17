@@ -36,7 +36,7 @@ import lombok.extern.slf4j.Slf4j;
 @ToString
 @RestController
 @RequestMapping("/work-management-service")
-@Api(tags = "Work Management System")
+@Api(tags = "State Schedule Rates Master ")
 public class WMSApiController{
 
     private final ObjectMapper objectMapper;

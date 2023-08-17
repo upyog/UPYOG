@@ -175,7 +175,43 @@ serviceMaps:
             - jsonPath: $.SchemeApplication.*.project_id
 
        
-      
+    - version: 1.0
+      description: Persists WMS Work details in tables
+      fromTopic: save-work-application
+      isTransaction: true
+      queryMaps:
+        - query: INSERT INTO work(work_id,project_id,work_no,work_name,project_name,department_name,work_type,work_category,work_subtype,project_phase,deviation_percent,start_location,end_location,financial_year,budget_head) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+          basePath: WMSWorkApplication.*
+          jsonMaps:
+            - jsonPath: $.WMSWorkApplication.*.work_id
+
+            - jsonPath: $.WMSWorkApplication.*.project_id
+           
+            - jsonPath: $.WMSWorkApplication.*.work_no
+            
+            - jsonPath: $.WMSWorkApplication.*.work_name
+
+            - jsonPath: $.WMSWorkApplication.*.project_name
+            
+            - jsonPath: $.WMSWorkApplication.*.department_name
+            
+            - jsonPath: $.WMSWorkApplication.*.work_type
+            
+            - jsonPath: $.WMSWorkApplication.*.work_category
+            
+            - jsonPath: $.WMSWorkApplication.*.work_subtype   
+            
+            - jsonPath: $.WMSWorkApplication.*.project_phase
+            
+            - jsonPath: $.WMSWorkApplication.*.deviation_percent
+            
+            - jsonPath: $.WMSWorkApplication.*.start_location
+            
+            - jsonPath: $.WMSWorkApplication.*.end_location
+            
+            - jsonPath: $.WMSWorkApplication.*.financial_year
+            
+            - jsonPath: $.WMSWorkApplication.*.budget_head   
       
  
 
