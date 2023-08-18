@@ -5,7 +5,7 @@
   "workspaces": [
     "packages/libraries",
     "packages/css",
-    "example",
+    "work-management-system",
     "packages/react-components",
     "packages/modules/common",
     "packages/modules/core",
@@ -51,7 +51,7 @@
     "dev:wms": "cd packages/modules/wms && yarn start",
     "dev:bills": "cd packages/modules/bills && yarn start",
     "dev:reports": "cd packages/modules/reports && yarn start",
-    "dev:example": "cd example && yarn start",
+    "dev:wmsMain": "cd work-management-system && yarn start",
     "build": "run-p build:**",
     "build:libraries": "cd packages/libraries && yarn build",
     "build:components": "cd packages/react-components && yarn build",

@@ -6,11 +6,12 @@ import { useTranslation } from "react-i18next";
 
 
 
-const App = () => {
+const CitizenApp = () => {
   const { path, url, ...match } = useRouteMatch();
   const { t } = useTranslation();
 
-  const Create = Digit?.ComponentRegistryService?.getComponent("WmsSorCreate");
+  const WmsSorCreate = Digit?.ComponentRegistryService?.getComponent("WmsSorCreate");
+  const WmsSorUpdate = Digit?.ComponentRegistryService?.getComponent("WmsSorUpdate");
   const Response = Digit?.ComponentRegistryService?.getComponent("Response");
   
   return (
@@ -19,7 +20,8 @@ const App = () => {
         <AppContainer>
         <BackButton>Back</BackButton> 
         
-          <PrivateRoute path={`${path}/sor`} component={Create} />
+          <PrivateRoute path={`${path}/sor/create`} component={WmsSorCreate} />
+          <PrivateRoute path={`${path}/sor/update/:id`} component={WmsSorUpdate} />
           <PrivateRoute path={`${path}/response`} component={Response} />
         </AppContainer>
       </Switch>
@@ -27,4 +29,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default CitizenApp;

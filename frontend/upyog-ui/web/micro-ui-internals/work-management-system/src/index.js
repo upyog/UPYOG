@@ -29,7 +29,7 @@ import { initBillsComponents, BillsModule } from "@egovernments/digit-ui-module-
 
 // import { PGRModule, PGRLinks } from "@egovernments/digit-ui-module-pgr";
 // import { Body, TopBar } from "@egovernments/digit-ui-react-components";
-import "@upyog-niua/upyog-css/example/index.css";
+import "@upyog-niua/upyog-css/work-management-system/index.css";
 
 // import * as comps from "@egovernments/digit-ui-react-components";
 

@@ -36,10 +36,8 @@ const Home = () => {
       onClick: () => history.push("/digit-ui/citizen/all-services"),
     },
     options: [
-     
-     
       {
-        name: t("SOR Application"),
+        name: t("WMS_HOME"),
         Icon: <WMSIcon />,
         onClick: () => history.push("/digit-ui/citizen/wms-home"),
       },

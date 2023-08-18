@@ -12,23 +12,27 @@ const WMSCard = () => {
    
     const propsForModuleCard = {
         Icon : <PersonIcon/>,
-        moduleName: t("Birth Registration"),
+        moduleName: t("CITIZEN_SERVICE_WMS"),
         kpis: [
             {
                 // count:  isLoading ? "-" : data?.EmployeCount?.totalEmployee,
-                label: t("TOTAL Application"),
-                link: `/digit-ui/employee/br/Inbox`
+                label: t("WMS_COMMON_INBOX"),
+                link: `/digit-ui/employee/wms/Inbox`
             },
          
         ],
         links: [
             {
-                label: t("Inbox"),
-                link: `/digit-ui/employee/br/Inbox`
+                label: t("WMS_SOR_INBOX"),
+                link: `/digit-ui/employee/wms/sor/Inbox`
             },
             {
-                label: t("Create SOR Application"),
-                link: `/digit-ui/citizen/br/birth`
+                label: t("WMS_SCHEDULE_MASTER_INBOX"),
+                link: `/digit-ui/citizen/wms/sdlmst/Inbox`
+            },
+            {
+                label: t("WMS_PROJECT_MASTER_INBOX"),
+                link: `/digit-ui/citizen/wms/prjmst/Inbox`
             }           
         ]
     }

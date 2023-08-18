@@ -7,7 +7,7 @@ const cleanCSS = require("gulp-clean-css");
 const rename = require("gulp-rename");
 const livereload = require("gulp-livereload");
 
-let output = "./example";
+let output = "./work-management-system";
 if (process.env.NODE_ENV === "production") {
   output = "./dist";
 }
