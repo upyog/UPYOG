@@ -22,8 +22,8 @@ public class WMSSchemeValidator {
 
 	    public void validateSchemeApplication(WMSSchemeRequest wmsSchemeRequest) {
 	    	wmsSchemeRequest.getSchemeApplications().forEach(application -> {
-	            if(ObjectUtils.isEmpty(application.getSchemeNameEn()))
-	                throw new CustomException("EG_WMSScheme_APP_ERR", "Scheme Name is mandatory for creating Scheme applications");
+	            if(ObjectUtils.isEmpty(application.getTenantId()))
+	                throw new CustomException("EG_WMSScheme_APP_ERR", "tenantId is mandatory for creating Scheme applications");
 	        });
 	    }
 

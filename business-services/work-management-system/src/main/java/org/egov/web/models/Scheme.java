@@ -23,7 +23,8 @@ public class Scheme {
 	
 	@JsonProperty("scheme_id")
     private Long id;
-	
+	@JsonProperty("tenantId")
+    private String tenantId = null;
 	@JsonProperty("start_date")
     private String startDate;
 	@JsonProperty("end_date")

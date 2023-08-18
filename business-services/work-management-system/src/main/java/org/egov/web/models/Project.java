@@ -3,6 +3,11 @@ package org.egov.web.models;
 import java.time.LocalDate;
 import java.util.Date;
 
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AllArgsConstructor;
@@ -53,8 +58,12 @@ public class Project {
 	private String approvalDate;
 	@JsonProperty("status")
 	private String status;
-	@JsonProperty("tenantid")
-	private String tenantId;
+	@JsonProperty("tenantId")
+	private String tenantId = null;
+	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	  @JoinColumn(name = "scheme_id", nullable = false)
+	  @JsonIgnore
+	  private Scheme scheme;
 	
 	
 	

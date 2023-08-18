@@ -13,6 +13,7 @@ import org.egov.web.models.Scheme;
 import org.egov.web.models.WMSProjectRequest;
 import org.egov.web.models.WMSSchemeRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +21,13 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Component
 public class ProjectApplicationEnrichment {
+	
+	
+	@Value("${egov.idgen.proj.idname}")
+    private String idGenName;
+	
+	@Value("${egov.idgen.proj.idformat}")
+    private String idGenFormat;
 
 	@Autowired
 	private IdgenUtil idgenUtil;
@@ -33,7 +41,7 @@ public class ProjectApplicationEnrichment {
 	String date = simpleDateFormat.format(new Date());
 
 	public void enrichProjectApplication(WMSProjectRequest wmsProjectRequest) {
-		List<String> projectMasterIdList = idgenUtil.getIdList(wmsProjectRequest.getRequestInfo(), wmsProjectRequest.getProjectApplications().get(0).getTenantId(),"wms.projectnumber","", wmsProjectRequest.getProjectApplications().size());
+		List<String> projectMasterIdList = idgenUtil.getIdList(wmsProjectRequest.getRequestInfo(), wmsProjectRequest.getProjectApplications().get(0).getTenantId(),idGenName, idGenFormat, wmsProjectRequest.getProjectApplications().size());
         Integer index = 0;
 		for (Project application : wmsProjectRequest.getProjectApplications()) {
 			// Enrich audit details

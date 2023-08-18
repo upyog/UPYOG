@@ -23,8 +23,8 @@ public class WMSProjectValidator {
 
 	    public void validateProjectApplication(WMSProjectRequest wmsProjectRequest) {
 	    	wmsProjectRequest.getProjectApplications().forEach(application -> {
-	            if(ObjectUtils.isEmpty(application.getProjectNameEn()))
-	                throw new CustomException("EG_WMSProject_APP_ERR", "Project Name is mandatory for creating Project applications");
+	            if(ObjectUtils.isEmpty(application.getTenantId()))
+	                throw new CustomException("EG_WMSProject_APP_ERR", "tenantId is mandatory for creating Project applications");
 	        });
 	    }
 
