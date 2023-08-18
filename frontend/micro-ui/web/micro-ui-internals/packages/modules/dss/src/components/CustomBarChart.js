@@ -7,7 +7,7 @@ import FilterContext from "./FilterContext";
 import NoData from "./NoData";
 import { checkCurrentScreen } from "./DSSCard";
 
-const formatValue = (value, symbol) => {
+const formatValue = (value, symbol,type) => {
   if (symbol?.toLowerCase() === "percentage") {
     /*   Removed by  percentage formatter.
     const Pformatter = new Intl.NumberFormat("en-IN", { maximumSignificantDigits: 3 });
@@ -15,11 +15,17 @@ const formatValue = (value, symbol) => {
     */
    
     return `${Number(value).toFixed()}`;
-  } else {
-    return value;
+  }
+  else if(type =="revenue")
+  {
+    return   Number(((value) / 1000000000).toFixed(2) || 0);
+  }
+  else {
+    return  Number((value).toFixed(2) || 0);
   }
 };
 let flag= 0
+let flag2=0
 const CustomLabel = ({ x, y, name, stroke, value, maxValue ,data}) => {
   console.log("hhhhhh",maxValue,data)
 
@@ -27,15 +33,9 @@ const CustomLabel = ({ x, y, name, stroke, value, maxValue ,data}) => {
   const { t } = useTranslation();
   
   let possibleValues = ["pttopPerformingStatesRevenue","ptbottomPerformingStatesRevenue","tltopPerformingStatesRevenue","tlbottomPerformingStatesRevenue","obpstopPerformingStatesRevenue","obpsbottomPerformingStatesRevenue","noctopPerformingStatesRevenue","nocbottomPerformingStatesRevenue","wstopPerformingStatesRevenue","wsbottomPerformingStatesRevenue","OverviewtopPerformingStates","OverviewbottomPerformingStates"]
-if(data?.tabName == "Revenue" && possibleValues.includes(data?.id) ) 
+if( possibleValues.includes(data?.id) ) 
 {
-  console.log("reee",maxValue,name)
- 
-  Object.keys(maxValue)?.forEach(key => {
-    console.log("ddddd",maxValue[key])
-    if(maxValue[key] > 10000000)
-    maxValue[key] =  `${((Number(maxValue[key]) / 1000000000).toFixed(2) || 0)}`;
-  });
+
   return (
     <>
       <text
@@ -55,9 +55,9 @@ if(data?.tabName == "Revenue" && possibleValues.includes(data?.id) )
     </>
   );
 }
-else if(data?.tabName == "GDP" && data?.id == "ptbottomPerformingStatesRevenueGDP" || "ptbottomPerformingStatesRevenue" &&  flag ==0)
+else if(data?.tabName == "GDP" && data?.id == "ptbottomPerformingStatesRevenueGDP" || "ptbottomPerformingStatesRevenue" )
 {
-  flag +=1
+  
   Object.keys(maxValue)?.forEach(key => { 
     console.log("reee123",maxValue[key],name)
     maxValue[key] = maxValue[key];
@@ -134,17 +134,34 @@ const CustomBarChart = ({
     filters: value?.filters,
     moduleLevel: value?.moduleLevel || moduleCode,
   });
+  console.log("hhhhhhhh",data)
   const chartData = useMemo(() => {
     if (!response) return null;
-    setChartDenomination(response?.responseData?.data?.[0]?.headerSymbol);
+    console.log("ressssssssss",response?.responseData)
+    let possibleValues = ["pttopPerformingStatesRevenue","ptbottomPerformingStatesRevenue","tltopPerformingStatesRevenue","tlbottomPerformingStatesRevenue","obpstopPerformingStatesRevenue","obpsbottomPerformingStatesRevenue","noctopPerformingStatesRevenue","nocbottomPerformingStatesRevenue","wstopPerformingStatesRevenue","wsbottomPerformingStatesRevenue","OverviewtopPerformingStates","OverviewbottomPerformingStates"]
+    setChartDenomination("number");
     const dd = response?.responseData?.data?.map((bar) => {
       let plotValue = bar?.plots?.[0].value || 0;
+      console.log("barrrrrrr",plotValue,data)
+      let type =""
+      if(possibleValues.includes(data?.id))
+      {
+        type="revenue"
+        return {
+          name: t(bar?.plots?.[0].name),
+          value: formatValue(plotValue, bar?.plots?.[0].symbol,type),
+          // value: Digit.Utils.dss.formatter(plotValue, bar?.plots?.[0].symbol),
+        };
+      }
+      else {
+
+      type="others"
       return {
         name: t(bar?.plots?.[0].name),
-        value: formatValue(plotValue, bar?.plots?.[0].symbol),
+        value: formatValue(plotValue, bar?.plots?.[0].symbol,type),
         // value: Digit.Utils.dss.formatter(plotValue, bar?.plots?.[0].symbol),
-      };
-    });
+      };}
+    })
     let newMax = Math.max(...dd.map((e) => Number(e.value)));
     let newObj = {};
     let newReturn = dd.map((ele) => {
