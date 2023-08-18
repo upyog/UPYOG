@@ -72,7 +72,7 @@ public class ServiceDefinitionQueryBuilder {
 
         // Pagination to limit results
         // do not paginate query in case of count call.
-        if(!criteria.getIsCountCall()){
+        if(criteria!=null && !criteria.getIsCountCall()){
             if(ObjectUtils.isEmpty(serviceDefinitionSearchRequest.getPagination())){
                 prepareDefaultPaginationObject(serviceDefinitionSearchRequest);
             }
