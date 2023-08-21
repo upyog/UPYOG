@@ -110,9 +110,18 @@ const NewSurveys = () => {
     };
 
     try{
-      let filters = {tenantIds : tenantIds?.[0]?.code, title : title}
-      Digit.Surveys.search(filters).then((ob) => {
-        if(ob?.Surveys?.length>0)
+      // let filters = {tenantIds : tenantIds?.[0]?.code, title : title}
+      let details = {
+        ServiceDefinitionCriteria:{
+          "tenantId": tenantId,
+          "code": [title],
+          "module": ["engagement"]
+        }
+        
+      }
+
+      Digit.Surveys.cfdefinitionsearch(details).then((ob) => {
+        if(ob?.ServiceDefinition?.length>0)
         {
           setShowToast({ key: true, label: "SURVEY_SAME_NAME_SURVEY_ALREADY_PRESENT" });
         }
