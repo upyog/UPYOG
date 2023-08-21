@@ -40,7 +40,7 @@ hs_err_pid*
 .project
 .settings/
 .mvnw/
-target/
+/target/
 
 # Logs
 logs
