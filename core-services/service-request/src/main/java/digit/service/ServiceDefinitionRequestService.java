@@ -67,7 +67,6 @@ public class ServiceDefinitionRequestService {
     public List<ServiceDefinition> searchServiceDefinition(ServiceDefinitionSearchRequest serviceDefinitionSearchRequest){
 
         List<ServiceDefinition> listOfServiceDefinitions = serviceDefinitionRequestRepository.getServiceDefinitions(serviceDefinitionSearchRequest);
-        List<User> users = null;
 
         if(CollectionUtils.isEmpty(listOfServiceDefinitions))
             return new ArrayList<>();
@@ -93,20 +92,22 @@ public class ServiceDefinitionRequestService {
         userSearchRequest = UserSearchRequest.builder().requestInfo(serviceDefinitionSearchRequest.getRequestInfo())
 					.uuid(clientIds).build();
 
-        users = mapper.convertValue(serviceRequestRepository.fetchResult(userUri, userSearchRequest), UserResponse.class).getUser();
-			
-        log.info("users", users);
-        // listOfServiceDefinitions.forEach(serviceDefinition -> {
-        //     String id = serviceDefinition.getClientId();
-        //     users.forEach(user ->{
-        //     if(user.getUuid().equals(id)){
-                
-        //     }
-        // });
-        // });
+        List<User> users = mapper.convertValue(serviceRequestRepository.fetchResult(userUri, userSearchRequest), UserResponse.class).getUser();
+        
+        System.out.println("user ::");	
+        System.out.println(users);
+         listOfServiceDefinitions.forEach(serviceDefinition -> {
+             String id = serviceDefinition.getClientId();
+             users.forEach(user ->{
+             if(user.getUuid().equals(id)){
+            	 serviceDefinition.setPostedBy(user.getName());
+             }
+         });
+         });
 
         
         Collections.sort(listOfServiceDefinitions);
+        System.out.println(listOfServiceDefinitions);
         return listOfServiceDefinitions;
     }
 
