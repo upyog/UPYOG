@@ -54,7 +54,6 @@ const Inbox = ({ parentRoute }) => {
   }
 
   function formReducer(state, payload) {
-    console.log()
     switch (payload.action) {
       case "mutateSearchForm":
         Digit.SessionStorage.set("CITIZENSURVEY.INBOX", { ...state, searchForm: payload.data })
@@ -105,6 +104,14 @@ const Inbox = ({ parentRoute }) => {
   const onPageSizeChange = (e) => {
     dispatch({ action: "mutateTableForm", data: { ...formState.tableForm, limit: e.target.value } })
   }
+
+  let ServiceCriteria = {
+    tenantId: userUlbs[0].code,
+    ids: [],
+    serviceDefIds: [],
+    referenceIds: [],
+  }
+  const { data: selecedSurveyData } = Digit.Hooks.survey.useSelectedSurveySearch({ServiceCriteria},{})
   
   // const { data: { Surveys, TotalCount } = {}, isLoading: isInboxLoading, } = Digit.Hooks.survey.useSurveyInbox(formState)
   const { data: surveyList, isLoading: isSurveyListLoading } = Digit.Hooks.survey.useCfdefinitionsearch({ServiceDefinitionCriteria:formState.ServiceDefinitionCriteria, Pagination:formState.tableForm})
@@ -121,11 +128,25 @@ const Inbox = ({ parentRoute }) => {
       element.active = true;
       element.insertQuestionsForUpdate = null;
       element.postedBy = element.additionalDetails.postedBy || "";
-      element.answersCount = "";
+      element.answersCount = 0;
       element.hasResponded = "";
 
     })
   }
+
+  ( async() => {
+    if (surveyList && selecedSurveyData){
+      surveyList?.ServiceDefinition?.map((element)=>{
+        selecedSurveyData?.Service?.map((ele)=>{
+          if (element.code === ele.referenceId){
+            element.answersCount ++;
+          }
+        })
+      })
+    }
+    
+
+  })();
 
 
   const PropsForInboxLinks = {
@@ -158,12 +179,10 @@ const Inbox = ({ parentRoute }) => {
 
     // data.hasOwnProperty("") ? delete data?.[""] : null
     // dispatch({ action: "mutateSearchForm", data })
-    // console.log(data,"data")
     dispatch({ action: "mutateSearchDefinationForm", data });
 
 
   }
-  console.log(formState?.ServiceDefinitionCriteria?.code[0],"tttt")
   const onFilterFormSubmit = (data) => {
     data.hasOwnProperty("") ? delete data?.[""] : null
     dispatch({ action: "mutateFilterForm", data })
