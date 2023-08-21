@@ -75,7 +75,7 @@
     "webfontloader": "1.6.28"
   },
   "resolutions": {
-    "**/datatables.net": "1.11.5"
+    "**/datatables.net": "1.11.5",
     "**/datatables.net-dt":"1.12.1",
     "**/datatables.net-bs":"1.12.1",
     "**/datatables.net-responsive-dt":"2.3.0",
