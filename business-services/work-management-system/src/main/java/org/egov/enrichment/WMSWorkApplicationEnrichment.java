@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import org.egov.repository.WMSWorkRepository;
 import org.egov.util.IdgenUtil;
+import org.egov.web.models.AuditDetails;
 import org.egov.web.models.ScheduleOfRateApplication;
 import org.egov.web.models.WMSSORRequest;
 import org.egov.web.models.WMSWorkApplication;
@@ -43,8 +44,8 @@ public class WMSWorkApplicationEnrichment {
         Integer index = 0;
 		for (WMSWorkApplication application : wmsWorkRequest.getWmsWorkApplications()) {
 			// Enrich audit details
-//	            AuditDetails auditDetails = AuditDetails.builder().createdBy(birthRegistrationRequest.getRequestInfo().getUserInfo().getUuid()).createdTime(System.currentTimeMillis()).lastModifiedBy(birthRegistrationRequest.getRequestInfo().getUserInfo().getUuid()).lastModifiedTime(System.currentTimeMillis()).build();
-//	            application.setAuditDetails(auditDetails);
+	            AuditDetails auditDetails = AuditDetails.builder().createdBy(wmsWorkRequest.getRequestInfo().getUserInfo().getUuid()).createdTime(System.currentTimeMillis()).lastModifiedBy(wmsWorkRequest.getRequestInfo().getUserInfo().getUuid()).lastModifiedTime(System.currentTimeMillis()).build();
+	            application.setAuditDetails(auditDetails);
 
 			// Enrich UUID
 			application.setWorkId((int) Math.floor(Math.random() * (9999 - 1000 + 1) + 1000));
@@ -66,13 +67,15 @@ public class WMSWorkApplicationEnrichment {
 	public void enrichWorkApplicationUpdate(WMSWorkRequest wmsWorkRequest, List<WMSWorkApplication> existingApplication) {
 		// Enrich lastModifiedTime and lastModifiedBy in case of update
 		for (WMSWorkApplication application : wmsWorkRequest.getWmsWorkApplications()) {
-//			application.setItemNo(existingApplication.get(0).getItemNo());
-//			application.setDescOfItem(existingApplication.get(0).getDescOfItem());
-//			application.setUnit(existingApplication.get(0).getUnit());
-//			application.setStartDate(existingApplication.get(0).getStartDate());
-//			
+			application.setProjectId(existingApplication.get(0).getProjectId());
+			application.setWorkName(existingApplication.get(0).getWorkName());
+			application.setStartLocation(existingApplication.get(0).getStartLocation());
+			application.setEndLocation(existingApplication.get(0).getEndLocation());
+			application.setFinancialYear(existingApplication.get(0).getFinancialYear());
+			application.setBudgetHead(existingApplication.get(0).getBudgetHead());
+			
 //			application.setEndDate(date);
-			// application.getAuditDetails().setLastModifiedBy(birthRegistrationRequest.getRequestInfo().getUserInfo().getUuid());
+			 application.getAuditDetails().setLastModifiedBy(wmsWorkRequest.getRequestInfo().getUserInfo().getUuid());
 		}
 	}
 

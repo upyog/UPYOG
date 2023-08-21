@@ -180,7 +180,7 @@ serviceMaps:
       fromTopic: save-work-application
       isTransaction: true
       queryMaps:
-        - query: INSERT INTO work(work_id,project_id,work_no,work_name,project_name,department_name,work_type,work_category,work_subtype,project_phase,deviation_percent,start_location,end_location,financial_year,budget_head) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO work(work_id,project_id,work_no,work_name,project_name,department_name,work_type,work_category,work_subtype,project_phase,deviation_percent,start_location,end_location,financial_year,budget_head,createdby,lastmodifiedby,createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: WMSWorkApplication.*
           jsonMaps:
             - jsonPath: $.WMSWorkApplication.*.work_id
@@ -211,10 +211,41 @@ serviceMaps:
             
             - jsonPath: $.WMSWorkApplication.*.financial_year
             
-            - jsonPath: $.WMSWorkApplication.*.budget_head   
+            - jsonPath: $.WMSWorkApplication.*.budget_head
+            
+            - jsonPath: $.WMSWorkApplication.*.auditDetails.createdBy
+
+            - jsonPath: $.WMSWorkApplication.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.WMSWorkApplication.*.auditDetails.createdTime
+            
+            - jsonPath: $.WMSWorkApplication.*.auditDetails.lastModifiedTime   
       
  
+    - version: 1.0
+      description: Update Work applications in table
+      fromTopic: update-work-application
+      isTransaction: true
+      queryMaps:
+      
+        - query: UPDATE work SET department_name = ?,work_type = ?, work_category = ?, work_subtype = ?, project_phase = ?, deviation_percent = ? WHERE work_no = ? and work_id = ?;
+          basePath: WMSWorkApplication.*
+          jsonMaps:
+            - jsonPath: $.WMSWorkApplication.*.department_name
 
+            - jsonPath: $.WMSWorkApplication.*.work_type
+           
+            - jsonPath: $.WMSWorkApplication.*.work_category
+            
+            - jsonPath: $.WMSWorkApplication.*.work_subtype
+            
+            - jsonPath: $.WMSWorkApplication.*.project_phase
+            
+            - jsonPath: $.WMSWorkApplication.*.deviation_percent
+            
+            - jsonPath: $.WMSWorkApplication.*.work_no
+            
+            - jsonPath: $.WMSWorkApplication.*.work_id			
 
 
 

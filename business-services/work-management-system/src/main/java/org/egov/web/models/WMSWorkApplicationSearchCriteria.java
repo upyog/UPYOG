@@ -23,5 +23,9 @@ public class WMSWorkApplicationSearchCriteria {
 
 	@JsonProperty("work_id")
     private List<Integer> workId;
+	
+	@JsonProperty("work_no")
+    private List<Integer> workNo;
 
+	
 }

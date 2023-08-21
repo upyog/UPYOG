@@ -8,11 +8,14 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.egov.web.models.AuditDetails;
 import org.egov.web.models.ScheduleOfRateApplication;
 import org.egov.web.models.WMSWorkApplication;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
+
+
 
 @Component
 public class WMSWorkApplicationRowMapper implements ResultSetExtractor<List<WMSWorkApplication>> {
@@ -25,10 +28,18 @@ public class WMSWorkApplicationRowMapper implements ResultSetExtractor<List<WMSW
 
             if(wmsWorkApplication == null) {
 
-                Date lastModifiedTime = rs.getDate("wStartLocation");
+                Long lastModifiedTime = rs.getLong("wlastmodifiedtime");
                 if (rs.wasNull()) {
                     lastModifiedTime = null;
                 }
+                
+                AuditDetails auditdetails = AuditDetails.builder()
+                        .createdBy(rs.getString("wcreatedBy"))
+                        .createdTime(rs.getLong("wcreatedTime"))
+                        .lastModifiedBy(rs.getString("wlastModifiedBy"))
+                        .lastModifiedTime(lastModifiedTime)
+                        .build();
+                
                 wmsWorkApplication = WMSWorkApplication.builder()
                         .workId(rs.getInt("wWorkId"))
                         .projectId(rs.getInt("wProjectId"))
@@ -45,6 +56,7 @@ public class WMSWorkApplicationRowMapper implements ResultSetExtractor<List<WMSW
                         .endLocation(rs.getString("wEndLocation"))
                         .financialYear(rs.getString("wFinancialYear"))
                         .budgetHead(rs.getString("wBudgetHead"))
+                        .auditDetails(auditdetails)
                         .build();
             }
             //addChildrenToProperty(rs, sorApplication);
