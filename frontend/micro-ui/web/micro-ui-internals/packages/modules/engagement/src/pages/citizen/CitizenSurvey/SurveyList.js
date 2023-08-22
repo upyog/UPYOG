@@ -14,7 +14,7 @@ const isActive = (startDate, endDate) => {
 const SurveyList = () => {
   const { t } = useTranslation();
   const history = useHistory();
-  const tenantIds = Digit.ULBService.getCitizenCurrentTenant();
+  const tenantIds = "pg.citya";
   const user = Digit.UserService.getUser();
   
   let ServiceDefinitionCriteria =  {
@@ -70,7 +70,7 @@ const SurveyList = () => {
 
         activeSurveysList.reverse();
         inactiveSurveysList.reverse();
-
+        
         return {
           activeSurveysList,
           inactiveSurveysList,
