@@ -233,7 +233,7 @@ const SurveyResultsView = ({surveyInfo,selecedSurveyresults}) => {
 
     const handleReportDownload = () => {
         const result = generateExcelObj(surveyInfo?.questions, selecedSurveyresults.answers)
-        return Digit.Download.Excel(result, selecedSurveyresults.title);
+        return Digit.Download.Excel(result, selecedSurveyresults.Service[0].referenceId);
     }
 
     // if(!data) return <Loader />

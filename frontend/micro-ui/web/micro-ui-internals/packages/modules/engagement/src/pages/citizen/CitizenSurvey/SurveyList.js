@@ -70,7 +70,7 @@ const SurveyList = () => {
 
         activeSurveysList.reverse();
         inactiveSurveysList.reverse();
-
+        
         return {
           activeSurveysList,
           inactiveSurveysList,
