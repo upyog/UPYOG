@@ -14,7 +14,7 @@ const isActive = (startDate, endDate) => {
 const SurveyList = () => {
   const { t } = useTranslation();
   const history = useHistory();
-  const tenantIds = "pg.citya";
+  const tenantIds = Digit.ULBService.getCitizenCurrentTenant();;
   const user = Digit.UserService.getUser();
   
   let ServiceDefinitionCriteria =  {
