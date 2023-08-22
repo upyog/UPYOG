@@ -111,7 +111,7 @@ const NewSurveys = () => {
 
     try{
       // let filters = {tenantIds : tenantIds?.[0]?.code, title : title}
-      let details = {
+      let searchDetails = {
         ServiceDefinitionCriteria:{
           "tenantId": tenantId,
           "code": [title],
@@ -120,7 +120,7 @@ const NewSurveys = () => {
         
       }
 
-      Digit.Surveys.cfdefinitionsearch(details).then((ob) => {
+      Digit.Surveys.cfdefinitionsearch(searchDetails).then((ob) => {
         if(ob?.ServiceDefinition?.length>0)
         {
           setShowToast({ key: true, label: "SURVEY_SAME_NAME_SURVEY_ALREADY_PRESENT" });
