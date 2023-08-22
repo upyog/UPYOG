@@ -78,17 +78,6 @@ const SurveyList = () => {
   );
 
   ( async() => {
-    // if (data?.surveyListId && selecedSurveyData){
-    //   data?.surveyListId.map((element,index)=>{
-    //     selecedSurveyData.Service.map((ele)=>{
-    //       if (element === ele.referenceId){
-    //         data.activeSurveysList[index].hasResponded = true;
-    //         data.activeSurveysList[index].responseStatus = "CS_SURVEY_RESPONDED";
-    //       }
-    //     })
-    //   })
-
-    // }
     if (data?.surveyListId && selecedSurveyData){
       data?.activeSurveysList.map((element,index)=>{
         selecedSurveyData.Service.map((ele)=>{
@@ -99,14 +88,14 @@ const SurveyList = () => {
         })
       })
 
-      data?.inactiveSurveysList.map((element,index)=>{
-        selecedSurveyData.Service.map((ele)=>{
-          if (element.code === ele.referenceId ){
-            data.inactiveSurveysList[index].hasResponded = true;
-            data.inactiveSurveysList[index].responseStatus = "CS_SURVEY_RESPONDED";
-          }
-        })
-      })
+      // data?.inactiveSurveysList.map((element,index)=>{
+      //   selecedSurveyData.Service.map((ele)=>{
+      //     if (element.code === ele.referenceId ){
+      //       data.inactiveSurveysList[index].hasResponded = true;
+      //       data.inactiveSurveysList[index].responseStatus = "CS_SURVEY_RESPONDED";
+      //     }
+      //   })
+      // })
     }
   })();
 
