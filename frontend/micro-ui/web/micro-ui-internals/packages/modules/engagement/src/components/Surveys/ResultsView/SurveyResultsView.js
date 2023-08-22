@@ -236,7 +236,7 @@ const SurveyResultsView = ({surveyInfo,selecedSurveyresults}) => {
         return Digit.Download.Excel(result, selecedSurveyresults.title);
     }
 
-    if(!data) return <Loader />
+    // if(!data) return <Loader />
     
     return (
     <div className="custom-group-merge-container">
