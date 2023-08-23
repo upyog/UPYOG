@@ -12,7 +12,11 @@ import digit.repository.ServiceRequestRepository;
 import lombok.extern.slf4j.Slf4j;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.JsonNode;
 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -89,7 +93,7 @@ public class ServiceDefinitionRequestService {
             System.out.println("user ::");	
             System.out.println(users);
 
-            List<ServiceDefinition> finalListOfServiceDefinitions = serviceDefinitionRequestRepository.getServiceDefinitions(serviceDefinitionSearchRequest);
+            List<ServiceDefinition> finalListOfServiceDefinitions = new ArrayList<>();
 
             listOfServiceDefinitions.forEach(serviceDefinition -> {
                 String id = serviceDefinition.getClientId();
@@ -105,10 +109,47 @@ public class ServiceDefinitionRequestService {
 
         }
 
-        
+        if(serviceDefinitionSearchRequest.getServiceDefinitionCriteria().getStatus()!=null){
+
+            List<ServiceDefinition> ListOfActiveServiceDefinitions = new ArrayList<>();
+            List<ServiceDefinition> ListOfInactiveServiceDefinitions = new ArrayList<>();
+            listOfServiceDefinitions.forEach(serviceDefinition -> {
+                JsonNode additionalDetails = mapper.valueToTree(serviceDefinition.getAdditionalDetails());
+                long startDate = additionalDetails.get("startDate").asLong(); 
+                long endDate = additionalDetails.get("endDate").asLong(); 
+                boolean isWithinToday = isDateRangeWithinToday(startDate, endDate);
+
+                if (isWithinToday) {
+                    ListOfActiveServiceDefinitions.add(serviceDefinition);
+                } else {
+                    ListOfInactiveServiceDefinitions.add(serviceDefinition);
+                }
+            });
+
+            if(serviceDefinitionSearchRequest.getServiceDefinitionCriteria().getStatus().equals("Active")){
+                Collections.sort(ListOfActiveServiceDefinitions);
+                return ListOfActiveServiceDefinitions;
+            }else{
+                Collections.sort(ListOfInactiveServiceDefinitions);
+                return ListOfInactiveServiceDefinitions;
+            }
+
+        }
         Collections.sort(listOfServiceDefinitions);
         System.out.println(listOfServiceDefinitions);
         return listOfServiceDefinitions;
+    }
+
+    public static boolean isDateRangeWithinToday(long startDateEpoch, long endDateEpoch) {
+        Instant startInstant = Instant.ofEpochSecond(startDateEpoch);
+        Instant endInstant = Instant.ofEpochSecond(endDateEpoch);
+
+        LocalDate today = LocalDate.now(ZoneId.systemDefault());
+
+        Instant todayStart = today.atStartOfDay(ZoneId.systemDefault()).toInstant();
+        Instant todayEnd = today.plusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant();
+
+        return startInstant.isAfter(todayStart) && endInstant.isBefore(todayEnd);
     }
 
     public ServiceDefinition updateServiceDefinition(ServiceDefinitionRequest serviceDefinitionRequest) {
