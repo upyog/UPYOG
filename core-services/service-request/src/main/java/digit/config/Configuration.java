@@ -69,4 +69,25 @@ public class Configuration {
 	@Value("${user.service.searchpath}")
 	private String userServiceSearchPath;
 
+    @Value("${egov.service.notification.action.code}")
+    private String surveyActionCode;
+
+    @Value("${egov.service.notification.event.topic}")
+    private String userEventTopic;
+
+    @Value("${egov.service.notification.ui.host}")
+    private String notificationUiHost;
+
+    @Value("${egov.service.notification.ui.redirect.url}")
+    private String notificationEndpoint;
+
+    @Value("${egov.localization.host}")
+    private String localizationHost;
+
+    @Value("${egov.localization.search.endpoint}")
+    private String localizationEndpoint;
+
+    @Value("${ss.notification.fallback.locale}")
+    private String fallBackLocale;
+
 }
