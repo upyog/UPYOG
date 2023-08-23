@@ -108,7 +108,7 @@ public class ServiceDefinitionRequestService {
         });
 
 
-        if(!serviceDefinitionSearchRequest.getServiceDefinitionCriteria().getPostedBy().isEmpty()){
+        if(serviceDefinitionSearchRequest.getServiceDefinitionCriteria().getPostedBy() != null && (!serviceDefinitionSearchRequest.getServiceDefinitionCriteria().getPostedBy().isEmpty())){
             UserSearchRequest userSearchRequest = null;
             String userUri = config.getUserServiceHostName()
 				.concat(config.getUserServiceSearchPath());
@@ -139,7 +139,7 @@ public class ServiceDefinitionRequestService {
 
         }
 
-        if(!serviceDefinitionSearchRequest.getServiceDefinitionCriteria().getStatus().isEmpty()){
+        if(serviceDefinitionSearchRequest.getServiceDefinitionCriteria().getStatus()!=null &&(!serviceDefinitionSearchRequest.getServiceDefinitionCriteria().getStatus().isEmpty())){
 
             List<ServiceDefinition> ListOfActiveServiceDefinitions = new ArrayList<>();
             List<ServiceDefinition> ListOfInactiveServiceDefinitions = new ArrayList<>();
