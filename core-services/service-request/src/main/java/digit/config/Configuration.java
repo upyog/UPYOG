@@ -87,7 +87,7 @@ public class Configuration {
     @Value("${egov.localization.search.endpoint}")
     private String localizationEndpoint;
 
-    @Value("${ss.notification.fallback.locale}")
+    @Value("${egov.service.notification.notification.fallback.locale}")
     private String fallBackLocale;
 
 }
