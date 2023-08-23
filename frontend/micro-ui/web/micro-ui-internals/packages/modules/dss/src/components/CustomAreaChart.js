@@ -17,7 +17,13 @@ const getColors = (index = 0) => {
   return COLORS[index];
 };
 
-const getDenominatedValue = (denomination, plotValue) => {
+const getDenominatedValue = (denomination, plotValue,plot) => {
+  console.log("denomination",plotValue,denomination,plot)
+  if(plot?.COLLECTIONS_NONTAX || plot?.COLLECTIONS_TAX || plot?.COLLECTIONS)
+  {
+    return Number((plotValue / 10000000).toFixed(2));
+  }
+  else {
   switch (denomination) {
     case "Unit":
       return plotValue;
@@ -28,6 +34,7 @@ const getDenominatedValue = (denomination, plotValue) => {
     default:
       return "";
   }
+}
 };
 
 const getValue = (plot) => plot.value;
@@ -143,7 +150,7 @@ const CustomAreaChart = ({ xDataKey = "name", yDataKey = getValue, data, setChar
     }
     else if (plot?.symbol?.toLowerCase() === "amount") {
       const { denomination } = value;
-      return getDenominatedValue(denomination, plotValue);
+      return getDenominatedValue(denomination, plotValue,plot);
     } else if (plot?.symbol?.toLowerCase() === "number") {
       return Number(plotValue.toFixed(1));
     } 
@@ -205,6 +212,7 @@ console.log("{keysArr?.[index]",keysArr?.[index],index)
   };
 
   const renderTooltipForLine = ({ payload, label, unit }) => {
+    console.log("payloadpayload",payload)
     let payloadObj = payload?.[0] || {};
     let prefix = payloadObj?.payload?.symbol?.toLowerCase() === "amount" && value?.denomination === "Unit" ? " ₹" : " ";
     let postfix =
@@ -219,13 +227,28 @@ console.log("{keysArr?.[index]",keysArr?.[index],index)
     delete newPayload?.symbol;
     let newObjArray = [newPayload?.name];
     delete newPayload?.name;
-    Object.keys(newPayload).map((key) => {
-      newObjArray.push(
-        `${key} -${prefix}${
-          payloadObj?.payload?.symbol?.toLowerCase() === "amount" ? getDenominatedValue(value?.denomination, newPayload?.[key])+": Diiference " : newPayload?.[key]
-        } ${postfix}`
-      );
-    });
+    console.log("sssssssss",payloadObj)
+if(payloadObj?.payload?.COLLECTIONS_NONTAX)
+{
+  Object.keys(newPayload).map((key) => {
+    newObjArray.push(
+      `${key} -${prefix}${ 
+       getDenominatedValue(value?.denomination, newPayload?.[key],payloadObj?.payload)
+      }Cr `
+    );
+  });
+}
+else {
+  Object.keys(newPayload).map((key) => {
+    newObjArray.push(
+      `${key} -${prefix}${ 
+        payloadObj?.payload?.COLLECTIONS_NONTAX ?getDenominatedValue(value?.denomination, newPayload?.[key],payloadObj?.payload):
+        payloadObj?.payload?.symbol?.toLowerCase() === "amount" ? getDenominatedValue(value?.denomination, newPayload?.[key])+": Diiference " : newPayload?.[key]
+      } ${postfix}`
+    );
+  });
+}
+     
     return (
       <div
         style={{
@@ -287,7 +310,7 @@ console.log("{keysArr?.[index]",keysArr?.[index],index)
             <Legend formatter={renderLegend} iconType="circle" />
             <Area type="monotone" dataKey={renderPlot} stroke="#048BD0" fill="url(#colorUv)" dot={true} />
           </AreaChart>
-        ) : id == "pgrCumulativeClosedComplaints" ? (
+        ) : id == "pgrCumulativeClosedCompla" ? (
       
               <ComposedChart
             width="100%"
@@ -307,7 +330,7 @@ console.log("{keysArr?.[index]",keysArr?.[index],index)
             <Tooltip content={renderTooltipForLine} />
             <Legend
             />
-          <Bar yAxisId="right" dataKey="Reopened Complaints" fill="#54d140" />
+          <Bar yAxisId="right" dataKey="Opened Complaints" fill="#54d140" />
           <Line
                 yAxisId="left"
                   type="monotone"
