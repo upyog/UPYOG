@@ -79,7 +79,7 @@ const Chart = ({ data, moduleLevel, overview = false }) => {
   console.log("response",response)
   if(response?.responseData?.data?.[0]?.headerName === "DSS_STATE_GDP_REVENUE_COLLECTION" )
   {
-    
+    console.log("responseData",response)
     response.responseData.data[0].headerValue = response.responseData.data[0].headerValue * 100
   }
   
@@ -110,7 +110,7 @@ const Chart = ({ data, moduleLevel, overview = false }) => {
       />
               :<p className="p2">
 
-        {response?.responseData?.data?.[0]?.headerName =="NATIONAL_DSS_TOTAL_COLLECTION" ? Digit.Utils.dss.formatter(response?.responseData?.data?.[0]?.headerValue, response?.responseData?.data?.[0]?.headerSymbol, "Cr", true, t) : response?.responseData?.data?.[0]?.headerName == "DSS_NON_TAX_REVENUE_PER_HOUSEHOLD" || "PropertyTaxRevenuePerHouseholdOverview"? Digit.Utils.dss.formatter(response?.responseData?.data?.[0]?.headerValue, response?.responseData?.data?.[0]?.headerSymbol, "Unit", true, t) : response?.responseData?.data?.[0]?.headerName == "DSS_STATE_GDP_REVENUE_COLLECTION"  ? Digit.Utils.dss.formatter(response?.responseData?.data?.[0]?.headerValue, response?.responseData?.data?.[0]?.headerSymbol, "UnitOverview", true, t): Digit.Utils.dss.formatter(response?.responseData?.data?.[0]?.headerValue, response?.responseData?.data?.[0]?.headerSymbol, "Lac", true, t)}
+        {response?.responseData?.data?.[0]?.headerName == "NATIONAL_DSS_TOTAL_COLLECTION" ? Digit.Utils.dss.formatter(response?.responseData?.data?.[0]?.headerValue, response?.responseData?.data?.[0]?.headerSymbol, "Cr", true, t): response?.responseData?.data?.[0]?.headerName ==  "NATIONAL_DSS_TARGET_COLLECTION"? Digit.Utils.dss.formatter(response?.responseData?.data?.[0]?.headerValue, response?.responseData?.data?.[0]?.headerSymbol, "Cr", true, t): response?.responseData?.data?.[0]?.headerName == "DSS_NON_TAX_REVENUE_PER_HOUSEHOLD"? Digit.Utils.dss.formatter(response?.responseData?.data?.[0]?.headerValue, response?.responseData?.data?.[0]?.headerSymbol, "Unit", true, t): response?.responseData?.data?.[0]?.headerName == "PropertyTaxRevenuePerHouseholdOverview" ? Digit.Utils.dss.formatter(response?.responseData?.data?.[0]?.headerValue, response?.responseData?.data?.[0]?.headerSymbol, "Unit", true, t): response?.responseData?.data?.[0]?.headerName == "DSS_STATE_GDP_REVENUE_COLLECTION"  ? Digit.Utils.dss.formatter(response?.responseData?.data?.[0]?.headerValue, response?.responseData?.data?.[0]?.headerSymbol, "UnitOverview", true, t): Digit.Utils.dss.formatter(response?.responseData?.data?.[0]?.headerValue, response?.responseData?.data?.[0]?.headerSymbol, "Unit", true, t)}
       </p>}
       {response?.responseData?.data?.[0]?.insight?.value ? (
         <p className={`p3 ${response?.responseData?.data?.[0]?.insight?.indicator === "upper_green" ? "color-green" : "color-red"}`}>
@@ -160,7 +160,7 @@ const HorBarChart = ({ data, setselectState = "" }) => {
       const row = data[i];
       for (let j = 0; j < row.plots.length; j++) {
         const plot = row.plots[j];
-        console.log("plottttt",plot)
+       
         if(plot?.value >10000)
         {
           result[plot.name] = { ...result[plot.name], [t(row.headerName)]:currencyFormatter.format((plot?.value / 10000000).toFixed(2) || 0), name: t(plot.name) };      
@@ -199,7 +199,7 @@ const renderLegend = (value) => {
   }
 
   const bars = response?.responseData?.data?.map((bar) => bar?.headerName);
-  console.log("response.responsedata",response,bars,chartData)
+
   return (
     <ResponsiveContainer
       width="50%"

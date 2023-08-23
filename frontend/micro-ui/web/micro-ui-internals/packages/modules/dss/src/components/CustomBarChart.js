@@ -20,8 +20,12 @@ const formatValue = (value, symbol,type) => {
   {
     return   Number(((value) / 1000000000).toFixed(2) || 0);
   }
+  else if(type =="population")
+  {
+    return   Number(((value) / 100).toFixed(2) || 0);
+  }
   else {
-    return  Number((value).toFixed(2) || 0);
+    return  Number((value).toFixed(4) || 0);
   }
 };
 let flag= 0
@@ -55,7 +59,7 @@ if( possibleValues.includes(data?.id) )
     </>
   );
 }
-else if(data?.tabName == "GDP" && data?.id == "ptbottomPerformingStatesRevenueGDP" || "ptbottomPerformingStatesRevenue" )
+else if(data?.id.includes("GDP") )
 {
   
   Object.keys(maxValue)?.forEach(key => { 
@@ -73,7 +77,28 @@ else if(data?.tabName == "GDP" && data?.id == "ptbottomPerformingStatesRevenueGD
         width="35"
         style={{ fontSize: "medium", textAlign: "right", fontVariantNumeric: "proportional-nums" }}
       >
-        {`${maxValue?.[t(name)]}`}
+        {`${maxValue?.[t(name)]} %`}
+      </text>
+      <text x={x} y={y} dx={-200} dy={10}>
+        {t(`DSS_TB_${Digit.Utils.locale.getTransformedLocale(name)}`)}
+      </text>
+    </>
+  );
+}
+else if (data?.id.includes("Population") || data?.id.includes("Household"))
+{
+  return (
+    <>
+      <text
+        x={x}
+        y={y}
+        dx={0}
+        dy={30}
+        fill={stroke}
+        width="35"
+        style={{ fontSize: "medium", textAlign: "right", fontVariantNumeric: "proportional-nums" }}
+      >
+        {`₹ ${maxValue?.[t(name)]}`}
       </text>
       <text x={x} y={y} dx={-200} dy={10}>
         {t(`DSS_TB_${Digit.Utils.locale.getTransformedLocale(name)}`)}
@@ -139,6 +164,7 @@ const CustomBarChart = ({
     if (!response) return null;
     console.log("ressssssssss",response?.responseData)
     let possibleValues = ["pttopPerformingStatesRevenue","ptbottomPerformingStatesRevenue","tltopPerformingStatesRevenue","tlbottomPerformingStatesRevenue","obpstopPerformingStatesRevenue","obpsbottomPerformingStatesRevenue","noctopPerformingStatesRevenue","nocbottomPerformingStatesRevenue","wstopPerformingStatesRevenue","wsbottomPerformingStatesRevenue","OverviewtopPerformingStates","OverviewbottomPerformingStates"]
+   
     setChartDenomination("number");
     const dd = response?.responseData?.data?.map((bar) => {
       let plotValue = bar?.plots?.[0].value || 0;
@@ -147,6 +173,15 @@ const CustomBarChart = ({
       if(possibleValues.includes(data?.id))
       {
         type="revenue"
+        return {
+          name: t(bar?.plots?.[0].name),
+          value: formatValue(plotValue, bar?.plots?.[0].symbol,type),
+          // value: Digit.Utils.dss.formatter(plotValue, bar?.plots?.[0].symbol),
+        };
+      }
+      else if (data.id.includes("Population") || data.id.includes("Household"))
+      {
+        type="population"
         return {
           name: t(bar?.plots?.[0].name),
           value: formatValue(plotValue, bar?.plots?.[0].symbol,type),
