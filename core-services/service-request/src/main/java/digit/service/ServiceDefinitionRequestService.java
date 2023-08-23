@@ -80,7 +80,35 @@ public class ServiceDefinitionRequestService {
             enrichmentService.setAttributeDefinitionValuesBackToNativeState(serviceDefinition);
         });
 
-        if(serviceDefinitionSearchRequest.getServiceDefinitionCriteria().getPostedBy()!=null){
+
+        // serch user by uuid which is clientid in service definition and enrich the posted by variable.
+        Set<String> clientIds = new HashSet<>();
+        // prepare a set of clientIds from servicedefinitionrequest to send to user search request
+        listOfServiceDefinitions.forEach(serviceDefinition -> {
+            if (serviceDefinition.getClientId() != null)
+			    clientIds.add(serviceDefinition.getClientId());
+        });
+
+        UserSearchRequest userSearchRequestByUuid = null;
+        String Url = config.getUserServiceHostName()
+				.concat(config.getUserServiceSearchPath());
+
+        userSearchRequestByUuid = UserSearchRequest.builder().requestInfo(serviceDefinitionSearchRequest.getRequestInfo())
+					.uuid(clientIds).build();
+
+        List<User> usersresponse = mapper.convertValue(serviceRequestRepository.fetchResult(Url, userSearchRequestByUuid), UserResponse.class).getUser();
+
+        listOfServiceDefinitions.forEach(serviceDefinition -> {
+            String id = serviceDefinition.getClientId();
+            usersresponse.forEach(user ->{
+            if(user.getUuid().equals(id)){
+                serviceDefinition.setPostedBy(user.getName());
+            }
+        });
+        });
+
+
+        if(!serviceDefinitionSearchRequest.getServiceDefinitionCriteria().getPostedBy().isEmpty()){
             UserSearchRequest userSearchRequest = null;
             String userUri = config.getUserServiceHostName()
 				.concat(config.getUserServiceSearchPath());
@@ -103,13 +131,15 @@ public class ServiceDefinitionRequestService {
                 }
                 });
             });
-            Collections.sort(finalListOfServiceDefinitions);
-            System.out.println(finalListOfServiceDefinitions);
-            return finalListOfServiceDefinitions;
+
+            listOfServiceDefinitions = finalListOfServiceDefinitions;
+            // Collections.sort(finalListOfServiceDefinitions);
+            // System.out.println(finalListOfServiceDefinitions);
+            // return finalListOfServiceDefinitions;
 
         }
 
-        if(serviceDefinitionSearchRequest.getServiceDefinitionCriteria().getStatus()!=null){
+        if(!serviceDefinitionSearchRequest.getServiceDefinitionCriteria().getStatus().isEmpty()){
 
             List<ServiceDefinition> ListOfActiveServiceDefinitions = new ArrayList<>();
             List<ServiceDefinition> ListOfInactiveServiceDefinitions = new ArrayList<>();
@@ -126,7 +156,7 @@ public class ServiceDefinitionRequestService {
                 }
             });
 
-            if(serviceDefinitionSearchRequest.getServiceDefinitionCriteria().getStatus().equals("Active")){
+            if(serviceDefinitionSearchRequest.getServiceDefinitionCriteria().getStatus().equalsIgnoreCase("Active")){
                 Collections.sort(ListOfActiveServiceDefinitions);
                 return ListOfActiveServiceDefinitions;
             }else{
