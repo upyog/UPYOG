@@ -55,6 +55,10 @@ public class ServiceDefinition implements Comparable<ServiceDefinition> {
     @JsonProperty("isActive")
     private Boolean isActive = true;
 
+    @Size(max = 128)
+    @JsonProperty("status")
+    private String status;
+
     @JsonProperty("attributes")
     @NotNull
     @Valid

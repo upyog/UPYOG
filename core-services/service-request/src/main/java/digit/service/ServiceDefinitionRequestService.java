@@ -76,34 +76,34 @@ public class ServiceDefinitionRequestService {
             enrichmentService.setAttributeDefinitionValuesBackToNativeState(serviceDefinition);
         });
 
-        // serch user from client id and enrich the posted by variable.
-        Set<String> clientIds = new HashSet<>();
-
-        // prepare a set of uuids from servicedefinitionrequest to send to user search request
-        listOfServiceDefinitions.forEach(serviceDefinition -> {
-            if (serviceDefinition.getClientId() != null)
-			    clientIds.add(serviceDefinition.getClientId());
-        });
-
-        UserSearchRequest userSearchRequest = null;
-        String userUri = config.getUserServiceHostName()
+        if(serviceDefinitionSearchRequest.getServiceDefinitionCriteria().getPostedBy()!=null){
+            UserSearchRequest userSearchRequest = null;
+            String userUri = config.getUserServiceHostName()
 				.concat(config.getUserServiceSearchPath());
 
-        userSearchRequest = UserSearchRequest.builder().requestInfo(serviceDefinitionSearchRequest.getRequestInfo())
-					.uuid(clientIds).build();
+            userSearchRequest = UserSearchRequest.builder().requestInfo(serviceDefinitionSearchRequest.getRequestInfo())
+					.name(serviceDefinitionSearchRequest.getServiceDefinitionCriteria().getPostedBy()).build();
 
-        List<User> users = mapper.convertValue(serviceRequestRepository.fetchResult(userUri, userSearchRequest), UserResponse.class).getUser();
+            List<User> users = mapper.convertValue(serviceRequestRepository.fetchResult(userUri, userSearchRequest), UserResponse.class).getUser();
         
-        System.out.println("user ::");	
-        System.out.println(users);
-         listOfServiceDefinitions.forEach(serviceDefinition -> {
-             String id = serviceDefinition.getClientId();
-             users.forEach(user ->{
-             if(user.getUuid().equals(id)){
-            	 serviceDefinition.setPostedBy(user.getName());
-             }
-         });
-         });
+            System.out.println("user ::");	
+            System.out.println(users);
+
+            List<ServiceDefinition> finalListOfServiceDefinitions = serviceDefinitionRequestRepository.getServiceDefinitions(serviceDefinitionSearchRequest);
+
+            listOfServiceDefinitions.forEach(serviceDefinition -> {
+                String id = serviceDefinition.getClientId();
+                users.forEach(user ->{
+                if(user.getUuid().equals(id)){
+                    finalListOfServiceDefinitions.add(serviceDefinition);
+                }
+                });
+            });
+            Collections.sort(finalListOfServiceDefinitions);
+            System.out.println(finalListOfServiceDefinitions);
+            return finalListOfServiceDefinitions;
+
+        }
 
         
         Collections.sort(listOfServiceDefinitions);

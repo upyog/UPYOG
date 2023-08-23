@@ -47,6 +47,12 @@ public class ServiceDefinitionCriteria {
     @JsonProperty("clientId")
     private String clientId = null;
 
+    @JsonProperty("postedBy")
+    private String postedBy;
+
+    @JsonProperty("status")
+    private String status;
+
     @JsonIgnore
     private Boolean isCountCall = false;
 
