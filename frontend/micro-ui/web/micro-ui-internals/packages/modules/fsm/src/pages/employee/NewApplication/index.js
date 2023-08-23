@@ -103,7 +103,8 @@ export const NewApplication = ({ parentUrl, heading }) => {
     const gender = data.applicationData.applicantGender;
     const paymentPreference = amount === 0 ? null : data?.paymentPreference ? data?.paymentPreference : null;
     const advanceAmount = amount === 0 ? null : data?.advancepaymentPreference?.advanceAmount;
-
+    const distancefromroad=data?.tripData?.distancefromroad;
+    const roadWidth= data?.tripData?.roadWidth;
     const formData = {
       fsm: {
         citizen: {
@@ -116,6 +117,8 @@ export const NewApplication = ({ parentUrl, heading }) => {
         source: applicationChannel.code,
         additionalDetails: {
           tripAmount: amount,
+          distancefromroad:distancefromroad,
+          roadWidth:roadWidth,
         },
         propertyUsage: data?.subtype,
         vehicleCapacity: data?.tripData?.vehicleType?.capacity,
