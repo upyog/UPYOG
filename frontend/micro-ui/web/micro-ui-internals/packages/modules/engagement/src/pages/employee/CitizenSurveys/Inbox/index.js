@@ -51,6 +51,7 @@ const Inbox = ({ parentRoute }) => {
     "tenantId": tenantId,
     "code": [],
     "module": ["engagement"],
+    "postedBy":""
   }
 
   function formReducer(state, payload) {
@@ -70,6 +71,7 @@ const Inbox = ({ parentRoute }) => {
         "module": ["engagement"]} })
         return { ...state, searchForm: payload.data, ServiceDefinitionCriteria: {"tenantId": tenantId,
         "code": [payload.data.title],
+        "postedBy:": payload.data.postedBy,
         "module": ["engagement"]} };
       default:
         break;
@@ -127,7 +129,7 @@ const Inbox = ({ parentRoute }) => {
       element.endDate = element.additionalDetails.endDate || null;
       element.active = true;
       element.insertQuestionsForUpdate = null;
-      element.postedBy = element.additionalDetails.postedBy || "";
+      element.postedBy = element.postedBy || "";
       element.answersCount = 0;
       element.hasResponded = "";
 
@@ -179,6 +181,7 @@ const Inbox = ({ parentRoute }) => {
 
     // data.hasOwnProperty("") ? delete data?.[""] : null
     // dispatch({ action: "mutateSearchForm", data })
+    console.log(data,"data")
     dispatch({ action: "mutateSearchDefinationForm", data });
 
 
