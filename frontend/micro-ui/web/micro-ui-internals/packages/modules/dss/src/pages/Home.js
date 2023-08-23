@@ -79,7 +79,7 @@ const Chart = ({ data, moduleLevel, overview = false }) => {
   console.log("response",response)
   if(response?.responseData?.data?.[0]?.headerName === "DSS_STATE_GDP_REVENUE_COLLECTION" )
   {
-    
+    console.log("responseData",response)
     response.responseData.data[0].headerValue = response.responseData.data[0].headerValue * 100
   }
   
@@ -110,7 +110,7 @@ const Chart = ({ data, moduleLevel, overview = false }) => {
       />
               :<p className="p2">
 
-        {response?.responseData?.data?.[0]?.headerName =="NATIONAL_DSS_TOTAL_COLLECTION" ? Digit.Utils.dss.formatter(response?.responseData?.data?.[0]?.headerValue, response?.responseData?.data?.[0]?.headerSymbol, "Cr", true, t) : response?.responseData?.data?.[0]?.headerName == "DSS_NON_TAX_REVENUE_PER_HOUSEHOLD" || "PropertyTaxRevenuePerHouseholdOverview"? Digit.Utils.dss.formatter(response?.responseData?.data?.[0]?.headerValue, response?.responseData?.data?.[0]?.headerSymbol, "Unit", true, t) : response?.responseData?.data?.[0]?.headerName == "DSS_STATE_GDP_REVENUE_COLLECTION"  ? Digit.Utils.dss.formatter(response?.responseData?.data?.[0]?.headerValue, response?.responseData?.data?.[0]?.headerSymbol, "UnitOverview", true, t): Digit.Utils.dss.formatter(response?.responseData?.data?.[0]?.headerValue, response?.responseData?.data?.[0]?.headerSymbol, "Lac", true, t)}
+        {response?.responseData?.data?.[0]?.headerName == "NATIONAL_DSS_TOTAL_COLLECTION" ? Digit.Utils.dss.formatter(response?.responseData?.data?.[0]?.headerValue, response?.responseData?.data?.[0]?.headerSymbol, "Cr", true, t): response?.responseData?.data?.[0]?.headerName ==  "NATIONAL_DSS_TARGET_COLLECTION"? Digit.Utils.dss.formatter(response?.responseData?.data?.[0]?.headerValue, response?.responseData?.data?.[0]?.headerSymbol, "Cr", true, t): response?.responseData?.data?.[0]?.headerName == "DSS_NON_TAX_REVENUE_PER_HOUSEHOLD"? Digit.Utils.dss.formatter(response?.responseData?.data?.[0]?.headerValue, response?.responseData?.data?.[0]?.headerSymbol, "Unit", true, t): response?.responseData?.data?.[0]?.headerName == "PropertyTaxRevenuePerHouseholdOverview" ? Digit.Utils.dss.formatter(response?.responseData?.data?.[0]?.headerValue, response?.responseData?.data?.[0]?.headerSymbol, "Unit", true, t): response?.responseData?.data?.[0]?.headerName == "DSS_STATE_GDP_REVENUE_COLLECTION"  ? Digit.Utils.dss.formatter(response?.responseData?.data?.[0]?.headerValue, response?.responseData?.data?.[0]?.headerSymbol, "UnitOverview", true, t): Digit.Utils.dss.formatter(response?.responseData?.data?.[0]?.headerValue, response?.responseData?.data?.[0]?.headerSymbol, "Unit", true, t)}
       </p>}
       {response?.responseData?.data?.[0]?.insight?.value ? (
         <p className={`p3 ${response?.responseData?.data?.[0]?.insight?.indicator === "upper_green" ? "color-green" : "color-red"}`}>
@@ -155,19 +155,32 @@ const HorBarChart = ({ data, setselectState = "" }) => {
 
     // console.log(index)
     // data?.splice(index, 1)
+    var date = new Date();
+            var months = [],
+                monthNames = [ "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ];
+            for(var i = 0; i < 12; i++) {
+                months.push(monthNames[date.getMonth()] + '-' + date.getFullYear());
+                date.setMonth(date.getMonth() - 1);
+            }    
+            console.log("months",months,data);
+
     let result = {};
     for (let i = 0; i < data?.length; i++) {
       const row = data[i];
       for (let j = 0; j < row.plots.length; j++) {
         const plot = row.plots[j];
-        console.log("plottttt",plot)
-        if(plot?.value >10000)
+        if(months.includes(plot?.name))
         {
-          result[plot.name] = { ...result[plot.name], [t(row.headerName)]:currencyFormatter.format((plot?.value / 10000000).toFixed(2) || 0), name: t(plot.name) };      
+          console.log("wwwwwwwwwwwwww",plot)
+          if(plot?.value >10000)
+          {
+            result[plot.name] = { ...result[plot.name], [t(row.headerName)]:currencyFormatter.format((plot?.value / 10000000).toFixed(2) || 0), name: t(plot.name) };      
+          }
+          else {
+            result[plot.name] = { ...result[plot.name], [t(row.headerName)]:plot?.value , name: t(plot.name) }; 
+          }
         }
-        else {
-          result[plot.name] = { ...result[plot.name], [t(row.headerName)]:plot?.value , name: t(plot.name) }; 
-        }
+     
        
       }
     }   
@@ -199,7 +212,7 @@ const renderLegend = (value) => {
   }
 
   const bars = response?.responseData?.data?.map((bar) => bar?.headerName);
-  console.log("response.responsedata",response,bars,chartData)
+
   return (
     <ResponsiveContainer
       width="50%"
@@ -226,11 +239,11 @@ const renderLegend = (value) => {
             data={chartData}
           >
             <CartesianGrid stroke="#f5f5f5" strokeDasharray="3 3" />
-            <XAxis dataKey={"name"} type={"category"} tick={{ fontSize: "14px", fill: "#505A5F" }} tickCount={10} />
+            <XAxis dataKey={"name"} type={"category"} tick={{ fontSize: "14px", fill: "#505A5F" }} tickCount={12} />
             <YAxis yAxisId="left"  type={"number"} orientation="left" stroke="#54d140" tickCount={10}
             unit={""}
             width={130}/>
-            <YAxis yAxisId="right" orientation="right" stroke="#a82227" tickCount={10}/>
+            <YAxis yAxisId="right" type={"number"} orientation="right" stroke="#a82227" tickCount={10}/>
             <Tooltip cursor={false} />
              <Legend formatter={renderLegend} iconType="circle" />
             <Bar yAxisId="left" dataKey="TotalCollection" fill="#54d140" />
