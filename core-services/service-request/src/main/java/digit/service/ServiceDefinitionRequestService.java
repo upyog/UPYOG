@@ -81,7 +81,7 @@ public class ServiceDefinitionRequestService {
             String userUri = config.getUserServiceHostName()
 				.concat(config.getUserServiceSearchPath());
 
-            userSearchRequest = UserSearchRequest.builder().requestInfo(serviceDefinitionSearchRequest.getRequestInfo())
+            userSearchRequest = UserSearchRequest.builder().requestInfo(serviceDefinitionSearchRequest.getRequestInfo()).tenantId(serviceDefinitionSearchRequest.getServiceDefinitionCriteria().getTenantId())
 					.name(serviceDefinitionSearchRequest.getServiceDefinitionCriteria().getPostedBy()).build();
 
             List<User> users = mapper.convertValue(serviceRequestRepository.fetchResult(userUri, userSearchRequest), UserResponse.class).getUser();
