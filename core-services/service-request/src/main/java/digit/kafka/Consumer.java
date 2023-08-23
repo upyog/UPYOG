@@ -30,7 +30,7 @@ public class Consumer {
     @Autowired
     private NotificationService notificationService;
 
-    @KafkaListener(topics = {"save-ss-survey"})
+    @KafkaListener(topics = {"save-service-definition"})
     public void listen(final HashMap<String, Object> record, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
 
         try {
