@@ -19,6 +19,7 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.Data;
 import lombok.Builder;
+import lombok.Builder.Default;;
 
 /**
  * The object will contain all the search parameters for Service Definition.
@@ -54,6 +55,7 @@ public class ServiceDefinitionCriteria {
     private String status;
 
     @JsonIgnore
+    @Default
     private Boolean isCountCall = false;
 
     public ServiceDefinitionCriteria addIdsItem(String idsItem) {
