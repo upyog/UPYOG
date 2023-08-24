@@ -108,7 +108,7 @@ public class ServiceDefinitionRequestService {
         });
 
 
-        if(serviceDefinitionSearchRequest.getServiceDefinitionCriteria().getPostedBy() != null && (!serviceDefinitionSearchRequest.getServiceDefinitionCriteria().getPostedBy().isEmpty())){
+        if(serviceDefinitionSearchRequest.getServiceDefinitionCriteria().getPostedBy() != null && (!serviceDefinitionSearchRequest.getServiceDefinitionCriteria().getPostedBy().isEmpty()) && (!serviceDefinitionSearchRequest.getServiceDefinitionCriteria().getPostedBy().equalsIgnoreCase("All"))){
             UserSearchRequest userSearchRequest = null;
             String userUri = config.getUserServiceHostName()
 				.concat(config.getUserServiceSearchPath());
@@ -147,6 +147,9 @@ public class ServiceDefinitionRequestService {
                 JsonNode additionalDetails = mapper.valueToTree(serviceDefinition.getAdditionalDetails());
                 long startDate = additionalDetails.get("startDate").asLong(); 
                 long endDate = additionalDetails.get("endDate").asLong(); 
+                System.out.println("startDate");
+                System.out.println(startDate);
+                System.out.println(endDate);
                 boolean isWithinToday = isDateRangeWithinToday(startDate, endDate);
 
                 if (isWithinToday) {
@@ -179,6 +182,9 @@ public class ServiceDefinitionRequestService {
         Instant todayStart = today.atStartOfDay(ZoneId.systemDefault()).toInstant();
         Instant todayEnd = today.plusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant();
 
+        System.out.println("isDateRangeWithinToday");
+        System.out.println(todayStart);
+        System.out.println(todayEnd);
         return startInstant.isAfter(todayStart) && endInstant.isBefore(todayEnd);
     }
 
