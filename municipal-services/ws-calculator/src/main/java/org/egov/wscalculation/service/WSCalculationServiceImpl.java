@@ -284,7 +284,7 @@ public class WSCalculationServiceImpl implements WSCalculationService {
 
 			Calculation calculation = null;
 
-			if (request.getIsDisconnectionRequest() != null) {
+			if (request.getIsDisconnectionRequest() != null && request.getIsDisconnectionRequest() ) {
 				if (request.getIsDisconnectionRequest() &&
 						criteria.getApplicationNo().equals(request.getCalculationCriteria().get(request.getCalculationCriteria().size() - 1)
 								.getApplicationNo())) {
