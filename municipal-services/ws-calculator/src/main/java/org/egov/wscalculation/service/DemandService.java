@@ -116,7 +116,7 @@ public class DemandService {
 		List<Calculation> createCalculations = new LinkedList<>();
 		// List that will contain Calculation for old demands
 		List<Calculation> updateCalculations = new LinkedList<>();
-		if (!CollectionUtils.isEmpty(calculations)) {
+		if (!CollectionUtils.isEmpty(calculations) && calculations.get(0)!=null) {
 			// Collect required parameters for demand search
 			String tenantId = calculations.get(0).getTenantId();
 			Long fromDateSearch = null;
