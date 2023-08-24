@@ -45,7 +45,7 @@ public class ServiceDefinitionController {
     public ResponseEntity<ServiceDefinitionResponse> search(@Valid @RequestBody ServiceDefinitionSearchRequest serviceDefinitionSearchRequest) {
         List<ServiceDefinition> serviceDefinitionList = serviceDefinitionRequestService.searchServiceDefinition(serviceDefinitionSearchRequest);
         Integer totalCount = serviceDefinitionRequestService.countTotalSurveys(serviceDefinitionSearchRequest);
-        ServiceDefinitionResponse response  = ServiceDefinitionResponse.builder().serviceDefinition(serviceDefinitionList).build();
+        ServiceDefinitionResponse response  = ServiceDefinitionResponse.builder().serviceDefinition(serviceDefinitionList).totalCount(totalCount).build();
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
