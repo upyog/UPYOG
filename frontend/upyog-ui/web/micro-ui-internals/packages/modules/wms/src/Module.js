@@ -63,14 +63,17 @@ export const WMSLinks = ({ matchPath, userType }) => {
   const links = [
   
     {
-      link: `${matchPath}/sor/home`,
+      link: `${matchPath}/sor-home`,
       i18nKey: t("SOR_HOME"),
     },
     {
       link: `${matchPath}/prjmst/home`,
       i18nKey: t("PRJMST_HOME"),
+    },{
+      link: `${matchPath}/pm-home`,
+      i18nKey: t("PM HOME"),
     },
-  ];
+  ];  
 
   return <CitizenHomeCard header={t("CITIZEN_SERVICE_WMS")} links={links} Icon={() => <PTIcon className="fill-path-primary-main" />} />;
 };
