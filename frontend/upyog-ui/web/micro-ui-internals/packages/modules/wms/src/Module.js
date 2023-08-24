@@ -77,7 +77,6 @@ export const WMSLinks = ({ matchPath, userType }) => {
 
 export const initWMSComponents = () => {
   Object.entries(componentsToRegister).forEach(([key, value]) => {
-    console.log(key);
     Digit.ComponentRegistryService.setComponent(key, value);
   });
 };

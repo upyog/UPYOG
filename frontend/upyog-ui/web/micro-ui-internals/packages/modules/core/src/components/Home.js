@@ -43,6 +43,8 @@ export const processLinkData = (newData, code, t) => {
     ];
     //RAIN-7297
     roleBasedLoginRoutes.map(({ role, from, loginLink, dashoardLink }) => {
+      console.log(role);
+      console.log(dashoardLink)
       if (Digit.UserService.hasAccess(role))
         newObj?.links?.push({
           link: from,

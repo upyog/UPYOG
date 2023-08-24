@@ -107,6 +107,30 @@ const Urls = {
     create: "/egov-hrms/employees/_create",
     update: "/egov-hrms/employees/_update",
   },
+wms:{
+  Scheme_Master:{
+    create: "https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/Scheme_Master",
+    update:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/Scheme_Master:id",
+    get:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/Scheme_Master:id",
+    search:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/Scheme_Master",
+    delete:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/Scheme_Master:id"
+  },
+  Project_Master:{
+    create: "https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/Project_Master",
+    update:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/Project_Master:id",
+    get:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/Project_Master:id",
+    search:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/Project_Master",
+    delete:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/Project_Master:id"
+  },
+  SORApplications:{
+    create: "https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/SORApplications",
+    update:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/SORApplications:id",
+    get:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/SORApplications",
+    search:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/SORApplications",
+    delete:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/SORApplications:id"
+  },
+
+  },
   tl: {
     create: "/tl-services/v1/_create",
     search: "/tl-services/v1/_search",
