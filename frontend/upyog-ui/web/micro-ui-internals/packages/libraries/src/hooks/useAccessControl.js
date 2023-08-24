@@ -1337,7 +1337,7 @@ const actions={
         "serviceCode": "CITIZEN_SERVICE_WMS",
         "code": "",
         "path": "",
-        "navigationURL": "/digit-ui/citizen/wms/sor/home",
+        "navigationURL": "/digit-ui/citizen/wms/sor-home",
         "leftIcon": "WMSIcon",
         "rightIcon": "",
         "queryParams": "",
@@ -1365,6 +1365,25 @@ const actions={
         "rightIcon": "",        
         "sidebarURL": "/digit-ui/citizen/wms-home"
     },
+    {
+        "id": 2478,
+        "name": "PM Home",
+        "url": "digit-ui-card",
+        "displayName": "PM Home",
+        "orderNumber": 5,
+        "parentModule": "WMS",
+        "enabled": true,
+        "serviceCode": "CITIZEN_SERVICE_WMS",
+        "code": "",
+        "path": "",
+        "navigationURL": "/digit-ui/citizen/pm-home",
+        "leftIcon": "WMSIcon",
+        "rightIcon": "",
+        "queryParams": "",
+        "sidebar": "digit-ui-links",
+        "sidebarURL": "/digit-ui/citizen/wms-home"
+    },
+    
   ]
 };
   const response = useQuery(["ACCESS_CONTROL", tenantId], actions,{enabled:roles?true:false});

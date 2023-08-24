@@ -71886,6 +71886,12 @@ export const LocalizationService = {
             "message": "Project Master Home",
             "module": "rainmaker-common",
             "locale": "en_IN"
+        },
+        {
+            "code": "PM HOME",
+            "message": "Physical Milestone",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
         },{
           
           "code": "CITIZEN_SERVICE_WMS_LB",

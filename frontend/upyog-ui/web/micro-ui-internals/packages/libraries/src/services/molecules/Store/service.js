@@ -754,7 +754,7 @@ export const StoreService = {
                 "serviceCode": "CITIZEN_SERVICE_WMS",
                 "code": "",
                 "path": "",
-                "navigationURL": "/digit-ui/citizen/wms/sor/home",
+                "navigationURL": "/digit-ui/citizen/wms/sor-home",
                 "leftIcon": "WMSIcon",
                 "rightIcon": "",
                 "queryParams": "",
@@ -780,7 +780,25 @@ export const StoreService = {
                   "navigationURL": "/digit-ui/citizen/wms/prjmst/home",
                   "leftIcon": "WMSIcon",
                   "rightIcon": ""
-              }
+              },
+              {
+                "id": 2478,
+                "name": "PM HOME",
+                "url": "digit-ui-card",
+                "displayName": "Physical Milestone",
+                "orderNumber": 3,
+                "parentModule": "WMS",
+                "enabled": true,
+                "serviceCode": "",
+                "code": "",
+                "path": "",
+                "navigationURL": "/digit-ui/citizen/pm-home",
+                "leftIcon": "propertyIcon",
+                "rightIcon": "",
+                "queryParams": "",
+                "sidebar": "digit-ui-links",
+                "sidebarURL": "/digit-ui/citizen/pt-home"
+            },
           ]
         },
       "common-masters": {
