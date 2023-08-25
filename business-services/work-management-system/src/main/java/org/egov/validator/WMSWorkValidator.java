@@ -31,7 +31,7 @@ public class WMSWorkValidator {
 	    }
 
 	    public List<WMSWorkApplication> validateApplicationUpdateRequest(WMSWorkRequest wmsWorkRequest) {
-	        List<Integer> ids = wmsWorkRequest.getWmsWorkApplications().stream().map(WMSWorkApplication::getWorkId).collect(Collectors.toList());
+	        List<String> ids = wmsWorkRequest.getWmsWorkApplications().stream().map(WMSWorkApplication::getWorkId).collect(Collectors.toList());
 	        List<WMSWorkApplication> wmsWorkApplications = repository.getApplications(WMSWorkApplicationSearchCriteria.builder().workId(ids).build());
 	        if(wmsWorkApplications.size() != ids.size())
 	            throw new CustomException("APPLICATION_DOES_NOT_EXIST", "One of the Work ids does not exist.");

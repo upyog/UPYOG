@@ -22,10 +22,10 @@ import lombok.ToString;
 public class WMSWorkApplicationSearchCriteria {
 
 	@JsonProperty("work_id")
-    private List<Integer> workId;
+    private List<String> workId;
 	
 	@JsonProperty("work_no")
-    private List<Integer> workNo;
+    private Integer workNo;
 
 	
 }

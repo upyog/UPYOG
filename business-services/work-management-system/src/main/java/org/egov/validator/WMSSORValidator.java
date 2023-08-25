@@ -27,7 +27,7 @@ public class WMSSORValidator {
 	    }
 
 	    public List<ScheduleOfRateApplication> validateApplicationUpdateRequest(WMSSORRequest wmsSORRequest) {
-	        List<Integer> ids = wmsSORRequest.getScheduleOfRateApplications().stream().map(ScheduleOfRateApplication::getSorId).collect(Collectors.toList());
+	        List<String> ids = wmsSORRequest.getScheduleOfRateApplications().stream().map(ScheduleOfRateApplication::getSorId).collect(Collectors.toList());
 	        List<ScheduleOfRateApplication> sorApplications = repository.getApplications(SORApplicationSearchCriteria.builder().sorId(ids).build());
 	        if(sorApplications.size() != ids.size())
 	            throw new CustomException("APPLICATION_DOES_NOT_EXIST", "One of the SOR ids does not exist.");

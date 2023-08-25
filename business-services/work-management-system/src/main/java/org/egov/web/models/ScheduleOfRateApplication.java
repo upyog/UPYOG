@@ -18,7 +18,7 @@ import lombok.Setter;
 public class ScheduleOfRateApplication {
 	
 	@JsonProperty("sor_id")
-	private Integer sorId = null;
+	private String sorId = null;
 	
 	@JsonProperty("tenantId")
     private String tenantId = null;
@@ -46,4 +46,7 @@ public class ScheduleOfRateApplication {
 	 
 	 @JsonProperty("rate")
 	 private Long rate = null;
+
+	 @JsonProperty("auditDetails")
+	 private AuditDetails auditDetails = null;
 }

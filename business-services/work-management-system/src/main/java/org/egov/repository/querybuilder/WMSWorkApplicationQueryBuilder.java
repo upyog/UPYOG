@@ -26,9 +26,9 @@ public class WMSWorkApplicationQueryBuilder {
         query.append(FROM_TABLES);
 
         if(!ObjectUtils.isEmpty(criteria.getWorkNo())){
-       	 addClauseIfRequired(query, preparedStmtList);
-            query.append(" work.work_no IN ( ").append(createQuery(criteria.getWorkNo())).append(" ) ");
-            addToPreparedStatement(preparedStmtList, criteria.getWorkNo());
+        	addClauseIfRequired(query, preparedStmtList);
+            query.append(" btr.work_no = ? ");
+            preparedStmtList.add(criteria.getWorkNo());
        }
         
         if(!ObjectUtils.isEmpty(criteria.getWorkId())){
@@ -51,7 +51,7 @@ public class WMSWorkApplicationQueryBuilder {
         }
     }
 
-    private String createQuery(List<Integer> list) {
+    private String createQuery(List<String> list) {
         StringBuilder builder = new StringBuilder();
         int length = list.size();
         for (int i = 0; i < length; i++) {
@@ -62,8 +62,8 @@ public class WMSWorkApplicationQueryBuilder {
         return builder.toString();
     }
 
-    private void addToPreparedStatement(List<Object> preparedStmtList, List<Integer> ids) {
-        ids.forEach(id -> {
+    private void addToPreparedStatement(List<Object> preparedStmtList, List<String> list) {
+        list.forEach(id -> {
             preparedStmtList.add(id);
         });
     }

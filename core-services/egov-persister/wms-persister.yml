@@ -6,7 +6,7 @@ serviceMaps:
       fromTopic: save-wms-application
       isTransaction: true
       queryMaps:
-        - query: INSERT INTO state_sor(sor_id,sor_name,start_date,end_date,chapter,item_no,description_of_item,unit,rate) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO state_sor(sor_id,sor_name,start_date,end_date,chapter,item_no,description_of_item,unit,rate,createdby,lastmodifiedby,createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: ScheduleOfRateApplication.*
           jsonMaps:
             - jsonPath: $.ScheduleOfRateApplication.*.sor_id
@@ -26,6 +26,14 @@ serviceMaps:
             - jsonPath: $.ScheduleOfRateApplication.*.unit
             
             - jsonPath: $.ScheduleOfRateApplication.*.rate
+            
+            - jsonPath: $.ScheduleOfRateApplication.*.auditDetails.createdBy
+
+            - jsonPath: $.ScheduleOfRateApplication.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.ScheduleOfRateApplication.*.auditDetails.createdTime
+            
+            - jsonPath: $.ScheduleOfRateApplication.*.auditDetails.lastModifiedTime
 
     - version: 1.0
       description: Update SOR applications in table

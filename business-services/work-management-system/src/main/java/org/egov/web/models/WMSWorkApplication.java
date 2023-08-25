@@ -21,7 +21,7 @@ import lombok.Setter;
 public class WMSWorkApplication {
 	
 	@JsonProperty("work_id")
-	private Integer workId = null;
+	private String workId = null;
 	
 	@JsonProperty("project_id")
     private Integer projectId = null;

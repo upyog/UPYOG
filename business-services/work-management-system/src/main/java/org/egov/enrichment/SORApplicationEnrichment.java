@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.egov.util.IdgenUtil;
+import org.egov.web.models.AuditDetails;
 import org.egov.web.models.ScheduleOfRateApplication;
 import org.egov.web.models.WMSSORRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,23 +41,14 @@ public class SORApplicationEnrichment {
         Integer index = 0;
 		for (ScheduleOfRateApplication application : wmsSORRequest.getScheduleOfRateApplications()) {
 			// Enrich audit details
-//	            AuditDetails auditDetails = AuditDetails.builder().createdBy(birthRegistrationRequest.getRequestInfo().getUserInfo().getUuid()).createdTime(System.currentTimeMillis()).lastModifiedBy(birthRegistrationRequest.getRequestInfo().getUserInfo().getUuid()).lastModifiedTime(System.currentTimeMillis()).build();
-//	            application.setAuditDetails(auditDetails);
+	            AuditDetails auditDetails = AuditDetails.builder().createdBy(wmsSORRequest.getRequestInfo().getUserInfo().getUuid()).createdTime(System.currentTimeMillis()).lastModifiedBy(wmsSORRequest.getRequestInfo().getUserInfo().getUuid()).lastModifiedTime(System.currentTimeMillis()).build();
+	            application.setAuditDetails(auditDetails);
 
 			// Enrich UUID
-			application.setSorId((int) Math.floor(Math.random() * (9999 - 1000 + 1) + 1000));
+			application.setSorId(UUID.randomUUID().toString());
 			application.setSorName(sorIdList.get(index++));
 			application.setStartDate(date);
 			application.setEndDate(date);
-
-			// Set application number from IdGen
-			// application.setApplicationNumber(birthRegistrationIdList.get(index++));
-
-			// Enrich registration Id
-			// application.getAddress().setRegistrationId(application.getId());
-
-			// Enrich address UUID
-			// application.getAddress().setId(UUID.randomUUID().toString());
 		}
 	}
 

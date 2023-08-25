@@ -41,7 +41,7 @@ public class WMSWorkApplicationRowMapper implements ResultSetExtractor<List<WMSW
                         .build();
                 
                 wmsWorkApplication = WMSWorkApplication.builder()
-                        .workId(rs.getInt("wWorkId"))
+                        .workId(rs.getString("wWorkId"))
                         .projectId(rs.getInt("wProjectId"))
                         .workNo(rs.getString("wWorkNo"))
                         .workName(rs.getString("wWorkName"))

@@ -10,7 +10,7 @@ import org.springframework.util.ObjectUtils;
 public class SORApplicationQueryBuilder {
 
 	
-	private static final String BASE_BTR_QUERY = " SELECT sor.sor_id as sSorId, sor.sor_name as ssorName, sor.start_date as sstartDate, sor.end_date as sendDate, sor.chapter as schapter, sor.item_no as sitemNo, sor.description_of_item as sdescOfItem, sor.unit as sunit, sor.rate as srate ";
+	private static final String BASE_BTR_QUERY = " SELECT sor.sor_id as sSorId, sor.sor_name as ssorName, sor.start_date as sstartDate, sor.end_date as sendDate, sor.chapter as schapter, sor.item_no as sitemNo, sor.description_of_item as sdescOfItem, sor.unit as sunit, sor.rate as srate , sor.createdby as screatedBy, sor.lastmodifiedby as slastmodifiedby, sor.createdtime as screatedtime, sor.lastmodifiedtime as slastmodifiedtime";
 
     //private static final String ADDRESS_SELECT_QUERY = " add.id as aid, add.tenantid as atenantid, add.doorno as adoorno, add.latitude as alatitude, add.longitude as alongitude, add.buildingname as abuildingname, add.addressid as aaddressid, add.addressnumber as aaddressnumber, add.type as atype, add.addressline1 as aaddressline1, add.addressline2 as aaddressline2, add.landmark as alandmark, add.street as astreet, add.city as acity, add.locality as alocality, add.pincode as apincode, add.detail as adetail, add.registrationid as aregistrationid ";
 
@@ -44,7 +44,7 @@ public class SORApplicationQueryBuilder {
         }
     }
 
-    private String createQuery(List<Integer> list) {
+    private String createQuery(List<String> list) {
         StringBuilder builder = new StringBuilder();
         int length = list.size();
         for (int i = 0; i < length; i++) {
@@ -55,7 +55,7 @@ public class SORApplicationQueryBuilder {
         return builder.toString();
     }
 
-    private void addToPreparedStatement(List<Object> preparedStmtList, List<Integer> ids) {
+    private void addToPreparedStatement(List<Object> preparedStmtList, List<String> ids) {
         ids.forEach(id -> {
             preparedStmtList.add(id);
         });

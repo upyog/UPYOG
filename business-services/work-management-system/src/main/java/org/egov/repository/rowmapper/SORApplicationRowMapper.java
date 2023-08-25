@@ -8,6 +8,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.egov.web.models.AuditDetails;
 import org.egov.web.models.ScheduleOfRateApplication;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
@@ -24,12 +25,21 @@ public class SORApplicationRowMapper implements ResultSetExtractor<List<Schedule
 
             if(sorApplication == null) {
 
-                Date lastModifiedTime = rs.getDate("sstartDate");
+            	Long lastModifiedTime = rs.getLong("slastmodifiedtime");
                 if (rs.wasNull()) {
                     lastModifiedTime = null;
+                    
+                    
                 }
-                sorApplication = ScheduleOfRateApplication.builder()
-                        .sorId(rs.getInt("sSorId"))
+                AuditDetails auditdetails = AuditDetails.builder()
+                        .createdBy(rs.getString("screatedBy"))
+                        .createdTime(rs.getLong("screatedTime"))
+                        .lastModifiedBy(rs.getString("slastModifiedBy"))
+                        .lastModifiedTime(lastModifiedTime)
+                        .build();
+                
+				sorApplication = ScheduleOfRateApplication.builder()
+                        .sorId(rs.getString("sSorId"))
                         .sorName(rs.getString("ssorName"))
                         .startDate(rs.getString("sstartDate"))
                         .endDate(rs.getString("sendDate"))
@@ -38,6 +48,7 @@ public class SORApplicationRowMapper implements ResultSetExtractor<List<Schedule
                         .descOfItem(rs.getString("sdescOfItem"))
                         .unit(rs.getInt("sunit"))
                         .rate(rs.getLong("srate"))
+                        .auditDetails(auditdetails)
                         .build();
             }
             //addChildrenToProperty(rs, sorApplication);
