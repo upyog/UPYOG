@@ -170,23 +170,20 @@ public class ServiceDefinitionRequestService {
         return listOfServiceDefinitions;
     }
 
-    public static boolean isDateRangeWithinToday(long startDateEpoch, long endDateEpoch) {
-        Instant startInstant = Instant.ofEpochSecond(startDateEpoch);
-        Instant endInstant = Instant.ofEpochSecond(endDateEpoch);
+    public static boolean isDateRangeWithinToday(long startDateEpochMillis, long endDateEpochMillis) {
+        LocalDate currentDate = LocalDate.now(ZoneId.systemDefault());
+        long todayStartEpochMillis = currentDate.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli();
+        long todayEndEpochMillis = currentDate.atTime(23, 59, 59).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
 
-        System.out.println("startDate");
-        System.out.println(startInstant);
-        System.out.println(endInstant);
+        System.out.println("today");
+        System.out.println(todayStartEpochMillis);
+        System.out.println(todayEndEpochMillis);
+        System.out.println("service Definition");
+        System.out.println(startDateEpochMillis);
+        System.out.println(endDateEpochMillis);
 
-        LocalDate today = LocalDate.now(ZoneId.systemDefault());
-
-        Instant todayStart = today.atStartOfDay(ZoneId.systemDefault()).toInstant();
-        Instant todayEnd = today.plusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant();
-
-        System.out.println("isDateRangeWithinToday");
-        System.out.println(todayStart);
-        System.out.println(todayEnd);
-        return startInstant.isAfter(todayStart) && endInstant.isBefore(todayEnd);
+        return startDateEpochMillis >= todayStartEpochMillis && endDateEpochMillis <= todayEndEpochMillis;
+    
     }
 
     public ServiceDefinition updateServiceDefinition(ServiceDefinitionRequest serviceDefinitionRequest) {
