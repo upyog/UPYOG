@@ -799,6 +799,24 @@ export const StoreService = {
                 "sidebar": "digit-ui-links",
                 "sidebarURL": "/digit-ui/citizen/pt-home"
             },
+              {
+                "id": 2479,
+                "name": "Contaractor Master",
+                "url": "digit-ui-card",
+                "displayName": "Contaractor Master",
+                "orderNumber": 6,
+                "parentModule": "WMS",
+                "enabled": true,
+                "serviceCode": "",
+                "code": "",
+                "path": "",
+                "navigationURL": "/digit-ui/citizen/cm-home",
+                "leftIcon": "propertyIcon",
+                "rightIcon": "",
+                "queryParams": "",
+                "sidebar": "digit-ui-links",
+                "sidebarURL": "/digit-ui/citizen/wms-home"
+            },
           ]
         },
       "common-masters": {

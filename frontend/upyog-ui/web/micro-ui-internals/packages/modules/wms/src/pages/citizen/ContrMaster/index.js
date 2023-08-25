@@ -1,7 +1,12 @@
-import React, { useEffect } from "react";
+import React from "react";
 
 const ContrMasterAdd = () =>{
 
-    return (<div>CONTRACTOR MASTER Add component</div>)
+    return (
+    <React.Fragment>
+    <div>sdssssd</div>
+    <div>CONTRACTOR MASTER Add component Test</div>
+    </React.Fragment>
+    )
 }
 export default ContrMasterAdd

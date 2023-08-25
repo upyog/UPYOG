@@ -22,8 +22,11 @@ import Response from "./pages/citizen/SOR/Response";
 import WmsSorId from "./pageComponents/SOR/WmsSorId";
 import WmsSorUpdate from "./pages/citizen/SOR/Update";
 import WmsSorCreate from "./pages/citizen/SOR/Create";
-
+import ContrMasterAdd from "./pages/citizen/ContrMaster/index";
+import ContrMasterView from "./pages/citizen/ContrMaster/ContrView"
 const componentsToRegister = {
+  ContrMasterAdd,
+  ContrMasterView,
  Response,
    RegisterDetails,
  /* WMSManageApplication,*/
@@ -72,7 +75,17 @@ export const WMSLinks = ({ matchPath, userType }) => {
     },{
       link: `${matchPath}/pm-home`,
       i18nKey: t("PM HOME"),
+    }
+    ,{
+      link: `${matchPath}/cm-home`,
+      i18nKey: t("Contact Master"),
     },
+    {
+      link: `${matchPath}/cm-table-view`,
+      i18nKey: t("Contact Master Tabless"),
+    },
+
+    
   ];  
 
   return <CitizenHomeCard header={t("CITIZEN_SERVICE_WMS")} links={links} Icon={() => <PTIcon className="fill-path-primary-main" />} />;

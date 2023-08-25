@@ -71892,6 +71892,12 @@ export const LocalizationService = {
             "message": "Physical Milestone",
             "module": "rainmaker-common",
             "locale": "en_IN"
+        },
+        {
+            "code": "Contaractor Master",
+            "message": "Contaractor Master",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
         },{
           
           "code": "CITIZEN_SERVICE_WMS_LB",
