@@ -17,9 +17,9 @@ const Inbox = ({ parentRoute }) => {
     .filter((ulb) => userInfo?.roles?.some((role) => role?.tenantId === ulb?.code))
     
   const statuses = [
-    { code: "ALL", name: `${t("ES_COMMON_ALL")}` },
-    { code: "ACTIVE", name: `${t("ES_COMMON_ACTIVE")}` },
-    { code: "INACTIVE", name: `${t("ES_COMMON_INACTIVE")}` }
+    { code: "All", name: `${t("ES_COMMON_ALL")}` },
+    { code: "Active", name: `${t("ES_COMMON_ACTIVE")}` },
+    { code: "Inactive", name: `${t("ES_COMMON_INACTIVE")}` }
   ]
 
   const isActive = (startDate, endDate) => {
@@ -60,19 +60,32 @@ const Inbox = ({ parentRoute }) => {
         Digit.SessionStorage.set("CITIZENSURVEY.INBOX", { ...state, searchForm: payload.data })
         return { ...state, searchForm: payload.data };
       case "mutateFilterForm":
-        Digit.SessionStorage.set("CITIZENSURVEY.INBOX", { ...state, filterForm: payload.data })
-        return { ...state, filterForm: payload.data };
+        // Digit.SessionStorage.set("CITIZENSURVEY.INBOX", { ...state, filterForm: payload.data })
+        // return { ...state, filterForm: payload.data };
+        Digit.SessionStorage.set("CITIZENSURVEY.INBOX", { ...state, filterForm: payload.data, ServiceDefinitionCriteria:{
+          "code": [state.searchForm.title],
+          "postedBy": state.searchForm.postedBy,
+          "module": ["engagement"],
+          "status": payload.data.status.code
+        }})
+        return { ...state, filterForm: payload.data, ServiceDefinitionCriteria: {"tenantId": tenantId,
+          "code": [state.searchForm.title],
+          "postedBy": state.searchForm.postedBy,
+          "module": ["engagement"],
+          "status": payload.data.status.code
+        } };
       case "mutateTableForm":
         Digit.SessionStorage.set("CITIZENSURVEY.INBOX", { ...state, tableForm: payload.data })
         return { ...state, tableForm: payload.data };
       case "mutateSearchDefinationForm":
         Digit.SessionStorage.set("CITIZENSURVEY.INBOX", { ...state, searchForm: payload.data, ServiceDefinitionCriteria: {"tenantId": tenantId,
-        "code": [payload.data.title],
-        "module": ["engagement"]} })
+          "code": [payload.data.title],
+          "postedBy": payload.data.postedBy,
+          "module": ["engagement"]} })
         return { ...state, searchForm: payload.data, ServiceDefinitionCriteria: {"tenantId": tenantId,
-        "code": [payload.data.title],
-        "postedBy:": payload.data.postedBy,
-        "module": ["engagement"]} };
+          "code": [payload.data.title],
+          "postedBy": payload.data.postedBy,
+          "module": ["engagement"]} };
       default:
         break;
     }
@@ -187,8 +200,9 @@ const Inbox = ({ parentRoute }) => {
 
   }
   const onFilterFormSubmit = (data) => {
-    data.hasOwnProperty("") ? delete data?.[""] : null
-    dispatch({ action: "mutateFilterForm", data })
+    // data.hasOwnProperty("") ? delete data?.[""] : null
+    // dispatch({ action: "mutateFilterForm", data })
+    dispatch({ action: "mutateFilterForm", data });
   }
 
   const propsForSearchForm = { SearchFormFields, onSearchFormSubmit, searchFormDefaultValues: formState?.ServiceDefinitionCriteria?.code[0], resetSearchFormDefaultValues: searchFormDefaultValues, onSearchFormReset }
