@@ -173,16 +173,16 @@ public class ServiceDefinitionRequestService {
     public static boolean isDateRangeWithinToday(long startDateEpochMillis, long endDateEpochMillis) {
         LocalDate currentDate = LocalDate.now(ZoneId.systemDefault());
         long todayStartEpochMillis = currentDate.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli();
-        long todayEndEpochMillis = currentDate.atTime(23, 59, 59).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+        // long todayEndEpochMillis = currentDate.atTime(23, 59, 59).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
 
         System.out.println("today");
         System.out.println(todayStartEpochMillis);
-        System.out.println(todayEndEpochMillis);
+        // System.out.println(todayEndEpochMillis);
         System.out.println("service Definition");
         System.out.println(startDateEpochMillis);
         System.out.println(endDateEpochMillis);
 
-        return startDateEpochMillis >= todayStartEpochMillis && endDateEpochMillis <= todayEndEpochMillis;
+        return startDateEpochMillis <= todayStartEpochMillis && endDateEpochMillis >= todayStartEpochMillis;
     
     }
 
