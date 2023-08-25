@@ -147,9 +147,6 @@ public class ServiceDefinitionRequestService {
                 JsonNode additionalDetails = mapper.valueToTree(serviceDefinition.getAdditionalDetails());
                 long startDate = additionalDetails.get("startDate").asLong(); 
                 long endDate = additionalDetails.get("endDate").asLong(); 
-                System.out.println("startDate");
-                System.out.println(startDate);
-                System.out.println(endDate);
                 boolean isWithinToday = isDateRangeWithinToday(startDate, endDate);
 
                 if (isWithinToday) {
@@ -176,6 +173,10 @@ public class ServiceDefinitionRequestService {
     public static boolean isDateRangeWithinToday(long startDateEpoch, long endDateEpoch) {
         Instant startInstant = Instant.ofEpochSecond(startDateEpoch);
         Instant endInstant = Instant.ofEpochSecond(endDateEpoch);
+
+        System.out.println("startDate");
+        System.out.println(startInstant);
+        System.out.println(endInstant);
 
         LocalDate today = LocalDate.now(ZoneId.systemDefault());
 
