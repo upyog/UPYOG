@@ -1383,6 +1383,24 @@ const actions={
         "sidebar": "digit-ui-links",
         "sidebarURL": "/digit-ui/citizen/wms-home"
     },
+    {
+        "id": 2479,
+        "name": "Contaractor Master",
+        "url": "digit-ui-card",
+        "displayName": "Contaractor Master",
+        "orderNumber": 6,
+        "parentModule": "WMS",
+        "enabled": true,
+        "serviceCode": "CITIZEN_SERVICE_WMS",
+        "code": "",
+        "path": "",
+        "navigationURL": "/digit-ui/citizen/cm-home",
+        "leftIcon": "WMSIcon",
+        "rightIcon": "",
+        "queryParams": "",
+        "sidebar": "digit-ui-links",
+        "sidebarURL": "/digit-ui/citizen/wms-home"
+    },
     
   ]
 };
