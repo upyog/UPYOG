@@ -139,7 +139,7 @@ public class ServiceDefinitionRequestService {
 
         }
 
-        if(serviceDefinitionSearchRequest.getServiceDefinitionCriteria().getStatus()!=null &&(!serviceDefinitionSearchRequest.getServiceDefinitionCriteria().getStatus().isEmpty())){
+        if(serviceDefinitionSearchRequest.getServiceDefinitionCriteria().getStatus()!=null &&(!serviceDefinitionSearchRequest.getServiceDefinitionCriteria().getStatus().isEmpty()) && (!serviceDefinitionSearchRequest.getServiceDefinitionCriteria().getStatus().equalsIgnoreCase("all"))){
 
             List<ServiceDefinition> ListOfActiveServiceDefinitions = new ArrayList<>();
             List<ServiceDefinition> ListOfInactiveServiceDefinitions = new ArrayList<>();
