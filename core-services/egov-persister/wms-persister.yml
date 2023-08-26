@@ -363,8 +363,39 @@ serviceMaps:
             
             - jsonPath: $.WMSTenderEntryApplication.*.work_duration	
             
+           
+            
+    - version: 1.0
+      description: Persists Work Award Approval details in tables
+      fromTopic: save-waward-application
+      isTransaction: true
+      queryMaps:
+
+        - query: INSERT INTO work_award_approval (work_award_id,work_name,percentage_type,quoted_percentage,contractor_name,no_of_days_for_agreement,loa_generation,award_date,document_upload,award_status) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?,?);
+          basePath: WMSWorkAwardApprovalApplication.*
+          jsonMaps:
+            - jsonPath: $.WMSWorkAwardApprovalApplication.*.work_award_id
+
+            - jsonPath: $.WMSWorkAwardApprovalApplication.*.work_name
+
+            - jsonPath: $.WMSWorkAwardApprovalApplication.*.percentage_type
+            
+            - jsonPath: $.WMSWorkAwardApprovalApplication.*.quoted_percentage
+
+            - jsonPath: $.WMSWorkAwardApprovalApplication.*.contractor_name
+
+            - jsonPath: $.WMSWorkAwardApprovalApplication.*.no_of_days_for_agreement
+
+            - jsonPath: $.WMSWorkAwardApprovalApplication.*.loa_generation
+
+            - jsonPath: $.WMSWorkAwardApprovalApplication.*.award_date
+
+            - jsonPath: $.WMSWorkAwardApprovalApplication.*.document_upload
+            
+            - jsonPath: $.WMSWorkAwardApprovalApplication.*.award_status
             
             
+               
     - version: 1.0
       description: Persists work estimation details in tables
       fromTopic: save-wrkest-application
