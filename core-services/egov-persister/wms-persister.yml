@@ -364,6 +364,48 @@ serviceMaps:
             - jsonPath: $.WMSTenderEntryApplication.*.work_duration	
             
            
+          
+    - version: 1.0
+      description: Persists Physical Financial Milestone details in tables
+      fromTopic: save-pfmile-application
+      isTransaction: true
+      queryMaps:
+
+        - query: INSERT INTO physical_financial_milestone (milestone_id,project_name,work_name,milestone_name,sr_no,activity_description,percentage_weightage,planned_start_date,planned_end_date,total_weightage,milestone_description,actual_start_date,actual_end_date,progress_update_date,completed_percentage) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?,?,?);
+          basePath: WMSPhysicalFinancialMilestoneApplication.*
+          jsonMaps:
+            - jsonPath: $.WMSPhysicalFinancialMilestoneApplication.*.milestone_id
+
+            - jsonPath: $.WMSPhysicalFinancialMilestoneApplication.*.project_name
+
+            - jsonPath: $.WMSPhysicalFinancialMilestoneApplication.*.work_name
+            
+            - jsonPath: $.WMSPhysicalFinancialMilestoneApplication.*.milestone_name
+
+            - jsonPath: $.WMSPhysicalFinancialMilestoneApplication.*.sr_no
+
+            - jsonPath: $.WMSPhysicalFinancialMilestoneApplication.*.activity_description
+
+            - jsonPath: $.WMSPhysicalFinancialMilestoneApplication.*.percentage_weightage
+
+            - jsonPath: $.WMSPhysicalFinancialMilestoneApplication.*.planned_start_date
+
+            - jsonPath: $.WMSPhysicalFinancialMilestoneApplication.*.planned_end_date
+            
+            - jsonPath: $.WMSPhysicalFinancialMilestoneApplication.*.total_weightage
+            
+            - jsonPath: $.WMSPhysicalFinancialMilestoneApplication.*.milestone_description
+            
+            - jsonPath: $.WMSPhysicalFinancialMilestoneApplication.*.actual_start_date
+            
+            - jsonPath: $.WMSPhysicalFinancialMilestoneApplication.*.actual_end_date
+            
+            - jsonPath: $.WMSPhysicalFinancialMilestoneApplication.*.progress_update_date
+            
+            - jsonPath: $.WMSPhysicalFinancialMilestoneApplication.*.completed_percentage
+            
+            
+          
             
     - version: 1.0
       description: Persists Work Award Approval details in tables
