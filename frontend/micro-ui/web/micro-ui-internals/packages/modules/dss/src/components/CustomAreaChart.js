@@ -11,6 +11,7 @@ const increasedHeightCharts = [
   "nssNOCApplicationVsProvisionalVsActual",
   "nocApplicationVsProvisionalVsActual",
   "permitsandOCissued",
+  "cumulativeCollectionOverview"
 ];
 const getColors = (index = 0) => {
   index = COLORS.length > index ? index : 0;
@@ -18,7 +19,6 @@ const getColors = (index = 0) => {
 };
 
 const getDenominatedValue = (denomination, plotValue,plot) => {
-  console.log("denomination",plotValue,denomination,plot)
   if(plot?.COLLECTIONS_NONTAX || plot?.COLLECTIONS_TAX || plot?.COLLECTIONS)
   {
     return Number((plotValue / 10000000).toFixed(2));
@@ -148,6 +148,10 @@ const CustomAreaChart = ({ xDataKey = "name", yDataKey = getValue, data, setChar
     {
       return null
     }
+    else if(key == "Total Collection"|| "Non Tax Collection" || "Tax Collection")
+    {
+      return getDenominatedValue("Cr", plotValue,plot);
+    }
     else if (plot?.symbol?.toLowerCase() === "amount") {
       const { denomination } = value;
       return getDenominatedValue(denomination, plotValue,plot);
@@ -162,7 +166,6 @@ const CustomAreaChart = ({ xDataKey = "name", yDataKey = getValue, data, setChar
   const renderLegend = () => <span style={{ fontSize: "14px", color: "#505A5F" }}>{t(`DSS_${Digit.Utils.locale.getTransformedLocale(id)}`)}</span>;
 
   const renderLegendForLine = (ss, sss, index) => {
-console.log("{keysArr?.[index]",keysArr?.[index],index)
     return (
       <ul>
  <span style={{ fontSize: "14px", color: "#505A5F" }}>{keysArr?.[index]}</span>
@@ -170,8 +173,6 @@ console.log("{keysArr?.[index]",keysArr?.[index],index)
     )
   }
   
- 
-
   const tickFormatter = (value) => {
     if (typeof value === "string") {
       return value.replace("-", ", ");
@@ -228,12 +229,12 @@ console.log("{keysArr?.[index]",keysArr?.[index],index)
     let newObjArray = [newPayload?.name];
     delete newPayload?.name;
     console.log("sssssssss",payloadObj)
-if(payloadObj?.payload?.COLLECTIONS_NONTAX)
+if(payloadObj?.payload?.["Non Tax Collection"])
 {
   Object.keys(newPayload).map((key) => {
     newObjArray.push(
       `${key} -${prefix}${ 
-       getDenominatedValue(value?.denomination, newPayload?.[key],payloadObj?.payload)
+       getDenominatedValue("Cr", newPayload?.[key],payloadObj?.payload)
       }Cr `
     );
   });
@@ -269,7 +270,6 @@ else {
   if (isLoading) {
     return <Loader />;
   }
-  console.log("AAAAAAA",chartData,id,keysArr)
   return (
     <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", height: "100%" }}>
       {(id === "fssmCapacityUtilization"  ||id === "fsmCapacityUtilization"  )&& (
