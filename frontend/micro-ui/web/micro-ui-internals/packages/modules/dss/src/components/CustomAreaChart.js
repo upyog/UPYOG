@@ -139,7 +139,7 @@ const CustomAreaChart = ({ xDataKey = "name", yDataKey = getValue, data, setChar
   }, [response, totalCapacity]);
 
   const renderPlot = (plot, key) => {
-    console.log("renderr",plot, key)
+    console.log("renderr",plot, key,id)
     const plotValue = key ? plot?.[key] : plot?.value || 0;
     if (id === "fssmCapacityUtilization" || id === "fsmCapacityUtilization" ){
       return Number(plotValue.toFixed(1));
@@ -147,6 +147,11 @@ const CustomAreaChart = ({ xDataKey = "name", yDataKey = getValue, data, setChar
     if (key === "Reopened Complaints")
     {
       return null
+    }
+    if(id === "cumulativeCollectionv3")
+    {
+      const { denomination } = value;
+      return getDenominatedValue(denomination, plotValue,plot);
     }
     else if(key == "Total Collection"|| "Non Tax Collection" || "Tax Collection")
     {
