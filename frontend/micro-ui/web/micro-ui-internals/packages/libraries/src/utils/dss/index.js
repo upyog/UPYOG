@@ -12,6 +12,8 @@ const amountFormatter = (value, denomination, t) => {
       return `₹ ${currencyFormatter.format(value?.toFixed(2) || 0)}`;
       case "UnitOverview":
       return `${currencyFormatter.format(value?.toFixed(2) || 0)} %`;
+      case "UnitGDP":
+      return `${currencyFormatter.format(value?.toFixed(4) || 0)}`;
     default:
       return "";
   }
