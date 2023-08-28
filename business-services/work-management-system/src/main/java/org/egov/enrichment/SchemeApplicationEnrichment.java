@@ -57,16 +57,22 @@ public class SchemeApplicationEnrichment {
 
 	public void enrichSchemeApplicationUponUpdate(WMSSchemeRequest wmsSchemeRequest, List<Scheme> existingApplication) {
 		// Enrich lastModifiedTime and lastModifiedBy in case of update
+		
+		
 		for (Scheme application : wmsSchemeRequest.getSchemeApplications()) {
-			application.setSourceOfFund(existingApplication.get(0).getSourceOfFund());
-			application.setSchemeDescription(existingApplication.get(0).getSchemeDescription());
-			application.setUploadDocument(existingApplication.get(0).getUploadDocument());
-			application.setFund(existingApplication.get(0).getFund());
-			application.setStartDate(existingApplication.get(0).getStartDate());
+			existingApplication.get(0).setSourceOfFund(application.getSourceOfFund());
+			existingApplication.get(0).setSchemeDescription(application.getSchemeDescription());
+			existingApplication.get(0).setUploadDocument(application.getUploadDocument());
+			existingApplication.get(0).setFund(application.getFund());
+			existingApplication.get(0).setStartDate(application.getStartDate());
+			existingApplication.get(0).setEndDate(date);
 			
-			application.setEndDate(date);
+			
 			// application.getAuditDetails().setLastModifiedBy(birthRegistrationRequest.getRequestInfo().getUserInfo().getUuid());
 		}
+		
+		
+		
 	}
 
 }

@@ -263,7 +263,7 @@ serviceMaps:
       isTransaction: true
       queryMaps:
 
-        - query: INSERT INTO contractor (vendor_id,vendor_type,vendor_sub_type,vendor_name,vendor_status,pfms_vendor_code,payto,mobile_number,email,uid_number,gst_number,pan_number,bank_branch,bank_ifsc_code,bank_account_number,function,primary_account_head,vendor_class,address,epfo_account_number) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?,?,?,?,?,?,?,?);
+        - query: INSERT INTO contractor (vendor_id,vendor_type,vendor_sub_type,vendor_name,vendor_status,pfms_vendor_code,payto,mobile_number,email,uid_number,gst_number,pan_number,bank_branch_ifsc_code,bank_account_number,function,primary_account_head,vendor_class,address,epfo_account_number) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?,?,?,?,?,?,?);
           basePath: WMSContractorApplication.*
           jsonMaps:
             - jsonPath: $.WMSContractorApplication.*.vendor_id
@@ -290,9 +290,7 @@ serviceMaps:
             
             - jsonPath: $.WMSContractorApplication.*.pan_number
             
-            - jsonPath: $.WMSContractorApplication.*.bank_branch
-            
-            - jsonPath: $.WMSContractorApplication.*.bank_ifsc_code
+            - jsonPath: $.WMSContractorApplication.*.bank_branch_ifsc_code
             
             - jsonPath: $.WMSContractorApplication.*.bank_account_number
             
@@ -522,4 +520,90 @@ serviceMaps:
             - jsonPath: $.WMSWorkEstimationApplication.*.document_description
             
             - jsonPath: $.WMSWorkEstimationApplication.*.upload_document
+            
+            
+            
+    - version: 1.0
+      description: Persists Contract Agreement details in tables
+      fromTopic: save-conagrmt-application
+      isTransaction: true
+      queryMaps:
 
+        - query: INSERT INTO contract_agreement (agreement_no,agreement_name,agreement_date,department_name,loa_no,resolution_no,resolution_date,tender_no,tender_date,agreement_type,defect_liability_period,contract_period,agreement_amount,payment_type,deposit_type,deposit_amount,work_description,account_no,particulars,valid_from_date,valid_till_date,bank_branch_ifsc_code,payment_mode,designation,employee_name,witness_name,address,uid,vendor_type,vendor_name,represented_by,primary_party,sr_no,terms_and_conditions,document_description,upload_document) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+          basePath: WMSContractAgreementApplication.*
+          jsonMaps:
+            - jsonPath: $.WMSContractAgreementApplication.*.agreement_no
+
+            - jsonPath: $.WMSContractAgreementApplication.*.agreement_name
+
+            - jsonPath: $.WMSContractAgreementApplication.*.agreement_date
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.department_name
+
+            - jsonPath: $.WMSContractAgreementApplication.*.loa_no
+
+            - jsonPath: $.WMSContractAgreementApplication.*.resolution_no
+
+            - jsonPath: $.WMSContractAgreementApplication.*.resolution_date
+
+            - jsonPath: $.WMSContractAgreementApplication.*.tender_no
+
+            - jsonPath: $.WMSContractAgreementApplication.*.tender_date
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.agreement_type
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.defect_liability_period
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.contract_period
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.agreement_amount
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.payment_type
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.deposit_type
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.deposit_amount
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.work_description
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.account_no
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.particulars
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.valid_from_date
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.valid_till_date
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.bank_branch_ifsc_code
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.payment_mode
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.designation
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.employee_name
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.witness_name
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.address
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.uid
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.vendor_type
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.vendor_name
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.represented_by
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.primary_party
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.sr_no
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.terms_and_conditions
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.document_description
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.upload_document
+            
+            
+            
+            
