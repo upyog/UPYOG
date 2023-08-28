@@ -87,6 +87,7 @@ export const ApplicationTimeline = (props) => {
   };
 
   const showNextActions = (nextAction) => {
+    console.log("Show next actions",nextAction)
     switch (nextAction?.action) {
       case "PAY":
         return (
@@ -97,7 +98,7 @@ export const ApplicationTimeline = (props) => {
                 state: { tenantId: props.application.tenantId },
               }}
             >
-              {!window.location.href.includes("citizen/fsm/") && <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} />}
+              {window.location.href.includes("citizen/fsm/") && <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} />}
             </Link>
           </div>
         );
