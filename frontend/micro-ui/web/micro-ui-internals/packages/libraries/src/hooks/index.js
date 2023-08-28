@@ -98,6 +98,7 @@ import usePtApplicationDetail from "./pt/useApplicationDetail";
 import usePtApplicationActions from "./pt/useApplicationActions";
 import usePtMDMS from "./pt/useMDMS";
 import usePropertyAssessment from "./pt/usePropertyAssessment";
+import UseAssessmentCreateUlb from "./pt/UseAssessmentCreateUlb";
 import usePtCalculationEstimate from "./pt/usePtCalculationEstimate";
 import useGenderMDMS from "./pt/useGenderMDMS";
 import usePTGenderMDMS from "./pt/usePTGenderMDMS";
@@ -322,6 +323,7 @@ const pt = {
   useApplicationActions: usePtApplicationActions,
   useMDMS: usePtMDMS,
   usePropertyAssessment,
+  UseAssessmentCreateUlb,
   usePtCalculationEstimate,
   useGenderMDMS,
   usePTGenderMDMS,
