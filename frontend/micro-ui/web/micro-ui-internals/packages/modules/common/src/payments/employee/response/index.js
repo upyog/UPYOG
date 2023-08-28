@@ -4,6 +4,20 @@ import { useHistory, useParams, Link, LinkLabel } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
 
+export const convertEpochToDate = (dateEpoch) => {
+  // Returning NA in else case because new Date(null) returns Current date from calender
+  if (dateEpoch) {
+    const dateFromApi = new Date(dateEpoch);
+    let month = dateFromApi.getMonth() + 1;
+    let day = dateFromApi.getDate();
+    let year = dateFromApi.getFullYear();
+    month = (month > 9 ? "" : "0") + month;
+    day = (day > 9 ? "" : "0") + day;
+    return `${day}/${month}/${year}`;
+  } else {
+    return "NA";
+  }
+};
 export const SuccessfulPayment = (props) => {
   const history = useHistory();
   const { addParams, clearParams } = props;
