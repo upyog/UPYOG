@@ -44,7 +44,7 @@ public class ServiceDefinitionRequestService {
     private Configuration config;
 
     @Autowired
-	private ObjectMapper mapper;
+    private ObjectMapper mapper;
 
     @Autowired
     private ServiceRequestRepository serviceRequestRepository;
@@ -62,17 +62,20 @@ public class ServiceDefinitionRequestService {
         // Producer statement to emit service definition to kafka for persisting
         producer.push(config.getServiceDefinitionCreateTopic(), serviceDefinitionRequest);
 
-        // Restore attribute values to the type in which it was sent in service definition request
+        // Restore attribute values to the type in which it was sent in service
+        // definition request
         enrichmentService.setAttributeDefinitionValuesBackToNativeState(serviceDefinition);
 
         return serviceDefinition;
     }
 
-    public List<ServiceDefinition> searchServiceDefinition(ServiceDefinitionSearchRequest serviceDefinitionSearchRequest){
+    public List<ServiceDefinition> searchServiceDefinition(
+            ServiceDefinitionSearchRequest serviceDefinitionSearchRequest) {
 
-        List<ServiceDefinition> listOfServiceDefinitions = serviceDefinitionRequestRepository.getServiceDefinitions(serviceDefinitionSearchRequest);
+        List<ServiceDefinition> listOfServiceDefinitions = serviceDefinitionRequestRepository
+                .getServiceDefinitions(serviceDefinitionSearchRequest);
 
-        if(CollectionUtils.isEmpty(listOfServiceDefinitions))
+        if (CollectionUtils.isEmpty(listOfServiceDefinitions))
             return new ArrayList<>();
 
         listOfServiceDefinitions.forEach(serviceDefinition -> {
@@ -80,129 +83,104 @@ public class ServiceDefinitionRequestService {
             enrichmentService.setAttributeDefinitionValuesBackToNativeState(serviceDefinition);
         });
 
-
-        // serch user by uuid which is clientid in service definition and enrich the posted by variable.
+        // serch user by uuid which is clientid in service definition and enrich the
+        // posted by variable.
         Set<String> clientIds = new HashSet<>();
-        // prepare a set of clientIds from servicedefinitionrequest to send to user search request
+        // prepare a set of clientIds from servicedefinitionrequest to send to user
+        // search request
         listOfServiceDefinitions.forEach(serviceDefinition -> {
             if (serviceDefinition.getClientId() != null)
-			    clientIds.add(serviceDefinition.getClientId());
+                clientIds.add(serviceDefinition.getClientId());
         });
 
         UserSearchRequest userSearchRequestByUuid = null;
         String Url = config.getUserServiceHostName()
-				.concat(config.getUserServiceSearchPath());
+                .concat(config.getUserServiceSearchPath());
 
-        userSearchRequestByUuid = UserSearchRequest.builder().requestInfo(serviceDefinitionSearchRequest.getRequestInfo())
-					.uuid(clientIds).build();
+        userSearchRequestByUuid = UserSearchRequest.builder()
+                .requestInfo(serviceDefinitionSearchRequest.getRequestInfo())
+                .uuid(clientIds).build();
 
-        List<User> usersresponse = mapper.convertValue(serviceRequestRepository.fetchResult(Url, userSearchRequestByUuid), UserResponse.class).getUser();
+        List<User> usersresponse = mapper
+                .convertValue(serviceRequestRepository.fetchResult(Url, userSearchRequestByUuid), UserResponse.class)
+                .getUser();
 
         listOfServiceDefinitions.forEach(serviceDefinition -> {
             String id = serviceDefinition.getClientId();
-            usersresponse.forEach(user ->{
-            if(user.getUuid().equals(id)){
-                serviceDefinition.setPostedBy(user.getName());
-            }
-        });
+            usersresponse.forEach(user -> {
+                if (user.getUuid().equals(id)) {
+                    serviceDefinition.setPostedBy(user.getName());
+                }
+            });
         });
 
-
-        if(serviceDefinitionSearchRequest.getServiceDefinitionCriteria().getPostedBy() != null && (!serviceDefinitionSearchRequest.getServiceDefinitionCriteria().getPostedBy().isEmpty()) && (!serviceDefinitionSearchRequest.getServiceDefinitionCriteria().getPostedBy().equalsIgnoreCase("All"))){
+        if (serviceDefinitionSearchRequest.getServiceDefinitionCriteria().getPostedBy() != null
+                && (!serviceDefinitionSearchRequest.getServiceDefinitionCriteria().getPostedBy().isEmpty())
+                && (!serviceDefinitionSearchRequest.getServiceDefinitionCriteria().getPostedBy()
+                        .equalsIgnoreCase("All"))) {
             UserSearchRequest userSearchRequest = null;
             String userUri = config.getUserServiceHostName()
-				.concat(config.getUserServiceSearchPath());
+                    .concat(config.getUserServiceSearchPath());
 
-            userSearchRequest = UserSearchRequest.builder().requestInfo(serviceDefinitionSearchRequest.getRequestInfo()).tenantId(serviceDefinitionSearchRequest.getServiceDefinitionCriteria().getTenantId())
-					.name(serviceDefinitionSearchRequest.getServiceDefinitionCriteria().getPostedBy()).build();
+            userSearchRequest = UserSearchRequest.builder().requestInfo(serviceDefinitionSearchRequest.getRequestInfo())
+                    .tenantId(serviceDefinitionSearchRequest.getServiceDefinitionCriteria().getTenantId())
+                    .name(serviceDefinitionSearchRequest.getServiceDefinitionCriteria().getPostedBy()).build();
 
-            List<User> users = mapper.convertValue(serviceRequestRepository.fetchResult(userUri, userSearchRequest), UserResponse.class).getUser();
-        
-            System.out.println("user ::");	
-            System.out.println(users);
+            List<User> users = mapper
+                    .convertValue(serviceRequestRepository.fetchResult(userUri, userSearchRequest), UserResponse.class)
+                    .getUser();
 
             List<ServiceDefinition> finalListOfServiceDefinitions = new ArrayList<>();
 
             listOfServiceDefinitions.forEach(serviceDefinition -> {
                 String id = serviceDefinition.getClientId();
-                users.forEach(user ->{
-                if(user.getUuid().equals(id)){
-                    finalListOfServiceDefinitions.add(serviceDefinition);
-                }
+                users.forEach(user -> {
+                    if (user.getUuid().equals(id)) {
+                        finalListOfServiceDefinitions.add(serviceDefinition);
+                    }
                 });
             });
 
             listOfServiceDefinitions = finalListOfServiceDefinitions;
-            // Collections.sort(finalListOfServiceDefinitions);
-            // System.out.println(finalListOfServiceDefinitions);
-            // return finalListOfServiceDefinitions;
-
         }
 
-        if(serviceDefinitionSearchRequest.getServiceDefinitionCriteria().getStatus()!=null &&(!serviceDefinitionSearchRequest.getServiceDefinitionCriteria().getStatus().isEmpty()) && (!serviceDefinitionSearchRequest.getServiceDefinitionCriteria().getStatus().equalsIgnoreCase("all"))){
+        if (serviceDefinitionSearchRequest.getServiceDefinitionCriteria().getStatus() != null
+                && (!serviceDefinitionSearchRequest.getServiceDefinitionCriteria().getStatus().isEmpty())
+                && (!serviceDefinitionSearchRequest.getServiceDefinitionCriteria().getStatus()
+                        .equalsIgnoreCase("all"))) {
 
-            List<ServiceDefinition> ListOfActiveServiceDefinitions = new ArrayList<>();
-            List<ServiceDefinition> ListOfInactiveServiceDefinitions = new ArrayList<>();
-            listOfServiceDefinitions.forEach(serviceDefinition -> {
-                JsonNode additionalDetails = mapper.valueToTree(serviceDefinition.getAdditionalDetails());
-                long startDate = additionalDetails.get("startDate").asLong(); 
-                long endDate = additionalDetails.get("endDate").asLong(); 
-                boolean isWithinToday = isDateRangeWithinToday(startDate, endDate);
-
-                if (isWithinToday) {
-                    ListOfActiveServiceDefinitions.add(serviceDefinition);
-                } else {
-                    ListOfInactiveServiceDefinitions.add(serviceDefinition);
-                }
-            });
-
-            if(serviceDefinitionSearchRequest.getServiceDefinitionCriteria().getStatus().equalsIgnoreCase("Active")){
-                Collections.sort(ListOfActiveServiceDefinitions);
-                return ListOfActiveServiceDefinitions;
-            }else{
-                Collections.sort(ListOfInactiveServiceDefinitions);
-                return ListOfInactiveServiceDefinitions;
-            }
+            LocalDate currentDate = LocalDate.now(ZoneId.systemDefault());
+            long todayStartEpochMillis = currentDate.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli();
+       
+            ServiceDefinitionCriteria ServiceDefinitionCriteria = serviceDefinitionSearchRequest.getServiceDefinitionCriteria();
+            ServiceDefinitionCriteria.setTodaysDate(todayStartEpochMillis);
+            serviceDefinitionSearchRequest.setServiceDefinitionCriteria(ServiceDefinitionCriteria);
+            List<ServiceDefinition> ListOfActiveInactiveServiceDefinitions = serviceDefinitionRequestRepository
+                .getServiceDefinitions(serviceDefinitionSearchRequest);
+            
+            Collections.sort(ListOfActiveInactiveServiceDefinitions);
+            return ListOfActiveInactiveServiceDefinitions;
 
         }
         Collections.sort(listOfServiceDefinitions);
-        System.out.println(listOfServiceDefinitions);
         return listOfServiceDefinitions;
     }
 
-    public static boolean isDateRangeWithinToday(long startDateEpochMillis, long endDateEpochMillis) {
-        LocalDate currentDate = LocalDate.now(ZoneId.systemDefault());
-        long todayStartEpochMillis = currentDate.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli();
-        // long todayEndEpochMillis = currentDate.atTime(23, 59, 59).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-
-        System.out.println("today");
-        System.out.println(todayStartEpochMillis);
-        // System.out.println(todayEndEpochMillis);
-        System.out.println("service Definition");
-        System.out.println(startDateEpochMillis);
-        System.out.println(endDateEpochMillis);
-
-        return startDateEpochMillis <= todayStartEpochMillis && endDateEpochMillis >= todayStartEpochMillis;
-    
-    }
 
     public ServiceDefinition updateServiceDefinition(ServiceDefinitionRequest serviceDefinitionRequest) {
 
-        // TO DO
         ServiceDefinition serviceDefinition = serviceDefinitionRequest.getServiceDefinition();
-    	
-    	enrichmentService.updateServiceDefinitionRequest(serviceDefinitionRequest);
 
-        System.out.println("updated service definition::");
-    	System.out.println(serviceDefinitionRequest.getServiceDefinition());
-    	
-    	producer.push(config.getServiceDefinitionUpdateTopic(), serviceDefinitionRequest);
+        enrichmentService.updateServiceDefinitionRequest(serviceDefinitionRequest);
+
+        producer.push(config.getServiceDefinitionUpdateTopic(), serviceDefinitionRequest);
 
         return serviceDefinition;
     }
-    
+
     /**
      * Fetches total count of surveys in the system based on the search criteria
+     * 
      * @param criteria Survey search criteria
      */
     public Integer countTotalSurveys(ServiceDefinitionSearchRequest serviceDefinitionSearchRequest) {
@@ -210,4 +188,3 @@ public class ServiceDefinitionRequestService {
     }
 
 }
-

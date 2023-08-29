@@ -54,6 +54,12 @@ public class ServiceDefinitionCriteria {
     @JsonProperty("status")
     private String status;
 
+    @JsonProperty("todaysDate")
+    private Long todaysDate;
+
+    @JsonProperty("isActive")
+    private Boolean isActive;
+
     @JsonIgnore
     @Default
     private Boolean isCountCall = false;

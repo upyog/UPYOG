@@ -62,6 +62,21 @@ public class ServiceDefinitionQueryBuilder {
             preparedStmtList.add(criteria.getClientId());
         }
 
+        if(!ObjectUtils.isEmpty(criteria.getTodaysDate())){
+            if(!ObjectUtils.isEmpty(criteria.getStatus()) && criteria.getStatus().equals("Active")){
+                addClauseIfRequired(query, preparedStmtList);
+                query.append(" ?::timestamp >= to_timestamp((additionalDetails->>'startDate')::bigint) ");
+                query.append(" AND ?::timestamp <= to_timestamp((additionalDetails->>'endDate')::bigint) ");
+                preparedStmtList.add(criteria.getTodaysDate());
+                preparedStmtList.add(criteria.getTodaysDate());
+            }else if(!ObjectUtils.isEmpty(criteria.getStatus()) && criteria.getStatus().equals("Inactive")){
+                addClauseIfRequired(query, preparedStmtList);
+                query.append(" ?::timestamp <= to_timestamp((additionalDetails->>'startDate')::bigint) ");
+                query.append(" AND ?::timestamp >= to_timestamp((additionalDetails->>'endDate')::bigint) ");
+                preparedStmtList.add(criteria.getTodaysDate());
+                preparedStmtList.add(criteria.getTodaysDate());
+            }
+        }
         // Fetch service definitions which have NOT been soft deleted
         addClauseIfRequired(query, preparedStmtList);
         query.append(" sd.isActive = ? ");

@@ -72,7 +72,7 @@ public class ServiceDefinitionRequestRepository {
         String query = serviceDefinitionQueryBuilder.getSurveyCountQuery(ServiceDefinitionSearchRequest, preparedStmtList);
         ServiceDefinitionCriteria.setIsCountCall(Boolean.FALSE);
 
-        log.info("query for search: " + query + " params: " + preparedStmtList);
+        log.info("query for count search call: " + query + " params: " + preparedStmtList);
 
         return jdbcTemplate.queryForObject(query, preparedStmtList.toArray(), Integer.class);
     }
