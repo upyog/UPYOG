@@ -61,14 +61,14 @@ const SelectTrips = ({ t, config, onSelect, formData = {}, userType, styles, FSM
       type: "text",
       name: "distancefromroad",
       default: formData?.tripData?.distancefromroad,
-      isMandatory: true,
+      //isMandatory: true,
     },
     {
       label: "ES_NEW_APPLICATION_ROAD_WIDTH",
       type: "text",
       name: "roadWidth",
       default: formData?.tripData?.roadWidth,
-      isMandatory: true,
+      //isMandatory: true,
     }
   ];
 
