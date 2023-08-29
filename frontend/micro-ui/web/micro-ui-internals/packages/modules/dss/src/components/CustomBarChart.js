@@ -223,9 +223,10 @@ const CustomBarChart = ({
     return <NoData t={t} />;
   }
   console.log("Loading chart",data)
+  let url=window.location.href
   return (
     <Fragment>
-      <ResponsiveContainer width="98%" height={420}>
+      <ResponsiveContainer width="98%" height={url.includes("drilldown")?730:400}>
         <BarChart
           width="70%"
           height="100%"
