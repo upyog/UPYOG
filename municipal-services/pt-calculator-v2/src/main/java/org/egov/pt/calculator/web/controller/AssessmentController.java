@@ -31,6 +31,13 @@ public class AssessmentController {
         return new ResponseEntity<>(new AssessmentResponse(new ResponseInfo(),assessedProperties), HttpStatus.OK);
 
 	}
+	@PostMapping("/_create")
+	public ResponseEntity<Object> createAssessment(@Valid @RequestBody CreateAssessmentRequest assessmentRequest) {
+
+		List<Assessment> assessedProperties=assessmentService.createAssessmentsForFY(assessmentRequest);
+        return new ResponseEntity<>(new AssessmentResponse(new ResponseInfo(),assessedProperties), HttpStatus.OK);
+
+	}
 	
 	@PostMapping("/reassess/_job")
 	public ResponseEntity<Object> reAssessment(@Valid @RequestBody CreateAssessmentRequest assessmentRequest) {
