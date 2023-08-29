@@ -43,10 +43,10 @@ export const MyBills = ({ stateCode }) => {
     };
     else
       return {
-        // isAdvanceAllowed: false,
-        // isVoucherCreationEnabled: true,
-        // minAmountPayable: 100,
-        // partPaymentAllowed: true,
+        isAdvanceAllowed: true,
+        isVoucherCreationEnabled: true,
+        minAmountPayable: 100,
+        partPaymentAllowed: true,
       };
   };
 
