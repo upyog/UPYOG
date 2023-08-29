@@ -62,6 +62,17 @@ export const PTService = {
       params: { tenantId },
       auth: true,
     }),
+    assessmentCreateUlb: (details, tenantId) =>
+    Request({
+      url: Urls.pt.assessment_createUlb,
+      data: details,
+      useCache: false,
+      userService: true,
+      method: "POST",
+      params: { tenantId },
+      auth: true,
+    }),
+    
   assessmentSearch: ({ tenantId, filters }) =>
     Request({
       url: Urls.pt.assessment_search,

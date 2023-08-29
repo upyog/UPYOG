@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Header, Card, KeyNote, LinkButton, Loader, MultiLink ,ActionBar, SubmitBar} from "@egovernments/digit-ui-react-components";
+import { Header, Card, KeyNote, LinkButton, Loader, MultiLink } from "@egovernments/digit-ui-react-components";
 import { useHistory, useLocation, useParams } from "react-router-dom";
 import getPDFData from "../../getPDFData";
 import { getVehicleType } from "../../utils";
@@ -26,7 +26,7 @@ const ApplicationDetails = () => {
   const { data: storeData } = Digit.Hooks.useStore.getInitData();
   const { tenants } = storeData || {};
   const [showOptions, setShowOptions] = useState(false);
-console.log("dataaaaaa",application)
+
   if (isLoading || !application) {
     return <Loader />;
   }
@@ -56,9 +56,7 @@ console.log("dataaaaaa",application)
       setShowOptions(false);
     }
   };
-  const proceeedToPay = () => {
-    history.push(`/digit-ui/citizen/payment/my-bills/FSM.TRIP_CHARGES/${application?.pdfData?.applicationNo}`);
-  };
+
   const dowloadOptions =
     paymentsHistory?.Payments?.length > 0
       ? [
@@ -99,13 +97,6 @@ console.log("dataaaaaa",application)
         })}
         <ApplicationTimeline application={application?.pdfData} id={id} />
       </Card>
-      {application?.pdfData?.applicationStatus === "PENDING_APPL_FEE_PAYMENT"?
-      <ActionBar>
-          <SubmitBar  label={t("PT_PROCEED_PAYMENT")} onSubmit={proceeedToPay} />
-        </ActionBar>:""}
-      <div>
-
-      </div>
     </React.Fragment>
   );
 };
