@@ -123,7 +123,14 @@ const SearchWaterConnection = ({ tenantId, onSubmit, data, count, resultOk, busi
         Header: t("WS_COMMON_TABLE_COL_AMT_DUE_LABEL"),
         disableSortBy: true,
         Cell: ({ row }) => {
-          return GetCell(`${row.original?.["due"] || "NA"}`);
+          if(row?.original?.["due"] <= 0)
+          {
+            return GetCell(`${row.original?.["due"]}`);
+          }
+          else {
+            return GetCell(`${row.original?.["due"] || "NA"}`);
+          }
+          
         },
       },
       {
@@ -149,7 +156,7 @@ const SearchWaterConnection = ({ tenantId, onSubmit, data, count, resultOk, busi
         Cell: ({ row }) => {
           const amount = row.original?.due;
 
-          if (amount > 0) {
+          if (amount || amount == 0) {
             return GetCell(getActionItem(row.original?.status, row));
           } else {
             return GetCell(t(`${"WS_NA"}`));

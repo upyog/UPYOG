@@ -519,7 +519,7 @@ const BillDetails = ({ businessService, consumerCode, _amount, onChange }) => {
                 className="text-indent-xl"
                 onChange={(e) => onChangeAmount(e.target.value)}
                 value={amount}
-                disable={getTotal() === 0}
+                disable={businessService === "WS" || "SW"?true:getTotal() === 0}
               />
             ) : (
               <TextInput style={{ width: "30%" }} className="text-indent-xl" value={getTotal()} disable={true} />
