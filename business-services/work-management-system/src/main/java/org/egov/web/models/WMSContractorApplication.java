@@ -52,7 +52,11 @@ public class WMSContractorApplication {
 	@JsonProperty("address")
 	private String address=null;
 	@JsonProperty("epfo_account_number")
-	private Long EPFOAccountNumber=null;
+	private String EPFOAccountNumber=null;
+	@JsonProperty("vat_number")
+	private String vatNumber=null;
+	@JsonProperty("allow_direct_payment")
+	private String allowDirectPayment=null;
 	@JsonProperty("tenantId")
 	 private String tenantId = null;
 	

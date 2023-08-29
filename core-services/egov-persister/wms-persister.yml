@@ -263,7 +263,7 @@ serviceMaps:
       isTransaction: true
       queryMaps:
 
-        - query: INSERT INTO contractor (vendor_id,vendor_type,vendor_sub_type,vendor_name,vendor_status,pfms_vendor_code,payto,mobile_number,email,uid_number,gst_number,pan_number,bank_branch_ifsc_code,bank_account_number,function,primary_account_head,vendor_class,address,epfo_account_number) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?,?,?,?,?,?,?);
+        - query: INSERT INTO contractor (vendor_id,vendor_type,vendor_sub_type,vendor_name,vendor_status,pfms_vendor_code,payto,mobile_number,email,uid_number,gst_number,pan_number,bank_branch_ifsc_code,bank_account_number,function,primary_account_head,vendor_class,address,epfo_account_number,vat_number,allow_direct_payment) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?,?,?,?,?,?,?,?,?);
           basePath: WMSContractorApplication.*
           jsonMaps:
             - jsonPath: $.WMSContractorApplication.*.vendor_id
@@ -302,7 +302,11 @@ serviceMaps:
             
             - jsonPath: $.WMSContractorApplication.*.address
             
-            - jsonPath: $.WMSContractorApplication.*.epfo_account_number	
+            - jsonPath: $.WMSContractorApplication.*.epfo_account_number
+            
+            - jsonPath: $.WMSContractorApplication.*.vat_number
+            
+            - jsonPath: $.WMSContractorApplication.*.allow_direct_payment	
             
             
             
@@ -603,6 +607,43 @@ serviceMaps:
             - jsonPath: $.WMSContractAgreementApplication.*.document_description
             
             - jsonPath: $.WMSContractAgreementApplication.*.upload_document
+            
+            
+            
+    - version: 1.0
+      description: Persists Work Order details in tables
+      fromTopic: save-worder-application
+      isTransaction: true
+      queryMaps:
+
+        - query: INSERT INTO work_order (work_order_id,work_order_date,agreement_no,contractor_name,work_name,contract_value,stipulated_completion_period,tender_number,tender_date,date_of_commencement,work_assignee,document_description,terms_and_conditions) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?);
+          basePath: WMSWorkOrderApplication.*
+          jsonMaps:
+            - jsonPath: $.WMSWorkOrderApplication.*.work_order_id
+
+            - jsonPath: $.WMSWorkOrderApplication.*.work_order_date
+
+            - jsonPath: $.WMSWorkOrderApplication.*.agreement_no
+            
+            - jsonPath: $.WMSWorkOrderApplication.*.contractor_name
+
+            - jsonPath: $.WMSWorkOrderApplication.*.work_name
+
+            - jsonPath: $.WMSWorkOrderApplication.*.contract_value
+
+            - jsonPath: $.WMSWorkOrderApplication.*.stipulated_completion_period
+
+            - jsonPath: $.WMSWorkOrderApplication.*.tender_number
+
+            - jsonPath: $.WMSWorkOrderApplication.*.tender_date
+            
+            - jsonPath: $.WMSWorkOrderApplication.*.date_of_commencement
+            
+            - jsonPath: $.WMSWorkOrderApplication.*.work_assignee
+            
+            - jsonPath: $.WMSWorkOrderApplication.*.document_description
+            
+            - jsonPath: $.WMSWorkOrderApplication.*.terms_and_conditions
             
             
             

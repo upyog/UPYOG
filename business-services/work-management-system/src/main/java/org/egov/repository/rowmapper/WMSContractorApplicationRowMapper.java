@@ -49,7 +49,9 @@ public class WMSContractorApplicationRowMapper implements ResultSetExtractor<Lis
                         .primaryAccountHead(rs.getString("vPrimaryAccountHead"))
                         .vendorClass(rs.getString("vVendorClass"))
                         .address(rs.getString("vAddress"))
-                        .EPFOAccountNumber(rs.getLong("vEpfoAccountNumber"))
+                        .EPFOAccountNumber(rs.getString("vEpfoAccountNumber"))
+                        .vatNumber(rs.getString("vVatNumber"))
+                        .allowDirectPayment(rs.getString("vAllowDirectPayment"))
                         .build();
             }
             //addChildrenToProperty(rs, sorApplication);
