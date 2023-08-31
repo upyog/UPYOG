@@ -648,3 +648,99 @@ serviceMaps:
             
             
             
+    - version: 1.0
+      description: Persists Measurement Book details in tables
+      fromTopic: save-mb-application
+      isTransaction: true
+      queryMaps:
+
+        - query: INSERT INTO measurement_book (measurement_book_id,work_order_no,contractor_name,work_name,measurement_book_no,status,agreement_no,project_name,work_order_amount,work_order_date,measurement_date,description_of_mb,je_name,chapter,item_no,description_of_the_item,estimated_quantity,cumulative_quantity,unit,rate,consumed_quantity,amount,add_mb,item_description,nos,l,bw,dh,upload_images,item_code,description,commulative_quantity,remark,overhead_description,value_type,estimated_amount,actual_amount,document_description,upload_document) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
+          basePath: WMSMeasurementBookApplication.*
+          jsonMaps:
+            - jsonPath: $.WMSMeasurementBookApplication.*.measurement_book_id
+
+            - jsonPath: $.WMSMeasurementBookApplication.*.work_order_no
+
+            - jsonPath: $.WMSMeasurementBookApplication.*.contractor_name
+            
+            - jsonPath: $.WMSMeasurementBookApplication.*.work_name
+
+            - jsonPath: $.WMSMeasurementBookApplication.*.measurement_book_no
+
+            - jsonPath: $.WMSMeasurementBookApplication.*.status
+
+            - jsonPath: $.WMSMeasurementBookApplication.*.agreement_no
+
+            - jsonPath: $.WMSMeasurementBookApplication.*.project_name
+
+            - jsonPath: $.WMSMeasurementBookApplication.*.work_order_amount
+            
+            - jsonPath: $.WMSMeasurementBookApplication.*.work_order_date
+            
+            - jsonPath: $.WMSMeasurementBookApplication.*.measurement_date
+            
+            - jsonPath: $.WMSMeasurementBookApplication.*.description_of_mb
+            
+            - jsonPath: $.WMSMeasurementBookApplication.*.je_name
+            
+            - jsonPath: $.WMSMeasurementBookApplication.*.chapter
+            
+            - jsonPath: $.WMSMeasurementBookApplication.*.item_no
+            
+            - jsonPath: $.WMSMeasurementBookApplication.*.description_of_the_item
+            
+            - jsonPath: $.WMSMeasurementBookApplication.*.estimated_quantity
+            
+            - jsonPath: $.WMSMeasurementBookApplication.*.cumulative_quantity
+            
+            - jsonPath: $.WMSMeasurementBookApplication.*.unit
+            
+            - jsonPath: $.WMSMeasurementBookApplication.*.rate
+            
+            - jsonPath: $.WMSMeasurementBookApplication.*.consumed_quantity	
+            
+            - jsonPath: $.WMSMeasurementBookApplication.*.amount
+            
+            - jsonPath: $.WMSMeasurementBookApplication.*.add_mb
+            
+            - jsonPath: $.WMSMeasurementBookApplication.*.item_description
+            
+            - jsonPath: $.WMSMeasurementBookApplication.*.nos
+            
+            - jsonPath: $.WMSMeasurementBookApplication.*.l
+            
+            - jsonPath: $.WMSMeasurementBookApplication.*.bw
+            
+            - jsonPath: $.WMSMeasurementBookApplication.*.dh
+            
+            - jsonPath: $.WMSMeasurementBookApplication.*.upload_images
+            
+            - jsonPath: $.WMSMeasurementBookApplication.*.item_code
+            
+            - jsonPath: $.WMSMeasurementBookApplication.*.description
+            
+            - jsonPath: $.WMSMeasurementBookApplication.*.commulative_quantity
+            
+            - jsonPath: $.WMSMeasurementBookApplication.*.remark
+            
+            - jsonPath: $.WMSMeasurementBookApplication.*.overhead_description
+            
+            - jsonPath: $.WMSMeasurementBookApplication.*.value_type
+            
+            - jsonPath: $.WMSMeasurementBookApplication.*.estimated_amount
+            
+            - jsonPath: $.WMSMeasurementBookApplication.*.actual_amount
+            
+            - jsonPath: $.WMSMeasurementBookApplication.*.document_description
+            
+            - jsonPath: $.WMSMeasurementBookApplication.*.upload_document
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
