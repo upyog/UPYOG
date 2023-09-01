@@ -14,6 +14,7 @@ const CitizenApp = () => {
   const WmsSorCreate = Digit?.ComponentRegistryService?.getComponent("WmsSorCreate");
   const WmsSorUpdate = Digit?.ComponentRegistryService?.getComponent("WmsSorUpdate");
   const Response = Digit?.ComponentRegistryService?.getComponent("Response");
+  const PhysicalMilestone = Digit?.ComponentRegistryService?.getComponent("PhysicalMilestone");
   const ContrMasterAdd = Digit?.ComponentRegistryService?.getComponent("ContrMasterAdd");
   const ContrMasterView = Digit?.ComponentRegistryService?.getComponent("ContrMasterView");
   
@@ -25,6 +26,7 @@ const CitizenApp = () => {
         <PrivateRoute path={`${path}/sor/create`} component={WmsSorCreate} />
           <PrivateRoute path={`${path}/sor/update/:id`} component={WmsSorUpdate} />
           <PrivateRoute path={`${path}/response`} component={Response} />
+          <PrivateRoute path={`${path}/pm-home`} component={PhysicalMilestone} />
           <PrivateRoute path={`${path}/cm-home`} component={ContrMasterAdd} />
           <PrivateRoute path={`${path}/cm-table-view`} component={ContrMasterView} />
         </AppContainer>

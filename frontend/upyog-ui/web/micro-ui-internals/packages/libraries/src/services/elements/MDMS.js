@@ -2238,7 +2238,7 @@ export const MdmsService = {
                 "serviceCode": "CITIZEN_SERVICE_WMS",
                 "code": "",
                 "path": "",
-                "navigationURL": "/digit-ui/citizen/pm-home",
+                "navigationURL": "/digit-ui/citizen/wms/pm-home",
                 "leftIcon": "WMSIcon",
                 "rightIcon": "",
                 "queryParams": "",

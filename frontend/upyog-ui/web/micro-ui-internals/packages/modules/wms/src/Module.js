@@ -24,7 +24,9 @@ import WmsSorUpdate from "./pages/citizen/SOR/Update";
 import WmsSorCreate from "./pages/citizen/SOR/Create";
 import ContrMasterAdd from "./pages/citizen/ContrMaster/index";
 import ContrMasterView from "./pages/citizen/ContrMaster/ContrView"
+import PhysicalMilestone from "./pages/citizen/PM";
 const componentsToRegister = {
+  PhysicalMilestone,
   ContrMasterAdd,
   ContrMasterView,
  Response,
