@@ -10,6 +10,8 @@ import org.egov.util.IdgenUtil;
 import org.egov.web.models.ScheduleOfRateApplication;
 import org.egov.web.models.WMSContractorApplication;
 import org.egov.web.models.WMSContractorRequest;
+import org.egov.web.models.WMSRunningAccountFinalBillApplication;
+import org.egov.web.models.WMSRunningAccountFinalBillRequest;
 import org.egov.web.models.WMSSORRequest;
 import org.egov.web.models.WMSWorkApplication;
 import org.egov.web.models.WMSWorkRequest;
@@ -21,7 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
-public class WMSContractorApplicationEnrichment {
+public class WMSRunningAccountFinalBillApplicationEnrichment {
 	
 	/*
 	 * @Value("${egov.idgen.work.idname}") private String idGenName;
@@ -40,16 +42,16 @@ public class WMSContractorApplicationEnrichment {
 	SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
 	String date = simpleDateFormat.format(new Date());
 
-	public void enrichContractorApplication(WMSContractorRequest wmsContractorRequest) { 
+	public void enrichRunningAccountFinalBillApplication(WMSRunningAccountFinalBillRequest wmsRunningAccountFinalBillRequest) { 
 		//List<String> sorIdList = idgenUtil.getIdList(wmsContractorRequest.getRequestInfo(), wmsContractorRequest.getWmsWorkApplications().get(0).getTenantId(), idGenName, idGenFormat, wmsContractorRequest.getWmsWorkApplications().size());
         //Integer index = 0;
-		for (WMSContractorApplication application : wmsContractorRequest.getWmsContractorApplications()) {
+		for (WMSRunningAccountFinalBillApplication application : wmsRunningAccountFinalBillRequest.getWmsRunningAccountFinalBillApplications()) {
 			// Enrich audit details
 //	            AuditDetails auditDetails = AuditDetails.builder().createdBy(birthRegistrationRequest.getRequestInfo().getUserInfo().getUuid()).createdTime(System.currentTimeMillis()).lastModifiedBy(birthRegistrationRequest.getRequestInfo().getUserInfo().getUuid()).lastModifiedTime(System.currentTimeMillis()).build();
 //	            application.setAuditDetails(auditDetails);
 
 			// Enrich UUID
-			application.setVendorId((int) Math.floor(Math.random() * (9999 - 1000 + 1) + 1000));
+			application.setRunningAccountId((int) Math.floor(Math.random() * (9999 - 1000 + 1) + 1000));
 			//application.setWorkName(sorIdList.get(index++));
 			//application.setStartDate(date);
 			//application.setEndDate(date);
@@ -65,25 +67,29 @@ public class WMSContractorApplicationEnrichment {
 		}
 	}
 
-	public void enrichContractorApplicationUpdate(WMSContractorRequest wmsContractorRequest, List<WMSContractorApplication> existingApplication) {
+	public void enrichRunningAccountFinalBillApplicationUpdate(WMSRunningAccountFinalBillRequest wmsRunningAccountFinalBillRequest, List<WMSRunningAccountFinalBillApplication> existingApplication) {
 		// Enrich lastModifiedTime and lastModifiedBy in case of update
-		for (WMSContractorApplication application : wmsContractorRequest.getWmsContractorApplications()) {
-			existingApplication.get(0).setMobileNumber(application.getMobileNumber());
-			existingApplication.get(0).setUIDNumber(application.getUIDNumber());
-			existingApplication.get(0).setVendorName(application.getVendorName());
-			existingApplication.get(0).setVatNumber(application.getVatNumber());
-			existingApplication.get(0).setEPFOAccountNumber(application.getEPFOAccountNumber());
-			existingApplication.get(0).setEmail(application.getEmail());
-			existingApplication.get(0).setGSTNumber(application.getGSTNumber());
-			existingApplication.get(0).setPANNumber(application.getPANNumber());
-			existingApplication.get(0).setBankAccountNumber(application.getBankAccountNumber());
-			existingApplication.get(0).setAddress(application.getAddress());
-			existingApplication.get(0).setVendorType(application.getVendorType());
-			existingApplication.get(0).setBankBranchIfscCode(application.getBankBranchIfscCode());
-			existingApplication.get(0).setFunction(application.getFunction());
-			existingApplication.get(0).setVendorClass(application.getVendorClass());
-			existingApplication.get(0).setVendorSubType(application.getVendorSubType());
-			existingApplication.get(0).setPrimaryAccountHead(application.getPrimaryAccountHead());
+		for (WMSRunningAccountFinalBillApplication application : wmsRunningAccountFinalBillRequest.getWmsRunningAccountFinalBillApplications()) {
+			existingApplication.get(0).setProjectName(application.getProjectName());
+			existingApplication.get(0).setWorkName(application.getWorkName());
+			existingApplication.get(0).setMbNo(application.getMbNo());
+			existingApplication.get(0).setMbDate(application.getMbDate());
+			existingApplication.get(0).setMbAmount(application.getMbAmount());
+			existingApplication.get(0).setEstimatedCost(application.getEstimatedCost());
+			existingApplication.get(0).setTenderType(application.getTenderType());
+			existingApplication.get(0).setPercentageType(application.getPercentageType());
+			existingApplication.get(0).setAwardAmount(application.getAwardAmount());
+			existingApplication.get(0).setBillDate(application.getBillDate());
+			existingApplication.get(0).setBillNo(application.getBillNo());
+			existingApplication.get(0).setBillAmount(application.getBillAmount());
+			existingApplication.get(0).setDeductionAmount(application.getDeductionAmount());
+			existingApplication.get(0).setRemark(application.getRemark());
+			existingApplication.get(0).setSrNo(application.getSrNo());
+			existingApplication.get(0).setDeductionDescription(application.getDeductionDescription());
+			existingApplication.get(0).setAdditionDeduction(application.getAdditionDeduction());
+			existingApplication.get(0).setCalculationMethod(application.getCalculationMethod());
+			existingApplication.get(0).setPercentage(application.getPercentage());
+//			application.setEndDate(date);
 			// application.getAuditDetails().setLastModifiedBy(birthRegistrationRequest.getRequestInfo().getUserInfo().getUuid());
 		}
 	}

@@ -26,9 +26,9 @@ public class WMSContractorApplicationRowMapper implements ResultSetExtractor<Lis
 
             if(wmsContractorApplication == null) {
 
-                Date lastModifiedTime = rs.getDate("vVendorName");
+                //Date lastModifiedTime = rs.getDate("vVendorName");
                 if (rs.wasNull()) {
-                    lastModifiedTime = null;
+                    //lastModifiedTime = null;
                 }
                 wmsContractorApplication = WMSContractorApplication.builder()
                         .vendorId(rs.getInt("vVendorId"))

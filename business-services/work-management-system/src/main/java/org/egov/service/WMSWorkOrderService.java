@@ -3,6 +3,8 @@ package org.egov.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.config.WMSConfiguration;
 import org.egov.config.WMSContractorConfiguration;
@@ -29,6 +31,7 @@ import org.egov.web.models.WMSSORRequest;
 import org.egov.web.models.WMSWorkApplication;
 import org.egov.web.models.WMSWorkApplicationSearchCriteria;
 import org.egov.web.models.WMSWorkOrderApplication;
+import org.egov.web.models.WMSWorkOrderApplicationSearchCriteria;
 import org.egov.web.models.WMSWorkOrderRequest;
 import org.egov.web.models.WMSWorkRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,6 +73,31 @@ public class WMSWorkOrderService {
         // Return the response back to user
         return wmsWorkOrderRequest.getWmsWorkOrderApplications();
     }
+
+
+	public List<WMSWorkOrderApplication> fetchWorkOrderApplications(RequestInfo requestInfo,
+			 WMSWorkOrderApplicationSearchCriteria workOrderApplicationSearchCriteria) {
+		List<WMSWorkOrderApplication> applications = wmsWorkOrderRepository.getApplications(workOrderApplicationSearchCriteria);
+
+        // If no applications are found matching the given criteria, return an empty list
+        if(CollectionUtils.isEmpty(applications))
+            return new ArrayList<>();
+
+        return applications;
+	}
+
+
+	public List<WMSWorkOrderApplication> updateWorkOrderMaster(@Valid WMSWorkOrderRequest workOrderRequest) {
+		List<WMSWorkOrderApplication> existingApplication = wmsWorkOrderApplicationValidator.validateApplicationUpdateRequest(workOrderRequest);
+        // Enrich application upon update
+        
+		wmsWorkOrderApplicationEnrichment.enrichWorkOrderApplicationUpdate(workOrderRequest,existingApplication);
+        //workflowService.updateWorkflowStatus(birthRegistrationRequest);
+        // Just like create request, update request will be handled asynchronously by the persister
+        producer.push(configuration.getUpdateTopic(), workOrderRequest);
+
+        return workOrderRequest.getWmsWorkOrderApplications();
+	}
 	
 	
 	

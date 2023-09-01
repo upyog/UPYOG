@@ -18,9 +18,11 @@ import org.egov.web.models.SORApplicationSearchCriteria;
 import org.egov.web.models.ScheduleOfRateApplication;
 import org.egov.web.models.WMSContractorApplication;
 import org.egov.web.models.WMSContractorApplicationResponse;
+import org.egov.web.models.WMSContractorApplicationSearchCriteria;
 import org.egov.web.models.WMSContractorRequest;
 import org.egov.web.models.WMSMeasurementBookApplication;
 import org.egov.web.models.WMSMeasurementBookApplicationResponse;
+import org.egov.web.models.WMSMeasurementBookApplicationSearchCriteria;
 import org.egov.web.models.WMSMeasurementBookRequest;
 import org.egov.web.models.WMSSORRequest;
 import org.egov.web.models.WMSWorkApplication;
@@ -82,6 +84,26 @@ public class WMSMeasurementBookApiController{
         WMSMeasurementBookApplicationResponse response = WMSMeasurementBookApplicationResponse.builder().wmsMeasurementBookApplications(applications).responseInfo(responseInfo).build();
         return new ResponseEntity<>(response, HttpStatus.OK);
        
+    }
+    
+    
+    @RequestMapping(value="/v1/mb/_view", method = RequestMethod.POST)
+    @ApiOperation(value = "Fetch Measurement Book for WMS")
+    public ResponseEntity<WMSMeasurementBookApplicationResponse> v1RegistrationFetchPost(@RequestBody RequestInfoWrapper requestInfoWrapper, @Valid @ModelAttribute WMSMeasurementBookApplicationSearchCriteria measurementBookApplicationSearchCriteria) {
+        List<WMSMeasurementBookApplication> applications = measurementBookService.fetchMeasurementBookApplications(requestInfoWrapper.getRequestInfo(), measurementBookApplicationSearchCriteria);
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true);
+        WMSMeasurementBookApplicationResponse response = WMSMeasurementBookApplicationResponse.builder().wmsMeasurementBookApplications(applications).responseInfo(responseInfo).build();
+        return new ResponseEntity<>(response,HttpStatus.OK);
+    }
+    
+    
+    @RequestMapping(value="/v1/mb/_update", method = RequestMethod.POST)
+    @ApiOperation(value = "Update Measurement Book for WMS")
+    public ResponseEntity<WMSMeasurementBookApplicationResponse> v1ContractorUpdatePost(@ApiParam(value = "Details for the new Contractor(s) + RequestInfo meta data." ,required=true )  @Valid @RequestBody WMSMeasurementBookRequest measurementBookRequest) {
+        List<WMSMeasurementBookApplication> applications = measurementBookService.updateMeasurementBookMaster(measurementBookRequest);
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(measurementBookRequest.getRequestInfo(), true);
+        WMSMeasurementBookApplicationResponse response = WMSMeasurementBookApplicationResponse.builder().wmsMeasurementBookApplications(applications).responseInfo(responseInfo).build();
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     

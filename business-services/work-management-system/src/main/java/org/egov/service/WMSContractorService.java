@@ -3,6 +3,8 @@ package org.egov.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.config.WMSConfiguration;
 import org.egov.config.WMSContractorConfiguration;
@@ -19,7 +21,9 @@ import org.egov.validator.WMSSORValidator;
 import org.egov.validator.WMSWorkValidator;
 import org.egov.web.models.SORApplicationSearchCriteria;
 import org.egov.web.models.ScheduleOfRateApplication;
+import org.egov.web.models.Scheme;
 import org.egov.web.models.WMSContractorApplication;
+import org.egov.web.models.WMSContractorApplicationSearchCriteria;
 import org.egov.web.models.WMSContractorRequest;
 import org.egov.web.models.WMSSORRequest;
 import org.egov.web.models.WMSWorkApplication;
@@ -64,6 +68,32 @@ public class WMSContractorService {
         // Return the response back to user
         return wmsContractorRequest.getWmsContractorApplications();
     }
+
+
+	public List<WMSContractorApplication> fetchContractorApplications(RequestInfo requestInfo,
+			WMSContractorApplicationSearchCriteria contractorApplicationSearchCriteria) {
+	
+			List<WMSContractorApplication> applications = wmsContractorRepository.getApplications(contractorApplicationSearchCriteria);
+
+	        // If no applications are found matching the given criteria, return an empty list
+	        if(CollectionUtils.isEmpty(applications))
+	            return new ArrayList<>();
+
+	        return applications;
+	}
+
+
+	public List<WMSContractorApplication> updateContractorMaster(WMSContractorRequest contractorRequest) {
+		List<WMSContractorApplication> existingApplication = wmsContractorApplicationValidator.validateApplicationUpdateRequest(contractorRequest);
+        // Enrich application upon update
+        
+		wmsContractorApplicationEnrichment.enrichContractorApplicationUpdate(contractorRequest,existingApplication);
+        //workflowService.updateWorkflowStatus(birthRegistrationRequest);
+        // Just like create request, update request will be handled asynchronously by the persister
+        producer.push(configuration.getUpdateTopic(), contractorRequest);
+
+        return contractorRequest.getWmsContractorApplications();
+	}
 	
 	
 	

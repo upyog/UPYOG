@@ -18,6 +18,7 @@ import org.egov.web.models.SORApplicationSearchCriteria;
 import org.egov.web.models.ScheduleOfRateApplication;
 import org.egov.web.models.WMSContractorApplication;
 import org.egov.web.models.WMSContractorApplicationResponse;
+import org.egov.web.models.WMSContractorApplicationSearchCriteria;
 import org.egov.web.models.WMSContractorRequest;
 import org.egov.web.models.WMSSORRequest;
 import org.egov.web.models.WMSWorkApplication;
@@ -25,6 +26,7 @@ import org.egov.web.models.WMSWorkApplicationResponse;
 import org.egov.web.models.WMSWorkApplicationSearchCriteria;
 import org.egov.web.models.WMSWorkOrderApplication;
 import org.egov.web.models.WMSWorkOrderApplicationResponse;
+import org.egov.web.models.WMSWorkOrderApplicationSearchCriteria;
 import org.egov.web.models.WMSWorkOrderRequest;
 import org.egov.web.models.WMSWorkRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,6 +81,25 @@ public class WMSWorkOrderApiController{
         WMSWorkOrderApplicationResponse response = WMSWorkOrderApplicationResponse.builder().wmsWorkOrderApplications(applications).responseInfo(responseInfo).build();
         return new ResponseEntity<>(response, HttpStatus.OK);
        
+    }
+    
+    @RequestMapping(value="/v1/workorder/_view", method = RequestMethod.POST)
+    @ApiOperation(value = "Fetch WorkOrder for WMS")
+    public ResponseEntity<WMSWorkOrderApplicationResponse> v1RegistrationFetchPost(@RequestBody RequestInfoWrapper requestInfoWrapper, @Valid @ModelAttribute WMSWorkOrderApplicationSearchCriteria workOrderApplicationSearchCriteria) {
+        List<WMSWorkOrderApplication> applications = workOrderService.fetchWorkOrderApplications(requestInfoWrapper.getRequestInfo(), workOrderApplicationSearchCriteria);
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true);
+        WMSWorkOrderApplicationResponse response = WMSWorkOrderApplicationResponse.builder().wmsWorkOrderApplications(applications).responseInfo(responseInfo).build();
+        return new ResponseEntity<>(response,HttpStatus.OK);
+    }
+    
+    
+    @RequestMapping(value="/v1/workorder/_update", method = RequestMethod.POST)
+    @ApiOperation(value = "Update WorkOrder for WMS")
+    public ResponseEntity<WMSWorkOrderApplicationResponse> v1WorkOrderUpdatePost(@ApiParam(value = "Details for the new Contractor(s) + RequestInfo meta data." ,required=true )  @Valid @RequestBody WMSWorkOrderRequest workOrderRequest) {
+        List<WMSWorkOrderApplication> applications = workOrderService.updateWorkOrderMaster(workOrderRequest);
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(workOrderRequest.getRequestInfo(), true);
+        WMSWorkOrderApplicationResponse response = WMSWorkOrderApplicationResponse.builder().wmsWorkOrderApplications(applications).responseInfo(responseInfo).build();
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     

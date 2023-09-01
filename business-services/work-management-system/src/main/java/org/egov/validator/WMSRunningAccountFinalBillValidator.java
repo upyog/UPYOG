@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.egov.repository.WMSContractorRepository;
-import org.egov.repository.WMSMeasurementBookRepository;
+import org.egov.repository.WMSRunningAccountFinalBillRepository;
 import org.egov.repository.WMSSORRepository;
 import org.egov.repository.WMSWorkRepository;
 import org.egov.tracer.model.CustomException;
@@ -13,9 +13,9 @@ import org.egov.web.models.ScheduleOfRateApplication;
 import org.egov.web.models.WMSContractorApplication;
 import org.egov.web.models.WMSContractorApplicationSearchCriteria;
 import org.egov.web.models.WMSContractorRequest;
-import org.egov.web.models.WMSMeasurementBookApplication;
-import org.egov.web.models.WMSMeasurementBookApplicationSearchCriteria;
-import org.egov.web.models.WMSMeasurementBookRequest;
+import org.egov.web.models.WMSRunningAccountFinalBillApplication;
+import org.egov.web.models.WMSRunningAccountFinalBillApplicationSearchCriteria;
+import org.egov.web.models.WMSRunningAccountFinalBillRequest;
 import org.egov.web.models.WMSSORRequest;
 import org.egov.web.models.WMSWorkApplication;
 import org.egov.web.models.WMSWorkApplicationSearchCriteria;
@@ -26,25 +26,25 @@ import org.springframework.util.ObjectUtils;
 
 
 @Component
-public class WMSMeasurementBookValidator {
+public class WMSRunningAccountFinalBillValidator {
 	
 	 @Autowired
-	    private WMSMeasurementBookRepository repository;
+	    private WMSRunningAccountFinalBillRepository repository;
 
-	    public void validateMeasurementBookApplication(WMSMeasurementBookRequest wmsMeasurementBookRequest) {
-	    	wmsMeasurementBookRequest.getWmsMeasurementBookApplications().forEach(application -> {
+	    public void validateRunningAccountFinalBillApplication(WMSRunningAccountFinalBillRequest wmsRunningAccountFinalBillRequest) {
+	    	wmsRunningAccountFinalBillRequest.getWmsRunningAccountFinalBillApplications().forEach(application -> {
 	            if(ObjectUtils.isEmpty(application.getTenantId()))
-	                throw new CustomException("EG_WMS_APP_ERR", "tenantId is mandatory for creating Measurement Book applications");
+	                throw new CustomException("EG_WMS_APP_ERR", "tenantId is mandatory for creating Running Account Final Bill applications");
 	        });
 	    }
 
-		public List<WMSMeasurementBookApplication> validateApplicationUpdateRequest(
-				WMSMeasurementBookRequest measurementBookRequest) {
-			List<Integer> ids = measurementBookRequest.getWmsMeasurementBookApplications().stream().map(WMSMeasurementBookApplication::getMeasurementBookId).collect(Collectors.toList());
-	        List<WMSMeasurementBookApplication> contractorApplications = repository.getApplications(WMSMeasurementBookApplicationSearchCriteria.builder().measurementBookId(ids).build());
-	        if(contractorApplications.size() != ids.size())
-	            throw new CustomException("APPLICATION_DOES_NOT_EXIST", "One of the Measurement Book ids does not exist.");
-	        return contractorApplications;
+		public List<WMSRunningAccountFinalBillApplication> validateApplicationUpdateRequest(
+				WMSRunningAccountFinalBillRequest runningAccountFinalBillRequest) {
+			List<Integer> ids = runningAccountFinalBillRequest.getWmsRunningAccountFinalBillApplications().stream().map(WMSRunningAccountFinalBillApplication::getRunningAccountId).collect(Collectors.toList());
+	        List<WMSRunningAccountFinalBillApplication> runningAccountFinalBillApplications = repository.getApplications(WMSRunningAccountFinalBillApplicationSearchCriteria.builder().runningAccountId(ids).build());
+	        if(runningAccountFinalBillApplications.size() != ids.size())
+	            throw new CustomException("APPLICATION_DOES_NOT_EXIST", "One of the Running Account Final Bill ids does not exist.");
+	        return runningAccountFinalBillApplications;
 		}
 
 		/*

@@ -70,11 +70,45 @@ public class WMSMeasurementBookApplicationEnrichment {
 	public void enrichMeasurementBookApplicationUpdate(WMSMeasurementBookRequest wmsMeasurementBookRequest, List<WMSMeasurementBookApplication> existingApplication) {
 		// Enrich lastModifiedTime and lastModifiedBy in case of update
 		for (WMSMeasurementBookApplication application : wmsMeasurementBookRequest.getWmsMeasurementBookApplications()) {
-//			application.setItemNo(existingApplication.get(0).getItemNo());
-//			application.setDescOfItem(existingApplication.get(0).getDescOfItem());
-//			application.setUnit(existingApplication.get(0).getUnit());
-//			application.setStartDate(existingApplication.get(0).getStartDate());
-//			
+			existingApplication.get(0).setWorkOrderNo(application.getWorkOrderNo());
+			existingApplication.get(0).setContractorName(application.getContractorName());
+			existingApplication.get(0).setWorkName(application.getWorkName());
+			existingApplication.get(0).setMeasurementBookNo(application.getMeasurementBookNo());
+			existingApplication.get(0).setStatus(application.getStatus());
+			existingApplication.get(0).setAgreementNo(application.getAgreementNo());
+			existingApplication.get(0).setProjectName(application.getProjectName());
+			existingApplication.get(0).setWorkOrderAmount(application.getWorkOrderAmount());
+			existingApplication.get(0).setWorkOrderDate(application.getWorkOrderDate());
+			existingApplication.get(0).setMeasurementDate(application.getMeasurementDate());
+			existingApplication.get(0).setDescriptionOfMb(application.getDescriptionOfMb());
+			existingApplication.get(0).setJeName(application.getJeName());
+			existingApplication.get(0).setChapter(application.getChapter());
+			existingApplication.get(0).setItemNo(application.getItemNo());
+			existingApplication.get(0).setDescriptionOfTheItem(application.getDescriptionOfTheItem());
+			existingApplication.get(0).setEstimatedQuantity(application.getEstimatedQuantity());
+			existingApplication.get(0).setCumulativeQuantity(application.getCumulativeQuantity());
+			existingApplication.get(0).setUnit(application.getUnit());
+			existingApplication.get(0).setRate(application.getRate());
+			existingApplication.get(0).setConsumedQuantity(application.getConsumedQuantity());
+			existingApplication.get(0).setAmount(application.getAmount());
+			existingApplication.get(0).setAddMb(application.getAddMb());
+			existingApplication.get(0).setItemDescription(application.getItemDescription());
+			existingApplication.get(0).setNos(application.getNos());
+			existingApplication.get(0).setL(application.getL());
+			existingApplication.get(0).setBw(application.getBw());
+			existingApplication.get(0).setDh(application.getDh());
+			existingApplication.get(0).setItemCode(application.getItemCode());
+			existingApplication.get(0).setDescription(application.getDescription());
+			existingApplication.get(0).setCommulativeQuantity(application.getCommulativeQuantity());
+			existingApplication.get(0).setRemark(application.getRemark());
+			existingApplication.get(0).setOverheadDescription(application.getOverheadDescription());
+			existingApplication.get(0).setValueType(application.getValueType());
+			existingApplication.get(0).setEstimatedAmount(application.getEstimatedAmount());
+			existingApplication.get(0).setActualAmount(application.getActualAmount());
+			existingApplication.get(0).setDocumentDescription(application.getDocumentDescription());
+			
+			
+			
 //			application.setEndDate(date);
 			// application.getAuditDetails().setLastModifiedBy(birthRegistrationRequest.getRequestInfo().getUserInfo().getUuid());
 		}

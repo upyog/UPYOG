@@ -96,8 +96,6 @@ public class SchemeApiController {
 
     @RequestMapping(value="/v1/scheme/_update", method = RequestMethod.POST)
     @ApiOperation(value = "Upadate Scheme for WMS")
-    //public ResponseEntity<String> v1SchemeUpdatePost(@RequestBody Scheme scheme) {
-        //List<SchemeCreationApplication> applications = schemeMasterService.updateBtApplication(birthRegistrationRequest);
     public ResponseEntity<SchemeApplicationResponse> v1SchemeUpdatePost(@ApiParam(value = "Details for the new Scheme(s) + RequestInfo meta data." ,required=true )  @Valid @RequestBody WMSSchemeRequest schemeRequest) {
         List<Scheme> applications = schemeMasterService.updateSchemeMaster(schemeRequest);
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(schemeRequest.getRequestInfo(), true);

@@ -70,11 +70,19 @@ public class WMSWorkOrderApplicationEnrichment {
 	public void enrichWorkOrderApplicationUpdate(WMSWorkOrderRequest wmsWorkOrderRequest, List<WMSWorkOrderApplication> existingApplication) {
 		// Enrich lastModifiedTime and lastModifiedBy in case of update
 		for (WMSWorkOrderApplication application : wmsWorkOrderRequest.getWmsWorkOrderApplications()) {
-//			application.setItemNo(existingApplication.get(0).getItemNo());
-//			application.setDescOfItem(existingApplication.get(0).getDescOfItem());
-//			application.setUnit(existingApplication.get(0).getUnit());
-//			application.setStartDate(existingApplication.get(0).getStartDate());
-//			
+			existingApplication.get(0).setWorkOrderDate(application.getWorkOrderDate());
+			existingApplication.get(0).setAgreementNo(application.getAgreementNo());
+			existingApplication.get(0).setContractorName(application.getContractorName());
+			existingApplication.get(0).setWorkName(application.getWorkName());
+			existingApplication.get(0).setContractValue(application.getContractValue());
+			existingApplication.get(0).setStipulatedCompletionPeriod(application.getStipulatedCompletionPeriod());
+			existingApplication.get(0).setTenderNumber(application.getTenderNumber());
+			existingApplication.get(0).setTenderDate(application.getTenderDate());
+			existingApplication.get(0).setDateOfCommencement(application.getDateOfCommencement());
+			existingApplication.get(0).setWorkAssignee(application.getWorkAssignee());
+			existingApplication.get(0).setDocumentDescription(application.getDocumentDescription());
+			existingApplication.get(0).setTermsAndConditions(application.getTermsAndConditions());
+			
 //			application.setEndDate(date);
 			// application.getAuditDetails().setLastModifiedBy(birthRegistrationRequest.getRequestInfo().getUserInfo().getUuid());
 		}

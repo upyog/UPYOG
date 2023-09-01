@@ -160,27 +160,27 @@ serviceMaps:
       queryMaps:
       
         - query: UPDATE project_master SET source_of_fund = ?,department =?,project_description=?,project_timeline=?,project_start_date = ?, project_end_date = ?, approval_number = ?, approval_date = ?, status = ? WHERE project_id=?;
-          basePath: SchemeApplication.*
+          basePath: ProjectApplication.*
           jsonMaps:
-            - jsonPath: $.SchemeApplication.*.source_of_fund
+            - jsonPath: $.ProjectApplication.*.source_of_fund
             
-            - jsonPath: $.SchemeApplication.*.department
+            - jsonPath: $.ProjectApplication.*.department
             
-            - jsonPath: $.SchemeApplication.*.project_description
+            - jsonPath: $.ProjectApplication.*.project_description
             
-            - jsonPath: $.SchemeApplication.*.project_timeline
+            - jsonPath: $.ProjectApplication.*.project_timeline
 
-            - jsonPath: $.SchemeApplication.*.project_start_date
+            - jsonPath: $.ProjectApplication.*.project_start_date
            
-            - jsonPath: $.SchemeApplication.*.project_end_date
+            - jsonPath: $.ProjectApplication.*.project_end_date
             
-            - jsonPath: $.SchemeApplication.*.approval_number
+            - jsonPath: $.ProjectApplication.*.approval_number
             
-            - jsonPath: $.SchemeApplication.*.approval_date
+            - jsonPath: $.ProjectApplication.*.approval_date
             
-            - jsonPath: $.SchemeApplication.*.status
+            - jsonPath: $.ProjectApplication.*.status
             
-            - jsonPath: $.SchemeApplication.*.project_id
+            - jsonPath: $.ProjectApplication.*.project_id
 
        
     - version: 1.0
@@ -306,7 +306,53 @@ serviceMaps:
             
             - jsonPath: $.WMSContractorApplication.*.vat_number
             
-            - jsonPath: $.WMSContractorApplication.*.allow_direct_payment	
+            - jsonPath: $.WMSContractorApplication.*.allow_direct_payment
+            
+            
+            
+            
+    - version: 1.0
+      description: Update contractor applications in table
+      fromTopic: update-contr-application
+      isTransaction: true
+      queryMaps:
+      
+        - query: UPDATE contractor SET mobile_number = ?,uid_number = ?, vendor_name = ?, vat_number = ?, epfo_account_number = ?, email = ?, gst_number = ?, pan_number = ?, bank_account_number = ?, address = ?, vendor_type = ?, bank_branch_ifsc_code = ?, function = ?, vendor_class = ?, vendor_sub_type = ?, primary_account_head = ? WHERE vendor_id=?;
+          basePath: WMSContractorApplication.*
+          jsonMaps:
+            - jsonPath: $.WMSContractorApplication.*.mobile_number
+
+            - jsonPath: $.WMSContractorApplication.*.uid_number
+           
+            - jsonPath: $.WMSContractorApplication.*.vendor_name
+            
+            - jsonPath: $.WMSContractorApplication.*.vat_number
+            
+            - jsonPath: $.WMSContractorApplication.*.epfo_account_number
+            
+            - jsonPath: $.WMSContractorApplication.*.email
+            
+            - jsonPath: $.WMSContractorApplication.*.gst_number
+            
+            - jsonPath: $.WMSContractorApplication.*.pan_number
+            
+            - jsonPath: $.WMSContractorApplication.*.bank_account_number
+            
+            - jsonPath: $.WMSContractorApplication.*.address
+            
+            - jsonPath: $.WMSContractorApplication.*.vendor_type
+            
+            - jsonPath: $.WMSContractorApplication.*.bank_branch_ifsc_code
+            
+            - jsonPath: $.WMSContractorApplication.*.function
+            
+            - jsonPath: $.WMSContractorApplication.*.vendor_class
+            
+            - jsonPath: $.WMSContractorApplication.*.vendor_sub_type
+            
+            - jsonPath: $.WMSContractorApplication.*.primary_account_head
+            
+            - jsonPath: $.WMSContractorApplication.*.vendor_id	
             
             
             
@@ -649,6 +695,44 @@ serviceMaps:
             
             
     - version: 1.0
+      description: Update Work Order applications in table
+      fromTopic: update-worder-application
+      isTransaction: true
+      queryMaps:
+      
+        - query: UPDATE work_order SET work_order_date = ?,agreement_no = ?, contractor_name = ?, work_name = ?, contract_value = ?, stipulated_completion_period = ?, tender_number = ?, tender_date = ?, date_of_commencement = ?, work_assignee = ?, document_description = ?, terms_and_conditions = ? WHERE work_order_id = ?;
+          basePath: WMSWorkOrderApplication.*
+          jsonMaps:
+            - jsonPath: $.WMSWorkOrderApplication.*.work_order_date
+
+            - jsonPath: $.WMSWorkOrderApplication.*.agreement_no
+            
+            - jsonPath: $.WMSWorkOrderApplication.*.contractor_name
+
+            - jsonPath: $.WMSWorkOrderApplication.*.work_name
+
+            - jsonPath: $.WMSWorkOrderApplication.*.contract_value
+
+            - jsonPath: $.WMSWorkOrderApplication.*.stipulated_completion_period
+
+            - jsonPath: $.WMSWorkOrderApplication.*.tender_number
+
+            - jsonPath: $.WMSWorkOrderApplication.*.tender_date
+            
+            - jsonPath: $.WMSWorkOrderApplication.*.date_of_commencement
+            
+            - jsonPath: $.WMSWorkOrderApplication.*.work_assignee
+            
+            - jsonPath: $.WMSWorkOrderApplication.*.document_description
+            
+            - jsonPath: $.WMSWorkOrderApplication.*.terms_and_conditions
+            
+            - jsonPath: $.WMSWorkApplication.*.work_order_id
+            
+            
+            
+            
+    - version: 1.0
       description: Persists Measurement Book details in tables
       fromTopic: save-mb-application
       isTransaction: true
@@ -740,6 +824,193 @@ serviceMaps:
             
             
             
+    - version: 1.0
+      description: Update Measurement Book applications in table
+      fromTopic: update-mb-application
+      isTransaction: true
+      queryMaps:
+      
+        - query: UPDATE measurement_book SET work_order_no = ?,contractor_name = ?, work_name = ?, measurement_book_no = ?, status = ?, agreement_no = ?, project_name = ?, work_order_amount = ?, work_order_date = ?, measurement_date = ?, description_of_mb = ?, je_name = ?, chapter = ?, item_no = ?, description_of_the_item = ?, estimated_quantity = ?, cumulative_quantity = ?, unit = ?, rate = ?, consumed_quantity = ?, amount = ?, add_mb = ?, item_description = ?, nos = ?, l = ?, bw = ?, dh = ?, item_code = ?, description = ?, commulative_quantity = ?, remark = ?, overhead_description = ?, value_type = ?, estimated_amount = ?, actual_amount = ?, document_description = ? WHERE measurement_book_id=?;
+          basePath: WMSMeasurementBookApplication.*
+          jsonMaps:
+            - jsonPath: $.WMSMeasurementBookApplication.*.work_order_no
+
+            - jsonPath: $.WMSMeasurementBookApplication.*.contractor_name
+            
+            - jsonPath: $.WMSMeasurementBookApplication.*.work_name
+
+            - jsonPath: $.WMSMeasurementBookApplication.*.measurement_book_no
+
+            - jsonPath: $.WMSMeasurementBookApplication.*.status
+
+            - jsonPath: $.WMSMeasurementBookApplication.*.agreement_no
+
+            - jsonPath: $.WMSMeasurementBookApplication.*.project_name
+
+            - jsonPath: $.WMSMeasurementBookApplication.*.work_order_amount
+            
+            - jsonPath: $.WMSMeasurementBookApplication.*.work_order_date
+            
+            - jsonPath: $.WMSMeasurementBookApplication.*.measurement_date
+            
+            - jsonPath: $.WMSMeasurementBookApplication.*.description_of_mb
+            
+            - jsonPath: $.WMSMeasurementBookApplication.*.je_name
+            
+            - jsonPath: $.WMSMeasurementBookApplication.*.chapter
+            
+            - jsonPath: $.WMSMeasurementBookApplication.*.item_no
+            
+            - jsonPath: $.WMSMeasurementBookApplication.*.description_of_the_item
+            
+            - jsonPath: $.WMSMeasurementBookApplication.*.estimated_quantity
+            
+            - jsonPath: $.WMSMeasurementBookApplication.*.cumulative_quantity
+            
+            - jsonPath: $.WMSMeasurementBookApplication.*.unit
+            
+            - jsonPath: $.WMSMeasurementBookApplication.*.rate
+            
+            - jsonPath: $.WMSMeasurementBookApplication.*.consumed_quantity	
+            
+            - jsonPath: $.WMSMeasurementBookApplication.*.amount
+            
+            - jsonPath: $.WMSMeasurementBookApplication.*.add_mb
+            
+            - jsonPath: $.WMSMeasurementBookApplication.*.item_description
+            
+            - jsonPath: $.WMSMeasurementBookApplication.*.nos
+            
+            - jsonPath: $.WMSMeasurementBookApplication.*.l
+            
+            - jsonPath: $.WMSMeasurementBookApplication.*.bw
+            
+            - jsonPath: $.WMSMeasurementBookApplication.*.dh
+            
+            - jsonPath: $.WMSMeasurementBookApplication.*.item_code
+            
+            - jsonPath: $.WMSMeasurementBookApplication.*.description
+            
+            - jsonPath: $.WMSMeasurementBookApplication.*.commulative_quantity
+            
+            - jsonPath: $.WMSMeasurementBookApplication.*.remark
+            
+            - jsonPath: $.WMSMeasurementBookApplication.*.overhead_description
+            
+            - jsonPath: $.WMSMeasurementBookApplication.*.value_type
+            
+            - jsonPath: $.WMSMeasurementBookApplication.*.estimated_amount
+            
+            - jsonPath: $.WMSMeasurementBookApplication.*.actual_amount
+            
+            - jsonPath: $.WMSMeasurementBookApplication.*.document_description
+            
+            - jsonPath: $.WMSMeasurementBookApplication.*.measurement_book_id	
+            
+            
+            
+            
+            
+    - version: 1.0
+      description: Persists Running Account Final Bill details in tables
+      fromTopic: save-rafb-application
+      isTransaction: true
+      queryMaps:
+
+        - query: INSERT INTO running_account_final_bill (running_account_id,project_name,work_name,mb_no,mb_date,mb_amount,estimated_cost,tender_type,percentage_type,award_amount,bill_date,bill_no,bill_amount,deduction_amount,remark,sr_no,deduction_description,addition_deduction,calculation_method,percentage) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?,?,?,?,?,?,?,?);
+          basePath: WMSRunningAccountFinalBillApplication.*
+          jsonMaps:
+            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.running_account_id
+
+            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.project_name
+
+            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.work_name
+            
+            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.mb_no
+
+            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.mb_date
+
+            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.mb_amount
+
+            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.estimated_cost
+
+            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.tender_type
+
+            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.percentage_type
+            
+            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.award_amount
+            
+            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.bill_date
+            
+            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.bill_no
+            
+            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.bill_amount
+            
+            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.deduction_amount
+            
+            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.remark
+            
+            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.sr_no
+            
+            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.deduction_description
+            
+            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.addition_deduction
+            
+            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.calculation_method
+            
+            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.percentage
+            
+            
+            
+            
+    - version: 1.0
+      description: Update Running Account Final Bill applications in table
+      fromTopic: update-rafb-application
+      isTransaction: true
+      queryMaps:
+      
+        - query: UPDATE running_account_final_bill SET project_name = ?,work_name = ?, mb_no = ?, mb_date = ?, mb_amount = ?, estimated_cost = ?, tender_type = ?, percentage_type = ?, award_amount = ?, bill_date = ?, bill_no = ?, bill_amount = ?, deduction_amount = ?, remark = ?, sr_no = ?, deduction_description = ?, addition_deduction = ?, calculation_method = ?, percentage = ? WHERE running_account_id=?;
+          basePath: WMSRunningAccountFinalBillApplication.*
+          jsonMaps:
+            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.project_name
+
+            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.work_name
+            
+            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.mb_no
+
+            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.mb_date
+
+            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.mb_amount
+
+            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.estimated_cost
+
+            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.tender_type
+
+            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.percentage_type
+            
+            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.award_amount
+            
+            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.bill_date
+            
+            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.bill_no
+            
+            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.bill_amount
+            
+            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.deduction_amount
+            
+            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.remark
+            
+            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.sr_no
+            
+            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.deduction_description
+            
+            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.addition_deduction
+            
+            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.calculation_method
+            
+            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.percentage
+            
+            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.running_account_id	
             
             
             
