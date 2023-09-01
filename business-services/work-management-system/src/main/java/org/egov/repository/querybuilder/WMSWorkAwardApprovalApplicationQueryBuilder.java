@@ -5,31 +5,32 @@ import java.util.List;
 
 import org.egov.web.models.WMSContractorApplicationSearchCriteria;
 import org.egov.web.models.WMSWorkApplicationSearchCriteria;
+import org.egov.web.models.WMSWorkAwardApprovalApplicationSearchCriteria;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
 @Component
-public class WMSContractorApplicationQueryBuilder {
+public class WMSWorkAwardApprovalApplicationQueryBuilder {
 
 	
-	private static final String BASE_CONTR_QUERY = " SELECT contr.vendor_id as vVendorId, contr.vendor_type as vVendorType, contr.vendor_sub_type as vVendorSubType, contr.vendor_name as vVendorName, contr.vendor_status as vVendorStatus, contr.pfms_vendor_code as vPfmsVendorCode, contr.payto as vPayTo, contr.mobile_number as vMobileNumber, contr.email as vEmail, contr.uid_number as vUidNumber, contr.gst_number as vGstNumber, contr.pan_number as vPanNumber, contr.bank_branch_ifsc_code as vBankBranchIfscCode, contr.bank_account_number as vBankAccountNumber,contr.function as vFunction,contr.primary_account_head as vPrimaryAccountHead,contr.vendor_class as vVendorClass,contr.address as vAddress,contr.epfo_account_number as vEpfoAccountNumber,contr.vat_number as vVatNumber,contr.allow_direct_payment as vAllowDirectPayment ";
+	private static final String BASE_WAWARD_QUERY = " SELECT waward.work_award_id as wWorkAwardId, waward.work_name as wWorkName, waward.percentage_type as wPercentageType, waward.quoted_percentage as wQuotedPercentage, waward.contractor_name as wContractorName, waward.no_of_days_for_agreement as wNoOfDaysForAgreement, waward.loa_generation as wLoaGeneration, waward.award_date as wAwardDate, waward.document_upload as wDocumentUpload, waward.award_status as wAwardStatus ";
 
     //private static final String ADDRESS_SELECT_QUERY = " add.id as aid, add.tenantid as atenantid, add.doorno as adoorno, add.latitude as alatitude, add.longitude as alongitude, add.buildingname as abuildingname, add.addressid as aaddressid, add.addressnumber as aaddressnumber, add.type as atype, add.addressline1 as aaddressline1, add.addressline2 as aaddressline2, add.landmark as alandmark, add.street as astreet, add.city as acity, add.locality as alocality, add.pincode as apincode, add.detail as adetail, add.registrationid as aregistrationid ";
 
     //private static final String FROM_TABLES = " FROM eg_bt_registration btr LEFT JOIN eg_bt_address add ON btr.id = add.registrationid ";
-    private static final String FROM_TABLES = " FROM contractor contr";
+    private static final String FROM_TABLES = " FROM work_award_approval waward";
 
-    private final String ORDERBY_CREATEDTIME = " ORDER BY contr.vendor_type DESC ";
+    private final String ORDERBY_CREATEDTIME = " ORDER BY waward.award_date DESC ";
 
-    public String getContractorApplicationSearchQuery(WMSContractorApplicationSearchCriteria criteria, List<Object> preparedStmtList){
-        StringBuilder query = new StringBuilder(BASE_CONTR_QUERY);
+    public String getWorkAwardApprovalApplicationSearchQuery(WMSWorkAwardApprovalApplicationSearchCriteria criteria, List<Object> preparedStmtList){
+        StringBuilder query = new StringBuilder(BASE_WAWARD_QUERY);
        // query.append(ADDRESS_SELECT_QUERY);
         query.append(FROM_TABLES);
 
-        if(!ObjectUtils.isEmpty(criteria.getVendorId())){
+        if(!ObjectUtils.isEmpty(criteria.getWorkAwardId())){
         	 addClauseIfRequired(query, preparedStmtList);
-             query.append(" contr.vendor_id IN ( ").append(createQuery(criteria.getVendorId())).append(" ) ");
-             addToPreparedStatement(preparedStmtList, criteria.getVendorId());
+             query.append(" waward.work_award_id IN ( ").append(createQuery(criteria.getWorkAwardId())).append(" ) ");
+             addToPreparedStatement(preparedStmtList, criteria.getWorkAwardId());
         }
 
         // order birth registration applications based on their createdtime in latest first manner

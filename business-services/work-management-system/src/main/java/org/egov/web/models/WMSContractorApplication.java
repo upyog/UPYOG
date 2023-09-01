@@ -39,10 +39,8 @@ public class WMSContractorApplication {
 	private Long GSTNumber=null;
 	@JsonProperty("pan_number")
 	private String PANNumber=null;
-	@JsonProperty("bank_branch")
-	private String bankBranch=null;
-	@JsonProperty("bank_ifsc_code")
-	private String bankIfscCode=null;
+	@JsonProperty("bank_branch_ifsc_code")
+	private String bankBranchIfscCode=null;
 	@JsonProperty("bank_account_number")
 	private Long bankAccountNumber=null;
 	@JsonProperty("function")
@@ -54,7 +52,11 @@ public class WMSContractorApplication {
 	@JsonProperty("address")
 	private String address=null;
 	@JsonProperty("epfo_account_number")
-	private Long EPFOAccountNumber=null;
+	private String EPFOAccountNumber=null;
+	@JsonProperty("vat_number")
+	private String vatNumber=null;
+	@JsonProperty("allow_direct_payment")
+	private String allowDirectPayment=null;
 	@JsonProperty("tenantId")
 	 private String tenantId = null;
 	

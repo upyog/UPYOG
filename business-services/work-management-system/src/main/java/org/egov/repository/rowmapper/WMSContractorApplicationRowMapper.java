@@ -43,14 +43,15 @@ public class WMSContractorApplicationRowMapper implements ResultSetExtractor<Lis
                         .UIDNumber(rs.getLong("vUidNumber"))
                         .GSTNumber(rs.getLong("vGstNumber"))
                         .PANNumber(rs.getString("vPanNumber"))
-                        .bankBranch(rs.getString("vBankBranch"))
-                        .bankIfscCode(rs.getString("vBankIfscCode"))
+                        .bankBranchIfscCode(rs.getString("vBankBranchIfscCode"))
                         .bankAccountNumber(rs.getLong("vBankAccountNumber"))
                         .function(rs.getString("vFunction"))
                         .primaryAccountHead(rs.getString("vPrimaryAccountHead"))
                         .vendorClass(rs.getString("vVendorClass"))
                         .address(rs.getString("vAddress"))
-                        .EPFOAccountNumber(rs.getLong("vEpfoAccountNumber"))
+                        .EPFOAccountNumber(rs.getString("vEpfoAccountNumber"))
+                        .vatNumber(rs.getString("vVatNumber"))
+                        .allowDirectPayment(rs.getString("vAllowDirectPayment"))
                         .build();
             }
             //addChildrenToProperty(rs, sorApplication);

@@ -41,8 +41,11 @@ public class ProjectApplicationEnrichment {
 	String date = simpleDateFormat.format(new Date());
 
 	public void enrichProjectApplication(WMSProjectRequest wmsProjectRequest) {
-		List<String> projectMasterIdList = idgenUtil.getIdList(wmsProjectRequest.getRequestInfo(), wmsProjectRequest.getProjectApplications().get(0).getTenantId(),idGenName, idGenFormat, wmsProjectRequest.getProjectApplications().size());
-        Integer index = 0;
+		
+		  //List<String> projectMasterIdList =idgenUtil.getIdList(wmsProjectRequest.getRequestInfo(),wmsProjectRequest.getProjectApplications().get(0).getTenantId(), idGenName,idGenFormat,wmsProjectRequest.getProjectApplications().size());
+		 
+		
+        //Integer index = 0;
 		for (Project application : wmsProjectRequest.getProjectApplications()) {
 			// Enrich audit details
 //	            AuditDetails auditDetails = AuditDetails.builder().createdBy(birthRegistrationRequest.getRequestInfo().getUserInfo().getUuid()).createdTime(System.currentTimeMillis()).lastModifiedBy(birthRegistrationRequest.getRequestInfo().getUserInfo().getUuid()).lastModifiedTime(System.currentTimeMillis()).build();
@@ -55,7 +58,7 @@ public class ProjectApplicationEnrichment {
 			application.setProjectEndDate(date);
 
 			// Set application number from IdGen
-			 application.setProjectNumber(projectMasterIdList.get(index++));
+			 //application.setProjectNumber(projectMasterIdList.get(index++));
 
 			// Enrich registration Id
 			// application.getAddress().setRegistrationId(application.getId());
@@ -67,18 +70,40 @@ public class ProjectApplicationEnrichment {
 
 	public void enrichProjectApplicationUponUpdate(WMSProjectRequest wmsProjectRequest, List<Project> existingApplication) {
 		// Enrich lastModifiedTime and lastModifiedBy in case of update
+		/*
+		 * for (Project application : wmsProjectRequest.getProjectApplications()) {
+		 * application.setSourceOfFund(existingApplication.get(0).getSourceOfFund());
+		 * application.setProjectDescription(existingApplication.get(0).
+		 * getProjectDescription());
+		 * application.setDepartment(existingApplication.get(0).getDepartment());
+		 * application.setProjectNumber(existingApplication.get(0).getProjectNumber());
+		 * application.setStatus(existingApplication.get(0).getStatus());
+		 * application.setProjectTimeline(existingApplication.get(0).getProjectTimeline(
+		 * )); application.setProjectStartDate(existingApplication.get(0).
+		 * getProjectStartDate());
+		 * 
+		 * application.setProjectEndDate(date); //
+		 * application.getAuditDetails().setLastModifiedBy(birthRegistrationRequest.
+		 * getRequestInfo().getUserInfo().getUuid()); }
+		 */
+		
 		for (Project application : wmsProjectRequest.getProjectApplications()) {
-			application.setSourceOfFund(existingApplication.get(0).getSourceOfFund());
-			application.setProjectDescription(existingApplication.get(0).getProjectDescription());
-			application.setDepartment(existingApplication.get(0).getDepartment());
-			application.setProjectNumber(existingApplication.get(0).getProjectNumber());
-			application.setStatus(existingApplication.get(0).getStatus());
-			application.setProjectTimeline(existingApplication.get(0).getProjectTimeline());
-			application.setProjectStartDate(existingApplication.get(0).getProjectStartDate());
 			
-			application.setProjectEndDate(date);
+			existingApplication.get(0).setSourceOfFund(application.getSourceOfFund());
+			existingApplication.get(0).setProjectDescription(application.getProjectDescription());
+			existingApplication.get(0).setDepartment(application.getDepartment());
+			existingApplication.get(0).setProjectNumber(application.getProjectNumber());
+			existingApplication.get(0).setStatus(application.getStatus());
+			existingApplication.get(0).setProjectTimeline(application.getProjectTimeline());
+			existingApplication.get(0).setProjectStartDate(application.getProjectStartDate());
+			existingApplication.get(0).setProjectEndDate(date);
+			
+			
 			// application.getAuditDetails().setLastModifiedBy(birthRegistrationRequest.getRequestInfo().getUserInfo().getUuid());
 		}
+		
+		
+		
 	}
 
 }
