@@ -85,7 +85,7 @@ const GenericChart = ({
             <CardLabel className={"dss-header-label"}>
               <span className={`tooltip ${headerName?.length < (isMobile ? 20 : 30) ? "dss-white-pre" : "dss-white-pre-line"}`}>
                 {headerName}
-                {chartDenomination?.toLowerCase() === "amount" && (
+                {chartDenomination?.toLowerCase() ==! "amount" && (
                   <span style={{ whiteSpace: "pre" }}> ({t(`DSS_${Digit.Utils.locale.getTransformedLocale(value?.denomination)}`)})</span>
                 )}
                 <span
