@@ -206,7 +206,10 @@ const renderLegend = (value) => {
   )
 }
   const chartData = useMemo(() => constructChartData(response?.responseData?.data));
+  const tooltipFormatter = (value, name) => {
+    return name == "TotalCollection"?`${value} Cr`:`${value}`
 
+  };
   if (isLoading) {
     return <Loader />;
   }
@@ -240,11 +243,9 @@ const renderLegend = (value) => {
           >
             <CartesianGrid stroke="#f5f5f5" strokeDasharray="3 3" />
             <XAxis dataKey={"name"} type={"category"} tick={{ fontSize: "14px", fill: "#505A5F" }} tickCount={12} />
-            <YAxis yAxisId="left"  type={"number"} orientation="left" stroke="#54d140" tickCount={10}
-            unit={""}
-            width={130}/>
-            <YAxis yAxisId="right" type={"number"} orientation="right" stroke="#a82227" tickCount={10}/>
-            <Tooltip cursor={false} />
+            <YAxis yAxisId="left"  type={"number"} orientation="left" stroke="#54d140" tickCount={10} domain={[0, 300]}/>
+            <YAxis yAxisId="right" type={"number"} orientation="right" stroke="#a82227" tickCount={10} />
+            <Tooltip cursor={false} formatter={tooltipFormatter}/>
              <Legend formatter={renderLegend} iconType="circle" />
             <Bar yAxisId="left" dataKey="TotalCollection" fill="#54d140" />
             <Line yAxisId="right" type="monotone" dataKey="liveUlbsCount" stroke="#a82227" />
