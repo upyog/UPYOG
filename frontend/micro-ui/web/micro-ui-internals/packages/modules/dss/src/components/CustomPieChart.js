@@ -86,7 +86,7 @@ const CustomPieChart = ({ dataKey = "value", data, setChartDenomination, moduleC
         fontSize="14px"
         textAnchor={x > cx ? "start" : "end"}
       >
-        {`${(percent * 100).toFixed(0)}%`}
+        {`${(percent * 100).toFixed(0)}% ${name}`}
       </text>
     );
   };
@@ -172,18 +172,20 @@ const CustomPieChart = ({ dataKey = "value", data, setChartDenomination, moduleC
       {chartData?.length === 0 || !chartData ? (
         <NoData t={t} />
       ) : (
-        <ResponsiveContainer width="99%" height={340}>
+        <ResponsiveContainer width="99%" height={440}>
           <PieChart cy={100}>
             <Pie
               data={chartData}
               dataKey={dataKey}
-              cy={150}
+              cx="50%"
+              cy="50%"
               style={{ cursor: response?.responseData?.drillDownChartId !== "none" ? "pointer" : "default" }}
               innerRadius={checkChartID(id) && !mobileView ? 90 : 70} ///Charts in rows(which contains 2 charts) are little bigger in size than charts in rows(which contains 3 charts) charts
               outerRadius={checkChartID(id) && !mobileView ? 110 : 90}
               margin={{ top: isPieClicked ? 0 : 5 }}
               fill="#8884d8"
-              //label={renderCustomLabel}
+              label={renderCustomLabel}
+
               labelLine={false}
               isAnimationActive={false}
               onClick={response?.responseData?.drillDownChartId !== "none" ? onPieClick : null}
@@ -193,26 +195,7 @@ const CustomPieChart = ({ dataKey = "value", data, setChartDenomination, moduleC
               ))}
             </Pie>
             <Tooltip content={renderTooltip} />
-            <Legend
-              layout="vertical"
-              verticalAlign="middle"
-              align="right"
-              iconType="circle"
-              formatter={renderLegend}
-              iconSize={10}
-              wrapperStyle={
-                chartData?.length > 6
-                  ? {
-                      paddingRight: checkChartID(id) && !mobileView ? 60 : 0, ///Padding for 2 charts in a row cases
-                      overflowY: "scroll",
-                      height: 250,
-                      width: "35%",
-                      overflowX: "auto",
-                      paddingTop: -20,
-                    }
-                  : { paddingRight: checkChartID(id) && !mobileView ? 60 : 0, width: "27%", overflowX: "auto", paddingTop: -20 } ///Padding for 2 charts in a row cases
-              }
-            />
+           
           </PieChart>
         </ResponsiveContainer>
       )}

@@ -107,7 +107,7 @@ const MetricChartRow = ({ data, setChartDenomination, index, moduleCode, indexVa
             className="tooltiptext"
             style={{
               fontSize: "medium",
-              width: t(`TIP_${data.name}`).length < 50 ? "fit-content" : 400,
+              width : t(`TIP_${data.name}`).length < 50 ? 200 : 400,
               height: 50,
               whiteSpace: "normal",
             }}
@@ -123,7 +123,7 @@ const MetricChartRow = ({ data, setChartDenomination, index, moduleCode, indexVa
 
   const getWidth = (data) => {
     if (isMobile) return "auto";
-    else return t(`TIP_${data.name}`).length < 50 ? "fit-content" : 400;
+    else return t(`TIP_${data.name}`).length < 50 ? 200 : 400;
     // if (isMobile) return t(`TIP_${data.name}`).length < 50 ? "fit-content" : 300;
     // else return t(`TIP_${data.name}`).length < 50 ? "fit-content" : 400;
   };
