@@ -33,13 +33,13 @@ public class WMSTenderEntryConfiguration {
     @Value("${tender.kafka.update.topic}")
     private String updateTopic;
 
-    @Value("${tender.default.offset}")
+    @Value("${wms.default.offset}")
     private Integer defaultOffset;
 
-    @Value("${tender.default.limit}")
+    @Value("${wms.default.limit}")
     private Integer defaultLimit;
 
-    @Value("${tender.search.max.limit}")
+    @Value("${wms.search.max.limit}")
     private Integer maxLimit;
 
 //    // User Config

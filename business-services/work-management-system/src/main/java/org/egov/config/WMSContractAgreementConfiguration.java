@@ -33,13 +33,13 @@ public class WMSContractAgreementConfiguration {
     @Value("${conagrmt.kafka.update.topic}")
     private String updateTopic;
 
-    @Value("${conagrmt.default.offset}")
+    @Value("${wms.default.offset}")
     private Integer defaultOffset;
 
-    @Value("${conagrmt.default.limit}")
+    @Value("${wms.default.limit}")
     private Integer defaultLimit;
 
-    @Value("${conagrmt.search.max.limit}")
+    @Value("${wms.search.max.limit}")
     private Integer maxLimit;
 
 //    // User Config

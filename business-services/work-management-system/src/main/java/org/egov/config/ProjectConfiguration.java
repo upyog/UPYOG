@@ -46,13 +46,13 @@ public class ProjectConfiguration {
     @Value("${prj.kafka.update.topic}")
     private String updateTopic;
 
-    @Value("${prj.default.offset}")
+    @Value("${wms.default.offset}")
     private Integer defaultOffset;
 
-    @Value("${prj.default.limit}")
+    @Value("${wms.default.limit}")
     private Integer defaultLimit;
 
-    @Value("${prj.search.max.limit}")
+    @Value("${wms.search.max.limit}")
     private Integer maxLimit;
     
     

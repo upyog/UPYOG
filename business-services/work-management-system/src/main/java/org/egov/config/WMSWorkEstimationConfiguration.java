@@ -33,13 +33,13 @@ public class WMSWorkEstimationConfiguration {
     @Value("${wrkest.kafka.update.topic}")
     private String updateTopic;
 
-    @Value("${wrkest.default.offset}")
+    @Value("${wms.default.offset}")
     private Integer defaultOffset;
 
-    @Value("${wrkest.default.limit}")
+    @Value("${wms.default.limit}")
     private Integer defaultLimit;
 
-    @Value("${wrkest.search.max.limit}")
+    @Value("${wms.search.max.limit}")
     private Integer maxLimit;
 
 //    // User Config

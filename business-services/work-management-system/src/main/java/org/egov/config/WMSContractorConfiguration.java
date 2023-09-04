@@ -33,13 +33,13 @@ public class WMSContractorConfiguration {
     @Value("${contr.kafka.update.topic}")
     private String updateTopic;
 
-    @Value("${contr.default.offset}")
+    @Value("${wms.default.offset}")
     private Integer defaultOffset;
 
-    @Value("${contr.default.limit}")
+    @Value("${wms.default.limit}")
     private Integer defaultLimit;
 
-    @Value("${contr.search.max.limit}")
+    @Value("${wms.search.max.limit}")
     private Integer maxLimit;
 
 //    // User Config

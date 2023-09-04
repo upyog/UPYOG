@@ -33,13 +33,13 @@ public class WMSRunningAccountFinalBillConfiguration {
     @Value("${rafb.kafka.update.topic}")
     private String updateTopic;
 
-    @Value("${rafb.default.offset}")
+    @Value("${wms.default.offset}")
     private Integer defaultOffset;
 
-    @Value("${rafb.default.limit}")
+    @Value("${wms.default.limit}")
     private Integer defaultLimit;
 
-    @Value("${rafb.search.max.limit}")
+    @Value("${wms.search.max.limit}")
     private Integer maxLimit;
 
 //    // User Config

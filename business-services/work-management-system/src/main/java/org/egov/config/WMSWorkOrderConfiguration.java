@@ -33,13 +33,13 @@ public class WMSWorkOrderConfiguration {
     @Value("${worder.kafka.update.topic}")
     private String updateTopic;
 
-    @Value("${worder.default.offset}")
+    @Value("${wms.default.offset}")
     private Integer defaultOffset;
 
-    @Value("${worder.default.limit}")
+    @Value("${wms.default.limit}")
     private Integer defaultLimit;
 
-    @Value("${worder.search.max.limit}")
+    @Value("${wms.search.max.limit}")
     private Integer maxLimit;
 
 //    // User Config

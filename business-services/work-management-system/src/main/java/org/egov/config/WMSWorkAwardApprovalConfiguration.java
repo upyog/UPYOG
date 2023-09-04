@@ -33,13 +33,13 @@ public class WMSWorkAwardApprovalConfiguration {
     @Value("${waward.kafka.update.topic}")
     private String updateTopic;
 
-    @Value("${waward.default.offset}")
+    @Value("${wms.default.offset}")
     private Integer defaultOffset;
 
-    @Value("${waward.default.limit}")
+    @Value("${wms.default.limit}")
     private Integer defaultLimit;
 
-    @Value("${waward.search.max.limit}")
+    @Value("${wms.search.max.limit}")
     private Integer maxLimit;
 
 //    // User Config

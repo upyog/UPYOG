@@ -33,13 +33,13 @@ public class WMSPhysicalFinancialMilestoneConfiguration {
     @Value("${pfmile.kafka.update.topic}")
     private String updateTopic;
 
-    @Value("${pfmile.default.offset}")
+    @Value("${wms.default.offset}")
     private Integer defaultOffset;
 
-    @Value("${pfmile.default.limit}")
+    @Value("${wms.default.limit}")
     private Integer defaultLimit;
 
-    @Value("${pfmile.search.max.limit}")
+    @Value("${wms.search.max.limit}")
     private Integer maxLimit;
 
 //    // User Config

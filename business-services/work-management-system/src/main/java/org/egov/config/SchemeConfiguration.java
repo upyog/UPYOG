@@ -46,13 +46,13 @@ public class SchemeConfiguration {
     @Value("${scm.kafka.update.topic}")
     private String updateTopic;
 
-    @Value("${scm.default.offset}")
+    @Value("${wms.default.offset}")
     private Integer defaultOffset;
 
-    @Value("${scm.default.limit}")
+    @Value("${wms.default.limit}")
     private Integer defaultLimit;
 
-    @Value("${scm.search.max.limit}")
+    @Value("${wms.search.max.limit}")
     private Integer maxLimit;
 
     // User Config
