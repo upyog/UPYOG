@@ -162,12 +162,7 @@ const MapChart = ({
     <ResponsiveContainer
       width="40%"
       height={220}
-      margin={{
-        top: 5,
-        right: 5,
-        left: 5,
-        bottom: 5,
-      }}
+      
     >
       <div style={{ position: "relative" }}>
         <ReactTooltip>{tooltipContent}</ReactTooltip>
