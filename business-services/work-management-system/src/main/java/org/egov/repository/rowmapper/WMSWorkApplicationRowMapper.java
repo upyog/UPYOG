@@ -20,10 +20,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class WMSWorkApplicationRowMapper implements ResultSetExtractor<List<WMSWorkApplication>> {
     public List<WMSWorkApplication> extractData(ResultSet rs) throws SQLException, DataAccessException {
-        Map<Integer,WMSWorkApplication> wmsWorkApplicationMap = new LinkedHashMap<>();
+        Map<String, WMSWorkApplication> wmsWorkApplicationMap = new LinkedHashMap<>();
 
         while (rs.next()){
-            int workId = rs.getInt("wWorkId");
+            String workId = rs.getString("wWorkId");
             WMSWorkApplication wmsWorkApplication = wmsWorkApplicationMap.get(workId);
 
             if(wmsWorkApplication == null) {

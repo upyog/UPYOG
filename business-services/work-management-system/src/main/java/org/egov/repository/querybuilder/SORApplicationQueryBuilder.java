@@ -1,5 +1,8 @@
 package org.egov.repository.querybuilder;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import org.egov.web.models.SORApplicationSearchCriteria;
@@ -18,19 +21,27 @@ public class SORApplicationQueryBuilder {
     private static final String FROM_TABLES = " FROM state_sor sor ";
 
     private final String ORDERBY_CREATEDTIME = " ORDER BY sor.end_date DESC ";
-
+	
     public String getSORApplicationSearchQuery(SORApplicationSearchCriteria criteria, List<Object> preparedStmtList){
         StringBuilder query = new StringBuilder(BASE_BTR_QUERY);
        // query.append(ADDRESS_SELECT_QUERY);
         query.append(FROM_TABLES);
-
-        if(!ObjectUtils.isEmpty(criteria.getSorId())){
+        
+        if(!ObjectUtils.isEmpty(criteria.getSorName())){
         	 addClauseIfRequired(query, preparedStmtList);
-             query.append(" sor.sor_id IN ( ").append(createQuery(criteria.getSorId())).append(" ) ");
-             addToPreparedStatement(preparedStmtList, criteria.getSorId());
+             query.append(" sor.sor_name Like '%"+criteria.getSorName()+"%' ");
+            // preparedStmtList.add("'%"+criteria.getSorName()+"%'");
         }
+        if(!ObjectUtils.isEmpty(criteria.getSorStartDate())){
+        	//addClauseIfRequired(query, preparedStmtList);
+            query.append(" AND TO_DATE(sor.end_date, 'YYYY-MM-DD') BETWEEN TO_DATE('"+criteria.getSorStartDate()+"', 'YYYY-MM-DD') ");
+            //preparedStmtList.add("'"+criteria.getSorStartDate()+"'");
+       }
+        if(!ObjectUtils.isEmpty(criteria.getSorEndDate())){
+            query.append(" AND TO_DATE('"+criteria.getSorEndDate()+"', 'YYYY-MM-DD') ");
+            //preparedStmtList.add("'"+criteria.getSorEndDate()+"'");
+       }
 
-        // order birth registration applications based on their createdtime in latest first manner
         query.append(ORDERBY_CREATEDTIME);
 
         return query.toString();

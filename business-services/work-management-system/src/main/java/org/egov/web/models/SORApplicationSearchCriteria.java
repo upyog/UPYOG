@@ -21,7 +21,14 @@ import lombok.ToString;
 @ToString
 public class SORApplicationSearchCriteria {
 
-	@JsonProperty("sor_id")
-    private List<String> sorId;
+	@JsonProperty("sor_name")
+    private String sorName;
+	
+	@JsonProperty("start_date")
+    private String sorStartDate;
+	
+	@JsonProperty("end_date")
+    private String sorEndDate;
+	
 
 }

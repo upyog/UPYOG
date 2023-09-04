@@ -17,10 +17,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class SORApplicationRowMapper implements ResultSetExtractor<List<ScheduleOfRateApplication>> {
     public List<ScheduleOfRateApplication> extractData(ResultSet rs) throws SQLException, DataAccessException {
-        Map<Integer,ScheduleOfRateApplication> sorApplicationMap = new LinkedHashMap<>();
+        Map<String,ScheduleOfRateApplication> sorApplicationMap = new LinkedHashMap<>();
 
         while (rs.next()){
-            int sorId = rs.getInt("sSorId");
+            String sorId = rs.getString("sSorId");
             ScheduleOfRateApplication sorApplication = sorApplicationMap.get(sorId);
 
             if(sorApplication == null) {
