@@ -70,10 +70,16 @@ public class WMSWorkAwardApprovalApplicationEnrichment {
 	public void enrichWorkAwardApprovalApplicationUpdate(WMSWorkAwardApprovalRequest wmsWorkAwardApprovalRequest, List<WMSWorkAwardApprovalApplication> existingApplication) {
 		// Enrich lastModifiedTime and lastModifiedBy in case of update
 		for (WMSWorkAwardApprovalApplication application : wmsWorkAwardApprovalRequest.getWmsWorkAwardApprovalApplications()) {
-//			application.setItemNo(existingApplication.get(0).getItemNo());
-//			application.setDescOfItem(existingApplication.get(0).getDescOfItem());
-//			application.setUnit(existingApplication.get(0).getUnit());
-//			application.setStartDate(existingApplication.get(0).getStartDate());
+			existingApplication.get(0).setWorkName(application.getWorkName());
+			existingApplication.get(0).setPercentageType(application.getPercentageType());
+			existingApplication.get(0).setQuotedPercentage(application.getQuotedPercentage());
+			existingApplication.get(0).setContractorName(application.getContractorName());
+			existingApplication.get(0).setNoOfDaysForAgreement(application.getNoOfDaysForAgreement());
+			existingApplication.get(0).setLoaGeneration(application.getLoaGeneration());
+			existingApplication.get(0).setAwardDate(application.getAwardDate());
+			existingApplication.get(0).setDocumentUpload(application.getDocumentUpload());
+			existingApplication.get(0).setAwardStatus(application.getAwardStatus());
+			
 //			
 //			application.setEndDate(date);
 			// application.getAuditDetails().setLastModifiedBy(birthRegistrationRequest.getRequestInfo().getUserInfo().getUuid());

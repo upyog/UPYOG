@@ -18,9 +18,11 @@ import org.egov.web.models.SORApplicationSearchCriteria;
 import org.egov.web.models.ScheduleOfRateApplication;
 import org.egov.web.models.WMSContractAgreementApplication;
 import org.egov.web.models.WMSContractAgreementApplicationResponse;
+import org.egov.web.models.WMSContractAgreementApplicationSearchCriteria;
 import org.egov.web.models.WMSContractAgreementRequest;
 import org.egov.web.models.WMSContractorApplication;
 import org.egov.web.models.WMSContractorApplicationResponse;
+import org.egov.web.models.WMSContractorApplicationSearchCriteria;
 import org.egov.web.models.WMSContractorRequest;
 import org.egov.web.models.WMSSORRequest;
 import org.egov.web.models.WMSWorkApplication;
@@ -79,6 +81,26 @@ public class WMSContractAgreementApiController{
         WMSContractAgreementApplicationResponse response = WMSContractAgreementApplicationResponse.builder().wmsContractAgreementApplications(applications).responseInfo(responseInfo).build();
         return new ResponseEntity<>(response, HttpStatus.OK);
        
+    }
+    
+    
+    @RequestMapping(value="/v1/contractagreement/_view", method = RequestMethod.POST)
+    @ApiOperation(value = "Fetch contract agreement for WMS")
+    public ResponseEntity<WMSContractAgreementApplicationResponse> v1RegistrationFetchPost(@RequestBody RequestInfoWrapper requestInfoWrapper, @Valid @ModelAttribute WMSContractAgreementApplicationSearchCriteria contractAgreementApplicationSearchCriteria) {
+        List<WMSContractAgreementApplication> applications = contractAgreementService.fetchContractAgreementApplications(requestInfoWrapper.getRequestInfo(), contractAgreementApplicationSearchCriteria);
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true);
+        WMSContractAgreementApplicationResponse response = WMSContractAgreementApplicationResponse.builder().wmsContractAgreementApplications(applications).responseInfo(responseInfo).build();
+        return new ResponseEntity<>(response,HttpStatus.OK);
+    }
+    
+    
+    @RequestMapping(value="/v1/contractagreement/_update", method = RequestMethod.POST)
+    @ApiOperation(value = "Update contract agreement for WMS")
+    public ResponseEntity<WMSContractAgreementApplicationResponse> v1ContractAgreementUpdatePost(@ApiParam(value = "Details for the new ContractAgreement(s) + RequestInfo meta data." ,required=true )  @Valid @RequestBody WMSContractAgreementRequest contractAgreementRequest) {
+        List<WMSContractAgreementApplication> applications = contractAgreementService.updateContractAgreementMaster(contractAgreementRequest);
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(contractAgreementRequest.getRequestInfo(), true);
+        WMSContractAgreementApplicationResponse response = WMSContractAgreementApplicationResponse.builder().wmsContractAgreementApplications(applications).responseInfo(responseInfo).build();
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     

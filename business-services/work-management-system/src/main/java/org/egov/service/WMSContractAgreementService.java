@@ -3,6 +3,8 @@ package org.egov.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.config.WMSConfiguration;
 import org.egov.config.WMSContractAgreementConfiguration;
@@ -24,6 +26,7 @@ import org.egov.validator.WMSWorkValidator;
 import org.egov.web.models.SORApplicationSearchCriteria;
 import org.egov.web.models.ScheduleOfRateApplication;
 import org.egov.web.models.WMSContractAgreementApplication;
+import org.egov.web.models.WMSContractAgreementApplicationSearchCriteria;
 import org.egov.web.models.WMSContractAgreementRequest;
 import org.egov.web.models.WMSContractorApplication;
 import org.egov.web.models.WMSContractorRequest;
@@ -70,6 +73,32 @@ public class WMSContractAgreementService {
         // Return the response back to user
         return wmsContractAgreementRequest.getWmsContractAgreementApplications();
     }
+
+
+	public List<WMSContractAgreementApplication> fetchContractAgreementApplications(RequestInfo requestInfo,
+			 WMSContractAgreementApplicationSearchCriteria contractAgreementApplicationSearchCriteria) {
+		List<WMSContractAgreementApplication> applications = wmsContractAgreementRepository.getApplications(contractAgreementApplicationSearchCriteria);
+
+        // If no applications are found matching the given criteria, return an empty list
+        if(CollectionUtils.isEmpty(applications))
+            return new ArrayList<>();
+
+        return applications;
+	}
+
+
+	public List<WMSContractAgreementApplication> updateContractAgreementMaster(
+			 WMSContractAgreementRequest contractAgreementRequest) {
+		List<WMSContractAgreementApplication> existingApplication = wmsContractAgreementApplicationValidator.validateApplicationUpdateRequest(contractAgreementRequest);
+        // Enrich application upon update
+        
+		wmsContractAgreementApplicationEnrichment.enrichContractAgreementApplicationUpdate(contractAgreementRequest,existingApplication);
+        //workflowService.updateWorkflowStatus(birthRegistrationRequest);
+        // Just like create request, update request will be handled asynchronously by the persister
+        producer.push(configuration.getUpdateTopic(), contractAgreementRequest);
+
+        return contractAgreementRequest.getWmsContractAgreementApplications();
+	}
 	
 	
 	

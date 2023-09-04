@@ -10,7 +10,11 @@ import org.egov.repository.WMSWorkRepository;
 import org.egov.tracer.model.CustomException;
 import org.egov.web.models.SORApplicationSearchCriteria;
 import org.egov.web.models.ScheduleOfRateApplication;
+import org.egov.web.models.WMSContractAgreementApplication;
+import org.egov.web.models.WMSContractAgreementApplicationSearchCriteria;
 import org.egov.web.models.WMSContractAgreementRequest;
+import org.egov.web.models.WMSContractorApplication;
+import org.egov.web.models.WMSContractorApplicationSearchCriteria;
 import org.egov.web.models.WMSContractorRequest;
 import org.egov.web.models.WMSSORRequest;
 import org.egov.web.models.WMSWorkApplication;
@@ -33,6 +37,15 @@ public class WMSContractAgreementValidator {
 	                throw new CustomException("EG_WMS_APP_ERR", "tenantId is mandatory for creating Contract Agreement applications");
 	        });
 	    }
+
+		public List<WMSContractAgreementApplication> validateApplicationUpdateRequest(
+				WMSContractAgreementRequest contractAgreementRequest) {
+			List<Integer> ids = contractAgreementRequest.getWmsContractAgreementApplications().stream().map(WMSContractAgreementApplication::getAgreementNo).collect(Collectors.toList());
+	        List<WMSContractAgreementApplication> contractAgreementApplications = repository.getApplications(WMSContractAgreementApplicationSearchCriteria.builder().agreementNo(ids).build());
+	        if(contractAgreementApplications.size() != ids.size())
+	            throw new CustomException("APPLICATION_DOES_NOT_EXIST", "One of the Contract Agreement ids does not exist.");
+	        return contractAgreementApplications;
+		}
 
 		/*
 		 * public List<WMSWorkApplication>

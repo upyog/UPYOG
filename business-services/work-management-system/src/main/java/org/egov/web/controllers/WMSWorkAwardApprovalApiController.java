@@ -18,6 +18,7 @@ import org.egov.web.models.SORApplicationSearchCriteria;
 import org.egov.web.models.ScheduleOfRateApplication;
 import org.egov.web.models.WMSContractorApplication;
 import org.egov.web.models.WMSContractorApplicationResponse;
+import org.egov.web.models.WMSContractorApplicationSearchCriteria;
 import org.egov.web.models.WMSContractorRequest;
 import org.egov.web.models.WMSSORRequest;
 import org.egov.web.models.WMSWorkApplication;
@@ -25,6 +26,7 @@ import org.egov.web.models.WMSWorkApplicationResponse;
 import org.egov.web.models.WMSWorkApplicationSearchCriteria;
 import org.egov.web.models.WMSWorkAwardApprovalApplication;
 import org.egov.web.models.WMSWorkAwardApprovalApplicationResponse;
+import org.egov.web.models.WMSWorkAwardApprovalApplicationSearchCriteria;
 import org.egov.web.models.WMSWorkAwardApprovalRequest;
 import org.egov.web.models.WMSWorkRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,6 +81,26 @@ public class WMSWorkAwardApprovalApiController{
         WMSWorkAwardApprovalApplicationResponse response = WMSWorkAwardApprovalApplicationResponse.builder().wmsWorkAwardApprovalApplications(applications).responseInfo(responseInfo).build();
         return new ResponseEntity<>(response, HttpStatus.OK);
        
+    }
+    
+    
+    @RequestMapping(value="/v1/workaward/_view", method = RequestMethod.POST)
+    @ApiOperation(value = "Fetch Work Award Approval  for WMS")
+    public ResponseEntity<WMSWorkAwardApprovalApplicationResponse> v1RegistrationFetchPost(@RequestBody RequestInfoWrapper requestInfoWrapper, @Valid @ModelAttribute WMSWorkAwardApprovalApplicationSearchCriteria workAwardApprovalApplicationSearchCriteria) {
+        List<WMSWorkAwardApprovalApplication> applications = workAwardApprovalService.fetchWorkAwardApprovalApplications(requestInfoWrapper.getRequestInfo(), workAwardApprovalApplicationSearchCriteria);
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true);
+        WMSWorkAwardApprovalApplicationResponse response = WMSWorkAwardApprovalApplicationResponse.builder().wmsWorkAwardApprovalApplications(applications).responseInfo(responseInfo).build();
+        return new ResponseEntity<>(response,HttpStatus.OK);
+    }
+    
+    
+    @RequestMapping(value="/v1/workaward/_update", method = RequestMethod.POST)
+    @ApiOperation(value = "Update Work Award Approval  for WMS")
+    public ResponseEntity<WMSWorkAwardApprovalApplicationResponse> v1WorkAwardApprovalUpdatePost(@ApiParam(value = "Details for the new Work Award Approval(s) + RequestInfo meta data." ,required=true )  @Valid @RequestBody WMSWorkAwardApprovalRequest workAwardApprovalRequest) {
+        List<WMSWorkAwardApprovalApplication> applications = workAwardApprovalService.updateWorkAwardApprovalMaster(workAwardApprovalRequest);
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(workAwardApprovalRequest.getRequestInfo(), true);
+        WMSWorkAwardApprovalApplicationResponse response = WMSWorkAwardApprovalApplicationResponse.builder().wmsWorkAwardApprovalApplications(applications).responseInfo(responseInfo).build();
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     

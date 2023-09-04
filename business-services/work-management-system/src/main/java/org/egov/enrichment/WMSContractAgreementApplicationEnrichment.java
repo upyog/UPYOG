@@ -70,11 +70,41 @@ public class WMSContractAgreementApplicationEnrichment {
 	public void enrichContractAgreementApplicationUpdate(WMSContractAgreementRequest wmsContractAgreementRequest, List<WMSContractAgreementApplication> existingApplication) {
 		// Enrich lastModifiedTime and lastModifiedBy in case of update
 		for (WMSContractAgreementApplication application : wmsContractAgreementRequest.getWmsContractAgreementApplications()) {
-//			application.setItemNo(existingApplication.get(0).getItemNo());
-//			application.setDescOfItem(existingApplication.get(0).getDescOfItem());
-//			application.setUnit(existingApplication.get(0).getUnit());
-//			application.setStartDate(existingApplication.get(0).getStartDate());
-//			
+			existingApplication.get(0).setAgreementName(application.getAgreementName());
+			existingApplication.get(0).setAgreementDate(application.getAgreementDate());
+			existingApplication.get(0).setDepartmentName(application.getDepartmentName());
+			existingApplication.get(0).setLoaNo(application.getLoaNo());
+			existingApplication.get(0).setResolutionNo(application.getResolutionNo());
+			existingApplication.get(0).setResolutionDate(application.getResolutionDate());
+			existingApplication.get(0).setTenderNo(application.getTenderNo());
+			existingApplication.get(0).setTenderDate(application.getTenderDate());
+			existingApplication.get(0).setAgreementType(application.getAgreementType());
+			existingApplication.get(0).setDefectLiabilityPeriod(application.getDefectLiabilityPeriod());
+			existingApplication.get(0).setContractPeriod(application.getContractPeriod());
+			existingApplication.get(0).setAgreementAmount(application.getAgreementAmount());
+			existingApplication.get(0).setPaymentType(application.getPaymentType());
+			existingApplication.get(0).setDepositType(application.getDepositType());
+			existingApplication.get(0).setDepositAmount(application.getDepositAmount());
+			existingApplication.get(0).setWorkDescription(application.getWorkDescription());
+			existingApplication.get(0).setAccountNo(application.getAccountNo());
+			existingApplication.get(0).setParticulars(application.getParticulars());
+			existingApplication.get(0).setValidFromDate(application.getValidFromDate());
+			existingApplication.get(0).setValidTillDate(application.getValidTillDate());
+			existingApplication.get(0).setBankBranchIfscCode(application.getBankBranchIfscCode());
+			existingApplication.get(0).setPaymentMode(application.getPaymentMode());
+			existingApplication.get(0).setDesignation(application.getDesignation());
+			existingApplication.get(0).setEmployeeName(application.getEmployeeName());
+			existingApplication.get(0).setWitnessName(application.getWitnessName());
+			existingApplication.get(0).setAddress(application.getAddress());
+			existingApplication.get(0).setUid(application.getUid());
+			existingApplication.get(0).setVendorType(application.getVendorType());
+			existingApplication.get(0).setVendorName(application.getVendorName());
+			existingApplication.get(0).setRepresentedBy(application.getRepresentedBy());
+			existingApplication.get(0).setPrimaryParty(application.getPrimaryParty());
+			existingApplication.get(0).setSrNo(application.getSrNo());
+			existingApplication.get(0).setTermsAndConditions(application.getTermsAndConditions());
+			existingApplication.get(0).setDocumentDescription(application.getDocumentDescription());
+			existingApplication.get(0).setUploadDocument(application.getUploadDocument());
 //			application.setEndDate(date);
 			// application.getAuditDetails().setLastModifiedBy(birthRegistrationRequest.getRequestInfo().getUserInfo().getUuid());
 		}

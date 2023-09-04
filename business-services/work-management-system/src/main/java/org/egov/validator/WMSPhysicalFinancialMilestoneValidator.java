@@ -10,7 +10,11 @@ import org.egov.repository.WMSWorkRepository;
 import org.egov.tracer.model.CustomException;
 import org.egov.web.models.SORApplicationSearchCriteria;
 import org.egov.web.models.ScheduleOfRateApplication;
+import org.egov.web.models.WMSContractorApplication;
+import org.egov.web.models.WMSContractorApplicationSearchCriteria;
 import org.egov.web.models.WMSContractorRequest;
+import org.egov.web.models.WMSPhysicalFinancialMilestoneApplication;
+import org.egov.web.models.WMSPhysicalFinancialMilestoneApplicationSearchCriteria;
 import org.egov.web.models.WMSPhysicalFinancialMilestoneRequest;
 import org.egov.web.models.WMSSORRequest;
 import org.egov.web.models.WMSWorkApplication;
@@ -33,6 +37,15 @@ public class WMSPhysicalFinancialMilestoneValidator {
 	                throw new CustomException("EG_WMS_APP_ERR", "tenantId is mandatory for creating Physical Financial Milestone applications");
 	        });
 	    }
+
+		public List<WMSPhysicalFinancialMilestoneApplication> validateApplicationUpdateRequest(
+				WMSPhysicalFinancialMilestoneRequest physicalFinancialMilestoneRequest) {
+			List<Integer> ids = physicalFinancialMilestoneRequest.getWmsPhysicalFinancialMilestoneApplications().stream().map(WMSPhysicalFinancialMilestoneApplication::getMilestoneId).collect(Collectors.toList());
+	        List<WMSPhysicalFinancialMilestoneApplication> physicalFinancialMilestoneApplications = repository.getApplications(WMSPhysicalFinancialMilestoneApplicationSearchCriteria.builder().milestoneId(ids).build());
+	        if(physicalFinancialMilestoneApplications.size() != ids.size())
+	            throw new CustomException("APPLICATION_DOES_NOT_EXIST", "One of the Physical Financial Milestone ids does not exist.");
+	        return physicalFinancialMilestoneApplications;
+		}
 
 		/*
 		 * public List<WMSWorkApplication>

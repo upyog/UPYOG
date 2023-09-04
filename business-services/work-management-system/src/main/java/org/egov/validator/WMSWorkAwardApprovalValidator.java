@@ -10,10 +10,14 @@ import org.egov.repository.WMSWorkRepository;
 import org.egov.tracer.model.CustomException;
 import org.egov.web.models.SORApplicationSearchCriteria;
 import org.egov.web.models.ScheduleOfRateApplication;
+import org.egov.web.models.WMSContractorApplication;
+import org.egov.web.models.WMSContractorApplicationSearchCriteria;
 import org.egov.web.models.WMSContractorRequest;
 import org.egov.web.models.WMSSORRequest;
 import org.egov.web.models.WMSWorkApplication;
 import org.egov.web.models.WMSWorkApplicationSearchCriteria;
+import org.egov.web.models.WMSWorkAwardApprovalApplication;
+import org.egov.web.models.WMSWorkAwardApprovalApplicationSearchCriteria;
 import org.egov.web.models.WMSWorkAwardApprovalRequest;
 import org.egov.web.models.WMSWorkRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +37,15 @@ public class WMSWorkAwardApprovalValidator {
 	                throw new CustomException("EG_WMS_APP_ERR", "tenantId is mandatory for creating Work Award Approval applications");
 	        });
 	    }
+
+		public List<WMSWorkAwardApprovalApplication> validateApplicationUpdateRequest(
+				WMSWorkAwardApprovalRequest workAwardApprovalRequest) {
+			List<Integer> ids = workAwardApprovalRequest.getWmsWorkAwardApprovalApplications().stream().map(WMSWorkAwardApprovalApplication::getWorkAwardId).collect(Collectors.toList());
+	        List<WMSWorkAwardApprovalApplication> workAwardApprovalApplications = repository.getApplications(WMSWorkAwardApprovalApplicationSearchCriteria.builder().workAwardId(ids).build());
+	        if(workAwardApprovalApplications.size() != ids.size())
+	            throw new CustomException("APPLICATION_DOES_NOT_EXIST", "One of the Work Award Approval ids does not exist.");
+	        return workAwardApprovalApplications;
+		}
 
 		/*
 		 * public List<WMSWorkApplication>

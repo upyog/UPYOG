@@ -19,8 +19,8 @@ public class SchemeRowMapper implements ResultSetExtractor<List<Scheme>> {
         Map<Long,Scheme> schemeApplicationMap = new LinkedHashMap<>();
 
         while (rs.next()){
-            long schemeId = rs.getLong("sSchemeId");
-            Scheme schemeApplication = schemeApplicationMap.get(schemeId);
+            long Id = rs.getLong("sSchemeId");
+            Scheme schemeApplication = schemeApplicationMap.get(Id);
 
             if(schemeApplication == null) {
 
@@ -41,7 +41,7 @@ public class SchemeRowMapper implements ResultSetExtractor<List<Scheme>> {
                         .build();
             }
             
-            schemeApplicationMap.put(schemeId, schemeApplication);
+            schemeApplicationMap.put(Id, schemeApplication);
         }
         return new ArrayList<>(schemeApplicationMap.values());
     }

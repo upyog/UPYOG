@@ -3,6 +3,8 @@ package org.egov.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.config.WMSConfiguration;
 import org.egov.config.WMSContractorConfiguration;
@@ -29,6 +31,7 @@ import org.egov.web.models.WMSSORRequest;
 import org.egov.web.models.WMSWorkApplication;
 import org.egov.web.models.WMSWorkApplicationSearchCriteria;
 import org.egov.web.models.WMSWorkAwardApprovalApplication;
+import org.egov.web.models.WMSWorkAwardApprovalApplicationSearchCriteria;
 import org.egov.web.models.WMSWorkAwardApprovalRequest;
 import org.egov.web.models.WMSWorkRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +51,7 @@ public class WMSWorkAwardApprovalService {
 	    @Autowired
 	    private WMSWorkAwardApprovalConfiguration configuration;
 	    @Autowired
-	    private WMSWorkAwardApprovalRepository wmsContractorRepository;
+	    private WMSWorkAwardApprovalRepository wmsWorkAwardApprovalRepository;
 	   
 	
 	public List<WMSWorkAwardApprovalApplication> registerWMSWorkAwardApprovalRequest(WMSWorkAwardApprovalRequest wmsWorkAwardApprovalRequest) {
@@ -70,6 +73,32 @@ public class WMSWorkAwardApprovalService {
         // Return the response back to user
         return wmsWorkAwardApprovalRequest.getWmsWorkAwardApprovalApplications();
     }
+
+
+	public List<WMSWorkAwardApprovalApplication> fetchWorkAwardApprovalApplications(RequestInfo requestInfo,
+			 WMSWorkAwardApprovalApplicationSearchCriteria workAwardApprovalApplicationSearchCriteria) {
+		List<WMSWorkAwardApprovalApplication> applications = wmsWorkAwardApprovalRepository.getApplications(workAwardApprovalApplicationSearchCriteria);
+
+        // If no applications are found matching the given criteria, return an empty list
+        if(CollectionUtils.isEmpty(applications))
+            return new ArrayList<>();
+
+        return applications;
+	}
+
+
+	public List<WMSWorkAwardApprovalApplication> updateWorkAwardApprovalMaster(
+			 WMSWorkAwardApprovalRequest workAwardApprovalRequest) {
+		List<WMSWorkAwardApprovalApplication> existingApplication = wmsWorkAwardApprovalApplicationValidator.validateApplicationUpdateRequest(workAwardApprovalRequest);
+        // Enrich application upon update
+        
+		wmsWorkAwardApprovalApplicationEnrichment.enrichWorkAwardApprovalApplicationUpdate(workAwardApprovalRequest,existingApplication);
+        //workflowService.updateWorkflowStatus(birthRegistrationRequest);
+        // Just like create request, update request will be handled asynchronously by the persister
+        producer.push(configuration.getUpdateTopic(), workAwardApprovalRequest);
+
+        return workAwardApprovalRequest.getWmsWorkAwardApprovalApplications();
+	}
 	
 	
 	

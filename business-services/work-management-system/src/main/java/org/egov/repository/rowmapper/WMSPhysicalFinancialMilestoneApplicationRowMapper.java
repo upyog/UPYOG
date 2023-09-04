@@ -27,9 +27,9 @@ public class WMSPhysicalFinancialMilestoneApplicationRowMapper implements Result
 
             if(wmsPhysicalFinancialMilestoneApplication == null) {
 
-                Date lastModifiedTime = rs.getDate("actual_end_date");
+                //Date lastModifiedTime = rs.getDate("actual_end_date");
                 if (rs.wasNull()) {
-                    lastModifiedTime = null;
+                    //lastModifiedTime = null;
                 }
                 wmsPhysicalFinancialMilestoneApplication = WMSPhysicalFinancialMilestoneApplication.builder()
                         .milestoneId(rs.getInt("mMilestoneId"))

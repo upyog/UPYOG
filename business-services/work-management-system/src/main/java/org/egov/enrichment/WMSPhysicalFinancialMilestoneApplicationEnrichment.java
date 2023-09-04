@@ -70,11 +70,21 @@ public class WMSPhysicalFinancialMilestoneApplicationEnrichment {
 	public void enrichPhysicalFinancialMilestoneApplicationUpdate(WMSPhysicalFinancialMilestoneRequest wmsPhysicalFinancialMilestoneRequest, List<WMSPhysicalFinancialMilestoneApplication> existingApplication) {
 		// Enrich lastModifiedTime and lastModifiedBy in case of update
 		for (WMSPhysicalFinancialMilestoneApplication application : wmsPhysicalFinancialMilestoneRequest.getWmsPhysicalFinancialMilestoneApplications()) {
-//			application.setItemNo(existingApplication.get(0).getItemNo());
-//			application.setDescOfItem(existingApplication.get(0).getDescOfItem());
-//			application.setUnit(existingApplication.get(0).getUnit());
-//			application.setStartDate(existingApplication.get(0).getStartDate());
-//			
+			existingApplication.get(0).setProjectName(application.getProjectName());
+			existingApplication.get(0).setWorkName(application.getWorkName());
+			existingApplication.get(0).setMilestoneName(application.getMilestoneName());
+			existingApplication.get(0).setSrNo(application.getSrNo());
+			existingApplication.get(0).setActivityDescription(application.getActivityDescription());
+			existingApplication.get(0).setPercentageWeightage(application.getPercentageWeightage());
+			existingApplication.get(0).setPlannedStartDate(application.getPlannedStartDate());
+			existingApplication.get(0).setPlannedEndDate(application.getPlannedEndDate());
+			existingApplication.get(0).setTotalWeightage(application.getTotalWeightage());
+			existingApplication.get(0).setMilestoneDescription(application.getMilestoneDescription());
+			existingApplication.get(0).setActualStartDate(application.getActualStartDate());
+			existingApplication.get(0).setActualEndDate(application.getActualEndDate());
+			existingApplication.get(0).setProgressUpdateDate(application.getProgressUpdateDate());
+			existingApplication.get(0).setCompletedPercentage(application.getCompletedPercentage());
+			
 //			application.setEndDate(date);
 			// application.getAuditDetails().setLastModifiedBy(birthRegistrationRequest.getRequestInfo().getUserInfo().getUuid());
 		}

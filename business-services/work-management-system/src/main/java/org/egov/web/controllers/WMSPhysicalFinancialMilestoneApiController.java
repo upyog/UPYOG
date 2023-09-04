@@ -18,9 +18,11 @@ import org.egov.web.models.SORApplicationSearchCriteria;
 import org.egov.web.models.ScheduleOfRateApplication;
 import org.egov.web.models.WMSContractorApplication;
 import org.egov.web.models.WMSContractorApplicationResponse;
+import org.egov.web.models.WMSContractorApplicationSearchCriteria;
 import org.egov.web.models.WMSContractorRequest;
 import org.egov.web.models.WMSPhysicalFinancialMilestoneApplication;
 import org.egov.web.models.WMSPhysicalFinancialMilestoneApplicationResponse;
+import org.egov.web.models.WMSPhysicalFinancialMilestoneApplicationSearchCriteria;
 import org.egov.web.models.WMSPhysicalFinancialMilestoneRequest;
 import org.egov.web.models.WMSSORRequest;
 import org.egov.web.models.WMSWorkApplication;
@@ -79,6 +81,26 @@ public class WMSPhysicalFinancialMilestoneApiController{
         WMSPhysicalFinancialMilestoneApplicationResponse response = WMSPhysicalFinancialMilestoneApplicationResponse.builder().wmsPhysicalFinancialMilestoneApplications(applications).responseInfo(responseInfo).build();
         return new ResponseEntity<>(response, HttpStatus.OK);
        
+    }
+    
+    
+    @RequestMapping(value="/v1/pfmilestone/_view", method = RequestMethod.POST)
+    @ApiOperation(value = "Fetch Physical Financial Milestone for WMS")
+    public ResponseEntity<WMSPhysicalFinancialMilestoneApplicationResponse> v1RegistrationFetchPost(@RequestBody RequestInfoWrapper requestInfoWrapper, @Valid @ModelAttribute WMSPhysicalFinancialMilestoneApplicationSearchCriteria physicalFinancialMilestoneApplicationSearchCriteria) {
+        List<WMSPhysicalFinancialMilestoneApplication> applications = physicalFinancialMilestoneService.fetchPhysicalFinancialMilestoneApplications(requestInfoWrapper.getRequestInfo(), physicalFinancialMilestoneApplicationSearchCriteria);
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true);
+        WMSPhysicalFinancialMilestoneApplicationResponse response = WMSPhysicalFinancialMilestoneApplicationResponse.builder().wmsPhysicalFinancialMilestoneApplications(applications).responseInfo(responseInfo).build();
+        return new ResponseEntity<>(response,HttpStatus.OK);
+    }
+    
+    
+    @RequestMapping(value="/v1/pfmilestone/_update", method = RequestMethod.POST)
+    @ApiOperation(value = "Update Physical Financial Milestone for WMS")
+    public ResponseEntity<WMSPhysicalFinancialMilestoneApplicationResponse> v1PhysicalFinancialMilestoneUpdatePost(@ApiParam(value = "Details for the new Physical Financial Milestone(s) + RequestInfo meta data." ,required=true )  @Valid @RequestBody WMSPhysicalFinancialMilestoneRequest physicalFinancialMilestoneRequest) {
+        List<WMSPhysicalFinancialMilestoneApplication> applications = physicalFinancialMilestoneService.updatePhysicalFinancialMilestoneMaster(physicalFinancialMilestoneRequest);
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(physicalFinancialMilestoneRequest.getRequestInfo(), true);
+        WMSPhysicalFinancialMilestoneApplicationResponse response = WMSPhysicalFinancialMilestoneApplicationResponse.builder().wmsPhysicalFinancialMilestoneApplications(applications).responseInfo(responseInfo).build();
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     

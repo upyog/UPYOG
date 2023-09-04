@@ -453,6 +453,50 @@ serviceMaps:
             - jsonPath: $.WMSPhysicalFinancialMilestoneApplication.*.completed_percentage
             
             
+            
+            
+            
+            
+    - version: 1.0
+      description: Update Physical Financial Milestone applications in table
+      fromTopic: update-pfmile-application
+      isTransaction: true
+      queryMaps:
+      
+        - query: UPDATE physical_financial_milestone SET project_name = ?,work_name = ?, milestone_name = ?, sr_no = ?, activity_description = ?, percentage_weightage = ?, planned_start_date = ?, planned_end_date = ?, total_weightage = ?, milestone_description = ?, actual_start_date = ?, actual_end_date = ?, progress_update_date = ?, completed_percentage = ? WHERE milestone_id=?;
+          basePath: WMSPhysicalFinancialMilestoneApplication.*
+          jsonMaps:
+            - jsonPath: $.WMSPhysicalFinancialMilestoneApplication.*.project_name
+
+            - jsonPath: $.WMSPhysicalFinancialMilestoneApplication.*.work_name
+            
+            - jsonPath: $.WMSPhysicalFinancialMilestoneApplication.*.milestone_name
+
+            - jsonPath: $.WMSPhysicalFinancialMilestoneApplication.*.sr_no
+
+            - jsonPath: $.WMSPhysicalFinancialMilestoneApplication.*.activity_description
+
+            - jsonPath: $.WMSPhysicalFinancialMilestoneApplication.*.percentage_weightage
+
+            - jsonPath: $.WMSPhysicalFinancialMilestoneApplication.*.planned_start_date
+
+            - jsonPath: $.WMSPhysicalFinancialMilestoneApplication.*.planned_end_date
+            
+            - jsonPath: $.WMSPhysicalFinancialMilestoneApplication.*.total_weightage
+            
+            - jsonPath: $.WMSPhysicalFinancialMilestoneApplication.*.milestone_description
+            
+            - jsonPath: $.WMSPhysicalFinancialMilestoneApplication.*.actual_start_date
+            
+            - jsonPath: $.WMSPhysicalFinancialMilestoneApplication.*.actual_end_date
+            
+            - jsonPath: $.WMSPhysicalFinancialMilestoneApplication.*.progress_update_date
+            
+            - jsonPath: $.WMSPhysicalFinancialMilestoneApplication.*.completed_percentage
+            
+            - jsonPath: $.WMSPhysicalFinancialMilestoneApplication.*.milestone_id	
+            
+            
           
             
     - version: 1.0
@@ -483,6 +527,37 @@ serviceMaps:
             - jsonPath: $.WMSWorkAwardApprovalApplication.*.document_upload
             
             - jsonPath: $.WMSWorkAwardApprovalApplication.*.award_status
+            
+            
+            
+    - version: 1.0
+      description: Update Work Award Approval applications in table
+      fromTopic: update-waward-application
+      isTransaction: true
+      queryMaps:
+      
+        - query: UPDATE work_award_approval SET work_name = ?,percentage_type =?,quoted_percentage=?,contractor_name=?,no_of_days_for_agreement = ?, loa_generation = ?, award_date = ?, document_upload = ?, award_status = ? WHERE work_award_id=?;
+          basePath: WMSWorkAwardApprovalApplication.*
+          jsonMaps:
+            - jsonPath: $.WMSWorkAwardApprovalApplication.*.work_name
+
+            - jsonPath: $.WMSWorkAwardApprovalApplication.*.percentage_type
+            
+            - jsonPath: $.WMSWorkAwardApprovalApplication.*.quoted_percentage
+
+            - jsonPath: $.WMSWorkAwardApprovalApplication.*.contractor_name
+
+            - jsonPath: $.WMSWorkAwardApprovalApplication.*.no_of_days_for_agreement
+
+            - jsonPath: $.WMSWorkAwardApprovalApplication.*.loa_generation
+
+            - jsonPath: $.WMSWorkAwardApprovalApplication.*.award_date
+
+            - jsonPath: $.WMSWorkAwardApprovalApplication.*.document_upload
+            
+            - jsonPath: $.WMSWorkAwardApprovalApplication.*.award_status
+            
+            - jsonPath: $.WMSWorkAwardApprovalApplication.*.work_award_id
             
             
                
@@ -654,6 +729,90 @@ serviceMaps:
             
             - jsonPath: $.WMSContractAgreementApplication.*.upload_document
             
+            
+            
+            
+            
+    - version: 1.0
+      description: Update Contract Agreement applications in table
+      fromTopic: update-conagrmt-application
+      isTransaction: true
+      queryMaps:
+      
+        - query: UPDATE contract_agreement SET agreement_name = ?,agreement_date = ?, department_name = ?, loa_no = ?, resolution_no = ?, resolution_date = ?, tender_no = ?, tender_date = ?, agreement_type = ?, defect_liability_period = ?, contract_period = ?, agreement_amount = ?, payment_type = ?, deposit_type = ?, deposit_amount = ?, work_description = ?, account_no = ?, particulars = ?, valid_from_date = ?, valid_till_date = ?, bank_branch_ifsc_code = ?, payment_mode = ?, designation = ?, employee_name = ?, witness_name = ?, address = ?, uid = ?, vendor_type = ?, vendor_name = ?, represented_by = ?, primary_party = ?, sr_no = ?, terms_and_conditions = ?, document_description = ?, upload_document = ? WHERE agreement_no = ?;
+          basePath: WMSContractAgreementApplication.*
+          jsonMaps:
+            - jsonPath: $.WMSContractAgreementApplication.*.agreement_name
+
+            - jsonPath: $.WMSContractAgreementApplication.*.agreement_date
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.department_name
+
+            - jsonPath: $.WMSContractAgreementApplication.*.loa_no
+
+            - jsonPath: $.WMSContractAgreementApplication.*.resolution_no
+
+            - jsonPath: $.WMSContractAgreementApplication.*.resolution_date
+
+            - jsonPath: $.WMSContractAgreementApplication.*.tender_no
+
+            - jsonPath: $.WMSContractAgreementApplication.*.tender_date
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.agreement_type
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.defect_liability_period
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.contract_period
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.agreement_amount
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.payment_type
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.deposit_type
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.deposit_amount
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.work_description
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.account_no
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.particulars
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.valid_from_date
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.valid_till_date
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.bank_branch_ifsc_code
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.payment_mode
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.designation
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.employee_name
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.witness_name
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.address
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.uid
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.vendor_type
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.vendor_name
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.represented_by
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.primary_party
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.sr_no
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.terms_and_conditions
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.document_description
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.upload_document
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.agreement_no
             
             
     - version: 1.0
