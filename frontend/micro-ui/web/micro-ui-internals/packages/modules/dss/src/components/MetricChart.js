@@ -9,6 +9,7 @@ import { ArrowUpwardElement } from "./ArrowUpward";
 const MetricData = ({ t, data, code, indexValuesWithStar }) => {
   const { value } = useContext(FilterContext);
   const insight = data?.insight?.value?.replace(/[+-]/g, "")?.split("%");
+  console.log("Index",data)
   return (
     <div>
       <p className="heading-m" style={{ textAlign: "right", paddingTop: "0px", whiteSpace: "nowrap" }}>
@@ -19,6 +20,10 @@ const MetricData = ({ t, data, code, indexValuesWithStar }) => {
              code === "fsmtotalsludgetreated" || code === "totalSludgeTreated" ? t(`DSS_KL`) : ""
           }`
         ):
+
+        data?.headerName.includes("DSS_STATE_GDP_REVENUE_COLLECTION") ||  data?.headerName.includes("DSS_STATE_GDP_PT_REVENUE_COLLECTION") ?(`${Number(data?.headerValue*100).toFixed(4)}`):
+        data?.headerName.includes("DSS_PT_TAX_REVENUE_PER_HOUSEHOLD")|| data?.headerName.includes("DSS_NON_TAX_REVENUE_PER_HOUSEHOLD") ?(`${Digit.Utils.dss.formatter(data?.headerValue, data?.headerSymbol, "Unit", true)}`):
+
         
         (
           `${Digit.Utils.dss.formatter(data?.headerValue, data?.headerSymbol, value?.denomination, true, t)} ${
