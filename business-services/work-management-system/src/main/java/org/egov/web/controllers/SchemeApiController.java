@@ -26,6 +26,9 @@ import org.egov.web.models.SchemeApplicationSearchCriteria;
 //import org.wms.web.models.SchemeCreationRequest;
 //import org.wms.web.models.SchemeCreationResponse;
 import org.egov.web.models.SchemeCreationApplication;
+import org.egov.web.models.WMSContractorApplication;
+import org.egov.web.models.WMSContractorApplicationResponse;
+import org.egov.web.models.WMSContractorApplicationSearchCriteria;
 //import org.wms.web.models.SchemeResponse;
 import org.egov.web.models.WMSSchemeRequest;
 
@@ -104,27 +107,15 @@ public class SchemeApiController {
     }
     	
 
-	/*
-	 * @RequestMapping(value="/v1/scheme/_view", method = RequestMethod.GET) public
-	 * ResponseEntity<Scheme> v1RegistrationUpdatePost(@RequestParam Long id) {
-	 * 
-	 * Scheme scheme = schemeMasterService.viewScheme(id);
-	 * 
-	 * if (scheme != null) { return ResponseEntity.ok(scheme); } else { return
-	 * ResponseEntity.notFound().build(); }
-	 * 
-	 * }
-	 */
+	
     
-    @RequestMapping(value = "/v1/scheme/_view", method = RequestMethod.GET)
-    public ResponseEntity<List<Scheme>> v1SchemeViewGet() {
-        List<Scheme> schemes = schemeMasterService.viewScheme();
-
-        if (!schemes.isEmpty()) {
-            return ResponseEntity.ok(schemes);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    @RequestMapping(value="/v1/scheme/_view", method = RequestMethod.POST)
+    @ApiOperation(value = "Fetch Scheme for WMS")
+    public ResponseEntity<SchemeApplicationResponse> v1RegistrationFetchPost(@RequestBody RequestInfoWrapper requestInfoWrapper, @Valid @ModelAttribute SchemeApplicationSearchCriteria schemerApplicationSearchCriteria) {
+        List<Scheme> applications = schemeMasterService.fetchSchemeApplications(requestInfoWrapper.getRequestInfo(), schemerApplicationSearchCriteria);
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true);
+        SchemeApplicationResponse response = SchemeApplicationResponse.builder().schemeApplications(applications).responseInfo(responseInfo).build();
+        return new ResponseEntity<>(response,HttpStatus.OK);
     }
 	
 	

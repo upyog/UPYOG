@@ -3,6 +3,8 @@ package org.egov.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.config.WMSConfiguration;
 import org.egov.config.WMSContractorConfiguration;
@@ -27,6 +29,7 @@ import org.egov.web.models.WMSContractorApplication;
 import org.egov.web.models.WMSContractorRequest;
 import org.egov.web.models.WMSSORRequest;
 import org.egov.web.models.WMSTenderEntryApplication;
+import org.egov.web.models.WMSTenderEntryApplicationSearchCriteria;
 import org.egov.web.models.WMSTenderEntryRequest;
 import org.egov.web.models.WMSWorkApplication;
 import org.egov.web.models.WMSWorkApplicationSearchCriteria;
@@ -70,6 +73,31 @@ public class WMSTenderEntryService {
         // Return the response back to user
         return wmsTenderEntryRequest.getWmsTenderEntryApplications();
     }
+
+
+	public List<WMSTenderEntryApplication> fetchTenderEntryApplications(RequestInfo requestInfo,
+			 WMSTenderEntryApplicationSearchCriteria tenderEntryApplicationSearchCriteria) {
+		List<WMSTenderEntryApplication> applications = wmsTenderEntryRepository.getApplications(tenderEntryApplicationSearchCriteria);
+
+        // If no applications are found matching the given criteria, return an empty list
+        if(CollectionUtils.isEmpty(applications))
+            return new ArrayList<>();
+
+        return applications;
+	}
+
+
+	public List<WMSTenderEntryApplication> updateTenderEntryMaster( WMSTenderEntryRequest tenderEntryRequest) {
+		List<WMSTenderEntryApplication> existingApplication = wmsTenderEntryApplicationValidator.validateApplicationUpdateRequest(tenderEntryRequest);
+        // Enrich application upon update
+        
+		wmsTenderEntryApplicationEnrichment.enrichTenderEntryApplicationUpdate(tenderEntryRequest,existingApplication);
+        //workflowService.updateWorkflowStatus(birthRegistrationRequest);
+        // Just like create request, update request will be handled asynchronously by the persister
+        producer.push(configuration.getUpdateTopic(), tenderEntryRequest);
+
+        return tenderEntryRequest.getWmsTenderEntryApplications();
+	}
 	
 	
 	

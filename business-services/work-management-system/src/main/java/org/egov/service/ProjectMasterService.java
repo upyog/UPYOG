@@ -25,6 +25,7 @@ import org.egov.web.models.ScheduleOfRateApplication;
 import org.egov.web.models.Scheme;
 import org.egov.web.models.SchemeApplicationSearchCriteria;
 import org.egov.web.models.SchemeCreationApplication;
+import org.egov.web.models.WMSContractorApplication;
 import org.egov.web.models.WMSProjectRequest;
 //import org.wms.web.models.SchemeCreationRequest;
 import org.egov.web.models.WMSSchemeRequest;
@@ -88,18 +89,19 @@ public class ProjectMasterService {
         return projectRequest.getProjectApplications();
     }
 
-	public List<Project> viewProject() {
-		List<Project> optionalProject = projectMasterRepository.getAllProject();
-
-        // If the scheme exists, return it; otherwise, return null.
-        return optionalProject;
-	}
-
-	public Project getProjectById(Long id) {
-		return projectMasterRepository.getProjectById(id);
-		
-		
-	}
+	/*
+	 * public List<Project> viewProject() { List<Project> optionalProject =
+	 * projectMasterRepository.getAllProject();
+	 * 
+	 * // If the scheme exists, return it; otherwise, return null. return
+	 * optionalProject; }
+	 * 
+	 * public Project getProjectById(Long id) { return
+	 * projectMasterRepository.getProjectById(id);
+	 * 
+	 * 
+	 * }
+	 */
 
 	public List<Project> searchProjectApplications(RequestInfo requestInfo,
 			 ProjectApplicationSearchCriteria projectApplicationSearchCriteria) {
@@ -112,6 +114,18 @@ public class ProjectMasterService {
 		
 		
 		return applications;
+	}
+
+
+	public List<Project> fetchProjectApplications(RequestInfo requestInfo,
+			 ProjectApplicationSearchCriteria projectApplicationSearchCriteria) {
+		List<Project> applications = projectMasterRepository.getApplications(projectApplicationSearchCriteria);
+
+        // If no applications are found matching the given criteria, return an empty list
+        if(CollectionUtils.isEmpty(applications))
+            return new ArrayList<>();
+
+        return applications;
 	}
 
 

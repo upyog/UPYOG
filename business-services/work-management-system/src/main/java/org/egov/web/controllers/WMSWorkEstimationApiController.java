@@ -18,6 +18,7 @@ import org.egov.web.models.SORApplicationSearchCriteria;
 import org.egov.web.models.ScheduleOfRateApplication;
 import org.egov.web.models.WMSContractorApplication;
 import org.egov.web.models.WMSContractorApplicationResponse;
+import org.egov.web.models.WMSContractorApplicationSearchCriteria;
 import org.egov.web.models.WMSContractorRequest;
 import org.egov.web.models.WMSSORRequest;
 import org.egov.web.models.WMSWorkApplication;
@@ -25,6 +26,7 @@ import org.egov.web.models.WMSWorkApplicationResponse;
 import org.egov.web.models.WMSWorkApplicationSearchCriteria;
 import org.egov.web.models.WMSWorkEstimationApplication;
 import org.egov.web.models.WMSWorkEstimationApplicationResponse;
+import org.egov.web.models.WMSWorkEstimationApplicationSearchCriteria;
 import org.egov.web.models.WMSWorkEstimationRequest;
 import org.egov.web.models.WMSWorkRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,6 +81,26 @@ public class WMSWorkEstimationApiController{
         WMSWorkEstimationApplicationResponse response = WMSWorkEstimationApplicationResponse.builder().wmsWorkEstimationApplications(applications).responseInfo(responseInfo).build();
         return new ResponseEntity<>(response, HttpStatus.OK);
        
+    }
+    
+    
+    @RequestMapping(value="/v1/workestimation/_view", method = RequestMethod.POST)
+    @ApiOperation(value = "Fetch Work Estimation for WMS")
+    public ResponseEntity<WMSWorkEstimationApplicationResponse> v1RegistrationFetchPost(@RequestBody RequestInfoWrapper requestInfoWrapper, @Valid @ModelAttribute WMSWorkEstimationApplicationSearchCriteria workEstimationApplicationSearchCriteria) {
+        List<WMSWorkEstimationApplication> applications = workEstimationService.fetchWorkEstimationApplications(requestInfoWrapper.getRequestInfo(), workEstimationApplicationSearchCriteria);
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true);
+        WMSWorkEstimationApplicationResponse response = WMSWorkEstimationApplicationResponse.builder().wmsWorkEstimationApplications(applications).responseInfo(responseInfo).build();
+        return new ResponseEntity<>(response,HttpStatus.OK);
+    }
+    
+    
+    @RequestMapping(value="/v1/workestimation/_update", method = RequestMethod.POST)
+    @ApiOperation(value = "Update Work Estimation for WMS")
+    public ResponseEntity<WMSWorkEstimationApplicationResponse> v1ContractorUpdatePost(@ApiParam(value = "Details for the new Contractor(s) + RequestInfo meta data." ,required=true )  @Valid @RequestBody WMSWorkEstimationRequest workEstimationRequest) {
+        List<WMSWorkEstimationApplication> applications = workEstimationService.updateWorkEstimationMaster(workEstimationRequest);
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(workEstimationRequest.getRequestInfo(), true);
+        WMSWorkEstimationApplicationResponse response = WMSWorkEstimationApplicationResponse.builder().wmsWorkEstimationApplications(applications).responseInfo(responseInfo).build();
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     

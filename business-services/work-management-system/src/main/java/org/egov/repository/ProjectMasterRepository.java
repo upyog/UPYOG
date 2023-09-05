@@ -68,17 +68,20 @@ public class ProjectMasterRepository {
 	
 	
 	// Method to retrieve all schemes
-    public List<Project> getAllProject() {
-        String sql = "SELECT * FROM project_master";
-        return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Project.class));
-    }
+	/*
+	 * public List<Project> getAllProject() { String sql =
+	 * "SELECT * FROM project_master"; return jdbcTemplate.query(sql, new
+	 * BeanPropertyRowMapper<>(Project.class)); }
+	 */
     
  // Method to retrieve a scheme by ID
-    public Project getProjectById(Long id) {
-        String sql = "SELECT * FROM project_master WHERE project_id  = ?";
-        return jdbcTemplate.queryForObject(sql, new Object[]{id}, new BeanPropertyRowMapper<>(Project.class));
-    }
-   //for searching
+	/*
+	 * public Project getProjectById(Long id) { String sql =
+	 * "SELECT * FROM project_master WHERE project_id  = ?"; return
+	 * jdbcTemplate.queryForObject(sql, new Object[]{id}, new
+	 * BeanPropertyRowMapper<>(Project.class)); }
+	 */
+   //for searching,Fetch
 	public List<Project> getApplications(
 			 ProjectApplicationSearchCriteria projectrApplicationSearchCriteria) {
 		// TODO Auto-generated method stub

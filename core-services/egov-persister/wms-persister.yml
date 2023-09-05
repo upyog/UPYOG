@@ -411,6 +411,64 @@ serviceMaps:
             
             - jsonPath: $.WMSTenderEntryApplication.*.work_duration	
             
+            
+            
+            
+    - version: 1.0
+      description: Update Tender Entry applications in table
+      fromTopic: update-tender-application
+      isTransaction: true
+      queryMaps:
+      
+        - query: UPDATE tender_entry SET department_name = ?,request_category =?,project_name=?,resolution_no=?,resolution_date = ?, prebid_meeting_date = ?, prebid_meeting_location = ?, issue_from_date = ?, issue_till_date = ?, publish_date = ?, technical_bid_open_date = ?, financial_bid_open_date = ?, validity = ?, upload_document = ?, work_no = ?, work_description = ?, estimated_cost = ?, tender_type = ?, tender_fee = ?, emd = ?, vendor_class = ?, work_duration = ? WHERE tender_id=?;
+          basePath: WMSTenderEntryApplication.*
+          jsonMaps:
+            - jsonPath: $.WMSTenderEntryApplication.*.department_name
+
+            - jsonPath: $.WMSTenderEntryApplication.*.request_category
+            
+            - jsonPath: $.WMSTenderEntryApplication.*.project_name
+
+            - jsonPath: $.WMSTenderEntryApplication.*.resolution_no
+
+            - jsonPath: $.WMSTenderEntryApplication.*.resolution_date
+
+            - jsonPath: $.WMSTenderEntryApplication.*.prebid_meeting_date
+
+            - jsonPath: $.WMSTenderEntryApplication.*.prebid_meeting_location
+
+            - jsonPath: $.WMSTenderEntryApplication.*.issue_from_date
+            
+            - jsonPath: $.WMSTenderEntryApplication.*.issue_till_date
+            
+            - jsonPath: $.WMSTenderEntryApplication.*.publish_date
+            
+            - jsonPath: $.WMSTenderEntryApplication.*.technical_bid_open_date
+            
+            - jsonPath: $.WMSTenderEntryApplication.*.financial_bid_open_date
+            
+            - jsonPath: $.WMSTenderEntryApplication.*.validity
+            
+            - jsonPath: $.WMSTenderEntryApplication.*.upload_document
+            
+            - jsonPath: $.WMSTenderEntryApplication.*.work_no
+            
+            - jsonPath: $.WMSTenderEntryApplication.*.work_description
+            
+            - jsonPath: $.WMSTenderEntryApplication.*.estimated_cost
+            
+            - jsonPath: $.WMSTenderEntryApplication.*.tender_type
+            
+            - jsonPath: $.WMSTenderEntryApplication.*.tender_fee
+            
+            - jsonPath: $.WMSTenderEntryApplication.*.emd
+            
+            - jsonPath: $.WMSTenderEntryApplication.*.vendor_class
+            
+            - jsonPath: $.WMSTenderEntryApplication.*.work_duration	
+            
+            - jsonPath: $.ProjectApplication.*.tender_id
+            
            
           
     - version: 1.0
@@ -645,6 +703,95 @@ serviceMaps:
             - jsonPath: $.WMSWorkEstimationApplication.*.document_description
             
             - jsonPath: $.WMSWorkEstimationApplication.*.upload_document
+            
+            
+            
+            
+            
+    - version: 1.0
+      description: Update work estimation applications in table
+      fromTopic: update-wrkest-application
+      isTransaction: true
+      queryMaps:
+      
+        - query: UPDATE work_estimation SET work_estimation_no = ?,project_name =?,work_name=?,from_date=?,to_date = ?, estimate_type = ?, sor_name = ?, download_template = ?, upload_template = ?, chapter = ?, item_no = ?, desription_of_the_item = ?, length = ?, bw = ?, dh = ?, nos = ?, quantity = ?, unit = ?, rate = ?, estimate_amount = ?, serial_no = ?, particulars_of_item = ?, calculation_type = ?, addition_deduction = ?, lf = ?, bwf = ?, dhf = ?, sub_total = ?, grand_total = ?, estimated_quantity = ?, remarks = ?, overhead_code = ?, overhead_description = ?, value_type = ?, estimated_amount = ?, document_description = ?, upload_document = ? WHERE estimate_id=?;
+          basePath: WMSWorkEstimationApplication.*
+          jsonMaps:
+            - jsonPath: $.WMSWorkEstimationApplication.*.work_estimation_no
+
+            - jsonPath: $.WMSWorkEstimationApplication.*.project_name
+            
+            - jsonPath: $.WMSWorkEstimationApplication.*.work_name
+
+            - jsonPath: $.WMSWorkEstimationApplication.*.from_date
+
+            - jsonPath: $.WMSWorkEstimationApplication.*.to_date
+
+            - jsonPath: $.WMSWorkEstimationApplication.*.estimate_type
+
+            - jsonPath: $.WMSWorkEstimationApplication.*.sor_name
+
+            - jsonPath: $.WMSWorkEstimationApplication.*.download_template
+            
+            - jsonPath: $.WMSWorkEstimationApplication.*.upload_template
+            
+            - jsonPath: $.WMSWorkEstimationApplication.*.chapter
+            
+            - jsonPath: $.WMSWorkEstimationApplication.*.item_no
+            
+            - jsonPath: $.WMSWorkEstimationApplication.*.desription_of_the_item
+            
+            - jsonPath: $.WMSWorkEstimationApplication.*.length
+            
+            - jsonPath: $.WMSWorkEstimationApplication.*.bw
+            
+            - jsonPath: $.WMSWorkEstimationApplication.*.dh
+            
+            - jsonPath: $.WMSWorkEstimationApplication.*.nos
+            
+            - jsonPath: $.WMSWorkEstimationApplication.*.quantity
+            
+            - jsonPath: $.WMSWorkEstimationApplication.*.unit
+            
+            - jsonPath: $.WMSWorkEstimationApplication.*.rate
+            
+            - jsonPath: $.WMSWorkEstimationApplication.*.estimate_amount
+            
+            - jsonPath: $.WMSWorkEstimationApplication.*.serial_no
+            
+            - jsonPath: $.WMSWorkEstimationApplication.*.particulars_of_item
+            
+            - jsonPath: $.WMSWorkEstimationApplication.*.calculation_type
+            
+            - jsonPath: $.WMSWorkEstimationApplication.*.addition_deduction
+            
+            - jsonPath: $.WMSWorkEstimationApplication.*.lf
+            
+            - jsonPath: $.WMSWorkEstimationApplication.*.bwf
+            
+            - jsonPath: $.WMSWorkEstimationApplication.*.dhf
+            
+            - jsonPath: $.WMSWorkEstimationApplication.*.sub_total
+            
+            - jsonPath: $.WMSWorkEstimationApplication.*.grand_total
+            
+            - jsonPath: $.WMSWorkEstimationApplication.*.estimated_quantity
+            
+            - jsonPath: $.WMSWorkEstimationApplication.*.remarks
+            
+            - jsonPath: $.WMSWorkEstimationApplication.*.overhead_code
+            
+            - jsonPath: $.WMSWorkEstimationApplication.*.overhead_description
+            
+            - jsonPath: $.WMSWorkEstimationApplication.*.value_type
+            
+            - jsonPath: $.WMSWorkEstimationApplication.*.estimated_amount
+            
+            - jsonPath: $.WMSWorkEstimationApplication.*.document_description
+            
+            - jsonPath: $.WMSWorkEstimationApplication.*.upload_document
+            
+            - jsonPath: $.WMSWorkEstimationApplication.*.estimate_id
             
             
             

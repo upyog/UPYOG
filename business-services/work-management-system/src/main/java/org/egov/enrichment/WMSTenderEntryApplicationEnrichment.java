@@ -70,11 +70,28 @@ public class WMSTenderEntryApplicationEnrichment {
 	public void enrichTenderEntryApplicationUpdate(WMSTenderEntryRequest wmsTenderEntryRequest, List<WMSTenderEntryApplication> existingApplication) {
 		// Enrich lastModifiedTime and lastModifiedBy in case of update
 		for (WMSTenderEntryApplication application : wmsTenderEntryRequest.getWmsTenderEntryApplications()) {
-//			application.setItemNo(existingApplication.get(0).getItemNo());
-//			application.setDescOfItem(existingApplication.get(0).getDescOfItem());
-//			application.setUnit(existingApplication.get(0).getUnit());
-//			application.setStartDate(existingApplication.get(0).getStartDate());
-//			
+			existingApplication.get(0).setDepartmentName(application.getDepartmentName());
+			existingApplication.get(0).setRequestCategory(application.getRequestCategory());
+			existingApplication.get(0).setProjectName(application.getProjectName());
+			existingApplication.get(0).setResolutionNo(application.getResolutionNo());
+			existingApplication.get(0).setResolutionDate(application.getResolutionDate());
+			existingApplication.get(0).setPrebidMeetingDate(application.getPrebidMeetingDate());
+			existingApplication.get(0).setPrebidMeetingLocation(application.getPrebidMeetingLocation());
+			existingApplication.get(0).setIssueFromDate(application.getIssueFromDate());
+			existingApplication.get(0).setIssueTillDate(application.getIssueTillDate());
+			existingApplication.get(0).setPublishDate(application.getPublishDate());
+			existingApplication.get(0).setTechnicalBidOpenDate(application.getTechnicalBidOpenDate());
+			existingApplication.get(0).setFinancialBidOpenDate(application.getFinancialBidOpenDate());
+			existingApplication.get(0).setValidity(application.getValidity());
+			existingApplication.get(0).setUploadDocument(application.getUploadDocument());
+			existingApplication.get(0).setWorkNo(application.getWorkNo());
+			existingApplication.get(0).setWorkDescription(application.getWorkDescription());
+			existingApplication.get(0).setEstimatedCost(application.getEstimatedCost());
+			existingApplication.get(0).setTenderType(application.getTenderType());
+			existingApplication.get(0).setTenderFee(application.getTenderFee());
+			existingApplication.get(0).setEmd(application.getEmd());
+			existingApplication.get(0).setVendorClass(application.getVendorClass());
+			existingApplication.get(0).setWorkDuration(application.getWorkDuration());
 //			application.setEndDate(date);
 			// application.getAuditDetails().setLastModifiedBy(birthRegistrationRequest.getRequestInfo().getUserInfo().getUuid());
 		}

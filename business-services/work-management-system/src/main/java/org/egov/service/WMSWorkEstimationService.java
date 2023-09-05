@@ -3,6 +3,8 @@ package org.egov.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.config.WMSConfiguration;
 import org.egov.config.WMSContractorConfiguration;
@@ -24,11 +26,13 @@ import org.egov.validator.WMSWorkValidator;
 import org.egov.web.models.SORApplicationSearchCriteria;
 import org.egov.web.models.ScheduleOfRateApplication;
 import org.egov.web.models.WMSContractorApplication;
+import org.egov.web.models.WMSContractorApplicationSearchCriteria;
 import org.egov.web.models.WMSContractorRequest;
 import org.egov.web.models.WMSSORRequest;
 import org.egov.web.models.WMSWorkApplication;
 import org.egov.web.models.WMSWorkApplicationSearchCriteria;
 import org.egov.web.models.WMSWorkEstimationApplication;
+import org.egov.web.models.WMSWorkEstimationApplicationSearchCriteria;
 import org.egov.web.models.WMSWorkEstimationRequest;
 import org.egov.web.models.WMSWorkRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,6 +74,32 @@ public class WMSWorkEstimationService {
         // Return the response back to user
         return wmsWorkEstimationRequest.getWmsWorkEstimationApplications();
     }
+
+
+	public List<WMSWorkEstimationApplication> fetchWorkEstimationApplications(RequestInfo requestInfo,
+			 WMSWorkEstimationApplicationSearchCriteria workEstimationApplicationSearchCriteria) {
+		List<WMSWorkEstimationApplication> applications = wmsWorkEstimationRepository.getApplications(workEstimationApplicationSearchCriteria);
+
+        // If no applications are found matching the given criteria, return an empty list
+        if(CollectionUtils.isEmpty(applications))
+            return new ArrayList<>();
+
+        return applications;
+	}
+
+
+	public List<WMSWorkEstimationApplication> updateWorkEstimationMaster(
+			 WMSWorkEstimationRequest workEstimationRequest) {
+		List<WMSWorkEstimationApplication> existingApplication = wmsWorkEstimationApplicationValidator.validateApplicationUpdateRequest(workEstimationRequest);
+        // Enrich application upon update
+        
+		wmsWorkEstimationApplicationEnrichment.enrichWorkEstimationApplicationUpdate(workEstimationRequest,existingApplication);
+        //workflowService.updateWorkflowStatus(birthRegistrationRequest);
+        // Just like create request, update request will be handled asynchronously by the persister
+        producer.push(configuration.getUpdateTopic(), workEstimationRequest);
+
+        return workEstimationRequest.getWmsWorkEstimationApplications();
+	}
 	
 	
 	

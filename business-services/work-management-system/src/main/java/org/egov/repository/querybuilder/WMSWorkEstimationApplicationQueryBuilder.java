@@ -20,7 +20,7 @@ public class WMSWorkEstimationApplicationQueryBuilder {
     //private static final String FROM_TABLES = " FROM eg_bt_registration btr LEFT JOIN eg_bt_address add ON btr.id = add.registrationid ";
     private static final String FROM_TABLES = " FROM work_estimation wrkest";
 
-    private final String ORDERBY_CREATEDTIME = " ORDER BY wrkest.estimate_type  DESC ";
+    private final String ORDERBY_CREATEDTIME = " ORDER BY wrkest.from_date  DESC ";
 
     public String getWorkEstimationApplicationSearchQuery(WMSWorkEstimationApplicationSearchCriteria criteria, List<Object> preparedStmtList){
         StringBuilder query = new StringBuilder(BASE_WRKEST_QUERY);

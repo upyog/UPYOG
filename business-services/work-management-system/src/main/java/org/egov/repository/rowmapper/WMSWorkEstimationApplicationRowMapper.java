@@ -27,9 +27,9 @@ public class WMSWorkEstimationApplicationRowMapper implements ResultSetExtractor
 
             if(wmsWorkEstimationApplication == null) {
 
-                Date lastModifiedTime = rs.getDate("eWorkEstimationNo");
+                //Date lastModifiedTime = rs.getDate("eWorkEstimationNo");
                 if (rs.wasNull()) {
-                    lastModifiedTime = null;
+                    //lastModifiedTime = null;
                 }
                 wmsWorkEstimationApplication = WMSWorkEstimationApplication.builder()
                         .estimateId(rs.getInt("eEstimateId"))

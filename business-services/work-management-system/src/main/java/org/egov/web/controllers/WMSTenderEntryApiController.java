@@ -18,10 +18,12 @@ import org.egov.web.models.SORApplicationSearchCriteria;
 import org.egov.web.models.ScheduleOfRateApplication;
 import org.egov.web.models.WMSContractorApplication;
 import org.egov.web.models.WMSContractorApplicationResponse;
+import org.egov.web.models.WMSContractorApplicationSearchCriteria;
 import org.egov.web.models.WMSContractorRequest;
 import org.egov.web.models.WMSSORRequest;
 import org.egov.web.models.WMSTenderEntryApplication;
 import org.egov.web.models.WMSTenderEntryApplicationResponse;
+import org.egov.web.models.WMSTenderEntryApplicationSearchCriteria;
 import org.egov.web.models.WMSTenderEntryRequest;
 import org.egov.web.models.WMSWorkApplication;
 import org.egov.web.models.WMSWorkApplicationResponse;
@@ -79,6 +81,26 @@ public class WMSTenderEntryApiController{
         WMSTenderEntryApplicationResponse response = WMSTenderEntryApplicationResponse.builder().wmsTenderEntryApplications(applications).responseInfo(responseInfo).build();
         return new ResponseEntity<>(response, HttpStatus.OK);
        
+    }
+    
+    
+    @RequestMapping(value="/v1/tenderentry/_view", method = RequestMethod.POST)
+    @ApiOperation(value = "Fetch TenderEntry for WMS")
+    public ResponseEntity<WMSTenderEntryApplicationResponse> v1RegistrationFetchPost(@RequestBody RequestInfoWrapper requestInfoWrapper, @Valid @ModelAttribute WMSTenderEntryApplicationSearchCriteria tenderEntryApplicationSearchCriteria) {
+        List<WMSTenderEntryApplication> applications = tenderEntryService.fetchTenderEntryApplications(requestInfoWrapper.getRequestInfo(), tenderEntryApplicationSearchCriteria);
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true);
+        WMSTenderEntryApplicationResponse response = WMSTenderEntryApplicationResponse.builder().wmsTenderEntryApplications(applications).responseInfo(responseInfo).build();
+        return new ResponseEntity<>(response,HttpStatus.OK);
+    }
+    
+    
+    @RequestMapping(value="/v1/tenderentry/_update", method = RequestMethod.POST)
+    @ApiOperation(value = "Update TenderEntry for WMS")
+    public ResponseEntity<WMSTenderEntryApplicationResponse> v1TenderEntryUpdatePost(@ApiParam(value = "Details for the new TenderEntry(s) + RequestInfo meta data." ,required=true )  @Valid @RequestBody WMSTenderEntryRequest tenderEntryRequest) {
+        List<WMSTenderEntryApplication> applications = tenderEntryService.updateTenderEntryMaster(tenderEntryRequest);
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(tenderEntryRequest.getRequestInfo(), true);
+        WMSTenderEntryApplicationResponse response = WMSTenderEntryApplicationResponse.builder().wmsTenderEntryApplications(applications).responseInfo(responseInfo).build();
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     

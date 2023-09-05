@@ -19,6 +19,7 @@ import org.egov.web.models.ScheduleOfRateApplication;
 import org.egov.web.models.Scheme;
 import org.egov.web.models.SchemeApplicationSearchCriteria;
 import org.egov.web.models.SchemeCreationApplication;
+import org.egov.web.models.WMSContractorApplication;
 //import org.wms.web.models.SchemeCreationRequest;
 import org.egov.web.models.WMSSchemeRequest;
 
@@ -81,18 +82,19 @@ public class SchemeMasterService {
         return schemeRequest.getSchemeApplications();
     }
 
-	public List<Scheme> viewScheme() {
-		List<Scheme> optionalScheme = schemeMasterRepository.getAllSchemes();
-
-        // If the scheme exists, return it; otherwise, return null.
-        return optionalScheme;
-	}
-
-	public Scheme getSchemeById(Long id) {
-		return schemeMasterRepository.getSchemeById(id);
-		
-		
-	}
+	/*
+	 * public List<Scheme> viewScheme() { List<Scheme> optionalScheme =
+	 * schemeMasterRepository.getAllSchemes();
+	 * 
+	 * // If the scheme exists, return it; otherwise, return null. return
+	 * optionalScheme; }
+	 * 
+	 * public Scheme getSchemeById(Long id) { return
+	 * schemeMasterRepository.getSchemeById(id);
+	 * 
+	 * 
+	 * }
+	 */
 
 	public List<Scheme> searchSchemeApplications(RequestInfo requestInfo,
 			 SchemeApplicationSearchCriteria schemerApplicationSearchCriteria) {
@@ -105,6 +107,18 @@ public class SchemeMasterService {
 		
 		
 		return applications;
+	}
+
+
+	public List<Scheme> fetchSchemeApplications(RequestInfo requestInfo,
+			 SchemeApplicationSearchCriteria schemerApplicationSearchCriteria) {
+		List<Scheme> applications = schemeMasterRepository.getApplications(schemerApplicationSearchCriteria);
+
+        // If no applications are found matching the given criteria, return an empty list
+        if(CollectionUtils.isEmpty(applications))
+            return new ArrayList<>();
+
+        return applications;
 	}
 
 

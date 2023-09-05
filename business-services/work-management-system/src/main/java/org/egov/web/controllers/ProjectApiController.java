@@ -105,27 +105,15 @@ public class ProjectApiController {
     }
     	
 
-	/*
-	 * @RequestMapping(value="/v1/scheme/_view", method = RequestMethod.GET) public
-	 * ResponseEntity<Scheme> v1RegistrationUpdatePost(@RequestParam Long id) {
-	 * 
-	 * Scheme scheme = schemeMasterService.viewScheme(id);
-	 * 
-	 * if (scheme != null) { return ResponseEntity.ok(scheme); } else { return
-	 * ResponseEntity.notFound().build(); }
-	 * 
-	 * }
-	 */
+	
     
-    @RequestMapping(value = "/v1/project/_view", method = RequestMethod.GET)
-    public ResponseEntity<List<Project>> v1ProjectViewGet() {
-        List<Project> projects = projectMasterService.viewProject();
-
-        if (!projects.isEmpty()) {
-            return ResponseEntity.ok(projects);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    @RequestMapping(value="/v1/project/_view", method = RequestMethod.POST)
+    @ApiOperation(value = "Fetch Project for WMS")
+    public ResponseEntity<ProjectApplicationResponse> v1RegistrationFetchPost(@RequestBody RequestInfoWrapper requestInfoWrapper, @Valid @ModelAttribute ProjectApplicationSearchCriteria projectApplicationSearchCriteria) {
+        List<Project> applications = projectMasterService.fetchProjectApplications(requestInfoWrapper.getRequestInfo(), projectApplicationSearchCriteria);
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true);
+        ProjectApplicationResponse response = ProjectApplicationResponse.builder().projectApplications(applications).responseInfo(responseInfo).build();
+        return new ResponseEntity<>(response,HttpStatus.OK);
     }
 	
 	

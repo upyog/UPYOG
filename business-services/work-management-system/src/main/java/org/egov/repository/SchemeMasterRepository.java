@@ -64,17 +64,20 @@ public class SchemeMasterRepository {
 	
 	
 	// Method to retrieve all schemes
-    public List<Scheme> getAllSchemes() {
-        String sql = "SELECT * FROM Scheme_Master";
-        return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Scheme.class));
-    }
+	/*
+	 * public List<Scheme> getAllSchemes() { String sql =
+	 * "SELECT * FROM Scheme_Master"; return jdbcTemplate.query(sql, new
+	 * BeanPropertyRowMapper<>(Scheme.class)); }
+	 */
     
  // Method to retrieve a scheme by ID
-    public Scheme getSchemeById(Long id) {
-        String sql = "SELECT * FROM Scheme_Master WHERE Scheme_ID = ?";
-        return jdbcTemplate.queryForObject(sql, new Object[]{id}, new BeanPropertyRowMapper<>(Scheme.class));
-    }
-   //for searching
+	/*
+	 * public Scheme getSchemeById(Long id) { String sql =
+	 * "SELECT * FROM Scheme_Master WHERE Scheme_ID = ?"; return
+	 * jdbcTemplate.queryForObject(sql, new Object[]{id}, new
+	 * BeanPropertyRowMapper<>(Scheme.class)); }
+	 */
+   //for searching,Fetch
 	public List<Scheme> getApplications(
 			 SchemeApplicationSearchCriteria schemerApplicationSearchCriteria) {
 		// TODO Auto-generated method stub

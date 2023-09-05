@@ -70,11 +70,43 @@ public class WMSWorkEstimationApplicationEnrichment {
 	public void enrichWorkEstimationApplicationUpdate(WMSWorkEstimationRequest wmsWorkEstimationRequest, List<WMSWorkEstimationApplication> existingApplication) {
 		// Enrich lastModifiedTime and lastModifiedBy in case of update
 		for (WMSWorkEstimationApplication application : wmsWorkEstimationRequest.getWmsWorkEstimationApplications()) {
-//			application.setItemNo(existingApplication.get(0).getItemNo());
-//			application.setDescOfItem(existingApplication.get(0).getDescOfItem());
-//			application.setUnit(existingApplication.get(0).getUnit());
-//			application.setStartDate(existingApplication.get(0).getStartDate());
-//			
+			existingApplication.get(0).setWorkEstimationNo(application.getWorkEstimationNo());
+			existingApplication.get(0).setProjectName(application.getProjectName());
+			existingApplication.get(0).setWorkName(application.getWorkName());
+			existingApplication.get(0).setFromDate(application.getFromDate());
+			existingApplication.get(0).setToDate(application.getToDate());
+			existingApplication.get(0).setEstimateType(application.getEstimateType());
+			existingApplication.get(0).setSorName(application.getSorName());
+			existingApplication.get(0).setDownloadTemplate(application.getDownloadTemplate());
+			existingApplication.get(0).setUploadTemplate(application.getUploadTemplate());
+			existingApplication.get(0).setChapter(application.getChapter());
+			existingApplication.get(0).setItemNo(application.getItemNo());
+			existingApplication.get(0).setDesriptionOfTheItem(application.getDesriptionOfTheItem());
+			existingApplication.get(0).setLength(application.getLength());
+			existingApplication.get(0).setBw(application.getBw());
+			existingApplication.get(0).setDh(application.getDh());
+			existingApplication.get(0).setNoS(application.getNoS());
+			existingApplication.get(0).setQuantity(application.getQuantity());
+			existingApplication.get(0).setUnit(application.getUnit());
+			existingApplication.get(0).setRate(application.getRate());
+			existingApplication.get(0).setEstimateAmount(application.getEstimateAmount());
+			existingApplication.get(0).setSerialNo(application.getSerialNo());
+			existingApplication.get(0).setParticularsOfItem(application.getParticularsOfItem());
+			existingApplication.get(0).setCalculationType(application.getCalculationType());
+			existingApplication.get(0).setAdditionDeduction(application.getAdditionDeduction());
+			existingApplication.get(0).setLf(application.getLf());
+			existingApplication.get(0).setBwf(application.getBwf());
+			existingApplication.get(0).setDhf(application.getDhf());
+			existingApplication.get(0).setSubTotal(application.getSubTotal());
+			existingApplication.get(0).setGrandTotal(application.getGrandTotal());
+			existingApplication.get(0).setEstimatedQuantity(application.getEstimatedQuantity());
+			existingApplication.get(0).setRemarks(application.getRemarks());
+			existingApplication.get(0).setOverheadCode(application.getOverheadCode());
+			existingApplication.get(0).setOverheadDescription(application.getOverheadDescription());
+			existingApplication.get(0).setValueType(application.getValueType());
+			existingApplication.get(0).setEstimatedAmount(application.getEstimatedAmount());
+			existingApplication.get(0).setDocumentDescription(application.getDocumentDescription());
+			existingApplication.get(0).setUploadDocument(application.getUploadDocument());
 //			application.setEndDate(date);
 			// application.getAuditDetails().setLastModifiedBy(birthRegistrationRequest.getRequestInfo().getUserInfo().getUuid());
 		}
