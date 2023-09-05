@@ -218,7 +218,7 @@ const renderLegend = (value) => {
 
   return (
     <ResponsiveContainer
-      width="50%"
+      width="60%"
       height={480}
       margin={{
         top: 5,
@@ -445,7 +445,7 @@ const Home = ({ stateCode }) => {
                           )}
                         </div>
                         {item?.charts?.[0]?.chartType == "map" && (
-                          <div className="dss-card-header" style={{ width: "45%" }}>
+                          <div className="dss-card-header" style={{ width: "60%" }}>
                             {Icon(row.vizArray?.[1]?.name)}
                             <p style={{ marginLeft: "20px", fontSize: "24px", fontFamily: "Roboto, sans-serif", fontWeight: 500, color: "#000000" }}>
                               {selectedState === ""
