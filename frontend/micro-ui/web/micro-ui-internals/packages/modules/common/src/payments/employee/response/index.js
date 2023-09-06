@@ -210,8 +210,8 @@ export const SuccessfulPayment = (props) => {
   
           if(count==0)
           {
-            let toDate=convertEpochToDate( payloadReceiptDetails.Payments[0].paymentDetails[0].bill.billDetails[0].toPeriod).split("/")[2];
-            let fromDate=convertEpochToDate( payloadReceiptDetails.Payments[0].paymentDetails[0].bill.billDetails[0].fromPeriod).split("/")[2];
+            let toDate=convertEpochToDate( payments.Payments[0].paymentDetails[0].bill.billDetails[0].toPeriod).split("/")[2];
+            let fromDate=convertEpochToDate( payments.Payments[0].paymentDetails[0].bill.billDetails[0].fromPeriod).split("/")[2];
             assessmentYear=assessmentYear==""?fromDate+"-"+toDate:assessmentYear+","+fromDate+"-"+toDate; 
             assessmentYearForReceipt=fromDate+"-"+toDate;
           }
