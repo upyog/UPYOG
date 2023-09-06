@@ -2189,9 +2189,9 @@ export const MdmsService = {
                   "queryParams": "",
                   "sidebar": "digit-ui-links",
                   "sidebarURL": "/digit-ui/citizen/pt-home"
-              }, 
+              },
               {
-                  "id": 2476,
+                  "id": 3001,
                   "name": "SOR_HOME",
                   "url": "digit-ui-card",
                   "displayName": "SOR HOME",
@@ -2208,12 +2208,48 @@ export const MdmsService = {
                   "sidebar": "digit-ui-links",
                   "sidebarURL": "/digit-ui/citizen/wms-home"
               },
+              /* {
+                "id": 3011,
+                "name": "SOR_LIST",
+                "url": "digit-ui-card",
+                "displayName": "SOR LIST",
+                "orderNumber": 1,
+                "parentModule": "WMS",
+                "enabled": true,
+                "serviceCode": "CITIZEN_SERVICE_WMS",
+                "code": "",
+                "path": "",
+                "navigationURL": "/digit-ui/citizen/wms/sor-list",
+                "leftIcon": "WMSIcon",
+                "rightIcon": "",
+                "queryParams": "",
+                "sidebar": "digit-ui-links",
+                "sidebarURL": "/digit-ui/citizen/wms/sor-home"
+            },
+            {
+              "id": 3012,
+              "name": "SOR_CREATE",
+              "url": "digit-ui-card",
+              "displayName": "SOR CREATE",
+              "orderNumber": 1,
+              "parentModule": "WMS",
+              "enabled": true,
+              "serviceCode": "CITIZEN_SERVICE_WMS",
+              "code": "",
+              "path": "",
+              "navigationURL": "/digit-ui/citizen/wms/sor-create",
+              "leftIcon": "WMSIcon",
+              "rightIcon": "",
+              "queryParams": "",
+              "sidebar": "digit-ui-links",
+              "sidebarURL": "/digit-ui/citizen/wms/sor-home"
+          }, */
               {
-                  "id": 2477,
+                  "id": 3002,
                   "name": "PRJMST_HOME",
                   "url": "digit-ui-card",
                   "displayName": "Project Master Home",
-                  "orderNumber": 1,
+                  "orderNumber": 2,
                   "queryParams": "",
                   "parentModule": "WMS",
                   "enabled": true,
@@ -2223,12 +2259,12 @@ export const MdmsService = {
                   "createdBy": null,
                   "lastModifiedDate": null,
                   "lastModifiedBy": null,
-                  "path": "/digit-ui/citizen/wms/prjmst/home",
-                  "navigationURL": "/digit-ui/citizen/wms/prjmst/home",
+                  "path": "/digit-ui/citizen/wms/prjmst-home",
+                  "navigationURL": "/digit-ui/citizen/wms/prjmst-home",
                   "leftIcon": "WMSIcon",
                   "rightIcon": ""
               },{
-                "id": 2478,
+                "id": 3003,
                 "name": "PM HOME",
                 "url": "digit-ui-card",
                 "displayName": "Physical Milestone",
@@ -2246,7 +2282,7 @@ export const MdmsService = {
                 "sidebarURL": "/digit-ui/citizen/wms-home"
             },
             {
-              "id": 2479,
+              "id": 3004,
               "name": "Contaractor Master",
               "url": "digit-ui-card",
               "displayName": "Contaractor Master",
@@ -2264,7 +2300,7 @@ export const MdmsService = {
               "sidebarURL": "/digit-ui/citizen/wms-home"
           },
             {
-              "id": 2480,
+              "id": 3005,
               "name": "Contaractor Master Table",
               "url": "digit-ui-card",
               "displayName": "Contaractor Master Table",
@@ -2603,6 +2639,10 @@ export const MdmsService = {
                       {
                           "label": "rainmaker-fsm",
                           "value": "rainmaker-fsm"
+                      },
+                      {
+                          "label": "rainmaker-wms",
+                          "value": "rainmaker-wms"
                       }
                   ]
               }
@@ -2671,7 +2711,7 @@ export const MdmsService = {
                           {
                               "code": "CITIZEN_SERVICE_WMS",
                               "name": "WMS",
-                              "label": "CITIZEN_SERVICE_WMS_LB",
+                              "label": "CITIZEN_SERVICE_WMS",
                               "enabled": true,
                               "navigationUrl": "/digit-ui/citizen/wms-home"
                           }
@@ -3652,6 +3692,7 @@ export const MdmsService = {
           },
       "DIGIT-UI": {}
     };
+    //const { MdmsRes } = await MdmsService.call(tenantId, mdmsDetails.details);
     const responseValue = transformResponse(mdmsDetails.type, MdmsRes, moduleCode.toUpperCase(), tenantId);
     const cacheSetting = getCacheSetting(mdmsDetails.details.moduleDetails[0].moduleName);
     PersistantStorage.set(key, responseValue, cacheSetting.cacheTimeInSecs);

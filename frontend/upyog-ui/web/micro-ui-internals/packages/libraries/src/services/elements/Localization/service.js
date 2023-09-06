@@ -71917,8 +71917,259 @@ export const LocalizationService = {
             "module": "rainmaker-common",
             "locale": "en_IN"
         },
+        {
+            "code": "WMS_SOR_CHAPTER_LABEL",
+            "message": "Chapter",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_SOR_DESC_OF_ITEM_LABEL",
+            "message": "Description of item",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
         
+        {
+            "code": "WMS_SOR_ITEM_NO_LABEL",
+            "message": "Item No",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_SOR_NAME_LABEL",
+            "message": "Name",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_SOR_RATE_LABEL",
+            "message": "Rate",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_SOR_UNIT_LABEL",
+            "message": "Unit",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_SOR_START_DATE_LABEL",
+            "message": "Start date",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_SOR_END_DATE_LABEL",
+            "message": "End Date",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_SOR_ID_LABEL",
+            "message": "SOR ID",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_HOME_SEARCH_RESULTS_HEADING",
+            "message": "SOR: Search Results",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_SOR_FORM_CREATE_HEAD",
+            "message": "SOR-Details",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },{
+            "code": "WMS_COMMON_SAVE",
+            "message": "Save",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },{
+            "code": "WMS_SOR_CONTROLS_LABEL",
+            "message": "Update",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_SOR_EDIT_LABEL",
+            "message": "Edit",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_COMMON_CLEAR_SEARCH",
+            "message": "Reset",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
         
+        {
+            "code": "WMS_COMMON_CLEAR_ALL",
+            "message": "Clear All",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        //WMS_ULB_LABEL
+        
+        {
+            "code": "WMS_ULB_LABEL",
+            "message": "ULB",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_COMMON_FILTER",
+            "message": "Filter",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_COMMON_SEARCH",
+            "message": "Search",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_COMMON_CREATE_HEADER",
+            "message": "Create",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        }, {
+            "code": "WMS_COMMON_SEARCH_BY",
+            "message": "Search By",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },{
+            "code": "WMS_COMMON_APPLY",
+            "message": "Apply",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },{
+            "code": "WMS_SOR_DETAILS_FORM_HEADER",
+            "message": "(Details)",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_NEW_SOR_FORM_HEADER",
+            "message": "Schedule of Rates",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_COMMON_CHAPTER_INVALID",
+            "message": "Invalid Chapter",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_COMMON_DESC_ITEM_INVALID",
+            "message": "Invalid Description of item",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_COMMON_END_DATE_INVALID",
+            "message": "Invalid End Date",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_COMMON_ITEM_NO_INVALID",
+            "message": "Invalid No of Item",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_COMMON_NAME_INVALID",
+            "message": "Invalid Name",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_COMMON_RATE_INVALID",
+            "message": "Invalid Rate",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_COMMON_UNIT_INVALID",
+            "message": "Invalid Unit",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_COMMON_TAKE_ACTION",
+            "message": "Edit",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_TITLE",
+            "message": "Title",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_COMMON_EDIT_SOR_HEADER",
+            "message": "Title",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_COMMON_BUTTON_SUBMIT",
+            "message": "SUBMIT",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },{
+            "code": "WMS_PM_FORM_CREATE_HEAD",
+            "message": "PM-Details",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        
+        {
+            "code": "WMS_NEW_PM_FORM_HEADER",
+            "message": "Physical Milestone",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_PM_PROJECT_NAME_LABEL ",
+            "message": "Project Name",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_PM_ML_NAME_LABEL ",
+            "message": "Milestone Name",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_PM_WORK_NAME_LABEL ",
+            "message": "Work Name",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_PM_PERCENT_LABEL",
+            "message": "Milestone Percentage",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+//
+//
+//
+//
+//
+//
+
+
         ]
     };
       messages.push(...data.messages);
