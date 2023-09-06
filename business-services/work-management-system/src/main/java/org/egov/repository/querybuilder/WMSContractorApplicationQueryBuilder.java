@@ -37,6 +37,12 @@ public class WMSContractorApplicationQueryBuilder {
             query.append(" contr.vendor_name IN ( ").append(createQueryString(criteria.getVendorName())).append(" ) ");
             addToPreparedStatementString(preparedStmtList, criteria.getVendorName());
        }
+        
+        if(!ObjectUtils.isEmpty(criteria.getPFMSVendorCode())){
+          	 addClauseIfRequired(query, preparedStmtList);
+               query.append(" contr.pfms_vendor_code IN ( ").append(createQueryString(criteria.getPFMSVendorCode())).append(" ) ");
+               addToPreparedStatementString(preparedStmtList, criteria.getPFMSVendorCode());
+          }
 
         // order birth registration applications based on their createdtime in latest first manner
         query.append(ORDERBY_CREATEDTIME);

@@ -26,5 +26,8 @@ public class WMSContractorApplicationSearchCriteria {
 	
 	@JsonProperty("vendor_name")
 	private List<String> vendorName=null;
+	
+	@JsonProperty("pfms_vendor_code")
+	private List<String> PFMSVendorCode=null;
 
 }
