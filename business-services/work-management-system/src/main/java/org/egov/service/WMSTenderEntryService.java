@@ -98,6 +98,18 @@ public class WMSTenderEntryService {
 
         return tenderEntryRequest.getWmsTenderEntryApplications();
 	}
+
+
+	public List<WMSTenderEntryApplication> searchWMSTenderEntryApplications(RequestInfo requestInfo,
+			 WMSTenderEntryApplicationSearchCriteria wmsTenderEntryApplicationSearchCriteria) {
+		List<WMSTenderEntryApplication> applications = wmsTenderEntryRepository.getApplications(wmsTenderEntryApplicationSearchCriteria);
+
+        // If no applications are found matching the given criteria, return an empty list
+        if(CollectionUtils.isEmpty(applications))
+            return new ArrayList<>();
+
+        return applications;
+	}
 	
 	
 	

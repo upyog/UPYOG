@@ -102,6 +102,18 @@ public class WMSMeasurementBookService {
 
         return measurementBookRequest.getWmsMeasurementBookApplications();
 	}
+
+
+	public List<WMSMeasurementBookApplication> searchWMSMeasurementBookApplications(RequestInfo requestInfo,
+			 WMSMeasurementBookApplicationSearchCriteria wmsMeasurementBookApplicationSearchCriteria) {
+		List<WMSMeasurementBookApplication> applications = wmsMeasurementBookRepository.getApplications(wmsMeasurementBookApplicationSearchCriteria);
+
+        // If no applications are found matching the given criteria, return an empty list
+        if(CollectionUtils.isEmpty(applications))
+            return new ArrayList<>();
+
+        return applications;
+	}
 	
 	
 	

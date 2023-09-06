@@ -18,6 +18,7 @@ import org.egov.web.models.SORApplicationSearchCriteria;
 import org.egov.web.models.ScheduleOfRateApplication;
 import org.egov.web.models.WMSContractorApplication;
 import org.egov.web.models.WMSContractorApplicationResponse;
+import org.egov.web.models.WMSContractorApplicationSearchCriteria;
 import org.egov.web.models.WMSContractorRequest;
 import org.egov.web.models.WMSRunningAccountFinalBillApplication;
 import org.egov.web.models.WMSRunningAccountFinalBillApplicationResponse;
@@ -97,12 +98,21 @@ public class WMSRunningAccountFinalBillApiController{
     
     
     @RequestMapping(value="/v1/runningaccount/_update", method = RequestMethod.POST)
-    @ApiOperation(value = "Update contractor for WMS")
+    @ApiOperation(value = "Update Running Account for WMS")
     public ResponseEntity<WMSRunningAccountFinalBillApplicationResponse> v1RunningaccountUpdatePost(@ApiParam(value = "Details for the new Running Account Final Bill(s) + RequestInfo meta data." ,required=true )  @Valid @RequestBody WMSRunningAccountFinalBillRequest runningAccountFinalBillRequest) {
         List<WMSRunningAccountFinalBillApplication> applications = runningAccountFinalBillService.updateRunningAccountFinalBillMaster(runningAccountFinalBillRequest);
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(runningAccountFinalBillRequest.getRequestInfo(), true);
         WMSRunningAccountFinalBillApplicationResponse response = WMSRunningAccountFinalBillApplicationResponse.builder().wmsRunningAccountFinalBillApplications(applications).responseInfo(responseInfo).build();
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+    
+    @RequestMapping(value="/v1/runningaccount/_search", method = RequestMethod.POST)
+    @ApiOperation(value = "Search Running Account for WMS")
+    public ResponseEntity<WMSRunningAccountFinalBillApplicationResponse> v1RegistrationSearchContractoRunningAccountFinalBill(@RequestBody RequestInfoWrapper requestInfoWrapper, @Valid @ModelAttribute WMSRunningAccountFinalBillApplicationSearchCriteria wmsRunningAccountFinalBillApplicationSearchCriteria) {
+        List<WMSRunningAccountFinalBillApplication> applications = runningAccountFinalBillService.searchWMSRunningAccountFinalBillApplications(requestInfoWrapper.getRequestInfo(), wmsRunningAccountFinalBillApplicationSearchCriteria);
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true);
+        WMSRunningAccountFinalBillApplicationResponse response = WMSRunningAccountFinalBillApplicationResponse.builder().wmsRunningAccountFinalBillApplications(applications).responseInfo(responseInfo).build();
+        return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
     

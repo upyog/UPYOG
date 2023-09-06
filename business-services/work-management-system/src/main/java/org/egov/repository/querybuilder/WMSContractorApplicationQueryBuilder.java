@@ -31,6 +31,12 @@ public class WMSContractorApplicationQueryBuilder {
              query.append(" contr.vendor_id IN ( ").append(createQuery(criteria.getVendorId())).append(" ) ");
              addToPreparedStatement(preparedStmtList, criteria.getVendorId());
         }
+        
+        if(!ObjectUtils.isEmpty(criteria.getVendorName())){
+       	 addClauseIfRequired(query, preparedStmtList);
+            query.append(" contr.vendor_name IN ( ").append(createQueryString(criteria.getVendorName())).append(" ) ");
+            addToPreparedStatementString(preparedStmtList, criteria.getVendorName());
+       }
 
         // order birth registration applications based on their createdtime in latest first manner
         query.append(ORDERBY_CREATEDTIME);
@@ -56,10 +62,27 @@ public class WMSContractorApplicationQueryBuilder {
         }
         return builder.toString();
     }
+    
+    private String createQueryString(List<String> list) {
+        StringBuilder builder = new StringBuilder();
+        int length = list.size();
+        for (int i = 0; i < length; i++) {
+            builder.append(" ?");
+            if (i != length - 1)
+                builder.append(",");
+        }
+        return builder.toString();
+    }
 
     private void addToPreparedStatement(List<Object> preparedStmtList, List<Integer> ids) {
         ids.forEach(id -> {
             preparedStmtList.add(id);
+        });
+    }
+    
+    private void addToPreparedStatementString(List<Object> preparedStmtList, List<String> names) {
+    	names.forEach(name -> {
+            preparedStmtList.add(name);
         });
     }
 }

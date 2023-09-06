@@ -105,6 +105,16 @@ public class WMSMeasurementBookApiController{
         WMSMeasurementBookApplicationResponse response = WMSMeasurementBookApplicationResponse.builder().wmsMeasurementBookApplications(applications).responseInfo(responseInfo).build();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+    
+    
+    @RequestMapping(value="/v1/mb/_search", method = RequestMethod.POST)
+    @ApiOperation(value = "Search mb for WMS")
+    public ResponseEntity<WMSMeasurementBookApplicationResponse> v1RegistrationSearchContractor(@RequestBody RequestInfoWrapper requestInfoWrapper, @Valid @ModelAttribute WMSMeasurementBookApplicationSearchCriteria wmsMeasurementBookApplicationSearchCriteria) {
+        List<WMSMeasurementBookApplication> applications = measurementBookService.searchWMSMeasurementBookApplications(requestInfoWrapper.getRequestInfo(), wmsMeasurementBookApplicationSearchCriteria);
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true);
+        WMSMeasurementBookApplicationResponse response = WMSMeasurementBookApplicationResponse.builder().wmsMeasurementBookApplications(applications).responseInfo(responseInfo).build();
+        return new ResponseEntity<>(response,HttpStatus.OK);
+    }
 
     
 }

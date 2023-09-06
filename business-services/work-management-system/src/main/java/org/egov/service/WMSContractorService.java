@@ -94,6 +94,18 @@ public class WMSContractorService {
 
         return contractorRequest.getWmsContractorApplications();
 	}
+
+
+	public List<WMSContractorApplication> searchWMSContractorApplications(RequestInfo requestInfo,
+			 WMSContractorApplicationSearchCriteria wmsContractorApplicationSearchCriteria) {
+		List<WMSContractorApplication> applications = wmsContractorRepository.getApplications(wmsContractorApplicationSearchCriteria);
+
+        // If no applications are found matching the given criteria, return an empty list
+        if(CollectionUtils.isEmpty(applications))
+            return new ArrayList<>();
+
+        return applications;
+	}
 	
 	
 	

@@ -102,6 +102,16 @@ public class WMSWorkAwardApprovalApiController{
         WMSWorkAwardApprovalApplicationResponse response = WMSWorkAwardApprovalApplicationResponse.builder().wmsWorkAwardApprovalApplications(applications).responseInfo(responseInfo).build();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+    
+    
+    @RequestMapping(value="/v1/workaward/_search", method = RequestMethod.POST)
+    @ApiOperation(value = "Search Work Award Approval for WMS")
+    public ResponseEntity<WMSWorkAwardApprovalApplicationResponse> v1RegistrationSearchContractWorkAwardApprovalor(@RequestBody RequestInfoWrapper requestInfoWrapper, @Valid @ModelAttribute WMSWorkAwardApprovalApplicationSearchCriteria wmsWorkAwardApprovalApplicationSearchCriteria) {
+        List<WMSWorkAwardApprovalApplication> applications = workAwardApprovalService.searchWMSWorkAwardApprovalApplications(requestInfoWrapper.getRequestInfo(), wmsWorkAwardApprovalApplicationSearchCriteria);
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true);
+        WMSWorkAwardApprovalApplicationResponse response = WMSWorkAwardApprovalApplicationResponse.builder().wmsWorkAwardApprovalApplications(applications).responseInfo(responseInfo).build();
+        return new ResponseEntity<>(response,HttpStatus.OK);
+    }
 
     
 }

@@ -100,6 +100,18 @@ public class WMSWorkEstimationService {
 
         return workEstimationRequest.getWmsWorkEstimationApplications();
 	}
+
+
+	public List<WMSWorkEstimationApplication> searchWMSWorkEstimationApplications(RequestInfo requestInfo,
+			 WMSWorkEstimationApplicationSearchCriteria wmsWorkEstimationApplicationSearchCriteria) {
+		List<WMSWorkEstimationApplication> applications = wmsWorkEstimationRepository.getApplications(wmsWorkEstimationApplicationSearchCriteria);
+
+        // If no applications are found matching the given criteria, return an empty list
+        if(CollectionUtils.isEmpty(applications))
+            return new ArrayList<>();
+
+        return applications;
+	}
 	
 	
 	

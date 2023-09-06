@@ -98,6 +98,18 @@ public class WMSWorkOrderService {
 
         return workOrderRequest.getWmsWorkOrderApplications();
 	}
+
+
+	public List<WMSWorkOrderApplication> searchWMSWorkOrderApplications(RequestInfo requestInfo,
+			 WMSWorkOrderApplicationSearchCriteria wmsWorkOrderApplicationSearchCriteria) {
+		List<WMSWorkOrderApplication> applications = wmsWorkOrderRepository.getApplications(wmsWorkOrderApplicationSearchCriteria);
+
+        // If no applications are found matching the given criteria, return an empty list
+        if(CollectionUtils.isEmpty(applications))
+            return new ArrayList<>();
+
+        return applications;
+	}
 	
 	
 	

@@ -102,6 +102,16 @@ public class WMSTenderEntryApiController{
         WMSTenderEntryApplicationResponse response = WMSTenderEntryApplicationResponse.builder().wmsTenderEntryApplications(applications).responseInfo(responseInfo).build();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+    
+    
+    @RequestMapping(value="/v1/tenderentry/_search", method = RequestMethod.POST)
+    @ApiOperation(value = "Search Tender Entry for WMS")
+    public ResponseEntity<WMSTenderEntryApplicationResponse> v1RegistrationSearchTenderEntry(@RequestBody RequestInfoWrapper requestInfoWrapper, @Valid @ModelAttribute WMSTenderEntryApplicationSearchCriteria wmsTenderEntryApplicationSearchCriteria) {
+        List<WMSTenderEntryApplication> applications = tenderEntryService.searchWMSTenderEntryApplications(requestInfoWrapper.getRequestInfo(), wmsTenderEntryApplicationSearchCriteria);
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true);
+        WMSTenderEntryApplicationResponse response = WMSTenderEntryApplicationResponse.builder().wmsTenderEntryApplications(applications).responseInfo(responseInfo).build();
+        return new ResponseEntity<>(response,HttpStatus.OK);
+    }
 
     
 }

@@ -99,6 +99,19 @@ public class WMSRunningAccountFinalBillService {
 
         return runningAccountFinalBillRequest.getWmsRunningAccountFinalBillApplications();
 	}
+
+
+	public List<WMSRunningAccountFinalBillApplication> searchWMSRunningAccountFinalBillApplications(
+			RequestInfo requestInfo,
+			 WMSRunningAccountFinalBillApplicationSearchCriteria wmsRunningAccountFinalBillApplicationSearchCriteria) {
+		List<WMSRunningAccountFinalBillApplication> applications = wmsRunningAccountFinalBillRepository.getApplications(wmsRunningAccountFinalBillApplicationSearchCriteria);
+
+        // If no applications are found matching the given criteria, return an empty list
+        if(CollectionUtils.isEmpty(applications))
+            return new ArrayList<>();
+
+        return applications;
+	}
 	
 	
 	

@@ -99,6 +99,18 @@ public class WMSWorkAwardApprovalService {
 
         return workAwardApprovalRequest.getWmsWorkAwardApprovalApplications();
 	}
+
+
+	public List<WMSWorkAwardApprovalApplication> searchWMSWorkAwardApprovalApplications(RequestInfo requestInfo,
+			 WMSWorkAwardApprovalApplicationSearchCriteria wmsWorkAwardApprovalApplicationSearchCriteria) {
+		List<WMSWorkAwardApprovalApplication> applications = wmsWorkAwardApprovalRepository.getApplications(wmsWorkAwardApprovalApplicationSearchCriteria);
+
+        // If no applications are found matching the given criteria, return an empty list
+        if(CollectionUtils.isEmpty(applications))
+            return new ArrayList<>();
+
+        return applications;
+	}
 	
 	
 	

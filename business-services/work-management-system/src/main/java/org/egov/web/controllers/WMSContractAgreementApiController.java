@@ -102,6 +102,15 @@ public class WMSContractAgreementApiController{
         WMSContractAgreementApplicationResponse response = WMSContractAgreementApplicationResponse.builder().wmsContractAgreementApplications(applications).responseInfo(responseInfo).build();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+    
+    @RequestMapping(value="/v1/contractagreement/_search", method = RequestMethod.POST)
+    @ApiOperation(value = "Search contract agreement for WMS")
+    public ResponseEntity<WMSContractAgreementApplicationResponse> v1RegistrationSearchContractAgreement(@RequestBody RequestInfoWrapper requestInfoWrapper, @Valid @ModelAttribute WMSContractAgreementApplicationSearchCriteria wmsContractAgreementApplicationSearchCriteria) {
+        List<WMSContractAgreementApplication> applications = contractAgreementService.searchWMSContractAgreementApplications(requestInfoWrapper.getRequestInfo(), wmsContractAgreementApplicationSearchCriteria);
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true);
+        WMSContractAgreementApplicationResponse response = WMSContractAgreementApplicationResponse.builder().wmsContractAgreementApplications(applications).responseInfo(responseInfo).build();
+        return new ResponseEntity<>(response,HttpStatus.OK);
+    }
 
     
 }

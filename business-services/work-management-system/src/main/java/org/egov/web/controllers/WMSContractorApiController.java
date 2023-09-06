@@ -117,6 +117,16 @@ public class WMSContractorApiController{
         WMSContractorApplicationResponse response = WMSContractorApplicationResponse.builder().wmsContractorApplications(applications).responseInfo(responseInfo).build();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+    
+    
+    @RequestMapping(value="/v1/contractor/_search", method = RequestMethod.POST)
+    @ApiOperation(value = "Search contractor for WMS")
+    public ResponseEntity<WMSContractorApplicationResponse> v1RegistrationSearchContractor(@RequestBody RequestInfoWrapper requestInfoWrapper, @Valid @ModelAttribute WMSContractorApplicationSearchCriteria wmsContractorApplicationSearchCriteria) {
+        List<WMSContractorApplication> applications = contractorService.searchWMSContractorApplications(requestInfoWrapper.getRequestInfo(), wmsContractorApplicationSearchCriteria);
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true);
+        WMSContractorApplicationResponse response = WMSContractorApplicationResponse.builder().wmsContractorApplications(applications).responseInfo(responseInfo).build();
+        return new ResponseEntity<>(response,HttpStatus.OK);
+    }
 
     
 }

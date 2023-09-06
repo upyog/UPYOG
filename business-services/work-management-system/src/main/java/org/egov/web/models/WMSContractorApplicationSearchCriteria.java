@@ -23,5 +23,8 @@ public class WMSContractorApplicationSearchCriteria {
 
 	@JsonProperty("vendor_id")
     private List<Integer> vendorId;
+	
+	@JsonProperty("vendor_name")
+	private List<String> vendorName=null;
 
 }

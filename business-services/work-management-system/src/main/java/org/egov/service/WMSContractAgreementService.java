@@ -99,6 +99,18 @@ public class WMSContractAgreementService {
 
         return contractAgreementRequest.getWmsContractAgreementApplications();
 	}
+
+
+	public List<WMSContractAgreementApplication> searchWMSContractAgreementApplications(RequestInfo requestInfo,
+			 WMSContractAgreementApplicationSearchCriteria wmsContractAgreementApplicationSearchCriteria) {
+		List<WMSContractAgreementApplication> applications = wmsContractAgreementRepository.getApplications(wmsContractAgreementApplicationSearchCriteria);
+
+        // If no applications are found matching the given criteria, return an empty list
+        if(CollectionUtils.isEmpty(applications))
+            return new ArrayList<>();
+
+        return applications;
+	}
 	
 	
 	

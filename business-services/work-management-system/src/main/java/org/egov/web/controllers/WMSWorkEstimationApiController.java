@@ -102,6 +102,16 @@ public class WMSWorkEstimationApiController{
         WMSWorkEstimationApplicationResponse response = WMSWorkEstimationApplicationResponse.builder().wmsWorkEstimationApplications(applications).responseInfo(responseInfo).build();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+    
+    
+    @RequestMapping(value="/v1/workestimation/_search", method = RequestMethod.POST)
+    @ApiOperation(value = "Search Work Estimation for WMS")
+    public ResponseEntity<WMSWorkEstimationApplicationResponse> v1RegistrationSearchWorkEstimation(@RequestBody RequestInfoWrapper requestInfoWrapper, @Valid @ModelAttribute WMSWorkEstimationApplicationSearchCriteria wmsWorkEstimationApplicationSearchCriteria) {
+        List<WMSWorkEstimationApplication> applications = workEstimationService.searchWMSWorkEstimationApplications(requestInfoWrapper.getRequestInfo(), wmsWorkEstimationApplicationSearchCriteria);
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true);
+        WMSWorkEstimationApplicationResponse response = WMSWorkEstimationApplicationResponse.builder().wmsWorkEstimationApplications(applications).responseInfo(responseInfo).build();
+        return new ResponseEntity<>(response,HttpStatus.OK);
+    }
 
     
 }

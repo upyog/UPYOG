@@ -101,6 +101,15 @@ public class WMSWorkOrderApiController{
         WMSWorkOrderApplicationResponse response = WMSWorkOrderApplicationResponse.builder().wmsWorkOrderApplications(applications).responseInfo(responseInfo).build();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+    
+    @RequestMapping(value="/v1/workorder/_search", method = RequestMethod.POST)
+    @ApiOperation(value = "Search WorkOrder for WMS")
+    public ResponseEntity<WMSWorkOrderApplicationResponse> v1RegistrationSearchWorkOrder(@RequestBody RequestInfoWrapper requestInfoWrapper, @Valid @ModelAttribute WMSWorkOrderApplicationSearchCriteria wmsWorkOrderApplicationSearchCriteria) {
+        List<WMSWorkOrderApplication> applications = workOrderService.searchWMSWorkOrderApplications(requestInfoWrapper.getRequestInfo(), wmsWorkOrderApplicationSearchCriteria);
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true);
+        WMSWorkOrderApplicationResponse response = WMSWorkOrderApplicationResponse.builder().wmsWorkOrderApplications(applications).responseInfo(responseInfo).build();
+        return new ResponseEntity<>(response,HttpStatus.OK);
+    }
 
     
 }

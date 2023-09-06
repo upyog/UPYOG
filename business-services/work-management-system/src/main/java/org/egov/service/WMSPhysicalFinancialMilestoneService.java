@@ -100,6 +100,19 @@ public class WMSPhysicalFinancialMilestoneService {
 
         return physicalFinancialMilestoneRequest.getWmsPhysicalFinancialMilestoneApplications();
 	}
+
+
+	public List<WMSPhysicalFinancialMilestoneApplication> searchWMSPhysicalFinancialMilestoneApplications(
+			RequestInfo requestInfo,
+			WMSPhysicalFinancialMilestoneApplicationSearchCriteria wmsPhysicalFinancialMilestoneApplicationSearchCriteria) {
+		List<WMSPhysicalFinancialMilestoneApplication> applications = wmsPhysicalFinancialMilestoneRepository.getApplications(wmsPhysicalFinancialMilestoneApplicationSearchCriteria);
+
+        // If no applications are found matching the given criteria, return an empty list
+        if(CollectionUtils.isEmpty(applications))
+            return new ArrayList<>();
+
+        return applications;
+	}
 	
 	
 	

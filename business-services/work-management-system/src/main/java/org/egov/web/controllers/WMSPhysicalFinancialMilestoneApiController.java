@@ -102,6 +102,16 @@ public class WMSPhysicalFinancialMilestoneApiController{
         WMSPhysicalFinancialMilestoneApplicationResponse response = WMSPhysicalFinancialMilestoneApplicationResponse.builder().wmsPhysicalFinancialMilestoneApplications(applications).responseInfo(responseInfo).build();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+    
+    
+    @RequestMapping(value="/v1/pfmilestone/_search", method = RequestMethod.POST)
+    @ApiOperation(value = "Search Physical Financial Milestone for WMS")
+    public ResponseEntity<WMSPhysicalFinancialMilestoneApplicationResponse> v1RegistrationSearchPhysicalFinancialMilestone(@RequestBody RequestInfoWrapper requestInfoWrapper, @Valid @ModelAttribute WMSPhysicalFinancialMilestoneApplicationSearchCriteria wmsPhysicalFinancialMilestoneApplicationSearchCriteria) {
+        List<WMSPhysicalFinancialMilestoneApplication> applications = physicalFinancialMilestoneService.searchWMSPhysicalFinancialMilestoneApplications(requestInfoWrapper.getRequestInfo(), wmsPhysicalFinancialMilestoneApplicationSearchCriteria);
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true);
+        WMSPhysicalFinancialMilestoneApplicationResponse response = WMSPhysicalFinancialMilestoneApplicationResponse.builder().wmsPhysicalFinancialMilestoneApplications(applications).responseInfo(responseInfo).build();
+        return new ResponseEntity<>(response,HttpStatus.OK);
+    }
 
     
 }
