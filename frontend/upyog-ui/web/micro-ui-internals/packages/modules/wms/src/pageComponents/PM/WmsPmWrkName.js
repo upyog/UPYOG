@@ -5,7 +5,7 @@ const WmsPmWrkName = ({ t, config, onSelect, formData = {}, userType, register, 
   const { pathname: url } = useLocation();
   const inputs = [
     {
-      label: "WMS_PM_WORK_NAME_LABEL",
+      label: "Work Name",
       type: "text",
       name: "work_name",
       validation: {

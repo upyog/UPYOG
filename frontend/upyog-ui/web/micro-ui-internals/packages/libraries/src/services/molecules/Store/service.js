@@ -783,7 +783,7 @@ export const StoreService = {
               },
               {
                 "id": 2478,
-                "name": "PM HOME",
+                "name": "PM_HOME",
                 "url": "digit-ui-card",
                 "displayName": "Physical Milestone",
                 "orderNumber": 3,
@@ -797,7 +797,43 @@ export const StoreService = {
                 "rightIcon": "",
                 "queryParams": "",
                 "sidebar": "digit-ui-links",
-                "sidebarURL": "/digit-ui/citizen/pt-home"
+                "sidebarURL": "/digit-ui/citizen/wms-home"
+            },
+            {
+                "id": 2479,
+                "name": "PM Create",
+                "url": "digit-ui-card",
+                "displayName": "PM Create",
+                "orderNumber": 3,
+                "parentModule": "WMS",
+                "enabled": true,
+                "serviceCode": "",
+                "code": "",
+                "path": "",
+                "navigationURL": "/digit-ui/citizen/pm-create",
+                "leftIcon": "propertyIcon",
+                "rightIcon": "",
+                "queryParams": "",
+                "sidebar": "digit-ui-links",
+                "sidebarURL": "/digit-ui/citizen/wms/pm-home"
+            },
+            {
+                "id": 2480,
+                "name": "PM List",
+                "url": "digit-ui-card",
+                "displayName": "PM List",
+                "orderNumber": 3,
+                "parentModule": "WMS",
+                "enabled": true,
+                "serviceCode": "",
+                "code": "",
+                "path": "",
+                "navigationURL": "/digit-ui/citizen/pm-list",
+                "leftIcon": "propertyIcon",
+                "rightIcon": "",
+                "queryParams": "",
+                "sidebar": "digit-ui-links",
+                "sidebarURL": "/digit-ui/citizen/wms/pm-home"
             },
               {
                 "id": 2479,

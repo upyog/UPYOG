@@ -13,15 +13,10 @@ const CitizenApp = ({ path, url, userType }) => {
       tenantId: tenantId,
     },
   };
-  if(path!=undefined )
-  {
-    //alert("in:"+path);
-  }
-  const List = Digit?.ComponentRegistryService?.getComponent("WmsSorList");
-  const Details = Digit?.ComponentRegistryService?.getComponent("WmsSorDetails");
-  const Create = Digit?.ComponentRegistryService?.getComponent("WmsSorCreate");
-  const PMCreate = Digit?.ComponentRegistryService?.getComponent("PMCreate");
-  
+/*-------PM ------ */
+const List = Digit?.ComponentRegistryService?.getComponent("WmsPMList");
+const PMCreate = Digit?.ComponentRegistryService?.getComponent("PMCreate");
+/*------- ------ */
   const Update = Digit?.ComponentRegistryService?.getComponent("WmsSorUpdate");
   const Edit = Digit?.ComponentRegistryService?.getComponent("WmsSorEdit");
   const Response = Digit?.ComponentRegistryService?.getComponent("Response");
@@ -31,18 +26,18 @@ const CitizenApp = ({ path, url, userType }) => {
       <AppContainer>
 
         <div className="ground-container">
-          
           <PrivateRoute
-            path={`${path}/sor-home`}
+            path={`${path}/pm-home`}
             component={() => (
               <List parentRoute={path} businessService="WMS" filterComponent="WMS_LIST_FILTER" initialStates={inboxInitialState} isInbox={true} />
             )}
           />
-          <PrivateRoute path={`${path}/pm-home`} component={() => <PMCreate />} />
-          <PrivateRoute path={`${path}/sor-create`} component={() => <Create />} />
+          {/* <PrivateRoute path={`${path}/pm-home`} component={() => <PMCreate />} /> */}
+          <PrivateRoute path={`${path}/pm-create`} component={() => <PMCreate />} />
+          {/* <PrivateRoute path={`${path}/sor-create`} component={() => <Create />} /> */}
           <PrivateRoute path={`${path}/response`} component={(props) => <Response {...props} parentRoute={path} />} />
-          <PrivateRoute path={`${path}/sor-details/:id`} component={() => <Details />} />
-          <PrivateRoute path={`${path}/sor-edit/:id`} component={() => <Edit />} />
+          {/* <PrivateRoute path={`${path}/sor-details/:id`} component={() => <Details />} /> */}
+          {/* <PrivateRoute path={`${path}/sor-edit/:id`} component={() => <Edit />} /> */}
           {/* <PrivateRoute path={`${path}/sor-update/:id`} component={() => <Update />} /> */}
         </div>
         </AppContainer>

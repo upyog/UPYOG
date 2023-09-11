@@ -8,7 +8,7 @@ const WmsPmPer = ({ t, config, onSelect, formData = {}, userType, register, erro
       label: "WMS_PM_PERCENT_LABEL",
       type: "text",
       name: "percent",
-      isMandatory: false,
+      isMandatory: true,
     },
   ];
 

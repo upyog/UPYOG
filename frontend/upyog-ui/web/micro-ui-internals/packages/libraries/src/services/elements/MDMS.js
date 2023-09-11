@@ -2265,7 +2265,7 @@ export const MdmsService = {
                   "rightIcon": ""
               },{
                 "id": 3003,
-                "name": "PM HOME",
+                "name": "PM_HOME",
                 "url": "digit-ui-card",
                 "displayName": "Physical Milestone",
                 "orderNumber": 3,

@@ -244,6 +244,12 @@ import useWmsSorCount from "./wms/sor/useWmsSorCount";
 import useWmsSorCreate from "./wms/sor/useWmsSorCreate";
 import useWmsSorUpdate from "./wms/sor/useWmsSorUpdate";
 
+import useWmsPmSearch from "./wms/pm/useWmsPmSearch";
+import useWmsPmCount from "./wms/pm/useWmsPmCount";
+import useWmsPmCreate from "./wms/pm/useWmsPmCreate";
+import useWmsPmUpdate from "./wms/pm/useWmsPmUpdate";
+
+
 import useGetHowItWorksJSON from "./useHowItWorksJSON";
 import useGetFAQsJSON from "./useGetFAQsJSON";
 import useGetDSSFAQsJSON from "./useGetDSSFAQsJSON";
@@ -496,6 +502,12 @@ const wms = {
     useWmsSorCreate:useWmsSorCreate,
     useWmsSorUpdate:useWmsSorUpdate,
     useWmsSorCount:useWmsSorCount
+  },
+  pm:{
+    useWmsPmSearch:useWmsPmSearch,
+    useWmsPmCreate:useWmsPmCreate,
+    useWmsPmUpdate:useWmsPmUpdate,
+    useWmsPmCount:useWmsPmCount
   },
   useWmsMDMS,
   useWmsGenderMDMS,

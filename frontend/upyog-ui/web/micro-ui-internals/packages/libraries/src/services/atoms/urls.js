@@ -225,18 +225,7 @@ wms:{
   bills: {
     cancelBill: "/billing-service/bill/v2/_cancelbill",
   },
-  wms:{
-    SchemeMaster:{create:"",search:"",update:"",count:""},
-    SORApplications:{create: "https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/SORApplications",
-    update:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/SORApplications:id",
-    get:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/SORApplications",
-    search:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/SORApplications",
-    delete:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/SORApplications:id"},
-    ProjectMaster:{create:"",search:"",update:"",count:""},
-    Work:{create:"",search:"",update:"",count:""},
-  },
-  
-wms_old:{
+wms:{
   Scheme_Master:{
     create: "https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/Scheme_Master",
     update:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/Scheme_Master:id",
@@ -260,11 +249,11 @@ wms_old:{
   },
   PMApplications:{
 
-    create: "http://10.216.36.152:8484/wms/wms-services/v1/pfmilestone/_create",
+    create: "https://64f5834d2b07270f705d4f91.mockapi.io/PMApplications",
 
     update:"https://64f5834d2b07270f705d4f91.mockapi.io/PMApplications:id",
 
-    get:"https://64f5834d2b07270f705d4f91.mockapi.io/PMApplications/:id",
+    get:"https://64f5834d2b07270f705d4f91.mockapi.io/PMApplications:id",
 
     search:"https://64f5834d2b07270f705d4f91.mockapi.io/PMApplications",
 

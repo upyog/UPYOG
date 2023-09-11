@@ -135,7 +135,7 @@ PMApplications:{
     }),
   create: (data, tenantId) =>
     Request({
-      data: data.PhysicalMilestone[0],
+      data: data,
       url: Urls.wms.PMApplications.create,
       useCache: false,
       method: "POST",

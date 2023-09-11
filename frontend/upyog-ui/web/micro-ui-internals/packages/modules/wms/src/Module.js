@@ -8,10 +8,13 @@ import EmployeeApp from "./pages/employee";
 
 import WMSCard from "./components/WmsCard";
 
+
 import Response from "./pages/citizen/SOR/Response";
 
 
 /**------------ PM */
+
+import List from "./pages/citizen/PM/List";
 import PMCreate from "./pages/citizen/PM/Create";
 import WmsPmId from "./pageComponents/PM/WmsPmId";
 import WmsPmMlName from "./pageComponents/PM/WmsPmMlName";
@@ -25,6 +28,7 @@ import ContrMasterView from "./pages/citizen/ContrMaster/ContrView";
 const componentsToRegister = {  
   Home:Home,  
   PMCreate:PMCreate,
+  WmsPMList:List,
   ContrMasterAdd,
   ContrMasterView,
   Response,
@@ -59,7 +63,7 @@ export const WMSModule = ({ stateCode, userType, tenants }) => {
 export const WMSLinks = ({ matchPath, userType }) => {
   const { t } = useTranslation();
   const links = [
-/*     {
+     {
       link: `${matchPath}/wms-home`,
       i18nKey: t("WMS_HOME"),
     }, 
@@ -78,7 +82,7 @@ export const WMSLinks = ({ matchPath, userType }) => {
     {
       link: `${matchPath}/cm-table-view`,
       i18nKey: t("Contact Master Tabless"),
-    },*/
+    },
   ];
   return <CitizenHomeCard header={t("CITIZEN_SERVICE_WMS")} links={links} Icon={() => <PTIcon className="fill-path-primary-main" />} />;
 };
