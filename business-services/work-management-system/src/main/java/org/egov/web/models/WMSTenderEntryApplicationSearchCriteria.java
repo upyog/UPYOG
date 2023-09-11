@@ -22,6 +22,6 @@ import lombok.ToString;
 public class WMSTenderEntryApplicationSearchCriteria {
 
 	@JsonProperty("tender_id")
-    private List<Integer> tenderId;
+    private List<String> tenderId;
 
 }

@@ -11,25 +11,33 @@ import java.util.Map;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
+import org.egov.web.models.AuditDetails;
 import org.egov.web.models.Scheme;
 
 @Component
 public class SchemeRowMapper implements ResultSetExtractor<List<Scheme>> {
     public List<Scheme> extractData(ResultSet rs) throws SQLException, DataAccessException {
-        Map<Long,Scheme> schemeApplicationMap = new LinkedHashMap<>();
+        Map<String,Scheme> schemeApplicationMap = new LinkedHashMap<>();
 
         while (rs.next()){
-            long Id = rs.getLong("sSchemeId");
+            String Id = rs.getString("sSchemeId");
             Scheme schemeApplication = schemeApplicationMap.get(Id);
 
             if(schemeApplication == null) {
 
-                Date lastModifiedTime = rs.getDate("sSchemeStartDate");
+            	Long lastModifiedTime = rs.getLong("sLastmodifiedtime");
                 if (rs.wasNull()) {
                     lastModifiedTime = null;
                 }
+                
+                AuditDetails auditdetails = AuditDetails.builder()
+                        .createdBy(rs.getString("sCreatedBy"))
+                        .createdTime(rs.getLong("sCreatedtime"))
+                        .lastModifiedBy(rs.getString("sLastmodifiedby"))
+                        .lastModifiedTime(lastModifiedTime)
+                        .build();
                 schemeApplication = Scheme.builder()
-                        .id((long) rs.getLong("sSchemeId"))
+                        .id(rs.getString("sSchemeId"))
                         .schemeNameEn(rs.getString("sSchemeName"))
                         .schemeNameReg(rs.getString("sSchemeNameReg"))
                         .startDate(rs.getString("sSchemeStartDate"))

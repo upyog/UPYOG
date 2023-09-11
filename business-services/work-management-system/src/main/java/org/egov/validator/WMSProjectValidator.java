@@ -29,7 +29,7 @@ public class WMSProjectValidator {
 	    }
 
 	    public List<Project> validateApplicationUpdateRequest(WMSProjectRequest wmsProjectRequest) {
-	        List<Long> ids = wmsProjectRequest.getProjectApplications().stream().map(Project::getProjectId).collect(Collectors.toList());
+	        List<String> ids = wmsProjectRequest.getProjectApplications().stream().map(Project::getProjectId).collect(Collectors.toList());
 	        List<Project> projectApplications = repository.updateProject(ProjectApplicationSearchCriteria.builder().projectId(ids).build());
 	        if(projectApplications.size() != ids.size())
 	            throw new CustomException("APPLICATION_DOES_NOT_EXIST", "One of the Project ids does not exist.");

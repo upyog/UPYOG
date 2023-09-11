@@ -19,7 +19,7 @@ import lombok.Setter;
 public class WMSTenderEntryApplication {
 	
 	@JsonProperty("tender_id")
-	private Integer tenderId=null;
+	private String tenderId=null;
 	@JsonProperty("department_name")
 	private String departmentName=null;
 	@JsonProperty("request_category")
@@ -64,6 +64,9 @@ public class WMSTenderEntryApplication {
 	private String vendorClass=null;
 	@JsonProperty("work_duration")
 	private String workDuration=null;
+	
+	@JsonProperty("auditDetails")
+	private AuditDetails auditDetails = null;
 	@JsonProperty("tenantId")
 	 private String tenantId = null;
 	

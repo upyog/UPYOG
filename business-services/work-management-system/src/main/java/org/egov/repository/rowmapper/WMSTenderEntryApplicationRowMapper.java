@@ -8,6 +8,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.egov.web.models.AuditDetails;
 import org.egov.web.models.ScheduleOfRateApplication;
 import org.egov.web.models.WMSContractorApplication;
 import org.egov.web.models.WMSTenderEntryApplication;
@@ -19,20 +20,27 @@ import org.springframework.stereotype.Component;
 @Component
 public class WMSTenderEntryApplicationRowMapper implements ResultSetExtractor<List<WMSTenderEntryApplication>> {
     public List<WMSTenderEntryApplication> extractData(ResultSet rs) throws SQLException, DataAccessException {
-        Map<Integer,WMSTenderEntryApplication> wmsTenderEntryApplicationMap = new LinkedHashMap<>();
+        Map<String,WMSTenderEntryApplication> wmsTenderEntryApplicationMap = new LinkedHashMap<>();
 
         while (rs.next()){
-            int tenderId = rs.getInt("tTenderId");
+            String tenderId = rs.getString("tTenderId");
             WMSTenderEntryApplication wmsTenderEntryApplication = wmsTenderEntryApplicationMap.get(tenderId);
 
             if(wmsTenderEntryApplication == null) {
 
-                Date lastModifiedTime = rs.getDate("tpublishDate");
+            	Long lastModifiedTime = rs.getLong("tLastmodifiedtime");
                 if (rs.wasNull()) {
                     lastModifiedTime = null;
                 }
+                
+                AuditDetails auditdetails = AuditDetails.builder()
+                        .createdBy(rs.getString("tCreatedBy"))
+                        .createdTime(rs.getLong("tCreatedtime"))
+                        .lastModifiedBy(rs.getString("tLastmodifiedby"))
+                        .lastModifiedTime(lastModifiedTime)
+                        .build();
                 wmsTenderEntryApplication = WMSTenderEntryApplication.builder()
-                        .tenderId(rs.getInt("ttenderId"))
+                        .tenderId(rs.getString("ttenderId"))
                         .departmentName(rs.getString("tdepartmentName"))
                         .requestCategory(rs.getString("trequestCategory"))
                         .projectName(rs.getString("tprojectName"))

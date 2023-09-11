@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.egov.util.IdgenUtil;
+import org.egov.web.models.AuditDetails;
 import org.egov.web.models.Project;
 import org.egov.web.models.Scheme;
 import org.egov.web.models.WMSProjectRequest;
@@ -50,12 +51,17 @@ public class ProjectApplicationEnrichment {
 			// Enrich audit details
 //	            AuditDetails auditDetails = AuditDetails.builder().createdBy(birthRegistrationRequest.getRequestInfo().getUserInfo().getUuid()).createdTime(System.currentTimeMillis()).lastModifiedBy(birthRegistrationRequest.getRequestInfo().getUserInfo().getUuid()).lastModifiedTime(System.currentTimeMillis()).build();
 //	            application.setAuditDetails(auditDetails);
+			
+			AuditDetails auditDetails = AuditDetails.builder().createdBy(wmsProjectRequest.getRequestInfo().getUserInfo().getUuid()).createdTime(System.currentTimeMillis()).lastModifiedBy(wmsProjectRequest.getRequestInfo().getUserInfo().getUuid()).lastModifiedTime(System.currentTimeMillis()).build();
+            application.setAuditDetails(auditDetails);
 
 			// Enrich UUID
-			application.setProjectId((long) Math.floor(Math.random() * (9999 - 1000 + 1) + 1000));
+            Long randomNumber=(long) Math.floor(Math.random() * (9999 - 1000 + 1) + 1000);
+			application.setProjectId(Long.toString(randomNumber));
+			//application.setId(UUID.randomUUID().toString());
 			//application.setDescOfItem(projectMasterIdList.get(index++));
-			application.setProjectStartDate(date);
-			application.setProjectEndDate(date);
+			//application.setProjectStartDate(date);
+			//application.setProjectEndDate(date);
 
 			// Set application number from IdGen
 			 //application.setProjectNumber(projectMasterIdList.get(index++));

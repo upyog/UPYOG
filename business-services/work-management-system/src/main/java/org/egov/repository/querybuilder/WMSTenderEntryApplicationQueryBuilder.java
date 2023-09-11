@@ -13,7 +13,7 @@ import org.springframework.util.ObjectUtils;
 public class WMSTenderEntryApplicationQueryBuilder {
 
 	
-	private static final String BASE_TENDER_QUERY = " SELECT tender.tender_id as ttenderId, tender.department_name as tdepartmentName, tender.request_category as trequestCategory, tender.project_name as tprojectName, tender.resolution_no as tresolutionNo, tender.resolution_date as tresolutionDate, tender.prebid_meeting_date as tprebidMeetingDate,tender.prebid_meeting_location as tprebidMeetingLocation, tender.issue_from_date as tissueFromDate, tender.issue_till_date as tissueTillDate, tender.publish_date as tpublishDate, tender.technical_bid_open_date as ttechnicalBidOpenDate, tender.financial_bid_open_date as tfinancialBidOpenDate, tender.validity as tvalidity, tender.upload_document as tuploadDocument, tender.work_no as tworkNo, tender.work_description as tworkDescription,tender.estimated_cost as testimatedCost,tender.tender_type as ttenderType,tender.tender_fee as ttenderFee,tender.emd as temd,tender.vendor_class as tvendorClass,tender.work_duration as tworkDuration ";
+	private static final String BASE_TENDER_QUERY = " SELECT tender.tender_id as ttenderId, tender.department_name as tdepartmentName, tender.request_category as trequestCategory, tender.project_name as tprojectName, tender.resolution_no as tresolutionNo, tender.resolution_date as tresolutionDate, tender.prebid_meeting_date as tprebidMeetingDate,tender.prebid_meeting_location as tprebidMeetingLocation, tender.issue_from_date as tissueFromDate, tender.issue_till_date as tissueTillDate, tender.publish_date as tpublishDate, tender.technical_bid_open_date as ttechnicalBidOpenDate, tender.financial_bid_open_date as tfinancialBidOpenDate, tender.validity as tvalidity, tender.upload_document as tuploadDocument, tender.work_no as tworkNo, tender.work_description as tworkDescription,tender.estimated_cost as testimatedCost,tender.tender_type as ttenderType,tender.tender_fee as ttenderFee,tender.emd as temd,tender.vendor_class as tvendorClass,tender.work_duration as tworkDuration, tender.createdby as tCreatedBy, tender.lastmodifiedby as tLastmodifiedby, tender.createdtime as tCreatedtime, tender.lastmodifiedtime as tLastmodifiedtime ";
 
     //private static final String ADDRESS_SELECT_QUERY = " add.id as aid, add.tenantid as atenantid, add.doorno as adoorno, add.latitude as alatitude, add.longitude as alongitude, add.buildingname as abuildingname, add.addressid as aaddressid, add.addressnumber as aaddressnumber, add.type as atype, add.addressline1 as aaddressline1, add.addressline2 as aaddressline2, add.landmark as alandmark, add.street as astreet, add.city as acity, add.locality as alocality, add.pincode as apincode, add.detail as adetail, add.registrationid as aregistrationid ";
 
@@ -47,7 +47,7 @@ public class WMSTenderEntryApplicationQueryBuilder {
         }
     }
 
-    private String createQuery(List<Integer> list) {
+    private String createQuery(List<String> list) {
         StringBuilder builder = new StringBuilder();
         int length = list.size();
         for (int i = 0; i < length; i++) {
@@ -58,7 +58,7 @@ public class WMSTenderEntryApplicationQueryBuilder {
         return builder.toString();
     }
 
-    private void addToPreparedStatement(List<Object> preparedStmtList, List<Integer> ids) {
+    private void addToPreparedStatement(List<Object> preparedStmtList, List<String> ids) {
         ids.forEach(id -> {
             preparedStmtList.add(id);
         });

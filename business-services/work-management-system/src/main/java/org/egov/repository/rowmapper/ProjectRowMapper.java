@@ -11,26 +11,34 @@ import java.util.Map;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
+import org.egov.web.models.AuditDetails;
 import org.egov.web.models.Project;
 import org.egov.web.models.Scheme;
 
 @Component
 public class ProjectRowMapper implements ResultSetExtractor<List<Project>> {
     public List<Project> extractData(ResultSet rs) throws SQLException, DataAccessException {
-        Map<Long,Project> projectApplicationMap = new LinkedHashMap<>();
+        Map<String,Project> projectApplicationMap = new LinkedHashMap<>();
 
         while (rs.next()){
-            long projectId = rs.getLong("sProjectId");
+            String projectId = rs.getString("sProjectId");
             Project projectApplication = projectApplicationMap.get(projectId);
 
             if(projectApplication == null) {
 
-                Date lastModifiedTime = rs.getDate("sProjectStartDate");
+            	Long lastModifiedTime = rs.getLong("sLastmodifiedtime");
                 if (rs.wasNull()) {
                     lastModifiedTime = null;
                 }
+                
+                AuditDetails auditdetails = AuditDetails.builder()
+                        .createdBy(rs.getString("sCreatedBy"))
+                        .createdTime(rs.getLong("sCreatedtime"))
+                        .lastModifiedBy(rs.getString("sLastmodifiedby"))
+                        .lastModifiedTime(lastModifiedTime)
+                        .build();
                 projectApplication = Project.builder()
-                        .projectId((long) rs.getLong("sProjectId"))
+                        .projectId(rs.getString("sProjectId"))
                         .projectNumber(rs.getString("sProjectNumber"))
                         .sourceOfFund(rs.getString("sSchemeSourceOfFund"))
                         .schemeNo(rs.getLong("sSchemeNo"))

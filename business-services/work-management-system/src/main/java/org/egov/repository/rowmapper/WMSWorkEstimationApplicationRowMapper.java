@@ -8,6 +8,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.egov.web.models.AuditDetails;
 import org.egov.web.models.ScheduleOfRateApplication;
 import org.egov.web.models.WMSContractorApplication;
 import org.egov.web.models.WMSWorkApplication;
@@ -19,20 +20,27 @@ import org.springframework.stereotype.Component;
 @Component
 public class WMSWorkEstimationApplicationRowMapper implements ResultSetExtractor<List<WMSWorkEstimationApplication>> {
     public List<WMSWorkEstimationApplication> extractData(ResultSet rs) throws SQLException, DataAccessException {
-        Map<Integer,WMSWorkEstimationApplication> wmsWorkEstimationApplicationMap = new LinkedHashMap<>();
+        Map<String,WMSWorkEstimationApplication> wmsWorkEstimationApplicationMap = new LinkedHashMap<>();
 
         while (rs.next()){
-            int estimateId = rs.getInt("eEstimateId");
+            String estimateId = rs.getString("eEstimateId");
             WMSWorkEstimationApplication wmsWorkEstimationApplication = wmsWorkEstimationApplicationMap.get(estimateId);
 
             if(wmsWorkEstimationApplication == null) {
 
-                //Date lastModifiedTime = rs.getDate("eWorkEstimationNo");
+            	Long lastModifiedTime = rs.getLong("eLastmodifiedtime");
                 if (rs.wasNull()) {
-                    //lastModifiedTime = null;
+                    lastModifiedTime = null;
                 }
+                
+                AuditDetails auditdetails = AuditDetails.builder()
+                        .createdBy(rs.getString("eCreatedBy"))
+                        .createdTime(rs.getLong("eCreatedtime"))
+                        .lastModifiedBy(rs.getString("eLastmodifiedby"))
+                        .lastModifiedTime(lastModifiedTime)
+                        .build();
                 wmsWorkEstimationApplication = WMSWorkEstimationApplication.builder()
-                        .estimateId(rs.getInt("eEstimateId"))
+                        .estimateId(rs.getString("eEstimateId"))
                         .workEstimationNo(rs.getString("eWorkEstimationNo"))
                         .projectName(rs.getString("eProjectName"))
                         .workName(rs.getString("eWorkName"))

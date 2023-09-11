@@ -22,7 +22,7 @@ import lombok.ToString;
 public class Scheme {
 	
 	@JsonProperty("scheme_id")
-    private Long id;
+    private String id;
 	@JsonProperty("tenantId")
     private String tenantId = null;
 	@JsonProperty("start_date")
@@ -45,6 +45,9 @@ public class Scheme {
 	private String schemeDescription=null;
 	@JsonProperty("upload_document")
 	private String uploadDocument=null;
+	
+	@JsonProperty("auditDetails")
+	private AuditDetails auditDetails = null;
 	
 
 }

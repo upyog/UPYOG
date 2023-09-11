@@ -26,7 +26,7 @@ import lombok.ToString;
 public class Project {
 	
 	@JsonProperty("project_id")
-	private Long projectId;
+	private String projectId;
 	@JsonProperty("project_number")
 	private String projectNumber;
 	@JsonProperty("source_of_fund")
@@ -58,6 +58,9 @@ public class Project {
 	private String approvalDate;
 	@JsonProperty("status")
 	private String status;
+	
+	@JsonProperty("auditDetails")
+	private AuditDetails auditDetails = null;
 	@JsonProperty("tenantId")
 	private String tenantId = null;
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)

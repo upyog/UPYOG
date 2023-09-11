@@ -40,7 +40,7 @@ public class WMSTenderEntryValidator {
 
 		public List<WMSTenderEntryApplication> validateApplicationUpdateRequest(
 				WMSTenderEntryRequest tenderEntryRequest) {
-			List<Integer> ids = tenderEntryRequest.getWmsTenderEntryApplications().stream().map(WMSTenderEntryApplication::getTenderId).collect(Collectors.toList());
+			List<String> ids = tenderEntryRequest.getWmsTenderEntryApplications().stream().map(WMSTenderEntryApplication::getTenderId).collect(Collectors.toList());
 	        List<WMSTenderEntryApplication> tenderEntryApplications = repository.getApplications(WMSTenderEntryApplicationSearchCriteria.builder().tenderId(ids).build());
 	        if(tenderEntryApplications.size() != ids.size())
 	            throw new CustomException("APPLICATION_DOES_NOT_EXIST", "One of the Tender Entry ids does not exist.");

@@ -28,7 +28,7 @@ public class WMSSchemeValidator {
 	    }
 
 	    public List<Scheme> validateApplicationUpdateRequest(WMSSchemeRequest wmsSchemeRequest) {
-	        List<Long> ids = wmsSchemeRequest.getSchemeApplications().stream().map(Scheme::getId).collect(Collectors.toList());
+	        List<String> ids = wmsSchemeRequest.getSchemeApplications().stream().map(Scheme::getId).collect(Collectors.toList());
 	        List<Scheme> schemeApplications = repository.updateScheme(SchemeApplicationSearchCriteria.builder().Id(ids).build());
 	        if(schemeApplications.size() != ids.size())
 	            throw new CustomException("APPLICATION_DOES_NOT_EXIST", "One of the Scheme ids does not exist.");

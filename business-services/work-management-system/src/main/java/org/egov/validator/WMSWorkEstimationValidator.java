@@ -40,7 +40,7 @@ public class WMSWorkEstimationValidator {
 
 		public List<WMSWorkEstimationApplication> validateApplicationUpdateRequest(
 				WMSWorkEstimationRequest workEstimationRequest) {
-			List<Integer> ids = workEstimationRequest.getWmsWorkEstimationApplications().stream().map(WMSWorkEstimationApplication::getEstimateId).collect(Collectors.toList());
+			List<String> ids = workEstimationRequest.getWmsWorkEstimationApplications().stream().map(WMSWorkEstimationApplication::getEstimateId).collect(Collectors.toList());
 	        List<WMSWorkEstimationApplication> WorkEstimationApplications = repository.getApplications(WMSWorkEstimationApplicationSearchCriteria.builder().estimateId(ids).build());
 	        if(WorkEstimationApplications.size() != ids.size())
 	            throw new CustomException("APPLICATION_DOES_NOT_EXIST", "One of the Work Estimation ids does not exist.");

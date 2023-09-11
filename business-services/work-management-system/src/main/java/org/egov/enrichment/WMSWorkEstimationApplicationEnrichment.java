@@ -51,7 +51,9 @@ public class WMSWorkEstimationApplicationEnrichment {
 //	            application.setAuditDetails(auditDetails);
 
 			// Enrich UUID
-			application.setEstimateId((int) Math.floor(Math.random() * (9999 - 1000 + 1) + 1000));
+            Long randomNumber=(long) Math.floor(Math.random() * (9999 - 1000 + 1) + 1000);
+			application.setEstimateId(Long.toString(randomNumber));
+			//application.setId(UUID.randomUUID().toString());
 			//application.setWorkName(sorIdList.get(index++));
 			//application.setStartDate(date);
 			//application.setEndDate(date);

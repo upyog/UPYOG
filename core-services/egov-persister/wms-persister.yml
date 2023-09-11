@@ -61,7 +61,7 @@ serviceMaps:
       isTransaction: true
       queryMaps:
 
-        - query: INSERT INTO scheme_master (scheme_id,start_date,end_date,source_of_fund,scheme_name_en,scheme_name_reg,fund,description_of_the_scheme,upload_document) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?);
+        - query: INSERT INTO scheme_master (scheme_id,start_date,end_date,source_of_fund,scheme_name_en,scheme_name_reg,fund,description_of_the_scheme,upload_document,createdby,lastmodifiedby,createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?);
           basePath: SchemeApplication.*
           jsonMaps:
             - jsonPath: $.SchemeApplication.*.scheme_id
@@ -81,6 +81,16 @@ serviceMaps:
             - jsonPath: $.SchemeApplication.*.description_of_the_scheme
 
             - jsonPath: $.SchemeApplication.*.upload_document
+            
+            - jsonPath: $.SchemeApplication.*.auditDetails.createdBy
+
+            - jsonPath: $.SchemeApplication.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.SchemeApplication.*.auditDetails.createdTime
+            
+            - jsonPath: $.SchemeApplication.*.auditDetails.lastModifiedTime
+            
+            
             
        
        
@@ -117,7 +127,7 @@ serviceMaps:
       isTransaction: true
       queryMaps:
 
-        - query: INSERT INTO project_master (project_id,project_number,source_of_fund,scheme_no,department,project_name_en,project_name_reg,project_description,project_timeline,project_start_date,project_end_date,scheme_name,approval_number,approval_date,status) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?,?,?);
+        - query: INSERT INTO project_master (project_id,project_number,source_of_fund,scheme_no,department,project_name_en,project_name_reg,project_description,project_timeline,project_start_date,project_end_date,scheme_name,approval_number,approval_date,status,createdby,lastmodifiedby,createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?,?,?,?,?,?,?);
           basePath: ProjectApplication.*
           jsonMaps:
             - jsonPath: $.ProjectApplication.*.project_id
@@ -149,6 +159,14 @@ serviceMaps:
             - jsonPath: $.ProjectApplication.*.approval_date
             
             - jsonPath: $.ProjectApplication.*.status
+            
+            - jsonPath: $.ProjectApplication.*.auditDetails.createdBy
+
+            - jsonPath: $.ProjectApplication.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.ProjectApplication.*.auditDetails.createdTime
+            
+            - jsonPath: $.ProjectApplication.*.auditDetails.lastModifiedTime
             
        
        
@@ -317,7 +335,7 @@ serviceMaps:
       isTransaction: true
       queryMaps:
       
-        - query: UPDATE contractor SET mobile_number = ?,uid_number = ?, vendor_name = ?, vat_number = ?, epfo_account_number = ?, email = ?, gst_number = ?, pan_number = ?, bank_account_number = ?, address = ?, vendor_type = ?, bank_branch_ifsc_code = ?, function = ?, vendor_class = ?, vendor_sub_type = ?, primary_account_head = ? WHERE vendor_id=?;
+        - query: UPDATE contractor SET mobile_number = ?,uid_number = ?, vendor_name = ?, vat_number = ?, epfo_account_number = ?, email = ?, gst_number = ?, pan_number = ?, bank_account_number = ?, address = ?, vendor_type = ?, bank_branch_ifsc_code = ?, function = ?, vendor_class = ?, vendor_sub_type = ?, primary_account_head = ?, pfms_vendor_code = ?, payto = ? WHERE vendor_id=?;
           basePath: WMSContractorApplication.*
           jsonMaps:
             - jsonPath: $.WMSContractorApplication.*.mobile_number
@@ -352,6 +370,10 @@ serviceMaps:
             
             - jsonPath: $.WMSContractorApplication.*.primary_account_head
             
+            - jsonPath: $.WMSContractorApplication.*.pfms_vendor_code
+            
+            - jsonPath: $.WMSContractorApplication.*.payto
+            
             - jsonPath: $.WMSContractorApplication.*.vendor_id	
             
             
@@ -362,7 +384,7 @@ serviceMaps:
       isTransaction: true
       queryMaps:
 
-        - query: INSERT INTO tender_entry (tender_id,department_name,request_category,project_name,resolution_no,resolution_date,prebid_meeting_date,prebid_meeting_location,issue_from_date,issue_till_date,publish_date,technical_bid_open_date,financial_bid_open_date,validity,upload_document,work_no,work_description,estimated_cost,tender_type,tender_fee,emd,vendor_class,work_duration) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
+        - query: INSERT INTO tender_entry (tender_id,department_name,request_category,project_name,resolution_no,resolution_date,prebid_meeting_date,prebid_meeting_location,issue_from_date,issue_till_date,publish_date,technical_bid_open_date,financial_bid_open_date,validity,upload_document,work_no,work_description,estimated_cost,tender_type,tender_fee,emd,vendor_class,work_duration,createdby,lastmodifiedby,createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
           basePath: WMSTenderEntryApplication.*
           jsonMaps:
             - jsonPath: $.WMSTenderEntryApplication.*.tender_id
@@ -410,6 +432,14 @@ serviceMaps:
             - jsonPath: $.WMSTenderEntryApplication.*.vendor_class
             
             - jsonPath: $.WMSTenderEntryApplication.*.work_duration	
+            
+            - jsonPath: $.WMSTenderEntryApplication.*.auditDetails.createdBy
+
+            - jsonPath: $.WMSTenderEntryApplication.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.WMSTenderEntryApplication.*.auditDetails.createdTime
+            
+            - jsonPath: $.WMSTenderEntryApplication.*.auditDetails.lastModifiedTime
             
             
             
@@ -625,7 +655,7 @@ serviceMaps:
       isTransaction: true
       queryMaps:
 
-        - query: INSERT INTO work_estimation (estimate_id,work_estimation_no,project_name,work_name,from_date,to_date,estimate_type,sor_name,download_template,upload_template,chapter,item_no,desription_of_the_item,length,bw,dh,nos,quantity,unit,rate,estimate_amount,serial_no,particulars_of_item,calculation_type,addition_deduction,lf,bwf,dhf,sub_total,grand_total,estimated_quantity,remarks,overhead_code,overhead_description,value_type,estimated_amount,document_description,upload_document) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO work_estimation (estimate_id,work_estimation_no,project_name,work_name,from_date,to_date,estimate_type,sor_name,download_template,upload_template,chapter,item_no,desription_of_the_item,length,bw,dh,nos,quantity,unit,rate,estimate_amount,serial_no,particulars_of_item,calculation_type,addition_deduction,lf,bwf,dhf,sub_total,grand_total,estimated_quantity,remarks,overhead_code,overhead_description,value_type,estimated_amount,document_description,upload_document,createdby,lastmodifiedby,createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?);
           basePath: WMSWorkEstimationApplication.*
           jsonMaps:
             - jsonPath: $.WMSWorkEstimationApplication.*.estimate_id
@@ -703,6 +733,14 @@ serviceMaps:
             - jsonPath: $.WMSWorkEstimationApplication.*.document_description
             
             - jsonPath: $.WMSWorkEstimationApplication.*.upload_document
+            
+            - jsonPath: $.WMSWorkEstimationApplication.*.auditDetails.createdBy
+
+            - jsonPath: $.WMSWorkEstimationApplication.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.WMSWorkEstimationApplication.*.auditDetails.createdTime
+            
+            - jsonPath: $.WMSWorkEstimationApplication.*.auditDetails.lastModifiedTime
             
             
             

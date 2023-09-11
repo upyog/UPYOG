@@ -22,6 +22,6 @@ import lombok.ToString;
 public class SchemeApplicationSearchCriteria {
 
 	@JsonProperty("scheme_id")
-    private List<Long> Id;
+    private List<String> Id;
 
 }

@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.egov.util.IdgenUtil;
+import org.egov.web.models.AuditDetails;
 import org.egov.web.models.Scheme;
 import org.egov.web.models.WMSSchemeRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,12 +38,17 @@ public class SchemeApplicationEnrichment {
 			// Enrich audit details
 //	            AuditDetails auditDetails = AuditDetails.builder().createdBy(birthRegistrationRequest.getRequestInfo().getUserInfo().getUuid()).createdTime(System.currentTimeMillis()).lastModifiedBy(birthRegistrationRequest.getRequestInfo().getUserInfo().getUuid()).lastModifiedTime(System.currentTimeMillis()).build();
 //	            application.setAuditDetails(auditDetails);
+			
+			AuditDetails auditDetails = AuditDetails.builder().createdBy(wmsSchemeRequest.getRequestInfo().getUserInfo().getUuid()).createdTime(System.currentTimeMillis()).lastModifiedBy(wmsSchemeRequest.getRequestInfo().getUserInfo().getUuid()).lastModifiedTime(System.currentTimeMillis()).build();
+            application.setAuditDetails(auditDetails);
 
-			// Enrich UUID
-			application.setId((long) Math.floor(Math.random() * (9999 - 1000 + 1) + 1000));
+			// Enrich UUIDsc
+            Long randomNumber=(long) Math.floor(Math.random() * (9999 - 1000 + 1) + 1000);
+			application.setId(Long.toString(randomNumber));
+            //application.setId(UUID.randomUUID().toString());
 			//application.setDescOfItem(birthRegistrationIdList.get(index++));
-			application.setStartDate(date);
-			application.setEndDate(date);
+			//application.setStartDate(date);
+			//application.setEndDate(date);
 
 			// Set application number from IdGen
 			// application.setApplicationNumber(birthRegistrationIdList.get(index++));
