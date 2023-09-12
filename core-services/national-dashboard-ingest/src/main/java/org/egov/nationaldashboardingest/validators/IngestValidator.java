@@ -1,29 +1,55 @@
 package org.egov.nationaldashboardingest.validators;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.apache.commons.lang3.math.NumberUtils;
+import org.egov.common.contract.request.RequestInfo;
+import org.egov.mdms.model.MasterDetail;
+import org.egov.mdms.model.MdmsCriteria;
+import org.egov.mdms.model.MdmsCriteriaReq;
+import org.egov.mdms.model.ModuleDetail;
+import org.egov.nationaldashboardingest.config.ApplicationProperties;
+import org.egov.nationaldashboardingest.producer.Producer;
+import org.egov.nationaldashboardingest.repository.ElasticSearchRepository;
+import org.egov.nationaldashboardingest.repository.IngestDataRepository;
+import org.egov.nationaldashboardingest.utils.IngestConstants;
+import org.egov.nationaldashboardingest.utils.JsonProcessorUtil;
+import org.egov.nationaldashboardingest.web.models.AckEntity;
+import org.egov.nationaldashboardingest.web.models.Data;
+import org.egov.nationaldashboardingest.web.models.IngestAckData;
+import org.egov.nationaldashboardingest.web.models.IngestRequest;
+import org.egov.nationaldashboardingest.web.models.MasterData;
+import org.egov.nationaldashboardingest.web.models.MasterDataRequest;
+import org.egov.tracer.model.CustomException;
+import org.egov.tracer.model.ServiceCallException;
+import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.ResourceAccessException;
+import org.springframework.web.client.RestTemplate;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.math.NumberUtils;
-import org.egov.common.contract.request.RequestInfo;
-import org.egov.nationaldashboardingest.config.ApplicationProperties;
-import org.egov.nationaldashboardingest.producer.Producer;
-import org.egov.nationaldashboardingest.repository.ElasticSearchRepository;
-import org.egov.nationaldashboardingest.repository.IngestDataRepository;
-import org.egov.nationaldashboardingest.utils.JsonProcessorUtil;
-import org.egov.nationaldashboardingest.web.models.*;
-import org.egov.nationaldashboardingest.utils.IngestConstants;
-import org.egov.tracer.model.CustomException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import com.jayway.jsonpath.JsonPath;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
@@ -46,8 +72,20 @@ public class IngestValidator {
 
     @Autowired
     private Producer producer;
+    
+    @Value("${egov.mdms.host}")
+	private String mdmsHost;
+	
+	@Value("${egov.mdms.search.endpoint}")
+	private String mdmsEndpoint;
+	
+	@Autowired
+	private RestTemplate restTemplate;
 
     private static final Pattern p = Pattern.compile("[^a-z0-9._()/&:,\\- ]", Pattern.CASE_INSENSITIVE);
+    
+	public static final String MDMS_NATIONALTENANTS_PATH = "$.MdmsRes.tenant.nationalInfo";
+
 
 
     public void verifyCrossStateRequest(Data data, RequestInfo requestInfo){
@@ -292,6 +330,63 @@ public class IngestValidator {
         }
     }
 
+    public Boolean verifyTenant(RequestInfo requestInfo,List<Data> ingestData)
+    {
+    	Boolean isTenantValid=false;
+    	
+    	
+		StringBuilder mdmsURL=new StringBuilder().append(mdmsHost).append(mdmsEndpoint);
+       
+    	MasterDetail mstrDetail = MasterDetail.builder().name("nationalInfo")
+				.filter("[?(@.active==true)]")
+				.build();
+		ModuleDetail moduleDetail = ModuleDetail.builder().moduleName("tenant")
+				.masterDetails(Arrays.asList(mstrDetail)).build();
+		MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(Arrays.asList(moduleDetail)).tenantId("pg")
+				.build();
+		MdmsCriteriaReq mdmsConfig = MdmsCriteriaReq.builder().requestInfo(requestInfo).mdmsCriteria(mdmsCriteria).build();
+		Object response = null;
+		List<Map<String,String>> jsonOutput=null;
+		//Map<String,Object> migratedTenant =null;
+    	log.info("URI: " + mdmsURL.toString());
+    	try {
+    			log.info(objectMapper.writeValueAsString(mdmsConfig));
+    			response = restTemplate.postForObject(mdmsURL.toString(), mdmsConfig, Map.class);
+    			jsonOutput=  JsonPath.read(response, MDMS_NATIONALTENANTS_PATH);
+    			//migratedTenant= jsonOutput.get(0);
+    		} catch (ResourceAccessException e) {
+    			
+    			Map<String, String> map = new HashMap<>();
+    			map.put(null, e.getMessage());
+    			throw new CustomException(map);
+    		}  catch (HttpClientErrorException e) {
+
+    			log.info("the error is : " + e.getResponseBodyAsString());
+    			throw new ServiceCallException(e.getResponseBodyAsString());
+    		}catch (Exception e) {
+
+    			log.error("Exception while fetching from searcher: ", e);
+    		}
+
+    	for(Data data:ingestData)
+    	{
+            String tenant=data.getUlb();
+            String state=data.getState();
+            for(Map<String,String> migratedTenants:jsonOutput)
+            {
+            	if(tenant.equals(migratedTenants.get("code")) && state.equals(migratedTenants.get("stateName")))
+            	{
+            		isTenantValid=true;
+            		return isTenantValid;
+            	}
+            	
+            }
+            
+    	};
+    	
+    	return isTenantValid;
+    }
+    
     // The verification logic will always use module name + date to determine the uniqueness of a set of records.
     public IngestAckData verifyIfDataAlreadyIngested(List<Data> ingestData) {
         List<String> keyDataToSearch = new ArrayList<>();
