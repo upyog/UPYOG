@@ -11,6 +11,7 @@ import org.egov.nationaldashboardingest.web.models.AuditDetails;
 import org.egov.nationaldashboardingest.web.models.IngestAckData;
 import org.egov.nationaldashboardingest.web.models.IngestRequest;
 import org.egov.nationaldashboardingest.web.models.MasterDataRequest;
+import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -49,7 +50,12 @@ public class IngestService {
 
         Map<String, List<JsonNode>> indexNameVsDocumentsToBeIndexed = new HashMap<>();
 
+        //Validate if data id for migrated tenant
+        Boolean isUlbValid=ingestValidator.verifyTenant(ingestRequest.getRequestInfo(),ingestRequest.getIngestData());
+        if(!isUlbValid)
+            throw new CustomException("EG_DS_SAME_RECORD_ERR", "State/ ULB name in request is not in sync with migrated tenant!!");
 
+        
         // Validate if record for the day is already present
         IngestAckData dataToDb = ingestValidator.verifyIfDataAlreadyIngested(ingestRequest.getIngestData());
 
