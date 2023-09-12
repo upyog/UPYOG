@@ -507,7 +507,7 @@ serviceMaps:
       isTransaction: true
       queryMaps:
 
-        - query: INSERT INTO physical_financial_milestone (milestone_id,project_name,work_name,milestone_name,sr_no,activity_description,percentage_weightage,planned_start_date,planned_end_date,total_weightage,milestone_description,actual_start_date,actual_end_date,progress_update_date,completed_percentage) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?,?,?);
+        - query: INSERT INTO physical_financial_milestone (milestone_id,project_name,work_name,milestone_name,percentage_weightage,createdby,lastmodifiedby,createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?,?,?,?,?);
           basePath: WMSPhysicalFinancialMilestoneApplication.*
           jsonMaps:
             - jsonPath: $.WMSPhysicalFinancialMilestoneApplication.*.milestone_id
@@ -518,27 +518,17 @@ serviceMaps:
             
             - jsonPath: $.WMSPhysicalFinancialMilestoneApplication.*.milestone_name
 
-            - jsonPath: $.WMSPhysicalFinancialMilestoneApplication.*.sr_no
-
-            - jsonPath: $.WMSPhysicalFinancialMilestoneApplication.*.activity_description
-
             - jsonPath: $.WMSPhysicalFinancialMilestoneApplication.*.percentage_weightage
+            
+            - jsonPath: $.WMSPhysicalFinancialMilestoneApplication.*.auditDetails.createdBy
 
-            - jsonPath: $.WMSPhysicalFinancialMilestoneApplication.*.planned_start_date
+            - jsonPath: $.WMSPhysicalFinancialMilestoneApplication.*.auditDetails.lastModifiedBy
 
-            - jsonPath: $.WMSPhysicalFinancialMilestoneApplication.*.planned_end_date
+            - jsonPath: $.WMSPhysicalFinancialMilestoneApplication.*.auditDetails.createdTime
             
-            - jsonPath: $.WMSPhysicalFinancialMilestoneApplication.*.total_weightage
+            - jsonPath: $.WMSPhysicalFinancialMilestoneApplication.*.auditDetails.lastModifiedTime
+
             
-            - jsonPath: $.WMSPhysicalFinancialMilestoneApplication.*.milestone_description
-            
-            - jsonPath: $.WMSPhysicalFinancialMilestoneApplication.*.actual_start_date
-            
-            - jsonPath: $.WMSPhysicalFinancialMilestoneApplication.*.actual_end_date
-            
-            - jsonPath: $.WMSPhysicalFinancialMilestoneApplication.*.progress_update_date
-            
-            - jsonPath: $.WMSPhysicalFinancialMilestoneApplication.*.completed_percentage
             
             
             
@@ -551,7 +541,7 @@ serviceMaps:
       isTransaction: true
       queryMaps:
       
-        - query: UPDATE physical_financial_milestone SET project_name = ?,work_name = ?, milestone_name = ?, sr_no = ?, activity_description = ?, percentage_weightage = ?, planned_start_date = ?, planned_end_date = ?, total_weightage = ?, milestone_description = ?, actual_start_date = ?, actual_end_date = ?, progress_update_date = ?, completed_percentage = ? WHERE milestone_id=?;
+        - query: UPDATE physical_financial_milestone SET project_name = ?,work_name = ?, milestone_name = ?, percentage_weightage = ? WHERE milestone_id=?;
           basePath: WMSPhysicalFinancialMilestoneApplication.*
           jsonMaps:
             - jsonPath: $.WMSPhysicalFinancialMilestoneApplication.*.project_name
@@ -560,27 +550,8 @@ serviceMaps:
             
             - jsonPath: $.WMSPhysicalFinancialMilestoneApplication.*.milestone_name
 
-            - jsonPath: $.WMSPhysicalFinancialMilestoneApplication.*.sr_no
-
-            - jsonPath: $.WMSPhysicalFinancialMilestoneApplication.*.activity_description
-
             - jsonPath: $.WMSPhysicalFinancialMilestoneApplication.*.percentage_weightage
 
-            - jsonPath: $.WMSPhysicalFinancialMilestoneApplication.*.planned_start_date
-
-            - jsonPath: $.WMSPhysicalFinancialMilestoneApplication.*.planned_end_date
-            
-            - jsonPath: $.WMSPhysicalFinancialMilestoneApplication.*.total_weightage
-            
-            - jsonPath: $.WMSPhysicalFinancialMilestoneApplication.*.milestone_description
-            
-            - jsonPath: $.WMSPhysicalFinancialMilestoneApplication.*.actual_start_date
-            
-            - jsonPath: $.WMSPhysicalFinancialMilestoneApplication.*.actual_end_date
-            
-            - jsonPath: $.WMSPhysicalFinancialMilestoneApplication.*.progress_update_date
-            
-            - jsonPath: $.WMSPhysicalFinancialMilestoneApplication.*.completed_percentage
             
             - jsonPath: $.WMSPhysicalFinancialMilestoneApplication.*.milestone_id	
             
@@ -593,7 +564,7 @@ serviceMaps:
       isTransaction: true
       queryMaps:
 
-        - query: INSERT INTO work_award_approval (work_award_id,work_name,percentage_type,quoted_percentage,contractor_name,no_of_days_for_agreement,loa_generation,award_date,document_upload,award_status) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?,?);
+        - query: INSERT INTO work_award_approval (work_award_id,work_name,percentage_type,quoted_percentage,contractor_name,no_of_days_for_agreement,loa_generation,award_date,document_upload,award_status,createdby,lastmodifiedby,createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?,?);
           basePath: WMSWorkAwardApprovalApplication.*
           jsonMaps:
             - jsonPath: $.WMSWorkAwardApprovalApplication.*.work_award_id
@@ -615,6 +586,14 @@ serviceMaps:
             - jsonPath: $.WMSWorkAwardApprovalApplication.*.document_upload
             
             - jsonPath: $.WMSWorkAwardApprovalApplication.*.award_status
+            
+            - jsonPath: $.WMSWorkAwardApprovalApplication.*.auditDetails.createdBy
+
+            - jsonPath: $.WMSWorkAwardApprovalApplication.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.WMSWorkAwardApprovalApplication.*.auditDetails.createdTime
+            
+            - jsonPath: $.WMSWorkAwardApprovalApplication.*.auditDetails.lastModifiedTime
             
             
             
@@ -839,7 +818,7 @@ serviceMaps:
       isTransaction: true
       queryMaps:
 
-        - query: INSERT INTO contract_agreement (agreement_no,agreement_name,agreement_date,department_name,loa_no,resolution_no,resolution_date,tender_no,tender_date,agreement_type,defect_liability_period,contract_period,agreement_amount,payment_type,deposit_type,deposit_amount,work_description,account_no,particulars,valid_from_date,valid_till_date,bank_branch_ifsc_code,payment_mode,designation,employee_name,witness_name,address,uid,vendor_type,vendor_name,represented_by,primary_party,sr_no,terms_and_conditions,document_description,upload_document) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO contract_agreement (agreement_no,agreement_name,agreement_date,department_name,loa_no,resolution_no,resolution_date,tender_no,tender_date,agreement_type,defect_liability_period,contract_period,agreement_amount,payment_type,deposit_type,deposit_amount,work_description,account_no,particulars,valid_from_date,valid_till_date,bank_branch_ifsc_code,payment_mode,designation,employee_name,witness_name,address,uid,vendor_type,vendor_name,represented_by,primary_party,sr_no,terms_and_conditions,document_description,upload_document,createdby,lastmodifiedby,createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?);
           basePath: WMSContractAgreementApplication.*
           jsonMaps:
             - jsonPath: $.WMSContractAgreementApplication.*.agreement_no
@@ -913,6 +892,14 @@ serviceMaps:
             - jsonPath: $.WMSContractAgreementApplication.*.document_description
             
             - jsonPath: $.WMSContractAgreementApplication.*.upload_document
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.auditDetails.createdBy
+
+            - jsonPath: $.WMSContractAgreementApplication.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.WMSContractAgreementApplication.*.auditDetails.createdTime
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.auditDetails.lastModifiedTime
             
             
             
@@ -1006,7 +993,7 @@ serviceMaps:
       isTransaction: true
       queryMaps:
 
-        - query: INSERT INTO work_order (work_order_id,work_order_date,agreement_no,contractor_name,work_name,contract_value,stipulated_completion_period,tender_number,tender_date,date_of_commencement,work_assignee,document_description,terms_and_conditions) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?);
+        - query: INSERT INTO work_order (work_order_id,work_order_date,agreement_no,contractor_name,work_name,contract_value,stipulated_completion_period,tender_number,tender_date,date_of_commencement,work_assignee,document_description,terms_and_conditions,createdby,lastmodifiedby,createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?,?,?,?,?);
           basePath: WMSWorkOrderApplication.*
           jsonMaps:
             - jsonPath: $.WMSWorkOrderApplication.*.work_order_id
@@ -1034,6 +1021,14 @@ serviceMaps:
             - jsonPath: $.WMSWorkOrderApplication.*.document_description
             
             - jsonPath: $.WMSWorkOrderApplication.*.terms_and_conditions
+            
+            - jsonPath: $.WMSWorkOrderApplication.*.auditDetails.createdBy
+
+            - jsonPath: $.WMSWorkOrderApplication.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.WMSWorkOrderApplication.*.auditDetails.createdTime
+            
+            - jsonPath: $.WMSWorkOrderApplication.*.auditDetails.lastModifiedTime
             
             
             
@@ -1082,7 +1077,7 @@ serviceMaps:
       isTransaction: true
       queryMaps:
 
-        - query: INSERT INTO measurement_book (measurement_book_id,work_order_no,contractor_name,work_name,measurement_book_no,status,agreement_no,project_name,work_order_amount,work_order_date,measurement_date,description_of_mb,je_name,chapter,item_no,description_of_the_item,estimated_quantity,cumulative_quantity,unit,rate,consumed_quantity,amount,add_mb,item_description,nos,l,bw,dh,upload_images,item_code,description,commulative_quantity,remark,overhead_description,value_type,estimated_amount,actual_amount,document_description,upload_document) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
+        - query: INSERT INTO measurement_book (measurement_book_id,work_order_no,contractor_name,work_name,measurement_book_no,status,agreement_no,project_name,work_order_amount,work_order_date,measurement_date,description_of_mb,je_name,chapter,item_no,description_of_the_item,estimated_quantity,cumulative_quantity,unit,rate,consumed_quantity,amount,add_mb,item_description,nos,l,bw,dh,upload_images,item_code,description,commulative_quantity,remark,overhead_description,value_type,estimated_amount,actual_amount,document_description,upload_document,createdby,lastmodifiedby,createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
           basePath: WMSMeasurementBookApplication.*
           jsonMaps:
             - jsonPath: $.WMSMeasurementBookApplication.*.measurement_book_id
@@ -1162,6 +1157,14 @@ serviceMaps:
             - jsonPath: $.WMSMeasurementBookApplication.*.document_description
             
             - jsonPath: $.WMSMeasurementBookApplication.*.upload_document
+            
+            - jsonPath: $.WMSMeasurementBookApplication.*.auditDetails.createdBy
+
+            - jsonPath: $.WMSMeasurementBookApplication.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.WMSMeasurementBookApplication.*.auditDetails.createdTime
+            
+            - jsonPath: $.WMSMeasurementBookApplication.*.auditDetails.lastModifiedTime
             
             
             
@@ -1261,7 +1264,7 @@ serviceMaps:
       isTransaction: true
       queryMaps:
 
-        - query: INSERT INTO running_account_final_bill (running_account_id,project_name,work_name,mb_no,mb_date,mb_amount,estimated_cost,tender_type,percentage_type,award_amount,bill_date,bill_no,bill_amount,deduction_amount,remark,sr_no,deduction_description,addition_deduction,calculation_method,percentage) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?,?,?,?,?,?,?,?);
+        - query: INSERT INTO running_account_final_bill (running_account_id,project_name,work_name,mb_no,mb_date,mb_amount,estimated_cost,tender_type,percentage_type,award_amount,bill_date,bill_no,bill_amount,deduction_amount,remark,sr_no,deduction_description,addition_deduction,calculation_method,percentage,createdby,lastmodifiedby,createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
           basePath: WMSRunningAccountFinalBillApplication.*
           jsonMaps:
             - jsonPath: $.WMSRunningAccountFinalBillApplication.*.running_account_id
@@ -1303,6 +1306,14 @@ serviceMaps:
             - jsonPath: $.WMSRunningAccountFinalBillApplication.*.calculation_method
             
             - jsonPath: $.WMSRunningAccountFinalBillApplication.*.percentage
+            
+            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.auditDetails.createdBy
+
+            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.auditDetails.createdTime
+            
+            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.auditDetails.lastModifiedTime
             
             
             

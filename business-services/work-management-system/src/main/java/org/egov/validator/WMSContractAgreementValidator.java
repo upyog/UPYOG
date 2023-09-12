@@ -40,7 +40,7 @@ public class WMSContractAgreementValidator {
 
 		public List<WMSContractAgreementApplication> validateApplicationUpdateRequest(
 				WMSContractAgreementRequest contractAgreementRequest) {
-			List<Integer> ids = contractAgreementRequest.getWmsContractAgreementApplications().stream().map(WMSContractAgreementApplication::getAgreementNo).collect(Collectors.toList());
+			List<String> ids = contractAgreementRequest.getWmsContractAgreementApplications().stream().map(WMSContractAgreementApplication::getAgreementNo).collect(Collectors.toList());
 	        List<WMSContractAgreementApplication> contractAgreementApplications = repository.getApplications(WMSContractAgreementApplicationSearchCriteria.builder().agreementNo(ids).build());
 	        if(contractAgreementApplications.size() != ids.size())
 	            throw new CustomException("APPLICATION_DOES_NOT_EXIST", "One of the Contract Agreement ids does not exist.");

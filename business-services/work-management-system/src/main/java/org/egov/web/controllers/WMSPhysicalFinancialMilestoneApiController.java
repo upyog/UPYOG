@@ -32,6 +32,7 @@ import org.egov.web.models.WMSWorkRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -46,6 +47,20 @@ import io.swagger.annotations.ApiParam;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
+
+@CrossOrigin(
+	    origins = {
+	        "http://localhost:3000", 
+	        "https://staging.example.com", 
+	        "https://app.example.com"
+	        },
+	    methods = {
+	                RequestMethod.OPTIONS,
+	                RequestMethod.GET,
+	                RequestMethod.PUT,
+	                RequestMethod.DELETE,
+	                RequestMethod.POST
+	})
 @javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2023-07-12T17:07:08.384+05:30")
 @Slf4j
 @ToString
@@ -70,7 +85,7 @@ public class WMSPhysicalFinancialMilestoneApiController{
         this.request = request;
         this.physicalFinancialMilestoneService = physicalFinancialMilestoneService;
     }
-    
+    @CrossOrigin( "http://*:3000")
     @ResponseBody
     @RequestMapping(value="/v1/pfmilestone/_create", method = RequestMethod.POST)
     @ApiOperation(value = "Create New Physical Financial Milestone for WMS")
@@ -83,7 +98,7 @@ public class WMSPhysicalFinancialMilestoneApiController{
        
     }
     
-    
+    @CrossOrigin( "http://*:3000")
     @RequestMapping(value="/v1/pfmilestone/_view", method = RequestMethod.POST)
     @ApiOperation(value = "Fetch Physical Financial Milestone for WMS")
     public ResponseEntity<WMSPhysicalFinancialMilestoneApplicationResponse> v1RegistrationFetchPost(@RequestBody RequestInfoWrapper requestInfoWrapper, @Valid @ModelAttribute WMSPhysicalFinancialMilestoneApplicationSearchCriteria physicalFinancialMilestoneApplicationSearchCriteria) {
@@ -93,7 +108,7 @@ public class WMSPhysicalFinancialMilestoneApiController{
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
     
-    
+    @CrossOrigin( "http://*:3000")
     @RequestMapping(value="/v1/pfmilestone/_update", method = RequestMethod.POST)
     @ApiOperation(value = "Update Physical Financial Milestone for WMS")
     public ResponseEntity<WMSPhysicalFinancialMilestoneApplicationResponse> v1PhysicalFinancialMilestoneUpdatePost(@ApiParam(value = "Details for the new Physical Financial Milestone(s) + RequestInfo meta data." ,required=true )  @Valid @RequestBody WMSPhysicalFinancialMilestoneRequest physicalFinancialMilestoneRequest) {
@@ -103,7 +118,7 @@ public class WMSPhysicalFinancialMilestoneApiController{
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
     
-    
+    @CrossOrigin( "http://*:3000")
     @RequestMapping(value="/v1/pfmilestone/_search", method = RequestMethod.POST)
     @ApiOperation(value = "Search Physical Financial Milestone for WMS")
     public ResponseEntity<WMSPhysicalFinancialMilestoneApplicationResponse> v1RegistrationSearchPhysicalFinancialMilestone(@RequestBody RequestInfoWrapper requestInfoWrapper, @Valid @ModelAttribute WMSPhysicalFinancialMilestoneApplicationSearchCriteria wmsPhysicalFinancialMilestoneApplicationSearchCriteria) {

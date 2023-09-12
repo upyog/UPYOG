@@ -22,6 +22,6 @@ import lombok.ToString;
 public class WMSMeasurementBookApplicationSearchCriteria {
 
 	@JsonProperty("measurement_book_id")
-    private List<Integer> measurementBookId;
+    private List<String> measurementBookId;
 
 }

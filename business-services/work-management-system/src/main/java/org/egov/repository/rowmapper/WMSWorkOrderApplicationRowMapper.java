@@ -8,6 +8,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.egov.web.models.AuditDetails;
 import org.egov.web.models.ScheduleOfRateApplication;
 import org.egov.web.models.WMSContractorApplication;
 import org.egov.web.models.WMSWorkApplication;
@@ -19,20 +20,27 @@ import org.springframework.stereotype.Component;
 @Component
 public class WMSWorkOrderApplicationRowMapper implements ResultSetExtractor<List<WMSWorkOrderApplication>> {
     public List<WMSWorkOrderApplication> extractData(ResultSet rs) throws SQLException, DataAccessException {
-        Map<Integer,WMSWorkOrderApplication> wmsWorkOrderApplicationMap = new LinkedHashMap<>();
+        Map<String,WMSWorkOrderApplication> wmsWorkOrderApplicationMap = new LinkedHashMap<>();
 
         while (rs.next()){
-            int workOrderId = rs.getInt("oWorkOrderId");
+            String workOrderId = rs.getString("oWorkOrderId");
             WMSWorkOrderApplication wmsWorkOrderApplication = wmsWorkOrderApplicationMap.get(workOrderId);
 
             if(wmsWorkOrderApplication == null) {
 
-                Date lastModifiedTime = rs.getDate("oWorkOrderDate");
+            	Long lastModifiedTime = rs.getLong("oLastmodifiedtime");
                 if (rs.wasNull()) {
                     lastModifiedTime = null;
                 }
+                
+                AuditDetails auditdetails = AuditDetails.builder()
+                        .createdBy(rs.getString("oCreatedBy"))
+                        .createdTime(rs.getLong("oCreatedtime"))
+                        .lastModifiedBy(rs.getString("oLastmodifiedby"))
+                        .lastModifiedTime(lastModifiedTime)
+                        .build();
                 wmsWorkOrderApplication = WMSWorkOrderApplication.builder()
-                        .workOrderId(rs.getInt("oWorkOrderId"))
+                        .workOrderId(rs.getString("oWorkOrderId"))
                         .workOrderDate(rs.getString("oWorkOrderDate"))
                         .agreementNo(rs.getInt("oAgreementNo"))
                         .contractorName(rs.getString("oContractorName"))

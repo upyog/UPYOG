@@ -8,6 +8,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.egov.web.models.AuditDetails;
 import org.egov.web.models.ScheduleOfRateApplication;
 import org.egov.web.models.WMSContractAgreementApplication;
 import org.egov.web.models.WMSContractorApplication;
@@ -19,20 +20,27 @@ import org.springframework.stereotype.Component;
 @Component
 public class WMSContractAgreementApplicationRowMapper implements ResultSetExtractor<List<WMSContractAgreementApplication>> {
     public List<WMSContractAgreementApplication> extractData(ResultSet rs) throws SQLException, DataAccessException {
-        Map<Integer,WMSContractAgreementApplication> wmsContractAgreementApplicationMap = new LinkedHashMap<>();
+        Map<String,WMSContractAgreementApplication> wmsContractAgreementApplicationMap = new LinkedHashMap<>();
 
         while (rs.next()){
-            int agreementNo = rs.getInt("aAgreementNo");
+            String agreementNo = rs.getString("aAgreementNo");
             WMSContractAgreementApplication wmsContractAgreementApplication = wmsContractAgreementApplicationMap.get(agreementNo);
 
             if(wmsContractAgreementApplication == null) {
 
-                Date lastModifiedTime = rs.getDate("aAgreementDate");
+            	Long lastModifiedTime = rs.getLong("aLastmodifiedtime");
                 if (rs.wasNull()) {
                     lastModifiedTime = null;
                 }
+                
+                AuditDetails auditdetails = AuditDetails.builder()
+                        .createdBy(rs.getString("aCreatedBy"))
+                        .createdTime(rs.getLong("aCreatedtime"))
+                        .lastModifiedBy(rs.getString("aLastmodifiedby"))
+                        .lastModifiedTime(lastModifiedTime)
+                        .build();
                 wmsContractAgreementApplication = WMSContractAgreementApplication.builder()
-                        .agreementNo(rs.getInt("aAgreementNo"))
+                        .agreementNo(rs.getString("aAgreementNo"))
                         .agreementName(rs.getString("aAgreementName"))
                         .agreementDate(rs.getString("aAgreementDate"))
                         .departmentName(rs.getString("aDepartmentName"))

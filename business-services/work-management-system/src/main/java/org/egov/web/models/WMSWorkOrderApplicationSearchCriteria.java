@@ -22,6 +22,6 @@ import lombok.ToString;
 public class WMSWorkOrderApplicationSearchCriteria {
 
 	@JsonProperty("work_order_id")
-    private List<Integer> workOrderId;
+    private List<String> workOrderId;
 
 }

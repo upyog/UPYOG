@@ -8,6 +8,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.egov.web.models.AuditDetails;
 import org.egov.web.models.ScheduleOfRateApplication;
 import org.egov.web.models.WMSContractorApplication;
 import org.egov.web.models.WMSWorkApplication;
@@ -19,20 +20,27 @@ import org.springframework.stereotype.Component;
 @Component
 public class WMSWorkAwardApprovalApplicationRowMapper implements ResultSetExtractor<List<WMSWorkAwardApprovalApplication>> {
     public List<WMSWorkAwardApprovalApplication> extractData(ResultSet rs) throws SQLException, DataAccessException {
-        Map<Integer,WMSWorkAwardApprovalApplication> wmsWorkAwardApprovalApplicationMap = new LinkedHashMap<>();
+        Map<String,WMSWorkAwardApprovalApplication> wmsWorkAwardApprovalApplicationMap = new LinkedHashMap<>();
 
         while (rs.next()){
-            int workAwardId = rs.getInt("wWorkAwardId");
+            String workAwardId = rs.getString("wWorkAwardId");
             WMSWorkAwardApprovalApplication wmsWorkAwardApprovalApplication = wmsWorkAwardApprovalApplicationMap.get(workAwardId);
 
             if(wmsWorkAwardApprovalApplication == null) {
 
-                Date lastModifiedTime = rs.getDate("wAwardDate");
+            	Long lastModifiedTime = rs.getLong("wLastmodifiedtime");
                 if (rs.wasNull()) {
                     lastModifiedTime = null;
                 }
+                
+                AuditDetails auditdetails = AuditDetails.builder()
+                        .createdBy(rs.getString("wCreatedBy"))
+                        .createdTime(rs.getLong("wCreatedtime"))
+                        .lastModifiedBy(rs.getString("wLastmodifiedby"))
+                        .lastModifiedTime(lastModifiedTime)
+                        .build();
                 wmsWorkAwardApprovalApplication = WMSWorkAwardApprovalApplication.builder()
-                        .workAwardId(rs.getInt("wWorkAwardId"))
+                        .workAwardId(rs.getString("wWorkAwardId"))
                         .workName(rs.getString("wWorkName"))
                         .percentageType(rs.getString("wPercentageType"))
                         .quotedPercentage(rs.getString("wQuotedPercentage"))

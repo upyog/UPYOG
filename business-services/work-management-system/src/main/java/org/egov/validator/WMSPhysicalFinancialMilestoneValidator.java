@@ -40,7 +40,7 @@ public class WMSPhysicalFinancialMilestoneValidator {
 
 		public List<WMSPhysicalFinancialMilestoneApplication> validateApplicationUpdateRequest(
 				WMSPhysicalFinancialMilestoneRequest physicalFinancialMilestoneRequest) {
-			List<Integer> ids = physicalFinancialMilestoneRequest.getWmsPhysicalFinancialMilestoneApplications().stream().map(WMSPhysicalFinancialMilestoneApplication::getMilestoneId).collect(Collectors.toList());
+			List<String> ids = physicalFinancialMilestoneRequest.getWmsPhysicalFinancialMilestoneApplications().stream().map(WMSPhysicalFinancialMilestoneApplication::getMilestoneId).collect(Collectors.toList());
 	        List<WMSPhysicalFinancialMilestoneApplication> physicalFinancialMilestoneApplications = repository.getApplications(WMSPhysicalFinancialMilestoneApplicationSearchCriteria.builder().milestoneId(ids).build());
 	        if(physicalFinancialMilestoneApplications.size() != ids.size())
 	            throw new CustomException("APPLICATION_DOES_NOT_EXIST", "One of the Physical Financial Milestone ids does not exist.");

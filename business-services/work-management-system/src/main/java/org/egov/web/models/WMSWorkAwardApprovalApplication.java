@@ -16,7 +16,7 @@ import lombok.Setter;
 public class WMSWorkAwardApprovalApplication {
 	
 	@JsonProperty("work_award_id")
-	private Integer workAwardId=null;
+	private String workAwardId=null;
 	@JsonProperty("work_name")
 	private String workName=null;
 	@JsonProperty("percentage_type")
@@ -35,6 +35,9 @@ public class WMSWorkAwardApprovalApplication {
 	private String documentUpload=null;
 	@JsonProperty("award_status")
 	private String awardStatus=null;
+	
+	@JsonProperty("auditDetails")
+	private AuditDetails auditDetails = null;
 	@JsonProperty("tenantId")
 	private String tenantId = null;
 	

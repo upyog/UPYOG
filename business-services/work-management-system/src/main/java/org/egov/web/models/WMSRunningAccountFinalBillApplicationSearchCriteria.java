@@ -22,6 +22,6 @@ import lombok.ToString;
 public class WMSRunningAccountFinalBillApplicationSearchCriteria {
 
 	@JsonProperty("running_account_id")
-    private List<Integer> runningAccountId;
+    private List<String> runningAccountId;
 
 }

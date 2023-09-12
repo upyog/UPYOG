@@ -16,7 +16,7 @@ import lombok.Setter;
 public class WMSRunningAccountFinalBillApplication {
 	
 	@JsonProperty("running_account_id")
-	private Integer runningAccountId=null;
+	private String runningAccountId=null;
 	@JsonProperty("project_name")
 	private String projectName=null;
 	@JsonProperty("work_name")
@@ -55,6 +55,9 @@ public class WMSRunningAccountFinalBillApplication {
 	private String calculationMethod=null;
 	@JsonProperty("percentage")
 	private String percentage=null;
+	
+	@JsonProperty("auditDetails")
+	private AuditDetails auditDetails = null;
 	@JsonProperty("tenantId")
 	 private String tenantId = null;
 	

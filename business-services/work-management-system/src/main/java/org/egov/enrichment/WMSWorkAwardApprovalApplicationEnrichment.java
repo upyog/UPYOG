@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import org.egov.repository.WMSWorkRepository;
 import org.egov.util.IdgenUtil;
+import org.egov.web.models.AuditDetails;
 import org.egov.web.models.ScheduleOfRateApplication;
 import org.egov.web.models.WMSContractorApplication;
 import org.egov.web.models.WMSContractorRequest;
@@ -49,9 +50,13 @@ public class WMSWorkAwardApprovalApplicationEnrichment {
 			// Enrich audit details
 //	            AuditDetails auditDetails = AuditDetails.builder().createdBy(birthRegistrationRequest.getRequestInfo().getUserInfo().getUuid()).createdTime(System.currentTimeMillis()).lastModifiedBy(birthRegistrationRequest.getRequestInfo().getUserInfo().getUuid()).lastModifiedTime(System.currentTimeMillis()).build();
 //	            application.setAuditDetails(auditDetails);
+			AuditDetails auditDetails = AuditDetails.builder().createdBy(wmsWorkAwardApprovalRequest.getRequestInfo().getUserInfo().getUuid()).createdTime(System.currentTimeMillis()).lastModifiedBy(wmsWorkAwardApprovalRequest.getRequestInfo().getUserInfo().getUuid()).lastModifiedTime(System.currentTimeMillis()).build();
+            application.setAuditDetails(auditDetails);
 
 			// Enrich UUID
-			application.setWorkAwardId((int) Math.floor(Math.random() * (9999 - 1000 + 1) + 1000));
+            Long randomNumber=(long) Math.floor(Math.random() * (9999 - 1000 + 1) + 1000);
+			application.setWorkAwardId(Long.toString(randomNumber));
+			//application.setId(UUID.randomUUID().toString());
 			//application.setWorkName(sorIdList.get(index++));
 			//application.setStartDate(date);
 			//application.setEndDate(date);

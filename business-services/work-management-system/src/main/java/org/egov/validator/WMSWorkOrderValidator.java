@@ -42,7 +42,7 @@ public class WMSWorkOrderValidator {
 
 		public List<WMSWorkOrderApplication> validateApplicationUpdateRequest(
 				 WMSWorkOrderRequest workOrderRequest) {
-			List<Integer> ids = workOrderRequest.getWmsWorkOrderApplications().stream().map(WMSWorkOrderApplication::getWorkOrderId).collect(Collectors.toList());
+			List<String> ids = workOrderRequest.getWmsWorkOrderApplications().stream().map(WMSWorkOrderApplication::getWorkOrderId).collect(Collectors.toList());
 	        List<WMSWorkOrderApplication> workOrderApplications = repository.getApplications(WMSWorkOrderApplicationSearchCriteria.builder().workOrderId(ids).build());
 	        if(workOrderApplications.size() != ids.size())
 	            throw new CustomException("APPLICATION_DOES_NOT_EXIST", "One of the WorkOrder ids does not exist.");

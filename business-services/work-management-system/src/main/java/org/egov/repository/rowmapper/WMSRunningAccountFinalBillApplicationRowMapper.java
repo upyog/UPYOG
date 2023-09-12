@@ -8,6 +8,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.egov.web.models.AuditDetails;
 import org.egov.web.models.ScheduleOfRateApplication;
 import org.egov.web.models.WMSContractorApplication;
 import org.egov.web.models.WMSRunningAccountFinalBillApplication;
@@ -19,20 +20,27 @@ import org.springframework.stereotype.Component;
 @Component
 public class WMSRunningAccountFinalBillApplicationRowMapper implements ResultSetExtractor<List<WMSRunningAccountFinalBillApplication>> {
     public List<WMSRunningAccountFinalBillApplication> extractData(ResultSet rs) throws SQLException, DataAccessException {
-        Map<Integer,WMSRunningAccountFinalBillApplication> wmsRunningAccountFinalBillApplicationMap = new LinkedHashMap<>();
+        Map<String,WMSRunningAccountFinalBillApplication> wmsRunningAccountFinalBillApplicationMap = new LinkedHashMap<>();
 
         while (rs.next()){
-            int runningAccountId = rs.getInt("bRunningAccountId");
+            String runningAccountId = rs.getString("bRunningAccountId");
             WMSRunningAccountFinalBillApplication wmsRunningAccountFinalBillApplication = wmsRunningAccountFinalBillApplicationMap.get(runningAccountId);
 
             if(wmsRunningAccountFinalBillApplication == null) {
 
-                Date lastModifiedTime = rs.getDate("bBillDate");
+            	Long lastModifiedTime = rs.getLong("bLastmodifiedtime");
                 if (rs.wasNull()) {
                     lastModifiedTime = null;
                 }
+                
+                AuditDetails auditdetails = AuditDetails.builder()
+                        .createdBy(rs.getString("bCreatedBy"))
+                        .createdTime(rs.getLong("bCreatedtime"))
+                        .lastModifiedBy(rs.getString("bLastmodifiedby"))
+                        .lastModifiedTime(lastModifiedTime)
+                        .build();
                 wmsRunningAccountFinalBillApplication = WMSRunningAccountFinalBillApplication.builder()
-                        .runningAccountId(rs.getInt("bRunningAccountId"))
+                        .runningAccountId(rs.getString("bRunningAccountId"))
                         .projectName(rs.getString("bProjectName"))
                         .workName(rs.getString("bworkName"))
                         .mbNo(rs.getInt("bMbNo"))

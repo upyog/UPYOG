@@ -40,7 +40,7 @@ public class WMSMeasurementBookValidator {
 
 		public List<WMSMeasurementBookApplication> validateApplicationUpdateRequest(
 				WMSMeasurementBookRequest measurementBookRequest) {
-			List<Integer> ids = measurementBookRequest.getWmsMeasurementBookApplications().stream().map(WMSMeasurementBookApplication::getMeasurementBookId).collect(Collectors.toList());
+			List<String> ids = measurementBookRequest.getWmsMeasurementBookApplications().stream().map(WMSMeasurementBookApplication::getMeasurementBookId).collect(Collectors.toList());
 	        List<WMSMeasurementBookApplication> contractorApplications = repository.getApplications(WMSMeasurementBookApplicationSearchCriteria.builder().measurementBookId(ids).build());
 	        if(contractorApplications.size() != ids.size())
 	            throw new CustomException("APPLICATION_DOES_NOT_EXIST", "One of the Measurement Book ids does not exist.");

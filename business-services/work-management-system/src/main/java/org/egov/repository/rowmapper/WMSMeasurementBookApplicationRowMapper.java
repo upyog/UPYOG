@@ -8,6 +8,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.egov.web.models.AuditDetails;
 import org.egov.web.models.ScheduleOfRateApplication;
 import org.egov.web.models.WMSContractorApplication;
 import org.egov.web.models.WMSMeasurementBookApplication;
@@ -19,20 +20,27 @@ import org.springframework.stereotype.Component;
 @Component
 public class WMSMeasurementBookApplicationRowMapper implements ResultSetExtractor<List<WMSMeasurementBookApplication>> {
     public List<WMSMeasurementBookApplication> extractData(ResultSet rs) throws SQLException, DataAccessException {
-        Map<Integer,WMSMeasurementBookApplication> wmsMeasurementBookApplicationMap = new LinkedHashMap<>();
+        Map<String,WMSMeasurementBookApplication> wmsMeasurementBookApplicationMap = new LinkedHashMap<>();
 
         while (rs.next()){
-            int measurementBookId = rs.getInt("mMeasurementBookId");
+            String measurementBookId = rs.getString("mMeasurementBookId");
             WMSMeasurementBookApplication wmsMeasurementBookApplication = wmsMeasurementBookApplicationMap.get(measurementBookId);
 
             if(wmsMeasurementBookApplication == null) {
 
-                Date lastModifiedTime = rs.getDate("mMeasurementDate");
+            	Long lastModifiedTime = rs.getLong("mLastmodifiedtime");
                 if (rs.wasNull()) {
                     lastModifiedTime = null;
                 }
+                
+                AuditDetails auditdetails = AuditDetails.builder()
+                        .createdBy(rs.getString("mCreatedBy"))
+                        .createdTime(rs.getLong("mCreatedtime"))
+                        .lastModifiedBy(rs.getString("mLastmodifiedby"))
+                        .lastModifiedTime(lastModifiedTime)
+                        .build();
                 wmsMeasurementBookApplication = WMSMeasurementBookApplication.builder()
-                        .measurementBookId(rs.getInt("mMeasurementBookId"))
+                        .measurementBookId(rs.getString("mMeasurementBookId"))
                         .workOrderNo(rs.getInt("mWorkOrderNo"))
                         .contractorName(rs.getString("mContractorName"))
                         .workName(rs.getString("mWorkName"))

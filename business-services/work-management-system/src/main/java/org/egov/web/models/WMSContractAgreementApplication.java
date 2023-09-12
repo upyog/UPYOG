@@ -16,7 +16,7 @@ import lombok.Setter;
 public class WMSContractAgreementApplication {
 	
 	@JsonProperty("agreement_no")
-	private Integer agreementNo=null;
+	private String agreementNo=null;
 	@JsonProperty("agreement_name")
 	private String agreementName=null;
 	@JsonProperty("agreement_date")
@@ -87,6 +87,9 @@ public class WMSContractAgreementApplication {
 	private String documentDescription=null;
 	@JsonProperty("upload_document")
 	private String uploadDocument=null;
+	
+	@JsonProperty("auditDetails")
+	private AuditDetails auditDetails = null;
 	@JsonProperty("tenantId")
 	 private String tenantId = null;
 	

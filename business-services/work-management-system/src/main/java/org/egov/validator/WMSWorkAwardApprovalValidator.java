@@ -40,7 +40,7 @@ public class WMSWorkAwardApprovalValidator {
 
 		public List<WMSWorkAwardApprovalApplication> validateApplicationUpdateRequest(
 				WMSWorkAwardApprovalRequest workAwardApprovalRequest) {
-			List<Integer> ids = workAwardApprovalRequest.getWmsWorkAwardApprovalApplications().stream().map(WMSWorkAwardApprovalApplication::getWorkAwardId).collect(Collectors.toList());
+			List<String> ids = workAwardApprovalRequest.getWmsWorkAwardApprovalApplications().stream().map(WMSWorkAwardApprovalApplication::getWorkAwardId).collect(Collectors.toList());
 	        List<WMSWorkAwardApprovalApplication> workAwardApprovalApplications = repository.getApplications(WMSWorkAwardApprovalApplicationSearchCriteria.builder().workAwardId(ids).build());
 	        if(workAwardApprovalApplications.size() != ids.size())
 	            throw new CustomException("APPLICATION_DOES_NOT_EXIST", "One of the Work Award Approval ids does not exist.");

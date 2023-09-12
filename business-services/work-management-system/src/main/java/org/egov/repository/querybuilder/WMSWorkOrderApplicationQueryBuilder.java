@@ -13,7 +13,7 @@ import org.springframework.util.ObjectUtils;
 public class WMSWorkOrderApplicationQueryBuilder {
 
 	
-	private static final String BASE_WORDER_QUERY = " SELECT worder.work_order_id as oWorkOrderId, worder.work_order_date as oWorkOrderDate, worder.agreement_no as oAgreementNo, worder.contractor_name as oContractorName, worder.work_name as oWorkName, worder.contract_value as oContractValue, worder.stipulated_completion_period as oStipulatedCompletionPeriod, worder.tender_number as oTenderNumber, worder.tender_date as oTenderDate, worder.date_of_commencement as oDateOfCommencement, worder.work_assignee as oWorkAssignee, worder.document_description as oDocumentDescription, worder.terms_and_conditions as oTermsAndConditions ";
+	private static final String BASE_WORDER_QUERY = " SELECT worder.work_order_id as oWorkOrderId, worder.work_order_date as oWorkOrderDate, worder.agreement_no as oAgreementNo, worder.contractor_name as oContractorName, worder.work_name as oWorkName, worder.contract_value as oContractValue, worder.stipulated_completion_period as oStipulatedCompletionPeriod, worder.tender_number as oTenderNumber, worder.tender_date as oTenderDate, worder.date_of_commencement as oDateOfCommencement, worder.work_assignee as oWorkAssignee, worder.document_description as oDocumentDescription, worder.terms_and_conditions as oTermsAndConditions, worder.createdby as oCreatedBy, worder.lastmodifiedby as oLastmodifiedby, worder.createdtime as oCreatedtime, worder.lastmodifiedtime as oLastmodifiedtime ";
 
     //private static final String ADDRESS_SELECT_QUERY = " add.id as aid, add.tenantid as atenantid, add.doorno as adoorno, add.latitude as alatitude, add.longitude as alongitude, add.buildingname as abuildingname, add.addressid as aaddressid, add.addressnumber as aaddressnumber, add.type as atype, add.addressline1 as aaddressline1, add.addressline2 as aaddressline2, add.landmark as alandmark, add.street as astreet, add.city as acity, add.locality as alocality, add.pincode as apincode, add.detail as adetail, add.registrationid as aregistrationid ";
 
@@ -47,7 +47,7 @@ public class WMSWorkOrderApplicationQueryBuilder {
         }
     }
 
-    private String createQuery(List<Integer> list) {
+    private String createQuery(List<String> list) {
         StringBuilder builder = new StringBuilder();
         int length = list.size();
         for (int i = 0; i < length; i++) {
@@ -58,7 +58,7 @@ public class WMSWorkOrderApplicationQueryBuilder {
         return builder.toString();
     }
 
-    private void addToPreparedStatement(List<Object> preparedStmtList, List<Integer> ids) {
+    private void addToPreparedStatement(List<Object> preparedStmtList, List<String> ids) {
         ids.forEach(id -> {
             preparedStmtList.add(id);
         });

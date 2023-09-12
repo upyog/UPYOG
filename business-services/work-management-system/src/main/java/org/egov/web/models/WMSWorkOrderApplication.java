@@ -16,7 +16,7 @@ import lombok.Setter;
 public class WMSWorkOrderApplication {
 	
 	@JsonProperty("work_order_id")
-	private Integer workOrderId=null;
+	private String workOrderId=null;
 	@JsonProperty("work_order_date")
 	private String workOrderDate=null;
 	@JsonProperty("agreement_no")
@@ -41,6 +41,9 @@ public class WMSWorkOrderApplication {
 	private String documentDescription=null;
 	@JsonProperty("terms_and_conditions")
 	private String termsAndConditions=null;
+	
+	@JsonProperty("auditDetails")
+	private AuditDetails auditDetails = null;
 	@JsonProperty("tenantId")
 	private String tenantId = null;
 	

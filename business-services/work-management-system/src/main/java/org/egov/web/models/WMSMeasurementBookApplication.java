@@ -16,7 +16,7 @@ import lombok.Setter;
 public class WMSMeasurementBookApplication {
 	
 	@JsonProperty("measurement_book_id")
-	private Integer measurementBookId=null;
+	private String measurementBookId=null;
 	@JsonProperty("work_order_no")
 	private Integer workOrderNo=null;
 	@JsonProperty("contractor_name")
@@ -93,6 +93,9 @@ public class WMSMeasurementBookApplication {
 	private String documentDescription=null;
 	@JsonProperty("upload_document")
 	private String uploadDocument=null;
+	
+	@JsonProperty("auditDetails")
+	private AuditDetails auditDetails = null;
 	@JsonProperty("tenantId")
 	 private String tenantId = null;
 	

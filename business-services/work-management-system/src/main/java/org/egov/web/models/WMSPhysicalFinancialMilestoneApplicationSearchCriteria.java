@@ -22,6 +22,6 @@ import lombok.ToString;
 public class WMSPhysicalFinancialMilestoneApplicationSearchCriteria {
 
 	@JsonProperty("milestone_id")
-    private List<Integer> milestoneId;
+    private List<String> milestoneId;
 
 }

@@ -22,6 +22,6 @@ import lombok.ToString;
 public class WMSContractAgreementApplicationSearchCriteria {
 
 	@JsonProperty("agreement_no")
-    private List<Integer> agreementNo;
+    private List<String> agreementNo;
 
 }

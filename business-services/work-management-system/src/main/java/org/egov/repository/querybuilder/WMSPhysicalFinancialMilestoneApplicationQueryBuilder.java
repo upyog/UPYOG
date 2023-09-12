@@ -13,8 +13,9 @@ import org.springframework.util.ObjectUtils;
 public class WMSPhysicalFinancialMilestoneApplicationQueryBuilder {
 
 	
-	private static final String BASE_PFMILE_QUERY = " SELECT pfmile.milestone_id as mMilestoneId, pfmile.project_name as mProjectName, pfmile.work_name as mWorkName, pfmile.milestone_name as mMilestoneName, pfmile.sr_no as mSrNo, pfmile.activity_description as mActivityDescription, pfmile.percentage_weightage as mPercentageWeightage, pfmile.planned_start_date as mPlannedStartDate, pfmile.planned_end_date as mPlannedEndDate, pfmile.total_weightage as mTotalWeightage, pfmile.milestone_description as mMilestoneDescription, pfmile.actual_start_date as mActualStartDate, pfmile.actual_end_date as mActualEndDate, pfmile.progress_update_date as mProgressUpdateDate, pfmile.completed_percentage as mCompletedPercentage ";
+	//private static final String BASE_PFMILE_QUERY = " SELECT pfmile.milestone_id as mMilestoneId, pfmile.project_name as mProjectName, pfmile.work_name as mWorkName, pfmile.milestone_name as mMilestoneName, pfmile.sr_no as mSrNo, pfmile.activity_description as mActivityDescription, pfmile.percentage_weightage as mPercentageWeightage, pfmile.planned_start_date as mPlannedStartDate, pfmile.planned_end_date as mPlannedEndDate, pfmile.total_weightage as mTotalWeightage, pfmile.milestone_description as mMilestoneDescription, pfmile.actual_start_date as mActualStartDate, pfmile.actual_end_date as mActualEndDate, pfmile.progress_update_date as mProgressUpdateDate, pfmile.completed_percentage as mCompletedPercentage ";
 
+	private static final String BASE_PFMILE_QUERY = " SELECT pfmile.milestone_id as mMilestoneId, pfmile.project_name as mProjectName, pfmile.work_name as mWorkName, pfmile.milestone_name as mMilestoneName, pfmile.percentage_weightage as mPercentageWeightage, pfmile.createdby as mCreatedBy, pfmile.lastmodifiedby as mLastmodifiedby, pfmile.createdtime as mCreatedtime, pfmile.lastmodifiedtime as mLastmodifiedtime ";
     //private static final String ADDRESS_SELECT_QUERY = " add.id as aid, add.tenantid as atenantid, add.doorno as adoorno, add.latitude as alatitude, add.longitude as alongitude, add.buildingname as abuildingname, add.addressid as aaddressid, add.addressnumber as aaddressnumber, add.type as atype, add.addressline1 as aaddressline1, add.addressline2 as aaddressline2, add.landmark as alandmark, add.street as astreet, add.city as acity, add.locality as alocality, add.pincode as apincode, add.detail as adetail, add.registrationid as aregistrationid ";
 
     //private static final String FROM_TABLES = " FROM eg_bt_registration btr LEFT JOIN eg_bt_address add ON btr.id = add.registrationid ";
@@ -47,7 +48,7 @@ public class WMSPhysicalFinancialMilestoneApplicationQueryBuilder {
         }
     }
 
-    private String createQuery(List<Integer> list) {
+    private String createQuery(List<String> list) {
         StringBuilder builder = new StringBuilder();
         int length = list.size();
         for (int i = 0; i < length; i++) {
@@ -58,7 +59,7 @@ public class WMSPhysicalFinancialMilestoneApplicationQueryBuilder {
         return builder.toString();
     }
 
-    private void addToPreparedStatement(List<Object> preparedStmtList, List<Integer> ids) {
+    private void addToPreparedStatement(List<Object> preparedStmtList, List<String> ids) {
         ids.forEach(id -> {
             preparedStmtList.add(id);
         });

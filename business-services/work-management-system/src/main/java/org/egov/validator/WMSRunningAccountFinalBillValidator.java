@@ -40,7 +40,7 @@ public class WMSRunningAccountFinalBillValidator {
 
 		public List<WMSRunningAccountFinalBillApplication> validateApplicationUpdateRequest(
 				WMSRunningAccountFinalBillRequest runningAccountFinalBillRequest) {
-			List<Integer> ids = runningAccountFinalBillRequest.getWmsRunningAccountFinalBillApplications().stream().map(WMSRunningAccountFinalBillApplication::getRunningAccountId).collect(Collectors.toList());
+			List<String> ids = runningAccountFinalBillRequest.getWmsRunningAccountFinalBillApplications().stream().map(WMSRunningAccountFinalBillApplication::getRunningAccountId).collect(Collectors.toList());
 	        List<WMSRunningAccountFinalBillApplication> runningAccountFinalBillApplications = repository.getApplications(WMSRunningAccountFinalBillApplicationSearchCriteria.builder().runningAccountId(ids).build());
 	        if(runningAccountFinalBillApplications.size() != ids.size())
 	            throw new CustomException("APPLICATION_DOES_NOT_EXIST", "One of the Running Account Final Bill ids does not exist.");
