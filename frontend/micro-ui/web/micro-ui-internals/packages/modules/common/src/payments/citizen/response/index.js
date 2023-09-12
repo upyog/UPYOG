@@ -12,7 +12,20 @@ export const SuccessfulPayment = (props)=>{
  return <WrapPaymentComponent {...props}/>
 }
 
-
+export const convertEpochToDate = (dateEpoch) => {
+  // Returning NA in else case because new Date(null) returns Current date from calender
+  if (dateEpoch) {
+    const dateFromApi = new Date(dateEpoch);
+    let month = dateFromApi.getMonth() + 1;
+    let day = dateFromApi.getDate();
+    let year = dateFromApi.getFullYear();
+    month = (month > 9 ? "" : "0") + month;
+    day = (day > 9 ? "" : "0") + day;
+    return `${day}/${month}/${year}`;
+  } else {
+    return "NA";
+  }
+};
  const WrapPaymentComponent = (props) => {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
@@ -145,7 +158,37 @@ export const SuccessfulPayment = (props)=>{
     const state = Digit.ULBService.getStateId();
     let response = { filestoreIds: [payments.Payments[0]?.fileStoreId] };
     if (!paymentData?.fileStoreId) {
-      response = await Digit.PaymentService.generatePdf(state, { Payments: [payments.Payments[0]] }, generatePdfKey);
+      let assessmentYear="",assessmentYearForReceipt="";
+      let count=0;
+      let toDate,fromDate;
+	  if(payments.Payments[0].paymentDetails[0].businessService=="PT"){
+       
+      payments.Payments[0].paymentDetails[0].bill.billDetails.map(element => {
+
+          if(element.amount >0 || element.amountPaid>0)
+          { count=count+1;
+            toDate=convertEpochToDate(element.toPeriod).split("/")[2];
+            fromDate=convertEpochToDate(element.fromPeriod).split("/")[2];
+            assessmentYear=assessmentYear==""?fromDate+"-"+toDate+"(Rs."+element.amountPaid+")":assessmentYear+","+fromDate+"-"+toDate+"(Rs."+element.amountPaid+")";
+            assessmentYearForReceipt=fromDate+"-"+toDate;
+          }
+    
+          });
+  
+          if(count==0)
+          {
+            let toDate=convertEpochToDate( payments.Payments[0].paymentDetails[0].bill.billDetails[0].toPeriod).split("/")[2];
+            let fromDate=convertEpochToDate( payments.Payments[0].paymentDetails[0].bill.billDetails[0].fromPeriod).split("/")[2];
+            assessmentYear=assessmentYear==""?fromDate+"-"+toDate:assessmentYear+","+fromDate+"-"+toDate; 
+            assessmentYearForReceipt=fromDate+"-"+toDate;
+          }
+          
+          const details = {
+          "assessmentYears": assessmentYear
+            }
+            payments.Payments[0].paymentDetails[0].additionalDetails=details; 
+        }
+        response = await Digit.PaymentService.generatePdf(state, { Payments: payments.Payments }, generatePdfKey);
     }
     const fileStore = await Digit.PaymentService.printReciept(state, { fileStoreIds: response.filestoreIds[0] });
     if (fileStore && fileStore[response.filestoreIds[0]]) {
