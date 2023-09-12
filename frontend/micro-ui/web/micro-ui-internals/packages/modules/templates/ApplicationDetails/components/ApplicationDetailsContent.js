@@ -10,7 +10,7 @@ import {
   StatusTable,
 } from "@egovernments/digit-ui-react-components";
 import { values } from "lodash";
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect,useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import BPADocuments from "./BPADocuments";
@@ -32,7 +32,7 @@ import WSFeeEstimation from "./WSFeeEstimation";
 import DocumentsPreview from "./DocumentsPreview";
 import InfoDetails from "./InfoDetails";
 import ViewBreakup from"./ViewBreakup";
-
+import ArrearSummary from "../../../common/src/payments/citizen/bills/routes/bill-details/arrear-summary"
 function ApplicationDetailsContent({
   applicationDetails,
   workflowDetails,
@@ -52,6 +52,44 @@ function ApplicationDetailsContent({
     window.open(thumbnailsToShow?.fullImage?.[0], "_blank");
   }
 
+  const [fetchBillData, updatefetchBillData] = useState({});
+  const setBillData = async (tenantId, propertyIds, updatefetchBillData, updateCanFetchBillData) => {
+    const assessmentData = await Digit.PTService.assessmentSearch({ tenantId, filters: { propertyIds } });
+    let billData = {};
+    if (assessmentData?.Assessments?.length > 0) {
+      billData = await Digit.PaymentService.fetchBill(tenantId, {
+        businessService: "PT",
+        consumerCode: propertyIds,
+      });
+    }
+    updatefetchBillData(billData);
+    updateCanFetchBillData({
+      loading: false,
+      loaded: true,
+      canLoad: true,
+    });
+  };
+  const [billData, updateCanFetchBillData] = useState({
+    loading: false,
+    loaded: false,
+    canLoad: false,
+  });
+
+  if (applicationData?.status == "ACTIVE" && !billData.loading && !billData.loaded && !billData.canLoad) {
+    updateCanFetchBillData({
+      loading: false,
+      loaded: false,
+      canLoad: true,
+    });
+  }
+  if (billData?.canLoad && !billData.loading && !billData.loaded) {
+    updateCanFetchBillData({
+      loading: true,
+      loaded: false,
+      canLoad: true,
+    });
+    setBillData(applicationData?.tenantId || tenantId, applicationData?.propertyId, updatefetchBillData, updateCanFetchBillData);
+  }
   const convertEpochToDateDMY = (dateEpoch) => {
     if (dateEpoch == null || dateEpoch == undefined || dateEpoch == "") {
       return "NA";
@@ -199,7 +237,7 @@ function ApplicationDetailsContent({
                   {detail?.Component ? <detail.Component /> : null}
                 </CardSectionHeader>
               </React.Fragment>
-            )}
+            )}           
             {/* TODO, Later will move to classes */}
             {/* Here Render the table for adjustment amount details detail.isTable is true for that table*/}
             {detail?.isTable && (
@@ -267,7 +305,7 @@ function ApplicationDetailsContent({
                         textStyle={{wordBreak: "break-all"}}
                       />
                     );
-                  }
+                  }                 
                   return (
                     <div>
                       {window.location.href.includes("modify") ?  (
@@ -294,6 +332,7 @@ function ApplicationDetailsContent({
                         textStyle={{wordBreak: "break-all"}}
                       />
                     )}
+                    {value.title === "PT_TOTAL_DUES"? <ArrearSummary bill={fetchBillData.Bill?.[0]} />:""}
                     </div>
                   )
                 })}
@@ -381,7 +420,7 @@ function ApplicationDetailsContent({
               {workflowDetails?.data?.timeline && workflowDetails?.data?.timeline?.length === 1 ? (
                 <CheckPoint
                   isCompleted={true}
-                  label={t(`${timelineStatusPrefix}${workflowDetails?.data?.timeline[0]?.state}`)}
+                   label={t(`${timelineStatusPrefix}${workflowDetails?.data?.timeline[0]?.state}`)}
                   customChild={getTimelineCaptions(workflowDetails?.data?.timeline[0])}
                 />
               ) : (
