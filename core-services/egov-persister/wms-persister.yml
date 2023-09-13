@@ -1368,5 +1368,48 @@ serviceMaps:
             - jsonPath: $.WMSRunningAccountFinalBillApplication.*.running_account_id	
             
             
+    - version: 1.0
+      description: Persists Bank details in tables
+      fromTopic: save-bank-application
+      isTransaction: true
+      queryMaps:
+
+        - query: INSERT INTO bank_details (bank_id,bank_name,bank_branch,bank_ifsc_code) VALUES (?, ?, ?, ?);
+          basePath: WMSBankDetailsApplication.*
+          jsonMaps:
+            - jsonPath: $.WMSBankDetailsApplication.*.bank_id
+
+            - jsonPath: $.WMSBankDetailsApplication.*.bank_name
+
+            - jsonPath: $.WMSBankDetailsApplication.*.bank_branch
+            
+            - jsonPath: $.WMSBankDetailsApplication.*.bank_ifsc_code
+
+            
+            
+            
+            
+            
+            
+            
+    - version: 1.0
+      description: Update Bank Details applications in table
+      fromTopic: update-bank-application
+      isTransaction: true
+      queryMaps:
+      
+        - query: UPDATE bank_details SET bank_name = ?,bank_branch = ?, bank_ifsc_code = ? WHERE bank_id = ?;
+          basePath: WMSBankDetailsApplication.*
+          jsonMaps:
+            - jsonPath: $.WMSBankDetailsApplication.*.bank_name
+
+            - jsonPath: $.WMSBankDetailsApplication.*.bank_branch
+            
+            - jsonPath: $.WMSBankDetailsApplication.*.bank_ifsc_code
+
+            - jsonPath: $.WMSBankDetailsApplication.*.bank_id
+
+            
+            
             
             
