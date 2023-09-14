@@ -107,7 +107,7 @@ public class WaterDemandRowMapper implements ResultSetExtractor<List<WaterConnec
 		//addDocumentToWaterConnection(rs, waterConnection);
 		//addPlumberInfoToWaterConnection(rs, waterConnection);
 		addHoldersDeatilsToWaterConnection(rs, waterConnection);
-		addRoadCuttingInfotToWaterConnection(rs, waterConnection);
+		//addRoadCuttingInfotToWaterConnection(rs, waterConnection);
 	}
 
 	private void addDocumentToWaterConnection(ResultSet rs, WaterConnection waterConnection) throws SQLException {
