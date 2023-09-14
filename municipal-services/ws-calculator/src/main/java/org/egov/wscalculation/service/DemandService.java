@@ -850,12 +850,13 @@ public class DemandService {
 			Long fromDate = (Long) financialYearMaster.get(WSCalculationConstant.STARTING_DATE_APPLICABLES);
 			Long toDate = (Long) financialYearMaster.get(WSCalculationConstant.ENDING_DATE_APPLICABLES);
 			
-			long count = waterCalculatorDao.getConnectionCount(tenantId, fromDate, toDate);
+			//long count = waterCalculatorDao.getConnectionCount(tenantId, fromDate, toDate);
 			
-			log.info("Connection Count: " + count);
+			//log.info("Connection Count: " + count);
 			
-			connections = waterCalculatorDao.getConnectionsNoList(tenantId,
-							WSCalculationConstant.nonMeterdConnection, 0, 0, fromDate, toDate);
+			connections = waterCalculatorDao.getConnectionsNoListForDemand(tenantId,
+							WSCalculationConstant.nonMeterdConnection, fromDate, toDate);
+			log.info("Connection Count for pending demand: " + connections.size());
 
 			connections = enrichmentService.filterConnections(connections);
 		}	
