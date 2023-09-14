@@ -75,7 +75,7 @@ const ApplicationDetails = (props) => {
         : applicationData?.advanceAmount === 0
         ? "PAY_LATER_SERVICE"
         : applicationData?.advanceAmount > 0
-        ? "FSM_ADVANCE_PAY_SERVICE"
+        ? "FSM_ADVANCE_PAY_SERVICE_V1"
         : applicationData?.paymentPreference === null &&
           applicationData?.additionalDetails?.tripAmount === 0 &&
           applicationData?.advanceAmount === null
