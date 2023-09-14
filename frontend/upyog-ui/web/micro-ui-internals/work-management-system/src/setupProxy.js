@@ -3,11 +3,20 @@ const { createProxyMiddleware } = require("http-proxy-middleware");
 const createProxy = createProxyMiddleware({
   //target: process.env.REACT_APP_PROXY_API || "https://uat.digit.org",
   // target: process.env.REACT_APP_PROXY_API || "https://qa.digit.org",
-  target: process.env.REACT_APP_PROXY_API ||"https://upyog-sandbox.niua.org",
+  //target:"https://test.wontract.com",//https://upyog-sandbox.niua.org" ,
+  target:"https://upyog-sandbox.niua.org" ,
   changeOrigin: true,  
 });
 const assetsProxy = createProxyMiddleware({
-  target: process.env.REACT_APP_PROXY_ASSETS || "https://upyog-sandbox.niua.org",
+  target: "https://upyog-sandbox.niua.org",
+  changeOrigin: true,
+});
+const apiProxy = createProxyMiddleware({
+  target: "http://localhost:8484",
+  changeOrigin: true,
+});
+const MapiProxy = createProxyMiddleware({
+  target: "http://10.216.36.67:8484",
   changeOrigin: true,
 });
 module.exports = function (app) {
@@ -18,9 +27,7 @@ module.exports = function (app) {
     "/localization",
     "/egov-workflow-v2",
     "/pgr-services",
-    "/wms-services",
     "/filestore",
-    "/egov-hrms",
     "/user-otp",
     "/user",
     "/fsm",
@@ -64,6 +71,29 @@ module.exports = function (app) {
     "/inbox/v1/elastic/_search",
     "/fsm-calculator",
     "/service-request",
+    "/wms/work-management-service/v1/sor/_create",
   ].forEach((location) => app.use(location, createProxy));
+
   ["/pb-egov-assets"].forEach((location) => app.use(location, assetsProxy));
+
+  ["/wms/work-management-service/v1/sor/_create",
+  "/wms/work-management-service/v1/sor/_search",  
+  "/wms/work-management-service/v1/sor/_count",
+  "/wms/work-management-service/v1/sor/_update",
+  "/wms/work-management-service/v1/sch/_create",
+  "/wms/work-management-service/v1/sch/_search",  
+  "/wms/work-management-service/v1/sch/_count",
+  "/wms/work-management-service/v1/sch/_update",
+]
+  .forEach((location) => app.use(location, apiProxy));
+  ["/wms/work-management-service/v1/sor/_create",
+  "/wms/work-management-service/v1/sor/_search",  
+  "/wms/work-management-service/v1/sor/_count",
+  "/wms/work-management-service/v1/sor/_update",
+  "/wms/work-management-service/v1/sch/_create",
+  "/wms/work-management-service/v1/sch/_search",  
+  "/wms/work-management-service/v1/sch/_count",
+  "/wms/work-management-service/v1/sch/_update",
+  ].forEach((location) => app.use(location, MapiProxy));
+  
 };

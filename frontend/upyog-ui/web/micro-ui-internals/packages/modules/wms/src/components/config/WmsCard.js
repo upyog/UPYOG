@@ -2,8 +2,8 @@ import { PersonIcon, EmployeeModuleCard } from "@egovernments/digit-ui-react-com
 import React from "react";
 import { useTranslation } from "react-i18next";
 
-const BRCard = () => {
-  const ADMIN = Digit.Utils.hrmsAccess();
+const WMSCard = () => {
+  const ADMIN = Digit.Utils.wmsAccess();
   if (!ADMIN) {
     return null;
   }
@@ -12,23 +12,23 @@ const BRCard = () => {
    
     const propsForModuleCard = {
         Icon : <PersonIcon/>,
-        moduleName: t("Birth Registration"),
+        moduleName: t("SOR-Details"),
         kpis: [
             {
                 // count:  isLoading ? "-" : data?.EmployeCount?.totalEmployee,
                 label: t("TOTAL Application"),
-                link: `/digit-ui/employee/br/Inbox`
+                link: `/digit-ui/citizen/wms/sor-list`
             },
          
         ],
         links: [
             {
                 label: t("Inbox"),
-                link: `/digit-ui/employee/br/Inbox`
+                link: `/digit-ui/citizen/wms/sor-list`
             },
             {
-                label: t("Create Birth-Registration"),
-                link: `/digit-ui/citizen/br/birth`
+                label: t("Create SOR-Registration"),
+                link: `/digit-ui/citizen/wms/sor-create`
             }           
         ]
     }
@@ -36,4 +36,4 @@ const BRCard = () => {
     return <EmployeeModuleCard {...propsForModuleCard} />
 };
 
-export default BRCard;
+export default WMSCard;

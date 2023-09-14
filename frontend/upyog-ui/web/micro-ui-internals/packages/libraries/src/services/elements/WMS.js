@@ -4,8 +4,8 @@ import { Request } from "../atoms/Utils/Request";
 
 const WmsService = {
   
-  SORApplications1:{
-                  search: (data,tenantId, filters, searchParams) =>
+  SORApplications2:{
+                  search: (data,tenantId, searchParams, filters) =>
                     Request({
                       data: data,
                       url: Urls.wms.SORApplications.search,
@@ -13,7 +13,7 @@ const WmsService = {
                       method: "POST",//"POST",
                       auth: true,
                       userService: true,
-                      params:{sorId:searchParams.sor_name}//TODO:#1 Actual API needs to attach  { tenantId, ...filters, ...searchParams },
+                      params:{...searchParams,...filters }//TODO:#1 Actual API needs to attach  { tenantId, ...filters, ...searchParams },
                     }),
                   create: (data, tenantId) =>
                     Request({
@@ -28,7 +28,7 @@ const WmsService = {
                   update: (data, tenantId) =>
                     Request({
                       data: data,
-                      url: Urls.wms.SORApplications.update,
+                      url: Urls.wms.SORApplications.update+"/"+data.SORApplication[0].sor_id,
                       useCache: false,
                       method: "PUT",
                       auth: true,
@@ -52,13 +52,13 @@ const WmsService = {
                       method: "POST",
                       auth: true,
                       userService: true,
-                      params: { tenantId },
+                      params: { sorName:sorName, sorStartDate:sorStartDate, sorEndDate:sorEndDate },
                     }),
-                    count: () =>
+                    count: (tenantId) =>
                     Request({
                       url: Urls.wms.SORApplications.count,
                       useCache: false,
-                      method:"GET",// "POST",
+                      method:"POST",// "POST",
                       auth: true,
                       userService: true,
                       params: {  },
@@ -72,11 +72,11 @@ const WmsService = {
         method: "GET",//"POST",
         auth: true,
         userService: true,
-        params:{ tenantId, ...filters, ...searchParams }//TODO:#1 Actual API needs to attach  { tenantId, ...filters, ...searchParams },
+        params:{...searchParams},// tenantId, ...filters, ...searchParams }//TODO:#1 Actual API needs to attach  { tenantId, ...filters, ...searchParams },
       }),
     create: (data, tenantId) =>
       Request({
-        data: data.ScheduleOfRateApplication[0],
+        data: data,
         url: Urls.wms.SORApplications.create,
         useCache: false,
         method: "POST",
@@ -87,12 +87,12 @@ const WmsService = {
     update: (data, tenantId) =>
       Request({
         data: data,
-        url: Urls.wms.SORApplications.update,
+        url: Urls.wms.SORApplications.update+"/"+data.sor_id,
         useCache: false,
         method: "PUT",
         auth: true,
         userService: true,
-        params: { tenantId },
+        params: {  },
       }),
     delete: (data, tenantId) =>
       Request({
@@ -104,14 +104,14 @@ const WmsService = {
         userService: true,
         params: { tenantId },
       }),
-    get: (tenantId,sor_id) =>
+    get: (sorId,tenantId) =>
       Request({
         url: Urls.wms.SORApplications.get,
         useCache: false,
-        method: "POST",
+        method: "GET",
         auth: true,
         userService: true,
-        params: { sor_id:sor_id },
+        params: { sor_id:sorId},
       }),
       count: () =>
       Request({
@@ -122,6 +122,124 @@ const WmsService = {
         userService: true,
         params: {  },
       }),
+},
+  SCHApplications:{
+    search: (tenantId, filters, searchParams) =>
+      Request({
+        url: Urls.wms.SCHApplications.search,
+        useCache: false,
+        method: "GET",//"POST",
+        auth: true,
+        userService: true,
+        params:{...searchParams},// tenantId, ...filters, ...searchParams }//TODO:#1 Actual API needs to attach  { tenantId, ...filters, ...searchParams },
+      }),
+    create: (data, tenantId) =>
+      Request({
+        data: data,
+        url: Urls.wms.SCHApplications.create,
+        useCache: false,
+        method: "POST",
+        auth: true,
+        userService: true,
+        params: {  },//TODO:#1 {tenantId}
+      }),
+    update: (data, tenantId) =>
+      Request({
+        data: data,
+        url: Urls.wms.SCHApplications.update+"/"+data.scheme_id,
+        useCache: false,
+        method: "PUT",
+        auth: true,
+        userService: true,
+        params: {  },
+      }),
+    delete: (data, tenantId) =>
+      Request({
+        data: data,
+        url: Urls.wms.SCHApplications.delete,
+        useCache: false,
+        method: "DELETE",
+        auth: true,
+        userService: true,
+        params: { tenantId },
+      }),
+    get: (schId,tenantId) =>
+      Request({
+        url: Urls.wms.SCHApplications.get,
+        useCache: false,
+        method: "GET",
+        auth: true,
+        userService: true,
+        params: { scheme_id:schId},
+      }),
+      count: () =>
+      Request({
+        url: Urls.wms.SCHApplications.count,
+        useCache: false,
+        method:"GET",// "POST",
+        auth: true,
+        userService: true,
+        params: {  },
+      }),
+},
+ProjectApplications:{
+  search: (tenantId, filters, searchParams) =>
+    Request({
+      url: Urls.wms.ProjectApplications.search,
+      useCache: false,
+      method: "GET",//"POST",
+      auth: true,
+      userService: true,
+      params:{...searchParams},// tenantId, ...filters, ...searchParams }//TODO:#1 Actual API needs to attach  { tenantId, ...filters, ...searchParams },
+    }),
+  create: (data, tenantId) =>
+    Request({
+      data: data,
+      url: Urls.wms.ProjectApplications.create,
+      useCache: false,
+      method: "POST",
+      auth: true,
+      userService: true,
+      params: {  },//TODO:#1 {tenantId}
+    }),
+  update: (data, tenantId) =>
+    Request({
+      data: data,
+      url: Urls.wms.ProjectApplications.update+"/"+data.project_id,
+      useCache: false,
+      method: "PUT",
+      auth: true,
+      userService: true,
+      params: {  },
+    }),
+  delete: (data, tenantId) =>
+    Request({
+      data: data,
+      url: Urls.wms.ProjectApplications.delete,
+      useCache: false,
+      method: "DELETE",
+      auth: true,
+      userService: true,
+      params: { tenantId },
+    }),
+  get: (projectId,tenantId) =>
+    Request({
+      url: Urls.wms.ProjectApplications.get,
+      useCache: false,
+      method: "GET",
+      auth: true,
+      userService: true,
+      params: { project_id:projectId},
+    }),
+    count: () =>
+    Request({
+      url: Urls.wms.ProjectApplications.count,
+      useCache: false,
+      method:"GET",// "POST",
+      auth: true,
+      userService: true,
+      params: {  },
+    }),
 },
 PMApplications:{
   search: (tenantId, filters, searchParams) =>
@@ -135,7 +253,7 @@ PMApplications:{
     }),
   create: (data, tenantId) =>
     Request({
-      data: data,
+      data: data.PhysicalMilestone[0],
       url: Urls.wms.PMApplications.create,
       useCache: false,
       method: "POST",

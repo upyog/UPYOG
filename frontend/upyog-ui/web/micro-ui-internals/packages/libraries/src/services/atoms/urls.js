@@ -107,30 +107,6 @@ const Urls = {
     create: "/egov-hrms/employees/_create",
     update: "/egov-hrms/employees/_update",
   },
-wms:{
-  Scheme_Master:{
-    create: "https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/Scheme_Master",
-    update:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/Scheme_Master:id",
-    get:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/Scheme_Master:id",
-    search:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/Scheme_Master",
-    delete:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/Scheme_Master:id"
-  },
-  Project_Master:{
-    create: "https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/Project_Master",
-    update:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/Project_Master:id",
-    get:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/Project_Master:id",
-    search:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/Project_Master",
-    delete:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/Project_Master:id"
-  },
-  SORApplications:{
-    create: "https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/SORApplications",
-    update:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/SORApplications:id",
-    get:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/SORApplications",
-    search:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/SORApplications",
-    delete:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/SORApplications:id"
-  },
-
-  },
   tl: {
     create: "/tl-services/v1/_create",
     search: "/tl-services/v1/_search",
@@ -224,46 +200,50 @@ wms:{
   },
   bills: {
     cancelBill: "/billing-service/bill/v2/_cancelbill",
-  },
-wms:{
-  Scheme_Master:{
-    create: "https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/Scheme_Master",
-    update:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/Scheme_Master:id",
-    get:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/Scheme_Master:id",
-    search:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/Scheme_Master",
-    delete:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/Scheme_Master:id"
-  },
-  Project_Master:{
-    create: "https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/Project_Master",
-    update:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/Project_Master:id",
-    get:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/Project_Master:id",
-    search:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/Project_Master",
-    delete:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/Project_Master:id"
-  },
-  SORApplications:{
-    create: "https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/SORApplications",
-    update:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/SORApplications:id",
-    get:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/SORApplications",
-    search:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/SORApplications",
-    delete:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/SORApplications:id"
-  },
-  PMApplications:{
-
-    create: "https://64f5834d2b07270f705d4f91.mockapi.io/PMApplications",
-
-    update:"https://64f5834d2b07270f705d4f91.mockapi.io/PMApplications:id",
-
-    get:"https://64f5834d2b07270f705d4f91.mockapi.io/PMApplications:id",
-
-    search:"https://64f5834d2b07270f705d4f91.mockapi.io/PMApplications",
-
-    count:"https://64f5834d2b07270f705d4f91.mockapi.io/PMApplications",
-
-    delete:"https://64f5834d2b07270f705d4f91.mockapi.io/PMApplications:id"
-
-  },
-
-  },
+  },  
+  wms:{
+    SORApplications:{
+      create: "https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/SORApplications",
+      update:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/SORApplications/",
+      get:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/SORApplications/:id",
+      search:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/SORApplications",      
+      count:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/SORApplications",
+      delete:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/SORApplications:id"
+    },
+    SCHApplications:{
+      create: "https://65002a9418c34dee0cd46ad1.mockapi.io/wms/work-management-service/v1/SCHApplications",
+      update:"https://65002a9418c34dee0cd46ad1.mockapi.io/wms/work-management-service/v1/SCHApplications/",
+      get:"https://65002a9418c34dee0cd46ad1.mockapi.io/wms/work-management-service/v1/SCHApplications/:id",
+      search:"https://65002a9418c34dee0cd46ad1.mockapi.io/wms/work-management-service/v1/SCHApplications",      
+      count:"https://65002a9418c34dee0cd46ad1.mockapi.io/wms/work-management-service/v1/SCHApplications",
+      delete:"https://65002a9418c34dee0cd46ad1.mockapi.io/wms/work-management-service/v1/SCHApplications:id"
+    },
+    
+    ProjectApplications:{
+      create: "https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/PMApplications",
+      update:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/PMApplications:id",
+      get:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/PMApplications/:id",
+      search:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/PMApplications",      
+      count:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/PMApplications",
+      delete:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/PMApplications:id"
+    },
+    SORApplications2:{
+      create: "http://192.168.0.102:8484/wms/work-management-service/v1/sor/_create",
+      update:"http://192.168.0.102:8484/wms/work-management-service/v1/sor/_update/:sor_id",
+      get:"http://192.168.0.102:8484/wms/work-management-service/v1/sor/_search",
+      search:"http://192.168.0.102:8484/wms/work-management-service/v1/sor/_search",
+      count:"http://192.168.0.102:8484/wms/work-management-service/v1/sor/_search",
+    },
+    PMApplications:{
+      create: "http://192.168.0.102-:8484/wms/wms-services/v1/pfmilestone/_create",
+      update:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/PMApplications:id",
+      get:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/PMApplications/:id",
+      search:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/PMApplications",
+      
+      count:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/PMApplications",
+      delete:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/PMApplications:id"
+    },
+  },  
   access_control: "/access/v1/actions/mdms/_get",
   billgenie: "/egov-searcher",
   audit: "/inbox/v1/elastic/_search",

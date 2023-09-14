@@ -5,16 +5,76 @@ import { useRouteMatch } from "react-router-dom";
 import CitizenApp from "./pages/citizen";
 import Home from "./pages/citizen/Home";
 import EmployeeApp from "./pages/employee";
-
+import ListFilter from "./components/ListFilter";
 import WMSCard from "./components/WmsCard";
 
 
-import Response from "./pages/citizen/SOR/Response";
+//** SOR */
+import WmsSorId from "./pageComponents/SOR/WmsSorId";
+import WmsSorName from "./pageComponents/SOR/WmsSorName";
+import WmsSorChapter from "./pageComponents/SOR/WmsSorChapter";
+import WmsSorItemNo from "./pageComponents/SOR/WmsSorItemNo";
+import WmsSorDescriptionOfItem from "./pageComponents/SOR/WmsSorDescriptionOfItem";
+import WmsSorRate from "./pageComponents/SOR/WmsSorRate";
+import WmsSorUnit from "./pageComponents/SOR/WmsSorUnit";
+import WmsSorStartDate from "./pageComponents/SOR/WmsSorStartDate";
+import WmsSorEndDate from "./pageComponents/SOR/WmsSorEndDate";
+import WmsSorResponse from "./pages/citizen/SOR/Response";
+
+import List from "./pages/citizen/SOR/List";
+import Details from "./pages/citizen/SOR/Details";
+import Create from "./pages/citizen/SOR/Create";
+import Edit from "./pages/citizen/SOR/Edit";
+
+//** SOR END*/
+
+
+//** PRJ */
+import WmsPrjId from "./pageComponents/PRJ/WmsPrjId";
+import WmsPrjNameEn from "./pageComponents/PRJ/WmsPrjNameEn";
+import WmsPrjNameReg from "./pageComponents/PRJ/WmsPrjNameReg";
+import WmsPrjNumber from "./pageComponents/PRJ/WmsPrjNumber";
+import WmsPrjDescription from "./pageComponents/PRJ/WmsPrjDescription";
+import WmsPrjApprovalNo from "./pageComponents/PRJ/WmsPrjApprovalNo";
+import WmsPrjDepartment from "./pageComponents/PRJ/WmsPrjDepartment";
+import WmsPrjTimeLine from "./pageComponents/PRJ/WmsPrjTimeLine";
+import WmsPrjSchemeName from "./pageComponents/PRJ/WmsPrjSchemeName";
+import WmsPrjSchemeNo from "./pageComponents/PRJ/WmsPrjSchemeNo";
+import WmsPrjSourceOfFund from "./pageComponents/PRJ/WmsPrjSourceOfFund";
+import WmsPrjApprovalDate from "./pageComponents/PRJ/WmsPrjApprovalDate";
+import WmsPrjStartDate from "./pageComponents/PRJ/WmsPrjStartDate";
+import WmsPrjEndDate from "./pageComponents/PRJ/WmsPrjEndDate";
+import WmsPrjStatus from "./pageComponents/PRJ/WmsPrjStatus";
+import WmsPrjResponse from "./pages/citizen/PRJ/Response";
+
+import PrjCreate from "./pages/citizen/PRJ/Create";
+import PrjList from "./pages/citizen/PRJ/List";
+import PrjDetails from "./pages/citizen/PRJ/Details";
+import PrjEdit from "./pages/citizen/PRJ/Edit";
+//** PRJ END*/
+
+
+
+//** SCH */
+import WmsSchId from "./pageComponents/SCH/WmsSchId";
+import WmsSchNameEn from "./pageComponents/SCH/WmsSchNameEn";
+import WmsSchNameReg from "./pageComponents/SCH/WmsSchNameReg";
+import WmsSchFund from "./pageComponents/SCH/WmsSchFund";
+import WmsSchSourceOfFund from "./pageComponents/SCH/WmsSchSourceOfFund";
+import WmsSchDescriptionOfScheme from "./pageComponents/SCH/WmsSchDescriptionOfScheme";
+import WmsSchStartDate from "./pageComponents/SCH/WmsSchStartDate";
+import WmsSchEndDate from "./pageComponents/SCH/WmsSchEndDate";
+import WmsSchResponse from "./pages/citizen/SCH/Response";
+
+import WmsSchList from "./pages/citizen/SCH/List";
+import WmsSchDetails from "./pages/citizen/SCH/Details";
+import WmsSchCreate from "./pages/citizen/SCH/Create";
+import WmsSchEdit from "./pages/citizen/SCH/Edit";
+
+//** SCH END*/
 
 
 /**------------ PM */
-
-import List from "./pages/citizen/PM/List";
 import PMCreate from "./pages/citizen/PM/Create";
 import WmsPmId from "./pageComponents/PM/WmsPmId";
 import WmsPmMlName from "./pageComponents/PM/WmsPmMlName";
@@ -27,17 +87,68 @@ import ContrMasterAdd from "./pages/citizen/ContrMaster/index";
 import ContrMasterView from "./pages/citizen/ContrMaster/ContrView";
 const componentsToRegister = {  
   Home:Home,  
+  WmsSorList:List,
+  WmsSorDetails:Details,
+  WmsSorCreate:Create,
+  WmsSorEdit:Edit,
+  WMS_LIST_FILTER: (props) => <ListFilter  {...props} />,  
+  WmsSorId,
+  WmsSorName,
+  WmsSorChapter,
+  WmsSorItemNo,
+  WmsSorDescriptionOfItem,
+  WmsSorUnit,
+  WmsSorRate,
+  WmsSorStartDate,
+  WmsSorEndDate,
+  WmsSorResponse:WmsSorResponse,
+
+  WmsSchList:WmsSchList,
+  WmsSchDetails:WmsSchDetails,
+  WmsSchCreate:WmsSchCreate,
+  WmsSchEdit:WmsSchEdit,
+  WmsSchId,
+  WmsSchNameEn,
+  WmsSchNameReg,
+  WmsSchFund,
+  WmsSchSourceOfFund,
+  WmsSchDescriptionOfScheme,
+  WmsSchStartDate,
+  WmsSchEndDate,
+  WmsSchResponse,
+  WmsSchResponse:WmsSchResponse,
+
+  WmsPrjList:PrjList,
+  WmsPrjDetails:PrjDetails,
+  WmsPrjCreate:PrjCreate,
+  WmsPrjEdit:PrjEdit,
+  WmsPrjId,
+  WmsPrjNameEn,
+  WmsPrjNameReg,
+  WmsPrjNumber,
+  WmsPrjDescription,
+  WmsPrjApprovalNo,
+  WmsPrjDepartment,
+  WmsPrjTimeLine,
+  WmsPrjSchemeName,
+  WmsPrjSchemeNo,
+  WmsPrjSourceOfFund,
+  WmsPrjApprovalDate,
+  WmsPrjStartDate,
+  WmsPrjEndDate,
+  WmsPrjStatus,
+  WmsPrjResponse:WmsPrjResponse,
+
   PMCreate:PMCreate,
-  WmsPMList:List,
   ContrMasterAdd,
   ContrMasterView,
-  Response,
   WMSCard,
   WmsPmId,
   WmsPmMlName,
   WmsPmPer,
   WmsPmPrjName,
   WmsPmWrkName,
+
 };
 export const WMSModule = ({ stateCode, userType, tenants }) => {
   const { path, url } = useRouteMatch();

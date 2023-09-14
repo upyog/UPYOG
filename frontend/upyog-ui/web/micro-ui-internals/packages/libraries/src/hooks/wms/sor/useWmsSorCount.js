@@ -1,8 +1,15 @@
 import { useQuery, useQueryClient } from "react-query";
-import WMSService from "../../../services/elements/WMS";
+import WmsService from "../../../services/elements/WMS";
 
 export const useWmsSorCount = (tenantId, config = {}) => {
-  return useQuery(["HRMS_COUNT", tenantId], () => WMSService.SORApplications.count(tenantId), config);
+  const client = useQueryClient();
+  const { isLoading, Errors, data } = useQuery(
+    ["WMS_SOR_COUNT",tenantId],
+    async () => await WmsService.SORApplications.count(tenantId).SORApplications,
+    config
+  );//isLoading: isLoading, Errors, data: res 
+  return { isLoading, Errors, data, revalidate: () => client.invalidateQueries(["WMS_SOR_COUNT", tenantId]) };
+
 };
 
 export default useWmsSorCount;

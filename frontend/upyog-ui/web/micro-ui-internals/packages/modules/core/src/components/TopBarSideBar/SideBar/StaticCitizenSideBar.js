@@ -235,7 +235,7 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
       return item
       
     })
-
+/* 
     var tmp={
       "type": "link",
       "text": "WMS",
@@ -324,7 +324,7 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
       "icon": "WMSIcon",
       "link": "/upyog-ui/citizen/wms-home"
   };
-  menuItems.push(tmp);
+  menuItems.push(tmp); */
 
   return (
     <React.Fragment>

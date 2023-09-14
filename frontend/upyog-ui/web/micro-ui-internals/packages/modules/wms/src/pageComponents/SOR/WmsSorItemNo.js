@@ -1,110 +1,52 @@
-import { FormStep, TextInput, CardLabel, LabelFieldPair, CardLabelError } from "@egovernments/digit-ui-react-components";
-import React, { useState, useEffect, Fragment } from "react";
+import React from "react";
+import { LabelFieldPair, CardLabel, TextInput, CardLabelError } from "@egovernments/digit-ui-react-components";
 import { useLocation } from "react-router-dom";
-
-const WmsSorItemNo = ({ t, config, onSelect, formData = {}, userType, register, errors, props }) => {
-  const tenants = Digit.Hooks.fsm.useTenants();
-  const [itemNo, setItemNo] = useState(formData?.ItemNo || "");
-  const [itemNoServicability, setItemNoServicability] = useState(null);
-
-  const { pathname } = useLocation();
-  const presentInModifyApplication = pathname.includes("modify");
-
+const WmsSorItemNo = ({ t, config, onSelect, formData = {}, userType, register, errors }) => {
+  const { pathname: url } = useLocation();
   const inputs = [
     {
-      label: "CORE_COMMON_PINCODE",
-      type: "text",
-      name: "sorItemNo",
-      validation: {
-        minlength: 6,
-        maxlength: 6,
-        pattern: "^[1-9][0-9]*",
-        max: "9999999",
-        title: t("CORE_COMMON_PINCODE_INVALID"),
+      label: "WMS_SOR_ITEM_NO_LABEL",
+      type: "number",
+      name: "item_no",
+       validation: {
+        isRequired: true,
+        pattern: Digit.Utils.getPattern('Num'),
+        title: t("WMS_COMMON_ITEM_NO_INVALID"),
       },
+      isMandatory: true,
     },
   ];
 
-  useEffect(() => {
-    if (formData.ItemNo) {
-      setItemNo(formData.ItemNo);
-    }
-  }, [formData.ItemNo]);
-
-  useEffect(() => {
-    if (formData?.address?.locality?.pincode !== pincode && userType === "employee") {
-      setPincode(formData?.address?.locality?.pincode || "");
-      setPincodeServicability(null);
-    }
-  }, [formData?.address?.locality]);
-
-  useEffect(() => {
-    if (userType === "employee" && pincode) {
-      onSelect(config.key, { ...formData.address, pincode: pincode?.[0] || pincode });
-    }
-  }, [pincode]);
-
-  function onChange(e) {
-    setPincode(e.target.value);
-    setPincodeServicability(null);
-    if (userType === "employee") {
-      const foundValue = tenants?.find((obj) => obj.pincode?.find((item) => item.toString() === e.target.value));
-      if (foundValue) {
-        const city = tenants.filter((obj) => obj.pincode?.find((item) => item == e.target.value))[0];
-        onSelect(config.key, { ...formData.address, city, pincode: e.target.value, slum: null });
-      } else {
-        onSelect(config.key, { ...formData.address, pincode: e.target.value });
-        setPincodeServicability("CS_COMMON_PINCODE_NOT_SERVICABLE");
-      }
-    }
+  function setValue(value, input) {
+    onSelect(config.key, { ...formData[config.key], [input]: value });
   }
-
-  const goNext = async (data) => {
-    const foundValue = tenants?.find((obj) => obj.pincode?.find((item) => item == data?.pincode));
-    if (foundValue) {
-      onSelect(config.key, { pincode });
-    } else {
-      setPincodeServicability("CS_COMMON_PINCODE_NOT_SERVICABLE");
-    }
-  };
-
-  if (userType === "employee") {
-    return inputs?.map((input, index) => {
-      return (
-        <>
-          <LabelFieldPair key={index}>
+  
+  return (
+    <div>
+      {inputs?.map((input, index) => {
+        let currentValue=formData && formData[config.key] && formData[config.key][input.name]||'';
+        return(<React.Fragment key={index}>
+          {errors[input.name] && <CardLabelError>{t(input.error)}</CardLabelError>}
+          <LabelFieldPair>
             <CardLabel className="card-label-smaller">
               {t(input.label)}
-              {config.isMandatory ? " * " : null}
+              {input.isMandatory ? " * " : null}
             </CardLabel>
             <div className="field">
-              <TextInput key={input.name} value={pincode} onChange={onChange} {...input.validation} />
+              <TextInput
+                key={input.name}
+                value={formData && formData[config.key] ? formData[config.key][input.name] : undefined}
+                onChange={(e) => setValue(e.target.value, input.name)}
+                disable={false}
+                defaultValue={undefined}
+                {...input.validation}
+              />
+            {currentValue&&currentValue.length>0&&!currentValue.match(Digit.Utils.getPattern('Num'))&&<CardLabelError style={{ width: "100%", marginTop: '-15px', fontSize: '16px', marginBottom: '12px'}}>{t("WMS_COMMON_ITEM_NO_INVALID")}</CardLabelError>}
             </div>
           </LabelFieldPair>
-          {pincodeServicability && (
-            <CardLabelError style={{ width: "70%", marginLeft: "30%", fontSize: "12px", marginTop: "-21px" }}>
-              {t(pincodeServicability)}
-            </CardLabelError>
-          )}
-        </>
-      );
-    });
-  }
-  const onSkip = () => onSelect();
-  return (
-    <React.Fragment>
-      <Timeline currentStep={1} flow="APPLY" />
-      <FormStep
-        t={t}
-        config={{ ...config, inputs }}
-        onSelect={goNext}
-        _defaultValues={{ pincode }}
-        onChange={onChange}
-        onSkip={onSkip}
-        forcedError={t(pincodeServicability)}
-        isDisabled={!pincode}
-      ></FormStep>
-    </React.Fragment>
+        </React.Fragment>
+      )})}
+    </div>
   );
 };
 

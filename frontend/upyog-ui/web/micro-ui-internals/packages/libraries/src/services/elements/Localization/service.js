@@ -11754,7 +11754,7 @@ export const LocalizationService = {
             },
             {
                 "code": "CS_LANDING_PAGE_COMPLAINTS_DESCRIPTION",
-                "message": "mSeva Complaints offers an easy to use interface which enables you to lodge civic works related complaints. It also lets you track the status of your complaint and facilitates direct interaction with your municipality till its resolution.",
+                "message": "Ey-Seva Complaints offers an easy to use interface which enables you to lodge civic works related complaints. It also lets you track the status of your complaint and facilitates direct interaction with your municipality till its resolution.",
                 "module": "rainmaker-common",
                 "locale": "en_IN"
             },
@@ -11964,7 +11964,7 @@ export const LocalizationService = {
             },
             {
                 "code": "CS_PAYMENT_REDIRECT_NOTICE",
-                "message": "You will be redirected to a third-party payment gateway.\nmSeva does not save any credit or debit card details.",
+                "message": "You will be redirected to a third-party payment gateway.\nEy-Seva does not save any credit or debit card details.",
                 "module": "rainmaker-common",
                 "locale": "en_IN"
             },
@@ -13854,7 +13854,7 @@ export const LocalizationService = {
             },
             {
                 "code": "DU_DOCUMENT_UPLOAD_NOTIFICATION_TEMPLATE",
-                "message": "A new document {document_name} has been uploaded in mSeva. Click the following link to view the document: {link}",
+                "message": "A new document {document_name} has been uploaded in Ey-Seva. Click the following link to view the document: {link}",
                 "module": "rainmaker-common",
                 "locale": "en_IN"
             },
@@ -55404,7 +55404,7 @@ export const LocalizationService = {
             },
             {
                 "code": "SS_SURVEY_NOTIFICATION_TEMPLATE",
-                "message": "A new survey {survey_title} has been launched in mSeva. Click here to participate.",
+                "message": "A new survey {survey_title} has been launched in Ey-Seva. Click here to participate.",
                 "module": "rainmaker-common",
                 "locale": "en_IN"
             },
@@ -72038,7 +72038,26 @@ export const LocalizationService = {
             "message": "Create",
             "module": "rainmaker-common",
             "locale": "en_IN"
-        }, {
+        },
+        {
+            "code": "WMS_PRJ_CREATE_HEADER",
+            "message": "Project Master",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_SOR_CREATE_HEADER",
+            "message": "Schedule Of Rate",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_SCH_CREATE_HEADER",
+            "message": "Scheme Master",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+         {
             "code": "WMS_COMMON_SEARCH_BY",
             "message": "Search By",
             "module": "rainmaker-common",
@@ -72139,19 +72158,19 @@ export const LocalizationService = {
             "locale": "en_IN"
         },
         {
-            "code": "WMS_PM_PROJECT_NAME_LABEL ",
+            "code": "WMS_PM_PROJECT_NAME_LABEL",
             "message": "Project Name",
             "module": "rainmaker-common",
             "locale": "en_IN"
         },
         {
-            "code": "WMS_PM_ML_NAME_LABEL ",
+            "code": "WMS_PM_ML_NAME_LABEL",
             "message": "Milestone Name",
             "module": "rainmaker-common",
             "locale": "en_IN"
         },
         {
-            "code": "WMS_PM_WORK_NAME_LABEL ",
+            "code": "WMS_PM_WORK_NAME_LABEL",
             "message": "Work Name",
             "module": "rainmaker-common",
             "locale": "en_IN"
@@ -72162,13 +72181,343 @@ export const LocalizationService = {
             "module": "rainmaker-common",
             "locale": "en_IN"
         },
-//
-//
-//
-//
-//
-//
-
+        {
+            "code": "WMS_PRJ_FORM_CREATE_HEAD",
+            "message": "Project-Details",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+         {
+            "code": "WMS_NEW_PRJ_FORM_HEADER",
+            "message": "Project Master",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_HOME_SEARCH_RESULTS_HEADING",
+            "message": "Search Results",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_PRJ_CONTROLS_LABEL",
+            "message": "Controls",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_PRJ_ID_LABEL",
+            "message": "Project ID",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_PRJ_STATUS_LABEL",
+            "message": "Status",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_PRJ_PROJECT_END_DATE_LABEL",
+            "message": "End Date",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_PRJ_PROJECT_START_DATE_LABEL",
+            "message": "Start Date",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_PRJ_APPROVAL_DATE_LABEL",
+            "message": "Approval Date",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_PRJ_SOURCE_OF_FUND_LABEL",
+            "message": "Source Of Fund",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_PRJ_SCHEME_NO_LABEL",
+            "message": "Scheme No",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_PRJ_SCHEME_NAME_LABEL",
+            "message": "Scheme",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_PRJ_PROJECT_TIMELINE_LABEL",
+            "message": "Timeline",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_PRJ_DEPARTMENT_LABEL",
+            "message": "Department",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_PRJ_APPROVAL_NUMBER_LABEL",
+            "message": "Approval No",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_PRJ_PROJECT_DESCRIPTION_LABEL",
+            "message": "Project Desc",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_PRJ_PROJECT_NAME_REG_LABEL",
+            "message": "Project Name(Reg)",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_PRJ_PROJECT_NAME_EN_LABEL",
+            "message": "Project Name(En)",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_PRJ_PROJECT_ID_LABEL",
+            "message": "Project ID",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_PRJ_DETAILS_FORM_HEADER",
+            "message": "Project Master",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "PRJ_HOME",
+            "message": "Project Home",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_PRJ_EDIT_LABEL",
+            "message": "Edit",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_PRJ_PROJECT_NUMBER_LABEL",
+            "message": "Project Number",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_PRJ_NAME_LABEL",
+            "message": "Project Name",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+{
+            "code": "SOR_RESPONSE_CREATE_ACTION_ERROR",
+            "message": "Issue while creating Schedule of record!",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_SCH_FORM_CREATE_HEAD",
+            "message": "Scheme-Details",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+         {
+            "code": "WMS_NEW_SCH_FORM_HEADER",
+            "message": "Scheme Master",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_HOME_SEARCH_RESULTS_HEADING",
+            "message": "Search Results",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_SCH_CONTROLS_LABEL",
+            "message": "Controls",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_SCH_ID_LABEL",
+            "message": "Scheme ID",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_SCH_STATUS_LABEL",
+            "message": "Status",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_SCH_END_DATE_LABEL",
+            "message": "End Date",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_SCH_START_DATE_LABEL",
+            "message": "Start Date",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_SCH_APPROVAL_DATE_LABEL",
+            "message": "Approval Date",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_SCH_SOURCE_OF_FUND_LABEL",
+            "message": "Source Of Fund",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_SCH_SCHEME_NO_LABEL",
+            "message": "Scheme No",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_SCH_SCHEME_NAME_LABEL",
+            "message": "Scheme",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_SCH_TIMELINE_LABEL",
+            "message": "Timeline",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_SCH_DEPARTMENT_LABEL",
+            "message": "Department",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_SCH_APPROVAL_NUMBER_LABEL",
+            "message": "Approval No",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_SCH_DESCRIPTION_LABEL",
+            "message": "Scheme Desc",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_SCH_NAME_REG_LABEL",
+            "message": "Scheme Name(Reg)",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_SCH_NAME_EN_LABEL",
+            "message": "Scheme Name(En)",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_SCH_ID_LABEL",
+            "message": "Scheme ID",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_SCH_DETAILS_FORM_HEADER",
+            "message": "Scheme Master",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "SCH_HOME",
+            "message": "Scheme Home",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_SCH_EDIT_LABEL",
+            "message": "Edit",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_SCH_NUMBER_LABEL",
+            "message": "Scheme Number",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_SCH_NAME_LABEL",
+            "message": "Scheme Name",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },{
+            "code": "SCH_RESPONSE_CREATE_ACTION_ERROR",
+            "message": "Issue while creating Scheme record!",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },{
+            "code": "SCH_HOME",
+            "message": "Scheme Master Home",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "SCH_LIST",
+            "message": "Scheme List",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "SCH_DETAILS",
+            "message": "Scheme Master(Details)",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "SCH_EDIT",
+            "message": "Scheme Master (Edit)",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_SCH_FUND_LABEL",
+            "message": "Fund",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_SCH_DESC_OF_SCHEME_LABEL",
+            "message": "Description of Scheme",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        
+//WMS_SCH_FUND_LABEL
+//WMS_SCH_DESC_OF_SCHEME_LABEL 
 
         ]
     };

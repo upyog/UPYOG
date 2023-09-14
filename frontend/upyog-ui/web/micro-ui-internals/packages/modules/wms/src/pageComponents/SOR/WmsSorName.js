@@ -7,11 +7,11 @@ const WmsSorName = ({ t, config, onSelect, formData = {}, userType, register, er
     {
       label: "WMS_SOR_NAME_LABEL",
       type: "text",
-      name: "sorName",
+      name: "sor_name",
       validation: {
         isRequired: true,
         pattern: Digit.Utils.getPattern('Name'),
-        title: t("CORE_COMMON_APPLICANT_NAME_INVALID"),
+        title: t("WMS_COMMON_NAME_INVALID"),
       },
       isMandatory: true,
     },
@@ -41,7 +41,7 @@ const WmsSorName = ({ t, config, onSelect, formData = {}, userType, register, er
                 defaultValue={undefined}
                 {...input.validation}
               />
-            {currentValue&&currentValue.length>0&&!currentValue.match(Digit.Utils.getPattern('Name'))&&<CardLabelError style={{ width: "100%", marginTop: '-15px', fontSize: '16px', marginBottom: '12px'}}>{t("CORE_COMMON_APPLICANT_NAME_INVALID")}</CardLabelError>}
+            {currentValue&&currentValue.length>0&&!currentValue.match(Digit.Utils.getPattern('Name'))&&<CardLabelError style={{ width: "100%", marginTop: '-15px', fontSize: '16px', marginBottom: '12px'}}>{t("WMS_COMMON_NAME_INVALID")}</CardLabelError>}
             </div>
           </LabelFieldPair>
         </React.Fragment>

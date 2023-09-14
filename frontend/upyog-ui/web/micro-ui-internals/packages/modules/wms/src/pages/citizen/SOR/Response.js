@@ -29,7 +29,7 @@ const BannerPicker = (props) => {
   );
 };
 
-const Response = (props) => {
+const WmsSorResponse = (props) => {
   const { t } = useTranslation();
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();
@@ -90,12 +90,11 @@ const Response = (props) => {
         action={state.action}
         isSuccess={!successData ? mutation?.isSuccess : true}
         isLoading={(mutation.isIdle && !mutationHappened) || mutation?.isLoading}
-        isEmployee={props.parentRoute.includes("employee")}
       />
-      <CardText>{t(DisplayText(state.action, mutation.isSuccess || !!successData, props.parentRoute.includes("employee"), t), t)}</CardText>
+      <CardText>{t(DisplayText(state.action, mutation.isSuccess || !!successData, props.parentRoute.includes("citizen"), t), t)}</CardText>
 
       <ActionBar>
-        <Link to={`${props.parentRoute.includes("employee") ? "/upyog-ui/employee" : "/upyog-ui/citizen"}`}>
+        <Link to={`${props.parentRoute.includes("citizen") ? "/upyog-ui/citizen" : "/upyog-ui/citizen"}`}>
           <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
         </Link>
       </ActionBar>
@@ -103,4 +102,4 @@ const Response = (props) => {
   );
 };
 
-export default Response;
+export default WmsSorResponse;

@@ -51,7 +51,7 @@ const initRequestBody = (tenantId) => ({
     moduleDetails: [
       {
         moduleName: "common-masters",
-        masterDetails: [{ name: "Department" }, { name: "Designation" }, { name: "StateInfo" }, { name: "wfSlaConfig" }, { name: "uiHomePage" }],
+        masterDetails: [{ name: "Department" }, { name: "Fund" }, { name: "Chapter" }, { name: "Designation" }, { name: "StateInfo" }, { name: "wfSlaConfig" }, { name: "uiHomePage" }],
       },
       {
         moduleName: "tenant",
@@ -637,7 +637,54 @@ const getGenderTypeList = (tenantId, moduleCode, type) => ({
     ],
   },
 });
-
+const getDepartmentList = (tenantId, moduleCode, type) => ({
+  type,
+  details: {
+    tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "Department",
+          },
+        ],
+      },
+    ],
+  },
+});
+const getFundList = (tenantId, moduleCode, type) => ({
+  type,
+  details: {
+    tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "Fund",
+          },
+        ],
+      },
+    ],
+  },
+});
+const getChapterList = (tenantId, moduleCode, type) => ({
+  type,
+  details: {
+    tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "Chapter",
+          },
+        ],
+      },
+    ],
+  },
+});
 const getMeterStatusTypeList = (tenantId) => ({
     moduleDetails: [
       {
@@ -1229,7 +1276,30 @@ const HRGenderType = (MdmsRes) => {
     };
   });
 };
-
+const WMSDepartment = (MdmsRes) => {
+  MdmsRes["common-masters"].Department.filter((Department) => Department.active).map((comDepartment) => {
+    return {
+      ...comDepartment,
+      i18nKey: `COMMON_DEPARTMENT_${comDepartment.code}`,
+    };
+  });
+};
+const WMSFund = (MdmsRes) => {
+  MdmsRes["common-masters"].Fund.filter((Fund) => Fund.active).map((comFund) => {
+  return {
+    ...comFund,
+    i18nKey: `COMMON_FUND_${comFund.code}`,
+  };
+});
+};
+const WMSChapter = (MdmsRes) => {
+  MdmsRes["common-masters"].Chapter.filter((Chapter) => Chapter.active).map((comChapter) => {
+  return {
+    ...comChapter,
+    i18nKey: `COMMON_CHAPTER_${comChapter.code}`,
+  };
+});
+};
 const GetMCollectBusinessService = (MdmsRes) =>
   MdmsRes["BillingService"].BusinessService.map((businesServiceDetails) => {
     return {
@@ -1387,6 +1457,12 @@ const transformResponse = (type, MdmsRes, moduleCode, tenantId) => {
       return PTGenderType(MdmsRes);
     case "HRGenderType":
       return HRGenderType(MdmsRes);
+    case "WMSDepartment":
+      return WMSDepartment(MdmsRes);
+    case "WMSChapter":
+      return WMSChapter(MdmsRes);
+    case "WMSFund":
+      return WMSFund(MdmsRes);
     case "DocumentTypes":
       return GetDocumentsTypes(MdmsRes);
     case "CheckList":
@@ -2208,44 +2284,8 @@ export const MdmsService = {
                   "sidebar": "digit-ui-links",
                   "sidebarURL": "/digit-ui/citizen/wms-home"
               },
-              /* {
-                "id": 3011,
-                "name": "SOR_LIST",
-                "url": "digit-ui-card",
-                "displayName": "SOR LIST",
-                "orderNumber": 1,
-                "parentModule": "WMS",
-                "enabled": true,
-                "serviceCode": "CITIZEN_SERVICE_WMS",
-                "code": "",
-                "path": "",
-                "navigationURL": "/digit-ui/citizen/wms/sor-list",
-                "leftIcon": "WMSIcon",
-                "rightIcon": "",
-                "queryParams": "",
-                "sidebar": "digit-ui-links",
-                "sidebarURL": "/digit-ui/citizen/wms/sor-home"
-            },
-            {
-              "id": 3012,
-              "name": "SOR_CREATE",
-              "url": "digit-ui-card",
-              "displayName": "SOR CREATE",
-              "orderNumber": 1,
-              "parentModule": "WMS",
-              "enabled": true,
-              "serviceCode": "CITIZEN_SERVICE_WMS",
-              "code": "",
-              "path": "",
-              "navigationURL": "/digit-ui/citizen/wms/sor-create",
-              "leftIcon": "WMSIcon",
-              "rightIcon": "",
-              "queryParams": "",
-              "sidebar": "digit-ui-links",
-              "sidebarURL": "/digit-ui/citizen/wms/sor-home"
-          }, */
               {
-                  "id": 3002,
+                  "id": 2477,
                   "name": "PRJMST_HOME",
                   "url": "digit-ui-card",
                   "displayName": "Project Master Home",
@@ -2264,8 +2304,8 @@ export const MdmsService = {
                   "leftIcon": "WMSIcon",
                   "rightIcon": ""
               },{
-                "id": 3003,
-                "name": "PM_HOME",
+                "id": 2478,
+                "name": "PM HOME",
                 "url": "digit-ui-card",
                 "displayName": "Physical Milestone",
                 "orderNumber": 3,
@@ -2274,7 +2314,7 @@ export const MdmsService = {
                 "serviceCode": "CITIZEN_SERVICE_WMS",
                 "code": "",
                 "path": "",
-                "navigationURL": "/digit-ui/citizen/wms/pm-home",
+                "navigationURL": "/digit-ui/citizen/pm-home",
                 "leftIcon": "WMSIcon",
                 "rightIcon": "",
                 "queryParams": "",
@@ -2282,7 +2322,7 @@ export const MdmsService = {
                 "sidebarURL": "/digit-ui/citizen/wms-home"
             },
             {
-              "id": 3004,
+              "id": 2479,
               "name": "Contaractor Master",
               "url": "digit-ui-card",
               "displayName": "Contaractor Master",
@@ -2300,7 +2340,7 @@ export const MdmsService = {
               "sidebarURL": "/digit-ui/citizen/wms-home"
           },
             {
-              "id": 3005,
+              "id": 2480,
               "name": "Contaractor Master Table",
               "url": "digit-ui-card",
               "displayName": "Contaractor Master Table",
@@ -2562,6 +2602,49 @@ export const MdmsService = {
                   "code": "DEPT_35",
                   "active": true
               }
+          ],
+          "Fund": [
+            {
+                "name": "Fund One",
+                "code": "FUND_1",
+                "active": true
+            },
+            {
+              "name": "Fund Two",
+              "code": "FUND_2",
+              "active": true
+          },
+          {
+            "name": "Fund Three",
+            "code": "FUND_3",
+            "active": true
+          },
+          ],
+          "Chapter": [
+            {
+                "name": "Chapter One",
+                "code": "CHAPTER_1",
+                "active": true
+            },
+            {
+              "name": "Chapter Two",
+              "code": "CHAPTER_2",
+              "active": true
+          },
+          {
+            "name": "Chapter Three",
+            "code": "CHAPTER_3",
+            "active": true
+        },{
+          "name": "Chapter Four",
+          "code": "CHAPTER_4",
+          "active": true
+      },
+      {
+        "name": "Chapter Five",
+        "code": "CHAPTER_5",
+        "active": true
+    },
           ],
           "StateInfo": [
               {
@@ -3104,6 +3187,51 @@ export const MdmsService = {
               "bannerImage": "https://egov-uat-assets.s3.amazonaws.com/PGR.png",
               "active": true,
               "order": 2,
+             /*  "common-masters":{
+                "Fund": [
+                  {
+                      "name": "Fund One",
+                      "code": "FUND_1",
+                      "active": true
+                  },
+                  {
+                    "name": "Fund Two",
+                    "code": "FUND_2",
+                    "active": true
+                },
+                {
+                  "name": "Fund Three",
+                  "code": "FUND_3",
+                  "active": true
+                },
+                ],
+                "Chapter": [
+                  {
+                      "name": "Chapter One",
+                      "code": "CHAPTER_1",
+                      "active": true
+                  },
+                  {
+                    "name": "Chapter Two",
+                    "code": "CHAPTER_2",
+                    "active": true
+                },
+                {
+                  "name": "Chapter Three",
+                  "code": "CHAPTER_3",
+                  "active": true
+              },{
+                "name": "Chapter Four",
+                "code": "CHAPTER_4",
+                "active": true
+            },
+            {
+              "name": "Chapter Five",
+              "code": "CHAPTER_5",
+              "active": true
+          },
+                ],
+              }, */
               "tenants": [
                   {
                       "code": "pg.citya"
@@ -3861,7 +3989,15 @@ export const MdmsService = {
   HRGenderType: (tenantId, moduleCode, type) => {
     return MdmsService.getDataByCriteria(tenantId, getGenderTypeList(tenantId, moduleCode, type), moduleCode);
   },
-
+  WMSDepartment: (tenantId, moduleCode, type) => {
+    return MdmsService.getDataByCriteria(tenantId, getDepartmentList(tenantId, moduleCode, type), moduleCode);
+  },
+  WMSFund: (tenantId, moduleCode, type) => {
+    return MdmsService.getDataByCriteria(tenantId, getFundList(tenantId, moduleCode, type), moduleCode);
+  },
+  WMSChapter: (tenantId, moduleCode, type) => {
+    return MdmsService.getDataByCriteria(tenantId,getChapterList(tenantId, moduleCode, type) , moduleCode);
+  },
   getDocumentTypes: (tenantId, moduleCode, type) => {
     return MdmsService.getDataByCriteria(tenantId, getDocumentTypesCriteria(tenantId, moduleCode, type), moduleCode);
   },

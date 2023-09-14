@@ -159,3 +159,6 @@ export const handleTodaysDate = (dateString) => {
 export const convertDateToMaximumPossibleValue = (dateObject) => {
   return new Date(dateObject.getFullYear(), dateObject.getMonth(), dateObject.getDate(), 23, 59);
 };
+export const shouldHideBackButton = (config = []) => {
+  return config.filter((key) => window.location.href.includes(key.screenPath)).length > 0 ? true : false;
+};

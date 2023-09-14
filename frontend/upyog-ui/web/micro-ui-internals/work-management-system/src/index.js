@@ -5,25 +5,25 @@ import { initLibraries } from "@egovernments/digit-ui-libraries";
 import { PGRReducers } from "@egovernments/digit-ui-module-pgr";
 import { PTModule, PTLinks, PTComponents } from "@egovernments/digit-ui-module-pt";
  import { WMSModule, initWMSComponents, WMSLinks} from "@egovernments/digit-ui-module-wms";
-import { MCollectModule, MCollectLinks } from "@egovernments/digit-ui-module-mcollect";
+//import { MCollectModule, MCollectLinks } from "@egovernments/digit-ui-module-mcollect";
 // import { TLModule, TLLinks } from "@egovernments/digit-ui-module-tl";
 import { initFSMComponents } from "@egovernments/digit-ui-module-fsm";
 import { initPGRComponents } from "@egovernments/digit-ui-module-pgr";
-import { initDSSComponents } from "@egovernments/digit-ui-module-dss";
+//import { initDSSComponents } from "@egovernments/digit-ui-module-dss";
 //import { initHRMSComponents } from "@egovernments/digit-ui-module-hrms";
-import { initReceiptsComponents, ReceiptsModule } from "@egovernments/digit-ui-module-receipts";
+//import { initReceiptsComponents, ReceiptsModule } from "@egovernments/digit-ui-module-receipts";
 // import { initReportsComponents } from "@egovernments/digit-ui-module-reports";
-import { initMCollectComponents } from "@egovernments/digit-ui-module-mcollect";
+//import { initMCollectComponents } from "@egovernments/digit-ui-module-mcollect";
 import { initTLComponents } from "@egovernments/digit-ui-module-tl";
 import { PaymentModule, PaymentLinks, paymentConfigs } from "@egovernments/digit-ui-module-common";
 //import { HRMSModule } from "@egovernments/digit-ui-module-hrms";
 import { initOBPSComponents } from "@egovernments/digit-ui-module-obps";
-import { initEngagementComponents } from "@egovernments/digit-ui-module-engagement";
-import { initNOCComponents } from "@egovernments/digit-ui-module-noc";
+//import { initEngagementComponents } from "@egovernments/digit-ui-module-engagement";
+//import { initNOCComponents } from "@egovernments/digit-ui-module-noc";
 import { initWSComponents } from "@egovernments/digit-ui-module-ws";
 import { DigitUI } from "@egovernments/digit-ui-module-core";
 import { initCommonPTComponents } from "@egovernments/digit-ui-module-commonpt";
-import { initBillsComponents, BillsModule } from "@egovernments/digit-ui-module-bills";
+//import { initBillsComponents, BillsModule } from "@egovernments/digit-ui-module-bills";
 
 // import {initCustomisationComponents} from "./customisations";
 
@@ -45,22 +45,22 @@ const enabledModules = [
   "Payment",
   "PT",
   "QuickPayLinks",
-  "DSS",
-  "MCollect",
+//  "DSS",
+//  "MCollect",
  // "HRMS",
   "TL",
-  "Receipts",
+  //"Receipts",
   "Reports",
   "OBPS",
-  "Engagement",
-  "NOC",
+ // "Engagement",
+ // "NOC",
   "WS",
   "WMS",
   // "CommonPT",
   "NDSS",
-  "Bills",
+  //"Bills",
   "SW",
-  "BillAmendment",
+ // "BillAmendment",
   "FireNoc",
   "Birth",
   "Death"
@@ -103,11 +103,11 @@ const initDigitUI = () => {
     PTModule,
     PTLinks,
     ...PTComponents,
-    MCollectLinks,
-    MCollectModule,
+ //   MCollectLinks,
+//    MCollectModule,
   //  HRMSModule,
-    ReceiptsModule,
-    BillsModule,
+  //  ReceiptsModule,
+  //  BillsModule,
     WMSLinks
     // TLModule,
     // TLLinks,
@@ -115,19 +115,19 @@ const initDigitUI = () => {
 
   initFSMComponents();
   initPGRComponents();
-  initDSSComponents();
-  initMCollectComponents();
+//  initDSSComponents();
+ // initMCollectComponents();
   //initHRMSComponents();
   initTLComponents();
-  initReceiptsComponents();
+ // initReceiptsComponents();
   // initReportsComponents();
   initOBPSComponents();
-  initEngagementComponents();
-  initNOCComponents();
+ // initEngagementComponents();
+  //initNOCComponents();
   initWSComponents();
   initWMSComponents();
   initCommonPTComponents();
-  initBillsComponents();
+  //initBillsComponents();
 
   // initCustomisationComponents();
 

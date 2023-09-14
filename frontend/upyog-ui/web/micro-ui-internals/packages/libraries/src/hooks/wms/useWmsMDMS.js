@@ -1,25 +1,24 @@
 import { MdmsService } from "../../services/elements/MDMS";
 import { useQuery } from "react-query";
-
-const useHrmsMDMS = (tenantId, moduleCode, type, config = {}) => {
-  const useHrmsRolesandDesignations = () => {
-    return useQuery(["HRMS_EMP_RD", tenantId], () => MdmsService.getHrmsEmployeeRolesandDesignation(tenantId), config);
+const useWmsMDMS = (tenantId, moduleCode, type, config = {}) => {
+  const useWmsDepartments = () => {
+    return useQuery(["WMS_DEPARTMENT", tenantId], () => MdmsService.WMSDepartment(tenantId, moduleCode, type), config);
   };
-  const useHrmsEmployeeTypes = () => {
-    return useQuery(["HRMS_EMP_TYPE", tenantId], () => MdmsService.getHrmsEmployeeTypes(tenantId, moduleCode, type), config);
+ const useWmsFunds = () => {
+    return useQuery(["WMS_FUND", tenantId], () => MdmsService.WMSFund(tenantId, moduleCode, type), config);
   };
-
-  const useHrmsEmployeeReasons = () => {
-    return useQuery(["HRMS_EMP_REASON", tenantId], () => MdmsService.getHrmsEmployeeReason(tenantId, moduleCode, type), config);
+  const  useWmsChapters = () => {
+    return useQuery(["WMS_CHAPTER", tenantId],() =>  MdmsService.WMSChapter(tenantId, moduleCode, type) , config);
   };
-
   switch (type) {
-    case "HRMSRolesandDesignation":
-      return useHrmsRolesandDesignations();
-    case "EmployeeType":
-      return useHrmsEmployeeTypes();
-    case "DeactivationReason":
-      return useHrmsEmployeeReasons();
+    case "Department":
+      return useWmsDepartments();
+       case "Fund":
+      return useWmsFunds();
+      case "Chapter":
+      return useWmsChapters();
   }
 };
-export default useHrmsMDMS;
+  
+
+export default useWmsMDMS;

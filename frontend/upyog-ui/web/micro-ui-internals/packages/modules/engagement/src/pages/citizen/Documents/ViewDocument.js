@@ -41,7 +41,7 @@ const ViewDocument = ({ match }) => {
   /* 
     Logic to view image on load of screen
     if (data?.documentList?.[0]?.filestoreId) {
-      openUploadedDocument(data?.documentList?.[0]?.filestoreId, "mSeva");
+      openUploadedDocument(data?.documentList?.[0]?.filestoreId, "Ey-Seva");
     } else if (data?.documentList?.[0]?.documentLink) {
       window.open(data?.documentList?.[0]?.documentLink,)
     }

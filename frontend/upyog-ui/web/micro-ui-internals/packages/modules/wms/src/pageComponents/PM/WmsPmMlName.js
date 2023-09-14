@@ -5,7 +5,7 @@ const WmsPmMlName = ({ t, config, onSelect, formData = {}, userType, register, e
   const { pathname: url } = useLocation();
   const inputs = [
     {
-      label: "Milestone",
+      label: "WMS_PM_ML_NAME_LABEL",
       type: "text",
       name: "ml_name",
       validation: {

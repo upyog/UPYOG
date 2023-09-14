@@ -1,9 +1,7 @@
 import { ActionBar, ApplyFilterBar, CloseSvg, Dropdown, RadioButtons, RemoveableTag, SubmitBar } from "@egovernments/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-// import { getCityThatUserhasAccess } from "../Utils/index";
 import { getCityThatUserhasAccess } from "./Utils";
-
 
 const ListFilter = ({ searchParams, onFilterChange, onSearch, removeParam, ...props }) => {
   const [filters, onSelectFilterRoles] = useState(searchParams?.filters?.role || { role: [] });
@@ -21,7 +19,7 @@ const ListFilter = ({ searchParams, onFilterChange, onSearch, removeParam, ...pr
         ele.code == (searchParams?.tenantId != undefined ? { code: searchParams?.tenantId } : { code: Digit.ULBService.getCurrentTenantId() })?.code
     )[0];
   });
-  const { isLoading, isError, errors, data: data, ...rest } = Digit.Hooks.wms.pm.useWmsPmSearch(
+  const { isLoading, isError, errors, data: data, ...rest } = Digit.Hooks.wms.sor.useWmsSorSearch(
     "",
     tenantId ? tenantId.code : searchParams?.tenantId,
     "",

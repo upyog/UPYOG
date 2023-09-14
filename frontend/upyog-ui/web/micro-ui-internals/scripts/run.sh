@@ -1,6 +1,6 @@
 #!/bin/bash
 
-MODULES=( "components" "common" "core" "libraries" "work-management-system" )
+MODULES=( "components" "common" "core" "libraries" "wmsMain" )
 
 RUNARGS=()
 BUILDARGS=()

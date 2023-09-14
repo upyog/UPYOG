@@ -9,7 +9,7 @@ const Search = ({ onSearch, searchParams, searchFields, type, onClose, isInboxPa
     defaultValues: searchParams,
   });
   const mobileView = innerWidth <= 640;
-  const ulb = Digit.SessionStorage.get("ENGAGEMENT_TENANTS");
+  const ulb = Digit.SessionStorage.get("WMS_TENANTS");
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const userInfo = Digit.UserService.getUser().info;
   // const userUlbs = ulb.filter(ulb => userInfo?.roles?.some(role => role?.tenantId === ulb?.code)).sort(alphabeticalSortFunctionForTenantsBasedOnName)
@@ -65,7 +65,7 @@ const Search = ({ onSearch, searchParams, searchFields, type, onClose, isInboxPa
     const mobileViewStyles = mobileView ? { margin: 0 } : {};
     return (
       <LinkLabel style={{ display: "inline", ...mobileViewStyles }} onClick={clearSearch}>
-        {t("ES_COMMON_CLEAR_SEARCH")}
+        {t("WMS_COMMON_CLEAR_SEARCH")}
       </LinkLabel>
     );
   };
@@ -76,7 +76,7 @@ const Search = ({ onSearch, searchParams, searchFields, type, onClose, isInboxPa
           <div className="search-complaint-container">
             {(type === "mobile" || mobileView) && (
               <div className="complaint-header">
-                <h2>{t("ES_COMMON_SEARCH_BY")}</h2>
+                <h2>{t("WMS_COMMON_SEARCH_BY")}</h2>
                 <span onClick={onClose}>
                   <CloseSvg />
                 </span>
@@ -107,7 +107,7 @@ const Search = ({ onSearch, searchParams, searchFields, type, onClose, isInboxPa
                 <div style={{ maxWidth: "unset", marginLeft: "unset", marginTop: "55px"}} className="search-submit-wrapper">
                   <SubmitBar
                     className="submit-bar-search"
-                    label={t("ES_COMMON_SEARCH")}
+                    label={t("WMS_COMMON_SEARCH")}
                     // disabled={!!Object.keys(formState.errors).length || formValueEmpty()}
                     submit
                   />
@@ -123,7 +123,7 @@ const Search = ({ onSearch, searchParams, searchFields, type, onClose, isInboxPa
             <button className="clear-search" style={{ flex: 1 }}>
               {clearAll(mobileView)}
             </button>
-            <SubmitBar disabled={!!Object.keys(formState.errors).length} label={t("ES_COMMON_SEARCH")} style={{ flex: 1 }} submit={true} />
+            <SubmitBar disabled={!!Object.keys(formState.errors).length} label={t("WMS_COMMON_SEARCH")} style={{ flex: 1 }} submit={true} />
           </ActionBar>
         )}
     </form>

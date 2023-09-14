@@ -6,7 +6,7 @@ import DesktopInbox from "./DesktopInbox";
 import axios from 'axios';
 const Inbox = ({ tenants, parentRoute }) => {
   const { t } = useTranslation()
-  Digit.SessionStorage.set("ENGAGEMENT_TENANTS", tenants);
+  Digit.SessionStorage.set("WMS_TENANTS", tenants);
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const [pageSize, setPageSize] = useState(10);
   const [pageOffset, setPageOffset] = useState(0);
