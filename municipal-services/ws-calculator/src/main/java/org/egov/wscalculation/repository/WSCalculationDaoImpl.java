@@ -12,6 +12,7 @@ import org.egov.wscalculation.repository.rowmapper.DemandSchedulerRowMapper;
 import org.egov.wscalculation.repository.rowmapper.MeterReadingCurrentReadingRowMapper;
 import org.egov.wscalculation.repository.rowmapper.MeterReadingRowMapper;
 import org.egov.wscalculation.repository.rowmapper.WaterConnectionRowMapper;
+import org.egov.wscalculation.repository.rowmapper.WaterDemandRowMapper;
 import org.egov.wscalculation.repository.rowmapper.WaterRowMapper;
 import org.egov.wscalculation.web.models.MeterConnectionRequest;
 import org.egov.wscalculation.web.models.MeterReading;
@@ -52,6 +53,9 @@ public class WSCalculationDaoImpl implements WSCalculationDao {
 	@Autowired
 	private WaterConnectionRowMapper waterConnectionRowMapper;
 
+	@Autowired
+	private WaterDemandRowMapper waterDemandRowMapper;
+	
 	@Value("${egov.meterservice.createmeterconnection}")
 	private String createMeterConnection;
 
@@ -145,7 +149,7 @@ public class WSCalculationDaoImpl implements WSCalculationDao {
 		List<Object> preparedStatement = new ArrayList<>();
 		String query = queryBuilder.getConnectionNumberListForDemand(tenantId, connectionType, preparedStatement,fromDate, toDate);
 		log.info("water " + connectionType + " connection list : " + query + " Parameters: "+preparedStatement.toArray());
-		return jdbcTemplate.query(query, preparedStatement.toArray(), waterConnectionRowMapper);
+		return jdbcTemplate.query(query, preparedStatement.toArray(), waterDemandRowMapper);
 	}
 	
 	@Override
