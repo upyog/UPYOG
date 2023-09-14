@@ -218,7 +218,7 @@ public class WSCalculatorQueryBuilder {
 	public String getConnectionNumberList(String tenantId, String connectionType, List<Object> preparedStatement, Integer batchOffset, Integer batchsize, Long fromDate, Long toDate) {
 		//StringBuilder query = new StringBuilder(connectionNoListQuery);
 		//StringBuilder query = new StringBuilder(connectionNoListQuery);
-		StringBuilder query = new StringBuilder(WATER_SEARCH_DEMAND_QUERY);
+		StringBuilder query = new StringBuilder(WATER_SEARCH_QUERY);
 		// Add connection type
 		addClauseIfRequired(preparedStatement, query);
 		query.append(" wc.connectiontype = ? ");
@@ -241,6 +241,36 @@ public class WSCalculatorQueryBuilder {
 		preparedStatement.add(tenantId);
 		preparedStatement.add(batchOffset);
 		preparedStatement.add(batchsize);
+		query.append(orderbyClause);
+
+		return query.toString();
+		
+	}
+
+	public String getConnectionNumberListForDemand(String tenantId, String connectionType, List<Object> preparedStatement, Long fromDate, Long toDate) {
+		//StringBuilder query = new StringBuilder(connectionNoListQuery);
+		//StringBuilder query = new StringBuilder(connectionNoListQuery);
+		StringBuilder query = new StringBuilder(WATER_SEARCH_DEMAND_QUERY);
+		// Add connection type
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" wc.connectiontype = ? ");
+		preparedStatement.add(connectionType);
+		// add tenantid
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" conn.tenantid = ? ");
+		preparedStatement.add(tenantId);
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" conn.connectionno is not null");
+		
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" conn.connectionno NOT IN (select distinct(consumercode) from egbs_demand_v1 dmd where (dmd.taxperiodfrom >= ? and dmd.taxperiodto <= ?) and businessservice = 'WS' and tenantid=?)");
+		preparedStatement.add(fromDate);
+		preparedStatement.add(toDate);
+		preparedStatement.add(tenantId);
+		
+		addClauseIfRequired(preparedStatement, query);
+		String orderbyClause = " conn.connectionno IN (select connectionno FROM eg_ws_connection where tenantid=? and connectionno is not null ORDER BY connectionno OFFSET ? LIMIT ?)";
+		preparedStatement.add(tenantId);
 		query.append(orderbyClause);
 
 		return query.toString();

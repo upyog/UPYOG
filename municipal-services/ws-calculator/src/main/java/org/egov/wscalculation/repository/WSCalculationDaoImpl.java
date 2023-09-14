@@ -6,16 +6,17 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.egov.wscalculation.producer.WSCalculationProducer;
 import org.egov.wscalculation.repository.builder.WSCalculatorQueryBuilder;
+import org.egov.wscalculation.repository.rowmapper.DemandSchedulerRowMapper;
+import org.egov.wscalculation.repository.rowmapper.MeterReadingCurrentReadingRowMapper;
+import org.egov.wscalculation.repository.rowmapper.MeterReadingRowMapper;
+import org.egov.wscalculation.repository.rowmapper.WaterConnectionRowMapper;
+import org.egov.wscalculation.repository.rowmapper.WaterRowMapper;
 import org.egov.wscalculation.web.models.MeterConnectionRequest;
 import org.egov.wscalculation.web.models.MeterReading;
 import org.egov.wscalculation.web.models.MeterReadingSearchCriteria;
 import org.egov.wscalculation.web.models.WaterConnection;
-import org.egov.wscalculation.producer.WSCalculationProducer;
-import org.egov.wscalculation.repository.rowmapper.DemandSchedulerRowMapper;
-import org.egov.wscalculation.repository.rowmapper.MeterReadingCurrentReadingRowMapper;
-import org.egov.wscalculation.repository.rowmapper.MeterReadingRowMapper;
-import org.egov.wscalculation.repository.rowmapper.WaterRowMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -47,6 +48,9 @@ public class WSCalculationDaoImpl implements WSCalculationDao {
 	
 	@Autowired
 	private WaterRowMapper waterRowMapper;
+	
+	@Autowired
+	private WaterConnectionRowMapper waterConnectionRowMapper;
 
 	@Value("${egov.meterservice.createmeterconnection}")
 	private String createMeterConnection;
@@ -137,11 +141,19 @@ public class WSCalculationDaoImpl implements WSCalculationDao {
 	}
 	
 	@Override
+	public List<WaterConnection> getConnectionsNoListForDemand(String tenantId, String connectionType, Long fromDate, Long toDate) {
+		List<Object> preparedStatement = new ArrayList<>();
+		String query = queryBuilder.getConnectionNumberListForDemand(tenantId, connectionType, preparedStatement,fromDate, toDate);
+		log.info("water " + connectionType + " connection list : " + query + " Parameters: "+preparedStatement.toArray());
+		return jdbcTemplate.query(query, preparedStatement.toArray(), waterConnectionRowMapper);
+	}
+	
+	@Override
 	public List<WaterConnection> getConnection(String tenantId, String consumerCode,String connectionType, Long fromDate, Long toDate) {
 		List<Object> preparedStatement = new ArrayList<>();
 		String query = queryBuilder.getConnectionNumber(tenantId, consumerCode,connectionType, preparedStatement,fromDate, toDate);
 		log.info("water " + connectionType + " connection list : " + query);
-		return jdbcTemplate.query(query, preparedStatement.toArray(), waterRowMapper);
+		return jdbcTemplate.query(query, preparedStatement.toArray(), waterConnectionRowMapper);
 	}
 
 	@Override

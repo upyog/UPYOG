@@ -101,8 +101,9 @@ public class CalculatorController {
 	}
 	
 	@PostMapping("/_generateDemand")
-	public void getConnection(@Valid @RequestBody BulkBillReq bulkBillReq) {
+	public String getConnection(@Valid @RequestBody BulkBillReq bulkBillReq) {
 		wSCalculationService.generateDemandForConsumerCodeBasedOnTimePeriod(bulkBillReq.getRequestInfo(), bulkBillReq.getBulkBillCriteria());
+		return "Demand Generated successfully for consumer Code "+bulkBillReq.getBulkBillCriteria().getConsumerCode();
 	}
 	
 	@PostMapping("/_applyAdhocTax")
