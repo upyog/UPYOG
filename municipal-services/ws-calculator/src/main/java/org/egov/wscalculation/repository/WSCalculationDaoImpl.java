@@ -135,6 +135,14 @@ public class WSCalculationDaoImpl implements WSCalculationDao {
 		log.info("water " + connectionType + " connection list : " + query);
 		return jdbcTemplate.query(query, preparedStatement.toArray(), waterRowMapper);
 	}
+	
+	@Override
+	public List<WaterConnection> getConnection(String tenantId, String consumerCode,String connectionType, Long fromDate, Long toDate) {
+		List<Object> preparedStatement = new ArrayList<>();
+		String query = queryBuilder.getConnectionNumber(tenantId, consumerCode,connectionType, preparedStatement,fromDate, toDate);
+		log.info("water " + connectionType + " connection list : " + query);
+		return jdbcTemplate.query(query, preparedStatement.toArray(), waterRowMapper);
+	}
 
 	@Override
 	public List<String> getTenantId() {

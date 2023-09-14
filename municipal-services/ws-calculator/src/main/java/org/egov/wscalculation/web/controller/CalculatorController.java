@@ -90,6 +90,21 @@ public class CalculatorController {
 		wSCalculationService.generateDemandBasedOnTimePeriod(bulkBillReq.getRequestInfo(), bulkBillReq.getBulkBillCriteria());
 	}
 	
+	@PostMapping("/_getConnectionForDemand")
+	public ResponseEntity<ConnectionResponse> generateDemand(@Valid @RequestBody BulkBillReq bulkBillReq) {
+		List<WaterConnection> waterConnectionList=wSCalculationService.getConnnectionWithPendingDemand(bulkBillReq.getRequestInfo(), bulkBillReq.getBulkBillCriteria());
+		ConnectionResponse response = ConnectionResponse.builder().connection(waterConnectionList)
+				.responseInfo(
+				responseInfoFactory.createResponseInfoFromRequestInfo(bulkBillReq.getRequestInfo(), true))
+				.build();
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+	
+	@PostMapping("/_generateDemand")
+	public void getConnection(@Valid @RequestBody BulkBillReq bulkBillReq) {
+		wSCalculationService.generateDemandForConsumerCodeBasedOnTimePeriod(bulkBillReq.getRequestInfo(), bulkBillReq.getBulkBillCriteria());
+	}
+	
 	@PostMapping("/_applyAdhocTax")
 	public ResponseEntity<CalculationRes> applyAdhocTax(@Valid @RequestBody AdhocTaxReq adhocTaxReq) {
 		List<Calculation> calculations = wSCalculationServiceImpl.applyAdhocTax(adhocTaxReq);

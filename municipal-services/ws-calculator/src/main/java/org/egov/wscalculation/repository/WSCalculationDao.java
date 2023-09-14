@@ -29,5 +29,7 @@ public interface WSCalculationDao {
 	int isBillingPeriodExists(String connectionNo, String billingPeriod);
 
 	long getConnectionCount(String tenantid, Long fromDate, Long toDate);
+	
+	List<WaterConnection> getConnection(String tenantId, String consumerCode,String connectionType,Long fromDate, Long toDate);
 
 }
