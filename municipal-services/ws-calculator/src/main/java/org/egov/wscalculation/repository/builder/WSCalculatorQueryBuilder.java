@@ -96,7 +96,7 @@ public class WSCalculatorQueryBuilder {
 			+ " conn.action, conn.adhocpenalty, conn.adhocrebate, conn.adhocpenaltyreason, conn.applicationType, conn.dateEffectiveFrom,"
 			+ " conn.adhocpenaltycomment, conn.adhocrebatereason, conn.adhocrebatecomment, conn.createdBy as ws_createdBy, conn.lastModifiedBy as ws_lastModifiedBy,"
 			+ " conn.createdTime as ws_createdTime, conn.lastModifiedTime as ws_lastModifiedTime,conn.additionaldetails, "
-			+ " conn.locality, conn.isoldapplication, conn.roadtype"+ holderSelectValues
+			+ " conn.locality, conn.isoldapplication, conn.roadtype,"+ holderSelectValues
 			+ " FROM eg_ws_connection conn "
 			+  INNER_JOIN_STRING
 			+" eg_ws_service wc ON wc.connection_id = conn.id"
