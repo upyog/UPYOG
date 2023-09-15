@@ -72182,6 +72182,30 @@ export const LocalizationService = {
             "locale": "en_IN"
         },
         {
+            "code": "WMS_COMMON_ML_NAME_INVALID",
+            "message": "Milestone name is invalid , kindly enter only alphabets",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_COMMON_PROJECT_NAME_INVALID",
+            "message": "Project name is invalid , kindly enter only alphabets",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_COMMON_WORK_NAME_INVALID",
+            "message": "Work name is invalid , kindly enter only alphabets",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_COMMON_PERCENTAGE_INVALID",
+            "message": "Percentage entry is invalid , kindly enter only numerics",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
             "code": "WMS_PRJ_FORM_CREATE_HEAD",
             "message": "Project-Details",
             "module": "rainmaker-common",

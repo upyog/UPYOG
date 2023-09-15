@@ -6,8 +6,13 @@ const WmsPmPer = ({ t, config, onSelect, formData = {}, userType, register, erro
   const inputs = [
     {
       label: "WMS_PM_PERCENT_LABEL",
-      type: "text",
-      name: "percent",
+      type: "number",
+      name: "percentage_weightage",
+      validation: {
+        isRequired: true,
+        pattern: Digit.Utils.getPattern('Percentage'),
+        title: t("WMS_COMMON_PERCENTAGE_INVALID"),
+      },
       isMandatory: true,
     },
   ];
@@ -35,6 +40,8 @@ const WmsPmPer = ({ t, config, onSelect, formData = {}, userType, register, erro
                 disable={false}
                 defaultValue={undefined}
               />
+              {currentValue&&currentValue.length>0&&!currentValue.match(Digit.Utils.getPattern('Percentage'))&&<CardLabelError style={{ width: "100%", marginTop: '-15px', fontSize: '16px', marginBottom: '12px'}}>{t("WMS_COMMON_PERCENTAGE_INVALID")}</CardLabelError>}
+
            </div>
           </LabelFieldPair>
         </React.Fragment>

@@ -8,15 +8,16 @@ const createProxy = createProxyMiddleware({
   changeOrigin: true,  
 });
 const assetsProxy = createProxyMiddleware({
-  target: "https://upyog-sandbox.niua.org",
+  target: process.env.REACT_APP_PROXY_ASSETS || "https://upyog-sandbox.niua.org",
   changeOrigin: true,
 });
-const apiProxy = createProxyMiddleware({
-  target: "http://localhost:8484",
-  changeOrigin: true,
-});
+
 const MapiProxy = createProxyMiddleware({
   target: "http://10.216.36.67:8484",
+  changeOrigin: true,
+});
+const localProxy = createProxyMiddleware({
+  target: "http://localhost:3000",
   changeOrigin: true,
 });
 module.exports = function (app) {
@@ -95,5 +96,8 @@ module.exports = function (app) {
   "/wms/work-management-service/v1/sch/_count",
   "/wms/work-management-service/v1/sch/_update",
   ].forEach((location) => app.use(location, MapiProxy));
+  
+
+  ["/wms/wms-services/v1/pfmilestone/_create","/wms/wms-services/v1/pfmilestone/_search"].forEach((location) => app.use(location, localProxy));
   
 };

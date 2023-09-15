@@ -102,17 +102,28 @@ const Create = () => {
   const onSubmit = (data) => {
     
     setIsLoading(true);
-    let PhysicalMilestones = 
-      {
-        PhysicalMilestone: [{
+    // let WMSPhysicalFinancialMilestoneApplication = 
+    //   {
+    //     WMSPhysicalFinancialMilestoneApplication: [{
+    //       project_name: data?.WmsPmPrjName?.project_name,
+    //       milestone_name: data?.WmsPmMlName?.milestone_name,  
+    //       work_name: data?.WmsPmWrkName?.work_name,
+    //       percentage_weightage: data?.WmsPmPer?.percentage_weightage, 
+    //       tenantId:tenantId
+    //     }],
+    //   };
+      let PhysicalMilestones = 
+        {
+          PhysicalMilestones: [{
           project_name: data?.WmsPmPrjName?.project_name,
-          ml_name: data?.WmsPmMlName?.ml_name,  
+          milestone_name: data?.WmsPmMlName?.milestone_name,  
           work_name: data?.WmsPmWrkName?.work_name,
-          percent: data?.WmsPmPer?.percent, 
+          percentage_weightage: data?.WmsPmPer?.percentage_weightage, 
           tenantId:tenantId
         }],
       };
       /* use customiseCreateFormData hook to make some chnages to the Employee object [0].PhysicalMilestone*/
+    //  Digit.WMSService.PMApplications.create(WMSPhysicalFinancialMilestoneApplication, tenantId).then((result,err)=>{
      Digit.WMSService.PMApplications.create(PhysicalMilestones, tenantId).then((result,err)=>{
       setIsLoading(false);
       let getdata = {...data , get: result }

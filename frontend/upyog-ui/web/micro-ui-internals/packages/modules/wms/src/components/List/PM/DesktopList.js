@@ -21,32 +21,33 @@ const DesktopList = ({ tableConfig, filterComponent, ...props }) => {
 
   const columns = React.useMemo(() => {
     return [
+      // {
+      //   Header: t("WMS_PM_ID_LABEL"),
+      //   disableSortBy: true,
+      //   Cell: ({ row }) => {
+      //     return GetCell(`${row.original?.pm_id}`);
+      //   },
+      // },
       {
-        Header: t("WMS_PM_ID_LABEL"),
-        disableSortBy: true,
-        Cell: ({ row }) => {
-          return GetCell(`${row.original?.pm_id}`);
-        },
-      },
-      {
-        Header: t("WMS_PM_ML_NAME_LABEL"),
+        Header: t("Milestone Name"),
         disableSortBy: false,
         Cell: ({ row }) => {
-          return GetCell(`${row.original?.ml_name}`);
+          console.log(row , "this is cell row");
+          return GetCell(`${row.original?.PhysicalMilestone[0].ml_name}`);
         },
       },
       {
-        Header: t("WMS_PM_PROJECT_NAME_LABEL"),
+        Header: t("Project Name"),
         disableSortBy: true,
         Cell: ({ row }) => {
-          return GetCell(`${row.original?.project_name}`);
+          return GetCell(`${row.original?.PhysicalMilestone[0].project_name}`);
         },
       },
       {
-        Header: t("WMS_PM_WORK_NAME_LABEL"),
+        Header: t("Work Name"),
         disableSortBy: true,
         Cell: ({ row }) => {
-          return GetCell(`${row.original?.work_name}`);
+          return GetCell(`${row.original?.PhysicalMilestone[0].work_name}`);
         },
       },
       
@@ -54,7 +55,7 @@ const DesktopList = ({ tableConfig, filterComponent, ...props }) => {
         Header: t("WMS_PM_PERCENT_LABEL"),
         disableSortBy: true,
         Cell: ({ row }) => {
-          return GetCell(`${row.original?.percent}`);
+          return GetCell(`${row.original?.PhysicalMilestone[0].percent}`);
         },
       },
       // {

@@ -80,7 +80,7 @@ const List = ({ parentRoute, businessService = "WMS", initialStates = {}, filter
       },
       {
         label: t("Milestone"),
-        name: "ml_name",
+        name: "milestone_name",
         type:"text"
       },
     ];
@@ -90,11 +90,17 @@ const List = ({ parentRoute, businessService = "WMS", initialStates = {}, filter
     return <Loader />;
   }
 
+  // console.log(data?.WMSPhysicalFinancialMilestoneApplications[1], "data inside list ");
+  console.log(data, "data inside list ");
+
+
+  // if (data?.WMSPhysicalFinancialMilestoneApplications[1]?.length !== null) {
   if (data?.length !== null) {
     if (isMobile) {
       return (
         <MobileList
           businessService={businessService}
+          // data={data?.WMSPhysicalFinancialMilestoneApplications[1]}
           data={data}
           isLoading={hookLoading}
           defaultSearchParams={initialStates.searchParams}
@@ -125,6 +131,7 @@ const List = ({ parentRoute, businessService = "WMS", initialStates = {}, filter
           {isList && <Header>{t("WMS_HOME_SEARCH_RESULTS_HEADING")}</Header>}
           <DesktopList
             businessService={businessService}
+            // data={data?.WMSPhysicalFinancialMilestoneApplications[1]}
             data={data}
             isLoading={hookLoading}
             defaultSearchParams={initialStates.searchParams}

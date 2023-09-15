@@ -21,6 +21,9 @@ const MobileList = ({
   allLinks,
 }) => {
   const { t } = useTranslation();
+  // console.log(data.PhysicalMilestone[0],"data");
+  // console.log(data, "data inside mobilelist")
+  // alert(JSON.stringify(data.PhysicalMilestone[0])
   // const getData = () => {
   //   return data?.Employees?.map((dataObj) => {
   //     const obj = {};
@@ -36,12 +39,17 @@ const MobileList = ({
 const GetSlaCell = (value) => {
   return value == "INACTIVE" ? <span className="sla-cell-error">{ t(value )|| ""}</span> : <span className="sla-cell-success">{ t(value) || ""}</span>;
 };
+
+  // console.log(data?.WMSPhysicalFinancialMilestoneApplications[1],"data");
+  
+
   const getData = () => {
-    return data?.PMApplications?.map((original) => ({   
-  [t("WMS_PM_ML_NAME_LABEL")]: GetCell(original?.WmsPmMlName?.ml_name || ""),
+    // return data?.WMSPhysicalFinancialMilestoneApplications[1]?.map((original) => ({ 
+    return data?.PhysicalMilestone[0].map((original) => ({   
+  [t("WMS_PM_ML_NAME_LABEL")]: GetCell(original?.WmsPmMlName?.milestone_name || ""),
   [t("WMS_PM_PROJECT_NAME_LABEL")]: GetCell(original?.WmsPmPrjName?.project_name || ""),
   [t("WMS_PM_WORK_NAME_LABEL")]: GetCell(original?.WmsPmWrkName?.work_name || ""),
-  [t("WMS_PM_PERCENT_LABEL")]: GetCell(original?.WmsPmPer?.percent || ""),
+  [t("WMS_PM_PERCENT_LABEL")]: GetCell(original?.WmsPmPer?.percentage_weightage || ""),
     }));
   };
   const serviceRequestIdKey = (original) => {return `${searchParams?.tenantId}/${original?.[t("HR_EMP_ID_LABEL")]}`};
