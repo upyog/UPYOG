@@ -825,14 +825,14 @@ public class DemandService {
 	}
 	
 	
-	public List<SewerageConnection> getConnectionPendingForDemand(String tenantId, RequestInfo requestInfo, BulkBillCriteria bulkBillCriteria) {
-		Map<String, Object> billingMasterData = calculatorUtils.loadBillingFrequencyMasterData(requestInfo, tenantId);
+	public List<SewerageConnection> getConnectionPendingForDemand(RequestInfo requestInfo, BulkBillCriteria bulkBillCriteria) {
+		Map<String, Object> billingMasterData = calculatorUtils.loadBillingFrequencyMasterData(requestInfo, bulkBillCriteria.getTenantId());
 		List<SewerageConnection> connections=new ArrayList<SewerageConnection>();
 
 		long startDay = (((int) billingMasterData.get(SWCalculationConstant.Demand_Generate_Date_String)) / 86400000);
 		if(isCurrentDateIsMatching((String) billingMasterData.get(SWCalculationConstant.Billing_Cycle_String), startDay)) {
 
-			Map<String, Object> masterMap = masterDataService.loadMasterData(requestInfo, tenantId);
+			Map<String, Object> masterMap = masterDataService.loadMasterData(requestInfo, bulkBillCriteria.getTenantId());
 
 			ArrayList<?> billingFrequencyMap = (ArrayList<?>) masterMap
 					.get(SWCalculationConstant.Billing_Period_Master);
@@ -844,7 +844,7 @@ public class DemandService {
 			Long fromDate = (Long) financialYearMaster.get(SWCalculationConstant.STARTING_DATE_APPLICABLES);
 			Long toDate = (Long) financialYearMaster.get(SWCalculationConstant.ENDING_DATE_APPLICABLES);
 
-			connections = sewerageCalculatorDao.getConnectionsNoListForDemand(tenantId,
+			connections = sewerageCalculatorDao.getConnectionsNoListForDemand(bulkBillCriteria.getTenantId(),
 							SWCalculationConstant.nonMeterdConnection, fromDate, toDate);
 					log.info("Size of the connection list for batch : "+ connections.size());
 					connections = enrichmentService.filterConnections(connections);
