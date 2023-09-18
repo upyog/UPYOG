@@ -6,6 +6,7 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.swcalculation.web.models.BulkBillCriteria;
 import org.egov.swcalculation.web.models.Calculation;
 import org.egov.swcalculation.web.models.CalculationReq;
+import org.egov.swcalculation.web.models.SewerageConnection;
 
 public interface SWCalculationService {
 	
@@ -14,4 +15,9 @@ public interface SWCalculationService {
 	void generateDemandBasedOnTimePeriod(RequestInfo requestInfo, BulkBillCriteria bulkBillCriteria);
 	
 	List<Calculation> getEstimation(CalculationReq request);
+	
+	void generateDemandForConsumerCodeBasedOnTimePeriod(RequestInfo requestInfo, BulkBillCriteria bulkBillCriteria);
+	
+	List<SewerageConnection> getConnnectionWithPendingDemand(RequestInfo requestInfo, BulkBillCriteria bulkBillCriteria);
+
 }

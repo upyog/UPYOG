@@ -25,4 +25,11 @@ public class BulkBillCriteria {
 
 	@JsonProperty("limit")
 	private Long limit;
+	
+	@JsonProperty("consumerCode")
+	private String consumerCode;
+	
+	@JsonProperty("tenantId")
+	private String tenantId;
+	
 }
