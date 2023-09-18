@@ -16,6 +16,10 @@ const MapiProxy = createProxyMiddleware({
   target: "http://10.216.36.67:8484",
   changeOrigin: true,
 });
+const apiProxy = createProxyMiddleware({
+  target: "http://localhost:8484",
+  changeOrigin: true,
+});
 const localProxy = createProxyMiddleware({
   target: "http://localhost:3000",
   changeOrigin: true,
