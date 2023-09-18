@@ -7,6 +7,9 @@ import org.egov.swcalculation.repository.builder.SWCalculatorQueryBuilder;
 import org.egov.swcalculation.repository.rowMapper.DemandSchedulerRowMapper;
 import org.egov.swcalculation.repository.rowMapper.SewerageRowMapper;
 import org.egov.swcalculation.web.models.SewerageConnection;
+import org.egov.wscalculation.repository.rowmapper.WaterConnectionRowMapper;
+import org.egov.wscalculation.repository.rowmapper.WaterDemandRowMapper;
+import org.egov.wscalculation.web.models.WaterConnection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -28,6 +31,12 @@ public class SewerageCalculatorDaoImpl implements SewerageCalculatorDao {
 
 	@Autowired
 	SewerageRowMapper sewerageRowMapper;
+	
+	@Autowired
+	SewerageConnectionRowMapper sewerageConnectionRowMapper;
+
+	@Autowired
+	SewerageDemandRowMapper sewerageDemandRowMapper;
 
 	@Override
 	public List<String> getTenantId() {
@@ -58,5 +67,22 @@ public class SewerageCalculatorDaoImpl implements SewerageCalculatorDao {
 		long count = jdbcTemplate.queryForObject(query,Integer.class);
 		return count;
 	}
+	
+	@Override
+	public List<SewerageConnection> getConnectionsNoListForDemand(String tenantId, String connectionType, Long fromDate, Long toDate) {
+		List<Object> preparedStatement = new ArrayList<>();
+		String query = queryBuilder.getConnectionNumberListForDemand(tenantId, connectionType, preparedStatement,fromDate, toDate);
+		log.info("sewerage " + connectionType + " connection list : " + query + " Parameters: "+preparedStatement.toArray());
+		return jdbcTemplate.query(query, preparedStatement.toArray(), sewerageDemandRowMapper);
+	}
+	
+	@Override
+	public List<SewerageConnection> getConnection(String tenantId, String consumerCode,String connectionType, Long fromDate, Long toDate) {
+		List<Object> preparedStatement = new ArrayList<>();
+		String query = queryBuilder.getConnectionNumber(tenantId, consumerCode,connectionType, preparedStatement,fromDate, toDate);
+		log.info("water " + connectionType + " connection list : " + query);
+		return jdbcTemplate.query(query, preparedStatement.toArray(), sewerageConnectionRowMapper);
+	}
+
 	
 }

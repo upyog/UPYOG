@@ -12,4 +12,9 @@ public interface SewerageCalculatorDao {
 
 	long getConnectionCount(String tenantid, Long fromDate, Long toDate);
 	
+	List<SewerageConnection> getConnectionsNoListForDemand(String tenantId, String connectionType, Long fromDate, Long toDate);
+
+	List<SewerageConnection> getConnection(String tenantId, String consumerCode,String connectionType,Long fromDate, Long toDate);
+
+	
 }
