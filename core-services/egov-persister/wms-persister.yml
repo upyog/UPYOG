@@ -1374,7 +1374,7 @@ serviceMaps:
       isTransaction: true
       queryMaps:
 
-        - query: INSERT INTO bank_details (bank_id,bank_name,bank_branch,bank_ifsc_code) VALUES (?, ?, ?, ?);
+        - query: INSERT INTO bank_details (bank_id,bank_name,bank_branch,bank_ifsc_code,bank_branch_ifsc_code,status,createdby,lastmodifiedby,createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?);
           basePath: WMSBankDetailsApplication.*
           jsonMaps:
             - jsonPath: $.WMSBankDetailsApplication.*.bank_id
@@ -1384,6 +1384,18 @@ serviceMaps:
             - jsonPath: $.WMSBankDetailsApplication.*.bank_branch
             
             - jsonPath: $.WMSBankDetailsApplication.*.bank_ifsc_code
+            
+            - jsonPath: $.WMSBankDetailsApplication.*.bank_branch_ifsc_code
+            
+            - jsonPath: $.WMSBankDetailsApplication.*.status
+            
+            - jsonPath: $.WMSBankDetailsApplication.*.auditDetails.createdBy
+
+            - jsonPath: $.WMSBankDetailsApplication.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.WMSBankDetailsApplication.*.auditDetails.createdTime
+            
+            - jsonPath: $.WMSBankDetailsApplication.*.auditDetails.lastModifiedTime
 
             
             
@@ -1398,7 +1410,7 @@ serviceMaps:
       isTransaction: true
       queryMaps:
       
-        - query: UPDATE bank_details SET bank_name = ?,bank_branch = ?, bank_ifsc_code = ? WHERE bank_id = ?;
+        - query: UPDATE bank_details SET bank_name = ?,bank_branch = ?, bank_ifsc_code = ?, bank_branch_ifsc_code = ?, status = ? WHERE bank_id = ?;
           basePath: WMSBankDetailsApplication.*
           jsonMaps:
             - jsonPath: $.WMSBankDetailsApplication.*.bank_name
@@ -1406,8 +1418,63 @@ serviceMaps:
             - jsonPath: $.WMSBankDetailsApplication.*.bank_branch
             
             - jsonPath: $.WMSBankDetailsApplication.*.bank_ifsc_code
+            
+            - jsonPath: $.WMSBankDetailsApplication.*.bank_branch_ifsc_code
+            
+            - jsonPath: $.WMSBankDetailsApplication.*.status
 
             - jsonPath: $.WMSBankDetailsApplication.*.bank_id
+            
+            
+            
+    - version: 1.0
+      description: Persists ContractorSubType details in tables
+      fromTopic: save-cstype-application
+      isTransaction: true
+      queryMaps:
+
+        - query: INSERT INTO contractor_subtype (contractor_id,contractor_stype_name,contractor_stype_status,createdby,lastmodifiedby,createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?,?,?,?);
+          basePath: WMSContractorSubTypeApplication.*
+          jsonMaps:
+            - jsonPath: $.WMSContractorSubTypeApplication.*.contractor_id
+
+            - jsonPath: $.WMSContractorSubTypeApplication.*.contractor_stype_name
+
+            - jsonPath: $.WMSContractorSubTypeApplication.*.contractor_stype_status
+            
+            - jsonPath: $.WMSContractorSubTypeApplication.*.auditDetails.createdBy
+
+            - jsonPath: $.WMSContractorSubTypeApplication.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.WMSContractorSubTypeApplication.*.auditDetails.createdTime
+            
+            - jsonPath: $.WMSContractorSubTypeApplication.*.auditDetails.lastModifiedTime
+            
+            
+
+            
+            
+            
+            
+            
+            
+            
+    - version: 1.0
+      description: Update ContractorSubType Details applications in table
+      fromTopic: update-cstype-application
+      isTransaction: true
+      queryMaps:
+      
+        - query: UPDATE contractor_subtype SET bank_name = ?,bank_branch = ?, bank_ifsc_code = ? WHERE contractor_id = ?;
+          basePath: WMSContractorSubTypeApplication.*
+          jsonMaps:
+            - jsonPath: $.WMSContractorSubTypeApplication.*.contractor_stype_name
+
+            
+            - jsonPath: $.WMSContractorSubTypeApplication.*.contractor_stype_status
+
+            - jsonPath: $.WMSContractorSubTypeApplication.*.contractor_id
+
 
             
             

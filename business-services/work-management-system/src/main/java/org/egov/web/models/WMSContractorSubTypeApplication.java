@@ -18,28 +18,18 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class WMSBankDetailsApplication {
+public class WMSContractorSubTypeApplication {
 	
-	@JsonProperty("bank_id")
-	private String bankId = null;
+	@JsonProperty("contractor_id")
+	private String contractorId = null;
 	
-	@JsonProperty("bank_name")
-    private String bankName = null;
+	@JsonProperty("contractor_stype_name")
+    private String contractorStypeName = null;
 
-	@JsonProperty("bank_branch")
-	 private String bankBranch = null;
-	
-	@JsonProperty("bank_ifsc_code")
-	 private String bankIfscCode = null;
-	
-	@JsonProperty("bank_branch_ifsc_code")
-	 private String bankBranchIfscCode = null;
-	
-	@JsonProperty("status")
-	 private String status = null;
+	@JsonProperty("contractor_stype_status")
+	 private String contractorStypeStatus = null;
 	
 	
-	 
 	 @JsonProperty("tenantId")
 	 private String tenantId = null;
 	 

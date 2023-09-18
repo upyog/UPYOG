@@ -44,6 +44,8 @@ public class WMSBankDetailsApplicationRowMapper implements ResultSetExtractor<Li
                         .bankName(rs.getString("bBankName"))
                         .bankBranch(rs.getString("bBankBranch"))
                         .bankIfscCode(rs.getString("bBankIfscCode"))
+                        .bankBranchIfscCode(rs.getString("bBankBranchIfscCode"))
+                        .status(rs.getString("bStatus"))
                         .build();
             }
             //addChildrenToProperty(rs, sorApplication);

@@ -34,6 +34,28 @@ public class WMSContractorValidator {
 	            if(ObjectUtils.isEmpty(application.getTenantId()))
 	                throw new CustomException("EG_WMS_APP_ERR", "tenantId is mandatory for creating Contractor applications");
 	        });
+	    	
+	    	wmsContractorRequest.getWmsContractorApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getVendorType()))
+	                throw new CustomException("EG_WMS_APP_ERR", "Vendor Type is mandatory for creating Contractor applications");
+	        });
+	    	wmsContractorRequest.getWmsContractorApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getVendorSubType()))
+	                throw new CustomException("EG_WMS_APP_ERR", "Vendor SubType is mandatory for creating Contractor applications");
+	        });
+	    	wmsContractorRequest.getWmsContractorApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getVendorName()))
+	                throw new CustomException("EG_WMS_APP_ERR", "Vendor Name is mandatory for creating Contractor applications");
+	        });
+	    	wmsContractorRequest.getWmsContractorApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getVendorClass()))
+	                throw new CustomException("EG_WMS_APP_ERR", "Vendor Class is mandatory for creating Contractor applications");
+	        });
+	    	
+	    	wmsContractorRequest.getWmsContractorApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getAddress()))
+	                throw new CustomException("EG_WMS_APP_ERR", "Address is mandatory for creating Contractor applications");
+	        });
 	    }
 
 		public List<WMSContractorApplication> validateApplicationUpdateRequest(WMSContractorRequest contractorRequest) {

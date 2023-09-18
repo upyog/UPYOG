@@ -15,6 +15,8 @@ import org.egov.web.models.WMSContractAgreementApplication;
 import org.egov.web.models.WMSContractAgreementRequest;
 import org.egov.web.models.WMSContractorApplication;
 import org.egov.web.models.WMSContractorRequest;
+import org.egov.web.models.WMSContractorSubTypeApplication;
+import org.egov.web.models.WMSContractorSubTypeRequest;
 import org.egov.web.models.WMSSORRequest;
 import org.egov.web.models.WMSWorkApplication;
 import org.egov.web.models.WMSWorkRequest;
@@ -26,7 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
-public class WMSBankDetailsApplicationEnrichment {
+public class WMSContractorSubTypeApplicationEnrichment {
 	
 	/*
 	 * @Value("${egov.idgen.work.idname}") private String idGenName;
@@ -45,20 +47,20 @@ public class WMSBankDetailsApplicationEnrichment {
 	SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
 	String date = simpleDateFormat.format(new Date());
 
-	public void enrichBankDetailsApplication(WMSBankDetailsRequest wmsBankDetailsRequest) { 
+	public void enrichContractorSubTypeApplication(WMSContractorSubTypeRequest wmsContractorSubTypeRequest) { 
 		//List<String> sorIdList = idgenUtil.getIdList(wmsContractorRequest.getRequestInfo(), wmsContractorRequest.getWmsWorkApplications().get(0).getTenantId(), idGenName, idGenFormat, wmsContractorRequest.getWmsWorkApplications().size());
         //Integer index = 0;
-		for (WMSBankDetailsApplication application : wmsBankDetailsRequest.getWmsBankDetailsApplications()) {
+		for (WMSContractorSubTypeApplication application : wmsContractorSubTypeRequest.getWmsContractorSubTypeApplications()) {
 			// Enrich audit details
 //	            AuditDetails auditDetails = AuditDetails.builder().createdBy(birthRegistrationRequest.getRequestInfo().getUserInfo().getUuid()).createdTime(System.currentTimeMillis()).lastModifiedBy(birthRegistrationRequest.getRequestInfo().getUserInfo().getUuid()).lastModifiedTime(System.currentTimeMillis()).build();
 //	            application.setAuditDetails(auditDetails);
 			
-			AuditDetails auditDetails = AuditDetails.builder().createdBy(wmsBankDetailsRequest.getRequestInfo().getUserInfo().getUuid()).createdTime(System.currentTimeMillis()).lastModifiedBy(wmsBankDetailsRequest.getRequestInfo().getUserInfo().getUuid()).lastModifiedTime(System.currentTimeMillis()).build();
+			AuditDetails auditDetails = AuditDetails.builder().createdBy(wmsContractorSubTypeRequest.getRequestInfo().getUserInfo().getUuid()).createdTime(System.currentTimeMillis()).lastModifiedBy(wmsContractorSubTypeRequest.getRequestInfo().getUserInfo().getUuid()).lastModifiedTime(System.currentTimeMillis()).build();
             application.setAuditDetails(auditDetails);
 
 			// Enrich UUID
             Long randomNumber=(long) Math.floor(Math.random() * (9999 - 1000 + 1) + 1000);
-			application.setBankId(Long.toString(randomNumber));
+			application.setContractorId(Long.toString(randomNumber));
 			//application.setId(UUID.randomUUID().toString());
 			//application.setWorkName(sorIdList.get(index++));
 			//application.setStartDate(date);
@@ -75,14 +77,12 @@ public class WMSBankDetailsApplicationEnrichment {
 		}
 	}
 
-	public void enrichBankDetailsApplicationUpdate(WMSBankDetailsRequest wmsBankDetailsRequest, List<WMSBankDetailsApplication> existingApplication) {
+	public void enrichContractorSubTypeApplicationUpdate(WMSContractorSubTypeRequest wmsContractorSubTypeRequest, List<WMSContractorSubTypeApplication> existingApplication) {
 		// Enrich lastModifiedTime and lastModifiedBy in case of update
-		for (WMSBankDetailsApplication application : wmsBankDetailsRequest.getWmsBankDetailsApplications()) {
-			existingApplication.get(0).setBankName(application.getBankName());
-			existingApplication.get(0).setBankBranch(application.getBankBranch());
-			existingApplication.get(0).setBankIfscCode(application.getBankIfscCode());
-			existingApplication.get(0).setBankBranchIfscCode(application.getBankBranchIfscCode());
-			existingApplication.get(0).setStatus(application.getStatus());
+		for (WMSContractorSubTypeApplication application : wmsContractorSubTypeRequest.getWmsContractorSubTypeApplications()) {
+			existingApplication.get(0).setContractorStypeName(application.getContractorStypeName());
+			existingApplication.get(0).setContractorStypeStatus(application.getContractorStypeStatus());
+			
 			
 			
 //			application.setEndDate(date);
