@@ -5,11 +5,10 @@ import java.util.List;
 
 import org.egov.swcalculation.repository.builder.SWCalculatorQueryBuilder;
 import org.egov.swcalculation.repository.rowMapper.DemandSchedulerRowMapper;
+import org.egov.swcalculation.repository.rowMapper.SewerageConnectionRowMapper;
+import org.egov.swcalculation.repository.rowMapper.SewerageDemandRowMapper;
 import org.egov.swcalculation.repository.rowMapper.SewerageRowMapper;
 import org.egov.swcalculation.web.models.SewerageConnection;
-import org.egov.wscalculation.repository.rowmapper.WaterConnectionRowMapper;
-import org.egov.wscalculation.repository.rowmapper.WaterDemandRowMapper;
-import org.egov.wscalculation.web.models.WaterConnection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
