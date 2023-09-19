@@ -102,6 +102,6 @@ module.exports = function (app) {
   ].forEach((location) => app.use(location, MapiProxy));
   
 
-  ["/wms/wms-services/v1/pfmilestone/_create","/wms/wms-services/v1/pfmilestone/_search"].forEach((location) => app.use(location, localProxy));
+ // ["/wms/wms-services/v1/pfmilestone/_create","/wms/wms-services/v1/pfmilestone/_search"].forEach((location) => app.use(location, localProxy));
   
 };

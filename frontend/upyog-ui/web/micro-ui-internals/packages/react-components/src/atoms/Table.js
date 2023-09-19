@@ -151,7 +151,9 @@ const Table = ({
       </div>
       {isPaginationRequired && (
         <div className="pagination dss-white-pre" >
-          {`${t("CS_COMMON_ROWS_PER_PAGE")} :`}
+		{/*{`${t("CS_COMMON_ROWS_PER_PAGE")} :`}*/}
+		  {`${t("Rows per page")} :`}
+		  
           <select
             className="cp"
             value={pageSize}

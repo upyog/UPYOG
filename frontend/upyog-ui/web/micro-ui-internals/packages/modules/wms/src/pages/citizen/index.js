@@ -35,6 +35,21 @@ const CitizenApp = ({ path, url, userType }) => {
   const WmsPrjResponse = Digit?.ComponentRegistryService?.getComponent("WmsPrjResponse");
 
   const PMCreate = Digit?.ComponentRegistryService?.getComponent("PMCreate");
+
+  const Inbox = Digit?.ComponentRegistryService?.getComponent("Inbox");
+  const WMSDetails = Digit?.ComponentRegistryService?.getComponent("WMSDetails");
+  const ContrMasterAdd = Digit?.ComponentRegistryService?.getComponent("ContrMasterAdd");
+  const ContrMasterView = Digit?.ComponentRegistryService?.getComponent("ContrMasterView");
+  const ContractViewTableTest = Digit?.ComponentRegistryService?.getComponent("ContractViewTableTest");
+  const ViewBankTable = Digit?.ComponentRegistryService?.getComponent("ViewBankTable");
+  const BankAdd = Digit?.ComponentRegistryService?.getComponent("BankAdd");
+  const AppEditBank = Digit?.ComponentRegistryService?.getComponent("AppEditBank");
+  const View = Digit?.ComponentRegistryService?.getComponent("View");
+  const VendorTypeAdd = Digit?.ComponentRegistryService?.getComponent("VendorTypeAdd");
+  const VendorTypeEdit = Digit?.ComponentRegistryService?.getComponent("VendorTypeEdit");
+  const EditCitizen = Digit?.ComponentRegistryService?.getComponent("WMSEditCitizen");
+
+  
   return (
     <span className={"pt-citizen"}>
     <Switch>
@@ -77,6 +92,20 @@ const CitizenApp = ({ path, url, userType }) => {
           
           <PrivateRoute path={`${path}/pm-home`} component={() => <PMCreate />} />
           {/* <PrivateRoute path={`${path}/sor-update/:id`} component={() => <Update />} /> */}
+    
+          <PrivateRoute path={`${path}/cm-home`} component={props => <Inbox {...props} tenants={tenantId} parentRoute={path} />} />
+          <PrivateRoute path={`${path}/details/:tenantId/:id`} component={() => <WMSDetails />} />
+          <PrivateRoute path={`${path}/add`} component={ContrMasterAdd} />
+          <PrivateRoute path={`${path}/cm-table-view`} component={ContrMasterView} />
+          <PrivateRoute path={`${path}/cm-table-test`} component={ContractViewTableTest} />
+          <PrivateRoute path={`${path}/bank/list`} component={ViewBankTable} />
+          <PrivateRoute path={`${path}/bank/add`} component={BankAdd} />
+          <PrivateRoute path={`${path}/bank/edit`} component={AppEditBank} />
+          <PrivateRoute path={`${path}/vendor_typ/list`} component={View} />
+          <PrivateRoute path={`${path}/vendor_typ/add`} component={VendorTypeAdd} />
+          <PrivateRoute path={`${path}/vendor_typ/edit/:tenantId/:id`} component={VendorTypeEdit} />
+          <PrivateRoute path={`${path}/edit/:tenantId/:id`} component={() => <EditCitizen />} />
+
         </div>
         </AppContainer>
       </Switch>

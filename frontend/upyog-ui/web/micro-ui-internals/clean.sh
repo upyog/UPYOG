@@ -26,3 +26,6 @@ cd "$BASEDIR/packages/modules/fsm" && rm -rf node_modules
 
 msg "Cleaning Core module"
 cd "$BASEDIR/packages/modules/core" && rm -rf node_modules
+
+msg "Cleaning WMS module"
+cd "$BASEDIR/packages/modules/wms" && rm -rf node_modules

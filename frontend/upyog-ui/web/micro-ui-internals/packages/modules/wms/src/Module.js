@@ -85,6 +85,45 @@ import WmsPmWrkName from "./pageComponents/PM/WmsPmWrkName";
 /**---------------- */
 import ContrMasterAdd from "./pages/citizen/ContrMaster/index";
 import ContrMasterView from "./pages/citizen/ContrMaster/ContrView";
+import ContractViewTableTest from "./pages/citizen/ContrMaster/ContractViewTableTest";
+import WmsCMMobileNumber from "./pageComponents/ContractMaster/WmsCMMobileNumber";
+import WmsCMPFMSVendorID from "./pageComponents/ContractMaster/WmsCMPFMSVendorID";
+import WmsCMUIDNumber from "./pageComponents/ContractMaster/WmsCMUIDNumber";
+import WmsCMVendorName from "./pageComponents/ContractMaster/WmsCMVendorName";
+import WmsCMVendorStatus from "./pageComponents/ContractMaster/WmsCMVendorStatus";
+import WmsCMVendorType from "./pageComponents/ContractMaster/WmsCMVendorType";
+import InboxFilter from "./components/CmList/InboxFilter";
+import WMSCardContract from "./components/CmList/wmscard";
+import Inbox from "./pages/citizen/ContrMaster/Inbox";
+import ContractMasterDetail from "./pages/citizen/ContrMaster/ContractMasterDetail";
+import WmsCMVATNumber from "./pageComponents/ContractMaster/WmsCMVATNumber";
+import WmsCMBankBranchIFSCCode from "./pageComponents/ContractMaster/WmsCMBankBranchIFSCCode";
+import WmsCMFunction from "./pageComponents/ContractMaster/WmsCMFunction";
+import WmsCMVendorClass from "./pageComponents/ContractMaster/WmsCMVendorClass";
+import WmsCMPFAccountNumber from "./pageComponents/ContractMaster/WmsCMPFAccountNumber";
+import WmsCMSubType from "./pageComponents/ContractMaster/WmsCMSubType";
+import WmsCMPayTo from "./pageComponents/ContractMaster/WmsCMPayTo";
+import WmsCMEmailId from "./pageComponents/ContractMaster/WmsCMEmailId";
+import WmsCMGSTNumber from "./pageComponents/ContractMaster/WmsCMGSTNumber";
+import WmsCMPANNumber from "./pageComponents/ContractMaster/WmsCMPANNumber";
+import WmsCMBankAccountNumber from "./pageComponents/ContractMaster/WmsCMBankAccountNumber";
+import WmsCMPrimaryAccountHead from "./pageComponents/ContractMaster/WmsCMPrimaryAccountHead";
+import WmsCMAddress from "./pageComponents/ContractMaster/WmsCMAddress";
+import WmsCMAllowDirectPayment from "./pageComponents/ContractMaster/WmsCMAllowDirectPayment";
+import WmsCMBankName from "./pageComponents/ContractMaster/bankField/WmsCMBankName";
+import WmsCMBankBranch from "./pageComponents/ContractMaster/bankField/WmsCMBankBranch";
+import WmsCMBankIFSCCode from "./pageComponents/ContractMaster/bankField/WmsCMBankIFSCCode";
+import WmsCMBankBranchIFSC from "./pageComponents/ContractMaster/bankField/WmsCMBankBranchIFSC";
+import WmsCMBankStatus from "./pageComponents/ContractMaster/bankField/WmsCMBankStatus";
+import EditCitizen from "./pages/citizen/ContrMaster/EditCitizen/index";
+import ViewBankTable from "./pages/citizen/ContrMaster/Master/Bank/View";
+import BankAdd from "./pages/citizen/ContrMaster/Master/Bank/BankAdd";
+import AppEditBank from "./pages/citizen/ContrMaster/Master/Bank/Edit/index";
+import VendorTypeAdd from "./pages/citizen/ContrMaster/Master/VendorType/VendorTypeAdd";
+import View from "./pages/citizen/ContrMaster/Master/VendorType/View";
+import VendorTypeEdit from "./pages/citizen/ContrMaster/Master/VendorType/Edit";
+import WmsCMVType from "./pageComponents/ContractMaster/vendorTypeField/WmsCMVType";
+import WmsCMVTypeStatus from "./pageComponents/ContractMaster/vendorTypeField/WmsCMVTypeStatus";
 const componentsToRegister = {  
   Home:Home,  
   WmsSorList:List,
@@ -148,6 +187,57 @@ const componentsToRegister = {
   WmsPmPer,
   WmsPmPrjName,
   WmsPmWrkName,
+Inbox,
+  WMSCardContract,
+  ContractViewTableTest,
+  WmsCMMobileNumber,
+WMSDetails: ContractMasterDetail,
+WmsCMPFMSVendorID,
+WmsCMUIDNumber,
+WmsCMVendorName,
+WmsCMVendorStatus,
+WmsCMVendorType,
+//     RegisterDetails,
+// SelectCorrespondenceAddress,
+//   WmsSelectAddress,
+//   WMSSelectPincode,
+//   WMSSelectEmailId,
+//   WMSSelectGender,
+//   WMSSelectPhoneNumber, 
+  WmsSorChapter,
+  WmsSorDescriptionOfItem,
+  Home:Home,
+  // WmsSorCreate : WmsSorCreate,
+  WmsSorId,
+  WMS_INBOX_FILTER: (props) => <InboxFilter {...props} />,
+  WmsCMVATNumber,
+  WmsCMBankBranchIFSCCode,
+WmsCMFunction,
+WmsCMVendorClass,
+WmsCMPFAccountNumber,
+WmsCMSubType,
+WmsCMPayTo,
+WmsCMEmailId,
+WmsCMGSTNumber,
+WmsCMPANNumber,
+WmsCMBankAccountNumber,
+WmsCMPrimaryAccountHead,
+WmsCMAddress,
+WmsCMAllowDirectPayment,
+WMSEditCitizen:EditCitizen,
+ViewBankTable,
+AppEditBank,
+BankAdd,
+WmsCMBankName,
+WmsCMBankBranch,
+WmsCMBankIFSCCode,
+WmsCMBankBranchIFSC,
+WmsCMBankStatus,
+VendorTypeAdd,
+View,
+VendorTypeEdit,
+WmsCMVType,
+WmsCMVTypeStatus
 
 };
 export const WMSModule = ({ stateCode, userType, tenants }) => {

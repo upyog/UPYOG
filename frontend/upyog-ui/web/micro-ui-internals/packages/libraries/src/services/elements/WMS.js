@@ -450,6 +450,148 @@ PMApplications:{
                       params: { tenantId },
                     }),
   },
+  ContractorMaster:{
+    search: (tenantId, filters, searchParams) =>
+      Request({
+        url: Urls.wms.ContractorMaster.search,
+        useCache: false,
+        method: "GET",
+        auth: true,
+        userService: true,
+        params: { tenantId, ...filters, ...searchParams },
+      }),
+    create: (data, tenantId) =>
+      Request({
+        data: data,
+        url: Urls.wms.ContractorMaster.create,
+        useCache: false,
+        method: "POST",
+        auth: true,
+        userService: true,
+        params: { tenantId },
+      }),
+    update: (data, tenantId) =>
+      Request({
+        data: data,
+        url: Urls.wms.ContractorMaster.update,
+        useCache: false,
+        method: "POST",
+        auth: true,
+        userService: true,
+        params: { tenantId },
+      }),
+    delete: (data, tenantId) =>
+      Request({
+        data: data,
+        url: Urls.wms.ContractorMaster.delete,
+        useCache: false,
+        method: "DELETE",
+        auth: true,
+        userService: true,
+        params: { tenantId },
+      }),
+    get: (tenantId) =>
+      Request({
+        url: Urls.wms.ContractorMaster.get,
+        useCache: false,
+        method: "GET",
+        auth: true,
+        userService: true,
+        params: { tenantId },
+      }),
+      getList: (data, tenantId) =>
+      Request({
+        data: data,
+        url: Urls.wms.ContractorMaster.get,
+        useCache: false,
+        method: "POST",
+        // method: "GET",
+        auth: true,
+        userService: true,
+        params: { tenantId },
+      }),
+      getSingleData: (tenantId) =>
+      Request({
+        url: `${Urls.wms.ContractorMaster.get}/?vendorId=${tenantId}`,
+        // url: Urls.wms.ContractorMaster.get,
+        useCache: false,
+        method: "POST",
+        // method: "GET",
+        auth: true,
+        userService: true,
+        params: {tenantId} ,
+      }),
+      getDataFilter: (tenantId) =>
+      Request({
+        url: Urls.wms.ContractorMaster.search+tenantId,
+        // url: Urls.wms.ContractorMaster.get+tenantId,
+        useCache: false,
+        method: "POST",
+        // method: "GET",
+        auth: true,
+        userService: true,
+        // params: {tenantId} ,
+      }),
+
+      getMasterData: (endPoint,tenantId) =>
+      Request({
+        url: Urls.wms.ContractorMaster.mdmsBank+''+endPoint,
+        // url: Urls.wms.ContractorMaster.get+tenantId,
+        useCache: false,
+        method: "POST",
+        // method: "GET",
+        auth: true,
+        userService: true,
+        // params: {tenantId} ,
+      }),
+
+      getMasterDataFakeAPI: (tenantId) =>
+      Request({
+        url: Urls.wms.ContractorMaster.mdms,
+        // url: Urls.wms.ContractorMaster.get+tenantId,
+        useCache: false,
+        // method: "POST",
+        method: "GET",
+        auth: true,
+        userService: true,
+        // params: {tenantId} ,
+      }),
+      getMasterSingleDataFakeAPI: (tenantId) =>
+      Request({
+        url: Urls.wms.ContractorMaster.mdms+'/'+tenantId,
+        useCache: false,
+        // method: "POST",
+        method: "GET",
+        auth: true,
+        userService: true,
+        // params: {tenantId} ,
+      }),
+      createMasterDataFakeAPI: (data, tenantId) =>
+      Request({
+        data: data,
+        url: Urls.wms.ContractorMaster.mdms,
+        useCache: false,
+        method: "POST",
+        auth: true,
+        userService: true,
+        params: { tenantId },
+      }),
+      
+      updateMasterDataFakeAPI: (data, tenantId) =>
+      Request({
+        data: data,
+        url: Urls.wms.ContractorMaster.mdms+'/'+tenantId,
+        useCache: false,
+        method: "PATCH",
+        // method: "POST",
+        auth: true,
+        userService: true,
+        params: { tenantId },
+      }),
+
+      
+
+},
 };
 
 export default WmsService;

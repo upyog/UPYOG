@@ -260,6 +260,12 @@ import useWmsPmSearch from "./wms/pm/useWmsPmSearch";
 import useWmsPmCount from "./wms/pm/useWmsPmCount";
 import useWmsPmCreate from "./wms/pm/useWmsPmCreate";
 import useWmsPmUpdate from "./wms/pm/useWmsPmUpdate";
+import useWmsCMGet from "./wms/cm/useWmsCMGet";
+import useWmsCMCount from "./wms/cm/useWmsCMCount";
+import useWmsCMSearch from "./wms/cm/useWmsCMSearch";
+import useWmsCMEdit from "./wms/cm/useWmsCMEdit";
+import useWmsCMAdd from "./wms/cm/useWmsCMAdd";
+import useWMSMaster from "./wms/cm/useWMSMaster";
 
 
 import useGetHowItWorksJSON from "./useHowItWorksJSON";
@@ -533,6 +539,14 @@ const wms = {
     useWmsPmCreate:useWmsPmCreate,
     useWmsPmUpdate:useWmsPmUpdate,
     useWmsPmCount:useWmsPmCount
+  },
+  cm:{
+    useWmsCMGet,
+    useWmsCMCount,
+    useWmsCMSearch,
+    useWmsCMEdit,
+    useWmsCMAdd,
+    useWMSMaster
   },
   useWmsSchMDMS,
   useWmsGenderMDMS,
