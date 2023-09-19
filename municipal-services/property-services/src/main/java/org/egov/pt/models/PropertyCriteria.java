@@ -54,6 +54,8 @@ public class PropertyCriteria {
 	private String doorNo;
 
 	private String oldPropertyId;
+	
+	private String propertyType;
 
 	private Set<String> creationReason;
 	
@@ -64,6 +66,9 @@ public class PropertyCriteria {
 
 	@Builder.Default
 	private Boolean isInboxSearch = false;
+	
+	@Builder.Default
+	private Boolean isDefaulterNoticeSearch = false;
 	
 	private Boolean isCitizen;
 
