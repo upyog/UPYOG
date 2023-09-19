@@ -275,7 +275,7 @@ public class SWCalculationServiceImpl implements SWCalculationService {
 
 	public List<SewerageConnection> getConnnectionWithPendingDemand(RequestInfo requestInfo, BulkBillCriteria bulkBillCriteria)
 	{
-		return demandService.getConnectionPendingForDemand(requestInfo,bulkBillCriteria.getTenantId());
+		return demandService.getConnectionPendingForDemand(requestInfo,bulkBillCriteria);
 	}
 	
 	public void generateDemandForConsumerCodeBasedOnTimePeriod(RequestInfo requestInfo, BulkBillCriteria bulkBillCriteria) {
