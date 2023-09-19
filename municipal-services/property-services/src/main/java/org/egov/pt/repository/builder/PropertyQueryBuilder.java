@@ -311,9 +311,15 @@ public class PropertyQueryBuilder {
 		builder.append("owner.status = ?");
 		preparedStmtList.add(Status.ACTIVE.toString());
 		
+		if(criteria.getIsDefaulterNoticeSearch())
+		{		
+			addClauseIfRequired(preparedStmtList,builder);
+			builder.append("property.status = ?");
+			preparedStmtList.add(Status.ACTIVE.toString());
+		}
 
 		String withClauseQuery = WITH_CLAUSE_QUERY.replace(REPLACE_STRING, builder);
-		if (onlyIds || criteria.getIsRequestForCount())
+		if (onlyIds || criteria.getIsRequestForCount() || criteria.getIsDefaulterNoticeSearch())
 			return builder.toString();
 		else 
 			return addPaginationWrapper(withClauseQuery, preparedStmtList, criteria);
