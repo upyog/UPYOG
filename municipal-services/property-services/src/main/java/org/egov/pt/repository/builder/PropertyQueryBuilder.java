@@ -164,6 +164,7 @@ public class PropertyQueryBuilder {
 					&& null == criteria.getDoorNo()
 					&& null == criteria.getOldPropertyId()
 					&& null == criteria.getDocumentNumbers()
+					&& null == criteria.getPropertyType()
 					&& (null == criteria.getFromDate() && null == criteria.getToDate())
 					&& CollectionUtils.isEmpty(criteria.getCreationReason());
 		
@@ -252,6 +253,14 @@ public class PropertyQueryBuilder {
 			addClauseIfRequired(preparedStmtList, builder);
 			builder.append(" property.status='ACTIVE' and owndoc.status='ACTIVE' and owndoc.documentuid  IN ( ").append(createQuery(documentNumberList)).append(" )");
 			addToPreparedStatement(preparedStmtList, documentNumberList);
+		}
+		
+		String propertyType = criteria.getPropertyType();
+
+		if(propertyType!=null){
+			addClauseIfRequired(preparedStmtList, builder);
+			builder.append("property.usagecategory like ?");
+			preparedStmtList.add("%"+criteria.getPropertyType().toUpperCase()+"%");
 		}
 		
 		if (null != criteria.getLocality()) {
