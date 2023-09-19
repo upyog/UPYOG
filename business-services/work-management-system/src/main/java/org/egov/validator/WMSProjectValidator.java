@@ -26,6 +26,46 @@ public class WMSProjectValidator {
 	            if(ObjectUtils.isEmpty(application.getTenantId()))
 	                throw new CustomException("EG_WMSProject_APP_ERR", "tenantId is mandatory for creating Project applications");
 	        });
+	    	
+	    	wmsProjectRequest.getProjectApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getDepartment()))
+	                throw new CustomException("EG_WMSProject_APP_ERR", "Department is mandatory for creating Project applications");
+	        });
+	    	
+	    	wmsProjectRequest.getProjectApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getProjectNumber()))
+	                throw new CustomException("EG_WMSProject_APP_ERR", "ProjectNumber is mandatory for creating Project applications");
+	        });
+	    	
+	    	wmsProjectRequest.getProjectApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getProjectNameEn()))
+	                throw new CustomException("EG_WMSProject_APP_ERR", "ProjectNameEn is mandatory for creating Project applications");
+	        });
+	    	
+	    	wmsProjectRequest.getProjectApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getProjectNameReg()))
+	                throw new CustomException("EG_WMSProject_APP_ERR", "ProjectNameReg is mandatory for creating Project applications");
+	        });
+	    	
+	    	wmsProjectRequest.getProjectApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getProjectDescription()))
+	                throw new CustomException("EG_WMSProject_APP_ERR", "ProjectDescription is mandatory for creating Project applications");
+	        });
+	    	
+	    	wmsProjectRequest.getProjectApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getProjectStartDate()))
+	                throw new CustomException("EG_WMSProject_APP_ERR", "ProjectStartDate is mandatory for creating Project applications");
+	        });
+	    	
+	    	wmsProjectRequest.getProjectApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getProjectEndDate()))
+	                throw new CustomException("EG_WMSProject_APP_ERR", "ProjectEndDate is mandatory for creating Project applications");
+	        });
+	    	
+	    	wmsProjectRequest.getProjectApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getStatus()))
+	                throw new CustomException("EG_WMSProject_APP_ERR", "Status is mandatory for creating Project applications");
+	        });
 	    }
 
 	    public List<Project> validateApplicationUpdateRequest(WMSProjectRequest wmsProjectRequest) {

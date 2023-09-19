@@ -24,6 +24,31 @@ public class WMSSORValidator {
 	            if(ObjectUtils.isEmpty(application.getTenantId()))
 	                throw new CustomException("EG_WMS_APP_ERR", "tenantId is mandatory for creating SOR applications");
 	        });
+	    	
+	    	wmsSORRequest.getScheduleOfRateApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getChapter()))
+	                throw new CustomException("EG_WMS_APP_ERR", "Chapter is mandatory for creating SOR applications");
+	        });
+	    	
+	    	wmsSORRequest.getScheduleOfRateApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getItemNo()))
+	                throw new CustomException("EG_WMS_APP_ERR", "ItemNo is mandatory for creating SOR applications");
+	        });
+	    	
+	    	wmsSORRequest.getScheduleOfRateApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getDescOfItem()))
+	                throw new CustomException("EG_WMS_APP_ERR", "DescOfItem is mandatory for creating SOR applications");
+	        });
+	    	
+	    	wmsSORRequest.getScheduleOfRateApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getUnit()))
+	                throw new CustomException("EG_WMS_APP_ERR", "Unit is mandatory for creating SOR applications");
+	        });
+	    	
+	    	wmsSORRequest.getScheduleOfRateApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getRate()))
+	                throw new CustomException("EG_WMS_APP_ERR", "Rate is mandatory for creating SOR applications");
+	        });
 	    }
 
 	    public List<ScheduleOfRateApplication> validateApplicationUpdateRequest(WMSSORRequest wmsSORRequest) {
