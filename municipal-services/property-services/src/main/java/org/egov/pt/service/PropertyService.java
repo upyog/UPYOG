@@ -419,7 +419,7 @@ public class PropertyService {
 		for(Property property:properties)
 		{
 			billResponse= billingService.fetchBill(property,requestInfo);
-			if(billResponse.getBill().size()>1)
+			if(billResponse.getBill().size()>=1)
 			{
 				if(billResponse.getBill().get(0).getBillDetails().size()==1)
 				{
@@ -457,7 +457,7 @@ public class PropertyService {
 	        log.info("Property Id "+property.getPropertyId() + " added in defaulter notice with Due " +property.getDueAmount() + " for year " +property.getDueAmountYear());
 
 		}
-		return properties;
+		return defaulterProperties;
 		
 	}
 
