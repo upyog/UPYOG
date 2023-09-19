@@ -25,6 +25,23 @@ public class WMSSchemeValidator {
 	            if(ObjectUtils.isEmpty(application.getTenantId()))
 	                throw new CustomException("EG_WMSScheme_APP_ERR", "tenantId is mandatory for creating Scheme applications");
 	        });
+	    	
+	    	wmsSchemeRequest.getSchemeApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getSourceOfFund()))
+	                throw new CustomException("EG_WMSScheme_APP_ERR", "SourceOfFund is mandatory for creating Scheme applications");
+	        });
+	    	
+	    	
+	    	wmsSchemeRequest.getSchemeApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getSchemeNameEn()))
+	                throw new CustomException("EG_WMSScheme_APP_ERR", "SchemeNameEn is mandatory for creating Scheme applications");
+	        });
+	    	
+	    	wmsSchemeRequest.getSchemeApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getSchemeDescription()))
+	                throw new CustomException("EG_WMSScheme_APP_ERR", "SchemeDescription is mandatory for creating Scheme applications");
+	        });
+	    	
 	    }
 
 	    public List<Scheme> validateApplicationUpdateRequest(WMSSchemeRequest wmsSchemeRequest) {

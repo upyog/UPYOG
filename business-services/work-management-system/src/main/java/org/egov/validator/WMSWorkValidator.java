@@ -28,6 +28,47 @@ public class WMSWorkValidator {
 	            if(ObjectUtils.isEmpty(application.getTenantId()))
 	                throw new CustomException("EG_WMS_APP_ERR", "tenantId is mandatory for creating SOR applications");
 	        });
+	    	
+	    	wmsWorkRequest.getWmsWorkApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getWorkNo()))
+	                throw new CustomException("EG_WMS_APP_ERR", "WorkNo is mandatory for creating SOR applications");
+	        });
+	    	
+	    	wmsWorkRequest.getWmsWorkApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getWorkName()))
+	                throw new CustomException("EG_WMS_APP_ERR", "WorkName is mandatory for creating SOR applications");
+	        });
+	    	
+	    	wmsWorkRequest.getWmsWorkApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getProjectName()))
+	                throw new CustomException("EG_WMS_APP_ERR", "ProjectName is mandatory for creating SOR applications");
+	        });
+	    	
+	    	wmsWorkRequest.getWmsWorkApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getDepartmentName()))
+	                throw new CustomException("EG_WMS_APP_ERR", "DepartmentName is mandatory for creating SOR applications");
+	        });
+	    	
+	    	wmsWorkRequest.getWmsWorkApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getWorkType()))
+	                throw new CustomException("EG_WMS_APP_ERR", "WorkType is mandatory for creating SOR applications");
+	        });
+	    	
+	    	wmsWorkRequest.getWmsWorkApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getWorkCategory()))
+	                throw new CustomException("EG_WMS_APP_ERR", "WorkCategory is mandatory for creating SOR applications");
+	        });
+	    	
+	    	wmsWorkRequest.getWmsWorkApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getProjectPhase()))
+	                throw new CustomException("EG_WMS_APP_ERR", "ProjectPhase is mandatory for creating SOR applications");
+	        });
+	    	wmsWorkRequest.getWmsWorkApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getStartLocation()))
+	                throw new CustomException("EG_WMS_APP_ERR", "StartLocation is mandatory for creating SOR applications");
+	        });
+	    	
+	    	
 	    }
 
 	    public List<WMSWorkApplication> validateApplicationUpdateRequest(WMSWorkRequest wmsWorkRequest) {

@@ -36,6 +36,143 @@ public class WMSWorkEstimationValidator {
 	            if(ObjectUtils.isEmpty(application.getTenantId()))
 	                throw new CustomException("EG_WMS_APP_ERR", "tenantId is mandatory for creating Work Estimation applications");
 	        });
+	    	
+	    	wmsWorkEstimationRequest.getWmsWorkEstimationApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getProjectName()))
+	                throw new CustomException("EG_WMS_APP_ERR", "ProjectName is mandatory for creating Work Estimation applications");
+	        });
+	    	
+	    	wmsWorkEstimationRequest.getWmsWorkEstimationApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getWorkName()))
+	                throw new CustomException("EG_WMS_APP_ERR", "WorkName is mandatory for creating Work Estimation applications");
+	        });
+	    	
+	    	wmsWorkEstimationRequest.getWmsWorkEstimationApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getEstimateType()))
+	                throw new CustomException("EG_WMS_APP_ERR", "EstimateType is mandatory for creating Work Estimation applications");
+	        });
+	    	
+	    	wmsWorkEstimationRequest.getWmsWorkEstimationApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getChapter()))
+	                throw new CustomException("EG_WMS_APP_ERR", "Chapter is mandatory for creating Work Estimation applications");
+	        });
+	    	
+	    	wmsWorkEstimationRequest.getWmsWorkEstimationApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getItemNo()))
+	                throw new CustomException("EG_WMS_APP_ERR", "ItemNo is mandatory for creating Work Estimation applications");
+	        });
+	    	
+	    	wmsWorkEstimationRequest.getWmsWorkEstimationApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getDesriptionOfTheItem()))
+	                throw new CustomException("EG_WMS_APP_ERR", "DesriptionOfTheItem is mandatory for creating Work Estimation applications");
+	        });
+	    	
+	    	wmsWorkEstimationRequest.getWmsWorkEstimationApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getUnit()))
+	                throw new CustomException("EG_WMS_APP_ERR", "Unit is mandatory for creating Work Estimation applications");
+	        });
+	    	
+	    	wmsWorkEstimationRequest.getWmsWorkEstimationApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getRate()))
+	                throw new CustomException("EG_WMS_APP_ERR", "Rate is mandatory for creating Work Estimation applications");
+	        });
+	    	
+	    	wmsWorkEstimationRequest.getWmsWorkEstimationApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getEstimateAmount()))
+	                throw new CustomException("EG_WMS_APP_ERR", "EstimateAmount is mandatory for creating Work Estimation applications");
+	        });
+	    	
+	    	wmsWorkEstimationRequest.getWmsWorkEstimationApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getSerialNo()))
+	                throw new CustomException("EG_WMS_APP_ERR", "SerialNo is mandatory for creating Work Estimation applications");
+	        });
+	    	
+	    	wmsWorkEstimationRequest.getWmsWorkEstimationApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getParticularsOfItem()))
+	                throw new CustomException("EG_WMS_APP_ERR", "ParticularsOfItem is mandatory for creating Work Estimation applications");
+	        });
+	    	
+	    	wmsWorkEstimationRequest.getWmsWorkEstimationApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getNoS()))
+	                throw new CustomException("EG_WMS_APP_ERR", "NoS is mandatory for creating Work Estimation applications");
+	        });
+	    	
+	    	wmsWorkEstimationRequest.getWmsWorkEstimationApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getCalculationType()))
+	                throw new CustomException("EG_WMS_APP_ERR", "CalculationType is mandatory for creating Work Estimation applications");
+	        });
+	    	
+	    	wmsWorkEstimationRequest.getWmsWorkEstimationApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getAdditionDeduction()))
+	                throw new CustomException("EG_WMS_APP_ERR", "AdditionDeduction is mandatory for creating Work Estimation applications");
+	        });
+	    	
+	    	wmsWorkEstimationRequest.getWmsWorkEstimationApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getLength()))
+	                throw new CustomException("EG_WMS_APP_ERR", "Length is mandatory for creating Work Estimation applications");
+	        });
+	    	
+	    	wmsWorkEstimationRequest.getWmsWorkEstimationApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getLf()))
+	                throw new CustomException("EG_WMS_APP_ERR", "Lf is mandatory for creating Work Estimation applications");
+	        });
+	    	
+	    	wmsWorkEstimationRequest.getWmsWorkEstimationApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getBw()))
+	                throw new CustomException("EG_WMS_APP_ERR", "Bw is mandatory for creating Work Estimation applications");
+	        });
+	    	
+	    	wmsWorkEstimationRequest.getWmsWorkEstimationApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getBwf()))
+	                throw new CustomException("EG_WMS_APP_ERR", "Bwf is mandatory for creating Work Estimation applications");
+	        });
+	    	
+	    	wmsWorkEstimationRequest.getWmsWorkEstimationApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getDh()))
+	                throw new CustomException("EG_WMS_APP_ERR", "Dh is mandatory for creating Work Estimation applications");
+	        });
+	    	
+	    	wmsWorkEstimationRequest.getWmsWorkEstimationApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getDhf()))
+	                throw new CustomException("EG_WMS_APP_ERR", "Dhf is mandatory for creating Work Estimation applications");
+	        });
+	    	
+	    	wmsWorkEstimationRequest.getWmsWorkEstimationApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getQuantity()))
+	                throw new CustomException("EG_WMS_APP_ERR", "Quantity is mandatory for creating Work Estimation applications");
+	        });
+	    	
+	    	wmsWorkEstimationRequest.getWmsWorkEstimationApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getSubTotal()))
+	                throw new CustomException("EG_WMS_APP_ERR", "SubTotal is mandatory for creating Work Estimation applications");
+	        });
+	    	
+	    	wmsWorkEstimationRequest.getWmsWorkEstimationApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getGrandTotal()))
+	                throw new CustomException("EG_WMS_APP_ERR", "GrandTotal is mandatory for creating Work Estimation applications");
+	        });
+	    	
+	    	wmsWorkEstimationRequest.getWmsWorkEstimationApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getEstimatedQuantity()))
+	                throw new CustomException("EG_WMS_APP_ERR", "EstimatedQuantity is mandatory for creating Work Estimation applications");
+	        });
+	    	
+	    	wmsWorkEstimationRequest.getWmsWorkEstimationApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getOverheadCode()))
+	                throw new CustomException("EG_WMS_APP_ERR", "OverheadCode is mandatory for creating Work Estimation applications");
+	        });
+	    	
+	    	wmsWorkEstimationRequest.getWmsWorkEstimationApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getOverheadDescription()))
+	                throw new CustomException("EG_WMS_APP_ERR", "OverheadDescription is mandatory for creating Work Estimation applications");
+	        });
+	    	
+	    	wmsWorkEstimationRequest.getWmsWorkEstimationApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getValueType()))
+	                throw new CustomException("EG_WMS_APP_ERR", "ValueType is mandatory for creating Work Estimation applications");
+	        });
+	    	
+	    	
 	    }
 
 		public List<WMSWorkEstimationApplication> validateApplicationUpdateRequest(
