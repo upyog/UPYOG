@@ -20,10 +20,10 @@ const apiProxy = createProxyMiddleware({
   target: "http://localhost:8484",
   changeOrigin: true,
 });
-const localProxy = createProxyMiddleware({
-  target: "http://localhost:3000",
-  changeOrigin: true,
-});
+// const localProxy = createProxyMiddleware({
+//   target: "http://localhost:3000",
+//   changeOrigin: true,
+// });
 module.exports = function (app) {
   [
     "/access/v1/actions/mdms",
