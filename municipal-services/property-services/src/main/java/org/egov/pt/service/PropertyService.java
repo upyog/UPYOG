@@ -418,15 +418,24 @@ public class PropertyService {
 		List<Property> defaulterProperties=new ArrayList<>();
 		for(Property property:properties)
 		{
-			billResponse= billingService.fetchBill(property,requestInfo);
+			try{
+				billResponse= billingService.fetchBill(property,requestInfo);
+			}
+			catch(Exception e)
+			{
+				log.info("Error occured while fetch bill for Property " + property.getPropertyId());
+				properties.remove(property);
+				enrichProperty(properties,requestInfo);
+				defaulterProperties.clear();
+			}
 			if(billResponse.getBill().size()>=1)
 			{
 				if(billResponse.getBill().get(0).getBillDetails().size()==1)
 				{
 					Long fromDate=billResponse.getBill().get(0).getBillDetails().get(0).getFromPeriod();
 					Long toDate=billResponse.getBill().get(0).getBillDetails().get(0).getToPeriod();
-					int fromYear=new Date(fromDate).getYear();
-					int toYear=new Date(toDate).getYear();
+					int fromYear=new Date(fromDate).getYear()+1900;
+					int toYear=new Date(toDate).getYear()+1900;
 					if(!(fromYear==(new Date().getYear()) || toYear==(new Date().getYear())))
 					{
 						property.setDueAmount(billResponse.getBill().get(0).getTotalAmount().toString());
@@ -443,8 +452,8 @@ public class PropertyService {
 					{
 						Long fromDate=bd.getFromPeriod();
 						Long toDate=bd.getToPeriod();
-						int fromYear=new Date(fromDate).getYear();
-						int toYear=new Date(toDate).getYear();
+						int fromYear=new Date(fromDate).getYear()+1900;
+						int toYear=new Date(toDate).getYear()+1900;
 						assessmentYear=assessmentYear==null? fromYear+"-"+toYear+"(Rs."+bd.getAmount()+")":
 							assessmentYear.concat(",").concat(fromYear+"-"+toYear+"(Rs."+bd.getAmount()+")");
 					}
