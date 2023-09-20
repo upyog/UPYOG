@@ -102,7 +102,8 @@ public class PropertyRowMapper implements ResultSetExtractor<List<Property>> {
 
 
 				setPropertyInfo(currentProperty, rs, tenanId, propertyUuId, linkedProperties, address);
-
+				currentProperty.setDueAmount(rs.getString("taxDue"));
+				currentProperty.setDueAmountYear(rs.getString("taxDueYear"));
 				addChildrenToProperty(rs, currentProperty);
 				propertyMap.put(propertyUuId, currentProperty);
 			}

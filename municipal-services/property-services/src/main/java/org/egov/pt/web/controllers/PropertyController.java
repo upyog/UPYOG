@@ -146,8 +146,6 @@ public class PropertyController {
         }
         
         log.info("Property count after search"+properties.size());
-        if(propertyCriteria.getIsDefaulterNoticeSearch())
-        	properties=propertyService.enrichProperty(properties,requestInfoWrapper.getRequestInfo());
         
         PropertyResponse response = PropertyResponse.builder()
         		.responseInfo(
