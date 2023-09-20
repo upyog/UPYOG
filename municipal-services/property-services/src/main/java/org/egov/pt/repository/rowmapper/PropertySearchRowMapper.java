@@ -243,7 +243,7 @@ public class PropertySearchRowMapper implements ResultSetExtractor<List<Property
 				.uuid(uuid)
 				.build();
 		
-		addDocToOwner(rs, owner);
+		//addDocToOwner(rs, owner);
 		
 		property.addOwnersItem(owner);
 	}
