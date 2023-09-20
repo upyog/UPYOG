@@ -23,6 +23,7 @@ import org.egov.pt.repository.rowmapper.EncryptionCountRowMapper;
 import org.egov.pt.repository.rowmapper.OpenPropertyRowMapper;
 import org.egov.pt.repository.rowmapper.PropertyAuditRowMapper;
 import org.egov.pt.repository.rowmapper.PropertyRowMapper;
+import org.egov.pt.repository.rowmapper.PropertySearchRowMapper;
 import org.egov.pt.repository.rowmapper.PropertyAuditEncRowMapper;
 import org.egov.pt.service.UserService;
 import org.egov.pt.util.PropertyUtil;
@@ -47,6 +48,9 @@ public class PropertyRepository {
 
 	@Autowired
 	private PropertyRowMapper rowMapper;
+	
+	@Autowired
+	private PropertySearchRowMapper rowSearchMapper;
 	
 	@Autowired
 	private OpenPropertyRowMapper openRowMapper;
@@ -84,6 +88,8 @@ public class PropertyRepository {
 			query=queryBuilder.getPropertySearchQuery(criteria, preparedStmtList, isPlainSearch, false);
 		if (isApiOpen)
 			return jdbcTemplate.query(query, preparedStmtList.toArray(), openRowMapper);
+		if(criteria.getIsDefaulterNoticeSearch())
+			return jdbcTemplate.query(query, preparedStmtList.toArray(), rowSearchMapper);
 		else
 			return jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapper);
 	}
