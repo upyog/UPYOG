@@ -49,7 +49,7 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
 
-@CrossOrigin(
+/*@CrossOrigin(
 	    origins = {
 	        "http://localhost:3000", 
 	        "https://staging.example.com", 
@@ -61,7 +61,7 @@ import lombok.extern.slf4j.Slf4j;
 	                RequestMethod.PUT,
 	                RequestMethod.DELETE,
 	                RequestMethod.POST
-	})
+	})*/
 @javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2023-07-12T17:07:08.384+05:30")
 @Slf4j
 @ToString

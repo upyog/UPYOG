@@ -36,6 +36,91 @@ public class WMSContractAgreementValidator {
 	            if(ObjectUtils.isEmpty(application.getTenantId()))
 	                throw new CustomException("EG_WMS_APP_ERR", "tenantId is mandatory for creating Contract Agreement applications");
 	        });
+	    	
+	    	wmsContractAgreementRequest.getWmsContractAgreementApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getAgreementNo()))
+	                throw new CustomException("EG_WMS_APP_ERR", "AgreementNo is mandatory for creating Contract Agreement applications");
+	        });
+	    	
+	    	wmsContractAgreementRequest.getWmsContractAgreementApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getAgreementDate()))
+	                throw new CustomException("EG_WMS_APP_ERR", "AgreementDate is mandatory for creating Contract Agreement applications");
+	        });
+	    	
+	    	wmsContractAgreementRequest.getWmsContractAgreementApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getDepartmentName()))
+	                throw new CustomException("EG_WMS_APP_ERR", "DepartmentName is mandatory for creating Contract Agreement applications");
+	        });
+	    	
+	    	wmsContractAgreementRequest.getWmsContractAgreementApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getLoaNo()))
+	                throw new CustomException("EG_WMS_APP_ERR", "LoaNo is mandatory for creating Contract Agreement applications");
+	        });
+	    	
+	    	wmsContractAgreementRequest.getWmsContractAgreementApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getTenderNo()))
+	                throw new CustomException("EG_WMS_APP_ERR", "TenderNo is mandatory for creating Contract Agreement applications");
+	        });
+	    	
+	    	wmsContractAgreementRequest.getWmsContractAgreementApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getTenderDate()))
+	                throw new CustomException("EG_WMS_APP_ERR", "TenderDate is mandatory for creating Contract Agreement applications");
+	        });
+	    	
+	    	wmsContractAgreementRequest.getWmsContractAgreementApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getAgreementType()))
+	                throw new CustomException("EG_WMS_APP_ERR", "AgreementType is mandatory for creating Contract Agreement applications");
+	        });
+	    	
+	    	wmsContractAgreementRequest.getWmsContractAgreementApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getContractPeriod()))
+	                throw new CustomException("EG_WMS_APP_ERR", "ContractPeriod is mandatory for creating Contract Agreement applications");
+	        });
+	    	
+	    	wmsContractAgreementRequest.getWmsContractAgreementApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getAgreementAmount()))
+	                throw new CustomException("EG_WMS_APP_ERR", "AgreementAmount is mandatory for creating Contract Agreement applications");
+	        });
+	    	
+	    	wmsContractAgreementRequest.getWmsContractAgreementApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getPaymentType()))
+	                throw new CustomException("EG_WMS_APP_ERR", "PaymentType is mandatory for creating Contract Agreement applications");
+	        });
+	    	
+	    	wmsContractAgreementRequest.getWmsContractAgreementApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getDepartmentName()))
+	                throw new CustomException("EG_WMS_APP_ERR", "DepartmentName is mandatory for creating Contract Agreement applications");
+	        });
+	    	
+	    	wmsContractAgreementRequest.getWmsContractAgreementApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getDesignation()))
+	                throw new CustomException("EG_WMS_APP_ERR", "Designation is mandatory for creating Contract Agreement applications");
+	        });
+	    	
+	    	wmsContractAgreementRequest.getWmsContractAgreementApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getEmployeeName()))
+	                throw new CustomException("EG_WMS_APP_ERR", "EmployeeName is mandatory for creating Contract Agreement applications");
+	        });
+	    	
+	    	wmsContractAgreementRequest.getWmsContractAgreementApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getVendorType()))
+	                throw new CustomException("EG_WMS_APP_ERR", "VendorType is mandatory for creating Contract Agreement applications");
+	        });
+	    	
+	    	wmsContractAgreementRequest.getWmsContractAgreementApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getVendorName()))
+	                throw new CustomException("EG_WMS_APP_ERR", "VendorName is mandatory for creating Contract Agreement applications");
+	        });
+	    	
+	    	wmsContractAgreementRequest.getWmsContractAgreementApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getRepresentedBy()))
+	                throw new CustomException("EG_WMS_APP_ERR", "RepresentedBy is mandatory for creating Contract Agreement applications");
+	        });
+	    	
+	    	wmsContractAgreementRequest.getWmsContractAgreementApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getPrimaryParty()))
+	                throw new CustomException("EG_WMS_APP_ERR", "PrimaryParty is mandatory for creating Contract Agreement applications");
+	        });
 	    }
 
 		public List<WMSContractAgreementApplication> validateApplicationUpdateRequest(

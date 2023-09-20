@@ -17,12 +17,16 @@ public class WMSWorkAwardApprovalApplication {
 	
 	@JsonProperty("work_award_id")
 	private String workAwardId=null;
+	@JsonProperty("work_no")
+	private String workNo=null;
 	@JsonProperty("work_name")
 	private String workName=null;
 	@JsonProperty("percentage_type")
 	private String percentageType=null;
 	@JsonProperty("quoted_percentage")
 	private String quotedPercentage=null;
+	@JsonProperty("accepted_work_cost")
+	private String acceptedWorkCost=null;
 	@JsonProperty("contractor_name")
 	private String contractorName=null;
 	@JsonProperty("no_of_days_for_agreement")

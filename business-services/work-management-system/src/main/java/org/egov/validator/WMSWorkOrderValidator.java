@@ -38,6 +38,26 @@ public class WMSWorkOrderValidator {
 	            if(ObjectUtils.isEmpty(application.getTenantId()))
 	                throw new CustomException("EG_WMS_APP_ERR", "tenantId is mandatory for creating WorkOrder applications");
 	        });
+	    	
+	    	wmsWorkOrderRequest.getWmsWorkOrderApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getWorkOrderDate()))
+	                throw new CustomException("EG_WMS_APP_ERR", "WorkOrderDate is mandatory for creating WorkOrder applications");
+	        });
+	    	
+	    	wmsWorkOrderRequest.getWmsWorkOrderApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getAgreementNo()))
+	                throw new CustomException("EG_WMS_APP_ERR", "AgreementNo is mandatory for creating WorkOrder applications");
+	        });
+	    	
+	    	wmsWorkOrderRequest.getWmsWorkOrderApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getDateOfCommencement()))
+	                throw new CustomException("EG_WMS_APP_ERR", "DateOfCommencement is mandatory for creating WorkOrder applications");
+	        });
+	    	
+	    	wmsWorkOrderRequest.getWmsWorkOrderApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getWorkAssignee()))
+	                throw new CustomException("EG_WMS_APP_ERR", "WorkAssignee is mandatory for creating WorkOrder applications");
+	        });
 	    }
 
 		public List<WMSWorkOrderApplication> validateApplicationUpdateRequest(

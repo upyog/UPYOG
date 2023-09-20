@@ -1,5 +1,7 @@
 package org.egov.web.models;
 
+import javax.persistence.Column;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AllArgsConstructor;
@@ -25,6 +27,7 @@ public class WMSContractorApplication {
 	private String vendorName=null;
 	@JsonProperty("vendor_status")
 	private String vendorStatus=null;
+	@Column(unique=true)
 	@JsonProperty("pfms_vendor_code")
 	private String PFMSVendorCode=null;
 	@JsonProperty("payto")
@@ -39,6 +42,7 @@ public class WMSContractorApplication {
 	private Long GSTNumber=null;
 	@JsonProperty("pan_number")
 	private String PANNumber=null;
+	@Column(unique=true)
 	@JsonProperty("bank_branch_ifsc_code")
 	private String bankBranchIfscCode=null;
 	@JsonProperty("bank_account_number")

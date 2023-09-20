@@ -23,6 +23,8 @@ public class WMSPhysicalFinancialMilestoneApplication {
 	private String workName=null;
 	@JsonProperty("milestone_name")
 	private String milestoneName=null;
+	//@JsonProperty("milestone_percentage")
+		//private String milestonePercentage=null;
 	//@JsonProperty("sr_no")
 	//private Integer srNo=null;
 	//@JsonProperty("activity_description")

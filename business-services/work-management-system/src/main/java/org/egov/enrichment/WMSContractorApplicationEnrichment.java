@@ -87,6 +87,7 @@ public class WMSContractorApplicationEnrichment {
 			
 			existingApplication.get(0).setPFMSVendorCode(application.getPFMSVendorCode());
 			existingApplication.get(0).setPayTo(application.getPayTo());
+			existingApplication.get(0).setVendorStatus(application.getVendorStatus());
 			// application.getAuditDetails().setLastModifiedBy(birthRegistrationRequest.getRequestInfo().getUserInfo().getUuid());
 		}
 	}

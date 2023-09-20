@@ -36,6 +36,40 @@ public class WMSWorkAwardApprovalValidator {
 	            if(ObjectUtils.isEmpty(application.getTenantId()))
 	                throw new CustomException("EG_WMS_APP_ERR", "tenantId is mandatory for creating Work Award Approval applications");
 	        });
+	    	
+	    	wmsWorkAwardApprovalRequest.getWmsWorkAwardApprovalApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getWorkName()))
+	                throw new CustomException("EG_WMS_APP_ERR", "WorkName is mandatory for creating Work Award Approval applications");
+	        });
+	    	
+	    	wmsWorkAwardApprovalRequest.getWmsWorkAwardApprovalApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getWorkNo()))
+	                throw new CustomException("EG_WMS_APP_ERR", "WorkNo is mandatory for creating Work Award Approval applications");
+	        });
+	    	
+	    	wmsWorkAwardApprovalRequest.getWmsWorkAwardApprovalApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getAcceptedWorkCost()))
+	                throw new CustomException("EG_WMS_APP_ERR", "AcceptedWorkCost is mandatory for creating Work Award Approval applications");
+	        });
+	    	
+	    	wmsWorkAwardApprovalRequest.getWmsWorkAwardApprovalApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getContractorName()))
+	                throw new CustomException("EG_WMS_APP_ERR", "ContractorName is mandatory for creating Work Award Approval applications");
+	        });
+	    	
+	    	wmsWorkAwardApprovalRequest.getWmsWorkAwardApprovalApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getNoOfDaysForAgreement()))
+	                throw new CustomException("EG_WMS_APP_ERR", "NoOfDaysForAgreement is mandatory for creating Work Award Approval applications");
+	        });
+	    	
+	    	wmsWorkAwardApprovalRequest.getWmsWorkAwardApprovalApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getAwardStatus()))
+	                throw new CustomException("EG_WMS_APP_ERR", "AwardStatus is mandatory for creating Work Award Approval applications");
+	        });
+	    	
+	    	
+	    	
+	    	
 	    }
 
 		public List<WMSWorkAwardApprovalApplication> validateApplicationUpdateRequest(
