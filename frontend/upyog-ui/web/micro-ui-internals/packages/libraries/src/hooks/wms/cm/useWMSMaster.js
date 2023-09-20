@@ -8,7 +8,16 @@ const useWMSMaster = ( tenantId, type,endppoints, moduleCode, config = {}) => {
   const bankBranchIFSCCode  = () => {
     return useQuery(["WMS_BANK_BRANCH", tenantId], () => WMSService.ContractorMaster.getMasterData(endppoints,tenantId, moduleCode, type), config);
   };
-
+  const bankGetSingleRecord  = () => {
+    return useQuery(["WMS_BANK_BRANCH_SINGLE_RECORD", tenantId], () => WMSService.ContractorMaster.getSingleResordsMasterData(tenantId), config);
+  };
+  const bankUpdateRecord = () => {
+    return useMutation((data) => WMSService.ContractorMaster.updateMasterData(data), config);
+  };
+  const bankCreateRecord = () => {
+    return useMutation((data) => WMSService.ContractorMaster.createMasterData(data), config);
+  };
+  
 //   const useHrmsEmployeeReasons = () => {
 //     return useQuery(["HRMS_EMP_REASON", tenantId], () => MdmsService.getHrmsEmployeeReason(tenantId, moduleCode, type), config);
 //   };
@@ -32,6 +41,13 @@ const useVendorTypeList = () => {
   switch (type) {
     case "WMS_BANK_BRANCH_TYPE":
       return bankBranchIFSCCode();
+    case "WMS_BANK_SINGLE_RECORD":
+      return bankGetSingleRecord();
+    case "WMS_BANK_UPDATE":
+      return bankUpdateRecord();
+      case "WMS_BANK_CREATE":
+      return bankCreateRecord();
+      
     // case "DeactivationReason":
     //   return useHrmsEmployeeReasons();
     case "WMS_V_TYPE_LIST":

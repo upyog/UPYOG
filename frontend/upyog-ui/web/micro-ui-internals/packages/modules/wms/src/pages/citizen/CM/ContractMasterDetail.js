@@ -13,13 +13,6 @@ const ContractMasterDetail = ({ location, match, history, }) => {
   const [data, setData] = useState([]);
 console.log("params ",params)
 console.log("data ",data)
-  // useEffect(() => {
-  //   (async () => {
-  //     const result = await axios(`https://62f0e3e5e2bca93cd23f2ada.mockapi.io/birth/${params.id}`);
-  //     setData(result.data);
-  //     console.log("gooo" ,result.data);
-  //   })();
-  // }, [params.id]);
 const cmGetSingleData = Digit?.Hooks?.wms?.cm?.useWmsCMCount(params.id);
 console.log("cmGetSingleData ",cmGetSingleData)
 

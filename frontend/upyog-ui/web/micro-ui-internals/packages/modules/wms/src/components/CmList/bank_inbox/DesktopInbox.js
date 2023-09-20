@@ -26,11 +26,7 @@ console.log("data ",data)
         Header: "Bank Name",
         disableSortBy: true,
         Cell: ({ row }) => {
-          return (
-            <span className="link">
-              <Link to={`details/${props.tenantId}/${row.original.bank_id}`}>{row.original.bank_name}</Link>
-            </span>
-          );
+          return (row.original.bank_name);
         },
       },
       {
@@ -62,7 +58,7 @@ console.log("data ",data)
         disableSortBy: true,
       },
       {
-        Header: "Bank Branch, IFSC Code",
+        Header: "Bank, Branch & IFSC Code",
         disableSortBy: true,
         Cell: ({ row }) => {
           
@@ -76,12 +72,6 @@ console.log("data ",data)
           //   }`
           // );
         },
-      },
-      {
-        Header: "Bank, Branch & IFSC Code",
-        disableSortBy: true,
-        Cell: ({ row }) => {
-          return GetCell(`${row.original?.bank_branch_ifsc_code}`);},
       },
 
       {
@@ -118,15 +108,15 @@ console.log("data ",data)
     ];
   }, []);
 
-  console.log({"props.currentPage":props.currentPage,
-    "props.onNextPage":props.onNextPage,
-    "props.onPrevPage":props.onPrevPage,
-    "props.pageSizeLimit":props.pageSizeLimit,
-    "props.onSort":props.onSort,
-    "props.disableSort":props.disableSort,
-    "props.onPageSizeChange":props.onPageSizeChange,
-    "props.sortParams":props.sortParams,
-    "props.totalRecords":props.totalRecords})
+  // console.log({"props.currentPage":props.currentPage,
+  //   "props.onNextPage":props.onNextPage,
+  //   "props.onPrevPage":props.onPrevPage,
+  //   "props.pageSizeLimit":props.pageSizeLimit,
+  //   "props.onSort":props.onSort,
+  //   "props.disableSort":props.disableSort,
+  //   "props.onPageSizeChange":props.onPageSizeChange,
+  //   "props.sortParams":props.sortParams,
+  //   "props.totalRecords":props.totalRecords})
   let result;
   if (props.isLoading) {
     result = <Loader />;

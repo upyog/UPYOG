@@ -14,15 +14,6 @@ const EditForm = ({ tenantId, data }) => {
   const [mdmsData, setmdmsData] = useState();
   const [editData, seteditData] = useState();
   
-  // const { data: mdmsData,isLoading } = Digit.Hooks.useCommonMDMS(Digit.ULBService.getStateId(), "egov-hrms", ["CommonFieldsConfig"], {
-  //   select: (data) => {
-  //      return {
-  //       config: data?.MdmsRes?.['egov-hrms']?.CommonFieldsConfig
-  //     };
-  //   },
-  //   retry: false,
-  //   enable: false,
-  // });
   const closeToast = () => {
     setShowToast(false);
   };
@@ -31,13 +22,13 @@ const EditForm = ({ tenantId, data }) => {
     setTimeout(() => {
       closeToast();
       //history.push('/wms/cm-home/')
+      history.replace('/upyog-ui/citizen/wms/cm-home')
     }, 5000);
   }
   },[showToast])
-  const {mutate,isSuccess,isError,error} = Digit?.Hooks?.wms?.cm?.useWmsCMEdit();
-  console.log({isSuccess,isError,error})
-// console.log("data for edit ",data)
-  const defaultValues = { // its for papolating data in form
+  const {mutate,isSuccess,isError,error,isLoading,...rest} = Digit?.Hooks?.wms?.cm?.useWmsCMEdit();
+  console.log({isSuccess,isError,error, rest})
+  const defaultValues = {
     tenantId: tenantId,
     WmsCMPFMSVendorID:{pfms_vendor_code:data?.pfms_vendor_code},
     WmsCMVendorType:{name:data?.vendor_type},
@@ -59,7 +50,6 @@ const EditForm = ({ tenantId, data }) => {
     WmsCMPrimaryAccountHead:{name:data?.primary_account_head},
     WmsCMAddress:{address:data?.address},
     WmsCMAllowDirectPayment:{allow_direct_payment:data?.allow_direct_payment},
-    // WmsCMAllowDirectPayment:{name:data?.allow_direct_payment},
   };
 
   const onFormValueChange = (setValue = true, formData) => { };
@@ -102,8 +92,7 @@ const EditForm = ({ tenantId, data }) => {
   };
 
 
-  // if (isLoading) {
-    if (false) {
+  if (isLoading) {
     return <Loader />;
   }
   const config =mdmsData?.config?mdmsData.config: newConfig;

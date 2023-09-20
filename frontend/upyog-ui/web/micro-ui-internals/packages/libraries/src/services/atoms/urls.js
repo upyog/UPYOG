@@ -240,9 +240,19 @@ wms:{
 
 
   },
-// ContractorMaster:{create:"http://10.216.36.152:8484/wms/wms-services/v1/contractor/_create",search:"",update:"",count:"https://62f0e3e5e2bca93cd23f2ada.mockapi.io/birth",get:"https://62f0e3e5e2bca93cd23f2ada.mockapi.io/birth"},
-ContractorMaster:{create:"http://10.216.36.152:8484/wms/wms-services/v1/contractor/_create",search:"http://10.216.36.152:8484/wms/wms-services/v1/contractor/_search",update:"http://10.216.36.152:8484/wms/wms-services/v1/contractor/_update",count:"https://62f0e3e5e2bca93cd23f2ada.mockapi.io/birth",get:"http://10.216.36.152:8484/wms/wms-services/v1/contractor/_view",mdms:"http://localhost:5000/vendorType",mdmsBank:"http://10.216.36.152:8484/wms/wms-services/v1/bank/"},
-// ContractorMaster:{create:"http://10.216.36.152:8484/wms/wms-services/v1/contractor/_create",search:"",update:"http://10.216.36.152:8484/wms/wms-services/v1/contractor/_update",count:"https://62f0e3e5e2bca93cd23f2ada.mockapi.io/birth",get:"http://localhost:5000/test"},
+ContractorMaster:{
+  create:"/wms/wms-services/v1/contractor/_create",
+  search:"/wms/wms-services/v1/contractor/_search",
+  update:"/wms/wms-services/v1/contractor/_update",
+  count:"https://62f0e3e5e2bca93cd23f2ada.mockapi.io/birth",
+  get:"/wms/wms-services/v1/contractor/_view",
+  mdms:"http://localhost:5000/vendorType",
+  mdmsBank:"/wms/wms-services/v1/bank/",
+  mdmsBankGet:"/wms/wms-services/v1/bank/_view",
+  mdmsBankUpdate:"/wms/wms-services/v1/bank/_update",
+  mdmsBankCreate:"/wms/wms-services/v1/bank/_create",
+
+},
   },
   access_control: "/access/v1/actions/mdms/_get",
   billgenie: "/egov-searcher",
