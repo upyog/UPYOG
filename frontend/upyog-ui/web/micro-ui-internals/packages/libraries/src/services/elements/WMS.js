@@ -544,6 +544,38 @@ PMApplications:{
         userService: true,
         // params: {tenantId} ,
       }),
+      getSingleResordsMasterData: (id) =>
+      Request({
+        url: Urls.wms.ContractorMaster.mdmsBankGet+'?bankId='+id,
+        useCache: false,
+        method: "POST",
+        // method: "GET",
+        auth: true,
+        userService: true,
+        // params: {tenantId} ,
+      }),
+      updateMasterData: (data) =>
+      Request({
+        data: data,
+        url: Urls.wms.ContractorMaster.mdmsBankUpdate,
+        useCache: false,
+        method: "POST",
+        auth: true,
+        userService: true,
+        // params: { tenantId },
+      
+      }),
+      createMasterData: (data) =>
+      Request({
+        data: data,
+        url: Urls.wms.ContractorMaster.mdmsBankCreate,
+        useCache: false,
+        method: "POST",
+        auth: true,
+        userService: true,
+        // params: { tenantId },
+      
+      }),
 
       getMasterDataFakeAPI: (tenantId) =>
       Request({

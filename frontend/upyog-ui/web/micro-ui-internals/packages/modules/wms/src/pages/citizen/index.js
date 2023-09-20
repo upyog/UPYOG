@@ -100,7 +100,7 @@ const CitizenApp = ({ path, url, userType }) => {
           <PrivateRoute path={`${path}/cm-table-test`} component={ContractViewTableTest} />
           <PrivateRoute path={`${path}/bank/list`} component={ViewBankTable} />
           <PrivateRoute path={`${path}/bank/add`} component={BankAdd} />
-          <PrivateRoute path={`${path}/bank/edit`} component={AppEditBank} />
+          <PrivateRoute path={`${path}/bank/edit/:tenantId/:id`} component={AppEditBank} />
           <PrivateRoute path={`${path}/vendor_typ/list`} component={View} />
           <PrivateRoute path={`${path}/vendor_typ/add`} component={VendorTypeAdd} />
           <PrivateRoute path={`${path}/vendor_typ/edit/:tenantId/:id`} component={VendorTypeEdit} />

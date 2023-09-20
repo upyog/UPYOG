@@ -83,9 +83,9 @@ import WmsPmPrjName from "./pageComponents/PM/WmsPmPrjName";
 import WmsPmWrkName from "./pageComponents/PM/WmsPmWrkName";
 
 /**---------------- */
-import ContrMasterAdd from "./pages/citizen/ContrMaster/index";
-import ContrMasterView from "./pages/citizen/ContrMaster/ContrView";
-import ContractViewTableTest from "./pages/citizen/ContrMaster/ContractViewTableTest";
+import ContrMasterAdd from "./pages/citizen/CM/index";
+import ContrMasterView from "./pages/citizen/CM/ContrView";
+import ContractViewTableTest from "./pages/citizen/CM/ContractViewTableTest";
 import WmsCMMobileNumber from "./pageComponents/ContractMaster/WmsCMMobileNumber";
 import WmsCMPFMSVendorID from "./pageComponents/ContractMaster/WmsCMPFMSVendorID";
 import WmsCMUIDNumber from "./pageComponents/ContractMaster/WmsCMUIDNumber";
@@ -94,8 +94,8 @@ import WmsCMVendorStatus from "./pageComponents/ContractMaster/WmsCMVendorStatus
 import WmsCMVendorType from "./pageComponents/ContractMaster/WmsCMVendorType";
 import InboxFilter from "./components/CmList/InboxFilter";
 import WMSCardContract from "./components/CmList/wmscard";
-import Inbox from "./pages/citizen/ContrMaster/Inbox";
-import ContractMasterDetail from "./pages/citizen/ContrMaster/ContractMasterDetail";
+import Inbox from "./pages/citizen/CM/Inbox";
+import ContractMasterDetail from "./pages/citizen/CM/ContractMasterDetail";
 import WmsCMVATNumber from "./pageComponents/ContractMaster/WmsCMVATNumber";
 import WmsCMBankBranchIFSCCode from "./pageComponents/ContractMaster/WmsCMBankBranchIFSCCode";
 import WmsCMFunction from "./pageComponents/ContractMaster/WmsCMFunction";
@@ -115,13 +115,13 @@ import WmsCMBankBranch from "./pageComponents/ContractMaster/bankField/WmsCMBank
 import WmsCMBankIFSCCode from "./pageComponents/ContractMaster/bankField/WmsCMBankIFSCCode";
 import WmsCMBankBranchIFSC from "./pageComponents/ContractMaster/bankField/WmsCMBankBranchIFSC";
 import WmsCMBankStatus from "./pageComponents/ContractMaster/bankField/WmsCMBankStatus";
-import EditCitizen from "./pages/citizen/ContrMaster/EditCitizen/index";
-import ViewBankTable from "./pages/citizen/ContrMaster/Master/Bank/View";
-import BankAdd from "./pages/citizen/ContrMaster/Master/Bank/BankAdd";
-import AppEditBank from "./pages/citizen/ContrMaster/Master/Bank/Edit/index";
-import VendorTypeAdd from "./pages/citizen/ContrMaster/Master/VendorType/VendorTypeAdd";
-import View from "./pages/citizen/ContrMaster/Master/VendorType/View";
-import VendorTypeEdit from "./pages/citizen/ContrMaster/Master/VendorType/Edit";
+import EditCitizen from "./pages/citizen/CM/EditCitizen/index";
+import ViewBankTable from "./pages/citizen/CM/Master/Bank/View";
+import BankAdd from "./pages/citizen/CM/Master/Bank/BankAdd";
+import AppEditBank from "./pages/citizen/CM/Master/Bank/Edit/index";
+import VendorTypeAdd from "./pages/citizen/CM/Master/VendorType/VendorTypeAdd";
+import View from "./pages/citizen/CM/Master/VendorType/View";
+import VendorTypeEdit from "./pages/citizen/CM/Master/VendorType/Edit";
 import WmsCMVType from "./pageComponents/ContractMaster/vendorTypeField/WmsCMVType";
 import WmsCMVTypeStatus from "./pageComponents/ContractMaster/vendorTypeField/WmsCMVTypeStatus";
 const componentsToRegister = {  
