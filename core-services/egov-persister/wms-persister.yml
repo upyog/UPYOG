@@ -335,7 +335,7 @@ serviceMaps:
       isTransaction: true
       queryMaps:
       
-        - query: UPDATE contractor SET mobile_number = ?,uid_number = ?, vendor_name = ?, vat_number = ?, epfo_account_number = ?, email = ?, gst_number = ?, pan_number = ?, bank_account_number = ?, address = ?, vendor_type = ?, bank_branch_ifsc_code = ?, function = ?, vendor_class = ?, vendor_sub_type = ?, primary_account_head = ?, pfms_vendor_code = ?, payto = ? WHERE vendor_id=?;
+        - query: UPDATE contractor SET mobile_number = ?,uid_number = ?, vendor_name = ?,vendor_status= ?, vat_number = ?, epfo_account_number = ?, email = ?, gst_number = ?, pan_number = ?, bank_account_number = ?, address = ?, vendor_type = ?, bank_branch_ifsc_code = ?, function = ?, vendor_class = ?, vendor_sub_type = ?, primary_account_head = ?, pfms_vendor_code = ?, payto = ? WHERE vendor_id=?;
           basePath: WMSContractorApplication.*
           jsonMaps:
             - jsonPath: $.WMSContractorApplication.*.mobile_number
@@ -343,6 +343,8 @@ serviceMaps:
             - jsonPath: $.WMSContractorApplication.*.uid_number
            
             - jsonPath: $.WMSContractorApplication.*.vendor_name
+            
+            - jsonPath: $.WMSContractorApplication.*.vendor_status
             
             - jsonPath: $.WMSContractorApplication.*.vat_number
             
@@ -564,16 +566,20 @@ serviceMaps:
       isTransaction: true
       queryMaps:
 
-        - query: INSERT INTO work_award_approval (work_award_id,work_name,percentage_type,quoted_percentage,contractor_name,no_of_days_for_agreement,loa_generation,award_date,document_upload,award_status,createdby,lastmodifiedby,createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?,?);
+        - query: INSERT INTO work_award_approval (work_award_id,work_no,work_name,percentage_type,quoted_percentage,accepted_work_cost,contractor_name,no_of_days_for_agreement,loa_generation,award_date,document_upload,award_status,createdby,lastmodifiedby,createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?,?,?,?);
           basePath: WMSWorkAwardApprovalApplication.*
           jsonMaps:
             - jsonPath: $.WMSWorkAwardApprovalApplication.*.work_award_id
+            
+            - jsonPath: $.WMSWorkAwardApprovalApplication.*.work_no
 
             - jsonPath: $.WMSWorkAwardApprovalApplication.*.work_name
 
             - jsonPath: $.WMSWorkAwardApprovalApplication.*.percentage_type
             
             - jsonPath: $.WMSWorkAwardApprovalApplication.*.quoted_percentage
+            
+            - jsonPath: $.WMSWorkAwardApprovalApplication.*.accepted_work_cost
 
             - jsonPath: $.WMSWorkAwardApprovalApplication.*.contractor_name
 
@@ -603,14 +609,18 @@ serviceMaps:
       isTransaction: true
       queryMaps:
       
-        - query: UPDATE work_award_approval SET work_name = ?,percentage_type =?,quoted_percentage=?,contractor_name=?,no_of_days_for_agreement = ?, loa_generation = ?, award_date = ?, document_upload = ?, award_status = ? WHERE work_award_id=?;
+        - query: UPDATE work_award_approval SET work_name = ?,work_no = ?,percentage_type =?,quoted_percentage=?,accepted_work_cost=?,contractor_name=?,no_of_days_for_agreement = ?, loa_generation = ?, award_date = ?, document_upload = ?, award_status = ? WHERE work_award_id=?;
           basePath: WMSWorkAwardApprovalApplication.*
           jsonMaps:
             - jsonPath: $.WMSWorkAwardApprovalApplication.*.work_name
+            
+            - jsonPath: $.WMSWorkAwardApprovalApplication.*.work_no
 
             - jsonPath: $.WMSWorkAwardApprovalApplication.*.percentage_type
             
             - jsonPath: $.WMSWorkAwardApprovalApplication.*.quoted_percentage
+            
+            - jsonPath: $.WMSWorkAwardApprovalApplication.*.accepted_work_cost
 
             - jsonPath: $.WMSWorkAwardApprovalApplication.*.contractor_name
 
@@ -1374,7 +1384,7 @@ serviceMaps:
       isTransaction: true
       queryMaps:
 
-        - query: INSERT INTO bank_details (bank_id,bank_name,bank_branch,bank_ifsc_code,bank_branch_ifsc_code,status,createdby,lastmodifiedby,createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?);
+        - query: INSERT INTO bank_details (bank_id,bank_name,bank_branch,bank_ifsc_code,bank_branch_ifsc_code,status,createdby,lastmodifiedby,createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?,?,?,?,?,?,?);
           basePath: WMSBankDetailsApplication.*
           jsonMaps:
             - jsonPath: $.WMSBankDetailsApplication.*.bank_id
@@ -1465,7 +1475,7 @@ serviceMaps:
       isTransaction: true
       queryMaps:
       
-        - query: UPDATE contractor_subtype SET bank_name = ?,bank_branch = ?, bank_ifsc_code = ? WHERE contractor_id = ?;
+        - query: UPDATE contractor_subtype SET contractor_stype_name = ?,contractor_stype_status = ? WHERE contractor_id = ?;
           basePath: WMSContractorSubTypeApplication.*
           jsonMaps:
             - jsonPath: $.WMSContractorSubTypeApplication.*.contractor_stype_name
@@ -1477,6 +1487,52 @@ serviceMaps:
 
 
             
+    - version: 1.0
+      description: Persists Vendor Type details in tables
+      fromTopic: save-vtype-application
+      isTransaction: true
+      queryMaps:
+
+        - query: INSERT INTO vendor_type (vendor_id,vendor_type_name,vendor_type_status,createdby,lastmodifiedby,createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?,?,?,?);
+          basePath: WMSVendorTypeApplication.*
+          jsonMaps:
+            - jsonPath: $.WMSVendorTypeApplication.*.vendor_id
+
+            - jsonPath: $.WMSVendorTypeApplication.*.vendor_type_name
+
+            - jsonPath: $.WMSVendorTypeApplication.*.vendor_type_status
             
+            - jsonPath: $.WMSVendorTypeApplication.*.auditDetails.createdBy
+
+            - jsonPath: $.WMSVendorTypeApplication.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.WMSVendorTypeApplication.*.auditDetails.createdTime
+            
+            - jsonPath: $.WMSVendorTypeApplication.*.auditDetails.lastModifiedTime
+            
+            
+
+            
+            
+            
+            
+            
+            
+            
+    - version: 1.0
+      description: Update Vendor Type Details applications in table
+      fromTopic: update-vtype-application
+      isTransaction: true
+      queryMaps:
+      
+        - query: UPDATE vendor_type SET vendor_type_name = ?,vendor_type_status = ? WHERE vendor_id = ?;
+          basePath: WMSVendorTypeApplication.*
+          jsonMaps:
+            - jsonPath: $.WMSVendorTypeApplication.*.vendor_type_name
+
+            
+            - jsonPath: $.WMSVendorTypeApplication.*.vendor_type_status
+
+            - jsonPath: $.WMSVendorTypeApplication.*.vendor_id
             
             
