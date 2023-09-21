@@ -64,15 +64,15 @@ public class ServiceDefinitionQueryBuilder {
 
         if(!ObjectUtils.isEmpty(criteria.getTodaysDate())){
             if(!ObjectUtils.isEmpty(criteria.getStatus()) && criteria.getStatus().equals("Active")){
-                addClauseIfRequired(query, preparedStmtList);
-                query.append(" ?::timestamp >= to_timestamp((additionalDetails->>'startDate')::bigint) ");
-                query.append(" AND ?::timestamp <= to_timestamp((additionalDetails->>'endDate')::bigint) ");
-                preparedStmtList.add(criteria.getTodaysDate());
-                preparedStmtList.add(criteria.getTodaysDate());
+               addClauseIfRequired(query, preparedStmtList);
+               query.append("to_timestamp((additionaldetails->>'startDate')::bigint) < to_timestamp(?::bigint)");
+               query.append(" AND to_timestamp((additionaldetails->>'endDate')::bigint) > to_timestamp(?::bigint)");
+               preparedStmtList.add(criteria.getTodaysDate());
+               preparedStmtList.add(criteria.getTodaysDate());
             }else if(!ObjectUtils.isEmpty(criteria.getStatus()) && criteria.getStatus().equals("Inactive")){
                 addClauseIfRequired(query, preparedStmtList);
-                query.append(" ?::timestamp <= to_timestamp((additionalDetails->>'startDate')::bigint) ");
-                query.append(" AND ?::timestamp >= to_timestamp((additionalDetails->>'endDate')::bigint) ");
+                query.append(" to_timestamp((additionaldetails->>'startDate')::bigint) > to_timestamp(?::bigint)");
+                query.append(" AND to_timestamp((additionaldetails->>'endDate')::bigint) < to_timestamp(?::bigint)");
                 preparedStmtList.add(criteria.getTodaysDate());
                 preparedStmtList.add(criteria.getTodaysDate());
             }
