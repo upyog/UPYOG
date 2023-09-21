@@ -72,6 +72,25 @@ public class ServiceDefinitionRequestService {
     public List<ServiceDefinition> searchServiceDefinition(
             ServiceDefinitionSearchRequest serviceDefinitionSearchRequest) {
 
+        if (serviceDefinitionSearchRequest.getServiceDefinitionCriteria().getStatus() != null
+                && (!serviceDefinitionSearchRequest.getServiceDefinitionCriteria().getStatus().isEmpty())
+                && (!serviceDefinitionSearchRequest.getServiceDefinitionCriteria().getStatus()
+                        .equalsIgnoreCase("all"))) {
+
+            LocalDate currentDate = LocalDate.now(ZoneId.systemDefault());
+            long todayStartEpochMillis = currentDate.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli();
+       
+            ServiceDefinitionCriteria ServiceDefinitionCriteria = serviceDefinitionSearchRequest.getServiceDefinitionCriteria();
+            ServiceDefinitionCriteria.setTodaysDate(todayStartEpochMillis);
+            serviceDefinitionSearchRequest.setServiceDefinitionCriteria(ServiceDefinitionCriteria);
+            List<ServiceDefinition> ListOfActiveInactiveServiceDefinitions = serviceDefinitionRequestRepository
+                .getServiceDefinitions(serviceDefinitionSearchRequest);
+            
+            Collections.sort(ListOfActiveInactiveServiceDefinitions);
+            return ListOfActiveInactiveServiceDefinitions;
+
+        }
+
         List<ServiceDefinition> listOfServiceDefinitions = serviceDefinitionRequestRepository
                 .getServiceDefinitions(serviceDefinitionSearchRequest);
 
@@ -142,25 +161,6 @@ public class ServiceDefinitionRequestService {
             });
 
             listOfServiceDefinitions = finalListOfServiceDefinitions;
-        }
-
-        if (serviceDefinitionSearchRequest.getServiceDefinitionCriteria().getStatus() != null
-                && (!serviceDefinitionSearchRequest.getServiceDefinitionCriteria().getStatus().isEmpty())
-                && (!serviceDefinitionSearchRequest.getServiceDefinitionCriteria().getStatus()
-                        .equalsIgnoreCase("all"))) {
-
-            LocalDate currentDate = LocalDate.now(ZoneId.systemDefault());
-            long todayStartEpochMillis = currentDate.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli();
-       
-            ServiceDefinitionCriteria ServiceDefinitionCriteria = serviceDefinitionSearchRequest.getServiceDefinitionCriteria();
-            ServiceDefinitionCriteria.setTodaysDate(todayStartEpochMillis);
-            serviceDefinitionSearchRequest.setServiceDefinitionCriteria(ServiceDefinitionCriteria);
-            List<ServiceDefinition> ListOfActiveInactiveServiceDefinitions = serviceDefinitionRequestRepository
-                .getServiceDefinitions(serviceDefinitionSearchRequest);
-            
-            Collections.sort(ListOfActiveInactiveServiceDefinitions);
-            return ListOfActiveInactiveServiceDefinitions;
-
         }
         Collections.sort(listOfServiceDefinitions);
         return listOfServiceDefinitions;

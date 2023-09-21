@@ -166,6 +166,25 @@ public class ServiceDefinitionQueryBuilder {
             addToPreparedStatement(preparedStmtList, criteria.getIds());
         }
 
+        if(!ObjectUtils.isEmpty(criteria.getTodaysDate()))
+        {
+            System.out.println("inside todays date query");
+            if(!ObjectUtils.isEmpty(criteria.getStatus()) && criteria.getStatus().equalsIgnoreCase("Active")){
+                addClauseIfRequired(query, preparedStmtList);
+                System.out.println("inside active query");
+                query.append("to_timestamp((sd.additionaldetails->>'startDate')::bigint) < to_timestamp(?::bigint)");
+                query.append(" AND to_timestamp((sd.additionaldetails->>'endDate')::bigint) > to_timestamp(?::bigint)");
+                preparedStmtList.add(criteria.getTodaysDate());
+                preparedStmtList.add(criteria.getTodaysDate());
+            }else if(!ObjectUtils.isEmpty(criteria.getStatus()) && criteria.getStatus().equals("Inactive")){
+                addClauseIfRequired(query, preparedStmtList);
+                query.append(" to_timestamp((sd.additionaldetails->>'startDate')::bigint) > to_timestamp(?::bigint)");
+                query.append(" AND to_timestamp((sd.additionaldetails->>'endDate')::bigint) < to_timestamp(?::bigint)");
+                preparedStmtList.add(criteria.getTodaysDate());
+                preparedStmtList.add(criteria.getTodaysDate());
+            }
+        }
+
         return query.toString();
     }
 }
