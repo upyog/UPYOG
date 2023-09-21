@@ -43,15 +43,12 @@ const ShowSurvey = ({ location }) => {
 
   //questionid in answers uuid in surveys needs to be matched
   const answers = selecedSurveyData.Service[0].attributes;
-  console.log(selecedSurveyData.Service,"eeee")
   answers?.map((element)=>{
-    console.log(element,"element")
     element.uuid = element.id;
     element.questionId = element.attributeCode;
     element.answer = [JSON.parse(element.value)];
     element.citizenId = selecedSurveyData.Service.accountId;
   })
-  console.log(answers,"answers")
   const formDefaultValues = {};
   answers?.map((ans) => {
     if (ans?.answer.length === 1) formDefaultValues[ans?.questionId] = ans?.answer[0];
