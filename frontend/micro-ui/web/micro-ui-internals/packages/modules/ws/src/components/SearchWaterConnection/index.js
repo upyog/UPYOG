@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useCallback, useMemo } from "react";
+import React, { Fragment, useState,useEffect, useCallback, useMemo } from "react";
 import { SearchForm, Table, Card, Loader, Header } from "@egovernments/digit-ui-react-components";
 import { useForm, Controller } from "react-hook-form";
 import SearchFields from "./SearchFields";
@@ -7,10 +7,17 @@ import { Link } from "react-router-dom";
 import MobileSearchWater from "./MobileSearchWater";
 
 const SearchWaterConnection = ({ tenantId, onSubmit, data, count, resultOk, businessService, isLoading }) => {
+
+  const [result,setResult]=  useState([])
   const replaceUnderscore = (str) => {
     str = str.replace(/_/g, " ");
     return str;
   };
+console.log("daaaaaaaaaaaaaa",data)
+let pay = { "BulkBillCriteria":{
+  "tenantId":"pg.citya"}
+ }
+ 
 
   const convertEpochToDate = (dateEpoch) => {
     if (dateEpoch == null || dateEpoch == undefined || dateEpoch == "") {
@@ -24,7 +31,16 @@ const SearchWaterConnection = ({ tenantId, onSubmit, data, count, resultOk, busi
     day = (day > 9 ? "" : "0") + day;
     return `${day}/${month}/${year}`;
   };
-
+useEffect ( async ()=> {
+  if(window.location.href.includes("search-demand"))
+  {
+    let data = await Digit.WSService.WSSewsearchDemand(pay)
+    setResult(data.connection)
+    //const result = data.connection
+    console.log("daaaaaaaaaaaaaa",data)
+  }
+  
+},[])
   const { t } = useTranslation();
   const { register, control, handleSubmit, setValue, getValues, reset } = useForm({
     defaultValues: {
@@ -166,7 +182,70 @@ const SearchWaterConnection = ({ tenantId, onSubmit, data, count, resultOk, busi
     ],
     []
   );
+  const columns2 = useMemo(
+    () => [
+      {
+        Header: t("WS_COMMON_TABLE_COL_CONSUMER_NO_LABEL"),
+        disableSortBy: true,
+        accessor: "connectionNo",
+        Cell: ({ row }) => {
+          return (
+            <div>
+              {row.original["connectionNo"] ? (
+                <span className={"link"}>
+                  <Link
+                    to={`/digit-ui/employee/ws/connection-details?applicationNumber=${row.original["connectionNo"]}&tenantId=${tenantId}&service=${
+                      row.original?.["service"]
+                      }&connectionType=${row.original?.["connectionType"]}&due=${row.original?.due || 0}&from=WS_SEWERAGE_CONNECTION_SEARCH_LABEL`}
+                  >
+                    {row.original["connectionNo"] || "NA"}
+                  </Link>
+                </span>
+              ) : (
+                <span>{t("NA")}</span>
+              )}
+            </div>
+          );
+        },
+      },
+      {
+        Header: t("WS_COMMON_TABLE_COL_applicationNo_LABEL"),
+        disableSortBy: true,
+        Cell: ({ row }) => {
+          return (<div>{row.original["applicationNo"]}</div>);
+        },
+      },
 
+      {
+        Header: t("WS_COMMON_TABLE_COL_propertyId_LABEL"),
+        disableSortBy: true,
+        Cell: ({ row }) => {
+          return GetCell(t(`WS_${row.original?.["propertyId"]?.toUpperCase()}`));
+        },
+      },
+  
+
+      {
+        Header: t("WS_COMMON_TABLE_COL_ACTION_LABEL"),
+        disableSortBy: true,
+        Cell: ({ row }) => {
+            return (<div onClick={generateDemand(row)}>{t(`${"WS_COMMON_COLLECT_DEMAND"}`)} </div>)
+          } 
+      },
+    ],
+    []
+  );
+const generateDemand=async (row)=>{
+    const pay ={  "BulkBillCriteria":{
+      "tenantId":"pg.citya",
+   "consumerCode" :row.original["connectionNo"]
+   }}
+   let data = await Digit.WSService.WSSewsearchDemandGen(pay)
+console.loga("sssssssssssssss",data)
+history.push(`/digit-ui/employee/payment/collect/SW/${encodeURIComponent(
+  row.original?.["connectionNo"])}/${row.original?.["tenantId"]}?tenantId=${row.original?.["tenantId"]}?workflow=WS&ISWSCON`)
+
+      }
   const getActionItem = (status, row) => {
     const userInfo = Digit.UserService.getUser();
     const userRoles = userInfo.info.roles.map((roleData) => roleData.code);
@@ -209,9 +288,9 @@ const SearchWaterConnection = ({ tenantId, onSubmit, data, count, resultOk, busi
       <Header styles={{ fontSize: "32px" }}>
         {businessService === "WS" ? t("WS_WATER_SEARCH_CONNECTION_SUB_HEADER") : t("WS_SEWERAGE_SEARCH_CONNECTION_SUB_HEADER")}
       </Header>
-      <SearchForm className="ws-custom-wrapper" onSubmit={onSubmit} handleSubmit={handleSubmit}>
+      {window.location.href.includes("search-demand")?"":<SearchForm className="ws-custom-wrapper" onSubmit={onSubmit} handleSubmit={handleSubmit}>
         <SearchFields {...{ register, control, reset, tenantId, t }} />
-      </SearchForm>
+      </SearchForm>}
       { isLoading ? <Loader /> : null } 
       {data?.display && !resultOk ? (
         <Card style={{ marginTop: 20 }}>
@@ -248,7 +327,29 @@ const SearchWaterConnection = ({ tenantId, onSubmit, data, count, resultOk, busi
           disableSort={false}
           sortParams={[{ id: getValues("sortBy"), desc: getValues("sortOrder") === "DESC" ? true : false }]}
         />
-      ) : null}
+      ) : <Table
+      t={t}
+      data={result}
+      totalRecords={count}
+      columns={columns2}
+      getCellProps={(cellInfo) => {
+        return {
+          style: {
+            minWidth: cellInfo.column.Header === t("ES_INBOX_APPLICATION_NO") ? "240px" : "",
+            padding: "20px 18px",
+            fontSize: "16px",
+          },
+        };
+      }}
+      onPageSizeChange={onPageSizeChange}
+      currentPage={getValues("offset") / getValues("limit")}
+      onNextPage={nextPage}
+      onPrevPage={previousPage}
+      pageSizeLimit={getValues("limit")}
+      onSort={onSort}
+      disableSort={false}
+      sortParams={[{ id: getValues("sortBy"), desc: getValues("sortOrder") === "DESC" ? true : false }]}
+    />}
     </>
   );
 };
