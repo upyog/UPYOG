@@ -55,6 +55,10 @@ const NewApplication = () => {
       propertyType: data?.PropertyType?.code,
       noOfFloors: Number(data?.noOfFloors),
       ownershipCategory: data?.ownershipCategory?.code,
+      additionalDetails:{
+      RentedMonths: data?.units[0]?.RentedMonths,
+      NonRentedMonthsUsage: data?.units[0]?.NonRentedMonthsUsage,
+      },
       owners: data?.owners.map((owner) => {
         let {
           name,
