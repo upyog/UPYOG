@@ -98,8 +98,8 @@ public class ServiceDefinitionQueryBuilder {
     }
 
     public String getSurveyCountQuery(ServiceDefinitionSearchRequest criteria, List<Object> preparedStmtList) {
-        String query = getServiceDefinitionsIdsQuery(criteria, preparedStmtList);
-        return SURVEY_COUNT_WRAPPER.replace("{INTERNAL_QUERY}", query);
+        String query = "select count(*) from eg_service_definition where isactive = true";
+        return query;
     }
     
     private void prepareDefaultPaginationObject(ServiceDefinitionSearchRequest serviceDefinitionSearchRequest) {
