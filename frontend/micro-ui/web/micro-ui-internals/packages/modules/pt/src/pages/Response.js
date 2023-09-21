@@ -51,9 +51,11 @@ const Response = (props) => {
   const { state } = props.location;
 
   const mutation = Digit.Hooks.pt.usePropertyAPI(tenantId, state.key !== "UPDATE");
+  const mutation1 = Digit.Hooks.pt.usePropertyAPI(tenantId, false);
 
   const { data: storeData } = Digit.Hooks.useStore.getInitData();
   const { tenants } = storeData || {};
+  const data123 = Digit.Services.PTService.update(state.Property, tenantId)
 
   const { isLoading: auditDataLoading, isError: isAuditError, data: auditData } = Digit.Hooks.pt.usePropertySearch(
     {
@@ -64,9 +66,11 @@ const Response = (props) => {
   );
 
   useEffect(() => {
-    if (mutation.data && mutation.isSuccess) setsuccessData(mutation.data);
+    if (mutation1.data && mutation1.isSuccess) setsuccessData(mutation1.data);
   }, [mutation.data]);
-
+  useEffect(() => {
+    if (mutation1.data && mutation1.isSuccess) setsuccessData(mutation1.data);
+  }, [mutation1.data]);
   useEffect(() => {
     const onSuccess = async (successRes) => {
       setMutationHappened(true);
