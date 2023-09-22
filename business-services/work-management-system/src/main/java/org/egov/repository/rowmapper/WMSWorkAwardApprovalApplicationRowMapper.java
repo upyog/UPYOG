@@ -41,9 +41,11 @@ public class WMSWorkAwardApprovalApplicationRowMapper implements ResultSetExtrac
                         .build();
                 wmsWorkAwardApprovalApplication = WMSWorkAwardApprovalApplication.builder()
                         .workAwardId(rs.getString("wWorkAwardId"))
+                        .workNo(rs.getString("wWorkNo"))
                         .workName(rs.getString("wWorkName"))
                         .percentageType(rs.getString("wPercentageType"))
                         .quotedPercentage(rs.getString("wQuotedPercentage"))
+                        .acceptedWorkCost(rs.getString("wAcceptedWorkCost"))
                         .contractorName(rs.getString("wContractorName"))
                         .noOfDaysForAgreement(rs.getInt("wNoOfDaysForAgreement"))
                         .loaGeneration(rs.getString("wLoaGeneration"))

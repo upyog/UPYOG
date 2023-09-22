@@ -9,12 +9,18 @@ import org.egov.repository.WMSWorkRepository;
 import org.egov.util.IdgenUtil;
 import org.egov.web.models.AuditDetails;
 import org.egov.web.models.ScheduleOfRateApplication;
+import org.egov.web.models.WMSBankDetailsApplication;
+import org.egov.web.models.WMSBankDetailsRequest;
+import org.egov.web.models.WMSContractAgreementApplication;
+import org.egov.web.models.WMSContractAgreementRequest;
 import org.egov.web.models.WMSContractorApplication;
 import org.egov.web.models.WMSContractorRequest;
+import org.egov.web.models.WMSContractorSubTypeApplication;
+import org.egov.web.models.WMSContractorSubTypeRequest;
 import org.egov.web.models.WMSSORRequest;
+import org.egov.web.models.WMSVendorTypeApplication;
+import org.egov.web.models.WMSVendorTypeRequest;
 import org.egov.web.models.WMSWorkApplication;
-import org.egov.web.models.WMSWorkAwardApprovalApplication;
-import org.egov.web.models.WMSWorkAwardApprovalRequest;
 import org.egov.web.models.WMSWorkRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,7 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
-public class WMSWorkAwardApprovalApplicationEnrichment {
+public class WMSVendorTypeApplicationEnrichment {
 	
 	/*
 	 * @Value("${egov.idgen.work.idname}") private String idGenName;
@@ -43,19 +49,20 @@ public class WMSWorkAwardApprovalApplicationEnrichment {
 	SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
 	String date = simpleDateFormat.format(new Date());
 
-	public void enrichWorkAwardApprovalApplication(WMSWorkAwardApprovalRequest wmsWorkAwardApprovalRequest) { 
+	public void enrichVendorTypeApplication(WMSVendorTypeRequest wmsVendorTypeRequest) { 
 		//List<String> sorIdList = idgenUtil.getIdList(wmsContractorRequest.getRequestInfo(), wmsContractorRequest.getWmsWorkApplications().get(0).getTenantId(), idGenName, idGenFormat, wmsContractorRequest.getWmsWorkApplications().size());
         //Integer index = 0;
-		for (WMSWorkAwardApprovalApplication application : wmsWorkAwardApprovalRequest.getWmsWorkAwardApprovalApplications()) {
+		for (WMSVendorTypeApplication application : wmsVendorTypeRequest.getWmsVendorTypeApplications()) {
 			// Enrich audit details
 //	            AuditDetails auditDetails = AuditDetails.builder().createdBy(birthRegistrationRequest.getRequestInfo().getUserInfo().getUuid()).createdTime(System.currentTimeMillis()).lastModifiedBy(birthRegistrationRequest.getRequestInfo().getUserInfo().getUuid()).lastModifiedTime(System.currentTimeMillis()).build();
 //	            application.setAuditDetails(auditDetails);
-			AuditDetails auditDetails = AuditDetails.builder().createdBy(wmsWorkAwardApprovalRequest.getRequestInfo().getUserInfo().getUuid()).createdTime(System.currentTimeMillis()).lastModifiedBy(wmsWorkAwardApprovalRequest.getRequestInfo().getUserInfo().getUuid()).lastModifiedTime(System.currentTimeMillis()).build();
+			
+			AuditDetails auditDetails = AuditDetails.builder().createdBy(wmsVendorTypeRequest.getRequestInfo().getUserInfo().getUuid()).createdTime(System.currentTimeMillis()).lastModifiedBy(wmsVendorTypeRequest.getRequestInfo().getUserInfo().getUuid()).lastModifiedTime(System.currentTimeMillis()).build();
             application.setAuditDetails(auditDetails);
 
 			// Enrich UUID
             Long randomNumber=(long) Math.floor(Math.random() * (9999 - 1000 + 1) + 1000);
-			application.setWorkAwardId(Long.toString(randomNumber));
+			application.setVendorId(Long.toString(randomNumber));
 			//application.setId(UUID.randomUUID().toString());
 			//application.setWorkName(sorIdList.get(index++));
 			//application.setStartDate(date);
@@ -72,22 +79,14 @@ public class WMSWorkAwardApprovalApplicationEnrichment {
 		}
 	}
 
-	public void enrichWorkAwardApprovalApplicationUpdate(WMSWorkAwardApprovalRequest wmsWorkAwardApprovalRequest, List<WMSWorkAwardApprovalApplication> existingApplication) {
+	public void enrichVendorTypeApplicationUpdate(WMSVendorTypeRequest wmsVendorTypeRequest, List<WMSVendorTypeApplication> existingApplication) {
 		// Enrich lastModifiedTime and lastModifiedBy in case of update
-		for (WMSWorkAwardApprovalApplication application : wmsWorkAwardApprovalRequest.getWmsWorkAwardApprovalApplications()) {
-			existingApplication.get(0).setWorkName(application.getWorkName());
-			existingApplication.get(0).setWorkNo(application.getWorkNo());
-			existingApplication.get(0).setPercentageType(application.getPercentageType());
-			existingApplication.get(0).setQuotedPercentage(application.getQuotedPercentage());
-			existingApplication.get(0).setAcceptedWorkCost(application.getAcceptedWorkCost());
-			existingApplication.get(0).setContractorName(application.getContractorName());
-			existingApplication.get(0).setNoOfDaysForAgreement(application.getNoOfDaysForAgreement());
-			existingApplication.get(0).setLoaGeneration(application.getLoaGeneration());
-			existingApplication.get(0).setAwardDate(application.getAwardDate());
-			existingApplication.get(0).setDocumentUpload(application.getDocumentUpload());
-			existingApplication.get(0).setAwardStatus(application.getAwardStatus());
+		for (WMSVendorTypeApplication application : wmsVendorTypeRequest.getWmsVendorTypeApplications()) {
+			existingApplication.get(0).setVendorTypeName(application.getVendorTypeName());
+			existingApplication.get(0).setVendorTypeStatus(application.getVendorTypeStatus());
 			
-//			
+			
+			
 //			application.setEndDate(date);
 			// application.getAuditDetails().setLastModifiedBy(birthRegistrationRequest.getRequestInfo().getUserInfo().getUuid());
 		}
