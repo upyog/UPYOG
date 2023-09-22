@@ -83,6 +83,8 @@ public class ServiceDefinitionRequestService {
             ServiceDefinitionCriteria ServiceDefinitionCriteria = serviceDefinitionSearchRequest.getServiceDefinitionCriteria();
             ServiceDefinitionCriteria.setTodaysDate(todayStartEpochMillis);
             serviceDefinitionSearchRequest.setServiceDefinitionCriteria(ServiceDefinitionCriteria);
+            System.out.println("search service definition");
+            System.out.println(serviceDefinitionSearchRequest.getServiceDefinitionCriteria());
             List<ServiceDefinition> ListOfActiveInactiveServiceDefinitions = serviceDefinitionRequestRepository
                 .getServiceDefinitions(serviceDefinitionSearchRequest);
             

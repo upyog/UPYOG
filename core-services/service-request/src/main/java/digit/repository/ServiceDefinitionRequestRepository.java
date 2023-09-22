@@ -54,6 +54,8 @@ public class ServiceDefinitionRequestRepository {
 
 
 
+        System.out.println("inside get service definition");
+        System.out.println(criteria);
         String query = serviceDefinitionQueryBuilder.getServiceDefinitionSearchQuery(criteria, preparedStmtList);
         log.info("query for search: " + query + " params: " + preparedStmtList);
         return jdbcTemplate.query(query, preparedStmtList.toArray(), serviceDefinitionRowMapper);
