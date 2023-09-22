@@ -1536,3 +1536,54 @@ serviceMaps:
             - jsonPath: $.WMSVendorTypeApplication.*.vendor_id
             
             
+
+    - version: 1.0
+      description: Persists Vendor Class details in tables
+      fromTopic: save-vclass-application
+      isTransaction: true
+      queryMaps:
+
+        - query: INSERT INTO vendor_class (vendor_class_id,vendor_class_name,vendor_class_status,createdby,lastmodifiedby,createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?,?,?,?);
+          basePath: WMSVendorClassApplication.*
+          jsonMaps:
+            - jsonPath: $.WMSVendorClassApplication.*.vendor_class_id
+
+            - jsonPath: $.WMSVendorClassApplication.*.vendor_class_name
+
+            - jsonPath: $.WMSVendorClassApplication.*.vendor_class_status
+            
+            - jsonPath: $.WMSVendorClassApplication.*.auditDetails.createdBy
+
+            - jsonPath: $.WMSVendorClassApplication.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.WMSVendorClassApplication.*.auditDetails.createdTime
+            
+            - jsonPath: $.WMSVendorClassApplication.*.auditDetails.lastModifiedTime
+            
+            
+
+            
+            
+            
+            
+            
+            
+            
+    - version: 1.0
+      description: Update Vendor Class Details applications in table
+      fromTopic: update-vclass-application
+      isTransaction: true
+      queryMaps:
+      
+        - query: UPDATE vendor_class SET vendor_class_name = ?,vendor_class_status = ? WHERE vendor_class_id = ?;
+          basePath: WMSVendorClassApplication.*
+          jsonMaps:
+            - jsonPath: $.WMSVendorClassApplication.*.vendor_class_name
+
+            
+            - jsonPath: $.WMSVendorClassApplication.*.vendor_class_status
+
+            - jsonPath: $.WMSVendorClassApplication.*.vendor_class_id
+            
+            
+            

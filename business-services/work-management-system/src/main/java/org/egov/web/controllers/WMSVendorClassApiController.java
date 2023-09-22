@@ -11,6 +11,7 @@ import org.egov.service.WMSBankDetailsService;
 import org.egov.service.WMSContractorService;
 import org.egov.service.WMSContractorSubTypeService;
 import org.egov.service.WMSORService;
+import org.egov.service.WMSVendorClassService;
 import org.egov.service.WMSVendorTypeService;
 import org.egov.service.WMSWorkService;
 import org.egov.util.ResponseInfoFactory;
@@ -37,6 +38,10 @@ import org.egov.web.models.WMSRunningAccountFinalBillApplicationResponse;
 import org.egov.web.models.WMSRunningAccountFinalBillApplicationSearchCriteria;
 import org.egov.web.models.WMSSORRequest;
 import org.egov.web.models.WMSSchemeRequest;
+import org.egov.web.models.WMSVendorClassApplication;
+import org.egov.web.models.WMSVendorClassApplicationResponse;
+import org.egov.web.models.WMSVendorClassApplicationSearchCriteria;
+import org.egov.web.models.WMSVendorClassRequest;
 import org.egov.web.models.WMSVendorTypeApplication;
 import org.egov.web.models.WMSVendorTypeApplicationResponse;
 import org.egov.web.models.WMSVendorTypeApplicationSearchCriteria;
@@ -83,63 +88,63 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequestMapping("/wms-services")
 @Api(tags = "VendorType Master")
-public class WMSVendorTypeApiController{
+public class WMSVendorClassApiController{
 
     private final ObjectMapper objectMapper;
 
     private final HttpServletRequest request;
     
-    private WMSVendorTypeService vendorTypeService;
+    private WMSVendorClassService vendorClassService;
 
     @Autowired
     private ResponseInfoFactory responseInfoFactory;
  
 
     @Autowired
-    public WMSVendorTypeApiController(ObjectMapper objectMapper, HttpServletRequest request, WMSVendorTypeService vendorTypeService) {
+    public WMSVendorClassApiController(ObjectMapper objectMapper, HttpServletRequest request, WMSVendorClassService vendorClassService) {
         this.objectMapper = objectMapper;
         this.request = request;
-        this.vendorTypeService = vendorTypeService;
+        this.vendorClassService = vendorClassService;
     }
     
     @ResponseBody
-    @RequestMapping(value="/v1/vendor/_create", method = RequestMethod.POST)
-    @ApiOperation(value = "Create New VendorType for WMS")
-    public ResponseEntity<WMSVendorTypeApplicationResponse> v1RegistrationCreateVendorType(@ApiParam(value = "Details for the new VendorType Application(s) + RequestInfo meta data." ,required=true )  @Valid @RequestBody WMSVendorTypeRequest wmsVendorTypeRequest) {
-    	List<WMSVendorTypeApplication> applications = vendorTypeService.registerWMSVendorTypeRequest(wmsVendorTypeRequest);
-        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(wmsVendorTypeRequest.getRequestInfo(), true);
+    @RequestMapping(value="/v1/vendorc/_create", method = RequestMethod.POST)
+    @ApiOperation(value = "Create New VendorClass for WMS")
+    public ResponseEntity<WMSVendorClassApplicationResponse> v1RegistrationCreateVendorClass(@ApiParam(value = "Details for the new VendorClass Application(s) + RequestInfo meta data." ,required=true )  @Valid @RequestBody WMSVendorClassRequest wmsVendorClassRequest) {
+    	List<WMSVendorClassApplication> applications = vendorClassService.registerWMSVendorClassRequest(wmsVendorClassRequest);
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(wmsVendorClassRequest.getRequestInfo(), true);
         
-        WMSVendorTypeApplicationResponse response = WMSVendorTypeApplicationResponse.builder().wmsVendorTypeApplications(applications).responseInfo(responseInfo).build();
+        WMSVendorClassApplicationResponse response = WMSVendorClassApplicationResponse.builder().wmsVendorClassApplications(applications).responseInfo(responseInfo).build();
         return new ResponseEntity<>(response, HttpStatus.OK);
        
     }
     
-    @RequestMapping(value="/v1/vendor/_view", method = RequestMethod.POST)
-    @ApiOperation(value = "Fetch VendorType for WMS")
-    public ResponseEntity<WMSVendorTypeApplicationResponse> v1RegistrationFetchPost(@RequestBody RequestInfoWrapper requestInfoWrapper, @Valid @ModelAttribute WMSVendorTypeApplicationSearchCriteria vendorTypeApplicationSearchCriteria) {
-        List<WMSVendorTypeApplication> applications = vendorTypeService.fetchVendorTypeApplications(requestInfoWrapper.getRequestInfo(), vendorTypeApplicationSearchCriteria);
+    @RequestMapping(value="/v1/vendorc/_view", method = RequestMethod.POST)
+    @ApiOperation(value = "Fetch VendorClass for WMS")
+    public ResponseEntity<WMSVendorClassApplicationResponse> v1RegistrationFetchPost(@RequestBody RequestInfoWrapper requestInfoWrapper, @Valid @ModelAttribute WMSVendorClassApplicationSearchCriteria vendorClassApplicationSearchCriteria) {
+        List<WMSVendorClassApplication> applications = vendorClassService.fetchVendorClassApplications(requestInfoWrapper.getRequestInfo(), vendorClassApplicationSearchCriteria);
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true);
-        WMSVendorTypeApplicationResponse response = WMSVendorTypeApplicationResponse.builder().wmsVendorTypeApplications(applications).responseInfo(responseInfo).build();
+        WMSVendorClassApplicationResponse response = WMSVendorClassApplicationResponse.builder().wmsVendorClassApplications(applications).responseInfo(responseInfo).build();
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
     
     
-    @RequestMapping(value="/v1/vendor/_update", method = RequestMethod.POST)
-    @ApiOperation(value = "Update VendorType for WMS")
-    public ResponseEntity<WMSVendorTypeApplicationResponse> v1VendorTypeUpdatePost(@ApiParam(value = "Details for the new VendorType(s) + RequestInfo meta data." ,required=true )  @Valid @RequestBody WMSVendorTypeRequest vendorTypeRequest) {
-        List<WMSVendorTypeApplication> applications = vendorTypeService.updateVendorTypeMaster(vendorTypeRequest);
-        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(vendorTypeRequest.getRequestInfo(), true);
-        WMSVendorTypeApplicationResponse response = WMSVendorTypeApplicationResponse.builder().wmsVendorTypeApplications(applications).responseInfo(responseInfo).build();
+    @RequestMapping(value="/v1/vendorc/_update", method = RequestMethod.POST)
+    @ApiOperation(value = "Update VendorClass for WMS")
+    public ResponseEntity<WMSVendorClassApplicationResponse> v1VendorClassUpdatePost(@ApiParam(value = "Details for the new VendorClass(s) + RequestInfo meta data." ,required=true )  @Valid @RequestBody WMSVendorClassRequest vendorClassRequest) {
+        List<WMSVendorClassApplication> applications = vendorClassService.updateVendorClassMaster(vendorClassRequest);
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(vendorClassRequest.getRequestInfo(), true);
+        WMSVendorClassApplicationResponse response = WMSVendorClassApplicationResponse.builder().wmsVendorClassApplications(applications).responseInfo(responseInfo).build();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
     
     
-    @RequestMapping(value="/v1/vendor/_search", method = RequestMethod.POST)
-    @ApiOperation(value = "Search VendorType for WMS")
-    public ResponseEntity<WMSVendorTypeApplicationResponse> v1RegistrationSearchVendorType(@RequestBody RequestInfoWrapper requestInfoWrapper, @Valid @ModelAttribute WMSVendorTypeApplicationSearchCriteria wmsVendorTypeApplicationSearchCriteria) {
-        List<WMSVendorTypeApplication> applications = vendorTypeService.searchWMSVendorTypeApplications(requestInfoWrapper.getRequestInfo(), wmsVendorTypeApplicationSearchCriteria);
+    @RequestMapping(value="/v1/vendorc/_search", method = RequestMethod.POST)
+    @ApiOperation(value = "Search VendorClass for WMS")
+    public ResponseEntity<WMSVendorClassApplicationResponse> v1RegistrationSearchVendorClass(@RequestBody RequestInfoWrapper requestInfoWrapper, @Valid @ModelAttribute WMSVendorClassApplicationSearchCriteria wmsVendorClassApplicationSearchCriteria) {
+        List<WMSVendorClassApplication> applications = vendorClassService.searchWMSVendorClassApplications(requestInfoWrapper.getRequestInfo(), wmsVendorClassApplicationSearchCriteria);
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true);
-        WMSVendorTypeApplicationResponse response = WMSVendorTypeApplicationResponse.builder().wmsVendorTypeApplications(applications).responseInfo(responseInfo).build();
+        WMSVendorClassApplicationResponse response = WMSVendorClassApplicationResponse.builder().wmsVendorClassApplications(applications).responseInfo(responseInfo).build();
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
