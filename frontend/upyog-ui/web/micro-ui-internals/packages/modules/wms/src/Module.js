@@ -124,6 +124,11 @@ import View from "./pages/citizen/CM/Master/VendorType/View";
 import VendorTypeEdit from "./pages/citizen/CM/Master/VendorType/Edit";
 import WmsCMVType from "./pageComponents/ContractMaster/vendorTypeField/WmsCMVType";
 import WmsCMVTypeStatus from "./pageComponents/ContractMaster/vendorTypeField/WmsCMVTypeStatus";
+import EditSubType from "./pages/citizen/CM/Master/VendorSubType/Edit/index";
+import AddSubType from "./pages/citizen/CM/Master/VendorSubType/Add";
+import ViewSubType from "./pages/citizen/CM/Master/VendorSubType/View";
+
+
 const componentsToRegister = {  
   Home:Home,  
   WmsSorList:List,
@@ -237,7 +242,10 @@ VendorTypeAdd,
 View,
 VendorTypeEdit,
 WmsCMVType,
-WmsCMVTypeStatus
+WmsCMVTypeStatus,
+EditSubType,
+AddSubType,
+ViewSubType
 
 };
 export const WMSModule = ({ stateCode, userType, tenants }) => {

@@ -17,6 +17,20 @@ const useWMSMaster = ( tenantId, type,endppoints, moduleCode, config = {}) => {
   const bankCreateRecord = () => {
     return useMutation((data) => WMSService.ContractorMaster.createMasterData(data), config);
   };
+
+  // Vendor Sub Type
+  const vendorSubType  = () => {
+    return useQuery(["WMS_SUB_TYPE", tenantId], () => WMSService.ContractorMaster.getMasterSubTypeData(tenantId), config);
+  };
+  const vendorSubTypeGetSingleRecord  = () => {
+    return useQuery(["WMS_SUB_TYPE_SINGLE_RECORD", tenantId], () => WMSService.ContractorMaster.getSingleResordsMasterSubTypeData(tenantId), config);
+  };
+  const vendorSubTypeUpdateRecord = () => {
+    return useMutation((data) => WMSService.ContractorMaster.updateMasterSubTypeData(data), config);
+  };
+  const vendorSubTypeCreateRecord = () => {
+    return useMutation((data) => WMSService.ContractorMaster.createMasterSubTypeData(data), config);
+  };
   
 //   const useHrmsEmployeeReasons = () => {
 //     return useQuery(["HRMS_EMP_REASON", tenantId], () => MdmsService.getHrmsEmployeeReason(tenantId, moduleCode, type), config);
@@ -50,6 +64,18 @@ const useVendorTypeList = () => {
       
     // case "DeactivationReason":
     //   return useHrmsEmployeeReasons();
+
+    case "WMS_SUB_TYPE_VIEW":
+      return vendorSubType();
+      case "WMS_SUB_TYPE_SINGLE_RECORD":
+        return vendorSubTypeGetSingleRecord();
+        case "WMS_SUB_TYPE_UPDATE":
+          return vendorSubTypeUpdateRecord();
+          case "WMS_SUB_TYPE_CREATE":
+            return vendorSubTypeCreateRecord();
+
+
+
     case "WMS_V_TYPE_LIST":
         return useVendorTypeList();
     case "WMS_V_TYPE_ADD":

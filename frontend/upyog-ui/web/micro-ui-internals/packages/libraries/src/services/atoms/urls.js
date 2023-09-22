@@ -251,6 +251,10 @@ ContractorMaster:{
   mdmsBankGet:"/wms/wms-services/v1/bank/_view",
   mdmsBankUpdate:"/wms/wms-services/v1/bank/_update",
   mdmsBankCreate:"/wms/wms-services/v1/bank/_create",
+  // mdmsSubType:"/wms/wms-services/v1/bank/",
+  mdmsSubTypeGet:"/wms/wms-services/v1/cstype/_view",
+  mdmsSubTypeUpdate:"/wms/wms-services/v1/cstype/_update",
+  mdmsSubTypeCreate:"/wms/wms-services/v1/cstype/_create",
 
 },
   },

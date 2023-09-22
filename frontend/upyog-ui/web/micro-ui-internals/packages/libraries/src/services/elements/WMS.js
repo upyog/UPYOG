@@ -533,6 +533,51 @@ PMApplications:{
         // params: {tenantId} ,
       }),
 
+      getMasterSubTypeData: (tenantId) =>
+      Request({
+        url: Urls.wms.ContractorMaster.mdmsSubTypeGet,
+        // url: Urls.wms.ContractorMaster.get+tenantId,
+        useCache: false,
+        method: "POST",
+        // method: "GET",
+        auth: true,
+        userService: true,
+        // params: {tenantId} ,
+      }),
+      getSingleResordsMasterSubTypeData: (id) =>
+      Request({
+        url: Urls.wms.ContractorMaster.mdmsSubTypeGet+'?contractorId='+id,
+        useCache: false,
+        method: "POST",
+        // method: "GET",
+        auth: true,
+        userService: true,
+        // params: {tenantId} ,
+      }),
+      updateMasterSubTypeData: (data) =>
+      Request({
+        data: data,
+        url: Urls.wms.ContractorMaster.mdmsSubTypeUpdate,
+        useCache: false,
+        method: "POST",
+        auth: true,
+        userService: true,
+        // params: { tenantId },
+      
+      }),
+      createMasterSubTypeData: (data) =>
+      Request({
+        data: data,
+        url: Urls.wms.ContractorMaster.mdmsSubTypeCreate,
+        useCache: false,
+        method: "POST",
+        auth: true,
+        userService: true,
+        // params: { tenantId },
+      
+      }),
+
+
       getMasterData: (endPoint,tenantId) =>
       Request({
         url: Urls.wms.ContractorMaster.mdmsBank+''+endPoint,
@@ -576,6 +621,7 @@ PMApplications:{
         // params: { tenantId },
       
       }),
+
 
       getMasterDataFakeAPI: (tenantId) =>
       Request({

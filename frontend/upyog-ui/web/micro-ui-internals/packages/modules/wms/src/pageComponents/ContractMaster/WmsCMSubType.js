@@ -7,9 +7,13 @@ const WmsCMSubType = ({ t, config, onSelect, formData = {}, userType }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
 
   const { pathname: url } = useLocation();
-  const editScreen = url.includes("/modify-application/");
-  const { data: citizenTypes = [], isLoading } = Digit.Hooks.hrms.useHrmsMDMS(tenantId, "egov-hrms", "EmployeeType") || {};
+  const { data: citizenTypes, isLoading } = Digit?.Hooks?.wms?.cm?.useWMSMaster(tenantId, "WMS_SUB_TYPE_VIEW") || {};
+  console.log("citizenTypes SubTYpes ", citizenTypes)
+
   const [citizenType, setcitizenType] = useState(formData?.WmsCMSubType);
+  const [citizenTypeList, setcitizenTypeList] = useState();
+  console.log("citizenTypes SubTYpes citizenTypeList ", citizenTypeList)
+
   const [isTrue, setisTrue] = useState(false);
   function SelectcitizenType(value) {
   if(!value?.name){setisTrue(true)}else{setisTrue(false);setcitizenType(value);}
@@ -18,6 +22,21 @@ const WmsCMSubType = ({ t, config, onSelect, formData = {}, userType }) => {
   useEffect(() => {
     onSelect(config.key, citizenType);
   }, [citizenType]);
+
+  useEffect(()=>{
+    let fData=[]
+    if(citizenTypes?.WMSContractorSubTypeApplications?.length>0){
+      const filterData = citizenTypes?.WMSContractorSubTypeApplications.filter((res)=> res.contractor_stype_status=="Active");
+fData.push({
+  "name": filterData?.contractor_stype_name,
+  "status": filterData?.contractor_stype_status
+})
+      console.log("filterData ddd ",filterData)
+      console.log("filterData ddd fData ",fData)
+      
+    setcitizenTypeList(fData)
+    }
+  },[citizenTypes])
 
 //   const vendorStatus = [
 //     {
@@ -69,7 +88,7 @@ const option = [{"name":"Non-Specified Hindu Undivided Family"},{"name":"Individ
           className="form-field"
           selected={citizenType}
           // option={citizenTypes?.["egov-hrms"]?.EmployeeType}
-          option={option}
+          option={citizenTypeList!=undefined && citizenTypeList}
           onBlur={SelectcitizenType}
           select={SelectcitizenType}
           optionKey="name"
