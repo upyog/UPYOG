@@ -327,7 +327,9 @@ history.push(`/digit-ui/employee/payment/collect/SW/${encodeURIComponent(
           disableSort={false}
           sortParams={[{ id: getValues("sortBy"), desc: getValues("sortOrder") === "DESC" ? true : false }]}
         />
-      ) : <Table
+      ) : null}
+      
+      {window.location.href.includes("search-demand")? <Table
       t={t}
       data={result}
       totalRecords={count}
@@ -349,7 +351,7 @@ history.push(`/digit-ui/employee/payment/collect/SW/${encodeURIComponent(
       onSort={onSort}
       disableSort={false}
       sortParams={[{ id: getValues("sortBy"), desc: getValues("sortOrder") === "DESC" ? true : false }]}
-    />}
+    />:""}
     </>
   );
 };
