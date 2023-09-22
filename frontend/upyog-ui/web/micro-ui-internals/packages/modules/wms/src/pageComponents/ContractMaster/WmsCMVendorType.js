@@ -14,7 +14,7 @@ const WmsCMVendorType = ({ t, config, onSelect, formData = {}, userType,setError
   const [citizenType, setcitizenType] = useState(formData?.WmsCMVendorType);
   const [citizenTypeList, setcitizenTypeList] = useState();
   const [isTrue, setisTrue] = useState(false);
-console.log("citizenTypes ", citizenTypes)
+console.log("citizenTypes vendor type ", citizenTypes)
   function SelectcitizenType(value) {
   if(!value?.name){setisTrue(true)}else{setisTrue(false);setcitizenType(value);}
   }
@@ -25,9 +25,17 @@ console.log("citizenTypes ", citizenTypes)
   }, [citizenType]);
 
   useEffect(()=>{
-    if(citizenTypes?.length>0){
-      const filterData = citizenTypes.filter((res)=> res.status=="Active");
-    setcitizenTypeList(filterData)
+    let fData=[]
+    if(citizenTypes?.WMSVendorTypeApplications?.length>0){
+      const filterData = citizenTypes?.WMSVendorTypeApplications.filter((res)=> res.vendor_type_status=="Active");
+      filterData.forEach(element => {
+        fData.push({
+    "id":element?.vendor_id,
+    "name": element?.vendor_type_name,
+    "status": element?.vendor_type_status
+  })
+  });
+      setcitizenTypeList(fData)
     }
   },[citizenTypes])
 
@@ -80,7 +88,7 @@ console.log("citizenTypes ", citizenTypes)
           className="form-field"
           selected={citizenType}
           // option={citizenTypeList?.["egov-hrms"]?.citizenType}
-          option={citizenTypeList}
+          option={citizenTypeList!=undefined && citizenTypeList}
           // option={vendorType}
           select={SelectcitizenType}
           onBlur={SelectcitizenType}

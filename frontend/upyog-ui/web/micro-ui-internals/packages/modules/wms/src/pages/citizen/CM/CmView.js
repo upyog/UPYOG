@@ -2,10 +2,10 @@ import React, { useState, useCallback ,  useEffect  } from "react";
 import { useTranslation } from "react-i18next";
 import { format, isValid } from "date-fns";
 import { Header ,LinkButton,Loader, Toast } from "@egovernments/digit-ui-react-components";
-import DesktopInbox from "./../../../components/CmList/inbox/DesktopInbox";
+import DesktopInbox from "../../../components/CmList/list/DesktopList";
 import { Link } from "react-router-dom";
 
-const Inbox = ({ tenants, parentRoute }) => {
+const View = ({ tenants, parentRoute }) => {
   const { t } = useTranslation()
   Digit.SessionStorage.set("ENGAGEMENT_TENANTS", tenants);
   const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -166,7 +166,7 @@ useEffect(() => {
                   to={`add`}
                 >
                   {/* <LinkButton style={{ textAlign: "left" }} label={t("PT_VIEW_MORE_DETAILS")} /> */}
-                  <LinkButton style={{display:"block", textAlign: "right" }} label={t("Add Contractor Master")} />
+                  <LinkButton style={{display:"block", textAlign: "right" }} label={t("Add")} />
                 </Link>
       
       <p>{}</p> 
@@ -195,4 +195,4 @@ useEffect(() => {
   );
 }
 
-export default Inbox;
+export default View;

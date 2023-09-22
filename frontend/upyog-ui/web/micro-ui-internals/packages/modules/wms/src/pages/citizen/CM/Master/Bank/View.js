@@ -2,7 +2,7 @@ import React, { useState, useCallback ,  useEffect  } from "react";
 import { useTranslation } from "react-i18next";
 import { format, isValid } from "date-fns";
 import { Header ,LinkButton,Loader, Toast } from "@egovernments/digit-ui-react-components";
-import DesktopInbox from "./../../../../../components/CmList/bank_inbox/DesktopInbox";
+import DesktopInbox from "../../../../../components/CmList/bank_List/DesktopList";
 import axios from 'axios';
 import { Link } from "react-router-dom";
 
@@ -10,7 +10,7 @@ const Inbox = ({ tenants, parentRoute }) => {
   const { t } = useTranslation()
   Digit.SessionStorage.set("ENGAGEMENT_TENANTS", tenants);
   const tenantId = Digit.ULBService.getCurrentTenantId();
-  const bankList = Digit?.Hooks?.wms?.cm?.useWMSMaster(tenantId,"WMS_BANK_BRANCH_TYPE","_view");
+  const bankList = Digit?.Hooks?.wms?.cm?.useWMSMaster(tenantId,"WMS_BANK_BRANCH_TYPE");
 
 //   Digit.Hooks.hrms.useHRMSCreate(tenantId)
   const [pageSize, setPageSize] = useState(10);

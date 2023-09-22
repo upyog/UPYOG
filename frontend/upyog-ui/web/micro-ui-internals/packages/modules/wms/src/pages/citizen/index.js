@@ -36,7 +36,7 @@ const CitizenApp = ({ path, url, userType }) => {
 
   const PMCreate = Digit?.ComponentRegistryService?.getComponent("PMCreate");
 
-  const Inbox = Digit?.ComponentRegistryService?.getComponent("Inbox");
+  const CMView = Digit?.ComponentRegistryService?.getComponent("CMView");
   const WMSDetails = Digit?.ComponentRegistryService?.getComponent("WMSDetails");
   const ContrMasterAdd = Digit?.ComponentRegistryService?.getComponent("ContrMasterAdd");
   const ContrMasterView = Digit?.ComponentRegistryService?.getComponent("ContrMasterView");
@@ -96,7 +96,7 @@ const CitizenApp = ({ path, url, userType }) => {
           <PrivateRoute path={`${path}/pm-home`} component={() => <PMCreate />} />
           {/* <PrivateRoute path={`${path}/sor-update/:id`} component={() => <Update />} /> */}
     
-          <PrivateRoute path={`${path}/cm-home`} component={props => <Inbox {...props} tenants={tenantId} parentRoute={path} />} />
+          <PrivateRoute path={`${path}/cm-home`} component={props => <CMView {...props} tenants={tenantId} parentRoute={path} />} />
           <PrivateRoute path={`${path}/details/:tenantId/:id`} component={() => <WMSDetails />} />
           <PrivateRoute path={`${path}/add`} component={ContrMasterAdd} />
           <PrivateRoute path={`${path}/cm-table-view`} component={ContrMasterView} />

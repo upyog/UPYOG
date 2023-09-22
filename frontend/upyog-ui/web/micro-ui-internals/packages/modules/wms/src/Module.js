@@ -94,7 +94,7 @@ import WmsCMVendorStatus from "./pageComponents/ContractMaster/WmsCMVendorStatus
 import WmsCMVendorType from "./pageComponents/ContractMaster/WmsCMVendorType";
 import InboxFilter from "./components/CmList/InboxFilter";
 import WMSCardContract from "./components/CmList/wmscard";
-import Inbox from "./pages/citizen/CM/Inbox";
+import CMView from "./pages/citizen/CM/CmView";
 import ContractMasterDetail from "./pages/citizen/CM/ContractMasterDetail";
 import WmsCMVATNumber from "./pageComponents/ContractMaster/WmsCMVATNumber";
 import WmsCMBankBranchIFSCCode from "./pageComponents/ContractMaster/WmsCMBankBranchIFSCCode";
@@ -127,7 +127,8 @@ import WmsCMVTypeStatus from "./pageComponents/ContractMaster/vendorTypeField/Wm
 import EditSubType from "./pages/citizen/CM/Master/VendorSubType/Edit/index";
 import AddSubType from "./pages/citizen/CM/Master/VendorSubType/Add";
 import ViewSubType from "./pages/citizen/CM/Master/VendorSubType/View";
-
+import WmsCMVendorSubTypeName from "./pageComponents/ContractMaster/vendorSubType/WmsCMVendorSubTypeName";
+import WmsCMVendorSubTypeStatus from "./pageComponents/ContractMaster/vendorSubType/WmsCMVendorSubTypeStatus";
 
 const componentsToRegister = {  
   Home:Home,  
@@ -192,7 +193,7 @@ const componentsToRegister = {
   WmsPmPer,
   WmsPmPrjName,
   WmsPmWrkName,
-Inbox,
+  CMView,
   WMSCardContract,
   ContractViewTableTest,
   WmsCMMobileNumber,
@@ -245,7 +246,10 @@ WmsCMVType,
 WmsCMVTypeStatus,
 EditSubType,
 AddSubType,
-ViewSubType
+ViewSubType,
+WmsCMVendorSubTypeName,
+WmsCMVendorSubTypeStatus
+
 
 };
 export const WMSModule = ({ stateCode, userType, tenants }) => {

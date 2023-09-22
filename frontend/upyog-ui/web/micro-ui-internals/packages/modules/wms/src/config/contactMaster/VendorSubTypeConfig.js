@@ -4,15 +4,15 @@ export const newConfig =[
       "body": [
             {
               type: "component",
-              component: "WmsCMBankName",
-              key: "WmsCMBankName",
+              component: "WmsCMVendorSubTypeName",
+              key: "WmsCMVendorSubTypeName",
               withoutLabel: true,
 
             },
             {
               type: "component",
-              component: "WmsCMBankStatus",
-              key: "WmsCMBankStatus",
+              component: "WmsCMVendorSubTypeStatus",
+              key: "WmsCMVendorSubTypeStatus",
               withoutLabel: true,
 
             }

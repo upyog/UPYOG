@@ -15,8 +15,8 @@ const DesktopInbox = ({ tableConfig, ...props} ) => {
   const GetSlaCell = (value) => {
     return value == "INACTIVE" ? <span className="sla-cell-error">{ value || ""}</span> : <span className="sla-cell-success">{ value || ""}</span>;
   };
-  // const data = props?.data?.WMSBankDetailsApplications;
-  const data = props?.data;
+  const data = props?.data?.WMSVendorTypeApplications;
+  // const data = props?.data;
 // console.log("data props ",props )
 // console.log("data props data ",props?.data )
 // console.log("data ",data)
@@ -39,7 +39,7 @@ const DesktopInbox = ({ tableConfig, ...props} ) => {
         Header: "Vendor Type",
         disableSortBy: true,
         Cell: ({ row }) => {
-          return GetCell(`${row.original?.name}`);
+          return GetCell(`${row.original?.vendor_type_name}`);
         },
       },
       {
@@ -50,7 +50,7 @@ const DesktopInbox = ({ tableConfig, ...props} ) => {
           // return GetCell(`${row.original?.vendor_status}`)
           // return GetCell(`${row.original?.vendor_status==="Active" ? <span style={{"color":"red"}}>{row.original?.vendor_status}</span> : <span style={{"color":"red"}}>{row.original?.vendor_status}</span>}`);
 
-          return GetSlaCell(`${row?.original?.status==="Active" ? row?.original?.status?.toUpperCase() : row?.original?.status?.toUpperCase()}`);
+          return GetSlaCell(`${row?.original?.vendor_type_status==="Active" ? row?.original?.vendor_type_status?.toUpperCase() : row?.original?.vendor_type_status?.toUpperCase()}`);
         },
       },
       {
@@ -64,7 +64,7 @@ const DesktopInbox = ({ tableConfig, ...props} ) => {
             </span> 
             {' '} */}
             <span className="link">
-            <Link to={`edit/${props.tenantId}/${row.original.id}`}>Edit</Link>
+            <Link to={`edit/${props.tenantId}/${row.original.vendor_id}`}>Edit</Link>
           </span>
           </React.Fragment>
             

@@ -2,7 +2,7 @@ import React, { useState, useCallback ,  useEffect  } from "react";
 import { useTranslation } from "react-i18next";
 import { format, isValid } from "date-fns";
 import { Header ,LinkButton,Loader, Toast } from "@egovernments/digit-ui-react-components";
-import DesktopInbox from "./../../../../../components/CmList/vendorType_Inbox/DesktopInbox";
+import DesktopInbox from "../../../../../components/CmList/vendorTypeList/DesktopList";
 import axios from 'axios';
 import { Link } from "react-router-dom";
 
@@ -33,20 +33,23 @@ const View = ({ tenants, parentRoute }) => {
   let isMobile = window.Digit.Utils.browser.isMobile();
   const [data, setData] = useState([]);
   const [dataBack, setDataBack] = useState();
+  const [isTrue, setisTrue] = useState(false);
 
 const {isLoading,isSuccess } = bankList;
 
 //  const { isLoading: is_Loading, isError: vendorCreateError, data: updateResponse, error: updateError, mutate }  = Digit?.Hooks?.wms?.cm?.useWmsCMSearch();
  const {  isError: vendorCreateError, data: updateResponse, error: updateError, mutate }  = Digit?.Hooks?.wms?.cm?.useWmsCMSearch();
 useEffect(() => {
-}, [searchParams]);
+  setisTrue(true)
+  bankList.refetch()
+}, []);
 
 useEffect(() => {
     if (bankList.data){
         setData(bankList.data);
         setDataBack(bankList.data)
     } 
-  }, [bankList.data]);
+  }, [bankList.data,isTrue]);
 
   useEffect(() => {
     setData(updateResponse)   
@@ -171,7 +174,7 @@ useEffect(() => {
                   to={`add`}
                 >
                   {/* <LinkButton style={{ textAlign: "left" }} label={t("PT_VIEW_MORE_DETAILS")} /> */}
-                  <LinkButton style={{display:"block", textAlign: "right" }} label={t("Add Vendor Type")} />
+                  <LinkButton style={{display:"block", textAlign: "right" }} label={t("Add")} />
                 </Link>
       
       <p>{}</p> 

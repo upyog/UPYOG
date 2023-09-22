@@ -4,7 +4,7 @@ import { LabelFieldPair, CardLabel, TextInput, CardLabelError } from "@egovernme
 
 import { useLocation } from "react-router-dom";
 
-const WmsCMVATNumber = ({ t, config, onSelect, formData = {}, userType, register, errors }) => {
+const WmsCMVendorSubTypeName = ({ t, config, onSelect, formData = {}, userType, register, errors }) => {
 
   const { pathname: url } = useLocation();
   const [isTrue, setisTrue] = useState(false);
@@ -12,30 +12,27 @@ const WmsCMVATNumber = ({ t, config, onSelect, formData = {}, userType, register
   const inputs = [
 
     {
-      label: "VAT Number",
+      label: "Vendor Sub Type",
       type: "text",
-      name: "VATNumber",
-      // validation: {
-      //   isRequired: true,
-      //   // pattern: Digit.Utils.getPattern('OldLicenceNo'),
-      //   // title: t("CORE_COMMON_APPLICANT_NAME_INVALID"),
-      //   title: "VAT Number Require",
+      name: "vendor_sub_type",
+      validation: {
+        isRequired: true,
+        // pattern: Digit.Utils.getPattern('Name'),
+        // title: t("CORE_COMMON_APPLICANT_NAME_INVALID"),
+        title: "Require",
 
-      // },
-      // isMandatory: true,
+      },
+      isMandatory: true,
     },
 
   ];
 
- 
-  function blurValue(e){
+ function blurValue(e){
     if(!e.target.value){setisTrue(true)}else{setisTrue(false)}
  }
   function setValue(value, input) {
-
     onSelect(config.key, { ...formData[config.key], [input]: value });
     if(value){setisTrue(false)}else{setisTrue(true)}
-
   }
 
  
@@ -80,9 +77,9 @@ const WmsCMVATNumber = ({ t, config, onSelect, formData = {}, userType, register
                 {...input.validation}
 
               />
-            {/* {isTrue&&<CardLabelError style={{ width: "100%", marginTop: '-15px', fontSize: '16px', marginBottom: '12px'}}>{t("Require Field")}</CardLabelError>}
+            {isTrue&&<CardLabelError style={{ width: "100%", marginTop: '-15px', fontSize: '16px', marginBottom: '12px'}}>{t("Require Field")}</CardLabelError>}
 
-            {currentValue&&currentValue.length>0&&!currentValue.match(Digit.Utils.getPattern('OldLicenceNo'))&&<CardLabelError style={{ width: "100%", marginTop: '-15px', fontSize: '16px', marginBottom: '12px'}}>{t("Vat No should only alphanumeric characters are allowed")}</CardLabelError>} */}
+            {currentValue&&currentValue.length>0&&!currentValue.match(Digit.Utils.getPattern('Name'))&&<CardLabelError style={{ width: "100%", marginTop: '-15px', fontSize: '16px', marginBottom: '12px'}}>{t("Only Alphabets are allowed")}</CardLabelError>}
 
             </div>
 
@@ -97,6 +94,6 @@ const WmsCMVATNumber = ({ t, config, onSelect, formData = {}, userType, register
   );
 
 };
-export default WmsCMVATNumber;
+export default WmsCMVendorSubTypeName;
 
  

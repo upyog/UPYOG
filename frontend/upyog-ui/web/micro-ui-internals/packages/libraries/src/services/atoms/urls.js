@@ -247,7 +247,6 @@ ContractorMaster:{
   count:"https://62f0e3e5e2bca93cd23f2ada.mockapi.io/birth",
   get:"/wms/wms-services/v1/contractor/_view",
   mdms:"http://localhost:5000/vendorType",
-  mdmsBank:"/wms/wms-services/v1/bank/",
   mdmsBankGet:"/wms/wms-services/v1/bank/_view",
   mdmsBankUpdate:"/wms/wms-services/v1/bank/_update",
   mdmsBankCreate:"/wms/wms-services/v1/bank/_create",
@@ -255,6 +254,9 @@ ContractorMaster:{
   mdmsSubTypeGet:"/wms/wms-services/v1/cstype/_view",
   mdmsSubTypeUpdate:"/wms/wms-services/v1/cstype/_update",
   mdmsSubTypeCreate:"/wms/wms-services/v1/cstype/_create",
+  mdmsTypeGet:"/wms/wms-services/v1/vendor/_view",
+  mdmsTypeUpdate:"/wms/wms-services/v1/vendor/_update",
+  mdmsTypeCreate:"/wms/wms-services/v1/vendor/_create",
 
 },
   },

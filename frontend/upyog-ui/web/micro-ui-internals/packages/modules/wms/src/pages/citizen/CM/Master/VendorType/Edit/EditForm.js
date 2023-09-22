@@ -1,28 +1,47 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { newConfig } from "../../../../../../config/contactMaster/VendorTypeConfig";
-import { FormComposer } from "@egovernments/digit-ui-react-components";
+import { FormComposer, Toast } from "@egovernments/digit-ui-react-components";
 import {useHistory} from 'react-router-dom'
 
 const EditForm=({ tenantId, data })=>{
   const history = useHistory();
   const [canSubmit, setSubmitValve] = useState(true);
-  const {mutate,isSuccess,isError,error} = Digit?.Hooks?.wms?.cm?.useWMSMaster(data?.id,"WMS_V_TYPE_UPDATE");
+  const {mutate,isSuccess,isError,error} = Digit?.Hooks?.wms?.cm?.useWMSMaster(tenantId,"WMS_V_TYPE_UPDATE");
   console.log({isSuccess,isError,error})
+  const [showToast, setShowToast] = useState(false);
+  const closeToast = () => {
+    setShowToast(false);
+  };
+  useEffect(()=>{
+    if(showToast){
+    setTimeout(() => {
+      closeToast();
+      // history.replace('/upyog-ui/citizen/wms/vendor-sub-type/list')
+      history.push('/upyog-ui/citizen/wms/vendor-type/list')
+
+      
+    }, 5000);
+  }
+  },[showToast])
+  useEffect(()=>{if(isSuccess){setShowToast(true);}else if(isError){alert("Something wrong in updated bank record")}else{}},[isSuccess])
+
   const defaultValues = {
-    WmsCMVType:{vendor_type: data?.name},
-    WmsCMVTypeStatus:{name: data?.status},
+    WmsCMVType:{vendor_type: data?.vendor_type_name},
+    WmsCMVTypeStatus:{name: data?.vendor_type_status},
   }
 
   const onFormValueChange = (setValue = true, formData) => { };
-    const onSubmit=async(data)=>{
-        console.log("data ",data)
-        const payloadData={
-            "name": data?.WmsCMVType?.vendor_type,   
-            "status": data?.WmsCMVTypeStatus?.name,   
-        }
+    const onSubmit=async(item)=>{
+        console.log("data vendor type ",item)
+        
+        const payloadData={"WMSVendorTypeApplication": [{
+          "vendor_id":data?.vendor_id,
+            "vendor_type_name": item?.WmsCMVType?.vendor_type,   
+            "vendor_type_status": item?.WmsCMVTypeStatus?.name,
+          "tenantId":tenantId
+      }]}
         console.log("payloadData ",payloadData)
-        mutate(payloadData)
-        history.push('/list')
+       await mutate(payloadData)
     }
     const config = newConfig?newConfig:newConfig;
 return (
@@ -63,6 +82,9 @@ return (
             buttonStyle={{marginRight: 10,"position":"initial"}}
             // childrenAtTheBottom={true}        
         /> */}
+      {showToast&&isError && <Toast label={'Something wrong'} onClose={closeToast} />}
+      {showToast&&isSuccess && <Toast label={'Record updated successfully'} onClose={closeToast} />}
+
     </React.Fragment>
 )
 }

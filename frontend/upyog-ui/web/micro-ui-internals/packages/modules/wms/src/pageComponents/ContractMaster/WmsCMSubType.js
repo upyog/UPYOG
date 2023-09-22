@@ -27,13 +27,13 @@ const WmsCMSubType = ({ t, config, onSelect, formData = {}, userType }) => {
     let fData=[]
     if(citizenTypes?.WMSContractorSubTypeApplications?.length>0){
       const filterData = citizenTypes?.WMSContractorSubTypeApplications.filter((res)=> res.contractor_stype_status=="Active");
-fData.push({
-  "name": filterData?.contractor_stype_name,
-  "status": filterData?.contractor_stype_status
+      filterData.forEach(element => {
+      fData.push({
+  "id":element?.contractor_id,
+  "name": element?.contractor_stype_name,
+  "status": element?.contractor_stype_status
 })
-      console.log("filterData ddd ",filterData)
-      console.log("filterData ddd fData ",fData)
-      
+});
     setcitizenTypeList(fData)
     }
   },[citizenTypes])

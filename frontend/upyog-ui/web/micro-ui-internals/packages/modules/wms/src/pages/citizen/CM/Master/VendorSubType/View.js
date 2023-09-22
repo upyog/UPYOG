@@ -2,7 +2,7 @@ import React, { useState, useCallback ,  useEffect  } from "react";
 import { useTranslation } from "react-i18next";
 import { format, isValid } from "date-fns";
 import { Header ,LinkButton,Loader, Toast } from "@egovernments/digit-ui-react-components";
-import DesktopInbox from "../../../../../components/CmList/vendorSubType_inbox/DesktopInbox";
+import DesktopInbox from "../../../../../components/CmList/vendorSubTypeList/DesktopList";
 import axios from 'axios';
 import { Link } from "react-router-dom";
 

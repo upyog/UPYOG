@@ -536,10 +536,8 @@ PMApplications:{
       getMasterSubTypeData: (tenantId) =>
       Request({
         url: Urls.wms.ContractorMaster.mdmsSubTypeGet,
-        // url: Urls.wms.ContractorMaster.get+tenantId,
         useCache: false,
         method: "POST",
-        // method: "GET",
         auth: true,
         userService: true,
         // params: {tenantId} ,
@@ -549,10 +547,8 @@ PMApplications:{
         url: Urls.wms.ContractorMaster.mdmsSubTypeGet+'?contractorId='+id,
         useCache: false,
         method: "POST",
-        // method: "GET",
         auth: true,
         userService: true,
-        // params: {tenantId} ,
       }),
       updateMasterSubTypeData: (data) =>
       Request({
@@ -562,7 +558,6 @@ PMApplications:{
         method: "POST",
         auth: true,
         userService: true,
-        // params: { tenantId },
       
       }),
       createMasterSubTypeData: (data) =>
@@ -573,14 +568,51 @@ PMApplications:{
         method: "POST",
         auth: true,
         userService: true,
-        // params: { tenantId },
+      
+      }),
+
+      getMasterTypeData: (tenantId) =>
+      Request({
+        url: Urls.wms.ContractorMaster.mdmsTypeGet,
+        useCache: false,
+        method: "POST",
+        auth: true,
+        userService: true,
+        params: {tenantId} ,
+      }),
+      getSingleResordsMasterTypeData: (id) =>
+      Request({
+        url: Urls.wms.ContractorMaster.mdmsTypeGet+'?vendorId='+id,
+        useCache: false,
+        method: "POST",
+        auth: true,
+        userService: true,
+      }),
+      updateMasterTypeData: (data) =>
+      Request({
+        data: data,
+        url: Urls.wms.ContractorMaster.mdmsTypeUpdate,
+        useCache: false,
+        method: "POST",
+        auth: true,
+        userService: true,
+      
+      }),
+      createMasterTypeData: (data) =>
+      Request({
+        data: data,
+        url: Urls.wms.ContractorMaster.mdmsTypeCreate,
+        useCache: false,
+        method: "POST",
+        auth: true,
+        userService: true,
       
       }),
 
 
-      getMasterData: (endPoint,tenantId) =>
+      getMasterData: (tenantId) =>
       Request({
-        url: Urls.wms.ContractorMaster.mdmsBank+''+endPoint,
+        url: Urls.wms.ContractorMaster.mdmsBankGet,
         // url: Urls.wms.ContractorMaster.get+tenantId,
         useCache: false,
         method: "POST",
@@ -623,6 +655,8 @@ PMApplications:{
       }),
 
 
+
+
       getMasterDataFakeAPI: (tenantId) =>
       Request({
         url: Urls.wms.ContractorMaster.mdms,
@@ -634,6 +668,7 @@ PMApplications:{
         userService: true,
         // params: {tenantId} ,
       }),
+
       getMasterSingleDataFakeAPI: (tenantId) =>
       Request({
         url: Urls.wms.ContractorMaster.mdms+'/'+tenantId,

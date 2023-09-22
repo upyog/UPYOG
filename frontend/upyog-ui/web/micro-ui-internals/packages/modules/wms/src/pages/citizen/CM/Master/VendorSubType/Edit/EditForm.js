@@ -15,7 +15,8 @@ const EditForm=({  data, tenantId })=>{
     if(showToast){
     setTimeout(() => {
       closeToast();
-      history.replace('/upyog-ui/citizen/wms/bank/list')
+      history.replace('/upyog-ui/citizen/wms/vendor-sub-type/list')
+      
     }, 5000);
   }
   },[showToast])
@@ -23,8 +24,8 @@ const EditForm=({  data, tenantId })=>{
   const [canSubmit, setSubmitValve] = useState(true);
   const defaultValues = {
 
-    WmsCMBankName:{bank_name: data?.contractor_stype_name},
-    WmsCMBankStatus:{name:data?.contractor_stype_status}
+    WmsCMVendorSubTypeName:{vendor_sub_type: data?.contractor_stype_name},
+    WmsCMVendorSubTypeStatus:{name:data?.contractor_stype_status}
   }
 
   const onFormValueChange = (setValue = true, formData) => { };
@@ -32,16 +33,15 @@ const EditForm=({  data, tenantId })=>{
         console.log("item ",item)
         const payloadData={"WMSContractorSubTypeApplication": [{
             "contractor_id":data?.contractor_id,
-            "contractor_stype_name": item?.WmsCMBankName?.bank_name,
-            "contractor_stype_status": item?.WmsCMBankStatus?.name,
+            "contractor_stype_name": item?.WmsCMVendorSubTypeName?.vendor_sub_type,
+            "contractor_stype_status": item?.WmsCMVendorSubTypeStatus?.name,
             "tenantId":tenantId
         }]}
         
        
         await mutate(payloadData)
-        setShowToast(true);
     }
-    // useEffect(()=>{if(isSuccess){alert("Updated Succefully")}else{alert("Something wrong in updated bank record")}},[isSuccess])
+    useEffect(()=>{if(isSuccess){setShowToast(true);}else if(isError){alert("Something wrong in updated bank record")}else{}},[isSuccess])
     const config = newConfig?newConfig:newConfig;
 return (
     <React.Fragment>

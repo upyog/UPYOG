@@ -116,7 +116,8 @@ module.exports = function (app) {
   "/wms/wms-services/v1/bank/",
   "/wms/wms-services/v1/contractor/_search",
   "/wms/wms-services/v1/contractor/_create",
-  "/wms/wms-services/v1/cstype"
+  "/wms/wms-services/v1/cstype",
+  "/wms/wms-services/v1/vendor"
   ].forEach((location) => app.use(location, CMProxy));
  
 };

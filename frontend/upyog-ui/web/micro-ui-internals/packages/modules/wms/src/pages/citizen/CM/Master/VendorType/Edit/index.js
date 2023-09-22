@@ -7,16 +7,12 @@ const VendorTypeEdit =()=>{
     const { id,tenantId } = useParams();
     console.log("param ",id)
     const { isLoading, isError, error, data, ...rest } = Digit?.Hooks?.wms?.cm?.useWMSMaster(id,"WMS_V_TYPE_SINGLE_RECORD");
-  console.log("data ",data)
+  console.log("data edit index ",data)
 
-//   const dataDummy={
-//     name: 'Noida',
-//     }
   if (isLoading) {
     return <Loader />;
   }
-  return <EditForm data={data} tenantId={tenantId} />;
-//   return <EditForm data={dataDummy} tenantId={tenantId} />;
+  return <EditForm data={data?.WMSVendorTypeApplications[0]} tenantId={tenantId} />;
 
 }
 export default VendorTypeEdit
