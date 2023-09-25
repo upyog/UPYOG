@@ -22,6 +22,8 @@ const Units = ({ t, config, onSelect, userType, formData, setError, formState, c
         usageCategory: null,
         builtUpArea: "",
         RentedMonths: null,
+        ageOfProperty:null,
+        structureType:null,
         NonRentedMonthsUsage: null
       },
     ]
@@ -144,7 +146,52 @@ const Units = ({ t, config, onSelect, userType, formData, setError, formState, c
        "active": true
        },  
     ]
-
+   let ageOfPropertyOptions =[
+    {
+      "i18nKey": "PROPERTYTAX_MONTH>10",
+      "name": "greater than 10 years",
+      "code": "10",
+     "active": true
+     },
+     {
+      "i18nKey": "PROPERTYTAX_MONTH>15",
+      "name": "greater than 15 years",
+      "code": "15",
+     "active": true
+     },
+     {
+      "i18nKey": "PROPERTYTAX_MONTH>25",
+      "name": "greater than 24 years",
+      "code": "25",
+     "active": true
+     } 
+   ]
+   let structureTypeOptions =[
+    {
+      "i18nKey": "PERMANENT",
+      "name": "Permanent",
+      "code": "permanent",
+     "active": true
+     },
+     {
+      "i18nKey": "TEMPORARY",
+      "name": "Temporary",
+      "code": "temporary",
+     "active": true
+     },
+     {
+      "i18nKey": "SEMI_PERMANENT",
+      "name": "Semi Permanent",
+      "code": "semi permanent",
+     "active": true
+     },
+     {
+      "i18nKey": "RCC",
+      "name": "RCC",
+      "code": "RCC",
+     "active": true
+     }  
+   ]
   let floorListData = [];
   function getfloorlistdata(floorlist) {
     floorListData = floorlist?.map((floor) => ({ i18nKey: "PROPERTYTAX_FLOOR_" + stringReplaceAll(floor?.code, "-", "_"), code: floor?.code })) || [];
@@ -268,6 +315,8 @@ const Units = ({ t, config, onSelect, userType, formData, setError, formState, c
     let unitsData = units?.map((unit) => ({
       occupancyType: unit?.occupancyType?.code,
       RentedMonths: unit?.RentedMonths?.code,
+      ageOfProperty: unit?.ageOfProperty?.code,
+      structureType: unit?.structureType?.code,
       NonRentedMonthsUsage:unit?.NonRentedMonthsUsage?.code,
       floorNo: unit?.floorNo?.code,
       constructionDetail: {
@@ -342,6 +391,8 @@ const Units = ({ t, config, onSelect, userType, formData, setError, formState, c
           floorlist={floorlist}
           occupencyOptions={occupencyOptions}
           rentedmonths={rentedmonths}
+          ageOfPropertyOptions={ageOfPropertyOptions}
+          structureTypeOptions = {structureTypeOptions}
           nonrentedusage={nonrentedusage}
           formData={formData}
           handleRemoveUnit={handleRemoveUnit}
@@ -372,6 +423,8 @@ function Unit({
   floorlist,
   occupencyOptions,
   rentedmonths,
+  ageOfPropertyOptions,
+  structureTypeOptions,
   nonrentedusage,
   formData,
   handleRemoveUnit,
@@ -542,7 +595,26 @@ function Unit({
         {!["RESIDENTIAL"].includes(usageType?.code) ? (
           <CardLabelError style={errorStyle}>{localFormState.touched.usageCategory ? errors?.usageCategory?.message : ""}</CardLabelError>
         ) : null}
-
+    <LabelFieldPair>
+            <CardLabel className="card-label-smaller">{t("PT_STRUCTURE_TYPE") + " *"}</CardLabel>
+            <Controller
+              name="structureType"
+              defaultValue={unit.structureType}
+              control={control}
+              render={(props) => (
+                <Dropdown
+                  className="form-field"
+                  selected={props.value}
+                  disable={structureTypeOptions?.length === 1}
+                  option={structureTypeOptions}
+                  select={props.onChange}
+                  optionKey="i18nKey"
+                  onBlur={props.onBlur}
+                  t={t}
+                />
+              )}
+            />
+            </LabelFieldPair> 
         <LabelFieldPair>
           <CardLabel className="card-label-smaller">{t("PT_FORM2_OCCUPANCY") + " *"}</CardLabel>
           <Controller
@@ -639,7 +711,30 @@ function Unit({
           ): null}     
         </React.Fragment>          
         ) : null}         
-          
+                      <LabelFieldPair>
+              <CardLabel className="card-label-smaller">{t("PT_FORM_AGE_OF_PROPERTY") + " *"}</CardLabel>
+              
+              <Controller
+            name="ageOfProperty"
+            defaultValue={unit?.ageOfProperty}
+            control={control}
+            render={(props) => (
+              <Dropdown
+                className="form-field"
+                selected={props.value}
+                disable={ageOfPropertyOptions?.length === 1}
+                option={ageOfPropertyOptions}
+                //select={selectSelfOccupied}
+                select={props.onChange}
+                optionKey="i18nKey"
+                onBlur={props.onBlur}
+                t={t}
+              />
+                  )}
+                />
+             
+            </LabelFieldPair>
+
         <LabelFieldPair>
           <CardLabel className="card-label-smaller">{t("PT_FORM2_BUILT_AREA") + " *"}</CardLabel>
           <div className="field">
