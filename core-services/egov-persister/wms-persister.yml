@@ -1586,4 +1586,57 @@ serviceMaps:
             - jsonPath: $.WMSVendorClassApplication.*.vendor_class_id
             
             
+    - version: 1.0
+      description: Persists Primary Account Head details in tables
+      fromTopic: save-pacch-application
+      isTransaction: true
+      queryMaps:
+
+        - query: INSERT INTO primary_account_head (primary_accounthead_id,primary_accounthead_name,primary_accounthead_accountno,primary_accounthead_location,createdby,lastmodifiedby,createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?,?,?,?,?);
+          basePath: WMSPrimaryAccountHeadApplication.*
+          jsonMaps:
+            - jsonPath: $.WMSPrimaryAccountHeadApplication.*.primary_accounthead_id
+
+            - jsonPath: $.WMSPrimaryAccountHeadApplication.*.primary_accounthead_name
+
+            - jsonPath: $.WMSPrimaryAccountHeadApplication.*.primary_accounthead_accountno
+            
+            - jsonPath: $.WMSPrimaryAccountHeadApplication.*.primary_accounthead_location
+            
+            - jsonPath: $.WMSPrimaryAccountHeadApplication.*.auditDetails.createdBy
+
+            - jsonPath: $.WMSPrimaryAccountHeadApplication.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.WMSPrimaryAccountHeadApplication.*.auditDetails.createdTime
+            
+            - jsonPath: $.WMSPrimaryAccountHeadApplication.*.auditDetails.lastModifiedTime
+            
+            
+
+            
+            
+            
+            
+            
+            
+            
+    - version: 1.0
+      description: Update Primary Account Head Details applications in table
+      fromTopic: update-pacch-application
+      isTransaction: true
+      queryMaps:
+      
+        - query: UPDATE primary_account_head SET primary_accounthead_name = ?,primary_accounthead_accountno = ?,primary_accounthead_location = ? WHERE primary_accounthead_id = ?;
+          basePath: WMSPrimaryAccountHeadApplication.*
+          jsonMaps:
+            - jsonPath: $.WMSPrimaryAccountHeadApplication.*.primary_accounthead_name
+
+            
+            - jsonPath: $.WMSPrimaryAccountHeadApplication.*.primary_accounthead_accountno
+            
+            - jsonPath: $.WMSPrimaryAccountHeadApplication.*.primary_accounthead_location
+
+            - jsonPath: $.WMSPrimaryAccountHeadApplication.*.primary_accounthead_id
+            
+            
             
