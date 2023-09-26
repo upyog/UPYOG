@@ -1,6 +1,5 @@
 package org.egov.pt.calculator.repository;
 
-
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -58,10 +57,6 @@ public class AssessmentRepository {
 	
 	private static final String ASSESSMENT_JOB_DATA_INSERT_QUERY = "Insert into eg_pt_assessment_job (id,assessmentnumber,propertyid,financialyear,createdtime,status,error,additionaldetails,tenantid) values(:id,:assessmentnumber,:propertyid,:financialyear,:createdtime,:status,:error,:additionaldetails,:tenantid)";;
 
-	private static final String ASSESSMENT_JOB_NEW_DATA_INSERT_QUERY = "Insert into eg_pt_assessment_job_table (id,assessmentnumber,propertyid,financialyear,createdtime,status,error,additionaldetails,tenantid) values(:id,:assessmentnumber,:propertyid,:financialyear,:createdtime,:status,:error,:additionaldetails,:tenantid)";;
-	
-	private static final String ASSESSMENT_JOB_DATA_UPDATE_QUERY = "update eg_pt_assessment_job_table set status=:status, successfulAssessments=:successfulAssessments, failedAssessments=:failedAssessments where jobid=:jobid";
-
 	private static final String OCUUPANCY_TYPE_RENTED = "RENTED";
 	
 	private static final String INNER_QUERY = "select pt.propertyid,sum(dd.taxamount - dd.collectionamount) balance,pt.tenantid from eg_pt_property pt, egbs_demand_v1 d,egbs_demanddetail_v1 dd where dd.demandid=d.id and dd.tenantid=d.tenantid and d.consumercode = pt.propertyid and d.tenantid = pt.tenantid and pt.status='ACTIVE' and d.status = 'ACTIVE' ";
@@ -118,6 +113,7 @@ public class AssessmentRepository {
 			
 			@Override
 			public void setValues(PreparedStatement ps, int rowNum) throws SQLException {
+
 				Assessment current = assessments.get(rowNum);
 				AuditDetails audit = current.getAuditDetails();
 
@@ -141,8 +137,7 @@ public class AssessmentRepository {
 				return assessments.size();
 			}
 		});
-
-				return assessments;
+		return assessments;
 	}
 	
 	
@@ -268,42 +263,6 @@ public class AssessmentRepository {
 		params.put("error", error);
 		params.put("tenantid", assessment.getTenantId());
 		params.put("additionaldetails", additionalDetails);
-		try {
-			namedParameterJdbcTemplate.update(query.toString(), params);
-		} catch (final DataAccessException e) {
-           log.info("exception in saving assessment job details");
-		}
-	}
-	
-	public void saveAssessmentJobDetails(int properties,int successAssess,int failAssess,String status, String additionalDetails,CreateAssessmentRequest assessmentRequest) {
-		StringBuilder query = new StringBuilder(ASSESSMENT_JOB_NEW_DATA_INSERT_QUERY);
-		final Map<String, Object> params = new HashMap<>();
-		
-		params.put("uuid", UUID.randomUUID());
-		params.put("locality", assessmentRequest.getLocality()!=null? assessmentRequest.getLocality() :null);
-		params.put("financialyear", assessmentRequest.getAssessmentYear());
-		params.put("createdtime", System.currentTimeMillis());
-		params.put("status", status);
-		params.put("tenantid", assessmentRequest.getTenantId());
-		params.put("assessmentstobegenerated",properties);
-		params.put("successfulAssessments", successAssess);
-		params.put("failedAssessments", failAssess);
-		params.put("additionaldetails", additionalDetails);
-		try {
-			namedParameterJdbcTemplate.update(query.toString(), params);
-		} catch (final DataAccessException e) {
-           log.info("exception in saving assessment job details");
-		}
-	}
-	
-	public void updateAssessmentJobDetails(String jobId,int successAssess,int failAssess,String status) {
-		StringBuilder query = new StringBuilder(ASSESSMENT_JOB_DATA_UPDATE_QUERY);
-		final Map<String, Object> params = new HashMap<>();
-		params.put("jobId",jobId);
-		params.put("status", status);
-		params.put("successfulAssessments", successAssess);
-		params.put("failedAssessments", failAssess);
-	
 		try {
 			namedParameterJdbcTemplate.update(query.toString(), params);
 		} catch (final DataAccessException e) {
