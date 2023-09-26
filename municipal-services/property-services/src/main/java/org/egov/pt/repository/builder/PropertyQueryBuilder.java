@@ -1,5 +1,6 @@
 package org.egov.pt.repository.builder;
 import java.time.Instant;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -22,6 +23,10 @@ public class PropertyQueryBuilder {
 	private static final String INNER_JOIN = "INNER JOIN";
 	private static final String LEFT_JOIN  =  "LEFT OUTER JOIN";
 	private static final String AND_QUERY = " AND ";
+	
+	private static final String PROPERTY_DEFAULTER_SEARCH="select * from (SELECT property.id as pid, property.propertyid, property.tenantid as ptenantid, surveyid, accountid, oldpropertyid, property.status as propertystatus, acknowldgementnumber, propertytype, ownershipcategory,property.usagecategory as pusagecategory, creationreason, nooffloors, landarea, property.superbuiltuparea as propertysbpa, linkedproperties, source, channel, property.createdby as pcreatedby, property.lastmodifiedby as plastmodifiedby, property.createdtime as pcreatedtime, property.lastmodifiedtime as plastmodifiedtime, property.additionaldetails as padditionaldetails, (CASE WHEN property.status='ACTIVE' then 0 WHEN property.status='INWORKFLOW' then 1 WHEN property.status='INACTIVE' then 2 ELSE 3 END) as statusorder, address.tenantid as adresstenantid, address.id as addressid, address.propertyid as addresspid, latitude, longitude, doorno, plotno, buildingname, street, landmark, city, pincode, locality, district, region, state, country, address.createdby as addresscreatedby, address.lastmodifiedby as addresslastmodifiedby, address.createdtime as addresscreatedtime, address.lastmodifiedtime as addresslastmodifiedtime, address.additionaldetails as addressadditionaldetails, owner.tenantid as owntenantid, ownerInfoUuid, owner.propertyid as ownpropertyid, userid, owner.status as ownstatus, isprimaryowner, ownertype, ownershippercentage, owner.institutionid as owninstitutionid, relationship, owner.createdby as owncreatedby, owner.createdtime as owncreatedtime,owner.lastmodifiedby as ownlastmodifiedby, owner.lastmodifiedtime as ownlastmodifiedtime, unit.id as unitid, unit.tenantid as unittenantid, unit.propertyid as unitpid, floorno, unittype, unit.usagecategory as unitusagecategory, occupancytype, occupancydate, carpetarea, builtuparea, plintharea, unit.superbuiltuparea as unitspba, arv, constructiontype, constructiondate, dimensions, unit.active as isunitactive, unit.createdby as unitcreatedby, unit.createdtime as unitcreatedtime, unit.lastmodifiedby as unitlastmodifiedby, unit.lastmodifiedtime as unitlastmodifiedtime  FROM EG_PT_PROPERTY property INNER JOIN EG_PT_ADDRESS address         ON property.id = address.propertyid INNER JOIN EG_PT_OWNER owner             ON property.id = owner.propertyid  LEFT OUTER JOIN EG_PT_UNIT unit ON property.id =  unit.propertyid  WHERE  property.tenantId= ?  AND property.usagecategory like ? AND address.locality = ? AND owner.status = ? AND property.status = ?) as propertydata"
+			+ " LEFT OUTER JOIN (select consumercode,sum(taxdue) as taxDue,STRING_AGG(year || '(Rs.' || taxdue || ')',',')  as taxDueYear from ( select d.consumercode, (to_char((To_timestamp(d.taxperiodfrom/1000) at time Zone 'Asia/Kolkata'),'YYYY') || '-' || to_char((To_timestamp(d.taxperiodto/1000) at time Zone 'Asia/Kolkata'),'YY')) as year ,  sum(dd.taxamount)-sum(dd.collectionamount) as taxdue from egbs_demanddetail_v1 dd, egbs_demand_v1 d "
+			+ " where dd.demandid=d.id and d.status!='CANCELLED' and dd.tenantid='pg.citya' and d.tenantid='pg.citya' and (to_char((To_timestamp(d.taxperiodfrom/1000) at time Zone 'Asia/Kolkata'),'YYYY') || '-' || to_char((To_timestamp(d.taxperiodto/1000) at time Zone 'Asia/Kolkata'),'YY')) != ? group by d.consumercode,(to_char((To_timestamp(d.taxperiodfrom/1000) at time Zone 'Asia/Kolkata'),'YYYY') || '-' || to_char((To_timestamp(d.taxperiodto/1000) at time Zone 'Asia/Kolkata'),'YY'))) tax where taxDue>0 group by tax.consumercode) as taxdata on propertydata.propertyid=taxdata.consumercode";
 	
 	private static String PROEPRTY_AUDIT_QUERY = "select property from eg_pt_property_audit where propertyid=?";
 
@@ -146,6 +151,38 @@ public class PropertyQueryBuilder {
 
 		return finalQuery;
 	}
+	
+	public String getPropertySearchQueryForDeafauterNotice (PropertyCriteria criteria, List<Object> preparedStmtList)
+	{
+		
+	Boolean isEmpty = null == criteria.getLocality() ||
+				 null == criteria.getPropertyType() || criteria.getTenantId()==null;
+	
+	if(isEmpty)
+		throw new CustomException("EG_PT_SEARCH_ERROR"," Please provide tenant, locality, propertyType for the property search for defaulter notice");
+	String currYearS;
+
+	int currYear=((new Date().getYear())+1900);
+	int currmonth=((new Date().getMonth())+1);
+	if(currmonth>=1 && currmonth <=3)
+		currYearS= (String.valueOf(currYear-1))+"-"+ (String.valueOf(currYear).substring(2,4));
+	else
+		currYearS=(String.valueOf(currYear))+"-"+ (String.valueOf(currYear+1).substring(2,4));
+		
+		
+	StringBuilder builder= new StringBuilder(PROPERTY_DEFAULTER_SEARCH);
+	preparedStmtList.add(criteria.getTenantId());
+	if(criteria.getPropertyType().equals("ALL"))
+		preparedStmtList.add("%%");
+	else
+		preparedStmtList.add("%"+criteria.getPropertyType().toUpperCase()+"%");
+	preparedStmtList.add(criteria.getLocality());
+	preparedStmtList.add(Status.ACTIVE.toString());
+	preparedStmtList.add(Status.ACTIVE.toString());
+	preparedStmtList.add(currYearS);
+
+	return builder.toString();
+	}
 
 	/**
 	 * 
@@ -163,6 +200,8 @@ public class PropertyQueryBuilder {
 					&& null == criteria.getName()
 					&& null == criteria.getDoorNo()
 					&& null == criteria.getOldPropertyId()
+					&& null == criteria.getDocumentNumbers()
+					&& null == criteria.getPropertyType()
 					&& (null == criteria.getFromDate() && null == criteria.getToDate())
 					&& CollectionUtils.isEmpty(criteria.getCreationReason());
 		
@@ -245,6 +284,15 @@ public class PropertyQueryBuilder {
 			addToPreparedStatement(preparedStmtList, creationReasonsList);
 		}
 		
+		Set<String> documentNumberList = criteria.getDocumentNumbers();
+
+		if(!CollectionUtils.isEmpty(documentNumberList)){
+			addClauseIfRequired(preparedStmtList, builder);
+			builder.append(" property.status='ACTIVE' and owndoc.status='ACTIVE' and owndoc.documentuid  IN ( ").append(createQuery(documentNumberList)).append(" )");
+			addToPreparedStatement(preparedStmtList, documentNumberList);
+		}
+		
+		
 		if (null != criteria.getLocality()) {
 
 			addClauseIfRequired(preparedStmtList,builder);
@@ -292,7 +340,7 @@ public class PropertyQueryBuilder {
 		addClauseIfRequired(preparedStmtList,builder);
 		builder.append("owner.status = ?");
 		preparedStmtList.add(Status.ACTIVE.toString());
-		
+	
 
 		String withClauseQuery = WITH_CLAUSE_QUERY.replace(REPLACE_STRING, builder);
 		if (onlyIds || criteria.getIsRequestForCount())

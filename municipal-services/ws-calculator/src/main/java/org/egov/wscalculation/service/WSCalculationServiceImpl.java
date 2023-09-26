@@ -284,7 +284,7 @@ public class WSCalculationServiceImpl implements WSCalculationService {
 
 			Calculation calculation = null;
 
-			if (request.getIsDisconnectionRequest() != null) {
+			if (request.getIsDisconnectionRequest() != null && request.getIsDisconnectionRequest() ) {
 				if (request.getIsDisconnectionRequest() &&
 						criteria.getApplicationNo().equals(request.getCalculationCriteria().get(request.getCalculationCriteria().size() - 1)
 								.getApplicationNo())) {
@@ -374,6 +374,23 @@ public class WSCalculationServiceImpl implements WSCalculationService {
 		tenantIds.forEach(tenantId -> {
 			demandService.generateDemandForTenantId(tenantId, requestInfo, bulkBillCriteria);
 		});
+	}
+	
+	public List<WaterConnection> getConnnectionWithPendingDemand(RequestInfo requestInfo, BulkBillCriteria bulkBillCriteria)
+	{
+		return demandService.getConnectionPendingForDemand(requestInfo,bulkBillCriteria.getTenantId());
+	}
+	
+	public void generateDemandForConsumerCodeBasedOnTimePeriod(RequestInfo requestInfo, BulkBillCriteria bulkBillCriteria) {
+		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+		LocalDateTime date = LocalDateTime.now();
+		log.info("Going to generate Demand of Consumer Code" + bulkBillCriteria.getConsumerCode());
+		
+		if (bulkBillCriteria.getTenantId()==null)
+			return;
+		log.info("Tenant Ids : " + bulkBillCriteria.getTenantId());
+			demandService.generateDemandForConsumerCode(requestInfo,bulkBillCriteria);
+	
 	}
 	
 	/**
