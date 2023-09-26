@@ -116,7 +116,7 @@ public class DemandService {
 		List<Calculation> createCalculations = new LinkedList<>();
 		// List that will contain Calculation for old demands
 		List<Calculation> updateCalculations = new LinkedList<>();
-		if (!CollectionUtils.isEmpty(calculations)) {
+		if (!CollectionUtils.isEmpty(calculations) && calculations.get(0)!=null) {
 			// Collect required parameters for demand search
 			String tenantId = calculations.get(0).getTenantId();
 			Long fromDateSearch = null;
@@ -771,6 +771,97 @@ public class DemandService {
 	public void generateDemandForTenantId(String tenantId, RequestInfo requestInfo, BulkBillCriteria bulkBillCriteria) {
 		requestInfo.getUserInfo().setTenantId(tenantId);
 		generateDemandForULB(requestInfo, tenantId, bulkBillCriteria);
+	}
+	
+	public void generateDemandForConsumerCode(RequestInfo requestInfo, BulkBillCriteria bulkBillCriteria) {
+		Map<String, Object> billingMasterData = calculatorUtils.loadBillingFrequencyMasterData(requestInfo, bulkBillCriteria.getTenantId());
+		
+		long startDay = (((int) billingMasterData.get(WSCalculationConstant.Demand_Generate_Date_String)) / 86400000);
+		if(isCurrentDateIsMatching((String) billingMasterData.get(WSCalculationConstant.Billing_Cycle_String), startDay)) {
+			
+			Map<String, Object> masterMap = mstrDataService.loadMasterData(requestInfo, bulkBillCriteria.getTenantId());
+
+			ArrayList<?> billingFrequencyMap = (ArrayList<?>) masterMap
+					.get(WSCalculationConstant.Billing_Period_Master);
+			mstrDataService.enrichBillingPeriod(null, billingFrequencyMap, masterMap, WSCalculationConstant.nonMeterdConnection);
+			
+			Map<String, Object> financialYearMaster =  (Map<String, Object>) masterMap.get(WSCalculationConstant.BILLING_PERIOD);
+			
+			Long fromDate = (Long) financialYearMaster.get(WSCalculationConstant.STARTING_DATE_APPLICABLES);
+			Long toDate = (Long) financialYearMaster.get(WSCalculationConstant.ENDING_DATE_APPLICABLES);
+			
+		List<WaterConnection> connections = waterCalculatorDao.getConnection(bulkBillCriteria.getTenantId(),bulkBillCriteria.getConsumerCode(),
+							WSCalculationConstant.nonMeterdConnection, fromDate, toDate);
+
+		connections = enrichmentService.filterConnections(connections);
+					String assessmentYear = estimationService.getAssessmentYear();
+					//log.info("Size of the connection list for batch : "+ batchOffset + " is " + connections.size());
+
+					if (connections.size() > 0) {
+						List<CalculationCriteria> calculationCriteriaList = new ArrayList<>();
+						for (WaterConnection connection : connections) {
+							CalculationCriteria calculationCriteria = CalculationCriteria.builder().tenantId(bulkBillCriteria.getTenantId())
+									.assessmentYear(assessmentYear).connectionNo(connection.getConnectionNo())
+									.waterConnection(connection).build();
+							calculationCriteriaList.add(calculationCriteria);
+						}
+						MigrationCount migrationCount = MigrationCount.builder()
+								.tenantid(bulkBillCriteria.getTenantId())
+								.businessService("WS")
+								.limit((long) 1.00)
+								.id(UUID.randomUUID().toString())
+								.offset((long)1.00)
+								.createdTime(System.currentTimeMillis())
+								.recordCount(Long.valueOf(connections.size()))
+								.build();
+
+						CalculationReq calculationReq = CalculationReq.builder()
+								.calculationCriteria(calculationCriteriaList)
+								.requestInfo(requestInfo)
+								.isconnectionCalculation(true)
+								.migrationCount(migrationCount)
+								.build();
+						
+						wsCalculationProducer.push(configs.getCreateDemand(), calculationReq);
+						
+						calculationCriteriaList.clear();
+					}
+
+		}
+	}
+	
+	public List<WaterConnection> getConnectionPendingForDemand(RequestInfo requestInfo, String tenantId)
+	{
+		Map<String, Object> billingMasterData = calculatorUtils.loadBillingFrequencyMasterData(requestInfo, tenantId);
+		List<WaterConnection> connections=new ArrayList<WaterConnection>();
+		long startDay = (((int) billingMasterData.get(WSCalculationConstant.Demand_Generate_Date_String)) / 86400000);
+		if(isCurrentDateIsMatching((String) billingMasterData.get(WSCalculationConstant.Billing_Cycle_String), startDay)) {
+			
+	
+
+			Map<String, Object> masterMap = mstrDataService.loadMasterData(requestInfo, tenantId);
+
+			ArrayList<?> billingFrequencyMap = (ArrayList<?>) masterMap
+					.get(WSCalculationConstant.Billing_Period_Master);
+			mstrDataService.enrichBillingPeriod(null, billingFrequencyMap, masterMap, WSCalculationConstant.nonMeterdConnection);
+			
+			Map<String, Object> financialYearMaster =  (Map<String, Object>) masterMap.get(WSCalculationConstant.BILLING_PERIOD);
+			
+			Long fromDate = (Long) financialYearMaster.get(WSCalculationConstant.STARTING_DATE_APPLICABLES);
+			Long toDate = (Long) financialYearMaster.get(WSCalculationConstant.ENDING_DATE_APPLICABLES);
+			
+			//long count = waterCalculatorDao.getConnectionCount(tenantId, fromDate, toDate);
+			
+			//log.info("Connection Count: " + count);
+			
+			connections = waterCalculatorDao.getConnectionsNoListForDemand(tenantId,
+							WSCalculationConstant.nonMeterdConnection, fromDate, toDate);
+			log.info("Connection Count for pending demand: " + connections.size());
+
+			connections = enrichmentService.filterConnections(connections);
+		}	
+			return connections;
+					
 	}
 
 	/**
