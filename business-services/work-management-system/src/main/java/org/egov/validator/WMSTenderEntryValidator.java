@@ -92,10 +92,12 @@ public class WMSTenderEntryValidator {
 	                throw new CustomException("EG_WMS_APP_ERR", "Validity is mandatory for creating Tender Entry applications");
 	        });
 	    	
-	    	wmsTenderEntryRequest.getWmsTenderEntryApplications().forEach(application -> {
-	            if(ObjectUtils.isEmpty(application.getUploadDocument()))
-	                throw new CustomException("EG_WMS_APP_ERR", "UploadDocument is mandatory for creating Tender Entry applications");
-	        });
+			/*
+			 * wmsTenderEntryRequest.getWmsTenderEntryApplications().forEach(application ->
+			 * { if(ObjectUtils.isEmpty(application.getUploadDocument())) throw new
+			 * CustomException("EG_WMS_APP_ERR",
+			 * "UploadDocument is mandatory for creating Tender Entry applications"); });
+			 */
 			/*
 			 * wmsTenderEntryRequest.getWmsTenderEntryApplications().forEach(application ->
 			 * { if(ObjectUtils.isEmpty(application.getWorkNo())) throw new
