@@ -4,6 +4,14 @@ import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
 import { Link, useParams } from "react-router-dom";
 
+export const SuccessfulPayment = (props)=>{
+  if(localStorage.getItem("BillPaymentEnabled")!=="true"){
+    window.history.forward();
+   return null;
+ }
+ return <WrapPaymentComponent {...props}/>
+}
+
 export const convertEpochToDate = (dateEpoch) => {
   // Returning NA in else case because new Date(null) returns Current date from calender
   if (dateEpoch) {
@@ -18,15 +26,6 @@ export const convertEpochToDate = (dateEpoch) => {
     return "NA";
   }
 };
-export const SuccessfulPayment = (props)=>{
-  if(localStorage.getItem("BillPaymentEnabled")!=="true"){
-    window.history.forward();
-   return null;
- }
- return <WrapPaymentComponent {...props}/>
-}
-
-
  const WrapPaymentComponent = (props) => {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
@@ -159,7 +158,37 @@ export const SuccessfulPayment = (props)=>{
     const state = Digit.ULBService.getStateId();
     let response = { filestoreIds: [payments.Payments[0]?.fileStoreId] };
     if (!paymentData?.fileStoreId) {
-      response = await Digit.PaymentService.generatePdf(state, { Payments: [payments.Payments[0]] }, generatePdfKey);
+      let assessmentYear="",assessmentYearForReceipt="";
+      let count=0;
+      let toDate,fromDate;
+	  if(payments.Payments[0].paymentDetails[0].businessService=="PT"){
+       
+      payments.Payments[0].paymentDetails[0].bill.billDetails.map(element => {
+
+          if(element.amount >0 || element.amountPaid>0)
+          { count=count+1;
+            toDate=convertEpochToDate(element.toPeriod).split("/")[2];
+            fromDate=convertEpochToDate(element.fromPeriod).split("/")[2];
+            assessmentYear=assessmentYear==""?fromDate+"-"+toDate+"(Rs."+element.amountPaid+")":assessmentYear+","+fromDate+"-"+toDate+"(Rs."+element.amountPaid+")";
+            assessmentYearForReceipt=fromDate+"-"+toDate;
+          }
+    
+          });
+  
+          if(count==0)
+          {
+            let toDate=convertEpochToDate( payments.Payments[0].paymentDetails[0].bill.billDetails[0].toPeriod).split("/")[2];
+            let fromDate=convertEpochToDate( payments.Payments[0].paymentDetails[0].bill.billDetails[0].fromPeriod).split("/")[2];
+            assessmentYear=assessmentYear==""?fromDate+"-"+toDate:assessmentYear+","+fromDate+"-"+toDate; 
+            assessmentYearForReceipt=fromDate+"-"+toDate;
+          }
+          
+          const details = {
+          "assessmentYears": assessmentYear
+            }
+            payments.Payments[0].paymentDetails[0].additionalDetails=details; 
+        }
+        response = await Digit.PaymentService.generatePdf(state, { Payments: payments.Payments }, generatePdfKey);
     }
     const fileStore = await Digit.PaymentService.printReciept(state, { fileStoreIds: response.filestoreIds[0] });
     if (fileStore && fileStore[response.filestoreIds[0]]) {
@@ -370,7 +399,7 @@ export const SuccessfulPayment = (props)=>{
       <div style={{display:"flex"}}>
       {business_service == "TL" ? (
         <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginRight: "20px", marginTop:"15px",marginBottom:"15px" }} onClick={printReciept}>
-          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#f47738">
+          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#a82227">
             <path d="M0 0h24v24H0V0z" fill="none" />
             <path d="M19 9h-4V3H9v6H5l7 7 7-7zm-8 2V5h2v6h1.17L12 13.17 9.83 11H11zm-6 7h14v2H5z" />
           </svg>
@@ -379,7 +408,7 @@ export const SuccessfulPayment = (props)=>{
       ) : null}
       {business_service == "TL" ? (
         <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginTop:"15px" }} onClick={printCertificate}>
-          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#f47738">
+          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#a82227">
             <path d="M0 0h24v24H0V0z" fill="none" />
             <path d="M19 9h-4V3H9v6H5l7 7 7-7zm-8 2V5h2v6h1.17L12 13.17 9.83 11H11zm-6 7h14v2H5z" />
           </svg>
@@ -413,7 +442,7 @@ export const SuccessfulPayment = (props)=>{
             {t("CS_DOWNLOAD_RECEIPT")}
           </div>
       ) : null}
-      {!(business_service == "TL" || business_service?.includes("WS")) || !(business_service?.includes("PT")) && <SubmitBar onSubmit={printReciept} label={t("COMMON_DOWNLOAD_RECEIPT")} />}
+      {!(business_service == "TL") || !(business_service?.includes("PT")) && <SubmitBar onSubmit={printReciept} label={t("COMMON_DOWNLOAD_RECEIPT")} />}
       {!(business_service == "TL") || !(business_service?.includes("PT")) && (
         <div className="link" style={isMobile ? { marginTop: "8px", width: "100%", textAlign: "center" } : { marginTop: "8px" }}>
           <Link to={`/digit-ui/citizen`}>{t("CORE_COMMON_GO_TO_HOME")}</Link>
