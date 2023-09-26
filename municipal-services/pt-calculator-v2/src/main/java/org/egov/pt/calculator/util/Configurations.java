@@ -137,6 +137,39 @@ public class Configurations {
 	@Value("${pt.mutation.minpayable.amount}")
 	private BigDecimal ptMutationMinPayable;
 	
+	
+	@Value("${egov.assessmentservice.create.endpoint}")	
+	private String	assessmentCreateEndpoint;	
+		
+	@Value("${egov.assessmentservice.update.endpoint}")	
+	private String	assessmentUpdateEndpoint;
+	
+	@Value("${egov.bill.search.endpoint}")	
+	private String billSearchEndPoint;
+	
+	@Value("${billingslab.value.usagemajor.residential}")	
+	private String usageMajorResidential;	
+		
+	@Value("${billingslab.value.occupancytype.pg}")	
+	private String occupancyTypePG;
+	
+	
+	
+	@Value("${state.level.tenant.id}")	
+	private String stateLevelTenantId;	
+	@Value("${kafka.topics.notification.sms}")	
+	private String smsNotifTopic;	
+	@Value("${egov.decypt.service.host}")	
+	private String decryptServiceHost;	
+	@Value("${egov.decypt.endpoint}")	
+	private String decryptEndPoint;	
+	@Value("${egov.localization.host}")	
+	private String localizationServiceHost;	
+	@Value("${egov.localization.context.path}")	
+	private String localizationContextPath;	
+	@Value("${egov.localization.search.endpoint}")	
+	private String localizationSearchEndpoint;	
+	
 
 
 }

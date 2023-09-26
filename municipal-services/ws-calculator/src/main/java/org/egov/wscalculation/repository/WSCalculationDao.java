@@ -24,10 +24,14 @@ public interface WSCalculationDao {
 	
 	List<WaterConnection> getConnectionsNoList(String tenantId, String connectionType, Integer batchOffset, Integer batchsize, Long fromDate, Long toDate);
 	
+	List<WaterConnection> getConnectionsNoListForDemand(String tenantId, String connectionType, Long fromDate, Long toDate);
+
 	List<String> getTenantId();
 	
 	int isBillingPeriodExists(String connectionNo, String billingPeriod);
 
 	long getConnectionCount(String tenantid, Long fromDate, Long toDate);
+	
+	List<WaterConnection> getConnection(String tenantId, String consumerCode,String connectionType,Long fromDate, Long toDate);
 
 }

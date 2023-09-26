@@ -1,29 +1,54 @@
 package org.egov.swcalculation.service;
 
+import static org.egov.swcalculation.constants.SWCalculationConstant.Assesment_Year;
+import static org.egov.swcalculation.constants.SWCalculationConstant.NEW_SEWERAGE_CONNECTION;
+import static org.egov.swcalculation.constants.SWCalculationConstant.ONE_TIME_FEE_SERVICE_FIELD;
+import static org.egov.swcalculation.constants.SWCalculationConstant.SERVICE_FIELD_VALUE_SW;
+import static org.egov.swcalculation.constants.SWCalculationConstant.SW_ADHOC_PENALTY;
+import static org.egov.swcalculation.constants.SWCalculationConstant.SW_ADHOC_REBATE;
+import static org.egov.swcalculation.constants.SWCalculationConstant.SW_SEWERAGE_CESS_MASTER;
+import static org.egov.swcalculation.constants.SWCalculationConstant.SW_TIME_ADHOC_PENALTY;
+import static org.egov.swcalculation.constants.SWCalculationConstant.SW_TIME_ADHOC_REBATE;
+import static org.egov.swcalculation.web.models.TaxHeadCategory.CHARGES;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import net.minidev.json.JSONArray;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.swcalculation.constants.SWCalculationConstant;
-import org.egov.swcalculation.util.CalculatorUtils;
-import org.egov.swcalculation.util.SewerageCessUtil;
-import org.egov.swcalculation.web.models.*;
 import org.egov.swcalculation.repository.SewerageCalculatorDao;
+import org.egov.swcalculation.util.CalculatorUtils;
 import org.egov.swcalculation.util.SWCalculationUtil;
+import org.egov.swcalculation.util.SewerageCessUtil;
+import org.egov.swcalculation.web.models.AdhocTaxReq;
+import org.egov.swcalculation.web.models.BulkBillCriteria;
+import org.egov.swcalculation.web.models.Calculation;
+import org.egov.swcalculation.web.models.CalculationCriteria;
+import org.egov.swcalculation.web.models.CalculationReq;
+import org.egov.swcalculation.web.models.Demand;
+import org.egov.swcalculation.web.models.DemandDetail;
+import org.egov.swcalculation.web.models.Property;
+import org.egov.swcalculation.web.models.SewerageConnection;
+import org.egov.swcalculation.web.models.SewerageConnectionRequest;
+import org.egov.swcalculation.web.models.TaxHeadCategory;
+import org.egov.swcalculation.web.models.TaxHeadEstimate;
+import org.egov.swcalculation.web.models.TaxHeadMaster;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import lombok.extern.slf4j.Slf4j;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-import static org.egov.swcalculation.constants.SWCalculationConstant.*;
-import static org.egov.swcalculation.web.models.TaxHeadCategory.CHARGES;
+import lombok.extern.slf4j.Slf4j;
+import net.minidev.json.JSONArray;
 
 @Service
 @Slf4j
@@ -248,6 +273,23 @@ public class SWCalculationServiceImpl implements SWCalculationService {
 		tenantIds.forEach(tenantId -> demandService.generateDemandForTenantId(tenantId, requestInfo, bulkBillCriteria));
 	}
 
+	public List<SewerageConnection> getConnnectionWithPendingDemand(RequestInfo requestInfo, BulkBillCriteria bulkBillCriteria)
+	{
+		return demandService.getConnectionPendingForDemand(requestInfo,bulkBillCriteria);
+	}
+	
+	public void generateDemandForConsumerCodeBasedOnTimePeriod(RequestInfo requestInfo, BulkBillCriteria bulkBillCriteria) {
+		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+		LocalDateTime date = LocalDateTime.now();
+		log.info("Going to generate Demand of Consumer Code" + bulkBillCriteria.getConsumerCode());
+		
+		if (bulkBillCriteria.getTenantId()==null)
+			return;
+		log.info("Tenant Ids : " + bulkBillCriteria.getTenantId());
+			demandService.generateDemandForConsumerCode(requestInfo,bulkBillCriteria);
+	
+	}
+	
 	/**
 	 * 
 	 * @param request
