@@ -29,6 +29,8 @@ public class ServiceDefinitionQueryBuilder {
     public String getServiceDefinitionsIdsQuery(ServiceDefinitionSearchRequest serviceDefinitionSearchRequest, List<Object> preparedStmtList) {
         ServiceDefinitionCriteria criteria = serviceDefinitionSearchRequest.getServiceDefinitionCriteria();
 
+        System.out.println("criteria inside query function");
+        System.out.println(criteria);
         StringBuilder query = new StringBuilder(SELECT + " DISTINCT(sd.id), sd.createdtime ");
         query.append(" FROM eg_service_definition sd ");
 
@@ -63,13 +65,16 @@ public class ServiceDefinitionQueryBuilder {
         }
 
         if(!ObjectUtils.isEmpty(criteria.getTodaysDate())){
+            System.out.println("inside gettodays date");
             if(!ObjectUtils.isEmpty(criteria.getStatus()) && criteria.getStatus().equals("Active")){
+               System.out.println("inside getstatus Active");
                addClauseIfRequired(query, preparedStmtList);
                query.append("to_timestamp((additionaldetails->>'startDate')::bigint) < to_timestamp(?::bigint)");
                query.append(" AND to_timestamp((additionaldetails->>'endDate')::bigint) > to_timestamp(?::bigint)");
                preparedStmtList.add(criteria.getTodaysDate());
                preparedStmtList.add(criteria.getTodaysDate());
             }else if(!ObjectUtils.isEmpty(criteria.getStatus()) && criteria.getStatus().equals("Inactive")){
+                System.out.println("inside getstatus Inactive");
                 addClauseIfRequired(query, preparedStmtList);
                 query.append(" to_timestamp((additionaldetails->>'startDate')::bigint) > to_timestamp(?::bigint)");
                 query.append(" AND to_timestamp((additionaldetails->>'endDate')::bigint) < to_timestamp(?::bigint)");

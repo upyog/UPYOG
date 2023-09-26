@@ -72,6 +72,8 @@ public class ServiceDefinitionRequestService {
     public List<ServiceDefinition> searchServiceDefinition(
             ServiceDefinitionSearchRequest serviceDefinitionSearchRequest) {
 
+        System.out.println("search service definition outside");
+        System.out.println(serviceDefinitionSearchRequest.getServiceDefinitionCriteria());
         if (serviceDefinitionSearchRequest.getServiceDefinitionCriteria().getStatus() != null
                 && (!serviceDefinitionSearchRequest.getServiceDefinitionCriteria().getStatus().isEmpty())
                 && (!serviceDefinitionSearchRequest.getServiceDefinitionCriteria().getStatus()
@@ -83,7 +85,7 @@ public class ServiceDefinitionRequestService {
             ServiceDefinitionCriteria ServiceDefinitionCriteria = serviceDefinitionSearchRequest.getServiceDefinitionCriteria();
             ServiceDefinitionCriteria.setTodaysDate(todayStartEpochMillis);
             serviceDefinitionSearchRequest.setServiceDefinitionCriteria(ServiceDefinitionCriteria);
-            System.out.println("search service definition");
+            System.out.println("search service definition inside");
             System.out.println(serviceDefinitionSearchRequest.getServiceDefinitionCriteria());
             List<ServiceDefinition> ListOfActiveInactiveServiceDefinitions = serviceDefinitionRequestRepository
                 .getServiceDefinitions(serviceDefinitionSearchRequest);
