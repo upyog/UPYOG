@@ -12,5 +12,4 @@ CREATE TABLE eg_pt_assessment_job
     additionaldetails character varying(255),
     error character varying(255),
     CONSTRAINT pk_eg_pt_assessment PRIMARY KEY (uuid)
-  )
 );
