@@ -1640,3 +1640,61 @@ serviceMaps:
             
             
             
+    - version: 1.0
+      description: Persists Function details in tables
+      fromTopic: save-func-application
+      isTransaction: true
+      queryMaps:
+
+        - query: INSERT INTO function (function_id,function_name,function_code,function_level,status,createdby,lastmodifiedby,createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?,?,?,?,?,?);
+          basePath: WMSFunctionApplication.*
+          jsonMaps:
+            - jsonPath: $.WMSFunctionApplication.*.function_id
+
+            - jsonPath: $.WMSFunctionApplication.*.function_name
+
+            - jsonPath: $.WMSFunctionApplication.*.function_code
+            
+            - jsonPath: $.WMSFunctionApplication.*.function_level
+            
+            - jsonPath: $.WMSFunctionApplication.*.status
+            
+            - jsonPath: $.WMSFunctionApplication.*.auditDetails.createdBy
+
+            - jsonPath: $.WMSFunctionApplication.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.WMSFunctionApplication.*.auditDetails.createdTime
+            
+            - jsonPath: $.WMSFunctionApplication.*.auditDetails.lastModifiedTime
+            
+            
+
+            
+            
+            
+            
+            
+            
+            
+    - version: 1.0
+      description: Update Function Details applications in table
+      fromTopic: update-func-application
+      isTransaction: true
+      queryMaps:
+      
+        - query: UPDATE function SET function_name = ?,function_code = ?,function_level = ?,status = ? WHERE function_id = ?;
+          basePath: WMSFunctionApplication.*
+          jsonMaps:
+            - jsonPath: $.WMSFunctionApplication.*.function_name
+
+            
+            - jsonPath: $.WMSFunctionApplication.*.function_code
+            
+            - jsonPath: $.WMSFunctionApplication.*.function_level
+            
+            - jsonPath: $.WMSFunctionApplication.*.status
+
+            - jsonPath: $.WMSFunctionApplication.*.function_id
+            
+            
+            
