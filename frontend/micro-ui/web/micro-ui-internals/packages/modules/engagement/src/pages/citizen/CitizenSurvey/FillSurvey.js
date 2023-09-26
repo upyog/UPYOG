@@ -44,23 +44,23 @@ const FillSurvey = ({ location }) => {
   const user = Digit.UserService.getUser();
   const { applicationNumber: surveyId, tenantId } = Digit.Hooks.useQueryParams();
   const { data, isLoading } = Digit.Hooks.survey.useSearch({uuid:surveyId,tenantId},{})
+  const tenantIds = Digit.ULBService.getCitizenCurrentTenant();
   let ServiceDefinitionCriteria =  {
     "tenantId": tenantId,
     "code": [],
     "module": ["engagement"],
   }
-  // let ServiceCriteria = {
-  //   tenantId: tenantId,
-  //   ids: [],
-  //   serviceDefIds: [location.state.id],
-  //   referenceIds: [location.state.code],
-  //   accountId: user?.info?.uuid || "dda30b0a-ae2d-4f87-8b52-d1fc73ed7643",
-  // }
-
-  // const { data: selecedSurveyData } = Digit.Hooks.survey.useSelectedSurveySearch({ServiceCriteria},{})
+  
   const { data: surveyQuestionData, isLoading: isLoadingSurveys } = Digit.Hooks.survey.useCfdefinitionsearch({ServiceDefinitionCriteria},{})
   const surveyData = location?.state?location.state:surveyQuestionData?.ServiceDefinition?.[0] ? surveyQuestionData?.ServiceDefinition?.[0] : {}
-
+  let ServiceCriteria = {
+    tenantId: tenantIds,
+    ids: [],
+    serviceDefIds: [],
+    referenceIds: [surveyData.code],
+    accountId: user?.info?.uuid || "dda30b0a-ae2d-4f87-8b52-d1fc73ed7643",
+  }
+  const { data: selecedSurveyData, } = Digit.Hooks.survey.useSelectedSurveySearch({ServiceCriteria},{})
   const surveyDataOld = data?.Surveys?.[0] ? data?.Surveys?.[0] : {}
   const {t} = useTranslation();
   let initialData = data;
@@ -79,31 +79,32 @@ const FillSurvey = ({ location }) => {
 
   const onSubmit = (data) => {
     const user = Digit.UserService.getUser();
-    console.log(surveyData,"surveyData");
-    console.log(data,"data")
+    if (selecedSurveyData.Service[0]){
+      setShowToast({ key: true, label: "SURVEY_FORM_IS_ALREADY_SUBMITTED" });
+    }else{
+      const details = {
+        // AnswerEntity: {
+        //   surveyId: surveyData.uuid,
+        //   answers: transformSurveyResponseData(data),
+        //   surveyTitle:surveyData.title,
+        //   hasResponded:surveyData.hasResponded,
+        // },
+        "Service": {
+          "tenantId": tenantId,
+          "serviceDefId": location.state.id,
+          "isActive": true,
+          "referenceId": location.state.code,
+          "attributes":transformSurveyResponseData(data,surveyData),
+          "additionalDetails": {},
+          "accountId" : user?.info?.uuid || "dda30b0a-ae2d-4f87-8b52-d1fc73ed7643",
+        }
+      };
+  
+      history.push("/digit-ui/citizen/engagement/surveys/submit-response", details);
+    }
 
-    const details = {
-      // AnswerEntity: {
-      //   surveyId: surveyData.uuid,
-      //   answers: transformSurveyResponseData(data),
-      //   surveyTitle:surveyData.title,
-      //   hasResponded:surveyData.hasResponded,
-      // },
-      "Service": {
-        "tenantId": tenantId,
-        "serviceDefId": location.state.id,
-        "isActive": true,
-        "referenceId": location.state.code,
-        "attributes":transformSurveyResponseData(data,surveyData),
-        "additionalDetails": {},
-        "accountId" : user?.info?.uuid || "dda30b0a-ae2d-4f87-8b52-d1fc73ed7643",
-      }
-    };
-
-    console.log(details,"details");
-    history.push("/digit-ui/citizen/engagement/surveys/submit-response", details);
+    
   };
-
 
   if(Object.keys(surveyData)?.length > 0 || isLoadingSurveys)
   return <CitizenSurveyDisplayForm surveyData={surveyData} isSubmitDisabled={showToast? true : false} isLoading={isLoading} onFormSubmit={onSubmit} formDisabled={showToast? true : false} showToast={showToast} />;
