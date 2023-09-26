@@ -15,6 +15,8 @@ public enum CreationReason {
   
   MUTATION ("MUTATION"),
   
+  STATUS("STATUS"),
+  
   LEGACY_ENTRY ("LEGACY_ENTRY"),
   
   BIFURCATION ("BIFURCATION"),

@@ -93,6 +93,12 @@ public class Property extends PropertyInfo {
 	@Valid
 	private List<Unit> units;
 
+	@JsonProperty("dueAmount")
+	private String dueAmount;
+	
+	@JsonProperty("dueAmountYear")
+	private String dueAmountYear;
+	
 	@DiffIgnore
 	@JsonProperty("additionalDetails")
 	private JsonNode additionalDetails;

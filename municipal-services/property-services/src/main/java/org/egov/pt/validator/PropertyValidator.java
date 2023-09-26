@@ -585,6 +585,8 @@ public class PropertyValidator {
 				&& CollectionUtils.isEmpty(criteria.getUuids())
 				&& null == criteria.getMobileNumber()
 				&& null == criteria.getName()
+				&& null == criteria.getDocumentNumbers()
+				&& null == criteria.getPropertyType()
 				&& null == criteria.getDoorNo()
 				&& null == criteria.getOldPropertyId()
 				&& (null == criteria.getFromDate() && null == criteria.getToDate());

@@ -1,8 +1,20 @@
 package org.egov.swcalculation.service;
 
+import static org.egov.swcalculation.constants.SWCalculationConstant.ONE_TIME_FEE_SERVICE_FIELD;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -19,8 +31,25 @@ import org.egov.swcalculation.repository.SewerageCalculatorDao;
 import org.egov.swcalculation.util.CalculatorUtils;
 import org.egov.swcalculation.util.SWCalculationUtil;
 import org.egov.swcalculation.validator.SWCalculationWorkflowValidator;
-import org.egov.swcalculation.web.models.*;
+import org.egov.swcalculation.web.models.BulkBillCriteria;
+import org.egov.swcalculation.web.models.Calculation;
+import org.egov.swcalculation.web.models.CalculationCriteria;
+import org.egov.swcalculation.web.models.CalculationReq;
+import org.egov.swcalculation.web.models.Demand;
 import org.egov.swcalculation.web.models.Demand.StatusEnum;
+import org.egov.swcalculation.web.models.DemandDetail;
+import org.egov.swcalculation.web.models.DemandDetailAndCollection;
+import org.egov.swcalculation.web.models.DemandNotificationObj;
+import org.egov.swcalculation.web.models.DemandRequest;
+import org.egov.swcalculation.web.models.DemandResponse;
+import org.egov.swcalculation.web.models.GetBillCriteria;
+import org.egov.swcalculation.web.models.MigrationCount;
+import org.egov.swcalculation.web.models.Property;
+import org.egov.swcalculation.web.models.RequestInfoWrapper;
+import org.egov.swcalculation.web.models.SewerageConnection;
+import org.egov.swcalculation.web.models.SewerageConnectionRequest;
+import org.egov.swcalculation.web.models.TaxHeadEstimate;
+import org.egov.swcalculation.web.models.TaxPeriod;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -31,8 +60,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
-
-import static org.egov.swcalculation.constants.SWCalculationConstant.ONE_TIME_FEE_SERVICE_FIELD;
 
 @Service
 @Slf4j
@@ -737,6 +764,96 @@ public class DemandService {
 
 		return isCurrentDemand;
 	}
+	
+	public void generateDemandForConsumerCode(RequestInfo requestInfo, BulkBillCriteria bulkBillCriteria) {
+		Map<String, Object> billingMasterData = calculatorUtils.loadBillingFrequencyMasterData(requestInfo,  bulkBillCriteria.getTenantId());
+		long startDay = (((int) billingMasterData.get(SWCalculationConstant.Demand_Generate_Date_String)) / 86400000);
+		if(isCurrentDateIsMatching((String) billingMasterData.get(SWCalculationConstant.Billing_Cycle_String), startDay)) {
+
+			Map<String, Object> masterMap = masterDataService.loadMasterData(requestInfo,  bulkBillCriteria.getTenantId());
+
+			ArrayList<?> billingFrequencyMap = (ArrayList<?>) masterMap
+					.get(SWCalculationConstant.Billing_Period_Master);
+			masterDataService.enrichBillingPeriod(null, billingFrequencyMap, masterMap, SWCalculationConstant.nonMeterdConnection);
+
+			Map<String, Object> financialYearMaster =  (Map<String, Object>) masterMap
+					.get(SWCalculationConstant.BILLING_PERIOD);
+
+			Long fromDate = (Long) financialYearMaster.get(SWCalculationConstant.STARTING_DATE_APPLICABLES);
+			Long toDate = (Long) financialYearMaster.get(SWCalculationConstant.ENDING_DATE_APPLICABLES);
+
+			List<SewerageConnection> connections = sewerageCalculatorDao.getConnection( bulkBillCriteria.getTenantId(),bulkBillCriteria.getConsumerCode(),
+							SWCalculationConstant.nonMeterdConnection, fromDate, toDate);
+					log.info("Size of the connection list for batch : "+ connections.size());
+					connections = enrichmentService.filterConnections(connections);
+					
+					if(connections.size()>0){
+						List<CalculationCriteria> calculationCriteriaList = new ArrayList<>();
+
+						for (SewerageConnection connection : connections) {
+							CalculationCriteria calculationCriteria = CalculationCriteria.builder().tenantId( bulkBillCriteria.getTenantId())
+									.assessmentYear(estimationService.getAssessmentYear()).connectionNo(connection.getConnectionNo())
+									.sewerageConnection(connection).build();
+							calculationCriteriaList.add(calculationCriteria);
+						}
+
+						/*MigrationCount migrationCount = MigrationCount.builder().id(UUID.randomUUID().toString()).offset(Long.valueOf(batchOffset)).limit(Long.valueOf(batchsize)).recordCount(Long.valueOf(connectionNos.size()))
+								.tenantid(tenantId).createdTime(System.currentTimeMillis()).businessService("SW").build();*/
+
+						MigrationCount migrationCount = MigrationCount.builder()
+								.tenantid( bulkBillCriteria.getTenantId())
+								.businessService("SW")
+								.limit((long)1.00)
+								.id(UUID.randomUUID().toString())
+								.offset((long)1.00)								
+								.createdTime(System.currentTimeMillis())
+								.recordCount(Long.valueOf(connections.size()))
+								.build();
+
+						CalculationReq calculationReq = CalculationReq.builder()
+								.calculationCriteria(calculationCriteriaList)
+								.requestInfo(requestInfo)
+								.isconnectionCalculation(true)
+								.migrationCount(migrationCount).build();
+						
+						kafkaTemplate.send(configs.getCreateDemand(), calculationReq);
+						log.info("Bulk bill Gen batch info : " + migrationCount);
+						calculationCriteriaList.clear();
+					}
+					}
+
+	}
+	
+	
+	public List<SewerageConnection> getConnectionPendingForDemand(RequestInfo requestInfo, BulkBillCriteria bulkBillCriteria) {
+		Map<String, Object> billingMasterData = calculatorUtils.loadBillingFrequencyMasterData(requestInfo, bulkBillCriteria.getTenantId());
+		List<SewerageConnection> connections=new ArrayList<SewerageConnection>();
+
+		long startDay = (((int) billingMasterData.get(SWCalculationConstant.Demand_Generate_Date_String)) / 86400000);
+		if(isCurrentDateIsMatching((String) billingMasterData.get(SWCalculationConstant.Billing_Cycle_String), startDay)) {
+
+			Map<String, Object> masterMap = masterDataService.loadMasterData(requestInfo, bulkBillCriteria.getTenantId());
+
+			ArrayList<?> billingFrequencyMap = (ArrayList<?>) masterMap
+					.get(SWCalculationConstant.Billing_Period_Master);
+			masterDataService.enrichBillingPeriod(null, billingFrequencyMap, masterMap, SWCalculationConstant.nonMeterdConnection);
+
+			Map<String, Object> financialYearMaster =  (Map<String, Object>) masterMap
+					.get(SWCalculationConstant.BILLING_PERIOD);
+
+			Long fromDate = (Long) financialYearMaster.get(SWCalculationConstant.STARTING_DATE_APPLICABLES);
+			Long toDate = (Long) financialYearMaster.get(SWCalculationConstant.ENDING_DATE_APPLICABLES);
+
+			connections = sewerageCalculatorDao.getConnectionsNoListForDemand(bulkBillCriteria.getTenantId(),
+							SWCalculationConstant.nonMeterdConnection, fromDate, toDate);
+					log.info("Size of the connection list for batch : "+ connections.size());
+					connections = enrichmentService.filterConnections(connections);
+					
+										}
+					return connections;
+
+	}
+
 	
 	/**
 	 * 

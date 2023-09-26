@@ -15,6 +15,17 @@ const getApplicationVehicleCapacity = (vehicleCapacity) => {
   return vehicleCapacity;
 };
 
+const getDistanceofPitFromRoad = (distancefromroad) => {
+  if (!distancefromroad) return "N/A";
+  return distancefromroad;
+};
+
+const getRoadWidth = (roadWidth) => {
+  if (!roadWidth) return "N/A";
+  return roadWidth;
+};
+
+
 const getAmountPerTrip = (amountPerTrip) => {
   if (!amountPerTrip) return "N/A";
   return amountPerTrip !== 0 ? `₹ ${amountPerTrip}` : "N/A";
@@ -115,6 +126,14 @@ const getPDFData = (application, tenantInfo, t) => {
           {
             title: t("ES_APPLICATION_DETAILS_VEHICLE_CAPACITY"),
             value: getApplicationVehicleCapacity(application?.vehicleCapacity),
+          },
+          {
+            title: t("ES_APPLICATION_DETAILS_DISTANCE_FROM_ROAD"),
+            value: getDistanceofPitFromRoad(application?.additionalDetails.distancefromroad) || "N/A",
+          },
+          {
+            title: t("ES_APPLICATION_DETAILS_ROAD_WIDTH"),
+            value: getRoadWidth(application?.additionalDetails.roadWidth) || "N/A",
           },
           { title: t("CS_APPLICATION_DETAILS_TRIPS"), value: application?.noOfTrips || "N/A" },
           {

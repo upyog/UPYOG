@@ -51,6 +51,7 @@ import static org.egov.demand.util.Constants.URL_PARAM_SEPERATOR;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
@@ -160,6 +161,9 @@ public class BillServicev2 {
 	
 	private static List<String> ownerPlainRequestFieldsList;
 	
+	
+	private List<String> ADVANCE_ALLOWED_BUSINESS_SERVICES=Arrays.asList("WS","SW");
+	
 	/**
 	 * Cancell bill operation can be carried by this method, based on consumerCodes
 	 * and businessService.
@@ -231,7 +235,13 @@ public class BillServicev2 {
 		 * If no existing bills found then Generate new bill 
 		 */
 		if (CollectionUtils.isEmpty(bills))
+		{
+			log.info( "If bills are empty" +bills.size());
+			if(!billCriteria.getBusinessService().equalsIgnoreCase("WS") && !billCriteria.getBusinessService().equalsIgnoreCase("SW"))
+			updateDemandsForexpiredBillDetails(billCriteria.getBusinessService(), billCriteria.getConsumerCode(), billCriteria.getTenantId(), requestInfoWrapper);
 			return generateBill(billCriteria, requestInfo);
+		}
+		
 		
 		/*
 		 * Adding consumer-codes of unbilled demands to generate criteria
@@ -365,17 +375,31 @@ public class BillServicev2 {
 		if (billCriteria.getConsumerCode() != null)
 			consumerCodes.addAll(billCriteria.getConsumerCode());
 
-		DemandCriteria demandCriteria = DemandCriteria.builder()
+		DemandCriteria demandCriteria=new DemandCriteria();
+		if(billCriteria.getBusinessService().equalsIgnoreCase("WS") || billCriteria.getBusinessService().equalsIgnoreCase("SW"))
+			demandCriteria = DemandCriteria.builder()
 				.status(org.egov.demand.model.Demand.StatusEnum.ACTIVE.toString())
 				.businessService(billCriteria.getBusinessService())
 				.mobileNumber(billCriteria.getMobileNumber())
 				.tenantId(billCriteria.getTenantId())
 				.email(billCriteria.getEmail())
 				.consumerCode(consumerCodes)
-				.isPaymentCompleted(false)
+				//.isPaymentCompleted(false)
 				.receiptRequired(false)
 				.demandId(demandIds)
 				.build();
+		else
+			demandCriteria = DemandCriteria.builder()
+			.status(org.egov.demand.model.Demand.StatusEnum.ACTIVE.toString())
+			.businessService(billCriteria.getBusinessService())
+			.mobileNumber(billCriteria.getMobileNumber())
+			.tenantId(billCriteria.getTenantId())
+			.email(billCriteria.getEmail())
+			.consumerCode(consumerCodes)
+			.isPaymentCompleted(false)
+			.receiptRequired(false)
+			.demandId(demandIds)
+			.build();
 		
 
 		/* Fetching demands for the given bill search criteria */
@@ -433,7 +457,8 @@ public class BillServicev2 {
 	 */
 	private List<BillV2> prepareBill(List<Demand> demands, RequestInfo requestInfo) {
 
-		
+		log.info("Demand received in prepare Bill are of size "+ demands.size() );
+		log.info("Demands are::"+demands);
 		List<BillV2> bills = new ArrayList<>();
 		User payer = null != demands.get(0).getPayer() ? demands.get(0).getPayer() : new User();
 		if (payer.getUuid() != null)
@@ -489,7 +514,7 @@ public class BillServicev2 {
 					billAmount = billAmount.add(billDetail.getAmount());
 				}
 				
-				if (billAmount.compareTo(BigDecimal.ZERO) >= 0) {
+				if ((billAmount.compareTo(BigDecimal.ZERO) >= 0) || (billAmount.compareTo(BigDecimal.ZERO) < 0 && ADVANCE_ALLOWED_BUSINESS_SERVICES.contains(demands.get(0).getBusinessService()))) {
 
 					BillV2 bill = BillV2.builder()
 						.auditDetails(util.getAuditDetail(requestInfo))

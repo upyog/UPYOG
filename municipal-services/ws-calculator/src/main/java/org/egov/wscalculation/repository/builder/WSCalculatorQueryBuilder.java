@@ -67,6 +67,41 @@ public class WSCalculatorQueryBuilder {
 	/*		+ INNER_JOIN_STRING
 			+ " egbs_demand_v1 as dmd on dmd.consumercode = conn.connectionno";*/
 
+	private static final String WATER_SEARCH_CONNECTION_QUERY = "SELECT conn.*, wc.*, plumber.*, wc.connectionCategory, wc.connectionType, wc.waterSource,"
+			+ " wc.meterId, wc.meterInstallationDate, wc.pipeSize, wc.noOfTaps, wc.proposedPipeSize, wc.proposedTaps, wc.connection_id as connection_Id, wc.connectionExecutionDate, wc.initialmeterreading, wc.appCreatedDate,"
+			+ " wc.detailsprovidedby, wc.estimationfileStoreId , wc.sanctionfileStoreId , wc.estimationLetterDate,"
+			+ " conn.id as conn_id, conn.tenantid, conn.applicationNo, conn.applicationStatus, conn.status, conn.connectionNo, conn.oldConnectionNo, conn.property_id, conn.roadcuttingarea,"
+			+ " conn.action, conn.adhocpenalty, conn.adhocrebate, conn.adhocpenaltyreason, conn.applicationType, conn.dateEffectiveFrom,"
+			+ " conn.adhocpenaltycomment, conn.adhocrebatereason, conn.adhocrebatecomment, conn.createdBy as ws_createdBy, conn.lastModifiedBy as ws_lastModifiedBy,"
+			+ " conn.createdTime as ws_createdTime, conn.lastModifiedTime as ws_lastModifiedTime,conn.additionaldetails, "
+			+ " conn.locality, conn.isoldapplication, conn.roadtype,plumber.id as plumber_id,"
+			+ " plumber.name as plumber_name, plumber.licenseno, roadcuttingInfo.id as roadcutting_id, roadcuttingInfo.roadtype as roadcutting_roadtype, roadcuttingInfo.roadcuttingarea as roadcutting_roadcuttingarea, roadcuttingInfo.roadcuttingarea as roadcutting_roadcuttingarea,"
+			+ " roadcuttingInfo.active as roadcutting_active, plumber.mobilenumber as plumber_mobileNumber, plumber.gender as plumber_gender, plumber.fatherorhusbandname, plumber.correspondenceaddress,"
+			+ " plumber.relationship, " + holderSelectValues
+			+ " FROM eg_ws_connection conn "
+			+  INNER_JOIN_STRING
+			+" eg_ws_service wc ON wc.connection_id = conn.id"
+			+  LEFT_OUTER_JOIN_STRING
+			+ "eg_ws_plumberinfo plumber ON plumber.wsid = conn.id"
+			+  LEFT_OUTER_JOIN_STRING
+			+ "eg_ws_connectionholder connectionholder ON connectionholder.connectionid = conn.id"
+			+  LEFT_OUTER_JOIN_STRING
+			+ "eg_ws_roadcuttinginfo roadcuttingInfo ON roadcuttingInfo.wsid = conn.id ";
+
+	
+	private static final String WATER_SEARCH_DEMAND_QUERY = "SELECT conn.*, wc.*, wc.connectionCategory, wc.connectionType, wc.waterSource,"
+			+ " wc.meterId, wc.meterInstallationDate, wc.pipeSize, wc.noOfTaps, wc.proposedPipeSize, wc.proposedTaps, wc.connection_id as connection_Id, wc.connectionExecutionDate, wc.initialmeterreading, wc.appCreatedDate,"
+			+ " wc.detailsprovidedby, wc.estimationfileStoreId , wc.sanctionfileStoreId , wc.estimationLetterDate,"
+			+ " conn.id as conn_id, conn.tenantid, conn.applicationNo, conn.applicationStatus, conn.status, conn.connectionNo, conn.oldConnectionNo, conn.property_id, conn.roadcuttingarea,"
+			+ " conn.action, conn.adhocpenalty, conn.adhocrebate, conn.adhocpenaltyreason, conn.applicationType, conn.dateEffectiveFrom,"
+			+ " conn.adhocpenaltycomment, conn.adhocrebatereason, conn.adhocrebatecomment, conn.createdBy as ws_createdBy, conn.lastModifiedBy as ws_lastModifiedBy,"
+			+ " conn.createdTime as ws_createdTime, conn.lastModifiedTime as ws_lastModifiedTime,conn.additionaldetails, "
+			+ " conn.locality, conn.isoldapplication, conn.roadtype,"+ holderSelectValues
+			+ " FROM eg_ws_connection conn "
+			+  INNER_JOIN_STRING
+			+" eg_ws_service wc ON wc.connection_id = conn.id"
+			+  LEFT_OUTER_JOIN_STRING
+			+ "eg_ws_connectionholder connectionholder ON connectionholder.connectionid = conn.id";
 
 	public String getDistinctTenantIds() {
 		return distinctTenantIdsCriteria;
@@ -226,7 +261,66 @@ public class WSCalculatorQueryBuilder {
 		return query.toString();
 		
 	}
-	
+
+	public String getConnectionNumberListForDemand(String tenantId, String connectionType, List<Object> preparedStatement, Long fromDate, Long toDate) {
+		//StringBuilder query = new StringBuilder(connectionNoListQuery);
+		//StringBuilder query = new StringBuilder(connectionNoListQuery);
+		StringBuilder query = new StringBuilder(WATER_SEARCH_DEMAND_QUERY);
+		// Add connection type
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" wc.connectiontype = ? ");
+		preparedStatement.add(connectionType);
+		// add tenantid
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" conn.tenantid = ? ");
+		preparedStatement.add(tenantId);
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" conn.connectionno is not null");
+		
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" conn.connectionno NOT IN (select distinct(consumercode) from egbs_demand_v1 dmd where (dmd.taxperiodfrom >= ? and dmd.taxperiodto <= ?) and businessservice = 'WS' and tenantid=?)");
+		preparedStatement.add(fromDate);
+		preparedStatement.add(toDate);
+		preparedStatement.add(tenantId);
+		
+		//addClauseIfRequired(preparedStatement, query);
+		String orderbyClause = " order by conn.connectionno";
+		query.append(orderbyClause);
+
+		return query.toString();
+		
+	}
+
+	public String getConnectionNumber(String tenantId, String consumerCode,String connectionType, List<Object> preparedStatement,Long fromDate, Long toDate) {
+		//StringBuilder query = new StringBuilder(connectionNoListQuery);
+		//StringBuilder query = new StringBuilder(connectionNoListQuery);
+		StringBuilder query = new StringBuilder(WATER_SEARCH_CONNECTION_QUERY);
+		// Add connection type
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" wc.connectiontype = ? ");
+		preparedStatement.add(connectionType);
+		// add tenantid
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" conn.tenantid = ? ");
+		preparedStatement.add(tenantId);
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" conn.connectionno is not null");
+		
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" conn.connectionno NOT IN (select distinct(consumercode) from egbs_demand_v1 dmd where (dmd.taxperiodfrom >= ? and dmd.taxperiodto <= ?) and businessservice = 'WS' and tenantid=? and consumercode = ?)");
+		preparedStatement.add(fromDate);
+		preparedStatement.add(toDate);
+		preparedStatement.add(tenantId);
+		preparedStatement.add(consumerCode);
+		
+		addClauseIfRequired(preparedStatement, query);
+		String orderbyClause = " conn.connectionno =? ";
+		preparedStatement.add(consumerCode);
+		query.append(orderbyClause);
+
+		return query.toString();
+		
+	}
 	public String isBillingPeriodExists(String connectionNo, String billingPeriod, List<Object> preparedStatement) {
 		StringBuilder query = new StringBuilder(noOfConnectionSearchQuery);
 		query.append(" connectionNo = ? ");
