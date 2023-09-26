@@ -192,7 +192,7 @@ public class AssessmentService {
 	
 	
 	 @SuppressWarnings("unchecked")
-	public void createAssessmentsForFY(CreateAssessmentRequest assessmentRequest) {
+	public List<Assessment> createAssessmentsForFY(CreateAssessmentRequest assessmentRequest) {
 		//Map<String, Map<String, Object>> scheduledTenants = fetchScheduledTenants(assessmentRequest.getRequestInfo());
 		//User user = userService.fetchPTAsseessmentUser();
 		RequestInfo requestInfo = assessmentRequest.getRequestInfo();
@@ -210,9 +210,6 @@ public class AssessmentService {
 			//		: (Boolean) configData.get(CalculatorConstants.IS_RENTED));
 			List<Property> properties = repository.fetchAllActiveProperties(assessmentRequest);
 			List<Assessment> assessedProperties=new ArrayList<Assessment>();
-			int assessmentSuccessCount=0,assessmentFailedCount=0;
-			
-			repository.saveAssessmentJobDetails(properties.size(),0,0, "INTIATED","Assessment", assessmentRequest);
 			for (Property property : properties) {
 				boolean isExists = repository.isAssessmentExists(property.getPropertyId(),
 						assessmentRequest.getAssessmentYear(), property.getTenantId());
@@ -232,20 +229,16 @@ public class AssessmentService {
 						Assessment createdAsessment = response.getAssessments().get(0);
 						repository.saveAssessmentGenerationDetails(createdAsessment, "SUCCESS","Assessment", null);
 						assessedProperties.add(createdAsessment);
-						assessmentSuccessCount++;
 					} catch (HttpClientErrorException e) {
 						repository.saveAssessmentGenerationDetails(assessment, "FAILED","Assessment", e.toString());
-						assessmentFailedCount++;
 					} catch (Exception e) {
 						repository.saveAssessmentGenerationDetails(assessment, "FAILED","Assessment", e.toString());
-						assessmentFailedCount++;
 					}
 
 				}
 
 			}
-			repository.updateAssessmentJobDetails("NA",assessmentSuccessCount,assessmentFailedCount, "COMPLETED");
-			//return assessedProperties;
+			return assessedProperties;
 		//}
 
 	}

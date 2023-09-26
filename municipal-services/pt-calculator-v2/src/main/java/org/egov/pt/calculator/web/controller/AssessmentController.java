@@ -27,14 +27,15 @@ public class AssessmentController {
 	@PostMapping("/_jobscheduler")
 	public ResponseEntity<Object> create(@Valid @RequestBody CreateAssessmentRequest assessmentRequest) {
 
-		assessmentService.createAssessmentsForFY(assessmentRequest);
-		return new ResponseEntity<>("Assessments are generated for the configured tenants.", HttpStatus.CREATED);
+		List<Assessment> assessedProperties=assessmentService.createAssessmentsForFY(assessmentRequest);
+        return new ResponseEntity<>(new AssessmentResponse(new ResponseInfo(),assessedProperties), HttpStatus.OK);
+
 	}
 	@PostMapping("/_create")
 	public ResponseEntity<Object> createAssessment(@Valid @RequestBody CreateAssessmentRequest assessmentRequest) {
 
-		assessmentService.createAssessmentsForFY(assessmentRequest);
-		return new ResponseEntity<>("Assessments are generated for the configured tenants.", HttpStatus.CREATED);
+		List<Assessment> assessedProperties=assessmentService.createAssessmentsForFY(assessmentRequest);
+        return new ResponseEntity<>(new AssessmentResponse(new ResponseInfo(),assessedProperties), HttpStatus.OK);
 
 	}
 	
