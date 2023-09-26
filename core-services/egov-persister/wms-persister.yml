@@ -386,7 +386,7 @@ serviceMaps:
       isTransaction: true
       queryMaps:
 
-        - query: INSERT INTO tender_entry (tender_id,department_name,request_category,project_name,resolution_no,resolution_date,prebid_meeting_date,prebid_meeting_location,issue_from_date,issue_till_date,publish_date,technical_bid_open_date,financial_bid_open_date,validity,upload_document,work_no,work_description,estimated_cost,tender_type,tender_fee,emd,vendor_class,work_duration,createdby,lastmodifiedby,createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
+        - query: INSERT INTO tender_entry (tender_id,department_name,request_category,project_name,resolution_no,resolution_date,prebid_meeting_date,prebid_meeting_location,issue_from_date,issue_till_date,publish_date,technical_bid_open_date,financial_bid_open_date,validity,upload_document,createdby,lastmodifiedby,createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?,?,?,?,?,?,?);
           basePath: WMSTenderEntryApplication.*
           jsonMaps:
             - jsonPath: $.WMSTenderEntryApplication.*.tender_id
@@ -419,22 +419,6 @@ serviceMaps:
             
             - jsonPath: $.WMSTenderEntryApplication.*.upload_document
             
-            - jsonPath: $.WMSTenderEntryApplication.*.work_no
-            
-            - jsonPath: $.WMSTenderEntryApplication.*.work_description
-            
-            - jsonPath: $.WMSTenderEntryApplication.*.estimated_cost
-            
-            - jsonPath: $.WMSTenderEntryApplication.*.tender_type
-            
-            - jsonPath: $.WMSTenderEntryApplication.*.tender_fee
-            
-            - jsonPath: $.WMSTenderEntryApplication.*.emd
-            
-            - jsonPath: $.WMSTenderEntryApplication.*.vendor_class
-            
-            - jsonPath: $.WMSTenderEntryApplication.*.work_duration	
-            
             - jsonPath: $.WMSTenderEntryApplication.*.auditDetails.createdBy
 
             - jsonPath: $.WMSTenderEntryApplication.*.auditDetails.lastModifiedBy
@@ -452,7 +436,7 @@ serviceMaps:
       isTransaction: true
       queryMaps:
       
-        - query: UPDATE tender_entry SET department_name = ?,request_category =?,project_name=?,resolution_no=?,resolution_date = ?, prebid_meeting_date = ?, prebid_meeting_location = ?, issue_from_date = ?, issue_till_date = ?, publish_date = ?, technical_bid_open_date = ?, financial_bid_open_date = ?, validity = ?, upload_document = ?, work_no = ?, work_description = ?, estimated_cost = ?, tender_type = ?, tender_fee = ?, emd = ?, vendor_class = ?, work_duration = ? WHERE tender_id=?;
+        - query: UPDATE tender_entry SET department_name = ?,request_category =?,project_name=?,resolution_no=?,resolution_date = ?, prebid_meeting_date = ?, prebid_meeting_location = ?, issue_from_date = ?, issue_till_date = ?, publish_date = ?, technical_bid_open_date = ?, financial_bid_open_date = ?, validity = ?, upload_document = ? WHERE tender_id=?;
           basePath: WMSTenderEntryApplication.*
           jsonMaps:
             - jsonPath: $.WMSTenderEntryApplication.*.department_name
@@ -482,22 +466,6 @@ serviceMaps:
             - jsonPath: $.WMSTenderEntryApplication.*.validity
             
             - jsonPath: $.WMSTenderEntryApplication.*.upload_document
-            
-            - jsonPath: $.WMSTenderEntryApplication.*.work_no
-            
-            - jsonPath: $.WMSTenderEntryApplication.*.work_description
-            
-            - jsonPath: $.WMSTenderEntryApplication.*.estimated_cost
-            
-            - jsonPath: $.WMSTenderEntryApplication.*.tender_type
-            
-            - jsonPath: $.WMSTenderEntryApplication.*.tender_fee
-            
-            - jsonPath: $.WMSTenderEntryApplication.*.emd
-            
-            - jsonPath: $.WMSTenderEntryApplication.*.vendor_class
-            
-            - jsonPath: $.WMSTenderEntryApplication.*.work_duration	
             
             - jsonPath: $.ProjectApplication.*.tender_id
             

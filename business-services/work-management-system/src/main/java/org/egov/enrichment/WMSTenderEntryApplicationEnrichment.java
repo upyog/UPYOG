@@ -89,14 +89,17 @@ public class WMSTenderEntryApplicationEnrichment {
 			existingApplication.get(0).setFinancialBidOpenDate(application.getFinancialBidOpenDate());
 			existingApplication.get(0).setValidity(application.getValidity());
 			existingApplication.get(0).setUploadDocument(application.getUploadDocument());
-			existingApplication.get(0).setWorkNo(application.getWorkNo());
-			existingApplication.get(0).setWorkDescription(application.getWorkDescription());
-			existingApplication.get(0).setEstimatedCost(application.getEstimatedCost());
-			existingApplication.get(0).setTenderType(application.getTenderType());
-			existingApplication.get(0).setTenderFee(application.getTenderFee());
-			existingApplication.get(0).setEmd(application.getEmd());
-			existingApplication.get(0).setVendorClass(application.getVendorClass());
-			existingApplication.get(0).setWorkDuration(application.getWorkDuration());
+			/*
+			 * existingApplication.get(0).setWorkNo(application.getWorkNo());
+			 * existingApplication.get(0).setWorkDescription(application.getWorkDescription(
+			 * ));
+			 * existingApplication.get(0).setEstimatedCost(application.getEstimatedCost());
+			 * existingApplication.get(0).setTenderType(application.getTenderType());
+			 * existingApplication.get(0).setTenderFee(application.getTenderFee());
+			 * existingApplication.get(0).setEmd(application.getEmd());
+			 * existingApplication.get(0).setVendorClass(application.getVendorClass());
+			 * existingApplication.get(0).setWorkDuration(application.getWorkDuration());
+			 */
 //			application.setEndDate(date);
 			// application.getAuditDetails().setLastModifiedBy(birthRegistrationRequest.getRequestInfo().getUserInfo().getUuid());
 		}

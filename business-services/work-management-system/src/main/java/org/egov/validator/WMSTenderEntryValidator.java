@@ -96,46 +96,47 @@ public class WMSTenderEntryValidator {
 	            if(ObjectUtils.isEmpty(application.getUploadDocument()))
 	                throw new CustomException("EG_WMS_APP_ERR", "UploadDocument is mandatory for creating Tender Entry applications");
 	        });
-	    	
-	    	wmsTenderEntryRequest.getWmsTenderEntryApplications().forEach(application -> {
-	            if(ObjectUtils.isEmpty(application.getWorkNo()))
-	                throw new CustomException("EG_WMS_APP_ERR", "WorkNo is mandatory for creating Tender Entry applications");
-	        });
-	    	
-	    	wmsTenderEntryRequest.getWmsTenderEntryApplications().forEach(application -> {
-	            if(ObjectUtils.isEmpty(application.getWorkDescription()))
-	                throw new CustomException("EG_WMS_APP_ERR", "WorkDescription is mandatory for creating Tender Entry applications");
-	        });
-	    	
-	    	wmsTenderEntryRequest.getWmsTenderEntryApplications().forEach(application -> {
-	            if(ObjectUtils.isEmpty(application.getEstimatedCost()))
-	                throw new CustomException("EG_WMS_APP_ERR", "EstimatedCost is mandatory for creating Tender Entry applications");
-	        });
-	    	
-	    	wmsTenderEntryRequest.getWmsTenderEntryApplications().forEach(application -> {
-	            if(ObjectUtils.isEmpty(application.getTenderType()))
-	                throw new CustomException("EG_WMS_APP_ERR", "TenderType is mandatory for creating Tender Entry applications");
-	        });
-	    	
-	    	wmsTenderEntryRequest.getWmsTenderEntryApplications().forEach(application -> {
-	            if(ObjectUtils.isEmpty(application.getTenderFee()))
-	                throw new CustomException("EG_WMS_APP_ERR", "TenderFee is mandatory for creating Tender Entry applications");
-	        });
-	    	
-	    	wmsTenderEntryRequest.getWmsTenderEntryApplications().forEach(application -> {
-	            if(ObjectUtils.isEmpty(application.getEmd()))
-	                throw new CustomException("EG_WMS_APP_ERR", "Emd is mandatory for creating Tender Entry applications");
-	        });
-	    	
-	    	wmsTenderEntryRequest.getWmsTenderEntryApplications().forEach(application -> {
-	            if(ObjectUtils.isEmpty(application.getVendorClass()))
-	                throw new CustomException("EG_WMS_APP_ERR", "VendorClass is mandatory for creating Tender Entry applications");
-	        });
-	    	
-	    	wmsTenderEntryRequest.getWmsTenderEntryApplications().forEach(application -> {
-	            if(ObjectUtils.isEmpty(application.getWorkDuration()))
-	                throw new CustomException("EG_WMS_APP_ERR", "WorkDuration is mandatory for creating Tender Entry applications");
-	        });
+			/*
+			 * wmsTenderEntryRequest.getWmsTenderEntryApplications().forEach(application ->
+			 * { if(ObjectUtils.isEmpty(application.getWorkNo())) throw new
+			 * CustomException("EG_WMS_APP_ERR",
+			 * "WorkNo is mandatory for creating Tender Entry applications"); });
+			 * 
+			 * wmsTenderEntryRequest.getWmsTenderEntryApplications().forEach(application ->
+			 * { if(ObjectUtils.isEmpty(application.getWorkDescription())) throw new
+			 * CustomException("EG_WMS_APP_ERR",
+			 * "WorkDescription is mandatory for creating Tender Entry applications"); });
+			 * 
+			 * wmsTenderEntryRequest.getWmsTenderEntryApplications().forEach(application ->
+			 * { if(ObjectUtils.isEmpty(application.getEstimatedCost())) throw new
+			 * CustomException("EG_WMS_APP_ERR",
+			 * "EstimatedCost is mandatory for creating Tender Entry applications"); });
+			 * 
+			 * wmsTenderEntryRequest.getWmsTenderEntryApplications().forEach(application ->
+			 * { if(ObjectUtils.isEmpty(application.getTenderType())) throw new
+			 * CustomException("EG_WMS_APP_ERR",
+			 * "TenderType is mandatory for creating Tender Entry applications"); });
+			 * 
+			 * wmsTenderEntryRequest.getWmsTenderEntryApplications().forEach(application ->
+			 * { if(ObjectUtils.isEmpty(application.getTenderFee())) throw new
+			 * CustomException("EG_WMS_APP_ERR",
+			 * "TenderFee is mandatory for creating Tender Entry applications"); });
+			 * 
+			 * wmsTenderEntryRequest.getWmsTenderEntryApplications().forEach(application ->
+			 * { if(ObjectUtils.isEmpty(application.getEmd())) throw new
+			 * CustomException("EG_WMS_APP_ERR",
+			 * "Emd is mandatory for creating Tender Entry applications"); });
+			 * 
+			 * wmsTenderEntryRequest.getWmsTenderEntryApplications().forEach(application ->
+			 * { if(ObjectUtils.isEmpty(application.getVendorClass())) throw new
+			 * CustomException("EG_WMS_APP_ERR",
+			 * "VendorClass is mandatory for creating Tender Entry applications"); });
+			 * 
+			 * wmsTenderEntryRequest.getWmsTenderEntryApplications().forEach(application ->
+			 * { if(ObjectUtils.isEmpty(application.getWorkDuration())) throw new
+			 * CustomException("EG_WMS_APP_ERR",
+			 * "WorkDuration is mandatory for creating Tender Entry applications"); });
+			 */
 	    }
 
 		public List<WMSTenderEntryApplication> validateApplicationUpdateRequest(
