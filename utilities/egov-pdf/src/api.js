@@ -1147,7 +1147,7 @@ async function create_defaulter_notice_pdf_pt(kafkaData){
           var payloads = [];
           var propertyData = properties.slice(i,i+batchSize);
           var propertyArray = { 
-              properties: propertyData,
+              Bill: propertyData,
               isBulkPdf: true,
               pdfJobId: jobid,
               pdfKey: pdfkey,
@@ -1158,12 +1158,12 @@ async function create_defaulter_notice_pdf_pt(kafkaData){
               service: bussinessService
           };
           logger.info("In Create Defaulter PDF consumer");
-          var pdfData = Object.assign({RequestInfo:requestinfo.RequestInfo}, propertyArray)
+          var pdfData = Object.assign({RequestInfo:requestinfo}, propertyArray)
           payloads.push({
             topic: config.KAFKA_RECEIVE_CREATE_JOB_TOPIC,
             messages: JSON.stringify(pdfData)
           });
-          logger.info("about to call  PDF service");
+          logger.info("about to call  PDF service" + payloads);
 
           producer.send(payloads, function(err, data) {
             if (err) {

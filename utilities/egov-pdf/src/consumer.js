@@ -1,7 +1,7 @@
 var config = require("./config");
 var kafka = require("kafka-node");
 const logger = require("./logger").logger;
-var {create_bulk_pdf, create_bulk_pdf_pt} = require("./api");
+var {create_bulk_pdf, create_bulk_pdf_pt,create_defaulter_notice_pdf_pt} = require("./api");
 
 const listenConsumer = async()=>{
 
