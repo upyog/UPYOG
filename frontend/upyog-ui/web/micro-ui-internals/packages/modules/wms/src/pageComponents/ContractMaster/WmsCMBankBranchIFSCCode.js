@@ -7,7 +7,12 @@ const WmsCMBankBranchIFSCCode = ({ t, config, onSelect, formData = {}, userType 
 
   const { pathname: url } = useLocation();
   const editScreen = url.includes("/modify-application/");
-  const { data: citizenTypes = [], isLoading } = Digit.Hooks.hrms.useHrmsMDMS(tenantId, "egov-hrms", "EmployeeType") || {};
+  // const { data: citizenTypes = [], isLoading } = Digit.Hooks.hrms.useHrmsMDMS(tenantId, "egov-hrms", "EmployeeType") || {};
+  const { data: citizenTypes, isLoading } = Digit?.Hooks?.wms?.cm?.useWMSMaster(tenantId,"WMS_BANK_BRANCH_TYPE") || {};
+  // const bankList = Digit?.Hooks?.wms?.cm?.useWMSMaster(tenantId,"WMS_BANK_BRANCH_TYPE");
+  const [citizenTypeList, setcitizenTypeList] = useState();
+
+console.log("citizenTypes bank ",citizenTypes)
   const [citizenType, setcitizenType] = useState(formData?.WmsCMBankBranchIFSCCode);
   const [isTrue, setisTrue] = useState(false);
   function SelectcitizenType(value) {
@@ -17,21 +22,34 @@ const WmsCMBankBranchIFSCCode = ({ t, config, onSelect, formData = {}, userType 
   useEffect(() => {
     onSelect(config.key, citizenType);
   }, [citizenType]);
-
-  const bank = [
-    {
-        "code": "CONTRACT_MASTER_SBI",
-        "name": "State Bank of India",
-        "module": "rainmaker-tl",
-        "locale": "en_IN"
-    },
-    {
-        "code": "CONTRACT_MASTER_HDFC",
-        "name": "HDFC",
-        "module": "rainmaker-tl",
-        "locale": "en_IN"
+  useEffect(()=>{
+    let fData=[]
+    if(citizenTypes?.WMSBankDetailsApplications?.length>0){
+      const filterData = citizenTypes?.WMSBankDetailsApplications.filter((res)=> res.status=="Active");
+      filterData.forEach(element => {
+      fData.push({
+  "id":element?.bank_id,
+  "name": element?.bank_branch_ifsc_code,
+  "status": element?.status
+})
+});
+    setcitizenTypeList(fData)
     }
-];
+  },[citizenTypes])
+//   const bank = [
+//     {
+//         "code": "CONTRACT_MASTER_SBI",
+//         "name": "State Bank of India",
+//         "module": "rainmaker-tl",
+//         "locale": "en_IN"
+//     },
+//     {
+//         "code": "CONTRACT_MASTER_HDFC",
+//         "name": "HDFC",
+//         "module": "rainmaker-tl",
+//         "locale": "en_IN"
+//     }
+// ];
   const inputs = [
     {
       label: "Bank, Branch & IFSC Code",
@@ -59,7 +77,7 @@ const WmsCMBankBranchIFSCCode = ({ t, config, onSelect, formData = {}, userType 
           className="form-field"
           selected={citizenType}
           // option={citizenTypes?.["egov-hrms"]?.citizenType}
-          option={bank}
+          option={citizenTypeList!=undefined && citizenTypeList}
           select={SelectcitizenType}
           onBlur={SelectcitizenType}
 

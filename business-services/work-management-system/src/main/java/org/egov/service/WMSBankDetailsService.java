@@ -113,6 +113,12 @@ public class WMSBankDetailsService {
 
         return applications;
 	}
+
+
+	public void saveUploadedFile(List<WMSBankDetailsApplication> entities) {
+		wmsBankDetailsRepository.saveFile(entities);
+		
+	}
 	
 	
 	

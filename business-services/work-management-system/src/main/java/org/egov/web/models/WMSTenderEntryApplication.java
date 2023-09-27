@@ -48,22 +48,23 @@ public class WMSTenderEntryApplication {
 	private Integer validity=null;
 	@JsonProperty("upload_document")
 	private String uploadDocument=null;
-	@JsonProperty("work_no")
-	private String workNo=null;
-	@JsonProperty("work_description")
-	private String workDescription=null;
-	@JsonProperty("estimated_cost")
-	private String estimatedCost=null;
-	@JsonProperty("tender_type")
-	private String tenderType=null;
-	@JsonProperty("tender_fee")
-	private Integer tenderFee=null;
-	@JsonProperty("emd")
-	private String emd=null;
-	@JsonProperty("vendor_class")
-	private String vendorClass=null;
-	@JsonProperty("work_duration")
-	private String workDuration=null;
+	/*
+	 * @JsonProperty("work_no") private String workNo=null;
+	 * 
+	 * @JsonProperty("work_description") private String workDescription=null;
+	 * 
+	 * @JsonProperty("estimated_cost") private String estimatedCost=null;
+	 * 
+	 * @JsonProperty("tender_type") private String tenderType=null;
+	 * 
+	 * @JsonProperty("tender_fee") private Integer tenderFee=null;
+	 * 
+	 * @JsonProperty("emd") private String emd=null;
+	 * 
+	 * @JsonProperty("vendor_class") private String vendorClass=null;
+	 * 
+	 * @JsonProperty("work_duration") private String workDuration=null;
+	 */
 	
 	@JsonProperty("auditDetails")
 	private AuditDetails auditDetails = null;

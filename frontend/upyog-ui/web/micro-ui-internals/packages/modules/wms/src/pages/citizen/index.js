@@ -40,7 +40,7 @@ const CitizenApp = ({ path, url, userType }) => {
   const WmsPhmEdit = Digit?.ComponentRegistryService?.getComponent("WmsPhmEdit");
   const WmsPhmResponse = Digit?.ComponentRegistryService?.getComponent("WmsPhmResponse");
 
-  const Inbox = Digit?.ComponentRegistryService?.getComponent("Inbox");
+  const CMView = Digit?.ComponentRegistryService?.getComponent("CMView");
   const WMSDetails = Digit?.ComponentRegistryService?.getComponent("WMSDetails");
   const ContrMasterAdd = Digit?.ComponentRegistryService?.getComponent("ContrMasterAdd");
   const ContrMasterView = Digit?.ComponentRegistryService?.getComponent("ContrMasterView");
@@ -53,6 +53,13 @@ const CitizenApp = ({ path, url, userType }) => {
   const VendorTypeEdit = Digit?.ComponentRegistryService?.getComponent("VendorTypeEdit");
   const EditCitizen = Digit?.ComponentRegistryService?.getComponent("WMSEditCitizen");
 
+  const EditSubType = Digit?.ComponentRegistryService?.getComponent("EditSubType");
+  const AddSubType = Digit?.ComponentRegistryService?.getComponent("AddSubType");
+  const ViewSubType = Digit?.ComponentRegistryService?.getComponent("ViewSubType");
+  
+  const TenderEntryAdd = Digit?.ComponentRegistryService?.getComponent("TenderEntryAdd");
+  const TenderEntryView = Digit?.ComponentRegistryService?.getComponent("TenderEntryView");
+  const EditTender = Digit?.ComponentRegistryService?.getComponent("EditTender");
   
   return (
     <span className={"pt-citizen"}>
@@ -105,18 +112,28 @@ const CitizenApp = ({ path, url, userType }) => {
           <PrivateRoute path={`${path}/phm-edit/:id`} component={() => <WmsPhmEdit />} />
           <PrivateRoute path={`${path}/phmresponse`} component={(props) => <WmsPhmResponse {...props} parentRoute={path} />} />
     
-          <PrivateRoute path={`${path}/cm-home`} component={props => <Inbox {...props} tenants={tenantId} parentRoute={path} />} />
+          <PrivateRoute path={`${path}/cm-home`} component={props => <CMView {...props} tenants={tenantId} parentRoute={path} />} />
           <PrivateRoute path={`${path}/details/:tenantId/:id`} component={() => <WMSDetails />} />
           <PrivateRoute path={`${path}/add`} component={ContrMasterAdd} />
           <PrivateRoute path={`${path}/cm-table-view`} component={ContrMasterView} />
           <PrivateRoute path={`${path}/cm-table-test`} component={ContractViewTableTest} />
           <PrivateRoute path={`${path}/bank/list`} component={ViewBankTable} />
           <PrivateRoute path={`${path}/bank/add`} component={BankAdd} />
-          <PrivateRoute path={`${path}/bank/edit`} component={AppEditBank} />
-          <PrivateRoute path={`${path}/vendor_typ/list`} component={View} />
-          <PrivateRoute path={`${path}/vendor_typ/add`} component={VendorTypeAdd} />
-          <PrivateRoute path={`${path}/vendor_typ/edit/:tenantId/:id`} component={VendorTypeEdit} />
+          <PrivateRoute path={`${path}/bank/edit/:tenantId/:id`} component={AppEditBank} />
+          <PrivateRoute path={`${path}/vendor-type/list`} component={View} />
+          <PrivateRoute path={`${path}/vendor-type/add`} component={VendorTypeAdd} />
+          <PrivateRoute path={`${path}/vendor-type/edit/:tenantId/:id`} component={VendorTypeEdit} />
+          <PrivateRoute path={`${path}/vendor-sub-type/list`} component={ViewSubType} />
+          <PrivateRoute path={`${path}/vendor-sub-type/add`} component={AddSubType} />
+          <PrivateRoute path={`${path}/vendor-sub-type/edit/:tenantId/:id`} component={EditSubType} />
           <PrivateRoute path={`${path}/edit/:tenantId/:id`} component={() => <EditCitizen />} />
+
+{/*Tender Entry*/}
+<PrivateRoute path={`${path}/te/add`} component={TenderEntryAdd} />
+{/* <PrivateRoute path={`${path}/te-add`} component={props => <TenderEntryAdd {...props} tenants={tenantId} parentRoute={path} />} /> */}
+<PrivateRoute path={`${path}/te/home`} component={TenderEntryView} />
+<PrivateRoute path={`${path}/te/edit`} component={EditTender} />
+
 
         </div>
         </AppContainer>

@@ -100,9 +100,9 @@ import WmsPhmEdit from "./pages/citizen/PHM/Edit";
 
 
 /**---------------- */
-import ContrMasterAdd from "./pages/citizen/ContrMaster/index";
-import ContrMasterView from "./pages/citizen/ContrMaster/ContrView";
-import ContractViewTableTest from "./pages/citizen/ContrMaster/ContractViewTableTest";
+import ContrMasterAdd from "./pages/citizen/CM/index";
+import ContrMasterView from "./pages/citizen/CM/ContrView";
+import ContractViewTableTest from "./pages/citizen/CM/ContractViewTableTest";
 import WmsCMMobileNumber from "./pageComponents/ContractMaster/WmsCMMobileNumber";
 import WmsCMPFMSVendorID from "./pageComponents/ContractMaster/WmsCMPFMSVendorID";
 import WmsCMUIDNumber from "./pageComponents/ContractMaster/WmsCMUIDNumber";
@@ -111,8 +111,8 @@ import WmsCMVendorStatus from "./pageComponents/ContractMaster/WmsCMVendorStatus
 import WmsCMVendorType from "./pageComponents/ContractMaster/WmsCMVendorType";
 import InboxFilter from "./components/CmList/InboxFilter";
 import WMSCardContract from "./components/CmList/wmscard";
-import Inbox from "./pages/citizen/ContrMaster/Inbox";
-import ContractMasterDetail from "./pages/citizen/ContrMaster/ContractMasterDetail";
+import CMView from "./pages/citizen/CM/CmView";
+import ContractMasterDetail from "./pages/citizen/CM/ContractMasterDetail";
 import WmsCMVATNumber from "./pageComponents/ContractMaster/WmsCMVATNumber";
 import WmsCMBankBranchIFSCCode from "./pageComponents/ContractMaster/WmsCMBankBranchIFSCCode";
 import WmsCMFunction from "./pageComponents/ContractMaster/WmsCMFunction";
@@ -132,15 +132,43 @@ import WmsCMBankBranch from "./pageComponents/ContractMaster/bankField/WmsCMBank
 import WmsCMBankIFSCCode from "./pageComponents/ContractMaster/bankField/WmsCMBankIFSCCode";
 import WmsCMBankBranchIFSC from "./pageComponents/ContractMaster/bankField/WmsCMBankBranchIFSC";
 import WmsCMBankStatus from "./pageComponents/ContractMaster/bankField/WmsCMBankStatus";
-import EditCitizen from "./pages/citizen/ContrMaster/EditCitizen/index";
-import ViewBankTable from "./pages/citizen/ContrMaster/Master/Bank/View";
-import BankAdd from "./pages/citizen/ContrMaster/Master/Bank/BankAdd";
-import AppEditBank from "./pages/citizen/ContrMaster/Master/Bank/Edit/index";
-import VendorTypeAdd from "./pages/citizen/ContrMaster/Master/VendorType/VendorTypeAdd";
-import View from "./pages/citizen/ContrMaster/Master/VendorType/View";
-import VendorTypeEdit from "./pages/citizen/ContrMaster/Master/VendorType/Edit";
+import EditCitizen from "./pages/citizen/CM/EditCitizen/index";
+import ViewBankTable from "./pages/citizen/CM/Master/Bank/View";
+import BankAdd from "./pages/citizen/CM/Master/Bank/BankAdd";
+import AppEditBank from "./pages/citizen/CM/Master/Bank/Edit/index";
+import VendorTypeAdd from "./pages/citizen/CM/Master/VendorType/VendorTypeAdd";
+import View from "./pages/citizen/CM/Master/VendorType/View";
+import VendorTypeEdit from "./pages/citizen/CM/Master/VendorType/Edit";
 import WmsCMVType from "./pageComponents/ContractMaster/vendorTypeField/WmsCMVType";
 import WmsCMVTypeStatus from "./pageComponents/ContractMaster/vendorTypeField/WmsCMVTypeStatus";
+import EditSubType from "./pages/citizen/CM/Master/VendorSubType/Edit/index";
+import AddSubType from "./pages/citizen/CM/Master/VendorSubType/Add";
+import ViewSubType from "./pages/citizen/CM/Master/VendorSubType/View";
+import WmsCMVendorSubTypeName from "./pageComponents/ContractMaster/vendorSubType/WmsCMVendorSubTypeName";
+import WmsCMVendorSubTypeStatus from "./pageComponents/ContractMaster/vendorSubType/WmsCMVendorSubTypeStatus";
+import TenderEntryAdd from "./pages/citizen/TE/index";
+import TenderEntryView from "./pages/citizen/TE/View"
+import EditTender from "./pages/citizen/TE/Edit/index"
+import WmsTMResulationNo from "./pageComponents/TE/WmsTMResulationNo"
+import WmsTMDepartment from "./pageComponents/TE/WmsTMDepartment"
+import WmsTEPreBuildMeetingDate from "./pageComponents/TE/WmsTEPreBuildMeetingDate"
+import WmsTEUploadDocuments from "./pageComponents/TE/WmsTEUploadDocuments"
+import WmsTEIssueFromDate from "./pageComponents/TE/WmsTEIssueFromDate"
+import WmsTEPublishDate from "./pageComponents/TE/WmsTEPublishDate"
+import WmsTETecnicalBidOpenDate from "./pageComponents/TE/WmsTETecnicalBidOpenDate"
+import WmsTMTenderCategory from "./pageComponents/TE/WmsTMTenderCategory"
+import WmsTMProvisionalSum from "./pageComponents/TE/WmsTMProvisionalSum"
+import WmsTMProjectName from "./pageComponents/TE/WmsTMProjectName"
+
+import WmsTEResolutionDate from "./pageComponents/TE/WmsTEResolutionDate"
+import WmsTMMeetingLocation from "./pageComponents/TE/WmsTMMeetingLocation"
+import WmsTEIssueTillDate from "./pageComponents/TE/WmsTEIssueTillDate"
+import WmsTEFinancialBidOpenDate from "./pageComponents/TE/WmsTEFinancialBidOpenDate"
+import WmsTMValidityOfTenderInDay from "./pageComponents/TE/WmsTMValidityOfTenderInDay"
+import WmsTMAdditionalPerformanceSD from "./pageComponents/TE/WmsTMAdditionalPerformanceSD"
+import WmsTMBankGuarantee from "./pageComponents/TE/WmsTMBankGuarantee"
+
+
 const componentsToRegister = {  
   Home:Home,  
   WmsSorList:List,
@@ -215,6 +243,7 @@ const componentsToRegister = {
   ContrMasterView,
   WMSCard,
 Inbox,
+  CMView,
   WMSCardContract,
   ContractViewTableTest,
   WmsCMMobileNumber,
@@ -264,7 +293,32 @@ VendorTypeAdd,
 View,
 VendorTypeEdit,
 WmsCMVType,
-WmsCMVTypeStatus
+WmsCMVTypeStatus,
+EditSubType,
+AddSubType,
+ViewSubType,
+WmsCMVendorSubTypeName,
+WmsCMVendorSubTypeStatus,
+TenderEntryAdd,
+TenderEntryView,
+EditTender,
+WmsTMResulationNo,
+WmsTMDepartment,
+WmsTEPreBuildMeetingDate,
+WmsTEUploadDocuments,
+WmsTEIssueFromDate,
+WmsTEPublishDate,
+WmsTETecnicalBidOpenDate,
+WmsTMTenderCategory,
+WmsTMProvisionalSum,
+WmsTMProjectName,
+WmsTEResolutionDate,
+WmsTMMeetingLocation,
+WmsTEIssueTillDate,
+WmsTEFinancialBidOpenDate,
+WmsTMValidityOfTenderInDay,
+WmsTMAdditionalPerformanceSD,
+WmsTMBankGuarantee
 
 };
 export const WMSModule = ({ stateCode, userType, tenants }) => {

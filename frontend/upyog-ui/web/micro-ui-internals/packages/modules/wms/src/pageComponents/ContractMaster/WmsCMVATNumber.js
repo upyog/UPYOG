@@ -15,14 +15,14 @@ const WmsCMVATNumber = ({ t, config, onSelect, formData = {}, userType, register
       label: "VAT Number",
       type: "text",
       name: "VATNumber",
-      validation: {
-        isRequired: true,
-        // pattern: Digit.Utils.getPattern('OldLicenceNo'),
-        // title: t("CORE_COMMON_APPLICANT_NAME_INVALID"),
-        title: "VAT Number Require",
+      // validation: {
+      //   isRequired: true,
+      //   // pattern: Digit.Utils.getPattern('OldLicenceNo'),
+      //   // title: t("CORE_COMMON_APPLICANT_NAME_INVALID"),
+      //   title: "VAT Number Require",
 
-      },
-      isMandatory: true,
+      // },
+      // isMandatory: true,
     },
 
   ];
@@ -80,9 +80,9 @@ const WmsCMVATNumber = ({ t, config, onSelect, formData = {}, userType, register
                 {...input.validation}
 
               />
-            {isTrue&&<CardLabelError style={{ width: "100%", marginTop: '-15px', fontSize: '16px', marginBottom: '12px'}}>{t("Require Field")}</CardLabelError>}
+            {/* {isTrue&&<CardLabelError style={{ width: "100%", marginTop: '-15px', fontSize: '16px', marginBottom: '12px'}}>{t("Require Field")}</CardLabelError>}
 
-            {currentValue&&currentValue.length>0&&!currentValue.match(Digit.Utils.getPattern('OldLicenceNo'))&&<CardLabelError style={{ width: "100%", marginTop: '-15px', fontSize: '16px', marginBottom: '12px'}}>{t("Vat No should only alphanumeric characters are allowed")}</CardLabelError>}
+            {currentValue&&currentValue.length>0&&!currentValue.match(Digit.Utils.getPattern('OldLicenceNo'))&&<CardLabelError style={{ width: "100%", marginTop: '-15px', fontSize: '16px', marginBottom: '12px'}}>{t("Vat No should only alphanumeric characters are allowed")}</CardLabelError>} */}
 
             </div>
 

@@ -1,6 +1,9 @@
 package org.egov.web.controllers;
 
 
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -8,33 +11,12 @@ import javax.validation.Valid;
 
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.service.WMSBankDetailsService;
-import org.egov.service.WMSContractorService;
-import org.egov.service.WMSORService;
-import org.egov.service.WMSWorkService;
 import org.egov.util.ResponseInfoFactory;
 import org.egov.web.models.RequestInfoWrapper;
-import org.egov.web.models.SORApplicationResponse;
-import org.egov.web.models.SORApplicationSearchCriteria;
-import org.egov.web.models.ScheduleOfRateApplication;
-import org.egov.web.models.Scheme;
-import org.egov.web.models.SchemeApplicationResponse;
 import org.egov.web.models.WMSBankDetailsApplication;
 import org.egov.web.models.WMSBankDetailsApplicationResponse;
 import org.egov.web.models.WMSBankDetailsApplicationSearchCriteria;
 import org.egov.web.models.WMSBankDetailsRequest;
-import org.egov.web.models.WMSContractorApplication;
-import org.egov.web.models.WMSContractorApplicationResponse;
-import org.egov.web.models.WMSContractorApplicationSearchCriteria;
-import org.egov.web.models.WMSContractorRequest;
-import org.egov.web.models.WMSRunningAccountFinalBillApplication;
-import org.egov.web.models.WMSRunningAccountFinalBillApplicationResponse;
-import org.egov.web.models.WMSRunningAccountFinalBillApplicationSearchCriteria;
-import org.egov.web.models.WMSSORRequest;
-import org.egov.web.models.WMSSchemeRequest;
-import org.egov.web.models.WMSWorkApplication;
-import org.egov.web.models.WMSWorkApplicationResponse;
-import org.egov.web.models.WMSWorkApplicationSearchCriteria;
-import org.egov.web.models.WMSWorkRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,10 +25,15 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderBuilder;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -131,6 +118,45 @@ public class WMSBankDetailsApiController{
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true);
         WMSBankDetailsApplicationResponse response = WMSBankDetailsApplicationResponse.builder().wmsBankDetailsApplications(applications).responseInfo(responseInfo).build();
         return new ResponseEntity<>(response,HttpStatus.OK);
+    }
+    
+    
+    @RequestMapping(value="/v1/bank/_upload", method = RequestMethod.POST)
+    public ResponseEntity<String> uploadCSVFile(@RequestParam("file") MultipartFile file) {
+        try {
+            // Parse the uploaded CSV file
+            List<WMSBankDetailsApplication> entities = new ArrayList<>();
+            try (Reader reader = new InputStreamReader(file.getInputStream())) {
+                //CSVReader csvReader = new CSVReaderBuilder(reader).withSkipLines(1).build();
+            	CSVReader csvReader = new CSVReaderBuilder(reader).build();
+                String[] line;
+                while ((line = csvReader.readNext()) != null) {
+                    WMSBankDetailsApplication bank = new WMSBankDetailsApplication();
+                    // Populate the entity fields from the CSV data
+                    // Example:
+                    // entity.setField1(line[0]);
+                    Long randomNumber=(long) Math.floor(Math.random() * (9999 - 1000 + 1) + 1000);
+        			bank.setBankId(Long.toString(randomNumber));
+                    bank.setBankName(line[0]);
+					bank.setBankBranch(line[1]);
+                    // entity.setField2(line[1]);
+					bank.setBankIfscCode(line[2]);
+					
+					bank.setBankBranchIfscCode(line[3]);
+					bank.setStatus(line[4]);
+                    entities.add(bank);
+                }
+            }
+
+            // Save the entities in the database
+            //entityRepository.saveAll(entities);
+            bankDetailsService.saveUploadedFile(entities);
+
+            return ResponseEntity.ok("File uploaded and data stored successfully.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Failed to upload and store the file: " + e.getMessage());
+        }
     }
 
     

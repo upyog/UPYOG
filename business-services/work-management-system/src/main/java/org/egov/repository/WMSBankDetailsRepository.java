@@ -44,4 +44,13 @@ public class WMSBankDetailsRepository {
         return jdbcTemplate.query(query,  rowMapper,preparedStmtList.toArray());
     }
 
+	public void saveFile(List<WMSBankDetailsApplication> entities) {
+		// TODO Auto-generated method stub
+		for (WMSBankDetailsApplication entity : entities) {
+            String sql = "INSERT INTO bank_details (bank_id,bank_name,bank_branch,bank_ifsc_code,bank_branch_ifsc_code,status,createdby,lastmodifiedby,createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?,?,?,?,?,?,?)";
+            jdbcTemplate.update(sql, entity.getBankId(), entity.getBankName(),entity.getBankBranch(),entity.getBankIfscCode(),entity.getBankBranchIfscCode(),entity.getStatus(),"CSV File Upload","WMS User",System.currentTimeMillis(),System.currentTimeMillis());
+        }
+		
+	}
+
 }

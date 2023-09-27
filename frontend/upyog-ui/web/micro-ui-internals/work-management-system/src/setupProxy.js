@@ -20,10 +20,16 @@ const apiProxy = createProxyMiddleware({
   target: "http://localhost:8484",
   changeOrigin: true,
 });
+
 // const localProxy = createProxyMiddleware({
 //   target: "http://localhost:3000",
 //   changeOrigin: true,
 // });
+const CMProxy = createProxyMiddleware({
+  // target: "http://10.216.36.67:8484",
+  target: "http://10.216.36.152:8484",  
+  changeOrigin: true,
+});
 module.exports = function (app) {
   [
     "/access/v1/actions/mdms",
@@ -89,9 +95,10 @@ module.exports = function (app) {
   "/wms/work-management-service/v1/sch/_search",  
   "/wms/work-management-service/v1/sch/_count",
   "/wms/work-management-service/v1/sch/_update",
-]
-  .forEach((location) => app.use(location, apiProxy));
-  ["/wms/work-management-service/v1/sor/_create",
+] .forEach((location) => app.use(location, apiProxy));
+
+  [
+    "/wms/work-management-service/v1/sor/_create",
   "/wms/work-management-service/v1/sor/_search",  
   "/wms/work-management-service/v1/sor/_count",
   "/wms/work-management-service/v1/sor/_update",
@@ -107,5 +114,15 @@ module.exports = function (app) {
   
 
  // ["/wms/wms-services/v1/pfmilestone/_create","/wms/wms-services/v1/pfmilestone/_search"].forEach((location) => app.use(location, localProxy));
-  
+ [
+  "/wms/wms-services/v1/contractor/_view",
+  "/wms/wms-services/v1/contractor/_update",
+  "/wms/wms-services/v1/bank/",
+  "/wms/wms-services/v1/contractor/_search",
+  "/wms/wms-services/v1/contractor/_create",
+  "/wms/wms-services/v1/cstype",
+  "/wms/wms-services/v1/vendor",
+  "/wms/wms-services/v1/tenderentry"
+  ].forEach((location) => app.use(location, CMProxy));
+ 
 };
