@@ -240,6 +240,7 @@ wms:{
 
 
   },
+  
 ContractorMaster:{
   create:"/wms/wms-services/v1/contractor/_create",
   search:"/wms/wms-services/v1/contractor/_search",
@@ -259,6 +260,13 @@ ContractorMaster:{
   mdmsTypeCreate:"/wms/wms-services/v1/vendor/_create",
 
 },
+Tender_Entry:{
+  create:"/wms/wms-services/v1/tenderentry/_create",
+  search:"/wms/wms-services/v1/tenderentry/_search",
+  update:"/wms/wms-services/v1/tenderentry/_update",
+  get:"/wms/wms-services/v1/tenderentry/_view",
+
+  },
   },
   access_control: "/access/v1/actions/mdms/_get",
   billgenie: "/egov-searcher",

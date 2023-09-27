@@ -129,6 +129,28 @@ import AddSubType from "./pages/citizen/CM/Master/VendorSubType/Add";
 import ViewSubType from "./pages/citizen/CM/Master/VendorSubType/View";
 import WmsCMVendorSubTypeName from "./pageComponents/ContractMaster/vendorSubType/WmsCMVendorSubTypeName";
 import WmsCMVendorSubTypeStatus from "./pageComponents/ContractMaster/vendorSubType/WmsCMVendorSubTypeStatus";
+import TenderEntryAdd from "./pages/citizen/TE/index";
+import TenderEntryView from "./pages/citizen/TE/View"
+import EditTender from "./pages/citizen/TE/Edit/index"
+import WmsTMResulationNo from "./pageComponents/TE/WmsTMResulationNo"
+import WmsTMDepartment from "./pageComponents/TE/WmsTMDepartment"
+import WmsTEPreBuildMeetingDate from "./pageComponents/TE/WmsTEPreBuildMeetingDate"
+import WmsTEUploadDocuments from "./pageComponents/TE/WmsTEUploadDocuments"
+import WmsTEIssueFromDate from "./pageComponents/TE/WmsTEIssueFromDate"
+import WmsTEPublishDate from "./pageComponents/TE/WmsTEPublishDate"
+import WmsTETecnicalBidOpenDate from "./pageComponents/TE/WmsTETecnicalBidOpenDate"
+import WmsTMTenderCategory from "./pageComponents/TE/WmsTMTenderCategory"
+import WmsTMProvisionalSum from "./pageComponents/TE/WmsTMProvisionalSum"
+import WmsTMProjectName from "./pageComponents/TE/WmsTMProjectName"
+
+import WmsTEResolutionDate from "./pageComponents/TE/WmsTEResolutionDate"
+import WmsTMMeetingLocation from "./pageComponents/TE/WmsTMMeetingLocation"
+import WmsTEIssueTillDate from "./pageComponents/TE/WmsTEIssueTillDate"
+import WmsTEFinancialBidOpenDate from "./pageComponents/TE/WmsTEFinancialBidOpenDate"
+import WmsTMValidityOfTenderInDay from "./pageComponents/TE/WmsTMValidityOfTenderInDay"
+import WmsTMAdditionalPerformanceSD from "./pageComponents/TE/WmsTMAdditionalPerformanceSD"
+import WmsTMBankGuarantee from "./pageComponents/TE/WmsTMBankGuarantee"
+
 
 const componentsToRegister = {  
   Home:Home,  
@@ -248,8 +270,27 @@ EditSubType,
 AddSubType,
 ViewSubType,
 WmsCMVendorSubTypeName,
-WmsCMVendorSubTypeStatus
-
+WmsCMVendorSubTypeStatus,
+TenderEntryAdd,
+TenderEntryView,
+EditTender,
+WmsTMResulationNo,
+WmsTMDepartment,
+WmsTEPreBuildMeetingDate,
+WmsTEUploadDocuments,
+WmsTEIssueFromDate,
+WmsTEPublishDate,
+WmsTETecnicalBidOpenDate,
+WmsTMTenderCategory,
+WmsTMProvisionalSum,
+WmsTMProjectName,
+WmsTEResolutionDate,
+WmsTMMeetingLocation,
+WmsTEIssueTillDate,
+WmsTEFinancialBidOpenDate,
+WmsTMValidityOfTenderInDay,
+WmsTMAdditionalPerformanceSD,
+WmsTMBankGuarantee
 
 };
 export const WMSModule = ({ stateCode, userType, tenants }) => {

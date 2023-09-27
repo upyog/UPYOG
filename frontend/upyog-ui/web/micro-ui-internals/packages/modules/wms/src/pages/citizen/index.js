@@ -53,6 +53,10 @@ const CitizenApp = ({ path, url, userType }) => {
   const AddSubType = Digit?.ComponentRegistryService?.getComponent("AddSubType");
   const ViewSubType = Digit?.ComponentRegistryService?.getComponent("ViewSubType");
   
+  const TenderEntryAdd = Digit?.ComponentRegistryService?.getComponent("TenderEntryAdd");
+  const TenderEntryView = Digit?.ComponentRegistryService?.getComponent("TenderEntryView");
+  const EditTender = Digit?.ComponentRegistryService?.getComponent("EditTender");
+  
   return (
     <span className={"pt-citizen"}>
     <Switch>
@@ -111,6 +115,13 @@ const CitizenApp = ({ path, url, userType }) => {
           <PrivateRoute path={`${path}/vendor-sub-type/add`} component={AddSubType} />
           <PrivateRoute path={`${path}/vendor-sub-type/edit/:tenantId/:id`} component={EditSubType} />
           <PrivateRoute path={`${path}/edit/:tenantId/:id`} component={() => <EditCitizen />} />
+
+{/*Tender Entry*/}
+<PrivateRoute path={`${path}/te/add`} component={TenderEntryAdd} />
+{/* <PrivateRoute path={`${path}/te-add`} component={props => <TenderEntryAdd {...props} tenants={tenantId} parentRoute={path} />} /> */}
+<PrivateRoute path={`${path}/te/home`} component={TenderEntryView} />
+<PrivateRoute path={`${path}/te/edit`} component={EditTender} />
+
 
         </div>
         </AppContainer>

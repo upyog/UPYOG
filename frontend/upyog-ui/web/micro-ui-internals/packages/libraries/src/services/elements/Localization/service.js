@@ -72539,6 +72539,121 @@ export const LocalizationService = {
             "module": "rainmaker-common",
             "locale": "en_IN"
         },
+        {
+            "code": "WMS_TE_ADD_LABEL",
+            "message": "Add Tender Entry",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_TE_COMMON_SAVE",
+            "message": "Save",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_TE_COMMON_PRE_BUILD-MEETING-DATE",
+            "message": "Pre-Build Meeting Date",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_TE_COMMON_PUBLISH_DATE",
+            "message": "Publish Date",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_TE_COMMON_TECHNICAL_BID_OPEN_DATE",
+            "message": "Technical Bid Open Date",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_TE_COMMON_ISSUE_FROM_DATE",
+            "message": "Issue From Date",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_TE_COMMON_TENDER_CATEGORY",
+            "message": "Tender Category",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_TE_COMMON_DEPARTMENT",
+            "message": "Department",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_TE_COMMON_RESULATION_NO",
+            "message": "Resulation No",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_TE_COMMON_PROVISIONAL_SUM",
+            "message": "Provisional Sum",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_TE_COMMON_PROJECT_NAME",
+            "message": "Project Name",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },{
+            "code": "WMS_TE_COMMON_BANK_GUARANTEE",
+            "message": "Bank Guarantee",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        
+        {
+            "code": "WMS_TE_COMMON_RESOLUTION_DATE",
+            "message": "Resolution Date",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_TE_COMMON_MEETING_LOCATION",
+            "message": "Meeting Location",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_TE_COMMON_ISSUE_TILL_DATE",
+            "message": "Issue Till Date",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_TE_COMMON_FINANCIAL_BID_OPEN_DATE",
+            "message": "Financial Bid Open Date",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_TE_COMMON_VALIDITY_OF_TENDER_IN_DAYS",
+            "message": "Validity of Tender(in Days)",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_TE_COMMON_ADDITIONAL_PERFORMANCE_SD",
+            "message": "Additional Performance SD",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+
+        
+        
+        
+        
+        
+
         
 //WMS_SCH_FUND_LABEL
 //WMS_SCH_DESC_OF_SCHEME_LABEL 

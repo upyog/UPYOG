@@ -266,6 +266,7 @@ import useWmsCMSearch from "./wms/cm/useWmsCMSearch";
 import useWmsCMEdit from "./wms/cm/useWmsCMEdit";
 import useWmsCMAdd from "./wms/cm/useWmsCMAdd";
 import useWMSMaster from "./wms/cm/useWMSMaster";
+import useWmsTEAdd from "./wms/TE/useWmsTEAdd";
 
 
 import useGetHowItWorksJSON from "./useHowItWorksJSON";
@@ -547,6 +548,9 @@ const wms = {
     useWmsCMEdit,
     useWmsCMAdd,
     useWMSMaster
+  },
+  te:{
+    useWmsTEAdd
   },
   useWmsSchMDMS,
   useWmsGenderMDMS,
