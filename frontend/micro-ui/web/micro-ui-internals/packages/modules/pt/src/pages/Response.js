@@ -55,7 +55,6 @@ const Response = (props) => {
 
   const { data: storeData } = Digit.Hooks.useStore.getInitData();
   const { tenants } = storeData || {};
-  const data123 = Digit.Services.PTService.update(state.Property, tenantId)
 
   const { isLoading: auditDataLoading, isError: isAuditError, data: auditData } = Digit.Hooks.pt.usePropertySearch(
     {
