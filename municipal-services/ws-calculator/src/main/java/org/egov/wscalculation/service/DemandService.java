@@ -852,8 +852,8 @@ public class DemandService {
 			
 			//long count = waterCalculatorDao.getConnectionCount(tenantId, fromDate, toDate);
 			
-			//log.info("Connection Count: " + count);
-			
+			log.info("fromDate:" + fromDate);
+			log.info("toDate:"+ toDate);			
 			connections = waterCalculatorDao.getConnectionsNoListForDemand(tenantId,
 							WSCalculationConstant.nonMeterdConnection, fromDate, toDate);
 			log.info("Connection Count for pending demand: " + connections.size());
