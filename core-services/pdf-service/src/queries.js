@@ -347,3 +347,153 @@ export async function cancelBulkPdfProcess(requestInfo, jobId, userid){
   }
   
 }
+
+export async function getDefaulterPdfRecordsDetails(userid, offset, limit, jobId){
+  try {
+    let data = [];
+    let param;
+    let query = 'select * from egov_defaulter_notice_pdf_info where ';
+    if(jobId){
+      query = query + 'jobid = $1 ';
+      param = jobId;
+    }
+    else{
+      query = query + 'uuid = $1 ';
+      param = userid;
+    }
+
+    query = query + 'limit $2 offset $3';
+
+    const result = await pool.query(query, [param, limit, offset]);
+    if(result.rowCount>=1){
+      
+      for(let row of result.rows){
+        let value = {
+          jobid: row.jobid,
+          uuid: row.uuid,
+          totalrecords: row.totalrecords,
+          recordscompleted: row.recordscompleted,
+          filestoreid: row.filestoreid,
+          createdtime: row.createdtime,
+          lastmodifiedby: row.lastmodifiedby,
+          lastmodifiedtime: row.lastmodifiedtime,
+          tenantId: row.tenantid,
+          locality: row.locality,
+          bussinessService: row.businessservice,
+          consumercode: row.consumercode,
+          isConsolidated: row.isconsolidated,
+          status: row.status
+        };
+        data.push(value);
+      }
+    }
+    return data;
+    
+  } catch (err) {
+    logger.error(err.stack || err);
+    
+  }
+
+}
+
+export async function insertRecordsForDN(bulkPdfJobId, totalPdfRecords, currentPdfRecords, userid, tenantId, locality,propertytype, bussinessService, consumerCode, isConsolidated) {
+  try {
+    const result = await pool.query('select * from egov_defaulter_notice_pdf_info where jobid = $1', [bulkPdfJobId]);
+    if(result.rowCount<1){
+      const insertQuery = 'INSERT INTO egov_defaulter_notice_pdf_info(jobid, uuid, recordscompleted, totalrecords, createdtime, filestoreid, lastmodifiedby, lastmodifiedtime, tenantid, locality,propertytype, businessservice, consumercode, isconsolidated, status) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14,$15)';      const curentTimeStamp = new Date().getTime();
+      const status = 'INPROGRESS';
+      await pool.query(insertQuery,[bulkPdfJobId, userid, currentPdfRecords, totalPdfRecords, curentTimeStamp, null, userid, curentTimeStamp, tenantId, locality, propertytype,bussinessService, consumerCode, isConsolidated, status]);
+    }
+    else{
+      var recordscompleted = parseInt(result.rows[0].recordscompleted);
+      var totalrecords = parseInt(result.rows[0].totalrecords);
+      if(recordscompleted < totalrecords){
+        const updateQuery = 'UPDATE egov_bulk_pdf_info SET recordscompleted = recordscompleted + $1, lastmodifiedby = $2, lastmodifiedtime = $3 WHERE jobid = $4';
+        const curentTimeStamp = new Date().getTime();
+        await pool.query(updateQuery,[currentPdfRecords, userid, curentTimeStamp, bulkPdfJobId]);
+      }
+    }
+  } catch (err) {
+    logger.error(err.stack || err);
+  } 
+}
+
+export async function mergePdfForDN(bulkPdfJobId, tenantId, userid, numberOfFiles, mobileNumber){
+
+  try {
+    const updateResult = await pool.query('select * from egov_bulk_pdf_info where jobid = $1', [bulkPdfJobId]);
+    var recordscompleted = parseInt(updateResult.rows[0].recordscompleted);
+    var totalrecords = parseInt(updateResult.rows[0].totalrecords);
+    var baseFolder = envVariables.SAVE_PDF_DIR + bulkPdfJobId + '/';
+    //var baseFolder = process.cwd() + '/' + bulkPdfJobId + '/';
+    
+    let fileNames = fs.readdirSync(baseFolder);
+    
+    if(recordscompleted >= totalrecords && fileNames.length == numberOfFiles){
+      var merger = new PDFMerger();
+    
+      logger.info('Files to be merged: ',fileNames);
+      (async () => {
+        var processStatus = updateResult.rows[0].status;
+        if(processStatus != 'CANCEL'){
+          try {
+            for (let i = 0; i < fileNames.length; i++){
+              logger.info(baseFolder+fileNames[i]);
+              merger.add(baseFolder+fileNames[i]);            //merge all pages. parameter is the path to file and filename.
+            }
+            await merger.save(baseFolder+'/output.pdf');        //save under given name and reset the internal document
+          } catch (err) {
+            logger.error(err.stack || err);
+          }
+      
+          var mergePdfData = fs.createReadStream(baseFolder+'output.pdf');
+          await fileStoreAPICall('output.pdf', tenantId, mergePdfData).then((filestoreid) => {
+            const updateQuery = 'UPDATE egov_bulk_pdf_info SET filestoreid = $1, lastmodifiedby = $2, lastmodifiedtime = $3, status = $5 WHERE jobid = $4';
+            const curentTimeStamp = new Date().getTime();
+            const status = 'DONE';
+            pool.query(updateQuery,[filestoreid, userid, curentTimeStamp, bulkPdfJobId, status]);
+            sendNoitification(filestoreid, mobileNumber, tenantId);
+        
+          }).catch((err) => {
+            logger.error(err.stack || err);
+          });
+        }
+
+        try {
+          if( fs.existsSync(baseFolder) ) {
+            fs.readdirSync(baseFolder).forEach(function(file,index){
+              var curPath = baseFolder + file;
+              if(fs.lstatSync(curPath).isDirectory()) { // recurse
+                deleteFolderRecursive(curPath);
+              } else { // delete file
+                fs.unlinkSync(curPath);
+              }
+            });
+            fs.rmdirSync(baseFolder);
+          }
+        } catch (error) {
+          logger.error(error.stack || error);
+          var errorPlayloads = [];
+          
+          errorPlayloads.push({
+            topic: envVariables.KAFKA_PDF_ERROR_TOPIC,
+            messages: error
+          });
+          producer.send(errorPlayloads, function(err, data) {
+            if (err) {
+              logger.error(err.stack || err);
+              errorCallback({
+                message: `error while publishing to kafka: ${err.message}`
+              });
+            } 
+          });
+        }
+        
+
+      })();
+    }
+  } catch (err) {
+    logger.error(err.stack || err);
+  }
+  
+}
