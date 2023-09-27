@@ -21,6 +21,7 @@ var {
   search_payment,
   create_pdf,
   search_workflow,
+  create_defaulter_notice_pdf_pt
 } = require("../api");
 
 const { asyncMiddleware } = require("../utils/asyncMiddleware");
@@ -331,8 +332,11 @@ router.post(
         tenantId: tenantId,
         bussinessService: bussinessService,
         jobid: jobid,
+        locality:locality,
+        propertytype:propertytype,
         properties: properties
       };
+      //create_defaulter_notice_pdf_pt(kafkaData);
 
       try {
         var payloads = [];
