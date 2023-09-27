@@ -55,14 +55,14 @@ public class WMSTenderEntryApplicationRowMapper implements ResultSetExtractor<Li
                         .financialBidOpenDate(rs.getString("tfinancialBidOpenDate"))
                         .validity(rs.getInt("tvalidity"))
                         .uploadDocument(rs.getString("tuploadDocument"))
-                        .workNo(rs.getString("tworkNo"))
-                        .workDescription(rs.getString("tworkDescription"))
-                        .estimatedCost(rs.getString("testimatedCost"))
-                        .tenderType(rs.getString("ttenderType"))
-                        .tenderFee(rs.getInt("ttenderFee"))
-                        .emd(rs.getString("temd"))
-                        .vendorClass(rs.getString("tvendorClass"))
-                        .workDuration(rs.getString("tworkDuration"))
+						/*
+						 * .workNo(rs.getString("tworkNo"))
+						 * .workDescription(rs.getString("tworkDescription"))
+						 * .estimatedCost(rs.getString("testimatedCost"))
+						 * .tenderType(rs.getString("ttenderType")) .tenderFee(rs.getInt("ttenderFee"))
+						 * .emd(rs.getString("temd")) .vendorClass(rs.getString("tvendorClass"))
+						 * .workDuration(rs.getString("tworkDuration"))
+						 */
                         .build();
             }
             //addChildrenToProperty(rs, sorApplication);
