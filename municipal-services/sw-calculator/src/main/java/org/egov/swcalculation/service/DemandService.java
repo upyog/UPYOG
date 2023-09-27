@@ -765,7 +765,7 @@ public class DemandService {
 		return isCurrentDemand;
 	}
 	
-	public void generateDemandForConsumerCode(RequestInfo requestInfo, BulkBillCriteria bulkBillCriteria) {
+	public String generateDemandForConsumerCode(RequestInfo requestInfo, BulkBillCriteria bulkBillCriteria) {
 		Map<String, Object> billingMasterData = calculatorUtils.loadBillingFrequencyMasterData(requestInfo,  bulkBillCriteria.getTenantId());
 		long startDay = (((int) billingMasterData.get(SWCalculationConstant.Demand_Generate_Date_String)) / 86400000);
 		if(isCurrentDateIsMatching((String) billingMasterData.get(SWCalculationConstant.Billing_Cycle_String), startDay)) {
@@ -781,12 +781,15 @@ public class DemandService {
 
 			Long fromDate = (Long) financialYearMaster.get(SWCalculationConstant.STARTING_DATE_APPLICABLES);
 			Long toDate = (Long) financialYearMaster.get(SWCalculationConstant.ENDING_DATE_APPLICABLES);
+			log.info("from date:: "+ fromDate);
+			log.info("to Date :: "+ toDate);
 
 			List<SewerageConnection> connections = sewerageCalculatorDao.getConnection( bulkBillCriteria.getTenantId(),bulkBillCriteria.getConsumerCode(),
 							SWCalculationConstant.nonMeterdConnection, fromDate, toDate);
 					log.info("Size of the connection list for batch : "+ connections.size());
 					connections = enrichmentService.filterConnections(connections);
-					
+					log.info("Size of the connection list after filtering "+ connections.size());
+
 					if(connections.size()>0){
 						List<CalculationCriteria> calculationCriteriaList = new ArrayList<>();
 
@@ -819,9 +822,13 @@ public class DemandService {
 						kafkaTemplate.send(configs.getCreateDemand(), calculationReq);
 						log.info("Bulk bill Gen batch info : " + migrationCount);
 						calculationCriteriaList.clear();
+						return "Demand Generated successfully for consumer Code"+bulkBillCriteria.getConsumerCode();
 					}
-					}
+					return "Demand is already generated for consumer code" + bulkBillCriteria.getConsumerCode();
+			
+		}
 
+		return "Some Error Occured!!";
 	}
 	
 	

@@ -102,8 +102,8 @@ public class SWCalculationController {
 	
 	@PostMapping("/_generateDemand")
 	public String getConnection(@Valid @RequestBody BulkBillReq bulkBillReq) {
-		sWCalculationService.generateDemandForConsumerCodeBasedOnTimePeriod(bulkBillReq.getRequestInfo(), bulkBillReq.getBulkBillCriteria());
-		return "Demand Generated successfully for consumer Code "+bulkBillReq.getBulkBillCriteria().getConsumerCode();
+		return sWCalculationService.generateDemandForConsumerCodeBasedOnTimePeriod(bulkBillReq.getRequestInfo(), bulkBillReq.getBulkBillCriteria());
+		//return "Demand Generated successfully for consumer Code "+bulkBillReq.getBulkBillCriteria().getConsumerCode();
 	}
 	
 
