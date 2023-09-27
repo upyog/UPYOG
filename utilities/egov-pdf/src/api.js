@@ -1163,7 +1163,7 @@ async function create_defaulter_notice_pdf_pt(kafkaData){
             topic: config.KAFKA_RECEIVE_CREATE_JOB_TOPIC,
             messages: JSON.stringify(pdfData)
           });
-          logger.info("about to call ");
+          logger.info("about to call  PDF service");
 
           producer.send(payloads, function(err, data) {
             if (err) {
