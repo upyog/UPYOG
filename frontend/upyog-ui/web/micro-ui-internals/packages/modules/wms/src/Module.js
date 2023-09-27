@@ -75,12 +75,29 @@ import WmsSchEdit from "./pages/citizen/SCH/Edit";
 
 
 /**------------ PM */
-import PMCreate from "./pages/citizen/PM/Create";
-import WmsPmId from "./pageComponents/PM/WmsPmId";
-import WmsPmMlName from "./pageComponents/PM/WmsPmMlName";
-import WmsPmPer from "./pageComponents/PM/WmsPmPer";
-import WmsPmPrjName from "./pageComponents/PM/WmsPmPrjName";
-import WmsPmWrkName from "./pageComponents/PM/WmsPmWrkName";
+
+
+import WmsPhmId from "./pageComponents/PHM/WmsPhmId";
+import WmsPhmPrjName from "./pageComponents/PHM/WmsPhmPrjName";
+import WmsPhmWorkName from "./pageComponents/PHM/WmsPhmWorkName";
+import WmsPhmMLName from "./pageComponents/PHM/WmsPhmMLName"
+import WmsPhmPercent from "./pageComponents/PHM/WmsPhmPercent";
+// import WmsPhmFund from "./pageComponents/PHM/WmsPhmFund";
+// import WmsPhmSourceOfFund from "./pageComponents/PHM/WmsPhmSourceOfFund";
+// import WmsPhmDescriptionOfPhmeme from "./pageComponents/PHM/WmsPhmDescriptionOfPhmeme";
+
+// import WmsPhmStartDate from "./pageComponents/PHM/WmsPhmStartDate";
+// import WmsPhmEndDate from "./pageComponents/PHM/WmsPhmEndDate";
+
+import WmsPhmResponse from "./pages/citizen/PHM/Response";
+import WmsPhmList from "./pages/citizen/PHM/List";
+import WmsPhmDetails from "./pages/citizen/PHM/Details";
+import WmsPhmCreate from "./pages/citizen/PHM/Create";
+import WmsPhmEdit from "./pages/citizen/PHM/Edit";
+
+
+
+
 
 /**---------------- */
 import ContrMasterAdd from "./pages/citizen/ContrMaster/index";
@@ -156,6 +173,22 @@ const componentsToRegister = {
   WmsSchEndDate,
   WmsSchResponse,
   WmsSchResponse:WmsSchResponse,
+  
+  WmsPhmList:WmsPhmList,
+  WmsPhmDetails:WmsPhmDetails,
+  WmsPhmCreate:WmsPhmCreate,
+  WmsPhmEdit:WmsPhmEdit,
+  WmsPhmResponse:WmsPhmResponse,
+  WmsPhmId,
+  WmsPhmMLName,
+  WmsPhmPrjName,
+  WmsPhmWorkName,
+  WmsPhmPercent,
+  // WmsPhmFund,
+  // WmsPhmSourceOfFund,
+  // WmsPhmDescriptionOfPhmeme,
+  // WmsPhmStartDate,
+  // WmsPhmEndDate,
 
   WmsPrjList:PrjList,
   WmsPrjDetails:PrjDetails,
@@ -178,15 +211,9 @@ const componentsToRegister = {
   WmsPrjStatus,
   WmsPrjResponse:WmsPrjResponse,
 
-  PMCreate:PMCreate,
   ContrMasterAdd,
   ContrMasterView,
   WMSCard,
-  WmsPmId,
-  WmsPmMlName,
-  WmsPmPer,
-  WmsPmPrjName,
-  WmsPmWrkName,
 Inbox,
   WMSCardContract,
   ContractViewTableTest,
@@ -273,7 +300,7 @@ export const WMSLinks = ({ matchPath, userType }) => {
       i18nKey: t("PRJMST_HOME"),
     },
     {
-      link: `${matchPath}/pm-home`,
+      link: `${matchPath}/phm-home`,
       i18nKey: t("PM HOME"),
     }
     ,{

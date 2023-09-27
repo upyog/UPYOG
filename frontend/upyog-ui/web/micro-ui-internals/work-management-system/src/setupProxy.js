@@ -13,7 +13,7 @@ const assetsProxy = createProxyMiddleware({
 });
 
 const MapiProxy = createProxyMiddleware({
-  target: "http://10.216.36.67:8484",
+  target: "https://65002a9418c34dee0cd46ad1.mockapi.io",
   changeOrigin: true,
 });
 const apiProxy = createProxyMiddleware({
@@ -99,6 +99,10 @@ module.exports = function (app) {
   "/wms/work-management-service/v1/sch/_search",  
   "/wms/work-management-service/v1/sch/_count",
   "/wms/work-management-service/v1/sch/_update",
+  "/wms/work-management-service/v1/phm/_create",
+  "/wms/work-management-service/v1/phm/_search",  
+  "/wms/work-management-service/v1/phm/_count",
+  "/wms/work-management-service/v1/phm/_update",
   ].forEach((location) => app.use(location, MapiProxy));
   
 

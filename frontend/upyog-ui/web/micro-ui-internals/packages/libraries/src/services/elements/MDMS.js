@@ -2304,7 +2304,7 @@ export const MdmsService = {
                   "leftIcon": "WMSIcon",
                   "rightIcon": ""
               },{
-                "id": 2478,
+                "id": 3004,
                 "name": "PM HOME",
                 "url": "digit-ui-card",
                 "displayName": "Physical Milestone",
@@ -2314,7 +2314,7 @@ export const MdmsService = {
                 "serviceCode": "CITIZEN_SERVICE_WMS",
                 "code": "",
                 "path": "",
-                "navigationURL": "/digit-ui/citizen/pm-home",
+                "navigationURL": "/digit-ui/citizen/wms/phm-home",
                 "leftIcon": "WMSIcon",
                 "rightIcon": "",
                 "queryParams": "",
