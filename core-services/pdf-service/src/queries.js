@@ -408,7 +408,7 @@ export async function insertRecordsForDN(bulkPdfJobId, totalPdfRecords, currentP
       var recordscompleted = parseInt(result.rows[0].recordscompleted);
       var totalrecords = parseInt(result.rows[0].totalrecords);
       if(recordscompleted < totalrecords){
-        const updateQuery = 'UPDATE egov_bulk_pdf_info SET recordscompleted = recordscompleted + $1, lastmodifiedby = $2, lastmodifiedtime = $3 WHERE jobid = $4';
+        const updateQuery = 'UPDATE egov_defaulter_notice_pdf_info SET recordscompleted = recordscompleted + $1, lastmodifiedby = $2, lastmodifiedtime = $3 WHERE jobid = $4';
         const curentTimeStamp = new Date().getTime();
         await pool.query(updateQuery,[currentPdfRecords, userid, curentTimeStamp, bulkPdfJobId]);
       }
@@ -421,7 +421,7 @@ export async function insertRecordsForDN(bulkPdfJobId, totalPdfRecords, currentP
 export async function mergePdfForDN(bulkPdfJobId, tenantId, userid, numberOfFiles, mobileNumber){
 
   try {
-    const updateResult = await pool.query('select * from egov_bulk_pdf_info where jobid = $1', [bulkPdfJobId]);
+    const updateResult = await pool.query('select * from egov_defaulter_notice_pdf_info where jobid = $1', [bulkPdfJobId]);
     var recordscompleted = parseInt(updateResult.rows[0].recordscompleted);
     var totalrecords = parseInt(updateResult.rows[0].totalrecords);
     var baseFolder = envVariables.SAVE_PDF_DIR + bulkPdfJobId + '/';
@@ -448,7 +448,7 @@ export async function mergePdfForDN(bulkPdfJobId, tenantId, userid, numberOfFile
       
           var mergePdfData = fs.createReadStream(baseFolder+'output.pdf');
           await fileStoreAPICall('output.pdf', tenantId, mergePdfData).then((filestoreid) => {
-            const updateQuery = 'UPDATE egov_bulk_pdf_info SET filestoreid = $1, lastmodifiedby = $2, lastmodifiedtime = $3, status = $5 WHERE jobid = $4';
+            const updateQuery = 'UPDATE egov_defaulter_notice_pdf_info SET filestoreid = $1, lastmodifiedby = $2, lastmodifiedtime = $3, status = $5 WHERE jobid = $4';
             const curentTimeStamp = new Date().getTime();
             const status = 'DONE';
             pool.query(updateQuery,[filestoreid, userid, curentTimeStamp, bulkPdfJobId, status]);
