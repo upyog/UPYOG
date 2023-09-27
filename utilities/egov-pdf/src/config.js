@@ -49,8 +49,9 @@ module.exports = {
     birth_certificate:
             process.env.BIRTH_CERTIFICATE || "birth-certificate",
     death_certificate:
-        process.env.DEATH_CERTIFICATE || "death-certificate"
-        
+        process.env.DEATH_CERTIFICATE || "death-certificate",
+    defaulter_notice:
+        process.env.DEFAULTER_NOTICE || "defaulter-notice"
   },
   app: {
     port: parseInt(process.env.APP_PORT) || 8080,
