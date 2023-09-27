@@ -100,9 +100,9 @@ public class SewerageConnectionRowMapper implements ResultSetExtractor<List<Sewe
                 connectionListMap.put(Id, sewarageConnection);
             }
 			//addDocumentToSewerageConnection(rs, sewarageConnection);
-			addPlumberInfoToSewerageConnection(rs, sewarageConnection);
+			//addPlumberInfoToSewerageConnection(rs, sewarageConnection);
 			addHoldersDeatilsToSewerageConnection(rs, sewarageConnection);
-            addRoadCuttingInfotToSewerageConnection(rs, sewarageConnection);
+            //addRoadCuttingInfotToSewerageConnection(rs, sewarageConnection);
         }
         return new ArrayList<>(connectionListMap.values());
     }

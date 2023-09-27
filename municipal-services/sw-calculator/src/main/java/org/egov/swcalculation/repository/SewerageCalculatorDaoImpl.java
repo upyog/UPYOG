@@ -71,7 +71,7 @@ public class SewerageCalculatorDaoImpl implements SewerageCalculatorDao {
 	public List<SewerageConnection> getConnectionsNoListForDemand(String tenantId, String connectionType, Long fromDate, Long toDate) {
 		List<Object> preparedStatement = new ArrayList<>();
 		String query = queryBuilder.getConnectionNumberListForDemand(tenantId, connectionType, preparedStatement,fromDate, toDate);
-		log.info("sewerage " + connectionType + " connection list : " + query + " Parameters: "+preparedStatement.toArray());
+		log.info("sewerage " + connectionType + " connection list : " + query + " Parameters: "+preparedStatement);
 		return jdbcTemplate.query(query, preparedStatement.toArray(), sewerageDemandRowMapper);
 	}
 	
@@ -79,7 +79,7 @@ public class SewerageCalculatorDaoImpl implements SewerageCalculatorDao {
 	public List<SewerageConnection> getConnection(String tenantId, String consumerCode,String connectionType, Long fromDate, Long toDate) {
 		List<Object> preparedStatement = new ArrayList<>();
 		String query = queryBuilder.getConnectionNumber(tenantId, consumerCode,connectionType, preparedStatement,fromDate, toDate);
-		log.info("water " + connectionType + " connection list : " + query);
+		log.info("Sewerage " + connectionType + " connection list : " + query);
 		return jdbcTemplate.query(query, preparedStatement.toArray(), sewerageConnectionRowMapper);
 	}
 
