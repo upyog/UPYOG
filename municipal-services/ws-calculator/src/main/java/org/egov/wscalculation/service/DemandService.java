@@ -773,7 +773,7 @@ public class DemandService {
 		generateDemandForULB(requestInfo, tenantId, bulkBillCriteria);
 	}
 	
-	public void generateDemandForConsumerCode(RequestInfo requestInfo, BulkBillCriteria bulkBillCriteria) {
+	public String generateDemandForConsumerCode(RequestInfo requestInfo, BulkBillCriteria bulkBillCriteria) {
 		Map<String, Object> billingMasterData = calculatorUtils.loadBillingFrequencyMasterData(requestInfo, bulkBillCriteria.getTenantId());
 		
 		long startDay = (((int) billingMasterData.get(WSCalculationConstant.Demand_Generate_Date_String)) / 86400000);
@@ -825,9 +825,15 @@ public class DemandService {
 						wsCalculationProducer.push(configs.getCreateDemand(), calculationReq);
 						
 						calculationCriteriaList.clear();
+						return "Demand Generated successfully for this consumer Code.";
+					}
+					else
+					{
+						return "Demand is already generated for last billing cycle for this consumercode";
 					}
 
 		}
+		return "Some error occured!!";
 	}
 	
 	public List<WaterConnection> getConnectionPendingForDemand(RequestInfo requestInfo, String tenantId)

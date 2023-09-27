@@ -381,16 +381,17 @@ public class WSCalculationServiceImpl implements WSCalculationService {
 		return demandService.getConnectionPendingForDemand(requestInfo,bulkBillCriteria.getTenantId());
 	}
 	
-	public void generateDemandForConsumerCodeBasedOnTimePeriod(RequestInfo requestInfo, BulkBillCriteria bulkBillCriteria) {
+	public String generateDemandForConsumerCodeBasedOnTimePeriod(RequestInfo requestInfo, BulkBillCriteria bulkBillCriteria) {
 		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 		LocalDateTime date = LocalDateTime.now();
 		log.info("Going to generate Demand of Consumer Code" + bulkBillCriteria.getConsumerCode());
 		
 		if (bulkBillCriteria.getTenantId()==null)
-			return;
+			return "Tenant Id should not be null.";
 		log.info("Tenant Ids : " + bulkBillCriteria.getTenantId());
-			demandService.generateDemandForConsumerCode(requestInfo,bulkBillCriteria);
+			String msg=demandService.generateDemandForConsumerCode(requestInfo,bulkBillCriteria);
 	
+			return msg;
 	}
 	
 	/**
