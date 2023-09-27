@@ -1,10 +1,20 @@
 var express = require("express");
 var router = express.Router();
+var producer = require("../producer").producer ;
 var url = require("url");
 var config = require("../config");
 const uuidv4 = require("uuid/v4");
+var logger = require("../logger").logger;
+const { Pool } = require('pg');
 
 
+const pool = new Pool({
+  user: config.DB_USER,
+  host: config.DB_HOST,
+  database: config.DB_NAME,
+  password: config.DB_PASSWORD,
+  port: config.DB_PORT,
+});
 var {
   search_property,
   search_bill,
@@ -300,7 +310,7 @@ router.post(
     if (!tenantId) {
       return renderError(
         res,
-        "tenantId and uuid are mandatory to generate the ptreceipt",
+        "tenantId are mandatory to generate the Pt defaulter notice",
         400
       );
     }
@@ -327,6 +337,7 @@ router.post(
       try {
         var payloads = [];
         var records=properties.length;
+        logger.info("::Pushing data to kafka::");
         payloads.push({
           topic: config.KAFKA_BULK_PDF_TOPIC,
           messages: JSON.stringify(kafkaData)
@@ -345,8 +356,8 @@ router.post(
         try {
           const result = await pool.query('select * from egov_defaulter_notice_pdf_info where jobid = $1', [jobid]);
           if(result.rowCount<1){
-            var userid = requestinfo.RequestInfo.userInfo.uuid;
-            const insertQuery = 'INSERT INTO egov_defaulter_notice_pdf_info(jobid, uuid, recordscompleted, totalrecords, createdtime, filestoreid, lastmodifiedby, lastmodifiedtime, tenantid, locality,propertytype, businessservice, consumercode, isconsolidated, status) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)';
+            var userid = requestinfo.userInfo.uuid;
+            const insertQuery = 'INSERT INTO egov_defaulter_notice_pdf_info(jobid, uuid, recordscompleted, totalrecords, createdtime, filestoreid, lastmodifiedby, lastmodifiedtime, tenantid, locality,propertytype, businessservice, consumercode, isconsolidated, status) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14,$15)';
             const curentTimeStamp = new Date().getTime();
             const status = 'INPROGRESS';
             await pool.query(insertQuery,[jobid, userid, 0, records, curentTimeStamp, null, userid, curentTimeStamp, tenantId, locality,propertytype, bussinessService, null, true, status]);
