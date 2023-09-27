@@ -51,6 +51,7 @@ import org.egov.swcalculation.web.models.SewerageConnectionRequest;
 import org.egov.swcalculation.web.models.TaxHeadEstimate;
 import org.egov.swcalculation.web.models.TaxPeriod;
 import org.egov.tracer.model.CustomException;
+import org.egov.wscalculation.producer.WSCalculationProducer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
@@ -80,6 +81,8 @@ public class DemandService {
 	@Autowired
 	private SWCalculationConfiguration configs;
 	
+	@Autowired
+	private SWCalculationProducer swCalculationProducer;
 	
 	@Autowired
 	private ServiceRequestRepository repository;
@@ -819,8 +822,7 @@ public class DemandService {
 								.isconnectionCalculation(true)
 								.migrationCount(migrationCount).build();
 						
-						kafkaTemplate.send(configs.getCreateDemand(), calculationReq);
-						log.info("Bulk bill Gen batch info : " + migrationCount);
+						swCalculationProducer.push(configs.getCreateDemand(), calculationReq);
 						calculationCriteriaList.clear();
 						return "Demand Generated successfully for consumer Code"+bulkBillCriteria.getConsumerCode();
 					}
