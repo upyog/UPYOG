@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { useHistory, useParams } from "react-router-dom";
 import ApplicationDetailsTemplate from "../../../../templates/ApplicationDetails";
 import OwnerHistory from "./PropertyMutation/ownerHistory";
+import usePropertyAPI from "../../../../../libraries/src/hooks/pt/usePropertyAPI"
 
 const Close = () => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#FFFFFF">
@@ -230,6 +231,28 @@ const PropertyDetails = () => {
                   // state: { workflow: { action: "OPEN", moduleName: "PT", businessService } },
                   state: null,
                 },
+                tenantId: Digit.ULBService.getStateId(),
+              },
+              {
+                action: "INACTIVE_PROPERTY",
+                forcedName: "PT_INACTIVE_PROPERTY",
+                showInactiveYearModel: true,
+                customFunctionToExecute: (data) => {
+                history.push("/digit-ui/employee/pt/response", { Property: data.Property, key: "UPDATE", action: "SUBMIT" });
+                },
+                // redirectionUrl: {
+                 
+                //   state: { workflow: { action: "OPEN", moduleName: "PT", businessService: "PT.CREATE" } },
+                // },
+               // AmountDueForPay: fetchBillData?.Bill[0]?.totalAmount,
+                //isWarningPopUp: !fetchBillData?.Bill[0]?.totalAmount ? true : true,
+                // redirectionUrl: {
+                //   pathname: !fetchBillData?.Bill[0]?.totalAmount
+                //     ? `/digit-ui/employee/pt/property-mutate-docs-required/${applicationNumber}`
+                //     : `/digit-ui/employee/payment/collect/PT/${applicationNumber}`,
+                //   // state: { workflow: { action: "OPEN", moduleName: "PT", businessService } },
+                //   state: null,
+                // },
                 tenantId: Digit.ULBService.getStateId(),
               },
             ]
