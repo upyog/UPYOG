@@ -1129,7 +1129,7 @@ async function create_bulk_pdf_pt(kafkaData){
 
 
 async function create_defaulter_notice_pdf_pt(kafkaData){
-  log.info("Kafka data is" + kafkaData);
+  logger.info("Kafka data is" + kafkaData);
   var tenantId = kafkaData.tenantId;
   var bussinessService = kafkaData.bussinessService;
   var properties=kafkaData.properties;
