@@ -1129,6 +1129,7 @@ async function create_bulk_pdf_pt(kafkaData){
 
 
 async function create_defaulter_notice_pdf_pt(kafkaData){
+  log.info("Kafka data is" + kafkaData);
   var tenantId = kafkaData.tenantId;
   var bussinessService = kafkaData.bussinessService;
   var properties=kafkaData.properties;
@@ -1141,7 +1142,7 @@ async function create_defaulter_notice_pdf_pt(kafkaData){
       var pdfkey = config.pdf.pt_defaulter_notice;
       try {
         var batchSize = config.PDF_BATCH_SIZE;
-        var size = consolidatedResult.Bill.length;
+        var size = properties.length;
         var numberOfFiles = (size%batchSize) == 0 ? (size/batchSize) : (~~(size/batchSize) +1);
         for(var i = 0;i<size;i+=batchSize){
           var payloads = [];
@@ -1198,7 +1199,7 @@ async function create_defaulter_notice_pdf_pt(kafkaData){
 
     }
  catch (ex) {
-    throw new Error("Failed to query bill for water and sewerage application");
+    throw new Error("Failed to query bill for water and sewerage application " + ex);
   }
 
 }
