@@ -80,6 +80,8 @@ public class DemandService {
 	@Autowired
 	private SWCalculationConfiguration configs;
 	
+	@Autowired
+	private SWCalculationProducer swCalculationProducer;
 	
 	@Autowired
 	private ServiceRequestRepository repository;
@@ -819,8 +821,7 @@ public class DemandService {
 								.isconnectionCalculation(true)
 								.migrationCount(migrationCount).build();
 						
-						kafkaTemplate.send(configs.getCreateDemand(), calculationReq);
-						log.info("Bulk bill Gen batch info : " + migrationCount);
+						swCalculationProducer.push(configs.getCreateDemand(), calculationReq);
 						calculationCriteriaList.clear();
 						return "Demand Generated successfully for consumer Code"+bulkBillCriteria.getConsumerCode();
 					}
