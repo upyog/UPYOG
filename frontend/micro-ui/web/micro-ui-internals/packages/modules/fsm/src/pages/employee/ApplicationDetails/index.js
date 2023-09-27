@@ -29,7 +29,7 @@ import { useQueryClient } from "react-query";
 
 import { Link, useHistory, useParams } from "react-router-dom";
 import { ViewImages } from "../../../components/ViewImages";
-
+import _ from "lodash";
 const ApplicationDetails = (props) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const state = Digit.ULBService.getStateId();
@@ -75,7 +75,7 @@ const ApplicationDetails = (props) => {
         : applicationData?.advanceAmount === 0
         ? "PAY_LATER_SERVICE"
         : applicationData?.advanceAmount > 0
-        ? "FSM_ADVANCE_PAY_SERVICE"
+        ? "FSM_ADVANCE_PAY_SERVICE_V1"
         : applicationData?.paymentPreference === null &&
           applicationData?.additionalDetails?.tripAmount === 0 &&
           applicationData?.advanceAmount === null
@@ -195,7 +195,15 @@ const ApplicationDetails = (props) => {
         date: `${t("CS_FSM_EXPECTED_DATE")} ${Digit.DateUtils.ConvertTimestampToDate(applicationData?.possibleServiceDate)}`,
       };
       return <TLCaption data={caption} />;
-    } else if (checkpoint.status === "COMPLETED") {
+    } 
+    else if (checkpoint.status === "PENDING_PAYYY") {
+      const caption = {
+        name: checkpoint?.assigner,
+        mobileNumber: checkpoint?.assigner?.mobileNumber,
+        date: `${t("CS_FSM_EXPECTED_DATE")} ${Digit.DateUtils.ConvertTimestampToDate(applicationData?.possibleServiceDate)}`,
+      };
+      return <TLCaption data={caption} />;
+    }else if (checkpoint.status === "COMPLETED") {
       return (
         <div>
           <Rating withText={true} text={t(`ES_FSM_YOU_RATED`)} currentRating={checkpoint.rating} />
@@ -218,12 +226,30 @@ const ApplicationDetails = (props) => {
       if (checkpoint?.numberOfTrips) caption.comment = `${t("NUMBER_OF_TRIPS")}: ${checkpoint?.numberOfTrips}`;
       return <TLCaption data={caption} />;
     }
+    else if(checkpoint.status === "ASSING_DSO")
+      {
+        const caption = {
+          name: checkpoint?.assigner,
+          mobileNumber: checkpoint?.assigner?.mobileNumber,
+          date: `${t("CS_FSM_EXPECTED_DATE")} ${Digit.DateUtils.ConvertTimestampToDate(applicationData?.possibleServiceDate)}`,
+        };
+        return <TLCaption data={caption} />;
+      }
   };
 
   if (isLoading) {
     return <Loader />;
   }
 
+let deepCopy = _.cloneDeep( workflowDetails )
+deepCopy?.data?.timeline.map((check,index) => {
+  if (check.status == "ASSING_DSO")
+  {
+      let obj= check
+      obj.status = "PENDING_PAYYY"
+      workflowDetails.data.timeline.splice(index, 0, obj);
+  }
+})
   return (
     <React.Fragment>
       {!isLoading ? (

@@ -14,6 +14,7 @@ import {
   Loader,
   Rating,
 } from "@egovernments/digit-ui-react-components";
+import _ from "lodash";
 import TLCaption from "./TLCaption";
 
 export const ApplicationTimeline = (props) => {
@@ -84,7 +85,15 @@ export const ApplicationTimeline = (props) => {
       if (checkpoint?.numberOfTrips) caption.comment = `${t("NUMBER_OF_TRIPS")}: ${checkpoint?.numberOfTrips}`;
       return <TLCaption data={caption} />;
     }
+    else if (checkpoint.status === "PENDING_PAYYY") {
+      const caption = {
+        name: checkpoint?.assigner,
+        mobileNumber: checkpoint?.assigner?.mobileNumber,
+        date: `${t("CS_FSM_EXPECTED_DATE")} ${Digit.DateUtils.ConvertTimestampToDate(props.application?.possibleServiceDate)}`,
+      };
+      return <TLCaption data={caption} />;
   };
+}
 
   const showNextActions = (nextAction) => {
     switch (nextAction?.action) {
@@ -116,6 +125,15 @@ export const ApplicationTimeline = (props) => {
     return <Loader />;
   }
 
+  let deepCopy = _.cloneDeep( data )
+  deepCopy?.timeline.map((check,index) => {
+    if (check.status == "ASSING_DSO")
+    {
+        let obj= check
+        obj.status = "PENDING_PAYYY"
+        data.timeline.splice(index, 0, obj);
+    }
+  })
   return (
     <React.Fragment>
       {!isLoading && (

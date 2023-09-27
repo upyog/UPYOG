@@ -376,6 +376,24 @@ public class WSCalculationServiceImpl implements WSCalculationService {
 		});
 	}
 	
+	public List<WaterConnection> getConnnectionWithPendingDemand(RequestInfo requestInfo, BulkBillCriteria bulkBillCriteria)
+	{
+		return demandService.getConnectionPendingForDemand(requestInfo,bulkBillCriteria.getTenantId());
+	}
+	
+	public String generateDemandForConsumerCodeBasedOnTimePeriod(RequestInfo requestInfo, BulkBillCriteria bulkBillCriteria) {
+		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+		LocalDateTime date = LocalDateTime.now();
+		log.info("Going to generate Demand of Consumer Code" + bulkBillCriteria.getConsumerCode());
+		
+		if (bulkBillCriteria.getTenantId()==null)
+			return "Tenant Id should not be null.";
+		log.info("Tenant Ids : " + bulkBillCriteria.getTenantId());
+			String msg=demandService.generateDemandForConsumerCode(requestInfo,bulkBillCriteria);
+	
+			return msg;
+	}
+	
 	/**
 	 * 
 	 * @param request - Calculation Request Object

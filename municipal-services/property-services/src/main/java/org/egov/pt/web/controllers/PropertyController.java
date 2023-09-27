@@ -36,8 +36,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Controller
 @RequestMapping("/property")
+@Slf4j
 public class PropertyController {
 
     @Autowired
@@ -141,6 +144,8 @@ public class PropertyController {
         }else {
         	 properties = propertyService.searchProperty(propertyCriteria,requestInfoWrapper.getRequestInfo());
         }
+        
+        log.info("Property count after search"+properties.size());
         
         PropertyResponse response = PropertyResponse.builder()
         		.responseInfo(

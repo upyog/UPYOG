@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 @Component
-public class WaterRowMapper implements ResultSetExtractor<List<WaterConnection>> {
+public class WaterConnectionRowMapper implements ResultSetExtractor<List<WaterConnection>> {
 
 	@Autowired
 	private ObjectMapper mapper;
@@ -104,7 +104,7 @@ public class WaterRowMapper implements ResultSetExtractor<List<WaterConnection>>
 	}
 
 	private void addChildrenToProperty(ResultSet rs, WaterConnection waterConnection) throws SQLException {
-		addDocumentToWaterConnection(rs, waterConnection);
+		//addDocumentToWaterConnection(rs, waterConnection);
 		addPlumberInfoToWaterConnection(rs, waterConnection);
 		addHoldersDeatilsToWaterConnection(rs, waterConnection);
 		addRoadCuttingInfotToWaterConnection(rs, waterConnection);

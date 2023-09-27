@@ -93,10 +93,10 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
   }, [file]);
 
   function submit(data) {
-    console.log("ddddddd21334254",data,action?.action)
     if (action?.action == "INACTIVE_PROPERTY"){
       console.log("dataaaaa123",data)
       let workflow = { action: "OPEN", comment: data?.comments, businessService:"PT.CREATE", moduleName: "PT" };
+      applicationData.creationReason = "STATUS"
       submitAction({
         customFunctionToExecute: action?.customFunctionToExecute,
         Property: {

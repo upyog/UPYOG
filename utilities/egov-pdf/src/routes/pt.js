@@ -1,8 +1,20 @@
 var express = require("express");
 var router = express.Router();
+var producer = require("../producer").producer ;
 var url = require("url");
 var config = require("../config");
+const uuidv4 = require("uuid/v4");
+var logger = require("../logger").logger;
+const { Pool } = require('pg');
 
+
+const pool = new Pool({
+  user: config.DB_USER,
+  host: config.DB_HOST,
+  database: config.DB_NAME,
+  password: config.DB_PASSWORD,
+  port: config.DB_PORT,
+});
 var {
   search_property,
   search_bill,
@@ -275,6 +287,100 @@ router.post(
         return renderError(
           res,
           "There is no property for you for this id",
+          404
+        );
+      }
+    } catch (ex) {
+      return renderError(res, "Failed to query receipt details of the property", 500);
+    }
+  })
+);
+
+router.post(
+  "/ptdefaulternotice",
+  asyncMiddleware(async function (req, res, next) {
+    var tenantId = req.query.tenantId;
+    var requestinfo = req.body.RequestInfo;
+    var properties=req.body.properties;
+    var locality=req.query.locality;
+    var propertytype=req.query.propertytype;
+    if (requestinfo == undefined) {
+      return renderError(res, "requestinfo can not be null", 400);
+    }
+    if (!tenantId) {
+      return renderError(
+        res,
+        "tenantId are mandatory to generate the Pt defaulter notice",
+        400
+      );
+    }
+    try {
+    
+      
+      if (
+        properties &&
+        properties.length > 0
+      ) {
+       
+        var bussinessService = "PT";
+        var id = uuidv4();
+      var jobid = `${config.pdf.pt_defaulter_notice}-${new Date().getTime()}-${id}`;
+
+      var kafkaData = {
+        requestinfo: requestinfo,
+        tenantId: tenantId,
+        bussinessService: bussinessService,
+        jobid: jobid,
+        properties: properties
+      };
+
+      try {
+        var payloads = [];
+        var records=properties.length;
+        logger.info("::Pushing data to kafka::");
+        payloads.push({
+          topic: config.KAFKA_BULK_PDF_TOPIC,
+          messages: JSON.stringify(kafkaData)
+        });
+        producer.send(payloads, function(err, data) {
+          if (err) {
+            logger.error(err.stack || err);
+            errorCallback({
+              message: `error while publishing to kafka: ${err.message}`
+            });
+          } else {
+            logger.info("jobid: " + jobid + ": published to kafka successfully");
+          }
+        });
+
+        try {
+          const result = await pool.query('select * from egov_defaulter_notice_pdf_info where jobid = $1', [jobid]);
+          if(result.rowCount<1){
+            var userid = requestinfo.userInfo.uuid;
+            const insertQuery = 'INSERT INTO egov_defaulter_notice_pdf_info(jobid, uuid, recordscompleted, totalrecords, createdtime, filestoreid, lastmodifiedby, lastmodifiedtime, tenantid, locality,propertytype, businessservice, consumercode, isconsolidated, status) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14,$15)';
+            const curentTimeStamp = new Date().getTime();
+            const status = 'INPROGRESS';
+            await pool.query(insertQuery,[jobid, userid, 0, records, curentTimeStamp, null, userid, curentTimeStamp, tenantId, locality,propertytype, bussinessService, null, true, status]);
+          }
+        } catch (err) {
+          logger.error(err.stack || err);
+        } 
+
+        res.status(201);
+        res.json({
+          ResponseInfo: requestinfo.RequestInfo,
+          jobId:jobid,
+          message: "Bulk pdf creation is in process",
+        });
+        
+      } catch (error) {
+        return renderError(res, `Failed to query bill for water and sewerage application`);
+      }
+     } 
+       else {
+        return renderError(
+          res,
+          "There is no property reecived in the request body",
           404
         );
       }

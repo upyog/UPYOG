@@ -22,6 +22,7 @@ const NewApplication = () => {
   }, []);
 
   const onFormValueChange = (setValue, formData, formState) => {
+    console.log("data",formData)
     setSubmitValve(!Object.keys(formState.errors).length);
     if (Object.keys(formState.errors).length === 1 && formState.errors?.units?.message === "arv") {
       setSubmitValve(!formData?.units.some((unit) => unit.occupancyType === "RENTED" && !unit.arv));
@@ -40,6 +41,7 @@ const NewApplication = () => {
   };
 
   const onSubmit = (data) => {
+    console.log("data",data)
     const formData = {
       tenantId,
       address: {
@@ -55,6 +57,12 @@ const NewApplication = () => {
       propertyType: data?.PropertyType?.code,
       noOfFloors: Number(data?.noOfFloors),
       ownershipCategory: data?.ownershipCategory?.code,
+      additionalDetails:{
+      RentedMonths: data?.units[0]?.RentedMonths,
+      NonRentedMonthsUsage: data?.units[0]?.NonRentedMonthsUsage,
+      ageOfProperty:data?.units[0]?.ageOfProperty,
+      structureType:data?.units[0]?.structureType
+      },
       owners: data?.owners.map((owner) => {
         let {
           name,

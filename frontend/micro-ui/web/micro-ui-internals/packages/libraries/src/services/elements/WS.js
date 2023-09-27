@@ -49,6 +49,28 @@ export const WSService = {
       userService: false,
       params: { tenantId, ...filters },
     }),
+    WSSewsearchDemand: (details) =>
+    Request({
+      url: Urls.ws.wsDemandSearch,
+      data: details,
+      useCache: false,
+      setTimeParam: false,
+      userService: true,
+      method: "POST",
+      params: {},
+      auth: true,
+    }),
+    WSSewsearchDemandGen: (details) =>
+    Request({
+      url: Urls.ws.wsDemandSearchGen,
+      data: details,
+      useCache: false,
+      setTimeParam: false,
+      userService: true,
+      method: "POST",
+      params: {},
+      auth: true,
+    }),
   update: (details, businessService) =>
     Request({
       url: businessService === "WATER" ? Urls.ws.water_update : Urls.ws.sewarage_update,

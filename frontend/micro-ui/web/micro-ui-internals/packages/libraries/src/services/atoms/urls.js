@@ -156,6 +156,8 @@ const Urls = {
     sewarage_create: "/sw-services/swc/_create",
     water_search: "/ws-services/wc/_search",
     sewarage_search: "/sw-services/swc/_search",
+    wsDemandSearch: "/ws-calculator/waterCalculator/_getConnectionForDemand",
+    wsDemandSearchGen: "/ws-calculator/waterCalculator/_generateDemand",
     water_update: "/ws-services/wc/_update",
     sewarage_update: "/sw-services/swc/_update",
     ws_calculation_estimate: "/ws-calculator/waterCalculator/_estimate",

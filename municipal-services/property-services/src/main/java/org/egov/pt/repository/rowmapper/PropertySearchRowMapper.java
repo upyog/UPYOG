@@ -37,7 +37,7 @@ import org.springframework.util.StringUtils;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 @Component
-public class PropertyRowMapper implements ResultSetExtractor<List<Property>> {
+public class PropertySearchRowMapper implements ResultSetExtractor<List<Property>> {
 
 	@Autowired
 	private ObjectMapper mapper;
@@ -58,21 +58,6 @@ public class PropertyRowMapper implements ResultSetExtractor<List<Property>> {
 				Address address = getAddress(rs, tenanId);
 
 				AuditDetails auditdetails = getAuditDetail(rs, "property");
-
-				String institutionId = rs.getString("institutionid");
-				Institution institute = null;
-				
-				if (null != institutionId) {
-					
-					institute = Institution.builder()
-						.nameOfAuthorizedPerson(rs.getString("nameOfAuthorizedPerson"))
-						.tenantId(rs.getString("institutiontenantid"))
-						.designation(rs.getString("designation"))
-						.name(rs.getString("institutionName"))
-						.type(rs.getString("institutionType"))
-						.id(institutionId)
-						.build();
-				}
 
 				Double landArea = rs.getDouble("landArea");
 				if (rs.wasNull()) {
@@ -96,12 +81,13 @@ public class PropertyRowMapper implements ResultSetExtractor<List<Property>> {
 						.propertyType(rs.getString("propertytype"))
 						.noOfFloors(rs.getLong("noOfFloors"))
 						.auditDetails(auditdetails)
-						.institution(institute)
 						.landArea(landArea)
 						.build();
 
 
 				setPropertyInfo(currentProperty, rs, tenanId, propertyUuId, linkedProperties, address);
+				currentProperty.setDueAmount(rs.getString("taxDue"));
+				currentProperty.setDueAmountYear(rs.getString("taxDueYear"));
 				addChildrenToProperty(rs, currentProperty);
 				propertyMap.put(propertyUuId, currentProperty);
 			}
@@ -124,7 +110,7 @@ public class PropertyRowMapper implements ResultSetExtractor<List<Property>> {
 			throws SQLException {
 
 		addOwnerToProperty(rs, currentProperty);
-		addDocToProperty(rs, currentProperty);
+		//addDocToProperty(rs, currentProperty);
 		addUnitsToProperty(rs, currentProperty);
 	}
 
@@ -257,7 +243,7 @@ public class PropertyRowMapper implements ResultSetExtractor<List<Property>> {
 				.uuid(uuid)
 				.build();
 		
-		addDocToOwner(rs, owner);
+		//addDocToOwner(rs, owner);
 		
 		property.addOwnersItem(owner);
 	}

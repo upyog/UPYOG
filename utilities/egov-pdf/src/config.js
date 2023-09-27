@@ -46,6 +46,8 @@ module.exports = {
     process.env.WNS_BILL || "ws-bill",
     pt_group_bill:
     process.env.PT_GROUP_BILL || "pt-group-bill",
+    pt_defaulter_notice:
+    process.env.PT_DEFAULTER_NOTICE || "pt-defaulternotice",
     birth_certificate:
             process.env.BIRTH_CERTIFICATE || "birth-certificate",
     death_certificate:

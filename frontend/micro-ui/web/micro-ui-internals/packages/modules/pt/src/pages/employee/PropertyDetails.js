@@ -202,7 +202,7 @@ const PropertyDetails = () => {
   }, [fetchBillData, appDetailsToShow]);
 
   if (applicationDetails?.applicationData?.status === "ACTIVE") {
-    console.log("application data",applicationDetails)
+
     workflowDetails = {
       ...workflowDetails,
       data: {
@@ -239,10 +239,7 @@ const PropertyDetails = () => {
                 forcedName: "PT_INACTIVE_PROPERTY",
                 showInactiveYearModel: true,
                 customFunctionToExecute: (data) => {
-                 console.log("application data",data)
-                 delete data.customFunctionToExecute;
-                 usePropertyAPI(data.Property,false)
-                 history.replace({ pathname: `/digit-ui/employee/pt/ptsearch/property-details/${data.Property.propertyId}` });
+                history.push("/digit-ui/employee/pt/response", { Property: data.Property, key: "UPDATE", action: "SUBMIT" });
                 },
                 // redirectionUrl: {
                  

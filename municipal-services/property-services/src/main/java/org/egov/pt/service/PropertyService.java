@@ -3,6 +3,7 @@ package org.egov.pt.service;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -17,6 +18,7 @@ import org.egov.pt.config.PropertyConfiguration;
 import org.egov.pt.models.OwnerInfo;
 import org.egov.pt.models.Property;
 import org.egov.pt.models.PropertyCriteria;
+import org.egov.pt.models.collection.BillDetail;
 import org.egov.pt.models.collection.BillResponse;
 import org.egov.pt.models.enums.CreationReason;
 import org.egov.pt.models.enums.Status;
@@ -405,6 +407,67 @@ public class PropertyService {
 		request.setProperty(previousPropertyToBeReInstated);
 
 		producer.pushAfterEncrytpion(config.getUpdatePropertyTopic(), request);
+	}
+	
+	
+	public List<Property> enrichProperty(List<Property> properties, RequestInfo requestInfo)
+	{
+        log.info("In Fetch Bill for Defaulter notice +++++++++++++++++++");
+
+		BillResponse billResponse=new BillResponse();
+		List<Property> defaulterProperties=new ArrayList<>();
+		for(Property property:properties)
+		{
+			try{
+				billResponse= billingService.fetchBill(property,requestInfo);
+			}
+			catch(Exception e)
+			{
+				log.info("Error occured while fetch bill for Property " + property.getPropertyId());
+				properties.remove(property);
+				enrichProperty(properties,requestInfo);
+				defaulterProperties.clear();
+			}
+			if(billResponse.getBill().size()>=1)
+			{
+				if(billResponse.getBill().get(0).getBillDetails().size()==1)
+				{
+					Long fromDate=billResponse.getBill().get(0).getBillDetails().get(0).getFromPeriod();
+					Long toDate=billResponse.getBill().get(0).getBillDetails().get(0).getToPeriod();
+					int fromYear=new Date(fromDate).getYear()+1900;
+					int toYear=new Date(toDate).getYear()+1900;
+					if(!(fromYear==(new Date().getYear()) || toYear==(new Date().getYear())))
+					{
+						property.setDueAmount(billResponse.getBill().get(0).getTotalAmount().toString());
+						String assessmentYear=fromYear+"-"+toYear+"(Rs."+billResponse.getBill().get(0).getTotalAmount().toString()+")";
+						property.setDueAmountYear(assessmentYear);
+						defaulterProperties.add(property);
+					}
+				}
+				else
+				{
+					property.setDueAmount(billResponse.getBill().get(0).getTotalAmount().toString());
+					String assessmentYear=null;
+					for(BillDetail bd:billResponse.getBill().get(0).getBillDetails())
+					{
+						Long fromDate=bd.getFromPeriod();
+						Long toDate=bd.getToPeriod();
+						int fromYear=new Date(fromDate).getYear()+1900;
+						int toYear=new Date(toDate).getYear()+1900;
+						assessmentYear=assessmentYear==null? fromYear+"-"+toYear+"(Rs."+bd.getAmount()+")":
+							assessmentYear.concat(",").concat(fromYear+"-"+toYear+"(Rs."+bd.getAmount()+")");
+					}
+					property.setDueAmountYear(assessmentYear);
+
+					defaulterProperties.add(property);
+				}
+
+			}
+	        log.info("Property Id "+property.getPropertyId() + " added in defaulter notice with Due " +property.getDueAmount() + " for year " +property.getDueAmountYear());
+
+		}
+		return defaulterProperties;
+		
 	}
 
 	/**
