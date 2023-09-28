@@ -162,8 +162,14 @@ public class PropertyService {
 			if(isRequestForStatusChange)
 			{
 				 BillResponse billResponse = billingService.fetchBill(request.getProperty(), request.getRequestInfo());
-			     BigDecimal dueAmount = billResponse.getBill().get(0).getTotalAmount();
-			     log.info("No. of Active Bills==="+ billResponse.getBill().size());
+				 
+				 BigDecimal dueAmount= new BigDecimal("0");
+				 if (billResponse != null && billResponse.getBill()!= null && billResponse.getBill().size()>=1) 
+				 {
+			     dueAmount = billResponse.getBill().get(0).getTotalAmount();
+				 }
+				 
+			     log.info("No. of Active Bills==="+ (billResponse != null && billResponse.getBill()!= null && billResponse.getBill().size()>=1)?billResponse.getBill().size(): "0");
 			     log.info("Amount Due is "+ dueAmount);
 			     if(dueAmount.compareTo(BigDecimal.ZERO)==0)
 			    	 throw new CustomException("EG_PT_ERROR_ACTIVE_BILL_PRESENT",
