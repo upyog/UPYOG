@@ -162,7 +162,13 @@ public class PropertyService {
 			if(isRequestForStatusChange)
 			{
 				 BillResponse billResponse = billingService.fetchBill(request.getProperty(), request.getRequestInfo());
-			     BigDecimal dueAmount = billResponse.getBill().get(0).getTotalAmount();
+				 
+				 BigDecimal dueAmount= new BigDecimal("0");
+				 if (billResponse != null && billResponse.getBill()!= null && billResponse.getBill().size()>=1) 
+				 {
+			     dueAmount = billResponse.getBill().get(0).getTotalAmount();
+				 }
+				 
 			     log.info("No. of Active Bills==="+ billResponse.getBill().size());
 			     log.info("Amount Due is "+ dueAmount);
 			     if(dueAmount.compareTo(BigDecimal.ZERO)==0)
