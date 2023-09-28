@@ -171,7 +171,7 @@ public class PropertyService {
 				 
 			     log.info("No. of Active Bills==="+ billResponse.getBill().size());
 			     log.info("Amount Due is "+ dueAmount);
-			     if(dueAmount.compareTo(BigDecimal.ZERO)==0)
+			     if(dueAmount.compareTo(BigDecimal.ZERO)>0)
 			    	 throw new CustomException("EG_PT_ERROR_ACTIVE_BILL_PRESENT",
 								"Clear Pending dues before De-Enumerating the property");
 							
