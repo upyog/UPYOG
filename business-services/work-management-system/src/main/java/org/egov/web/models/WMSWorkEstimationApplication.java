@@ -1,5 +1,7 @@
 package org.egov.web.models;
 
+import javax.validation.Valid;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AllArgsConstructor;
@@ -39,8 +41,8 @@ public class WMSWorkEstimationApplication {
 	private String chapter=null;
 	@JsonProperty("item_no")
 	private String itemNo=null;
-	@JsonProperty("desription_of_the_item")
-	private String desriptionOfTheItem=null;
+	@JsonProperty("description_of_the_item")
+	private String descriptionOfTheItem=null;
 	@JsonProperty("length")
 	private Integer length=null;
 	@JsonProperty("bw")
@@ -96,5 +98,9 @@ public class WMSWorkEstimationApplication {
 	
 	@JsonProperty("auditDetails")
 	private AuditDetails auditDetails = null;
+	
+	@Valid
+    @JsonProperty("workflow")
+    private Workflow workflow = null;
 	
 }

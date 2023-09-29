@@ -65,21 +65,21 @@ public class WMSWorkEstimationConfiguration {
     @Value("${egov.idgen.path}")
     private String idGenPath;
 //
-//    //Workflow Config
-//    @Value("${egov.workflow.host}")
-//    private String wfHost;
-//
-//    @Value("${egov.workflow.transition.path}")
-//    private String wfTransitionPath;
-//
-//    @Value("${egov.workflow.businessservice.search.path}")
-//    private String wfBusinessServiceSearchPath;
-//
-//    @Value("${egov.workflow.processinstance.search.path}")
-//    private String wfProcessInstanceSearchPath;
-//
-//    @Value("${is.workflow.enabled}")
-//    private Boolean isWorkflowEnabled;
+  //Workflow Config
+    @Value("${egov.workflow.host}")
+    private String wfHost;
+
+    @Value("${egov.workflow.transition.path}")
+    private String wfTransitionPath;
+
+    @Value("${egov.workflow.businessservice.search.path}")
+    private String wfBusinessServiceSearchPath;
+
+    @Value("${egov.workflow.processinstance.search.path}")
+    private String wfProcessInstanceSearchPath;
+
+    @Value("${is.workflow.enabled}")
+    private Boolean isWorkflowEnabled;
 //
 //    //MDMS
 //    @Value("${egov.mdms.host}")
