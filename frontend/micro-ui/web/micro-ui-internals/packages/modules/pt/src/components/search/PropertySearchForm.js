@@ -1,4 +1,4 @@
-import { CardLabelError, SearchField, SearchForm, SubmitBar, TextInput,Localities,MobileNumber } from "@egovernments/digit-ui-react-components";
+import { CardLabelError, SearchField, SearchForm, SubmitBar, TextInput,Localities,MobileNumber, Dropdown } from "@egovernments/digit-ui-react-components";
 import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 
@@ -21,9 +21,39 @@ const SearchPTID = ({ tenantId, t, onSubmit, onReset, searchBy, PTSearchFields, 
       ...payload,
         }
   });
-  const formValue = watch();
+  const stateId = Digit.ULBService.getStateId();
+  const { data: usageMenu = {}, isLoading } = Digit.Hooks.pt.usePropertyMDMS(stateId, "PropertyTax", [
+    "UsageCategory",
+    "OccupancyType",
+    "Floor",
+    "OwnerType",
+    "OwnerShipCategory",
+    "Documents",
+    "SubOwnerShipCategory",
+    "OwnerShipCategory",
+  ]);
+  let usagecat = [];
+  usagecat = usageMenu?.PropertyTax?.UsageCategory?.filter((e) => e?.code !== "MIXED") || [];
+  const usageCategoryMajorMenu = (usagecat) => {
+    const catMenu = usagecat
+      ?.filter((e) => e?.code.split(".").length <= 2 && e?.code !== "NONRESIDENTIAL")
+      ?.map((item) => {
+        const arr = item?.code.split(".");
+        if (arr.length == 2) return { i18nKey: "PROPERTYTAX_BILLING_SLAB_" + arr[1], code: item?.code };
+        else return { i18nKey: "PROPERTYTAX_BILLING_SLAB_" + item?.code, code: item?.code };
+      });
+    return catMenu;
+  };
+  const [usageType, setUsageType] = useState();
+  let formValue = watch();
   const fields = PTSearchFields?.[searchBy] || {};
   sessionStorage.removeItem("revalidateddone");
+  console.log("payload",payload,formValue)
+ const setProptype =(e)=>{
+  console.log("e",e.code)
+  setUsageType
+  formValue.propertyType= "bbb"
+ }
   return (
     <div className="PropertySearchForm">
       <SearchForm onSubmit={onSubmit} className={"pt-property-search"} handleSubmit={handleSubmit}>
@@ -66,6 +96,25 @@ const SearchPTID = ({ tenantId, t, onSubmit, onReset, searchBy, PTSearchFields, 
               //maxlength={10}
         />
         </div>
+        :field.type === "propertyType"?
+        <div>
+        <Dropdown
+          className="form-field"
+          selected={usageType}
+          disable={false}
+          defaultValue={formValue?.[key]}
+          name={key}
+          option={usageCategoryMajorMenu(usagecat)}
+          select={(e) => setProptype(e)}
+          inputRef={register({
+            value: getValues(key),
+            shouldUnregister: true,
+          })}
+          
+          optionKey="i18nKey"
+          t={t}
+        />
+         </div>
         :
             <TextInput
                   name={key}

@@ -83,6 +83,9 @@ const Urls = {
     cfcreate: "/service-request/service/v1/_create",
     cfdefinitionsearch: "/service-request/service/definition/v1/_search",
     cfsearch: "/service-request/service/v1/_search",
+    defaulterNotice:"/egov-pdf/download/PT/ptdefaulternotice",
+    getDefaulterNoticeStatus:"/pdf-service/v1/_getBulkDefaulterNoticeRecordsDetails"
+    
   },
 
   dss: {
