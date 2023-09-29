@@ -223,22 +223,29 @@ wms:{
     search:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/SORApplications",
     delete:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/SORApplications:id"
   },
-  PMApplications:{
+  // PMApplications:{
 
-    create: "https://64f5834d2b07270f705d4f91.mockapi.io/PMApplications",
-    // create: "http://10.216.36.152:8484/wms/wms-services/v1/pfmilestone/_create",
+  //   create: "https://64f5834d2b07270f705d4f91.mockapi.io/PMApplications",
+  //   // create: "http://10.216.36.152:8484/wms/wms-services/v1/pfmilestone/_create",
 
-    search:"https://64f5834d2b07270f705d4f91.mockapi.io/PMApplications",
-    // search:"http://10.216.36.152:8484/wms/wms-services/v1/pfmilestone/_search",
+  //   search:"https://64f5834d2b07270f705d4f91.mockapi.io/PMApplications",
+  //   // search:"http://10.216.36.152:8484/wms/wms-services/v1/pfmilestone/_search",
     
 
-    get:"https://64f5834d2b07270f705d4f91.mockapi.io/PMApplications:id",
+  //   get:"https://64f5834d2b07270f705d4f91.mockapi.io/PMApplications:id",
 
     
 
-    count:"https://64f5834d2b07270f705d4f91.mockapi.io/PMApplications",
+  //   count:"https://64f5834d2b07270f705d4f91.mockapi.io/PMApplications",
 
 
+  // },
+  PHMApplications:{
+    create: "https://64f5834d2b07270f705d4f91.mockapi.io/PHMApplications",
+    update:"https://64f5834d2b07270f705d4f91.mockapi.io/PHMApplications",
+    get:"https://64f5834d2b07270f705d4f91.mockapi.io/PHMApplications/:id",
+    search:"https://64f5834d2b07270f705d4f91.mockapi.io/PHMApplications",      
+    count:"https://64f5834d2b07270f705d4f91.mockapi.io/PHMApplications",
   },
   
 ContractorMaster:{
@@ -271,6 +278,5 @@ Tender_Entry:{
   access_control: "/access/v1/actions/mdms/_get",
   billgenie: "/egov-searcher",
   audit: "/inbox/v1/elastic/_search",
-};
-
+}
 export default Urls;

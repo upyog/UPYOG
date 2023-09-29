@@ -1,45 +1,39 @@
 package org.egov.web.controllers;
 
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.egov.common.contract.response.ResponseInfo;
-import org.egov.service.WMSContractorService;
-import org.egov.service.WMSORService;
 import org.egov.service.WMSTenderEntryService;
-import org.egov.service.WMSWorkService;
 import org.egov.util.ResponseInfoFactory;
 import org.egov.web.models.RequestInfoWrapper;
-import org.egov.web.models.SORApplicationResponse;
-import org.egov.web.models.SORApplicationSearchCriteria;
-import org.egov.web.models.ScheduleOfRateApplication;
-import org.egov.web.models.WMSContractorApplication;
-import org.egov.web.models.WMSContractorApplicationResponse;
-import org.egov.web.models.WMSContractorApplicationSearchCriteria;
-import org.egov.web.models.WMSContractorRequest;
-import org.egov.web.models.WMSSORRequest;
 import org.egov.web.models.WMSTenderEntryApplication;
 import org.egov.web.models.WMSTenderEntryApplicationResponse;
 import org.egov.web.models.WMSTenderEntryApplicationSearchCriteria;
 import org.egov.web.models.WMSTenderEntryRequest;
-import org.egov.web.models.WMSWorkApplication;
-import org.egov.web.models.WMSWorkApplicationResponse;
-import org.egov.web.models.WMSWorkApplicationSearchCriteria;
-import org.egov.web.models.WMSWorkRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -62,6 +56,9 @@ public class WMSTenderEntryApiController{
 
     @Autowired
     private ResponseInfoFactory responseInfoFactory;
+    
+    @Value("${upload.directory}")
+    private String uploadDirectory;
  
 
     @Autowired
@@ -111,6 +108,31 @@ public class WMSTenderEntryApiController{
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true);
         WMSTenderEntryApplicationResponse response = WMSTenderEntryApplicationResponse.builder().wmsTenderEntryApplications(applications).responseInfo(responseInfo).build();
         return new ResponseEntity<>(response,HttpStatus.OK);
+    }
+    
+    
+    @RequestMapping(value="/v1/tenderentry/_upload", headers = ("content-type=multipart/*"),method = RequestMethod.POST,consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @ApiOperation(value = "Search Tender Entry for WMS")
+    public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file,@RequestParam("tenantId") String tenantId,@RequestParam("module") String module) {
+        try {
+            if (file.isEmpty()) {
+                return new ResponseEntity<>("Please select a file to upload.", HttpStatus.BAD_REQUEST);
+            }
+
+            // Create the upload directory if it doesn't exist
+            File directory = new File(uploadDirectory);
+            if (!directory.exists()) {
+                directory.mkdirs();
+            }
+
+            // Save the file to the specified directory
+            Path filePath = Paths.get(uploadDirectory, file.getOriginalFilename());
+            file.transferTo(filePath.toFile());
+
+            return new ResponseEntity<>("File uploaded successfully.", HttpStatus.OK);
+        } catch (IOException e) {
+            return new ResponseEntity<>("Failed to upload the file.", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     

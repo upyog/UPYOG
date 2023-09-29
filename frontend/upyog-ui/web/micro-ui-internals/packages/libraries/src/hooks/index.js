@@ -256,10 +256,10 @@ import useWmsPrjCreate from "./wms/prj/useWmsPrjCreate";
 import useWmsPrjUpdate from "./wms/prj/useWmsPrjUpdate";
 import useWmsMDMS from "./wms/useWmsMDMS";
 
-import useWmsPmSearch from "./wms/pm/useWmsPmSearch";
-import useWmsPmCount from "./wms/pm/useWmsPmCount";
-import useWmsPmCreate from "./wms/pm/useWmsPmCreate";
-import useWmsPmUpdate from "./wms/pm/useWmsPmUpdate";
+import useWmsPhmSearch from "./wms/phm/useWmsPhmSearch";
+import useWmsPhmCount from "./wms/phm/useWmsPhmCount";
+import useWmsPhmCreate from "./wms/phm/useWmsPhmCreate";
+import useWmsPhmUpdate from "./wms/phm/useWmsPhmUpdate";
 import useWmsCMGet from "./wms/cm/useWmsCMGet";
 import useWmsCMCount from "./wms/cm/useWmsCMCount";
 import useWmsCMSearch from "./wms/cm/useWmsCMSearch";
@@ -536,12 +536,11 @@ const wms = {
     useWmsPrjUpdate:useWmsPrjUpdate,
     useWmsPrjCount:useWmsPrjCount
   },
-  useWmsSorMDMS,
-  pm:{
-    useWmsPmSearch:useWmsPmSearch,
-    useWmsPmCreate:useWmsPmCreate,
-    useWmsPmUpdate:useWmsPmUpdate,
-    useWmsPmCount:useWmsPmCount
+  phm:{
+    useWmsPhmSearch:useWmsPhmSearch,
+    useWmsPhmCreate:useWmsPhmCreate,
+    useWmsPhmUpdate:useWmsPhmUpdate,
+    useWmsPhmCount:useWmsPhmCount
   },
   cm:{
     useWmsCMGet,
