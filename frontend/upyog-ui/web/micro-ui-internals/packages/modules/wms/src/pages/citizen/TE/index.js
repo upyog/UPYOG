@@ -8,12 +8,39 @@ const TenderEntryAdd = () =>{
   const { t } = useTranslation();
   const tenantId = Digit.ULBService.getCurrentTenantId();
 const {mutate,isSuccess,isError,error} = Digit?.Hooks?.wms?.te?.useWmsTEAdd();
-useEffect(()=>{
-if(isSuccess){alert("Created Successfully")}else{alert("something wrong")}
-},[isSuccess])
+
     const [showToast, setShowToast] = useState(null);
+    const [isTrue, setisTrue] = useState(false);
+    const [imagePath, setimagePath] = useState("");
+const getDataimg=(d)=>{
+  setimagePath(d)
+}
+    console.log("imagePath out lifting ",imagePath)
+    console.log("imagePath out lifting names",imagePath[0]?.documentUid?.fileStoreId)
+    
+  //   useEffect(()=>{
+  //     const getImg = localStorage.getItem("imagePath");
+  //     console.log("imagePath out",getImg)
+  //     setimagePath(getImg);
+
+  //     if(localStorage.getItem("imagePath")){console.log("tureee")}else{console.log("Falseee"); 
+  //   // setimagePath("Testssss")
+  // }
+  // },[isTrue])
+
+    useEffect(()=>{
+      if(isSuccess){alert("Created Successfully")}else{alert("something wrong")}
+      },[isSuccess])
+
     const onSubmit = async(data) => {
+      // setisTrue(true);
         console.log("Add tender entry ",data)
+        let ddd=imagePath
+        console.log("imagePath in in ",imagePath)
+
+        // setTimeout(async()=>{
+         
+          console.log("imagePath in ",{imagePath, ddd})
         let payload = {"WMSTenderEntryApplication": [{
           "department_name":data?.WmsTMDepartment?.name,
           "resolution_no":data?.WmsTMResulationNo?.resulation_no,
@@ -22,6 +49,8 @@ if(isSuccess){alert("Created Successfully")}else{alert("something wrong")}
           "publish_date":data?.WmsTEPublishDate?.['tecnical-bid-open-date'],
           "technical_bid_open_date":data?.WmsTETecnicalBidOpenDate?.['technical_bid_open_date'],
           "request_category":data?.WmsTMTenderCategory?.name,
+          // "upload_document":imagePath,
+          "upload_document":imagePath[0]?.documentUid?.fileStoreId,
           // :data?.WmsTMBankGuarantee?.bank-guarantee,
           // :data?.WmsTMProvisionalSum?.name,
           "resolution_date":data?.WmsTEResolutionDate?.['resolution-date'],
@@ -34,7 +63,13 @@ if(isSuccess){alert("Created Successfully")}else{alert("something wrong")}
           "tenantId": tenantId
         }]};
 console.log(payload ,"payload")
-        await mutate(payload)
+        await mutate(payload);
+        
+      // },8000);
+      //   setTimeout(()=>{
+      //   localStorage.removeItem("imagePath")
+      //   // setisTrue(false)
+      // },20000)
     }
   const configs = newConfig?newConfig:newConfig;
     return(<>
@@ -45,6 +80,7 @@ console.log(payload ,"payload")
               label={t("WMS_TE_COMMON_SAVE")}
               config={configs}
               onSubmit={onSubmit}
+              getDataimg={getDataimg}
               fieldStyle={{ marginRight: 0 }}
             />
             {showToast && (

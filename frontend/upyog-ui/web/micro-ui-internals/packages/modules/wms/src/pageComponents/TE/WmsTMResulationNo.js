@@ -5,7 +5,7 @@ import { LabelFieldPair, CardLabel, TextInput, CardLabelError } from "@egovernme
 import { useLocation } from "react-router-dom";
 
 const WmsTMResulationNo = ({ t, config, onSelect, formData = {}, userType, register, errors }) => {
-
+console.log({config, onSelect, formData}, " config, onSelect, formData")
   const { pathname: url } = useLocation();
   const [isTrue, setisTrue] = useState(false);
 

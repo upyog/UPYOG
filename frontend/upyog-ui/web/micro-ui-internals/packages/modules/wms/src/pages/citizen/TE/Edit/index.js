@@ -1,14 +1,14 @@
 // import React, { useState,useEffect,Fragment } from "react";
 import React, {Fragment } from "react";
-// import { useParams } from "react-router-dom";
-// import EditForm from "./EditForm";
-// import { Loader } from "@egovernments/digit-ui-react-components";
+import { useParams } from "react-router-dom";
+import EditForm from "./EditForm";
+import { Loader } from "@egovernments/digit-ui-react-components";
 
 const EditTender = () => {
-    // const { id,tenantId } = useParams();
+    const { id,tenantId } = useParams();
   //   console.log("param ",id)
-  //   const { isLoading, isError, error, data, ...rest } = Digit?.Hooks?.wms?.cm?.useWMSMaster(id,"WMS_BANK_SINGLE_RECORD");
-  // console.log("data ",data)
+    const { isLoading, isError, error, data, ...rest } = Digit?.Hooks?.wms?.te?.useWmsTEGetSingleRecord(tenantId,2339);
+  console.log("data tender ",data)
   // console.log("data ",data?.WMSBankDetailsApplications[0])
   // const dataDummy=
   // {bank_branch: 'Noida',
@@ -20,7 +20,7 @@ const EditTender = () => {
   // if (isLoading) {
   //   return <Loader />;
   // }
-  // return <EditForm data={data?.WMSBankDetailsApplications[0]} tenantId={tenantId} />;
+  return <EditForm data={data?.WMSTenderEntryApplications[0]} tenantId={tenantId} />;
   // return <EditForm data={dataDummy} tenantId={tenantId} />;
 
   return(<>

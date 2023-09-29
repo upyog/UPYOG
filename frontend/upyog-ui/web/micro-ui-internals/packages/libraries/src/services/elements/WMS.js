@@ -742,6 +742,14 @@ TenderEntry:{
         userService: true,
         params: { tenantId },
       }),
+      getSingle: (id) =>
+      Request({
+        url: Urls.wms.Tender_Entry.get+'?tenderId='+id,
+        useCache: false,
+        method: "POST",
+        auth: true,
+        userService: true,
+      }),
       search: (tenantId, filters, searchParams) =>
       Request({
         url: Urls.wms.Tender_Entry.search,
