@@ -589,6 +589,7 @@ public class PropertyValidator {
 				&& null == criteria.getPropertyType()
 				&& null == criteria.getDoorNo()
 				&& null == criteria.getOldPropertyId()
+				&& null == criteria.getLocality()
 				&& (null == criteria.getFromDate() && null == criteria.getToDate());
 		
 		if (isUserCitizen) {
