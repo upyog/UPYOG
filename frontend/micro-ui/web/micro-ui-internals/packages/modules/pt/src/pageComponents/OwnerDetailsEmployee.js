@@ -1,4 +1,4 @@
-import { CardLabel, CardLabelError, Dropdown, LabelFieldPair, LinkButton, MobileNumber, TextInput } from "@egovernments/digit-ui-react-components";
+import { CardLabel, CardLabelError, Dropdown, LabelFieldPair, LinkButton, MobileNumber, TextInput,Toast } from "@egovernments/digit-ui-react-components";
 import _ from "lodash";
 import React, { useEffect, useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -122,11 +122,12 @@ const OwnerForm = (_props) => {
   } = _props;
   const { originalData = {} } = formData;
   const { institution = {} } = originalData;
-
+const [uuid, setUuid]= useState(null)
+const [showToast, setShowToast] = useState(null);
   const { control, formState: localFormState, watch, setError: setLocalError, clearErrors: clearLocalErrors, setValue, trigger } = useForm();
   const formValue = watch();
   const { errors } = localFormState;
-
+  const tenantId = Digit.ULBService.getCurrentTenantId();
   owner["institution"] = { name: owner?.institution?.name ? formValue?.institution?.name : institution?.name };
   owner["institution"].type = {
     active: true,
@@ -194,6 +195,24 @@ const OwnerForm = (_props) => {
   }, [errors]);
 
   const errorStyle = { width: "70%", marginLeft: "30%", fontSize: "12px", marginTop: "-21px" };
+
+  useEffect(() => {
+    const getData = setTimeout(async () => {
+      const propertyDetails = await Digit.PTService.search({ tenantId, filters: { documentNumbers: uuid } });
+      if (propertyDetails?.Properties.length > 0) {
+        setShowToast({
+          error: true,label: `Please enter a valid document number`
+        })
+      }
+      else {
+        setShowToast({
+          label: `Valid document number`
+        })
+      }
+    }, 1000)
+    return () => clearTimeout(getData)
+  }, [uuid])
+
 
   return (
     <React.Fragment>
@@ -557,8 +576,9 @@ const OwnerForm = (_props) => {
                         disable={isEditScreen}
                         autoFocus={focusIndex.index === owner?.key && focusIndex.type === "documents.documentUid"}
                         onChange={(e) => {
-                          props.onChange(e);
-                          setFocusIndex({ index: owner.key, type: "documents.documentUid" });
+                          setUuid(e.target.value)                    
+                            props.onChange(e);
+                            setFocusIndex({ index: owner.key, type: "documents.documentUid" });                        
                         }}
                         labelStyle={{ marginTop: "unset" }}
                         onBlur={props.onBlur}
@@ -626,6 +646,14 @@ const OwnerForm = (_props) => {
           </CardLabelError>
         </div>
       </div>
+      {showToast?.label && (
+        <Toast
+          label={showToast?.label}
+          onClose={(w) => {
+            setShowToast((x) => null);
+          }}
+        />
+      )}
     </React.Fragment>
   );
 };
