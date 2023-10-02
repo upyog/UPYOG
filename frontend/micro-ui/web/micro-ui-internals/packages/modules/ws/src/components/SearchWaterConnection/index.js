@@ -1,23 +1,19 @@
 import React, { Fragment, useState,useEffect, useCallback, useMemo } from "react";
-import { SearchForm, Table, Card, Loader, Header } from "@egovernments/digit-ui-react-components";
+import { SearchForm, Table, Card, Loader, Header,Toast } from "@egovernments/digit-ui-react-components";
 import { useForm, Controller } from "react-hook-form";
 import SearchFields from "./SearchFields";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import MobileSearchWater from "./MobileSearchWater";
-
+import { useHistory } from "react-router-dom";
 const SearchWaterConnection = ({ tenantId, onSubmit, data, count, resultOk, businessService, isLoading }) => {
-
+  const history = useHistory()
   const [result,setResult]=  useState([])
+  const [showToast, setShowToast] = useState(null);
   const replaceUnderscore = (str) => {
     str = str.replace(/_/g, " ");
     return str;
   };
-console.log("daaaaaaaaaaaaaa",data)
-let pay = { "BulkBillCriteria":{
-  "tenantId":"pg.citya"}
- }
- 
 
   const convertEpochToDate = (dateEpoch) => {
     if (dateEpoch == null || dateEpoch == undefined || dateEpoch == "") {
@@ -31,16 +27,15 @@ let pay = { "BulkBillCriteria":{
     day = (day > 9 ? "" : "0") + day;
     return `${day}/${month}/${year}`;
   };
-useEffect ( async ()=> {
-  if(window.location.href.includes("search-demand"))
-  {
-    let data = await Digit.WSService.WSSewsearchDemand(pay)
+  useEffect(async () => {
+    const payload = {
+      "BulkBillCriteria": {
+        "tenantId": "pg.citya"
+      }
+    }
+    let data = await Digit.WSService.WSSewsearchDemand(payload, window.location.href.includes("ws/sewerage/search-demand") ? "sw" : "ws")
     setResult(data.connection)
-    //const result = data.connection
-    console.log("daaaaaaaaaaaaaa",data)
-  }
-  
-},[])
+  }, [])
   const { t } = useTranslation();
   const { register, control, handleSubmit, setValue, getValues, reset } = useForm({
     defaultValues: {
@@ -229,23 +224,41 @@ useEffect ( async ()=> {
         Header: t("WS_COMMON_TABLE_COL_ACTION_LABEL"),
         disableSortBy: true,
         Cell: ({ row }) => {
-            return (<div onClick={generateDemand(row)}>{t(`${"WS_COMMON_COLLECT_DEMAND"}`)} </div>)
+          return GetCell(generateDemand1(row))
+            //return (<div style={{cursor :"pointer", color :"#a82227"}}>{t(`${"WS_COMMON_COLLECT_DEMAND"}`)} </div>)
           } 
       },
     ],
     []
   );
-const generateDemand=async (row)=>{
-    const pay ={  "BulkBillCriteria":{
-      "tenantId":"pg.citya",
-   "consumerCode" :row.original["connectionNo"]
-   }}
-   let data = await Digit.WSService.WSSewsearchDemandGen(pay)
-console.loga("sssssssssssssss",data)
-history.push(`/digit-ui/employee/payment/collect/SW/${encodeURIComponent(
-  row.original?.["connectionNo"])}/${row.original?.["tenantId"]}?tenantId=${row.original?.["tenantId"]}?workflow=WS&ISWSCON`)
 
+  const generateDemand1 = (row) => {
+    return (
+        <div>
+            <span className="link">
+                <button onClick={() => { generateDemand(row) }}>
+                    {t(`${"WS_COMMON_COLLECT_DEMAND"}`)}{" "}
+                </button>
+            </span>
+        </div>
+    )
+};
+  const generateDemand = async (row) => {
+    const payload = {
+      "BulkBillCriteria": {
+        "tenantId": "pg.citya",
+        "consumerCode": row.original["connectionNo"]
       }
+    }
+    let data = await Digit.WSService.WSSewsearchDemandGen(payload, window.location.href.includes("ws/sewerage/search-demand") ? "sw" : "ws")
+    console.log("sssssssssssssss", data)
+    setShowToast({
+      label: `${data}`
+  })
+    history.push(`/digit-ui/employee/payment/collect/SW/${encodeURIComponent(
+      row.original?.["connectionNo"])}/${row.original?.["tenantId"]}?tenantId=${row.original?.["tenantId"]}?workflow=WS&ISWSCON`)
+
+  }
   const getActionItem = (status, row) => {
     const userInfo = Digit.UserService.getUser();
     const userRoles = userInfo.info.roles.map((roleData) => roleData.code);
@@ -286,7 +299,7 @@ history.push(`/digit-ui/employee/payment/collect/SW/${encodeURIComponent(
   return (
     <>
       <Header styles={{ fontSize: "32px" }}>
-        {businessService === "WS" ? t("WS_WATER_SEARCH_CONNECTION_SUB_HEADER") : t("WS_SEWERAGE_SEARCH_CONNECTION_SUB_HEADER")}
+        {window.location.href.includes("water") ? t("WS_WATER_SEARCH_CONNECTION_SUB_HEADER") : t("WS_SEWERAGE_SEARCH_CONNECTION_SUB_HEADER")}
       </Header>
       {window.location.href.includes("search-demand")?"":<SearchForm className="ws-custom-wrapper" onSubmit={onSubmit} handleSubmit={handleSubmit}>
         <SearchFields {...{ register, control, reset, tenantId, t }} />
@@ -329,7 +342,7 @@ history.push(`/digit-ui/employee/payment/collect/SW/${encodeURIComponent(
         />
       ) : null}
       
-      {window.location.href.includes("search-demand")? <Table
+      {window.location.href.includes("search-demand")? result?.length > 0 ? <Table
       t={t}
       data={result}
       totalRecords={count}
@@ -351,7 +364,21 @@ history.push(`/digit-ui/employee/payment/collect/SW/${encodeURIComponent(
       onSort={onSort}
       disableSort={false}
       sortParams={[{ id: getValues("sortBy"), desc: getValues("sortOrder") === "DESC" ? true : false }]}
-    />:""}
+    />:<Card style={{ marginTop: 20 }}>
+          {
+            <p  style={{ textAlign: "center" }}>
+              No Data Found
+            </p>
+          }
+  </Card>:""}
+  {showToast?.label && (
+        <Toast
+          label={showToast?.label}
+          onClose={(w) => {
+            setShowToast((x) => null);
+          }}
+        />
+      )}
     </>
   );
 };
