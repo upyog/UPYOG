@@ -85,6 +85,7 @@ public class WMSPrimaryAccountHeadApplicationEnrichment {
 			existingApplication.get(0).setPrimaryAccountHeadName(application.getPrimaryAccountHeadName());
 			existingApplication.get(0).setPrimaryAccountHeadAccountno(application.getPrimaryAccountHeadAccountno());
 			existingApplication.get(0).setPrimaryAccountHeadLocation(application.getPrimaryAccountHeadLocation());
+			existingApplication.get(0).setAccountStatus(application.getAccountStatus());
 			
 			
 			

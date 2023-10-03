@@ -14,7 +14,7 @@ import org.springframework.util.ObjectUtils;
 public class WMSPrimaryAccountHeadApplicationQueryBuilder {
 
 	
-	private static final String BASE_PACC_QUERY = " SELECT pacc.primary_accounthead_id as pPrimaryAccountHeadId, pacc.primary_accounthead_name as pPrimaryAccountHeadName, pacc.primary_accounthead_accountno as pPrimaryAccountHeadAccountno,pacc.primary_accounthead_location as pPrimaryAccountHeadLocation,pacc.createdby as pCreatedBy, pacc.lastmodifiedby as pLastmodifiedby, pacc.createdtime as pCreatedtime, pacc.lastmodifiedtime as pLastmodifiedtime ";
+	private static final String BASE_PACC_QUERY = " SELECT pacc.primary_accounthead_id as pPrimaryAccountHeadId, pacc.primary_accounthead_name as pPrimaryAccountHeadName, pacc.primary_accounthead_accountno as pPrimaryAccountHeadAccountno,pacc.primary_accounthead_location as pPrimaryAccountHeadLocation,pacc.account_status as pAccountStatus,pacc.createdby as pCreatedBy, pacc.lastmodifiedby as pLastmodifiedby, pacc.createdtime as pCreatedtime, pacc.lastmodifiedtime as pLastmodifiedtime ";
 
     //private static final String ADDRESS_SELECT_QUERY = " add.id as aid, add.tenantid as atenantid, add.doorno as adoorno, add.latitude as alatitude, add.longitude as alongitude, add.buildingname as abuildingname, add.addressid as aaddressid, add.addressnumber as aaddressnumber, add.type as atype, add.addressline1 as aaddressline1, add.addressline2 as aaddressline2, add.landmark as alandmark, add.street as astreet, add.city as acity, add.locality as alocality, add.pincode as apincode, add.detail as adetail, add.registrationid as aregistrationid ";
     //private static final String FROM_TABLES = " FROM eg_bt_registration btr LEFT JOIN eg_bt_address add ON btr.id = add.registrationid ";

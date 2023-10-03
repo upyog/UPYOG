@@ -46,6 +46,7 @@ public class WMSPrimaryAccountHeadApplicationRowMapper implements ResultSetExtra
                         .primaryAccountHeadName(rs.getString("pPrimaryAccountHeadName"))
                         .primaryAccountHeadAccountno(rs.getString("pPrimaryAccountHeadAccountno"))
                         .primaryAccountHeadLocation(rs.getString("pPrimaryAccountHeadLocation"))
+                        .accountStatus(rs.getString("pAccountStatus"))
                         .build();
             }
             //addChildrenToProperty(rs, sorApplication);
