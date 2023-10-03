@@ -333,7 +333,7 @@ public class IngestValidator {
     public Boolean verifyTenant(RequestInfo requestInfo,List<Data> ingestData)
     {
     	Boolean isTenantValid=false;
-    	
+    	int validCounts=0;
     	
 		StringBuilder mdmsURL=new StringBuilder().append(mdmsHost).append(mdmsEndpoint);
        
@@ -376,14 +376,15 @@ public class IngestValidator {
             {
             	if(tenant.equals(migratedTenants.get("code")) && state.equals(migratedTenants.get("stateName")))
             	{
-            		isTenantValid=true;
-            		return isTenantValid;
+            		validCounts++;
             	}
-            	
+            
             }
             
     	};
     	
+    	if(validCounts ==ingestData.size() )
+    		isTenantValid=true;
     	return isTenantValid;
     }
     
