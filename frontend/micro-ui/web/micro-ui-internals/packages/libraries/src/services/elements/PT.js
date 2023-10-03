@@ -55,7 +55,7 @@ export const PTService = {
   assessmentCreate: (details, tenantId) =>
     Request({
       url: Urls.pt.assessment_create,
-      data: details,
+      data:details ,
       useCache: false,
       userService: true,
       method: "POST",
@@ -72,7 +72,6 @@ export const PTService = {
       params: { tenantId },
       auth: true,
     }),
-    
   assessmentSearch: ({ tenantId, filters }) =>
     Request({
       url: Urls.pt.assessment_search,
@@ -141,7 +140,31 @@ export const PTService = {
       data: {...filters},
       //params: { tenantId, ...filters },
     }),
+    generateDefaulterNotice: (tenantId,details) =>
+    Request({
+      url: Urls.pt.defaulterNotice,
+      data: {properties:details},
+      useCache: false,
+      auth:true,
+      userService: true,
+      method: "POST",
+      params: { tenantId, key :"pt-defaulternotice" },
+      auth: true,
+    }),
+    getDefaulterNoticeStatus: (filters) =>
+    Request({
+      url: Urls.pt.getDefaulterNoticeStatus,
+      useCache: false,
+      auth:true,
+      userService: true,
+      method: "POST",
+      params: {...filters },
+      auth: true,
+    }),
 };
+
+
+
 
 // export const PTService = {
 //   fetchProperties: ({ tenantId, filters }) =>
