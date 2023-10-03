@@ -278,15 +278,15 @@ public class SWCalculationServiceImpl implements SWCalculationService {
 		return demandService.getConnectionPendingForDemand(requestInfo,bulkBillCriteria);
 	}
 	
-	public void generateDemandForConsumerCodeBasedOnTimePeriod(RequestInfo requestInfo, BulkBillCriteria bulkBillCriteria) {
+	public String generateDemandForConsumerCodeBasedOnTimePeriod(RequestInfo requestInfo, BulkBillCriteria bulkBillCriteria) {
 		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 		LocalDateTime date = LocalDateTime.now();
 		log.info("Going to generate Demand of Consumer Code" + bulkBillCriteria.getConsumerCode());
 		
 		if (bulkBillCriteria.getTenantId()==null)
-			return;
+			return "Tenant Id is mandatory!!";
 		log.info("Tenant Ids : " + bulkBillCriteria.getTenantId());
-			demandService.generateDemandForConsumerCode(requestInfo,bulkBillCriteria);
+			return demandService.generateDemandForConsumerCode(requestInfo,bulkBillCriteria);
 	
 	}
 	

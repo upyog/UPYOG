@@ -41,7 +41,10 @@ import {
   insertStoreIds,
   insertRecords,
   mergePdf,
+  insertRecordsForDN,
+  mergePdfForDN,
   getBulkPdfRecordsDetails,
+  getDefaulterPdfRecordsDetails,
   cancelBulkPdfProcess
 } from "./queries";
 import {
@@ -718,6 +721,45 @@ app.post(
 
 );
 
+app.post(
+  "/pdf-service/v1/_getBulkDefaulterNoticeRecordsDetails",
+  asyncHandler(async (req, res) => {
+    let requestInfo, uuid, offset, limit, jobId;
+    try {
+      requestInfo = get(req.body, "RequestInfo");
+      uuid = requestInfo.userInfo.uuid;
+      offset = get(req.query, "offset");
+      limit = get(req.query, "limit");
+      jobId = get(req.query, "jobId");
+
+      let data = await getDefaulterPdfRecordsDetails(uuid, offset, limit, jobId);
+      if(data.length<=0){
+        res.status(400);
+        res.json({
+            ResponseInfo: requestInfo,
+            message: `Defaulter Notice pdf records details are not present for the employee ${requestInfo.userInfo.name} .Please trigger a bulk bill creation process`,
+          });
+      }
+      else{
+        res.status(200);
+        res.json({
+            ResponseInfo: requestInfo,
+            groupBillrecords: data,
+          });
+      }
+
+      
+    } catch (error) {
+      logger.error(error.stack || error);
+      res.status(400);
+      res.json({
+        ResponseInfo: requestInfo,
+        message: "Error while retreving the details",
+      });
+    }
+  })
+
+);
 var i = 0;
 dataConfigUrls &&
   dataConfigUrls.split(",").map((item) => {
@@ -920,6 +962,7 @@ export const createNoSave = async (
     var mobileNumber = get(req, "RequestInfo.userInfo.mobileNumber");
     var billd = get(req, "Bill");
     var locality = get(req, "locality");
+    var propertytype = get(req, "propertytype");
     var bussinessService = get(req, "service");
     var isConsolidated = get(req, "isConsolidated");
     var consumerCode = get(req, "consumerCode");
@@ -971,8 +1014,16 @@ export const createNoSave = async (
           `createnosave success for pdf creation with job id: ${bulkPdfJobId} with key: ${key}, entityId ${entityIds}`
         );
         (async () => {
+          if(key== "pt-defaulternotice")
+          {
+            await insertRecordsForDN(bulkPdfJobId, totalPdfRecords, currentPdfRecords, userid, tenantId, locality,propertytype, bussinessService, consumerCode, isConsolidated);
+            await mergePdfForDN(bulkPdfJobId, tenantId, userid, numberOfFiles, mobileNumber);
+            
+          }
+          else{
           await insertRecords(bulkPdfJobId, totalPdfRecords, currentPdfRecords, userid, tenantId, locality, bussinessService, consumerCode, isConsolidated);
           await mergePdf(bulkPdfJobId, tenantId, userid, numberOfFiles, mobileNumber);
+          }
         })();
       });
       doc.end();
