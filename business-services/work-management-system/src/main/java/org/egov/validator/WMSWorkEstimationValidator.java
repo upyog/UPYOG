@@ -63,7 +63,7 @@ public class WMSWorkEstimationValidator {
 	        });
 	    	
 	    	wmsWorkEstimationRequest.getWmsWorkEstimationApplications().forEach(application -> {
-	            if(ObjectUtils.isEmpty(application.getDesriptionOfTheItem()))
+	            if(ObjectUtils.isEmpty(application.getDescriptionOfTheItem()))
 	                throw new CustomException("EG_WMS_APP_ERR", "DesriptionOfTheItem is mandatory for creating Work Estimation applications");
 	        });
 	    	

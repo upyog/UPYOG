@@ -53,7 +53,8 @@ public class WMSWorkEstimationService {
 	    private WMSWorkEstimationConfiguration configuration;
 	    @Autowired
 	    private WMSWorkEstimationRepository wmsWorkEstimationRepository;
-	   
+	    @Autowired
+	    private WorkflowService workflowService;
 	
 	public List<WMSWorkEstimationApplication> registerWMSWorkEstimationRequest(WMSWorkEstimationRequest wmsWorkEstimationRequest) {
 		wmsWorkEstimationApplicationValidator.validateWorkEstimationApplication(wmsWorkEstimationRequest);
@@ -63,7 +64,7 @@ public class WMSWorkEstimationService {
        // userService.callUserService(birthRegistrationRequest);
 
         // Initiate workflow for the new application
-        //workflowService.updateWorkflowStatus(birthRegistrationRequest);
+        workflowService.updateWorkflowStatus(wmsWorkEstimationRequest);
 
         //Call calculator to calculate and create demand
         //calculationService.getCalculation(birthRegistrationRequest);
@@ -94,7 +95,7 @@ public class WMSWorkEstimationService {
         // Enrich application upon update
         
 		wmsWorkEstimationApplicationEnrichment.enrichWorkEstimationApplicationUpdate(workEstimationRequest,existingApplication);
-        //workflowService.updateWorkflowStatus(birthRegistrationRequest);
+        workflowService.updateWorkflowStatus(workEstimationRequest);
         // Just like create request, update request will be handled asynchronously by the persister
         producer.push(configuration.getUpdateTopic(), workEstimationRequest);
 

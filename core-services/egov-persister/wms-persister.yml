@@ -612,7 +612,7 @@ serviceMaps:
       isTransaction: true
       queryMaps:
 
-        - query: INSERT INTO work_estimation (estimate_id,work_estimation_no,project_name,work_name,from_date,to_date,estimate_type,sor_name,download_template,upload_template,chapter,item_no,desription_of_the_item,length,bw,dh,nos,quantity,unit,rate,estimate_amount,serial_no,particulars_of_item,calculation_type,addition_deduction,lf,bwf,dhf,sub_total,grand_total,estimated_quantity,remarks,overhead_code,overhead_description,value_type,estimated_amount,document_description,upload_document,createdby,lastmodifiedby,createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?);
+        - query: INSERT INTO work_estimation (estimate_id,work_estimation_no,project_name,work_name,from_date,to_date,estimate_type,sor_name,download_template,upload_template,chapter,item_no,description_of_the_item,length,bw,dh,nos,quantity,unit,rate,estimate_amount,serial_no,particulars_of_item,calculation_type,addition_deduction,lf,bwf,dhf,sub_total,grand_total,estimated_quantity,remarks,overhead_code,overhead_description,value_type,estimated_amount,document_description,upload_document,createdby,lastmodifiedby,createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?);
           basePath: WMSWorkEstimationApplication.*
           jsonMaps:
             - jsonPath: $.WMSWorkEstimationApplication.*.estimate_id
@@ -639,7 +639,7 @@ serviceMaps:
             
             - jsonPath: $.WMSWorkEstimationApplication.*.item_no
             
-            - jsonPath: $.WMSWorkEstimationApplication.*.desription_of_the_item
+            - jsonPath: $.WMSWorkEstimationApplication.*.description_of_the_item
             
             - jsonPath: $.WMSWorkEstimationApplication.*.length
             
@@ -709,7 +709,7 @@ serviceMaps:
       isTransaction: true
       queryMaps:
       
-        - query: UPDATE work_estimation SET work_estimation_no = ?,project_name =?,work_name=?,from_date=?,to_date = ?, estimate_type = ?, sor_name = ?, download_template = ?, upload_template = ?, chapter = ?, item_no = ?, desription_of_the_item = ?, length = ?, bw = ?, dh = ?, nos = ?, quantity = ?, unit = ?, rate = ?, estimate_amount = ?, serial_no = ?, particulars_of_item = ?, calculation_type = ?, addition_deduction = ?, lf = ?, bwf = ?, dhf = ?, sub_total = ?, grand_total = ?, estimated_quantity = ?, remarks = ?, overhead_code = ?, overhead_description = ?, value_type = ?, estimated_amount = ?, document_description = ?, upload_document = ? WHERE estimate_id=?;
+        - query: UPDATE work_estimation SET work_estimation_no = ?,project_name =?,work_name=?,from_date=?,to_date = ?, estimate_type = ?, sor_name = ?, download_template = ?, upload_template = ?, chapter = ?, item_no = ?, description_of_the_item = ?, length = ?, bw = ?, dh = ?, nos = ?, quantity = ?, unit = ?, rate = ?, estimate_amount = ?, serial_no = ?, particulars_of_item = ?, calculation_type = ?, addition_deduction = ?, lf = ?, bwf = ?, dhf = ?, sub_total = ?, grand_total = ?, estimated_quantity = ?, remarks = ?, overhead_code = ?, overhead_description = ?, value_type = ?, estimated_amount = ?, document_description = ?, upload_document = ? WHERE estimate_id=?;
           basePath: WMSWorkEstimationApplication.*
           jsonMaps:
             - jsonPath: $.WMSWorkEstimationApplication.*.work_estimation_no
@@ -734,7 +734,7 @@ serviceMaps:
             
             - jsonPath: $.WMSWorkEstimationApplication.*.item_no
             
-            - jsonPath: $.WMSWorkEstimationApplication.*.desription_of_the_item
+            - jsonPath: $.WMSWorkEstimationApplication.*.description_of_the_item
             
             - jsonPath: $.WMSWorkEstimationApplication.*.length
             

@@ -43,5 +43,7 @@ public class WMSWorkEstimationRepository {
         log.info("Final query: " + query);
         return jdbcTemplate.query(query,  rowMapper,preparedStmtList.toArray());
     }
+    
+    
 
 }

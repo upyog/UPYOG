@@ -20,9 +20,11 @@ import org.egov.web.models.WMSTenderEntryApplicationSearchCriteria;
 import org.egov.web.models.WMSTenderEntryRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -110,7 +112,19 @@ public class WMSTenderEntryApiController{
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
     
-    
+    @CrossOrigin(
+    	    origins = {
+    	        "http://localhost:3000", 
+    	        "https://staging.example.com", 
+    	        "https://app.example.com"
+    	        },
+    	    methods = {
+    	                RequestMethod.OPTIONS,
+    	                RequestMethod.GET,
+    	                RequestMethod.PUT,
+    	                RequestMethod.DELETE,
+    	                RequestMethod.POST
+    	})
     @RequestMapping(value="/v1/tenderentry/_upload", headers = ("content-type=multipart/*"),method = RequestMethod.POST,consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ApiOperation(value = "Search Tender Entry for WMS")
     public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file,@RequestParam("tenantId") String tenantId,@RequestParam("module") String module) {
@@ -128,8 +142,13 @@ public class WMSTenderEntryApiController{
             // Save the file to the specified directory
             Path filePath = Paths.get(uploadDirectory, file.getOriginalFilename());
             file.transferTo(filePath.toFile());
+            
+            
+			/*
+			 * HttpHeaders headers = new HttpHeaders(); headers.add("Custom-Header", "foo");
+			 */
 
-            return new ResponseEntity<>("File uploaded successfully.", HttpStatus.OK);
+            return new ResponseEntity<String>("C:/uploaded/"+file.getOriginalFilename(),HttpStatus.OK);
         } catch (IOException e) {
             return new ResponseEntity<>("Failed to upload the file.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
