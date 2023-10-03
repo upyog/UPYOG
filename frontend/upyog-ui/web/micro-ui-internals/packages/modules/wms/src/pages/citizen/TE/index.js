@@ -40,8 +40,8 @@ const getDataimg=(d)=>{
 
         // setTimeout(async()=>{
          
-          console.log("imagePath in ",{imagePath, ddd})
-        let payload = {"WMSTenderEntryApplication": [{
+          // console.log("imagePath in ",{imagePath, ddd})
+        let payloadData = {"WMSTenderEntryApplication": [{
           "department_name":data?.WmsTMDepartment?.name,
           "resolution_no":data?.WmsTMResulationNo?.resulation_no,
           "prebid_meeting_date":data?.WmsTEPreBuildMeetingDate?.['Pre-Build-Meeting-Date'],
@@ -60,10 +60,18 @@ const getDataimg=(d)=>{
           "validity":data?.WmsTMValidityOfTenderInDay?.['validity-of-tender-in-days'],
           // :data?.WmsTMAdditionalPerformanceSD?.additional-performance-sd,
           "project_name":data?.WmsTMProjectName?.name,
+          "work_no": "WD1234",
+          "work_description": "Pipe Fitting",
+          "estimated_cost": "5000 INR",
+            "tender_type": "Item Rate",
+            "tender_fee": 10000,
+            "emd": "1000",
+            "vendor_class": "Class A",
+            "work_duration": "2 Months",
           "tenantId": tenantId
         }]};
-console.log(payload ,"payload")
-        await mutate(payload);
+console.log(payloadData ,"payload")
+        await mutate(payloadData);
         
       // },8000);
       //   setTimeout(()=>{

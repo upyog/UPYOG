@@ -3,7 +3,7 @@ import { newConfig } from "../../../../../config/contactMaster/FunctionAppConfig
 import { FormComposer, Toast } from "@egovernments/digit-ui-react-components";
 import {useHistory} from 'react-router-dom'
 
-const VendorClassAdd =()=>{
+const functionAppAdd =()=>{
   const history = useHistory();
 
     const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -24,23 +24,13 @@ const [showToast, setShowToast] = useState(false);
   
     const onSubmit = async(data)=>{
   console.log({isSuccess,isError,error})
-
-console.log("Vendor Class Add ",data)
-
-        // const payloadData={"WMSFunctionApplication": [{
-          // "function_name": data?.WmsFAName?.function_name,
-          // "function_code": data?.WmsFACode?.function_code,
-          // "function_level": data?.WmsFALevel?.function_level,
-          // "status": data?.WmsFAStatus?.name,
-          // "tenantId": tenantId  
-        // }]}
-        const payloadData={
+        const payloadData={"WMSFunctionApplication":[{
           "function_name": data?.WmsFAName?.function_name,
           "function_code": data?.WmsFACode?.function_code,
           "function_level": data?.WmsFALevel?.function_level,
           "status": data?.WmsFAStatus?.name,
           "tenantId": tenantId   
-      }
+      }]}
 console.log("Vendor Class Add payloadData ",payloadData)
 
 await mutate(payloadData)
@@ -69,4 +59,4 @@ const configs = newConfig?newConfig:newConfig;
         </React.Fragment>
     )
 }
-export default VendorClassAdd
+export default functionAppAdd

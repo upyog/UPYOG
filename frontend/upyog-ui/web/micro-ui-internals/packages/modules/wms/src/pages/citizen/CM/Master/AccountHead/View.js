@@ -172,7 +172,7 @@ useEffect(() => {
   return (
     <div>
       <Header>
-        {t("Vendor Type List")}
+        {t("Account Head List")}
       </Header>
       <Link
                   to={`add`}

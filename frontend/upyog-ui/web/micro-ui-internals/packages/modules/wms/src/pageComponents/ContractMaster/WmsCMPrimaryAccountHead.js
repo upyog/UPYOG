@@ -8,8 +8,10 @@ const WmsCMPrimaryAccountHead = ({ t, config, onSelect, formData = {}, userType 
 
   const { pathname: url } = useLocation();
   const editScreen = url.includes("/modify-application/");
-  const { data: citizenTypes = [], isLoading } = Digit.Hooks.hrms.useHrmsMDMS(tenantId, "egov-hrms", "EmployeeType") || {};
+  const { data: citizenTypes, isLoading } = Digit?.Hooks?.wms?.cm?.useWMSMaster(tenantId, "WMS_ACCOUNT_HEAD_LIST") || {};
   const [citizenType, setcitizenType] = useState(formData?.WmsCMPrimaryAccountHead);
+  const [citizenTypeList, setcitizenTypeList] = useState();
+
   const [isTrue, setisTrue] = useState(false);
   function SelectcitizenType(value) {
   if(!value?.name){setisTrue(true)}else{setisTrue(false);setcitizenType(value);}
@@ -18,6 +20,21 @@ const WmsCMPrimaryAccountHead = ({ t, config, onSelect, formData = {}, userType 
   useEffect(() => {
     onSelect(config.key, citizenType);
   }, [citizenType]);
+
+  useEffect(()=>{
+    let fData=[]
+    if(citizenTypes?.WMSPrimaryAccountHeadApplications?.length>0){
+      const filterData = citizenTypes?.WMSPrimaryAccountHeadApplications.filter((res)=> res.account_status=="Active");
+      filterData.forEach(element => {
+        fData.push({
+    "id":element?.primary_accounthead_id,
+    "name": element?.primary_accounthead_name,
+    "status": element?.account_status
+  })
+  });
+      setcitizenTypeList(fData)
+    }
+  },[citizenTypes])
 
 //   const vendorStatus = [
 //     {
@@ -34,20 +51,20 @@ const WmsCMPrimaryAccountHead = ({ t, config, onSelect, formData = {}, userType 
 //     }
 // ];
 
-const option = [
-  {
-      "code": "CONTRACT_MASTER_SBI",
-      "name": "State Bank of India",
-      "module": "rainmaker-tl",
-      "locale": "en_IN"
-  },
-  {
-      "code": "CONTRACT_MASTER_HDFC",
-      "name": "HDFC",
-      "module": "rainmaker-tl",
-      "locale": "en_IN"
-  }
-];
+// const option = [
+//   {
+//       "code": "CONTRACT_MASTER_SBI",
+//       "name": "State Bank of India",
+//       "module": "rainmaker-tl",
+//       "locale": "en_IN"
+//   },
+//   {
+//       "code": "CONTRACT_MASTER_HDFC",
+//       "name": "HDFC",
+//       "module": "rainmaker-tl",
+//       "locale": "en_IN"
+//   }
+// ];
   const inputs = [
     {
       label: "Primary Account Head",
@@ -74,8 +91,8 @@ const option = [
         <Dropdown
           className="form-field"
           selected={citizenType}
-          // option={citizenTypes?.["egov-hrms"]?.EmployeeType}
-          option={option}
+          option={citizenTypeList!=undefined && citizenTypeList}
+          // option={option}
           onBlur={SelectcitizenType}
           select={SelectcitizenType}
           optionKey="name"

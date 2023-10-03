@@ -8,8 +8,12 @@ const WmsCMFunction = ({ t, config, onSelect, formData = {}, userType }) => {
 
   const { pathname: url } = useLocation();
   const editScreen = url.includes("/modify-application/");
-  const { data: citizenTypes = [], isLoading } = Digit.Hooks.hrms.useHrmsMDMS(tenantId, "egov-hrms", "EmployeeType") || {};
+  const { data: citizenTypes, isLoading } = Digit?.Hooks?.wms?.cm?.useWMSMaster(tenantId, "WMS_FUNCTION_APP_LIST") || {};
   const [citizenType, setcitizenType] = useState(formData?.WmsCMFunction);
+  
+  const [citizenTypeList, setcitizenTypeList] = useState();
+  console.log("citizenTypes vendor type ", citizenTypes)
+
   const [isTrue, setisTrue] = useState(false);
   function SelectcitizenType(value) {
   if(!value?.name){setisTrue(true)}else{setisTrue(false);setcitizenType(value);}
@@ -19,20 +23,36 @@ const WmsCMFunction = ({ t, config, onSelect, formData = {}, userType }) => {
     onSelect(config.key, citizenType);
   }, [citizenType]);
 
-  const vendorFunction = [
-    {
-        "code": "CONTRACT_MASTER_FUNCTIONA",
-        "name": "Function A",
-        "module": "rainmaker-tl",
-        "locale": "en_IN"
-    },
-    {
-        "code": "CONTRACT_MASTER_FUNCTIONB",
-        "name": "Function B",
-        "module": "rainmaker-tl",
-        "locale": "en_IN"
+  useEffect(()=>{
+    let fData=[]
+    if(citizenTypes?.WMSFunctionApplications?.length>0){
+      const filterData = citizenTypes?.WMSFunctionApplications.filter((res)=> res.status=="Active");
+      filterData.forEach(element => {
+        fData.push({
+    "id":element?.function_id,
+    "name": element?.function_name,
+    "status": element?.status
+  })
+  });
+      setcitizenTypeList(fData)
     }
-];
+  },[citizenTypes])
+
+
+//   const vendorFunction = [
+//     {
+//         "code": "CONTRACT_MASTER_FUNCTIONA",
+//         "name": "Function A",
+//         "module": "rainmaker-tl",
+//         "locale": "en_IN"
+//     },
+//     {
+//         "code": "CONTRACT_MASTER_FUNCTIONB",
+//         "name": "Function B",
+//         "module": "rainmaker-tl",
+//         "locale": "en_IN"
+//     }
+// ];
   const inputs = [
     {
       label: "Function",
@@ -60,7 +80,8 @@ const WmsCMFunction = ({ t, config, onSelect, formData = {}, userType }) => {
           className="form-field"
           selected={citizenType}
           // option={citizenTypes?.["egov-hrms"]?.EmployeeType}
-          option={vendorFunction}
+          option={citizenTypeList!=undefined && citizenTypeList}
+          // option={vendorFunction}
           select={SelectcitizenType}
           onBlur={SelectcitizenType}
           optionKey="name"

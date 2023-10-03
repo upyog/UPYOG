@@ -6,7 +6,7 @@ import {useHistory} from 'react-router-dom'
 const EditForm=({ tenantId, data })=>{
   const history = useHistory();
   const [canSubmit, setSubmitValve] = useState(true);
-  const {mutate,isSuccess,isError,error} = Digit?.Hooks?.wms?.cm?.useWMSMaster(tenantId,"WMS_V_TYPE_UPDATE");
+  const {mutate,isSuccess,isError,error} = Digit?.Hooks?.wms?.cm?.useWMSMaster(tenantId,"WMS_ACCOUNT_HEAD_UPDATE");
   console.log({isSuccess,isError,error})
   const [showToast, setShowToast] = useState(false);
   const closeToast = () => {
@@ -17,7 +17,7 @@ const EditForm=({ tenantId, data })=>{
     setTimeout(() => {
       closeToast();
       // history.replace('/upyog-ui/citizen/wms/vendor-sub-type/list')
-      history.push('/upyog-ui/citizen/wms/vendor-class/list')
+      history.push('/upyog-ui/citizen/wms/account-head/list')
 
       
     }, 5000);
@@ -26,23 +26,22 @@ const EditForm=({ tenantId, data })=>{
   useEffect(()=>{if(isSuccess){setShowToast(true);}else if(isError){alert("Something wrong in updated bank record")}else{}},[isSuccess])
 
   const defaultValues = {
-    WmsCMVCName:{vendor_class_name: data?.vendor_class_name},
-    WmsCMVCStatus:{name: data?.vendor_class_status},
+    WmsAHName:{primary_accounthead_name: data?.primary_accounthead_name},
+    WmsAHLocation:{primary_accounthead_location: data?.primary_accounthead_location},
+    WmsAHAccountno:{primary_accounthead_accountno: data?.primary_accounthead_accountno},
+    WmsAHStatus:{name: data?.account_status},
   }
 
   const onFormValueChange = (setValue = true, formData) => { };
     const onSubmit=async(item)=>{
         console.log("data vendor type ",item)
         
-        const payloadData={"WMSVendorClassApplication": [{
-          // "vendor_id":data?.vendor_id,
-          //   "vendor_class_name": item?.WmsCMVCName?.vendor_class_name,   
-          //   "vendor_class_status": item?.WmsCMVCStatus?.name,
-          // "tenantId":tenantId
-
-          "vendor_id":data?.vendor_id,
-            "vendor_class_name": item?.vendor_class_name,   
-            "vendor_class_status": item?.vendor_class_status,
+        const payloadData={"WMSPrimaryAccountHeadApplication": [{
+          "primary_accounthead_id":data?.primary_accounthead_id,
+            "primary_accounthead_name": item?.WmsAHName?.primary_accounthead_name,   
+            "primary_accounthead_accountno": item?.WmsAHAccountno?.primary_accounthead_accountno,   
+            "primary_accounthead_location": item?.WmsAHLocation?.primary_accounthead_location,   
+            "account_status": item?.WmsAHStatus?.name,
           "tenantId":tenantId
       }]}
         console.log("payloadData ",payloadData)

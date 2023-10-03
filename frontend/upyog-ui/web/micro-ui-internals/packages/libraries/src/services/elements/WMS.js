@@ -394,19 +394,19 @@ PHMApplications:{
         url: Urls.wms.ContractorMaster.mdmsVenderClassGet,
         // url: Urls.wms.ContractorMaster.get+tenantId,
         useCache: false,
-        // method: "POST",
-        method: "GET",
+        method: "POST",
         auth: true,
         userService: true,
         // params: {tenantId} ,
       }),
 
       getSingleResordsMasterClassData: (tenantId) =>
-      Request(console.log("tenantId tenantId ",{tenantId,"ss":Urls.wms.ContractorMaster.mdmsVenderClassGet+'?vendor_id='+tenantId}),{
-        // url: Urls.wms.ContractorMaster.mdmsVenderClassGet+'/'+tenantId,
-        url: Urls.wms.ContractorMaster.mdmsVenderClassGet+"?vendor_id="+tenantId,
+      Request(
+        // console.log("tenantId tenantId ",{tenantId,"ss":Urls.wms.ContractorMaster.mdmsVenderClassGet+'?vendor_id='+tenantId}),
+        {
+        url: Urls.wms.ContractorMaster.mdmsVenderClassGet+"?vendorClassId="+tenantId,
         useCache: false,
-        method: "GET",
+        method: "POST",
         auth: true,
         userService: true,
         // params: {tenantId} ,
@@ -425,10 +425,9 @@ PHMApplications:{
       updateMasterClassData: (data, tenantId) =>
       Request({
         data: data,
-        url: Urls.wms.ContractorMaster.mdmsVenderClassUpdate+'/'+tenantId,
+        url: Urls.wms.ContractorMaster.mdmsVenderClassUpdate,
         useCache: false,
-        method: "PATCH",
-        // method: "POST",
+        method: "POST",
         auth: true,
         userService: true,
         params: { tenantId },
@@ -440,19 +439,19 @@ PHMApplications:{
         url: Urls.wms.ContractorMaster.mdmsAccountHeadGet,
         // url: Urls.wms.ContractorMaster.get+tenantId,
         useCache: false,
-        // method: "POST",
-        method: "GET",
+        method: "POST",
         auth: true,
         userService: true,
         // params: {tenantId} ,
       }),
 
       getSingleResordsAccountHeadData: (tenantId) =>
-      Request(console.log("tenantId tenantId ",{tenantId,"ss":Urls.wms.ContractorMaster.mdmsVenderClassGet+'?vendor_id='+tenantId}),{
-        // url: Urls.wms.ContractorMaster.mdmsVenderClassGet+'/'+tenantId,
-        url: Urls.wms.ContractorMaster.mdmsAccountHeadGet+'?vendor_id='+2,    
+      Request(
+        // console.log("tenantId tenantId ",{tenantId,"ss":Urls.wms.ContractorMaster.mdmsVenderClassGet+'?vendor_id='+tenantId}),
+        {
+        url: Urls.wms.ContractorMaster.mdmsAccountHeadGet+'?primaryAccountheadId='+tenantId,    
         useCache: false,
-        method: "GET",
+        method: "POST",
         auth: true,
         userService: true,
         // params: {tenantId} ,
@@ -471,10 +470,9 @@ PHMApplications:{
       updateAccountHeadData: (data, tenantId) =>
       Request({
         data: data,
-        url: Urls.wms.ContractorMaster.mdmsAccountHeadUpdate+'/'+tenantId,
+        url: Urls.wms.ContractorMaster.mdmsAccountHeadUpdate,
         useCache: false,
-        method: "PATCH",
-        // method: "POST",
+        method: "POST",
         auth: true,
         userService: true,
         params: { tenantId },
@@ -484,21 +482,21 @@ PHMApplications:{
       getFunctionAppData: (tenantId) =>
       Request({
         url: Urls.wms.ContractorMaster.mdmsFunctionAppGet,
-        // url: Urls.wms.ContractorMaster.get+tenantId,
         useCache: false,
-        // method: "POST",
-        method: "GET",
+        method: "POST",
         auth: true,
         userService: true,
         // params: {tenantId} ,
       }),
 
       getSingleResordsFunctionAppData: (tenantId) =>
-      Request(console.log("tenantId tenantId ",{tenantId,"ss":Urls.wms.ContractorMaster.mdmsVenderClassGet+'?vendor_id='+tenantId}),{
+      Request(
+        // console.log("tenantId tenantId ",{tenantId,"ss":Urls.wms.ContractorMaster.mdmsFunctionAppGet+'?functionId='+tenantId}),
+        {
         // url: Urls.wms.ContractorMaster.mdmsVenderClassGet+'/'+tenantId,
-        url: Urls.wms.ContractorMaster.mdmsFunctionAppGet+'?vendor_id='+2,    
+        url: Urls.wms.ContractorMaster.mdmsFunctionAppGet+'?functionId='+tenantId,    
         useCache: false,
-        method: "GET",
+        method: "POST",
         auth: true,
         userService: true,
         // params: {tenantId} ,
@@ -517,10 +515,10 @@ PHMApplications:{
       updateFunctionAppData: (data, tenantId) =>
       Request({
         data: data,
-        url: Urls.wms.ContractorMaster.mdmsFunctionAppUpdate+'/'+tenantId,
+        url: Urls.wms.ContractorMaster.mdmsFunctionAppUpdate,
+        // url: Urls.wms.ContractorMaster.mdmsFunctionAppUpdate+'/'+tenantId,
         useCache: false,
-        method: "PATCH",
-        // method: "POST",
+        method: "POST",
         auth: true,
         userService: true,
         params: { tenantId },

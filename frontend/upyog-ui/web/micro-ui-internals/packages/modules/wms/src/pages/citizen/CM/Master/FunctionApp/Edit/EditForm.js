@@ -7,7 +7,6 @@ const EditForm=({ tenantId, data })=>{
   const history = useHistory();
   const [canSubmit, setSubmitValve] = useState(true);
   const {mutate,isSuccess,isError,error} = Digit?.Hooks?.wms?.cm?.useWMSMaster(tenantId,"WMS_FUNCTION_APP_UPDATE");
-  console.log({isSuccess,isError,error})
   const [showToast, setShowToast] = useState(false);
   const closeToast = () => {
     setShowToast(false);
@@ -18,41 +17,27 @@ const EditForm=({ tenantId, data })=>{
       closeToast();
       // history.replace('/upyog-ui/citizen/wms/vendor-sub-type/list')
       history.push('/upyog-ui/citizen/wms/function-app/list')
-
-      
     }, 5000);
   }
   },[showToast])
   useEffect(()=>{if(isSuccess){setShowToast(true);}else if(isError){alert("Something wrong in updated bank record")}else{}},[isSuccess])
-
   const defaultValues = {
     WmsFAName:{function_name: data?.function_name},
     WmsFACode:{function_code: data?.function_code},
     WmsFALevel:{function_level: data?.function_level},
-    WmsFAStatus:{name: data?.name}
+    WmsFAStatus:{name: data?.status}
   }
 
   const onFormValueChange = (setValue = true, formData) => { };
     const onSubmit=async(item)=>{
-        console.log("data Function app update ",item)
-      //   const payloadData={"WMSVendorClassApplication": [{
-      //     "id":1,
-      //     "function_name": data?.WmsFAName?.function_name,
-      //     "function_code": data?.WmsFACode?.function_code,
-      //     "function_level": data?.WmsFALevel?.function_level,
-      //     "status": data?.WmsFAStatus?.name,
-      //     "tenantId":tenantId
-      // }]}
-
-      const payloadData={
-        "id":2,
-        "function_name": data?.WmsFAName?.function_name,
-        "function_code": data?.WmsFACode?.function_code,
-        "function_level": data?.WmsFALevel?.function_level,
-        "status": data?.WmsFAStatus?.name,
+      const payloadData={"WMSFunctionApplication": [{
+        "function_id":data?.function_id,
+        "function_name": item?.WmsFAName?.function_name,
+        "function_code": item?.WmsFACode?.function_code,
+        "function_level": item?.WmsFALevel?.function_level,
+        "status": item?.WmsFAStatus?.name,
         "tenantId":tenantId
-    }
-        console.log("payloadData ",payloadData)
+    }]}
        await mutate(payloadData)
     }
     const config = newConfig?newConfig:newConfig;

@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import EditForm from "./EditForm";
 import { Loader } from "@egovernments/digit-ui-react-components";
 
-const VendorClassEdit =()=>{
+const FunctionAppEdit =()=>{
     const { id,tenantId } = useParams();
     console.log("param ",id)
     const { isLoading, isError, error, data, ...rest } = Digit?.Hooks?.wms?.cm?.useWMSMaster(id,"WMS_FUNCTION_APP_SINGLE_RECORD");
@@ -18,8 +18,8 @@ const data1=[
   if (isLoading) {
     return <Loader />;
   }
-  // return <EditForm data={data?.WMSVendorTypeApplications[0]} tenantId={tenantId} />;
-  return <EditForm data={data1[0]} tenantId={tenantId} />;
+  return <EditForm data={data?.WMSFunctionApplications[0]} tenantId={tenantId} />;
+  // return <EditForm data={data1[0]} tenantId={tenantId} />;
 
 }
-export default VendorClassEdit
+export default FunctionAppEdit

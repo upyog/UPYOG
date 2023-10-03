@@ -15,8 +15,8 @@ const DesktopInbox = ({ tableConfig, ...props} ) => {
   const GetSlaCell = (value) => {
     return value == "INACTIVE" ? <span className="sla-cell-error">{ value || ""}</span> : <span className="sla-cell-success">{ value || ""}</span>;
   };
-  // const data = props?.data?.WMSVendorClassApplication;
-  const data = props?.data;
+  const data = props?.data?.WMSPrimaryAccountHeadApplications;
+  // const data = props?.data;
 // console.log("data props ",props )
 // console.log("data props data ",props?.data )
 // console.log("data ",data)
@@ -56,7 +56,17 @@ const DesktopInbox = ({ tableConfig, ...props} ) => {
           return GetCell(`${row.original?.primary_accounthead_location}`);
         },
       },
-      
+      {
+        Header: "Status",
+        disableSortBy: true,
+        Cell: ({ row }) => {
+          
+          // return GetCell(`${row.original?.vendor_status}`)
+          // return GetCell(`${row.original?.vendor_status==="Active" ? <span style={{"color":"red"}}>{row.original?.vendor_status}</span> : <span style={{"color":"red"}}>{row.original?.vendor_status}</span>}`);
+
+          return GetSlaCell(`${row?.original?.account_status==="Active" ? row?.original?.account_status?.toUpperCase() : row?.original?.account_status?.toUpperCase()}`);
+        },
+      },
       {
         Header: "Action",
         disableSortBy: true,
@@ -68,7 +78,7 @@ const DesktopInbox = ({ tableConfig, ...props} ) => {
             </span> 
             {' '} */}
             <span className="link">
-            <Link to={`edit/${props.tenantId}/${row?.original?.id}`}>Edit</Link>
+            <Link to={`edit/${props.tenantId}/${row?.original?.primary_accounthead_id}`}>Edit</Link>
           </span>
           </React.Fragment>
             

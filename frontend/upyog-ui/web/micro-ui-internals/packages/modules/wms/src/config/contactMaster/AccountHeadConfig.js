@@ -23,7 +23,14 @@ export const newConfig =[
               key: "WmsAHLocation",
               withoutLabel: true,
 
+            },{
+              type: "component",
+              component: "WmsAHStatus",
+              key: "WmsAHStatus",
+              withoutLabel: true,
+
             },
+            
           ]
   },
 

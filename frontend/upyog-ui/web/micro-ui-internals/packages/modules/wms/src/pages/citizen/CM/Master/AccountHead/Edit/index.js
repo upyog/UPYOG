@@ -6,16 +6,16 @@ import { Loader } from "@egovernments/digit-ui-react-components";
 const AccountHeadEdit =()=>{
     const { id,tenantId } = useParams();
     console.log("param ",id)
-    const { isLoading, isError, error, data, ...rest } = Digit?.Hooks?.wms?.cm?.useWMSMaster(id,"WMS_V_CLASS_SINGLE_RECORD");
+    const { isLoading, isError, error, data, ...rest } = Digit?.Hooks?.wms?.cm?.useWMSMaster(id,"WMS_ACCOUNT_HEAD_SINGLE_RECORD");
   console.log("data edit index ",data, isLoading)
-const data1=[
-  {"vendor_id":1,"vendor_class_name":"Tesh","vendor_class_status":"Active"}
-]
+// const data1=[
+//   {"vendor_id":1,"vendor_class_name":"Tesh","vendor_class_status":"Active"}
+// ]
   if (isLoading) {
     return <Loader />;
   }
-  // return <EditForm data={data?.WMSVendorTypeApplications[0]} tenantId={tenantId} />;
-  return <EditForm data={data1[0]} tenantId={tenantId} />;
+  return <EditForm data={data?.WMSPrimaryAccountHeadApplications[0]} tenantId={tenantId} />;
+  // return <EditForm data={data1[0]} tenantId={tenantId} />;
 
 }
 export default AccountHeadEdit

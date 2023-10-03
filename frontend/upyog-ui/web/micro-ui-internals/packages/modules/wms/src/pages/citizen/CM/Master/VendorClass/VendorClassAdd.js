@@ -23,20 +23,13 @@ const [showToast, setShowToast] = useState(false);
   useEffect(()=>{if(isSuccess){setShowToast(true);}else if(isError){alert("Something wrong in updated bank record")}else{}},[isSuccess])
   
     const onSubmit = async(data)=>{
-  console.log({isSuccess,isError,error})
-
 console.log("Vendor Class Add ",data)
 
-        // const payloadData={"WMSVendorClassApplication": [{
-        //     "vendor_class_name": data?.WmsCMVCName?.vendor_class_name,
-        //     "vendor_class_status": data?.WmsCMVCStatus?.name,
-        //     "tenantId": tenantId
-        // }]}
-        const payloadData={
+        const payloadData={"WMSVendorClassApplication": [{
           "vendor_class_name": data?.WmsCMVCName?.vendor_class_name,
           "vendor_class_status": data?.WmsCMVCStatus?.name,
           "tenantId": tenantId
-      }
+      }]}
 console.log("Vendor Class Add payloadData ",payloadData)
 
 await mutate(payloadData)

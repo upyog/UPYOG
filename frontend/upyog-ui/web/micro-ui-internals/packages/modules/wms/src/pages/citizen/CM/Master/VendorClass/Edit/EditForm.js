@@ -35,14 +35,9 @@ const EditForm=({ tenantId, data })=>{
         console.log("data vendor type ",item)
         
         const payloadData={"WMSVendorClassApplication": [{
-          // "vendor_id":data?.vendor_id,
-          //   "vendor_class_name": item?.WmsCMVCName?.vendor_class_name,   
-          //   "vendor_class_status": item?.WmsCMVCStatus?.name,
-          // "tenantId":tenantId
-
-          "vendor_id":data?.vendor_id,
-            "vendor_class_name": item?.vendor_class_name,   
-            "vendor_class_status": item?.vendor_class_status,
+          "vendor_class_id":data?.vendor_class_id,
+            "vendor_class_name": item?.WmsCMVCName?.vendor_class_name,   
+            "vendor_class_status": item?.WmsCMVCStatus?.name,
           "tenantId":tenantId
       }]}
         console.log("payloadData ",payloadData)

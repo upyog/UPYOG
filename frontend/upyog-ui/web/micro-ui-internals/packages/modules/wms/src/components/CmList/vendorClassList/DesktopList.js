@@ -15,8 +15,8 @@ const DesktopInbox = ({ tableConfig, ...props} ) => {
   const GetSlaCell = (value) => {
     return value == "INACTIVE" ? <span className="sla-cell-error">{ value || ""}</span> : <span className="sla-cell-success">{ value || ""}</span>;
   };
-  // const data = props?.data?.WMSVendorClassApplication;
-  const data = props?.data;
+  const data = props?.data?.WMSVendorClassApplications;
+  // const data = props?.data;
 // console.log("data props ",props )
 // console.log("data props data ",props?.data )
 // console.log("data ",data)
@@ -64,7 +64,7 @@ const DesktopInbox = ({ tableConfig, ...props} ) => {
             </span> 
             {' '} */}
             <span className="link">
-            <Link to={`edit/${props.tenantId}/${row?.original?.id}`}>Edit</Link>
+            <Link to={`edit/${props.tenantId}/${row?.original?.vendor_class_id}`}>Edit</Link>
           </span>
           </React.Fragment>
             

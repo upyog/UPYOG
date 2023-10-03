@@ -8,8 +8,12 @@ const WmsCMVendorClass = ({ t, config, onSelect, formData = {}, userType }) => {
 
   const { pathname: url } = useLocation();
   const editScreen = url.includes("/modify-application/");
-  const { data: citizenTypes = [], isLoading } = Digit.Hooks.hrms.useHrmsMDMS(tenantId, "egov-hrms", "EmployeeType") || {};
+  const { data: citizenTypes, isLoading } = Digit?.Hooks?.wms?.cm?.useWMSMaster(tenantId, "WMS_V_CLASS_LIST") || {};
   const [citizenType, setcitizenType] = useState(formData?.WmsCMVendorClass);
+  const [citizenTypeList, setcitizenTypeList] = useState();
+
+  console.log("citizenTypes vendor type ", citizenTypes)
+
   const [isTrue, setisTrue] = useState(false);
   function SelectcitizenType(value) {
   if(!value?.name){setisTrue(true)}else{setisTrue(false);setcitizenType(value);}
@@ -19,26 +23,40 @@ const WmsCMVendorClass = ({ t, config, onSelect, formData = {}, userType }) => {
     onSelect(config.key, citizenType);
   }, [citizenType]);
 
-  const vendorClass = [
-    {
-        "code": "CONTRACT_MASTER_CLASSA",
-        "name": "CLASS A",
-        "module": "rainmaker-tl",
-        "locale": "en_IN"
-    },
-    {
-        "code": "CONTRACT_MASTER_CLASSB",
-        "name": "CLASS B",
-        "module": "rainmaker-tl",
-        "locale": "en_IN"
-    },
-    {
-        "code": "CONTRACT_MASTER_CLASSC",
-        "name": "CLASS C",
-        "module": "rainmaker-tl",
-        "locale": "en_IN"
+  useEffect(()=>{
+    let fData=[]
+    if(citizenTypes?.WMSVendorClassApplications?.length>0){
+      const filterData = citizenTypes?.WMSVendorClassApplications.filter((res)=> res.vendor_class_status=="Active");
+      filterData.forEach(element => {
+        fData.push({
+    "id":element?.vendor_class_id,
+    "name": element?.vendor_class_name,
+    "status": element?.vendor_class_status
+  })
+  });
+      setcitizenTypeList(fData)
     }
-];
+  },[citizenTypes])
+//   const vendorClass = [
+//     {
+//         "code": "CONTRACT_MASTER_CLASSA",
+//         "name": "CLASS A",
+//         "module": "rainmaker-tl",
+//         "locale": "en_IN"
+//     },
+//     {
+//         "code": "CONTRACT_MASTER_CLASSB",
+//         "name": "CLASS B",
+//         "module": "rainmaker-tl",
+//         "locale": "en_IN"
+//     },
+//     {
+//         "code": "CONTRACT_MASTER_CLASSC",
+//         "name": "CLASS C",
+//         "module": "rainmaker-tl",
+//         "locale": "en_IN"
+//     }
+// ];
   const inputs = [
     {
       label: "Vendor Class",
@@ -65,8 +83,8 @@ const WmsCMVendorClass = ({ t, config, onSelect, formData = {}, userType }) => {
         <Dropdown
           className="form-field"
           selected={citizenType}
-          // option={citizenTypes?.["egov-hrms"]?.EmployeeType}
-          option={vendorClass}
+          option={citizenTypeList!=undefined && citizenTypeList}
+          // option={vendorClass}
           onBlur={SelectcitizenType}
           select={SelectcitizenType}
           optionKey="name"

@@ -7,7 +7,7 @@ package-lock.json
 locales/
 build/
 packages/**/dist/
-
+UPYOG/business-services/
 # yarn #
 .yarn
 .yarnrc.yml

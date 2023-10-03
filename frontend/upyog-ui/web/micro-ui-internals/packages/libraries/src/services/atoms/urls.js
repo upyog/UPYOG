@@ -267,17 +267,17 @@ ContractorMaster:{
   mdmsTypeCreate:"/wms/wms-services/v1/vendor/_create",
 
   
-  mdmsVenderClassGet:"http://localhost:5000/_create",
-  mdmsVenderClassUpdate:"http://localhost:5000/_create",
-  mdmsVenderClassCreate:"http://localhost:5000/_create",
+  mdmsVenderClassGet:"/wms/wms-services/v1/vendorc/_view",
+  mdmsVenderClassUpdate:"/wms/wms-services/v1/vendorc/_update",
+  mdmsVenderClassCreate:"/wms/wms-services/v1/vendorc/_create",
 
-  mdmsAccountHeadGet:"http://localhost:5000/_ahcreate",
-  mdmsAccountHeadUpdate:"http://localhost:5000/_ahcreate",
-  mdmsAccountHeadCreate:"http://localhost:5000/_ahcreate",
+  mdmsAccountHeadGet:"/wms/wms-services/v1/paccounth/_view",
+  mdmsAccountHeadUpdate:"/wms/wms-services/v1/paccounth/_update",
+  mdmsAccountHeadCreate:"/wms/wms-services/v1/paccounth/_create",
 
-  mdmsFunctionAppGet:"http://localhost:5000/_facreate",
-  mdmsFunctionAppUpdate:"http://localhost:5000/_facreate",
-  mdmsFunctionAppCreate:"http://localhost:5000/_facreate",
+  mdmsFunctionAppGet:"/wms/wms-services/v1/func/_view",
+  mdmsFunctionAppUpdate:"/wms/wms-services/v1/func/_update",
+  mdmsFunctionAppCreate:"/wms/wms-services/v1/func/_create",
   
 
 },

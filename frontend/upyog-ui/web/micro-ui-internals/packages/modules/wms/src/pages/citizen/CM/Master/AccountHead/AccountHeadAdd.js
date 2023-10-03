@@ -22,32 +22,22 @@ const [showToast, setShowToast] = useState(false);
   },[showToast])
   useEffect(()=>{if(isSuccess){setShowToast(true);}else if(isError){alert("Something wrong in updated bank record")}else{}},[isSuccess])
   
-    const onSubmit = async(data)=>{
-  console.log({isSuccess,isError,error})
-
-console.log("Account Head Add ",data)
-
-        // const payloadData={"WMSPrimaryAccountHeadApplication": [{
-          // "primary_accounthead_name": data?.WmsAHName?.primary_accounthead_name,
-          // "primary_accounthead_accountno": data?.WmsAHAccountno?.primary_accounthead_accountno,
-          // "primary_accounthead_location": data?.WmsAHLocation?.primary_accounthead_location,
-          // "tenantId": tenantId
-        // }]}
-        const payloadData={
-          "primary_accounthead_name": data?.WmsAHName?.primary_accounthead_name,
-          "primary_accounthead_accountno": data?.WmsAHAccountno?.primary_accounthead_accountno,
-          "primary_accounthead_location": data?.WmsAHLocation?.primary_accounthead_location,
-          "tenantId": tenantId  
-      }
-console.log("Vendor Class Add payloadData ",payloadData)
-
+    const onSubmit = async(item)=>{
+console.log("Account Head Add ",item)
+      const payloadData={"WMSPrimaryAccountHeadApplication": [{
+          "primary_accounthead_name": item?.WmsAHName?.primary_accounthead_name,   
+          "primary_accounthead_accountno": item?.WmsAHAccountno?.primary_accounthead_accountno,   
+          "primary_accounthead_location": item?.WmsAHLocation?.primary_accounthead_location,   
+          "account_status": item?.WmsAHStatus?.name,
+        "tenantId":tenantId
+    }]}
 await mutate(payloadData)
 }    
 const configs = newConfig?newConfig:newConfig;
     return (
         <React.Fragment>
                 <FormComposer
-            heading="Vendor Class Add"
+            heading="Account Head Add"
             label="Save"
             // config={configs}
             config={configs.map((config) => {

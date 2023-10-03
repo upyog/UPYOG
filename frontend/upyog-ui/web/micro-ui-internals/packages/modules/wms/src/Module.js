@@ -181,6 +181,7 @@ import AccountHeadEdit from "./pages/citizen/CM/Master/AccountHead/Edit/index";
 import WmsAHAccountno from "./pageComponents/ContractMaster/AccountHead/WmsAHAccountno"
 import WmsAHLocation from "./pageComponents/ContractMaster/AccountHead/WmsAHLocation"
 import WmsAHName from "./pageComponents/ContractMaster/AccountHead/WmsAHName"
+import WmsAHStatus from "./pageComponents/ContractMaster/AccountHead/WmsAHStatus"
 
 import FunctionAppAdd from "./pages/citizen/CM/Master/FunctionApp/FunctionAppAdd";
 import FunctionAppEdit from "./pages/citizen/CM/Master/FunctionApp/Edit/index";
@@ -351,6 +352,7 @@ AccountHeadView,
 AccountHeadEdit,
 WmsAHAccountno,
 WmsAHLocation,
+WmsAHStatus,
 WmsAHName,
 FunctionAppAdd,
 FunctionAppEdit,
