@@ -1,4 +1,5 @@
 import { Header, Localities, Toast } from "@egovernments/digit-ui-react-components";
+import PropertyType  from "../../../../../react-components/src/molecules/PropertyType";
 import React, { memo, useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -100,7 +101,42 @@ const PTSearchFields = {
       },
     },
   },
+  defaulterNotice:{
+    locality: {
+      type: "custom",
+      label: "PT_SEARCH_LOCALITY",
+      placeHolder: "PT_SEARCH_LOCALITY_PLACEHOLDER",
+      validation: {
+        required: "PTLOCALITYMANDATORY",
+      },
+      customComponent: Localities,
+      customCompProps: {
+        boundaryType: "revenue",
+        keepNull: false,
+        optionCardStyles: { height: "600px", overflow: "auto", zIndex: "10" },
+        disableLoader: true,
+      },
+    },
+    propertyType: {
+      type: "custom",
+      label: "PT_SEARCH_PROPERTY_TYPE",
+      placeHolder: "PT_SEARCH_PROPERTY_TYPE_PLACEHOLDER",
+      customComponent: PropertyType,
+      customCompProps: {
+        keepNull: false,
+        optionCardStyles: { height: "600px", overflow: "auto", zIndex: "10" },
+        disableLoader: true,
+      },
+    }
+    // propertyType: {
+    //   type: "propertyType",
+    //   label: "PT_SEARCHPROPERTY_TABEL_PROPERTY_TYPE",
+    //   placeHolder: "PT_SEARCH_DOOR_NO_PLACEHOLDER",
+     
+    // },
+  },
 };
+
 const defaultValues = {
   propertyIds: "",
   mobileNumber: "",
@@ -108,6 +144,7 @@ const defaultValues = {
   locality: "",
   name: "",
   doorNo: "",
+  propertyType:""
 };
 
 const Search = () => {
@@ -119,6 +156,7 @@ const Search = () => {
   const [showToast, setShowToast] = useState(null);
   const SearchComponent = memo(Digit.ComponentRegistryService.getComponent("PropertySearchForm"));
   const SearchResultComponent = memo(Digit.ComponentRegistryService.getComponent("PropertySearchResults"));
+  const SearchPTIDPropComponent = memo(Digit.ComponentRegistryService.getComponent("SearchPTIDProp"));
   const { data: ptSearchConfig, isLoading } = Digit.Hooks.pt.useMDMS(Digit.ULBService.getStateId(), "DIGIT-UI", "HelpText", {
     select: (data) => {
       return data?.["DIGIT-UI"]?.["HelpText"]?.[0]?.PT;
@@ -136,17 +174,25 @@ const Search = () => {
     }
   },[searchBy])
   const onSubmit = useCallback((_data) => {
-    setFormData(_data);
-    if (Object.keys(_data).filter((k) => _data[k] && typeof _data[k] !== "object").length > 0) {
-      setPayload(
-        Object.keys(_data)
-          .filter((k) => _data[k])
-          .reduce((acc, key) => ({ ...acc, [key]: typeof _data[key] === "object" ? _data[key].code : _data[key] }), {})
-      );
-      setShowToast(null);
-    } else {
-      setShowToast({ warning: true, label: "ERR_PT_FILL_VALID_FIELDS" });
+    if(Object.keys(_data).includes("propertyType"))
+    {
+      setFormData(_data);
+      setPayload({locality:_data.locality.code, propertyType:_data.propertyType.code})
     }
+    else {
+      setFormData(_data);
+      if (Object.keys(_data).filter((k) => _data[k] && typeof _data[k] !== "object").length > 0) {
+        setPayload(
+          Object.keys(_data)
+            .filter((k) => _data[k])
+            .reduce((acc, key) => ({ ...acc, [key]: typeof _data[key] === "object" ? _data[key].code : _data[key] }), {})
+        );
+        setShowToast(null);
+      } else {
+        setShowToast({ warning: true, label: "ERR_PT_FILL_VALID_FIELDS" });
+      }
+    }
+  
   });
   return (
     <React.Fragment>
@@ -161,9 +207,12 @@ const Search = () => {
         onSubmit={onSubmit}
         onReset={onReset}
       />
-      {Object.keys(payload).length > 0 && (
+      
+      {Object.keys(payload).includes("propertyType") ?
+      <SearchPTIDPropComponent t={t} showToast={showToast} setShowToast={setShowToast} tenantId={tenantId} payload={payload} ptSearchConfig={{...ptSearchConfig}} />
+      : Object.keys(payload).length > 0 ? (
         <SearchResultComponent t={t} showToast={showToast} setShowToast={setShowToast} tenantId={tenantId} payload={payload} ptSearchConfig={{...ptSearchConfig}} />
-      )}
+      ):""}
       {showToast && (
         <Toast
           error={showToast.error}

@@ -83,6 +83,9 @@ const Urls = {
     cfcreate: "/service-request/service/v1/_create",
     cfdefinitionsearch: "/service-request/service/definition/v1/_search",
     cfsearch: "/service-request/service/v1/_search",
+    defaulterNotice:"/egov-pdf/download/PT/ptdefaulternotice",
+    getDefaulterNoticeStatus:"/pdf-service/v1/_getBulkDefaulterNoticeRecordsDetails"
+    
   },
 
   dss: {
@@ -157,7 +160,9 @@ const Urls = {
     water_search: "/ws-services/wc/_search",
     sewarage_search: "/sw-services/swc/_search",
     wsDemandSearch: "/ws-calculator/waterCalculator/_getConnectionForDemand",
+    swDemandSearch: "/sw-calculator/sewerageCalculator/_getConnectionForDemand",
     wsDemandSearchGen: "/ws-calculator/waterCalculator/_generateDemand",
+    swDemandSearchGen: "/sw-calculator/sewerageCalculator/_generateDemand",
     water_update: "/ws-services/wc/_update",
     sewarage_update: "/sw-services/swc/_update",
     ws_calculation_estimate: "/ws-calculator/waterCalculator/_estimate",
