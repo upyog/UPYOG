@@ -168,6 +168,28 @@ import WmsTMValidityOfTenderInDay from "./pageComponents/TE/WmsTMValidityOfTende
 import WmsTMAdditionalPerformanceSD from "./pageComponents/TE/WmsTMAdditionalPerformanceSD"
 import WmsTMBankGuarantee from "./pageComponents/TE/WmsTMBankGuarantee"
 
+import VendorClassEdit from "./pages/citizen/CM/Master/VendorClass/Edit/index";
+import VendorClassAdd from "./pages/citizen/CM/Master/VendorClass/VendorClassAdd";
+import VendorClassView from "./pages/citizen/CM/Master/VendorClass/View";
+import WmsCMVCName from "./pageComponents/ContractMaster/vendorClass/WmsCMVCName"
+import WmsCMVCStatus from "./pageComponents/ContractMaster/vendorClass/WmsCMVCStatus"
+
+
+import AccountHeadAdd from "./pages/citizen/CM/Master/AccountHead/AccountHeadAdd";
+import AccountHeadView from "./pages/citizen/CM/Master/AccountHead/View";
+import AccountHeadEdit from "./pages/citizen/CM/Master/AccountHead/Edit/index";
+import WmsAHAccountno from "./pageComponents/ContractMaster/AccountHead/WmsAHAccountno"
+import WmsAHLocation from "./pageComponents/ContractMaster/AccountHead/WmsAHLocation"
+import WmsAHName from "./pageComponents/ContractMaster/AccountHead/WmsAHName"
+
+import FunctionAppAdd from "./pages/citizen/CM/Master/FunctionApp/FunctionAppAdd";
+import FunctionAppEdit from "./pages/citizen/CM/Master/FunctionApp/Edit/index";
+import FunctionAppView from "./pages/citizen/CM/Master/FunctionApp/View";
+
+import WmsFACode from "./pageComponents/ContractMaster/FunctionApp/WmsFACode"
+import WmsFALevel from "./pageComponents/ContractMaster/FunctionApp/WmsFALevel"
+import WmsFAName from "./pageComponents/ContractMaster/FunctionApp/WmsFAName"
+import WmsFAStatus from "./pageComponents/ContractMaster/FunctionApp/WmsFAStatus"
 
 const componentsToRegister = {  
   Home:Home,  
@@ -242,7 +264,7 @@ const componentsToRegister = {
   ContrMasterAdd,
   ContrMasterView,
   WMSCard,
-Inbox,
+// Inbox,
   CMView,
   WMSCardContract,
   ContractViewTableTest,
@@ -318,8 +340,25 @@ WmsTEIssueTillDate,
 WmsTEFinancialBidOpenDate,
 WmsTMValidityOfTenderInDay,
 WmsTMAdditionalPerformanceSD,
-WmsTMBankGuarantee
-
+WmsTMBankGuarantee,
+VendorClassEdit,
+VendorClassAdd,
+VendorClassView,
+WmsCMVCName,
+WmsCMVCStatus,
+AccountHeadAdd,
+AccountHeadView,
+AccountHeadEdit,
+WmsAHAccountno,
+WmsAHLocation,
+WmsAHName,
+FunctionAppAdd,
+FunctionAppEdit,
+FunctionAppView,
+WmsFACode,
+WmsFALevel,
+WmsFAName,
+WmsFAStatus,
 };
 export const WMSModule = ({ stateCode, userType, tenants }) => {
   const { path, url } = useRouteMatch();

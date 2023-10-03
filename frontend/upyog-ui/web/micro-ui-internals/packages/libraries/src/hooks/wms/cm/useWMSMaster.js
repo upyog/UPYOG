@@ -4,6 +4,7 @@ import WMSService from "../../../services/elements/WMS";
 import { useQuery,useMutation } from "react-query";
 
 const useWMSMaster = ( tenantId, type,endppoints, moduleCode, config = {}) => {
+  console.log("tenantId, type ",{tenantId, type})
   // Bank Branch IFSC Code
   const bankBranchIFSCCode  = () => {
     return useQuery(["WMS_BANK_BRANCH", tenantId], () => WMSService.ContractorMaster.getMasterData(tenantId, moduleCode, type), config);
@@ -50,7 +51,50 @@ const useVendorTypeList = () => {
     return useQuery(["WMS_MD_VENDER_TYPE_SINGLE_RECORD",tenantId], () => WMSService.ContractorMaster.getSingleResordsMasterTypeData(tenantId));
   };
 
+
+  // Vendor CLass
+const useVendorClassList = () => {
+  return useQuery(["WMS_MD_VENDER_CLASS_LIST", tenantId], () => WMSService.ContractorMaster.getMasterClassData(tenantId), config);
+};
+const useVendorClassAdd = () => {
+  return useMutation((data) => WMSService.ContractorMaster.createMasterClassData(data), config);
+};
+const useVendorClassUpdate = () => {
+  return useMutation((data) => WMSService.ContractorMaster.updateMasterClassData(data), config);
+};
+ const useVendorClassSingleRecord = () => {
+  // alert("view si")
+  return useQuery(["WMS_MD_VENDER_CLASS_SINGLE_RECORD",tenantId], () => WMSService.ContractorMaster.getSingleResordsMasterClassData(tenantId));
+};
   
+//Account Head
+const useAccountHeadList = () => {
+  return useQuery(["WMS_MD_ACCOUNT_HEAD_LIST", tenantId], () => WMSService.ContractorMaster.getAccountHeadData(tenantId), config);
+};
+const useAccountHeadAdd = () => {
+  return useMutation((data) => WMSService.ContractorMaster.createAccountHeadData(data), config);
+};
+const useAccountHeadUpdate = () => {
+  return useMutation((data) => WMSService.ContractorMaster.updateAccountHeadData(data), config);
+};
+ const useAccountHeadSingleRecord = () => {
+  return useQuery(["WMS_MD_ACCOUNT_HEAD_SINGLE_RECORD",tenantId], () => WMSService.ContractorMaster.getSingleResordsAccountHeadData(tenantId));
+};
+
+//Function Head
+const useFunctionAppList = () => {
+  return useQuery(["WMS_MD_FUNCTION_APP_LIST", tenantId], () => WMSService.ContractorMaster.getFunctionAppData(tenantId), config);
+};
+const useFunctionAppAdd = () => {
+  return useMutation((data) => WMSService.ContractorMaster.createFunctionAppData(data), config);
+};
+const useFunctionAppUpdate = () => {
+  return useMutation((data) => WMSService.ContractorMaster.updateFunctionAppData(data), config);
+};
+ const useFunctionAppSingleRecord = () => {
+  return useQuery(["WMS_MD_FUNCTION_APP_SINGLE_RECORD",tenantId], () => WMSService.ContractorMaster.getSingleResordsFunctionAppData(tenantId));
+};
+
 
   switch (type) {
     case "WMS_BANK_BRANCH_TYPE":
@@ -82,6 +126,37 @@ const useVendorTypeList = () => {
         return useVendorTypeUpdate()
     case "WMS_V_TYPE_SINGLE_RECORD":
     return useVendorTypeSingleRecord();
+
+
+    case "WMS_V_CLASS_LIST":
+      return useVendorClassList();
+  case "WMS_V_CLASS_ADD":
+      return useVendorClassAdd();
+  case "WMS_V_CLASS_UPDATE":
+      return useVendorClassUpdate()
+  case "WMS_V_CLASS_SINGLE_RECORD":
+  return useVendorClassSingleRecord();
+
+  
+  case "WMS_ACCOUNT_HEAD_LIST":
+      return useAccountHeadList();
+  case "WMS_ACCOUNT_HEAD_ADD":
+      return useAccountHeadAdd();
+  case "WMS_ACCOUNT_HEAD_UPDATE":
+      return useAccountHeadUpdate()
+  case "WMS_ACCOUNT_HEAD_SINGLE_RECORD":
+  return useAccountHeadSingleRecord();
+  
+
+  case "WMS_FUNCTION_APP_LIST":
+      return useFunctionAppList();
+  case "WMS_FUNCTION_APP_ADD":
+      return useFunctionAppAdd();
+  case "WMS_FUNCTION_APP_UPDATE":
+      return useFunctionAppUpdate()
+  case "WMS_FUNCTION_APP_SINGLE_RECORD":
+  return useFunctionAppSingleRecord();
   }
 };
+
 export default useWMSMaster;

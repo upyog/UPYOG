@@ -388,52 +388,145 @@ PHMApplications:{
 
 
 
+//Fake json data getting Vendor Class ###############################
+      getMasterClassData: (tenantId) =>
+      Request({
+        url: Urls.wms.ContractorMaster.mdmsVenderClassGet,
+        // url: Urls.wms.ContractorMaster.get+tenantId,
+        useCache: false,
+        // method: "POST",
+        method: "GET",
+        auth: true,
+        userService: true,
+        // params: {tenantId} ,
+      }),
 
-      // getMasterDataFakeAPI: (tenantId) =>
-      // Request({
-      //   url: Urls.wms.ContractorMaster.mdms,
-      //   // url: Urls.wms.ContractorMaster.get+tenantId,
-      //   useCache: false,
-      //   // method: "POST",
-      //   method: "GET",
-      //   auth: true,
-      //   userService: true,
-      //   // params: {tenantId} ,
-      // }),
-
-      // getMasterSingleDataFakeAPI: (tenantId) =>
-      // Request({
-      //   url: Urls.wms.ContractorMaster.mdms+'/'+tenantId,
-      //   useCache: false,
-      //   // method: "POST",
-      //   method: "GET",
-      //   auth: true,
-      //   userService: true,
-      //   // params: {tenantId} ,
-      // }),
-      // createMasterDataFakeAPI: (data, tenantId) =>
-      // Request({
-      //   data: data,
-      //   url: Urls.wms.ContractorMaster.mdms,
-      //   useCache: false,
-      //   method: "POST",
-      //   auth: true,
-      //   userService: true,
-      //   params: { tenantId },
-      // }),
+      getSingleResordsMasterClassData: (tenantId) =>
+      Request(console.log("tenantId tenantId ",{tenantId,"ss":Urls.wms.ContractorMaster.mdmsVenderClassGet+'?vendor_id='+tenantId}),{
+        // url: Urls.wms.ContractorMaster.mdmsVenderClassGet+'/'+tenantId,
+        url: Urls.wms.ContractorMaster.mdmsVenderClassGet+"?vendor_id="+tenantId,
+        useCache: false,
+        method: "GET",
+        auth: true,
+        userService: true,
+        // params: {tenantId} ,
+      }),
+      createMasterClassData: (data, tenantId) =>
+      Request({
+        data: data,
+        url: Urls.wms.ContractorMaster.mdmsVenderClassCreate,
+        useCache: false,
+        method: "POST",
+        auth: true,
+        userService: true,
+        params: { tenantId },
+      }),
       
-      // updateMasterDataFakeAPI: (data, tenantId) =>
-      // Request({
-      //   data: data,
-      //   url: Urls.wms.ContractorMaster.mdms+'/'+tenantId,
-      //   useCache: false,
-      //   method: "PATCH",
-      //   // method: "POST",
-      //   auth: true,
-      //   userService: true,
-      //   params: { tenantId },
-      // })
+      updateMasterClassData: (data, tenantId) =>
+      Request({
+        data: data,
+        url: Urls.wms.ContractorMaster.mdmsVenderClassUpdate+'/'+tenantId,
+        useCache: false,
+        method: "PATCH",
+        // method: "POST",
+        auth: true,
+        userService: true,
+        params: { tenantId },
+      }),
+
+      //Fake json data getting Account Head ###############################
+      getAccountHeadData: (tenantId) =>
+      Request({
+        url: Urls.wms.ContractorMaster.mdmsAccountHeadGet,
+        // url: Urls.wms.ContractorMaster.get+tenantId,
+        useCache: false,
+        // method: "POST",
+        method: "GET",
+        auth: true,
+        userService: true,
+        // params: {tenantId} ,
+      }),
+
+      getSingleResordsAccountHeadData: (tenantId) =>
+      Request(console.log("tenantId tenantId ",{tenantId,"ss":Urls.wms.ContractorMaster.mdmsVenderClassGet+'?vendor_id='+tenantId}),{
+        // url: Urls.wms.ContractorMaster.mdmsVenderClassGet+'/'+tenantId,
+        url: Urls.wms.ContractorMaster.mdmsAccountHeadGet+'?vendor_id='+2,    
+        useCache: false,
+        method: "GET",
+        auth: true,
+        userService: true,
+        // params: {tenantId} ,
+      }),
+      createAccountHeadData: (data, tenantId) =>
+      Request({
+        data: data,
+        url: Urls.wms.ContractorMaster.mdmsAccountHeadCreate,
+        useCache: false,
+        method: "POST",
+        auth: true,
+        userService: true,
+        params: { tenantId },
+      }),
+      
+      updateAccountHeadData: (data, tenantId) =>
+      Request({
+        data: data,
+        url: Urls.wms.ContractorMaster.mdmsAccountHeadUpdate+'/'+tenantId,
+        useCache: false,
+        method: "PATCH",
+        // method: "POST",
+        auth: true,
+        userService: true,
+        params: { tenantId },
+      }),
+
+      //Fake json data getting Function App ###############################
+      getFunctionAppData: (tenantId) =>
+      Request({
+        url: Urls.wms.ContractorMaster.mdmsFunctionAppGet,
+        // url: Urls.wms.ContractorMaster.get+tenantId,
+        useCache: false,
+        // method: "POST",
+        method: "GET",
+        auth: true,
+        userService: true,
+        // params: {tenantId} ,
+      }),
+
+      getSingleResordsFunctionAppData: (tenantId) =>
+      Request(console.log("tenantId tenantId ",{tenantId,"ss":Urls.wms.ContractorMaster.mdmsVenderClassGet+'?vendor_id='+tenantId}),{
+        // url: Urls.wms.ContractorMaster.mdmsVenderClassGet+'/'+tenantId,
+        url: Urls.wms.ContractorMaster.mdmsFunctionAppGet+'?vendor_id='+2,    
+        useCache: false,
+        method: "GET",
+        auth: true,
+        userService: true,
+        // params: {tenantId} ,
+      }),
+      createFunctionAppData: (data, tenantId) =>
+      Request({
+        data: data,
+        url: Urls.wms.ContractorMaster.mdmsFunctionAppCreate,
+        useCache: false,
+        method: "POST",
+        auth: true,
+        userService: true,
+        params: { tenantId },
+      }),
+      
+      updateFunctionAppData: (data, tenantId) =>
+      Request({
+        data: data,
+        url: Urls.wms.ContractorMaster.mdmsFunctionAppUpdate+'/'+tenantId,
+        useCache: false,
+        method: "PATCH",
+        // method: "POST",
+        auth: true,
+        userService: true,
+        params: { tenantId },
+      })
 },
+
 TenderEntry:{
   create: (data, tenantId) =>
       Request({

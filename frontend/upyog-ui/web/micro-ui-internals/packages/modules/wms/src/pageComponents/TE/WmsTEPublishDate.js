@@ -10,7 +10,7 @@ const WmsTEPublishDate = ({ t, config, onSelect, formData = {}, userType, regist
     {
       label: t("WMS_TE_COMMON_PUBLISH_DATE"),
       type: "date",
-      name: "tecnical-bid-open-date",
+      name: "publish_date",
       validation: {
         isRequired: true,
         title: t("WMS_COMMON_START_DATE_INVALID"),

@@ -7,25 +7,37 @@ import { Loader } from "@egovernments/digit-ui-react-components";
 const EditTender = () => {
     const { id,tenantId } = useParams();
   //   console.log("param ",id)
-    const { isLoading, isError, error, data, ...rest } = Digit?.Hooks?.wms?.te?.useWmsTEGetSingleRecord(tenantId,2339);
-  console.log("data tender ",data)
+  //   const { isLoading, isError, error, data, ...rest } = Digit?.Hooks?.wms?.te?.useWmsTEGetSingleRecord(tenantId,2339);
+  // console.log("data tender ",data)
   // console.log("data ",data?.WMSBankDetailsApplications[0])
-  // const dataDummy=
-  // {bank_branch: 'Noida',
-  //   bank_ifsc_code: 'SBIN00012',
-  //   bank_name: 'State Bank Of India',
-  //   name:'Active'}
+  const dataDummy=
+  {
+    "department_name":"abc",
+    "resolution_no":"123",
+    "prebid_meeting_date":"12-3-2023",
+    "issue_from_date":"08-3-2023",
+    "publish_date":"12-3-2023",
+    "technical_bid_open_date":"12-3-2023",
+    "request_category":"Te",
+    "upload_document":"image.jpg",
+    "resolution_date":"12-4-2023",
+    "prebid_meeting_location":"Noida",
+    "issue_till_date":"12-4-2023",
+    "financial_bid_open_date":"12-4-2023",
+    "validity":"30",
+    "project_name":"SMC"
+  }
 
     
   // if (isLoading) {
   //   return <Loader />;
   // }
-  return <EditForm data={data?.WMSTenderEntryApplications[0]} tenantId={tenantId} />;
-  // return <EditForm data={dataDummy} tenantId={tenantId} />;
+  // return <EditForm data={data?.WMSTenderEntryApplications[0]} tenantId={tenantId} />;
+  return <EditForm data={dataDummy} tenantId={tenantId} />;
 
-  return(<>
-  <div>edit</div>
-  </>)
+  // return(<>
+  // <div>edit</div>
+  // </>)
 
 }
 export default EditTender;

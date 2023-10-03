@@ -73,9 +73,9 @@ console.log("citizenTypes vendor type ", citizenTypes)
     },
   ];
 
-  if (isLoading) {
-    return <Loader />;
-  }
+  // if (isLoading) {
+  //   return <Loader />;
+  // }
 
   return inputs?.map((input, index) => {
     return (
@@ -94,6 +94,7 @@ console.log("citizenTypes vendor type ", citizenTypes)
           onBlur={SelectcitizenType}
           optionKey="name"
           defaultValue={undefined}
+          placeholder="Department"
           {...input.validation}
           t={t}
         />

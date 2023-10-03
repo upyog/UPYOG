@@ -266,6 +266,20 @@ ContractorMaster:{
   mdmsTypeUpdate:"/wms/wms-services/v1/vendor/_update",
   mdmsTypeCreate:"/wms/wms-services/v1/vendor/_create",
 
+  
+  mdmsVenderClassGet:"http://localhost:5000/_create",
+  mdmsVenderClassUpdate:"http://localhost:5000/_create",
+  mdmsVenderClassCreate:"http://localhost:5000/_create",
+
+  mdmsAccountHeadGet:"http://localhost:5000/_ahcreate",
+  mdmsAccountHeadUpdate:"http://localhost:5000/_ahcreate",
+  mdmsAccountHeadCreate:"http://localhost:5000/_ahcreate",
+
+  mdmsFunctionAppGet:"http://localhost:5000/_facreate",
+  mdmsFunctionAppUpdate:"http://localhost:5000/_facreate",
+  mdmsFunctionAppCreate:"http://localhost:5000/_facreate",
+  
+
 },
 Tender_Entry:{
   create:"/wms/wms-services/v1/tenderentry/_create",

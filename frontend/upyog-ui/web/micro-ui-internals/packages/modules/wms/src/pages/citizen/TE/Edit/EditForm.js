@@ -4,6 +4,7 @@ import { newConfig } from "../../../../components/config/te-config";
 
 import { FormComposer, Toast } from "@egovernments/digit-ui-react-components";
 import { useHistory } from "react-router-dom";
+import { convertEpochToDate } from "../../../../components/Utils";
 
 const EditForm=({  data, tenantId })=>{
   const history = useHistory();
@@ -30,20 +31,22 @@ const EditForm=({  data, tenantId })=>{
   //   WmsCMBankStatus:{name:data?.status}
   // }
   const defaultValues = {
-    WmsTMDepartment:{"department_name":data?.department_name},
-    WmsTMResulationNo:{"resolution_no":data?.resolution_no},
-    WmsTEPreBuildMeetingDate:{"prebid_meeting_date":data?.prebid_meeting_date},
-    WmsTEIssueFromDate:{"issue_from_date":data?.issue_from_date},
-    WmsTEPublishDate:{"publish_date":data?.publish_date},
-    WmsTETecnicalBidOpenDate:{"technical_bid_open_date":data?.technical_bid_open_date},
-    WmsTMTenderCategory:{"request_category":data?.request_category},
+    WmsTMDepartment:{name:data?.department_name},
+    WmsTMResulationNo:{resulation_no:data?.resolution_no},
+    WmsTEPreBuildMeetingDate:{["Pre-Build-Meeting-Date"]:convertEpochToDate(data?.prebid_meeting_date)},
+    WmsTEIssueFromDate:{"issue-from-date":convertEpochToDate(data?.issue_from_date )
+    // data?.issue_from_date
+  },
+    WmsTEPublishDate:{publish_date:convertEpochToDate(data?.publish_date)},
+    WmsTETecnicalBidOpenDate:{technical_bid_open_date:convertEpochToDate(data?.technical_bid_open_date)},
+    WmsTMTenderCategory:{"name":data?.request_category},
     WmsTEUploadDocuments:{"upload_document":data?.upload_document},
-    WmsTEResolutionDate:{"resolution_date":data?.resolution_date},
-    WmsTMMeetingLocation:{"prebid_meeting_location":data?.prebid_meeting_location},
-    WmsTEIssueTillDate:{"issue_till_date":data?.issue_till_date},
-    WmsTEFinancialBidOpenDate:{"financial_bid_open_date":data?.financial_bid_open_date},
-    WmsTMValidityOfTenderInDay:{"validity":data?.validity},
-    WmsTMProjectName:{"project_name":data?.project_name},
+    WmsTEResolutionDate:{"resolution-date":convertEpochToDate(data?.resolution_date)},
+    WmsTMMeetingLocation:{"meeting-location":data?.prebid_meeting_location},
+    WmsTEIssueTillDate:{"issue-till-date":convertEpochToDate(data?.issue_till_date)},
+    WmsTEFinancialBidOpenDate:{"financial-bid-open-date":convertEpochToDate(data?.financial_bid_open_date)},
+    WmsTMValidityOfTenderInDay:{"validity-of-tender-in-days":data?.validity},
+    WmsTMProjectName:{"name":data?.project_name},
     }
 console.log("defaultValues tender ",defaultValues)
   const onFormValueChange = (setValue = true, formData) => { };
