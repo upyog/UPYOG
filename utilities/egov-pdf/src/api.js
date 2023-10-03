@@ -1126,6 +1126,88 @@ async function create_bulk_pdf_pt(kafkaData){
 
 }
 
+
+
+async function create_defaulter_notice_pdf_pt(kafkaData){
+ // logger.info("Kafka data is" + kafkaData);
+  var tenantId = kafkaData.tenantId;
+  var bussinessService = kafkaData.bussinessService;
+  var properties=kafkaData.properties;
+  var requestinfo = kafkaData.requestinfo;
+  var jobid = kafkaData.jobid;
+  var locality=kafkaData.locality;
+  var propertytype=kafkaData.propertytype;
+  
+  try {
+    if (properties.length > 0) {
+      var pdfResponse;
+      var pdfkey = config.pdf.pt_defaulter_notice;
+      try {
+        var batchSize = config.PDF_BATCH_SIZE;
+        var size = properties.length;
+        var numberOfFiles = (size%batchSize) == 0 ? (size/batchSize) : (~~(size/batchSize) +1);
+        for(var i = 0;i<size;i+=batchSize){
+          var payloads = [];
+          var propertyData = properties.slice(i,i+batchSize);
+          var propertyArray = { 
+              Bill: propertyData,
+              isBulkPdf: true,
+              pdfJobId: jobid,
+              pdfKey: pdfkey,
+              totalPdfRecords:size,
+              currentPdfRecords: propertyData.length,
+              tenantId: tenantId,
+              numberOfFiles:numberOfFiles,
+              service: bussinessService,
+              locality:locality,
+              propertytype:propertytype
+          };
+          logger.info("In Create Defaulter PDF consumer");
+          var pdfData = Object.assign({RequestInfo:requestinfo}, propertyArray)
+          payloads.push({
+            topic: config.KAFKA_RECEIVE_CREATE_JOB_TOPIC,
+            messages: JSON.stringify(pdfData)
+          });
+          logger.info("about to call PDF service" + payloads);
+
+          producer.send(payloads, function(err, data) {
+            if (err) {
+              logger.error(err.stack || err);
+              errorCallback({
+                message: `error while publishing to kafka: ${err.message}`
+              });
+            } else {
+              logger.info("jobid: " + jobid + ": published to kafka successfully");
+            }
+          });
+
+        }
+
+        try {
+          const result = await pool.query('select * from egov_defaulter_notice_pdf_info where jobid = $1', [jobid]);
+          if(result.rowCount>=1){
+            const updateQuery = 'UPDATE egov_defaulter_notice_pdf_info SET totalrecords = $1 WHERE jobid = $2';
+            await pool.query(updateQuery,[size, jobid]);
+          }
+        } catch (err) {
+          logger.error(err.stack || err);
+        }
+      } catch (ex) {
+        let errorMessage= "Failed to generate PDF"; 
+        if (ex.response && ex.response.data) logger.error(ex.response.data);
+        throw new Error(errorMessage);
+      }
+    } else {
+      throw new Error("There is no billfound for the criteria");
+    }
+
+    }
+ catch (ex) {
+    throw new Error("Failed to query bill for water and sewerage application " + ex);
+  }
+
+}
+
 module.exports = {
   create_pdf,
   create_pdf_and_upload,
@@ -1153,5 +1235,6 @@ module.exports = {
   search_property_by_id,
   getPropertyDeatils,
   create_bulk_pdf,
-  create_bulk_pdf_pt
+  create_bulk_pdf_pt,
+  create_defaulter_notice_pdf_pt
 };

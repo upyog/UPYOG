@@ -57,25 +57,20 @@ public class SWCalculatorQueryBuilder {
 			+ "eg_sw_connectionholder connectionholder ON connectionholder.connectionid = conn.id ";
 			
 	
-	private final static String SEWERAGE_CONNECTION_SEARCH_QUERY = "SELECT conn.*, sc.*, document.*, plumber.*, sc.connectionExecutionDate,"
+	private final static String SEWERAGE_CONNECTION_SEARCH_QUERY = "SELECT conn.*, sc.*, sc.connectionExecutionDate,"
 			+ "sc.noOfWaterClosets, sc.noOfToilets,sc.proposedWaterClosets, sc.proposedToilets, sc.connectionType, sc.connection_id as connection_Id, sc.appCreatedDate,"
 			+ "  sc.detailsprovidedby, sc.estimationfileStoreId , sc.sanctionfileStoreId , sc.estimationLetterDate,"
 			+ " conn.id as conn_id, conn.tenantid, conn.applicationNo, conn.applicationStatus, conn.status, conn.connectionNo, conn.oldConnectionNo, conn.property_id,"
 			+ " conn.roadcuttingarea, conn.action, conn.adhocpenalty, conn.adhocrebate, conn.createdBy as sw_createdBy,"
 			+ " conn.lastModifiedBy as sw_lastModifiedBy, conn.createdTime as sw_createdTime, conn.lastModifiedTime as sw_lastModifiedTime,conn.additionaldetails, "
 			+ " conn.adhocpenaltyreason, conn.adhocpenaltycomment, conn.adhocrebatereason, conn.adhocrebatecomment, conn.applicationType, conn.dateEffectiveFrom,"
-			+ " conn.locality, conn.isoldapplication, conn.roadtype,plumber.id as plumber_id, plumber.name as plumber_name, plumber.licenseno,"
-			+ " roadcuttingInfo.id as roadcutting_id, roadcuttingInfo.roadtype as roadcutting_roadtype, roadcuttingInfo.roadcuttingarea as roadcutting_roadcuttingarea, roadcuttingInfo.roadcuttingarea as roadcutting_roadcuttingarea, roadcuttingInfo.active as roadcutting_active,"
-			+ " plumber.mobilenumber as plumber_mobileNumber, plumber.gender as plumber_gender, plumber.fatherorhusbandname, plumber.correspondenceaddress, plumber.relationship, " + holderSelectValues +
+			+ " conn.locality, conn.isoldapplication, conn.roadtype,"
+			+ holderSelectValues +
 			" FROM eg_sw_connection conn "
 			+  INNER_JOIN_STRING
 			+" eg_sw_service sc ON sc.connection_id = conn.id"
-			+  LEFT_OUTER_JOIN_STRING
-			+ "eg_sw_plumberinfo plumber ON plumber.swid = conn.id"
 			+ LEFT_OUTER_JOIN_STRING
-			+ "eg_sw_connectionholder connectionholder ON connectionholder.connectionid = conn.id"
-			+ LEFT_OUTER_JOIN_STRING
-			+ "eg_sw_roadcuttinginfo roadcuttingInfo ON roadcuttingInfo.swid = conn.id ";
+			+ "eg_sw_connectionholder connectionholder ON connectionholder.connectionid = conn.id ";
 
 
 	public String getDistinctTenantIds() {
