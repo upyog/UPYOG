@@ -226,7 +226,7 @@ const ApplicationDetails = (props) => {
       if (checkpoint?.numberOfTrips) caption.comment = `${t("NUMBER_OF_TRIPS")}: ${checkpoint?.numberOfTrips}`;
       return <TLCaption data={caption} />;
     }
-    else if(checkpoint.status === "ASSING_DSO")
+    else if(checkpoint.status === "ASSING_DSO_PAY")
       {
         const caption = {
           name: checkpoint?.assigner,
@@ -242,11 +242,14 @@ const ApplicationDetails = (props) => {
   }
 
 let deepCopy = _.cloneDeep( workflowDetails )
+let index1 =0
 deepCopy?.data?.timeline.map((check,index) => {
-  if (check.status == "ASSING_DSO")
+  if (check.status == "ASSING_DSO" && index1 ==0)
   {
       let obj= check
       obj.status = "PENDING_PAYYY"
+      index1 +=1
+      workflowDetails.data.timeline[index].status ="ASSING_DSO_PAY"
       workflowDetails.data.timeline.splice(index, 0, obj);
   }
 })

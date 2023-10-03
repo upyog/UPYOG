@@ -51,7 +51,7 @@ import SearchPropertyComponent from "./pages/citizen/SearchProperty";
 import SearchResultsComponent from "./pages/citizen/SearchResults";
 import EditProperty from "./pages/citizen/EditProperty";
 import MutateProperty from "./pages/citizen/Mutate";
-
+import SearchPTIDProp from "./components/search/SearchDefaulter";
 import PropertyInformation from "./pages/citizen/MyProperties/propertyInformation";
 import PTWFCaption from "./pageComponents/PTWFCaption";
 import PTWFReason from "./pageComponents/PTWFReason";
@@ -172,7 +172,8 @@ const componentsToRegister = {
   SelectOtp, // To-do: Temp fix, Need to check why not working if selectOtp module is already imported from core module
   AcknowledgementCF,
   CitizenFeedback,
-  PTSelectLandmark
+  PTSelectLandmark,
+  SearchPTIDProp
 };
 
 const addComponentsToRegistry = () => {
