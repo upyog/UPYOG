@@ -49,9 +49,10 @@ export const WSService = {
       userService: false,
       params: { tenantId, ...filters },
     }),
-    WSSewsearchDemand: (details) =>
+    
+    WSSewsearchDemand: (details, businessService) =>
     Request({
-      url: Urls.ws.wsDemandSearch,
+      url: businessService === "ws" ?Urls.ws.wsDemandSearch:Urls.ws.swDemandSearch,
       data: details,
       useCache: false,
       setTimeParam: false,
@@ -60,9 +61,9 @@ export const WSService = {
       params: {},
       auth: true,
     }),
-    WSSewsearchDemandGen: (details) =>
+    WSSewsearchDemandGen: (details,businessService) =>
     Request({
-      url: Urls.ws.wsDemandSearchGen,
+      url:businessService === "ws"? Urls.ws.wsDemandSearchGen: Urls.ws.swDemandSearchGen, 
       data: details,
       useCache: false,
       setTimeParam: false,
