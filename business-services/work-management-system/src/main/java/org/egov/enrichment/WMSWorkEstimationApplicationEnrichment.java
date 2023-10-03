@@ -83,7 +83,7 @@ public class WMSWorkEstimationApplicationEnrichment {
 			existingApplication.get(0).setUploadTemplate(application.getUploadTemplate());
 			existingApplication.get(0).setChapter(application.getChapter());
 			existingApplication.get(0).setItemNo(application.getItemNo());
-			existingApplication.get(0).setDesriptionOfTheItem(application.getDesriptionOfTheItem());
+			existingApplication.get(0).setDescriptionOfTheItem(application.getDescriptionOfTheItem());
 			existingApplication.get(0).setLength(application.getLength());
 			existingApplication.get(0).setBw(application.getBw());
 			existingApplication.get(0).setDh(application.getDh());

@@ -52,7 +52,7 @@ public class WMSWorkEstimationApplicationRowMapper implements ResultSetExtractor
                         .uploadTemplate(rs.getString("eUploadTemplate"))
                         .chapter(rs.getString("eChapter"))
                         .itemNo(rs.getString("eItemNo"))
-                        .desriptionOfTheItem(rs.getString("eDesriptionOfTheItem"))
+                        .descriptionOfTheItem(rs.getString("eDescriptionOfTheItem"))
                         .length(rs.getInt("eLength"))
                         .bw(rs.getInt("eBw"))
                         .dh(rs.getInt("eDh"))

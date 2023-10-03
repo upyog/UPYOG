@@ -31,7 +31,8 @@ public class WMSPrimaryAccountHeadApplication {
 	
 	@JsonProperty("primary_accounthead_location")
     private String primaryAccountHeadLocation = null;
-	
+	@JsonProperty("account_status")
+    private String accountStatus = null;
 	
 	 @JsonProperty("tenantId")
 	 private String tenantId = null;

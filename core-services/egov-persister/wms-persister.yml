@@ -1560,7 +1560,7 @@ serviceMaps:
       isTransaction: true
       queryMaps:
 
-        - query: INSERT INTO primary_account_head (primary_accounthead_id,primary_accounthead_name,primary_accounthead_accountno,primary_accounthead_location,createdby,lastmodifiedby,createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?,?,?,?,?);
+        - query: INSERT INTO primary_account_head (primary_accounthead_id,primary_accounthead_name,primary_accounthead_accountno,primary_accounthead_location,account_status,createdby,lastmodifiedby,createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?,?,?,?,?,?);
           basePath: WMSPrimaryAccountHeadApplication.*
           jsonMaps:
             - jsonPath: $.WMSPrimaryAccountHeadApplication.*.primary_accounthead_id
@@ -1570,6 +1570,8 @@ serviceMaps:
             - jsonPath: $.WMSPrimaryAccountHeadApplication.*.primary_accounthead_accountno
             
             - jsonPath: $.WMSPrimaryAccountHeadApplication.*.primary_accounthead_location
+            
+            - jsonPath: $.WMSPrimaryAccountHeadApplication.*.account_status
             
             - jsonPath: $.WMSPrimaryAccountHeadApplication.*.auditDetails.createdBy
 
@@ -1594,7 +1596,7 @@ serviceMaps:
       isTransaction: true
       queryMaps:
       
-        - query: UPDATE primary_account_head SET primary_accounthead_name = ?,primary_accounthead_accountno = ?,primary_accounthead_location = ? WHERE primary_accounthead_id = ?;
+        - query: UPDATE primary_account_head SET primary_accounthead_name = ?,primary_accounthead_accountno = ?,primary_accounthead_location = ?,account_status = ? WHERE primary_accounthead_id = ?;
           basePath: WMSPrimaryAccountHeadApplication.*
           jsonMaps:
             - jsonPath: $.WMSPrimaryAccountHeadApplication.*.primary_accounthead_name
@@ -1603,6 +1605,8 @@ serviceMaps:
             - jsonPath: $.WMSPrimaryAccountHeadApplication.*.primary_accounthead_accountno
             
             - jsonPath: $.WMSPrimaryAccountHeadApplication.*.primary_accounthead_location
+            
+            - jsonPath: $.WMSPrimaryAccountHeadApplication.*.account_status
 
             - jsonPath: $.WMSPrimaryAccountHeadApplication.*.primary_accounthead_id
             
