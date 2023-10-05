@@ -64,4 +64,7 @@ public class WMSContractorApplication {
 	@JsonProperty("tenantId")
 	 private String tenantId = null;
 	
+	@JsonProperty("auditDetails")
+	private AuditDetails auditDetails = null;
+	
 }

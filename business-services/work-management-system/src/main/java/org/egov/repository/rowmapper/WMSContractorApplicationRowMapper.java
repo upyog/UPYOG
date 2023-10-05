@@ -8,6 +8,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.egov.web.models.AuditDetails;
 import org.egov.web.models.ScheduleOfRateApplication;
 import org.egov.web.models.WMSContractorApplication;
 import org.egov.web.models.WMSWorkApplication;
@@ -26,10 +27,17 @@ public class WMSContractorApplicationRowMapper implements ResultSetExtractor<Lis
 
             if(wmsContractorApplication == null) {
 
-                //Date lastModifiedTime = rs.getDate("vVendorName");
+            	Long lastModifiedTime = rs.getLong("vLastmodifiedtime");
                 if (rs.wasNull()) {
-                    //lastModifiedTime = null;
+                    lastModifiedTime = null;
                 }
+                
+                AuditDetails auditdetails = AuditDetails.builder()
+                        .createdBy(rs.getString("vCreatedBy"))
+                        .createdTime(rs.getLong("vCreatedtime"))
+                        .lastModifiedBy(rs.getString("vLastmodifiedby"))
+                        .lastModifiedTime(lastModifiedTime)
+                        .build();
                 wmsContractorApplication = WMSContractorApplication.builder()
                         .vendorId(rs.getInt("vVendorId"))
                         .vendorType(rs.getString("vVendorType"))

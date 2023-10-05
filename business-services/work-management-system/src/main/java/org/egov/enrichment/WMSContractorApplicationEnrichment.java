@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import org.egov.repository.WMSWorkRepository;
 import org.egov.util.IdgenUtil;
+import org.egov.web.models.AuditDetails;
 import org.egov.web.models.ScheduleOfRateApplication;
 import org.egov.web.models.WMSContractorApplication;
 import org.egov.web.models.WMSContractorRequest;
@@ -44,9 +45,8 @@ public class WMSContractorApplicationEnrichment {
 		//List<String> sorIdList = idgenUtil.getIdList(wmsContractorRequest.getRequestInfo(), wmsContractorRequest.getWmsWorkApplications().get(0).getTenantId(), idGenName, idGenFormat, wmsContractorRequest.getWmsWorkApplications().size());
         //Integer index = 0;
 		for (WMSContractorApplication application : wmsContractorRequest.getWmsContractorApplications()) {
-			// Enrich audit details
-//	            AuditDetails auditDetails = AuditDetails.builder().createdBy(birthRegistrationRequest.getRequestInfo().getUserInfo().getUuid()).createdTime(System.currentTimeMillis()).lastModifiedBy(birthRegistrationRequest.getRequestInfo().getUserInfo().getUuid()).lastModifiedTime(System.currentTimeMillis()).build();
-//	            application.setAuditDetails(auditDetails);
+			AuditDetails auditDetails = AuditDetails.builder().createdBy(wmsContractorRequest.getRequestInfo().getUserInfo().getUuid()).createdTime(System.currentTimeMillis()).lastModifiedBy(wmsContractorRequest.getRequestInfo().getUserInfo().getUuid()).lastModifiedTime(System.currentTimeMillis()).build();
+            application.setAuditDetails(auditDetails);
 
 			// Enrich UUID
 			application.setVendorId((int) Math.floor(Math.random() * (9999 - 1000 + 1) + 1000));
