@@ -72648,7 +72648,7 @@ export const LocalizationService = {
         },
         {
             "code": "WMS_TE_COMMON_RESULATION_NO",
-            "message": "Resulation No",
+            "message": "Resolution No",
             "module": "rainmaker-common",
             "locale": "en_IN"
         },

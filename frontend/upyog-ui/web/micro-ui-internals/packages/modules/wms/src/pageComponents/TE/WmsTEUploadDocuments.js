@@ -238,7 +238,7 @@ const WmsTEUploadDocuments = ({ t, config, userType, formData, onSelect }) => {
     const [error, setError] = useState(null);
     const [uploadedFile, setUploadedFile] = useState(null);
     const [file, setFile] = useState(null);
-// console.log({file,error,uploadedFile}," Image")
+console.log({file,error,uploadedFile,config, userType, formData, onSelect}," Image")
     const goNext = () => {
         onSelect(config.key, { documents });
     };
@@ -267,46 +267,48 @@ const WmsTEUploadDocuments = ({ t, config, userType, formData, onSelect }) => {
                 } else if (file?.type && !allowedFileTypesRegex.test(file?.type)) {
                   setError(t(`NOT_SUPPORTED_FILE_TYPE`))
                 } else {
-// try {
-//     var formdata = new FormData();
-// formdata.append("file", file);
-// formdata.append("tenantId", "pg");
-// formdata.append("module", "wms");
-//     let  requestOptions = {
-//         method: 'POST',
-//         body: formdata,
-//         redirect: 'follow'
-//       };
+try {
+    var formdata = new FormData();
+formdata.append("file", file);
+formdata.append("tenantId", "pg");
+formdata.append("module", "wms");
+    let  requestOptions = {
+        method: 'POST',
+        body: formdata,
+        redirect: 'follow'
+      };
 
-//     fetch("http://10.216.36.152:8484/wms/wms-services/v1/tenderentry/_upload", requestOptions)
-//     .then(response => response.text())
-//     .then(result => {
-//         return (
-//             localStorage.setItem("imagePath",result),
-//         console.log("image uploaded ", result)
-//     )})
-//     .catch(error => console.log('errorrrrrr ', error));
-// } catch (error) {
-//     alert("Something wrong!")
-// }
+    fetch("http://10.216.36.152:8484/wms/wms-services/v1/tenderentry/_upload", requestOptions)
+    .then(response => response.text())
+    .then(result => {
+        return (
+            setUploadedFile(result),
+
+            localStorage.setItem("imagePath",result),
+        console.log("image uploaded ", result)
+    )})
+    .catch(error => console.log('errorrrrrr ', error));
+} catch (error) {
+    alert("Something wrong!")
+}
 
                     {/*
                     IT ONLY WILL BE USE FOR IMAGE UPLOAD
                     */} 
-                    try {
-                        // C:\UpyogProjectDev\UPYOG-LIVE\UPYOG\frontend\upyog-ui\web\micro-ui-internals\packages\libraries\src\services\atoms\UploadServices.js
-                        const response = await Digit.UploadServices.Filestorage("WS", file, tenantIdCode);
-                        console.log("response ",response )
-                        if (response?.data?.files?.length > 0) {
-                            setUploadedFile(response?.data?.files[0]);
-                            // localStorage.setItem("imagePath",JSON.stringify(response?.data?.files[0]?.fileStoreId))
-                            // setUploadedFile(response?.data?.files[0]?.fileStoreId);
-                        } else {
-                            setError(t("CS_FILE_UPLOAD_ERROR"));
-                        }
-                    } catch (err) {
-                        setError(t("CS_FILE_UPLOAD_ERROR"));
-                    }
+                    // try {
+                    //     // C:\UpyogProjectDev\UPYOG-LIVE\UPYOG\frontend\upyog-ui\web\micro-ui-internals\packages\libraries\src\services\atoms\UploadServices.js
+                    //     const response = await Digit.UploadServices.Filestorage("WS", file, tenantIdCode);
+                    //     console.log("response ",response )
+                    //     if (response?.data?.files?.length > 0) {
+                    //         setUploadedFile(response?.data?.files[0]);
+                    //         // localStorage.setItem("imagePath",JSON.stringify(response?.data?.files[0]?.fileStoreId))
+                    //         // setUploadedFile(response?.data?.files[0]?.fileStoreId);
+                    //     } else {
+                    //         setError(t("CS_FILE_UPLOAD_ERROR"));
+                    //     }
+                    // } catch (err) {
+                    //     setError(t("CS_FILE_UPLOAD_ERROR"));
+                    // }
                     
                 }
             }
@@ -332,11 +334,12 @@ const WmsTEUploadDocuments = ({ t, config, userType, formData, onSelect }) => {
                         onDelete={() => { setUploadedFile(null); }}
                         message={uploadedFile ? `1 ${t(`CS_ACTION_FILEUPLOADED`)}` : t(`CS_ACTION_NO_FILEUPLOADED`)}
                         textStyles={{ width: "100%" }}
-                        inputStyles={{ width: "280px" }}
+                        inputStyles={{ width: "250px" }}
                         buttonType="button"
                         accept= "image/*, .pdf, .png, .jpeg, .jpg"
                         iserror={error}
                     />
+                    <img src={formData?.WmsTEUploadDocuments?.upload_document} width="25" />
                 </div>
             </LabelFieldPair>
         </div>

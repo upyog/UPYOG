@@ -388,7 +388,7 @@ PHMApplications:{
 
 
 
-//Fake json data getting Vendor Class ###############################
+// data getting Vendor Class ###############################
       getMasterClassData: (tenantId) =>
       Request({
         url: Urls.wms.ContractorMaster.mdmsVenderClassGet,
@@ -433,7 +433,7 @@ PHMApplications:{
         params: { tenantId },
       }),
 
-      //Fake json data getting Account Head ###############################
+      // data getting Account Head ###############################
       getAccountHeadData: (tenantId) =>
       Request({
         url: Urls.wms.ContractorMaster.mdmsAccountHeadGet,
@@ -478,7 +478,7 @@ PHMApplications:{
         params: { tenantId },
       }),
 
-      //Fake json data getting Function App ###############################
+      // data getting Function App ###############################
       getFunctionAppData: (tenantId) =>
       Request({
         url: Urls.wms.ContractorMaster.mdmsFunctionAppGet,
@@ -573,15 +573,28 @@ TenderEntry:{
         auth: true,
         userService: true,
       }),
-      search: (tenantId, filters, searchParams) =>
-      Request({
-        url: Urls.wms.Tender_Entry.search,
+      search: (data) =>
+      // console.log("Search tender List ", {tenantId, filters, searchParams}),
+       Request({
+        url: Urls.wms.Tender_Entry.search+data,
         useCache: false,
-        method: "GET",
+        method: "POST",
         auth: true,
         userService: true,
-        params: { tenantId, ...filters, ...searchParams },
+        // params: { tenantId, filters, searchParams },
       }),
+
+      // getDataFilter: (tenantId) =>
+      // Request({
+      //   url: Urls.wms.ContractorMaster.search+tenantId,
+      //   // url: Urls.wms.ContractorMaster.get+tenantId,
+      //   useCache: false,
+      //   method: "POST",
+      //   // method: "GET",
+      //   auth: true,
+      //   userService: true,
+      //   // params: {tenantId} ,
+      // }),
 }
 };
 

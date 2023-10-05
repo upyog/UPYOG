@@ -10,6 +10,12 @@ const EditForm=({  data, tenantId })=>{
   const history = useHistory();
   const { isLoading, isError,isSuccess, error, data:record, mutate,...rest } = Digit?.Hooks?.wms?.te?.useWmsTEEdit();
   const [showToast, setShowToast] = useState(false);
+  const [imagePath, setimagePath] = useState();
+  const onFormValueChange=(setValue, formData, formState)=>{
+    console.log("dddddddddddddddd ",{setValue, formData, formState, isSuccess, isError})
+    setimagePath(formData?.WmsTEUploadDocuments?.[0]?.fileStoreId)
+  }
+
   const closeToast = () => {
     setShowToast(false);
   };
@@ -17,7 +23,7 @@ const EditForm=({  data, tenantId })=>{
     if(showToast){
     setTimeout(() => {
       closeToast();
-      history.replace('/upyog-ui/citizen/wms/bank/list')
+      history.replace('/upyog-ui/citizen/wms/tender-entry/home')
     }, 5000);
   }
   },[showToast])
@@ -34,9 +40,7 @@ const EditForm=({  data, tenantId })=>{
     WmsTMDepartment:{name:data?.department_name},
     WmsTMResulationNo:{resulation_no:data?.resolution_no},
     WmsTEPreBuildMeetingDate:{["Pre-Build-Meeting-Date"]:convertEpochToDate(data?.prebid_meeting_date)},
-    WmsTEIssueFromDate:{"issue-from-date":convertEpochToDate(data?.issue_from_date )
-    // data?.issue_from_date
-  },
+    WmsTEIssueFromDate:{"issue-from-date":convertEpochToDate(data?.issue_from_date )},
     WmsTEPublishDate:{publish_date:convertEpochToDate(data?.publish_date)},
     WmsTETecnicalBidOpenDate:{technical_bid_open_date:convertEpochToDate(data?.technical_bid_open_date)},
     WmsTMTenderCategory:{"name":data?.request_category},
@@ -48,25 +52,34 @@ const EditForm=({  data, tenantId })=>{
     WmsTMValidityOfTenderInDay:{"validity-of-tender-in-days":data?.validity},
     WmsTMProjectName:{"name":data?.project_name},
     }
-console.log("defaultValues tender ",defaultValues)
-  const onFormValueChange = (setValue = true, formData) => { };
-    const onSubmit=async(item)=>{
-        // console.log("item ",item)
-        const payloadData={"WMSTenderEntryApplication": [{
-            "bank_id":data?.tender_id,
 
-            "bank_name": item?.WmsCMBankName?.bank_name,
-            "bank_branch": item?.WmsCMBankBranch?.bank_branch,
-            "bank_ifsc_code": item?.WmsCMBankIFSCCode?.bank_ifsc_code,
-            "bank_branch_ifsc_code": item?.WmsCMBankName?.bank_name+","+item?.WmsCMBankBranch?.bank_branch+","+item?.WmsCMBankIFSCCode?.bank_ifsc_code,
-            "status": item?.WmsCMBankStatus?.name
-        }]}
-        
-       
+    // const onFormValueChange = (setValue = true, formData) => { };
+    const onSubmit=async(item)=>{
+        console.log("item edit ",item)
+        let payloadData = {"WMSTenderEntryApplication": [{
+          "tender_id":data?.tender_id,
+          "department_name":item?.WmsTMDepartment?.name,
+          "resolution_no":item?.WmsTMResulationNo?.resulation_no,
+          "prebid_meeting_date":item?.WmsTEPreBuildMeetingDate?.['Pre-Build-Meeting-Date'],
+          "issue_from_date":item?.WmsTEIssueFromDate?.['issue-from-date'],
+          "publish_date":item?.WmsTEPublishDate?.['publish_date'],
+          "technical_bid_open_date":item?.WmsTETecnicalBidOpenDate?.['technical_bid_open_date'],
+          "request_category":item?.WmsTMTenderCategory?.name,
+          // "upload_document":imagePath[0]?.documentUid?.fileStoreId,
+          "upload_document":imagePath,
+          "resolution_date":item?.WmsTEResolutionDate?.['resolution-date'],
+          "prebid_meeting_location":item?.WmsTMMeetingLocation?.['meeting-location'],
+          "issue_till_date":item?.WmsTEIssueTillDate?.['issue-till-date'],
+          "financial_bid_open_date":item?.WmsTEFinancialBidOpenDate?.['financial-bid-open-date'],
+          "validity":item?.WmsTMValidityOfTenderInDay?.['validity-of-tender-in-days'],
+          "project_name":item?.WmsTMProjectName?.name,
+          "tenantId": tenantId
+        }]};
+        console.log("item edit payloadData ",payloadData)
+
         await mutate(payloadData)
-        setShowToast(true);
     }
-    // useEffect(()=>{if(isSuccess){alert("Updated Succefully")}else{alert("Something wrong in updated bank record")}},[isSuccess])
+    useEffect(()=>{if(isSuccess){setShowToast(true)}else{setShowToast(false)}},[isSuccess])
     const config = newConfig?newConfig:newConfig;
 return (
     <React.Fragment>
@@ -87,10 +100,13 @@ return (
         onSubmit={onSubmit}
         defaultValues={defaultValues}
         onFormValueChange={onFormValueChange}
+        
       /> 
-       {showToast&&isError && <Toast error={showToast.key} label={t('Something went wrong!')} onClose={closeToast} />}
-      {showToast&&isSuccess && <Toast label={t('Record updated successfully')} onClose={closeToast} />} 
+       {/* {showToast&&isError && <Toast error={showToast.key} label={t('Something went wrong!')} onClose={closeToast} />}
+      {showToast&&isSuccess && <Toast label={t('Record updated successfully')} onClose={closeToast} />}  */}
 
+      {showToast&&isError && <Toast error={showToast.key} label={'Something went wrong!'} onClose={closeToast} />}
+      {showToast&&isSuccess && <Toast label={'Record updated successfully'} onClose={closeToast} />} 
 
 
 

@@ -7,8 +7,8 @@ import { Loader } from "@egovernments/digit-ui-react-components";
 const EditTender = () => {
     const { id,tenantId } = useParams();
   //   console.log("param ",id)
-  //   const { isLoading, isError, error, data, ...rest } = Digit?.Hooks?.wms?.te?.useWmsTEGetSingleRecord(tenantId,2339);
-  // console.log("data tender ",data)
+    const { isLoading, isError, error, data, ...rest } = Digit?.Hooks?.wms?.te?.useWmsTEGetSingleRecord(tenantId,id);
+  console.log("data tender ",data)
   // console.log("data ",data?.WMSBankDetailsApplications[0])
   const dataDummy=
   {
@@ -29,11 +29,11 @@ const EditTender = () => {
   }
 
     
-  // if (isLoading) {
-  //   return <Loader />;
-  // }
-  // return <EditForm data={data?.WMSTenderEntryApplications[0]} tenantId={tenantId} />;
-  return <EditForm data={dataDummy} tenantId={tenantId} />;
+  if (isLoading) {
+    return <Loader />;
+  }
+  return <EditForm data={data?.WMSTenderEntryApplications[0]} tenantId={tenantId} />;
+  // return <EditForm data={dataDummy} tenantId={tenantId} />;
 
   // return(<>
   // <div>edit</div>

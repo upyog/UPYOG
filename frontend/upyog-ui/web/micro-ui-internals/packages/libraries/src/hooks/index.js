@@ -269,6 +269,8 @@ import useWMSMaster from "./wms/cm/useWMSMaster";
 import useWmsTEAdd from "./wms/TE/useWmsTEAdd";
 import useWmsTEEdit from "./wms/TE/useWmsTEEdit";
 import useWmsTEGetSingleRecord from "./wms/TE/useWmsTEGetSingleRecord";
+import useWmsTEGetRecord from "./wms/TE/useWmsTEGetRecord";
+import useWmsTESearch from "./wms/TE/useWmsTESearch";
 
 
 import useGetHowItWorksJSON from "./useHowItWorksJSON";
@@ -553,7 +555,9 @@ const wms = {
   te:{
     useWmsTEAdd,
     useWmsTEEdit,
-    useWmsTEGetSingleRecord
+    useWmsTEGetSingleRecord,
+    useWmsTEGetRecord,
+    useWmsTESearch
   },
   useWmsSchMDMS,
   useWmsGenderMDMS,
