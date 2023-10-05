@@ -2,10 +2,7 @@ package org.egov.repository.querybuilder;
 
 import java.util.List;
 
-
-import org.egov.web.models.WMSContractorApplicationSearchCriteria;
 import org.egov.web.models.WMSTenderEntryApplicationSearchCriteria;
-import org.egov.web.models.WMSWorkApplicationSearchCriteria;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
@@ -32,6 +29,24 @@ public class WMSTenderEntryApplicationQueryBuilder {
              query.append(" tender.tender_id IN ( ").append(createQuery(criteria.getTenderId())).append(" ) ");
              addToPreparedStatement(preparedStmtList, criteria.getTenderId());
         }
+        
+        if(!ObjectUtils.isEmpty(criteria.getDepartmentName())){
+       	 addClauseIfRequired(query, preparedStmtList);
+            query.append(" tender.department_name IN ( ").append(createQuery(criteria.getDepartmentName())).append(" ) ");
+            addToPreparedStatement(preparedStmtList, criteria.getDepartmentName());
+       }
+        
+        if(!ObjectUtils.isEmpty(criteria.getResolutionNo())){
+       	 addClauseIfRequired(query, preparedStmtList);
+            query.append(" tender.resolution_no IN ( ").append(createQueryInt(criteria.getResolutionNo())).append(" ) ");
+            addToPreparedStatementInt(preparedStmtList, criteria.getResolutionNo());
+       }
+        
+        if(!ObjectUtils.isEmpty(criteria.getPrebidMeetingDate())){
+       	 addClauseIfRequired(query, preparedStmtList);
+            query.append(" tender.prebid_meeting_date IN ( ").append(createQuery(criteria.getPrebidMeetingDate())).append(" ) ");
+            addToPreparedStatement(preparedStmtList, criteria.getPrebidMeetingDate());
+       }
 
         // order birth registration applications based on their createdtime in latest first manner
         query.append(ORDERBY_CREATEDTIME);
@@ -57,8 +72,25 @@ public class WMSTenderEntryApplicationQueryBuilder {
         }
         return builder.toString();
     }
+    
+    private String createQueryInt(List<Integer> list) {
+        StringBuilder builder = new StringBuilder();
+        int length = list.size();
+        for (int i = 0; i < length; i++) {
+            builder.append(" ?");
+            if (i != length - 1)
+                builder.append(",");
+        }
+        return builder.toString();
+    }
 
     private void addToPreparedStatement(List<Object> preparedStmtList, List<String> ids) {
+        ids.forEach(id -> {
+            preparedStmtList.add(id);
+        });
+    }
+    
+    private void addToPreparedStatementInt(List<Object> preparedStmtList, List<Integer> ids) {
         ids.forEach(id -> {
             preparedStmtList.add(id);
         });

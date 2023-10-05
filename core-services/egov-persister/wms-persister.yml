@@ -281,7 +281,7 @@ serviceMaps:
       isTransaction: true
       queryMaps:
 
-        - query: INSERT INTO contractor (vendor_id,vendor_type,vendor_sub_type,vendor_name,vendor_status,pfms_vendor_code,payto,mobile_number,email,uid_number,gst_number,pan_number,bank_branch_ifsc_code,bank_account_number,function,primary_account_head,vendor_class,address,epfo_account_number,vat_number,allow_direct_payment) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?,?,?,?,?,?,?,?,?);
+        - query: INSERT INTO contractor (vendor_id,vendor_type,vendor_sub_type,vendor_name,vendor_status,pfms_vendor_code,payto,mobile_number,email,uid_number,gst_number,pan_number,bank_branch_ifsc_code,bank_account_number,function,primary_account_head,vendor_class,address,epfo_account_number,vat_number,allow_direct_payment,createdby,lastmodifiedby,createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
           basePath: WMSContractorApplication.*
           jsonMaps:
             - jsonPath: $.WMSContractorApplication.*.vendor_id
@@ -325,6 +325,14 @@ serviceMaps:
             - jsonPath: $.WMSContractorApplication.*.vat_number
             
             - jsonPath: $.WMSContractorApplication.*.allow_direct_payment
+            
+            - jsonPath: $.WMSContractorApplication.*.auditDetails.createdBy
+
+            - jsonPath: $.WMSContractorApplication.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.WMSContractorApplication.*.auditDetails.createdTime
+            
+            - jsonPath: $.WMSContractorApplication.*.auditDetails.lastModifiedTime
             
             
             

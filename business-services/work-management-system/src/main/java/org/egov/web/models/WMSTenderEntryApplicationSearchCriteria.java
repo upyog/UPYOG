@@ -23,5 +23,14 @@ public class WMSTenderEntryApplicationSearchCriteria {
 
 	@JsonProperty("tender_id")
     private List<String> tenderId;
+	
+	@JsonProperty("department_name")
+    private List<String> departmentName;
+	
+	@JsonProperty("resolution_no")
+    private List<Integer> resolutionNo;
+	
+	@JsonProperty("prebid_meeting_date")
+    private List<String> prebidMeetingDate;
 
 }
