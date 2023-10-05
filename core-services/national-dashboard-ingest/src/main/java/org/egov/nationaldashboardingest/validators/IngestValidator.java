@@ -86,36 +86,45 @@ public class IngestValidator {
     private static final Pattern p = Pattern.compile("[^a-z0-9._()/&:,\\- ]", Pattern.CASE_INSENSITIVE);
     
 	public static final String MDMS_NATIONALTENANTS_PATH = "$.MdmsRes.tenant.nationalInfo";
-	public static final String MDMS_USERINFO_PATH = "$.MdmsRes.tenant.nationalInfoUser";
 
 
 
-    public void verifyCrossStateRequest(Data data, RequestInfo requestInfo){
-        String employeeUlb = requestInfo.getUserInfo().getTenantId();
-        Set<String> roles = new HashSet<>();
-        requestInfo.getUserInfo().getRoles().forEach(role -> {
-            roles.add(role.getCode());
-        });
-
-        // Skip validations in case the user is having adaptor ingest specific role
-        if(!roles.contains(applicationProperties.getAdaptorIngestSystemRole())) {
-            if (roles.contains("SUPERUSER")) {
-                String ulbPresentInRequest = data.getUlb();
-                log.info(ulbPresentInRequest.split("\\.")[0]);
-                if (!ulbPresentInRequest.split("\\.")[0].equals(employeeUlb.split("\\.")[0])) {
-                    throw new CustomException("EG_INGEST_ERR", "Superusers of one state cannot insert data for another state");
-                }
-
-            } else {
-                String ulbPresentInRequest = data.getUlb();
-                if (ulbPresentInRequest.contains(".")) {
-                    if (!employeeUlb.equals(ulbPresentInRequest))
-                        throw new CustomException("EG_INGEST_ERR", "Employee of ulb: " + employeeUlb + " cannot insert data for ulb: " + ulbPresentInRequest);
-                } else {
-                    if (!employeeUlb.contains(ulbPresentInRequest.toLowerCase()))
-                        throw new CustomException("EG_INGEST_ERR", "Employee of ulb: " + employeeUlb + " cannot insert data for ulb: " + ulbPresentInRequest);
-                }
-            }
+//    public void verifyCrossStateRequest(Data data, RequestInfo requestInfo){
+//        String employeeUlb = requestInfo.getUserInfo().getTenantId();
+//        Set<String> roles = new HashSet<>();
+//        requestInfo.getUserInfo().getRoles().forEach(role -> {
+//            roles.add(role.getCode());
+//        });
+//
+//        // Skip validations in case the user is having adaptor ingest specific role
+//        if(!roles.contains(applicationProperties.getAdaptorIngestSystemRole())) {
+//            if (roles.contains("SUPERUSER")) {
+//                String ulbPresentInRequest = data.getUlb();
+//                log.info(ulbPresentInRequest.split("\\.")[0]);
+//                if (!ulbPresentInRequest.split("\\.")[0].equals(employeeUlb.split("\\.")[0])) {
+//                    throw new CustomException("EG_INGEST_ERR", "Superusers of one state cannot insert data for another state");
+//                }
+//
+//            } else {
+//                String ulbPresentInRequest = data.getUlb();
+//                if (ulbPresentInRequest.contains(".")) {
+//                    if (!employeeUlb.equals(ulbPresentInRequest))
+//                        throw new CustomException("EG_INGEST_ERR", "Employee of ulb: " + employeeUlb + " cannot insert data for ulb: " + ulbPresentInRequest);
+//                } else {
+//                    if (!employeeUlb.contains(ulbPresentInRequest.toLowerCase()))
+//                        throw new CustomException("EG_INGEST_ERR", "Employee of ulb: " + employeeUlb + " cannot insert data for ulb: " + ulbPresentInRequest);
+//                }
+//            }
+//        }
+//    }
+	
+	public void verifyCrossStateRequest(Data data, RequestInfo requestInfo){
+        String uuid = requestInfo.getUserInfo().getUuid();
+  
+        Map<String,String> userUUID=applicationProperties.getNationalDashboardUser();
+        if(!userUUID.get(data.getState()).equalsIgnoreCase(uuid)) {
+                 throw new CustomException("EG_CROSS_STATE_DATA_INGEST", "Employee of one state cannot insert data of another State!!");
+               
         }
     }
 
@@ -339,28 +348,23 @@ public class IngestValidator {
 	int validCounts=0;
 	
 	StringBuilder mdmsURL=new StringBuilder().append(mdmsHost).append(mdmsEndpoint);
-    List<MasterDetail> mstrDetail = new ArrayList<>();
-
-//	MasterDetail mstrDetail = MasterDetail.builder().name("nationalInfo")
-//			.filter("[?(@.active==true)]")
-//			.build();
-	mstrDetail.add(MasterDetail.builder().name("nationalInfo").filter("[?(@.active==true)]").build());
-	mstrDetail.add(MasterDetail.builder().name("nationalInfoUser").build());
+   
+	MasterDetail mstrDetail = MasterDetail.builder().name("nationalInfo")
+			.filter("[?(@.active==true)]")
+			.build();
 	
-	ModuleDetail moduleDetail = ModuleDetail.builder().moduleName("tenant").masterDetails(mstrDetail).build();
+	
+	ModuleDetail moduleDetail = ModuleDetail.builder().moduleName("tenant").masterDetails(Arrays.asList(mstrDetail)).build();
 	MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(Arrays.asList(moduleDetail)).tenantId("pg").build();
 	MdmsCriteriaReq mdmsConfig = MdmsCriteriaReq.builder().requestInfo(requestInfo).mdmsCriteria(mdmsCriteria).build();
 	Object response = null;
 	List<Map<String,String>> jsonOutput=null;
-	List<Map<String,String>> jsonOutputUsr=null;
-	//Map<String,Object> migratedTenant =null;
 	
 	log.info("URI: " + mdmsURL.toString());
 	try {
 			log.info(objectMapper.writeValueAsString(mdmsConfig));
 			response = restTemplate.postForObject(mdmsURL.toString(), mdmsConfig, Map.class);
 			jsonOutput=  JsonPath.read(response, MDMS_NATIONALTENANTS_PATH);
-			jsonOutputUsr= JsonPath.read(response, MDMS_USERINFO_PATH);
 			//migratedTenant= jsonOutput.get(0);
 			
 		} catch (ResourceAccessException e) {
@@ -381,22 +385,15 @@ public class IngestValidator {
 	{
         String tenant=data.getUlb();
         String state=data.getState();
-        String uuid=requestInfo.getUserInfo().getUuid();
-        
-        for(Map<String,String> users:jsonOutputUsr)
-        {
-        if(uuid.equals(users.get("uuid")) && state.equals(users.get("stateCode")))
-        {
-        	for(Map<String,String> migratedTenants:jsonOutput)
+    
+       	for(Map<String,String> migratedTenants:jsonOutput)
         	{
         		if(tenant.equals(migratedTenants.get("code")) && state.equals(migratedTenants.get("stateName")))
         		{
         		validCounts++;
         		}
         	}
-        }
-        }
-	};
+	}
 	
 	if(validCounts ==ingestData.size())
 		isTenantValid=true;

@@ -53,12 +53,13 @@ public class IngestService {
         //Validate if data id for migrated tenant
         Boolean isUlbValid=ingestValidator.verifyTenant(ingestRequest.getRequestInfo(),ingestRequest.getIngestData());
         if(!isUlbValid)
-            throw new CustomException("EG_DS_SAME_RECORD_ERR", "State/ ULB name in request is not in sync with migrated tenant!! or User is not authorised to push data of this ulb/State");
+            throw new CustomException("EG_DS_SAME_RECORD_ERR", "State/ ULB name in request is not in sync with migrated tenant!!");
 
         
         // Validate if record for the day is already present
         IngestAckData dataToDb = ingestValidator.verifyIfDataAlreadyIngested(ingestRequest.getIngestData());
 
+        
         ingestRequest.getIngestData().forEach(data -> {
 
             // Validates that no cross state data is being ingested, i.e. employee of state X cannot insert data for state Y

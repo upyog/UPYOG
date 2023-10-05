@@ -44,6 +44,9 @@ public class ApplicationProperties {
 
     @Value("${adaptor.ingest.system.role}")
     private String adaptorIngestSystemRole;
+    
+    @Value("#{${national.dashboard.user}}")
+    private Map<String, String> nationalDashboardUser;
 
 
 
