@@ -124,7 +124,7 @@ const BillDetails = ({ paymentRules, businessService }) => {
   }, [paymentType, amount]);
 
   useEffect(() => {
-    if (!isFSMLoading && application?.pdfData?.applicationStatus === "PENDING_APPL_FEE_PAYMENT") {
+    if (!isFSMLoading && application?.pdfData?.applicationStatus === "PENDING_APPL_FEE_PAYMENT_CITIZEN") {
       setPaymentAllowed(true);
       setPaymentType(t("CS_PAYMENT_ADV_COLLECTION"));
     }
@@ -133,6 +133,7 @@ const BillDetails = ({ paymentRules, businessService }) => {
   useEffect(() => {
     if (!bill && data) {
       let requiredBill = data.Bill.filter((e) => e.consumerCode == (wrkflow === "WNS" ? stringReplaceAll(consumerCode, "+", "/") : consumerCode))[0];
+      console.log("requiredBillrequiredBill",requiredBill)
       setBill(requiredBill);
     }
   }, [isLoading]);
@@ -203,7 +204,7 @@ const BillDetails = ({ paymentRules, businessService }) => {
             <div>
               <KeyNote keyValue={t("ES_PAYMENT_DETAILS_TOTAL_AMOUNT")} note={application?.pdfData?.totalAmount} />
               <KeyNote keyValue={t("ES_PAYMENT_DETAILS_ADV_AMOUNT")} note={application?.pdfData?.advanceAmount} />
-              {application?.pdfData?.applicationStatus !== "PENDING_APPL_FEE_PAYMENT" ? (
+              {application?.pdfData?.applicationStatus !== "PENDING_APPL_FEE_PAYMENT_CITIZEN" ? (
                 <KeyNote keyValue={t("FSM_DUE_AMOUNT_TO_BE_PAID")} note={bill?.totalAmount} />
               ) : null}
             </div>
@@ -223,7 +224,7 @@ const BillDetails = ({ paymentRules, businessService }) => {
               options={
                 paymentRules.partPaymentAllowed &&
                 application?.pdfData?.paymentPreference !== "POST_PAY" &&
-                application?.pdfData?.applicationStatus === "PENDING_APPL_FEE_PAYMENT"
+                application?.pdfData?.applicationStatus === "PENDING_APPL_FEE_PAYMENT_CITIZEN"
                   ? [t("CS_PAYMENT_ADV_COLLECTION")]
                   : [t("CS_PAYMENT_FULL_AMOUNT")]
               }
