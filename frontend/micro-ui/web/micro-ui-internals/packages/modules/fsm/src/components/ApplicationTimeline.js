@@ -125,15 +125,20 @@ export const ApplicationTimeline = (props) => {
     return <Loader />;
   }
 
+
   let deepCopy = _.cloneDeep( data )
-  deepCopy?.timeline.map((check,index) => {
-    if (check.status == "ASSING_DSO")
-    {
-        let obj= check
-        obj.status = "PENDING_PAYYY"
-        data.timeline.splice(index, 0, obj);
-    }
-  })
+  console.log("dataaaaaaaaaaaaaaaaa",data)
+let index1 =0
+deepCopy?.timeline.map((check,index) => {
+  if (check.status == "ASSING_DSO" && index1 ==0)
+  {
+      let obj= check
+      obj.status = "PENDING_PAYYY"
+      index1 +=1
+      data.timeline[index].status ="ASSING_DSO_PAY"
+      data.timeline.splice(index, 0, obj);
+  }
+})
   return (
     <React.Fragment>
       {!isLoading && (
@@ -144,7 +149,8 @@ export const ApplicationTimeline = (props) => {
             </CardSectionHeader>
           )}
           {data?.timeline && data?.timeline?.length === 1 ? (
-            <CheckPoint isCompleted={true} label={t("CS_COMMON_" + data?.timeline[0]?.status)} customChild={getTimelineCaptions(data?.timeline[0])} />
+            <CheckPoint isCompleted={true} label={t("CS_COMMON_FSM_" + `${data?.timeline[0]?.performedAction === "UPDATE" ? "UPDATE_" : ""}` + data?.timeline[0]?.status)} customChild={getTimelineCaptions(data?.timeline[0])} />
+            
           ) : (
             <ConnectingCheckPoints>
               {data?.timeline &&
@@ -154,7 +160,7 @@ export const ApplicationTimeline = (props) => {
                       <CheckPoint
                         keyValue={index}
                         isCompleted={index === 0}
-                        label={t("CS_COMMON_" + checkpoint.status)}
+                        label={t("CS_COMMON_" +  `${checkpoint?.performedAction === "UPDATE" ? "UPDATE_" : ""}` + checkpoint.status)}
                         customChild={getTimelineCaptions(checkpoint)}
                       />
                     </React.Fragment>
