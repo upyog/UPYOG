@@ -121,6 +121,9 @@ const PTSearchFields = {
       type: "custom",
       label: "PT_SEARCH_PROPERTY_TYPE",
       placeHolder: "PT_SEARCH_PROPERTY_TYPE_PLACEHOLDER",
+      validation: {
+        required: "PTPROPERTYTYPEMANDATORY",
+      },
       customComponent: PropertyType,
       customCompProps: {
         keepNull: false,
@@ -180,8 +183,8 @@ const Search = () => {
       setPayload({locality:_data.locality.code, propertyType:_data.propertyType.code})
     }
     else {
-      setFormData(_data);
-      if (Object.keys(_data).filter((k) => _data[k] && typeof _data[k] !== "object").length > 0) {
+      setFormData(_data);     
+      if (Object.keys(_data).filter((k) => _data[k] && typeof _data[k] !== "object")) {
         setPayload(
           Object.keys(_data)
             .filter((k) => _data[k])
