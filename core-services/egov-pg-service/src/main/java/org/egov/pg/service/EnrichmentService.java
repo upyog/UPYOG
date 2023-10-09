@@ -1,8 +1,13 @@
 package org.egov.pg.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import lombok.extern.slf4j.Slf4j;
+import static java.util.Collections.singletonMap;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Objects;
+
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.pg.constants.PgConstants;
 import org.egov.pg.constants.TransactionAdditionalFields;
@@ -11,17 +16,15 @@ import org.egov.pg.models.BankAccount;
 import org.egov.pg.models.Transaction;
 import org.egov.pg.repository.BankAccountRepository;
 import org.egov.pg.web.models.TransactionRequest;
-import org.egov.pg.web.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.Collections;
-import java.util.Map;
-import java.util.Objects;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import static java.util.Collections.singletonMap;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
@@ -50,6 +53,10 @@ public class EnrichmentService {
         // Generate ID from ID Gen service and assign to txn object
         String txnId = idGenService.generateTxnId(transactionRequest);
         transaction.setTxnId(txnId);
+        DateTimeFormatter myFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+		LocalDateTime date = LocalDateTime.now();
+		String dateFormat = myFormat.format(date);
+        transaction.setTxnDate(dateFormat);
         transaction.setUser(userService.createOrSearchUser(transactionRequest));
         transaction.setTxnStatus(Transaction.TxnStatusEnum.PENDING);
         transaction.setTxnStatusMsg(PgConstants.TXN_INITIATED);
