@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 // import { newConfig } from "../../../../../../config/contactMaster/BankBranchConfig";
-import { newConfig } from "../../../../components/config/te-config";
+import { newConfig } from "../../../../components/config/TE/te-config";
 
 import { FormComposer, Toast } from "@egovernments/digit-ui-react-components";
 import { useHistory } from "react-router-dom";

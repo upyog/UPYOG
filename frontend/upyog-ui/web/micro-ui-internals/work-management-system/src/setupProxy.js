@@ -1,11 +1,15 @@
 const { createProxyMiddleware } = require("http-proxy-middleware");
 
 const createProxy = createProxyMiddleware({
-  //target: process.env.REACT_APP_PROXY_API || "https://uat.digit.org",
+  // target: process.env.REACT_APP_PROXY_API || "https://uat.digit.org",
+  target: process.env.REACT_APP_PROXY_API,
   // target: process.env.REACT_APP_PROXY_API || "https://qa.digit.org",
   //target:"https://test.wontract.com",//https://upyog-sandbox.niua.org" ,
-  target:"https://upyog-sandbox.niua.org" ,
+  // target:"https://upyog-sandbox.niua.org" ,
+  // changeOrigin: true,  
   changeOrigin: true,  
+  secure: false,
+  https: true
 });
 const assetsProxy = createProxyMiddleware({
   target: process.env.REACT_APP_PROXY_ASSETS || "https://upyog-sandbox.niua.org",

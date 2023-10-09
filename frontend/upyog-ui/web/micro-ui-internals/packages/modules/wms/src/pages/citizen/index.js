@@ -73,6 +73,15 @@ const CitizenApp = ({ path, url, userType }) => {
   const TenderEntryView = Digit?.ComponentRegistryService?.getComponent("TenderEntryView");
   const EditTender = Digit?.ComponentRegistryService?.getComponent("EditTender");
   
+  const DepartmentAdd = Digit?.ComponentRegistryService?.getComponent("DepartmentAdd");
+  const DepartmentView = Digit?.ComponentRegistryService?.getComponent("DepartmentView");
+  const DepartmentEdit = Digit?.ComponentRegistryService?.getComponent("DepartmentEdit");
+  
+  const TenderCategoryAdd = Digit?.ComponentRegistryService?.getComponent("TenderCategoryAdd");
+  const TenderCategoryView = Digit?.ComponentRegistryService?.getComponent("TenderCategoryView");
+  const TenderCategoryEdit = Digit?.ComponentRegistryService?.getComponent("TenderCategoryEdit");
+
+
   return (
     <span className={"pt-citizen"}>
     <Switch>
@@ -152,12 +161,18 @@ const CitizenApp = ({ path, url, userType }) => {
           <PrivateRoute path={`${path}/function-app/edit/:tenantId/:id`} component={FunctionAppEdit} />
 
 {/*Tender Entry*/}  
- 
+
 <PrivateRoute path={`${path}/tender-entry/add`} component={TenderEntryAdd} />
-{/* <PrivateRoute path={`${path}/te-add`} component={props => <TenderEntryAdd {...props} tenants={tenantId} parentRoute={path} />} /> */}
 <PrivateRoute path={`${path}/tender-entry/home`} component={TenderEntryView} />
 <PrivateRoute path={`${path}/tender-entry/edit/:tenantId/:id`} component={EditTender} />
 
+<PrivateRoute path={`${path}/tender-entry/department/add`} component={DepartmentAdd} />
+<PrivateRoute path={`${path}/tender-entry/department/list`} component={DepartmentView} />
+<PrivateRoute path={`${path}/tender-entry/department/edit/:tenantId/:id`} component={DepartmentEdit} />
+
+<PrivateRoute path={`${path}/tender-entry/tender-category/add`} component={TenderCategoryAdd} />
+<PrivateRoute path={`${path}/tender-entry/tender-category/list`} component={TenderCategoryView} />
+<PrivateRoute path={`${path}/tender-entry/tender-category/edit/:tenantId/:id`} component={TenderCategoryEdit} />
 
         </div>
         </AppContainer>

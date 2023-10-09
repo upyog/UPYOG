@@ -191,6 +191,16 @@ import WmsFACode from "./pageComponents/ContractMaster/FunctionApp/WmsFACode"
 import WmsFALevel from "./pageComponents/ContractMaster/FunctionApp/WmsFALevel"
 import WmsFAName from "./pageComponents/ContractMaster/FunctionApp/WmsFAName"
 import WmsFAStatus from "./pageComponents/ContractMaster/FunctionApp/WmsFAStatus"
+import DepartmentAdd from "./pages/citizen/TE/Master/Department/DepartmentAdd";
+import DepartmentEdit from "./pages/citizen/TE/Master/Department/Edit/index";
+import DepartmentView from "./pages/citizen/TE/Master/Department/View";
+import WmsDepartmentStatus from "./pageComponents/TE/department/WmsDepartmentStatus";
+import WmsDepartmentName from "./pageComponents/TE/department/WmsDepartmentName";
+import TenderCategoryAdd from "./pages/citizen/TE/Master/TenderCategory/TenderCategoryAdd";
+import TenderCategoryView from "./pages/citizen/TE/Master/TenderCategory/View";
+import TenderCategoryEdit from "./pages/citizen/TE/Master/TenderCategory/Edit/index";
+import WmsTenderCategoryName from "./pageComponents/TE/tenderCategory/WmsTenderCategoryName";
+import WmsTenderCategoryStatus from "./pageComponents/TE/tenderCategory/WmsTenderCategoryStatus";
 
 const componentsToRegister = {  
   Home:Home,  
@@ -361,7 +371,18 @@ WmsFACode,
 WmsFALevel,
 WmsFAName,
 WmsFAStatus,
+DepartmentAdd,
+DepartmentView,
+DepartmentEdit,
+WmsDepartmentName,
+WmsDepartmentStatus,
+TenderCategoryAdd,
+WmsTenderCategoryName,
+WmsTenderCategoryStatus,
+TenderCategoryView,
+TenderCategoryEdit
 };
+
 export const WMSModule = ({ stateCode, userType, tenants }) => {
   const { path, url } = useRouteMatch();
   const moduleCode = "WMS";

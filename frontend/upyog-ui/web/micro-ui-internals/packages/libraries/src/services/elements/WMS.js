@@ -584,17 +584,92 @@ TenderEntry:{
         // params: { tenantId, filters, searchParams },
       }),
 
-      // getDataFilter: (tenantId) =>
-      // Request({
-      //   url: Urls.wms.ContractorMaster.search+tenantId,
-      //   // url: Urls.wms.ContractorMaster.get+tenantId,
-      //   useCache: false,
-      //   method: "POST",
-      //   // method: "GET",
-      //   auth: true,
-      //   userService: true,
-      //   // params: {tenantId} ,
-      // }),
+
+      // data getting Department ###############################
+      getDepartmentMasterData: (tenantId) =>
+      Request({
+        url: Urls.wms.Tender_Entry.mdmsdepartmentGet,
+        useCache: false,
+        method: "POST",
+        auth: true,
+        userService: true,
+        // params: {tenantId} ,
+      }),
+
+      getDepartmentSingleResordsMasterData: (tenantId) =>
+      Request(
+        {
+        url: Urls.wms.Tender_Entry.mdmsdepartmentGet+'?departmentId='+tenantId,    
+        useCache: false,
+        method: "POST",
+        auth: true,
+        userService: true,
+        // params: {tenantId} ,
+      }),
+      updateDepartmentMasterData: (data, tenantId) =>
+      Request({
+        data: data,
+        url: Urls.wms.Tender_Entry.mdmsdepartmentUpdate,
+        useCache: false,
+        method: "POST",
+        auth: true,
+        userService: true,
+        params: { tenantId },
+      }),
+      
+      createDepartmentMasterData: (data, tenantId) =>
+      Request({
+        data: data,
+        url: Urls.wms.Tender_Entry.mdmsdepartmentCreate,
+        useCache: false,
+        method: "POST",
+        auth: true,
+        userService: true,
+        params: { tenantId },
+      }),
+
+      // data getting Tender Category ###############################
+      getTenderCategoryMasterData: (tenantId) =>
+      Request({
+        url: Urls.wms.Tender_Entry.mdmsTCategoryGet,
+        useCache: false,
+        method: "POST",
+        auth: true,
+        userService: true,
+        // params: {tenantId} ,
+      }),
+
+      getTenderCategorySingleResordsMasterData: (tenantId) =>
+      Request(
+        {
+        url: Urls.wms.Tender_Entry.mdmsTCategoryGet+'?departmentId='+tenantId,    
+        useCache: false,
+        method: "POST",
+        auth: true,
+        userService: true,
+        // params: {tenantId} ,
+      }),
+      updateTenderCategoryMasterData: (data, tenantId) =>
+      Request({
+        data: data,
+        url: Urls.wms.Tender_Entry.mdmsTCategoryUpdate,
+        useCache: false,
+        method: "POST",
+        auth: true,
+        userService: true,
+        params: { tenantId },
+      }),
+      
+      createTenderCategoryMasterData: (data, tenantId) =>
+      Request({
+        data: data,
+        url: Urls.wms.Tender_Entry.mdmsTCategoryCreate,
+        useCache: false,
+        method: "POST",
+        auth: true,
+        userService: true,
+        params: { tenantId },
+      })
 }
 };
 

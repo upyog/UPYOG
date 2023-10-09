@@ -287,6 +287,13 @@ Tender_Entry:{
   update:"/wms/wms-services/v1/tenderentry/_update",
   get:"/wms/wms-services/v1/tenderentry/_view",
 
+  mdmsdepartmentGet:"/wms/wms-services/v1/department/_view",
+  mdmsdepartmentUpdate:"/wms/wms-services/v1/department/_update",
+  mdmsdepartmentCreate:"/wms/wms-services/v1/department/_create",
+
+  mdmsTCategoryGet:"/wms/wms-services/v1/TCategory/_view",
+  mdmsTCategoryUpdate:"/wms/wms-services/v1/TCategory/_update",
+  mdmsTCategoryCreate:"/wms/wms-services/v1/TCategory/_create",
   },
   },
   access_control: "/access/v1/actions/mdms/_get",
