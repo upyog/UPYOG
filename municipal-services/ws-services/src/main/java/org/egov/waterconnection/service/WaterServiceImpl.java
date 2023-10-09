@@ -313,6 +313,7 @@ public class WaterServiceImpl implements WaterService {
 		//Call workflow
 		wfIntegrator.callWorkFlow(waterConnectionRequest, property);
 		//call calculator service to generate the demand for one time fee
+		if(!waterConnectionRequest.getWaterConnection().getIsDisconnectionTemporary())
 		calculationService.calculateFeeAndGenerateDemand(waterConnectionRequest, property);
 		//check for edit and send edit notification
 		waterDaoImpl.pushForEditNotification(waterConnectionRequest, isStateUpdatable);
