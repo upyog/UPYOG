@@ -1,6 +1,7 @@
 package org.egov.nationaldashboardingest.validators;
 
 import java.text.ParseException;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -330,61 +331,63 @@ public class IngestValidator {
         }
     }
 
-    public Boolean verifyTenant(RequestInfo requestInfo,List<Data> ingestData)
-    {
-    	Boolean isTenantValid=false;
+    public Boolean verifyTenant(RequestInfo requestInfo,List<Data> ingestData) {
     	
-    	
-		StringBuilder mdmsURL=new StringBuilder().append(mdmsHost).append(mdmsEndpoint);
-       
-    	MasterDetail mstrDetail = MasterDetail.builder().name("nationalInfo")
-				.filter("[?(@.active==true)]")
-				.build();
-		ModuleDetail moduleDetail = ModuleDetail.builder().moduleName("tenant")
-				.masterDetails(Arrays.asList(mstrDetail)).build();
-		MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(Arrays.asList(moduleDetail)).tenantId("pg")
-				.build();
-		MdmsCriteriaReq mdmsConfig = MdmsCriteriaReq.builder().requestInfo(requestInfo).mdmsCriteria(mdmsCriteria).build();
-		Object response = null;
-		List<Map<String,String>> jsonOutput=null;
-		//Map<String,Object> migratedTenant =null;
-    	log.info("URI: " + mdmsURL.toString());
-    	try {
-    			log.info(objectMapper.writeValueAsString(mdmsConfig));
-    			response = restTemplate.postForObject(mdmsURL.toString(), mdmsConfig, Map.class);
-    			jsonOutput=  JsonPath.read(response, MDMS_NATIONALTENANTS_PATH);
-    			//migratedTenant= jsonOutput.get(0);
-    		} catch (ResourceAccessException e) {
-    			
-    			Map<String, String> map = new HashMap<>();
-    			map.put(null, e.getMessage());
-    			throw new CustomException(map);
-    		}  catch (HttpClientErrorException e) {
 
-    			log.info("the error is : " + e.getResponseBodyAsString());
-    			throw new ServiceCallException(e.getResponseBodyAsString());
-    		}catch (Exception e) {
+	Boolean isTenantValid=false;
+	int validCounts=0;
+	
+	StringBuilder mdmsURL=new StringBuilder().append(mdmsHost).append(mdmsEndpoint);
+   
+	MasterDetail mstrDetail = MasterDetail.builder().name("nationalInfo")
+			.filter("[?(@.active==true)]")
+			.build();
+	
+	
+	ModuleDetail moduleDetail = ModuleDetail.builder().moduleName("tenant").masterDetails(Arrays.asList(mstrDetail)).build();
+	MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(Arrays.asList(moduleDetail)).tenantId("pg").build();
+	MdmsCriteriaReq mdmsConfig = MdmsCriteriaReq.builder().requestInfo(requestInfo).mdmsCriteria(mdmsCriteria).build();
+	Object response = null;
+	List<Map<String,String>> jsonOutput=null;
+	
+	log.info("URI: " + mdmsURL.toString());
+	try {
+			log.info(objectMapper.writeValueAsString(mdmsConfig));
+			response = restTemplate.postForObject(mdmsURL.toString(), mdmsConfig, Map.class);
+			jsonOutput=  JsonPath.read(response, MDMS_NATIONALTENANTS_PATH);
+			//migratedTenant= jsonOutput.get(0);
+			
+		} catch (ResourceAccessException e) {
+			
+			Map<String, String> map = new HashMap<>();
+			map.put(null, e.getMessage());
+			throw new CustomException(map);
+		}  catch (HttpClientErrorException e) {
 
-    			log.error("Exception while fetching from searcher: ", e);
-    		}
+			log.info("the error is : " + e.getResponseBodyAsString());
+			throw new ServiceCallException(e.getResponseBodyAsString());
+		}catch (Exception e) {
 
-    	for(Data data:ingestData)
-    	{
-            String tenant=data.getUlb();
-            String state=data.getState();
-            for(Map<String,String> migratedTenants:jsonOutput)
-            {
-            	if(tenant.equals(migratedTenants.get("code")) && state.equals(migratedTenants.get("stateName")))
-            	{
-            		isTenantValid=true;
-            		return isTenantValid;
-            	}
-            	
-            }
-            
-    	};
-    	
-    	return isTenantValid;
+			log.error("Exception while fetching from searcher: ", e);
+		}
+
+	for(Data data:ingestData)
+	{
+        String tenant=data.getUlb();
+        String state=data.getState();
+    
+       	for(Map<String,String> migratedTenants:jsonOutput)
+        	{
+        		if(tenant.equals(migratedTenants.get("code")) && state.equals(migratedTenants.get("stateName")))
+        		{
+        		validCounts++;
+        		}
+        	}
+	}
+	
+	if(validCounts ==ingestData.size())
+		isTenantValid=true;
+	return isTenantValid;
     }
     
     // The verification logic will always use module name + date to determine the uniqueness of a set of records.
