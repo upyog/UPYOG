@@ -1678,3 +1678,53 @@ serviceMaps:
             
             
             
+    - version: 1.0
+      description: Persists Department details in tables
+      fromTopic: save-dept-application
+      isTransaction: true
+      queryMaps:
+
+        - query: INSERT INTO department (dept_id,dept_name,dept_status,createdby,lastmodifiedby,createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?,?,?,?);
+          basePath: WMSDepartmentApplication.*
+          jsonMaps:
+            - jsonPath: $.WMSDepartmentApplication.*.dept_id
+
+            - jsonPath: $.WMSDepartmentApplication.*.dept_name
+
+            - jsonPath: $.WMSDepartmentApplication.*.dept_status
+            
+            - jsonPath: $.WMSDepartmentApplication.*.auditDetails.createdBy
+
+            - jsonPath: $.WMSDepartmentApplication.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.WMSDepartmentApplication.*.auditDetails.createdTime
+            
+            - jsonPath: $.WMSDepartmentApplication.*.auditDetails.lastModifiedTime
+            
+            
+
+            
+            
+            
+            
+            
+            
+            
+    - version: 1.0
+      description: Update Department Details applications in table
+      fromTopic: update-dept-application
+      isTransaction: true
+      queryMaps:
+      
+        - query: UPDATE department SET dept_name = ?,dept_status = ? WHERE dept_id = ?;
+          basePath: WMSDepartmentApplication.*
+          jsonMaps:
+            - jsonPath: $.WMSDepartmentApplication.*.dept_name
+
+            
+            - jsonPath: $.WMSDepartmentApplication.*.dept_status
+            
+            - jsonPath: $.WMSDepartmentApplication.*.dept_id
+            
+            
+            
