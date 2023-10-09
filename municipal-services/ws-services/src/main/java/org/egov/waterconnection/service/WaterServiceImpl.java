@@ -313,7 +313,6 @@ public class WaterServiceImpl implements WaterService {
 		//Call workflow
 		wfIntegrator.callWorkFlow(waterConnectionRequest, property);
 		//call calculator service to generate the demand for one time fee
-		if(!waterConnectionRequest.getWaterConnection().getIsDisconnectionTemporary())
 		calculationService.calculateFeeAndGenerateDemand(waterConnectionRequest, property);
 		//check for edit and send edit notification
 		waterDaoImpl.pushForEditNotification(waterConnectionRequest, isStateUpdatable);
@@ -367,6 +366,7 @@ public class WaterServiceImpl implements WaterService {
 		waterConnectionValidator.validateUpdate(waterConnectionRequest, searchResult, WCConstants.DISCONNECT_CONNECTION);
 		userService.updateUser(waterConnectionRequest, searchResult);
 		//call calculator service to generate the demand for one time fee
+		if(!waterConnectionRequest.getWaterConnection().getIsDisconnectionTemporary())
 		calculationService.calculateFeeAndGenerateDemand(waterConnectionRequest, property);
 		//check whether amount is due
 		boolean isNoPayment = false;
