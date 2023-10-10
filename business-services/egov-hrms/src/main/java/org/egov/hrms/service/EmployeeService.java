@@ -150,7 +150,6 @@ public class EmployeeService {
             if( !CollectionUtils.isEmpty(criteria.getRoles()) )
                 userSearchCriteria.put(HRMSConstants.HRMS_USER_SEARCH_CRITERA_ROLECODES,criteria.getRoles());
             UserResponse userResponse = userService.getUser(requestInfo, userSearchCriteria);
-            userResponse.setUser(userResponse.getUser().stream().filter( i -> i.getActive()==true).collect(Collectors.toList()));
 			userChecked =true;
             if(!CollectionUtils.isEmpty(userResponse.getUser())) {
                  mapOfUsers.putAll(userResponse.getUser().stream()
@@ -191,7 +190,12 @@ public class EmployeeService {
         List <Employee> employees = new ArrayList<>();
         if(!((!CollectionUtils.isEmpty(criteria.getRoles()) || !CollectionUtils.isEmpty(criteria.getNames()) || !StringUtils.isEmpty(criteria.getPhone())) && CollectionUtils.isEmpty(criteria.getUuids())))
             employees = repository.fetchEmployees(criteria, requestInfo);
+        
+        employees=employees.stream().filter( i -> i.getIsActive()==true).collect(Collectors.toList());
+
         List<String> uuids = employees.stream().map(Employee :: getUuid).collect(Collectors.toList());
+        log.info("Active employees are::" + employees.size() + "uuids are :::" + uuids);
+
 		if(!CollectionUtils.isEmpty(uuids)){
             Map<String, Object> UserSearchCriteria = new HashMap<>();
             UserSearchCriteria.put(HRMSConstants.HRMS_USER_SEARCH_CRITERA_UUID,uuids);
