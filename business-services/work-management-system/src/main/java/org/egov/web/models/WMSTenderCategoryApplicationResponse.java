@@ -28,21 +28,21 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class WMSDepartmentApplicationResponse {
+public class WMSTenderCategoryApplicationResponse {
 	
 	@JsonProperty("ResponseInfo")
     private ResponseInfo responseInfo = null;
 
-    @JsonProperty("WMSDepartmentApplications")
+    @JsonProperty("WMSTenderCategoryApplications")
     @Valid
-    private List<WMSDepartmentApplication> wmsDepartmentApplications = null;
+    private List<WMSTenderCategoryApplication> wmsTenderCategoryApplications = null;
 
 
-    public WMSDepartmentApplicationResponse addWMSDepartmentApplicationsItem(WMSDepartmentApplication wmsDepartmentApplicationsItem) {
-        if (this.wmsDepartmentApplications == null) {
-            this.wmsDepartmentApplications = new ArrayList<>();
+    public WMSTenderCategoryApplicationResponse addWMSTenderCategoryApplicationsItem(WMSTenderCategoryApplication wmsTenderCategoryApplicationsItem) {
+        if (this.wmsTenderCategoryApplications == null) {
+            this.wmsTenderCategoryApplications = new ArrayList<>();
         }
-        this.wmsDepartmentApplications.add(wmsDepartmentApplicationsItem);
+        this.wmsTenderCategoryApplications.add(wmsTenderCategoryApplicationsItem);
         return this;
     }
 

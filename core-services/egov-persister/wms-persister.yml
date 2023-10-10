@@ -1728,3 +1728,53 @@ serviceMaps:
             
             
             
+    - version: 1.0
+      description: Persists TenderCategory details in tables
+      fromTopic: save-tcat-application
+      isTransaction: true
+      queryMaps:
+
+        - query: INSERT INTO tender_category (category_id,category_name,category_status,createdby,lastmodifiedby,createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?,?,?,?);
+          basePath: WMSTenderCategoryApplication.*
+          jsonMaps:
+            - jsonPath: $.WMSTenderCategoryApplication.*.category_id
+
+            - jsonPath: $.WMSTenderCategoryApplication.*.category_name
+
+            - jsonPath: $.WMSTenderCategoryApplication.*.category_status
+            
+            - jsonPath: $.WMSTenderCategoryApplication.*.auditDetails.createdBy
+
+            - jsonPath: $.WMSTenderCategoryApplication.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.WMSTenderCategoryApplication.*.auditDetails.createdTime
+            
+            - jsonPath: $.WMSTenderCategoryApplication.*.auditDetails.lastModifiedTime
+            
+            
+
+            
+            
+            
+            
+            
+            
+            
+    - version: 1.0
+      description: Update TenderCategory Details applications in table
+      fromTopic: update-tcat-application
+      isTransaction: true
+      queryMaps:
+      
+        - query: UPDATE tender_category SET category_name = ?,category_status = ? WHERE category_id = ?;
+          basePath: WMSTenderCategoryApplication.*
+          jsonMaps:
+            - jsonPath: $.WMSTenderCategoryApplication.*.category_name
+
+            
+            - jsonPath: $.WMSTenderCategoryApplication.*.category_status
+            
+            - jsonPath: $.WMSTenderCategoryApplication.*.category_id
+            
+            
+            

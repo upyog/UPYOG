@@ -24,8 +24,8 @@ public class WMSDepartmentApplicationRowMapper implements ResultSetExtractor<Lis
         Map<String,WMSDepartmentApplication> wmsDepartmentApplicationMap = new LinkedHashMap<>();
 
         while (rs.next()){
-            String bankId = rs.getString("bBankId");
-            WMSDepartmentApplication wmsDepartmentApplication = wmsDepartmentApplicationMap.get(bankId);
+            String deptId = rs.getString("dDeptId");
+            WMSDepartmentApplication wmsDepartmentApplication = wmsDepartmentApplicationMap.get(deptId);
 
             if(wmsDepartmentApplication == null) {
 
@@ -47,7 +47,7 @@ public class WMSDepartmentApplicationRowMapper implements ResultSetExtractor<Lis
                         .build();
             }
             //addChildrenToProperty(rs, sorApplication);
-            wmsDepartmentApplicationMap.put(bankId, wmsDepartmentApplication);
+            wmsDepartmentApplicationMap.put(deptId, wmsDepartmentApplication);
         }
         return new ArrayList<>(wmsDepartmentApplicationMap.values());
     }
