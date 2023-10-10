@@ -150,6 +150,7 @@ public class EmployeeService {
             if( !CollectionUtils.isEmpty(criteria.getRoles()) )
                 userSearchCriteria.put(HRMSConstants.HRMS_USER_SEARCH_CRITERA_ROLECODES,criteria.getRoles());
             UserResponse userResponse = userService.getUser(requestInfo, userSearchCriteria);
+            userResponse.setUser(userResponse.getUser().stream().filter( i -> i.getActive()==true).collect(Collectors.toList()));
 			userChecked =true;
             if(!CollectionUtils.isEmpty(userResponse.getUser())) {
                  mapOfUsers.putAll(userResponse.getUser().stream()
