@@ -5,7 +5,6 @@ import java.util.Map;
 
 import org.egov.pg.models.Transaction;
 import org.egov.pg.service.Gateway;
-import org.egov.pg.utils.Utils;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -213,7 +212,8 @@ public class NttdataGateway implements Gateway {
 		PayDetails payDetails = new PayDetails();
 		payDetails.setAmount(currentStatus.getTxnAmount());
 		payDetails.setTxnCurrency("INR");
-		payDetails.setSignature("NSE");
+		String signature=merchantId + "Test@123" + merchantTxnId + currentStatus.getTxnAmount() + "INR" + "TXNVERIFICATION";
+		payDetails.setSignature(AtomEncryption.encrypt(signature, "KEY123657234"));
 	
 		HeadDetails headDetails = new HeadDetails();
 		headDetails.setApi("TXNVERIFICATION");
