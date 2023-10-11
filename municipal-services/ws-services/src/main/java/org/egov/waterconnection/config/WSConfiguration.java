@@ -209,6 +209,9 @@ public class WSConfiguration {
 
     @Value("${egov.collection.host}")
     private String collectionHost;
+    
+	@Value("${reconnection.ws.workflow.name}")
+	private String wsWorkflowReconnectionName;
 
     @Value("${state.level.tenant.id}")
     private String stateLevelTenantId;
