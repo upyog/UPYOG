@@ -39,6 +39,8 @@ public class NttdataGateway implements Gateway {
     private final boolean ACTIVE;
     private ObjectMapper objectMapper;
 
+    private final String ORIGINAL_RETURN_URL_KEY;
+    private final String REDIRECT_URL;
     private RestTemplate restTemplate;
 
     @Autowired
@@ -56,6 +58,9 @@ public class NttdataGateway implements Gateway {
         MERCHANT_PATH_DEBIT=null;
         //MERCHANT_PATH_DEBIT = environment.getRequiredProperty("phonepe.url.debit");
         MERCHANT_PATH_STATUS = "https://caller.atomtech.in/ots/payment/status?";
+        REDIRECT_URL = environment.getRequiredProperty("paygov.redirect.url");
+        ORIGINAL_RETURN_URL_KEY = environment.getRequiredProperty("paygov.original.return.url.key");
+        
     }
 
     public ResponseParser decryptData(String encData)
@@ -187,6 +192,7 @@ public class NttdataGateway implements Gateway {
             params.add("merchId", merchantId);
             params.add("custEmail", transaction.getUser().getEmailId());
             params.add("custMobile", transaction.getUser().getMobileNumber());
+            params.add("returnURL", getReturnUrl(transaction.getCallbackUrl(), REDIRECT_URL));
             UriComponents uriComponents = UriComponentsBuilder.fromHttpUrl(MERCHANT_HOST).queryParams(params)
                     .build();
 
@@ -339,7 +345,9 @@ public class NttdataGateway implements Gateway {
         
 
     }
-
+    private String getReturnUrl(String callbackUrl, String baseurl) {
+        return UriComponentsBuilder.fromHttpUrl(baseurl).queryParam(ORIGINAL_RETURN_URL_KEY, callbackUrl).build().toUriString();
+    }
 
     @Override
     public String generateRedirectFormData(Transaction transaction) {
