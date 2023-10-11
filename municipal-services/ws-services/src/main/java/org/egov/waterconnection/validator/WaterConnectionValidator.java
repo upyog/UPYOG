@@ -15,6 +15,7 @@ import org.egov.waterconnection.web.models.OwnerInfo;
 import org.egov.waterconnection.web.models.ValidatorResult;
 import org.egov.waterconnection.web.models.WaterConnection;
 import org.egov.waterconnection.web.models.WaterConnectionRequest;
+import org.egov.waterconnection.web.models.Connection.StatusEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -173,4 +174,27 @@ public class WaterConnectionValidator {
 			}
 		}
 	}
-}
+	public void validateConnectionStatus(List<WaterConnection> previousConnectionsList, WaterConnectionRequest waterConnectionRequest, int reqType) {
+			Map<String, String> errorMap = new HashMap<>();
+			WaterConnection waterConnection = previousConnectionsList.stream().filter(wc -> wc.getOldApplication().booleanValue()==false).findFirst().orElse(null);
+			if(waterConnection != null) {
+				if(reqType == WCConstants.RECONNECTION && !(waterConnection.getStatus()==StatusEnum.ACTIVE 
+						&& WCConstants.DISCONNECTION_FINAL_STATE.equals(waterConnection.getApplicationStatus()))) {
+					errorMap.put("INVALID APPLICATION", "Reconnection can only be applied on a disconnected connection.");
+				}
+				if(reqType == WCConstants.DISCONNECT_CONNECTION && !(waterConnection.getStatus()==StatusEnum.ACTIVE 
+						&& (WCConstants.MODIFIED_FINAL_STATE_DISCONNECTED.equals(waterConnection.getApplicationStatus()))
+						|| WCConstants.STATUS_APPROVED.equals(waterConnection.getApplicationStatus()))) {
+					errorMap.put("INVALID APPLICATION", "The connection is either in workflow or already closed");
+				}  
+				if(reqType == WCConstants.DISCONNECT_CONNECTION && !(waterConnection.getStatus()==StatusEnum.ACTIVE 
+						&& (WCConstants.STATUS_APPROVED.equals(waterConnection.getApplicationStatus())))) {
+					errorMap.put("INVALID APPLICATION", "The connection is either in workflow or already closed");
+				}
+			}
+			
+			if (!CollectionUtils.isEmpty(errorMap))
+				throw new CustomException(errorMap);
+		}
+
+	}

@@ -17,6 +17,7 @@ import org.egov.waterconnection.validator.MDMSValidator;
 import org.egov.waterconnection.validator.ValidateProperty;
 import org.egov.waterconnection.validator.WaterConnectionValidator;
 import org.egov.waterconnection.web.models.*;
+import org.egov.waterconnection.web.models.Connection.StatusEnum;
 import org.egov.waterconnection.web.models.workflow.BusinessService;
 import org.egov.waterconnection.web.models.workflow.ProcessInstance;
 import org.egov.waterconnection.workflow.WorkflowIntegrator;
@@ -103,9 +104,19 @@ public class WaterServiceImpl implements WaterService {
 			reqType = WCConstants.DISCONNECT_CONNECTION;
 			validateDisconnectionRequest(waterConnectionRequest);
 		}
+		else if (waterConnectionRequest.isReconnectRequest()) {
+			reqType = WCConstants.RECONNECTION;
+			validateReconnectionRequest(waterConnectionRequest);
+		}
 
 		else if (wsUtil.isModifyConnectionRequest(waterConnectionRequest)) {
 			List<WaterConnection> previousConnectionsList = getAllWaterApplications(waterConnectionRequest);
+			// Validate any process Instance exists with WF
+			if (!CollectionUtils.isEmpty(previousConnectionsList)) {
+				workflowService.validateInProgressWF(previousConnectionsList, waterConnectionRequest.getRequestInfo(),
+						waterConnectionRequest.getWaterConnection().getTenantId());
+				waterConnectionValidator.validateConnectionStatus(previousConnectionsList, waterConnectionRequest, reqType);
+			}
 			swapConnHolders(waterConnectionRequest,previousConnectionsList);
 
 			//Swap masked Plumber info with unmasked plumberInfo from previous applications
@@ -172,6 +183,27 @@ public class WaterServiceImpl implements WaterService {
 			}
 		}
 
+	}
+	
+	private void validateReconnectionRequest(WaterConnectionRequest waterConnectionRequest) {
+		if (waterConnectionRequest.getWaterConnection().getStatus().toString().equalsIgnoreCase(WCConstants.ACTIVE)) {
+			throw new CustomException("INVALID_REQUEST",
+					"Water connection must be inactive for reconnection request");
+		}
+
+		List<WaterConnection> previousConnectionsList = getAllWaterApplications(waterConnectionRequest);
+		swapConnHolders(waterConnectionRequest,previousConnectionsList);
+
+		//Swap masked Plumber info with unmasked plumberInfo from previous applications
+		if(!ObjectUtils.isEmpty(previousConnectionsList.get(0).getPlumberInfo()))
+			unmaskingUtil.getUnmaskedPlumberInfo(waterConnectionRequest.getWaterConnection().getPlumberInfo(), previousConnectionsList.get(0).getPlumberInfo());
+
+		for(WaterConnection connection : previousConnectionsList) {
+			if(!(connection.getApplicationStatus().equalsIgnoreCase(WCConstants.STATUS_APPROVED) || connection.getApplicationStatus().equalsIgnoreCase(WCConstants.MODIFIED_FINAL_STATE))) {
+				throw new CustomException("INVALID_REQUEST",
+						"No application should be in progress while applying for Reconnection");
+			}
+		}
 	}
 
 	/**

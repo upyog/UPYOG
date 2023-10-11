@@ -231,6 +231,8 @@ public class WSCalculationConstant {
 
 	public static final String WS_ADHOC_REBATE = "WS_ADHOC_REBATE";
 	
+	public static final String WS_RECONNECTION_CHARGE = "WS_RECONNECTION_CHARGE";
+	
 	public static final String FORM_FEE_CONST = "formFee";
 
 	public static final String SCRUTINY_FEE_CONST = "scrutinyFee";

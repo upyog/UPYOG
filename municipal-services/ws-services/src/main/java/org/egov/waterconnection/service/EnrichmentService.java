@@ -129,6 +129,9 @@ public class EnrichmentService {
 		else if(reqType==WCConstants.DISCONNECT_CONNECTION) {
 			applicationType=WCConstants.DISCONNECT_WATER_CONNECTION;
 		}
+		else if (reqType == WCConstants.RECONNECTION) {
+			applicationType=WCConstants.WATER_RECONNECTION;
+		}
 		else {
 			applicationType=WCConstants.MODIFY_WATER_CONNECTION;
 		}
