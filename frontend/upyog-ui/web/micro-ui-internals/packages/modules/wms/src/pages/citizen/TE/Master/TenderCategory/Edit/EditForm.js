@@ -18,7 +18,7 @@ const EditForm=({ tenantId, data })=>{
     setTimeout(() => {
       closeToast();
       // history.replace('/upyog-ui/citizen/wms/vendor-sub-type/list')
-      history.push('/upyog-ui/citizen/wms/account-head/list')
+      history.push('/upyog-ui/citizen/wms/tender-entry/tender-category/list')
 
       
     }, 5000);
@@ -27,22 +27,18 @@ const EditForm=({ tenantId, data })=>{
   useEffect(()=>{if(isSuccess){setShowToast(true);}else if(isError){alert("Something wrong in updated record")}else{}},[isSuccess])
 
   const defaultValues = {
-    WmsAHName:{primary_accounthead_name: data?.primary_accounthead_name},
-    WmsAHLocation:{primary_accounthead_location: data?.primary_accounthead_location},
-    WmsAHAccountno:{primary_accounthead_accountno: data?.primary_accounthead_accountno},
-    WmsAHStatus:{name: data?.account_status},
+    WmsTenderCategoryName:{tender_category_name: data?.category_name},
+    WmsTenderCategoryStatus:{name: data?.category_status},
   }
 
   const onFormValueChange = (setValue = true, formData) => { };
     const onSubmit=async(item)=>{
         console.log("Department type ",item)
         
-        const payloadData={"WMSPrimaryAccountHeadApplication": [{
-          "primary_accounthead_id":data?.primary_accounthead_id,
-            "primary_accounthead_name": item?.WmsAHName?.primary_accounthead_name,   
-            "primary_accounthead_accountno": item?.WmsAHAccountno?.primary_accounthead_accountno,   
-            "primary_accounthead_location": item?.WmsAHLocation?.primary_accounthead_location,   
-            "account_status": item?.WmsAHStatus?.name,
+        const payloadData={"WMSTenderCategoryApplication": [{
+          "category_id":data?.category_id,
+            "category_name": item?.WmsTenderCategoryName?.tender_category_name,   
+            "category_status": item?.WmsTenderCategoryStatus?.name,
           "tenantId":tenantId
       }]}
         console.log("payloadData ",payloadData)

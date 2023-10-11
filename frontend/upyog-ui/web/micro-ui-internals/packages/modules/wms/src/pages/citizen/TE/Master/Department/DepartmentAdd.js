@@ -16,7 +16,7 @@ const [showToast, setShowToast] = useState(false);
     if(showToast){
     setTimeout(() => {
       closeToast();
-      history.replace('/upyog-ui/citizen/wms/department/list')
+      history.replace('/upyog-ui/citizen/wms/tender-entry/department/list')
     }, 5000);
   }
   },[showToast])
@@ -24,9 +24,9 @@ const [showToast, setShowToast] = useState(false);
   
     const onSubmit = async(item)=>{
 console.log("Department ",item)
-      const payloadData={"WMSPrimaryAccountHeadApplication": [{
-          "primary_accounthead_name": item?.WmsAHName?.primary_accounthead_name,   
-          "account_status": item?.WmsAHStatus?.name,
+      const payloadData={"WMSDepartmentApplication": [{
+          "dept_name": item?.WmsDepartmentName?.deoartment_name,   
+          "dept_status": item?.WmsDepartmentStatus?.name,
         "tenantId":tenantId
     }]}
 await mutate(payloadData)

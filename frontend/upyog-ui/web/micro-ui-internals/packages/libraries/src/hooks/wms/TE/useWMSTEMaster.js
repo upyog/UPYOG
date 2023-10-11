@@ -21,10 +21,10 @@ const useWMSTEMaster = ( tenantId, type,endppoints, moduleCode, config = {}) => 
 
   // Tender Category
   const TenderCategoryGetAllRecord  = () => {
-    return useQuery(["WMS_DEPARTMENT_BRANCH", tenantId], () => WMSService.TenderEntry.getTenderCategoryMasterData(tenantId, moduleCode, type), config);
+    return useQuery(["WMS_TenderCategoryGetAllRecord_BRANCH", tenantId], () => WMSService.TenderEntry.getTenderCategoryMasterData(tenantId, moduleCode, type), config);
   };
   const TenderCategoryGetSingleRecord  = () => {
-    return useQuery(["WMS_DEPARTMENT_SINGLE_RECORD", tenantId], () => WMSService.TenderEntry.getTenderCategorySingleResordsMasterData(tenantId), config);
+    return useQuery(["WMS_TenderCategoryGetAllRecord_SINGLE_RECORD", tenantId], () => WMSService.TenderEntry.getTenderCategorySingleResordsMasterData(tenantId), config);
   };
   const TenderCategoryUpdateRecord = () => {
     return useMutation((data) => WMSService.TenderEntry.updateTenderCategoryMasterData(data), config);
@@ -33,6 +33,10 @@ const useWMSTEMaster = ( tenantId, type,endppoints, moduleCode, config = {}) => 
     return useMutation((data) => WMSService.TenderEntry.createTenderCategoryMasterData(data), config);
   };
 
+    // Tender Category
+    const getProjectNameGetAllRecord  = () => {
+      return useQuery(["WMS_PROJECT_NAME_BRANCH", tenantId], () => WMSService.TenderEntry.getProjectName(), config);
+    };
   
 
   switch (type) {
@@ -53,6 +57,9 @@ const useWMSTEMaster = ( tenantId, type,endppoints, moduleCode, config = {}) => 
         return TenderCategoryUpdateRecord();
       case "WMS_TENDER_CATEGORY_CREATE":
         return TenderCategoryCreateRecord();
+
+        case "WMS_PROJECT_NAME_ALL_RECORD":
+        return getProjectNameGetAllRecord()
   }
 };
 

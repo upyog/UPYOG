@@ -5,8 +5,7 @@ const createProxy = createProxyMiddleware({
   target: process.env.REACT_APP_PROXY_API,
   // target: process.env.REACT_APP_PROXY_API || "https://qa.digit.org",
   //target:"https://test.wontract.com",//https://upyog-sandbox.niua.org" ,
-  // target:"https://upyog-sandbox.niua.org" ,
-  // changeOrigin: true,  
+  // target:"https://upyog-sandbox.niua.ogin: true,  
   changeOrigin: true,  
   secure: false,
   https: true
@@ -129,7 +128,10 @@ module.exports = function (app) {
   "/wms/wms-services/v1/tenderentry",
   "/wms/wms-services/v1/func",
   "/wms/wms-services/v1/vendorc",
-  "/wms/wms-services/v1/paccounth"
+  "/wms/wms-services/v1/paccounth",
+  "/wms/wms-services/v1/dept/",
+  "/wms/wms-services/v1/tcategory/",
+  "/wms/wms-services/v1/project/"
   ].forEach((location) => app.use(location, CMProxy));
  
 };

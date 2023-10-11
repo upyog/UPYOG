@@ -2,7 +2,8 @@ import React, { useState, useCallback ,  useEffect  } from "react";
 import { useTranslation } from "react-i18next";
 import { format, isValid } from "date-fns";
 import { Header ,LinkButton,Loader, Toast } from "@egovernments/digit-ui-react-components";
-import DesktopInbox from "../../../../../components/CmList/AccountHeadList/DesktopList";
+import DesktopInbox from "../../../../../components/List/TE/TenderCategory/DesktopList";
+
 import axios from 'axios';
 import { Link } from "react-router-dom";
 
@@ -10,8 +11,7 @@ const View = ({ tenants, parentRoute }) => {
   const { t } = useTranslation()
   Digit.SessionStorage.set("ENGAGEMENT_TENANTS", tenants);
   const tenantId = Digit.ULBService.getCurrentTenantId();
-  const bankList = Digit?.Hooks?.wms?.te?.useWMSTEMaster(tenantId, "WMS_TENDER_CATEGORY_ALL_RECORD") || {};
-
+  const TenderCategoryList = Digit?.Hooks?.wms?.te?.useWMSTEMaster(tenantId, "WMS_TENDER_CATEGORY_ALL_RECORD") || {};
 
 //   Digit.Hooks.hrms.useHRMSCreate(tenantId)
   const [pageSize, setPageSize] = useState(10);
@@ -33,25 +33,22 @@ const View = ({ tenants, parentRoute }) => {
   const [dataBack, setDataBack] = useState();
   const [isTrue, setisTrue] = useState(false);
 
-const {isLoading,isSuccess } = bankList;
+const {isLoading,isSuccess } = TenderCategoryList;
 
 //  const { isLoading: is_Loading, isError: vendorCreateError, data: updateResponse, error: updateError, mutate }  = Digit?.Hooks?.wms?.cm?.useWmsCMSearch();
- const {  isError: vendorCreateError, data: updateResponse, error: updateError, mutate }  = Digit?.Hooks?.wms?.cm?.useWmsCMSearch();
-//  const dataDummy =[
-//   {"vendor_id":1,"vendor_class_name":"EY Noida","vendor_class_status":"Active"},
-//   {"vendor_id":2,"vendor_class_name":"EY Airocity","vendor_class_status":"Inactive"},
-// ]
+ const {  isError: vendorCreateError, data: updateResponse, error: updateError, mutate }  = Digit?.Hooks?.wms?.te?.useWMSTEMaster(tenantId, "WMS_TENDER_CATEGORY_ALL_RECORD");
+
 useEffect(() => {
   setisTrue(true)
-  bankList.refetch()
+  TenderCategoryList.refetch()
 }, []);
 
 useEffect(() => {
-    if (bankList.data){
-        setData(bankList.data);
-        setDataBack(bankList.data)
+    if (TenderCategoryList.data){
+        setData(TenderCategoryList.data);
+        setDataBack(TenderCategoryList.data)
     } 
-  }, [bankList.data,isTrue]);
+  }, [TenderCategoryList.data,isTrue]);
 
   useEffect(() => {
     setData(updateResponse)   

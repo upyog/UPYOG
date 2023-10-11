@@ -16,18 +16,17 @@ const [showToast, setShowToast] = useState(false);
     if(showToast){
     setTimeout(() => {
       closeToast();
-      history.replace('/upyog-ui/citizen/wms/department/list')
+      history.replace('/upyog-ui/citizen/wms/tender-entry/tender-category/list')
     }, 5000);
   }
   },[showToast])
   useEffect(()=>{if(isSuccess){setShowToast(true);}else if(isError){alert("Something wrong in updated bank record")}else{}},[isSuccess])
   
     const onSubmit = async(item)=>{
-console.log("Department ",item)
-      const payloadData={"WMSPrimaryAccountHeadApplication": [{
-          "primary_accounthead_name": item?.WmsAHName?.primary_accounthead_name,   
-          "account_status": item?.WmsAHStatus?.name,
-        "tenantId":tenantId
+      const payloadData={"WMSTenderCategoryApplication": [{
+          "category_name": item?.WmsTenderCategoryName?.tender_category_name,   
+          "category_status": item?.WmsTenderCategoryStatus?.name,
+          "tenantId":tenantId
     }]}
 await mutate(payloadData)
 }    

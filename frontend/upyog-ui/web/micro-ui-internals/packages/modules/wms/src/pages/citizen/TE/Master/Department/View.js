@@ -2,7 +2,8 @@ import React, { useState, useCallback ,  useEffect  } from "react";
 import { useTranslation } from "react-i18next";
 import { format, isValid } from "date-fns";
 import { Header ,LinkButton,Loader, Toast } from "@egovernments/digit-ui-react-components";
-import DesktopInbox from "../../../../../components/CmList/AccountHeadList/DesktopList";
+// import DesktopInbox from "../../../../../components/CmList/AccountHeadList/DesktopList";
+import DesktopInbox from "../../../../../components/List/TE/Department/DesktopList";
 import axios from 'axios';
 import { Link } from "react-router-dom";
 
@@ -10,8 +11,8 @@ const View = ({ tenants, parentRoute }) => {
   const { t } = useTranslation()
   Digit.SessionStorage.set("ENGAGEMENT_TENANTS", tenants);
   const tenantId = Digit.ULBService.getCurrentTenantId();
-  const bankList = Digit?.Hooks?.wms?.te?.useWMSTEMaster(tenantId, "WMS_DEPARTMENT_ALL_RECORD") || {};
-
+  const departmentList = Digit?.Hooks?.wms?.te?.useWMSTEMaster(tenantId, "WMS_DEPARTMENT_ALL_RECORD") || {};
+console.log("departmentList ",departmentList)
 
 //   Digit.Hooks.hrms.useHRMSCreate(tenantId)
   const [pageSize, setPageSize] = useState(10);
@@ -33,7 +34,7 @@ const View = ({ tenants, parentRoute }) => {
   const [dataBack, setDataBack] = useState();
   const [isTrue, setisTrue] = useState(false);
 
-const {isLoading,isSuccess } = bankList;
+const {isLoading,isSuccess } = departmentList;
 
 //  const { isLoading: is_Loading, isError: vendorCreateError, data: updateResponse, error: updateError, mutate }  = Digit?.Hooks?.wms?.cm?.useWmsCMSearch();
  const {  isError: vendorCreateError, data: updateResponse, error: updateError, mutate }  = Digit?.Hooks?.wms?.cm?.useWmsCMSearch();
@@ -43,15 +44,15 @@ const {isLoading,isSuccess } = bankList;
 // ]
 useEffect(() => {
   setisTrue(true)
-  bankList.refetch()
+  departmentList.refetch()
 }, []);
 
 useEffect(() => {
-    if (bankList.data){
-        setData(bankList.data);
-        setDataBack(bankList.data)
+    if (departmentList.data){
+        setData(departmentList.data);
+        setDataBack(departmentList.data)
     } 
-  }, [bankList.data,isTrue]);
+  }, [departmentList.data,isTrue]);
 
   useEffect(() => {
     setData(updateResponse)   

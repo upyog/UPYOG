@@ -9,12 +9,12 @@ const WmsTMDepartment = ({ t, config, onSelect, formData = {}, userType,setError
 
   const { pathname: url } = useLocation();
   const editScreen = url.includes("/modify-application/");
-  const { data: citizenTypes, isLoading } = Digit?.Hooks?.wms?.cm?.useWMSMaster(tenantId, "WMS_V_TYPE_LIST") || {};
+  const { data: citizenTypes, isLoading } = Digit?.Hooks?.wms?.te?.useWMSTEMaster(tenantId, "WMS_DEPARTMENT_ALL_RECORD") || {};
   // const citizenTypes = Digit?.Hooks?.wms?.cm?.useWMSMaster(tenantId, "WMS_V_TYPE") || {};
   const [citizenType, setcitizenType] = useState(formData?.WmsTMDepartment);
   const [citizenTypeList, setcitizenTypeList] = useState();
   const [isTrue, setisTrue] = useState(false);
-console.log("citizenTypes vendor type ", citizenTypes)
+console.log("TenderEntry type ", citizenTypes)
   function SelectcitizenType(value) {
   if(!value?.name){setisTrue(true)}else{setisTrue(false);setcitizenType(value);}
   }
@@ -26,13 +26,13 @@ console.log("citizenTypes vendor type ", citizenTypes)
 
   useEffect(()=>{
     let fData=[]
-    if(citizenTypes?.WMSVendorTypeApplications?.length>0){
-      const filterData = citizenTypes?.WMSVendorTypeApplications.filter((res)=> res.vendor_type_status=="Active");
+    if(citizenTypes?.WMSDepartmentApplications?.length>0){
+      const filterData = citizenTypes?.WMSDepartmentApplications.filter((res)=> res.dept_status=="Active");
       filterData.forEach(element => {
         fData.push({
-    "id":element?.vendor_id,
-    "name": element?.vendor_type_name,
-    "status": element?.vendor_type_status
+    "id":element?.dept_id,
+    "name": element?.dept_name,
+    "status": element?.dept_status
   })
   });
       setcitizenTypeList(fData)

@@ -599,7 +599,7 @@ TenderEntry:{
       getDepartmentSingleResordsMasterData: (tenantId) =>
       Request(
         {
-        url: Urls.wms.Tender_Entry.mdmsdepartmentGet+'?departmentId='+tenantId,    
+        url: Urls.wms.Tender_Entry.mdmsdepartmentGet+'?deptId='+tenantId,    
         useCache: false,
         method: "POST",
         auth: true,
@@ -642,7 +642,7 @@ TenderEntry:{
       getTenderCategorySingleResordsMasterData: (tenantId) =>
       Request(
         {
-        url: Urls.wms.Tender_Entry.mdmsTCategoryGet+'?departmentId='+tenantId,    
+        url: Urls.wms.Tender_Entry.mdmsTCategoryGet+'?categoryId='+tenantId,    
         useCache: false,
         method: "POST",
         auth: true,
@@ -669,7 +669,20 @@ TenderEntry:{
         auth: true,
         userService: true,
         params: { tenantId },
-      })
+      }),
+
+      getProjectName: (tenantId) =>
+      Request({
+        url: Urls.wms.Tender_Entry.ProjectName,
+        useCache: false,
+        method: "POST",
+        auth: true,
+        userService: true,
+        // params: {tenantId} ,
+      }),
+
+
+      
 }
 };
 

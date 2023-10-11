@@ -14,7 +14,7 @@ const AccountHeadEdit =()=>{
   if (isLoading) {
     return <Loader />;
   }
-  return <EditForm data={data?.WMSPrimaryAccountHeadApplications[0]} tenantId={tenantId} />;
+  return <EditForm data={data?.WMSTenderCategoryApplications[0]} tenantId={tenantId} />;
   // return <EditForm data={data1[0]} tenantId={tenantId} />;
 
 }
