@@ -23,7 +23,7 @@ public class AipayService {
 	 //private static final String AIPAY_URL = "https://caller.atomtech.in/ots/aipay/auth?";
 	
 	 private static final String AIPAY_URL = "https://paynetzuat.atomtech.in/ots/aipay/auth?";
-	 private static final String AIPAY_URL_STATUS = "https://caller.atomtech.in/ots/payment/status?";
+	 private static final String AIPAY_URL_STATUS = "https://paynetzuat.atomtech.in/ots/payment/status?";
 
 	  public static String getAtomTokenId(String merchantId, String serverResp)
 	  {
@@ -61,7 +61,7 @@ public class AipayService {
 	    String result = "";
 	    try
 	    {
-	    	System.out.println("in get atomtokenID method Merchant Id ="+merchantId+ "&&&&&& Encypted text ="+ serverResp);
+	    	System.out.println("in fetch Status method Merchant Id ="+merchantId+ "&&&&&& Encypted text ="+ serverResp);
 //	      result = Utility.httpPostCaller("merchId=" + merchantId + "&encData=" + serverResp, "https://caller.atomtech.in/ots/aipay/auth");
 	      WebClient.Builder webClientBuilder=WebClient.builder();
 	      webClientBuilder=getCertificateSkippedRestObject();

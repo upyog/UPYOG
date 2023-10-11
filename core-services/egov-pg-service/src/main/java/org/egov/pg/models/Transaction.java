@@ -33,7 +33,6 @@ public class Transaction {
     @Size(min = 2, max = 50)
     private String tenantId;
     
-    private String txnDate;
 
     /**
      * Transaction Amount, preferably rounded off to two decimal places

@@ -1,6 +1,8 @@
 package org.egov.pg.service.gateways.nttdata;
 
 import java.net.URI;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 import org.egov.pg.models.Transaction;
@@ -93,8 +95,10 @@ public class NttdataGateway implements Gateway {
 		merchDetails.setMerchTxnId(merchantTxnId);
 		merchDetails.setUserId("");
 		merchDetails.setPassword("Test@123");
-		merchDetails.setMerchTxnDate(transaction.getTxnDate());
-
+		DateTimeFormatter myFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+		LocalDateTime date = LocalDateTime.now();
+		String dateFormat = myFormat.format(date);
+		merchDetails.setMerchTxnDate(dateFormat);
 		PayDetails payDetails = new PayDetails();
 		payDetails.setAmount(transaction.getTxnAmount());
 		payDetails.setCustAccNo(transaction.getConsumerCode());
@@ -207,13 +211,15 @@ public class NttdataGateway implements Gateway {
 		merchDetails.setMerchId(merchantId);
 		merchDetails.setMerchTxnId(merchantTxnId);
 		merchDetails.setPassword("Test@123");
-		merchDetails.setMerchTxnDate(currentStatus.getTxnDate());
-
+		DateTimeFormatter myFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		LocalDateTime date = LocalDateTime.now();
+		String dateFormat = myFormat.format(date);
+		merchDetails.setMerchTxnDate(dateFormat);
 		PayDetails payDetails = new PayDetails();
 		payDetails.setAmount(currentStatus.getTxnAmount());
 		payDetails.setTxnCurrency("INR");
 		String signature=merchantId + "Test@123" + merchantTxnId + currentStatus.getTxnAmount() + "INR" + "TXNVERIFICATION";
-		payDetails.setSignature(AtomEncryption.encrypt(signature, "KEY123657234"));
+		payDetails.setSignature(AtomSignature.generateSignature("KEY123657234",signature));
 	
 		HeadDetails headDetails = new HeadDetails();
 		headDetails.setApi("TXNVERIFICATION");
@@ -234,8 +240,7 @@ public class NttdataGateway implements Gateway {
 
 		String encryptedData="",decryptedData="";
 		String serverResp = "";
-		String decryptResponse = "";
-		String atomTokenId="";
+		String decryptResponsee = "";
 		try {
 		
 			encryptedData = AuthEncryption.getAuthEncrypted(json, "A4476C2062FFA58980DC8F79EB6A799E");
@@ -245,14 +250,18 @@ public class NttdataGateway implements Gateway {
 				//serverResp="merchId";
 				System.out.println("serverResp Result------: " + serverResp);
 				System.out.println("serverResp Length------: " + serverResp.length());
-				System.out.println("serverResp Condition---: " + serverResp.startsWith("merchId"));
+				System.out.println("serverResp Condition---: " + serverResp.startsWith("encData"));
 
-				if ((serverResp != null) && (serverResp.startsWith("merchId"))) {
-					decryptResponse = serverResp.split("\\&encData=")[1];
+				if ((serverResp != null) && (serverResp.startsWith("encData"))) {
+					decryptResponsee = serverResp.split("\\&merchId=")[0];
+					String decryptResponse = decryptResponsee.split("encData=")[1];
+
 					System.out.println("serrResp---: " + decryptResponse);
 
 					decryptedData = AuthEncryption.getAuthDecrypted(decryptResponse, "75AEF0FA1B94B3C10D4F5B268F757F11");
 					System.out.println("DecryptedData------: " + decryptedData);
+					if(!decryptedData.contains("OTS0000"))
+						throw new CustomException(null, "Response from Fetch API is "+decryptedData);
 					ResponseParser resp = objectMapper.readValue(decryptedData, ResponseParser.class);
 		           return transformRawResponse(resp, currentStatus);
 	
@@ -265,8 +274,8 @@ public class NttdataGateway implements Gateway {
 				}
 			}
 			catch (Exception e) {
-	            log.error("Some Error Occured in Status API Call", e);
-	            throw new CustomException(null, "Some Error Occured in token API Call");
+	            log.error("Some Error Occured in Status API Call"+ e);
+	            throw new CustomException(null, "Some Error Occured in Status API Call");
 			}
 		}
 		catch (Exception e) {
