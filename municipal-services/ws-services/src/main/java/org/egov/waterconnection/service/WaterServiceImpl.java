@@ -45,7 +45,7 @@ public class WaterServiceImpl implements WaterService {
 
 	@Autowired
 	private ValidateProperty validateProperty;
-
+	
 	@Autowired
 	private MDMSValidator mDMSValidator;
 
@@ -358,7 +358,7 @@ public class WaterServiceImpl implements WaterService {
 				waterConnectionRequest.getWaterConnection().getApplicationNo(),
 				waterConnectionRequest.getWaterConnection().getTenantId(),
 				config.getDisconnectBusinessServiceName());
-
+ 
 		boolean isStateUpdatable = waterServiceUtil.getStatusForUpdate(businessService, previousApplicationStatus);
 
 		enrichmentService.enrichUpdateWaterConnection(waterConnectionRequest);
@@ -366,7 +366,7 @@ public class WaterServiceImpl implements WaterService {
 		waterConnectionValidator.validateUpdate(waterConnectionRequest, searchResult, WCConstants.DISCONNECT_CONNECTION);
 		userService.updateUser(waterConnectionRequest, searchResult);
 		//call calculator service to generate the demand for one time fee
-		if(!waterConnectionRequest.getWaterConnection().getIsDisconnectionTemporary())
+		//if(!waterConnectionRequest.getWaterConnection().getIsDisconnectionTemporary())
 		calculationService.calculateFeeAndGenerateDemand(waterConnectionRequest, property);
 		//check whether amount is due
 		boolean isNoPayment = false;
