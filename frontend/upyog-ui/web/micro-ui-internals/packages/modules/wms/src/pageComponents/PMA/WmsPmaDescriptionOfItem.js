@@ -1,17 +1,17 @@
 import React from "react";
 import { LabelFieldPair, CardLabel, TextInput, CardLabelError } from "@egovernments/digit-ui-react-components";
 import { useLocation } from "react-router-dom";
-const WmsPmMlName = ({ t, config, onSelect, formData = {}, userType, register, errors }) => {
+const WmsPmaDescriptionOfItem = ({ t, config, onSelect, formData = {}, userType, register, errors }) => {
   const { pathname: url } = useLocation();
   const inputs = [
     {
-      label: "Milestone Name",
+      label: "WMS_PMA_DESC_OF_ITEM_LABEL",
       type: "text",
-      name: "milestone_name",
+      name: "description_of_item",
       validation: {
         isRequired: true,
         pattern: Digit.Utils.getPattern('Name'),
-        title: t("WMS_COMMON_ML_NAME_INVALID"),
+        title: t("WMS_COMMON_DESC_ITEM_INVALID"),
       },
       isMandatory: true,
     },
@@ -41,7 +41,7 @@ const WmsPmMlName = ({ t, config, onSelect, formData = {}, userType, register, e
                 defaultValue={undefined}
                 {...input.validation}
               />
-            {currentValue&&currentValue.length>0&&!currentValue.match(Digit.Utils.getPattern('Name'))&&<CardLabelError style={{ width: "100%", marginTop: '-15px', fontSize: '16px', marginBottom: '12px'}}>{t("WMS_COMMON_ML_NAME_INVALID")}</CardLabelError>}
+            {currentValue&&currentValue.length>0&&!currentValue.match(Digit.Utils.getPattern('Name'))&&<CardLabelError style={{ width: "100%", marginTop: '-15px', fontSize: '16px', marginBottom: '12px'}}>{t("WMS_COMMON_DESC_ITEM_INVALID")}</CardLabelError>}
             </div>
           </LabelFieldPair>
         </React.Fragment>
@@ -50,4 +50,4 @@ const WmsPmMlName = ({ t, config, onSelect, formData = {}, userType, register, e
   );
 };
 
-export default WmsPmMlName;
+export default WmsPmaDescriptionOfItem;

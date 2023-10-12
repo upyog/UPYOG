@@ -1664,7 +1664,7 @@ const actions={
         "serviceCode": "CITIZEN_SERVICE_WMS",
         "code": "",
         "path": "",
-        "navigationURL": "/digit-ui/citizen/wms/phm-details/:scheme_id",
+        "navigationURL": "/digit-ui/citizen/wms/phm-details/:phm_id",
         "leftIcon": "WMSIcon",
         "rightIcon": "",
         "queryParams": "",
@@ -1675,14 +1675,14 @@ const actions={
         "id": 3044,
         "name": "PHM_EDIT",
         "url": "digit-ui-card",
-        "displayName": "SCH_EDIT",
+        "displayName": "PHM_EDIT",
         "orderNumber": 4,
         "parentModule": "WMS",
         "enabled": true,
         "serviceCode": "CITIZEN_SERVICE_WMS",
         "code": "",
         "path": "",
-        "navigationURL": "/digit-ui/citizen/wms/phm-edit/:scheme_id",
+        "navigationURL": "/digit-ui/citizen/wms/phm-edit/:phm_id",
         "leftIcon": "WMSIcon",
         "rightIcon": "",
         "queryParams": "",
@@ -1690,6 +1690,8 @@ const actions={
         "sidebarURL": "/digit-ui/citizen/wms/phm-home"
     },
     
+    
+
     {
         "id": 3005,
         "name": "Contaractor Master",
@@ -1708,6 +1710,100 @@ const actions={
         "sidebar": "digit-ui-links",
         "sidebarURL": "/digit-ui/citizen/wms-home"
     },
+
+    {
+        "id": 3006,
+        "name": "PMA_Home",
+        "url": "digit-ui-card",
+        "displayName": "PMA Home",
+        "orderNumber": 3,
+        "parentModule": "WMS",
+        "enabled": true,
+        "serviceCode": "CITIZEN_SERVICE_WMS",
+        "code": "",
+        "path": "",
+        "navigationURL": "/digit-ui/citizen/pma-home",
+        "leftIcon": "WMSIcon",
+        "rightIcon": "",
+        "queryParams": "",
+        "sidebar": "digit-ui-links",
+        "sidebarURL": "/digit-ui/citizen/wms-home"
+    },
+    {
+        "id": 3045,
+        "name": "PMA_CREATE",
+        "url": "digit-ui-card",
+        "displayName": "PM(Create)",
+        "orderNumber": 2,
+        "parentModule": "WMS",
+        "enabled": true,
+        "serviceCode": "CITIZEN_SERVICE_WMS",
+        "code": "",
+        "path": "",
+        "navigationURL": "/digit-ui/citizen/wms/pma-create",
+        "leftIcon": "WMSIcon",
+        "rightIcon": "",
+        "queryParams": "",
+        "sidebar": "digit-ui-links",
+        "sidebarURL": "/digit-ui/citizen/wms/pma-home"
+    },
+    {
+        "id": 3046,
+        "name": "PMA_LIST",
+        "url": "digit-ui-card",
+        "displayName": "PM(List)",
+        "orderNumber": 1,
+        "parentModule": "WMS",
+        "enabled": true,
+        "serviceCode": "CITIZEN_SERVICE_WMS",
+        "code": "",
+        "path": "",
+        "navigationURL": "/digit-ui/citizen/wms/pma-list",
+        "leftIcon": "WMSIcon",
+        "rightIcon": "",
+        "queryParams": "",
+        "sidebar": "digit-ui-links",
+        "sidebarURL": "/digit-ui/citizen/wms/pma-home"
+    },
+    {
+        "id": 3047,
+        "name": "PMA_DETAILS",
+        "url": "digit-ui-card",
+        "displayName": "PMA_DETAILS",
+        "orderNumber": 3,
+        "parentModule": "WMS",
+        "enabled": true,
+        "serviceCode": "CITIZEN_SERVICE_WMS",
+        "code": "",
+        "path": "",
+        "navigationURL": "/digit-ui/citizen/wms/pma-details/:pma_id",
+        "leftIcon": "WMSIcon",
+        "rightIcon": "",
+        "queryParams": "",
+        "sidebar": "digit-ui-links",
+        "sidebarURL": "/digit-ui/citizen/wms/pma-home"
+    }, 
+    {
+        "id": 3048,
+        "name": "PMA_EDIT",
+        "url": "digit-ui-card",
+        "displayName": "PMA_EDIT",
+        "orderNumber": 4,
+        "parentModule": "WMS",
+        "enabled": true,
+        "serviceCode": "CITIZEN_SERVICE_WMS",
+        "code": "",
+        "path": "",
+        "navigationURL": "/digit-ui/citizen/wms/pma-edit/:pma_id",
+        "leftIcon": "WMSIcon",
+        "rightIcon": "",
+        "queryParams": "",
+        "sidebar": "digit-ui-links",
+        "sidebarURL": "/digit-ui/citizen/wms/pma-home"
+    },
+    
+
+
   ]
 };
 //const actions=async () => await AccessControlService.getAccessControl(roles);

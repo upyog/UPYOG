@@ -20,13 +20,13 @@ const DesktopList = ({ tableConfig, filterComponent, ...props }) => {
 
   const columns = React.useMemo(() => {
     return [
-      // {
-      //   Header: t("WMS_PHM_ID_LABEL"),
-      //   disablePhmtBy: true,
-      //   Cell: ({ row }) => {
-      //     return GetCell(`${row.original?.phm_id}`);
-      //   },
-      // },
+      {
+        Header: t("WMS_PHM_ID_LABEL"),
+        disablePhmtBy: true,
+        Cell: ({ row }) => {
+          return GetCell(`${row.original?.phm_id}`);
+        },
+      },
       {
         Header: t("WMS_PHM_PROJECT_NAME_LABEL"),
         disablePhmtBy: false,
@@ -62,6 +62,17 @@ const DesktopList = ({ tableConfig, filterComponent, ...props }) => {
           return (
             <span className="link">
               <Link to={`/upyog-ui/citizen/wms/phm-details/${row.original.phm_id}`}>{t("WMS_PHM_EDIT_LABEL")}</Link>
+            </span>
+          );
+        },
+      },
+      {
+        Header: t("WMS_PHM_CONTROLS2_LABEL"),
+        disablePhmtBy: true,
+        Cell: ({ row }) => {
+          return (
+            <span className="link">
+              <Link to={`/upyog-ui/citizen/wms/pma-home/${row.original.phm_id}`}>{t("WMS_PHM_COMMON_CREATE_ACTIVITY_HEADER")}</Link>
             </span>
           );
         },
@@ -127,12 +138,12 @@ const DesktopList = ({ tableConfig, filterComponent, ...props }) => {
                 businessService: "WMS",
                 roles: ["CITIZEN"],
               },
-              {
+/*               {
                 text: t("WMS_PHM_COMMON_CREATE_ACTIVITY_HEADER"),
                 link: "/upyog-ui/citizen/wms/phm-activity-home",
                 businessService: "WMS",
                 roles: ["CITIZEN"],
-              },
+              }, */
             ]}
             headerText={t("WMS_PHM_CREATE_PAGE_LABEL")}
             businessService={props.businessService}

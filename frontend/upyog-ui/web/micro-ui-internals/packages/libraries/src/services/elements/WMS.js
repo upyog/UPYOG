@@ -182,6 +182,66 @@ PHMApplications:{
         params: {  },
       }),
 },
+
+PMAApplications:{
+  search: (tenantId, filters, searchParams) =>
+    Request({
+      url: Urls.wms.PMAApplications.search,
+      useCache: false,
+      method: "GET",//"POST",
+      auth: true,
+      userService: true,
+      params:{...searchParams},// tenantId, ...filters, ...searchParams }//TODO:#1 Actual API needs to attach  { tenantId, ...filters, ...searchParams },
+    }),
+  create: (data, tenantId) =>
+    Request({
+      data: data,
+      url: Urls.wms.PMAApplications.create,
+      useCache: false,
+      method: "POST",
+      auth: true,
+      userService: true,
+      params: {  },//TODO:#1 {tenantId}
+    }),
+  update: (data, tenantId) =>
+    Request({
+      data: data,
+      url: Urls.wms.PMAApplications.update+"/"+data.phm_id,
+      useCache: false,
+      method: "PUT",
+      auth: true,
+      userService: true,
+      params: {  },
+    }),
+  delete: (data, tenantId) =>
+    Request({
+      data: data,
+      url: Urls.wms.PMAApplications.delete,
+      useCache: false,
+      method: "DELETE",
+      auth: true,
+      userService: true,
+      params: { tenantId },
+    }),
+  get: (phmId,tenantId) =>
+    Request({
+      url: Urls.wms.PMAApplications.get,
+      useCache: false,
+      method: "GET",
+      auth: true,
+      userService: true,
+      params: { phmeme_id:phmId},
+    }),
+    count: () =>
+    Request({
+      url: Urls.wms.PMAApplications.count,
+      useCache: false,
+      method:"GET",// "POST",
+      auth: true,
+      userService: true,
+      params: {  },
+    }),
+},
   ContractorMaster:{
     search: (tenantId, filters, searchParams) =>
       Request({

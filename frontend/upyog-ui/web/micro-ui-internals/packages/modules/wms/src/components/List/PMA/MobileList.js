@@ -1,8 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-// import { DataCard } from "./DataCard";
-import {DataCard} from "../DataCard";
-import DataLinks from "../DataLinks";
+import { DataCard } from "../DataCard";
+import  DataLinks  from "../DataLinks";
 
 const MobileList = ({
   data,
@@ -11,19 +10,16 @@ const MobileList = ({
   searchFields,
   onFilterChange,
   onSearch,
-  onSort,
+  onPmat,
   parentRoute,
   searchParams,
-  sortParams,
+  phmtParams,
   linkPrefix,
   tableConfig,
   filterComponent,
   allLinks,
 }) => {
   const { t } = useTranslation();
-  // console.log(data.PhysicalMilestone[0],"data");
-  // console.log(data, "data inside mobilelist")
-  // alert(JSON.stringify(data.PhysicalMilestone[0])
   // const getData = () => {
   //   return data?.Employees?.map((dataObj) => {
   //     const obj = {};
@@ -39,20 +35,17 @@ const MobileList = ({
 const GetSlaCell = (value) => {
   return value == "INACTIVE" ? <span className="sla-cell-error">{ t(value )|| ""}</span> : <span className="sla-cell-success">{ t(value) || ""}</span>;
 };
-
-  // console.log(data?.WMSPhysicalFinancialMilestoneApplications[1],"data");
-  
-
   const getData = () => {
-    // return data?.WMSPhysicalFinancialMilestoneApplications[1]?.map((original) => ({ 
-    return data?.PhysicalMilestone[0].map((original) => ({   
-  [t("WMS_PM_ML_NAME_LABEL")]: GetCell(original?.WmsPmMlName?.milestone_name || ""),
-  [t("WMS_PM_PROJECT_NAME_LABEL")]: GetCell(original?.WmsPmPrjName?.project_name || ""),
-  [t("WMS_PM_WORK_NAME_LABEL")]: GetCell(original?.WmsPmWrkName?.work_name || ""),
-  [t("WMS_PM_PERCENT_LABEL")]: GetCell(original?.WmsPmPer?.percentage_weightage || ""),
+    return data?.PMAApplications?.map((original) => ({
+      [t("WMS_PMA_ID_LABEL")]: GetCell(original?.WmsPmaId?.phm_id || ""),
+      [t("WMS_PMA_DESC_OF_ITEM_LABEL")]: GetCell(original?.WmsPmaDescriptionOfItem?.description_of_item || ""),
+      [t("WMS_PMA_PERCENT_NAME_LABEL")]: GetCell(original?.WmsPPercent?.percent_weightage || ""),
+      [t("WMS_PMA_START_DATE_LABEL")]: GetCell(original?.WmsPmaStartDate?.start_date || ""),
+      [t("WMS_PMA_END_DATE_LABEL")]: GetCell(original?.WmsPmaEndDate?.end_date || ""),
+      
     }));
   };
-  const serviceRequestIdKey = (original) => {return `${searchParams?.tenantId}/${original?.[t("HR_EMP_ID_LABEL")]}`};
+  const serviceRequestIdKey = (original) => {return `${searchParams?.tenantId}/${original?.[t("WMS_PMA_NAME_EN_LABEL")]}`};
 
   return (
     <div style={{ padding: 0 }}>
@@ -66,11 +59,11 @@ const GetSlaCell = (value) => {
             isLoading={isLoading}
             isSearch={isSearch}
             onSearch={onSearch}
-            onSort={onSort}
+            onPmat={onPmat}
             searchParams={searchParams}
             searchFields={searchFields}
             linkPrefix={linkPrefix}
-            sortParams={sortParams}
+            phmtParams={phmtParams}
             filterComponent={filterComponent}
             serviceRequestIdKey={serviceRequestIdKey}
           />

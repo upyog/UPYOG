@@ -96,7 +96,28 @@ import WmsPhmCreate from "./pages/citizen/PHM/Create";
 import WmsPhmEdit from "./pages/citizen/PHM/Edit";
 
 
+/**------------ PMA */
 
+import WmsPmaId from "./pageComponents/PMA/WmsPmaId";
+import WmsPmaDescriptionOfItem from "./pageComponents/PMA/WmsPmaDescriptionOfItem";
+import WmsPmaPercent from "./pageComponents/PMA/WmsPmaPercent";
+import WmsPmaStartDate from "./pageComponents/PMA/WmsPmaStartDate";
+import WmsPmaEndDate from "./pageComponents/PMA/WmsPmaEndDate";
+
+
+
+// import WmsPmaFund from "./pageComponents/PMA/WmsPmaFund";
+// import WmsPmaSourceOfFund from "./pageComponents/PMA/WmsPmaSourceOfFund";
+// import WmsPmaDescriptionOfPmaeme from "./pageComponents/PMA/WmsPmaDescriptionOfPmaeme";
+
+// import WmsPmaStartDate from "./pageComponents/PMA/WmsPmaStartDate";
+// import WmsPmaEndDate from "./pageComponents/PMA/WmsPmaEndDate";
+
+import WmsPmaResponse from "./pages/citizen/PMA/Response";
+import WmsPmaList from "./pages/citizen/PMA/List";
+import WmsPmaDetails from "./pages/citizen/PMA/Details";
+import WmsPmaCreate from "./pages/citizen/PMA/Create";
+import WmsPmaEdit from "./pages/citizen/PMA/Edit";
 
 
 /**---------------- */
@@ -250,6 +271,22 @@ const componentsToRegister = {
   // WmsPhmDescriptionOfPhmeme,
   // WmsPhmStartDate,
   // WmsPhmEndDate,
+
+  WmsPmaList:WmsPmaList,
+  WmsPmaDetails:WmsPmaDetails,
+  WmsPmaCreate:WmsPmaCreate,
+  WmsPmaEdit:WmsPmaEdit,
+  WmsPmaResponse:WmsPmaResponse,
+  WmsPmaId,
+  WmsPmaDescriptionOfItem,
+  WmsPmaPercent,
+  WmsPmaStartDate,
+  WmsPmaEndDate,
+  // WmsPmaFund,
+  // WmsPmaSourceOfFund,
+  // WmsPmaDescriptionOfPmaeme,
+  // WmsPmaStartDate,
+  // WmsPmaEndDate,
 
   WmsPrjList:PrjList,
   WmsPrjDetails:PrjDetails,

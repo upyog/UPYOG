@@ -1,11 +1,11 @@
 import React from "react";
 import { LabelFieldPair, CardLabel } from "@egovernments/digit-ui-react-components";
-const WmsPmId = ({ t, config, onSelect, formData = {}, userType, register, errors }) => {
+const WmsPmaId = ({ t, config, onSelect, formData = {}, userType, register, errors }) => {
   const inputs = [
     {
       label: "",
-      type: "text",
-      name: "pm_id",
+      type: "number",
+      name: "phm_id",
     },
   ];
   return (
@@ -27,4 +27,4 @@ const WmsPmId = ({ t, config, onSelect, formData = {}, userType, register, error
   );
 };
 
-export default WmsPmId;
+export default WmsPmaId;

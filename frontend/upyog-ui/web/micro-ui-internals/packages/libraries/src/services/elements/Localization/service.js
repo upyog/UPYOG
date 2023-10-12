@@ -72046,6 +72046,12 @@ export const LocalizationService = {
             "locale": "en_IN"
         },
         {
+            "code": "WMS_PMA_COMMON_CREATE_HEADER",
+            "message": "Add Milestone Activity",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
             "code": "WMS_PRJ_CREATE_HEADER",
             "message": "Project Master",
             "module": "rainmaker-common",
@@ -72211,6 +72217,13 @@ export const LocalizationService = {
             "locale": "en_IN"
         },
         {
+            "code": "WMS_PHM_CONTROLS2_LABEL",
+            "message": "Activities",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        
+        {
             "code": "WMS_PHM_CREATE_PAGE_LABEL",
             "message": "Physical Milestone",
             "module": "rainmaker-common",
@@ -72237,6 +72250,73 @@ export const LocalizationService = {
         {
             "code": "WMS_PHM_EDIT_LABEL",
             "message": "Edit",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_NEW_PMA_FORM_HEADER",
+            "message": "Physical Milestone Activity",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_PMA_ID_LABEL",
+            "message": "PM ID",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_PMA_DETAILS_FORM_HEADER",
+            "message": "Milestone Details",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_PMA_FORM_EDIT_CREATE_HEAD",
+            "message": "Edit Milestone Details",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_PMA_DESC_OF_ITEM_LABEL",
+            "message": "Description of the Item",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_PMA_PERCENT_NAME_LABEL",
+            "message": "% Weightage",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_PMA_START_DATE_LABEL",
+            "message": "Start Date",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_PMA_END_DATE_LABEL",
+            "message": "End Date",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_PMA_CONTROLS_LABEL",
+            "message": "Change",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_PMA_CONTROLS2_LABEL",
+            "message": "Activities",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        
+        {
+            "code": "WMS_PMA_CREATE_PAGE_LABEL",
+            "message": "Physical Milestone",
             "module": "rainmaker-common",
             "locale": "en_IN"
         },

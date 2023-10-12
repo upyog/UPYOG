@@ -685,6 +685,22 @@ const getChapterList = (tenantId, moduleCode, type) => ({
     ],
   },
 });
+const getProjectList = (tenantId, moduleCode, type) => ({
+  type,
+  details: {
+    tenantId,
+    moduleDetails: [
+      {
+        moduleName: moduleCode,
+        masterDetails: [
+          {
+            name: "Project",
+          },
+        ],
+      },
+    ],
+  },
+});
 const getMeterStatusTypeList = (tenantId) => ({
     moduleDetails: [
       {
@@ -1300,6 +1316,15 @@ const WMSChapter = (MdmsRes) => {
   };
 });
 };
+const WMSProject = (MdmsRes) => {
+  MdmsRes["common-masters"].Project.filter((Project) => Project.active).map((comProject) => {
+    console.log(comProject);
+  return {
+    ...comProject,
+    i18nKey: `COMMON_PROJECT_${comProject.code}`,
+  };
+});
+};
 const GetMCollectBusinessService = (MdmsRes) =>
   MdmsRes["BillingService"].BusinessService.map((businesServiceDetails) => {
     return {
@@ -1460,7 +1485,9 @@ const transformResponse = (type, MdmsRes, moduleCode, tenantId) => {
     case "WMSDepartment":
       return WMSDepartment(MdmsRes);
     case "WMSChapter":
-      return WMSChapter(MdmsRes);
+      return WMSChapter(MdmsRes);      
+    case "WMSProject":
+      return WMSProject(MdmsRes);
     case "WMSFund":
       return WMSFund(MdmsRes);
     case "DocumentTypes":
@@ -2303,7 +2330,8 @@ export const MdmsService = {
                   "navigationURL": "/digit-ui/citizen/wms/prjmst-home",
                   "leftIcon": "WMSIcon",
                   "rightIcon": ""
-              },{
+              },
+              {
                 "id": 3004,
                 "name": "PM HOME",
                 "url": "digit-ui-card",
@@ -2321,6 +2349,7 @@ export const MdmsService = {
                 "sidebar": "digit-ui-links",
                 "sidebarURL": "/digit-ui/citizen/wms-home"
             },
+         
             {
               "id": 2479,
               "name": "Contaractor Master",
@@ -2645,6 +2674,32 @@ export const MdmsService = {
         "code": "CHAPTER_5",
         "active": true
     },
+  ],
+  "Project": [
+    {
+        "name": "Project One",
+        "code": "PROJECT_1",
+        "active": true
+    },
+    {
+      "name": "Project Two",
+      "code": "PROJECT_2",
+      "active": true
+  },
+  {
+    "name": "Project Three",
+    "code": "PROJECT_3",
+    "active": true
+},{
+  "name": "Project Four",
+  "code": "PROJECT_4",
+  "active": true
+},
+{
+"name": "Project Five",
+"code": "PROJECT_5",
+"active": true
+},
           ],
           "StateInfo": [
               {
@@ -3824,6 +3879,7 @@ export const MdmsService = {
     const responseValue = transformResponse(mdmsDetails.type, MdmsRes, moduleCode.toUpperCase(), tenantId);
     const cacheSetting = getCacheSetting(mdmsDetails.details.moduleDetails[0].moduleName);
     PersistantStorage.set(key, responseValue, cacheSetting.cacheTimeInSecs);
+    console.log(responseValue);
     return responseValue;
   },
   getServiceDefs: (tenantId, moduleCode) => {
@@ -3997,6 +4053,9 @@ export const MdmsService = {
   },
   WMSChapter: (tenantId, moduleCode, type) => {
     return MdmsService.getDataByCriteria(tenantId,getChapterList(tenantId, moduleCode, type) , moduleCode);
+  },
+  WMSProject: (tenantId, moduleCode, type) => {
+    return MdmsService.getDataByCriteria(tenantId,getProjectList(tenantId, moduleCode, type) , moduleCode);
   },
   getDocumentTypes: (tenantId, moduleCode, type) => {
     return MdmsService.getDataByCriteria(tenantId, getDocumentTypesCriteria(tenantId, moduleCode, type), moduleCode);

@@ -10,6 +10,9 @@ const useWmsMDMS = (tenantId, moduleCode, type, config = {}) => {
   const  useWmsChapters = () => {
     return useQuery(["WMS_CHAPTER", tenantId],() =>  MdmsService.WMSChapter(tenantId, moduleCode, type) , config);
   };
+  const  useWmsProjects = () => {
+    return useQuery(["WMS_PROJECT", tenantId],() =>  MdmsService.WMSProject(tenantId, moduleCode, type) , config);
+  };
   switch (type) {
     case "Department":
       return useWmsDepartments();
@@ -17,6 +20,8 @@ const useWmsMDMS = (tenantId, moduleCode, type, config = {}) => {
       return useWmsFunds();
       case "Chapter":
       return useWmsChapters();
+      case "Project":
+        return useWmsProjects();
   }
 };
   
