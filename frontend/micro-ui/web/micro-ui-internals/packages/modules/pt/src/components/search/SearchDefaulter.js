@@ -117,35 +117,25 @@ const { isLoading, error, data, isSuccess } = useQuery(["propertySearchList", te
         Cell: ({ row }) => GetCell(`${row.original.owners.map((ob) => ob.name).join(",")}` || ""),
       },
       {
-        Header: t("ES_INBOX_LOCALITY"),
-        disableSortBy: true,
-        Cell: ({ row }) => GetCell(t(row.original.locality) || ""),
-      },
-      {
         Header: t("PT_COMMON_TABLE_COL_STATUS_LABEL"),
         Cell: ({ row }) => GetCell(t(row?.original?.status || "NA")),
         disableSortBy: true,
       },
       {
         Header: t("PT_AMOUNT_DUE"),
-        Cell: ({ row }) => GetCell(row?.original?.due?`₹ ${row?.original?.due}`:t("PT_NA")),
+        Cell: ({ row }) => GetCell(row?.original?.dueAmount?`₹ ${row?.original?.dueAmount}`:t("PT_NA")),
         disableSortBy: true,
       },
       {
-        Header: t("ES_SEARCH_ACTION"),
+        Header: t("PT_AMOUNT_YEAR"),
+        Cell: ({ row }) => GetCell(row?.original?.dueAmountYear?`${row?.original?.dueAmountYear}`:t("PT_NA")),
         disableSortBy: true,
-        Cell: ({ row }) => {
-          return (
-            <div>
-              {row.original?.due > 0 && Digit.Utils.didEmployeeHasRole("PT_CEMP") ? (
-                <span className="link"> 
-                  <a  style={{textDecoration:'none'}} onClick={() => handleCollectTaxClick(row.original)}>{t("ES_PT_COLLECT_TAX")}</a>
-                </span>
-              ) : null}
-            </div>
-          );
-        },
       },
+      {
+        Header: t("PT_PROPERTY_TYPE"),
+        Cell: ({ row }) => GetCell(row?.original?.propertyType?`${row?.original?.propertyType}`:t("PT_NA")),
+        disableSortBy: true,
+      }
     ],
     []
   );
@@ -276,21 +266,24 @@ const onViewDownload =async () =>{
           disableSort={true}
         />
          {/* <SearchForm onSubmit={onSubmit} className={"pt-property-search"} handleSubmit={onSubmit}> */}
-         <SearchField className="pt-search-action-submit">
-          {/* <SubmitBar label={t("ES_COMMON_SEARCH")} submit /> */}
+         <div style={{display:"flex", flexDirection:"row-reverse"}}>   
+         <div style={{width:"inherit",marginLeft:"10px"}}>
+         <SearchField className="pt-search-action-submit" >
           <SubmitBar
-            label={t("CS_COMMON_PROCEED")}
+            label={t("CS_COMMON_GENERATE_NOTICE")}
             onSubmit={onSubmit}
           />
         </SearchField>
-        {/* </SearchForm> */}
+         </div>
+    <div style={{width:"inherit",marginLeft:"10px"}}>
         <SearchField className="pt-search-action-submit">
           {/* <SubmitBar label={t("ES_COMMON_SEARCH")} submit /> */}
           <SubmitBar
             label={t("CS_COMMON_DOWNLOADS")}
             onSubmit={onViewDownload}
           />
-        </SearchField>
+        </SearchField></div></div>
+      
         {showDownloads &&(
         <Table
           t={t}

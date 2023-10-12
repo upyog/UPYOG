@@ -22,6 +22,8 @@ const formatUnits = (units = [], currentFloor, isFloor) => {
         occupancyType: "",
         rentedMonths:"",
         nonRentedMonthsUsage:"",
+        ageOfProperty:null,
+        structureType:null,
         builtUpArea: null,
         arv: "",
         floorNo: isFloor ? { code: currentFloor, i18nKey: `PROPERTYTAX_FLOOR_${currentFloor}` } : "",
@@ -35,6 +37,8 @@ const formatUnits = (units = [], currentFloor, isFloor) => {
       builtUpArea: unit?.constructionDetail?.builtUpArea,
       rentedMonths:unit?.rentedMonths,
       nonRentedMonthsUsage: unit?.nonRentedMonthsUsage,
+      ageOfProperty: unit?.ageOfProperty,
+      structureType: unit?.structureType,
       usageCategory: usageCategory ? { code: usageCategory, i18nKey: `PROPERTYTAX_BILLING_SLAB_${usageCategory}` } : {},
       occupancyType: unit?.occupancyType ? { code: unit.occupancyType, i18nKey: `PROPERTYTAX_OCCUPANCYTYPE_${unit?.occupancyType}` } : "",
       floorNo: unit?.floorNo || Number.isInteger(unit?.floorNo) ? { code: unit.floorNo, i18nKey: `PROPERTYTAX_FLOOR_${unit?.floorNo}` } : {},
@@ -195,7 +199,52 @@ const SelectPTUnits = React.memo(({ t, config, onSelect, userType, formData }) =
        "active": true
        },  
     ]
-
+    let ageOfProperty =[
+      {
+        "i18nKey": "PROPERTYTAX_MONTH>10",
+        "name": "greater than 10 years",
+        "code": "10",
+       "active": true
+       },
+       {
+        "i18nKey": "PROPERTYTAX_MONTH>15",
+        "name": "greater than 15 years",
+        "code": "15",
+       "active": true
+       },
+       {
+        "i18nKey": "PROPERTYTAX_MONTH>25",
+        "name": "greater than 24 years",
+        "code": "25",
+       "active": true
+       } 
+     ]
+     let structureType =[
+      {
+        "i18nKey": "PERMANENT",
+        "name": "Permanent",
+        "code": "permanent",
+       "active": true
+       },
+       {
+        "i18nKey": "TEMPORARY",
+        "name": "Temporary",
+        "code": "temporary",
+       "active": true
+       },
+       {
+        "i18nKey": "SEMI_PERMANENT",
+        "name": "Semi Permanent",
+        "code": "semi permanent",
+       "active": true
+       },
+       {
+        "i18nKey": "RCC",
+        "name": "RCC",
+        "code": "RCC",
+       "active": true
+       }  
+     ]
   function handleAdd() {
     const values = [...fields];
     values.push({
@@ -204,6 +253,8 @@ const SelectPTUnits = React.memo(({ t, config, onSelect, userType, formData }) =
       occupancyType: "",
       rentedMonths: "",
       nonRentedMonthsUsage: "",
+      ageOfProperty: "",
+      structureType: "",
       builtUpArea: null,
       arv: "",
       floorNo: isFloor ? { code: currentFloor, i18nKey: `PROPERTYTAX_FLOOR_${currentFloor}` } : "",
@@ -259,6 +310,17 @@ const SelectPTUnits = React.memo(({ t, config, onSelect, userType, formData }) =
     units[i].nonRentedMonthsUsage=value;
     setFields(units);
   }
+  function selectageOfProperty(i, value) {
+    let units = [...fields];
+    units[i].ageOfProperty=value;
+    setFields(units);
+  }
+
+  function selectstructureType(i, value) {
+    let units = [...fields];
+    units[i].structureType=value;
+    setFields(units);
+  }
 
   function onChangeArea(i, e) {
     let units = [...fields];
@@ -290,10 +352,6 @@ const SelectPTUnits = React.memo(({ t, config, onSelect, userType, formData }) =
             )?.code;
           } else if (key === "builtUpArea") {
             unit["constructionDetail"] = { builtUpArea: field[key] };
-          //  } else if (key === "rentedMonths" ) {
-          //    unit["additionalDetails"] = { rentedMonths: field[key] };
-          //  } else if (key === "nonRentedMonthsUsage" ) {
-          //    unit["additionalDetails"] = { nonRentedMonthsUsage: field[key] };
           } else {
             unit[key] = typeof field[key] == "object" ? field[key]?.code : field[key];
           }
@@ -414,6 +472,28 @@ const SelectPTUnits = React.memo(({ t, config, onSelect, userType, formData }) =
                   select={(e) => selectOccupancy(index, e)}
                 />
               </div>
+              <CardLabel>{`${t("PT_STRUCTURE_TYPE")}*`}</CardLabel>
+              <div className={"form-pt-dropdown-only"}>
+                <Dropdown
+                  t={t}
+                  optionKey="i18nKey"
+                  isMandatory={config.isMandatory}
+                  option={structureType}
+                  selected={field?.structureType}
+                  select={(e) => selectstructureType(index, e)}
+                />
+              </div>
+              <CardLabel>{`${t("PT_AGE_OF_PROPERTY")}*`}</CardLabel>
+              <div className={"form-pt-dropdown-only"}>
+                <Dropdown
+                  t={t}
+                  optionKey="i18nKey"
+                  isMandatory={config.isMandatory}
+                  option={ageOfProperty}
+                  selected={field?.ageOfProperty}
+                  select={(e) => selectageOfProperty(index, e)}
+                />
+              </div>
               {field?.occupancyType?.code && field.occupancyType.code.includes("RENTED") && (
                 <>
                   <CardLabel>{`${t("PT_FORM2_TOTAL_ANNUAL_RENT")}*`}</CardLabel>
@@ -433,6 +513,7 @@ const SelectPTUnits = React.memo(({ t, config, onSelect, userType, formData }) =
                       title: t("CORE_COMMON_REQUIRED_ERRMSG"),
                     }}
                   />
+                
               <CardLabel>{`${t("PT_FORM2_RENTED_MONTHS")}*`}</CardLabel>
               <div className={"form-pt-dropdown-only"}>
                 <Dropdown

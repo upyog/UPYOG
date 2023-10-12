@@ -194,6 +194,9 @@ const ApplicationDetails = () => {
       acknowledgementIds={appDetailsToShow?.applicationData?.acknowldgementNumber}
       workflowDetails={workflowDetails}
       mutate={mutate}
+      showToast={showToast}
+      setShowToast={setShowToast}
+      closeToast={closeToast}
     />
    )
  } 

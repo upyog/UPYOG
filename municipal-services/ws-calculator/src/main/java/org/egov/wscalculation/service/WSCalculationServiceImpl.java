@@ -110,7 +110,8 @@ public class WSCalculationServiceImpl implements WSCalculationService {
 			masterMap = masterDataService.loadMasterData(request.getRequestInfo(),
 					request.getCalculationCriteria().get(0).getTenantId());
 			calculations = getCalculations(request, masterMap);
-		} else {
+		}
+		else {
 			//Calculate and create demand for application
 			masterMap = masterDataService.loadExemptionMaster(request.getRequestInfo(),
 					request.getCalculationCriteria().get(0).getTenantId());
