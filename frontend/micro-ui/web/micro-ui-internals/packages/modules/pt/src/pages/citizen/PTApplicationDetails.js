@@ -52,7 +52,7 @@ const PTApplicationDetails = () => {
   sessionStorage.setItem("pt-property", JSON.stringify(application));
 
   useMemo(() => {
-    if(data?.Properties?.[0]?.status === "ACTIVE" && popup == false && servicedata?.Service?.length == 0)
+    if((data?.Properties?.[0]?.status === "ACTIVE"  || data?.Properties?.[0]?.status === "INACTIVE")&& popup == false && servicedata?.Service?.length == 0)
       setpopup(true);
   },[data,servicedata])
 
