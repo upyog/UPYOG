@@ -57,12 +57,22 @@ const DesktopList = ({ tableConfig, filterComponent, ...props }) => {
         },
       },
       {
+        Header: t("WMS_SOR_CONTROL_LABEL"),
+        disableSortBy: true,
+        Cell: ({ row }) => {
+          return (
+            <span className="link">
+              <Link to={`/upyog-ui/citizen/wms/sor-details/${row.original.sor_id}`}>{t("WMS_SOR_VIEW_LABEL")}</Link>
+            </span>
+          );
+        },
+      },{
         Header: t("WMS_SOR_CONTROLS_LABEL"),
         disableSortBy: true,
         Cell: ({ row }) => {
           return (
             <span className="link">
-              <Link to={`/upyog-ui/citizen/wms/sor-details/${row.original.sor_id}`}>{t("WMS_SOR_EDIT_LABEL")}</Link>
+              <Link to={`/upyog-ui/citizen/wms/sor-edit/${row.original.sor_id}`}>{t("WMS_SOR_EDIT_LABEL")}</Link>
             </span>
           );
         },
@@ -74,6 +84,7 @@ const DesktopList = ({ tableConfig, filterComponent, ...props }) => {
   if (props.isLoading) {
     result = <Loader />;
   } else if (data?.length === 0) {
+    //alert(props?.isSearch);
     result = (
       <Card style={{ marginTop: 20 }}>
         {/* TODO Change localization key */}

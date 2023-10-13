@@ -40,6 +40,12 @@ const CitizenApp = ({ path, url, userType }) => {
   const WmsPhmEdit = Digit?.ComponentRegistryService?.getComponent("WmsPhmEdit");
   const WmsPhmResponse = Digit?.ComponentRegistryService?.getComponent("WmsPhmResponse");
 
+  const WmsPmaList = Digit?.ComponentRegistryService?.getComponent("WmsPmaList");
+  const WmsPmaCreate = Digit?.ComponentRegistryService?.getComponent("WmsPmaCreate");
+  const WmsPmaDetails = Digit?.ComponentRegistryService?.getComponent("WmsPmaDetails");  
+  const WmsPmaEdit = Digit?.ComponentRegistryService?.getComponent("WmsPmaEdit");
+  const WmsPmaResponse = Digit?.ComponentRegistryService?.getComponent("WmsPmaResponse");
+
   const CMView = Digit?.ComponentRegistryService?.getComponent("CMView");
   const WMSDetails = Digit?.ComponentRegistryService?.getComponent("WMSDetails");
   const ContrMasterAdd = Digit?.ComponentRegistryService?.getComponent("ContrMasterAdd");
@@ -135,6 +141,17 @@ const CitizenApp = ({ path, url, userType }) => {
           <PrivateRoute path={`${path}/phm-details/:id`} component={() => <WmsPhmDetails />} />
           <PrivateRoute path={`${path}/phm-edit/:id`} component={() => <WmsPhmEdit />} />
           <PrivateRoute path={`${path}/phmresponse`} component={(props) => <WmsPhmResponse {...props} parentRoute={path} />} />
+
+          <PrivateRoute
+            path={`${path}/pma-home`}
+            component={() => (
+              <WmsPmaList parentRoute={path} businessService="WMS" filterComponent="WMS_LIST_FILTER" initialStates={inboxInitialState} isInbox={true} />
+            )}
+          />
+          <PrivateRoute path={`${path}/pma-create`} component={() => <WmsPmaCreate />} />
+          <PrivateRoute path={`${path}/pma-details/:id`} component={() => <WmsPmaDetails />} />
+          <PrivateRoute path={`${path}/pma-edit/:id`} component={() => <WmsPmaEdit />} />
+          <PrivateRoute path={`${path}/pmaresponse`} component={(props) => <WmsPmaResponse {...props} parentRoute={path} />} />
     
           <PrivateRoute path={`${path}/cm-home`} component={props => <CMView {...props} tenants={tenantId} parentRoute={path} />} />
           <PrivateRoute path={`${path}/details/:tenantId/:id`} component={() => <WMSDetails />} />

@@ -4,9 +4,8 @@ import { useTranslation } from "react-i18next";
 import DesktopList from "../../../../components/List/SOR/DesktopList";
 import MobileList from  "../../../../components/List/SOR/MobileList";
 
-const WmsSorList = ({ parentRoute, businessService = "WMS", initialStates = {}, filterComponent, isList }) => {
+const WmsSorList = ({ parentRoute, businessService = "WMS", initialStates = {}, filterComponent, isList=false }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
-  const { isLoading: isLoading, Errors, data: res } = Digit.Hooks.wms.sor.useWmsSorCount(tenantId);
 
   const { t } = useTranslation();
   const [pageOffset, setPageOffset] = useState(initialStates.pageOffset || 0);
@@ -31,12 +30,9 @@ const { isLoading: hookLoading, isError, error, data, ...rest } = Digit.Hooks.wm
   );
 
   useEffect(() => {
-     setTotalReacords(res?.length-1);
-  }, [res]);
+     setTotalReacords(data?.length-1);
+  }, [hookLoading,data,rest]);
 //  useEffect(() => {setTotalReacords(SORApplications?.length-1);}, [SORApplications]);
-
-  useEffect(() => {}, [hookLoading, rest]);
-
   useEffect(() => {
     setPageOffset(0);
   }, [searchParams]);
@@ -72,7 +68,7 @@ const { isLoading: hookLoading, isError, error, data, ...rest } = Digit.Hooks.wm
       {
         label: t("WMS_SOR_NAME_LABEL"),
         name: "sor_name",
-        type:"text"
+        type:"name"
       },
       {
         label: t("WMS_SOR_START_DATE_LABEL"),
@@ -87,23 +83,20 @@ const { isLoading: hookLoading, isError, error, data, ...rest } = Digit.Hooks.wm
     ];
   };
 
-  if (isLoading) {
+  if (hookLoading) {
     return <Loader />;
   }
-/*else
+/* else
 {
-  if(SORApplications!=undefined)
-  alert(JSON.stringify(SORApplications))
+  if(data!=undefined)
+  alert(JSON.stringify(data))
 } */
   //if (SORApplications?.length !== null) {
   if (data?.length !== null) {
     if (isMobile) {
       return (
         <MobileList
-          businessService={businessService}
-          //data={SORApplications}
-          //isLoading={isLoading}
-          
+          businessService={businessService}          
           data={data}
           isLoading={hookLoading}
           defaultSearchParams={initialStates.searchParams}
@@ -123,7 +116,7 @@ const { isLoading: hookLoading, isError, error, data, ...rest } = Digit.Hooks.wm
           searchParams={searchParams}
           sortParams={sortParams}
           totalRecords={totalRecords}
-          linkPrefix={'/upyog-ui/citizen/wms/sor-details/'}
+          linkPrefix={'/upyog-ui/citizen/wms/sor-edit/'}
           filterComponent={filterComponent}
         />
       );
@@ -133,8 +126,6 @@ const { isLoading: hookLoading, isError, error, data, ...rest } = Digit.Hooks.wm
           {isList && <Header>{t("WMS_HOME_SEARCH_RESULTS_HEADING")}</Header>}
           <DesktopList
             businessService={businessService}
-            //data={SORApplications}
-            //isLoading={isLoading}
             data={data}
             isLoading={hookLoading}
             defaultSearchParams={initialStates.searchParams}

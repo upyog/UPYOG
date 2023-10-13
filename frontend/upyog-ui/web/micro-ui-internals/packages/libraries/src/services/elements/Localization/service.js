@@ -71878,12 +71878,12 @@ export const LocalizationService = {
               "locale": "en_IN"
           },{
             "code": "SOR_HOME",
-            "message": "SOR Home",
+            "message": "SOR Master",
             "module": "rainmaker-common",
             "locale": "en_IN"
         },{
-            "code": "PRJMST_HOME",
-            "message": "Project Master Home",
+            "code": "PRJ_HOME",
+            "message": "Project Master",
             "module": "rainmaker-common",
             "locale": "en_IN"
         },
@@ -72003,10 +72003,21 @@ export const LocalizationService = {
             "message": "Update",
             "module": "rainmaker-common",
             "locale": "en_IN"
+        },{
+            "code": "WMS_SOR_CONTROLS_LABEL",
+            "message": "View",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
         },
+        
         {
             "code": "WMS_SOR_EDIT_LABEL",
             "message": "Edit",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },{
+            "code": "WMS_SOR_VIEW_LABEL",
+            "message": "View",
             "module": "rainmaker-common",
             "locale": "en_IN"
         },
@@ -72052,6 +72063,12 @@ export const LocalizationService = {
         {
             "code": "WMS_PHM_COMMON_CREATE_HEADER",
             "message": "Milestone Entry",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_PMA_COMMON_CREATE_HEADER",
+            "message": "Add Milestone Activity",
             "module": "rainmaker-common",
             "locale": "en_IN"
         },
@@ -72221,6 +72238,13 @@ export const LocalizationService = {
             "locale": "en_IN"
         },
         {
+            "code": "WMS_PHM_CONTROLS2_LABEL",
+            "message": "Activities",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        
+        {
             "code": "WMS_PHM_CREATE_PAGE_LABEL",
             "message": "Physical Milestone",
             "module": "rainmaker-common",
@@ -72247,6 +72271,73 @@ export const LocalizationService = {
         {
             "code": "WMS_PHM_EDIT_LABEL",
             "message": "Edit",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_NEW_PMA_FORM_HEADER",
+            "message": "Physical Milestone Activity",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_PMA_ID_LABEL",
+            "message": "PM ID",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_PMA_DETAILS_FORM_HEADER",
+            "message": "Milestone Details",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_PMA_FORM_EDIT_CREATE_HEAD",
+            "message": "Edit Milestone Details",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_PMA_DESC_OF_ITEM_LABEL",
+            "message": "Description of the Item",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_PMA_PERCENT_NAME_LABEL",
+            "message": "% Weightage",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_PMA_START_DATE_LABEL",
+            "message": "Start Date",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_PMA_END_DATE_LABEL",
+            "message": "End Date",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_PMA_CONTROLS_LABEL",
+            "message": "Change",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_PMA_CONTROLS2_LABEL",
+            "message": "Activities",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        
+        {
+            "code": "WMS_PMA_CREATE_PAGE_LABEL",
+            "message": "Physical Milestone",
             "module": "rainmaker-common",
             "locale": "en_IN"
         },
@@ -72282,7 +72373,7 @@ export const LocalizationService = {
         },
          {
             "code": "WMS_NEW_PRJ_FORM_HEADER",
-            "message": "Project Master",
+            "message": "New Project Master",
             "module": "rainmaker-common",
             "locale": "en_IN"
         },
@@ -72396,7 +72487,7 @@ export const LocalizationService = {
         },
         {
             "code": "PRJ_HOME",
-            "message": "Project Home",
+            "message": "Project Master",
             "module": "rainmaker-common",
             "locale": "en_IN"
         },
@@ -72546,7 +72637,7 @@ export const LocalizationService = {
         },
         {
             "code": "SCH_HOME",
-            "message": "Scheme Home",
+            "message": "Scheme Master",
             "module": "rainmaker-common",
             "locale": "en_IN"
         },

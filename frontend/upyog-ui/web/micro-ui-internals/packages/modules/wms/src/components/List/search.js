@@ -1,4 +1,4 @@
-import { ActionBar, CloseSvg, DatePicker, Label, LinkLabel, SubmitBar, TextInput } from "@egovernments/digit-ui-react-components";
+import { ActionBar, CloseSvg, DatePicker, Label, LinkLabel, SubmitBar, TextInput,Dropdown } from "@egovernments/digit-ui-react-components";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -8,6 +8,10 @@ const SearchData = ({ onSearch, type, onClose, searchFields, searchParams, isInb
   const { register, handleSubmit, reset, watch, control } = useForm({
     defaultValues: searchParams,
   });
+  
+  const tenantId = Digit.ULBService.getCurrentTenantId();
+  const { data: Chapters , isLoading } = Digit.Hooks.wms.useWmsMDMS(tenantId, "common-masters", "Chapter") || {};
+
   const mobileView = innerWidth <= 640;
   const onSubmitInput = (data) => {
     if (!data.mobileNumber) {
@@ -63,7 +67,27 @@ const SearchData = ({ onSearch, type, onClose, searchFields, searchParams, isInb
                   <div key={input.name} className="input-fields">
                     <span className={"mobile-input"}>
                       <Label>{input.label}</Label>
-                      {input.type !== "date" ? (
+                      {input.type === "date" ? (
+                        <Controller
+                        render={(props) => <DatePicker date={props.value} onChange={props.onChange} />}
+                        name={input.name}
+                        control={control}
+                        defaultValue={null}
+                      />
+                      ) : (
+                        <div >
+                        {input.type === "name" ?( <Controller
+                          render={(props) => 
+                          <Dropdown                            
+                            className="form-field"
+                            selected={props.value}
+                            option={Chapters?.["common-masters"]?.Chapter}
+                            select={props.onChange}
+                            optionKey="name"/>}
+                          name={input.name}
+                          control={control}
+                          defaultValue={null}
+                        />): 
                         <div className="field-container">
                           {input?.componentInFront ? (
                             <span className="citizen-card-input citizen-card-input--front" style={{ flex: "none" }}>
@@ -71,15 +95,11 @@ const SearchData = ({ onSearch, type, onClose, searchFields, searchParams, isInb
                             </span>
                           ) : null}
                           <TextInput {...input} inputRef={register} watch={watch} shouldUpdate={true} />
-                        </div>
-                      ) : (
-                        <Controller
-                          render={(props) => <DatePicker date={props.value} onChange={props.onChange} />}
-                          name={input.name}
-                          control={control}
-                          defaultValue={null}
-                        />
-                      )}{" "}
+                        </div>}
+                       </div>)
+                      }
+                      
+                      {" "}
                     </span>
                   </div>
                 ))}

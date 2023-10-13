@@ -5,10 +5,10 @@ export const useWmsSorSearch = (tenantId, searchparams,  filters, isupdated, con
   const client = useQueryClient();
   const { isLoading, error, data } = useQuery(
     ["WMS_SOR_SEARCH",tenantId,searchparams,filters, isupdated],
-    async () => await WMSService.SORApplications.search(tenantId, searchparams, filters).SORApplications,
+    async () => await WMSService.SORApplications.search(tenantId, searchparams, filters),
     config
   );//isLoading: hookLoading, isError, error, data, ...rest
-  return { isLoading, error, data, revalidate: () => client.invalidateQueries(["WMS_SOR_SEARCH", tenantId,searchparams,filters]) };;
+  return { isLoading, error, data, revalidate: () => client.invalidateQueries(["WMS_SOR_SEARCH", tenantId,searchparams,filters]) };
 };
 
 export default useWmsSorSearch;

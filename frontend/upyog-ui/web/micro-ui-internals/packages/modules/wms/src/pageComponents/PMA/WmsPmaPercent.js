@@ -1,17 +1,17 @@
 import React from "react";
 import { LabelFieldPair, CardLabel, TextInput, CardLabelError } from "@egovernments/digit-ui-react-components";
 import { useLocation } from "react-router-dom";
-const WmsPmPrjName = ({ t, config, onSelect, formData = {}, userType, register, errors }) => {
+const WmsPmaPercent = ({ t, config, onSelect, formData = {}, userType, register, errors }) => {
   const { pathname: url } = useLocation();
   const inputs = [
     {
-      label: "Project Name ",
-      type: "text",
-      name: "project_name",
+      label: "WMS_PMA_PERCENT_NAME_LABEL",
+      type: "number",
+      name: "percent_weightage",
       validation: {
         isRequired: true,
         pattern: Digit.Utils.getPattern('Name'),
-        title: t("WMS_COMMON_PROJECT_NAME_INVALID"),
+        title: t("WMS_COMMON_NAME_INVALID"),
       },
       isMandatory: true,
     },
@@ -41,7 +41,7 @@ const WmsPmPrjName = ({ t, config, onSelect, formData = {}, userType, register, 
                 defaultValue={undefined}
                 {...input.validation}
               />
-            {currentValue&&currentValue.length>0&&!currentValue.match(Digit.Utils.getPattern('Name'))&&<CardLabelError style={{ width: "100%", marginTop: '-15px', fontSize: '16px', marginBottom: '12px'}}>{t("WMS_COMMON_PROJECT_NAME_INVALID")}</CardLabelError>}
+            {currentValue&&currentValue.length>0&&!currentValue.match(Digit.Utils.getPattern('Name'))&&<CardLabelError style={{ width: "100%", marginTop: '-15px', fontSize: '16px', marginBottom: '12px'}}>{t("WMS_COMMON_NAME_INVALID")}</CardLabelError>}
             </div>
           </LabelFieldPair>
         </React.Fragment>
@@ -50,4 +50,4 @@ const WmsPmPrjName = ({ t, config, onSelect, formData = {}, userType, register, 
   );
 };
 
-export default WmsPmPrjName;
+export default WmsPmaPercent;

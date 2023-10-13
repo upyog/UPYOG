@@ -3,7 +3,6 @@ import { useTranslation } from "react-i18next";
 import DataTable from "../DataTable";
 import { Card, Loader } from "@egovernments/digit-ui-react-components";
 import DataLinks from "../DataLinks";
-// import SearchData from "./search";
 import SearchData from "../search";
 import { Link } from "react-router-dom";
 
@@ -21,54 +20,63 @@ const DesktopList = ({ tableConfig, filterComponent, ...props }) => {
 
   const columns = React.useMemo(() => {
     return [
-      // {
-      //   Header: t("WMS_PM_ID_LABEL"),
-      //   disableSortBy: true,
-      //   Cell: ({ row }) => {
-      //     return GetCell(`${row.original?.pm_id}`);
-      //   },
-      // },
       {
-        Header: t("Milestone Name"),
-        disableSortBy: false,
+        Header: t("WMS_PMA_ID_LABEL"),
+        disablePmatBy: true,
         Cell: ({ row }) => {
-          console.log(row , "this is cell row");
-          return GetCell(`${row.original?.PhysicalMilestone[0].ml_name}`);
+          return GetCell(`${row.original?.pma_id}`);
         },
       },
       {
-        Header: t("Project Name"),
-        disableSortBy: true,
+        Header: t("WMS_PMA_PROJECT_NAME_LABEL"),
+        disablePmatBy: false,
         Cell: ({ row }) => {
-          return GetCell(`${row.original?.PhysicalMilestone[0].project_name}`);
+          return GetCell(`${row.original?.project_name}`);
         },
       },
       {
-        Header: t("Work Name"),
-        disableSortBy: true,
+        Header: t("WMS_PMA_WORK_NAME_LABEL"),
+        disablePmatBy: false,
         Cell: ({ row }) => {
-          return GetCell(`${row.original?.PhysicalMilestone[0].work_name}`);
+          return GetCell(`${row.original?.work_name}`);
         },
       },
-      
       {
-        Header: t("WMS_PM_PERCENT_LABEL"),
-        disableSortBy: true,
+        Header: t("WMS_PMA_ML_NAME_LABEL"),
+        disablePmatBy: true,
         Cell: ({ row }) => {
-          return GetCell(`${row.original?.PhysicalMilestone[0].percent}`);
+          return GetCell(`${row.original?.milestone_name}`);
         },
       },
-      // {
-      //   Header: t("WMS_PM_CONTROLS_LABEL"),
-      //   disableSortBy: true,
-      //   Cell: ({ row }) => {
-      //     return (
-      //       <span className="link">
-      //         <Link to={`/upyog-ui/citizen/wms/pm-edit/${row.original.pm_id}`}>{t("WMS_PM_EDIT_LABEL")}</Link>
-      //       </span>
-      //     );
-      //   },
-      // },
+      {
+        Header: t("WMS_PMA_PERCENT_NAME_LABEL"),
+        disablePmatBy: true,
+        Cell: ({ row }) => {
+          return GetCell(`${row.original?.percent_weightage}`);
+        },
+      },
+      {
+        Header: t("WMS_PMA_CONTROLS_LABEL"),
+        disablePmatBy: true,
+        Cell: ({ row }) => {
+          return (
+            <span className="link">
+              <Link to={`/upyog-ui/citizen/wms/pma-details/${row.original.pma_id}`}>{t("WMS_PMA_EDIT_LABEL")}</Link>
+            </span>
+          );
+        },
+      },
+      {
+        Header: t("WMS_PMA_CONTROLS2_LABEL"),
+        disablePmatBy: true,
+        Cell: ({ row }) => {
+          return (
+            <span className="link">
+              <Link to={`/upyog-ui/citizen/wms/pma-activity-home/${row.original.pma_id}`}>{t("WMS_PMA_COMMON_CREATE_ACTIVITY_HEADER")}</Link>
+            </span>
+          );
+        },
+      },
     ];
   }, []);
 
@@ -97,7 +105,7 @@ const DesktopList = ({ tableConfig, filterComponent, ...props }) => {
         getCellProps={(cellInfo) => {
           return {
             style: {
-              maxWidth: cellInfo.column.Header == t("WMS_PM_ID_LABEL") ? "150px" : "",
+              maxWidth: cellInfo.column.Header == t("WMS_PMA_ID_LABEL") ? "150px" : "",
               padding: "20px 18px",
               fontSize: "16px",
               minWidth: "150px",
@@ -109,9 +117,9 @@ const DesktopList = ({ tableConfig, filterComponent, ...props }) => {
         onNextPage={props.onNextPage}
         onPrevPage={props.onPrevPage}
         pageSizeLimit={props.pageSizeLimit}
-        onSort={props.onSort}
-        disableSort={props.disableSort}
-        sortParams={props.sortParams}
+        onPmat={props.onPmat}
+        disablePmat={props.disablePmat}
+        pmatParams={props.pmatParams}
         totalRecords={props.totalRecords}
       />
     );
@@ -125,26 +133,21 @@ const DesktopList = ({ tableConfig, filterComponent, ...props }) => {
             parentRoute={props.parentRoute}
             allLinks={[
               {
-                text: t("WMS_COMMON_CREATE_HEADER"),
-                link: "/upyog-ui/citizen/wms/pm-create",
+                text: t("WMS_PMA_COMMON_CREATE_HEADER"),
+                link: "/upyog-ui/citizen/wms/pma-create",
                 businessService: "WMS",
                 roles: ["CITIZEN"],
               },
+/*               {
+                text: t("WMS_PMA_COMMON_CREATE_ACTIVITY_HEADER"),
+                link: "/upyog-ui/citizen/wms/pma-activity-home",
+                businessService: "WMS",
+                roles: ["CITIZEN"],
+              }, */
             ]}
-            headerText={"Physical Milestone"}
+            headerText={t("WMS_PMA_CREATE_PAGE_LABEL")}
             businessService={props.businessService}
-          />
-          {/* <div>
-            {
-              <FilterComponent
-                defaultSearchParams={props.defaultSearchParams}
-                onFilterChange={props.onFilterChange}
-                searchParams={props.searchParams}
-                type="desktop"
-                tenantIds={tenantIds}
-              />
-            }
-          </div> */}
+          />         
         </div>
       )}
       <div style={{ flex: 1 }}>

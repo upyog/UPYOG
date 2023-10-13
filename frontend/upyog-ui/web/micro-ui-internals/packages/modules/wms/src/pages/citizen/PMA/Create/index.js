@@ -2,9 +2,10 @@ import { FormComposer, Loader,Header } from "@egovernments/digit-ui-react-compon
 import React, {  useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
-import { newConfig } from "../../../../components/config/sor-config";
+import {newConfig} from "../../../../components/config/pma-config";
+
 import { convertEpochToDate, pdfDownloadLink } from "../../../../components/Utils";
-const WmsSorCreate = () => {
+const WmsPmaCreate = () => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const { t } = useTranslation();
   const history = useHistory();  
@@ -12,27 +13,22 @@ const WmsSorCreate = () => {
   const [canSubmit, setSubmitValve] = useState(false);
   const [showToast, setShowToast] = useState(null);
   const onSubmit = (data) => {
-    //alert(JSON.stringify(data));
     setIsLoading(true);
-    let ScheduleOfRateApplications = 
+    let PmaemeApplications = 
       {
-        ScheduleOfRateApplication: [{
-          sor_name: data?.WmsSorName?.name,
-          description_of_item: data?.WmsSorDescriptionOfItem?.name,  
-          chapter: data?.WmsSorChapter?.name,
-          item_no: data?.WmsSorItemNo?.name,        
-          unit: data?.WmsSorUnit?.name,
-          rate: data?.WmsSorRate?.name,         
-          start_date: convertEpochToDate(data?.WmsSorStartDate?.name),
-          end_date: convertEpochToDate(data?.WmsSorEndDate?.name),
+        PmaemeApplication: [{
+          description_of_item: data?.WmsPmaDescriptionOfItem?.description_of_item, 
+          percent_weightage: data?.WmsPmaPercent?.percent_weightage, 
+          start_date:data?.WmsPmaStartDate?.start_date,
+          end_date:data?.WmsPmaEndDate?.end_date,
           tenantId:tenantId
         }],
       };
     
-      /* use customiseCreateFormData hook to make some chnages to the Employee object [0].ScheduleOfRateApplication*/
-     Digit.WMSService.SORApplications.create(ScheduleOfRateApplications.ScheduleOfRateApplication[0], tenantId).then((result,err)=>{
+      /* use customiseCreateFormData hook to make some chnages to the Employee object [0].PmaeduleOfRateApplication*/
+     Digit.WMSService.PMAApplications.create(PmaemeApplications.PmaemeApplication[0], tenantId).then((result,err)=>{
       setIsLoading(false);
-       history.push("/upyog-ui/citizen/wms/sor-home");
+       history.push("/upyog-ui/citizen/wms/pma-home");
      })
      .catch((e) => {
      console.log("err");
@@ -48,9 +44,9 @@ const WmsSorCreate = () => {
 
   return (
     <div>
-    <Header>{t("WMS_NEW_SOR_FORM_HEADER")}</Header>
+    <Header>{t("WMS_NEW_PMA_FORM_HEADER")}</Header>
     <FormComposer
-              head={t("WMS_SOR_FORM_CREATE_HEAD")}
+              head={t("WMS_PMA_FORM_CREATE_HEAD")}
               label={t("WMS_COMMON_SAVE")}
               config={configs}
               onSubmit={onSubmit}
@@ -69,4 +65,4 @@ const WmsSorCreate = () => {
   );
 };
 
-export default WmsSorCreate;
+export default WmsPmaCreate;

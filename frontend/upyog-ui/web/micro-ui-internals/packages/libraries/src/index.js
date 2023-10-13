@@ -112,7 +112,7 @@ const initLibraries = () => {
   setupLibraries("NOCSearch", NOCSearch);
   setupLibraries("AccessControlService", AccessControlService);
   setupLibraries("BillServices", BillServices);
-  setupLibraries("AuditService",AuditService);
+  setupLibraries("AuditService", AuditService);
   return new Promise((resolve) => {
     initI18n(resolve);
   });
