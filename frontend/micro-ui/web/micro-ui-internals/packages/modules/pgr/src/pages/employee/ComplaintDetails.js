@@ -170,8 +170,10 @@ const ComplaintDetailsModal = ({ workflowDetails, complaintDetails, close, popup
               : t("CS_COMMON_RESOLVE")
       }
       actionSaveOnSubmit={() => {
-        if(selectedAction === "REJECT" && !comments)
+        if(!comments)
         setError(t("CS_MANDATORY_COMMENTS"));
+        // if(selectedAction === "REJECT" && !comments)
+        // setError(t("CS_MANDATORY_COMMENTS"));
         else
         onAssign(selectedEmployee, comments, uploadedFile);
       }}

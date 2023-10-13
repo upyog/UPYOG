@@ -21,9 +21,13 @@ const useEmployeeFilter = (tenantId, roles, complaintDetails) => {
       setEmployeeDetails([
         {
           department: t(`COMMON_MASTERS_DEPARTMENT_${department}`),
-          employees: employees.map((employee) => {
-            return { uuid: employee.user.uuid, name: employee.user.name };
-          }),
+          employees: employees.filter((employee) => {
+            if(employee.isActive===true){
+              return employee;
+            }            
+          }).map((employee) => {
+              return { uuid: employee.user.uuid, name: employee.user.name };
+            }),
         },
       ]);
     })();
