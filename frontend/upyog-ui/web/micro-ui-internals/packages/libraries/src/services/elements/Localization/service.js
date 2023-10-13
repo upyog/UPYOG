@@ -71878,12 +71878,12 @@ export const LocalizationService = {
               "locale": "en_IN"
           },{
             "code": "SOR_HOME",
-            "message": "SOR Home",
+            "message": "SOR Master",
             "module": "rainmaker-common",
             "locale": "en_IN"
         },{
-            "code": "PRJMST_HOME",
-            "message": "Project Master Home",
+            "code": "PRJ_HOME",
+            "message": "Project Master",
             "module": "rainmaker-common",
             "locale": "en_IN"
         },
@@ -71993,10 +71993,21 @@ export const LocalizationService = {
             "message": "Update",
             "module": "rainmaker-common",
             "locale": "en_IN"
+        },{
+            "code": "WMS_SOR_CONTROLS_LABEL",
+            "message": "View",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
         },
+        
         {
             "code": "WMS_SOR_EDIT_LABEL",
             "message": "Edit",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },{
+            "code": "WMS_SOR_VIEW_LABEL",
+            "message": "View",
             "module": "rainmaker-common",
             "locale": "en_IN"
         },
@@ -72352,7 +72363,7 @@ export const LocalizationService = {
         },
          {
             "code": "WMS_NEW_PRJ_FORM_HEADER",
-            "message": "Project Master",
+            "message": "New Project Master",
             "module": "rainmaker-common",
             "locale": "en_IN"
         },
@@ -72466,7 +72477,7 @@ export const LocalizationService = {
         },
         {
             "code": "PRJ_HOME",
-            "message": "Project Home",
+            "message": "Project Master",
             "module": "rainmaker-common",
             "locale": "en_IN"
         },
@@ -72616,7 +72627,7 @@ export const LocalizationService = {
         },
         {
             "code": "SCH_HOME",
-            "message": "Scheme Home",
+            "message": "Scheme Master",
             "module": "rainmaker-common",
             "locale": "en_IN"
         },

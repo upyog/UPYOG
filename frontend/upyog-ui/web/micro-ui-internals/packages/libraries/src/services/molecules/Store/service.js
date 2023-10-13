@@ -835,16 +835,16 @@ export const StoreService = {
             },
             {
                 "id": 3002,
-                "name": "PRJMST_HOME",
+                "name": "PRJ_HOME",
                 "url": "digit-ui-card",
-                "displayName": "PRJMST_HOME",
+                "displayName": "PRJ_HOME",
                 "orderNumber": 4,
                 "parentModule": "WMS",
                 "enabled": true,
                 "serviceCode": "CITIZEN_SERVICE_WMS",
                 "code": "",
                 "path": "",
-                "navigationURL": "/digit-ui/citizen/wms/prjmst-home",
+                "navigationURL": "/digit-ui/citizen/wms/prj-home",
                 "leftIcon": "WMSIcon",
                 "rightIcon": "",
                 "queryParams": "",
@@ -853,75 +853,75 @@ export const StoreService = {
             },
             {
                 "id": 3021,
-                "name": "PRJMST_LIST",
+                "name": "PRJ_LIST",
                 "url": "digit-ui-card",
-                "displayName": "PRJMST_LIST",
+                "displayName": "PRJ_LIST",
                 "orderNumber": 1,
                 "parentModule": "WMS",
                 "enabled": true,
                 "serviceCode": "CITIZEN_SERVICE_WMS",
                 "code": "",
                 "path": "",
-                "navigationURL": "/digit-ui/citizen/wms/prjmst-list",
+                "navigationURL": "/digit-ui/citizen/wms/prj-list",
                 "leftIcon": "WMSIcon",
                 "rightIcon": "",
                 "queryParams": "",
                 "sidebar": "digit-ui-links",
-                "sidebarURL": "/digit-ui/citizen/wms/prjmst-home"
+                "sidebarURL": "/digit-ui/citizen/wms/prj-home"
             },
             {
                 "id": 3022,
-                "name": "PRJMST_CREATE",
+                "name": "PRJ_CREATE",
                 "url": "digit-ui-card",
-                "displayName": "PRJMST_CREATE",
+                "displayName": "PRJ_CREATE",
                 "orderNumber": 2,
                 "parentModule": "WMS",
                 "enabled": true,
                 "serviceCode": "CITIZEN_SERVICE_WMS",
                 "code": "",
                 "path": "",
-                "navigationURL": "/digit-ui/citizen/wms/prjmst-create",
+                "navigationURL": "/digit-ui/citizen/wms/prj-create",
                 "leftIcon": "WMSIcon",
                 "rightIcon": "",
                 "queryParams": "",
                 "sidebar": "digit-ui-links",
-                "sidebarURL": "/digit-ui/citizen/wms/prjmst-home"
+                "sidebarURL": "/digit-ui/citizen/wms/prj-home"
             },
             {
                 "id": 3023,
-                "name": "PRJMST_DETAILS",
+                "name": "PRJ_DETAILS",
                 "url": "digit-ui-card",
-                "displayName": "PRJMST_DETAILS",
+                "displayName": "PRJ_DETAILS",
                 "orderNumber": 3,
                 "parentModule": "WMS",
                 "enabled": true,
                 "serviceCode": "CITIZEN_SERVICE_WMS",
                 "code": "",
                 "path": "",
-                "navigationURL": "/digit-ui/citizen/wms/prjmst-details/:sor_id",
+                "navigationURL": "/digit-ui/citizen/wms/prj-details/:sor_id",
                 "leftIcon": "WMSIcon",
                 "rightIcon": "",
                 "queryParams": "",
                 "sidebar": "digit-ui-links",
-                "sidebarURL": "/digit-ui/citizen/wms/prjmst-home"
+                "sidebarURL": "/digit-ui/citizen/wms/prj-home"
             },
             {
                 "id": 3024,
-                "name": "PRJMST_EDIT",
+                "name": "PRJ_EDIT",
                 "url": "digit-ui-card",
-                "displayName": "PRJMST_EDIT",
+                "displayName": "PRJ_EDIT",
                 "orderNumber": 4,
                 "parentModule": "WMS",
                 "enabled": true,
                 "serviceCode": "CITIZEN_SERVICE_WMS",
                 "code": "",
                 "path": "",
-                "navigationURL": "/digit-ui/citizen/wms/prjmst-edit/:sor_id",
+                "navigationURL": "/digit-ui/citizen/wms/prj-edit/:sor_id",
                 "leftIcon": "WMSIcon",
                 "rightIcon": "",
                 "queryParams": "",
                 "sidebar": "digit-ui-links",
-                "sidebarURL": "/digit-ui/citizen/wms/prjmst-home"
+                "sidebarURL": "/digit-ui/citizen/wms/prj-home"
             },
             {
                 "id": 3003,
@@ -1367,7 +1367,7 @@ export const StoreService = {
                   "code": "DEPT_35",
                   "active": true
               }
-          ],
+          ],          
           "Fund": [
             {
                 "name": "Fund One",
@@ -1410,6 +1410,32 @@ export const StoreService = {
         "code": "CHAPTER_5",
         "active": true
     },
+          ],
+          "Unit": [
+            {
+                "name": "Unit One",
+                "code": "UNIT_1",
+                "active": true
+            },
+            {
+              "name": "Unit Two",
+              "code": "UNIT_2",
+              "active": true
+          },
+          {
+            "name": "Unit Three",
+            "code": "UNIT_3",
+            "active": true
+            },{
+            "name": "Unit Four",
+            "code": "UNIT_4",
+            "active": true
+        },
+        {
+            "name": "Unit Five",
+            "code": "UNIT_5",
+            "active": true
+        },
           ],
           "StateInfo": [
               {

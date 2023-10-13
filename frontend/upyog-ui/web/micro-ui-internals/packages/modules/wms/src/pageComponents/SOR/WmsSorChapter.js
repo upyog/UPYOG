@@ -5,9 +5,6 @@ import { useLocation } from "react-router-dom";
 
 const WmsSorChapter = ({ t, config, onSelect, formData = {}, userType }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
-
-  const { pathname: url } = useLocation();
-  const editScreen = url.includes("/sor-edit/");
   const { data: Chapters , isLoading } = Digit.Hooks.wms.useWmsMDMS(tenantId, "common-masters", "Chapter") || {};
   const [chapter, setchapter] = useState(formData?.SelectChapter);
   function SelectChapter(value) {
@@ -41,11 +38,12 @@ const WmsSorChapter = ({ t, config, onSelect, formData = {}, userType }) => {
           {input.isMandatory ? " * " : null}
         </CardLabel>
         <Dropdown
+          key={input.name}
           className="form-field"
           selected={chapter}
-          option={Chapters?.["common-master"]?.Chapter}
+          option={Chapters?.["common-masters"]?.Chapter}
           select={SelectChapter}
-          optionKey="code"
+          optionKey="name"
           defaultValue={undefined}
           t={t}
         />

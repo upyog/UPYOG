@@ -5,7 +5,7 @@ export const useWmsSchSearch = (tenantId, searchparams,  filters, isupdated, con
   const client = useQueryClient();
   const { isLoading, error, data } = useQuery(
     ["WMS_SCH_SEARCH",tenantId,searchparams,filters, isupdated],
-    async () => await WMSService.SCHApplications.search(tenantId, searchparams, filters).SCHApplications,
+    async () => await WMSService.SCHApplications.search(tenantId, searchparams, filters),
     config
   );//isLoading: hookLoading, isError, error, data, ...rest
   return { isLoading, error, data, revalidate: () => client.invalidateQueries(["WMS_SCH_SEARCH", tenantId,searchparams,filters]) };;

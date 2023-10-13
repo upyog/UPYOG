@@ -67,9 +67,9 @@ const WmsSorEdit = () => {
     requestdata.end_date = Date.parse(input?.WmsSorEndDate?.end_date);
     requestdata.sor_name = input?.WmsSorName?.sor_name ? input?.WmsSorName?.sor_name : undefined;
     requestdata.description_of_item = input?.WmsSorDescriptionOfItem?.description_of_item ? input?.WmsSorDescriptionOfItem?.description_of_item : undefined;
-    requestdata.chapter = input?.WmsSorChapter?.chapter ? input?.WmsSorChapter?.chapter : undefined;
+    requestdata.chapter = input?.WmsSorChapter?.name ? input?.WmsSorChapter?.name : undefined;
     requestdata.item_no = input?.WmsSorItemNo?.item_no ? input?.WmsSorItemNo?.item_no : undefined;
-    requestdata.unit = input?.WmsSorUnit?.unit ? input?.WmsSorUnit?.unit : undefined;
+    requestdata.unit = input?.WmsSorUnit?.name ? input?.WmsSorUnit?.name : undefined;
     requestdata.rate = input?.WmsSorRate?.rate ? input?.WmsSorRate?.rate : undefined;
     //let ScheduleOfRateApplications = [requestdata];
     Digit.WMSService.SORApplications.update(requestdata, tenantId).then((result,err)=>{
@@ -95,9 +95,9 @@ const WmsSorEdit = () => {
     WmsSorId: {sor_id:dataEdit[0]?.sor_id},
     WmsSorName: { sor_name: dataEdit[0]?.sor_name },
     WmsSorDescriptionOfItem: { description_of_item: dataEdit[0]?.description_of_item },
-    WmsSorChapter: { chapter: dataEdit[0]?.chapter },
+    WmsSorChapter: { name: dataEdit[0]?.chapter },
     WmsSorItemNo: { item_no: dataEdit[0]?.item_no },
-    WmsSorUnit: { unit: dataEdit[0]?.unit },
+    WmsSorUnit: { name: dataEdit[0]?.unit },
     WmsSorRate: { rate: dataEdit[0]?.rate },
     WmsSorStartDate: { start_date: convertEpochToDate(dataEdit[0]?.start_date )},
     WmsSorEndDate: { end_date: convertEpochToDate(dataEdit[0]?.end_date )},

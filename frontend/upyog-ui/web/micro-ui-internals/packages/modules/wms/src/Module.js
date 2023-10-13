@@ -312,7 +312,6 @@ const componentsToRegister = {
   ContrMasterAdd,
   ContrMasterView,
   WMSCard,
-// Inbox,
   CMView,
   WMSCardContract,
   ContractViewTableTest,
@@ -449,8 +448,12 @@ export const WMSLinks = ({ matchPath, userType }) => {
       i18nKey: t("WMS_HOME"),
     }, 
     {
-      link: `${matchPath}/prjmst/home`,
-      i18nKey: t("PRJMST_HOME"),
+      link: `${matchPath}/prj-home`,
+      i18nKey: t("PRJ_HOME"),
+    },
+    {
+      link: `${matchPath}/sch-home`,
+      i18nKey: t("SCH_HOME"),
     },
     {
       link: `${matchPath}/phm-home`,

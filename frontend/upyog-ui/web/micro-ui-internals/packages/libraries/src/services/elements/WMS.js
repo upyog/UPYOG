@@ -11,8 +11,8 @@ const WmsService = {
         url: Urls.wms.SORApplications.search,
         useCache: false,
         method: "GET",//"POST",
-        auth: true,
-        userService: true,
+        auth: false,
+        userService: false,
         params:{...searchParams},// tenantId, ...filters, ...searchParams }//TODO:#1 Actual API needs to attach  { tenantId, ...filters, ...searchParams },
       }),
     create: (data, tenantId) =>
@@ -22,7 +22,7 @@ const WmsService = {
         useCache: false,
         method: "POST",
         auth: true,
-        userService: true,
+        userService: false,
         params: {  },//TODO:#1 {tenantId}
       }),
     update: (data, tenantId) =>
@@ -32,7 +32,7 @@ const WmsService = {
         useCache: false,
         method: "PUT",
         auth: true,
-        userService: true,
+        userService: false,
         params: {  },
       }),
     delete: (data, tenantId) =>
@@ -42,25 +42,25 @@ const WmsService = {
         useCache: false,
         method: "DELETE",
         auth: true,
-        userService: true,
+        userService: false,
         params: { tenantId },
       }),
-    get: (sorId,tenantId) =>
+    get: (sor_id) =>
       Request({
-        url: Urls.wms.SORApplications.get,
+        url: Urls.wms.SORApplications.get+"/"+ sor_id,
         useCache: false,
         method: "GET",
-        auth: true,
-        userService: true,
-        params: { sor_id:sorId},
+        auth: false,
+        userService: false,
+        params:{},
       }),
       count: () =>
       Request({
         url: Urls.wms.SORApplications.count,
         useCache: false,
         method:"GET",// "POST",
-        auth: true,
-        userService: true,
+        auth: false,
+        userService: false,
         params: {  },
       }),
 },

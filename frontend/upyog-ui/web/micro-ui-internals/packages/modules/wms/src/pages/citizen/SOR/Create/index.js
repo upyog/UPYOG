@@ -12,18 +12,19 @@ const WmsSorCreate = () => {
   const [canSubmit, setSubmitValve] = useState(false);
   const [showToast, setShowToast] = useState(null);
   const onSubmit = (data) => {
+    //alert(JSON.stringify(data));
     setIsLoading(true);
     let ScheduleOfRateApplications = 
       {
         ScheduleOfRateApplication: [{
-          sor_name: data?.WmsSorName?.sor_name,
-          description_of_item: data?.WmsSorDescriptionOfItem?.description_of_item,  
-          chapter: data?.WmsSorChapter?.chapter,
-          item_no: data?.WmsSorItemNo?.item_no,        
-          unit: data?.WmsSorUnit?.unit,
-          rate: data?.WmsSorRate?.rate,         
-          start_date: convertEpochToDate(data?.WmsSorStartDate?.start_date),
-          end_date: convertEpochToDate(data?.WmsSorEndDate?.end_date),
+          sor_name: data?.WmsSorName?.name,
+          description_of_item: data?.WmsSorDescriptionOfItem?.name,  
+          chapter: data?.WmsSorChapter?.name,
+          item_no: data?.WmsSorItemNo?.name,        
+          unit: data?.WmsSorUnit?.name,
+          rate: data?.WmsSorRate?.name,         
+          start_date: convertEpochToDate(data?.WmsSorStartDate?.name),
+          end_date: convertEpochToDate(data?.WmsSorEndDate?.name),
           tenantId:tenantId
         }],
       };
