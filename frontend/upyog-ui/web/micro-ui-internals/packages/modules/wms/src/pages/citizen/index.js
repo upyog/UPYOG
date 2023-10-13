@@ -80,7 +80,7 @@ const CitizenApp = ({ path, url, userType }) => {
   const TenderCategoryAdd = Digit?.ComponentRegistryService?.getComponent("TenderCategoryAdd");
   const TenderCategoryView = Digit?.ComponentRegistryService?.getComponent("TenderCategoryView");
   const TenderCategoryEdit = Digit?.ComponentRegistryService?.getComponent("TenderCategoryEdit");
-
+  const MasterPageList = Digit?.ComponentRegistryService?.getComponent("MasterPageList");
 
   return (
     <span className={"pt-citizen"}>
@@ -88,13 +88,16 @@ const CitizenApp = ({ path, url, userType }) => {
       <AppContainer>
       {shouldHideBackButton(hideBackButtonConfig) ? <BackButton>Back</BackButton> : ""}
         <div className="ground-container">
-          
+        
+
           <PrivateRoute
             path={`${path}/sor-home`}
             component={() => (
               <WmsSorList parentRoute={path} businessService="WMS" filterComponent="WMS_LIST_FILTER" initialStates={inboxInitialState} isInbox={true} />
             )}
           />
+        <PrivateRoute path={`${path}/master-data`} component={() => <MasterPageList />} />
+
           <PrivateRoute path={`${path}/sor-create`} component={() => <WmsSorCreate />} />
           <PrivateRoute path={`${path}/sor-details/:id`} component={() => <WmsSorDetails />} />
           <PrivateRoute path={`${path}/sor-edit/:id`} component={() => <WmsSorEdit />} />

@@ -15,14 +15,14 @@ const WmsCMGSTNumber = ({ t, config, onSelect, formData = {}, userType, register
       label: "GST Number",
       type: "text",
       name: "gst_number",
-      validation: {
-        isRequired: true,
-        // pattern: Digit.Utils.getPattern('OldLicenceNo'),
-        // title: t("CORE_COMMON_APPLICANT_NAME_INVALID"),
-        title: "GST Number Require",
+      // validation: {
+      //   isRequired: true,
+      //   // pattern: Digit.Utils.getPattern('OldLicenceNo'),
+      //   // title: t("CORE_COMMON_APPLICANT_NAME_INVALID"),
+      //   title: "GST Number Require",
 
-      },
-      isMandatory: true,
+      // },
+      // isMandatory: true,
     },
 
   ];
@@ -58,7 +58,7 @@ const WmsCMGSTNumber = ({ t, config, onSelect, formData = {}, userType, register
 
               {t(input.label)}
 
-              {input.isMandatory ? " * " : null}
+              {/* {input.isMandatory ? " * " : null} */}
 
             </CardLabel>
 
@@ -80,9 +80,9 @@ const WmsCMGSTNumber = ({ t, config, onSelect, formData = {}, userType, register
                 {...input.validation}
 
               />
-            {isTrue&&<CardLabelError style={{ width: "100%", marginTop: '-15px', fontSize: '16px', marginBottom: '12px'}}>{t("Require Field")}</CardLabelError>}
+            {/* {isTrue&&<CardLabelError style={{ width: "100%", marginTop: '-15px', fontSize: '16px', marginBottom: '12px'}}>{t("Require Field")}</CardLabelError>}
 
-            {currentValue&&currentValue.length>0&&!currentValue.match(Digit.Utils.getPattern('OldLicenceNo'))&&<CardLabelError style={{ width: "100%", marginTop: '-15px', fontSize: '16px', marginBottom: '12px'}}>{t("GST Number is allow in only this formate [07XXXX2115X1XX]")}</CardLabelError>}
+            {currentValue&&currentValue.length>0&&!currentValue.match(Digit.Utils.getPattern('OldLicenceNo'))&&<CardLabelError style={{ width: "100%", marginTop: '-15px', fontSize: '16px', marginBottom: '12px'}}>{t("GST Number is allow in only this formate [07XXXX2115X1XX]")}</CardLabelError>} */}
 
             </div>
 

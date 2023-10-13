@@ -19,17 +19,17 @@ console.log({t, config, onSelect, formData})
 
       name: "mobile_number",
 
-      validation: {
+      // validation: {
 
-        isRequired: true,
+      //   isRequired: true,
 
-        // pattern: Digit.Utils.getPattern('MobileNumber'),
-        // title: t("CORE_COMMON_APPLICANT_NAME_INVALID"),
-        title: "Numeric only allow",
+      //   // pattern: Digit.Utils.getPattern('MobileNumber'),
+      //   // title: t("CORE_COMMON_APPLICANT_NAME_INVALID"),
+      //   title: "Numeric only allow",
 
-      },
+      // },
 
-      isMandatory: true,
+      // isMandatory: true,
 
     },
 
@@ -67,7 +67,7 @@ console.log({t, config, onSelect, formData})
 
               {t(input.label)}
 
-              {input.isMandatory ? " * " : null}
+              {/* {input.isMandatory ? " * " : null} */}
 
             </CardLabel>
 
@@ -89,9 +89,9 @@ console.log({t, config, onSelect, formData})
                 {...input.validation}
 
               />
-            {isTrue&&<CardLabelError style={{ width: "100%", marginTop: '-15px', fontSize: '16px', marginBottom: '12px'}}>{t("Require Field")}</CardLabelError>}
+            {/* {isTrue&&<CardLabelError style={{ width: "100%", marginTop: '-15px', fontSize: '16px', marginBottom: '12px'}}>{t("Require Field")}</CardLabelError>}
 
-            {currentValue&&currentValue.length>0&&!currentValue.match(Digit.Utils.getPattern('MobileNumber'))&&<CardLabelError style={{ width: "100%", marginTop: '-15px', fontSize: '16px', marginBottom: '12px'}}>{t("Max 10 characters number allow only")}</CardLabelError>}
+            {currentValue&&currentValue.length>0&&!currentValue.match(Digit.Utils.getPattern('MobileNumber'))&&<CardLabelError style={{ width: "100%", marginTop: '-15px', fontSize: '16px', marginBottom: '12px'}}>{t("Max 10 characters number allow only")}</CardLabelError>} */}
 
             </div>
 

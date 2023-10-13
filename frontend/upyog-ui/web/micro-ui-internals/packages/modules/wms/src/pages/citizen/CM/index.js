@@ -1,7 +1,6 @@
 import { FormComposer,Toast } from "@egovernments/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-// import { newConfig as newConfigBPA } from "../../../config/contactMaster/contactMasterConfig";
 import { newConfig } from "../../../config/contactMaster/contactMasterConfig";
 import {useHistory} from 'react-router-dom'
 
@@ -24,6 +23,11 @@ console.log({isSuccess,isError,error})
     }, 5000);
   }
   },[showToast])
+  useEffect(()=>{
+    if(isSuccess){
+      setShowToast(true)
+    }else{setShowToast(false)}
+  },[isSuccess])
 const onSubmit=async(data)=>{
     console.log("data ",data)
     // let contactCreate ={
@@ -78,7 +82,7 @@ const onSubmit=async(data)=>{
     "function":data?.WmsCMFunction?.name,
     "vendor_class":data?.WmsCMVendorClass?.name,
     "vendor_sub_type":data?.WmsCMSubType?.name,
-    "primary_account_head":data?.WmsCMPrimaryAccountHead.name,
+    "primary_account_head":data?.WmsCMPrimaryAccountHead?.name,
     "tenantId": tenantId
     }
         ]
@@ -93,10 +97,8 @@ const onSubmit=async(data)=>{
     //       }}]
     console.log("Text Controll View ",contactCreate, tenantId)
 
-
   /* use customiseCreateFormData hook to make some chnages to the Employee object */
   await mutate(contactCreate, tenantId)
-  setShowToast(true)
 
 //   Digit.WMSService.ContractorMaster.create(contactCreate, tenantId).then((result,err)=>{
 //     let getdata = {...data , get: result }

@@ -82,7 +82,7 @@ const option = [{"name":"Non-Specified Hindu Undivided Family"},{"name":"Individ
       <LabelFieldPair key={index}>
         <CardLabel className="card-label-smaller">
           {t(input.label)}
-          {input.isMandatory ? " * " : null}
+          {input.isMandatory ? <span style={{"color":"red"}}> * </span> : null}
         </CardLabel>
         <Dropdown
           className="form-field"

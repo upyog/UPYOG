@@ -55,7 +55,7 @@ const WmsCMVType = ({ t, config, onSelect, formData = {}, userType, register, er
 
               {t(input.label)}
 
-              {input.isMandatory ? " * " : null}
+              {input.isMandatory ? <span style={{"color":"red"}}> * </span> : null}
 
             </CardLabel>
 

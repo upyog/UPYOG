@@ -55,10 +55,10 @@ console.log("citizenTypes bank ",citizenTypes)
       label: "Bank, Branch & IFSC Code",
       type: "text",
       name: "bank_branch_ifsc_code",
-      validation: {
-        isRequired: true,
-      },
-      isMandatory: true,
+      // validation: {
+      //   isRequired: true,
+      // },
+      // isMandatory: true,
     },
   ];
 
@@ -71,7 +71,7 @@ console.log("citizenTypes bank ",citizenTypes)
       <LabelFieldPair key={index}>
         <CardLabel className="card-label-smaller">
           {t(input.label)}
-          {input.isMandatory ? " * " : null}
+          {/* {input.isMandatory ? " * " : null} */}
         </CardLabel>
         <Dropdown
           className="form-field"
@@ -85,7 +85,7 @@ console.log("citizenTypes bank ",citizenTypes)
           defaultValue={undefined}
           t={t}
         />
-            {isTrue&&<CardLabelError style={{ width: "100%", marginTop: '-15px', fontSize: '16px', marginBottom: '12px'}}>{t("Require Field")}</CardLabelError>}
+            {/* {isTrue&&<CardLabelError style={{ width: "100%", marginTop: '-15px', fontSize: '16px', marginBottom: '12px'}}>{t("Require Field")}</CardLabelError>} */}
 
       </LabelFieldPair>
     );

@@ -78,7 +78,7 @@ const WmsCMVendorClass = ({ t, config, onSelect, formData = {}, userType }) => {
       <LabelFieldPair key={index}>
         <CardLabel className="card-label-smaller">
           {t(input.label)}
-          {input.isMandatory ? " * " : null}
+          {input.isMandatory ? <span style={{"color":"red"}}> * </span> : null}
         </CardLabel>
         <Dropdown
           className="form-field"

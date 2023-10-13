@@ -15,14 +15,14 @@ const WmsCMPANNumber = ({ t, config, onSelect, formData = {}, userType, register
       label: "PAN Number",
       type: "text",
       name: "pan_number",
-      validation: {
-        isRequired: true,
-        // pattern: Digit.Utils.getPattern('OldLicenceNo'),
-        // title: t("CORE_COMMON_APPLICANT_NAME_INVALID"),
-        title: "PAN Number Require",
+      // validation: {
+      //   isRequired: true,
+      //   // pattern: Digit.Utils.getPattern('OldLicenceNo'),
+      //   // title: t("CORE_COMMON_APPLICANT_NAME_INVALID"),
+      //   title: "PAN Number Require",
 
-      },
-      isMandatory: true,
+      // },
+      // isMandatory: true,
     },
 
   ];
@@ -58,7 +58,7 @@ const WmsCMPANNumber = ({ t, config, onSelect, formData = {}, userType, register
 
               {t(input.label)}
 
-              {input.isMandatory ? " * " : null}
+              {/* {input.isMandatory ? " * " : null} */}
 
             </CardLabel>
 
@@ -80,9 +80,9 @@ const WmsCMPANNumber = ({ t, config, onSelect, formData = {}, userType, register
                 {...input.validation}
 
               />
-            {isTrue&&<CardLabelError style={{ width: "100%", marginTop: '-15px', fontSize: '16px', marginBottom: '12px'}}>{t("Require Field")}</CardLabelError>}
+            {/* {isTrue&&<CardLabelError style={{ width: "100%", marginTop: '-15px', fontSize: '16px', marginBottom: '12px'}}>{t("Require Field")}</CardLabelError>}
 
-            {currentValue&&currentValue.length>0&&!currentValue.match(Digit.Utils.getPattern('OldLicenceNo'))&&<CardLabelError style={{ width: "100%", marginTop: '-15px', fontSize: '16px', marginBottom: '12px'}}>{t("PAN Number is allow in only this formate [XXXX9876X]")}</CardLabelError>}
+            {currentValue&&currentValue.length>0&&!currentValue.match(Digit.Utils.getPattern('OldLicenceNo'))&&<CardLabelError style={{ width: "100%", marginTop: '-15px', fontSize: '16px', marginBottom: '12px'}}>{t("PAN Number is allow in only this formate [XXXX9876X]")}</CardLabelError>} */}
 
             </div>
 

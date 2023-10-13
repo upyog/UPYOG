@@ -55,7 +55,7 @@ const WmsCMVendorSubTypeName = ({ t, config, onSelect, formData = {}, userType, 
 
               {t(input.label)}
 
-              {input.isMandatory ? " * " : null}
+              {input.isMandatory ? <span style={{"color":"red"}}> * </span> : null}
 
             </CardLabel>
 

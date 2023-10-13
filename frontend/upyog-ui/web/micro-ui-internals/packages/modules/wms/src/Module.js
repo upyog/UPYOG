@@ -201,6 +201,7 @@ import TenderCategoryView from "./pages/citizen/TE/Master/TenderCategory/View";
 import TenderCategoryEdit from "./pages/citizen/TE/Master/TenderCategory/Edit/index";
 import WmsTenderCategoryName from "./pageComponents/TE/tenderCategory/WmsTenderCategoryName";
 import WmsTenderCategoryStatus from "./pageComponents/TE/tenderCategory/WmsTenderCategoryStatus";
+import MasterPageList from "./pages/citizen/MasterPageList";
 
 const componentsToRegister = {  
   Home:Home,  
@@ -380,7 +381,8 @@ TenderCategoryAdd,
 WmsTenderCategoryName,
 WmsTenderCategoryStatus,
 TenderCategoryView,
-TenderCategoryEdit
+TenderCategoryEdit,
+MasterPageList
 };
 
 export const WMSModule = ({ stateCode, userType, tenants }) => {
@@ -423,10 +425,10 @@ export const WMSLinks = ({ matchPath, userType }) => {
       link: `${matchPath}/cm-home`,
       i18nKey: t("Contact Master"),
     },
-    {
-      link: `${matchPath}/cm-table-view`,
-      i18nKey: t("Contact Master Tabless"),
-    },
+    // {
+    //   link: `${matchPath}/cm-table-view`,
+    //   i18nKey: t("Contact Master Tabless"),
+    // },
   ];
   return <CitizenHomeCard header={t("CITIZEN_SERVICE_WMS")} links={links} Icon={() => <PTIcon className="fill-path-primary-main" />} />;
 };

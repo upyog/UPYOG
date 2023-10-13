@@ -58,7 +58,7 @@ const WmsCMVATNumber = ({ t, config, onSelect, formData = {}, userType, register
 
               {t(input.label)}
 
-              {input.isMandatory ? " * " : null}
+              {input.isMandatory ? <span style={{"color":"red"}}> * </span> : null}
 
             </CardLabel>
 

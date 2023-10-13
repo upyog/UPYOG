@@ -18,19 +18,19 @@ const WmsCMUIDNumber = ({ t, config, onSelect, formData = {}, userType, register
 
       name: "uid_number",
 
-      validation: {
+      // validation: {
 
-        isRequired: true,
+      //   isRequired: true,
 
-        // pattern: Digit.Utils.getPattern('AadharNo'),
+      //   // pattern: Digit.Utils.getPattern('AadharNo'),
 
-        // title: t("CORE_COMMON_APPLICANT_NAME_INVALID"),
-        title: "UID Number Require",
+      //   // title: t("CORE_COMMON_APPLICANT_NAME_INVALID"),
+      //   title: "UID Number Require",
 
 
-      },
+      // },
 
-      isMandatory: true,
+      // isMandatory: true,
 
     },
 
@@ -64,7 +64,7 @@ const WmsCMUIDNumber = ({ t, config, onSelect, formData = {}, userType, register
 
               {t(input.label)}
 
-              {input.isMandatory ? " * " : null}
+              {/* {input.isMandatory ? " * " : null} */}
 
             </CardLabel>
 
@@ -86,7 +86,7 @@ const WmsCMUIDNumber = ({ t, config, onSelect, formData = {}, userType, register
 
               />
 
-            {currentValue&&currentValue.length>0&&!currentValue.match(Digit.Utils.getPattern('AadharNo'))&&<CardLabelError style={{ width: "100%", marginTop: '-15px', fontSize: '16px', marginBottom: '12px'}}>{t("Only 12 digit aadhaar number are allowed")}</CardLabelError>}
+            {/* {currentValue&&currentValue.length>0&&!currentValue.match(Digit.Utils.getPattern('AadharNo'))&&<CardLabelError style={{ width: "100%", marginTop: '-15px', fontSize: '16px', marginBottom: '12px'}}>{t("Only 12 digit aadhaar number are allowed")}</CardLabelError>} */}
 
             </div>
 

@@ -70,10 +70,10 @@ const WmsCMPrimaryAccountHead = ({ t, config, onSelect, formData = {}, userType 
       label: "Primary Account Head",
       type: "text",
       name: "primary_account_head",
-      validation: {
-        isRequired: true,
-      },
-      isMandatory: true,
+      // validation: {
+      //   isRequired: true,
+      // },
+      // isMandatory: true,
     },
   ];
 
@@ -86,7 +86,7 @@ const WmsCMPrimaryAccountHead = ({ t, config, onSelect, formData = {}, userType 
       <LabelFieldPair key={index}>
         <CardLabel className="card-label-smaller">
           {t(input.label)}
-          {input.isMandatory ? " * " : null}
+          {/* {input.isMandatory ? " * " : null} */}
         </CardLabel>
         <Dropdown
           className="form-field"
@@ -99,7 +99,7 @@ const WmsCMPrimaryAccountHead = ({ t, config, onSelect, formData = {}, userType 
           defaultValue={undefined}
           t={t}
         />
-            {isTrue&&<CardLabelError style={{ width: "100%", marginTop: '-15px', fontSize: '16px', marginBottom: '12px'}}>{t("Require Field")}</CardLabelError>}
+            {/* {isTrue&&<CardLabelError style={{ width: "100%", marginTop: '-15px', fontSize: '16px', marginBottom: '12px'}}>{t("Require Field")}</CardLabelError>} */}
 
       </LabelFieldPair>
     );

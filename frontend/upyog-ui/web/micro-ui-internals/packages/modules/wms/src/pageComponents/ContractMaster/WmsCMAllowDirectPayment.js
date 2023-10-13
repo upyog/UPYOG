@@ -17,14 +17,14 @@ console.log("CheckBoxData ",CheckBoxData)
       type: "checkbox",
       name: "allow_direct_payment",
       
-      validation: {
-        isRequired: true,
-        // pattern: Digit.Utils.getPattern('Name'),
-        // title: t("CORE_COMMON_APPLICANT_NAME_INVALID"),
-        title: "Require",
+      // validation: {
+      //   isRequired: true,
+      //   // pattern: Digit.Utils.getPattern('Name'),
+      //   // title: t("CORE_COMMON_APPLICANT_NAME_INVALID"),
+      //   title: "Require",
 
-      },
-      isMandatory: true,
+      // },
+      // isMandatory: true,
     },
 
   ];
@@ -54,7 +54,7 @@ console.log("CheckBoxData ",CheckBoxData)
 
               {t(input.label)}
 
-              {input.isMandatory ? " * " : null}
+              {/* {input.isMandatory ? " * " : null} */}
 
             </CardLabel>
 

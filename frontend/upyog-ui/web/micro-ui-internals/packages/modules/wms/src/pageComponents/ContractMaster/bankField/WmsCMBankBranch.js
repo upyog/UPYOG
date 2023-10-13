@@ -55,7 +55,7 @@ const WmsCMBankBranch = ({ t, config, onSelect, formData = {}, userType, registe
 
               {t(input.label)}
 
-              {input.isMandatory ? " * " : null}
+              {input.isMandatory ? <span style={{"color":"red"}}> * </span> : null}
 
             </CardLabel>
 

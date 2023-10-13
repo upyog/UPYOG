@@ -15,14 +15,14 @@ const WmsCMPFAccountNumber = ({ t, config, onSelect, formData = {}, userType, re
       label: "PF Account Number",
       type: "text",
       name: "epfo_account_number",
-      validation: {
-        isRequired: true,
-        // pattern: Digit.Utils.getPattern('OldLicenceNo'),
-        // title: t("CORE_COMMON_APPLICANT_NAME_INVALID"),
-        title: "PF Account Number Require",
+      // validation: {
+      //   isRequired: true,
+      //   // pattern: Digit.Utils.getPattern('OldLicenceNo'),
+      //   // title: t("CORE_COMMON_APPLICANT_NAME_INVALID"),
+      //   title: "PF Account Number Require",
 
-      },
-      isMandatory: true,
+      // },
+      // isMandatory: true,
     },
 
   ];
@@ -56,7 +56,7 @@ const WmsCMPFAccountNumber = ({ t, config, onSelect, formData = {}, userType, re
 
               {t(input.label)}
 
-              {input.isMandatory ? " * " : null}
+              {/* {input.isMandatory ? " * " : null} */}
 
             </CardLabel>
 
@@ -78,9 +78,9 @@ const WmsCMPFAccountNumber = ({ t, config, onSelect, formData = {}, userType, re
                 {...input.validation}
 
               />
-            {isTrue&&<CardLabelError style={{ width: "100%", marginTop: '-15px', fontSize: '16px', marginBottom: '12px'}}>{t("Require Field")}</CardLabelError>}
+            {/* {isTrue&&<CardLabelError style={{ width: "100%", marginTop: '-15px', fontSize: '16px', marginBottom: '12px'}}>{t("Require Field")}</CardLabelError>}
 
-            {currentValue&&currentValue.length>0&&!currentValue.match(Digit.Utils.getPattern('OldLicenceNo'))&&<CardLabelError style={{ width: "100%", marginTop: '-15px', fontSize: '16px', marginBottom: '12px'}}>{t("PF No should only alphanumeric characters are allowed")}</CardLabelError>}
+            {currentValue&&currentValue.length>0&&!currentValue.match(Digit.Utils.getPattern('OldLicenceNo'))&&<CardLabelError style={{ width: "100%", marginTop: '-15px', fontSize: '16px', marginBottom: '12px'}}>{t("PF No should only alphanumeric characters are allowed")}</CardLabelError>} */}
 
             </div>
 

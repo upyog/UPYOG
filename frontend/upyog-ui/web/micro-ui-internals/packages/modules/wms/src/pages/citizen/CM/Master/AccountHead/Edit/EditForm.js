@@ -23,6 +23,13 @@ const EditForm=({ tenantId, data })=>{
     }, 5000);
   }
   },[showToast])
+
+  useEffect(()=>{
+    if(isSuccess){
+      setShowToast(true)
+    }else{setShowToast(false)}
+  },[isSuccess])
+  
   useEffect(()=>{if(isSuccess){setShowToast(true);}else if(isError){alert("Something wrong in updated bank record")}else{}},[isSuccess])
 
   const defaultValues = {

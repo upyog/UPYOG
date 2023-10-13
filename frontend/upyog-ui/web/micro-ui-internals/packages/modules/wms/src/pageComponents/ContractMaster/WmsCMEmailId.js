@@ -15,14 +15,14 @@ const WmsCMEmailId = ({ t, config, onSelect, formData = {}, userType, register, 
       label: "Email Id",
       type: "text",
       name: "email",
-      validation: {
-        isRequired: true,
-        // pattern: Digit.Utils.getPattern('Email'),
-        // title: t("CORE_COMMON_APPLICANT_NAME_INVALID"),
-        title: "Email Id Require",
+      // validation: {
+      //   isRequired: true,
+      //   // pattern: Digit.Utils.getPattern('Email'),
+      //   // title: t("CORE_COMMON_APPLICANT_NAME_INVALID"),
+      //   title: "Email Id Require",
 
-      },
-      isMandatory: true,
+      // },
+      // isMandatory: true,
     },
 
   ];
@@ -58,7 +58,7 @@ const WmsCMEmailId = ({ t, config, onSelect, formData = {}, userType, register, 
 
               {t(input.label)}
 
-              {input.isMandatory ? " * " : null}
+              {/* {input.isMandatory ? " * " : null} */}
 
             </CardLabel>
 
@@ -80,9 +80,9 @@ const WmsCMEmailId = ({ t, config, onSelect, formData = {}, userType, register, 
                 {...input.validation}
 
               />
-            {isTrue&&<CardLabelError style={{ width: "100%", marginTop: '-15px', fontSize: '16px', marginBottom: '12px'}}>{t("Require Field")}</CardLabelError>}
+            {/* {isTrue&&<CardLabelError style={{ width: "100%", marginTop: '-15px', fontSize: '16px', marginBottom: '12px'}}>{t("Require Field")}</CardLabelError>}
 
-            {currentValue&&currentValue.length>0&&!currentValue.match(Digit.Utils.getPattern('Email'))&&<CardLabelError style={{ width: "100%", marginTop: '-15px', fontSize: '16px', marginBottom: '12px'}}>{t("Email is allow in only this formate example@domainname.com")}</CardLabelError>}
+            {currentValue&&currentValue.length>0&&!currentValue.match(Digit.Utils.getPattern('Email'))&&<CardLabelError style={{ width: "100%", marginTop: '-15px', fontSize: '16px', marginBottom: '12px'}}>{t("Email is allow in only this formate example@domainname.com")}</CardLabelError>} */}
 
             </div>
 

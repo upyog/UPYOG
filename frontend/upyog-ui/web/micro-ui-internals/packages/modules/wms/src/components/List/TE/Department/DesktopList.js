@@ -15,7 +15,7 @@ const DesktopInbox = ({ tableConfig, ...props} ) => {
   const GetSlaCell = (value) => {
     return value == "INACTIVE" ? <span className="sla-cell-error">{ value || ""}</span> : <span className="sla-cell-success">{ value || ""}</span>;
   };
-  const data = props?.data?.WMSPrimaryAccountHeadApplications;
+  const data = props?.data?.WMSDepartmentApplications;
   // const data = props?.data;
 // console.log("data props ",props )
 // console.log("data props data ",props?.data )
@@ -36,26 +36,14 @@ const DesktopInbox = ({ tableConfig, ...props} ) => {
       //   },
       // },
       {
-        Header: "Accounthead Head Name",
+        Header: "Department Name",
         disableSortBy: true,
         Cell: ({ row }) => {
-          return GetCell(`${row.original?.primary_accounthead_name}`);
+          return GetCell(`${row.original?.dept_name}`);
         },
       },
-      {
-        Header: "Account Head Number",
-        disableSortBy: true,
-        Cell: ({ row }) => {
-          return GetCell(`${row.original?.primary_accounthead_accountno}`);
-        },
-      },
-      {
-        Header: "Accounthead Head Location",
-        disableSortBy: true,
-        Cell: ({ row }) => {
-          return GetCell(`${row.original?.primary_accounthead_location}`);
-        },
-      },
+      
+      
       {
         Header: "Status",
         disableSortBy: true,
@@ -64,7 +52,7 @@ const DesktopInbox = ({ tableConfig, ...props} ) => {
           // return GetCell(`${row.original?.vendor_status}`)
           // return GetCell(`${row.original?.vendor_status==="Active" ? <span style={{"color":"red"}}>{row.original?.vendor_status}</span> : <span style={{"color":"red"}}>{row.original?.vendor_status}</span>}`);
 
-          return GetSlaCell(`${row?.original?.account_status==="Active" ? row?.original?.account_status?.toUpperCase() : row?.original?.account_status?.toUpperCase()}`);
+          return GetSlaCell(`${row?.original?.dept_status==="Active" ? row?.original?.dept_status?.toUpperCase() : row?.original?.dept_status?.toUpperCase()}`);
         },
       },
       {
@@ -78,7 +66,7 @@ const DesktopInbox = ({ tableConfig, ...props} ) => {
             </span> 
             {' '} */}
             <span className="link">
-            <Link to={`edit/${props.tenantId}/${row?.original?.primary_accounthead_id}`}>Edit</Link>
+            <Link to={`edit/${props.tenantId}/${row?.original?.dept_id}`}>Edit</Link>
           </span>
           </React.Fragment>
             

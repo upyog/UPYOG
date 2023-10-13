@@ -14,7 +14,7 @@ const WmsCMVendorType = ({ t, config, onSelect, formData = {}, userType,setError
   const [citizenType, setcitizenType] = useState(formData?.WmsCMVendorType);
   const [citizenTypeList, setcitizenTypeList] = useState();
   const [isTrue, setisTrue] = useState(false);
-console.log("citizenTypes vendor type ", citizenTypes)
+console.log("citizenTypes vendor type ", citizenTypeList)
   function SelectcitizenType(value) {
   if(!value?.name){setisTrue(true)}else{setisTrue(false);setcitizenType(value);}
   }
@@ -73,23 +73,22 @@ console.log("citizenTypes vendor type ", citizenTypes)
     },
   ];
 
-  if (isLoading) {
-    return <Loader />;
-  }
+  // if (isLoading) {
+  //   return <Loader />;
+  // }
 
   return inputs?.map((input, index) => {
     return (
       <LabelFieldPair key={index}>
         <CardLabel className="card-label-smaller">
           {t(input.label)}
-          {input.isMandatory ? " * " : null}
+          {input.isMandatory ? <span style={{"color":"red"}}> * </span> : null}
         </CardLabel>
         <Dropdown
           className="form-field"
           selected={citizenType}
-          // option={citizenTypeList?.["egov-hrms"]?.citizenType}
-          option={citizenTypeList!=undefined && citizenTypeList}
-          // option={vendorType}
+          option={citizenTypeList==="undefined" ? <span>Loading...</span> : citizenTypeList }
+          // option={citizenTypeList!=undefined && citizenTypeList}
           select={SelectcitizenType}
           onBlur={SelectcitizenType}
           optionKey="name"

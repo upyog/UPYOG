@@ -34,7 +34,8 @@ const {isLoading,isSuccess } = cmGetTableData;
 
 //  const { isLoading: is_Loading, isError: vendorCreateError, data: updateResponse, error: updateError, mutate }  = Digit?.Hooks?.wms?.cm?.useWmsCMSearch();
  const {  isError: vendorCreateError, data: updateResponse, error: updateError, mutate }  = Digit?.Hooks?.wms?.cm?.useWmsCMSearch();
-useEffect(() => {
+useEffect(()=>{cmGetTableData.refetch()},[])
+ useEffect(() => {
 }, [searchParams]);
 
 useEffect(() => {

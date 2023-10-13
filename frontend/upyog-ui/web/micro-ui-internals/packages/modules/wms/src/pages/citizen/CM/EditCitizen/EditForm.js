@@ -92,9 +92,9 @@ const EditForm = ({ tenantId, data }) => {
   };
 
 
-  if (isLoading) {
-    return <Loader />;
-  }
+  // if (isLoading) {
+  //   return <Loader />;
+  // }
   const config =mdmsData?.config?mdmsData.config: newConfig;
 
   return (

@@ -71894,8 +71894,18 @@ export const LocalizationService = {
             "locale": "en_IN"
         },
         {
-            "code": "Contaractor Master",
+            "code": "CONTRACTOR_MASTER",
             "message": "Contaractor Master",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },{
+            "code": "TENDER_ENTRY",
+            "message": "Tender Entry",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },{
+            "code": "MASTER_DATA",
+            "message": "Master Data",
             "module": "rainmaker-common",
             "locale": "en_IN"
         },{

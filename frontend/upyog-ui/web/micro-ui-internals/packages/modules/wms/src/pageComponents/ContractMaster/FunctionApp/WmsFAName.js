@@ -55,7 +55,7 @@ const WmsFAName = ({ t, config, onSelect, formData = {}, userType, register, err
 
               {t(input.label)}
 
-              {input.isMandatory ? " * " : null}
+              {input.isMandatory ? <span style={{"color":"red"}}> * </span> : null}
 
             </CardLabel>
 

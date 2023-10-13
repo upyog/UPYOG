@@ -15,14 +15,14 @@ const WmsCMPFMSVendorID = ({ t, config, onSelect, formData = {}, userType, regis
       label: "PFMS Vendor ID",
       type: "text",
       name: "pfms_vendor_code",
-      validation: {
-        isRequired: true,
+      // validation: {
+        // isRequired: true,
         // pattern: Digit.Utils.getPattern('OldLicenceNo'),
         // title: t("CORE_COMMON_APPLICANT_NAME_INVALID"),
-        title: "PFMS Vendor ID Require",
+        // title: "PFMS Vendor ID Require",
 
-      },
-      isMandatory: true,
+      // },
+      // isMandatory: true,
     },
 
   ];
@@ -55,7 +55,7 @@ const WmsCMPFMSVendorID = ({ t, config, onSelect, formData = {}, userType, regis
 
               {t(input.label)}
 
-              {input.isMandatory ? " * " : null}
+              {/* {input.isMandatory ? " * " : null} */}
 
             </CardLabel>
 
@@ -77,9 +77,9 @@ const WmsCMPFMSVendorID = ({ t, config, onSelect, formData = {}, userType, regis
                 {...input.validation}
 
               />
-            {isTrue&&<CardLabelError style={{ width: "100%", marginTop: '-15px', fontSize: '16px', marginBottom: '12px'}}>{t("Require Field")}</CardLabelError>}
+            {/* {isTrue&&<CardLabelError style={{ width: "100%", marginTop: '-15px', fontSize: '16px', marginBottom: '12px'}}>{t("Require Field")}</CardLabelError>}
 
-            {currentValue&&currentValue.length>0&&!currentValue.match(Digit.Utils.getPattern('OldLicenceNo'))&&<CardLabelError style={{ width: "100%", marginTop: '-15px', fontSize: '16px', marginBottom: '12px'}}>{t("PFMS vendor code should only alphanumeric characters are allowed")}</CardLabelError>}
+            {currentValue&&currentValue.length>0&&!currentValue.match(Digit.Utils.getPattern('OldLicenceNo'))&&<CardLabelError style={{ width: "100%", marginTop: '-15px', fontSize: '16px', marginBottom: '12px'}}>{t("PFMS vendor code should only alphanumeric characters are allowed")}</CardLabelError>} */}
 
             </div>
 

@@ -1122,6 +1122,42 @@ export const StoreService = {
                 "sidebar": "digit-ui-links",
                 "sidebarURL": "/digit-ui/citizen/wms-home"
             },
+            {
+                "id": 3006,
+                "name": "TENDER_ENTRY",
+                "url": "digit-ui-card",
+                "displayName": "Tender Entry",
+                "orderNumber": 6,
+                "parentModule": "WMS",
+                "enabled": true,
+                "serviceCode": "",
+                "code": "",
+                "path": "",
+                "navigationURL": "/digit-ui/citizen/tender-entry/home",
+                "leftIcon": "propertyIcon",
+                "rightIcon": "",
+                "queryParams": "",
+                "sidebar": "digit-ui-links",
+                "sidebarURL": "/digit-ui/citizen/wms-home"
+            },
+            {
+                "id": 3007,
+                "name": "MASTER_DATA",
+                "url": "digit-ui-card",
+                "displayName": "Master Data",
+                "orderNumber": 6,
+                "parentModule": "WMS",
+                "enabled": true,
+                "serviceCode": "",
+                "code": "",
+                "path": "",
+                "navigationURL": "/digit-ui/master-data",
+                "leftIcon": "propertyIcon",
+                "rightIcon": "",
+                "queryParams": "",
+                "sidebar": "digit-ui-links",
+                "sidebarURL": "/digit-ui/citizen/wms-home"
+            },
           ]
         },
       "common-masters": {

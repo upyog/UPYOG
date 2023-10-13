@@ -15,14 +15,14 @@ const WmsCMBankAccountNumber = ({ t, config, onSelect, formData = {}, userType, 
       label: "Bank Account Number",
       type: "text",
       name: "bank_account_number",
-      validation: {
-        isRequired: true,
-        // pattern: Digit.Utils.getPattern('Name'),
-        // title: t("CORE_COMMON_APPLICANT_NAME_INVALID"),
-        title: "Bank Account Number Require",
+      // validation: {
+      //   isRequired: true,
+      //   // pattern: Digit.Utils.getPattern('Name'),
+      //   // title: t("CORE_COMMON_APPLICANT_NAME_INVALID"),
+      //   title: "Bank Account Number Require",
 
-      },
-      isMandatory: true,
+      // },
+      // isMandatory: true,
     },
 
   ];
@@ -58,7 +58,7 @@ const WmsCMBankAccountNumber = ({ t, config, onSelect, formData = {}, userType, 
 
               {t(input.label)}
 
-              {input.isMandatory ? " * " : null}
+              {/* {input.isMandatory ? " * " : null} */}
 
             </CardLabel>
 
@@ -80,9 +80,9 @@ const WmsCMBankAccountNumber = ({ t, config, onSelect, formData = {}, userType, 
                 {...input.validation}
 
               />
-            {isTrue&&<CardLabelError style={{ width: "100%", marginTop: '-15px', fontSize: '16px', marginBottom: '12px'}}>{t("Require Field")}</CardLabelError>}
+            {/* {isTrue&&<CardLabelError style={{ width: "100%", marginTop: '-15px', fontSize: '16px', marginBottom: '12px'}}>{t("Require Field")}</CardLabelError>}
 
-            {currentValue&&currentValue.length>0&&!currentValue.match(Digit.Utils.getPattern('DocumentNo'))&&<CardLabelError style={{ width: "100%", marginTop: '-15px', fontSize: '16px', marginBottom: '12px'}}>{t("Max 15 characters number allow only")}</CardLabelError>}
+            {currentValue&&currentValue.length>0&&!currentValue.match(Digit.Utils.getPattern('DocumentNo'))&&<CardLabelError style={{ width: "100%", marginTop: '-15px', fontSize: '16px', marginBottom: '12px'}}>{t("Max 15 characters number allow only")}</CardLabelError>} */}
 
             </div>
 
