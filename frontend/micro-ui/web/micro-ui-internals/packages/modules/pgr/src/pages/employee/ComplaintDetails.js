@@ -81,7 +81,8 @@ const ComplaintDetailsModal = ({ workflowDetails, complaintDetails, close, popup
   const useEmployeeData = Digit.Hooks.pgr.useEmployeeFilter(
     tenantId, 
     stateArray?.[0]?.assigneeRoles?.length > 0 ? stateArray?.[0]?.assigneeRoles?.join(",") : "",
-    complaintDetails
+    complaintDetails,
+    true
     );
   const employeeData = useEmployeeData
     ? useEmployeeData.map((departmentData) => {
