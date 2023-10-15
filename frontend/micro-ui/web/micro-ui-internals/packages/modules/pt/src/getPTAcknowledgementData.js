@@ -81,6 +81,7 @@ const getOwner = (application, t, customTitle) => {
 };
 
 const getAssessmentInfo = (application, t) => {
+  console.log("getAssessmentInfo",application)
   let values = [
     { title: t("PT_ASSESMENT_INFO_USAGE_TYPE"), value: application?.usageCategory ? `${t(
       (application?.usageCategory !== "RESIDENTIAL" ? "COMMON_PROPUSGTYPE_NONRESIDENTIAL_" : "COMMON_PROPSUBUSGTYPE_") +
@@ -89,6 +90,7 @@ const getAssessmentInfo = (application, t) => {
     { title: t("PT_ASSESMENT_INFO_TYPE_OF_BUILDING"), value: t(getPropertyTypeLocale(application?.propertyType)) || t("CS_NA") },
     { title: t("PT_ASSESMENT_INFO_PLOT_SIZE"), value: t(application?.landArea) || t("CS_NA") },
     { title: t("PT_ASSESMENT_INFO_NO_OF_FLOOR"), value: t(application?.noOfFloors) || t("CS_NA") },
+    { title: t("PT_ASSESMENT_INFO_ELECTRICITY_ID"), value: t(application?.additionalDetails?.electricity) || t("CS_NA") },
   ];
   application.units = application?.units?.filter((unit) => unit.active == true) || [];
   let flrno,
