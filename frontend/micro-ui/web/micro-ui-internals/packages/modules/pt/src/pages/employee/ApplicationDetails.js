@@ -188,6 +188,7 @@ const ApplicationDetails = () => {
   let dowloadOptions = [propertyDetailsPDF];
 
  if (applicationDetails?.applicationData?.creationReason === "MUTATION"){
+  
    return(
     <MutationApplicationDetails 
       propertyId = {propertyId}
@@ -200,6 +201,17 @@ const ApplicationDetails = () => {
     />
    )
  } 
+ if(applicationDetails?.applicationDetails[1].title =="PT_ASSESMENT_INFO_SUB_HEADER")
+{
+if (applicationDetails?.applicationDetails[1].values.length ==4)
+{
+  let obj = {
+    "title": "PT_ASSESMENT_ELECTRICITY",
+    "value": applicationDetails?.additionalDetails?.electricity || "NA"
+}
+applicationDetails?.applicationDetails[1].values.push(obj)
+}
+}
 
   return (
     <div>
