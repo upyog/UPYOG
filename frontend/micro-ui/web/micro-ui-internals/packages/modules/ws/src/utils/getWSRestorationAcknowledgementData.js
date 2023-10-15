@@ -66,45 +66,25 @@ import {
       header: t(`${application?.tenantId?.replace('.', '_')?.toUpperCase()}_HEADER_LABEL`),
       subHeader: t(`${application?.tenantId?.replace('.', '_')?.toUpperCase()}_SUB_HEADER_LABEL`),
       description: t(`${application?.tenantId?.replace('.', '_')?.toUpperCase()}_DES_HEADER_LABEL`),
-      typeOfApplication: application?.applicationNo?.includes("SW") ? t("WS_SEWERAGE_DISCONNECTION"): t("WS_WATER_DISCONNECTION"),
+      typeOfApplication: application?.applicationNo?.includes("SW") ? t("WS_SEWERAGE_RESTORATION"): t("WS_WATER_RESORATION"),
       date: Digit.DateUtils.ConvertEpochToDate(application?.additionalDetails?.appCreatedDate) || "NA",
       values: values,
       ...dynamicHeaderData
     }
   }
   
-  const getDisconnectionDetails = (application, t) => {
-    return {
-        title: t("WS_DISCONNECTION_DETAILS"),
-        values: [
-          { title: t("WS_DISCONNECTION_TYPE"), value: application?.isDisconnectionTemporary === true ? t("WS_DISCONNECTIONTYPE_TEMPORARY") : t("WS_DISCONNECTIONTYPE_PERMANENT") || t("CS_NA") },
-          { title: t("WS_DISCONNECTION_PROPOSED_DATE"), value: Digit.DateUtils.ConvertEpochToDate(application?.dateEffectiveFrom) || t("CS_NA") },
-          { title: t("WS_DISCONNECTION_REASON"), value: application?.disconnectionReason || t("CS_NA") },
-        ],
-      };
-  };
   const getRestorationDetails = (application, t) => {
     return {
         title: t("WS_RESTORATION_DETAILS"),
         values: [
-          { title: t("WS_DISCONNECTION_TYPE"), value: application?.isDisconnectionTemporary === true ? t("WS_DISCONNECTIONTYPE_TEMPORARY") : t("WS_DISCONNECTIONTYPE_PERMANENT") || t("CS_NA") },
-          { title: t("WS_DISCONNECTION_PROPOSED_DATE"), value: Digit.DateUtils.ConvertEpochToDate(application?.dateEffectiveFrom) || t("CS_NA") },
-          { title: t("WS_DISCONNECTION_REASON"), value: application?.disconnectionReason || t("CS_NA") },
+          { title: t("WS_RESTORATION_PROPOSED_DATE"), value: Digit.DateUtils.ConvertEpochToDate(application?.dateEffectiveFrom) || t("CS_NA") },
+          { title: t("WS_RESTORATION_REASON"), value: application?.reconnectionReason || t("CS_NA") },
         ],
       };
   };
-  const getDocumentDetails = (application, t) => {
-    const documents = application?.documents
-    return {
-      title: t("WS_COMMON_DOCUMENTS_DETAILS"),
-      isAttachments:true,
-      values: documents?.map(doc => t(doc?.documentType))
-    };
-  };
   
   
-  const getWSDisconectionAcknowledgementData = async (application, property, tenantInfo, t) => {
-    console.log("application",application)
+  const getWSRestorationAcknowledgementData = async (application, property, tenantInfo, t) => {
     const filesArray = application?.DisconnectionResponse?.documents?.map((value) => value?.fileStoreId);
     let res;
     if (filesArray) {
@@ -122,10 +102,9 @@ import {
       details: [
         getPropertyDetails(property, t),
         getConnectionHolderDetails(application, t),
-        getDisconnectionDetails(application, t),
-        getDocumentDetails(application,t)
+        getRestorationDetails(application, t),
       ],
     };
   };
   
-  export default getWSDisconectionAcknowledgementData;
+  export default getWSRestorationAcknowledgementData;

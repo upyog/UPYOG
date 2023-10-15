@@ -178,6 +178,25 @@ const GetConnectionDetails = () => {
         }
     }
   };
+  const getRestorationButton = () => {
+    let pathname = `/digit-ui/employee/ws/new-restoration`;
+
+    if(!checkWorkflow){
+      setshowActionToast({
+        key: "error",
+        label: "WORKFLOW_IN_PROGRESS",
+      });
+    }
+    else{
+        if (billData[0]?.status === "ACTIVE" || applicationDetails?.fetchBillsData?.length <=0 || due === "0") {
+          Digit.SessionStorage.set("WS_DISCONNECTION", applicationDetails);
+          history.push(`${pathname}`);
+        } else {
+          setshowModal(true);
+        }
+    }
+  };
+  
   function onActionSelect(action) {
     if (action === "MODIFY_CONNECTION_BUTTON") {
       getModifyConnectionButton();
@@ -186,13 +205,17 @@ const GetConnectionDetails = () => {
     } else if (action === "DISCONNECTION_BUTTON") {
       getDisconnectionButton();
     }
+    else if(action === "RESTORATION_BUTTON")
+    {
+      getRestorationButton();
+    }
   }
 
   //all options needs to be shown
   //const showAction = due !== "0" ? actionConfig : actionConfig.filter((item) => item !== "BILL_AMENDMENT_BUTTON");
   const checkApplicationStatusForDisconnection =  applicationDetails?.applicationData?.status === "Active" ? true : false
   const showAction= checkApplicationStatusForDisconnection ? actionConfig : actionConfig.filter((item) => item !== "DISCONNECTION_BUTTON");
-
+const showActionRestoration = ["RESTORATION_BUTTON"]
 
   async function getBillSearch() {
     if (applicationDetails?.fetchBillsData?.length > 0) {
@@ -252,7 +275,7 @@ const GetConnectionDetails = () => {
       </div>
     );
   };
-
+console.log("applicationDetails",applicationDetails)
   return (
     <Fragment>
       <div>
@@ -290,7 +313,12 @@ const GetConnectionDetails = () => {
 
             <SubmitBar ref={actionMenuRef} label={t("WF_TAKE_ACTION")} onSubmit={() => setDisplayMenu(!displayMenu)} />
           </ActionBar>
-        ) : null}
+        ) : 
+        <ActionBar>
+            {displayMenu ? <Menu options={showActionRestoration} localeKeyPrefix={"WS"} t={t} onSelect={onActionSelect} /> : null}
+
+            <SubmitBar ref={actionMenuRef} label={t("WF_TAKE_ACTION")} onSubmit={() => setDisplayMenu(!displayMenu)} />
+          </ActionBar>}
         {showModal ? (
           <Modal
             open={showModal}
