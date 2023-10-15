@@ -10,6 +10,7 @@ import {
   BreadCrumb,
   BackButton,
   Loader,
+  DatePicker
 } from "@egovernments/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -323,7 +324,6 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
   };
 
   if (loading) return <Loader></Loader>;
-
   return (
     <div className="user-profile">
       <section style={{ margin: userType === "citizen" ? "8px" : "24px",position:"relative" }}>
@@ -455,21 +455,7 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
               <LabelFieldPair>
                 <CardLabel style={editScreen ? { color: "#B1B4B6" } : {}}>{`${t("CORE_COMMON_PROFILE_DOB")}`}*</CardLabel>
                 <div style={{ width: "100%", maxWidth:"960px" }}>
-                  <TextInput
-                    t={t}
-                    style={{ width: "100%" }}
-                    type={"date"}
-                    isMandatory={false}
-                    name="dob"
-                    value={dob}
-                    onChange={(e)=>setUserDOB(e.target.value)}
-                    {...(validation = {
-                      isRequired: true,
-                      
-                      title: t("CORE_COMMON_PROFILE_DOB_ERROR_MESSAGE"),
-                    })}
-                    disabled={editScreen}
-                  />
+                <DatePicker date={userDetails?.dob} disable={true}  />
                   {errors?.userName && <CardLabelError> {errors?.userName?.message} </CardLabelError>}
                 </div>
               </LabelFieldPair>
@@ -618,18 +604,7 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
                   "CORE_COMMON_PROFILE_DOB"
                 )}`}</CardLabel>
                 <div style={{width: "100%"}}>
-                  <TextInput
-                    t={t}
-                    type={"date"}
-                    isMandatory={false}
-            
-                    optionKey="i18nKey"
-                    name="dob"
-                    value={dob}
-                    onChange={(e)=>setUserDOB(e.target.value)}
-                    
-                    //disable={editScreen}
-                  />
+                <DatePicker date={userDetails?.dob} disable={true}  />
                  {/* {errors?.emailAddress && <CardLabelError> {errors?.emailAddress?.message} </CardLabelError>} */}
                 </div>
               </LabelFieldPair>

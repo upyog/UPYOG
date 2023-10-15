@@ -6,7 +6,7 @@ import CardLabel from "../atoms/CardLabel";
 import CardLabelError from "../atoms/CardLabelError";
 import TextInput from "../atoms/TextInput";
 import InputCard from "./InputCard";
-
+import { DatePicker } from "@egovernments/digit-ui-react-components";
 const FormStep = ({
   t,
   children,
@@ -37,7 +37,8 @@ const FormStep = ({
   var isDisable = isDisabled ? true : config.canDisable && Object.keys(errors).filter((i) => errors[i]).length;
 
   const inputs = config.inputs?.map((input, index) => {
-    if (input.type === "text") {
+    console.log("input",input, index)
+    if (input.type === "text") {  
       return (
         <React.Fragment key={index}>
           <CardLabel>{t(input.label)} {input.labelChildren && input.labelChildren}</CardLabel>
@@ -69,7 +70,20 @@ const FormStep = ({
           <TextArea key={index} name={input.name} value={value} onChange={onChange} inputRef={register(input.validation)} maxLength="1024"></TextArea>
         </React.Fragment>
       );
+      if (input.type === "date")
+      {
+      return (
+        <React.Fragment key={index}>
+          
+                
+                <DatePicker key={index} date={value} name={input.name} onChange={onChange}
+                title={input.validation?.title}  />
+          
+        </React.Fragment>
+      );
+      }
   });
+ 
 
   return (
     <form onSubmit={handleSubmit(goNext)}>

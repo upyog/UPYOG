@@ -55,19 +55,6 @@ export const loginSteps = [
         error : "please enter valid date",
         validation: {
           required: true,
-          /*customValidation:(value)=>{
-            const selectedDate=new Date(value);
-            const TodayDate= new Date();
-            if(selectedDate > TodayDate){
-              alert("Date cannot be in future");
-              return null;
-            }
-            
-
-          }*/
-
-          
-          
           
         },
        
