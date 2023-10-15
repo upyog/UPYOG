@@ -197,9 +197,43 @@ const ConnectionDetails = () => {
     }
     
   };
+  const getRestorationButton = () => {
+    console.log("getRestorationButton",data,!data?.checkWorkFlow)
+    console.log("Payment",paymentDetails)
+    if (!data?.checkWorkFlow){
+      setshowActionToast({
+        key: "error",
+        label: "CONNECTION_INPROGRESS_LABEL",
+      });
+      setTimeout(() => {
+        closeBillToast();
+      }, 5000);
+    }
+    else {
+        if (paymentDetails?.data?.Bill?.length === 0 ) {
+          console.log("Payment",paymentDetails)
+          let pathname = `/digit-ui/citizen/ws/restoration-application`;
+          Digit.SessionStorage.set("WS_DISCONNECTION", {...state, serviceType: isSW ? "SEWERAGE" : "WATER"});
+          history.push(`${pathname}`);
+        } else if (paymentDetails?.data?.Bill?.[0]?.totalAmount !== 0) {
+          setshowModal(true);
+        }
+        else if(paymentDetails?.data?.Bill?.[0]?.totalAmount == 0)
+        {let pathname = `/digit-ui/citizen/ws/restore-application/restoration-application`;
+        Digit.SessionStorage.set("WS_DISCONNECTION", {...state, serviceType: isSW ? "SEWERAGE" : "WATER"});
+        history.push(`${pathname}`);
 
+        }
+      
+    }
+    
+  };
+  
   function onActionSelect() {
     getDisconnectionButton();
+  }
+  function onActionSelectRestoration() {
+    getRestorationButton();
   }
   const Close = () => (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#FFFFFF">
@@ -528,7 +562,11 @@ let serviceType = state?.applicationType?.includes("WATER") ? "WATER":"SEWERAGE"
                 <SubmitBar style={{ width: "100%" }} label={t("WS_DISCONNECTION_BUTTON")} onSubmit={onActionSelect} />
               </div>
             </ActionBar>
-          ) : null}
+          ) : <ActionBar style={{ position: "relative", boxShadow: "none", minWidth: "240px", maxWidth: "310px", padding: "0px", marginTop: "15px" }}>
+          <div style={{ width: "100%" }}>
+            <SubmitBar style={{ width: "100%" }} label={t("WS_RECONNECTION_BUTTON")} onSubmit={onActionSelectRestoration} />
+          </div>
+        </ActionBar>}
 
           {showModal ? (
             <Modal

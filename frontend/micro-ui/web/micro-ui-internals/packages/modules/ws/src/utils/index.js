@@ -757,6 +757,23 @@ export const updatePayloadOfWSDisconnection = async (data, type) => {
     : payload;
   return payload;
 };
+export const updatePayloadOfWSRestoration = async (data, type) => {
+  let payload = {
+    ...data,
+    plumberInfo : data?.plumberInfo?.[0] ? [{...data?.plumberInfo?.[0], id:null}] : data?.plumberInfo,
+    applicationType: type === "WATER" ? "WATER_RECONNECTION" : "SEWERAGE_RECONNECTION",
+    processInstance: {
+      ...data?.processInstance,
+      businessService: type === "WATER" ? "WSReconnection" : "SWReconnection",
+      action: "SUBMIT_APPLICATION",
+    },
+  };
+  /* use customiseCreateFormData hook to make some chnages to the water object */
+  payload = Digit?.Customizations?.WS?.customiseUpdatePayloadOfWSDisconnection
+    ? Digit?.Customizations?.WS?.customiseUpdatePayloadOfWSDisconnection(data, payload, type)
+    : payload;
+  return payload;
+};
 
 export const getOwnersforPDF = (property, t) => {
   let interarray = [];
