@@ -769,9 +769,7 @@ export const updatePayloadOfWSRestoration = async (data, type) => {
     },
   };
   /* use customiseCreateFormData hook to make some chnages to the water object */
-  payload = Digit?.Customizations?.WS?.customiseUpdatePayloadOfWSDisconnection
-    ? Digit?.Customizations?.WS?.customiseUpdatePayloadOfWSDisconnection(data, payload, type)
-    : payload;
+ 
   return payload;
 };
 
