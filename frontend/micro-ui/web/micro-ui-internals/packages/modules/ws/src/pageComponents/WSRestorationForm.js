@@ -24,7 +24,7 @@ import {
 import React, { useEffect, useState } from "react";
 import { useHistory, useRouteMatch } from "react-router-dom";
 import DisconnectTimeline from "../components/DisconnectTimeline";
-import { stringReplaceAll, createPayloadOfWSDisconnection, updatePayloadOfWSDisconnection, convertDateToEpoch ,updatePayloadOfWSRestoration} from "../utils";
+import { stringReplaceAll, createPayloadOfWSDisconnection, updatePayloadOfWSDisconnection, convertDateToEpoch ,updatePayloadOfWSRestoration,createPayloadOfWSReconnection} from "../utils";
 import { addDays, format } from "date-fns";
 
 const WSRestorationForm = ({ t, config, onSelect, userType }) => {
@@ -140,7 +140,7 @@ console.log("disconnectionTypes",disconnectionTypes)
     }
 
     else {
-      const payload = await createPayloadOfWSDisconnection(data, applicationData, applicationData?.applicationData?.serviceType);
+      const payload = await createPayloadOfWSReconnection(data, applicationData, applicationData?.applicationData?.serviceType);
       if(payload?.WaterConnection?.water){
         payload.WaterConnection.isdisconnection = false;
         payload.WaterConnection.isDisconnectionTemporary=true;
