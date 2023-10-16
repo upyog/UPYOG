@@ -74,7 +74,7 @@ export const SelectPaymentType = (props) => {
           name: name || userInfo?.info?.name || billDetails?.payerName,
           mobileNumber: mobileNumber || userInfo?.info?.mobileNumber || billDetails?.mobileNumber,
           tenantId: billDetails?.tenantId,
-          //emailId: "sriranjan.srivastava@owc.com"
+          emailId: "sriranjan.srivastava@owc.com"
         },
         // success
         callbackUrl: window.location.href.includes("mcollect") || wrkflow === "WNS"
@@ -88,31 +88,25 @@ export const SelectPaymentType = (props) => {
 
     try {
       const data = await Digit.PaymentService.createCitizenReciept(billDetails?.tenantId, filterData);
-      debugger
       const redirectUrl = data?.Transaction?.redirectUrl;
       if (d?.paymentType == "AXIS") {
         window.location = redirectUrl;
       }
       else if (d?.paymentType == "NTTDATA") {
-        console.log("redirectUrl",redirectUrl,data)
-        let b= redirectUrl.split("returnURL=")
-        let url=b[0].split("?")[1].split("&")
-        console.log("ggggggggggggggggg",b)
+        let redirect= redirectUrl.split("returnURL=")
+        let url=redirect[0].split("?")[1].split("&")
         const options = {
           "atomTokenId": url[0].split("=")[1],
           "merchId": url[1].split("=")[1],
           "custEmail": "sriranjan.srivastava@owc.com",
           "custMobile": url[3].split("=")[1],
-          "returnUrl": b[1]
+          "returnUrl": redirect[1]
         }
-        debugger
-        console.log("options", options)
         let atom = new AtomPaynetz(options, 'uat');
       }
       else {
         // new payment gatewayfor UPYOG pay
         try {
-          debugger
           const gatewayParam = redirectUrl
             ?.split("?")
             ?.slice(1)
@@ -128,7 +122,6 @@ export const SelectPaymentType = (props) => {
             method: "POST",
             target: "_top",
           });
-          debugger
           const orderForNDSLPaymentSite = [
             "checksum",
             "messageType",
@@ -157,9 +150,7 @@ export const SelectPaymentType = (props) => {
           // gatewayParam["failUrl"]= data?.Transaction?.callbackUrl;
 
           // var formdata = new FormData();
-          debugger
-console.log("gatewayParam[successUrl", gatewayParam["successUrl"])
-debugger
+
           for (var key of orderForNDSLPaymentSite) {
 
             // formdata.append(key,gatewayParam[key]);
@@ -178,7 +169,6 @@ debugger
           makePayment(gatewayParam.txURL,newForm);
 
         } catch (e) {
-          console.log("Error in payment redirect ", e);
           //window.location = redirectionUrl;
         }
       }
