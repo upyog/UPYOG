@@ -365,7 +365,7 @@ const Home = ({ stateCode }) => {
     <FilterContext.Provider value={provided}>
       <div ref={fullPageRef}>
         <div className="options" style={{ margin: "10px" }}>
-          <Header styles={{ marginBottom: "0px" }}>{t(dashboardConfig?.[0]?.name)}</Header>
+          <Header styles={{ marginBottom: "0px" }}><span style={{color:"#a82227"}}>NARAD</span> - <span><span style={{color:"#a82227"}}>Na</span>tional <span style={{color:"#a82227"}}>R</span>eal-<span>T</span>ime-<span>U</span>rban <span style={{color:"#a82227"}}>A</span>ggregated <span style={{color:"#a82227"}}>D</span>ashboard</span></Header>
           {mobileView ? null : (
             <div>
               <div className="mrlg">
