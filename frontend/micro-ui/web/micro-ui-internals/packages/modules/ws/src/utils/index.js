@@ -736,7 +736,7 @@ export const createPayloadOfWSReconnection = async (data, storeData, service) =>
       },
       channel: user === "citizen" ? "CITIZEN" : "CFC_COUNTER",
     },
-    disconnectRequest: true,
+    disconnectRequest: false,
   };
 
   if (storeData.applicationData.connectionType) {
@@ -786,7 +786,7 @@ export const createPayloadOfWSReconnection = async (data, storeData, service) =>
       },
       channel: user === "citizen" ? "CITIZEN" : "CFC_COUNTER",
     },
-    disconnectRequest: true,
+    disconnectRequest: false,
   };
 
   // if (storeData.applicationData.connectionType) {
@@ -796,9 +796,9 @@ export const createPayloadOfWSReconnection = async (data, storeData, service) =>
 
   let returnObject = service === "WATER" ? wsPayload : swPayload;
   /* use customiseCreateFormData hook to make some chnages to the water object */
-  returnObject = Digit?.Customizations?.WS?.customiseCreatePayloadOfWSDisconnection
-    ? Digit?.Customizations?.WS?.customiseCreatePayloadOfWSDisconnection(data, returnObject, service)
-    : returnObject;
+  // returnObject = Digit?.Customizations?.WS?.customiseCreatePayloadOfWSDisconnection
+  //   ? Digit?.Customizations?.WS?.customiseCreatePayloadOfWSDisconnection(data, returnObject, service)
+  //   : returnObject;
 
   return returnObject;
 };
