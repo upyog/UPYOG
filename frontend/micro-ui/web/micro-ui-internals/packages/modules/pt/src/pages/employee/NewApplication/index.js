@@ -22,7 +22,6 @@ const NewApplication = () => {
   }, []);
 
   const onFormValueChange = (setValue, formData, formState) => {
-    console.log("data",formData)
     setSubmitValve(!Object.keys(formState.errors).length);
     if (Object.keys(formState.errors).length === 1 && formState.errors?.units?.message === "arv") {
       setSubmitValve(!formData?.units.some((unit) => unit.occupancyType === "RENTED" && !unit.arv));
@@ -61,7 +60,8 @@ const NewApplication = () => {
       RentedMonths: data?.units[0]?.RentedMonths,
       NonRentedMonthsUsage: data?.units[0]?.NonRentedMonthsUsage,
       ageOfProperty:data?.units[0]?.ageOfProperty,
-      structureType:data?.units[0]?.structureType
+      structureType:data?.units[0]?.structureType,
+      electricity:data?.electricity
       },
       owners: data?.owners.map((owner) => {
         let {
@@ -144,7 +144,7 @@ const NewApplication = () => {
       heading={t("ES_TITLE_NEW_PROPERTY_APPLICATION")}
       isDisabled={!canSubmit}
       label={t("ES_COMMON_APPLICATION_SUBMIT")}
-      config={configs.map((config) => {
+      config={configs.map((config) => {   
         return {
           ...config,
           body: config.body.filter((a) => !a.hideInEmployee),

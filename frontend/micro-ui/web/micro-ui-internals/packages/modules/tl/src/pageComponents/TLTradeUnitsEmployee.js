@@ -39,7 +39,7 @@ const TLTradeUnitsEmployee = ({ config, onSelect, userType, formData, setError, 
      const { data: tradeMdmsData,isLoading } = Digit.Hooks.tl.useTradeLicenseMDMS(stateId, "TradeLicense", "TradeUnits", "[?(@.type=='TL')]");
     const { data: billingSlabTradeTypeData, isLoading:isbillingSlabLoading } = Digit.Hooks.tl.useTradeLicenseBillingslab({ tenantId, filters: {} }, {
         select: (data) => {
-        return data?.billingSlab.filter((e) => e.tradeType && e.applicationType === applicationType && e.licenseType === "PERMANENT" && e.uom);
+        return data?.billingSlab.filter((e) => e.tradeType && e.applicationType === applicationType && e.licenseType === "PERMANENT" );
     }});
 
     const addNewUnits = () => {

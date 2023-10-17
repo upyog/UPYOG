@@ -40,9 +40,12 @@ const WSDisconnectionForm = ({ t, config, onSelect, userType }) => {
   const [disconnectionData, setDisconnectionData] = useState({
       type: applicationData.WSDisconnectionForm ? applicationData.WSDisconnectionForm.type : "",
       date: applicationData.WSDisconnectionForm ? applicationData.WSDisconnectionForm.date : "",
+      endDate: applicationData.WSDisconnectionForm ? applicationData?.WSDisconnectionForm?.endDate ||"" : "",
       reason: applicationData.WSDisconnectionForm ?  applicationData.WSDisconnectionForm.reason : "",
       documents: applicationData.WSDisconnectionForm ? applicationData.WSDisconnectionForm.documents : []
   });
+
+  
   const [documents, setDocuments] = useState(applicationData.WSDisconnectionForm ? applicationData.WSDisconnectionForm.documents : []);
   const [error, setError] = useState(null);
   const [disconnectionTypeList, setDisconnectionTypeList] = useState([]);
@@ -99,7 +102,7 @@ const WSDisconnectionForm = ({ t, config, onSelect, userType }) => {
   useEffect(() => {
     const disconnectionTypes = mdmsData?.["ws-services-masters"]?.disconnectionType || []; 
     disconnectionTypes?.forEach(data => data.i18nKey = `WS_DISCONNECTIONTYPE_${stringReplaceAll(data?.code?.toUpperCase(), " ", "_")}`);
-
+console.log("disconnectionTypes",disconnectionTypes)
     setDisconnectionTypeList(disconnectionTypes);
   }, [mdmsData]);
 
@@ -124,14 +127,19 @@ const WSDisconnectionForm = ({ t, config, onSelect, userType }) => {
   const onSubmit = async (data) => {
     const appDate= new Date();
     const proposedDate= format(addDays(appDate, slaData?.slaDays), 'yyyy-MM-dd').toString();
-
+    
     if( convertDateToEpoch(data?.date)  <= convertDateToEpoch(proposedDate)){
       setError({key: "error", message: "PROPOSED_DISCONNECTION_INVALID_DATE"});
       setTimeout(() => {
         setError(false);
       }, 3000);
     }
-
+    if( data?.type == "Temporary" && convertDateToEpoch(data?.endDate)  <= convertDateToEpoch(data?.date)){
+      setError({key: "error", message: "PROPOSED_DISCONNECTION_INVALID_END_DATE"});
+      setTimeout(() => {
+        setError(false);
+      }, 3000);
+    }
     else if(wsDocsLoading || documents.length < 2 || disconnectionData?.reason?.value === "" || disconnectionData?.reason === "" || disconnectionData?.date === "" || disconnectionData?.type === ""){
       setError({ warning: true, message: "PLEASE_FILL_MANDATORY_DETAILS" });
       setTimeout(() => {
@@ -255,7 +263,31 @@ if(userType === 'citizen') {
             }}
           ></DatePicker>
           </div>
-
+          {disconnectionData.type?.value?.code === "Temporary"?
+          <div>
+          <CardLabel className="card-label-smaller" style={{display: "inline"}}>
+            {t("WS_DISCONNECTION_PROPOSED_END_DATE") + "*"}
+            <div className={`tooltip`} style={{position: "absolute"}}>
+            <InfoIcon/>
+            <span className="tooltiptext" style={{
+                    whiteSpace: Digit.Utils.browser.isMobile() ? "unset" : "nowrap",
+                    fontSize: "medium",
+                    width: Digit.Utils.browser.isMobile() ? "150px" : "unset"
+                  }}>
+                   {t("SHOULD_BE_DATE") + " "  + " " + t("DAYS_OF_PROPOSED_DATE")}
+                  </span>
+            </div>
+          </CardLabel>
+          <div className="field">
+          <DatePicker
+            date={disconnectionData?.endDate}
+            onChange={(date) => {
+              setDisconnectionData({ ...disconnectionData, endDate: date });
+            }}
+          ></DatePicker>
+          </div>
+          </div>
+          :""}
             <LabelFieldPair>
               <CardLabel className="card-label-smaller" style={{display: "inline"}}>{t("WS_DISCONNECTION_REASON")+ "*"}</CardLabel>              
                 <TextArea
@@ -272,12 +304,20 @@ if(userType === 'citizen') {
               onSubmit={() => {
                 const appDate= new Date();
                 const proposedDate= format(addDays(appDate, slaData?.slaDays), 'yyyy-MM-dd').toString();
-
+console.log("disconnectionData",disconnectionData)
                 if( parseInt(convertDateToEpoch(disconnectionData?.date))  <= parseInt(convertDateToEpoch(proposedDate))){
                   setError({key: "error", message: "PROPOSED_DISCONNECTION_INVALID_DATE"});
                   setTimeout(() => {
                     setError(false);
                   }, 3000);  
+                }
+                else if (disconnectionData?.type?.value?.code =="Temporary"&& parseInt(convertDateToEpoch(disconnectionData.endDate))  <= parseInt(convertDateToEpoch(disconnectionData?.date)))
+                {
+                  console.log("Temporary connection")
+                  setError({key: "error", message: "PROPOSED_DISCONNECTION_INVALID_END_DATE"});
+                  setTimeout(() => {
+                    setError(false);
+                  }, 3000); 
                 }
                 else{
                   history.push(match.path.replace("application-form", "documents-upload"));
@@ -296,7 +336,7 @@ if(userType === 'citizen') {
       </div>
     );
   }
-
+console.log("disconnectionData.type?.value?.code",disconnectionData.type?.value?.code)
   return (
     <div style={{ margin: "16px" }}>
     <Header styles={{fontSize: "32px", marginLeft: "18px"}}>{t("WS_WATER_AND_SEWERAGE_DISCONNECTION")}</Header>
@@ -362,6 +402,31 @@ if(userType === 'citizen') {
           </div>
           
           </LabelFieldPair>
+          {disconnectionData.type?.value?.code === "Temporary"?
+          <LabelFieldPair>
+          
+          <CardLabel style={{ marginTop: "-5px", fontWeight: "700", display: "inline" }} className="card-label-smaller">
+            {t("WS_DISCONNECTION_PROPOSED_END_DATE")+ "*"} 
+            <div className={`tooltip`} style={{position: "absolute", marginLeft: "4px"}}>
+            <InfoIcon/>
+            <span className="tooltiptext" style={{
+                    whiteSpace: Digit.Utils.browser.isMobile() ? "unset" : "nowrap",
+                    fontSize: "medium",
+                  }}>
+                    {t("SHOULD_BE_DATE")+ " " + " " + t("DAYS_OF_APPLICATION_END_DATE")}
+                  </span>
+            </div>
+          </CardLabel>
+          <div className="field">
+          <DatePicker
+            date={disconnectionData?.endDate}
+            onChange={(date) => {
+              setDisconnectionData({ ...disconnectionData, endDate: date });
+            }}
+          ></DatePicker>
+          </div>
+          </LabelFieldPair>
+           :""}
           <LabelFieldPair>
               <CardLabel style={{ marginTop: "-5px", fontWeight: "700", display: "inline" }} className="card-label-smaller">{t("WS_DISCONNECTION_REASON") + "*"}</CardLabel>              
               <div className="field">
