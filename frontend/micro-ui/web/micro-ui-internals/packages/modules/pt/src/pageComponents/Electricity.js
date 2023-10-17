@@ -11,13 +11,14 @@ const Electricity = ({ t, config, onSelect, value, userType, formData, setError:
  
   let electricity;
   let setElectricity;
+  const [hidden, setHidden] = useState(true);
   if (!isNaN(index)) {
    
     [electricity, setElectricity] = useState(formData.units && formData.units[index] && formData.units[index].electricity);
 
   } else {
    
-    [electricity, setElectricity] = useState(formData?.electricity);
+     [electricity, setElectricity] = useState(formData?.electricity);
   }
   const [error, setError] = useState(null);
   const [unitareaerror, setunitareaerror] = useState(null);
@@ -25,6 +26,16 @@ const Electricity = ({ t, config, onSelect, value, userType, formData, setError:
 
   const { pathname } = useLocation();
   const presentInModifyApplication = pathname.includes("modify");
+  function setElectricityNo(e) {
+    //electricity=true;
+    setElectricity(e.target.value);
+    if(electricity?.length==9 ){
+      
+      setHidden(false);
+    //setElectricity(e.target.value);
+  }
+
+}
 
 //   function setPropertyfloorarea(e) {
 //     setfloorarea(e.target.value);
@@ -76,13 +87,20 @@ const Electricity = ({ t, config, onSelect, value, userType, formData, setError:
   //const onSkip = () => onSelect();
 
   function onChange(e) {
-      setElectricity(e.target.value);
+    //electricity=true;
+    setElectricity(e.target.value);
+    if(electricity?.length== 9){
+      
+      setHidden(false);
+
+    }
+      //setElectricity(e.target.value);
    
  
   }
-  const goNext = async (data) => {
+  function goNext()  {
     
-      onSelect(config.key, { electricity});
+      onSelect(config.key, electricity);
    
   };
 
@@ -125,6 +143,18 @@ const Electricity = ({ t, config, onSelect, value, userType, formData, setError:
         maxLength: 10
       }
     },
+    {
+      label: "PT_ELECTRICITY_UID_LABEL",
+      type: "text",
+      name: "elec",
+      error: "ERR_HRMS_INVALID_ELECTRICITY_NO",
+      validation: {
+        required: true,
+        minLength: 10,
+        maxLength: 10
+      }
+    },
+    
   ];
 
   if (userType === "employee") {
@@ -137,12 +167,13 @@ const Electricity = ({ t, config, onSelect, value, userType, formData, setError:
               <TextInput
                 key={input.name}
                 id={input.name}
+                isMandatory={config.isMandatory}
                 value={electricity}
                 onChange={onChange}
                 onSelect={goNext}
                 {...input.validation}
                 onBlur={onBlur}
-                {...(validation = { pattern: "^([0-9]){0,8}$", type: "number", title: t("PT_PLOT_SIZE_ERROR_MESSAGE") })}
+                
                 // autoFocus={presentInModifyApplication}
               />
             </div>
@@ -156,6 +187,38 @@ const Electricity = ({ t, config, onSelect, value, userType, formData, setError:
       );
     });
   }
+  return (
+    <React.Fragment>
+     {window.location.href.includes("/citizen") ? <Timeline currentStep={1}/> : null}
+    <FormStep
+      config={config}
+      onChange={onChange}
+      
+      onSelect={goNext}
+      onSkip={onSkip}
+      t={t}
+      isDisabled={hidden}
+      showErrorBelowChildren={true}
+    >
+      <CardLabel>{`${t("PT_ELECTRICITY")}`}</CardLabel>
+      <TextInput
+        t={t}
+        type={"number"}
+        isMandatory={false}
+        optionKey="i18nKey"
+        name="electricity"
+        value={electricity}
+        onChange={setElectricityNo}
+        {...(validation = { 
+          required: true,
+          minLength: 10,
+          maxLength: 10,
+         })}
+      />
+    </FormStep>
+    </React.Fragment>
+  );
+
 
 
 };
