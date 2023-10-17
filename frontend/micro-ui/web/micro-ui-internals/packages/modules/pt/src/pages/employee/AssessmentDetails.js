@@ -171,14 +171,6 @@ const CloseBtn = (props) => {
 function change(){
   var total_amount=ptCalculationEstimateData?.Calculation[0]?.totalAmount
   const [first,second]=[parseInt(first_temp.current.value),parseInt(second_temp.current.value)];
-  var additionalDetails={
-    "adhocPenalty":0,
-    "adhocExemptionReason":null,
-    "adhocPenaltyReason":null,
-    "adhocExemption":0
-  }
-  AssessmentData.additionalDetails=additionalDetails;
-
     if((selectedPenalityReason && first>0)/* &&(!selectedRebateReason) */){
       if(selectPenalityReason.value!=='Others'){
         if(first<total_amount){
@@ -188,12 +180,10 @@ function change(){
             "estimateAmount": ptCalculationEstimateData.Calculation[0].taxHeadEstimates[6]?.estimateAmount+first,
             "category": "TAX"
         }
-        // AssessmentData.additionalDetails={
-        //   "adhocPenalty":additionalPenality,
-        //   "adhocPenaltyReason":selectedPenalityReason.value,
-        // }
-        AssessmentData.additionalDetails.adhocPenalty=additionalPenality;
-        AssessmentData.additionalDetails.adhocPenaltyReason=selectedPenalityReason.value;
+        AssessmentData.additionalDetails={
+          "adhocPenalty":additionalPenality,
+          "adhocPenaltyReason":selectedPenalityReason.value,
+        }
         ptCalculationEstimateData.Calculation[0].totalAmount=ptCalculationEstimateData?.Calculation[0]?.totalAmount+first;
            }
            else{
@@ -208,12 +198,10 @@ function change(){
             "estimateAmount": ptCalculationEstimateData.Calculation[0].taxHeadEstimates[6]?.estimateAmount+first,
             "category": "TAX"
         }
-        // AssessmentData.additionalDetails={
-        //   "adhocPenalty":additionalPenality,
-        //   "adhocPenaltyReason":fourth_temp.current.value,
-        // }
-        AssessmentData.additionalDetails.adhocPenalty=additionalPenality;
-        AssessmentData.additionalDetails.adhocPenaltyReason=fourth_temp.current.value;
+        AssessmentData.additionalDetails={
+          "adhocPenalty":additionalPenality,
+          "adhocPenaltyReason":fourth_temp.current.value,
+        }
         ptCalculationEstimateData.Calculation[0].totalAmount=ptCalculationEstimateData?.Calculation[0]?.totalAmount+first;
            }
            else{
@@ -236,7 +224,7 @@ function change(){
         //   "adhocExemptionReason":selectedRebateReason.value,
         // }
         AssessmentData.additionalDetails.adhocExemption=second;
-        AssessmentData.additionalDetails.adhocExemptionReason=selectedRebateReason.value;
+        AssessmentData.additionalDetails.adhocExemption=selectedRebateReason.value;
         ptCalculationEstimateData.Calculation[0].totalAmount=ptCalculationEstimateData?.Calculation[0]?.totalAmount-second;
            }
            else{
@@ -252,12 +240,8 @@ function change(){
             "estimateAmount": ptCalculationEstimateData.Calculation[0].taxHeadEstimates[5]?.estimateAmount-second,
             "category": "TAX"
         }
-        // AssessmentData.additionalDetails={
-        //   "adhocExemption":second,
-        //   "adhocExemptionReason":third_temp.current.value,
-        // }
         AssessmentData.additionalDetails.adhocExemption=second;
-        AssessmentData.additionalDetails.adhocExemptionReason=third_temp.current.value;
+        AssessmentData.additionalDetails.adhocExemption=third_temp.current.value,
         ptCalculationEstimateData.Calculation[0].totalAmount=ptCalculationEstimateData?.Calculation[0]?.totalAmount-second;
            }
            else{
