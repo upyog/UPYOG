@@ -223,6 +223,8 @@ import TenderCategoryEdit from "./pages/citizen/TE/Master/TenderCategory/Edit/in
 import WmsTenderCategoryName from "./pageComponents/TE/tenderCategory/WmsTenderCategoryName";
 import WmsTenderCategoryStatus from "./pageComponents/TE/tenderCategory/WmsTenderCategoryStatus";
 import MasterPageList from "./pages/citizen/MasterPageList";
+import ContractAgreementAdd from "./pages/citizen/CA/index";
+import ContractAgreementView from "./pages/citizen/CA/View";
 
 const componentsToRegister = {  
   Home:Home,  
@@ -418,8 +420,11 @@ WmsTenderCategoryName,
 WmsTenderCategoryStatus,
 TenderCategoryView,
 TenderCategoryEdit,
-MasterPageList
+MasterPageList,
+ContractAgreementAdd,
+ContractAgreementView
 };
+
 
 export const WMSModule = ({ stateCode, userType, tenants }) => {
   const { path, url } = useRouteMatch();

@@ -72807,7 +72807,18 @@ export const LocalizationService = {
             "module": "rainmaker-common",
             "locale": "en_IN"
         },
-
+        {
+            "code": "WMS_CA_ADD_CONTRACT_AGREEMENT",
+            "message": "Add Contract Agreement ",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_CA_ADD_CONTRACT_AGREEMENT_LIST",
+            "message": "Contract Agreement List",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
         
         
         

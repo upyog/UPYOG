@@ -88,6 +88,8 @@ const CitizenApp = ({ path, url, userType }) => {
   const TenderCategoryEdit = Digit?.ComponentRegistryService?.getComponent("TenderCategoryEdit");
   const MasterPageList = Digit?.ComponentRegistryService?.getComponent("MasterPageList");
 
+  const ContractAgreementAdd = Digit?.ComponentRegistryService?.getComponent("ContractAgreementAdd");
+  const ContractAgreementView = Digit?.ComponentRegistryService?.getComponent("ContractAgreementView");
   return (
     <span className={"pt-citizen"}>
     <Switch>
@@ -95,7 +97,6 @@ const CitizenApp = ({ path, url, userType }) => {
       {shouldHideBackButton(hideBackButtonConfig) ? <BackButton>Back</BackButton> : ""}
         <div className="ground-container">
         
-
           <PrivateRoute
             path={`${path}/sor-home`}
             component={() => (
@@ -180,19 +181,23 @@ const CitizenApp = ({ path, url, userType }) => {
           <PrivateRoute path={`${path}/function-app/add`} component={FunctionAppAdd} />
           <PrivateRoute path={`${path}/function-app/edit/:tenantId/:id`} component={FunctionAppEdit} />
 
-{/*Tender Entry*/}  
+            {/*Tender Entry*/}  
 
-<PrivateRoute path={`${path}/tender-entry/add`} component={TenderEntryAdd} />
-<PrivateRoute path={`${path}/tender-entry/home`} component={TenderEntryView} />
-<PrivateRoute path={`${path}/tender-entry/edit/:tenantId/:id`} component={EditTender} />
+            <PrivateRoute path={`${path}/tender-entry/add`} component={TenderEntryAdd} />
+            <PrivateRoute path={`${path}/tender-entry/home`} component={TenderEntryView} />
+            <PrivateRoute path={`${path}/tender-entry/edit/:tenantId/:id`} component={EditTender} />
 
-<PrivateRoute path={`${path}/tender-entry/department/add`} component={DepartmentAdd} />
-<PrivateRoute path={`${path}/tender-entry/department/list`} component={DepartmentView} />
-<PrivateRoute path={`${path}/tender-entry/department/edit/:tenantId/:id`} component={DepartmentEdit} />
+            <PrivateRoute path={`${path}/tender-entry/department/add`} component={DepartmentAdd} />
+            <PrivateRoute path={`${path}/tender-entry/department/list`} component={DepartmentView} />
+            <PrivateRoute path={`${path}/tender-entry/department/edit/:tenantId/:id`} component={DepartmentEdit} />
 
-<PrivateRoute path={`${path}/tender-entry/tender-category/add`} component={TenderCategoryAdd} />
-<PrivateRoute path={`${path}/tender-entry/tender-category/list`} component={TenderCategoryView} />
-<PrivateRoute path={`${path}/tender-entry/tender-category/edit/:tenantId/:id`} component={TenderCategoryEdit} />
+            <PrivateRoute path={`${path}/tender-entry/tender-category/add`} component={TenderCategoryAdd} />
+            <PrivateRoute path={`${path}/tender-entry/tender-category/list`} component={TenderCategoryView} />
+            <PrivateRoute path={`${path}/tender-entry/tender-category/edit/:tenantId/:id`} component={TenderCategoryEdit} />
+
+            {/*Contract Agreement*/}  
+            <PrivateRoute path={`${path}/contract-agreement/add`} component={() => <ContractAgreementAdd />} />
+            <PrivateRoute path={`${path}/contract-agreement/list`} component={() => <ContractAgreementView />} />
 
         </div>
         </AppContainer>
