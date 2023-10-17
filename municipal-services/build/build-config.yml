@@ -210,7 +210,7 @@ config:
         image-name: "inbox"
         dockerfile: "build/maven/Dockerfile"
         
-  - name: "builds/municipal-services/ptr-services"
+  - name: "builds/municipal-services/pet-services"
       build:
         - work-dir: "pet-services"
           image-name: "pet-services"
