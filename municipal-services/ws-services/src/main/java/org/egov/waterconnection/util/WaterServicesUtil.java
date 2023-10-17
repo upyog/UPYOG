@@ -333,5 +333,4 @@ public class WaterServicesUtil {
 		StringBuilder builder = new StringBuilder();
 		return builder.append(config.getCollectionHost()).append(config.getPaymentSearch());
 	}
-
 }
