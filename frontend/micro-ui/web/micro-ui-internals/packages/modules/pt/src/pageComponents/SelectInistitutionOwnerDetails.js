@@ -144,7 +144,7 @@ const SelectInistitutionOwnerDetails = ({ t, config, onSelect, userType, formDat
             disable={isUpdateProperty || isEditProperty}
             {...(validation = {
               isRequired: true,
-              pattern: "^[a-zA-Z-.`' ]*$",
+              pattern: "[a-zA-Z]+(?:-[a-zA-Z]+)*$",
               title: t("PT_NAME_ERROR_MESSAGE"),
             })}
           />
@@ -159,7 +159,7 @@ const SelectInistitutionOwnerDetails = ({ t, config, onSelect, userType, formDat
             disable={isUpdateProperty || isEditProperty}
             {...(validation = {
               isRequired: true,
-              pattern: "^[a-zA-Z-.`' ]*$",
+              pattern: "[a-zA-Z]+(?:-[a-zA-Z]+)*$",
               title: t("PT_DESIGNATION_ERROR_MESSAGE"),
             })}
           />

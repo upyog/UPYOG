@@ -116,7 +116,7 @@ const LicenseDetails = ({ t, config, onSelect, userType, formData, ownerIndex })
               disable={name && !isOpenLinkFlow ? true : false}
               {...(validation = {
                 isRequired: true,
-                pattern: "^[a-zA-Z-.`' ]*$",
+                pattern: "[a-zA-Z]+(?:-[a-zA-Z]+)*$",
                 type: "text",
                 title: t("PT_NAME_ERROR_MESSAGE"),
               })}
