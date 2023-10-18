@@ -312,7 +312,9 @@ public class WaterServiceImpl implements WaterService {
 			return updateWaterConnectionForReconnectFlow(waterConnectionRequest);
 		}
 		SearchCriteria criteria = new SearchCriteria();
-		if(wsUtil.isModifyConnectionRequest(waterConnectionRequest) && !waterConnectionRequest.getWaterConnection().getIsDisconnectionTemporary() && !waterConnectionRequest.isReconnectRequest() && !waterConnectionRequest.isDisconnectRequest()) {
+		log.info("con" + wsUtil.isModifyConnectionRequest(waterConnectionRequest));
+		log.info("isDisconnection" +waterConnectionRequest.getWaterConnection().getIsDisconnectionTemporary());
+		if(wsUtil.isModifyConnectionRequest(waterConnectionRequest) && !waterConnectionRequest.getWaterConnection().getIsDisconnectionTemporary()) {
 			// Received request to update the connection for modifyConnection WF
 			return updateWaterConnectionForModifyFlow(waterConnectionRequest);
 		}
