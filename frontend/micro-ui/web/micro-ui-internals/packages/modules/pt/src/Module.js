@@ -4,6 +4,8 @@ import { useTranslation } from "react-i18next";
 import { useRouteMatch } from "react-router-dom";
 import Area from "./pageComponents/Area";
 import Electricity from "./pageComponents/Electricity";
+//import ElectricityUID from "./pageComponents/ElectricityUID";
+import ElectricityUID from "./pageComponents/ElectricityUID";
 import PTLandArea from "./pageComponents/PTLandArea";
 import GroundFloorDetails from "./pageComponents/GroundFloorDetails";
 import IsAnyPartOfThisFloorUnOccupied from "./pageComponents/IsAnyPartOfThisFloorUnOccupied";
@@ -120,6 +122,7 @@ const componentsToRegister = {
   IsAnyPartOfThisFloorUnOccupied,
   UnOccupiedArea,
   Area,
+  ElectricityUID,
   Electricity,
   IsResidential,
   PropertyType,

@@ -14,11 +14,13 @@ const Electricity = ({ t, config, onSelect, value, userType, formData, setError:
   const [hidden, setHidden] = useState(true);
   if (!isNaN(index)) {
    
-    [electricity, setElectricity] = useState(formData.units && formData.units[index] && formData.units[index].electricity);
-
+    [electricity, setElectricity] = useState(formData?.originalData?.additionalDetails?.electricity || "");
+    //console.log("formdata", formData)
   } else {
    
-     [electricity, setElectricity] = useState(formData?.electricity);
+   
+     [electricity, setElectricity] = useState(formData?.originalData?.additionalDetails?.electricity || "");
+     //console.log("formdata12", formData)
   }
   const [error, setError] = useState(null);
   const [unitareaerror, setunitareaerror] = useState(null);
@@ -29,8 +31,8 @@ const Electricity = ({ t, config, onSelect, value, userType, formData, setError:
   function setElectricityNo(e) {
     //electricity=true;
     setElectricity(e.target.value);
-    if(electricity?.length==9 ){
-      
+    
+    if(electricity.length>=10 ){
       setHidden(false);
     //setElectricity(e.target.value);
   }
@@ -88,18 +90,24 @@ const Electricity = ({ t, config, onSelect, value, userType, formData, setError:
 
   function onChange(e) {
     //electricity=true;
-    setElectricity(e.target.value);
-    if(electricity?.length== 9){
-      
-      setHidden(false);
-
-    }
-      //setElectricity(e.target.value);
-   
- 
-  }
-  function goNext()  {
     
+    setElectricity(e.target.value);
+    //const alphanumericRegex = /^[a-zA-Z0-9]*$/;
+    //const isValid = alphanumericRegex.test(a) && a.length>=1 && a.length<=10;
+
+    //if(electricity?.length== 9){
+      
+      
+      //setHidden(false);
+
+    //
+      //setElectricity(e.target.value);
+    
+    }
+ 
+  //}
+  function goNext()  {
+      sessionStorage.setItem("Electricity", electricity.i18nKey);
       onSelect(config.key, electricity);
    
   };
@@ -115,10 +123,13 @@ const Electricity = ({ t, config, onSelect, value, userType, formData, setError:
 //   }, [floorarea]);
   useEffect(() => {
     if (userType === "employee") {
-      console.log("config",config,formData)
-    //   if (!Number(floorarea)) setFormError(config.key, { type: "required", message: t("CORE_COMMON_REQUIRED_ERRMSG") });
-    //   else if (isNaN(floorarea)) setFormError(config.key, { type: "invalid", message: t("ERR_DEFAULT_INPUT_FIELD_MSG") });
-    //   else clearFormErrors(config.key);
+      //console.log("config",config,formData)
+      console.log("elec",electricity)
+      console.log("eleclength",electricity.length)
+     if (electricity.length===0) setFormError(config.key, { type: "required", message: t("CORE_COMMON_REQUIRED_ERRMSG") });
+     else if (electricity.length<10 || !Number(electricity)) setFormError(config.key, { type: "invalid", message: t("ERR_DEFAULT_INPUT_FIELD_MSG") });
+    else clearFormErrors(config.key);
+
       onSelect(config.key, electricity);
       //onSelect("electricity", electricity);
     }
@@ -127,7 +138,7 @@ const Electricity = ({ t, config, onSelect, value, userType, formData, setError:
   useEffect(() => {
     if (presentInModifyApplication && userType === "employee") {
      
-      setElectricity(formData?.originalData?.electricity)
+      setElectricity(formData?.originalData?.additionalDetails?.electricity)
     }
   }, []);
 
@@ -143,7 +154,7 @@ const Electricity = ({ t, config, onSelect, value, userType, formData, setError:
         maxLength: 10
       }
     },
-    {
+    /*{
       label: "PT_ELECTRICITY_UID_LABEL",
       type: "text",
       name: "elec",
@@ -153,7 +164,7 @@ const Electricity = ({ t, config, onSelect, value, userType, formData, setError:
         minLength: 10,
         maxLength: 10
       }
-    },
+    },*/
     
   ];
 
@@ -164,18 +175,21 @@ const Electricity = ({ t, config, onSelect, value, userType, formData, setError:
           <LabelFieldPair key={index}>
             <CardLabel className="card-label-smaller">{t(input.label) + " *"}</CardLabel>
             <div className="field">
-              <TextInput
+              
+                <TextInput
                 key={input.name}
                 id={input.name}
                 isMandatory={config.isMandatory}
                 value={electricity}
                 onChange={onChange}
+                //onChange={setElectricityNo}
                 onSelect={goNext}
                 {...input.validation}
                 onBlur={onBlur}
                 
                 // autoFocus={presentInModifyApplication}
               />
+              
             </div>
           </LabelFieldPair>
           {formState.touched[config.key] ? (

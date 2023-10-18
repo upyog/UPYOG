@@ -208,6 +208,14 @@ if (applicationDetails?.applicationDetails[1].values.length ==4)
 }
 applicationDetails?.applicationDetails[1].values.push(obj)
 }
+if (applicationDetails?.applicationDetails[1].values.length ==5)
+{
+  let obj = {
+    "title": "PT_ASSESMENT_ELECTRICITY_UID",
+    "value": applicationDetails?.additionalDetails?.electricityuid || "NA"
+}
+applicationDetails?.applicationDetails[1].values.push(obj)
+}
 }
 
   return (
