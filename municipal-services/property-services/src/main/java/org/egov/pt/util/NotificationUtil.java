@@ -462,9 +462,12 @@ public class NotificationUtil {
                            .replace("$propertyId", property.getPropertyId())
                            .replace("$tenantId", property.getTenantId())
                            .replace("$businessService" , PT_BUSINESSSERVICE);
+                   
+                   log.info("3 pay link "+config.getPayLink());
+                   log.info(" 2 actionLink is" + actionLink);
 
                    actionLink = config.getUiAppHost() + actionLink;
-                   log.info("actionLink is" + actionLink);
+                   log.info(" 1 actionLink is" + actionLink);
 
                    ActionItem item = ActionItem.builder().actionUrl(actionLink).code(config.getPayCode()).build();
                    items.add(item);
