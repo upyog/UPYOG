@@ -2379,7 +2379,7 @@ export const MdmsService = {
             },
             {
               "id": 3004,
-              "name": "PM HOME",
+              "name": "Physical Milestone Home ",
               "url": "digit-ui-card",
               "displayName": "Physical Milestone",
               "orderNumber": 4,
@@ -2388,7 +2388,7 @@ export const MdmsService = {
               "serviceCode": "CITIZEN_SERVICE_WMS",
               "code": "",
               "path": "",
-              "navigationURL": "/digit-ui/citizen/pm-home",
+              "navigationURL": "/digit-ui/citizen/wms/phm-home",
               "leftIcon": "WMSIcon",
               "rightIcon": "",
               "queryParams": "",
@@ -2467,6 +2467,24 @@ export const MdmsService = {
       "sidebar": "digit-ui-links",
       "sidebarURL": "/digit-ui/citizen/wms/contract-agreement/list"
   },
+  {
+    "id": 3009,
+    "name": "Measurement Book Home",
+    "url": "digit-ui-card",
+    "displayName": "Measurement Book",
+    "orderNumber": 4,
+    "parentModule": "WMS",
+    "enabled": true,
+    "serviceCode": "CITIZEN_SERVICE_WMS",
+    "code": "",
+    "path": "",
+    "navigationURL": "/digit-ui/citizen/wms/mb-home",
+    "leftIcon": "WMSIcon",
+    "rightIcon": "",
+    "queryParams": "",
+    "sidebar": "digit-ui-links",
+    "sidebarURL": "/digit-ui/citizen/wms-home"
+},
   ]
         },
       "common-masters": {
