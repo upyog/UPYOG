@@ -62,6 +62,7 @@ import { convertDateToEpoch, convertEpochToDate, createPayloadOfWSDisconnection,
     const onSubmit = async (data) => {
       const payload = await createPayloadOfWSDisconnection(data, {applicationData: value}, value.serviceType);
       if(payload?.WaterConnection?.water){
+        payload.WaterConnection?.isDisconnectionTemporary ? payload.WaterConnection["endDate"]=convertDateToEpoch(value.WSDisconnectionForm.endDate) || "":"";
         if (waterMutation) {
           setIsEnableLoader(true);
           await waterMutation(payload, {
@@ -90,6 +91,7 @@ import { convertDateToEpoch, convertEpochToDate, createPayloadOfWSDisconnection,
         }
       }
       else if(payload?.SewerageConnection?.sewerage){
+        payload.SewerageConnection.isDisconnectionTemporary? payload.SewerageConnection["endDate"]=convertDateToEpoch(value.WSDisconnectionForm.endDate) || "" :"";
         if (sewerageMutation) {
           setIsEnableLoader(true);
           await sewerageMutation(payload, {
@@ -122,7 +124,7 @@ import { convertDateToEpoch, convertEpochToDate, createPayloadOfWSDisconnection,
   if(isEnableLoader) {
     return <Loader/>
   }
-
+console.log("value.WSDisconnectionForm",value.WSDisconnectionForm)
   return(
     <React.Fragment>
     <Header styles={{fontSize:"32px"}}>{t("WS_COMMON_SUMMARY")}</Header>
@@ -141,6 +143,7 @@ import { convertDateToEpoch, convertEpochToDate, createPayloadOfWSDisconnection,
         <Row className="border-none" label={t("WS_DISCONNECTION_CONSUMER_NUMBER")} text={value.connectionNo}/>
         <Row className="border-none" label={t("WS_DISCONNECTION_TYPE")} text={t(value.WSDisconnectionForm.type.value.i18nKey)}/>
         <Row className="border-none" label={t("WS_DISCONNECTION_PROPOSED_DATE")} text={convertEpochToDate(convertDateToEpoch(value.WSDisconnectionForm.date))}/>
+       {value.WSDisconnectionForm.type.value.code == "Temporary"? <Row className="border-none" label={t("WS_DISCONNECTION_PROPOSED_END_DATE")} text={convertEpochToDate(convertDateToEpoch(value.WSDisconnectionForm.endDate))}/>:""}
         <Row className="border-none" label={t("WS_DISCONNECTION_REASON")} text={value.WSDisconnectionForm.reason.value}/>         
       </StatusTable>
     </Card>

@@ -188,15 +188,30 @@ const ApplicationDetails = () => {
   let dowloadOptions = [propertyDetailsPDF];
 
  if (applicationDetails?.applicationData?.creationReason === "MUTATION"){
+  
    return(
     <MutationApplicationDetails 
       propertyId = {propertyId}
       acknowledgementIds={appDetailsToShow?.applicationData?.acknowldgementNumber}
       workflowDetails={workflowDetails}
       mutate={mutate}
+      showToast={showToast}
+      setShowToast={setShowToast}
+      closeToast={closeToast}
     />
    )
  } 
+ if(applicationDetails?.applicationDetails[1].title =="PT_ASSESMENT_INFO_SUB_HEADER")
+{
+if (applicationDetails?.applicationDetails[1].values.length ==4)
+{
+  let obj = {
+    "title": "PT_ASSESMENT_ELECTRICITY",
+    "value": applicationDetails?.additionalDetails?.electricity || "NA"
+}
+applicationDetails?.applicationDetails[1].values.push(obj)
+}
+}
 
   return (
     <div>

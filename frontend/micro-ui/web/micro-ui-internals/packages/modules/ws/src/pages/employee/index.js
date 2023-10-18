@@ -8,6 +8,7 @@ import WSResponse from "./WSResponse";
 import Response from "./Response";
 import ResponseBillAmend from "./ResponseBillAmend";
 import WSDisconnectionResponse from "./DisconnectionApplication/WSDisconnectionResponse";
+import WSRestorationResponse from "./RestorationApplication/WSRestorationResponse";
 
 const BILLSBreadCrumbs = ({ location }) => {
   const { t } = useTranslation();
@@ -247,6 +248,7 @@ const App = ({ path }) => {
   const WSModifyApplication = Digit?.ComponentRegistryService?.getComponent("WSModifyApplication");
   const WSEditModifyApplication = Digit?.ComponentRegistryService?.getComponent("WSEditModifyApplication");
   const WSDisconnectionApplication = Digit?.ComponentRegistryService?.getComponent("WSDisconnectionApplication");
+  const WSRestorationApplication = Digit?.ComponentRegistryService?.getComponent("WSRestorationApplication");
   const WSEditApplicationByConfig = Digit?.ComponentRegistryService?.getComponent("WSEditApplicationByConfig");
   const WSBillIAmendMentInbox = Digit?.ComponentRegistryService?.getComponent("WSBillIAmendMentInbox");
   const WSGetDisconnectionDetails = Digit?.ComponentRegistryService?.getComponent("WSGetDisconnectionDetails");
@@ -304,6 +306,7 @@ const App = ({ path }) => {
           <PrivateRoute path={`${path}/sewerage/search-application`} component={(props) => <WSSearch {...props} parentRoute={path} />} />
           <PrivateRoute path={`${path}/ws-response`} component={WSResponse} />
           <PrivateRoute path={`${path}/ws-disconnection-response`} component={WSDisconnectionResponse} />
+          <PrivateRoute path={`${path}/ws-restoration-response`} component={WSRestorationResponse} />
           <PrivateRoute path={`${path}/water/search-connection`} component={(props) => <WSSearchWater {...props} parentRoute={path} />} />
           <PrivateRoute path={`${path}/sewerage/search-connection`} component={(props) => <WSSearchWater {...props} parentRoute={path} />} />
           <PrivateRoute path={`${path}/water/search-demand`} component={(props) => <WSSearchWater {...props} parentRoute={path} />} />
@@ -313,6 +316,7 @@ const App = ({ path }) => {
           <PrivateRoute path={`${path}/modify-application-edit`} component={WSEditModifyApplication} />
           <PrivateRoute path={`${path}/disconnection-application`} component={WSDisconnectionDocsRequired} />
           <PrivateRoute path={`${path}/new-disconnection`} component={WSDisconnectionApplication} />
+          <PrivateRoute path={`${path}/new-restoration`} component={WSRestorationApplication} />
           <PrivateRoute path={`${path}/bill-amend/inbox`} component={(props) => <WSBillIAmendMentInbox {...props} parentRoute={path} />} />
           <PrivateRoute path={`${path}/water/inbox`} component={(props) => <WSInbox {...props} parentRoute={path} />} />
           <PrivateRoute path={`${path}/sewerage/inbox`} component={(props) => <WSInbox {...props} parentRoute={path} />} />

@@ -83,7 +83,16 @@ import {
         ],
       };
   };
-
+  const getRestorationDetails = (application, t) => {
+    return {
+        title: t("WS_RESTORATION_DETAILS"),
+        values: [
+          { title: t("WS_DISCONNECTION_TYPE"), value: application?.isDisconnectionTemporary === true ? t("WS_DISCONNECTIONTYPE_TEMPORARY") : t("WS_DISCONNECTIONTYPE_PERMANENT") || t("CS_NA") },
+          { title: t("WS_DISCONNECTION_PROPOSED_DATE"), value: Digit.DateUtils.ConvertEpochToDate(application?.dateEffectiveFrom) || t("CS_NA") },
+          { title: t("WS_DISCONNECTION_REASON"), value: application?.disconnectionReason || t("CS_NA") },
+        ],
+      };
+  };
   const getDocumentDetails = (application, t) => {
     const documents = application?.documents
     return {
@@ -95,6 +104,7 @@ import {
   
   
   const getWSDisconectionAcknowledgementData = async (application, property, tenantInfo, t) => {
+    console.log("application",application)
     const filesArray = application?.DisconnectionResponse?.documents?.map((value) => value?.fileStoreId);
     let res;
     if (filesArray) {
