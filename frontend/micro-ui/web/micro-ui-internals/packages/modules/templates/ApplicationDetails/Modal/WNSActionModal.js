@@ -197,7 +197,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
       submitAction({ WaterConnection: applicationData, disconnectRequest: true }) :
       submitAction({ SewerageConnection: applicationData, disconnectRequest: true })
     } 
-    else if(applicationData?.processInstance?.businessService == "WSReconnection") {
+    else if(applicationData?.applicationType == "RECONNECT_CONNECTION") {
       applicationData?.serviceType == "WATER" ?
       submitAction({ WaterConnection: applicationData, disconnectRequest: false, reconnectRequest:true }) :
       submitAction({ SewerageConnection: applicationData, disconnectRequest: false, reconnectRequest:true })
