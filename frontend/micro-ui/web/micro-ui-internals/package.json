@@ -52,7 +52,7 @@
     "dev:reports": "cd packages/modules/reports && yarn start",
     "dev:example": "cd example && yarn start",
     "build": "run-p build:**",
-    "buildD:libraries": "cd packages/libraries && yarn build",
+    "build:libraries": "cd packages/libraries && yarn build",
     "build:components": "cd packages/react-components && yarn build",
     "build:common": "cd packages/modules/common && yarn build",
     "build:pt": "cd packages/modules/pt && yarn build",
