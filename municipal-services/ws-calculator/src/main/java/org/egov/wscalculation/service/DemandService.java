@@ -150,6 +150,8 @@ public class DemandService {
 				} else {
 					demands = searchDemand(tenantId, consumerCodes, fromDateSearch, toDateSearch, request.getRequestInfo(), null,
 							request.getIsDisconnectionRequest());
+					log.info("Demands fetched are:: " + demands);
+
 					Set<String> connectionNumbersFromDemands = new HashSet<>();
 					if (!CollectionUtils.isEmpty(demands))
 						connectionNumbersFromDemands = demands.stream().map(Demand::getConsumerCode)
@@ -228,6 +230,13 @@ public class DemandService {
 					: calculation.getTotalAmount();
 			String businessService = isForConnectionNO ? configs.getBusinessService()
 					: ONE_TIME_FEE_SERVICE_FIELD;
+
+			
+			log.info("in create Demand  Business Service is" +businessService );
+			
+			if(calculationReq.getIsReconnectionRequest())
+				businessService="WSReconnection";
+			log.info("in create Demand  Business Service is" +businessService );
 
 			addRoundOffTaxHead(calculation.getTenantId(), demandDetails);
 
