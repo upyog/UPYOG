@@ -49,9 +49,9 @@ public class BankDetails {
 
 	@Override
 	public String toString() {
-		return "BankDetails [otsBankId=" + otsBankId + ", bankTxnId=" + bankTxnId + ", otsBankName=" + otsBankName
+		return "BankDetails [otsBankId=" + otsBankId + ", bankTxnId=" + bankTxnId + ", otsBankName=" + otsBankName + ", cardType=" + cardType + ", cardMaskNumber=" + cardMaskNumber 
 				+ ", getOtsBankId()=" + getOtsBankId() + ", getBankTxnId()=" + getBankTxnId() + ", getOtsBankName()="
-				+ getOtsBankName() + ", getClass()=" + getClass() + ", hashCode()=" + hashCode() + ", toString()="
+				+ getOtsBankName() + ", getCardType()=" + getCardType() + ", getCardMaskNumber()=" + getCardMaskNumber()+ ", getClass()=" + getClass() + ", hashCode()=" + hashCode() + ", toString()="
 				+ super.toString() + "]";
 	}
 }
