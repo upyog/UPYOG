@@ -393,6 +393,7 @@ public class IngestValidator {
         		if(tenant.equals(migratedTenants.get("code")) && state.equals(migratedTenants.get("stateName")))
         		{
         		validCounts++;
+        		break;
         		}
         	}
 	}
