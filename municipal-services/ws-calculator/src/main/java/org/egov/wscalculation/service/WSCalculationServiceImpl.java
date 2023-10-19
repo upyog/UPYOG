@@ -162,8 +162,9 @@ public class WSCalculationServiceImpl implements WSCalculationService {
 		WaterConnection waterConnection = criteria.getWaterConnection();
 		
 		@SuppressWarnings("unchecked")
-		Map<String, TaxHeadCategory> taxHeadCategoryMap = ((List<TaxHeadMaster>) masterMap
-				.get(WSCalculationConstant.TAXHEADMASTER_MASTER_KEY)).stream()
+		List<TaxHeadMaster> ll=((List<TaxHeadMaster>) masterMap
+				.get(WSCalculationConstant.TAXHEADMASTER_MASTER_KEY));
+		Map<String, TaxHeadCategory> taxHeadCategoryMap = ll.stream()
 						.collect(Collectors.toMap(TaxHeadMaster::getCode, TaxHeadMaster::getCategory, (OldValue, NewValue) -> NewValue));
 
 		BigDecimal taxAmt = BigDecimal.ZERO;

@@ -679,7 +679,7 @@ public class WorkflowNotificationService {
         CalculationCriteria criteria = CalculationCriteria.builder().applicationNo(waterConnectionRequest.getWaterConnection().getApplicationNo())
                 .waterConnection(waterConnectionRequest.getWaterConnection()).tenantId(property.getTenantId()).build();
         CalculationReq calRequest = CalculationReq.builder().calculationCriteria(Arrays.asList(criteria))
-                .requestInfo(waterConnectionRequest.getRequestInfo()).isconnectionCalculation(false).build();
+                .requestInfo(waterConnectionRequest.getRequestInfo()).isconnectionCalculation(false).isDisconnectionRequest(false).isReconnectionRequest(false).build();
         try {
             Object response = serviceRequestRepository.fetchResult(waterServiceUtil.getEstimationURL(), calRequest);
             CalculationRes calResponse = mapper.convertValue(response, CalculationRes.class);
