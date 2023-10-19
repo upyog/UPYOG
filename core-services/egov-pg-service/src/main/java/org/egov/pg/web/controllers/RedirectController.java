@@ -81,13 +81,21 @@ public class RedirectController {
          * https://test.org/pg-service/transaction/v1/_redirect?originalreturnurl=/digit-ui/citizen/payment/success/PT/PG-PT-2022-03-10-006063/pg.citya?eg_pg_txnid=PB_PG_2022_07_12_002082_48
          * Here we are reading originalreturnurl value and then forming redirect URL with domain name.
          */
-        if(gateway != null) {
+        if(gateway != null && gateway.equalsIgnoreCase("PAYGOV")) {
             StringBuilder redirectURL = new StringBuilder();
             redirectURL.append(returnURL);
             formData.remove(returnUrlKey);
             httpHeaders.setLocation(UriComponentsBuilder.fromHttpUrl(redirectURL.toString())
                     .queryParams(formData).build().encode().toUri());
-        } else {
+        } 
+        else if(gateway != null && gateway.equalsIgnoreCase("NTTDATA")) {
+            StringBuilder redirectURL = new StringBuilder();
+            returnURL=returnURL + "&eg_pg_txnid="+txnId;
+            redirectURL.append(returnURL);
+            formData.remove(returnUrlKey);
+            httpHeaders.setLocation(UriComponentsBuilder.fromHttpUrl(redirectURL.toString())
+                    .queryParams(formData).build().encode().toUri());
+        }else {
             httpHeaders.setLocation(UriComponentsBuilder.fromHttpUrl(formData.get(returnUrlKey).get(0))
                     .queryParams(formData).build().encode().toUri());
         }
