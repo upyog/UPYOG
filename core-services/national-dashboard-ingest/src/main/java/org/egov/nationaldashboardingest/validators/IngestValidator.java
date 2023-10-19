@@ -384,7 +384,9 @@ public class IngestValidator {
 	for(Data data:ingestData)
 	{
         String tenant=data.getUlb();
+        data.setState(toCamelCase(data.getState()));
         String state=data.getState();
+        
     
        	for(Map<String,String> migratedTenants:jsonOutput)
         	{
