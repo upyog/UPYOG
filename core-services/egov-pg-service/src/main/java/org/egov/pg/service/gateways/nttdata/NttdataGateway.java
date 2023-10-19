@@ -310,7 +310,7 @@ public class NttdataGateway implements Gateway {
 
         if(resp !=null && resp.getPayInstrument() !=null)
         {
-        if (resp.getPayInstrument().get(0).getResponseDetails().getStatusCode().equals("OTS00000")) {
+        if (resp.getPayInstrument().get(0).getResponseDetails().getStatusCode().equals("OTS0000")) {
             status = Transaction.TxnStatusEnum.SUCCESS;
 
             return Transaction.builder()
