@@ -76,13 +76,14 @@ public class PayInstrument {
 	}
 	@Override
 	public String toString() {
-		return "PayInstrument [headDetails=" + headDetails + ", merchDetails=" + merchDetails + ", payDetails="
+		return "PayInstrument [headDetails=" + headDetails + ", merchDetails=" + merchDetails + ", settlementDetails=" + settlementDetails
+				+ ", payDetails="
 				+ payDetails + ", responseUrls=" + responseUrls + ", payModeSpecificData=" + payModeSpecificData
 				+ ", extras=" + extras + ", custDetails=" + custDetails + ", responseDetails=" + responseDetails
 				+ ", getResponseDetails()=" + getResponseDetails() + ", getHeadDetails()=" + getHeadDetails()
 				+ ", getMerchDetails()=" + getMerchDetails() + ", getPayDetails()=" + getPayDetails()
 				+ ", getResponseUrls()=" + getResponseUrls() + ", getPayModeSpecificData()=" + getPayModeSpecificData()
-				+ ", getExtras()=" + getExtras() + ", getCustDetails()=" + getCustDetails() + ", getClass()="
+				+ ", getExtras()=" + getExtras() + ", getCustDetails()=" + getCustDetails() + ", getSettlementDetails()=" + getSettlementDetails() + ", getClass()="
 				+ getClass() + ", hashCode()=" + hashCode() + ", toString()=" + super.toString() + "]";
 	}
 	
