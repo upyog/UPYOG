@@ -49,7 +49,11 @@ public class RedirectController {
         log.info("formData in redirect::::"+formData);
 
     	String returnURL = formData.get(returnUrlKey).get(0); 
-    	String txnId = formData.get(PgConstants.PG_TXN_IN_LABEL).get(0); 
+    	String txnId=null;
+    	if(formData.get(PgConstants.PG_TXN_IN_LABEL)!=null)
+    		txnId = formData.get(PgConstants.PG_TXN_IN_LABEL).get(0);
+    	else
+    		txnId = formData.get(PgConstants.PG_TXN_IN_LABEL_NTTDATA).get(0); 
 
         //MultiValueMap<String, String> params = UriComponentsBuilder.fromUriString(returnURL).build().getQueryParams();
         log.info("returnUrl in redirect::::"+returnURL);
@@ -77,7 +81,7 @@ public class RedirectController {
          * https://test.org/pg-service/transaction/v1/_redirect?originalreturnurl=/digit-ui/citizen/payment/success/PT/PG-PT-2022-03-10-006063/pg.citya?eg_pg_txnid=PB_PG_2022_07_12_002082_48
          * Here we are reading originalreturnurl value and then forming redirect URL with domain name.
          */
-        if(gateway != null && gateway.equalsIgnoreCase("PAYGOV")) {
+        if(gateway != null) {
             StringBuilder redirectURL = new StringBuilder();
             redirectURL.append(returnURL);
             formData.remove(returnUrlKey);
