@@ -93,6 +93,10 @@ public class RedirectController {
             returnURL=returnURL + "&eg_pg_txnid="+txnId;
             redirectURL.append(returnURL);
             formData.remove(returnUrlKey);
+            formData.remove("encData");
+            formData.remove("merchId");
+            formData.remove(PgConstants.PG_TXN_IN_LABEL_NTTDATA);
+
             httpHeaders.setLocation(UriComponentsBuilder.fromHttpUrl(redirectURL.toString())
                     .queryParams(formData).build().encode().toUri());
         }else {
