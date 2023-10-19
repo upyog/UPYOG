@@ -4,6 +4,24 @@ public class BankDetails {
 	private String otsBankId;
 	private String bankTxnId;
 	private String otsBankName;
+	private String cardType;
+	private String cardMaskNumber;
+
+	public String getCardType() {
+		return cardType;
+	}
+
+	public void setCardType(String cardType) {
+		this.cardType = cardType;
+	}
+
+	public String getCardMaskNumber() {
+		return cardMaskNumber;
+	}
+
+	public void setCardMaskNumber(String cardMaskNumber) {
+		this.cardMaskNumber = cardMaskNumber;
+	}
 
 	public String getOtsBankId() {
 		return otsBankId;
@@ -31,9 +49,9 @@ public class BankDetails {
 
 	@Override
 	public String toString() {
-		return "BankDetails [otsBankId=" + otsBankId + ", bankTxnId=" + bankTxnId + ", otsBankName=" + otsBankName
+		return "BankDetails [otsBankId=" + otsBankId + ", bankTxnId=" + bankTxnId + ", otsBankName=" + otsBankName + ", cardType=" + cardType + ", cardMaskNumber=" + cardMaskNumber 
 				+ ", getOtsBankId()=" + getOtsBankId() + ", getBankTxnId()=" + getBankTxnId() + ", getOtsBankName()="
-				+ getOtsBankName() + ", getClass()=" + getClass() + ", hashCode()=" + hashCode() + ", toString()="
+				+ getOtsBankName() + ", getCardType()=" + getCardType() + ", getCardMaskNumber()=" + getCardMaskNumber()+ ", getClass()=" + getClass() + ", hashCode()=" + hashCode() + ", toString()="
 				+ super.toString() + "]";
 	}
 }

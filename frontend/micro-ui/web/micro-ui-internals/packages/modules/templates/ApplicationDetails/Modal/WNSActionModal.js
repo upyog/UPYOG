@@ -196,7 +196,13 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
       applicationData?.serviceType == "WATER" ?
       submitAction({ WaterConnection: applicationData, disconnectRequest: true }) :
       submitAction({ SewerageConnection: applicationData, disconnectRequest: true })
-    } else {
+    } 
+    else if(applicationData?.applicationType == "RECONNECT_CONNECTION") {
+      applicationData?.serviceType == "WATER" ?
+      submitAction({ WaterConnection: applicationData, disconnectRequest: false, reconnectRequest:true }) :
+      submitAction({ SewerageConnection: applicationData, disconnectRequest: false, reconnectRequest:true })
+    }
+      else {
       const adhocRebateData = sessionStorage.getItem("Digit.ADHOC_ADD_REBATE_DATA");
       const parsedAdhocRebateData = adhocRebateData ? JSON.parse(adhocRebateData) : "";
       if (parsedAdhocRebateData?.value?.adhocPenalty) applicationData.additionalDetails.adhocPenalty = parseInt(parsedAdhocRebateData?.value?.adhocPenalty) || "";
