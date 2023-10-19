@@ -119,6 +119,21 @@ import WmsPmaDetails from "./pages/citizen/PMA/Details";
 import WmsPmaCreate from "./pages/citizen/PMA/Create";
 import WmsPmaEdit from "./pages/citizen/PMA/Edit";
 
+/**------MB---------- */
+
+import WmsMbId from "./pageComponents/MB/WmsMbId";
+import WmsMbChapter from "./pageComponents/MB/WmsMbChapter";
+import WmsMbDescriptionOfItem from "./pageComponents/MB/WmsMbDescriptionOfItem";
+import WmsMbDate from "./pageComponents/MB/WmsMbDate";
+
+import WmsMbResponse from "./pages/citizen/MB/Response";
+import WmsMbList from "./pages/citizen/MB/List";
+import WmsMbDetails  from "./pages/citizen/MB/Details";
+import WmsMbCreate from "./pages/citizen/MB/Create";
+import WmsMbEdit from "./pages/citizen/MB/Edit";
+
+
+
 
 /**---------------- */
 import ContrMasterAdd from "./pages/citizen/CM/index";
@@ -244,6 +259,17 @@ const componentsToRegister = {
   WmsSorStartDate,
   WmsSorEndDate,
   WmsSorResponse:WmsSorResponse,
+
+  WmsMbList:WmsMbList,
+  WmsMbDetails:WmsMbDetails,
+  WmsMbCreate:WmsMbCreate,
+  WmsMbEdit:WmsMbEdit,
+  WMS_LIST_FILTER: (props) => <ListFilter  {...props} />,  
+  WmsMbId,
+  WmsMbChapter,
+  WmsMbDescriptionOfItem,
+  WmsMbDate,
+  WmsMbResponse:WmsMbResponse,
 
   WmsSchList:WmsSchList,
   WmsSchDetails:WmsSchDetails,

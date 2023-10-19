@@ -1104,6 +1104,24 @@ export const StoreService = {
                 "sidebar": "digit-ui-links",
                 "sidebarURL": "/digit-ui/citizen/wms/phm-home"
             },
+            {
+                "id": 3009,
+                "name": "MB_HOME",
+                "url": "digit-ui-card",
+                "displayName": "Measurement Book",
+                "orderNumber": 3,
+                "parentModule": "WMS",
+                "enabled": true,
+                "serviceCode": "",
+                "code": "",
+                "path": "",
+                "navigationURL": "/digit-ui/citizen/mb-home",
+                "leftIcon": "propertyIcon",
+                "rightIcon": "",
+                "queryParams": "",
+                "sidebar": "digit-ui-links",
+                "sidebarURL": "/digit-ui/citizen/mb-home"
+            },
               {
                 "id": 3005,
                 "name": "Contaractor Master",
