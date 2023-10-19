@@ -98,7 +98,23 @@ public class CalculationService {
 				throw new CustomException("WATER_CALCULATION_EXCEPTION", "Calculation response can not parsed!!!");
 			}
 		}
-
+		else if (WCConstants.RECONNECT_DISCONNECTION_CONST.equalsIgnoreCase(request.getWaterConnection().getProcessInstance().getAction())) {
+			CalculationCriteria criteria = CalculationCriteria.builder()
+					.applicationNo(request.getWaterConnection().getApplicationNo())
+					.waterConnection(request.getWaterConnection())
+					.tenantId(property.getTenantId()).connectionNo(request.getWaterConnection().getConnectionNo()).build();
+			CalculationReq calRequest = CalculationReq.builder().calculationCriteria(Arrays.asList(criteria))
+					.requestInfo(request.getRequestInfo()).isconnectionCalculation(false).isDisconnectionRequest(false).isReconnectionRequest(true).build();
+			try {
+				Object response = serviceRequestRepository.fetchResult(waterServiceUtil.getCalculatorURL(), calRequest);
+				CalculationRes calResponse = mapper.convertValue(response, CalculationRes.class);
+			} catch (ServiceCallException e) {
+				throw new ServiceCallException(e.getError());
+			} catch (Exception ex) {
+				log.error("Calculation response error!!", ex);
+				throw new CustomException("WATER_CALCULATION_EXCEPTION", "Calculation response can not parsed!!!");
+			}
+		}
 	}
 
 	public boolean fetchBill(String tenantId, String connectionNo, RequestInfo requestInfo) {

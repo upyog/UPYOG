@@ -549,7 +549,7 @@ public class EstimationService {
 		}
 	}
 	
-	public Map<String, List> getReconnectionFeeEstimation(CalculationCriteria criteria, RequestInfo requestInfo) {
+	public Map<String, List> getReconnectionFeeEstimation(CalculationCriteria criteria, RequestInfo requestInfo, Map<String, Object> masterData ) {
 		if (StringUtils.isEmpty(criteria.getWaterConnection()) && !StringUtils.isEmpty(criteria.getApplicationNo())) {
 			SearchCriteria searchCriteria = new SearchCriteria();
 			searchCriteria.setApplicationNumber(criteria.getApplicationNo());
@@ -561,25 +561,31 @@ public class EstimationService {
 			throw new CustomException("WATER_CONNECTION_NOT_FOUND",
 					"Water Connection are not present for " + criteria.getApplicationNo() + " Application no");
 		}
-		List<TaxHeadEstimate> taxHeadEstimates = getTaxHeadForReconnectionFeeEstimationV2(criteria, requestInfo);
+		List<TaxHeadEstimate> taxHeadEstimates = getTaxHeadForReconnectionFeeEstimationV2(criteria,masterData, requestInfo);
 		Map<String, List> estimatesAndBillingSlabs = new HashMap<>();
 		estimatesAndBillingSlabs.put("estimates", taxHeadEstimates);
 		return estimatesAndBillingSlabs;
 	}
 
 	private List<TaxHeadEstimate> getTaxHeadForReconnectionFeeEstimationV2(CalculationCriteria criteria,
-			RequestInfo requestInfo) {
-		BigDecimal reconnectionCharge = BigDecimal.ZERO;
-		List<TaxHeadEstimate> estimates = new ArrayList<>();
+			Map<String, Object> masterData, RequestInfo requestInfo) {
+		JSONArray feeSlab = (JSONArray) masterData.getOrDefault(WSCalculationConstant.WC_FEESLAB_MASTER, null);
+		if (feeSlab == null)
+			throw new CustomException("FEE_SLAB_NOT_FOUND", "fee slab master data not found!!"); 
 		
-		//BigDecimal scrutinyFee = BigDecimal.ZERO;
-
-		reconnectionCharge = BigDecimal.valueOf(200);
+		JSONObject feeObj = mapper.convertValue(feeSlab.get(0), JSONObject.class);
+		BigDecimal reconnectionCharge = BigDecimal.ZERO;
+		
+		if (feeObj.get(WSCalculationConstant.RECONNECTION_FEE_CONST) != null) {
+			reconnectionCharge = new BigDecimal(feeObj.getAsNumber(WSCalculationConstant.RECONNECTION_FEE_CONST).toString());
+		}
+		
+		List<TaxHeadEstimate> estimates = new ArrayList<>();
 
 		estimates.add(TaxHeadEstimate.builder().taxHeadCode(WSCalculationConstant.WS_RECONNECTION_CHARGE)
-				.estimateAmount(reconnectionCharge.setScale(2, RoundingMode.UP)).build());
-
+				.estimateAmount(reconnectionCharge).build());
 		return estimates;
 
 	}
+
 }

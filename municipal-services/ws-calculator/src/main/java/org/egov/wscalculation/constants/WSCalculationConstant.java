@@ -237,6 +237,8 @@ public class WSCalculationConstant {
 
 	public static final String SCRUTINY_FEE_CONST = "scrutinyFee";
 	
+	public static final String RECONNECTION_FEE_CONST = "reconnectionfee";
+	
 	public static final String METER_COST_CONST = "meterCost";
 	
 	public static final String OTHER_CHARGE_CONST = "other";
