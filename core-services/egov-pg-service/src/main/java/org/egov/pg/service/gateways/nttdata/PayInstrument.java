@@ -1,17 +1,18 @@
 package org.egov.pg.service.gateways.nttdata;
 
-
+import java.util.List;
 
 public class PayInstrument {
 
 	private HeadDetails headDetails;
+	private SettlementDetails settlementDetails;
 	private MerchDetails merchDetails;
 	private PayDetails payDetails;
 	private ResponseUrls responseUrls;
 	private PayModeSpecificData payModeSpecificData;
 	private Extras extras;
 	private CustDetails custDetails;
-//	public List<responseDeatails> responseDeatil;
+	public ResponseDetails responseDetails;
 	public ResponseDetails getResponseDetails() {
 		return responseDetails;
 	}
@@ -24,7 +25,7 @@ public class PayInstrument {
 	public void setResponseDetails(ResponseDetails responseDetails) {
 		this.responseDetails = responseDetails;
 	}
-	private ResponseDetails responseDetails;
+	
 	public HeadDetails getHeadDetails() {
 		return headDetails;
 	}

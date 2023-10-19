@@ -4,6 +4,24 @@ public class BankDetails {
 	private String otsBankId;
 	private String bankTxnId;
 	private String otsBankName;
+	private String cardType;
+	private String cardMaskNumber;
+
+	public String getCardType() {
+		return cardType;
+	}
+
+	public void setCardType(String cardType) {
+		this.cardType = cardType;
+	}
+
+	public String getCardMaskNumber() {
+		return cardMaskNumber;
+	}
+
+	public void setCardMaskNumber(String cardMaskNumber) {
+		this.cardMaskNumber = cardMaskNumber;
+	}
 
 	public String getOtsBankId() {
 		return otsBankId;
