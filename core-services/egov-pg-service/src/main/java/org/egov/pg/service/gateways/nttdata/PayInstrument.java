@@ -4,6 +4,12 @@ import java.util.List;
 
 public class PayInstrument {
 
+	public SettlementDetails getSettlementDetails() {
+		return settlementDetails;
+	}
+	public void setSettlementDetails(SettlementDetails settlementDetails) {
+		this.settlementDetails = settlementDetails;
+	}
 	private HeadDetails headDetails;
 	private SettlementDetails settlementDetails;
 	private MerchDetails merchDetails;

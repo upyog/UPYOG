@@ -1,14 +1,12 @@
 package org.egov.pg.service.gateways.nttdata;
 
-import java.util.Arrays;
-
 public class PayModeSpecificData {
-	private String[] subChannel;
+	private String subChannel;
 	private BankDetails bankDetails;
-	public String[] getSubChannel() {
+	public String getSubChannel() {
 		return subChannel;
 	}
-	public void setSubChannel(String[] subChannel) {
+	public void setSubChannel(String subChannel) {
 		this.subChannel = subChannel;
 	}
 	public BankDetails getBankDetails() {
@@ -19,8 +17,8 @@ public class PayModeSpecificData {
 	}
 	@Override
 	public String toString() {
-		return "PayModeSpecificData [subChannel=" + Arrays.toString(subChannel) + ", bankDetails=" + bankDetails
-				+ ", getSubChannel()=" + Arrays.toString(getSubChannel()) + ", getBankDetails()=" + getBankDetails()
+		return "PayModeSpecificData [subChannel=" + (subChannel) + ", bankDetails=" + bankDetails
+				+ ", getSubChannel()=" + (getSubChannel()) + ", getBankDetails()=" + getBankDetails()
 				+ ", getClass()=" + getClass() + ", hashCode()=" + hashCode() + ", toString()=" + super.toString()
 				+ "]";
 	}
