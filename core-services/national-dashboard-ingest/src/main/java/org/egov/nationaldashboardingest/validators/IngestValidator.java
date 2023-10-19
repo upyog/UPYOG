@@ -89,32 +89,42 @@ public class IngestValidator {
 
 
 
-    public void verifyCrossStateRequest(Data data, RequestInfo requestInfo){
-        String employeeUlb = requestInfo.getUserInfo().getTenantId();
-        Set<String> roles = new HashSet<>();
-        requestInfo.getUserInfo().getRoles().forEach(role -> {
-            roles.add(role.getCode());
-        });
-
-        // Skip validations in case the user is having adaptor ingest specific role
-        if(!roles.contains(applicationProperties.getAdaptorIngestSystemRole())) {
-            if (roles.contains("SUPERUSER")) {
-                String ulbPresentInRequest = data.getUlb();
-                log.info(ulbPresentInRequest.split("\\.")[0]);
-                if (!ulbPresentInRequest.split("\\.")[0].equals(employeeUlb.split("\\.")[0])) {
-                    throw new CustomException("EG_INGEST_ERR", "Superusers of one state cannot insert data for another state");
-                }
-
-            } else {
-                String ulbPresentInRequest = data.getUlb();
-                if (ulbPresentInRequest.contains(".")) {
-                    if (!employeeUlb.equals(ulbPresentInRequest))
-                        throw new CustomException("EG_INGEST_ERR", "Employee of ulb: " + employeeUlb + " cannot insert data for ulb: " + ulbPresentInRequest);
-                } else {
-                    if (!employeeUlb.contains(ulbPresentInRequest.toLowerCase()))
-                        throw new CustomException("EG_INGEST_ERR", "Employee of ulb: " + employeeUlb + " cannot insert data for ulb: " + ulbPresentInRequest);
-                }
-            }
+//    public void verifyCrossStateRequest(Data data, RequestInfo requestInfo){
+//        String employeeUlb = requestInfo.getUserInfo().getTenantId();
+//        Set<String> roles = new HashSet<>();
+//        requestInfo.getUserInfo().getRoles().forEach(role -> {
+//            roles.add(role.getCode());
+//        });
+//
+//        // Skip validations in case the user is having adaptor ingest specific role
+//        if(!roles.contains(applicationProperties.getAdaptorIngestSystemRole())) {
+//            if (roles.contains("SUPERUSER")) {
+//                String ulbPresentInRequest = data.getUlb();
+//                log.info(ulbPresentInRequest.split("\\.")[0]);
+//                if (!ulbPresentInRequest.split("\\.")[0].equals(employeeUlb.split("\\.")[0])) {
+//                    throw new CustomException("EG_INGEST_ERR", "Superusers of one state cannot insert data for another state");
+//                }
+//
+//            } else {
+//                String ulbPresentInRequest = data.getUlb();
+//                if (ulbPresentInRequest.contains(".")) {
+//                    if (!employeeUlb.equals(ulbPresentInRequest))
+//                        throw new CustomException("EG_INGEST_ERR", "Employee of ulb: " + employeeUlb + " cannot insert data for ulb: " + ulbPresentInRequest);
+//                } else {
+//                    if (!employeeUlb.contains(ulbPresentInRequest.toLowerCase()))
+//                        throw new CustomException("EG_INGEST_ERR", "Employee of ulb: " + employeeUlb + " cannot insert data for ulb: " + ulbPresentInRequest);
+//                }
+//            }
+//        }
+//    }
+	
+	public void verifyCrossStateRequest(Data data, RequestInfo requestInfo){
+        String uuid = requestInfo.getUserInfo().getUuid();
+  
+        Map<String,String> userUUID=applicationProperties.getNationalDashboardUser();
+        if(!userUUID.get(data.getState()).equalsIgnoreCase(uuid)) {
+                 throw new CustomException("EG_CROSS_STATE_DATA_INGEST", "Employee of one state cannot insert data of another State!!");
+               
         }
     }
 
@@ -374,13 +384,16 @@ public class IngestValidator {
 	for(Data data:ingestData)
 	{
         String tenant=data.getUlb();
+        data.setState(toCamelCase(data.getState()));
         String state=data.getState();
+        
     
        	for(Map<String,String> migratedTenants:jsonOutput)
         	{
         		if(tenant.equals(migratedTenants.get("code")) && state.equals(migratedTenants.get("stateName")))
         		{
         		validCounts++;
+        		break;
         		}
         	}
 	}
