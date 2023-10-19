@@ -310,29 +310,29 @@ public class NttdataGateway implements Gateway {
 
         if(resp !=null && resp.getPayInstrument() !=null)
         {
-        if (resp.getPayInstrument().getResponseDetails().getStatusCode().equals("OTS00000")) {
+        if (resp.getPayInstrument().get(0).getResponseDetails().getStatusCode().equals("OTS00000")) {
             status = Transaction.TxnStatusEnum.SUCCESS;
 
             return Transaction.builder()
                     .txnId(currentStatus.getTxnId())
-                    .txnAmount(resp.getPayInstrument().getPayDetails().getTotalAmount())
+                    .txnAmount(resp.getPayInstrument().get(0).getPayDetails().getTotalAmount())
                     .txnStatus(status)
-                    .gatewayTxnId(resp.getPayInstrument().getPayModeSpecificData().getBankDetails().getBankTxnId())
-                    .gatewayStatusCode(resp.getPayInstrument().getResponseDetails().getStatusCode())
-                    .gatewayStatusMsg(resp.getPayInstrument().getResponseDetails().getMessage())
+                    .gatewayTxnId(resp.getPayInstrument().get(0).getPayModeSpecificData().getBankDetails().getBankTxnId())
+                    .gatewayStatusCode(resp.getPayInstrument().get(0).getResponseDetails().getStatusCode())
+                    .gatewayStatusMsg(resp.getPayInstrument().get(0).getResponseDetails().getMessage())
                     .responseJson(resp)
                     .build();
         } else {
-            if (resp.getPayInstrument().getResponseDetails().getStatusCode().equalsIgnoreCase("OTS0551"))
+            if (resp.getPayInstrument().get(0).getResponseDetails().getStatusCode().equalsIgnoreCase("OTS0551"))
                 status = Transaction.TxnStatusEnum.PENDING;
             else
                 status = Transaction.TxnStatusEnum.FAILURE;
             return Transaction.builder()
                     .txnId(currentStatus.getTxnId())
                     .txnStatus(status)
-                    .gatewayTxnId(resp.getPayInstrument().getPayModeSpecificData().getBankDetails().getBankTxnId())
-                    .gatewayStatusCode(resp.getPayInstrument().getResponseDetails().getStatusCode())
-                    .gatewayStatusMsg(resp.getPayInstrument().getResponseDetails().getMessage())
+                    .gatewayTxnId(resp.getPayInstrument().get(0).getPayModeSpecificData().getBankDetails().getBankTxnId())
+                    .gatewayStatusCode(resp.getPayInstrument().get(0).getResponseDetails().getStatusCode())
+                    .gatewayStatusMsg(resp.getPayInstrument().get(0).getResponseDetails().getMessage())
                      .responseJson(resp)
                     .build();
         }
