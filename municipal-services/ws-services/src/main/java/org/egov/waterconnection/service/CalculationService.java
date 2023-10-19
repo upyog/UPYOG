@@ -134,6 +134,23 @@ public class CalculationService {
 		}
 		return isNoPayment;
 	}
+	
+	public boolean fetchBillForReconnect(String tenantId, String connectionNo, RequestInfo requestInfo) {
+		boolean isNoPayment = false;
+		try {
+			Object result = serviceRequestRepository.fetchResult(getFetchBillURLForReconnect(tenantId, connectionNo)
+					, RequestInfoWrapper.builder().requestInfo(requestInfo).build());
+			BillResponse billResponse = mapper.convertValue(result, BillResponse.class);
+			for (Bill bill : billResponse.getBill()) {
+				if (bill.getTotalAmount().equals(BigDecimal.valueOf(0.0))) {
+					isNoPayment = true;
+				}
+			}
+		} catch (Exception ex) {
+			throw new CustomException("WATER_FETCH_BILL_ERRORCODE", "Error while fetching the bill" + ex.getMessage());
+		}
+		return isNoPayment;
+	}
 
 	private StringBuilder getFetchBillURL(String tenantId, String connectionNo) {
 
@@ -144,5 +161,16 @@ public class CalculationService {
 				.append(connectionNo).append(WCConstants.SEPARATER)
 				.append(WCConstants.BUSINESSSERVICE_FIELD_FOR_SEARCH_URL)
 				.append(WCConstants.WATER_TAX_SERVICE_CODE);
+	}
+	
+	private StringBuilder getFetchBillURLForReconnect(String tenantId, String connectionNo) {
+
+		return new StringBuilder().append(config.getBillingServiceHost())
+				.append(config.getFetchBillEndPoint()).append(WCConstants.URL_PARAMS_SEPARATER)
+				.append(WCConstants.TENANT_ID_FIELD_FOR_SEARCH_URL).append(tenantId)
+				.append(WCConstants.SEPARATER).append(WCConstants.CONSUMER_CODE_SEARCH_FIELD_NAME)
+				.append(connectionNo).append(WCConstants.SEPARATER)
+				.append(WCConstants.BUSINESSSERVICE_FIELD_FOR_SEARCH_URL)
+				.append("WSReconnection");
 	}
 }
