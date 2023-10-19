@@ -1,8 +1,7 @@
 import React,{Fragment, useEffect, useState} from "react";
-import { newConfig } from "../../../components/config/TE/te-config";
+import { newConfig } from "../../../components/config/CA/ca-config";
 import { FormComposer, Header, Toast } from "@egovernments/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
-import useEDCRInbox from "../../../../../../libraries/src/hooks/obps/useEDCRInbox";
 
 const ContractAgreementAdd = () =>{
   const { t } = useTranslation();

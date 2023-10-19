@@ -276,6 +276,7 @@ import useWmsTEGetSingleRecord from "./wms/TE/useWmsTEGetSingleRecord";
 import useWmsTEGetRecord from "./wms/TE/useWmsTEGetRecord";
 import useWmsTESearch from "./wms/TE/useWmsTESearch";
 import useWMSTEMaster from "./wms/TE/useWMSTEMaster";
+import useWmsCAGet from "./wms/CA/useWmsCAGet";
 
 
 import useGetHowItWorksJSON from "./useHowItWorksJSON";
@@ -570,6 +571,9 @@ const wms = {
     useWmsTEGetRecord,
     useWmsTESearch,
     useWMSTEMaster
+  },
+  ca:{
+    useWmsCAGet
   },
   useWmsSchMDMS,
   useWmsGenderMDMS,
