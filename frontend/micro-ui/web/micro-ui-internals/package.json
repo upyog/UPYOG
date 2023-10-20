@@ -16,7 +16,8 @@
     "packages/modules/tl",
     "packages/modules/ws",
     "packages/modules/commonPt",
-    "packages/modules/fsm"
+    "packages/modules/fsm",
+    "packages/modules/mCollect"
   ],
   "author": "Abhinav Kushwaha <abhinav.kushwaha@egovernments.org>",
   "license": "MIT",
