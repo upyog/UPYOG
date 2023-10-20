@@ -149,21 +149,6 @@ public class DemandService {
 						updateCalculations.add(calculation);
 					}
 				}
-				else if(request.getIsReconnectionRequest() != null && request.getIsReconnectionRequest())
-				{
-					
-					demands = searchDemandForReconnectionRequest(calculation.getTenantId(), consumerCodes, fromDateSearch,
-							null, request.getRequestInfo(), null, request.getIsDisconnectionRequest(),request.getIsReconnectionRequest());
-
-					Set<String> connectionNumbersFromDemands = new HashSet<>();
-					if (!CollectionUtils.isEmpty(demands))
-						connectionNumbersFromDemands = demands.stream().map(Demand::getConsumerCode)
-								.collect(Collectors.toSet());
-					if (!connectionNumbersFromDemands.contains(isForConnectionNo ? calculation.getConnectionNo() : calculation.getApplicationNO())) {
-						createCalculations.add(calculation);
-					} else
-						updateCalculations.add(calculation);
-				}
 				else {
 					demands = searchDemand(tenantId, consumerCodes, fromDateSearch, toDateSearch, request.getRequestInfo(), null,
 							request.getIsDisconnectionRequest(),request.getIsReconnectionRequest());
@@ -638,11 +623,7 @@ public class DemandService {
 			if (isDisconnectionRequest) {
 				searchResult = searchDemandForDisconnectionRequest(calculation.getTenantId(), consumerCodes, null,
 						toDateSearch, requestInfo, null, isDisconnectionRequest);
-			} else if (isReconnectionRequest)
-				{
-					searchResult = searchDemandForReconnectionRequest(calculation.getTenantId(), consumerCodes, fromDateSearch,
-							toDateSearch, requestInfo, null, isDisconnectionRequest , isReconnectionRequest);
-				}
+			}
 			else {
 				searchResult = searchDemand(calculation.getTenantId(), consumerCodes, fromDateSearch,
 						toDateSearch, requestInfo, null, isDisconnectionRequest,isReconnectionRequest);
@@ -1180,17 +1161,6 @@ public class DemandService {
 	List<Demand> searchDemandForDisconnectionRequest(String tenantId, Set<String> consumerCodes,
 													 Long fromDateSearch, Long toDateSearch, RequestInfo requestInfo, Boolean isDemandPaid, Boolean isDisconnectionRequest) {
 		List<Demand> demandList = searchDemand(tenantId, consumerCodes, null, toDateSearch, requestInfo,
-				null, isDisconnectionRequest,false);
-		if (!CollectionUtils.isEmpty(demandList)) {
-			//Sorting the demandList in descending order to pick the latest demand generated
-			demandList = demandList.stream().sorted(Comparator.comparing(Demand::getTaxPeriodTo)
-					.reversed()).collect(Collectors.toList());
-		}
-		return demandList;
-	}
-	List<Demand> searchDemandForReconnectionRequest(String tenantId, Set<String> consumerCodes,
-			 Long fromDateSearch, Long toDateSearch, RequestInfo requestInfo, Boolean isDemandPaid, Boolean isDisconnectionRequest,Boolean isReconnectionRequest) {
-		List<Demand> demandList = searchDemand(tenantId, consumerCodes, fromDateSearch, null, requestInfo,
 				null, isDisconnectionRequest,false);
 		if (!CollectionUtils.isEmpty(demandList)) {
 			//Sorting the demandList in descending order to pick the latest demand generated
