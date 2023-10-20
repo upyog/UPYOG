@@ -1,6 +1,7 @@
 package org.egov.wscalculation.service;
 
 import java.math.BigDecimal;
+
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Function;
@@ -256,11 +257,13 @@ public class DemandService {
 				.waterConnectionIds(waterConnectionIds)
 				.billingCycle(billingcycle)
 				.build();
-
+		log.info("Demand Input for WSREconnection is " +demands);
 		List<Demand> demandRes = demandRepository.saveDemand(requestInfo, demands,notificationObj);
+		log.info("Demand Response for WSREconnection is " +demandRes);
+		
 		if(calculationReq.getIsReconnectionRequest())
 			fetchBillForReconnect(demandRes, requestInfo, masterMap);
-		else if(isForConnectionNO)
+		else if(isForConnectionNO && ! calculationReq.getIsReconnectionRequest())
 			fetchBill(demandRes, requestInfo, masterMap);
 		
 		return demandRes;
