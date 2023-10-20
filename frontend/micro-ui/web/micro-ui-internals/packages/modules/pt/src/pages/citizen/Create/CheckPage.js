@@ -37,6 +37,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
     address,
     isResdential,
     PropertyType,
+    electricity,
     noOfFloors,
     noOofBasements,
     units = [{}],
@@ -61,6 +62,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
     isUpdateProperty,
   } = value;
   const typeOfApplication = !isEditProperty && !isUpdateProperty ? `new-application` : `edit-application`;
+  
   let flatplotsize;
   if (isPropertyselfoccupied(selfOccupied?.i18nKey)) {
     flatplotsize = parseInt(landarea?.floorarea);
@@ -76,7 +78,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
   if (isPropertyIndependent(PropertyType?.i18nKey)) {
     flatplotsize = parseInt(propertyArea?.builtUpArea) + parseInt(propertyArea?.plotSize);
   }
-
+  
   const [agree, setAgree] = useState(false);
   const setdeclarationhandler = () => {
     setAgree(!agree);
@@ -276,6 +278,11 @@ const CheckPage = ({ onSubmit, value = {} }) => {
             label={t("PT_ASSESMENT1_PROPERTY_TYPE")}
             text={`${t(checkForNA(PropertyType?.i18nKey))}`}
             actionButton={<ActionButton jumpTo={`/digit-ui/citizen/pt/property/${typeOfApplication}/property-type`} />}
+          />
+          <Row
+            label={t("PT_ASSESMENT1_ELECTRICITY_NUMBER")}
+            text={`${t(checkForNA(electricity?.i18nKey))}`}
+            actionButton={<ActionButton jumpTo={`/digit-ui/citizen/pt/property/${typeOfApplication}/electricity-number`} />}
           />
           {PropertyType?.code !== "VACANT" &&<Row
             label={t("PT_ASSESMENT1_PLOT_SIZE")}

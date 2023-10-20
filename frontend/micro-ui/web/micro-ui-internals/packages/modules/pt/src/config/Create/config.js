@@ -174,13 +174,33 @@ export const newConfig =[
                         "cardText": "",
                         "submitBarLabel": "PT_COMMONS_NEXT"
                     },
+                    
+                    "nextStep": "electricity-number",
+                    
+                    "withoutLabel": true
+                    
+                },
+                {
+                    "type": "component",
+                    "route": "electricity-number",
+                    "isMandatory": true,
+                    "component": "Electricity",
+                    "key": "electricity",
+                    "withoutLabel": true,
+                    "texts": {
+                        "headerCaption": "",
+                        "header": "PT_ASSESMENT1_ELECTRICITY_NUMBER",
+                        "cardText": "",
+                        "submitBarLabel": "PT_COMMONS_NEXT"
+                    },
                     "nextStep": {
                         "COMMON_PROPTYPE_BUILTUP_INDEPENDENTPROPERTY": "landarea",
                         "COMMON_PROPTYPE_BUILTUP_SHAREDPROPERTY": "PtUnits",
                         "COMMON_PROPTYPE_VACANT": "area"
                     },
-                    "key": "PropertyType",
+                    "key": "electricity",
                     "withoutLabel": true
+                    
                 },
                 {
                     "type": "component",
@@ -398,6 +418,8 @@ export const newConfig =[
                     "nextStep": "map",
                     "hideInEmployee": true
                 }
+               
+                
             ]
         },
         {
@@ -579,4 +601,5 @@ export const newConfig =[
                 }
             ]
         }
+        
     ];

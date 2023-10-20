@@ -17,7 +17,7 @@ const EditForm = ({ applicationData }) => {
     setMutationHappened(false);
     clearSuccessData();
   }, []);
-
+  console.log("applicationData",applicationData)
   const defaultValues = {
     originalData: applicationData,
     address: applicationData?.address,
@@ -42,7 +42,9 @@ const EditForm = ({ applicationData }) => {
   };
 
   const onSubmit = (data) => {
+    console.log(data)
     const formData = {
+      
       ...applicationData,
       address: {
         ...applicationData?.address,
@@ -57,6 +59,9 @@ const EditForm = ({ applicationData }) => {
       noOfFloors: Number(data?.noOfFloors),
       landArea: Number(data?.landarea),
       superBuiltUpArea: Number(data?.landarea),
+      additionalDetails:{...data.originalData.additionalDetails, electricity:data.electricity},
+      additionalDetails:{...data.originalData.additionalDetails, electricityuid:data.electricityuid},
+      //electricity:data?.electricity,
       source: "MUNICIPAL_RECORDS", // required
       channel: "CFC_COUNTER", // required
       documents: applicationData?.documents ? applicationData?.documents.map((old) => {
@@ -86,6 +91,7 @@ const EditForm = ({ applicationData }) => {
   /* use newConfig instead of commonFields for local development in case needed */
 
   const configs = commonFields ? commonFields : newConfig;
+  console.log("aaaa", configs)
 
   return (
     <FormComposer
