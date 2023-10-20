@@ -112,7 +112,7 @@ public class WSCalculationServiceImpl implements WSCalculationService {
 			calculations = getCalculations(request, masterMap);
 		}
 		else if (request.getIsReconnectionRequest()) {
-			connectionRequest = request.getIsReconnectionRequest();
+			connectionRequest = (!request.getIsReconnectionRequest());
 			masterMap = masterDataService.loadExemptionMaster(request.getRequestInfo(),
 					request.getCalculationCriteria().get(0).getTenantId());
 			calculations = getReconnectionFeeCalculation(request, masterMap);

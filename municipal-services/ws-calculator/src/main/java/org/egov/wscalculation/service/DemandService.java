@@ -513,6 +513,8 @@ public class DemandService {
 											Boolean isDisconnectionRequest,Boolean isReconnectionRequest) {
 		StringBuilder url = new StringBuilder(configs.getBillingServiceHost());
 		String businessService = taxPeriodFrom == null && !isDisconnectionRequest ? ONE_TIME_FEE_SERVICE_FIELD : configs.getBusinessService();
+		if(isReconnectionRequest)
+			businessService="WSReconnection";
 		url.append(configs.getDemandSearchEndPoint());
 		url.append("?");
 		url.append("tenantId=");
