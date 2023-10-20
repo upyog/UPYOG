@@ -481,8 +481,8 @@ public class WaterServiceImpl implements WaterService {
 		boolean isNoPayment = false;
 		WaterConnection waterConnection = waterConnectionRequest.getWaterConnection();
 		ProcessInstance processInstance = waterConnection.getProcessInstance();
-		if (WCConstants.APPROVE_CONNECTION_CONST.equalsIgnoreCase(processInstance.getAction())) {
-			isNoPayment = calculationService.fetchBillForReconnect(waterConnection.getTenantId(), waterConnection.getConnectionNo(), waterConnectionRequest.getRequestInfo());
+		if (WCConstants.APPROVE_CONNECTION_CONST.equalsIgnoreCase(processInstance.getAction()) ) {
+			isNoPayment = calculationService.fetchBillForReconnect(waterConnection.getTenantId(), waterConnection.getApplicationNo(), waterConnectionRequest.getRequestInfo());
 			if (isNoPayment) {
 				processInstance.setComment(WORKFLOW_NO_PAYMENT_CODE);
 			}
