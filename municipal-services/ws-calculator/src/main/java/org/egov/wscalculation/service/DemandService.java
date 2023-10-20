@@ -452,6 +452,7 @@ public class DemandService {
 		Object result = serviceRequestRepository.fetchResult(
 				getDemandSearchURL(tenantId, consumerCodes, taxPeriodFrom, taxPeriodTo, isDemandPaid, isDisconnectionRequest,isReconnectionRequest),
 				RequestInfoWrapper.builder().requestInfo(requestInfo).build());
+		log.info("Search demand for reconnection is " +result);
 		try {
 			return mapper.convertValue(result, DemandResponse.class).getDemands();
 		} catch (IllegalArgumentException e) {
@@ -512,8 +513,6 @@ public class DemandService {
 											Boolean isDisconnectionRequest,Boolean isReconnectionRequest) {
 		StringBuilder url = new StringBuilder(configs.getBillingServiceHost());
 		String businessService = taxPeriodFrom == null && !isDisconnectionRequest ? ONE_TIME_FEE_SERVICE_FIELD : configs.getBusinessService();
-		if(isReconnectionRequest)
-			businessService="WSReconnection";
 		url.append(configs.getDemandSearchEndPoint());
 		url.append("?");
 		url.append("tenantId=");
@@ -622,7 +621,8 @@ public class DemandService {
 			if (isDisconnectionRequest) {
 				searchResult = searchDemandForDisconnectionRequest(calculation.getTenantId(), consumerCodes, null,
 						toDateSearch, requestInfo, null, isDisconnectionRequest);
-			} else {
+			}
+			else {
 				searchResult = searchDemand(calculation.getTenantId(), consumerCodes, fromDateSearch,
 						toDateSearch, requestInfo, null, isDisconnectionRequest,isReconnectionRequest);
 			}
@@ -997,6 +997,8 @@ public class DemandService {
 				Object result = serviceRequestRepository.fetchResult(
 						calculatorUtils.getFetchBillURLForReconnection(demand.getTenantId(), demand.getConsumerCode()),
 						RequestInfoWrapper.builder().requestInfo(requestInfo).build());
+				log.info("Result of fetchbillReconnect is " +result);
+				
 				HashMap<String, Object> billResponse = new HashMap<>();
 				billResponse.put("requestInfo", requestInfo);
 				billResponse.put("billResponse", result);
