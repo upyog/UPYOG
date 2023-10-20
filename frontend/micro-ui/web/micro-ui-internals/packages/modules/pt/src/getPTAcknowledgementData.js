@@ -91,6 +91,7 @@ const getAssessmentInfo = (application, t) => {
     { title: t("PT_ASSESMENT_INFO_PLOT_SIZE"), value: t(application?.landArea) || t("CS_NA") },
     { title: t("PT_ASSESMENT_INFO_NO_OF_FLOOR"), value: t(application?.noOfFloors) || t("CS_NA") },
     { title: t("PT_ASSESMENT_INFO_ELECTRICITY_ID"), value: t(application?.additionalDetails?.electricity) || t("CS_NA") },
+    { title: t("PT_ASSESMENT_INFO_ELECTRICITY_UID"), value: t(application?.additionalDetails?.electricityuid) || t("CS_NA") },
   ];
   application.units = application?.units?.filter((unit) => unit.active == true) || [];
   let flrno,

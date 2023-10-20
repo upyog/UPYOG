@@ -61,7 +61,8 @@ const NewApplication = () => {
       NonRentedMonthsUsage: data?.units[0]?.NonRentedMonthsUsage,
       ageOfProperty:data?.units[0]?.ageOfProperty,
       structureType:data?.units[0]?.structureType,
-      electricity:data?.electricity
+      electricity:data?.electricity,
+      electricityuid:data?.electricityuid
       },
       owners: data?.owners.map((owner) => {
         let {
@@ -138,6 +139,16 @@ const NewApplication = () => {
   /* use newConfig instead of commonFields for local development in case needed */
 
   const configs = commonFields?commonFields:newConfig;
+  
+
+  /*console.log("new",configs)
+  configs[1]?.body?.push( {
+    "type": "component",
+    "isMandatory": true,
+    "component": "ElectricityUID",
+    "key": "electricityuid",
+    "withoutLabel": true
+  })*/
 
   return (
     <FormComposer
