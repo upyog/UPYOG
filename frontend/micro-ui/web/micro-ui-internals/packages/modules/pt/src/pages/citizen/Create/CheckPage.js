@@ -18,6 +18,8 @@ import {
   ispropertyunoccupied
 } from "../../../utils";
 import Timeline from "../../../components/TLTimeline";
+import ElectricityUID from "../../../pageComponents/ElectricityUID";
+import Electricity from "../../../pageComponents/Electricity";
 
 const ActionButton = ({ jumpTo }) => {
   const { t } = useTranslation();
@@ -32,14 +34,17 @@ const ActionButton = ({ jumpTo }) => {
 const CheckPage = ({ onSubmit, value = {} }) => {
   const { t } = useTranslation();
   const history = useHistory();
-
+  console.log("value",value)
   const {
     address,
     isResdential,
     PropertyType,
     electricity,
+    electricityuid,
+    ElectricityUID,
     noOfFloors,
     noOofBasements,
+    additionalDetails,
     units = [{}],
     landarea,
     landArea,
@@ -281,8 +286,13 @@ const CheckPage = ({ onSubmit, value = {} }) => {
           />
           <Row
             label={t("PT_ASSESMENT1_ELECTRICITY_NUMBER")}
-            text={`${t(checkForNA(electricity?.i18nKey))}`}
+            text={`${t(checkForNA(electricity?.electricity))}`}
             actionButton={<ActionButton jumpTo={`/digit-ui/citizen/pt/property/${typeOfApplication}/electricity-number`} />}
+          />
+          <Row
+            label={t("PT_ASSESMENT1_ELECTRICITY_UID")}
+            text={`${t(checkForNA(electricityuid?.electricityuid))}`}
+            actionButton={<ActionButton jumpTo={`/digit-ui/citizen/pt/property/${typeOfApplication}/electricity-uid`} />}
           />
           {PropertyType?.code !== "VACANT" &&<Row
             label={t("PT_ASSESMENT1_PLOT_SIZE")}

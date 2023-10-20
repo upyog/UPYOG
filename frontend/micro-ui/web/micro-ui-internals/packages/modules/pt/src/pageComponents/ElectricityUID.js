@@ -12,6 +12,7 @@ const ElectricityUID = ({ t, config, onSelect, value, userType, formData, setErr
   let electricityuid;
   let setElectricityUID;
   const [hidden, setHidden] = useState(true);
+  const pattern= /^[a-zA-Z0-9-]*$/;
   if (!isNaN(index)) {
    
     [electricityuid, setElectricityUID] = useState(formData?.originalData?.additionalDetails?.electricityuid || "");
@@ -46,23 +47,33 @@ const ElectricityUID = ({ t, config, onSelect, value, userType, formData, setErr
  
   
   function goNext()  {
-    
-      onSelect(config.key, electricityuid);
+    sessionStorage.setItem("electricityuid", electricityuid.i18nKey);
+      onSelect("electricityuid", {electricityuid});
    
   };
-
+  
   useEffect(() => {
     if (userType === "employee") {
       
       console.log("elecuid", electricityuid)
      if (electricityuid.length===0) setFormError(config.key, { type: "required", message: t("CORE_COMMON_REQUIRED_ERRMSG") });
-     else if (electricityuid.length<10 || !Number(electricityuid)) setFormError(config.key, { type: "invalid", message: t("ERR_DEFAULT_INPUT_FIELD_MSG") });
+     else if (electricityuid.length<15 || electricityuid.length >15 || !pattern.test(electricityuid) ) setFormError(config.key, { type: "invalid", message: t("ERR_DEFAULT_INPUT_FIELD_MSG") });
     else clearFormErrors(config.key);
 
       onSelect(config.key, electricityuid);
       
     }
   }, [electricityuid]);
+ /* useEffect(()=>{
+    if (window.location.href.includes("/citizen")){
+      if (electricityuid.length===0) setFormError(config.key, { type: "required", message: t("CORE_COMMON_REQUIRED_ERRMSG") });
+     else if (electricityuid.length<15 || electricityuid.length >15 || !pattern.test(electricityuid) ) setFormError(config.key, { type: "invalid", message: t("ERR_DEFAULT_INPUT_FIELD_MSG") });
+    else clearFormErrors(config.key);
+
+      onSelect(config.key, electricityuid);
+
+    }
+  })*/
 
   useEffect(() => {
     if (presentInModifyApplication && userType === "employee") {
@@ -78,9 +89,7 @@ const ElectricityUID = ({ t, config, onSelect, value, userType, formData, setErr
       name: "electricity_uid",
       error: "ERR_HRMS_INVALID_ELECTRICITY_UID_NO",
       validation: {
-        required: true,
-        minLength: 10,
-        maxLength: 10
+        pattern: "/^[a-zA-Z0-9-]*$"
       }
     },
     
@@ -119,13 +128,13 @@ const ElectricityUID = ({ t, config, onSelect, value, userType, formData, setErr
       );
     });
   }
+  
   return (
     <React.Fragment>
      {window.location.href.includes("/citizen") ? <Timeline currentStep={1}/> : null}
     <FormStep
       config={config}
       onChange={onChange}
-      
       onSelect={goNext}
       onSkip={onSkip}
       t={t}
@@ -141,11 +150,7 @@ const ElectricityUID = ({ t, config, onSelect, value, userType, formData, setErr
         name="electricityuid"
         value={electricityuid}
         onChange={setElectricityUIDNo}
-        {...(validation = { 
-          required: true,
-          minLength: 10,
-          maxLength: 10,
-         })}
+        {...(validation = { pattern: "/^[a-zA-Z0-9-]*$", type: "number", title: t("PT_PLOT_SIZE_ERROR_MESSAGE") })}
       />
     </FormStep>
     </React.Fragment>
