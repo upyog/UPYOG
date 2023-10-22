@@ -525,7 +525,7 @@ const SelectPTUnits = React.memo(({ t, config, onSelect, userType, formData }) =
                   select={(e) => selectrentedMonths(index, e)}
                 />
               </div>
-              { (field.rentedMonths.code ==="month1" || field.rentedMonths.code ==="month2" || field.rentedMonths.code ==="month3" || field.rentedMonths.code ==="month4" || field.rentedMonths.code ==="month5" || field.rentedMonths.code ==="month6" || field.rentedMonths.code ==="month7" || field.rentedMonths.code ==="month8" || field.rentedMonths.code ==="month9" || field.rentedMonths.code ==="month10" || field.rentedMonths.code ==="month11") && (
+              { (field?.rentedMonths?.code ==="month1" || field?.rentedMonths?.code ==="month2" || field?.rentedMonths?.code ==="month3" || field?.rentedMonths?.code ==="month4" || field?.rentedMonths?.code ==="month5" || field?.rentedMonths?.code ==="month6" || field?.rentedMonths?.code ==="month7" || field?.rentedMonths?.code ==="month8" || field?.rentedMonths?.code ==="month9" || field?.rentedMonths?.code ==="month10" || field?.rentedMonths?.code ==="month11") && (
               <>
               <CardLabel>{`${t("PT_FORM2_NONRENTED_MONTHS_USAGE")}*`}</CardLabel>
               <div className={"form-pt-dropdown-only"}>

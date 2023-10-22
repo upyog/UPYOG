@@ -85,7 +85,7 @@ const PTSearchFields = {
           message: "PT_MIN_3CHAR",
         },
         pattern: {
-          value:  "[a-zA-Z]+(?:-[a-zA-Z]+)*$",
+          value:  "^[a-zA-Z ]*$",
           message: "PAYMENT_INVALID_NAME",
         },
       },

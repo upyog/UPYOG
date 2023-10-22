@@ -204,6 +204,7 @@ const Units = ({ t, config, onSelect, userType, formData, setError, formState, c
       let defaultUnits = formData?.originalData?.units
         ?.filter((e) => e.active)
         ?.map((unit, index) => {
+          console.log("unit",unit)
           let { occupancyType, usageCategory: uc, constructionDetail, floorNo, arv } = unit;
           occupancyType = occupencyOptions.filter((e) => e?.code === occupancyType)[0];
           let usageCategory = usageCategoryMajorMenu(usagecat).filter((e) => e?.code === uc)[0];
@@ -486,6 +487,7 @@ function Unit({
     let keys = Object.keys(formValue);
     const part = {};
     keys.forEach((key) => (part[key] = unit[key]));
+    console.log("formValueformValueformValue",formValue)
 
     if (!_.isEqual(formValue, part)) setUnits((prev) => prev.map((item) => (item.key === unit.key ? { ...item, ...formValue } : item)));
 
@@ -685,7 +687,7 @@ function Unit({
           />
         </LabelFieldPair>
         <CardLabelError style={errorStyle}>{localFormState.touched.Rentedmonths ? errors?.Rentedmonths?.message : ""}</CardLabelError>
-        {formValue.RentedMonths?.code === "month1" || formValue.RentedMonths?.code === "month2" || formValue.RentedMonths?.code === "month3" || formValue.RentedMonths?.code === "month4" || formValue.RentedMonths?.code === "month5" || formValue.RentedMonths?.code === "month6" || formValue.RentedMonths?.code === "month7" || formValue.RentedMonths?.code === "month8" || formValue.RentedMonths?.code === "month9" || formValue.RentedMonths?.code === "month10" || formValue.RentedMonths?.code === "month11" ? (
+        {formValue?.RentedMonths?.code === "month1" || formValue?.RentedMonths?.code === "month2" || formValue?.RentedMonths?.code === "month3" || formValue?.RentedMonths?.code === "month4" || formValue?.RentedMonths?.code === "month5" || formValue?.RentedMonths?.code === "month6" || formValue?.RentedMonths?.code === "month7" || formValue?.RentedMonths?.code === "month8" || formValue?.RentedMonths?.code === "month9" || formValue?.RentedMonths?.code === "month10" || formValue?.RentedMonths?.code === "month11" ? (
           <React.Fragment>
             <LabelFieldPair>
             <CardLabel className="card-label-smaller">{t("PT_FORM2_NONRENTED_MONTHS_USAGE") + " *"}</CardLabel>
