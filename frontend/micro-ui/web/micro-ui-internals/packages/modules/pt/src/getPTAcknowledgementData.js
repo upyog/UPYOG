@@ -134,6 +134,14 @@ const getAssessmentInfo = (application, t) => {
         value: (flrno = unit?.floorNo) > -3 ? t(unit?.constructionDetail?.builtUpArea) || t("CS_NA") : "",
       },
       {
+        title: (flrno = unit?.floorNo) > -3 ? t("PT_FORM2_PROPERTY_TYPE") : "",
+        value: (flrno = unit?.floorNo) > -3 ? t(unit?.additionalDetails?.structureType) || t("CS_NA") : "",
+      },
+      {
+        title: (flrno = unit?.floorNo) > -3 ? t("PT_FORM2_AGE_OF_PROPERTY") : "",
+        value: (flrno = unit?.floorNo) > -3 ? t(unit?.additionalDetails?.ageOfProperty) || t("CS_NA") : "",
+      },
+      {
         title:
           (flrno = unit?.floorNo) > -3
             ? t(getPropertyOccupancyTypeLocale(unit?.occupancyType)) === "Rented"
