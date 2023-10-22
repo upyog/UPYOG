@@ -24,7 +24,7 @@ import {
 import React, { useEffect, useState } from "react";
 import { useHistory, useRouteMatch } from "react-router-dom";
 import DisconnectTimeline from "../components/DisconnectTimeline";
-import { stringReplaceAll, createPayloadOfWSDisconnection, updatePayloadOfWSDisconnection, convertDateToEpoch } from "../utils";
+import { stringReplaceAll, createPayloadOfWSDisconnection, updatePayloadOfWSDisconnection, convertDateToEpoch ,updatePayloadOfWSRestoration,createPayloadOfWSReconnection} from "../utils";
 import { addDays, format } from "date-fns";
 
 const WSRestorationForm = ({ t, config, onSelect, userType }) => {
@@ -140,7 +140,7 @@ console.log("disconnectionTypes",disconnectionTypes)
     }
 
     else {
-      const payload = await createPayloadOfWSDisconnection(data, applicationData, applicationData?.applicationData?.serviceType);
+      const payload = await createPayloadOfWSReconnection(data, applicationData, applicationData?.applicationData?.serviceType);
       if(payload?.WaterConnection?.water){
         payload.WaterConnection.isdisconnection = false;
         payload.WaterConnection.isDisconnectionTemporary=true;
@@ -169,7 +169,7 @@ console.log("disconnectionTypes",disconnectionTypes)
                 },
                 onSuccess: (data, variables) => {
                   Digit.SessionStorage.set("WS_DISCONNECTION", {...applicationData, DisconnectionResponse: data?.WaterConnection?.[0]});
-                  history.push(`/digit-ui/employee/ws/ws-disconnection-response?applicationNumber=${data?.WaterConnection?.[0]?.applicationNo}`);                
+                  history.push(`/digit-ui/employee/ws/ws-restoration-response?applicationNumber=${data?.WaterConnection?.[0]?.applicationNo}`);                
                 },
               })
             },
@@ -204,7 +204,7 @@ console.log("disconnectionTypes",disconnectionTypes)
                 },
                 onSuccess: (data, variables) => {
                   Digit.SessionStorage.set("WS_DISCONNECTION", {...applicationData, DisconnectionResponse: data?.SewerageConnections?.[0]});
-                  history.push(`/digit-ui/employee/ws/ws-disconnection-response?applicationNumber=${data?.SewerageConnections?.[0]?.applicationNo}`);              
+                  history.push(`/digit-ui/employee/ws/ws-restoration-response?applicationNumber=${data?.SewerageConnections?.[0]?.applicationNo}`);              
                 },
               })
             },

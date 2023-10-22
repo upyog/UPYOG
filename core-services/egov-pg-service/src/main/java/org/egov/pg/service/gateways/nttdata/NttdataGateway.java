@@ -1,11 +1,12 @@
 package org.egov.pg.service.gateways.nttdata;
 
 import java.net.URI;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 import org.egov.pg.models.Transaction;
 import org.egov.pg.service.Gateway;
-import org.egov.pg.utils.Utils;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -38,6 +39,8 @@ public class NttdataGateway implements Gateway {
     private final boolean ACTIVE;
     private ObjectMapper objectMapper;
 
+    private final String ORIGINAL_RETURN_URL_KEY;
+    private final String REDIRECT_URL;
     private RestTemplate restTemplate;
 
     @Autowired
@@ -55,6 +58,9 @@ public class NttdataGateway implements Gateway {
         MERCHANT_PATH_DEBIT=null;
         //MERCHANT_PATH_DEBIT = environment.getRequiredProperty("phonepe.url.debit");
         MERCHANT_PATH_STATUS = "https://caller.atomtech.in/ots/payment/status?";
+        REDIRECT_URL = environment.getRequiredProperty("paygov.redirect.url");
+        ORIGINAL_RETURN_URL_KEY = environment.getRequiredProperty("paygov.original.return.url.key");
+        
     }
 
     public ResponseParser decryptData(String encData)
@@ -94,8 +100,10 @@ public class NttdataGateway implements Gateway {
 		merchDetails.setMerchTxnId(merchantTxnId);
 		merchDetails.setUserId("");
 		merchDetails.setPassword("Test@123");
-		merchDetails.setMerchTxnDate(transaction.getTxnDate());
-
+		DateTimeFormatter myFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+		LocalDateTime date = LocalDateTime.now();
+		String dateFormat = myFormat.format(date);
+		merchDetails.setMerchTxnDate(dateFormat);
 		PayDetails payDetails = new PayDetails();
 		payDetails.setAmount(transaction.getTxnAmount());
 		payDetails.setCustAccNo(transaction.getConsumerCode());
@@ -184,6 +192,7 @@ public class NttdataGateway implements Gateway {
             params.add("merchId", merchantId);
             params.add("custEmail", transaction.getUser().getEmailId());
             params.add("custMobile", transaction.getUser().getMobileNumber());
+            params.add("returnURL", getReturnUrl(transaction.getCallbackUrl(), REDIRECT_URL));
             UriComponents uriComponents = UriComponentsBuilder.fromHttpUrl(MERCHANT_HOST).queryParams(params)
                     .build();
 
@@ -208,12 +217,15 @@ public class NttdataGateway implements Gateway {
 		merchDetails.setMerchId(merchantId);
 		merchDetails.setMerchTxnId(merchantTxnId);
 		merchDetails.setPassword("Test@123");
-		merchDetails.setMerchTxnDate(currentStatus.getTxnDate());
-
+		DateTimeFormatter myFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		LocalDateTime date = LocalDateTime.now();
+		String dateFormat = myFormat.format(date);
+		merchDetails.setMerchTxnDate(dateFormat);
 		PayDetails payDetails = new PayDetails();
 		payDetails.setAmount(currentStatus.getTxnAmount());
 		payDetails.setTxnCurrency("INR");
-		payDetails.setSignature("NSE");
+		String signature=merchantId + "Test@123" + merchantTxnId + currentStatus.getTxnAmount() + "INR" + "TXNVERIFICATION";
+		payDetails.setSignature(AtomSignature.generateSignature("KEY123657234",signature));
 	
 		HeadDetails headDetails = new HeadDetails();
 		headDetails.setApi("TXNVERIFICATION");
@@ -234,8 +246,7 @@ public class NttdataGateway implements Gateway {
 
 		String encryptedData="",decryptedData="";
 		String serverResp = "";
-		String decryptResponse = "";
-		String atomTokenId="";
+		String decryptResponsee = "";
 		try {
 		
 			encryptedData = AuthEncryption.getAuthEncrypted(json, "A4476C2062FFA58980DC8F79EB6A799E");
@@ -245,14 +256,18 @@ public class NttdataGateway implements Gateway {
 				//serverResp="merchId";
 				System.out.println("serverResp Result------: " + serverResp);
 				System.out.println("serverResp Length------: " + serverResp.length());
-				System.out.println("serverResp Condition---: " + serverResp.startsWith("merchId"));
+				System.out.println("serverResp Condition---: " + serverResp.startsWith("encData"));
 
-				if ((serverResp != null) && (serverResp.startsWith("merchId"))) {
-					decryptResponse = serverResp.split("\\&encData=")[1];
+				if ((serverResp != null) && (serverResp.startsWith("encData"))) {
+					decryptResponsee = serverResp.split("\\&merchId=")[0];
+					String decryptResponse = decryptResponsee.split("encData=")[1];
+
 					System.out.println("serrResp---: " + decryptResponse);
 
 					decryptedData = AuthEncryption.getAuthDecrypted(decryptResponse, "75AEF0FA1B94B3C10D4F5B268F757F11");
 					System.out.println("DecryptedData------: " + decryptedData);
+					if(!decryptedData.contains("OTS0000"))
+						throw new CustomException(null, "Response from Fetch API is "+decryptedData);
 					ResponseParser resp = objectMapper.readValue(decryptedData, ResponseParser.class);
 		           return transformRawResponse(resp, currentStatus);
 	
@@ -265,8 +280,8 @@ public class NttdataGateway implements Gateway {
 				}
 			}
 			catch (Exception e) {
-	            log.error("Some Error Occured in Status API Call", e);
-	            throw new CustomException(null, "Some Error Occured in token API Call");
+	            log.error("Some Error Occured in Status API Call"+ e);
+	            throw new CustomException(null, "Some Error Occured in Status API Call");
 			}
 		}
 		catch (Exception e) {
@@ -295,29 +310,29 @@ public class NttdataGateway implements Gateway {
 
         if(resp !=null && resp.getPayInstrument() !=null)
         {
-        if (resp.getPayInstrument().getResponseDetails().getStatusCode().equals("OTS00000")) {
+        if (resp.getPayInstrument().get(0).getResponseDetails().getStatusCode().equals("OTS0000")) {
             status = Transaction.TxnStatusEnum.SUCCESS;
 
             return Transaction.builder()
                     .txnId(currentStatus.getTxnId())
-                    .txnAmount(resp.getPayInstrument().getPayDetails().getTotalAmount())
+                    .txnAmount(resp.getPayInstrument().get(0).getPayDetails().getTotalAmount())
                     .txnStatus(status)
-                    .gatewayTxnId(resp.getPayInstrument().getPayModeSpecificData().getBankDetails().getBankTxnId())
-                    .gatewayStatusCode(resp.getPayInstrument().getResponseDetails().getStatusCode())
-                    .gatewayStatusMsg(resp.getPayInstrument().getResponseDetails().getMessage())
+                    .gatewayTxnId(resp.getPayInstrument().get(0).getPayModeSpecificData().getBankDetails().getBankTxnId())
+                    .gatewayStatusCode(resp.getPayInstrument().get(0).getResponseDetails().getStatusCode())
+                    .gatewayStatusMsg(resp.getPayInstrument().get(0).getResponseDetails().getMessage())
                     .responseJson(resp)
                     .build();
         } else {
-            if (resp.getPayInstrument().getResponseDetails().getStatusCode().equalsIgnoreCase("OTS0551"))
+            if (resp.getPayInstrument().get(0).getResponseDetails().getStatusCode().equalsIgnoreCase("OTS0551"))
                 status = Transaction.TxnStatusEnum.PENDING;
             else
                 status = Transaction.TxnStatusEnum.FAILURE;
             return Transaction.builder()
                     .txnId(currentStatus.getTxnId())
                     .txnStatus(status)
-                    .gatewayTxnId(resp.getPayInstrument().getPayModeSpecificData().getBankDetails().getBankTxnId())
-                    .gatewayStatusCode(resp.getPayInstrument().getResponseDetails().getStatusCode())
-                    .gatewayStatusMsg(resp.getPayInstrument().getResponseDetails().getMessage())
+                    .gatewayTxnId(resp.getPayInstrument().get(0).getPayModeSpecificData().getBankDetails().getBankTxnId())
+                    .gatewayStatusCode(resp.getPayInstrument().get(0).getResponseDetails().getStatusCode())
+                    .gatewayStatusMsg(resp.getPayInstrument().get(0).getResponseDetails().getMessage())
                      .responseJson(resp)
                     .build();
         }
@@ -330,7 +345,9 @@ public class NttdataGateway implements Gateway {
         
 
     }
-
+    private String getReturnUrl(String callbackUrl, String baseurl) {
+        return UriComponentsBuilder.fromHttpUrl(baseurl).queryParam(ORIGINAL_RETURN_URL_KEY, callbackUrl).build().toUriString();
+    }
 
     @Override
     public String generateRedirectFormData(Transaction transaction) {

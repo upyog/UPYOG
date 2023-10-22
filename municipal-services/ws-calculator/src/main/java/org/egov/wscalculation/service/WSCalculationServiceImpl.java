@@ -110,7 +110,15 @@ public class WSCalculationServiceImpl implements WSCalculationService {
 			masterMap = masterDataService.loadMasterData(request.getRequestInfo(),
 					request.getCalculationCriteria().get(0).getTenantId());
 			calculations = getCalculations(request, masterMap);
-		} else {
+		}
+		else if (request.getIsReconnectionRequest()) {
+			connectionRequest = (!request.getIsReconnectionRequest());
+			masterMap = masterDataService.loadExemptionMaster(request.getRequestInfo(),
+					request.getCalculationCriteria().get(0).getTenantId());
+			calculations = getReconnectionFeeCalculation(request, masterMap);
+			log.info("In reconnection request connectionRequest" + connectionRequest);
+		}
+		else {
 			//Calculate and create demand for application
 			masterMap = masterDataService.loadExemptionMaster(request.getRequestInfo(),
 					request.getCalculationCriteria().get(0).getTenantId());
@@ -155,8 +163,9 @@ public class WSCalculationServiceImpl implements WSCalculationService {
 		WaterConnection waterConnection = criteria.getWaterConnection();
 		
 		@SuppressWarnings("unchecked")
-		Map<String, TaxHeadCategory> taxHeadCategoryMap = ((List<TaxHeadMaster>) masterMap
-				.get(WSCalculationConstant.TAXHEADMASTER_MASTER_KEY)).stream()
+		List<TaxHeadMaster> ll=((List<TaxHeadMaster>) masterMap
+				.get(WSCalculationConstant.TAXHEADMASTER_MASTER_KEY));
+		Map<String, TaxHeadCategory> taxHeadCategoryMap = ll.stream()
 						.collect(Collectors.toMap(TaxHeadMaster::getCode, TaxHeadMaster::getCategory, (OldValue, NewValue) -> NewValue));
 
 		BigDecimal taxAmt = BigDecimal.ZERO;
@@ -229,7 +238,7 @@ public class WSCalculationServiceImpl implements WSCalculationService {
 			case CHARGES:
 				waterCharge = waterCharge.add(estimate.getEstimateAmount());
 				break;
-
+	
 			case PENALTY:
 				penalty = penalty.add(estimate.getEstimateAmount());
 				break;
@@ -290,7 +299,15 @@ public class WSCalculationServiceImpl implements WSCalculationService {
 								.getApplicationNo())) {
 					calculation = getCalculation(request.getRequestInfo(), criteria, estimationMap, masterMap, true, true);
 				}
-			} else {
+			} else if (request.getIsReconnectionRequest() != null && request.getIsReconnectionRequest()) {
+				if (request.getIsReconnectionRequest() &&
+						criteria.getApplicationNo().equals(request.getCalculationCriteria().get(request.getCalculationCriteria().size() - 1)
+								.getApplicationNo())) {
+					calculation = getCalculation(request.getRequestInfo(), criteria, estimationMap, masterMap, true, false);
+				}
+				
+			}
+			else {
 				calculation = getCalculation(request.getRequestInfo(), criteria, estimationMap, masterMap, true, false);
 			}
 			calculations.add(calculation);
@@ -404,6 +421,18 @@ public class WSCalculationServiceImpl implements WSCalculationService {
 		List<Calculation> calculations = new ArrayList<>(request.getCalculationCriteria().size());
 		for (CalculationCriteria criteria : request.getCalculationCriteria()) {
 			Map<String, List> estimationMap = estimationService.getFeeEstimation(criteria, request.getRequestInfo(),
+					masterMap);
+			masterDataService.enrichBillingPeriodForFee(masterMap);
+			Calculation calculation = getCalculation(request.getRequestInfo(), criteria, estimationMap, masterMap, false, false);
+			calculations.add(calculation);
+		}
+		return calculations;
+	}
+	
+	List<Calculation> getReconnectionFeeCalculation(CalculationReq request, Map<String, Object> masterMap) {
+		List<Calculation> calculations = new ArrayList<>(request.getCalculationCriteria().size());
+		for (CalculationCriteria criteria : request.getCalculationCriteria()) {
+			Map<String, List> estimationMap = estimationService.getReconnectionFeeEstimation(criteria, request.getRequestInfo(),
 					masterMap);
 			masterDataService.enrichBillingPeriodForFee(masterMap);
 			Calculation calculation = getCalculation(request.getRequestInfo(), criteria, estimationMap, masterMap, false, false);

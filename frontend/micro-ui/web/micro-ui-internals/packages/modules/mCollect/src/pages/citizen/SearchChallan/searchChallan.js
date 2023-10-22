@@ -168,7 +168,7 @@ const SearchChallan = ({ config: propsConfig, formData }) => {
           onChange={setchallanNo}
           /* {...(validation = {
             isRequired: true,
-            //pattern: "^[a-zA-Z-.`' ]*$",
+            //pattern: "^[a-zA-Z ]*$",
             type: "any",
             title: t("wrong Challan No."),
           })} */

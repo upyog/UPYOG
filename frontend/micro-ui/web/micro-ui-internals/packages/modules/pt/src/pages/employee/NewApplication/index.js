@@ -22,7 +22,6 @@ const NewApplication = () => {
   }, []);
 
   const onFormValueChange = (setValue, formData, formState) => {
-    console.log("data",formData)
     setSubmitValve(!Object.keys(formState.errors).length);
     if (Object.keys(formState.errors).length === 1 && formState.errors?.units?.message === "arv") {
       setSubmitValve(!formData?.units.some((unit) => unit.occupancyType === "RENTED" && !unit.arv));
@@ -41,7 +40,11 @@ const NewApplication = () => {
   };
 
   const onSubmit = (data) => {
-    console.log("data",data)
+    let dataNew = data?.units?.map((value)=>{
+      let additionalDetails ={"structureType" : value.structureType,"ageOfProperty":value.ageOfProperty }
+      return {...value,additionalDetails}
+    })
+    data.units = dataNew
     const formData = {
       tenantId,
       address: {
@@ -60,8 +63,10 @@ const NewApplication = () => {
       additionalDetails:{
       RentedMonths: data?.units[0]?.RentedMonths,
       NonRentedMonthsUsage: data?.units[0]?.NonRentedMonthsUsage,
-      ageOfProperty:data?.units[0]?.ageOfProperty,
-      structureType:data?.units[0]?.structureType
+      // ageOfProperty:data?.units[0]?.ageOfProperty,
+      // structureType:data?.units[0]?.structureType,
+      electricity:data?.electricity,
+      electricityuid:data?.electricityuid
       },
       owners: data?.owners.map((owner) => {
         let {
@@ -138,13 +143,23 @@ const NewApplication = () => {
   /* use newConfig instead of commonFields for local development in case needed */
 
   const configs = commonFields?commonFields:newConfig;
+  
+
+  /*console.log("new",configs)
+  configs[1]?.body?.push( {
+    "type": "component",
+    "isMandatory": true,
+    "component": "ElectricityUID",
+    "key": "electricityuid",
+    "withoutLabel": true
+  })*/
 
   return (
     <FormComposer
       heading={t("ES_TITLE_NEW_PROPERTY_APPLICATION")}
       isDisabled={!canSubmit}
       label={t("ES_COMMON_APPLICATION_SUBMIT")}
-      config={configs.map((config) => {
+      config={configs.map((config) => {   
         return {
           ...config,
           body: config.body.filter((a) => !a.hideInEmployee),

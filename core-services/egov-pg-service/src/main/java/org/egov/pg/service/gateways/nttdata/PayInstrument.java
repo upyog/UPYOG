@@ -1,17 +1,24 @@
 package org.egov.pg.service.gateways.nttdata;
 
-
+import java.util.List;
 
 public class PayInstrument {
 
+	public SettlementDetails getSettlementDetails() {
+		return settlementDetails;
+	}
+	public void setSettlementDetails(SettlementDetails settlementDetails) {
+		this.settlementDetails = settlementDetails;
+	}
 	private HeadDetails headDetails;
+	private SettlementDetails settlementDetails;
 	private MerchDetails merchDetails;
 	private PayDetails payDetails;
 	private ResponseUrls responseUrls;
 	private PayModeSpecificData payModeSpecificData;
 	private Extras extras;
 	private CustDetails custDetails;
-//	public List<responseDeatails> responseDeatil;
+	public ResponseDetails responseDetails;
 	public ResponseDetails getResponseDetails() {
 		return responseDetails;
 	}
@@ -24,7 +31,7 @@ public class PayInstrument {
 	public void setResponseDetails(ResponseDetails responseDetails) {
 		this.responseDetails = responseDetails;
 	}
-	private ResponseDetails responseDetails;
+	
 	public HeadDetails getHeadDetails() {
 		return headDetails;
 	}
@@ -69,13 +76,14 @@ public class PayInstrument {
 	}
 	@Override
 	public String toString() {
-		return "PayInstrument [headDetails=" + headDetails + ", merchDetails=" + merchDetails + ", payDetails="
+		return "PayInstrument [headDetails=" + headDetails + ", merchDetails=" + merchDetails + ", settlementDetails=" + settlementDetails
+				+ ", payDetails="
 				+ payDetails + ", responseUrls=" + responseUrls + ", payModeSpecificData=" + payModeSpecificData
 				+ ", extras=" + extras + ", custDetails=" + custDetails + ", responseDetails=" + responseDetails
 				+ ", getResponseDetails()=" + getResponseDetails() + ", getHeadDetails()=" + getHeadDetails()
 				+ ", getMerchDetails()=" + getMerchDetails() + ", getPayDetails()=" + getPayDetails()
 				+ ", getResponseUrls()=" + getResponseUrls() + ", getPayModeSpecificData()=" + getPayModeSpecificData()
-				+ ", getExtras()=" + getExtras() + ", getCustDetails()=" + getCustDetails() + ", getClass()="
+				+ ", getExtras()=" + getExtras() + ", getCustDetails()=" + getCustDetails() + ", getSettlementDetails()=" + getSettlementDetails() + ", getClass()="
 				+ getClass() + ", hashCode()=" + hashCode() + ", toString()=" + super.toString() + "]";
 	}
 	

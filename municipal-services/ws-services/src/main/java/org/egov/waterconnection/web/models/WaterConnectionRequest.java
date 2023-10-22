@@ -35,6 +35,9 @@ public class WaterConnectionRequest {
 	
 	@JsonProperty("disconnectRequest")
 	private boolean disconnectRequest;
+	
+	@JsonProperty("reconnectRequest")
+	private boolean reconnectRequest;
 
 	@Builder.Default
 	@JsonProperty("isCreateCall")
@@ -72,6 +75,11 @@ public class WaterConnectionRequest {
 	
 	public WaterConnectionRequest disconnectionRequest(boolean isDisconnectionRequest) {
 		this.disconnectRequest = isDisconnectionRequest;
+		return this;
+	}
+	
+	public WaterConnectionRequest reconnectionRequest(boolean isReconnectionRequest) {
+		this.reconnectRequest = isReconnectionRequest;
 		return this;
 	}
 

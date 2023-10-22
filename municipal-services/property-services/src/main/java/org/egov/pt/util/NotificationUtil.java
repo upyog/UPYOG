@@ -437,6 +437,7 @@ public class NotificationUtil {
            if(isActionReq){
                List<ActionItem> items = new ArrayList<>();
                String msg = smsRequests.get(0).getMessage();
+               log.info("Message is for Event" + msg);
                String actionLink = "";
                if(msg.contains(PT_CORRECTION_PENDING)){
             	   
@@ -449,8 +450,9 @@ public class NotificationUtil {
                            .replace("$tenantId", tenantId)
                            .replace("$propertyId" , property.getPropertyId())
                            .replace("$applicationNumber" , property.getAcknowldgementNumber());
-
                    actionLink = config.getUiAppHost() + actionLink;
+                   log.info("actionLink is" + actionLink);
+
                    ActionItem item = ActionItem.builder().actionUrl(actionLink).code(VIEW_APPLICATION_CODE).build();
                    items.add(item);
                }
@@ -460,8 +462,13 @@ public class NotificationUtil {
                            .replace("$propertyId", property.getPropertyId())
                            .replace("$tenantId", property.getTenantId())
                            .replace("$businessService" , PT_BUSINESSSERVICE);
+                   
+                   log.info("3 pay link "+config.getPayLink());
+                   log.info(" 2 actionLink is" + actionLink);
 
                    actionLink = config.getUiAppHost() + actionLink;
+                   log.info(" 1 actionLink is" + actionLink);
+
                    ActionItem item = ActionItem.builder().actionUrl(actionLink).code(config.getPayCode()).build();
                    items.add(item);
                }
@@ -471,6 +478,8 @@ public class NotificationUtil {
                            .replace(NOTIFICATION_TENANTID, property.getTenantId());
 
                    actionLink = config.getUiAppHost() + actionLink;
+                   log.info("actionLink is" + actionLink);
+
                    ActionItem item = ActionItem.builder().actionUrl(actionLink).code(VIEW_PROPERTY_CODE).build();
                    items.add(item);
                }
@@ -481,6 +490,8 @@ public class NotificationUtil {
                            .replace(NOTIFICATION_TENANTID, property.getTenantId());
 
                    actionLink = config.getUiAppHost() + actionLink;
+                   log.info("actionLink is" + actionLink);
+
                    ActionItem item = ActionItem.builder().actionUrl(actionLink).code(VIEW_PROPERTY_CODE).build();
                    items.add(item);
                }
@@ -493,6 +504,8 @@ public class NotificationUtil {
 
                if(msg.contains(NOTIFICATION_PAY_LINK)){
                    actionLink = getPayUrl(property);
+                   log.info("actionLink is" + actionLink);
+
                    ActionItem item = ActionItem.builder().actionUrl(actionLink).code(NOTIFICATION_PAY_LINK).build();
                    items.add(item);
                }
@@ -500,6 +513,8 @@ public class NotificationUtil {
                if(msg.contains(MT_RECEIPT_STRING))
                {
                    actionLink = getMutationUrl(property);
+                   log.info("actionLink is" + actionLink);
+
                    ActionItem item = ActionItem.builder().actionUrl(actionLink).code(DOWNLOAD_MUTATION_RECEIPT_CODE).build();
                    items.add(item);
                }
@@ -507,6 +522,8 @@ public class NotificationUtil {
                if(msg.contains(MT_CERTIFICATE_STRING))
                {
                    actionLink = getMutationUrl(property);
+                   log.info("actionLink is" + actionLink);
+
                    ActionItem item = ActionItem.builder().actionUrl(actionLink).code(DOWNLOAD_MUTATION_CERTIFICATE_CODE).build();
                    items.add(item);
                }

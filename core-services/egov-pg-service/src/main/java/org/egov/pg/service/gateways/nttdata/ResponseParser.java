@@ -1,19 +1,21 @@
 package org.egov.pg.service.gateways.nttdata;
 
 
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class ResponseParser
 {
-  private PayInstrument payInstrument;
+  private List<PayInstrument> payInstrument;
 
-  public PayInstrument getPayInstrument()
+  public List<PayInstrument> getPayInstrument()
   {
     return this.payInstrument;
   }
 
-  public void setPayInstrument(PayInstrument payInstrument) {
+  public void setPayInstrument(List<PayInstrument> payInstrument) {
     this.payInstrument = payInstrument;
   }
 

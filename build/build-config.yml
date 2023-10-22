@@ -777,4 +777,10 @@ config:
         image-name: pt-services-dx
         dockerfile: build/maven/Dockerfile
         
-   
+  - name: "builds/upyog/municipal-services/pet-services"
+    build:
+      - work-dir: "municipal-services/pet-services"
+        image-name: "pet-services"
+        dockerfile: "build/maven/Dockerfile"
+      - work-dir: "municipal-services/pet-services/src/main/resources/db"
+        image-name: "pet-services-db"   

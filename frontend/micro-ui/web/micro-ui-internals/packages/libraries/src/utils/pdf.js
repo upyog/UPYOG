@@ -830,6 +830,7 @@ function createContent(details, phoneNumber, breakPageLimit = null) {
 
   details.forEach((detail, index) => {
     if (detail?.values?.length > 0) {
+      console.log("details",detail.values)
       let column1 = [];
       let column2 = [];
 
@@ -951,6 +952,7 @@ function createContentForDetailsWithLengthOfTwo(values, data, column1, column2, 
 }
 
 function createContentForDetailsWithLengthOfOneAndThree(values, data, column1, column2, num = 0) {
+  console.log("createContentForDetailsWithLengthOfOneAndThree",values, data, column1, column2)
   values.forEach((value, index) => {
     if (index === 0) {
       column1.push({
@@ -958,47 +960,50 @@ function createContentForDetailsWithLengthOfOneAndThree(values, data, column1, c
         font: "Hind",
         fontSize: 12,
         // bold: true,
-        margin: values.length > 1 ? [-25, -5, 0, 0] : [-25, 0, 0, 0],
+        width: "30%",
+        margin:[-25, 0, 0, 0],
       });
       column2.push({
         text: value.value,
         font: "Hind",
         fontSize: 9,
         color: "#1a1a1a",
-        margin: values.length > 1 ? [-25, 5, 0, 0] : [-25, 5, 0, 0],
-        width: "25%",
+        margin:[-25, 0, 0, 0],
+        width: "30%",
       });
     } else if (index === 2) {
       column1.push({
         text: value.title,
         font: "Hind",
-        fontSize: 12,
+        fontSize: 9,
         // bold: true,
-        margin: [-60, -5, 0, 0],
+        width: "30%",
+        margin:[-25, 0, 0, 0],
       });
       column2.push({
         text: value.value,
         font: "Hind",
         fontSize: 9,
-        margin: [26, 5, 0, 0],
+        margin:[-25, 0, 0, 0],
         color: "#1a1a1a",
-        width: "25%",
+        width: "30%",
       });
     } else {
       column1.push({
         text: value.title,
         font: "Hind",
-        fontSize: 12,
+        fontSize: 9,
         // bold: true,
-        margin: [-28, -5, 0, 0],
+        width: "30%",
+        margin:[-25, 0, 0, 0],
       });
       column2.push({
         text: value.value,
         font: "Hind",
         fontSize: 9,
-        margin: [15, 5, 0, 0],
+        margin:[-25, 0, 0, 0],
         color: "#1a1a1a",
-        width: "25%",
+        width: "30%",
       });
     }
   });

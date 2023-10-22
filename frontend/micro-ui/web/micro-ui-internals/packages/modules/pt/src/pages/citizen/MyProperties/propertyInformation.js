@@ -9,6 +9,7 @@ import {
   Row,
   StatusTable,
   SubmitBar,
+  LinkLabel
 } from "@egovernments/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -281,6 +282,12 @@ const handleClick=()=>{
           <StatusTable>
             <Row className="border-none" label={t("PT_PROPERTY_PTUID")} text={`${property.propertyId || t("CS_NA")}`} /* textStyle={{ whiteSpace: "pre" }} */ />
             <Row className="border-none" label={t("CS_COMMON_TOTAL_AMOUNT_DUE")} text={`₹${t(getBillAmount(fetchBillData))}`} />
+            <LinkLabel
+            onClick={() => history.push({ pathname: `/digit-ui/employee/pt/payment-details/${property?.propertyId}`})}
+            style={isMobile ? { marginTop: "15px", marginLeft: "0px" } : { marginTop: "15px" }}
+          >
+            {t("PT_VIEW_PAYMENT")}
+          </LinkLabel>
           </StatusTable>
           <ArrearSummary bill={fetchBillData.Bill?.[0]} />
           <CardSubHeader>{t("PT_PROPERTY_ADDRESS_SUB_HEADER")}</CardSubHeader>

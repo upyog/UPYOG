@@ -455,7 +455,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                                         onChange={(e) => setOwnerName(index, e)}
                                         {...(validation = {
                                             isRequired: true,
-                                            pattern: "^[a-zA-Z-.`' ]*$",
+                                            pattern: "^[a-zA-Z ]*$",
                                             type: "text",
                                             title: t("TL_NAME_ERROR_MESSAGE"),
                                         })}

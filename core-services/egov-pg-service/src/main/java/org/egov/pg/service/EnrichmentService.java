@@ -53,10 +53,6 @@ public class EnrichmentService {
         // Generate ID from ID Gen service and assign to txn object
         String txnId = idGenService.generateTxnId(transactionRequest);
         transaction.setTxnId(txnId);
-        DateTimeFormatter myFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-		LocalDateTime date = LocalDateTime.now();
-		String dateFormat = myFormat.format(date);
-        transaction.setTxnDate(dateFormat);
         transaction.setUser(userService.createOrSearchUser(transactionRequest));
         transaction.setTxnStatus(Transaction.TxnStatusEnum.PENDING);
         transaction.setTxnStatusMsg(PgConstants.TXN_INITIATED);
