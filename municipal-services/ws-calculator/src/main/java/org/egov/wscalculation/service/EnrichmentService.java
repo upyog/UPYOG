@@ -82,9 +82,6 @@ public class EnrichmentService {
 					} else if (connection.getApplicationStatus().equals(MODIFIED_FINAL_STATE)) {
 							connectionHashMap.put(connection.getConnectionNo(), connection);
 						}
-					else if (connection.getApplicationStatus().equals(STATUS_APPROVED)) {
-						connectionHashMap.put(connection.getConnectionNo(), connection);
-					}
 				}
 			}
 		});
