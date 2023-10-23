@@ -79,10 +79,11 @@ public class EnrichmentService {
 						if (creationDate1.compareTo(creationDate2) == -1) {
 							connectionHashMap.put(connection.getConnectionNo(), connection);
 						}
-					} else {
-						if (connection.getApplicationStatus().equals(MODIFIED_FINAL_STATE)) {
+					} else if (connection.getApplicationStatus().equals(MODIFIED_FINAL_STATE)) {
 							connectionHashMap.put(connection.getConnectionNo(), connection);
 						}
+					else if (connection.getApplicationStatus().equals(STATUS_APPROVED)) {
+						connectionHashMap.put(connection.getConnectionNo(), connection);
 					}
 				}
 			}
