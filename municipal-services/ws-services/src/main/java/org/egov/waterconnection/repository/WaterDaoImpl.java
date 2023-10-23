@@ -76,6 +76,8 @@ public class WaterDaoImpl implements WaterDao {
 		List<Object> preparedStatement = new ArrayList<>();
 		String query = wsQueryBuilder.getSearchQueryString(criteria, preparedStatement, requestInfo);
 
+		log.info("Search Query" + query);
+		log.info("Parameters for search Query:: " + preparedStatement.toString());
 		if (query == null)
 			return Collections.emptyList();
 		Boolean isOpenSearch = isSearchOpen(requestInfo.getUserInfo());

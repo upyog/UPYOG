@@ -232,6 +232,8 @@ public class WaterServiceImpl implements WaterService {
 		criteria = encryptionDecryptionUtil.encryptObject(criteria, WNS_PLUMBER_ENCRYPTION_MODEL, SearchCriteria.class);
 
 		waterConnectionList = getWaterConnectionsList(criteria, requestInfo);
+		log.info("connection after search" +waterConnectionList.size() );
+
 		if (!StringUtils.isEmpty(criteria.getSearchType()) &&
 				criteria.getSearchType().equals(WCConstants.SEARCH_TYPE_CONNECTION)) {
 			waterConnectionList = enrichmentService.filterConnections(waterConnectionList);
@@ -239,6 +241,8 @@ public class WaterServiceImpl implements WaterService {
 				waterConnectionList = enrichmentService.enrichPropertyDetails(waterConnectionList, criteria, requestInfo);
 			}*/
 		}
+		
+		log.info("Filtered connection after search" +waterConnectionList.size() );
 		if ((criteria.getIsPropertyDetailsRequired() != null) && criteria.getIsPropertyDetailsRequired()) {
 			waterConnectionList = enrichmentService.enrichPropertyDetails(waterConnectionList, criteria, requestInfo);
 		}
