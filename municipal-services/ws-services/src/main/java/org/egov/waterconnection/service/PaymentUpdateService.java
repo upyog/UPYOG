@@ -87,7 +87,7 @@ public class PaymentUpdateService {
 			boolean isServiceMatched = false;
 			for (PaymentDetail paymentDetail : paymentRequest.getPayment().getPaymentDetails()) {
 				if (WCConstants.WATER_SERVICE_BUSINESS_ID.equals(paymentDetail.getBusinessService()) ||
-            paymentDetail.getBusinessService().equalsIgnoreCase(config.getReceiptBusinessservice())) {
+            paymentDetail.getBusinessService().equalsIgnoreCase(config.getReceiptBusinessservice()) || paymentDetail.getBusinessService().equalsIgnoreCase(config.getReconnectBusinessServiceName())) {
 					isServiceMatched = true;
 				}
 			}
@@ -104,7 +104,7 @@ public class PaymentUpdateService {
 							.connectionNumber(Stream.of(paymentDetail.getBill().getConsumerCode().toString()).collect(Collectors.toSet()))
 							.applicationStatus(Collections.singleton(PENDING_FOR_PAYMENT_STATUS_CODE)).build();
 				}
-				if (paymentDetail.getBusinessService().equalsIgnoreCase(config.getReceiptBusinessservice())) {
+				if (paymentDetail.getBusinessService().equalsIgnoreCase(config.getReceiptReconnectionBusinessservice()) || paymentDetail.getBusinessService().equalsIgnoreCase(config.getReceiptBusinessservice())) {
 					criteria = SearchCriteria.builder()
 							.tenantId(paymentRequest.getPayment().getTenantId())
 							.applicationNumber(Stream.of(paymentDetail.getBill().getConsumerCode().toString()).collect(Collectors.toSet())).build();
