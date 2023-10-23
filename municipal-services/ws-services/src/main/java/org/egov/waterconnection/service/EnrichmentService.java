@@ -499,6 +499,8 @@ public class EnrichmentService {
 						}
 					} else if (connection.getApplicationStatus().equals(WCConstants.MODIFIED_FINAL_STATE)) {
 							connectionHashMap.put(connection.getConnectionNo(), connection);
+					} else if (connection.getApplicationType().equals(WCConstants.WATER_RECONNECTION )) {
+						connectionHashMap.put(connection.getConnectionNo(), connection);
 					} else {
 						if (connection.getApplicationStatus().equals(WCConstants
 								.DISCONNECTION_FINAL_STATE)) {
