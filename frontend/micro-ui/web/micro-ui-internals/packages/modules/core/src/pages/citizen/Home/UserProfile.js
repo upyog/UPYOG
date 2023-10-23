@@ -427,7 +427,7 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
                     onChange={(e)=>setUserName(e.target.value)}
                     {...(validation = {
                       isRequired: true,
-                      pattern: "[a-zA-Z]+(?:-[a-zA-Z]+)*$",
+                      pattern: "^[a-zA-Z ]*$",
                       type: "tel",
                       title: t("CORE_COMMON_PROFILE_NAME_ERROR_MESSAGE"),
                     })}
@@ -512,7 +512,7 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
                     placeholder="Enter Your Name"
                     {...(validation = {
                       isRequired: true,
-                      pattern: "[a-zA-Z]+(?:-[a-zA-Z]+)*$",
+                      pattern: "^[a-zA-Z ]*$",
                       type: "text",
                       title: t("CORE_COMMON_PROFILE_NAME_ERROR_MESSAGE"),
                     })}
@@ -554,7 +554,7 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
                     placeholder="Enter Your City Name"
                     {...(validation = {
                       isRequired: true,
-                      // pattern: "[a-zA-Z]+(?:-[a-zA-Z]+)*$",
+                      // pattern: "^[a-zA-Z ]*$",
                       type: "text",
                       title: t("CORE_COMMON_PROFILE_CITY_ERROR_MESSAGE"),
                     })}

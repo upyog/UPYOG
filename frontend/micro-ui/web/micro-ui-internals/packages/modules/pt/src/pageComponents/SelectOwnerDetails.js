@@ -134,7 +134,7 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData, ownerInde
               ValidationRequired = {true}
               {...(validation = {
                 isRequired: true,
-                pattern: "[a-zA-Z]+(?:-[a-zA-Z]+)*$",
+                pattern: "^[a-zA-Z ]*$",
                 type: "tel",
                 title: t("PT_NAME_ERROR_MESSAGE"),
               })}
@@ -154,7 +154,7 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData, ownerInde
               onChange={setGuardiansName}
               ValidationRequired = {true}
               {...(validation = {
-                pattern: "[a-zA-Z]+(?:-[a-zA-Z]+)*$",
+                pattern: "^[a-zA-Z ]*$",
                 title: t("PT_NAME_ERROR_MESSAGE"),
               })}
               disable={editScreen}
@@ -236,7 +236,7 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData, ownerInde
           ValidationRequired = {true}
           {...(validation = {
             isRequired: true,
-            pattern: "[a-zA-Z]+(?:-[a-zA-Z]+)*$",
+            pattern: "^[a-zA-Z ]*$",
             type: "text",
             title: t("PT_NAME_ERROR_MESSAGE"),
           })}
@@ -275,7 +275,7 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData, ownerInde
           ValidationRequired = {true}
           {...(validation = {
             isRequired: true,
-            pattern: "[a-zA-Z]+(?:-[a-zA-Z]+)*$",
+            pattern: "^[a-zA-Z ]*$",
             type: "text",
             title: t("PT_NAME_ERROR_MESSAGE"),
           })}
