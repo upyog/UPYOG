@@ -520,6 +520,10 @@ export const setPropertyDetails = (data) => {
 
 /*   method to convert collected details to proeprty create object */
 export const convertToProperty = (data = {}) => {
+  let dataNew = data?.units?.map((value) => {
+    let additionalDetails = { "structureType": value.structureType, "ageOfProperty": value.ageOfProperty }
+    return { ...value, additionalDetails }
+  })
   let isResdential = data.isResdential;
   let propertyType = data.PropertyType;
   let selfOccupied = data.selfOccupied;
@@ -529,7 +533,7 @@ export const convertToProperty = (data = {}) => {
   let builtUpArea = data?.floordetails?.builtUpArea || null;
   let noOfFloors = data?.noOfFloors;
   let noOofBasements = data?.noOofBasements;
-  let unit = data?.units;
+  let unit = dataNew;
   let basement1 = Array.isArray(data?.units) && data?.units["-1"] ? data?.units["-1"] : null;
   let basement2 = Array.isArray(data?.units) && data?.units["-2"] ? data?.units["-2"] : null;
   data = setDocumentDetails(data);
@@ -564,6 +568,9 @@ export const convertToProperty = (data = {}) => {
         unit: unit,
         basement1: basement1,
         basement2: basement2,
+        electricity:data.electricity.electricity,
+        electricityuid:data.electricityuid.electricityuid
+
       },
 
       creationReason: getCreationReason(data),

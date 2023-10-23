@@ -59,8 +59,7 @@ const EditForm = ({ applicationData }) => {
       noOfFloors: Number(data?.noOfFloors),
       landArea: Number(data?.landarea),
       superBuiltUpArea: Number(data?.landarea),
-      additionalDetails:{...data.originalData.additionalDetails, electricity:data.electricity},
-      additionalDetails:{...data.originalData.additionalDetails, electricityuid:data.electricityuid},
+      additionalDetails:{...data.originalData.additionalDetails, electricity:data.electricity,electricityuid:data.electricityuid},
       //electricity:data?.electricity,
       source: "MUNICIPAL_RECORDS", // required
       channel: "CFC_COUNTER", // required

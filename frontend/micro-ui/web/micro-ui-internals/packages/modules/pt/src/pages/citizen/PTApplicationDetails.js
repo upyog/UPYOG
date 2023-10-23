@@ -240,7 +240,6 @@ const PTApplicationDetails = () => {
       label: t("MT_CERTIFICATE"),
       onClick: () => printCertificate(),
     });
-
   return (
     <React.Fragment>
       <div>
@@ -450,6 +449,16 @@ const PTApplicationDetails = () => {
                   text={(property?.landArea && `${t(`${property?.landArea} sq.ft`)}`) || t("CS_NA")}
                 />
                 <Row className="border-none" label={t("PT_ASSESMENT_INFO_NO_OF_FLOOR")} text={`${t(property?.noOfFloors)}` || t("CS_NA")} />
+                <Row
+                  className="border-none"
+                  label={t("PT_ASSESMENT1_ELECTRICITY_NUMBER")}
+                  text={(`${t(`${property.additionalDetails?.electricity}`)}`) || t("CS_NA")}
+                />
+                   <Row
+                  className="border-none"
+                  label={t("PT_ASSESMENT1_ELECTRICITY_UID")}
+                  text={(`${t(`${property.additionalDetails?.electricityuid}`)}`) || t("CS_NA")}
+                />
               </StatusTable>
               <div>
                 {Array.isArray(units) &&
@@ -484,6 +493,16 @@ const PTApplicationDetails = () => {
                               className="border-none"
                               label={t("PT_BUILTUP_AREA_LABEL")}
                               text={`${`${unit?.constructionDetail?.builtUpArea} sq.ft` || t("CS_NA")}`}
+                            />
+                            <Row
+                              className="border-none"
+                              label={t("PT_STRUCTURE_TYPE_LABEL")}
+                              text={`${`${property?.additionalDetails?.unit?.[index]?.structureType}` || t("CS_NA")}`}
+                            />
+                             <Row
+                              className="border-none"
+                              label={t("PT_AGE_OF_PROPERTY_LABEL")}
+                              text={`${`${property?.additionalDetails?.unit?.[index]?.ageOfProperty}` || t("CS_NA")}`}
                             />
                             {unit.occupancyType == "RENTED" && (
                               <Row
