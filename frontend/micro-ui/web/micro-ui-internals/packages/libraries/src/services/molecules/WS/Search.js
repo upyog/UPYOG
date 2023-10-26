@@ -106,6 +106,7 @@ export const WSSearch = {
   },
 
   fetchBillData: async ({tenantId, serviceTypeOfData, collectionNumber}) => {
+    console.log("fetchBillData",collectionNumber)
     const businessService = serviceTypeOfData;
     const consumerCode = collectionNumber;
     const response = await Digit.PaymentService.fetchBill(tenantId, {
@@ -198,7 +199,8 @@ export const WSSearch = {
     };
 
     tenantId = wsData?.[0]?.tenantId ? wsData?.[0]?.tenantId : tenantId;
-    const serviceTypeOfData = serviceType == "WATER" ? "WS.ONE_TIME_FEE" : "SW.ONE_TIME_FEE";
+    console.log("workflowDetails",workflowDetails,wsData)
+    const serviceTypeOfData = serviceType == "WATER" ? workflowDetails?.ProcessInstances[0]?.businessService === "WSReconnection" ? "WSReconnection": "WS.ONE_TIME_FEE" : "SW.ONE_TIME_FEE";
     const collectionNumber = filters?.applicationNumber;
 
 
@@ -1480,7 +1482,7 @@ export const WSSearch = {
     const propertyDataDetails = cloneDeep(properties?.Properties?.[0]);
     const workFlowDataDetails = cloneDeep(workflowDetails);
     const serviceDataType = cloneDeep(serviceType);
-
+console.log("wsDataDetails",wsDataDetails,propertyDataDetails,wsResponseForWorkflowData)
     const serviceTypeOfData = serviceType == "WATER" ? "WS" : "SW";
     const collectionNumber = wsDataDetails?.connectionNo;
     const colletionOFData = await WSSearch.colletionData({tenantId, serviceTypeOfData, collectionNumber}, {});

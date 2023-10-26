@@ -8,19 +8,14 @@ const Electricity = ({ t, config, onSelect, value, userType, formData, setError:
   let index = window.location.href.split("/").pop();
   let validation = {};
   const onSkip = () => onSelect();
- 
+
   let electricity;
   let setElectricity;
   const [hidden, setHidden] = useState(true);
   if (!isNaN(index)) {
-   
     [electricity, setElectricity] = useState(formData?.originalData?.additionalDetails?.electricity || "");
-    //console.log("formdata", formData)
   } else {
-   
-   
-     [electricity, setElectricity] = useState(formData?.originalData?.additionalDetails?.electricity || "");
-     //console.log("formdata12", formData)
+    [electricity, setElectricity] = useState(formData?.originalData?.additionalDetails?.electricity || "");
   }
   const [error, setError] = useState(null);
   const [unitareaerror, setunitareaerror] = useState(null);
@@ -29,106 +24,31 @@ const Electricity = ({ t, config, onSelect, value, userType, formData, setError:
   const { pathname } = useLocation();
   const presentInModifyApplication = pathname.includes("modify");
   function setElectricityNo(e) {
-    //electricity=true;
     setElectricity(e.target.value);
-    
-    if(electricity.length>=10 ){
-      setHidden(false);
-    //setElectricity(e.target.value);
+
+  }
+  useEffect(() => {
+    electricity.length == 10 ? setHidden(false) : setHidden(true);
+  }, [electricity])
+  function onChange(e) {
+    setElectricity(e.target.value);
+
   }
 
-}
-
-//   function setPropertyfloorarea(e) {
-//     setfloorarea(e.target.value);
-//     setunitareaerror(null);
-//     setareanotzeroerror(null);
-//     if (formData?.PropertyType?.code === "BUILTUP.INDEPENDENTPROPERTY" && parseInt(formData?.units[index]?.builtUpArea) < e.target.value) {
-//       setunitareaerror("PT_TOTUNITAREA_LESS_THAN_BUILTUP_ERR_MSG");
-//     }
-//     if (formData?.PropertyType?.code === "BUILTUP.SHAREDPROPERTY" && parseInt(formData?.floordetails?.builtUpArea) < e.target.value) {
-//       setunitareaerror("PT_SELFOCCUPIED_AREA_LESS_THAN_BUILTUP");
-//     }
-//     if (parseInt(e.target.value) == 0) {
-//       setareanotzeroerror("PT_AREA_NOT_0_MSG");
-//     }
-//   }
-
-
-//   const goNext = () => {
-//     if (!isNaN(index)) {
-//       let unit = formData.units && formData.units[index];
-//       //units["RentalArea"] = RentArea;
-//       //units["AnnualRent"] = AnnualRent;
-//       if (
-//         (formData?.isResdential?.i18nKey === "PT_COMMON_YES" || formData?.usageCategoryMajor?.i18nKey == "PROPERTYTAX_BILLING_SLAB_NONRESIDENTIAL") &&
-//         formData?.PropertyType?.i18nKey !== "COMMON_PROPTYPE_VACANT"
-//       ) {
-//         sessionStorage.setItem("area", "yes");
-//       } else {
-//         sessionStorage.setItem("area", "no");
-//       }
-
-//       let floordet = { ...unit, floorarea };
-//       onSelect(config.key, floordet, false, index);
-//     } else {
-//       if (
-//         (formData?.isResdential?.i18nKey === "PT_COMMON_YES" || formData?.usageCategoryMajor?.i18nKey == "PROPERTYTAX_BILLING_SLAB_NONRESIDENTIAL") &&
-//         formData?.PropertyType?.i18nKey !== "COMMON_PROPTYPE_VACANT"
-//       ) {
-//         sessionStorage.setItem("area", "yes");
-//       } else if (formData?.PropertyType?.code === "VACANT") {
-//         sessionStorage.setItem("area", "vacant");
-//       } else {
-//         sessionStorage.setItem("area", "no");
-//       }
-
-//       onSelect("landarea", { floorarea });
-//     }
-//   };
-  //const onSkip = () => onSelect();
-
-  function onChange(e) {
-    //electricity=true;
-    
-    setElectricity(e.target.value);
-    //const alphanumericRegex = /^[a-zA-Z0-9]*$/;
-    //const isValid = alphanumericRegex.test(a) && a.length>=1 && a.length<=10;
-
-    //if(electricity?.length== 9){
-      
-      
-      //setHidden(false);
-
-    //
-      //setElectricity(e.target.value);
-    
-    }
- 
   //}
-  function goNext()  {
-      sessionStorage.setItem("Electricity", electricity.i18nKey);
-      onSelect(config.key, electricity);
-   
+  function goNext() {
+    console.log("eleccc", electricity)
+    sessionStorage.setItem("electricity", electricity.i18nKey);
+    onSelect("electricity", { electricity });
+
   };
 
-//   useEffect(() => {
-//     if (userType === "employee") {
-//       if (!Number(floorarea)) setFormError(config.key, { type: "required", message: t("CORE_COMMON_REQUIRED_ERRMSG") });
-//       else if (isNaN(floorarea)) setFormError(config.key, { type: "invalid", message: t("ERR_DEFAULT_INPUT_FIELD_MSG") });
-//       else clearFormErrors(config.key);
-     
-//       onSelect(config.key, floorarea);
-//     }
-//   }, [floorarea]);
+
   useEffect(() => {
     if (userType === "employee") {
-      //console.log("config",config,formData)
-      console.log("elec",electricity)
-      console.log("eleclength",electricity.length)
-     if (electricity.length===0) setFormError(config.key, { type: "required", message: t("CORE_COMMON_REQUIRED_ERRMSG") });
-     else if (electricity.length<10 || !Number(electricity)) setFormError(config.key, { type: "invalid", message: t("ERR_DEFAULT_INPUT_FIELD_MSG") });
-    else clearFormErrors(config.key);
+      if (electricity !== "undefined" && electricity?.length === 0) setFormError(config.key, { type: "required", message: t("CORE_COMMON_REQUIRED_ERRMSG") });
+      else if (electricity !== "undefined" && electricity?.length < 10 || electricity?.length > 10 || !Number(electricity)) setFormError(config.key, { type: "invalid", message: t("ERR_DEFAULT_INPUT_FIELD_MSG") });
+      else clearFormErrors(config.key);
 
       onSelect(config.key, electricity);
       //onSelect("electricity", electricity);
@@ -137,7 +57,7 @@ const Electricity = ({ t, config, onSelect, value, userType, formData, setError:
 
   useEffect(() => {
     if (presentInModifyApplication && userType === "employee") {
-     
+
       setElectricity(formData?.originalData?.additionalDetails?.electricity)
     }
   }, []);
@@ -146,7 +66,7 @@ const Electricity = ({ t, config, onSelect, value, userType, formData, setError:
     {
       label: "PT_ELECTRICITY_LABEL",
       type: "text",
-      name: "elec",
+      name: "electricity",
       error: "ERR_HRMS_INVALID_ELECTRICITY_NO",
       validation: {
         required: true,
@@ -154,18 +74,8 @@ const Electricity = ({ t, config, onSelect, value, userType, formData, setError:
         maxLength: 10
       }
     },
-    /*{
-      label: "PT_ELECTRICITY_UID_LABEL",
-      type: "text",
-      name: "elec",
-      error: "ERR_HRMS_INVALID_ELECTRICITY_NO",
-      validation: {
-        required: true,
-        minLength: 10,
-        maxLength: 10
-      }
-    },*/
-    
+
+
   ];
 
   if (userType === "employee") {
@@ -175,8 +85,8 @@ const Electricity = ({ t, config, onSelect, value, userType, formData, setError:
           <LabelFieldPair key={index}>
             <CardLabel className="card-label-smaller">{t(input.label) + " *"}</CardLabel>
             <div className="field">
-              
-                <TextInput
+
+              <TextInput
                 key={input.name}
                 id={input.name}
                 isMandatory={config.isMandatory}
@@ -186,10 +96,10 @@ const Electricity = ({ t, config, onSelect, value, userType, formData, setError:
                 onSelect={goNext}
                 {...input.validation}
                 onBlur={onBlur}
-                
-                // autoFocus={presentInModifyApplication}
+
+              // autoFocus={presentInModifyApplication}
               />
-              
+
             </div>
           </LabelFieldPair>
           {formState.touched[config.key] ? (
@@ -203,33 +113,33 @@ const Electricity = ({ t, config, onSelect, value, userType, formData, setError:
   }
   return (
     <React.Fragment>
-     {window.location.href.includes("/citizen") ? <Timeline currentStep={1}/> : null}
-    <FormStep
-      config={config}
-      onChange={onChange}
-      
-      onSelect={goNext}
-      onSkip={onSkip}
-      t={t}
-      isDisabled={hidden}
-      showErrorBelowChildren={true}
-    >
-      <CardLabel>{`${t("PT_ELECTRICITY")}`}</CardLabel>
-      <TextInput
+      {window.location.href.includes("/citizen") ? <Timeline currentStep={1} /> : null}
+      <FormStep
+        config={config}
+        onChange={onChange}
+
+        onSelect={goNext}
+        onSkip={onSkip}
         t={t}
-        type={"number"}
-        isMandatory={false}
-        optionKey="i18nKey"
-        name="electricity"
-        value={electricity}
-        onChange={setElectricityNo}
-        {...(validation = { 
-          required: true,
-          minLength: 10,
-          maxLength: 10,
-         })}
-      />
-    </FormStep>
+        isDisabled={hidden}
+        showErrorBelowChildren={true}
+      >
+        <CardLabel>{`${t("PT_ELECTRICITY")}`}</CardLabel>
+        <TextInput
+          t={t}
+          type={"number"}
+          isMandatory={false}
+          optionKey="i18nKey"
+          name="electricity"
+          value={electricity}
+          onChange={setElectricityNo}
+          {...(validation = {
+            required: true,
+            minLength: 10,
+            maxLength: 10,
+          })}
+        />
+      </FormStep>
     </React.Fragment>
   );
 

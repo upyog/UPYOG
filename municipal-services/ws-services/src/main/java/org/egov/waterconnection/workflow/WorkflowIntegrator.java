@@ -59,7 +59,7 @@ public class WorkflowIntegrator {
 	public void callWorkFlow(WaterConnectionRequest waterConnectionRequest, Property property) {
 		String wfBusinessServiceName = config.getBusinessServiceValue();
 
-		if(waterConnectionRequest.isDisconnectRequest()
+		if(waterConnectionRequest.isDisconnectRequest() && !waterConnectionRequest.isReconnectRequest()
 				|| (waterConnectionRequest.getWaterConnection().getApplicationStatus().equalsIgnoreCase(WCConstants.PENDING_FOR_PAYMENT_STATUS_CODE)
 				&& waterConnectionRequest.getWaterConnection().getApplicationNo().contains(WCConstants.APPLICATION_DISCONNECTION_CODE))) {
 			wfBusinessServiceName = config.getDisconnectBusinessServiceName();

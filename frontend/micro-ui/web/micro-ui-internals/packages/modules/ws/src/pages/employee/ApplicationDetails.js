@@ -279,23 +279,48 @@ const ApplicationDetails = () => {
   });
   workflowDetails?.data?.nextActions?.forEach((action) => {
     if (action?.action === "PAY") {
-      action.redirectionUrll = {
-        pathname: `${getBusinessService(filters)}/${applicationDetails?.applicationNo}/${applicationDetails?.tenantId}?tenantId=${
-          applicationDetails?.tenantId
-        }&ISWSAPP&applicationNumber=${applicationDetails?.applicationNo}`,
-        state: applicationDetails?.tenantId,
-      };
+      if(workflowDetails?.data?.processInstances?.[0]?.businessService =="WSReconnection")
+      {
+        action.redirectionUrll = {
+          pathname: `WSReconnection/${applicationDetails?.applicationNo}/${applicationDetails?.tenantId}?tenantId=${
+            applicationDetails?.tenantId
+          }&ISWSAPP&applicationNumber=${applicationDetails?.applicationNo}`,
+          state: applicationDetails?.tenantId,
+        };
+      }
+      else {
+        action.redirectionUrll = {
+          pathname: `${getBusinessService(filters)}/${applicationDetails?.applicationNo}/${applicationDetails?.tenantId}?tenantId=${
+            applicationDetails?.tenantId
+          }&ISWSAPP&applicationNumber=${applicationDetails?.applicationNo}`,
+          state: applicationDetails?.tenantId,
+        };
+      }
+      
     }
   });
 
   workflowDetails?.data?.actionState?.nextActions?.forEach((action) => {
+    console.log("workflowDetails",workflowDetails)
     if (action?.action === "PAY") {
-      action.redirectionUrll = {
-        pathname: `${getBusinessService(filters)}/${applicationDetails?.applicationNo}/${applicationDetails?.tenantId}?tenantId=${
-          applicationDetails?.tenantId
-        }&ISWSAPP&applicationNumber=${applicationDetails?.applicationNo}`,
-        state: applicationDetails?.tenantId,
-      };
+      if (workflowDetails?.data?.processInstances?.[0]?.businessService =="WSReconnection")
+      {
+        action.redirectionUrll = {
+          pathname: `WSReconnection/${applicationDetails?.applicationNo}/${applicationDetails?.tenantId}?tenantId=${
+            applicationDetails?.tenantId
+          }&ISWSAPP&applicationNumber=${applicationDetails?.applicationNo}`,
+          state: applicationDetails?.tenantId,
+        };
+      }
+      else{
+        action.redirectionUrll = {
+          pathname: `${getBusinessService(filters)}/${applicationDetails?.applicationNo}/${applicationDetails?.tenantId}?tenantId=${
+            applicationDetails?.tenantId
+          }&ISWSAPP&applicationNumber=${applicationDetails?.applicationNo}`,
+          state: applicationDetails?.tenantId,
+        };
+      }
+     
     }
   });
 

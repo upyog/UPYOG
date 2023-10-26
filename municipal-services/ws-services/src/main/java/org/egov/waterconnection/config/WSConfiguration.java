@@ -238,14 +238,15 @@ public class WSConfiguration {
     @Value("${egov.receipt.disconnection.businessservice.topic}")
     private String receiptDisconnectionBusinessservice;
 
-//    @Value("${egov.receipt.reconnection.businessservice.topic}")
-//    private String receiptReconnectionBusinessservice;
+    @Value("${egov.receipt.reconnection.businessservice.topic}")
+    private String receiptReconnectionBusinessservice;
     
-//    @Value("${egov.idgen.wrcid.name}")
-//    private String waterReconnectionIdGenName;
-//
-//    @Value("${egov.idgen.wrcid.format}")
-//    private String waterResconnectionIdGenFormat;
+	/*
+	 * @Value("${egov.idgen.wrcid.name}") private String waterReconnectionIdGenName;
+	 * 
+	 * @Value("${egov.idgen.wrcid.format}") private String
+	 * waterResconnectionIdGenFormat;
+	 */
 
     @Value("${egov.water.connection.document.access.audit.kafka.topic}")
     private String documentAuditTopic;
