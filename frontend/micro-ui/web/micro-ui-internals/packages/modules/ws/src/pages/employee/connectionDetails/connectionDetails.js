@@ -275,7 +275,6 @@ const showActionRestoration = ["RESTORATION_BUTTON"]
       </div>
     );
   };
-console.log("applicationDetails",applicationDetails)
   return (
     <Fragment>
       <div>
@@ -313,12 +312,17 @@ console.log("applicationDetails",applicationDetails)
 
             <SubmitBar ref={actionMenuRef} label={t("WF_TAKE_ACTION")} onSubmit={() => setDisplayMenu(!displayMenu)} />
           </ActionBar>
-        ) : 
+        ) : applicationDetails?.applicationData?.isDisconnectionTemporary && applicationDetails?.applicationData?.status !== "Active"  && applicationDetails?.applicationData?.applicationStatus == "DISCONNECTION_EXECUTED"?
         <ActionBar>
             {displayMenu ? <Menu options={showActionRestoration} localeKeyPrefix={"WS"} t={t} onSelect={onActionSelect} /> : null}
 
             <SubmitBar ref={actionMenuRef} label={t("WF_TAKE_ACTION")} onSubmit={() => setDisplayMenu(!displayMenu)} />
+          </ActionBar>:  <ActionBar>
+            {displayMenu ? <Menu options={showAction} localeKeyPrefix={"WS"} t={t} onSelect={onActionSelect} /> : null}
+
+            <SubmitBar ref={actionMenuRef} label={t("WF_TAKE_ACTION")} onSubmit={() => setDisplayMenu(!displayMenu)} />
           </ActionBar>}
+       
         {showModal ? (
           <Modal
             open={showModal}
