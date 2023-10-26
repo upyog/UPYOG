@@ -93,7 +93,11 @@ public class WorkflowNotificationService {
     public void process(WaterConnectionRequest request, String topic) {
         try {
             String applicationStatus = request.getWaterConnection().getApplicationStatus();
-            List<String> configuredChannelNames =  notificationUtil.fetchChannelList(request.getRequestInfo(), request.getWaterConnection().getTenantId(), WATER_SERVICE_BUSINESS_ID, request.getWaterConnection().getProcessInstance().getAction());
+            List<String> configuredChannelNames=new ArrayList<String>();
+            if(request.isDisconnectRequest() || request.isReconnectRequest())
+            	configuredChannelNames=  notificationUtil.fetchChannelList(request.getRequestInfo(), request.getWaterConnection().getTenantId(), "WS.CREATE", request.getWaterConnection().getProcessInstance().getAction());
+            else
+                configuredChannelNames =  notificationUtil.fetchChannelList(request.getRequestInfo(), request.getWaterConnection().getTenantId(), WATER_SERVICE_BUSINESS_ID, request.getWaterConnection().getProcessInstance().getAction());
             User userInfoCopy = request.getRequestInfo().getUserInfo();
             User userInfo = notificationUtil.getInternalMicroserviceUser(request.getWaterConnection().getTenantId());
             request.getRequestInfo().setUserInfo(userInfo);
@@ -317,6 +321,12 @@ public class WorkflowNotificationService {
             reqType = DISCONNECT_CONNECTION;
         }
 
+        if((workflow.getAction().equalsIgnoreCase(WCConstants.ACTIVATE_CONNECTION)) &&
+        		waterConnectionRequest.isReconnectRequest())
+        {
+        	reqType = RECONNECTION;
+        }
+        
         String message = notificationUtil.getCustomizedMsgForSMS(
                 workflow.getAction(), applicationStatus,
                 localizationMessage, reqType);
@@ -337,6 +347,7 @@ public class WorkflowNotificationService {
             log.info("No message Found For Topic : " + topic);
             return Collections.emptyList();
         }
+        log.info("SMS body is WS"+message);
 
            //Send the notification to all owners
             Map<String, String> mobileNumbersAndNames = new HashMap<>();
