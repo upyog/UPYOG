@@ -185,8 +185,8 @@ const ActivateConnection = () => {
               ]
               : []
         }
-
-        const reqDetails = filters?.service == "WATER" ? { WaterConnection: formData } : { SewerageConnection: formData }
+        
+        const reqDetails = filters?.service == "WATER"? formData?.applicationType === "RECONNECT_CONNECTION" ? { WaterConnection: formData, reconnectRequest:true, disconnectRequest:false } :{ WaterConnection: formData }: formData?.applicationType === "RECONNECT_CONNECTION" ? { SewerageConnection: formData ,reconnectRequest:true, disconnectRequest:false}:{ SewerageConnection: formData}
 
         if (mutate) {
             // setIsEnableLoader(true);
