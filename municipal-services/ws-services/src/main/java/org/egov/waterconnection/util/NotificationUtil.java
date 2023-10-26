@@ -150,6 +150,10 @@ public class NotificationUtil {
 		{
 			builder.append("WS_DISCONNECT_").append(action.toUpperCase()).append("_").append(applicationStatus.toUpperCase()).append("_SMS_MESSAGE");
 		}
+		if (reqType == RECONNECTION)
+		{
+			builder.append("WS_RECONNECT_").append(action.toUpperCase()).append("_").append(applicationStatus.toUpperCase()).append("_SMS_MESSAGE");
+		}
 		return getMessageTemplate(builder.toString(), localizationMessage);
 	}
 

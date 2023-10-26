@@ -72,6 +72,7 @@ public class WorkflowNotificationConsumer {
 				waterConnectionRequest.setWaterConnection(encryptionDecryptionUtil.decryptObject(waterConnection,
 						WNS_PLUMBER_PLAIN_DECRYPTION_MODEL, WaterConnection.class, waterConnectionRequest.getRequestInfo()));
 			}
+			log.info("waterConnectionRequest is"+ waterConnectionRequest);
 
 			if (!waterConnectionRequest.isOldDataEncryptionRequest())
 				workflowNotificationService.process(waterConnectionRequest, topic);
