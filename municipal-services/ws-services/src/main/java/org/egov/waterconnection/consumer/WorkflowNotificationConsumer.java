@@ -51,6 +51,7 @@ public class WorkflowNotificationConsumer {
 	 */
 	@KafkaListener(topics = { "${egov.waterservice.createwaterconnection.topic}" ,"${egov.waterservice.updatewaterconnection.topic}", "${egov.waterservice.updatewaterconnection.workflow.topic}"})
 	public void listen(final HashMap<String, Object> record, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
+		log.info("Record received in update Water connectuion is"+ record);
 		try {
 			WaterConnectionRequest waterConnectionRequest = mapper.convertValue(record, WaterConnectionRequest.class);
 			WaterConnection waterConnection = waterConnectionRequest.getWaterConnection();
@@ -72,7 +73,7 @@ public class WorkflowNotificationConsumer {
 				waterConnectionRequest.setWaterConnection(encryptionDecryptionUtil.decryptObject(waterConnection,
 						WNS_PLUMBER_PLAIN_DECRYPTION_MODEL, WaterConnection.class, waterConnectionRequest.getRequestInfo()));
 			}
-			log.info("waterConnectionRequest is"+ waterConnectionRequest);
+			log.info("waterConnectionRequest is "+ waterConnectionRequest);
 
 			if (!waterConnectionRequest.isOldDataEncryptionRequest())
 				workflowNotificationService.process(waterConnectionRequest, topic);

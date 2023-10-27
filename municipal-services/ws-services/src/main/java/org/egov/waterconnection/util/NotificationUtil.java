@@ -175,6 +175,11 @@ public class NotificationUtil {
 		{
 			builder.append("WS_DISCONNECT_").append(action.toUpperCase()).append("_").append(applicationStatus.toUpperCase()).append("_APP_MESSAGE");
 		}
+		if (reqType == RECONNECTION)
+		{
+			builder.append("WS_RECONNECT_").append(action.toUpperCase()).append("_").append(applicationStatus.toUpperCase()).append("_APP_MESSAGE");
+		}
+		log.info("getting localised template for code " + builder.toString());
 		return getMessageTemplate(builder.toString(), localizationMessage);
 	}
 
@@ -196,6 +201,10 @@ public class NotificationUtil {
 		if (reqType == DISCONNECT_CONNECTION)
 		{
 			builder.append("WS_DISCONNECT_").append(action.toUpperCase()).append("_").append(applicationStatus.toUpperCase()).append("_EMAIL_MESSAGE");
+		}
+		if (reqType == RECONNECTION)
+		{
+			builder.append("WS_RECONNECT_").append(action.toUpperCase()).append("_").append(applicationStatus.toUpperCase()).append("_EMAIL_MESSAGE");
 		}
 		return getMessageTemplate(builder.toString(), localizationMessage);
 	}
