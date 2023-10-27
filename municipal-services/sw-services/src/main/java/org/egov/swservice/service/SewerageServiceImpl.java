@@ -100,11 +100,11 @@ public class SewerageServiceImpl implements SewerageService {
 	public List<SewerageConnection> createSewerageConnection(SewerageConnectionRequest sewerageConnectionRequest) {
 		int reqType = SWConstants.CREATE_APPLICATION;
 		
-		if (sewerageConnectionRequest.isDisconnectRequest()) {
+		if (sewerageConnectionRequest.isDisconnectRequest() || sewerageConnectionRequest.getSewerageConnection().getApplicationType().equalsIgnoreCase(SWConstants.DISCONNECT_SEWERAGE_CONNECTION)) {
 			reqType = SWConstants.DISCONNECT_CONNECTION;
 			validateDisconnectionRequest(sewerageConnectionRequest);
 		}
-		else if (sewerageConnectionRequest.isReconnectRequest()) {
+		else if (sewerageConnectionRequest.isReconnectRequest() || sewerageConnectionRequest.getSewerageConnection().getApplicationType().equalsIgnoreCase(SWConstants.SEWERAGE_RECONNECTION)) {
 			reqType = SWConstants.RECONNECTION;
 			validateReconnectionRequest(sewerageConnectionRequest);
 		}
@@ -298,10 +298,10 @@ public class SewerageServiceImpl implements SewerageService {
 	@Override
 	public List<SewerageConnection> updateSewerageConnection(SewerageConnectionRequest sewerageConnectionRequest) {
 
-		if(sewerageConnectionRequest.isDisconnectRequest()) {
+		if(sewerageConnectionRequest.isDisconnectRequest() || sewerageConnectionRequest.getSewerageConnection().getApplicationType().equalsIgnoreCase(SWConstants.DISCONNECT_SEWERAGE_CONNECTION)) {
 			return updateSewerageConnectionForDisconnectFlow(sewerageConnectionRequest);
 		}
-		else if (sewerageConnectionRequest.isReconnectRequest()) {
+		else if (sewerageConnectionRequest.isReconnectRequest() || sewerageConnectionRequest.getSewerageConnection().getApplicationType().equalsIgnoreCase(SWConstants.SEWERAGE_RECONNECTION)) {
 			return updateSewerageConnectionForReconnectFlow(sewerageConnectionRequest);
 		}
 		
@@ -390,7 +390,7 @@ public class SewerageServiceImpl implements SewerageService {
 		enrichmentService.enrichUpdateSewerageConnection(sewerageConnectionRequest);
 		actionValidator.validateUpdateRequest(sewerageConnectionRequest, businessService, previousApplicationStatus);
 		sewerageConnectionValidator.validateUpdate(sewerageConnectionRequest, searchResult);
-		sewerageDaoImpl.pushForEditNotification(sewerageConnectionRequest, isStateUpdatable);
+		//sewerageDaoImpl.pushForEditNotification(sewerageConnectionRequest, isStateUpdatable);
 		userService.updateUser(sewerageConnectionRequest, searchResult);
 		calculationService.calculateFeeAndGenerateDemand(sewerageConnectionRequest, property);
 		//check whether amount is due
@@ -458,7 +458,7 @@ public class SewerageServiceImpl implements SewerageService {
 		enrichmentService.enrichUpdateSewerageConnection(sewerageConnectionRequest);
 		actionValidator.validateUpdateRequest(sewerageConnectionRequest, businessService, previousApplicationStatus);
 		sewerageConnectionValidator.validateUpdate(sewerageConnectionRequest, searchResult);
-		sewerageDaoImpl.pushForEditNotification(sewerageConnectionRequest, isStateUpdatable);
+		//sewerageDaoImpl.pushForEditNotification(sewerageConnectionRequest, isStateUpdatable);
 		userService.updateUser(sewerageConnectionRequest, searchResult);
 		calculationService.calculateFeeAndGenerateDemand(sewerageConnectionRequest, property);
 		//check whether amount is due
@@ -466,7 +466,7 @@ public class SewerageServiceImpl implements SewerageService {
 		SewerageConnection sewerageConnection = sewerageConnectionRequest.getSewerageConnection();
 		ProcessInstance processInstance = sewerageConnection.getProcessInstance();
 		if (SWConstants.APPROVE_CONNECTION_CONST.equalsIgnoreCase(processInstance.getAction())) {
-			isNoPayment = calculationService.fetchBillForReconnect(sewerageConnection.getTenantId(), sewerageConnection.getConnectionNo(), sewerageConnectionRequest.getRequestInfo());
+			isNoPayment = calculationService.fetchBillForReconnect(sewerageConnection.getTenantId(), sewerageConnection.getApplicationNo(), sewerageConnectionRequest.getRequestInfo());
 			if (isNoPayment) {
 				processInstance.setComment(WORKFLOW_NO_PAYMENT_CODE);
 			}
