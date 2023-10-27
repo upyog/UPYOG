@@ -355,7 +355,7 @@ public class WorkflowNotificationService {
             log.info("No message Found For Topic : " + topic);
             return Collections.emptyList();
         }
-        log.info("SMS body is WS"+message);
+        log.info("SMS body is "+message);
 
            //Send the notification to all owners
             Map<String, String> mobileNumbersAndNames = new HashMap<>();
