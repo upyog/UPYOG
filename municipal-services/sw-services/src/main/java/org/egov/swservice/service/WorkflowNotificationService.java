@@ -690,7 +690,7 @@ public class WorkflowNotificationService {
 				.sewerageConnection(sewerageConnectionRequest.getSewerageConnection()).tenantId(property.getTenantId())
 				.build();
 		CalculationReq calRequest = CalculationReq.builder().calculationCriteria(Arrays.asList(criteria))
-				.requestInfo(sewerageConnectionRequest.getRequestInfo()).isconnectionCalculation(false).build();
+				.requestInfo(sewerageConnectionRequest.getRequestInfo()).isconnectionCalculation(false).disconnectRequest(false).isReconnectionRequest(false).build();
 		try {
 			Object response = serviceRequestRepository.fetchResult(sewerageServicesUtil.getEstimationURL(), calRequest);
 			CalculationRes calResponse = mapper.convertValue(response, CalculationRes.class);

@@ -106,7 +106,16 @@ public class SWCalculationServiceImpl implements SWCalculationService {
 			demandService.generateDemand(request, calculations, masterMap, connectionRequest);
 			unsetSewerageConnection(calculations);
 
-		} else {
+		}
+		else if (request.getIsreconnectionRequest())	
+		{
+			connectionRequest = (!request.getIsreconnectionRequest());
+			Map<String, Object> masterMap = mDataService.loadExemptionMaster(request.getRequestInfo(),
+					request.getCalculationCriteria().get(0).getTenantId());
+			calculations = getReconnectionFeeCalculation(request, masterMap);
+			log.info("In reconnection request connectionRequest" + connectionRequest);
+		} 
+		else {
 			// Calculate and create demand for application
 			Map<String, Object> masterData = mDataService.loadExemptionMaster(request.getRequestInfo(),
 					request.getCalculationCriteria().get(0).getTenantId());
@@ -165,7 +174,7 @@ public class SWCalculationServiceImpl implements SWCalculationService {
 				List<SewerageConnection> sewerageConnectionList = util.getSewerageConnection(requestInfo, criteria.getConnectionNo(), requestInfo.getUserInfo().getTenantId());
 				for (SewerageConnection connection : sewerageConnectionList) {
 					if (connection.getApplicationType().equalsIgnoreCase(NEW_SEWERAGE_CONNECTION)) {
-						List<Demand> demandsList = demandService.searchDemand(requestInfo.getUserInfo().getTenantId(), Collections.singleton(connection.getConnectionNo()),
+						List<Demand> demandsList = demandService.searchDemandForDisconnectionRequest(requestInfo.getUserInfo().getTenantId(), Collections.singleton(connection.getConnectionNo()),
 								null, toDate, requestInfo, null, isLastElementWithDisconnectionRequest);
 						Demand demand = null;
 						if (!CollectionUtils.isEmpty(demandsList)) {
@@ -308,13 +317,20 @@ public class SWCalculationServiceImpl implements SWCalculationService {
 			mDataService.enrichBillingPeriod(criteria, billingFrequencyMap, masterMap, criteria.getSewerageConnection().getConnectionType());
 
 			Calculation calculation = null;
-			if (request.getDisconnectRequest() != null) {
-				if (request.getDisconnectRequest() &&
-						criteria.getApplicationNo().equals(request.getCalculationCriteria().get(request.getCalculationCriteria().size() - 1)
+			if (request.getDisconnectRequest() != null && request.getDisconnectRequest()) {
+				if (request.getDisconnectRequest() && criteria.getApplicationNo().equals(request.getCalculationCriteria().get(request.getCalculationCriteria().size() - 1)
 								.getApplicationNo())) {
 					calculation = getCalculation(request.getRequestInfo(), criteria, estimationMap, masterMap, true, true);
 				}
-			} else {
+			}  else if (request.getIsreconnectionRequest() != null && request.getIsreconnectionRequest()) {
+				if (request.getIsreconnectionRequest() &&
+						criteria.getApplicationNo().equals(request.getCalculationCriteria().get(request.getCalculationCriteria().size() - 1)
+								.getApplicationNo())) {
+					calculation = getCalculation(request.getRequestInfo(), criteria, estimationMap, masterMap, true, false);
+				}
+				
+			} 
+			else {
 				calculation = getCalculation(request.getRequestInfo(), criteria, estimationMap, masterMap, true, false);
 			}
 			calculations.add(calculation);
@@ -322,6 +338,18 @@ public class SWCalculationServiceImpl implements SWCalculationService {
 		return calculations;
 	}
 
+	List<Calculation> getReconnectionFeeCalculation(CalculationReq request, Map<String, Object> masterMap) {
+		List<Calculation> calculations = new ArrayList<>(request.getCalculationCriteria().size());
+		for (CalculationCriteria criteria : request.getCalculationCriteria()) {
+			Map<String, List> estimationMap = estimationService.getReconnectionFeeEstimation(criteria, request.getRequestInfo(),
+					masterMap);
+			mDataService.enrichBillingPeriodForFee(masterMap);
+			Calculation calculation = getCalculation(request.getRequestInfo(), criteria, estimationMap, masterMap,
+					false, false);
+			calculations.add(calculation);
+		}
+		return calculations;
+	}
 	/**
 	 * 
 	 * 
