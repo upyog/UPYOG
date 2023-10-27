@@ -20,12 +20,8 @@ import reactor.netty.http.client.HttpClient;
 //import com.nttdatapay.aipayclient.utils.Utility;
 
 public class AipayService {
-	 //private static final String AIPAY_URL = "https://caller.atomtech.in/ots/aipay/auth?";
 	
-	 private static final String AIPAY_URL = "https://paynetzuat.atomtech.in/ots/aipay/auth?";
-	 private static final String AIPAY_URL_STATUS = "https://paynetzuat.atomtech.in/ots/payment/status?";
-
-	  public static String getAtomTokenId(String merchantId, String serverResp)
+	  public static String getAtomTokenId(String merchantId, String serverResp, String atomUrl)
 	  {
 	    String result = "";
 	    try
@@ -35,7 +31,7 @@ public class AipayService {
 	      WebClient.Builder webClientBuilder=WebClient.builder();
 	      webClientBuilder= getCertificateSkippedRestObject();
 	      result=webClientBuilder.build().post()
-	    		  .uri(AIPAY_URL+"merchId=" + merchantId + "&encData=" + serverResp)
+	    		  .uri(atomUrl+"merchId=" + merchantId + "&encData=" + serverResp)
 	    		  .contentType(MediaType.APPLICATION_JSON)
 	    		  .retrieve()
 	    		  .bodyToMono(String.class)
@@ -56,7 +52,7 @@ public class AipayService {
 			return WebClient.builder().clientConnector(new ReactorClientHttpConnector(httpClient));
 		}
 	  
-	  public static String getTransactionStatus(String merchantId, String serverResp)
+	  public static String getTransactionStatus(String merchantId, String serverResp, String statusUrl)
 	  {
 	    String result = "";
 	    try
@@ -66,7 +62,7 @@ public class AipayService {
 	      WebClient.Builder webClientBuilder=WebClient.builder();
 	      webClientBuilder=getCertificateSkippedRestObject();
 	      result=webClientBuilder.build().post()
-	    		  .uri(AIPAY_URL_STATUS+"merchId=" + merchantId + "&encData=" + serverResp)
+	    		  .uri(statusUrl+"merchId=" + merchantId + "&encData=" + serverResp)
 	    		  .contentType(MediaType.APPLICATION_JSON)
 	    		  .retrieve()
 	    		  .bodyToMono(String.class)
