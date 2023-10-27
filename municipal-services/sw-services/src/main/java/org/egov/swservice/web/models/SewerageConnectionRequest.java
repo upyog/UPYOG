@@ -46,6 +46,9 @@ public class SewerageConnectionRequest {
 
 	@JsonProperty("disconnectRequest")
 	private boolean disconnectRequest;
+	
+	@JsonProperty("reconnectRequest")
+	private boolean reconnectRequest;
 
 	public SewerageConnectionRequest requestInfo(RequestInfo requestInfo) {
 		this.requestInfo = requestInfo;
@@ -75,6 +78,11 @@ public class SewerageConnectionRequest {
 	
 	public SewerageConnectionRequest disconnectionRequest(boolean isDisconnectionRequest) {
 		this.disconnectRequest = isDisconnectionRequest;
+		return this;
+	}
+	
+	public SewerageConnectionRequest reconnectionRequest(boolean isReconnectionRequest) {
+		this.reconnectRequest = isReconnectionRequest;
 		return this;
 	}
 

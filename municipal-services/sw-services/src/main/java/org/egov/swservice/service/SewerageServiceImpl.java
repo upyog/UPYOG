@@ -104,7 +104,10 @@ public class SewerageServiceImpl implements SewerageService {
 			reqType = SWConstants.DISCONNECT_CONNECTION;
 			validateDisconnectionRequest(sewerageConnectionRequest);
 		}
-		
+		else if (sewerageConnectionRequest.isReconnectRequest()) {
+			reqType = SWConstants.RECONNECTION;
+			validateReconnectionRequest(sewerageConnectionRequest);
+		}
 		else if (sewerageServicesUtil.isModifyConnectionRequest(sewerageConnectionRequest)) {
 			List<SewerageConnection> sewerageConnectionList = getAllSewerageApplications(sewerageConnectionRequest);
 			swapConnHolders(sewerageConnectionRequest,sewerageConnectionList);
@@ -172,6 +175,28 @@ public class SewerageServiceImpl implements SewerageService {
 			}
 		}
 		
+	}
+	
+	private void validateReconnectionRequest(SewerageConnectionRequest sewerageConnectionRequest) {
+		if (!sewerageConnectionRequest.getSewerageConnection().getStatus().toString().equalsIgnoreCase(SWConstants.ACTIVE)) {
+			throw new CustomException("INVALID_REQUEST",
+					"Sewerage connection must be inactive for reconnection request");
+		}
+
+		List<SewerageConnection> previousConnectionsList = getAllSewerageApplications(sewerageConnectionRequest);
+		swapConnHolders(sewerageConnectionRequest,previousConnectionsList);
+
+		//Swap masked Plumber info with unmasked plumberInfo from previous applications
+		if(!ObjectUtils.isEmpty(previousConnectionsList.get(0).getPlumberInfo()))
+			unmaskingUtil.getUnmaskedPlumberInfo(sewerageConnectionRequest.getSewerageConnection().getPlumberInfo(), previousConnectionsList.get(0).getPlumberInfo());
+
+		
+		for(SewerageConnection connection : previousConnectionsList) {
+			if(!(connection.getApplicationStatus().equalsIgnoreCase(SWConstants.STATUS_APPROVED) || connection.getApplicationStatus().equalsIgnoreCase(SWConstants.DISCONNECTION_FINAL_STATE)|| connection.getApplicationStatus().equalsIgnoreCase(SWConstants.MODIFIED_FINAL_STATE))) {
+				throw new CustomException("INVALID_REQUEST",
+						"No application should be in progress while applying for Reconnection");
+			}
+		}
 	}
 
 	/**
@@ -275,6 +300,9 @@ public class SewerageServiceImpl implements SewerageService {
 
 		if(sewerageConnectionRequest.isDisconnectRequest()) {
 			return updateSewerageConnectionForDisconnectFlow(sewerageConnectionRequest);
+		}
+		else if (sewerageConnectionRequest.isReconnectRequest()) {
+			return updateSewerageConnectionForReconnectFlow(sewerageConnectionRequest);
 		}
 		
 		SearchCriteria criteria = new SearchCriteria();
@@ -404,6 +432,75 @@ public class SewerageServiceImpl implements SewerageService {
 
 	}
 
+	private List<SewerageConnection> updateSewerageConnectionForReconnectFlow(SewerageConnectionRequest sewerageConnectionRequest) {
+		SearchCriteria criteria = new SearchCriteria();
+
+		sewerageConnectionValidator.validateSewerageConnection(sewerageConnectionRequest, SWConstants.RECONNECTION);
+		mDMSValidator.validateMasterData(sewerageConnectionRequest, SWConstants.RECONNECTION);
+		Property property = validateProperty.getOrValidateProperty(sewerageConnectionRequest);
+		validateProperty.validatePropertyFields(property,sewerageConnectionRequest.getRequestInfo());
+		String previousApplicationStatus = workflowService.getApplicationStatus(
+				sewerageConnectionRequest.getRequestInfo(),
+				sewerageConnectionRequest.getSewerageConnection().getApplicationNo(),
+				sewerageConnectionRequest.getSewerageConnection().getTenantId(),config.getDisconnectBusinessServiceName() );
+		BusinessService businessService = workflowService.getBusinessService(config.getDisconnectBusinessServiceName(),
+				sewerageConnectionRequest.getSewerageConnection().getTenantId(),
+				sewerageConnectionRequest.getRequestInfo());
+		SewerageConnection searchResult = getConnectionForUpdateRequest(
+				sewerageConnectionRequest.getSewerageConnection().getId(), sewerageConnectionRequest.getRequestInfo());
+
+		Boolean isStateUpdatable = sewerageServicesUtil.getStatusForUpdate(businessService, previousApplicationStatus);
+
+		boolean isPlumberSwapped = unmaskingUtil.getUnmaskedPlumberInfo(sewerageConnectionRequest.getSewerageConnection().getPlumberInfo(), searchResult.getPlumberInfo());
+		if (isPlumberSwapped)
+			sewerageConnectionRequest.setSewerageConnection(encryptionDecryptionUtil.decryptObject(sewerageConnectionRequest.getSewerageConnection(), "WnSConnectionPlumberDecrypDisabled", SewerageConnection.class, sewerageConnectionRequest.getRequestInfo()));
+
+		enrichmentService.enrichUpdateSewerageConnection(sewerageConnectionRequest);
+		actionValidator.validateUpdateRequest(sewerageConnectionRequest, businessService, previousApplicationStatus);
+		sewerageConnectionValidator.validateUpdate(sewerageConnectionRequest, searchResult);
+		sewerageDaoImpl.pushForEditNotification(sewerageConnectionRequest, isStateUpdatable);
+		userService.updateUser(sewerageConnectionRequest, searchResult);
+		calculationService.calculateFeeAndGenerateDemand(sewerageConnectionRequest, property);
+		//check whether amount is due
+		boolean isNoPayment = false;
+		SewerageConnection sewerageConnection = sewerageConnectionRequest.getSewerageConnection();
+		ProcessInstance processInstance = sewerageConnection.getProcessInstance();
+		if (SWConstants.APPROVE_CONNECTION_CONST.equalsIgnoreCase(processInstance.getAction())) {
+			isNoPayment = calculationService.fetchBillForReconnect(sewerageConnection.getTenantId(), sewerageConnection.getConnectionNo(), sewerageConnectionRequest.getRequestInfo());
+			if (isNoPayment) {
+				processInstance.setComment(WORKFLOW_NO_PAYMENT_CODE);
+			}
+		}
+		// Call workflow
+		wfIntegrator.callWorkFlow(sewerageConnectionRequest, property);
+
+		/* encrypt here */
+		sewerageConnectionRequest.setSewerageConnection(encryptConnectionDetails(sewerageConnectionRequest.getSewerageConnection()));
+		/* encrypt here for connection holder details */
+		sewerageConnectionRequest.setSewerageConnection(encryptConnectionHolderDetails(sewerageConnectionRequest.getSewerageConnection()));
+
+		sewerageDao.updateSewerageConnection(sewerageConnectionRequest, isStateUpdatable);
+
+		// setting oldApplication Flag
+		markOldApplication(sewerageConnectionRequest);
+
+		if (!StringUtils.isEmpty(sewerageConnectionRequest.getSewerageConnection().getTenantId()))
+			criteria.setTenantId(sewerageConnectionRequest.getSewerageConnection().getTenantId());
+		enrichmentService.enrichProcessInstance(Arrays.asList(sewerageConnectionRequest.getSewerageConnection()), criteria, sewerageConnectionRequest.getRequestInfo());
+
+		//Updating the workflow from approve for disconnection to pending for disconnection execution when there are no dues
+		if(SWConstants.APPROVE_DISCONNECTION_CONST.equalsIgnoreCase(processInstance.getAction()) && isNoPayment){
+			paymentUpdateService.noPaymentWorkflow(sewerageConnectionRequest, property, sewerageConnectionRequest.getRequestInfo());
+		}
+
+		/* decrypt here */
+		sewerageConnectionRequest.setSewerageConnection(decryptConnectionDetails(sewerageConnectionRequest.getSewerageConnection(), sewerageConnectionRequest.getRequestInfo()));
+
+		return Arrays.asList(sewerageConnectionRequest.getSewerageConnection());
+
+	}
+
+	
 	/**
 	 * Search Sewerage connection to be update
 	 * 

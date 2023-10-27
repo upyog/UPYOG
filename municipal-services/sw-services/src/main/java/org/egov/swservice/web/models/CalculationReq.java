@@ -46,6 +46,9 @@ public class CalculationReq   {
 
         @JsonProperty("disconnectRequest")
         private Boolean disconnectRequest = false;
+        
+		@JsonProperty("isReconnectionRequest")
+		private Boolean isReconnectionRequest = false;
 
 
         public CalculationReq addCalulationCriteriaItem(CalculationCriteria calulationCriteriaItem) {

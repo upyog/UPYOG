@@ -124,6 +124,9 @@ public class EnrichmentService {
 		else if(reqType==SWConstants.DISCONNECT_CONNECTION) {
 			applicationType=SWConstants.DISCONNECT_SEWERAGE_CONNECTION;
 		}
+		else if (reqType == SWConstants.RECONNECTION) {
+			applicationType=SWConstants.SEWERAGE_RECONNECTION;
+		}
 		else {
 			applicationType=SWConstants.MODIFY_SEWERAGE_CONNECTION;
 		}
