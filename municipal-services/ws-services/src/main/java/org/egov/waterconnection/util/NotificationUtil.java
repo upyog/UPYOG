@@ -154,6 +154,8 @@ public class NotificationUtil {
 		{
 			builder.append("WS_RECONNECT_").append(action.toUpperCase()).append("_").append(applicationStatus.toUpperCase()).append("_SMS_MESSAGE");
 		}
+		log.info("getting localised SMS template for code " + builder.toString());
+
 		return getMessageTemplate(builder.toString(), localizationMessage);
 	}
 
