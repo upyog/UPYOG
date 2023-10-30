@@ -107,9 +107,9 @@ public class SWCalculationServiceImpl implements SWCalculationService {
 			unsetSewerageConnection(calculations);
 
 		}
-		else if (request.getIsreconnectionRequest())	
+		else if (request.getReconnectRequest())	
 		{
-			connectionRequest = (!request.getIsreconnectionRequest());
+			connectionRequest = (!request.getReconnectRequest());
 			Map<String, Object> masterMap = mDataService.loadExemptionMaster(request.getRequestInfo(),
 					request.getCalculationCriteria().get(0).getTenantId());
 			calculations = getReconnectionFeeCalculation(request, masterMap);
@@ -322,8 +322,8 @@ public class SWCalculationServiceImpl implements SWCalculationService {
 								.getApplicationNo())) {
 					calculation = getCalculation(request.getRequestInfo(), criteria, estimationMap, masterMap, true, true);
 				}
-			}  else if (request.getIsreconnectionRequest() != null && request.getIsreconnectionRequest()) {
-				if (request.getIsreconnectionRequest() &&
+			}  else if (request.getReconnectRequest() != null && request.getReconnectRequest()) {
+				if (request.getReconnectRequest() &&
 						criteria.getApplicationNo().equals(request.getCalculationCriteria().get(request.getCalculationCriteria().size() - 1)
 								.getApplicationNo())) {
 					calculation = getCalculation(request.getRequestInfo(), criteria, estimationMap, masterMap, true, false);
