@@ -73,7 +73,7 @@ const ActivateConnection = () => {
         key: Date.now(),
     }];
 
-    const activationDetails = state?.data?.connectionType?.toUpperCase() === "METERED" ? [{
+    const activationDetails = state?.data?.connectionType?.toUpperCase() === "METERED" && state?.data?.applicationType == "NEW_WATER_CONNECTION" ? [{
         meterId: state?.data?.meterId || "",
         meterInstallationDate: state?.data?.meterInstallationDate ? convertEpochToDates(state?.data?.meterInstallationDate) : null,
         meterInitialReading: state?.data?.additionalDetails?.initialMeterReading || "",
