@@ -316,6 +316,13 @@ public class SewerageServicesUtil {
 
 		return false;
 	}
+	
+	public boolean isReconnectConnectionRequest(SewerageConnectionRequest sewerageConnectionRequest) {
+		if(sewerageConnectionRequest.getSewerageConnection().getApplicationType().equalsIgnoreCase(SWConstants.SEWERAGE_RECONNECTION))
+			return !StringUtils.isEmpty(sewerageConnectionRequest.getSewerageConnection().getConnectionNo());
+
+		return false;
+	}
 
 
 	public StringBuilder getcollectionURL() {

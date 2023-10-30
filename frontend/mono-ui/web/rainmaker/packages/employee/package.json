@@ -3,8 +3,8 @@
   "version": "2.0.0",
   "license": "egov",
   "private": true,
-  "homepage": "https://qa.digit.org/employee/",
-  "proxy": "https://qa.digit.org/",
+  "homepage": "https://upyog.niua.org/employee",
+  "proxy": "https://upyog.niua.org",
   "dependencies": {
     "@babel/runtime": "7.3.1",
     "@material-ui/core": "1.5.1",
@@ -76,12 +76,12 @@
   },
   "resolutions": {
     "**/datatables.net": "1.11.5",
-    "**/datatables.net-dt":"1.12.1",
-    "**/datatables.net-bs":"1.12.1",
-    "**/datatables.net-responsive-dt":"2.3.0",
-    "**/datatables.net-responsive":"2.2.9",
-    "**/datatables.net-buttons-bs":"2.0.0",
-    "**/datatables.net-buttons": "2.2.2"
+    "**/datatables.net-dt":"1.12.1",
+    "**/datatables.net-bs":"1.12.1",
+    "**/datatables.net-responsive-dt":"2.3.0",
+    "**/datatables.net-responsive":"2.2.9",
+    "**/datatables.net-buttons-bs":"2.0.0",
+    "**/datatables.net-buttons": "2.2.2"
   },
   "scripts": {
     "build-css": "node-sass-chokidar src/ -o src/",
