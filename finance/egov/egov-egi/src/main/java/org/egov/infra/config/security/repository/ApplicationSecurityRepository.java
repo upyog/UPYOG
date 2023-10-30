@@ -139,14 +139,12 @@ public class ApplicationSecurityRepository implements SecurityContextRepository 
 		Object sessionIdFromRedis = redisTemplate.opsForHash().get("session_token_fetch:" + userToken, "session_id");
         LOGGER.info("**Redis:: sessionID*****"+sessionIdFromRedis);
         
-		LOGGER.info("******Print all keys from redis");
-		Set<Object> redisKeys = redisTemplate.keys("*");
-		// Store the keys in a List
-		Iterator<Object> it = redisKeys.iterator();
-		while (it.hasNext()) {
-			Object data = it.next();
-			LOGGER.info("Keys in redis: " + data);
-		}
+		/*
+		 * LOGGER.info("******Print all keys from redis"); Set<Object> redisKeys =
+		 * redisTemplate.keys("*"); // Store the keys in a List Iterator<Object> it =
+		 * redisKeys.iterator(); while (it.hasNext()) { Object data = it.next();
+		 * LOGGER.info("Keys in redis: " + data); }
+		 */
 		return this.parepareCurrentUser(response.getUserSearchResponseContent().get(0));
 	}
 
