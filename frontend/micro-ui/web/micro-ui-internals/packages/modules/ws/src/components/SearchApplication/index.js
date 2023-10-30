@@ -120,13 +120,15 @@ const SearchApplication = ({ tenantId, onSubmit, data, count, resultOk, business
           if (
             row?.original?.["applicationType"] == "NEW_WATER_CONNECTION" || 
             row?.original?.["applicationType"] == "MODIFY_WATER_CONNECTION" ||
-            row?.original?.["applicationType"] == "DISCONNECT_WATER_CONNECTION"
+            row?.original?.["applicationType"] == "DISCONNECT_WATER_CONNECTION"||
+            row?.original?.["applicationType"] == "WATER_RECONNECTIO"
           ) {
             service = "WATER"
           } else if (
             row?.original?.["applicationType"] == "NEW_SEWERAGE_CONNECTION" ||
             row?.original?.["applicationType"] == "MODIFY_SEWERAGE_CONNECTION" || 
-            row?.original?.["applicationType"] == "DISCONNECT_SEWERAGE_CONNECTION"
+            row?.original?.["applicationType"] == "DISCONNECT_SEWERAGE_CONNECTION" ||
+            row?.original?.["applicationType"] == "SEWERAGE_RECONNECTION"
           ) {
             service = "SEWERAGE"
           }

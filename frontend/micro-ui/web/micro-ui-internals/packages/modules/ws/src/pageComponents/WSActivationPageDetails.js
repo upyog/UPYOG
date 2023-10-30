@@ -137,7 +137,7 @@ const ConnectionDetails = (_props) => {
     return (
         <div>
             <div style={{ marginBottom: "16px" }}>
-                {filters?.service === "WATER" && formData?.connectionDetails?.[0]?.connectionType?.code?.toUpperCase() === "METERED" ? <div>
+                {filters?.service === "WATER" && formData?.connectionDetails?.[0]?.connectionType?.code?.toUpperCase() === "METERED" && formData?.connectionDetails?.[0]?.formDetails?.applicationData?.applicationType !== "RECONNECT_CONNECTION"  ? <div>
                     <LabelFieldPair>
                         <CardLabel style={isMobile && isEmployee ? {fontWeight: "700", width:"100%"} : { marginTop: "-5px", fontWeight: "700" }} className="card-label-smaller">{`${t("WS_SERV_DETAIL_METER_ID")}*`}</CardLabel>
                         <div className="field">
