@@ -442,8 +442,8 @@ public class SewerageServiceImpl implements SewerageService {
 		String previousApplicationStatus = workflowService.getApplicationStatus(
 				sewerageConnectionRequest.getRequestInfo(),
 				sewerageConnectionRequest.getSewerageConnection().getApplicationNo(),
-				sewerageConnectionRequest.getSewerageConnection().getTenantId(),config.getDisconnectBusinessServiceName() );
-		BusinessService businessService = workflowService.getBusinessService(config.getDisconnectBusinessServiceName(),
+				sewerageConnectionRequest.getSewerageConnection().getTenantId(),config.getReconnectBusinessServiceName() );
+		BusinessService businessService = workflowService.getBusinessService(config.getReconnectBusinessServiceName(),
 				sewerageConnectionRequest.getSewerageConnection().getTenantId(),
 				sewerageConnectionRequest.getRequestInfo());
 		SewerageConnection searchResult = getConnectionForUpdateRequest(
@@ -489,7 +489,7 @@ public class SewerageServiceImpl implements SewerageService {
 		enrichmentService.enrichProcessInstance(Arrays.asList(sewerageConnectionRequest.getSewerageConnection()), criteria, sewerageConnectionRequest.getRequestInfo());
 
 		//Updating the workflow from approve for disconnection to pending for disconnection execution when there are no dues
-		if(SWConstants.APPROVE_DISCONNECTION_CONST.equalsIgnoreCase(processInstance.getAction()) && isNoPayment){
+		if(SWConstants.APPROVE_CONNECTION_CONST.equalsIgnoreCase(processInstance.getAction()) && isNoPayment){
 			paymentUpdateService.noPaymentWorkflow(sewerageConnectionRequest, property, sewerageConnectionRequest.getRequestInfo());
 		}
 
