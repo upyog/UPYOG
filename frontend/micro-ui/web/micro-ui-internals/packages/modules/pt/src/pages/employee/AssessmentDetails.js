@@ -169,9 +169,10 @@ const CloseBtn = (props) => {
   );
 };
 function change(){
-  var total_amount=ptCalculationEstimateData?.Calculation[0]?.totalAmount
+  let total_amount=ptCalculationEstimateData?.Calculation[0]?.totalAmount
   const [first,second]=[parseInt(first_temp.current.value),parseInt(second_temp.current.value)];
-  var additionalDetails={
+  console.log("first,second",first,second,ptCalculationEstimateData,AssessmentData)
+  let additionalDetails={
     "adhocPenalty":0,
     "adhocExemptionReason":null,
     "adhocPenaltyReason":null,
@@ -182,10 +183,12 @@ function change(){
     if((selectedPenalityReason && first>0)/* &&(!selectedRebateReason) */){
       if(selectPenalityReason.value!=='Others'){
         if(first<total_amount){
-          var additionalPenality=first;
+          console.log("total_amounttotal_amount",total_amount)
+          let additionalPenality=first;
+         
           ptCalculationEstimateData.Calculation[0].taxHeadEstimates[6]={
             "taxHeadCode": "PT_TIME_PENALTY",
-            "estimateAmount": ptCalculationEstimateData.Calculation[0].taxHeadEstimates[6]?.estimateAmount+first,
+            "estimateAmount":  ptCalculationEstimateData.Calculation[0].taxHeadEstimates[6].estimateAmount=first,
             "category": "TAX"
         }
         // AssessmentData.additionalDetails={
@@ -194,7 +197,8 @@ function change(){
         // }
         AssessmentData.additionalDetails.adhocPenalty=additionalPenality;
         AssessmentData.additionalDetails.adhocPenaltyReason=selectedPenalityReason.value;
-        ptCalculationEstimateData.Calculation[0].totalAmount=ptCalculationEstimateData?.Calculation[0]?.totalAmount+first;
+        ptCalculationEstimateData.Calculation[0].totalAmount=ptCalculationEstimateData?.Calculation[0]?.taxAmount+first;
+        console.log("ptCalculationEstimateData",ptCalculationEstimateData,)
            }
            else{
              alert("Penality cannot exceed total amount");
@@ -202,7 +206,8 @@ function change(){
       }
       else{
         if(first<total_amount){
-          var additionalPenality=first;
+          console.log("firstfirstfirstfirstfirst",first,total_amount)
+          let additionalPenality=first;
           ptCalculationEstimateData.Calculation[0].taxHeadEstimates[6]={
             "taxHeadCode": "PT_TIME_PENALTY",
             "estimateAmount": ptCalculationEstimateData.Calculation[0].taxHeadEstimates[6]?.estimateAmount+first,
@@ -228,7 +233,7 @@ function change(){
         if(second<total_amount){
           ptCalculationEstimateData.Calculation[0].taxHeadEstimates[5]={
             "taxHeadCode": "PT_TIME_REBATE",
-            "estimateAmount": ptCalculationEstimateData.Calculation[0].taxHeadEstimates[5]?.estimateAmount+second,
+            "estimateAmount": ptCalculationEstimateData.Calculation[0].taxHeadEstimates[5].estimateAmount=second,
             "category": "TAX"
         }
         // AssessmentData.additionalDetails={
@@ -237,7 +242,7 @@ function change(){
         // }
         AssessmentData.additionalDetails.adhocExemption=second;
         AssessmentData.additionalDetails.adhocExemptionReason=selectedRebateReason.value;
-        ptCalculationEstimateData.Calculation[0].totalAmount=ptCalculationEstimateData?.Calculation[0]?.totalAmount-second;
+        ptCalculationEstimateData.Calculation[0].totalAmount=ptCalculationEstimateData?.Calculation[0]?.taxAmount-second;
            }
            else{
              alert( "Adhoc Exemption cannot be greater than the estimated tax for the given property");
