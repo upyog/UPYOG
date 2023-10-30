@@ -1285,14 +1285,12 @@ public class MicroserviceUtils {
     }
 
     public void removeSessionFromRedis(String access_token, String sessionId) {
-    	LOGGER.info("******Print all keys from redis on LOGOUT***********");
-		Set<Object> redisKeys = redisTemplate.keys("*");
-		// Store the keys in a List
-		Iterator<Object> it = redisKeys.iterator();
-		while (it.hasNext()) {
-			Object data = it.next();
-			LOGGER.info("****Keys in redis---->>> " + data);
-		}
+		/*
+		 * LOGGER.info("******Print all keys from redis on LOGOUT***********");
+		 * Set<Object> redisKeys = redisTemplate.keys("*"); // Store the keys in a List
+		 * Iterator<Object> it = redisKeys.iterator(); while (it.hasNext()) { Object
+		 * data = it.next(); LOGGER.info("****Keys in redis---->>> " + data); }
+		 */
         LOGGER.info("Logout for authtoken : " + access_token + " and session : " + sessionId);
         Object sessionIdFromRedis = redisTemplate.opsForHash().get("session_token_fetch:" + access_token, "session_id");
         LOGGER.info("**Redis:: sessionID*****"+sessionIdFromRedis);
