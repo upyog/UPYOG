@@ -54,7 +54,7 @@ export const convertEpochToDate = (dateEpoch) => {
   //   { tenantId, consumerCode, businessService: business_service },
   //   { enabled: allowFetchBill, retry: false, staleTime: Infinity, refetchOnWindowFocus: false }
   // );
-
+  const newTenantId=business_service.includes("WS.ONE_TIME_FEE" || "SW.ONE_TIME_FEE")?Digit.ULBService.getStateId():tenantId;
   const { data: reciept_data, isLoading: recieptDataLoading } = Digit.Hooks.useRecieptSearch(
     {
       tenantId,
@@ -72,7 +72,7 @@ export const convertEpochToDate = (dateEpoch) => {
     }
   );
 
-  const { data: generatePdfKey } = Digit.Hooks.useCommonMDMS(tenantId, "common-masters", "ReceiptKey", {
+  const { data: generatePdfKey } = Digit.Hooks.useCommonMDMS(newTenantId, "common-masters", "ReceiptKey", {
     select: (data) =>
       data["common-masters"]?.uiCommonPay?.filter(({ code }) => business_service?.includes(code))[0]?.receiptKey || "consolidatedreceipt",
     retry: false,
@@ -438,6 +438,26 @@ export const convertEpochToDate = (dateEpoch) => {
           <SubmitBar label={t("CS_REVIEW_AND_FEEDBACK")} />
       </Link></div>}
       {business_service?.includes("PT") ? (
+        <div className="link" style={isMobile ? { marginTop: "8px", width: "100%", textAlign: "center" } : { marginTop: "8px" }} onClick={printReciept}>
+            {t("CS_DOWNLOAD_RECEIPT")}
+          </div>
+      ) : null}
+      {business_service?.includes("WS") ? (
+        <div className="link" style={isMobile ? { marginTop: "8px", width: "100%", textAlign: "center" } : { marginTop: "8px" }} onClick={printReciept}>
+            {t("CS_DOWNLOAD_RECEIPT")}
+          </div>
+      ) : null}
+      {business_service?.includes("SW") ? (
+        <div className="link" style={isMobile ? { marginTop: "8px", width: "100%", textAlign: "center" } : { marginTop: "8px" }} onClick={printReciept}>
+            {t("CS_DOWNLOAD_RECEIPT")}
+          </div>
+      ) : null}      
+      {business_service?.includes("FSM") ? (
+        <div className="link" style={isMobile ? { marginTop: "8px", width: "100%", textAlign: "center" } : { marginTop: "8px" }} onClick={printReciept}>
+            {t("CS_DOWNLOAD_RECEIPT")}
+          </div>
+      ) : null}
+      {business_service?.includes("BPA") ? (
         <div className="link" style={isMobile ? { marginTop: "8px", width: "100%", textAlign: "center" } : { marginTop: "8px" }} onClick={printReciept}>
             {t("CS_DOWNLOAD_RECEIPT")}
           </div>
