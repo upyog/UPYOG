@@ -441,6 +441,6 @@ public class CalculatorUtils {
 				.append(SWCalculationConstant.SEPARATER).append(SWCalculationConstant.CONSUMER_CODE_SEARCH_FIELD_NAME)
 				.append(consumerCode).append(SWCalculationConstant.SEPARATER)
 				.append(SWCalculationConstant.BUSINESSSERVICE_FIELD_FOR_SEARCH_URL)
-				.append("WSReconnection");
+				.append("SWReconnection");
 	}
 }
