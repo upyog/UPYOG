@@ -100,11 +100,11 @@ public class WaterServiceImpl implements WaterService {
 
 		int reqType = WCConstants.CREATE_APPLICATION;
 
-		if (waterConnectionRequest.isDisconnectRequest() || waterConnectionRequest.getWaterConnection().getApplicationType().equalsIgnoreCase(WCConstants.DISCONNECT_WATER_CONNECTION)) {
+		if (waterConnectionRequest.isDisconnectRequest() || (waterConnectionRequest.getWaterConnection().getApplicationType() !=null && waterConnectionRequest.getWaterConnection().getApplicationType().equalsIgnoreCase(WCConstants.DISCONNECT_WATER_CONNECTION))) {
 			reqType = WCConstants.DISCONNECT_CONNECTION;
 			validateDisconnectionRequest(waterConnectionRequest);
 		}
-		else if (waterConnectionRequest.isReconnectRequest() || waterConnectionRequest.getWaterConnection().getApplicationType().equalsIgnoreCase(WCConstants.WATER_RECONNECTION)) {
+		else if (waterConnectionRequest.isReconnectRequest() || (waterConnectionRequest.getWaterConnection().getApplicationType() !=null  && waterConnectionRequest.getWaterConnection().getApplicationType().equalsIgnoreCase(WCConstants.WATER_RECONNECTION))) {
 			reqType = WCConstants.RECONNECTION;
 			validateReconnectionRequest(waterConnectionRequest);
 		}
