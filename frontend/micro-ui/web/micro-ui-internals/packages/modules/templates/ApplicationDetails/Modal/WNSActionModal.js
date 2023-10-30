@@ -211,7 +211,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
       if (parsedAdhocRebateData?.value?.adhocRebate) applicationData.additionalDetails.adhocRebate = parseInt(parsedAdhocRebateData?.value?.adhocRebate) || "";
       if (parsedAdhocRebateData?.value?.adhocRebateComment) applicationData.additionalDetails.adhocRebateComment = parsedAdhocRebateData?.value?.adhocRebateComment || "";
       if (parsedAdhocRebateData?.value?.adhocRebateReason) applicationData.additionalDetails.adhocRebateReason = parsedAdhocRebateData?.value?.adhocRebateReason || "";
-      applicationData?.serviceType == "WATER" ? submitAction({ WaterConnection: applicationData }) : submitAction({ SewerageConnection: applicationData });
+      applicationData?.serviceType == "WATER" ? submitAction({ WaterConnection: applicationData ,disconnectRequest: false, reconnectRequest:false}) : submitAction({ SewerageConnection: applicationData, disconnectRequest: false, reconnectRequest:false });
     }
   }
 
