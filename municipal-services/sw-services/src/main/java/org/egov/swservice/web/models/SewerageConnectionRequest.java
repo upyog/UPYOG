@@ -45,10 +45,12 @@ public class SewerageConnectionRequest {
 	private boolean isOldDataEncryptionRequest = false;
 
 	@JsonProperty("disconnectRequest")
-	private boolean disconnectRequest;
+	@Builder.Default
+	private boolean disconnectRequest=false;
 	
 	@JsonProperty("reconnectRequest")
-	private boolean reconnectRequest;
+	@Builder.Default
+	private boolean reconnectRequest=false;
 
 	public SewerageConnectionRequest requestInfo(RequestInfo requestInfo) {
 		this.requestInfo = requestInfo;

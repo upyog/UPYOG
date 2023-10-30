@@ -103,6 +103,7 @@ public class WorkflowIntegrator {
 		List<ProcessInstance> processInstances = new ArrayList<>();
 		processInstances.add(processInstance);
 		ProcessInstanceResponse processInstanceResponse;
+		log.info("PI :"+processInstances);
 
 		try {
 			processInstanceResponse = mapper.convertValue(
