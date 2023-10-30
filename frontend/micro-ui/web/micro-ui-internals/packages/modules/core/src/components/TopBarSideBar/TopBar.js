@@ -105,7 +105,7 @@ const TopBar = ({
       {mobileView ? <Hamburger handleClick={toggleSidebar} color="#9E9E9E" /> : null}
       <img className="city" src="https://in-egov-assets.s3.ap-south-1.amazonaws.com/images/Upyog-logo.png" style={{width:"auto"}}/>
       <span style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
-        {loggedin &&
+        {loggedin && !window.location.href.includes("dss") &&
           (cityDetails?.city?.ulbGrade ? (
             <p className="ulb" style={mobileView ? { fontSize: "14px", display: "inline-block" } : {marginTop:"20px",paddingLeft:"10px"}}>
               {t(cityDetails?.i18nKey).toUpperCase()}{" "}
@@ -114,20 +114,20 @@ const TopBar = ({
           ) : (
             <img className="state" src={logoUrl} />
           ))}
-        {!loggedin && (
+        {!loggedin && !window.location.href.includes("dss") && (
           <p className="ulb" style={mobileView ? { fontSize: "14px", display: "inline-block" } : {}}>
             {t(`MYCITY_${stateInfo?.code?.toUpperCase()}_LABEL`)} {t(`MYCITY_STATECODE_LABEL`)}
           </p>
         )}
         {!mobileView && (
           <div className={mobileView ? "right" : "flex-right right w-80 column-gap-15"} style={!loggedin ? { width: "80%" } : {}}>
-            <div className="left">
+            {!window.location.href.includes("dss") && <div className="left">
               {!window.location.href.includes("employee/user/login") && !window.location.href.includes("employee/user/language-selection") && (
                 <ChangeCity dropdown={true} t={t} />
               )}
-            </div>
+            </div>}
             <div className="left">{showLanguageChange && <ChangeLanguage dropdown={true} />}</div>
-            {userDetails?.access_token && (
+            {userDetails?.access_token &&(
               <div className="left">
                 <Dropdown
                   option={userOptions}
