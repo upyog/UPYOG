@@ -178,7 +178,7 @@ public class SewerageServiceImpl implements SewerageService {
 	}
 	
 	private void validateReconnectionRequest(SewerageConnectionRequest sewerageConnectionRequest) {
-		if (!sewerageConnectionRequest.getSewerageConnection().getStatus().toString().equalsIgnoreCase(SWConstants.ACTIVE)) {
+		if (sewerageConnectionRequest.getSewerageConnection().getStatus().toString().equalsIgnoreCase(SWConstants.ACTIVE)) {
 			throw new CustomException("INVALID_REQUEST",
 					"Sewerage connection must be inactive for reconnection request");
 		}
