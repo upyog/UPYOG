@@ -158,7 +158,7 @@ public class DemandService {
 			}
 
 			List<Demand> demands = searchDemand(tenantId, consumerCodes, fromDateSearch, toDateSearch, request.getRequestInfo(), null,
-					request.getDisconnectRequest(),request.getReconnectRequest());
+					request.getIsDisconnectionRequest(),request.getIsReconnectionRequest());
 			Set<String> connectionNumbersFromDemands = new HashSet<>();
 			if (!CollectionUtils.isEmpty(demands))
 				connectionNumbersFromDemands = demands.stream().map(Demand::getConsumerCode)
@@ -167,9 +167,9 @@ public class DemandService {
 			// If demand already exists add it updateCalculations else
 			// createCalculations
 			for (Calculation calculation : calculations) {
-				if (request.getDisconnectRequest() != null && request.getDisconnectRequest()) {
+				if (request.getIsDisconnectionRequest() != null && request.getIsDisconnectionRequest()) {
 					demands = searchDemandForDisconnectionRequest(calculation.getTenantId(), consumerCodes, null,
-							toDateSearch, request.getRequestInfo(), null, request.getDisconnectRequest());
+							toDateSearch, request.getRequestInfo(), null, request.getIsDisconnectionRequest());
 					if (!CollectionUtils.isEmpty(demands) &&
 							!(demands.get(0).getDemandDetails().get(0).getCollectionAmount().doubleValue() == 0.0)) {
 						createCalculations.add(calculation);
@@ -193,7 +193,7 @@ public class DemandService {
 
 		if (!CollectionUtils.isEmpty(updateCalculations))
 			createdDemands = updateDemandForCalculation(request, updateCalculations, fromDate, toDate, isForConnectionNo,
-					request.getDisconnectRequest(),request.getReconnectRequest());
+					request.getIsDisconnectionRequest(),request.getIsReconnectionRequest());
 		return createdDemands;
 	}
 
@@ -249,7 +249,7 @@ public class DemandService {
 			Long expiryDate = (Long) financialYearMaster.get(SWCalculationConstant.Demand_Expiry_Date_String);
 			BigDecimal minimumPayableAmount = isForConnectionNO ? configs.getMinimumPayableAmount() : calculation.getTotalAmount();
 			String businessService = isForConnectionNO ? configs.getBusinessService() : ONE_TIME_FEE_SERVICE_FIELD;
-			if(calculationReq.getReconnectRequest())
+			if(calculationReq.getIsReconnectionRequest())
 				businessService="SWReconnection";
 			addRoundOffTaxHead(calculation.getTenantId(), demandDetails);
 			Map<String, String> additionalDetailsMap = new HashMap<>();
@@ -268,9 +268,9 @@ public class DemandService {
 				.billingCycle(billingcycle)
 				.build();
 		List<Demand> demandRes = demandRepository.saveDemand(calculationReq.getRequestInfo(), demands,notificationObj);
-		if(calculationReq.getReconnectRequest())
+		if(calculationReq.getIsReconnectionRequest())
 			fetchBillForReconnect(demandRes, calculationReq.getRequestInfo(), masterMap);
-		else if(isForConnectionNO && !calculationReq.getReconnectRequest())
+		else if(isForConnectionNO && !calculationReq.getIsReconnectionRequest())
 			fetchBill(demandRes, calculationReq.getRequestInfo(),masterMap);
 		return demandRes;
 	}

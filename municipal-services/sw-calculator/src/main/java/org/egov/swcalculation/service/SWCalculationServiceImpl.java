@@ -90,9 +90,9 @@ public class SWCalculationServiceImpl implements SWCalculationService {
 	public List<Calculation> getCalculation(CalculationReq request) {
 		List<Calculation> calculations;
 		boolean connectionRequest = false;
-		if (request.getDisconnectRequest()!= null && request.getDisconnectRequest()) {
+		if (request.getIsDisconnectionRequest()!= null && request.getIsDisconnectionRequest()) {
 			// Calculate and create demand for connection
-			connectionRequest = request.getDisconnectRequest();
+			connectionRequest = request.getIsDisconnectionRequest();
 			Map<String, Object> masterMap = mDataService.loadMasterData(request.getRequestInfo(),
 					request.getCalculationCriteria().get(0).getTenantId());
 			calculations = getCalculations(request, masterMap);
@@ -107,9 +107,9 @@ public class SWCalculationServiceImpl implements SWCalculationService {
 			unsetSewerageConnection(calculations);
 
 		}
-		else if (request.getReconnectRequest())	
+		else if (request.getIsReconnectionRequest())	
 		{
-			connectionRequest = (!request.getReconnectRequest());
+			connectionRequest = (!request.getIsReconnectionRequest());
 			Map<String, Object> masterMap = mDataService.loadExemptionMaster(request.getRequestInfo(),
 					request.getCalculationCriteria().get(0).getTenantId());
 			calculations = getReconnectionFeeCalculation(request, masterMap);
@@ -317,13 +317,13 @@ public class SWCalculationServiceImpl implements SWCalculationService {
 			mDataService.enrichBillingPeriod(criteria, billingFrequencyMap, masterMap, criteria.getSewerageConnection().getConnectionType());
 
 			Calculation calculation = null;
-			if (request.getDisconnectRequest() != null && request.getDisconnectRequest()) {
-				if (request.getDisconnectRequest() && criteria.getApplicationNo().equals(request.getCalculationCriteria().get(request.getCalculationCriteria().size() - 1)
+			if (request.getIsDisconnectionRequest() != null && request.getIsDisconnectionRequest()) {
+				if (request.getIsDisconnectionRequest() && criteria.getApplicationNo().equals(request.getCalculationCriteria().get(request.getCalculationCriteria().size() - 1)
 								.getApplicationNo())) {
 					calculation = getCalculation(request.getRequestInfo(), criteria, estimationMap, masterMap, true, true);
 				}
-			}  else if (request.getReconnectRequest() != null && request.getReconnectRequest()) {
-				if (request.getReconnectRequest() &&
+			}  else if (request.getIsReconnectionRequest() != null && request.getIsReconnectionRequest()) {
+				if (request.getIsReconnectionRequest() &&
 						criteria.getApplicationNo().equals(request.getCalculationCriteria().get(request.getCalculationCriteria().size() - 1)
 								.getApplicationNo())) {
 					calculation = getCalculation(request.getRequestInfo(), criteria, estimationMap, masterMap, true, false);

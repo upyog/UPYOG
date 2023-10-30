@@ -44,10 +44,12 @@ public class CalculationReq   {
 		@NotNull
 		 private Boolean isconnectionCalculation;
 
-        @JsonProperty("disconnectRequest")
+    	@JsonProperty("isDisconnectionRequest")
+        @Builder.Default
         private Boolean isDisconnectionRequest = false;
         
 		@JsonProperty("isReconnectionRequest")
+        @Builder.Default
 		private Boolean isReconnectionRequest = false;
 
 
