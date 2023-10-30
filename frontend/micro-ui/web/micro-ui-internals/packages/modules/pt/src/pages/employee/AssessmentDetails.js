@@ -12,6 +12,8 @@ import {convertEpochToDate} from "../../utils/index";
 
 const AssessmentDetails = () => {
   const { t } = useTranslation();
+  const [penalty,setPenalty] = useState("")
+  const [rebate,setRebate] = useState("")
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const { id: propertyId } = useParams();
   const stateId = Digit.ULBService.getStateId();
@@ -64,6 +66,11 @@ const AssessmentDetails = () => {
     // estimate calculation
     ptCalculationEstimateMutate({ Assessment: AssessmentData });
     }, []);
+    useEffect(()=>{
+      setPenalty(parseInt(ptCalculationEstimateData?.Calculation[0].taxHeadEstimates[6].estimateAmount))
+      console.log("ptCalculationEstimateData123333",ptCalculationEstimateData?.Calculation[0].taxHeadEstimates[5].estimateAmount,ptCalculationEstimateData,ptCalculationEstimateLoading)
+      setRebate(parseInt(ptCalculationEstimateData?.Calculation[0].taxHeadEstimates[5].estimateAmount))
+    },[ptCalculationEstimateLoading])
   useEffect(() => {
     if (applicationDetails) setAppDetailsToShow(_.cloneDeep(applicationDetails));
   }, [applicationDetails]);
@@ -179,7 +186,6 @@ function change(){
     "adhocExemption":0
   }
   AssessmentData.additionalDetails=additionalDetails;
-
     if((selectedPenalityReason && first>0)/* &&(!selectedRebateReason) */){
       if(selectPenalityReason.value!=='Others'){
         if(first<total_amount){
@@ -188,7 +194,7 @@ function change(){
          
           ptCalculationEstimateData.Calculation[0].taxHeadEstimates[6]={
             "taxHeadCode": "PT_TIME_PENALTY",
-            "estimateAmount":  ptCalculationEstimateData.Calculation[0].taxHeadEstimates[6].estimateAmount=first,
+            "estimateAmount":  ptCalculationEstimateData.Calculation[0].taxHeadEstimates[6].estimateAmount=first+penalty,
             "category": "TAX"
         }
         // AssessmentData.additionalDetails={
@@ -210,7 +216,7 @@ function change(){
           let additionalPenality=first;
           ptCalculationEstimateData.Calculation[0].taxHeadEstimates[6]={
             "taxHeadCode": "PT_TIME_PENALTY",
-            "estimateAmount": ptCalculationEstimateData.Calculation[0].taxHeadEstimates[6]?.estimateAmount+first,
+            "estimateAmount": ptCalculationEstimateData.Calculation[0].taxHeadEstimates[6]?.estimateAmount+first+penalty,
             "category": "TAX"
         }
         // AssessmentData.additionalDetails={
@@ -233,7 +239,7 @@ function change(){
         if(second<total_amount){
           ptCalculationEstimateData.Calculation[0].taxHeadEstimates[5]={
             "taxHeadCode": "PT_TIME_REBATE",
-            "estimateAmount": ptCalculationEstimateData.Calculation[0].taxHeadEstimates[5].estimateAmount=second,
+            "estimateAmount": ptCalculationEstimateData.Calculation[0].taxHeadEstimates[5].estimateAmount=second+rebate,
             "category": "TAX"
         }
         // AssessmentData.additionalDetails={
@@ -254,7 +260,7 @@ function change(){
         if(second<total_amount){
           ptCalculationEstimateData.Calculation[0].taxHeadEstimates[5]={
             "taxHeadCode": "PT_TIME_REBATE",
-            "estimateAmount": ptCalculationEstimateData.Calculation[0].taxHeadEstimates[5]?.estimateAmount-second,
+            "estimateAmount": ptCalculationEstimateData.Calculation[0].taxHeadEstimates[5]?.estimateAmount-second-rebate,
             "category": "TAX"
         }
         // AssessmentData.additionalDetails={

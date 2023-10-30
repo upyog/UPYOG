@@ -79,7 +79,8 @@ const WSSewerageConnectionDetails = ({ t, config, userType, onSelect, formData }
                     "action": "INITIATE"
                 },
                 "channel": "CITIZEN"
-            }
+            },
+            reconnectRequest:false, disconnectRequest:false
             }
           }
       
@@ -147,7 +148,8 @@ const WSSewerageConnectionDetails = ({ t, config, userType, onSelect, formData }
                       "action": "INITIATE"
                   },
                   "channel": "CITIZEN"
-              }
+              },
+              reconnectRequest:false, disconnectRequest:false
               }
             }
               
