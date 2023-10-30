@@ -150,6 +150,8 @@ public class NotificationUtil {
      */
     public void sendEventNotification(EventRequest request) {
         producer.push(config.getSaveUserEventsTopic(), request);
+        log.info("Events added to send:: " + request.getEvents());
+
     }
 
     /**

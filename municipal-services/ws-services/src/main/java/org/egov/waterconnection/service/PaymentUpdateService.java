@@ -222,6 +222,7 @@ public class PaymentUpdateService {
 					WaterConnectionRequest waterConnectionRequest = WaterConnectionRequest.builder()
 							.waterConnection(connections.get()).requestInfo(paymentRequest.getRequestInfo())
 							.build();
+					if(!(waterConnectionRequest.getWaterConnection().getApplicationType().equalsIgnoreCase(WCConstants.WATER_RECONNECTION)) && !(waterConnectionRequest.getWaterConnection().getApplicationType().equalsIgnoreCase(WCConstants.DISCONNECT_WATER_CONNECTION)) )
 					sendPaymentNotification(waterConnectionRequest, paymentDetail);
 				}
 			}

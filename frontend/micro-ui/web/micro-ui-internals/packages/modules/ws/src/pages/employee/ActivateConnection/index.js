@@ -73,7 +73,7 @@ const ActivateConnection = () => {
         key: Date.now(),
     }];
 
-    const activationDetails = state?.data?.connectionType?.toUpperCase() === "METERED" ? [{
+    const activationDetails = state?.data?.connectionType?.toUpperCase() === "METERED" && state?.data?.applicationType == "NEW_WATER_CONNECTION" ? [{
         meterId: state?.data?.meterId || "",
         meterInstallationDate: state?.data?.meterInstallationDate ? convertEpochToDates(state?.data?.meterInstallationDate) : null,
         meterInitialReading: state?.data?.additionalDetails?.initialMeterReading || "",
@@ -185,8 +185,8 @@ const ActivateConnection = () => {
               ]
               : []
         }
-
-        const reqDetails = filters?.service == "WATER" ? { WaterConnection: formData } : { SewerageConnection: formData }
+        
+        const reqDetails = filters?.service == "WATER"? formData?.applicationType === "RECONNECT_CONNECTION" ? { WaterConnection: formData, reconnectRequest:true, disconnectRequest:false } :{ WaterConnection: formData }: formData?.applicationType === "RECONNECT_CONNECTION" ? { SewerageConnection: formData ,reconnectRequest:true, disconnectRequest:false}:{ SewerageConnection: formData}
 
         if (mutate) {
             // setIsEnableLoader(true);

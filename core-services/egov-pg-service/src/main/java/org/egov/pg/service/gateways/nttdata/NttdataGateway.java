@@ -31,11 +31,9 @@ public class NttdataGateway implements Gateway {
 
     private static final String GATEWAY_NAME = "NTTDATA";
     private final String MERCHANT_HOST;
-    private final String MERCHANT_PATH_DEBIT;
+    private final String MERCHANT_PATH_ATOM;
     private final String MERCHANT_PATH_STATUS;
     private final String MERCHANT_ID;
-    private final String SALT;
-    private final String SALT_INDEX;
     private final boolean ACTIVE;
     private ObjectMapper objectMapper;
 
@@ -48,18 +46,13 @@ public class NttdataGateway implements Gateway {
         this.restTemplate = restTemplate;
         this.objectMapper = objectMapper;
 
-        ACTIVE = Boolean.TRUE;
-        MERCHANT_ID = "317156";
-        SALT=null;
-        SALT_INDEX=null;
-        //SALT = environment.getRequiredProperty("phonepe.merchant.secret.key");
-        //SALT_INDEX = environment.getRequiredProperty("phonepe.merchant.secret.index");
-        MERCHANT_HOST = "https://pgtest.atomtech.in/staticdata/ots/js/atomcheckout.js";
-        MERCHANT_PATH_DEBIT=null;
-        //MERCHANT_PATH_DEBIT = environment.getRequiredProperty("phonepe.url.debit");
-        MERCHANT_PATH_STATUS = "https://caller.atomtech.in/ots/payment/status?";
-        REDIRECT_URL = environment.getRequiredProperty("paygov.redirect.url");
-        ORIGINAL_RETURN_URL_KEY = environment.getRequiredProperty("paygov.original.return.url.key");
+        ACTIVE = Boolean.valueOf(environment.getRequiredProperty("nttdata.active"));
+        MERCHANT_ID =  environment.getRequiredProperty("nttdata.merchant.id");
+        MERCHANT_HOST = environment.getRequiredProperty("nttdata.merchant.checkout.host");
+        MERCHANT_PATH_ATOM=environment.getRequiredProperty("nttdata.gateway.url.atom");
+        MERCHANT_PATH_STATUS = environment.getRequiredProperty("nttdata.gateway.url.status");
+        REDIRECT_URL = environment.getRequiredProperty("nttdata.redirect.url");
+        ORIGINAL_RETURN_URL_KEY = environment.getRequiredProperty("nttdata.original.return.url.key");
         
     }
 
@@ -85,7 +78,7 @@ public class NttdataGateway implements Gateway {
 
 		System.out.println("############################ NTT DATA AUTH Controller Post #########################");
 
-		String merchantId = "317156";
+		String merchantId = MERCHANT_ID;
 
 		String merchantTxnId = transaction.getTxnId();
 
@@ -151,7 +144,7 @@ public class NttdataGateway implements Gateway {
 			encryptedData = AuthEncryption.getAuthEncrypted(json, "A4476C2062FFA58980DC8F79EB6A799E");
 			System.out.println("EncryptedData------: " + encryptedData);
 			try {
-			serverResp = AipayService.getAtomTokenId(merchantId, encryptedData);
+			serverResp = AipayService.getAtomTokenId(merchantId, encryptedData,MERCHANT_PATH_ATOM);
 			//serverResp="merchId";
 			System.out.println("serverResp Result------: " + serverResp);
 			System.out.println("serverResp Length------: " + serverResp.length());
@@ -252,7 +245,7 @@ public class NttdataGateway implements Gateway {
 			encryptedData = AuthEncryption.getAuthEncrypted(json, "A4476C2062FFA58980DC8F79EB6A799E");
 			System.out.println("EncryptedData------: " + encryptedData);
 			try {
-				serverResp = AipayService.getTransactionStatus(merchantId, encryptedData);
+				serverResp = AipayService.getTransactionStatus(merchantId, encryptedData,MERCHANT_PATH_STATUS);
 				//serverResp="merchId";
 				System.out.println("serverResp Result------: " + serverResp);
 				System.out.println("serverResp Length------: " + serverResp.length());
