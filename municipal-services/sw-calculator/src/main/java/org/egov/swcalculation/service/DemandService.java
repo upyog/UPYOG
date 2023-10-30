@@ -158,7 +158,7 @@ public class DemandService {
 			}
 
 			List<Demand> demands = searchDemand(tenantId, consumerCodes, fromDateSearch, toDateSearch, request.getRequestInfo(), null,
-					request.getDisconnectRequest(),request.getIsreconnectionRequest());
+					request.getDisconnectRequest(),request.getReconnectRequest());
 			Set<String> connectionNumbersFromDemands = new HashSet<>();
 			if (!CollectionUtils.isEmpty(demands))
 				connectionNumbersFromDemands = demands.stream().map(Demand::getConsumerCode)
@@ -193,7 +193,7 @@ public class DemandService {
 
 		if (!CollectionUtils.isEmpty(updateCalculations))
 			createdDemands = updateDemandForCalculation(request, updateCalculations, fromDate, toDate, isForConnectionNo,
-					request.getDisconnectRequest(),request.getIsreconnectionRequest());
+					request.getDisconnectRequest(),request.getReconnectRequest());
 		return createdDemands;
 	}
 
@@ -249,8 +249,8 @@ public class DemandService {
 			Long expiryDate = (Long) financialYearMaster.get(SWCalculationConstant.Demand_Expiry_Date_String);
 			BigDecimal minimumPayableAmount = isForConnectionNO ? configs.getMinimumPayableAmount() : calculation.getTotalAmount();
 			String businessService = isForConnectionNO ? configs.getBusinessService() : ONE_TIME_FEE_SERVICE_FIELD;
-			if(calculationReq.getIsreconnectionRequest())
-				businessService="WSReconnection";
+			if(calculationReq.getReconnectRequest())
+				businessService="SWReconnection";
 			addRoundOffTaxHead(calculation.getTenantId(), demandDetails);
 			Map<String, String> additionalDetailsMap = new HashMap<>();
 			additionalDetailsMap.put("propertyId", property.getPropertyId());
@@ -268,9 +268,9 @@ public class DemandService {
 				.billingCycle(billingcycle)
 				.build();
 		List<Demand> demandRes = demandRepository.saveDemand(calculationReq.getRequestInfo(), demands,notificationObj);
-		if(calculationReq.getIsreconnectionRequest())
+		if(calculationReq.getReconnectRequest())
 			fetchBillForReconnect(demandRes, calculationReq.getRequestInfo(), masterMap);
-		else if(isForConnectionNO && !calculationReq.getIsreconnectionRequest())
+		else if(isForConnectionNO && !calculationReq.getReconnectRequest())
 			fetchBill(demandRes, calculationReq.getRequestInfo(),masterMap);
 		return demandRes;
 	}
