@@ -104,7 +104,7 @@ const TopBar = ({
     <div className="topbar">
       {mobileView ? <Hamburger handleClick={toggleSidebar} color="#9E9E9E" /> : null}
       <img className="city" src="https://in-egov-assets.s3.ap-south-1.amazonaws.com/images/Upyog-logo.png" style={{width:"auto"}}/>
-      <span style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
+      <span style={{ display: "flex", flexDirection :window.location.href.includes("dss")?"row-reverse":"" ,alignItems: window.location.href.includes("dss")?"":"center", justifyContent: "space-between", width: "100%" }}>
         {loggedin && !window.location.href.includes("dss") &&
           (cityDetails?.city?.ulbGrade ? (
             <p className="ulb" style={mobileView ? { fontSize: "14px", display: "inline-block" } : {marginTop:"20px",paddingLeft:"10px"}}>
