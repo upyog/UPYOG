@@ -188,9 +188,9 @@ const MapChart = ({
                     onMouseEnter={(event) =>
                       onMouseEnter(geo, current, event)
                     }
-                    onClick={(event) =>
-                      onMouseClick(geo, current, event)
-                    }
+                    // onClick={(event) =>
+                    //   onMouseClick(geo, current, event)
+                    // }
                     onMouseLeave={(event) =>
                       onMouseLeave(geo, current, event)
                     }
