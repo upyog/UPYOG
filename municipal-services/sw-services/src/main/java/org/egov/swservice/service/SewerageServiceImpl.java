@@ -100,11 +100,11 @@ public class SewerageServiceImpl implements SewerageService {
 	public List<SewerageConnection> createSewerageConnection(SewerageConnectionRequest sewerageConnectionRequest) {
 		int reqType = SWConstants.CREATE_APPLICATION;
 		
-		if (sewerageConnectionRequest.isDisconnectRequest() || sewerageConnectionRequest.getSewerageConnection().getApplicationType().equalsIgnoreCase(SWConstants.DISCONNECT_SEWERAGE_CONNECTION)) {
+		if (sewerageConnectionRequest.isDisconnectRequest()) {
 			reqType = SWConstants.DISCONNECT_CONNECTION;
 			validateDisconnectionRequest(sewerageConnectionRequest);
 		}
-		else if (sewerageConnectionRequest.isReconnectRequest() || sewerageConnectionRequest.getSewerageConnection().getApplicationType().equalsIgnoreCase(SWConstants.SEWERAGE_RECONNECTION)) {
+		else if (sewerageConnectionRequest.isReconnectRequest()) {
 			reqType = SWConstants.RECONNECTION;
 			validateReconnectionRequest(sewerageConnectionRequest);
 		}
