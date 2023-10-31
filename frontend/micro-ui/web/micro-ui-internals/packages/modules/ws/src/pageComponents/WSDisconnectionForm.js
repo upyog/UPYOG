@@ -127,14 +127,14 @@ console.log("disconnectionTypes",disconnectionTypes)
   const onSubmit = async (data) => {
     const appDate= new Date();
     const proposedDate= format(addDays(appDate, slaData?.slaDays), 'yyyy-MM-dd').toString();
-    
+    console.log("convertDateToEpoch", data?.type?.value?.name)
     if( convertDateToEpoch(data?.date)  <= convertDateToEpoch(proposedDate)){
       setError({key: "error", message: "PROPOSED_DISCONNECTION_INVALID_DATE"});
       setTimeout(() => {
         setError(false);
       }, 3000);
     }
-    if( data?.type == "Temporary" && convertDateToEpoch(data?.endDate)  <= convertDateToEpoch(data?.date)){
+    if( data?.type?.value?.name == "Temporary" && convertDateToEpoch(data?.endDate)  <= convertDateToEpoch(data?.date)){
       setError({key: "error", message: "PROPOSED_DISCONNECTION_INVALID_END_DATE"});
       setTimeout(() => {
         setError(false);
@@ -305,7 +305,7 @@ if(userType === 'citizen') {
                 const appDate= new Date();
                 const proposedDate= format(addDays(appDate, slaData?.slaDays), 'yyyy-MM-dd').toString();
 console.log("disconnectionData",disconnectionData)
-                if( parseInt(convertDateToEpoch(disconnectionData?.date))  <= parseInt(convertDateToEpoch(proposedDate))){
+                if( convertDateToEpoch(disconnectionData?.date)  <= convertDateToEpoch(proposedDate)){
                   setError({key: "error", message: "PROPOSED_DISCONNECTION_INVALID_DATE"});
                   setTimeout(() => {
                     setError(false);
