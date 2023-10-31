@@ -329,6 +329,12 @@ if(chartKey == "xptFyByStatesv3")
 }
 else {
  columns = response?.responseData?.data?.find((row) =>!!row);
+ console.log("columns,column123456s",columns)
+ 
+ if(columns?.plots?.length == 13)
+ {
+  columns?.plots?.splice(3,6)
+ }
 }
     return columns?.plots
       ?.filter((plot) => plot?.name !== "TankCapacity")
