@@ -40,7 +40,8 @@ const WSSewerageConnectionDetails = ({ t, config, userType, onSelect, formData }
                     "action": "INITIATE"
                 },
                 "channel": "CITIZEN"
-                }
+                },
+                reconnectRequest:false, disconnectRequest:false
               }
             }
             else{
@@ -109,7 +110,8 @@ const WSSewerageConnectionDetails = ({ t, config, userType, onSelect, formData }
                     "action": "INITIATE"
                 },
                 "channel": "CITIZEN"
-                }
+                },
+                reconnectRequest:false, disconnectRequest:false
               }
             }
             else{
@@ -162,7 +164,8 @@ const WSSewerageConnectionDetails = ({ t, config, userType, onSelect, formData }
                       "action": "INITIATE"
                   },
                   "channel": "CITIZEN"
-                  }
+                  },
+                  reconnectRequest:false, disconnectRequest:false
                 }
               }
             else{
@@ -201,7 +204,8 @@ const WSSewerageConnectionDetails = ({ t, config, userType, onSelect, formData }
                     "action": "INITIATE"
                 },
                 "channel": "CITIZEN"
-            }
+            },
+            reconnectRequest:false, disconnectRequest:false
             }
           }
 
