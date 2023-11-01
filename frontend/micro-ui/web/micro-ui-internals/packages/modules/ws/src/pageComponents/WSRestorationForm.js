@@ -195,7 +195,7 @@ console.log("disconnectionTypes",disconnectionTypes)
             onSuccess: async (data, variables) => {
               let response = await updatePayloadOfWSRestoration(data?.SewerageConnections?.[0], "SEWERAGE");
               let sewerageConnectionUpdate = { SewerageConnection: response };
-              sewerageConnectionUpdate = {...sewerageConnectionUpdate, disconnectRequest: fasle,reconnectRequest:true};
+              sewerageConnectionUpdate = {...sewerageConnectionUpdate, disconnectRequest:false,reconnectRequest:true};
               await sewerageUpdateMutation(sewerageConnectionUpdate, {
                 onError: (error, variables) => {
                   setIsEnableLoader(false);
