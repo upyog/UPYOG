@@ -1,5 +1,6 @@
 import SelectPropertySubtype from "./SelectPropertySubtype";
 import SelectPropertyType from "./SelectPropertyType";
+import SelectPropertyID from "../../../pageComponents/SelectPropertyID";
 // import SelectAddress from "./SelectAddress";
 import FSMSelectAddress from "./FSMSelectAddress";
 // import SelectStreet from "./SelectStreet";
@@ -15,6 +16,18 @@ import FSMSelectGeolocation from "./FSMSelectGeolocation";
 
 export const config = {
   routes: [
+    {
+      route: "property-id",
+      component: SelectPropertyID,
+      groupKey: "ES_TITLE_APPLICATION_DETAILS",
+      texts: {
+        headerCaption: "",
+        header: "CS_FILE_APPLICATION_PROPERTY_ID_LABEL",
+        cardText: "CS_FILE_APPLICATION_PROPERTY_ID_TEXT",
+        submitBarLabel: "CS_COMMON_NEXT",
+      },
+      nextStep: "property-type",
+    },
     {
       route: "property-type",
       component: SelectPropertyType,
@@ -164,5 +177,5 @@ export const config = {
       nextStep: null,
     },
   ],
-  indexRoute: "property-type",
+  indexRoute: "property-id",
 };

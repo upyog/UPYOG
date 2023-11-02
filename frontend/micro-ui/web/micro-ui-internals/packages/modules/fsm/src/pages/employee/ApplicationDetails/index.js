@@ -31,6 +31,7 @@ import { Link, useHistory, useParams } from "react-router-dom";
 import { ViewImages } from "../../../components/ViewImages";
 import _ from "lodash";
 const ApplicationDetails = (props) => {
+  
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const state = Digit.ULBService.getStateId();
   const { t } = useTranslation();
@@ -52,6 +53,7 @@ const ApplicationDetails = (props) => {
     {},
     props.userType
   );
+  console.log("applnDeta", applicationDetails)
   const { isLoading: isDataLoading, isSuccess, data: applicationData } = Digit.Hooks.fsm.useSearch(
     tenantId,
     { applicationNos: applicationNumber },
@@ -78,6 +80,7 @@ const ApplicationDetails = (props) => {
         ? "FSM_ADVANCE_PAY_SERVICE_V1"
         : applicationData?.paymentPreference === null &&
           applicationData?.additionalDetails?.tripAmount === 0 &&
+          applicationData?.additionalDetails?.propertyID===0 &&
           applicationData?.advanceAmount === null
         ? "FSM_ZERO_PAY_SERVICE"
         : "FSM",
