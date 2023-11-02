@@ -4,12 +4,15 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 import org.egov.user.domain.model.Role;
 
 @Getter
 @Builder
 @AllArgsConstructor
 @EqualsAndHashCode(of = {"code", "tenantId"})
+@NoArgsConstructor
 public class RoleRequest {
 
     private String code;
