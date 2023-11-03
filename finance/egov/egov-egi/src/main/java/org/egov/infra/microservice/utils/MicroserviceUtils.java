@@ -1301,7 +1301,7 @@ public class MicroserviceUtils {
             	sessionId = String.valueOf(sessionIdFromRedis);
             	LOGGER.info("***********sessionId**** " + sessionId);
                 redisTemplate.delete(access_token);
-                redisTemplate.delete("auth:"+access_token);
+                //redisTemplate.delete("auth:"+access_token);
                 redisTemplate.delete(sessionId);
                 LOGGER.info("spring:session:sessions:" + sessionId);
                 LOGGER.info("spring:session:sessions:expires:" + sessionId);
