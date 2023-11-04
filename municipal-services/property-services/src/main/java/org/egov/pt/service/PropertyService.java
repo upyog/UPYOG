@@ -115,7 +115,7 @@ public class PropertyService {
 		*/
 		//Push data after encryption
 		producer.pushAfterEncrytpion(config.getSavePropertyTopic(), request);
-		request.getProperty().setWorkflow(null);
+		request.getProperty().setWorkflow(request.getProperty().getWorkflow());
 
 		/* decrypt here */
 		return encryptionDecryptionUtil.decryptObject(request.getProperty(), PTConstants.PROPERTY_MODEL, Property.class, request.getRequestInfo());
