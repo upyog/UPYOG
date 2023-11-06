@@ -31,7 +31,8 @@ public class CustomConsumer {
 
 		DocumentContext documentContext = JsonPath.parse(record);
 		String sourceUri = documentContext.read(JsonPathConstant.signOutUriJsonPath);
-
+		log.info("sourceUri: " + sourceUri);
+		log.info("JsonPathConstant.signOutUri: " + JsonPathConstant.signOutUri + "--->>> Is equal:::"+sourceUri.equals(JsonPathConstant.signOutUri));
 		if (sourceUri.equals(JsonPathConstant.signOutUri))
 			signOutService.callFinanceForSignOut(documentContext);
 
