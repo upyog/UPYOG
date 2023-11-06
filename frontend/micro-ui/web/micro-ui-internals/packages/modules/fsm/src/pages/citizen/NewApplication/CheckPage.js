@@ -29,10 +29,11 @@ const ActionButton = ({ jumpTo }) => {
 };
 
 const CheckPage = ({ onSubmit, value }) => {
+  console.log("submit", onSubmit, value)
   const { t } = useTranslation();
   const history = useHistory();
 
-  const { address, propertyType, subtype, pitType, pitDetail, selectGender, selectPaymentPreference, selectTripNo } = value;
+  const { address, propertyID,  propertyType, subtype, pitType, pitDetail, selectGender, selectPaymentPreference, selectTripNo } = value;
 
   const pitDetailValues = pitDetail ? Object.values(pitDetail).filter((value) => !!value) : null;
 
@@ -73,6 +74,11 @@ const CheckPage = ({ onSubmit, value }) => {
               actionButton={<ActionButton jumpTo="/digit-ui/citizen/fsm/new-application/select-gender" />}
             />
           )}
+          <Row
+            label={t("CS_CHECK_PROPERTY_ID")}
+            text={t(propertyID?. propertyID)}
+            actionButton={<ActionButton jumpTo="/digit-ui/citizen/fsm/new-application/property-id" />}
+          />
           <Row
             label={t("CS_CHECK_PROPERTY_TYPE")}
             text={t(propertyType.i18nKey)}
