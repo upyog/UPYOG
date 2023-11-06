@@ -29,8 +29,10 @@ public class SignOutService {
 	private String coexistencelogoutUri;
 
 	public void callFinanceForSignOut(DocumentContext documentContext) {
+		log.info("Calling the funcation callFinanceForSignOut");
 		ResponseEntity<?> response = null;
 		String accessToken = documentContext.read(JsonPathConstant.signOutAccessToken);
+		log.info("accessToken:::"+accessToken);
 		documentContext = documentContext.delete(JsonPathConstant.userInfo);
 		documentContext = documentContext.put(JsonPathConstant.requestInfo, "authToken", accessToken);
 		LinkedHashMap<String, Object> jsonRequest = documentContext.read(JsonPathConstant.request);
