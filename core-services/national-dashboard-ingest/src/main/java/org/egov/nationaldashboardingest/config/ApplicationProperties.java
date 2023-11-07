@@ -48,6 +48,8 @@ public class ApplicationProperties {
     @Value("#{${national.dashboard.user}}")
     private Map<String, String> nationalDashboardUser;
 
+    @Value("#{${national.dashboard.usageType}}")
+    private List<String> nationalDashboardUsageTypePT;
 
 
 
