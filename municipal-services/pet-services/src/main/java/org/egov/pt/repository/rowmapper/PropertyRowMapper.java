@@ -215,9 +215,9 @@ public class PropertyRowMapper implements ResultSetExtractor<List<Property>> {
 			}
 
 		Document doc =  Document.builder()
-			.status(Status.fromValue(rs.getString("pdocstatus")))
+//			.status(Status.fromValue(rs.getString("pdocstatus")))
 			.documentType(rs.getString("pdoctype"))
-			.fileStoreId(rs.getString("pdocfileStore"))
+			.filestoreId(rs.getString("pdocfileStore"))
 			.documentUid(rs.getString("pdocuid"))
 			.id(docId)
 			.build();
@@ -296,8 +296,8 @@ public class PropertyRowMapper implements ResultSetExtractor<List<Property>> {
 			}
 	
 		Document doc = Document.builder()
-			.status(Status.fromValue(rs.getString("owndocstatus")))
-			.fileStoreId(rs.getString("owndocfileStore"))
+//			.status(Status.fromValue(rs.getString("owndocstatus")))
+			.filestoreId(rs.getString("owndocfileStore"))
 			.documentType(rs.getString("owndoctype"))
 			.documentUid(rs.getString("owndocuid"))
 			.id(docId)
