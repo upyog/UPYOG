@@ -14,7 +14,8 @@
     "micro-ui-internals/packages/modules/ws",
     "micro-ui-internals/packages/modules/fsm",
     "micro-ui-internals/packages/modules/commonPt",
-    "micro-ui-internals/packages/modules/dss"
+    "micro-ui-internals/packages/modules/dss",
+    "micro-ui-internals/packages/modules/obps"
   ],
   "engines": {
     "node": ">=14"
