@@ -47,7 +47,7 @@ const MetricData = ({ t, data, code, indexValuesWithStar }) => {
   );
 };
 
-const MetricChartRow = ({ data, setChartDenomination, index, moduleCode, indexValuesWithStar }) => {
+const MetricChartRow = ({ data, setChartDenomination, index, moduleCode, indexValuesWithStar,imageSrc }) => {
   const { id, chartType } = data;
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const { t } = useTranslation();
@@ -114,6 +114,7 @@ const MetricChartRow = ({ data, setChartDenomination, index, moduleCode, indexVa
           >
             <span style={{ fontWeight: "500", color: "white" }}>{t(`TIP_${data.name}`)}</span>
           </span>
+         
         </div>
         <span style={{ whiteSpace: "pre" }}>{t("DSS_NO_DATA")}</span>
       </div>
@@ -134,9 +135,11 @@ const MetricChartRow = ({ data, setChartDenomination, index, moduleCode, indexVa
     // if (isMobile) return t(`TIP_${data.name}`).length < 50 ? 50 : "auto";
     // else return 50;
   };
-
+console.log("response?.responseData?.data?.[0]",response?.responseData?.data?.[0])
   return (
     <div className="row" style={{display:"flex",flexDirection:"column",width:"45%", height:"100px",margin:"2%",padding:"2%",backgroundColor:"white",boxShadow:"0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22)"}}>
+      <div style={{display:"flex"}}>
+        <div style={{width:"85%"}}>
       <div className={`tooltip`}>
         {typeof name == "string" && name}
         {Array.isArray(name) && name?.filter((ele) => ele)?.map((ele) => <div style={{ whiteSpace: "pre" }}>{ele}</div>)}
@@ -159,6 +162,10 @@ const MetricChartRow = ({ data, setChartDenomination, index, moduleCode, indexVa
       </div>
       <MetricData t={t} data={response?.responseData?.data?.[0]} code={response?.responseData?.visualizationCode} indexValuesWithStar={indexValuesWithStar} />
       {/* <div>{`${displaySymbol(response.headerSymbol)} ${response.headerValue}`}</div> */}
+      </div>
+      <div style={{width:"15%"}}><a href="https://imgbb.com/"><img src={imageSrc} alt="8" border="0" style={{width:"100%", height :"100%"}} /></a>
+      </div>
+      </div>
     </div>
   );
 };
@@ -173,11 +180,15 @@ const MetricChartNew = ({ data, setChartDenomination, moduleCode }) => {
     "sdssOverviewCitizenFeedbackScore",
     "AvgCitizenRating"
   ];
+
+  let url =["https://i.ibb.co/VLrKpzv/7.png","https://i.ibb.co/6FJyr8R/10.png","https://i.ibb.co/3R34JhW/11.png","https://i.ibb.co/bFZG6Jf/13.png","https://i.ibb.co/kGN1LzK/8.png","https://i.ibb.co/KDXM6cB/5.png","https://i.ibb.co/bFZG6Jf/13.png","https://i.ibb.co/TkBT18V/14.png"]
+
+  let url2=["https://i.ibb.co/4N9r5Ng/2.png","https://i.ibb.co/rv2fcMR/3.png","https://i.ibb.co/4Ky8Pjm/1.png","https://i.ibb.co/ZMJwGSc/6.png","https://i.ibb.co/nRHxqCr/12.png","https://i.ibb.co/S0S8n9g/4.png","https://i.ibb.co/S0S8n9g/4.png"]
   return (
     <>
       <span className="chart-metric-wrapper">
         {charts.map((chart, index) => (
-          <MetricChartRow data={chart} key={index} index={index} moduleCode={moduleCode} setChartDenomination={setChartDenomination} indexValuesWithStar={indexValuesWithStar} />
+          <MetricChartRow data={chart} key={index} index={index} moduleCode={moduleCode} setChartDenomination={setChartDenomination} indexValuesWithStar={indexValuesWithStar} imageSrc={charts.length == 8 ?url[index]:url2[index]}/>
         ))}
       </span>
     </>

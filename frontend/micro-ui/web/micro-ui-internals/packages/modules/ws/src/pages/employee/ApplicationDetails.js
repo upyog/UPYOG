@@ -153,7 +153,7 @@ const ApplicationDetails = () => {
 
   const checkWSAdditionalDetails = () => {
     console.log("applicationDetailsapplicationDetails",applicationDetails)
-    if(applicationDetails?.processInstancesDetails?.[0]?.businessService =="WSReconnection")
+    if(applicationDetails?.processInstancesDetails?.[0]?.businessService =="WSReconnection" || applicationDetails?.processInstancesDetails?.[0]?.businessService =="SWReconnection")
     {
       return true;
     }
@@ -288,6 +288,15 @@ const ApplicationDetails = () => {
           state: applicationDetails?.tenantId,
         };
       }
+      else if(workflowDetails?.data?.processInstances?.[0]?.businessService =="SWReconnection")
+      {
+        action.redirectionUrll = {
+          pathname: `SWReconnection/${applicationDetails?.applicationNo}/${applicationDetails?.tenantId}?tenantId=${
+            applicationDetails?.tenantId
+          }&ISWSAPP&applicationNumber=${applicationDetails?.applicationNo}`,
+          state: applicationDetails?.tenantId,
+        };
+      }
       else {
         action.redirectionUrll = {
           pathname: `${getBusinessService(filters)}/${applicationDetails?.applicationNo}/${applicationDetails?.tenantId}?tenantId=${
@@ -307,6 +316,15 @@ const ApplicationDetails = () => {
       {
         action.redirectionUrll = {
           pathname: `WSReconnection/${applicationDetails?.applicationNo}/${applicationDetails?.tenantId}?tenantId=${
+            applicationDetails?.tenantId
+          }&ISWSAPP&applicationNumber=${applicationDetails?.applicationNo}`,
+          state: applicationDetails?.tenantId,
+        };
+      }
+      else if (workflowDetails?.data?.processInstances?.[0]?.businessService =="SWReconnection")
+      {
+        action.redirectionUrll = {
+          pathname: `SWReconnection/${applicationDetails?.applicationNo}/${applicationDetails?.tenantId}?tenantId=${
             applicationDetails?.tenantId
           }&ISWSAPP&applicationNumber=${applicationDetails?.applicationNo}`,
           state: applicationDetails?.tenantId,
