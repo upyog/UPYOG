@@ -59,5 +59,6 @@ public class BoundarySearchRequest {
 	private String hierarchyTypeName;
 	private List<Long> boundaryIds;
 	private String boundaryTypeName;
+	private String pinCode;
 
 }

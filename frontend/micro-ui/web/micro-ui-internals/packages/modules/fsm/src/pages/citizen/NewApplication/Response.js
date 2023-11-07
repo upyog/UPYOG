@@ -22,6 +22,7 @@ const BannerPicker = (props) => {
 };
 
 const Response = ({ data, onSuccess }) => {
+  console.log("res", data, onSuccess)
   const { t } = useTranslation();
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const mutation = Digit.Hooks.fsm.useDesludging(data?.address?.city ? data.address?.city?.code : tenantId);
@@ -55,7 +56,7 @@ const Response = ({ data, onSuccess }) => {
       try {
         const amount = Digit.SessionStorage.get("total_amount");
         const amountPerTrip = Digit.SessionStorage.get("amount_per_trip");
-        const { subtype, pitDetail, address, pitType, source, selectGender, selectPaymentPreference, selectTripNo } = data;
+        const { subtype, propertyID, pitDetail, address, pitType, source, selectGender, selectPaymentPreference, selectTripNo } = data;
         const { city, locality, geoLocation, pincode, street, doorNo, landmark, slum } = address;
         setPaymentPreference(selectPaymentPreference?.code);
         const advanceAmount = amount === 0 ? null : selectPaymentPreference?.advanceAmount;
@@ -103,6 +104,7 @@ const Response = ({ data, onSuccess }) => {
             additionalDetails: {
               totalAmount: amount,
               tripAmount: amountPerTrip,
+              propertyID : propertyID.propertyID
             },
             advanceAmount,
           },

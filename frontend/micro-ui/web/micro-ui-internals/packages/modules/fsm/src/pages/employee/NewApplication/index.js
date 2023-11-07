@@ -42,7 +42,9 @@ export const NewApplication = ({ parentUrl, heading }) => {
   };
 
   const onFormValueChange = (setValue, formData) => {
+    console.log("ProID", formData)
     if (
+      formData?. propertyID &&
       formData?.propertyType &&
       formData?.subtype &&
       formData?.address?.locality?.code &&
@@ -83,6 +85,7 @@ export const NewApplication = ({ parentUrl, heading }) => {
   // }, [propertyType, subType, vehicle]);
 
   const onSubmit = (data) => {
+    console.log("data", data)
     const applicationChannel = data.channel;
     const sanitationtype = data?.pitType?.code;
     const pitDimension = data?.pitDetail;
@@ -93,6 +96,7 @@ export const NewApplication = ({ parentUrl, heading }) => {
     const doorNo = data?.address?.doorNo?.trim();
     const slum = data?.address?.slum;
     const landmark = data?.address?.landmark?.trim();
+    const propertyID = data.propertyID. propertyID;
     const noOfTrips = data?.tripData?.noOfTrips;
     const amount = data.tripData.amountPerTrip;
     const cityCode = data?.address?.city?.code;
@@ -119,6 +123,7 @@ export const NewApplication = ({ parentUrl, heading }) => {
           tripAmount: amount,
           distancefromroad:distancefromroad,
           roadWidth:roadWidth,
+          propertyID : propertyID,
         },
         propertyUsage: data?.subtype,
         vehicleCapacity: data?.tripData?.vehicleType?.capacity,
@@ -164,7 +169,7 @@ export const NewApplication = ({ parentUrl, heading }) => {
   }
 
   const configs = [...preFields, ...commonFields];
-
+  console.log("configs", configs)
   return (
     <React.Fragment>
       <div style={{ marginLeft: "15px" }}>
@@ -176,6 +181,7 @@ export const NewApplication = ({ parentUrl, heading }) => {
         config={configs
           .filter((i) => !i.hideInEmployee)
           .map((config) => {
+            console.log("config.map", config)
             return {
               ...config,
               body: config.body.filter((a) => !a.hideInEmployee),

@@ -813,10 +813,10 @@ public class DemandService {
 			
 		List<WaterConnection> connections = waterCalculatorDao.getConnection(bulkBillCriteria.getTenantId(),bulkBillCriteria.getConsumerCode(),
 							WSCalculationConstant.nonMeterdConnection, fromDate, toDate);
-
+log.info("connection after search in cal"+connections.size() + " with from and to date as" + fromDate +"  "+ toDate );
 		connections = enrichmentService.filterConnections(connections);
 					String assessmentYear = estimationService.getAssessmentYear();
-					//log.info("Size of the connection list for batch : "+ batchOffset + " is " + connections.size());
+					log.info("Size of the connection list after filter : "+ connections.size());
 
 					if (connections.size() > 0) {
 						List<CalculationCriteria> calculationCriteriaList = new ArrayList<>();
