@@ -10,12 +10,12 @@
     "packages/modules/common",
     "packages/modules/core",
     "packages/modules/engagement",
-    "packages/modules/pgr",
     "packages/modules/pt",
     "packages/modules/ws",
     "packages/modules/commonPt",
     "packages/modules/fsm",
     "packages/modules/dss"
+
   ],
   "author": "Abhinav Kushwaha <abhinav.kushwaha@egovernments.org>",
   "license": "MIT",
