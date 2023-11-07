@@ -407,18 +407,27 @@ public class IngestValidator {
         Set < String > usageCategory = new HashSet < String > ();
         HashMap < String, Object > map = ingestData.getMetrics();
         List < String > keyToFetch = null;
-        int invalidCounts = 0;
+        Boolean validCounts = false;
         Boolean isUsageCategoryInvalid = false;
 
         if (ingestData.getModule() != null && ingestData.getModule().equals("PT")) {
             keyToFetch = applicationProperties.getNationalDashboardUsageTypePT();
+        }
+        else if (ingestData.getModule() != null && ingestData.getModule().equals("WS")) {
+            keyToFetch = applicationProperties.getNationalDashboardUsageTypeWS();
+        }
+        else if (ingestData.getModule() != null && ingestData.getModule().equals("FIRENOC")) {
+            keyToFetch = applicationProperties.getNationalDashboardUsageTypeNOC();
+        }
+        else if (ingestData.getModule() != null && ingestData.getModule().equals("FSM")) {
+            keyToFetch = applicationProperties.getNationalDashboardUsageTypeFSM();
         }
 
         if (keyToFetch != null) {
             for (String key: keyToFetch) {
                 List < HashMap < String, Object >> values = (List < HashMap < String, Object >> ) map.get(key);
                 for (HashMap < String, Object > a: values) {
-                    if (a.get("groupBy").equals("usageCategory")) {
+                    if (a.get("groupBy").equals("usageCategory") || a.get("groupBy").equals("usageType")) {
                         List < HashMap < String, String >> valuess = (List < HashMap < String, String >> ) a.get("buckets");
                         for (HashMap < String, String > b: valuess)
                             usageCategory.add(toCamelCase(b.get("name")));
@@ -426,19 +435,20 @@ public class IngestValidator {
 
                 }
             }
+    		for (String migratedTenants: usageCategory) {
+                for (String Usagemdms: usageList)
+                    if (Usagemdms.equals(migratedTenants)) {
+                    	validCounts = true;
+                        break;
+               }
+                    else {
+                    	validCounts = false;
+                    }
+            }
+            if(!validCounts)
+        		isUsageCategoryInvalid=true;
         }
 
-		for (String migratedTenants: usageCategory) {
-            for (String Usagemdms: usageList)
-                if (Usagemdms.equals(migratedTenants)) {
-                    break;
-           }
-                else {
-                	invalidCounts++;
-                }
-        }
-        if(invalidCounts >0 )
-    		isUsageCategoryInvalid=true;
     	return isUsageCategoryInvalid;
     }
     
