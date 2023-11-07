@@ -62,6 +62,18 @@ public class EnrichmentService {
 		            application.getPetDetails().setPetDetailsId(application.getId());
 		            application.getPetDetails().setId(UUID.randomUUID().toString()); // Enrich petDetails UUID
 		            application.setApplicationNumber(petRegistrationIdList.get(index++)); //Enrich application number from IDgen
+		            if (!CollectionUtils.isEmpty(application.getDocuments()))
+		            	application.getDocuments().forEach(doc -> {
+		    				if (doc.getId() == null) {
+		    					doc.setId(UUID.randomUUID().toString());
+		    					doc.setActive(true);
+		    					doc.setTenantId(application.getTenantId());
+		    					doc.setAuditDetails(application.getAuditDetails());
+		    					
+		    				}
+		    				System.out.println("Document id:"+application.getDocuments());
+		    			});
+		            
 		           // application.setApplicationNumber(UUID.randomUUID().toString());
 		        }
 		    }

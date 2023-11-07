@@ -35,6 +35,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
+import org.springframework.web.context.annotation.ApplicationScope;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Sets;
@@ -98,20 +99,12 @@ public class PetRegistrationService {
     }
 	
     public List<PetRegistrationApplication> searchPtrApplications(RequestInfo requestInfo, PetApplicationSearchCriteria petApplicationSearchCriteria) {
-        // Fetch applications from database according to the given search criteria
+        
         List<PetRegistrationApplication> applications = petRegistrationRepository.getApplications(petApplicationSearchCriteria);
-
-        // If no applications are found matching the given criteria, return an empty list
+        
         if(CollectionUtils.isEmpty(applications))
             return new ArrayList<>();
 
-        // Enrich mother and father of applicant objects
-//        applications.forEach(application -> {
-////            enrichmentUtil.enrichFatherApplicantOnSearch(application);
-////            enrichmentUtil.enrichMotherApplicantOnSearch(application);
-//        });
-
-        // Otherwise return the found applications
         return applications;
     }
 

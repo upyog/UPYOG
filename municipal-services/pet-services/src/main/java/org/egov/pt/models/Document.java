@@ -1,6 +1,7 @@
 package org.egov.pt.models;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -17,31 +18,40 @@ import org.hibernate.validator.constraints.SafeHtml;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(toBuilder = true)
-@EqualsAndHashCode(of= {"fileStoreId","documentUid","id"})
+@EqualsAndHashCode(of= {"filestoreid","documentuid","id"})
 public class Document {
 
-  @SafeHtml
-  @JsonProperty("id")
-  private String id ;
+	@Size(max=64)
+    @SafeHtml
+    @JsonProperty("id")
+    private String id;
 
-  @JsonProperty("documentType")
-  @SafeHtml
-  @NotNull
-  private String documentType ;
+    @JsonProperty("active")
+    private Boolean active;
 
-  @JsonProperty("fileStoreId")
-  @SafeHtml
-  @NotNull
-  private String fileStoreId ;
+    @Size(max=64)
+    @SafeHtml
+    @JsonProperty("tenantId")
+    private String tenantId = null;
 
-  @SafeHtml
-  @JsonProperty("documentUid")
-  private String documentUid ;
+    @Size(max=64)
+    @SafeHtml
+    @JsonProperty("documentType")
+    private String documentType = null;
 
-  @JsonProperty("auditDetails")
-  private AuditDetails auditDetails;
+    @Size(max=64)
+    @SafeHtml
+    @JsonProperty("filestoreId")
+    private String filestoreId = null;
 
-  @JsonProperty("status")
-  private Status status;
+    @Size(max=64)
+    @SafeHtml
+    @JsonProperty("documentUid")
+    private String documentUid;
+
+    @JsonProperty("auditDetails")
+    private AuditDetails auditDetails = null;
+  
+  
 }
 
