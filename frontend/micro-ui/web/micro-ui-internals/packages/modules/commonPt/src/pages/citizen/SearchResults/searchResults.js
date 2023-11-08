@@ -134,6 +134,7 @@ const PropertySearchResults = ({ template, header, actionButtonLabel, isMutation
       status:t(property.status),
       owner_mobile: (property?.owners || [])[0]?.mobileNumber,
       address:property?.address,
+      owners:property.owners,
       privacy: {
         property_address : {
           uuid: property?.owners?.[0]?.uuid, 

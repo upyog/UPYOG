@@ -88,30 +88,33 @@ const LocationDetails = ({ t, config, onSelect, userType, formData, ownerIndex =
 
   const [localities, setLocalities] = useState();
 
-  const [selectedLocality, setSelectedLocality] = useState(formData.address.locality || propertyData.address.locality||null);
+  const [selectedLocality, setSelectedLocality] = useState(propertyData.address.locality||formData.address.locality ||null);
 
   useEffect(() => {
-    if (selectedCity && fetchedLocalities  && !Pinerror) {
-      let __localityList = fetchedLocalities;
-      let filteredLocalityList = [];
+    // if (selectedCity && fetchedLocalities  && !Pinerror) {
+    //   let __localityList = fetchedLocalities;
+    //   let filteredLocalityList = [];
+    //   console.log("fetchedLocalities",fetchedLocalities)
+    //   if (formData?.address?.locality && formData?.address?.locality?.code === selectedLocality?.code) {
+    //     setSelectedLocality(formData.address.locality);
+    //   }
 
-      if (formData?.address?.locality && formData?.address?.locality?.code === selectedLocality?.code) {
-        setSelectedLocality(formData.address.locality);
-      }
-
-      if ((formData?.address?.pincode || pincode) && !Pinerror) {
-        filteredLocalityList = __localityList.filter((obj) => obj.pincode?.find((item) => item == pincode));
-        if (!formData?.address?.locality && filteredLocalityList.length<=0) setSelectedLocality();
-      }
-      if(!localities || (filteredLocalityList.length > 0 && localities.length !== filteredLocalityList.length) || (filteredLocalityList.length <=0 && localities && localities.length !==__localityList.length))
-      {
-        setLocalities(() => (filteredLocalityList.length > 0 ? filteredLocalityList : __localityList));
-      }
-      if (filteredLocalityList.length === 1 && ((selectedLocality == null) || (selectedLocality && filteredLocalityList[0]?.code !== selectedLocality?.code))) {
-        setSelectedLocality(filteredLocalityList[0]);
-        sessionStorage.setItem("currLocality", JSON.stringify(filteredLocalityList[0]));
-      }
-    }
+    //   if ((formData?.address?.pincode || pincode) && !Pinerror) {
+    //     filteredLocalityList = __localityList.filter((obj) => obj.pincode?.find((item) => item == pincode));
+    //     if (!formData?.address?.locality && filteredLocalityList.length<=0) setSelectedLocality();
+    //   }
+    //   if(!localities || (filteredLocalityList.length > 0 && localities.length !== filteredLocalityList.length) || (filteredLocalityList.length <=0 && localities && localities.length !==__localityList.length))
+    //   {
+    //     console.log("filteredLocalityList",filteredLocalityList)
+    //     setLocalities(() => (filteredLocalityList.length > 0 ? filteredLocalityList : __localityList));
+    //   }
+    //   if (filteredLocalityList.length === 1 && ((selectedLocality == null) || (selectedLocality && filteredLocalityList[0]?.code !== selectedLocality?.code))) {
+    //     setSelectedLocality(filteredLocalityList[0]);
+    //     sessionStorage.setItem("currLocality", JSON.stringify(filteredLocalityList[0]));
+    //   }
+    // }
+    console.log("propertyData.address.locality",propertyData.address.locality)
+    setSelectedLocality(propertyData.address.locality)
   }, [selectedCity, formData?.pincode, fetchedLocalities, pincode,geoLocation]);
 
 
@@ -196,6 +199,7 @@ const LocationDetails = ({ t, config, onSelect, userType, formData, ownerIndex =
     if (formData?.address?.locality) {
       formData.address["locality"] = locality;
     }
+    console.log("locality",locality)
     setSelectedLocality(locality);
     sessionStorage.setItem("currLocality", JSON.stringify(locality));
   }
@@ -249,6 +253,7 @@ console.log("Lcation Details", formData)
         name="pincode"
         onChange={selectPincode}
         value={pincode}
+        disabled={true}
       />}
       <CardLabel>{`${t("BPA_CITY_LABEL")}*`}</CardLabel>
       {!isOpen && <RadioOrSelect
@@ -261,23 +266,23 @@ console.log("Lcation Details", formData)
         //labelKey="TENANT_TENANTS"
         disabled={true}
       />}
-      {!isOpen && selectedCity && localities && (
+      
         <span className={"form-pt-dropdown-only"}>
           <CardLabel>{`${t("BPA_LOC_MOHALLA_LABEL")}*`}</CardLabel>
-          <RadioOrSelect
+          <TextInput
             optionCardStyles={{ maxHeight:"20vmax", overflow:"scroll" }}
             isMandatory={config.isMandatory}
-            options={localities.sort((a, b) => a.name.localeCompare(b.name))}
-            selectedOption={selectedLocality}
+            //options={}
+            value={propertyData.address.locality.name}
             optionKey="i18nkey"
-            onSelect={selectLocality}
+            
             t={t}
             isDependent={true}
             labelKey={`${stringReplaceAll(selectedCity?.code,".","_").toUpperCase()}_REVENUE`}
-          //disabled={isEdit}
+          disabled={true}
           />
         </span>
-      )}
+      
       <CardLabel>{`${t("BPA_DETAILS_SRT_NAME_LABEL")}`}</CardLabel>
       {!isOpen && <TextInput
         style={{ }}
@@ -287,6 +292,7 @@ console.log("Lcation Details", formData)
         name="street"
         onChange={selectStreet}
         value={street}
+        disabled={true}
       />}
       <CardLabel>{`${t("ES_NEW_APPLICATION_LOCATION_LANDMARK")}`}</CardLabel>
       {!isOpen && <TextInput
@@ -297,6 +303,7 @@ console.log("Lcation Details", formData)
         name="landmark"
         onChange={selectLandmark}
         value={landmark}
+        disabled={true}
       // {...(validation = {
       //     isRequired: true,
       //     pattern: getPattern("Name"),
