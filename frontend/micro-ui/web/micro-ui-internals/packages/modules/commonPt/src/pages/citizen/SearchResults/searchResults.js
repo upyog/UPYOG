@@ -122,7 +122,7 @@ const PropertySearchResults = ({ template, header, actionButtonLabel, isMutation
 
   const searchResults = arr?.map((property) => {
     let addr = property?.address || {};
-   
+   console.log("property",property)
     return {
       property_id: property?.propertyId,
       owner_name: (property?.owners || [])[0]?.name,
@@ -133,6 +133,7 @@ const PropertySearchResults = ({ template, header, actionButtonLabel, isMutation
       bil_due__date: payment[property?.propertyId]?.bil_due__date || t("N/A"),
       status:t(property.status),
       owner_mobile: (property?.owners || [])[0]?.mobileNumber,
+      address:property?.address,
       privacy: {
         property_address : {
           uuid: property?.owners?.[0]?.uuid, 
@@ -160,7 +161,9 @@ const PropertySearchResults = ({ template, header, actionButtonLabel, isMutation
 
   const sendOtpToUser = async (record) => {
     if(onSelect) {
-      onSelect('cptId', { id: record.property_id }); 
+      sessionStorage.setItem("Digit_OBPS_PT",JSON.stringify(record))
+      onSelect('cptId', { id: record.property_id });
+
     } else {
       const data = {
         mobileNumber : record?.owner_mobile,
