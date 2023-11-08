@@ -44,7 +44,8 @@ public class ServiceDefinitionController {
     @RequestMapping(value="/definition/v1/_search", method = RequestMethod.POST)
     public ResponseEntity<ServiceDefinitionResponse> search(@Valid @RequestBody ServiceDefinitionSearchRequest serviceDefinitionSearchRequest) {
         List<ServiceDefinition> serviceDefinitionList = serviceDefinitionRequestService.searchServiceDefinition(serviceDefinitionSearchRequest);
-        ServiceDefinitionResponse response  = ServiceDefinitionResponse.builder().serviceDefinition(serviceDefinitionList).build();
+        Integer totalCount = serviceDefinitionRequestService.countTotalSurveys(serviceDefinitionSearchRequest);
+        ServiceDefinitionResponse response  = ServiceDefinitionResponse.builder().serviceDefinition(serviceDefinitionList).totalCount(totalCount).build();
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
