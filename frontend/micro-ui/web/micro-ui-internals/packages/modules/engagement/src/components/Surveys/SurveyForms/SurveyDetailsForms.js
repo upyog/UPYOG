@@ -7,6 +7,7 @@ const SurveyDetailsForms = ({ t, registerRef, controlSurveyForm, surveyFormState
   const ulbs = Digit.SessionStorage.get("ENGAGEMENT_TENANTS");
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const userInfo = Digit.UserService.getUser().info;
+  console.log(Digit.UserService.getUser(),"userInfo")
   const userUlbs = ulbs
     .filter((ulb) => userInfo?.roles?.some((role) => role?.tenantId === ulb?.code))
     .sort(alphabeticalSortFunctionForTenantsBasedOnName);
@@ -28,7 +29,6 @@ const SurveyDetailsForms = ({ t, registerRef, controlSurveyForm, surveyFormState
     return false
   }
 
-
   return (
     <div className="surveydetailsform-wrapper">
       <span className="surveyformfield">
@@ -42,6 +42,7 @@ const SurveyDetailsForms = ({ t, registerRef, controlSurveyForm, surveyFormState
             const renderRemovableTokens = useMemo(
               () =>
                 props?.value?.map((ulb, index) => {
+                  console.log(ulb,"ulb")
                   return (
                     <RemoveableTag
                       key={index}
