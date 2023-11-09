@@ -190,7 +190,14 @@ const ConnectionDetails = () => {
           let pathname = `/digit-ui/citizen/ws/disconnect-application`;
           Digit.SessionStorage.set("WS_DISCONNECTION", {...state, serviceType: isSW ? "SEWERAGE" : "WATER"});
           history.push(`${pathname}`);
-        } else if (paymentDetails?.data?.Bill?.[0]?.totalAmount !== 0) {
+        } 
+        else if(paymentDetails?.data?.Bill?.[0]?.totalAmount < 0)
+        {
+          let pathname = `/digit-ui/citizen/ws/disconnect-application`;
+          Digit.SessionStorage.set("WS_DISCONNECTION", {...state, serviceType: isSW ? "SEWERAGE" : "WATER"});
+          history.push(`${pathname}`);
+        }
+        else if (paymentDetails?.data?.Bill?.[0]?.totalAmount !== 0) {
           setshowModal(true);
         }
       
@@ -215,7 +222,13 @@ const ConnectionDetails = () => {
           let pathname = `/digit-ui/citizen/ws/restoration-application`;
           Digit.SessionStorage.set("WS_DISCONNECTION", {...state, serviceType: isSW ? "SEWERAGE" : "WATER"});
           history.push(`${pathname}`);
-        } else if (paymentDetails?.data?.Bill?.[0]?.totalAmount !== 0) {
+        } else if(paymentDetails?.data?.Bill?.[0]?.totalAmount < 0)
+        {
+          let pathname = `/digit-ui/citizen/ws/restore-application/restoration-application`;
+        Digit.SessionStorage.set("WS_DISCONNECTION", {...state, serviceType: isSW ? "SEWERAGE" : "WATER"});
+        history.push(`${pathname}`);
+        }
+        else if (paymentDetails?.data?.Bill?.[0]?.totalAmount !== 0) {
           setshowModal(true);
         }
         else if(paymentDetails?.data?.Bill?.[0]?.totalAmount == 0)
@@ -265,7 +278,6 @@ const ConnectionDetails = () => {
 
 
 let serviceType = state?.applicationType?.includes("WATER") ? "WATER":"SEWERAGE";
-
   return (
     <React.Fragment>
       <div className="cardHeaderWithOptions" style={{ marginRight: "auto", maxWidth: "960px" }}>
@@ -562,7 +574,7 @@ let serviceType = state?.applicationType?.includes("WATER") ? "WATER":"SEWERAGE"
                 <SubmitBar style={{ width: "100%" }} label={t("WS_DISCONNECTION_BUTTON")} onSubmit={onActionSelect} />
               </div>
             </ActionBar>
-          ) : <ActionBar style={{ position: "relative", boxShadow: "none", minWidth: "240px", maxWidth: "310px", padding: "0px", marginTop: "15px" }}>
+          ) : state?.applicationStatus =="DISCONNECTION_EXECUTED" && state?.status == "Inactive" && state?.isDisconnectionTemporary && <ActionBar style={{ position: "relative", boxShadow: "none", minWidth: "240px", maxWidth: "310px", padding: "0px", marginTop: "15px" }}>
           <div style={{ width: "100%" }}>
             <SubmitBar style={{ width: "100%" }} label={t("WS_RECONNECTION_BUTTON")} onSubmit={onActionSelectRestoration} />
           </div>

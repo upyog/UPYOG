@@ -247,12 +247,17 @@ public class SWConstants {
 	public static final int MODIFY_CONNECTION = 2;
 	
 	public static final int DISCONNECT_CONNECTION =  3;
+	
+	public static final int RECONNECTION =  4;
 
 	public static final String APPROVE_CONNECTION = "APPROVE_CONNECTION";
 
 	public static final String NEW_SEWERAGE_CONNECTION ="NEW_SEWERAGE_CONNECTION";
 	public static final String MODIFY_SEWERAGE_CONNECTION = "MODIFY_SEWERAGE_CONNECTION";
 	public static final String DISCONNECT_SEWERAGE_CONNECTION = "DISCONNECT_SEWERAGE_CONNECTION";
+	public static final String SEWERAGE_RECONNECTION = "SEWERAGE_RECONNECTION";
+	public static final String RECONNECT_DISCONNECTION_CONST = "APPROVE_FOR_CONNECTION";
+
 	
 	public static final String SEWERAGE_SERVICE_BUSINESS_ID = "SW";
 
@@ -268,6 +273,8 @@ public class SWConstants {
 	public static final String MODIFIED_FINAL_STATE = "APPROVED";
 
 	public static final String DISCONNECTION_FINAL_STATE = "DISCONNECTION_EXECUTED";
+	
+	public static final String MODIFIED_FINAL_STATE_DISCONNECTED = "CONNECTION_DISCONNECTED";
 
 	public static final List<String> FINAL_CONNECTION_STATES = Collections
 			.unmodifiableList(Arrays.asList(MODIFIED_FINAL_STATE, STATUS_APPROVED, DISCONNECTION_FINAL_STATE));

@@ -3,6 +3,21 @@ export const newConfig = [
     head: "ES_NEW_APPLICATION_PROPERTY_DETAILS",
     body: [
       {
+        label: "ES_NEW_APPLICATION_PROPERTY_ID",
+        isMandatory: true,
+        type: "component",
+        route: "property-id",
+        key: "propertyID",
+        component: "SelectPropertyID",
+        texts: {
+          headerCaption: "",
+          header: "CS_FILE_APPLICATION_PROPERTY_ID_LABEL",
+          cardText: "CS_FILE_APPLICATION_PROPERTY_ID_TEXT",
+          submitBarLabel: "CS_COMMON_NEXT",
+        },
+        nextStep: "property-type",
+      },
+      {
         label: "ES_NEW_APPLICATION_PROPERTY_TYPE",
         isMandatory: true,
         type: "component",

@@ -20,7 +20,7 @@ const DisconnectionApplication = () => {
 
   let config = [];
 
-  if (!isLoading && newConfig.length > 0) {
+  if (!isLoading) {
     newConfig.forEach((obj) => {
       config = config.concat(obj.body.filter((a) => !a.hideInCitizen));
     });

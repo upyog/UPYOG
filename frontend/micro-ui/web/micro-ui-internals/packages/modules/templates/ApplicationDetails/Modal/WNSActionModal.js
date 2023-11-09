@@ -197,10 +197,11 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
       submitAction({ WaterConnection: applicationData, disconnectRequest: true }) :
       submitAction({ SewerageConnection: applicationData, disconnectRequest: true })
     } 
-    else if(applicationData?.applicationType == "RECONNECT_CONNECTION") {
-      applicationData?.serviceType == "WATER" ?
-      submitAction({ WaterConnection: applicationData, disconnectRequest: false, reconnectRequest:true }) :
+    else if(applicationData?.applicationType == "SEWERAGE_RECONNECTION") {
       submitAction({ SewerageConnection: applicationData, disconnectRequest: false, reconnectRequest:true })
+    }
+    else if(applicationData?.applicationType == "WATER_RECONNECTION") {
+      submitAction({ WaterConnection: applicationData, disconnectRequest: false, reconnectRequest:true })
     }
       else {
       const adhocRebateData = sessionStorage.getItem("Digit.ADHOC_ADD_REBATE_DATA");
@@ -211,10 +212,10 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
       if (parsedAdhocRebateData?.value?.adhocRebate) applicationData.additionalDetails.adhocRebate = parseInt(parsedAdhocRebateData?.value?.adhocRebate) || "";
       if (parsedAdhocRebateData?.value?.adhocRebateComment) applicationData.additionalDetails.adhocRebateComment = parsedAdhocRebateData?.value?.adhocRebateComment || "";
       if (parsedAdhocRebateData?.value?.adhocRebateReason) applicationData.additionalDetails.adhocRebateReason = parsedAdhocRebateData?.value?.adhocRebateReason || "";
-      applicationData?.serviceType == "WATER" ? submitAction({ WaterConnection: applicationData }) : submitAction({ SewerageConnection: applicationData });
+      applicationData?.serviceType == "WATER" ? submitAction({ WaterConnection: applicationData ,disconnectRequest: false, reconnectRequest:false}) : submitAction({ SewerageConnection: applicationData, disconnectRequest: false, reconnectRequest:false });
     }
   }
-
+   
   useEffect(() => {
     if (applicationData?.processInstance?.businessService == "DisconnectWSConnection" || applicationData?.processInstance?.businessService == "DisconnectSWConnection") {
       if (action) {

@@ -85,6 +85,7 @@ public class LocationBoundaryController {
 			@RequestParam(value = "hierarchyTypeCode", required = false) @Size(max = 128) final String hierarchyType,
 			@RequestParam(value = "codes", required = false) final List<String> codes,
 			@RequestParam(value = "boundaryType", required = false) @Size(max = 64) final String boundaryType,
+			@RequestParam(value = "pinCode", required = false) @Size(max = 6) final String pinCode,
 			@RequestBody @Valid RequestInfo requestInfo) {
 		Long startTime;
 		Long endTime;
@@ -95,7 +96,7 @@ public class LocationBoundaryController {
 		List<MdmsTenantBoundary> allBoundarys = null;
 
 		BoundarySearchRequest boundarySearchRequest = BoundarySearchRequest.builder().tenantId(tenantId)
-				.hierarchyTypeName(hierarchyType).boundaryTypeName(boundaryType).codes(codes).build();
+				.hierarchyTypeName(hierarchyType).boundaryTypeName(boundaryType).codes(codes).pinCode(pinCode).build();
 		allBoundarys = boundaryService.getBoundariesByTenantAndHierarchyType(boundarySearchRequest, requestInfo);
 		responseInfo.setStatus(HttpStatus.OK.toString());
 		boundaryResponse.setResponseInfo(responseInfo);

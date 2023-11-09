@@ -135,11 +135,11 @@ const getAssessmentInfo = (application, t) => {
       },
       {
         title: (flrno = unit?.floorNo) > -3 ? t("PT_FORM2_PROPERTY_TYPE") : "",
-        value: (flrno = unit?.floorNo) > -3 ? t(unit?.additionalDetails?.structureType) || t("CS_NA") : "",
+        value: (flrno = unit?.floorNo) > -3 ? t(application?.additionalDetails?.unit[0]?.structureType) || t("CS_NA") : "",
       },
       {
         title: (flrno = unit?.floorNo) > -3 ? t("PT_FORM2_AGE_OF_PROPERTY") : "",
-        value: (flrno = unit?.floorNo) > -3 ? t(unit?.additionalDetails?.ageOfProperty) || t("CS_NA") : "",
+        value: (flrno = unit?.floorNo) > -3 ? t(application?.additionalDetails?.unit[0]?.ageOfProperty) || t("CS_NA") : "",
       },
       {
         title:
@@ -155,6 +155,34 @@ const getAssessmentInfo = (application, t) => {
               : t("")
             : "",
       },
+      {
+      title:
+        (flrno = unit?.floorNo) > -3
+          ? t(getPropertyOccupancyTypeLocale(unit?.occupancyType)) === "Rented"
+            ? t("PT_FORM2_RENTED_MONTHS")
+            : t("")
+          : "",
+      value:
+        (flrno = unit?.floorNo) > -3
+          ? t(getPropertyOccupancyTypeLocale(unit?.occupancyType)) === "Rented"
+            ? (application?.additionalDetails?.unit[0]?.rentedMonths ) || t("CS_NA")
+            : t("")
+          : "",
+    },
+    {
+      title:
+        (flrno = unit?.floorNo) > -3
+          ? t(getPropertyOccupancyTypeLocale(unit?.occupancyType)) === "Rented"
+            ? t("PT_FORM2_NONRENTED_MONTHS_USAGE")
+            : t("")
+          : "",
+      value:
+        (flrno = unit?.floorNo) > -3
+          ? t(getPropertyOccupancyTypeLocale(unit?.occupancyType)) === "Rented"
+            ? (application?.additionalDetails?.unit[0]?.nonRentedMonthsUsage ) || t("CS_NA")
+            : t("")
+          : "",
+    },
     ];
 
     values.push(...doc);

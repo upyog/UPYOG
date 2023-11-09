@@ -58,6 +58,8 @@ import {
 
 
 let v8 = require("v8");
+let egov_host = envVariables.EGOV_HOST;
+
 let totalHeapSizeInGB = (((v8.getHeapStatistics().total_available_size) / 1024 / 1024 / 1024).toFixed(2));
 console.log(`*******************************************`);
 console.log(`Total Heap Size ~ ${totalHeapSizeInGB} GB`);
@@ -1085,6 +1087,7 @@ export const fillValues = (variableTovalueMap, formatconfig) => {
  * dataconfig- data config read from dataconfig of module
  */
 const generateQRCodes = async (
+  key,
   moduleObject,
   dataconfig,
   variableTovalueMap
@@ -1098,8 +1101,12 @@ const generateQRCodes = async (
   for (var i = 0, len = qrcodeMappings.length; i < len; i++) {
     let qrmapping = qrcodeMappings[i];
     let varname = qrmapping.variable;
-    let qrtext = mustache.render(qrmapping.value, variableTovalueMap);
+    if(key == 'property-receipt' || key == 'consolidatedreceipt' || key == 'tradelicense-receipt' || key == 'fsm-receipt' || key == 'misc-receipt' || key == 'ws-onetime-receipt')
+    qrmapping.value=egov_host.concat(qrmapping.value);
 
+logger.info("value is " + qrmapping.value) ;   
+    let qrtext = mustache.render(qrmapping.value, variableTovalueMap);
+    logger.info("URL is" + qrtext) ; 
     let qrCodeImage = await QRCode.toDataURL(qrtext);
     variableTovalueMap[varname] = qrCodeImage;
   }
@@ -1223,7 +1230,7 @@ const handlelogic = async (
       unregisteredLocalisationCodes
     ),
   ]);
-  await generateQRCodes(moduleObject, dataconfig, variableTovalueMap);
+  await generateQRCodes(key,moduleObject, dataconfig, variableTovalueMap);
   handleDerivedMapping(dataconfig, variableTovalueMap);
   formatObject = fillValues(variableTovalueMap, formatObject);
   if (isCommonTableBorderRequired === true)

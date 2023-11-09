@@ -432,4 +432,15 @@ public class CalculatorUtils {
 				.append(SWCalculationConstant.SERVICE_FIELD_FOR_SEARCH_URL)
 				.append(SWCalculationConstant.ONE_TIME_FEE_SERVICE_FIELD);
 	}
+	
+	public StringBuilder getFetchBillURLForReconnection(String tenantId, String consumerCode) {
+
+		return new StringBuilder().append(configurations.getBillingServiceHost())
+				.append(configurations.getFetchBillEndPoint()).append(SWCalculationConstant.URL_PARAMS_SEPARATER)
+				.append(SWCalculationConstant.TENANT_ID_FIELD_FOR_SEARCH_URL).append(tenantId)
+				.append(SWCalculationConstant.SEPARATER).append(SWCalculationConstant.CONSUMER_CODE_SEARCH_FIELD_NAME)
+				.append(consumerCode).append(SWCalculationConstant.SEPARATER)
+				.append(SWCalculationConstant.BUSINESSSERVICE_FIELD_FOR_SEARCH_URL)
+				.append("SWReconnection");
+	}
 }

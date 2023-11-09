@@ -9,13 +9,17 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
 import org.egov.common.contract.request.User;
 import org.egov.swservice.config.SWConfiguration;
-import org.egov.swservice.repository.rowmapper.EncryptionCountRowMapper;
-import org.egov.swservice.repository.rowmapper.OpenSewerageRowMapper;
-import org.egov.swservice.web.models.*;
 import org.egov.swservice.producer.SewarageConnectionProducer;
 import org.egov.swservice.repository.builder.SWQueryBuilder;
+import org.egov.swservice.repository.rowmapper.EncryptionCountRowMapper;
+import org.egov.swservice.repository.rowmapper.OpenSewerageRowMapper;
 import org.egov.swservice.repository.rowmapper.SewerageRowMapper;
 import org.egov.swservice.util.SWConstants;
+import org.egov.swservice.web.models.Connection;
+import org.egov.swservice.web.models.EncryptionCount;
+import org.egov.swservice.web.models.SearchCriteria;
+import org.egov.swservice.web.models.SewerageConnection;
+import org.egov.swservice.web.models.SewerageConnectionRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -109,11 +113,11 @@ public class SewerageDaoImpl implements SewerageDao {
 			if (SWConstants.EXECUTE_DISCONNECTION.equalsIgnoreCase(reqAction)) {
 				sewerageConnectionRequest.getSewerageConnection().setStatus(Connection.StatusEnum.INACTIVE);
 			}
+			if ((sewerageConnectionRequest.isReconnectRequest() || sewerageConnectionRequest.getSewerageConnection().getApplicationType().equalsIgnoreCase(SWConstants.SEWERAGE_RECONNECTION)) && SWConstants.ACTIVATE_CONNECTION_CONST.equalsIgnoreCase(reqAction)) {
+				sewerageConnectionRequest.getSewerageConnection().setStatus(Connection.StatusEnum.ACTIVE);
+			}
 			sewarageConnectionProducer.push(updateSewarageConnection, sewerageConnectionRequest);
-		} else if (SWConstants.EXECUTE_DISCONNECTION.equalsIgnoreCase(sewerageConnectionRequest.getSewerageConnection().getProcessInstance().getAction())) {
-			sewerageConnectionRequest.getSewerageConnection().setStatus(Connection.StatusEnum.INACTIVE);
-			sewarageConnectionProducer.push(updateSewarageConnection, sewerageConnectionRequest);
-		} else {
+		}  else {
 			sewarageConnectionProducer.push(swConfiguration.getWorkFlowUpdateTopic(), sewerageConnectionRequest);
 		}
 	}

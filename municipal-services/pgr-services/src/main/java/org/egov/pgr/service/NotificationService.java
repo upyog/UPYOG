@@ -68,8 +68,10 @@ public class NotificationService {
                 log.info("Notification Disabled For State :" + applicationStatus);
                 return;
             }
+            log.info("In Notification code for PGR");
 
             Map<String, List<String>> finalMessage = getFinalMessage(request, topic, applicationStatus);
+            log.info("final Message is -========" + finalMessage);
             String citizenMobileNumber = request.getService().getCitizen().getMobileNumber();
             String employeeMobileNumber = null;
 
@@ -104,6 +106,7 @@ public class NotificationService {
 
             if(!StringUtils.isEmpty(finalMessage)){
                 if (config.getIsUserEventsNotificationEnabled() != null && config.getIsUserEventsNotificationEnabled()) {
+                	log.info("in Event Generation code!!!");
                     for (Map.Entry<String,List<String>> entry : finalMessage.entrySet()) {
                         for(String msg : entry.getValue()) {
                             EventRequest eventRequest = enrichEventRequest(request, msg);

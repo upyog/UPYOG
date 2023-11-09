@@ -43,9 +43,16 @@ public class CalculationReq   {
     	@JsonProperty("isconnectionCalculation")
 		@NotNull
         private Boolean isconnectionCalculation;
+    	
+    	@Builder.Default
+        @JsonProperty("isDisconnectionRequest")
+        private Boolean isDisconnectionRequest=Boolean.FALSE;
 
-        @JsonProperty("disconnectRequest")
-        private Boolean disconnectRequest = false;
+
+		@Builder.Default
+        @JsonProperty("isReconnectionRequest")
+        private Boolean isReconnectionRequest=Boolean.FALSE;
+
 
     	/*
          * Used by the bulk bill generator to send batch information through kafka

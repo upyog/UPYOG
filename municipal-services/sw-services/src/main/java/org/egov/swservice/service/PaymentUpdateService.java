@@ -86,7 +86,7 @@ public class PaymentUpdateService {
 			boolean isServiceMatched = false;
 			for (PaymentDetail paymentDetail : paymentRequest.getPayment().getPaymentDetails()) {
 				if (paymentDetail.getBusinessService().equalsIgnoreCase(config.getReceiptBusinessservice()) ||
-						SEWERAGE_SERVICE_BUSINESS_ID.equals(paymentDetail.getBusinessService())) {
+						SEWERAGE_SERVICE_BUSINESS_ID.equals(paymentDetail.getBusinessService()) || paymentDetail.getBusinessService().equalsIgnoreCase(config.getReconnectBusinessServiceName())) {
 					isServiceMatched = true;
 				}
 			}
@@ -103,7 +103,7 @@ public class PaymentUpdateService {
 							.connectionNumber(Stream.of(paymentDetail.getBill().getConsumerCode().toString()).collect(Collectors.toSet()))
 							.applicationStatus(Collections.singleton(PENDING_FOR_PAYMENT_STATUS_CODE)).build();
 				}
-				if (paymentDetail.getBusinessService().equalsIgnoreCase(config.getReceiptBusinessservice())) {
+				if (paymentDetail.getBusinessService().equalsIgnoreCase(config.getReconnectBusinessServiceName()) || paymentDetail.getBusinessService().equalsIgnoreCase(config.getReceiptBusinessservice())) {
 					criteria = SearchCriteria.builder()
 							.tenantId(paymentRequest.getPayment().getTenantId())
 							.applicationNumber(Stream.of(paymentDetail.getBill().getConsumerCode().toString()).collect(Collectors.toSet())).build();
@@ -132,6 +132,8 @@ public class PaymentUpdateService {
 					RequestInfo requestInfo = sewerageConnectionRequest.getRequestInfo();
 					Role role = Role.builder().code("SYSTEM_PAYMENT").tenantId(property.getTenantId()).build();
 					requestInfo.getUserInfo().getRoles().add(role);
+					if(paymentDetail.getBusinessService().equalsIgnoreCase(config.getReconnectBusinessServiceName()))
+						sewerageConnectionRequest.setReconnectRequest(true);
 					wfIntegrator.callWorkFlow(sewerageConnectionRequest, property);
 					enrichmentService.enrichFileStoreIds(sewerageConnectionRequest);
 					repo.updateSewerageConnection(sewerageConnectionRequest, false);
@@ -212,6 +214,7 @@ public class PaymentUpdateService {
 					SewerageConnectionRequest sewerageConnectionRequest = SewerageConnectionRequest.builder()
 							.sewerageConnection(connections.get()).requestInfo(paymentRequest.getRequestInfo())
 							.build();
+					if(!(sewerageConnectionRequest.getSewerageConnection().getApplicationType().equalsIgnoreCase(SWConstants.SEWERAGE_RECONNECTION)) && !(sewerageConnectionRequest.getSewerageConnection().getApplicationType().equalsIgnoreCase(SWConstants.DISCONNECT_SEWERAGE_CONNECTION)) )
 					sendPaymentNotification(sewerageConnectionRequest, paymentDetail);
 				}
 			}

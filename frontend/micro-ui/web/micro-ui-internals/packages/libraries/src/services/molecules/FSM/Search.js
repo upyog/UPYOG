@@ -35,6 +35,7 @@ const displayServiceDate = (timeStamp) => {
 export const Search = {
   all: async (tenantId, filters = {}) => {
     const response = await FSMService.search(tenantId, { ...filters });
+    console.log("response", response )
     return response;
   },
 
@@ -89,6 +90,7 @@ export const Search = {
       response?.additionalDetails && response?.additionalDetails.tripAmount
         ? response.additionalDetails.tripAmount
         : demandDetails?.Demands[0]?.demandDetails[0]?.taxAmount || "N/A";
+    const propertyID= response.additionalDetails.propertyID || "N/A";
     // const totalAmount = response?.noOfTrips === 0 || amountPerTrip === "N/A" ? "N/A" : response?.noOfTrips * Number(amountPerTrip);
     const totalAmount = demandDetails?.Demands[0]?.demandDetails?.map((detail) => detail?.taxAmount)?.reduce((a, b) => a + b) || "N/A";
     const employeeResponse = [
@@ -113,6 +115,7 @@ export const Search = {
       {
         title: "ES_APPLICATION_DETAILS_PROPERTY_DETAILS",
         values: [
+          {title: "ES_APPLICATION_DETAILS_PROPERTY_ID", value: response?.additionalDetails?.propertyID},
           { title: "ES_APPLICATION_DETAILS_PROPERTY_TYPE", value: getPropertyTypeLocale(response?.propertyUsage) },
           { title: "ES_APPLICATION_DETAILS_PROPERTY_SUB-TYPE", value: getPropertySubtypeLocale(response?.propertyUsage) },
         ],
@@ -223,7 +226,7 @@ export const Search = {
     return {
       tenantId: response.tenantId,
       applicationDetails: citizenResponse,
-      pdfData: { ...response, amountPerTrip, totalAmount, vehicleMake, vehicleCapacity, slumName, dsoDetails },
+      pdfData: { ...response, propertyID, amountPerTrip, totalAmount, vehicleMake, vehicleCapacity, slumName, dsoDetails },
     };
   },
 

@@ -87,7 +87,7 @@ public class IngestValidator {
     
 	public static final String MDMS_NATIONALTENANTS_PATH = "$.MdmsRes.tenant.nationalInfo";
 
-
+	public static final String MDMS_PROPERTYTYPE_PATH = "$.MdmsRes.tenant.propertyType";
 
 //    public void verifyCrossStateRequest(Data data, RequestInfo requestInfo){
 //        String employeeUlb = requestInfo.getUserInfo().getTenantId();
@@ -401,6 +401,103 @@ public class IngestValidator {
 	if(validCounts ==ingestData.size())
 		isTenantValid=true;
 	return isTenantValid;
+    }
+	 public Boolean verifyUsage(Data ingestData, Set < String > usageList) {
+
+        Set < String > usageCategory = new HashSet < String > ();
+        HashMap < String, Object > map = ingestData.getMetrics();
+        List < String > keyToFetch = null;
+        Boolean validCounts = false;
+        Boolean isUsageCategoryInvalid = false;
+
+        if (ingestData.getModule() != null && ingestData.getModule().equals("PT")) {
+            keyToFetch = applicationProperties.getNationalDashboardUsageTypePT();
+        }
+        else if (ingestData.getModule() != null && ingestData.getModule().equals("WS")) {
+            keyToFetch = applicationProperties.getNationalDashboardUsageTypeWS();
+        }
+        else if (ingestData.getModule() != null && ingestData.getModule().equals("FIRENOC")) {
+            keyToFetch = applicationProperties.getNationalDashboardUsageTypeNOC();
+        }
+        else if (ingestData.getModule() != null && ingestData.getModule().equals("FSM")) {
+            keyToFetch = applicationProperties.getNationalDashboardUsageTypeFSM();
+        }
+
+        if (keyToFetch != null) {
+            for (String key: keyToFetch) {
+                List < HashMap < String, Object >> values = (List < HashMap < String, Object >> ) map.get(key);
+                for (HashMap < String, Object > a: values) {
+                    if (a.get("groupBy").equals("usageCategory") || a.get("groupBy").equals("usageType")) {
+                        List < HashMap < String, String >> valuess = (List < HashMap < String, String >> ) a.get("buckets");
+                        for (HashMap < String, String > b: valuess)
+                            usageCategory.add(toCamelCase(b.get("name")));
+                    }
+
+                }
+            }
+    		for (String migratedTenants: usageCategory) {
+                for (String Usagemdms: usageList)
+                    if (Usagemdms.equals(migratedTenants)) {
+                    	validCounts = true;
+                        break;
+               }
+                    else {
+                    	validCounts = false;
+                    }
+            }
+            if(!validCounts)
+        		isUsageCategoryInvalid=true;
+        }
+
+    	return isUsageCategoryInvalid;
+    }
+    
+    public Set < String > verifyPropertyType(RequestInfo requestInfo, List < Data > ingestData) {
+
+
+        Boolean isUsageTypeValid = false;
+        int validCounts = 0;
+
+        StringBuilder mdmsURL = new StringBuilder().append(mdmsHost).append(mdmsEndpoint);
+
+        MasterDetail mstrDetail = MasterDetail.builder().name("propertyType")
+            .filter("[?(@.active==true)]")
+            .build();
+
+
+        ModuleDetail moduleDetail = ModuleDetail.builder().moduleName("tenant").masterDetails(Arrays.asList(mstrDetail)).build();
+        MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(Arrays.asList(moduleDetail)).tenantId("pg").build();
+        MdmsCriteriaReq mdmsConfig = MdmsCriteriaReq.builder().requestInfo(requestInfo).mdmsCriteria(mdmsCriteria).build();
+        Object response = null;
+        List < Map < String, String >> jsonOutput = null;
+
+        log.info("URI: " + mdmsURL.toString());
+        try {
+            log.info(objectMapper.writeValueAsString(mdmsConfig));
+            response = restTemplate.postForObject(mdmsURL.toString(), mdmsConfig, Map.class);
+            jsonOutput = JsonPath.read(response, MDMS_PROPERTYTYPE_PATH);
+            //migratedTenant= jsonOutput.get(0);
+
+        } catch (ResourceAccessException e) {
+
+            Map < String, String > map = new HashMap < > ();
+            map.put(null, e.getMessage());
+            throw new CustomException(map);
+        } catch (HttpClientErrorException e) {
+
+            log.info("the error is : " + e.getResponseBodyAsString());
+            throw new ServiceCallException(e.getResponseBodyAsString());
+        } catch (Exception e) {
+
+            log.error("Exception while fetching from searcher: ", e);
+        }
+
+
+        Set < String > usageList = new HashSet < String > ();
+        for (Map < String, String > migratedTenants: jsonOutput) {
+            usageList.add(migratedTenants.get("code"));
+        }
+        return usageList;
     }
     
     // The verification logic will always use module name + date to determine the uniqueness of a set of records.
