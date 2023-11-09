@@ -120,8 +120,7 @@ public class ServiceQueryBuilder {
 
         // Append limit
         query.append(" LIMIT ? ");
-        preparedStmtList.add(ObjectUtils.isEmpty(pagination.getLimit()) ? config.getDefaultLimit() :
-                ((pagination.getLimit() > config.getMaxLimit()) ? config.getMaxLimit() : pagination.getLimit()));
+        preparedStmtList.add(ObjectUtils.isEmpty(pagination.getLimit()) ? config.getDefaultLimit() : pagination.getLimit());
     }
 
 

@@ -141,30 +141,33 @@ public class ServiceDefinitionRequestService {
                 && (!serviceDefinitionSearchRequest.getServiceDefinitionCriteria().getPostedBy().isEmpty())
                 && (!serviceDefinitionSearchRequest.getServiceDefinitionCriteria().getPostedBy()
                         .equalsIgnoreCase("All"))) {
-            UserSearchRequest userSearchRequest = null;
-            String userUri = config.getUserServiceHostName()
-                    .concat(config.getUserServiceSearchPath());
+            // UserSearchRequest userSearchRequest = null;
+            // String userUri = config.getUserServiceHostName()
+            //         .concat(config.getUserServiceSearchPath());
 
-            userSearchRequest = UserSearchRequest.builder().requestInfo(serviceDefinitionSearchRequest.getRequestInfo())
-                    .tenantId(serviceDefinitionSearchRequest.getServiceDefinitionCriteria().getTenantId())
-                    .name(serviceDefinitionSearchRequest.getServiceDefinitionCriteria().getPostedBy()).build();
+            // userSearchRequest = UserSearchRequest.builder().requestInfo(serviceDefinitionSearchRequest.getRequestInfo())
+            //         .tenantId(serviceDefinitionSearchRequest.getServiceDefinitionCriteria().getTenantId())
+            //         .name(serviceDefinitionSearchRequest.getServiceDefinitionCriteria().getPostedBy()).build();
 
-            List<User> users = mapper
-                    .convertValue(serviceRequestRepository.fetchResult(userUri, userSearchRequest), UserResponse.class)
-                    .getUser();
+            // List<User> users = mapper
+            //         .convertValue(serviceRequestRepository.fetchResult(userUri, userSearchRequest), UserResponse.class)
+            //         .getUser();
 
-            List<ServiceDefinition> finalListOfServiceDefinitions = new ArrayList<>();
+            // List<ServiceDefinition> finalListOfServiceDefinitions = new ArrayList<>();
 
-            listOfServiceDefinitions.forEach(serviceDefinition -> {
-                String id = serviceDefinition.getClientId();
-                users.forEach(user -> {
-                    if (user.getUuid().equals(id)) {
-                        finalListOfServiceDefinitions.add(serviceDefinition);
-                    }
-                });
-            });
+            // listOfServiceDefinitions.forEach(serviceDefinition -> {
+            //     String id = serviceDefinition.getClientId();
+            //     users.forEach(user -> {
+            //         if (user.getUuid().equals(id)) {
+            //             finalListOfServiceDefinitions.add(serviceDefinition);
+            //         }
+            //     });
+            // });
 
-            listOfServiceDefinitions = finalListOfServiceDefinitions;
+            // listOfServiceDefinitions = finalListOfServiceDefinitions;
+            List<ServiceDefinition> ListOfPostedByServiceDefinitions = serviceDefinitionRequestRepository
+                .getServiceDefinitions(serviceDefinitionSearchRequest);
+            listOfServiceDefinitions = ListOfPostedByServiceDefinitions;
         }
         Collections.sort(listOfServiceDefinitions);
         return listOfServiceDefinitions;
