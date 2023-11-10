@@ -133,12 +133,12 @@ const CreateProperty = ({ parentRoute }) => {
   useEffect(() => {  
     if(propertyDataLoading && propertyData?.Properties.length >0)  
     {  
-      alert("property exist"),  
+      //alert("property exist"),  
       setShowToast(true) 
     }  
-    else {  
-      setShowToast(true)  
-      //history.push(`${match.path}/acknowledgement`);  
+    else if(propertyDataLoading && propertyData?.Properties.length === 0) {  
+      setShowToast(false)  
+      history.push(`${match.path}/acknowledgement`);  
     }  
     }, [propertyData]);
 
