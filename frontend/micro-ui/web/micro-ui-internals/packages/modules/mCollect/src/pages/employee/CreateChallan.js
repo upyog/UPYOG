@@ -239,7 +239,7 @@ const CreateChallen = ({ ChallanData }) => {
   }, [fetchedLocalities]);
 
   useEffect(() => {
-    Digit.MDMSService.getPaymentRules(tenantId, "[?(@.type=='Adhoc' && @.isActive=='true')]", isActive=true).then((value) => {
+    Digit.MDMSService.getPaymentRules(tenantId, "[?(@.type=='Adhoc' && @.isActive==true)]", isActive=true).then((value) => {
       setAPIcategories(
         func.setServiceCategory(value.MdmsRes.BillingService.BusinessService).map((ele) => {
           ele.code = "BILLINGSERVICE_BUSINESSSERVICE_" +stringReplaceAll(ele.code.toUpperCase()," ","_");

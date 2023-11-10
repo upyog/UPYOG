@@ -97,9 +97,12 @@ public class WorkflowNotificationService {
 			Property property = validateProperty.getOrValidateProperty(request);
 
 			request.getRequestInfo().setUserInfo(userInfoCopy);
-
-			List<String> configuredChannelNames =  notificationUtil.fetchChannelList(request.getRequestInfo(), request.getSewerageConnection().getTenantId(), SEWERAGE_SERVICE_BUSINESS_ID, request.getSewerageConnection().getProcessInstance().getAction());
-
+			
+			 List<String> configuredChannelNames=new ArrayList<String>();
+			 if(request.getSewerageConnection().getApplicationType().equalsIgnoreCase(SWConstants.SEWERAGE_RECONNECTION) || request.getSewerageConnection().getApplicationType().equalsIgnoreCase(SWConstants.DISCONNECT_SEWERAGE_CONNECTION))	            	configuredChannelNames=  notificationUtil.fetchChannelList(request.getRequestInfo(), request.getSewerageConnection().getTenantId(), "SW.CREATE", request.getSewerageConnection().getProcessInstance().getAction());
+	            else
+	                configuredChannelNames =  notificationUtil.fetchChannelList(request.getRequestInfo(), request.getSewerageConnection().getTenantId(), SEWERAGE_SERVICE_BUSINESS_ID, request.getSewerageConnection().getProcessInstance().getAction());
+			
 
 			if(configuredChannelNames.contains(CHANNEL_NAME_EVENT)) {
 				if (config.getIsUserEventsNotificationEnabled() != null && config.getIsUserEventsNotificationEnabled()) {
@@ -155,6 +158,11 @@ public class WorkflowNotificationService {
 		{
 			reqType = DISCONNECT_CONNECTION;
 		}
+		  if(workflow.getAction().equalsIgnoreCase(SWConstants.ACTIVATE_CONNECTION) &&
+				  sewerageServicesUtil.isReconnectConnectionRequest(sewerageConnectionRequest))
+          {
+              reqType = RECONNECTION ;
+          }
 		
 		String message = notificationUtil.getCustomizedMsgForInApp(
 				workflow.getAction(), applicationStatus,
@@ -322,6 +330,11 @@ public class WorkflowNotificationService {
 		{
 			reqType = DISCONNECT_CONNECTION;
 		}
+		  if(workflow.getAction().equalsIgnoreCase(SWConstants.ACTIVATE_CONNECTION) &&
+				  sewerageServicesUtil.isReconnectConnectionRequest(sewerageConnectionRequest))
+          {
+              reqType = RECONNECTION ;
+          }
 		String message = notificationUtil.getCustomizedMsgForSMS(
 				workflow.getAction(), applicationStatus,
 				localizationMessage, reqType);
@@ -407,6 +420,11 @@ public class WorkflowNotificationService {
 		{
 			reqType = DISCONNECT_CONNECTION;
 		}
+		 if(workflow.getAction().equalsIgnoreCase(SWConstants.ACTIVATE_CONNECTION) &&
+				  sewerageServicesUtil.isReconnectConnectionRequest(sewerageConnectionRequest))
+         {
+             reqType = RECONNECTION ;
+         }
 		String message = notificationUtil.getCustomizedMsgForEmail(
 				workflow.getAction(), applicationStatus,
 				localizationMessage, reqType);
@@ -690,7 +708,7 @@ public class WorkflowNotificationService {
 				.sewerageConnection(sewerageConnectionRequest.getSewerageConnection()).tenantId(property.getTenantId())
 				.build();
 		CalculationReq calRequest = CalculationReq.builder().calculationCriteria(Arrays.asList(criteria))
-				.requestInfo(sewerageConnectionRequest.getRequestInfo()).isconnectionCalculation(false).build();
+				.requestInfo(sewerageConnectionRequest.getRequestInfo()).isconnectionCalculation(false).isDisconnectionRequest(false).isReconnectionRequest(false).build();
 		try {
 			Object response = serviceRequestRepository.fetchResult(sewerageServicesUtil.getEstimationURL(), calRequest);
 			CalculationRes calResponse = mapper.convertValue(response, CalculationRes.class);

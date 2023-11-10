@@ -92,13 +92,15 @@ public class WorkflowNotificationService {
      */
     public void process(WaterConnectionRequest request, String topic) {
         try {
+        	log.info("In process of consumer to generate notifications");
             String applicationStatus = request.getWaterConnection().getApplicationStatus();
             List<String> configuredChannelNames=new ArrayList<String>();
-            if(request.isDisconnectRequest() || request.isReconnectRequest())
+			if(request.getWaterConnection().getApplicationType().equalsIgnoreCase(WCConstants.WATER_RECONNECTION) || request.getWaterConnection().getApplicationType().equalsIgnoreCase(WCConstants.DISCONNECT_WATER_CONNECTION))
             	configuredChannelNames=  notificationUtil.fetchChannelList(request.getRequestInfo(), request.getWaterConnection().getTenantId(), "WS.CREATE", request.getWaterConnection().getProcessInstance().getAction());
             else
                 configuredChannelNames =  notificationUtil.fetchChannelList(request.getRequestInfo(), request.getWaterConnection().getTenantId(), WATER_SERVICE_BUSINESS_ID, request.getWaterConnection().getProcessInstance().getAction());
-            User userInfoCopy = request.getRequestInfo().getUserInfo();
+            log.info("configuredChannelNames for request Type " + request.getWaterConnection().getApplicationType() + " is :: "  + configuredChannelNames);
+			User userInfoCopy = request.getRequestInfo().getUserInfo();
             User userInfo = notificationUtil.getInternalMicroserviceUser(request.getWaterConnection().getTenantId());
             request.getRequestInfo().setUserInfo(userInfo);
 
@@ -156,6 +158,12 @@ public class WorkflowNotificationService {
         {
             reqType = DISCONNECT_CONNECTION;
         }
+        
+        if(workflow.getAction().equalsIgnoreCase(WCConstants.ACTIVATE_CONNECTION) &&
+                    waterServiceUtil.isReconnectConnectionRequest(request))
+            {
+                reqType = RECONNECTION ;
+            }
 
         String message = notificationUtil.getCustomizedMsgForInApp(workflow.getAction(), applicationStatus,
                 localizationMessage, reqType);
@@ -322,7 +330,7 @@ public class WorkflowNotificationService {
         }
 
         if((workflow.getAction().equalsIgnoreCase(WCConstants.ACTIVATE_CONNECTION)) &&
-        		waterConnectionRequest.isReconnectRequest())
+        		waterServiceUtil.isReconnectConnectionRequest(waterConnectionRequest))
         {
         	reqType = RECONNECTION;
         }
@@ -347,7 +355,7 @@ public class WorkflowNotificationService {
             log.info("No message Found For Topic : " + topic);
             return Collections.emptyList();
         }
-        log.info("SMS body is WS"+message);
+        log.info("SMS body is "+message);
 
            //Send the notification to all owners
             Map<String, String> mobileNumbersAndNames = new HashMap<>();
@@ -413,6 +421,12 @@ public class WorkflowNotificationService {
             reqType = DISCONNECT_CONNECTION;
         }
 
+        if((workflow.getAction().equalsIgnoreCase(WCConstants.ACTIVATE_CONNECTION)) &&
+        		waterServiceUtil.isReconnectConnectionRequest(waterConnectionRequest))
+        {
+        	reqType = RECONNECTION;
+        }
+        
         String message = notificationUtil.getCustomizedMsgForEmail(
                 workflow.getAction(), applicationStatus,
                 localizationMessage, reqType);

@@ -131,6 +131,22 @@ export const BillDetailsFormConfig = (props, t) => ({
       ],
     },
   ],
+  "SWReconnection": [
+    {
+      head: t("COMMON_PAY_SCREEN_HEADER"),
+      body: [
+        {
+          withoutLabel: true,
+          type: "custom",
+          populators: {
+            name: "amount",
+            customProps: { businessService: "SWReconnection", consumerCode: props.consumerCode },
+            component: (props, customProps) => <BillDetails onChange={props.onChange} amount={props.value} {...customProps} />,
+          },
+        },
+      ],
+    },
+  ],
   SW: [
     {
       head: t("COMMON_PAY_SCREEN_HEADER"),
