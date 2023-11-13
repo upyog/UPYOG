@@ -18,6 +18,7 @@ import org.egov.common.contract.request.Role;
 import org.egov.tracer.model.CustomException;
 import org.egov.vehicle.config.VehicleConfiguration;
 import org.egov.vehicle.repository.ServiceRequestRepository;
+import org.egov.vehicle.repository.VehicleRepository;
 import org.egov.vehicle.trip.util.VehicleTripConstants;
 import org.egov.vehicle.util.Constants;
 import org.egov.vehicle.util.VehicleErrorConstants;
@@ -50,23 +51,32 @@ public class UserService {
 	@Autowired
 	private ObjectMapper mapper;
 
+	@Autowired
+	private VehicleRepository repository;
+
 	/**
 	 * 
 	 * @param vendorRequest
 	 */
 	@SuppressWarnings("null")
-	public void manageOwner(VehicleRequest vendorRequest) {
+	public void manageOwner(VehicleRequest vehicleRequest, boolean isUpdate) {
 
-		Vehicle vehicle = vendorRequest.getVehicle();
+		Vehicle vehicle = vehicleRequest.getVehicle();
 		User owner = vehicle.getOwner();
 
 		UserDetailResponse userDetailResponse = null;
 		if (owner != null) {
 			userDetailResponse = userExists(owner);
-			if (userDetailResponse != null && !CollectionUtils.isEmpty(userDetailResponse.getUser())) {
-				owner = userDetailResponse.getUser().get(0);
+			if (!isUpdate) {
+				if (userDetailResponse != null && !CollectionUtils.isEmpty(userDetailResponse.getUser())) {
+					owner = userDetailResponse.getUser().get(0);
+				} else
+					owner = createVehicleOwner(owner, vehicleRequest.getRequestInfo());
 			} else {
-				owner = createVehicleOwner(owner, vendorRequest.getRequestInfo());
+
+				HashMap<String, String> errorMap = new HashMap<>();
+				updateUserDetails(owner, vehicleRequest.getRequestInfo(), errorMap);
+
 			}
 			vehicle.setOwner(owner);
 
@@ -74,6 +84,22 @@ public class UserService {
 			log.debug("MobileNo is not existed in Application.");
 			throw new CustomException(VehicleErrorConstants.INVALID_OWNER_ERROR, "MobileNo is mandatory for ownerInfo");
 		}
+
+	}
+
+	private User updateUserDetails(User vehicleInfo, RequestInfo requestInfo, HashMap<String, String> errorMap) {
+		User userUpdated = new User();
+		UserRequest userRequest = UserRequest.builder().user(vehicleInfo).requestInfo(requestInfo).build();
+		StringBuilder uri = new StringBuilder();
+		uri.append(config.getUserHost()).append(config.getUserContextPath()).append(config.getUserUpdateEndpoint());
+		UserDetailResponse userResponse = ownerCall(userRequest, uri);
+		if (userResponse != null && !userResponse.getUser().isEmpty()) {
+			userUpdated = userResponse.getUser().get(0);
+		} else {
+			errorMap.put(VehicleErrorConstants.INVALID_VEHICLE_OWNER,
+					"Unable to Update UserDetails to the existing Vehicle !");
+		}
+		return userUpdated;
 
 	}
 
@@ -180,6 +206,9 @@ public class UserService {
 
 		if (!StringUtils.isEmpty(owner.getMobileNumber())) {
 			ownerSearchRequest.setMobileNumber(owner.getMobileNumber());
+		}
+		if (!StringUtils.isEmpty(owner.getName())) {
+			ownerSearchRequest.setName(owner.getName());
 		}
 		StringBuilder uri = new StringBuilder(config.getUserHost()).append(config.getUserSearchEndpoint());
 		return ownerCall(ownerSearchRequest, uri);
