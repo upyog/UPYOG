@@ -1,5 +1,6 @@
 package org.egov.pt.models;
 
+import java.util.List;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -9,6 +10,7 @@ import io.swagger.annotations.ApiModelProperty;
 import org.egov.pt.models.Address;
 import org.egov.pt.models.Applicant;
 import org.egov.pt.models.AuditDetails;
+import org.javers.core.metamodel.annotation.DiffIgnore;
 import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
@@ -67,7 +69,12 @@ public class PetRegistrationApplication   {
         
         @JsonProperty("petDetails")
         private PetDetails petDetails = null;
-                
+           
+        @JsonProperty("documents")
+    	@Valid
+    	@DiffIgnore
+    	private List<Document> documents;
+        
         @Valid
         @JsonProperty("workflow")
         private Workflow workflow = null; 

@@ -300,6 +300,12 @@ public class PropertyQueryBuilder {
 			builder.append("address.locality = ?");
 			preparedStmtList.add(criteria.getLocality());
 		}
+		if (null != criteria.getDoorNo()) {
+
+			addClauseIfRequired(preparedStmtList,builder);
+			builder.append("address.doorno = ?");
+			preparedStmtList.add(criteria.getDoorNo());
+		}
 
 		Set<String> propertyIds = criteria.getPropertyIds();
 		if (!CollectionUtils.isEmpty(propertyIds)) {
