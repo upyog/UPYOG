@@ -77,8 +77,9 @@ public class PayService {
 		if(BigDecimal.ONE.compareTo(noOfDays) <= 0) noOfDays = noOfDays.add(BigDecimal.ONE);
 		BigDecimal penalty = getApplicablePenalty(waterCharge, noOfDays, timeBasedExemptionMasterMap.get(WSCalculationConstant.WC_PENANLTY_MASTER));
 		BigDecimal interest = getApplicableInterest(waterCharge, noOfDays, timeBasedExemptionMasterMap.get(WSCalculationConstant.WC_INTEREST_MASTER));
-		BigDecimal rebate = getApplicableRebate(waterCharge, demand, timeBasedExemptionMasterMap.get(WSCalculationConstant.WC_INTEREST_MASTER));
+		BigDecimal rebate = getApplicableRebate(waterCharge, demand, timeBasedExemptionMasterMap.get(WSCalculationConstant.WC_REBATE_MASTER));
 
+		log.info("time based applicables are: penalty = " + penalty +" interest = "+  interest+ " rebate = " +rebate);
 		estimates.put(WSCalculationConstant.WS_TIME_PENALTY, penalty.setScale(2, 2));
 		estimates.put(WSCalculationConstant.WS_TIME_INTEREST, interest.setScale(2, 2));
 		estimates.put(WSCalculationConstant.WS_TIME_REBATE, rebate.setScale(2, 2));
