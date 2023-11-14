@@ -202,12 +202,13 @@ public class PayService {
 		BigDecimal rate = null != rebateMaster.get(WSCalculationConstant.RATE_FIELD_NAME)
 				? BigDecimal.valueOf(((Number) rebateMaster.get(WSCalculationConstant.RATE_FIELD_NAME)).doubleValue())
 				: null;
+		log.info("rate amount applicable"+ rate);
 
 		BigDecimal flatAmt = null != rebateMaster.get(WSCalculationConstant.FLAT_AMOUNT_FIELD_NAME)
 				? BigDecimal
 						.valueOf(((Number) rebateMaster.get(WSCalculationConstant.FLAT_AMOUNT_FIELD_NAME)).doubleValue())
 				: BigDecimal.ZERO;
-		log.info("rate amount applicable"+ rate);
+		log.info("flatAmt applicable"+ rate);
 
 		if (rate == null)
 			applicableRebate = flatAmt.compareTo(waterCharge) > 0 ? BigDecimal.ZERO : flatAmt;
@@ -216,7 +217,7 @@ public class PayService {
 			applicableRebate = waterCharge.multiply(rate.divide(WSCalculationConstant.HUNDRED));
 		}
 		//applicableInterest.multiply(noOfDays.divide(BigDecimal.valueOf(365), 6, 5));
-		log.info("Days allowed for rebate "+ daysApplicable);
+		log.info("Rebate amount is "+ applicableRebate);
 
 		return applicableRebate;
 	}
