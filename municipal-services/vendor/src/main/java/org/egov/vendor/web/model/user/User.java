@@ -62,7 +62,7 @@ public class User {
     @JsonProperty("gender")
     private String gender;
 
-    @NotNull
+    // @NotNull
     @SafeHtml
     @Pattern(regexp = "^[0-9]{10}$", message = "MobileNumber should be 10 digit number")
     @JsonProperty("mobileNumber")
