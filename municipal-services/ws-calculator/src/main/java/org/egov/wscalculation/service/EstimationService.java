@@ -44,6 +44,9 @@ public class EstimationService {
 	
 	@Autowired
 	private WSCalculationUtil wSCalculationUtil;
+	
+	@Autowired
+	private PayService payService;
 
 	/**
 	 * Generates a List of Tax head estimates with tax head code, tax head
@@ -80,6 +83,8 @@ public class EstimationService {
 				(JSONArray) masterData.get(WSCalculationConstant.CALCULATION_ATTRIBUTE_CONST));
 		timeBasedExemptionMasterMap.put(WSCalculationConstant.WC_WATER_CESS_MASTER,
 				(JSONArray) (masterData.getOrDefault(WSCalculationConstant.WC_WATER_CESS_MASTER, null)));
+		timeBasedExemptionMasterMap.put(WSCalculationConstant.WC_REBATE_MASTER,
+				(JSONArray) (masterData.getOrDefault(WSCalculationConstant.WC_REBATE_MASTER, null)));
 		// mDataService.setWaterConnectionMasterValues(requestInfo, tenantId,
 		// billingSlabMaster,
 		// timeBasedExemptionMasterMap);
@@ -120,6 +125,15 @@ public class EstimationService {
 			estimates.add(TaxHeadEstimate.builder().taxHeadCode(WSCalculationConstant.WS_WATER_CESS)
 					.estimateAmount(waterCess.setScale(2, 2)).build());
 		}
+		
+
+		if (timeBasedExemptionsMasterMap.get(WSCalculationConstant.WC_REBATE_MASTER) != null) {
+			BigDecimal rebate;
+			rebate = payService.getApplicableRebate(waterCharge,null,  timeBasedExemptionsMasterMap.get(WSCalculationConstant.WC_REBATE_MASTER));
+			estimates.add(TaxHeadEstimate.builder().taxHeadCode(WSCalculationConstant.WS_TIME_REBATE)
+					.estimateAmount(rebate.setScale(2, 2)).build());
+		}
+		
 		return estimates;
 	}
 

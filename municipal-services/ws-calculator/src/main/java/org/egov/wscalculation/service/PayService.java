@@ -187,7 +187,11 @@ public class PayService {
 		if (null == rebateMaster) return applicableRebate;
 		
 		long currentUTC = System.currentTimeMillis();
-		long numberOfDaysInMillis = currentUTC-demand.getAuditDetails().getCreatedTime() ;
+		long numberOfDaysInMillis =System.currentTimeMillis();
+		if(demand==null)
+			numberOfDaysInMillis=currentUTC-numberOfDaysInMillis;
+		else
+			numberOfDaysInMillis = currentUTC-demand.getAuditDetails().getCreatedTime() ;
 		BigDecimal noOfDays = BigDecimal.valueOf((TimeUnit.MILLISECONDS.toDays(Math.abs(numberOfDaysInMillis))));
 		
 		log.info("noOfDays after demand Generation are "+noOfDays);
