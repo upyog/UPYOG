@@ -83,6 +83,8 @@ public class WSCalculationConstant {
 	public static final String WS_WATER_CESS = "WS_WATER_CESS";
 
 	public static final String WS_CHARGE = "WS_CHARGE";
+	
+	public static final String WS_TIME_REBATE="WS_TIME_REBATE";
 
 	/**
 	 * data fields
