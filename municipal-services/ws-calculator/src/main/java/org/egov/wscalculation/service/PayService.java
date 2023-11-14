@@ -66,7 +66,7 @@ public class PayService {
 	 * @return estimation of time based exemption
 	 */
 	public Map<String, BigDecimal> applyPenaltyRebateAndInterest(BigDecimal waterCharge,
-			String assessmentYear, Map<String, JSONArray> timeBasedExemptionMasterMap, Long billingExpiryDate) {
+			String assessmentYear, Map<String, JSONArray> timeBasedExemptionMasterMap, Long billingExpiryDate, Demand demand) {
 
 		if (BigDecimal.ZERO.compareTo(waterCharge) >= 0)
 			return Collections.emptyMap();
@@ -77,9 +77,11 @@ public class PayService {
 		if(BigDecimal.ONE.compareTo(noOfDays) <= 0) noOfDays = noOfDays.add(BigDecimal.ONE);
 		BigDecimal penalty = getApplicablePenalty(waterCharge, noOfDays, timeBasedExemptionMasterMap.get(WSCalculationConstant.WC_PENANLTY_MASTER));
 		BigDecimal interest = getApplicableInterest(waterCharge, noOfDays, timeBasedExemptionMasterMap.get(WSCalculationConstant.WC_INTEREST_MASTER));
+		BigDecimal rebate = getApplicableRebate(waterCharge, demand, timeBasedExemptionMasterMap.get(WSCalculationConstant.WC_INTEREST_MASTER));
 
 		estimates.put(WSCalculationConstant.WS_TIME_PENALTY, penalty.setScale(2, 2));
 		estimates.put(WSCalculationConstant.WS_TIME_INTEREST, interest.setScale(2, 2));
+		estimates.put(WSCalculationConstant.WS_TIME_REBATE, rebate.setScale(2, 2));
 		return estimates;
 	}
 
@@ -197,18 +199,18 @@ public class PayService {
 		log.info("Days allowed for rebate "+ daysApplicable);
 
 		if (noOfDays.compareTo(daysApplicable) >= 0) {
+			log.info("when days are more than applicable for rebate");
+
 			return applicableRebate;
 		}
 		BigDecimal rate = null != rebateMaster.get(WSCalculationConstant.RATE_FIELD_NAME)
 				? BigDecimal.valueOf(((Number) rebateMaster.get(WSCalculationConstant.RATE_FIELD_NAME)).doubleValue())
 				: null;
-		log.info("rate amount applicable"+ rate);
 
 		BigDecimal flatAmt = null != rebateMaster.get(WSCalculationConstant.FLAT_AMOUNT_FIELD_NAME)
 				? BigDecimal
 						.valueOf(((Number) rebateMaster.get(WSCalculationConstant.FLAT_AMOUNT_FIELD_NAME)).doubleValue())
 				: BigDecimal.ZERO;
-		log.info("flatAmt applicable"+ rate);
 
 		if (rate == null)
 			applicableRebate = flatAmt.compareTo(waterCharge) > 0 ? BigDecimal.ZERO : flatAmt;

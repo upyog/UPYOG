@@ -723,27 +723,15 @@ public class DemandService {
 		List<DemandDetail> details = demand.getDemandDetails();
 
 		Map<String, BigDecimal> interestPenaltyRebateEstimates = payService.applyPenaltyRebateAndInterest(
-				waterChargeApplicable, taxPeriod.getFinancialYear(), timeBasedExemptionMasterMap, expiryDate);
-		
-		
+				waterChargeApplicable, taxPeriod.getFinancialYear(), timeBasedExemptionMasterMap, expiryDate,demand);
 	
-
 		BigDecimal penalty  = interestPenaltyRebateEstimates.get(WSCalculationConstant.WS_TIME_PENALTY);
 		BigDecimal interest = interestPenaltyRebateEstimates.get(WSCalculationConstant.WS_TIME_INTEREST);
-		BigDecimal rebate   = payService.getApplicableRebate(waterChargeApplicable,demand,timeBasedExemptionMasterMap.get(WSCalculationConstant.WC_REBATE_MASTER)); 
-		interestPenaltyRebateEstimates.put(WSCalculationConstant.WS_TIME_REBATE, rebate.setScale(2, 2));
-		
+		BigDecimal rebate   = interestPenaltyRebateEstimates.get(WSCalculationConstant.WS_TIME_REBATE);
 		log.info("penalty amount is " + penalty);
 		log.info("interest amount is " + interest);
 		log.info("rebate amount is " + rebate);
-
-		if(penalty == null)
-			penalty = BigDecimal.ZERO;
-		if(interest == null)
-			interest = BigDecimal.ZERO;
-		if(rebate == null)
-			rebate = BigDecimal.ZERO;
-
+		
 		DemandDetailAndCollection latestPenaltyDemandDetail, latestInterestDemandDetail,latestRebateDemandDetail;
 
 		if (interest.compareTo(BigDecimal.ZERO) != 0) {
