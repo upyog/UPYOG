@@ -570,7 +570,7 @@ public class DemandService {
 			return Collections.emptyList();
 		}
 
-
+		log.info("Demands are of size " + res.getDemands().size());
 		// Loop through the consumerCodes and re-calculate the time base applicable
 		Map<String, Demand> consumerCodeToDemandMap = res.getDemands().stream()
 				.collect(Collectors.toMap(Demand::getId, Function.identity()));
@@ -581,6 +581,7 @@ public class DemandService {
 		List<TaxPeriod> taxPeriods = mstrDataService.getTaxPeriodList(requestInfoWrapper.getRequestInfo(), tenantId, SERVICE_FIELD_VALUE_WS);
 		
 		consumerCodeToDemandMap.forEach((id, demand) ->{
+			log.info(" In Demand Loop +++++++");
 			if (demand.getStatus() != null
 					&& WSCalculationConstant.DEMAND_CANCELLED_STATUS.equalsIgnoreCase(demand.getStatus().toString()))
 				throw new CustomException(WSCalculationConstant.EG_WS_INVALID_DEMAND_ERROR,
@@ -724,6 +725,7 @@ public class DemandService {
 
 		Map<String, BigDecimal> interestPenaltyRebateEstimates = payService.applyPenaltyRebateAndInterest(
 				waterChargeApplicable, taxPeriod.getFinancialYear(), timeBasedExemptionMasterMap, expiryDate,demand);
+		
 	
 		BigDecimal penalty  = interestPenaltyRebateEstimates.get(WSCalculationConstant.WS_TIME_PENALTY);
 		BigDecimal interest = interestPenaltyRebateEstimates.get(WSCalculationConstant.WS_TIME_INTEREST);
@@ -731,7 +733,14 @@ public class DemandService {
 		log.info("penalty amount is " + penalty);
 		log.info("interest amount is " + interest);
 		log.info("rebate amount is " + rebate);
-		
+
+		if(penalty == null)
+			penalty = BigDecimal.ZERO;
+		if(interest == null)
+			interest = BigDecimal.ZERO;
+		if(rebate == null)
+			rebate = BigDecimal.ZERO;
+
 		DemandDetailAndCollection latestPenaltyDemandDetail, latestInterestDemandDetail,latestRebateDemandDetail;
 
 		if (interest.compareTo(BigDecimal.ZERO) != 0) {
