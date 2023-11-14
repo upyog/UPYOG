@@ -13,9 +13,11 @@ import org.egov.wscalculation.web.models.TaxHeadEstimate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
 
 @Service
+@Slf4j
 public class PayService {
 
 	@Autowired
@@ -185,12 +187,15 @@ public class PayService {
 		long numberOfDaysInMillis = currentUTC-demand.getAuditDetails().getCreatedTime() ;
 		BigDecimal noOfDays = BigDecimal.valueOf((TimeUnit.MILLISECONDS.toDays(Math.abs(numberOfDaysInMillis))));
 		
+		log.info("noOfDays after demand Generation are "+noOfDays);
 		BigDecimal daysApplicable = null != rebateMaster.get(WSCalculationConstant.ENDING_DATE_APPLICABLES)
 				? BigDecimal.valueOf(((Number) rebateMaster.get(WSCalculationConstant.ENDING_DATE_APPLICABLES)).intValue())
 				: null;
 	
 		if (daysApplicable == null)
 			return applicableRebate;
+		log.info("Days allowed for rebate "+ daysApplicable);
+
 		if (noOfDays.compareTo(daysApplicable) >= 0) {
 			return applicableRebate;
 		}
@@ -202,6 +207,7 @@ public class PayService {
 				? BigDecimal
 						.valueOf(((Number) rebateMaster.get(WSCalculationConstant.FLAT_AMOUNT_FIELD_NAME)).doubleValue())
 				: BigDecimal.ZERO;
+		log.info("rate amount applicable"+ rate);
 
 		if (rate == null)
 			applicableRebate = flatAmt.compareTo(waterCharge) > 0 ? BigDecimal.ZERO : flatAmt;
@@ -210,6 +216,8 @@ public class PayService {
 			applicableRebate = waterCharge.multiply(rate.divide(WSCalculationConstant.HUNDRED));
 		}
 		//applicableInterest.multiply(noOfDays.divide(BigDecimal.valueOf(365), 6, 5));
+		log.info("Days allowed for rebate "+ daysApplicable);
+
 		return applicableRebate;
 	}
 }
