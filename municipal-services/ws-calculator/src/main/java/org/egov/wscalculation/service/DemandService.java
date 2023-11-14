@@ -731,11 +731,10 @@ public class DemandService {
 		BigDecimal penalty  = interestPenaltyRebateEstimates.get(WSCalculationConstant.WS_TIME_PENALTY);
 		BigDecimal interest = interestPenaltyRebateEstimates.get(WSCalculationConstant.WS_TIME_INTEREST);
 		BigDecimal rebate   = payService.getApplicableRebate(waterChargeApplicable,demand,timeBasedExemptionMasterMap.get(WSCalculationConstant.WC_REBATE_MASTER)); 
-		interestPenaltyRebateEstimates.put(WSCalculationConstant.WS_TIME_REBATE, rebate.negate().setScale(2, 2));
+		interestPenaltyRebateEstimates.put(WSCalculationConstant.WS_TIME_REBATE, rebate.setScale(2, 2));
 		
 		log.info("penalty amount is " + penalty);
 		log.info("interest amount is " + interest);
-
 		log.info("rebate amount is " + rebate);
 
 		if(penalty == null)
