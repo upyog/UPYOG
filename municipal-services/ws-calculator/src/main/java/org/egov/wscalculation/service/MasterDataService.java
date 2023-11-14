@@ -268,6 +268,7 @@ public class MasterDataService {
 		String maxYearFromTheList = "0";
 		long maxStartTime = 0L;
 
+		log.info("Master List is " + masterList.toArray().toString());
 		for (Object object : masterList) {
 
 			Map<String, Object> objMap = (Map<String, Object>) object;
@@ -295,6 +296,9 @@ public class MasterDataService {
 				}
 			}
 		}
+		
+		log.info("Master List selected is " + objToBeReturned.toString());
+
 		return objToBeReturned;
 	}
 

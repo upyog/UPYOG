@@ -719,22 +719,28 @@ public class DemandService {
 		
 		boolean isPenaltyUpdated = false;
 		boolean isInterestUpdated = false;
-		
+		boolean isRebateUpdated = false;
 		List<DemandDetail> details = demand.getDemandDetails();
 
-		Map<String, BigDecimal> interestPenaltyEstimates = payService.applyPenaltyRebateAndInterest(
+		Map<String, BigDecimal> interestPenaltyRebateEstimates = payService.applyPenaltyRebateAndInterest(
 				waterChargeApplicable, taxPeriod.getFinancialYear(), timeBasedExemptionMasterMap, expiryDate);
-		if (null == interestPenaltyEstimates)
-			return isCurrentDemand;
+		
+		
+	
 
-		BigDecimal penalty = interestPenaltyEstimates.get(WSCalculationConstant.WS_TIME_PENALTY);
-		BigDecimal interest = interestPenaltyEstimates.get(WSCalculationConstant.WS_TIME_INTEREST);
+		BigDecimal penalty  = interestPenaltyRebateEstimates.get(WSCalculationConstant.WS_TIME_PENALTY);
+		BigDecimal interest = interestPenaltyRebateEstimates.get(WSCalculationConstant.WS_TIME_INTEREST);
+		BigDecimal rebate   = payService.getApplicableRebate(waterChargeApplicable,demand,timeBasedExemptionMasterMap.get(WSCalculationConstant.WC_REBATE_MASTER)); 
+		interestPenaltyRebateEstimates.put(WSCalculationConstant.WS_TIME_REBATE, rebate.negate().setScale(2, 2));
+		
 		if(penalty == null)
 			penalty = BigDecimal.ZERO;
 		if(interest == null)
 			interest = BigDecimal.ZERO;
+		if(rebate == null)
+			rebate = BigDecimal.ZERO;
 
-		DemandDetailAndCollection latestPenaltyDemandDetail, latestInterestDemandDetail;
+		DemandDetailAndCollection latestPenaltyDemandDetail, latestInterestDemandDetail,latestRebateDemandDetail;
 
 		if (interest.compareTo(BigDecimal.ZERO) != 0) {
 			latestInterestDemandDetail = utils.getLatestDemandDetailByTaxHead(WSCalculationConstant.WS_TIME_INTEREST,
@@ -754,6 +760,15 @@ public class DemandService {
 			}
 		}
 
+		if (rebate.compareTo(BigDecimal.ZERO) != 0) {
+			latestRebateDemandDetail = utils.getLatestDemandDetailByTaxHead(WSCalculationConstant.WS_TIME_REBATE,
+					details);
+			if (latestRebateDemandDetail != null) {
+				updateTaxAmount(rebate, latestRebateDemandDetail);
+				isRebateUpdated = true;
+			}
+		}
+
 		if (!isPenaltyUpdated && penalty.compareTo(BigDecimal.ZERO) > 0)
 			details.add(
 					DemandDetail.builder().taxAmount(penalty.setScale(2, 2)).taxHeadMasterCode(WSCalculationConstant.WS_TIME_PENALTY)
@@ -762,7 +777,13 @@ public class DemandService {
 			details.add(
 					DemandDetail.builder().taxAmount(interest.setScale(2, 2)).taxHeadMasterCode(WSCalculationConstant.WS_TIME_INTEREST)
 							.demandId(demandId).tenantId(tenantId).build());
+		
+		if (!isRebateUpdated && rebate.compareTo(BigDecimal.ZERO) > 0)
+			details.add(
+					DemandDetail.builder().taxAmount(rebate.setScale(2, 2)).taxHeadMasterCode(WSCalculationConstant.WS_TIME_REBATE)
+							.demandId(demandId).tenantId(tenantId).build());
 		}
+
 
 		return isCurrentDemand;
 	}
@@ -850,7 +871,7 @@ log.info("connection after search in cal"+connections.size() + " with from and t
 					}
 					else
 					{
-						return "Demand is already generated for last billing cycle for this consumercode";
+						return "Either connection is Metered or Demand is already generated for last billing cycle for this consumercode";
 					}
 
 		}

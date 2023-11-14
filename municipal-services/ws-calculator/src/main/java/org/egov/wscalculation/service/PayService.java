@@ -1,12 +1,14 @@
 package org.egov.wscalculation.service;
 
 import java.math.BigDecimal;
+import java.sql.Date;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.egov.wscalculation.constants.WSCalculationConstant;
+import org.egov.wscalculation.web.models.Demand;
 import org.egov.wscalculation.web.models.TaxHeadEstimate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -73,6 +75,7 @@ public class PayService {
 		if(BigDecimal.ONE.compareTo(noOfDays) <= 0) noOfDays = noOfDays.add(BigDecimal.ONE);
 		BigDecimal penalty = getApplicablePenalty(waterCharge, noOfDays, timeBasedExemptionMasterMap.get(WSCalculationConstant.WC_PENANLTY_MASTER));
 		BigDecimal interest = getApplicableInterest(waterCharge, noOfDays, timeBasedExemptionMasterMap.get(WSCalculationConstant.WC_INTEREST_MASTER));
+
 		estimates.put(WSCalculationConstant.WS_TIME_PENALTY, penalty.setScale(2, 2));
 		estimates.put(WSCalculationConstant.WS_TIME_INTEREST, interest.setScale(2, 2));
 		return estimates;
@@ -171,5 +174,42 @@ public class PayService {
 		}
 		//applicableInterest.multiply(noOfDays.divide(BigDecimal.valueOf(365), 6, 5));
 		return applicableInterest;
+	}
+	
+	public BigDecimal getApplicableRebate(BigDecimal waterCharge, Demand demand, JSONArray config) {
+		BigDecimal applicableRebate = BigDecimal.ZERO;
+		Map<String, Object> rebateMaster = mDService.getApplicableMaster(estimationService.getAssessmentYear(), config);
+		if (null == rebateMaster) return applicableRebate;
+		
+		long currentUTC = System.currentTimeMillis();
+		long numberOfDaysInMillis = currentUTC-demand.getAuditDetails().getCreatedTime() ;
+		BigDecimal noOfDays = BigDecimal.valueOf((TimeUnit.MILLISECONDS.toDays(Math.abs(numberOfDaysInMillis))));
+		
+		BigDecimal daysApplicable = null != rebateMaster.get(WSCalculationConstant.ENDING_DATE_APPLICABLES)
+				? BigDecimal.valueOf(((Number) rebateMaster.get(WSCalculationConstant.ENDING_DATE_APPLICABLES)).intValue())
+				: null;
+	
+		if (daysApplicable == null)
+			return applicableRebate;
+		if (noOfDays.compareTo(daysApplicable) >= 0) {
+			return applicableRebate;
+		}
+		BigDecimal rate = null != rebateMaster.get(WSCalculationConstant.RATE_FIELD_NAME)
+				? BigDecimal.valueOf(((Number) rebateMaster.get(WSCalculationConstant.RATE_FIELD_NAME)).doubleValue())
+				: null;
+
+		BigDecimal flatAmt = null != rebateMaster.get(WSCalculationConstant.FLAT_AMOUNT_FIELD_NAME)
+				? BigDecimal
+						.valueOf(((Number) rebateMaster.get(WSCalculationConstant.FLAT_AMOUNT_FIELD_NAME)).doubleValue())
+				: BigDecimal.ZERO;
+
+		if (rate == null)
+			applicableRebate = flatAmt.compareTo(waterCharge) > 0 ? BigDecimal.ZERO : flatAmt;
+		else{
+			// rate of interest
+			applicableRebate = waterCharge.multiply(rate.divide(WSCalculationConstant.HUNDRED));
+		}
+		//applicableInterest.multiply(noOfDays.divide(BigDecimal.valueOf(365), 6, 5));
+		return applicableRebate;
 	}
 }
