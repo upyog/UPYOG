@@ -82,7 +82,7 @@ public class PayService {
 		log.info("time based applicables are: penalty = " + penalty +" interest = "+  interest+ " rebate = " +rebate);
 		estimates.put(WSCalculationConstant.WS_TIME_PENALTY, penalty.setScale(2, 2));
 		estimates.put(WSCalculationConstant.WS_TIME_INTEREST, interest.setScale(2, 2));
-		estimates.put(WSCalculationConstant.WS_TIME_REBATE, rebate.setScale(2, 2));
+		estimates.put(WSCalculationConstant.WS_TIME_REBATE, rebate.negate().setScale(2, 2));
 		return estimates;
 	}
 
