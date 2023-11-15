@@ -704,6 +704,7 @@ public class DemandService {
 		BigDecimal waterChargeApplicable = BigDecimal.ZERO;
 		BigDecimal oldPenalty = BigDecimal.ZERO;
 		BigDecimal oldInterest = BigDecimal.ZERO;
+		BigDecimal oldRebate = BigDecimal.ZERO;
 		
 
 		for (DemandDetail detail : demand.getDemandDetails()) {
@@ -715,6 +716,10 @@ public class DemandService {
 			}
 			if (detail.getTaxHeadMasterCode().equalsIgnoreCase(WSCalculationConstant.WS_TIME_INTEREST)) {
 				oldInterest = oldInterest.add(detail.getTaxAmount());
+			}
+			
+			if (detail.getTaxHeadMasterCode().equalsIgnoreCase(WSCalculationConstant.WS_TIME_REBATE)) {
+				oldRebate = oldRebate.add(detail.getTaxAmount());
 			}
 		}
 		
@@ -779,7 +784,7 @@ public class DemandService {
 					DemandDetail.builder().taxAmount(interest.setScale(2, 2)).taxHeadMasterCode(WSCalculationConstant.WS_TIME_INTEREST)
 							.demandId(demandId).tenantId(tenantId).build());
 		
-		if (!isRebateUpdated && rebate.compareTo(BigDecimal.ZERO) > 0)
+		if (!isRebateUpdated && rebate.compareTo(BigDecimal.ZERO) != 0)
 			details.add(
 					DemandDetail.builder().taxAmount(rebate.setScale(2, 2)).taxHeadMasterCode(WSCalculationConstant.WS_TIME_REBATE)
 							.demandId(demandId).tenantId(tenantId).build());
@@ -835,7 +840,7 @@ public class DemandService {
 			
 		List<WaterConnection> connections = waterCalculatorDao.getConnection(bulkBillCriteria.getTenantId(),bulkBillCriteria.getConsumerCode(),
 							WSCalculationConstant.nonMeterdConnection, fromDate, toDate);
-log.info("connection after search in cal"+connections.size() + " with from and to date as" + fromDate +"  "+ toDate );
+		log.info("connection after search in cal"+connections.size() + " with from and to date as" + fromDate +"  "+ toDate );
 		connections = enrichmentService.filterConnections(connections);
 					String assessmentYear = estimationService.getAssessmentYear();
 					log.info("Size of the connection list after filter : "+ connections.size());

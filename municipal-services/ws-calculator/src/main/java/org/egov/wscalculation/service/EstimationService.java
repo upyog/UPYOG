@@ -131,7 +131,7 @@ public class EstimationService {
 			BigDecimal rebate;
 			rebate = payService.getApplicableRebate(waterCharge,null,  timeBasedExemptionsMasterMap.get(WSCalculationConstant.WC_REBATE_MASTER));
 			estimates.add(TaxHeadEstimate.builder().taxHeadCode(WSCalculationConstant.WS_TIME_REBATE)
-					.estimateAmount(rebate.setScale(2, 2)).build());
+					.estimateAmount(rebate.negate().setScale(2, 2)).build());
 		}
 		
 		return estimates;
