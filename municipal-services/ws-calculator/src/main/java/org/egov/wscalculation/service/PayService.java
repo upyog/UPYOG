@@ -74,6 +74,7 @@ public class PayService {
 		long currentUTC = System.currentTimeMillis();
 		long numberOfDaysInMillis = billingExpiryDate - currentUTC;
 		BigDecimal noOfDays = BigDecimal.valueOf((TimeUnit.MILLISECONDS.toDays(Math.abs(numberOfDaysInMillis))));
+		log.info("No. of days for Demand expiry are ::" + noOfDays );
 		if(BigDecimal.ONE.compareTo(noOfDays) <= 0) noOfDays = noOfDays.add(BigDecimal.ONE);
 		BigDecimal penalty = getApplicablePenalty(waterCharge, noOfDays, timeBasedExemptionMasterMap.get(WSCalculationConstant.WC_PENANLTY_MASTER));
 		BigDecimal interest = getApplicableInterest(waterCharge, noOfDays, timeBasedExemptionMasterMap.get(WSCalculationConstant.WC_INTEREST_MASTER));
@@ -153,6 +154,7 @@ public class PayService {
 		BigDecimal applicableInterest = BigDecimal.ZERO;
 		Map<String, Object> interestMaster = mDService.getApplicableMaster(estimationService.getAssessmentYear(), config);
 		if (null == interestMaster) return applicableInterest;
+		
 		BigDecimal daysApplicable = null != interestMaster.get(WSCalculationConstant.DAYA_APPLICABLE_NAME)
 				? BigDecimal.valueOf(((Number) interestMaster.get(WSCalculationConstant.DAYA_APPLICABLE_NAME)).intValue())
 				: null;
@@ -177,7 +179,7 @@ public class PayService {
 			// rate of interest
 			applicableInterest = waterCharge.multiply(rate.divide(WSCalculationConstant.HUNDRED));
 		}
-		//applicableInterest.multiply(noOfDays.divide(BigDecimal.valueOf(365), 6, 5));
+		applicableInterest.multiply(noOfDays.divide(BigDecimal.valueOf(365), 6, 5));
 		return applicableInterest;
 	}
 	
@@ -203,7 +205,7 @@ public class PayService {
 			return applicableRebate;
 		log.info("Days allowed for rebate "+ daysApplicable);
 
-		if (noOfDays.compareTo(daysApplicable) >= 0) {
+		if (noOfDays.compareTo(daysApplicable) > 0) {
 			log.info("when days are more than applicable for rebate");
 
 			return applicableRebate;
@@ -223,7 +225,6 @@ public class PayService {
 			// rate of interest
 			applicableRebate = waterCharge.multiply(rate.divide(WSCalculationConstant.HUNDRED));
 		}
-		//applicableInterest.multiply(noOfDays.divide(BigDecimal.valueOf(365), 6, 5));
 		log.info("Rebate amount is "+ applicableRebate);
 
 		return applicableRebate;
