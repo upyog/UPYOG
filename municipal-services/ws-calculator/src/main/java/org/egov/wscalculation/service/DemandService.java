@@ -730,14 +730,16 @@ public class DemandService {
 
 		Map<String, BigDecimal> interestPenaltyRebateEstimates = payService.applyPenaltyRebateAndInterest(
 				waterChargeApplicable, taxPeriod.getFinancialYear(), timeBasedExemptionMasterMap, expiryDate,demand);
-		
+		log.info("old penalty amount is " + oldPenalty);
+		log.info("old interest amount is " + oldInterest);
+		log.info("old rebate amount is " + oldRebate);
 	
 		BigDecimal penalty  = interestPenaltyRebateEstimates.get(WSCalculationConstant.WS_TIME_PENALTY);
 		BigDecimal interest = interestPenaltyRebateEstimates.get(WSCalculationConstant.WS_TIME_INTEREST);
 		BigDecimal rebate   = interestPenaltyRebateEstimates.get(WSCalculationConstant.WS_TIME_REBATE);
-		log.info("penalty amount is " + penalty);
-		log.info("interest amount is " + interest);
-		log.info("rebate amount is " + rebate);
+		log.info("penalty amount after calculation is " + penalty);
+		log.info("interest amount after calculation  is " + interest);
+		log.info("rebate amount after calculation is " + rebate);
 
 		if(penalty == null)
 			penalty = BigDecimal.ZERO;
@@ -766,11 +768,11 @@ public class DemandService {
 			}
 		}
 
-		if (rebate.compareTo(BigDecimal.ZERO) != 0) {
+		if (oldRebate.compareTo(BigDecimal.ZERO) != 0 || rebate.compareTo(BigDecimal.ZERO) != 0) {
 			latestRebateDemandDetail = utils.getLatestDemandDetailByTaxHead(WSCalculationConstant.WS_TIME_REBATE,
 					details);
 			if (latestRebateDemandDetail != null) {
-				updateTaxAmount(rebate, latestRebateDemandDetail);
+				updateRebate(rebate, latestRebateDemandDetail);
 				isRebateUpdated = true;
 			}
 		}
@@ -805,6 +807,18 @@ public class DemandService {
 	 */
 	private void updateTaxAmount(BigDecimal newAmount, DemandDetailAndCollection latestDetailInfo) {
 		BigDecimal diff = newAmount.subtract(latestDetailInfo.getTaxAmountForTaxHead());
+		BigDecimal newTaxAmountForLatestDemandDetail = latestDetailInfo.getLatestDemandDetail().getTaxAmount()
+				.add(diff);
+		latestDetailInfo.getLatestDemandDetail().setTaxAmount(newTaxAmountForLatestDemandDetail);
+	}
+	
+	private void updateRebate(BigDecimal newAmount, DemandDetailAndCollection latestDetailInfo) {
+		BigDecimal diff =BigDecimal.ZERO;
+		if(newAmount.compareTo(BigDecimal.ZERO)==0)
+			diff=BigDecimal.ZERO;
+		else
+			
+			diff= newAmount;
 		BigDecimal newTaxAmountForLatestDemandDetail = latestDetailInfo.getLatestDemandDetail().getTaxAmount()
 				.add(diff);
 		latestDetailInfo.getLatestDemandDetail().setTaxAmount(newTaxAmountForLatestDemandDetail);
