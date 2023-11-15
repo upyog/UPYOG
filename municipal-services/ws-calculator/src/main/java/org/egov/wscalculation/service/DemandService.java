@@ -817,11 +817,11 @@ public class DemandService {
 		if(newAmount.compareTo(BigDecimal.ZERO)==0)
 			diff=BigDecimal.ZERO;
 		else
-			
 			diff= newAmount;
-		BigDecimal newTaxAmountForLatestDemandDetail = latestDetailInfo.getLatestDemandDetail().getTaxAmount()
-				.add(diff);
-		latestDetailInfo.getLatestDemandDetail().setTaxAmount(newTaxAmountForLatestDemandDetail);
+		
+		log.info("Rebate after calculation is "+ diff);
+		
+		latestDetailInfo.getLatestDemandDetail().setTaxAmount(diff);
 	}
 	
 	
