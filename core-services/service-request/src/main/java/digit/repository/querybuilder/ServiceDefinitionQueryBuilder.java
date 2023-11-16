@@ -66,17 +66,18 @@ public class ServiceDefinitionQueryBuilder {
         if(!ObjectUtils.isEmpty(criteria.getTodaysDate()))
         {
             System.out.println("inside todays date query");
-            if(!ObjectUtils.isEmpty(criteria.getStatus()) && criteria.getStatus().equals("Active")){
+            if(!ObjectUtils.isEmpty(criteria.getStatus()) && criteria.getStatus().equalsIgnoreCase("Active")){
                 addClauseIfRequired(query, preparedStmtList);
                 System.out.println("inside active query");
-                query.append("to_timestamp((additionaldetails->>'startDate')::bigint) < to_timestamp(?::bigint)");
-                query.append(" AND to_timestamp((additionaldetails->>'endDate')::bigint) > to_timestamp(?::bigint)");
+                query.append(" AND to_timestamp((sd.additionaldetails->>'endDate')::bigint) > to_timestamp(?::bigint)");
                 preparedStmtList.add(criteria.getTodaysDate());
                 preparedStmtList.add(criteria.getTodaysDate());
-            }else if(!ObjectUtils.isEmpty(criteria.getStatus()) && criteria.getStatus().equals("Inactive")){
+            }else if(!ObjectUtils.isEmpty(criteria.getStatus()) && criteria.getStatus().equalsIgnoreCase("Inactive")){
                 addClauseIfRequired(query, preparedStmtList);
-                query.append(" to_timestamp((additionaldetails->>'startDate')::bigint) > to_timestamp(?::bigint)");
-                query.append(" AND to_timestamp((additionaldetails->>'endDate')::bigint) < to_timestamp(?::bigint)");
+                
+                query.append(" to_timestamp((sd.additionaldetails->>'startDate')::bigint) < to_timestamp(?::bigint)");
+                query.append(" AND to_timestamp((sd.additionaldetails->>'endDate')::bigint) < to_timestamp(?::bigint)");
+               
                 preparedStmtList.add(criteria.getTodaysDate());
                 preparedStmtList.add(criteria.getTodaysDate());
             }
@@ -84,7 +85,7 @@ public class ServiceDefinitionQueryBuilder {
 
         if(!ObjectUtils.isEmpty(criteria.getPostedBy())){
             addClauseIfRequired(query, preparedStmtList);
-            query.append("sd.additionaldetails->>'postedBy' = ?");
+            query.append("LOWER(sd.additionaldetails->>'postedBy') ILIKE ?");
             preparedStmtList.add(criteria.getPostedBy());        
         }
 
@@ -182,13 +183,12 @@ public class ServiceDefinitionQueryBuilder {
             if(!ObjectUtils.isEmpty(criteria.getStatus()) && criteria.getStatus().equalsIgnoreCase("Active")){
                 addClauseIfRequired(query, preparedStmtList);
                 System.out.println("inside active query");
-                query.append("to_timestamp((sd.additionaldetails->>'startDate')::bigint) < to_timestamp(?::bigint)");
                 query.append(" AND to_timestamp((sd.additionaldetails->>'endDate')::bigint) > to_timestamp(?::bigint)");
                 preparedStmtList.add(criteria.getTodaysDate());
                 preparedStmtList.add(criteria.getTodaysDate());
-            }else if(!ObjectUtils.isEmpty(criteria.getStatus()) && criteria.getStatus().equals("Inactive")){
+            }else if(!ObjectUtils.isEmpty(criteria.getStatus()) && criteria.getStatus().equalsIgnoreCase("Inactive")){
                 addClauseIfRequired(query, preparedStmtList);
-                query.append(" to_timestamp((sd.additionaldetails->>'startDate')::bigint) > to_timestamp(?::bigint)");
+                query.append(" to_timestamp((sd.additionaldetails->>'startDate')::bigint) < to_timestamp(?::bigint)");
                 query.append(" AND to_timestamp((sd.additionaldetails->>'endDate')::bigint) < to_timestamp(?::bigint)");
                 preparedStmtList.add(criteria.getTodaysDate());
                 preparedStmtList.add(criteria.getTodaysDate());
@@ -197,7 +197,7 @@ public class ServiceDefinitionQueryBuilder {
 
         if(!ObjectUtils.isEmpty(criteria.getPostedBy())){
             addClauseIfRequired(query, preparedStmtList);
-            query.append("sd.additionaldetails->>'postedBy' = ?");
+            query.append("LOWER(sd.additionaldetails->>'postedBy') ILIKE ?");
             preparedStmtList.add(criteria.getPostedBy());        
         }
 
