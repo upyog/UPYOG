@@ -130,7 +130,14 @@ export const PaymentService = {
       auth: true,
       params: { tenantId, ...params },
     }),
-
+    recieptSearchNew: (tenantId, params) =>
+    Request({
+      url:Urls.payment.obps_Reciept_Search,
+      method: "POST",
+      // do not change this directly add a param if needed
+      auth: true,
+      params: { tenantId, ...params },
+    }),
   getBulkPdfRecordsDetails: (filters) =>
     Request({
       url: Urls.payment.getBulkPdfRecordsDetails,
