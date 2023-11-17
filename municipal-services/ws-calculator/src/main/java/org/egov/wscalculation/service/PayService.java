@@ -74,8 +74,10 @@ public class PayService {
 		long currentUTC = System.currentTimeMillis();
 		long numberOfDaysInMillis = billingExpiryDate - currentUTC;
 		BigDecimal noOfDays = BigDecimal.valueOf((TimeUnit.MILLISECONDS.toDays(Math.abs(numberOfDaysInMillis))));
-		log.info("No. of days for Demand expiry are ::" + noOfDays );
+		log.info("No. of days for Demand expiry are ::" + noOfDays );//19648
 		if(BigDecimal.ONE.compareTo(noOfDays) <= 0) noOfDays = noOfDays.add(BigDecimal.ONE);
+		log.info("No. of days for Demand expiry after comparison are ::" + noOfDays );
+
 		BigDecimal penalty = getApplicablePenalty(waterCharge, noOfDays, timeBasedExemptionMasterMap.get(WSCalculationConstant.WC_PENANLTY_MASTER));
 		BigDecimal interest = getApplicableInterest(waterCharge, noOfDays, timeBasedExemptionMasterMap.get(WSCalculationConstant.WC_INTEREST_MASTER));
 		BigDecimal rebate = getApplicableRebate(waterCharge, demand, timeBasedExemptionMasterMap.get(WSCalculationConstant.WC_REBATE_MASTER));
@@ -160,8 +162,15 @@ public class PayService {
 				: null;
 		if (daysApplicable == null)
 			return applicableInterest;
+		
+		log.info("No of days in interest " + noOfDays);
+		
 		BigDecimal daysDiff = noOfDays.subtract(daysApplicable);
+		log.info("No of days in interest after difference of daysApplicable " + daysDiff);
+		// if daysDiff < 1 interest zero
 		if (daysDiff.compareTo(BigDecimal.ONE) < 0) {
+			log.info("No of days are less than one");
+
 			return applicableInterest;
 		}
 		BigDecimal rate = null != interestMaster.get(WSCalculationConstant.RATE_FIELD_NAME)
