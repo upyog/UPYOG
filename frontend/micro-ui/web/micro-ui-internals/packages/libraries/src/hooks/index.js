@@ -13,6 +13,7 @@ import {
   useGetPaymentRulesForBusinessServices,
   useDemandSearch,
   useRecieptSearch,
+  useRecieptSearchNew,
   usePaymentSearch,
   useBulkPdfDetails,
 } from "./payment";
@@ -511,6 +512,7 @@ const Hooks = {
   useApplicationStatusGeneral,
   useModuleTenants,
   useRecieptSearch,
+  useRecieptSearchNew,
   usePaymentSearch,
   useNewInboxGeneral,
   useEvents,
