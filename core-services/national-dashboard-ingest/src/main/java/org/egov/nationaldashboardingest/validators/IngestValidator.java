@@ -407,7 +407,9 @@ public class IngestValidator {
         Set < String > usageCategory = new HashSet < String > ();
         HashMap < String, Object > map = ingestData.getMetrics();
         List < String > keyToFetch = null;
-        Boolean validCounts = false;
+        Boolean isValid=false;
+        int validCounts=0;
+        
         Boolean isUsageCategoryInvalid = false;
 
         if (ingestData.getModule() != null && ingestData.getModule().equals("PT")) {
@@ -436,16 +438,15 @@ public class IngestValidator {
                 }
             }
     		for (String migratedTenants: usageCategory) {
-                for (String Usagemdms: usageList)
-                    if (Usagemdms.equals(migratedTenants)) {
-                    	validCounts = true;
-                        break;
-               }
-                    else {
-                    	validCounts = false;
-                    }
+    			isValid=usageList.contains(migratedTenants); 
+    			if(!isValid)
+    				break;
+    			else
+    				validCounts++;
+    				
+    				
             }
-            if(!validCounts)
+            if(validCounts==usageCategory.size())
         		isUsageCategoryInvalid=true;
         }
 

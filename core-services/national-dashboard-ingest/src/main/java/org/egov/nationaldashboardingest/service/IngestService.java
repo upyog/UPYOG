@@ -63,14 +63,14 @@ public class IngestService {
         
         // Validate if record for the day is already present
         IngestAckData dataToDb = ingestValidator.verifyIfDataAlreadyIngested(ingestRequest.getIngestData());
-
+        // IngestAckData dataToDb =null;
         
         ingestRequest.getIngestData().forEach(data -> {
 
             // Validates that no cross state data is being ingested, i.e. employee of state X cannot insert data for state Y
             ingestValidator.verifyCrossStateRequest(data, ingestRequest.getRequestInfo());
             Boolean isUsageCategoryInvalid = ingestValidator.verifyUsage(data, usageList);
-            if(isUsageCategoryInvalid)
+            if(!isUsageCategoryInvalid)
                 throw new CustomException("EG_DS_INVALID_USAGE_ERR", "Invalid Usage Category!!");
 
             // Validates whether the fields configured for a given module are present in payload
