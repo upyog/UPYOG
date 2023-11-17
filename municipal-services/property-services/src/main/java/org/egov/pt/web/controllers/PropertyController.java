@@ -85,6 +85,17 @@ public class PropertyController {
     				
     		}
     	}
+    	PropertyCriteria propertyCriteria=new PropertyCriteria();
+    	propertyCriteria.setIsRequestForDuplicatePropertyValidation(true);
+    	propertyCriteria.setTenantId(propertyRequest.getProperty().getTenantId());
+    	propertyCriteria.setLocality(propertyRequest.getProperty().getAddress().getLocality().getCode());
+    	propertyCriteria.setDoorNo(propertyRequest.getProperty().getAddress().getDoorNo());
+    	propertyCriteria.setMobileNumber(propertyRequest.getProperty().getOwners().get(0).getMobileNumber());
+    	propertyCriteria.setName(propertyRequest.getProperty().getOwners().get(0).getName());
+    	List<Property> properties=propertyService.searchProperty(propertyCriteria,propertyRequest.getRequestInfo());
+    	if(properties.size()>0)
+			throw new CustomException(null,"Property already exists in the system with selected tenant,owner name, mobile number,locality and Door No!!");
+
         Property property = propertyService.createProperty(propertyRequest);
         ResponseInfo resInfo = responseInfoFactory.createResponseInfoFromRequestInfo(propertyRequest.getRequestInfo(), true);
         PropertyResponse response = PropertyResponse.builder()
@@ -116,7 +127,18 @@ public class PropertyController {
     				
     		}
     	}
- 
+    	PropertyCriteria propertyCriteria=new PropertyCriteria();
+    	propertyCriteria.setIsRequestForDuplicatePropertyValidation(true);
+    	propertyCriteria.setTenantId(propertyRequest.getProperty().getTenantId());
+    	propertyCriteria.setLocality(propertyRequest.getProperty().getAddress().getLocality().getCode());
+    	propertyCriteria.setDoorNo(propertyRequest.getProperty().getAddress().getDoorNo());
+    	propertyCriteria.setMobileNumber(propertyRequest.getProperty().getOwners().get(0).getMobileNumber());
+    	propertyCriteria.setName(propertyRequest.getProperty().getOwners().get(0).getName());
+    	List<Property> properties=propertyService.searchProperty(propertyCriteria,propertyRequest.getRequestInfo());
+    	if(properties.size()>0)
+			throw new CustomException(null,"Property already exists in the system with selected tenant,owner name, mobile number,locality and Door No!!");
+
+
         Property property = propertyService.updateProperty(propertyRequest);
         ResponseInfo resInfo = responseInfoFactory.createResponseInfoFromRequestInfo(propertyRequest.getRequestInfo(), true);
         PropertyResponse response = PropertyResponse.builder()
