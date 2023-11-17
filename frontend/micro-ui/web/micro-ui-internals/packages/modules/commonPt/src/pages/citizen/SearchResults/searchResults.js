@@ -161,8 +161,9 @@ const PropertySearchResults = ({ template, header, actionButtonLabel, isMutation
   };
 
   const sendOtpToUser = async (record) => {
+    sessionStorage.setItem("Digit_OBPS_PT",JSON.stringify(record))
     if(onSelect) {
-      sessionStorage.setItem("Digit_OBPS_PT",JSON.stringify(record))
+    
       onSelect('cptId', { id: record.property_id });
 
     } else {
