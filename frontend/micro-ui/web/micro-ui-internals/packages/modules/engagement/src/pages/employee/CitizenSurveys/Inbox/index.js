@@ -57,8 +57,16 @@ const Inbox = ({ parentRoute }) => {
   function formReducer(state, payload) {
     switch (payload.action) {
       case "mutateSearchForm":
-        Digit.SessionStorage.set("CITIZENSURVEY.INBOX", { ...state, searchForm: payload.data })
-        return { ...state, searchForm: payload.data };
+        Digit.SessionStorage.set("CITIZENSURVEY.INBOX", { ...state, searchForm: payload.data , ServiceDefinitionCriteria:{
+          "code": [],
+          "postedBy": null,
+          "module": ["engagement"],
+        }})
+        return { ...state, searchForm: payload.data,ServiceDefinitionCriteria: {"tenantId": tenantId,
+        "code": [],
+        "postedBy": null,
+        "module": ["engagement"],
+      }  };
       case "mutateFilterForm":
         // Digit.SessionStorage.set("CITIZENSURVEY.INBOX", { ...state, filterForm: payload.data })
         // return { ...state, filterForm: payload.data };
