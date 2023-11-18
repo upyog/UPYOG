@@ -411,7 +411,11 @@ public class IngestValidator {
         int validCounts=0;
         
         Boolean isUsageCategoryInvalid = false;
-
+        if (ingestData.getModule() != null && ingestData.getModule().equals("PGR") || ingestData.getModule() != null && ingestData.getModule().equals("TL")) {
+            keyToFetch = null;
+            isUsageCategoryInvalid = true;
+        }
+    
         if (ingestData.getModule() != null && ingestData.getModule().equals("PT")) {
             keyToFetch = applicationProperties.getNationalDashboardUsageTypePT();
         }
