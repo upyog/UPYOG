@@ -7,12 +7,15 @@ import Timeline from "../components/TLTimeline";
 const PTSelectStreet = ({ t, config, onSelect, userType, formData, formState, setError, clearErrors }) => {
   const onSkip = () => onSelect();
   const [focusIndex, setFocusIndex] = useState({ index: -1, type: "" });
+  const [street,setStreet]=useState(formData?.address.street)
+  const [doorNo,setDoorNo]=useState(formData?.address.doorNo )
+
   const { control, formState: localFormState, watch, setError: setLocalError, clearErrors: clearLocalErrors, setValue, trigger } = useForm();
   const formValue = watch();
   const { errors } = localFormState;
   const checkLocation = window.location.href.includes("tl/new-application") || window.location.href.includes("tl/renew-application-details");
   const isRenewal = window.location.href.includes("edit-application") || window.location.href.includes("tl/renew-application-details");
-
+  let validation = {};
   let inputs;
   if (window.location.href.includes("tl")) {
     inputs = config.inputs;
@@ -24,6 +27,7 @@ const PTSelectStreet = ({ t, config, onSelect, userType, formData, formState, se
         label: "PT_PROPERTY_ADDRESS_STREET_NAME",
         type: "text",
         name: "street",
+        isMandatory:"true",
         validation: {
           pattern: "[a-zA-Z0-9 !@#$%^&*()_+\-={};':\\\\|,.<>/?]{1,64}",
           // maxlength: 256,
@@ -34,6 +38,7 @@ const PTSelectStreet = ({ t, config, onSelect, userType, formData, formState, se
         label: "PT_PROPERTY_ADDRESS_HOUSE_NO",
         type: "text",
         name: "doorNo",
+        isMandatory:"true",
         validation: {
           pattern: "[a-zA-Z0-9 !@#$%^&*()_+\-={};':\\\\|,.<>/?]{1,64}",
           // maxlength: 256,
@@ -62,7 +67,12 @@ const PTSelectStreet = ({ t, config, onSelect, userType, formData, formState, se
     }
     return {};
   };
-
+const setData=(config,data)=>{
+  let dataNew ={street,doorNo}
+  console.log(dataNew,config)
+ 
+  onSelect(config,  dataNew)
+}
   useEffect(() => {
     trigger();
   }, []);
@@ -78,13 +88,19 @@ const PTSelectStreet = ({ t, config, onSelect, userType, formData, formState, se
     const keys = Object.keys(formValue);
     const part = {};
     keys.forEach((key) => (part[key] = formData[config.key]?.[key]));
-
+   
     if (!_.isEqual(formValue, part)) {
       onSelect(config.key, { ...formData[config.key], ...formValue });
       trigger();
     }
+    console.log("formValue",formValue,formData)
   }, [formValue]);
-
+  function selectStreet(e) {
+    setStreet(e.target.value);
+  }
+  function selectDoorNo(e) {
+    setDoorNo(e.target.value);
+  }
   if (userType === "employee") {
     return inputs?.map((input, index) => {
       return (
@@ -120,16 +136,41 @@ const PTSelectStreet = ({ t, config, onSelect, userType, formData, formState, se
       );
     });
   }
+  console.log("street && doorNo",street,doorNo)
   return (
     <React.Fragment>
     {window.location.href.includes("/citizen") ? <Timeline currentStep={1}/> : null}
     <FormStep
-      config={{ ...config, inputs }}
+      config={{ ...config }}
       _defaultValues={{ street: formData?.address.street, doorNo: formData?.address.doorNo }}
-      onSelect={(data) => onSelect(config.key, data)}
+      onSelect={(data) => {setData(config.key,data)}}
       onSkip={onSkip}
+      isDisabled={!street && !doorNo}
       t={t}
-    />
+    >
+        <CardLabel>{`${t("PT_PROPERTY_ADDRESS_STREET_NAME")}*`}</CardLabel>
+          <TextInput
+            t={t}
+            isMandatory={true}
+            type={"text"}
+            optionKey="i18nKey"
+            name="street"
+            onChange={selectStreet}
+            value={street}
+            
+          />
+      <CardLabel>{`${t("PT_PROPERTY_ADDRESS_HOUSE_NO")}*`}</CardLabel>
+          <TextInput
+            t={t}
+            isMandatory={true}
+            type={"text"}
+            optionKey="i18nKey"
+            name="doorNo"
+            onChange={selectDoorNo}
+            value={doorNo}
+           
+          />
+      </FormStep>
     </React.Fragment>
   );
 };
