@@ -23,6 +23,7 @@ const NewApplication = () => {
 
   const onFormValueChange = (setValue, formData, formState) => {
     setSubmitValve(!Object.keys(formState.errors).length);
+    let addressError= formData?.address?.street == "" || formData?.address?.doorNo == "" || !formData?.address?.doorNo || !formData?.address?.street || Object.keys(formState.errors).length? setSubmitValve(false): setSubmitValve(true);
     if (Object.keys(formState.errors).length === 1 && formState.errors?.units?.message === "arv") {
       setSubmitValve(!formData?.units.some((unit) => unit.occupancyType === "RENTED" && !unit.arv));
     }
