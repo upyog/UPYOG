@@ -60,7 +60,7 @@ const FSMRegistry = () => {
     {
       vehicleIds: vehicleIds,
       driverIds: driverIds,
-      status: "ACTIVE",
+      // status: "ACTIVE",
     },
     { enabled: false }
   );
@@ -173,7 +173,7 @@ const FSMRegistry = () => {
           {
             label: t("ES_FSM_REGISTRY_SEARCH_VEHICLE_NUMBER"),
             name: "registrationNumber",
-            pattern: `[A-Z]{2}\\s{1}[0-9]{2}\\s{0,1}[A-Z]{1,2}\\s{1}[0-9]{4}`,
+            pattern: `[A-Z]{2}\\s{0,1}[0-9]{2}\\s{0,1}[A-Z]{0,2}\\s{0,1}[0-9]{4}`,
             title: t("ES_FSM_VEHICLE_FORMAT_TIP"),
           },
         ]

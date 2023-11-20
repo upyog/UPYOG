@@ -44,7 +44,7 @@ const SelectGender = ({ config, onSelect, t, userType, formData }) => {
           className="payment-form-text-input-correction"
           isMandatory={config.isMandatory}
           selected={genderType}
-          option={GenderData}
+          option={GenderData?.sort((a, b) => a.code.localeCompare(b.code))}
           select={selectGenderType}
           optionKey="i18nKey"
           disable={config.disable}
@@ -58,7 +58,7 @@ const SelectGender = ({ config, onSelect, t, userType, formData }) => {
       <Timeline currentStep={2} flow="APPLY" />
       <FormStep config={config} onSelect={onSubmit} onSkip={onSkip} isDisabled={!genderType} t={t}>
         <RadioOrSelect
-          options={GenderData}
+          options={GenderData?.sort((a, b) => a.code.localeCompare(b.code))}
           selectedOption={genderType}
           optionKey="i18nKey"
           onSelect={selectGenderType}
