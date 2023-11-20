@@ -107,7 +107,7 @@ const setData=(config,data)=>{
         <LabelFieldPair key={index}>
           <CardLabel className="card-label-smaller">
             {!checkLocation ? t(input.label) : `${t(input.label)}:`}
-            {config.isMandatory ? " * " : null}
+            {config.isMandatory ? " * " : " * "}
           </CardLabel>
           <div className="field">
             <Controller
@@ -136,7 +136,6 @@ const setData=(config,data)=>{
       );
     });
   }
-  console.log("street && doorNo",street,doorNo)
   return (
     <React.Fragment>
     {window.location.href.includes("/citizen") ? <Timeline currentStep={1}/> : null}
