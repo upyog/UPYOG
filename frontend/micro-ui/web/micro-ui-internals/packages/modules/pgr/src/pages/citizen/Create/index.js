@@ -69,6 +69,7 @@ export const CreateComplaint = () => {
       const { city_complaint, locality_complaint, uploadedImages, complaintType, subType, details, ...values } = paramState;
       const { code: cityCode, name: city } = city_complaint;
       const { code: localityCode, name: localityName } = locality_complaint;
+      const storedpropertyid =sessionStorage.getItem("propertyid")
       const _uploadImages = uploadedImages?.map((url) => ({
         documentType: "PHOTO",
         fileStoreId: url,
@@ -88,6 +89,9 @@ export const CreateComplaint = () => {
         localityName,
         state: stateInfo.name,
         uploadedImages: _uploadImages,
+        additionalDetails: {
+          propertyid: storedpropertyid,
+        },
       };
 
       await dispatch(createComplaint(data));
