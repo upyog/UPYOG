@@ -193,7 +193,7 @@ public class ServiceRequestValidator {
         }
 
         if(System.currentTimeMillis()-lastModifiedTime > config.getComplainMaxIdleTime())
-            throw new CustomException("INVALID_ACTION","Complaint is closed");
+            throw new CustomException("INVALID_ACTION","Complaint has crossed maximum idle days limit after getting resolved.Cannot be re opened ");
 
     }
 
