@@ -284,6 +284,8 @@ public class BillServicev2 {
 			isBillExpired = false;
 		}
 			
+		log.info("Consumer Code to be expired " + cosnumerCodesToBeExpired);
+		log.info("Consumer code not found in bill " + cosnumerCodesNotFoundInBill);
 		/*
 		 * If none of the billDetails in the bills needs to be updated then return the search result
 		 */
