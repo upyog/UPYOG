@@ -691,6 +691,9 @@ public class DemandService {
 		TaxPeriod taxPeriod = taxPeriods.stream().filter(t -> demand.getTaxPeriodFrom().compareTo(t.getFromDate()) >= 0
 				&& demand.getTaxPeriodTo().compareTo(t.getToDate()) <= 0).findAny().orElse(null);
 		
+		log.info("expiry date is ===" + expiryDate);
+		
+		log.info("Current time is ---" + System.currentTimeMillis());
 		if (taxPeriod == null) {
 			log.info("Demand Expired!! ->> Consumer Code "+ demand.getConsumerCode() +" Demand Id -->> "+ demand.getId());
 			return false;
