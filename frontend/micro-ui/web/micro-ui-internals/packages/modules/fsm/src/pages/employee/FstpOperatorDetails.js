@@ -467,7 +467,7 @@ const FstpOperatorDetails = () => {
               textStyle={isMobile ? { width: "100%" } : {}}
               text={
                 <div>
-                  <TextInput type="number" name="vehicleCapacity" value={vehicleCapacity} onChange={(e) => onChangeVehicleCapacity(e.target.value)} />
+                  <TextInput type="number" name="vehicleCapacity" value={vehicleCapacity} onChange={(e) => onChangeVehicleCapacity(e.target.value)} disable={true}/>
                 </div>
               }
               rowContainerStyle={isMobile ? { display: "block" } : { justifyContent: "space-between" }}
