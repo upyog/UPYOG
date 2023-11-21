@@ -21,6 +21,12 @@ const BannerPicker = ({ response }) => {
   const { complaints } = response;
 
   if (complaints && complaints.response && complaints.response.responseInfo) {
+  sessionStorage.removeItem("type" );
+  sessionStorage.removeItem("pincode");
+  sessionStorage.removeItem("tenantId");
+  sessionStorage.removeItem("localityCode");
+  sessionStorage.removeItem("landmark"); 
+  sessionStorage.removeItem("propertyid")
     return (
       <Banner
         message={GetActionMessage(complaints.response.ServiceWrappers[0].workflow)}

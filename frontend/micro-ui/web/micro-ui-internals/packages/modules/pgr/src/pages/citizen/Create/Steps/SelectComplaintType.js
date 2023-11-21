@@ -25,10 +25,22 @@ const SelectComplaintType = ({ t, config, onSelect, value }) => {
   };
 
   const textParams = config.texts;
+  const valuenew= {
+    key  :"PropertyTax",
+    name :"Property Tax"}
 
   const menu = Digit.Hooks.pgr.useComplaintTypes({ stateCode: Digit.ULBService.getCurrentTenantId() });
   const cities = Digit.Hooks.pgr.useTenants();
   const [subTypeMenu, setSubTypeMenu] = useState([]);
+  const pttype=sessionStorage.getItem("type")
+  useEffect(()=>{
+    (async()=>{
+      if (pttype=="PT") {
+        setComplaintType(valuenew);
+        setSubTypeMenu(await serviceDefinitions.getSubMenu("pg.citya", valuenew, t));
+      }
+    })();   
+  },[]) 
  
   function selectedSubType(value) {
    
@@ -43,7 +55,7 @@ const SelectComplaintType = ({ t, config, onSelect, value }) => {
           label: t("CS_COMPLAINT_DETAILS_COMPLAINT_TYPE"),
           isMandatory: true,
           type: "dropdown",
-          populators: <Dropdown option={menu} optionKey="name" id="complaintType" selected={complaintType} select={selectedValue} />,
+          populators: <Dropdown option={menu} optionKey="name" id="complaintType" selected={complaintType} select={selectedValue} disable={pttype}/>,
         },
         {
           label: t("CS_COMPLAINT_DETAILS_COMPLAINT_SUBTYPE"),
