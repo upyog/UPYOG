@@ -1101,12 +1101,13 @@ const generateQRCodes = async (
   for (var i = 0, len = qrcodeMappings.length; i < len; i++) {
     let qrmapping = qrcodeMappings[i];
     let varname = qrmapping.variable;
+    let urlQR='';
+    urlQR=egov_host;
     if(key == 'property-receipt' || key == 'consolidatedreceipt' || key == 'tradelicense-receipt' || key == 'fsm-receipt' || key == 'misc-receipt' || key == 'ws-onetime-receipt')
-    qrmapping.value=egov_host.concat(qrmapping.value);
+    qrmapping.value=urlQR.concat(qrmapping.value);
 
-logger.info("value is " + qrmapping.value) ;   
     let qrtext = mustache.render(qrmapping.value, variableTovalueMap);
-    logger.info("URL is" + qrtext) ; 
+    logger.info("URL is " + qrtext) ; 
     let qrCodeImage = await QRCode.toDataURL(qrtext);
     variableTovalueMap[varname] = qrCodeImage;
   }
