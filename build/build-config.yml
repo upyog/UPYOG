@@ -399,6 +399,13 @@ config:
         image-name: "xstate-webchat"
       - work-dir: "core-services/xstate-webchat/nodejs/db"
         image-name: "xstate-webchat-db"
+  - name: "builds/upyog/core-services/mdms-v2"
+    build:
+      - work-dir: "core-services/mdms-v2"
+        image-name: "mdms-v2"
+        dockerfile: "build/maven/Dockerfile"
+      - work-dir: "core-services/mdms-v2/src/main/resources/db"
+        image-name: "mdms-v2-db"     
                 
 #Municipal Services
 
