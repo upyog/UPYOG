@@ -101,7 +101,7 @@ import {
       enabled: isNational,
     });
   
-    const { data: response, isLoading } = Digit.Hooks.dss.useDashboardConfig("national-overview");
+    const { data: response, isLoading } = Digit.Hooks.dss.useDashboardConfig("mainDashboard");
     const { data: ulbTenants, isLoading: isUlbLoading } = Digit.Hooks.useModuleTenants("DSS");
     const { isLoading: isMdmsLoading, data: mdmsData } = Digit.Hooks.useCommonMDMS(stateCode, "FSM", "FSTPPlantInfo");
     const [showOptions, setShowOptions] = useState(false);
@@ -190,7 +190,7 @@ import {
         setTabState(tabArray[0]);
       }
     }, [tabArray]);
-  
+
     const shareOptions =
       // navigator.share
       //   ? [
@@ -263,16 +263,16 @@ import {
       return <Loader />;
     }
     console.log("dashboardConfig?.[0]?.visualizations",dashboardConfig?.[0]?.visualizations)
-    let b= []
-    let c= dashboardConfig?.[0]?.visualizations[0].vizArray[0].charts.filter((val) =>{
-      if(val.id === "targetCollectionvOverview" ||val.id === "totalCollectionOverview" ||val.id === "totalCollectionv3" || val.id ==="totalNonTaxCollection" ||val.id === "nonTaxRevenueContribution" || val.id ==="StateGDPwiseTotalRevenueCollection" || val.id ==="PropertyTaxRevenuePerHouseholdOverview" || val.id ==="NonTaxRevenuePerHousehold")
-    {
-      return val
-    }
-    })
-  console.log("c1234444",c)
-  dashboardConfig[0].visualizations[0].vizArray[0].charts = c
-    b.push(dashboardConfig?.[0]?.visualizations[0],dashboardConfig?.[0]?.visualizations[2])
+  //   let b= []
+  //   let c= dashboardConfig?.[0]?.visualizations[0].vizArray[0].charts.filter((val) =>{
+  //     if(val.id === "targetCollectionvOverview" ||val.id === "totalCollectionOverview" ||val.id === "totalCollectionv3" || val.id ==="totalNonTaxCollection" ||val.id === "nonTaxRevenueContribution" || val.id ==="StateGDPwiseTotalRevenueCollection" || val.id ==="PropertyTaxRevenuePerHouseholdOverview" || val.id ==="NonTaxRevenuePerHousehold")
+  //   {
+  //     return val
+  //   }
+  //   })
+  // console.log("c1234444",c)
+  // dashboardConfig[0].visualizations[0].vizArray[0].charts = c
+  //   b.push(dashboardConfig?.[0]?.visualizations[0],dashboardConfig?.[0]?.visualizations[2])
     return (
       <FilterContext.Provider value={provided}>
         <div ref={fullPageRef} id="divToPrint">
@@ -492,7 +492,7 @@ import {
               </div>
             )}
           </div>
-          {b
+          {dashboardConfig?.[0]?.visualizations
             .filter((row) => row.name === tabState)
             .map((row, key) => {
               return <Layout rowData={row} key={key} services={screenConfig} configName={dashboardConfig?.[0]?.name} />;
