@@ -11,7 +11,7 @@ const SelectPropertyID = ({ t, config, onSelect, formData, userType, setError: s
   
     const inputs = [
       {
-        label: "CS_FILE_APPLICATION_PROPERTY_ID_LABEL",
+        label: "ES_FILE_APPLICATION_PROPERTY_ID_LABEL",
         type: "text",
         name: "propertyID",
         validation: {
@@ -20,6 +20,9 @@ const SelectPropertyID = ({ t, config, onSelect, formData, userType, setError: s
         },
       },
     ];
+    const goNext=()=>{
+      onSelect(config.key, { ...formData[config.key], ...data })
+    }
   
     useEffect(() => {
       setPropertyID(formData?.additionalDetails?.propertyID);
@@ -44,34 +47,29 @@ const SelectPropertyID = ({ t, config, onSelect, formData, userType, setError: s
     }
   
     if (userType === "employee") {
-      return inputs?.map((input, index) => {
+      
         return (
-          <LabelFieldPair key={index}>
-            <CardLabel className="card-label-smaller">
-              {t(input.label)}
-              {config.isMandatory ? " * " : null}
-             
-            </CardLabel>
-            <TextInput className="form-field" id={input.name} value={propertyID} onChange={onChange} name={input.name || ""} {...input.validation} />
-          </LabelFieldPair>
+          
+            <TextInput className="form-field" id="propertyID" value={propertyID} onChange={onChange} t={t} />
+         
         );
-      });
+     
     }
     const onSkip = () => onSelect();
     return (
       <React.Fragment>
         <Timeline currentStep={1} flow="APPLY" />
         <FormStep
-          t={t}
-          config={{ ...config, inputs }}
-          value={propertyID}
-          onSelect={(data) => onSelect(config.key, { ...formData[config.key], ...data })}
-          
-          onChange={onChange}
-          onSkip={onSkip}
-          forcedError={t(error)}
-        isDisabled={propertyID ? false : true}
-        ></FormStep>
+         t={t}
+         config={{ ...config, inputs }}
+         value={propertyID}
+         onSelect={(data) => onSelect(config.key, { ...formData[config.key], ...data })}
+         
+         onChange={onChange}
+         onSkip={onSkip}
+         forcedError={t(error)}
+       isDisabled={propertyID ? false : true}
+       ></FormStep>
       </React.Fragment>
     );
 };
