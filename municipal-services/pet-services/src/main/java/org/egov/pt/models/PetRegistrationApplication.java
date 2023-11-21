@@ -1,5 +1,6 @@
 package org.egov.pt.models;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -78,5 +79,15 @@ public class PetRegistrationApplication   {
         @Valid
         @JsonProperty("workflow")
         private Workflow workflow = null; 
+        
+        public PetRegistrationApplication addDocumentsItem(Document documentsItem) {
+    		if (this.documents == null) {
+    			this.documents = new ArrayList<>();
+    		}
+
+    		if (null != documentsItem)
+    			this.documents.add(documentsItem);
+    		return this;
+    	}
 }
 

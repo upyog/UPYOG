@@ -1,9 +1,11 @@
 package org.egov.pt.repository.rowmapper;
 
 import org.egov.pt.models.*;
+import org.egov.pt.models.enums.Status;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -35,23 +37,21 @@ public class PetApplicationRowMapper implements ResultSetExtractor<List<PetRegis
 						.createdTime(rs.getLong("pcreatedTime")).lastModifiedBy(rs.getString("plastModifiedBy"))
 						.lastModifiedTime(lastModifiedTime).build();
 				PetDetails petdetails = PetDetails.builder().id(rs.getString("ptid")).petName(rs.getString("ptpetName"))
-						.breedType(rs.getString("ptbreedType")).clinicName(rs.getString("ptclinicName"))
+						.petType(rs.getString("ptpetType")).breedType(rs.getString("ptbreedType")).clinicName(rs.getString("ptclinicName"))
 						.doctorName(rs.getString("ptdoctorName")).lastVaccineDate(rs.getString("ptlastVaccineDate"))
 						.petAge(rs.getString("ptpetAge")).petGender(rs.getString("ptpetGender")).build();
-
+				
 				petRegistrationApplication = PetRegistrationApplication.builder()
 						.applicationNumber(rs.getString("papplicationnumber")).tenantId(rs.getString("ptenantid"))
 						.id(rs.getString("pid"))
-						// .petName(rs.getString("ppetname"))
 						.applicantName(rs.getString("papplicantname"))
-//                        .babyLastName(rs.getString("pbabylastname"))
-						.fatherName("pfathername")
-//                        .motherOfApplicant(mother)
-						// .doctorName(rs.getString("pdoctorname"))
-						// .hospitalName(rs.getString("phospitalname"))
-						// .breedName(rs.getString("pbreedname"))
-						// .petAge(rs.getInt("ppetage"))
+						.fatherName(rs.getString("pfathername"))
+						.emailId(rs.getString("pemailId"))
+						.mobileNumber(rs.getString("pmobileNumber"))
 						.petDetails(petdetails).auditDetails(auditdetails).build();
+				addDocToPetApplication(rs,petRegistrationApplication);
+				 
+				 
 			}
 			addPetRegistrationDetails(rs, petRegistrationApplication);
 			petRegistrationApplicationMap.put(uuid, petRegistrationApplication);
@@ -76,5 +76,28 @@ public class PetApplicationRowMapper implements ResultSetExtractor<List<PetRegis
 				.detail("adetail").registrationId("aregistrationid").build();
 
 		petRegistrationApplication.setAddress(address);
+	}
+	
+	private void addDocToPetApplication(ResultSet rs, PetRegistrationApplication petApplication) throws SQLException {
+		String docId = rs.getString("did");
+		List<Document> docs = petApplication.getDocuments();
+		
+		if (docId == null )
+			return;
+
+		if (!CollectionUtils.isEmpty(docs))
+			for (Document doc : docs) {
+				if (doc.getId().equals(docId))
+					return;
+			}
+
+		Document doc =  Document.builder()
+			.documentType(rs.getString("documentType"))
+			.filestoreId(rs.getString("dfilestoreId"))
+			.documentUid(rs.getString("ddocumentUid"))
+			.id(docId)
+			.build();
+		
+		petApplication.addDocumentsItem(doc);
 	}
 }
