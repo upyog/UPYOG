@@ -490,7 +490,7 @@ public class WSCalculationServiceImpl implements WSCalculationService {
 			List<Object> waterCessMasterList = timeBasedExemptionMasterMap
 					.get(WSCalculationConstant.WC_WATER_CESS_MASTER);
 
-			Map<String, Object> CessMap = mDataService.getApplicableMaster(WSCalculationConstant.Assessment_Year, waterCessMasterList);
+			Map<String, Object> CessMap = mDataService.getApplicableMasterCess(WSCalculationConstant.Assessment_Year, waterCessMasterList);
 			waterCess = waterCessUtil.calculateWaterCess(finalWaterCharge, CessMap);
 
 		}

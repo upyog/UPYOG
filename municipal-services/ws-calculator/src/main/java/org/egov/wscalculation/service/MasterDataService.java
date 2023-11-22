@@ -304,6 +304,47 @@ public class MasterDataService {
 		return objToBeReturned;
 	}
 
+	@SuppressWarnings("unchecked")
+	public Map<String, Object> getApplicableMasterCess(String assessmentYear, List<Object> masterList) {
+
+		Map<String, Object> objToBeReturned = null;
+		String maxYearFromTheList = "0";
+		long maxStartTime = 0L;
+		log.info("assessmentYear "+ assessmentYear);
+		log.info("Master List is " + masterList.toString());
+		for (Object object : masterList) {
+
+			Map<String, Object> objMap = (Map<String, Object>) object;
+			String objFinYear = ((String) objMap.get(WSCalculationConstant.FROMFY_FIELD_NAME)).split("-")[0];
+			if (!objMap.containsKey(WSCalculationConstant.STARTING_DATE_APPLICABLES)) {
+				if (objFinYear.compareTo(assessmentYear.split("-")[0]) == 0)
+					return objMap;
+
+				else if (assessmentYear.split("-")[0].compareTo(objFinYear) > 0
+						&& maxYearFromTheList.compareTo(objFinYear) <= 0) {
+					maxYearFromTheList = objFinYear;
+					objToBeReturned = objMap;
+				}
+			} else {
+				String objStartDay = ((String) objMap.get(WSCalculationConstant.STARTING_DATE_APPLICABLES));
+				if (assessmentYear.split("-")[0].compareTo(objFinYear) >= 0
+						&& maxYearFromTheList.compareTo(objFinYear) <= 0) {
+					maxYearFromTheList = objFinYear;
+					long startTime = getStartDayInMillis(objStartDay);
+					long currentTime = System.currentTimeMillis();
+					if (startTime < currentTime && maxStartTime < startTime) {
+						objToBeReturned = objMap;
+						maxStartTime = startTime;
+					}
+				}
+			}
+		}
+		
+		log.info("Master List selected is " + objToBeReturned.toString());
+
+		return objToBeReturned;
+	}
+
 	/**
 	 * Converts startDay to epoch
 	 * 
@@ -336,13 +377,24 @@ public class MasterDataService {
 			LocalDate demandDate=LocalDate.ofEpochDay(demand.getAuditDetails().getCreatedTime());
 			LocalDate penaltyApplicableDate=demandDate.plusDays(Long.parseLong(startDay));
 			
-			log.info("Penalty is applicable after date " + demandDate.toString() + "for demand with ID " + demand.getId());
+			log.info("Penalty/Interest is applicable after date " + demandDate.toString() + "for demand with ID " + demand.getId());
 			return penaltyApplicableDate.toEpochDay();
 		}
 		
 		return date.getTime();
 	}
 
+	private Long getStartDayInMillis(String startDay) {
+		Date date;
+		
+			try {
+				SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+				 date = df.parse(startDay);
+			} catch (ParseException e) {
+				throw new CustomException("INVALID_START_DAY", "The startDate of the penalty cannot be parsed");
+			}
+			return date.getTime();
+	}
 
 	/**
 	 * Method to calculate exemption based on the Amount and exemption map
