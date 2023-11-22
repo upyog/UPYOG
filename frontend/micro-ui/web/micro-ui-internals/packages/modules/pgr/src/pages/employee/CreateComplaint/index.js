@@ -14,10 +14,12 @@ export const CreateComplaint = ({ parentUrl }) => {
 
   const getCities = () => cities?.filter((e) => e.code === Digit.ULBService.getCurrentTenantId()) || [];
 
-  const [complaintType, setComplaintType] = useState({});
+  const [complaintType, setComplaintType] = useState(JSON?.parse(sessionStorage.getItem("complaintType")) || {});
   const [subTypeMenu, setSubTypeMenu] = useState([]);
-  const [subType, setSubType] = useState({});
+  const [subType, setSubType] = useState(JSON?.parse(sessionStorage.getItem("subType")) || {});
   const [pincode, setPincode] = useState("");
+  const [mobileNumber, setMobileNumber] = useState(sessionStorage.getItem("mobileNumber") || "");
+  const [fullName, setFullName] = useState(sessionStorage.getItem("name") || "");
   const [selectedCity, setSelectedCity] = useState(getCities()[0] ? getCities()[0] : null);
 
   const { data: fetchedLocalities } = Digit.Hooks.useBoundaryLocalities(
@@ -28,7 +30,7 @@ export const CreateComplaint = ({ parentUrl }) => {
     },
     t
   );
-
+console.log("sessionStorage.getItemsessionStorage.getItem",subType)
   const [localities, setLocalities] = useState(fetchedLocalities);
   const [selectedLocality, setSelectedLocality] = useState(null);
   const [canSubmit, setSubmitValve] = useState(false);
@@ -78,16 +80,19 @@ export const CreateComplaint = ({ parentUrl }) => {
       if (value.key === "Others") {
         setSubType({ name: "" });
         setComplaintType(value);
+        sessionStorage.setItem("complaintType",JSON.stringify(value))
         setSubTypeMenu([{ key: "Others", name: t("SERVICEDEFS.OTHERS") }]);
       } else {
         setSubType({ name: "" });
         setComplaintType(value);
+        sessionStorage.setItem("complaintType",JSON.stringify(value))
         setSubTypeMenu(await serviceDefinitions.getSubMenu(tenantId, value, t));
       }
     }
   }
 
   function selectedSubType(value) {
+    sessionStorage.setItem("subType",JSON.stringify(value))
     setSubType(value);
   }
 
@@ -106,7 +111,6 @@ export const CreateComplaint = ({ parentUrl }) => {
     setSubmitted(true);
     !submitted && onSubmit(data);
   };
-
   //On SUbmit
   const onSubmit = async (data) => {
     if (!canSubmit) return;
@@ -134,6 +138,17 @@ export const CreateComplaint = ({ parentUrl }) => {
       setPincodeNotValid(false);
     }
   };
+  const handleMobileNumber = (event) => {
+ 
+    const { value } = event.target;
+    console.log("handleMobileNumber",value)
+    setMobileNumber(value);
+  
+  };
+  const handleName = (event) => {
+    const { value } = event.target;
+    setFullName(value);
+  };
 
   const isPincodeValid = () => !pincodeNotValid;
 
@@ -145,11 +160,16 @@ export const CreateComplaint = ({ parentUrl }) => {
           label: t("ES_CREATECOMPLAINT_MOBILE_NUMBER"),
           isMandatory: true,
           type: "text",
+          value:mobileNumber,
+          onChange: handleMobileNumber,
           populators: {
             name: "mobileNumber",
+            onChange: handleMobileNumber,
             validation: {
               required: true,
               pattern: /^[6-9]\d{9}$/,
+             
+              
             },
             componentInFront: <div className="employee-card-input employee-card-input--front">+91</div>,
             error: t("CORE_COMMON_MOBILE_ERROR"),
@@ -159,11 +179,15 @@ export const CreateComplaint = ({ parentUrl }) => {
           label: t("ES_CREATECOMPLAINT_COMPLAINT_NAME"),
           isMandatory: true,
           type: "text",
+          value:fullName,
           populators: {
             name: "name",
+            onChange: handleName,
             validation: {
               required: true,
               pattern: /^[A-Za-z]/,
+              
+             
             },
             error: t("CS_ADDCOMPLAINT_NAME_ERROR"),
           },
@@ -186,6 +210,27 @@ export const CreateComplaint = ({ parentUrl }) => {
           menu: { ...subTypeMenu },
           populators: <Dropdown option={subTypeMenu} optionKey="name" id="complaintSubType" selected={subType} select={selectedSubType} />,
         },
+        {
+          //label: t("WS_COMMON_PROPERTY_DETAILS"),
+          "isEditConnection": true,
+          "isCreateConnection": true,
+          "isModifyConnection": true,
+          "isEditByConfigConnection": true,
+          "isProperty":subType?.key?.includes("Property")?true:false,
+          component: "CPTPropertySearchNSummary",
+          key: "cpt",
+          type: "component",
+          "body": [
+              {
+                  "component": "CPTPropertySearchNSummary",
+                  "withoutLabel": true,
+                  "key": "cpt",
+                  "type": "component",
+                  "hideInCitizen": true
+              }
+          ]
+        }
+     
       ],
     },
     {
@@ -249,6 +294,12 @@ export const CreateComplaint = ({ parentUrl }) => {
       ],
     },
   ];
+
+  if(sessionStorage.getItem("pgrProperty") !== "undefined")
+  {
+    let data =sessionStorage.getItem("pgrProperty")
+    console.log("pgrProperty",JSON?.parse(data),config)
+  }
   return (
     <FormComposer
       heading={t("ES_CREATECOMPLAINT_NEW_COMPLAINT")}
@@ -259,3 +310,4 @@ export const CreateComplaint = ({ parentUrl }) => {
     />
   );
 };
+
