@@ -59,7 +59,7 @@ import {
 
 let v8 = require("v8");
 let egov_host = envVariables.EGOV_HOST;
-
+//let egov_host='https://upyog-test.niua.org';
 let totalHeapSizeInGB = (((v8.getHeapStatistics().total_available_size) / 1024 / 1024 / 1024).toFixed(2));
 console.log(`*******************************************`);
 console.log(`Total Heap Size ~ ${totalHeapSizeInGB} GB`);
@@ -1101,12 +1101,18 @@ const generateQRCodes = async (
   for (var i = 0, len = qrcodeMappings.length; i < len; i++) {
     let qrmapping = qrcodeMappings[i];
     let varname = qrmapping.variable;
-    let urlQR='';
-    urlQR=egov_host;
+    let urlQR='',qrtext;
     if(key == 'property-receipt' || key == 'consolidatedreceipt' || key == 'tradelicense-receipt' || key == 'fsm-receipt' || key == 'misc-receipt' || key == 'ws-onetime-receipt')
-    qrmapping.value=urlQR.concat(qrmapping.value);
+    {
+      urlQR=egov_host;
 
-    let qrtext = mustache.render(qrmapping.value, variableTovalueMap);
+      urlQR=urlQR.concat(qrmapping.value);
+    }
+    if(urlQR=='')
+    qrtext = mustache.render(qrmapping.value, variableTovalueMap);
+    else
+    qrtext = mustache.render(urlQR, variableTovalueMap);
+
     logger.info("URL is " + qrtext) ; 
     let qrCodeImage = await QRCode.toDataURL(qrtext);
     variableTovalueMap[varname] = qrCodeImage;

@@ -154,6 +154,8 @@ public class IngestValidator {
         validateStringNotNumeric(ingestData.getUlb());
         validateStringNotNumeric(ingestData.getRegion());
         validateStringNotNumeric(ingestData.getState());
+        if(ingestData.getWard().contains(":"))
+        	ingestData.setWard(ingestData.getWard().replace(":",""));
 		
         ingestData.setState(toCamelCase(ingestData.getState()));
 
