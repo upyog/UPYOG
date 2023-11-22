@@ -1,4 +1,4 @@
-import { Loader,Modal } from "@egovernments/digit-ui-react-components";
+import { Loader,Modal ,Card , CardHeader, StatusTable,Row} from "@egovernments/digit-ui-react-components";
 import React ,{Fragment,useState,useEffect}from "react";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
@@ -204,6 +204,7 @@ const CreateProperty = ({ parentRoute }) => {
   config.indexRoute = "info";
   const CheckPage = Digit?.ComponentRegistryService?.getComponent("PTCheckPage");
   const PTAcknowledgement = Digit?.ComponentRegistryService?.getComponent("PTAcknowledgement");
+  console.log("propertyData",propertyData)
   return (
     <div>
       <div>
@@ -237,7 +238,18 @@ const CreateProperty = ({ parentRoute }) => {
       actionSaveLabel={"Proceed"}
       actionSaveOnSubmit={setModal}
       formId="modal-action"
-    ></Modal>}
+    >  <div style={{ width: "100%" }}>
+    <Card>
+        <CardHeader>Property Details</CardHeader>
+     
+            <StatusTable>
+                <Row label={t("CR_PROPERTY_NUMBER")} text={propertyData?.Properties?.[0]?.propertyId || "NA"} textStyle={{ whiteSpace: "pre" }} />
+                <Row label={t("CR_OWNER_NAME")} text={propertyData?.Properties?.[0]?.owners?.[0].name || "NA"} />
+                <Row label={t("CR_MOBILE_NUMBER")} text={propertyData?.Properties?.[0]?.owners?.[0].mobileNumber|| "NA"} />        
+            </StatusTable>
+    </Card>
+</div>
+      </Modal>}
     </div>
     </div>
   );

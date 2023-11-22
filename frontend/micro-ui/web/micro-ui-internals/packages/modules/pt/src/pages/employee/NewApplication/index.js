@@ -1,4 +1,4 @@
-import { FormComposer, Loader } from "@egovernments/digit-ui-react-components";
+import { FormComposer, Loader,Modal ,Card , CardHeader, StatusTable,Row } from "@egovernments/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
@@ -11,6 +11,15 @@ const NewApplication = () => {
   const [canSubmit, setSubmitValve] = useState(false);
   const defaultValues = { };
   const history = useHistory();
+  const [showToast, setShowToast] = useState(null);
+  const [searchData, setSearchData] = useState({});
+  const { data: propertyData, isLoading: propertyDataLoading, error, isSuccess, billData } = Digit.Hooks.pt.usePropertySearchWithDue({
+    tenantId: searchData?.city,
+    filters: searchData?.filters,
+    auth: true /*  to enable open search set false  */,
+    configs: { enabled: Object.keys(searchData).length > 0, retry: false, retryOnMount: false, staleTime: Infinity },
+  });
+  const [formData,setFormData]=useState({})
   // delete
   // const [_formData, setFormData,_clear] = Digit.Hooks.useSessionStorage("store-data",null);
   const [mutationHappened, setMutationHappened, clear] = Digit.Hooks.useSessionStorage("EMPLOYEE_MUTATION_HAPPENED", false);
@@ -123,7 +132,14 @@ const NewApplication = () => {
       documents: data?.documents?.documents,
       applicationStatus: "CREATE",
     };
-
+    let tempObject={
+      "mobileNumber":formData.owners?.[0].mobileNumber,
+      "name":formData.owners?.[0].name,
+      "doorNo": formData.address.doorNo,
+      "locality": formData.address.locality.code,
+      "isRequestForDuplicatePropertyValidation":true
+    }
+   
     if (!data?.ownershipCategory?.code.includes("INDIVIDUAL")) {
       formData.institution = {
         name: data.owners?.[0].institution.name,
@@ -133,19 +149,47 @@ const NewApplication = () => {
         tenantId: Digit.ULBService.getCurrentTenantId(),
       };
     }
-
-    history.replace("/digit-ui/employee/pt/response", { Property: formData }); //current wala
-
+  setFormData(formData)
+  setSearchData({ city: Digit.ULBService.getCurrentTenantId(), filters: tempObject });    
+    
+  
   };
   if (isLoading) {
     return <Loader />;
   }
-
+  useEffect(() => {  
+    if(propertyDataLoading && propertyData?.Properties.length >0)  
+    {  
+      //alert("property exist"),  
+      setShowToast(true) 
+    }  
+    else if(propertyDataLoading && propertyData?.Properties.length === 0) {  
+      setShowToast(false)  
+      history.replace("/digit-ui/employee/pt/response", { Property: formData }); //current wala
+    }  
+    }, [propertyData]);
   /* use newConfig instead of commonFields for local development in case needed */
 
   const configs = commonFields?commonFields:newConfig;
   
+  const Heading = (props) => {
+    return <h1 className="heading-m">{props.label}</h1>;
+  };
 
+  const Close = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#FFFFFF">
+      <path d="M0 0h24v24H0V0z" fill="none" />
+      <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z" />
+    </svg>
+  );
+
+  const CloseBtn = (props) => {
+    return (
+      <div className="icon-bg-secondary" onClick={props.onClick}>
+        <Close />
+      </div>
+    );
+  };
   /*console.log("new",configs)
   configs[1]?.body?.push( {
     "type": "component",
@@ -156,6 +200,9 @@ const NewApplication = () => {
   })*/
 
   return (
+    <div>
+
+   
     <FormComposer
       heading={t("ES_TITLE_NEW_PROPERTY_APPLICATION")}
       isDisabled={!canSubmit}
@@ -171,6 +218,29 @@ const NewApplication = () => {
       defaultValues={defaultValues}
       onFormValueChange={onFormValueChange}
     />
+    <div>
+    { showToast &&   <Modal
+    headerBarMain={<Heading label={"Property Alredy exist"} />}
+    headerBarEnd={<CloseBtn onClick={closeModal} />}
+    actionCancelLabel={"Cancel"}
+    actionCancelOnSubmit={closeModal}
+    actionSaveLabel={"Proceed"}
+    actionSaveOnSubmit={setModal}
+    formId="modal-action"
+  >  <div style={{ width: "100%" }}>
+  <Card>
+      <CardHeader>Property Details</CardHeader>
+   
+          <StatusTable>
+              <Row label={t("CR_PROPERTY_NUMBER")} text={propertyData?.Properties?.[0]?.propertyId || "NA"} textStyle={{ whiteSpace: "pre" }} />
+              <Row label={t("CR_OWNER_NAME")} text={propertyData?.Properties?.[0]?.owners?.[0].name || "NA"} />
+              <Row label={t("CR_MOBILE_NUMBER")} text={propertyData?.Properties?.[0]?.owners?.[0].mobileNumber|| "NA"} />        
+          </StatusTable>
+  </Card>
+</div>
+    </Modal>}
+  </div>
+  </div>
   );
 };
 

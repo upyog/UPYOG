@@ -39,7 +39,7 @@ export const FormComposer = (props) => {
     props.getFormAccessors && props.getFormAccessors({ setValue, getValues });
   }, []);
   const fieldSelector = (type, populators,component,value,config) => {
-    console.log("component",populators)
+  
     const Component = typeof component === "string" ? Digit.ComponentRegistryService.getComponent(component) : component;
     switch (type) {
       case "text":
@@ -50,10 +50,10 @@ export const FormComposer = (props) => {
           </div>
         );
       case "textarea":
-        return <TextArea className="field desktop-w-full" name={populators.name || ""} {...populators} inputRef={register(populators.validation)} />;
+        return <TextArea className="field desktop-w-full" value={value} name={populators.name || ""} {...populators} inputRef={register(populators.validation)} />;
       case "component":
         {
-          console.log("propsss",props,props?.config?.[1]?.body?.[2]?.isProperty)
+          
           if(props?.config?.[1]?.body?.[2]?.isProperty)
           {
             return (
@@ -120,8 +120,6 @@ export const FormComposer = (props) => {
 
   const isDisabled = props.isDisabled || false;
   
-console.log("ccccccccccccccccccccccccc",formFields,props.children)
-onSubmit()
   return (
     <form onSubmit={handleSubmit(onSubmit)}  onChange={(e)=> changeValue(e.target.name,e.target.value)}>
       <Card>
