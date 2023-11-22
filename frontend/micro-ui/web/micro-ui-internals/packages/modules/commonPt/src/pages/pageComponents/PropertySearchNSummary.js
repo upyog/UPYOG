@@ -59,7 +59,7 @@ const PropertySearchNSummary = ({ config, onSelect, userType, formData, setError
   useEffect(() => {
     onSelect("cpt", { details: propertyDetails?.Properties[0] });
     console.log("")
-    sessionStorage.setItem("pgrProperty",JSON.stringify(propertyDetails?.Properties[0]))
+    localStorage.setItem("pgrProperty",JSON.stringify(propertyDetails?.Properties[0]))
   }, [propertyDetails, pathname]);
 
   const searchProperty = () => {

@@ -13,7 +13,7 @@ export const CreateComplaint = ({ parentUrl }) => {
   const { t } = useTranslation();
 
   const getCities = () => cities?.filter((e) => e.code === Digit.ULBService.getCurrentTenantId()) || [];
-
+const propetyData=localStorage.getItem("pgrProperty") 
   const [complaintType, setComplaintType] = useState(JSON?.parse(sessionStorage.getItem("complaintType")) || {});
   const [subTypeMenu, setSubTypeMenu] = useState([]);
   const [subType, setSubType] = useState(JSON?.parse(sessionStorage.getItem("subType")) || {});
@@ -21,7 +21,8 @@ export const CreateComplaint = ({ parentUrl }) => {
   const [mobileNumber, setMobileNumber] = useState(sessionStorage.getItem("mobileNumber") || "");
   const [fullName, setFullName] = useState(sessionStorage.getItem("name") || "");
   const [selectedCity, setSelectedCity] = useState(getCities()[0] ? getCities()[0] : null);
-
+const [propertyId, setPropertyId]= useState("")
+const [description, setDescription] = useState("")
   const { data: fetchedLocalities } = Digit.Hooks.useBoundaryLocalities(
     getCities()[0]?.code,
     "admin",
@@ -30,12 +31,12 @@ export const CreateComplaint = ({ parentUrl }) => {
     },
     t
   );
-console.log("sessionStorage.getItemsessionStorage.getItem",subType)
+
   const [localities, setLocalities] = useState(fetchedLocalities);
   const [selectedLocality, setSelectedLocality] = useState(null);
   const [canSubmit, setSubmitValve] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-
+  const [property,setPropertyData]=useState(null)
   const [pincodeNotValid, setPincodeNotValid] = useState(false);
   const [params, setParams] = useState({});
   const tenantId = window.Digit.SessionStorage.get("Employee.tenantId");
@@ -45,7 +46,7 @@ console.log("sessionStorage.getItemsessionStorage.getItem",subType)
   const history = useHistory();
   const serviceDefinitions = Digit.GetServiceDefinitions;
   const client = useQueryClient();
-
+  
   useEffect(() => {
     if (complaintType?.key && subType?.key && selectedCity?.code && selectedLocality?.code) {
       setSubmitValve(true);
@@ -103,6 +104,7 @@ console.log("sessionStorage.getItemsessionStorage.getItem",subType)
   };
 
   function selectLocality(locality) {
+    console.log("ddddddddd",locality)
     setSelectedLocality(locality);
   }
 
@@ -120,14 +122,15 @@ console.log("sessionStorage.getItemsessionStorage.getItem",subType)
     const region = selectedCity.city.name;
     const localityCode = selectedLocality.code;
     const localityName = selectedLocality.name;
-    const landmark = data.landmark;
+    const landmark = data?.landmark;
     const { key } = subType;
     const complaintType = key;
-    const mobileNumber = data.mobileNumber;
-    const name = data.name;
+    const mobileNumber = data?.mobileNumber;
+    const name = data?.name;
     const formData = { ...data, cityCode, city, district, region, localityCode, localityName, landmark, complaintType, mobileNumber, name };
     await dispatch(createComplaint(formData));
     await client.refetchQueries(["fetchInboxData"]);
+    localStorage.removeItem("pgrProperty");
     history.push(parentUrl + "/response");
   };
 
@@ -149,7 +152,11 @@ console.log("sessionStorage.getItemsessionStorage.getItem",subType)
     const { value } = event.target;
     setFullName(value);
   };
-
+  const handleDescription = (event) => {
+    const { value } = event.target;
+    setDescription(value);
+  };
+  
   const isPincodeValid = () => !pincodeNotValid;
 
   const config = [
@@ -287,19 +294,45 @@ console.log("sessionStorage.getItemsessionStorage.getItem",subType)
         {
           label: t("CS_COMPLAINT_DETAILS_ADDITIONAL_DETAILS"),
           type: "textarea",
+          onChange: handleDescription,
+          value:description,
           populators: {
             name: "description",
+            onChange: handleDescription,
           },
         },
       ],
     },
   ];
 
-  if(sessionStorage.getItem("pgrProperty") !== "undefined")
-  {
-    let data =sessionStorage.getItem("pgrProperty")
-    console.log("pgrProperty",JSON?.parse(data),config)
-  }
+ 
+    useEffect(()=>{
+      console.log("heloo world",propetyData )
+      if(propetyData !== "undefined"   && propetyData !== null)
+      {
+       let data =JSON.parse(propetyData)
+       console.log("stp 1",propetyData)
+       setPropertyData(data)
+        setPropertyId(data?.propertyId)
+      }
+    },[])
+  useEffect(()=>{
+    console.log("step 2",propetyData,property,typeof(propetyData))
+    if(property !== "undefined" && property !== null )
+    {
+      let data =property
+     
+      setPincode(data?.address?.pincode || "")
+      
+      let b= localities.filter((item)=>{
+        return item.code === data?.address?.locality?.code
+      })
+      setSelectedLocality(b?.[0])
+      setDescription(data?.propertyId)
+      console.log("pgrProperty",localities,data?.propertyId,data)
+    }
+   
+  },[propertyId])
   return (
     <FormComposer
       heading={t("ES_CREATECOMPLAINT_NEW_COMPLAINT")}
