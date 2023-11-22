@@ -16,7 +16,8 @@
     "packages/modules/tl",
     "packages/modules/ws",
     "packages/modules/commonPt",
-    "packages/modules/fsm"
+    "packages/modules/fsm",
+    "packages/modules/workbench"
   ],
   "author": "Abhinav Kushwaha <abhinav.kushwaha@egovernments.org>",
   "license": "MIT",
@@ -25,7 +26,7 @@
     "node": ">=14"
   },
   "scripts": {
-    "start": "SKIP_PREFLIGHT_CHECK=true run-s build start:dev",
+    "start": "run-s build start:dev",
     "sprint": "SKIP_PREFLIGHT_CHECK=true run-s start:script",
     "start:dev": "run-p dev:**",
     "start:script": "./scripts/create.sh",
@@ -50,6 +51,7 @@
     "dev:ws": "cd packages/modules/ws && yarn start",
     "dev:bills": "cd packages/modules/bills && yarn start",
     "dev:reports": "cd packages/modules/reports && yarn start",
+    "dev:workbench": "cd packages/modules/workbench && yarn start",
     "dev:example": "cd example && yarn start",
     "build": "run-p build:**",
     "build:libraries": "cd packages/libraries && yarn build",
@@ -71,6 +73,7 @@
     "build:ws": "cd packages/modules/ws && yarn build",
     "buildD:bills": "cd packages/modules/bills && yarn build",
     "buildR:reports": "cd packages/modules/reports && yarn build",
+    "build:workbench": "cd packages/modules/workbench && yarn build",
     "deploy:jenkins": "./scripts/jenkins.sh"
   },
   "devDependencies": {
