@@ -78,8 +78,8 @@ public class PayService {
 		if(BigDecimal.ONE.compareTo(noOfDays) <= 0) noOfDays = noOfDays.add(BigDecimal.ONE);
 		log.info("No. of days for Demand expiry after comparison are ::" + noOfDays );
 
-		BigDecimal penalty = getApplicablePenalty(waterCharge, noOfDays, timeBasedExemptionMasterMap.get(WSCalculationConstant.WC_PENANLTY_MASTER));
-		BigDecimal interest = getApplicableInterest(waterCharge, noOfDays, timeBasedExemptionMasterMap.get(WSCalculationConstant.WC_INTEREST_MASTER));
+		BigDecimal penalty = getApplicablePenalty(demand,waterCharge, noOfDays, timeBasedExemptionMasterMap.get(WSCalculationConstant.WC_PENANLTY_MASTER));
+		BigDecimal interest = getApplicableInterest(demand,waterCharge, noOfDays, timeBasedExemptionMasterMap.get(WSCalculationConstant.WC_INTEREST_MASTER));
 		BigDecimal rebate = getApplicableRebate(waterCharge, demand, timeBasedExemptionMasterMap.get(WSCalculationConstant.WC_REBATE_MASTER));
 
 		log.info("time based applicables are: penalty = " + penalty +" interest = "+  interest+ " rebate = " +rebate);
@@ -96,10 +96,10 @@ public class PayService {
 	 * @param assessmentYear - Assessment Year
 	 * @return applicable penalty for given time
 	 */
-	public BigDecimal getPenalty(BigDecimal taxAmt, String assessmentYear, JSONArray penaltyMasterList, BigDecimal noOfDays) {
+	public BigDecimal getPenalty(Demand demand,BigDecimal taxAmt, String assessmentYear, JSONArray penaltyMasterList, BigDecimal noOfDays) {
 
 		BigDecimal penaltyAmt = BigDecimal.ZERO;
-		Map<String, Object> penalty = mDService.getApplicableMaster(assessmentYear, penaltyMasterList);
+		Map<String, Object> penalty = mDService.getApplicableMaster(demand,assessmentYear, penaltyMasterList);
 		if (null == penalty) return penaltyAmt;
 			penaltyAmt = mDService.calculateApplicable(taxAmt, penalty);
 		return penaltyAmt;
@@ -113,9 +113,9 @@ public class PayService {
 	 *            master configuration
 	 * @return applicable penalty
 	 */
-	public BigDecimal getApplicablePenalty(BigDecimal waterCharge, BigDecimal noOfDays, JSONArray config) {
+	public BigDecimal getApplicablePenalty(Demand demand,BigDecimal waterCharge, BigDecimal noOfDays, JSONArray config) {
 		BigDecimal applicablePenalty = BigDecimal.ZERO;
-		Map<String, Object> penaltyMaster = mDService.getApplicableMaster(estimationService.getAssessmentYear(), config);
+		Map<String, Object> penaltyMaster = mDService.getApplicableMaster(demand,estimationService.getAssessmentYear(), config);
 		if (null == penaltyMaster) return applicablePenalty;
 		BigDecimal daysApplicable = null != penaltyMaster.get(WSCalculationConstant.DAYA_APPLICABLE_NAME)
 				? BigDecimal.valueOf(((Number) penaltyMaster.get(WSCalculationConstant.DAYA_APPLICABLE_NAME)).intValue())
@@ -152,9 +152,9 @@ public class PayService {
 	 *            master configuration
 	 * @return applicable Interest
 	 */
-	public BigDecimal getApplicableInterest(BigDecimal waterCharge, BigDecimal noOfDays, JSONArray config) {
+	public BigDecimal getApplicableInterest(Demand demand,BigDecimal waterCharge, BigDecimal noOfDays, JSONArray config) {
 		BigDecimal applicableInterest = BigDecimal.ZERO;
-		Map<String, Object> interestMaster = mDService.getApplicableMaster(estimationService.getAssessmentYear(), config);
+		Map<String, Object> interestMaster = mDService.getApplicableMaster(demand,estimationService.getAssessmentYear(), config);
 		if (null == interestMaster) return applicableInterest;
 		
 		BigDecimal daysApplicable = null != interestMaster.get(WSCalculationConstant.DAYA_APPLICABLE_NAME)
@@ -173,6 +173,12 @@ public class PayService {
 
 			return applicableInterest;
 		}
+		long currentUTC = System.currentTimeMillis();
+		long numberOfDaysInMillis = demand.getAuditDetails().getCreatedTime() - currentUTC;
+		BigDecimal noOfDaysforInterest = BigDecimal.valueOf((TimeUnit.MILLISECONDS.toDays(Math.abs(numberOfDaysInMillis))))
+				.subtract(BigDecimal.valueOf(((Number) interestMaster.get(WSCalculationConstant.STARTING_DATE_APPLICABLES)).doubleValue()));
+		log.info("No. of days for Demand expiry are ::" + noOfDays );//19648
+		
 		BigDecimal rate = null != interestMaster.get(WSCalculationConstant.RATE_FIELD_NAME)
 				? BigDecimal.valueOf(((Number) interestMaster.get(WSCalculationConstant.RATE_FIELD_NAME)).doubleValue())
 				: null;
@@ -188,13 +194,13 @@ public class PayService {
 			// rate of interest
 			applicableInterest = waterCharge.multiply(rate.divide(WSCalculationConstant.HUNDRED));
 		}
-		applicableInterest.multiply(noOfDays.divide(BigDecimal.valueOf(365), 6, 5));
+		applicableInterest.multiply(noOfDaysforInterest.divide(BigDecimal.valueOf(365), 6, 5));
 		return applicableInterest;
 	}
 	
 	public BigDecimal getApplicableRebate(BigDecimal waterCharge, Demand demand, JSONArray config) {
 		BigDecimal applicableRebate = BigDecimal.ZERO;
-		Map<String, Object> rebateMaster = mDService.getApplicableMaster(estimationService.getAssessmentYear(), config);
+		Map<String, Object> rebateMaster = mDService.getApplicableMaster(demand,estimationService.getAssessmentYear(), config);
 		if (null == rebateMaster) return applicableRebate;
 		
 		long currentUTC = System.currentTimeMillis();

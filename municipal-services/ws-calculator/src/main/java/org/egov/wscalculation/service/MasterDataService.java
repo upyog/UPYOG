@@ -5,6 +5,7 @@ import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
@@ -21,15 +22,16 @@ import org.egov.mdms.model.MdmsResponse;
 import org.egov.tracer.model.CustomException;
 import org.egov.wscalculation.config.WSCalculationConfiguration;
 import org.egov.wscalculation.constants.WSCalculationConstant;
+import org.egov.wscalculation.repository.ServiceRequestRepository;
+import org.egov.wscalculation.util.CalculatorUtil;
+import org.egov.wscalculation.util.WSCalculationUtil;
 import org.egov.wscalculation.web.models.CalculationCriteria;
+import org.egov.wscalculation.web.models.Demand;
 import org.egov.wscalculation.web.models.RequestInfoWrapper;
 import org.egov.wscalculation.web.models.TaxHeadMaster;
 import org.egov.wscalculation.web.models.TaxHeadMasterResponse;
 import org.egov.wscalculation.web.models.TaxPeriod;
 import org.egov.wscalculation.web.models.TaxPeriodResponse;
-import org.egov.wscalculation.repository.ServiceRequestRepository;
-import org.egov.wscalculation.util.CalculatorUtil;
-import org.egov.wscalculation.util.WSCalculationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -262,13 +264,13 @@ public class MasterDataService {
 	 * @return master data for that assessment Year
 	 */
 	@SuppressWarnings("unchecked")
-	public Map<String, Object> getApplicableMaster(String assessmentYear, List<Object> masterList) {
+	public Map<String, Object> getApplicableMaster(Demand demand,String assessmentYear, List<Object> masterList) {
 
 		Map<String, Object> objToBeReturned = null;
 		String maxYearFromTheList = "0";
 		long maxStartTime = 0L;
-
-		log.info("Master List is " + masterList.toArray().toString());
+		log.info("assessmentYear "+ assessmentYear);
+		log.info("Master List is " + masterList.toString());
 		for (Object object : masterList) {
 
 			Map<String, Object> objMap = (Map<String, Object>) object;
@@ -287,7 +289,7 @@ public class MasterDataService {
 				if (assessmentYear.split("-")[0].compareTo(objFinYear) >= 0
 						&& maxYearFromTheList.compareTo(objFinYear) <= 0) {
 					maxYearFromTheList = objFinYear;
-					long startTime = getStartDayInMillis(objStartDay);
+					long startTime = getStartDayInMillis(demand,objStartDay);
 					long currentTime = System.currentTimeMillis();
 					if (startTime < currentTime && maxStartTime < startTime) {
 						objToBeReturned = objMap;
@@ -309,17 +311,38 @@ public class MasterDataService {
 	 *            StartDay of applicable
 	 * @return Returns the start date in milli seconds
 	 */
-	private Long getStartDayInMillis(String startDay) {
+//	private Long getStartDayInMillis(String startDay) {
+//		Date date;
+//		try {
+//			SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+//			 date = df.parse(startDay);
+//		} catch (ParseException e) {
+//			throw new CustomException("INVALID_START_DAY", "The startDate of the penalty cannot be parsed");
+//		}
+//
+//		return date.getTime();
+//	}
+	
+	private Long getStartDayInMillis(Demand demand,String startDay) {
 		Date date;
-		try {
-			SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-			 date = df.parse(startDay);
-		} catch (ParseException e) {
-			throw new CustomException("INVALID_START_DAY", "The startDate of the penalty cannot be parsed");
+		if(startDay.contains("/")) {
+			try {
+				SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+				 date = df.parse(startDay);
+			} catch (ParseException e) {
+				throw new CustomException("INVALID_START_DAY", "The startDate of the penalty cannot be parsed");
+			}
+		} else {
+			LocalDate demandDate=LocalDate.ofEpochDay(demand.getAuditDetails().getCreatedTime());
+			LocalDate penaltyApplicableDate=demandDate.plusDays(Long.parseLong(startDay));
+			
+			log.info("Penalty is applicable after date " + demandDate.toString() + "for demand with ID " + demand.getId());
+			return penaltyApplicableDate.toEpochDay();
 		}
-
+		
 		return date.getTime();
 	}
+
 
 	/**
 	 * Method to calculate exemption based on the Amount and exemption map
