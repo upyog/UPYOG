@@ -71,7 +71,6 @@ public class ServiceDefinitionQueryBuilder {
                 System.out.println("inside active query");
                 query.append(" AND to_timestamp((sd.additionaldetails->>'endDate')::bigint) > to_timestamp(?::bigint)");
                 preparedStmtList.add(criteria.getTodaysDate());
-                preparedStmtList.add(criteria.getTodaysDate());
             }else if(!ObjectUtils.isEmpty(criteria.getStatus()) && criteria.getStatus().equalsIgnoreCase("Inactive")){
                 addClauseIfRequired(query, preparedStmtList);
                 
@@ -85,7 +84,7 @@ public class ServiceDefinitionQueryBuilder {
 
         if(!ObjectUtils.isEmpty(criteria.getPostedBy())){
             addClauseIfRequired(query, preparedStmtList);
-            query.append("LOWER(sd.additionaldetails->>'postedBy') ILIKE ?");
+            query.append("LOWER(sd.additionaldetails->>'postedBy') ILIKE ( ? || '%' )");
             preparedStmtList.add(criteria.getPostedBy());        
         }
 
@@ -185,7 +184,6 @@ public class ServiceDefinitionQueryBuilder {
                 System.out.println("inside active query");
                 query.append(" AND to_timestamp((sd.additionaldetails->>'endDate')::bigint) > to_timestamp(?::bigint)");
                 preparedStmtList.add(criteria.getTodaysDate());
-                preparedStmtList.add(criteria.getTodaysDate());
             }else if(!ObjectUtils.isEmpty(criteria.getStatus()) && criteria.getStatus().equalsIgnoreCase("Inactive")){
                 addClauseIfRequired(query, preparedStmtList);
                 query.append(" to_timestamp((sd.additionaldetails->>'startDate')::bigint) < to_timestamp(?::bigint)");
@@ -197,7 +195,7 @@ public class ServiceDefinitionQueryBuilder {
 
         if(!ObjectUtils.isEmpty(criteria.getPostedBy())){
             addClauseIfRequired(query, preparedStmtList);
-            query.append("LOWER(sd.additionaldetails->>'postedBy') ILIKE ?");
+            query.append("LOWER(sd.additionaldetails->>'postedBy') ILIKE ( ? || '%' )");
             preparedStmtList.add(criteria.getPostedBy());        
         }
 
