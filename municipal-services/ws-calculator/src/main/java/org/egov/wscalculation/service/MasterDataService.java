@@ -5,8 +5,10 @@ import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -374,7 +376,10 @@ public class MasterDataService {
 				throw new CustomException("INVALID_START_DAY", "The startDate of the penalty cannot be parsed");
 			}
 		} else {
-			LocalDate demandDate=LocalDate.ofEpochDay(demand.getAuditDetails().getCreatedTime());
+			Instant instant = Instant.ofEpochMilli(demand.getAuditDetails().getCreatedTime());
+			ZoneId zoneId = ZoneId.systemDefault(); // Use the system default time zone
+			LocalDate demandDate = instant.atZone(zoneId).toLocalDate();
+			//LocalDate demandDate=LocalDate.ofEpochDay(demand.getAuditDetails().getCreatedTime());
 			LocalDate penaltyApplicableDate=demandDate.plusDays(Long.parseLong(startDay));
 			
 			log.info("Penalty/Interest is applicable after date " + demandDate.toString() + "for demand with ID " + demand.getId());
