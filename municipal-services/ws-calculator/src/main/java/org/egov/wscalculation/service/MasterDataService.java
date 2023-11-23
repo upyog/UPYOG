@@ -389,7 +389,7 @@ public class MasterDataService {
 			//LocalDate demandDate=LocalDate.ofEpochDay(demand.getAuditDetails().getCreatedTime());
 			LocalDate penaltyApplicableDate=demandDate.plusDays(Long.parseLong(startDay));
 		    log.info("Penalty/Interest is applicable after date " + penaltyApplicableDate.toString() + " for demand with ID " + demand.getId());
-			return penaltyApplicableDate.toEpochDay();
+			return penaltyApplicableDate.atStartOfDay(zoneId).toInstant().toEpochMilli();
 		}
 		
 		return date.getTime();
