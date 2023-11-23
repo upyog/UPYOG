@@ -118,6 +118,10 @@ const didEmployeeHasRole = (role) => {
   return rolearray?.length;
 };
 
+const didEmployeeHasAtleastOneRole = (roles = []) => {
+  return roles.some((role) => didEmployeeHasRole(role));
+};
+
 const pgrAccess = () => {
   const userInfo = Digit.UserService.getUser();
   const userRoles = userInfo?.info?.roles?.map((roleData) => roleData?.code);
@@ -294,6 +298,7 @@ export default {
   mCollectAccess,
   receiptsAccess,
   didEmployeeHasRole,
+  didEmployeeHasAtleastOneRole,
   hrmsAccess,
   getPattern,
   hrmsRoles,

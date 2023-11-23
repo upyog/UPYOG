@@ -23,7 +23,8 @@ import { initWSComponents } from "@egovernments/digit-ui-module-ws";
 import { DigitUI } from "@egovernments/digit-ui-module-core";
 import { initCommonPTComponents } from "@egovernments/digit-ui-module-commonpt";
 import { initBillsComponents, BillsModule } from "@egovernments/digit-ui-module-bills";
-import {initWorkbenchComponents} from "@egovernments/digit-ui-module-workbench";
+import { initWorkbenchComponents } from "@egovernments/digit-ui-module-workbench";
+
 
 // import {initCustomisationComponents} from "./customisations";
 
@@ -63,7 +64,7 @@ const enabledModules = [
   "FireNoc",
   "Birth",
   "Death",
-  "Workbench",
+  "Workbench"
 ];
 
 const initTokens = (stateCode) => {
