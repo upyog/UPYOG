@@ -39,7 +39,6 @@ import org.egov.infra.persistence.entity.enums.Gender;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.HTTPUtilities;
-import org.owasp.esapi.filters.SecurityWrapperRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
@@ -76,10 +75,14 @@ public class RestServiceAuthFilter implements Filter {
 
 		HTTPUtilities httpUtilities = ESAPI.httpUtilities();
 		httpUtilities.setCurrentHTTP(httpRequest, httpResponse);
+		LOGGER.info("*****httpRequest.getRequestURI()****"+httpRequest.getRequestURI());
 		if (httpRequest.getRequestURI().contains("/ClearToken")
 				|| httpRequest.getRequestURI().contains("/refreshToken")) {
-			LOGGER.info("Clear Token request recieved ");
-			httpRequest.getRequestDispatcher(httpRequest.getServletPath()).forward(req, res);
+			LOGGER.info("*****Clear Token request recieved****");
+			chain.doFilter(req, res);
+		} else if (httpRequest.getRequestURI().contains("/rest/logout")) {
+			LOGGER.info("*****LOGOUT Request forward****");
+			chain.doFilter(req, res);
 		} else if (httpRequest.getRequestURI().contains("/rest/voucher/")) {
 			try {
 				RestRequestWrapper request = new RestRequestWrapper(httpRequest);
