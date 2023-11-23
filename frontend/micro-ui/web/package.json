@@ -15,8 +15,7 @@
     "micro-ui-internals/packages/modules/tl",
     "micro-ui-internals/packages/modules/ws",
     "micro-ui-internals/packages/modules/fsm",
-    "micro-ui-internals/packages/modules/commonPt",
-    "micro-ui-internals/packages/modules/workbench"
+    "micro-ui-internals/packages/modules/commonPt"
   ],
   "engines": {
     "node": ">=14"
