@@ -303,7 +303,7 @@ public class MasterDataService {
 			}
 		}
 		
-		log.info("Master List selected is " + objToBeReturned!=null?objToBeReturned.toString():null);
+		log.info("Master List selected is " + (null==objToBeReturned?"NA":objToBeReturned.toString()));
 
 		return objToBeReturned;
 	}
