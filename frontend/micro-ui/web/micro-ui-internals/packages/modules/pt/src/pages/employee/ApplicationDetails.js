@@ -72,6 +72,9 @@ const ApplicationDetails = () => {
 
   useEffect(() => {
     if (applicationDetails) {
+      
+      applicationDetails.applicationDetails[2].additionalDetails.owners= applicationDetails?.applicationDetails?.[2]?.additionalDetails?.owners?.reverse()
+     
       setAppDetailsToShow(_.cloneDeep(applicationDetails));
       if (applicationDetails?.applicationData?.status !== "ACTIVE" && applicationDetails?.applicationData?.creationReason === "MUTATION") {
         setEnableAudit(true);
