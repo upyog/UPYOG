@@ -301,7 +301,7 @@ const PTApplicationDetails = () => {
               <CardSubHeader style={{ fontSize: "24px" }}>{t("PT_MUTATION_TRANSFEROR_DETAILS")}</CardSubHeader>
               <div>
                 {Array.isArray(transferorOwners) &&
-                  transferorOwners.map((owner, index) => (
+                  transferorOwners.reverse().map((owner, index) => (
                     <div key={index}>
                       <CardSubHeader>
                         {transferorOwners.length != 1 && (
@@ -330,7 +330,7 @@ const PTApplicationDetails = () => {
               {isInstitution ? (
                 <div>
                   {Array.isArray(transfereeOwners) &&
-                    transfereeOwners.map((owner, index) => (
+                    transfereeOwners.reverse().map((owner, index) => (
                       <div key={index}>
                         <CardSubHeader>
                           {transfereeOwners.length != 1 && (
@@ -363,7 +363,7 @@ const PTApplicationDetails = () => {
               ) : (
                 <div>
                   {Array.isArray(transfereeOwners) &&
-                    transfereeOwners.map((owner, index) => (
+                    transfereeOwners.reverse().map((owner, index) => (
                       <div key={index}>
                         <CardSubHeader>
                           {transfereeOwners.length != 1 && (
@@ -520,7 +520,7 @@ const PTApplicationDetails = () => {
               <CardSubHeader style={{ fontSize: "24px" }}>{t("PT_COMMON_PROPERTY_OWNERSHIP_DETAILS_HEADER")}</CardSubHeader>
               <div>
                 {Array.isArray(owners) &&
-                  owners.map((owner, index) => (
+                  owners.reverse().map((owner, index) => (
                     <div key={index}>
                       <CardSubHeader>
                         {owners.length != 1 && (
