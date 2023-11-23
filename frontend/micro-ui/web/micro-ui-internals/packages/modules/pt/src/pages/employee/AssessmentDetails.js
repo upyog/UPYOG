@@ -248,7 +248,7 @@ function change(){
         // }
         AssessmentData.additionalDetails.adhocExemption=second;
         AssessmentData.additionalDetails.adhocExemptionReason=selectedRebateReason.value;
-        ptCalculationEstimateData.Calculation[0].totalAmount=ptCalculationEstimateData?.Calculation[0]?.taxAmount-second;
+        ptCalculationEstimateData.Calculation[0].totalAmount=ptCalculationEstimateData?.Calculation[0]?.totalAmount-second;
            }
            else{
              alert( "Adhoc Exemption cannot be greater than the estimated tax for the given property");
