@@ -8,7 +8,9 @@ import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -292,7 +294,12 @@ public class MasterDataService {
 						&& maxYearFromTheList.compareTo(objFinYear) <= 0) {
 					maxYearFromTheList = objFinYear;
 					long startTime = getStartDayInMillis(demand,objStartDay);
+					log.info(" For Master " + object.toString());
+
+					log.info("Start Time is " + startTime);
 					long currentTime = System.currentTimeMillis();
+					log.info("Current Time is " + currentTime);
+
 					if (startTime < currentTime && maxStartTime < startTime) {
 						objToBeReturned = objMap;
 						maxStartTime = startTime;
@@ -381,9 +388,11 @@ public class MasterDataService {
 			LocalDate demandDate = instant.atZone(zoneId).toLocalDate();
 			//LocalDate demandDate=LocalDate.ofEpochDay(demand.getAuditDetails().getCreatedTime());
 			LocalDate penaltyApplicableDate=demandDate.plusDays(Long.parseLong(startDay));
-			
-			log.info("Penalty/Interest is applicable after date " + demandDate.toString() + "for demand with ID " + demand.getId());
-			return penaltyApplicableDate.toEpochDay();
+			LocalTime time = LocalTime.parse("00:00:00"); 
+		    ZoneOffset zone = ZoneOffset.of("Z"); 
+
+			log.info("Penalty/Interest is applicable after date " + penaltyApplicableDate.toString() + " for demand with ID " + demand.getId());
+			return penaltyApplicableDate.toEpochSecond(time, zone);
 		}
 		
 		return date.getTime();

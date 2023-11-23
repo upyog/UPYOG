@@ -194,7 +194,9 @@ public class PayService {
 			// rate of interest
 			applicableInterest = waterCharge.multiply(rate.divide(WSCalculationConstant.HUNDRED));
 		}
-		applicableInterest.multiply(noOfDaysforInterest.divide(BigDecimal.valueOf(365), 6, 5));
+		
+		log.info("Interest before days calculation is " + applicableInterest);
+		//applicableInterest.multiply(noOfDaysforInterest).divide (BigDecimal.valueOf(365));
 		return applicableInterest;
 	}
 	
