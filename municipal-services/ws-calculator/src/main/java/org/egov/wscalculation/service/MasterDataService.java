@@ -273,7 +273,6 @@ public class MasterDataService {
 		Map<String, Object> objToBeReturned = null;
 		String maxYearFromTheList = "0";
 		long maxStartTime = 0L;
-		log.info("assessmentYear "+ assessmentYear);
 		log.info("Master List is " + masterList.toString());
 		for (Object object : masterList) {
 
@@ -294,11 +293,7 @@ public class MasterDataService {
 						&& maxYearFromTheList.compareTo(objFinYear) <= 0) {
 					maxYearFromTheList = objFinYear;
 					long startTime = getStartDayInMillis(demand,objStartDay);
-					log.info(" For Master " + object.toString());
-
-					log.info("Start Time is " + startTime);
 					long currentTime = System.currentTimeMillis();
-					log.info("Current Time is " + currentTime);
 
 					if (startTime < currentTime && maxStartTime < startTime) {
 						objToBeReturned = objMap;
@@ -308,7 +303,7 @@ public class MasterDataService {
 			}
 		}
 		
-		log.info("Master List selected is " + objToBeReturned.toString());
+		log.info("Master List selected is " + objToBeReturned!=null?objToBeReturned.toString():null);
 
 		return objToBeReturned;
 	}

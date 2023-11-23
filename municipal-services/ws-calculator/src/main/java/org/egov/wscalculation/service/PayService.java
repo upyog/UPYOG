@@ -163,14 +163,10 @@ public class PayService {
 		if (daysApplicable == null)
 			return applicableInterest;
 		
-		log.info("No of days in interest " + noOfDays);
 		
 		BigDecimal daysDiff = noOfDays.subtract(daysApplicable);
-		log.info("No of days in interest after difference of daysApplicable " + daysDiff);
 		// if daysDiff < 1 interest zero
 		if (daysDiff.compareTo(BigDecimal.ONE) < 0) {
-			log.info("No of days are less than one");
-
 			return applicableInterest;
 		}
 		long currentUTC = System.currentTimeMillis();
@@ -195,8 +191,8 @@ public class PayService {
 			applicableInterest = waterCharge.multiply(rate.divide(WSCalculationConstant.HUNDRED));
 		}
 		
-		log.info("Interest before days calculation is " + applicableInterest);
-		//applicableInterest.multiply(noOfDaysforInterest).divide (BigDecimal.valueOf(365));
+		// Interest calculation when rate is entered per annum
+		//applicableInterest=applicableInterest.multiply(noOfDaysforInterest).divide(BigDecimal.valueOf(365)).setScale(2, BigDecimal.ROUND_HALF_EVEN);
 		return applicableInterest;
 	}
 	
