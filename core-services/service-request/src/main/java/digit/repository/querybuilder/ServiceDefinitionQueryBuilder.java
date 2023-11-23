@@ -69,7 +69,7 @@ public class ServiceDefinitionQueryBuilder {
             if(!ObjectUtils.isEmpty(criteria.getStatus()) && criteria.getStatus().equalsIgnoreCase("Active")){
                 addClauseIfRequired(query, preparedStmtList);
                 System.out.println("inside active query");
-                query.append(" AND to_timestamp((sd.additionaldetails->>'endDate')::bigint) > to_timestamp(?::bigint)");
+                query.append(" to_timestamp((sd.additionaldetails->>'endDate')::bigint) > to_timestamp(?::bigint)");
                 preparedStmtList.add(criteria.getTodaysDate());
             }else if(!ObjectUtils.isEmpty(criteria.getStatus()) && criteria.getStatus().equalsIgnoreCase("Inactive")){
                 addClauseIfRequired(query, preparedStmtList);
@@ -182,7 +182,7 @@ public class ServiceDefinitionQueryBuilder {
             if(!ObjectUtils.isEmpty(criteria.getStatus()) && criteria.getStatus().equalsIgnoreCase("Active")){
                 addClauseIfRequired(query, preparedStmtList);
                 System.out.println("inside active query");
-                query.append(" AND to_timestamp((sd.additionaldetails->>'endDate')::bigint) > to_timestamp(?::bigint)");
+                query.append(" to_timestamp((sd.additionaldetails->>'endDate')::bigint) > to_timestamp(?::bigint)");
                 preparedStmtList.add(criteria.getTodaysDate());
             }else if(!ObjectUtils.isEmpty(criteria.getStatus()) && criteria.getStatus().equalsIgnoreCase("Inactive")){
                 addClauseIfRequired(query, preparedStmtList);
