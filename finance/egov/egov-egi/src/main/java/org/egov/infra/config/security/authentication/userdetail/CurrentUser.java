@@ -64,6 +64,9 @@ public class CurrentUser implements UserDetails {
     private final User user;
     private final List<SimpleGrantedAuthority> authorities = new ArrayList<>();
 
+    public CurrentUser() {
+		this.user = new User();
+	}
     public CurrentUser(User user) {
         if (user == null) {
             throw new UsernameNotFoundException("User not found");
