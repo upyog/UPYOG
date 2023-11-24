@@ -44,7 +44,7 @@ export const config = [
         name: "name",
         validation: {
           pattern: {
-            value: "^[a-zA-Z ]*$",
+            value: "^[a-zA-Z ]+$",
             message: "PAYMENT_INVALID_NAME",
           },
         },
