@@ -23,10 +23,10 @@ const SortByName = (na, nb) => {
   return 0;
 };
 
-const GetCitiesWithi18nKeys = (mdmsRes, moduleCode) => {
-  const cityList = (mdmsRes.tenant.citymodule && mdmsRes.tenant.citymodule.find((module) => module.code === moduleCode).tenants) || [];
+const GetCitiesWithi18nKeys = (MdmsRes, moduleCode) => {
+  const cityList = (MdmsRes.tenant.citymodule && MdmsRes.tenant.citymodule.find((module) => module.code === moduleCode).tenants) || [];
   const citiesMap = cityList.map((city) => city.code);
-  const cities = mdmsRes.tenant.tenants
+  const cities = MdmsRes.tenant.tenants
     .filter((city) => citiesMap.includes(city.code))
     .map(({ code, name, logoId, emailId, address, contactNumber }) => ({
       code,
@@ -978,42 +978,42 @@ const getStaticData = () => ({
   ],
 });
 
-const GetEgovLocations = (mdmsRes) => {
-  return mdmsRes["egov-location"].TenantBoundary[0].boundary.children.map((obj) => ({
+const GetEgovLocations = (MdmsRes) => {
+  return MdmsRes["egov-location"].TenantBoundary[0].boundary.children.map((obj) => ({
     name: obj.localname,
     i18nKey: obj.localname,
   }));
 };
 
-const GetServiceDefs = (mdmsRes, moduleCode) => mdmsRes[`RAINMAKER-${moduleCode}`].ServiceDefs.filter((def) => def.active);
+const GetServiceDefs = (MdmsRes, moduleCode) => MdmsRes[`RAINMAKER-${moduleCode}`].ServiceDefs.filter((def) => def.active);
 
-const GetSanitationType = (mdmsRes) => ["FSM"].SanitationType.filter((type) => type.active);
+const GetSanitationType = (MdmsRes) => ["FSM"].SanitationType.filter((type) => type.active);
 
-const GetPitType = (mdmsRes) =>
-  mdmsRes["FSM"].PitType.filter((item) => item.active).map((type) => ({ ...type, i18nKey: `PITTYPE_MASTERS_${type.code}` }));
+const GetPitType = (MdmsRes) =>
+  MdmsRes["FSM"].PitType.filter((item) => item.active).map((type) => ({ ...type, i18nKey: `PITTYPE_MASTERS_${type.code}` }));
 
-const GetApplicationChannel = (mdmsRes) =>
-  mdmsRes["FSM"].ApplicationChannel.filter((type) => type.active).map((channel) => ({
+const GetApplicationChannel = (MdmsRes) =>
+  MdmsRes["FSM"].ApplicationChannel.filter((type) => type.active).map((channel) => ({
     ...channel,
     i18nKey: `ES_APPLICATION_DETAILS_APPLICATION_CHANNEL_${channel.code}`,
   }));
 
-const GetPropertyType = (mdmsRes) =>
-  mdmsRes["FSM"].PropertyType.filter((property) => property.active && !property.propertyType).map((item) => ({
+const GetPropertyType = (MdmsRes) =>
+  MdmsRes["FSM"].PropertyType.filter((property) => property.active && !property.propertyType).map((item) => ({
     ...item,
     i18nKey: `PROPERTYTYPE_MASTERS_${item.code}`,
     code: item.code,
   }));
 
-const GetPropertySubtype = (mdmsRes) =>
-  mdmsRes["FSM"].PropertyType.filter((property) => property.active && property.propertyType).map((item) => ({
+const GetPropertySubtype = (MdmsRes) =>
+  MdmsRes["FSM"].PropertyType.filter((property) => property.active && property.propertyType).map((item) => ({
     ...item,
     i18nKey: `PROPERTYTYPE_MASTERS_${item.code}`,
     code: item.code,
   }));
 
-const GetVehicleType = (mdmsRes) =>
-  mdmsRes["Vehicle"].VehicleMakeModel.filter((vehicle) => vehicle.active)
+const GetVehicleType = (MdmsRes) =>
+  MdmsRes["Vehicle"].VehicleMakeModel.filter((vehicle) => vehicle.active)
     .filter((vehicle) => vehicle.make)
     .map((vehicleDetails) => {
       return {
@@ -1022,8 +1022,8 @@ const GetVehicleType = (mdmsRes) =>
       };
     });
 
-const GetVehicleMakeModel = (mdmsRes) =>
-  mdmsRes["Vehicle"].VehicleMakeModel.filter((vehicle) => vehicle.active)
+const GetVehicleMakeModel = (MdmsRes) =>
+  MdmsRes["Vehicle"].VehicleMakeModel.filter((vehicle) => vehicle.active)
     .map((vehicleDetails) => {
       return {
         ...vehicleDetails,
@@ -1031,8 +1031,8 @@ const GetVehicleMakeModel = (mdmsRes) =>
       };
   });
 
-const GetSlumLocalityMapping = (mdmsRes, tenantId) =>
-  mdmsRes["FSM"].Slum.filter((type) => type.active).reduce((prev, curr) => {
+const GetSlumLocalityMapping = (MdmsRes, tenantId) =>
+  MdmsRes["FSM"].Slum.filter((type) => type.active).reduce((prev, curr) => {
     return prev[curr.locality]
       ? {
           ...prev,
@@ -1055,42 +1055,42 @@ const GetSlumLocalityMapping = (mdmsRes, tenantId) =>
         };
   }, {});
 
-const GetPropertyOwnerShipCategory = (mdmsRes) =>
-  mdmsRes["PropertyTax"].OwnerShipCategory.filter((ownerShip) => ownerShip.active).map((ownerShipDetails) => {
+const GetPropertyOwnerShipCategory = (MdmsRes) =>
+  MdmsRes["PropertyTax"].OwnerShipCategory.filter((ownerShip) => ownerShip.active).map((ownerShipDetails) => {
     return {
       ...ownerShipDetails,
       i18nKey: `COMMON_MASTER_OWNER_TYPE_${ownerShipDetails.code}`,
     };
   });
 
-const GetTradeOwnerShipCategory = (mdmsRes) =>
-  mdmsRes["common-masters"].OwnerShipCategory.filter((ownerShip) => ownerShip.active).map((ownerShipDetails) => {
+const GetTradeOwnerShipCategory = (MdmsRes) =>
+  MdmsRes["common-masters"].OwnerShipCategory.filter((ownerShip) => ownerShip.active).map((ownerShipDetails) => {
     return {
       ...ownerShipDetails,
       i18nKey: `COMMON_MASTER_OWNER_TYPE_${ownerShipDetails.code}`,
     };
   });
 
-const GetPropertyOwnerType = (mdmsRes) =>
-  mdmsRes["PropertyTax"].OwnerType.filter((owner) => owner.active).map((ownerDetails) => {
+const GetPropertyOwnerType = (MdmsRes) =>
+  MdmsRes["PropertyTax"].OwnerType.filter((owner) => owner.active).map((ownerDetails) => {
     return {
       ...ownerDetails,
       i18nKey: `PROPERTYTAX_OWNERTYPE_${ownerDetails.code}`,
     };
   });
 
-const getSubPropertyOwnerShipCategory = (mdmsRes) => {
-  mdmsRes["PropertyTax"].SubOwnerShipCategory.filter((category) => category.active).map((subOwnerShipDetails) => {
+const getSubPropertyOwnerShipCategory = (MdmsRes) => {
+  MdmsRes["PropertyTax"].SubOwnerShipCategory.filter((category) => category.active).map((subOwnerShipDetails) => {
     return {
       ...subOwnerShipDetails,
       i18nKey: `PROPERTYTAX_BILLING_SLAB_${subOwnerShipDetails.code}`,
     };
   });
-  sessionStorage.setItem("getSubPropertyOwnerShipCategory", JSON.stringify(mdmsRes));
+  sessionStorage.setItem("getSubPropertyOwnerShipCategory", JSON.stringify(MdmsRes));
 };
 
-const getDocumentRequiredScreen = (mdmsRes) => {
-  mdmsRes["PropertyTax"].Documents.filter((Documents) => Documents.active).map((dropdownData) => {
+const getDocumentRequiredScreen = (MdmsRes) => {
+  MdmsRes["PropertyTax"].Documents.filter((Documents) => Documents.active).map((dropdownData) => {
     return {
       ...Documents,
       i18nKey: `${dropdownData.code}`,
@@ -1098,8 +1098,8 @@ const getDocumentRequiredScreen = (mdmsRes) => {
   });
 };
 
-const getTLDocumentRequiredScreen = (mdmsRes) => {
-  mdmsRes["TradeLicense"].Documents.filter((Documents) => Documents.active).map((dropdownData) => {
+const getTLDocumentRequiredScreen = (MdmsRes) => {
+  MdmsRes["TradeLicense"].Documents.filter((Documents) => Documents.active).map((dropdownData) => {
     return {
       ...Documents,
       i18nKey: `${dropdownData.code}`,
@@ -1107,8 +1107,8 @@ const getTLDocumentRequiredScreen = (mdmsRes) => {
   });
 };
 
-const getMapConfig = (mdmsRes) => {
-  mdmsRes["PropertyTax"].MapConfig.filter((MapConfig) => MapConfig).map((MapData) => {
+const getMapConfig = (MdmsRes) => {
+  MdmsRes["PropertyTax"].MapConfig.filter((MapConfig) => MapConfig).map((MapData) => {
     return {
       ...MapConfig,
       defaultconfig: MapData.defaultConfig,
@@ -1116,58 +1116,58 @@ const getMapConfig = (mdmsRes) => {
   });
 };
 
-const getUsageCategory = (mdmsRes) =>
-  mdmsRes["PropertyTax"].UsageCategory.filter((UsageCategory) => UsageCategory.active).map((UsageCategorylist) => {
+const getUsageCategory = (MdmsRes) =>
+  MdmsRes["PropertyTax"].UsageCategory.filter((UsageCategory) => UsageCategory.active).map((UsageCategorylist) => {
     return {
       ...UsageCategorylist,
       i18nKey: `PROPERTYTAX_BILLING_SLAB_${UsageCategorylist.code}`,
     };
   });
 
-const getPTPropertyType = (mdmsRes) =>
-  mdmsRes["PropertyTax"].UsageCategory.filter((PropertyType) => PropertyType.active).map((PTPropertyTypelist) => {
+const getPTPropertyType = (MdmsRes) =>
+  MdmsRes["PropertyTax"].UsageCategory.filter((PropertyType) => PropertyType.active).map((PTPropertyTypelist) => {
     return {
       ...UsageCategorylist,
       i18nKey: `COMMON_PROPTYPE_${stringReplaceAll(PTPropertyTypelist.code, ".", "_")}`,
     };
   });
 
-const getTLStructureType = (mdmsRes) =>
-  mdmsRes["common-masters"].StructureType.filter((StructureType) => StructureType.active).map((TLStructureTypeList) => {
+const getTLStructureType = (MdmsRes) =>
+  MdmsRes["common-masters"].StructureType.filter((StructureType) => StructureType.active).map((TLStructureTypeList) => {
     return {
       ...TLStructureTypeList,
       i18nKey: `COMMON_MASTERS_STRUCTURETYPE_${stringReplaceAll(TLStructureTypeList.code, ".", "_")}`,
     };
   });
 
-const getTLAccessoriesType = (mdmsRes) =>
-  mdmsRes["TradeLicense"].AccessoriesCategory.filter((AccessoriesCategory) => AccessoriesCategory.active).map((TLAccessoryTypeList) => {
+const getTLAccessoriesType = (MdmsRes) =>
+  MdmsRes["TradeLicense"].AccessoriesCategory.filter((AccessoriesCategory) => AccessoriesCategory.active).map((TLAccessoryTypeList) => {
     return {
       ...TLAccessoryTypeList,
       i18nKey: `TRADELICENSE_ACCESSORIESCATEGORY_${stringReplaceAll(TLAccessoryTypeList.code, ".", "_")}`,
     };
   });
 
-const getTLFinancialYear = (mdmsRes) =>
-  mdmsRes["egf-master"].FinancialYear.filter((FinancialYear) => FinancialYear.active && FinancialYear.module === "TL").map((FinancialYearList) => {
+const getTLFinancialYear = (MdmsRes) =>
+  MdmsRes["egf-master"].FinancialYear.filter((FinancialYear) => FinancialYear.active && FinancialYear.module === "TL").map((FinancialYearList) => {
     return {
       ...FinancialYearList,
       //i18nKey: `TRADELICENSE_ACCESSORIESCATEGORY_${stringReplaceAll(TLAccessoryTypeList.code, ".", "_")}`,
     };
   });
-const getFloorList = (mdmsRes) =>
-  mdmsRes["PropertyTax"].Floor.filter((PTFloor) => PTFloor.active).map((PTFloorlist) => {
+const getFloorList = (MdmsRes) =>
+  MdmsRes["PropertyTax"].Floor.filter((PTFloor) => PTFloor.active).map((PTFloorlist) => {
     return {
       ...PTFloorlist,
       i18nKey: `PROPERTYTAX_FLOOR_${PTFloorlist.code}`,
     };
   });
 
-const GetReasonType = (mdmsRes, type, moduleCode) =>
+const GetReasonType = (MdmsRes, type, moduleCode) =>
   Object.assign(
     {},
-    ...Object.keys(mdmsRes[moduleCode]).map((collection) => ({
-      [collection]: mdmsRes[moduleCode][collection]
+    ...Object.keys(MdmsRes[moduleCode]).map((collection) => ({
+      [collection]: MdmsRes[moduleCode][collection]
         .filter((reason) => reason.active)
         .map((reason) => ({
           ...reason,
@@ -1176,8 +1176,8 @@ const GetReasonType = (mdmsRes, type, moduleCode) =>
     }))
   );
 
-const getRentalDetailsCategory = (mdmsRes) => {
-  mdmsRes["PropertyTax"].RentalDetails.filter((category) => category.active).map((RentalDetailsInfo) => {
+const getRentalDetailsCategory = (MdmsRes) => {
+  MdmsRes["PropertyTax"].RentalDetails.filter((category) => category.active).map((RentalDetailsInfo) => {
     return {
       ...RentalDetailsInfo,
       i18nKey: `PROPERTYTAX_BILLING_SLAB_${RentalDetailsInfo.code}`,
@@ -1185,26 +1185,26 @@ const getRentalDetailsCategory = (mdmsRes) => {
   });
 };
 
-const getChargeSlabsCategory = (mdmsRes) => {
-  mdmsRes["PropertyTax"].ChargeSlabs.filter((category) => category.active).map((ChargeSlabsInfo) => {
+const getChargeSlabsCategory = (MdmsRes) => {
+  MdmsRes["PropertyTax"].ChargeSlabs.filter((category) => category.active).map((ChargeSlabsInfo) => {
     return {
       ...ChargeSlabsInfo,
     };
   });
 };
 
-const getGenderType = (mdmsRes) => {
-  return mdmsRes["common-masters"].GenderType.filter((GenderType) => GenderType.active).map((genderDetails) => {
+const getGenderType = (MdmsRes) => {
+  return MdmsRes["common-masters"].GenderType.filter((GenderType) => GenderType.active).map((genderDetails) => {
     return {
       ...genderDetails,
       i18nKey: `PT_COMMON_GENDER_${genderDetails.code}`,
     };
   });
-  //return mdmsRes;
+  //return MdmsRes;
 };
 
-const TLGenderType = (mdmsRes) => {
-  mdmsRes["common-masters"].GenderType.filter((GenderType) => GenderType.active).map((genders) => {
+const TLGenderType = (MdmsRes) => {
+  MdmsRes["common-masters"].GenderType.filter((GenderType) => GenderType.active).map((genders) => {
     return {
       ...genders,
       i18nKey: `TL_GENDER_${genders.code}`,
@@ -1212,8 +1212,8 @@ const TLGenderType = (mdmsRes) => {
   });
 };
 
-const PTGenderType = (mdmsRes) => {
-  mdmsRes["common-masters"].GenderType.filter((GenderType) => GenderType.active).map((formGender) => {
+const PTGenderType = (MdmsRes) => {
+  MdmsRes["common-masters"].GenderType.filter((GenderType) => GenderType.active).map((formGender) => {
     return {
       ...formGender,
       i18nKey: `PT_FORM3_${formGender.code}`,
@@ -1221,8 +1221,8 @@ const PTGenderType = (mdmsRes) => {
   });
 };
 
-const HRGenderType = (mdmsRes) => {
-  mdmsRes["common-masters"].GenderType.filter((GenderType) => GenderType.active).map((comGender) => {
+const HRGenderType = (MdmsRes) => {
+  MdmsRes["common-masters"].GenderType.filter((GenderType) => GenderType.active).map((comGender) => {
     return {
       ...comGender,
       i18nKey: `COMMON_GENDER_${comGender.code}`,
@@ -1230,24 +1230,24 @@ const HRGenderType = (mdmsRes) => {
   });
 };
 
-const GetMCollectBusinessService = (mdmsRes) =>
-  mdmsRes["BillingService"].BusinessService.map((businesServiceDetails) => {
+const GetMCollectBusinessService = (MdmsRes) =>
+  MdmsRes["BillingService"].BusinessService.map((businesServiceDetails) => {
     return {
       ...businesServiceDetails,
       i18nKey: `BILLINGSERVICE_BUSINESSSERVICE_${businesServiceDetails.code}`,
     };
   });
 
-const GetMCollectApplicationStatus = (mdmsRes) =>
-  mdmsRes["mCollect"].applcationStatus.map((appStatusDetails) => {
+const GetMCollectApplicationStatus = (MdmsRes) =>
+  MdmsRes["mCollect"].applcationStatus.map((appStatusDetails) => {
     return {
       ...appStatusDetails,
       i18nKey: `BILLINGSERVICE_BUSINESSSERVICE_${appStatusDetails.code}`,
     };
   });
 
-const getFSMGenderType = (mdmsRes) => {
-  return mdmsRes["common-masters"].GenderType.map((genderDetails) => {
+const getFSMGenderType = (MdmsRes) => {
+  return MdmsRes["common-masters"].GenderType.map((genderDetails) => {
     return {
       ...genderDetails,
       i18nKey: `COMMON_GENDER_${genderDetails.code}`,
@@ -1255,8 +1255,8 @@ const getFSMGenderType = (mdmsRes) => {
   });
 };
 
-const GetFSTPORejectionReason = (mdmsRes) => {
-  return mdmsRes["Vehicle"].FSTPORejectionReason.filter((reason) => reason.active).map((reasonDetails) => {
+const GetFSTPORejectionReason = (MdmsRes) => {
+  return MdmsRes["Vehicle"].FSTPORejectionReason.filter((reason) => reason.active).map((reasonDetails) => {
     return {
       ...reasonDetails,
       i18nKey: `ES_ACTION_REASON_${reasonDetails.code}`,
@@ -1264,8 +1264,8 @@ const GetFSTPORejectionReason = (mdmsRes) => {
   });
 };
 
-const GetPaymentType = (mdmsRes) => {
-  return mdmsRes["FSM"].PaymentType.filter((option) => option.active).map((reasonDetails) => {
+const GetPaymentType = (MdmsRes) => {
+  return MdmsRes["FSM"].PaymentType.filter((option) => option.active).map((reasonDetails) => {
     return {
       ...reasonDetails,
       i18nKey: `ES_ACTION_${reasonDetails.code}`,
@@ -1273,8 +1273,8 @@ const GetPaymentType = (mdmsRes) => {
   });
 };
 
-const GetTripNumber = (mdmsRes) => {
-  return mdmsRes["FSM"].TripNumber.filter((option) => option.active).map((reasonDetails) => {
+const GetTripNumber = (MdmsRes) => {
+  return MdmsRes["FSM"].TripNumber.filter((option) => option.active).map((reasonDetails) => {
     return {
       ...reasonDetails,
       i18nKey: `ES_ACTION_TRIP_${reasonDetails.code}`,
@@ -1282,8 +1282,8 @@ const GetTripNumber = (mdmsRes) => {
   });
 };
 
-const GetReceivedPaymentType = (mdmsRes) => {
-  return mdmsRes["FSM"].ReceivedPaymentType.filter((option) => option.active).map((reasonDetails) => {
+const GetReceivedPaymentType = (MdmsRes) => {
+  return MdmsRes["FSM"].ReceivedPaymentType.filter((option) => option.active).map((reasonDetails) => {
     return {
       ...reasonDetails,
       i18nKey: `ES_ACTION_${reasonDetails.code}`,
@@ -1291,118 +1291,118 @@ const GetReceivedPaymentType = (mdmsRes) => {
   });
 };
 
-const getDssDashboard = (mdmsRes) => mdmsRes["dss-dashboard"]["dashboard-config"];
+const getDssDashboard = (MdmsRes) => MdmsRes["dss-dashboard"]["dashboard-config"];
 
-const GetRoleStatusMapping = (mdmsRes) => mdmsRes["DIGIT-UI"].RoleStatusMapping;
-const GetCommonFields = (mdmsRes, moduleCode) =>
-  moduleCode.toUpperCase() === "PROPERTYTAX" ? mdmsRes["PropertyTax"].CommonFieldsConfig : mdmsRes["FSM"].CommonFieldsConfig;
+const GetRoleStatusMapping = (MdmsRes) => MdmsRes["DIGIT-UI"].RoleStatusMapping;
+const GetCommonFields = (MdmsRes, moduleCode) =>
+  moduleCode.toUpperCase() === "PROPERTYTAX" ? MdmsRes["PropertyTax"].CommonFieldsConfig : MdmsRes["FSM"].CommonFieldsConfig;
 
-const GetPreFields = (mdmsRes) => mdmsRes["FSM"].PreFieldsConfig;
+const GetPreFields = (MdmsRes) => MdmsRes["FSM"].PreFieldsConfig;
 
-const GetPostFields = (mdmsRes) => mdmsRes["FSM"].PostFieldsConfig;
+const GetPostFields = (MdmsRes) => MdmsRes["FSM"].PostFieldsConfig;
 
-const GetFSTPPlantInfo = (mdmsRes) => mdmsRes["FSM"].FSTPPlantInfo;
+const GetFSTPPlantInfo = (MdmsRes) => MdmsRes["FSM"].FSTPPlantInfo;
 
-const GetDocumentsTypes = (mdmsRes) => mdmsRes["BPA"].DocTypeMapping;
+const GetDocumentsTypes = (MdmsRes) => MdmsRes["BPA"].DocTypeMapping;
 
-const GetChecklist = (mdmsRes) => mdmsRes["BPA"].CheckList;
+const GetChecklist = (MdmsRes) => MdmsRes["BPA"].CheckList;
 
-const transformResponse = (type, mdmsRes, moduleCode, tenantId) => {
+const transformResponse = (type, MdmsRes, moduleCode, tenantId) => {
   switch (type) {
     case "citymodule":
-      return GetCitiesWithi18nKeys(mdmsRes, moduleCode);
+      return GetCitiesWithi18nKeys(MdmsRes, moduleCode);
     case "egovLocation":
-      return GetEgovLocations(mdmsRes);
+      return GetEgovLocations(MdmsRes);
     case "serviceDefs":
-      return GetServiceDefs(mdmsRes, moduleCode);
+      return GetServiceDefs(MdmsRes, moduleCode);
     case "ApplicationChannel":
-      return GetApplicationChannel(mdmsRes);
+      return GetApplicationChannel(MdmsRes);
     case "SanitationType":
-      return GetSanitationType(mdmsRes);
+      return GetSanitationType(MdmsRes);
     case "PropertyType":
-      return GetPropertyType(mdmsRes);
+      return GetPropertyType(MdmsRes);
     case "PropertySubtype":
-      return GetPropertySubtype(mdmsRes);
+      return GetPropertySubtype(MdmsRes);
     case "PitType":
-      return GetPitType(mdmsRes);
+      return GetPitType(MdmsRes);
     case "VehicleType":
-      return GetVehicleType(mdmsRes);
+      return GetVehicleType(MdmsRes);
     case "VehicleMakeModel":
-      return GetVehicleMakeModel(mdmsRes);
+      return GetVehicleMakeModel(MdmsRes);
     case "Slum":
-      return GetSlumLocalityMapping(mdmsRes, tenantId);
+      return GetSlumLocalityMapping(MdmsRes, tenantId);
     case "OwnerShipCategory":
-      return GetPropertyOwnerShipCategory(mdmsRes);
+      return GetPropertyOwnerShipCategory(MdmsRes);
     case "TLOwnerShipCategory":
-      return GetTradeOwnerShipCategory(mdmsRes);
+      return GetTradeOwnerShipCategory(MdmsRes);
     case "OwnerType":
-      return GetPropertyOwnerType(mdmsRes);
+      return GetPropertyOwnerType(MdmsRes);
     case "SubOwnerShipCategory":
-      return getSubPropertyOwnerShipCategory(mdmsRes);
+      return getSubPropertyOwnerShipCategory(MdmsRes);
     case "Documents":
-      return getDocumentRequiredScreen(mdmsRes);
+      return getDocumentRequiredScreen(MdmsRes);
     case "TLDocuments":
-      return getTLDocumentRequiredScreen(mdmsRes);
+      return getTLDocumentRequiredScreen(MdmsRes);
     case "MapConfig":
-      return getMapConfig(mdmsRes);
+      return getMapConfig(MdmsRes);
     case "UsageCategory":
-      return getUsageCategory(mdmsRes);
+      return getUsageCategory(MdmsRes);
     case "PTPropertyType":
-      return getPTPropertyType(mdmsRes);
+      return getPTPropertyType(MdmsRes);
     case "StructureType":
-      return getTLStructureType(mdmsRes);
+      return getTLStructureType(MdmsRes);
     case "AccessoryCategory":
-      return getTLAccessoriesType(mdmsRes);
+      return getTLAccessoriesType(MdmsRes);
     case "FinancialYear":
-      return getTLFinancialYear(mdmsRes);
+      return getTLFinancialYear(MdmsRes);
     case "Floor":
-      return getFloorList(mdmsRes);
+      return getFloorList(MdmsRes);
     case "Reason":
-      return GetReasonType(mdmsRes, type, moduleCode);
+      return GetReasonType(MdmsRes, type, moduleCode);
     case "RoleStatusMapping":
-      return GetRoleStatusMapping(mdmsRes);
+      return GetRoleStatusMapping(MdmsRes);
     case "CommonFieldsConfig":
-      return GetCommonFields(mdmsRes, moduleCode);
+      return GetCommonFields(MdmsRes, moduleCode);
     case "PreFieldsConfig":
-      return GetPreFields(mdmsRes);
+      return GetPreFields(MdmsRes);
     case "PostFieldsConfig":
-      return GetPostFields(mdmsRes);
+      return GetPostFields(MdmsRes);
     case "RentalDeatils":
-      return getRentalDetailsCategory(mdmsRes);
+      return getRentalDetailsCategory(MdmsRes);
     case "ChargeSlabs":
-      return getChargeSlabsCategory(mdmsRes);
+      return getChargeSlabsCategory(MdmsRes);
     case "DssDashboard":
-      return getDssDashboard(mdmsRes);
+      return getDssDashboard(MdmsRes);
     case "BusinessService":
-      return GetMCollectBusinessService(mdmsRes);
+      return GetMCollectBusinessService(MdmsRes);
     case "applcatonStatus":
-      return GetMCollectApplicationStatus(mdmsRes);
+      return GetMCollectApplicationStatus(MdmsRes);
     case "FSTPPlantInfo":
-      return GetFSTPPlantInfo(mdmsRes);
+      return GetFSTPPlantInfo(MdmsRes);
     case "GenderType":
-      return getGenderType(mdmsRes);
+      return getGenderType(MdmsRes);
     case "TLGendertype":
-      return TLGenderType(mdmsRes);
+      return TLGenderType(MdmsRes);
     case "PTGenderType":
-      return PTGenderType(mdmsRes);
+      return PTGenderType(MdmsRes);
     case "HRGenderType":
-      return HRGenderType(mdmsRes);
+      return HRGenderType(MdmsRes);
     case "DocumentTypes":
-      return GetDocumentsTypes(mdmsRes);
+      return GetDocumentsTypes(MdmsRes);
     case "CheckList":
-      return GetChecklist(mdmsRes);
+      return GetChecklist(MdmsRes);
     case "FSMGenderType":
-      return getFSMGenderType(mdmsRes);
+      return getFSMGenderType(MdmsRes);
     case "FSTPORejectionReason":
-      return GetFSTPORejectionReason(mdmsRes);
+      return GetFSTPORejectionReason(MdmsRes);
     case "PaymentType":
-      return GetPaymentType(mdmsRes);
+      return GetPaymentType(MdmsRes);
     case "TripNumber":
-      return GetTripNumber(mdmsRes);
+      return GetTripNumber(MdmsRes);
     case "ReceivedPaymentType":
-      return GetReceivedPaymentType(mdmsRes);
+      return GetReceivedPaymentType(MdmsRes);
     default:
-      return mdmsRes;
+      return MdmsRes;
   }
 };
 
@@ -1501,8 +1501,8 @@ export const MdmsServiceV2 = {
     if (inStoreValue) {
       return inStoreValue;
     }
-    const { mdmsRes } = await MdmsServiceV2.call(tenantId, mdmsDetails.details);
-    const responseValue = transformResponse(mdmsDetails.type, mdmsRes, moduleCode.toUpperCase(), tenantId);
+    const { MdmsRes } = await MdmsServiceV2.call(tenantId, mdmsDetails.details);
+    const responseValue = transformResponse(mdmsDetails.type, MdmsRes, moduleCode.toUpperCase(), tenantId);
     const cacheSetting = getCacheSetting(mdmsDetails.details.moduleDetails[0].moduleName);
     PersistantStorage.set(key, responseValue, cacheSetting.cacheTimeInSecs);
     return responseValue;
