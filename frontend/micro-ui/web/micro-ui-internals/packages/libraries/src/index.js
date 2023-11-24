@@ -18,6 +18,7 @@ import * as dateUtils from "./services/atoms/Utils/Date";
 import Download from "./services/atoms/Download";
 import { WorkflowService } from "./services/elements/WorkFlow";
 import { MdmsService } from "./services/elements/MDMS";
+import { MdmsServiceV2 } from "./services/elements/MDMSV2";
 import { Complaint } from "./services/elements/Complaint";
 import { UserService } from "./services/elements/User";
 import { PTService } from "./services/elements/PT";
@@ -88,6 +89,7 @@ const initLibraries = () => {
   setupLibraries("DateUtils", dateUtils);
   setupLibraries("WorkflowService", WorkflowService);
   setupLibraries("MDMSService", MdmsService);
+  setupLibraries("MDMSServiceV2", MdmsServiceV2);
   setupLibraries("UploadServices", UploadServices);
   setupLibraries("JsDictionary", JsDictionary);
   setupLibraries("GetServiceDefinitions", GetServiceDefinitions);
