@@ -39,6 +39,8 @@ import { initBillsComponents } from "@egovernments/digit-ui-module-bills";
 import { initWorkbenchComponents } from "@egovernments/digit-ui-module-workbench";
 // import { initReportsComponents } from "@egovernments/digit-ui-module-reports";
 
+window.contextPath = window?.globalConfigs?.getConfig("CONTEXT_PATH");
+
 initLibraries();
 
 const enabledModules = [
@@ -104,6 +106,7 @@ const moduleReducers = (initData) => ({
 });
 
 function App() {
+  window.contextPath = window?.globalConfigs?.getConfig("CONTEXT_PATH");
   const stateCode =
     window.globalConfigs?.getConfig("STATE_LEVEL_TENANT_ID") ||
     process.env.REACT_APP_STATE_LEVEL_TENANT_ID;
