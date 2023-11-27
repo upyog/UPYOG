@@ -43,7 +43,7 @@ public class DriverService {
 		}
 		driverRequest.getDriver().getOwner()
 				.setMobileNumber(driverRepository.getDriverSeqMobileNum(getSeqDriverMobileNumber()));
-		userService.manageDrivers(driverRequest);
+		userService.manageDrivers(driverRequest, true);
 		enrichmentService.enrichCreate(driverRequest);
 		driverRepository.save(driverRequest);
 		return driverRequest.getDriver();
@@ -62,7 +62,7 @@ public class DriverService {
 		if (driverRequest.getDriver().getTenantId().split("\\.").length == 1) {
 			throw new CustomException("Invalid TenantId", " Application cannot be updated at StateLevel");
 		}
-		userService.manageDrivers(driverRequest);
+		userService.manageDrivers(driverRequest, false);
 		enrichmentService.enrichUpdate(driverRequest);
 		driverRepository.update(driverRequest);
 		return driverRequest.getDriver();
