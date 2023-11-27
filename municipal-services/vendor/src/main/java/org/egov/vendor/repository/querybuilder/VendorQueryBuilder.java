@@ -3,6 +3,7 @@ package org.egov.vendor.repository.querybuilder;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.vendor.config.VendorConfiguration;
 import org.egov.vendor.web.model.VendorSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -105,14 +106,25 @@ public class VendorQueryBuilder {
 			}
 
 			List<String> vendorName = criteria.getName();
-			if (!CollectionUtils.isEmpty(vendorName)) {
+			if (!CollectionUtils.isEmpty(vendorName)
+					&& (vendorName.stream().filter(name -> name.length() > 0).findFirst().orElse(null) != null)) {
 				List<String> vendorNametoLowerCase = criteria.getName().stream().map(String::toLowerCase)
 						.collect(Collectors.toList());
+				boolean flag = false;
 				addClauseIfRequired(preparedStmtList, builder);
-				builder.append(" LOWER(vendor.name) IN (").append(createQuery(vendorNametoLowerCase)).append(")");
-				addToPreparedStatement(preparedStmtList, vendorNametoLowerCase);
+				builder.append(" ( ");
+				for (String vendorname : vendorNametoLowerCase) {
+					if (flag)
+						builder.append(" OR ");
+					builder.append(" LOWER(vendor.name) like ?");
+					preparedStmtList.add('%' + StringUtils.lowerCase(vendorname) + '%');
+					builder.append(" ESCAPE '_' ");
 
+					flag = true;
+				}
+				builder.append(" ) ");
 			}
+			
 			List<String> ownerIds = criteria.getOwnerIds();
 			if (!CollectionUtils.isEmpty(ownerIds)) {
 				addClauseIfRequired(preparedStmtList, builder);
