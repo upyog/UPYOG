@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import PropTypes from "prop-types";
 
 import TextArea from "../atoms/TextArea";
-import TextInput from "../atoms/TextInput";
+// import TextInput from "../atoms/TextInput";
 import CardLabel from "../atoms/CardLabel";
 import Rating from "../atoms/Rating";
 import CheckBox from "../atoms/CheckBox";
@@ -17,7 +17,7 @@ const RatingCard = ({ config, onSelect, t }) => {
   const { register, watch, handleSubmit } = useForm();
   const [comments, setComments] = useState("");
   const [rating, setRating] = useState(0);
-  const [textInput, setTextInput] = useState(0);
+  // const [textInput, setTextInput] = useState(0);
 
   const onSubmit = (data) => {
     data.rating = rating;
@@ -85,7 +85,7 @@ const RatingCard = ({ config, onSelect, t }) => {
       );
       
     }
-    if (input.type === "text") {
+    /*if (input.type === "text") {
       return (
         <React.Fragment key={index}>
           <CardLabel>{t(input.label)}</CardLabel>
@@ -93,7 +93,7 @@ const RatingCard = ({ config, onSelect, t }) => {
         </React.Fragment>
       );
       
-    }
+    } */
   });
   return (
     <form onSubmit={handleSubmit(onSubmit)}>

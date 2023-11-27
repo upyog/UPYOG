@@ -19,7 +19,7 @@ function todayDate() {
 }
 
 function getFilteredDsoData(dsoData, vehicle, vehicleCapacity) {
-  return dsoData?.filter((e) => e.vehicles?.find((veh) => veh?.capacity == vehicleCapacity));
+  return dsoData?.filter((e) => e.vehicles?.find((veh) => veh?.capacity == vehicleCapacity))?.sort((a, b) => a.name.localeCompare(b.name));
 }
 
 export const configAssignDso = ({ t, dsoData, dso, selectDSO, vehicleMenu, vehicle, vehicleCapacity, selectVehicle, action }) => {
