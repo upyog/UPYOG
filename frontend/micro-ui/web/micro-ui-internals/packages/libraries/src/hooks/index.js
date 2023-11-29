@@ -21,6 +21,7 @@ import { useApplicationsForBusinessServiceSearch } from "./useApplicationForBill
 import useBoundaryLocalities from "./useLocalities";
 import useCommonMDMS from "./useMDMS";
 import useCustomMDMS from "./useCustomMDMS";
+import useWorkBenchCustomAPIHook from "./useWorkBenchCustomAPIHook";
 import useCustomAPIHook from "./useCustomAPIHook";
 import useInboxGeneral from "./useInboxGeneral/useInboxGeneral";
 import useApplicationStatusGeneral from "./useStatusGeneral";
@@ -33,6 +34,7 @@ import useCreateEvent from "./events/useCreateEvent";
 import useUpdateEvent from "./events/useUpdateEvent";
 import useNewInboxGeneral from "./useInboxGeneral/useNewInbox";
 import useDynamicData from "./useDynamicData";
+import useCustomAPIMutationHook from "./useCustomAPIMutationHook";
 
 import useComplaintDetails from "./pgr/useComplaintDetails";
 import { useComplaintsList, useComplaintsListByMobile } from "./pgr/useComplaintList";
@@ -97,6 +99,7 @@ import useTenantsPT from "./pt/useTenants";
 import usePtApplicationDetail from "./pt/useApplicationDetail";
 import usePtApplicationActions from "./pt/useApplicationActions";
 import usePtMDMS from "./pt/useMDMS";
+import usePtMDMSV2 from "./pt/useMDMSV2";
 import usePropertyAssessment from "./pt/usePropertyAssessment";
 import UseAssessmentCreateUlb from "./pt/UseAssessmentCreateUlb";
 import usePtCalculationEstimate from "./pt/usePtCalculationEstimate";
@@ -255,6 +258,8 @@ import useToCheckPrivacyEnablement from "./ws/useToCheckPrivacyEnablement";
 import useWSConfigMDMS from "./ws/useWSConfigMDMS";
 import useFeedBackSearch from "./useFeedBackSearch";
 
+import useWorkBenchRouteSubscription from "./useWorkBenchRouteSubscription"
+
 const pgr = {
   useComplaintDetails,
   useComplaintsList,
@@ -328,6 +333,7 @@ const pt = {
   useApplicationDetail: usePtApplicationDetail,
   useApplicationActions: usePtApplicationActions,
   useMDMS: usePtMDMS,
+  useMDMSV2: usePtMDMSV2,
   usePropertyAssessment,
   UseAssessmentCreateUlb,
   usePtCalculationEstimate,
@@ -517,6 +523,7 @@ const Hooks = {
   useApplicationsForBusinessServiceSearch,
   useDemandSearch,
   useInboxGeneral,
+  useCustomAPIMutationHook,
   useEmployeeSearch,
   useBoundaryLocalities,
   useCommonMDMS,
@@ -554,6 +561,7 @@ const Hooks = {
   ws,
   useCustomMDMS,
   useCustomAPIHook,
+  useWorkBenchCustomAPIHook,
   reports,
   useGetHowItWorksJSON,
   useGetFAQsJSON,
@@ -564,6 +572,7 @@ const Hooks = {
   useBulkPdfDetails,
   useBillAmendmentInbox,
   useAudit,
+  useRouteSubscription:useWorkBenchRouteSubscription,
 };
 
 export default Hooks;

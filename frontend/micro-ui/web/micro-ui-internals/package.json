@@ -16,7 +16,8 @@
     "packages/modules/tl",
     "packages/modules/ws",
     "packages/modules/commonPt",
-    "packages/modules/fsm"  
+    "packages/modules/fsm",
+    "packages/modules/workbench"  
   ],
   "author": "Abhinav Kushwaha <abhinav.kushwaha@egovernments.org>",
   "license": "MIT",
@@ -40,6 +41,7 @@
     "dev:pgr": "cd packages/modules/pgr && yarn start",
     "dev:fsm": "cd packages/modules/fsm && yarn start",
     "dev:dss": "cd packages/modules/dss && yarn start",
+    "dev:workbench": "cd packages/modules/workbench && yarn start",
     "dev:mcollect": "cd packages/modules/mCollect && yarn start",
     "dev:receipts": "cd packages/modules/receipts && yarn start",
     "dev:tl": "cd packages/modules/tl && yarn start",
@@ -67,6 +69,7 @@
     "buildD:hrms": "cd packages/modules/hrms && yarn build",
     "buildD:obps": "cd packages/modules/obps && yarn build",
     "build:engagement": "cd packages/modules/engagement && yarn build",
+    "build:workbench": "cd packages/modules/workbench && yarn build",
     "buildD:noc": "cd packages/modules/noc && yarn build",
     "build:ws": "cd packages/modules/ws && yarn build",
     "buildD:bills": "cd packages/modules/bills && yarn build",
