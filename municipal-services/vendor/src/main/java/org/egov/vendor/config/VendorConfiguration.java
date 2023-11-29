@@ -142,4 +142,13 @@ public class VendorConfiguration {
 	@Value("${dso.driver.role.name}")
 	private String dsoDriverRoleName;
 
+	@Value("${citizen.role}")
+	private String citizenRole;
+
+	@Value("${citizen.role.name}")
+	private String citizenRoleName;
+
+	@Value("${vendor.driver.mobile.number}")
+	private String driverMobileNumberIncrement;
+
 }

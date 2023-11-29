@@ -117,11 +117,11 @@ CREATE INDEX  IF NOT EXISTS  index_tenant_eg_fsm_pit_detail  ON eg_fsm_pit_detai
 );
 
 
-CREATE INDEX  IF NOT EXISTS  index_fsm_id_eg_fsm_pit_detail  ON eg_fsm_pit_detail
-(
-  fms_id
+-- CREATE INDEX  IF NOT EXISTS  index_fsm_id_eg_fsm_pit_detail  ON eg_fsm_pit_detail
+-- (
+--   fms_id
 
-);
+-- );
 
 CREATE TABLE IF NOT EXISTS eg_fsm_pit_detail_auditlog(
 

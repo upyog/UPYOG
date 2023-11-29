@@ -9,7 +9,7 @@ const getSlumName = (application, t) => {
   }
   return application?.slum?.i18nKey ? t(`${application?.slum?.i18nKey}`) : "N/A";
 };
-
+/*
 const getDistanceofPitFromRoad = (distancefromroad) => {
    if (!distancefromroad) 
     return "N/A";
@@ -19,7 +19,7 @@ const getRoadWidth = (roadWidth) => {
    if (!roadWidth) 
     return "N/A"; 
   return roadWidth;};
-
+*/
 
 const getApplicationVehicleCapacity = (vehicleCapacity) => {
   if (!vehicleCapacity) return "N/A";
@@ -127,12 +127,12 @@ const getPDFData = (application, tenantInfo, t) => {
             title: t("ES_APPLICATION_DETAILS_VEHICLE_CAPACITY"),
             value: getApplicationVehicleCapacity(application?.vehicleCapacity),
           },
-          { title: t("ES_APPLICATION_DETAILS_DISTANCE_FROM_ROAD"),
+          /*{ title: t("ES_APPLICATION_DETAILS_DISTANCE_FROM_ROAD"),
             value: getDistanceofPitFromRoad(application?.additionalDetails.distancefromroad) || "N/A",
           },
           { title: t("ES_APPLICATION_DETAILS_ROAD_WIDTH"),
             value: getRoadWidth(application?.additionalDetails.roadWidth) || "N/A",
-          },
+          }, */
           { title: t("CS_APPLICATION_DETAILS_TRIPS"), value: application?.noOfTrips || "N/A" },
           {
             title: t("CS_APPLICATION_DETAILS_AMOUNT_PER_TRIP"),
