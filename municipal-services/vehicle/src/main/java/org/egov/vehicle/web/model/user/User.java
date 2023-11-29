@@ -70,7 +70,7 @@ public class User {
 
     @Size(max=128)
     @SafeHtml
-    @NotNull
+    // @NotNull
     @JsonProperty("emailId")
     private String emailId;
 
@@ -121,7 +121,7 @@ public class User {
     @JsonProperty("active")
     private Boolean active;
 
-    @NotNull
+    // @NotNull
     @JsonProperty("dob")
     private Long dob;
 

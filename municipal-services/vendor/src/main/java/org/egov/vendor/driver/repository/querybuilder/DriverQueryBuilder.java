@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.vendor.config.VendorConfiguration;
 import org.egov.vendor.driver.web.model.DriverSearchCriteria;
 import org.egov.vendor.web.model.VendorSearchCriteria;
@@ -23,6 +24,7 @@ public class DriverQueryBuilder {
 			+ "(SELECT *, DENSE_RANK() OVER (ORDER BY SORT_BY SORT_ORDER) offset_ FROM " + "({})"
 			+ " result) result_offset " + "limit ? offset ?";
 	private static final String DRIVER_NO_VENDOR_QUERY = " SELECT DISTINCT (driver.id) FROM EG_DRIVER driver LEFT JOIN eg_vendor_driver vendor_driver ON driver.id=vendor_driver.driver_id";
+	private static final String DRIVER_SEQ_MOBILE_NUMBER_QUERY = " SELECT nextval";
 
 	public String getDriverSearchQuery(DriverSearchCriteria criteria, List<Object> preparedStmtList) {
 		StringBuilder builder = new StringBuilder(QUERY);
@@ -39,12 +41,24 @@ public class DriverQueryBuilder {
 			}
 
 			List<String> driverName = criteria.getName();
-			if (!CollectionUtils.isEmpty(driverName)) {
+			if (!CollectionUtils.isEmpty(driverName)
+					&& (driverName.stream().filter(name -> name.length() > 0).findFirst().orElse(null) != null)) {
+				boolean flag = false;
 				addClauseIfRequired(preparedStmtList, builder);
-				builder.append(" driver.name IN (").append(createQuery(driverName)).append(")");
-				addToPreparedStatement(preparedStmtList, driverName);
+				builder.append(" ( ");
+				for (String drivername : driverName) {
 
+					if (flag)
+						builder.append(" OR ");
+					builder.append(" LOWER(driver.name) like ?");
+					preparedStmtList.add('%' + StringUtils.lowerCase(drivername) + '%');
+					builder.append(" ESCAPE '_' ");
+					flag = true;
+
+				}
+				builder.append(" ) ");
 			}
+
 			List<String> ownerIds = criteria.getOwnerIds();
 			if (!CollectionUtils.isEmpty(ownerIds)) {
 				addClauseIfRequired(preparedStmtList, builder);
@@ -145,6 +159,13 @@ public class DriverQueryBuilder {
 		addClauseIfRequired(preparedStmtList, builder);
 		builder.append(" vendor_driver.vendor_id IS NULL OR vendordriverstatus='INACTIVE'");
 
+		return builder.toString();
+	}
+
+	public String getSeqDriverMobileNumber(String seqDriverMobileNumber, List<Object> preparedStmtList) {
+
+		StringBuilder builder = new StringBuilder(DRIVER_SEQ_MOBILE_NUMBER_QUERY);
+		builder.append("('" + seqDriverMobileNumber + "')");
 		return builder.toString();
 	}
 

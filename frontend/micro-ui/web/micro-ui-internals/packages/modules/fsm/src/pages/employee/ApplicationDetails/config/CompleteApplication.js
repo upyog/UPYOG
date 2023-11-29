@@ -3,7 +3,7 @@ import { DatePicker } from "@egovernments/digit-ui-react-components";
 import { RadioButtons } from "@egovernments/digit-ui-react-components";
 
 
-export const configCompleteApplication = ({ t, vehicle, vehicleCapacity, noOfTrips, applicationCreatedTime = 0, receivedPaymentType, action, module }) => ({
+export const configCompleteApplication = ({ t, vehicle, vehicleCapacity, noOfTrips, applicationCreatedTime = 0, action, module }) => ({
 
   label: {
     heading: `ES_FSM_ACTION_TITLE_${action}`,
@@ -120,7 +120,7 @@ export const configCompleteApplication = ({ t, vehicle, vehicleCapacity, noOfTri
           disable: true,
           // disable: customizationConfig ? !customizationConfig?.noOfTrips?.override : true,
         },
-        module !== "FSM_ZERO_PAY_SERVICE" && {
+        /*module !== "FSM_ZERO_PAY_SERVICE" && {
           label: "FSM_PAYMENT_RECEIVED",
           isMandatory: true,
           type: "custom",
@@ -147,7 +147,7 @@ export const configCompleteApplication = ({ t, vehicle, vehicleCapacity, noOfTri
               />
             ),
           },
-        },
+        }, */
       ],
     },
   ],

@@ -79,11 +79,12 @@ public class VehicleTripValidator {
 
 			} else {
 
-				if (vehicleTrip.getTripStartTime() <= 0 || vehicleTrip.getTripEndTime() <= 0
-						|| vehicleTrip.getTripStartTime() > vehicleTrip.getTripEndTime()) {
-					throw new CustomException(VehicleTripConstants.INVALID_TRIDETAIL_ERROR,
-							"Trip Start and End Time are invalid: ");
-				}
+				/**
+				 * if (vehicleTrip.getTripStartTime() <= 0 || vehicleTrip.getTripEndTime() <= 0
+				 * || vehicleTrip.getTripStartTime() > vehicleTrip.getTripEndTime()) { throw new
+				 * CustomException(VehicleTripConstants.INVALID_TRIDETAIL_ERROR, "Trip Start and
+				 * End Time are invalid: "); }
+				 */
 
 				if (vehicleTrip.getVolumeCarried() == null || vehicleTrip.getVolumeCarried() <= 0) {
 					throw new CustomException(VehicleTripConstants.INVALID_VOLUME, "Invalid volume carried");
@@ -269,9 +270,11 @@ public class VehicleTripValidator {
 			throw new CustomException(VehicleTripConstants.VOLUME_GRT_CAPACITY,
 					"Waster collected is greater than vehicle Capcity");
 		}
+		/*
 		if (vehicleTrip.getTripEndTime() <= 0) {
 			throw new CustomException(VehicleTripConstants.INVALID_TRIP_ENDTIME, "Invalid Trip end time");
 		}
+		*/
 
 		validateTripInOutTime(vehicleTrip, vehicleTrip.getTripDetails().get(0));
 
@@ -398,12 +401,13 @@ public class VehicleTripValidator {
 
 		if (response.getVehicleTrip() != null && !CollectionUtils.isEmpty(response.getVehicleTrip())) {
 			response.getVehicleTrip().forEach(vehicletrip -> {
-				if (requestVehicleTrip.getTripStartTime() <= vehicletrip.getTripEndTime()) {
+				/* if (requestVehicleTrip.getTripStartTime() <= vehicletrip.getTripEndTime()) {
 					throw new CustomException(VehicleTripConstants.INVALID_TRIDETAIL_ERROR,
 							"Current Trip Start time: " + requestVehicleTrip.getTripStartTime()
 									+ "should be after the previous trip end time : "
 									+ requestVehicleTrip.getTripEndTime());
 				}
+				*/	
 			});
 		}
 	}

@@ -33,7 +33,14 @@ const SelectName = ({ t, config, onSelect, formData = {}, userType, register, er
       },
       componentInFront: <div className="employee-card-input employee-card-input--front">+91</div>,
       isMandatory: true,
-    }
+    },
+    {
+      label: "COMMON_APPLICANT_GENDER",
+      type: "dropdown",
+      name: "applicantGender",
+      options: genderTypes,
+      isMandatory: false,
+    },
   ];
 
   useEffect(() => {
@@ -84,7 +91,7 @@ const SelectName = ({ t, config, onSelect, formData = {}, userType, register, er
               </CardLabel>
               <div className="field">
                 <Dropdown
-                  option={input.options}
+                  option={input.options?.sort((a, b) => a.code.localeCompare(b.code))}
                   optionKey="i18nKey"
                   id="dropdown"
                   selected={formData && formData[config.key] ? input.options.find((data) => data.code === formData[config.key][input.name]) : null}

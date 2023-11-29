@@ -45,7 +45,9 @@ export const NewApplication = ({ parentUrl, heading }) => {
     if (
       formData?.propertyType &&
       formData?.subtype &&
-      formData?.address?.locality?.code &&
+      ((formData?.address?.locality?.name === "Other" ? formData?.address?.newLocality : formData?.address?.locality?.code) ||
+        (formData?.address?.propertyLocation?.code === "FROM_GRAM_PANCHAYAT" &&
+          (formData?.address?.gramPanchayat?.name === "Other" ? formData?.address?.newGp : formData?.address?.gramPanchayat?.code))) &&
       formData?.tripData?.vehicleType &&
       formData?.channel &&
       (formData?.tripData?.amountPerTrip || formData?.tripData?.amountPerTrip === 0)
@@ -102,7 +104,14 @@ export const NewApplication = ({ parentUrl, heading }) => {
     const localityName = data?.address?.locality?.name;
     const gender = data.applicationData.applicantGender;
     const paymentPreference = amount === 0 ? null : data?.paymentPreference ? data?.paymentPreference : null;
-    const advanceAmount = amount === 0 ? null : data?.advancepaymentPreference?.advanceAmount;
+    const advanceAmount =
+      amount === 0 ? null : data?.advancepaymentPreference?.advanceAmount === null ? 0 : data?.advancepaymentPreference?.advanceAmount;
+    const gramPanchayat = data?.address.gramPanchayat;
+    const village = data?.address.village;
+    const propertyLocation = data?.address?.propertyLocation?.code;
+    const newLocality = data?.address?.newLocality;
+    const newGp = data?.address?.newGp;
+    const newVillage = data?.address?.newVillage;
 
     const formData = {
       fsm: {
@@ -115,7 +124,7 @@ export const NewApplication = ({ parentUrl, heading }) => {
         sanitationtype: sanitationtype,
         source: applicationChannel.code,
         additionalDetails: {
-          tripAmount: amount,
+          tripAmount: typeof amount === "number" ? JSON.stringify(amount) : amount,
         },
         propertyUsage: data?.subtype,
         vehicleCapacity: data?.tripData?.vehicleType?.capacity,
@@ -133,17 +142,32 @@ export const NewApplication = ({ parentUrl, heading }) => {
           pincode,
           slumName: slum,
           locality: {
-            code: localityCode,
-            name: localityName,
+            code: propertyLocation === "FROM_GRAM_PANCHAYAT" ? gramPanchayat?.code : localityCode,
+            name: propertyLocation === "FROM_GRAM_PANCHAYAT" ? gramPanchayat?.name : localityName,
           },
           geoLocation: {
             latitude: data?.address?.latitude,
             longitude: data?.address?.longitude,
           },
+          additionalDetails: {
+            boundaryType: propertyLocation === "FROM_GRAM_PANCHAYAT" ? (village?.code ? "Village" : "GP") : "Locality",
+            gramPanchayat: {
+              code: gramPanchayat?.code,
+              name: gramPanchayat?.name,
+            },
+            village: village?.code
+              ? {
+                  code: village?.code ? village?.code : "",
+                  name: village?.name ? village?.name : "",
+                }
+              : newVillage,
+            newLocality: newLocality,
+            newGramPanchayat: newGp,
+          },
         },
         noOfTrips,
         paymentPreference,
-        advanceAmount,
+        advanceAmount: typeof advanceAmount === "number" ? JSON.stringify(advanceAmount) : advanceAmount,
       },
       workflow: null,
     };
