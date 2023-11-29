@@ -23,7 +23,6 @@ import { initWSComponents } from "@egovernments/digit-ui-module-ws";
 import { DigitUI } from "@egovernments/digit-ui-module-core";
 import { initCommonPTComponents } from "@egovernments/digit-ui-module-commonpt";
 import { initBillsComponents, BillsModule } from "@egovernments/digit-ui-module-bills";
-import { initWorkbenchComponents } from "@egovernments/digit-ui-module-workbench";
 
 window.contextPath = window?.globalConfigs?.getConfig("CONTEXT_PATH");
 
@@ -65,7 +64,6 @@ const enabledModules = [
   "FireNoc",
   "Birth",
   "Death",
-  "Workbench"
 ];
 
 const initTokens = (stateCode) => {
@@ -128,7 +126,6 @@ const initDigitUI = () => {
   initWSComponents();
   initCommonPTComponents();
   initBillsComponents();
-  initWorkbenchComponents();
 
 
   // initCustomisationComponents();
