@@ -190,7 +190,6 @@ export const convertEpochToDate = (dateEpoch) => {
             payments.Payments[0].paymentDetails[0].additionalDetails=details; 
         }
         paymentarray[0]=payments.Payments[0]
-        console.log("paymentarray",paymentarray)
         response = await Digit.PaymentService.generatePdf(state, { Payments: paymentarray }, generatePdfKey);
     }
     const fileStore = await Digit.PaymentService.printReciept(state, { fileStoreIds: response.filestoreIds[0] });
