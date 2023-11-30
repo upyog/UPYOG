@@ -11,9 +11,11 @@ import org.egov.pt.models.enums.Relationship;
 import org.egov.pt.models.enums.Status;
 import org.egov.pt.models.user.User;
 import org.hibernate.validator.constraints.SafeHtml;
+import org.javers.core.metamodel.annotation.DiffIgnore;
 import org.springframework.util.CollectionUtils;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -66,6 +68,11 @@ public class OwnerInfo extends User {
 	@JsonProperty("documents")
 	@Valid
 	private List<Document> documents;
+	
+	
+	@DiffIgnore
+	@JsonProperty("additionalDetails")
+	private JsonNode additionalDetails;
 
 	@JsonProperty("relationship")
 	private Relationship relationship;
