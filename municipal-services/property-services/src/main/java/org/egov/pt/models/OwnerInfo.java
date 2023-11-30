@@ -136,7 +136,7 @@ public class OwnerInfo extends User {
 					 String createdBy, Long createdDate, String lastModifiedBy, Long lastModifiedDate, String tenantId,
 					 String ownerInfoUuid, String mobileNumber2, String gender2, String fatherOrHusbandName2,
 					 String correspondenceAddress2, Boolean isPrimaryOwner, Double ownerShipPercentage, String ownerType,
-					 String institutionId, Status status, List<Document> documents, Relationship relationship, String alternatemobilenumber) {
+					 String institutionId, Status status, List<Document> documents, Relationship relationship, String alternatemobilenumber, JsonNode additionalDetails) {
 		super(id, uuid, userName, password, salutation, name, gender, mobileNumber, emailId, altContactNumber, pan,
 				aadhaarNumber, permanentAddress, permanentCity, permanentPincode, correspondenceCity,
 				correspondencePincode, correspondenceAddress, active, dob, pwdExpiryDate, locale, type, signature,
@@ -153,7 +153,8 @@ public class OwnerInfo extends User {
 		this.institutionId = institutionId;
 		this.status = status;
 		this.documents = documents;
-		this.relationship = relationship;		
+		this.relationship = relationship;
+		this.additionalDetails=additionalDetails;
 	}
 
 
