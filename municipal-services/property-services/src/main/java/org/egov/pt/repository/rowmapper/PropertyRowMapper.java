@@ -254,6 +254,7 @@ public class PropertyRowMapper implements ResultSetExtractor<List<Property>> {
 				.tenantId(rs.getString("owntenantid"))
 				.ownerType(rs.getString("ownerType"))
 				.isPrimaryOwner(isPrimaryOwner)
+				.additionalDetails(getadditionalDetail(rs, "oadditionaldetails"))
 				.uuid(uuid)
 				.build();
 		

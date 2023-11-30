@@ -28,6 +28,11 @@ const SearchProperty = ({ config: propsConfig, onSelect, redirectToUrl }) => {
   let allCities = Digit.Hooks.pt.useTenants()?.sort((a, b) => a?.i18nKey?.localeCompare?.(b?.i18nKey));
   // if called from tl module get tenants from tl usetenants
   allCities = allCities ? allCities : Digit.Hooks.tl.useTenants()?.sort((a, b) => a?.i18nKey?.localeCompare?.(b?.i18nKey));  
+  if(window.location.href.includes("obps"))
+  {
+    console.log("Using",Digit.SessionStorage.get("OBPS_TENANTS"))
+    allCities = Digit.SessionStorage.get("OBPS_TENANTS")
+  }
   const [cityCode, setCityCode] = useState();
   const [formValue, setFormValue] = useState();
   const [errorShown, seterrorShown] = useState(false);
@@ -38,7 +43,7 @@ const SearchProperty = ({ config: propsConfig, onSelect, redirectToUrl }) => {
     auth: true /*  to enable open search set false  */,
     configs: { enabled: Object.keys(searchData).length > 0, retry: false, retryOnMount: false, staleTime: Infinity },
   });
-
+console.log("allCities",allCities)
   useEffect(() => {
     if ( !(searchData?.filters?.mobileNumber && Object.values(searchData?.filters)?.filter(ob => ob !== undefined)?.length == 1) && 
       propertyData?.Properties.length > 0 &&
@@ -524,7 +529,7 @@ const SearchProperty = ({ config: propsConfig, onSelect, redirectToUrl }) => {
         cardStyle={{marginBottom:"0",maxWidth:"960px"}}
       ></FormComposer>
       <span className="link" style={isMobile ? {display:"flex", justifyContent:"center",paddingBottom:"16px"} : {display:"flex", justifyContent:"left",paddingBottom:"16px", marginLeft: "45px"}}>
-        <Link to={window.location.href.includes("/ws/")?"/digit-ui/citizen/ws/create-application/create-property" : (window.location.href.includes("/tl/tradelicence/") ? "/digit-ui/citizen/tl/tradelicence/new-application/create-property" : "/digit-ui/citizen/commonpt/property/new-application")}>{t("CPT_REG_NEW_PROPERTY")}</Link>
+        <Link to={window.location.href.includes("/ws/")?"/digit-ui/citizen/ws/create-application/create-property" : window.location.href.includes("/tl/tradelicence/") ? "/digit-ui/citizen/tl/tradelicence/new-application/create-property":window.location.href.includes("/obps/bpa/") ? "/digit-ui/citizen/obps/bpa/building_plan_scrutiny/new_construction/create-property":"/digit-ui/citizen/commonpt/property/new-application"}>{t("CPT_REG_NEW_PROPERTY")}</Link>
       </span>
       {showToast && (
         <Toast

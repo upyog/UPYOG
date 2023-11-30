@@ -154,6 +154,7 @@ export const convertEpochToDate = (dateEpoch) => {
   const printReciept = async () => {
     if (printing) return;
     setPrinting(true);
+    let paymentArray=[];
     const tenantId = paymentData?.tenantId;
     const state = Digit.ULBService.getStateId();
     let response = { filestoreIds: [payments.Payments[0]?.fileStoreId] };
@@ -188,7 +189,8 @@ export const convertEpochToDate = (dateEpoch) => {
             }
             payments.Payments[0].paymentDetails[0].additionalDetails=details; 
         }
-        response = await Digit.PaymentService.generatePdf(state, { Payments: payments.Payments }, generatePdfKey);
+        paymentArray[0]=payments.Payments[0]
+        response = await Digit.PaymentService.generatePdf(state, { Payments: paymentArray }, generatePdfKey);
     }
     const fileStore = await Digit.PaymentService.printReciept(state, { fileStoreIds: response.filestoreIds[0] });
     if (fileStore && fileStore[response.filestoreIds[0]]) {
