@@ -3,17 +3,10 @@
 
 A React App built on top of DIGIT UI Core.
 
-# DIGIT
-
-DIGIT eGovernance Platform Services
-
-DIGIT (Digital Infrastructure for Governance, Impact & Transformation) is India's largest platform for governance services. Visit https://core.digit.org/ for more details.
-
-DIGIT platform is microservices based API platform enabling quick rebundling of services as per specific needs. This is a repo that lays down the core platform on top of which other mission services depend.
-
 
 # DIGIT UI 
 
+DIGIT (Digital Infrastructure for Governance, Impact & Transformation) is India's largest platform for governance services. Visit https://www.digit.org for more details.
 
 This repository contains source code for web implementation of the new Digit UI modules with dependencies and libraries.
 
@@ -27,12 +20,12 @@ It is also used to manage the Localisation data present in the system (Localisat
 Clone the project
 
 ```bash
-  git clone https://github.com/egovernments/DIGIT-Frontend.git
+  git clone https://github.com/egovernments/Digit-Core.git
 ```
 
 Go to the Sub directory to run UI
 ```bash
-    cd into micro-ui/web/micro-ui-internals
+    cd into frontend/micro-ui/web/micro-ui-internals
 ```
 
 Install dependencies
@@ -43,7 +36,7 @@ Install dependencies
 
 Add .env file
 ```bash
-    micro-ui/web/micro-ui-internals/example/.env
+    frontend/micro-ui/web/micro-ui-internals/example/.env
 ```
 
 Start the server
@@ -103,38 +96,5 @@ To run this project, you will need to add the following environment variables to
 For support, add the issues in https://github.com/egovernments/DIGIT-core/issues.
 
 
-## Modules
-
-    1. Core
-    2. Workbench
-    3. HRMS
-    4. Dashboard
-    5. Engagement
-    6. Payment
-
-## Starting with Digit-UI App (Impelmentation Teams) - MICRO-UI
-
-
-Go to the Sub directory to run UI
-
-```bash
-    cd into micro-ui/web
-```
-    
-```bash
-  yarn install
-```
-
-Add .env file
-```bash
-    micro-ui/web/.env
-```
-
-Start the server
-
-```bash
-  yarn start
-```
-
-
 ![Logo](https://s3.ap-south-1.amazonaws.com/works-dev-asset/mseva-white-logo.png)
+

@@ -5,7 +5,7 @@ export const Config = {
   actionRole: "MDMS_ADMIN",
   actionLink: "workbench/mdms-add-v2",
   apiDetails: {
-    serviceName: `/mdms-v2/v2/_search`,
+    serviceName: "/mdms-v2/v2/_search",
     requestParam: {},
     requestBody: {
       MdmsCriteria: {
@@ -43,10 +43,7 @@ export const Config = {
         defaultValues: {
           value: "",
           field: "",
-          isActive:{
-            code: "WBH_COMMON_ALL",
-            value: "all",
-          }
+          isActive:""
           // createdFrom: "",
           // createdTo: "",
         },
@@ -103,10 +100,6 @@ export const Config = {
                 {
                   code: "WBH_COMMON_NO",
                   value: false,
-                },
-                {
-                  code: "WBH_COMMON_ALL",
-                  value: "all",
                 }
               ],
             },
@@ -177,8 +170,7 @@ export const Config = {
         enableGlobalSearch: false,
         enableColumnSort: true,
         resultsJsonPath: "mdms",
-        rowClassName:"table-row-mdms table-row-mdms-hover",
-        noColumnBorder:true
+        rowClassName:"table-row-mdms"
       },
       children: {},
       show: true,

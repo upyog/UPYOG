@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useReducer, useMemo, useRef,useCallback } from "react";
+import React, { useState, useEffect, useReducer, useMemo, useRef } from "react";
 import {
   Card,
   CustomDropdown,
@@ -14,16 +14,9 @@ import {
   Toast,
   InfoBannerIcon,
   UploadFile,
-  DeleteIconv2,
-  FileUploadModal,
-  BreakLine,
-  InfoIconOutline,
-  UploadIcon
 } from "@egovernments/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import reducer, { intialState } from "../../utils/LocAddReducer";
-// import sampleFile from "../../utils/file.xlsx"
-import GenerateXlsx from "../../components/GenerateXlsx";
 
 const langDropdownConfig = {
   label: "WBH_LOC_LANG",
@@ -142,7 +135,6 @@ function hasFalsyValueIgnoringZero(arrOfObjects) {
     return false; // No non-zero falsy values found in this object
   });
 }
-
 const LocalisationAdd = () => {
   const [selectedLang, setSelectedLang] = useState(null);
   const [showToast, setShowToast] = useState(false);
@@ -153,8 +145,7 @@ const LocalisationAdd = () => {
   const [jsonResult, setJsonResult] = useState(null);
   const [jsonResultDefault,setJsonResultDefault] = useState(null)
   const [state, dispatch] = useReducer(reducer, intialState);
-  const [isDeleted,setIsDeleted] = useState(null)
-  const [showBulkUploadModal,setShowBulkUploadModal] = useState(false)
+  
   const inputRef = useRef(null);
 
   useEffect(() => {
@@ -176,18 +167,6 @@ const LocalisationAdd = () => {
     }
   }, [selectedLang, selectedModule]);
 
-  
-  
-  const handleDeleteRow =  ({row,val,col}) => {
-      dispatch({
-        type: "DELETE_ROW",
-        state: {
-          row
-        },
-      });
-      setIsDeleted(()=>!isDeleted)
-    }
-
   const columns = useMemo(
     () => [
       {
@@ -204,8 +183,7 @@ const LocalisationAdd = () => {
                   state: {
                     row,
                     value: e.target.value,
-                    // id: row.index,
-                    id: row.original.id,
+                    id: row.index,
                     type: "keycode",
                   },
                 });
@@ -267,7 +245,7 @@ const LocalisationAdd = () => {
           <div class="tooltip" style={{ marginTop: "-10px" }}>
             <span class="textoverflow" style={{ "--max-width": `20ch` }}>
               {String(t("WBH_LOC_MESSAGE_VALUE"))}
-              <InfoIconOutline styles={{ marginLeft: "0.3rem",marginBottom:"-0.2rem" }}  />
+              <InfoBannerIcon styles={{ marginLeft: "0.3rem",marginBottom:"-0.2rem" }} fill={"#f47738"} />
             </span>
             {/* check condtion - if length greater than 20 */}
             <span class="tooltiptext" style={{ whiteSpace: "normal", width: "15rem" }}>
@@ -287,8 +265,7 @@ const LocalisationAdd = () => {
                   state: {
                     row,
                     value: e.target.value,
-                    // id: row.index,
-                    id: row.original.id,
+                    id: row.index,
                     type: "message",
                   },
                 });
@@ -300,19 +277,8 @@ const LocalisationAdd = () => {
           );
         },
       },
-      {
-        Header: t("CS_COMMON_ACTION"),
-        // accessor: "code",
-        Cell: ({ value, col, row, ...rest }) => {
-          return (
-            <span onClick={() => handleDeleteRow({row,value,col})} className="icon-wrapper">
-              <DeleteIconv2 fill={"#F47738"} />
-            </span>
-          );
-        },
-      },
     ],
-    [isDeleted]
+    []
   );
 
   const reqCriteriaAdd = {
@@ -373,17 +339,16 @@ const LocalisationAdd = () => {
       dispatch({
         type: "CLEAR_STATE",
       });
-      dispatch({
-        type: "ADD_ROW",
-        state: {
-          code: "",
-          message: "",
-          locale: selectedLang.value,
-          module: selectedModule.value,
-          id: 0,
-        },
-      });
-      setIsDeleted(()=>!isDeleted)
+      // dispatch({
+      //   type: "ADD_ROW",
+      //   state: {
+      //     code: "",
+      //     message: "",
+      //     locale: selectedLang.value,
+      //     module: selectedModule.value,
+      //     id: 0,
+      //   },
+      // });
     };
     const onError = (resp) => {
       let label = `${t("WBH_LOC_UPSERT_FAIL")}: `
@@ -490,11 +455,9 @@ const LocalisationAdd = () => {
 
     const onSuccess = (resp) => {
       setShowToast({ label: `${t("WBH_LOC_UPSERT_SUCCESS")}` });
-      setShowBulkUploadModal(false)
       closeToast();
     };
     const onError = (resp) => {
-      setShowBulkUploadModal(false)
       let label = `${t("WBH_LOC_UPSERT_FAIL")}: `
       resp?.response?.data?.Errors?.map((err,idx) => {
         if(idx===resp?.response?.data?.Errors?.length-1){
@@ -527,32 +490,6 @@ const LocalisationAdd = () => {
       },
     });
   };
-
-  const onBulkUploadModalSubmit = async (file) => {
-    try {
-     const result = await Digit.Utils.parsingUtils.parseXlsToJsonMultipleSheetsFile(file);
-     const updatedResult = convertObjectOfArraysToSingleArray(result)
-     //make result for default locale
-     const updatedResultDefault = updatedResult.map(row=> {
-       return {
-         ...row,
-         locale:"default"
-       }
-     })
- 
-     const filteredResult = [filterObjectsByKeys(updatedResult,["message","module","locale","code"])]
-     const filteredResultDefault = [filterObjectsByKeys(updatedResultDefault,["message","module","locale","code"])]
- 
-     setJsonResult(filteredResult)
-     setJsonResultDefault(filteredResultDefault)
-    } catch (error) {
-     setShowToast({
-       label: error.message || "Invalid file type. Please upload an Excel file.",
-       isError: true,
-     });
- 
-    }
-   };
 
   const handleBulkUpload = async (event) => {
    try {
@@ -612,12 +549,6 @@ const LocalisationAdd = () => {
     }
   }, [jsonResult,jsonResultDefault])
   
-  const fileValidator = (errMsg) => {
-    setShowToast({isError:true,label:t("WBH_BULK_UPLOAD_DOC_VALIDATION_MSG")})
-    closeToast()
-    setShowBulkUploadModal(false)
-  }
-
 
   return (
     <React.Fragment>
@@ -627,37 +558,13 @@ const LocalisationAdd = () => {
           <Button
             label={t("WBH_LOC_BULK_UPLOAD_XLS")}
             variation="secondary"
-            icon={<UploadIcon styles={{ height: "2.2rem", width: "2.2rem" }} />}
+            icon={<AddFilled style={{ height: "20px", width: "20px" }} />}
             type="button"
-            // onButtonClick={callInputClick}
-            onButtonClick={() => setShowBulkUploadModal(true)}
-            className={"header-btn"}
+            onButtonClick={callInputClick}
           />
-          <input className={"hide-input-type-file"} type="file" accept="xls xlsx" onChange={handleBulkUpload} />
+          <input className={"hide-input-type-file"} ref={inputRef} type="file" accept="xls xlsx" onChange={handleBulkUpload} />
         </div>
       </div>
-      {showBulkUploadModal && (
-        <FileUploadModal
-          heading={"WBH_BULK_UPLOAD_HEADER"}
-          cancelLabel={"WBH_LOC_EDIT_MODAL_CANCEL"}
-          submitLabel={"WBH_BULK_UPLOAD_SUBMIT"}
-          onSubmit={onBulkUploadModalSubmit}
-          onClose={() => setShowBulkUploadModal(false)}
-          t={t}
-          fileValidator={fileValidator}
-          onClickDownloadSample = {callInputClick}
-        />
-      )}
-      {<GenerateXlsx inputRef={inputRef}/>}
-      {/* {
-        <div>
-          <h2>bobbyhadz.com</h2>
-
-          <a href={require("../../utils/file.xlsx")} download="Example-PDF-document" target="_blank" rel="noreferrer">
-            <button>Download .pdf file</button>
-          </a>
-        </div>
-      } */}
       <Card>
         <LabelFieldPair style={{ alignItems: "flex-start" }}>
           <CardLabel style={{ marginBottom: "0.4rem" }}>{t("WBH_LOC_SELECT_LANG")}</CardLabel>
@@ -687,11 +594,8 @@ const LocalisationAdd = () => {
             disable={localeDropdownConfig?.disable}
           />
         </LabelFieldPair>
-      </Card>
-      {showToast && <Toast label={showToast.label} error={showToast?.isError} isDleteBtn={true} onClose={() => setShowToast(null)}></Toast>}
-      {selectedLang && selectedModule && (
-        <Card>
-          {/* {selectedLang && selectedModule && (
+
+        {selectedLang && selectedModule && (
           <div style={{ display: "flex" }}>
             <Button
               label={t("ADD_NEW_ROW")}
@@ -722,72 +626,41 @@ const LocalisationAdd = () => {
               type="button"
             />
           </div>
-        )} */}
+        )}
 
-          {state.tableState.length > 0 && (
-            <Table
-              pageSizeLimit={50}
-              className={"table"}
-              t={t}
-              customTableWrapperClassName={"dss-table-wrapper"}
-              disableSort={true}
-              autoSort={false}
-              data={state.tableState}
-              totalRecords={state.tableState.length}
-              columns={columns}
-              isPaginationRequired={false}
-              manualPagination={false}
-              getCellProps={(cellInfo) => {
-                return {
-                  style: {
-                    padding: "20px 18px",
-                    fontSize: "16px",
-                    whiteSpace: "normal",
-                  },
-                };
-              }}
-            />
-          )}
-          <BreakLine style={{height:"0.01rem"}} />
-          {selectedLang && selectedModule && (
-            <div style={{ display: "flex",justifyContent:"space-between", marginTop: "2rem" }}>
-              <Button
-                label={t("ADD_NEW_ROW")}
-                variation="secondary"
-                onButtonClick={() => {
-                  handleAddRow();
-                }}
-                type="button"
-              />
-              <Button
-                label={t("CLEAR_LOC_TABLE")}
-                variation="secondary"
-                onButtonClick={() => {
-                  dispatch({
-                    type: "CLEAR_STATE",
-                  });
-                  // dispatch({
-                  //   type: "ADD_ROW",
-                  //   state: {
-                  //     code: "",
-                  //     message: "",
-                  //     locale: selectedLang.value,
-                  //     module: selectedModule.value,
-                  //     id: 0,
-                  //   },
-                  // });
-                }}
-                type="button"
-              />
-            </div>
-          )}
-          {state.tableState.length > 0 && (
-            <ActionBar>
-              <SubmitBar label={t("CORE_COMMON_SAVE")} onSubmit={handleSubmit} />
-            </ActionBar>
-          )}
-        </Card>
-      )}
+        {state.tableState.length > 0 && (
+          <Table
+            pageSizeLimit={50}
+            className={"table"}
+            t={t}
+            customTableWrapperClassName={"dss-table-wrapper"}
+            disableSort={true}
+            autoSort={false}
+            data={state.tableState}
+            totalRecords={state.tableState.length}
+            columns={columns}
+            isPaginationRequired={false}
+            manualPagination={false}
+            getCellProps={(cellInfo) => {
+              return {
+                style: {
+                  padding: "20px 18px",
+                  fontSize: "16px",
+                  whiteSpace: "normal",
+                },
+              };
+            }}
+            styles={{ marginTop: "3rem" }}
+          />
+        )}
+
+        {state.tableState.length > 0 && (
+          <ActionBar>
+            <SubmitBar label={t("CORE_COMMON_SAVE")} onSubmit={handleSubmit} />
+          </ActionBar>
+        )}
+        {showToast && <Toast label={showToast.label} error={showToast?.isError} isDleteBtn={true} onClose={()=>setShowToast(null)}></Toast>}
+      </Card>
     </React.Fragment>
   );
 };

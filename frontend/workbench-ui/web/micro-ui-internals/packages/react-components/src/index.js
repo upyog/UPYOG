@@ -205,10 +205,7 @@ import {
   HistoryIcon,
   WarningIcon,
   AttentionListIcon,
-  UploadIcon,
-  FileIcon,
-  DeleteIconv2,
-  InfoIconOutline
+
 } from "./atoms/svgindex";
 import Table from "./atoms/Table";
 import TelePhone from "./atoms/TelePhone";
@@ -230,7 +227,6 @@ import { FormComposer } from "./hoc/FormComposer";
 import { FormComposer as FormComposerV2 } from "./hoc/FormComposerV2";
 import RenderFormFields from "./molecules/RenderFormFields";
 import Modal from "./hoc/Modal";
-import FileUploadModal from "./hoc/FileUploadModal"
 import ResponseComposer from "./hoc/ResponseComposer";
 import InboxComposer from "./hoc/InboxComposer";
 
@@ -344,7 +340,6 @@ export {
   CityMohalla,
   DetailsCard,
   WorkflowModal,
-  FileUploadModal,
   Label,
   Table,
   PopUp,
@@ -544,10 +539,6 @@ export {
   CreateEstimateIcon,
   GotoInboxIcon,
   LocateIcon,
-  UploadIcon,
-  FileIcon,
-  DeleteIconv2,
-  InfoIconOutline,
 
   /* Works Management  */
 

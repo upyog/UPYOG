@@ -1,4 +1,4 @@
-import { AddFilled, Button, Header, InboxSearchComposer, Loader, Dropdown, Card } from "@egovernments/digit-ui-react-components";
+import { AddFilled, Button, Header, InboxSearchComposer, Loader, Dropdown } from "@egovernments/digit-ui-react-components";
 import React, { useState, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory, useParams } from "react-router-dom";
@@ -40,7 +40,7 @@ const MDMSManageMaster = () => {
   tenantId = tenantId || Digit.ULBService.getCurrentTenantId();
   const SchemaDefCriteria = {
     tenantId:tenantId ,
-    limit:100
+    limit:50
   }
   if(master && modulee ) {
     SchemaDefCriteria.codes = [`${master}.${modulee}`] 
@@ -55,7 +55,7 @@ const MDMSManageMaster = () => {
   };
 
   const { isLoading, data: dropdownData } = Digit.Hooks.useCustomAPIHook({
-    url: `/${Digit.Hooks.workbench.getMDMSContextPath()}/schema/v1/_search`,
+    url: "/mdms-v2/schema/v1/_search",
     params: {
       
     },
@@ -163,9 +163,9 @@ const MDMSManageMaster = () => {
     <React.Fragment>
         <Header className="works-header-search">{t(Config?.label)}</Header>
       <div className="jk-header-btn-wrapper">
-        <Card className="manage-master-wrapper">
         <Dropdown
           option={masterOptions}
+          style={{width:"25%",marginRight:"1rem" }}
           className={"form-field"}
           optionKey="code"
           selected={master && modulee ? toDropdownObj(master) : masterName}
@@ -182,7 +182,7 @@ const MDMSManageMaster = () => {
         />
         <Dropdown
           option={moduleOptions}
-          style={{marginRight:"auto" }}
+          style={{width:"25%",marginRight:"auto" }}
           className={"form-field"}
           optionKey="code"
           selected={master && modulee ? toDropdownObj(master,modulee) : moduleName}
@@ -195,7 +195,6 @@ const MDMSManageMaster = () => {
           
           disable = {modulee ? true : false}
         />
-        </Card>
       </div>
     </React.Fragment>
   );

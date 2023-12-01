@@ -57,18 +57,4 @@ const UICreateConfigGenerator = (MDMSSchema = {}, UISchema = {}) => {
   return newConfig;
 };
 
-/**
- * Custom util to get the mdms context path.
- *
- * @author jagankumar-egov
- *
- * @example
- *   Digit.Hooks.workbench.getMDMSContextPath()
- *
- * @returns {Array<object>} Returns the Create screen config
- */
-const getMDMSContextPath = () => {
-  return window?.globalConfigs?.getConfig("MDMS_CONTEXT_PATH") || "mdms-v2";
-};
-
-export { UICreateConfigGenerator, getMDMSContextPath };
+export { UICreateConfigGenerator };

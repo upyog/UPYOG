@@ -33,13 +33,13 @@ const MDMSView = ({...props}) => {
   
 
   const reqCriteria = {
-    url: `/${Digit.Hooks.workbench.getMDMSContextPath()}/v2/_search`,
+    url: `/mdms-v2/v2/_search`,
     params: {},
     body: {
       MdmsCriteria: {
         tenantId: tenantId ,
-        uniqueIdentifiers:[uniqueIdentifier],
-        schemaCode:`${moduleName}.${masterName}`
+        uniqueIdentifier,
+        schemaCodes:[`${moduleName}.${masterName}`]
       },
     },
     config: {
@@ -60,7 +60,7 @@ const MDMSView = ({...props}) => {
   const { isLoading, data, isFetching,refetch,revalidate } = Digit.Hooks.useCustomAPIHook(reqCriteria);
 
   const reqCriteriaUpdate = {
-    url: `/${Digit.Hooks.workbench.getMDMSContextPath()}/v2/_update/${moduleName}.${masterName}`,
+    url: `/mdms-v2/v2/_update/${moduleName}.${masterName}`,
     params: {},
     body: {
       
@@ -94,7 +94,7 @@ const MDMSView = ({...props}) => {
 
     mutation.mutate(
       {
-        url:`/${Digit.Hooks.workbench.getMDMSContextPath()}/v2/_update/${moduleName}.${masterName}`,
+        url:`/mdms-v2/v2/_update/${moduleName}.${masterName}`,
         params: {},
         body: {
           Mdms:{
@@ -127,7 +127,7 @@ const MDMSView = ({...props}) => {
 
   return (
     <React.Fragment>
-      <MDMSAdd defaultFormData = {data?.data} updatesToUISchema ={{"ui:readonly": true}} screenType={"view"} onViewActionsSelect={onActionSelect} viewActions={fetchActionItems(data)} />
+      <MDMSAdd defaultFormData = {data?.data} updatesToUISchema ={{"ui:readonly": true,"ui:disabled":true}} screenType={"view"} onViewActionsSelect={onActionSelect} viewActions={fetchActionItems(data)} />
       {showToast && <Toast label={showToast.label} error={showToast?.isError} isDleteBtn={true} onClose={()=> setShowToast(null)}></Toast>}
     </React.Fragment>
   )

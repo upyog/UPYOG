@@ -3,7 +3,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 
 
-const CustomCheckbox = function (props) {
+export const CustomCheckbox = function (props) {
   const { t } = useTranslation();
 
   return (
@@ -14,5 +14,3 @@ const CustomCheckbox = function (props) {
     </div>
   );
 };
-
-export default CustomCheckbox;

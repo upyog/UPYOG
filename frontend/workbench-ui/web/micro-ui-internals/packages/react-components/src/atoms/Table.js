@@ -27,9 +27,7 @@ const IndeterminateCheckbox = forwardRef(
     )
   }
 )
-const getNoColumnBorder=(noColumnBorder)=>noColumnBorder?({
-  cellspacing:"0" ,cellpadding:"0"
-}):null;
+
 const Table = ({
   className = "table",
   t,
@@ -63,8 +61,7 @@ const Table = ({
   actionLabel = 'CS_COMMON_DOWNLOAD',
   tableSelectionHandler = () => {},
   onClickRow= ()=>{},
-  rowClassName = "",
-  noColumnBorder=false
+  rowClassName = ""
 }) => {
   const {
     getTableProps,
@@ -164,7 +161,7 @@ const Table = ({
     <React.Fragment>
       <span className={customTableWrapperClassName}>
         {tableTopComponent ? tableTopComponent : null}
-        <table className={className} {...getTableProps()} style={styles} ref={tableRef} {...getNoColumnBorder(noColumnBorder)}>
+        <table className={className} {...getTableProps()} style={styles} ref={tableRef}>
           <thead>
             {headerGroups.map((headerGroup) => (
               <tr {...headerGroup.getHeaderGroupProps()}>

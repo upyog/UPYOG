@@ -7,7 +7,7 @@ import Header from "../../../components/Header";
 
 /* set employee details to enable backward compatiable */
 const setEmployeeDetail = (userObject, token) => {
-  let locale = JSON.parse(sessionStorage.getItem("Digit.locale"))?.value || Digit.Utils.getDefaultLanguage();
+  let locale = JSON.parse(sessionStorage.getItem("Digit.locale"))?.value || "en_IN";
   localStorage.setItem("Employee.tenant-id", userObject?.tenantId);
   localStorage.setItem("tenant-id", userObject?.tenantId);
   localStorage.setItem("citizen.userRequestObject", JSON.stringify(userObject));
@@ -125,10 +125,10 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
         secondaryActionLabel={propsConfig.texts.secondaryButtonLabel}
         onSecondayActionClick={onForgotPassword}
         heading={propsConfig.texts.header}
+        headingStyle={{ textAlign: "center" }}
+        cardStyle={{ margin: "auto", minWidth: "408px" }}
         className="loginFormStyleEmployee"
-        cardSubHeaderClassName="loginCardSubHeaderClassName"
-        cardClassName="loginCardClassName"
-        buttonClassName="buttonClassName"
+        buttonStyle={{ maxWidth: "100%", width: "100%" }}
       >
         <Header />
       </FormComposerV2>

@@ -15,6 +15,8 @@ https://rjsf-team.github.io/react-jsonschema-form/docs/
 */
 const onFormError = (errors) => console.log("I have", errors.length, "errors to fix");
 
+const uiSchema = {};
+
 const MDMSAdd = ({ defaultFormData, updatesToUISchema, screenType = "add", onViewActionsSelect, viewActions, onSubmitEditAction, ...props }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const [spinner, toggleSpinner] = useState(false);
@@ -23,10 +25,10 @@ const MDMSAdd = ({ defaultFormData, updatesToUISchema, screenType = "add", onVie
   const [sessionFormData, setSessionFormData, clearSessionFormData] = FormSession;
   const [session, setSession] = useState(sessionFormData);
   const [formSchema, setFormSchema] = useState({});
-  const [uiSchema, setUiSchema] = useState({});
   const [api, setAPI] = useState(false);
 
   const [noSchema, setNoSchema] = useState(false);
+  const [loadDependent, setLoadDependent] = useState([]);
   const [showErrorToast, setShowErrorToast] = useState(false);
   const [disableForm, setDisableForm] = useState(false);
 
@@ -40,7 +42,7 @@ const MDMSAdd = ({ defaultFormData, updatesToUISchema, screenType = "add", onVie
   const { t } = useTranslation();
   const history = useHistory();
   const reqCriteria = {
-    url: `/${Digit.Hooks.workbench.getMDMSContextPath()}/schema/v1/_search`,
+    url: "/mdms-v2/schema/v1/_search",
     params: {},
     body: {
       SchemaDefCriteria: {
@@ -62,7 +64,33 @@ const MDMSAdd = ({ defaultFormData, updatesToUISchema, screenType = "add", onVie
     },
     changeQueryName: "schema",
   };
+  const reqCriteriaForData = {
+    url: `/mdms-v2/v2/_search`,
+    params: {},
+    body: {
+      MdmsCriteria: {
+        tenantId: tenantId,
+        schemaCodes: loadDependent.map((e) => e.schemaCode),
+      },
+    },
+    config: {
+      enabled: loadDependent && loadDependent?.length > 0,
+      select: (data) => {
+        const dependentData = {};
+        data?.mdms?.map((ele) => {
+          if (dependentData?.[ele?.schemaCode] && dependentData?.[ele?.schemaCode]?.length > 0) {
+            dependentData[ele?.schemaCode]?.push(ele?.uniqueIdentifier);
+          } else {
+            dependentData[ele?.schemaCode] = [ele?.uniqueIdentifier];
+          }
+        });
+        return dependentData;
+      },
+    },
+    changeQueryName: "data",
+  };
 
+  const { isLoading: additonalLoading, data: additonalData } = Digit.Hooks.useCustomAPIHook(reqCriteriaForData);
   const { isLoading, data: schema, isFetching } = Digit.Hooks.useCustomAPIHook(reqCriteria);
   const body = api?.requestBody
     ? { ...api?.requestBody }
@@ -76,7 +104,7 @@ const MDMSAdd = ({ defaultFormData, updatesToUISchema, screenType = "add", onVie
         },
       };
   const reqCriteriaAdd = {
-    url: api ? api?.url : `/${Digit.Hooks.workbench.getMDMSContextPath()}/v2/_create/${moduleName}.${masterName}`,
+    url: api ? api?.url : `/mdms-v2/v2/_create/${moduleName}.${masterName}`,
     params: {},
     body: { ...body },
     config: {
@@ -134,34 +162,44 @@ const MDMSAdd = ({ defaultFormData, updatesToUISchema, screenType = "add", onVie
     // setFormSchema(schema);
     /* localise */
     if (schema && schema?.definition) {
+      // Object.keys(schema?.definition?.properties).map((key) => {
+      //   const title = Digit.Utils.locale.getTransformedLocale(`${schema?.code}_${key}`);
+      //   schema.definition.properties[key] = { ...schema.definition.properties[key], title: t(title) };
+      //   console.log(schema.definition.properties[key],'schema.definition.properties[key]',key)
+      // });
       Digit.Utils.workbench.updateTitleToLocalisationCodeForObject(schema?.definition, schema?.code);
       setFormSchema(schema);
       /* logic to search for the reference data from the mdms data api */
 
       if (schema?.definition?.["x-ref-schema"]?.length > 0) {
-        schema?.definition?.["x-ref-schema"]?.map((dependent) => {
-          if (dependent?.fieldPath) {
-            let updatedPath = Digit.Utils.workbench.getUpdatedPath(dependent?.fieldPath);
-            if (_.get(schema?.definition?.properties, updatedPath)) {
-              _.set(schema?.definition?.properties, updatedPath, {
-                ..._.get(schema?.definition?.properties, updatedPath, {}),
-                enum: [],
-                schemaCode: dependent?.schemaCode,
-                fieldPath: dependent?.fieldPath,
-                tenantId,
-              });
-            }
-          }
-        });
-        setFormSchema({ ...schema });
-        /* added disable to get the complete form re rendered to get the enum values reflected */
-        setDisableForm(true);
-        setTimeout(() => {
-          setDisableForm(false);
-        });
+        setLoadDependent([...schema?.definition?.["x-ref-schema"]]);
       }
     }
   }, [schema]);
+
+  useEffect(() => {
+    /* logic to enable the enum values fetched from the mdms data api */
+    if (loadDependent && loadDependent?.length > 0) {
+      loadDependent?.map((dependent) => {
+        if (dependent?.fieldPath && additonalData?.[dependent?.schemaCode]?.length > 0) {
+          let updatedPath = Digit.Utils.workbench.getUpdatedPath(dependent?.fieldPath);
+          if (_.get(schema?.definition?.properties, updatedPath)) {
+            _.set(schema?.definition?.properties, updatedPath, {
+              ..._.get(schema?.definition?.properties, updatedPath, {}),
+              enum: additonalData?.[dependent?.schemaCode],
+              schemaCode : dependent?.schemaCode
+            });
+          }
+        }
+      });
+      setFormSchema({ ...schema });
+      /* added disable to get the complete form re rendered to get the enum values reflected */
+      setDisableForm(true);
+      setTimeout(() => {
+        setDisableForm(false);
+      });
+    }
+  }, [additonalData]);
 
   useEffect(() => {
     if (!_.isEqual(sessionFormData, session)) {
