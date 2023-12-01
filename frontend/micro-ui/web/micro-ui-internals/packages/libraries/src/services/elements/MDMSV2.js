@@ -1407,7 +1407,7 @@ const transformResponse = (type, MdmsRes, moduleCode, tenantId) => {
 };
 
 const getCacheSetting = (moduleName) => {
-  return ApiCacheService.getSettingByServiceUrl(Urls.MDMS, moduleName);
+  return ApiCacheService.getSettingByServiceUrl(Urls.MDMSV2, moduleName);
 };
 
 const mergedData = {};
@@ -1475,7 +1475,7 @@ export const MdmsServiceV2 = {
   init: (stateCode) =>
     ServiceRequest({
       serviceName: "mdmsInit",
-      url: Urls.MDMS,
+      url: Urls.MDMSV2,
       data: initRequestBody(stateCode),
       useCache: true,
       params: { tenantId: stateCode },

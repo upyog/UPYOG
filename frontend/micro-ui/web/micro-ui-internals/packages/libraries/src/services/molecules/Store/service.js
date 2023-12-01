@@ -1,5 +1,6 @@
 import { LocalizationService } from "../../elements/Localization/service";
 import { MdmsService } from "../../elements/MDMS";
+import { MdmsServiceV2 } from "../../elements/MDMSV2";
 import { Storage } from "../../atoms/Utils/Storage";
 import { ApiCacheService } from "../../atoms/ApiCacheService";
 
@@ -55,7 +56,8 @@ export const StoreService = {
     return await Promise.all(allBoundries);
   },
   digitInitData: async (stateCode, enabledModules) => {
-    const { MdmsRes } = await MdmsService.init(stateCode);
+    const { MdmsRes } = await MdmsServiceV2.init(stateCode);
+    console.log(MdmsRes,"MdmsRes")
     const stateInfo = MdmsRes["common-masters"]?.StateInfo?.[0]||{};
     const uiHomePage = MdmsRes["common-masters"]?.uiHomePage?.[0]||{};
     const localities = {};
