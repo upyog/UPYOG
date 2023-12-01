@@ -9,9 +9,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.swing.Spring;
+
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
 import org.egov.pt.config.PropertyConfiguration;
+import org.egov.pt.models.Address;
 import org.egov.pt.models.ConstructionDetail;
 import org.egov.pt.models.GeoLocation;
 import org.egov.pt.models.Institution;
@@ -95,6 +98,9 @@ public class PropertyValidator {
 		validateMasterData(request, errorMap);
 		validateMobileNumber(request, errorMap);
 		validateFields(request, errorMap);
+		
+		//FOR Manipur Validation
+		validatePropertyAddressFields(request, errorMap);
 		if (!CollectionUtils.isEmpty(units))
 			validateUnits(request, errorMap);
 		
@@ -111,6 +117,24 @@ public class PropertyValidator {
 			throw new CustomException(errorMap);
 	}
 
+	
+	private void validatePropertyAddressFields(PropertyRequest request, Map<String, String> errorMap) {
+		Address address = request.getProperty().getAddress();
+		
+		if(null==address.getDagNo() || address.getDagNo().isEmpty()) {
+			errorMap.put("EG_PT_ADDRESS_DAG_ERROR","Invalid Dag No, cannot be empty");
+		}
+		if(null==address.getDistrictName() || address.getDistrictName().isEmpty()) {
+			errorMap.put("EG_PT_ADDRESS_DISTRICT_ERROR","Invalid District Name No, cannot be empty");
+		}
+		if(null==address.getTownName() || address.getTownName().isEmpty()) {
+			errorMap.put("EG_PT_ADDRESS_TOWN_ERROR","Invalid Town Name, cannot be empty");
+		}
+		if(null==address.getWardNo() || address.getWardNo().isEmpty()) {
+			errorMap.put("EG_PT_ADDRESS_WARD_ERROR","Invalid Ward No, cannot be empty");
+		}
+		
+	}
 	private void validateUnits(PropertyRequest request, Map<String, String> errorMap) {
 
 		Property property = request.getProperty();

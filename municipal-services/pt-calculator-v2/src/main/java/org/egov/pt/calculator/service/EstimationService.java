@@ -175,15 +175,15 @@ public class EstimationService {
 		if(criteria.getFromDate()==null || criteria.getToDate()==null)
             enrichmentService.enrichDemandPeriod(criteria,assessmentYear,masterMap);
 
-        List<BillingSlab> filteredBillingSlabs = getSlabsFiltered(property,criteria.getFinancialYear(),requestInfo);
+        List<BillingSlab> filteredBillingSlabs = getSlabsFiltered(property,criteria,requestInfo);
 
 		Map<String, Map<String, List<Object>>> propertyBasedExemptionMasterMap = new HashMap<>();
 		Map<String, JSONArray> timeBasedExemptionMasterMap = new HashMap<>();
 		mDataService.setPropertyMasterValues(requestInfo, tenantId, propertyBasedExemptionMasterMap,
 				timeBasedExemptionMasterMap);
-
+		
 		List<String> billingSlabIds = new LinkedList<>();
-
+		System.out.println(filteredBillingSlabs.size());
 		/*
 		 * by default land should get only one slab from database per tenantId
 		 */
@@ -401,7 +401,7 @@ public class EstimationService {
 		List<Payment> payments = new LinkedList<>();
 
 		if(!StringUtils.isEmpty(property.getPropertyId()) && !StringUtils.isEmpty(property.getTenantId())){
-			payments = paymentService.getPaymentsFromProperty(property, RequestInfoWrapper.builder().requestInfo(requestInfo).build());
+			//payments = paymentService.getPaymentsFromProperty(property, RequestInfoWrapper.builder().requestInfo(requestInfo).build());
 		}
 
 
@@ -537,14 +537,14 @@ public class EstimationService {
 	/**
 	 * method to do a first level filtering on the slabs based on the values present in Property detail
 	 */
-	private List<BillingSlab> getSlabsFiltered(Property property, String financialYear,RequestInfo requestInfo) {
+	private List<BillingSlab> getSlabsFiltered(Property property, CalculationCriteria criteria,RequestInfo requestInfo) {
 
 		PropertyDetail detail = property.getPropertyDetails().get(0);
-		log.info("financial Year in Criteria is" + financialYear);
+		log.info("financial Year in Criteria is" + criteria);
 		
 		String tenantId = property.getTenantId();
-		String validFrom=financialYear.split("-")[0]+"-04-01";
-		String validTo="20"+financialYear.split("-")[1]+"-03-31";
+		String validFrom=criteria.getFinancialYear().split("-")[0]+"-04-01";
+		String validTo="20"+criteria.getFinancialYear().split("-")[1]+"-03-31";
 		BillingSlabSearchCriteria slabSearchCriteria = BillingSlabSearchCriteria.builder().tenantId(tenantId).validFrom(validFrom).validTo(validTo).build();
 		List<BillingSlab> billingSlabs = billingSlabService.searchBillingSlabs(requestInfo, slabSearchCriteria)
 				.getBillingSlab();
@@ -558,46 +558,62 @@ public class EstimationService {
 		final String dtlPtSubType = detail.getPropertySubType();
 		final String dtlOwnerShipCat = detail.getOwnershipCategory();
 		final String dtlSubOwnerShipCat = detail.getSubOwnershipCategory();
+		log.debug("dtlSubOwnerShipCat"+dtlSubOwnerShipCat);
 		final String dtlAreaType = property.getAddress().getLocality().getArea();
 		final Boolean dtlIsMultiFloored = detail.getNoOfFloors() > 1;
 
+		
 		return billingSlabs.stream().filter(slab -> {
 
 			Boolean slabMultiFloored = slab.getIsPropertyMultiFloored();
-			String  slabAreaType = slab.getAreaType();
-			String  slabPropertyType = slab.getPropertyType();
-			String  slabPropertySubType = slab.getPropertySubType();
-			String  slabOwnerShipCat = slab.getOwnerShipCategory();
-			String  slabSubOwnerShipCat = slab.getSubOwnerShipCategory();
-			Double  slabAreaFrom = slab.getFromPlotSize();
-			Double  slabAreaTo = slab.getToPlotSize();
+			String slabAreaType = slab.getAreaType();
+			String slabPropertyType = slab.getPropertyType();
+			String slabPropertySubType = slab.getPropertySubType();
+			String slabOwnerShipCat = slab.getOwnerShipCategory();
+			String slabSubOwnerShipCat = slab.getSubOwnerShipCategory();
+			Double slabAreaFrom = slab.getFromPlotSize();
+			Double slabAreaTo = slab.getToPlotSize();
 
 			boolean isPropertyMultiFloored = slabMultiFloored.equals(dtlIsMultiFloored);
-
-			boolean isAreaMatching = slabAreaType.equalsIgnoreCase(dtlAreaType) || all.equalsIgnoreCase(slab.getAreaType());
-
+			
+			log.debug(" isPropertyMultiFloored : " +isPropertyMultiFloored);
+			
+			boolean isAreaMatching = slabAreaType.equalsIgnoreCase(dtlAreaType)
+					|| all.equalsIgnoreCase(slab.getAreaType());
+			
+			log.debug(" isAreaMatching: " + isAreaMatching);
 			boolean isPtTypeMatching = slabPropertyType.equalsIgnoreCase(dtlPtType);
-
+			
+			log.debug(" isPtTypeMatching: " + isPtTypeMatching);
 			boolean isPtSubTypeMatching = slabPropertySubType.equalsIgnoreCase(dtlPtSubType)
 					|| all.equalsIgnoreCase(slabPropertySubType);
-
+			
+			log.debug(" isPtSubTypeMatching : " + isPtTypeMatching);
+			
 			boolean isOwnerShipMatching = slabOwnerShipCat.equalsIgnoreCase(dtlOwnerShipCat)
 					|| all.equalsIgnoreCase(slabOwnerShipCat);
-
+			log.debug(" isOwnerShipMatching : " + isOwnerShipMatching);
+			
 			boolean isSubOwnerShipMatching = slabSubOwnerShipCat.equalsIgnoreCase(dtlSubOwnerShipCat)
 					|| all.equalsIgnoreCase(slabSubOwnerShipCat);
-
+			log.debug(" isSubOwnerShipMatching : " + isSubOwnerShipMatching);
 			boolean isPlotMatching = false;
-
+			
+			log.debug(" slabAreaFrom <= plotSize && slabAreaTo >= plotSize : " + (slabAreaFrom <= plotSize && slabAreaTo >= plotSize));
+			
+			log.debug(" slabAreaFrom < plotSize && slabAreaTo >= plotSize: " + (slabAreaFrom < plotSize && slabAreaTo >= plotSize));
+			
 			if (plotSize == 0.0)
 				isPlotMatching = slabAreaFrom <= plotSize && slabAreaTo >= plotSize;
 			else
 				isPlotMatching = slabAreaFrom < plotSize && slabAreaTo >= plotSize;
-
+			
+				log.debug(" isPlotMatching : " + isPlotMatching);
 			return isPtTypeMatching && isPtSubTypeMatching && isOwnerShipMatching && isSubOwnerShipMatching
 					&& isPlotMatching && isAreaMatching && isPropertyMultiFloored;
 
 		}).collect(Collectors.toList());
+		
 	}
 
 	/**

@@ -187,7 +187,7 @@ serviceMaps:
       - jsonPath: $.Property.auditDetails.lastModifiedTime
 
 
-    - query: INSERT INTO eg_pt_address(tenantid, id, propertyid, doorno, plotno, buildingname, street, landmark, city, pincode, locality, district, region, state, country, latitude, longitude, createdby, createdtime, lastmodifiedby, lastmodifiedtime, additionaldetails) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+    - query: INSERT INTO eg_pt_address(tenantid, id, propertyid, doorno, plotno, buildingname, street, landmark, city, pincode, locality, district, region, state, country, latitude, longitude, createdby, createdtime, lastmodifiedby, lastmodifiedtime, additionaldetails,dag_no,district_name,town_name,ward_no,leikai_name,village,patta_no,proper_house_no,common_name_of_building,principal_road_name,sub_side_road_name,landmark_name,others) VALUES (?, ?, ?,?,?,?,?,?,?,?,?,?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?);
       basePath: Property.address
       jsonMaps:
 
@@ -234,6 +234,32 @@ serviceMaps:
       - jsonPath: $.Property.auditDetails.lastModifiedTime
 
       - jsonPath: $.Property.address.additionalDetails
+      
+      - jsonPath: $.Property.address.dagNo
+      
+      - jsonPath: $.Property.address.districtName
+      
+      - jsonPath: $.Property.address.townName
+      
+      - jsonPath: $.Property.address.wardNo
+      
+      - jsonPath: $.Property.address.leikaiName
+      
+      - jsonPath: $.Property.address.village
+      
+      - jsonPath: $.Property.address.pattaNo
+      
+      - jsonPath: $.Property.address.properHouseNo
+      
+      - jsonPath: $.Property.address.commonNameOfBuilding
+      
+      - jsonPath: $.Property.address.principalRoadName
+      
+      - jsonPath: $.Property.address.subSideRoadName
+      
+      - jsonPath: $.Property.address.landmarkName
+      
+      - jsonPath: $.Property.address.others
         type: JSON
         dbType: JSONB
 
