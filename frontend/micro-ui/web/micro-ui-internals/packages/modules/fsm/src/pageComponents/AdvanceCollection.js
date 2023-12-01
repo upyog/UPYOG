@@ -38,7 +38,9 @@ const AdvanceCollection = ({ t, config, onSelect, formData, userType, FSMTextFie
         title: t("ES_NEW_APPLICATION_AMOUNT_INVALID"),
       },
 
-      default: formData?.advanceAmount,
+      default: url.includes("modify")
+        ? applicationData?.advanceAmount
+        : formData?.advanceAmount,
       isMandatory: true,
     },
   ];
@@ -106,7 +108,20 @@ const AdvanceCollection = ({ t, config, onSelect, formData, userType, FSMTextFie
         Digit.SessionStorage.set("advance_amount", advanceBalanceAmount);
         setTotalAmount(totaltripAmount);
         setAdvanceAmounts(advanceBalanceAmount);
-        if (!url.includes("modify") || (url.includes("modify") && advanceBalanceAmount > formData?.advancepaymentPreference?.advanceAmount)) {
+        if (
+          formData?.address?.propertyLocation?.code === "FROM_GRAM_PANCHAYAT" &&
+          url.includes("modify")
+        ) {
+          setValue({
+            advanceAmount: 0,
+          });
+        } else if (
+          !url.includes("modify") ||
+          url.includes("modify") ||
+          (formData?.advancepaymentPreference?.advanceAmount > 0 &&
+            advanceBalanceAmount >
+              formData?.advancepaymentPreference?.advanceAmount)
+        ) {
           setValue({
             advanceAmount: advanceBalanceAmount,
           });
