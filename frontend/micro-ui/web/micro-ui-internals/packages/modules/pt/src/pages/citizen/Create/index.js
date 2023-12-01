@@ -155,6 +155,7 @@ const CreateProperty = ({ parentRoute }) => {
     <Switch>
       {config.map((routeObj, index) => {
         const { component, texts, inputs, key } = routeObj;
+        console.log("routeObj==",routeObj)
         const Component = typeof component === "string" ? Digit.ComponentRegistryService.getComponent(component) : component;
         return (
           <Route path={`${match.path}/${routeObj.route}`} key={index}>

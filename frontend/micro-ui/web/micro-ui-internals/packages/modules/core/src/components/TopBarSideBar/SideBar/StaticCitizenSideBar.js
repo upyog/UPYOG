@@ -134,10 +134,11 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
   const tenantId = Digit.ULBService.getCitizenCurrentTenant();
   const filteredTenantContact = storeData?.tenants.filter((e) => e.code === tenantId)[0]?.contactNumber || storeData?.tenants[0]?.contactNumber;
 
-  let menuItems = [...SideBarMenu(t, showProfilePage, redirectToLoginPage, isEmployee, storeData, tenantId)];
-
-  menuItems = menuItems.filter((item) => item.element !== "LANGUAGE");
-
+  let menuItems2 = [...SideBarMenu(t, showProfilePage, redirectToLoginPage, isEmployee, storeData, tenantId)];
+  console.log("menuItems1==",menuItems2);
+  let menuItems = menuItems2.filter((item) => item.element !== "LANGUAGE");
+  console.log("menuItems==",menuItems);
+  
   const MenuItem = ({ item }) => {
     const leftIconArray = item?.icon || item.icon?.type?.name;
     const leftIcon = leftIconArray ? IconsObject[leftIconArray] : IconsObject.BillsIcon;
@@ -174,7 +175,7 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
 
   if (isFetched && user && user.access_token) {
     profileItem = <Profile info={user?.info} stateName={stateInfo?.name} t={t} />;
-    menuItems = menuItems.filter((item) => item?.id !== "login-btn" && item?.id !== "help-line");
+    menuItems = menuItems.filter((item) => item?.id !== "login-btn" && item?.id !== "help-line"); 
     menuItems = [
       ...menuItems,
       {

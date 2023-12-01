@@ -77,7 +77,7 @@ const TopBar = ({
   const urlsToDisableNotificationIcon = (pathname) =>
     !!Digit.UserService?.getUser()?.access_token
       ? false
-      : ["/digit-ui/citizen/select-language", "/digit-ui/citizen/select-location"].includes(pathname);
+      : ["/digit-ui/citizen/select-location"].includes(pathname);
 
   if (CITIZEN) {
     return (
@@ -103,7 +103,7 @@ const TopBar = ({
   return (
     <div className="topbar">
       {mobileView ? <Hamburger handleClick={toggleSidebar} color="#9E9E9E" /> : null}
-      <img className="city" src="https://in-egov-assets.s3.ap-south-1.amazonaws.com/images/Upyog-logo.png" />
+      <img className="city" src="http://216.48.176.229/static/8.png" />
       <span style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
         {loggedin &&
           (cityDetails?.city?.ulbGrade ? (
@@ -141,13 +141,13 @@ const TopBar = ({
                     profilePic == null ? (
                       <TextToImg name={userDetails?.info?.name || userDetails?.info?.userInfo?.name || "Employee"} />
                     ) : (
-                      <img src="https://in-egov-assets.s3.ap-south-1.amazonaws.com/images/Upyog-logo.png" style={{ height: "48px", width: "48px", borderRadius: "50%" }} />
+                      <img src="http://216.48.176.229/static/8.png" style={{ height: "48px", width: "48px", borderRadius: "50%" }} />
                     )
                   }
                 />
               </div>
             )}
-            <img className="state" src="https://in-egov-assets.s3.ap-south-1.amazonaws.com/images/Upyog-logo.png" />
+            <img className="state" src="http://216.48.176.229/static/8.png" />
           </div>
         )}
       </span>

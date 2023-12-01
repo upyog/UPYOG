@@ -10,12 +10,32 @@ const assetsProxy = createProxyMiddleware({
   target: process.env.REACT_APP_PROXY_ASSETS || "https://qa.digit.org",
   changeOrigin: true,
 });
+const assetsProxyMdms = createProxyMiddleware({
+  target: process.env.REACT_APP_PROXY_API_MDMS || "https://qa.digit.org",
+  changeOrigin: true,
+});
+const assetsProxyLocalisation = createProxyMiddleware({
+  target: process.env.REACT_APP_PROXY_API_LOCALISATION || "https://qa.digit.org",
+  changeOrigin: true,
+});
+const assetsProxyPropertyService = createProxyMiddleware({
+  target: process.env.REACT_APP_PROXY_API_PROPERTY_SERVICE || "https://qa.digit.org",
+  changeOrigin: true,
+});
+const assetsProxyEgovLocation = createProxyMiddleware({
+  target: process.env.REACT_APP_PROXY_API_LOCATION_SERVICE || "https://qa.digit.org",
+  changeOrigin: true,
+});
+const assetsProxyBillingService = createProxyMiddleware({
+  target: process.env.REACT_APP_PROXY_API_BILLING_SERVICE || "https://qa.digit.org",
+  changeOrigin: true,
+});
 module.exports = function (app) {
   [
     "/access/v1/actions/mdms",
-    "/egov-mdms-service",
-    "/egov-location",
-    "/localization",
+    // "/egov-mdms-service",
+    // "/egov-location",
+    // "/localization",
     "/egov-workflow-v2",
     "/pgr-services",
     "/filestore",
@@ -23,13 +43,13 @@ module.exports = function (app) {
     "/user-otp",
     "/user",
     "/fsm",
-    "/billing-service",
+    // "/billing-service",
     "/collection-services",
     "/pdf-service",
     "/pg-service",
     "/vehicle",
     "/vendor",
-    "/property-services",
+    // "/property-services",
     "/fsm-calculator/v1/billingSlab/_search",
     "/pt-calculator-v2",
     "/dashboard-analytics",
@@ -64,5 +84,11 @@ module.exports = function (app) {
     "/fsm-calculator",
     "/service-request",
   ].forEach((location) => app.use(location, createProxy));
+  ["/egov-mdms-service"].forEach((location) => app.use(location, assetsProxyMdms));
+  ["/localization"].forEach((location) => app.use(location, assetsProxyLocalisation));
+  ["/property-services"].forEach((location) => app.use(location, assetsProxyPropertyService));
+  ["/egov-location"].forEach((location) => app.use(location, assetsProxyEgovLocation));
+  ["/billing-service"].forEach((location) => app.use(location, assetsProxyBillingService));
+
   ["/pb-egov-assets"].forEach((location) => app.use(location, assetsProxy));
 };

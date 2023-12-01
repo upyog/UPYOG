@@ -2,19 +2,19 @@ export const newConfig =[
         {
             "head": "ES_NEW_APPLICATION_LOCATION_DETAILS",
             "body": [
-                {
-                    "route": "map",
-                    "component": "PTSelectGeolocation",
-                    "nextStep": "pincode",
-                    "hideInEmployee": true,
-                    "key": "address",
-                    "texts": {
-                        "header": "PT_GEOLOCATON_HEADER",
-                        "cardText": "PT_GEOLOCATION_TEXT",
-                        "nextText": "PT_COMMON_NEXT",
-                        "skipAndContinueText": "CORE_COMMON_SKIP_CONTINUE"
-                    }
-                },
+                // {
+                //     "route": "map",
+                //     "component": "PTSelectGeolocation",
+                //     "nextStep": "pincode",
+                //     "hideInEmployee": true,
+                //     "key": "address",
+                //     "texts": {
+                //         "header": "PT_GEOLOCATON_HEADER",
+                //         "cardText": "PT_GEOLOCATION_TEXT",
+                //         "nextText": "PT_COMMON_NEXT",
+                //         "skipAndContinueText": "CORE_COMMON_SKIP_CONTINUE"
+                //     }
+                // },
                 {
                     "route": "pincode",
                     "component": "PTSelectPincode",
@@ -202,7 +202,7 @@ export const newConfig =[
                     },
                     "key": "units",
                     "withoutLabel": true,
-                    "nextStep": "map",
+                    "nextStep": "pincode",
                     "hideInEmployee": true
                 },
                 {
@@ -234,7 +234,7 @@ export const newConfig =[
                     },
                     "key": "units",
                     "withoutLabel": true,
-                    "nextStep": "map",
+                    "nextStep": "pincode",
                     "hideInEmployee": true
                 },
                 {
@@ -328,7 +328,7 @@ export const newConfig =[
                         "cardText": "PT_FLAT_DETAILS_DESC",
                         "submitBarLabel": "PT_COMMON_NEXT"
                     },
-                    "nextStep": "map",
+                    "nextStep": "pincode",
                     "key": "units",
                     "withoutLabel": true,
                     "hideInEmployee": true
@@ -395,7 +395,7 @@ export const newConfig =[
                     },
                     "key": "units",
                     "withoutLabel": true,
-                    "nextStep": "map",
+                    "nextStep": "pincode",
                     "hideInEmployee": true
                 }
             ]

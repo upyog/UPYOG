@@ -40,6 +40,66 @@ const PTSelectStreet = ({ t, config, onSelect, userType, formData, formState, se
           title: t("CORE_COMMON_DOOR_INVALID"),
         },
       },
+      {
+        label: "PT_PROPERTY_ADDRESS_VILLAGE",
+        type: "text",
+        name: "village",
+        validation: {
+          pattern: "[a-zA-Z0-9 !@#$%^&*()_+\-={};':\\\\|,.<>/?]{1,64}",
+          // maxlength: 256,
+          title: t("CORE_COMMON_VILLAGE_INVALID"),
+        },
+      },
+      {
+        label: "PT_PROPERTY_ADDRESS_PATTA_NO",
+        type: "text",
+        name: "pattaNo",
+        validation: {
+          pattern: "[a-zA-Z0-9 !@#$%^&*()_+\-={};':\\\\|,.<>/?]{1,64}",
+          // maxlength: 256,
+          title: t("CORE_COMMON_PATTA_INVALID"),
+        },
+      },
+      {
+        label: "PT_PROPERTY_ADDRESS_DAG_NO",
+        type: "text",
+        name: "dagNo",
+        validation: {
+          pattern: "[a-zA-Z0-9 !@#$%^&*()_+\-={};':\\\\|,.<>/?]{1,64}",
+          // maxlength: 256,
+          title: t("CORE_COMMON_DAG_INVALID"),
+        },
+      },
+      {
+        label: "PT_PROPERTY_ADDRESS_CMN_NAME_OF_BUILDING",
+        type: "text",
+        name: "cmnNameOfBuilding",
+        validation: {
+          pattern: "[a-zA-Z0-9 !@#$%^&*()_+\-={};':\\\\|,.<>/?]{1,64}",
+          // maxlength: 256,
+          title: t("CORE_COMMON_NAME_OF_BUILDING_INVALID"),
+        },
+      },
+      {
+        label: "PT_PROPERTY_ADDRESS_NAME_OF_PRINCIPAL_ROAD",
+        type: "text",
+        name: "nameOfPrincipalRoad",
+        validation: {
+          pattern: "[a-zA-Z0-9 !@#$%^&*()_+\-={};':\\\\|,.<>/?]{1,64}",
+          // maxlength: 256,
+          title: t("CORE_COMMON_NAME_OF_PRINCIPAL_ROAD_INVALID"),
+        },
+      },
+      {
+        label: "PT_PROPERTY_ADDRESS_NAME_OF_SUB_ROAD",
+        type: "text",
+        name: "nameOfSubRoad",
+        validation: {
+          pattern: "[a-zA-Z0-9 !@#$%^&*()_+\-={};':\\\\|,.<>/?]{1,64}",
+          // maxlength: 256,
+          title: t("CORE_COMMON_NAME_OF_SUB_ROAD_INVALID"),
+        },
+      },
     ];
   }
 

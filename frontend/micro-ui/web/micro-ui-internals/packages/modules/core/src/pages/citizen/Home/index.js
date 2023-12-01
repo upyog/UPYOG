@@ -42,11 +42,11 @@ const Home = () => {
     },
   });
 
-  if (!tenantId) {
-    Digit.SessionStorage.get("locale") === null
-      ? history.push(`/digit-ui/citizen/select-language`)
-      : history.push(`/digit-ui/citizen/select-location`);
-  }
+  // if (!tenantId) {
+  //   Digit.SessionStorage.get("locale") === null
+  //     ? history.push(`/digit-ui/citizen/select-language`)
+  //     : history.push(`/digit-ui/citizen/select-location`);
+  // }
 
   const appBannerWebObj = uiHomePage?.appBannerDesktop;
   const appBannerMobObj = uiHomePage?.appBannerMobile;
@@ -67,31 +67,31 @@ const Home = () => {
       onClick: () => history.push(citizenServicesObj?.sideOption?.navigationUrl),
     },
     options: [
-      {
-        name: t(citizenServicesObj?.props?.[0]?.label),
-        Icon: <ComplaintIcon />,
-        onClick: () => history.push(citizenServicesObj?.props?.[0]?.navigationUrl),
-      },
+      // {
+      //   name: t(citizenServicesObj?.props?.[0]?.label),
+      //   Icon: <ComplaintIcon />,
+      //   onClick: () => history.push(citizenServicesObj?.props?.[0]?.navigationUrl),
+      // },
       {
         name: t(citizenServicesObj?.props?.[1]?.label),
         Icon: <PTIcon className="fill-path-primary-main" />,
         onClick: () => history.push(citizenServicesObj?.props?.[1]?.navigationUrl),
       },
-      {
-        name: t(citizenServicesObj?.props?.[2]?.label),
-        Icon: <CaseIcon className="fill-path-primary-main" />,
-        onClick: () => history.push(citizenServicesObj?.props?.[2]?.navigationUrl),
-      },
+      // {
+      //   name: t(citizenServicesObj?.props?.[2]?.label),
+      //   Icon: <CaseIcon className="fill-path-primary-main" />,
+      //   onClick: () => history.push(citizenServicesObj?.props?.[2]?.navigationUrl),
+      // },
       // {
       //     name: t("ACTION_TEST_WATER_AND_SEWERAGE"),
       //     Icon: <DropIcon/>,
       //     onClick: () => history.push("/digit-ui/citizen")
       // },
-      {
-        name: t(citizenServicesObj?.props?.[3]?.label),
-        Icon: <WSICon />,
-        onClick: () => history.push(citizenServicesObj?.props?.[3]?.navigationUrl),
-      },
+      // {
+      //   name: t(citizenServicesObj?.props?.[3]?.label),
+      //   Icon: <WSICon />,
+      //   onClick: () => history.push(citizenServicesObj?.props?.[3]?.navigationUrl),
+      // },
     ],
     styles: { display: "flex", flexWrap: "wrap", justifyContent: "flex-start", width: "100%" },
   };
@@ -139,7 +139,7 @@ const Home = () => {
       </div> */}
       <div className="HomePageWrapper">
         {<div className="BannerWithSearch">
-          {isMobile ? <img src={"https://nugp-assets.s3.ap-south-1.amazonaws.com/nugp+asset/Banner+UPYOG+%281920x500%29B+%282%29.jpg"} /> : <img src={"https://nugp-assets.s3.ap-south-1.amazonaws.com/nugp+asset/Banner+UPYOG+%281920x500%29A.jpg"} />}
+          {isMobile ? <img src={"http://216.48.176.229/static/2.png"} /> : <img src={"http://216.48.176.229/static/2.png"} />}
           {/* <div className="Search">
             <StandaloneSearchBar placeholder={t("CS_COMMON_SEARCH_PLACEHOLDER")} />
           </div> */}
@@ -150,7 +150,7 @@ const Home = () => {
         </div>}
 
 
-        {(whatsAppBannerMobObj || whatsAppBannerWebObj) && (
+        {/* {(whatsAppBannerMobObj || whatsAppBannerWebObj) && (
           <div className="WhatsAppBanner">
             {isMobile ? (
               <img src={"https://nugp-assets.s3.ap-south-1.amazonaws.com/nugp+asset/Banner+UPYOG+%281920x500%29B+%282%29.jpg"} onClick={() => handleClickOnWhatsAppBanner(whatsAppBannerMobObj)} style={{"width":"100%"}}/>
@@ -158,7 +158,7 @@ const Home = () => {
               <img src={"https://nugp-assets.s3.ap-south-1.amazonaws.com/nugp+asset/Banner+UPYOG+%281920x500%29B+%282%29.jpg"} onClick={() => handleClickOnWhatsAppBanner(whatsAppBannerWebObj)} style={{"width":"100%"}}/>
             )}
           </div>
-        )}
+        )} */}
 
         {conditionsToDisableNotificationCountTrigger() ? (
           EventsDataLoading ? (

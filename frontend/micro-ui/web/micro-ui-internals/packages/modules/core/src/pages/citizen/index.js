@@ -60,7 +60,8 @@ const Home = ({
         const formattedData = data?.["ACCESSCONTROL-ACTIONS-TEST"]?.["actions-test"]
           ?.filter((el) => el.enabled === true)
           .reduce((a, b) => {
-            a[b.parentModule] = a[b.parentModule]?.length > 0 ? [b, ...a[b.parentModule]] : [b];
+            if(b.parentModule=='PT')
+            a[b.parentModule] = a[b.parentModule]?.length > 0 && b.parentModule=='PT' ? [b, ...a[b.parentModule]] : [b];
             return a;
           }, {});
         return formattedData;
@@ -101,7 +102,7 @@ const Home = ({
       <React.Fragment>
         <Route key={index} path={`${path}/${code.toLowerCase()}-home`}>
           <div className="moduleLinkHomePage">
-            <img src={ "https://nugp-assets.s3.ap-south-1.amazonaws.com/nugp+asset/Banner+UPYOG+%281920x500%29B+%282%29.jpg"||bannerImage || stateInfo?.bannerUrl} alt="noimagefound" />
+            <img src={ "http://216.48.176.229/static/2.png"||bannerImage || stateInfo?.bannerUrl} alt="noimagefound" />
             <BackButton className="moduleLinkHomePageBackButton" />
             <h1>{t("MODULE_" + code.toUpperCase())}</h1>
             <div className="moduleLinkHomePageModuleLinks">
