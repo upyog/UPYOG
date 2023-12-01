@@ -18,7 +18,7 @@ const RentalDetails = ({ t, config, onSelect, value, userType, formData }) => {
   }
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();
-  const { data: Menu, isLoading } = Digit.Hooks.pt.usePropertyMDMS(stateId, "PropertyTax", "RentalDetails");
+  const { data: Menu, isLoading } = Digit.Hooks.pt.usePropertyMDMSV2(stateId, "PropertyTax", "RentalDetails");
 
   if (Menu) {
     config.texts.cardText = Menu?.PropertyTax?.RentalDetails[0]?.code

@@ -13,7 +13,7 @@ const RequiredDoc = () => {
   const history = useHistory();
   const { id } = useParams();
   const [docs, setDocs] = useState([]);
-  const { isLoading, data: Documentsob } = Digit.Hooks.pt.usePropertyMDMS(stateId, "PropertyTax", ["MutationDocuments"]);
+  const { isLoading, data: Documentsob } = Digit.Hooks.pt.usePropertyMDMSV2(stateId, "PropertyTax", ["MutationDocuments"]);
   const OnSubmit = () => {
     history.push(`/digit-ui/employee/pt/property-mutate/${id}`);
   };
