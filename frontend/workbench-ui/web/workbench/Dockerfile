@@ -14,7 +14,7 @@ RUN cd web/ \
     && node -e 'console.log(v8.getHeapStatistics().heap_size_limit/(1024*1024))' \
     && node -e 'console.log("workbench only")' \
     && cd workbench/ \
-    &&  ./install-deps.sh \
+    && chmod +x ./install-deps.sh \
     && cd ../ \
     && yarn install \ 
     && yarn build:webpack 
