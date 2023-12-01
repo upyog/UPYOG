@@ -190,6 +190,13 @@ const NewApplication = () => {
       </div>
     );
   };
+  const closeModal =() =>{
+    setShowToast(false)
+  }
+  const setModal=()=>{
+      setShowToast(false)   
+      history.replace("/digit-ui/employee/pt/response", { Property: formData })
+    }
   /*console.log("new",configs)
   configs[1]?.body?.push( {
     "type": "component",
@@ -234,7 +241,8 @@ const NewApplication = () => {
           <StatusTable>
               <Row label={t("CR_PROPERTY_NUMBER")} text={propertyData?.Properties?.[0]?.propertyId || "NA"} textStyle={{ whiteSpace: "pre" }} />
               <Row label={t("CR_OWNER_NAME")} text={propertyData?.Properties?.[0]?.owners?.[0].name || "NA"} />
-              <Row label={t("CR_MOBILE_NUMBER")} text={propertyData?.Properties?.[0]?.owners?.[0].mobileNumber|| "NA"} />        
+              <Row label={t("CR_MOBILE_NUMBER")} text={propertyData?.Properties?.[0]?.owners?.[0].mobileNumber|| "NA"} /> 
+              <Row label={t("CR_ADDRESS")}    text={( propertyData?.Properties?.[0]?.address?.doorNo +", "+ propertyData?.Properties?.[0]?.address?.locality?.name +", "+ propertyData?.Properties?.[0]?.address?.city ) || "NA"}/>      
           </StatusTable>
   </Card>
 </div>
