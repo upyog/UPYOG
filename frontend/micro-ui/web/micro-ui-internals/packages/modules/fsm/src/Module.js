@@ -4,27 +4,27 @@ import { useTranslation } from "react-i18next";
 import { Link, useRouteMatch } from "react-router-dom";
 import FSMCard from "./components/FsmCard";
 import CheckSlum from "./pageComponents/CheckSlum";
-// import SelectAddress from "./pageComponents/SelectAddress";
-import FSMSelectAddress from "./pageComponents/FSMSelectAddress";
+import SelectAddress from "./pageComponents/SelectAddress";
+// import FSMSelectAddress from "./pageComponents/FSMSelectAddress";
 import SelectChannel from "./pageComponents/SelectChannel";
 import SelectGender from "./pageComponents/SelectGender";
 import SelectPaymentType from "./pageComponents/SelectPaymentType";
-// import SelectGeolocation from "./pageComponents/SelectGeolocation";
-import FSMSelectGeolocation from "./pageComponents/FSMSelectGeolocation";
-// import SelectLandmark from "./pageComponents/SelectLandmark";
-import FSMSelectLandmark from "./pageComponents/FSMSelectLandmark";
+import SelectGeolocation from "./pageComponents/SelectGeolocation";
+// import FSMSelectGeolocation from "./pageComponents/FSMSelectGeolocation";
+import SelectLandmark from "./pageComponents/SelectLandmark";
+// import FSMSelectLandmark from "./pageComponents/FSMSelectLandmark";
 import SelectName from "./pageComponents/SelectName";
-// import SelectPincode from "./pageComponents/SelectPincode";
-import FSMSelectPincode from "./pageComponents/FSMSelectPincode";
+import SelectPincode from "./pageComponents/SelectPincode";
+// import FSMSelectPincode from "./pageComponents/FSMSelectPincode";
 import SelectPitType from "./pageComponents/SelectPitType";
+import SelectTripNo from "./pageComponents/SelectTripNo";
 import SelectPropertySubtype from "./pageComponents/SelectPropertySubtype";
 import SelectPropertyType from "./pageComponents/SelectPropertyType";
 import SelectSlumName from "./pageComponents/SelectSlumName";
-// import SelectStreet from "./pageComponents/SelectStreet";
-import FSMSelectStreet from "./pageComponents/FSMSelectStreet";
+import SelectStreet from "./pageComponents/SelectStreet";
+// import FSMSelectStreet from "./pageComponents/FSMSelectStreet";
 import SelectTankSize from "./pageComponents/SelectTankSize";
 import SelectTripData from "./pageComponents/SelectTripData";
-import SelectTripNo from "./pageComponents/SelectTripNo";
 import SelectPaymentPreference from "./pageComponents/SelectPaymentPreference";
 import SelectVehicle from "./pageComponents/SelectVehicleType";
 import CitizenApp from "./pages/citizen";
@@ -58,6 +58,8 @@ import AdvanceCollection from "./pageComponents/AdvanceCollection";
 import SelectTrips from "./pageComponents/SelectTrips";
 import PlusMinusInput from "./pageComponents/PlusMinusInput";
 import ConfirmationBox from "./components/Confirmation";
+import SelectLocalityOrGramPanchayat from "./pageComponents/SelectLocalityOrGramPanchayat";
+
 
 const FSMModule = ({ stateCode, userType, tenants }) => {
   const moduleCode = "FSM";
@@ -158,19 +160,19 @@ const FSMLinks = ({ matchPath, userType }) => {
 const componentsToRegister = {
   SelectPropertySubtype,
   SelectPropertyType,
-  // SelectAddress,
-  FSMSelectAddress,
-  // SelectStreet,
-  FSMSelectStreet,
-  // SelectLandmark,
-  FSMSelectLandmark,
-  // SelectPincode,
-  FSMSelectPincode,
+  SelectAddress,
+  // FSMSelectAddress,
+  SelectStreet,
+  // FSMSelectStreet,
+  SelectLandmark,
+  // FSMSelectLandmark,
+  SelectPincode,
+  // FSMSelectPincode,
   SelectTankSize,
   SelectPitType,
   SelectTripNo,
-  // SelectGeolocation,
-  FSMSelectGeolocation,
+  SelectGeolocation,
+  // FSMSelectGeolocation,
   SelectSlumName,
   CheckSlum,
   FSMCard,
@@ -212,6 +214,7 @@ const componentsToRegister = {
   SelectTrips,
   PlusMinusInput,
   ConfirmationBox,
+  SelectLocalityOrGramPanchayat,
 };
 
 export const initFSMComponents = () => {

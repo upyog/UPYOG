@@ -29,7 +29,7 @@ import { useQueryClient } from "react-query";
 
 import { Link, useHistory, useParams } from "react-router-dom";
 import { ViewImages } from "../../../components/ViewImages";
-import _ from "lodash";
+// import _ from "lodash";
 const ApplicationDetails = (props) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const state = Digit.ULBService.getStateId();
@@ -75,7 +75,7 @@ const ApplicationDetails = (props) => {
         : applicationData?.advanceAmount === 0
         ? "PAY_LATER_SERVICE"
         : applicationData?.advanceAmount > 0
-        ? "FSM_ADVANCE_PAY_SERVICE_V1"
+        ? "FSM_ADVANCE_PAY_SERVICE"
         : applicationData?.paymentPreference === null &&
           applicationData?.additionalDetails?.tripAmount === 0 &&
           applicationData?.advanceAmount === null
@@ -99,7 +99,7 @@ const ApplicationDetails = (props) => {
 
   useEffect(() => {
     switch (selectedAction) {
-      case DSO && "SCHEDULE":
+      case "SCHEDULE":
       case "DSO_ACCEPT":
       case "ACCEPT":
       case "ASSIGN":
@@ -118,7 +118,7 @@ const ApplicationDetails = (props) => {
         return setShowModal(true);
       case "SUBMIT":
       case "FSM_SUBMIT":
-      case !DSO && "SCHEDULE":
+      // case !DSO && "SCHEDULE":
         return history.push("/digit-ui/employee/fsm/modify-application/" + applicationNumber);
       case "PAY":
       case "FSM_PAY":
@@ -195,14 +195,14 @@ const ApplicationDetails = (props) => {
         date: `${t("CS_FSM_EXPECTED_DATE")} ${Digit.DateUtils.ConvertTimestampToDate(applicationData?.possibleServiceDate)}`,
       };
       return <TLCaption data={caption} />;
-    } 
+    /*} 
     else if (checkpoint.status === "PENDING_PAYYY") {
       const caption = {
         name: checkpoint?.assigner,
         mobileNumber: checkpoint?.assigner?.mobileNumber,
         date: `${t("CS_FSM_EXPECTED_DATE")} ${Digit.DateUtils.ConvertTimestampToDate(applicationData?.possibleServiceDate)}`,
       };
-      return <TLCaption data={caption} />;
+      return <TLCaption data={caption} />; */
     }else if (checkpoint.status === "COMPLETED") {
       return (
         <div>
@@ -226,7 +226,7 @@ const ApplicationDetails = (props) => {
       if (checkpoint?.numberOfTrips) caption.comment = `${t("NUMBER_OF_TRIPS")}: ${checkpoint?.numberOfTrips}`;
       return <TLCaption data={caption} />;
     }
-    else if(checkpoint.status === "ASSING_DSO_PAY")
+    /*else if(checkpoint.status === "ASSING_DSO_PAY")
       {
         const caption = {
           name: checkpoint?.assigner,
@@ -234,13 +234,13 @@ const ApplicationDetails = (props) => {
           date: `${t("CS_FSM_EXPECTED_DATE")} ${Digit.DateUtils.ConvertTimestampToDate(applicationData?.possibleServiceDate)}`,
         };
         return <TLCaption data={caption} />;
-      }
+      } */
   };
 
   if (isLoading) {
     return <Loader />;
   }
-
+/*
 let deepCopy = _.cloneDeep( workflowDetails )
 let index1 =0
 deepCopy?.data?.timeline.map((check,index) => {
@@ -252,7 +252,7 @@ deepCopy?.data?.timeline.map((check,index) => {
       workflowDetails.data.timeline[index].status ="ASSING_DSO_PAY"
       workflowDetails.data.timeline.splice(index, 0, obj);
   }
-})
+}) */
   return (
     <React.Fragment>
       {!isLoading ? (

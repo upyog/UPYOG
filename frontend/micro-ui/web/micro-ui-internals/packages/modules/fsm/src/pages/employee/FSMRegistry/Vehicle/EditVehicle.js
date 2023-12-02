@@ -87,10 +87,10 @@ const EditVehicle = ({ parentUrl, heading }) => {
     const vehicleType = data?.vehicle?.type?.code || data?.vehicle?.type;
     const vehicleModal = data?.vehicle?.modal?.code || data?.vehicle?.modal;
     const tankCapacity = data?.vehicle?.type?.capacity || data?.vehicle?.tankCapacity;
-    const pollutionCert = new Date(`${data?.pollutionCert}`).getTime();
-    const insurance = new Date(`${data?.insurance}`).getTime();
-    const roadTax = new Date(`${data?.roadTax}`).getTime();
-    const fitnessValidity = new Date(`${data?.fitnessValidity}`).getTime();
+    const pollutionCert = data?.pollutionCert > 0 || data?.pollutionCert?.length > 0 ? new Date(`${data?.pollutionCert}`).getTime() : null;
+    const insurance = data?.insurance > 0 || data?.insurance?.length > 0 ? new Date(`${data?.insurance}`).getTime() : null;
+    const roadTax = data?.roadTax > 0 || data?.roadTax?.length > 0 ? new Date(`${data?.roadTax}`).getTime() : null;
+    const fitnessValidity = data?.fitnessValidity > 0 || data?.fitnessValidity?.length > 0 ? new Date(`${data?.fitnessValidity}`).getTime() : null;
     const additionalDetails = data?.additionalDetails;
     const formData = {
       vehicle: {

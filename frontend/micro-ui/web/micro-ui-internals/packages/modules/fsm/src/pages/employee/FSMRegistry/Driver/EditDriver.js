@@ -45,7 +45,7 @@ const EditDriver = ({ parentUrl, heading }) => {
         selectGender: driverDetails?.driverData?.owner?.gender,
         dob: driverDetails?.driverData?.owner?.dob && Digit.DateUtils.ConvertTimestampToDate(driverDetails?.driverData?.owner?.dob, "yyyy-MM-dd"),
         emailId: driverDetails?.driverData?.owner?.emailId === "abc@egov.com" ? "" : driverDetails?.driverData?.owner?.emailId,
-        phone: driverDetails?.driverData?.owner?.mobileNumber,
+        // phone: driverDetails?.driverData?.owner?.mobileNumber,
         additionalDetails: driverDetails?.driverData?.additionalDetails?.description,
       };
       setDefaultValues(values);
