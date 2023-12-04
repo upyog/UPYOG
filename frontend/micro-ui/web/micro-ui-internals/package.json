@@ -13,8 +13,6 @@
     "packages/modules/pt",
     "packages/modules/ws",
     "packages/modules/commonPt",
-    "packages/modules/fsm",
-    "packages/modules/dss",
     "packages/modules/obps",
     "packages/modules/pgr",
     "packages/modules/ptr"
