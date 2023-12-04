@@ -90,7 +90,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
     // },[showToast]);
 
     function selectedValue(value) {
-        console.log("value",value)
+        
         setOwnershipCategory(value);
     }
 

@@ -161,7 +161,19 @@ export const config = {
         cardText: "CS_FILE_PROPERTY_PIT_TYPE_TEXT",
         nextText: "CS_COMMON_NEXT",
       },
+      nextStep: "road-details",
+    },
+    {
+      route: "road-details",
+      component: SelectRoadDetails,
+      groupKey: "CS_CHECK_PIT_SEPTIC_TANK_DETAILS",
+      texts: {
+        header: "CS_FILE_PROPERTY_ROAD_WIDTH",
+        cardText: "CS_FILE_PROPERTY_ROAD_WIDTH_TEXT",
+        nextText: "CS_COMMON_NEXT",
+      },
       nextStep: "tank-size",
+
     },
     {
       route: "tank-size",

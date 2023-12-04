@@ -138,6 +138,7 @@ const CreateProperty = ({ parentRoute }) => {
     }  
     else if(propertyDataLoading && propertyData?.Properties.length === 0) {  
       setShowToast(false)  
+      console.log("propertyDatapropertyData",propertyData)
       history.push(`${match.path}/acknowledgement`);  
     }  
     }, [propertyData]);
@@ -204,7 +205,7 @@ const CreateProperty = ({ parentRoute }) => {
   config.indexRoute = "info";
   const CheckPage = Digit?.ComponentRegistryService?.getComponent("PTCheckPage");
   const PTAcknowledgement = Digit?.ComponentRegistryService?.getComponent("PTAcknowledgement");
-  console.log("propertyData",propertyData)
+
   return (
     <div>
       <div>

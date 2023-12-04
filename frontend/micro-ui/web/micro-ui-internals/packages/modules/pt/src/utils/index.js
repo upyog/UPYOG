@@ -100,6 +100,7 @@ export const setOwnerDetails = (data) => {
   const { address, owners } = data;
   let institution = {},
     owner = [];
+    console.log("setOwnerDetailssetOwnerDetails",data)
   if (owners && owners.length > 0) {
     if (data?.ownershipCategory?.value === "INSTITUTIONALPRIVATE" || data?.ownershipCategory?.value === "INSTITUTIONALGOVERNMENT") {
       institution.designation = owners[0]?.designation;
@@ -128,7 +129,8 @@ export const setOwnerDetails = (data) => {
       data.institution = institution;
       data.owners = owner;
     } else {
-      owners.map((ownr) => {
+      owners.map((ownr,index) => {
+        console.log("ownrownrownrownr",ownr)
         let document = [];
         if (ownr?.ownerType?.code != "NONE") {
           document.push({
@@ -153,6 +155,7 @@ export const setOwnerDetails = (data) => {
           permanentAddress: ownr?.permanentAddress,
           relationship: ownr?.relationship?.code,
           documents: document,
+          additionalDetails:{ownerSequence:index, ownerName:ownr?.name}
         });
       });
       data.owners = owner;

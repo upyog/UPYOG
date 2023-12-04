@@ -33,7 +33,7 @@ const CheckPage = ({ onSubmit, value }) => {
   const { t } = useTranslation();
   const history = useHistory();
 
-  const { address, propertyID,  propertyType, subtype, pitType, pitDetail, selectGender, selectPaymentPreference, selectTripNo } = value;
+  const { address, propertyID,  propertyType, subtype, pitType, pitDetail, selectGender, selectPaymentPreference, selectTripNo, roadWidth, distancefromroad } = value;
 
   const pitDetailValues = pitDetail ? Object.values(pitDetail).filter((value) => !!value) : null;
 
@@ -117,6 +117,18 @@ const CheckPage = ({ onSubmit, value }) => {
               actionButton={<ActionButton jumpTo="/digit-ui/citizen/fsm/new-application/pit-type" />}
             />
           )}
+           
+          <Row
+            label={t("CS_CHECK_ROAD_WIDTH")}
+            text={t(roadWidth?.roadWidth)}
+            actionButton={<ActionButton jumpTo="/digit-ui/citizen/fsm/new-application/road-details" />}
+          />
+          <Row
+            label={t("CS_CHECK_DISTANCE_FROM_ROAD")}
+            text={t(roadWidth?.distancefromroad)}
+            actionButton={<ActionButton jumpTo="/digit-ui/citizen/fsm/new-application/road-details" />}
+          />
+
           {pitMeasurement && (
             <Row
               label={t("CS_CHECK_SIZE")}

@@ -91,6 +91,8 @@ export const Search = {
         ? response.additionalDetails.tripAmount
         : demandDetails?.Demands[0]?.demandDetails[0]?.taxAmount || "N/A";
     const propertyID= response.additionalDetails.propertyID || "N/A";
+    //const roadWidth=response.additionalDetails.roadWidth || "N/A";
+    
     // const totalAmount = response?.noOfTrips === 0 || amountPerTrip === "N/A" ? "N/A" : response?.noOfTrips * Number(amountPerTrip);
     const totalAmount = demandDetails?.Demands[0]?.demandDetails?.map((detail) => detail?.taxAmount)?.reduce((a, b) => a + b) || "N/A";
     const employeeResponse = [
@@ -156,6 +158,14 @@ export const Search = {
           {
             title: "ES_APPLICATION_DETAILS_PIT_TYPE",
             value: !!response?.sanitationtype ? `PITTYPE_MASTERS_${response?.sanitationtype}` : "",
+          },
+          {
+            title: "ES_APPLICATION_DETAILS_ROAD_WIDTH",
+            value: response?. additionalDetails?.roadWidth ,
+          },
+          {
+            title: "ES_APPLICATION_DETAILS_DISTANCE_FROM_ROAD",
+            value: response?. additionalDetails?.distancefromroad,
           },
           {
             title: "ES_APPLICATION_DETAILS_PIT_DIMENSION",
