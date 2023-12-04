@@ -50,6 +50,7 @@ export const NewApplication = ({ parentUrl, heading }) => {
       formData?.address?.locality?.code &&
       formData?.tripData?.vehicleType &&
       formData?.channel &&
+      formData?.pitType &&
       (formData?.tripData?.amountPerTrip || formData?.tripData?.amountPerTrip === 0)
     ) {
       setSubmitValve(true);

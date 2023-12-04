@@ -45,8 +45,11 @@ const FstpOperatorDetails = () => {
   let { id: applicationNos } = useParams();
   const [filters, setFilters] = useState(applicationNos != undefined ? { applicationNos } : { applicationNos: "null" });
   const [isVehicleSearchCompleted, setIsVehicleSearchCompleted] = useState(false);
+  console.log("isVehicleSearchCompleted", isVehicleSearchCompleted)
   const [searchParams, setSearchParams] = useState({});
+  console.log("searchParams",searchParams)
   const [showToast, setShowToast] = useState(null);
+  const [vehicleCapacity, setVehicleCapacity]=useState(null);
   const [wasteCollected, setWasteCollected] = useState(null);
   const [errors, setErrors] = useState({});
   const [tripStartTime, setTripStartTime] = useState(null);
@@ -78,6 +81,9 @@ const FstpOperatorDetails = () => {
 
   const onChangeVehicleNumber = (value) => {
     setNewVehicleNumber(value);
+  };
+  const onChangeVehicleCapacity = (value) => {
+    setVehicleCapacity(value);
   };
 
   const onChangeDsoName = (value) => {
@@ -115,7 +121,15 @@ const FstpOperatorDetails = () => {
 
   useEffect(() => {
     if (isSuccess) {
-      setWasteCollected(vehicle?.vehicle?.tankCapacity);
+      setWasteCollected();
+      const applicationNos = vehicle?.tripDetails?.map((tripData) => tripData.referenceNo).join(",");
+      setSearchParams(applicationNos ? { applicationNos } : { applicationNos: "null" });
+      setIsVehicleSearchCompleted(true);
+    }
+  }, [isSuccess]);
+  useEffect(() => {
+    if (isSuccess) {
+      setVehicleCapacity(vehicle?.vehicle?.tankCapacity);
       const applicationNos = vehicle?.tripDetails?.map((tripData) => tripData.referenceNo).join(",");
       setSearchParams(applicationNos ? { applicationNos } : { applicationNos: "null" });
       setIsVehicleSearchCompleted(true);
@@ -190,7 +204,7 @@ const FstpOperatorDetails = () => {
     vehicle.fstpExitTime = timeStamp;
     vehicle.volumeCarried = wasteCollected;
     vehicle.tripDetails[0].additionalDetails = tripDetail;
-    vehicle.additionalDetails = { fileStoreId: uploadedFile, comments: comments };
+    vehicle.additionalDetails = { fileStoreId: uploadedFile, comments: comments, vehicleCapacity: vehicleCapacity };
 
     const details = {
       vehicleTrip: [vehicle],
@@ -270,6 +284,7 @@ const FstpOperatorDetails = () => {
       vehicleNumber: newVehicleNumber || applicationNos,
       dsoName: newDsoName,
       locality: newLocality,
+      vehiclecapacity : vehicleCapacity,
       fileStoreId: uploadedFile,
       comments: comments,
     };
@@ -444,6 +459,18 @@ const FstpOperatorDetails = () => {
                   <CustomTimePicker name="tripStartTime" onChange={(val) => handleTimeChange(val, setTripStartTime)} value={tripStartTime} />
                 </div>
               }
+            />
+            <Row
+              key={t("ES_VEHICLE_CAPACITY")}
+              label={`${t("ES_VEHICLE_CAPACITY")} * `}
+              labelStyle={{ minWidth: "fit-content", fontWeight: "normal" }}
+              textStyle={isMobile ? { width: "100%" } : {}}
+              text={
+                <div>
+                  <TextInput type="number" name="vehicleCapacity" value={vehicleCapacity} onChange={(e) => onChangeVehicleCapacity(e.target.value)} disable={true} />
+                </div>
+              }
+              rowContainerStyle={isMobile ? { display: "block" } : { justifyContent: "space-between" }}
             />
             <div ref={wasteRecievedRef}>
               <CardLabelError>{t(errors.wasteRecieved)}</CardLabelError>
