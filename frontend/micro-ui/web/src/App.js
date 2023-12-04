@@ -10,6 +10,13 @@ import {
   PTLinks,
   PTComponents,
 } from "@egovernments/digit-ui-module-pt";
+
+import {
+  PTRModule,
+  PTRLinks,
+  PTRComponents,
+} from "@niua/upyog-ui-module-ptr";
+
 import { MCollectModule, MCollectLinks, initMCollectComponents } from "@egovernments/digit-ui-module-mcollect";
 import { initDSSComponents } from "@egovernments/digit-ui-module-dss";
 import {
@@ -63,7 +70,8 @@ const enabledModules = [
   "BillAmendment",
   "FireNoc",
   "Birth",
-  "Death"
+  "Death",
+  "PTR"
 ];
 window.Digit.ComponentRegistryService.setupRegistry({
   ...paymentConfigs,
@@ -77,7 +85,10 @@ window.Digit.ComponentRegistryService.setupRegistry({
   HRMSModule,
   TLModule,
   TLLinks,
-  ReceiptsModule
+  ReceiptsModule,
+  PTRModule,
+  PTRLinks,
+  ...PTRComponents,
 });
 
 initPGRComponents();
