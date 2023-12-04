@@ -101,7 +101,7 @@ const initDigitUI = () => {
     ...PTComponents,
     MCollectLinks,
     MCollectModule,
-    // HRMSModule,
+    HRMSModule,
     ReceiptsModule,
     BillsModule,
 
@@ -113,7 +113,7 @@ const initDigitUI = () => {
   initPGRComponents();
   initDSSComponents();
   initMCollectComponents();
-  // initHRMSComponents();
+  initHRMSComponents();
   initTLComponents();
   initReceiptsComponents();
   // initReportsComponents();
