@@ -87,6 +87,12 @@ const Urls = {
     getDefaulterNoticeStatus:"/pdf-service/v1/_getBulkDefaulterNoticeRecordsDetails"
     
   },
+  ptr: {  
+    
+    create:"/pet-services/pet-registration/_create",
+    search:"/pet-services/pet-registration/_search",
+    update:"/pet-services/pet-registration/_update"
+  },
 
   dss: {
     dashboardConfig: "/dashboard-analytics/dashboard/getDashboardConfig",
