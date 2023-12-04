@@ -29,7 +29,7 @@ import { initBillsComponents, BillsModule } from "@egovernments/digit-ui-module-
 // import { PGRModule, PGRLinks } from "@egovernments/digit-ui-module-pgr";
 // import { Body, TopBar } from "@egovernments/digit-ui-react-components";
 import "@upyog-niua/upyog-css/example/index.css";
-
+import { PTRModule, PTRLinks, PTRComponents } from "@niua/upyog-ui-module-ptr";
 // import * as comps from "@egovernments/digit-ui-react-components";
 
 // import { subFormRegistry } from "@egovernments/digit-ui-libraries";
@@ -61,7 +61,8 @@ const enabledModules = [
   "BillAmendment",
   "FireNoc",
   "Birth",
-  "Death"
+  "Death",
+  "PTR"
 ];
 
 const initTokens = (stateCode) => {
@@ -105,7 +106,9 @@ const initDigitUI = () => {
     HRMSModule,
     ReceiptsModule,
     BillsModule,
-
+    PTRModule,
+    PTRLinks,
+    ...PTRComponents
     // TLModule,
     // TLLinks,
   });
