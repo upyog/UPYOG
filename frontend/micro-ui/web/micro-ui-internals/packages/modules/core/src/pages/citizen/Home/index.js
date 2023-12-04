@@ -129,6 +129,12 @@ const Home = () => {
     ],
     styles: { display: "flex", flexWrap: "wrap", justifyContent: "flex-start", width: "100%" },
   };
+  sessionStorage.removeItem("type" );
+  sessionStorage.removeItem("pincode");
+  sessionStorage.removeItem("tenantId");
+  sessionStorage.removeItem("localityCode");
+  sessionStorage.removeItem("landmark"); 
+  sessionStorage.removeItem("propertyid");
 
   return isLoading ? (
     <Loader />
