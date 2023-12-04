@@ -162,7 +162,7 @@ const componentsToRegister = {
   SelectPropertyType,
   // SelectAddress,
   FSMSelectAddress,
-  SelectStreet,
+  // SelectStreet,
   FSMSelectStreet,
   // SelectLandmark,
   FSMSelectLandmark,
