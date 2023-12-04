@@ -87,7 +87,7 @@ public class IngestValidator {
     
 	public static final String MDMS_NATIONALTENANTS_PATH = "$.MdmsRes.tenant.nationalInfo";
 
-
+	public static final String MDMS_PROPERTYTYPE_PATH = "$.MdmsRes.tenant.propertyType";
 
 //    public void verifyCrossStateRequest(Data data, RequestInfo requestInfo){
 //        String employeeUlb = requestInfo.getUserInfo().getTenantId();
@@ -122,7 +122,7 @@ public class IngestValidator {
         String uuid = requestInfo.getUserInfo().getUuid();
   
         Map<String,String> userUUID=applicationProperties.getNationalDashboardUser();
-        if(!userUUID.get(data.getState()).equalsIgnoreCase(uuid)) {
+        if(!userUUID.get(data.getState()).contains(uuid)) {
                  throw new CustomException("EG_CROSS_STATE_DATA_INGEST", "Employee of one state cannot insert data of another State!!");
                
         }
@@ -154,6 +154,8 @@ public class IngestValidator {
         validateStringNotNumeric(ingestData.getUlb());
         validateStringNotNumeric(ingestData.getRegion());
         validateStringNotNumeric(ingestData.getState());
+        if(ingestData.getWard().contains(":"))
+        	ingestData.setWard(ingestData.getWard().replace(":"," "));
 		
         ingestData.setState(toCamelCase(ingestData.getState()));
 

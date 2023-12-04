@@ -24,6 +24,8 @@ import { DigitUI } from "@egovernments/digit-ui-module-core";
 import { initCommonPTComponents } from "@egovernments/digit-ui-module-commonpt";
 import { initBillsComponents, BillsModule } from "@egovernments/digit-ui-module-bills";
 
+window.contextPath = window?.globalConfigs?.getConfig("CONTEXT_PATH");
+
 // import {initCustomisationComponents} from "./customisations";
 
 // import { PGRModule, PGRLinks } from "@egovernments/digit-ui-module-pgr";
@@ -124,6 +126,7 @@ const initDigitUI = () => {
   initCommonPTComponents();
   initBillsComponents();
 
+
   // initCustomisationComponents();
 
   const moduleReducers = (initData) => ({
@@ -143,6 +146,7 @@ const initDigitUI = () => {
   initTokens(stateCode);
 
   const registry = window?.Digit.ComponentRegistryService.getRegistry();
+  window.contextPath = window?.globalConfigs?.getConfig("CONTEXT_PATH");
   ReactDOM.render(<DigitUI stateCode={stateCode} enabledModules={enabledModules} moduleReducers={moduleReducers} />, document.getElementById("root"));
 };
 

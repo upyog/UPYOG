@@ -9,8 +9,8 @@
 # -
 
 config:
--   name: builds/digit-ui
+-   name: builds/workbench-ui
     build:
       - work-dir: frontend/micro-ui/web/
       dockerfile: web/docker/Dockerfile
-      image-name: digit-ui
+      image-name: workbench-ui

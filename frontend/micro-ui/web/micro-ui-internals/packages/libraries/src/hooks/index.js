@@ -21,6 +21,7 @@ import { useApplicationsForBusinessServiceSearch } from "./useApplicationForBill
 import useBoundaryLocalities from "./useLocalities";
 import useCommonMDMS from "./useMDMS";
 import useCustomMDMS from "./useCustomMDMS";
+import useWorkBenchCustomAPIHook from "./useWorkBenchCustomAPIHook";
 import useCustomAPIHook from "./useCustomAPIHook";
 import useInboxGeneral from "./useInboxGeneral/useInboxGeneral";
 import useApplicationStatusGeneral from "./useStatusGeneral";
@@ -33,6 +34,7 @@ import useCreateEvent from "./events/useCreateEvent";
 import useUpdateEvent from "./events/useUpdateEvent";
 import useNewInboxGeneral from "./useInboxGeneral/useNewInbox";
 import useDynamicData from "./useDynamicData";
+import useCustomAPIMutationHook from "./useCustomAPIMutationHook";
 
 import useComplaintDetails from "./pgr/useComplaintDetails";
 import { useComplaintsList, useComplaintsListByMobile } from "./pgr/useComplaintList";
@@ -97,6 +99,7 @@ import useTenantsPT from "./pt/useTenants";
 import usePtApplicationDetail from "./pt/useApplicationDetail";
 import usePtApplicationActions from "./pt/useApplicationActions";
 import usePtMDMS from "./pt/useMDMS";
+import usePtMDMSV2 from "./pt/useMDMSV2";
 import usePropertyAssessment from "./pt/usePropertyAssessment";
 import UseAssessmentCreateUlb from "./pt/UseAssessmentCreateUlb";
 import usePtCalculationEstimate from "./pt/usePtCalculationEstimate";
@@ -194,6 +197,12 @@ import useSurveySearch from "./surveys/useSearch";
 import useSurveyShowResults from "./surveys/useShowResults";
 import useSurveySubmitResponse from "./surveys/useSubmitResponse";
 import useSurveyInbox from "./surveys/useSurveyInbox";
+import useServeyCreateDef from "./surveys/useCreateSurvey";
+import useCfdefinitionsearch from "./surveys/useCfdefinitionsearch";
+import useSubmitSurveyResponse from "./surveys/useSubmitSurveyResponse";
+import useSelectedSurveySearch from "./surveys/useSelectedSurveySearch";
+import useCfdefinitionsearchresult from "./surveys/useCfdefinitionsearchresult";
+import useUpdateSurvey from "./surveys/useSurveyUpdate";
 
 import useNOCDetails from "./noc/useNOCDetails";
 import useNOCInbox from "./noc/useInbox";
@@ -248,6 +257,8 @@ import { usePrivacyContext } from "./usePrivacyContext";
 import useToCheckPrivacyEnablement from "./ws/useToCheckPrivacyEnablement";
 import useWSConfigMDMS from "./ws/useWSConfigMDMS";
 import useFeedBackSearch from "./useFeedBackSearch";
+
+import useWorkBenchRouteSubscription from "./useWorkBenchRouteSubscription"
 
 const pgr = {
   useComplaintDetails,
@@ -322,6 +333,7 @@ const pt = {
   useApplicationDetail: usePtApplicationDetail,
   useApplicationActions: usePtApplicationActions,
   useMDMS: usePtMDMS,
+  useMDMSV2: usePtMDMSV2,
   usePropertyAssessment,
   UseAssessmentCreateUlb,
   usePtCalculationEstimate,
@@ -439,6 +451,12 @@ const survey = {
   useSubmitResponse: useSurveySubmitResponse,
   useShowResults: useSurveyShowResults,
   useSurveyInbox,
+  useServeyCreateDef:useServeyCreateDef,
+  useCfdefinitionsearch:useCfdefinitionsearch,
+  useSubmitSurveyResponse:useSubmitSurveyResponse,
+  useSelectedSurveySearch:useSelectedSurveySearch,
+  useCfdefinitionsearchresult:useCfdefinitionsearchresult,
+  useUpdateSurvey:useUpdateSurvey,
 };
 
 const noc = {
@@ -505,6 +523,7 @@ const Hooks = {
   useApplicationsForBusinessServiceSearch,
   useDemandSearch,
   useInboxGeneral,
+  useCustomAPIMutationHook,
   useEmployeeSearch,
   useBoundaryLocalities,
   useCommonMDMS,
@@ -542,6 +561,7 @@ const Hooks = {
   ws,
   useCustomMDMS,
   useCustomAPIHook,
+  useWorkBenchCustomAPIHook,
   reports,
   useGetHowItWorksJSON,
   useGetFAQsJSON,
@@ -552,6 +572,7 @@ const Hooks = {
   useBulkPdfDetails,
   useBillAmendmentInbox,
   useAudit,
+  useRouteSubscription:useWorkBenchRouteSubscription,
 };
 
 export default Hooks;
