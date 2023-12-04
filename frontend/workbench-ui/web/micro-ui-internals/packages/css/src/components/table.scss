@@ -14,10 +14,6 @@
     }
   }
 
-  &-row-mdms:hover{
-    background-color: #f0f0f0; /* Change this to the desired hover color */
-    cursor: pointer;
-  }
 
   tbody {
     border: none;
@@ -107,7 +103,6 @@
       background: #fff;
       right: 0;
       left:0;
-      border-right: 1px solid #b1b4b6;
       border-top-left-radius: 4px;
     }
   }
@@ -118,7 +113,6 @@
       color: theme(colors.primary.main);
       left: 0;
       right:0;
-      border-right: 1px solid #b1b4b6;
     }
   }
 }

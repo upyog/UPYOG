@@ -19,8 +19,8 @@ import Form from "@rjsf/core";
 import validator from "@rjsf/validator-ajv8";
 // import { UiSchema } from '@rjsf/utils';
 import { titleId } from "@rjsf/utils";
-import App from "./MultiSelect";
-import { CustomCheckbox } from "./checbox";
+import CustomDropdown from "./MultiSelect";
+import CustomCheckbox from "./Checbox";
 /*
 
 created the foem using rjfs json form 
@@ -39,7 +39,6 @@ The  DigitJSONForm  component is a custom form component built using the  react-
 const uiSchema = {
   "ui:title": " ",
   "ui:classNames": "my-class",
-
   "ui:submitButtonOptions": {
     props: {
       disabled: false,
@@ -74,8 +73,8 @@ function transformErrors(errors) {
     return error;
   });
 }
-const getArrayWrapperClassName=(type)=>{
-  switch(type){
+const getArrayWrapperClassName = (type) => {
+  switch (type) {
     case "array":
       return "jk-array-of-array";
     case "object":
@@ -83,47 +82,47 @@ const getArrayWrapperClassName=(type)=>{
     default:
       return "jk-array-of-non-objects";
   }
-  
-}
+};
 
 function ArrayFieldItemTemplate(props) {
   const { t } = useTranslation();
 
-  const { children, className, index, onDropIndexClick ,schema,disabled} = props;
-  const isArrayOfObjects=schema?.type== "object";
-  const newClass=getArrayWrapperClassName(schema?.type)
+  const { children, className, index, onDropIndexClick, schema, disabled } = props;
+  const isArrayOfObjects = schema?.type == "object";
+  const newClass = getArrayWrapperClassName(schema?.type);
   return (
     <div className={`${className} ${newClass}`}>
-     <span className={"array-children"}>
-     {children}
-     </span>
-      {isArrayOfObjects ? <span className="array-obj">
-      {props.hasRemove && (
-        <div className="array-remove-button-wrapper">
+      <span className={"array-children"}>{children}</span>
+      {isArrayOfObjects ? (
+        <span className="array-obj">
+          {props.hasRemove && (
+            <div className="array-remove-button-wrapper">
+              <Button
+                label={`${t("WBH_DELETE_ACTION")}`}
+                variation="secondary"
+                className="array-remove-button"
+                icon={<SVG.Delete width={"28"} height={"28"} />}
+                onButtonClick={onDropIndexClick(index)}
+                type="button"
+                isDisabled={disabled}
+              />
+            </div>
+          )}
+        </span>
+      ) : (
+        props.hasRemove && (
+          <div className="array-remove-button-wrapper">
             <Button
-          label={`${t("WBH_DELETE_ACTION")}`}
-          variation="secondary"
-          className="array-remove-button" 
-          icon={ <SVG.Delete width={"28"} height={"28"} />}
-          onButtonClick={onDropIndexClick(index)}
-          type="button"
-          isDisabled={disabled}
-        />
-        </div>
-      )}
-        </span>:
-      props.hasRemove && (
-        <div className="array-remove-button-wrapper">
-            <Button
-          label={`${t("WBH_DELETE_ACTION")}`}
-          variation="secondary"
-          className="array-remove-button" 
-          icon={ <SVG.Delete width={"28"} height={"28"} />}
-          onButtonClick={onDropIndexClick(index)}
-          type="button"
-          isDisabled={disabled}
-        />
-        </div>
+              label={`${t("WBH_DELETE_ACTION")}`}
+              variation="secondary"
+              className="array-remove-button"
+              icon={<SVG.Delete width={"28"} height={"28"} />}
+              onButtonClick={onDropIndexClick(index)}
+              type="button"
+              isDisabled={disabled}
+            />
+          </div>
+        )
       )}
     </div>
   );
@@ -202,7 +201,10 @@ function CustomFieldTemplate(props) {
   const { id, classNames, style, label, help, required, description, errors, children } = props;
   let titleCode = label;
   let additionalCode = "";
-  if (!label?.includes(Digit.Utils.locale.getTransformedLocale(moduleName)) && !label?.includes(Digit.Utils.locale.getTransformedLocale(masterName))) {
+  if (
+    !label?.includes(Digit.Utils.locale.getTransformedLocale(moduleName)) &&
+    !label?.includes(Digit.Utils.locale.getTransformedLocale(masterName))
+  ) {
     titleCode = Digit.Utils.locale.getTransformedLocale(`${moduleName}.${moduleName}_${label?.slice(0, -2)}`);
     additionalCode = label?.slice(-2);
   }
@@ -249,14 +251,18 @@ const DigitJSONForm = ({
   viewActions,
   disabled = false,
   setShowToast,
-  setShowErrorToast
+  setShowErrorToast,
 }) => {
   const { t } = useTranslation();
-
-  const onSubmitV2 = ({ formData }) => {
-    onSubmit(formData);
+  useEffect(() => {
+    onFormChange({ formData: Digit.Utils.workbench.postProcessData(formData, inputUiSchema) });
+  }, []);
+  const onSubmitV2 = async({ formData }) => {
+    const updatedData=await Digit.Utils.workbench.preProcessData(formData, inputUiSchema);
+    onSubmit(updatedData);
   };
-  const customWidgets = { SelectWidget: App, CheckboxWidget: CustomCheckbox };
+
+  const customWidgets = { SelectWidget: CustomDropdown, CheckboxWidget: CustomCheckbox };
 
   const [displayMenu, setDisplayMenu] = useState(false);
   const [liveValidate, setLiveValidate] = useState(false);
@@ -306,7 +312,7 @@ const DigitJSONForm = ({
           // liveValidate={formData && Object.keys(formData) && Object.keys(formData)?.length > 0}
         >
           {(screenType === "add" || screenType === "edit") && (
-            <ActionBar style={{zIndex:"0"}}>
+            <ActionBar style={{ zIndex: "0" }}>
               <SubmitBar label={screenType === "edit" ? t("WBH_ADD_MDMS_UPDATE_ACTION") : t("WBH_ADD_MDMS_ADD_ACTION")} submit="submit" />
               {/* <LinkButton style={props?.skipStyle} label={t(`CS_SKIP_CONTINUE`)}  /> */}
             </ActionBar>
@@ -328,9 +334,16 @@ const DigitJSONForm = ({
           )}
         </Form>
       </Card>
-      {showToast && <Toast label={t(showToast)} error={showErrorToast} onClose={()=>{
-        setShowToast(null)
-        }} isDleteBtn={true}></Toast> }
+      {showToast && (
+        <Toast
+          label={t(showToast)}
+          error={showErrorToast}
+          onClose={() => {
+            setShowToast(null);
+          }}
+          isDleteBtn={true}
+        ></Toast>
+      )}
     </React.Fragment>
   );
 };

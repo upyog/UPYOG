@@ -14,13 +14,13 @@ const MDMSEdit = ({...props}) => {
   const [showToast, setShowToast] = useState(false);
   const [renderLoader,setRenderLoader] = useState(false)
   const reqCriteria = {
-    url: `/mdms-v2/v2/_search`,
+    url: `/${Digit.Hooks.workbench.getMDMSContextPath()}/v2/_search`,
     params: {},
     body: {
       MdmsCriteria: {
         tenantId: stateId,
-        uniqueIdentifier,
-        schemaCodes:[`${moduleName}.${masterName}`]
+        uniqueIdentifiers:[uniqueIdentifier],
+        schemaCode:`${moduleName}.${masterName}`
       },
     },
     config: {
@@ -32,7 +32,7 @@ const MDMSEdit = ({...props}) => {
   };
 
   const reqCriteriaSchema = {
-    url: `/mdms-v2/schema/v1/_search`,
+    url: `/${Digit.Hooks.workbench.getMDMSContextPath()}/schema/v1/_search`,
     params: {},
     body: {
       SchemaDefCriteria: {
@@ -45,7 +45,7 @@ const MDMSEdit = ({...props}) => {
       select: (data) => { 
         const uniqueFields = data?.SchemaDefinitions?.[0]?.definition?.["x-unique"]
         const updatesToUiSchema = {}
-        uniqueFields.forEach(field => updatesToUiSchema[field] = {"ui:disabled":true})
+        uniqueFields.forEach(field => updatesToUiSchema[field] = {"ui:readonly":true})
         return {schema:data?.SchemaDefinitions?.[0],updatesToUiSchema}
       },
     },
@@ -70,7 +70,7 @@ const MDMSEdit = ({...props}) => {
   
 
   const reqCriteriaUpdate = {
-    url: `/mdms-v2/v2/_update/${moduleName}.${masterName}`,
+    url: `/${Digit.Hooks.workbench.getMDMSContextPath()}/v2/_update/${moduleName}.${masterName}`,
     params: {},
     body: {
       
@@ -104,7 +104,7 @@ const MDMSEdit = ({...props}) => {
 
     mutation.mutate(
       {
-        url:`/mdms-v2/v2/_update/${moduleName}.${masterName}`,
+        url:`/${Digit.Hooks.workbench.getMDMSContextPath()}/v2/_update/${moduleName}.${masterName}`,
         params: {},
         body: {
           Mdms:{

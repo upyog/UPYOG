@@ -1071,6 +1071,57 @@ const AddIcon = ({ styles, className, fill = "white" }) => (
   </svg>
 );
 
+const UploadIcon = ({styles, className, fill = "white",height="64",width="64" }) => (
+  <svg style={{...styles}} className={className} width={width} height={height} viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <g clip-path="url(#clip0_431_5084)">
+      <path
+        d="M24.0007 42.6667H40.0007V26.6667H50.6673L32.0007 8L13.334 26.6667H24.0007V42.6667ZM13.334 48H50.6673V53.3333H13.334V48Z"
+        fill="#B1B4B6"
+      />
+    </g>
+    <defs>
+      <clipPath id="clip0_431_5084">
+        <rect width={width} height={height} fill={fill} />
+      </clipPath>
+    </defs>
+  </svg>
+);
+
+const DeleteIconv2 = ({styles, className, fill = "#F47738",height="24",width="24" }) => (
+  <svg width={width} style={styles} className={className} height={height} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <g clip-path="url(#clip0_431_5088)">
+      <path d="M6 19C6 20.1 6.9 21 8 21H16C17.1 21 18 20.1 18 19V7H6V19ZM19 4H15.5L14.5 3H9.5L8.5 4H5V6H19V4Z" fill={fill}/>
+    </g>
+    <defs>
+      <clipPath id="clip0_431_5088">
+        <rect width="24" height="24" fill="white" />
+      </clipPath>
+    </defs>
+  </svg>
+);
+
+const InfoIconOutline = ({styles, className, fill = "#505A5F",height="20",width="20" }) => (
+  <svg style={styles} className={className} xmlns="http://www.w3.org/2000/svg" width={width} height={height} viewBox="0 0 20 20" fill={fill}>
+  <path d="M8.7085 5.54171H10.2918V7.12504H8.7085V5.54171ZM8.7085 8.70837H10.2918V13.4584H8.7085V8.70837ZM9.50016 1.58337C5.13016 1.58337 1.5835 5.13004 1.5835 9.50004C1.5835 13.87 5.13016 17.4167 9.50016 17.4167C13.8702 17.4167 17.4168 13.87 17.4168 9.50004C17.4168 5.13004 13.8702 1.58337 9.50016 1.58337ZM9.50016 15.8334C6.00891 15.8334 3.16683 12.9913 3.16683 9.50004C3.16683 6.00879 6.00891 3.16671 9.50016 3.16671C12.9914 3.16671 15.8335 6.00879 15.8335 9.50004C15.8335 12.9913 12.9914 15.8334 9.50016 15.8334Z" fill="#505A5F"/>
+</svg>
+)
+
+const FileIcon = ({ styles, className, fill = "white", height = "64", width = "64" }) => (
+  <svg styles={styles} className={className} width="24" height="24" viewBox="0 0 24 24" fill={fill} xmlns="http://www.w3.org/2000/svg">
+    <g clip-path="url(#clip0_431_5092)">
+      <path
+        d="M14 2H6C4.9 2 4.01 2.9 4.01 4L4 20C4 21.1 4.89 22 5.99 22H18C19.1 22 20 21.1 20 20V8L14 2ZM16 18H8V16H16V18ZM16 14H8V12H16V14ZM13 9V3.5L18.5 9H13Z"
+        fill="#505A5F"
+      />
+    </g>
+    <defs>
+      <clipPath id="clip0_431_5092">
+        <rect width="24" height="24" fill={fill} />
+      </clipPath>
+    </defs>
+  </svg>
+);
+
 const SubtractIcon = ({ styles, className, fill = "white" }) => (
   <svg width="12" height="14" className={className} style={{ ...styles }} viewBox="0 0 12 14" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M9.24609 0.783203V3.45508H0.667969V0.783203H9.24609Z" fill={fill} />
@@ -1894,5 +1945,9 @@ export {
   PaymentIcon,
   HistoryIcon,
   WarningIcon,
-  AttentionListIcon
+  AttentionListIcon,
+  UploadIcon,
+  FileIcon,
+  DeleteIconv2,
+  InfoIconOutline
 };

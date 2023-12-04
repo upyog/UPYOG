@@ -109,6 +109,7 @@
 @import "./digitv2/index.scss";
 /* @import "./digitv2/typography.scss"; */
 @import "./components/inboxv2/index.scss";
+@import "./components//sidebar.scss";
 
 .display-none {
   display: none;
@@ -265,8 +266,10 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 input[readonly] {
-  @apply border-grey-dark text-grey-dark !important;
-  
+  @apply border-grey-dark !important;
+  background-color:  theme(digitv2.lightTheme.background);
+  border-color: theme(digitv2.lightTheme.text-color-secondary);
+  color: theme(digitv2.lightTheme.text-color-secondary);
 }
 
 .hide-input-type-file {

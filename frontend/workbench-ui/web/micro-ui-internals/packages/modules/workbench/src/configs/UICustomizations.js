@@ -442,12 +442,13 @@ export const UICustomizations = {
       const {field,value,isActive} = custom || {}
       filters[field?.code] = value
       if(isActive){
-        data.body.MdmsCriteria.isActive = isActive?.value
+        if(isActive.value==="all") delete data.body.MdmsCriteria.isActive
+        else data.body.MdmsCriteria.isActive = isActive?.value
       }else{
         delete data.body.MdmsCriteria.isActive
       }
       data.body.MdmsCriteria.filters = filters
-      data.body.MdmsCriteria.schemaCodes = [additionalDetails?.currentSchemaCode]
+      data.body.MdmsCriteria.schemaCode = additionalDetails?.currentSchemaCode
       delete data.body.MdmsCriteria.custom
       // const {field,value} = data.body.MdmsCriteria.moduleDetails[0].masterDetails[0].custom || {}
       

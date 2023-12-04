@@ -6,6 +6,7 @@ msg() {
   echo -e "\n\n\033[32;32m$1\033[0m"
 }
 
+
 # msg "Pre-building all packages"
 # yarn build
 # sleep 5

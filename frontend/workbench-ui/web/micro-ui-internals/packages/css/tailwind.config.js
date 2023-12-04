@@ -113,7 +113,7 @@ module.exports = {
         divider: "#D6D5D4",
         "header-sidenav": "#0B4B66",
         "input-border": "#505A5F",
-        "primary-bg": "#E6D7D0",
+        "primary-bg": "#FEEFE7",
       },
       alert: {
         error: "#D4351C",
@@ -220,7 +220,7 @@ module.exports = {
         normal: "normal",
       },
       screens: {
-        mobile: "360px",
+        mobile: "400px",
         tablet: "768px",
         desktop: "1024px",
       },
