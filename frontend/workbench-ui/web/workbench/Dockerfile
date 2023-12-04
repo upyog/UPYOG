@@ -15,6 +15,7 @@ RUN cd web/ \
     && node -e 'console.log("workbench only")' \
     && cd workbench/ \
     && chmod +x ./install-deps.sh \
+    &&  ./install-deps.sh \
     && cd ../ \
     && yarn install \ 
     && yarn build:webpack 
