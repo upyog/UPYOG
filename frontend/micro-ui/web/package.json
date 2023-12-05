@@ -11,6 +11,7 @@
     "micro-ui-internals/packages/modules/pt",
     "micro-ui-internals/packages/modules/ws",
     "micro-ui-internals/packages/modules/fsm"
+
   ],
   "engines": {
     "node": ">=14"
