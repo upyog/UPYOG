@@ -9,7 +9,6 @@
     "packages/react-components",
     "packages/modules/common",
     "packages/modules/core",
-    "packages/modules/engagement",
     "packages/modules/pt",
     "packages/modules/ws",
     "packages/modules/fsm"

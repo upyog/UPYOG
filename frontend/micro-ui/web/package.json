@@ -8,7 +8,6 @@
     "micro-ui-internals/packages/react-components",
     "micro-ui-internals/packages/modules/common",
     "micro-ui-internals/packages/modules/core",
-    "micro-ui-internals/packages/modules/engagement",
     "micro-ui-internals/packages/modules/pt",
     "micro-ui-internals/packages/modules/ws",
     "micro-ui-internals/packages/modules/fsm"
