@@ -79,9 +79,6 @@ window.Digit.ComponentRegistryService.setupRegistry({
   TLModule,
   TLLinks,
   ReceiptsModule,
-  PTRModule,
-  PTRLinks,
-  ...PTRComponents,
 });
 
 initPGRComponents();
