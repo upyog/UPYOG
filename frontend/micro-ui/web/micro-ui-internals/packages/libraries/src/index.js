@@ -50,8 +50,7 @@ import AccessControlService from "./services/elements/Access";
 import BillServices from "./services/elements/Bill";
 import { CFService } from "./services/elements/CF";
 
-import {CustomService} from "./services/elements/CustomService";
-import { PTRService } from "./services/elements/PTR";     
+import {CustomService} from "./services/elements/CustomService";    
 
 const setupLibraries = (Library, props) => {
   window.Digit = window.Digit || {};
@@ -73,7 +72,6 @@ const initLibraries = () => {
   setupLibraries("LoginService", LoginService);
   setupLibraries("LocalizationService", LocalizationService);
   setupLibraries("PGRService", PGRService);
-  setupLibraries("PTRService", PTRService); 
   setupLibraries("FSMService", FSMService);
   setupLibraries("PTService", PTService);
   setupLibraries("CFService", CFService);

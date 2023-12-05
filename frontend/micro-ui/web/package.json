@@ -15,7 +15,6 @@
     "micro-ui-internals/packages/modules/obps",
     "micro-ui-internals/packages/modules/pgr",
     "micro-ui-internals/packages/modules/ptr"
-
   ],
   "engines": {
     "node": ">=14"
