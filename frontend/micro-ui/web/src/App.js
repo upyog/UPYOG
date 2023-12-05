@@ -15,7 +15,7 @@ import {
   PTRModule,
   PTRLinks,
   PTRComponents,
-} from "@niua/upyog-ui-module-ptr";
+} from "@upyog-niua/upyog-ui-module-ptr";
 
 import { MCollectModule, MCollectLinks, initMCollectComponents } from "@egovernments/digit-ui-module-mcollect";
 import { initDSSComponents } from "@egovernments/digit-ui-module-dss";
