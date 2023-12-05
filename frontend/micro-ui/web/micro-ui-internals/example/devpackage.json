@@ -9,7 +9,7 @@
     "start": "react-scripts start"
   },
   "devDependencies": {
-    "@niua/upyog-ui-module-ptr":"1.0.0",
+    "@upyog-niua/upyog-ui-module-ptr":"1.0.0",
     "@egovernments/digit-ui-libraries":"^1.4.0",
     "@egovernments/digit-ui-module-common":"^1.4.0",
     "@egovernments/digit-ui-module-engagement":"^1.4.0",
