@@ -11,7 +11,6 @@
     "packages/modules/core",
     "packages/modules/pt",
     "packages/modules/ws",
-    "packages/modules/commonPt",
     "packages/modules/pgr",
     "packages/modules/fsm"
   ],
