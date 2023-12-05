@@ -251,19 +251,6 @@ import useWSConfigMDMS from "./ws/useWSConfigMDMS";
 import useFeedBackSearch from "./useFeedBackSearch";
 
 
-import usePetMDMS from "./ptr/usePetMDMS";
-import useBreedTypeMDMS from "./ptr/useBreedTypeMDMS";
-import usePTRCreateAPI from "./ptr/usePTRCreateAPI";
-//import useTenantsPTR from "./ptr/useTenants";
-import useTenantsPTR from "./ptr/useTenantsPTR";
-import usePTRPetMDMS from "./ptr/usePTRPetMDMS";
-import usePTRGenderMDMS from "./ptr/usePTRGenderMDMS";
-import usePTRSearch from "./ptr/usePTRSearch";
-import usePtrApplicationDetail from "./ptr/usePtrApplicationDetail";
-import usePTRApplicationAction from "./ptr/usePTRApplicationAction";
-import useServiceSearchPTR from "./ptr/useServiceSearchPTR";
-
-
 const pgr = {
   useComplaintDetails,
   useComplaintsList,
@@ -347,18 +334,6 @@ const pt = {
   useRatingAndFeedbackMDMS,
   useServiceSearchCF,
 };
-const ptr = {
-  usePetMDMS,
-  usePTRPetMDMS,
-  useBreedTypeMDMS,
-  usePTRCreateAPI,
-  usePTRApplicationAction,
-  usePTRGenderMDMS,
-  usePTRSearch,
-  usePtrApplicationDetail,
-  useTenantsPTR,
-  useServiceSearchPTR
-  };
 const dss = {
   useMDMS: useDssMdms,
   useDashboardConfig,
@@ -556,7 +531,6 @@ const Hooks = {
   pgr,
   fsm,
   pt,
-  ptr,
   dss,
   mcollect,
   hrms,
