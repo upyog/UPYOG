@@ -295,6 +295,12 @@ Tender_Entry:{
   
   ProjectName:"/wms/wms-services/v1/project/_view",
   },
+Contractor_Agreement:{
+  create:"/wms/wms-services/v1/contractagreement/_create",
+  search:"/wms/wms-services/v1/contractagreement/_search",
+  update:"/wms/wms-services/v1/contractagreement/_update",
+  get:"/wms/wms-services/v1/contractagreement/_view",
+},
   },
   access_control: "/access/v1/actions/mdms/_get",
   billgenie: "/egov-searcher",

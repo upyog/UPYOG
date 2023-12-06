@@ -131,7 +131,8 @@ module.exports = function (app) {
   "/wms/wms-services/v1/paccounth",
   "/wms/wms-services/v1/dept/",
   "/wms/wms-services/v1/tcategory/",
-  "/wms/wms-services/v1/project/"
+  "/wms/wms-services/v1/project/",
+  "/wms/wms-services/v1/contractagreement/"
   ].forEach((location) => app.use(location, CMProxy));
  
 };

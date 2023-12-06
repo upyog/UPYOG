@@ -799,11 +799,67 @@ TenderEntry:{
         auth: true,
         userService: true,
         // params: {tenantId} ,
-      }),
-
-
-      
-}
+      }),   
+  },
+  ContractorAgreement:{
+    create: (data, tenantId) =>
+        Request({
+          data: data,
+          url: Urls.wms.Contractor_Agreement.create,
+          useCache: false,
+          method: "POST",
+          auth: true,
+          userService: true,
+          // params: { tenantId },
+        }),
+      update: (data, tenantId) =>
+        Request({
+          data: data,
+          url: Urls.wms.Contractor_Agreement.update,
+          useCache: false,
+          method: "POST",
+          auth: true,
+          userService: true,
+          params: { tenantId },
+        }),
+      delete: (data, tenantId) =>
+        Request({
+          data: data,
+          url: Urls.wms.Contractor_Agreement.delete,
+          useCache: false,
+          method: "DELETE",
+          auth: true,
+          userService: true,
+          params: { tenantId },
+        }),
+      getList: (tenantId) =>
+        Request({
+          url: Urls.wms.Contractor_Agreement.get,
+          useCache: false,
+          method: "POST",
+          auth: true,
+          userService: true,
+          params: { tenantId },
+        }),
+        getSingle: (id) =>
+        Request({
+          url: Urls.wms.Contractor_Agreement.get+'?agreementNo='+id,
+          useCache: false,
+          method: "POST",
+          auth: true,
+          userService: true,
+        }),
+        search: (data) =>
+        // console.log("Search tender List ", {tenantId, filters, searchParams}),
+         Request({
+          url: Urls.wms.Contractor_Agreement.search+data,
+          useCache: false,
+          method: "POST",
+          auth: true,
+          userService: true,
+          // params: { tenantId, filters, searchParams },
+        }),
+      }
 };
 
 export default WmsService;
