@@ -228,7 +228,7 @@ public class PropertyEncryptionService {
         MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(Arrays.asList(moduleDetail)).tenantId(tenantId)
                 .build();
         MdmsCriteriaReq mdmsCriteriaReq = MdmsCriteriaReq.builder().requestInfo(requestInfo).mdmsCriteria(mdmsCriteria).build();
-        StringBuilder uri = new StringBuilder(config.getMdmsHost()).append(config.getMdmsEndpoint());
+        StringBuilder uri = new StringBuilder(config.getMdmsHost()).append(config.getMdmsEndPoint());
         try {
             Optional<Object> result = serviceRequestRepository.fetchResult(uri, mdmsCriteriaReq);
             List<Map<String, Object>> jsonOutput = new ArrayList<>();
