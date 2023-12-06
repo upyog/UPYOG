@@ -214,7 +214,7 @@ const setData=(config,data)=>{
         <CardLabel>{`${t("PT_PROPERTY_ADDRESS_STREET_NAME")}*`}</CardLabel>
           <TextInput
             t={t}
-            isMandatory={true}
+            //isMandatory={true}
             type={"text"}
             optionKey="i18nKey"
             name="street"
@@ -225,7 +225,7 @@ const setData=(config,data)=>{
       <CardLabel>{`${t("PT_PROPERTY_ADDRESS_HOUSE_NO")}*`}</CardLabel>
           <TextInput
             t={t}
-            isMandatory={true}
+            //isMandatory={true}
             type={"text"}
             optionKey="i18nKey"
             name="doorNo"

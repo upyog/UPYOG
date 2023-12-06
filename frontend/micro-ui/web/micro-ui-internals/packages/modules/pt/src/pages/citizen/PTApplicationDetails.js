@@ -518,7 +518,7 @@ console.log("transferorOwnerstransferorOwnerstransferorOwners",transferorOwners,
                   ))}
               </div>
               <CardSubHeader style={{ fontSize: "24px" }}>{t("PT_COMMON_PROPERTY_OWNERSHIP_DETAILS_HEADER")}</CardSubHeader>
-              <div>
+              <div className="owner-details">
                 {Array.isArray(owners) &&
                   owners.reverse().map((owner, index) => (
                     <div key={index}>
