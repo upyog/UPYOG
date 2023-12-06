@@ -183,6 +183,66 @@ PHMApplications:{
       }),
 },
 
+MBApplications:{
+  search: (tenantId, filters, searchParams) =>
+    Request({
+      url: Urls.wms.MBApplications.search,
+      useCache: false,
+      method: "GET",//"POST",
+      auth: true,
+      userService: true,
+      params:{...searchParams},// tenantId, ...filters, ...searchParams }//TODO:#1 Actual API needs to attach  { tenantId, ...filters, ...searchParams },
+    }),
+  create: (data, tenantId) =>
+    Request({
+      data: data,
+      url: Urls.wms.MBApplications.create,
+      useCache: false,
+      method: "POST",
+      auth: true,
+      userService: true,
+      params: {  },//TODO:#1 {tenantId}
+    }),
+  update: (data, tenantId) =>
+    Request({
+      data: data,
+      url: Urls.wms.MBApplications.update+"/"+data.phm_id,
+      useCache: false,
+      method: "PUT",
+      auth: true,
+      userService: true,
+      params: {  },
+    }),
+  delete: (data, tenantId) =>
+    Request({
+      data: data,
+      url: Urls.wms.MBApplications.delete,
+      useCache: false,
+      method: "DELETE",
+      auth: true,
+      userService: true,
+      params: { tenantId },
+    }),
+  get: (phmId,tenantId) =>
+    Request({
+      url: Urls.wms.MBApplications.get,
+      useCache: false,
+      method: "GET",
+      auth: true,
+      userService: true,
+      params: { phmeme_id:phmId},
+    }),
+    count: () =>
+    Request({
+      url: Urls.wms.MBApplications.count,
+      useCache: false,
+      method:"GET",// "POST",
+      auth: true,
+      userService: true,
+      params: {  },
+    }),
+},
+
 PMAApplications:{
   search: (tenantId, filters, searchParams) =>
     Request({

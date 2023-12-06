@@ -230,6 +230,13 @@ wms:{
     search:"https://64f5834d2b07270f705d4f91.mockapi.io/PHMApplications",      
     count:"https://64f5834d2b07270f705d4f91.mockapi.io/PHMApplications",
   },
+  MBApplications:{
+    create: "https://64f5834d2b07270f705d4f91.mockapi.io/MBApplications",
+    update:"https://64f5834d2b07270f705d4f91.mockapi.io/MBApplications",
+    get:"https://64f5834d2b07270f705d4f91.mockapi.io/MBApplications/:id",
+    search:"https://64f5834d2b07270f705d4f91.mockapi.io/MBApplications",      
+    count:"https://64f5834d2b07270f705d4f91.mockapi.io/MBApplications",
+  },
 
   PMAApplications:{
     create: "https://64f5834d2b07270f705d4f91.mockapi.io/PMAApplications",
