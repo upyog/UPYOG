@@ -29,7 +29,7 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData, ownerInde
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();
 
-  const { data: Menu } = Digit.Hooks.pt.useGenderMDMS(stateId, "common-masters", "GenderType");
+  const { data: Menu } = Digit.Hooks.pt.useGenderMDMSV2(stateId, "common-masters", "GenderType");
 
   let menu = [];
   Menu &&

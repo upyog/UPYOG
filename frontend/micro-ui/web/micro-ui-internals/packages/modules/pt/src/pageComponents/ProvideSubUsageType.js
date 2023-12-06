@@ -15,7 +15,7 @@ const ProvideSubUsageType = ({ t, config, onSelect, userType, formData }) => {
     [SubUsageType, setSelfOccupied] = useState(formData.subusagetype?.SubUsageType);
   }
 
-  const { data: Menu = {} } = Digit.Hooks.pt.usePropertyMDMS(stateId, "PropertyTax", "UsageCategory") || {};
+  const { data: Menu = {} } = Digit.Hooks.pt.usePropertyMDMSV2(stateId, "PropertyTax", "UsageCategory") || {};
 
   let subusageoption = [];
   subusageoption = Menu?.PropertyTax?.UsageCategory || [];

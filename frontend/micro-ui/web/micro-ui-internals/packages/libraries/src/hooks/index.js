@@ -92,6 +92,7 @@ import useAdvanceBalanceCalulation from "./fsm/useAdvanceBalanceCalculation";
 import useEmployeeSearch from "./useEmployeeSearch";
 
 import usePropertyMDMS from "./pt/usePropertyMDMS";
+import usePropertyMDMSV2 from "./pt/usePropertyMDMSV2";
 import usePropertyAPI from "./pt/usePropertyAPI";
 import usePropertyCreateNUpdateAPI from "./pt/usePropertyCreateNUpdateAPI";
 import usePropertyDocumentSearch from "./pt/usePropertyDocumentSearch";
@@ -104,7 +105,9 @@ import usePropertyAssessment from "./pt/usePropertyAssessment";
 import UseAssessmentCreateUlb from "./pt/UseAssessmentCreateUlb";
 import usePtCalculationEstimate from "./pt/usePtCalculationEstimate";
 import useGenderMDMS from "./pt/useGenderMDMS";
+import useGenderMDMSV2 from "./pt/useGenderMDMSV2";
 import usePTGenderMDMS from "./pt/usePTGenderMDMS";
+import usePTGenderMDMSV2 from "./pt/usePTGenderMDMSV2";
 import useMyPropertyPayments from "./pt/useMyPropertyPayments";
 import useGenericViewProperty from "./pt/useGenericViewProperty";
 import useRatingAndFeedbackMDMS from "./pt/useRatingAndFeedbackMDMS";
@@ -325,6 +328,7 @@ const pt = {
   usePropertySearchNew,
   usePropertyPayment,
   usePropertyMDMS,
+  usePropertyMDMSV2,
   usePropertySearchWithDue,
   usePropertyAPI,
   usePropertyCreateNUpdateAPI,
@@ -338,7 +342,9 @@ const pt = {
   UseAssessmentCreateUlb,
   usePtCalculationEstimate,
   useGenderMDMS,
+  useGenderMDMSV2,
   usePTGenderMDMS,
+  usePTGenderMDMSV2,
   useMyPropertyPayments,
   useGenericViewProperty,
   useRatingAndFeedbackMDMS,
