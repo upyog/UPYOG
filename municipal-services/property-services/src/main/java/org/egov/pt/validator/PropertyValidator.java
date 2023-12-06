@@ -100,7 +100,7 @@ public class PropertyValidator {
 		validateFields(request, errorMap);
 		
 		//FOR Manipur Validation
-		validatePropertyAddressFields(request, errorMap);
+		//validatePropertyAddressFields(request, errorMap);
 		if (!CollectionUtils.isEmpty(units))
 			validateUnits(request, errorMap);
 		
