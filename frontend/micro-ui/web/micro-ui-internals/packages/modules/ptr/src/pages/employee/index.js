@@ -226,7 +226,7 @@ import { PrivateRoute,BreadCrumb } from "@egovernments/digit-ui-react-components
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Link, Switch, useLocation } from "react-router-dom";
-import { PTLinks } from "../../Module";
+import { PTRLinks } from "../../Module";
 import Inbox from "./Inbox";
 import PaymentDetails from "./PaymentDetails";
 import Search from "./Search";
@@ -396,7 +396,7 @@ const EmployeeApp = ({ path, url, userType }) => {
             / <span>{getBreadCrumb()}</span>
           </p>} */}
           {!isRes ? <div style={isNewRegistration ? {marginLeft: "12px" } : {marginLeft:"-4px"}}><PTBreadCrumbs location={location} /></div> : null}
-          <PrivateRoute exact path={`${path}/`} component={() => <PTLinks matchPath={path} userType={userType} />} />
+          <PrivateRoute exact path={`${path}/`} component={() => <PTRLinks matchPath={path} userType={userType} />} />
           <PrivateRoute
             path={`${path}/inbox`}
             component={() => (
