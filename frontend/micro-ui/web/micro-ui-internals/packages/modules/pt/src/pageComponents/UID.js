@@ -1,4 +1,5 @@
-import { CardLabel, FormStep, LabelFieldPair, TextInput, CardLabelError } from "@egovernments/digit-ui-react-components";
+import { CardLabel,  LabelFieldPair, TextInput, CardLabelError } from "@egovernments/digit-ui-react-components";
+import FormStep from "../../../../react-components/src/molecules/FormStep";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import Timeline from "../components/TLTimeline";
@@ -99,11 +100,12 @@ const UID = ({ t, config, onSelect, value, userType, formData, setError: setForm
               <TextInput
                 key={input.name}
                 id={input.name}
-                isMandatory={config.isMandatory}
+                //isMandatory={config.isMandatory}
                 value={uid}
                 onChange={onChange}
                 //onChange={setElectricityNo}
                 onSelect={goNext}
+                placeholder={"Enter a valid 15-digit alphanumeric UID"}
                 {...input.validation}
                 onBlur={onBlur}
 
@@ -143,6 +145,7 @@ const UID = ({ t, config, onSelect, value, userType, formData, setError: setForm
           name="uid"
           value={uid}
           onChange={setUidzno}
+          placeholder={"Enter a valid 15-digit alphanumeric UID"}
           {...inputs[0].validation}
         // {...(validation = { pattern: "/^[a-zA-Z0-9-]*$", type: "text", title: t("PT_UNIQUE_ID_ERROR_MESSAGE") })}
         />
