@@ -173,11 +173,11 @@ const DesktopInbox = ({ tableConfig, ...props} ) => {
           isInboxPage={!props?.isSearch}
           searchParams={props.searchParams}
         /> */}
-        <div style={{"justify-content": "space-between","overflow-x":"auto"}}>
+        {/* <div style={{"justify-content": "space-between","overflow-x":"auto"}}> */}
         <div className="result" style={{ marginLeft: !props?.isSearch ? "0px" : "" }}>
           {result}
         </div>
-        </div>
+        {/* </div> */}
       </div>
     </div>
   );

@@ -239,9 +239,22 @@ import WmsTenderCategoryName from "./pageComponents/TE/tenderCategory/WmsTenderC
 import WmsTenderCategoryStatus from "./pageComponents/TE/tenderCategory/WmsTenderCategoryStatus";
 import MasterPageList from "./pages/citizen/MasterPageList";
 import ContractAgreementAdd from "./pages/citizen/CA/index";
+import ContractAgreementEdit from "./pages/citizen/CA/Edit";
+import ContractAgreementDetail from "./pages/citizen/CA/Detail";
+
 import ContractAgreementView from "./pages/citizen/CA/View";
 import WmsCAContractor from "./pageComponents/CA/PartySecond/WmsCAContractor";
+import WmsCAAgreement from "./pageComponents/CA/PartySecond/WmsCAAgreement";
+import WmsCASdPgBgDetails from "./pageComponents/CA/PartySecond/WmsCASdPgBgDetails";
+import WmsCAUlbPartyOne from "./pageComponents/CA/PartySecond/WmsCAUlbPartyOne";
+import WmsCATermsAndConditions from "./pageComponents/CA/PartySecond/WmsCATermsAndConditions";
 
+import WmsCATextTest from "./pageComponents/CA/PartySecond/WmsCATextTest";
+import WmsRAFBCreate from "./pages/citizen/RAFB/Create";
+import WmsRAFBEdit from "./pages/citizen/RAFB/Edit";
+import WmsRAFBDetail from "./pages/citizen/RAFB/Detail";
+import WmsRAFBList from "./pages/citizen/RAFB/List";
+import FilterSearch from "./components/List/RAFB/InboxFilter";
 const componentsToRegister = {  
   Home:Home,  
   WmsSorList:List,
@@ -449,9 +462,23 @@ TenderCategoryView,
 TenderCategoryEdit,
 MasterPageList,
 ContractAgreementAdd,
+ContractAgreementEdit,
+ContractAgreementDetail,
 ContractAgreementView,
-WmsCAContractor
+WmsCAContractor,
+WmsCAAgreement,
+WmsCASdPgBgDetails,
+WmsCATextTest,
+WmsCAUlbPartyOne,
+WmsCATermsAndConditions,
+WmsRAFBCreate,
+WmsRAFBEdit,
+WmsRAFBDetail,
+WmsRAFBList,
+FINAL_BILL_SEARCH_FILTER: (props) => <FilterSearch {...props} />,
+
 };
+
 
 export const WMSModule = ({ stateCode, userType, tenants }) => {
   const { path, url } = useRouteMatch();
@@ -502,6 +529,7 @@ export const WMSLinks = ({ matchPath, userType }) => {
     //   i18nKey: t("Contact Master Tabless"),
     // },
   ];
+  
   return <CitizenHomeCard header={t("CITIZEN_SERVICE_WMS")} links={links} Icon={() => <PTIcon className="fill-path-primary-main" />} />;
 };
 export const initWMSComponents = () => {

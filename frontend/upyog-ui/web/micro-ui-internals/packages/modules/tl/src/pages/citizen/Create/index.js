@@ -97,6 +97,8 @@ const CreateTradeLicence = ({ parentRoute }) => {
   };
 
   function handleSelect(key, data, skipStep, index, isAddMultiple = false) {
+  console.log("onSelect TLInfo key, data, skipStep, index, isAddMultiple = false",{key, data, skipStep, index, isAddMultiple})
+
     if(key === "formData")
     setParams({...data})
     else{

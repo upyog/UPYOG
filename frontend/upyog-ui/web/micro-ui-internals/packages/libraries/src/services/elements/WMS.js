@@ -799,7 +799,81 @@ TenderEntry:{
           userService: true,
           // params: { tenantId, filters, searchParams },
         }),
-      }
+
+
+
+        createFake: (data, tenantId) =>
+        Request({
+          data: data,
+          url: Urls.wms.Contractor_Agreement.createFake,
+          useCache: false,
+          method: "POST",
+          auth: true,
+          userService: true,
+          // params: { tenantId },
+        }),
+
+        getSingleFake: (tenantId) =>
+          // console.log("bankList sttepr single data WMS tenantId "),
+         Request({
+          // url: Urls.wms.Contractor_Agreement.createFake/tenantId,
+          url: Urls.wms.Contractor_Agreement.createFake+'/'+tenantId,
+          useCache: false,
+          method: "GET",
+          auth: true,
+          userService: true,
+          // params: { tenantId },
+        }),
+        
+        
+        getListFake: (tenantId) =>
+          // console.log("bankList sttepr single data WMS tenantId "),
+         Request({
+          // url: Urls.wms.Contractor_Agreement.createFake/tenantId,
+          url: Urls.wms.Contractor_Agreement.createFake,
+          useCache: false,
+          method: "GET",
+          auth: true,
+          userService: true,
+          // params: { tenantId },
+        }),
+
+        updateFake: (data,id,tenantId) =>
+        // console.log('bankList sttepr single data update WMS data ',data,id)
+        Request({
+          data: data,
+          url: Urls.wms.Contractor_Agreement.createFake+'/'+id,
+          useCache: false,
+          method: "PUT",
+          auth: true,
+          userService: true,
+          // params: { tenantId },
+        }),
+        
+        //  Request({
+        //   // url: Urls.wms.Contractor_Agreement.createFake/tenantId,
+        //   url: Urls.wms.Contractor_Agreement.createFake+'/'+tenantId,
+        //   useCache: false,
+        //   method: "PUT",
+        //   auth: true,
+        //   userService: true,
+        //   // params: { tenantId },
+
+          
+        // }),
+
+      //   getTenderCategorySingleResordsMasterData: (tenantId) =>
+      // Request(
+      //   {
+      //   url: Urls.wms.Tender_Entry.mdmsTCategoryGet+'?categoryId='+tenantId,    
+      //   useCache: false,
+      //   method: "POST",
+      //   auth: true,
+      //   userService: true,
+      //   // params: {tenantId} ,
+      // }),
+      
+    }
 };
 
 export default WmsService;
