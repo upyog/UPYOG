@@ -8,8 +8,16 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.egov.web.models.AgreementDocuments;
+import org.egov.web.models.AgreementInfo;
 import org.egov.web.models.AuditDetails;
+import org.egov.web.models.Contractors;
+import org.egov.web.models.Party1Details;
+import org.egov.web.models.Party2Details;
+import org.egov.web.models.Party2Witness;
+import org.egov.web.models.SDPGBGDetails;
 import org.egov.web.models.ScheduleOfRateApplication;
+import org.egov.web.models.TermsAndConditions;
 import org.egov.web.models.WMSContractAgreementApplication;
 import org.egov.web.models.WMSContractorApplication;
 import org.egov.web.models.WMSWorkApplication;
@@ -33,17 +41,10 @@ public class WMSContractAgreementApplicationRowMapper implements ResultSetExtrac
                     lastModifiedTime = null;
                 }
                 
-                AuditDetails auditdetails = AuditDetails.builder()
-                        .createdBy(rs.getString("aCreatedBy"))
-                        .createdTime(rs.getLong("aCreatedtime"))
-                        .lastModifiedBy(rs.getString("aLastmodifiedby"))
-                        .lastModifiedTime(lastModifiedTime)
-                        .build();
-                wmsContractAgreementApplication = WMSContractAgreementApplication.builder()
-                        .agreementNo(rs.getString("aAgreementNo"))
+                List<AgreementInfo> agreementInfo = (List<AgreementInfo>) AgreementInfo.builder()                   
                         .agreementName(rs.getString("aAgreementName"))
                         .agreementDate(rs.getString("aAgreementDate"))
-                        .departmentName(rs.getString("aDepartmentName"))
+                        .departmentNameAi(rs.getString("aDepartmentNameAi"))
                         .loaNo(rs.getString("aLoaNo"))
                         .resolutionNo(rs.getInt("aResolutionNo"))
                         .resolutionDate(rs.getString("aResolutionDate"))
@@ -54,29 +55,98 @@ public class WMSContractAgreementApplicationRowMapper implements ResultSetExtrac
                         .contractPeriod(rs.getString("aContractPeriod"))
                         .agreementAmount(rs.getInt("aAgreementAmount"))
                         .paymentType(rs.getString("aPaymentType"))
-                        .depositType(rs.getString("aDepositType"))
-                        .depositAmount(rs.getInt("aDepositAmount"))
-                        .workDescription(rs.getString("aWorkDescription"))
+                        .build();
+                
+                Party1Details party1Details = Party1Details.builder()
+                        .departmentNameParty1(rs.getString("aDepartmentNameParty1"))
+                        .designation(rs.getString("aDesignation"))
+                        .employeeName(rs.getString("aEmployeeName"))
+                        .witnessNameP1(rs.getString("aWitnessNameP1"))
+                        .addressP1(rs.getString("aAddressP1"))
+                        .uidP1(rs.getString("aUidP1"))
+                        .build();
+                
+                SDPGBGDetails sDPGBGDetails = SDPGBGDetails.builder()
                         .accountNo(rs.getLong("aAccountNo"))
                         .particulars(rs.getString("aParticulars"))
                         .validFromDate(rs.getString("aValidFromDate"))
                         .validTillDate(rs.getString("aValidTillDate"))
                         .bankBranchIfscCode(rs.getString("aBankBranchIfscCode"))
                         .paymentMode(rs.getString("aPaymentMode"))
-                        .designation(rs.getString("aDesignation"))
-                        .employeeName(rs.getString("aEmployeeName"))
-                        .witnessName(rs.getString("aWitnessName"))
-                        .address(rs.getString("aAddress"))
-                        .uid(rs.getString("aUid"))
-                        .vendorType(rs.getString("aVendorType"))
+                        .build();
+                
+                TermsAndConditions termsAndConditions = TermsAndConditions.builder()
+                        .srNo(rs.getInt("aSrNo"))
+                        .termsAndConditions(rs.getString("aTermsAndConditions"))
+                        .build();
+                
+                //Party2Details party2Details = Party2Details.builder()
+                        
+                        
+                
+                Contractors contractors=Contractors.builder()
+                		.vendorType(rs.getString("aVendorType"))
                         .vendorName(rs.getString("aVendorName"))
                         .representedBy(rs.getString("aRepresentedBy"))
                         .primaryParty(rs.getString("aPrimaryParty"))
-                        .srNo(rs.getInt("aSrNo"))
-                        .termsAndConditions(rs.getString("aTermsAndConditions"))
+                        .build();
+                
+                Party2Witness party2Witness=Party2Witness.builder()
+                		.witnessNameP2(rs.getString("aWitnessNameP2"))
+                        .addressP2(rs.getString("aAddressP2"))
+                        .uidP2(rs.getString("aUidP2"))
+                        .build();
+                
+                AgreementDocuments agreementDocuments = AgreementDocuments.builder()
                         .documentDescription(rs.getString("aDocumentDescription"))
                         .uploadDocument(rs.getString("aUploadDocument"))
                         .build();
+                
+                AuditDetails auditdetails = AuditDetails.builder()
+                        .createdBy(rs.getString("aCreatedBy"))
+                        .createdTime(rs.getLong("aCreatedtime"))
+                        .lastModifiedBy(rs.getString("aLastmodifiedby"))
+                        .lastModifiedTime(lastModifiedTime)
+                        .build();
+				/*
+				 * wmsContractAgreementApplication = WMSContractAgreementApplication.builder()
+				 * .agreementNo(rs.getString("aAgreementNo")).build();
+				 */
+                
+				/*
+				 * wmsContractAgreementApplication = WMSContractAgreementApplication.builder()
+				 * .agreementNo(rs.getString("aAgreementNo"))
+				 * .agreementName(rs.getString("aAgreementName"))
+				 * .agreementDate(rs.getString("aAgreementDate"))
+				 * .departmentName(rs.getString("aDepartmentName"))
+				 * .loaNo(rs.getString("aLoaNo")) .resolutionNo(rs.getInt("aResolutionNo"))
+				 * .resolutionDate(rs.getString("aResolutionDate"))
+				 * .tenderNo(rs.getInt("aTenderNo")) .tenderDate(rs.getString("aTenderDate"))
+				 * .agreementType(rs.getString("aAgreementType"))
+				 * .defectLiabilityPeriod(rs.getString("aDefectLiabilityPeriod"))
+				 * .contractPeriod(rs.getString("aContractPeriod"))
+				 * .agreementAmount(rs.getInt("aAgreementAmount"))
+				 * .paymentType(rs.getString("aPaymentType"))
+				 * .depositType(rs.getString("aDepositType"))
+				 * .depositAmount(rs.getInt("aDepositAmount"))
+				 * .workDescription(rs.getString("aWorkDescription"))
+				 * .accountNo(rs.getLong("aAccountNo"))
+				 * .particulars(rs.getString("aParticulars"))
+				 * .validFromDate(rs.getString("aValidFromDate"))
+				 * .validTillDate(rs.getString("aValidTillDate"))
+				 * .bankBranchIfscCode(rs.getString("aBankBranchIfscCode"))
+				 * .paymentMode(rs.getString("aPaymentMode"))
+				 * .designation(rs.getString("aDesignation"))
+				 * .employeeName(rs.getString("aEmployeeName"))
+				 * .witnessName(rs.getString("aWitnessName")) .address(rs.getString("aAddress"))
+				 * .uid(rs.getString("aUid")) .vendorType(rs.getString("aVendorType"))
+				 * .vendorName(rs.getString("aVendorName"))
+				 * .representedBy(rs.getString("aRepresentedBy"))
+				 * .primaryParty(rs.getString("aPrimaryParty")) .srNo(rs.getInt("aSrNo"))
+				 * .termsAndConditions(rs.getString("aTermsAndConditions"))
+				 * .documentDescription(rs.getString("aDocumentDescription"))
+				 * .uploadDocument(rs.getString("aUploadDocument")) .build();
+				 */
             }
             //addChildrenToProperty(rs, sorApplication);
             wmsContractAgreementApplicationMap.put(agreementNo, wmsContractAgreementApplication);

@@ -201,35 +201,42 @@ const Urls = {
   bills: {
     cancelBill: "/billing-service/bill/v2/_cancelbill",
   },
-  wms: {
-    SORApplications: {
-      create: "https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/SORApplications",
-      update: "https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/SORApplications:id",
-      get: "https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/SORApplications/:id",
-      search: "https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/SORApplications",
-      delete: "https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/SORApplications:id",
-    },
-    PRJApplications: {
-      create: "https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/PRJApplications",
-      update: "https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/PRJApplications:id",
-      get: "https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/PRJApplications",
-      search: "https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/PRJApplications",
-      delete: "https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/PRJApplications:id",
-    },
-    SCHApplications: {
-      create: "https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/SCHApplications",
-      update: "https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/SCHApplications:id",
-      get: "https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/SCHApplications",
-      search: "https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/SCHApplications",
-      delete: "https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/SCHApplications:id",
-    },
-    PHMApplications: {
-      create: "https://64f5834d2b07270f705d4f91.mockapi.io/PHMApplications",
-      update: "https://64f5834d2b07270f705d4f91.mockapi.io/PHMApplications",
-      get: "https://64f5834d2b07270f705d4f91.mockapi.io/PHMApplications/:id",
-      search: "https://64f5834d2b07270f705d4f91.mockapi.io/PHMApplications",
-      count: "https://64f5834d2b07270f705d4f91.mockapi.io/PHMApplications",
-    },
+wms:{
+  SORApplications:{
+    create: "https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/SORApplications",
+    update:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/SORApplications:id",
+    get:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/SORApplications/:id",
+    search:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/SORApplications",
+    delete:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/SORApplications:id"
+  },
+  PRJApplications:{
+    create: "https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/PRJApplications",
+    update:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/PRJApplications:id",
+    get:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/PRJApplications",
+    search:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/PRJApplications",
+    delete:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/PRJApplications:id"
+  }, 
+  SCHApplications:{
+    create: "https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/SCHApplications",
+    update:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/SCHApplications:id",
+    get:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/SCHApplications",
+    search:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/SCHApplications",
+    delete:"https://64c200dcfa35860baea10c66.mockapi.io/wms/work-management-service/v1/SCHApplications:id"
+  },
+  PHMApplications:{
+    create: "https://64f5834d2b07270f705d4f91.mockapi.io/PHMApplications",
+    update:"https://64f5834d2b07270f705d4f91.mockapi.io/PHMApplications",
+    get:"https://64f5834d2b07270f705d4f91.mockapi.io/PHMApplications/:id",
+    search:"https://64f5834d2b07270f705d4f91.mockapi.io/PHMApplications",      
+    count:"https://64f5834d2b07270f705d4f91.mockapi.io/PHMApplications",
+  },
+  MBApplications:{
+    create: "https://64f5834d2b07270f705d4f91.mockapi.io/MBApplications",
+    update:"https://64f5834d2b07270f705d4f91.mockapi.io/MBApplications",
+    get:"https://64f5834d2b07270f705d4f91.mockapi.io/MBApplications/:id",
+    search:"https://64f5834d2b07270f705d4f91.mockapi.io/MBApplications",      
+    count:"https://64f5834d2b07270f705d4f91.mockapi.io/MBApplications",
+  },
 
     PMAApplications: {
       create: "https://64f5834d2b07270f705d4f91.mockapi.io/PMAApplications",
