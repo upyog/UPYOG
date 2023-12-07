@@ -15,6 +15,12 @@ RUN yarn add @egovernments/digit-ui-module-hrms
 RUN yarn add @egovernments/digit-ui-module-core
 RUN yarn add @egovernments/digit-ui-module-obps
 RUN yarn add @egovernments/digit-ui-module-ws
+RUN yarn add @egovernments/digit-ui-module-common
+RUN yarn add @egovernments/digit-ui-module-workbench
+RUN yarn add @egovernments/digit-ui-module-commonpt
+RUN yarn add @egovernments/digit-ui-module-receipts
+RUN yarn add @egovernments/digit-ui-module-bills
+RUN yarn add @egovernments/digit-ui-module-masters
 ARG WORK_DIR
 WORKDIR /app
 ENV NODE_OPTIONS "--max-old-space-size=4096"
