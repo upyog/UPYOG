@@ -92,9 +92,9 @@ const Table = ({
     <React.Fragment>
     <div ref={tref} style={tref.current && tref.current.offsetWidth < tref.current.scrollWidth ? {...inboxStyles}: {}}>
     <span className={customTableWrapperClassName}>
+    <div style={{"justify-content": "space-between","overflow-x":"auto"}}>
     {tableTopComponent ? tableTopComponent:null}
-      <table className={className} {...getTableProps()} style={styles} ref={tableRef}>
-         
+      <table className={className} {...getTableProps()} style={styles} ref={tableRef}>  
         <thead>
           {headerGroups.map((headerGroup) => (
             <tr {...headerGroup.getHeaderGroupProps()}>
@@ -147,6 +147,7 @@ const Table = ({
           })}
         </tbody>
       </table>
+      </div>
       </span>
       </div>
       {isPaginationRequired && (

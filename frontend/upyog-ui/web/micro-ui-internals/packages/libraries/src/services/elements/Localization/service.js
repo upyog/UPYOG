@@ -72814,8 +72814,26 @@ export const LocalizationService = {
             "locale": "en_IN"
         },
         {
+            "code": "WMS_CA_EDIT_CONTRACT_AGREEMENT",
+            "message": "EDIT Contract Agreement ",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_CA_CONTRACT_DETAIL",
+            "message": "Contract Agreement Detail",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
             "code": "WMS_CA_ADD_CONTRACT_AGREEMENT_LIST",
             "message": "Contract Agreement List",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_RUNNING_ACCOUNT_FINAL_BILL",
+            "message": "Running Account / Final Bill",
             "module": "rainmaker-common",
             "locale": "en_IN"
         },

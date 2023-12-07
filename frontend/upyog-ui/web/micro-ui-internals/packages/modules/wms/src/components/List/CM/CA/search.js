@@ -5,6 +5,7 @@ import { TextInput, Label, SubmitBar, LinkLabel, ActionBar, CloseSvg, DatePicker
 import { alphabeticalSortFunctionForTenantsBasedOnName } from "../../../../utils";
 
 const Search = ({ onSearch, searchParams, searchFields, type, onClose, isInboxPage, t }) => {
+  console.log("searchFields fff ",searchFields)
   const { register, handleSubmit, formState, reset, watch, control } = useForm({
     defaultValues: searchParams,
   });
@@ -34,6 +35,19 @@ const Search = ({ onSearch, searchParams, searchFields, type, onClose, isInboxPa
             defaultValue={null}
           />
         )
+        break
+        case "date":
+          return (<Controller
+              name={input.name}
+              control={control}
+              defaultValue={null}
+              // rules={{ required: true }}
+              render={(props) => <DatePicker onChange={props.onChange} date={props.value} />}
+              // render={({ field, value, onChange }) => <DatePicker date={value} onChange={(data) => setFormData(data, "tender_date", index)} />}
+
+                  />
+                  )
+                  break
       default:
         return (
           <Controller
@@ -50,10 +64,13 @@ const Search = ({ onSearch, searchParams, searchFields, type, onClose, isInboxPa
     console.log("search data/ ",data)
     data.delete = [];
     searchFields.forEach((field) => {
+    console.log("search data/ field ",field)
+
     // console.log("search data name ",data[field.name])
     // console.log("search data name ",!data[field.name])
       if (!data[field.name]) data.delete.push(field.name);
     });
+    console.log("search data/ data modify",data)
 
     onSearch(data);
     if (type === "mobile") {

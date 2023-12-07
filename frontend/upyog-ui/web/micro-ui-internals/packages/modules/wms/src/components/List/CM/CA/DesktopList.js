@@ -15,8 +15,16 @@ const DesktopInbox = ({ tableConfig, ...props} ) => {
   const GetSlaCell = (value) => {
     return value == "INACTIVE" ? <span className="sla-cell-error">{ value || ""}</span> : <span className="sla-cell-success">{ value || ""}</span>;
   };
-  const data = props?.data?.WMSContractAgreementApplications;
-  // const data = props?.data;
+  // const data = props?.data?.WMSContractAgreementApplications;
+  const data = props?.data;
+  // const [data,setData]=useState()
+  // props?.data?.map(res=>setData(res?.agreement))
+  
+console.log("datadatadatadatadata ",data)
+  // console.log("datadatadatadatadata 1 ",data1)
+  // console.log("datadatadatadatadata 2 ",data2)
+  // return false
+  
 // console.log("data props ",props )
 // console.log("data props data ",props?.data )
 // console.log("data ",data)
@@ -34,12 +42,35 @@ const DesktopInbox = ({ tableConfig, ...props} ) => {
       //       </span>
       //     );
       //   },
-      // },
+      // },   
       {
-        Header: "Agreement Name",
+        Header: "Vendor Type",
         disableSortBy: true,
         Cell: ({ row }) => {
-          return GetCell(`${row.original?.agreement_name}`);
+          return GetCell(`${Boolean(row.original?.vendor_type)?row.original?.vendor_type:"-"}`);
+        },
+      },
+      {
+        Header: "Vendor Name",
+        disableSortBy: true,
+        Cell: ({ row }) => {
+          return GetCell(`${Boolean(row.original?.vendor_name)?row.original?.vendor_name:"-"}`);
+        },
+      },
+      {
+        Header: "Witness Name",
+        disableSortBy: true,
+        Cell: ({ row }) => {
+          return GetCell(`${Boolean(row.original?.witness_name)?row.original?.witness_name:"-"}`);
+        },
+      },
+
+      {
+        Header: "Agreement No",
+        disableSortBy: true,
+        Cell: ({ row }) => {
+          // return <div>{cell?.row?.original?.agreement?.map(item=>GetCell(`${item?.agreement_no}`)).join(', ')}</div>
+          return GetCell(`${Boolean(row.original?.agreement_no)?row.original?.agreement_no:"-"}`);
         },
       },
       
@@ -47,23 +78,63 @@ const DesktopInbox = ({ tableConfig, ...props} ) => {
         Header: "Agreement Date",
         disableSortBy: true,
         Cell: ({ row }) => {
-          return GetCell(`${row.original?.agreement_date}`);
+          // return row.original.map(item=>GetCell(`${item?.agreement_date}`))
+          return GetCell(`${Boolean(row.original?.agreement_date)?row.original?.agreement_date:"-"}`);
+        },
+      },
+      
+      {
+        Header: "Deposit Type",
+        disableSortBy: true,
+        Cell: ({ row }) => {
+          return GetCell(`${Boolean(row.original?.deposit_type)?row.original?.deposit_type:"-"}`);
+        },
+      },
+      {
+        Header: "Valid From Date",
+        disableSortBy: true,
+        Cell: ({ row }) => {
+          return GetCell(`${Boolean(row.original?.valid_from_date)?row.original?.valid_from_date:"-"}`);
+        },
+      },
+      {
+        Header: "Valid Till Date",
+        disableSortBy: true,
+        Cell: ({ row }) => {
+          return GetCell(`${Boolean(row.original?.valid_till_date)?row.original?.valid_till_date:"-"}`);
         },
       },
       {
         Header: "Department Name",
         disableSortBy: true,
         Cell: ({ row }) => {
-          return GetCell(`${row.original?.department_name}`);
+          return GetCell(`${Boolean(row.original?.department_name_party1)?row.original?.department_name_party1:"-"}`);
         },
       },
       {
-        Header: "LOA No",
+        Header: "Designation",
         disableSortBy: true,
         Cell: ({ row }) => {
-          return GetCell(`${row.original?.loa_no}`);
+          return GetCell(`${Boolean(row.original?.designation)?row.original?.designation:"-"}`);
         },
       },
+      {
+        Header: "Terms & Conditions",
+        disableSortBy: true,
+        Cell: ({ row }) => {
+          return GetCell(`${Boolean(row?.original?.terms_and_conditions)? row.original?.terms_and_conditions :"-"}`);
+        },
+      },
+      
+      {
+        Header: "Status",
+        disableSortBy: true,
+        Cell: ({ row }) => {
+          // return GetCell(`${Boolean(row?.original?.status)? row.original?.status :"-"}`);
+          return GetCell(`${Boolean(row?.original?.status)? (row?.original?.status==="draft")? "Draft":(row?.original?.status==="pending")? "Pending" : "Approved" :"-"}`);
+        },
+      },
+      
       {
         Header: "Action",
         disableSortBy: true,
@@ -71,11 +142,11 @@ const DesktopInbox = ({ tableConfig, ...props} ) => {
           return (
             <React.Fragment>
              <span className="link">
-              <Link to={`details/${props.tenantId}/${row.original.agreement_no}`}>View</Link>
+              <Link to={`detail/${props.tenantId}/${row?.original?.uid}`}>View</Link>
             </span> 
             {' '} 
             <span className="link">
-            <Link to={`edit/${props.tenantId}/${row?.original?.agreement_no}`}>Edit</Link>
+            <Link to={`edit/${props.tenantId}/${row?.original?.uid}`}>Edit</Link>
           </span>
           </React.Fragment>
             
@@ -175,7 +246,7 @@ const DesktopInbox = ({ tableConfig, ...props} ) => {
       )}
     */}
       <div style={{ flex: 1,width:"100%" }}>
-        {/* <SearchApplication
+         {/* <SearchApplication
           defaultSearchParams={props.defaultSearchParams}
           onSearch={props.onSearch}
           type="desktop"
@@ -183,14 +254,14 @@ const DesktopInbox = ({ tableConfig, ...props} ) => {
           searchFields={props.searchFields}
           isInboxPage={!props?.isSearch}
           searchParams={props.searchParams}
-        /> */}
-        <div style={{"justify-content": "space-between","overflow-x":"auto"}}>
+        />  */}
+        {/* <div style={{"justify-content": "space-between","overflow-x":"auto"}}> */}
         <div className="result" style={{ marginLeft: !props?.isSearch ? "0px" : "" }}>
           {result}
         </div>
         </div>
       </div>
-    </div>
+    // </div>
   );
 };
 

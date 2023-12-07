@@ -95,7 +95,16 @@ const CitizenApp = ({ path, url, userType }) => {
   const MasterPageList = Digit?.ComponentRegistryService?.getComponent("MasterPageList");
 
   const ContractAgreementAdd = Digit?.ComponentRegistryService?.getComponent("ContractAgreementAdd");
+  const ContractAgreementEdit = Digit?.ComponentRegistryService?.getComponent("ContractAgreementEdit");
   const ContractAgreementView = Digit?.ComponentRegistryService?.getComponent("ContractAgreementView");
+  const ContractAgreementDetail = Digit?.ComponentRegistryService?.getComponent("ContractAgreementDetail");
+  
+  const WmsRAFBCreate = Digit?.ComponentRegistryService?.getComponent("WmsRAFBCreate");
+  const WmsRAFBEdit = Digit?.ComponentRegistryService?.getComponent("WmsRAFBEdit");
+  const WmsRAFBDetail = Digit?.ComponentRegistryService?.getComponent("WmsRAFBDetail");
+  const WmsRAFBList = Digit?.ComponentRegistryService?.getComponent("WmsRAFBList");
+  
+  
   return (
     <span className={"pt-citizen"}>
     <Switch>
@@ -217,8 +226,15 @@ const CitizenApp = ({ path, url, userType }) => {
 
             {/*Contract Agreement*/}  
             <PrivateRoute path={`${path}/contract-agreement/add`} component={() => <ContractAgreementAdd />} />
+            <PrivateRoute path={`${path}/contract-agreement/edit/:tenantId/:id`} component={() => <ContractAgreementEdit />} />
+            <PrivateRoute path={`${path}/contract-agreement/detail/:tenantId/:id`} component={() => <ContractAgreementDetail />} />
             <PrivateRoute path={`${path}/contract-agreement/list`} component={() => <ContractAgreementView />} />
-
+            
+            {/* Running Account / Final Bill */}
+            <PrivateRoute path={`${path}/running-account/add`} component={() => <WmsRAFBCreate />} />
+            <PrivateRoute path={`${path}/running-account/edit/:tenantId/:id`} component={() => <WmsRAFBEdit />} />
+            <PrivateRoute path={`${path}/running-account/detail/:tenantId/:id`} component={() => <WmsRAFBDetail />} />
+            <PrivateRoute path={`${path}/running-account/list`} component={() => <WmsRAFBList filterComponent="FINAL_BILL_SEARCH_FILTER"  initialStates={inboxInitialState} isInbox={true} />} />
         </div>
         </AppContainer>
       </Switch>

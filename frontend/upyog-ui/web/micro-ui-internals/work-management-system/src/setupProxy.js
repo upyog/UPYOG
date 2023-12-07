@@ -2,10 +2,11 @@ const { createProxyMiddleware } = require("http-proxy-middleware");
 
 const createProxy = createProxyMiddleware({
   // target: process.env.REACT_APP_PROXY_API || "https://uat.digit.org",
-  target: process.env.REACT_APP_PROXY_API,
+  // target: process.env.REACT_APP_PROXY_API,
   // target: process.env.REACT_APP_PROXY_API || "https://qa.digit.org",
   //target:"https://test.wontract.com",//https://upyog-sandbox.niua.org" ,
-  target:"https://test.wontract.com" ,
+  // target:"https://test.wontract.com" ,
+  target:"https://upyog-sandbox.niua.org" ,
   changeOrigin: true,  
   secure: false,
   https: true 
@@ -25,7 +26,7 @@ const apiProxy = createProxyMiddleware({
 });
 
 // const localProxy = createProxyMiddleware({
-//   target: "http://localhost:3000",
+//   target: "http://localhost:5000",
 //   changeOrigin: true,
 // });
 const CMProxy = createProxyMiddleware({
@@ -116,7 +117,6 @@ module.exports = function (app) {
   ].forEach((location) => app.use(location, MapiProxy));
   
 
- // ["/wms/wms-services/v1/pfmilestone/_create","/wms/wms-services/v1/pfmilestone/_search"].forEach((location) => app.use(location, localProxy));
  [
   "/wms/wms-services/v1/contractor/_view",
   "/wms/wms-services/v1/contractor/_update",
@@ -134,5 +134,7 @@ module.exports = function (app) {
   "/wms/wms-services/v1/project/",
   "/wms/wms-services/v1/contractagreement/"
   ].forEach((location) => app.use(location, CMProxy));
- 
+
+  // ["CASteper"].forEach((location) => app.use(location, localProxy));
+
 };

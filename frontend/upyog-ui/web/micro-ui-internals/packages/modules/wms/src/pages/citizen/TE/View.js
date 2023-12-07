@@ -73,11 +73,12 @@ useEffect(() => {
       {
         label: t("Pre-bid Meeting Date"),
         name: "prebidMeetingDate"
-      },
-      {
-        label: t("Resolution No"),
-        name: "resolutionNo"
       }
+      // ,
+      // {
+      //   label: t("Resolution No"),
+      //   name: "resolutionNo"
+      // }
     //   ,
     //   {
     //     label: t("Pre-bid Meeting Date"),

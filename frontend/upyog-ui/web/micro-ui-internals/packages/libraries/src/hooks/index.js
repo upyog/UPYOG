@@ -277,7 +277,8 @@ import useWmsTEGetRecord from "./wms/TE/useWmsTEGetRecord";
 import useWmsTESearch from "./wms/TE/useWmsTESearch";
 import useWMSTEMaster from "./wms/TE/useWMSTEMaster";
 import useWmsCAGet from "./wms/CA/useWmsCAGet";
-
+import useWmsCAAdd from "./wms/CA/useWmsCAAdd";
+import useWmsCAUpdate from "./wms/CA/useWmsCAUpdate";
 
 import useGetHowItWorksJSON from "./useHowItWorksJSON";
 import useGetFAQsJSON from "./useGetFAQsJSON";
@@ -289,6 +290,7 @@ import { usePrivacyContext } from "./usePrivacyContext";
 import useToCheckPrivacyEnablement from "./ws/useToCheckPrivacyEnablement";
 import useWSConfigMDMS from "./ws/useWSConfigMDMS";
 import useFeedBackSearch from "./useFeedBackSearch";
+import useTenantsWMS from "./wms/useTenants";
 
 const pgr = {
   useComplaintDetails,
@@ -573,7 +575,9 @@ const wms = {
     useWMSTEMaster
   },
   ca:{
-    useWmsCAGet
+    useWmsCAGet,
+    useWmsCAAdd,
+    useWmsCAUpdate
   },
   useWmsSchMDMS,
   useWmsGenderMDMS,
@@ -646,6 +650,7 @@ const Hooks = {
   useBulkPdfDetails,
   useBillAmendmentInbox,
   useAudit,
+  useTenantsWMS
 };
 
 export default Hooks;
