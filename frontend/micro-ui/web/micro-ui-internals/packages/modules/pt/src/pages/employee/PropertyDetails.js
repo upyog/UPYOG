@@ -103,7 +103,7 @@ const PropertyDetails = () => {
       {
         let obj = {
           "title": "PT_ASSESMENT_ELECTRICITY_UID",
-          "value": applicationDetails?.additionalDetails?.electricityuid || "NA"
+          "value": applicationDetails?.additionalDetails?.uid || "NA"
         }
         applicationDetails?.applicationDetails[1].values.push(obj)
       }

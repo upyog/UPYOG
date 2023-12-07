@@ -37,7 +37,6 @@ const Electricity = ({ t, config, onSelect, value, userType, formData, setError:
 
   //}
   function goNext() {
-    console.log("eleccc", electricity)
     sessionStorage.setItem("electricity", electricity.i18nKey);
     onSelect("electricity", { electricity });
 
@@ -49,9 +48,8 @@ const Electricity = ({ t, config, onSelect, value, userType, formData, setError:
       if (electricity !== "undefined" && electricity?.length === 0) setFormError(config.key, { type: "required", message: t("CORE_COMMON_REQUIRED_ERRMSG") });
       else if (electricity !== "undefined" && electricity?.length < 10 || electricity?.length > 10 || !Number(electricity)) setFormError(config.key, { type: "invalid", message: t("ERR_DEFAULT_INPUT_FIELD_MSG") });
       else clearFormErrors(config.key);
-
       onSelect(config.key, electricity);
-      //onSelect("electricity", electricity);
+
     }
   }, [electricity]);
 

@@ -457,7 +457,7 @@ console.log("transferorOwnerstransferorOwnerstransferorOwners",transferorOwners,
                    <Row
                   className="border-none"
                   label={t("PT_ASSESMENT1_ELECTRICITY_UID")}
-                  text={(`${t(`${property.additionalDetails?.electricityuid}`)}`) || t("CS_NA")}
+                  text={(`${t(`${property.additionalDetails?.uid}`)}`) || t("CS_NA")}
                 />
               </StatusTable>
               <div>

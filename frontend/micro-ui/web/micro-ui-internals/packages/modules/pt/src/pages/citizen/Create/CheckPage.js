@@ -18,7 +18,7 @@ import {
   ispropertyunoccupied
 } from "../../../utils";
 import Timeline from "../../../components/TLTimeline";
-import ElectricityUID from "../../../pageComponents/ElectricityUID";
+import UID from "../../../pageComponents/UID";
 import Electricity from "../../../pageComponents/Electricity";
 
 const ActionButton = ({ jumpTo }) => {
@@ -40,8 +40,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
     isResdential,
     PropertyType,
     electricity,
-    electricityuid,
-    ElectricityUID,
+    uid,
     noOfFloors,
     noOofBasements,
     additionalDetails,
@@ -291,7 +290,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
           />
           <Row
             label={t("PT_ASSESMENT1_ELECTRICITY_UID")}
-            text={`${t(checkForNA(electricityuid?.electricityuid))}`}
+            text={`${t(checkForNA(uid?.uid))}`}
             actionButton={<ActionButton jumpTo={`/digit-ui/citizen/pt/property/${typeOfApplication}/electricity-uid`} />}
           />
           {PropertyType?.code !== "VACANT" &&<Row

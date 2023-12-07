@@ -572,7 +572,7 @@ export const convertToProperty = (data = {}) => {
         basement1: basement1,
         basement2: basement2,
         electricity:data.electricity.electricity,
-        electricityuid:data.electricityuid.electricityuid
+        uid:data.uid.uid
 
       },
 

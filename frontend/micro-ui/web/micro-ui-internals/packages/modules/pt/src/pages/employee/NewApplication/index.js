@@ -7,6 +7,7 @@ import { newConfig } from "../../../config/Create/config";
 const NewApplication = () => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const tenants = Digit.Hooks.pt.useTenants();
+  console.log("tenantstenants",tenants)
   const { t } = useTranslation();
   const [canSubmit, setSubmitValve] = useState(false);
   const defaultValues = { };
@@ -76,7 +77,7 @@ const NewApplication = () => {
       // ageOfProperty:data?.units[0]?.ageOfProperty,
       // structureType:data?.units[0]?.structureType,
       electricity:data?.electricity,
-      electricityuid:data?.electricityuid
+      uid:data?.uid
       },
       owners: data?.owners.map((owner) => {
         let {
@@ -197,14 +198,6 @@ const NewApplication = () => {
       setShowToast(false)   
       history.replace("/digit-ui/employee/pt/response", { Property: formData })
     }
-  /*console.log("new",configs)
-  configs[1]?.body?.push( {
-    "type": "component",
-    "isMandatory": true,
-    "component": "ElectricityUID",
-    "key": "electricityuid",
-    "withoutLabel": true
-  })*/
 
   return (
     <div>
