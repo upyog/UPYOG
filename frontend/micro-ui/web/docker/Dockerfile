@@ -3,6 +3,7 @@ FROM upyogio/alpine-node-builder-14:yarn AS build
 RUN apk update && apk upgrade
 RUN apk add --no-cache git>2.30.0
 RUN yarn add @egovernments/digit-ui-libraries
+RUN yarn add @egovernments/digit-ui-module-pt
 ARG WORK_DIR
 WORKDIR /app
 ENV NODE_OPTIONS "--max-old-space-size=4096"
