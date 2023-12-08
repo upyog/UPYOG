@@ -82,6 +82,7 @@ public class WMSRunningAccountFinalBillApplicationEnrichment {
 			existingApplication.get(0).setMbAmount(application.getMbAmount());
 			existingApplication.get(0).setEstimatedCost(application.getEstimatedCost());
 			existingApplication.get(0).setTenderType(application.getTenderType());
+			existingApplication.get(0).setValue(application.getValue());
 			existingApplication.get(0).setPercentageType(application.getPercentageType());
 			existingApplication.get(0).setAwardAmount(application.getAwardAmount());
 			existingApplication.get(0).setBillDate(application.getBillDate());
@@ -94,6 +95,9 @@ public class WMSRunningAccountFinalBillApplicationEnrichment {
 			existingApplication.get(0).setAdditionDeduction(application.getAdditionDeduction());
 			existingApplication.get(0).setCalculationMethod(application.getCalculationMethod());
 			existingApplication.get(0).setPercentage(application.getPercentage());
+			existingApplication.get(0).setPercentageValue(application.getPercentageValue());
+			existingApplication.get(0).setTaxAmount(application.getTaxAmount());
+			existingApplication.get(0).setTaxCategory(application.getTaxCategory());
 //			application.setEndDate(date);
 			// application.getAuditDetails().setLastModifiedBy(birthRegistrationRequest.getRequestInfo().getUserInfo().getUuid());
 		}

@@ -48,6 +48,7 @@ public class WMSRunningAccountFinalBillApplicationRowMapper implements ResultSet
                         .mbAmount(rs.getInt("bMbAmount"))
                         .estimatedCost(rs.getString("bEstimatedCost"))
                         .tenderType(rs.getString("bTenderType"))
+                        .value(rs.getString("bValue"))
                         .percentageType(rs.getString("bPercentageType"))
                         .awardAmount(rs.getInt("bAwardAmount"))
                         .billDate(rs.getString("bBillDate"))
@@ -60,6 +61,10 @@ public class WMSRunningAccountFinalBillApplicationRowMapper implements ResultSet
                         .additionDeduction(rs.getString("bAdditionDeduction"))
                         .calculationMethod(rs.getString("bCalculationMethod"))
                         .percentage(rs.getString("bPercentage"))
+                        .percentageValue(rs.getString("bPercentageValue"))
+                        .workOrderNo(rs.getString("bWorkOrderNo"))
+                        .taxAmount(rs.getString("bTaxAmount"))
+                        .taxCategory(rs.getString("bTaxCategory"))
                         .build();
             }
             //addChildrenToProperty(rs, sorApplication);
