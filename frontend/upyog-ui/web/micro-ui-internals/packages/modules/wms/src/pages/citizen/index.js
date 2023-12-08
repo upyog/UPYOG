@@ -52,6 +52,12 @@ const CitizenApp = ({ path, url, userType }) => {
   const WmsMbEdit = Digit?.ComponentRegistryService?.getComponent("WmsMbEdit");
   const WmsMbResponse = Digit?.ComponentRegistryService?.getComponent("WmsMbResponse");
 
+  const WmsDrList = Digit?.ComponentRegistryService?.getComponent("WmsDrList");
+  const WmsDrCreate = Digit?.ComponentRegistryService?.getComponent("WmsDrCreate");
+  const WmsDrDetails = Digit?.ComponentRegistryService?.getComponent("WmsDrDetails");  
+  const WmsDrEdit = Digit?.ComponentRegistryService?.getComponent("WmsDrEdit");
+  const WmsDrResponse = Digit?.ComponentRegistryService?.getComponent("WmsDrResponse");
+
   const CMView = Digit?.ComponentRegistryService?.getComponent("CMView");
   const WMSDetails = Digit?.ComponentRegistryService?.getComponent("WMSDetails");
   const ContrMasterAdd = Digit?.ComponentRegistryService?.getComponent("ContrMasterAdd");
@@ -181,6 +187,17 @@ const CitizenApp = ({ path, url, userType }) => {
           <PrivateRoute path={`${path}/mb-details/:id`} component={() => <WmsMbDetails />} />
           <PrivateRoute path={`${path}/mb-edit/:id`} component={() => <WmsMbEdit />} />
           <PrivateRoute path={`${path}/response`} component={(props) => <WmsMbResponse {...props} parentRoute={path} />} />
+
+        <PrivateRoute
+            path={`${path}/dr-home`}
+            component={() => (
+              <WmsDrList parentRoute={path} businessService="WMS" filterComponent="WMS_LIST_FILTER" initialStates={inboxInitialState} isInbox={true} />
+            )}
+          />
+          <PrivateRoute path={`${path}/dr-create`} component={() => <WmsDrCreate />} />
+          <PrivateRoute path={`${path}/dr-details/:id`} component={() => <WmsDrDetails />} />
+          <PrivateRoute path={`${path}/dr-edit/:id`} component={() => <WmsDrEdit />} />
+          <PrivateRoute path={`${path}/drresponse`} component={(props) => <WmsDrResponse {...props} parentRoute={path} />} />
 
 
           <PrivateRoute path={`${path}/cm-home`} component={props => <CMView {...props} tenants={tenantId} parentRoute={path} />} />

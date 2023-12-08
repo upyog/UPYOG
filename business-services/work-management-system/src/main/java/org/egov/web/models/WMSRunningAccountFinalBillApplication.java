@@ -31,6 +31,8 @@ public class WMSRunningAccountFinalBillApplication {
 	private String estimatedCost=null;
 	@JsonProperty("tender_type")
 	private String tenderType=null;
+	@JsonProperty("value")
+	private String value=null;
 	@JsonProperty("percentage_type")
 	private String percentageType=null;
 	@JsonProperty("award_amount")
@@ -55,7 +57,14 @@ public class WMSRunningAccountFinalBillApplication {
 	private String calculationMethod=null;
 	@JsonProperty("percentage")
 	private String percentage=null;
-	
+	@JsonProperty("percentage_Value")
+	private String percentageValue=null;
+	@JsonProperty("workOrder_No")
+	private String workOrderNo=null;
+	@JsonProperty("tax_Amount")
+	private String taxAmount=null;
+	@JsonProperty("tax_Category")
+	private String taxCategory=null;
 	@JsonProperty("auditDetails")
 	private AuditDetails auditDetails = null;
 	@JsonProperty("tenantId")

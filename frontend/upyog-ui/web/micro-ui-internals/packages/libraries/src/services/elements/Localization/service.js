@@ -72366,6 +72366,98 @@ export const LocalizationService = {
             "locale": "en_IN"
         },
         {
+            "code": "WMS_NEW_DR_FORM_HEADER",
+            "message": "Deduction Register",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_DR_ID_LABEL",
+            "message": "DR ID",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_DR_DETAILS_FORM_HEADER",
+            "message": "Deduction Register",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_DR_FORM_EDIT_CREATE_HEAD",
+            "message": "Edit Register Details",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_DR_PROJECT_NAME_LABEL",
+            "message": "Project Name",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_DR_WORK_NAME_LABEL",
+            "message": "Work Name",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_DR_ML_NAME_LABEL",
+            "message": "Milestone Name",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_DR_PERCENT_NAME_LABEL",
+            "message": "Deduction Percentage",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_DR_CONTROLS_LABEL",
+            "message": "Change",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_DR_CONTROLS2_LABEL",
+            "message": "Activities",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        
+        {
+            "code": "WMS_DR_CREATE_PAGE_LABEL",
+            "message": "Deduction Register",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_DR_COMMON_CREATE_HEADER",
+            "message": "Deduction Register",
+            "module": "rainmaker-common",
+            
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_DR_COMMON_CREATE_ACTIVITY_HEADER",
+            "message": "Add Deduction Activity",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_DR_PRJ_NAME_LABEL",
+            "message": "Work Name",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_DR_EDIT_LABEL",
+            "message": "Edit",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
             "code": "WMS_PRJ_FORM_CREATE_HEAD",
             "message": "Project-Details",
             "module": "rainmaker-common",

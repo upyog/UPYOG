@@ -1,18 +1,17 @@
 import { Header, Loader } from "@egovernments/digit-ui-react-components";
 import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import DesktopList from "../../../../components/List/MB/DesktopList";
-import MobileList from  "../../../../components/List/MB/MobileList";
+import DesktopList from "../../../../components/List/PMA/DesktopList";
+import MobileList from  "../../../../components/List/PMA/MobileList";
 
-const WmsMbList = ({ parentRoute, businessService = "WMS", initialStates = {}, filterComponent, isList }) => {
+const WmsPmaList = ({ parentRoute, businessService = "WMS", initialStates = {}, filterComponent, isList }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
-  const { isLoading: isLoading, Errors, data: res } = Digit.Hooks.wms.mb.useWmsMbCount(tenantId);
-
+  const { isLoading: isLoading, Errors, data: res } = Digit.Hooks.wms.pma.useWmsPmaCount(tenantId);
 
   const { t } = useTranslation();
   const [pageOffset, setPageOffset] = useState(initialStates.pageOffset || 0);
   const [pageSize, setPageSize] = useState(initialStates.pageSize || 10);
-  const [mbtParams, setMbtParams] = useState(initialStates.mbtParams || [{ id: "createdTime", desc: false }]);
+  const [pmatParams, setPmatParams] = useState(initialStates.pmatParams || [{ id: "createdTime", desc: false }]);
   const [totalRecords, setTotalReacords] = useState(undefined);
   const [searchParams, setSearchParams] = useState(() => {
     return initialStates.searchParams || {};
@@ -20,30 +19,23 @@ const WmsMbList = ({ parentRoute, businessService = "WMS", initialStates = {}, f
 
   let isMobile = window.Digit.Utils.browser.isMobile();
   let paginationParams = isMobile
-    ? { limit: 100, offset: pageOffset, mbtOrder: mbtParams?.[0]?.desc ? "DESC" : "ASC" }
-    : { limit: pageSize, offset: pageOffset, mbtOrder: mbtParams?.[0]?.desc ? "DESC" : "ASC" };
+    ? { limit: 100, offset: pageOffset, pmatOrder: pmatParams?.[0]?.desc ? "DESC" : "ASC" }
+    : { limit: pageSize, offset: pageOffset, pmatOrder: pmatParams?.[0]?.desc ? "DESC" : "ASC" };
   const isupdate = Digit.SessionStorage.get("isupdate");
-  //const { MBApplications } = async () => await WMSService.MBApplications.search(tenantId, searchparams, filters);// Digit.Hooks.wms.mb.useWmsMbSearch(
-  //  tenantId,
-  //  searchParams,
-  //  paginationParams,
-  //  isupdate
-  //);
-
-  const { isLoading: hookLoading, isError, error, data:MbData, ...rest } = Digit.Hooks.wms.mb.useWmsMbSearch(
+  //const { PMAApplications } = async () => await WMSService.PMAApplications.search(tenantId, searchparams, filters);// Digit.Hooks.wms.pma.useWmsPmaSearch(
+const { isLoading: hookLoading, isError, error, data, ...rest } = Digit.Hooks.wms.pma.useWmsPmaSearch(
     searchParams,
     tenantId,
     paginationParams,
     isupdate
   );
 
-
   useEffect(() => {
+     setTotalReacords(res?.length-1);
+  }, [res]);
+//  useEffect(() => {setTotalReacords(PMAApplications?.length-1);}, [PMAApplications]);
 
-     setTotalReacords(MbData?.length-1);
-  }, [MbData]);
-
- // useEffect(() => {}, [isLoading, MBApplications]);
+  useEffect(() => {}, [hookLoading, rest]);
 
   useEffect(() => {
     setPageOffset(0);
@@ -66,9 +58,9 @@ const WmsMbList = ({ parentRoute, businessService = "WMS", initialStates = {}, f
     setSearchParams({ ..._new });
   };
 
-  const handleMbt = useCallback((args) => {
+  const handlePmat = useCallback((args) => {
     if (args.length === 0) return;
-    setMbtParams(args);
+    setPmatParams(args);
   }, []);
 
   const handlePageSizeChange = (e) => {
@@ -78,51 +70,60 @@ const WmsMbList = ({ parentRoute, businessService = "WMS", initialStates = {}, f
   const getSearchFields = () => {
     return [
       {
-        label: t("WMS_MB_NAME_LABEL"),
-        name: "mb_name",
-        type:"name"
+        label: t("WMS_PMA_DESC_OF_ITEM_LABEL"),
+        name: "description_of_item",
+        type:"text"
       },
       {
-        label: t("WMS_MB_DATE_LABEL"),
-        name: "mb_date",
+        label: t("WMS_PMA_START_DATE_LABEL"),
+        name: "start_date",
         type:"date",
+      },
+      {
+        label: t("WMS_PMA_END_DATE_LABEL"),
+        name: "end_date",
+        type:"date"
       },
     ];
   };
 
-  /* if (isLoading) {
+  if (isLoading) {
     return <Loader />;
   }
-else
+/*else
 {
-  if(MBApplications!=undefined)
-  alert(JSON.stringify(MBApplications))
+  if(PMAApplications!=undefined)
+  alert(JSON.stringify(PMAApplications))
 } */
-  if (MbData?.length !== null) {
+  //if (PMAApplications?.length !== null) {
+  if (data?.length !== null) {
     if (isMobile) {
       return (
         <MobileList
           businessService={businessService}
-          data={MbData}
-          isLoading={isLoading}
+          //data={PMAApplications}
+          //isLoading={isLoading}
+          
+          data={data}
+          isLoading={hookLoading}
           defaultSearchParams={initialStates.searchParams}
           isSearch={isList}
           onFilterChange={handleFilterChange}
           searchFields={getSearchFields()}
           onSearch={handleFilterChange}
-          onMbt={handleMbt}
+          onPmat={handlePmat}
           onNextPage={fetchNextPage}
           tableConfig={rest?.tableConfig}
           onPrevPage={fetchPrevPage}
           currentPage={Math.floor(pageOffset / pageSize)}
           pageSizeLimit={pageSize}
-          disableMbt={false}
+          disablePmat={false}
           onPageSizeChange={handlePageSizeChange}
           parentRoute={parentRoute}
           searchParams={searchParams}
-          mbtParams={mbtParams}
+          pmatParams={pmatParams}
           totalRecords={totalRecords}
-          linkPrefix={'/upyog-ui/citizen/wms/mb-details/'}
+          linkPrefix={'/upyog-ui/citizen/wms/pma-details/'}
           filterComponent={filterComponent}
         />
       );
@@ -132,23 +133,25 @@ else
           {isList && <Header>{t("WMS_HOME_SEARCH_RESULTS_HEADING")}</Header>}
           <DesktopList
             businessService={businessService}
-            data={MbData}
-            isLoading={isLoading}
+            //data={PMAApplications}
+            //isLoading={isLoading}
+            data={data}
+            isLoading={hookLoading}
             defaultSearchParams={initialStates.searchParams}
             isSearch={isList}
             onFilterChange={handleFilterChange}
             searchFields={getSearchFields()}
             onSearch={handleFilterChange}
-            onMbt={handleMbt}
+            onPmat={handlePmat}
             onNextPage={fetchNextPage}
             onPrevPage={fetchPrevPage}
             currentPage={Math.floor(pageOffset / pageSize)}
             pageSizeLimit={pageSize}
-            disableMbt={false}
+            disablePmat={false}
             onPageSizeChange={handlePageSizeChange}
             parentRoute={parentRoute}
             searchParams={searchParams}
-            mbtParams={mbtParams}
+            pmatParams={pmatParams}
             totalRecords={totalRecords}
             filterComponent={filterComponent}
           />
@@ -158,4 +161,4 @@ else
   }
 };
 
-export default WmsMbList;
+export default WmsPmaList;

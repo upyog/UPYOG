@@ -2505,6 +2505,24 @@ export const MdmsService = {
   "sidebar": "digit-ui-links",
   "sidebarURL": "/digit-ui/citizen/wms/master-data"
 },
+{
+  "id": 3011,
+  "name": "Deduction Register ",
+  "url": "digit-ui-card",
+  "displayName": "Deduction Register",
+  "orderNumber": 4,
+  "parentModule": "WMS",
+  "enabled": true,
+  "serviceCode": "CITIZEN_SERVICE_WMS",
+  "code": "",
+  "path": "",
+  "navigationURL": "/digit-ui/citizen/wms/dr-home",
+  "leftIcon": "WMSIcon",
+  "rightIcon": "",
+  "queryParams": "",
+  "sidebar": "digit-ui-links",
+  "sidebarURL": "/digit-ui/citizen/dr-home"
+},
   ]
         },
       "common-masters": {
