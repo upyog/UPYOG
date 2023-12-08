@@ -9,12 +9,12 @@ const NewApplication = () => {
   const tenants = Digit.Hooks.pt.useTenants();
   const { t } = useTranslation();
   const [canSubmit, setSubmitValve] = useState(false);
-  const defaultValues = { };
+  const defaultValues = {};
   const history = useHistory();
   // delete
   // const [_formData, setFormData,_clear] = Digit.Hooks.useSessionStorage("store-data",null);
   const [mutationHappened, setMutationHappened, clear] = Digit.Hooks.useSessionStorage("EMPLOYEE_MUTATION_HAPPENED", false);
-  const [successData, setsuccessData, clearSuccessData] = Digit.Hooks.useSessionStorage("EMPLOYEE_MUTATION_SUCCESS_DATA", { });
+  const [successData, setsuccessData, clearSuccessData] = Digit.Hooks.useSessionStorage("EMPLOYEE_MUTATION_SUCCESS_DATA", {});
   const { data: commonFields, isLoading } = Digit.Hooks.pt.useMDMSV2(Digit.ULBService.getStateId(), "PropertyTax", "CommonFieldsConfig");
   useEffect(() => {
     setMutationHappened(false);
@@ -22,7 +22,7 @@ const NewApplication = () => {
   }, []);
 
   const onFormValueChange = (setValue, formData, formState) => {
-    console.log("data",formData)
+    console.log("data", formData);
     setSubmitValve(!Object.keys(formState.errors).length);
     if (Object.keys(formState.errors).length === 1 && formState.errors?.units?.message === "arv") {
       setSubmitValve(!formData?.units.some((unit) => unit.occupancyType === "RENTED" && !unit.arv));
@@ -41,7 +41,7 @@ const NewApplication = () => {
   };
 
   const onSubmit = (data) => {
-    console.log("data",data)
+    console.log("data", data);
     const formData = {
       tenantId,
       address: {
@@ -49,21 +49,21 @@ const NewApplication = () => {
         city: data?.address?.city?.name,
         locality: { code: data?.address?.locality?.code, area: data?.address?.locality?.area },
       },
-      usageCategory: data?.usageCategoryMajor.code,
-      usageCategoryMajor: data?.usageCategoryMajor?.code.split(".")[0],
-      usageCategoryMinor: data?.usageCategoryMajor?.code.split(".")[1] || null,
+      usageCategory: data?.usageCategoryMajor?.code,
+      usageCategoryMajor: data?.usageCategoryMajor?.code?.split(".")[0],
+      usageCategoryMinor: data?.usageCategoryMajor?.code?.split(".")[1] || null,
       landArea: Number(data?.landarea),
       superBuiltUpArea: Number(data?.landarea),
       propertyType: data?.PropertyType?.code,
       noOfFloors: Number(data?.noOfFloors),
       ownershipCategory: data?.ownershipCategory?.code,
-      additionalDetails:{
-      RentedMonths: data?.units[0]?.RentedMonths,
-      NonRentedMonthsUsage: data?.units[0]?.NonRentedMonthsUsage,
-      ageOfProperty:data?.units[0]?.ageOfProperty,
-      structureType:data?.units[0]?.structureType
+      additionalDetails: {
+        RentedMonths: data?.units?.[0]?.RentedMonths,
+        NonRentedMonthsUsage: data?.units?.[0]?.NonRentedMonthsUsage,
+        ageOfProperty: data?.units?.[0]?.ageOfProperty,
+        structureType: data?.units?.[0]?.structureType,
       },
-      owners: data?.owners.map((owner) => {
+      owners: data?.owners?.map((owner) => {
         let {
           name,
           mobileNumber,
@@ -77,7 +77,7 @@ const NewApplication = () => {
         } = owner;
         let __owner;
 
-        if (!data?.ownershipCategory?.code.includes("INDIVIDUAL")) {
+        if (!data?.ownershipCategory?.code?.includes("INDIVIDUAL")) {
           __owner = { name, mobileNumber, designation, altContactNumber, emailId, correspondenceAddress, isCorrespondenceAddress, ownerType };
         } else {
           __owner = {
@@ -85,9 +85,9 @@ const NewApplication = () => {
             mobileNumber,
             correspondenceAddress,
             permanentAddress: data?.address?.locality?.name,
-            relationship: owner?.relationship.code,
+            relationship: owner?.relationship?.code,
             fatherOrHusbandName,
-            gender: owner?.gender.code,
+            gender: owner?.gender?.code,
             emailId,
           };
         }
@@ -101,7 +101,7 @@ const NewApplication = () => {
         if (_owner.ownerType !== "NONE") {
           const { documentType, documentUid } = owner?.documents;
           _owner.documents = [
-            { documentUid: documentUid, documentType: documentType.code, fileStoreId: documentUid },
+            { documentUid: documentUid, documentType: documentType?.code, fileStoreId: documentUid },
             data?.documents?.documents?.find((e) => e.documentType?.includes("OWNER.IDENTITYPROOF")),
           ];
         } else {
@@ -120,16 +120,15 @@ const NewApplication = () => {
 
     if (!data?.ownershipCategory?.code.includes("INDIVIDUAL")) {
       formData.institution = {
-        name: data.owners?.[0].institution.name,
-        type: data.owners?.[0].institution.type?.code?.split(".")[1],
-        designation: data.owners?.[0].designation,
-        nameOfAuthorizedPerson: data.owners?.[0].name,
+        name: data?.owners?.[0].institution?.name,
+        type: data?.owners?.[0].institution?.type?.code?.split(".")[1],
+        designation: data?.owners?.[0].designation,
+        nameOfAuthorizedPerson: data?.owners?.[0]?.name,
         tenantId: Digit.ULBService.getCurrentTenantId(),
       };
     }
 
     history.replace("/digit-ui/employee/pt/response", { Property: formData }); //current wala
-
   };
   if (isLoading) {
     return <Loader />;
@@ -137,7 +136,7 @@ const NewApplication = () => {
 
   /* use newConfig instead of commonFields for local development in case needed */
 
-  const configs = commonFields?commonFields:newConfig;
+  const configs = commonFields ? commonFields : newConfig;
 
   return (
     <FormComposer
