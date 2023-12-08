@@ -96,6 +96,11 @@ public class WMSRunningAccountFinalBillValidator {
 	            if(ObjectUtils.isEmpty(application.getDeductionAmount()))
 	                throw new CustomException("EG_WMS_APP_ERR", "DeductionAmount is mandatory for creating Running Account Final Bill applications");
 	        });
+	    	
+	    	wmsRunningAccountFinalBillRequest.getWmsRunningAccountFinalBillApplications().forEach(application -> {
+	            if(ObjectUtils.isEmpty(application.getWorkOrderNo()))
+	                throw new CustomException("EG_WMS_APP_ERR", "WorkOrderNo is mandatory for creating Running Account Final Bill applications");
+	        });
 	    }
 
 		public List<WMSRunningAccountFinalBillApplication> validateApplicationUpdateRequest(
