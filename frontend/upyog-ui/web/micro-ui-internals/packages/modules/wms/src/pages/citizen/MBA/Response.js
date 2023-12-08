@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
 const GetMessage = (type, action, isSuccess, isEmployee, t) => {
-  return t(`MB_RESPONSE_${action ? action : "CREATE"}_${type}${isSuccess ? "" : "_ERROR"}`);
+  return t(`PHM_RESPONSE_${action ? action : "CREATE"}_${type}${isSuccess ? "" : "_ERROR"}`);
 };
 
 const GetActionMessage = (action, isSuccess, isEmployee, t) => {
@@ -13,7 +13,7 @@ const GetActionMessage = (action, isSuccess, isEmployee, t) => {
 
 const GetLabel = (action, isSuccess, isEmployee, t) => {
   if (isSuccess) {
-    return t("WMS_MB_ID_LABEL");
+    return t("WMS_PHM_ID_LABEL");
   }
   // return GetMessage("LABEL", action, isSuccess, isEmployee, t);
 };
@@ -29,15 +29,15 @@ const BannerPicker = (props) => {
   );
 };
 
-const WmsDrResponse = (props) => {
+const WmsPmaResponse = (props) => {
   const { t } = useTranslation();
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();
   const { state } = props.location;
-  const [mutationHappened, setMutationHappened, clear] = Digit.Hooks.useSessionStorage("MB_WMS_MUTATION_HAPPENED", false);
-  const [successData, setsuccessData, clearSuccessData] = Digit.Hooks.useSessionStorage("MB_WMS_MUTATION_SUCCESS_DATA", false);
-  const [errorInfo, setErrorInfo, clearError] = Digit.Hooks.useSessionStorage("MB_WMS_ERROR_DATA", false);
-  const mutation = state.key === "UPDATE" ? Digit.Hooks.wms.mb.useWmsDrUpdate(tenantId) : Digit.Hooks.wms.mb.useWmsDrCreate(tenantId);
+  const [mutationHappened, setMutationHappened, clear] = Digit.Hooks.useSessionStorage("PHM_WMS_MUTATION_HAPPENED", false);
+  const [successData, setsuccessData, clearSuccessData] = Digit.Hooks.useSessionStorage("PHM_WMS_MUTATION_SUCCESS_DATA", false);
+  const [errorInfo, setErrorInfo, clearError] = Digit.Hooks.useSessionStorage("PHM_WMS_ERROR_DATA", false);
+  const mutation = state.key === "UPDATE" ? Digit.Hooks.wms.phm.useWmsPmaUpdate(tenantId) : Digit.Hooks.wms.phm.useWmsPmaCreate(tenantId);
 
   const onError = (error, variables) => {
     setErrorInfo(error?.response?.data?.Errors[0]?.code || 'ERROR');
@@ -76,7 +76,7 @@ const WmsDrResponse = (props) => {
       return mutation?.error?.response?.data?.Errors[0].code||errorInfo;
     } else {
       Digit.SessionStorage.set("isupdate", Math.floor(100000 + Math.random() * 900000));
-      return state.key === "CREATE"?"WMS_CREATE_MB_INFO" :"";
+      return state.key === "CREATE"?"WMS_CREATE_PHM_INFO" :"";
     }
   };
     if (mutation.isLoading || (mutation.isIdle && !mutationHappened)) {
@@ -102,4 +102,4 @@ const WmsDrResponse = (props) => {
   );
 };
 
-export default WmsDrResponse;
+export default WmsPmaResponse;

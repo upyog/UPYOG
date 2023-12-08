@@ -132,8 +132,21 @@ import WmsMbDetails  from "./pages/citizen/MB/Details";
 import WmsMbCreate from "./pages/citizen/MB/Create";
 import WmsMbEdit from "./pages/citizen/MB/Edit";
 
+/**---------------DR--------------- */
+
+import WmsDrResponse from "./pages/citizen/DR/Response";
+import WmsDrList from "./pages/citizen/DR/List";
+import WmsDrDetails from "./pages/citizen/DR/Details";
+import WmsDrCreate from "./pages/citizen/DR/Create";
+import WmsDrEdit from "./pages/citizen/DR/Edit";
 
 
+
+import WmsDrId from "./pageComponents/DR/WmsDrId";
+import WmsDrPrjName from "./pageComponents/DR/WmsDrPrjName";
+import WmsDrWorkName from "./pageComponents/DR/WmsDrWorkName";
+import WmsDrMLName from "./pageComponents/DR/WmsDrMLName"
+import WmsDrPercent from "./pageComponents/DR/WmsDrPercent";
 
 /**---------------- */
 import ContrMasterAdd from "./pages/citizen/CM/index";
@@ -330,6 +343,24 @@ const componentsToRegister = {
   // WmsPmaDescriptionOfPmaeme,
   // WmsPmaStartDate,
   // WmsPmaEndDate,
+
+  WmsDrList:WmsDrList,
+  WmsDrDetails:WmsDrDetails,
+  WmsDrCreate:WmsDrCreate,
+  WmsDrEdit:WmsDrEdit,
+  WmsDrResponse:WmsDrResponse,
+  WmsDrId,
+  WmsDrMLName,
+  WmsDrPrjName,
+  WmsDrWorkName,
+  WmsDrPercent,
+  // WmsDrFund,
+  // WmsDrSourceOfFund,
+  // WmsDrDescriptionOfDreme,
+  // WmsDrStartDate,
+  // WmsDrEndDate,
+
+  
 
   WmsPrjList:PrjList,
   WmsPrjDetails:PrjDetails,
