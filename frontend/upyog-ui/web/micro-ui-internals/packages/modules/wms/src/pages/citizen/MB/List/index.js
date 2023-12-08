@@ -4,8 +4,10 @@ import { useTranslation } from "react-i18next";
 import DesktopList from "../../../../components/List/MB/DesktopList";
 import MobileList from  "../../../../components/List/MB/MobileList";
 
-const WmsMbList = ({ parentRoute, businessService = "WMS", initialStates = {}, filterComponent, isList=false }) => {
+const WmsMbList = ({ parentRoute, businessService = "WMS", initialStates = {}, filterComponent, isList }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
+  const { isLoading: isLoading, Errors, data: res } = Digit.Hooks.wms.mb.useWmsMbCount(tenantId);
+
 
   const { t } = useTranslation();
   const [pageOffset, setPageOffset] = useState(initialStates.pageOffset || 0);
@@ -22,17 +24,27 @@ const WmsMbList = ({ parentRoute, businessService = "WMS", initialStates = {}, f
     : { limit: pageSize, offset: pageOffset, mbtOrder: mbtParams?.[0]?.desc ? "DESC" : "ASC" };
   const isupdate = Digit.SessionStorage.get("isupdate");
   //const { MBApplications } = async () => await WMSService.MBApplications.search(tenantId, searchparams, filters);// Digit.Hooks.wms.mb.useWmsMbSearch(
-const { isLoading: hookLoading, isError, error, data, ...rest } = Digit.Hooks.wms.mb.useWmsMbSearch(
+  //  tenantId,
+  //  searchParams,
+  //  paginationParams,
+  //  isupdate
+  //);
+
+  const { isLoading: hookLoading, isError, error, data:MbData, ...rest } = Digit.Hooks.wms.mb.useWmsMbSearch(
     searchParams,
     tenantId,
     paginationParams,
     isupdate
   );
 
+
   useEffect(() => {
-     setTotalReacords(data?.length-1);
-  }, [hookLoading,data,rest]);
-//  useEffect(() => {setTotalReacords(MBApplications?.length-1);}, [MBApplications]);
+
+     setTotalReacords(MbData?.length-1);
+  }, [MbData]);
+
+ // useEffect(() => {}, [isLoading, MBApplications]);
+
   useEffect(() => {
     setPageOffset(0);
   }, [searchParams]);
@@ -78,22 +90,21 @@ const { isLoading: hookLoading, isError, error, data, ...rest } = Digit.Hooks.wm
     ];
   };
 
-  if (hookLoading) {
+  /* if (isLoading) {
     return <Loader />;
   }
-/* else
+else
 {
-  if(data!=undefined)
-  alert(JSON.stringify(data))
+  if(MBApplications!=undefined)
+  alert(JSON.stringify(MBApplications))
 } */
-  //if (MBApplications?.length !== null) {
-  if (data?.length !== null) {
+  if (MbData?.length !== null) {
     if (isMobile) {
       return (
         <MobileList
-          businessService={businessService}          
-          data={data}
-          isLoading={hookLoading}
+          businessService={businessService}
+          data={MbData}
+          isLoading={isLoading}
           defaultSearchParams={initialStates.searchParams}
           isSearch={isList}
           onFilterChange={handleFilterChange}
@@ -111,7 +122,7 @@ const { isLoading: hookLoading, isError, error, data, ...rest } = Digit.Hooks.wm
           searchParams={searchParams}
           mbtParams={mbtParams}
           totalRecords={totalRecords}
-          linkPrefix={'/upyog-ui/citizen/wms/mb-edit/'}
+          linkPrefix={'/upyog-ui/citizen/wms/mb-details/'}
           filterComponent={filterComponent}
         />
       );
@@ -121,8 +132,8 @@ const { isLoading: hookLoading, isError, error, data, ...rest } = Digit.Hooks.wm
           {isList && <Header>{t("WMS_HOME_SEARCH_RESULTS_HEADING")}</Header>}
           <DesktopList
             businessService={businessService}
-            data={data}
-            isLoading={hookLoading}
+            data={MbData}
+            isLoading={isLoading}
             defaultSearchParams={initialStates.searchParams}
             isSearch={isList}
             onFilterChange={handleFilterChange}
