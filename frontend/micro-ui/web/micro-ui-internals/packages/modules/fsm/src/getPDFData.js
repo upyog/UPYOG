@@ -38,6 +38,8 @@ const getPDFData = (application, tenantInfo, t) => {
   const totalAmount = amountPerTrip * application?.noOfTrips;
   const advanceAmountDue = application?.advanceAmount;
   const propertyID = application ?. additionalDetails?. propertyID;
+  const roadWidth = application?. additionalDetails?. roadWidth;
+  const distancefromroad = application?. additionalDetails?. distancefromroad;
 
   return {
     t: t,
@@ -102,6 +104,13 @@ const getPDFData = (application, tenantInfo, t) => {
             title: t("CS_APPLICATION_DETAILS_PIT_TYPE"),
             value: application?.sanitationtype ? t("PITTYPE_MASTERS_" + application?.sanitationtype) : "N/A",
           },
+          {
+            title: t("CS_APPLICATION_DETAILS_ROAD_WIDTH"), value: application?.additionalDetails?.roadWidth || "N/A" 
+          },
+          {
+            title: t("CS_APPLICATION_DETAILS_DISTANCE_FROM_ROAD"), value: application?.additionalDetails?.distancefromroad || "N/A" 
+          },
+          
           {
             title: t("CS_APPLICATION_DETAILS_DIMENSION"),
             // NOTE: value have too much whitespace bcz we want the text after whitespace should go to next line, so pls don't remove whitespace

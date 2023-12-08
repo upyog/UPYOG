@@ -195,16 +195,16 @@ export const newConfig =[
                         "submitBarLabel": "PT_COMMONS_NEXT"
                     },
                     
-                    "nextStep": "electricity-uid",
+                    "nextStep": "uid",
                     
                     "withoutLabel": true
                     
                 },
                 {
                     "type": "component",
-                    "route": "electricity-uid",
+                    "route": "uid",
                     "isMandatory": true,
-                    "component": "ElectricityUID",
+                    "component": "UID",
                     "texts": {
                         "headerCaption": "",
                         "header": "PT_ASSESMENT1_ELECTRICITY_UID_NUMBER",
@@ -216,7 +216,7 @@ export const newConfig =[
                         "COMMON_PROPTYPE_BUILTUP_SHAREDPROPERTY": "PtUnits",
                         "COMMON_PROPTYPE_VACANT": "area"
                     },
-                    "key": "electricityuid",
+                    "key": "uid",
                     "withoutLabel": true
                     
                 },

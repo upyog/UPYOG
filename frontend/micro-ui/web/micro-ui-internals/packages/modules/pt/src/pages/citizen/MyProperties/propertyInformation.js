@@ -274,12 +274,15 @@ const handleClick=()=>{
   const closeWarningPopup = () => {
     setWarningPopUp(false);
   };
+  const handleClickOnPtPgr=()=>{
   sessionStorage.setItem("type","PT" );
   sessionStorage.setItem("pincode", data.Properties[0].address.pincode);
   sessionStorage.setItem("tenantId", data.Properties[0].address.tenantId);
   sessionStorage.setItem("localityCode", data.Properties[0].address.locality.code);
   sessionStorage.setItem("landmark", data.Properties[0].address.landmark); 
-  sessionStorage.setItem("propertyid",data.Properties[0].propertyId)
+  sessionStorage.setItem("propertyid",data.Properties[0].propertyId)  ;
+  history.push(`/digit-ui/citizen/pgr/create-complaint/complaint-type?propertyId=${property.propertyId}`);
+  }
   return (
     <React.Fragment>
       <Header>{t("PT_PROPERTY_INFORMATION")}</Header>
@@ -357,7 +360,7 @@ const handleClick=()=>{
               ))}
           </div>
           <CardSubHeader>{t("PT_COMMON_PROPERTY_OWNERSHIP_DETAILS_HEADER")}</CardSubHeader>
-          <div>
+          <div className="owner-details">
             {Array.isArray(owners) &&
               owners.map((owner, index) => (
                 <div key={index}>
@@ -424,7 +427,7 @@ const handleClick=()=>{
           <div>
           {property?.status === "ACTIVE" && !enableAudit && (
             <div style={{ marginTop: "1em", bottom: "0px", width: "100%", marginBottom: "1.2em" }}>               
-            <button className="submit-bar" type="button" onClick={() => history.push(`/digit-ui/citizen/pgr/create-complaint/complaint-type?propertyId=${property.propertyId}`)} style={{fontFamily:"sans-serif", color:"white","fontSize":"19px"}}>{t("PT_PGR")}</button>
+            <button className="submit-bar" type="button" onClick={handleClickOnPtPgr} style={{fontFamily:"sans-serif", color:"white","fontSize":"19px"}}>{t("PT_PGR")}</button>
             </div>              
             )}
             {property?.status === "ACTIVE" && !enableAudit && (

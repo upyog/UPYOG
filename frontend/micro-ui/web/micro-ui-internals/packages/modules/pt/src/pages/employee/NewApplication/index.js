@@ -7,6 +7,7 @@ import { newConfig } from "../../../config/Create/config";
 const NewApplication = () => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const tenants = Digit.Hooks.pt.useTenants();
+  console.log("tenantstenants",tenants)
   const { t } = useTranslation();
   const [canSubmit, setSubmitValve] = useState(false);
   const defaultValues = { };
@@ -76,7 +77,7 @@ const NewApplication = () => {
       // ageOfProperty:data?.units[0]?.ageOfProperty,
       // structureType:data?.units[0]?.structureType,
       electricity:data?.electricity,
-      electricityuid:data?.electricityuid
+      uid:data?.uid
       },
       owners: data?.owners.map((owner) => {
         let {
@@ -190,14 +191,13 @@ const NewApplication = () => {
       </div>
     );
   };
-  /*console.log("new",configs)
-  configs[1]?.body?.push( {
-    "type": "component",
-    "isMandatory": true,
-    "component": "ElectricityUID",
-    "key": "electricityuid",
-    "withoutLabel": true
-  })*/
+  const closeModal =() =>{
+    setShowToast(false)
+  }
+  const setModal=()=>{
+      setShowToast(false)   
+      history.replace("/digit-ui/employee/pt/response", { Property: formData })
+    }
 
   return (
     <div>
@@ -234,7 +234,8 @@ const NewApplication = () => {
           <StatusTable>
               <Row label={t("CR_PROPERTY_NUMBER")} text={propertyData?.Properties?.[0]?.propertyId || "NA"} textStyle={{ whiteSpace: "pre" }} />
               <Row label={t("CR_OWNER_NAME")} text={propertyData?.Properties?.[0]?.owners?.[0].name || "NA"} />
-              <Row label={t("CR_MOBILE_NUMBER")} text={propertyData?.Properties?.[0]?.owners?.[0].mobileNumber|| "NA"} />        
+              <Row label={t("CR_MOBILE_NUMBER")} text={propertyData?.Properties?.[0]?.owners?.[0].mobileNumber|| "NA"} /> 
+              <Row label={t("CR_ADDRESS")}    text={( propertyData?.Properties?.[0]?.address?.doorNo +", "+ propertyData?.Properties?.[0]?.address?.locality?.name +", "+ propertyData?.Properties?.[0]?.address?.city ) || "NA"}/>      
           </StatusTable>
   </Card>
 </div>

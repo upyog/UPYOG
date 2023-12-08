@@ -17,6 +17,7 @@ import SelectName from "./pageComponents/SelectName";
 // import SelectPincode from "./pageComponents/SelectPincode";
 import FSMSelectPincode from "./pageComponents/FSMSelectPincode";
 import SelectPitType from "./pageComponents/SelectPitType";
+import SelectRoadDetails from "./pageComponents/SelectRoadDetails";
 import SelectPropertySubtype from "./pageComponents/SelectPropertySubtype";
 import SelectPropertyType from "./pageComponents/SelectPropertyType";
 import SelectPropertyID from "./pageComponents/SelectPropertyID";
@@ -170,6 +171,7 @@ const componentsToRegister = {
   FSMSelectPincode,
   SelectTankSize,
   SelectPitType,
+  SelectRoadDetails,
   SelectTripNo,
   // SelectGeolocation,
   FSMSelectGeolocation,
