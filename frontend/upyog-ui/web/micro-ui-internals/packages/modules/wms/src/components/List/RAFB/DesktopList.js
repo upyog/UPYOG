@@ -178,7 +178,7 @@ const DesktopInbox = ({ tableConfig, filterComponent, ...props} ) => {
   } else if (data?.length > 0) {
     result = (
       <ApplicationTable
-        // t={t}
+        t={t}
         data={data}
         columns={columns}
         getCellProps={(cellInfo) => {
@@ -241,6 +241,7 @@ const DesktopInbox = ({ tableConfig, filterComponent, ...props} ) => {
       {/* <div style={{ flex: 1,width:"100%" }}> */}
       <div style={{ flex: 1 }}>
           <SearchApplication
+          t={t}
           defaultSearchParams={props.defaultSearchParams}
           onSearch={props.onSearch}
           type="desktop"
@@ -251,8 +252,8 @@ const DesktopInbox = ({ tableConfig, filterComponent, ...props} ) => {
         />  
 
         {/* <div style={{"justify-content": "space-between","overflow-x":"auto"}}> */}
-        {/* <div className="result" style={{ marginLeft: !props?.isSearch ? "24px" : "", flex: 1 }}> */}
-        <div className="result" style={{ marginLeft: true ? "24px" : "" , flex: 1}}>
+        <div className="result" style={{ marginLeft: !props?.isSearch ? "24px" : "", flex: 1 }}>
+        {/* <div className="result" style={{ marginLeft: true ? "24px" : "" , flex: 1}}> */}
           {result}
         </div>
         </div>

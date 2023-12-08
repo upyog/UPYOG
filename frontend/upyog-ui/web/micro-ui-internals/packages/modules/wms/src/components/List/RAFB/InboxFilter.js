@@ -1575,7 +1575,7 @@ const SearchCitizenFilter = ({ searchParams, onFilterChange, defaultSearchParams
   useEffect(() => {
     if (service && ulbLists) {
       // setSearchParams({ ...service, tenantId: ulbLists.tenantId });
-      setSearchParams({ ...service, vendor_type: "Vendor Type 2" });
+      setSearchParams({ ...service, vendor_type: "Vendor Type 2",vendor_name: "", });
       
     }
   }, [service, ulbLists]);
@@ -1608,6 +1608,7 @@ const SearchCitizenFilter = ({ searchParams, onFilterChange, defaultSearchParams
 
   return (
     <React.Fragment>
+      <div style={{marginTop:"16px!important"}}>
       <div className="filter citizen-filter">
         <div className="filter-card">
           <div className="heading" style={{ alignItems: "center" }}>
@@ -1668,6 +1669,7 @@ const SearchCitizenFilter = ({ searchParams, onFilterChange, defaultSearchParams
             </div>
           </div>
         </div>
+      </div>
       </div>
     </React.Fragment>
   );

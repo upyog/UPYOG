@@ -6,7 +6,7 @@ import DesktopInbox from "../../../../components/List/RAFB/DesktopList";
 import axios from "axios";
 import { Link } from "react-router-dom";
 
-const WmsRAFBList = ({ tenants, parentRoute,filterComponent }) => {
+const WmsRAFBList = ({ tenants, parentRoute, filterComponent }) => {
   const { t } = useTranslation();
   Digit.SessionStorage.set("ENGAGEMENT_TENANTS", tenants);
   const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -32,7 +32,7 @@ const WmsRAFBList = ({ tenants, parentRoute,filterComponent }) => {
   // debugger;
   let isMobile = window.Digit.Utils.browser.isMobile();
   const [data, setData] = useState([]);
-  const [dataBack, setDataBack] = useState();
+  const [dataBack, setDataBack] = useState([]);
   const [isTrue, setisTrue] = useState(false);
 
   const { isLoading, isSuccess } = bankList;
@@ -55,7 +55,7 @@ const WmsRAFBList = ({ tenants, parentRoute,filterComponent }) => {
         sdata.push({
           ...data,
           uid: res?.id,
-          status:res?.status,
+          status: res?.status,
           ...res?.WMSContractAgreementApplication[0]?.contractors[0],
           ...res?.WMSContractAgreementApplication[0]?.party2_witness[0],
         });
@@ -79,11 +79,11 @@ const WmsRAFBList = ({ tenants, parentRoute,filterComponent }) => {
 
   const getSearchFields = () => {
     return [
-        // {
-        //   label: t("EVENTS_ULB_LABEL"),
-        //   name: "ulb",
-        //   type: "ulb",
-        // },
+      // {
+      //   label: t("EVENTS_ULB_LABEL"),
+      //   name: "ulb",
+      //   type: "ulb",
+      // },
       {
         label: t("Vendor Type"),
         name: "vendor_type",
@@ -92,6 +92,10 @@ const WmsRAFBList = ({ tenants, parentRoute,filterComponent }) => {
         label: t("Vendor Name"),
         name: "vendor_name",
       },
+      // {
+      //   label: t("Status"),
+      //   name: "vendor_status",
+      // },
       // {
       //   label: t("Witness Name"),
       //   name: "witness_name",
@@ -117,71 +121,117 @@ const WmsRAFBList = ({ tenants, parentRoute,filterComponent }) => {
     },
   ];
 
-  //Filter server side
-  // function filterTableList(departmentName, prebidMeetingDate) {
-  //   let formData = "";
-  //   if (
-  //     (prebidMeetingDate != null && departmentName == null) ||
-  //     (prebidMeetingDate != "" && departmentName == "") ||
-  //     (prebidMeetingDate != undefined && departmentName == undefined)
-  //   ) {
-  //     formData = `?prebidMeetingDate=${prebidMeetingDate}`;
-  //     return formData;
-  //   } else if (
-  //     (departmentName != null && prebidMeetingDate == null) ||
-  //     (departmentName != "" && prebidMeetingDate == "") ||
-  //     (departmentName != undefined && prebidMeetingDate == undefined)
-  //   ) {
-  //     formData = `?departmentName=${departmentName}`;
-  //     return formData;
-  //   } else if (
-  //     (departmentName != "" && prebidMeetingDate != "") ||
-  //     (departmentName != null && prebidMeetingDate != null) ||
-  //     (departmentName != undefined && prebidMeetingDate != undefined)
-  //   ) {
-  //     formData = `?departmentName=${departmentName}&prebidMeetingDate=${prebidMeetingDate}`;
-  //     return formData;
-  //   } else {
-  //     alert("Please fill any field");
-  //   }
-  // }
+  // useEffect(() => {
+  //   filterData();
+  // }, [searchQuery]);
 
-//Top right side Filter
+  //Top right side Filter
   const onSearch = async (params) => {
+    console.log("paramsparams ", params);
+    // delete params.delete
+    // setSearchQuery(Object.values(params))
+
+    if (params === "reset") {
+      // alert("Reset block excuted");
+      setData(dataBack);
+      return false;
+    }
+    if(params?.vendor_type===null && params?.vendor_name===null && params?.vendor_status===null){
+      setData(dataBack);
+      return false
+    }
+    filterData(params);
+  };
+  const filterData = (params) => {
+    console.log("dataBack ",dataBack)
+    const dataBackFi = dataBack.filter((item) => item.vendor_type);
+    console.log("dataBack dataBackFi",dataBackFi)
+
+    const filteredData = dataBackFi.filter((item) => { 
+      return (
+        item.vendor_type.toString().includes(params?.vendor_type) &&
+        item.vendor_name.toString().includes(params?.vendor_name)
+        // &&
+        // item.status.toString().includes(params?.vendor_status)
+        
+        // &&
+        // item?.witness_name?.toLowerCase()?.includes(searchQuery?.witness_name?.toLowerCase())
+      );
+    
+    });
+    setData(filteredData);
+  };
+  const onSearch_old = async (params) => {
+    console.log("paramsparams ", params);
+    // delete params.delete
+    // setSearchQuery(Object.values(params))
+
     if (params === "reset") {
       alert("Reset block excuted");
       setData(dataBack);
       return false;
     }
-      filterData(params)
-  };
-
-//Left side Filter
-  const handleFilterChange = (data) => {
-    console.log("data data data ",data)
-    filterData(data)
-    // setSearchParams({ ...searchParams, ...data });
+    filterData(params); //old
   };
   
-  const filterData=(params)=>{
+  // const filterData=()=>{
+  const filterData_old = (params) => {
+    //old
+    //     const filteredArray = searchQuery.filter(item => item);
+    // const filterItem = filteredArray.length>0?
+    // filteredArray.map((item)=>data.filter((dataItem)=>dataItem.vendor_type === item))
+    // :[...data]
+    // setData(filterItem)
+    //     console.log("searchQuery.length ",filteredArray)
+
+    //     old
     const filteredData = dataBack?.filter(
-      (item) =>
-          item?.vendor_type?.includes(params?.vendor_type)||
-        item?.vendor_name?.toLowerCase()?.includes(params?.vendor_name?.toLowerCase()) 
-        // &&
-        // item?.witness_name?.toLowerCase()?.includes(searchQuery?.witness_name?.toLowerCase())
-);
+      (item) => item?.vendor_type?.includes(params?.vendor_type) || item?.vendor_name?.toLowerCase()?.includes(params?.vendor_name?.toLowerCase())
+      // &&
+      // item?.witness_name?.toLowerCase()?.includes(searchQuery?.witness_name?.toLowerCase())
+    );
     console.log("search field filterData ", filteredData);
     setData(filteredData);
-}
-
-console.log("searchParams sssssssss",searchParams)
-  const globalSearch = (rows, columnIds) => {// not in use
-    // return rows;
-    return rows?.filter((row) =>
-      searchParams?.babyLastName ? row.original?.babyLastName?.toUpperCase().startsWith(searchParams?.babyLastName.toUpperCase()) : true
-    );
   };
+
+  //Left side Filter
+  const handleFilterChange = (data) => {
+    console.log("data data data ", data);
+    globalSearch(data);
+    // setSearchParams({ ...searchParams, ...data });
+  };
+
+  const globalSearch = (params, columnIds) => {
+    const dataBackFi = dataBack.filter((item) => item.vendor_type);
+    const filteredData = dataBackFi.filter((item) => {
+      return (
+        item.vendor_type.toString().toLowerCase().includes(params?.vendor_type.toLowerCase()) &&
+        item.vendor_name.toString().toLowerCase().includes(params?.vendor_name?.toLowerCase())
+      );
+    });
+    setData(filteredData);
+  // return rows?.filter((row) =>
+  //   searchParams?.babyLastName ? row.original?.babyLastName?.toUpperCase().startsWith(searchParams?.babyLastName.toUpperCase()) : true
+  // );
+};
+
+  // const globalSearch = (rows, columnIds) => {// not in use
+  const globalSearch_old = (params, columnIds) => {
+    // not in use
+    // return rows;
+    const filteredData = dataBack?.filter(
+      (item) => item?.vendor_type?.includes(params?.vendor_type) || item?.vendor_name?.toLowerCase()?.includes(params?.vendor_name?.toLowerCase())
+      // &&
+      // item?.witness_name?.toLowerCase()?.includes(searchQuery?.witness_name?.toLowerCase())
+    );
+    console.log("search field filterData ", filteredData);
+    setData(filteredData);
+
+    // return rows?.filter((row) =>
+    //   searchParams?.babyLastName ? row.original?.babyLastName?.toUpperCase().startsWith(searchParams?.babyLastName.toUpperCase()) : true
+    // );
+  };
+
 
   const fetchNextPage = useCallback(() => {
     setPageOffset((prevPageOffSet) => parseInt(prevPageOffSet) + parseInt(pageSize));
@@ -195,10 +245,6 @@ console.log("searchParams sssssssss",searchParams)
     setPageSize(Number(e.target.value));
     // setPageSize((prevPageSize) => (e.target.value));
   };
-
-  // if(is_Loading){
-  //   alert("ddddddddddd")
-  // }
 
   if (isLoading) {
     return <Loader />;
@@ -229,7 +275,6 @@ console.log("searchParams sssssssss",searchParams)
         tenantId={tenantId}
         filterComponent={filterComponent}
         // filterComponent={"d"}
-
       />
       <style>
         {`
