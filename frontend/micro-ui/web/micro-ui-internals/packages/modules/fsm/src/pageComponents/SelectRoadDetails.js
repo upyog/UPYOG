@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { FormStep, TextInput, LabelFieldPair, CardLabel, WrapUnMaskComponent } from "@egovernments/digit-ui-react-components";
+import { TextInput, LabelFieldPair, CardLabel, WrapUnMaskComponent } from "@egovernments/digit-ui-react-components";
+import FormStep from "../../../../react-components/src/molecules/FormStep";
 import { useForm, Controller } from "react-hook-form";
 import _ from "lodash";
 import Timeline from "../components/TLTimelineInFSM";
@@ -29,6 +30,7 @@ console.log("formData",formData)
         label: "ES_NEW_APPLICATION_ROAD_WIDTH",
         type: "text",
         name: "roadWidth",
+        placeholder:"Enter road width in meters",
         validation: {
             maxlength: 256,
           title: t("CORE_COMMON_ROADWIDTH_INVALID"),
@@ -38,6 +40,7 @@ console.log("formData",formData)
         label: "ES_NEW_APPLICATION_DISTANCE_FROM_ROAD",
         type: "text",
         name: "distancefromroad",
+        placeholder:"Enter distance of pit from road",
         validation: {
            maxlength: 256,
           title: t("CORE_COMMON_DISTANCE_INVALID"),

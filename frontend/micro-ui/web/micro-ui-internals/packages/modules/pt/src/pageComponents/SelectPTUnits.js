@@ -480,6 +480,7 @@ const SelectPTUnits = React.memo(({ t, config, onSelect, userType, formData }) =
                   isMandatory={config.isMandatory}
                   option={structureType}
                   selected={field?.structureType}
+                  placeholder={"Select structure type"}
                   select={(e) => selectstructureType(index, e)}
                 />
               </div>
@@ -491,6 +492,7 @@ const SelectPTUnits = React.memo(({ t, config, onSelect, userType, formData }) =
                   isMandatory={config.isMandatory}
                   option={ageOfProperty}
                   selected={field?.ageOfProperty}
+                  placeholder={"Select Age of Property"}
                   select={(e) => selectageOfProperty(index, e)}
                 />
               </div>
