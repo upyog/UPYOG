@@ -22,7 +22,7 @@
             return (
               <div>
                 <span className="link">
-                  <Link to={`${props.parentRoute}/property-details/` + row.original?.searchData?.["applicationNumber"]}>
+                  <Link to={`${props.parentRoute}/pet-details/` + row.original?.searchData?.["applicationNumber"]}>
                     {row.original?.searchData?.["applicationNumber"]}
                   </Link>
                 </span>

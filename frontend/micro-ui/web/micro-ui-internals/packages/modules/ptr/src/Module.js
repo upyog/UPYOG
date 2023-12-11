@@ -17,10 +17,10 @@ import PropertyUsageType from "./pageComponents/PropertyUsageType";
 import ProvideSubUsageType from "./pageComponents/ProvideSubUsageType";
 import ProvideSubUsageTypeOfRentedArea from "./pageComponents/ProvideSubUsageTypeOfRentedArea";
 import PTWFApplicationTimeline from "./pageComponents/PTWFApplicationTimeline";
-import PTSelectAddress from "./pageComponents/PTSelectAddress";
+// import PTSelectAddress from "./pageComponents/PTRSelectAddress";
 import PTSelectGeolocation from "./pageComponents/PTSelectGeolocation";
 //import PTSelectStreet from "./pageComponents/PTSelectStreet";
-import PTSelectPincode from "./pageComponents/PTSelectPincode";
+// import PTSelectPincode from "./pageComponents/PTRSelectPincode";
 
 import PTRPetdetails from "./pageComponents/PTRPetdetails";
 import PTROwnerDetails from "./pageComponents/PTROwnerDetails";
@@ -30,13 +30,16 @@ import PTRSelectStreet from "./pageComponents/PTRSelectStreet";
 import PTRCreate from "./pages/citizen/Create";
 import PTRCitizenDetails from "./pageComponents/PTRCitizenDetails";
 import PTRCitizenAddress from "./pageComponents/PTRCitizenAddress";
+import PTRSelectPincode from "./pageComponents/PTRSelectPincode";
+import PTRSelectAddress from "./pageComponents/PTRSelectAddress";
+import PTRSelectProofIdentity from "./pageComponents/PTRSelectProofIdentity";
 
 import RentalDetails from "./pageComponents/RentalDetails";
 import SelectInistitutionOwnerDetails from "./pageComponents/SelectInistitutionOwnerDetails";
 import SelectOwnerAddress from "./pageComponents/SelectOwnerAddress";
 // import SelectOwnerDetails from "./pageComponents/SelectOwnerDetails";
 import SelectOwnerShipDetails from "./pageComponents/SelectOwnerShipDetails";
-import SelectProofIdentity from "./pageComponents/SelectProofIdentity";
+// import SelectProofIdentity from "./pageComponents/SelectProofIdentity";
 import SelectSpecialOwnerCategoryType from "./pageComponents/SelectSpecialOwnerCategoryType";
 import SelectSpecialProofIdentity from "./pageComponents/SelectSpecialProofIdentity";
 import Units from "./pageComponents/Units";
@@ -108,8 +111,8 @@ const componentsToRegister = {
   PTCheckPage,
   PTAcknowledgement,
   PropertyTax,
-  PTSelectPincode,
-  PTSelectAddress,
+  // PTSelectPincode,
+  // PTSelectAddress,
   //PTSelectStreet,
   Proof,
   SelectOwnerShipDetails,
@@ -117,7 +120,7 @@ const componentsToRegister = {
   SelectSpecialOwnerCategoryType,
   SelectOwnerAddress,
   SelectInistitutionOwnerDetails,
-  SelectProofIdentity,
+  // SelectProofIdentity,
   SelectSpecialProofIdentity,
   PTSelectGeolocation,
   PTWFApplicationTimeline,
@@ -193,7 +196,10 @@ const componentsToRegister = {
   PTRSelectStreet,
   PTRCitizenDetails,
   PTRCitizenPet,
-  PTRCitizenAddress
+  PTRCitizenAddress,
+  PTRSelectPincode,
+  PTRSelectAddress,
+  PTRSelectProofIdentity
  
 };
 
@@ -240,42 +246,42 @@ export const PTRLinks = ({ matchPath, userType }) => {
   }, []);
 
   const links = [
-    {
-      link: `${matchPath}/property/citizen-search`,
-      i18nKey: t("PT_SEARCH_AND_PAY"),
-    },
-    {
-      link: `/digit-ui/citizen/payment/my-bills/PT`,
-      i18nKey: t("CS_TITLE_MY_BILLS"),
-    },
-    {
-      link: `${matchPath}/property/my-payments`,
-      i18nKey: t("PT_MY_PAYMENTS_HEADER"),
-    },
-    {
-      link: `${matchPath}/property/new-application`,
-      i18nKey: t("PTR_CREATE_PET_REGISTRATION"),
-    },
     // {
-    //   link: `${matchPath}/ptr/new-application`,
-    //   i18nKey: t("PTR_CREATE_PET_APPLICATION"),
+    //   link: `${matchPath}/property/citizen-search`,
+    //   i18nKey: t("PT_SEARCH_AND_PAY"),
+    // },
+    // {
+    //   link: `/digit-ui/citizen/payment/my-bills/PT`,
+    //   i18nKey: t("CS_TITLE_MY_BILLS"),
+    // },
+    // {
+    //   link: `${matchPath}/property/my-payments`,
+    //   i18nKey: t("PT_MY_PAYMENTS_HEADER"),
+    // },
+    // {
+    //   link: `${matchPath}/property/new-application`,
+    //   i18nKey: t("PTR_CREATE_PET_REGISTRATION"),
     // },
     {
-      link: `${matchPath}/property/my-properties`,
-      i18nKey: t("PT_MY_PROPERTIES"),
-    },
-    {
-      link: `${matchPath}/property/my-applications`,
-      i18nKey: t("PT_MY_APPLICATION"),
+      link: `${matchPath}/ptr/new-application`,
+      i18nKey: t("PTR_CREATE_PET_APPLICATION"),
     },
     // {
-    //   link: `${matchPath}/ptr/my-applications`,
-    //   i18nKey: t("PTR_MY_APPLICATIONS_HEADER"),
+    //   link: `${matchPath}/property/my-properties`,
+    //   i18nKey: t("PT_MY_PROPERTIES"),
+    // },
+    // {
+    //   link: `${matchPath}/property/my-applications`,
+    //   i18nKey: t("PT_MY_APPLICATION"),
     // },
     {
-      link: `${matchPath}/property/property-mutation`,
-      i18nKey: t("PT_PROPERTY_MUTATION"),
+      link: `${matchPath}/ptr/my-application`,
+      i18nKey: t("PTR_MY_APPLICATIONS_HEADER"),
     },
+    // {
+    //   link: `${matchPath}/property/property-mutation`,
+    //   i18nKey: t("PT_PROPERTY_MUTATION"),
+    // },
     {
       link: `${matchPath}/howItWorks`,
       i18nKey: t("PT_HOW_IT_WORKS"),
@@ -286,7 +292,7 @@ export const PTRLinks = ({ matchPath, userType }) => {
     },
   ];
 
-  return <CitizenHomeCard header={t("ACTION_TEST_PROPERTY_TAX")} links={links} Icon={() => <PTIcon className="fill-path-primary-main" />} />;
+  return <CitizenHomeCard header={t("ACTION_TEST_PTR")} links={links} Icon={() => <PTIcon className="fill-path-primary-main" />} />;
 };
 
 export const PTRComponents = {
