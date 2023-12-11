@@ -3,16 +3,16 @@ import React, { useEffect } from "react";
 import { cardBodyStyle, stringReplaceAll } from "../utils";
 //import { map } from "lodash-es";
 
-const PropertyTax = ({ t, config, onSelect, userType, formData }) => {
+const PetServiceDoc = ({ t, config, onSelect, userType, formData }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();
   sessionStorage.removeItem("docReqScreenByBack");
 
   const docType = config?.isMutation ? ["MutationDocuments"] : "Documents";
 
-  const { isLoading, data: Documentsob = {} } = Digit.Hooks.pt.usePropertyMDMS(stateId, "PropertyTax", docType);
+  const { isLoading, data: Documentsob = {} } = Digit.Hooks.ptr.usePetMDMS(stateId, "PetService", docType);
 
-  let docs = Documentsob?.PropertyTax?.[config?.isMutation ? docType[0] : docType];
+  let docs = Documentsob?.PetService?.[config?.isMutation ? docType[0] : docType];
   if (!config?.isMutation) docs = docs?.filter((doc) => doc["digit-citizen"]);
   function onSave() {}
 
@@ -23,13 +23,13 @@ const PropertyTax = ({ t, config, onSelect, userType, formData }) => {
   return (
     <React.Fragment>
       <Card>
-        <CardHeader>{!config.isMutation ? t("PT_DOC_REQ_SCREEN_HEADER") : t("PT_REQIURED_DOC_TRANSFER_OWNERSHIP")}</CardHeader>
+        <CardHeader>{!config.isMutation ? t("PTR_DOC_REQ_SCREEN_HEADER") : t("PTR_REQIURED_DOC_TRANSFER_OWNERSHIP")}</CardHeader>
         <div>
-          <CardText className={"primaryColor"}>{t("PT_DOC_REQ_SCREEN_SUB_HEADER")}</CardText>
-          <CardText className={"primaryColor"}>{t("PT_DOC_REQ_SCREEN_TEXT")}</CardText>
-          <CardText className={"primaryColor"}>{t("PT_DOC_REQ_SCREEN_SUB_TEXT")}</CardText>
-          <CardSubHeader>{t("PT_DOC_REQ_SCREEN_LABEL")}</CardSubHeader>
-          <CardText className={"primaryColor"}>{t("PT_DOC_REQ_SCREEN_LABEL_TEXT")}</CardText>
+          <CardText className={"primaryColor"}>{t("PTR_DOC_REQ_SCREEN_SUB_HEADER")}</CardText>
+          <CardText className={"primaryColor"}>{t("PTR_DOC_REQ_SCREEN_TEXT")}</CardText>
+          <CardText className={"primaryColor"}>{t("PTR_DOC_REQ_SCREEN_SUB_TEXT")}</CardText>
+          <CardSubHeader>{t("PTR_DOC_REQ_SCREEN_LABEL")}</CardSubHeader>
+          <CardText className={"primaryColor"}>{t("PTR_DOC_REQ_SCREEN_LABEL_TEXT")}</CardText>
           <div>
             {isLoading && <Loader />}
             {Array.isArray(docs)
@@ -50,10 +50,10 @@ const PropertyTax = ({ t, config, onSelect, userType, formData }) => {
                   docs.map(({ code, dropdownData }, index) => (
                     <div key={index}>
                       <CardSubHeader>
-                        {index + 1}. {t("PROPERTYTAX_" + stringReplaceAll(code, ".", "_") + "_HEADING")}
+                        {index + 1}. {t("PET_" + stringReplaceAll(code, ".", "_") + "_HEADING")}
                       </CardSubHeader>
                       {dropdownData.map((dropdownData) => (
-                        <CardText className={"primaryColor"}>{t("PROPERTYTAX_" + stringReplaceAll(dropdownData?.code, ".", "_") + "_LABEL")}</CardText>
+                        <CardText className={"primaryColor"}>{t("PET_" + stringReplaceAll(dropdownData?.code, ".", "_") + "_LABEL")}</CardText>
                       ))}
                     </div>
                   ))
@@ -61,11 +61,11 @@ const PropertyTax = ({ t, config, onSelect, userType, formData }) => {
           </div>
         </div>
         <span>
-          <SubmitBar label={t("PT_COMMON_NEXT")} onSubmit={onSelect} />
+          <SubmitBar label={t("PTR_COMMON_NEXT")} onSubmit={onSelect} />
         </span>
       </Card>
     </React.Fragment>
   );
 };
 
-export default PropertyTax;
+export default PetServiceDoc;

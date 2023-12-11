@@ -11,7 +11,7 @@ import IsThisFloorSelfOccupied from "./pageComponents/IsThisFloorSelfOccupied";
 import Proof from "./pageComponents/Proof";
 import PropertyBasementDetails from "./pageComponents/PropertyBasementDetails";
 import PropertyFloorDetails from "./pageComponents/PropertyFloorDetails";
-import PropertyTax from "./pageComponents/PropertyTax";
+// import PropertyTax from "./pageComponents/PropertyTax";
 import PropertyType from "./pageComponents/PropertyType";
 import PropertyUsageType from "./pageComponents/PropertyUsageType";
 import ProvideSubUsageType from "./pageComponents/ProvideSubUsageType";
@@ -33,6 +33,7 @@ import PTRCitizenAddress from "./pageComponents/PTRCitizenAddress";
 import PTRSelectPincode from "./pageComponents/PTRSelectPincode";
 import PTRSelectAddress from "./pageComponents/PTRSelectAddress";
 import PTRSelectProofIdentity from "./pageComponents/PTRSelectProofIdentity";
+import PetServiceDoc from "./pageComponents/PetServiceDoc";
 
 import RentalDetails from "./pageComponents/RentalDetails";
 import SelectInistitutionOwnerDetails from "./pageComponents/SelectInistitutionOwnerDetails";
@@ -110,7 +111,7 @@ const componentsToRegister = {
   PTLandArea,
   PTCheckPage,
   PTAcknowledgement,
-  PropertyTax,
+  // PropertyTax,
   // PTSelectPincode,
   // PTSelectAddress,
   //PTSelectStreet,
@@ -199,7 +200,8 @@ const componentsToRegister = {
   PTRCitizenAddress,
   PTRSelectPincode,
   PTRSelectAddress,
-  PTRSelectProofIdentity
+  PTRSelectProofIdentity,
+  PetServiceDoc
  
 };
 

@@ -5,7 +5,7 @@
                     "body": [
                         {
                             "route":"info",
-                            "component":"PropertyTax",
+                            "component":"PetServiceDoc",
                             "nextStep": "owners",
                             "key": "Documents"
                         },
