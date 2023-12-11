@@ -301,7 +301,7 @@ console.log("transferorOwnerstransferorOwnerstransferorOwners",transferorOwners,
               <CardSubHeader style={{ fontSize: "24px" }}>{t("PT_MUTATION_TRANSFEROR_DETAILS")}</CardSubHeader>
               <div>
                 {Array.isArray(transferorOwners) &&
-                  transferorOwners.reverse().map((owner, index) => (
+                   transfereeOwners.sort((item,item2)=>{return item?.additionalDetails?.ownerSequence - item2?.additionalDetails?.ownerSequence}).map((owner, index) => (
                     <div key={index}>
                       <CardSubHeader>
                         {transferorOwners.length != 1 && (
@@ -330,7 +330,7 @@ console.log("transferorOwnerstransferorOwnerstransferorOwners",transferorOwners,
               {isInstitution ? (
                 <div>
                   {Array.isArray(transfereeOwners) &&
-                    transfereeOwners.reverse().map((owner, index) => (
+                   transfereeOwners.sort((item,item2)=>{return item.additionalDetails.ownerSequence - item2.additionalDetails.ownerSequence}).map((owner, index) => (
                       <div key={index}>
                         <CardSubHeader>
                           {transfereeOwners.length != 1 && (
@@ -363,7 +363,7 @@ console.log("transferorOwnerstransferorOwnerstransferorOwners",transferorOwners,
               ) : (
                 <div>
                   {Array.isArray(transfereeOwners) &&
-                    transfereeOwners.reverse().map((owner, index) => (
+                    transfereeOwners.sort((item,item2)=>{return item?.additionalDetails?.ownerSequence - item2?.additionalDetails?.ownerSequence}).map((owner, index) => (
                       <div key={index}>
                         <CardSubHeader>
                           {transfereeOwners.length != 1 && (
@@ -520,7 +520,7 @@ console.log("transferorOwnerstransferorOwnerstransferorOwners",transferorOwners,
               <CardSubHeader style={{ fontSize: "24px" }}>{t("PT_COMMON_PROPERTY_OWNERSHIP_DETAILS_HEADER")}</CardSubHeader>
               <div className="owner-details">
                 {Array.isArray(owners) &&
-                  owners.reverse().map((owner, index) => (
+                  owners.sort((item,item2)=>{return item?.additionalDetails?.ownerSequence - item2?.additionalDetails?.ownerSequence}).map((owner, index) => (
                     <div key={index}>
                       <CardSubHeader>
                         {owners.length != 1 && (
