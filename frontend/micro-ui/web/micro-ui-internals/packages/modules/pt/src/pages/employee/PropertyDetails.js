@@ -305,7 +305,9 @@ const PropertyDetails = () => {
 
   }
   const UpdatePropertyNumberComponent = Digit?.ComponentRegistryService?.getComponent("EmployeeUpdateOwnerNumber");
-  console.log("app", appDetailsToShow)
+  if (appDetailsToShow?.applicationData) {
+    appDetailsToShow?.applicationData?.owners.sort((item, item2) => { return item?.additionalDetails?.ownerSequence - item2?.additionalDetails?.ownerSequence })
+  }
   return (
     <div>
       <Header>{t("PT_PROPERTY_INFORMATION")}</Header>

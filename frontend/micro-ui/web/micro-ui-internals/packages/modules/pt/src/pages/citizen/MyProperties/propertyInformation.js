@@ -365,7 +365,7 @@ const handleClick=()=>{
           <CardSubHeader>{t("PT_COMMON_PROPERTY_OWNERSHIP_DETAILS_HEADER")}</CardSubHeader>
           <div className="owner-details">
             {Array.isArray(owners) &&
-              owners.map((owner, index) => (
+              owners.sort((item,item2)=>{return item.additionalDetails.ownerSequence - item2.additionalDetails.ownerSequence}).map((owner, index) => (
                 <div key={index}>
                   <CardSubHeader>
                     {owners.length != 1 && (

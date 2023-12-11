@@ -223,7 +223,9 @@ if (applicationDetails?.applicationDetails[1].values.length ==5)
 applicationDetails?.applicationDetails[1].values.push(obj)
 }
 }
-
+  if (appDetailsToShow?.applicationData) {
+    appDetailsToShow?.applicationData?.owners.sort((item, item2) => { return item?.additionalDetails?.ownerSequence - item2?.additionalDetails?.ownerSequence })
+  }
   return (
     <div>
         <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
