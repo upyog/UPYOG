@@ -58,7 +58,7 @@ const Routes = ({ path, stateCode }) => {
 
   const handClick =(e,module)=>{
     e.stopPropagation() 
-    module === "home"?window.location.href=`${path}/landing/${module}`:window.location.href=`${path}/dashboard/${module}`
+    module === "home"?window.location.href=`${path}/landing/NURT_DASHBOARD`:window.location.href=`${path}/dashboard/${module}`
   }
   return (
     <div style={{display:"flex"}}>

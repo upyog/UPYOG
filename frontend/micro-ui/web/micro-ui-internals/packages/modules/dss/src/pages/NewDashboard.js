@@ -107,7 +107,8 @@ import {
     const [showOptions, setShowOptions] = useState(false);
     const [showFilters, setShowFilters] = useState(false);
     const [tabState, setTabState] = useState("");
-  
+   
+    
     const handleFilters = (data) => {
       Digit.SessionStorage.set(key, data);
       setFilters(data);
@@ -262,17 +263,7 @@ import {
     if (isLoading || isUlbLoading || localizationLoading || isMdmsLoading || isLoadingNAT || isServicesLoading) {
       return <Loader />;
     }
-    console.log("dashboardConfig?.[0]?.visualizations",dashboardConfig?.[0]?.visualizations)
-  //   let b= []
-  //   let c= dashboardConfig?.[0]?.visualizations[0].vizArray[0].charts.filter((val) =>{
-  //     if(val.id === "targetCollectionvOverview" ||val.id === "totalCollectionOverview" ||val.id === "totalCollectionv3" || val.id ==="totalNonTaxCollection" ||val.id === "nonTaxRevenueContribution" || val.id ==="StateGDPwiseTotalRevenueCollection" || val.id ==="PropertyTaxRevenuePerHouseholdOverview" || val.id ==="NonTaxRevenuePerHousehold")
-  //   {
-  //     return val
-  //   }
-  //   })
-  // console.log("c1234444",c)
-  // dashboardConfig[0].visualizations[0].vizArray[0].charts = c
-  //   b.push(dashboardConfig?.[0]?.visualizations[0],dashboardConfig?.[0]?.visualizations[2])
+
     return (
       <FilterContext.Provider value={provided}>
         <div ref={fullPageRef} id="divToPrint">

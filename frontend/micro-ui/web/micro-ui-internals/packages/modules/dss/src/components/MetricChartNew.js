@@ -88,11 +88,31 @@ const MetricChartRow = ({ data, setChartDenomination, index, moduleCode, indexVa
          lastUpdatedTime: "",
        }}));
      }
+   
+     if(response?.responseData?.visualizationCode == "StateGDPwiseTotalRevenueCollection" && response.responseData.data[0].headerValue < 0.001)
+     {
+     
+      response.responseData.data[0].headerValue =  response.responseData.data?.[0].headerValue *100;
+      response.responseData.data[0].headerSymbol = "percentage"
+      console.log("responsee",response)
+     }
     } else {
       
       setShowDate({});
     }
   }, [response]);
+  useEffect(() => {
+    if (response) {
+     if(response?.responseData?.visualizationCode == "StateGDPwiseTotalRevenueCollection" && response.responseData.data[0].headerValue <0.0001)
+     {
+     
+      response.responseData.data[0].headerValue =  response.responseData.data?.[0].headerValue *100;
+      response.responseData.data[0].headerSymbol = "percentage"
+      console.log("responsee",response)
+     }
+     
+    } 
+  }, []);
 
   if (isLoading) {
     return false;
@@ -135,7 +155,6 @@ const MetricChartRow = ({ data, setChartDenomination, index, moduleCode, indexVa
     // if (isMobile) return t(`TIP_${data.name}`).length < 50 ? 50 : "auto";
     // else return 50;
   };
-console.log("response?.responseData?.data?.[0]",response?.responseData?.data?.[0])
   return (
     <div className="row" style={{display:"flex",flexDirection:"column",width:"45%", height:"100px",margin:"2%",padding:"2%",backgroundColor:"white",boxShadow:"0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22)"}}>
       <div style={{display:"flex"}}>
@@ -172,6 +191,7 @@ console.log("response?.responseData?.data?.[0]",response?.responseData?.data?.[0
 
 const MetricChartNew = ({ data, setChartDenomination, moduleCode }) => {
   const { charts } = data;
+
   const indexValuesWithStar = [
     "citizenAvgRating",
     "nssOverviewCitizenFeedbackScore",
