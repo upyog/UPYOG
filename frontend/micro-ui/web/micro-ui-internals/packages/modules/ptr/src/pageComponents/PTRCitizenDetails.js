@@ -12,6 +12,7 @@ const PTRCitizenDetails
 
   let index =  window.location.href.charAt(window.location.href.length - 1);
   let validation = {};
+  //this is for blam checking
 
   const [applicantName, setName] = useState((formData.owners && formData.owners[index] && formData.owners[index].applicantName) || formData?.owners?.applicantName || "");
   const [emailId, setEmail] = useState((formData.owners && formData.owners[index] && formData.owners[index].emailId) || formData?.owners?.emailId || "");
