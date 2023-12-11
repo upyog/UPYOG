@@ -73,7 +73,7 @@ const SelectOwnerShipDetails = ({ t, config, onSelect, userType, formData, onBlu
     if (userType === "employee") {
       const arr = ownerShipdropDown
         ?.filter((e) => e.code.split(".").length <= 2)
-        ?.splice(0, 4)
+        ?.splice(0, 10)
         ?.map((ownerShipDetails) => ({
           ...ownerShipDetails,
           i18nKey: `PT_OWNERSHIP_${
@@ -162,7 +162,11 @@ const SelectOwnerShipDetails = ({ t, config, onSelect, userType, formData, onBlu
 
   return (
     <React.Fragment>
-      {window.location.href.includes("/citizen/pt/property/property-mutation") ? <Timeline currentStep={1} flow="PT_MUTATE" /> : <Timeline currentStep={2} />}
+      {window.location.href.includes("/citizen/pt/property/property-mutation") ? (
+        <Timeline currentStep={1} flow="PT_MUTATE" />
+      ) : (
+        <Timeline currentStep={2} />
+      )}
       <FormStep t={t} config={config} onSelect={goNext} onSkip={onSkip} isDisabled={!ownershipCategory}>
         <div>
           <RadioButtons
