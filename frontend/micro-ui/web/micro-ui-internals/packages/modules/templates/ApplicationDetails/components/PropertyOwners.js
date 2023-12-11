@@ -34,6 +34,7 @@ function PropertyOwners({ owners }) {
 
   return (
     <React.Fragment>
+      <div className="owner-details">
       {owners.map((owner, index) => (
         <div key={t(owner?.title)} style={cardStyles}>
           {/* TODO, Later will move to classes */}
@@ -87,6 +88,7 @@ function PropertyOwners({ owners }) {
           </React.Fragment>
         </div>
       ))}
+      </div>
     </React.Fragment>
   );
 }

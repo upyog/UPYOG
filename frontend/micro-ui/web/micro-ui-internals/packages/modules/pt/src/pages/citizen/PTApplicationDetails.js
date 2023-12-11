@@ -151,7 +151,7 @@ const PTApplicationDetails = () => {
 
   let transfereeOwners = get(property, "ownersTemp", []);
   let transferorOwners = get(property, "ownersInit", []);
-
+console.log("transferorOwnerstransferorOwnerstransferorOwners",transferorOwners,transfereeOwners)
   let transfereeInstitution = get(property, "institutionTemp", []);
   let isInstitution = property?.ownershipCategoryInit?.startsWith("INSTITUTION");
   let transferorInstitution = get(property, "institutionInit", []);
@@ -457,7 +457,7 @@ const PTApplicationDetails = () => {
                    <Row
                   className="border-none"
                   label={t("PT_ASSESMENT1_ELECTRICITY_UID")}
-                  text={(`${t(`${property.additionalDetails?.electricityuid}`)}`) || t("CS_NA")}
+                  text={(`${t(`${property.additionalDetails?.uid}`)}`) || t("CS_NA")}
                 />
               </StatusTable>
               <div>
@@ -518,7 +518,7 @@ const PTApplicationDetails = () => {
                   ))}
               </div>
               <CardSubHeader style={{ fontSize: "24px" }}>{t("PT_COMMON_PROPERTY_OWNERSHIP_DETAILS_HEADER")}</CardSubHeader>
-              <div>
+              <div className="owner-details">
                 {Array.isArray(owners) &&
                   owners.reverse().map((owner, index) => (
                     <div key={index}>

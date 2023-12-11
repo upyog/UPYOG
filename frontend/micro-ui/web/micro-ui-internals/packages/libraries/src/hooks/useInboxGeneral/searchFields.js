@@ -26,6 +26,7 @@ const inboxSearchFields = {
       },
     },
   ],
+
 };
 
 const searchFieldsForSearch = {

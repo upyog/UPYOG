@@ -250,6 +250,7 @@ import useToCheckPrivacyEnablement from "./ws/useToCheckPrivacyEnablement";
 import useWSConfigMDMS from "./ws/useWSConfigMDMS";
 import useFeedBackSearch from "./useFeedBackSearch";
 
+
 const pgr = {
   useComplaintDetails,
   useComplaintsList,
@@ -333,7 +334,6 @@ const pt = {
   useRatingAndFeedbackMDMS,
   useServiceSearchCF,
 };
-
 const dss = {
   useMDMS: useDssMdms,
   useDashboardConfig,

@@ -398,3 +398,11 @@
 .language-selector .submit-bar, .submit-bar-disabled{
   background-color: #5a1166 !important;
 }
+
+.owner-details{
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  flex-wrap: wrap;
+  justify-content: space-between
+}

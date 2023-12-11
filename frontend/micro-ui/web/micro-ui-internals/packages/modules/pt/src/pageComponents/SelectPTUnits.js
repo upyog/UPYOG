@@ -115,73 +115,73 @@ const SelectPTUnits = React.memo(({ t, config, onSelect, userType, formData }) =
     {
      "i18nKey": "PROPERTYTAX_MONTH1",
       "name": "Month 1",
-      "code": "month1",
+      "code": "1",
       "active": true
      },
     {
       "i18nKey": "PROPERTYTAX_MONTH2",
       "name": "Month 2",
-      "code": "month2",
+      "code": "2",
      "active": true
      },
      {
       "i18nKey": "PROPERTYTAX_MONTH3",
       "name": "Month 3",
-      "code": "month3",
+      "code": "3",
      "active": true
      },
      {
       "i18nKey": "PROPERTYTAX_MONTH4",
       "name": "Month 4",
-      "code": "month4",
+      "code": "4",
      "active": true
      },
      {
       "i18nKey": "PROPERTYTAX_MONTH5",
       "name": "Month 5",
-      "code": "month5",
+      "code": "5",
      "active": true
      },
      {
       "i18nKey": "PROPERTYTAX_MONTH6",
       "name": "Month 6",
-      "code": "month6",
+      "code": "6",
      "active": true
      },
      {
       "i18nKey": "PROPERTYTAX_MONTH7",
       "name": "Month 7",
-      "code": "month7",
+      "code": "7",
      "active": true
      },
      {
       "i18nKey": "PROPERTYTAX_MONTH8",
       "name": "Month 8",
-      "code": "month8",
+      "code": "8",
      "active": true
      },
      {
       "i18nKey": "PROPERTYTAX_MONTH9",
       "name": "Month 9",
-      "code": "month9",
+      "code": "9",
      "active": true
      },
      {
       "i18nKey": "PROPERTYTAX_MONTH10",
       "name": "Month 10",
-      "code": "month10",
+      "code": "10",
      "active": true
      },
      {
       "i18nKey": "PROPERTYTAX_MONTH11",
       "name": "Month 11",
-      "code": "month11",
+      "code": "11",
      "active": true
      },
      {
       "i18nKey": "PROPERTYTAX_MONTH12",
       "name": "Month 12",
-      "code": "month12",
+      "code": "12",
      "active": true
      },    
     ]   
@@ -189,13 +189,13 @@ const SelectPTUnits = React.memo(({ t, config, onSelect, userType, formData }) =
       {
         "i18nKey": "NON_RENT_SELFOCCUPIED",
         "name": "Non Rent Self occupied",
-        "code": "nonrentselfoccupied",
+        "code": "NonRentSelfOccupied",
        "active": true
        },  
        {
         "i18nKey": "NON_RENT_UNOCCUPIED",
         "name": "Non rent Un occupied",
-        "code": "nonrentunoccupied",
+        "code": "NonRentUnOccupied",
        "active": true
        },  
     ]
@@ -525,7 +525,7 @@ const SelectPTUnits = React.memo(({ t, config, onSelect, userType, formData }) =
                   select={(e) => selectrentedMonths(index, e)}
                 />
               </div>
-              { (field?.rentedMonths?.code ==="month1" || field?.rentedMonths?.code ==="month2" || field?.rentedMonths?.code ==="month3" || field?.rentedMonths?.code ==="month4" || field?.rentedMonths?.code ==="month5" || field?.rentedMonths?.code ==="month6" || field?.rentedMonths?.code ==="month7" || field?.rentedMonths?.code ==="month8" || field?.rentedMonths?.code ==="month9" || field?.rentedMonths?.code ==="month10" || field?.rentedMonths?.code ==="month11") && (
+              { (field?.rentedMonths?.code ==="1" || field?.rentedMonths?.code ==="2" || field?.rentedMonths?.code ==="3" || field?.rentedMonths?.code ==="4" || field?.rentedMonths?.code ==="5" || field?.rentedMonths?.code ==="6" || field?.rentedMonths?.code ==="7" || field?.rentedMonths?.code ==="8" || field?.rentedMonths?.code ==="9" || field?.rentedMonths?.code ==="10" || field?.rentedMonths?.code ==="11") && (
               <>
               <CardLabel>{`${t("PT_FORM2_NONRENTED_MONTHS_USAGE")}*`}</CardLabel>
               <div className={"form-pt-dropdown-only"}>

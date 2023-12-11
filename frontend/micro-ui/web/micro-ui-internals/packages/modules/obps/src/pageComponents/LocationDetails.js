@@ -113,7 +113,7 @@ const LocationDetails = ({ t, config, onSelect, userType, formData, ownerIndex =
     //     sessionStorage.setItem("currLocality", JSON.stringify(filteredLocalityList[0]));
     //   }
     // }
-    console.log("propertyData.address.locality",propertyData.address.locality)
+
     setSelectedLocality(propertyData.address.locality)
   }, [selectedCity, formData?.pincode, fetchedLocalities, pincode,geoLocation]);
 

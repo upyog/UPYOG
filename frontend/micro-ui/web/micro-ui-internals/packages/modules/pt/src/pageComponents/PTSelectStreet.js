@@ -31,7 +31,6 @@ const PTSelectStreet = ({ t, config, onSelect, userType, formData, formState, se
         validation: {
           pattern: "[a-zA-Z0-9 !@#$%^&*()_+\-={};':\\\\|,.<>/?]{1,64}",
           isRequired: true,
-          // maxlength: 256,
           title: t("CORE_COMMON_STREET_INVALID"),
         },
       },
@@ -43,7 +42,6 @@ const PTSelectStreet = ({ t, config, onSelect, userType, formData, formState, se
         validation: {
           pattern: "[a-zA-Z0-9 !@#$%^&*()_+\-={};':\\\\|,.<>/?]{1,64}",
           isRequired: true,
-          // maxlength: 256,
           title: t("CORE_COMMON_DOOR_INVALID"),
         },
       },
@@ -53,11 +51,7 @@ const PTSelectStreet = ({ t, config, onSelect, userType, formData, formState, se
   const convertValidationToRules = ({ validation, name, messages }) => {
     if (validation) {
       let { pattern: valPattern, maxlength, minlength, required: valReq } = validation || {};
-      if(true)
-      {
-        console.log("validation, name, messages",validation, name, messages,formValue)
-        //setLocalError(key, { type: `${key.toUpperCase()}_REQUIRED`, message: t(`CORE_COMMON_REQUIRED_ERRMSG`) });
-      }
+     
       let pattern = (value) => {
         if (valPattern) {
           if (valPattern instanceof RegExp) return valPattern.test(value) ? true : messages?.pattern || `${name.toUpperCase()}_PATTERN`;
@@ -69,15 +63,12 @@ const PTSelectStreet = ({ t, config, onSelect, userType, formData, formState, se
       let maxLength = (value) => (maxlength ? (value?.length <= maxlength ? true : messages?.maxlength || `${name.toUpperCase()}_MAXLENGTH`) : true);
       let minLength = (value) => (minlength ? (value?.length >= minlength ? true : messages?.minlength || `${name.toUpperCase()}_MINLENGTH`) : true);
       let required = (value) => (valReq ? (!!value ? true : messages?.required || `${name.toUpperCase()}_REQUIRED`) : true);
-
       return { pattern, required, minLength, maxLength };
     }
     return {};
   };
 const setData=(config,data)=>{
   let dataNew ={street,doorNo}
-  console.log(dataNew,config)
- 
   onSelect(config, dataNew)
 }
   useEffect(() => {
@@ -95,10 +86,11 @@ const setData=(config,data)=>{
     const keys = Object.keys(formValue);
     const part = {};
     keys.forEach((key) => (part[key] = formData[config.key]?.[key]));
-   
+    console.log("key",formValue)
     if (!_.isEqual(formValue, part)) {
       onSelect(config.key, { ...formData[config.key], ...formValue });
       for (let key in formValue) {
+      
         if (!formValue[key] && !localFormState?.errors[key]) {
           setLocalError(key, { type: `${key.toUpperCase()}_REQUIRED`, message: t(`CORE_COMMON_REQUIRED_ERRMSG`) });
         } else if (formValue[key] && localFormState.errors[key]) {
@@ -107,9 +99,10 @@ const setData=(config,data)=>{
       }
       trigger();
     } 
-    //console.log("formValue",formValue,formData)
+    console.log("formValue",formValue,formData)
   }, [formValue]);
   function selectStreet(e) {
+    setFocusIndex({ index:1 });
     setStreet(e.target.value);
   }
   function selectDoorNo(e) {
@@ -132,12 +125,14 @@ const setData=(config,data)=>{
               defaultValue={formData?.address?.[inputs[0].name]}
               name={inputs[0].name}
               rules={{ validate: convertValidationToRules(inputs[0]) }}
+              type={"text"}
               render={(_props) => (
-          
+                
                 <TextInput
                   id={inputs[0].name}
                   key={inputs[0].name}
                   value={_props.value}
+                  type={"text"}
                   onChange={(e) => {
                     setFocusIndex({ index:0  });
                     _props.onChange(e.target.value);
@@ -170,12 +165,14 @@ const setData=(config,data)=>{
               defaultValue={formData?.address?.[inputs[1].name]}
               name={inputs[1].name}
               rules={{ validate: convertValidationToRules(inputs[1]) }}
+              type={"text"}
               render={(_props) => (
           
                 <TextInput
                   id={inputs[1].name}
                   key={inputs[1].name}
                   value={_props.value}
+                  type={"text"}
                   onChange={(e) => {
                     setFocusIndex({ index:1 });
                     _props.onChange(e.target.value);
@@ -184,6 +181,7 @@ const setData=(config,data)=>{
                   disable={isRenewal}
                   autoFocus={focusIndex?.index == 1}
                   {...inputs[1].validation}
+                  
                 />
                 
                
@@ -214,23 +212,26 @@ const setData=(config,data)=>{
         <CardLabel>{`${t("PT_PROPERTY_ADDRESS_STREET_NAME")}*`}</CardLabel>
           <TextInput
             t={t}
-            isMandatory={true}
+            //isMandatory={true}
             type={"text"}
             optionKey="i18nKey"
             name="street"
             onChange={selectStreet}
             value={street}
-            
+            errorStyle={true}
+            autoFocus={focusIndex?.index == 1}
           />
       <CardLabel>{`${t("PT_PROPERTY_ADDRESS_HOUSE_NO")}*`}</CardLabel>
           <TextInput
             t={t}
-            isMandatory={true}
+            //isMandatory={true}
             type={"text"}
             optionKey="i18nKey"
             name="doorNo"
             onChange={selectDoorNo}
             value={doorNo}
+            errorStyle={false}
+            autoFocus={focusIndex?.index == 1}
            
           />
       </FormStep>
