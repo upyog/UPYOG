@@ -76,7 +76,6 @@ const Chart = ({ data, moduleLevel, overview = false }) => {
     return <Loader />;
   }
   
-  console.log("response",response)
   if(response?.responseData?.data?.[0]?.headerName === "DSS_STATE_GDP_REVENUE_COLLECTION" )
   {
     
