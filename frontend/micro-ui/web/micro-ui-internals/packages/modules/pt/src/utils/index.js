@@ -901,9 +901,14 @@ export const stringReplaceAll = (str = "", searcher = "", replaceWith = "") => {
   return str;
 };
 
-export const DownloadReceipt = async (consumerCode, tenantId, businessService, pdfKey = "consolidatedreceipt") => {
+export const DownloadReceipt = async (consumerCode, tenantId, businessService, receiptNumber,pdfKey = "consolidatedreceipt") => {
   tenantId = tenantId ? tenantId : Digit.ULBService.getCurrentTenantId();
-  await Digit.Utils.downloadReceipt(consumerCode, businessService, "consolidatedreceipt", tenantId);
+  if (receiptNumber) {
+    await Digit.Utils.downloadReceipt(null, businessService, "pt", undefined, receiptNumber);
+  }
+  else {
+    await Digit.Utils.downloadReceipt(consumerCode, businessService, "pt", tenantId);
+  }
 };
 
 export const checkIsAnArray = (obj = []) => {
