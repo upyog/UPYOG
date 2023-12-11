@@ -1,5 +1,5 @@
-import { CardLabel, LabelFieldPair, TextInput, CardLabelError } from "@egovernments/digit-ui-react-components";
-import FormStep from "../../../../react-components/src/molecules/FormStep";
+import { CardLabel,LabelFieldPair, TextInput, CardLabelError } from "@egovernments/digit-ui-react-components";
+import  FormStep  from "../../../../react-components/src/molecules/FormStep";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import Timeline from "../components/TLTimeline";
@@ -19,44 +19,38 @@ const Electricity = ({ t, config, onSelect, value, userType, formData, setError:
     [electricity, setElectricity] = useState(formData?.originalData?.additionalDetails?.electricity || "");
   }
   const [error, setError] = useState(null);
-  const [unitareaerror, setunitareaerror] = useState(null);
-  const [areanotzeroerror, setareanotzeroerror] = useState(null);
-
   const { pathname } = useLocation();
   const presentInModifyApplication = pathname.includes("modify");
-  function setElectricityNo(e) {
-    setElectricity(e.target.value);
-
-  }
   useEffect(() => {
-    electricity.length == 10 ? setHidden(false) : setHidden(true);
+    validateElectricity();
   }, [electricity])
-  function onChange(e) {
+  const onChange=(e)=> {
     setElectricity(e.target.value);
+    validateElectricity();
 
   }
 
   //}
-  function goNext() {
+  const goNext=()=> {
     sessionStorage.setItem("electricity", electricity.i18nKey);
     onSelect("electricity", { electricity });
-
   };
 
 
   useEffect(() => {
     if (userType === "employee") {
+      console.log("configkeyEEE", config.key)
       if (electricity !== "undefined" && electricity?.length === 0) setFormError(config.key, { type: "required", message: t("CORE_COMMON_REQUIRED_ERRMSG") });
       else if (electricity !== "undefined" && electricity?.length < 10 || electricity?.length > 10 || !Number(electricity)) setFormError(config.key, { type: "invalid", message: t("ERR_DEFAULT_INPUT_FIELD_MSG") });
       else clearFormErrors(config.key);
-      onSelect(config.key, electricity);
 
+      onSelect(config.key, electricity);
+      //onSelect("electricity", electricity);
     }
   }, [electricity]);
 
   useEffect(() => {
     if (presentInModifyApplication && userType === "employee") {
-
       setElectricity(formData?.originalData?.additionalDetails?.electricity)
     }
   }, []);
@@ -66,7 +60,7 @@ const Electricity = ({ t, config, onSelect, value, userType, formData, setError:
       label: "PT_ELECTRICITY_LABEL",
       type: "text",
       name: "electricity",
-      error: "ERR_HRMS_INVALID_ELECTRICITY_NO",
+      isMandatory : "true",
       validation: {
         required: true,
         minLength: 10,
@@ -76,6 +70,23 @@ const Electricity = ({ t, config, onSelect, value, userType, formData, setError:
 
 
   ];
+  const validateElectricity=()=>{
+    if(new RegExp(/^\d{10}$/).test(electricity) || electricity===""){
+      setError("");
+    }
+    
+  };
+  const handleElectricityChange=(e)=>{
+    const value=e.target.value;
+      if(new RegExp(/^\d{0,10}$/).test(value)|| value===""){
+        onChange(e);
+        validateElectricity();
+      }
+      else{
+        setError("Electricity number should contain only 10 digits");
+      }
+
+  }
 
   if (userType === "employee") {
     return inputs?.map((input, index) => {
@@ -90,7 +101,7 @@ const Electricity = ({ t, config, onSelect, value, userType, formData, setError:
                 id={input.name}
                 //isMandatory={config.isMandatory}
                 value={electricity}
-                onChange={onChange}
+                onChange={handleElectricityChange}
                 //onChange={setElectricityNo}
                 onSelect={goNext}
                 placeholder={"Enter a valid 10-digit electricity number"}
@@ -116,12 +127,12 @@ const Electricity = ({ t, config, onSelect, value, userType, formData, setError:
       {window.location.href.includes("/citizen") ? <Timeline currentStep={1} /> : null}
       <FormStep
         config={config}
-        onChange={onChange}
+        onChange={handleElectricityChange}
 
         onSelect={goNext}
         onSkip={onSkip}
         t={t}
-        isDisabled={hidden}
+        isDisabled={electricity.length===10 ? false: true}
         showErrorBelowChildren={true}
       >
         <CardLabel>{`${t("PT_ELECTRICITY")}`}</CardLabel>
@@ -132,7 +143,7 @@ const Electricity = ({ t, config, onSelect, value, userType, formData, setError:
           optionKey="i18nKey"
           name="electricity"
           value={electricity}
-          onChange={setElectricityNo}
+          onChange={handleElectricityChange}
           placeholder={"Enter a valid 10-digit electricity number"}
           {...(validation = {
             required: true,
@@ -140,6 +151,9 @@ const Electricity = ({ t, config, onSelect, value, userType, formData, setError:
             maxLength: 10,
           })}
         />
+        {error && (
+          <CardLabelError>{error}</CardLabelError> 
+        )}
       </FormStep>
     </React.Fragment>
   );
