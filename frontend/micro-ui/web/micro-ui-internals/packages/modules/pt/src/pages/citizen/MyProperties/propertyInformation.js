@@ -283,6 +283,7 @@ const handleClick=()=>{
   sessionStorage.setItem("propertyid",data.Properties[0].propertyId)  ;
   history.push(`/digit-ui/citizen/pgr/create-complaint/complaint-type?propertyId=${property.propertyId}`);
   }
+  console.log("data78", data)
   return (
     <React.Fragment>
       <Header>{t("PT_PROPERTY_INFORMATION")}</Header>
@@ -322,6 +323,8 @@ const handleClick=()=>{
             <Row className="border-none" label={t("PT_COMMON_PROPERTY_TYPE")} text={`${t(getPropertyTypeLocale(property?.propertyType))}` || t("CS_NA")} />
             <Row className="border-none" label={t("PT_ASSESMENT1_PLOT_SIZE")} text={`${property.landArea} sq.ft` || t("CS_NA")} />
             <Row className="border-none" label={t("PT_ASSESMENT_INFO_NO_OF_FLOOR")} text={`${property.noOfFloors || t("CS_NA")}`} />
+            <Row className="border-none" label={t("PT_ASSESSMENT1_ELECTRICITY")} text={`${property?.additionalDetails?.electricity || t("CS_NA")}`} />
+            <Row className="border-none" label={t("PT_ASSESSMENT1_UID")} text={`${property?.additionalDetails?.uid || t("CS_NA")}`} />
           </StatusTable>
           <div>
             {Array.isArray(units) &&

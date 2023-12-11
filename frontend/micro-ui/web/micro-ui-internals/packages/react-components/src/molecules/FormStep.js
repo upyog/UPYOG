@@ -54,6 +54,7 @@ const FormStep = ({
               maxlength={input.validation.maxlength}
               pattern={input.validation?.pattern}
               title={input.validation?.title}
+              placeholder={input.placeholder}
               inputRef={register(input.validation)}
               isMandatory={errors[input.name]}
               disable={input.disable ? input.disable : false}

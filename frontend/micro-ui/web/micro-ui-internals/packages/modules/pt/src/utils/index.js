@@ -125,6 +125,7 @@ export const setOwnerDetails = (data) => {
         name: owners[0]?.name,
         ownerType: owners[0]?.ownerType?.code || "NONE",
         documents: document,
+        additionalDetails:{ownerSequence:0, ownerName: owners[0]?.name}
       });
       data.institution = institution;
       data.owners = owner;
@@ -158,6 +159,7 @@ export const setOwnerDetails = (data) => {
           additionalDetails:{ownerSequence:index, ownerName:ownr?.name}
         });
       });
+      console.log("dddddddddddddddddddd",owner)
       data.owners = owner;
     }
   }
@@ -523,6 +525,7 @@ export const setPropertyDetails = (data) => {
 
 /*   method to convert collected details to proeprty create object */
 export const convertToProperty = (data = {}) => {
+  console.log("dtaaaaaaaaa",data)
   let dataNew = data?.units?.map((value) => {
     let additionalDetails = { "structureType": value.structureType, "ageOfProperty": value.ageOfProperty }
     return { ...value, additionalDetails }
@@ -898,9 +901,14 @@ export const stringReplaceAll = (str = "", searcher = "", replaceWith = "") => {
   return str;
 };
 
-export const DownloadReceipt = async (consumerCode, tenantId, businessService, pdfKey = "consolidatedreceipt") => {
+export const DownloadReceipt = async (consumerCode, tenantId, businessService, receiptNumber,pdfKey = "consolidatedreceipt") => {
   tenantId = tenantId ? tenantId : Digit.ULBService.getCurrentTenantId();
-  await Digit.Utils.downloadReceipt(consumerCode, businessService, "consolidatedreceipt", tenantId);
+  if (receiptNumber) {
+    await Digit.Utils.downloadReceipt(null, businessService, "pt", undefined, receiptNumber);
+  }
+  else {
+    await Digit.Utils.downloadReceipt(consumerCode, businessService, "pt", tenantId);
+  }
 };
 
 export const checkIsAnArray = (obj = []) => {

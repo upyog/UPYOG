@@ -611,6 +611,7 @@ function Unit({
                   option={structureTypeOptions}
                   select={props.onChange}
                   optionKey="i18nKey"
+                  placeholder="Select the Structure Type"
                   onBlur={props.onBlur}
                   t={t}
                 />
@@ -729,6 +730,7 @@ function Unit({
                 //select={selectSelfOccupied}
                 select={props.onChange}
                 optionKey="i18nKey"
+                placeholder="Select Age of Property"
                 onBlur={props.onBlur}
                 t={t}
               />
