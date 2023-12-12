@@ -22,7 +22,6 @@ const DisplayText = (action, isSuccess, isEmployee, t) => {
 };
 
 const BannerPicker = (props) => {
-  //console.log("propssss", props)
   return (
     <Banner
       message={GetActionMessage(props?.data?.PetRegistrationApplications?.[0]?.applicationStatus || props.action, props.isSuccess, props.isEmployee, props.t)}
@@ -51,8 +50,11 @@ const Response = (props) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const { state } = props.location;
 
+
+  
+
   const mutation = Digit.Hooks.ptr.usePTRCreateAPI(tenantId, state.key !== "UPDATE");
-  const mutation1 = Digit.Hooks.ptr.usePTRCreateAPI(tenantId, false);
+   const mutation1 = Digit.Hooks.ptr.usePTRCreateAPI(tenantId, false);
 
   const { data: storeData } = Digit.Hooks.useStore.getInitData();
   const { tenants } = storeData || {};
@@ -65,9 +67,9 @@ const Response = (props) => {
     { enabled: enableAudit, select: (data) => data.PetRegistrationApplications?.filter((e) => e.status === "ACTIVE") }
   );
 
-  // useEffect(() => {
-  //   if (mutation1.data && mutation1.isSuccess) setsuccessData(mutation1.data);
-  // }, [mutation.data]);
+  useEffect(() => {
+    if (mutation1.data && mutation1.isSuccess) setsuccessData(mutation1.data);
+  }, [mutation.data]);
 
   useEffect(() => {
     if (mutation1.data && mutation1.isSuccess) setsuccessData(mutation1.data);
@@ -75,7 +77,7 @@ const Response = (props) => {
 
   /* 
   This useEffect is created in a logic that once you successfully submitted
-  It clears the query cache to force a data refresh.  handling the response.
+  It clears the query cache (data refresh), so that emploee can fill fresh form and also handle the response.
 
   */
   useEffect(() => {
@@ -100,31 +102,18 @@ const Response = (props) => {
     }
   }, []);
 
-  // TODO: will need to add a specific module for pdf to download the pdf 
-
-  // const handleDownloadPdf = async () => {
-  //   //const { PetRegistrationApplication = [] } = mutation.data || successData;
-  //   const PetRegistrationApplications = PetRegistrationApplications?.[0] || {};
-  //   const tenantInfo = tenants.find((tenant) => tenant.code === PetRegistrationApplications.tenantId);
-    
-  //   let tenantId = PetRegistrationApplications.tenantId || tenantId;
-  //   // const propertyDetails = await Digit.PTService.search({ tenantId, filters: { applicationNumber: PetRegistrationApplications?.propertyId, status: "INACTIVE" } }); 
-  //   const petDetails = await Digit.PTRService.search({ tenantId, filters: { applicationNumber: PetRegistrationApplications?.applicationNumber, status: "INACTIVE" } });   
   
-  //   PetRegistrationApplications.transferorDetails = petDetails?.PetRegistrationApplications?.[0] || [];
-  //   PetRegistrationApplications.isTransferor = true;
-  //   PetRegistrationApplications.transferorOwnershipCategory = petDetails?.PetRegistrationApplications?.[0]?.ownershipCategory
-    
-  //   const data = await getPTAcknowledgementData({ ...PetRegistrationApplications, auditData }, tenantInfo, t);
-  //   Digit.Utils.pdf.generate(data);
-  // };
 
   const handleDownloadPdf = async () => {
-    const PetRegistrationApplications = props?.data?.PetRegistrationApplications?.[0] ;
-    const tenantInfo  = "pg.citya"
-    // tenants.find((tenant) => tenant.code === PetRegistrationApplications.tenantId);
+    const { PetRegistrationApplications = [] } = mutation.data || successData;
+    console.log("petfewff", PetRegistrationApplications);
+    const Pet = (PetRegistrationApplications && PetRegistrationApplications[0]) || {};
+    const tenantInfo = tenants.find((tenant) => tenant.code === Pet.tenantId);
 
-    const data = await getPTAcknowledgementData(PetRegistrationApplications, tenantInfo, t);
+    let tenantId = Pet.tenantId || tenantId;
+    
+
+    const data = await getPTAcknowledgementData({ ...Pet, auditData }, tenantInfo, t);
     Digit.Utils.pdf.generate(data);
   };
   

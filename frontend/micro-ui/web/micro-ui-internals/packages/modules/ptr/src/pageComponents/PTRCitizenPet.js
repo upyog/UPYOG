@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { FormStep, TextInput, CardLabel, RadioButtons, Dropdown } from "@egovernments/digit-ui-react-components";
+import { FormStep, TextInput, CardLabel, RadioButtons, Dropdown, RadioOrSelect } from "@egovernments/digit-ui-react-components";
 import { cardBodyStyle } from "../utils";
 import { useLocation, useRouteMatch } from "react-router-dom";
 import Timeline from "../components/TLTimeline";
+import { Controller, useForm } from "react-hook-form";
 
 
 const PTRCitizenPet
@@ -42,6 +43,8 @@ const PTRCitizenPet
 
 
 
+
+
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();
 
@@ -57,6 +60,8 @@ const PTRCitizenPet
     Menu.map((petone) => {
       menu.push({ i18nKey: `PTR_PET_${petone.code}`, code: `${petone.code}`, value: `${petone.name}` });
   });
+
+  const {control} = useForm();
 
 
   
@@ -178,32 +183,51 @@ const PTRCitizenPet
         <CardLabel>{`${t("PTR_SEARCH_PET_TYPE")}`}</CardLabel>
         
         
-       <RadioButtons
-          t={t}
-          options={menu}
-          optionsKey="i18nKey"
-          name="petType"
-          value={petType}
-          selectedOption={petType}
-          onSelect={setPetType}
-        // isDependent={true}
-          labelKey="PTR_SERACH_PET_TYPE"
-        // disabled={isUpdateProperty || isEditProperty}
-  />
+       
+
+        <Controller
+                control={control}
+                name={"petType"}
+                defaultValue={petType}
+                rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
+                render={(props) => (
+                  <Dropdown
+                    
+                    className="form-field"
+                    selected={petType}
+                    select={setPetType}
+                    option={menu}
+                    optionKey="i18nKey"
+                    t={t}
+                  />
+                  
+                )}
+                
+              />
         
 
         <CardLabel>{`${t("PTR_SEARCH_BREED_TYPE")}`}</CardLabel>
-        <RadioButtons
-          t={t}
-          options={breed_type}
-          optionsKey="i18nKey"
-          name="breedType"
-          value={breedType}
-          selectedOption={breedType}
-          onSelect={setBreedType}
-          labelKey="PTR_SERACH_BREED_TYPE"
-       
-        />
+      
+
+         <Controller
+            control={control}
+            name={"breedType"}
+            defaultValue={breedType}
+            rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
+            render={(props) => (
+              <Dropdown
+                
+                className="form-field"
+                selected={breedType}
+                select={setBreedType}
+                option={breed_type}
+                optionKey="i18nKey"
+                t={t}
+              />
+              
+            )}
+                
+          />
         
 
         <CardLabel>{`${t("PTR_PET_NAME")}`}</CardLabel>
@@ -215,6 +239,7 @@ const PTRCitizenPet
           name="petName"
           value={petName}
           onChange={setpetname}
+          style={{ width: "86%" }}
           //disable={isUpdateProperty || isEditProperty}
           ValidationRequired = {false}
           {...(validation = {
@@ -227,18 +252,26 @@ const PTRCitizenPet
 
         <CardLabel>{`${t("PTR_PET_SEX")}`}</CardLabel>
         
-        <RadioButtons
-          t={t}
-          options={pet_sex}
-          optionsKey="i18nKey"
-          name="petGender"
-          value={petGender}
-          selectedOption={petGender}
-          onSelect={setPetGender}
-        // isDependent={true}
-          labelKey="PTR_SERACH_BREED_TYPE"
-        // disabled={isUpdateProperty || isEditProperty}
-        />
+        
+         <Controller
+            control={control}
+            name={"petGender"}
+            defaultValue={petGender}
+            rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
+            render={(props) => (
+              <Dropdown
+                
+                className="form-field"
+                selected={petGender}
+                select={setPetGender}
+                option={pet_sex}
+                optionKey="i18nKey"
+                t={t}
+              />
+              
+            )}
+                
+          />
 
         <CardLabel>{`${t("PTR_PET_AGE")}`}</CardLabel>
         <TextInput
@@ -249,6 +282,7 @@ const PTRCitizenPet
           name="petAge"
           value={petAge}
           onChange={setpetage}
+          style={{ width: "86%" }}
           placeholder="in months"
           rules={{
             required: t("CORE_COMMON_REQUIRED_ERRMSG"),
@@ -267,6 +301,7 @@ const PTRCitizenPet
           name="doctorName"
           value={doctorName}
           onChange={setdoctorname}
+          style={{ width: "86%" }}
           //disable={isUpdateProperty || isEditProperty}
           ValidationRequired = {false}
           {...(validation = {
@@ -286,6 +321,7 @@ const PTRCitizenPet
           name="clinicName"
           value={clinicName}
           onChange={setclinicname}
+          style={{ width: "86%" }}
           //disable={isUpdateProperty || isEditProperty}
           ValidationRequired = {false}
           {...(validation = {
@@ -305,6 +341,7 @@ const PTRCitizenPet
           name="lastVaccineDate"
           value={lastVaccineDate}
           onChange={setvaccinationdate}
+          style={{ width: "86%" }}
           max={new Date().toISOString().split('T')[0]}
           rules={{
             required: t("CORE_COMMON_REQUIRED_ERRMSG"),
@@ -322,6 +359,7 @@ const PTRCitizenPet
           name="vaccinationNumber"
           value={vaccinationNumber}
           onChange={setvaccinationnumber}
+          style={{ width: "86%" }}
           
         />
       

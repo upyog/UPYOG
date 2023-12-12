@@ -5,15 +5,15 @@ import { Controller, useForm } from "react-hook-form";
 import { useLocation } from "react-router-dom";
 import Timeline from "../components/TLTimeline";
 
-const PTSelectAddress = ({ t, config, onSelect, userType, formData, setError, clearErrors, formState }) => {
+const PTRSelectAddress = ({ t, config, onSelect, userType, formData, setError, clearErrors, formState }) => {
   const allCities = Digit.Hooks.pt.useTenants();
   let tenantId = Digit.ULBService.getCurrentTenantId();
   const { pathname } = useLocation();
   const presentInModifyApplication = pathname.includes("modify");
 
-  let isEditProperty = formData?.isEditProperty || false;
-  if (presentInModifyApplication) isEditProperty = true;
-  if (formData?.isUpdateProperty) isEditProperty = true;
+  let isEditAddress = formData?.isEditAddress || false;
+  if (presentInModifyApplication) isEditAddress = true;
+  if (formData?.isUpdateProperty) isEditAddress = true;
   const { pincode, city } = formData?.address || "";
   const cities =
     userType === "employee"
@@ -72,9 +72,9 @@ const PTSelectAddress = ({ t, config, onSelect, userType, formData, setError, cl
 
       if (filteredLocalityList.length === 1) {
         setSelectedLocality(filteredLocalityList[0]);
-        if (userType === "employee") {
-          onSelect(config.key, { ...formData[config.key], locality: filteredLocalityList[0] });
-        }
+        // if (userType === "employee") {
+        //   onSelect(config.key, { ...formData[config.key], locality: filteredLocalityList[0] });
+        // }
       }
     }
   }, [selectedCity, formData?.address?.pincode, fetchedLocalities]);
@@ -99,7 +99,7 @@ const PTSelectAddress = ({ t, config, onSelect, userType, formData, setError, cl
     onSelect(config.key, { city: selectedCity, locality: selectedLocality });
   }
 
-  const { control, formState: localFormState, watch, setError: setLocalError, clearErrors: clearLocalErrors, setValue } = useForm();
+  const { control, formState: localFormState, watch, /*setError: setLocalError, clearErrors: clearLocalErrors,*/ setValue } = useForm();
   const formValue = watch();
   const { errors } = localFormState;
   const errorStyle = { width: "70%", marginLeft: "30%", fontSize: "12px", marginTop: "-21px" };
@@ -112,9 +112,9 @@ const PTSelectAddress = ({ t, config, onSelect, userType, formData, setError, cl
       if (!_.isEqual(formValue, part)) onSelect(config.key, { ...formData[config.key], ...formValue });
       for (let key in formValue) {
         if (!formValue[key] && !localFormState?.errors[key]) {
-          setLocalError(key, { type: `${key.toUpperCase()}_REQUIRED`, message: t(`CORE_COMMON_REQUIRED_ERRMSG`) });
+          // setLocalError(key, { type: `${key.toUpperCase()}_REQUIRED`, message: t(`CORE_COMMON_REQUIRED_ERRMSG`) });
         } else if (formValue[key] && localFormState.errors[key]) {
-          clearLocalErrors([key]);
+          // clearLocalErrors([key]);
         }
       }
     }
@@ -123,8 +123,8 @@ const PTSelectAddress = ({ t, config, onSelect, userType, formData, setError, cl
   useEffect(() => {
     if (userType === "employee") {
       const errorsPresent = !!Object.keys(localFormState.errors).lengtha;
-      if (errorsPresent && !formState.errors?.[config.key]) setError(config.key, { type: "required" });
-      else if (!errorsPresent && formState.errors?.[config.key]) clearErrors(config.key);
+      if (errorsPresent && !formState.errors?.[config.key]) /*setError(config.key, { type: "required" })*/;
+      else if (!errorsPresent && formState.errors?.[config.key]) /*clearErrors(config.key)*/;
     }
   }, [localFormState]);
 
@@ -141,7 +141,7 @@ const PTSelectAddress = ({ t, config, onSelect, userType, formData, setError, cl
               <Dropdown
                 className="form-field"
                 selected={props.value}
-                disable={isEditProperty ? isEditProperty : cities?.length === 1}
+                disable={isEditAddress ? isEditAddress : cities?.length === 1}
                 option={cities}
                 select={props.onChange}
                 optionKey="code"
@@ -167,7 +167,7 @@ const PTSelectAddress = ({ t, config, onSelect, userType, formData, setError, cl
                 onBlur={props.onBlur}
                 optionKey="i18nkey"
                 t={t}
-                disable={isEditProperty ? isEditProperty : false}
+                disable={isEditAddress ? isEditAddress : false}
               />
             )}
           />
@@ -198,7 +198,7 @@ const PTSelectAddress = ({ t, config, onSelect, userType, formData, setError, cl
               isPTFlow={true}
               //isDependent={true}
               //labelKey="TENANT_TENANTS"
-              disabled={isEditProperty}
+              disabled={isEditAddress}
             />
           </span>
           {selectedCity && localities && <CardLabel>{`${t("PTR_LOCALITY")} `}</CardLabel>}
@@ -214,7 +214,7 @@ const PTSelectAddress = ({ t, config, onSelect, userType, formData, setError, cl
                 t={t}
                 //isDependent={true}
                 labelKey=""
-                disabled={isEditProperty}
+                disabled={isEditAddress}
               />
             </span>
           )}
@@ -224,4 +224,4 @@ const PTSelectAddress = ({ t, config, onSelect, userType, formData, setError, cl
   );
 };
 
-export default PTSelectAddress;
+export default PTRSelectAddress;

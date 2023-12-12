@@ -35,12 +35,12 @@ const App = () => {
       <Switch>
         <AppContainer>
           {!shouldHideBackButton(hideBackButtonConfig) ? <BackButton>Back</BackButton> : ""}
-          <PrivateRoute path={`${path}/property/new-application`} component={PTRCreate} />
+          <PrivateRoute path={`${path}/petservice/new-application`} component={PTRCreate} />
           <PrivateRoute path={`${path}/property/edit-application`} component={EditProperty} />
           <Route path={`${path}/property/citizen-search`} component={SearchPropertyComponent} />
           <Route path={`${path}/property/search-results`} component={SearchResultsComponent} />
-          <PrivateRoute path={`${path}/property/application/:acknowledgementIds/:tenantId`} component={PTApplicationDetails}></PrivateRoute>
-          <PrivateRoute path={`${path}/property/my-applications`} component={PTMyApplications}></PrivateRoute>
+          <PrivateRoute path={`${path}/petservice/application/:acknowledgementIds/:tenantId`} component={PTApplicationDetails}></PrivateRoute>
+          <PrivateRoute path={`${path}/petservice/my-application`} component={PTMyApplications}></PrivateRoute>
           <PrivateRoute path={`${path}/property/my-properties`} component={MyProperties}></PrivateRoute>
           <PrivateRoute path={`${path}/property/my-payments`} component={PTMyPayments}></PrivateRoute>
           <PrivateRoute path={`${path}/property/property-mutation`} component={MutateProperty}></PrivateRoute>

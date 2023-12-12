@@ -91,16 +91,16 @@ const getAssessmentInfo = (application, t) => {
       //         (application?.usageCategory?.split(".")[1] ? application?.usageCategory?.split(".")[1] : application?.usageCategory)
       //     )}`
       //   : t("CS_NA"),
-      value: application?.applicationData?.petDetails.petName,
+      value: application?.petDetails.petName,
     },
     // { title: t("PT_ASSESMENT_INFO_TYPE_OF_BUILDING"), value: t(getPropertyTypeLocale(application?.propertyType)) || t("CS_NA") },
-    { title: t("PTR_PET_TYPE"), value: application?.applicationData?.petDetails.petType },
+    { title: t("PTR_PET_TYPE"), value: application?.petDetails.petType },
     // { title: t("PT_ASSESMENT_INFO_PLOT_SIZE"), value: t(application?.landArea) || t("CS_NA") },
 
-    { title: t("PTR_BREED_TYPE"), value: application?.applicationData.petDetails.breedType },
+    { title: t("PTR_BREED_TYPE"), value: application?.petDetails.breedType },
     // { title: t("PT_ASSESMENT_INFO_NO_OF_FLOOR"), value: t(application?.noOfFloors) || t("CS_NA") },
-    { title: t("PTR_VACCINATED_DATE"), value: application?.applicationData.petDetails.lastVaccineDate },
-    { title: t("PTR_VACCINATION_NUMBER"), value: application?.applicationData.petDetails.vaccinationNumber },
+    { title: t("PTR_VACCINATED_DATE"), value: application?.petDetails.lastVaccineDate },
+    { title: t("PTR_VACCINATION_NUMBER"), value: application?.petDetails.vaccinationNumber },
   ];
   // application.units = application?.units?.filter((unit) => unit.active == true) || [];
   // let flrno,
@@ -215,7 +215,7 @@ const mutationRegistrationDetails = (application, t) => {
 const getPTAcknowledgementData = async (application, tenantInfo, t) => {
   const filesArray = application?.documents?.map((value) => value?.fileStoreId);
   const res = filesArray?.length > 0 && (await Digit.UploadServices.Filefetch(filesArray, Digit.ULBService.getStateId()));
-
+  console.log("application", application);
   if (application.creationReason === "MUTATION") {
     return {
       t: t,
@@ -269,15 +269,15 @@ const getPTAcknowledgementData = async (application, tenantInfo, t) => {
       {
         title: t("CS_TITLE_APPLICATION_DETAILS"),
         values: [
-          { title: t("PT_APPLICATION_NO"), value: application?.applicationData?.applicationNumber },
+          { title: t("PT_APPLICATION_NO"), value: application?.applicationNumber },
           // { title: t("PT_PROPERRTYID"), value: application?.propertyId },
           {
             title: t("CS_APPLICATION_DETAILS_APPLICATION_DATE"),
-            value: Digit.DateUtils.ConvertTimestampToDate(application?.applicationData?.auditDetails?.createdTime, "dd/MM/yyyy"),
+            value: Digit.DateUtils.ConvertTimestampToDate(application?.auditDetails?.createdTime, "dd/MM/yyyy"),
           },
           {
             title: t("PTR_APPLICANT_NAME"),
-            value: application?.applicationData?.applicantName,
+            value: application?.applicantName,
           },
         ],
       },
@@ -288,15 +288,15 @@ const getPTAcknowledgementData = async (application, tenantInfo, t) => {
         title: t("PTR_LOCATION_DETAILS"),
         values: [
           // { title: t("PT_PROPERTY_ADDRESS_PINCODE"), value: application?.address?.pincode || t("CS_NA") },
-          { title: t("PTR_PINCODE"), value: application?.applicationData?.address?.pincode },
-          { title: t("PTR_CITY"), value: application?.applicationData?.address?.city },
+          { title: t("PTR_PINCODE"), value: application?.address?.pincode },
+          { title: t("PTR_CITY"), value: application?.address?.city },
           // { title: t("PT_PROPERTY_ADDRESS_CITY"), value: t(getCityLocale(application?.tenantId)) || t("CS_NA") },
           // {
           //   title: t("PT_PROPERTY_ADDRESS_MOHALLA"),
           //   value: t(`${getMohallaLocale(application?.address?.locality?.code, application?.tenantId)}`) || t("CS_NA"),
           // },
-          { title: t("PTR_STREET_NAME"), value: application?.applicationData?.address?.street },
-          { title: t("PTR_HOUSE_NO"), value: application?.applicationData?.address?.doorNo },
+          { title: t("PTR_STREET_NAME"), value: application?.address?.street },
+          { title: t("PTR_HOUSE_NO"), value: application?.address?.doorNo },
           // application?.channel === "CITIZEN" ? { title: t("PT_PROPERTY_ADDRESS_LANDMARK"), value: application?.address?.landmark || t("CS_NA") } : {},
         ],
       },

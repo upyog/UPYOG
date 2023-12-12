@@ -32,11 +32,11 @@ const PTRCard = () => {
     {
       count: isLoading ? "-" : total?.totalCount,
       label: t("ES_COMMON_INBOX"),
-      link: `/digit-ui/employee/pt/inbox`,
+      link: `/digit-ui/employee/ptr/inbox`,
     },
     {
       label: t("PTR_TITLE_NEW_PET_REGISTRATION"),
-      link: `/digit-ui/employee/pt/new-application`,
+      link: `/digit-ui/employee/ptr/new-application`,
       role: "PT_CEMP"
     },
     // {
@@ -45,7 +45,7 @@ const PTRCard = () => {
     // },
     {
       label: t("ES_COMMON_APPLICATION_SEARCH"),
-      link: `/digit-ui/employee/pt/application-search`,
+      link: `/digit-ui/employee/ptr/application-search`,
     },
   ]
   const PT_CEMP = Digit.UserService.hasAccess(["PT_CEMP"]) || false;
@@ -56,7 +56,7 @@ const PTRCard = () => {
       {
         count: total?.totalCount,
         label: t("ES_TITLE_INBOX"),
-        link: `/digit-ui/employee/pt/inbox`,
+        link: `/digit-ui/employee/ptr/inbox`,
       },
       // {
         

@@ -31,7 +31,7 @@ export const newConfig =[
            
             {
                 "route": "pincode",
-                "component": "PTSelectPincode",
+                "component": "PTRSelectPincode",
                 "texts": {
                     "headerCaption": "PT_PROPERTY_LOCATION_CAPTION",
                     "header": "PT_PINCODE_LABEL",
@@ -46,7 +46,7 @@ export const newConfig =[
             },
             {
                 "route": "address",
-                "component": "PTSelectAddress",
+                "component": "PTRSelectAddress",
                 "withoutLabel": true,
                 "texts": {
                     "headerCaption": "PT_PROPERTY_LOCATION_CAPTION",
