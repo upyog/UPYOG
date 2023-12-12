@@ -96,7 +96,7 @@ const NewApplication = () => {
 
    
     //console.log("ddddddddddddddddddddd",formData )
-    history.replace("/digit-ui/employee/pt/response", { PetRegistrationApplications: formData }); //current wala
+    history.replace("/digit-ui/employee/ptr/response", { PetRegistrationApplications: formData }); //current wala
     //history.replace("/digit-ui/employee/pt/response", {PetRegistrationApplications:formData});
     
 
@@ -114,9 +114,9 @@ const NewApplication = () => {
   return (
     <FormComposer
       heading={t("ES_TITLE_NEW_PET_REGISTARTION")}
-      //heading="Pet Registration"
-      //isDisabled={canSubmit}
+      // isDisabled={canSubmit}
       label={t("ES_COMMON_APPLICATION_SUBMIT")}
+     
       config={configs.map((config) => {
         //console.log("jjjjjjjjjjjj",config)
         return {

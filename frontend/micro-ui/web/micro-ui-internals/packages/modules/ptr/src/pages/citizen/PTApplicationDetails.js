@@ -15,7 +15,7 @@ import { size } from "lodash";
 const PTApplicationDetails = () => {
   const { t } = useTranslation();
   const history = useHistory();
-  const { applicationNumber, tenantId } = useParams();
+  const { acknowledgementIds, tenantId } = useParams();
   const [acknowldgementData, setAcknowldgementData] = useState([]);
   const [showOptions, setShowOptions] = useState(false);
   const [popup, setpopup] = useState(false);
@@ -23,64 +23,74 @@ const PTApplicationDetails = () => {
   // const tenantId = Digit.ULBService.getCurrentTenantId();
   const { data: storeData } = Digit.Hooks.useStore.getInitData();
   const { tenants } = storeData || {};
-  const { isLoading, isError, error, data } = Digit.Hooks.ptr.usePTRSearch(
-    { filters: { applicationNumber, tenantId } },
-    { filters: { applicationNumber, tenantId } }
+  // const { isLoading, isError, error, data } = Digit.Hooks.ptr.usePTRSearch(
+  //   { filters: { acknowledgementIds, tenantId } },
+  //   { filters: { acknowledgementIds, tenantId } }
+  // );
+
+  const { isLoading, isError,error, data } = Digit.Hooks.ptr.usePTRSearch(
+    {
+      tenantId,
+      filters: { applicationNumber: acknowledgementIds },
+    },
+   // { enabled: enableAudit, select: (data) => data.PetRegistrationApplications?.filter((e) => e.status === "ACTIVE") }
   );
+
   const [billAmount, setBillAmount] = useState(null);
   const [billStatus, setBillStatus] = useState(null);
 
   let serviceSearchArgs = {
     tenantId : tenantId,
-    code: [`${data?.PetRegistrationApplications?.[0]?.creationReason}`], 
-    module: ["pet-services"],
-    referenceId : [data?.PetRegistrationApplications?.[0]?.applicationNumber]
-    
+    code: [`PT_${data?.PetRegistrationApplications?.[0]?.creationReason}`], 
+    module: ["PT"],
+    referenceIds : [data?.PetRegistrationApplications?.[0]?.applicationNumber]
     //removing thid as of now sending ack no in referenceId
     // attributes: {
     //         "attributeCode": "referenceId",
     //         "value": data?.PetRegistrationApplications?.[0]?.applicationNumber,
     //     }
   }
-  console.log("refrenseeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",data)
 
-  const { isLoading:serviceloading, error : serviceerror, data : servicedata} = Digit.Hooks.pt.useServiceSearchCF({ filters: { serviceSearchArgs } },{ filters: { serviceSearchArgs }, enabled : data?.PetRegistrationApplications?.[0]?.applicationNumber ?true : false, cacheTime : 0 });
+  //const { isLoading:serviceloading, error : serviceerror, data : servicedata} = Digit.Hooks.pt.useServiceSearchCF({ filters: { serviceSearchArgs } },{ filters: { serviceSearchArgs }, enabled : data?.PetRegistrationApplications?.[0]?.applicationNumber ?true : false, cacheTime : 0 });
 
 
   const PetRegistrationApplications = get(data, "PetRegistrationApplications", []);
-  // const propertyId = get(data, "PetRegistrationApplications[0].applicationNumber", []);
+  console.log("pettttttttttttttttt",PetRegistrationApplications)
   
-  let pet_details = (PetRegistrationApplications && PetRegistrationApplications.length > 0 && PetRegistrationApplications[0]) || {};
-  const application = pet_details;
+  const petId = get(data, "PetRegistrationApplications[0].applicationNumber", []);
+  console.log("hdjashdfjhseihfjshjfhdsjjnfkndkfvjrsnfghb",petId)
+  let  pet_details = (PetRegistrationApplications && PetRegistrationApplications.length > 0 && PetRegistrationApplications[0]) || {};
+  const application =  pet_details;
   sessionStorage.setItem("pt-property", JSON.stringify(application));
-  console.log("pet_details equal to petregistration",pet_details)
 
-  useMemo(() => {
-    if((data?.PetRegistrationApplications?.[0]?.status === "ACTIVE"  || data?.PetRegistrationApplications?.[0]?.status === "INACTIVE")&& popup == false && servicedata?.Service?.length == 0)
-      setpopup(true);
-  },[data,servicedata])
+  // useMemo(() => {
+  //   if((data?.PetRegistrationApplications?.[0]?.status === "ACTIVE" || data?.PetRegistrationApplications?.[0]?.status === "INACTIVE") && popup == false && servicedata?.Service?.length == 0)
+  //     setpopup(true);
+  // },[data,servicedata])
 
   useEffect(async () => {
-    if (applicationNumber && tenantId && pet_details) {
-      const res = await Digit.PaymentService.searchBill(tenantId, { Service: "PT.MUTATION", consumerCode: applicationNumber });
+    if (acknowledgementIds && tenantId &&  pet_details) {
+      const res = await Digit.PaymentService.searchBill(tenantId, { Service: "PT.MUTATION", consumerCode: acknowledgementIds });
       if (!res.Bill.length) {
-        const res1 = await Digit.PTService.ptCalculateMutation({ Pet_Details: pet_details }, tenantId);
-        setBillAmount(res1?.[applicationNumber]?.totalAmount || t("CS_NA"));
+        const res1 = await Digit.PTService.ptCalculateMutation({  pet_details:  pet_details }, tenantId);
+        setBillAmount(res1?.[acknowledgementIds]?.totalAmount || t("CS_NA"));
         setBillStatus(t(`PT_MUT_BILL_ACTIVE`));
       } else {
         setBillAmount(res?.Bill[0]?.totalAmount || t("CS_NA"));
         setBillStatus(t(`PT_MUT_BILL_${res?.Bill[0]?.status?.toUpperCase()}`));
       }
     }
-  }, [tenantId, applicationNumber, pet_details]);
+  }, [tenantId, acknowledgementIds,  pet_details]);
 
   const { isLoading: auditDataLoading, isError: isAuditError, data: auditResponse } = Digit.Hooks.ptr.usePTRSearch(
     {
       tenantId,
-      filters: { applicationNumber: applicationNumber, audit: true },
+      filters: { applicationNumber: petId, audit: true },
     },
     {
       enabled: true,
+      // select: (d) =>
+      //   d.PetRegistrationApplications.filter((e) => e.status === "ACTIVE")?.sort((a, b) => b.auditDetails.lastModifiedTime - a.auditDetails.lastModifiedTime),
     }
   );
 
@@ -88,18 +98,18 @@ const PTApplicationDetails = () => {
     {
       tenantId: tenantId,
       businessService: "ptr",
-      consumerCodes: applicationNumber,
+      consumerCodes: acknowledgementIds,
       isEmployee: false,
     },
-    { enabled: applicationNumber ? true : false }
+    { enabled: acknowledgementIds ? true : false }
   );
 
-   if (!pet_details.workflow) {
+  if (! pet_details.workflow) {
     let workflow = {
       id: null,
-      tenantId: application?.tenantId,
+      tenantId: tenantId,
       businessService: "ptr",
-      businessIds: application?.applicationNumber,
+      businessId: application?.applicationNumber,
       action: "",
       moduleName: "pet-services",
       state: null,
@@ -107,15 +117,13 @@ const PTApplicationDetails = () => {
       documents: null,
       assignes: null,
     };
-    pet_details.workflow = workflow;
-   }
+     pet_details.workflow = workflow;
+  }
 
-  
-
-  if (pet_details && pet_details.owners && pet_details.owners.length > 0) {
+  if ( pet_details &&  pet_details.owners &&  pet_details.owners.length > 0) {
     let ownersTemp = [];
     let owners = [];
-    pet_details.owners.map((owner) => {
+     pet_details.owners.map((owner) => {
       owner.documentUid = owner.documents ? owner.documents[0].documentUid : "NA";
       owner.documentType = owner.documents ? owner.documents[0].documentType : "NA";
       if (owner.status == "ACTIVE") {
@@ -124,60 +132,59 @@ const PTApplicationDetails = () => {
         owners.push(owner);
       }
     });
-    pet_details.ownersInit = owners;
-    pet_details.ownersTemp = ownersTemp;
+     pet_details.ownersInit = owners;
+     pet_details.ownersTemp = ownersTemp;
   }
-  // pet_details.ownershipCategoryTemp = pet_details?.ownershipCategory;
-  // pet_details.ownershipCategoryInit = "NA";
+   pet_details.ownershipCategoryTemp =  pet_details?.ownershipCategory;
+   pet_details.ownershipCategoryInit = "NA";
   // Set Institution/Applicant info card visibility
   if (get(application, "PetRegistrationApplications[0].ownershipCategory", "")?.startsWith("INSTITUTION")) {
-    pet_details.institutionTemp = pet_details.institution;
+     pet_details.institutionTemp =  pet_details.institution;
   }
 
   if (auditResponse && Array.isArray(get(auditResponse, "PetRegistrationApplications", [])) && get(auditResponse, "PetRegistrationApplications", []).length > 0) {
     const propertiesAudit = get(auditResponse, "PetRegistrationApplications", []);
-    const propertyIndex = pet_details.status == "ACTIVE" ? 1 : 0;
-    // const previousActiveProperty = propertiesAudit.filter(property => property.status == 'ACTIVE').sort((x, y) => y.auditDetails.lastModifiedTime - x.auditDetails.lastModifiedTime)[propertyIndex];
-    // Removed filter(property => property.status == 'ACTIVE') condition to match result in qa env
+    const propertyIndex =  pet_details.status == "ACTIVE" ? 1 : 0;
+    // const previousActiveProperty = propertiesAudit.filter( pet_details =>  pet_details.status == 'ACTIVE').sort((x, y) => y.auditDetails.lastModifiedTime - x.auditDetails.lastModifiedTime)[propertyIndex];
+    // Removed filter( pet_details =>  pet_details.status == 'ACTIVE') condition to match result in qa env
     const previousActiveProperty = propertiesAudit
-      .filter((pet_details) => pet_details.status == "ACTIVE")
+      .filter(( pet_details) =>  pet_details.status == "ACTIVE")
       .sort((x, y) => y.auditDetails.lastModifiedTime - x.auditDetails.lastModifiedTime)[propertyIndex];
-    // pet_details.ownershipCategoryInit = previousActiveProperty?.ownershipCategory;
-    pet_details.ownersInit = previousActiveProperty?.owners?.filter((owner) => owner.status == "ACTIVE");
+     pet_details.ownershipCategoryInit = previousActiveProperty?.ownershipCategory;
+     pet_details.ownersInit = previousActiveProperty?.owners?.filter((owner) => owner.status == "ACTIVE");
 
     const curWFProperty = propertiesAudit.sort((x, y) => y.auditDetails.lastModifiedTime - x.auditDetails.lastModifiedTime)[0];
-    pet_details.ownersTemp = curWFProperty.owners.filter((owner) => owner.status == "ACTIVE");
+     pet_details.ownersTemp = curWFProperty.owners.filter((owner) => owner.status == "ACTIVE");
 
-    // if (pet_details?.ownershipCategoryInit?.startsWith("INSTITUTION")) {
-    //   pet_details.institutionInit = previousActiveProperty.institution;
-    // }
+    if ( pet_details?.ownershipCategoryInit?.startsWith("INSTITUTION")) {
+       pet_details.institutionInit = previousActiveProperty.institution;
+    }
   }
 
-  // let transfereeOwners = get(pet_details, "ownersTemp", []);
-  // let transferorOwners = get(pet_details, "ownersInit", []);
+  let transfereeOwners = get( pet_details, "ownersTemp", []);
+  let transferorOwners = get( pet_details, "ownersInit", []);
+  let transfereeInstitution = get( pet_details, "institutionTemp", []);
+  let isInstitution =  pet_details?.ownershipCategoryInit?.startsWith("INSTITUTION");
+  let transferorInstitution = get( pet_details, "institutionInit", []);
 
-  // let transfereeInstitution = get(pet_details, "institutionTemp", []);
-  // let isInstitution = pet_details?.ownershipCategoryInit?.startsWith("INSTITUTION");
-  // let transferorInstitution = get(pet_details, "institutionInit", []);
-
-  // let units = [];
-  // units = application?.units;
-  // units &&
-  //   units.sort((x, y) => {
-  //     let a = x.floorNo,
-  //       b = y.floorNo;
-  //     if (x.floorNo < 0) {
-  //       a = x.floorNo * -20;
-  //     }
-  //     if (y.floorNo < 0) {
-  //       b = y.floorNo * -20;
-  //     }
-  //     if (a > b) {
-  //       return 1;
-  //     } else {
-  //       return -1;
-  //     }
-  //   });
+  let units = [];
+  units = application?.units;
+  units &&
+    units.sort((x, y) => {
+      let a = x.floorNo,
+        b = y.floorNo;
+      if (x.floorNo < 0) {
+        a = x.floorNo * -20;
+      }
+      if (y.floorNo < 0) {
+        b = y.floorNo * -20;
+      }
+      if (a > b) {
+        return 1;
+      } else {
+        return -1;
+      }
+    });
   let owners = [];
   owners = application?.owners;
   let docs = [];
@@ -187,11 +194,11 @@ const PTApplicationDetails = () => {
     return <Loader />;
   }
 
-  // let flrno,
-  //   i = 0;
-  // flrno = units && units[0]?.floorNo;
+  let flrno,
+    i = 0;
+  flrno = units && units[0]?.floorNo;
 
-  // const isPropertyTransfer = pet_details?.creationReason && pet_details.creationReason === "MUTATION" ? true : false;
+  const isPropertyTransfer =  pet_details?.creationReason &&  pet_details.creationReason === "MUTATION" ? true : false;
 
   const getAcknowledgementData = async () => {
     const applications = application || {};
@@ -202,8 +209,8 @@ const PTApplicationDetails = () => {
   };
 
   let documentDate = t("CS_NA");
-  if (pet_details?.additionalDetails?.documentDate) {
-    const date = new Date(pet_details?.additionalDetails?.documentDate);
+  if ( pet_details?.additionalDetails?.documentDate) {
+    const date = new Date( pet_details?.additionalDetails?.documentDate);
     const month = Digit.Utils.date.monthNames[date.getMonth()];
     documentDate = `${date.getDate()} ${month} ${date.getFullYear()}`;
   }
@@ -231,7 +238,7 @@ const PTApplicationDetails = () => {
   let dowloadOptions = [];
 
   dowloadOptions.push({
-    label: data?.PetRegistrationApplications?.[0]?.creationReason === "MUTATION" ? t("MT_APPLICATION") : t("PTR_APPLICATION"),
+    label: data?.PetRegistrationApplications?.[0]?.creationReason === "MUTATION" ? t("MT_APPLICATION") : t("PT_APPLICATION_ACKNOWLEDGMENT"),
     onClick: () => getAcknowledgementData(),
   });
   if (reciept_data && reciept_data?.Payments.length > 0 && recieptDataLoading == false)
@@ -244,7 +251,7 @@ const PTApplicationDetails = () => {
       label: t("MT_CERTIFICATE"),
       onClick: () => printCertificate(),
     });
-
+  
   return (
     <React.Fragment>
       <div>
@@ -325,9 +332,6 @@ const PTApplicationDetails = () => {
 };
 
 export default PTApplicationDetails;
-
-            
-
             
            
            

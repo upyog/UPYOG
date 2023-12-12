@@ -5,7 +5,7 @@
                     "body": [
                         {
                             "route":"info",
-                            "component":"PropertyTax",
+                            "component":"PetServiceDoc",
                             "nextStep": "owners",
                             "key": "Documents"
                         },
@@ -52,7 +52,7 @@
                     [
                         {
                         "route": "pincode",
-                        "component": "PTSelectPincode",
+                        "component": "PTRSelectPincode",
                         "texts": {
                             
                             "submitBarLabel": "PTR_COMMON_NEXT",
@@ -66,7 +66,7 @@
 
                         {
                         "route": "address",
-                        "component": "PTSelectAddress",
+                        "component": "PTRSelectAddress",
                         "withoutLabel": true,
                         "texts": {
                             
