@@ -193,8 +193,11 @@ export const convertEpochToDate = (dateEpoch) => {
             console.log("payment",payments)
             printRecieptNew(payments)
         }
-        paymentArray[0]=payments.Payments[0]
-       // response = await Digit.PaymentService.generatePdf(state, { Payments: paymentArray }, generatePdfKey);
+        else {
+          paymentArray[0]=payments.Payments[0]
+           response = await Digit.PaymentService.generatePdf(state, { Payments: paymentArray }, generatePdfKey);
+        }
+       
     }
   
     const fileStore = await Digit.PaymentService.printReciept(state, { fileStoreIds: response.filestoreIds[0] });
