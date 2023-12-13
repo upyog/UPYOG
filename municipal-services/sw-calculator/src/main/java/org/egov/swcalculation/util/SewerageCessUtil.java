@@ -19,7 +19,7 @@ public class SewerageCessUtil {
 		BigDecimal waterCess = BigDecimal.ZERO;
 		if (sewerageCharge.doubleValue() == 0.0)
 			return waterCess;
-		Map<String, Object> CessMap = mDataService.getApplicableMaster(assessmentYear, masterList);
+		Map<String, Object> CessMap = mDataService.getApplicableMasterCess(assessmentYear, masterList);
 		return calculateSewerageCess(sewerageCharge, CessMap);
 	}
 
