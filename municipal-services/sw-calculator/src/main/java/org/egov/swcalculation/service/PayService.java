@@ -73,8 +73,8 @@ public class PayService {
 		long numberOfDaysInMillis = billingExpiryDate - currentUTC;
 		BigDecimal noOfDays = BigDecimal.valueOf((TimeUnit.MILLISECONDS.toDays(Math.abs(numberOfDaysInMillis))));
 		if(BigDecimal.ONE.compareTo(noOfDays) <= 0) noOfDays = noOfDays.add(BigDecimal.ONE);
-		BigDecimal penalty = getApplicablePenalty(sewerageCharge, noOfDays, timeBasedExemptionMasterMap.get(SWCalculationConstant.SW_PENANLTY_MASTER));
-		BigDecimal interest = getApplicableInterest(sewerageCharge, noOfDays, timeBasedExemptionMasterMap.get(SWCalculationConstant.SW_INTEREST_MASTER));
+		BigDecimal penalty = getApplicablePenalty(demand,sewerageCharge, noOfDays, timeBasedExemptionMasterMap.get(SWCalculationConstant.SW_PENANLTY_MASTER));
+		BigDecimal interest = getApplicableInterest(demand,sewerageCharge, noOfDays, timeBasedExemptionMasterMap.get(SWCalculationConstant.SW_INTEREST_MASTER));
 		BigDecimal rebate = getApplicableRebate(sewerageCharge, demand, timeBasedExemptionMasterMap.get(SWCalculationConstant.SW_REBATE_MASTER));
 
 		estimates.put(SWCalculationConstant.SW_TIME_PENALTY, penalty.setScale(2, 2));
@@ -92,9 +92,9 @@ public class PayService {
 	 * @param config - Config object
 	 * @return - Returns Penalty details
 	 */
-	public BigDecimal getApplicablePenalty(BigDecimal sewerageCharge, BigDecimal noOfDays, JSONArray config) {
+	public BigDecimal getApplicablePenalty(Demand demand,BigDecimal sewerageCharge, BigDecimal noOfDays, JSONArray config) {
 		BigDecimal applicablePenalty = BigDecimal.ZERO;
-		Map<String, Object> penaltyMaster = mDService.getApplicableMaster(estimationService.getAssessmentYear(), config);
+		Map<String, Object> penaltyMaster = mDService.getApplicableMaster(demand,estimationService.getAssessmentYear(), config);
 		if (null == penaltyMaster) return applicablePenalty;
 		BigDecimal daysApplicable = null != penaltyMaster.get(SWCalculationConstant.DAYA_APPLICABLE_NAME)
 				? BigDecimal.valueOf(((Number) penaltyMaster.get(SWCalculationConstant.DAYA_APPLICABLE_NAME)).intValue())
@@ -129,9 +129,9 @@ public class PayService {
 	 * @param config - Config object
 	 * @return - Returns applicable interest details
 	 */
-	public BigDecimal getApplicableInterest(BigDecimal sewerageCharge, BigDecimal noOfDays, JSONArray config) {
+	public BigDecimal getApplicableInterest(Demand demand,BigDecimal sewerageCharge, BigDecimal noOfDays, JSONArray config) {
 		BigDecimal applicableInterest = BigDecimal.ZERO;
-		Map<String, Object> interestMaster = mDService.getApplicableMaster(estimationService.getAssessmentYear(), config);
+		Map<String, Object> interestMaster = mDService.getApplicableMaster(demand,estimationService.getAssessmentYear(), config);
 		if (null == interestMaster) return applicableInterest;
 		BigDecimal daysApplicable = null != interestMaster.get(SWCalculationConstant.DAYA_APPLICABLE_NAME)
 				? BigDecimal.valueOf(((Number) interestMaster.get(SWCalculationConstant.DAYA_APPLICABLE_NAME)).intValue())
