@@ -7,13 +7,16 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.egov.swcalculation.constants.SWCalculationConstant;
+import org.egov.swcalculation.web.models.Demand;
 import org.egov.swcalculation.web.models.TaxHeadEstimate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
 
 @Service
+@Slf4j
 public class PayService {
 
 	@Autowired
@@ -61,7 +64,7 @@ public class PayService {
 	 * @return estimation of time based exemption
 	 */
 	public Map<String, BigDecimal> applyPenaltyRebateAndInterest(BigDecimal sewerageCharge,
-			String assessmentYear, Map<String, JSONArray> timeBasedExemptionMasterMap, Long billingExpiryDate) {
+			String assessmentYear, Map<String, JSONArray> timeBasedExemptionMasterMap, Long billingExpiryDate, Demand demand) {
 
 		if (BigDecimal.ZERO.compareTo(sewerageCharge) >= 0)
 			return Collections.emptyMap();
@@ -72,8 +75,12 @@ public class PayService {
 		if(BigDecimal.ONE.compareTo(noOfDays) <= 0) noOfDays = noOfDays.add(BigDecimal.ONE);
 		BigDecimal penalty = getApplicablePenalty(sewerageCharge, noOfDays, timeBasedExemptionMasterMap.get(SWCalculationConstant.SW_PENANLTY_MASTER));
 		BigDecimal interest = getApplicableInterest(sewerageCharge, noOfDays, timeBasedExemptionMasterMap.get(SWCalculationConstant.SW_INTEREST_MASTER));
+		BigDecimal rebate = getApplicableRebate(sewerageCharge, demand, timeBasedExemptionMasterMap.get(SWCalculationConstant.SW_REBATE_MASTER));
+
 		estimates.put(SWCalculationConstant.SW_TIME_PENALTY, penalty.setScale(2, 2));
 		estimates.put(SWCalculationConstant.SW_TIME_INTEREST, interest.setScale(2, 2));
+		estimates.put(SWCalculationConstant.SW_TIME_REBATE, rebate.negate().setScale(2, 2));
+
 		return estimates;
 	}
 	
@@ -152,5 +159,51 @@ public class PayService {
 		}
 		//applicableInterest.multiply(noOfDays.divide(BigDecimal.valueOf(365), 6, 5));
 		return applicableInterest;
+	}
+	public BigDecimal getApplicableRebate(BigDecimal waterCharge, Demand demand, JSONArray config) {
+		BigDecimal applicableRebate = BigDecimal.ZERO;
+		Map<String, Object> rebateMaster = mDService.getApplicableMaster(demand,estimationService.getAssessmentYear(), config);
+		if (null == rebateMaster) return applicableRebate;
+		
+		long currentUTC = System.currentTimeMillis();
+		long numberOfDaysInMillis =System.currentTimeMillis();
+		if(demand==null)
+			numberOfDaysInMillis=currentUTC-numberOfDaysInMillis;
+		else
+			numberOfDaysInMillis = currentUTC-demand.getAuditDetails().getCreatedTime() ;
+		BigDecimal noOfDays = BigDecimal.valueOf((TimeUnit.MILLISECONDS.toDays(Math.abs(numberOfDaysInMillis))));
+		
+		log.info("noOfDays after demand Generation are "+noOfDays);
+		BigDecimal daysApplicable = null != rebateMaster.get(SWCalculationConstant.ENDING_DATE_APPLICABLES)
+				? BigDecimal.valueOf(((Number) rebateMaster.get(SWCalculationConstant.ENDING_DATE_APPLICABLES)).intValue())
+				: null;
+	
+		if (daysApplicable == null)
+			return applicableRebate;
+		log.info("Days allowed for rebate "+ daysApplicable);
+
+		if (noOfDays.compareTo(daysApplicable) > 0) {
+			log.info("when days are more than applicable for rebate");
+
+			return applicableRebate;
+		}
+		BigDecimal rate = null != rebateMaster.get(SWCalculationConstant.RATE_FIELD_NAME)
+				? BigDecimal.valueOf(((Number) rebateMaster.get(SWCalculationConstant.RATE_FIELD_NAME)).doubleValue())
+				: null;
+
+		BigDecimal flatAmt = null != rebateMaster.get(SWCalculationConstant.FLAT_AMOUNT_FIELD_NAME)
+				? BigDecimal
+						.valueOf(((Number) rebateMaster.get(SWCalculationConstant.FLAT_AMOUNT_FIELD_NAME)).doubleValue())
+				: BigDecimal.ZERO;
+
+		if (rate == null)
+			applicableRebate = flatAmt.compareTo(waterCharge) > 0 ? BigDecimal.ZERO : flatAmt;
+		else{
+			// rate of interest
+			applicableRebate = waterCharge.multiply(rate.divide(SWCalculationConstant.HUNDRED));
+		}
+		log.info("Rebate amount is "+ applicableRebate);
+
+		return applicableRebate;
 	}
 }

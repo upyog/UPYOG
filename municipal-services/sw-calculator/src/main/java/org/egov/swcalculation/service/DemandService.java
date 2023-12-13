@@ -783,7 +783,8 @@ public class DemandService {
 		BigDecimal sewerageChargeApplicable = BigDecimal.ZERO;
 		BigDecimal oldPenalty = BigDecimal.ZERO;
 		BigDecimal oldInterest = BigDecimal.ZERO;
-		
+		BigDecimal oldRebate = BigDecimal.ZERO;
+
 
 		for (DemandDetail detail : demand.getDemandDetails()) {
 			if (SWCalculationConstant.TAX_APPLICABLE.contains(detail.getTaxHeadMasterCode())) {
@@ -795,24 +796,36 @@ public class DemandService {
 			if (detail.getTaxHeadMasterCode().equalsIgnoreCase(SWCalculationConstant.SW_TIME_INTEREST)) {
 				oldInterest = oldInterest.add(detail.getTaxAmount());
 			}
+			if (detail.getTaxHeadMasterCode().equalsIgnoreCase(SWCalculationConstant.SW_TIME_REBATE)) {
+				oldRebate = oldRebate.add(detail.getTaxAmount());
+			}
 		}
 		
 		boolean isPenaltyUpdated = false;
 		boolean isInterestUpdated = false;
-		
-		Map<String, BigDecimal> interestPenaltyEstimates = payService.applyPenaltyRebateAndInterest(
-				sewerageChargeApplicable, taxPeriod.getFinancialYear(), timeBasedExemptionMasterMap, demand.getBillExpiryTime());
-		if (null == interestPenaltyEstimates)
-			return isCurrentDemand;
+		boolean isRebateUpdated = false;
 
-		BigDecimal penalty = interestPenaltyEstimates.get(SWCalculationConstant.SW_TIME_PENALTY);
-		BigDecimal interest = interestPenaltyEstimates.get(SWCalculationConstant.SW_TIME_INTEREST);
+		List<DemandDetail> details = demand.getDemandDetails();
+
+		Map<String, BigDecimal> interestPenaltyRebateEstimates = payService.applyPenaltyRebateAndInterest(
+				sewerageChargeApplicable, taxPeriod.getFinancialYear(), timeBasedExemptionMasterMap, demand.getBillExpiryTime(),demand);
+		log.info("old penalty amount is " + oldPenalty);
+		log.info("old interest amount is " + oldInterest);
+		log.info("old rebate amount is " + oldRebate);
+	
+		BigDecimal penalty  = interestPenaltyRebateEstimates.get(SWCalculationConstant.SW_TIME_PENALTY);
+		BigDecimal interest = interestPenaltyRebateEstimates.get(SWCalculationConstant.SW_TIME_INTEREST);
+		BigDecimal rebate   = interestPenaltyRebateEstimates.get(SWCalculationConstant.SW_TIME_REBATE);
+		log.info("penalty amount after calculation is " + penalty);
+		log.info("interest amount after calculation  is " + interest);
+		log.info("rebate amount after calculation is " + rebate);
 		if(penalty == null)
 			penalty = BigDecimal.ZERO;
 		if(interest == null)
 			interest = BigDecimal.ZERO;
-
-		DemandDetailAndCollection latestPenaltyDemandDetail, latestInterestDemandDetail;
+		if(rebate == null)
+			rebate = BigDecimal.ZERO;
+		DemandDetailAndCollection latestPenaltyDemandDetail, latestInterestDemandDetail,latestRebateDemandDetail;
 
 		if (interest.compareTo(BigDecimal.ZERO) != 0) {
 			latestInterestDemandDetail = utils.getLatestDemandDetailByTaxHead(SWCalculationConstant.SW_TIME_INTEREST,
@@ -832,6 +845,14 @@ public class DemandService {
 			}
 		}
 
+		if (oldRebate.compareTo(BigDecimal.ZERO) != 0 || rebate.compareTo(BigDecimal.ZERO) != 0) {
+			latestRebateDemandDetail = utils.getLatestDemandDetailByTaxHead(SWCalculationConstant.SW_TIME_REBATE,
+					details);
+			if (latestRebateDemandDetail != null) {
+				updateRebate(rebate, latestRebateDemandDetail);
+				isRebateUpdated = true;
+			}
+		}
 		if (!isPenaltyUpdated && penalty.compareTo(BigDecimal.ZERO) > 0)
 			demand.getDemandDetails().add(
 					DemandDetail.builder().taxAmount(penalty.setScale(2, 2)).taxHeadMasterCode(SWCalculationConstant.SW_TIME_PENALTY)
@@ -840,10 +861,27 @@ public class DemandService {
 			demand.getDemandDetails().add(
 					DemandDetail.builder().taxAmount(interest.setScale(2, 2)).taxHeadMasterCode(SWCalculationConstant.SW_TIME_INTEREST)
 							.demandId(demand.getId()).tenantId(demand.getTenantId()).build());
+		
+		if (!isRebateUpdated && rebate.compareTo(BigDecimal.ZERO) != 0)
+			details.add(
+					DemandDetail.builder().taxAmount(rebate.setScale(2, 2)).taxHeadMasterCode(SWCalculationConstant.SW_TIME_REBATE)
+							.demandId(demand.getId()).tenantId(demand.getTenantId()).build());
 		}
-
 		return isCurrentDemand;
 	}
+	
+	private void updateRebate(BigDecimal newAmount, DemandDetailAndCollection latestDetailInfo) {
+		BigDecimal diff =BigDecimal.ZERO;
+		if(newAmount.compareTo(BigDecimal.ZERO)==0)
+			diff=BigDecimal.ZERO;
+		else
+			diff= newAmount;
+		
+		log.info("Rebate after calculation is "+ diff);
+		
+		latestDetailInfo.getLatestDemandDetail().setTaxAmount(diff);
+	}
+	
 	
 	public String generateDemandForConsumerCode(RequestInfo requestInfo, BulkBillCriteria bulkBillCriteria) {
 		Map<String, Object> billingMasterData = calculatorUtils.loadBillingFrequencyMasterData(requestInfo,  bulkBillCriteria.getTenantId());

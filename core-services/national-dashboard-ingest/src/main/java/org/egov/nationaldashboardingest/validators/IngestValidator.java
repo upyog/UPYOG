@@ -155,7 +155,7 @@ public class IngestValidator {
         validateStringNotNumeric(ingestData.getRegion());
         validateStringNotNumeric(ingestData.getState());
         if(ingestData.getWard().contains(":"))
-        	ingestData.setWard(ingestData.getWard().replace(":",""));
+        	ingestData.setWard(ingestData.getWard().replace(":"," "));
 		
         ingestData.setState(toCamelCase(ingestData.getState()));
 
