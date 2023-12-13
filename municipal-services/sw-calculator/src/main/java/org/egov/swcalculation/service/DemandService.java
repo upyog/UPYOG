@@ -51,7 +51,6 @@ import org.egov.swcalculation.web.models.SewerageConnectionRequest;
 import org.egov.swcalculation.web.models.TaxHeadEstimate;
 import org.egov.swcalculation.web.models.TaxPeriod;
 import org.egov.tracer.model.CustomException;
-import org.egov.wscalculation.constants.WSCalculationConstant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
@@ -809,7 +808,7 @@ public class DemandService {
 		List<DemandDetail> details = demand.getDemandDetails();
 
 		Map<String, BigDecimal> interestPenaltyRebateEstimates = payService.applyPenaltyRebateAndInterest(
-				sewerageChargeApplicable, taxPeriod.getFinancialYear(), timeBasedExemptionMasterMap, demand.getBillExpiryTime());
+				sewerageChargeApplicable, taxPeriod.getFinancialYear(), timeBasedExemptionMasterMap, demand.getBillExpiryTime(),demand);
 		log.info("old penalty amount is " + oldPenalty);
 		log.info("old interest amount is " + oldInterest);
 		log.info("old rebate amount is " + oldRebate);
