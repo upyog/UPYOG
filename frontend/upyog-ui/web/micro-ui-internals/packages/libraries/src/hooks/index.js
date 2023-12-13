@@ -260,6 +260,12 @@ import useWmsPhmSearch from "./wms/phm/useWmsPhmSearch";
 import useWmsPhmCount from "./wms/phm/useWmsPhmCount";
 import useWmsPhmCreate from "./wms/phm/useWmsPhmCreate";
 import useWmsPhmUpdate from "./wms/phm/useWmsPhmUpdate";
+
+import useWmsDrSearch from "./wms/dr/useWmsDrSearch";
+import useWmsDrCount from "./wms/dr/useWmsDrCount";
+import useWmsDrCreate from "./wms/dr/useWmsDrCreate";
+import useWmsDrUpdate from "./wms/dr/useWmsDrUpdate";
+
 import useWmsPmaSearch from "./wms/pma/useWmsPmaSearch";
 import useWmsPmaCount from "./wms/pma/useWmsPmaCount";
 import useWmsPmaCreate from "./wms/pma/useWmsPmaCreate";
@@ -551,6 +557,12 @@ const wms = {
     useWmsPhmCreate:useWmsPhmCreate,
     useWmsPhmUpdate:useWmsPhmUpdate,
     useWmsPhmCount:useWmsPhmCount
+  },
+  dr:{
+    useWmsDrSearch:useWmsDrSearch,
+    useWmsDrCreate:useWmsDrCreate,
+    useWmsDrUpdate:useWmsDrUpdate,
+    useWmsDrCount:useWmsDrCount
   },
   pma:{
     useWmsPmaSearch:useWmsPmaSearch,
