@@ -901,13 +901,22 @@ export const stringReplaceAll = (str = "", searcher = "", replaceWith = "") => {
   return str;
 };
 
-export const DownloadReceipt = async (consumerCode, tenantId, businessService, receiptNumber,pdfKey = "consolidatedreceipt") => {
+export const DownloadReceipt = async (consumerCode, tenantId, businessService, receiptNumber,application,pdfKey = "consolidatedreceipt") => {
   tenantId = tenantId ? tenantId : Digit.ULBService.getCurrentTenantId();
+  const state = Digit.ULBService.getStateId();
   if (receiptNumber) {
-    await Digit.Utils.downloadReceipt(null, businessService, "pt", undefined, receiptNumber);
-  }
+    if(application.fileStoreId)
+    {
+      const fileStore = await Digit.PaymentService.printReciept(state, { fileStoreIds: application.fileStoreId });
+      window.open(fileStore[application.fileStoreId], "_blank");
+    }
+    else {
+      await Digit.Utils.downloadReceipt(null, businessService, "PT", undefined, receiptNumber);
+    }
+    
+ }
   else {
-    await Digit.Utils.downloadReceipt(consumerCode, businessService, "pt", tenantId);
+    await Digit.Utils.downloadReceipt(consumerCode, businessService, "PT", tenantId);
   }
 };
 
