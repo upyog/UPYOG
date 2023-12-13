@@ -5,7 +5,10 @@ import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -16,17 +19,22 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.egov.common.contract.request.RequestInfo;
-import org.egov.mdms.model.*;
+import org.egov.mdms.model.MasterDetail;
+import org.egov.mdms.model.MdmsCriteria;
+import org.egov.mdms.model.MdmsCriteriaReq;
+import org.egov.mdms.model.MdmsResponse;
+import org.egov.mdms.model.ModuleDetail;
 import org.egov.swcalculation.constants.SWCalculationConstant;
+import org.egov.swcalculation.repository.Repository;
+import org.egov.swcalculation.util.CalculatorUtils;
+import org.egov.swcalculation.util.SWCalculationUtil;
 import org.egov.swcalculation.web.models.CalculationCriteria;
+import org.egov.swcalculation.web.models.Demand;
 import org.egov.swcalculation.web.models.RequestInfoWrapper;
 import org.egov.swcalculation.web.models.TaxHeadMaster;
 import org.egov.swcalculation.web.models.TaxHeadMasterResponse;
 import org.egov.swcalculation.web.models.TaxPeriod;
 import org.egov.swcalculation.web.models.TaxPeriodResponse;
-import org.egov.swcalculation.repository.Repository;
-import org.egov.swcalculation.util.CalculatorUtils;
-import org.egov.swcalculation.util.SWCalculationUtil;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -160,33 +168,14 @@ public class MasterDataService {
 			timeBasedExemptionMasterMap.put(entry.getKey(), entry.getValue());
 		}
 	}
-	
-	
-	/**
-	 * Returns the 'APPLICABLE' master object from the list of inputs
-	 *
-	 * filters the Input based on their effective financial year and starting
-	 * day
-	 *
-	 * If an object is found with effective year same as assessment year that
-	 * master entity will be returned
-	 *
-	 * If exact match is not found then the entity with latest effective
-	 * financial year which should be lesser than the assessment year
-	 *
-	 * NOTE : applicable points to single object out of all the entries for a
-	 * given master which fits the period of the property being assessed
-	 *
-	 * @param assessmentYear - Assessment Year
-	 * @param masterList - List of MDMS Master data
-	 */
 	@SuppressWarnings("unchecked")
-	public Map<String, Object> getApplicableMaster(String assessmentYear, List<Object> masterList) {
+	public Map<String, Object> getApplicableMasterCess(String assessmentYear, List<Object> masterList) {
 
 		Map<String, Object> objToBeReturned = null;
 		String maxYearFromTheList = "0";
 		long maxStartTime = 0L;
-
+		log.info("assessmentYear "+ assessmentYear);
+		log.info("Master List is " + masterList.toString());
 		for (Object object : masterList) {
 
 			Map<String, Object> objMap = (Map<String, Object>) object;
@@ -214,6 +203,65 @@ public class MasterDataService {
 				}
 			}
 		}
+		
+		log.info("Master List selected is " + objToBeReturned.toString());
+
+		return objToBeReturned;
+	}
+
+	
+	/**
+	 * Returns the 'APPLICABLE' master object from the list of inputs
+	 *
+	 * filters the Input based on their effective financial year and starting
+	 * day
+	 *
+	 * If an object is found with effective year same as assessment year that
+	 * master entity will be returned
+	 *
+	 * If exact match is not found then the entity with latest effective
+	 * financial year which should be lesser than the assessment year
+	 *
+	 * NOTE : applicable points to single object out of all the entries for a
+	 * given master which fits the period of the property being assessed
+	 *
+	 * @param assessmentYear - Assessment Year
+	 * @param masterList - List of MDMS Master data
+	 */
+	@SuppressWarnings("unchecked")
+	public Map<String, Object> getApplicableMaster(Demand demand,String assessmentYear, List<Object> masterList) {
+
+		Map<String, Object> objToBeReturned = null;
+		String maxYearFromTheList = "0";
+		long maxStartTime = 0L;
+
+		for (Object object : masterList) {
+
+			Map<String, Object> objMap = (Map<String, Object>) object;
+			String objFinYear = ((String) objMap.get(SWCalculationConstant.FROMFY_FIELD_NAME)).split("-")[0];
+			if (!objMap.containsKey(SWCalculationConstant.STARTING_DATE_APPLICABLES)) {
+				if (objFinYear.compareTo(assessmentYear.split("-")[0]) == 0)
+					return objMap;
+
+				else if (assessmentYear.split("-")[0].compareTo(objFinYear) > 0
+						&& maxYearFromTheList.compareTo(objFinYear) <= 0) {
+					maxYearFromTheList = objFinYear;
+					objToBeReturned = objMap;
+				}
+			} else {
+				String objStartDay = ((String) objMap.get(SWCalculationConstant.STARTING_DATE_APPLICABLES));
+				if (assessmentYear.split("-")[0].compareTo(objFinYear) >= 0
+						&& maxYearFromTheList.compareTo(objFinYear) <= 0) {
+					maxYearFromTheList = objFinYear;
+					long startTime = getStartDayInMillis(demand,objStartDay);
+					long currentTime = System.currentTimeMillis();
+					if (startTime < currentTime && maxStartTime < startTime) {
+						objToBeReturned = objMap;
+						maxStartTime = startTime;
+					}
+				}
+			}
+		}
 		return objToBeReturned;
 	}
 	
@@ -225,14 +273,37 @@ public class MasterDataService {
 	 *            StartDay of applicable
 	 * @return Returns start day in milli seconds
 	 */
-	private Long getStartDayInMillis(String startDay) {
-		try {
-			SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-			Date date = df.parse(startDay);
-			return date.getTime();
-		} catch (ParseException e) {
-			throw new CustomException("INVALID_START_DAY", "The startDate of the penalty cannot be parsed");
+	private Long getStartDayInMillis(Demand demand,String startDay) {
+		Date date;
+		if(startDay.contains("/")) {
+			try {
+				SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+				 date = df.parse(startDay);
+			} catch (ParseException e) {
+				throw new CustomException("INVALID_START_DAY", "The startDate of the penalty cannot be parsed");
+			}
+		} else {
+			Instant instant = Instant.ofEpochMilli(demand.getAuditDetails().getCreatedTime());
+			ZoneId zoneId = ZoneId.systemDefault(); // Use the system default time zone
+			LocalDate demandDate = instant.atZone(zoneId).toLocalDate();
+			//LocalDate demandDate=LocalDate.ofEpochDay(demand.getAuditDetails().getCreatedTime());
+			LocalDate penaltyApplicableDate=demandDate.plusDays(Long.parseLong(startDay));
+		    log.info("Penalty/Interest is applicable after date " + penaltyApplicableDate.toString() + " for demand with ID " + demand.getId());
+			return penaltyApplicableDate.atStartOfDay(zoneId).toInstant().toEpochMilli();
 		}
+		
+		return date.getTime();
+	}
+	private Long getStartDayInMillis(String startDay) {
+		Date date;
+		
+			try {
+				SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+				 date = df.parse(startDay);
+			} catch (ParseException e) {
+				throw new CustomException("INVALID_START_DAY", "The startDate of the penalty cannot be parsed");
+			}
+			return date.getTime();
 	}
 	
 	/**

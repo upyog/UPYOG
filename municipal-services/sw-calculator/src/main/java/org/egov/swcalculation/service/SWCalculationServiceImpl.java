@@ -441,7 +441,7 @@ public class SWCalculationServiceImpl implements SWCalculationService {
 			List<Object> sewerageCessMasterList = timeBasedExemptionMasterMap
 					.get(SWCalculationConstant.SW_SEWERAGE_CESS_MASTER);
 
-			Map<String, Object> CessMap = mDataService.getApplicableMaster(Assesment_Year, sewerageCessMasterList);
+			Map<String, Object> CessMap = mDataService.getApplicableMasterCess(Assesment_Year, sewerageCessMasterList);
 			sewerageCess = sewerageCessUtil.calculateSewerageCess(finalSewerageCharge, CessMap);
 
 		}
