@@ -8,7 +8,7 @@ const rename = require("gulp-rename");
 const livereload = require("gulp-livereload");
 
 let output = "./example";
-if (true) {
+if (process.env.NODE_ENV === "production") {
   output = "./dist";
 }
 
@@ -43,7 +43,7 @@ function livereloadStyles() {
 exports.styles = styles;
 exports.default = series(styles);
 exports.watch = livereloadStyles;
-if (true) {
+if (process.env.NODE_ENV === "production") {
   exports.build = series(cleanStyles, styles, minify);
 } else {
   exports.build = series(styles, livereloadStyles);
