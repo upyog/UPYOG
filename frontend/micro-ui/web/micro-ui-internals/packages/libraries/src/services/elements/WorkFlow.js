@@ -1,8 +1,6 @@
 import Urls from "../atoms/urls";
 import { Request } from "../atoms/Utils/Request";
 import cloneDeep from "lodash/cloneDeep";
-import { PaymentService } from "./Payment";
-import { FSMService } from "./FSM";
 
 const getThumbnails = async (ids, tenantId, documents = []) => {
   tenantId = window.location.href.includes("/obps/") || window.location.href.includes("/pt/") ? Digit.ULBService.getStateId() : tenantId;
@@ -111,13 +109,7 @@ export const WorkflowService = {
     });
   },
 
-  getDetailsById: async ({ tenantId, id, moduleCode, role, getTripData, serviceData }) => {
-    var isPaymentCompleted = false;
-    var isTripAmountAvailable = false;
-    var isAmountDue = false;
-    const filters = { id };
-    const response = await FSMService.search(tenantId, { ...filters });
-    if (Number(response.fsm[0].additionalDetails.tripAmount) === 0) isTripAmountAvailable = true;
+  getDetailsById: async ({ tenantId, id, moduleCode, role, getTripData }) => {
     const workflow = await Digit.WorkflowService.getByBusinessId(tenantId, id); 
     const applicationProcessInstance = cloneDeep(workflow?.ProcessInstances);
     const getLocationDetails = window.location.href.includes("/obps/") || window.location.href.includes("noc/inbox");
@@ -125,8 +117,8 @@ export const WorkflowService = {
     const businessServiceResponse = (await Digit.WorkflowService.init(tenantId, moduleCodeData))?.BusinessServices[0]?.states;
     if (workflow && workflow.ProcessInstances) {
       const processInstances = workflow.ProcessInstances;
-      const nextStates = processInstances[0]?.nextActions?.map((action) => ({ action: action?.action, nextState: processInstances[0]?.state.uuid }));
-      const nextActions = nextStates?.map((id) => ({
+      const nextStates = processInstances[0]?.nextActions.map((action) => ({ action: action?.action, nextState: processInstances[0]?.state.uuid }));
+      const nextActions = nextStates.map((id) => ({
         action: id.action,
         state: businessServiceResponse?.find((state) => state.uuid === id.nextState),
       }));
@@ -158,21 +150,10 @@ export const WorkflowService = {
         "roles": "FSM_EMP_FSTPO,FSM_EMP_FSTPO"
       }]
 
-      if (window.location.href.includes("application-details")) {
-        // const demandDetails = await PaymentService.demandSearch(tenantId, id, "FSM.TRIP_CHARGES");
-        // isPaymentCompleted = demandDetails?.Demands[0]?.isPaymentCompleted;
-        const filters = {
-          businessService: "FSM.TRIP_CHARGES",
-          consumerCode: id,
-        };
-        const fetchBill = await PaymentService.fetchBill(tenantId, filters);
-        isAmountDue = fetchBill?.Bill && fetchBill?.Bill.length > 0 && fetchBill?.Bill[0]?.billDetails[0]?.amount > 0;
-      }
-
-      const actionRolePair = nextActions?.map((action) => ({
-        action: action?.action,
-        roles: action.state?.actions?.map((action) => action.roles).join(","),
-      }));
+      // const actionRolePair = nextActions?.map((action) => ({
+      //   action: action?.action,
+      //   roles: action.state?.actions?.map((action) => action.roles).join(","),
+      // }));
 
       if (processInstances.length > 0) {
         const TLEnrichedWithWorflowData = await makeCommentsSubsidariesOfPreviousActions(processInstances)
@@ -267,8 +248,7 @@ export const WorkflowService = {
                 timeline.splice(disposalInProgressPosition + 1, 0, ...waitingForDisposedAction)
                 tripTimeline = disposedAction
               } else {
-                tripTimeline =
-                  timeline?.filter((x) => x.status === "CANCELED").length !== 0 ? timeline : disposedAction.concat(waitingForDisposedAction);
+                tripTimeline = disposedAction.concat(waitingForDisposedAction)
               }
               const feedbackPosition = timeline.findIndex((data) => data.status === "CITIZEN_FEEDBACK_PENDING")
               if (feedbackPosition !== -1) {
@@ -280,36 +260,16 @@ export const WorkflowService = {
           } catch (err) { }
         }
 
-      // TAKING OUT CURRENT APPL STATUS
-      const tempCheckStatus = timeline.map((i) => i.status)[0];
-      // HANDLING ACTION FOR NEW VEHICLE LOG FROM UI SIDE
-      // HIDING PAYMENT OPTION FOR DSO AND WHEN APPLICATION IS NOT IN PAYMENT STATUS
-      const nextAction = location.pathname.includes("new-vehicle-entry")
-        ? action_newVehicle
-        : location.pathname.includes("dso")
-        ? actionRolePair.filter((i) => i.action !== "PAY")
-        : (tempCheckStatus.includes("WAITING_FOR_DISPOSAL") || tempCheckStatus.includes("PENDING_APPL_FEE_PAYMENT")) && isAmountDue
-        ? isTripAmountAvailable
-          ? actionRolePair.filter((i) => i.action !== "PAY").filter((x) => x.action !== "CANCEL")
-          : actionRolePair.filter((i) => i.action !== "COMPLETED")
-        : tempCheckStatus.includes("DSO_INPROGRESS")
-        ? actionRolePair.filter((i) => i.action !== "COMPLETED").filter((x) => x.action !== "PAY")
-        : tempCheckStatus.includes("DISPOSED") && isAmountDue != undefined && isAmountDue
-        ? actionRolePair.filter((i) => i.action !== "COMPLETED").filter((x) => x.action !== "CANCEL")
-        : tempCheckStatus.includes("DISPOSED") && isTripAmountAvailable
-        ? actionRolePair.filter((i) => i.action !== "PAY").filter((x) => x.action !== "CANCEL")
-        : actionRolePair.filter((i) => i.action !== "PAY");
-      const nextActions = isAmountDue
-        ? nextAction
-            .filter((x) => x.action !== "COMPLETED")
-            .filter((i) => i.action !== "SENDBACK")
-            .filter((x) => x.action !== "REASSING")
-        : tempCheckStatus.includes("WAITING_FOR_DISPOSAL") && !isAmountDue
-        ? nextAction
-            .filter((i) => i.action !== "SENDBACK")
-            .filter((x) => x.action !== "REASSING")
-            .filter((x) => x.action !== "CANCEL")
-        : nextAction.filter((i) => i.action !== "SENDBACK").filter((x) => x.action !== "REASSING");
+      //Added the condition so that following filter can happen only for fsm and does not affect other module
+      let nextStep = [];
+      if(window.location.href?.includes("fsm")){
+        // TAKING OUT CURRENT APPL STATUS
+        const actionRolePair = nextActions?.map((action) => ({
+          action: action?.action,
+          roles: action.state?.actions?.map((action) => action.roles).join(","),
+        }));
+        nextStep = location.pathname.includes("new-vehicle-entry") ? action_newVehicle : location.pathname.includes("dso") ? actionRolePair.filter((i)=> i.action !== "PAY") : actionRolePair;
+      }
 
         if (role !== "CITIZEN" && moduleCode === "PGR") {
           const onlyPendingForAssignmentStatusArray = timeline?.filter(e => e?.status === "PENDINGFORASSIGNMENT")
@@ -328,15 +288,11 @@ export const WorkflowService = {
 
         const details = {
           timeline,
-          nextActions,
+          nextActions : window.location.href?.includes("fsm") ? nextStep : nextActions,
           actionState,
           applicationBusinessService: workflow?.ProcessInstances?.[0]?.businessService,
           processInstances: applicationProcessInstance,
         };
-        return details;
-      } else if (processInstances.length === 0 && location.pathname.includes("new-vehicle-entry")) {
-        const nextActions = location.pathname.includes("new-vehicle-entry") && action_newVehicle;
-        const details = { nextActions };
         return details;
       }
     } else {
