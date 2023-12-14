@@ -129,6 +129,9 @@ public class EnrichmentService {
 		else if(reqType==WCConstants.DISCONNECT_CONNECTION) {
 			applicationType=WCConstants.DISCONNECT_WATER_CONNECTION;
 		}
+		else if (reqType == WCConstants.RECONNECTION) {
+			applicationType=WCConstants.WATER_RECONNECTION;
+		}
 		else {
 			applicationType=WCConstants.MODIFY_WATER_CONNECTION;
 		}
@@ -494,15 +497,11 @@ public class EnrichmentService {
 						if (creationDate1.compareTo(creationDate2) == -1) {
 							connectionHashMap.put(connection.getConnectionNo(), connection);
 						}
-					} else if (connection.getApplicationStatus().equals(WCConstants.MODIFIED_FINAL_STATE)) {
+					} else if (connection.getApplicationStatus().equals(WCConstants.MODIFIED_FINAL_STATE )) {
 							connectionHashMap.put(connection.getConnectionNo(), connection);
-					} else {
-						if (connection.getApplicationStatus().equals(WCConstants
-								.DISCONNECTION_FINAL_STATE)) {
-							connectionHashMap.put(connection.getConnectionNo(), connection);
-						}
-					}
+					} 
 				}
+				
 			}
 		});
 		return new ArrayList(connectionHashMap.values());

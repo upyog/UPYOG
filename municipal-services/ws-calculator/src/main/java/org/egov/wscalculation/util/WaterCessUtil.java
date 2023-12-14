@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.egov.wscalculation.constants.WSCalculationConstant;
 import org.egov.wscalculation.service.MasterDataService;
+import org.egov.wscalculation.web.models.Demand;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -19,7 +20,7 @@ public class WaterCessUtil {
 		BigDecimal waterCess = BigDecimal.ZERO;
 		if (waterCharge.doubleValue() == 0.0)
 			return waterCess;
-		Map<String, Object> CessMap = mDataService.getApplicableMaster(assessmentYear, masterList);
+		Map<String, Object> CessMap = mDataService.getApplicableMasterCess(assessmentYear, masterList);
 		return calculateWaterCess(waterCharge, CessMap);
 	}
 

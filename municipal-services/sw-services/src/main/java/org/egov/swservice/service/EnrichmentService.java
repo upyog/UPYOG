@@ -124,6 +124,9 @@ public class EnrichmentService {
 		else if(reqType==SWConstants.DISCONNECT_CONNECTION) {
 			applicationType=SWConstants.DISCONNECT_SEWERAGE_CONNECTION;
 		}
+		else if (reqType == SWConstants.RECONNECTION) {
+			applicationType=SWConstants.SEWERAGE_RECONNECTION;
+		}
 		else {
 			applicationType=SWConstants.MODIFY_SEWERAGE_CONNECTION;
 		}
@@ -470,14 +473,9 @@ public class EnrichmentService {
 						if (creationDate1.compareTo(creationDate2) == -1) {
 							connectionHashMap.put(connection.getConnectionNo(), connection);
 						}
-					} else if (connection.getApplicationStatus().equals(SWConstants.MODIFIED_FINAL_STATE)) {
+					} else if(connection.getApplicationStatus().equals(SWConstants.MODIFIED_FINAL_STATE)) {
 						connectionHashMap.put(connection.getConnectionNo(), connection);
-					} else {
-						if(connection.getApplicationStatus().equals(SWConstants
-								.DISCONNECTION_FINAL_STATE)) {
-							connectionHashMap.put(connection.getConnectionNo(), connection);
-						}
-					}
+					} 
 				}
 			}
 		});

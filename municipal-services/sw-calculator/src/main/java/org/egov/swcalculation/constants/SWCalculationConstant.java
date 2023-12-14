@@ -241,6 +241,8 @@ public class SWCalculationConstant {
 	public static final String SW_FORM_FEE = "SW_FORM_FEE";
 
 	public static final String SW_SCRUTINY_FEE = "SW_SCRUTINY_FEE";
+	
+	public static final String RECONNECTION_FEE_CONST = "reconnectionfee";
 
 	public static final String SW_ONE_TIME_FEE = "SW_ONE_TIME_FEE";
 
@@ -280,6 +282,8 @@ public class SWCalculationConstant {
 
 	public static final String SW_ADHOC_REBATE = "SW_ADHOC_REBATE";
 
+	public static final String SW_RECONNECTION_CHARGE = "SW_RECONNECTION_CHARGE";
+	
 	public static final String ADHOC_PENALTY = "adhocPenalty";
 
 	public static final String ADHOC_REBATE = "adhocRebate";

@@ -32,6 +32,7 @@ public class Transaction {
     @NotNull
     @Size(min = 2, max = 50)
     private String tenantId;
+    
 
     /**
      * Transaction Amount, preferably rounded off to two decimal places
