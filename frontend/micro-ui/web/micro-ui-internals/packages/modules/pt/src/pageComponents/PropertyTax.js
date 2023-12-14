@@ -19,7 +19,10 @@ const PropertyTax = ({ t, config, onSelect, userType, formData }) => {
   function goNext() {
     onSelect();
   }
-
+const onConcent=(e)=>{
+  e.preventDefault()
+  popupWindow = window.open('https://digilocker.meripehchaan.gov.in/public/oauth2/1/authorize?response_type=code&client_id=IB0DDEFE20&state=oidc_flow&redirect_uri=https%3A%2F%2Fupyog-test.niua.org%2FDigiLocker&code_challenge=lx1QRh0rzTWiVqlOyruU0CNS9WASYNtYQ1atsutrzK4&code_challenge_method=S256&dl_flow=signin','_blank','height=600,width=600');
+}
   return (
     <React.Fragment>
       <Card>
@@ -62,6 +65,9 @@ const PropertyTax = ({ t, config, onSelect, userType, formData }) => {
         </div>
         <span>
           <SubmitBar label={t("PT_COMMON_NEXT")} onSubmit={onSelect} />
+        </span>
+        <span>
+          <SubmitBar label={t("PT_DIGILOCKER_CONSENT")} onSubmit={(e) => {onConcent(e)}} />
         </span>
       </Card>
     </React.Fragment>

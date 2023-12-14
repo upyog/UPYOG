@@ -205,7 +205,7 @@ const CreateProperty = ({ parentRoute }) => {
   config.indexRoute = "info";
   const CheckPage = Digit?.ComponentRegistryService?.getComponent("PTCheckPage");
   const PTAcknowledgement = Digit?.ComponentRegistryService?.getComponent("PTAcknowledgement");
-
+console.log("configconfig",config)
   return (
     <div>
       <div>
