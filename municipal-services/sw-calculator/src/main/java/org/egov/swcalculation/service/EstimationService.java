@@ -542,4 +542,45 @@ public class EstimationService {
 	    calendar.set(Calendar.SECOND, 59);
 	    calendar.set(Calendar.MILLISECOND, 999);
 	}
+	
+	public Map<String, List> getReconnectionFeeEstimation(CalculationCriteria criteria, RequestInfo requestInfo, Map<String, Object> masterData ) {
+		String tenantId = requestInfo.getUserInfo().getTenantId();
+		if (StringUtils.isEmpty(criteria.getSewerageConnection()) && !StringUtils.isEmpty(criteria.getApplicationNo())) {
+			SearchCriteria searchCriteria = new SearchCriteria();
+			searchCriteria.setApplicationNumber(criteria.getApplicationNo());
+			searchCriteria.setTenantId(criteria.getTenantId());
+			criteria.setSewerageConnection(
+					calculatorUtil.getSewerageConnectionOnApplicationNO(requestInfo, searchCriteria, tenantId));	
+		}
+
+		if (criteria.getSewerageConnection() == null) {
+			throw new CustomException("SEWERAGE_CONNECTION_NOT_FOUND",
+					"Sewerage Connection are not present for " + criteria.getApplicationNo() + " Application no");
+		}
+		List<TaxHeadEstimate> taxHeadEstimates = getTaxHeadForReconnectionFeeEstimationV2(criteria,masterData, requestInfo);
+		Map<String, List> estimatesAndBillingSlabs = new HashMap<>();
+		estimatesAndBillingSlabs.put("estimates", taxHeadEstimates);
+		return estimatesAndBillingSlabs;
+	}
+
+	private List<TaxHeadEstimate> getTaxHeadForReconnectionFeeEstimationV2(CalculationCriteria criteria,
+			Map<String, Object> masterData, RequestInfo requestInfo) {
+		JSONArray feeSlab = (JSONArray) masterData.getOrDefault(SWCalculationConstant.SC_FEESLAB_MASTER, null);
+		if (feeSlab == null)
+			throw new CustomException("FEE_SLAB_NOT_FOUND", "fee slab master data not found!!"); 
+		
+		JSONObject feeObj = mapper.convertValue(feeSlab.get(0), JSONObject.class);
+		BigDecimal reconnectionCharge = BigDecimal.ZERO;
+		
+		if (feeObj.get(SWCalculationConstant.RECONNECTION_FEE_CONST) != null) {
+			reconnectionCharge = new BigDecimal(feeObj.getAsNumber(SWCalculationConstant.RECONNECTION_FEE_CONST).toString());
+		}
+		
+		List<TaxHeadEstimate> estimates = new ArrayList<>();
+
+		estimates.add(TaxHeadEstimate.builder().taxHeadCode(SWCalculationConstant.SW_RECONNECTION_CHARGE)
+				.estimateAmount(reconnectionCharge).build());
+		return estimates;
+
+	}
 }
