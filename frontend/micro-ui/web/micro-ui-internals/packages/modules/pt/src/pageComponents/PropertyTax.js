@@ -21,7 +21,7 @@ const PropertyTax = ({ t, config, onSelect, userType, formData }) => {
   }
 const onConcent=(e)=>{
   e.preventDefault()
-  popupWindow = window.open('https://digilocker.meripehchaan.gov.in/public/oauth2/1/authorize?response_type=code&client_id=IB0DDEFE20&state=oidc_flow&redirect_uri=https%3A%2F%2Fupyog-test.niua.org%2FDigiLocker&code_challenge=lx1QRh0rzTWiVqlOyruU0CNS9WASYNtYQ1atsutrzK4&code_challenge_method=S256&dl_flow=signin','_blank','height=600,width=600');
+  let popupWindow = window.open('https://digilocker.meripehchaan.gov.in/public/oauth2/1/authorize?response_type=code&client_id=IB0DDEFE20&state=oidc_flow&redirect_uri=http%3A%2F%2Flocalhost:3000%2Fdigit-ui%2Fcitizen%2FDigiLocker&code_challenge=lx1QRh0rzTWiVqlOyruU0CNS9WASYNtYQ1atsutrzK4&code_challenge_method=S256&dl_flow=signin','_blank','height=600,width=600');
 }
   return (
     <React.Fragment>

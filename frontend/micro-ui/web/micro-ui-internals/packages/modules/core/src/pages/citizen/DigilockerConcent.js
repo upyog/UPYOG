@@ -3,7 +3,7 @@ import { Card, Row, CardHeader, StatusTable } from "@egovernments/digit-ui-react
 import { useTranslation } from "react-i18next";
 const DigiLockerConcent = ({ path }) => {
     const { t } = useTranslation();
-
+localStorage.setItem("digilocker",window.location.href.split("=")[1].split("&")[0])
     return (
         <React.Fragment>
             <div style={{ width: "100%" }}>
