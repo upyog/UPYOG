@@ -144,7 +144,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
       isDisabled={!action.showFinancialYearsModal ? PTALoading || (action?.docUploadRequired && !uploadedFile) : !selectedFinancialYear}
       formId="modal-action"
     >
-       (
+       
         <FormComposer
           config={config.form}
           noBoxShadow
@@ -154,7 +154,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
           defaultValues={defaultValues}
           formId="modal-action"
         />
-      )
+      
     </Modal>
   ) : (
     <Loader />

@@ -225,10 +225,11 @@ const ApplicationDetails = () => {
   // }
   
   const handleDownloadPdf = async () => {
-    const PetRegistrationApplications = appDetailsToShow?.applicationData ;
-    const tenantInfo  = tenants.find((tenant) => tenant.code === PetRegistrationApplications.tenantId);
-
-    const data = await getPTAcknowledgementData(PetRegistrationApplications, tenantInfo, t);
+    const PetRegistrationApplications = appDetailsToShow?.applicationData;
+    const tenantInfo = tenants.find((tenant) => tenant.code === PetRegistrationApplications.tenantId);
+    console.log("petttttttt", PetRegistrationApplications);
+    const data = await getPTAcknowledgementData(PetRegistrationApplications.applicationData, tenantInfo, t);
+    console.log("datasssssssss", data);
     Digit.Utils.pdf.generate(data);
   };
 
