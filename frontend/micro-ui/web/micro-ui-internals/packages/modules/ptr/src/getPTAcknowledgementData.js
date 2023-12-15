@@ -82,6 +82,7 @@ const getOwner = (application, t, customTitle) => {
 };
 
 const getAssessmentInfo = (application, t) => {
+  console.log("application", application);
   let values = [
     {
       title: t("PTR_PET_NAME"),
@@ -215,48 +216,48 @@ const mutationRegistrationDetails = (application, t) => {
 const getPTAcknowledgementData = async (application, tenantInfo, t) => {
   const filesArray = application?.documents?.map((value) => value?.fileStoreId);
   const res = filesArray?.length > 0 && (await Digit.UploadServices.Filefetch(filesArray, Digit.ULBService.getStateId()));
-  console.log("application", application);
-  if (application.creationReason === "MUTATION") {
-    return {
-      t: t,
-      tenantId: tenantInfo?.code,
-      name: `${t(tenantInfo?.i18nKey)} ${ulbCamel(t(`ULBGRADE_${tenantInfo?.city?.ulbGrade.toUpperCase().replace(" ", "_").replace(".", "_")}`))}`,
-      email: tenantInfo?.emailId,
-      phoneNumber: tenantInfo?.contactNumber,
-      heading: t("PT_ACKNOWLEDGEMENT"),
-      details: [
-        {
-          title: t("CS_TITLE_APPLICATION_DETAILS"),
-          values: [
-            { title: t("PT_APPLICATION_NO"), value: application?.applicationNumber },
-            { title: t("PT_PROPERRTYID"), value: application?.propertyId },
-            {
-              title: t("CS_APPLICATION_DETAILS_APPLICATION_DATE"),
-              value: Digit.DateUtils.ConvertTimestampToDate(application?.auditDetails?.createdTime, "dd/MM/yyyy"),
-            },
-          ],
-        },
-        {
-          title: t("PT_PROPERTY_ADDRESS_SUB_HEADER"),
-          values: [
-            { title: t("PT_PROPERTY_ADDRESS_PINCODE"), value: application?.address?.pincode || t("CS_NA") },
-            { title: t("PT_PROPERTY_ADDRESS_CITY"), value: t(getCityLocale(application?.tenantId)) || t("CS_NA") },
-            {
-              title: t("PT_PROPERTY_ADDRESS_MOHALLA"),
-              value: t(`${getMohallaLocale(application?.address?.locality?.code, application?.tenantId)}`) || t("CS_NA"),
-            },
-            { title: t("PT_PROPERTY_ADDRESS_STREET_NAME"), value: application?.address?.street || t("CS_NA") },
-            { title: t("PT_PROPERTY_ADDRESS_HOUSE_NO"), value: application?.address?.doorNo || t("CS_NA") },
-            { title: t("PT_PROPERTY_ADDRESS_LANDMARK"), value: application?.address?.landmark || t("CS_NA") },
-          ],
-        },
-        getOwner(application, t, "PT_MUTATION_TRANSFEROR_DETAILS"),
-        getOwner(application, t, "PT_MUTATION_TRANSFEREE_DETAILS_HEADER"),
-        getMutationDetails(application, t),
-        mutationRegistrationDetails(application, t),
-      ],
-    };
-  }
+
+  // if (application.creationReason === "MUTATION") {
+  //   return {
+  //     t: t,
+  //     tenantId: tenantInfo?.code,
+  //     name: `${t(tenantInfo?.i18nKey)} ${ulbCamel(t(`ULBGRADE_${tenantInfo?.city?.ulbGrade.toUpperCase().replace(" ", "_").replace(".", "_")}`))}`,
+  //     email: tenantInfo?.emailId,
+  //     phoneNumber: tenantInfo?.contactNumber,
+  //     heading: t("PT_ACKNOWLEDGEMENT"),
+  //     details: [
+  //       {
+  //         title: t("CS_TITLE_APPLICATION_DETAILS"),
+  //         values: [
+  //           { title: t("PT_APPLICATION_NO"), value: application?.applicationNumber },
+  //           { title: t("PT_PROPERRTYID"), value: application?.propertyId },
+  //           {
+  //             title: t("CS_APPLICATION_DETAILS_APPLICATION_DATE"),
+  //             value: Digit.DateUtils.ConvertTimestampToDate(application?.auditDetails?.createdTime, "dd/MM/yyyy"),
+  //           },
+  //         ],
+  //       },
+  //       {
+  //         title: t("PT_PROPERTY_ADDRESS_SUB_HEADER"),
+  //         values: [
+  //           { title: t("PT_PROPERTY_ADDRESS_PINCODE"), value: application?.address?.pincode || t("CS_NA") },
+  //           { title: t("PT_PROPERTY_ADDRESS_CITY"), value: t(getCityLocale(application?.tenantId)) || t("CS_NA") },
+  //           {
+  //             title: t("PT_PROPERTY_ADDRESS_MOHALLA"),
+  //             value: t(`${getMohallaLocale(application?.address?.locality?.code, application?.tenantId)}`) || t("CS_NA"),
+  //           },
+  //           { title: t("PT_PROPERTY_ADDRESS_STREET_NAME"), value: application?.address?.street || t("CS_NA") },
+  //           { title: t("PT_PROPERTY_ADDRESS_HOUSE_NO"), value: application?.address?.doorNo || t("CS_NA") },
+  //           { title: t("PT_PROPERTY_ADDRESS_LANDMARK"), value: application?.address?.landmark || t("CS_NA") },
+  //         ],
+  //       },
+  //       getOwner(application, t, "PT_MUTATION_TRANSFEROR_DETAILS"),
+  //       getOwner(application, t, "PT_MUTATION_TRANSFEREE_DETAILS_HEADER"),
+  //       getMutationDetails(application, t),
+  //       mutationRegistrationDetails(application, t),
+  //     ],
+  //   };
+  // }
   //console.log("$$$$$$$$", application);
   return {
     t: t,
@@ -300,22 +301,22 @@ const getPTAcknowledgementData = async (application, tenantInfo, t) => {
           // application?.channel === "CITIZEN" ? { title: t("PT_PROPERTY_ADDRESS_LANDMARK"), value: application?.address?.landmark || t("CS_NA") } : {},
         ],
       },
-      {
-        title: t("PT_COMMON_DOCS"),
-        values:
-          application.documents && application.documents.length > 0
-            ? application.documents.map((document, index) => {
-                let documentLink = pdfDownloadLink(res?.data, document?.fileStoreId);
-                return {
-                  title: t(document?.documentType || t("CS_NA")),
-                  value: pdfDocumentName(documentLink, index) || t("CS_NA"),
-                };
-              })
-            : {
-                title: t("PT_NO_DOCUMENTS"),
-                value: " ",
-              },
-      },
+      // {
+      //   title: t("PT_COMMON_DOCS"),
+      //   values:
+      //     application.documents && application.documents.length > 0
+      //       ? application.documents.map((document, index) => {
+      //           let documentLink = pdfDownloadLink(res?.data, document?.fileStoreId);
+      //           return {
+      //             title: t(document?.documentType || t("CS_NA")),
+      //             value: pdfDocumentName(documentLink, index) || t("CS_NA"),
+      //           };
+      //         })
+      //       : {
+      //           title: t("PT_NO_DOCUMENTS"),
+      //           value: " ",
+      //         },
+      // },
     ],
   };
 };
