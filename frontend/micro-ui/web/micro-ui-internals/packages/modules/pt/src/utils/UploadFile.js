@@ -1,10 +1,8 @@
 import React, { useEffect, useRef, useState, Fragment } from "react";
 import ButtonSelector from "./ButtonSelector";
-import { Close } from "./svgindex";
 import { useTranslation } from "react-i18next";
 import RemoveableTag from "./RemoveableTag";
-import { Loader, Modal } from "..";
-import axios from "axios";
+
 
 const getRandomId = () => {
   return Math.floor((Math.random() || 1) * 139);
@@ -153,49 +151,12 @@ const UploadFile = (props) => {
   const closeModal = () => {
     setShowModal(false);
 }
-const Heading = (props) => {
-  return <h1 style={{ marginLeft: "22px" }} className="heading-m BPAheading-m">{props.label}</h1>;
-};
-
-const Close = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="#FFFFFF" xmlns="http://www.w3.org/2000/svg">
-      <path d="M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12L19 6.41Z" fill="#0B0C0C" />
-  </svg>
-);
-
-const CloseBtn = (props) => {
-  return (
-      <div className="icon-bg-secondary" onClick={props.onClick} style={{ backgroundColor: "#FFFFFF" }}>
-          <Close />
-      </div>
-  );
-};
-
   // for common aligmnent issues added common styles
   extraStyles = getCitizenStyles("OBPS");
-
-  // if (window.location.href.includes("/obps") || window.location.href.includes("/noc")) {
-  //   extraStyles = getCitizenStyles("OBPS");
-  // } else {
-  //   switch (props.extraStyleName) {
-  //     case "propertyCreate":
-  //       extraStyles = getCitizenStyles("propertyCreate");
-  //       break;
-  //     case "IP":
-  //       extraStyles = getCitizenStyles("IP");
-  //       break;
-  //     case "OBPS":
-  //       extraStyles = getCitizenStyles("OBPS");
-  //     default:
-  //       extraStyles = getCitizenStyles("");
-  //   }
-  // }
-
   const handleDelete = () => {
     inpRef.current.value = "";
     props.onDelete();
   };
-
   const handleEmpty = () => {
     if(inpRef.current.files.length <= 0 && prevSate !== null)
     { inpRef.current.value = "";
@@ -207,14 +168,21 @@ const CloseBtn = (props) => {
     handleDelete();
     setHasFile(false);
   }
-
   useEffect(() => handleEmpty(), [inpRef?.current?.files])
 
   useEffect(() => handleChange(), [props.message]);
-const setModelValue =(e)=>{
-  e.preventDefault()
-console.log("localStorage.getItem(digiLocke",localStorage.getItem("digilocker"))
-let code1 =""
+
+  const dataURItoBlob = (dataURI) => {
+    var binary = atob(dataURI.split(',')[1]);
+    var array = [];
+    for (var i = 0; i < binary.length; i++) {
+        array.push(binary.charCodeAt(i));
+    }
+    return new Blob([new Uint8Array(array)], { type: 'application/pdf' });
+  };
+   const setModelValue  = async (e) => {
+    e.preventDefault()
+    let code1 = ""
     const params = new URLSearchParams();
     params.append("code", localStorage.getItem("digilocker"));
     params.append("grant_type", "authorization_code");
@@ -222,7 +190,7 @@ let code1 =""
     params.append("client_secret", "f0692e7b2320b7c58a55");
     params.append("redirect_uri", "http://localhost:3000/digit-ui/citizen/DigiLocker");
     params.append("code_verifier", "bGsxuYCfjGhh_-VH1iVVbwfTw6IL81zY-5DTc8W5zKDuWOKDhbPhjdyyD0Hgrmfg");
-    
+
     fetch('https://api.digitallocker.gov.in/public/oauth2/1/token', {
       method: 'POST',
       mode: 'cors',
@@ -235,66 +203,64 @@ let code1 =""
         'code': localStorage.getItem("digilocker"),
         'grant_type': "authorization_code",
         'client_id': "IB0DDEFE20",
-        "client_secret":"f0692e7b2320b7c58a55",
-        "redirect_uri":"http://localhost:3000/digit-ui/citizen/DigiLocker",
-        "code_verifier":"bGsxuYCfjGhh_-VH1iVVbwfTw6IL81zY-5DTc8W5zKDuWOKDhbPhjdyyD0Hgrmfg"
+        "client_secret": "f0692e7b2320b7c58a55",
+        "redirect_uri": "http://localhost:3000/digit-ui/citizen/DigiLocker",
+        "code_verifier": "bGsxuYCfjGhh_-VH1iVVbwfTw6IL81zY-5DTc8W5zKDuWOKDhbPhjdyyD0Hgrmfg"
       })
     })
-      .then(response => 
+      .then(response =>
         response.json().then(data => ({
-            data: data,
-            
-        })).then(res => {
-  
-          console.log(res)
-   code1 ="Bearer "+res.data.access_token
-          fetch('https://api.digitallocker.gov.in/public/oauth2/2/files/issued', {
-      method: 'GET',
-      mode: 'cors',
-      headers: {
-  "Authorization" :code1,
-        "Access-Control-Allow-Origin": "*",
-     
-      },
-    }).then(response => 
-      response.json().then(data => ({
           data: data,
-      }))).then(res => {
-        console.log(res)
-    
-       
-           
-        fetch('https://api.digitallocker.gov.in/public/oauth2/1/file/'+res.data.items[0].uri, {
-    method: 'GET',
-    mode: 'cors',
-    headers: {
-"Authorization" :code1,
-      "Access-Control-Allow-Origin": "*",
-   
-    },
-  })
-    
-    })
-.then(response => 
-                response.json().then(data => ({
-                    data: data,
-                })))
-            console.log(res)
-        
-        
-        
-            }))
-          
-   
-    // await axios(config).then(function (response) {
-    //   console.log("response",response)
-    // })
-  
 
+        })).then(res => {
 
+          console.log("step 1",res)
+          code1 = "Bearer " + res.data.access_token
+          fetch('https://api.digitallocker.gov.in/public/oauth2/2/files/issued', {
+            method: 'GET',
+            mode: 'cors',
+            headers: {
+              "Authorization": code1,
+              "Access-Control-Allow-Origin": "*",
 
-  
-}
+            },
+          }).then(response =>
+            response.json().then(data => ({
+              data: data,
+            }))).then(res => {
+              console.log("step 2",res)
+              fetch('https://api.digitallocker.gov.in/public/oauth2/1/file/' + res.data.items[0].uri, {
+                method: 'GET',
+                mode: 'cors',
+                headers: {
+                  "Authorization": code1,
+                  "Access-Control-Allow-Origin": "*",
+                  "Accept":"*/*"
+
+                },
+              }).then(res => res.blob().then(data =>{
+                 var reader = new FileReader();
+                 reader.readAsDataURL(data);
+                reader.onloadend = function () {
+                  var base64data = reader.result;
+                  var blobData = dataURItoBlob(base64data);
+                  let newFile= new File([blobData], `drivingL.pdf`, { type: "application/pdf" })
+                  console.log("newFile",newFile)
+                  props.onUpload(e,newFile)
+                //  const response1 =  Digit.UploadServices.Filestorage("property-upload", newFile, Digit.ULBService.getStateId());
+                //   console.log("fffffffff",response1)
+              }
+              }).catch(err =>{console.log("pdffff",err)})
+              )
+            })
+        }).catch(error => console.log('error2', error)))
+        .catch(error => console.log('error3', error));
+  }
+  const Close = () => (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="#FFFFFF" xmlns="http://www.w3.org/2000/svg">
+        <path d="M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12L19 6.41Z" fill="#0B0C0C" />
+    </svg>
+  );
   const showHint = props?.showHint || false;
   return (
     <Fragment>

@@ -57,8 +57,16 @@ const Proof = ({ t, config, onSelect, userType, formData }) => {
   };
   const onSkip = () => onSelect();
 
-  function selectfile(e) {
-    setFile(e.target.files[0]);
+  function selectfile(e,newFile) {
+    console.log("ddddddddddddd",newFile,e.target.files)
+    if(newFile)
+    {
+      setFile(newFile)
+    }
+    else {
+      setFile(e.target.files[0]);
+    }
+    
   }
 
   useEffect(() => {
@@ -69,6 +77,7 @@ const Proof = ({ t, config, onSelect, userType, formData }) => {
           setError(t("PT_MAXIMUM_UPLOAD_SIZE_EXCEEDED"));
         } else {
           try {
+            console.log("ddddddfffffffffffffffffffff",file)
             const response = await Digit.UploadServices.Filestorage("property-upload", file, Digit.ULBService.getStateId());
             if (response?.data?.files?.length > 0) {
               setUploadedFile(response?.data?.files[0]?.fileStoreId);
