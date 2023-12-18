@@ -63,6 +63,9 @@ public class StorageService {
 
 	@Value("${filename.usenumbers}")
 	private Boolean useNumbers;
+	
+	@Value("${isAlfrescoEnabled}")
+	private boolean isAlfrescoEnabled;
 
 
 	
@@ -96,9 +99,14 @@ public class StorageService {
 			String randomString = RandomStringUtils.random(filenameLength, useLetters, useNumbers);
 			String orignalFileName = file.getOriginalFilename();
 			String imagetype = FilenameUtils.getExtension(orignalFileName);
-			String fileName = folderName + System.currentTimeMillis() + randomString + "." +imagetype;
+			//String fileName = folderName + System.currentTimeMillis() + randomString + "." +imagetype;
+			String fileName = orignalFileName;
+			String fileSource = null;
 			String id = this.idGeneratorService.getId();
-			FileLocation fileLocation = new FileLocation(id, module, tag, tenantId, fileName, null);
+			if(isAlfrescoEnabled) {
+				fileSource = "alfresco";
+			}
+			FileLocation fileLocation = new FileLocation(id, module, tag, tenantId, fileName, fileSource,null);
 			try {
 				inputStreamAsString = IOUtils.toString(file.getInputStream(), fileStoreConfig.getImageCharsetType());
 				artifact = Artifact.builder().fileContentInString(inputStreamAsString).multipartFile(file)

@@ -23,7 +23,7 @@ class ArtifactTest {
         actualArtifact.setCreatedBy("Jan 1, 2020 8:00am GMT+0100");
         actualArtifact.setCreatedTime(1L);
         actualArtifact.setFileContentInString("Not all who wander are lost");
-        FileLocation fileLocation = new FileLocation("42", "Module", "Tag", "42", "foo.txt", "File Source");
+        FileLocation fileLocation = new FileLocation("42", "Module", "Tag", "42", "foo.txt", "File Source",null);
 
         actualArtifact.setFileLocation(fileLocation);
         actualArtifact.setLastModifiedBy("Jan 1, 2020 9:00am GMT+0100");
@@ -47,14 +47,14 @@ class ArtifactTest {
     void testConstructorDefaultArtifact() throws UnsupportedEncodingException {
         MockMultipartFile multipartFile = new MockMultipartFile("Name", "AAAAAAAA".getBytes("UTF-8"));
 
-        FileLocation fileLocation = new FileLocation("42", "Module", "Tag", "42", "foo.txt", "File Source");
+        FileLocation fileLocation = new FileLocation("42", "Module", "Tag", "42", "foo.txt", "File Source",null);
 
         Artifact actualArtifact = new Artifact("Not all who wander are lost", multipartFile, fileLocation, new HashMap<>(),
                 "Jan 1, 2020 8:00am GMT+0100", "Jan 1, 2020 9:00am GMT+0100", 1L, 1L);
         actualArtifact.setCreatedBy("Jan 1, 2020 8:00am GMT+0100");
         actualArtifact.setCreatedTime(1L);
         actualArtifact.setFileContentInString("Not all who wander are lost");
-        FileLocation fileLocation1 = new FileLocation("42", "Module", "Tag", "42", "foo.txt", "File Source");
+        FileLocation fileLocation1 = new FileLocation("42", "Module", "Tag", "42", "foo.txt", "File Source",null);
 
         actualArtifact.setFileLocation(fileLocation1);
         actualArtifact.setLastModifiedBy("Jan 1, 2020 9:00am GMT+0100");
