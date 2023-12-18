@@ -93,7 +93,7 @@ export const PTRSearch = {
                     title: `PTR_${document?.documentType.replace(".", "_")}`,
                     documentType: document?.documentType,
                     documentUid: document?.documentUid,
-                    fileStoreId: document?.fileStoreId,
+                    fileStoreId: document?.filestoreId,
                     status: document.status,
                   };
                 }),

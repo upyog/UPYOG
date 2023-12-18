@@ -43,7 +43,7 @@ const ApplicationDetails = () => {
   } = Digit.Hooks.ptr.usePTRApplicationAction(tenantId);
   
 
-
+   //console.log("//////////////////////////////////////////////////////",applicationDetails)
 
   
 
@@ -181,7 +181,7 @@ const ApplicationDetails = () => {
         return {
           action: "PAY",
           forcedName: "WF_EMPLOYEE_PTR_PAY",
-          redirectionUrl: { pathname: `/digit-ui/employee/payment/collect/ptr/${appDetailsToShow?.applicationData?.applicationData?.applicationNumber}` },
+          redirectionUrl: { pathname: `/digit-ui/employee/payment/collect/pet-services/${appDetailsToShow?.applicationData?.applicationData?.applicationNumber}` },
         };
       }
       return act;
@@ -221,7 +221,7 @@ const ApplicationDetails = () => {
   //     {
   //       title: "PT_WORKFLOW_DOCS",
   //       values: wfDocs?.map?.((e) => ({ ...e, title: e.documentType })),
-  //     },
+      // },
   //   ];
   // }
   
