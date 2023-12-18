@@ -116,7 +116,6 @@ const ApplicationDetails = () => {
       setBusinessService(workflowDetails?.data?.applicationBusinessService);
       
 
-      //setBusinessService("ptr");
 
     }
   }, [workflowDetails.data]);
@@ -124,7 +123,7 @@ const ApplicationDetails = () => {
   //console.log("use effect :", workflowDetails.data);
 
 
-  //const PT_CEMP = Digit.UserService.hasAccess(["PT_CEMP"]) || false;
+   const PT_CEMP = Digit.UserService.hasAccess(["PT_CEMP"]) || false;
 
   // if (appDetailsToShow?.applicationData?.status === "ACTIVE" && PT_CEMP) {
   //   workflowDetails = {
@@ -172,22 +171,22 @@ const ApplicationDetails = () => {
   //   });
   // }
 
-  // if (
-  //   PT_CEMP &&
-  //   workflowDetails?.data?.applicationBusinessService === "ptr" &&
-  //   workflowDetails?.data?.actionState?.nextActions?.find((act) => act.action === "PAY")
-  // ) {
-  //   workflowDetails.data.actionState.nextActions = workflowDetails?.data?.actionState?.nextActions.map((act) => {
-  //     if (act.action === "PAY") {
-  //       return {
-  //         action: "PAY",
-  //         forcedName: "WF_EMPLOYEE_PT.MUTATION_PAY",
-  //         redirectionUrl: { pathname: `/digit-ui/employee/payment/collect/PT.MUTATION/${appDetailsToShow?.applicationData?.applicationNumber}` },
-  //       };
-  //     }
-  //     return act;
-  //   });
-  // }
+  if (
+    PT_CEMP &&
+    workflowDetails?.data?.applicationBusinessService === "ptr" &&
+    workflowDetails?.data?.actionState?.nextActions?.find((act) => act.action === "PAY")
+  ) {
+    workflowDetails.data.actionState.nextActions = workflowDetails?.data?.actionState?.nextActions.map((act) => {
+      if (act.action === "PAY") {
+        return {
+          action: "PAY",
+          forcedName: "WF_EMPLOYEE_PTR_PAY",
+          redirectionUrl: { pathname: `/digit-ui/employee/payment/collect/ptr/${appDetailsToShow?.applicationData?.applicationData?.applicationNumber}` },
+        };
+      }
+      return act;
+    });
+  }
 
   // if (
   //   PT_CEMP && 
@@ -209,10 +208,12 @@ const ApplicationDetails = () => {
   // }
 
   // const wfDocs = workflowDetails.data?.timeline?.reduce((acc, { wfDocuments }) => {
+  //   console.log("ghsdddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",wfDocuments)
   //   return wfDocuments ? [...acc, ...wfDocuments] : acc;
   // }, []);
   // let appdetailsDocuments = appDetailsToShow?.applicationDetails?.find((e) => e.title === "PT_OWNERSHIP_INFO_SUB_HEADER")?.additionalDetails
   //   ?.documents;
+  // console.log("gdahgdahdgdhdhehhedehdehwdwededgdg",appDetailsToShow?.applicationDetails)
 
   // if (appdetailsDocuments && wfDocs?.length && !appdetailsDocuments?.find((e) => e.title === "PT_WORKFLOW_DOCS")) {
   //   appDetailsToShow.applicationDetails.find((e) => e.title === "PT_OWNERSHIP_INFO_SUB_HEADER").additionalDetails.documents = [
@@ -227,9 +228,7 @@ const ApplicationDetails = () => {
   const handleDownloadPdf = async () => {
     const PetRegistrationApplications = appDetailsToShow?.applicationData;
     const tenantInfo = tenants.find((tenant) => tenant.code === PetRegistrationApplications.tenantId);
-    console.log("petttttttt", PetRegistrationApplications);
     const data = await getPTAcknowledgementData(PetRegistrationApplications.applicationData, tenantInfo, t);
-    console.log("datasssssssss", data);
     Digit.Utils.pdf.generate(data);
   };
 
@@ -267,6 +266,8 @@ const ApplicationDetails = () => {
             />
           )}
           </div>
+
+          
           
       
       <ApplicationDetailsTemplate

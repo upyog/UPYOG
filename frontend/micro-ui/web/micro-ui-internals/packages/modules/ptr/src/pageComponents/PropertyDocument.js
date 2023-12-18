@@ -10,8 +10,9 @@ const PDFSvg = ({ width = 20, height = 20, style }) => (
 );
 
 function PropertyDocument({ property = {} }) {
+  console.log("property",property)
   const { t } = useTranslation();
-  const { isLoading, isError, error, data } = Digit.Hooks.pt.usePropertyDocumentSearch({
+  const { isLoading, isError, error, data } = Digit.Hooks.ptr.usePTRPropertyDocumentSearch({
     property,
   });
   const documents = property?.documents || [];
@@ -25,11 +26,12 @@ function PropertyDocument({ property = {} }) {
       <React.Fragment>
         <div style={{ display: "flex", flexWrap: "wrap" }}>
           {documents?.map((document, index) => {
+            console.log("yfffffffffffffffffffffffffffff",document)
             let documentLink = pdfDownloadLink(data.pdfFiles, document?.fileStoreId);
             return (
               <a target="_" href={documentLink} style={{ minWidth: "160px" }} key={index}>
                 <PDFSvg width={85} height={100} style={{ background: "#f6f6f6", padding: "8px" }} />
-                <p style={{ marginTop: "8px" }}>{t(`PT_${document?.documentType.replace(".","_")}`)}</p>
+                <p style={{ marginTop: "8px" }}>{t(`PTR_${document?.documentType.replace(".","_")}`)}</p>
               </a>
             );
           })}
