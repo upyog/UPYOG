@@ -70,14 +70,14 @@ const PTApplicationDetails = () => {
 
   useEffect(async () => {
     if (acknowledgementIds && tenantId &&  pet_details) {
-      const res = await Digit.PaymentService.searchBill(tenantId, { Service: "PT.MUTATION", consumerCode: acknowledgementIds });
+      const res = await Digit.PaymentService.searchBill(tenantId, { Service: "ptr", consumerCode: acknowledgementIds });
       if (!res.Bill.length) {
         const res1 = await Digit.PTService.ptCalculateMutation({  pet_details:  pet_details }, tenantId);
         setBillAmount(res1?.[acknowledgementIds]?.totalAmount || t("CS_NA"));
-        setBillStatus(t(`PT_MUT_BILL_ACTIVE`));
+        setBillStatus(t(`PTR_MUT_BILL_ACTIVE`));
       } else {
         setBillAmount(res?.Bill[0]?.totalAmount || t("CS_NA"));
-        setBillStatus(t(`PT_MUT_BILL_${res?.Bill[0]?.status?.toUpperCase()}`));
+        setBillStatus(t(`PTR_MUT_BILL_${res?.Bill[0]?.status?.toUpperCase()}`));
       }
     }
   }, [tenantId, acknowledgementIds,  pet_details]);

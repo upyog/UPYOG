@@ -1,7 +1,7 @@
 /*
 
 
-@author - Shivank-NIUA
+@author - Shivank shukla -NIUA
 
 this file is created to show the Application Detail page from both search application and inbox
 as this file is specially designed for Pet-Registration 
@@ -32,6 +32,7 @@ export const PTRSearch = {
     return response.PetRegistrationApplications[0];
   },
   RegistrationDetails: ({ PetRegistrationApplications: response, t }) => {
+    console.log("responseeee ",response)
     return [
 
       {
@@ -86,6 +87,8 @@ export const PTRSearch = {
              
               values: response?.documents
                 ?.map((document) => {
+                  console.log("documenttsssssssssssssssssssss ",document)
+
                   return {
                     title: `PTR_${document?.documentType.replace(".", "_")}`,
                     documentType: document?.documentType,
@@ -107,7 +110,7 @@ export const PTRSearch = {
     return {
       tenantId: response.tenantId,
       applicationDetails: PTRSearch.RegistrationDetails({ PetRegistrationApplications: response, t }),
-      //additionalDetails: response?.additionalDetails,
+      additionalDetails: response?.documents?.[0],
       applicationData: response,
       transformToAppDetailsForEmployee: PTRSearch.RegistrationDetails,
       

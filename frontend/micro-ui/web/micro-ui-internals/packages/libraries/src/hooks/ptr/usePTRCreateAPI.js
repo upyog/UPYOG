@@ -1,6 +1,6 @@
 /*
 
-created by - Shivank
+@author Shivank-NIUA
 
 */
 
@@ -8,9 +8,9 @@ import { useQuery, useMutation } from "react-query";
 import { PTRService } from "../../services/elements/PTR";
 
 
-export const usePTRCreateAPI = (tenantId, shivank = true) => {
+export const usePTRCreateAPI = (tenantId, type = true) => {
  // return useMutation((data) => PTRService.create(data, tenantId));
-  if (shivank) {
+  if (type) {
     return useMutation((data) => PTRService.create(data, tenantId));
   } 
   else {
