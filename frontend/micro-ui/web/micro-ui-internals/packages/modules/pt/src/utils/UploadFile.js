@@ -180,49 +180,18 @@ const UploadFile = (props) => {
     }
     return new Blob([new Uint8Array(array)], { type: 'application/pdf' });
   };
-   const setModelValue  = async (e) => {
+/* this fetchDigiLockerDocuments function is used to fetch documents from Digilocker*/
+
+   const fetchDigiLockerDocuments  = async (e) => {
     e.preventDefault()
-    let code1 = ""
-    const params = new URLSearchParams();
-    params.append("code", localStorage.getItem("digilocker"));
-    params.append("grant_type", "authorization_code");
-    params.append("client_id", "IB0DDEFE20");
-    params.append("client_secret", "f0692e7b2320b7c58a55");
-    params.append("redirect_uri", "http://localhost:3000/digit-ui/citizen/DigiLocker");
-    params.append("code_verifier", "bGsxuYCfjGhh_-VH1iVVbwfTw6IL81zY-5DTc8W5zKDuWOKDhbPhjdyyD0Hgrmfg");
-
-    fetch('https://api.digitallocker.gov.in/public/oauth2/1/token', {
-      method: 'POST',
-      mode: 'cors',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "PUT, DELETE,POST"
-      },
-      body: new URLSearchParams({
-        'code': localStorage.getItem("digilocker"),
-        'grant_type': "authorization_code",
-        'client_id': "IB0DDEFE20",
-        "client_secret": "f0692e7b2320b7c58a55",
-        "redirect_uri": "http://localhost:3000/digit-ui/citizen/DigiLocker",
-        "code_verifier": "bGsxuYCfjGhh_-VH1iVVbwfTw6IL81zY-5DTc8W5zKDuWOKDhbPhjdyyD0Hgrmfg"
-      })
-    })
-      .then(response =>
-        response.json().then(data => ({
-          data: data,
-
-        })).then(res => {
-
-          console.log("step 1",res)
-          code1 = "Bearer " + res.data.access_token
+   
+          let code1 = "Bearer " + sessionStorage.getItem("DigiLocker.token")
           fetch('https://api.digitallocker.gov.in/public/oauth2/2/files/issued', {
-            method: 'GET',
+            method: 'GET',                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
             mode: 'cors',
             headers: {
               "Authorization": code1,
               "Access-Control-Allow-Origin": "*",
-
             },
           }).then(response =>
             response.json().then(data => ({
@@ -252,9 +221,8 @@ const UploadFile = (props) => {
               }
               }).catch(err =>{console.log("pdffff",err)})
               )
-            })
-        }).catch(error => console.log('error2', error)))
-        .catch(error => console.log('error3', error));
+            }).catch(error => console.log('error2', error))
+       
   }
   const Close = () => (
     <svg width="24" height="24" viewBox="0 0 24 24" fill="#FFFFFF" xmlns="http://www.w3.org/2000/svg">
@@ -275,8 +243,8 @@ const UploadFile = (props) => {
             type={props.buttonType}
           />
           <span style={{fontWeight:"bold"}}>OR</span>
-          <div className="col col-md-4  text-md-center p-0" style={{width:"40%"}}>
-             <button className="digilocker-btn"type="submit" onClick={(e)=> setModelValue(e)}><img src="https://meripehchaan.gov.in/assets/img/icon/digi.png" class="mr-2" style={{"width":"12%"}}></img>Fetch from DigiLocker</button>
+          <div className="col col-md-4  text-md-center p-0" style={{width:"40%", marginTop:"5px"}}>
+             <button className="digilocker-btn"type="submit" onClick={(e)=> fetchDigiLockerDocuments(e)}><img src="https://meripehchaan.gov.in/assets/img/icon/digi.png" class="mr-2" style={{"width":"12%"}}></img>Fetch from DigiLocker</button>
                 </div>
             {props?.uploadedFiles?.map((file, index) => {
               const fileDetailsData = file[1]

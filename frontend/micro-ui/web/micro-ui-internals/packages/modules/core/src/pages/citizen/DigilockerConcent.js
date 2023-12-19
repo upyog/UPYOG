@@ -7,10 +7,15 @@ localStorage.setItem("digilocker",window.location.href.split("=")[1].split("&")[
     return (
         <React.Fragment>
             <div style={{ width: "100%" }}>
+                {window.location.href.includes("error")?
                 <Card>
-                    <CardHeader>Receipt Summary</CardHeader>
-                    <span>successful</span>
-                </Card>
+                    <CardHeader>DigiLocker Concent Error</CardHeader>
+                    <span>Concent has been denied</span>
+                </Card>:
+                <Card>
+                <CardHeader>DigiLocker Concent</CardHeader>
+                <span>Concent recieved. Now documents can be shared from Digilocker by using "Fetch from Digilocker" button on document upload screen</span>
+            </Card>}
             </div>
         </React.Fragment>
     );
