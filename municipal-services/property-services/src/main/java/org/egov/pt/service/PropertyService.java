@@ -511,6 +511,8 @@ public class PropertyService {
 					return Collections.emptyList();
 
 				properties = repository.getPropertiesWithOwnerInfo(criteria, requestInfo, false);
+				log.info("In Property Search before filtering");
+
 				filterPropertiesForUser(properties, criteria.getOwnerIds());
 			} else {
 				properties = repository.getPropertiesWithOwnerInfo(criteria, requestInfo, false);
