@@ -108,7 +108,7 @@ export const usePaymentUpdate = ({ egId }, businessService, config) => {
 };
 
 export const useGetPaymentRulesForBusinessServices = (tenantId) => {
-  return useQuery(["getPaymentRules", tenantId], () => Digit.MDMSService.getPaymentRules(tenantId));
+  return useQuery(["getPaymentRules", tenantId], () => Digit.MDMSServiceV2.getPaymentRules(tenantId));
 };
 
 export const usePaymentSearch = (tenantId, filters, config = {}) => {
