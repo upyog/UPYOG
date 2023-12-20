@@ -262,7 +262,6 @@ import usePTRSearch from "./ptr/usePTRSearch";
 import usePtrApplicationDetail from "./ptr/usePtrApplicationDetail";
 import usePTRApplicationAction from "./ptr/usePTRApplicationAction";
 import useServiceSearchPTR from "./ptr/useServiceSearchPTR";
-import usePTRPropertyDocumentSearch from "./ptr/usePTRPropertyDocumentSearch";
 
 
 const pgr = {
@@ -359,7 +358,6 @@ const ptr = {
   usePtrApplicationDetail,
   useTenantsPTR,
   useServiceSearchPTR,
-  usePTRPropertyDocumentSearch
   };
 const dss = {
   useMDMS: useDssMdms,

@@ -188,6 +188,34 @@ const PTRCitizenPet = ({ t, config, onSelect, userType, formData, ownerIndex }) 
             )}
           />
 
+        
+
+        <CardLabel>{`${t("PTR_PET_NAME")}`}</CardLabel>
+        <TextInput
+          t={t}
+          type={"text"}
+          isMandatory={false}
+          optionKey="i18nKey"
+          name="petName"
+          value={petName}
+          onChange={setpetname}
+          style={{ width: "100%" }}
+          //disable={isUpdateProperty || isEditProperty}
+          ValidationRequired = {false}
+          {...(validation = {
+            isRequired: true,
+            pattern: "^[a-zA-Z-.`' ]*$",
+            type: "text",
+            title: t("PT_NAME_ERROR_MESSAGE"),
+          })}
+        />
+
+        <CardLabel>{`${t("PTR_PET_SEX")}`}</CardLabel>
+        
+        
+         <Controller
+
+
           <CardLabel>{`${t("PTR_PET_NAME")}`}</CardLabel>
           <TextInput
             t={t}
@@ -211,6 +239,7 @@ const PTRCitizenPet = ({ t, config, onSelect, userType, formData, ownerIndex }) 
           <CardLabel>{`${t("PTR_PET_SEX")}`}</CardLabel>
 
           <Controller
+
             control={control}
             name={"petGender"}
             defaultValue={petGender}
@@ -219,6 +248,108 @@ const PTRCitizenPet = ({ t, config, onSelect, userType, formData, ownerIndex }) 
               <Dropdown className="form-field" selected={petGender} select={setPetGender} option={pet_sex} optionKey="i18nKey" t={t} />
             )}
           />
+
+
+        <CardLabel>{`${t("PTR_PET_AGE")}`}</CardLabel>
+        <TextInput
+        t={t}
+          type={"text"}
+          isMandatory={false}
+          optionKey="i18nKey"
+          name="petAge"
+          value={petAge}
+          onChange={setpetage}
+          style={{ width: "100%" }}
+          placeholder="in months"
+          rules={{
+            required: t("CORE_COMMON_REQUIRED_ERRMSG"),
+            validate: (v) => (/^\d{1,4}$/.test(v) && parseInt(v, 10) >= 0 && parseInt(v, 10) <= 1440 ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
+
+          }}
+          
+        />
+
+        <CardLabel>{`${t("PTR_DOCTOR_NAME")}`}</CardLabel>
+        <TextInput
+          t={t}
+          type={"text"}
+          isMandatory={false}
+          optionKey="i18nKey"
+          name="doctorName"
+          value={doctorName}
+          onChange={setdoctorname}
+          style={{ width: "100%" }}
+          //disable={isUpdateProperty || isEditProperty}
+          ValidationRequired = {false}
+          {...(validation = {
+            isRequired: true,
+            pattern: "^[a-zA-Z-.`' ]*$",
+            type: "text",
+            title: t("PT_NAME_ERROR_MESSAGE"),
+          })}
+        />
+
+        <CardLabel>{`${t("PTR_CLINIC_NAME")}`}</CardLabel>
+        <TextInput
+          t={t}
+          type={"text"}
+          isMandatory={false}
+          optionKey="i18nKey"
+          name="clinicName"
+          value={clinicName}
+          onChange={setclinicname}
+          style={{ width: "100%" }}
+          //disable={isUpdateProperty || isEditProperty}
+          ValidationRequired = {false}
+          {...(validation = {
+            isRequired: true,
+            pattern: "^[a-zA-Z-.`' ]*$",
+            type: "text",
+            title: t("PT_NAME_ERROR_MESSAGE"),
+          })}
+        />
+
+        <CardLabel>{`${t("PTR_VACCINATED_DATE")}`}</CardLabel>
+        <TextInput
+          t={t}
+          type={"date"}
+          isMandatory={false}
+          optionKey="i18nKey"
+          name="lastVaccineDate"
+          value={lastVaccineDate}
+          onChange={setvaccinationdate}
+          style={{ width: "100%" }}
+          max={new Date().toISOString().split('T')[0]}
+          rules={{
+            required: t("CORE_COMMON_REQUIRED_ERRMSG"),
+            validDate: (val) => (/^\d{4}-\d{2}-\d{2}$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
+          }}
+          
+        />
+
+        <CardLabel>{`${t("PTR_VACCINATION_NUMBER")}`}</CardLabel>
+        <TextInput
+          t={t}
+          type={"text"}
+          isMandatory={false}
+          optionKey="i18nKey"
+          name="vaccinationNumber"
+          value={vaccinationNumber}
+          onChange={setvaccinationnumber}
+          style={{ width: "100%" }}
+          
+        />
+      
+        
+
+        
+      
+
+      
+        
+        
+      </div>
+    </FormStep>
 
           <CardLabel>{`${t("PTR_PET_AGE")}`}</CardLabel>
           <TextInput
@@ -321,6 +452,7 @@ const PTRCitizenPet = ({ t, config, onSelect, userType, formData, ownerIndex }) 
           />
         </div>
       </FormStep>
+
     </React.Fragment>
   );
 };

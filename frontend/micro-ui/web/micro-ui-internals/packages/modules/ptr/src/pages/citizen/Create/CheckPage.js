@@ -34,7 +34,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
 
   //console.log("onSubmit",onSubmit )
 
-  //console.log("checkpage",value)
+  console.log("checkpage",value)
 
   const {
     address,
@@ -185,13 +185,13 @@ const CheckPage = ({ onSubmit, value = {} }) => {
        
        
         <CheckBox
-          label={t("PT_FINAL_DECLARATION_MESSAGE")}
+          label={t("PTR_FINAL_DECLARATION_MESSAGE")}
           onChange={setdeclarationhandler}
           styles={{ height: "auto" }}
           //disabled={!agree}
         />
       </div>
-      <SubmitBar label={t("PT_COMMON_BUTTON_SUBMIT")} onSubmit={onSubmit} disabled={!agree} />
+      <SubmitBar label={t("PTR_COMMON_BUTTON_SUBMIT")} onSubmit={onSubmit} disabled={!agree} />
     </Card>
    </React.Fragment>
   );

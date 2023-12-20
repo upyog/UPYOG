@@ -33,7 +33,7 @@ const PaymentDetails = () => {
   const isMobile = window.Digit.Utils.browser.isMobile();
 
   const { isLoading, isError, error, data } = Digit.Hooks.receipts.useReceiptsSearch(
-    { businessServices: "ptr", consumerCodes: applicationNumber },
+    { businessServices: "pet-services", consumerCodes: applicationNumber },
     tenantId,
     [],
     false

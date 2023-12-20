@@ -36,6 +36,7 @@ const PTRCitizenDetails = ({ t, config, onSelect, userType, formData, ownerIndex
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();
 
+
   function setOwnerName(e) {
     // setName(e.target.value);
     // Remove characters that are not alphabets
