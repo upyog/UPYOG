@@ -134,11 +134,11 @@ const getAssessmentInfo = (application, t) => {
       },
       {
         title: (flrno = unit?.floorNo) > -3 ? t("PT_FORM2_PROPERTY_TYPE") : "",
-        value: (flrno = unit?.floorNo) > -3 ? t(application?.additionalDetails?.unit[0]?.structureType) || t("CS_NA") : "",
+        value: (flrno = unit?.floorNo) > -3 ? t(application?.additionalDetails?.unit?.[0]?.structureType) || t(unit.additionalDetails.structureType) || t("CS_NA") : "",
       },
       {
         title: (flrno = unit?.floorNo) > -3 ? t("PT_FORM2_AGE_OF_PROPERTY") : "",
-        value: (flrno = unit?.floorNo) > -3 ? t(application?.additionalDetails?.unit[0]?.ageOfProperty) || t("CS_NA") : "",
+        value: (flrno = unit?.floorNo) > -3 ? t(application?.additionalDetails?.unit?.[0]?.ageOfProperty) ||t(unit.additionalDetails.ageOfProperty)|| t("CS_NA") : "",
       },
       {
         title:
