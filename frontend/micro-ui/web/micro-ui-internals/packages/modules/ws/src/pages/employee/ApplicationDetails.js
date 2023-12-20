@@ -152,19 +152,26 @@ const ApplicationDetails = () => {
   }
 
   const checkWSAdditionalDetails = () => {
-    const connectionType = applicationDetails?.applicationData?.connectionType;
-    const noOfTaps = applicationDetails?.applicationData?.noOfTaps === 0 ? null : applicationDetails?.applicationData?.noOfTaps;
-    const pipeSize = applicationDetails?.applicationData?.pipeSize === 0 ? null : applicationDetails?.applicationData?.pipeSize;
-    const waterSource =  applicationDetails?.applicationData?.waterSource;
-    const noOfWaterClosets = applicationDetails?.applicationData?.noOfWaterClosets === 0 ? null : applicationDetails?.applicationData?.noOfWaterClosets;
-    const noOfToilets = applicationDetails?.applicationData?.noOfToilets === 0 ? null : applicationDetails?.applicationData?.noOfToilets;
-    const plumberDetails = applicationDetails?.applicationData?.additionalDetails?.detailsProvidedBy;
-    const roadCuttingInfo = applicationDetails?.applicationData?.roadCuttingInfo;
-
-    if( !connectionType || !((noOfTaps && pipeSize && waterSource) || (noOfWaterClosets && noOfToilets)) || !plumberDetails || !roadCuttingInfo){
-      return false
+    if(applicationDetails?.processInstancesDetails?.[0]?.businessService =="WSReconnection" || applicationDetails?.processInstancesDetails?.[0]?.businessService =="SWReconnection")
+    {
+      return true;
     }
-    return true;
+    else {
+      const connectionType = applicationDetails?.applicationData?.connectionType;
+      const noOfTaps = applicationDetails?.applicationData?.noOfTaps === 0 ? null : applicationDetails?.applicationData?.noOfTaps;
+      const pipeSize = applicationDetails?.applicationData?.pipeSize === 0 ? null : applicationDetails?.applicationData?.pipeSize;
+      const waterSource =  applicationDetails?.applicationData?.waterSource;
+      const noOfWaterClosets = applicationDetails?.applicationData?.noOfWaterClosets === 0 ? null : applicationDetails?.applicationData?.noOfWaterClosets;
+      const noOfToilets = applicationDetails?.applicationData?.noOfToilets === 0 ? null : applicationDetails?.applicationData?.noOfToilets;
+      const plumberDetails = applicationDetails?.applicationData?.additionalDetails?.detailsProvidedBy;
+      const roadCuttingInfo = applicationDetails?.applicationData?.roadCuttingInfo;
+  
+      if( !connectionType || !((noOfTaps && pipeSize && waterSource) || (noOfWaterClosets && noOfToilets)) || !plumberDetails || !roadCuttingInfo){
+        return false
+      }
+      return true;
+    }
+   
   }
   let dowloadOptions = [],
   appStatus = applicationDetails?.applicationData?.applicationStatus || "";
@@ -271,23 +278,66 @@ const ApplicationDetails = () => {
   });
   workflowDetails?.data?.nextActions?.forEach((action) => {
     if (action?.action === "PAY") {
-      action.redirectionUrll = {
-        pathname: `${getBusinessService(filters)}/${applicationDetails?.applicationNo}/${applicationDetails?.tenantId}?tenantId=${
-          applicationDetails?.tenantId
-        }&ISWSAPP&applicationNumber=${applicationDetails?.applicationNo}`,
-        state: applicationDetails?.tenantId,
-      };
+      if(workflowDetails?.data?.processInstances?.[0]?.businessService =="WSReconnection")
+      {
+        action.redirectionUrll = {
+          pathname: `WSReconnection/${applicationDetails?.applicationNo}/${applicationDetails?.tenantId}?tenantId=${
+            applicationDetails?.tenantId
+          }&ISWSAPP&applicationNumber=${applicationDetails?.applicationNo}`,
+          state: applicationDetails?.tenantId,
+        };
+      }
+      else if(workflowDetails?.data?.processInstances?.[0]?.businessService =="SWReconnection")
+      {
+        action.redirectionUrll = {
+          pathname: `SWReconnection/${applicationDetails?.applicationNo}/${applicationDetails?.tenantId}?tenantId=${
+            applicationDetails?.tenantId
+          }&ISWSAPP&applicationNumber=${applicationDetails?.applicationNo}`,
+          state: applicationDetails?.tenantId,
+        };
+      }
+      else {
+        action.redirectionUrll = {
+          pathname: `${getBusinessService(filters)}/${applicationDetails?.applicationNo}/${applicationDetails?.tenantId}?tenantId=${
+            applicationDetails?.tenantId
+          }&ISWSAPP&applicationNumber=${applicationDetails?.applicationNo}`,
+          state: applicationDetails?.tenantId,
+        };
+      }
+      
     }
   });
 
   workflowDetails?.data?.actionState?.nextActions?.forEach((action) => {
+    console.log("workflowDetails",workflowDetails)
     if (action?.action === "PAY") {
-      action.redirectionUrll = {
-        pathname: `${getBusinessService(filters)}/${applicationDetails?.applicationNo}/${applicationDetails?.tenantId}?tenantId=${
-          applicationDetails?.tenantId
-        }&ISWSAPP&applicationNumber=${applicationDetails?.applicationNo}`,
-        state: applicationDetails?.tenantId,
-      };
+      if (workflowDetails?.data?.processInstances?.[0]?.businessService =="WSReconnection")
+      {
+        action.redirectionUrll = {
+          pathname: `WSReconnection/${applicationDetails?.applicationNo}/${applicationDetails?.tenantId}?tenantId=${
+            applicationDetails?.tenantId
+          }&ISWSAPP&applicationNumber=${applicationDetails?.applicationNo}`,
+          state: applicationDetails?.tenantId,
+        };
+      }
+      else if (workflowDetails?.data?.processInstances?.[0]?.businessService =="SWReconnection")
+      {
+        action.redirectionUrll = {
+          pathname: `SWReconnection/${applicationDetails?.applicationNo}/${applicationDetails?.tenantId}?tenantId=${
+            applicationDetails?.tenantId
+          }&ISWSAPP&applicationNumber=${applicationDetails?.applicationNo}`,
+          state: applicationDetails?.tenantId,
+        };
+      }
+      else{
+        action.redirectionUrll = {
+          pathname: `${getBusinessService(filters)}/${applicationDetails?.applicationNo}/${applicationDetails?.tenantId}?tenantId=${
+            applicationDetails?.tenantId
+          }&ISWSAPP&applicationNumber=${applicationDetails?.applicationNo}`,
+          state: applicationDetails?.tenantId,
+        };
+      }
+     
     }
   });
 

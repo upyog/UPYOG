@@ -198,7 +198,7 @@ export const WSSearch = {
     };
 
     tenantId = wsData?.[0]?.tenantId ? wsData?.[0]?.tenantId : tenantId;
-    const serviceTypeOfData = serviceType == "WATER" ? "WS.ONE_TIME_FEE" : "SW.ONE_TIME_FEE";
+    const serviceTypeOfData = serviceType == "WATER" ? workflowDetails?.ProcessInstances[0]?.businessService === "WSReconnection" ? "WSReconnection": "WS.ONE_TIME_FEE" : workflowDetails?.ProcessInstances[0]?.businessService == "SWReconnection" ? "SWReconnection": "SW.ONE_TIME_FEE";
     const collectionNumber = filters?.applicationNumber;
 
 

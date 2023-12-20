@@ -9,6 +9,7 @@ import {
   Row,
   StatusTable,
   SubmitBar,
+  LinkLabel
 } from "@egovernments/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -273,7 +274,16 @@ const handleClick=()=>{
   const closeWarningPopup = () => {
     setWarningPopUp(false);
   };
-  console.log("billData",fetchBillData?.Bill?.[0])
+  const handleClickOnPtPgr=()=>{
+  sessionStorage.setItem("type","PT" );
+  sessionStorage.setItem("pincode", data.Properties[0].address.pincode);
+  sessionStorage.setItem("tenantId", data.Properties[0].address.tenantId);
+  sessionStorage.setItem("localityCode", data.Properties[0].address.locality.code);
+  sessionStorage.setItem("landmark", data.Properties[0].address.landmark); 
+  sessionStorage.setItem("propertyid",data.Properties[0].propertyId)  ;
+  history.push(`/digit-ui/citizen/pgr/create-complaint/complaint-type?propertyId=${property.propertyId}`);
+  }
+  console.log("data78", data)
   return (
     <React.Fragment>
       <Header>{t("PT_PROPERTY_INFORMATION")}</Header>
@@ -282,6 +292,12 @@ const handleClick=()=>{
           <StatusTable>
             <Row className="border-none" label={t("PT_PROPERTY_PTUID")} text={`${property.propertyId || t("CS_NA")}`} /* textStyle={{ whiteSpace: "pre" }} */ />
             <Row className="border-none" label={t("CS_COMMON_TOTAL_AMOUNT_DUE")} text={`₹${t(getBillAmount(fetchBillData))}`} />
+            <LinkLabel
+            onClick={() => history.push({ pathname: `/digit-ui/employee/pt/payment-details/${property?.propertyId}`})}
+            style={isMobile ? { marginTop: "15px", marginLeft: "0px" } : { marginTop: "15px" }}
+          >
+            {t("PT_VIEW_PAYMENT")}
+          </LinkLabel>
           </StatusTable>
           <ArrearSummary bill={fetchBillData.Bill?.[0]} />
           <CardSubHeader>{t("PT_PROPERTY_ADDRESS_SUB_HEADER")}</CardSubHeader>
@@ -307,6 +323,8 @@ const handleClick=()=>{
             <Row className="border-none" label={t("PT_COMMON_PROPERTY_TYPE")} text={`${t(getPropertyTypeLocale(property?.propertyType))}` || t("CS_NA")} />
             <Row className="border-none" label={t("PT_ASSESMENT1_PLOT_SIZE")} text={`${property.landArea} sq.ft` || t("CS_NA")} />
             <Row className="border-none" label={t("PT_ASSESMENT_INFO_NO_OF_FLOOR")} text={`${property.noOfFloors || t("CS_NA")}`} />
+            <Row className="border-none" label={t("PT_ASSESSMENT1_ELECTRICITY")} text={`${property?.additionalDetails?.electricity || t("CS_NA")}`} />
+            <Row className="border-none" label={t("PT_ASSESSMENT1_UID")} text={`${property?.additionalDetails?.uid || t("CS_NA")}`} />
           </StatusTable>
           <div>
             {Array.isArray(units) &&
@@ -345,10 +363,10 @@ const handleClick=()=>{
               ))}
           </div>
           <CardSubHeader>{t("PT_COMMON_PROPERTY_OWNERSHIP_DETAILS_HEADER")}</CardSubHeader>
-          <div>
+          <div className="owner-details">
             {Array.isArray(owners) &&
-              owners.map((owner, index) => (
-                <div key={index}>
+              owners.sort((item,item2)=>{return item.additionalDetails.ownerSequence - item2.additionalDetails.ownerSequence}).map((owner, index) => (
+                <div key={index} className="owner-details-child">
                   <CardSubHeader>
                     {owners.length != 1 && (
                       <span>
@@ -393,8 +411,8 @@ const handleClick=()=>{
                     {specialCategoryDoc && specialCategoryDoc.length>0 && <Row className="border-none" label={t("PT_SPL_CAT_DOC_TYPE")} text={`${t(stringReplaceAll(specialCategoryDoc[index]?.documentType,".","_"))}` || t("NA")} />}
                     {specialCategoryDoc && specialCategoryDoc.length>0 && <Row className="border-none" label={t("PT_SPL_CAT_DOC_ID")} text={`${t(specialCategoryDoc[index]?.id)}` || t("CS_NA")} />}
                     <Row className="border-none" label={t("PT_MUTATION_AUTHORISED_EMAIL")} text={owner?.emailId ? owner?.emailId:`${(t("CS_NA"))}`} />
-                    <Row className="border-none" label={t("PT_OWNERSHIP_INFO_CORR_ADDR")} text={`${t(owner?.correspondenceAddress)}` || t("CS_NA")} />
-                    {specialCategoryDoc?.length == 0 && <Row className="border-none"  label={t("PT_SPL_CAT")} text={t("CS_NONE")} /> }
+                    <Row className="border-none" label={t("PT_OWNERSHIP_INFO_CORR_ADDR")} text={`${t(owner?.permanentAddress)}` || t("CS_NA")} />
+                    {specialCategoryDoc?.length == 0 && <Row className="border-none"  label={t("PT_SPL_CAT")} text={(owner?.ownerType || t("CS_NA"))} /> }
                   </StatusTable>
                 </div>
               ))}
@@ -410,6 +428,11 @@ const handleClick=()=>{
             )}
           </div>
           <div>
+          {property?.status === "ACTIVE" && !enableAudit && (
+            <div style={{ marginTop: "1em", bottom: "0px", width: "100%", marginBottom: "1.2em" }}>               
+            <button className="submit-bar" type="button" onClick={handleClickOnPtPgr} style={{fontFamily:"sans-serif", color:"white","fontSize":"19px"}}>{t("PT_PGR")}</button>
+            </div>              
+            )}
             {property?.status === "ACTIVE" && !enableAudit && (
               <div style={{ marginTop: "1em", bottom: "0px", width: "100%", marginBottom: "1.2em" }}>
                 <Link to={{ pathname: `/digit-ui/citizen/pt/property/edit-application/action=UPDATE/${property.propertyId}` }}>

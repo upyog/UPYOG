@@ -43,11 +43,13 @@ export const NewApplication = ({ parentUrl, heading }) => {
 
   const onFormValueChange = (setValue, formData) => {
     if (
+      formData?. propertyID &&
       formData?.propertyType &&
       formData?.subtype &&
       formData?.address?.locality?.code &&
       formData?.tripData?.vehicleType &&
       formData?.channel &&
+      formData?.pitType &&
       (formData?.tripData?.amountPerTrip || formData?.tripData?.amountPerTrip === 0)
     ) {
       setSubmitValve(true);
@@ -93,6 +95,7 @@ export const NewApplication = ({ parentUrl, heading }) => {
     const doorNo = data?.address?.doorNo?.trim();
     const slum = data?.address?.slum;
     const landmark = data?.address?.landmark?.trim();
+    const propertyID = data.propertyID. propertyID;
     const noOfTrips = data?.tripData?.noOfTrips;
     const amount = data.tripData.amountPerTrip;
     const cityCode = data?.address?.city?.code;
@@ -103,7 +106,8 @@ export const NewApplication = ({ parentUrl, heading }) => {
     const gender = data.applicationData.applicantGender;
     const paymentPreference = amount === 0 ? null : data?.paymentPreference ? data?.paymentPreference : null;
     const advanceAmount = amount === 0 ? null : data?.advancepaymentPreference?.advanceAmount;
-
+    const distancefromroad=data?.tripData?.distancefromroad;
+    const roadWidth= data?.tripData?.roadWidth;
     const formData = {
       fsm: {
         citizen: {
@@ -116,6 +120,9 @@ export const NewApplication = ({ parentUrl, heading }) => {
         source: applicationChannel.code,
         additionalDetails: {
           tripAmount: amount,
+          distancefromroad:distancefromroad,
+          roadWidth:roadWidth,
+          propertyID : propertyID,
         },
         propertyUsage: data?.subtype,
         vehicleCapacity: data?.tripData?.vehicleType?.capacity,
@@ -161,7 +168,6 @@ export const NewApplication = ({ parentUrl, heading }) => {
   }
 
   const configs = [...preFields, ...commonFields];
-
   return (
     <React.Fragment>
       <div style={{ marginLeft: "15px" }}>

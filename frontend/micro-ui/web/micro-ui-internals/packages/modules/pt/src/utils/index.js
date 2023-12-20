@@ -124,11 +124,12 @@ export const setOwnerDetails = (data) => {
         name: owners[0]?.name,
         ownerType: owners[0]?.ownerType?.code || "NONE",
         documents: document,
+        additionalDetails:{ownerSequence:0, ownerName: owners[0]?.name}
       });
       data.institution = institution;
       data.owners = owner;
     } else {
-      owners.map((ownr) => {
+      owners.map((ownr,index) => {
         let document = [];
         if (ownr?.ownerType?.code != "NONE") {
           document.push({
@@ -153,6 +154,7 @@ export const setOwnerDetails = (data) => {
           permanentAddress: ownr?.permanentAddress,
           relationship: ownr?.relationship?.code,
           documents: document,
+          additionalDetails:{ownerSequence:index, ownerName:ownr?.name}
         });
       });
       data.owners = owner;
@@ -520,6 +522,10 @@ export const setPropertyDetails = (data) => {
 
 /*   method to convert collected details to proeprty create object */
 export const convertToProperty = (data = {}) => {
+  let dataNew = data?.units?.map((value) => {
+    let additionalDetails = { "structureType": value.structureType, "ageOfProperty": value.ageOfProperty }
+    return { ...value, additionalDetails }
+  })
   let isResdential = data.isResdential;
   let propertyType = data.PropertyType;
   let selfOccupied = data.selfOccupied;
@@ -529,7 +535,7 @@ export const convertToProperty = (data = {}) => {
   let builtUpArea = data?.floordetails?.builtUpArea || null;
   let noOfFloors = data?.noOfFloors;
   let noOofBasements = data?.noOofBasements;
-  let unit = data?.units;
+  let unit = dataNew;
   let basement1 = Array.isArray(data?.units) && data?.units["-1"] ? data?.units["-1"] : null;
   let basement2 = Array.isArray(data?.units) && data?.units["-2"] ? data?.units["-2"] : null;
   data = setDocumentDetails(data);
@@ -564,6 +570,9 @@ export const convertToProperty = (data = {}) => {
         unit: unit,
         basement1: basement1,
         basement2: basement2,
+        electricity:data.electricity.electricity,
+        uid:data.uid.uid
+
       },
 
       creationReason: getCreationReason(data),
@@ -888,9 +897,23 @@ export const stringReplaceAll = (str = "", searcher = "", replaceWith = "") => {
   return str;
 };
 
-export const DownloadReceipt = async (consumerCode, tenantId, businessService, pdfKey = "consolidatedreceipt") => {
+export const DownloadReceipt = async (consumerCode, tenantId, businessService, receiptNumber,application,pdfKey = "consolidatedreceipt") => {
   tenantId = tenantId ? tenantId : Digit.ULBService.getCurrentTenantId();
-  await Digit.Utils.downloadReceipt(consumerCode, businessService, "consolidatedreceipt", tenantId);
+  const state = Digit.ULBService.getStateId();
+  if (receiptNumber) {
+    if(application.fileStoreId)
+    {
+      const fileStore = await Digit.PaymentService.printReciept(state, { fileStoreIds: application.fileStoreId });
+      window.open(fileStore[application.fileStoreId], "_blank");
+    }
+    else {
+      await Digit.Utils.downloadReceipt(null, businessService, "PT", undefined, receiptNumber);
+    }
+    
+ }
+  else {
+    await Digit.Utils.downloadReceipt(consumerCode, businessService, "PT", tenantId);
+  }
 };
 
 export const checkIsAnArray = (obj = []) => {

@@ -10,17 +10,6 @@ const getSlumName = (application, t) => {
   return application?.slum?.i18nKey ? t(`${application?.slum?.i18nKey}`) : "N/A";
 };
 
-const getDistanceofPitFromRoad = (distancefromroad) => {
-   if (!distancefromroad) 
-    return "N/A";
-    return distancefromroad;};
-   
-const getRoadWidth = (roadWidth) => {
-   if (!roadWidth) 
-    return "N/A"; 
-  return roadWidth;};
-
-
 const getApplicationVehicleCapacity = (vehicleCapacity) => {
   if (!vehicleCapacity) return "N/A";
   return vehicleCapacity;
@@ -80,6 +69,7 @@ const getPDFData = (application, tenantInfo, t) => {
       {
         title: t("CS_APPLICATION_DETAILS_PROPERTY_DETAILS"),
         values: [
+          { title: t("CS_APPLICATION_DETAILS_PROPERTY_ID"), value: application?.additionalDetails?.propertyID || "N/A" },
           { title: t("CS_APPLICATION_DETAILS_PROPERTY_TYPE"), value: t(getPropertyTypeLocale(application?.propertyUsage)) || "N/A" },
           { title: t("CS_APPLICATION_DETAILS_PROPERTY_SUB_TYPE"), value: t(getPropertySubtypeLocale(application?.propertyUsage)) || "N/A" },
         ],
@@ -110,6 +100,13 @@ const getPDFData = (application, tenantInfo, t) => {
             value: application?.sanitationtype ? t("PITTYPE_MASTERS_" + application?.sanitationtype) : "N/A",
           },
           {
+            title: t("CS_APPLICATION_DETAILS_ROAD_WIDTH"), value: application?.additionalDetails?.roadWidth || "N/A" 
+          },
+          {
+            title: t("CS_APPLICATION_DETAILS_DISTANCE_FROM_ROAD"), value: application?.additionalDetails?.distancefromroad || "N/A" 
+          },
+          
+          {
             title: t("CS_APPLICATION_DETAILS_DIMENSION"),
             // NOTE: value have too much whitespace bcz we want the text after whitespace should go to next line, so pls don't remove whitespace
             value:
@@ -126,12 +123,6 @@ const getPDFData = (application, tenantInfo, t) => {
           {
             title: t("ES_APPLICATION_DETAILS_VEHICLE_CAPACITY"),
             value: getApplicationVehicleCapacity(application?.vehicleCapacity),
-          },
-          { title: t("ES_APPLICATION_DETAILS_DISTANCE_FROM_ROAD"),
-            value: getDistanceofPitFromRoad(application?.additionalDetails.distancefromroad) || "N/A",
-          },
-          { title: t("ES_APPLICATION_DETAILS_ROAD_WIDTH"),
-            value: getRoadWidth(application?.additionalDetails.roadWidth) || "N/A",
           },
           { title: t("CS_APPLICATION_DETAILS_TRIPS"), value: application?.noOfTrips || "N/A" },
           {

@@ -70,7 +70,7 @@ export const newConfigMutate = [
             name: "name",
             validation: {
               pattern: {
-                value: "[A-Za-z .`'-]{3,63}",
+                value: "^[a-zA-Z ]+$",
                 message: "PAYMENT_INVALID_NAME",
               },
             },

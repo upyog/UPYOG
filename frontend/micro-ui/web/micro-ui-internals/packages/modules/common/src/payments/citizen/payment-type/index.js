@@ -74,11 +74,12 @@ export const SelectPaymentType = (props) => {
           name: name || userInfo?.info?.name || billDetails?.payerName,
           mobileNumber: mobileNumber || userInfo?.info?.mobileNumber || billDetails?.mobileNumber,
           tenantId: billDetails?.tenantId,
+          emailId: "sriranjan.srivastava@owc.com"
         },
         // success
         callbackUrl: window.location.href.includes("mcollect") || wrkflow === "WNS"
           ? `${window.location.protocol}//${window.location.host}/digit-ui/citizen/payment/success/${businessService}/${wrkflow === "WNS"? consumerCode:consumerCode}/${tenantId}?workflow=${wrkflow === "WNS"? wrkflow : "mcollect"}`
-          : `${window.location.protocol}//${window.location.host}/digit-ui/citizen/payment/success/${businessService}/${wrkflow === "WNS"? consumerCode:consumerCode}/${tenantId}?propertyId=${consumerCode}`,
+          : `${window.location.protocol}//${window.location.host}/digit-ui/citizen/payment/success/${businessService}/${wrkflow === "WNS"? encodeURIComponent(consumerCode):consumerCode}/${tenantId}?propertyId=${consumerCode}`,
         additionalDetails: {
           isWhatsapp: false,
         },
@@ -90,10 +91,22 @@ export const SelectPaymentType = (props) => {
       const redirectUrl = data?.Transaction?.redirectUrl;
       if (d?.paymentType == "AXIS") {
         window.location = redirectUrl;
-      } else {
+      }
+      else if (d?.paymentType == "NTTDATA") {
+        let redirect= redirectUrl.split("returnURL=")
+        let url=redirect[0].split("?")[1].split("&")
+        const options = {
+          "atomTokenId": url[0].split("=")[1],
+          "merchId": url[1].split("=")[1],
+          "custEmail": "sriranjan.srivastava@owc.com",
+          "custMobile": url[3].split("=")[1],
+          "returnUrl": redirect[1]
+        }
+        let atom = new AtomPaynetz(options, 'uat');
+      }
+      else {
         // new payment gatewayfor UPYOG pay
         try {
-
           const gatewayParam = redirectUrl
             ?.split("?")
             ?.slice(1)
@@ -109,7 +122,6 @@ export const SelectPaymentType = (props) => {
             method: "POST",
             target: "_top",
           });
-
           const orderForNDSLPaymentSite = [
             "checksum",
             "messageType",

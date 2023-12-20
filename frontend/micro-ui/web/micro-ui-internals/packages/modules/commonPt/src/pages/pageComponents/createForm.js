@@ -20,8 +20,11 @@ const CreatePropertyForm = ({ config, onSelect,value, userType, redirectUrl }) =
   sessionStorage.setItem("VisitedLightCreate",true);
   const isMobile = window.Digit.Utils.browser.isMobile();
 
-  const allCities = Digit.Hooks.pt.useTenants()?.sort((a, b) => a?.i18nKey?.localeCompare?.(b?.i18nKey));
-  
+  let allCities = Digit.Hooks.pt.useTenants()?.sort((a, b) => a?.i18nKey?.localeCompare?.(b?.i18nKey));
+  if(window.location.href.includes("obps"))
+  {
+    allCities = Digit.SessionStorage.get("OBPS_TENANTS")
+  }
   const [formValue, setFormValue] = useState("");
   const [cityCode, setCityCode] = useState("");
   let enableSkip = userType=="employee"?false :config?.isSkipEnabled || sessionStorage.getItem("skipenabled");

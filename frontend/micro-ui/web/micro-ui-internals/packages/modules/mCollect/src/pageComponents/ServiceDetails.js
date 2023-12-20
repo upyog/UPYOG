@@ -39,7 +39,7 @@ const ServiceDetails = ({ config, onSelect, userType, formData, setError, formSt
   const [selectedLocality, setSelectedLocality] = useState("");
   const [TaxHeadMaster, setAPITaxHeadMaster] = useState([]);
 
-  const {Categories : categoires , data: categoriesandTypes} = Digit.Hooks.mcollect.useMCollectCategory(tenantId,"[?(@.type=='Adhoc')]");
+  const {Categories : categoires , data: categoriesandTypes} = Digit.Hooks.mcollect.useMCollectCategory(tenantId,"[?(@.type=='Adhoc' && @.isActive==true)]");
 
 
   const { data: fetchedLocalities } = Digit.Hooks.useBoundaryLocalities(
