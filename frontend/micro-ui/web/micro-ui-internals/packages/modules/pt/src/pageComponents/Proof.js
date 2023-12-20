@@ -1,9 +1,8 @@
-import { CardLabel, CardLabelDesc, Dropdown, FormStep } from "@egovernments/digit-ui-react-components";
+import { CardLabel, CardLabelDesc, Dropdown, FormStep ,UploadFile} from "@egovernments/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { stringReplaceAll } from "../utils";
 import Timeline from "../components/TLTimeline";
-import UploadFile from "../utils/UploadFile";
 
 const Proof = ({ t, config, onSelect, userType, formData }) => {
   //let index = window.location.href.charAt(window.location.href.length - 1);
