@@ -7,7 +7,7 @@ const SelectMobileNumber = ({ t, onSelect, showRegisterLink, mobileNumber, onMob
   const [isCheckBox, setIsCheckBox] = useState(false);
   const [isCCFEnabled, setisCCFEnabled] = useState(false);
   const [mdmsConfig, setMdmsConfig] = useState("");
-
+  const [error, setError]=useState("");
   const { isLoading, data } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "common-masters", [{ name: "CitizenConsentForm" }]);
 
   function setTermsAndPolicyDetails(e) {
@@ -33,7 +33,8 @@ const SelectMobileNumber = ({ t, onSelect, showRegisterLink, mobileNumber, onMob
 }
 
   const checkLabels = () => {
-    return <span>
+    return (
+    <span>
       {isCCFEnabled?.checkBoxLabels?.map((data, index) => {
         return <span>
           {/* {index == 0 && "CCF"} */}
@@ -44,10 +45,23 @@ const SelectMobileNumber = ({ t, onSelect, showRegisterLink, mobileNumber, onMob
         </span>
       })}
     </span>
-  }
-
-
-
+    );
+  };
+  const validateMobileNumber=()=>{
+      if(/^\d{0,10}$/.test(mobileNumber)){
+        setError("")
+      }
+  };
+  const handleMobileChange=(e)=>{
+      const value=e.target.value;
+      if(/^\d{0,10}$/.test(value)|| value===""){
+        onMobileChange(e);
+        validateMobileNumber();
+      }
+      else{
+        setError(t("CORE_COMMON_PROFILE_MOBILE_NUMBER_INVALID"));
+      }
+  };
   if (isLoading) return <Loader />
 
   return (
@@ -57,10 +71,12 @@ const SelectMobileNumber = ({ t, onSelect, showRegisterLink, mobileNumber, onMob
       config={config}
       t={t}
       componentInFront="+91"
-      onChange={onMobileChange}
+      onChange={handleMobileChange}
       value={mobileNumber}
     >
-      {isCCFEnabled?.isCitizenConsentFormEnabled && <div>
+      {error && <p style={{color:"red"}}>{error}</p>}
+      {isCCFEnabled?.isCitizenConsentFormEnabled && (
+      <div>
         <CheckBox
           className="form-field"
           label={checkLabels()}
@@ -79,7 +95,7 @@ const SelectMobileNumber = ({ t, onSelect, showRegisterLink, mobileNumber, onMob
           mdmsConfig={mdmsConfig}
           setMdmsConfig={setMdmsConfig}
         />
-      </div>}
+      </div>)}
     </FormStep>
   );
 };

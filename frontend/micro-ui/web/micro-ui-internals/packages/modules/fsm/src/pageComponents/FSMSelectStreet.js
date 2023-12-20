@@ -89,20 +89,12 @@ const FSMSelectStreet = ({ t, config, onSelect, userType, formData, formState, s
     trigger();
   }, []);
 
-  useEffect(()=>{
-    if(formData?.address?.doorNo) setDoorNo(formData?.address?.doorNo)
-    if(formData?.address?.street) setStreet(formData?.address?.street)
-  },[formData?.address])
-
   useEffect(() => {
-    if (formData?.address?.doorNo) setDoorNo(formData?.address?.doorNo);
-    if (formData?.address?.street) setStreet(formData?.address?.street);
-  }, [formData?.address]);
+    if (formData?.address?.doorNo) setDoorNo(formData?.address?.doorNo)
+    if (formData?.address?.street) setStreet(formData?.address?.street)
+  }, [formData?.address])
 
-  useEffect(() => {
-    if (formData?.address?.doorNo) setDoorNo(formData?.address?.doorNo);
-    if (formData?.address?.street) setStreet(formData?.address?.street);
-  }, [formData?.address]);
+
 
   useEffect(() => {
     if (userType === "employee") {

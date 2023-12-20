@@ -27,7 +27,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
     formData?.owners?.owners?.forEach(owner => {
         if(owner.isPrimaryOwner == "false" ) owner.isPrimaryOwner = false
     })
-    const [fields, setFeilds] = useState(
+    let [fields, setFeilds] = useState(
         (formData?.owners && formData?.owners?.owners) || [{ name: "", gender: "", mobileNumber: null, isPrimaryOwner: true }]
     );
 
@@ -391,6 +391,50 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
         else
         return true;
     }
+let propertyData =JSON.parse(sessionStorage.getItem("Digit_OBPS_PT"))
+fields =propertyData.owners.map((owner) =>{
+    let gender
+    if (owner.gender =="FEMALE")
+    {
+        gender={
+            "code": "FEMALE",
+            "active": true,
+            "i18nKey": "COMMON_GENDER_FEMALE"
+        }
+        return {"name":owner.name, "mobileNumber":owner.mobileNumber, gender:gender,isPrimaryOwner}
+    }
+    else if (owner.gender =="MALE")
+    {
+        gender={
+            "code": "MALE",
+            "active": true,
+            "i18nKey": "COMMON_GENDER_MALE"
+        }
+        return {"name":owner.name, "mobileNumber":owner.mobileNumber, gender:gender,isPrimaryOwner}
+    }
+
+})
+useEffect(()=>{
+    let propertyData =JSON.parse(sessionStorage.getItem("Digit_OBPS_PT"))
+    if(propertyData.owners.length == 1)
+    {let value ={
+        "code": "INDIVIDUAL.SINGLEOWNER",
+        "active": true,
+        "i18nKey": "COMMON_MASTERS_OWNERSHIPCATEGORY_INDIVIDUAL_SINGLEOWNER"
+    }
+    selectedValue(value);
+    }
+    else if(propertyData.owners.length > 1)
+    {
+        let value={
+            "code": "INDIVIDUAL.MULTIPLEOWNERS",
+            "active": true,
+            "i18nKey": "COMMON_MASTERS_OWNERSHIPCATEGORY_INDIVIDUAL_MULTIPLEOWNERS"
+        }
+        selectedValue(value);
+    }
+},[])
+
 
     return (
         <div>
@@ -409,6 +453,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                             value={ownershipCategory}
                             labelKey="PT_OWNERSHIP"
                             isDependent={true}
+                            disabled = {true}
                         />
                     </div>
                     {fields.map((field, index) => {
@@ -439,6 +484,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                                                     type: "tel",
                                                     title: t("CORE_COMMON_APPLICANT_MOBILE_NUMBER_INVALID"),
                                                 })}
+                                                disabled={true}
                                             />
                                             <div style={{ position: "relative", zIndex: "100", right: "35px", marginTop: "-24px", marginRight:Webview?"-20px":"-20px" }} onClick={(e) => getOwnerDetails(index, e)}> <SearchIcon /> </div>
                                         </div>
@@ -455,10 +501,11 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                                         onChange={(e) => setOwnerName(index, e)}
                                         {...(validation = {
                                             isRequired: true,
-                                            pattern: "^[a-zA-Z-.`' ]*$",
+                                            pattern: "^[a-zA-Z ]*$",
                                             type: "text",
                                             title: t("TL_NAME_ERROR_MESSAGE"),
                                         })}
+                                        disabled={true}
                                     />
                                     <CardLabel>{`${t("BPA_APPLICANT_GENDER_LABEL")} *`}</CardLabel>
                                     <RadioOrSelect
@@ -468,6 +515,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                                     optionKey="i18nKey"
                                     onSelect={(e) => setGenderName(index, e)}
                                     t={t}
+                                    disabled={true}
                                     />
                                     {ismultiple && (
                                         <CheckBox

@@ -136,6 +136,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
   const [defaultValues, setDefautValue] = useState({
     capacity: vehicle?.capacity,
     wasteCollected: vehicle?.capacity,
+    propertyID : applicationData?.additionalDetails?. propertyID,
     propertyType: applicationData?.propertyUsage.split('.')[0],
     subtype: applicationData?.propertyUsage,
     pitType: applicationData?.sanitationtype,

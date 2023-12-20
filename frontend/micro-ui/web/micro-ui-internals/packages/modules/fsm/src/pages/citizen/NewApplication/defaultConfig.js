@@ -1,5 +1,6 @@
 import SelectPropertySubtype from "./SelectPropertySubtype";
 import SelectPropertyType from "./SelectPropertyType";
+import SelectPropertyID from "../../../pageComponents/SelectPropertyID";
 // import SelectAddress from "./SelectAddress";
 import FSMSelectAddress from "./FSMSelectAddress";
 // import SelectStreet from "./SelectStreet";
@@ -15,6 +16,18 @@ import FSMSelectGeolocation from "./FSMSelectGeolocation";
 
 export const config = {
   routes: [
+    {
+      route: "property-id",
+      component: SelectPropertyID,
+      groupKey: "ES_TITLE_APPLICATION_DETAILS",
+      texts: {
+        headerCaption: "",
+        header: "CS_FILE_APPLICATION_PROPERTY_ID_LABEL",
+        cardText: "CS_FILE_APPLICATION_PROPERTY_ID_TEXT",
+        submitBarLabel: "CS_COMMON_NEXT",
+      },
+      nextStep: "property-type",
+    },
     {
       route: "property-type",
       component: SelectPropertyType,
@@ -148,6 +161,17 @@ export const config = {
         cardText: "CS_FILE_PROPERTY_PIT_TYPE_TEXT",
         nextText: "CS_COMMON_NEXT",
       },
+      nextStep: "road-details",
+    },
+    {
+      route: "road-details",
+      component: SelectRoadDetails,
+      groupKey: "CS_CHECK_PIT_SEPTIC_TANK_DETAILS",
+      texts: {
+        header: "CS_FILE_PROPERTY_ROAD_WIDTH",
+        cardText: "CS_FILE_PROPERTY_ROAD_WIDTH_TEXT",
+        nextText: "CS_COMMON_NEXT",
+      },
       nextStep: "tank-size",
     },
     {
@@ -164,5 +188,5 @@ export const config = {
       nextStep: null,
     },
   ],
-  indexRoute: "property-type",
+  indexRoute: "property-id",
 };

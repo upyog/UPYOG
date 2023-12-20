@@ -13,6 +13,7 @@ import {
   useGetPaymentRulesForBusinessServices,
   useDemandSearch,
   useRecieptSearch,
+  useRecieptSearchNew,
   usePaymentSearch,
   useBulkPdfDetails,
 } from "./payment";
@@ -249,6 +250,7 @@ import useToCheckPrivacyEnablement from "./ws/useToCheckPrivacyEnablement";
 import useWSConfigMDMS from "./ws/useWSConfigMDMS";
 import useFeedBackSearch from "./useFeedBackSearch";
 
+
 const pgr = {
   useComplaintDetails,
   useComplaintsList,
@@ -332,7 +334,6 @@ const pt = {
   useRatingAndFeedbackMDMS,
   useServiceSearchCF,
 };
-
 const dss = {
   useMDMS: useDssMdms,
   useDashboardConfig,
@@ -511,6 +512,7 @@ const Hooks = {
   useApplicationStatusGeneral,
   useModuleTenants,
   useRecieptSearch,
+  useRecieptSearchNew,
   usePaymentSearch,
   useNewInboxGeneral,
   useEvents,

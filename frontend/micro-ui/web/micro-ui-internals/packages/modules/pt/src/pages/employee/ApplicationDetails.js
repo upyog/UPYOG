@@ -72,6 +72,7 @@ const ApplicationDetails = () => {
 
   useEffect(() => {
     if (applicationDetails) {
+      applicationDetails.applicationDetails[2].additionalDetails.owners= applicationDetails?.applicationDetails?.[2]?.additionalDetails?.owners?.reverse()    
       setAppDetailsToShow(_.cloneDeep(applicationDetails));
       if (applicationDetails?.applicationData?.status !== "ACTIVE" && applicationDetails?.applicationData?.creationReason === "MUTATION") {
         setEnableAudit(true);
@@ -187,17 +188,38 @@ const ApplicationDetails = () => {
   };
   let dowloadOptions = [propertyDetailsPDF];
 
- if (applicationDetails?.applicationData?.creationReason === "MUTATION"){
+ if (applicationDetails?.applicationData?.creationReason === "MUTATION"){  
    return(
     <MutationApplicationDetails 
       propertyId = {propertyId}
       acknowledgementIds={appDetailsToShow?.applicationData?.acknowldgementNumber}
       workflowDetails={workflowDetails}
       mutate={mutate}
+      showToast={showToast}
+      setShowToast={setShowToast}
+      closeToast={closeToast}
     />
    )
  } 
-
+  if (applicationDetails?.applicationDetails[1].title == "PT_ASSESMENT_INFO_SUB_HEADER") {
+    if (applicationDetails?.applicationDetails[1].values.length == 4) {
+      let obj = {
+        "title": "PT_ASSESMENT_ELECTRICITY",
+        "value": applicationDetails?.additionalDetails?.electricity || "NA"
+      }
+      applicationDetails?.applicationDetails[1].values.push(obj)
+    }
+    if (applicationDetails?.applicationDetails[1].values.length == 5) {
+      let obj = {
+        "title": "PT_ASSESMENT_ELECTRICITY_UID",
+        "value": applicationDetails?.additionalDetails?.uid || "NA"
+      }
+      applicationDetails?.applicationDetails[1].values.push(obj)
+    }
+  }
+  if (appDetailsToShow?.applicationData) {
+    appDetailsToShow?.applicationData?.owners.sort((item, item2) => { return item?.additionalDetails?.ownerSequence - item2?.additionalDetails?.ownerSequence })
+  }
   return (
     <div>
         <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>

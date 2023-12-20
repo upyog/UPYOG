@@ -6,6 +6,10 @@ import { Controller, useForm } from "react-hook-form";
 const PropertyLocationDetails = ({ t, config, onSelect, userType, formData, formState, ownerIndex, setError, clearErrors }) => {
   let validation = {};
   let allCities = Digit.Hooks.pt.useTenants() ? Digit.Hooks.pt.useTenants() : Digit.Hooks.tl.useTenants();
+  if(window.location.href.includes("obps"))
+  {
+    allCities = Digit.SessionStorage.get("OBPS_TENANTS")
+  }
   // if called from tl module get tenants from tl usetenants
   const userInfo = Digit.UserService.getUser()?.info;
   userType = userInfo?.type == "EMPLOYEE" ? "employee" : "citizen";
