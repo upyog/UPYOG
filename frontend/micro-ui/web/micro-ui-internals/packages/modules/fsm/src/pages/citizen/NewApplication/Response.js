@@ -103,7 +103,7 @@ const Response = ({ data, onSuccess }) => {
             additionalDetails: {
               totalAmount: amount,
               tripAmount: amountPerTrip,
-              propertyID : propertyID.propertyID,
+              propertyID : propertyID?.propertyID,
               distancefromroad : data.roadWidth.distancefromroad,
               roadWidth: data.roadWidth.roadWidth,
             },

@@ -46,7 +46,7 @@ const inputs = [
          onChange={onChange}
          onSkip={onSkip}
          forcedError={t(error)}
-         isDisabled={propertyID ? false : true}
+         isDisabled={false}
        ></FormStep>
       </React.Fragment>
     );

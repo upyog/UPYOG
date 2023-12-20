@@ -152,9 +152,7 @@ const NewApplication = () => {
   setFormData(formData)
   setSearchData({ city: Digit.ULBService.getCurrentTenantId(), filters: tempObject });
   };
-  if (isLoading) {
-    return <Loader />;
-  }
+ 
   useEffect(() => {  
     if(propertyDataLoading && propertyData?.Properties.length >0)  
     {  
@@ -169,7 +167,9 @@ const NewApplication = () => {
   /* use newConfig instead of commonFields for local development in case needed */
 
   const configs = commonFields?commonFields:newConfig;
-  
+  if (isLoading) {
+    return <Loader />;
+  }
   const Heading = (props) => {
     return <h1 className="heading-m">{props.label}</h1>;
   };

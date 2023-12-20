@@ -523,7 +523,7 @@ export const setPropertyDetails = (data) => {
 /*   method to convert collected details to proeprty create object */
 export const convertToProperty = (data = {}) => {
   let dataNew = data?.units?.map((value) => {
-    let additionalDetails = { "structureType": value.structureType, "ageOfProperty": value.ageOfProperty }
+    let additionalDetails = { "structureType": value?.structureType, "ageOfProperty": value?.ageOfProperty }
     return { ...value, additionalDetails }
   })
   let isResdential = data.isResdential;

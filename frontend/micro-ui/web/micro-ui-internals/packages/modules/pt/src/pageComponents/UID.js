@@ -62,7 +62,7 @@ const UID = ({ t, config, onSelect, value, userType, formData, setError: setForm
       name: "electricity_uid",
       error: "ERR_HRMS_INVALID_ELECTRICITY_UID_NO",
       validation: {
-        //pattern: "/^[a-zA-Z0-9-]*$",
+        pattern: "/^[a-zA-Z0-9-]*$",
         required: true,
         minLength: 15,
         maxLength: 15
@@ -71,14 +71,14 @@ const UID = ({ t, config, onSelect, value, userType, formData, setError: setForm
 
   ];
   const validateUID=()=>{
-    if(/^[0-9-]{0,15}$/.test(uid) || uid===""){
+    if(/^[a-zA-Z0-9-]{0,15}$/.test(uid) || uid===""){
       setError(" ");
     }
    
   };
   const handleUIDChange=(e)=>{
     const value=e.target.value;
-      if(/^[0-9-]{0,15}$/.test(value)|| value===""){
+      if(/^[a-zA-Z0-9-]{0,15}$/.test(value)|| value===""){
         onChange(e);
         validateUID();
       }
