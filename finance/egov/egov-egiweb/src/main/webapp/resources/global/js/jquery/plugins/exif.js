@@ -1,3 +1,6 @@
+
+/* exif.js version 2.3.0 need to be changed it is previous version */
+
 (function() {
 
     var debug = false;
