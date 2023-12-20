@@ -1,6 +1,6 @@
 export const newConfig =[
     {
-        "head": "SOR-Details",
+        "head": "MB-Details",
         "body": [
               {
                 type: "component",
