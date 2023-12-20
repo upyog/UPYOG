@@ -239,7 +239,7 @@ const PTRCitizenPet
           name="petName"
           value={petName}
           onChange={setpetname}
-          style={{ width: "86%" }}
+          style={{ width: "100%" }}
           //disable={isUpdateProperty || isEditProperty}
           ValidationRequired = {false}
           {...(validation = {
@@ -282,7 +282,7 @@ const PTRCitizenPet
           name="petAge"
           value={petAge}
           onChange={setpetage}
-          style={{ width: "86%" }}
+          style={{ width: "100%" }}
           placeholder="in months"
           rules={{
             required: t("CORE_COMMON_REQUIRED_ERRMSG"),
@@ -301,7 +301,7 @@ const PTRCitizenPet
           name="doctorName"
           value={doctorName}
           onChange={setdoctorname}
-          style={{ width: "86%" }}
+          style={{ width: "100%" }}
           //disable={isUpdateProperty || isEditProperty}
           ValidationRequired = {false}
           {...(validation = {
@@ -321,7 +321,7 @@ const PTRCitizenPet
           name="clinicName"
           value={clinicName}
           onChange={setclinicname}
-          style={{ width: "86%" }}
+          style={{ width: "100%" }}
           //disable={isUpdateProperty || isEditProperty}
           ValidationRequired = {false}
           {...(validation = {
@@ -341,7 +341,7 @@ const PTRCitizenPet
           name="lastVaccineDate"
           value={lastVaccineDate}
           onChange={setvaccinationdate}
-          style={{ width: "86%" }}
+          style={{ width: "100%" }}
           max={new Date().toISOString().split('T')[0]}
           rules={{
             required: t("CORE_COMMON_REQUIRED_ERRMSG"),
@@ -359,7 +359,7 @@ const PTRCitizenPet
           name="vaccinationNumber"
           value={vaccinationNumber}
           onChange={setvaccinationnumber}
-          style={{ width: "86%" }}
+          style={{ width: "100%" }}
           
         />
       

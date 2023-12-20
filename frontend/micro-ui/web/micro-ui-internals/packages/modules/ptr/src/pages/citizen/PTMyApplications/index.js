@@ -9,6 +9,7 @@ export const PTMyApplications = () => {
   const { t } = useTranslation();
   const tenantId = Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();
   const user = Digit.UserService.getUser().info;
+  
 
   let filter = window.location.href.split("/").pop();
   let t1;

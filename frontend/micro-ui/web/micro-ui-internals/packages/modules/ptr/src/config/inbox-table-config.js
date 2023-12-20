@@ -29,7 +29,7 @@
               </div>
             );
           },
-          mobileCell: (original) => GetMobCell(original?.searchData?.["propertyId"]),
+          mobileCell: (original) => GetMobCell(original?.searchData?.["applicationNumber"]),
         },
         {
           Header: t("ES_INBOX_OWNER_NAME"),

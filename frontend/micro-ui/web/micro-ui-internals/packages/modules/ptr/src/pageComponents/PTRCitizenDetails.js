@@ -36,6 +36,8 @@ const PTRCitizenDetails
 
   
 
+  
+
   function setOwnerName(e) {
     setName(e.target.value);
   }
