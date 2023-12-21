@@ -20,21 +20,7 @@
         register("sortBy", "commencementDate")
         register("sortOrder", "DESC")
       },[register])
-      //need to get from workflow
-      // const applicationTypes = [
-      //     {
-      //         code: "CREATE",
-      //         i18nKey: "CREATE"
-      //     },
-      //     {
-      //         code: "UPDATE",
-      //         i18nKey: "UPDATE"
-      //     },
-      //     {
-      //         code: "MUTATION",
-      //         i18nKey: "MUTATION"
-      //     },
-      // ]
+      
       const applicationStatuses = [
           {
               code: "ACTIVE",
@@ -50,19 +36,10 @@
           },
       ]
 
-      // const getaddress = (address) => {
-      //     let newaddr = `${address?.doorNo ? `${address?.doorNo}, ` : ""} ${address?.street ? `${address?.street}, ` : ""}${
-      //         address?.landmark ? `${address?.landmark}, ` : ""
-      //       }${t(address?.locality.code)}, ${t(address?.city)},${t(address?.pincode) ? `${address.pincode}` : " "}`
-      //     return newaddr;
-      // }
+      
       const GetCell = (value) => <span className="cell-text">{value}</span>;
       const columns = useMemo( () => ([
-          // {
-          //     Header: t("PT_SEARCHPROPERTY_TABEL_PID"),
-          //     disableSortBy: true,
-          //     accessor: (row) => GetCell(row.propertyId || ""),
-          // },
+          
           {
               Header: t("PTR_APPLICATION_NUMBER"),
               accessor: "applicationNumber",
@@ -79,16 +56,7 @@
                 );
               },
             },
-          //   {
-          //     Header: t("PT_SEARCHPROPERTY_TABEL_APPLICATIONTYPE"),
-          //     disableSortBy: true,
-          //     accessor: (row) => GetCell(row.creationReason || ""),
-          //   },
-          //   {
-          //     Header: t("PT_COMMON_TABLE_COL_OWNER_NAME"),
-          //     accessor: (row) => GetCell(row.owners.map( o => o.name ). join(",") || ""),
-          //     disableSortBy: true,
-          //   },
+          
 
             {
               Header: t("PTR_APPLICANT_NAME"),

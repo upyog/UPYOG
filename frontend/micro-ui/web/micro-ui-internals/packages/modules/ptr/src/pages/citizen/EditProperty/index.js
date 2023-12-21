@@ -6,7 +6,7 @@ import { useQueryClient } from "react-query";
 import { Redirect, Route, Switch, useHistory, useLocation, useRouteMatch } from "react-router-dom";
 import { newConfig } from "../../../config/Create/config";
 
-import { checkArrayLength, stringReplaceAll,getSuperBuiltUpareafromob } from "../../../utils";
+// import { checkArrayLength, stringReplaceAll,getSuperBuiltUpareafromob } from "../../../utils";
 
 const getPropertyEditDetails = (data = { }) => {
   // converting owners details
@@ -257,7 +257,7 @@ const getPropertyEditDetails = (data = { }) => {
           };
       data.IsAnyPartOfThisFloorUnOccupied =
         unoccupiedtf == true ? { i18nKey: "PT_COMMON_YES", code: "UNOCCUPIED" } : { i18nKey: "PT_COMMON_NO", code: "UNOCCUPIED" };
-      data.floordetails = { plotSize: data?.landArea, builtUpArea: getSuperBuiltUpareafromob(data) };
+      // data.floordetails = { plotSize: data?.landArea, builtUpArea: getSuperBuiltUpareafromob(data) };
       data["extraunitFPB"] = extraunitsFPB;
     } else if (data?.propertyType === "BUILTUP.INDEPENDENTPROPERTY") {
       let nooffloor = 0,

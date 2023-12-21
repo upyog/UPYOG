@@ -35,31 +35,24 @@ const BannerPicker = (props) => {
 
 const PTAcknowledgement = ({ data, onSuccess }) => {
 
-  //console.log("data pt rackno",data )
+  
   const { t } = useTranslation();
-  // const isPropertyMutation = window.location.href.includes("property-mutation");
+  
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const mutation = Digit.Hooks.ptr.usePTRCreateAPI(data.address?.city?.code); 
   const { data: storeData } = Digit.Hooks.useStore.getInitData();
   const match = useRouteMatch();
   const { tenants } = storeData || {};
 
-  //console.log("data in ackno", data)
 
   useEffect(() => {
     try {
-      //let tenantId = isPropertyMutation ? data.Property?.address.tenantId : data?.address?.city ? data.address?.city?.code : tenantId;
-      //console.log("data under useeffect", data)
+      
       data.tenantId = data.address?.city?.code;
       let formdata = convertToProperty(data)
       
 
-      //console.log("formdata ", formdata)
-      //  !window.location.href.includes("edit-application")
-      //   ? isPropertyMutation
-      //     ? data
-      //     : convertToProperty(data)
-      //   : convertToUpdateProperty(data,t);
+      
       mutation.mutate(formdata, {
         onSuccess,
       });
@@ -67,22 +60,15 @@ const PTAcknowledgement = ({ data, onSuccess }) => {
     }
   }, []);
 
-  useEffect (()=>{
-    //console.log("Component is rendering very well")
-
-  }, []);
+  
 
   const handleDownloadPdf = async () => {
     const { PetRegistrationApplications = [] } = mutation.data;
-    console.log("mutationnnnnnnnnnnnnnnnnnnnn", mutation.data);
-    let Property = (PetRegistrationApplications && PetRegistrationApplications[0]) || {};
-    const tenantInfo = tenants.find((tenant) => tenant.code === Property.tenantId);
-    let tenantId = Property.tenantId || tenantId;
-    // const propertyDetails = await Digit.PTService.search({ tenantId, filters: { propertyIds: Property?.propertyId, status: "INACTIVE" } });
-    // Property.transferorDetails = propertyDetails?.PetRegistrationApplications?.[0] || [];
-    // Property.isTransferor = true;
-    // Property.transferorOwnershipCategory = propertyDetails?.PetRegistrationApplications?.[0]?.ownershipCategory;
-    const data = await getPTAcknowledgementData({ ...Property }, tenantInfo, t);
+    let Pet = (PetRegistrationApplications && PetRegistrationApplications[0]) || {};
+    const tenantInfo = tenants.find((tenant) => tenant.code === Pet.tenantId);
+    let tenantId = Pet.tenantId || tenantId;
+   
+    const data = await getPTAcknowledgementData({ ...Pet }, tenantInfo, t);
     Digit.Utils.pdf.generate(data);
   };
 

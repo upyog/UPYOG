@@ -8,6 +8,7 @@ const PTRCitizenDetails = ({ t, config, onSelect, userType, formData, ownerIndex
   const { pathname: url } = useLocation();
   // const editScreen = url.includes("/modify-application/");
   //const mutationScreen = url.includes("/property-mutation/");
+  const user = Digit.UserService.getUser().info;
 
   let index = window.location.href.charAt(window.location.href.length - 1);
   let validation = {};
@@ -40,8 +41,14 @@ const PTRCitizenDetails = ({ t, config, onSelect, userType, formData, ownerIndex
   function setOwnerName(e) {
     // setName(e.target.value);
     // Remove characters that are not alphabets
+    setName(user?.name);
+
+  function setOwnerName(e) {
+    // setName(e.target.value);
+    // Remove characters that are not alphabets
     const inputValue = e.target.value.replace(/[^a-zA-Z ]/g, "");
     setName(inputValue);
+
   }
   function setOwnerEmail(e) {
     const enteredEmail = e.target.value;
@@ -60,17 +67,38 @@ const PTRCitizenDetails = ({ t, config, onSelect, userType, formData, ownerIndex
   }
 
   function setMobileNo(e) {
-    setMobileNumber(e.target.value);
+    setMobileNumber(user?.mobileNumber);
   }
 
   function setAltMobileNo(e) {
     setAltMobileNumber(e.target.value);
   }
   function setGuardiansName(e) {
+
+    const inputValue = e.target.value.replace(/[^a-zA-Z ]/g, "");
+    setFatherOrHusbandName(inputValue);
+  }
+
+  // this useEffect is set in the logic as it automatically filled owner name and mobile number in application detail page
+
+  useEffect(() => {
+    if (!mobileNumber && user?.mobileNumber) {
+      setMobileNumber(user?.mobileNumber);
+    }
+    if (!applicantName && user?.name) {
+      setName(user?.name);
+    }
+
+    if (userType === "citizen") {
+      goNext();
+    }
+  }, [user, userType]);
+
     //setFatherOrHusbandName(e.target.value);
     const inputValue = e.target.value.replace(/[^a-zA-Z ]/g, "");
     setFatherOrHusbandName(inputValue);
   }
+
 
   const goNext = () => {
     let owner = formData.owners && formData.owners[index];
@@ -134,6 +162,7 @@ const PTRCitizenDetails = ({ t, config, onSelect, userType, formData, ownerIndex
           <MobileNumber
             value={mobileNumber}
             name="mobileNumber"
+            //onChange={(value) => setMobileNo({ target: { value } })}
             onChange={(value) => setMobileNo({ target: { value } })}
             //disable={isUpdateProperty || isEditProperty}
             {...{ required: true, pattern: "[6-9]{1}[0-9]{9}", type: "tel" }}
@@ -175,7 +204,7 @@ const PTRCitizenDetails = ({ t, config, onSelect, userType, formData, ownerIndex
             name="emailId"
             value={emailId}
             onChange={setOwnerEmail}
-            //disable={isUpdateProperty || isEditProperty}
+           
             ValidationRequired={false}
             {...(validation = {
               isRequired: true,

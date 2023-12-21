@@ -2,7 +2,7 @@ import { AppContainer, BackButton, PrivateRoute } from "@egovernments/digit-ui-r
 import React from "react";
 import { Route, Switch, useRouteMatch } from "react-router-dom";
 import { shouldHideBackButton } from "../../utils";
-import Search from "../employee/Search";
+// import Search from "../employee/Search";
 import { useTranslation } from "react-i18next";
 import { PTMyPayments } from "./MyPayments";
 
@@ -21,12 +21,12 @@ const App = () => {
 
   const PTRCreate = Digit?.ComponentRegistryService?.getComponent("PTRCreatePet");
   const EditProperty = Digit?.ComponentRegistryService?.getComponent("PTEditProperty");
-  const SearchPropertyComponent = Digit?.ComponentRegistryService?.getComponent("PTSearchPropertyComponent");
+  // const SearchPropertyComponent = Digit?.ComponentRegistryService?.getComponent("PTSearchPropertyComponent");
   const SearchResultsComponent = Digit?.ComponentRegistryService?.getComponent("PTSearchResultsComponent");
   const PTApplicationDetails = Digit?.ComponentRegistryService?.getComponent("PTApplicationDetails");
   const PTMyApplications = Digit?.ComponentRegistryService?.getComponent("PTMyApplications");
   const MyProperties = Digit?.ComponentRegistryService?.getComponent("PTMyProperties");
-  const MutateProperty = Digit?.ComponentRegistryService?.getComponent("PTMutateProperty");
+  // const MutateProperty = Digit?.ComponentRegistryService?.getComponent("PTMutateProperty");
   const PropertyInformation = Digit?.ComponentRegistryService?.getComponent("PropertyInformation");
   const PropertyOwnerHistory = Digit?.ComponentRegistryService?.getComponent("PropertyOwnerHistory");
   const AssessmentDetails = Digit?.ComponentRegistryService?.getComponent("PTAssessmentDetails");
@@ -37,13 +37,13 @@ const App = () => {
           {!shouldHideBackButton(hideBackButtonConfig) ? <BackButton>Back</BackButton> : ""}
           <PrivateRoute path={`${path}/petservice/new-application`} component={PTRCreate} />
           <PrivateRoute path={`${path}/property/edit-application`} component={EditProperty} />
-          <Route path={`${path}/property/citizen-search`} component={SearchPropertyComponent} />
+          {/* <Route path={`${path}/property/citizen-search`} component={SearchPropertyComponent} /> */}
           <Route path={`${path}/property/search-results`} component={SearchResultsComponent} />
           <PrivateRoute path={`${path}/petservice/application/:acknowledgementIds/:tenantId`} component={PTApplicationDetails}></PrivateRoute>
           <PrivateRoute path={`${path}/petservice/my-application`} component={PTMyApplications}></PrivateRoute>
           <PrivateRoute path={`${path}/property/my-properties`} component={MyProperties}></PrivateRoute>
           <PrivateRoute path={`${path}/property/my-payments`} component={PTMyPayments}></PrivateRoute>
-          <PrivateRoute path={`${path}/property/property-mutation`} component={MutateProperty}></PrivateRoute>
+          {/* <PrivateRoute path={`${path}/property/property-mutation`} component={MutateProperty}></PrivateRoute> */}
           <PrivateRoute path={`${path}/property/properties/:propertyIds`} component={PropertyInformation}></PrivateRoute>
           {/* <PrivateRoute path={`${path}/property/transfer-ownership`} component={MutateProperty}></PrivateRoute> */}
           <PrivateRoute path={`${path}/property/owner-history/:tenantId/:propertyIds`} component={PropertyOwnerHistory}></PrivateRoute>
