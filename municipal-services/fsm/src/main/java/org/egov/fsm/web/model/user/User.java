@@ -179,6 +179,20 @@ public class User {
     @JsonProperty("gender")
     private String gender;
 
+    @NotNull
+    @SafeHtml
+    @Size(max=100)
+    @JsonProperty("fatherOrHusbandName")
+    private String fatherOrHusbandName;
+
+    @NotNull
+    @JsonProperty("relationship")
+    private GuardianRelation relationship;
+
+    public enum GuardianRelation {
+        FATHER, MOTHER, HUSBAND, OTHER;
+    }
+
     public User addRolesItem(Role rolesItem) {
             if (this.roles == null) {
                     this.roles = new ArrayList<>();
