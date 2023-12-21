@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Objects;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
@@ -180,13 +179,11 @@ public class User {
     @JsonProperty("gender")
     private String gender;
 
-    @NotNull
     @SafeHtml
     @Size(max=100)
     @JsonProperty("fatherOrHusbandName")
     private String fatherOrHusbandName;
 
-    @NotNull
     @JsonProperty("relationship")
     private GuardianRelation relationship;
 
