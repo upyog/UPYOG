@@ -37,10 +37,18 @@ const PTRCitizenDetails = ({ t, config, onSelect, userType, formData, ownerIndex
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();
 
+
   function setOwnerName(e) {
     // setName(e.target.value);
     // Remove characters that are not alphabets
     setName(user?.name);
+
+  function setOwnerName(e) {
+    // setName(e.target.value);
+    // Remove characters that are not alphabets
+    const inputValue = e.target.value.replace(/[^a-zA-Z ]/g, "");
+    setName(inputValue);
+
   }
   function setOwnerEmail(e) {
     const enteredEmail = e.target.value;
@@ -66,6 +74,7 @@ const PTRCitizenDetails = ({ t, config, onSelect, userType, formData, ownerIndex
     setAltMobileNumber(e.target.value);
   }
   function setGuardiansName(e) {
+
     const inputValue = e.target.value.replace(/[^a-zA-Z ]/g, "");
     setFatherOrHusbandName(inputValue);
   }
@@ -84,6 +93,12 @@ const PTRCitizenDetails = ({ t, config, onSelect, userType, formData, ownerIndex
       goNext();
     }
   }, [user, userType]);
+
+    //setFatherOrHusbandName(e.target.value);
+    const inputValue = e.target.value.replace(/[^a-zA-Z ]/g, "");
+    setFatherOrHusbandName(inputValue);
+  }
+
 
   const goNext = () => {
     let owner = formData.owners && formData.owners[index];
@@ -148,7 +163,7 @@ const PTRCitizenDetails = ({ t, config, onSelect, userType, formData, ownerIndex
             value={mobileNumber}
             name="mobileNumber"
             //onChange={(value) => setMobileNo({ target: { value } })}
-            onChange={setMobileNo}
+            onChange={(value) => setMobileNo({ target: { value } })}
             //disable={isUpdateProperty || isEditProperty}
             {...{ required: true, pattern: "[6-9]{1}[0-9]{9}", type: "tel" }}
           />
@@ -184,19 +199,19 @@ const PTRCitizenDetails = ({ t, config, onSelect, userType, formData, ownerIndex
           <TextInput
             t={t}
             type={"text"}
-            isMandatory={false}
+            isMandatory={true}
             optionKey="i18nKey"
             name="emailId"
             value={emailId}
             onChange={setOwnerEmail}
-            //disable={isUpdateProperty || isEditProperty}
-            // ValidationRequired={false}
-            // {...(validation = {
-            //   isRequired: true,
-            //   //pattern: "[a-z0-9._%+-]+@[a-z0-9.-]+.[a-z]{2,}$",
-            //   type: "text",
-            //   // title: t("PTR_NAME_ERROR_MESSAGE"),
-            // })}
+           
+            ValidationRequired={false}
+            {...(validation = {
+              isRequired: true,
+              //pattern: "[a-z0-9._%+-]+@[a-z0-9.-]+.[a-z]{2,}$",
+              type: "text",
+              // title: t("PTR_NAME_ERROR_MESSAGE"),
+            })}
           />
         </div>
       </FormStep>
