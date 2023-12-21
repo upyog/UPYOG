@@ -9,9 +9,6 @@ const getAction = (flow) => {
     case "STAKEHOLDER":
       actions = [];
       break;
-    case "PT_MUTATE":
-      actions = ["PT_OWNERSHIP_INFO_SUB_HEADER", "PT_MUTATION_DETAILS", "CE_DOCUMENT_DETAILS", "PT_COMMON_SUMMARY"];
-      break;
     default:
       actions = ["ES_TITILE_OWNER_DETAILS", "ES_TITILE_PET_DETAILS", "PTR_LOCATION_DETAILS", "ES_TITILE_DOCUMENT_DETAILS","PTR_SUMMARY"];
   }

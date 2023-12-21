@@ -11,7 +11,7 @@ export const convertDotValues = (value = "") => {
 export const convertToLocale = (value = "", key = "") => {
   let convertedValue = convertDotValues(value);
   if (convertedValue == "NA") {
-    return "PT_NA";
+    return "PTR_NA";
   }
   return `${key}_${convertedValue}`;
 };
@@ -34,7 +34,7 @@ export const getPropertyOccupancyTypeLocale = (value = "") => {
 export const getMohallaLocale = (value = "", tenantId = "") => {
   let convertedValue = convertDotValues(tenantId);
   if (convertedValue == "NA" || !checkForNotNull(value)) {
-    return "PT_NA";
+    return "PTR_NA";
   }
   convertedValue = convertedValue.toUpperCase();
   return convertToLocale(value, `${convertedValue}_REVENUE`);
@@ -43,7 +43,7 @@ export const getMohallaLocale = (value = "", tenantId = "") => {
 export const getCityLocale = (value = "") => {
   let convertedValue = convertDotValues(value);
   if (convertedValue == "NA" || !checkForNotNull(value)) {
-    return "PT_NA";
+    return "PTR_NA";
   }
   convertedValue = convertedValue.toUpperCase();
   return convertToLocale(convertedValue, `TENANT_TENANTS`);
@@ -143,40 +143,8 @@ export const setOwnerDetails = (data) => {
   };
 
 
-
-export const getSuperBuiltUparea = (data) => {
-  let builtUpArea;
-  if (data?.selfOccupied?.i18nKey === "PT_YES_IT_IS_SELFOCCUPIED") {
-    builtUpArea = parseInt(data?.floordetails?.builtUpArea);
-  } else {
-    if (data?.selfOccupied?.i18nKey === "PT_PARTIALLY_RENTED_OUT") {
-      builtUpArea = parseInt(data?.landarea?.floorarea) + parseInt(data?.Constructiondetails?.RentArea);
-    } else {
-      builtUpArea = parseInt(data?.Constructiondetails?.RentArea);
-    }
-    if (data?.IsAnyPartOfThisFloorUnOccupied.i18nKey === "PT_COMMON_YES") {
-      builtUpArea = builtUpArea + parseInt(data?.UnOccupiedArea?.UnOccupiedArea);
-    }
-  }
-  return builtUpArea;
-};
-
-export const getSuperBuiltUpareafromob = (data) => {
-  let builtuparea = 0;
-  data?.units.map((unit) => {
-    builtuparea = builtuparea + unit?.constructionDetail?.builtUpArea;
-  });
-  return builtuparea;
-};
-
-
-
 export const convertToProperty = (data) => {
-  //console.log("datataaa*******************------------------",data)
-
-  
-
-  
+ 
   data = setDocumentDetails(data);
   data = setOwnerDetails(data);
   data = setAddressDetails(data);
@@ -199,7 +167,7 @@ export const convertToProperty = (data) => {
     }],
   };
 
-  //console.log("returning form data ", formdata)
+ 
   return formdata;
 };
 
@@ -231,243 +199,11 @@ else
 return true;
 }
 
-export const setUpdateOwnerDetails = (data = []) => {
-  const { institution, owners } = data;
-  if (data?.ownershipCategory?.value === "INSTITUTIONALPRIVATE" || data?.ownershipCategory?.value === "INSTITUTIONALGOVERNMENT") {
-    if (data?.ownershipCategory?.value === "INSTITUTIONALPRIVATE" || data?.ownershipCategory?.value === "INSTITUTIONALGOVERNMENT") {
-      institution.designation = owners[0]?.designation;
-      institution.name = owners[0]?.inistitutionName;
-      institution.nameOfAuthorizedPerson = owners[0]?.name;
-      institution.tenantId = data?.address?.city?.code;
-      institution.type = owners[0]?.inistitutetype?.value;
-      let document = [];
-      if (owners[0]?.documents["proofIdentity"]?.fileStoreId && owners[0].documents["proofIdentity"].id) {
-        document.push({
-          fileStoreId: owners[0].documents["proofIdentity"].fileStoreId || "",
-          documentType: owners[0].documents["proofIdentity"].documentType?.code || "",
-          id: owners[0].documents["proofIdentity"].id || "",
-          status: owners[0].documents["proofIdentity"].status || "",
-        });
-      } else {
-        document.push({
-          fileStoreId: owners[0].documents["proofIdentity"].fileStoreId || "",
-          documentType: owners[0].documents["proofIdentity"].documentType?.code || "",
-        });
-      }
-      data.owners.forEach((owner) => {
-        owner.altContactNumber = owners[0]?.altContactNumber;
-        owner.correspondenceAddress = owners[0]?.permanentAddress;
-        owner.designation = owners[0]?.designation;
-        owner.emailId = owners[0]?.emailId;
-        owner.isCorrespondenceAddress = owners[0]?.isCorrespondenceAddress;
-        owner.mobileNumber = owners[0]?.mobileNumber;
-        owner.name = owners[0]?.name;
-        owner.ownerType = owners[0]?.ownerType?.code || "NONE";
-        owner.documents = document;
-      });
-      data.institution = institution;
-    }
-  } else {
-    data.owners.forEach((owner) => {
-      let document = [];
-      if (owner?.ownerType?.code != "NONE") {
-        if (owner.documents["specialProofIdentity"].id) {
-          document.push({
-            fileStoreId: owner.documents["specialProofIdentity"].fileStoreId || "",
-            documentType: owner.documents["specialProofIdentity"].documentType?.code || "",
-            id: owner.documents["specialProofIdentity"].id || "",
-            status: owner.documents["specialProofIdentity"].status || "",
-          });
-        } else {
-          document.push({
-            fileStoreId: owner.documents["specialProofIdentity"].fileStoreId || "",
-            documentType: owner.documents["specialProofIdentity"].documentType?.code || "",
-          });
-        }
-      }
-      if (owner?.documents["proofIdentity"]?.fileStoreId) {
-        if (owner.documents["proofIdentity"].id) {
-          document.push({
-            fileStoreId: owner.documents["proofIdentity"].fileStoreId || "",
-            documentType: owner.documents["proofIdentity"].documentType?.code || "",
-            id: owner.documents["proofIdentity"].id || "",
-            status: owner.documents["proofIdentity"].status || "",
-          });
-        } else {
-          document.push({
-            fileStoreId: owner.documents["proofIdentity"].fileStoreId || "",
-            documentType: owner.documents["proofIdentity"].documentType?.code || "",
-          });
-        }
-      }
-      owner.gender = owner?.gender?.code;
-      owner.ownerType = owner?.ownerType?.code;
-      owner.relationship = owner?.relationship?.code;
-      owner.documents = document;
-    });
-  }
-  return data;
-};
-export const setUpdatedDocumentDetails = (data) => {
-  const { address, owners } = data;
-  let documents = [];
-  if (address?.documents["ProofOfAddress"]?.id) {
-    documents.push({
-      fileStoreId: address?.documents["ProofOfAddress"]?.fileStoreId || "",
-      documentType: address?.documents["ProofOfAddress"]?.documentType?.code || "",
-      id: address?.documents["ProofOfAddress"]?.id || "",
-      status: address?.documents["ProofOfAddress"]?.status || "",
-    });
-  } else {
-    documents.push({
-      fileStoreId: address?.documents["ProofOfAddress"]?.fileStoreId || "",
-      documentType: address?.documents["ProofOfAddress"]?.documentType?.code || "",
-    });
-  }
-
-  owners &&
-    owners.length > 0 &&
-    owners.map((owner) => {
-      owner.documents.map((document) => {
-        documents.push(document);
-      });
-    });
-  data.documents = documents;
-  return data;
-};
-export const convertToUpdateProperty = (data = {}, t) => {
-  let isResdential = data.isResdential;
-  let propertyType = data.PropertyType;
-  let selfOccupied = data.selfOccupied;
-  let Subusagetypeofrentedarea = data.Subusagetypeofrentedarea || null;
-  let subusagetype = data.subusagetype || null;
-  let IsAnyPartOfThisFloorUnOccupied = data.IsAnyPartOfThisFloorUnOccupied || null;
-  let builtUpArea = data?.floordetails?.builtUpArea || null;
-  let noOfFloors = data?.noOfFloors;
-  let noOofBasements = data?.noOofBasements;
-  let unit = data?.units;
-  data.units = data?.units?.map((ob) => {return({
-    ...ob, unitType : ob?.unitType?.code
-  })})
-  let basement1 = Array.isArray(data?.units) && data?.units["-1"] ? data?.units["-1"] : null;
-  let basement2 = Array.isArray(data?.units) && data?.units["-2"] ? data?.units["-2"] : null;
-  data = setAddressDetails(data);
-  data = setUpdateOwnerDetails(data);
-  data = setUpdatedDocumentDetails(data);
-  data = setPropertyDetails(data);
-  data.address.city = data.address.city ? data.address.city : t(`TENANT_TENANTS_${stringReplaceAll(data?.tenantId.toUpperCase(),".","_")}`);
-
-  const formdata = {
-    Property: {
-      id: data.id,
-      accountId: data.accountId,
-      acknowldgementNumber: data.acknowldgementNumber,
-      propertyId: data.propertyId,
-      status: data.status || "INWORKFLOW",
-      tenantId: data.tenantId,
-      address: data.address,
-
-      ownershipCategory: data?.ownershipCategory?.value,
-      owners: data.owners,
-      institution: data.institution || null,
-
-      documents: data.documents || [],
-      ...data.propertyDetails,
-
-      additionalDetails: {
-        inflammable: false,
-        heightAbove36Feet: false,
-        isResdential: isResdential,
-        propertyType: propertyType,
-        selfOccupied: selfOccupied,
-        Subusagetypeofrentedarea: Subusagetypeofrentedarea,
-        subusagetype: subusagetype,
-        IsAnyPartOfThisFloorUnOccupied: IsAnyPartOfThisFloorUnOccupied,
-        builtUpArea: builtUpArea,
-        noOfFloors: noOfFloors,
-        noOofBasements: noOofBasements,
-        unit: unit,
-        basement1: basement1,
-        basement2: basement2,
-      },
-
-      creationReason: getCreationReason(data),
-      source: "MUNICIPAL_RECORDS",
-      channel: "CITIZEN",
-      workflow: getWorkflow(data),
-    },
-  };
-
-  let propertyInitialObject = JSON.parse(sessionStorage.getItem("propertyInitialObject"));
-  if (checkArrayLength(propertyInitialObject?.units) && checkIsAnArray(formdata.Property?.units) && data?.isEditProperty) {
-    propertyInitialObject.units = propertyInitialObject.units.filter((unit) => unit.active);
-    let oldUnits = propertyInitialObject.units.map((unit) => {
-      return { ...unit, active: false };
-    });
-    formdata.Property?.units.push(...oldUnits);
-  }
-  /* if (
-    checkArrayLength(propertyInitialObject?.owners) &&
-    checkIsAnArray(formdata.Property?.owners) &&
-    data?.isEditProperty &&
-    data.isUpdateProperty == false
-  ) {
-    propertyInitialObject.owners = propertyInitialObject.owners.filter((owner) => owner.status === "ACTIVE");
-    let oldOwners = propertyInitialObject.owners.map((owner) => {
-      return { ...owner, status: "INACTIVE" };
-    });
-    formdata.Property?.owners.push(...oldOwners);
-  } else {
-    formdata.Property.owners = [...propertyInitialObject.owners];
-  } */
-
-  if (checkArrayLength(propertyInitialObject?.owners) && checkIsAnArray(formdata.Property?.owners)) {
-    formdata.Property.owners = [...propertyInitialObject.owners];
-  }
-  if (propertyInitialObject?.auditDetails) {
-    formdata.Property["auditDetails"] = { ...propertyInitialObject.auditDetails };
-  }
-  return formdata;
-};
-
 /*   method to check value  if not returns NA*/
 export const checkForNA = (value = "") => {
-  return checkForNotNull(value) ? value : "PT_NA";
+  return checkForNotNull(value) ? value : "PTR_NA";
 };
 
-/*   method to check value  if not returns NA*/
-export const isPropertyVacant = (value = "") => {
-  return checkForNotNull(value) && value.includes("VACANT") ? true : false;
-};
-
-/*   method to check value equal to flat / part of building if not returns NA  */
-export const isPropertyFlatorPartofBuilding = (value = "") => {
-  return checkForNotNull(value) && value.includes("SHAREDPROPERTY") ? true : false;
-};
-
-export const isPropertyIndependent = (value = "") => {
-  return checkForNotNull(value) && value.includes("INDEPENDENT") ? true : false;
-};
-
-export const isthere1Basement = (value = "") => {
-  return checkForNotNull(value) && value.includes("ONE") ? true : false;
-};
-
-export const isthere2Basement = (value = "") => {
-  return checkForNotNull(value) && value.includes("TWO") ? true : false;
-};
-
-export const isPropertyselfoccupied = (value = "") => {
-  return checkForNotNull(value) && value.includes("SELFOCCUPIED") ? true : false;
-};
-
-export const isPropertyPartiallyrented = (value = "") => {
-  return checkForNotNull(value) && value.includes("PARTIALLY") ? true : false;
-};
-
-export const ispropertyunoccupied = (value = "") => {
-  return checkForNotNull(value) && value.includes("YES") ? true : false;
-};
 /*   method to get required format from fielstore url*/
 export const pdfDownloadLink = (documents = {}, fileStoreId = "", format = "") => {
   /* Need to enhance this util to return required format*/

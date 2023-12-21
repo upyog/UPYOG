@@ -5,9 +5,8 @@ import { Link, Switch, useLocation } from "react-router-dom";
 import { PTRLinks } from "../../Module";
 import Inbox from "./Inbox";
 import PaymentDetails from "./PaymentDetails";
-import Search from "./Search";
+// import Search from "./Search";
 import SearchApp from "./SearchApp";
-import UlbAssesment from "./UlbAssesment";
 
 
 const EmployeeApp = ({ path, url, userType }) => {

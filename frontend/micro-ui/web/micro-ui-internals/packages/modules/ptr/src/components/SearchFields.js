@@ -102,7 +102,7 @@ const SearchFields = ({register, control, reset, tenantId, t, formState, setShow
                             />
                 </SearchField>
                 <SearchField>
-                    <label>{t("PT_FROM_DATE")}</label>
+                    <label>{t("PTR_FROM_DATE")}</label>
                     <Controller
                         render={(props) => <DatePicker date={props.value} disabled={false} onChange={props.onChange} />}
                         name="fromDate"
@@ -110,7 +110,7 @@ const SearchFields = ({register, control, reset, tenantId, t, formState, setShow
                         />
                 </SearchField>
                 <SearchField>
-                    <label>{t("PT_TO_DATE")}</label>
+                    <label>{t("PTR_TO_DATE")}</label>
                     <Controller
                         render={(props) => <DatePicker date={props.value} disabled={false} onChange={props.onChange} />}
                         name="toDate"

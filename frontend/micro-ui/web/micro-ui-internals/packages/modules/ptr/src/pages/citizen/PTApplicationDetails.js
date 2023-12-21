@@ -3,10 +3,11 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory, useParams } from "react-router-dom";
 import getPTAcknowledgementData from "../../getPTAcknowledgementData";
-import PropertyDocument from "../../pageComponents/PropertyDocument";
+// import PropertyDocument from "../../pageComponents/PropertyDocument";
+import PetDocument from "../../pageComponents/PetDocument";
 import PTWFApplicationTimeline from "../../pageComponents/PTWFApplicationTimeline";
 import { getCityLocale, getPropertyTypeLocale, propertyCardBodyStyle, getMohallaLocale, pdfDownloadLink } from "../../utils";
-import PTCitizenFeedbackPopUp from "../../pageComponents/PTCitizenFeedbackPopUp";
+// import PTCitizenFeedbackPopUp from "../../pageComponents/PTCitizenFeedbackPopUp";
 //import PTCitizenFeedback from "@egovernments/digit-ui-module-core/src/components/PTCitizenFeedback";
 
 import get from "lodash/get";
@@ -238,7 +239,7 @@ const PTApplicationDetails = () => {
   let dowloadOptions = [];
 
   dowloadOptions.push({
-    label: data?.PetRegistrationApplications?.[0]?.creationReason === "MUTATION" ? t("MT_APPLICATION") : t("PT_APPLICATION_ACKNOWLEDGMENT"),
+    label: data?.PetRegistrationApplications?.[0]?.creationReason === "MUTATION" ? t("MT_APPLICATION") : t("PTR_APPLICATION_ACKNOWLEDGMENT"),
     onClick: () => getAcknowledgementData(),
   });
   if (reciept_data && reciept_data?.Payments.length > 0 && recieptDataLoading == false)
@@ -305,7 +306,7 @@ const PTApplicationDetails = () => {
           <CardSubHeader style={{ fontSize: "24px" }}>{t("PTR_DOCUMENT_DETAILS")}</CardSubHeader>
           <div>
             {Array.isArray(docs) ? (
-              docs.length > 0 && <PropertyDocument pet_details={pet_details}></PropertyDocument>
+              docs.length > 0 && <PetDocument pet_details={pet_details}></PetDocument>
             ) : (
               <StatusTable>
                 <Row className="border-none" text={t("PTR_NO_DOCUMENTS_MSG")} />
