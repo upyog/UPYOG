@@ -97,11 +97,10 @@ console.log("formData",formData)
       {window.location.href.includes("/tl") ? <Timeline currentStep={2} /> : <Timeline currentStep={1} flow="APPLY" />}
       <FormStep
         config={{ ...config, inputs }}
-        _defaultValues={{ roadWidth: formData?.roadWidth?.roadWidth , distancefromroad: formData?.roadWidth?.distancefromroad}}
+        _defaultValues={{ roadWidth: formData?.roadWidth?.roadWidth || "", distancefromroad: formData?.roadWidth?.distancefromroad || ""}}
         onChange={handleSkip}
         onSelect={(data) => onSelect(config.key, data)}
-        onSkip={onSkip}
-        isDisabled={roadWidth || distance ? false : true}
+        isDisabled={roadWidth && distance ? false : true}
         t={t}
       />
     </React.Fragment>

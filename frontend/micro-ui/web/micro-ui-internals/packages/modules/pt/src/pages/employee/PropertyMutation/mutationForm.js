@@ -31,8 +31,6 @@ const MutationForm = ({ applicationData, tenantId }) => {
         documentDate,
         documentNumber,
         documentValue,
-        isMutationInCourt,
-        isPropertyUnderGovtPossession,
         marketValue,
         reasonForTransfer,
       } = additionalDetails;
@@ -41,8 +39,6 @@ const MutationForm = ({ applicationData, tenantId }) => {
           !documentDate ||
           !documentNumber ||
           !documentValue ||
-          !isMutationInCourt ||
-          !isPropertyUnderGovtPossession ||
           !marketValue ||
           !reasonForTransfer
         )
@@ -97,7 +93,7 @@ const MutationForm = ({ applicationData, tenantId }) => {
           ...additionalDetails,
           isMutationInCourt: additionalDetails.isMutationInCourt?.code,
           reasonForTransfer: additionalDetails?.reasonForTransfer.code,
-          isPropertyUnderGovtPossession: additionalDetails.isPropertyUnderGovtPossession.code,
+          isPropertyUnderGovtPossession: additionalDetails?.isPropertyUnderGovtPossession?.code,
           documentDate: new Date(additionalDetails?.documentDate).getTime(),
           marketValue: Number(additionalDetails?.marketValue),
         },

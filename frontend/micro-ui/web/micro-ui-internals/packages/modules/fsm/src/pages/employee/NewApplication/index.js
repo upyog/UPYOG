@@ -42,6 +42,7 @@ export const NewApplication = ({ parentUrl, heading }) => {
   };
 
   const onFormValueChange = (setValue, formData) => {
+    console.log("ProID", formData)
     if (
       formData?. propertyID &&
       formData?.propertyType &&
