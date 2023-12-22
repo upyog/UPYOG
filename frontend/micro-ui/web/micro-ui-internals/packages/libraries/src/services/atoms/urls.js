@@ -93,6 +93,7 @@ const Urls = {
     search:"/pet-services/pet-registration/_search",
     update:"/pet-services/pet-registration/_update",
     fetch_payment_details: "/billing-service/bill/v2/_fetchbill",
+    
   },
 
   dss: {

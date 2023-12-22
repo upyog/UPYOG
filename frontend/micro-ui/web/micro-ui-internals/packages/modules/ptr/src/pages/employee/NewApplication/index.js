@@ -84,6 +84,7 @@ const NewApplication = () => {
   return (
     <FormComposer
       heading={t("ES_TITLE_NEW_PET_REGISTARTION")}
+      isDisabled={!canSubmit}
       label={t("ES_COMMON_APPLICATION_SUBMIT")}
       config={configs.map((config) => {
        
