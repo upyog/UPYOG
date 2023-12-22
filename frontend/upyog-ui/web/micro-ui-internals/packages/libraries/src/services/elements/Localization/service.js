@@ -72336,8 +72336,8 @@ export const LocalizationService = {
         },
         
         {
-            "code": "WMS_MB_CREATE_PAGE_LABEL",
-            "message": "Physical Milestone",
+            "code": "WMS_MB_CREATE_HEADER",
+            "message": "Measurement Book",
             "module": "rainmaker-common",
             "locale": "en_IN"
         },
@@ -72367,7 +72367,7 @@ export const LocalizationService = {
         },
         {
             "code": "WMS_MB_DESC_OF_ITEM_LABEL",
-            "message": "Description of the Item",
+            "message": "Description of the MB",
             "module": "rainmaker-common",
             "locale": "en_IN"
         },
@@ -72386,6 +72386,24 @@ export const LocalizationService = {
         {
             "code": "WMS_MB_END_DATE_LABEL",
             "message": "End Date",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_MB_DATE_LABEL",
+            "message": "Measurement Date",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_MB_CHAPTER_LABEL",
+            "message": "Engineer Name",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_MB_NAME_LABEL",
+            "message": "Engineer Name",
             "module": "rainmaker-common",
             "locale": "en_IN"
         },
