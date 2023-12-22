@@ -12,7 +12,8 @@
     "packages/modules/pgr",
     "packages/modules/dss",
     "packages/modules/commonPt",
-    "packages/modules/pt"
+    "packages/modules/pt",
+    "packages/modules/mCollect"
 
   ],
   "author": "Abhinav Kushwaha <abhinav.kushwaha@egovernments.org>",
