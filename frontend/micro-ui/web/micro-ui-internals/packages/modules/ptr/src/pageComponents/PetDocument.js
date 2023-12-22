@@ -9,7 +9,7 @@ const PDFSvg = ({ width = 20, height = 20, style }) => (
   </svg>
 );
 
-function PropertyDocument({ property = {} }) {
+function PetDocument({ property = {} }) {
   const { t } = useTranslation();
   const { isLoading, isError, error, data } = Digit.Hooks.pt.usePropertyDocumentSearch({
     property,
@@ -39,4 +39,4 @@ function PropertyDocument({ property = {} }) {
   );
 }
 
-export default PropertyDocument;
+export default PetDocument;

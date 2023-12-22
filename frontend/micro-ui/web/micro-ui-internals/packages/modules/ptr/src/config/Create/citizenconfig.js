@@ -100,9 +100,9 @@
                     "body": [
                         {
                             "route": "documents",
-                            "component": "SelectProofIdentity",
+                            "component": "PTRSelectProofIdentity",
                             "withoutLabel": true,
-                            "key": "document",
+                            "key": "documents",
                             "type": "component",
                             "nextStep":null,
                             "texts": {

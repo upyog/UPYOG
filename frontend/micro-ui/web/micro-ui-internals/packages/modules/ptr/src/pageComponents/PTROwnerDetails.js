@@ -231,7 +231,7 @@
               <CardLabelError style={errorStyle}>{localFormState.touched.mobileNumber ? errors?.mobileNumber?.message : ""}</CardLabelError>
 
               <LabelFieldPair>
-                <CardLabel className="card-label-smaller">{t("PTR_ALT_MOBILE_NUMBER") + " *"}</CardLabel>
+                <CardLabel className="card-label-smaller">{t("PTR_ALT_MOBILE_NUMBER")}</CardLabel>
                 <div className="field">
                   <Controller
                     control={control}

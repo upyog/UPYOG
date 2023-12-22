@@ -357,7 +357,7 @@ const ptr = {
   usePTRSearch,
   usePtrApplicationDetail,
   useTenantsPTR,
-  useServiceSearchPTR
+  useServiceSearchPTR,
   };
 const dss = {
   useMDMS: useDssMdms,

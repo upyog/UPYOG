@@ -3,10 +3,11 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory, useParams } from "react-router-dom";
 import getPTAcknowledgementData from "../../getPTAcknowledgementData";
-import PropertyDocument from "../../pageComponents/PropertyDocument";
+// import PropertyDocument from "../../pageComponents/PropertyDocument";
+import PetDocument from "../../pageComponents/PetDocument";
 import PTWFApplicationTimeline from "../../pageComponents/PTWFApplicationTimeline";
 import { getCityLocale, getPropertyTypeLocale, propertyCardBodyStyle, getMohallaLocale, pdfDownloadLink } from "../../utils";
-import PTCitizenFeedbackPopUp from "../../pageComponents/PTCitizenFeedbackPopUp";
+// import PTCitizenFeedbackPopUp from "../../pageComponents/PTCitizenFeedbackPopUp";
 //import PTCitizenFeedback from "@egovernments/digit-ui-module-core/src/components/PTCitizenFeedback";
 
 import get from "lodash/get";
@@ -70,14 +71,14 @@ const PTApplicationDetails = () => {
 
   useEffect(async () => {
     if (acknowledgementIds && tenantId &&  pet_details) {
-      const res = await Digit.PaymentService.searchBill(tenantId, { Service: "PT.MUTATION", consumerCode: acknowledgementIds });
+      const res = await Digit.PaymentService.searchBill(tenantId, { Service: "ptr", consumerCode: acknowledgementIds });
       if (!res.Bill.length) {
         const res1 = await Digit.PTService.ptCalculateMutation({  pet_details:  pet_details }, tenantId);
         setBillAmount(res1?.[acknowledgementIds]?.totalAmount || t("CS_NA"));
-        setBillStatus(t(`PT_MUT_BILL_ACTIVE`));
+        setBillStatus(t(`PTR_MUT_BILL_ACTIVE`));
       } else {
         setBillAmount(res?.Bill[0]?.totalAmount || t("CS_NA"));
-        setBillStatus(t(`PT_MUT_BILL_${res?.Bill[0]?.status?.toUpperCase()}`));
+        setBillStatus(t(`PTR_MUT_BILL_${res?.Bill[0]?.status?.toUpperCase()}`));
       }
     }
   }, [tenantId, acknowledgementIds,  pet_details]);
@@ -238,7 +239,7 @@ const PTApplicationDetails = () => {
   let dowloadOptions = [];
 
   dowloadOptions.push({
-    label: data?.PetRegistrationApplications?.[0]?.creationReason === "MUTATION" ? t("MT_APPLICATION") : t("PT_APPLICATION_ACKNOWLEDGMENT"),
+    label: data?.PetRegistrationApplications?.[0]?.creationReason === "MUTATION" ? t("MT_APPLICATION") : t("PTR_APPLICATION_ACKNOWLEDGMENT"),
     onClick: () => getAcknowledgementData(),
   });
   if (reciept_data && reciept_data?.Payments.length > 0 && recieptDataLoading == false)
@@ -305,7 +306,7 @@ const PTApplicationDetails = () => {
           <CardSubHeader style={{ fontSize: "24px" }}>{t("PTR_DOCUMENT_DETAILS")}</CardSubHeader>
           <div>
             {Array.isArray(docs) ? (
-              docs.length > 0 && <PropertyDocument pet_details={pet_details}></PropertyDocument>
+              docs.length > 0 && <PetDocument pet_details={pet_details}></PetDocument>
             ) : (
               <StatusTable>
                 <Row className="border-none" text={t("PTR_NO_DOCUMENTS_MSG")} />
