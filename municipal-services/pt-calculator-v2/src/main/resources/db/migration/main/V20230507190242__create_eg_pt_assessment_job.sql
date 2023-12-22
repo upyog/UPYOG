@@ -1,4 +1,4 @@
-CREATE TABLE eg_pt_assessment_job
+IF NOT EXISTS CREATE TABLE eg_pt_assessment_job
 (
     uuid character varying(64) NOT NULL,
     locality character varying(64),
