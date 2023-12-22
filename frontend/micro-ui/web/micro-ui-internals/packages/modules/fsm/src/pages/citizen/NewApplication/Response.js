@@ -43,6 +43,7 @@ const Response = ({ data, onSuccess }) => {
   });
 
   const onError = (error, variables) => {
+    console.log("error",error)
     setErrorInfo(error?.response?.data?.Errors[0]?.code || "ERROR");
     setMutationHappened(true);
   };
@@ -51,6 +52,7 @@ const Response = ({ data, onSuccess }) => {
   }, [mutation.data]);
 
   useEffect(() => {
+    console.log("errorInfoerrorInfo",errorInfo)
     if (!mutationHappened && !errorInfo) {
       try {
         const amount = Digit.SessionStorage.get("total_amount");
@@ -132,7 +134,7 @@ const Response = ({ data, onSuccess }) => {
     Digit.Utils.pdf.generate(data);
   };
   const isSuccess = !successData ? mutation?.isSuccess : true;
-
+console.log("mutation",mutation,mutationHappened)
   return mutation.isLoading || (mutation.isIdle && !mutationHappened) ? (
     <Loader />
   ) : (
