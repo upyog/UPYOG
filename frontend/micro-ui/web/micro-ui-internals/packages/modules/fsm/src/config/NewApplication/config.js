@@ -3,6 +3,21 @@ export const newConfig = [
     head: "ES_NEW_APPLICATION_PROPERTY_DETAILS",
     body: [
       {
+        label: "ES_NEW_APPLICATION_PROPERTY_ID",
+        isMandatory: true,
+        type: "component",
+        route: "property-id",
+        key: "propertyID",
+        component: "SelectPropertyID",
+        texts: {
+          headerCaption: "",
+          header: "CS_FILE_APPLICATION_PROPERTY_ID_LABEL",
+          cardText: "CS_FILE_APPLICATION_PROPERTY_ID_TEXT",
+          submitBarLabel: "CS_COMMON_NEXT",
+        },
+        nextStep: "property-type",
+      },
+      {
         label: "ES_NEW_APPLICATION_PROPERTY_TYPE",
         isMandatory: true,
         type: "component",
@@ -140,7 +155,7 @@ export const newConfig = [
     body: [
       {
         label: "ES_NEW_APPLICATION_PIT_TYPE",
-        isMandatory: false,
+        isMandatory: true,
         type: "component",
         route: "pit-type",
         key: "pitType",
@@ -151,7 +166,23 @@ export const newConfig = [
           submitBarLabel: "CS_COMMON_NEXT",
           skipText: "CORE_COMMON_SKIP_CONTINUE",
         },
+        nextStep: "road-details",
+      },
+      {
+        label: "ES_NEW_APPLICATION_ROAD_WIDTH",
+        isMandatory: true,
+        type: "component",
+        route: "road-details",
+        key: "roadWidth",
+        component: "SelectRoadDetails",
+        texts: {
+          header: "CS_FILE_PROPERTY_ROAD_WIDTH",
+          cardText: "CS_FILE_PROPERTY_ROAD_WIDTH_TEXT",
+          submitBarLabel: "CS_COMMON_NEXT",
+          skipText: "CORE_COMMON_SKIP_CONTINUE",
+        },
         nextStep: "tank-size",
+
       },
       {
         route: "tank-size",

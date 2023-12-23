@@ -136,7 +136,7 @@ const NewChallan = ({ChallanData}) => {
         amount: TaxHeadMasterKeys.map((ele,index) => {
           return {
             taxHeadCode: `${data?.category?.code?.split(".")[0]}.${ele}`,
-            amount: TaxHeadMasterValues[index] ? parseInt(TaxHeadMasterValues[index]) : 0,
+            amount: TaxHeadMasterValues[index] ? Math.round(TaxHeadMasterValues[index]) : 0,
           };
         }),
       };
@@ -158,7 +158,7 @@ const NewChallan = ({ChallanData}) => {
           amount: TaxHeadMasterKeys.map((ele,index) => {
           return {
             taxHeadCode: `${data?.category?.code?.split(".")[0]}.${ele}`,
-            amount: TaxHeadMasterValues[index] ? parseInt(TaxHeadMasterValues[index]) : 0,
+            amount: TaxHeadMasterValues[index] ? Math.round(TaxHeadMasterValues[index]) : 0,
           };
         }),
       };

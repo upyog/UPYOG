@@ -4,10 +4,11 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { convertToStakeholderObject } from "../../../utils/index";
 
-const GetActionMessage = (props) => {
+const GetActionMessage = ( props) => {
+  const LicenseType=props?.data?.Licenses?.[0]?.tradeLicenseDetail?.tradeUnits?.[0]?.tradeType?.split(".")[0] || "ARCHITECT";
   const { t } = useTranslation();
   if (props.isSuccess) {
-    return !window.location.href.includes("edit-application") ? t("CS_STAKEHOLDER_APPLICATION_SUCCESS") : t("CS_PROPERTY_UPDATE_APPLICATION_SUCCESS");
+    return !window.location.href.includes("edit-application") ? `${t(`TRADELICENSE_TRADETYPE_${LicenseType}`)}${t(`CS_STAKEHOLDER_APPLICATION_SUCCESS`)}` : t("CS_PROPERTY_UPDATE_APPLICATION_SUCCESS");
   } else if (props.isLoading) {
     return !window.location.href.includes("edit-application") ? t("CS_STAKEHOLDER_APPLICATION_PENDING") : t("CS_PROPERTY_UPDATE_APPLICATION_PENDING");
   } else if (!props.isSuccess) {
@@ -21,11 +22,12 @@ const rowContainerStyle = {
 };
 
 const BannerPicker = (props) => {
+  const LicenseType=props?.data?.Licenses?.[0]?.tradeLicenseDetail?.tradeUnits?.[0]?.tradeType?.split(".")[0] || "ARCHITECT";
   return (
     <Banner
       message={GetActionMessage(props)}
       applicationNumber={props.data?.Licenses[0].applicationNumber}
-      info={props.isSuccess ? props.t("BPA_NEW_STAKEHOLDER_REGISTRATION_APP_LABEL") : ""}
+      info={props.isSuccess ? `${props.t(`TRADELICENSE_TRADETYPE_${LicenseType}`)} ${props.t("BPA_NEW_STAKEHOLDER_REGISTRATION_APP_LABEL")}` : ""}
       successful={props.isSuccess}
       style={{ padding: "10px" }}
       headerStyles={{ fontSize: "32px" }}

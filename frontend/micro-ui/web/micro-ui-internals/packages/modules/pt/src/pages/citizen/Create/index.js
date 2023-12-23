@@ -1,5 +1,5 @@
-import { Loader } from "@egovernments/digit-ui-react-components";
-import React ,{Fragment}from "react";
+import { Loader,Modal ,Card , CardHeader, StatusTable,Row} from "@egovernments/digit-ui-react-components";
+import React ,{Fragment,useState,useEffect}from "react";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
 import { Redirect, Route, Switch, useHistory, useLocation, useRouteMatch } from "react-router-dom";
@@ -10,11 +10,20 @@ const CreateProperty = ({ parentRoute }) => {
   const match = useRouteMatch();
   const { t } = useTranslation();
   const { pathname } = useLocation();
+  const [showToast, setShowToast] = useState(null);
   const history = useHistory();
   const stateId = Digit.ULBService.getStateId();
   let config = [];
   const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage("PT_CREATE_PROPERTY", {});
   let { data: commonFields, isLoading } = Digit.Hooks.pt.useMDMS(stateId, "PropertyTax", "CommonFieldsConfig");
+  const [searchData, setSearchData] = useState({});
+  const { data: propertyData, isLoading: propertyDataLoading, error, isSuccess, billData } = Digit.Hooks.pt.usePropertySearchWithDue({
+    tenantId: searchData?.city,
+    filters: searchData?.filters,
+    auth: true /*  to enable open search set false  */,
+    configs: { enabled: Object.keys(searchData).length > 0, retry: false, retryOnMount: false, staleTime: Infinity },
+  });
+
   const goNext = (skipStep, index, isAddMultiple, key) => {
     let currentPath = pathname.split("/").pop(),
       lastchar = currentPath.charAt(currentPath.length - 1),
@@ -111,8 +120,28 @@ const CreateProperty = ({ parentRoute }) => {
     }
 
   const createProperty = async () => {
-    history.push(`${match.path}/acknowledgement`);
+    let tempObject={
+      "mobileNumber":params.owners[0].mobileNumber,
+      "name":params.owners[0].name,
+      "doorNo": params.address.doorNo,
+      "locality": params.address.locality.code,
+      "isRequestForDuplicatePropertyValidation":true
+    }
+    setSearchData({ city: params.address.city.code, filters: tempObject });    
+    //history.push(`${match.path}/acknowledgement`);
   };
+  useEffect(() => {  
+    if(propertyDataLoading && propertyData?.Properties.length >0)  
+    {  
+      //alert("property exist"),  
+      setShowToast(true) 
+    }  
+    else if(propertyDataLoading && propertyData?.Properties.length === 0) {  
+      setShowToast(false)  
+      console.log("propertyDatapropertyData",propertyData)
+      history.push(`${match.path}/acknowledgement`);  
+    }  
+    }, [propertyData]);
 
   function handleSelect(key, data, skipStep, index, isAddMultiple = false) {
     if (key === "owners") {
@@ -130,6 +159,24 @@ const CreateProperty = ({ parentRoute }) => {
     }
     goNext(skipStep, index, isAddMultiple, key);
   }
+  const Heading = (props) => {
+    return <h1 className="heading-m">{props.label}</h1>;
+  };
+
+  const Close = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#FFFFFF">
+      <path d="M0 0h24v24H0V0z" fill="none" />
+      <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z" />
+    </svg>
+  );
+
+  const CloseBtn = (props) => {
+    return (
+      <div className="icon-bg-secondary" onClick={props.onClick}>
+        <Close />
+      </div>
+    );
+  };
 
   const handleSkip = () => {};
   const handleMultiple = () => {};
@@ -142,6 +189,13 @@ const CreateProperty = ({ parentRoute }) => {
     return <Loader />;
   }
 
+  const closeModal =() =>{
+    setShowToast(false)
+  }
+  const setModal=()=>{
+    setShowToast(false)   
+    history.push(`${match.path}/acknowledgement`) 
+  }
   // commonFields=newConfig;
   /* use newConfig instead of commonFields for local development in case needed */
   commonFields = newConfig;
@@ -152,6 +206,8 @@ const CreateProperty = ({ parentRoute }) => {
   const CheckPage = Digit?.ComponentRegistryService?.getComponent("PTCheckPage");
   const PTAcknowledgement = Digit?.ComponentRegistryService?.getComponent("PTAcknowledgement");
   return (
+    <div>
+      <div>
     <Switch>
       {config.map((routeObj, index) => {
         const { component, texts, inputs, key } = routeObj;
@@ -172,6 +228,31 @@ const CreateProperty = ({ parentRoute }) => {
         <Redirect to={`${match.path}/${config.indexRoute}`} />
       </Route>
     </Switch>
+    </div>
+    <div>
+      { showToast &&   <Modal
+      headerBarMain={<Heading label={"Property Alredy exist"} />}
+      headerBarEnd={<CloseBtn onClick={closeModal} />}
+      actionCancelLabel={"Cancel"}
+      actionCancelOnSubmit={closeModal}
+      actionSaveLabel={"Proceed"}
+      actionSaveOnSubmit={setModal}
+      formId="modal-action"
+    >  <div style={{ width: "100%" }}>
+    <Card>
+        <CardHeader>Property Details</CardHeader>
+     
+            <StatusTable>
+                <Row label={t("CR_PROPERTY_NUMBER")} text={propertyData?.Properties?.[0]?.propertyId || "NA"} textStyle={{ whiteSpace: "pre" }} />
+                <Row label={t("CR_OWNER_NAME")} text={propertyData?.Properties?.[0]?.owners?.[0].name || "NA"} />
+                <Row label={t("CR_MOBILE_NUMBER")} text={propertyData?.Properties?.[0]?.owners?.[0].mobileNumber|| "NA"} />
+                <Row label={t("CR_ADDRESS")}    text={( propertyData?.Properties?.[0]?.address?.doorNo +", "+ propertyData?.Properties?.[0]?.address?.locality?.name +", "+ propertyData?.Properties?.[0]?.address?.city ) || "NA"}/>
+            </StatusTable>
+    </Card>
+</div>
+      </Modal>}
+    </div>
+    </div>
   );
 };
 

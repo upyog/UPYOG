@@ -176,7 +176,7 @@ const WSConnectionHolder = ({ t, config, onSelect, userType, formData, ownerInde
               //disable={name && !isOpenLinkFlow ? true : false}
               {...(validation = {
                 isRequired: true,
-                pattern: "^[a-zA-Z-.`' ]*$",
+                pattern: "^[a-zA-Z ]*$",
                 type: "text",
                 title: t("WS_NAME_ERROR_MESSAGE"),
               })}
@@ -216,7 +216,7 @@ const WSConnectionHolder = ({ t, config, onSelect, userType, formData, ownerInde
               //disable={editScreen}
               {...(validation = {
                 isRequired: true,
-                pattern: "^[a-zA-Z-.`' ]*$",
+                pattern: "^[a-zA-Z ]*$",
                 type: "text",
                 title: t("WS_NAME_ERROR_MESSAGE"),
               })}

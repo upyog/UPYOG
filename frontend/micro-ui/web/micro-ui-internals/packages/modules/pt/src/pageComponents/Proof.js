@@ -1,4 +1,4 @@
-import { CardLabel, CardLabelDesc, Dropdown, FormStep, UploadFile } from "@egovernments/digit-ui-react-components";
+import { CardLabel, CardLabelDesc, Dropdown, FormStep ,UploadFile} from "@egovernments/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { stringReplaceAll } from "../utils";
@@ -56,8 +56,15 @@ const Proof = ({ t, config, onSelect, userType, formData }) => {
   };
   const onSkip = () => onSelect();
 
-  function selectfile(e) {
-    setFile(e.target.files[0]);
+  function selectfile(e,newFile) {
+    if(newFile)
+    {
+      setFile(newFile)
+    }
+    else {
+      setFile(e.target.files[0]);
+    }
+    
   }
 
   useEffect(() => {

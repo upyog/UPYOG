@@ -43,6 +43,7 @@ const Response = ({ data, onSuccess }) => {
   });
 
   const onError = (error, variables) => {
+    console.log("error",error)
     setErrorInfo(error?.response?.data?.Errors[0]?.code || "ERROR");
     setMutationHappened(true);
   };
@@ -51,11 +52,12 @@ const Response = ({ data, onSuccess }) => {
   }, [mutation.data]);
 
   useEffect(() => {
+    console.log("errorInfoerrorInfo",errorInfo)
     if (!mutationHappened && !errorInfo) {
       try {
         const amount = Digit.SessionStorage.get("total_amount");
         const amountPerTrip = Digit.SessionStorage.get("amount_per_trip");
-        const { subtype, pitDetail, address, pitType, source, selectGender, selectPaymentPreference, selectTripNo } = data;
+        const { subtype, propertyID, pitDetail, address, pitType, source, selectGender, selectPaymentPreference, selectTripNo } = data;
         const { city, locality, geoLocation, pincode, street, doorNo, landmark, slum } = address;
         setPaymentPreference(selectPaymentPreference?.code);
         const advanceAmount = amount === 0 ? null : selectPaymentPreference?.advanceAmount;
@@ -103,6 +105,9 @@ const Response = ({ data, onSuccess }) => {
             additionalDetails: {
               totalAmount: amount,
               tripAmount: amountPerTrip,
+              propertyID : propertyID?.propertyID,
+              distancefromroad : data.roadWidth.distancefromroad,
+              roadWidth: data.roadWidth.roadWidth,
             },
             advanceAmount,
           },
@@ -129,7 +134,7 @@ const Response = ({ data, onSuccess }) => {
     Digit.Utils.pdf.generate(data);
   };
   const isSuccess = !successData ? mutation?.isSuccess : true;
-
+console.log("mutation",mutation,mutationHappened)
   return mutation.isLoading || (mutation.isIdle && !mutationHappened) ? (
     <Loader />
   ) : (

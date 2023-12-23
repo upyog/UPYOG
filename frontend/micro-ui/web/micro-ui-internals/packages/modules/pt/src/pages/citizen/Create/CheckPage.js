@@ -32,13 +32,16 @@ const ActionButton = ({ jumpTo }) => {
 const CheckPage = ({ onSubmit, value = {} }) => {
   const { t } = useTranslation();
   const history = useHistory();
-
+  console.log("value",value)
   const {
     address,
     isResdential,
     PropertyType,
+    electricity,
+    uid,
     noOfFloors,
     noOofBasements,
+    additionalDetails,
     units = [{}],
     landarea,
     landArea,
@@ -60,7 +63,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
     isEditProperty,
     isUpdateProperty,
   } = value;
-  const typeOfApplication = !isEditProperty && !isUpdateProperty ? `new-application` : `edit-application`;
+  const typeOfApplication = !isEditProperty && !isUpdateProperty ? `new-application` : `edit-application`; 
   let flatplotsize;
   if (isPropertyselfoccupied(selfOccupied?.i18nKey)) {
     flatplotsize = parseInt(landarea?.floorarea);
@@ -276,6 +279,16 @@ const CheckPage = ({ onSubmit, value = {} }) => {
             label={t("PT_ASSESMENT1_PROPERTY_TYPE")}
             text={`${t(checkForNA(PropertyType?.i18nKey))}`}
             actionButton={<ActionButton jumpTo={`/digit-ui/citizen/pt/property/${typeOfApplication}/property-type`} />}
+          />
+          <Row
+            label={t("PT_ASSESMENT1_ELECTRICITY_NUMBER")}
+            text={`${t(checkForNA(electricity?.electricity))}`}
+            actionButton={<ActionButton jumpTo={`/digit-ui/citizen/pt/property/${typeOfApplication}/electricity-number`} />}
+          />
+          <Row
+            label={t("PT_ASSESMENT1_ELECTRICITY_UID")}
+            text={`${t(checkForNA(uid?.uid))}`}
+            actionButton={<ActionButton jumpTo={`/digit-ui/citizen/pt/property/${typeOfApplication}/electricity-uid`} />}
           />
           {PropertyType?.code !== "VACANT" &&<Row
             label={t("PT_ASSESMENT1_PLOT_SIZE")}
