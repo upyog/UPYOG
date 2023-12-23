@@ -78,7 +78,7 @@ const NewApplication = () => {
       electricity:data?.electricity,
       uid:data?.uid
       },
-      owners: data?.owners.map((owner) => {
+      owners: data?.owners.map((owner,index) => {
         let {
           name,
           mobileNumber,
@@ -104,6 +104,8 @@ const NewApplication = () => {
             fatherOrHusbandName,
             gender: owner?.gender.code,
             emailId,
+            additionalDetails:{ownerSequence:index, ownerName:owner?.name}
+            
           };
         }
 
