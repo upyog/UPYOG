@@ -2523,6 +2523,24 @@ export const MdmsService = {
   "sidebar": "digit-ui-links",
   "sidebarURL": "/digit-ui/citizen/dr-home"
 },
+{
+  "id": 3012,
+  "name": "Project Register ",
+  "url": "digit-ui-card",
+  "displayName": "Project Register",
+  "orderNumber": 4,
+  "parentModule": "WMS",
+  "enabled": true,
+  "serviceCode": "CITIZEN_SERVICE_WMS",
+  "code": "",
+  "path": "",
+  "navigationURL": "/digit-ui/citizen/wms/pr-home",
+  "leftIcon": "WMSIcon",
+  "rightIcon": "",
+  "queryParams": "",
+  "sidebar": "digit-ui-links",
+  "sidebarURL": "/digit-ui/citizen/pr-home"
+},
   ]
         },
       "common-masters": {

@@ -151,11 +151,11 @@ import WmsDrPercent from "./pageComponents/DR/WmsDrPercent";
 
 /**------------------- PR------------------------------- */
 
-import WmsPrResponse from "./pages/citizen/DR/Response";
-import WmsPrList from "./pages/citizen/DR/List";
-import WmsPrDetails from "./pages/citizen/DR/Details";
-import WmsPrCreate from "./pages/citizen/DR/Create";
-import WmsPrEdit from "./pages/citizen/DR/Edit";
+import WmsPrResponse from "./pages/citizen/PR/Response";
+import WmsPrList from "./pages/citizen/PR/List";
+import WmsPrDetails from "./pages/citizen/PR/Details";
+import WmsPrCreate from "./pages/citizen/PR/Create";
+import WmsPrEdit from "./pages/citizen/PR/Edit";
 
 import WmsPrId from "./pageComponents/PR/WmsPrId";
 import WmsPrBillDate from "./pageComponents/PR/WmsPrBillDate";

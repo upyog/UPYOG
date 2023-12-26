@@ -53,12 +53,13 @@ const GetSlaCell = (value) => {
     return data?.PRApplications?.map((original) => ({
       [t("WMS_PR_ID_LABEL")]: GetCell(original?.WmsPrId?.pr_id || ""),
       [t("WMS_PR_SCH_NAME_LABEL")]: GetCell(original?.WmsPrSchName?.scheme_name || ""),
+      [t("WMS_PR_PROJECT_NAME_LABEL")]: GetCell(original?.WmsPrPrjName?.project_name || ""),
       [t("WMS_PR_WORK_TYPE_LABEL")]: GetCell(original?.WmsPrTypeOfWork?.Work_type || ""),
       [t("WMS_PR_WORK_NAME_LABEL")]: GetCell(original?.WmsPrWorkName?.work_name || ""),
       [t("WMS_PR_ESTNUMBER_NAME_LABEL")]: GetCell(original?.WmsPrEstNumber?.percent_weightage || ""),
       [t("WMS_PR_ESTWORKCOST_NAME_LABEL")]: GetCell(original?.WmsPrEstWorkCost?.percent_weightage || ""),
       [t("WMS_PR_STA_NAME_LABEL")]: GetCell(original?.WmsPrSTA?.percent_weightage || ""),
-      [t("WMS_PR_STATUS_LABEL")]: GetCell(original?.WmsPrWorkName?.Status_name || ""),
+      [t("WMS_PR_STATUS_LABEL")]: GetCell(original?.WmsPrStatus?.Status_name || ""),
       [t("WMS_PR_BILL_DATE_LABEL")]: GetCell(original?.WmsPrBillDate?.project_start_date || ""),
       [t("WMS_PR_PAYMENT_DATE_LABEL")]: GetCell(original?.WmsPrPaymentDate?.project_end_date || ""),
 
