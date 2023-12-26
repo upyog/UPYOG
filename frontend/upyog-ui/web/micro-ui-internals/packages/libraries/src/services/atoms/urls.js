@@ -246,6 +246,20 @@ wms:{
       count: "https://64f5834d2b07270f705d4f91.mockapi.io/PMAApplications",
     },
 
+    DRApplications: {
+      create: "https://64f5834d2b07270f705d4f91.mockapi.io/DRApplications",
+      update: "https://64f5834d2b07270f705d4f91.mockapi.io/DRApplications",
+      get: "https://64f5834d2b07270f705d4f91.mockapi.io/DRApplications/:id",
+      search: "https://64f5834d2b07270f705d4f91.mockapi.io/DRApplications",
+      count: "https://64f5834d2b07270f705d4f91.mockapi.io/DRApplications",
+    },
+    PRApplications: {
+      create: "https://64f5834d2b07270f705d4f91.mockapi.io/PRApplications",
+      update: "https://64f5834d2b07270f705d4f91.mockapi.io/PRApplications",
+      get: "https://64f5834d2b07270f705d4f91.mockapi.io/PRApplications/:id",
+      search: "https://64f5834d2b07270f705d4f91.mockapi.io/PRApplications",
+      count: "https://64f5834d2b07270f705d4f91.mockapi.io/PRApplications",
+    },
     ContractorMaster: {
       create: "/wms/wms-services/v1/contractor/_create",
       search: "/wms/wms-services/v1/contractor/_search",
