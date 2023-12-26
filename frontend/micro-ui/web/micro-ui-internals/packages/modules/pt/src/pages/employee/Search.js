@@ -177,19 +177,24 @@ const Search = () => {
     }
   },[searchBy])
   const onSubmit = useCallback((_data) => {
+    console.log("_data",_data)
     if(Object.keys(_data).includes("propertyType"))
     {
       setFormData(_data);
+      console.log("_data2",payload)
       setPayload({locality:_data.locality.code, propertyType:_data.propertyType.code})
+      console.log("_data3",payload)
     }
     else {
-      setFormData(_data);     
+      setFormData(_data);   
+      console.log("_data5",formData)  
       if (Object.keys(_data).filter((k) => _data[k] && typeof _data[k] !== "object")) {
         setPayload(
           Object.keys(_data)
             .filter((k) => _data[k])
             .reduce((acc, key) => ({ ...acc, [key]: typeof _data[key] === "object" ? _data[key].code : _data[key] }), {})
         );
+        console.log("_data4",payload)
         setShowToast(null);
       } else {
         setShowToast({ warning: true, label: "ERR_PT_FILL_VALID_FIELDS" });
