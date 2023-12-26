@@ -154,7 +154,8 @@ public class InboxService {
         }
 
         Integer totalCount = 0;
-        if(!(processCriteria.getModuleName().equals(SW) || processCriteria.getModuleName().equals(WS)))
+        if(!(processCriteria.getModuleName().equals(SW) || processCriteria.getModuleName().equals(WS)) 
+                        || !processCriteria.getModuleName().equalsIgnoreCase(FSMConstants.FSM_MODULE)))
             totalCount = workflowService.getProcessCount(criteria.getTenantId(), requestInfo, processCriteria);
         Integer nearingSlaProcessCount =  0;
         if(!(processCriteria.getModuleName().equals(PTR) || processCriteria.getModuleName().equals(PT))) {
@@ -382,11 +383,11 @@ public class InboxService {
             }
 
            //TODO as on now this does not seem to be required, hence commenting the code
-           /* if (!ObjectUtils.isEmpty(processCriteria.getModuleName())
+            if (!ObjectUtils.isEmpty(processCriteria.getModuleName())
 					&& processCriteria.getModuleName().equalsIgnoreCase(FSMConstants.FSM_MODULE)) {
 
                 totalCount = fsmInboxFilter.fetchApplicationCountFromSearcher(criteria, StatusIdNameMap, requestInfo, dsoId);
-            }*/
+            }
             if (processCriteria != null && !ObjectUtils.isEmpty(processCriteria.getModuleName())
                     && processCriteria.getModuleName().equals(BPA)) {
                 totalCount = bpaInboxFilterService.fetchApplicationCountFromSearcher(criteria, StatusIdNameMap, requestInfo);
@@ -541,7 +542,7 @@ public class InboxService {
             }
             Map<String, Object> businessMap = StreamSupport.stream(businessObjects.spliterator(), false)
                     .collect(Collectors.toMap(s1 -> ((JSONObject) s1).get(businessIdParam).toString(),
-                            s1 -> s1, (e1, e2) -> e1, LinkedHashMap::new));
+                        s1 -> s1, (e1, e2) -> e1, LinkedHashMap::new));
             ArrayList businessIds = new ArrayList();
             businessIds.addAll(businessMap.keySet());
             processCriteria.setBusinessIds(businessIds);
