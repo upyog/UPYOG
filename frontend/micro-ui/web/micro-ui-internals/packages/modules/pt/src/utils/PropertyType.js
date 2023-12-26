@@ -5,9 +5,7 @@ import { useTranslation } from "react-i18next";
 const PropertyType = ({ selectLocality, keepNull, selected, optionCardStyles, style, disable, disableLoader }) => {
   const { t } = useTranslation();
 
-  if (isLoading && !disableLoader) {
-    return <Loader />;
-  }
+ 
   const stateId = Digit.ULBService.getStateId();
   const { data: usageMenu = {}, isLoading } = Digit.Hooks.pt.usePropertyMDMS(stateId, "PropertyTax", [
     "UsageCategory",
@@ -32,7 +30,9 @@ const PropertyType = ({ selectLocality, keepNull, selected, optionCardStyles, st
       console.log("catMenu", catMenu)
     return catMenu;
   };
-
+  if (isLoading && !disableLoader) {
+    return <Loader />;
+  }
   return (
     // <Dropdown
     //   option={usageCategoryMajorMenu(usagecat)}
