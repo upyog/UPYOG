@@ -36,7 +36,9 @@ const FSMSelectAddress = ({ t, config, onSelect, userType, formData }) => {
       ? allCities.filter((city) => city?.pincode?.some((pin) => pin == pincode))
       : allCities;
 
-  const [selectedCity, setSelectedCity] = useState(() => formData?.address?.city || Digit.SessionStorage.get("fsm.file.address.city") || Digit.SessionStorage.get("CITIZEN.COMMON.HOME.CITY"));
+  const [selectedCity, setSelectedCity] = useState(
+    () => formData?.address?.city || Digit.SessionStorage.get("fsm.file.address.city") || Digit.SessionStorage.get("CITIZEN.COMMON.HOME.CITY")
+  );
   const [newLocality, setNewLocality] = useState();
   const { data: fetchedLocalities } = Digit.Hooks.useBoundaryLocalities(
     selectedCity?.code,
@@ -47,13 +49,8 @@ const FSMSelectAddress = ({ t, config, onSelect, userType, formData }) => {
     t
   );
 
-  const { data: urcConfig } = Digit.Hooks.fsm.useMDMS(
-    tenantId,
-    "FSM",
-    "UrcConfig"
-  );
-  const isUrcEnable =
-    urcConfig && urcConfig.length > 0 && urcConfig[0].URCEnable;
+  const { data: urcConfig } = Digit.Hooks.fsm.useMDMS(tenantId, "FSM", "UrcConfig");
+  const isUrcEnable = urcConfig && urcConfig.length > 0 && urcConfig[0].URCEnable;
   const [selectLocation, setSelectLocation] = useState(() =>
     formData?.address?.propertyLocation
       ? formData?.address?.propertyLocation
@@ -61,7 +58,7 @@ const FSMSelectAddress = ({ t, config, onSelect, userType, formData }) => {
       ? Digit.SessionStorage.get("locationType")
       : inputs[0]
   );
-  
+
   const [localities, setLocalities] = useState();
   const [selectedLocality, setSelectedLocality] = useState();
 
@@ -83,11 +80,7 @@ const FSMSelectAddress = ({ t, config, onSelect, userType, formData }) => {
         });
       }
     }
-    if (
-      (!isUrcEnable || isNewVendor || isEditVendor) &&
-      selectedCity &&
-      fetchedLocalities
-    ) {
+    if ((!isUrcEnable || isNewVendor || isEditVendor) && selectedCity && fetchedLocalities) {
       let __localityList = fetchedLocalities;
       let filteredLocalityList = [];
 
@@ -158,7 +151,10 @@ const FSMSelectAddress = ({ t, config, onSelect, userType, formData }) => {
   };
 
   function onSubmit() {
-    onSelect(config.key, { city: selectedCity, locality: selectedLocality });
+    onSelect(config.key, {
+      city: selectedCity,
+      propertyLocation: Digit.SessionStorage.get("locationType") ? Digit.SessionStorage.get("locationType") : selectLocation,
+    });
   }
 
   if (userType === "employee") {
@@ -183,38 +179,28 @@ const FSMSelectAddress = ({ t, config, onSelect, userType, formData }) => {
         {!isUrcEnable || isNewVendor || isEditVendor ? (
           <div>
             <LabelFieldPair>
-          <CardLabel className="card-label-smaller">
-            {t("ES_NEW_APPLICATION_LOCATION_MOHALLA")}
-            {config.isMandatory ? " * " : null}
-          </CardLabel>
-          <Dropdown
-            className="form-field"
-            isMandatory
-            selected={selectedLocality}
-            option={localities}
-            select={selectLocality}
-            optionKey="i18nkey"
-            t={t}
-          />
-        </LabelFieldPair>
-        {!isNewVendor &&
-              !isEditVendor &&
-              !isUrcEnable &&
-              formData?.address?.locality?.name === "Other" && (
-                <LabelFieldPair>
-                  <CardLabel className="card-label-smaller">{`${t(
-                    "ES_INBOX_PLEASE_SPECIFY_LOCALITY"
-                  )} *`}</CardLabel>
-                  <div className="field">
-                    <TextInput
-                      id="newLocality"
-                      key="newLocality"
-                      value={newLocality}
-                      onChange={(e) => onNewLocality(e.target.value)}
-                    />
-                  </div>
-                </LabelFieldPair>
-              )}
+              <CardLabel className="card-label-smaller">
+                {t("ES_NEW_APPLICATION_LOCATION_MOHALLA")}
+                {config.isMandatory ? " * " : null}
+              </CardLabel>
+              <Dropdown
+                className="form-field"
+                isMandatory
+                selected={selectedLocality}
+                option={localities}
+                select={selectLocality}
+                optionKey="i18nkey"
+                t={t}
+              />
+            </LabelFieldPair>
+            {!isNewVendor && !isEditVendor && !isUrcEnable && formData?.address?.locality?.name === "Other" && (
+              <LabelFieldPair>
+                <CardLabel className="card-label-smaller">{`${t("ES_INBOX_PLEASE_SPECIFY_LOCALITY")} *`}</CardLabel>
+                <div className="field">
+                  <TextInput id="newLocality" key="newLocality" value={newLocality} onChange={(e) => onNewLocality(e.target.value)} />
+                </div>
+              </LabelFieldPair>
+            )}
           </div>
         ) : (
           <LabelFieldPair>
@@ -230,7 +216,7 @@ const FSMSelectAddress = ({ t, config, onSelect, userType, formData }) => {
                 // disabled={editScreen}
               />
             </div>
-        </LabelFieldPair>
+          </LabelFieldPair>
         )}
       </div>
     );
@@ -239,22 +225,18 @@ const FSMSelectAddress = ({ t, config, onSelect, userType, formData }) => {
     <React.Fragment>
       <Timeline currentStep={1} flow="APPLY" />
       <FormStep config={config} onSelect={onSubmit} t={t} isDisabled={selectLocation ? false : true}>
-      {isUrcEnable && (
-          <>
+        {isUrcEnable && (
+          <React.Fragment>
             <CardLabel>{`${t("CS_PROPERTY_LOCATION")} *`}</CardLabel>
             <RadioOrSelect
               isMandatory={config.isMandatory}
               options={inputs}
-              selectedOption={
-                Digit.SessionStorage.get("locationType")
-                  ? Digit.SessionStorage.get("locationType")
-                  : selectLocation
-              }
+              selectedOption={Digit.SessionStorage.get("locationType") ? Digit.SessionStorage.get("locationType") : selectLocation}
               optionKey="i18nKey"
               onSelect={selectedValue}
               t={t}
             />
-          </>
+          </React.Fragment>
         )}
         <CardLabel>{`${t("MYCITY_CODE_LABEL")} *`}</CardLabel>
         <RadioOrSelect options={cities} selectedOption={selectedCity} optionKey="i18nKey" onSelect={selectCity} t={t} />
