@@ -58,6 +58,12 @@ const CitizenApp = ({ path, url, userType }) => {
   const WmsDrEdit = Digit?.ComponentRegistryService?.getComponent("WmsDrEdit");
   const WmsDrResponse = Digit?.ComponentRegistryService?.getComponent("WmsDrResponse");
 
+  const WmsPrList = Digit?.ComponentRegistryService?.getComponent("WmsPrList");
+  const WmsPrCreate = Digit?.ComponentRegistryService?.getComponent("WmsPrCreate");
+  const WmsPrDetails = Digit?.ComponentRegistryService?.getComponent("WmsPrDetails");  
+  const WmsPrEdit = Digit?.ComponentRegistryService?.getComponent("WmsPrEdit");
+  const WmsPrResponse = Digit?.ComponentRegistryService?.getComponent("WmsPrResponse");
+
   const CMView = Digit?.ComponentRegistryService?.getComponent("CMView");
   const WMSDetails = Digit?.ComponentRegistryService?.getComponent("WMSDetails");
   const ContrMasterAdd = Digit?.ComponentRegistryService?.getComponent("ContrMasterAdd");
@@ -199,6 +205,16 @@ const CitizenApp = ({ path, url, userType }) => {
           <PrivateRoute path={`${path}/dr-edit/:id`} component={() => <WmsDrEdit />} />
           <PrivateRoute path={`${path}/drresponse`} component={(props) => <WmsDrResponse {...props} parentRoute={path} />} />
 
+          <PrivateRoute
+            path={`${path}/pr-home`}
+            component={() => (
+              <WmsPrList parentRoute={path} businessService="WMS" filterComponent="WMS_LIST_FILTER" initialStates={inboxInitialState} isInbox={true} />
+            )}
+          />
+          <PrivateRoute path={`${path}/pr-create`} component={() => <WmsPrCreate />} />
+          <PrivateRoute path={`${path}/pr-details/:id`} component={() => <WmsPrDetails />} />
+          <PrivateRoute path={`${path}/pr-edit/:id`} component={() => <WmsPrEdit />} />
+          <PrivateRoute path={`${path}/prresponse`} component={(props) => <WmsPrResponse {...props} parentRoute={path} />} />
 
           <PrivateRoute path={`${path}/cm-home`} component={props => <CMView {...props} tenants={tenantId} parentRoute={path} />} />
           <PrivateRoute path={`${path}/details/:tenantId/:id`} component={() => <WMSDetails />} />

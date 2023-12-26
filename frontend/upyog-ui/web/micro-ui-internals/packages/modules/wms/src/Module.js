@@ -148,6 +148,29 @@ import WmsDrWorkName from "./pageComponents/DR/WmsDrWorkName";
 import WmsDrMLName from "./pageComponents/DR/WmsDrMLName"
 import WmsDrPercent from "./pageComponents/DR/WmsDrPercent";
 
+
+/**------------------- PR------------------------------- */
+
+import WmsPrResponse from "./pages/citizen/DR/Response";
+import WmsPrList from "./pages/citizen/DR/List";
+import WmsPrDetails from "./pages/citizen/DR/Details";
+import WmsPrCreate from "./pages/citizen/DR/Create";
+import WmsPrEdit from "./pages/citizen/DR/Edit";
+
+import WmsPrId from "./pageComponents/PR/WmsPrId";
+import WmsPrBillDate from "./pageComponents/PR/WmsPrBillDate";
+import WmsPrEstNumber from "./pageComponents/PR/WmsPrEstNumber";
+import WmsPrEstWorkCost from "./pageComponents/PR/WmsPrEstWorkCost";
+import WmsPrPaymentDate from "./pageComponents/PR/WmsPrPaymentDate";
+import WmsPrPrjName from "./pageComponents/PR/WmsPrPrjName";
+import WmsPrSchName from "./pageComponents/PR/WmsPrSchName";
+import WmsPrSTA from "./pageComponents/PR/WmsPrSTA";
+import WmsPrStatus from "./pageComponents/PR/WmsPrStatus";
+import WmsPrTypeOfWork from "./pageComponents/PR/WmsPrTypeOfWork";
+import WmsPrWorkName from "./pageComponents/PR/WmsPrWorkName";
+
+
+
 /**---------------- */
 import ContrMasterAdd from "./pages/citizen/CM/index";
 import ContrMasterView from "./pages/citizen/CM/ContrView";
@@ -360,6 +383,32 @@ const componentsToRegister = {
   // WmsDrStartDate,
   // WmsDrEndDate,
 
+
+  WmsPrList:WmsPrList,
+  WmsPrDetails:WmsPrDetails,
+  WmsPrCreate:WmsPrCreate,
+  WmsPrEdit:WmsPrEdit,
+  WmsPrResponse:WmsPrResponse,
+  WmsPrId,
+  WmsPrBillDate,
+  WmsPrEstNumber,
+  WmsPrEstWorkCost,
+  WmsPrPaymentDate,
+  WmsPrPrjName,
+  WmsPrSchName,
+  WmsPrSTA,
+  WmsPrStatus,
+  WmsPrTypeOfWork,
+  WmsPrWorkName,
+  // WmsDrMLName,
+  // WmsDrPrjName,
+  // WmsDrWorkName,
+  // WmsDrPercent,
+  // WmsDrFund,
+  // WmsDrSourceOfFund,
+  // WmsDrDescriptionOfDreme,
+  // WmsDrStartDate,
+  // WmsDrEndDate,
   
 
   WmsPrjList:PrjList,

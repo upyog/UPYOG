@@ -20,9 +20,9 @@ const WmsPrWorkName = ({ t, config, onSelect, formData = {}, userType }) => {
   }, [fund]);
   const inputs = [
     {
-      label: "WMS_DR_WORK_NAME_LABEL",
+      label: "WMS_PR_WORK_NAME_LABEL",
       type: "text",
-      name: "Work_name",
+      name: "work_name",
       validation: {
         isRequired: true,
         pattern: Digit.Utils.getPattern('Name'),

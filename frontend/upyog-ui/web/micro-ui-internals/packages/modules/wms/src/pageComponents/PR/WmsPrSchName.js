@@ -7,7 +7,7 @@ const WmsPrSchName = ({ t, config, onSelect, formData = {}, userType, register, 
     {
       label: "WMS_PR_SCH_NAME_LABEL",
       type: "text",
-      name: "milestone_name",
+      name: "scheme_name",
       validation: {
         isRequired: true,
         pattern: Digit.Utils.getPattern('Name'),
