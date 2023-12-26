@@ -5,28 +5,15 @@ const SelectTripNo = ({ config, formData, t, onSelect, userType }) => {
   const state = Digit.ULBService.getStateId();
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();
-  const selectedCity = Digit.SessionStorage.get(
-    "CITIZEN.COMMON.HOME.CITY"
-  )?.code;
+  const selectedCity = Digit.SessionStorage.get("CITIZEN.COMMON.HOME.CITY")?.code;
   const { data: tripNumberData, isLoading } = Digit.Hooks.fsm.useMDMS(stateId, "FSM", "TripNumber");
-  const {
-    data: dsoData,
-    isLoading: isDsoLoading,
-    isSuccess: isDsoSuccess,
-    error: dsoError,
-  } = Digit.Hooks.fsm.useDsoSearch(
-    selectedCity === formData?.address?.city?.code
-      ? selectedCity
-      : formData?.address?.city?.code,
-    {
-      limit: -1,
-      status: "ACTIVE",
-    }
-  );
-  const { isLoading: isVehicleMenuLoading, data: vehicleData } =
-    Digit.Hooks.fsm.useMDMS(state, "Vehicle", "VehicleType", {
-      staleTime: Infinity,
-    });
+  const { data: dsoData, isLoading: isDsoLoading, isSuccess: isDsoSuccess, error: dsoError } = Digit.Hooks.fsm.useDsoSearch(selectedCity, {
+    limit: -1,
+    status: "ACTIVE",
+  });
+  const { isLoading: isVehicleMenuLoading, data: vehicleData } = Digit.Hooks.fsm.useMDMS(state, "Vehicle", "VehicleType", {
+    staleTime: Infinity,
+  });
   const [tripNo, setTripNo] = useState(formData?.tripNo);
   const [vehicleCapacity, setVehicleCapacity] = useState(formData?.capacity);
   const [vehicleMenu, setVehicleMenu] = useState([]);
