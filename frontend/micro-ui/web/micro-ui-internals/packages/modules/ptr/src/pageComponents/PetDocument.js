@@ -9,12 +9,12 @@ const PDFSvg = ({ width = 20, height = 20, style }) => (
   </svg>
 );
 
-function PetDocument({ property = {} }) {
+function PetDocument({ petdetail = {} }) {
   const { t } = useTranslation();
-  const { isLoading, isError, error, data } = Digit.Hooks.pt.usePropertyDocumentSearch({
-    property,
+  const { isLoading, isError, error, data } = Digit.Hooks.ptr.usePetDocumentSearch({
+    petdetail,
   });
-  const documents = property?.documents || [];
+  const documents = petdetail?.documents || [];
 
   if (isLoading) {
     return <Loader />;
@@ -25,6 +25,7 @@ function PetDocument({ property = {} }) {
       <React.Fragment>
         <div style={{ display: "flex", flexWrap: "wrap" }}>
           {documents?.map((document, index) => {
+            console.log("ffffffffffffffffffffffffff",document)
             let documentLink = pdfDownloadLink(data.pdfFiles, document?.fileStoreId);
             return (
               <a target="_" href={documentLink} style={{ minWidth: "160px" }} key={index}>

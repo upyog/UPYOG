@@ -13,12 +13,12 @@ const PTPayments = ({ application }) => {
         keyValue={t("CS_PAYMENT_AMOUNT_PAID_WITHOUT_SYMBOL")}
         note={`₹ ${application?.paymentDetails?.[0]?.totalAmountPaid}`}
       />
-      <KeyNote keyValue={t("PT_SEARCHPROPERTY_TABEL_PID")} note={t(application?.paymentDetails?.[0]?.bill?.consumerCode)} />
-      <KeyNote keyValue={t("PT_OWNERS_NAME")} note={application?.owners?.map((owner) => owner?.name).join(",")} />
-      <KeyNote keyValue={t("PT_RECEIPT_DATE_LABEL")} note={convertEpochToDate(application?.paymentDetails?.[0]?.receiptDate) || t("CS_NA")} />
-      <KeyNote keyValue={t("PT_RECEIPT_NO_LABEL")} note={t(application?.paymentDetails?.[0]?.receiptNumber)} />
+      <KeyNote keyValue={t("PTR_SEARCHPROPERTY_TABEL_PID")} note={t(application?.paymentDetails?.[0]?.bill?.consumerCode)} />
+      <KeyNote keyValue={t("PTR_OWNERS_NAME")} note={application?.owners?.map((owner) => owner?.name).join(",")} />
+      <KeyNote keyValue={t("PTR_RECEIPT_DATE_LABEL")} note={convertEpochToDate(application?.paymentDetails?.[0]?.receiptDate) || t("CS_NA")} />
+      <KeyNote keyValue={t("PTR_RECEIPT_NO_LABEL")} note={t(application?.paymentDetails?.[0]?.receiptNumber)} />
       <SubmitBar
-        label={t("PT_DOWNLOAD_RECEIPT")}
+        label={t("PTR_DOWNLOAD_RECEIPT")}
         onSubmit={(e) => DownloadReceipt(application?.paymentDetails?.[0]?.bill?.consumerCode, application?.tenantId, "PT")}
       />
     </Card>

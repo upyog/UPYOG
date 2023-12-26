@@ -262,6 +262,8 @@ import usePTRSearch from "./ptr/usePTRSearch";
 import usePtrApplicationDetail from "./ptr/usePtrApplicationDetail";
 import usePTRApplicationAction from "./ptr/usePTRApplicationAction";
 import useServiceSearchPTR from "./ptr/useServiceSearchPTR";
+import usePetDocumentSearch from "./ptr/usePetDocumentSearch";
+import useMyPetPayments from "./ptr/useMyPetPayments";
 
 
 const pgr = {
@@ -358,6 +360,9 @@ const ptr = {
   usePtrApplicationDetail,
   useTenantsPTR,
   useServiceSearchPTR,
+  usePetDocumentSearch,
+  useMyPetPayments
+ 
   };
 const dss = {
   useMDMS: useDssMdms,

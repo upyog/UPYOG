@@ -25,25 +25,26 @@ const PTRSelectProofIdentity = ({ t, config, onSelect, userType, formData, setEr
   const onSkip = () => onSelect();
   function onAdd() {}
 
-  // useEffect(() => {
-  //   let count = 0;
-  //   data?.PetService?.Documents.map((doc) => {
-  //     console.log("gggggggggggggggggggggggggg",doc)
-  //     let isRequired = false;
-  //     documents.map((data) => {
-  //       console.log("fffffffffffffffffffffffffffffffffffff",data)
-  //       if (doc.required && data?.documentType.includes(doc.code)) isRequired = true;
-  //     });
-  //     if (!isRequired && doc.required) count = count + 1;
-  //   });
-  //   if ((count == "0" || count == 0) && documents.length > 0) setEnableSubmit(false);
-  //   else setEnableSubmit(true);
-  // }, [documents, checkRequiredFields]);
+  useEffect(() => {
+    let count = 0;
+    data?.PetService?.Documents.map((doc) => {
+      doc.hasDropdown = true;
+      
+      let isRequired = false;
+      documents.map((data) => {
+        console.log("fffffffffffffffffffffffffffffffffffff",data)
+        if (doc.required && data?.documentType.includes(doc.code)) isRequired = true;
+      });
+      if (!isRequired && doc.required) count = count + 1;
+    });
+    if ((count == "0" || count == 0) && documents.length > 0) setEnableSubmit(false);
+    else setEnableSubmit(true);
+  }, [documents, checkRequiredFields]);
 
-  const PTRDocument = data?.PetService?.Documents.map(document => ({
-    ...document,
-    hasDropdown: true
-  }));
+  // const PTRDocument = data?.PetService?.Documents.map(document => ({
+  //   ...document,
+  //   hasDropdown: true
+  // }));
 
   // const goNext = () => {
   //   onSelect(config.key, { documents, PTRDocumentLength: PTRDocument?.length });
@@ -58,8 +59,8 @@ const PTRSelectProofIdentity = ({ t, config, onSelect, userType, formData, setEr
     <div>
       {userType === "citizen" && <Timeline currentStep={4} />}
       {!isLoading ? (
-        <FormStep t={t} config={config} onSelect={handleSubmit} onSkip={onSkip} isDisabled={!enableSubmit} onAdd={onAdd}>
-          {PTRDocument?.map((document, index) => {
+        <FormStep t={t} config={config} onSelect={handleSubmit} onSkip={onSkip} isDisabled={enableSubmit} onAdd={onAdd}>
+          {data?.PetService?.Documents?.map((document, index) => {
             console.log("ooooooooooooooooooooooooooooooooooooooo",document)
             return (
               <PTRSelectDocument
@@ -235,6 +236,7 @@ function PTRSelectDocument({
           <Dropdown
             className="form-field"
             selected={selectedDocument}
+            style={{ width: "100%" }}
             // disable={dropDownData?.length === 0 || (propertyInitialValues?.documents && propertyInitialValues?.documents.length>0 && propertyInitialValues?.documents.filter((document) => document.documentType.includes(doc?.code)).length>0? enabledActions?.[action].disableDropdown : false)}
             option={dropDownData.map((e) => ({ ...e, i18nKey: e.code?.replaceAll(".", "_") }))}
             select={handlePTRSelectDocument}

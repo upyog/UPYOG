@@ -62,7 +62,7 @@ const PTApplicationDetails = () => {
   console.log("hdjashdfjhseihfjshjfhdsjjnfkndkfvjrsnfghb",petId)
   let  pet_details = (PetRegistrationApplications && PetRegistrationApplications.length > 0 && PetRegistrationApplications[0]) || {};
   const application =  pet_details;
-  sessionStorage.setItem("pt-property", JSON.stringify(application));
+  sessionStorage.setItem("ptr-property", JSON.stringify(application));
 
   // useMemo(() => {
   //   if((data?.PetRegistrationApplications?.[0]?.status === "ACTIVE" || data?.PetRegistrationApplications?.[0]?.status === "INACTIVE") && popup == false && servicedata?.Service?.length == 0)
@@ -71,7 +71,7 @@ const PTApplicationDetails = () => {
 
   useEffect(async () => {
     if (acknowledgementIds && tenantId &&  pet_details) {
-      const res = await Digit.PaymentService.searchBill(tenantId, { Service: "ptr", consumerCode: acknowledgementIds });
+      const res = await Digit.PaymentService.searchBill(tenantId, { Service: "pet-services", consumerCode: acknowledgementIds });
       if (!res.Bill.length) {
         const res1 = await Digit.PTService.ptCalculateMutation({  pet_details:  pet_details }, tenantId);
         setBillAmount(res1?.[acknowledgementIds]?.totalAmount || t("CS_NA"));
@@ -98,7 +98,7 @@ const PTApplicationDetails = () => {
   const { data: reciept_data, isLoading: recieptDataLoading } = Digit.Hooks.useRecieptSearch(
     {
       tenantId: tenantId,
-      businessService: "ptr",
+      businessService: "pet-services",
       consumerCodes: acknowledgementIds,
       isEmployee: false,
     },
@@ -109,7 +109,7 @@ const PTApplicationDetails = () => {
     let workflow = {
       id: null,
       tenantId: tenantId,
-      businessService: "ptr",
+      businessService: "pet-services",
       businessId: application?.applicationNumber,
       action: "",
       moduleName: "pet-services",
@@ -303,7 +303,7 @@ const PTApplicationDetails = () => {
           </StatusTable>
 
 
-          <CardSubHeader style={{ fontSize: "24px" }}>{t("PTR_DOCUMENT_DETAILS")}</CardSubHeader>
+          {/* <CardSubHeader style={{ fontSize: "24px" }}>{t("PTR_DOCUMENT_DETAILS")}</CardSubHeader>
           <div>
             {Array.isArray(docs) ? (
               docs.length > 0 && <PetDocument pet_details={pet_details}></PetDocument>
@@ -312,7 +312,7 @@ const PTApplicationDetails = () => {
                 <Row className="border-none" text={t("PTR_NO_DOCUMENTS_MSG")} />
               </StatusTable>
             )}
-          </div>
+          </div> */}
           <PTWFApplicationTimeline application={application} id={application?.applicationNumber} userType={"citizen"} />
           {showToast && (
           <Toast

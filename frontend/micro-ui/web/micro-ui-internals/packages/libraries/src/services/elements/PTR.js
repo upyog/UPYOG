@@ -37,6 +37,9 @@ export const PTRService = {
       auth: true,
   }),
 
+ 
+ 
+
   fetchPaymentDetails: ({ tenantId, consumerCodes ,auth=true}) =>
     Request({
       url: Urls.ptr.fetch_payment_details,
