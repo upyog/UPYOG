@@ -19,7 +19,7 @@ const TransferProof = ({ t, config, onSelect, userType, formData }) => {
   let dropdownData = [];
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();
-  const { data: Documentsob } = Digit.Hooks.pt.useMDMS(stateId, "PropertyTax", "MutationDocuments");
+  const { data: Documentsob } = Digit.Hooks.pt.useMDMSV2(stateId, "PropertyTax", "MutationDocuments");
   const docs = Documentsob?.PropertyTax?.MutationDocuments;
   const transferReason = Array.isArray(docs) && docs.filter((doc) => doc.code.includes("OWNER.TRANSFERREASONDOCUMENT"));
 
