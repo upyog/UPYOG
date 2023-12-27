@@ -231,7 +231,7 @@ const CreateProperty = ({ parentRoute }) => {
     </div>
     <div>
       { showToast &&   <Modal
-      headerBarMain={<Heading label={"Property Alredy exist"} />}
+      headerBarMain={<Heading label={t("CR_PROPERTY_DUPLICATE")} />}
       headerBarEnd={<CloseBtn onClick={closeModal} />}
       actionCancelLabel={"Cancel"}
       actionCancelOnSubmit={closeModal}
