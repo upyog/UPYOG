@@ -43,9 +43,9 @@ const WmsPrCreate = () => {
 
   return (
     <div>
-    <Header>{t("WMS_NEW_PHM_FORM_HEADER")}</Header>
+    <Header>{t("WMS_NEW_PR_FORM_HEADER")}</Header>
     <FormComposer
-              head={t("WMS_PHM_FORM_CREATE_HEAD")}
+              head={t("WMS_PR_FORM_CREATE_HEAD")}
               label={t("WMS_COMMON_SAVE")}
               config={configs}
               onSubmit={onSubmit}

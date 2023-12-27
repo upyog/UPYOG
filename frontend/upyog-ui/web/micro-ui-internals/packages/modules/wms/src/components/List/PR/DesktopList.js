@@ -35,7 +35,7 @@ const DesktopList = ({ tableConfig, filterComponent, ...props }) => {
         },
       },
       {
-        Header: t("WMS_DR_WORK_TYPE_LABEL"),
+        Header: t("WMS_PR_WORK_TYPE_LABEL"),
         disablePrtBy: false,
         Cell: ({ row }) => {
           return GetCell(`${row.original?.work_type}`);

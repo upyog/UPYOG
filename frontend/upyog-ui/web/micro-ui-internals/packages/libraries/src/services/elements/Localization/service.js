@@ -72061,7 +72061,7 @@ export const LocalizationService = {
             "locale": "en_IN"
         },
         {
-            "code": "WMS_PHM_COMMON_CREATE_HEADER",
+            "code": "H",
             "message": "Milestone Entry",
             "module": "rainmaker-common",
             "locale": "en_IN"
@@ -72602,7 +72602,7 @@ export const LocalizationService = {
             "locale": "en_IN"
         },
         {
-            "code": "WWMS_PR_STA_NAME_LABEL",
+            "code": "WMS_PR_STA_NAME_LABEL",
             "message": "Sanctioned Tender Amount",
             "module": "rainmaker-common",
             "locale": "en_IN"
@@ -72614,13 +72614,13 @@ export const LocalizationService = {
             "locale": "en_IN"
         },
         {
-            "code": "WMS_PR_STATUS_LABEL",
+            "code": "WMS_PR_BILL_DATE_LABEL",
             "message": "Bill Received Date ",
             "module": "rainmaker-common",
             "locale": "en_IN"
         },
         {
-            "code": "WMS_PR_CONTROLS_LABEL",
+            "code": "WMS_PR_PAYMENT_DATE_LABEL",
             "message": "Payment received date",
             "module": "rainmaker-common",
             "locale": "en_IN"
@@ -72640,13 +72640,13 @@ export const LocalizationService = {
         },
         {
             "code": "WMS_PR_COMMON_CREATE_HEADER",
-            "message": "Deduction Register",
+            "message": "Project Registration",
             "module": "rainmaker-common",           
             "locale": "en_IN"
         },
         {
             "code": "WMS_PR_COMMON_CREATE_ACTIVITY_HEADER",
-            "message": "Add Deduction Activity",
+            "message": "Add Project Activity",
             "module": "rainmaker-common",
             "locale": "en_IN"
         },

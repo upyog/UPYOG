@@ -26,9 +26,9 @@ const WmsPrEdit  = () => {
 
   const [checkfield, setcheck] = useState(false);
   
-  const [errorInfo, setErrorInfo, clearError] = Digit.Hooks.useSessionStorage("DR_WMS_ERROR_DATA", false);
-  const [mutationHappened, setMutationHappened, clear] = Digit.Hooks.useSessionStorage("DR_WMS_MUTATION_HAPPENED", false);
-  const [successData, setsuccessData, clearSuccessData] = Digit.Hooks.useSessionStorage("DR_WMS_MUTATION_SUCCESS_DATA", false);
+  const [errorInfo, setErrorInfo, clearError] = Digit.Hooks.useSessionStorage("PR_WMS_ERROR_DATA", false);
+  const [mutationHappened, setMutationHappened, clear] = Digit.Hooks.useSessionStorage("PR_WMS_MUTATION_HAPPENED", false);
+  const [successData, setsuccessData, clearSuccessData] = Digit.Hooks.useSessionStorage("PR_WMS_MUTATION_SUCCESS_DATA", false);
   const { isLoading, isError, error, data:dataEdit, ...rest } = Digit.Hooks.wms.pr.useWmsPrSearch({ pr_id: prId }, tenantId, null, isupdate);
   var defaultValues={};
   useEffect(() => {
@@ -73,7 +73,7 @@ const WmsPrEdit  = () => {
     // requestdata.unit = input?.WmsPrUnit?.unit ? input?.WmsPrUnit?.unit : undefined;
     // requestdata.rate = input?.WmsPrRate?.rate ? input?.WmsPrRate?.rate : undefined;
     //let ScheduleOfRateApplications = [requestdata];
-    Digit.WMSService.DRApplications.update(requestdata, tenantId).then((result,err)=>{
+    Digit.WMSService.PRApplications.update(requestdata, tenantId).then((result,err)=>{
       setIsLoading(false);
       history.push("/upyog-ui/citizen/wms/pr-home");
      })
@@ -109,7 +109,7 @@ const WmsPrEdit  = () => {
   return (
     <div>
       <FormComposer
-        heading={t("WMS_DR_FORM_EDIT_CREATE_HEAD")}
+        heading={t("WMS_PR_FORM_EDIT_CREATE_HEAD")}
         //isDisabled={!canSubmit}
         label={t("WMS_COMMON_BUTTON_SUBMIT")}
         config={configs}

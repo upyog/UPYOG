@@ -6,8 +6,8 @@ import ActionModal from "../../../../components/Modal";
 import { convertEpochToDate, pdfDownloadLink } from "../../../../components/Utils";
 
 const WmsPrDetails = () => {
-  const activeworkflowActions = ["DEACTIVATE_PHM_HEAD", "COMMON_EDIT_PHM_HEADER"];
-  const deactiveworkflowActions = ["ACTIVATE_PHM_HEAD"];
+  const activeworkflowActions = ["DEACTIVATE_PR_HEAD", "COMMON_EDIT_PR_HEADER"];
+  const deactiveworkflowActions = ["ACTIVATE_PR_HEAD"];
   const [selectedAction, setSelectedAction] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const { t } = useTranslation();
@@ -17,9 +17,9 @@ const WmsPrDetails = () => {
   const [displayMenu, setDisplayMenu] = useState(false);
   const isupdate = Digit.SessionStorage.get("isupdate");
   const { isLoading, isError, error, data, ...rest } = Digit.Hooks.wms.pr.useWmsPrSearch({ preme_id: prId }, tenantId, null, isupdate);
-  const [errorInfo, setErrorInfo, clearError] = Digit.Hooks.useSessionStorage("PHM_WMS_ERROR_DATA", false);
-  const [mutationHappened, setMutationHappened, clear] = Digit.Hooks.useSessionStorage("PHM_WMS_MUTATION_HAPPENED", false);
-  const [successData, setsuccessData, clearSuccessData] = Digit.Hooks.useSessionStorage("PHM_WMS_MUTATION_SUCCESS_DATA", false);
+  const [errorInfo, setErrorInfo, clearError] = Digit.Hooks.useSessionStorage("PR_WMS_ERROR_DATA", false);
+  const [mutationHappened, setMutationHappened, clear] = Digit.Hooks.useSessionStorage("PR_WMS_MUTATION_HAPPENED", false);
+  const [successData, setsuccessData, clearSuccessData] = Digit.Hooks.useSessionStorage("PR_WMS_MUTATION_SUCCESS_DATA", false);
   const isMobile = window.Digit.Utils.browser.isMobile();
 
   useEffect(() => {
@@ -54,18 +54,18 @@ const WmsPrDetails = () => {
     <React.Fragment>
       <div style={isMobile ? {marginLeft: "-12px", 
       fontFamily: "calibri", color: "#FF0000"} :{ marginLeft: "15px", fontFamily: "calibri", color: "#FF0000" }}>
-        <Header>{t("WMS_NEW_PHM_FORM_HEADER")}</Header>
+        <Header>{t("WMS_NEW_PR_FORM_HEADER")}</Header>
       </div>
       {!isLoading && data?.length > 0 ? (
         <div>
           <Card>
-            <CardSubHeader className="card-section-header">{t("WMS_PHM_DETAILS_FORM_HEADER")} </CardSubHeader>
+            <CardSubHeader className="card-section-header">{t("WMS_PR_DETAILS_FORM_HEADER")} </CardSubHeader>
             <StatusTable>
-              <Row label={t("WMS_PHM_ID_LABEL")} text={data?.[0]?.pr_id || "NA"} textStyle={{ whiteSpace: "pre" }} />
-              <Row label={t("WMS_PHM_PROJECT_NAME_LABEL")} text={data?.[0]?.project_name || "NA"} textStyle={{ whiteSpace: "pre" }} />
-              <Row label={t("WMS_PHM_WORK_NAME_LABEL")} text={data?.[0]?.work_name || "NA"} textStyle={{ whiteSpace: "pre" }} />
-              <Row label={t("WMS_PHM_ML_NAME_LABEL")} text={data?.[0]?.milestone_name || "NA"} />
-              <Row label={t("WMS_PHM_PERCENT_NAME_LABEL")} text={data?.[0]?.percent_weightage || "NA"} />
+              <Row label={t("WMS_PR_ID_LABEL")} text={data?.[0]?.pr_id || "NA"} textStyle={{ whiteSpace: "pre" }} />
+              <Row label={t("WMS_PR_PROJECT_NAME_LABEL")} text={data?.[0]?.project_name || "NA"} textStyle={{ whiteSpace: "pre" }} />
+              <Row label={t("WMS_PR_WORK_NAME_LABEL")} text={data?.[0]?.work_name || "NA"} textStyle={{ whiteSpace: "pre" }} />
+              <Row label={t("WMS_PR_ML_NAME_LABEL")} text={data?.[0]?.milestone_name || "NA"} />
+              <Row label={t("WMS_PR_PERCENT_NAME_LABEL")} text={data?.[0]?.percent_weightage || "NA"} />
               
             </StatusTable>
             </Card>
