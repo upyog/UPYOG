@@ -711,7 +711,7 @@ public class InboxService {
 				&& processCriteria.getModuleName().equalsIgnoreCase(FSMConstants.FSM_MODULE)) {
 
 			List<String> applicationStatus = new ArrayList<>();
-			/*applicationStatus.add(WAITING_FOR_DISPOSAL_STATE);
+			applicationStatus.add(WAITING_FOR_DISPOSAL_STATE);
 			applicationStatus.add(DISPOSED_STATE);
 			List<Map<String, Object>> vehicleResponse = fetchVehicleTripResponse(criteria, requestInfo,applicationStatus);
 			BusinessService businessService = workflowService.getBusinessService(criteria.getTenantId(), requestInfo,
@@ -792,7 +792,6 @@ public class InboxService {
 					});
 				}
 			}
-            */
 			
 			//SAN-920: Logic for aggregating the statuses of Pay now and post pay application
 			List<HashMap<String, Object>> aggregateStatusCountMap = new ArrayList<>();
