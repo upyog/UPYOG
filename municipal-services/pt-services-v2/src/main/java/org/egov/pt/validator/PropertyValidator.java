@@ -51,14 +51,6 @@ public class PropertyValidator {
     @Autowired
     private ServiceRequestRepository serviceRequestRepository;
 
-    @Value("${egov.mdms.host}")
-    private String mdmsHost;
-
-    @Value("${egov.mdms.search.endpoint}")
-    private String mdmsEndpoint;
-
-
-
     /**
      * Validate the masterData and ctizenInfo of the given propertyRequest
      * @param request PropertyRequest for create
@@ -125,7 +117,7 @@ public class PropertyValidator {
      *
      */
     private Map<String,List<String>> getAttributeValues(String tenantId, String moduleName, List<String> names, String filter,String jsonpath, RequestInfo requestInfo){
-        StringBuilder uri = new StringBuilder(mdmsHost).append(mdmsEndpoint);
+        StringBuilder uri = new StringBuilder(propertyConfiguration.getMdmsHost()).append(propertyConfiguration.getMdmsEndpoint());
         MdmsCriteriaReq criteriaReq = propertyUtil.prepareMdMsRequest(tenantId,moduleName,names,filter,requestInfo);
         try {
             Object result = serviceRequestRepository.fetchResult(uri, criteriaReq);

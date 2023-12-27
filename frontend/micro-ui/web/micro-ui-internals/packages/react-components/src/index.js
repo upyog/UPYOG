@@ -199,6 +199,7 @@ import DashboardBox from "./molecules/DashboardBox";
 import DetailsCard from "./molecules/DetailsCard";
 import FilterAction from "./molecules/FilterAction";
 import FormStep from "./molecules/FormStep";
+import CustomDropdown from "./molecules/CustomDropdown";
 import InputCard from "./molecules/InputCard";
 import Localities from "./molecules/Localities";
 import LocationSearchCard from "./molecules/LocationSearchCard";
@@ -223,7 +224,7 @@ import UploadPitPhoto from "./molecules/UploadPitPhoto";
 import { DownloadBtnCommon } from "./atoms/svgindex";
 import ToggleSwitch from "./atoms/ToggleSwitch";
 
-// import CitizenConsentForm from "./atoms/CitizenConsentForm";
+import CitizenConsentForm from "./atoms/CitizenConsentForm";
 
 export {
   Phone,
@@ -349,6 +350,7 @@ export {
   // Molecule
   InputCard,
   FormStep,
+  CustomDropdown,
   RatingCard,
   SearchAction,
   FilterAction,
@@ -456,5 +458,5 @@ export {
   FirenocIcon,
   InfoIcon,
   LoginIcon,
-  // CitizenConsentForm
+  CitizenConsentForm
 };
