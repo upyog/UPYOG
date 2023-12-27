@@ -266,10 +266,10 @@ import useWmsDrCount from "./wms/dr/useWmsDrCount";
 import useWmsDrCreate from "./wms/dr/useWmsDrCreate";
 import useWmsDrUpdate from "./wms/dr/useWmsDrUpdate";
 
-import useWmsPrSearch from "./wms/dr/useWmsPrSearch";
-import useWmsPrCount from "./wms/dr/useWmsPrCount";
-import useWmsPrCreate from "./wms/dr/useWmsPrCreate";
-import useWmsPrUpdate from "./wms/dr/useWmsPrUpdate";
+import useWmsPrSearch from "./wms/pr/useWmsPrSearch";
+import useWmsPrCount from "./wms/pr/useWmsPrCount";
+import useWmsPrCreate from "./wms/pr/useWmsPrCreate";
+import useWmsPrUpdate from "./wms/pr/useWmsPrUpdate";
 
 import useWmsMbSearch from "./wms/mb/useWmsMbSearch";
 import useWmsMbCount from "./wms/mb/useWmsMbCount";

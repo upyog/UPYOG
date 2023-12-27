@@ -325,7 +325,7 @@ DRApplications:{
   update: (data, tenantId) =>
     Request({
       data: data,
-      url: Urls.wms.DRApplications.update+"/"+data.phm_id,
+      url: Urls.wms.DRApplications.update+"/"+data.dr_id,
       useCache: false,
       method: "PUT",
       auth: true,
@@ -349,7 +349,7 @@ DRApplications:{
       method: "GET",
       auth: true,
       userService: true,
-      params: { phmeme_id:phmId},
+      params: { phmeme_id:drId},
     }),
     count: () =>
     Request({
@@ -385,7 +385,7 @@ PRApplications:{
   update: (data, tenantId) =>
     Request({
       data: data,
-      url: Urls.wms.PRApplications.update+"/"+data.phm_id,
+      url: Urls.wms.PRApplications.update+"/"+data.pr_id,
       useCache: false,
       method: "PUT",
       auth: true,
@@ -409,7 +409,7 @@ PRApplications:{
       method: "GET",
       auth: true,
       userService: true,
-      params: { phmeme_id:phmId},
+      params: { phmeme_id:prId},
     }),
     count: () =>
     Request({
