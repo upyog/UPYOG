@@ -56,6 +56,7 @@ const MutationForm = ({ applicationData, tenantId }) => {
       data?.originalData?.documents?.filter(
         (oldDoc) => !mutationDocs?.PropertyTax?.MutationDocuments.some((mut) => oldDoc.documentType.includes(mut.code))
       ) || [];
+      console.log("data",data)
     const submitData = {
       Property: {
         ...data.originalData,
@@ -67,11 +68,12 @@ const MutationForm = ({ applicationData, tenantId }) => {
             altContactNumber: data.owners[0].altContactNumber,
             status: "INACTIVE",
           })),
-          ...data.owners.map((owner) => {
+          ...data.owners.map((owner,index) => {
             let obj = {};
             let gender = owner.gender.code;
             let ownerType = owner.ownerType.code;
             let relationship = owner.relationship.code;
+            let additionalDetails= {ownerSequence:index, ownerName:owner?.name}
             obj.documents = [data?.documents?.documents?.find((e) => e.documentType?.includes("OWNER.IDENTITYPROOF"))];
             if (owner.documents) {
               let { documentUid, documentType } = owner.documents;
@@ -86,6 +88,7 @@ const MutationForm = ({ applicationData, tenantId }) => {
               landlineNumber: owner?.altContactNumber,
               ...obj,
               status: "ACTIVE",
+              additionalDetails
             };
           }),
         ],
@@ -122,7 +125,7 @@ const MutationForm = ({ applicationData, tenantId }) => {
   };
 
   const configs = newConfigMutate;
-
+console.log("config", configs);
   return (
     <FormComposer
       heading={t("ES_TITLE_MUTATE_PROPERTY")}
