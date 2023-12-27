@@ -150,7 +150,8 @@ public class InboxService {
         }
 
         Integer totalCount = 0;
-        if(!(processCriteria.getModuleName().equals(SW) || processCriteria.getModuleName().equals(WS)))
+        if(!(processCriteria.getModuleName().equals(SW) || processCriteria.getModuleName().equals(WS))
+            || !(processCriteria.getModuleName().equalsIgnoreCase(FSMConstants.FSM_MODULE)))
             totalCount = workflowService.getProcessCount(criteria.getTenantId(), requestInfo, processCriteria);
         Integer nearingSlaProcessCount = workflowService.getNearingSlaProcessCount(criteria.getTenantId(), requestInfo, processCriteria);
         List<String> inputStatuses = new ArrayList<>();
@@ -362,11 +363,11 @@ public class InboxService {
             }
 
            //TODO as on now this does not seem to be required, hence commenting the code
-           /* if (!ObjectUtils.isEmpty(processCriteria.getModuleName())
+            if (!ObjectUtils.isEmpty(processCriteria.getModuleName())
 					&& processCriteria.getModuleName().equalsIgnoreCase(FSMConstants.FSM_MODULE)) {
 
                 totalCount = fsmInboxFilter.fetchApplicationCountFromSearcher(criteria, StatusIdNameMap, requestInfo, dsoId);
-            }*/
+            }
             if (processCriteria != null && !ObjectUtils.isEmpty(processCriteria.getModuleName())
                     && processCriteria.getModuleName().equals(BPA)) {
                 totalCount = bpaInboxFilterService.fetchApplicationCountFromSearcher(criteria, StatusIdNameMap, requestInfo);
