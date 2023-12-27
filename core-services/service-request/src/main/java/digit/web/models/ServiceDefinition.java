@@ -30,7 +30,7 @@ import lombok.Builder;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ServiceDefinition {
+public class ServiceDefinition implements Comparable<ServiceDefinition> {
     @JsonProperty("id")
     @Size(min = 2, max = 64)
     private String id = null;
@@ -44,6 +44,9 @@ public class ServiceDefinition {
     @Size(min = 2, max = 64)
     private String code = null;
 
+    @JsonProperty("postedBy")
+    private String postedBy = null;
+
     @JsonProperty("module")
     @NotNull
     @Size(min = 2, max = 64)
@@ -51,6 +54,10 @@ public class ServiceDefinition {
 
     @JsonProperty("isActive")
     private Boolean isActive = true;
+
+    @Size(max = 128)
+    @JsonProperty("status")
+    private String status;
 
     @JsonProperty("attributes")
     @NotNull
@@ -71,6 +78,12 @@ public class ServiceDefinition {
     public ServiceDefinition addAttributesItem(AttributeDefinition attributesItem) {
         this.attributes.add(attributesItem);
         return this;
+    }
+
+    // for sorting response according to create time
+    @Override
+    public int compareTo(ServiceDefinition other) {
+        return Long.compare(this.auditDetails.getCreatedTime(), other.auditDetails.getCreatedTime());
     }
 
 }

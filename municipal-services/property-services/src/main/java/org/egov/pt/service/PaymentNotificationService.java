@@ -65,11 +65,6 @@ public class PaymentNotificationService {
 
     private PropertyConfiguration config;
 
-    @Value("${egov.mdms.host}")
-    private String mdmsHost;
-
-    @Value("${egov.mdms.search.endpoint}")
-    private String mdmsUrl;
 
     /**
      *

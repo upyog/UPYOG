@@ -57,13 +57,6 @@ public class NotificationUtil {
 
     private UserService userService;
 
-
-    @Value("${egov.mdms.host}")
-    private String mdmsHost;
-
-    @Value("${egov.mdms.search.endpoint}")
-    private String mdmsUrl;
-
     @Autowired
     public NotificationUtil(ServiceRequestRepository serviceRequestRepository, PropertyConfiguration config,
                             PropertyProducer producer, RestTemplate restTemplate,UserService userService) {
@@ -566,7 +559,7 @@ public class NotificationUtil {
     public List<String> fetchChannelList(RequestInfo requestInfo, String tenantId, String moduleName, String action){
         List<String> masterData = new ArrayList<>();
         StringBuilder uri = new StringBuilder();
-        uri.append(mdmsHost).append(mdmsUrl);
+        uri.append(config.getMdmsHost()).append(config.getMdmsEndPoint());
         if(StringUtils.isEmpty(tenantId))
             return masterData;
         MdmsCriteriaReq mdmsCriteriaReq = getMdmsRequestForChannelList(requestInfo, tenantId.split("\\.")[0]);
