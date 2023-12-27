@@ -32,7 +32,7 @@ function PropertyOwners({ owners }) {
     rowContainerStyle = {};
   }
   let owners1 = owners.sort((item,item2)=>{return item?.additionalDetails?.ownerSequence - item2?.additionalDetails?.ownerSequence})
-  console.log("vvvvvvvvv",owners1,owners)
+
   return (
     <React.Fragment>
       <div className="owner-details">

@@ -302,7 +302,7 @@ const PropertyDetails = () => {
   const UpdatePropertyNumberComponent = Digit?.ComponentRegistryService?.getComponent("EmployeeUpdateOwnerNumber");
  
     appDetailsToShow?.applicationData?.owners.sort((item, item2) => { return item?.additionalDetails?.ownerSequence - item2?.additionalDetails?.ownerSequence })
-    console.log("appDetailsToShow?.applicationDatadddddddddddddddddddddddddddd",appDetailsToShow?.applicationData)
+    
   
   return (
     <div>
