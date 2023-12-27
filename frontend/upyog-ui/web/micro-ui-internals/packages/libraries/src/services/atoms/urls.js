@@ -231,11 +231,11 @@ wms:{
     count:"https://64f5834d2b07270f705d4f91.mockapi.io/PHMApplications",
   },
   MBApplications:{
-    create: "https://64f5834d2b07270f705d4f91.mockapi.io/MBApplications",
-    update:"https://64f5834d2b07270f705d4f91.mockapi.io/MBApplications",
-    get:"https://64f5834d2b07270f705d4f91.mockapi.io/MBApplications/:id",
-    search:"https://64f5834d2b07270f705d4f91.mockapi.io/MBApplications",      
-    count:"https://64f5834d2b07270f705d4f91.mockapi.io/MBApplications",
+    create:"https://658bef9a859b3491d3f51ac4.mockapi.io/MBApplications",
+    update:"https://658bef9a859b3491d3f51ac4.mockapi.io/MBApplications",
+    get:"https://658bef9a859b3491d3f51ac4.mockapi.io/MBApplications",
+    search:"https://658bef9a859b3491d3f51ac4.mockapi.io/MBApplications",      
+    count:"https://658bef9a859b3491d3f51ac4.mockapi.io/MBApplications",
   },
 
     PMAApplications: {
