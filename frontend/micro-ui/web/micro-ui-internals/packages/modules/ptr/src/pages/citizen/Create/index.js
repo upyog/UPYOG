@@ -53,7 +53,6 @@ const PTRCreate = ({ parentRoute }) => {
     if (nextStep === null) {
       return redirectWithHistory(`${match.path}/check`);
     }
-    //console.log("nextstep",nextStep )
     if (!isNaN(nextStep.split("/").pop())) {
       nextPage = `${match.path}/${nextStep}`;
     }
@@ -115,7 +114,7 @@ const PTRCreate = ({ parentRoute }) => {
   const CheckPage = Digit?.ComponentRegistryService?.getComponent("PTCheckPage");
   const PTAcknowledgement = Digit?.ComponentRegistryService?.getComponent("PTAcknowledgement");
 
-  //console.log("params", params)
+  
   
   return (
     <Switch>

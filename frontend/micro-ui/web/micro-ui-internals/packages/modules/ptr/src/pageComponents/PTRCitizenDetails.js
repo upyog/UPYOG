@@ -32,7 +32,7 @@ const PTRCitizenDetails = ({ t, config, onSelect, userType, formData, ownerIndex
 
   const [isEmailValid, setIsEmailValid] = useState(true);
   // const isUpdateProperty = formData?.isUpdateProperty || false;
-  // let isEditProperty = formData?.isEditProperty || false;
+  let isEditProperty = formData?.isEditProperty || false;
 
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();
@@ -134,7 +134,7 @@ const PTRCitizenDetails = ({ t, config, onSelect, userType, formData, ownerIndex
             name="applicantName"
             value={applicantName}
             onChange={setOwnerName}
-            //disable={isUpdateProperty || isEditProperty}
+            disable={isEditProperty}
             ValidationRequired={false}
             {...(validation = {
               isRequired: true,
@@ -151,7 +151,7 @@ const PTRCitizenDetails = ({ t, config, onSelect, userType, formData, ownerIndex
             name="mobileNumber"
             //onChange={(value) => setMobileNo({ target: { value } })}
             onChange={setMobileNo}
-            //disable={isUpdateProperty || isEditProperty}
+            disable={isEditProperty}
             {...{ required: true, pattern: "[6-9]{1}[0-9]{9}", type: "tel" }}
           />
 
@@ -160,7 +160,7 @@ const PTRCitizenDetails = ({ t, config, onSelect, userType, formData, ownerIndex
             value={alternateNumber}
             name="alternateNumber"
             onChange={(value) => setAltMobileNo({ target: { value } })}
-            //disable={isUpdateProperty || isEditProperty}
+            disable={isEditProperty}
             {...{ required: true, pattern: "[6-9]{1}[0-9]{9}", type: "tel" }}
           />
           <CardLabel>{`${t("PTR_FATHER_HUSBAND_NAME")}`}</CardLabel>
@@ -172,7 +172,7 @@ const PTRCitizenDetails = ({ t, config, onSelect, userType, formData, ownerIndex
             name="fatherName"
             value={fatherName}
             onChange={setGuardiansName}
-            //disable={isUpdateProperty || isEditProperty}
+            disable={isEditProperty}
             ValidationRequired={false}
             {...(validation = {
               isRequired: true,

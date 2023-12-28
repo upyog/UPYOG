@@ -66,7 +66,7 @@ const PTRCitizenPet = ({ t, config, onSelect, userType, formData, ownerIndex }) 
       }
     });
 
-  const { data: Pet_Sex } = Digit.Hooks.ptr.usePTRGenderMDMS(stateId, "common-masters", "GenderType"); // this hook is for Pet gender type { male, female}
+  const { data: Pet_Sex } = Digit.Hooks.ptr.usePTRGenderMDMS(stateId, "common-masters", "GenderType"); // this hook is for Pet gender type { male, female} 
 
   let pet_sex = []; //for pet gender
 

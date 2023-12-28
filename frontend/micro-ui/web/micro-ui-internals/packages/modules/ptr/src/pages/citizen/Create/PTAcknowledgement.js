@@ -85,7 +85,7 @@ const PTAcknowledgement = ({ data, onSuccess }) => {
             rowContainerStyle={rowContainerStyle}
             last
             // label={t("PTR_APPLIACATION_NUMBER")}
-            text={mutation?.data?.PetRegistrationApplications[0]?.applicationNumber}
+            // text={mutation?.data?.PetRegistrationApplications[0]?.applicationNumber}
             textStyle={{ whiteSpace: "pre", width: "60%" }}
           />
         )}

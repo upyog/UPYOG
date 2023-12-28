@@ -41,7 +41,7 @@ const PaymentDetails = () => {
     if (data) {
       setPaymentObject(
         data?.Payments?.map((payment) => {
-          console.log("payyyyyyyy",payment)
+          
           return {
             receiptNumber: payment.paymentDetails[0].receiptNumber,
             billPeriod: getBillPeriod(payment.paymentDetails[0].bill.billDetails),
