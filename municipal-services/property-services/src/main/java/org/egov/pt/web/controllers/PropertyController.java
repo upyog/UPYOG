@@ -145,7 +145,10 @@ public class PropertyController {
         	 properties = propertyService.searchProperty(propertyCriteria,requestInfoWrapper.getRequestInfo());
         }
         
-        log.info("Property count after search"+properties.size());
+        if(properties != null)
+        	log.info("Property count after search"+properties.size());
+        else
+        	log.info("Property count after search"+count);
         
         PropertyResponse response = PropertyResponse.builder()
         		.responseInfo(

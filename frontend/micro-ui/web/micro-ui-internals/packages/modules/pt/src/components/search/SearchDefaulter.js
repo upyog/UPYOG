@@ -27,7 +27,7 @@ const { isLoading, error, data, isSuccess } = useQuery(["propertySearchList", te
   const mutation = Digit.Hooks.pt.usePropertyAPI(tenantId, false);
 
   const UpdatePropertyNumberComponent = Digit?.ComponentRegistryService?.getComponent("EmployeeUpdateOwnerNumber");
-  const { data: updateNumberConfig } = Digit.Hooks.useCommonMDMS(Digit.ULBService.getStateId(), "PropertyTax", ["UpdateNumber"], {
+  const { data: updateNumberConfig } = Digit.Hooks.useCommonMDMSV2(Digit.ULBService.getStateId(), "PropertyTax", ["UpdateNumber"], {
     select: (data) => {
       return data?.PropertyTax?.UpdateNumber?.[0];
     },
