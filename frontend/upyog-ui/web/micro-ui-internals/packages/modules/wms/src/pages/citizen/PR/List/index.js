@@ -87,8 +87,8 @@ const WmsPrList = ({ parentRoute, businessService = "WMS", initialStates = {}, f
         type:"text",
       },
       {
-        label: t("WMS_PR_ML_NAME_LABEL"),
-        name: "milestone_name",
+        label: t("WMS_PR_WORK_TYPE_LABEL"),
+        name: "Work_type",
         type:"text"
       },
     ];
