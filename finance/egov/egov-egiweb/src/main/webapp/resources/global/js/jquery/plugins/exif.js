@@ -1,3 +1,5 @@
+/* exif.js version 2.3.0 */
+
 (function() {
 
     var debug = false;
