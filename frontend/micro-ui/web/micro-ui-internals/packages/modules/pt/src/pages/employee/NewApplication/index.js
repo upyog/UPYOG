@@ -78,7 +78,7 @@ const NewApplication = () => {
       electricity:data?.electricity,
       uid:data?.uid
       },
-      owners: data?.owners.map((owner) => {
+      owners: data?.owners.map((owner,index) => {
         let {
           name,
           mobileNumber,
@@ -104,6 +104,8 @@ const NewApplication = () => {
             fatherOrHusbandName,
             gender: owner?.gender.code,
             emailId,
+            additionalDetails:{ownerSequence:index, ownerName:owner?.name}
+            
           };
         }
 
@@ -215,7 +217,7 @@ const NewApplication = () => {
     />
     <div>
     { showToast &&   <Modal
-    headerBarMain={<Heading label={"Property Alredy exist"} />}
+    headerBarMain={<Heading label={t("CR_PROPERTY_NUMBER")} />}
     headerBarEnd={<CloseBtn onClick={closeModal} />}
     actionCancelLabel={"Cancel"}
     actionCancelOnSubmit={closeModal}
