@@ -450,16 +450,6 @@ const FstpOperatorDetails = () => {
         />
       ),
     },
-    {
-      title: `${t("ES_INBOX_LOCALITY")} *`,
-      value: (tripDetails && tripDetails[0]?.address?.locality?.name) || (
-        <TextInput
-          //style={{ width: "40%" }}
-          onChange={(e) => onChangeLocality(e.target.value)}
-          value={newLocality}
-        />
-      ),
-    },
   ];
 
   const handleTimeChange = (value, cb) => {
