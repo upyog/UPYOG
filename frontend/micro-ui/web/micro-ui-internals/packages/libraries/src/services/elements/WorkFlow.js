@@ -1,6 +1,7 @@
 import Urls from "../atoms/urls";
 import { Request } from "../atoms/Utils/Request";
 import cloneDeep from "lodash/cloneDeep";
+import { PaymentService } from "./Payment";
 
 const getThumbnails = async (ids, tenantId, documents = []) => {
   tenantId = window.location.href.includes("/obps/") || window.location.href.includes("/pt/") ? Digit.ULBService.getStateId() : tenantId;
@@ -121,7 +122,7 @@ export const WorkflowService = {
   },
 
   getDetailsById: async ({ tenantId, id, moduleCode, role, getTripData }) => {
-    const workflow = await Digit.WorkflowService.getByBusinessId(tenantId, id); 
+    const workflow = await Digit.WorkflowService.getByBusinessId(tenantId, id);
     const applicationProcessInstance = cloneDeep(workflow?.ProcessInstances);
     const getLocationDetails = window.location.href.includes("/obps/") || window.location.href.includes("noc/inbox");
     const moduleCodeData = getLocationDetails ? applicationProcessInstance?.[0]?.businessService : moduleCode;
@@ -286,7 +287,7 @@ export const WorkflowService = {
                 timeline.splice(disposalInProgressPosition + 1, 0, ...waitingForDisposedAction);
                 tripTimeline = disposedAction;
               } else {
-                tripTimeline = disposedAction.concat(waitingForDisposedAction)
+                tripTimeline = disposedAction.concat(waitingForDisposedAction);
               }
               const feedbackPosition = timeline.findIndex((data) => data.status === "CITIZEN_FEEDBACK_PENDING");
               if (feedbackPosition !== -1) {
@@ -298,16 +299,30 @@ export const WorkflowService = {
           } catch (err) {}
         }
 
-      //Added the condition so that following filter can happen only for fsm and does not affect other module
-      let nextStep = [];
-      if(window.location.href?.includes("fsm")){
-        // TAKING OUT CURRENT APPL STATUS
-        const actionRolePair = nextActions?.map((action) => ({
-          action: action?.action,
-          roles: action.state?.actions?.map((action) => action.roles).join(","),
-        }));
-        nextStep = location.pathname.includes("new-vehicle-entry") ? action_newVehicle : location.pathname.includes("dso") ? actionRolePair.filter((i)=> i.action !== "PAY") : actionRolePair;
-      }
+        //Added the condition so that following filter can happen only for fsm and does not affect other module
+        let nextStep = [];
+        if (window.location.href?.includes("fsm")) {
+          // Cheking whether amount fully paid or not
+          var isAmountDue = false;
+          const filters = {
+            businessService: "FSM.TRIP_CHARGES",
+            consumerCode: id,
+          };
+          const fetchBill = await PaymentService.fetchBill(tenantId, filters);
+          isAmountDue = fetchBill?.Bill && fetchBill?.Bill.length > 0 && fetchBill?.Bill[0]?.billDetails[0]?.amount > 0;
+          // TAKING OUT CURRENT APPL STATUS
+          const actionRolePair = nextActions?.map((action) => ({
+            action: action?.action,
+            roles: action.state?.actions?.map((action) => action.roles).join(","),
+          }));
+          nextStep = location.pathname.includes("new-vehicle-entry")
+            ? action_newVehicle
+            : location.pathname.includes("dso")
+            ? actionRolePair.filter((i) => i.action !== "PAY")
+            : actionRolePair;
+          const tempCheckStatus = timeline.map((i) => i.status)[0];
+          nextStep = tempCheckStatus.includes("WAITING_FOR_DISPOSAL") && !isAmountDue ? nextStep?.filter((i) => i.action !== "PAY") : nextStep;
+        }
 
         if (role !== "CITIZEN" && moduleCode === "PGR") {
           const onlyPendingForAssignmentStatusArray = timeline?.filter((e) => e?.status === "PENDINGFORASSIGNMENT");
@@ -334,7 +349,7 @@ export const WorkflowService = {
 
         const details = {
           timeline,
-          nextActions : window.location.href?.includes("fsm") ? nextStep : nextActions,
+          nextActions: window.location.href?.includes("fsm") ? nextStep : nextActions,
           actionState,
           applicationBusinessService: workflow?.ProcessInstances?.[0]?.businessService,
           processInstances: applicationProcessInstance,
