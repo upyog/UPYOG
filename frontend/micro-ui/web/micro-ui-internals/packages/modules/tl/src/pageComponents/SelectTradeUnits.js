@@ -36,7 +36,7 @@ const SelectTradeUnits = ({ t, config, onSelect, userType, formData }) => {
   const { isLoading, data: Data = {} } = Digit.Hooks.tl.useTradeLicenseMDMS(stateId, "TradeLicense", "TradeUnits", "[?(@.type=='TL')]");
   const { data: billingSlabTradeTypeData, isLoading : isBillingSlabLoading } = Digit.Hooks.tl.useTradeLicenseBillingslab({ tenantId: tenantId, filters: {} }, {
     select: (data) => {
-    return data?.billingSlab.filter((e) => e.tradeType && (e.applicationType === (window.location.href.includes("renew-trade") ? "RENEWAL" : "NEW")) && e.licenseType === "PERMANENT" && e.uom);
+    return data?.billingSlab.filter((e) => e.tradeType && (e.applicationType === (window.location.href.includes("renew-trade") ? "RENEWAL" : "NEW")) && e.licenseType === "PERMANENT" );
     }});
   let TradeCategoryMenu = [];
   let TradeCategoryMenu2 = [];

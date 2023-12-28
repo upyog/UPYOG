@@ -250,7 +250,7 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                 //disable={isUpdateProperty || isEditProperty}
                 {...(validation = {
                   isRequired: true,
-                  pattern: "^[a-zA-Z-.`' ]*$",
+                  pattern: "^[a-zA-Z ]*$",
                   type: "text",
                   title: t("TL_NAME_ERROR_MESSAGE"),
                 })}
@@ -281,7 +281,7 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                 //disable={isUpdateProperty || isEditProperty}
                 {...(validation = {
                   // isRequired: true,
-                  pattern: "^[a-zA-Z-.`' ]*$",
+                  pattern: "^[a-zA-Z ]+$",
                   type: "text",
                   title: t("TL_NAME_ERROR_MESSAGE"),
                 })}
@@ -298,7 +298,7 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                 //disable={isUpdateProperty || isEditProperty}
                 {...(validation = {
                   // isRequired: true,
-                  pattern: "^[a-zA-Z-.`' ]*$",
+                  pattern: "^[a-zA-Z ]*$",
                   type: "text",
                   title: t("TL_NAME_ERROR_MESSAGE"),
                 })}
@@ -404,7 +404,7 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
               //disable={isUpdateProperty || isEditProperty}
               {...(validation = {
                 isRequired: true,
-                pattern: "^[a-zA-Z-.`' ]*$",
+                pattern: "^[a-zA-Z ]+$",
                 type: "text",
                 title: t("TL_NAME_ERROR_MESSAGE"),
               })}
@@ -457,7 +457,7 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
               //disable={isUpdateProperty || isEditProperty}
               {...(validation = {
                 isRequired: true,
-                pattern: "^[a-zA-Z-.`' ]*$",
+                pattern: "^[a-zA-Z ]+$",
                 type: "text",
                 title: t("TL_NAME_ERROR_MESSAGE"),
               })}

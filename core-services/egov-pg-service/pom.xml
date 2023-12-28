@@ -20,6 +20,16 @@
       <groupId>org.springframework</groupId>
       <artifactId>spring-beans</artifactId>
       <version>5.2.20.RELEASE</version>
+	</dependency>
+		<dependency>
+				<groupId>com.github.mwmahlberg.speedy</groupId>
+				<artifactId>speedy-template-thymeleaf</artifactId>
+				<version>0.1.1</version>
+			</dependency>
+			<dependency>
+		<groupId>org.springframework</groupId>
+		<artifactId>spring-webflux</artifactId>
+		<version>5.2.12.RELEASE</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -99,6 +109,14 @@
       <groupId>org.jsoup</groupId>
       <artifactId>jsoup</artifactId>
       <version>1.10.2</version>
+	</dependency>
+		<dependency>	
+		<groupId>io.netty</groupId>
+		<artifactId>netty-handler</artifactId>
+		</dependency>
+		<dependency>
+		<groupId>io.projectreactor.netty</groupId>
+		<artifactId>reactor-netty</artifactId>
     </dependency>
   </dependencies>
   <repositories>

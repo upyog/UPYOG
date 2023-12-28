@@ -10,6 +10,7 @@ import {
   BreadCrumb,
   BackButton,
   Loader,
+  DatePicker
 } from "@egovernments/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -48,6 +49,7 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
   const userInfo = Digit.UserService.getUser()?.info || {};
   const [userDetails, setUserDetails] = useState(null);
   const [name, setName] = useState(userInfo?.name ? userInfo.name : "");
+  const [dob, setDob] = useState(userInfo?.dob? userInfo.dob: "");
   const [email, setEmail] = useState(userInfo?.emailId ? userInfo.emailId : "");
   const [gender, setGender] = useState(userDetails?.gender);
   const [city, setCity] = useState(userInfo?.permanentCity ? userInfo.permanentCity : cityDetails.name);
@@ -96,6 +98,7 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
 
     setLoading(false);
   }, [userDetails !== null]);
+  console.log("Details",userDetails)
 
   let validation = {};
   const editScreen = false; // To-do: Deubug and make me dynamic or remove if not needed
@@ -181,6 +184,7 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
       const requestData = {
         ...userInfo,
         name,
+        dob,
         gender: gender?.value,
         emailId: email,
         photo: profilePic,
@@ -196,7 +200,7 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
 
       if (email.length && !(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email))) {
         throw JSON.stringify({ type: "error", message: t("CORE_COMMON_PROFILE_EMAIL_INVALID") });
-      }
+      }     
 
       if (currentPassword.length || newPassword.length || confirmPassword.length) {
         if (newPassword !== confirmPassword) {
@@ -223,6 +227,7 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
             info: {
               ...user.info,
               name,
+              dob,
               mobileNumber,
               emailId: email,
               permanentCity: city,
@@ -405,7 +410,7 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
                     onChange={(e)=>setUserName(e.target.value)}
                     {...(validation = {
                       isRequired: true,
-                      pattern: "^[a-zA-Z-.`' ]*$",
+                      pattern: "^[a-zA-Z ]*$",
                       type: "tel",
                       title: t("CORE_COMMON_PROFILE_NAME_ERROR_MESSAGE"),
                     })}
@@ -430,8 +435,14 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
                   name="gender"
                 />
               </LabelFieldPair>
-
-              {/* <LabelFieldPair>
+              <LabelFieldPair>
+                <CardLabel style={editScreen ? { color: "#B1B4B6" } : {}}>{`${t("CORE_COMMON_PROFILE_DOB")}`}*</CardLabel>
+                <div style={{ width: "100%", maxWidth:"960px" }}>
+                <DatePicker date={userDetails?.dob} disable={true}  />
+                  {errors?.userName && <CardLabelError> {errors?.userName?.message} </CardLabelError>}
+                </div>
+              </LabelFieldPair>
+               <LabelFieldPair>
                 <CardLabel style={editScreen ? { color: "#B1B4B6" } : {}}>{`${t("CORE_COMMON_PROFILE_EMAIL")}`}</CardLabel>
                 <div style={{ width: "100%" }}>
                   <TextInput
@@ -443,11 +454,11 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
                     name="email"
                     value={email}
                     onChange={(e)=>setUserEmailAddress(e.target.value)}
-                    disable={editScreen}
+                    disable={!editScreen}
                   />
                   {errors?.emailAddress && <CardLabelError> {errors?.emailAddress?.message} </CardLabelError>}
                 </div>
-              </LabelFieldPair> */}
+              </LabelFieldPair> 
               
               <button
                 onClick={updateProfile}
@@ -482,7 +493,7 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
                     placeholder="Enter Your Name"
                     {...(validation = {
                       isRequired: true,
-                      pattern: "^[a-zA-Z-.`' ]*$",
+                      pattern: "^[a-zA-Z ]*$",
                       type: "text",
                       title: t("CORE_COMMON_PROFILE_NAME_ERROR_MESSAGE"),
                     })}
@@ -524,7 +535,7 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
                     placeholder="Enter Your City Name"
                     {...(validation = {
                       isRequired: true,
-                      // pattern: "^[a-zA-Z-.`' ]*$",
+                      // pattern: "^[a-zA-Z ]*$",
                       type: "text",
                       title: t("CORE_COMMON_PROFILE_CITY_ERROR_MESSAGE"),
                     })}
@@ -550,7 +561,7 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
                 </div>
               </LabelFieldPair>
               
-              {/* <LabelFieldPair style={{ display: "flex" }}>
+               <LabelFieldPair style={{ display: "flex" }}>
                 <CardLabel className="profile-label-margin" style={editScreen ? { color: "#B1B4B6", width: "300px" } : { width: "300px" }}>{`${t(
                   "CORE_COMMON_PROFILE_EMAIL"
                 )}`}</CardLabel>
@@ -568,7 +579,16 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
                   />
                   {errors?.emailAddress && <CardLabelError> {errors?.emailAddress?.message} </CardLabelError>}
                 </div>
-              </LabelFieldPair> */}
+              </LabelFieldPair>
+              <LabelFieldPair style={{ display: "flex" }}>
+                <CardLabel className="profile-label-margin" style={editScreen ? { color: "#B1B4B6", width: "300px" } : { width: "300px" }}>{`${t(
+                  "CORE_COMMON_PROFILE_DOB"
+                )}`}</CardLabel>
+                <div style={{width: "100%"}}>
+                <DatePicker date={userDetails?.dob} disable={true}  />
+                 {/* {errors?.emailAddress && <CardLabelError> {errors?.emailAddress?.message} </CardLabelError>} */}
+                </div>
+              </LabelFieldPair>             
 
               <LabelFieldPair>
                 <div>

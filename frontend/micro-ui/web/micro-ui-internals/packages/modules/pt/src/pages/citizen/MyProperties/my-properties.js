@@ -7,6 +7,12 @@ const MyProperty = ({ application }) => {
   const { t } = useTranslation();
   const address = application?.address;
   const owners = application?.owners;
+  sessionStorage.removeItem("type" );
+  sessionStorage.removeItem("pincode");
+  sessionStorage.removeItem("tenantId");
+  sessionStorage.removeItem("localityCode");
+  sessionStorage.removeItem("landmark"); 
+  sessionStorage.removeItem("propertyid")
   return (
     <Card>
       <KeyNote keyValue={t("PT_COMMON_TABLE_COL_PT_ID")} note={application.propertyId} />
