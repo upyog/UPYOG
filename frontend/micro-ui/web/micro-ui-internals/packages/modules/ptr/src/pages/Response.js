@@ -50,11 +50,8 @@ const Response = (props) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const { state } = props.location;
 
-
-  
-
   const mutation = Digit.Hooks.ptr.usePTRCreateAPI(tenantId, state.key !== "UPDATE");
-   const mutation1 = Digit.Hooks.ptr.usePTRCreateAPI(tenantId, false);
+  const mutation1 = Digit.Hooks.ptr.usePTRCreateAPI(tenantId, false);
 
   const { data: storeData } = Digit.Hooks.useStore.getInitData();
   const { tenants } = storeData || {};
@@ -70,20 +67,17 @@ const Response = (props) => {
   useEffect(() => {
     if (mutation1.data && mutation1.isSuccess) setsuccessData(mutation1.data);
   }, [mutation.data]);
-
   useEffect(() => {
     if (mutation1.data && mutation1.isSuccess) setsuccessData(mutation1.data);
   }, [mutation1.data]);
-
-  /* 
-  This useEffect is created in a logic that once you successfully submitted
-  It clears the query cache (data refresh), so that emploee can fill fresh form and also handle the response.
-
-  */
   useEffect(() => {
-    const onSuccess = async () => {queryClient.clear(); };
-
-
+    const onSuccess = async (successRes) => {
+      setMutationHappened(true);
+      queryClient.clear();
+      if (successRes?.PetRegistrationApplications[0]?.creationReason === "MUTATION") {
+        setEnableAudit(true);
+      }
+    };
     const onError = (error, variables) => {
       setShowToast({ key: "error" });
       setError(error?.response?.data?.Errors[0]?.message || null);
@@ -102,8 +96,6 @@ const Response = (props) => {
     }
   }, []);
 
-  
-
   const handleDownloadPdf = async () => {
     const { PetRegistrationApplications = [] } = mutation.data || successData;
     const Pet = (PetRegistrationApplications && PetRegistrationApplications[0]) || {};
@@ -115,7 +107,6 @@ const Response = (props) => {
     const data = await getPTAcknowledgementData({ ...Pet, auditData }, tenantInfo, t);
     Digit.Utils.pdf.generate(data);
   };
-  
 
   if (mutation.isLoading || (mutation.isIdle && !mutationHappened)) {
     return <Loader />;
@@ -136,7 +127,7 @@ const Response = (props) => {
           {DisplayText(state.action, (mutation.isSuccess || !!successData) && !mutation.isError, props.parentRoute.includes("employee"), t)}
         </CardText>
         {(mutation.isSuccess || !!successData) && !mutation.isError && (
-          <SubmitBar style={{ overflow: "hidden" }} label={t("PTR_PET_DOWNLOAD_ACK_FORM")} onSubmit={handleDownloadPdf} />
+          <SubmitBar style={{ overflow: "hidden" }} label={t("PTR_DOWNLOAD_ACK_FORM")} onSubmit={handleDownloadPdf} />
         )}
       </Card>
       {showToast && <Toast error={showToast.key === "error" ? true : false} label={error} onClose={closeToast} />}

@@ -298,7 +298,7 @@ const OwnerForm = (_props) => {
               control={control}
               name={"petGender"}
               defaultValue={pets?.petGender}
-              rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
+              // rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
               render={(props) => (
                 <Dropdown
                   className="form-field"
