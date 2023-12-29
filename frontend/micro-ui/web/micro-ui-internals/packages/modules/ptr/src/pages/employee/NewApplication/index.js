@@ -32,6 +32,7 @@ const NewApplication = () => {
   };
 
   const onPetSubmit = (data) => {
+    console.log("dta for payload console", data)
 
 
     
@@ -43,7 +44,7 @@ const NewApplication = () => {
         ...data?.pets[0],
         petType:data?.pets[0]?.petType?.value,
         breedType:data?.pets[0]?.breedType?.value,
-        petGender: data?.pets[0]?.petGender?.value,
+        petGender: data?.pets[0]?.petGender?.name,
        },
         
       address: {

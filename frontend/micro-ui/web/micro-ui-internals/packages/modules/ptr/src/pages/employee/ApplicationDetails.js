@@ -30,6 +30,8 @@ const ApplicationDetails = () => {
 
 
   const { isLoading, isError, data: applicationDetails, error } = Digit.Hooks.ptr.usePtrApplicationDetail(t, tenantId, applicationNumber);
+  console.log("appppppdetailtosho",applicationDetails)
+
 
 
 
