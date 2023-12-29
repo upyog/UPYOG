@@ -20,7 +20,7 @@ import PTCheckPage from "./pages/citizen/Create/CheckPage";
 import PTAcknowledgement from "./pages/citizen/Create/PTAcknowledgement";
 import { PTMyPayments } from "./pages/citizen/MyPayments";
 import { PTMyApplications } from "./pages/citizen/PTMyApplications";
-import { MyProperties } from "./pages/citizen/MyProperties";
+// import { MyProperties } from "./pages/citizen/MyProperties";
 import PTApplicationDetails from "./pages/citizen/PTApplicationDetails";
 import EditProperty from "./pages/citizen/EditProperty";
 import PTWFCaption from "./pageComponents/PTWFCaption";
@@ -50,7 +50,7 @@ const componentsToRegister = {
   PTEditApplication: EditApplication,
   PTResponse: Response,
   PTMyApplications: PTMyApplications,
-  PTMyProperties: MyProperties,
+  // PTMyProperties: MyProperties,
   PTApplicationDetails: PTApplicationDetails,
   PTEditProperty: EditProperty,
   SelectOtp, // To-do: Temp fix, Need to check why not working if selectOtp module is already imported from core module

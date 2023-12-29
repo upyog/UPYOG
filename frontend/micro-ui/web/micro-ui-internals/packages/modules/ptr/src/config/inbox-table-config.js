@@ -13,80 +13,7 @@
 
   export const TableConfig = (t) => ({
     PTR: {
-      // searchColumns: (props) => [
-      //   {
-      //     Header: t("PTR"),
-      //     // accessor: "searchData.propertyId",
-      //     disableSortBy: true,
-      //     Cell: ({ row }) => {
-      //       return (
-      //         <div>
-      //           <span className="link">
-      //             <Link to={`${props.parentRoute}/pet-details/` + row.original?.searchData?.["applicationNumber"]}>
-      //               {row.original?.searchData?.["applicationNumber"]}
-      //             </Link>
-      //           </span>
-      //         </div>
-      //       );
-      //     },
-      //     mobileCell: (original) => GetMobCell(original?.searchData?.["applicationNumber"]),
-      //   },
-      //   {
-      //     Header: t("ES_INBOX_OWNER_NAME"),
-      //     disableSortBy: true,
-      //     Cell: ({ row }) => {
-      //       const owners = row.original?.searchData["owners"] || [];
-      //       const status = row.original?.searchData.status;
-      //       const creationReason = row.original?.searchData.creationReason;
-      //       const sortedOwners = [...owners.filter((a, b) => a.status === "ACTIVE"), ...owners.filter((a, b) => a.status !== "ACTIVE")];
-      //       const _owner = status === "INWORKFLOW" && creationReason === "MUTATION" ? sortedOwners.reverse() : sortedOwners;
-
-      //       return GetCell(`${_owner?.[0].name}`);
-      //     },
-      //     mobileCell: (original) => GetMobCell(original?.searchData?.["owners"]?.[0].name),
-      //   },
-      //   {
-      //     Header: t("ES_INBOX_LOCALITY"),
-      //     Cell: ({ row }) => {
-      //       const tenantId = row.original?.searchData?.tenantId;
-      //       return GetCell(t(`${tenantId.replace(".", "_").toUpperCase()}_REVENUE_${row.original?.searchData?.address?.locality?.code}`));
-      //     },
-      //     disableSortBy: true,
-      //     mobileCell: (original) => GetMobCell(original?.searchData?.address?.locality?.name),
-      //   },
-      //   {
-      //     Header: t("ES_SEARCH_PROPERTY_STATUS"),
-      //     Cell: ({ row }) => {
-      //       return GetCell(t(row.original?.searchData?.status));
-      //     },
-      //     disableSortBy: true,
-      //     mobileCell: (original) => GetMobCell(original?.searchData?.status),
-      //   },
-      //   {
-      //     Header: t("ES_SEARCH_TAX_DUE"),
-      //     Cell: ({ row }) => {
-      //       return GetCell("₹ " + row.original?.searchData?.due_tax);
-      //     },
-      //     disableSortBy: true,
-      //     mobileCell: (original) => GetMobCell("₹ " + original?.searchData?.due_tax),
-      //   },
-      //   {
-      //     Header: t("ES_SEARCH_ACTION"),
-      //     Cell: ({ row }) => {
-      //       return (
-      //         <div>
-      //           {row.original?.searchData?.due_tax > 0 && Digit.Utils.didEmployeeHasRole("PT_CEMP") ? (
-      //             <span className="link">
-      //               <Link to={`/digit-ui/employee/payment/collect/PT/` + row.original?.searchData?.["propertyId"]}>{t("ES_PT_COLLECT_TAX")}</Link>
-      //             </span>
-      //           ) : null}
-      //         </div>
-      //       );
-      //     },
-      //     disableSortBy: true,
-      //     // mobileCell: (original) => GetMobCell(original?.searchData?.["propertyId"]),
-      //   },
-      // ],
+      
       
       inboxColumns: (props) => [
       
@@ -141,11 +68,11 @@
           Cell: ({ row }) => {
             console.log("row",row)
             const wf = row.original?.workflowData;
-            return GetCell(t(`${row?.original?.workflowData?.state?.["state"]}`));
+            return GetCell(t(`${row?.original?.workflowData?.state?.["applicationStatus"]}`));
 
 
           },
-          mobileCell: (original) => GetMobCell(t(`ES_PTR_COMMON_STATUS_${original?.workflowData?.state?.["state"]}`)),
+          mobileCell: (original) => GetMobCell(t(`ES_PTR_COMMON_STATUS_${original?.workflowData?.state?.["applicationStatus"]}`)),
         
 
         },

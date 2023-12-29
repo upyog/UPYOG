@@ -21,6 +21,7 @@ const PTWFApplicationTimeline = (props) => {
   }
 
   const getTimelineCaptions = (checkpoint) => {
+    console.log("checkponttttt",checkpoint)
     if (checkpoint.state === "OPEN")
     {
       const caption = {
@@ -140,6 +141,7 @@ const PTWFApplicationTimeline = (props) => {
             <ConnectingCheckPoints>
               {data?.timeline &&
                 data?.timeline.map((checkpoint, index, arr) => {
+                  
                   let timelineStatusPostfix = "";
                   if (window.location.href.includes("/obps/")) {
                     if(workflowDetails?.data?.timeline[index-1]?.state?.includes("BACK_FROM") || workflowDetails?.data?.timeline[index-1]?.state?.includes("SEND_TO_CITIZEN"))

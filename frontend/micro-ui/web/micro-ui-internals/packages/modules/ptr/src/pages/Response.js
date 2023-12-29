@@ -106,7 +106,6 @@ const Response = (props) => {
 
   const handleDownloadPdf = async () => {
     const { PetRegistrationApplications = [] } = mutation.data || successData;
-    console.log("petfewff", PetRegistrationApplications);
     const Pet = (PetRegistrationApplications && PetRegistrationApplications[0]) || {};
     const tenantInfo = tenants.find((tenant) => tenant.code === Pet.tenantId);
 

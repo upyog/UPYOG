@@ -25,7 +25,7 @@ const App = () => {
   const SearchResultsComponent = Digit?.ComponentRegistryService?.getComponent("PTSearchResultsComponent");
   const PTApplicationDetails = Digit?.ComponentRegistryService?.getComponent("PTApplicationDetails");
   const PTMyApplications = Digit?.ComponentRegistryService?.getComponent("PTMyApplications");
-  const MyProperties = Digit?.ComponentRegistryService?.getComponent("PTMyProperties");
+  // const MyProperties = Digit?.ComponentRegistryService?.getComponent("PTMyProperties");
   // const MutateProperty = Digit?.ComponentRegistryService?.getComponent("PTMutateProperty");
   const PropertyInformation = Digit?.ComponentRegistryService?.getComponent("PropertyInformation");
   const PropertyOwnerHistory = Digit?.ComponentRegistryService?.getComponent("PropertyOwnerHistory");
@@ -41,7 +41,7 @@ const App = () => {
           <Route path={`${path}/property/search-results`} component={SearchResultsComponent} />
           <PrivateRoute path={`${path}/petservice/application/:acknowledgementIds/:tenantId`} component={PTApplicationDetails}></PrivateRoute>
           <PrivateRoute path={`${path}/petservice/my-application`} component={PTMyApplications}></PrivateRoute>
-          <PrivateRoute path={`${path}/property/my-properties`} component={MyProperties}></PrivateRoute>
+          {/* <PrivateRoute path={`${path}/property/my-properties`} component={MyProperties}></PrivateRoute> */}
           <PrivateRoute path={`${path}/property/my-payments`} component={PTMyPayments}></PrivateRoute>
           {/* <PrivateRoute path={`${path}/property/property-mutation`} component={MutateProperty}></PrivateRoute> */}
           <PrivateRoute path={`${path}/property/properties/:propertyIds`} component={PropertyInformation}></PrivateRoute>

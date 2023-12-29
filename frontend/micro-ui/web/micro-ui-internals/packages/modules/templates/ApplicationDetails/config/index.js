@@ -11,6 +11,7 @@ import { configBPAApproverApplication } from "./BPAApproverApplication";
 import { configNOCApproverApplication } from "./NOCApproverApplication";
 import { configWSApproverApplication } from "./WSApproverApplication";
 import { configWSDisConnectApplication } from "./WSDisconnectApplication";
+import { configPTRApproverApplication } from "./PTRApproverApplication";
 
 export {
   configAssignDso,
@@ -25,5 +26,6 @@ export {
   configBPAApproverApplication,
   configNOCApproverApplication,
   configWSApproverApplication,
-  configWSDisConnectApplication
+  configWSDisConnectApplication,
+  configPTRApproverApplication
 };
