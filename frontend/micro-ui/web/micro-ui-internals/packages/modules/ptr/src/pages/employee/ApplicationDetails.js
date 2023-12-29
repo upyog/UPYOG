@@ -18,22 +18,22 @@ const ApplicationDetails = () => {
   const [showOptions, setShowOptions] = useState(false);
   const [enableAudit, setEnableAudit] = useState(false);
   const [businessService, setBusinessService] = useState("ptr");
-  
 
 
-  sessionStorage.setItem("applicationNoinAppDetails",applicationNumber);
 
-  
+  sessionStorage.setItem("applicationNoinAppDetails", applicationNumber);
 
-  
-  
+
+
+
+
 
 
   const { isLoading, isError, data: applicationDetails, error } = Digit.Hooks.ptr.usePtrApplicationDetail(t, tenantId, applicationNumber);
-  
 
-  
-  
+
+
+
   const {
     isLoading: updatingApplication,
     isError: updateApplicationError,
@@ -41,22 +41,21 @@ const ApplicationDetails = () => {
     error: updateError,
     mutate,
   } = Digit.Hooks.ptr.usePTRApplicationAction(tenantId);
-  
 
-   //console.log("//////////////////////////////////////////////////////",applicationDetails)
 
-  
+
+
 
   let workflowDetails = Digit.Hooks.useWorkflowDetails({
-  tenantId: applicationDetails?.applicationData?.tenantId || tenantId,
-  id: applicationDetails?.applicationData?.applicationData?.applicationNumber,
-  moduleCode: businessService,
-  role: "PT_CEMP",
-});
-  
-  
+    tenantId: applicationDetails?.applicationData?.tenantId || tenantId,
+    id: applicationDetails?.applicationData?.applicationData?.applicationNumber,
+    moduleCode: businessService,
+    role: "PT_CEMP",
+  });
 
-  
+
+
+
 
 
 
@@ -65,10 +64,10 @@ const ApplicationDetails = () => {
       tenantId,
       filters: { applicationNumber: applicationNumber, audit: true },
     },
-   // { enabled: enableAudit, select: (data) => data.PetRegistrationApplications?.filter((e) => e.status === "ACTIVE") }
+    // { enabled: enableAudit, select: (data) => data.PetRegistrationApplications?.filter((e) => e.status === "ACTIVE") }
   );
 
-  
+
 
   const closeToast = () => {
     setShowToast(null);
@@ -76,35 +75,31 @@ const ApplicationDetails = () => {
 
   useEffect(() => {
     if (applicationDetails) {
-      //console.log("use effect application details", applicationDetails);
       setAppDetailsToShow(_.cloneDeep(applicationDetails));
       // if (applicationDetails?.applicationData?.status !== "ACTIVE" && applicationDetails?.applicationData?.creationReason === "MUTATION") {
-        // setEnableAudit(true);
+      // setEnableAudit(true);
       // }
     }
   }, [applicationDetails]);
 
-  
+
 
   useEffect(() => {
-   
-    if (workflowDetails?.data?.applicationBusinessService && !(workflowDetails?.data?.applicationBusinessService === "ptr" && businessService === "ptr"))
-    
 
-    {
+    if (workflowDetails?.data?.applicationBusinessService && !(workflowDetails?.data?.applicationBusinessService === "ptr" && businessService === "ptr")) {
       setBusinessService(workflowDetails?.data?.applicationBusinessService);
-      
+
 
 
     }
   }, [workflowDetails.data]);
 
-  //console.log("use effect :", workflowDetails.data);
 
 
-   const PT_CEMP = Digit.UserService.hasAccess(["PT_CEMP"]) || false;
 
-  
+  const PT_CEMP = Digit.UserService.hasAccess(["PT_CEMP"]) || false;
+
+
 
   if (
     PT_CEMP &&
@@ -123,8 +118,8 @@ const ApplicationDetails = () => {
     });
   }
 
-  
-  
+
+
   const handleDownloadPdf = async () => {
     const PetRegistrationApplications = appDetailsToShow?.applicationData;
     const tenantInfo = tenants.find((tenant) => tenant.code === PetRegistrationApplications.tenantId);
@@ -143,24 +138,24 @@ const ApplicationDetails = () => {
 
   return (
     <div>
-        <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
-      <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("PTR_PET_APPLICATION_DETAILS")}</Header>
-      {dowloadOptions && dowloadOptions.length > 0 && (
-            <MultiLink
-              className="multilinkWrapper employee-mulitlink-main-div"
-              onHeadClick={() => setShowOptions(!showOptions)}
-              displayOptions={showOptions}
-              options={dowloadOptions}
-              downloadBtnClassName={"employee-download-btn-className"}
-              optionsClassName={"employee-options-btn-className"}
-              // ref={menuRef}
-            />
-          )}
-          </div>
+      <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
+        <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("PTR_PET_APPLICATION_DETAILS")}</Header>
+        {dowloadOptions && dowloadOptions.length > 0 && (
+          <MultiLink
+            className="multilinkWrapper employee-mulitlink-main-div"
+            onHeadClick={() => setShowOptions(!showOptions)}
+            displayOptions={showOptions}
+            options={dowloadOptions}
+            downloadBtnClassName={"employee-download-btn-className"}
+            optionsClassName={"employee-options-btn-className"}
+          // ref={menuRef}
+          />
+        )}
+      </div>
 
-          
-          
-      
+
+
+
       <ApplicationDetailsTemplate
         applicationDetails={appDetailsToShow}
         isLoading={isLoading}
@@ -178,7 +173,7 @@ const ApplicationDetails = () => {
         statusAttribute={"state"}
         MenuStyle={{ color: "#FFFFFF", fontSize: "18px" }}
       />
-    
+
     </div>
   );
 };

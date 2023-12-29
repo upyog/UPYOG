@@ -3,12 +3,10 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory, useParams } from "react-router-dom";
 import getPTAcknowledgementData from "../../getPTAcknowledgementData";
-// import PropertyDocument from "../../pageComponents/PropertyDocument";
 import PetDocument from "../../pageComponents/PetDocument";
 import PTWFApplicationTimeline from "../../pageComponents/PTWFApplicationTimeline";
-import { getCityLocale, getPropertyTypeLocale, propertyCardBodyStyle, getMohallaLocale, pdfDownloadLink } from "../../utils";
-// import PTCitizenFeedbackPopUp from "../../pageComponents/PTCitizenFeedbackPopUp";
-//import PTCitizenFeedback from "@egovernments/digit-ui-module-core/src/components/PTCitizenFeedback";
+import { pdfDownloadLink } from "../../utils";
+
 
 import get from "lodash/get";
 import { size } from "lodash";
@@ -24,17 +22,13 @@ const PTApplicationDetails = () => {
   // const tenantId = Digit.ULBService.getCurrentTenantId();
   const { data: storeData } = Digit.Hooks.useStore.getInitData();
   const { tenants } = storeData || {};
-  // const { isLoading, isError, error, data } = Digit.Hooks.ptr.usePTRSearch(
-  //   { filters: { acknowledgementIds, tenantId } },
-  //   { filters: { acknowledgementIds, tenantId } }
-  // );
+ 
 
   const { isLoading, isError,error, data } = Digit.Hooks.ptr.usePTRSearch(
     {
       tenantId,
       filters: { applicationNumber: acknowledgementIds },
     },
-   // { enabled: enableAudit, select: (data) => data.PetRegistrationApplications?.filter((e) => e.status === "ACTIVE") }
   );
 
   const [billAmount, setBillAmount] = useState(null);
@@ -42,24 +36,20 @@ const PTApplicationDetails = () => {
 
   let serviceSearchArgs = {
     tenantId : tenantId,
-    code: [`PT_${data?.PetRegistrationApplications?.[0]?.creationReason}`], 
-    module: ["PT"],
+    code: [`PTR_${data?.PetRegistrationApplications?.[0]?.creationReason}`], 
+    module: ["PTR"],
     referenceIds : [data?.PetRegistrationApplications?.[0]?.applicationNumber]
-    //removing thid as of now sending ack no in referenceId
-    // attributes: {
-    //         "attributeCode": "referenceId",
-    //         "value": data?.PetRegistrationApplications?.[0]?.applicationNumber,
-    //     }
+    
   }
 
   //const { isLoading:serviceloading, error : serviceerror, data : servicedata} = Digit.Hooks.pt.useServiceSearchCF({ filters: { serviceSearchArgs } },{ filters: { serviceSearchArgs }, enabled : data?.PetRegistrationApplications?.[0]?.applicationNumber ?true : false, cacheTime : 0 });
 
 
   const PetRegistrationApplications = get(data, "PetRegistrationApplications", []);
-  console.log("pettttttttttttttttt",PetRegistrationApplications)
+  
   
   const petId = get(data, "PetRegistrationApplications[0].applicationNumber", []);
-  console.log("hdjashdfjhseihfjshjfhdsjjnfkndkfvjrsnfghb",petId)
+  
   let  pet_details = (PetRegistrationApplications && PetRegistrationApplications.length > 0 && PetRegistrationApplications[0]) || {};
   const application =  pet_details;
   sessionStorage.setItem("ptr-property", JSON.stringify(application));
@@ -90,8 +80,7 @@ const PTApplicationDetails = () => {
     },
     {
       enabled: true,
-      // select: (d) =>
-      //   d.PetRegistrationApplications.filter((e) => e.status === "ACTIVE")?.sort((a, b) => b.auditDetails.lastModifiedTime - a.auditDetails.lastModifiedTime),
+      
     }
   );
 
@@ -136,56 +125,27 @@ const PTApplicationDetails = () => {
      pet_details.ownersInit = owners;
      pet_details.ownersTemp = ownersTemp;
   }
-   pet_details.ownershipCategoryTemp =  pet_details?.ownershipCategory;
-   pet_details.ownershipCategoryInit = "NA";
-  // Set Institution/Applicant info card visibility
-  if (get(application, "PetRegistrationApplications[0].ownershipCategory", "")?.startsWith("INSTITUTION")) {
-     pet_details.institutionTemp =  pet_details.institution;
-  }
+  
 
   if (auditResponse && Array.isArray(get(auditResponse, "PetRegistrationApplications", [])) && get(auditResponse, "PetRegistrationApplications", []).length > 0) {
-    const propertiesAudit = get(auditResponse, "PetRegistrationApplications", []);
-    const propertyIndex =  pet_details.status == "ACTIVE" ? 1 : 0;
-    // const previousActiveProperty = propertiesAudit.filter( pet_details =>  pet_details.status == 'ACTIVE').sort((x, y) => y.auditDetails.lastModifiedTime - x.auditDetails.lastModifiedTime)[propertyIndex];
-    // Removed filter( pet_details =>  pet_details.status == 'ACTIVE') condition to match result in qa env
-    const previousActiveProperty = propertiesAudit
+    const petAudit = get(auditResponse, "PetRegistrationApplications", []);
+    const petIndex =  pet_details.status == "ACTIVE" ? 1 : 0;
+    
+    const previousActiveProperty = petAudit
       .filter(( pet_details) =>  pet_details.status == "ACTIVE")
-      .sort((x, y) => y.auditDetails.lastModifiedTime - x.auditDetails.lastModifiedTime)[propertyIndex];
+      .sort((x, y) => y.auditDetails.lastModifiedTime - x.auditDetails.lastModifiedTime)[petIndex];
      pet_details.ownershipCategoryInit = previousActiveProperty?.ownershipCategory;
      pet_details.ownersInit = previousActiveProperty?.owners?.filter((owner) => owner.status == "ACTIVE");
 
-    const curWFProperty = propertiesAudit.sort((x, y) => y.auditDetails.lastModifiedTime - x.auditDetails.lastModifiedTime)[0];
-     pet_details.ownersTemp = curWFProperty.owners.filter((owner) => owner.status == "ACTIVE");
+    const curWFpet = petAudit.sort((x, y) => y.auditDetails.lastModifiedTime - x.auditDetails.lastModifiedTime)[0];
+     pet_details.ownersTemp = curWFpet.owners.filter((owner) => owner.status == "ACTIVE");
 
-    if ( pet_details?.ownershipCategoryInit?.startsWith("INSTITUTION")) {
-       pet_details.institutionInit = previousActiveProperty.institution;
-    }
+    
   }
 
-  let transfereeOwners = get( pet_details, "ownersTemp", []);
-  let transferorOwners = get( pet_details, "ownersInit", []);
-  let transfereeInstitution = get( pet_details, "institutionTemp", []);
-  let isInstitution =  pet_details?.ownershipCategoryInit?.startsWith("INSTITUTION");
-  let transferorInstitution = get( pet_details, "institutionInit", []);
+  
 
-  let units = [];
-  units = application?.units;
-  units &&
-    units.sort((x, y) => {
-      let a = x.floorNo,
-        b = y.floorNo;
-      if (x.floorNo < 0) {
-        a = x.floorNo * -20;
-      }
-      if (y.floorNo < 0) {
-        b = y.floorNo * -20;
-      }
-      if (a > b) {
-        return 1;
-      } else {
-        return -1;
-      }
-    });
+ 
   let owners = [];
   owners = application?.owners;
   let docs = [];
@@ -195,11 +155,7 @@ const PTApplicationDetails = () => {
     return <Loader />;
   }
 
-  let flrno,
-    i = 0;
-  flrno = units && units[0]?.floorNo;
-
-  const isPropertyTransfer =  pet_details?.creationReason &&  pet_details.creationReason === "MUTATION" ? true : false;
+ 
 
   const getAcknowledgementData = async () => {
     const applications = application || {};

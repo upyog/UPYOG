@@ -1,7 +1,7 @@
 import { Loader, Modal, FormComposer } from "@egovernments/digit-ui-react-components";
 import React, { useState, useEffect } from "react";
 
-import { configPTRejectApplication, configPTVerifyApplication, configPTApproverApplication, configPTAssessProperty } from "../config";
+import { configPTRejectApplication, configPTVerifyApplication, configPTRApproverApplication} from "../config";
 import * as predefinedConfig from "../config";
 
 const Heading = (props) => {
@@ -117,7 +117,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
   useEffect(() => {
     if (action) {
       setConfig(
-          configPTApproverApplication({
+          configPTRApproverApplication({
             t,
             action,
             approvers,

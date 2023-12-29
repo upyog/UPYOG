@@ -41,19 +41,7 @@ const PTRSelectProofIdentity = ({ t, config, onSelect, userType, formData, setEr
     else setEnableSubmit(true);
   }, [documents, checkRequiredFields]);
 
-  // const PTRDocument = data?.PetService?.Documents.map(document => ({
-  //   ...document,
-  //   hasDropdown: true
-  // }));
-
-  // const goNext = () => {
-  //   onSelect(config.key, { documents, PTRDocumentLength: PTRDocument?.length });
-  // };
-
-  
-  // useEffect(() => {
-  //   goNext();
-  // }, [documents]);
+ 
 
   return (
     <div>
