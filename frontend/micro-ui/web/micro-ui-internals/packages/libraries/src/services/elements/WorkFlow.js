@@ -204,7 +204,6 @@ export const WorkflowService = {
           };
           return checkPoint;
         });
-
         if (getTripData) {
           try {
             const filters = {
@@ -304,12 +303,14 @@ export const WorkflowService = {
         if (window.location.href?.includes("fsm")) {
           // Cheking whether amount fully paid or not
           var isAmountDue = false;
-          const filters = {
-            businessService: "FSM.TRIP_CHARGES",
-            consumerCode: id,
-          };
-          const fetchBill = await PaymentService.fetchBill(tenantId, filters);
-          isAmountDue = fetchBill?.Bill && fetchBill?.Bill.length > 0 && fetchBill?.Bill[0]?.billDetails[0]?.amount > 0;
+          if (window.location.href.includes("application-details")) {
+            const filters = {
+              businessService: "FSM.TRIP_CHARGES",
+              consumerCode: id,
+            };
+            const fetchBill = await PaymentService.fetchBill(tenantId, filters);
+            isAmountDue = fetchBill?.Bill && fetchBill?.Bill.length > 0 && fetchBill?.Bill[0]?.billDetails[0]?.amount > 0;
+          }
           // TAKING OUT CURRENT APPL STATUS
           const actionRolePair = nextActions?.map((action) => ({
             action: action?.action,
