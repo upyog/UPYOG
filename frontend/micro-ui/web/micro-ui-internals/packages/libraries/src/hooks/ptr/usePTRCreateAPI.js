@@ -1,9 +1,3 @@
-/*
-
-@author Shivank-NIUA
-
-*/
-
 import { useQuery, useMutation } from "react-query";
 import { PTRService } from "../../services/elements/PTR";
 

@@ -5,7 +5,6 @@ import { Link, Switch, useLocation } from "react-router-dom";
 import { PTRLinks } from "../../Module";
 import Inbox from "./Inbox";
 import PaymentDetails from "./PaymentDetails";
-// import Search from "./Search";
 import SearchApp from "./SearchApp";
 
 
@@ -22,8 +21,7 @@ const EmployeeApp = ({ path, url, userType }) => {
       services: ["ptr"],
       applicationStatus: [],
       locality: [],
-      // tenantId:{},
-      // applicationNumber:{},
+
     },
   };
 
@@ -53,20 +51,14 @@ const EmployeeApp = ({ path, url, userType }) => {
   const breadcrumbObj = {
     ["/digit-ui/employee/ptr/inbox"]: "ES_TITLE_INBOX",    
     ["/digit-ui/employee/ptr/new-application"]: "ES_TITLE_NEW_PROPERTY_APPLICATION",
-    ["/digit-ui/employee/pt/search"]: "PT_COMMON_SEARCH_PROPERTY_SUB_HEADER",
-    ["/digit-ui/employee/pt/application-search"]: "ES_COMMON_APPLICATION_SEARCH",
-    ["/digit-ui/employee/pt/Ulb-assesment"]: "ES_COMMON_ULB_ASSESSMENT",
+    
   };
 
   const getBreadCrumb = () => {
     if (breadcrumbObj[location.pathname]) return t(breadcrumbObj[location.pathname]);
-    else if (location.pathname.includes("/digit-ui/employee/pt/application-details/")) return t("PTR_APPLICATION_TITLE");
-    else if (location.pathname.includes("/digit-ui/employee/pt/property-details/")) return t("PT_PROPERTY_INFORMATION");
-    else if (location.pathname.includes("/digit-ui/employee/pt/payment-details/")) return t("PT_PAYMENT_HISTORY");
-    else if (location.pathname.includes("/digit-ui/employee/pt/assessment-details/")) return t("PT_ASSESS_PROPERTY");
-    else if (location.pathname.includes("digit-ui/employee/pt/property-mutate-docs-required")) return t("PT_REQIURED_DOC_TRANSFER_OWNERSHIP");
-    else if (location.pathname.includes("/digit-ui/employee/pt/property-mutate/")) return t("ES_TITLE_MUTATE_PROPERTY");
-    else if (location.pathname.includes("/digit-ui/employee/pt/modify-application/")) return t("PT_UPDATE_PROPERTY");
+    else if (location.pathname.includes("/digit-ui/employee/ptr/application-details/")) return t("PTR_APPLICATION_TITLE");
+    else if (location.pathname.includes("/digit-ui/employee/ptr/payment-details/")) return t("PT_PAYMENT_HISTORY");
+    
   };
 
   const PTBreadCrumbs = ({ location }) => {
@@ -90,31 +82,13 @@ const EmployeeApp = ({ path, url, userType }) => {
         content: t("PT_COMMON_SEARCH_PROPERTY_SUB_HEADER"),
         show: location.pathname.includes("/pt/search") || location.pathname.includes("/pt/ptsearch") ? true : false,
       },
+    
       {
-        path: "digit-ui/employee/pt/property-mutate-docs-required",
-        content: t("PT_REQIURED_DOC_TRANSFER_OWNERSHIP"),
-        show: location.pathname.includes("pt/property-mutate-docs-required") ? true : false,
-      },
-      {
-        path: "/digit-ui/employee/pt/property-mutate/",
-        content: t("ES_TITLE_MUTATE_PROPERTY"),
-        show: location.pathname.includes("pt/property-mutate/") ? true : false,
-      },
-      {
-        path: "/digit-ui/employee/pt/modify-application/",
-        content: t("PT_UPDATE_PROPERTY"),
-        show: location.pathname.includes("pt/modify-application") ? true : false,
-      },
-      {
-        path: "/digit-ui/employee/pt/application-search",
+        path: "/digit-ui/employee/ptr/application-search",
         content: t("ES_COMMON_APPLICATION_SEARCH"),
-        show: location.pathname.includes("/pt/application-search") || location.pathname.includes("/pt/applicationsearch/application-details/") ? true : false,
+        show: location.pathname.includes("/ptr/application-search") || location.pathname.includes("/pt/applicationsearch/application-details/") ? true : false,
       },
-      {
-        path: "/digit-ui/employee/pt/ulb-assesment",
-        content: t("ES_COMMON_ULB_ASSESSMENT"),
-        show: location.pathname.includes("/pt/ulb-assesment") || location.pathname.includes("/pt/ulb-assesment") ? true : false,
-      },
+      
       {
         path: `/digit-ui/employee/pt/ptsearch/property-details/${sessionStorage.getItem("propertyIdinPropertyDetail")}`,
         content: fromScreen || fromScreen2 ? `${t(fromScreen || fromScreen2)} / ${t("PT_PROPERTY_INFORMATION")}`:t("PT_PROPERTY_INFORMATION"),
@@ -127,11 +101,7 @@ const EmployeeApp = ({ path, url, userType }) => {
         show: location.pathname.includes("/pt/property-details/") || location.pathname.includes("/pt/payment-details/") ? true : false,
         isBack:true,
       },
-      {
-        path: `/digit-ui/employee/pt/applicationsearch/application-details/${sessionStorage.getItem("applicationNoinAppDetails")}`,
-        content: t("PTR_APPLICATION_TITLE"),
-        show: location.pathname.includes("/pt/application-details/") || location.pathname.includes("/pt/applicationsearch/application-details/") ? true : false,
-      },
+      
       {
         path: "/digit-ui/employee/pt/payment-details/",
         content: fromScreen ? `${t(fromScreen)} / ${t("PT_PAYMENT_HISTORY")
@@ -139,11 +109,7 @@ const EmployeeApp = ({ path, url, userType }) => {
         show: location.pathname.includes("/pt/ptsearch/payment-details") || location.pathname.includes("/pt/payment-details") ? true : false,
         isBack:fromScreen && true,
       },
-      {
-        path: "/digit-ui/employee/pt/assessment-details/",
-        content: t("PT_ASSESS_PROPERTY"),
-        show: location.pathname.includes("pt/ptsearch/assessment-details") ? true : false,
-      },
+      
     ];
   
     return <BreadCrumb style={isMobile?{display:"flex"}:{}}  spanStyle={{maxWidth:"min-content"}} crumbs={crumbs} />;
@@ -151,14 +117,11 @@ const EmployeeApp = ({ path, url, userType }) => {
 
   const NewApplication = Digit?.ComponentRegistryService?.getComponent("PTNewApplication");
   const ApplicationDetails = Digit?.ComponentRegistryService?.getComponent("ApplicationDetails");
-  const PropertyDetails = Digit?.ComponentRegistryService?.getComponent("PTPropertyDetails");
-  const AssessmentDetails = Digit?.ComponentRegistryService?.getComponent("PTAssessmentDetails");
+
   const EditApplication = Digit?.ComponentRegistryService?.getComponent("PTEditApplication");
   const Response = Digit?.ComponentRegistryService?.getComponent("PTResponse");
-  const TransferOwnership = Digit?.ComponentRegistryService?.getComponent("PTTransferOwnership");
   const DocsRequired = Digit?.ComponentRegistryService?.getComponent("PTDocsRequired");
   const isRes = window.location.href.includes("ptr/response");
-  const isLocation = window.location.href.includes("pt") || window.location.href.includes("application");
   const isNewRegistration = window.location.href.includes("new-application") || window.location.href.includes("modify-application") || window.location.href.includes("ptr/application-details");
   return (
     <Switch>
@@ -187,18 +150,10 @@ const EmployeeApp = ({ path, url, userType }) => {
           />
           <PrivateRoute path={`${path}/new-application`} component={() => <NewApplication parentUrl={url} />} />
           <PrivateRoute path={`${path}/application-details/:id`} component={() => <ApplicationDetails parentRoute={path} />} />
-          <PrivateRoute path={`${path}/property-details/:id`} component={() => <PropertyDetails parentRoute={path} />} />
           <PrivateRoute path={`${path}/applicationsearch/application-details/:id`} component={() => <ApplicationDetails parentRoute={path} />} />
-          <PrivateRoute path={`${path}/ptsearch/property-details/:id`} component={() => <PropertyDetails parentRoute={path} />} />
           <PrivateRoute path={`${path}/payment-details/:id`} component={() => <PaymentDetails parentRoute={path} />} />
           <PrivateRoute path={`${path}/ptsearch/payment-details/:id`} component={() => <PaymentDetails parentRoute={path} />} />
-          <PrivateRoute path={`${path}/assessment-details/:id`} component={() => <AssessmentDetails parentRoute={path} />} />
-          <PrivateRoute path={`${path}/ptsearch/assessment-details/:id`} component={() => <AssessmentDetails parentRoute={path} />} />
-          <PrivateRoute path={`${path}/modify-application/:id`} component={() => <EditApplication />} />
-          {/**/}
           <PrivateRoute path={`${path}/response`} component={(props) => <Response {...props} parentRoute={path} />} />
-          <PrivateRoute path={`${path}/property-mutate/:id`} component={() => <TransferOwnership parentRoute={path} />} />
-          <PrivateRoute path={`${path}/property-mutate-docs-required/:id`} component={() => <DocsRequired parentRoute={path} />} />
           <PrivateRoute path={`${path}/search`} component={(props) => <Search {...props} t={t} parentRoute={path} />} />
           <PrivateRoute
             path={`${path}/searchold`}
@@ -214,7 +169,6 @@ const EmployeeApp = ({ path, url, userType }) => {
             )}
           />
           <PrivateRoute path={`${path}/application-search`} component={(props) => <SearchApp {...props} parentRoute={path} />} />
-          <PrivateRoute path={`${path}/ulb-assesment`} component={(props) => <UlbAssesment {...props} parentRoute={path} />} />
         </div>
       </React.Fragment>
     </Switch>
