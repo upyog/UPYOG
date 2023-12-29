@@ -10,7 +10,7 @@
 		<version>2.2.6.RELEASE</version>
 	</parent>
 	<groupId>org.egov</groupId>
-	<artifactId>property-services</artifactId>
+	<artifactId>pet-services</artifactId>
 	<version>1.1.8-SNAPSHOT</version>
 	<name>egov-pt-registry</name>
 	<properties>
@@ -154,13 +154,13 @@
 				<configuration>
 					<jsonLibrary>jackson2</jsonLibrary>
 					<classes>
-						<class>org.egov.pt.web.contracts.AssessmentRequest</class>
-						<class>org.egov.pt.web.contracts.AssessmentResponse</class>
-						<class>org.egov.pt.web.contracts.PropertyRequest</class>
-						<class>org.egov.pt.web.contracts.PropertyResponse</class>
+						<class>org.egov.ptr.web.contracts.AssessmentRequest</class>
+						<class>org.egov.ptr.web.contracts.AssessmentResponse</class>
+						<class>org.egov.ptr.web.contracts.PropertyRequest</class>
+						<class>org.egov.ptr.web.contracts.PropertyResponse</class>
 					</classes>
 					<customTypeMappings>
-						<customTypeMapping>org.egov.pt.models.enums.Source:PropertySource</customTypeMapping>
+						<customTypeMapping>org.egov.ptr.models.enums.Source:PropertySource</customTypeMapping>
 						<customTypeMapping>org.egov.common.contract.request.User:User</customTypeMapping>
 						<customTypeMapping>org.egov.common.contract.request.RequestInfo:RequestInfo</customTypeMapping>
 						<customTypeMapping>org.egov.common.contract.response.ResponseInfo:ResponseInfo</customTypeMapping>
