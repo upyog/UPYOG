@@ -6,17 +6,21 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import org.egov.common.contract.request.User;
 
 import javax.validation.Valid;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A Object which holds the basic info about the revenue assessment for which the demand is generated like module name, consumercode, owner, etc.
  */
 
 @Data
-//@NoArgsConstructor
+@NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class Demand   {
@@ -49,7 +53,7 @@ public class Demand   {
     @Builder.Default
     @JsonProperty("demandDetails")
     @Valid
-    private DemandDetail demandDetails;
+    private List<DemandDetail> demandDetails = new ArrayList<>();
 
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails;
