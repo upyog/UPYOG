@@ -52,6 +52,8 @@ public class PetApplicationRowMapper implements ResultSetExtractor<List<PetRegis
 				addDocToPetApplication(rs,petRegistrationApplication);
 				 
 				 
+			}else {
+				addDocToPetApplication(rs,petRegistrationApplication);
 			}
 			addPetRegistrationDetails(rs, petRegistrationApplication);
 			petRegistrationApplicationMap.put(uuid, petRegistrationApplication);

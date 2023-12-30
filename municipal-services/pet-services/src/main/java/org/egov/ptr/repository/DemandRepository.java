@@ -37,6 +37,8 @@ public class DemandRepository {
         StringBuilder url = new StringBuilder(config.getBillingHost());
         url.append(config.getDemandCreateEndpoint());
         DemandRequest request = new DemandRequest(requestInfo,demand);
+        System.out.println("Request object for fetchResult: "+ request);
+        System.out.println("URL for fetchResult: "+ url);
         Object result = serviceRequestRepository.fetchResult(url,request);
         DemandResponse response = null;
         try{

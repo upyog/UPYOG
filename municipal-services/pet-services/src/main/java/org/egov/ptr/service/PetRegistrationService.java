@@ -120,10 +120,9 @@ public class PetRegistrationService {
         // Enrich application upon update
         enrichmentService.enrichPetApplicationUponUpdate(petRegistrationRequest);
 
-        RequestInfo req = new RequestInfo();
         if(petRegistrationRequest.getPetRegistrationApplications().get(0).getWorkflow().getAction().equals("APPROVE")){
         	System.out.println("In approve case");
-        demandService.createDemand(req,petRegistrationRequest);
+        demandService.createDemand(petRegistrationRequest);
         }
         wfService.updateWorkflowStatus(petRegistrationRequest);
 

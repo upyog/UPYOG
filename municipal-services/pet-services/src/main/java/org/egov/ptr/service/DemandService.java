@@ -7,6 +7,7 @@ import org.egov.common.contract.request.User;
 import org.egov.ptr.config.PetConfiguration;
 import org.egov.ptr.models.Demand;
 import org.egov.ptr.models.DemandDetail;
+import org.egov.ptr.models.PetRegistrationApplication;
 import org.egov.ptr.models.PetRegistrationRequest;
 import org.egov.ptr.repository.DemandRepository;
 import org.egov.ptr.repository.ServiceRequestRepository;
@@ -37,21 +38,24 @@ public class DemandService {
 
 
 
-	public List<Demand> createDemand(RequestInfo requestInfo, PetRegistrationRequest petReq) {
+	public List<Demand> createDemand( PetRegistrationRequest petReq) {
 		String tenantId = petReq.getPetRegistrationApplications().get(0).getTenantId();
 		String consumerCode = petReq.getPetRegistrationApplications().get(0).getApplicationNumber();
-		
-		DemandDetail demandDetails = DemandDetail.builder().collectionAmount(null).taxAmount(BigDecimal.valueOf(500.00))
-				.taxHeadMasterCode("PET_REGISTRATION_FEE").tenantId(null).build();
+		PetRegistrationApplication petApplication = petReq.getPetRegistrationApplications().get(0);
+		User owner = User.builder().name(petApplication.getApplicantName()).emailId(petApplication.getEmailId())
+				.mobileNumber(petApplication.getMobileNumber()).tenantId(petApplication.getTenantId()).build();
+		List<DemandDetail> demandDetails = new LinkedList<>();
+		demandDetails.add(DemandDetail.builder().collectionAmount(BigDecimal.ZERO).taxAmount(BigDecimal.valueOf(500.00))
+				.taxHeadMasterCode("PET_REGISTRATION_FEE").tenantId(null).build());
 
-		Demand demand = Demand.builder().consumerCode(consumerCode).demandDetails(demandDetails).payer(petReq.getRequestInfo().getUserInfo())
+		Demand demand = Demand.builder().consumerCode(consumerCode).demandDetails(demandDetails).payer(owner)
 				.minimumAmountPayable(BigDecimal.valueOf(500.00)).tenantId(tenantId).taxPeriodFrom(Long.valueOf("1680307199000")).taxPeriodTo(Long.valueOf("1711929599000"))
 				.consumerType("ptr").businessService("pet-services").additionalDetails(null).build();
 		System.out.println("Demand details: "+demand);
 		List<Demand> demands = new ArrayList<>();
 		demands.add(demand);
 		
-		return demandRepository.saveDemand(requestInfo, demands);
+		return demandRepository.saveDemand(petReq.getRequestInfo(), demands);
 	}
 
 	
