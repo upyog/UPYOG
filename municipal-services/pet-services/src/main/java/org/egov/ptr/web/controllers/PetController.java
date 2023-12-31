@@ -28,7 +28,7 @@ import io.swagger.annotations.ApiParam;
 //allowedHeaders = {"Authorization", "Origin"}, 
 //origins = {"http://localhost:3000", "*"} )
 @CrossOrigin(
-	    origins = {"http://localhost:3000"},
+	    origins = {"http://localhost:3000","*"},
 	    allowedHeaders = {"Authorization", "Origin", "Content-Type", "Accept"},
 	    exposedHeaders = {"Access-Control-Allow-Origin", "Access-Control-Allow-Credentials", "X-Get-Header"},
 	    methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE},
