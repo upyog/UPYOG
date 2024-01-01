@@ -52,6 +52,7 @@ const PTApplicationDetails = () => {
   
   let  pet_details = (PetRegistrationApplications && PetRegistrationApplications.length > 0 && PetRegistrationApplications[0]) || {};
   const application =  pet_details;
+  console.log("deails",pet_details)
   sessionStorage.setItem("ptr-property", JSON.stringify(application));
 
   // useMemo(() => {
@@ -110,38 +111,7 @@ const PTApplicationDetails = () => {
      pet_details.workflow = workflow;
   }
 
-  if ( pet_details &&  pet_details.owners &&  pet_details.owners.length > 0) {
-    let ownersTemp = [];
-    let owners = [];
-     pet_details.owners.map((owner) => {
-      owner.documentUid = owner.documents ? owner.documents[0].documentUid : "NA";
-      owner.documentType = owner.documents ? owner.documents[0].documentType : "NA";
-      if (owner.status == "ACTIVE") {
-        ownersTemp.push(owner);
-      } else {
-        owners.push(owner);
-      }
-    });
-     pet_details.ownersInit = owners;
-     pet_details.ownersTemp = ownersTemp;
-  }
   
-
-  if (auditResponse && Array.isArray(get(auditResponse, "PetRegistrationApplications", [])) && get(auditResponse, "PetRegistrationApplications", []).length > 0) {
-    const petAudit = get(auditResponse, "PetRegistrationApplications", []);
-    const petIndex =  pet_details.status == "ACTIVE" ? 1 : 0;
-    
-    const previousActiveProperty = petAudit
-      .filter(( pet_details) =>  pet_details.status == "ACTIVE")
-      .sort((x, y) => y.auditDetails.lastModifiedTime - x.auditDetails.lastModifiedTime)[petIndex];
-     pet_details.ownershipCategoryInit = previousActiveProperty?.ownershipCategory;
-     pet_details.ownersInit = previousActiveProperty?.owners?.filter((owner) => owner.status == "ACTIVE");
-
-    const curWFpet = petAudit.sort((x, y) => y.auditDetails.lastModifiedTime - x.auditDetails.lastModifiedTime)[0];
-     pet_details.ownersTemp = curWFpet.owners.filter((owner) => owner.status == "ACTIVE");
-
-    
-  }
 
   
 
@@ -195,7 +165,7 @@ const PTApplicationDetails = () => {
   let dowloadOptions = [];
 
   dowloadOptions.push({
-    label: data?.PetRegistrationApplications?.[0]?.creationReason === "MUTATION" ? t("MT_APPLICATION") : t("PTR_APPLICATION_ACKNOWLEDGMENT"),
+    label: data?.PetRegistrationApplications?.[0]?.creationReason === "MUTATION" ? t("MT_APPLICATION") : t("PTR_PET_DOWNLOAD_ACK_FORM"),
     onClick: () => getAcknowledgementData(),
   });
   if (reciept_data && reciept_data?.Payments.length > 0 && recieptDataLoading == false)
@@ -245,7 +215,7 @@ const PTApplicationDetails = () => {
             <Row className="border-none" label={t("PTR_APPLICANT_NAME")} text={pet_details?.applicantName || t("CS_NA")} />
             <Row className="border-none" label={t("PTR_FATHER/HUSBAND_NAME")} text={pet_details?.fatherName || t("CS_NA")} />
             <Row className="border-none" label={t("PTR_APPLICANT_MOBILE_NO")} text={pet_details?.mobileNumber || t("CS_NA")} />
-            <Row className="border-none" label={t("PTR_APPLICANT_EMAILID")} text={pet_details?.doorNo || t("CS_NA")} />
+            <Row className="border-none" label={t("PTR_APPLICANT_EMAILID")} text={pet_details?.emailId || t("CS_NA")} />
           </StatusTable>
 
           <CardSubHeader style={{ fontSize: "24px" }}>{t("PTR_PET_DETAILS_HEADER")}</CardSubHeader>

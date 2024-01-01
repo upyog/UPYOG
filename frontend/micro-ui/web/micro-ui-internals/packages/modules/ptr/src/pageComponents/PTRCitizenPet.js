@@ -37,6 +37,8 @@ const PTRCitizenPet = ({ t, config, onSelect, userType, formData, ownerIndex }) 
     (formData.pets && formData.pets[index] && formData.pets[index].lastVaccineDate) || formData?.pets?.lastVaccineDate || ""
   );
 
+  console.log("fomdaa ", formData)
+
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();
 

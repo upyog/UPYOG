@@ -102,6 +102,10 @@ const getAssessmentInfo = (application, t) => {
     // { title: t("PT_ASSESMENT_INFO_NO_OF_FLOOR"), value: t(application?.noOfFloors) || t("CS_NA") },
     { title: t("PTR_VACCINATED_DATE"), value: application?.petDetails.lastVaccineDate },
     { title: t("PTR_VACCINATION_NUMBER"), value: application?.petDetails.vaccinationNumber },
+    { title: t("PTR_DOCTOR_NAME"), value: application?.petDetails.doctorName },
+    { title: t("PTR_CLINIC_NAME"), value: application?.petDetails.clinicName },
+
+
   ];
   // application.units = application?.units?.filter((unit) => unit.active == true) || [];
   // let flrno,
