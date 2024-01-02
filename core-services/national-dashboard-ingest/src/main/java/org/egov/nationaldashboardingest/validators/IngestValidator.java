@@ -155,7 +155,7 @@ public class IngestValidator {
         validateStringNotNumeric(ingestData.getRegion());
         validateStringNotNumeric(ingestData.getState());
         if(ingestData.getWard().contains(":"))
-        	ingestData.setWard(ingestData.getWard().replace(":",""));
+        	ingestData.setWard(ingestData.getWard().replace(":"," "));
 		
         ingestData.setState(toCamelCase(ingestData.getState()));
 
@@ -514,6 +514,8 @@ public class IngestValidator {
         IngestAckData hashedData = new IngestAckData();
         List<AckEntity> ackEntityList = new ArrayList<>();
         ingestData.forEach(data -> {
+	    if(data.getWard().contains(":"))
+        	 data.setWard(data.getWard().replace(":"," "));
             StringBuilder currKeyData = new StringBuilder();
             currKeyData.append(data.getDate()).append(":").append(data.getModule()).append(":").append(data.getWard()).append(":").append(data.getUlb()).append(":").append(data.getRegion()).append(":").append(data.getState());
             log.info("Current key data: " + currKeyData);
