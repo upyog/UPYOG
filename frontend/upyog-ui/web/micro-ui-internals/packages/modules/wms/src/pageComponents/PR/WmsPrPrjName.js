@@ -6,15 +6,18 @@ import { useLocation } from "react-router-dom";
 const WmsPrPrjName = ({ t, config, onSelect, formData = {}, userType }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
 
-  const { data: Projects , isLoading } = Digit.Hooks.wms.useWmsMDMS(tenantId, "common-masters", "Project") || {};
-  const [project, setproject] = useState(formData?.SelectProject);
-  function SelectProject(value) {
-    setproject(value);
+  const { pathname: url } = useLocation();
+  const editScreen = url.includes("/modify-application/");
+  // const { data: Funds = [{Fund:"Fund1"},{Fund:"Fund2"}], isLoading } = Digit.Hooks.wms.useWmsMDMS(tenantId, "common-masters", "Fund") || {};
+  const [fund, setfund] = useState(formData?.WmsPrPrjName);
+  function WmsPrPrjName(value) {
+    setfund(value);
   }
 
   useEffect(() => {
-    onSelect(config.key, project);
-  }, [project]);
+   // alert(Funds)
+    onSelect(config.key, fund);
+  }, [fund]);
   const inputs = [
     {
       label: "WMS_PR_PROJECT_NAME_LABEL",
@@ -22,17 +25,16 @@ const WmsPrPrjName = ({ t, config, onSelect, formData = {}, userType }) => {
       name: "project_name",
       validation: {
         isRequired: true,
+        pattern: Digit.Utils.getPattern('Name'),
+        title: t("WMS_COMMON_NAME_INVALID"),
       },
       isMandatory: true,
     },
   ];
 
-  if (isLoading) {
-    return <Loader />;
-  }
-  else{
-    console.log("JK",Projects);
-  }
+  // if (isLoading) {
+  //   return <Loader />;
+  // }
 
   return inputs?.map((input, index) => {
     return (
@@ -43,9 +45,9 @@ const WmsPrPrjName = ({ t, config, onSelect, formData = {}, userType }) => {
         </CardLabel>
         <Dropdown
           className="form-field"
-          selected={project}
-          option={Projects?.["common-master"]?.Project}
-          select={SelectProject}
+          selected={fund}
+          option={[{code:"Project 1",Fund:"Project 1"},{code:"Project 2",Fund:"Project 2"}]}
+          select={WmsPrPrjName}
           optionKey="code"
           defaultValue={undefined}
           t={t}
