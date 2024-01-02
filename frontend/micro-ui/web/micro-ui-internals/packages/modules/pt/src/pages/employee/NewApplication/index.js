@@ -217,7 +217,7 @@ const NewApplication = () => {
     />
     <div>
     { showToast &&   <Modal
-    headerBarMain={<Heading label={"Property Alredy exist"} />}
+    headerBarMain={<Heading label={t("CR_PROPERTY_NUMBER")} />}
     headerBarEnd={<CloseBtn onClick={closeModal} />}
     actionCancelLabel={"Cancel"}
     actionCancelOnSubmit={closeModal}
