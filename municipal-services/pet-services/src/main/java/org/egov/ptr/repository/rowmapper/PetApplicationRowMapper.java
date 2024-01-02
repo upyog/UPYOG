@@ -38,7 +38,7 @@ public class PetApplicationRowMapper implements ResultSetExtractor<List<PetRegis
 						.lastModifiedTime(lastModifiedTime).build();
 				PetDetails petdetails = PetDetails.builder().id(rs.getString("ptid")).petName(rs.getString("ptpetName"))
 						.petType(rs.getString("ptpetType")).breedType(rs.getString("ptbreedType")).clinicName(rs.getString("ptclinicName"))
-						.doctorName(rs.getString("ptdoctorName")).lastVaccineDate(rs.getString("ptlastVaccineDate"))
+						.doctorName(rs.getString("ptdoctorName")).lastVaccineDate(rs.getString("ptlastVaccineDate")).vaccinationNumber(rs.getString("ptvaccinationNumber"))
 						.petAge(rs.getString("ptpetAge")).petGender(rs.getString("ptpetGender")).build();
 				
 				petRegistrationApplication = PetRegistrationApplication.builder()

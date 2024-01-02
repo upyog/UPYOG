@@ -12,7 +12,7 @@ public class PetApplicationQueryBuilder {
 
     private static final String BASE_PTR_QUERY = " SELECT ptr.id as pid, ptr.tenantid as ptenantid, ptr.applicationnumber as papplicationnumber, ptr.applicantname as papplicantname, ptr.fathername as pfathername, ptr.mobileNumber as pmobileNumber, ptr.emailId as pemailId, ptr.createdby as pcreatedby, ptr.lastmodifiedby as plastmodifiedby, ptr.createdtime as pcreatedtime, ptr.lastmodifiedtime as plastmodifiedtime, ";
 
-    private static final String PET_SELECT_QUERY = " pet.id as ptid, pet.petName as ptpetname, pet.petType as ptpetType, pet.breedType as ptbreedtype, pet.petAge as ptpetage, pet.petGender as ptpetgender, pet.clinicName as ptclinicname, pet.doctorName as ptdoctorname, pet.lastVaccineDate as ptlastvaccinedate, pet.petDetailsId as ptpetdetails, ";
+    private static final String PET_SELECT_QUERY = " pet.id as ptid, pet.petName as ptpetname, pet.petType as ptpetType, pet.breedType as ptbreedtype, pet.petAge as ptpetage, pet.petGender as ptpetgender, pet.clinicName as ptclinicname, pet.doctorName as ptdoctorname, pet.lastVaccineDate as ptlastvaccinedate, pet.petDetailsId as ptpetdetails, pet.vaccinationNumber as ptvaccinationNumber";
     
     private static final String ADDRESS_SELECT_QUERY = " add.id as aid, add.tenantid as atenantid, add.doorno as adoorno, add.latitude as alatitude, add.longitude as alongitude, add.buildingname as abuildingname, add.addressid as aaddressid, add.addressnumber as aaddressnumber, add.type as atype, add.addressline1 as aaddressline1, add.addressline2 as aaddressline2, add.landmark as alandmark, add.street as astreet, add.city as acity, add.locality as alocality, add.pincode as apincode, add.detail as adetail, add.registrationid as aregistrationid, ";
 
