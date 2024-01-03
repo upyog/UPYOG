@@ -122,7 +122,7 @@ public class IngestValidator {
         String uuid = requestInfo.getUserInfo().getUuid();
   
         Map<String,String> userUUID=applicationProperties.getNationalDashboardUser();
-        if(!userUUID.get(data.getState()).contains(uuid)) {
+        if(!userUUID.get("SUPERUUID").equalsIgnoreCase(uuid) && !userUUID.get(data.getState()).contains(uuid)) {
                  throw new CustomException("EG_CROSS_STATE_DATA_INGEST", "Employee of one state cannot insert data of another State!!");
                
         }
