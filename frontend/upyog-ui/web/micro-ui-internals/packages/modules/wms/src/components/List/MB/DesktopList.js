@@ -134,7 +134,7 @@ const DesktopList = ({ tableConfig, filterComponent, ...props }) => {
             parentRoute={props.parentRoute}
             allLinks={[
               {
-                text: t("WMS_COMMON_CREATE_HEADER"),
+                text: t("WMS_MB_COMMON_CREATE_HEADER"),
                 link: "/upyog-ui/citizen/wms/mb-create",
                 businessService: "WMS",
                 roles: ["CITIZEN"],

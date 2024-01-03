@@ -72342,6 +72342,12 @@ export const LocalizationService = {
             "locale": "en_IN"
         },
         {
+            "code": "WMS_MB_COMMON_CREATE_HEADER",
+            "message": "Measurement Entry",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
             "code": "WMS_NEW_MB_FORM_HEADER",
             "message": "Measurement Book details",
             "module": "rainmaker-common",
@@ -72349,7 +72355,7 @@ export const LocalizationService = {
         },
         {
             "code": "WMS_MB_ID_LABEL",
-            "message": "PM ID",
+            "message": "MB ID",
             "module": "rainmaker-common",
             "locale": "en_IN"
         },
