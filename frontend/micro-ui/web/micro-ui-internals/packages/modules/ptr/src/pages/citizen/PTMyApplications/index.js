@@ -74,7 +74,7 @@ export const PTMyApplications = () => {
       <p style={{ marginLeft: "16px", marginTop: "16px" }}>
         {t("PTR_TEXT_NOT_ABLE_TO_FIND_THE_APPLICATION")}{" "}
         <span className="link" style={{ display: "block" }}>
-          <Link to="/digit-ui/citizen/ptr/petservice/new-application/info">{t("PTR_COMMON_CLICK_HERE_TO_REGISTER_NEW_PROPERTY")}</Link>
+          <Link to="/digit-ui/citizen/ptr/petservice/new-application/info">{t("PTR_COMMON_CLICK_HERE_TO_REGISTER_NEW_PET")}</Link>
         </span>
       </p>
     </React.Fragment>

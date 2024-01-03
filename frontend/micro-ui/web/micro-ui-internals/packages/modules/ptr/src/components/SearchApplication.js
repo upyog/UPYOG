@@ -24,15 +24,15 @@
       const applicationStatuses = [
           {
               code: "ACTIVE",
-              i18nKey: "WF_PT_ACTIVE"
+              i18nKey: "WF_PTR_ACTIVE"
           },
           {
               code: "INACTIVE",
-              i18nKey: "WF_PT_INACTIVE"
+              i18nKey: "WF_PTR_INACTIVE"
           },
           {
               code: "INWORKFLOW",
-              i18nKey: "WF_PT_INWORKFLOW"
+              i18nKey: "WF_PTR_INWORKFLOW"
           },
       ]
 

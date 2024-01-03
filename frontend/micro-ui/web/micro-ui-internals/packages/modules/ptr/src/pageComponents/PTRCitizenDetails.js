@@ -10,22 +10,24 @@ const PTRCitizenDetails
   // const editScreen = url.includes("/modify-application/");
   //const mutationScreen = url.includes("/property-mutation/");
 
-  let index =  window.location.href.charAt(window.location.href.length - 1);
+  let index = 0
+  // window.location.href.charAt(window.location.href.length - 1);
+  console.log("index in detail page ",  index)
+  // 
   let validation = {};
-  //this is for blam checking
 
-  const [applicantName, setName] = useState((formData.owners && formData.owners[index] && formData.owners[index].applicantName) || formData?.owners?.applicantName || "");
-  const [emailId, setEmail] = useState((formData.owners && formData.owners[index] && formData.owners[index].emailId) || formData?.owners?.emailId || "");
+  const [applicantName, setName] = useState((formData.ownerss && formData.ownerss[index] && formData.ownerss[index].applicantName) || formData?.ownerss?.applicantName || "");
+  const [emailId, setEmail] = useState((formData.ownerss && formData.ownerss[index] && formData.ownerss[index].emailId) || formData?.ownerss?.emailId || "");
   const [mobileNumber, setMobileNumber] = useState(
-    (formData.owners && formData.owners[index] && formData.owners[index].mobileNumber) || formData?.owners?.mobileNumber || ""
+    (formData.ownerss && formData.ownerss[index] && formData.ownerss[index].mobileNumber) || formData?.ownerss?.mobileNumber || ""
   );
   const [alternateNumber, setAltMobileNumber] = useState(
-    (formData.owners && formData.owners[index] && formData.owners[index].alternateNumber) || formData?.owners?.alternateNumber || ""
+    (formData.ownerss && formData.ownerss[index] && formData.ownerss[index].alternateNumber) || formData?.ownerss?.alternateNumber || ""
   );
 
   
   const [fatherName, setFatherOrHusbandName] = useState(
-    (formData.owners && formData.owners[index] && formData.owners[index].fatherName) || formData?.owners?.fatherName || ""
+    (formData.ownerss && formData.ownerss[index] && formData.ownerss[index].fatherName) || formData?.ownerss?.fatherName || ""
   );
   
   // const isUpdateProperty = formData?.isUpdateProperty || false;
@@ -57,7 +59,7 @@ const PTRCitizenDetails
   
 
   const goNext = () => {
-    let owner = formData.owners && formData.owners[index];
+    let owner = formData.ownerss && formData.ownerss[index];
     let ownerStep;
     if (userType === "citizen") {
       ownerStep = { ...owner, applicantName, mobileNumber,alternateNumber, fatherName, emailId};

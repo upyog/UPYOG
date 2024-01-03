@@ -18,15 +18,15 @@ import { stringReplaceAll, CompareTwoObjects } from "../utils";
 const createPtrDetails = () => ({
 
   doctorName: "",
-  vaccinationNumber:"",
+  vaccinationNumber: "",
   lastVaccineDate: "",
   petAge: "",
   petType: "",
-  breedType:"",
-  clinicName:"",
+  breedType: "",
+  clinicName: "",
   petName: "",
   petGender: "",
-  
+
   key: Date.now(),
 });
 
@@ -39,40 +39,40 @@ const PTRPetdetails = ({ config, onSelect, userType, formData, setError, formSta
 
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();
-  
-  
-  
 
-  const { data: Menu } = Digit.Hooks.ptr.usePTRPetMDMS(stateId, "PetService", "PetType");  
-  
-  const { data: Breed_Type } = Digit.Hooks.ptr.useBreedTypeMDMS(stateId, "PetService", "BreedType" );  // hooks for breed type
+
+
+
+  const { data: Menu } = Digit.Hooks.ptr.usePTRPetMDMS(stateId, "PetService", "PetType");
+
+  const { data: Breed_Type } = Digit.Hooks.ptr.useBreedTypeMDMS(stateId, "PetService", "BreedType");  // hooks for breed type
   //console.log("breeedddddd",Breed_Type)
   let menu = [];   //variable name for pettype
-  let breed_type = [];  
-    // variable name for breedtype
+  let breed_type = [];
+  // variable name for breedtype
 
   Menu &&
     Menu.map((petone) => {
       menu.push({ i18nKey: `PTR_PET_${petone.code}`, code: `${petone.code}`, value: `${petone.name}` });
-  });
+    });
 
   //console.log("Menu", menu)
 
- 
 
-Breed_Type && 
-  Breed_Type.map((breedss) => {
-    if(breedss.PetType== pets[0]?.petType?.code) {
-      breed_type.push({
-        i18nKey: `PTR_BREED_TYPE_${breedss.code}`,
-        code: `${breedss.code}`,  
-        value: `${breedss.name}` 
-      });
-    }
-  
-   });
 
-  
+  Breed_Type &&
+    Breed_Type.map((breedss) => {
+      if (breedss.PetType == pets[0]?.petType?.code) {
+        breed_type.push({
+          i18nKey: `PTR_BREED_TYPE_${breedss.code}`,
+          code: `${breedss.code}`,
+          value: `${breedss.name}`
+        });
+      }
+
+    });
+
+
 
 
   const { data: Pet_Sex } = Digit.Hooks.ptr.usePTRGenderMDMS(stateId, "common-masters", "GenderType");       // this hook is for Pet gender type { male, female}
@@ -80,19 +80,19 @@ Breed_Type &&
   let pet_sex = [];    //for pet gender 
 
   Pet_Sex &&
-  Pet_Sex.map((ptrgenders) => {                                      
-    if(ptrgenders.code !=="TRANSGENDER")
-    pet_sex.push({ i18nKey: `PTR_GENDER_${ptrgenders.code}`, code: `${ptrgenders.code}`, name: `${ptrgenders.code}` });
+    Pet_Sex.map((ptrgenders) => {
+      if (ptrgenders.code !== "TRANSGENDER")
+        pet_sex.push({ i18nKey: `PTR_GENDER_${ptrgenders.code}`, code: `${ptrgenders.code}`, name: `${ptrgenders.code}` });
     });
 
-  
+
   useEffect(() => {
     onSelect(config?.key, pets);
     // we need to call the breed type hook here and apply the conditional expression to get the data according to selection 
 
   }, [pets]);
 
-  
+
 
 
   const commonProps = {
@@ -111,14 +111,14 @@ Breed_Type &&
     pet_sex
   };
 
-  return  (
+  return (
     <React.Fragment>
       {pets.map((pets, index) => (
         <OwnerForm key={pets.key} index={index} pets={pets} {...commonProps} />
       ))}
-      
+
     </React.Fragment>
-  ) 
+  )
 };
 
 const OwnerForm = (_props) => {
@@ -138,12 +138,12 @@ const OwnerForm = (_props) => {
     menu,
     breed_type,
     pet_sex
-    
+
   } = _props;
-  
+
   const [showToast, setShowToast] = useState(null);
   const {
-    control,formState: localFormState,watch,setError: setLocalError,clearErrors: clearLocalErrors,setValue,trigger,} = useForm();
+    control, formState: localFormState, watch, setError: setLocalError, clearErrors: clearLocalErrors, setValue, trigger, } = useForm();
   const formValue = watch();
   const { errors } = localFormState;
   const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -156,7 +156,7 @@ const OwnerForm = (_props) => {
   const [part, setPart] = React.useState({});
 
   useEffect(() => {
-    let _ownerType = isIndividualTypeOwner 
+    let _ownerType = isIndividualTypeOwner
 
     if (!_.isEqual(part, formValue)) {
       setPart({ ...formValue });
@@ -192,7 +192,7 @@ const OwnerForm = (_props) => {
               rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
               render={(props) => (
                 <Dropdown
-                  
+
                   className="form-field"
                   selected={props.value}
                   select={props.onChange}
@@ -201,11 +201,11 @@ const OwnerForm = (_props) => {
                   optionKey="i18nKey"
                   t={t}
                 />
-                 
+
               )}
-              
+
             />
-            
+
           </LabelFieldPair>
           <CardLabelError style={errorStyle}>{localFormState.touched.petType ? errors?.petType?.message : ""}</CardLabelError>
           <LabelFieldPair>
@@ -244,7 +244,7 @@ const OwnerForm = (_props) => {
                 render={(props) => (
                   <TextInput
                     value={props.value}
-                   // disable={isEditScreen}
+                    // disable={isEditScreen}
                     autoFocus={focusIndex.index === pets?.key && focusIndex.type === "petName"}
                     onChange={(e) => {
                       props.onChange(e.target.value);
@@ -276,7 +276,7 @@ const OwnerForm = (_props) => {
                 render={(props) => (
                   <TextInput
                     value={props.value}
-                   // disable={isEditScreen}
+                    // disable={isEditScreen}
                     autoFocus={focusIndex.index === pets?.key && focusIndex.type === "petAge"}
                     onChange={(e) => {
                       props.onChange(e);
@@ -286,11 +286,23 @@ const OwnerForm = (_props) => {
                     onBlur={props.onBlur}
                     placeholder="in months"
                   />
+
                 )}
               />
+
             </div>
+
           </LabelFieldPair>
+          <div style={{textAlign: 'center'}}>
+            {Math.floor(watch('petAge') / 12)}
+            {Math.floor(watch('petAge') / 12) === 1 ? 'ptr_year' : 'ptr_years'}
+            &nbsp;
+            {watch('petAge') % 12}
+            {watch('petAge') % 12 === 1 ? 'ptr_month' : 'ptr_months'}
+          </div>
+          <br></br>
           <CardLabelError style={errorStyle}>{localFormState.touched.petAge ? errors?.petAge?.message : ""}</CardLabelError>
+
 
           <LabelFieldPair>
             <CardLabel className="card-label-smaller">{t("PTR_PET_SEX") + " *"}</CardLabel>
@@ -305,7 +317,7 @@ const OwnerForm = (_props) => {
                   selected={props.value}
                   select={props.onChange}
                   onBlur={props.onBlur}
-                 // disable={isEditScreen}
+                  // disable={isEditScreen}
                   option={pet_sex}
                   optionKey="i18nKey"
                   t={t}
@@ -329,7 +341,7 @@ const OwnerForm = (_props) => {
                 render={(props) => (
                   <TextInput
                     value={props.value}
-                   // disable={isEditScreen}
+                    // disable={isEditScreen}
                     autoFocus={focusIndex.index === pets?.key && focusIndex.type === "doctorName"}
                     onChange={(e) => {
                       props.onChange(e.target.value);
@@ -358,7 +370,7 @@ const OwnerForm = (_props) => {
                 render={(props) => (
                   <TextInput
                     value={props.value}
-                   // disable={isEditScreen}
+                    // disable={isEditScreen}
                     autoFocus={focusIndex.index === pets?.key && focusIndex.type === "clinicName"}
                     onChange={(e) => {
                       props.onChange(e.target.value);
@@ -387,12 +399,12 @@ const OwnerForm = (_props) => {
                 }}
                 render={(props) => (
                   <TextInput
-                      type="date"
-                      value={props.value}
-                      onChange={(e) => {
-                          props.onChange(e.target.value);
-                      }}
-                      max={new Date().toISOString().split('T')[0]}
+                    type="date"
+                    value={props.value}
+                    onChange={(e) => {
+                      props.onChange(e.target.value);
+                    }}
+                    max={new Date().toISOString().split('T')[0]}
                   />
                 )}
               />
@@ -414,7 +426,7 @@ const OwnerForm = (_props) => {
                 render={(props) => (
                   <TextInput
                     value={props.value}
-                   // disable={isEditScreen}
+                    // disable={isEditScreen}
                     autoFocus={focusIndex.index === pets?.key && focusIndex.type === "vaccinationNumber"}
                     onChange={(e) => {
                       props.onChange(e.target.value);

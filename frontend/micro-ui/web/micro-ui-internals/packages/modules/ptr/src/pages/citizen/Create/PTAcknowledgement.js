@@ -8,7 +8,7 @@ import { convertToProperty } from "../../../utils";
 const GetActionMessage = (props) => {
   const { t } = useTranslation();
   if (props.isSuccess) {
-    return !window.location.href.includes("edit-application") ? t("CS_PTR_APPLICATION_SUCCESS") : t("CS_PTR_UPDATE_APPLICATION_SUCCESS");
+    return !window.location.href.includes("edit-application") ? t("ES_PTR_RESPONSE_CREATE_ACTION") : t("CS_PTR_UPDATE_APPLICATION_SUCCESS");
   } else if (props.isLoading) {
     return !window.location.href.includes("edit-application") ? t("CS_PTR_APPLICATION_PENDING") : t("CS_PTR_UPDATE_APPLICATION_PENDING");
   } else if (!props.isSuccess) {
@@ -77,8 +77,8 @@ const PTAcknowledgement = ({ data, onSuccess }) => {
   ) : (
     <Card>
       <BannerPicker t={t} data={mutation.data} isSuccess={mutation.isSuccess} isLoading={mutation.isIdle || mutation.isLoading} />
-      {mutation.isSuccess && <CardText>{t("ES_PTR_RESPONSE_CREATE_ACTION")}</CardText>}
-      {!mutation.isSuccess && <CardText>{t("CS_PTR_RESPONSE_ERROR")}</CardText>}
+      {/* {mutation.isSuccess && <CardText>{t("ES_PTR_RESPONSE_CREATE_ACTION")}</CardText>} */}
+      {/* {!mutation.isSuccess && <CardText>{t("CS_PTR_RESPONSE_ERROR")}</CardText>} */}
       <StatusTable>
         {mutation.isSuccess && (
           <Row
