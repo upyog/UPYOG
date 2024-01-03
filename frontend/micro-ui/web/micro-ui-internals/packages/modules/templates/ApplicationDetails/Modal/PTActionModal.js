@@ -32,7 +32,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
     },
     { enabled: !action?.isTerminateState }
   );
-  const { isLoading: financialYearsLoading, data: financialYearsData } = Digit.Hooks.pt.useMDMS(
+  const { isLoading: financialYearsLoading, data: financialYearsData } = Digit.Hooks.pt.useMDMSV2(
     tenantId,
     businessService,
     "FINANCIAL_YEARLS",

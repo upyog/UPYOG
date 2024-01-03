@@ -54,7 +54,7 @@ const SubMenu = ({ item }) => {
         <div className={`sidebar-link  ${pathname === item?.navigationURL ? "active" : ""}`}>
           <div className="actions">
             {leftIcon}
-            {item.navigationURL?.indexOf("/digit-ui") === -1 ? (
+            {item.navigationURL?.indexOf("/digit-ui") === -1 && !item.navigationURL.includes("/workbench-ui")? (
               <a
                 data-tip="React-tooltip"
                 data-for={`jk-side-${getModuleName}`}
