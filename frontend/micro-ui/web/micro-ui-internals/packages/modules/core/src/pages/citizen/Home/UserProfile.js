@@ -74,7 +74,6 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
       usersResponse && usersResponse.user && usersResponse.user.length && setUserDetails(usersResponse.user[0]);
     }
   };
-  //console.log(getUserInfo)
 
   React.useEffect(() => {
     window.addEventListener("resize", () => setWindowWidth(window.innerWidth));
@@ -109,10 +108,7 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
   const closeFileUploadDrawer = () => setOpenUploadSide(false);
 
   const setUserName = (value) => {
-    console.log("namevalue",value)
-    //debugger
     setName(value);
-    
 
     if(!new RegExp(/^[a-zA-Z ]+$/i).test(value) || value.length === 0 || value.length > 50){
       setErrors({...errors, userName : {type: "pattern", message: t("CORE_COMMON_PROFILE_NAME_INVALID")}});
@@ -120,17 +116,6 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
       setErrors({...errors, userName : null})
     }
   }
-  //console.log("setUserName",setUserName)
-  
-  const setUserDOB = (value) => {
-    console.log("DOBvalue",value)
-    //debugger;
-    setDob(value);
-    
-  }
-  //console.log("setUserDOB",setUserDOB)
-
-  
 
   const setUserEmailAddress = (value) => {
     setEmail(value);
@@ -215,8 +200,7 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
 
       if (email.length && !(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email))) {
         throw JSON.stringify({ type: "error", message: t("CORE_COMMON_PROFILE_EMAIL_INVALID") });
-      }
-      
+      }     
 
       if (currentPassword.length || newPassword.length || confirmPassword.length) {
         if (newPassword !== confirmPassword) {
@@ -236,7 +220,6 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
 
       if (responseInfo && responseInfo.status === "200") {
         const user = Digit.UserService.getUser();
-        
 
         if (user) {
           Digit.UserService.setUser({
@@ -260,7 +243,6 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
           tenantId: tenant,
           type: "EMPLOYEE",
           username: userInfo?.userName,
-
           confirmPassword: confirmPassword,
         };
 
@@ -324,6 +306,7 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
   };
 
   if (loading) return <Loader></Loader>;
+
   return (
     <div className="user-profile">
       <section style={{ margin: userType === "citizen" ? "8px" : "24px",position:"relative" }}>
@@ -459,8 +442,6 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
                   {errors?.userName && <CardLabelError> {errors?.userName?.message} </CardLabelError>}
                 </div>
               </LabelFieldPair>
-              
-
                <LabelFieldPair>
                 <CardLabel style={editScreen ? { color: "#B1B4B6" } : {}}>{`${t("CORE_COMMON_PROFILE_EMAIL")}`}</CardLabel>
                 <div style={{ width: "100%" }}>
@@ -607,8 +588,7 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
                 <DatePicker date={userDetails?.dob} disable={true}  />
                  {/* {errors?.emailAddress && <CardLabelError> {errors?.emailAddress?.message} </CardLabelError>} */}
                 </div>
-              </LabelFieldPair>
-              
+              </LabelFieldPair>             
 
               <LabelFieldPair>
                 <div>

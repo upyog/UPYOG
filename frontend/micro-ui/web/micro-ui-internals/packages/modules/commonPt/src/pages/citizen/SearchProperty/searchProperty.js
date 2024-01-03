@@ -30,7 +30,6 @@ const SearchProperty = ({ config: propsConfig, onSelect, redirectToUrl }) => {
   allCities = allCities ? allCities : Digit.Hooks.tl.useTenants()?.sort((a, b) => a?.i18nKey?.localeCompare?.(b?.i18nKey));  
   if(window.location.href.includes("obps"))
   {
-    console.log("Using",Digit.SessionStorage.get("OBPS_TENANTS"))
     allCities = Digit.SessionStorage.get("OBPS_TENANTS")
   }
   const [cityCode, setCityCode] = useState();
@@ -43,7 +42,7 @@ const SearchProperty = ({ config: propsConfig, onSelect, redirectToUrl }) => {
     auth: true /*  to enable open search set false  */,
     configs: { enabled: Object.keys(searchData).length > 0, retry: false, retryOnMount: false, staleTime: Infinity },
   });
-console.log("allCities",allCities)
+
   useEffect(() => {
     if ( !(searchData?.filters?.mobileNumber && Object.values(searchData?.filters)?.filter(ob => ob !== undefined)?.length == 1) && 
       propertyData?.Properties.length > 0 &&

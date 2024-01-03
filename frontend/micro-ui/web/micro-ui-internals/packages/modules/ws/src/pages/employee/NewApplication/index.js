@@ -130,8 +130,7 @@ const NewApplication = () => {
     let waterAndSewerageLoader = false, waterLoader = false, sewerageLoader = false;
     if (payload?.water && payload?.sewerage) waterAndSewerageLoader = true;
     if (payload?.water && !payload?.sewerage) waterLoader = true;
-    if (!payload?.water && payload?.sewerage) sewerageLoader = true;
-    
+    if (!payload?.water && payload?.sewerage) sewerageLoader = true;   
     let waterConnection = { WaterConnection: payload ,disconnectRequest: false, reconnectRequest: false};
     let sewerageConnection = { SewerageConnection: payload ,disconnectRequest: false, reconnectRequest: false};
 

@@ -119,7 +119,6 @@ export const FormComposer = (props) => {
   );
 
   const isDisabled = props.isDisabled || false;
-  
   return (
     <form onSubmit={handleSubmit(onSubmit)}  onChange={(e)=> changeValue(e.target.name,e.target.value)}>
       <Card>

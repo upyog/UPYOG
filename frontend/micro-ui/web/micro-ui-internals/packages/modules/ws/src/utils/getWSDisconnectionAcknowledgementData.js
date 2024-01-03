@@ -104,7 +104,6 @@ import {
   
   
   const getWSDisconectionAcknowledgementData = async (application, property, tenantInfo, t) => {
-    console.log("application",application)
     const filesArray = application?.DisconnectionResponse?.documents?.map((value) => value?.fileStoreId);
     let res;
     if (filesArray) {

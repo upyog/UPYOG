@@ -37,7 +37,6 @@ const FormStep = ({
   var isDisable = isDisabled ? true : config.canDisable && Object.keys(errors).filter((i) => errors[i]).length;
 
   const inputs = config.inputs?.map((input, index) => {
-    console.log("input1234",input, config)
     if (input.type === "text") {  
       return (
         <React.Fragment key={index}>
@@ -99,7 +98,6 @@ const FormStep = ({
       );
       }
   });
- console.log("inputsinputsinputs",inputs)
 
   return (
     <form onSubmit={handleSubmit(goNext)}>

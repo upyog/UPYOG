@@ -124,7 +124,7 @@ import { convertDateToEpoch, convertEpochToDate, createPayloadOfWSDisconnection,
   if(isEnableLoader) {
     return <Loader/>
   }
-console.log("value.WSDisconnectionForm",value.WSDisconnectionForm)
+
   return(
     <React.Fragment>
     <Header styles={{fontSize:"32px"}}>{t("WS_COMMON_SUMMARY")}</Header>

@@ -134,7 +134,6 @@ const ActivateConnection = () => {
     const closeToastOfError = () => { setShowToast(null); };
 
     const onSubmit = async (data) => {
-        console.log("datadata",data)
         if(!canSubmit){
             setShowToast({ warning: true, message: "PLEASE_FILL_MANDATORY_DETAILS" });
             setTimeout(() => {
@@ -186,7 +185,7 @@ const ActivateConnection = () => {
               ]
               : []
         }
-        console.log("formData?.applicationType",formData?.applicationType)
+
         const reqDetails = filters?.service == "WATER"? formData?.applicationType === "WATER_RECONNECTION" ? { WaterConnection: formData, reconnectRequest:true, disconnectRequest:false } :{ WaterConnection: formData }: formData?.applicationType === "SEWERAGE_RECONNECTION" ? { SewerageConnection: formData ,reconnectRequest:true, disconnectRequest:false}:{ SewerageConnection: formData}
 
         if (mutate) {

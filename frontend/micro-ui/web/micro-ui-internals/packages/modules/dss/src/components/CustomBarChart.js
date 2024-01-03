@@ -7,7 +7,7 @@ import FilterContext from "./FilterContext";
 import NoData from "./NoData";
 import { checkCurrentScreen } from "./DSSCard";
 
-const formatValue = (value, symbol) => {
+const formatValue = (value, symbol,type) => {
   if (symbol?.toLowerCase() === "percentage") {
     /*   Removed by  percentage formatter.
     const Pformatter = new Intl.NumberFormat("en-IN", { maximumSignificantDigits: 3 });
@@ -15,24 +15,31 @@ const formatValue = (value, symbol) => {
     */
    
     return `${Number(value).toFixed()}`;
-  } else {
-    return value;
+  }
+  else if(type =="revenue")
+  {
+    return   Number(((value) / 1000000000).toFixed(2) || 0);
+  }
+  else if(type =="population")
+  {
+    return   Number(((value) / 100).toFixed(2) || 0);
+  }
+  else {
+    return  Number((value).toFixed(4) || 0);
   }
 };
-
+let flag= 0
+let flag2=0
 const CustomLabel = ({ x, y, name, stroke, value, maxValue ,data}) => {
   console.log("hhhhhh",maxValue,data)
+
   const currencyFormatter = new Intl.NumberFormat("en-IN", { currency: "INR" });
   const { t } = useTranslation();
-  let possibleValues = ["pttopPerformingStatesRevenue","ptbottomPerformingStatesRevenue","tltopPerformingStatesRevenue","tlbottomPerformingStatesRevenue","obpstopPerformingStatesRevenue","obpsbottomPerformingStatesRevenue","noctopPerformingStatesRevenue","nocbottomPerformingStatesRevenue","wstopPerformingStatesRevenue","wsbottomPerformingStatesRevenue"]
-if(data?.tabName == "Revenue" || possibleValues.includes(data?.id))
+  
+  let possibleValues = ["pttopPerformingStatesRevenue","ptbottomPerformingStatesRevenue","tltopPerformingStatesRevenue","tlbottomPerformingStatesRevenue","obpstopPerformingStatesRevenue","obpsbottomPerformingStatesRevenue","noctopPerformingStatesRevenue","nocbottomPerformingStatesRevenue","wstopPerformingStatesRevenue","wsbottomPerformingStatesRevenue","OverviewtopPerformingStates","OverviewbottomPerformingStates"]
+if( possibleValues.includes(data?.id) ) 
 {
-  console.log("reee",maxValue,name)
-  Object.keys(maxValue)?.forEach(key => {
-    console.log("ddddd",maxValue[key])
-    if(maxValue[key] > 10000000)
-    maxValue[key] =  `${((maxValue[key] / 1000000000).toFixed(2) || 0)}`;
-  });
+
   return (
     <>
       <text
@@ -45,6 +52,53 @@ if(data?.tabName == "Revenue" || possibleValues.includes(data?.id))
         style={{ fontSize: "medium", textAlign: "right", fontVariantNumeric: "proportional-nums" }}
       >
         {`₹ ${maxValue?.[t(name)]} ${t("ES_DSS_CR")}`}
+      </text>
+      <text x={x} y={y} dx={-200} dy={10}>
+        {t(`DSS_TB_${Digit.Utils.locale.getTransformedLocale(name)}`)}
+      </text>
+    </>
+  );
+}
+else if(data?.id.includes("GDP") )
+{
+  
+  Object.keys(maxValue)?.forEach(key => { 
+    console.log("reee123",maxValue[key],name)
+    maxValue[key] = maxValue[key];
+  });
+  return (
+    <>
+      <text
+        x={x}
+        y={y}
+        dx={0}
+        dy={30}
+        fill={stroke}
+        width="35"
+        style={{ fontSize: "medium", textAlign: "right", fontVariantNumeric: "proportional-nums" }}
+      >
+        {`${maxValue?.[t(name)]} %`}
+      </text>
+      <text x={x} y={y} dx={-200} dy={10}>
+        {t(`DSS_TB_${Digit.Utils.locale.getTransformedLocale(name)}`)}
+      </text>
+    </>
+  );
+}
+else if (data?.id.includes("Population") || data?.id.includes("Household"))
+{
+  return (
+    <>
+      <text
+        x={x}
+        y={y}
+        dx={0}
+        dy={30}
+        fill={stroke}
+        width="35"
+        style={{ fontSize: "medium", textAlign: "right", fontVariantNumeric: "proportional-nums" }}
+      >
+        {`₹ ${maxValue?.[t(name)]}`}
       </text>
       <text x={x} y={y} dx={-200} dy={10}>
         {t(`DSS_TB_${Digit.Utils.locale.getTransformedLocale(name)}`)}
@@ -105,17 +159,44 @@ const CustomBarChart = ({
     filters: value?.filters,
     moduleLevel: value?.moduleLevel || moduleCode,
   });
+  console.log("hhhhhhhh",data)
   const chartData = useMemo(() => {
     if (!response) return null;
-    setChartDenomination(response?.responseData?.data?.[0]?.headerSymbol);
+    console.log("ressssssssss",response?.responseData)
+    let possibleValues = ["pttopPerformingStatesRevenue","ptbottomPerformingStatesRevenue","tltopPerformingStatesRevenue","tlbottomPerformingStatesRevenue","obpstopPerformingStatesRevenue","obpsbottomPerformingStatesRevenue","noctopPerformingStatesRevenue","nocbottomPerformingStatesRevenue","wstopPerformingStatesRevenue","wsbottomPerformingStatesRevenue","OverviewtopPerformingStates","OverviewbottomPerformingStates"]
+   
+    setChartDenomination("number");
     const dd = response?.responseData?.data?.map((bar) => {
       let plotValue = bar?.plots?.[0].value || 0;
+      console.log("barrrrrrr",plotValue,data)
+      let type =""
+      if(possibleValues.includes(data?.id))
+      {
+        type="revenue"
+        return {
+          name: t(bar?.plots?.[0].name),
+          value: formatValue(plotValue, bar?.plots?.[0].symbol,type),
+          // value: Digit.Utils.dss.formatter(plotValue, bar?.plots?.[0].symbol),
+        };
+      }
+      else if (data.id.includes("Population") || data.id.includes("Household"))
+      {
+        type="population"
+        return {
+          name: t(bar?.plots?.[0].name),
+          value: formatValue(plotValue, bar?.plots?.[0].symbol,type),
+          // value: Digit.Utils.dss.formatter(plotValue, bar?.plots?.[0].symbol),
+        };
+      }
+      else {
+
+      type="others"
       return {
         name: t(bar?.plots?.[0].name),
-        value: formatValue(plotValue, bar?.plots?.[0].symbol),
+        value: formatValue(plotValue, bar?.plots?.[0].symbol,type),
         // value: Digit.Utils.dss.formatter(plotValue, bar?.plots?.[0].symbol),
-      };
-    });
+      };}
+    })
     let newMax = Math.max(...dd.map((e) => Number(e.value)));
     let newObj = {};
     let newReturn = dd.map((ele) => {
@@ -145,7 +226,7 @@ const CustomBarChart = ({
   let url=window.location.href
   return (
     <Fragment>
-      <ResponsiveContainer width="98%" height={url.includes("drilldown")?730:350}>
+      <ResponsiveContainer width="98%" height={url.includes("drilldown")?730:400}>
         <BarChart
           width="70%"
           height="100%"

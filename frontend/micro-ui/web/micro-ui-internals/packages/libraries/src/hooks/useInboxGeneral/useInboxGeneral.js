@@ -6,6 +6,7 @@ import { PTService } from "../../services/elements/PT";
 import { filterFunctions } from "./filterFn";
 import { getSearchFields } from "./searchFields";
 import { TLService } from "../../services/elements/TL";
+
 const inboxConfig = (tenantId, filters) => ({
   PT: {
     services: ["PT.CREATE"],

@@ -107,8 +107,7 @@ import {
     const [showOptions, setShowOptions] = useState(false);
     const [showFilters, setShowFilters] = useState(false);
     const [tabState, setTabState] = useState("");
-   
-    
+  
     const handleFilters = (data) => {
       Digit.SessionStorage.set(key, data);
       setFilters(data);
@@ -263,7 +262,6 @@ import {
     if (isLoading || isUlbLoading || localizationLoading || isMdmsLoading || isLoadingNAT || isServicesLoading) {
       return <Loader />;
     }
-
     return (
       <FilterContext.Provider value={provided}>
         <div ref={fullPageRef} id="divToPrint">

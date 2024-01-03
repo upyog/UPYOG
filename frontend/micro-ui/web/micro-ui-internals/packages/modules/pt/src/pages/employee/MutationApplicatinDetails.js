@@ -401,7 +401,7 @@ const MutationApplicationDetails = ({ propertyId, acknowledgementIds, workflowDe
               <CardSubHeader style={getCardSubHeadrStyles()}>{t("PT_MUTATION_TRANSFEROR_DETAILS")}</CardSubHeader>
               <div>
                 {Array.isArray(transferorOwners) &&
-                  transferorOwners.map((owner, index) => (
+                  transferorOwners.sort((item,item2)=>{return item?.additionalDetails?.ownerSequence - item2?.additionalDetails?.ownerSequence}).map((owner, index) => (
                     <div key={index}>
                       <CardSubHeader style={getCardSubHeadrStyles()}>
                         {transferorOwners.length != 1 && (
@@ -427,7 +427,7 @@ const MutationApplicationDetails = ({ propertyId, acknowledgementIds, workflowDe
                 transferorInstitution.length ? (
                   <div>
                     {Array.isArray(transfereeOwners) &&
-                      transfereeOwners.map((owner, index) => (
+                      transfereeOwners.sort((item,item2)=>{return item?.additionalDetails?.ownerSequence - item2?.additionalDetails?.ownerSequence}).map((owner, index) => (
                         <div key={index}>
                           <CardSubHeader style={getCardSubHeadrStyles()}>
                             {transfereeOwners.length != 1 && (

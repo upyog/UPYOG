@@ -143,14 +143,11 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
     const proposedDate= format(subYears(appDate, 18), 'yyyy-MM-dd').toString();
 
     if( convertDateToEpoch(proposedDate)  <= convertDateToEpoch(value)){
-      return true
-      
+      return true     
     }
     else {
-      return false;
-      
-    }
-    
+      return false;     
+    }    
   }
   const selectName = async (name) => {
     const data = {

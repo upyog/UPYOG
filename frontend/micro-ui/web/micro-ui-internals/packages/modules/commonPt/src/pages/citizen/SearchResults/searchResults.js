@@ -122,7 +122,6 @@ const PropertySearchResults = ({ template, header, actionButtonLabel, isMutation
 
   const searchResults = arr?.map((property) => {
     let addr = property?.address || {};
-   console.log("property",property)
     return {
       property_id: property?.propertyId,
       owner_name: (property?.owners || [])[0]?.name,
@@ -162,10 +161,8 @@ const PropertySearchResults = ({ template, header, actionButtonLabel, isMutation
 
   const sendOtpToUser = async (record) => {
     sessionStorage.setItem("Digit_OBPS_PT",JSON.stringify(record))
-    if(onSelect) {
-    
+    if(onSelect) {  
       onSelect('cptId', { id: record.property_id });
-
     } else {
       const data = {
         mobileNumber : record?.owner_mobile,

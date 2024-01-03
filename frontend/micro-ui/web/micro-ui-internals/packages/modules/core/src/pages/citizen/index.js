@@ -19,7 +19,6 @@ import AcknowledgementCF from "../../components/AcknowledgementCF";
 import CitizenFeedback from "../../components/CitizenFeedback";
 import Search from "./SearchApp";
 import QRCode from "./QRCode"
-import DigiLockerConcent from "./DigilockerConcent";
 const sidebarHiddenFor = [
   "digit-ui/citizen/register/name",
   "/digit-ui/citizen/select-language",
@@ -214,9 +213,6 @@ const Home = ({
           </Route>
           <Route path={`${path}/payment/verification`}>
          <QRCode></QRCode>
-          </Route>
-          <Route path={`${path}/DigiLocker`}>
-         <DigiLockerConcent />
           </Route>
           <ErrorBoundary initData={initData}>
             {appRoutes}

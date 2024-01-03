@@ -142,8 +142,6 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
     pitType: applicationData?.sanitationtype,
     pitDetail: applicationData?.pitDetail,
   });
-  console.log("default", defaultValues)
-
 
   useEffect(() => {
     if (!receivedPaymentLoad) {

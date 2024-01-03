@@ -44,8 +44,6 @@ const WSDisconnectionForm = ({ t, config, onSelect, userType }) => {
       reason: applicationData.WSDisconnectionForm ?  applicationData.WSDisconnectionForm.reason : "",
       documents: applicationData.WSDisconnectionForm ? applicationData.WSDisconnectionForm.documents : []
   });
-
-  
   const [documents, setDocuments] = useState(applicationData.WSDisconnectionForm ? applicationData.WSDisconnectionForm.documents : []);
   const [error, setError] = useState(null);
   const [disconnectionTypeList, setDisconnectionTypeList] = useState([]);
@@ -102,7 +100,7 @@ const WSDisconnectionForm = ({ t, config, onSelect, userType }) => {
   useEffect(() => {
     const disconnectionTypes = mdmsData?.["ws-services-masters"]?.disconnectionType || []; 
     disconnectionTypes?.forEach(data => data.i18nKey = `WS_DISCONNECTIONTYPE_${stringReplaceAll(data?.code?.toUpperCase(), " ", "_")}`);
-console.log("disconnectionTypes",disconnectionTypes)
+
     setDisconnectionTypeList(disconnectionTypes);
   }, [mdmsData]);
 
@@ -127,7 +125,7 @@ console.log("disconnectionTypes",disconnectionTypes)
   const onSubmit = async (data) => {
     const appDate= new Date();
     const proposedDate= format(addDays(appDate, slaData?.slaDays), 'yyyy-MM-dd').toString();
-    console.log("convertDateToEpoch", data?.type?.value?.name)
+
     if( convertDateToEpoch(data?.date)  <= convertDateToEpoch(proposedDate)){
       setError({key: "error", message: "PROPOSED_DISCONNECTION_INVALID_DATE"});
       setTimeout(() => {

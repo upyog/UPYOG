@@ -10,7 +10,6 @@ import {
   PTLinks,
   PTComponents,
 } from "@upyog/digit-ui-module-pt";
-
 import { MCollectModule, MCollectLinks, initMCollectComponents } from "@egovernments/digit-ui-module-mcollect";
 import { initDSSComponents } from "@egovernments/digit-ui-module-dss";
 import {
@@ -28,7 +27,7 @@ import {
   TLModule,
   TLLinks,
   initTLComponents,
-} from "@egovernments/digit-ui-module-tl";
+} from "@upyog/digit-ui-module-tl";
 import { initReceiptsComponents, ReceiptsModule } from "@egovernments/digit-ui-module-receipts";
 import { initOBPSComponents } from "@upyog/digit-ui-module-obps";
 import { initNOCComponents } from "@egovernments/digit-ui-module-noc";

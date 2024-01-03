@@ -38,18 +38,18 @@ const SelectAddress = ({ t, config, onSelect, value }) => {
     return locality_complaint ? locality_complaint : null;
   });
 
-  useEffect(async()=> {
+  useEffect(async () => {
     if (selectedCity && fetchedLocalities) {
       const { pincode } = value;
       let __localityList = pincode ? fetchedLocalities.filter((city) => city["pincode"] == pincode) : fetchedLocalities;
       await setLocalities(__localityList);
-      if(pttype=="PT"){
-        let filteredLocalities=__localityList.filter(locality=>locality.code === localitynew);
-      if(filteredLocalities){
-        setSelectedLocality(filteredLocalities[0])
+      if (pttype == "PT") {
+        let filteredLocalities = __localityList.filter(locality => locality.code === localitynew);
+        if (filteredLocalities) {
+          setSelectedLocality(filteredLocalities[0])
+        }
       }
-      }
-      else{
+      else {
         setLocalities(__localityList);
       }
     }

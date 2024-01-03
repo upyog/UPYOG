@@ -4,7 +4,6 @@ const capitalize = (text) => text.substr(0, 1).toUpperCase() + text.substr(1);
 const ulbCamel = (ulb) => ulb.toLowerCase().split(" ").map(capitalize).join(" ");
 
 const getSlumName = (application, t) => {
-  console.log("app", application)
   if (application?.slumName) {
     return t(application.slumName);
   }
@@ -37,9 +36,6 @@ const getPDFData = (application, tenantInfo, t) => {
   const amountPerTrip = additionalDetails?.tripAmount;
   const totalAmount = amountPerTrip * application?.noOfTrips;
   const advanceAmountDue = application?.advanceAmount;
-  const propertyID = application ?. additionalDetails?. propertyID;
-  const roadWidth = application?. additionalDetails?. roadWidth;
-  const distancefromroad = application?. additionalDetails?. distancefromroad;
 
   return {
     t: t,
@@ -76,7 +72,6 @@ const getPDFData = (application, tenantInfo, t) => {
           { title: t("CS_APPLICATION_DETAILS_PROPERTY_ID"), value: application?.additionalDetails?.propertyID || "N/A" },
           { title: t("CS_APPLICATION_DETAILS_PROPERTY_TYPE"), value: t(getPropertyTypeLocale(application?.propertyUsage)) || "N/A" },
           { title: t("CS_APPLICATION_DETAILS_PROPERTY_SUB_TYPE"), value: t(getPropertySubtypeLocale(application?.propertyUsage)) || "N/A" },
-          
         ],
       },
       {
@@ -141,7 +136,7 @@ const getPDFData = (application, tenantInfo, t) => {
           {
             title: t("CS_APPLICATION_DETAILS_ADV_AMOUNT_DUE"),
             value: getAdvanceAmount(advanceAmountDue),
-          },      
+          },
         ],
       },
     ],

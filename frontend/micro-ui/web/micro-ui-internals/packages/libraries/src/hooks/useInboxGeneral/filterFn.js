@@ -105,5 +105,4 @@ export const filterFunctions = {
 
     return { searchFilters, workflowFilters };
   },
-
 };

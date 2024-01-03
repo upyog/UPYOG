@@ -293,7 +293,7 @@ const handleClick=()=>{
             <Row className="border-none" label={t("PT_PROPERTY_PTUID")} text={`${property.propertyId || t("CS_NA")}`} /* textStyle={{ whiteSpace: "pre" }} */ />
             <Row className="border-none" label={t("CS_COMMON_TOTAL_AMOUNT_DUE")} text={`₹${t(getBillAmount(fetchBillData))}`} />
             <LinkLabel
-            onClick={() => history.push({ pathname: `/digit-ui/employee/pt/payment-details/${property?.propertyId}`})}
+            onClick={() => history.push({ pathname: `/digit-ui/citizen/pt/payment-details/${property?.propertyId}`})}
             style={isMobile ? { marginTop: "15px", marginLeft: "0px" } : { marginTop: "15px" }}
           >
             {t("PT_VIEW_PAYMENT")}
@@ -365,7 +365,7 @@ const handleClick=()=>{
           <CardSubHeader>{t("PT_COMMON_PROPERTY_OWNERSHIP_DETAILS_HEADER")}</CardSubHeader>
           <div className="owner-details">
             {Array.isArray(owners) &&
-              owners.sort((item,item2)=>{return item.additionalDetails.ownerSequence - item2.additionalDetails.ownerSequence}).map((owner, index) => (
+              owners.sort((item,item2)=>{return item?.additionalDetails?.ownerSequence - item2?.additionalDetails?.ownerSequence}).map((owner, index) => (
                 <div key={index} className="owner-details-child">
                   <CardSubHeader>
                     {owners.length != 1 && (

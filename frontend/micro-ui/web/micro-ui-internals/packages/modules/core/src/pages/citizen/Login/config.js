@@ -31,7 +31,6 @@ export const loginSteps = [
   {
     texts: {
       header: "CS_LOGIN_PROVIDE_NAME_DOB",
-
       cardText: "CS_LOGIN_NAME_TEXT",
       nextText: "CS_COMMONS_NEXT",
       submitBarLabel: "CS_COMMONS_NEXT",
@@ -61,7 +60,4 @@ export const loginSteps = [
       },
     ],
   },
-  
-  
-
 ];

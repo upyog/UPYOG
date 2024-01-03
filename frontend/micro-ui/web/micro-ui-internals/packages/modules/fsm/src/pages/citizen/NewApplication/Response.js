@@ -22,7 +22,6 @@ const BannerPicker = (props) => {
 };
 
 const Response = ({ data, onSuccess }) => {
-  console.log("res", data, onSuccess)
   const { t } = useTranslation();
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const mutation = Digit.Hooks.fsm.useDesludging(data?.address?.city ? data.address?.city?.code : tenantId);
@@ -44,6 +43,7 @@ const Response = ({ data, onSuccess }) => {
   });
 
   const onError = (error, variables) => {
+    console.log("error",error)
     setErrorInfo(error?.response?.data?.Errors[0]?.code || "ERROR");
     setMutationHappened(true);
   };
@@ -52,6 +52,7 @@ const Response = ({ data, onSuccess }) => {
   }, [mutation.data]);
 
   useEffect(() => {
+    console.log("errorInfoerrorInfo",errorInfo)
     if (!mutationHappened && !errorInfo) {
       try {
         const amount = Digit.SessionStorage.get("total_amount");
@@ -104,7 +105,7 @@ const Response = ({ data, onSuccess }) => {
             additionalDetails: {
               totalAmount: amount,
               tripAmount: amountPerTrip,
-              propertyID : propertyID.propertyID,
+              propertyID : propertyID?.propertyID,
               distancefromroad : data.roadWidth.distancefromroad,
               roadWidth: data.roadWidth.roadWidth,
             },
@@ -133,7 +134,7 @@ const Response = ({ data, onSuccess }) => {
     Digit.Utils.pdf.generate(data);
   };
   const isSuccess = !successData ? mutation?.isSuccess : true;
-
+console.log("mutation",mutation,mutationHappened)
   return mutation.isLoading || (mutation.isIdle && !mutationHappened) ? (
     <Loader />
   ) : (
