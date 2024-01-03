@@ -9,14 +9,14 @@ const PetServiceDoc = ({ t, config, onSelect, userType, formData }) => {
   sessionStorage.removeItem("docReqScreenByBack");
 
   const docType = config?.isMutation ? ["MutationDocuments"] : "Documents";
-  console.log("dc", docType);
-  console.log("stateid", stateId);
+
+  
+ 
   //const { isLoading, data: Documentsob } = Digit.Hooks.pt.usePropertyMDMS(stateId, "PropertyTax", docType);
   const { isLoading, data: Documentsob = {} } = Digit.Hooks.ptr.usePetMDMS(stateId, "PetService", docType);
   console.log("datassss", Documentsob);
   //let docs = Documentsob?.PropertyTax?.[config?.isMutation ? docType[0] : docType];
   let docs = Documentsob?.PetService?.Documents;
-  console.log("fewfewffwf", docs);
   //if (!config?.isMutation) docs = docs?.filter((doc) => doc["digit-citizen"]);
   function onSave() {}
 
@@ -38,7 +38,7 @@ const PetServiceDoc = ({ t, config, onSelect, userType, formData }) => {
             {isLoading && <Loader />}
             {Array.isArray(docs)
               ? config?.isMutation
-                ? docs.map(({ code, dropdownData }, index) => (
+                ? docs.map(({ code, dropdownData }, index) => ( 
                     <div key={index}>
                       <CardSubHeader>
                         {index + 1}. {t(code)}
@@ -47,7 +47,7 @@ const PetServiceDoc = ({ t, config, onSelect, userType, formData }) => {
                       {/* <CardText>{t(`${code.split('.')[0]}.${code.split('.')[1]}.${code.split('.')[1]}_DESCRIPTION`)}</CardText> */}
                     </div>
                   ))
-                : docs.map(({ code, dropdownData }, index) => (
+                : docs.map(({ code, dropdownData }, index) => ( 
                     <div key={index}>
                       <CardSubHeader>
                         {index + 1}. {t(stringReplaceAll(code, ".", "_"))}

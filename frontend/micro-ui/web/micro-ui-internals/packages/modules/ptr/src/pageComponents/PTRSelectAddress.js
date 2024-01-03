@@ -11,6 +11,8 @@ const PTRSelectAddress = ({ t, config, onSelect, userType, formData, setError, c
   const { pathname } = useLocation();
   const presentInModifyApplication = pathname.includes("modify");
 
+  
+
   let isEditAddress = formData?.isEditAddress || false;
   if (presentInModifyApplication) isEditAddress = true;
   if (formData?.isUpdateProperty) isEditAddress = true;
