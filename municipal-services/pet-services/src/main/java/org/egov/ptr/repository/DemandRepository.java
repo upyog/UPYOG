@@ -40,9 +40,11 @@ public class DemandRepository {
         System.out.println("Request object for fetchResult: "+ request);
         System.out.println("URL for fetchResult: "+ url);
         Object result = serviceRequestRepository.fetchResult(url,request);
+        System.out.println("Result from fetchResult method: "+ result);
         DemandResponse response = null;
         try{
             response = mapper.convertValue(result,DemandResponse.class);
+            System.out.println("Demand response mapper: "+ response);
         }
         catch(IllegalArgumentException e){
             throw new CustomException("PARSING ERROR","Failed to parse response of create demand");
