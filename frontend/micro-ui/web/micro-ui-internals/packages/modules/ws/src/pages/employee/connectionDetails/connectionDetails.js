@@ -198,8 +198,7 @@ const GetConnectionDetails = () => {
           setshowModal(true);
         }
     }
-  };
-  
+  }; 
   function onActionSelect(action) {
     if (action === "MODIFY_CONNECTION_BUTTON") {
       getModifyConnectionButton();

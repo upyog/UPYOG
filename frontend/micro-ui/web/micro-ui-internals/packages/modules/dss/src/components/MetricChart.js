@@ -19,6 +19,10 @@ const MetricData = ({ t, data, code, indexValuesWithStar }) => {
              code === "fsmtotalsludgetreated" || code === "totalSludgeTreated" ? t(`DSS_KL`) : ""
           }`
         ):
+
+        data?.headerName.includes("DSS_STATE_GDP_REVENUE_COLLECTION") ||  data?.headerName.includes("DSS_STATE_GDP_PT_REVENUE_COLLECTION") ?(`${Number(data?.headerValue*100).toFixed(4)}`):
+        data?.headerName.includes("DSS_PT_TAX_REVENUE_PER_HOUSEHOLD")|| data?.headerName.includes("DSS_NON_TAX_REVENUE_PER_HOUSEHOLD") ?(`${Digit.Utils.dss.formatter(data?.headerValue, data?.headerSymbol, "Unit", true)}`):
+
         
         (
           `${Digit.Utils.dss.formatter(data?.headerValue, data?.headerSymbol, value?.denomination, true, t)} ${
@@ -107,7 +111,7 @@ const MetricChartRow = ({ data, setChartDenomination, index, moduleCode, indexVa
             className="tooltiptext"
             style={{
               fontSize: "medium",
-              width: t(`TIP_${data.name}`).length < 50 ? "fit-content" : 400,
+              width : t(`TIP_${data.name}`).length < 50 ? 200 : 400,
               height: 50,
               whiteSpace: "normal",
             }}
@@ -123,7 +127,7 @@ const MetricChartRow = ({ data, setChartDenomination, index, moduleCode, indexVa
 
   const getWidth = (data) => {
     if (isMobile) return "auto";
-    else return t(`TIP_${data.name}`).length < 50 ? "fit-content" : 400;
+    else return t(`TIP_${data.name}`).length < 50 ? 200 : 400;
     // if (isMobile) return t(`TIP_${data.name}`).length < 50 ? "fit-content" : 300;
     // else return t(`TIP_${data.name}`).length < 50 ? "fit-content" : 400;
   };

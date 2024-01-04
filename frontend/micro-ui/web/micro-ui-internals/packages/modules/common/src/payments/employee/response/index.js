@@ -243,7 +243,6 @@ export const SuccessfulPayment = (props) => {
     let paymentArray=[];
     const payments = await Digit.PaymentService.getReciept(tenantId, "PT", { receiptNumbers: payment.Payments[0].paymentDetails[0].receiptNumber });
     let response = { filestoreIds: [payments.Payments[0]?.fileStoreId] };
-  console.log("responseresponseresponseresponse",response,payments.Payments[0]?.fileStoreId,!payments.Payments[0]?.fileStoreId)
     if (true) {
       let assessmentYear="",assessmentYearForReceipt="";
       let count=0;

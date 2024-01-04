@@ -9,6 +9,7 @@ import { ArrowUpwardElement } from "./ArrowUpward";
 const MetricData = ({ t, data, code, indexValuesWithStar }) => {
   const { value } = useContext(FilterContext);
   const insight = data?.insight?.value?.replace(/[+-]/g, "")?.split("%");
+
   return (
     <div>
       <p className="heading-m" style={{ paddingTop: "0px", whiteSpace: "nowrap" }}>
@@ -19,6 +20,8 @@ const MetricData = ({ t, data, code, indexValuesWithStar }) => {
              code === "fsmtotalsludgetreated" || code === "totalSludgeTreated" ? t(`DSS_KL`) : ""
           }`
         ):
+        data?.headerName.includes("DSS_STATE_GDP_REVENUE_COLLECTION")
+       ? Digit.Utils.dss.formatter(data.headerValue, data.headerSymbol, "UnitGDP", true, t):
         
         (
           `${Digit.Utils.dss.formatter(data?.headerValue, data?.headerSymbol, value?.denomination, true, t)} ${
@@ -88,13 +91,9 @@ const MetricChartRow = ({ data, setChartDenomination, index, moduleCode, indexVa
          lastUpdatedTime: "",
        }}));
      }
-   
-     if(response?.responseData?.visualizationCode == "StateGDPwiseTotalRevenueCollection" && response.responseData.data[0].headerValue < 0.001)
+     if(response?.responseData?.visualizationCode == "StateGDPwiseTotalRevenueCollection")
      {
-     
-      response.responseData.data[0].headerValue =  response.responseData.data?.[0].headerValue *100;
-      response.responseData.data[0].headerSymbol = "percentage"
-      console.log("responsee",response)
+      response.responseData.data[0].headerSymbol = "amount"
      }
     } else {
       
@@ -103,12 +102,9 @@ const MetricChartRow = ({ data, setChartDenomination, index, moduleCode, indexVa
   }, [response]);
   useEffect(() => {
     if (response) {
-     if(response?.responseData?.visualizationCode == "StateGDPwiseTotalRevenueCollection" && response.responseData.data[0].headerValue <0.0001)
+     if(response?.responseData?.visualizationCode == "StateGDPwiseTotalRevenueCollection")
      {
-     
-      response.responseData.data[0].headerValue =  response.responseData.data?.[0].headerValue *100;
-      response.responseData.data[0].headerSymbol = "percentage"
-      console.log("responsee",response)
+      response.responseData.data[0].headerSymbol = "amount"
      }
      
     } 
@@ -191,7 +187,6 @@ const MetricChartRow = ({ data, setChartDenomination, index, moduleCode, indexVa
 
 const MetricChartNew = ({ data, setChartDenomination, moduleCode }) => {
   const { charts } = data;
-
   const indexValuesWithStar = [
     "citizenAvgRating",
     "nssOverviewCitizenFeedbackScore",
@@ -201,9 +196,9 @@ const MetricChartNew = ({ data, setChartDenomination, moduleCode }) => {
     "AvgCitizenRating"
   ];
 
-  let url =["https://i.ibb.co/VLrKpzv/7.png","https://i.ibb.co/6FJyr8R/10.png","https://i.ibb.co/3R34JhW/11.png","https://i.ibb.co/bFZG6Jf/13.png","https://i.ibb.co/kGN1LzK/8.png","https://i.ibb.co/KDXM6cB/5.png","https://i.ibb.co/bFZG6Jf/13.png","https://i.ibb.co/TkBT18V/14.png"]
+  let url =["https://nugp-assets.s3.ap-south-1.amazonaws.com/nugp+asset/7.png","https://nugp-assets.s3.ap-south-1.amazonaws.com/nugp+asset/11.png","https://nugp-assets.s3.ap-south-1.amazonaws.com/nugp+asset/8.png","https://nugp-assets.s3.ap-south-1.amazonaws.com/nugp+asset/12.png","https://nugp-assets.s3.ap-south-1.amazonaws.com/nugp+asset/9.png","https://nugp-assets.s3.ap-south-1.amazonaws.com/nugp+asset/13.png","https://nugp-assets.s3.ap-south-1.amazonaws.com/nugp+asset/10.png","https://nugp-assets.s3.ap-south-1.amazonaws.com/nugp+asset/14.png"]
 
-  let url2=["https://i.ibb.co/4N9r5Ng/2.png","https://i.ibb.co/rv2fcMR/3.png","https://i.ibb.co/4Ky8Pjm/1.png","https://i.ibb.co/ZMJwGSc/6.png","https://i.ibb.co/nRHxqCr/12.png","https://i.ibb.co/S0S8n9g/4.png","https://i.ibb.co/S0S8n9g/4.png"]
+  let url2=["https://nugp-assets.s3.ap-south-1.amazonaws.com/nugp+asset/2.png","https://nugp-assets.s3.ap-south-1.amazonaws.com/nugp+asset/3.png","https://nugp-assets.s3.ap-south-1.amazonaws.com/nugp+asset/1.png","https://nugp-assets.s3.ap-south-1.amazonaws.com/nugp+asset/4.png","https://nugp-assets.s3.ap-south-1.amazonaws.com/nugp+asset/6.png","https://nugp-assets.s3.ap-south-1.amazonaws.com/nugp+asset/6.png"]
   return (
     <>
       <span className="chart-metric-wrapper">

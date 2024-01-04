@@ -15,7 +15,6 @@ export const config = [
       submitBarLabel: "CS_COMMON_NEXT",
     },
   },
-  
   {
     texts: {
       headerCaption: "",

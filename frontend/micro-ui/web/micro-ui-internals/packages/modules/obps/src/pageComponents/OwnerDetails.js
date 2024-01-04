@@ -90,7 +90,6 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
     // },[showToast]);
 
     function selectedValue(value) {
-        
         setOwnershipCategory(value);
     }
 
@@ -392,9 +391,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
         else
         return true;
     }
-console.log("fieldss",fields)
 let propertyData =JSON.parse(sessionStorage.getItem("Digit_OBPS_PT"))
-console.log("prop",propertyData)
 fields =propertyData.owners.map((owner) =>{
     let gender
     if (owner.gender =="FEMALE")

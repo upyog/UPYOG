@@ -17,7 +17,7 @@ const EditForm = ({ applicationData }) => {
     setMutationHappened(false);
     clearSuccessData();
   }, []);
-  console.log("applicationData",applicationData)
+
   const defaultValues = {
     originalData: applicationData,
     address: applicationData?.address,
@@ -42,9 +42,7 @@ const EditForm = ({ applicationData }) => {
   };
 
   const onSubmit = (data) => {
-    console.log(data)
-    const formData = {
-      
+    const formData = {     
       ...applicationData,
       address: {
         ...applicationData?.address,
@@ -90,7 +88,6 @@ const EditForm = ({ applicationData }) => {
   /* use newConfig instead of commonFields for local development in case needed */
 
   const configs = commonFields ? commonFields : newConfig;
-  console.log("aaaa", configs)
 
   return (
     <FormComposer

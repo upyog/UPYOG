@@ -251,7 +251,7 @@ const SearchWaterConnection = ({ tenantId, onSubmit, data, count, resultOk, busi
       }
     }
     let data = await Digit.WSService.WSSewsearchDemandGen(payload, window.location.href.includes("ws/sewerage/search-demand") ? "sw" : "ws")
-    
+
     setShowToast({
       label: `${data}`
   })

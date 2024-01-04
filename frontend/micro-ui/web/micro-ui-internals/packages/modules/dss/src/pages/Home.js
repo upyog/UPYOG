@@ -18,7 +18,7 @@ import { useParams } from "react-router-dom";
 import FilterContext from "../components/FilterContext";
 import { ArrowUpwardElement } from "../components/ArrowUpward";
 import { ArrowDownwardElement } from "../components/ArrowDownward";
-import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis,Line,ComposedChart } from "recharts";
 import { Icon } from "../components/common/Icon";
 import MapChart from "../components/MapChart";
 import MapDrillChart from "../components/mapDrillDownTable";
@@ -109,7 +109,7 @@ const Chart = ({ data, moduleLevel, overview = false }) => {
       />
               :<p className="p2">
 
-        {response?.responseData?.data?.[0]?.headerName =="NATIONAL_DSS_TOTAL_COLLECTION" ? Digit.Utils.dss.formatter(response?.responseData?.data?.[0]?.headerValue, response?.responseData?.data?.[0]?.headerSymbol, "Cr", true, t) : response?.responseData?.data?.[0]?.headerName == "DSS_NON_TAX_REVENUE_PER_HOUSEHOLD" ? Digit.Utils.dss.formatter(response?.responseData?.data?.[0]?.headerValue, response?.responseData?.data?.[0]?.headerSymbol, "Unit", true, t) : response?.responseData?.data?.[0]?.headerName == "DSS_STATE_GDP_REVENUE_COLLECTION" ? Digit.Utils.dss.formatter(response?.responseData?.data?.[0]?.headerValue, response?.responseData?.data?.[0]?.headerSymbol, "UnitOverview", true, t): Digit.Utils.dss.formatter(response?.responseData?.data?.[0]?.headerValue, response?.responseData?.data?.[0]?.headerSymbol, "Lac", true, t)}
+        {response?.responseData?.data?.[0]?.headerName == "NATIONAL_DSS_TOTAL_COLLECTION" ? Digit.Utils.dss.formatter(response?.responseData?.data?.[0]?.headerValue, response?.responseData?.data?.[0]?.headerSymbol, "Cr", true, t): response?.responseData?.data?.[0]?.headerName ==  "NATIONAL_DSS_TARGET_COLLECTION"? Digit.Utils.dss.formatter(response?.responseData?.data?.[0]?.headerValue, response?.responseData?.data?.[0]?.headerSymbol, "Cr", true, t): response?.responseData?.data?.[0]?.headerName == "DSS_NON_TAX_REVENUE_PER_HOUSEHOLD"? Digit.Utils.dss.formatter(response?.responseData?.data?.[0]?.headerValue, response?.responseData?.data?.[0]?.headerSymbol, "Unit", true, t): response?.responseData?.data?.[0]?.headerName == "PropertyTaxRevenuePerHouseholdOverview" ? Digit.Utils.dss.formatter(response?.responseData?.data?.[0]?.headerValue, response?.responseData?.data?.[0]?.headerSymbol, "Unit", true, t): response?.responseData?.data?.[0]?.headerName == "DSS_STATE_GDP_REVENUE_COLLECTION"  ? Digit.Utils.dss.formatter(response?.responseData?.data?.[0]?.headerValue, response?.responseData?.data?.[0]?.headerSymbol, "UnitGDP", true, t): Digit.Utils.dss.formatter(response?.responseData?.data?.[0]?.headerValue, response?.responseData?.data?.[0]?.headerSymbol, "Unit", true, t)}
       </p>}
       {response?.responseData?.data?.[0]?.insight?.value ? (
         <p className={`p3 ${response?.responseData?.data?.[0]?.insight?.indicator === "upper_green" ? "color-green" : "color-red"}`}>
@@ -149,18 +149,35 @@ const HorBarChart = ({ data, setselectState = "" }) => {
 
   const constructChartData = (data) => {
     const currencyFormatter = new Intl.NumberFormat("en-IN", { currency: "INR" });
-    console.log("data: ",data)
-    let index = data?.findIndex(x => x.headerName == "liveUlbsCount");
+    // console.log("data: ",data)
+    // let index = data?.findIndex(x => x.headerName == "liveUlbsCount");
 
-    console.log(index)
-    data?.splice(index, 1)
+    // console.log(index)
+    // data?.splice(index, 1)
+    var date = new Date();
+    var months = [],
+        monthNames = [ "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ];
+    for(var i = 0; i < 12; i++) {
+        months.push(monthNames[date.getMonth()] + '-' + date.getFullYear());
+        date.setMonth(date.getMonth() - 1);
+    }    
+    console.log("months",months,data);
     let result = {};
     for (let i = 0; i < data?.length; i++) {
       const row = data[i];
       for (let j = 0; j < row.plots.length; j++) {
         const plot = row.plots[j];
-        
-        result[plot.name] = { ...result[plot.name], [t(row.headerName)]:currencyFormatter.format((plot?.value / 10000000).toFixed(2) || 0), name: t(plot.name) };      
+        if(months.includes(plot?.name))
+        {
+         
+          if(plot?.value >10000)
+          {
+            result[plot.name] = { ...result[plot.name], [t(row.headerName)]:currencyFormatter.format((plot?.value / 10000000).toFixed(2) || 0), name: t(plot.name) };      
+          }
+          else {
+            result[plot.name] = { ...result[plot.name], [t(row.headerName)]:plot?.value , name: t(plot.name) }; 
+          }
+        }
       }
     }   
     return Object.keys(result).map((key) => {      
@@ -170,17 +187,29 @@ const HorBarChart = ({ data, setselectState = "" }) => {
       };
     });
   };
-  const renderLegend = (value) => (
-    <span style={{ fontSize: "14px", color: "#505A5F" }}>{t(`DSS_${Digit.Utils.locale.getTransformedLocale(value)}`)} (Cr)</span>
-  );
-  const chartData = useMemo(() => constructChartData(response?.responseData?.data));
+const renderLegend = (value) => {
 
+  return (
+    <li style={{display:"contents"}}>
+      {
+        value == "TotalCollection"?
+          <span style={{ fontSize: "14px", color: "#505A5F" }}>{t(`DSS_${Digit.Utils.locale.getTransformedLocale(value)}`)}(Cr)</span>:<span style={{ fontSize: "14px", color: "#505A5F" }}>{t(`DSS_${Digit.Utils.locale.getTransformedLocale(value)}`)}</span>
+        
+      }
+    </li>
+  )
+}
+  const chartData = useMemo(() => constructChartData(response?.responseData?.data));
+  const tooltipFormatter = (value, name) => {
+    return name == "TotalCollection"?`${value} Cr`:`${value}`
+
+  };
   if (isLoading) {
     return <Loader />;
   }
 
   const bars = response?.responseData?.data?.map((bar) => bar?.headerName);
-  console.log("response.responsedata",response,bars)
+
   return (
     <ResponsiveContainer
       width="50%"
@@ -195,44 +224,26 @@ const HorBarChart = ({ data, setselectState = "" }) => {
       {chartData?.length === 0 || !chartData ? (
         <NoData t={t} />
       ) : (
-        <BarChart
-          width="100%"
-          height="100%"
-          margin={{
-            top: 5,
-            right: 5,
-            left: 5,
-            bottom: 5,
-          }}
-          layout={"horizontal"}
-          data={chartData}
-          barGap={12}
-          barSize={30}
-        >
-          <CartesianGrid strokeDasharray="2 2" />
-          <YAxis
-            dataKey={""}
-            type={"number"}
-            tick={{ fontSize: "12px", fill: "#505A5F" }}
-            label={{
-              value: "",
-              angle: -90,
-              position: "insideLeft",
-              dy: 50,
-              fontSize: "12px",
-              fill: "#505A5F",
+          <ComposedChart
+            width="100%"
+            height="100%"
+            margin={{
+              top: 5,
+              right: 5,
+              left: 5,
+              bottom: 5,
             }}
-            tickCount={10}
-            unit={""}
-            width={130}
-          />
-          <XAxis dataKey={"name"} type={"category"} tick={{ fontSize: "14px", fill: "#505A5F" }} tickCount={10} />
-          {bars?.map((bar, id) => (
-            <Bar key={id} dataKey={t(bar)} fill={barColors[id]} stackId={bars?.length > 2 ? 1 : id} />
-          ))}
-          <Legend formatter={renderLegend} iconType="circle" />
-          <Tooltip cursor={false} />
-        </BarChart>
+            data={chartData}
+          >
+            <CartesianGrid stroke="#f5f5f5" strokeDasharray="3 3" />
+            <XAxis dataKey={"name"} type={"category"} tick={{ fontSize: "14px", fill: "#505A5F" }} tickCount={12} />
+            <YAxis yAxisId="left"  type={"number"} orientation="left" stroke="#54d140" tickCount={10} domain={[0, 600]}/>
+            <YAxis yAxisId="right" type={"number"} orientation="right" stroke="#a82227" tickCount={10} />
+            <Tooltip cursor={false} formatter={tooltipFormatter}/>
+             <Legend formatter={renderLegend} iconType="circle" />
+            <Bar yAxisId="left" dataKey="TotalCollection" fill="#54d140" />
+            <Line yAxisId="right" type="monotone" dataKey="liveUlbsCount" stroke="#a82227" />
+          </ComposedChart>
       )}
     </ResponsiveContainer>
   );
@@ -348,7 +359,7 @@ const Home = ({ stateCode }) => {
     <FilterContext.Provider value={provided}>
       <div ref={fullPageRef}>
         <div className="options" style={{ margin: "10px" }}>
-          <Header styles={{ marginBottom: "0px" }}>{t(dashboardConfig?.[0]?.name)}</Header>
+        <Header styles={{ marginBottom: "0px" }}><span style={{color:"#a82227"}}>UMEED</span> - <span><span style={{color:"#a82227"}}>U</span>rban <span style={{color:"#a82227"}}>M</span>onitoring for <span style={{color:"#a82227"}}>E</span>fficient and <span style={{color:"#a82227"}}>E</span>ffective <span style={{color:"#a82227"}}>D</span>ecision-making</span></Header>
           {mobileView ? null : (
             <div>
               <div className="mrlg">
@@ -428,7 +439,7 @@ const Home = ({ stateCode }) => {
                           )}
                         </div>
                         {item?.charts?.[0]?.chartType == "map" && (
-                          <div className="dss-card-header" style={{ width: "45%" }}>
+                          <div className="dss-card-header" style={{ width: "60%" }}>
                             {Icon(row.vizArray?.[1]?.name)}
                             <p style={{ marginLeft: "20px", fontSize: "24px", fontFamily: "Roboto, sans-serif", fontWeight: 500, color: "#000000" }}>
                               {selectedState === ""

@@ -88,7 +88,6 @@ const PropertyDetails = () => {
 
   useEffect(() => {
     if (applicationDetails && !enableAudit) {
-      console.log("123",applicationDetails)
       if(applicationDetails?.applicationDetails[1].title =="PT_ASSESMENT_INFO_SUB_HEADER")
       {
       if (applicationDetails?.applicationDetails[1].values.length ==4)
@@ -223,7 +222,6 @@ const PropertyDetails = () => {
   }, [fetchBillData, appDetailsToShow]);
 
   if (applicationDetails?.applicationData?.status === "ACTIVE") {
-
     workflowDetails = {
       ...workflowDetails,
       data: {
@@ -285,7 +283,6 @@ const PropertyDetails = () => {
   }
 
   if (appDetailsToShow?.applicationData?.status === "ACTIVE" && PT_CEMP) {
-    console.log("inside PT create `")
     if (businessService == "PT.CREATE") setBusinessService("PT.UPDATE");
     if (!workflowDetails?.data?.actionState?.nextActions?.find((e) => e.action === "UPDATE")) {
       workflowDetails?.data?.actionState?.nextActions?.push({
@@ -298,16 +295,15 @@ const PropertyDetails = () => {
       });
     }
   }
-  
 
   if (fetchBillLoading) {
     return <Loader />;
-
   }
   const UpdatePropertyNumberComponent = Digit?.ComponentRegistryService?.getComponent("EmployeeUpdateOwnerNumber");
-  if (appDetailsToShow?.applicationData) {
+ 
     appDetailsToShow?.applicationData?.owners.sort((item, item2) => { return item?.additionalDetails?.ownerSequence - item2?.additionalDetails?.ownerSequence })
-  }
+    
+  
   return (
     <div>
       <Header>{t("PT_PROPERTY_INFORMATION")}</Header>

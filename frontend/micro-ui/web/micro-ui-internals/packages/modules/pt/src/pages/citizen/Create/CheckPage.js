@@ -18,8 +18,6 @@ import {
   ispropertyunoccupied
 } from "../../../utils";
 import Timeline from "../../../components/TLTimeline";
-import UID from "../../../pageComponents/UID";
-import Electricity from "../../../pageComponents/Electricity";
 
 const ActionButton = ({ jumpTo }) => {
   const { t } = useTranslation();
@@ -65,8 +63,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
     isEditProperty,
     isUpdateProperty,
   } = value;
-  const typeOfApplication = !isEditProperty && !isUpdateProperty ? `new-application` : `edit-application`;
-  
+  const typeOfApplication = !isEditProperty && !isUpdateProperty ? `new-application` : `edit-application`; 
   let flatplotsize;
   if (isPropertyselfoccupied(selfOccupied?.i18nKey)) {
     flatplotsize = parseInt(landarea?.floorarea);
@@ -82,7 +79,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
   if (isPropertyIndependent(PropertyType?.i18nKey)) {
     flatplotsize = parseInt(propertyArea?.builtUpArea) + parseInt(propertyArea?.plotSize);
   }
-  
+
   const [agree, setAgree] = useState(false);
   const setdeclarationhandler = () => {
     setAgree(!agree);
@@ -291,7 +288,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
           <Row
             label={t("PT_ASSESMENT1_ELECTRICITY_UID")}
             text={`${t(checkForNA(uid?.uid))}`}
-            actionButton={<ActionButton jumpTo={`/digit-ui/citizen/pt/property/${typeOfApplication}/electricity-uid`} />}
+            actionButton={<ActionButton jumpTo={`/digit-ui/citizen/pt/property/${typeOfApplication}/uid`} />}
           />
           {PropertyType?.code !== "VACANT" &&<Row
             label={t("PT_ASSESMENT1_PLOT_SIZE")}

@@ -3,7 +3,7 @@ import { TextArea, LabelFieldPair, CardLabel, TextInput } from "@egovernments/di
 import FormStep from "../../../../react-components/src/molecules/FormStep"
 import Timeline from "../components/TLTimelineInFSM";
 const SelectPropertyID = ({ t, config, onSelect, formData, userType, setError: setFormError, clearErrors: clearFormErrors }) => {
-const [propertyID, setPropertyID] = useState(formData?.propertyID?.propertyID);
+const [propertyID, setPropertyID] = useState(formData?.propertyID?.propertyID|| "");
 const [error, setError] = useState("");
 const inputs = [
   {
@@ -46,7 +46,7 @@ const inputs = [
          onChange={onChange}
          onSkip={onSkip}
          forcedError={t(error)}
-         isDisabled={propertyID ? false : true}
+         isDisabled={false}
        ></FormStep>
       </React.Fragment>
     );

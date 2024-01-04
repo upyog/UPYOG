@@ -45,9 +45,7 @@ const FstpOperatorDetails = () => {
   let { id: applicationNos } = useParams();
   const [filters, setFilters] = useState(applicationNos != undefined ? { applicationNos } : { applicationNos: "null" });
   const [isVehicleSearchCompleted, setIsVehicleSearchCompleted] = useState(false);
-  console.log("isVehicleSearchCompleted", isVehicleSearchCompleted)
   const [searchParams, setSearchParams] = useState({});
-  console.log("searchParams",searchParams)
   const [showToast, setShowToast] = useState(null);
   const [vehicleCapacity, setVehicleCapacity]=useState(null);
   const [wasteCollected, setWasteCollected] = useState(null);

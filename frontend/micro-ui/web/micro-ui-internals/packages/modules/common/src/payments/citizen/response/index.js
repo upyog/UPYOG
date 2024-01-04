@@ -183,23 +183,33 @@ export const convertEpochToDate = (dateEpoch) => {
             assessmentYear=assessmentYear==""?fromDate+"-"+toDate:assessmentYear+","+fromDate+"-"+toDate; 
             assessmentYearForReceipt=fromDate+"-"+toDate;
           }
+
+      
+         
+           const details = {
+              "assessmentYears": assessmentYear,
+              "arrearCode": ""
+                } 
           
-          const details = {
-          "assessmentYears": assessmentYear,
-          "arrearCode": ""
-            }
-            
+         
             payments.Payments[0].paymentDetails[0].additionalDetails=details; 
-            console.log("payment",payments)
             printRecieptNew(payments)
         }
         else {
+          let details
+
+          if(payments.Payments[0].paymentDetails[0].businessService=="BPAREG")
+          {
+              details = {...payments.Payments[0].additionalDetails,
+              "stakeholderType":"Application"
+                } 
+          }
+          payments.Payments[0].additionalDetails=details;
           paymentArray[0]=payments.Payments[0]
+          console.log("paymentArray",paymentArray)
            response = await Digit.PaymentService.generatePdf(state, { Payments: paymentArray }, generatePdfKey);
-        }
-       
-    }
-  
+        }       
+    }  
     const fileStore = await Digit.PaymentService.printReciept(state, { fileStoreIds: response.filestoreIds[0] });
     if (fileStore && fileStore[response.filestoreIds[0]]) {
       window.open(fileStore[response.filestoreIds[0]], "_blank");
@@ -266,6 +276,7 @@ export const convertEpochToDate = (dateEpoch) => {
       currentDate.getFullYear() + "-" + (currentDate.getMonth() + 1) + "-" + currentDate.getDate()
     );
     let reqData = { ...bpaDataDetails, edcrDetail: [{ ...edcrData }] };
+    console.log("reqData",reqData)
     let response = await Digit.PaymentService.generatePdf(bpaDataDetails?.tenantId, { Bpa: [reqData] }, order);
     const fileStore = await Digit.PaymentService.printReciept(bpaDataDetails?.tenantId, { fileStoreIds: response.filestoreIds[0] });
     window.open(fileStore[response?.filestoreIds[0]], "_blank");
@@ -347,6 +358,8 @@ export const convertEpochToDate = (dateEpoch) => {
     padding: "4px 0px",
     justifyContent: "space-between",
   };
+  //New Payment Reciept For PT module with year bifurcations
+
   const printRecieptNew = async (payment) => {
     console.log("paymentpayment",payment,payment.Payments[0].paymentDetails[0].receiptNumber,payment.Payments[0])
     const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -354,7 +367,6 @@ export const convertEpochToDate = (dateEpoch) => {
     let paymentArray=[];
     const payments = await Digit.PaymentService.getReciept(tenantId, "PT", { receiptNumbers: payment.Payments[0].paymentDetails[0].receiptNumber });
     let response = { filestoreIds: [payments.Payments[0]?.fileStoreId] };
-  console.log("responseresponseresponseresponse",response,payments.Payments[0]?.fileStoreId,!payments.Payments[0]?.fileStoreId)
     if (true) {
       let assessmentYear="",assessmentYearForReceipt="";
       let count=0;

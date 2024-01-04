@@ -7,7 +7,6 @@ import { newConfig } from "../../../config/Create/config";
 const NewApplication = () => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const tenants = Digit.Hooks.pt.useTenants();
-  console.log("tenantstenants",tenants)
   const { t } = useTranslation();
   const [canSubmit, setSubmitValve] = useState(false);
   const defaultValues = { };
@@ -79,7 +78,7 @@ const NewApplication = () => {
       electricity:data?.electricity,
       uid:data?.uid
       },
-      owners: data?.owners.map((owner) => {
+      owners: data?.owners.map((owner,index) => {
         let {
           name,
           mobileNumber,
@@ -105,6 +104,8 @@ const NewApplication = () => {
             fatherOrHusbandName,
             gender: owner?.gender.code,
             emailId,
+            additionalDetails:{ownerSequence:index, ownerName:owner?.name}
+            
           };
         }
 
@@ -151,13 +152,9 @@ const NewApplication = () => {
       };
     }
   setFormData(formData)
-  setSearchData({ city: Digit.ULBService.getCurrentTenantId(), filters: tempObject });    
-    
-  
+  setSearchData({ city: Digit.ULBService.getCurrentTenantId(), filters: tempObject });
   };
-  if (isLoading) {
-    return <Loader />;
-  }
+ 
   useEffect(() => {  
     if(propertyDataLoading && propertyData?.Properties.length >0)  
     {  
@@ -172,7 +169,9 @@ const NewApplication = () => {
   /* use newConfig instead of commonFields for local development in case needed */
 
   const configs = commonFields?commonFields:newConfig;
-  
+  if (isLoading) {
+    return <Loader />;
+  }
   const Heading = (props) => {
     return <h1 className="heading-m">{props.label}</h1>;
   };
@@ -200,9 +199,7 @@ const NewApplication = () => {
     }
 
   return (
-    <div>
-
-   
+    <div>   
     <FormComposer
       heading={t("ES_TITLE_NEW_PROPERTY_APPLICATION")}
       isDisabled={!canSubmit}
@@ -220,7 +217,7 @@ const NewApplication = () => {
     />
     <div>
     { showToast &&   <Modal
-    headerBarMain={<Heading label={"Property Alredy exist"} />}
+    headerBarMain={<Heading label={t("CR_PROPERTY_NUMBER")} />}
     headerBarEnd={<CloseBtn onClick={closeModal} />}
     actionCancelLabel={"Cancel"}
     actionCancelOnSubmit={closeModal}

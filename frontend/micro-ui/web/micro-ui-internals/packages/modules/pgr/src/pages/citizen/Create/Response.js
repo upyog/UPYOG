@@ -17,7 +17,6 @@ const GetActionMessage = ({ action }) => {
   }
 };
 
-
 const BannerPicker = ({ response }) => {
   const { complaints } = response;
 
@@ -61,10 +60,11 @@ const Response = (props) => {
     <Card>
       {appState.complaints.response && <BannerPicker response={appState} />}
       <CardText>{t("CS_COMMON_TRACK_COMPLAINT_TEXT")}</CardText>
+      {appState.complaints.response?.ServiceWrappers?.[0]?.workflow.action == "RATE" ?"": <div style={{marginBottom:"10px"}}><SubmitBar label={t("PT_DOWNLOAD_ACK_FORM")} onSubmit={(e) =>{handleDownloadPdf(e)}} /></div>}
       <Link to="/digit-ui/citizen">
         <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
       </Link>
-      {appState.complaints.response && <SubmitBar label={t("PT_DOWNLOAD_ACK_FORM")} onSubmit={(e) =>{handleDownloadPdf(e)}} />}
+
     </Card>
   );
 };

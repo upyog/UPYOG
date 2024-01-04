@@ -205,7 +205,6 @@ const CreateProperty = ({ parentRoute }) => {
   config.indexRoute = "info";
   const CheckPage = Digit?.ComponentRegistryService?.getComponent("PTCheckPage");
   const PTAcknowledgement = Digit?.ComponentRegistryService?.getComponent("PTAcknowledgement");
-console.log("configconfig",config)
   return (
     <div>
       <div>
@@ -232,7 +231,7 @@ console.log("configconfig",config)
     </div>
     <div>
       { showToast &&   <Modal
-      headerBarMain={<Heading label={"Property Alredy exist"} />}
+      headerBarMain={<Heading label={t("CR_PROPERTY_DUPLICATE")} />}
       headerBarEnd={<CloseBtn onClick={closeModal} />}
       actionCancelLabel={"Cancel"}
       actionCancelOnSubmit={closeModal}

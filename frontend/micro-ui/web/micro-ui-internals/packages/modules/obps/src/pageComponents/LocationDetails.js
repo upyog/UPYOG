@@ -7,7 +7,6 @@ import { stringReplaceAll } from "../utils";
 
 const LocationDetails = ({ t, config, onSelect, userType, formData, ownerIndex = 0, addNewOwner, isShowToast }) => {
   let propertyData =JSON.parse(sessionStorage.getItem("Digit_OBPS_PT"))
-  console.log("prop",propertyData)
   let currCity = JSON.parse(sessionStorage.getItem("currentCity")) || { };
   let currPincode = sessionStorage.getItem("currentPincode");
   let currLocality = JSON.parse(sessionStorage.getItem("currentLocality")) || { };
@@ -199,11 +198,10 @@ const LocationDetails = ({ t, config, onSelect, userType, formData, ownerIndex =
     if (formData?.address?.locality) {
       formData.address["locality"] = locality;
     }
-    console.log("locality",locality)
     setSelectedLocality(locality);
     sessionStorage.setItem("currLocality", JSON.stringify(locality));
   }
-console.log("Lcation Details", formData)
+
   return (
     <div>
       {!isOpen && <Timeline />}
@@ -275,14 +273,12 @@ console.log("Lcation Details", formData)
             //options={}
             value={propertyData.address.locality.name}
             optionKey="i18nkey"
-            
             t={t}
             isDependent={true}
             labelKey={`${stringReplaceAll(selectedCity?.code,".","_").toUpperCase()}_REVENUE`}
           disabled={true}
           />
         </span>
-      
       <CardLabel>{`${t("BPA_DETAILS_SRT_NAME_LABEL")}`}</CardLabel>
       {!isOpen && <TextInput
         style={{ }}

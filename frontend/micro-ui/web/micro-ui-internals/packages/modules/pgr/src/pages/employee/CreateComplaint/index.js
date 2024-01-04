@@ -46,7 +46,6 @@ const [description, setDescription] = useState("")
   const history = useHistory();
   const serviceDefinitions = Digit.GetServiceDefinitions;
   const client = useQueryClient();
-  
   useEffect(() => {
     if (complaintType?.key && subType?.key && selectedCity?.code && selectedLocality?.code) {
       setSubmitValve(true);
@@ -174,9 +173,7 @@ const [description, setDescription] = useState("")
             onChange: handleMobileNumber,
             validation: {
               required: true,
-              pattern: /^[6-9]\d{9}$/,
-             
-              
+              pattern: /^[6-9]\d{9}$/,  
             },
             componentInFront: <div className="employee-card-input employee-card-input--front">+91</div>,
             error: t("CORE_COMMON_MOBILE_ERROR"),
@@ -193,8 +190,6 @@ const [description, setDescription] = useState("")
             validation: {
               required: true,
               pattern: /^[A-Za-z]/,
-              
-             
             },
             error: t("CS_ADDCOMPLAINT_NAME_ERROR"),
           },
@@ -304,8 +299,6 @@ const [description, setDescription] = useState("")
       ],
     },
   ];
-
- 
     useEffect(()=>{
       console.log("heloo world",propetyData )
       if(propetyData !== "undefined"   && propetyData !== null)
@@ -343,4 +336,3 @@ const [description, setDescription] = useState("")
     />
   );
 };
-

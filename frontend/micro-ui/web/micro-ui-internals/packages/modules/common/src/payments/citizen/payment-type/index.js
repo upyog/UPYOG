@@ -169,6 +169,7 @@ export const SelectPaymentType = (props) => {
           makePayment(gatewayParam.txURL,newForm);
 
         } catch (e) {
+          console.log("Error in payment redirect ", e);
           //window.location = redirectionUrl;
         }
       }

@@ -35,7 +35,6 @@ const displayServiceDate = (timeStamp) => {
 export const Search = {
   all: async (tenantId, filters = {}) => {
     const response = await FSMService.search(tenantId, { ...filters });
-    console.log("response", response )
     return response;
   },
 

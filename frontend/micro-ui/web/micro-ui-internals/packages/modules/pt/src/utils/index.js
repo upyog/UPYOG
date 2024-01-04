@@ -100,7 +100,6 @@ export const setOwnerDetails = (data) => {
   const { address, owners } = data;
   let institution = {},
     owner = [];
-    console.log("setOwnerDetailssetOwnerDetails",data)
   if (owners && owners.length > 0) {
     if (data?.ownershipCategory?.value === "INSTITUTIONALPRIVATE" || data?.ownershipCategory?.value === "INSTITUTIONALGOVERNMENT") {
       institution.designation = owners[0]?.designation;
@@ -131,7 +130,6 @@ export const setOwnerDetails = (data) => {
       data.owners = owner;
     } else {
       owners.map((ownr,index) => {
-        console.log("ownrownrownrownr",ownr)
         let document = [];
         if (ownr?.ownerType?.code != "NONE") {
           document.push({
@@ -159,7 +157,6 @@ export const setOwnerDetails = (data) => {
           additionalDetails:{ownerSequence:index, ownerName:ownr?.name}
         });
       });
-      console.log("dddddddddddddddddddd",owner)
       data.owners = owner;
     }
   }
@@ -525,9 +522,8 @@ export const setPropertyDetails = (data) => {
 
 /*   method to convert collected details to proeprty create object */
 export const convertToProperty = (data = {}) => {
-  console.log("dtaaaaaaaaa",data)
   let dataNew = data?.units?.map((value) => {
-    let additionalDetails = { "structureType": value.structureType, "ageOfProperty": value.ageOfProperty }
+    let additionalDetails = { "structureType": value?.structureType, "ageOfProperty": value?.ageOfProperty }
     return { ...value, additionalDetails }
   })
   let isResdential = data.isResdential;

@@ -8,7 +8,6 @@ const PropertyLocationDetails = ({ t, config, onSelect, userType, formData, form
   let allCities = Digit.Hooks.pt.useTenants() ? Digit.Hooks.pt.useTenants() : Digit.Hooks.tl.useTenants();
   if(window.location.href.includes("obps"))
   {
-    console.log("Using",Digit.SessionStorage.get("OBPS_TENANTS"))
     allCities = Digit.SessionStorage.get("OBPS_TENANTS")
   }
   // if called from tl module get tenants from tl usetenants

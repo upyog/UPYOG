@@ -68,7 +68,6 @@ const AssessmentDetails = () => {
     }, []);
     useEffect(()=>{
       setPenalty(parseInt(ptCalculationEstimateData?.Calculation[0].taxHeadEstimates[6].estimateAmount))
-      console.log("ptCalculationEstimateData123333",ptCalculationEstimateData?.Calculation[0].taxHeadEstimates[5].estimateAmount,ptCalculationEstimateData,ptCalculationEstimateLoading)
       setRebate(parseInt(ptCalculationEstimateData?.Calculation[0].taxHeadEstimates[5].estimateAmount))
     },[ptCalculationEstimateLoading])
   useEffect(() => {
@@ -178,7 +177,6 @@ const CloseBtn = (props) => {
 function change(){
   let total_amount=ptCalculationEstimateData?.Calculation[0]?.totalAmount
   const [first,second]=[parseInt(first_temp.current.value),parseInt(second_temp.current.value)];
-  console.log("first,second",first,second,ptCalculationEstimateData,AssessmentData)
   let additionalDetails={
     "adhocPenalty":0,
     "adhocExemptionReason":null,
@@ -189,9 +187,7 @@ function change(){
     if((selectedPenalityReason && first>0)/* &&(!selectedRebateReason) */){
       if(selectPenalityReason.value!=='Others'){
         if(first<total_amount){
-          console.log("total_amounttotal_amount",total_amount)
           let additionalPenality=first;
-         
           ptCalculationEstimateData.Calculation[0].taxHeadEstimates[6]={
             "taxHeadCode": "PT_TIME_PENALTY",
             "estimateAmount":  ptCalculationEstimateData.Calculation[0].taxHeadEstimates[6].estimateAmount=first+penalty,
@@ -212,7 +208,6 @@ function change(){
       }
       else{
         if(first<total_amount){
-          console.log("firstfirstfirstfirstfirst",first,total_amount)
           let additionalPenality=first;
           ptCalculationEstimateData.Calculation[0].taxHeadEstimates[6]={
             "taxHeadCode": "PT_TIME_PENALTY",

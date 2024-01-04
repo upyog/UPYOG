@@ -173,7 +173,6 @@ export const config = {
         nextText: "CS_COMMON_NEXT",
       },
       nextStep: "tank-size",
-
     },
     {
       route: "tank-size",

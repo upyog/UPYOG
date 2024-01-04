@@ -29,7 +29,6 @@ const ActionButton = ({ jumpTo }) => {
 };
 
 const CheckPage = ({ onSubmit, value }) => {
-  console.log("submit", onSubmit, value)
   const { t } = useTranslation();
   const history = useHistory();
 

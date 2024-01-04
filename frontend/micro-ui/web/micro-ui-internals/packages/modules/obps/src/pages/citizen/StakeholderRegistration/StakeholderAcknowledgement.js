@@ -6,7 +6,6 @@ import { convertToStakeholderObject } from "../../../utils/index";
 
 const GetActionMessage = ( props) => {
   const LicenseType=props?.data?.Licenses?.[0]?.tradeLicenseDetail?.tradeUnits?.[0]?.tradeType?.split(".")[0] || "ARCHITECT";
-
   const { t } = useTranslation();
   if (props.isSuccess) {
     return !window.location.href.includes("edit-application") ? `${t(`TRADELICENSE_TRADETYPE_${LicenseType}`)}${t(`CS_STAKEHOLDER_APPLICATION_SUCCESS`)}` : t("CS_PROPERTY_UPDATE_APPLICATION_SUCCESS");

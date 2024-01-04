@@ -121,7 +121,7 @@ const MapChart = ({
   {
     let totalCount = dat.plots[3].value;
     let liveCount = dat.plots[4].value;
-    let live = dat.plots[4].strValue > 0 ? true : false;
+    let live = dat.plots[4].strValue > 0 ? true : true;
     DataObj[dat.headerName] = {
       ...DataObj?.[dat.headerName],
       status: dat.plots[2].strValue,
@@ -162,12 +162,7 @@ const MapChart = ({
     <ResponsiveContainer
       width="40%"
       height={220}
-      margin={{
-        top: 5,
-        right: 5,
-        left: 5,
-        bottom: 5,
-      }}
+      
     >
       <div style={{ position: "relative" }}>
         <ReactTooltip>{tooltipContent}</ReactTooltip>
@@ -193,9 +188,9 @@ const MapChart = ({
                     onMouseEnter={(event) =>
                       onMouseEnter(geo, current, event)
                     }
-                    onClick={(event) =>
-                      onMouseClick(geo, current, event)
-                    }
+                    // onClick={(event) =>
+                    //   onMouseClick(geo, current, event)
+                    // }
                     onMouseLeave={(event) =>
                       onMouseLeave(geo, current, event)
                     }

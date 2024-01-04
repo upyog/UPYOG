@@ -101,7 +101,6 @@ export const CreateComplaint = () => {
   };
 
   const handleSelect = (data) => {
-    
     let c = JSON.parse(sessionStorage.getItem("complaintType"))
     if(data?.subType)
     {

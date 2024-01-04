@@ -152,7 +152,6 @@ const ApplicationDetails = () => {
   }
 
   const checkWSAdditionalDetails = () => {
-    console.log("applicationDetailsapplicationDetails",applicationDetails)
     if(applicationDetails?.processInstancesDetails?.[0]?.businessService =="WSReconnection" || applicationDetails?.processInstancesDetails?.[0]?.businessService =="SWReconnection")
     {
       return true;

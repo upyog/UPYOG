@@ -31,6 +31,7 @@ function PropertyOwners({ owners }) {
     cardStyles = { ...cardStyles, maxWidth: "950px" };
     rowContainerStyle = {};
   }
+  let owners1 = owners.sort((item,item2)=>{return item?.additionalDetails?.ownerSequence - item2?.additionalDetails?.ownerSequence})
 
   return (
     <React.Fragment>

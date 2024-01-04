@@ -23,7 +23,6 @@ const CreatePropertyForm = ({ config, onSelect,value, userType, redirectUrl }) =
   let allCities = Digit.Hooks.pt.useTenants()?.sort((a, b) => a?.i18nKey?.localeCompare?.(b?.i18nKey));
   if(window.location.href.includes("obps"))
   {
-    console.log("Enter",Digit.SessionStorage.get("OBPS_TENANTS"))
     allCities = Digit.SessionStorage.get("OBPS_TENANTS")
   }
   const [formValue, setFormValue] = useState("");

@@ -151,7 +151,7 @@ const PTApplicationDetails = () => {
 
   let transfereeOwners = get(property, "ownersTemp", []);
   let transferorOwners = get(property, "ownersInit", []);
-console.log("transferorOwnerstransferorOwnerstransferorOwners",transferorOwners,transfereeOwners)
+
   let transfereeInstitution = get(property, "institutionTemp", []);
   let isInstitution = property?.ownershipCategoryInit?.startsWith("INSTITUTION");
   let transferorInstitution = get(property, "institutionInit", []);

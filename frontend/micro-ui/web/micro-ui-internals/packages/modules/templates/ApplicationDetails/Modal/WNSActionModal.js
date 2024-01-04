@@ -215,7 +215,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
       applicationData?.serviceType == "WATER" ? submitAction({ WaterConnection: applicationData ,disconnectRequest: false, reconnectRequest:false}) : submitAction({ SewerageConnection: applicationData, disconnectRequest: false, reconnectRequest:false });
     }
   }
-   
+
   useEffect(() => {
     if (applicationData?.processInstance?.businessService == "DisconnectWSConnection" || applicationData?.processInstance?.businessService == "DisconnectSWConnection") {
       if (action) {

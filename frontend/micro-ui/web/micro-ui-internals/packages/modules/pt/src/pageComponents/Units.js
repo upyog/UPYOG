@@ -204,7 +204,6 @@ const Units = ({ t, config, onSelect, userType, formData, setError, formState, c
       let defaultUnits = formData?.originalData?.units
         ?.filter((e) => e.active)
         ?.map((unit, index) => {
-          console.log("unit",unit)
           let { occupancyType, usageCategory: uc, constructionDetail, floorNo, arv } = unit;
           occupancyType = occupencyOptions.filter((e) => e?.code === occupancyType)[0];
           let usageCategory = usageCategoryMajorMenu(usagecat).filter((e) => e?.code === uc)[0];
@@ -487,7 +486,6 @@ function Unit({
     let keys = Object.keys(formValue);
     const part = {};
     keys.forEach((key) => (part[key] = unit[key]));
-    console.log("formValueformValueformValue",formValue)
 
     if (!_.isEqual(formValue, part)) setUnits((prev) => prev.map((item) => (item.key === unit.key ? { ...item, ...formValue } : item)));
 
