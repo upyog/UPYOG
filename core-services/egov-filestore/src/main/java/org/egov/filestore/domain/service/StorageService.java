@@ -159,7 +159,8 @@ public class StorageService {
 	}
 
 	public Resource retrieve(String fileStoreId, String tenantId) throws IOException {
-		return artifactRepository.find(fileStoreId, tenantId);
+		//return artifactRepository.find(fileStoreId, tenantId);
+		return null;
 	}
 
 	public List<FileInfo> retrieveByTag(String tag, String tenantId) {
@@ -167,8 +168,8 @@ public class StorageService {
 	}
 
 	public Map<String, String> getUrls(String tenantId, List<String> fileStoreIds) {
-		Map<String, String> urlMap = getUrlMap(
-				artifactRepository.getByTenantIdAndFileStoreIdList(tenantId, fileStoreIds));
+		Map<String, String> urlMap = null;
+		//getUrlMap(artifactRepository.getByTenantIdAndFileStoreIdList(tenantId, fileStoreIds));
 		return urlMap;
 	}
 
