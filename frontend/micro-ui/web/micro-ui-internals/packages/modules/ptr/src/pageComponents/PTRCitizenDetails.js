@@ -4,204 +4,180 @@ import { cardBodyStyle } from "../utils";
 import { useLocation, useRouteMatch } from "react-router-dom";
 import Timeline from "../components/TLTimeline";
 
-const PTRCitizenDetails = ({ t, config, onSelect, userType, formData, ownerIndex }) => {
+const PTRCitizenDetails
+ = ({ t, config, onSelect, userType, formData, ownerIndex }) => {
   const { pathname: url } = useLocation();
   // const editScreen = url.includes("/modify-application/");
   //const mutationScreen = url.includes("/property-mutation/");
-  const user = Digit.UserService.getUser().info;
 
-  let index = window.location.href.charAt(window.location.href.length - 1);
+  let index = 0
+  // window.location.href.charAt(window.location.href.length - 1);
+  console.log("index in detail page ",  index)
+  // 
   let validation = {};
 
-  const [applicantName, setName] = useState(
-    (formData.owners && formData.owners[index] && formData.owners[index].applicantName) || formData?.owners?.applicantName || ""
-  );
-  const [emailId, setEmail] = useState(
-    (formData.owners && formData.owners[index] && formData.owners[index].emailId) || formData?.owners?.emailId || ""
-  );
+  const [applicantName, setName] = useState((formData.ownerss && formData.ownerss[index] && formData.ownerss[index].applicantName) || formData?.ownerss?.applicantName || "");
+  const [emailId, setEmail] = useState((formData.ownerss && formData.ownerss[index] && formData.ownerss[index].emailId) || formData?.ownerss?.emailId || "");
   const [mobileNumber, setMobileNumber] = useState(
-    (formData.owners && formData.owners[index] && formData.owners[index].mobileNumber) || formData?.owners?.mobileNumber || ""
+    (formData.ownerss && formData.ownerss[index] && formData.ownerss[index].mobileNumber) || formData?.ownerss?.mobileNumber || ""
   );
   const [alternateNumber, setAltMobileNumber] = useState(
-    (formData.owners && formData.owners[index] && formData.owners[index].alternateNumber) || formData?.owners?.alternateNumber || ""
+    (formData.ownerss && formData.ownerss[index] && formData.ownerss[index].alternateNumber) || formData?.ownerss?.alternateNumber || ""
   );
 
+  
   const [fatherName, setFatherOrHusbandName] = useState(
-    (formData.owners && formData.owners[index] && formData.owners[index].fatherName) || formData?.owners?.fatherName || ""
+    (formData.ownerss && formData.ownerss[index] && formData.ownerss[index].fatherName) || formData?.ownerss?.fatherName || ""
   );
-
-  const [isEmailValid, setIsEmailValid] = useState(true);
+  
   // const isUpdateProperty = formData?.isUpdateProperty || false;
-  let isEditProperty = formData?.isEditProperty || false;
+  // let isEditProperty = formData?.isEditProperty || false;
 
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();
 
+  
+
   function setOwnerName(e) {
-    // setName(e.target.value);
-    // Remove characters that are not alphabets
-    //const inputValue = e.target.value.replace(/[^a-zA-Z ]/g, "");
-    setName(user?.name);
+    setName(e.target.value);
   }
   function setOwnerEmail(e) {
-    const enteredEmail = e.target.value;
-
-    // Email validation pattern
-    const emailValidationPattern = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/i; // Case-insensitive
-
-    // Check if the entered email matches the validation pattern
-    const isValid = emailValidationPattern.test(enteredEmail) || enteredEmail === "";
-
-    // Update the email validity state
-    setIsEmailValid(isValid);
-
-    // Update the email state
-    setEmail(enteredEmail);
+    setEmail(e.target.value);
   }
+  
 
   function setMobileNo(e) {
-    //setMobileNumber(e.target.value);
-    setMobileNumber(user?.mobileNumber);
-    //setAltMobileNo();
+    setMobileNumber(e.target.value);
   }
-
+  
   function setAltMobileNo(e) {
     setAltMobileNumber(e.target.value);
   }
   function setGuardiansName(e) {
-    //setFatherOrHusbandName(e.target.value);
-    const inputValue = e.target.value.replace(/[^a-zA-Z ]/g, "");
-    setFatherOrHusbandName(inputValue);
+    setFatherOrHusbandName(e.target.value);
   }
-
-  useEffect(() => {
-    if (!mobileNumber && user?.mobileNumber) {
-      setMobileNumber(user?.mobileNumber);
-    }
-    if (!applicantName && user?.name) {
-      setName(user?.name);
-    }
-
-    if (userType === "citizen") {
-      goNext();
-    }
-  }, [user, userType]);
+  
 
   const goNext = () => {
-    let owner = formData.owners && formData.owners[index];
+    let owner = formData.ownerss && formData.ownerss[index];
     let ownerStep;
     if (userType === "citizen") {
-      ownerStep = { ...owner, applicantName, mobileNumber, alternateNumber, fatherName, emailId };
+      ownerStep = { ...owner, applicantName, mobileNumber,alternateNumber, fatherName, emailId};
       onSelect(config.key, { ...formData[config.key], ...ownerStep }, false, index);
     } else {
-      ownerStep = { ...owner, applicantName, mobileNumber, alternateNumber, fatherName, emailId };
-      onSelect(config.key, ownerStep, false, index);
+      
+      ownerStep = { ...owner, applicantName,  mobileNumber,alternateNumber, fatherName,emailId };
+      onSelect(config.key, ownerStep, false,index);
     }
   };
 
   const onSkip = () => onSelect();
 
+  
+  
+
   useEffect(() => {
     if (userType === "citizen") {
       goNext();
     }
-  }, [applicantName, mobileNumber, alternateNumber, fatherName, emailId]);
+  }, [applicantName, mobileNumber, fatherName, emailId]);
+
+ 
 
   return (
     <React.Fragment>
-      {window.location.href.includes("/citizen") ? (
-        window.location.href.includes("/citizen/pt/property/property-mutation") ? (
-          <Timeline currentStep={1} flow="PT_MUTATE" />
-        ) : (
-          <Timeline currentStep={1} />
-        )
-      ) : null}
+    {
+      window.location.href.includes("/citizen") ?
+        window.location.href.includes("/citizen/pt/property/property-mutation") ? 
+          <Timeline currentStep={1} flow="PT_MUTATE" /> : <Timeline currentStep={1} />
+    : null
+    }
 
-      <FormStep
-        config={config}
-        onSelect={goNext}
-        onSkip={onSkip}
-        t={t}
-        isDisabled={!applicantName || !mobileNumber || !fatherName || !emailId || !isEmailValid}
-      >
-        <div>
-          <CardLabel>{`${t("PTR_APPLICANT_NAME")}`}</CardLabel>
-          <TextInput
-            t={t}
-            type={"text"}
-            isMandatory={false}
-            optionKey="i18nKey"
-            name="applicantName"
-            value={applicantName}
-            onChange={setOwnerName}
-            disable={isEditProperty}
-            ValidationRequired={false}
-            {...(validation = {
-              isRequired: true,
-              // pattern: "^[a-zA-Z-.`' ]*$",
-              //pattern: /^[a-zA-Z@ ]*$/,
-              type: "text",
-              // title: t("PT_NAME_ERROR_MESSAGE"),
-            })}
-          />
+    <FormStep
+      config={config}
+      onSelect={goNext}
+      onSkip={onSkip}
+      t={t}
+      isDisabled={!applicantName || !mobileNumber || !fatherName || !emailId}
+    >
+      <div>
+        <CardLabel>{`${t("PTR_APPLICANT_NAME")}`}</CardLabel>
+        <TextInput
+          t={t}
+          type={"text"}
+          isMandatory={false}
+          optionKey="i18nKey"
+          name="applicantName"
+          value={applicantName}
+          onChange={setOwnerName}
+          //disable={isUpdateProperty || isEditProperty}
+          ValidationRequired = {true}
+          {...(validation = {
+            isRequired: true,
+            pattern: "^[a-zA-Z-.`' ]*$",
+            type: "text",
+            title: t("PT_NAME_ERROR_MESSAGE"),
+          })}
+        />
+       
+        <CardLabel>{`${t("PTR_MOBILE_NUMBER")}`}</CardLabel>
+        <MobileNumber
+          value={mobileNumber}
+          name="mobileNumber"
+          onChange={(value) => setMobileNo({ target: { value } })}
+          //disable={isUpdateProperty || isEditProperty}
+          {...{ required: true, pattern: "[6-9]{1}[0-9]{9}", type: "tel", title: t("CORE_COMMON_APPLICANT_MOBILE_NUMBER_INVALID") }}
+        />
 
-          <CardLabel>{`${t("PTR_MOBILE_NUMBER")}`}</CardLabel>
-          <MobileNumber
-            value={mobileNumber}
-            name="mobileNumber"
-            //onChange={(value) => setMobileNo({ target: { value } })}
-            onChange={setMobileNo}
-            disable={isEditProperty}
-            {...{ required: true, pattern: "[6-9]{1}[0-9]{9}", type: "tel" }}
-          />
-
-          <CardLabel>{`${t("PTR_ALT_MOBILE_NUMBER")}`}</CardLabel>
+        <CardLabel>{`${t("PTR_ALT_MOBILE_NUMBER")}`}</CardLabel>
           <MobileNumber
             value={alternateNumber}
             name="alternateNumber"
             onChange={(value) => setAltMobileNo({ target: { value } })}
-            disable={isEditProperty}
-            {...{ required: true, pattern: "[6-9]{1}[0-9]{9}", type: "tel" }}
-          />
-          <CardLabel>{`${t("PTR_FATHER_HUSBAND_NAME")}`}</CardLabel>
-          <TextInput
-            t={t}
-            type={"text"}
-            isMandatory={false}
-            optionKey="i18nKey"
-            name="fatherName"
-            value={fatherName}
-            onChange={setGuardiansName}
-            disable={isEditProperty}
-            ValidationRequired={false}
-            {...(validation = {
-              isRequired: true,
-              // pattern: "^[a-zA-Z-.`' ]*$",
-              type: "text",
-              // title: t("PT_NAME_ERROR_MESSAGE"),
-            })}
-          />
-
-          <CardLabel>{`${t("PTR_EMAIL_ID")}`}</CardLabel>
-          <TextInput
-            t={t}
-            type={"text"}
-            isMandatory={false}
-            optionKey="i18nKey"
-            name="emailId"
-            value={emailId}
-            onChange={setOwnerEmail}
             //disable={isUpdateProperty || isEditProperty}
-            // ValidationRequired={false}
-            // {...(validation = {
-            //   isRequired: true,
-            //   //pattern: "[a-z0-9._%+-]+@[a-z0-9.-]+.[a-z]{2,}$",
-            //   type: "text",
-            //   // title: t("PTR_NAME_ERROR_MESSAGE"),
-            // })}
+            {...{ required: false, pattern: "[6-9]{1}[0-9]{9}", type: "tel", title: t("CORE_COMMON_APPLICANT_MOBILE_NUMBER_INVALID") }}
           />
-        </div>
-      </FormStep>
+        <CardLabel>{`${t("PTR_FATHER_HUSBAND_NAME")}`}</CardLabel>
+        <TextInput
+          t={t}
+          type={"text"}
+          isMandatory={false}
+          optionKey="i18nKey"
+          name="fatherName"
+          value={fatherName}
+          onChange={setGuardiansName}
+          //disable={isUpdateProperty || isEditProperty}
+          ValidationRequired = {true}
+          {...(validation = {
+            isRequired: true,
+            pattern: "^[a-zA-Z-.`' ]*$",
+            type: "text",
+            title: t("PTR_NAME_ERROR_MESSAGE"),
+          })}
+        />
+
+        <CardLabel>{`${t("PTR_EMAIL_ID")}`}</CardLabel>
+        <TextInput
+          t={t}
+          type={"text"}
+          isMandatory={true}
+          optionKey="i18nKey"
+          name="emailId"
+          value={emailId}
+          onChange={setOwnerEmail}
+          //disable={isUpdateProperty || isEditProperty}
+          ValidationRequired = {true}
+          {...(validation = {
+            isRequired: true,
+            pattern: "[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$",
+            type: "text",
+            title: t("PTR_NAME_ERROR_MESSAGE"),
+          })}
+        />
+        
+        
+      </div>
+    </FormStep>
     </React.Fragment>
   );
 };
