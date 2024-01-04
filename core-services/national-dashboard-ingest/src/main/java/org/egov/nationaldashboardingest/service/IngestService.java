@@ -52,10 +52,14 @@ public class IngestService {
         Map<String, List<JsonNode>> indexNameVsDocumentsToBeIndexed = new HashMap<>();
 
         //Validate if data id for migrated tenant
+        String uuid = ingestRequest.getRequestInfo().getUserInfo().getUuid();
+        
+        Map<String,String> userUUID=applicationProperties.getNationalDashboardUser();
+        if(!userUUID.get("SUPERUUID").equalsIgnoreCase(uuid)) {
         Boolean isUlbValid=ingestValidator.verifyTenant(ingestRequest.getRequestInfo(),ingestRequest.getIngestData());
         if(!isUlbValid)
             throw new CustomException("EG_DS_SAME_RECORD_ERR", "State/ ULB name in request is not in sync with migrated tenant!!");
-
+    }
 
          Set<String> usageList = ingestValidator.verifyPropertyType(ingestRequest.getRequestInfo(),ingestRequest.getIngestData());
 
