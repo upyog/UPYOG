@@ -14,7 +14,7 @@ const BannerPicker = (props) => {
   return (
     <Banner
       message={GetActionMessage()}
-      applicationNumber={props.data?.fsm[0]?.applicationNo}
+      applicationNumber={props?.data?.fsm && props?.data?.fsm[0]?.applicationNo}
       info={props.t("CS_FILE_DESLUDGING_APPLICATION_NO")}
       successful={props.isSuccess}
     />
@@ -33,7 +33,6 @@ const Response = ({ data, onSuccess }) => {
   const [paymentPreference, setPaymentPreference] = useState(null);
   const [advancePay, setAdvancePay] = useState(null);
   const [zeroPay, setZeroPay] = useState(null);
-
   const Data = mutation?.data || successData;
   const localityCode = Data?.fsm?.[0].address?.locality?.code;
   const slumCode = Data?.fsm?.[0].address?.slumName;
@@ -76,18 +75,18 @@ const Response = ({ data, onSuccess }) => {
         const advanceAmount = amount === 0 ? null : selectPaymentPreference?.advanceAmount;
         amount === 0 ? setZeroPay(true) : setZeroPay(false);
         advanceAmount === 0 ? setAdvancePay(true) : setAdvancePay(false);
+
         const formdata = {
           fsm: {
             citizen: {
               gender: selectGender?.code,
             },
-            tenantId: city.code,
+            tenantId: city?.code,
             additionalDetails: {},
-            propertyUsage: subtype.code,
+            propertyUsage: subtype?.code,
             address: {
-              tenantId: city.code,
+              tenantId: city?.code,
               additionalDetails: {
-                additionalDetails: null,
                 boundaryType: propertyLocation?.code === "FROM_GRAM_PANCHAYAT" ? "GP" : "Locality",
                 gramPanchayat: {
                   code: gramPanchayat?.code,
@@ -106,11 +105,11 @@ const Response = ({ data, onSuccess }) => {
               doorNo: doorNo?.trim(),
               landmark: landmark?.trim(),
               slumName: slum,
-              city: city.name,
+              city: city?.name,
               pincode,
               locality: {
-                code: locality.code,
-                name: locality.name,
+                code: propertyLocation?.code === "WITHIN_ULB_LIMITS" ? locality?.code : gramPanchayat?.code,
+                name: propertyLocation?.code === "WITHIN_ULB_LIMITS" ? locality?.name : gramPanchayat?.name,
               },
               geoLocation: {
                 latitude: geoLocation?.latitude,
