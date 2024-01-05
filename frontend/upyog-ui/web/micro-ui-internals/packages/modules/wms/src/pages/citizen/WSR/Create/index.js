@@ -2,7 +2,7 @@ import { FormComposer, Loader,Header } from "@egovernments/digit-ui-react-compon
 import React, {  useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
-import { newConfig } from "../../../../components/config/dr-config";
+import { newConfig } from "../../../../components/config/wsr-config";
 import { convertEpochToDate, pdfDownloadLink } from "../../../../components/Utils";
 const WmsWsrCreate = () => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -25,9 +25,9 @@ const WmsWsrCreate = () => {
       };
     
       /* use customiseCreateFormData hook to make some chnages to the Employee object [0].WsreduleOfRateApplication*/
-     Digit.WMSService.PHMApplications.create(WsrApplications.WsrApplication[0], tenantId).then((result,err)=>{
+     Digit.WMSService.WSRApplications.create(WsrApplications.WsrApplication[0], tenantId).then((result,err)=>{
       setIsLoading(false);
-       history.push("/upyog-ui/citizen/wms/dr-home");
+       history.push("/upyog-ui/citizen/wms/wsr-home");
      })
      .catch((e) => {
      console.log("err");
@@ -43,9 +43,9 @@ const WmsWsrCreate = () => {
 
   return (
     <div>
-    <Header>{t("WMS_NEW_DR_FORM_HEADER")}</Header>
+    <Header>{t("WMS_NEW_WSR_FORM_HEADER")}</Header>
     <FormComposer
-              head={t("WMS_DR_FORM_CREATE_HEAD")}
+              head={t("WMS_WSR_FORM_CREATE_HEAD")}
               label={t("WMS_COMMON_SAVE")}
               config={configs}
               onSubmit={onSubmit}

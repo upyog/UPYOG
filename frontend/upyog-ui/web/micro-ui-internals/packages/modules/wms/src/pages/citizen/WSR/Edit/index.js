@@ -2,7 +2,7 @@ import { FormComposer, Toast,Loader } from "@egovernments/digit-ui-react-compone
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory, useParams } from "react-router-dom";
-import { newConfig } from "../../../../components/config/dr-config";
+import { newConfig } from "../../../../components/config/wsr-config";
 
 import { convertEpochToDate } from "../../../../components/Utils";
 
@@ -13,7 +13,7 @@ const WmsWsrEdit  = () => {
   const [showToast, setShowToast] = useState(null);
 
   const isupdate = Digit.SessionStorage.get("isupdate");
-  const { id: drId } = useParams();
+  const { id: wsrId } = useParams();
   const { tenantId: tenantId } = useParams();
   // const [WsrName, setWsrName] = useState(null);
   // const [descriptionOfItem, setDescriptionOfItem] = useState(null);
@@ -26,10 +26,10 @@ const WmsWsrEdit  = () => {
 
   const [checkfield, setcheck] = useState(false);
   
-  const [errorInfo, setErrorInfo, clearError] = Digit.Hooks.useSessionStorage("DR_WMS_ERROR_DATA", false);
-  const [mutationHappened, setMutationHappened, clear] = Digit.Hooks.useSessionStorage("DR_WMS_MUTATION_HAPPENED", false);
-  const [successData, setsuccessData, clearSuccessData] = Digit.Hooks.useSessionStorage("DR_WMS_MUTATION_SUCCESS_DATA", false);
-  const { isLoading, isError, error, data:dataEdit, ...rest } = Digit.Hooks.wms.dr.useWmsWsrSearch({ dr_id: drId }, tenantId, null, isupdate);
+  const [errorInfo, setErrorInfo, clearError] = Digit.Hooks.useSessionStorage("WSR_WMS_ERROR_DATA", false);
+  const [mutationHappened, setMutationHappened, clear] = Digit.Hooks.useSessionStorage("WSR_WMS_MUTATION_HAPPENED", false);
+  const [successData, setsuccessData, clearSuccessData] = Digit.Hooks.useSessionStorage("WSR_WMS_MUTATION_SUCCESS_DATA", false);
+  const { isLoading, isError, error, data:dataEdit, ...rest } = Digit.Hooks.wms.wsr.useWmsWsrSearch({ wsr_id: wsrId }, tenantId, null, isupdate);
   var defaultValues={};
   useEffect(() => {
     setMutationHappened(false);
@@ -73,13 +73,13 @@ const WmsWsrEdit  = () => {
     // requestdata.unit = input?.WmsWsrUnit?.unit ? input?.WmsWsrUnit?.unit : undefined;
     // requestdata.rate = input?.WmsWsrRate?.rate ? input?.WmsWsrRate?.rate : undefined;
     //let ScheduleOfRateApplications = [requestdata];
-    Digit.WMSService.DRApplications.update(requestdata, tenantId).then((result,err)=>{
+    Digit.WMSService.WSRApplications.update(requestdata, tenantId).then((result,err)=>{
       setIsLoading(false);
-      history.push("/upyog-ui/citizen/wms/dr-home");
+      history.push("/upyog-ui/citizen/wms/wsr-home");
      })
      .catch((e) => {
      console.log("err");
-     history.push("/upyog-ui/citizen/wms/dr-home");
+     history.push("/upyog-ui/citizen/wms/wsr-home");
     });
     /* use customiseUpdateFormData hook to make some chnages to the Employee object */
     //ScheduleOfRateApplications=Digit?.Customizations?.WMS?.customiseUpdateFormData?Digit.Customizations.WMS.customiseUpdateFormData(data,ScheduleOfRateApplications):ScheduleOfRateApplications;
@@ -109,7 +109,7 @@ const WmsWsrEdit  = () => {
   return (
     <div>
       <FormComposer
-        heading={t("WMS_DR_FORM_EDIT_CREATE_HEAD")}
+        heading={t("WMS_WSR_FORM_EDIT_CREATE_HEAD")}
         //isDisabled={!canSubmit}
         label={t("WMS_COMMON_BUTTON_SUBMIT")}
         config={configs}

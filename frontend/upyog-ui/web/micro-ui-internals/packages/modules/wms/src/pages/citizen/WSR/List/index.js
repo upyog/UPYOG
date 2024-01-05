@@ -1,8 +1,8 @@
 import { Header, Loader } from "@egovernments/digit-ui-react-components";
 import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import DesktopList from "../../../../components/List/DR/DesktopList";
-import MobileList from  "../../../../components/List/DR/MobileList";
+import DesktopList from "../../../../components/List/WSR/DesktopList";
+import MobileList from  "../../../../components/List/WSR/MobileList";
 
 const WmsWsrList = ({ parentRoute, businessService = "WMS", initialStates = {}, filterComponent, isList }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -22,7 +22,7 @@ const WmsWsrList = ({ parentRoute, businessService = "WMS", initialStates = {}, 
     ? { limit: 100, offset: pageOffset, drtOrder: drtParams?.[0]?.desc ? "DESC" : "ASC" }
     : { limit: pageSize, offset: pageOffset, drtOrder: drtParams?.[0]?.desc ? "DESC" : "ASC" };
   const isupdate = Digit.SessionStorage.get("isupdate");
-  //const { DRApplications } = async () => await WMSService.DRApplications.search(tenantId, searchparams, filters);// Digit.Hooks.wms.dr.useWmsWsrSearch(
+  //const { WSRApplications } = async () => await WMSService.WSRApplications.search(tenantId, searchparams, filters);// Digit.Hooks.wms.dr.useWmsWsrSearch(
   //  tenantId,
   //  searchParams,
   //  paginationParams,
@@ -42,7 +42,7 @@ const WmsWsrList = ({ parentRoute, businessService = "WMS", initialStates = {}, 
      setTotalReacords(WsrData?.length-1);
   }, [WsrData]);
 
- // useEffect(() => {}, [isLoading, DRApplications]);
+ // useEffect(() => {}, [isLoading, WSRApplications]);
 
   useEffect(() => {
     setPageOffset(0);
@@ -77,17 +77,17 @@ const WmsWsrList = ({ parentRoute, businessService = "WMS", initialStates = {}, 
   const getSearchFields = () => {
     return [
       {
-        label: t("WMS_DR_PROJECT_NAME_LABEL"),
+        label: t("WMS_WSR_PROJECT_NAME_LABEL"),
         name: "project_name",
         type:"text"
       },
       {
-        label: t("WMS_DR_WORK_NAME_LABEL"),
+        label: t("WMS_WSR_WORK_NAME_LABEL"),
         name: "work_name",
         type:"text",
       },
       {
-        label: t("WMS_DR_ML_NAME_LABEL"),
+        label: t("WMS_WSR_ML_NAME_LABEL"),
         name: "milestone_name",
         type:"text"
       },
@@ -99,8 +99,8 @@ const WmsWsrList = ({ parentRoute, businessService = "WMS", initialStates = {}, 
   }
 else
 {
-  if(DRApplications!=undefined)
-  alert(JSON.stringify(DRApplications))
+  if(WSRApplications!=undefined)
+  alert(JSON.stringify(WSRApplications))
 } */
   if (WsrData?.length !== null) {
     if (isMobile) {
