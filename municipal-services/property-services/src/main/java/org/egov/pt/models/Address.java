@@ -84,22 +84,14 @@ public class Address {
 	@NotEmpty
 	@NotNull(message = "Invalid DAG No. ")
 	private String dagNo;
-	@NotNull
 	@JsonProperty("districtName")
 	private String districtName;
-	@NotNull
 	@JsonProperty("townName")
 	private String townName;
-	@NotNull
 	@JsonProperty("wardNo")
 	private String wardNo;
-	@NotNull
-	@JsonProperty("leikaiName")
-	private String leikaiName;
-	@NotNull
 	@JsonProperty("village")
 	private String village;
-	@NotNull
 	@JsonProperty("pattaNo")
 	private String pattaNo;
 	@JsonProperty("properHouseNo")
@@ -114,4 +106,7 @@ public class Address {
 	private String landmarkName;
 	@JsonProperty("others")
 	private String others;
+	@JsonProperty("typeOfRoad")
+	private String typeOfRoad;
+	
 }
