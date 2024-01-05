@@ -175,7 +175,7 @@ const Address = {
     },
     landmark: {
       description: "additional landmark to help locate the address",
-      valid_htmlData: true,
+      valid_htmlData: false,
       type: "string"
     },
     city: {
@@ -186,7 +186,7 @@ const Address = {
     },
     pincode: {
       type: "string",
-      valid_htmlData: true,
+      valid_htmlData: false,
       description:
         "PIN code of the address. Indian pincodes will usually be all numbers."
     },
@@ -198,16 +198,16 @@ const Address = {
     buildingName: {
       type: "string",
       description: "Name of the building",
-      valid_htmlData: true,
+      valid_htmlData: false,
       maxLength: 64,
-      minLength: 2
+      minLength: 0
     },
     street: {
       type: "string",
       description: "Street Name",
-      valid_htmlData: true,
+      valid_htmlData: false,
       maxLength: 64,
-      minLength: 2
+      minLength: 0
     },
     locality: {
       type: "object",
