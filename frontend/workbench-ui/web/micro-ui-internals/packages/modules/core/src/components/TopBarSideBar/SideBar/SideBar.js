@@ -28,7 +28,7 @@ Used to navigate to other mission's ui if user has access
 const navigateToRespectiveURL = (history = {}, url = "") => {
   if (url?.indexOf(`/${window?.contextPath}`) === -1) {
     const hostUrl = window.location.origin;
-    const updatedURL = DIGIT_UI_CONTEXTS?.every((e) => url?.indexOf(`/${e}`) === -1) ? hostUrl + "/employee/" + url : hostUrl + url;
+    const updatedURL = DIGIT_UI_CONTEXTS?.every((e) => url?.indexOf(`/${e}`) === -1) ? hostUrl + `${url.includes("/digit-ui")?"":"/employee/"}` + url : hostUrl + url;
     window.location.href = updatedURL;
   } else {
     history.push(url);
@@ -101,6 +101,7 @@ const Sidebar = ({ data }) => {
     return null; // Return null if no non-empty leftIcon is found
   }
   const renderSidebarItems = (items, parentKey = null, flag = true, level = 0) => {
+    items.Home.item.navigationURL="/digit-ui/employee";
     return (
       <div className={`submenu-container level-${level}`}>
         {Object.keys(items).map((key, index) => {
