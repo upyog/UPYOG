@@ -30,6 +30,8 @@ public class PTConstants {
     public static final String MDMS_PT_OCCUPANCYTYPE = "OccupancyType";
 
     public static final String MDMS_PT_CONSTRUCTIONTYPE = "ConstructionType";
+    
+    public static final String MDMS_PT_ROADTYPE = "TypeOfRoad";
 
     public static final String MDMS_PT_CONSTRUCTIONSUBTYPE = "ConstructionSubType";
 

@@ -1,8 +1,11 @@
 package org.egov.pt.service;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -13,6 +16,7 @@ import org.egov.pt.models.Institution;
 import org.egov.pt.models.OwnerInfo;
 import org.egov.pt.models.Property;
 import org.egov.pt.models.PropertyCriteria;
+import org.egov.pt.models.TypeOfRoad;
 import org.egov.pt.models.enums.Status;
 import org.egov.pt.models.user.User;
 import org.egov.pt.util.PTConstants;
@@ -22,6 +26,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 public class EnrichmentService {
@@ -54,6 +62,7 @@ public class EnrichmentService {
 		enrichUuidsForPropertyCreate(requestInfo, property);
 		setIdgenIds(request);
 		enrichBoundary(property, requestInfo);
+		enrichRoadType(property, requestInfo);
 	}
 
 	private void enrichUuidsForPropertyCreate(RequestInfo requestInfo, Property property) {
@@ -200,6 +209,30 @@ public class EnrichmentService {
     public void enrichBoundary(Property property, RequestInfo requestInfo){
     	
         boundaryService.getAreaType(property, requestInfo, PTConstants.BOUNDARY_HEIRARCHY_CODE);
+    }
+    
+    public void enrichRoadType(Property property, RequestInfo requestInfo){
+    	 
+        String tenantId = property.getTenantId();
+        List<String> masterNames = new ArrayList<>(Arrays.asList(PTConstants.MDMS_PT_ROADTYPE));
+        String filter = "$.*.[?(@.code=="+"'"+property.getAddress().getTypeOfRoad().getCode()+"')]";
+    	Map<String,List<String>> mdmsRet = propertyutil.getAttributeValues(tenantId, PTConstants.MDMS_PT_MOD_NAME, 
+    			masterNames, filter, PTConstants.JSONPATH_CODES, requestInfo);
+    	System.out.println(mdmsRet);
+    	
+    	String s = mdmsRet.get(PTConstants.MDMS_PT_ROADTYPE).get(0);
+    	
+    	ObjectMapper mapper = new ObjectMapper();
+    	try {
+			TypeOfRoad t =  mapper.readValue(s, TypeOfRoad.class);
+			System.out.println(t.getCode());
+		} catch (JsonMappingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
     
     /**

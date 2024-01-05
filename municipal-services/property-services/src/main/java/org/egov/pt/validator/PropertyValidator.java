@@ -298,7 +298,8 @@ public class PropertyValidator {
 				PTConstants.MDMS_PT_OWNERTYPE,
 				PTConstants.MDMS_PT_USAGECATEGORY,
 				PTConstants.MDMS_PT_OCCUPANCYTYPE,
-				PTConstants.MDMS_PT_CONSTRUCTIONTYPE));
+				PTConstants.MDMS_PT_CONSTRUCTIONTYPE,
+				PTConstants.MDMS_PT_ROADTYPE));
 
 		validateInstitution(property, errorMap);
 		
@@ -381,6 +382,10 @@ public class PropertyValidator {
 
 		if (property.getUsageCategory() != null && !codes.get(PTConstants.MDMS_PT_USAGECATEGORY).contains(property.getUsageCategory())) {
 			errorMap.put("Invalid USageCategory", "The USageCategory '" + property.getUsageCategory() + "' does not exists");
+		}
+		
+		if (property.getAddress().getTypeOfRoad().getCode() != null && !codes.get(PTConstants.MDMS_PT_ROADTYPE).contains(property.getAddress().getTypeOfRoad().getCode())) {
+			errorMap.put("Invalid Type Of Road", "The Road Type '" + property.getAddress().getTypeOfRoad().getCode() + "' does not exists");
 		}
 		
 		if (!CollectionUtils.isEmpty(property.getUnits()))
