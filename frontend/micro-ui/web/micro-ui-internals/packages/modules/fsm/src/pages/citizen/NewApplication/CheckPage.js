@@ -69,18 +69,18 @@ const CheckPage = ({ onSubmit, value }) => {
           {selectGender && (
             <Row
               label={t("ES_FSM_ACTION_GENDER_TYPE")}
-              text={t(selectGender.i18nKey)}
+              text={t(selectGender?.i18nKey)}
               actionButton={<ActionButton jumpTo="/digit-ui/citizen/fsm/new-application/select-gender" />}
             />
           )}
           <Row
             label={t("CS_CHECK_PROPERTY_TYPE")}
-            text={t(propertyType.i18nKey)}
+            text={t(propertyType?.i18nKey)}
             actionButton={<ActionButton jumpTo="/digit-ui/citizen/fsm/new-application/property-type" />}
           />
           <Row
             label={t("CS_CHECK_PROPERTY_SUB_TYPE")}
-            text={t(subtype.i18nKey)}
+            text={t(subtype?.i18nKey)}
             actionButton={<ActionButton jumpTo="/digit-ui/citizen/fsm/new-application/property-subtype" />}
           />
           <Row
