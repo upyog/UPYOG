@@ -145,7 +145,7 @@ export const Search = {
                   : "N/A",
               }
             : null,
-          additionalDetails?.boundaryType === "Village" || additionalDetails?.boundaryType === "GP"
+          additionalDetails?.boundaryType === "GP"
             ? {
                 title: t("CS_GRAM_PANCHAYAT"),
                 value: additionalDetails?.gramPanchayat?.code
@@ -153,7 +153,7 @@ export const Search = {
                   : "N/A",
               }
             : null,
-          additionalDetails?.boundaryType === "Village" || additionalDetails?.boundaryType === "GP"
+          additionalDetails?.boundaryType === "GP"
             ? {
                 title: t("CS_VILLAGE_NAME"),
                 value: additionalDetails?.village?.code
