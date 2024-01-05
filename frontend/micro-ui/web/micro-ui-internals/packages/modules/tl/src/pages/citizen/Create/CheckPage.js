@@ -200,11 +200,11 @@ const WrapCheckPage = ({ onSubmit, value }) => {
             </React.Fragment>
           )}
         </StatusTable>
-        <div style={{ textAlign: "left" }}>
+        {/* <div style={{ textAlign: "left" }}>
           <Link to={`/digit-ui/citizen/commonpt/view-property?propertyId=${cpt?.details?.propertyId || cptId?.id || value?.tradeLicenseDetail?.additionalDetail?.propertyId}&tenantId=${cpt?.details?.tenantId || value?.tenantId}`}>
             <LinkButton style={{ textAlign: "left" }} label={t("TL_VIEW_PROPERTY")} />
           </Link>
-        </div>
+        </div> */}
       </Card>}
       <Card>
         <StatusTable>
