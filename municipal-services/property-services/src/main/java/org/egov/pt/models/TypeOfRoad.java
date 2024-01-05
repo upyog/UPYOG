@@ -19,10 +19,13 @@ import lombok.ToString;
 @Builder
 public class TypeOfRoad {
 	
-	@JsonProperty("i18nKey")
-	private String i18nKey;
-	
 	@JsonProperty("code")
 	private String code;
+	
+	@JsonProperty("name")
+	private String name;
+	
+	@JsonProperty("active")
+	private boolean active;
 
 }

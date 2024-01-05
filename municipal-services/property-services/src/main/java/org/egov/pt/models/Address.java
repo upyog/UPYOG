@@ -107,6 +107,6 @@ public class Address {
 	@JsonProperty("others")
 	private String others;
 	@JsonProperty("typeOfRoad")
-	private String typeOfRoad;
+	private TypeOfRoad typeOfRoad;
 	
 }
