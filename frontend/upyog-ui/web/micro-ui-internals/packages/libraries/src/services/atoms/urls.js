@@ -260,6 +260,13 @@ wms:{
       search: "https://658bef9a859b3491d3f51ac4.mockapi.io/PRApplications",
       count: "https://658bef9a859b3491d3f51ac4.mockapi.io/PRApplications",
     },
+    WSRApplications: {
+      create: "https://658bef9a859b3491d3f51ac4.mockapi.io/WSRApplications",
+      update: "https://658bef9a859b3491d3f51ac4.mockapi.io/WSRApplications",
+      get: "https://658bef9a859b3491d3f51ac4.mockapi.io/WSRApplications/:id",
+      search: "https://658bef9a859b3491d3f51ac4.mockapi.io/WSRApplications",
+      count: "https://658bef9a859b3491d3f51ac4.mockapi.io/WSRApplications",
+    },
     ContractorMaster: {
       create: "/wms/wms-services/v1/contractor/_create",
       search: "/wms/wms-services/v1/contractor/_search",
