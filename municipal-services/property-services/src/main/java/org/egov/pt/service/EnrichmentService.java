@@ -13,6 +13,7 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.pt.config.PropertyConfiguration;
 import org.egov.pt.models.AuditDetails;
 import org.egov.pt.models.Institution;
+import org.egov.pt.models.Locality;
 import org.egov.pt.models.OwnerInfo;
 import org.egov.pt.models.Property;
 import org.egov.pt.models.PropertyCriteria;
@@ -30,6 +31,8 @@ import org.springframework.util.ObjectUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.DocumentContext;
+import com.jayway.jsonpath.JsonPath;
 
 @Service
 public class EnrichmentService {
@@ -212,27 +215,16 @@ public class EnrichmentService {
     }
     
     public void enrichRoadType(Property property, RequestInfo requestInfo){
-    	 
         String tenantId = property.getTenantId();
         List<String> masterNames = new ArrayList<>(Arrays.asList(PTConstants.MDMS_PT_ROADTYPE));
         String filter = "$.*.[?(@.code=="+"'"+property.getAddress().getTypeOfRoad().getCode()+"')]";
     	Map<String,List<String>> mdmsRet = propertyutil.getAttributeValues(tenantId, PTConstants.MDMS_PT_MOD_NAME, 
     			masterNames, filter, PTConstants.JSONPATH_CODES, requestInfo);
-    	System.out.println(mdmsRet);
-    	
-    	String s = mdmsRet.get(PTConstants.MDMS_PT_ROADTYPE).get(0);
-    	
     	ObjectMapper mapper = new ObjectMapper();
-    	try {
-			TypeOfRoad t =  mapper.readValue(s, TypeOfRoad.class);
-			System.out.println(t.getCode());
-		} catch (JsonMappingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+    	DocumentContext context = JsonPath.parse(mdmsRet.get(PTConstants.MDMS_PT_ROADTYPE));
+    	ArrayList roadType = context.read("$.*");
+    	TypeOfRoad rt = mapper.convertValue(roadType.get(0), TypeOfRoad.class);
+    	property.getAddress().setTypeOfRoad(rt);
     }
     
     /**
