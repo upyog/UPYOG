@@ -14,7 +14,8 @@
     "packages/modules/commonPt",
     "packages/modules/pt",
     "packages/modules/mCollect",
-    "packages/modules/obps"
+    "packages/modules/obps",
+    "packages/modules/ws"
   ],
   "author": "Abhinav Kushwaha <abhinav.kushwaha@egovernments.org>",
   "license": "MIT",
