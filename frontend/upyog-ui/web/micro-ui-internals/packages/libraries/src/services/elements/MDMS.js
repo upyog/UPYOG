@@ -2541,6 +2541,24 @@ export const MdmsService = {
   "sidebar": "digit-ui-links",
   "sidebarURL": "/digit-ui/citizen/pr-home"
 },
+{
+  "id": 3013,
+  "name": "Work Status Report",
+  "url": "digit-ui-card",
+  "displayName": "Work Status Report",
+  "orderNumber": 4,
+  "parentModule": "WMS",
+  "enabled": true,
+  "serviceCode": "CITIZEN_SERVICE_WMS",
+  "code": "",
+  "path": "",
+  "navigationURL": "/digit-ui/citizen/wms/wsr-home",
+  "leftIcon": "WMSIcon",
+  "rightIcon": "",
+  "queryParams": "",
+  "sidebar": "digit-ui-links",
+  "sidebarURL": "/digit-ui/citizen/wsr-home"
+},
   ]
         },
       "common-masters": {
