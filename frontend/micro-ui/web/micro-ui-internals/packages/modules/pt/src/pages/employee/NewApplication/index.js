@@ -50,11 +50,11 @@ const NewApplication = () => {
   };
 
   const onSubmit = (data) => {
-    let dataNew = data?.units?.map((value)=>{
-      let additionalDetails ={"structureType" : value.structureType,"ageOfProperty":value.ageOfProperty }
-      return {...value,additionalDetails}
-    })
-    data.units = dataNew
+    // let dataNew = data?.units?.map((value)=>{
+    //   let additionalDetails ={"structureType" : value.structureType,"ageOfProperty":value.ageOfProperty }
+    //   return {...value,additionalDetails}
+    // })
+    // data.units = dataNew
     const formData = {
       tenantId,
       address: {
@@ -71,10 +71,10 @@ const NewApplication = () => {
       noOfFloors: Number(data?.noOfFloors),
       ownershipCategory: data?.ownershipCategory?.code,
       additionalDetails:{
-      RentedMonths: data?.units[0]?.RentedMonths,
-      NonRentedMonthsUsage: data?.units[0]?.NonRentedMonthsUsage,
-      // ageOfProperty:data?.units[0]?.ageOfProperty,
-      // structureType:data?.units[0]?.structureType,
+      //RentedMonths: data?.units[0]?.RentedMonths,
+      //NonRentedMonthsUsage: data?.units[0]?.NonRentedMonthsUsage,
+       ageOfProperty:data?.propertyStructureDetails?.ageOfProperty,
+       structureType:data?.propertyStructureDetails?.structureType,
       electricity:data?.electricity,
       uid:data?.uid
       },

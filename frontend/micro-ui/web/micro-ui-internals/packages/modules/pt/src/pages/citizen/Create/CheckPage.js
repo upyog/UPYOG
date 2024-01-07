@@ -62,6 +62,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
     owners,
     isEditProperty,
     isUpdateProperty,
+    propertyStructureDetails,
   } = value;
   const typeOfApplication = !isEditProperty && !isUpdateProperty ? `new-application` : `edit-application`; 
   let flatplotsize;
