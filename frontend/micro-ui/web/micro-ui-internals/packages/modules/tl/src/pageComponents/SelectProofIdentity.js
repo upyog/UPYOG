@@ -14,7 +14,7 @@ const SelectProofIdentity = ({ t, config, onSelect, userType, formData }) => {
   //let dropdownData = [];
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();
-  const { data: Documentsob = { } } = Digit.Hooks.pt.usePropertyMDMS(stateId, "PropertyTax", "Documents");
+  const { data: Documentsob = { } } = Digit.Hooks.pt.usePropertyMDMSV2(stateId, "PropertyTax", "Documents");
   const docs = Documentsob?.PropertyTax?.Documents;
   const proofOfIdentity = Array.isArray(docs) && docs.filter((doc) => doc.code.includes("ADDRESSPROOF"));
   // if (proofOfIdentity.length > 0) {

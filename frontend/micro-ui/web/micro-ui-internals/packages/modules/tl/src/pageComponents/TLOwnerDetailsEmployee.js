@@ -657,7 +657,7 @@ const TLOwnerDetailsEmployee = ({ config, onSelect, userType, formData, setError
   const [isErrors, setIsErrors] = useState(false);
   const [previousLicenseDetails, setPreviousLicenseDetails] = useState(formData?.tradedetils1 || []);
 
-  const { data: mdmsData, isLoading } = Digit.Hooks.pt.usePropertyMDMS(stateId, "PropertyTax", [
+  const { data: mdmsData, isLoading } = Digit.Hooks.pt.usePropertyMDMSV2(stateId, "PropertyTax", [
     "UsageCategory",
     "OccupancyType",
     "Floor",
