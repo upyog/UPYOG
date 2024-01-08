@@ -72549,7 +72549,7 @@ export const LocalizationService = {
         },
         {
             "code": "WMS_NEW_WSR_FORM_HEADER",
-            "message": "Deduction Register",
+            "message": "Work Status Report",
             "module": "rainmaker-common",
             "locale": "en_IN"
         },
@@ -72561,7 +72561,7 @@ export const LocalizationService = {
         },
         {
             "code": "WMS_WSR_DETAILS_FORM_HEADER",
-            "message": "Deduction Register",
+            "message": "Work Status Report",
             "module": "rainmaker-common",
             "locale": "en_IN"
         },
@@ -72591,7 +72591,7 @@ export const LocalizationService = {
         },
         {
             "code": "WMS_WSR_PERCENT_NAME_LABEL",
-            "message": "Deduction Percentage",
+            "message": "Status Percentage",
             "module": "rainmaker-common",
             "locale": "en_IN"
         },
