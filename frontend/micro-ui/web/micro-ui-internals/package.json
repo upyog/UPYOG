@@ -16,6 +16,7 @@
     "packages/modules/mCollect",
     "packages/modules/obps",
     "packages/modules/ws"
+    "packages/modules/tl"
   ],
   "author": "Abhinav Kushwaha <abhinav.kushwaha@egovernments.org>",
   "license": "MIT",

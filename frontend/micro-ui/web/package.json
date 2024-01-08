@@ -15,8 +15,7 @@
     "micro-ui-internals/packages/modules/mCollect",
     "micro-ui-internals/packages/modules/obps",
     "micro-ui-internals/packages/modules/ws"
-
-
+    "micro-ui-internals/packages/modules/tl"
   ],
   "engines": {
     "node": ">=14"

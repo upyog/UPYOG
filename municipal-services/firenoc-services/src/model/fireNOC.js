@@ -129,11 +129,12 @@ const Address = {
       description:
         "Unique Identifier of the tenant to which user primarily belongs"
     },
-    doorNo: {
-      type: "string",
-      valid_htmlData: true,
-      description: "House number or door number."
-    },
+    // doorNo: {
+    //   type: "string",
+    //   valid_htmlData: true,
+    //   description: "House number or door number.",
+      
+    // },
     latitude: {
       type: "number",
       // format: "double",
@@ -173,41 +174,41 @@ const Address = {
       valid_htmlData: true,
       type: "string"
     },
-    landmark: {
-      description: "additional landmark to help locate the address",
-      valid_htmlData: true,
-      type: "string"
-    },
+    // landmark: {
+    //   description: "additional landmark to help locate the address",
+    //   valid_htmlData: false,
+    //   type: "string"
+    // },
     city: {
       description:
         "City of the address. Can be represented by the tenantid itself",
       type: "string",
       valid_htmlData: true,
     },
-    pincode: {
-      type: "string",
-      valid_htmlData: true,
-      description:
-        "PIN code of the address. Indian pincodes will usually be all numbers."
-    },
+    // pincode: {
+    //   type: "string",
+    //   valid_htmlData: false,
+    //   description:
+    //     "PIN code of the address. Indian pincodes will usually be all numbers."
+    // },
     detail: {
       type: "string",
       valid_htmlData: true,
       description: "more address detail as may be needed"
     },
-    buildingName: {
-      type: "string",
-      description: "Name of the building",
-      valid_htmlData: true,
-      maxLength: 64,
-      minLength: 2
-    },
+    // buildingName: {
+    //   type: "string",
+    //   description: "Name of the building",
+    //   valid_htmlData: false,
+    //   maxLength: 64,
+    //   minLength: 0
+    // },
     street: {
       type: "string",
       description: "Street Name",
-      valid_htmlData: true,
+      valid_htmlData: false,
       maxLength: 64,
-      minLength: 2
+      minLength: 0
     },
     locality: {
       type: "object",
