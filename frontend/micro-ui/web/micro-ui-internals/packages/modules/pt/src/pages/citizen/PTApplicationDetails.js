@@ -459,6 +459,16 @@ const PTApplicationDetails = () => {
                   label={t("PT_ASSESMENT1_ELECTRICITY_UID")}
                   text={(`${t(`${property.additionalDetails?.uid}`)}`) || t("CS_NA")}
                 />
+                  <Row
+                    className="border-none"
+                    label={t("PT_STRUCTURE_TYPE_LABEL")}
+                    text={`${`${property?.additionalDetails?.structureType?.i18nKey}` || t("CS_NA")}`}
+                  />
+                  <Row
+                    className="border-none"
+                    label={t("PT_AGE_OF_PROPERTY_LABEL")}
+                    text={`${`${property?.additionalDetails?.ageOfProperty?.code}` || t("CS_NA")}`}
+                  />
               </StatusTable>
               <div>
                 {Array.isArray(units) &&
@@ -494,16 +504,7 @@ const PTApplicationDetails = () => {
                               label={t("PT_BUILTUP_AREA_LABEL")}
                               text={`${`${unit?.constructionDetail?.builtUpArea} sq.ft` || t("CS_NA")}`}
                             />
-                            <Row
-                              className="border-none"
-                              label={t("PT_STRUCTURE_TYPE_LABEL")}
-                              text={`${`${property?.additionalDetails?.unit?.[index]?.structureType}` || t("CS_NA")}`}
-                            />
-                             <Row
-                              className="border-none"
-                              label={t("PT_AGE_OF_PROPERTY_LABEL")}
-                              text={`${`${property?.additionalDetails?.unit?.[index]?.ageOfProperty}` || t("CS_NA")}`}
-                            />
+                          
                             {unit.occupancyType == "RENTED" && (
                               <Row
                                 className="border-none"
