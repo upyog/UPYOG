@@ -1,4 +1,4 @@
-import { CardLabel, Dropdown, FormStep, LinkButton, Loader, TextInput, DeleteIcon } from "@egovernments/digit-ui-react-components";
+import { CardLabel, Dropdown, FormStep, LinkButton, Loader, LabelFieldPair, DeleteIcon } from "@egovernments/digit-ui-react-components";
 import React, { useEffect, useState ,Fragment} from "react";
 import Timeline from "../components/TLTimeline";
 
@@ -13,46 +13,14 @@ const getUsageCategory = (usageCategory = "") => {
   return tempObj;
 };
 
-// const formatUnits = (units = [], currentFloor, isFloor) => {
-//   if (!units || units.length == 0) {
-//     return [
-//       {
-//         usageCategory: "",
-//         ageOfProperty:null,
-//         structureType:null,
-//       },
-//     ];
-//   }
-//   return units.map((unit) => {
-//     let usageCategory = unit?.usageCategory && !(unit?.usageCategory?.includes("NONRESIDENTIAL")) ?  "RESIDENTIAL" : getUsageCategory(unit?.usageCategory)?.usageCategoryMinor;
-//     return {
-//       ...unit,
-//       builtUpArea: unit?.constructionDetail?.builtUpArea,
-//       rentedMonths:unit?.rentedMonths,
-//       nonRentedMonthsUsage: unit?.nonRentedMonthsUsage,
-//       ageOfProperty: unit?.ageOfProperty,
-//       structureType: unit?.structureType,
-//       usageCategory: usageCategory ? { code: usageCategory, i18nKey: `PROPERTYTAX_BILLING_SLAB_${usageCategory}` } : {},
-//       occupancyType: unit?.occupancyType ? { code: unit.occupancyType, i18nKey: `PROPERTYTAX_OCCUPANCYTYPE_${unit?.occupancyType}` } : "",
-//       floorNo: unit?.floorNo || Number.isInteger(unit?.floorNo) ? { code: unit.floorNo, i18nKey: `PROPERTYTAX_FLOOR_${unit?.floorNo}` } : {},
-//       unitType: unit?.unitType ? { code: unit.unitType, i18nKey: `PROPERTYTAX_BILLING_SLAB_${unit?.unitType?.code || unit?.unitType}` } : "",
-//     };
-//   });
-// };
 const PropertyStructureDetails = ({ t, config, onSelect, userType, formData }) => {
   let path = window.location.pathname.split("/");
   let currentFloor = Number(path[path.length - 1]);
   let isFloor = window.location.pathname.includes("new-application/units") || window.location.pathname.includes("/edit-application/units");
-  const [fields, setFields] = useState({"usageCategory":"","structureType":"","ageOfProperty":""}||
-    formData.PropertyStructureDetails
-  );
-console.log("formaData",formData)
-//   useEffect(() => {
-//     setFields(() => formatUnits(isFloor ? formData?.units?.filter((ee) => ee.floorNo == currentFloor) : formData?.units, currentFloor, isFloor));
-//     return () => {
-//       setFields(null);
-//     };
-//   }, [currentFloor, formData, isFloor]);
+  const [fields, setFields] = useState(window.location.pathname.includes("/pt/modify-application/")? formData.propertyStructureDetails: {"usageCategory":"","structureType":"","ageOfProperty":""})
+   
+  
+console.log("formaDataPropertyStructureDetails",formData)
 
   const getheader = () => {
    
@@ -147,6 +115,38 @@ console.log("formaData",formData)
        "active": true
        }  
      ]
+       const catMenu= [
+      {
+          "code": "RESIDENTIAL",
+          "name": "RESIDENTIAL",
+          "i18nKey": "PROPERTYTAX_BILLING_SLAB_RESIDENTIAL",
+          "label": "PropertyType"
+      },
+      {
+          "code": "NONRESIDENTIAL.COMMERCIAL",
+          "name": "NONRESIDENTIAL.COMMERCIAL",
+          "i18nKey": "PROPERTYTAX_BILLING_SLAB_COMMERCIAL",
+          "label": "PropertyType"
+      },
+      {
+          "code": "NONRESIDENTIAL.INDUSTRIAL",
+          "name": "NONRESIDENTIAL.INDUSTRIAL",
+          "i18nKey": "PROPERTYTAX_BILLING_SLAB_INDUSTRIAL",
+          "label": "PropertyType"
+      },
+      {
+          "code": "NONRESIDENTIAL.INSTITUTIONAL",
+          "name": "NONRESIDENTIAL.INSTITUTIONAL",
+          "i18nKey": "PROPERTYTAX_BILLING_SLAB_INSTITUTIONAL",
+          "label": "PropertyType"
+      },
+      {
+          "code": "NONRESIDENTIAL.OTHERS",
+          "name": "NONRESIDENTIAL.OTHERS",
+          "i18nKey": "PROPERTYTAX_BILLING_SLAB_OTHERS",
+          "label": "PropertyType"
+      }
+  ]
   function selectUsageCategory(i, value) {
    let field ={...fields}
    field.usageCategory = value;
@@ -157,19 +157,26 @@ console.log("formaData",formData)
     let field ={...fields}
     field.ageOfProperty=value;
     setFields(field);
+    if(userType === "employee")
+    {
+      onSelect(config.key, field);
+    }
   }
 
   function selectstructureType(i, value) {
     let field ={...fields}
     field.structureType=value;
     setFields(field);
+    if(userType === "employee")
+    {
+      onSelect(config.key, field);
+    }
   }
 
 
+
   const goNext = () => {
-    console.log("firlds",fields)
-    onSelect(config.key, fields);
-    
+    onSelect(config.key, fields); 
   };
 
   const onSkip = () => onSelect();
@@ -182,7 +189,42 @@ console.log("formaData",formData)
 console.log("fields",fields)
     return true;
   }
+  if (userType === "employee") {
+      return (
+        <React.Fragment>
+          <LabelFieldPair key={0}>
+          <CardLabel>{`${t("PT_STRUCTURE_TYPE")}*`}</CardLabel>
+            <div className="field">
+            <Dropdown
+                  t={t}
+                  optionKey="i18nKey"
+                  isMandatory={config.isMandatory}
+                  option={structureType}
+                  selected={fields?.structureType}
+                  placeholder={"Select structure type"}
+                  select={(e) => selectstructureType(1, e)}
+                />
 
+            </div>
+          </LabelFieldPair>
+          <LabelFieldPair key={1}>
+          <CardLabel>{`${t("PT_AGE_OF_PROPERTY")}*`}</CardLabel>
+            <div className="field">
+            <Dropdown
+                  t={t}
+                  optionKey="i18nKey"
+                  isMandatory={config.isMandatory}
+                  option={ageOfProperty}
+                  selected={fields?.ageOfProperty}
+                  placeholder={"Select Age of Property"}
+                  select={(e) => selectageOfProperty(2, e)}
+                />
+
+            </div>
+          </LabelFieldPair>
+        </React.Fragment>
+      );
+  }
   return (
     <React.Fragment>
     {window.location.href.includes("/citizen") ? <Timeline currentStep={1}/> : null}
@@ -212,18 +254,18 @@ console.log("fields",fields)
                 style={{ width: "100px", display: "inline" }}
                 onClick={(e) => handleRemove(index)}
               /> */}
+              {formData?.PropertyType?.code === "VACANT"? 
+              <div>
               <CardLabel>{`${t("PT_FORM2_USAGE_TYPE")}*`}</CardLabel>
               <Dropdown
                 t={t}
                 optionKey="i18nKey"
                 isMandatory={config.isMandatory}
-                option={[
-                  ...(mdmsData?.UsageCategory ? mdmsData?.UsageCategory : []),
-                  { code: "RESIDENTIAL", i18nKey: "PROPERTYTAX_BILLING_SLAB_RESIDENTIAL" },
-                ]}
+                option={catMenu}
                 selected={fields?.usageCategory}
                 select={(e) => selectUsageCategory(0, e)}
               />
+              </div>:""}
               <CardLabel>{`${t("PT_STRUCTURE_TYPE")}*`}</CardLabel>
               <div className={"form-pt-dropdown-only"}>
                 <Dropdown

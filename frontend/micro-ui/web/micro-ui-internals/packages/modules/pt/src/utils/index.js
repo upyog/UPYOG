@@ -475,7 +475,7 @@ export const setPropertyDetails = (data) => {
       landArea: parseInt(data?.landarea?.floorarea),
       propertyType: data?.PropertyType?.code,
       noOfFloors: 0,
-      usageCategory: getUsageType(data),
+      usageCategory: data?.propertyStructureDetails?.usageCategory?.code,
     };
   } else if (data?.PropertyType?.code?.includes("SHAREDPROPERTY")) {
     /*  update this case tulika*/
