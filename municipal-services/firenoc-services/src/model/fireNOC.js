@@ -131,7 +131,6 @@ const Address = {
     },
     doorNo: {
       type: ["string", "null"],
-      valid_htmlData: true,
       description: "House number or door number.",
       
     },
@@ -176,7 +175,6 @@ const Address = {
     },
     landmark: {
       description: "additional landmark to help locate the address",
-      valid_htmlData: false,
       type: ["string", "null"]
         },
     city: {
@@ -187,7 +185,6 @@ const Address = {
     },
     pincode: {
       type: ["string", "null"],
-      valid_htmlData: false,
       description:
         "PIN code of the address. Indian pincodes will usually be all numbers."
     },
@@ -199,14 +196,12 @@ const Address = {
     buildingName: {
       type: ["string", "null"],
       description: "Name of the building",
-      valid_htmlData: false,
       maxLength: 64,
       minLength: 0
     },
     street: {
       type: ["string", "null"],
       description: "Street Name",
-      valid_htmlData: false,
       maxLength: 64,
       minLength: 0
     },
