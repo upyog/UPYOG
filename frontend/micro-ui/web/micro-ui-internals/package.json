@@ -14,7 +14,10 @@
     "packages/modules/commonPt",
     "packages/modules/pt",
     "packages/modules/mCollect",
-    "packages/modules/tl"
+    "packages/modules/obps",
+    "packages/modules/tl",
+    "packages/modules/ptr"
+
   ],
   "author": "Abhinav Kushwaha <abhinav.kushwaha@egovernments.org>",
   "license": "MIT",
@@ -49,6 +52,7 @@
     "dev:bills": "cd packages/modules/bills && yarn start",
     "dev:reports": "cd packages/modules/reports && yarn start",
     "dev:example": "cd example && yarn start",
+    "dev:ptr": "cd packages/modules/ptr && yarn start",
     "build": "run-p build:**",
     "build:libraries": "cd packages/libraries && yarn build",
     "build:components": "cd packages/react-components && yarn build",
@@ -62,6 +66,7 @@
     "build:mcollect": "cd packages/modules/mCollect && yarn build",
     "buildD:receipts": "cd packages/modules/receipts && yarn build",
     "build:tl": "cd packages/modules/tl && yarn build",
+    "build:ptr": "cd packages/modules/ptr && yarn build",
     "buildD:hrms": "cd packages/modules/hrms && yarn build",
     "buildD:obps": "cd packages/modules/obps && yarn build",
     "buildD:engagement": "cd packages/modules/engagement && yarn build",
