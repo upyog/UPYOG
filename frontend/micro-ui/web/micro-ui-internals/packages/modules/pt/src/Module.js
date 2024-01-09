@@ -71,6 +71,7 @@ import PTRegistrationDocument from "./pageComponents/Mutate/RegistrationDocument
 import TransferProof from "./pageComponents/Mutate/transferReasonDocument";
 import UpdateNumber from "./pages/citizen/MyProperties/updateNumber";
 import EmployeeUpdateOwnerNumber from "./pages/employee/updateNumber";
+import PropertyStructureDetails from "./pageComponents/PropertyStructureDetails";
 //import PTCitizenFeedback from "@egovernments/digit-ui-module-core/src/components/PTCitizenFeedback";
 
 import EmployeeApp from "./pages/employee";
@@ -123,6 +124,7 @@ const componentsToRegister = {
   Area,
   UID,
   Electricity,
+  PropertyStructureDetails,
   IsResidential,
   PropertyType,
   PropertyUsageType,

@@ -297,6 +297,7 @@ export const getusageCategory = (data, i) => {
 };
 
 export const getunits = (data) => {
+  console.log("datadatadatadatadatadatadata",data)
   let unit = [];
   if (data?.selfOccupied?.i18nKey === "PT_YES_IT_IS_SELFOCCUPIED" && data?.IsAnyPartOfThisFloorUnOccupied.i18nKey === "PT_COMMON_YES") {
     unit.push({
@@ -369,6 +370,7 @@ export const getunits = (data) => {
 };
 
 export const getunitarray = (i, unitsdata, unit, data) => {
+  console.log("unitsdataunitsdataunitsdata"),unitsdata
   if (unitsdata[i].active === true) {
     unit.push(unitsdata[i]);
   } else if (
@@ -473,7 +475,7 @@ export const setPropertyDetails = (data) => {
       landArea: parseInt(data?.landarea?.floorarea),
       propertyType: data?.PropertyType?.code,
       noOfFloors: 0,
-      usageCategory: getUsageType(data),
+      usageCategory: data?.propertyStructureDetails?.usageCategory?.code,
     };
   } else if (data?.PropertyType?.code?.includes("SHAREDPROPERTY")) {
     /*  update this case tulika*/
@@ -522,10 +524,11 @@ export const setPropertyDetails = (data) => {
 
 /*   method to convert collected details to proeprty create object */
 export const convertToProperty = (data = {}) => {
-  let dataNew = data?.units?.map((value) => {
-    let additionalDetails = { "structureType": value?.structureType, "ageOfProperty": value?.ageOfProperty }
-    return { ...value, additionalDetails }
-  })
+  console.log("data",data)
+  // let dataNew = data?.units?.map((value) => {
+  //   let additionalDetails = { "structureType": value?.structureType, "ageOfProperty": value?.ageOfProperty }
+  //   return { ...value, additionalDetails }
+  // })
   let isResdential = data.isResdential;
   let propertyType = data.PropertyType;
   let selfOccupied = data.selfOccupied;
@@ -535,7 +538,7 @@ export const convertToProperty = (data = {}) => {
   let builtUpArea = data?.floordetails?.builtUpArea || null;
   let noOfFloors = data?.noOfFloors;
   let noOofBasements = data?.noOofBasements;
-  let unit = dataNew;
+  let unit = data?.units;
   let basement1 = Array.isArray(data?.units) && data?.units["-1"] ? data?.units["-1"] : null;
   let basement2 = Array.isArray(data?.units) && data?.units["-2"] ? data?.units["-2"] : null;
   data = setDocumentDetails(data);
@@ -567,11 +570,12 @@ export const convertToProperty = (data = {}) => {
         builtUpArea: builtUpArea,
         noOfFloors: noOfFloors,
         noOofBasements: noOofBasements,
-        unit: unit,
         basement1: basement1,
         basement2: basement2,
         electricity:data.electricity.electricity,
-        uid:data.uid.uid
+        uid:data.uid.uid,
+        ageOfProperty: data.propertyStructureDetails.ageOfProperty,
+        structureType:data.propertyStructureDetails.structureType,
 
       },
 
@@ -769,6 +773,8 @@ export const convertToUpdateProperty = (data = {}, t) => {
         unit: unit,
         basement1: basement1,
         basement2: basement2,
+        ageOfProperty: data.propertyStructureDetails.ageOfProperty,
+        structureType:data.propertyStructureDetails.structureType,
       },
 
       creationReason: getCreationReason(data),
