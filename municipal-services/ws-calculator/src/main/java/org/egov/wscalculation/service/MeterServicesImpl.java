@@ -53,15 +53,37 @@ public class MeterServicesImpl implements MeterService {
 		List<MeterReading> meterReadingsList = new ArrayList<MeterReading>();
 		if(meterConnectionRequest.getMeterReading().getGenerateDemand()){
 			wsCalulationWorkflowValidator.applicationValidation(meterConnectionRequest.getRequestInfo(),meterConnectionRequest.getMeterReading().getTenantId(),meterConnectionRequest.getMeterReading().getConnectionNo(),genratedemand);
-			wsCalculationValidator.validateMeterReading(meterConnectionRequest, true);
+			wsCalculationValidator.validateMeterReading(meterConnectionRequest.getRequestInfo(),meterConnectionRequest.getMeterReading(), true);
 		}
-		enrichmentService.enrichMeterReadingRequest(meterConnectionRequest);
+		enrichmentService.enrichMeterReadingRequest(meterConnectionRequest.getRequestInfo(),meterConnectionRequest.getMeterReading());
 		meterReadingsList.add(meterConnectionRequest.getMeterReading());
 		wSCalculationDao.saveMeterReading(meterConnectionRequest);
 		if (meterConnectionRequest.getMeterReading().getGenerateDemand()) {
 			generateDemandForMeterReading(meterReadingsList, meterConnectionRequest.getRequestInfo());
 		}
 		return meterReadingsList;
+	}
+	
+	@Override
+	public List<MeterReading> createMeterReadingBulk(MeterConnectionRequest meterConnectionRequest) {
+		Boolean genratedemand = true;
+		List<MeterReading> meterReadingsList = new ArrayList<MeterReading>();
+		List<MeterReading> meterReadingOutput=new ArrayList<MeterReading>();
+		for(MeterReading mr:meterConnectionRequest.getMeterReadingList()) {
+		if(mr.getGenerateDemand()){
+			wsCalulationWorkflowValidator.applicationValidation(meterConnectionRequest.getRequestInfo(),mr.getTenantId(),mr.getConnectionNo(),genratedemand);
+			wsCalculationValidator.validateMeterReading(meterConnectionRequest.getRequestInfo(),mr, true);
+		}
+		enrichmentService.enrichMeterReadingRequest(meterConnectionRequest.getRequestInfo(),mr);
+		meterReadingsList.add(mr);
+		meterConnectionRequest.setMeterReading(mr);
+		wSCalculationDao.saveMeterReading(meterConnectionRequest);
+		if (mr.getGenerateDemand()) {
+			generateDemandForMeterReading(meterReadingsList, meterConnectionRequest.getRequestInfo());
+		}
+		meterReadingOutput.add(meterReadingsList.get(0));
+		}
+		return meterReadingOutput;
 	}
 
 	private void generateDemandForMeterReading(List<MeterReading> meterReadingsList, RequestInfo requestInfo) {
