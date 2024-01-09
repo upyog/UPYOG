@@ -122,7 +122,7 @@ public class IngestValidator {
         String uuid = requestInfo.getUserInfo().getUuid();
   
         Map<String,String> userUUID=applicationProperties.getNationalDashboardUser();
-        if(!userUUID.get(data.getState()).contains(uuid)) {
+        if(!userUUID.get("SUPERUUID").equalsIgnoreCase(uuid) && !userUUID.get(data.getState()).contains(uuid)) {
                  throw new CustomException("EG_CROSS_STATE_DATA_INGEST", "Employee of one state cannot insert data of another State!!");
                
         }
@@ -413,7 +413,7 @@ public class IngestValidator {
         int validCounts=0;
         
         Boolean isUsageCategoryInvalid = false;
-        if (ingestData.getModule() != null && ingestData.getModule().equals("PGR") || ingestData.getModule() != null && ingestData.getModule().equals("TL")) {
+        if (ingestData.getModule() != null && ingestData.getModule().equals("COMMON") || ingestData.getModule().equals("PGR") || ingestData.getModule() != null && ingestData.getModule().equals("TL") || ingestData.getModule() != null && ingestData.getModule().equals("OBPS") || ingestData.getModule() != null && ingestData.getModule().equals("MCOLLECT") ) {
             keyToFetch = null;
             isUsageCategoryInvalid = true;
         }
@@ -514,6 +514,8 @@ public class IngestValidator {
         IngestAckData hashedData = new IngestAckData();
         List<AckEntity> ackEntityList = new ArrayList<>();
         ingestData.forEach(data -> {
+	    if(data.getWard().contains(":"))
+        	 data.setWard(data.getWard().replace(":"," "));
             StringBuilder currKeyData = new StringBuilder();
             currKeyData.append(data.getDate()).append(":").append(data.getModule()).append(":").append(data.getWard()).append(":").append(data.getUlb()).append(":").append(data.getRegion()).append(":").append(data.getState());
             log.info("Current key data: " + currKeyData);
