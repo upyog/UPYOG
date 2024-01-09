@@ -11,15 +11,17 @@ const SearchFields = ({ register, control, reset, tenantId, t }) => {
   };
 
   const propsForOldConnectionNumberNpropertyId = {
-    pattern: "[A-Za-z]{2}\-[A-Za-z]{2}\-[0-9]{4}\-[0-9]{4}\-[0-9]{2}\-[0-9]{2}\-[0-9]{6}|[A-Za-z]{2}\-[A-Za-z]{2}\-[0-9]{4}\-[0-9]{2}\-[0-9]{2}\-[0-9]{6}",
+    pattern:  {
+      value: "[A-Za-z]{2}\-[A-Za-z]{2}\-[0-9]{4}\-[0-9]{4}\-[0-9]{2}\-[0-9]{2}\-[0-9]{6}|[A-Za-z]{2}\-[A-Za-z]{2}\-[0-9]{4}\-[0-9]{4}\-[0-9]{2}\-[0-9]{2}\-[0-9]{6}|[A-Za-z]{2}\-[A-Za-z]{2}\-[0-9]{4}\-[0-9]{2}\-[0-9]{2}\-[0-9]{6}",
+    },
     title: t("ERR_DEFAULT_INPUT_FIELD_MSG"),
   };
-  let validation = {}
+
   return (
     <>
       <SearchField style={{width:"100%"}}>
         <label>{t("WS_PROPERTY_ID_LABEL")}</label>
-        <TextInput name="propertyId" inputRef={register({})} {...propsForOldConnectionNumberNpropertyId} />
+        <TextInput name="propertyId" inputRef={register({})} />
       </SearchField>
 
       <SearchField className="submit">
