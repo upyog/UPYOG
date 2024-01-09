@@ -140,6 +140,15 @@ const Urls = {
     edcrreportdownload: "/bpa-services/v1/bpa/_permitorderedcr",
     getSearchDetails: "/inbox/v1/dss/_search",
   },
+  ptr: {  
+    
+    create:"/pet-services/pet-registration/_create",
+    search:"/pet-services/pet-registration/_search",
+    update:"/pet-services/pet-registration/_update",
+    fetch_payment_details: "/billing-service/bill/v2/_fetchbill",
+    payment_search: "/collection-services/payments/pet-services/_search",
+    
+  },
 
   edcr: {
     create: "/edcr/rest/dcr/scrutinize",

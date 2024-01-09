@@ -215,7 +215,7 @@ function ApplicationDetailsContent({
         return ""
     }
   }
-  console.log("applicationDetails?.applicationDetails",applicationDetails?.applicationDetails)
+  // console.log("applicationDetails?.applicationDetails",applicationDetails?.applicationDetails)
   return (
     <Card style={{ position: "relative" }} className={"employeeCard-override"}>
       {/* For UM-4418 changes */}

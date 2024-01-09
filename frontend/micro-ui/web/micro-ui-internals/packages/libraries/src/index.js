@@ -51,6 +51,8 @@ import BillServices from "./services/elements/Bill";
 import { CFService } from "./services/elements/CF";
 
 import {CustomService} from "./services/elements/CustomService";    
+import { PTRService } from "./services/elements/PTR";     
+
 
 const setupLibraries = (Library, props) => {
   window.Digit = window.Digit || {};
@@ -63,7 +65,7 @@ const initLibraries = () => {
   setupLibraries("PersistantStorage", PersistantStorage);
   setupLibraries("UserService", UserService);
   setupLibraries("ULBService", ULBService);
-
+  setupLibraries("PTRService", PTRService); 
   setupLibraries("Config", { mergeConfig });
   setupLibraries("Services", { useStore });
   setupLibraries("Enums", Enums);
