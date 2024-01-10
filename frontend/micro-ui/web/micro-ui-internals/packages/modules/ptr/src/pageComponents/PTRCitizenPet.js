@@ -291,8 +291,8 @@ const PTRCitizenPet
 
             />
             <div>
-              {Math.floor(petAge / 12)} {Math.floor(petAge / 12) === 1 ? 'ptr_year' : 'ptr_years'}&nbsp;
-              {petAge % 12} {petAge % 12 === 1 ? 'ptr_month' : 'ptr_months'}
+              {Math.floor(petAge / 12)} {Math.floor(petAge / 12) === 1 ? 'PTR_YEAR' : 'PTR_YEARS'}&nbsp;
+              {petAge % 12} {petAge % 12 === 1 ? 'PTR_MONTH' : 'PTR_MONTHS'}
             </div>
 
             <br></br>
