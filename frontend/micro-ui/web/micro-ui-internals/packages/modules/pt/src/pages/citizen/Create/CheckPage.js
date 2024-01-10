@@ -229,6 +229,12 @@ const CheckPage = ({ onSubmit, value = {} }) => {
                         actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/pt/property/${typeOfApplication}/owner-details/`}${index}`} />}
                       />
                       <Row
+                        label={t("PT_FORM3_EMAIL_ID")}
+                        text={`${t(checkForNA(owner?.emailId))}`}
+                        actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/pt/property/${typeOfApplication}/owner-details/`}${index}`} />}
+                      />
+
+                      <Row
                         label={t("PT_SPECIAL_OWNER_CATEGORY")}
                         text={`${t(checkForNA(owner?.ownerType?.code))}`}
                         actionButton={
