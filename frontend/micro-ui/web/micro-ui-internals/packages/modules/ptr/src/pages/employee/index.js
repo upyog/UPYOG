@@ -49,15 +49,15 @@ const EmployeeApp = ({ path, url, userType }) => {
   const searchMW = [{ combineTaxDueInSearchData }];
 
   const breadcrumbObj = {
-    ["/digit-ui/employee/ptr/inbox"]: "ES_TITLE_INBOX",    
-    ["/digit-ui/employee/ptr/new-application"]: "ES_TITLE_NEW_PROPERTY_APPLICATION",
+    ["/digit-ui/employee/ptr/petservice/inbox"]: "ES_TITLE_INBOX",    
+    ["/digit-ui/employee/ptr/petservice/new-application"]: "ES_TITLE_NEW_PET_APPLICATION",
     
   };
 
   const getBreadCrumb = () => {
     if (breadcrumbObj[location.pathname]) return t(breadcrumbObj[location.pathname]);
-    else if (location.pathname.includes("/digit-ui/employee/ptr/application-details/")) return t("PTR_APPLICATION_TITLE");
-    else if (location.pathname.includes("/digit-ui/employee/ptr/payment-details/")) return t("PT_PAYMENT_HISTORY");
+    else if (location.pathname.includes("/digit-ui/employee/ptr/petservice/application-details/")) return t("PTR_APPLICATION_TITLE");
+    else if (location.pathname.includes("/digit-ui/employee/ptr/petservice/payment-details/")) return t("PT_PAYMENT_HISTORY");
     
   };
 
@@ -73,9 +73,9 @@ const EmployeeApp = ({ path, url, userType }) => {
         show: true,
       },
       {
-        path: "/digit-ui/employee/ptr/inbox",
+        path: "/digit-ui/employee/ptr/petservice/inbox",
         content: t("ES_TITLE_INBOX"),
-        show: location.pathname.includes("ptr/inbox") ? true : false,
+        show: location.pathname.includes("ptr/petservice/inbox") ? true : false,
       },
       {
         path: "/digit-ui/employee/pt/search",
@@ -84,9 +84,9 @@ const EmployeeApp = ({ path, url, userType }) => {
       },
     
       {
-        path: "/digit-ui/employee/ptr/application-search",
+        path: "/digit-ui/employee/ptr/petservice/my-applications",
         content: t("ES_COMMON_APPLICATION_SEARCH"),
-        show: location.pathname.includes("/ptr/application-search") || location.pathname.includes("/pt/applicationsearch/application-details/") ? true : false,
+        show: location.pathname.includes("/ptr/petservice/my-applications") || location.pathname.includes("/pt/applicationsearch/application-details/") ? true : false,
       },
       
       {
@@ -136,7 +136,7 @@ const EmployeeApp = ({ path, url, userType }) => {
           {!isRes ? <div style={isNewRegistration ? {marginLeft: "12px" } : {marginLeft:"-4px"}}><PTBreadCrumbs location={location} /></div> : null}
           <PrivateRoute exact path={`${path}/`} component={() => <PTRLinks matchPath={path} userType={userType} />} />
           <PrivateRoute
-            path={`${path}/inbox`}
+            path={`${path}/petservice/inbox`}
             component={() => (
               <Inbox
                 useNewInboxAPI={true}
@@ -148,13 +148,13 @@ const EmployeeApp = ({ path, url, userType }) => {
               />
             )}
           />
-          <PrivateRoute path={`${path}/new-application`} component={() => <NewApplication parentUrl={url} />} />
-          <PrivateRoute path={`${path}/application-details/:id`} component={() => <ApplicationDetails parentRoute={path} />} />
-          <PrivateRoute path={`${path}/applicationsearch/application-details/:id`} component={() => <ApplicationDetails parentRoute={path} />} />
-          <PrivateRoute path={`${path}/payment-details/:id`} component={() => <PaymentDetails parentRoute={path} />} />
-          <PrivateRoute path={`${path}/ptsearch/payment-details/:id`} component={() => <PaymentDetails parentRoute={path} />} />
-          <PrivateRoute path={`${path}/response`} component={(props) => <Response {...props} parentRoute={path} />} />
-          <PrivateRoute path={`${path}/search`} component={(props) => <Search {...props} t={t} parentRoute={path} />} />
+          <PrivateRoute path={`${path}/petservice/new-application`} component={() => <NewApplication parentUrl={url} />} />
+          <PrivateRoute path={`${path}/petservice/application-details/:id`} component={() => <ApplicationDetails parentRoute={path} />} />
+          <PrivateRoute path={`${path}/petservice/applicationsearch/application-details/:id`} component={() => <ApplicationDetails parentRoute={path} />} />
+          <PrivateRoute path={`${path}/petservice/payment-details/:id`} component={() => <PaymentDetails parentRoute={path} />} />
+          <PrivateRoute path={`${path}/petservice/ptsearch/payment-details/:id`} component={() => <PaymentDetails parentRoute={path} />} />
+          <PrivateRoute path={`${path}/petservice/response`} component={(props) => <Response {...props} parentRoute={path} />} />
+          <PrivateRoute path={`${path}/petservice/search`} component={(props) => <Search {...props} t={t} parentRoute={path} />} />
           <PrivateRoute
             path={`${path}/searchold`}
             component={() => (
@@ -168,7 +168,7 @@ const EmployeeApp = ({ path, url, userType }) => {
               />
             )}
           />
-          <PrivateRoute path={`${path}/application-search`} component={(props) => <SearchApp {...props} parentRoute={path} />} />
+          <PrivateRoute path={`${path}/petservice/my-applications`} component={(props) => <SearchApp {...props} parentRoute={path} />} />
         </div>
       </React.Fragment>
     </Switch>

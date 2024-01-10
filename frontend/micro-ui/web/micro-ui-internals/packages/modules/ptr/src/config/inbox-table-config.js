@@ -24,7 +24,7 @@
               <div>
                 <span className="link">
                   
-                  <Link to={`${props.parentRoute}/application-details/` + `${row?.original?.searchData?.["applicationNumber"]}`}>
+                  <Link to={`${props.parentRoute}/petservice/application-details/` + `${row?.original?.searchData?.["applicationNumber"]}`}>
 
                     {row.original?.searchData?.["applicationNumber"]}
                   </Link>
