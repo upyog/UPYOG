@@ -537,6 +537,13 @@
     }
   },
   "PropertyTax": {
+    "TypeOfRoad": {
+      "masterName": "TypeOfRoad",
+      "isStateLevel": true,
+      "uniqueKeys": [
+        "$.code"
+      ]
+    },
     "MutationReason": {
       "masterName": "MutationReason",
       "isStateLevel": true,
@@ -1145,19 +1152,20 @@
       "uniqueKeys": [
         "$.code"
       ]
-      },
-      "PaymentType": {
+    },
+    "PaymentType": {
       "masterName": "PaymentType",
       "isStateLevel": true,
       "uniqueKeys": [
         "$.code"
       ]
-    },"ReceivedPaymentType": {
-			"masterName": "ReceivedPaymentType",
-			"isStateLevel": true,
-			"uniqueKeys": [
-				"$.code"
-			]
+    },
+    "ReceivedPaymentType": {
+      "masterName": "ReceivedPaymentType",
+      "isStateLevel": true,
+      "uniqueKeys": [
+        "$.code"
+      ]
     },
     "CheckList": {
       "masterName": "CheckList",
@@ -1237,19 +1245,19 @@
       ]
     },
     "AdvancePayment": {
-			"masterName": "AdvancePayment",
-			"isStateLevel": true,
-			"uniqueKeys": [
-				"$.code"
-			]
-		},
-		"CancellationFee": {
-			"masterName": "CancellationFee",
-			"isStateLevel": true,
-			"uniqueKeys": [
-				"$.code"
-			]
-		}
+      "masterName": "AdvancePayment",
+      "isStateLevel": true,
+      "uniqueKeys": [
+        "$.code"
+      ]
+    },
+    "CancellationFee": {
+      "masterName": "CancellationFee",
+      "isStateLevel": true,
+      "uniqueKeys": [
+        "$.code"
+      ]
+    }
   },
   "Vehicle": {
     "SuctionType": {
