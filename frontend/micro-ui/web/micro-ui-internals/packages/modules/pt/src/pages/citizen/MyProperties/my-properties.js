@@ -1,5 +1,5 @@
 import { Card, KeyNote, SubmitBar } from "@egovernments/digit-ui-react-components";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 
@@ -7,6 +7,22 @@ const MyProperty = ({ application }) => {
   const { t } = useTranslation();
   const address = application?.address;
   const owners = application?.owners;
+  const [billData, setBillData]=useState(null);
+  const [loading, setLoading]=useState(false);
+  const fetchBillData=async()=>{
+        setLoading(true);
+        const result= await Digit.PaymentService.fetchBill(
+          application.tenantId,{
+          businessService: "PT",
+          consumerCode: application.propertyId,
+      });
+      
+      setBillData(result);
+      setLoading(false);
+  };
+  useEffect(()=>{
+    fetchBillData();
+  }, [application.tenantId, application.propertyId]); 
   sessionStorage.removeItem("type" );
   sessionStorage.removeItem("pincode");
   sessionStorage.removeItem("tenantId");
@@ -32,6 +48,13 @@ const MyProperty = ({ application }) => {
       <Link to={`/digit-ui/citizen/pt/property/properties/${application.propertyId}`}>
         <SubmitBar label={t("PT_VIEW_DETAILS")} />
       </Link>
+      {billData?.Bill.length > 0  ? (
+      <Link to={`/digit-ui/citizen/payment/my-bills/PT/${application?.propertyId}`}>
+    
+        <div style={{marginTop:"10px"}}><SubmitBar label={t("COMMON_MAKE_PAYMENT")}/></div>
+      </Link>
+      ):null}
+      
     </Card>
   );
 };
