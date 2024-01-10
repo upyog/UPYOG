@@ -17,7 +17,7 @@ const NewApplication = () => {
    const [mutationHappened, setMutationHappened, clear] = Digit.Hooks.useSessionStorage("EMPLOYEE_MUTATION_HAPPENED", false);
   const [successData, setsuccessData, clearSuccessData] = Digit.Hooks.useSessionStorage("EMPLOYEE_MUTATION_SUCCESS_DATA", { });
  
-  const { data: commonFields, isLoading } = Digit.Hooks.pt.useMDMS(Digit.ULBService.getStateId(), "PropertyTax", "CommonFieldsConfig");
+  // const { data: commonFields, isLoading } = Digit.Hooks.pt.useMDMS(Digit.ULBService.getStateId(), "PropertyTax", "CommonFieldsConfig");
 
   useEffect(() => {
     setMutationHappened(false);
@@ -65,21 +65,23 @@ const NewApplication = () => {
         
     }];
 
-    history.replace("/digit-ui/employee/ptr/response", { PetRegistrationApplications: formData }); 
+    history.replace("/digit-ui/employee/ptr/petservice/response", { PetRegistrationApplications: formData }); 
     
 
   };
     
 
    
-  if (isLoading) {
-    return <Loader />;
-  }
+  // if (isLoading) {
+  //   return <Loader />;
+  // }
 
   /* use newConfig instead of commonFields for local development in case needed */
 
   
-  const configs = commonFields? newConfig: commonFields;    
+  // const configs = commonFields? newConfig: commonFields;    \
+  const configs =  newConfig;    
+
 
   
   return (
