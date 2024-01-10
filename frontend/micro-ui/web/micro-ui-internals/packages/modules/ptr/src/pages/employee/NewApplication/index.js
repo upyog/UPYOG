@@ -19,10 +19,10 @@ const NewApplication = () => {
  
   // const { data: commonFields, isLoading } = Digit.Hooks.pt.useMDMS(Digit.ULBService.getStateId(), "PropertyTax", "CommonFieldsConfig");
 
-  // useEffect(() => {
-  //   setMutationHappened(false);
-  //   clearSuccessData();
-  // }, []);
+  useEffect(() => {
+    setMutationHappened(false);
+    clearSuccessData();
+  }, []);
 
   
 
