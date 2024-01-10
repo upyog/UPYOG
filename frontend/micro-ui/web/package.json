@@ -14,8 +14,10 @@
     "micro-ui-internals/packages/modules/commonPt",
     "micro-ui-internals/packages/modules/mCollect",
     "micro-ui-internals/packages/modules/obps",
-    "micro-ui-internals/packages/modules/ws"
-    "micro-ui-internals/packages/modules/tl"
+    "micro-ui-internals/packages/modules/tl",
+    "micro-ui-internals/packages/modules/ptr"
+
+
   ],
   "engines": {
     "node": ">=14"
@@ -32,14 +34,15 @@
     "@egovernments/digit-ui-module-hrms": "1.7.0-beta.2",
     "@egovernments/digit-ui-module-mcollect": "1.7.0-beta.2",
     "@egovernments/digit-ui-module-commonpt":"1.7.0-beta.3",
-    "@upyog/digit-ui-module-obps": "1.7.0-beta.2",
+    "@upyog/digit-ui-module-obps": "1.7.0-beta.3",
     "@egovernments/digit-ui-module-noc": "1.7.0-beta.2",
     "@egovernments/digit-ui-module-pgr": "1.7.0-beta.2",
     "@upyog/digit-ui-module-pt": "1.7.0-beta.2",
     "@egovernments/digit-ui-module-receipts": "1.7.0-beta.2",
     "@upyog/digit-ui-module-tl": "1.7.0-beta.2",
-    "@upyog/digit-ui-module-ws": "1.7.0-beta.2",
+    "@upyog/digit-ui-module-ws": "1.7.0-beta.4",
     "@egovernments/digit-ui-react-components": "1.7.0-beta.2",
+    "@upyog-niua/upyog-ui-module-ptr": "1.0.0",
     "babel-loader": "8.1.0",
     "react": "17.0.2",
     "react-dom": "17.0.2",

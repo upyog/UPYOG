@@ -434,13 +434,14 @@ public class IngestValidator {
         if (keyToFetch != null) {
             for (String key: keyToFetch) {
                 List < HashMap < String, Object >> values = (List < HashMap < String, Object >> ) map.get(key);
+                if (values!=null) {
                 for (HashMap < String, Object > a: values) {
                     if (a.get("groupBy").equals("usageCategory") || a.get("groupBy").equals("usageType")) {
                         List < HashMap < String, String >> valuess = (List < HashMap < String, String >> ) a.get("buckets");
                         for (HashMap < String, String > b: valuess)
                             usageCategory.add(toCamelCase(b.get("name")));
                     }
-
+                }
                 }
             }
     		for (String migratedTenants: usageCategory) {

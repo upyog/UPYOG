@@ -1,6 +1,10 @@
 package org.egov.wscalculation.service;
 
 
+import static org.egov.wscalculation.constants.WSCalculationConstant.APP_CREATED_DATE;
+import static org.egov.wscalculation.constants.WSCalculationConstant.FINAL_CONNECTION_STATES;
+import static org.egov.wscalculation.constants.WSCalculationConstant.MODIFIED_FINAL_STATE;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -8,16 +12,16 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.egov.common.contract.request.RequestInfo;
 import org.egov.wscalculation.web.models.AuditDetails;
 import org.egov.wscalculation.web.models.Connection;
-import org.egov.wscalculation.web.models.MeterConnectionRequest;
+import org.egov.wscalculation.web.models.MeterReading;
 import org.egov.wscalculation.web.models.WaterConnection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import static org.egov.wscalculation.constants.WSCalculationConstant.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 public class EnrichmentService {
@@ -30,16 +34,16 @@ public class EnrichmentService {
 	@Autowired
 	private ObjectMapper mapper;
 
-	public void enrichMeterReadingRequest(MeterConnectionRequest meterConnectionRequest) {
-		AuditDetails auditDetails = getAuditDetails(meterConnectionRequest.getRequestInfo().getUserInfo().getUuid(),
+	public void enrichMeterReadingRequest(RequestInfo requestInfo, MeterReading meterReading) {
+		AuditDetails auditDetails = getAuditDetails(requestInfo.getUserInfo().getUuid(),
 				true);
-		meterConnectionRequest.getMeterReading().setId(UUID.randomUUID().toString());
-		if (meterConnectionRequest.getMeterReading().getLastReadingDate() == null
-				|| meterConnectionRequest.getMeterReading().getLastReadingDate() == 0) {
+		meterReading.setId(UUID.randomUUID().toString());
+		if (meterReading.getLastReadingDate() == null
+				|| meterReading.getLastReadingDate() == 0) {
 			Long lastReadingDate = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(30);
-			meterConnectionRequest.getMeterReading().setLastReadingDate(lastReadingDate);
+			meterReading.setLastReadingDate(lastReadingDate);
 		}
-		meterConnectionRequest.getMeterReading().setAuditDetails(auditDetails);
+		meterReading.setAuditDetails(auditDetails);
 	}
 	
 	/**

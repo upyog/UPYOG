@@ -493,6 +493,15 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                   labelKey=""
                   isPTFlow={true}
                 />
+                <CardLabel>{`${t("TL_EMAIL_ID_LABEL")}`}</CardLabel>
+                <TextInput
+                  t={t}
+                  isMandatory={false}
+                  name="emailId"
+                  value={field.emailId}
+                  onChange={(e) => handleTextInputField(index, e, "emailId")}
+                  {...{ required: true, pattern: "[A-Za-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$", title: t("CORE_COMMON_APPLICANT_EMAILI_ID_INVALID") }}
+                />
                 {typeOfOwner === "MULTIOWNER" && (
                   <CheckBox
                     label={t("TL_PRIMARY_OWNER_LABEL")}

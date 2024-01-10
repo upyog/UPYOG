@@ -1,12 +1,24 @@
 package org.egov.wscalculation.validator;
 
-import lombok.extern.slf4j.Slf4j;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.egov.wscalculation.constants.WSCalculationConstant;
 import org.egov.wscalculation.repository.WSCalculationDao;
 import org.egov.wscalculation.service.MasterDataService;
 import org.egov.wscalculation.util.CalculatorUtil;
-import org.egov.wscalculation.web.models.MeterConnectionRequest;
 import org.egov.wscalculation.web.models.MeterReading;
 import org.egov.wscalculation.web.models.MeterReadingSearchCriteria;
 import org.egov.wscalculation.web.models.WaterConnection;
@@ -15,12 +27,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.*;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Slf4j
@@ -43,22 +50,21 @@ public class WSCalculationValidator {
 	 * @param isUpdate
 	 *            True for create
 	 */
-	public void validateMeterReading(MeterConnectionRequest meterConnectionRequest, boolean isUpdate) {
-		MeterReading meterReading = meterConnectionRequest.getMeterReading();
+	public void validateMeterReading(RequestInfo requestInfo,MeterReading meterReading, boolean isUpdate) {
 		Map<String, String> errorMap = new HashMap<>();
 
 		// Future Billing Period Check
 		validateBillingPeriod(meterReading.getBillingPeriod());
   
-		List<WaterConnection> waterConnectionList = calculationUtil.getWaterConnection(meterConnectionRequest.getRequestInfo(),
-				meterReading.getConnectionNo(), meterConnectionRequest.getMeterReading().getTenantId());
+		List<WaterConnection> waterConnectionList = calculationUtil.getWaterConnection(requestInfo,
+				meterReading.getConnectionNo(), meterReading.getTenantId());
 		WaterConnection connection = null;
 		if(waterConnectionList != null){
 			int size = waterConnectionList.size();
 			connection = waterConnectionList.get(size-1);
 		}
 
-		if (meterConnectionRequest.getMeterReading().getGenerateDemand() && connection == null) {
+		if (meterReading.getGenerateDemand() && connection == null) {
 			errorMap.put("INVALID_METER_READING_CONNECTION_NUMBER", "Invalid water connection number");
 		}
 		if (connection != null
