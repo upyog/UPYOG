@@ -295,10 +295,10 @@ const OwnerForm = (_props) => {
           </LabelFieldPair>
           <div style={{textAlign: 'center'}}>
             {Math.floor(watch('petAge') / 12)}
-            {Math.floor(watch('petAge') / 12) === 1 ? 'ptr_year' : 'ptr_years'}
+            {Math.floor(watch('petAge') / 12) === 1 ? 'PTR_YEAR' : 'PTR_YEARS'}
             &nbsp;
             {watch('petAge') % 12}
-            {watch('petAge') % 12 === 1 ? 'ptr_month' : 'ptr_months'}
+            {watch('petAge') % 12 === 1 ? 'PTR_MONTH' : 'PTR_MONTHS'}
           </div>
           <br></br>
           <CardLabelError style={errorStyle}>{localFormState.touched.petAge ? errors?.petAge?.message : ""}</CardLabelError>
