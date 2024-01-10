@@ -65,7 +65,7 @@ const NewApplication = () => {
         
     }];
 
-    history.replace("/digit-ui/employee/ptr/response", { PetRegistrationApplications: formData }); 
+    history.replace("/digit-ui/employee/ptr/petservice/response", { PetRegistrationApplications: formData }); 
     
 
   };

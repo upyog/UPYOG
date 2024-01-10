@@ -48,7 +48,7 @@
                 return (
                   <div>
                     <span className="link">
-                      <Link to={`/digit-ui/employee/ptr/applicationsearch/application-details/${row.original["applicationNumber"]}`}>
+                      <Link to={`/digit-ui/employee/ptr/petservice/applicationsearch/application-details/${row.original["applicationNumber"]}`}>
                         {row.original["applicationNumber"]}
                       </Link>
                     </span>
