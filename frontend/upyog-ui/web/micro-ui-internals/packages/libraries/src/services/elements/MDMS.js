@@ -2542,7 +2542,7 @@ export const MdmsService = {
   "sidebarURL": "/digit-ui/citizen/pr-home"
 },
 {
-  "id": 3013,
+  "id": 3033,
   "name": "Work Status Report",
   "url": "digit-ui-card",
   "displayName": "Work Status Report",

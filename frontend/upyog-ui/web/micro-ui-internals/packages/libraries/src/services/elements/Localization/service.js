@@ -72548,98 +72548,6 @@ export const LocalizationService = {
             "locale": "en_IN"
         },
         {
-            "code": "WMS_NEW_WSR_FORM_HEADER",
-            "message": "Work Status Report",
-            "module": "rainmaker-common",
-            "locale": "en_IN"
-        },
-        {
-            "code": "WMS_WSR_ID_LABEL",
-            "message": "WSR ID",
-            "module": "rainmaker-common",
-            "locale": "en_IN"
-        },
-        {
-            "code": "WMS_WSR_DETAILS_FORM_HEADER",
-            "message": "Work Status Report",
-            "module": "rainmaker-common",
-            "locale": "en_IN"
-        },
-        {
-            "code": "WMS_WSR_FORM_EDIT_CREATE_HEAD",
-            "message": "Edit Register Details",
-            "module": "rainmaker-common",
-            "locale": "en_IN"
-        },
-        {
-            "code": "WMS_WSR_PROJECT_NAME_LABEL",
-            "message": "Project Name",
-            "module": "rainmaker-common",
-            "locale": "en_IN"
-        },
-        {
-            "code": "WMS_WSR_WORK_NAME_LABEL",
-            "message": "Work Name",
-            "module": "rainmaker-common",
-            "locale": "en_IN"
-        },
-        {
-            "code": "WMS_WSR_ML_NAME_LABEL",
-            "message": "Milestone Name",
-            "module": "rainmaker-common",
-            "locale": "en_IN"
-        },
-        {
-            "code": "WMS_WSR_PERCENT_NAME_LABEL",
-            "message": "Status Percentage",
-            "module": "rainmaker-common",
-            "locale": "en_IN"
-        },
-        {
-            "code": "WMS_WSR_CONTROLS_LABEL",
-            "message": "Change",
-            "module": "rainmaker-common",
-            "locale": "en_IN"
-        },
-        {
-            "code": "WMS_WSR_CONTROLS2_LABEL",
-            "message": "Activities",
-            "module": "rainmaker-common",
-            "locale": "en_IN"
-        },
-        
-        {
-            "code": "WMS_WSR_CREATE_PAGE_LABEL",
-            "message": "Deduction Register",
-            "module": "rainmaker-common",
-            "locale": "en_IN"
-        },
-        {
-            "code": "WMS_WSR_COMMON_CREATE_HEADER",
-            "message": "Deduction Register",
-            "module": "rainmaker-common",           
-            "locale": "en_IN"
-        },
-        {
-            "code": "WMS_WSR_COMMON_CREATE_ACTIVITY_HEADER",
-            "message": "Add Deduction Activity",
-            "module": "rainmaker-common",
-            "locale": "en_IN"
-        },
-        {
-            "code": "WMS_WSR_PRJ_NAME_LABEL",
-            "message": "Work Name",
-            "module": "rainmaker-common",
-            "locale": "en_IN"
-        },
-        {
-            "code": "WMS_WSR_EDIT_LABEL",
-            "message": "Edit",
-            "module": "rainmaker-common",
-            "locale": "en_IN"
-        },
-
-        {
             "code": "WMS_NEW_PR_FORM_HEADER",
             "message": "Project Register",
             "module": "rainmaker-common",
@@ -72755,6 +72663,97 @@ export const LocalizationService = {
         },
         {
             "code": "WMS_PR_EDIT_LABEL",
+            "message": "Edit",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_NEW_WSR_FORM_HEADER",
+            "message": "Work Status Report",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_WSR_ID_LABEL",
+            "message": "WSR ID",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_WSR_DETAILS_FORM_HEADER",
+            "message": "Work Status Report",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_WSR_FORM_EDIT_CREATE_HEAD",
+            "message": "Edit Register Details",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_WSR_PROJECT_NAME_LABEL",
+            "message": "Project Name",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_WSR_WORK_NAME_LABEL",
+            "message": "Work Name",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_WSR_ML_NAME_LABEL",
+            "message": "Milestone Name",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_WSR_PERCENT_NAME_LABEL",
+            "message": "Status Percentage",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_WSR_CONTROLS_LABEL",
+            "message": "Change",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_WSR_CONTROLS2_LABEL",
+            "message": "Activities",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        
+        {
+            "code": "WMS_WSR_CREATE_PAGE_LABEL",
+            "message": "Deduction Register",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_WSR_COMMON_CREATE_HEADER",
+            "message": "Deduction Register",
+            "module": "rainmaker-common",           
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_WSR_COMMON_CREATE_ACTIVITY_HEADER",
+            "message": "Add Deduction Activity",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_WSR_PRJ_NAME_LABEL",
+            "message": "Work Name",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_WSR_EDIT_LABEL",
             "message": "Edit",
             "module": "rainmaker-common",
             "locale": "en_IN"

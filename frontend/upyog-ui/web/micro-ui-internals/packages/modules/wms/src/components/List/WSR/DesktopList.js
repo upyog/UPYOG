@@ -24,7 +24,7 @@ const DesktopList = ({ tableConfig, filterComponent, ...props }) => {
         Header: t("WMS_WSR_ID_LABEL"),
         disableDrtBy: true,
         Cell: ({ row }) => {
-          return GetCell(`${row.original?.dr_id}`);
+          return GetCell(`${row.original?.wsr_id}`);
         },
       },
       {
@@ -61,7 +61,7 @@ const DesktopList = ({ tableConfig, filterComponent, ...props }) => {
         Cell: ({ row }) => {
           return (
             <span className="link">
-              <Link to={`/upyog-ui/citizen/wms/dr-details/${row.original.dr_id}`}>{t("WMS_WSR_EDIT_LABEL")}</Link>
+              <Link to={`/upyog-ui/citizen/wms/wsr-details/${row.original.wsr_id}`}>{t("WMS_WSR_EDIT_LABEL")}</Link>
             </span>
           );
         },
@@ -72,7 +72,7 @@ const DesktopList = ({ tableConfig, filterComponent, ...props }) => {
         Cell: ({ row }) => {
           return (
             <span className="link">
-              <Link to={`/upyog-ui/citizen/wms/pma-home/${row.original.dr_id}`}>{t("WMS_WSR_COMMON_CREATE_ACTIVITY_HEADER")}</Link>
+              <Link to={`/upyog-ui/citizen/wms/pma-home/${row.original.wsr_id}`}>{t("WMS_WSR_COMMON_CREATE_ACTIVITY_HEADER")}</Link>
             </span>
           );
         },
@@ -119,7 +119,7 @@ const DesktopList = ({ tableConfig, filterComponent, ...props }) => {
         pageSizeLimit={props.pageSizeLimit}
         onDrt={props.onDrt}
         disableDrt={props.disableDrt}
-        drtParams={props.drtParams}
+        wsrtParams={props.wsrtParams}
         totalRecords={props.totalRecords}
       />
     );
@@ -134,13 +134,13 @@ const DesktopList = ({ tableConfig, filterComponent, ...props }) => {
             allLinks={[
               {
                 text: t("WMS_WSR_COMMON_CREATE_HEADER"),
-                link: "/upyog-ui/citizen/wms/dr-create",
+                link: "/upyog-ui/citizen/wms/wsr-create",
                 businessService: "WMS",
                 roles: ["CITIZEN"],
               },
 /*               {
                 text: t("WMS_WSR_COMMON_CREATE_ACTIVITY_HEADER"),
-                link: "/upyog-ui/citizen/wms/dr-activity-home",
+                link: "/upyog-ui/citizen/wms/wsr-activity-home",
                 businessService: "WMS",
                 roles: ["CITIZEN"],
               }, */

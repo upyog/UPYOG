@@ -13,7 +13,7 @@ const MobileList = ({
   onDet,
   parentRoute,
   searchParams,
-  drtParams,
+  wsrtParams,
   linkPrefix,
   tableConfig,
   filterComponent,
@@ -37,7 +37,7 @@ const GetSlaCell = (value) => {
 };
   const getData = () => {
     return data?.DRApplications?.map((original) => ({
-      [t("WMS_WSR_ID_LABEL")]: GetCell(original?.WmsDrId?.dr_id || ""),
+      [t("WMS_WSR_ID_LABEL")]: GetCell(original?.WmsDrId?.wsr_id || ""),
       [t("WMS_WSR_PROJECT_NAME_LABEL")]: GetCell(original?.WmsDrPrjName?.project_name || ""),
       [t("WMS_WSR_WORK_NAME_LABEL")]: GetCell(original?.WmsDrWorkName?.work_name || ""),
       [t("WMS_WSR_ML_NAME_LABEL")]: GetCell(original?.WmsDrMLName?.milestone_name || ""),
@@ -63,7 +63,7 @@ const GetSlaCell = (value) => {
             searchParams={searchParams}
             searchFields={searchFields}
             linkPrefix={linkPrefix}
-            drtParams={drtParams}
+            wsrtParams={wsrtParams}
             filterComponent={filterComponent}
             serviceRequestIdKey={serviceRequestIdKey}
           />

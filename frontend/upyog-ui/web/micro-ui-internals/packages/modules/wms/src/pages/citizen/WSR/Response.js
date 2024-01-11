@@ -29,7 +29,7 @@ const BannerPicker = (props) => {
   );
 };
 
-const WmsDrResponse = (props) => {
+const WmsWsrResponse = (props) => {
   const { t } = useTranslation();
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();
@@ -37,7 +37,7 @@ const WmsDrResponse = (props) => {
   const [mutationHappened, setMutationHappened, clear] = Digit.Hooks.useSessionStorage("WSR_WMS_MUTATION_HAPPENED", false);
   const [successData, setsuccessData, clearSuccessData] = Digit.Hooks.useSessionStorage("WSR_WMS_MUTATION_SUCCESS_DATA", false);
   const [errorInfo, setErrorInfo, clearError] = Digit.Hooks.useSessionStorage("WSR_WMS_ERROR_DATA", false);
-  const mutation = state.key === "UPDATE" ? Digit.Hooks.wms.dr.useWmsDrUpdate(tenantId) : Digit.Hooks.wms.dr.useWmsDrCreate(tenantId);
+  const mutation = state.key === "UPDATE" ? Digit.Hooks.wms.dr.useWmsWsrUpdate(tenantId) : Digit.Hooks.wms.dr.useWmsWsrCreate(tenantId);
 
   const onError = (error, variables) => {
     setErrorInfo(error?.response?.data?.Errors[0]?.code || 'ERROR');
@@ -102,4 +102,4 @@ const WmsDrResponse = (props) => {
   );
 };
 
-export default WmsDrResponse;
+export default WmsWsrResponse;

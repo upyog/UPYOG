@@ -5,7 +5,7 @@ const WmsWsrId = ({ t, config, onSelect, formData = {}, userType, register, erro
     {
       label: "",
       type: "number",
-      name: "dr_id",
+      name: "wsr_id",
     },
   ];
   return (
