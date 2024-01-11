@@ -1,20 +1,33 @@
 import SelectPropertySubtype from "./SelectPropertySubtype";
 import SelectPropertyType from "./SelectPropertyType";
-import SelectAddress from "./SelectAddress";
-// import FSMSelectAddress from "./FSMSelectAddress";
-import SelectStreet from "./SelectStreet";
-// import FSMSelectStreet from "./FSMSelectStreet";
-import SelectLandmark from "./SelectLandmark";
-// import FSMSelectLandmark from "./FSMSelectLandmark";
-import SelectPincode from "./SelectPincode";
-// import FSMSelectPincode from "./FSMSelectPincode";
+import SelectPropertyID from "../../../pageComponents/SelectPropertyID";
+// import SelectAddress from "./SelectAddress";
+import FSMSelectAddress from "./FSMSelectAddress";
+// import SelectStreet from "./SelectStreet";
+import FSMSelectStreet from "./FSMSelectStreet";
+// import SelectLandmark from "./SelectLandmark";
+import FSMSelectLandmark from "./FSMSelectLandmark";
+// import SelectPincode from "./SelectPincode";
+import FSMSelectPincode from "./FSMSelectPincode";
 import SelectTankSize from "./SelectTankSize";
 import SelectPitType from "./SelectPitType";
-import SelectGeolocation from "./SelectGeolocation";
-// import FSMSelectGeolocation from "./FSMSelectGeolocation";
+// import SelectGeolocation from "./SelectGeolocation";
+import FSMSelectGeolocation from "./FSMSelectGeolocation";
 
 export const config = {
   routes: [
+    {
+      route: "property-id",
+      component: SelectPropertyID,
+      groupKey: "ES_TITLE_APPLICATION_DETAILS",
+      texts: {
+        headerCaption: "",
+        header: "CS_FILE_APPLICATION_PROPERTY_ID_LABEL",
+        cardText: "CS_FILE_APPLICATION_PROPERTY_ID_TEXT",
+        submitBarLabel: "CS_COMMON_NEXT",
+      },
+      nextStep: "property-type",
+    },
     {
       route: "property-type",
       component: SelectPropertyType,
@@ -41,13 +54,13 @@ export const config = {
     },
     {
       route: "map",
-      component: SelectGeolocation,
+      component: FSMSelectGeolocation,
       nextStep: "pincode",
       hideInEmployee: true,
     },
     {
       route: "pincode",
-      component: SelectPincode,
+      component: FSMSelectPincode,
       groupKey: "ES_NEW_APPLICATION_LOCATION_DETAILS",
       texts: {
         headerCaption: "",
@@ -73,7 +86,7 @@ export const config = {
     },
     {
       route: "address",
-      component: SelectAddress,
+      component: FSMSelectAddress,
       groupKey: "ES_NEW_APPLICATION_LOCATION_DETAILS",
       texts: {
         headerCaption: "CS_FILE_APPLICATION_PROPERTY_LOCATION_LABEL",
@@ -85,7 +98,7 @@ export const config = {
     },
     {
       route: "street",
-      component: SelectStreet,
+      component: FSMSelectStreet,
       groupKey: "ES_NEW_APPLICATION_LOCATION_DETAILS",
       texts: {
         headerCaption: "CS_FILE_APPLICATION_PROPERTY_LOCATION_LABEL",
@@ -118,7 +131,7 @@ export const config = {
     },
     {
       route: "landmark",
-      component: SelectLandmark,
+      component: FSMSelectLandmark,
       groupKey: "ES_NEW_APPLICATION_LOCATION_DETAILS",
       texts: {
         headerCaption: "CS_FILE_APPLICATION_PROPERTY_LOCATION_LABEL",
@@ -148,6 +161,17 @@ export const config = {
         cardText: "CS_FILE_PROPERTY_PIT_TYPE_TEXT",
         nextText: "CS_COMMON_NEXT",
       },
+      nextStep: "road-details",
+    },
+    {
+      route: "road-details",
+      component: SelectRoadDetails,
+      groupKey: "CS_CHECK_PIT_SEPTIC_TANK_DETAILS",
+      texts: {
+        header: "CS_FILE_PROPERTY_ROAD_WIDTH",
+        cardText: "CS_FILE_PROPERTY_ROAD_WIDTH_TEXT",
+        nextText: "CS_COMMON_NEXT",
+      },
       nextStep: "tank-size",
     },
     {
@@ -164,5 +188,5 @@ export const config = {
       nextStep: null,
     },
   ],
-  indexRoute: "property-type",
+  indexRoute: "property-id",
 };

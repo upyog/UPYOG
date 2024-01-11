@@ -322,7 +322,7 @@ const OwnerForm = (_props) => {
                 defaultValue={owner?.name}
                 rules={{
                   required: t("CORE_COMMON_REQUIRED_ERRMSG"),
-                  validate: { pattern: (val) => (/^[a-zA-Z\s]*$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")) },
+                 
                 }}
                 render={(props) => (
                   <TextInput
@@ -452,7 +452,7 @@ const OwnerForm = (_props) => {
                     defaultValue={owner?.fatherOrHusbandName}
                     rules={{
                       required: t("CORE_COMMON_REQUIRED_ERRMSG"),
-                      validate: { pattern: (val) => (/^\w+( +\w+)*$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")) },
+                      validate: { pattern: (val) => (/^[a-zA-Z ]+$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")) },
                     }}
                     render={(props) => (
                       <TextInput

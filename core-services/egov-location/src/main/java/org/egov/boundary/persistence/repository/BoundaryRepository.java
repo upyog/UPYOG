@@ -377,6 +377,14 @@ public class BoundaryRepository {
 					end = new Date().getTime();
 					logger.info("TIME TAKEN for filterBoundaryCodes() = " + (end - start) + "ms");
 				}
+				if (boundarySearchRequest.getPinCode() != null && !boundarySearchRequest.getPinCode().isEmpty()) {
+					list.clear();
+					start = new Date().getTime();
+					list = filterBoundaryCodesForPincode(tenantBndry.getBoundary().getChildren(),
+							boundarySearchRequest.getPinCode());
+					end = new Date().getTime();
+					logger.info("TIME TAKEN for filterBoundaryCodes() = " + (end - start) + "ms");
+				}
 
 				if (boundarySearchRequest.getBoundaryTypeName() != null
 						&& !boundarySearchRequest.getBoundaryTypeName().isEmpty()) {
@@ -403,6 +411,20 @@ public class BoundaryRepository {
 							.collect(Collectors.toList());
 					list = filterBoundaryCodes(list, boundarySearchRequest.getCodes());
 				}
+				
+				if (boundarySearchRequest.getPinCode() != null
+						&& boundarySearchRequest.getBoundaryTypeName() != null
+						&& !boundarySearchRequest.getBoundaryTypeName().isEmpty()) {
+					list.clear();
+					start = new Date().getTime();
+					list = prepareChildBoundaryList(tenantBndry);
+					end = new Date().getTime();
+					logger.info("TIME TAKEN for prepareChildBoundaryList() = " + (end - start) + "ms");
+					list = list.stream()
+							.filter(p -> boundarySearchRequest.getBoundaryTypeName().equalsIgnoreCase(p.getLabel()))
+							.collect(Collectors.toList());
+					list = filterBoundaryCodesForPincode(list, boundarySearchRequest.getPinCode());
+				}
 				mdmsBoundary.setBoundary(list);
 				boundaryList.add(mdmsBoundary);
 			}
@@ -413,21 +435,52 @@ public class BoundaryRepository {
 		return boundaryList;
 	}
 
+	private List<MdmsBoundary> filterBoundaryCodesForPincode(List<MdmsBoundary> boundaryList, String pincode) {
+		List<MdmsBoundary> list = new ArrayList<MdmsBoundary>();
+		
+		Integer pin=Integer.parseInt(pincode);
+			for (MdmsBoundary boundary : boundaryList) {
+				if (boundary.getPincode() !=null && boundary.getPincode().contains(pin)) {
+					list.add(boundary);
+				} else if (boundary.getChildren() != null && boundary.getChildren().size()>0) {
+					for (MdmsBoundary boundary1 : boundary.getChildren()) {
+						if (boundary1.getPincode() !=null && boundary1.getPincode().contains(pin)) {
+							list.add(boundary);
+						} else if (boundary1.getChildren() != null && boundary1.getChildren().size()>0) {
+							for (MdmsBoundary boundary2 : boundary1.getChildren()) {
+								if (boundary2.getPincode() !=null && boundary2.getPincode().contains(pin)) {
+									list.add(boundary);
+								} else if (boundary2.getChildren() != null && boundary2.getChildren().size()>0) {
+									for (MdmsBoundary boundary3 : boundary2.getChildren()) {
+										if (boundary3.getPincode() !=null && boundary3.getPincode().contains(pin)) {
+											list.add(boundary);
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			
+		}
+		return list;
+	}
+	
 	private List<MdmsBoundary> filterBoundaryCodes(List<MdmsBoundary> boundaryList, List<String> codes) {
 		List<MdmsBoundary> list = new ArrayList<MdmsBoundary>();
 		for (String code : codes) {
 			for (MdmsBoundary boundary : boundaryList) {
 				if (boundary.getCode().equals(code)) {
 					list.add(boundary);
-				} else if (boundary.getChildren() != null) {
+				} else if (boundary.getChildren() != null && boundary.getChildren().size()>0) {
 					for (MdmsBoundary boundary1 : boundary.getChildren()) {
 						if (boundary1.getCode().equals(code)) {
 							list.add(boundary);
-						} else if (boundary1.getChildren() != null) {
+						} else if (boundary1.getChildren() != null && boundary1.getChildren().size()>0) {
 							for (MdmsBoundary boundary2 : boundary1.getChildren()) {
 								if (boundary2.getCode().equals(code)) {
 									list.add(boundary);
-								} else if (boundary2.getChildren() != null) {
+								} else if (boundary2.getChildren() != null && boundary2.getChildren().size()>0) {
 									for (MdmsBoundary boundary3 : boundary2.getChildren()) {
 										if (boundary3.getCode().equals(code)) {
 											list.add(boundary);

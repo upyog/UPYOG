@@ -51,11 +51,11 @@ const WSPropertyDetails = ({ t, config, onSelect, userType, formData, setError, 
           </button>
         </div>
       </LabelFieldPair>
-      <Link to={`/digit-ui/employee/commonpt/search?redirectToUrl=${redirectBackUrl}`}>
+      <Link to={`/digit-ui/employee/pt/search`}>
         <LinkButton label={t("CPT_SEARCH_PROPERTY")} style={{ color: "#a82227", display: "inline-block" }} />
       </Link>
       &nbsp; | &nbsp;
-      <Link to={`/digit-ui/employee/commonpt/new-application?redirectToUrl=${redirectBackUrl}`}>
+      <Link to={`/digit-ui/employee/pt/new-application`}>
         <LinkButton label={t("CPT_CREATE_PROPERTY")} style={{ color: "#a82227", display: "inline-block" }} />
       </Link>
       {propertyDetails && propertyDetails?.Properties.length && (

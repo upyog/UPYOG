@@ -69,6 +69,9 @@ public class WorkflowNotificationConsumer {
 				sewerageConnectionRequest.setSewerageConnection(encryptionDecryptionUtil.decryptObject(sewerageConnection,
 						WNS_PLUMBER_PLAIN_DECRYPTION_MODEL, SewerageConnection.class, sewerageConnectionRequest.getRequestInfo()));
 			}
+			
+			log.info("sewerageConnectionRequest is"+ sewerageConnectionRequest);
+
 			if (!sewerageConnectionRequest.isOldDataEncryptionRequest())
 				workflowNotificationService.process(sewerageConnectionRequest, topic);
 		} catch (Exception ex) {

@@ -130,6 +130,7 @@ export const Search = {
       {
         title: "ES_APPLICATION_DETAILS_PROPERTY_DETAILS",
         values: [
+          {title: "ES_APPLICATION_DETAILS_PROPERTY_ID", value: response?.additionalDetails?.propertyID},
           { title: "ES_APPLICATION_DETAILS_PROPERTY_TYPE", value: getPropertyTypeLocale(response?.propertyUsage) },
           { title: "ES_APPLICATION_DETAILS_PROPERTY_SUB-TYPE", value: getPropertySubtypeLocale(response?.propertyUsage) },
         ],
@@ -169,7 +170,7 @@ export const Search = {
           { title: "PT_PROPERTY_ADDRESS_HOUSE_NO", value: response?.address?.doorNo },
           { title: "CS_FILE_APPLICATION_PROPERTY_LOCATION_LANDMARK_LABEL", value: response?.address?.landmark },
           { title: "CS_FILE_APPLICATION_PROPERTY_LOCATION_SLUM_LABEL", value: slumName },
-          /*{
+          {
             title: "ES_APPLICATION_DETAILS_LOCATION_GEOLOCATION",
             value:
               response?.address?.geoLocation?.latitude && response?.address?.geoLocation?.longitude
@@ -183,8 +184,7 @@ export const Search = {
                     src: Digit.Utils.getStaticMapUrl(response?.address?.geoLocation?.latitude, response?.address?.geoLocation?.longitude),
                   }
                 : null,
-          }, 
-          */
+          },
         ],
       },
       {
@@ -193,6 +193,14 @@ export const Search = {
           {
             title: "ES_APPLICATION_DETAILS_PIT_TYPE",
             value: !!response?.sanitationtype ? `PITTYPE_MASTERS_${response?.sanitationtype}` : "",
+          },
+          {
+            title: "ES_APPLICATION_DETAILS_ROAD_WIDTH",
+            value: response?. additionalDetails?.roadWidth ,
+          },
+          {
+            title: "ES_APPLICATION_DETAILS_DISTANCE_FROM_ROAD",
+            value: response?. additionalDetails?.distancefromroad,
           },
           {
             title: "ES_APPLICATION_DETAILS_PIT_DIMENSION",
@@ -278,7 +286,7 @@ export const Search = {
     return {
       tenantId: response.tenantId,
       applicationDetails: citizenResponse,
-      pdfData: { ...response, amountPerTrip, totalAmount, vehicleMake, vehicleCapacity, slumName, dsoDetails },
+      pdfData: { ...response, propertyID, amountPerTrip, totalAmount, vehicleMake, vehicleCapacity, slumName, dsoDetails },
     };
   },
 

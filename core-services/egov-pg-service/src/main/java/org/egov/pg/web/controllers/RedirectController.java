@@ -49,7 +49,11 @@ public class RedirectController {
         log.info("formData in redirect::::"+formData);
 
     	String returnURL = formData.get(returnUrlKey).get(0); 
-    	String txnId = formData.get(PgConstants.PG_TXN_IN_LABEL).get(0); 
+    	String txnId=null;
+    	if(formData.get(PgConstants.PG_TXN_IN_LABEL)!=null)
+    		txnId = formData.get(PgConstants.PG_TXN_IN_LABEL).get(0);
+    	else
+    		txnId = formData.get(PgConstants.PG_TXN_IN_LABEL_NTTDATA).get(0); 
 
         //MultiValueMap<String, String> params = UriComponentsBuilder.fromUriString(returnURL).build().getQueryParams();
         log.info("returnUrl in redirect::::"+returnURL);
@@ -83,7 +87,19 @@ public class RedirectController {
             formData.remove(returnUrlKey);
             httpHeaders.setLocation(UriComponentsBuilder.fromHttpUrl(redirectURL.toString())
                     .queryParams(formData).build().encode().toUri());
-        } else {
+        } 
+        else if(gateway != null && gateway.equalsIgnoreCase("NTTDATA")) {
+            StringBuilder redirectURL = new StringBuilder();
+            returnURL=returnURL + "&eg_pg_txnid="+txnId;
+            redirectURL.append(returnURL);
+            formData.remove(returnUrlKey);
+            formData.remove("encData");
+            formData.remove("merchId");
+            formData.remove(PgConstants.PG_TXN_IN_LABEL_NTTDATA);
+
+            httpHeaders.setLocation(UriComponentsBuilder.fromHttpUrl(redirectURL.toString())
+                    .queryParams(formData).build().encode().toUri());
+        }else {
             httpHeaders.setLocation(UriComponentsBuilder.fromHttpUrl(formData.get(returnUrlKey).get(0))
                     .queryParams(formData).build().encode().toUri());
         }

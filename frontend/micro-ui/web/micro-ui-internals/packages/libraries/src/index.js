@@ -51,7 +51,7 @@ import AccessControlService from "./services/elements/Access";
 import BillServices from "./services/elements/Bill";
 import { CFService } from "./services/elements/CF";
 
-import {CustomService} from "./services/elements/CustomService";
+import {CustomService} from "./services/elements/CustomService";    
 
 const setupLibraries = (Library, props) => {
   window.Digit = window.Digit || {};

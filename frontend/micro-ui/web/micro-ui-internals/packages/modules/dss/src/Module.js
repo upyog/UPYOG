@@ -58,11 +58,11 @@ const Routes = ({ path, stateCode }) => {
 
   const handClick =(e,module)=>{
     e.stopPropagation() 
-    module === "home"?window.location.href=`${path}/landing/${module}`:window.location.href=`${path}/dashboard/${module}`
+    module === "home"?window.location.href=`${path}/landing/NURT_DASHBOARD`:window.location.href=`${path}/dashboard/${module}`
   }
   return (
     <div style={{display:"flex"}}>
-      <div className="chart-sidebar" style={{width:"300px",marginLeft:"-80px",position:"fixed",height:"100%", backgroundImage:"url(https://in-egov-assets.s3.ap-south-1.amazonaws.com/images/top-green-card.png), url(https://in-egov-assets.s3.ap-south-1.amazonaws.com/images/top-red-card.png)", backgroundSize:"cover",backgroundBlendMode:"lighten",display:window.location.href.includes("main-dashboard-landing")?"":"none"}}>
+      <div className="chart-sidebar" style={{width:"300px",marginLeft:"-80px", backgroundImage:"url(https://in-egov-assets.s3.ap-south-1.amazonaws.com/images/top-green-card.png), url(https://in-egov-assets.s3.ap-south-1.amazonaws.com/images/top-red-card.png)", backgroundSize:"cover",backgroundBlendMode:"lighten",display:window.location.href.includes("main-dashboard-landing")?"":"none"}}>
         <div style={{width:"90%",margin:"5%",backgroundColor:"white",fontWeight:"700",textAlign:"center",height:"50px",lineHeight:"3",cursor:"pointer",marginTop:"10%"}}  onClick = {(e)=>handClick(e,"home")}className="dashBoard">View dashboard</div>
         <div style={{width:"90%",margin:"5%",backgroundColor:"white",fontWeight:"700",textAlign:"center",height:"50px",cursor:"pointer"}} className="dashBoard" onClick = {(e)=>handClick(e,"national-propertytax")}>
 Property Tax Assessment and Payment</div>
@@ -77,7 +77,7 @@ Miscellaneous Collections</div>
 Desludging Service</div>
       
       </div>
-      <div className="chart-wrapper" style={isMobile ? {marginTop:"unset"} :window.location.href.includes("main-dashboard") ? {marginLeft:"200px", width:"100%"}:{width:"100%"}}>
+      <div className="chart-wrapper" style={isMobile ? {marginTop:"unset"} : {width:"100%"}}>
       <DssBreadCrumb location={location} />
       <Switch>
         <PrivateRoute path={`${path}/landing/:moduleCode`} component={() => <Home stateCode={stateCode} />} />

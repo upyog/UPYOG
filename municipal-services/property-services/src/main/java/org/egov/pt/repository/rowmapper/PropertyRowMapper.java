@@ -254,6 +254,7 @@ public class PropertyRowMapper implements ResultSetExtractor<List<Property>> {
 				.tenantId(rs.getString("owntenantid"))
 				.ownerType(rs.getString("ownerType"))
 				.isPrimaryOwner(isPrimaryOwner)
+				.additionalDetails(getadditionalDetail(rs, "oadditionaldetails"))
 				.uuid(uuid)
 				.build();
 		
@@ -389,7 +390,7 @@ public class PropertyRowMapper implements ResultSetExtractor<List<Property>> {
 			throw new CustomException("PARSING ERROR", "The propertyAdditionalDetail json cannot be parsed");
 		}
 
-		if(propertyAdditionalDetails.isEmpty())
+		if(propertyAdditionalDetails!=null && propertyAdditionalDetails.isEmpty() )
 			propertyAdditionalDetails = null;
 		
 		return propertyAdditionalDetails;

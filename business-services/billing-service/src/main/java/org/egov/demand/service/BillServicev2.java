@@ -237,7 +237,6 @@ public class BillServicev2 {
 		if (CollectionUtils.isEmpty(bills))
 		{
 			log.info( "If bills are empty" +bills.size());
-			if(!billCriteria.getBusinessService().equalsIgnoreCase("WS") && !billCriteria.getBusinessService().equalsIgnoreCase("SW"))
 			updateDemandsForexpiredBillDetails(billCriteria.getBusinessService(), billCriteria.getConsumerCode(), billCriteria.getTenantId(), requestInfoWrapper);
 			return generateBill(billCriteria, requestInfo);
 		}
@@ -285,6 +284,8 @@ public class BillServicev2 {
 			isBillExpired = false;
 		}
 			
+		log.info("Consumer Code to be expired " + cosnumerCodesToBeExpired);
+		log.info("Consumer code not found in bill " + cosnumerCodesNotFoundInBill);
 		/*
 		 * If none of the billDetails in the bills needs to be updated then return the search result
 		 */

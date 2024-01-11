@@ -76,10 +76,9 @@ const Chart = ({ data, moduleLevel, overview = false }) => {
     return <Loader />;
   }
   
-  console.log("response",response)
   if(response?.responseData?.data?.[0]?.headerName === "DSS_STATE_GDP_REVENUE_COLLECTION" )
   {
-    console.log("responseData",response)
+    
     response.responseData.data[0].headerValue = response.responseData.data[0].headerValue * 100
   }
   
@@ -156,14 +155,13 @@ const HorBarChart = ({ data, setselectState = "" }) => {
     // console.log(index)
     // data?.splice(index, 1)
     var date = new Date();
-            var months = [],
-                monthNames = [ "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ];
-            for(var i = 0; i < 12; i++) {
-                months.push(monthNames[date.getMonth()] + '-' + date.getFullYear());
-                date.setMonth(date.getMonth() - 1);
-            }    
-            console.log("months",months,data);
-
+    var months = [],
+        monthNames = [ "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ];
+    for(var i = 0; i < 12; i++) {
+        months.push(monthNames[date.getMonth()] + '-' + date.getFullYear());
+        date.setMonth(date.getMonth() - 1);
+    }    
+    console.log("months",months,data);
     let result = {};
     for (let i = 0; i < data?.length; i++) {
       const row = data[i];
@@ -180,8 +178,6 @@ const HorBarChart = ({ data, setselectState = "" }) => {
             result[plot.name] = { ...result[plot.name], [t(row.headerName)]:plot?.value , name: t(plot.name) }; 
           }
         }
-     
-       
       }
     }   
     return Object.keys(result).map((key) => {      
@@ -191,8 +187,6 @@ const HorBarChart = ({ data, setselectState = "" }) => {
       };
     });
   };
-//   const renderLegend = (value) =>
-// (<span style={{ fontSize: "14px", color: "#505A5F" }}>{t(`DSS_${Digit.Utils.locale.getTransformedLocale(value)}`)} (Cr)</span>);
 const renderLegend = (value) => {
 
   return (
@@ -218,7 +212,7 @@ const renderLegend = (value) => {
 
   return (
     <ResponsiveContainer
-      width="60%"
+      width="50%"
       height={480}
       margin={{
         top: 5,
@@ -365,7 +359,7 @@ const Home = ({ stateCode }) => {
     <FilterContext.Provider value={provided}>
       <div ref={fullPageRef}>
         <div className="options" style={{ margin: "10px" }}>
-          <Header styles={{ marginBottom: "0px" }}><span style={{color:"#a82227"}}>UMEED</span> - <span><span style={{color:"#a82227"}}>U</span>rban <span style={{color:"#a82227"}}>M</span>onitoring for <span style={{color:"#a82227"}}>E</span>fficient and <span style={{color:"#a82227"}}>E</span>ffective <span style={{color:"#a82227"}}>D</span>ecision-making</span></Header>
+        <Header styles={{ marginBottom: "0px" }}><span style={{color:"#a82227"}}>UMEED</span> - <span><span style={{color:"#a82227"}}>U</span>rban <span style={{color:"#a82227"}}>M</span>onitoring for <span style={{color:"#a82227"}}>E</span>fficient and <span style={{color:"#a82227"}}>E</span>ffective <span style={{color:"#a82227"}}>D</span>ecision-making</span></Header>
           {mobileView ? null : (
             <div>
               <div className="mrlg">

@@ -13,7 +13,7 @@ const TransfererDetails = ({ userType, formData, config, onSelect }) => {
     return (
       <React.Fragment>
         <StatusTable>
-          {propertyDetails?.owners
+          {propertyDetails?.owners.sort((item,item2)=>{return item?.additionalDetails?.ownerSequence - item2?.additionalDetails?.ownerSequence})
             ?.filter((e) => e.status === "ACTIVE")
             .map((owner, index, arr) => {
               return (
