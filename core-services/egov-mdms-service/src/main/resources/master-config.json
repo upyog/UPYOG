@@ -572,6 +572,13 @@
         "$.code"
       ]
     },
+    "TypeOfRoad": {
+      "masterName": "TypeOfRoad",
+      "isStateLevel": true,
+      "uniqueKeys": [
+        "$.code"
+      ]
+    },
     "ConstructionSubType": {
       "masterName": "ConstructionSubType",
       "isStateLevel": true,
