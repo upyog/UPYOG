@@ -3,6 +3,8 @@ import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useRouteMatch } from "react-router-dom";
 import Area from "./pageComponents/Area";
+import Electricity from "./pageComponents/Electricity";
+import UID from "./pageComponents/UID";
 import PTLandArea from "./pageComponents/PTLandArea";
 import GroundFloorDetails from "./pageComponents/GroundFloorDetails";
 import IsAnyPartOfThisFloorUnOccupied from "./pageComponents/IsAnyPartOfThisFloorUnOccupied";
@@ -119,6 +121,8 @@ const componentsToRegister = {
   IsAnyPartOfThisFloorUnOccupied,
   UnOccupiedArea,
   Area,
+  UID,
+  Electricity,
   IsResidential,
   PropertyType,
   PropertyUsageType,

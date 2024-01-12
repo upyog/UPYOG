@@ -76,6 +76,8 @@ public class WaterDaoImpl implements WaterDao {
 		List<Object> preparedStatement = new ArrayList<>();
 		String query = wsQueryBuilder.getSearchQueryString(criteria, preparedStatement, requestInfo);
 
+		log.info("Search Query" + query);
+		log.info("Parameters for search Query:: " + preparedStatement.toString());
 		if (query == null)
 			return Collections.emptyList();
 		Boolean isOpenSearch = isSearchOpen(requestInfo.getUserInfo());
@@ -108,6 +110,9 @@ public class WaterDaoImpl implements WaterDao {
 		if (isStateUpdatable) {
 			if (WCConstants.EXECUTE_DISCONNECTION.equalsIgnoreCase(reqAction)) {
 				waterConnectionRequest.getWaterConnection().setStatus(Connection.StatusEnum.INACTIVE);
+			}
+			if ((waterConnectionRequest.isReconnectRequest() || waterConnectionRequest.getWaterConnection().getApplicationType().equalsIgnoreCase(WCConstants.WATER_RECONNECTION)) && WCConstants.ACTIVATE_CONNECTION_CONST.equalsIgnoreCase(reqAction)) {
+				waterConnectionRequest.getWaterConnection().setStatus(Connection.StatusEnum.ACTIVE);
 			}
 			waterConnectionProducer.push(updateWaterConnection, waterConnectionRequest);
 		} else {

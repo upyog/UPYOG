@@ -200,6 +200,9 @@ public class SWConfiguration {
 
     @Value("${state.level.tenant.id}")
     private String stateLevelTenantId;
+    
+	@Value("${reconnection.sw.workflow.name}")
+	private String swWorkflowReconnectionName;
 
     //mdms
     @Value("${egov.mdms.host}")
@@ -210,6 +213,9 @@ public class SWConfiguration {
 
     @Value("${egov.disconnect.businessservice}")
     private String disconnectBusinessServiceName;
+    
+    @Value("${egov.reconnect.businessservice}")
+    private String reconnectBusinessServiceName;
 
     @Value("${egov.idgen.sdcid.name}")
     private String sewerageDisconnectionIdGenName;

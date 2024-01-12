@@ -6,7 +6,7 @@ import { loginSteps } from "./config";
 import SelectMobileNumber from "./SelectMobileNumber";
 import SelectOtp from "./SelectOtp";
 import SelectName from "./SelectName";
-
+import { subYears, format } from "date-fns";
 const TYPE_REGISTER = { type: "register" };
 const TYPE_LOGIN = { type: "login" };
 const DEFAULT_USER = "digit-user";
@@ -138,7 +138,17 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
       setCanSubmitNo(true);
     }
   };
+  function selectCommencementDate(value) {
+    const appDate= new Date();
+    const proposedDate= format(subYears(appDate, 18), 'yyyy-MM-dd').toString();
 
+    if( convertDateToEpoch(proposedDate)  <= convertDateToEpoch(value)){
+      return true     
+    }
+    else {
+      return false;     
+    }    
+  }
   const selectName = async (name) => {
     const data = {
       ...params,
@@ -146,15 +156,27 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
       userType: getUserType(),
       ...name,
     };
-    setParmas({ ...params, ...name });
-    setCanSubmitName(true);
-    const [res, err] = await sendOtp({ otp: { ...data, ...TYPE_REGISTER } });
-    if (res) {
-      setCanSubmitName(false);
-      history.replace(`${path}/otp`, { from: getFromLocation(location.state, searchParams) });
-    } else {
-      setCanSubmitName(false);
+    console.log("name",name)
+    if (selectCommencementDate(name.dob))
+    {
+      setError("Minimum age should be 18 years");
+      setTimeout(() => {
+        setError(false);
+      }, 3000);
     }
+    else {
+      setParmas({ ...params, ...name });
+      setCanSubmitName(true);
+      const [res, err] = await sendOtp({ otp: { ...data, ...TYPE_REGISTER } });
+      if (res) {
+        setCanSubmitName(false);
+        history.replace(`${path}/otp`, { from: getFromLocation(location.state, searchParams) });
+      } else {
+        setCanSubmitName(false);
+      }
+    }
+    
+  
   };
 
   const selectOtp = async () => {
@@ -268,3 +290,18 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
 };
 
 export default Login;
+export const convertDateToEpoch = (dateString, dayStartOrEnd = "dayend") => {
+  //example input format : "2018-10-02"
+  try {
+    const parts = dateString.match(/(\d{4})-(\d{1,2})-(\d{1,2})/);
+    const DateObj = new Date(Date.UTC(parts[1], parts[2] - 1, parts[3]));
+    DateObj.setMinutes(DateObj.getMinutes() + DateObj.getTimezoneOffset());
+    if (dayStartOrEnd === "dayend") {
+      DateObj.setHours(DateObj.getHours() + 24);
+      DateObj.setSeconds(DateObj.getSeconds() - 1);
+    }
+    return DateObj.getTime();
+  } catch (e) {
+    return dateString;
+  }
+};

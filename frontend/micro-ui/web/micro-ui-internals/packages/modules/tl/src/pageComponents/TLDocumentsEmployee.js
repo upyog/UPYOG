@@ -16,7 +16,7 @@ const TLDocumentsEmployee = ({ t, config, onSelect, userType, formData, setError
 
   if (isEditScreen) action = "update";
 
-  const { isLoading, data: documentsData } = Digit.Hooks.pt.usePropertyMDMS(stateId, "TradeLicense", ["documentObj"]);
+  const { isLoading, data: documentsData } = Digit.Hooks.pt.usePropertyMDMSV2(stateId, "TradeLicense", ["documentObj"]);
 
   const ckeckingLocation = window.location.href.includes("renew-application-details");
 

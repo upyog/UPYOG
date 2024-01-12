@@ -4,12 +4,12 @@ import {
   initPGRComponents,
   PGRReducers,
 } from "@egovernments/digit-ui-module-pgr";
-import { initFSMComponents } from "@egovernments/digit-ui-module-fsm";
+import { initFSMComponents } from "@upyog/digit-ui-module-fsm";
 import {
   PTModule,
   PTLinks,
   PTComponents,
-} from "@egovernments/digit-ui-module-pt";
+} from "@upyog/digit-ui-module-pt";
 import { MCollectModule, MCollectLinks, initMCollectComponents } from "@egovernments/digit-ui-module-mcollect";
 import { initDSSComponents } from "@egovernments/digit-ui-module-dss";
 import {
@@ -27,12 +27,12 @@ import {
   TLModule,
   TLLinks,
   initTLComponents,
-} from "@egovernments/digit-ui-module-tl";
+} from "@upyog/digit-ui-module-tl";
 import { initReceiptsComponents, ReceiptsModule } from "@egovernments/digit-ui-module-receipts";
-import { initOBPSComponents } from "@egovernments/digit-ui-module-obps";
+import { initOBPSComponents } from "@upyog/digit-ui-module-obps";
 import { initNOCComponents } from "@egovernments/digit-ui-module-noc";
 import { initEngagementComponents } from "@egovernments/digit-ui-module-engagement";
-import { initWSComponents } from "@egovernments/digit-ui-module-ws";
+import { initWSComponents } from "@upyog/digit-ui-module-ws";
 import { initCustomisationComponents } from "./Customisations";
 import { initCommonPTComponents } from "@egovernments/digit-ui-module-commonpt";
 import { initBillsComponents } from "@egovernments/digit-ui-module-bills";
@@ -79,7 +79,7 @@ window.Digit.ComponentRegistryService.setupRegistry({
   HRMSModule,
   TLModule,
   TLLinks,
-  ReceiptsModule
+  ReceiptsModule,
 });
 
 initPGRComponents();

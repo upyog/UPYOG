@@ -32,7 +32,7 @@ const CheckPage = ({ onSubmit, value }) => {
   const { t } = useTranslation();
   const history = useHistory();
 
-  const { address, propertyType, subtype, pitType, pitDetail, selectGender, selectPaymentPreference, selectTripNo } = value;
+  const { address, propertyID,  propertyType, subtype, pitType, pitDetail, selectGender, selectPaymentPreference, selectTripNo, roadWidth, distancefromroad } = value;
 
   const pitDetailValues = pitDetail ? Object.values(pitDetail).filter((value) => !!value) : null;
 
@@ -43,7 +43,6 @@ const CheckPage = ({ onSubmit, value }) => {
       return previous + current + "m x ";
     }
   }, "");
-
   return (
     <React.Fragment>
       <Timeline currentStep={4} flow="APPLY" />
@@ -69,25 +68,30 @@ const CheckPage = ({ onSubmit, value }) => {
           {selectGender && (
             <Row
               label={t("ES_FSM_ACTION_GENDER_TYPE")}
-              text={t(selectGender.i18nKey)}
+              text={t(selectGender?.i18nKey)}
               actionButton={<ActionButton jumpTo="/digit-ui/citizen/fsm/new-application/select-gender" />}
             />
           )}
           <Row
+            label={t("CS_CHECK_PROPERTY_ID")}
+            text={t(propertyID?. propertyID)}
+            actionButton={<ActionButton jumpTo="/digit-ui/citizen/fsm/new-application/property-id" />}
+          />
+          <Row
             label={t("CS_CHECK_PROPERTY_TYPE")}
-            text={t(propertyType.i18nKey)}
+            text={t(propertyType?.i18nKey)}
             actionButton={<ActionButton jumpTo="/digit-ui/citizen/fsm/new-application/property-type" />}
           />
           <Row
             label={t("CS_CHECK_PROPERTY_SUB_TYPE")}
-            text={t(subtype.i18nKey)}
+            text={t(subtype?.i18nKey)}
             actionButton={<ActionButton jumpTo="/digit-ui/citizen/fsm/new-application/property-subtype" />}
           />
           <Row
             label={t("CS_CHECK_ADDRESS")}
-            text={`${address?.doorNo?.trim() ? `${address?.doorNo?.trim()}, ` : ""} ${
-              address?.street?.trim() ? `${address?.street?.trim()}, ` : ""
-            }${t(address?.locality?.i18nkey)}, ${t(address?.city.code)}`}
+            text={`${address?.doorNo?.trim() ? `${address?.doorNo?.trim()}, ` : ""} ${address?.street?.trim() ? `${address?.street?.trim()}, ` : ""}${
+              address?.propertyLocation?.code === "WITHIN_ULB_LIMITS" ? t(address?.locality?.i18nkey) : address?.gramPanchayat?.i18nkey
+            }, ${t(address?.city.code)}`}
             actionButton={<ActionButton jumpTo="/digit-ui/citizen/fsm/new-application/pincode" />}
           />
           {address?.landmark?.trim() && (
@@ -111,6 +115,18 @@ const CheckPage = ({ onSubmit, value }) => {
               actionButton={<ActionButton jumpTo="/digit-ui/citizen/fsm/new-application/pit-type" />}
             />
           )}
+           
+          <Row
+            label={t("CS_CHECK_ROAD_WIDTH")}
+            text={t(roadWidth?.roadWidth)}
+            actionButton={<ActionButton jumpTo="/digit-ui/citizen/fsm/new-application/road-details" />}
+          />
+          <Row
+            label={t("CS_CHECK_DISTANCE_FROM_ROAD")}
+            text={t(roadWidth?.distancefromroad)}
+            actionButton={<ActionButton jumpTo="/digit-ui/citizen/fsm/new-application/road-details" />}
+          />
+
           {pitMeasurement && (
             <Row
               label={t("CS_CHECK_SIZE")}

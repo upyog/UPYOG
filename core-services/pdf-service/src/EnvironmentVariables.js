@@ -1,5 +1,6 @@
 const envVariables = {
   MAX_NUMBER_PAGES: process.env.MAX_NUMBER_PAGES || 80,
+  EGOV_HOST: process.env.EGOV_HOST || "https://upyog-test.niua.org",
   EGOV_LOCALISATION_HOST:
     process.env.EGOV_LOCALISATION_HOST || "http://egov-localization:8080",
   EGOV_LOCALISATION_SEARCH:

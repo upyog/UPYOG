@@ -1,9 +1,9 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams, useHistory, Redirect } from "react-router-dom";
 
-import { BackButton, Card, CardHeader, CardText, TextArea, SubmitBar } from "@egovernments/digit-ui-react-components";
+import { BackButton, Card, CardHeader, CardText, TextArea, SubmitBar,Toast } from "@egovernments/digit-ui-react-components";
 
 import { updateComplaints } from "../../../redux/actions/index";
 import { LOCALIZATION_KEY } from "../../../constants/Localization";
@@ -15,7 +15,8 @@ const AddtionalDetails = (props) => {
   const dispatch = useDispatch();
   const appState = useSelector((state) => state)["common"];
   let { t } = useTranslation();
-  
+  const [showToast, setShowToast] = useState(false)
+  const [error, setError] = useState(null);
   const {complaintDetails} = props
   useEffect(() => {
     if (appState.complaints) {
@@ -28,12 +29,22 @@ const AddtionalDetails = (props) => {
 
   const updateComplaint = useCallback(
     async (complaintDetails) => {
-      await dispatch(updateComplaints(complaintDetails));
-      history.push(`${props.match.path}/response/${id}`);
+      try{
+        await dispatch(updateComplaints(complaintDetails));
+        history.push(`${props.match.path}/response/${id}`);
+      }
+      catch(e)
+      {
+          setShowToast( { isError: false, isWarning: true, key: "error", message: e?.response?.data?.Errors[0]?.message})
+          setError(e?.response?.data?.Errors[0]?.message);
+      }
+     
     },
     [dispatch]
   );
-
+  const closeToast = () => {
+    setShowToast(false);
+};
   const getUpdatedWorkflow = (reopenDetails, type) => {
     switch (type) {
       case "REOPEN":
@@ -49,6 +60,7 @@ const AddtionalDetails = (props) => {
   };
 
   function reopenComplaint() {
+    setShowToast(false)
     let reopenDetails = Digit.SessionStorage.get(`reopen.${id}`);
     if (complaintDetails) {
       complaintDetails.workflow = getUpdatedWorkflow(
@@ -90,6 +102,8 @@ const AddtionalDetails = (props) => {
           <SubmitBar label={t(`${LOCALIZATION_KEY.CS_HEADER}_REOPEN_COMPLAINT`)} />
         </div>
       </Card>
+      <React.Fragment>{showToast && <Toast error={showToast.key === "error"} label={error} onClose={closeToast} />}</React.Fragment>;
+  
     </React.Fragment>
   );
 };

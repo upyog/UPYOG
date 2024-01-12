@@ -83,6 +83,8 @@ public class WSCalculationConstant {
 	public static final String WS_WATER_CESS = "WS_WATER_CESS";
 
 	public static final String WS_CHARGE = "WS_CHARGE";
+	
+	public static final String WS_TIME_REBATE="WS_TIME_REBATE";
 
 	/**
 	 * data fields
@@ -231,9 +233,13 @@ public class WSCalculationConstant {
 
 	public static final String WS_ADHOC_REBATE = "WS_ADHOC_REBATE";
 	
+	public static final String WS_RECONNECTION_CHARGE = "WS_RECONNECTION_CHARGE";
+	
 	public static final String FORM_FEE_CONST = "formFee";
 
 	public static final String SCRUTINY_FEE_CONST = "scrutinyFee";
+	
+	public static final String RECONNECTION_FEE_CONST = "reconnectionfee";
 	
 	public static final String METER_COST_CONST = "meterCost";
 	

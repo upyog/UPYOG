@@ -90,32 +90,39 @@ public class SWCalculationServiceImpl implements SWCalculationService {
 	public List<Calculation> getCalculation(CalculationReq request) {
 		List<Calculation> calculations;
 		boolean connectionRequest = false;
-		if (request.getDisconnectRequest()!= null && request.getDisconnectRequest()) {
+		Map<String, Object> masterMap;
+		if (request.getIsDisconnectionRequest()!= null && request.getIsDisconnectionRequest()) {
 			// Calculate and create demand for connection
-			connectionRequest = request.getDisconnectRequest();
-			Map<String, Object> masterMap = mDataService.loadMasterData(request.getRequestInfo(),
+			connectionRequest = request.getIsDisconnectionRequest();
+			 masterMap = mDataService.loadMasterData(request.getRequestInfo(),
 					request.getCalculationCriteria().get(0).getTenantId());
 			calculations = getCalculations(request, masterMap);
-			demandService.generateDemand(request, calculations, masterMap, connectionRequest);
-			unsetSewerageConnection(calculations);
+			
 		} else if (request.getIsconnectionCalculation()) {
 			connectionRequest = request.getIsconnectionCalculation();
-			Map<String, Object> masterMap = mDataService.loadMasterData(request.getRequestInfo(),
+			masterMap = mDataService.loadMasterData(request.getRequestInfo(),
 					request.getCalculationCriteria().get(0).getTenantId());
 			calculations = getCalculations(request, masterMap);
-			demandService.generateDemand(request, calculations, masterMap, connectionRequest);
-			unsetSewerageConnection(calculations);
+			
 
-		} else {
-			// Calculate and create demand for application
-			Map<String, Object> masterData = mDataService.loadExemptionMaster(request.getRequestInfo(),
-					request.getCalculationCriteria().get(0).getTenantId());
-			calculations = getFeeCalculation(request, masterData);
-			demandService.generateDemand(request, calculations, masterData,
-					request.getIsconnectionCalculation());
-			unsetSewerageConnection(calculations);
 		}
-		
+		else if (request.getIsReconnectionRequest())	
+		{
+			connectionRequest = (!request.getIsReconnectionRequest());
+			masterMap = mDataService.loadExemptionMaster(request.getRequestInfo(),
+					request.getCalculationCriteria().get(0).getTenantId());
+			calculations = getReconnectionFeeCalculation(request, masterMap);
+			log.info("In reconnection request connectionRequest" + connectionRequest);
+		} 
+		else {
+			// Calculate and create demand for application
+			masterMap = mDataService.loadExemptionMaster(request.getRequestInfo(),
+					request.getCalculationCriteria().get(0).getTenantId());
+			calculations = getFeeCalculation(request, masterMap);
+			connectionRequest = request.getIsconnectionCalculation();
+		}
+		demandService.generateDemand(request, calculations, masterMap,connectionRequest);
+		unsetSewerageConnection(calculations);
 		return calculations;
 	}
 
@@ -165,7 +172,7 @@ public class SWCalculationServiceImpl implements SWCalculationService {
 				List<SewerageConnection> sewerageConnectionList = util.getSewerageConnection(requestInfo, criteria.getConnectionNo(), requestInfo.getUserInfo().getTenantId());
 				for (SewerageConnection connection : sewerageConnectionList) {
 					if (connection.getApplicationType().equalsIgnoreCase(NEW_SEWERAGE_CONNECTION)) {
-						List<Demand> demandsList = demandService.searchDemand(requestInfo.getUserInfo().getTenantId(), Collections.singleton(connection.getConnectionNo()),
+						List<Demand> demandsList = demandService.searchDemandForDisconnectionRequest(requestInfo.getUserInfo().getTenantId(), Collections.singleton(connection.getConnectionNo()),
 								null, toDate, requestInfo, null, isLastElementWithDisconnectionRequest);
 						Demand demand = null;
 						if (!CollectionUtils.isEmpty(demandsList)) {
@@ -308,13 +315,20 @@ public class SWCalculationServiceImpl implements SWCalculationService {
 			mDataService.enrichBillingPeriod(criteria, billingFrequencyMap, masterMap, criteria.getSewerageConnection().getConnectionType());
 
 			Calculation calculation = null;
-			if (request.getDisconnectRequest() != null) {
-				if (request.getDisconnectRequest() &&
-						criteria.getApplicationNo().equals(request.getCalculationCriteria().get(request.getCalculationCriteria().size() - 1)
+			if (request.getIsDisconnectionRequest() != null && request.getIsDisconnectionRequest()) {
+				if (request.getIsDisconnectionRequest() && criteria.getApplicationNo().equals(request.getCalculationCriteria().get(request.getCalculationCriteria().size() - 1)
 								.getApplicationNo())) {
 					calculation = getCalculation(request.getRequestInfo(), criteria, estimationMap, masterMap, true, true);
 				}
-			} else {
+			}  else if (request.getIsReconnectionRequest() != null && request.getIsReconnectionRequest()) {
+				if (request.getIsReconnectionRequest() &&
+						criteria.getApplicationNo().equals(request.getCalculationCriteria().get(request.getCalculationCriteria().size() - 1)
+								.getApplicationNo())) {
+					calculation = getCalculation(request.getRequestInfo(), criteria, estimationMap, masterMap, true, false);
+				}
+				
+			} 
+			else {
 				calculation = getCalculation(request.getRequestInfo(), criteria, estimationMap, masterMap, true, false);
 			}
 			calculations.add(calculation);
@@ -322,6 +336,18 @@ public class SWCalculationServiceImpl implements SWCalculationService {
 		return calculations;
 	}
 
+	List<Calculation> getReconnectionFeeCalculation(CalculationReq request, Map<String, Object> masterMap) {
+		List<Calculation> calculations = new ArrayList<>(request.getCalculationCriteria().size());
+		for (CalculationCriteria criteria : request.getCalculationCriteria()) {
+			Map<String, List> estimationMap = estimationService.getReconnectionFeeEstimation(criteria, request.getRequestInfo(),
+					masterMap);
+			mDataService.enrichBillingPeriodForFee(masterMap);
+			Calculation calculation = getCalculation(request.getRequestInfo(), criteria, estimationMap, masterMap,
+					false, false);
+			calculations.add(calculation);
+		}
+		return calculations;
+	}
 	/**
 	 * 
 	 * 
@@ -415,7 +441,7 @@ public class SWCalculationServiceImpl implements SWCalculationService {
 			List<Object> sewerageCessMasterList = timeBasedExemptionMasterMap
 					.get(SWCalculationConstant.SW_SEWERAGE_CESS_MASTER);
 
-			Map<String, Object> CessMap = mDataService.getApplicableMaster(Assesment_Year, sewerageCessMasterList);
+			Map<String, Object> CessMap = mDataService.getApplicableMasterCess(Assesment_Year, sewerageCessMasterList);
 			sewerageCess = sewerageCessUtil.calculateSewerageCess(finalSewerageCharge, CessMap);
 
 		}

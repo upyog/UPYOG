@@ -86,6 +86,8 @@ public class PropertyRepository {
 			query=queryBuilder.getPropertySearchQueryForDeafauterNotice(criteria,preparedStmtList);
 		else
 			query=queryBuilder.getPropertySearchQuery(criteria, preparedStmtList, isPlainSearch, false);
+		
+		log.info("Query for Property search is " + query + " with parameters " +  preparedStmtList.toArray().toString());
 		if (isApiOpen)
 			return jdbcTemplate.query(query, preparedStmtList.toArray(), openRowMapper);
 		if(criteria.getIsDefaulterNoticeSearch())

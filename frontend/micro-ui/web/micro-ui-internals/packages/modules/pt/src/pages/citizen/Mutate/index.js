@@ -89,8 +89,9 @@ const MutationCitizen = (props) => {
         creationReason: "MUTATION",
         owners: [
           ...originalProperty.owners?.map((e) => ({ ...e, status: "INACTIVE" })),
-          ...ownersArray.map((owner) => ({
+          ...ownersArray.map((owner,index) => ({
             ...owner,
+            additionalDetails:{ownerSequence:index, ownerName:owner?.name},
             documents: Object.keys(owner.documents).map((key) => {
               const { documentType, fileStoreId } = owner.documents[key];
               return { documentType: documentType.code, fileStoreId };
@@ -139,6 +140,7 @@ const MutationCitizen = (props) => {
     } else {
       delete data.Property.institution;
     }
+    console.log("data",data,params)
     setFormData(data);
   };
 

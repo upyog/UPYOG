@@ -6,11 +6,13 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Builder.Default;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import org.egov.common.contract.request.RequestInfo;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
 
@@ -34,7 +36,12 @@ public class WaterConnectionRequest {
 	private WaterConnection waterConnection = null;
 	
 	@JsonProperty("disconnectRequest")
-	private boolean disconnectRequest;
+	@Builder.Default
+	private boolean disconnectRequest=false;
+	
+	@JsonProperty("reconnectRequest")
+	@Builder.Default
+	private boolean reconnectRequest=false;
 
 	@Builder.Default
 	@JsonProperty("isCreateCall")
@@ -72,6 +79,11 @@ public class WaterConnectionRequest {
 	
 	public WaterConnectionRequest disconnectionRequest(boolean isDisconnectionRequest) {
 		this.disconnectRequest = isDisconnectionRequest;
+		return this;
+	}
+	
+	public WaterConnectionRequest reconnectionRequest(boolean isReconnectionRequest) {
+		this.reconnectRequest = isReconnectionRequest;
 		return this;
 	}
 

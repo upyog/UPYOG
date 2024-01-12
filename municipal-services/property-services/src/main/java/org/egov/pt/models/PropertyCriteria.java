@@ -70,6 +70,9 @@ public class PropertyCriteria {
 	@Builder.Default
 	private Boolean isDefaulterNoticeSearch = false;
 	
+	@Builder.Default
+	private Boolean isRequestForDuplicatePropertyValidation = false;
+	
 	private Boolean isCitizen;
 
 	@Builder.Default

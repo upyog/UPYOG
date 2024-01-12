@@ -9,7 +9,7 @@ const SelectDocuments = ({ t, config, onSelect, userType, formData, setError: se
 
   const { action = "create" } = Digit.Hooks.useQueryParams();
 
-  const { isLoading, data } = Digit.Hooks.pt.usePropertyMDMS(stateId, "PropertyTax", [
+  const { isLoading, data } = Digit.Hooks.pt.usePropertyMDMSV2(stateId, "PropertyTax", [
     "UsageCategory",
     "OccupancyType",
     "Floor",

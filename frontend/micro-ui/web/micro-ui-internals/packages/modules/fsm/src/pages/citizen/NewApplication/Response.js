@@ -14,7 +14,7 @@ const BannerPicker = (props) => {
   return (
     <Banner
       message={GetActionMessage()}
-      applicationNumber={props.data?.fsm[0]?.applicationNo}
+      applicationNumber={props?.data?.fsm && props?.data?.fsm[0]?.applicationNo}
       info={props.t("CS_FILE_DESLUDGING_APPLICATION_NO")}
       successful={props.isSuccess}
     />
@@ -43,6 +43,7 @@ const Response = ({ data, onSuccess }) => {
   });
 
   const onError = (error, variables) => {
+    console.log("error",error)
     setErrorInfo(error?.response?.data?.Errors[0]?.code || "ERROR");
     setMutationHappened(true);
   };
@@ -51,11 +52,12 @@ const Response = ({ data, onSuccess }) => {
   }, [mutation.data]);
 
   useEffect(() => {
+    console.log("errorInfoerrorInfo",errorInfo)
     if (!mutationHappened && !errorInfo) {
       try {
         const amount = Digit.SessionStorage.get("total_amount");
         const amountPerTrip = Digit.SessionStorage.get("amount_per_trip");
-        const { subtype, pitDetail, address, pitType, source, selectGender, selectPaymentPreference, selectTripNo } = data;
+        const { subtype, propertyID, pitDetail, address, pitType, source, selectGender, selectPaymentPreference, selectTripNo } = data;
         const {
           city,
           locality,
@@ -81,13 +83,12 @@ const Response = ({ data, onSuccess }) => {
             citizen: {
               gender: selectGender?.code,
             },
-            tenantId: city.code,
+            tenantId: city?.code,
             additionalDetails: {},
-            propertyUsage: subtype.code,
+            propertyUsage: subtype?.code,
             address: {
-              tenantId: city.code,
+              tenantId: city?.code,
               additionalDetails: {
-                additionalDetails: null,
                 boundaryType: propertyLocation?.code === "FROM_GRAM_PANCHAYAT" ? "GP" : "Locality",
                 gramPanchayat: {
                   code: gramPanchayat?.code,
@@ -106,11 +107,11 @@ const Response = ({ data, onSuccess }) => {
               doorNo: doorNo?.trim(),
               landmark: landmark?.trim(),
               slumName: slum,
-              city: city.name,
+              city: city?.name,
               pincode,
               locality: {
-                code: locality.code,
-                name: locality.name,
+                code: propertyLocation?.code === "WITHIN_ULB_LIMITS" ? locality?.code : gramPanchayat?.code,
+                name: propertyLocation?.code === "WITHIN_ULB_LIMITS" ? locality?.name : gramPanchayat?.name,
               },
               geoLocation: {
                 latitude: geoLocation?.latitude,
@@ -133,6 +134,9 @@ const Response = ({ data, onSuccess }) => {
             additionalDetails: {
               totalAmount: amount,
               tripAmount: typeof amountPerTrip === "number" ? JSON.stringify(amountPerTrip) : amountPerTrip,
+              propertyID : propertyID?.propertyID,
+              distancefromroad : data.roadWidth.distancefromroad,
+              roadWidth: data.roadWidth.roadWidth,
             },
             advanceAmount: typeof advanceAmount === "number" ? JSON.stringify(advanceAmount) : advanceAmount,
           },

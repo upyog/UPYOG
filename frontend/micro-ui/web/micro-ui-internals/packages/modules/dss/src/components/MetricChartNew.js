@@ -9,6 +9,7 @@ import { ArrowUpwardElement } from "./ArrowUpward";
 const MetricData = ({ t, data, code, indexValuesWithStar }) => {
   const { value } = useContext(FilterContext);
   const insight = data?.insight?.value?.replace(/[+-]/g, "")?.split("%");
+
   return (
     <div>
       <p className="heading-m" style={{ paddingTop: "0px", whiteSpace: "nowrap" }}>
@@ -19,6 +20,8 @@ const MetricData = ({ t, data, code, indexValuesWithStar }) => {
              code === "fsmtotalsludgetreated" || code === "totalSludgeTreated" ? t(`DSS_KL`) : ""
           }`
         ):
+        data?.headerName.includes("DSS_STATE_GDP_REVENUE_COLLECTION")
+       ? Digit.Utils.dss.formatter(data.headerValue, data.headerSymbol, "UnitGDP", true, t):
         
         (
           `${Digit.Utils.dss.formatter(data?.headerValue, data?.headerSymbol, value?.denomination, true, t)} ${
@@ -88,11 +91,24 @@ const MetricChartRow = ({ data, setChartDenomination, index, moduleCode, indexVa
          lastUpdatedTime: "",
        }}));
      }
+     if(response?.responseData?.visualizationCode == "StateGDPwiseTotalRevenueCollection")
+     {
+      response.responseData.data[0].headerSymbol = "amount"
+     }
     } else {
       
       setShowDate({});
     }
   }, [response]);
+  useEffect(() => {
+    if (response) {
+     if(response?.responseData?.visualizationCode == "StateGDPwiseTotalRevenueCollection")
+     {
+      response.responseData.data[0].headerSymbol = "amount"
+     }
+     
+    } 
+  }, []);
 
   if (isLoading) {
     return false;
@@ -135,7 +151,6 @@ const MetricChartRow = ({ data, setChartDenomination, index, moduleCode, indexVa
     // if (isMobile) return t(`TIP_${data.name}`).length < 50 ? 50 : "auto";
     // else return 50;
   };
-console.log("response?.responseData?.data?.[0]",response?.responseData?.data?.[0])
   return (
     <div className="row" style={{display:"flex",flexDirection:"column",width:"45%", height:"100px",margin:"2%",padding:"2%",backgroundColor:"white",boxShadow:"0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22)"}}>
       <div style={{display:"flex"}}>
@@ -183,7 +198,7 @@ const MetricChartNew = ({ data, setChartDenomination, moduleCode }) => {
 
   let url =["https://nugp-assets.s3.ap-south-1.amazonaws.com/nugp+asset/7.png","https://nugp-assets.s3.ap-south-1.amazonaws.com/nugp+asset/11.png","https://nugp-assets.s3.ap-south-1.amazonaws.com/nugp+asset/8.png","https://nugp-assets.s3.ap-south-1.amazonaws.com/nugp+asset/12.png","https://nugp-assets.s3.ap-south-1.amazonaws.com/nugp+asset/9.png","https://nugp-assets.s3.ap-south-1.amazonaws.com/nugp+asset/13.png","https://nugp-assets.s3.ap-south-1.amazonaws.com/nugp+asset/10.png","https://nugp-assets.s3.ap-south-1.amazonaws.com/nugp+asset/14.png"]
 
-  let url2=["https://nugp-assets.s3.ap-south-1.amazonaws.com/nugp+asset/2.png","https://nugp-assets.s3.ap-south-1.amazonaws.com/nugp+asset/3.png","https://nugp-assets.s3.ap-south-1.amazonaws.com/nugp+asset/1.png","https://nugp-assets.s3.ap-south-1.amazonaws.com/nugp+asset/4.png","https://i.ibb.co/S0S8n9g/4.png","https://i.ibb.co/S0S8n9g/4.png"]
+  let url2=["https://nugp-assets.s3.ap-south-1.amazonaws.com/nugp+asset/2.png","https://nugp-assets.s3.ap-south-1.amazonaws.com/nugp+asset/3.png","https://nugp-assets.s3.ap-south-1.amazonaws.com/nugp+asset/1.png","https://nugp-assets.s3.ap-south-1.amazonaws.com/nugp+asset/4.png","https://nugp-assets.s3.ap-south-1.amazonaws.com/nugp+asset/6.png","https://nugp-assets.s3.ap-south-1.amazonaws.com/nugp+asset/6.png"]
   return (
     <>
       <span className="chart-metric-wrapper">

@@ -256,7 +256,7 @@ const OwnerForm = (_props) => {
                       control={control}
                       defaultValue={owner?.name}
                       name={"name"}
-                      rules={{ required: t("REQUIRED_FIELD"), validate: { pattern: (val) => (/^[a-zA-Z-.`' ]*$/.test(val) ? true : t("TL_NAME_ERROR_MESSAGE")) } }}
+                      rules={{ required: t("REQUIRED_FIELD"), validate: { pattern: (val) => (/^[a-zA-Z ]+$/.test(val) ? true : t("TL_NAME_ERROR_MESSAGE")) } }}
                       render={(props)=>(
                         <TextInput
                           t={t}
@@ -286,7 +286,7 @@ const OwnerForm = (_props) => {
                       control={control}
                       name={"designation"}
                       defaultValue={owner?.designation}
-                      rules={{ /* required: t("REQUIRED_FIELD"), */ validate: { pattern: (val) => (/^[a-zA-Z-.`' ]*$/.test(val) ? true : t("TL_NAME_ERROR_MESSAGE")) } }}
+                      rules={{ /* required: t("REQUIRED_FIELD"), */ validate: { pattern: (val) => (/^[a-zA-Z ]*$/.test(val) ? true : t("TL_NAME_ERROR_MESSAGE")) } }}
                       render={(props)=>(
                         <TextInput
                           t={t}
@@ -657,7 +657,7 @@ const TLOwnerDetailsEmployee = ({ config, onSelect, userType, formData, setError
   const [isErrors, setIsErrors] = useState(false);
   const [previousLicenseDetails, setPreviousLicenseDetails] = useState(formData?.tradedetils1 || []);
 
-  const { data: mdmsData, isLoading } = Digit.Hooks.pt.usePropertyMDMS(stateId, "PropertyTax", [
+  const { data: mdmsData, isLoading } = Digit.Hooks.pt.usePropertyMDMSV2(stateId, "PropertyTax", [
     "UsageCategory",
     "OccupancyType",
     "Floor",

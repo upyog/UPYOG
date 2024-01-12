@@ -56,6 +56,20 @@ const SelectTrips = ({ t, config, onSelect, formData = {}, userType, styles, FSM
       disable: false,
       isMandatory: true,
     },
+    {
+      label:"ES_NEW_APPLICATION_DISTANCE_FROM_ROAD",
+      type: "text",
+      name: "distancefromroad",
+      default: formData?.tripData?.distancefromroad,
+      //isMandatory: true,
+    },
+    {
+      label: "ES_NEW_APPLICATION_ROAD_WIDTH",
+      type: "text",
+      name: "roadWidth",
+      default: formData?.tripData?.roadWidth,
+      //isMandatory: true,
+    }
   ];
 
   function setTripNum(value) {
@@ -66,9 +80,9 @@ const SelectTrips = ({ t, config, onSelect, formData = {}, userType, styles, FSM
     setVehicle({ label: value.capacity });
     onSelect(config.key, { ...formData[config.key], vehicleType: value });
   }
-
-  function setValue(object) {
-    onSelect(config.key, { ...formData[config.key], ...object });
+  //console.log(formdata)
+  function setValue(value, input) {
+    onSelect(config.key, { ...formData[config.key], [input]: value });
   }
   useEffect(() => {
     (async () => {
@@ -147,9 +161,9 @@ const SelectTrips = ({ t, config, onSelect, formData = {}, userType, styles, FSM
             <TextInput
               type={input.type}
               style={{ ...styles, ...FSMTextFieldStyle }}
-              onChange={(e) => setTripNum(e.target.value)}
+              onChange={(e) => setValue(e.target.value, input.name)}
               key={input.name}
-              value={input.default ? input.default : formData && formData[config.key] ? formData[config.key][input.name] : null}
+              value={formData && formData[config.key] ? formData[config.key][input.name] : null}
               {...input.validation}
               disable={input.disable}
             />

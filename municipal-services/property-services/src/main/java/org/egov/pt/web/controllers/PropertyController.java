@@ -1,6 +1,7 @@
 
 package org.egov.pt.web.controllers;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -135,7 +136,7 @@ public class PropertyController {
             propertyValidator.validatePropertyCriteria(propertyCriteria, requestInfoWrapper.getRequestInfo());
         }
         
-    	List<Property> properties = null;
+    	List<Property> properties = new ArrayList<Property>();
     	Integer count = 0;
         
         if (propertyCriteria.getIsRequestForCount()) {
