@@ -2,8 +2,8 @@ import { Banner, Card, CardText, LinkButton, LinkLabel, Loader, Row, StatusTable
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useRouteMatch } from "react-router-dom";
-import getPTAcknowledgementData from "../../../getPTAcknowledgementData";
-import { convertToProperty } from "../../../utils";
+import getPetAcknowledgementData from "../../../getPetAcknowledgementData";
+import { PetDataConvert } from "../../../utils";
 
 const GetActionMessage = (props) => {
   const { t } = useTranslation();
@@ -33,7 +33,7 @@ const BannerPicker = (props) => {
   );
 };
 
-const PTAcknowledgement = ({ data, onSuccess }) => {
+const PTRAcknowledgement = ({ data, onSuccess }) => {
 
   
   const { t } = useTranslation();
@@ -49,7 +49,7 @@ const PTAcknowledgement = ({ data, onSuccess }) => {
     try {
       
       data.tenantId = data.address?.city?.code;
-      let formdata = convertToProperty(data)
+      let formdata = PetDataConvert(data)
       
 
       
@@ -68,7 +68,7 @@ const PTAcknowledgement = ({ data, onSuccess }) => {
     const tenantInfo = tenants.find((tenant) => tenant.code === Pet.tenantId);
     let tenantId = Pet.tenantId || tenantId;
    
-    const data = await getPTAcknowledgementData({ ...Pet }, tenantInfo, t);
+    const data = await getPetAcknowledgementData({ ...Pet }, tenantInfo, t);
     Digit.Utils.pdf.generate(data);
   };
 
@@ -98,4 +98,4 @@ const PTAcknowledgement = ({ data, onSuccess }) => {
   );
 };
 
-export default PTAcknowledgement;
+export default PTRAcknowledgement;

@@ -2,13 +2,11 @@ import React, { useEffect, useState } from "react";
 import { FormStep, TextInput, CardLabel, RadioButtons, LabelFieldPair, Dropdown, Menu, MobileNumber } from "@egovernments/digit-ui-react-components";
 import { cardBodyStyle } from "../utils";
 import { useLocation, useRouteMatch } from "react-router-dom";
-import Timeline from "../components/TLTimeline";
+import Timeline from "../components/PTRTimeline";
 
 const PTRCitizenDetails
  = ({ t, config, onSelect, userType, formData, ownerIndex }) => {
   const { pathname: url } = useLocation();
-  // const editScreen = url.includes("/modify-application/");
-  //const mutationScreen = url.includes("/property-mutation/");
 
   let index = 0
   // window.location.href.charAt(window.location.href.length - 1);
@@ -30,8 +28,7 @@ const PTRCitizenDetails
     (formData.ownerss && formData.ownerss[index] && formData.ownerss[index].fatherName) || formData?.ownerss?.fatherName || ""
   );
   
-  // const isUpdateProperty = formData?.isUpdateProperty || false;
-  // let isEditProperty = formData?.isEditProperty || false;
+ 
 
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();
@@ -88,8 +85,7 @@ const PTRCitizenDetails
     <React.Fragment>
     {
       window.location.href.includes("/citizen") ?
-        window.location.href.includes("/citizen/pt/property/property-mutation") ? 
-          <Timeline currentStep={1} flow="PT_MUTATE" /> : <Timeline currentStep={1} />
+ <Timeline currentStep={1} />
     : null
     }
 
@@ -110,7 +106,6 @@ const PTRCitizenDetails
           name="applicantName"
           value={applicantName}
           onChange={setOwnerName}
-          //disable={isUpdateProperty || isEditProperty}
           ValidationRequired = {true}
           {...(validation = {
             isRequired: true,
@@ -125,7 +120,6 @@ const PTRCitizenDetails
           value={mobileNumber}
           name="mobileNumber"
           onChange={(value) => setMobileNo({ target: { value } })}
-          //disable={isUpdateProperty || isEditProperty}
           {...{ required: true, pattern: "[6-9]{1}[0-9]{9}", type: "tel", title: t("CORE_COMMON_APPLICANT_MOBILE_NUMBER_INVALID") }}
         />
 
@@ -134,7 +128,6 @@ const PTRCitizenDetails
             value={alternateNumber}
             name="alternateNumber"
             onChange={(value) => setAltMobileNo({ target: { value } })}
-            //disable={isUpdateProperty || isEditProperty}
             {...{ required: false, pattern: "[6-9]{1}[0-9]{9}", type: "tel", title: t("CORE_COMMON_APPLICANT_MOBILE_NUMBER_INVALID") }}
           />
         <CardLabel>{`${t("PTR_FATHER_HUSBAND_NAME")}`}</CardLabel>
@@ -146,7 +139,6 @@ const PTRCitizenDetails
           name="fatherName"
           value={fatherName}
           onChange={setGuardiansName}
-          //disable={isUpdateProperty || isEditProperty}
           ValidationRequired = {true}
           {...(validation = {
             isRequired: true,
@@ -165,7 +157,6 @@ const PTRCitizenDetails
           name="emailId"
           value={emailId}
           onChange={setOwnerEmail}
-          //disable={isUpdateProperty || isEditProperty}
           ValidationRequired = {true}
           {...(validation = {
             isRequired: true,

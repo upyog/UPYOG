@@ -65,42 +65,7 @@ const SearchFields = ({register, control, reset, tenantId, t, formState, setShow
                 />
                  <CardLabelError>{formState?.errors?.["mobileNumber"]?.message}</CardLabelError>
                 </SearchField>
-                <SearchField>
-                    <label>{t("PT_SEARCHPROPERTY_TABEL_APPLICATIONTYPE")}</label>
-                    <Controller
-                            control={control}
-                            name="creationReason"
-                            render={(props) => (
-                                <Dropdown
-                                selected={props.value}
-                                select={props.onChange}
-                                onBlur={props.onBlur}
-                                option={applicationTypes}
-                                optionKey="i18nKey"
-                                t={t}
-                                disable={false}
-                                />
-                            )}
-                            />
-                </SearchField>
-                <SearchField>
-                    <label>{t("ES_SEARCH_PROPERTY_STATUS")}</label>
-                    <Controller
-                            control={control}
-                            name="status"
-                            render={(props) => (
-                                <Dropdown
-                                selected={props.value}
-                                select={props.onChange}
-                                onBlur={props.onBlur}
-                                option={applicationStatuses}
-                                optionKey="i18nKey"
-                                t={t}
-                                disable={false}
-                                />
-                            )}
-                            />
-                </SearchField>
+                
                 <SearchField>
                     <label>{t("PTR_FROM_DATE")}</label>
                     <Controller
@@ -125,7 +90,6 @@ const SearchFields = ({register, control, reset, tenantId, t, formState, setShow
                             applicationNumber: "", 
                             fromDate: "", 
                             toDate: "",
-                            propertyIds: "",
                             mobileNumber:"",
                             status: "",
                             creationReason: "",

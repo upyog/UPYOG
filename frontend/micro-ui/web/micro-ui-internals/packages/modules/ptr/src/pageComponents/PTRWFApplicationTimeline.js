@@ -2,9 +2,9 @@ import { ActionLinks, CardSectionHeader, CheckPoint, ConnectingCheckPoints, Load
 import React, { Fragment } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import PTWFCaption from "./PTWFCaption";
+import PETWFCaption from "./PETWFCaption";
 
-const PTWFApplicationTimeline = (props) => {
+const PTRWFApplicationTimeline = (props) => {
   const { t } = useTranslation();
   const businessService = (props.application?.creationReason && `${props.application.creationReason}`) || "ptr";
   // const businessService = "ptr";
@@ -28,7 +28,7 @@ const PTWFApplicationTimeline = (props) => {
         date: checkpoint?.auditDetails?.lastModified,
         source: props.application?.channel || "",
       };
-      return <PTWFCaption data={caption} />;
+      return <PETWFCaption data={caption} />;
     }
     else if (checkpoint.state) {
       const caption = {
@@ -39,7 +39,7 @@ const PTWFApplicationTimeline = (props) => {
         wfComment: checkpoint.wfComment,
         thumbnailsToShow: checkpoint?.thumbnailsToShow,
       };
-      return <PTWFCaption data={caption} OpenImage={OpenImage} />;
+      return <PETWFCaption data={caption} OpenImage={OpenImage} />;
     } else if (checkpoint.status === "ACTIVE" && props?.userType === 'citizen') {
       return (
         <div>
@@ -64,7 +64,7 @@ const PTWFApplicationTimeline = (props) => {
         name: checkpoint?.assigner?.name,
         comment: t(checkpoint?.comment),
       };
-      return <PTWFCaption data={caption} />;
+      return <PETWFCaption data={caption} />;
     }
   };
 
@@ -175,4 +175,4 @@ const PTWFApplicationTimeline = (props) => {
   );
 };
 
-export default PTWFApplicationTimeline;
+export default PTRWFApplicationTimeline;

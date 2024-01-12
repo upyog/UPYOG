@@ -119,7 +119,7 @@ const Inbox = ({
       return (
         <div>
           {isInbox && <Header>{t("ES_COMMON_INBOX")}</Header>}
-          {!isInbox && <Header>{t("SEARCH_PROPERTY")}</Header>}
+         
           
           <PTRDesktopInbox
             moduleCode={moduleCode}

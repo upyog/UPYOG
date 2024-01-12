@@ -1,15 +1,3 @@
-// import {
-//   getFixedFilename,
-//   getPropertyTypeLocale,
-//   getPropertyOwnerTypeLocale,
-//   getPropertyUsageTypeLocale,
-//   getPropertySubUsageTypeLocale,
-//   getPropertyOccupancyTypeLocale,
-//   getMohallaLocale,
-//   pdfDocumentName,
-//   pdfDownloadLink,
-//   getCityLocale,
-// } from "./utils";
 
 
 const capitalize = (text) => text.substr(0, 1).toUpperCase() + text.substr(1);
@@ -48,7 +36,7 @@ const getAssessmentInfo = (application, t) => {
 
 
 
-const getPTAcknowledgementData = async (application, tenantInfo, t) => {
+const getPetAcknowledgementData = async (application, tenantInfo, t) => {
   const filesArray = application?.documents?.map((value) => value?.fileStoreId);
   const res = filesArray?.length > 0 && (await Digit.UploadServices.Filefetch(filesArray, Digit.ULBService.getStateId()));
 
@@ -102,4 +90,4 @@ const getPTAcknowledgementData = async (application, tenantInfo, t) => {
   };
 };
 
-export default getPTAcknowledgementData;
+export default getPetAcknowledgementData;

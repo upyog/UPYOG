@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { CardLabel, Dropdown, UploadFile, Toast, Loader, FormStep, LabelFieldPair } from "@egovernments/digit-ui-react-components";
-import Timeline from "../components/TLTimeline";
+import Timeline from "../components/PTRTimeline";
 
 const PTRSelectProofIdentity = ({ t, config, onSelect, userType, formData, setError: setFormError, clearErrors: clearFormErrors, formState }) => {
   const tenantId = Digit.ULBService.getStateId();
@@ -77,18 +77,13 @@ function PTRSelectDocument({
   t,
   document: doc,
   setDocuments,
-  error,
   setError,
   documents,
   action,
   formData,
-  setFormError,
-  clearFormErrors,
-  config,
-  formState,
-  fromRawData,
+  
   id,
-  propertyInitialValues,
+  
 }) {
   const filteredDocument = documents?.filter((item) => item?.documentType?.includes(doc?.code))[0];
   ////console.log("ffffffff", filteredDocument);
@@ -113,33 +108,12 @@ function PTRSelectDocument({
     setFile(e.target.files[0]);
   }
   const { dropdownData } = doc;
-  //console.log("dshdfsgfhshfjshfjhsfhu",dropdownData)
-  //const { dropdownFilter, enabledActions, filterCondition } = doc?.additionalDetails || {};
+  
   var dropDownData = dropdownData;
-   //let hideInput = false;
+   
   const [isHidden, setHidden] = useState(false);
 
-  // const addError = () => {
-  //   let type = formState.errors?.[config.key]?.type;
-  //   if (!Array.isArray(type)) type = [];
-  //   if (!type.includes(doc.code)) {
-  //     type.push(doc.code);
-  //     setFormError(config.key, { type });
-  //   }
-  // };
-
-  // const removeError = () => {
-  //   let type = formState.errors?.[config.key]?.type;
-  //   if (!Array.isArray(type)) type = [];
-  //   if (type.includes(doc?.code)) {
-  //     type = type.filter((e) => e != doc?.code);
-  //     if (!type.length) {
-  //       clearFormErrors(config.key);
-  //     } else {
-  //       setFormError(config.key, { type });
-  //     }
-  //   }
-  // };
+  
 
   useEffect(() => {
     if (selectedDocument?.code) {
@@ -161,15 +135,7 @@ function PTRSelectDocument({
         ];
       });
     }
-    // if (!isHidden) {
-    //   if (!uploadedFile || !selectedDocument?.code) {
-    //     addError();
-    //   } else if (uploadedFile && selectedDocument?.code) {
-    //     removeError();
-    //   }
-    // } else if (isHidden) {
-    //   removeError();
-    // }
+    
   }, [uploadedFile, selectedDocument]);
 
   useEffect(() => {
@@ -225,7 +191,6 @@ function PTRSelectDocument({
             className="form-field"
             selected={selectedDocument}
             style={{ width: "100%" }}
-            // disable={dropDownData?.length === 0 || (propertyInitialValues?.documents && propertyInitialValues?.documents.length>0 && propertyInitialValues?.documents.filter((document) => document.documentType.includes(doc?.code)).length>0? enabledActions?.[action].disableDropdown : false)}
             option={dropDownData.map((e) => ({ ...e, i18nKey: e.code?.replaceAll(".", "_") }))}
             select={handlePTRSelectDocument}
             optionKey="i18nKey"
@@ -246,7 +211,6 @@ function PTRSelectDocument({
             textStyles={{ width: "100%" }}
             inputStyles={{ width: "280px" }}
             accept=".pdf, .jpeg, .jpg, .png"   //  to accept document of all kind
-            // disabled={(propertyInitialValues?.documents && propertyInitialValues?.documents.length>0 && propertyInitialValues?.documents.filter((document) => document.documentType.includes(doc?.code)).length>0? enabledActions?.[action].disableUpload : false) || !selectedDocument?.code}
             buttonType="button"
             error={!uploadedFile}
           />
