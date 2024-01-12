@@ -37,7 +37,7 @@ public class StorageService {
 
 	@Autowired
 	private CloudFileMgrUtils util;
-	
+
 	private FileStoreConfig configs;
 
 	@Autowired
@@ -52,7 +52,7 @@ public class StorageService {
 	private FileStoreConfig fileStoreConfig;
 
 	private StorageValidator storageValidator;
-	
+
 	private MinioConfig minioConfig;
 
 	@Value("${filename.length}")
@@ -63,13 +63,13 @@ public class StorageService {
 
 	@Value("${filename.usenumbers}")
 	private Boolean useNumbers;
-	
+
 	@Value("${isAlfrescoEnabled}")
 	private boolean isAlfrescoEnabled;
 
 
-	
-	
+
+
 
 	@Autowired
 	public StorageService(ArtifactRepository artifactRepository, IdGeneratorService idGeneratorService,
@@ -118,7 +118,7 @@ public class StorageService {
 				log.error("IO Exception while mapping files to artifact: " + e.getMessage());
 			}
 			storageValidator.validate(artifact);
-			
+
 			if (fileStoreConfig.getImageFormats().contains(FilenameUtils.getExtension(artifact.getMultipartFile().getOriginalFilename())))
 				setThumbnailImages(artifact);
 		}
@@ -127,7 +127,7 @@ public class StorageService {
 	}
 
 	private void setThumbnailImages(Artifact artifact) {
-		
+
 		String completeName = artifact.getFileLocation().getFileName();
 		int index = completeName.indexOf('/');
 		String fileNameWithPath = completeName.substring(index + 1, completeName.length());
@@ -159,8 +159,7 @@ public class StorageService {
 	}
 
 	public Resource retrieve(String fileStoreId, String tenantId) throws IOException {
-		//return artifactRepository.find(fileStoreId, tenantId);
-		return null;
+		return artifactRepository.find(fileStoreId, tenantId);
 	}
 
 	public List<FileInfo> retrieveByTag(String tag, String tenantId) {
@@ -168,8 +167,7 @@ public class StorageService {
 	}
 
 	public Map<String, String> getUrls(String tenantId, List<String> fileStoreIds) {
-		Map<String, String> urlMap = null;
-		//getUrlMap(artifactRepository.getByTenantIdAndFileStoreIdList(tenantId, fileStoreIds));
+		Map<String, String> urlMap = getUrlMap(artifactRepository.getByTenantIdAndFileStoreIdList(tenantId, fileStoreIds));
 		return urlMap;
 	}
 
@@ -179,8 +177,8 @@ public class StorageService {
 
 	private String getFolderName(String module, String tenantId, Calendar calendar) {
 		return tenantId + "/" + module + "/" + calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.ENGLISH)
-				+ "/" + calendar.get(Calendar.DATE) + "/";
+		+ "/" + calendar.get(Calendar.DATE) + "/";
 	}
 
-	
+
 }
