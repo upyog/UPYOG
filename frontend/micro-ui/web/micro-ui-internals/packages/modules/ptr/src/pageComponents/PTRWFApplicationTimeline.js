@@ -40,24 +40,9 @@ const PTRWFApplicationTimeline = (props) => {
         thumbnailsToShow: checkpoint?.thumbnailsToShow,
       };
       return <PETWFCaption data={caption} OpenImage={OpenImage} />;
-    } else if (checkpoint.status === "ACTIVE" && props?.userType === 'citizen') {
-      return (
-        <div>
-          <Link to={`/digit-ui/citizen/pt/property/properties/${props?.application?.applicationNumber}`}>
-            <ActionLinks>{t("PT_VIEW_PROPERTY_DETAILS")}</ActionLinks>
-          </Link>
-        </div>
-      );
-    }
-    // else if (checkpoint.state === "CORRECTIONPENDING") {
-    //   return (
-    //     <div>
-    //       <Link to={`/digit-ui/citizen/pt/property/properties/${props?.application?.applicationNumber}`}>
-    //         <ActionLinks>{t("EDIT_PROPERTY")}</ActionLinks>
-    //       </Link>
-    //     </div>
-    //   );
-    // }
+    } 
+    
+   
     else {
       const caption = {
         date: Digit.DateUtils.ConvertTimestampToDate(props.application?.auditDetails.lastModified),
@@ -90,21 +75,7 @@ const PTRWFApplicationTimeline = (props) => {
           </div>
           ) : null
         );
-      case "EDIT":
-        return (
-          <div style={{ marginTop: "1em", bottom: "0px", width: "100%", marginBottom: "1.2em" }}>
-            {businessService != "PT.MUTATION" && (
-              <Link
-                to={{
-                  pathname: `/digit-ui/citizen/pt/property/edit-application/action=edit-${businessService}/${props.id}`,
-                  state: { tenantId: props.application.tenantId },
-                }}
-              >
-                <SubmitBar label={t("CS_APPLICATION_DETAILS_EDIT")} />
-              </Link>
-            )}
-          </div>
-        );
+      
       case "SUBMIT_FEEDBACK":
         return (
           <div style={{ marginTop: "24px" }}>
