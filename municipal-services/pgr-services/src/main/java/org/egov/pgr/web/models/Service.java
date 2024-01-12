@@ -88,6 +88,9 @@ public class Service   {
         @JsonProperty("auditDetails")
         private AuditDetails auditDetails = null;
 
-
+        @NotNull
+        @SafeHtml
+        @JsonProperty("priority")
+        private Priority priority = Priority.LOW;
 }
 
