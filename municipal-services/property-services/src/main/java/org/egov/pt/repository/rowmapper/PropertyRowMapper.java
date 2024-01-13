@@ -20,6 +20,7 @@ import org.egov.pt.models.Institution;
 import org.egov.pt.models.Locality;
 import org.egov.pt.models.OwnerInfo;
 import org.egov.pt.models.Property;
+import org.egov.pt.models.TypeOfRoad;
 import org.egov.pt.models.Unit;
 import org.egov.pt.models.enums.Channel;
 import org.egov.pt.models.enums.CreationReason;
@@ -330,12 +331,35 @@ public class PropertyRowMapper implements ResultSetExtractor<List<Property>> {
 		.id(rs.getString("addressid"))
 		.state(rs.getString("state"))
 		.city(rs.getString("city"))
+		.typeOfRoad(getTypeOfRoad(rs,"type_of_road"))
+		.commonNameOfBuilding(rs.getString("common_name_of_building"))
 		.geoLocation(geoLocation)
 		.locality(locality)
 		.tenantId(tenanId)
 		.build();
 	}
-	
+	private TypeOfRoad getTypeOfRoad(ResultSet rs, String key) throws SQLException {
+
+		TypeOfRoad propertyAdditionalDetails = null;
+
+		try {
+
+			String obj =  rs.getString(key);
+			if (obj != null) {
+				propertyAdditionalDetails =new TypeOfRoad();
+			
+				propertyAdditionalDetails.setCode( obj);
+			}
+
+		} catch (Exception e) {
+			throw new CustomException("PARSING ERROR", "The propertyAdditionalDetail json cannot be parsed");
+		}
+
+		if(propertyAdditionalDetails.getCode().isEmpty())
+			propertyAdditionalDetails = null;
+		
+		return propertyAdditionalDetails;
+	}
 	/**
 	 * prepares and returns an audit detail object
 	 * 

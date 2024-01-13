@@ -45,8 +45,7 @@ public class InboxController {
 	
 	
 	@PostMapping(value = "/_search")
-	public ResponseEntity<InboxResponse> search(@Valid @RequestBody  InboxRequest inboxRequest) {
-		
+	public ResponseEntity<InboxResponse> search( @RequestBody  InboxRequest inboxRequest) {
 		InboxResponse response = inboxService.fetchInboxData(inboxRequest.getInbox(),inboxRequest.getRequestInfo());
 		
 		response.setResponseInfo(
