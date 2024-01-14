@@ -43,14 +43,14 @@ const ApplicationDetails = (props) => {
   const [showModal, setShowModal] = useState(false);
   const [showToast, setShowToast] = useState(null);
   const [imageZoom, setImageZoom] = useState(null);
-  const DSO = Digit.UserService.hasAccess(["FSM_DSO"]) || false;
+  const DSO =  false;
 
   const { isLoading, isError, data: applicationDetails, error } = Digit.Hooks.fsm.useApplicationDetail(
     t,
     tenantId,
     applicationNumber,
     {},
-    props.userType
+   "EMPLOYEE"
   );
   const { isLoading: isDataLoading, isSuccess, data: applicationData } = Digit.Hooks.fsm.useSearch(
     tenantId,
@@ -82,9 +82,9 @@ const ApplicationDetails = (props) => {
           applicationData?.advanceAmount === null
         ? "FSM_ZERO_PAY_SERVICE"
         : "FSM",
-    role: DSO ? "FSM_DSO" : "FSM_EMPLOYEE",
+    role:  "FSM_EMPLOYEE",
     serviceData: applicationDetails,
-    getTripData: DSO ? false : true,
+    getTripData: true,
   });
 
   useEffect(() => {

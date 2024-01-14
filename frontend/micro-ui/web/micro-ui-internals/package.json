@@ -14,7 +14,8 @@
     "packages/modules/commonPt",
     "packages/modules/pt",
     "packages/modules/mCollect",
-    "packages/modules/tl"
+    "packages/modules/tl",
+    "packages/modules/fsm"
 
   ],
   "author": "Abhinav Kushwaha <abhinav.kushwaha@egovernments.org>",
