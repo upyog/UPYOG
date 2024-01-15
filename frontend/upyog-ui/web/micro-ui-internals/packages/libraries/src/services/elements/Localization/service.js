@@ -72061,7 +72061,7 @@ export const LocalizationService = {
             "locale": "en_IN"
         },
         {
-            "code": "WMS_PHM_COMMON_CREATE_HEADER",
+            "code": "H",
             "message": "Milestone Entry",
             "module": "rainmaker-common",
             "locale": "en_IN"
@@ -72336,6 +72336,97 @@ export const LocalizationService = {
         },
         
         {
+            "code": "WMS_MB_CREATE_HEADER",
+            "message": "Measurement Book",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_MB_COMMON_CREATE_HEADER",
+            "message": "Measurement Entry",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_NEW_MB_FORM_HEADER",
+            "message": "Measurement Book details",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_MB_ID_LABEL",
+            "message": "MB ID",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_MB_DETAILS_FORM_HEADER",
+            "message": "Milestone Details",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_MB_FORM_EDIT_CREATE_HEAD",
+            "message": "Edit Milestone Details",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_MB_DESC_OF_ITEM_LABEL",
+            "message": "Description of the MB",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_MB_PERCENT_NAME_LABEL",
+            "message": "% Weightage",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_MB_START_DATE_LABEL",
+            "message": "Start Date",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_MB_END_DATE_LABEL",
+            "message": "End Date",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_MB_DATE_LABEL",
+            "message": "Measurement Date",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_MB_CHAPTER_LABEL",
+            "message": "Engineer Name",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_MB_NAME_LABEL",
+            "message": "Engineer Name",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_MB_CONTROLS_LABEL",
+            "message": "Change",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_MB_CONTROLS2_LABEL",
+            "message": "Activities",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        
+        {
             "code": "WMS_PMA_CREATE_PAGE_LABEL",
             "message": "Physical Milestone",
             "module": "rainmaker-common",
@@ -72435,8 +72526,7 @@ export const LocalizationService = {
         {
             "code": "WMS_DR_COMMON_CREATE_HEADER",
             "message": "Deduction Register",
-            "module": "rainmaker-common",
-            
+            "module": "rainmaker-common",           
             "locale": "en_IN"
         },
         {
@@ -72457,6 +72547,218 @@ export const LocalizationService = {
             "module": "rainmaker-common",
             "locale": "en_IN"
         },
+        {
+            "code": "WMS_NEW_PR_FORM_HEADER",
+            "message": "Project Register",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_PR_ID_LABEL",
+            "message": "PR ID",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_PR_DETAILS_FORM_HEADER",
+            "message": "Project Register",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_PR_FORM_EDIT_CREATE_HEAD",
+            "message": "Edit Register Details",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_PR_SCH_NAME_LABEL",
+            "message": "Scheme Name",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_PR_PROJECT_NAME_LABEL",
+            "message": "Project Name",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },{
+            "code": "WMS_PR_WORK_TYPE_LABEL",
+            "message": "Type of Work",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_PR_WORK_NAME_LABEL",
+            "message": "Work Name",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_PR_ESTNUMBER_NAME_LABEL",
+            "message": "Estimated Number",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_PR_ESTWORKCOST_NAME_LABEL",
+            "message": "Estimated Work Cost",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_PR_STA_NAME_LABEL",
+            "message": "Sanctioned Tender Amount",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_PR_STATUS_LABEL",
+            "message": "Status",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_PR_BILL_DATE_LABEL",
+            "message": "Bill Received Date ",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_PR_PAYMENT_DATE_LABEL",
+            "message": "Payment received date",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_PR_CONTROLS2_LABEL",
+            "message": "Activities",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        
+        {
+            "code": "WMS_PR_CREATE_PAGE_LABEL",
+            "message": "Project Register",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_PR_COMMON_CREATE_HEADER",
+            "message": "Project Registration",
+            "module": "rainmaker-common",           
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_PR_COMMON_CREATE_ACTIVITY_HEADER",
+            "message": "Add Project Activity",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_PR_PRJ_NAME_LABEL",
+            "message": "Work Name",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_PR_EDIT_LABEL",
+            "message": "Edit",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_NEW_WSR_FORM_HEADER",
+            "message": "Work Status Report",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_WSR_ID_LABEL",
+            "message": "WSR ID",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_WSR_DETAILS_FORM_HEADER",
+            "message": "Work Status Report",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_WSR_FORM_EDIT_CREATE_HEAD",
+            "message": "Edit Register Details",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_WSR_PROJECT_NAME_LABEL",
+            "message": "Project Name",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_WSR_WORK_NAME_LABEL",
+            "message": "Work Name",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_WSR_ML_NAME_LABEL",
+            "message": "Milestone Name",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_WSR_PERCENT_NAME_LABEL",
+            "message": "Status Percentage",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_WSR_CONTROLS_LABEL",
+            "message": "Change",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_WSR_CONTROLS2_LABEL",
+            "message": "Activities",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        
+        {
+            "code": "WMS_WSR_CREATE_PAGE_LABEL",
+            "message": "Deduction Register",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_WSR_COMMON_CREATE_HEADER",
+            "message": "Deduction Register",
+            "module": "rainmaker-common",           
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_WSR_COMMON_CREATE_ACTIVITY_HEADER",
+            "message": "Add Deduction Activity",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_WSR_PRJ_NAME_LABEL",
+            "message": "Work Name",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_WSR_EDIT_LABEL",
+            "message": "Edit",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        
         {
             "code": "WMS_PRJ_FORM_CREATE_HEAD",
             "message": "Project-Details",

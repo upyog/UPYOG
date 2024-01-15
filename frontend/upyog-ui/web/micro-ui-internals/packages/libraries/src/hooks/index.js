@@ -260,6 +260,28 @@ import useWmsPhmSearch from "./wms/phm/useWmsPhmSearch";
 import useWmsPhmCount from "./wms/phm/useWmsPhmCount";
 import useWmsPhmCreate from "./wms/phm/useWmsPhmCreate";
 import useWmsPhmUpdate from "./wms/phm/useWmsPhmUpdate";
+
+import useWmsDrSearch from "./wms/dr/useWmsDrSearch";
+import useWmsDrCount from "./wms/dr/useWmsDrCount";
+import useWmsDrCreate from "./wms/dr/useWmsDrCreate";
+import useWmsDrUpdate from "./wms/dr/useWmsDrUpdate";
+
+import useWmsPrSearch from "./wms/pr/useWmsPrSearch";
+import useWmsPrCount from "./wms/pr/useWmsPrCount";
+import useWmsPrCreate from "./wms/pr/useWmsPrCreate";
+import useWmsPrUpdate from "./wms/pr/useWmsPrUpdate";
+
+import useWmsMbSearch from "./wms/mb/useWmsMbSearch";
+import useWmsMbCount from "./wms/mb/useWmsMbCount";
+import useWmsMbCreate from "./wms/mb/useWmsMbCreate";
+import useWmsMbUpdate from "./wms/mb/useWmsMbUpdate";
+
+import useWmsWsrSearch from "./wms/wsr/useWmsWsrSearch";
+import useWmsWsrCount from "./wms/wsr/useWmsWsrCount";
+import useWmsWsrCreate from "./wms/wsr/useWmsWsrCreate";
+import useWmsWsrUpdate from "./wms/wsr/useWmsWsrUpdate";
+
+
 import useWmsPmaSearch from "./wms/pma/useWmsPmaSearch";
 import useWmsPmaCount from "./wms/pma/useWmsPmaCount";
 import useWmsPmaCreate from "./wms/pma/useWmsPmaCreate";
@@ -553,6 +575,30 @@ const wms = {
     useWmsPhmCreate:useWmsPhmCreate,
     useWmsPhmUpdate:useWmsPhmUpdate,
     useWmsPhmCount:useWmsPhmCount
+  },
+  mb:{
+    useWmsMbSearch:useWmsMbSearch,
+    useWmsMbCreate:useWmsMbCreate,
+    useWmsMbUpdate:useWmsMbUpdate,
+    useWmsMbCount:useWmsMbCount
+  },
+  dr:{
+    useWmsDrSearch:useWmsDrSearch,
+    useWmsDrCreate:useWmsDrCreate,
+    useWmsDrUpdate:useWmsDrUpdate,
+    useWmsDrCount:useWmsDrCount
+  },
+  pr:{
+    useWmsPrSearch:useWmsPrSearch,
+    useWmsPrCreate:useWmsPrCreate,
+    useWmsPrUpdate:useWmsPrUpdate,
+    useWmsPrCount:useWmsPrCount
+  },
+  wsr:{
+    useWmsWsrSearch:useWmsWsrSearch,
+    useWmsWsrCreate:useWmsWsrCreate,
+    useWmsWsrUpdate:useWmsWsrUpdate,
+    useWmsWsrCount:useWmsWsrCount
   },
   pma:{
     useWmsPmaSearch:useWmsPmaSearch,

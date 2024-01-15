@@ -231,11 +231,11 @@ wms:{
     count:"https://64f5834d2b07270f705d4f91.mockapi.io/PHMApplications",
   },
   MBApplications:{
-    create: "https://64f5834d2b07270f705d4f91.mockapi.io/MBApplications",
-    update:"https://64f5834d2b07270f705d4f91.mockapi.io/MBApplications",
-    get:"https://64f5834d2b07270f705d4f91.mockapi.io/MBApplications/:id",
-    search:"https://64f5834d2b07270f705d4f91.mockapi.io/MBApplications",      
-    count:"https://64f5834d2b07270f705d4f91.mockapi.io/MBApplications",
+    create:"https://658bef9a859b3491d3f51ac4.mockapi.io/MBApplications",
+    update:"https://658bef9a859b3491d3f51ac4.mockapi.io/MBApplications",
+    get:"https://658bef9a859b3491d3f51ac4.mockapi.io/MBApplications",
+    search:"https://658bef9a859b3491d3f51ac4.mockapi.io/MBApplications",      
+    count:"https://658bef9a859b3491d3f51ac4.mockapi.io/MBApplications",
   },
 
     PMAApplications: {
@@ -246,6 +246,27 @@ wms:{
       count: "https://64f5834d2b07270f705d4f91.mockapi.io/PMAApplications",
     },
 
+    DRApplications: {
+      create: "https://64f5834d2b07270f705d4f91.mockapi.io/DRApplications",
+      update: "https://64f5834d2b07270f705d4f91.mockapi.io/DRApplications",
+      get: "https://64f5834d2b07270f705d4f91.mockapi.io/DRApplications/:id",
+      search: "https://64f5834d2b07270f705d4f91.mockapi.io/DRApplications",
+      count: "https://64f5834d2b07270f705d4f91.mockapi.io/DRApplications",
+    },
+    PRApplications: {
+      create: "https://658bef9a859b3491d3f51ac4.mockapi.io/PRApplications",
+      update: "https://658bef9a859b3491d3f51ac4.mockapi.io/PRApplications",
+      get: "https://658bef9a859b3491d3f51ac4.mockapi.io/PRApplications/:id",
+      search: "https://658bef9a859b3491d3f51ac4.mockapi.io/PRApplications",
+      count: "https://658bef9a859b3491d3f51ac4.mockapi.io/PRApplications",
+    },
+    WSRApplications: {
+      create: "https://658bef9a859b3491d3f51ac4.mockapi.io/WSRApplications",
+      update: "https://658bef9a859b3491d3f51ac4.mockapi.io/WSRApplications",
+      get: "https://658bef9a859b3491d3f51ac4.mockapi.io/WSRApplications/:id",
+      search: "https://658bef9a859b3491d3f51ac4.mockapi.io/WSRApplications",
+      count: "https://658bef9a859b3491d3f51ac4.mockapi.io/WSRApplications",
+    },
     ContractorMaster: {
       create: "/wms/wms-services/v1/contractor/_create",
       search: "/wms/wms-services/v1/contractor/_search",

@@ -2,9 +2,9 @@ import { FormComposer, Loader,Header } from "@egovernments/digit-ui-react-compon
 import React, {  useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
-import { newConfig } from "../../../../components/config/dr-config";
+import { newConfig } from "../../../../components/config/wsr-config";
 import { convertEpochToDate, pdfDownloadLink } from "../../../../components/Utils";
-const WmsDrCreate = () => {
+const WmsWsrCreate = () => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const { t } = useTranslation();
   const history = useHistory();  
@@ -13,21 +13,21 @@ const WmsDrCreate = () => {
   const [showToast, setShowToast] = useState(null);
   const onSubmit = (data) => {
     setIsLoading(true);
-    let DrApplications = 
+    let WsrApplications = 
       {
-        DrApplication: [{
-          project_name: data?.WmsDrPrjName?.project_name,  
-          work_name: data?.WmsDrWorkName?.work_name,  
-          milestone_name: data?.WmsDrMLName?.milestone_name,
-          percent_weightage: data?.WmsDrPercent?.percent_weightage,
+        WsrApplication: [{
+          project_name: data?.WmsWsrPrjName?.project_name,  
+          work_name: data?.WmsWsrWorkName?.work_name,  
+          milestone_name: data?.WmsWsrMLName?.milestone_name,
+          percent_weightage: data?.WmsWsrPercent?.percent_weightage,
           tenantId:tenantId
         }],
       };
     
-      /* use customiseCreateFormData hook to make some chnages to the Employee object [0].DreduleOfRateApplication*/
-     Digit.WMSService.PHMApplications.create(DrApplications.DrApplication[0], tenantId).then((result,err)=>{
+      /* use customiseCreateFormData hook to make some chnages to the Employee object [0].WsreduleOfRateApplication*/
+     Digit.WMSService.WSRApplications.create(WsrApplications.WsrApplication[0], tenantId).then((result,err)=>{
       setIsLoading(false);
-       history.push("/upyog-ui/citizen/wms/dr-home");
+       history.push("/upyog-ui/citizen/wms/wsr-home");
      })
      .catch((e) => {
      console.log("err");
@@ -43,9 +43,9 @@ const WmsDrCreate = () => {
 
   return (
     <div>
-    <Header>{t("WMS_NEW_DR_FORM_HEADER")}</Header>
+    <Header>{t("WMS_NEW_WSR_FORM_HEADER")}</Header>
     <FormComposer
-              head={t("WMS_DR_FORM_CREATE_HEAD")}
+              head={t("WMS_WSR_FORM_CREATE_HEAD")}
               label={t("WMS_COMMON_SAVE")}
               config={configs}
               onSubmit={onSubmit}
@@ -64,4 +64,4 @@ const WmsDrCreate = () => {
   );
 };
 
-export default WmsDrCreate;
+export default WmsWsrCreate;

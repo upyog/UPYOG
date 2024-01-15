@@ -302,6 +302,125 @@ PMAApplications:{
       params: {  },
     }),
 },
+DRApplications:{
+  search: (tenantId, filters, searchParams) =>
+    Request({
+      url: Urls.wms.DRApplications.search,
+      useCache: false,
+      method: "GET",//"POST",
+      auth: true,
+      userService: true,
+      params:{...searchParams},// tenantId, ...filters, ...searchParams }//TODO:#1 Actual API needs to attach  { tenantId, ...filters, ...searchParams },
+    }),
+  create: (data, tenantId) =>
+    Request({
+      data: data,
+      url: Urls.wms.DRApplications.create,
+      useCache: false,
+      method: "POST",
+      auth: true,
+      userService: true,
+      params: {  },//TODO:#1 {tenantId}
+    }),
+  update: (data, tenantId) =>
+    Request({
+      data: data,
+      url: Urls.wms.DRApplications.update+"/"+data.dr_id,
+      useCache: false,
+      method: "PUT",
+      auth: true,
+      userService: true,
+      params: {  },
+    }),
+  delete: (data, tenantId) =>
+    Request({
+      data: data,
+      url: Urls.wms.DRApplications.delete,
+      useCache: false,
+      method: "DELETE",
+      auth: true,
+      userService: true,
+      params: { tenantId },
+    }),
+  get: (phmId,tenantId) =>
+    Request({
+      url: Urls.wms.DRApplications.get,
+      useCache: false,
+      method: "GET",
+      auth: true,
+      userService: true,
+      params: { phmeme_id:drId},
+    }),
+    count: () =>
+    Request({
+      url: Urls.wms.DRApplications.count,
+      useCache: false,
+      method:"GET",// "POST",
+      auth: true,
+      userService: true,
+      params: {  },
+    }),
+},
+
+PRApplications:{
+  search: (tenantId, filters, searchParams) =>
+    Request({
+      url: Urls.wms.PRApplications.search,
+      useCache: false,
+      method: "GET",//"POST",
+      auth: true,
+      userService: true,
+      params:{...searchParams},// tenantId, ...filters, ...searchParams }//TODO:#1 Actual API needs to attach  { tenantId, ...filters, ...searchParams },
+    }),
+  create: (data, tenantId) =>
+    Request({
+      data: data,
+      url: Urls.wms.PRApplications.create,
+      useCache: false,
+      method: "POST",
+      auth: true,
+      userService: true,
+      params: {  },//TODO:#1 {tenantId}
+    }),
+  update: (data, tenantId) =>
+    Request({
+      data: data,
+      url: Urls.wms.PRApplications.update+"/"+data.pr_id,
+      useCache: false,
+      method: "PUT",
+      auth: true,
+      userService: true,
+      params: {  },
+    }),
+  delete: (data, tenantId) =>
+    Request({
+      data: data,
+      url: Urls.wms.PRApplications.delete,
+      useCache: false,
+      method: "DELETE",
+      auth: true,
+      userService: true,
+      params: { tenantId },
+    }),
+  get: (phmId,tenantId) =>
+    Request({
+      url: Urls.wms.PRApplications.get,
+      useCache: false,
+      method: "GET",
+      auth: true,
+      userService: true,
+      params: { phmeme_id:prId},
+    }),
+    count: () =>
+    Request({
+      url: Urls.wms.PRApplications.count,
+      useCache: false,
+      method:"GET",// "POST",
+      auth: true,
+      userService: true,
+      params: {  },
+    }),
+},
   ContractorMaster:{
     search: (tenantId, filters, searchParams) =>
       Request({

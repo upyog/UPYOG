@@ -148,6 +148,43 @@ import WmsDrWorkName from "./pageComponents/DR/WmsDrWorkName";
 import WmsDrMLName from "./pageComponents/DR/WmsDrMLName"
 import WmsDrPercent from "./pageComponents/DR/WmsDrPercent";
 
+
+/**------------------- PR------------------------------- */
+
+import WmsPrResponse from "./pages/citizen/PR/Response";
+import WmsPrList from "./pages/citizen/PR/List";
+import WmsPrDetails from "./pages/citizen/PR/Details";
+import WmsPrCreate from "./pages/citizen/PR/Create";
+import WmsPrEdit from "./pages/citizen/PR/Edit";
+
+import WmsPrId from "./pageComponents/PR/WmsPrId";
+import WmsPrBillDate from "./pageComponents/PR/WmsPrBillDate";
+import WmsPrEstNumber from "./pageComponents/PR/WmsPrEstNumber";
+import WmsPrEstWorkCost from "./pageComponents/PR/WmsPrEstWorkCost";
+import WmsPrPaymentDate from "./pageComponents/PR/WmsPrPaymentDate";
+import WmsPrPrjName from "./pageComponents/PR/WmsPrPrjName";
+import WmsPrSchName from "./pageComponents/PR/WmsPrSchName";
+import WmsPrSTA from "./pageComponents/PR/WmsPrSTA";
+import WmsPrStatus from "./pageComponents/PR/WmsPrStatus";
+import WmsPrTypeOfWork from "./pageComponents/PR/WmsPrTypeOfWork";
+import WmsPrWorkName from "./pageComponents/PR/WmsPrWorkName";
+
+/** ---------------------WSR----------------------- */
+
+import WmsWsrResponse from "./pages/citizen/WSR/Response";
+import WmsWsrList from "./pages/citizen/WSR/List";
+import WmsWsrDetails from "./pages/citizen/WSR/Details";
+import WmsWsrCreate from "./pages/citizen/WSR/Create";
+import WmsWsrEdit from "./pages/citizen/WSR/Edit";
+
+
+
+import WmsWsrId from "./pageComponents/WSR/WmsWsrId";
+import WmsWsrPrjName from "./pageComponents/WSR/WmsWsrPrjName";
+import WmsWsrWorkName from "./pageComponents/WSR/WmsWsrWorkName";
+import WmsWsrMLName from "./pageComponents/WSR/WmsWsrMLName"
+import WmsWsrPercent from "./pageComponents/WSR/WmsWsrPercent";
+
 /**---------------- */
 import ContrMasterAdd from "./pages/citizen/CM/index";
 import ContrMasterView from "./pages/citizen/CM/ContrView";
@@ -378,6 +415,49 @@ const componentsToRegister = {
   // WmsDrStartDate,
   // WmsDrEndDate,
 
+
+  WmsWsrList:WmsWsrList,
+  WmsWsrDetails:WmsWsrDetails,
+  WmsWsrCreate:WmsWsrCreate,
+  WmsWsrEdit:WmsWsrEdit,
+  WmsWsrResponse:WmsWsrResponse,
+  WmsWsrId,
+  WmsWsrMLName,
+  WmsWsrPrjName,
+  WmsWsrWorkName,
+  WmsWsrPercent,
+  // WmsWsrFund,
+  // WmsWsrSourceOfFund,
+  // WmsWsrDescriptionOfWsreme,
+  // WmsWsrStartDate,
+  // WmsWsrEndDate,
+
+
+  WmsPrList:WmsPrList,
+  WmsPrDetails:WmsPrDetails,
+  WmsPrCreate:WmsPrCreate,
+  WmsPrEdit:WmsPrEdit,
+  WmsPrResponse:WmsPrResponse,
+  WmsPrId,
+  WmsPrBillDate,
+  WmsPrEstNumber,
+  WmsPrEstWorkCost,
+  WmsPrPaymentDate,
+  WmsPrPrjName,
+  WmsPrSchName,
+  WmsPrSTA,
+  WmsPrStatus,
+  WmsPrTypeOfWork,
+  WmsPrWorkName,
+  // WmsDrMLName,
+  // WmsDrPrjName,
+  // WmsDrWorkName,
+  // WmsDrPercent,
+  // WmsDrFund,
+  // WmsDrSourceOfFund,
+  // WmsDrDescriptionOfDreme,
+  // WmsDrStartDate,
+  // WmsDrEndDate,
   
 
   WmsPrjList:PrjList,

@@ -2,9 +2,9 @@ import { FormComposer, Loader,Header } from "@egovernments/digit-ui-react-compon
 import React, {  useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
-import { newConfig } from "../../../../components/config/dr-config";
+import { newConfig } from "../../../../components/config/pr-config";
 import { convertEpochToDate, pdfDownloadLink } from "../../../../components/Utils";
-const WmsDrCreate = () => {
+const WmsPrCreate = () => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const { t } = useTranslation();
   const history = useHistory();  
@@ -13,21 +13,21 @@ const WmsDrCreate = () => {
   const [showToast, setShowToast] = useState(null);
   const onSubmit = (data) => {
     setIsLoading(true);
-    let DrApplications = 
+    let PrApplications = 
       {
-        DrApplication: [{
-          project_name: data?.WmsDrPrjName?.project_name,  
-          work_name: data?.WmsDrWorkName?.work_name,  
-          milestone_name: data?.WmsDrMLName?.milestone_name,
-          percent_weightage: data?.WmsDrPercent?.percent_weightage,
+        PrApplication: [{
+          project_name: data?.WmsPrPrjName?.project_name,  
+          work_name: data?.WmsPrWorkName?.work_name,  
+          milestone_name: data?.WmsPrMLName?.milestone_name,
+          percent_weightage: data?.WmsPrPercent?.percent_weightage,
           tenantId:tenantId
         }],
       };
     
-      /* use customiseCreateFormData hook to make some chnages to the Employee object [0].DreduleOfRateApplication*/
-     Digit.WMSService.PHMApplications.create(DrApplications.DrApplication[0], tenantId).then((result,err)=>{
+      /* use customiseCreateFormData hook to make some chnages to the Employee object [0].PreduleOfRateApplication*/
+     Digit.WMSService.PHMApplications.create(PrApplications.PrApplication[0], tenantId).then((result,err)=>{
       setIsLoading(false);
-       history.push("/upyog-ui/citizen/wms/dr-home");
+       history.push("/upyog-ui/citizen/wms/pr-home");
      })
      .catch((e) => {
      console.log("err");
@@ -43,9 +43,9 @@ const WmsDrCreate = () => {
 
   return (
     <div>
-    <Header>{t("WMS_NEW_DR_FORM_HEADER")}</Header>
+    <Header>{t("WMS_NEW_PR_FORM_HEADER")}</Header>
     <FormComposer
-              head={t("WMS_DR_FORM_CREATE_HEAD")}
+              head={t("WMS_PR_FORM_CREATE_HEAD")}
               label={t("WMS_COMMON_SAVE")}
               config={configs}
               onSubmit={onSubmit}
@@ -64,4 +64,4 @@ const WmsDrCreate = () => {
   );
 };
 
-export default WmsDrCreate;
+export default WmsPrCreate;

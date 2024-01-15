@@ -21,58 +21,58 @@ const DesktopList = ({ tableConfig, filterComponent, ...props }) => {
   const columns = React.useMemo(() => {
     return [
       {
-        Header: t("WMS_MB_ID_LABEL"),
-        disableSortBy: true,
+        Header: t("WMS_WSR_ID_LABEL"),
+        disableDrtBy: true,
         Cell: ({ row }) => {
-          return GetCell(`${row.original?.mb_id}`);
+          return GetCell(`${row.original?.wsr_id}`);
         },
       },
       {
-        Header: t("WMS_MB_NAME_LABEL"),
-        disableSortBy: false,
+        Header: t("WMS_WSR_PROJECT_NAME_LABEL"),
+        disableDrtBy: false,
         Cell: ({ row }) => {
-          return GetCell(`${row.original?.mb_name}`);
+          return GetCell(`${row.original?.project_name}`);
         },
       },
       {
-        Header: t("WMS_MB_ITEM_NO_LABEL"),
-        disableSortBy: true,
+        Header: t("WMS_WSR_WORK_NAME_LABEL"),
+        disableDrtBy: false,
         Cell: ({ row }) => {
-          return GetCell(`${row.original?.item_no}`);
+          return GetCell(`${row.original?.work_name}`);
         },
       },
       {
-        Header: t("WMS_MB_RATE_LABEL"),
-        disableSortBy: true,
+        Header: t("WMS_WSR_ML_NAME_LABEL"),
+        disableDrtBy: true,
         Cell: ({ row }) => {
-          return GetCell(`${row.original?.rate}`);
-        },
-      },
-      
-      {
-        Header: t("WMS_MB_UNIT_LABEL"),
-        disableSortBy: true,
-        Cell: ({ row }) => {
-          return GetCell(`${row.original?.unit}`);
+          return GetCell(`${row.original?.milestone_name}`);
         },
       },
       {
-        Header: t("WMS_MB_CONTROL_LABEL"),
-        disableSortBy: true,
+        Header: t("WMS_WSR_PERCENT_NAME_LABEL"),
+        disableDrtBy: true,
+        Cell: ({ row }) => {
+          return GetCell(`${row.original?.percent_weightage}`);
+        },
+      },
+      {
+        Header: t("WMS_WSR_CONTROLS_LABEL"),
+        disableDrtBy: true,
         Cell: ({ row }) => {
           return (
             <span className="link">
-              <Link to={`/upyog-ui/citizen/wms/mb-details/${row.original.mb_id}`}>{t("WMS_MB_VIEW_LABEL")}</Link>
+              <Link to={`/upyog-ui/citizen/wms/wsr-details/${row.original.wsr_id}`}>{t("WMS_WSR_EDIT_LABEL")}</Link>
             </span>
           );
         },
-      },{
-        Header: t("WMS_MB_CONTROLS_LABEL"),
-        disableSortBy: true,
+      },
+      {
+        Header: t("WMS_WSR_CONTROLS2_LABEL"),
+        disableDrtBy: true,
         Cell: ({ row }) => {
           return (
             <span className="link">
-              <Link to={`/upyog-ui/citizen/wms/mb-edit/${row.original.mb_id}`}>{t("WMS_MB_EDIT_LABEL")}</Link>
+              <Link to={`/upyog-ui/citizen/wms/pma-home/${row.original.wsr_id}`}>{t("WMS_WSR_COMMON_CREATE_ACTIVITY_HEADER")}</Link>
             </span>
           );
         },
@@ -84,7 +84,6 @@ const DesktopList = ({ tableConfig, filterComponent, ...props }) => {
   if (props.isLoading) {
     result = <Loader />;
   } else if (data?.length === 0) {
-    //alert(props?.isSearch);
     result = (
       <Card style={{ marginTop: 20 }}>
         {/* TODO Change localization key */}
@@ -106,7 +105,7 @@ const DesktopList = ({ tableConfig, filterComponent, ...props }) => {
         getCellProps={(cellInfo) => {
           return {
             style: {
-              maxWidth: cellInfo.column.Header == t("WMS_MB_ID_LABEL") ? "150px" : "",
+              maxWidth: cellInfo.column.Header == t("WMS_WSR_ID_LABEL") ? "150px" : "",
               padding: "20px 18px",
               fontSize: "16px",
               minWidth: "150px",
@@ -118,9 +117,9 @@ const DesktopList = ({ tableConfig, filterComponent, ...props }) => {
         onNextPage={props.onNextPage}
         onPrevPage={props.onPrevPage}
         pageSizeLimit={props.pageSizeLimit}
-        onSort={props.onSort}
-        disableSort={props.disableSort}
-        mbtParams={props.mbtParams}
+        onDrt={props.onDrt}
+        disableDrt={props.disableDrt}
+        wsrtParams={props.wsrtParams}
         totalRecords={props.totalRecords}
       />
     );
@@ -134,26 +133,21 @@ const DesktopList = ({ tableConfig, filterComponent, ...props }) => {
             parentRoute={props.parentRoute}
             allLinks={[
               {
-                text: t("WMS_MB_COMMON_CREATE_HEADER"),
-                link: "/upyog-ui/citizen/wms/mb-create",
+                text: t("WMS_WSR_COMMON_CREATE_HEADER"),
+                link: "/upyog-ui/citizen/wms/wsr-create",
                 businessService: "WMS",
                 roles: ["CITIZEN"],
               },
+/*               {
+                text: t("WMS_WSR_COMMON_CREATE_ACTIVITY_HEADER"),
+                link: "/upyog-ui/citizen/wms/wsr-activity-home",
+                businessService: "WMS",
+                roles: ["CITIZEN"],
+              }, */
             ]}
-            headerText={t("WMS_MB_CREATE_HEADER")}
+            headerText={t("WMS_WSR_CREATE_PAGE_LABEL")}
             businessService={props.businessService}
-          />
-          {/* <div>
-            {
-              <FilterComponent
-                defaultSearchParams={props.defaultSearchParams}
-                onFilterChange={props.onFilterChange}
-                searchParams={props.searchParams}
-                type="desktop"
-                tenantIds={tenantIds}
-              />
-            }
-          </div> */}
+          />         
         </div>
       )}
       <div style={{ flex: 1 }}>

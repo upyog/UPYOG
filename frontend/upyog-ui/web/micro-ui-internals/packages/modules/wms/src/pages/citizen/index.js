@@ -58,6 +58,20 @@ const CitizenApp = ({ path, url, userType }) => {
   const WmsDrEdit = Digit?.ComponentRegistryService?.getComponent("WmsDrEdit");
   const WmsDrResponse = Digit?.ComponentRegistryService?.getComponent("WmsDrResponse");
 
+  const WmsPrList = Digit?.ComponentRegistryService?.getComponent("WmsPrList");
+  const WmsPrCreate = Digit?.ComponentRegistryService?.getComponent("WmsPrCreate");
+  const WmsPrDetails = Digit?.ComponentRegistryService?.getComponent("WmsPrDetails");  
+  const WmsPrEdit = Digit?.ComponentRegistryService?.getComponent("WmsPrEdit");
+  const WmsPrResponse = Digit?.ComponentRegistryService?.getComponent("WmsPrResponse");
+
+  const WmsWsrList = Digit?.ComponentRegistryService?.getComponent("WmsWsrList");
+  const WmsWsrCreate = Digit?.ComponentRegistryService?.getComponent("WmsWsrCreate");
+  const WmsWsrDetails = Digit?.ComponentRegistryService?.getComponent("WmsWsrDetails");  
+  const WmsWsrEdit = Digit?.ComponentRegistryService?.getComponent("WmsWsrEdit");
+  const WmsWsrResponse = Digit?.ComponentRegistryService?.getComponent("WmsWsrResponse");
+
+
+
   const CMView = Digit?.ComponentRegistryService?.getComponent("CMView");
   const WMSDetails = Digit?.ComponentRegistryService?.getComponent("WMSDetails");
   const ContrMasterAdd = Digit?.ComponentRegistryService?.getComponent("ContrMasterAdd");
@@ -201,6 +215,27 @@ const CitizenApp = ({ path, url, userType }) => {
           <PrivateRoute path={`${path}/dr-edit/:id`} component={() => <WmsDrEdit />} />
           <PrivateRoute path={`${path}/drresponse`} component={(props) => <WmsDrResponse {...props} parentRoute={path} />} />
 
+          <PrivateRoute
+            path={`${path}/pr-home`}
+            component={() => (
+              <WmsPrList parentRoute={path} businessService="WMS" filterComponent="WMS_LIST_FILTER" initialStates={inboxInitialState} isInbox={true} />
+            )}
+          />
+          <PrivateRoute path={`${path}/pr-create`} component={() => <WmsPrCreate />} />
+          <PrivateRoute path={`${path}/pr-details/:id`} component={() => <WmsPrDetails />} />
+          <PrivateRoute path={`${path}/pr-edit/:id`} component={() => <WmsPrEdit />} />
+          <PrivateRoute path={`${path}/prresponse`} component={(props) => <WmsPrResponse {...props} parentRoute={path} />} />
+
+          <PrivateRoute
+            path={`${path}/wsr-home`}
+            component={() => (
+              <WmsWsrList parentRoute={path} businessService="WMS" filterComponent="WMS_LIST_FILTER" initialStates={inboxInitialState} isInbox={true} />
+            )}
+          />
+          <PrivateRoute path={`${path}/wsr-create`} component={() => <WmsWsrCreate />} />
+          <PrivateRoute path={`${path}/wsr-details/:id`} component={() => <WmsWsrDetails />} />
+          <PrivateRoute path={`${path}/wsr-edit/:id`} component={() => <WmsWsrEdit />} />
+          <PrivateRoute path={`${path}/wsrresponse`} component={(props) => <WmsWsrResponse {...props} parentRoute={path} />} />
 
           <PrivateRoute path={`${path}/cm-home`} component={props => <CMView {...props} tenants={tenantId} parentRoute={path} />} />
           <PrivateRoute path={`${path}/details/:tenantId/:id`} component={() => <WMSDetails />} />
