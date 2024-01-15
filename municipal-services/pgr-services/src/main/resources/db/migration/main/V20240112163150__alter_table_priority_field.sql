@@ -1,1 +1,1 @@
-ALTER TABLE eg_pgr_service_v2 ADD COLUMN priority VARCHAR(10) DEFAULT 'LOW';
+ALTER TABLE eg_pgr_service_v2 ADD COLUMN priority VARCHAR(50) DEFAULT 'LOW';
