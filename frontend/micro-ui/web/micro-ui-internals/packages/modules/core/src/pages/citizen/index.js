@@ -18,7 +18,8 @@ import StaticDynamicCard from "./StaticDynamicComponent/StaticDynamicCard";
 import AcknowledgementCF from "../../components/AcknowledgementCF";
 import CitizenFeedback from "../../components/CitizenFeedback";
 import Search from "./SearchApp";
-import QRCode from "./QRCode"
+import QRCode from "./QRCode";
+import ChallanQRCode from "./ChallanQRCode";
 const sidebarHiddenFor = [
   "digit-ui/citizen/register/name",
   "/digit-ui/citizen/select-language",
@@ -213,6 +214,9 @@ const Home = ({
           </Route>
           <Route path={`${path}/payment/verification`}>
          <QRCode></QRCode>
+          </Route>
+          <Route path={`${path}/challan/details`}>
+         <ChallanQRCode></ChallanQRCode>
           </Route>
           <ErrorBoundary initData={initData}>
             {appRoutes}
