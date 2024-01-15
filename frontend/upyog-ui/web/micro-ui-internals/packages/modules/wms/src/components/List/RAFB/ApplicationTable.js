@@ -14,6 +14,7 @@ const ApplicationTable = ({
   onNextPage,
   onPrevPage,
   onPageSizeChange,
+  showCheckbox
 
 }) => {
   return (
@@ -32,9 +33,9 @@ const ApplicationTable = ({
       onNextPage={onNextPage}
       onPrevPage={onPrevPage}
       onPageSizeChange={onPageSizeChange}
+      showCheckbox={showCheckbox}
 
     />
   )
 }
-
 export default ApplicationTable;

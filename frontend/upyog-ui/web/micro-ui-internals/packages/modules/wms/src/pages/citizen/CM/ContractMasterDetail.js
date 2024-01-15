@@ -3,14 +3,16 @@ import React, { useState , useEffect } from 'react'
 import { useTranslation } from 'react-i18next';
 // import { openDocumentLink, openUploadedDocument } from '../../utils';
 import axios from 'axios';
-import { useParams } from "react-router-dom";
+import { useParams,useHistory } from "react-router-dom";
 
 
 
-const ContractMasterDetail = ({ location, match, history, }) => {
 
+const ContractMasterDetail = ({ location, match }) => {
+  const tenantId = Digit.ULBService.getCurrentTenantId();
   const params = useParams();
   const [data, setData] = useState([]);
+  const history = useHistory();
 console.log("params ",params)
 console.log("data ",data)
 const cmGetSingleData = Digit?.Hooks?.wms?.cm?.useWmsCMCount(params.id);
@@ -32,7 +34,6 @@ console.log("cmGetSingleData ",cmGetSingleData)
 
     function onActionSelect(action) {
         // setSelectedAction(action);
-     
           history.push(`/digit-ui/employee/br/responseemp`)
     }
 
@@ -90,7 +91,12 @@ console.log("cmGetSingleData ",cmGetSingleData)
                 </div>
             </div>
 
-            {/* <ActionBar>
+      <ActionBar>
+        <SubmitBar label={t("WMS_COMMON_TAKE_ACTION")} onSubmit={() =>  history.push(`./../../edit/${tenantId}/${params.id}`)} />
+        {/* <SubmitBar label={t("WMS_COMMON_TAKE_ACTION")} onSubmit={() =>  history.push(`/upyog-ui/citizen/wms/mb-edit/${data?.[0]?.mb_id}`)} /> */}
+      </ActionBar>
+{/*
+      <ActionBar>
         {displayMenu ? (
           <Menu
             localeKeyPrefix={"BR"}
@@ -101,7 +107,7 @@ console.log("cmGetSingleData ",cmGetSingleData)
         ) : null}
         <SubmitBar label={t("ES_COMMON_TAKE_ACTION")} onSubmit={() => setDisplayMenu(!displayMenu)} />
       </ActionBar>
-      {showModal &&
+       {showModal &&
         <Modal
           headerBarMain={<Heading label={t('ES_EVENT_DELETE_POPUP_HEADER')} />}
           headerBarEnd={<CloseBtn onClick={() => setShowModal(false)} />}

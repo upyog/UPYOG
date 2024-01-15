@@ -933,6 +933,20 @@ TenderEntry:{
       //   // params: {tenantId} ,
       // }),
       
+    },
+
+    RunningAccountFinalBill:{
+      getPreviousBill: (tenantId) =>
+          // console.log("bankList sttepr single data WMS tenantId "),
+         Request({
+          // url: Urls.wms.Contractor_Agreement.createFake/tenantId,
+          url: Urls.wms.Running_Account_Final_Bill.getPreviousBill,
+          useCache: false,
+          method: "GET",
+          auth: true,
+          userService: true,
+          // params: { tenantId },
+        })
     }
 };
 

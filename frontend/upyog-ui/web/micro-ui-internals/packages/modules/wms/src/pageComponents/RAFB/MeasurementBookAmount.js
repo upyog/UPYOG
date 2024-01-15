@@ -1,13 +1,13 @@
 import { CardLabel, CitizenInfoLabel, FormStep, Loader, TextInput } from "@egovernments/digit-ui-react-components";
 import React, { useState, useEffect } from "react";
-import Timeline from "../components/TLTimeline";
-import { currentFinancialYear } from "../utils";
+import Timeline from "../../components/RAFB/Timeline";
+// import { currentFinancialYear } from "../utils";
 
-const SelectTradeName = ({ t, config, onSelect, value, userType, formData, digitTest="testqwert" }) => {
-  alert("select trade name")
+const MeasurementBookAmount = ({ t, config, onSelect, value, userType, formData, digitTest="testqwert" }) => {
+  console.log("MeasurementBookAmount config,formData ",{config,formData})
   let validation = {};
   const onSkip = () => onSelect();
-  const [TradeName, setTradeName] = useState(formData.TradeDetails?.TradeName);
+  const [WorkOrderNo, setWorkOrderNo] = useState(formData.ProjectInfo?.WorkOrderNo);
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();
   const isEdit = window.location.href.includes("/edit-application/") || window.location.href.includes("renew-trade");
@@ -15,8 +15,8 @@ const SelectTradeName = ({ t, config, onSelect, value, userType, formData, digit
 
   let mdmsFinancialYear = fydata["egf-master"] ? fydata["egf-master"].FinancialYear.filter(y => y.module === "TL") : [];
   let FY = mdmsFinancialYear && mdmsFinancialYear.length > 0 && mdmsFinancialYear.sort((x, y) => y.endingDate - x.endingDate)[0]?.code;
-  function setSelectTradeName(e) {
-    setTradeName(e.target.value);
+  function setSelectWorkOrderNo(e) {
+    setWorkOrderNo(e.target.value);
   }
 
   useEffect(() => {
@@ -40,8 +40,8 @@ const SelectTradeName = ({ t, config, onSelect, value, userType, formData, digit
 
     // sessionStorage.setItem("CurrentFinancialYear", FY);
     // sessionStorage.setItem("CurrentFinancialYear", getCurrentFinancialYear());
-    sessionStorage.setItem("CurrentFinancialYear", currentFinancialYear());
-    onSelect(config.key, { TradeName });
+    // sessionStorage.setItem("CurrentFinancialYear", currentFinancialYear());
+    onSelect(config.key, { WorkOrderNo });
   };
   if (isLoading) {
     return <Loader></Loader>
@@ -49,23 +49,23 @@ const SelectTradeName = ({ t, config, onSelect, value, userType, formData, digit
 
   return (
     <React.Fragment>
-      {window.location.href.includes("/citizen") ? <Timeline /> : null}
+      {window.location.href.includes("/citizen") ? <Timeline currentStep={3}  /> : null}
       <FormStep
         config={config}
         onSelect={goNext}
         onSkip={onSkip}
         t={t}
-        isDisabled={!TradeName}
+        isDisabled={!WorkOrderNo}
       >
-        <CardLabel>{`${t("TL_LOCALIZATION_TRADE_NAME")}`}</CardLabel>
+        <CardLabel>{`${t("WMS_RUNNING_ACCOUNT_FINAL_BILL_MB_AMMOUNT")}`}</CardLabel>
         <TextInput
           t={t}
-          isMandatory={false}
+          isMandatory={true}
           type={"text"}
           optionKey="i18nKey"
-          name="TradeName"
-          value={TradeName}
-          onChange={setSelectTradeName}
+          name="WorkOrderNumber"
+          value={WorkOrderNo}
+          onChange={setSelectWorkOrderNo}
           disable={isEdit}
           {...(validation = { pattern: "^[a-zA-Z-0-9_@/#&+-.`' ]*$", isRequired: true, title: t("TL_INVALID_TRADE_NAME") })}
         />
@@ -75,4 +75,4 @@ const SelectTradeName = ({ t, config, onSelect, value, userType, formData, digit
   );
 };
 
-export default SelectTradeName;
+export default MeasurementBookAmount;

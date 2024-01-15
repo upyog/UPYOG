@@ -264,10 +264,28 @@ import WmsCATermsAndConditions from "./pageComponents/CA/PartySecond/WmsCATermsA
 
 import WmsCATextTest from "./pageComponents/CA/PartySecond/WmsCATextTest";
 import WmsRAFBCreate from "./pages/citizen/RAFB/Create";
+import WmsRAFBCreateTest from "./pages/citizen/RAFB/Create/index_Test";
+import WMSCheckPage from "./pages/citizen/RAFB/Create/CheckPage";
+
 import WmsRAFBEdit from "./pages/citizen/RAFB/Edit";
 import WmsRAFBDetail from "./pages/citizen/RAFB/Detail";
 import WmsRAFBList from "./pages/citizen/RAFB/List";
 import FilterSearch from "./components/List/RAFB/InboxFilter";
+
+import SelectProjectName from "./pageComponents/RAFB/SelectProjectName";
+import SelectWorkName from "./pageComponents/RAFB/SelectWorkName";
+import WorkOrderNo from "./pageComponents/RAFB/WorkOrderNo";
+import PreviousRunningBillInformation from "./pageComponents/RAFB/PreviousRunningBillInformation";
+import TenderWorkDetails from "./pageComponents/RAFB/TenderWorkDetails";
+import WithheldDeductionsDetails from "./pageComponents/RAFB/WithheldDeductionsDetails";
+import RABillsTaxDetails from "./pageComponents/RAFB/RABillsTaxDetails";
+import SelectMeasurementBook from "./pageComponents/RAFB/SelectMeasurementBook";
+import MeasurementBookDate from "./pageComponents/RAFB/MeasurementBookDate";
+import MeasurementBookno from "./pageComponents/RAFB/MeasurementBookno";
+import MeasurementBookAmount from "./pageComponents/RAFB/MeasurementBookAmount";
+import TenderEntryDetail from "./pages/citizen/TE/detail/TenderEntryDetail";
+
+
 const componentsToRegister = {  
   Home:Home,  
   WmsSorList:List,
@@ -396,8 +414,8 @@ WmsCMUIDNumber,
 WmsCMVendorName,
 WmsCMVendorStatus,
 WmsCMVendorType,
-//     RegisterDetails,
-// SelectCorrespondenceAddress,
+//   RegisterDetails,
+//   SelectCorrespondenceAddress,
 //   WmsSelectAddress,
 //   WMSSelectPincode,
 //   WMSSelectEmailId,
@@ -503,11 +521,24 @@ WmsCATextTest,
 WmsCAUlbPartyOne,
 WmsCATermsAndConditions,
 WmsRAFBCreate,
+WmsRAFBCreateTest,
 WmsRAFBEdit,
 WmsRAFBDetail,
 WmsRAFBList,
 FINAL_BILL_SEARCH_FILTER: (props) => <FilterSearch {...props} />,
-
+WMSCheckPage,
+SelectProjectName,
+SelectWorkName,
+WorkOrderNo,
+PreviousRunningBillInformation,
+TenderWorkDetails,
+WithheldDeductionsDetails,
+RABillsTaxDetails,
+SelectMeasurementBook,
+MeasurementBookDate,
+MeasurementBookno,
+MeasurementBookAmount,
+TenderEntryDetail
 };
 
 

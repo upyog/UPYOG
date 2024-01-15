@@ -92,122 +92,122 @@ console.log("data ",data)
           // );
         },
       },
-      {
-        Header: "VAT Number",
-        disableSortBy: true,
-        Cell: ({ row }) => {
-          return GetCell(`${row.original?.vat_number}`);},
-      },
-      {
-        Header: "Bank, Branch & IFSC Code",
-        disableSortBy: true,
-        Cell: ({ row }) => {
-          return GetCell(`${row.original?.bank_branch_ifsc_code}`);},
-      },
-      {
-        Header: "Function",
-        disableSortBy: true,
-        Cell: ({ row }) => {
-          return GetCell(`${row.original?.function}`);},
-      },
-      {
-        Header: "Vendor Class",
-        disableSortBy: true,
-        Cell: ({ row }) => {
-          return GetCell(`${row.original?.vendor_class}`);},
-      },
-      {
-        Header: "PF Account Number",
-        disableSortBy: true,
-        Cell: ({ row }) => {
-          return GetCell(`${row.original?.epfo_account_number}`);},
-      },
-      {
-        Header: "Sub Type",
-        disableSortBy: true,
-        Cell: ({ row }) => {
-          return GetCell(`${row.original?.vendor_sub_type}`);},
-      },
-      {
-        Header: "Pay To",
-        disableSortBy: true,
-        Cell: ({ row }) => {
-          return GetCell(`${row.original?.payto}`);},
-      },
-      {
-        Header: "Email Id",
-        disableSortBy: true,
-        Cell: ({ row }) => {
-          return GetCell(`${row.original?.email}`);},
-      },
-      {
-        Header: "GST Number",
-        disableSortBy: true,
-        Cell: ({ row }) => {
-          return GetCell(`${row.original?.gst_number}`);},
-      },
-      {
-        Header: "PAN Number",
-        disableSortBy: true,
-        Cell: ({ row }) => {
-          return GetCell(`${row.original?.pan_number}`);},
-      },
-      {
-        Header: "Bank Account Number",
-        disableSortBy: true,
-        Cell: ({ row }) => {
-          return GetCell(`${row.original?.bank_account_number}`);},
-      },
-      {
-        Header: "Primary Account Head",
-        disableSortBy: true,
-        Cell: ({ row }) => {
-          return GetCell(`${row.original?.primary_account_head}`);},
-      },
-      {
-        Header: "Address",
-        disableSortBy: true,
-        Cell: ({ row }) => {
-          return GetCell(`${row.original?.address}`);},
-      },
+      // {
+      //   Header: "VAT Number",
+      //   disableSortBy: true,
+      //   Cell: ({ row }) => {
+      //     return GetCell(`${row.original?.vat_number}`);},
+      // },
+      // {
+      //   Header: "Bank, Branch & IFSC Code",
+      //   disableSortBy: true,
+      //   Cell: ({ row }) => {
+      //     return GetCell(`${row.original?.bank_branch_ifsc_code}`);},
+      // },
+      // {
+      //   Header: "Function",
+      //   disableSortBy: true,
+      //   Cell: ({ row }) => {
+      //     return GetCell(`${row.original?.function}`);},
+      // },
+      // {
+      //   Header: "Vendor Class",
+      //   disableSortBy: true,
+      //   Cell: ({ row }) => {
+      //     return GetCell(`${row.original?.vendor_class}`);},
+      // },
+      // {
+      //   Header: "PF Account Number",
+      //   disableSortBy: true,
+      //   Cell: ({ row }) => {
+      //     return GetCell(`${row.original?.epfo_account_number}`);},
+      // },
+      // {
+      //   Header: "Sub Type",
+      //   disableSortBy: true,
+      //   Cell: ({ row }) => {
+      //     return GetCell(`${row.original?.vendor_sub_type}`);},
+      // },
+      // {
+      //   Header: "Pay To",
+      //   disableSortBy: true,
+      //   Cell: ({ row }) => {
+      //     return GetCell(`${row.original?.payto}`);},
+      // },
+      // {
+      //   Header: "Email Id",
+      //   disableSortBy: true,
+      //   Cell: ({ row }) => {
+      //     return GetCell(`${row.original?.email}`);},
+      // },
+      // {
+      //   Header: "GST Number",
+      //   disableSortBy: true,
+      //   Cell: ({ row }) => {
+      //     return GetCell(`${row.original?.gst_number}`);},
+      // },
+      // {
+      //   Header: "PAN Number",
+      //   disableSortBy: true,
+      //   Cell: ({ row }) => {
+      //     return GetCell(`${row.original?.pan_number}`);},
+      // },
+      // {
+      //   Header: "Bank Account Number",
+      //   disableSortBy: true,
+      //   Cell: ({ row }) => {
+      //     return GetCell(`${row.original?.bank_account_number}`);},
+      // },
+      // {
+      //   Header: "Primary Account Head",
+      //   disableSortBy: true,
+      //   Cell: ({ row }) => {
+      //     return GetCell(`${row.original?.primary_account_head}`);},
+      // },
+      // {
+      //   Header: "Address",
+      //   disableSortBy: true,
+      //   Cell: ({ row }) => {
+      //     return GetCell(`${row.original?.address}`);},
+      // },
 
-      {
-        Header: "Vendor Status",
-        disableSortBy: true,
-        Cell: ({ row }) => {
+      // {
+      //   Header: "Vendor Status",
+      //   disableSortBy: true,
+      //   Cell: ({ row }) => {
           
-          // return GetCell(`${row.original?.vendor_status}`)
-          // return GetCell(`${row.original?.vendor_status==="Active" ? <span style={{"color":"red"}}>{row.original?.vendor_status}</span> : <span style={{"color":"red"}}>{row.original?.vendor_status}</span>}`);
+      //     // return GetCell(`${row.original?.vendor_status}`)
+      //     // return GetCell(`${row.original?.vendor_status==="Active" ? <span style={{"color":"red"}}>{row.original?.vendor_status}</span> : <span style={{"color":"red"}}>{row.original?.vendor_status}</span>}`);
 
-          return GetSlaCell(`${row.original?.vendor_status==="Active" ? row.original?.vendor_status.toUpperCase() : row.original?.vendor_status.toUpperCase()}`);
-        },
-      },
-      {
-        Header: "Allow Direct Payment",
-        disableSortBy: true,
-        Cell: ({ row }) => {
-          return GetCell(`${row.original?.allow_direct_payment}`)
-        },
-      },
-      {
-        Header: "Action",
-        disableSortBy: true,
-        Cell: ({ row }) => {
-          return (
-            <React.Fragment>
-            <span className="link">
-              <Link to={`details/${props.tenantId}/${row.original.vendor_id}`}>View</Link>
-            </span> 
-            {' '}
-            <span className="link">
-            <Link to={`edit/${props.tenantId}/${row.original.vendor_id}`}>Edit</Link>
-          </span>
-          </React.Fragment>
+      //     return GetSlaCell(`${row.original?.vendor_status==="Active" ? row.original?.vendor_status.toUpperCase() : row.original?.vendor_status.toUpperCase()}`);
+      //   },
+      // },
+      // {
+      //   Header: "Allow Direct Payment",
+      //   disableSortBy: true,
+      //   Cell: ({ row }) => {
+      //     return GetCell(`${row.original?.allow_direct_payment}`)
+      //   },
+      // },
+      // {
+      //   Header: "Action",
+      //   disableSortBy: true,
+      //   Cell: ({ row }) => {
+      //     return (
+      //       <React.Fragment>
+      //       <span className="link">
+      //         <Link to={`details/${props.tenantId}/${row.original.vendor_id}`}>View</Link>
+      //       </span> 
+      //       {' '}
+      //       <span className="link">
+      //       <Link to={`edit/${props.tenantId}/${row.original.vendor_id}`}>Edit</Link>
+      //     </span>
+      //     </React.Fragment>
             
             
-          )
-        },
-       },
+      //     )
+      //   },
+      //  },
 
     ];
   }, []);
@@ -221,10 +221,21 @@ console.log("data ",data)
   //   "props.onPageSizeChange":props.onPageSizeChange,
   //   "props.sortParams":props.sortParams,
   //   "props.totalRecords":props.totalRecords})
+  // alert(props.isLoading)
+
+  // if (data?.length === undefined) {
+  //   return (
+  //     <Loader />
+  //   );
+  // } // alert(data?.length)
+  
   let result;
   if (props.isLoading) {
     result = <Loader />;
-  } else if (data?.length === 0) {
+  } else if (props.isLoading===false && data?.length === undefined){
+    result = <Loader />
+  } 
+  else if (data?.length === 0) {
     result = (
       <Card style={{ marginTop: 20 }}>
         {/* TODO Change localization key */}

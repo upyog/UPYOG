@@ -70,10 +70,15 @@ useEffect(() => {
         label: t("Department"),
         name: "departmentName"
       },
-      {
-        label: t("Pre-bid Meeting Date"),
-        name: "prebidMeetingDate"
-      }
+      // {
+      //   label: t("Project Name"),
+      //   name: "projectName"
+      // },
+      
+      // {
+      //   label: t("Pre-bid Meeting Date"),
+      //   name: "prebidMeetingDate"
+      // }
       // ,
       // {
       //   label: t("Resolution No"),
@@ -95,6 +100,10 @@ useEffect(() => {
   ]
 
   function filterTableList(departmentName,prebidMeetingDate){
+    alert(departmentName)
+     departmentName = departmentName?.trim();
+     prebidMeetingDate = prebidMeetingDate?.trim();
+    alert(departmentName)
     let formData = "";
     if(prebidMeetingDate!=null && departmentName==null || prebidMeetingDate!="" && departmentName=="" || prebidMeetingDate!=undefined && departmentName==undefined){
      formData = `?prebidMeetingDate=${prebidMeetingDate}`
@@ -159,12 +168,12 @@ useEffect(() => {
       <Header>
         {t("Tender Entry List")}
       </Header>
-      <Link
+      {/* <Link
                   to={`add`}
                 >
-                  {/* <LinkButton style={{ textAlign: "left" }} label={t("PT_VIEW_MORE_DETAILS")} /> */}
+                  {/* <LinkButton style={{ textAlign: "left" }} label={t("PT_VIEW_MORE_DETAILS")} /> /}
                   <LinkButton style={{display:"block", textAlign: "right" }} label={t("Add")} />
-                </Link>
+                </Link> */}
       
       <p>{}</p> 
       <DesktopInbox

@@ -788,6 +788,7 @@ const getTradeUnitsDataList = (tenantId, moduleCode, type, filter) => ({
   },
 });
 
+
 const getMCollectApplicationStatusCriteria = (tenantId, moduleCode, type) => ({
   type,
   details: {
@@ -1610,6 +1611,7 @@ export const MdmsService = {
       params: { tenantId: stateCode },
     }),
   call: (tenantId, details) => {
+    console.log("call tenantId ",{tenantId, details})
     return new Promise((resolve, reject) =>
       debouncedCall(
         {
@@ -1627,10 +1629,13 @@ export const MdmsService = {
   getDataByCriteria: async (tenantId, mdmsDetails, moduleCode) => {
     const key = `MDMS.${tenantId}.${moduleCode}.${mdmsDetails.type}.${JSON.stringify(mdmsDetails.details)}`;
     const inStoreValue = PersistantStorage.get(key);
+    console.log("PersistantStorage inStoreValue ",{PersistantStorage,inStoreValue})
+
     if (inStoreValue) {
       return inStoreValue;
     }
-    //const { MdmsRes } = await MdmsService.call(tenantId, mdmsDetails.details);
+    // const { MdmsRes } = await MdmsService.call(tenantId, mdmsDetails.details);
+    console.log("return data MdmsRes ",MdmsRes)
     var MdmsRes  =  
     {
       "ACCESSCONTROL-ACTIONS-TEST": {
@@ -4038,11 +4043,11 @@ export const MdmsService = {
           },
       "DIGIT-UI": {}
     };
-    //const { MdmsRes } = await MdmsService.call(tenantId, mdmsDetails.details);
+    // const { MdmsRes } = await MdmsService.call(tenantId, mdmsDetails.details);
     const responseValue = transformResponse(mdmsDetails.type, MdmsRes, moduleCode.toUpperCase(), tenantId);
     const cacheSetting = getCacheSetting(mdmsDetails.details.moduleDetails[0].moduleName);
     PersistantStorage.set(key, responseValue, cacheSetting.cacheTimeInSecs);
-    console.log(responseValue);
+    console.log("return data responseValue ",responseValue);
     return responseValue;
   },
   getServiceDefs: (tenantId, moduleCode) => {
@@ -4115,7 +4120,7 @@ export const MdmsService = {
     return MdmsService.getDataByCriteria(tenantId, getDocumentRequiredScreenCategory(tenantId, moduleCode), moduleCode);
   },
   getTLDocumentRequiredScreen: (tenantId, moduleCode) => {
-    return MdmsService.getDataByCriteria(tenantId, getDocumentRequiredScreenCategory(tenantId, moduleCode), moduleCode);
+      return MdmsService.getDataByCriteria(tenantId, getDocumentRequiredScreenCategory(tenantId, moduleCode), moduleCode);
   },
   getTradeUnitsData: (tenantId, moduleCode, type, filter) => {
     return MdmsService.getDataByCriteria(tenantId, getTradeUnitsDataList(tenantId, moduleCode, type, filter), moduleCode);

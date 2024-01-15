@@ -3,6 +3,7 @@ import React from "react";
 import { stringReplaceAll } from "../utils";
 
 const TradeLicense = ({ t, config, onSelect, userType, formData }) => {
+  alert("trade licence")
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();
 
@@ -16,7 +17,7 @@ const TradeLicense = ({ t, config, onSelect, userType, formData }) => {
   return (
     <React.Fragment>
       <Card>
-        <CardHeader>{t("TL_DOC_REQ_SCREEN_HEADER")}</CardHeader>
+        <CardHeader>{t("TL_DOC_REQ_SCREEN_HEADER sssssssssssssssssssssssssd")}</CardHeader>
         <div>
           <CardText>{t("TL_DOC_REQ_SCREEN_TEXT")}</CardText>
           <div>

@@ -106,9 +106,11 @@ const CitizenApp = ({ path, url, userType }) => {
   const ContractAgreementDetail = Digit?.ComponentRegistryService?.getComponent("ContractAgreementDetail");
   
   const WmsRAFBCreate = Digit?.ComponentRegistryService?.getComponent("WmsRAFBCreate");
+  const WmsRAFBCreateTest = Digit?.ComponentRegistryService?.getComponent("WmsRAFBCreateTest");
   const WmsRAFBEdit = Digit?.ComponentRegistryService?.getComponent("WmsRAFBEdit");
   const WmsRAFBDetail = Digit?.ComponentRegistryService?.getComponent("WmsRAFBDetail");
   const WmsRAFBList = Digit?.ComponentRegistryService?.getComponent("WmsRAFBList");
+  const TenderEntryDetail = Digit?.ComponentRegistryService?.getComponent("TenderEntryDetail");
   
   
   return (
@@ -232,11 +234,12 @@ const CitizenApp = ({ path, url, userType }) => {
             <PrivateRoute path={`${path}/tender-entry/add`} component={TenderEntryAdd} />
             <PrivateRoute path={`${path}/tender-entry/home`} component={TenderEntryView} />
             <PrivateRoute path={`${path}/tender-entry/edit/:tenantId/:id`} component={EditTender} />
+            <PrivateRoute path={`${path}/tender-entry/detail/:tenantId/:id`} component={TenderEntryDetail} />
 
             <PrivateRoute path={`${path}/tender-entry/department/add`} component={DepartmentAdd} />
             <PrivateRoute path={`${path}/tender-entry/department/list`} component={DepartmentView} />
             <PrivateRoute path={`${path}/tender-entry/department/edit/:tenantId/:id`} component={DepartmentEdit} />
-
+            
             <PrivateRoute path={`${path}/tender-entry/tender-category/add`} component={TenderCategoryAdd} />
             <PrivateRoute path={`${path}/tender-entry/tender-category/list`} component={TenderCategoryView} />
             <PrivateRoute path={`${path}/tender-entry/tender-category/edit/:tenantId/:id`} component={TenderCategoryEdit} />
@@ -249,6 +252,7 @@ const CitizenApp = ({ path, url, userType }) => {
             
             {/* Running Account / Final Bill */}
             <PrivateRoute path={`${path}/running-account/add`} component={() => <WmsRAFBCreate />} />
+            <PrivateRoute path={`${path}/running-account/addTest`} component={() => <WmsRAFBCreateTest />} />
             <PrivateRoute path={`${path}/running-account/edit/:tenantId/:id`} component={() => <WmsRAFBEdit />} />
             <PrivateRoute path={`${path}/running-account/detail/:tenantId/:id`} component={() => <WmsRAFBDetail />} />
             <PrivateRoute path={`${path}/running-account/list`} component={() => <WmsRAFBList filterComponent="FINAL_BILL_SEARCH_FILTER"  initialStates={inboxInitialState} isInbox={true} />} />

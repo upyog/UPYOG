@@ -72929,8 +72929,117 @@ export const LocalizationService = {
             "module": "rainmaker-common",
             "locale": "en_IN"
         },
+
+        {
+            "code": "WMS_RUNNING_ACCOUNT_FINAL_BILL_PROJECT_NAME",
+            "message": "Project Name",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_RUNNING_ACCOUNT_FINAL_BILL_WORK_NAME",
+            "message": "Work Name",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_RUNNING_ACCOUNT_FINAL_BILL_WORK_ORDER_NO",
+            "message": "Work Order Number",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
         
-        
+        {
+            "code": "WMS_RUNNING_ACCOUNT_FINAL_BILL_PROJECT_INFORMATION",
+            "message": "Project Information",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_RUNNING_ACCOUNT_FINAL_BILL_PREVIOUS_RUNNING_BILL_INFORMATION",
+            "message": "Previous Running Bill Information",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_RUNNING_ACCOUNT_FINAL_BILL_MB_NOT_PAID",
+            "message": "MB Not Paid",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_RUNNING_ACCOUNT_FINAL_BILL_TENDER_WORK_DETAILS",
+            "message": "Tender Work Details",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_RUNNING_ACCOUNT_FINAL_BILL_WITHHELD_DEDUCTIONS_DETAILS",
+            "message": "Withheld Deductions Details",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_RUNNING_ACCOUNT_FINAL_BILL_RA_BILL_TAX_DETAILS",
+            "message": "RA Bill Tax Details",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+                
+        {
+            "code": "WMS_RUNNING_ACCOUNT_PREVIOUS_RUNNING_BILL",
+            "message": "Previous Running Bill Information",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_RUNNING_ACCOUNT_MB_NOT_PAID",
+            "message": "MB Not Paid",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_RUNNING_ACCOUNT_TENDER_WORK_DETAILS",
+            "message": "Tender Work Details",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+
+        {
+            "code": "WMS_RUNNING_ACCOUNT_WITHHELD_DEDUCTIONS_DETAILS",
+            "message": "Withheld Deductions Details",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_RUNNING_ACCOUNT_RA_BILLS_TAX_DETAILS",
+            "message": "RA Bills Tax Details",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+
+        {
+            "i18nKey": "TRADELICENSE_TRADETYPE_MANUFACTURE",
+            "code": "TRADELICENSE_TRADETYPE_MANUFACTURE",
+            "message": "MANUFACTURE",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "i18nKey": "TRADELICENSE_TRADETYPE_RETAIL",
+            "code": "TRADELICENSE_TRADETYPE_RETAIL",
+            "message": "RETAIL",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "i18nKey": "TRADELICENSE_TRADETYPE_WHOLESALE",
+            "code": "TRADELICENSE_TRADETYPE_WHOLESALE",
+            "message": "WHOLESALE",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        }
+
         
         
         

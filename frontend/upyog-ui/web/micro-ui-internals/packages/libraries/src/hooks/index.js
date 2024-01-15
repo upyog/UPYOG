@@ -291,6 +291,8 @@ import useToCheckPrivacyEnablement from "./ws/useToCheckPrivacyEnablement";
 import useWSConfigMDMS from "./ws/useWSConfigMDMS";
 import useFeedBackSearch from "./useFeedBackSearch";
 import useTenantsWMS from "./wms/useTenants";
+import useWmsRAFBGet from "./wms/RAFB/useWmsRAFBGet";
+
 
 const pgr = {
   useComplaintDetails,
@@ -581,7 +583,12 @@ const wms = {
   },
   useWmsSchMDMS,
   useWmsGenderMDMS,
-  useWmsMDMS
+  useWmsMDMS,
+  rafb:{
+    useWmsRAFBGet
+  },
+  
+  
 };
 const reports = {
   useReportMeta,

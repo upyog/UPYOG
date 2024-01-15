@@ -304,6 +304,10 @@ wms:{
       // createFake:"/CASteper",
       // getFake:"/CASteper",
     },
+
+    Running_Account_Final_Bill: {
+      getPreviousBill: "http://localhost:5000/previousBill"
+    }
   },
   access_control: "/access/v1/actions/mdms/_get",
   billgenie: "/egov-searcher",

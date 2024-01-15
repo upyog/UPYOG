@@ -2,12 +2,12 @@ import React, { useState, useCallback, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { format, isValid } from "date-fns";
 import { Header, LinkButton, Loader, Toast } from "@egovernments/digit-ui-react-components";
-import DesktopInbox from "../../../components/List/CM/CA/DesktopList";
+import DesktopInbox from "../../../../components/List/RAFB/DesktopList";
 import axios from "axios";
 import { Link } from "react-router-dom";
 
-const View = ({ tenants, parentRoute }) => {
-  const {t} = useTranslation();
+const WmsRAFBList = ({ tenants, parentRoute, filterComponent }) => {
+  const { t } = useTranslation();
   Digit.SessionStorage.set("ENGAGEMENT_TENANTS", tenants);
   const tenantId = Digit.ULBService.getCurrentTenantId();
   //   const bankList = Digit?.Hooks?.wms?.cm?.useWMSMaster(tenantId,"WMS_BANK_BRANCH_TYPE","_view");
@@ -32,7 +32,7 @@ const View = ({ tenants, parentRoute }) => {
   // debugger;
   let isMobile = window.Digit.Utils.browser.isMobile();
   const [data, setData] = useState([]);
-  const [dataBack, setDataBack] = useState();
+  const [dataBack, setDataBack] = useState([]);
   const [isTrue, setisTrue] = useState(false);
 
   const { isLoading, isSuccess } = bankList;
@@ -55,7 +55,7 @@ const View = ({ tenants, parentRoute }) => {
         sdata.push({
           ...data,
           uid: res?.id,
-          status:res?.status,
+          status: res?.status,
           ...res?.WMSContractAgreementApplication[0]?.contractors[0],
           ...res?.WMSContractAgreementApplication[0]?.party2_witness[0],
         });
@@ -79,11 +79,11 @@ const View = ({ tenants, parentRoute }) => {
 
   const getSearchFields = () => {
     return [
-        // {
-        //   label: t("EVENTS_ULB_LABEL"),
-        //   name: "ulb",
-        //   type: "ulb",
-        // },
+      // {
+      //   label: t("EVENTS_ULB_LABEL"),
+      //   name: "ulb",
+      //   type: "ulb",
+      // },
       {
         label: t("Vendor Type"),
         name: "vendor_type",
@@ -92,11 +92,15 @@ const View = ({ tenants, parentRoute }) => {
         label: t("Vendor Name"),
         name: "vendor_name",
       },
-      {
-        label: t("Witness Name"),
-        name: "witness_name",
-        // isMendatory:true
-      },
+      // {
+      //   label: t("Status"),
+      //   name: "vendor_status",
+      // },
+      // {
+      //   label: t("Witness Name"),
+      //   name: "witness_name",
+      //   // isMendatory:true
+      // },
       // {
       //   label: t("From Date"),
       //   name: "from_Date",
@@ -117,119 +121,117 @@ const View = ({ tenants, parentRoute }) => {
     },
   ];
 
-  //Filter server side
-  // function filterTableList(departmentName, prebidMeetingDate) {
-  //   let formData = "";
-  //   if (
-  //     (prebidMeetingDate != null && departmentName == null) ||
-  //     (prebidMeetingDate != "" && departmentName == "") ||
-  //     (prebidMeetingDate != undefined && departmentName == undefined)
-  //   ) {
-  //     formData = `?prebidMeetingDate=${prebidMeetingDate}`;
-  //     return formData;
-  //   } else if (
-  //     (departmentName != null && prebidMeetingDate == null) ||
-  //     (departmentName != "" && prebidMeetingDate == "") ||
-  //     (departmentName != undefined && prebidMeetingDate == undefined)
-  //   ) {
-  //     formData = `?departmentName=${departmentName}`;
-  //     return formData;
-  //   } else if (
-  //     (departmentName != "" && prebidMeetingDate != "") ||
-  //     (departmentName != null && prebidMeetingDate != null) ||
-  //     (departmentName != undefined && prebidMeetingDate != undefined)
-  //   ) {
-  //     formData = `?departmentName=${departmentName}&prebidMeetingDate=${prebidMeetingDate}`;
-  //     return formData;
-  //   } else {
-  //     alert("Please fill any field");
-  //   }
-  // }
+  // useEffect(() => {
+  //   filterData();
+  // }, [searchQuery]);
 
-  const [searchQuery, setSearchQuery] = useState({
-    vendor_type: "",
-    vendor_name: "",
-    witness_name: "",
-  });
-
-  const [filteredData, setFilteredData] = useState(data);
-
-  // const handleInputChange = (e) => {
-  //   const { name, value } = e.target;
-  //   setSearchQuery({
-  //     ...searchQuery,
-  //     [name]: value
-  //   });
-  // };
-
-  // const searchData = () => {
-  //   const { name, age, city } = searchQuery;
-  //   const filteredData = initialData.filter(
-  //     (item) =>
-  //       (name === "" || item.name.toLowerCase().includes(name.toLowerCase())) &&
-  //       (isNaN(age) || item.age === parseInt(age)) &&
-  //       (city === "" || item.city.toLowerCase().includes(city.toLowerCase()))
-  //   );
-  //   setFilteredData(filteredData);
-  // };
-
+  //Top right side Filter
   const onSearch = async (params) => {
-    console.log("search field ", params);
-    // const {vendor_type:name,vendor_name:age,witness_name:city}=params;
-    const { vendor_type, vendor_name, witness_name } = params;
-    console.log("vendor_type,vendor_name,witness_name ", { vendor_type, vendor_name, witness_name });
-    // const { name, value } = e.target;
-    setSearchQuery({
-      ...searchQuery,
-      vendor_type: vendor_type ? vendor_type : "",
-      vendor_name: vendor_name ? vendor_name : "",
-      witness_name: witness_name ? witness_name : "",
+    console.log("paramsparams ", params);
+    // delete params.delete
+    // setSearchQuery(Object.values(params))
+
+    if (params === "reset") {
+      // alert("Reset block excuted");
+      setData(dataBack);
+      return false;
+    }
+    if(params?.vendor_type===null && params?.vendor_name===null && params?.vendor_status===null){
+      setData(dataBack);
+      return false
+    }
+    filterData(params);
+  };
+  const filterData = (params) => {
+    console.log("dataBack ",dataBack)
+    const dataBackFi = dataBack.filter((item) => item.vendor_type);
+    console.log("dataBack dataBackFi",dataBackFi)
+
+    const filteredData = dataBackFi.filter((item) => { 
+      return (
+        item.vendor_type.toString().includes(params?.vendor_type) &&
+        item.vendor_name.toString().includes(params?.vendor_name)
+        // &&
+        // item.status.toString().includes(params?.vendor_status)
+        
+        // &&
+        // item?.witness_name?.toLowerCase()?.includes(searchQuery?.witness_name?.toLowerCase())
+      );
+    
     });
-    // if (params === "reset" || (vendor_type === null && vendor_name === null)) {
+    setData(filteredData);
+  };
+  const onSearch_old = async (params) => {
+    console.log("paramsparams ", params);
+    // delete params.delete
+    // setSearchQuery(Object.values(params))
+
     if (params === "reset") {
       alert("Reset block excuted");
       setData(dataBack);
       return false;
     }
-    if(Boolean(searchQuery.vendor_type) || Boolean(searchQuery.vendor_name) || Boolean(searchQuery.witness_name)){
-      filterData()
-    }
-
-    // if (params === "reset" || (params?.departmentName === null && params?.prebidMeetingDate === null)) {
-    //   setData(dataBack);
-    //   return false;
-    // }
-    // const filterData = filterTableList(params?.departmentName, params?.prebidMeetingDate);
-    // await mutate(filterData);
+    filterData(params); //old
   };
+  
+  // const filterData=()=>{
+  const filterData_old = (params) => {
+    //old
+    //     const filteredArray = searchQuery.filter(item => item);
+    // const filterItem = filteredArray.length>0?
+    // filteredArray.map((item)=>data.filter((dataItem)=>dataItem.vendor_type === item))
+    // :[...data]
+    // setData(filterItem)
+    //     console.log("searchQuery.length ",filteredArray)
 
-const filterData=()=>{
-  // debugger;
-    console.log(dataBack);
-    console.log("searchQuery ", searchQuery);
-
+    //     old
     const filteredData = dataBack?.filter(
-      (item) =>
-        item?.vendor_type?.toLowerCase()?.includes(searchQuery?.vendor_type?.toLowerCase()) &&
-        item?.vendor_name?.toLowerCase()?.includes(searchQuery?.vendor_name?.toLowerCase()) &&
-        item?.witness_name?.toLowerCase()?.includes(searchQuery?.witness_name?.toLowerCase())
+      (item) => item?.vendor_type?.includes(params?.vendor_type) || item?.vendor_name?.toLowerCase()?.includes(params?.vendor_name?.toLowerCase())
+      // &&
+      // item?.witness_name?.toLowerCase()?.includes(searchQuery?.witness_name?.toLowerCase())
     );
-
-    // setFilteredData(filteredData);
-
     console.log("search field filterData ", filteredData);
     setData(filteredData);
-}
-  const handleFilterChange = (data) => {
-    setSearchParams({ ...searchParams, ...data });
   };
 
-  const globalSearch = (rows, columnIds) => {
-    // return rows;
-    return rows?.filter((row) =>
-      searchParams?.babyLastName ? row.original?.babyLastName?.toUpperCase().startsWith(searchParams?.babyLastName.toUpperCase()) : true
-    );
+  //Left side Filter
+  const handleFilterChange = (data) => {
+    console.log("data data data ", data);
+    globalSearch(data);
+    // setSearchParams({ ...searchParams, ...data });
   };
+
+  const globalSearch = (params, columnIds) => {
+    const dataBackFi = dataBack.filter((item) => item.vendor_type);
+    const filteredData = dataBackFi.filter((item) => {
+      return (
+        item.vendor_type.toString().toLowerCase().includes(params?.vendor_type.toLowerCase()) &&
+        item.vendor_name.toString().toLowerCase().includes(params?.vendor_name?.toLowerCase())
+      );
+    });
+    setData(filteredData);
+  // return rows?.filter((row) =>
+  //   searchParams?.babyLastName ? row.original?.babyLastName?.toUpperCase().startsWith(searchParams?.babyLastName.toUpperCase()) : true
+  // );
+};
+
+  // const globalSearch = (rows, columnIds) => {// not in use
+  const globalSearch_old = (params, columnIds) => {
+    // not in use
+    // return rows;
+    const filteredData = dataBack?.filter(
+      (item) => item?.vendor_type?.includes(params?.vendor_type) || item?.vendor_name?.toLowerCase()?.includes(params?.vendor_name?.toLowerCase())
+      // &&
+      // item?.witness_name?.toLowerCase()?.includes(searchQuery?.witness_name?.toLowerCase())
+    );
+    console.log("search field filterData ", filteredData);
+    setData(filteredData);
+
+    // return rows?.filter((row) =>
+    //   searchParams?.babyLastName ? row.original?.babyLastName?.toUpperCase().startsWith(searchParams?.babyLastName.toUpperCase()) : true
+    // );
+  };
+
 
   const fetchNextPage = useCallback(() => {
     setPageOffset((prevPageOffSet) => parseInt(prevPageOffSet) + parseInt(pageSize));
@@ -244,22 +246,12 @@ const filterData=()=>{
     // setPageSize((prevPageSize) => (e.target.value));
   };
 
-  // if(is_Loading){
-  //   alert("ddddddddddd")
-  // }
-
   if (isLoading) {
     return <Loader />;
   }
   return (
     <div>
-      <Header>{t("WMS_CA_ADD_CONTRACT_AGREEMENT_LIST")}</Header>
-      <Link to={`add`}>
-        {/* <LinkButton style={{ textAlign: "left" }} label={t("PT_VIEW_MORE_DETAILS")} /> */}
-        <LinkButton style={{ display: "block", textAlign: "right" }} label={t("Add")} />
-      </Link>
-
-      <p>{}</p>
+      <Header>{t("WMS_RUNNING_ACCOUNT_FINAL_BILL")}</Header>
       <DesktopInbox
         t={t}
         data={data}
@@ -273,14 +265,16 @@ const filterData=()=>{
         onFilterChange={handleFilterChange}
         pageSizeLimit={pageSize}
         totalRecords={data?.totalCount}
-        title={"Agreement Contractor List"}
-        iconName={"calender"}
+        title={"Running Account / Final Bill"}
+        iconName={"account"}
         currentPage={parseInt(pageOffset / pageSize)}
         onNextPage={fetchNextPage}
         onPrevPage={fetchPrevPage}
         onPageSizeChange={handlePageSizeChange}
         isLoading={isLoading}
         tenantId={tenantId}
+        filterComponent={filterComponent}
+        // filterComponent={"d"}
       />
       <style>
         {`
@@ -292,4 +286,4 @@ const filterData=()=>{
   );
 };
 
-export default View;
+export default WmsRAFBList;

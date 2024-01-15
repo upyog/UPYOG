@@ -61,6 +61,8 @@ const Search = ({ onSearch, searchParams, searchFields, type, onClose, isInboxPa
   }
 
   const onSubmitInput = (data) => {
+    // data.preventDefault();
+    alert("ddddddddddddddd")
     console.log("search data/ ",data)
     data.delete = [];
     searchFields.forEach((field) => {
@@ -73,11 +75,10 @@ const Search = ({ onSearch, searchParams, searchFields, type, onClose, isInboxPa
     console.log("search data/ data modify",data)
 
     onSearch(data);
-    if (type === "mobile") {
+    if (type === "mobile"){
       onClose();
     }
   }
-
   const clearSearch = () => {
     onSearch("reset");
     

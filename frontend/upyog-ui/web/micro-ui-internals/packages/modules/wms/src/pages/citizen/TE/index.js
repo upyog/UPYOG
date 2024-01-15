@@ -4,7 +4,7 @@ import { FormComposer, Header, Toast } from "@egovernments/digit-ui-react-compon
 import { useTranslation } from "react-i18next";
 import useEDCRInbox from "../../../../../../libraries/src/hooks/obps/useEDCRInbox";
 
-const TenderEntryAdd = () =>{
+const TenderEntryAdd = () =>{ 
   const { t } = useTranslation();
   const tenantId = Digit.ULBService.getCurrentTenantId();
 const {mutate,isSuccess,isError,error} = Digit?.Hooks?.wms?.te?.useWmsTEAdd();
@@ -40,12 +40,13 @@ const getDataimg=(d)=>{
       setTimeout(() => {
         closeToast();
         history.replace('/upyog-ui/citizen/wms/tender-entry/home')
-        
       }, 5000);
     }
     },[showToast])
 
     const onSubmit = async(data) => {
+      // alert("dddd")
+      console.log("payloadData data ",data)  
         let payloadData = {"WMSTenderEntryApplication": [{
           "department_name":data?.WmsTMDepartment?.name,
           "resolution_no":data?.WmsTMResulationNo?.resulation_no,
@@ -54,7 +55,7 @@ const getDataimg=(d)=>{
           "publish_date":data?.WmsTEPublishDate?.['publish_date'],
           "technical_bid_open_date":data?.WmsTETecnicalBidOpenDate?.['technical_bid_open_date'],
           "request_category":data?.WmsTMTenderCategory?.name,
-          "upload_document":imagePath[0]?.documentUid?.fileStoreId,
+          // "upload_document":imagePath[0]?.documentUid?.fileStoreId,
           "resolution_date":data?.WmsTEResolutionDate?.['resolution-date'],
           "prebid_meeting_location":data?.WmsTMMeetingLocation?.['meeting-location'],
           "issue_till_date":data?.WmsTEIssueTillDate?.['issue-till-date'],
@@ -63,6 +64,7 @@ const getDataimg=(d)=>{
           "project_name":data?.WmsTMProjectName?.name,
           "tenantId": tenantId
         }]};
+        console.log("payloadData ",payloadData)
         await mutate(payloadData);
     }
   const configs = newConfig?newConfig:newConfig;
@@ -77,7 +79,7 @@ const getDataimg=(d)=>{
               getDataimg={getDataimg}
               fieldStyle={{ marginRight: 0 }}
             />
-            {isSuccess && (
+            {/* {isSuccess && (
         <Toast
           error={showToast.key}
           label={t(showToast.label)}
@@ -85,8 +87,11 @@ const getDataimg=(d)=>{
             setShowToast(null);
           }}
         />
-      )}
-            </div>
+        )} */}
+
+      {showToast&&isError && <Toast error={showToast.key} label={t('Something went wrong!')} onClose={closeToast} />}
+      {showToast&&isSuccess && <Toast label={t('Record submitted successfully')} onClose={closeToast} />}
+    </div>
     </>)
 }
 export default TenderEntryAdd;

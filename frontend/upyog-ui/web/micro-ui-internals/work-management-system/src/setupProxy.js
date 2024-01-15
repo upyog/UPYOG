@@ -5,8 +5,8 @@ const createProxy = createProxyMiddleware({
   // target: process.env.REACT_APP_PROXY_API,
   // target: process.env.REACT_APP_PROXY_API || "https://qa.digit.org",
   //target:"https://test.wontract.com",//https://upyog-sandbox.niua.org" ,
-  // target:"https://test.wontract.com" ,
-  target:"https://upyog-sandbox.niua.org" ,
+  target:"https://test.wontract.com" ,
+  // target:"https://upyog-sandbox.niua.org" ,
   changeOrigin: true,  
   secure: false,
   https: true 
@@ -31,7 +31,7 @@ const apiProxy = createProxyMiddleware({
 // });
 const CMProxy = createProxyMiddleware({
   // target: "http://10.216.36.67:8484",
-  target: "http://10.216.36.152:8484",  
+  target: "http://10.216.36.246:8484",  
   changeOrigin: true,
 });
 module.exports = function (app) {
@@ -99,7 +99,7 @@ module.exports = function (app) {
   "/wms/work-management-service/v1/sch/_search",  
   "/wms/work-management-service/v1/sch/_count",
   "/wms/work-management-service/v1/sch/_update",
-] .forEach((location) => app.use(location, apiProxy));
+  ] .forEach((location) => app.use(location, apiProxy));
 
   [
     "/wms/work-management-service/v1/sor/_create",

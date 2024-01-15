@@ -188,7 +188,7 @@ console.log("datadatadatadatadata ",data)
   } else if (data?.length > 0) {
     result = (
       <ApplicationTable
-        // t={t}
+        t={t}
         data={data}
         columns={columns}
         getCellProps={(cellInfo) => {

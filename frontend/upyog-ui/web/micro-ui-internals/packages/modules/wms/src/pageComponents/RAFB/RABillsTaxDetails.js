@@ -1,12 +1,11 @@
 import { CardLabel, Dropdown, FormStep, LinkButton, Loader, RadioButtons, TextInput } from "@egovernments/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import Timeline from "../components/TLTimeline";
-import { sortDropdownNames } from "../utils/index";
+import Timeline from "../../components/RAFB/Timeline";
+import { sortDropdownNames } from "../../utils/index";
 
-const SelectTradeUnits = ({ t, config, onSelect, userType, formData }) => {
-  debugger
-  console.log("TL SelectTradeUnits formData ",formData);
+const RABillsTaxDetails = ({ t, config, onSelect, userType, formData }) => {
+  console.log("Ra Bills formData  ",formData)
   let validation = {};
   const [TradeCategory, setTradeCategory] = useState("");
   const [TradeType, setTradeType] = useState(formData?.TadeDetails?.Units?.TradeType || "");
@@ -14,16 +13,22 @@ const SelectTradeUnits = ({ t, config, onSelect, userType, formData }) => {
   const [UnitOfMeasure, setUnitOfMeasure] = useState(formData?.TadeDetails?.Units?.UnitOfMeasure || "");
   const [UomValue, setUomValue] = useState(formData?.TadeDetails?.Units?.UomValue || "");
   const [error, setError] = useState(null);
-  const [fields, setFeilds] = useState(
-    (formData?.TradeDetails && formData?.TradeDetails?.units) || [{ tradecategory: "", tradetype: "", tradesubtype: "", unit: null, uom: null }]
-  );
-
+  // debugger
+  // const [fields, setFeilds] = useState(
+  //   (formData?.TradeDetails && formData?.TradeDetails?.units) || [{ tradecategory: "", tradetype: "", tradesubtype: "", unit: null, uom: null }]
+  // );
+  // const [fields, setFeilds] = useState(
+  //   (formData?.TradeDetails && formData?.TradeDetails?.units) || [{ taxcategory: "", remark: "", amount: "" }]
+  // );
+  const [fields, setFeilds] = useState([{ taxcategory: "", remark: "", amount: "" }]);
+  console.log("fields fields ",fields)
   const tenantId = Digit.ULBService.getCitizenCurrentTenant();
   const stateId = Digit.ULBService.getStateId();
+  console.log("fields fields stateId ",{tenantId,stateId})
 
   function handleAdd() {
     const values = [...fields];
-    values.push({ tradecategory: "", tradetype: "", tradesubtype: "", unit: null, uom: null });
+    values.push({ taxcategory: "", remark: "", amount: "" });
     setFeilds(values);
   }
 
@@ -43,7 +48,8 @@ const SelectTradeUnits = ({ t, config, onSelect, userType, formData }) => {
   let TradeCategoryMenu = [];
   let TradeCategoryMenu2 = [];
   //let TradeTypeMenu = [];
-
+console.log("Data Data1 ",Data )
+console.log("Data Data2 ",billingSlabTradeTypeData)
   Data &&
     Data.TradeLicense &&
     Data.TradeLicense.TradeType.map((ob) => {
@@ -51,6 +57,7 @@ const SelectTradeUnits = ({ t, config, onSelect, userType, formData }) => {
         TradeCategoryMenu2.push({ i18nKey: `TRADELICENSE_TRADETYPE_${ob.code.split(".")[0]}`, code: `${ob.code.split(".")[0]}` });
       }
     });
+    console.log("TradeCategoryMenu2 ",TradeCategoryMenu2)
 
     billingSlabTradeTypeData &&
     billingSlabTradeTypeData.length > 0 &&
@@ -151,7 +158,9 @@ const SelectTradeUnits = ({ t, config, onSelect, userType, formData }) => {
   }
   function selectTradeType(i, value) {
     let units = [...fields];
+    console.log("units 1 ",units,value)
     units[i].tradetype = value;
+    console.log("units 2 ",units,value)
     setTradeType(value);
     selectTradeSubType(i, null);
     selectUomValue(i,"");
@@ -257,7 +266,8 @@ const SelectTradeUnits = ({ t, config, onSelect, userType, formData }) => {
     if(!error){
     setError(null);
     unitsdata = { ...units, units: fields };
-    onSelect(config.key, unitsdata);
+    // onSelect(config.key, unitsdata);
+    onSelect(config.key, {"fname":"ram","lname":"kumar"});
     }
   };
 
@@ -276,7 +286,7 @@ const SelectTradeUnits = ({ t, config, onSelect, userType, formData }) => {
   const onSkip = () => onSelect();
   return (
     <React.Fragment>
-      {window.location.href.includes("/citizen") ? <Timeline /> : null}
+      {window.location.href.includes("/citizen") ? <Timeline currentStep={6} /> : null}
       {isLoading || isBillingSlabLoading ? (
         <Loader />
       ) : (
@@ -286,7 +296,7 @@ const SelectTradeUnits = ({ t, config, onSelect, userType, formData }) => {
           onSkip={onSkip}
           t={t}
           forcedError={t(error)}
-          isDisabled={!fields[0].tradecategory || !fields[0].tradetype || !fields[0].tradesubtype}
+          // isDisabled={!fields[0].tradecategory || !fields[0].tradetype || !fields[0].tradesubtype}
         >
           {fields.map((field, index) => {
             return (
@@ -406,4 +416,4 @@ const SelectTradeUnits = ({ t, config, onSelect, userType, formData }) => {
     </React.Fragment>
   );
 };
-export default SelectTradeUnits;
+export default RABillsTaxDetails;
