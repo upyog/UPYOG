@@ -4,11 +4,11 @@ import WmsService from "../../../services/elements/WMS";
 export const useWmsWsrCount = (tenantId, config = {}) => {
   const client = useQueryClient();
   const { isLoading, Errors, data } = useQuery(
-    ["WMS_PR_COUNT",tenantId],
-    async () => await WmsService.PRApplications.count(tenantId),
+    ["WMS_WSR_COUNT",tenantId],
+    async () => await WmsService.WSRApplications.count(tenantId),
     config
   );//isLoading: isLoading, Errors, data: res 
-  return { isLoading, Errors, data, revalidate: () => client.invalidateQueries(["WMS_PR_COUNT", tenantId]) };
+  return { isLoading, Errors, data, revalidate: () => client.invalidateQueries(["WMS_WSR_COUNT", tenantId]) };
 
 };
 

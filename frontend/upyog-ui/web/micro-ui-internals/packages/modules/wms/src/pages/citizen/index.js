@@ -227,7 +227,7 @@ const CitizenApp = ({ path, url, userType }) => {
           <PrivateRoute
             path={`${path}/wsr-home`}
             component={() => (
-              <WmsPrList parentRoute={path} businessService="WMS" filterComponent="WMS_LIST_FILTER" initialStates={inboxInitialState} isInbox={true} />
+              <WmsWsrList parentRoute={path} businessService="WMS" filterComponent="WMS_LIST_FILTER" initialStates={inboxInitialState} isInbox={true} />
             )}
           />
           <PrivateRoute path={`${path}/wsr-create`} component={() => <WmsWsrCreate />} />
