@@ -3,11 +3,13 @@ import { newConfig } from "../../../components/config/TE/te-config";
 import { FormComposer, Header, Toast } from "@egovernments/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import useEDCRInbox from "../../../../../../libraries/src/hooks/obps/useEDCRInbox";
+import {useHistory} from 'react-router-dom'
 
 const TenderEntryAdd = () =>{ 
   const { t } = useTranslation();
   const tenantId = Digit.ULBService.getCurrentTenantId();
 const {mutate,isSuccess,isError,error} = Digit?.Hooks?.wms?.te?.useWmsTEAdd();
+const history = useHistory();
 
     const [showToast, setShowToast] = useState(null);
     const [isTrue, setisTrue] = useState(false);
@@ -39,7 +41,7 @@ const getDataimg=(d)=>{
       if(showToast){
       setTimeout(() => {
         closeToast();
-        history.replace('/upyog-ui/citizen/wms/tender-entry/home')
+        history.push('/upyog-ui/citizen/wms/tender-entry/home')
       }, 5000);
     }
     },[showToast])

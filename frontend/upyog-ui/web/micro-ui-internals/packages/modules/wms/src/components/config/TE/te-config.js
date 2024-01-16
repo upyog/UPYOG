@@ -80,12 +80,13 @@ export const newConfig =[
               //   withoutLabel: true,
   
               // },
-              {
-                type: "component",
-                component: "WmsTEUploadDocuments",
-                key: "WmsTEUploadDocuments",
-                withoutLabel: true,
-              },
+
+              // { this json is workong
+              //   type: "component",
+              //   component: "WmsTEUploadDocuments",
+              //   key: "WmsTEUploadDocuments",
+              //   withoutLabel: true,
+              // },
 
               
               
