@@ -199,7 +199,6 @@ const SelectStreet = ({ t, config, onSelect, userType, formData, formState, setE
         _defaultValues={{ street: formData?.address.street, doorNo: formData?.address.doorNo }}
         onChange={handleSkip}
         onSelect={(data) => onSelect(config.key, data)}
-        onSkip={onSkip}
         isDisabled={doorNo || street ? false : true}
         t={t}
       />
