@@ -72,6 +72,30 @@ export const configCompleteApplication = ({ t, vehicle, vehicleCapacity, noOfTri
           nextStep: "property-type",
         },
         {
+          label: t("ES_FSM_ACTION_ROAD_WIDTH"),
+          type: "number",
+          isMandatory: true,
+          populators: {
+            name: "roadWidth",
+            validation: {
+              required: true,
+            },
+          },
+          disable: false,
+        },
+        {
+          label: t("ES_FSM_ACTION_DISTANCE_FROM_ROAD"),
+          type: "number",
+          isMandatory: true,
+          populators: {
+            name: "distancefromroad",
+            validation: {
+              required: true,
+            },
+          },
+          disable: false,
+        },
+        {
           label: "ES_NEW_APPLICATION_PROPERTY_TYPE",
           isMandatory: true,
           type: "component",

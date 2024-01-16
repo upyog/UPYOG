@@ -16,12 +16,6 @@ const MyApplication = ({ application }) => {
       <Link to={{ pathname: `/digit-ui/citizen/fsm/application-details/${application.applicationNo}`, state: { tenantId: application.tenantId } }}>
         <SubmitBar label={t("CS_COMMON_VIEW")} />
       </Link>
-      {application?.applicationStatus==="PENDING_APPL_FEE_PAYMENT" ? (
-      <Link to={{ pathname: `/digit-ui/citizen/payment/my-bills/FSM.TRIP_CHARGES/${application?.applicationNo}/?tenantId=${application.tenantId}`,}}>
-        <div style={{marginTop:"10px"}}><SubmitBar label={t("COMMON_MAKE_PAYMENT")} /></div>
-      </Link>
-      ):null}
-
     </Card>
   );
 };
