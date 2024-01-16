@@ -114,7 +114,7 @@ const Search = ({ onSearch, searchParams, searchFields, type, onClose, isInboxPa
                 ))}
 
      
-              {type === "desktop" && !mobileView && (
+              {/* {type === "desktop" && !mobileView && (
                 <div style={{ maxWidth: "unset", marginLeft: "unset", marginTop: "55px"}} className="search-submit-wrapper">
                   <SubmitBar
                     className="submit-bar-search"
@@ -123,9 +123,24 @@ const Search = ({ onSearch, searchParams, searchFields, type, onClose, isInboxPa
                     // disabled={!!Object.keys(formState.errors).length || formValueEmpty()}
                     submit
                   />
-                  {/* style={{ paddingTop: "16px", textAlign: "center" }} className="clear-search" */}
-                  <div>{clearAll()}</div>
+                  <div style={{ paddingTop: "16px", textAlign: "center" }} className="clear-search">{clearAll()}</div>
                 </div>
+              )}2 */}
+            </div>
+
+            <div className="inbox-action-container">
+              {type === "desktop" && !mobileView && (
+                <span style={{ paddingTop: "9px" }} className="clear-search">
+                  {clearAll()}
+                </span>
+              )}
+              {type === "desktop" && !mobileView && (
+                <SubmitBar
+                  style={{ marginTop: "unset" }}
+                  className="submit-bar-search"
+                  label={t("WMS_COMMON_SEARCH")}
+                  submit
+                />
               )}
             </div>
           </div>

@@ -312,6 +312,7 @@ console.log("data ",data)
     */}
       <div style={{ flex: 1,width:"100%" }}>
         <SearchApplication
+          t={t}
           defaultSearchParams={props.defaultSearchParams}
           onSearch={props.onSearch}
           type="desktop"

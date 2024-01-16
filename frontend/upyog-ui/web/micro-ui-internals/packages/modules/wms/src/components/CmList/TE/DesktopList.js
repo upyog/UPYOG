@@ -281,6 +281,7 @@ const DesktopInbox = ({ tableConfig, ...props} ) => {
     
       <div style={{ flex: 1 }}>
          <SearchApplication
+         t={t}
           defaultSearchParams={props.defaultSearchParams}
           onSearch={props.onSearch}
           type="desktop"

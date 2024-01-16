@@ -100,10 +100,8 @@ useEffect(() => {
   ]
 
   function filterTableList(departmentName,prebidMeetingDate){
-    alert(departmentName)
      departmentName = departmentName?.trim();
      prebidMeetingDate = prebidMeetingDate?.trim();
-    alert(departmentName)
     let formData = "";
     if(prebidMeetingDate!=null && departmentName==null || prebidMeetingDate!="" && departmentName=="" || prebidMeetingDate!=undefined && departmentName==undefined){
      formData = `?prebidMeetingDate=${prebidMeetingDate}`
@@ -115,7 +113,6 @@ useEffect(() => {
      formData = `?departmentName=${departmentName}&prebidMeetingDate=${prebidMeetingDate}`
      return formData;
   }else{
-  alert("Please fill any field")
 }
   }
 

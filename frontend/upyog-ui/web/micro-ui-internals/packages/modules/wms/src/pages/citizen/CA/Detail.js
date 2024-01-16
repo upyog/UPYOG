@@ -378,6 +378,7 @@ const ContractAgreementDetail = () => {
             {item.body?.length < 1 ? (
               <>
                 <Table
+                t={t}
                   columns={item.columns}
                   allAgreementData
                   data={item.body}
@@ -399,6 +400,7 @@ const ContractAgreementDetail = () => {
               </>
             ) : (
               <Table
+              t={t}
                 columns={item.columns}
                 data={item.body}
                 getCellProps={(cellInfo) => {
