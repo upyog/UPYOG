@@ -33,10 +33,10 @@ export const newConfig =[
                 "route": "pincode",
                 "component": "PTRSelectPincode",
                 "texts": {
-                    "headerCaption": "PT_PROPERTY_LOCATION_CAPTION",
-                    "header": "PT_PINCODE_LABEL",
-                    "cardText": "PT_PINCODE_TEXT",
-                    "submitBarLabel": "PT_COMMON_NEXT",
+                    "headerCaption": "PTR_CAPTION",
+                    "header": "PTR_PINCODE_LABEL",
+                    "cardText": "PTR_PINCODE_TEXT",
+                    "submitBarLabel": "PTR_COMMON_NEXT",
                     "skipText": "CORE_COMMON_SKIP_CONTINUE"
                 },
                 "withoutLabel": true,
@@ -47,13 +47,7 @@ export const newConfig =[
             {
                 "route": "address",
                 "component": "PTRSelectAddress",
-                "withoutLabel": true,
-                "texts": {
-                    "headerCaption": "PT_PROPERTY_LOCATION_CAPTION",
-                    "header": "CS_FILE_APPLICATION_PROPERTY_LOCATION_ADDRESS_TEXT",
-                    "cardText": "CS_FILE_APPLICATION_PROPERTY_LOCATION_CITY_MOHALLA_TEXT",
-                    "submitBarLabel": "PT_COMMON_NEXT"
-                },
+                "withoutLabel": true,              
                 "key": "address",
                 "nextStep": "street",
                 "isMandatory": true,
@@ -65,12 +59,6 @@ export const newConfig =[
                 "component": "PTRSelectStreet",
                 "key": "address",
                 "withoutLabel": true,
-                "texts": {
-                    "headerCaption": "PT_PROPERTY_LOCATION_CAPTION",
-                    "header": "CS_FILE_APPLICATION_PROPERTY_LOCATION_ADDRESS_TEXT",
-                    "cardText": "PT_STREET_TEXT",
-                    "submitBarLabel": "PT_COMMON_NEXT"
-                },
                 "nextStep": "landmark"
             },
             {
@@ -78,13 +66,6 @@ export const newConfig =[
                 "route": "landmark",
                 "component": "PTSelectLandmark",
                 "withoutLabel": true,
-                "texts": {
-                    "headerCaption": "PT_PROPERTY_LOCATION_CAPTION",
-                    "header": "CS_FILE_APPLICATION_PROPERTY_LOCATION_PROVIDE_LANDMARK_TITLE",
-                    "cardText": "CS_FILE_APPLICATION_PROPERTY_LOCATION_PROVIDE_LANDMARK_TEXT",
-                    "submitBarLabel": "PT_COMMON_NEXT",
-                    "skipText": "CORE_COMMON_SKIP_CONTINUE"
-                },
                 "key": "address",
                 // "nextStep": "proof",
                 "hideInEmployee": true

@@ -8,50 +8,7 @@ export const convertDotValues = (value = "") => {
   );
 };
 
-export const convertToLocale = (value = "", key = "") => {
-  let convertedValue = convertDotValues(value);
-  if (convertedValue == "NA") {
-    return "PTR_NA";
-  }
-  return `${key}_${convertedValue}`;
-};
 
-export const getPropertyTypeLocale = (value = "") => {
-  return convertToLocale(value, "COMMON_PROPTYPE");
-};
-
-export const getPropertyUsageTypeLocale = (value = "") => {
-  return convertToLocale(value, "COMMON_PROPUSGTYPE");
-};
-
-export const getPropertySubUsageTypeLocale = (value = "") => {
-  return convertToLocale(value, "COMMON_PROPSUBUSGTYPE");
-};
-export const getPropertyOccupancyTypeLocale = (value = "") => {
-  return convertToLocale(value, "PROPERTYTAX_OCCUPANCYTYPE");
-};
-
-export const getMohallaLocale = (value = "", tenantId = "") => {
-  let convertedValue = convertDotValues(tenantId);
-  if (convertedValue == "NA" || !checkForNotNull(value)) {
-    return "PTR_NA";
-  }
-  convertedValue = convertedValue.toUpperCase();
-  return convertToLocale(value, `${convertedValue}_REVENUE`);
-};
-
-export const getCityLocale = (value = "") => {
-  let convertedValue = convertDotValues(value);
-  if (convertedValue == "NA" || !checkForNotNull(value)) {
-    return "PTR_NA";
-  }
-  convertedValue = convertedValue.toUpperCase();
-  return convertToLocale(convertedValue, `TENANT_TENANTS`);
-};
-
-export const getPropertyOwnerTypeLocale = (value = "") => {
-  return convertToLocale(value, "PROPERTYTAX_OWNERTYPE");
-};
 
 export const getFixedFilename = (filename = "", size = 5) => {
   if (filename.length <= size) {
@@ -64,19 +21,8 @@ export const shouldHideBackButton = (config = []) => {
   return config.filter((key) => window.location.href.includes(key.screenPath)).length > 0 ? true : false;
 };
 
-/*   style to keep the body height fixed across screens */
-export const cardBodyStyle = {
-  // maxHeight: "calc(100vh - 20em)",
-  // overflowY: "auto",
-};
-
-export const propertyCardBodyStyle = {
-  // maxHeight: "calc(100vh - 10em)",
-  // overflowY: "auto",
-};
 
 export const setAddressDetails = (data) => {
-  //console.log("data for address", data)
   let { address } = data;
 
   let propAddress = {
@@ -143,7 +89,7 @@ export const setOwnerDetails = (data) => {
   };
 
 
-export const convertToProperty = (data) => {
+export const PetDataConvert = (data) => {
  
   data = setDocumentDetails(data);
   data = setOwnerDetails(data);
@@ -267,12 +213,9 @@ export const checkArrayLength = (obj = [], length = 0) => {
 
 export const getWorkflow = (data = {}) => {
   return {
-    action: data?.isEditProperty ? "REOPEN" : "OPEN",
+
     businessService: `ptr`,
     moduleName: "pet-services",
   };
 };
 
-export const getCreationReason = (data = {}) => {
-  return data?.isUpdateProperty  ? "UPDATE" : "CREATE";
-};

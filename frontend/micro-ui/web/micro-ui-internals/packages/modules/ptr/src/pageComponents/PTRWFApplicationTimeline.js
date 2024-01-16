@@ -2,9 +2,11 @@ import { ActionLinks, CardSectionHeader, CheckPoint, ConnectingCheckPoints, Load
 import React, { Fragment } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import PTWFCaption from "./PTWFCaption";
+import PETWFCaption from "./PETWFCaption";
 
-const PTWFApplicationTimeline = (props) => {
+
+// ToDo: ned to check code carefully which we want and dont.
+const PTRWFApplicationTimeline = (props) => {
   const { t } = useTranslation();
   const businessService = (props.application?.creationReason && `${props.application.creationReason}`) || "ptr";
   // const businessService = "ptr";
@@ -28,7 +30,7 @@ const PTWFApplicationTimeline = (props) => {
         date: checkpoint?.auditDetails?.lastModified,
         source: props.application?.channel || "",
       };
-      return <PTWFCaption data={caption} />;
+      return <PETWFCaption data={caption} />;
     }
     else if (checkpoint.state) {
       const caption = {
@@ -39,32 +41,17 @@ const PTWFApplicationTimeline = (props) => {
         wfComment: checkpoint.wfComment,
         thumbnailsToShow: checkpoint?.thumbnailsToShow,
       };
-      return <PTWFCaption data={caption} OpenImage={OpenImage} />;
-    } else if (checkpoint.status === "ACTIVE" && props?.userType === 'citizen') {
-      return (
-        <div>
-          <Link to={`/digit-ui/citizen/pt/property/properties/${props?.application?.applicationNumber}`}>
-            <ActionLinks>{t("PT_VIEW_PROPERTY_DETAILS")}</ActionLinks>
-          </Link>
-        </div>
-      );
-    }
-    // else if (checkpoint.state === "CORRECTIONPENDING") {
-    //   return (
-    //     <div>
-    //       <Link to={`/digit-ui/citizen/pt/property/properties/${props?.application?.applicationNumber}`}>
-    //         <ActionLinks>{t("EDIT_PROPERTY")}</ActionLinks>
-    //       </Link>
-    //     </div>
-    //   );
-    // }
+      return <PETWFCaption data={caption} OpenImage={OpenImage} />;
+    } 
+    
+   
     else {
       const caption = {
         date: Digit.DateUtils.ConvertTimestampToDate(props.application?.auditDetails.lastModified),
         name: checkpoint?.assigner?.name,
         comment: t(checkpoint?.comment),
       };
-      return <PTWFCaption data={caption} />;
+      return <PETWFCaption data={caption} />;
     }
   };
 
@@ -90,21 +77,7 @@ const PTWFApplicationTimeline = (props) => {
           </div>
           ) : null
         );
-      case "EDIT":
-        return (
-          <div style={{ marginTop: "1em", bottom: "0px", width: "100%", marginBottom: "1.2em" }}>
-            {businessService != "PT.MUTATION" && (
-              <Link
-                to={{
-                  pathname: `/digit-ui/citizen/pt/property/edit-application/action=edit-${businessService}/${props.id}`,
-                  state: { tenantId: props.application.tenantId },
-                }}
-              >
-                <SubmitBar label={t("CS_APPLICATION_DETAILS_EDIT")} />
-              </Link>
-            )}
-          </div>
-        );
+      
       case "SUBMIT_FEEDBACK":
         return (
           <div style={{ marginTop: "24px" }}>
@@ -175,4 +148,4 @@ const PTWFApplicationTimeline = (props) => {
   );
 };
 
-export default PTWFApplicationTimeline;
+export default PTRWFApplicationTimeline;

@@ -2,9 +2,9 @@ import { Header, Loader } from "@egovernments/digit-ui-react-components";
 import React from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import PTApplication from "./pt-application";
+import PetApplication from "./pet-application";
 
-export const PTMyApplications = () => {
+export const PetMyApplications = () => {
   const { t } = useTranslation();
   const tenantId = Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();
   const user = Digit.UserService.getUser().info;
@@ -57,7 +57,7 @@ export const PTMyApplications = () => {
         {applicationsList?.length > 0 &&
           applicationsList.map((application, index) => (
             <div key={index}>
-              <PTApplication application={application} tenantId={user?.permanentCity} buttonLabel={getLabelValue(application)}/>
+              <PetApplication application={application} tenantId={user?.permanentCity} buttonLabel={getLabelValue(application)}/>
             </div>
           ))}
         {!applicationsList?.length > 0 && <p style={{ marginLeft: "16px", marginTop: "16px" }}>{t("PTR_NO_APPLICATION_FOUND_MSG")}</p>}

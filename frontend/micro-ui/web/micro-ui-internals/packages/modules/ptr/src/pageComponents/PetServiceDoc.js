@@ -12,12 +12,9 @@ const PetServiceDoc = ({ t, config, onSelect, userType, formData }) => {
 
   
  
-  //const { isLoading, data: Documentsob } = Digit.Hooks.pt.usePropertyMDMS(stateId, "PropertyTax", docType);
   const { isLoading, data: Documentsob = {} } = Digit.Hooks.ptr.usePetMDMS(stateId, "PetService", docType);
-  // console.log("datassss", Documentsob);
-  //let docs = Documentsob?.PropertyTax?.[config?.isMutation ? docType[0] : docType];
+  
   let docs = Documentsob?.PetService?.Documents;
-  //if (!config?.isMutation) docs = docs?.filter((doc) => doc["digit-citizen"]);
   function onSave() {}
 
   function goNext() {
@@ -44,7 +41,6 @@ const PetServiceDoc = ({ t, config, onSelect, userType, formData }) => {
                         {index + 1}. {t(code)}
                       </CardSubHeader>
                       <CardText className={"primaryColor"}>{dropdownData.map((dropdownData) => t(dropdownData?.code)).join(", ")}</CardText>
-                      {/* <CardText>{t(`${code.split('.')[0]}.${code.split('.')[1]}.${code.split('.')[1]}_DESCRIPTION`)}</CardText> */}
                     </div>
                   ))
                 : docs.map(({ code, dropdownData }, index) => ( 
