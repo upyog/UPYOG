@@ -20,8 +20,8 @@ const TradeLicenseList = ({ application }) => {
   const [numOfApplications, setNumberOfApplications] = useState([]);
   const { isLoading, data: fydata = {} } = Digit.Hooks.tl.useTradeLicenseMDMS(stateId, "egf-master", "FinancialYear");
   let mdmsFinancialYear = fydata["egf-master"] ? fydata["egf-master"].FinancialYear.filter((y) => y.module === "TL") : [];
-  let isrenewalspresent = false;
-
+  //let isrenewalspresent = false;
+  const [isrenewalspresent,setIsrenewalspresent] =useState(false)
   async function apicall(application) {
     let res = await Digit.TLService.TLsearch({ tenantId: application.tenantId, filters: { licenseNumbers: application.licenseNumber } });
     let Licenses = res.Licenses;
@@ -29,7 +29,8 @@ const TradeLicenseList = ({ application }) => {
     Licenses &&
       Licenses.map((ob) => {
         if (ob.financialYear === FY) {
-          isrenewalspresent = true;
+          setIsrenewalspresent(true)
+          //isrenewalspresent = true;
         }
       });
     if (isrenewalspresent && Licenses) {
@@ -56,13 +57,53 @@ const TradeLicenseList = ({ application }) => {
       setShowToast({ error: true, label: `${t("TL_ERROR_TOAST_MUTUALLY_EXPIRED")}` });
     }
   }
+useEffect(async ()=>{
 
+  const licenseNumbers = application?.licenseNumber;
+    const filters = { licenseNumbers, offset: 0 };
+    let numOfApplications = await TLSearch.numberOfApplications(application?.tenantId, filters);
+    let allowedToNextYear= false;
+    //isrenewalspresent = false;
+    setIsrenewalspresent(false)
+    let latestRenewalYearofAPP = "";
+    let financialYear = cloneDeep(application?.financialYear);
+      const financialYearDate = financialYear?.split('-')[1];
+      const finalFinancialYear = `20${Number(financialYearDate)}-${Number(financialYearDate)+1}`
+      const latestFinancialYear = Math.max.apply(Math, numOfApplications?.filter(ob => ob.licenseNumber === application?.licenseNumber)?.map(function(o){return parseInt(o.financialYear.split("-")[0])}))
+      const isAllowedToNextYear = numOfApplications?.filter(data => (data.financialYear == finalFinancialYear && data?.status !== "REJECTED"));
+
+      if(Object.keys(fydata).length >0)
+      {
+        let FY = getvalidfromdate("", mdmsFinancialYear).finYearRange;
+        numOfApplications &&
+        numOfApplications.map((ob) => {
+            if (ob.financialYear === FY) {
+              setIsrenewalspresent(true)
+              //isrenewalspresent = true;
+            }
+          });
+          if (isAllowedToNextYear?.length > 0){
+             setAllowedToNextYear(false);
+             setoldRenewalAppNo(isAllowedToNextYear?.[0]?.applicationNumber);
+          }
+          if(!(application?.financialYear.includes(`${latestFinancialYear}`))) {
+            latestRenewalYearofAPP = application?.financialYear;
+            setlatestRenewalYearofAPP(application?.financialYear);
+          }
+          if (!isAllowedToNextYear || isAllowedToNextYear?.length == 0){
+            allowedToNextYear = true;
+            setAllowedToNextYear(true);
+          }
+        setNumberOfApplications(numOfApplications)
+      }
+},[fydata])
   const onsubmit = async() => {
     const licenseNumbers = application?.licenseNumber;
     const filters = { licenseNumbers, offset: 0 };
     let numOfApplications = await TLSearch.numberOfApplications(application?.tenantId, filters);
     let allowedToNextYear= false;
-    isrenewalspresent = false;
+    setIsrenewalspresent(false)
+    //isrenewalspresent = false;
     let latestRenewalYearofAPP = "";
     let financialYear = cloneDeep(application?.financialYear);
       const financialYearDate = financialYear?.split('-')[1];
@@ -73,7 +114,8 @@ const TradeLicenseList = ({ application }) => {
     numOfApplications &&
     numOfApplications.map((ob) => {
         if (ob.financialYear === FY) {
-          isrenewalspresent = true;
+          setIsrenewalspresent(true)
+          //isrenewalspresent = true;
         }
       });
       if (isAllowedToNextYear?.length > 0){
@@ -113,7 +155,7 @@ const TradeLicenseList = ({ application }) => {
             : t("TL_EXPIRED_STATUS_MSG") + convertEpochToDateCitizen(application.validTo) + " " + t("TL_EXPIRED_STATUS_MSG_1")
         }
       />
-      <SubmitBar label={t("TL_RENEW_LABEL")} onSubmit={onsubmit} />
+      {isrenewalspresent ?<KeyNote keyValue={`${t("TL_RENEWAL_PRESENT_ERROR")}`} />:<SubmitBar label={t("TL_RENEW_LABEL")} onSubmit={onsubmit} />}
     </Card>
     {showToast && (
         <Toast
