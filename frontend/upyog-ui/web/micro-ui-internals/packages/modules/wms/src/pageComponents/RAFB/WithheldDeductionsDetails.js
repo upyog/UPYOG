@@ -37,8 +37,9 @@ const WithheldDeductionsDetails = ({ t, config, onSelect, userType, formData }) 
     if(!error){
     setError(null);
     unitsdata = { ...units, units: fields };
+    onSelect(config.key, fields);
     // onSelect(config.key, unitsdata);
-    onSelect(config.key, {"fname":"ram","lname":"kumar"});
+    // onSelect(config.key, {"fname":"with held deduction details ram","lname":"kumar"});
     }
   };
 
@@ -51,7 +52,7 @@ const WithheldDeductionsDetails = ({ t, config, onSelect, userType, formData }) 
     const isMutation = url.includes("property-mutation");
   
     const isEditProperty = formData?.isEditProperty || false;
-    const [dropdownValue, setDropdownValue] = useState([{ taxcategory: "" }])
+    // const [dropdownValue, setDropdownValue] = useState([{ taxcategory: "" }])
     // const [dropdownValue, setDropdownValue] = useState(
     //   !isMutation ? formData?.address?.documents?.ProofOfAddress?.documentType || null : formData?.[config.key]?.documentType
     // );
@@ -72,12 +73,19 @@ const WithheldDeductionsDetails = ({ t, config, onSelect, userType, formData }) 
     }
     console.log("dropdownValue dropdownData ",dropdownData);
   
-    function setTypeOfDropdownValue(i,value) {
-      console.log("dropdownValue i val ",{i,value,fields})
+    function setTypeOfDropdownValue(i,e) {
+      // return false
+      
+      console.log("dropdownValue i val ",{i,e,fields})
       let units = [...fields];
       console.log("dropdownValue i val two ",units)
 
-      units[i].taxcategory = value;
+      if(e.target?.name===undefined){
+        units[i].taxcategory = e;
+      }else{
+        const {name,value}=e.target;
+        units[i][name] = value;
+      }
       console.log("dropdownValue i val three ",units)
       setFeilds(units);
     }
@@ -155,10 +163,38 @@ const WithheldDeductionsDetails = ({ t, config, onSelect, userType, formData }) 
                             t={t}
                             isMandatory={false}
                             option={dropdownData}
-                            selected={dropdownValue}
+                            selected={fields.taxcategory}
                             optionKey="i18nKey"
+                            name=""
                             select={(e)=>setTypeOfDropdownValue(index,e)}
                             placeholder={t(`PT_MUTATION_SELECT_DOC_LABEL`)}
+                          />
+
+                          <CardLabel>{`${t("WMS_RUNNING_ACCOUNT_FINAL_BILL_WORK_NAME")}`}</CardLabel>
+                          <TextInput
+                            t={t}
+                            isMandatory={false}
+                            type={"text"}
+                            optionKey="i18nKey"
+                            name="remark"
+                            value={fields.remark}
+                            onChange={(e)=>setTypeOfDropdownValue(index,e)}
+                            // onChange={setSelectWorkName}
+                            // disable={isEdit}
+                            // {...(validation = { pattern: "^[a-zA-Z-0-9_@/#&+-.`' ]*$", isRequired: true, title: t("TL_INVALID_TRADE_NAME") })}
+                          />
+                          <CardLabel>{`${t("WMS_RUNNING_ACCOUNT_FINAL_BILL_WORK_NAME")}`}</CardLabel>
+                          <TextInput
+                            t={t}
+                            isMandatory={false}
+                            type={"text"}
+                            optionKey="i18nKey"
+                            name="amount"
+                            value={fields.amount}
+                            onChange={(e)=>setTypeOfDropdownValue(index,e)}
+                            // onChange={setSelectWorkName}
+                            // disable={isEdit}
+                            // {...(validation = { pattern: "^[a-zA-Z-0-9_@/#&+-.`' ]*$", isRequired: true, title: t("TL_INVALID_TRADE_NAME") })}
                           />
                 </div>
               </div>

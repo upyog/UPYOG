@@ -267,7 +267,7 @@ console.log("Data Data2 ",billingSlabTradeTypeData)
     setError(null);
     unitsdata = { ...units, units: fields };
     // onSelect(config.key, unitsdata);
-    onSelect(config.key, {"fname":"ram","lname":"kumar"});
+    onSelect(config.key, {"fname":"RA bills Tax Details ram","lname":"kumar"});
     }
   };
 

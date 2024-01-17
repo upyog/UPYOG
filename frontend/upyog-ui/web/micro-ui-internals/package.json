@@ -14,7 +14,8 @@
     "packages/modules/pt",
     "packages/modules/fsm",
     "packages/modules/ws",
-    "packages/modules/wms"
+    "packages/modules/wms",
+    "packages/modules/dss"
   ],
   "author": "Abhinav Kushwaha <abhinav.kushwaha@egovernments.org>",
   "license": "MIT",
@@ -51,6 +52,9 @@
     "build:obps": "cd packages/modules/obps && yarn build",
     "build:ws": "cd packages/modules/ws && yarn build",
     "build:wms": "cd packages/modules/wms && yarn build",
+    "build:dss": "cd packages/modules/dss && yarn build",
+    "build:mcollect": "cd packages/modules/mCollect && yarn build",
+    
     "deploy:jenkins": "./scripts/jenkins.sh"
   },
   "devDependencies": {
