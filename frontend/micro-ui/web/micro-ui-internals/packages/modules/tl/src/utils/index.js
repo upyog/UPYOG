@@ -503,12 +503,12 @@ export const convertToUpdateTrade = (data = {}, datafromflow, tenantId) => {
 }
 
 export const getvalidfromdate = (date, fy) => {
-  let temp = parseInt(fy[0].id);
+  let temp = parseInt(fy[0].code);
   let object = fy?.[0];
   fy && fy.map((ob) => {
-    if (parseInt(ob.id) > temp) {
+    if (parseInt(ob.code) > temp) {
       object = ob;
-      temp = parseInt(ob.id);
+      temp = parseInt(ob.code);
     }
   })
   return object;

@@ -17,9 +17,11 @@ import SelectName from "./pageComponents/SelectName";
 // import SelectPincode from "./pageComponents/SelectPincode";
 import FSMSelectPincode from "./pageComponents/FSMSelectPincode";
 import SelectPitType from "./pageComponents/SelectPitType";
+import SelectRoadDetails from "./pageComponents/SelectRoadDetails";
 import SelectTripNo from "./pageComponents/SelectTripNo";
 import SelectPropertySubtype from "./pageComponents/SelectPropertySubtype";
 import SelectPropertyType from "./pageComponents/SelectPropertyType";
+import SelectPropertyID from "./pageComponents/SelectPropertyID";
 import SelectSlumName from "./pageComponents/SelectSlumName";
 // import SelectStreet from "./pageComponents/SelectStreet";
 import FSMSelectStreet from "./pageComponents/FSMSelectStreet";
@@ -160,6 +162,7 @@ const FSMLinks = ({ matchPath, userType }) => {
 const componentsToRegister = {
   SelectPropertySubtype,
   SelectPropertyType,
+  SelectPropertyID,
   // SelectAddress,
   FSMSelectAddress,
   // SelectStreet,
@@ -170,6 +173,7 @@ const componentsToRegister = {
   FSMSelectPincode,
   SelectTankSize,
   SelectPitType,
+  SelectRoadDetails,
   SelectTripNo,
   // SelectGeolocation,
   FSMSelectGeolocation,
