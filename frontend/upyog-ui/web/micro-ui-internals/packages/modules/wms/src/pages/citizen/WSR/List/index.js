@@ -6,12 +6,12 @@ import MobileList from  "../../../../components/List/WSR/MobileList";
 
 const WmsWsrList = ({ parentRoute, businessService = "WMS", initialStates = {}, filterComponent, isList }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
-  const { isLoading: isLoading, Errors, data: res } = Digit.Hooks.wms.dr.useWmsWsrCount(tenantId);
+  const { isLoading: isLoading, Errors, data: res } = Digit.Hooks.wms.wsr.useWmsWsrCount(tenantId);
 
   const { t } = useTranslation();
   const [pageOffset, setPageOffset] = useState(initialStates.pageOffset || 0);
   const [pageSize, setPageSize] = useState(initialStates.pageSize || 10);
-  const [drtParams, setWsrtParams] = useState(initialStates.drtParams || [{ id: "createdTime", desc: false }]);
+  const [wsrtParams, setWsrtParams] = useState(initialStates.wsrtParams || [{ id: "createdTime", desc: false }]);
   const [totalRecords, setTotalReacords] = useState(undefined);
   const [searchParams, setSearchParams] = useState(() => {
     return initialStates.searchParams || {};
@@ -19,17 +19,17 @@ const WmsWsrList = ({ parentRoute, businessService = "WMS", initialStates = {}, 
 
   let isMobile = window.Digit.Utils.browser.isMobile();
   let paginationParams = isMobile
-    ? { limit: 100, offset: pageOffset, drtOrder: drtParams?.[0]?.desc ? "DESC" : "ASC" }
-    : { limit: pageSize, offset: pageOffset, drtOrder: drtParams?.[0]?.desc ? "DESC" : "ASC" };
+    ? { limit: 100, offset: pageOffset, wsrtOrder: wsrtParams?.[0]?.desc ? "DESC" : "ASC" }
+    : { limit: pageSize, offset: pageOffset, wsrtOrder: wsrtParams?.[0]?.desc ? "DESC" : "ASC" };
   const isupdate = Digit.SessionStorage.get("isupdate");
-  //const { WSRApplications } = async () => await WMSService.WSRApplications.search(tenantId, searchparams, filters);// Digit.Hooks.wms.dr.useWmsWsrSearch(
+  //const { WSRApplications } = async () => await WMSService.WSRApplications.search(tenantId, searchparams, filters);// Digit.Hooks.wms.wsr.useWmsWsrSearch(
   //  tenantId,
   //  searchParams,
   //  paginationParams,
   //  isupdate
   //);
 
-  const { isLoading: hookLoading, isError, error, data:WsrData, ...rest } = Digit.Hooks.wms.dr.useWmsWsrSearch(
+  const { isLoading: hookLoading, isError, error, data:WsrData, ...rest } = Digit.Hooks.wms.wsr.useWmsWsrSearch(
     searchParams,
     tenantId,
     paginationParams,
@@ -124,9 +124,9 @@ else
           onPageSizeChange={handlePageSizeChange}
           parentRoute={parentRoute}
           searchParams={searchParams}
-          drtParams={drtParams}
+          wsrtParams={wsrtParams}
           totalRecords={totalRecords}
-          linkPrefix={'/upyog-ui/citizen/wms/dr-details/'}
+          linkPrefix={'/upyog-ui/citizen/wms/wsr-details/'}
           filterComponent={filterComponent}
         />
       );
@@ -152,7 +152,7 @@ else
             onPageSizeChange={handlePageSizeChange}
             parentRoute={parentRoute}
             searchParams={searchParams}
-            drtParams={drtParams}
+            wsrtParams={wsrtParams}
             totalRecords={totalRecords}
             filterComponent={filterComponent}
           />

@@ -1,7 +1,7 @@
 export const newConfig =[
     {
       
-        "head": "Deduction-Register",
+        "head": "Work Status Report",
         "body": [
               {
                 type: "component",
