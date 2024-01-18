@@ -1,18 +1,70 @@
 import React, { Fragment, useState,useEffect, useCallback, useMemo } from "react";
-import { SearchForm, Table, Card, Loader, Header,Toast } from "@egovernments/digit-ui-react-components";
+import { SearchForm, Table, Card, Loader, Header,Toast,DownloadBtnCommon, UploadFile } from "@egovernments/digit-ui-react-components";
 import { useForm, Controller } from "react-hook-form";
 import SearchFields from "./SearchFields";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import MobileSearchWater from "./MobileSearchWater";
 import { useHistory } from "react-router-dom";
+import {convertDateToEpoch} from "../../utils/index"
+import * as XLSX from "xlsx";
 const BulkBillSearch = ({ tenantId, onSubmit, data, count, resultOk, businessService, isLoading }) => {
   const history = useHistory()
   const [result,setResult]=  useState([])
   const [showToast, setShowToast] = useState(null);
+  const [uploadedFile, setUploadedFile] = useState("a");
+  const [file,setFile] = useState("")
+  const [items, setItems] = useState([]);
+  function selectfile(e) {
+    console.log("eeeeee",e)
+    e.preventDefault()
+      setFile(e.target.files[0]);
+      readExcel(e.target.files[0]);
+
+    }
   const replaceUnderscore = (str) => {
     str = str.replace(/_/g, " ");
     return str;
+  };
+
+
+  const readExcel = (file) => {
+    console.log("filefile",file)
+    const promise = new Promise((resolve, reject) => {
+      const fileReader = new FileReader();
+      fileReader.readAsArrayBuffer(file);
+
+      fileReader.onload = (e) => {
+        const bufferArray = e.target.result;
+
+        const wb = XLSX.read(bufferArray, { type: "buffer" });
+
+        const wsname = wb.SheetNames[0];
+
+        const ws = wb.Sheets[wsname];
+
+        const data = XLSX.utils.sheet_to_json(ws);
+        
+        let d=new Date((44944 - (25567 + 1))*86400*1000)
+        //console.log("datadatadata",data,d)
+        console.log("fileReader",data)
+        let dnwq=data.map((ff)=>{
+          console.log("ff",ff)
+         ff.currentReadingDate = convertDateToEpoch(ff.currentReadingDate)
+        })
+        console.log("datadatadatagggggg",dnwq)
+        resolve(data);
+      };
+
+      fileReader.onerror = (error) => {
+        reject(error);
+      };
+    });
+
+    promise.then((d) => {
+      console.log("dd",d)
+      //setItems(d);
+    });
   };
 
   const convertEpochToDate = (dateEpoch) => {
@@ -46,7 +98,18 @@ const BulkBillSearch = ({ tenantId, onSubmit, data, count, resultOk, businessSer
       searchType: "CONNECTION",
     },
   });
+  const DownloadBtn = (props) => {
+    return (
+        <div onClick={props.onClick}>
+            <DownloadBtnCommon />
+        </div>
+    );
+};
+// function selectfile(e) {
+//   //setFile(e.target.files[0]);
+//   readExcel(e.target.files[0]);
 
+// }
   useEffect(() => {
     register("offset", 0);
     register("limit", 10);
@@ -82,6 +145,13 @@ const BulkBillSearch = ({ tenantId, onSubmit, data, count, resultOk, businessSer
   }
   //need to get from workflow
   const GetCell = (value) => <span className="cell-text">{value}</span>;
+  const handleExcelDownload = (e,tabData) => {
+    e.preventDefault()
+    console.log("handleExcelDownload",tabData)
+    if (tabData?.[0] !== undefined) {
+      return Digit.Download.Excel(tabData,"bulBill");
+    }
+  };
   const columns = useMemo(
     () => [
       {
@@ -93,13 +163,8 @@ const BulkBillSearch = ({ tenantId, onSubmit, data, count, resultOk, businessSer
             <div>
               {row.original["connectionNo"] ? (
                 <span className={"link"}>
-                  <Link
-                    to={`/digit-ui/employee/ws/connection-details?applicationNumber=${row.original["connectionNo"]}&tenantId=${tenantId}&service=${
-                      row.original?.["service"]
-                      }&connectionType=${row.original?.["connectionType"]}&due=${row.original?.due || 0}&from=WS_SEWERAGE_CONNECTION_SEARCH_LABEL`}
-                  >
                     {row.original["connectionNo"] || "NA"}
-                  </Link>
+             
                 </span>
               ) : (
                 <span>{t("NA")}</span>
@@ -109,71 +174,61 @@ const BulkBillSearch = ({ tenantId, onSubmit, data, count, resultOk, businessSer
         },
       },
       {
-        Header: t("WS_COMMON_TABLE_COL_SERVICE_LABEL"),
+        Header: t("BILLING_CYCLE"),
         disableSortBy: true,
         Cell: ({ row }) => {
-          return GetCell(t(`WS_${row.original?.["service"]}`));
-        },
-      },
-
-      {
-        Header: t("WS_COMMON_TABLE_COL_OWN_NAME_LABEL"),
-        disableSortBy: true,
-        Cell: ({ row }) => {
-          return GetCell(row?.original?.connectionHolders?.map((owner) => owner?.name).join(",") ? row?.original?.connectionHolders?.map((owner) => owner?.name).join(",") : `${row.original?.["owner"] || "NA"}`);
+          return GetCell(row.original?.["billingPeriod"]);
         },
       },
       {
-        Header: t("WS_COMMON_TABLE_COL_STATUS_LABEL"),
+        Header: t("LAST_READING"),
         disableSortBy: true,
         Cell: ({ row }) => {
-          return GetCell(t(`WS_${row.original?.["status"]?.toUpperCase()}`));
+          return GetCell(row.original?.["lastReading"]);
         },
+        
       },
       {
-        Header: t("WS_COMMON_TABLE_COL_AMT_DUE_LABEL"),
+        Header: t("METER_READING_DATE"),
         disableSortBy: true,
         Cell: ({ row }) => {
-          if(row?.original?.["due"] <= 0)
-          {
-            return GetCell(`${row.original?.["due"]}`);
-          }
-          else {
-            return GetCell(`${row.original?.["due"] || "NA"}`);
-          }
-          
+          return GetCell(row.original?.["lastReadingDate"]);
         },
+        
       },
       {
-        Header: t("WS_COMMON_TABLE_COL_ADDRESS"),
+        Header: t("METER_STATUS"),
         disableSortBy: true,
         Cell: ({ row }) => {
-          return GetCell(`${row.original?.["address"] || "NA"}`);
+          return GetCell(row.original?.["meterStatus"]);
         },
+        
       },
       {
-        Header: t("WS_COMMON_TABLE_COL_DUE_DATE_LABEL"),
+        Header: t("CURRECT_READING"),
         disableSortBy: true,
         Cell: ({ row }) => {
-          const status = row.original?.["status"]?.toUpperCase() || "";
-          const dueDate = row.original?.dueDate === "NA" ? t("WS_NA") : convertEpochToDate(row.original?.dueDate);
-          return GetCell(status === "INACTIVE" ? t("WS_NA") : t(`${dueDate}`));
+          return GetCell(row.original?.["currentReading"]);
         },
+        
       },
-
       {
-        Header: t("WS_COMMON_TABLE_COL_ACTION_LABEL"),
+        Header: t("CURRECT_READING_DATE"),
         disableSortBy: true,
         Cell: ({ row }) => {
-          const amount = row.original?.due;
-
-          if (amount || amount == 0) {
-            return GetCell(getActionItem(row.original?.status, row));
-          } else {
-            return GetCell(t(`${"WS_NA"}`));
-          }
+          return GetCell(row.original?.["currentReadingDate"]);
         },
+        
       },
+      {
+        Header: t("CONSUMPTION"),
+        disableSortBy: true,
+        Cell: ({ row }) => {
+          return GetCell(row.original?.["consumption"]);
+        },
+        
+      },
+     
     ],
     []
   );
@@ -316,7 +371,27 @@ const BulkBillSearch = ({ tenantId, onSubmit, data, count, resultOk, businessSer
             ))}
         </Card>
         // <></>
-      ) : resultOk ? (
+      ) : true ? (
+        <div style={{ backgroundColor: "white" }}>
+        <div className="sideContent" style={{ float: "left", padding:"20px 10px", fontSize:"24px", fontWeight:"700", fontFamily:"Roboto"}}>
+        {t("ABG_SEARCH_RESULTS_HEADER")}
+        </div>
+        <div className="sideContent" style={{ float: "right", padding: "10px 30px" }}>
+            <span className="table-search-wrapper" style={{cursor:"pointer"}}>
+                <DownloadBtn className="mrlg cursorPointer" onClick={(e) => handleExcelDownload(e,data)} />
+            </span>
+        </div>
+            <div>
+              <UploadFile
+                extraStyleName={"BulkBill"}
+                accept=".xlsx"
+                onUpload={(e) => selectfile(e)}
+                onDelete={(e) => {
+                  setUploadedFile(null);
+                }}
+
+              />
+            </div> 
         <Table
           t={t}
           data={data}
@@ -340,6 +415,7 @@ const BulkBillSearch = ({ tenantId, onSubmit, data, count, resultOk, businessSer
           disableSort={false}
           sortParams={[{ id: getValues("sortBy"), desc: getValues("sortOrder") === "DESC" ? true : false }]}
         />
+        </div>
       ) : null}
       
       {window.location.href.includes("search-demand")? result?.length > 0 ? <Table

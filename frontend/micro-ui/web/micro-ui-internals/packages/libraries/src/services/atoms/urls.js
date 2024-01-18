@@ -190,6 +190,7 @@ const Urls = {
     sewerage_applyAdhocTax: "/sw-calculator/sewerageCalculator/_applyAdhocTax",
     getSearchDetails: "/inbox/v1/dss/_search",
     disconnection_notice: "/pdf-service/v1/_createnosave",
+    meter_search:"/ws-calculator/meterConnection/_search"
   },
 
   engagement: {

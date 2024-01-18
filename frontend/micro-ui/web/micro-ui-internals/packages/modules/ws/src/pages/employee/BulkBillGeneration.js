@@ -1,5 +1,5 @@
 import { Loader, Toast } from "@egovernments/digit-ui-react-components";
-import React, { useState, Fragment, useCallback } from "react";
+import React, { useState, Fragment, useCallback, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
 const BulkBillGeneration = ({ path }) => {
@@ -13,46 +13,42 @@ const BulkBillGeneration = ({ path }) => {
   const getUrlPathName = window.location.pathname;
   const checkPathName = getUrlPathName.includes("water/search-connection");
   const businessServ = checkPathName ? "WS" : "SW";
-
+const [result1,setResult] =useState("")
   const [showToast, setShowToast] = useState(null);
   const serviceConfig = {
     WATER: "WATER",
     SEWERAGE: "SEWERAGE",
   };
 console.log("gggggggggggggbulknill")
-  const onSubmit = useCallback((_data) => {
-    const { connectionNumber, oldConnectionNumber, mobileNumber, propertyId } = _data;
-    if (!connectionNumber && !oldConnectionNumber && !mobileNumber && !propertyId) {
-      setShowToast({ error: true, label: "WS_HOME_SEARCH_CONN_RESULTS_DESC" });
-      setTimeout(() => {
-        setShowToast(false);
-      }, 3000);
-    } else {
-      setPayload(
-        Object.keys(_data)
-          .filter((k) => _data[k])
-          .reduce((acc, key) => ({ ...acc, [key]: typeof _data[key] === "object" ? _data[key].code : _data[key] }), {})
-      );
-    }
+  const onSubmit = useCallback(() => {
+ 
+      setPayload({"tenantId":"pg.citya","locality":"JLC476"});
+    
   });
 
   const config = {
     enabled: !!(payload && Object.keys(payload).length > 0),
   };
 
-  let result = Digit.Hooks.ws.useSearchWS({ tenantId, filters: payload, config, bussinessService: businessServ, t ,shortAddress:true});
+  let result = Digit.WSService.WSMeterSearch({ filters: payload, config});
   
   const isMobile = window.Digit.Utils.browser.isMobile();
 
   if (result?.isLoading && isMobile) {
     return <Loader />
   }
-
+  useEffect(async () => {
+    setPayload({"tenantId":"pg.citya","locality":"JLC476"});
+    let data = await Digit.WSService.WSMeterSearch({filters: payload})
+    console.log("bbbbbbbbbbbbb",data)
+    setResult(data.meterReadings)
+  }, [])
   const getData = () => {
-    if (result?.data?.length == 0 ) {
+    console.log("result",result1)
+    if (result1?.length == 0 ) {
       return { display: "ES_COMMON_NO_DATA" }
-    } else if (result?.data?.length > 0) {
-      return result?.data
+    } else if (result1?.length > 0) {
+      return result1
     } else {
       return [];
     }
