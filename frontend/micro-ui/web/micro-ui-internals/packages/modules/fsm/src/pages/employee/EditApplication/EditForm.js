@@ -22,6 +22,7 @@ const EditForm = ({ tenantId, applicationData, channelMenu, vehicleMenu, sanitat
     clearSuccessData();
     clearError();
   }, []);
+  
   const defaultValues = {
     channel: channelMenu.filter((channel) => channel.code === applicationData.source)[0],
     applicationData: {
@@ -35,9 +36,12 @@ const EditForm = ({ tenantId, applicationData, channelMenu, vehicleMenu, sanitat
       amount: applicationData.noOfTrips * applicationData.additionalDetails.tripAmount || undefined,
       vehicleType: { capacity: applicationData?.vehicleCapacity },
       vehicleCapacity: applicationData?.vehicleCapacity,
+      distancefromroad:applicationData.additionalDetails.distancefromroad,
+      roadWidth:applicationData.additionalDetails.roadWidth,
     },
     propertyType: applicationData.propertyUsage.split(".")[0],
     subtype: applicationData.propertyUsage,
+    propertyID : applicationData.additionalDetails.propertyID,
     address: {
       pincode: applicationData.address.pincode,
       locality: {
@@ -54,7 +58,7 @@ const EditForm = ({ tenantId, applicationData, channelMenu, vehicleMenu, sanitat
     paymentPreference: applicationData.paymentPreference,
     advancepaymentPreference: { advanceAmount: applicationData?.advanceAmount },
   };
-
+  console.log("applicationData",defaultValues)
   const onFormValueChange = (setValue, formData) => {
     if (
       formData?.propertyType &&
@@ -121,6 +125,8 @@ const EditForm = ({ tenantId, applicationData, channelMenu, vehicleMenu, sanitat
       additionalDetails: {
         ...applicationData.additionalDetails,
         tripAmount: amount,
+        distancefromroad:data.tripData.distancefromroad,
+        roadWidth:data.tripData.roadWidth,
       },
       propertyUsage,
       vehicleType: data.tripData.vehicleType.type,
@@ -175,7 +181,6 @@ const EditForm = ({ tenantId, applicationData, channelMenu, vehicleMenu, sanitat
   }
 
   const configs = [...preFields, ...commonFields];
-
   return (
     <>
       <div style={{ marginLeft: "15px" }}>
