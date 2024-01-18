@@ -68,7 +68,7 @@ const WmsWsrEdit  = () => {
     // requestdata.end_date = Date.parse(input?.WmsWsrEndDate?.end_date);
     requestdata.project_name = input?.WmsWsrPrjName?.project_name ? input?.WmsWsrPrjName?.project_name : undefined;
     requestdata.work_name = input?.WmsWsrWorkName?.work_name ? input?.WmsWsrWorkName?.work_name : undefined;
-    requestdata.milestone_name = input?.WmsWsrMLName?.milestone_name ? input?.WmsWsrMLName?.milestone_name : undefined;
+    requestdata.milestone_name = input?.WmsWsrActivity?.milestone_name ? input?.WmsWsrActivity?.milestone_name : undefined;
     requestdata.percent_weightage = input?.WmsWsrPercent?.percent_weightage ? input?.WmsWsrPercent?.percent_weightage : undefined;
     // requestdata.unit = input?.WmsWsrUnit?.unit ? input?.WmsWsrUnit?.unit : undefined;
     // requestdata.rate = input?.WmsWsrRate?.rate ? input?.WmsWsrRate?.rate : undefined;
@@ -96,7 +96,7 @@ const WmsWsrEdit  = () => {
     WmsWsrId: {Wsr_id:dataEdit[0]?.Wsr_id},
     WmsWsrPrjName: { project_name: dataEdit[0]?.project_name },
     WmsWsrWorkName: { work_name: dataEdit[0]?.work_name },
-    WmsWsrMLName: { milestone_name: dataEdit[0]?.milestone_name },
+    WmsWsrActivity: { milestone_name: dataEdit[0]?.milestone_name },
     WmsWsrPercent: { percent_weightage: dataEdit[0]?.percent_weightage },
     // WmsWsrUnit: { unit: dataEdit[0]?.unit },
     // WmsWsrRate: { rate: dataEdit[0]?.rate },

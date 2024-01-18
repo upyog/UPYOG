@@ -25,8 +25,8 @@ export const newConfig =[
               },
               {
                 type: "component",
-                component: "WmsWsrMLName",
-                key: "WmsWsrMLName",
+                component: "WmsWsrActivity",
+                key: "WmsWsrActivity",
                 isMandatory: true,
                 withoutLabel: true,
               },

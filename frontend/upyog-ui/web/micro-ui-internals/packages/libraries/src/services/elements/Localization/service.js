@@ -72704,8 +72704,8 @@ export const LocalizationService = {
             "locale": "en_IN"
         },
         {
-            "code": "WMS_WSR_ML_NAME_LABEL",
-            "message": "Milestone Name",
+            "code": "WMS_WSR_ACTIVITY_NAME_LABEL",
+            "message": "Activity Name",
             "module": "rainmaker-common",
             "locale": "en_IN"
         },

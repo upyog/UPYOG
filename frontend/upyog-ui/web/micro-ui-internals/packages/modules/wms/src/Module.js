@@ -182,7 +182,7 @@ import WmsWsrEdit from "./pages/citizen/WSR/Edit";
 import WmsWsrId from "./pageComponents/WSR/WmsWsrId";
 import WmsWsrPrjName from "./pageComponents/WSR/WmsWsrPrjName";
 import WmsWsrWorkName from "./pageComponents/WSR/WmsWsrWorkName";
-import WmsWsrMLName from "./pageComponents/WSR/WmsWsrMLName"
+import WmsWsrActivity from "./pageComponents/WSR/WmsWsrActivity"
 import WmsWsrPercent from "./pageComponents/WSR/WmsWsrPercent";
 
 /**---------------- */
@@ -422,7 +422,7 @@ const componentsToRegister = {
   WmsWsrEdit:WmsWsrEdit,
   WmsWsrResponse:WmsWsrResponse,
   WmsWsrId,
-  WmsWsrMLName,
+  WmsWsrActivity,
   WmsWsrPrjName,
   WmsWsrWorkName,
   WmsWsrPercent,
