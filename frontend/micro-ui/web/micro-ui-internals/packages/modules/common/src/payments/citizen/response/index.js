@@ -38,10 +38,12 @@ export const convertEpochToDate = (dateEpoch) => {
   );
   
   const { isLoading, data, isError } = Digit.Hooks.usePaymentUpdate({ egId }, business_service, {
+    
     retry: false,
     staleTime: Infinity,
     refetchOnWindowFocus: false,
   });
+  console.log("datatatataty",data)
 
   const { label } = Digit.Hooks.useApplicationsForBusinessServiceSearch({ businessService: business_service }, { enabled: false });
 
@@ -667,6 +669,16 @@ export const convertEpochToDate = (dateEpoch) => {
             {t("CS_DOWNLOAD_RECEIPT")}
           </div>
       ) : null}
+
+      {/*for pet service */}
+       {business_service?.includes("pet-services") ? (
+        <div className="link" style={isMobile ? { marginTop: "8px", width: "100%", textAlign: "center" } : { marginTop: "8px" }} onClick={printReciept}>
+            {t("CS_DOWNLOAD_RECEIPT")}
+          </div>
+      ) : null}
+      {/*for pet service */}
+
+
       {business_service?.includes("WS") ? (
         <div className="link" style={isMobile ? { marginTop: "8px", width: "100%", textAlign: "center" } : { marginTop: "8px" }} onClick={printReciept}>
             {t("CS_DOWNLOAD_RECEIPT")}
