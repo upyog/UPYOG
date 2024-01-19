@@ -3,7 +3,7 @@ import React, { useEffect } from "react";
 import { cardBodyStyle, stringReplaceAll } from "../utils";
 //import { map } from "lodash-es";
 
-const PetServiceDoc = ({ t, config, onSelect, userType, formData }) => {
+const PTRServiceDoc = ({ t, config, onSelect, userType, formData }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();
   sessionStorage.removeItem("docReqScreenByBack");
@@ -66,4 +66,4 @@ const PetServiceDoc = ({ t, config, onSelect, userType, formData }) => {
   );
 };
 
-export default PetServiceDoc;
+export default PTRServiceDoc;

@@ -10,7 +10,7 @@ import { pdfDownloadLink } from "../../utils";
 import get from "lodash/get";
 import { size } from "lodash";
 
-const PetApplicationDetails = () => {
+const PTRApplicationDetails = () => {
   const { t } = useTranslation();
   const history = useHistory();
   const { acknowledgementIds, tenantId } = useParams();
@@ -29,6 +29,9 @@ const PetApplicationDetails = () => {
       filters: { applicationNumber: acknowledgementIds },
     },
   );
+
+
+  console.log("jdjdjdjdjdjdjdjjdjdjdjdj")
 
   const [billAmount, setBillAmount] = useState(null);
   const [billStatus, setBillStatus] = useState(null);
@@ -50,6 +53,7 @@ const PetApplicationDetails = () => {
   
   let  pet_details = (PetRegistrationApplications && PetRegistrationApplications.length > 0 && PetRegistrationApplications[0]) || {};
   const application =  pet_details;
+  console.log("hhhhhhhhhhhhhhhh",pet_details);
   
   sessionStorage.setItem("ptr-pet", JSON.stringify(application));
 
@@ -79,15 +83,15 @@ const PetApplicationDetails = () => {
     }
   );
 
-  // const { data: reciept_data, isLoading: recieptDataLoading } = Digit.Hooks.useRecieptSearch(
-  //   {
-  //     tenantId: tenantId,
-  //     businessService: "pet-services",
-  //     consumerCodes: acknowledgementIds,
-  //     isEmployee: true,
-  //   },
-  //   { enabled: acknowledgementIds ? true : false }
-  // );
+  const { data: reciept_data, isLoading: recieptDataLoading } = Digit.Hooks.useRecieptSearch(
+    {
+      tenantId: tenantId,
+      businessService: "pet-services",
+      consumerCodes: acknowledgementIds,
+      isEmployee: false,
+    },
+    { enabled: acknowledgementIds ? true : false }
+  );
 
   if (!pet_details.workflow) {
     let workflow = {
@@ -228,7 +232,7 @@ const PetApplicationDetails = () => {
           {/* <CardSubHeader style={{ fontSize: "24px" }}>{t("PTR_DOCUMENT_DETAILS")}</CardSubHeader>
           <div>
             {Array.isArray(docs) ? (
-              docs.length > 0 && <PetDocument pet_details={pet_details}></PetDocument>
+              docs.length > 0 && <PTRDocument pet_details={pet_details}></PTRDocument>
             ) : (
               <StatusTable>
                 <Row className="border-none" text={t("PTR_NO_DOCUMENTS_MSG")} />
@@ -254,7 +258,7 @@ const PetApplicationDetails = () => {
   );
 };
 
-export default PetApplicationDetails;
+export default PTRApplicationDetails;
             
            
            

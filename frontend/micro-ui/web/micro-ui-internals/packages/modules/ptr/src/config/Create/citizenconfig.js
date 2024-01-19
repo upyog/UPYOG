@@ -5,7 +5,7 @@
                     "body": [
                         {
                             "route":"info",
-                            "component":"PetServiceDoc",
+                            "component":"PTRServiceDoc",
                             "nextStep": "owners",
                             "key": "Documents"
                         },
