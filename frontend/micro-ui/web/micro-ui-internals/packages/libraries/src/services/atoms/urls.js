@@ -182,6 +182,7 @@ const Urls = {
     billAmendmentCreate: "/billing-service/amendment/_create",
     billAmendmentUpdate: "/billing-service/amendment/_update",
     ws_meter_conncetion_create: "/ws-calculator/meterConnection/_create",
+    ws_meter_conncetion_bulk_create: "/ws-calculator/meterConnection/_bulkReading",
     sw_meter_conncetion_create: "/sw-calculator/meterConnection/_create",
     wns_group_bill: "/egov-pdf/download/WNS/wnsgroupbill",
     cancel_group_bill: "/pdf-service/v1/_cancelProcess",

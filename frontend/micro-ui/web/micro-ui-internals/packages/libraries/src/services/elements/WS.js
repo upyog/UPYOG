@@ -135,6 +135,17 @@ export const WSService = {
       params: {},
       auth: true,
     }),
+    bulkMeterConnectioncreate: (details, businessService) =>
+    Request({
+      url: Urls.ws.ws_meter_conncetion_bulk_create,
+      data: details,
+      useCache: false,
+      setTimeParam: false,
+      userService: true,
+      method: "POST",
+      params: {},
+      auth: true,
+    }),
   wnsGroupBill: (filters) =>
     Request({
       url: Urls.ws.wns_group_bill,

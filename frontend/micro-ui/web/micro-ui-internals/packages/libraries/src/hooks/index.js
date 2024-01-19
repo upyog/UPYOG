@@ -238,6 +238,7 @@ import useWaterPropertySearch from "./ws/useWaterPropertySearch";
 import useDisconnectionWorkflow from "./ws/useDisconnectionWorkflow";
 import useDisConnectionDetails from "./ws/useDisConnectionDetails";
 import useWSModifyDetailsPage from "./ws/useWSModifyDetailsPage";
+import useBulkMeterReadingCreateAPI from "./ws/useBulkMeterCreate";
 
 import useGetHowItWorksJSON from "./useHowItWorksJSON";
 import useGetFAQsJSON from "./useGetFAQsJSON";
@@ -513,6 +514,7 @@ const ws = {
   useDisConnectionDetails,
   useWSModifyDetailsPage,
   useToCheckPrivacyEnablement,
+  useBulkMeterReadingCreateAPI,
   useWSConfigMDMS: useWSConfigMDMS,
 };
 
