@@ -3,6 +3,7 @@ import { CREATE_COMPLAINT } from "./types";
 const createComplaint = ({
   cityCode,
   complaintType,
+  priorityLevel,
   description,
   landmark,
   city,
@@ -20,6 +21,7 @@ const createComplaint = ({
   const response = await Digit.Complaint.create({
     cityCode,
     complaintType,
+    priorityLevel,
     description,
     landmark,
     city,

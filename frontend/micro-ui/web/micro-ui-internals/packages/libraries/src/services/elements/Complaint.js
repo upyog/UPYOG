@@ -2,6 +2,7 @@ export const Complaint = {
   create: async ({
     cityCode,
     complaintType,
+    priorityLevel,
     description,
     landmark,
     city,
@@ -20,6 +21,7 @@ export const Complaint = {
       service: {
         tenantId: cityCode,
         serviceCode: complaintType,
+        priority : priorityLevel.code,
         description: description,
         additionalDetail: {},
         source: Digit.Utils.browser.isWebview() ? "mobile" : "web",
