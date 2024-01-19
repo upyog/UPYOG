@@ -78,9 +78,7 @@ const ApplicationDetails = () => {
   useEffect(() => {
     if (applicationDetails) {
       setAppDetailsToShow(_.cloneDeep(applicationDetails));
-      // if (applicationDetails?.applicationData?.status !== "ACTIVE" && applicationDetails?.applicationData?.creationReason === "MUTATION") {
-      // setEnableAudit(true);
-      // }
+     
     }
   }, [applicationDetails]);
 
