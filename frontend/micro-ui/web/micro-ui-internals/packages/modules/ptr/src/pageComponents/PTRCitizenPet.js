@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { FormStep, TextInput, CardLabel, RadioButtons, Dropdown, RadioOrSelect } from "@egovernments/digit-ui-react-components";
 import { cardBodyStyle } from "../utils";
 import { useLocation, useRouteMatch } from "react-router-dom";
-import Timeline from "../components/TLTimeline";
+import Timeline from "../components/PTRTimeline";
 import { Controller, useForm } from "react-hook-form";
 
 
@@ -167,8 +167,7 @@ const PTRCitizenPet
       <React.Fragment>
         {
           window.location.href.includes("/citizen") ?
-            window.location.href.includes("/citizen/pt/property/property-mutation") ?
-              <Timeline currentStep={1} flow="PT_MUTATE" /> : <Timeline currentStep={2} />
+            <Timeline currentStep={2} />
             : null
         }
 
@@ -240,7 +239,6 @@ const PTRCitizenPet
               value={petName}
               onChange={setpetname}
               style={{ width: "86%" }}
-              //disable={isUpdateProperty || isEditProperty}
               ValidationRequired={false}
               {...(validation = {
                 isRequired: true,
@@ -307,7 +305,6 @@ const PTRCitizenPet
               value={doctorName}
               onChange={setdoctorname}
               style={{ width: "86%" }}
-              //disable={isUpdateProperty || isEditProperty}
               ValidationRequired={false}
               {...(validation = {
                 isRequired: true,
@@ -327,7 +324,6 @@ const PTRCitizenPet
               value={clinicName}
               onChange={setclinicname}
               style={{ width: "86%" }}
-              //disable={isUpdateProperty || isEditProperty}
               ValidationRequired={false}
               {...(validation = {
                 isRequired: true,
@@ -367,14 +363,6 @@ const PTRCitizenPet
               style={{ width: "86%" }}
 
             />
-
-
-
-
-
-
-
-
 
           </div>
         </FormStep>

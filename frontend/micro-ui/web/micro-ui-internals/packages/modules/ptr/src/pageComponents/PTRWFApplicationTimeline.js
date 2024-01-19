@@ -1,12 +1,15 @@
-import { ActionLinks, CardSectionHeader, CheckPoint, ConnectingCheckPoints, Loader, SubmitBar } from "@egovernments/digit-ui-react-components";
+import { ActionLinks, CardSectionHeader, CheckPoint, CloseSvg, ConnectingCheckPoints, Loader, SubmitBar } from "@egovernments/digit-ui-react-components";
 import React, { Fragment } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import PTWFCaption from "./PTWFCaption";
+import PTRWFCaption from "./PTRWFCaption";
 
-const PTWFApplicationTimeline = (props) => {
+
+// ToDo: ned to check code carefully which we want and dont.
+const PTRWFApplicationTimeline = (props) => {
+  console.log("idddddddddd", props)
   const { t } = useTranslation();
-  const businessService = (props.application?.creationReason && `${props.application.creationReason}`) || "ptr";
+  const businessService = "pet-services";
   // const businessService = "ptr";
 
   const { isLoading, data } = Digit.Hooks.useWorkflowDetails({
@@ -28,7 +31,7 @@ const PTWFApplicationTimeline = (props) => {
         date: checkpoint?.auditDetails?.lastModified,
         source: props.application?.channel || "",
       };
-      return <PTWFCaption data={caption} />;
+      return <PTRWFCaption data={caption} />;
     }
     else if (checkpoint.state) {
       const caption = {
@@ -39,32 +42,17 @@ const PTWFApplicationTimeline = (props) => {
         wfComment: checkpoint.wfComment,
         thumbnailsToShow: checkpoint?.thumbnailsToShow,
       };
-      return <PTWFCaption data={caption} OpenImage={OpenImage} />;
-    } else if (checkpoint.status === "ACTIVE" && props?.userType === 'citizen') {
-      return (
-        <div>
-          <Link to={`/digit-ui/citizen/pt/property/properties/${props?.application?.applicationNumber}`}>
-            <ActionLinks>{t("PT_VIEW_PROPERTY_DETAILS")}</ActionLinks>
-          </Link>
-        </div>
-      );
-    }
-    // else if (checkpoint.state === "CORRECTIONPENDING") {
-    //   return (
-    //     <div>
-    //       <Link to={`/digit-ui/citizen/pt/property/properties/${props?.application?.applicationNumber}`}>
-    //         <ActionLinks>{t("EDIT_PROPERTY")}</ActionLinks>
-    //       </Link>
-    //     </div>
-    //   );
-    // }
+      return <PTRWFCaption data={caption} OpenImage={OpenImage} />;
+    } 
+    
+   
     else {
       const caption = {
         date: Digit.DateUtils.ConvertTimestampToDate(props.application?.auditDetails.lastModified),
         name: checkpoint?.assigner?.name,
         comment: t(checkpoint?.comment),
       };
-      return <PTWFCaption data={caption} />;
+      return <PTRWFCaption data={caption} />;
     }
   };
 
@@ -83,28 +71,14 @@ const PTWFApplicationTimeline = (props) => {
           ? (
           <div style={{ marginTop: "1em", bottom: "0px", width: "100%", marginBottom: "1.2em" }}>
             <Link
-              to={{ pathname: `/digit-ui/citizen/payment/my-bills/${businessService}/${props.id}`, state: { tenantId: props.application.tenantId, applicationNumber : props?.application?.applicationNumber } }}
+              to={{ pathname: `/digit-ui/citizen/payment/my-bills/${businessService}/${props?.application?.applicationNumber}`, state: { tenantId: props.application.tenantId, applicationNumber : props?.application?.applicationNumber } }}
             >
               <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} />
             </Link>
           </div>
           ) : null
         );
-      case "EDIT":
-        return (
-          <div style={{ marginTop: "1em", bottom: "0px", width: "100%", marginBottom: "1.2em" }}>
-            {businessService != "PT.MUTATION" && (
-              <Link
-                to={{
-                  pathname: `/digit-ui/citizen/pt/property/edit-application/action=edit-${businessService}/${props.id}`,
-                  state: { tenantId: props.application.tenantId },
-                }}
-              >
-                <SubmitBar label={t("CS_APPLICATION_DETAILS_EDIT")} />
-              </Link>
-            )}
-          </div>
-        );
+      
       case "SUBMIT_FEEDBACK":
         return (
           <div style={{ marginTop: "24px" }}>
@@ -175,4 +149,4 @@ const PTWFApplicationTimeline = (props) => {
   );
 };
 
-export default PTWFApplicationTimeline;
+export default PTRWFApplicationTimeline;

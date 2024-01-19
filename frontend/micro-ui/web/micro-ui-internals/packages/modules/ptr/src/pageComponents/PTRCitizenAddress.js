@@ -2,7 +2,7 @@ import { CardLabel, FormStep, LabelFieldPair, TextInput } from "@egovernments/di
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import Timeline from "../components/TLTimeline";
+import Timeline from "../components/PTRTimeline";
 
 const PTRCitizenAddress = ({ t, config, onSelect, userType, formData, formState, setError, clearErrors }) => {
   const onSkip = () => onSelect();
@@ -10,15 +10,10 @@ const PTRCitizenAddress = ({ t, config, onSelect, userType, formData, formState,
   const { control, formState: localFormState, watch, setError: setLocalError, clearErrors: clearLocalErrors, setValue, trigger } = useForm();
   const formValue = watch();
   const { errors } = localFormState;
-  const checkLocation = window.location.href.includes("tl/new-application") || window.location.href.includes("tl/renew-application-details");
-  const isRenewal = window.location.href.includes("edit-application") || window.location.href.includes("tl/renew-application-details");
+  const checkLocation = window.location.href.includes("ptr/petservice/new-application");
 
   let inputs;
-  if (window.location.href.includes("tl")) {
-    inputs = config.inputs;
-    config.inputs[0].disable = window.location.href.includes("edit-application");
-    config.inputs[1].disable = window.location.href.includes("edit-application");
-  } else {
+  
     inputs = [
       {
         label: "PTR_STREET_NAME",
@@ -45,9 +40,9 @@ const PTRCitizenAddress = ({ t, config, onSelect, userType, formData, formState,
         type: "text",
         name: "buildingName",
          validation: {
-        //   pattern: "[a-zA-Z0-9 !@#$%^&*()_+\-={};':\\\\|,.<>/?]{1,64}",
-        //   // maxlength: 256,
-        //   title: t("CORE_COMMON_DOOR_INVALID"),
+          pattern: "[a-zA-Z0-9 !@#$%^&*()_+\-={};':\\\\|,.<>/?]{1,64}",
+          // maxlength: 256,
+          title: t("CORE_COMMON_DOOR_INVALID"),
          },
       },
       {
@@ -55,9 +50,9 @@ const PTRCitizenAddress = ({ t, config, onSelect, userType, formData, formState,
         type: "text",
         name: "addressLine1",
          validation: {
-        //   pattern: "[a-zA-Z0-9 !@#$%^&*()_+\-={};':\\\\|,.<>/?]{1,64}",
-        //   // maxlength: 256,
-        //   title: t("CORE_COMMON_DOOR_INVALID"),
+          pattern: "[a-zA-Z0-9 !@#$%^&*()_+\-={};':\\\\|,.<>/?]{1,64}",
+          // maxlength: 256,
+          title: t("CORE_COMMON_DOOR_INVALID"),
          },
       },
       {
@@ -65,9 +60,9 @@ const PTRCitizenAddress = ({ t, config, onSelect, userType, formData, formState,
         type: "text",
         name: "addressLine2",
          validation: {
-        //   pattern: "[a-zA-Z0-9 !@#$%^&*()_+\-={};':\\\\|,.<>/?]{1,64}",
-        //   // maxlength: 256,
-        //   title: t("CORE_COMMON_DOOR_INVALID"),
+          pattern: "[a-zA-Z0-9 !@#$%^&*()_+\-={};':\\\\|,.<>/?]{1,64}",
+          // maxlength: 256,
+          title: t("CORE_COMMON_DOOR_INVALID"),
          },
       },
       {
@@ -75,15 +70,15 @@ const PTRCitizenAddress = ({ t, config, onSelect, userType, formData, formState,
         type: "text",
         name: "landmark",
          validation: {
-        //   pattern: "[a-zA-Z0-9 !@#$%^&*()_+\-={};':\\\\|,.<>/?]{1,64}",
-        //   // maxlength: 256,
-        //   title: t("CORE_COMMON_DOOR_INVALID"),
+          pattern: "[a-zA-Z0-9 !@#$%^&*()_+\-={};':\\\\|,.<>/?]{1,64}",
+          // maxlength: 256,
+          title: t("CORE_COMMON_DOOR_INVALID"),
          },
       },
     
       
     ];
-  }
+  // }
 
   const convertValidationToRules = ({ validation, name, messages }) => {
     if (validation) {
@@ -151,7 +146,7 @@ const PTRCitizenAddress = ({ t, config, onSelect, userType, formData, formState,
                     _props.onChange(e.target.value);
                   }}
                   onBlur={_props.onBlur}
-                  disable={isRenewal}
+                  // disable={isRenewal}
                   autoFocus={focusIndex?.index == index}
                   {...input.validation}
                 />

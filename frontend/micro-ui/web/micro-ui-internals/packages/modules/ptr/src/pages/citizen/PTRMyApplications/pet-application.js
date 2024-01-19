@@ -3,7 +3,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 
-const PTApplication = ({ application, tenantId, buttonLabel }) => {
+const PetApplication = ({ application, tenantId, buttonLabel }) => {
   
   
   const { t } = useTranslation();
@@ -21,4 +21,4 @@ const PTApplication = ({ application, tenantId, buttonLabel }) => {
   );
 };
 
-export default PTApplication;
+export default PetApplication;

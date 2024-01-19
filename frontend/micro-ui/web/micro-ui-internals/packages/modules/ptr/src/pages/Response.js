@@ -3,7 +3,7 @@ import { Card, Banner, CardText, SubmitBar, Loader, LinkButton, Toast, ActionBar
 import { Link, useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
-import getPTAcknowledgementData from "../getPTAcknowledgementData";
+import getPetAcknowledgementData from "../getPetAcknowledgementData";
 
 const GetMessage = (type, action, isSuccess, isEmployee, t) => {
   return t(`${isEmployee ? "E" : "C"}S_PTR_RESPONSE_${action ? action : "CREATE"}_${type}${isSuccess ? "" : "_ERROR"}`);
@@ -72,9 +72,10 @@ const Response = (props) => {
   }, [mutation1.data]);
   useEffect(() => {
     const onSuccess = async (successRes) => {
+      console.log("hhhhhhhhhhhhhhhh",successRes)
       setMutationHappened(true);
       queryClient.clear();
-      if (successRes?.PetRegistrationApplications[0]?.creationReason === "MUTATION") {
+      if (successRes?.PetRegistrationApplications[0]?.creationReason === "CREATE") {
         setEnableAudit(true);
       }
     };
@@ -104,7 +105,7 @@ const Response = (props) => {
     let tenantId = Pet.tenantId || tenantId;
     
 
-    const data = await getPTAcknowledgementData({ ...Pet, auditData }, tenantInfo, t);
+    const data = await getPetAcknowledgementData({ ...Pet, auditData }, tenantInfo, t);
     Digit.Utils.pdf.generate(data);
   };
 
