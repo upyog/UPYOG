@@ -12,7 +12,7 @@
     "packages/modules/pgr",
     "packages/modules/pt",
     "packages/modules/ws",
-    "packages/modules/fsm"
+    "packages/modules/fsm",
     "packages/modules/mCollect",
     "packages/modules/obps"
   ],
