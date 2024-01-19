@@ -227,14 +227,13 @@ export const WSService = {
       params: { tenantId, key },
       data: data,
     }),
-    WSMeterSearch: (filters) =>
+    WSMeterSearch: ({ tenantId, filters }) =>
     Request({
       url: Urls.ws.meter_search,
       useCache: false,
       method: "POST",
       auth: true,
-      userService: true,
-      params: { "tenantId":"pg.citya","locality":"JLC476" },
-     
+      userService: false,
+      params: { tenantId, ...filters },
     }),
 };

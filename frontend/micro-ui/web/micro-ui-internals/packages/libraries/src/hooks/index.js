@@ -213,6 +213,7 @@ import WSuseSearch from "./ws/useSearch";
 import useOldValue from "./ws/useOldValue";
 import useSewSearch from "./ws/useSewSearch";
 import useSearchWS from "./ws/useSearchWS";
+import useBulkSearchWS from "./ws/useBulkSearchWS"
 import useMypaymentWS from "./ws/useMypaymentWS";
 import useWSDetailsPage from "./ws/useWSDetailsPage";
 import useWSApplicationActions from "./ws/useApplicationActions";
@@ -492,6 +493,7 @@ const ws = {
   WSuseSearch,
   useSewSearch,
   useSearchWS,
+  useBulkSearchWS,
   useWSDetailsPage,
   useWSApplicationActions,
   useApplicationActionsBillAmendUpdate,

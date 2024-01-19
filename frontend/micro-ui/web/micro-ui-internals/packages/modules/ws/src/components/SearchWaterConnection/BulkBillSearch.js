@@ -111,6 +111,8 @@ const BulkBillSearch = ({ tenantId, onSubmit, data, count, resultOk, businessSer
       sortBy: "commencementDate",
       sortOrder: "DESC",
       searchType: "CONNECTION",
+      locality:"",
+      tenantId:""
     },
   });
   const DownloadBtn = (props) => {
@@ -126,7 +128,8 @@ const BulkBillSearch = ({ tenantId, onSubmit, data, count, resultOk, businessSer
     register("sortBy", "commencementDate");
     register("searchType", "CONNECTION");
     register("sortOrder", "DESC");
-    register("propertyId", "");
+    register("locality", "");
+    register("tenantId", "");
   }, [register]);
 
   const onSort = useCallback((args) => {
@@ -151,7 +154,7 @@ const BulkBillSearch = ({ tenantId, onSubmit, data, count, resultOk, businessSer
   const isMobile = window.Digit.Utils.browser.isMobile();
 
   if (isMobile) {
-    return <MobileSearchWater {...{ Controller, register, control, t, reset, previousPage, handleSubmit, tenantId, data, onSubmit }} />;
+    return <MobileSearchWater {...{ Controller, register, control, t, reset, previousPage, handleSubmit, tenantId, data, onSubmit ,setValue}} />;
   }
   //need to get from workflow
   const GetCell = (value) => <span className="cell-text">{value}</span>;
@@ -247,7 +250,7 @@ const BulkBillSearch = ({ tenantId, onSubmit, data, count, resultOk, businessSer
         {t("WS_WATER_SEARCH_BULK_CONNECTION_SUB_HEADER")}
       </Header>
       <SearchForm className="ws-custom-wrapper" onSubmit={onSubmit} handleSubmit={handleSubmit}>
-        <BulkBillSearchFields {...{ register, control, reset, tenantId, t }} />
+        <BulkBillSearchFields {...{ register, control, reset, tenantId, t,setValue }} />
       </SearchForm>
       {isLoading ? <Loader /> : null}
       {data?.display && !resultOk ? (
