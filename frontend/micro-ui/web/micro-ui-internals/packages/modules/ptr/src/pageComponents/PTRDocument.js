@@ -9,7 +9,7 @@ const PDFSvg = ({ width = 20, height = 20, style }) => (
   </svg>
 );
 
-function PetDocument({ petdetail = {} }) {
+function PTRDocument({ petdetail = {} }) {
   const { t } = useTranslation();
   const { isLoading, isError, error, data } = Digit.Hooks.ptr.usePetDocumentSearch({
     petdetail,
@@ -40,4 +40,4 @@ function PetDocument({ petdetail = {} }) {
   );
 }
 
-export default PetDocument;
+export default PTRDocument;

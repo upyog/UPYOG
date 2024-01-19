@@ -58,12 +58,12 @@ const EmployeeApp = ({ path, url, userType }) => {
     return <BreadCrumb style={isMobile?{display:"flex"}:{}}  spanStyle={{maxWidth:"min-content"}} crumbs={crumbs} />;
   }
 
-  const NewApplication = Digit?.ComponentRegistryService?.getComponent("PETNewApplication");
+  const NewApplication = Digit?.ComponentRegistryService?.getComponent("PTRNewApplication");
   const ApplicationDetails = Digit?.ComponentRegistryService?.getComponent("ApplicationDetails");
 
   // const EditApplication = Digit?.ComponentRegistryService?.getComponent("PTEditApplication");
-  const Response = Digit?.ComponentRegistryService?.getComponent("PETResponse");
-  const DocsRequired = Digit?.ComponentRegistryService?.getComponent("PTDocsRequired");
+  const Response = Digit?.ComponentRegistryService?.getComponent("PTRResponse");
+  const DocsRequired = Digit?.ComponentRegistryService?.getComponent("PTRDocsRequired");
   const isRes = window.location.href.includes("ptr/response");
   const isNewRegistration = window.location.href.includes("new-application") || window.location.href.includes("modify-application") || window.location.href.includes("ptr/application-details");
   return (
