@@ -229,7 +229,7 @@
                                             <div><spring:message code="msg.cred.invalid"/></div>
                                         </div>
                                     </c:otherwise>
-                                </c:choose>-
+                                </c:choose>
                             </div>
                         </c:if>
                         <c:if test="${not empty param.reset}">
