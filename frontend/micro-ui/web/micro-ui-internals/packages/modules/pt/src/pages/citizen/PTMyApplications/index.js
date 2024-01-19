@@ -20,8 +20,8 @@ export const PTMyApplications = () => {
     t1 = 4;
   }
   let filter1 = !isNaN(parseInt(filter))
-    ? { limit: "50", sortOrder: "ASC", sortBy: "createdTime", offset: off, tenantId }
-    : { limit: "4", sortOrder: "ASC", sortBy: "createdTime", offset: "0",mobileNumber:user?.mobileNumber, tenantId };
+    ? { limit: "50", sortOrder: "ASC", sortBy: "createdTime", offset: off, tenantId, status:"INWORKFLOW"}
+    : { limit: "4", sortOrder: "ASC", sortBy: "createdTime", offset: "0",mobileNumber:user?.mobileNumber, tenantId,status:"INWORKFLOW"};
 
   const { isLoading, isError, error, data } = Digit.Hooks.pt.usePropertySearch({ filters: filter1 }, { filters: filter1 });
   

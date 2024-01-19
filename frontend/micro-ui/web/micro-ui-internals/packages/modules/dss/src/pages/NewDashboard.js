@@ -262,21 +262,10 @@ import {
     if (isLoading || isUlbLoading || localizationLoading || isMdmsLoading || isLoadingNAT || isServicesLoading) {
       return <Loader />;
     }
-    console.log("dashboardConfig?.[0]?.visualizations",dashboardConfig?.[0]?.visualizations)
-  //   let b= []
-  //   let c= dashboardConfig?.[0]?.visualizations[0].vizArray[0].charts.filter((val) =>{
-  //     if(val.id === "targetCollectionvOverview" ||val.id === "totalCollectionOverview" ||val.id === "totalCollectionv3" || val.id ==="totalNonTaxCollection" ||val.id === "nonTaxRevenueContribution" || val.id ==="StateGDPwiseTotalRevenueCollection" || val.id ==="PropertyTaxRevenuePerHouseholdOverview" || val.id ==="NonTaxRevenuePerHousehold")
-  //   {
-  //     return val
-  //   }
-  //   })
-  // console.log("c1234444",c)
-  // dashboardConfig[0].visualizations[0].vizArray[0].charts = c
-  //   b.push(dashboardConfig?.[0]?.visualizations[0],dashboardConfig?.[0]?.visualizations[2])
     return (
       <FilterContext.Provider value={provided}>
         <div ref={fullPageRef} id="divToPrint">
-          <div style={{width:"100%",height:"150px",marginBottom:"70px",marginTop:"-50px",backgroundImage:"url(https://in-egov-assets.s3.ap-south-1.amazonaws.com/images/top-green-card.png)"}}>
+          <div style={{backgroundColor:"red",width:"100%",height:"150px",marginBottom:"70px",marginTop:"-50px",backgroundImage:"url(https://in-egov-assets.s3.ap-south-1.amazonaws.com/images/top-green-card.png)"}}>
           <div className="options" style={{paddingLeft:"5%", paddingTop:"40px",marginBottom:"20px"}}>
             <Header styles={mobileView ? { marginLeft: "0px", whiteSpace: "pre-line" } : { marginBottom: "0px", whiteSpace: "pre" }}>
               {t(dashboardConfig?.[0]?.name)}

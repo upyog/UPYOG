@@ -42,7 +42,9 @@ export const NewApplication = ({ parentUrl, heading }) => {
   };
 
   const onFormValueChange = (setValue, formData) => {
+    console.log("ProID", formData)
     if (
+      formData?. propertyID &&
       formData?.propertyType &&
       formData?.subtype &&
       ((formData?.address?.locality?.name === "Other" ? formData?.address?.newLocality : formData?.address?.locality?.code) ||
@@ -50,6 +52,7 @@ export const NewApplication = ({ parentUrl, heading }) => {
           (formData?.address?.gramPanchayat?.name === "Other" ? formData?.address?.newGp : formData?.address?.gramPanchayat?.code))) &&
       formData?.tripData?.vehicleType &&
       formData?.channel &&
+      formData?.pitType &&
       (formData?.tripData?.amountPerTrip || formData?.tripData?.amountPerTrip === 0)
     ) {
       setSubmitValve(true);
@@ -95,6 +98,7 @@ export const NewApplication = ({ parentUrl, heading }) => {
     const doorNo = data?.address?.doorNo?.trim();
     const slum = data?.address?.slum;
     const landmark = data?.address?.landmark?.trim();
+    const propertyID = data.propertyID. propertyID;
     const noOfTrips = data?.tripData?.noOfTrips;
     const amount = data.tripData.amountPerTrip;
     const cityCode = data?.address?.city?.code;
@@ -106,6 +110,8 @@ export const NewApplication = ({ parentUrl, heading }) => {
     const paymentPreference = amount === 0 ? null : data?.paymentPreference ? data?.paymentPreference : null;
     const advanceAmount =
       amount === 0 ? null : data?.advancepaymentPreference?.advanceAmount === null ? 0 : data?.advancepaymentPreference?.advanceAmount;
+    const distancefromroad=data?.tripData?.distancefromroad;
+    const roadWidth= data?.tripData?.roadWidth;
     const gramPanchayat = data?.address.gramPanchayat;
     const village = data?.address.village;
     const propertyLocation = data?.address?.propertyLocation?.code;
@@ -125,6 +131,9 @@ export const NewApplication = ({ parentUrl, heading }) => {
         source: applicationChannel.code,
         additionalDetails: {
           tripAmount: typeof amount === "number" ? JSON.stringify(amount) : amount,
+          distancefromroad:distancefromroad,
+          roadWidth:roadWidth,
+          propertyID : propertyID,
         },
         propertyUsage: data?.subtype,
         vehicleCapacity: data?.tripData?.vehicleType?.capacity,

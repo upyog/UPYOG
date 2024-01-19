@@ -168,18 +168,55 @@ export const newConfig =[
               "route": "property-type",
               "isMandatory": true,
               "component": "PropertyType",
+              "key":"PropertyType",
               "texts": {
                   "headerCaption": "",
                   "header": "PT_ASSESMENT1_PROPERTY_TYPE",
                   "cardText": "",
                   "submitBarLabel": "PT_COMMONS_NEXT"
               },
+                    
+                    "nextStep": "electricity-number",
+                    
+                    "withoutLabel": true
+                    
+                },
+                {
+                    "type": "component",
+                    "route": "electricity-number",
+                    "isMandatory": true,
+                    "component": "Electricity",
+                    "key": "electricity",
+                    "withoutLabel": true,
+                    "texts": {
+                        "headerCaption": "",
+                        "header": "PT_ASSESMENT1_ELECTRICITY_NUMBER",
+                        "cardText": "",
+                        "submitBarLabel": "PT_COMMONS_NEXT"
+                    },
+                    
+                    "nextStep": "uid",
+                    
+                    "withoutLabel": true
+                    
+                },
+                {
+                    "type": "component",
+                    "route": "uid",
+                    "isMandatory": true,
+                    "component": "UID",
+                    "texts": {
+                        "headerCaption": "",
+                        "header": "PT_ASSESMENT1_ELECTRICITY_UID_NUMBER",
+                        "cardText": "",
+                        "submitBarLabel": "PT_COMMONS_NEXT"
+                    },
               "nextStep": {
                   "COMMON_PROPTYPE_BUILTUP_INDEPENDENTPROPERTY": "landarea",
                   "COMMON_PROPTYPE_BUILTUP_SHAREDPROPERTY": "PtUnits",
                   "COMMON_PROPTYPE_VACANT": "area"
               },
-              "key": "PropertyType",
+              "key": "uid",
               "withoutLabel": true
           },
           {

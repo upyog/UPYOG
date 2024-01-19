@@ -33,6 +33,7 @@ const Response = ({ data, onSuccess }) => {
   const [paymentPreference, setPaymentPreference] = useState(null);
   const [advancePay, setAdvancePay] = useState(null);
   const [zeroPay, setZeroPay] = useState(null);
+
   const Data = mutation?.data || successData;
   const localityCode = Data?.fsm?.[0].address?.locality?.code;
   const slumCode = Data?.fsm?.[0].address?.slumName;
@@ -42,6 +43,7 @@ const Response = ({ data, onSuccess }) => {
   });
 
   const onError = (error, variables) => {
+    console.log("error",error)
     setErrorInfo(error?.response?.data?.Errors[0]?.code || "ERROR");
     setMutationHappened(true);
   };
@@ -50,11 +52,12 @@ const Response = ({ data, onSuccess }) => {
   }, [mutation.data]);
 
   useEffect(() => {
+    console.log("errorInfoerrorInfo",errorInfo)
     if (!mutationHappened && !errorInfo) {
       try {
         const amount = Digit.SessionStorage.get("total_amount");
         const amountPerTrip = Digit.SessionStorage.get("amount_per_trip");
-        const { subtype, pitDetail, address, pitType, source, selectGender, selectPaymentPreference, selectTripNo } = data;
+        const { subtype, propertyID, pitDetail, address, pitType, source, selectGender, selectPaymentPreference, selectTripNo } = data;
         const {
           city,
           locality,
@@ -75,7 +78,6 @@ const Response = ({ data, onSuccess }) => {
         const advanceAmount = amount === 0 ? null : selectPaymentPreference?.advanceAmount;
         amount === 0 ? setZeroPay(true) : setZeroPay(false);
         advanceAmount === 0 ? setAdvancePay(true) : setAdvancePay(false);
-
         const formdata = {
           fsm: {
             citizen: {
@@ -132,6 +134,9 @@ const Response = ({ data, onSuccess }) => {
             additionalDetails: {
               totalAmount: amount,
               tripAmount: typeof amountPerTrip === "number" ? JSON.stringify(amountPerTrip) : amountPerTrip,
+              propertyID : propertyID?.propertyID,
+              distancefromroad : data.roadWidth.distancefromroad,
+              roadWidth: data.roadWidth.roadWidth,
             },
             advanceAmount: typeof advanceAmount === "number" ? JSON.stringify(advanceAmount) : advanceAmount,
           },

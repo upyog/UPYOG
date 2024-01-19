@@ -59,6 +59,7 @@ const PTAcknowledgement = ({ data, onSuccess }) => {
         onSuccess,
       });
     } catch (err) {
+      console,log("error",err)
     }
   }, []);
 
@@ -81,7 +82,7 @@ const PTAcknowledgement = ({ data, onSuccess }) => {
     <Card>
       <BannerPicker t={t} data={mutation.data} isSuccess={mutation.isSuccess} isLoading={mutation.isIdle || mutation.isLoading} />
       {mutation.isSuccess && <CardText>{t("CS_FILE_PROPERTY_RESPONSE")}</CardText>}
-      {!mutation.isSuccess && <CardText>{t("CS_FILE_PROPERTY_FAILED_RESPONSE")}</CardText>}
+      {!mutation.isSuccess && <CardText>{t("CS_FILE_PROPERTY_FAILED_RESPONSE") }. {mutation.error.response.data.Errors[0].message} </CardText>}
       {/* {mutation.isSuccess && (
         <LinkButton
           label={

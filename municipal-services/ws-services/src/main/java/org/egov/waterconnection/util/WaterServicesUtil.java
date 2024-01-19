@@ -329,9 +329,15 @@ public class WaterServicesUtil {
 		return false;
 	}
 
+	public boolean isReconnectConnectionRequest(WaterConnectionRequest waterConnectionRequest) {
+		if(waterConnectionRequest.getWaterConnection().getApplicationType().equalsIgnoreCase(WCConstants.WATER_RECONNECTION))
+			return !StringUtils.isEmpty(waterConnectionRequest.getWaterConnection().getConnectionNo());
+
+		return false;
+	}
+	
 	public StringBuilder getcollectionURL() {
 		StringBuilder builder = new StringBuilder();
 		return builder.append(config.getCollectionHost()).append(config.getPaymentSearch());
 	}
-
 }

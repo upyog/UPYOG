@@ -18,7 +18,6 @@ import SelectName from "./pageComponents/SelectName";
 import FSMSelectPincode from "./pageComponents/FSMSelectPincode";
 import SelectPitType from "./pageComponents/SelectPitType";
 import SelectRoadDetails from "./pageComponents/SelectRoadDetails";
-import SelectTripNo from "./pageComponents/SelectTripNo";
 import SelectPropertySubtype from "./pageComponents/SelectPropertySubtype";
 import SelectPropertyType from "./pageComponents/SelectPropertyType";
 import SelectPropertyID from "./pageComponents/SelectPropertyID";
@@ -27,6 +26,7 @@ import SelectSlumName from "./pageComponents/SelectSlumName";
 import FSMSelectStreet from "./pageComponents/FSMSelectStreet";
 import SelectTankSize from "./pageComponents/SelectTankSize";
 import SelectTripData from "./pageComponents/SelectTripData";
+import SelectTripNo from "./pageComponents/SelectTripNo";
 import SelectPaymentPreference from "./pageComponents/SelectPaymentPreference";
 import SelectVehicle from "./pageComponents/SelectVehicleType";
 import CitizenApp from "./pages/citizen";
@@ -61,7 +61,6 @@ import SelectTrips from "./pageComponents/SelectTrips";
 import PlusMinusInput from "./pageComponents/PlusMinusInput";
 import ConfirmationBox from "./components/Confirmation";
 import SelectLocalityOrGramPanchayat from "./pageComponents/SelectLocalityOrGramPanchayat";
-
 
 const FSMModule = ({ stateCode, userType, tenants }) => {
   const moduleCode = "FSM";

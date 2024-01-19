@@ -13,6 +13,7 @@ import {
   useGetPaymentRulesForBusinessServices,
   useDemandSearch,
   useRecieptSearch,
+  useRecieptSearchNew,
   usePaymentSearch,
   useBulkPdfDetails,
 } from "./payment";
@@ -351,7 +352,6 @@ const pt = {
   useRatingAndFeedbackMDMS,
   useServiceSearchCF,
 };
-
 const dss = {
   useMDMS: useDssMdms,
   useDashboardConfig,
@@ -538,6 +538,7 @@ const Hooks = {
   useApplicationStatusGeneral,
   useModuleTenants,
   useRecieptSearch,
+  useRecieptSearchNew,
   usePaymentSearch,
   useNewInboxGeneral,
   useEvents,

@@ -262,10 +262,12 @@ public class WCConstants {
 	public static final int UPDATE_APPLICATION = 1;
 	public static final int MODIFY_CONNECTION =  2;
 	public static final int DISCONNECT_CONNECTION =  3;
+	public static final int RECONNECTION =  4;
 	
 	public static final String NEW_WATER_CONNECTION = "NEW_WATER_CONNECTION";
 	public static final String MODIFY_WATER_CONNECTION = "MODIFY_WATER_CONNECTION";
 	public static final String DISCONNECT_WATER_CONNECTION = "DISCONNECT_WATER_CONNECTION";
+	public static final String WATER_RECONNECTION = "WATER_RECONNECTION";
 	
 	public static final String WATER_SERVICE_BUSINESS_ID = "WS";
 
@@ -282,10 +284,12 @@ public class WCConstants {
 	public static final String MODIFIED_FINAL_STATE = "APPROVED";
 
 	public static final String DISCONNECTION_FINAL_STATE = "DISCONNECTION_EXECUTED";
+	
+	public static final String MODIFIED_FINAL_STATE_DISCONNECTED = "CONNECTION_DISCONNECTED";
 
 
 	public static final List<String> FINAL_CONNECTION_STATES = Collections
-			.unmodifiableList(Arrays.asList(MODIFIED_FINAL_STATE, STATUS_APPROVED, DISCONNECTION_FINAL_STATE));
+			.unmodifiableList(Arrays.asList(MODIFIED_FINAL_STATE, MODIFIED_FINAL_STATE_DISCONNECTED, STATUS_APPROVED, DISCONNECTION_FINAL_STATE));
 	
 	public static final String SEARCH_TYPE_CONNECTION = "CONNECTION";
 
@@ -313,6 +317,8 @@ public class WCConstants {
 	public static final String EXECUTE_DISCONNECTION = "EXECUTE_DISCONNECTION";
 
 	public static final String APPROVE_DISCONNECTION_CONST = "APPROVE_FOR_DISCONNECTION";
+	
+	public static final String RECONNECT_DISCONNECTION_CONST = "APPROVE_FOR_CONNECTION";
 
 	public static final String APPLICATION_DISCONNECTION_CODE = "DC";
 

@@ -9,7 +9,6 @@ import { ArrowUpwardElement } from "./ArrowUpward";
 const MetricData = ({ t, data, code, indexValuesWithStar }) => {
   const { value } = useContext(FilterContext);
   const insight = data?.insight?.value?.replace(/[+-]/g, "")?.split("%");
-  console.log("Index",data)
   return (
     <div>
       <p className="heading-m" style={{ textAlign: "right", paddingTop: "0px", whiteSpace: "nowrap" }}>

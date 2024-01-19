@@ -144,6 +144,13 @@ public class NotificationUtil {
 		{
 			notificationCode = new StringBuilder("SW_DISCONNECT_").append(action.toUpperCase()).append("_").append(applicationStatus.toUpperCase()).append("_SMS_MESSAGE");
 		}
+		
+		if (reqType == RECONNECTION)
+		{
+			notificationCode = new StringBuilder("SW_RECONNECT_").append(action.toUpperCase()).append("_").append(applicationStatus.toUpperCase()).append("_SMS_MESSAGE");
+		}
+		log.info("getting localised template for code " + notificationCode.toString());
+
 		return getMessageTemplate(notificationCode.toString(), localizationMessage);
 	}
 
@@ -165,6 +172,12 @@ public class NotificationUtil {
 		{
 			builder.append("SW_DISCONNECT_").append(action.toUpperCase()).append("_").append(applicationStatus.toUpperCase()).append("_EMAIL_MESSAGE");
 		}
+		if (reqType == RECONNECTION)
+		{
+			builder.append("SW_RECONNECT_").append(action.toUpperCase()).append("_").append(applicationStatus.toUpperCase()).append("_EMAIL_MESSAGE");
+		}
+		log.info("getting localised template for code " + builder.toString());
+
 		return getMessageTemplate(builder.toString(), localizationMessage);
 	}
 	/**
@@ -185,6 +198,11 @@ public class NotificationUtil {
 		{
 			notificationCode = new StringBuilder("SW_DISCONNECT_").append(action.toUpperCase()).append("_").append(applicationStatus.toUpperCase()).append("_APP_MESSAGE");
 		}
+		if (reqType == RECONNECTION)
+		{
+			notificationCode = new StringBuilder("SW_RECONNECT_").append(action.toUpperCase()).append("_").append(applicationStatus.toUpperCase()).append("_APP_MESSAGE");
+		}
+		log.info("getting localised template for code " + notificationCode.toString());
 		return getMessageTemplate(notificationCode.toString(), localizationMessage);
 	}
 	

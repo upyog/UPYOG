@@ -9,10 +9,12 @@
     "packages/react-components",
     "packages/modules/common",
     "packages/modules/core",
+    "packages/modules/pgr",
     "packages/modules/pt",
     "packages/modules/ws",
-    "packages/modules/pgr",
     "packages/modules/fsm"
+    "packages/modules/mCollect",
+    "packages/modules/obps"
   ],
   "author": "Abhinav Kushwaha <abhinav.kushwaha@egovernments.org>",
   "license": "MIT",

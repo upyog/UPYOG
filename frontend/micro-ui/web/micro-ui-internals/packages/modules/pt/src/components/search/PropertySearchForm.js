@@ -33,15 +33,49 @@ const SearchPTID = ({ tenantId, t, onSubmit, onReset, searchBy, PTSearchFields, 
     "OwnerShipCategory",
   ]);
   let usagecat = [];
-  usagecat = usageMenu?.PropertyTax?.UsageCategory?.filter((e) => e?.code !== "MIXED") || [];
-  const usageCategoryMajorMenu = (usagecat) => {
-    const catMenu = usagecat
-      ?.filter((e) => e?.code.split(".").length <= 2 && e?.code !== "NONRESIDENTIAL")
-      ?.map((item) => {
-        const arr = item?.code.split(".");
-        if (arr.length == 2) return { i18nKey: "PROPERTYTAX_BILLING_SLAB_" + arr[1], code: item?.code };
-        else return { i18nKey: "PROPERTYTAX_BILLING_SLAB_" + item?.code, code: item?.code };
-      });
+  //usagecat = usageMenu?.PropertyTax?.UsageCategory?.filter((e) => e?.code !== "MIXED") || [];
+  const usageCategoryMajorMenu = () => {
+    console.log("usageCategoryMajorMenu")
+    const catMenu= [
+      {
+          "code": "RESIDENTIAL",
+          "name": "RESIDENTIAL",
+          "i18nKey": "PROPERTYTAX_BILLING_SLAB_RESIDENTIAL",
+          "label": "PropertyType"
+      },
+      {
+          "code": "NONRESIDENTIAL.COMMERCIAL",
+          "name": "NONRESIDENTIAL.COMMERCIAL",
+          "i18nKey": "PROPERTYTAX_BILLING_SLAB_COMMERCIAL",
+          "label": "PropertyType"
+      },
+      {
+          "code": "NONRESIDENTIAL.INDUSTRIAL",
+          "name": "NONRESIDENTIAL.INDUSTRIAL",
+          "i18nKey": "PROPERTYTAX_BILLING_SLAB_INDUSTRIAL",
+          "label": "PropertyType"
+      },
+      {
+          "code": "NONRESIDENTIAL.INSTITUTIONAL",
+          "name": "NONRESIDENTIAL.INSTITUTIONAL",
+          "i18nKey": "PROPERTYTAX_BILLING_SLAB_INSTITUTIONAL",
+          "label": "PropertyType"
+      },
+      {
+          "code": "NONRESIDENTIAL.OTHERS",
+          "name": "NONRESIDENTIAL.OTHERS",
+          "i18nKey": "PROPERTYTAX_BILLING_SLAB_OTHERS",
+          "label": "PropertyType"
+      }
+  ]
+    // const catMenu = usagecat
+    //   ?.filter((e) => e?.code.split(".").length <= 2 && e?.code !== "NONRESIDENTIAL")
+    //   ?.map((item) => {
+    //     const arr = item?.code.split(".");
+    //     if (arr.length == 2) return { i18nKey: "PROPERTYTAX_BILLING_SLAB_" + arr[1], code: item?.code };
+    //     else return { i18nKey: "PROPERTYTAX_BILLING_SLAB_" + item?.code, code: item?.code };
+    //   });
+    console.log("usageCategoryMajorMenu",catMenu)
     return catMenu;
   };
   const [usageType, setUsageType] = useState();
@@ -104,7 +138,7 @@ const SearchPTID = ({ tenantId, t, onSubmit, onReset, searchBy, PTSearchFields, 
           disable={false}
           defaultValue={formValue?.[key]}
           name={key}
-          option={usageCategoryMajorMenu(usagecat)}
+          option={usageCategoryMajorMenu()}
           select={(e) => setProptype(e)}
           inputRef={register({
             value: getValues(key),
