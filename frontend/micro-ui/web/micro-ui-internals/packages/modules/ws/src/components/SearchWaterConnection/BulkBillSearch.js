@@ -1,5 +1,5 @@
 import React, { Fragment, useState,useEffect, useCallback, useMemo } from "react";
-import { SearchForm, Table, Card, Loader, Header,Toast,DownloadBtnCommon, UploadFile } from "@egovernments/digit-ui-react-components";
+import { SearchForm, Table, Card, Loader, Header,Toast,DownloadBtnCommon, UploadFile, SubmitBar } from "@egovernments/digit-ui-react-components";
 import { useForm, Controller } from "react-hook-form";
 import BulkBillSearchFields from "./BulkBillSearchFields";
 import { useTranslation } from "react-i18next";
@@ -9,23 +9,17 @@ import { useHistory } from "react-router-dom";
 import {convertDateToEpoch} from "../../utils/index"
 import * as XLSX from "xlsx";
 const BulkBillSearch = ({ tenantId, onSubmit, data, count, resultOk, businessService, isLoading }) => {
-  const history = useHistory()
-  const [result,setResult]=  useState([])
   const [showToast, setShowToast] = useState(null);
-  const [uploadedFile, setUploadedFile] = useState("a");
+  const [uploadedFile, setUploadedFile] = useState(()=> null);
   const [file,setFile] = useState("")
-  const [items, setItems] = useState([]);
+  const [meterReadingData,setMeterReadingData] = useState([])
   function selectfile(e) {
-    console.log("eeeeee",e)
     e.preventDefault()
       setFile(e.target.files[0]);
       readExcel(e.target.files[0]);
+      setUploadedFile("bulk");
 
     }
-  const replaceUnderscore = (str) => {
-    str = str.replace(/_/g, " ");
-    return str;
-  };
   const {
     isLoading: updatingMeterConnectionLoading,
     isError: updateMeterConnectionError,
@@ -35,7 +29,6 @@ const BulkBillSearch = ({ tenantId, onSubmit, data, count, resultOk, businessSer
   } = Digit.Hooks.ws.useMeterReadingCreateAPI(businessService);
 
   const readExcel = async (file) => {
-    console.log("filefile",file)
     const promise = new Promise((resolve, reject) => {
       const fileReader = new FileReader();
       fileReader.readAsArrayBuffer(file);
@@ -51,14 +44,10 @@ const BulkBillSearch = ({ tenantId, onSubmit, data, count, resultOk, businessSer
 
         const data = XLSX.utils.sheet_to_json(ws);
         
-        let d=new Date((44944 - (25567 + 1))*86400*1000)
-        //console.log("datadatadata",data,d)
-        console.log("fileReader",data)
         const meterReadingList=data.map((meter)=>{
           
         return{"billingPeriod":meter.billingPeriod,"currentReading":meter.currentReading,"currentReadingDate":meter.currentReadingDate,"lastReading":meter.lastReading,"lastReadingDate":meter.lastReadingDate,"connectionNo":meter.connectionNo,"meterStatus":meter.meterStatus}
         })
-        console.log("datadatadatagggggg",meterReadingList)
         resolve(meterReadingList);
       };
 
@@ -67,30 +56,30 @@ const BulkBillSearch = ({ tenantId, onSubmit, data, count, resultOk, businessSer
       };
     });
 
-    promise.then(async (d) => {
-      if (meterReadingMutation) {
-        let meterReadingsPayload = { meterReadingList: d };
-        await meterReadingMutation(meterReadingsPayload, {
-          onError: (error, variables) => {
-
-            setShowToast({ key: "error", message: error?.message ? error.message : error });
-            setTimeout(closeToast, 5000);
-          },
-          onSuccess: async (data, variables) => {
-
-            setShowToast({ key: "success", message: "WS_METER_READING_ADDED_SUCCESFULLY" });
-            setTimeout(closeToast, 3000);
-            setTimeout(() => {
-              window.location.reload();
-            }, 4000);
-          },
-        });
-      }
-      console.log("dd",d)
-      //setItems(d);
+    promise.then(async (meterReading) => {
+setMeterReadingData(meterReading)
     });
   };
+ const handleBulkSubmit=async ()=>{
+    if (meterReadingMutation) {
+      let meterReadingsPayload = { meterReadingList: meterReadingData };
+      await meterReadingMutation(meterReadingsPayload, {
+        onError: (error, variables) => {
 
+          setShowToast({ error: true, label: error?.message ? error.message : error });
+          setTimeout(closeToast, 5000);
+        },
+        onSuccess: async (data, variables) => {
+
+          setShowToast({ key: "success", label: "WS_METER_READING_ADDED_SUCCESFULLY" });
+          setTimeout(closeToast, 3000);
+          setTimeout(() => {
+            window.location.reload();
+          }, 4000);
+        },
+      });
+    }
+  }
   const convertEpochToDate = (dateEpoch) => {
     if (dateEpoch == null || dateEpoch == undefined || dateEpoch == "") {
       return "NA";
@@ -158,11 +147,10 @@ const BulkBillSearch = ({ tenantId, onSubmit, data, count, resultOk, businessSer
   }
   //need to get from workflow
   const GetCell = (value) => <span className="cell-text">{value}</span>;
-  const handleExcelDownload = (e,tabData) => {
+  const handleExcelDownload = (e,tabData) => {s
     e.preventDefault()
-    console.log("handleExcelDownload",tabData)
     if (tabData?.[0] !== undefined) {
-      return Digit.Download.Excel(tabData,"bulBill");
+      return Digit.Download.Excel(tabData,"Bulk-Bill");
     }
   };
   const columns = useMemo(
@@ -175,7 +163,7 @@ const BulkBillSearch = ({ tenantId, onSubmit, data, count, resultOk, businessSer
           return (
             <div>
               {row.original["connectionNo"] ? (
-                <span className={"link"}>
+                <span>
                     {row.original["connectionNo"] || "NA"}
              
                 </span>
@@ -264,7 +252,7 @@ const BulkBillSearch = ({ tenantId, onSubmit, data, count, resultOk, businessSer
             ))}
         </Card>
         // <></>
-      ) : true ? (
+      ) : resultOk ? (
         <div style={{ backgroundColor: "white" }}>
 
           <div className="sideContent" style={{ float: "right", padding: "10px 30px" }}>
@@ -272,17 +260,25 @@ const BulkBillSearch = ({ tenantId, onSubmit, data, count, resultOk, businessSer
               <DownloadBtn className="mrlg cursorPointer" onClick={(e) => handleExcelDownload(e, data)} />
             </span>
           </div>
-          <div style={{ width: "80%" }}>
+          <div style={{display:"flex" }}>
+          <div style={{ width: "70%" }}>
             <UploadFile
-              id={"edcr-doc"}
+              id={"Bulk-Bill"}
               extraStyleName={"propertyCreate"}
               message={uploadedFile ? `1 ${t(`CS_ACTION_FILEUPLOADED`)}` : t(`CS_ACTION_NO_FILEUPLOADED`)}
               accept=".xlsx"
               onUpload={(e) => selectfile(e)}
               onDelete={(e) => {
                 setUploadedFile(null);
+                setMeterReadingData([])
               }}
             />
+          </div>
+          {meterReadingData?.length >0?<div style={{top:"5px",left:"10px",position:"relative"}}>
+          <span>
+          <SubmitBar label={t("CS_COMMON_SUBMIT_READING")} onSubmit={handleBulkSubmit} />
+        </span>
+          </div>:""}
           </div>
           <Table
             t={t}

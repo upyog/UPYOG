@@ -7,7 +7,6 @@ import { WSService } from "../../services/elements/WS";
  */
 
 const useBulkSearchWS = ({ tenantId,  filters, config = {}}) => {
-  console.log(" filters, config", filters, config,...Object.keys(filters)?.map((e) => filters?.[e]))
   let responseWS = "";
   responseWS=useQuery(
       ["WS_WATER_SEARCH",tenantId, ...Object.keys(filters)?.map((e) => filters?.[e])],

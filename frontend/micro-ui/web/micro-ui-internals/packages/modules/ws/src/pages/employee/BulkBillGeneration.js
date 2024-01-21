@@ -5,36 +5,25 @@ import { useTranslation } from "react-i18next";
 const BulkBillGeneration = ({ path }) => {
   const [isBothCallsFinished, setIsBothCallFinished] = useState(true);
   const { t } = useTranslation();
-  //const tenantId = Digit.ULBService.getCurrentTenantId();
   const [payload, setPayload] = useState({});
   const [setLoading, setLoadingState] = useState(false);
-  const [tenantId, setTenantId] =useState("")
   const WSBulkBillSearch = Digit.ComponentRegistryService.getComponent("WSBulkBillSearch");
-  // const [businessServ, setBusinessServ] = useState([]);
+  const tenantId = Digit.ULBService.getCurrentTenantId();
   const getUrlPathName = window.location.pathname;
   const checkPathName = getUrlPathName.includes("water/search-connection");
   const businessServ = checkPathName ? "WS" : "SW";
-const [result1,setResult] =useState("")
   const [showToast, setShowToast] = useState(null);
-  const serviceConfig = {
-    WATER: "WATER",
-    SEWERAGE: "SEWERAGE",
-  };
-
+ 
   const onSubmit = ((data) => {
- console.log("data",data)
- setTenantId(data?.tenantId)
-      setPayload({"locality":data?.locality?.code});
-    
+      setPayload({"locality":data?.locality?.code});   
   });
 
   const config = {
     enabled: !!(payload && Object.keys(payload).length > 0),
   };
 
-  let result = Digit.Hooks.ws.useBulkSearchWS({ tenantId:tenantId,filters: payload, config});
-  //let result = Digit.Hooks.ws.useSearchWS({ tenantId, filters: payload, config, bussinessService: businessServ, t ,shortAddress:true});
-  console.log("resultresultresult",result)
+  let result = Digit.Hooks.ws.useBulkSearchWS({ tenantId,filters: payload, config});
+ 
   const isMobile = window.Digit.Utils.browser.isMobile();
 
   if (result?.isLoading && isMobile) {
@@ -46,25 +35,17 @@ const [result1,setResult] =useState("")
     if (result?.meterReadings.length == 0 ) {
       return { display: "ES_COMMON_NO_DATA" }
     } else if (result?.meterReadings.length > 0) {
-      return result?.meterReadings
+      let meterReadings=result?.meterReadings.map((data)=>{
+        return {"billingPeriod":data.billingPeriod,"connectionNo":data.connectionNo,"consumption":data.consumption,"currentReading":data.currentReading,"currentReadingDate":data.currentReadingDate,"lastReading":data.lastReading,"lastReadingDate":data.lastReadingDate,"meterStatus":data.meterStatus}})
+      return meterReadings
     } else {
       return [];
     }
   }
 
   const isResultsOk = () => {
-    return result?.data?.meterReadings?.length > 0 ? true : false;
+    return result?.meterReadings?.length > 0 ? true : false;
   }
-
-  // if(!result?.isLoading)
-  //   result.data = result?.data?.meterReadings.map((item) => {
-  //     if (item?.connectionNo?.includes("WS")) {
-  //       item.service = serviceConfig.WATER;
-  //     } else if (item?.connectionNo?.includes("SW")) {
-  //       item.service = serviceConfig.SEWERAGE;
-  //     }
-  //     return item;
-  //   });
 
   return (
     <Fragment>
