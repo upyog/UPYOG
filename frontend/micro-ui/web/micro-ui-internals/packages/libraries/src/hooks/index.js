@@ -213,6 +213,7 @@ import WSuseSearch from "./ws/useSearch";
 import useOldValue from "./ws/useOldValue";
 import useSewSearch from "./ws/useSewSearch";
 import useSearchWS from "./ws/useSearchWS";
+import useBulkSearchWS from "./ws/useBulkSearchWS"
 import useMypaymentWS from "./ws/useMypaymentWS";
 import useWSDetailsPage from "./ws/useWSDetailsPage";
 import useWSApplicationActions from "./ws/useApplicationActions";
@@ -238,6 +239,7 @@ import useWaterPropertySearch from "./ws/useWaterPropertySearch";
 import useDisconnectionWorkflow from "./ws/useDisconnectionWorkflow";
 import useDisConnectionDetails from "./ws/useDisConnectionDetails";
 import useWSModifyDetailsPage from "./ws/useWSModifyDetailsPage";
+import useBulkMeterReadingCreateAPI from "./ws/useBulkMeterCreate";
 
 import useGetHowItWorksJSON from "./useHowItWorksJSON";
 import useGetFAQsJSON from "./useGetFAQsJSON";
@@ -491,6 +493,7 @@ const ws = {
   WSuseSearch,
   useSewSearch,
   useSearchWS,
+  useBulkSearchWS,
   useWSDetailsPage,
   useWSApplicationActions,
   useApplicationActionsBillAmendUpdate,
@@ -513,6 +516,7 @@ const ws = {
   useDisConnectionDetails,
   useWSModifyDetailsPage,
   useToCheckPrivacyEnablement,
+  useBulkMeterReadingCreateAPI,
   useWSConfigMDMS: useWSConfigMDMS,
 };
 
