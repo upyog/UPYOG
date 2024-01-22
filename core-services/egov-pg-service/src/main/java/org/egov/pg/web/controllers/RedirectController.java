@@ -54,7 +54,8 @@ public class RedirectController {
     	{
     		txnId = formData.get(PgConstants.PG_TXN_IN_LABEL).get(0);
     		if(txnId==null)
-    			txnId=returnURL.split("PgConstants.PG_TXN_IN_LABEL"+"=")[1];	
+    			txnId=returnURL.split("PgConstants.PG_TXN_IN_LABEL"+"=")[1];
+    	}
     	else
     		txnId = formData.get(PgConstants.PG_TXN_IN_LABEL_NTTDATA).get(0); 
 
