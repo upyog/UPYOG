@@ -1027,18 +1027,15 @@ class ShowField extends Component {
     // }
   
   let url=window.location.href
-  let url2=""
-    
-  if(url.includes("localhost")){
-    url2=url.split("report")[0] +"digit-ui/employee/pgr/complaint/details/"
-  }
-  else{
-    url2=url.split("employee")[0]+"digit-ui/employee/pgr/complaint/details/"
-  }
+  //uncomment below line for localhost environment
+  //let redirectingUrl=url.split("report")[0] +"digit-ui/employee/pgr/complaint/details/"
+
+  //comment below line for local host environment   
+  let redirectingUrl=url.split("employee")[0]+"digit-ui/employee/pgr/complaint/details/"  
   
-  function redirectToPage(e,page){
+  function redirectToPage(e,grievanceId){
     e.preventDefault()
-    window.location.href=url2+page;
+    window.location.href=redirectingUrl+grievanceId;
   }
     return (
       <tbody>
