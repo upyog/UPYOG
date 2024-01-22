@@ -147,7 +147,7 @@ setMeterReadingData(meterReading)
   }
   //need to get from workflow
   const GetCell = (value) => <span className="cell-text">{value}</span>;
-  const handleExcelDownload = (e,tabData) => {s
+  const handleExcelDownload = (e,tabData) => {
     e.preventDefault()
     if (tabData?.[0] !== undefined) {
       return Digit.Download.Excel(tabData,"Bulk-Bill");
