@@ -16,7 +16,10 @@ import org.egov.wscalculation.web.models.MeterReadingSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Component
+@Slf4j
 public class MeterServicesImpl implements MeterService {
 
 	@Autowired
@@ -75,11 +78,15 @@ public class MeterServicesImpl implements MeterService {
 			applicationValid=wsCalulationWorkflowValidator.applicationValidationBulk(meterConnectionRequest.getRequestInfo(),mr.getTenantId(),mr.getConnectionNo(),genratedemand);
 			readingValid=wsCalculationValidator.validateMeterReadingBulk(meterConnectionRequest.getRequestInfo(),mr, true);
 		}
+		
+		log.info("applicationValid ="+applicationValid);
+		log.info("readingValid ="+readingValid);
+
 		if(applicationValid && readingValid) {
 		enrichmentService.enrichMeterReadingRequest(meterConnectionRequest.getRequestInfo(),mr);
 		meterReadingsList.add(mr);
 		meterConnectionRequest.setMeterReading(mr);
-		wSCalculationDao.saveMeterReading(meterConnectionRequest);
+		//wSCalculationDao.saveMeterReading(meterConnectionRequest);
 		if (mr.getGenerateDemand()) {
 			generateDemandForMeterReading(meterReadingsList, meterConnectionRequest.getRequestInfo());
 		}
