@@ -69,11 +69,13 @@ public class MeterServicesImpl implements MeterService {
 		Boolean genratedemand = true;
 		List<MeterReading> meterReadingsList = new ArrayList<MeterReading>();
 		List<MeterReading> meterReadingOutput=new ArrayList<MeterReading>();
+		Boolean applicationValid = false,readingValid=false;
 		for(MeterReading mr:meterConnectionRequest.getMeterReadingList()) {
 		if(mr.getGenerateDemand()){
-			wsCalulationWorkflowValidator.applicationValidation(meterConnectionRequest.getRequestInfo(),mr.getTenantId(),mr.getConnectionNo(),genratedemand);
-			wsCalculationValidator.validateMeterReading(meterConnectionRequest.getRequestInfo(),mr, true);
+			applicationValid=wsCalulationWorkflowValidator.applicationValidationBulk(meterConnectionRequest.getRequestInfo(),mr.getTenantId(),mr.getConnectionNo(),genratedemand);
+			readingValid=wsCalculationValidator.validateMeterReadingBulk(meterConnectionRequest.getRequestInfo(),mr, true);
 		}
+		if(applicationValid && readingValid) {
 		enrichmentService.enrichMeterReadingRequest(meterConnectionRequest.getRequestInfo(),mr);
 		meterReadingsList.add(mr);
 		meterConnectionRequest.setMeterReading(mr);
@@ -82,6 +84,7 @@ public class MeterServicesImpl implements MeterService {
 			generateDemandForMeterReading(meterReadingsList, meterConnectionRequest.getRequestInfo());
 		}
 		meterReadingOutput.add(meterReadingsList.get(0));
+		}
 		}
 		return meterReadingOutput;
 	}
