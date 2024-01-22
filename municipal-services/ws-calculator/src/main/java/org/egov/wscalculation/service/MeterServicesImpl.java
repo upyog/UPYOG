@@ -86,7 +86,7 @@ public class MeterServicesImpl implements MeterService {
 		enrichmentService.enrichMeterReadingRequest(meterConnectionRequest.getRequestInfo(),mr);
 		meterReadingsList.add(mr);
 		meterConnectionRequest.setMeterReading(mr);
-		//wSCalculationDao.saveMeterReading(meterConnectionRequest);
+		wSCalculationDao.saveMeterReading(meterConnectionRequest);
 		if (mr.getGenerateDemand()) {
 			generateDemandForMeterReading(meterReadingsList, meterConnectionRequest.getRequestInfo());
 		}
