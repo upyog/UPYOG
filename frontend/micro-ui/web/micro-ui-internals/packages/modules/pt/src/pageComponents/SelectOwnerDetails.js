@@ -69,7 +69,7 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData, ownerInde
         onSelect("", ownerStep);
         return;
       }
-      ownerStep = { ...owner, name, gender, mobileNumber, fatherOrHusbandName, relationship };
+      ownerStep = { ...owner, name, gender, mobileNumber, fatherOrHusbandName, relationship, emailId:email};
       onSelect(config.key, ownerStep, false, index);
     }
   };
@@ -293,6 +293,15 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData, ownerInde
           labelKey="PT_RELATION"
           disabled={isUpdateProperty || isEditProperty}
         />
+        <CardLabel>{`${t("PT_FORM3_EMAIL_ID")}`}</CardLabel>
+        <TextInput
+              isMandatory={false}
+              name="email"
+              value={email}
+              onChange={setOwnerEmail}
+              {...{ required: true, pattern: "[A-Za-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$", type: "email", title: t("CORE_COMMON_APPLICANT_EMAILI_ID_INVALID") }}
+              disable={isUpdateProperty || isEditProperty}
+            />
       </div>
     </FormStep>
     </React.Fragment>

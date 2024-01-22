@@ -70,6 +70,7 @@ const getOwner = (application, t, customTitle) => {
         { title: t("PT_OWNERSHIP_INFO_TEL_PHONE_NO"), value: owners[0]?.altContactNumber || t("CS_NA") },
         { title: t("PT_OWNERSHIP_INFO_CORR_ADDR"), value: owners[0]?.correspondenceAddress || t("CS_NA") },
         { title: t("PT_FORM3_OWNERSHIP_TYPE"), value: t(application?.ownershipCategory) || t("CS_NA") },
+        { title: t("PT_OWNERSHIP_INFO_EMAIL_ID"), value: owners[0]?.emailId || t("CS_NA") },
       ],
     };
   } else {
@@ -91,6 +92,8 @@ const getAssessmentInfo = (application, t) => {
     { title: t("PT_ASSESMENT_INFO_NO_OF_FLOOR"), value: t(application?.noOfFloors) || t("CS_NA") },
     { title: t("PT_ASSESMENT_INFO_ELECTRICITY_ID"), value: t(application?.additionalDetails?.electricity) || t("CS_NA") },
     { title: t("PT_ASSESMENT_INFO_ELECTRICITY_UID"), value: t(application?.additionalDetails?.uid) || t("CS_NA") },
+    { title:  t("PT_FORM2_PROPERTY_TYPE"),value: t(application?.additionalDetails?.structureType.i18nKey) || t("CS_NA")},
+     {title:  t("PT_FORM2_AGE_OF_PROPERTY"),value: t(application?.additionalDetails?.ageOfProperty.code)|| t("CS_NA")},
   ];
   application.units = application?.units?.filter((unit) => unit.active == true) || [];
   let flrno,
@@ -131,14 +134,6 @@ const getAssessmentInfo = (application, t) => {
       {
         title: (flrno = unit?.floorNo) > -3 ? t("PT_FORM2_BUILT_AREA") : "",
         value: (flrno = unit?.floorNo) > -3 ? t(unit?.constructionDetail?.builtUpArea) || t("CS_NA") : "",
-      },
-      {
-        title: (flrno = unit?.floorNo) > -3 ? t("PT_FORM2_PROPERTY_TYPE") : "",
-        value: (flrno = unit?.floorNo) > -3 ? t(application?.additionalDetails?.unit?.[0]?.structureType) || t(unit.additionalDetails.structureType) || t("CS_NA") : "",
-      },
-      {
-        title: (flrno = unit?.floorNo) > -3 ? t("PT_FORM2_AGE_OF_PROPERTY") : "",
-        value: (flrno = unit?.floorNo) > -3 ? t(application?.additionalDetails?.unit?.[0]?.ageOfProperty) ||t(unit.additionalDetails.ageOfProperty)|| t("CS_NA") : "",
       },
       {
         title:
