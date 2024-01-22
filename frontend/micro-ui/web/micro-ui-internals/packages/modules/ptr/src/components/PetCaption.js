@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { TelePhone } from "@egovernments/digit-ui-react-components";
 import Reason from "./Reason";
 
-const TLCaption = ({ data }) => {
+const PetCaption = ({ data }) => {
   const { t } = useTranslation();
   return (
     <div>
@@ -16,4 +16,4 @@ const TLCaption = ({ data }) => {
   );
 };
 
-export default TLCaption;
+export default PetCaption;

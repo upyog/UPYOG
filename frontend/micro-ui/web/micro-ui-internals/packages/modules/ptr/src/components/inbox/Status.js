@@ -10,13 +10,9 @@ const Status = ({ onAssignmentChange, searchParams, businessServices, statusMap,
 
   const { data: statusData, isLoading } = Digit.Hooks.useApplicationStatusGeneral({ businessServices }, {});
 
-  const { userRoleStates, otherRoleStates } = statusData || {};
+  const { userRoleStates } = statusData || {};
 
-  const map = {
-    "PTR.CREATE": "ES_PTR_NEW_PROPERTY",
-    //"PT.MUTATION": "ES_PT_TRANSFER_OWNERSHIP",
-    "PTR.UPDATE": "ES_PTR_UPDATE_PROPERTY",
-  };
+ 
 
   const translateState = (state, t) => {
     return `${t(map[state.stateBusinessService])}` + " - " + t(`ES_PTR_COMMON_STATUS_${state.state || "CREATED"}`);

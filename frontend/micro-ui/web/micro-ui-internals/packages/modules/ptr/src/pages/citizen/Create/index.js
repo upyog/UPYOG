@@ -7,7 +7,6 @@ import { Redirect, Route, Switch, useHistory, useLocation, useRouteMatch } from 
 import { citizenConfig } from "../../../config/Create/citizenconfig";
 import { data } from "jquery";
 
-// const CreateProperty = ({ parentRoute }) => {
 const PTRCreate = ({ parentRoute }) => {
 
   const queryClient = useQueryClient();
@@ -17,8 +16,8 @@ const PTRCreate = ({ parentRoute }) => {
   const history = useHistory();
   const stateId = Digit.ULBService.getStateId();
   let config = [];
-  const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage("PT_CREATE_PROPERTY", {});
-  let { data: commonFields, isLoading } = Digit.Hooks.pt.useMDMS(stateId, "PropertyTax", "CommonFieldsConfig");
+  const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage("PTR_CREATE_PET", {});
+  let { data: commonFields, isLoading } = Digit.Hooks.pt.useMDMS(stateId, "PropertyTax", "CommonFieldsConfig"); //  PROPERTY CONFIG HOOK , just for commkonfeild config 
   const goNext = (skipStep, index, isAddMultiple, key) => {
     let currentPath = pathname.split("/").pop(),
       lastchar = currentPath.charAt(currentPath.length - 1),
@@ -67,7 +66,7 @@ const PTRCreate = ({ parentRoute }) => {
   if(params && Object.keys(params).length>0 && window.location.href.includes("/info") && sessionStorage.getItem("docReqScreenByBack") !== "true")
     {
       clearParams();
-      queryClient.invalidateQueries("PT_CREATE_PROPERTY");
+      queryClient.invalidateQueries("PTR_CREATE_PET");
     }
 
   const ptrcreate = async () => {
@@ -96,7 +95,7 @@ const PTRCreate = ({ parentRoute }) => {
 
   const onSuccess = () => {
     clearParams();
-    queryClient.invalidateQueries("PT_CREATE_PROPERTY");
+    queryClient.invalidateQueries("PTR_CREATE_PET");
   };
   if (isLoading) {
     return <Loader />;
@@ -108,11 +107,11 @@ const PTRCreate = ({ parentRoute }) => {
   commonFields.forEach((obj) => {
     config = config.concat(obj.body.filter((a) => !a.hideInCitizen));
   });
-  // config.indexRoute = "info";
+  
   config.indexRoute = "info";
 
-  const CheckPage = Digit?.ComponentRegistryService?.getComponent("PTCheckPage");
-  const PTAcknowledgement = Digit?.ComponentRegistryService?.getComponent("PTAcknowledgement");
+  const CheckPage = Digit?.ComponentRegistryService?.getComponent("PTRCheckPage");
+  const PTRAcknowledgement = Digit?.ComponentRegistryService?.getComponent("PTRAcknowledgement");
 
   
   
@@ -133,7 +132,7 @@ const PTRCreate = ({ parentRoute }) => {
         <CheckPage onSubmit={ptrcreate} value={params} />
       </Route>
       <Route path={`${match.path}/acknowledgement`}>
-        <PTAcknowledgement data={params} onSuccess={onSuccess} />
+        <PTRAcknowledgement data={params} onSuccess={onSuccess} />
       </Route>
       <Route>
         <Redirect to={`${match.path}/${config.indexRoute}`} />

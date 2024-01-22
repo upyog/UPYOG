@@ -6,7 +6,7 @@ import { newConfig } from "../../../config/Create/config";
 
 const NewApplication = () => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
-  //const tenants = Digit.Hooks.pt.useTenants();
+  const tenants = Digit.Hooks.ptr.useTenants();
 
   const { t } = useTranslation();
   const [canSubmit, setSubmitValve] = useState(false);

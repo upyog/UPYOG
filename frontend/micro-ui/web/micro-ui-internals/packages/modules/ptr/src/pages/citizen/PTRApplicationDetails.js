@@ -2,16 +2,15 @@ import { Card, CardSubHeader, Header, LinkButton, Loader, Row, StatusTable, Mult
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory, useParams } from "react-router-dom";
-import getPTAcknowledgementData from "../../getPTAcknowledgementData";
-import PetDocument from "../../pageComponents/PetDocument";
-import PTWFApplicationTimeline from "../../pageComponents/PTWFApplicationTimeline";
+import getPetAcknowledgementData from "../../getPetAcknowledgementData";
+import PTRWFApplicationTimeline from "../../pageComponents/PTRWFApplicationTimeline";
 import { pdfDownloadLink } from "../../utils";
 
 
 import get from "lodash/get";
 import { size } from "lodash";
 
-const PTApplicationDetails = () => {
+const PTRApplicationDetails = () => {
   const { t } = useTranslation();
   const history = useHistory();
   const { acknowledgementIds, tenantId } = useParams();
@@ -31,6 +30,9 @@ const PTApplicationDetails = () => {
     },
   );
 
+
+  console.log("jdjdjdjdjdjdjdjjdjdjdjdj")
+
   const [billAmount, setBillAmount] = useState(null);
   const [billStatus, setBillStatus] = useState(null);
 
@@ -42,7 +44,6 @@ const PTApplicationDetails = () => {
     
   }
 
-  //const { isLoading:serviceloading, error : serviceerror, data : servicedata} = Digit.Hooks.pt.useServiceSearchCF({ filters: { serviceSearchArgs } },{ filters: { serviceSearchArgs }, enabled : data?.PetRegistrationApplications?.[0]?.applicationNumber ?true : false, cacheTime : 0 });
 
 
   const PetRegistrationApplications = get(data, "PetRegistrationApplications", []);
@@ -52,25 +53,22 @@ const PTApplicationDetails = () => {
   
   let  pet_details = (PetRegistrationApplications && PetRegistrationApplications.length > 0 && PetRegistrationApplications[0]) || {};
   const application =  pet_details;
+  console.log("hhhhhhhhhhhhhhhh",pet_details);
   
-  sessionStorage.setItem("ptr-property", JSON.stringify(application));
+  sessionStorage.setItem("ptr-pet", JSON.stringify(application));
 
-  // useMemo(() => {
-  //   if((data?.PetRegistrationApplications?.[0]?.status === "ACTIVE" || data?.PetRegistrationApplications?.[0]?.status === "INACTIVE") && popup == false && servicedata?.Service?.length == 0)
-  //     setpopup(true);
-  // },[data,servicedata])
-
+  
   useEffect(async () => {
     if (acknowledgementIds && tenantId &&  pet_details) {
       const res = await Digit.PaymentService.searchBill(tenantId, { Service: "pet-services", consumerCode: acknowledgementIds });
-      if (!res.Bill.length) {
-        const res1 = await Digit.PTService.ptCalculateMutation({  pet_details:  pet_details }, tenantId);
-        setBillAmount(res1?.[acknowledgementIds]?.totalAmount || t("CS_NA"));
-        setBillStatus(t(`PTR_MUT_BILL_ACTIVE`));
-      } else {
-        setBillAmount(res?.Bill[0]?.totalAmount || t("CS_NA"));
-        setBillStatus(t(`PTR_MUT_BILL_${res?.Bill[0]?.status?.toUpperCase()}`));
-      }
+      // if (!res.Bill.length) {
+      //   const res1 = await Digit.PTService.ptCalculateMutation({  pet_details:  pet_details }, tenantId);
+      //   setBillAmount(res1?.[acknowledgementIds]?.totalAmount || t("CS_NA"));
+      //   setBillStatus(t(`PTR_MUT_BILL_ACTIVE`));
+      // } else {
+      //   setBillAmount(res?.Bill[0]?.totalAmount || t("CS_NA"));
+      //   setBillStatus(t(`PTR_MUT_BILL_${res?.Bill[0]?.status?.toUpperCase()}`));
+      // }
     }
   }, [tenantId, acknowledgementIds,  pet_details]);
 
@@ -90,12 +88,12 @@ const PTApplicationDetails = () => {
       tenantId: tenantId,
       businessService: "pet-services",
       consumerCodes: acknowledgementIds,
-      isEmployee: true,
+      isEmployee: false,
     },
     { enabled: acknowledgementIds ? true : false }
   );
 
-  if (! pet_details.workflow) {
+  if (!pet_details.workflow) {
     let workflow = {
       id: null,
       tenantId: tenantId,
@@ -116,10 +114,10 @@ const PTApplicationDetails = () => {
   
 
  
-  let owners = [];
-  owners = application?.owners;
-  let docs = [];
-  docs = application?.documents;
+  // let owners = [];
+  // owners = application?.owners;
+  // let docs = [];
+  // docs = application?.documents;
 
   if (isLoading || auditDataLoading) {
     return <Loader />;
@@ -130,7 +128,7 @@ const PTApplicationDetails = () => {
   const getAcknowledgementData = async () => {
     const applications = application || {};
     const tenantInfo = tenants.find((tenant) => tenant.code === applications.tenantId);
-    const acknowldgementDataAPI = await getPTAcknowledgementData({ ...applications }, tenantInfo, t);
+    const acknowldgementDataAPI = await getPetAcknowledgementData({ ...applications }, tenantInfo, t);
     Digit.Utils.pdf.generate(acknowldgementDataAPI);
     //setAcknowldgementData(acknowldgementDataAPI);
   };
@@ -165,19 +163,21 @@ const PTApplicationDetails = () => {
   let dowloadOptions = [];
 
   dowloadOptions.push({
-    label: data?.PetRegistrationApplications?.[0]?.creationReason === "MUTATION" ? t("MT_APPLICATION") : t("PTR_PET_DOWNLOAD_ACK_FORM"),
+    label: t("PTR_PET_DOWNLOAD_ACK_FORM"),
     onClick: () => getAcknowledgementData(),
   });
-  if (reciept_data && reciept_data?.Payments.length > 0 && recieptDataLoading == false)
-    dowloadOptions.push({
-      label: t("MT_FEE_RECIEPT"),
-      onClick: () => getRecieptSearch({ tenantId: reciept_data?.Payments[0]?.tenantId, payments: reciept_data?.Payments[0] }),
-    });
-  if (data?.PetRegistrationApplications?.[0]?.creationReason === "MUTATION" && data?.PetRegistrationApplications?.[0]?.status === "ACTIVE")
-    dowloadOptions.push({
-      label: t("MT_CERTIFICATE"),
-      onClick: () => printCertificate(),
-    });
+
+  //commented out, need later for download receipt and certificate 
+  // if (reciept_data && reciept_data?.Payments.length > 0 && recieptDataLoading == false)
+  //   dowloadOptions.push({
+  //     label: t("MT_FEE_RECIEPT"),
+  //     onClick: () => getRecieptSearch({ tenantId: reciept_data?.Payments[0]?.tenantId, payments: reciept_data?.Payments[0] }),
+  //   });
+  // if (data?.PetRegistrationApplications?.[0]?.creationReason === "CREATE" && data?.PetRegistrationApplications?.[0]?.status === "ACTIVE")
+  //   dowloadOptions.push({
+  //     label: t("MT_CERTIFICATE"),
+  //     onClick: () => printCertificate(),
+  //   });
   
   return (
     <React.Fragment>
@@ -232,14 +232,14 @@ const PTApplicationDetails = () => {
           {/* <CardSubHeader style={{ fontSize: "24px" }}>{t("PTR_DOCUMENT_DETAILS")}</CardSubHeader>
           <div>
             {Array.isArray(docs) ? (
-              docs.length > 0 && <PetDocument pet_details={pet_details}></PetDocument>
+              docs.length > 0 && <PTRDocument pet_details={pet_details}></PTRDocument>
             ) : (
               <StatusTable>
                 <Row className="border-none" text={t("PTR_NO_DOCUMENTS_MSG")} />
               </StatusTable>
             )}
           </div> */}
-          <PTWFApplicationTimeline application={application} id={application?.applicationNumber} userType={"citizen"} />
+          <PTRWFApplicationTimeline application={application} id={application?.applicationNumber} userType={"citizen"} />
           {showToast && (
           <Toast
             error={showToast.key}
@@ -258,7 +258,7 @@ const PTApplicationDetails = () => {
   );
 };
 
-export default PTApplicationDetails;
+export default PTRApplicationDetails;
             
            
            

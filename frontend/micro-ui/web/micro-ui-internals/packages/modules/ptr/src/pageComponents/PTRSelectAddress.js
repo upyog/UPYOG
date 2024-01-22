@@ -3,10 +3,10 @@ import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useLocation } from "react-router-dom";
-import Timeline from "../components/TLTimeline";
+import Timeline from "../components/PTRTimeline";
 
 const PTRSelectAddress = ({ t, config, onSelect, userType, formData, setError, clearErrors, formState }) => {
-  const allCities = Digit.Hooks.pt.useTenants();
+  const allCities = Digit.Hooks.ptr.useTenants();
   let tenantId = Digit.ULBService.getCurrentTenantId();
   const { pathname } = useLocation();
   const presentInModifyApplication = pathname.includes("modify");
@@ -15,14 +15,10 @@ const PTRSelectAddress = ({ t, config, onSelect, userType, formData, setError, c
 
   let isEditAddress = formData?.isEditAddress || false;
   if (presentInModifyApplication) isEditAddress = true;
-  if (formData?.isUpdateProperty) isEditAddress = true;
+  
   const { pincode, city } = formData?.address || "";
   const cities =
-    userType === "employee"
-      ? allCities.filter((city) => city.code === tenantId)
-      : pincode
-      ? allCities.filter((city) => city?.pincode?.some((pin) => pin == pincode))
-      : allCities;
+    userType === "employee" ? allCities.filter((city) => city.code === tenantId) : pincode  ? allCities.filter((city) => city?.pincode?.some((pin) => pin == pincode)) : allCities;
 
   const [selectedCity, setSelectedCity] = useState(() => {
     return formData?.address?.city || null;
@@ -30,7 +26,7 @@ const PTRSelectAddress = ({ t, config, onSelect, userType, formData, setError, c
 
   const { data: fetchedLocalities } = Digit.Hooks.useBoundaryLocalities(
     selectedCity?.code,
-    "revenue",
+     "revenue",
     {
       enabled: !!selectedCity,
     },
@@ -80,6 +76,8 @@ const PTRSelectAddress = ({ t, config, onSelect, userType, formData, setError, c
       }
     }
   }, [selectedCity, formData?.address?.pincode, fetchedLocalities]);
+
+  console.log("formmmmmmmmmm",formData)
 
   function selectCity(city) {
     setSelectedLocality(null);
@@ -180,13 +178,7 @@ const PTRSelectAddress = ({ t, config, onSelect, userType, formData, setError, c
   }
   return (
     <React.Fragment>
-      {window.location.href.includes("/citizen") ? (
-        window.location.href.includes("/citizen/pt/property/property-mutation") ? (
-          <Timeline currentStep={1} flow="PT_MUTATE" />
-        ) : (
-          <Timeline currentStep={3} />
-        )
-      ) : null}
+      {window.location.href.includes("/citizen") ? <Timeline currentStep={3} /> : null}
       <FormStep config={config} onSelect={onSubmit} t={t} isDisabled={selectedLocality ? false : true}>
         <div>
           <CardLabel>{`${t("MYCITY_CODE_LABEL")} `}</CardLabel>

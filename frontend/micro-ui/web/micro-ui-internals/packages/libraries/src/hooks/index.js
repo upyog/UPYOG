@@ -255,8 +255,6 @@ import useFeedBackSearch from "./useFeedBackSearch";
 import usePetMDMS from "./ptr/usePetMDMS";
 import useBreedTypeMDMS from "./ptr/useBreedTypeMDMS";
 import usePTRCreateAPI from "./ptr/usePTRCreateAPI";
-//import useTenantsPTR from "./ptr/useTenants";
-import useTenantsPTR from "./ptr/useTenantsPTR";
 import usePTRPetMDMS from "./ptr/usePTRPetMDMS";
 import usePTRGenderMDMS from "./ptr/usePTRGenderMDMS";
 import usePTRSearch from "./ptr/usePTRSearch";
@@ -265,6 +263,7 @@ import usePTRApplicationAction from "./ptr/usePTRApplicationAction";
 import useServiceSearchPTR from "./ptr/useServiceSearchPTR";
 import usePetDocumentSearch from "./ptr/usePetDocumentSearch";
 import useMyPetPayments from "./ptr/useMyPetPayments";
+import useTenantsPTR from "./ptr/useTenants";
 
 
 const pgr = {
@@ -294,10 +293,11 @@ const ptr = {
   usePTRGenderMDMS,
   usePTRSearch,
   usePtrApplicationDetail,
-  useTenantsPTR,
+  // useTenantsPTR,
   useServiceSearchPTR,
   usePetDocumentSearch,
-  useMyPetPayments
+  useMyPetPayments,
+  useTenants: useTenantsPTR
  
 };
 

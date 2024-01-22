@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import ApplicationDetailsTemplate from "../../../../templates/ApplicationDetails";
-import getPTAcknowledgementData from "../../getPTAcknowledgementData";
+import getPetAcknowledgementData from "../../getPetAcknowledgementData";
 
 
 const ApplicationDetails = () => {
@@ -78,9 +78,7 @@ const ApplicationDetails = () => {
   useEffect(() => {
     if (applicationDetails) {
       setAppDetailsToShow(_.cloneDeep(applicationDetails));
-      // if (applicationDetails?.applicationData?.status !== "ACTIVE" && applicationDetails?.applicationData?.creationReason === "MUTATION") {
-      // setEnableAudit(true);
-      // }
+     
     }
   }, [applicationDetails]);
 
@@ -125,7 +123,7 @@ const ApplicationDetails = () => {
   const handleDownloadPdf = async () => {
     const PetRegistrationApplications = appDetailsToShow?.applicationData;
     const tenantInfo = tenants.find((tenant) => tenant.code === PetRegistrationApplications.tenantId);
-    const data = await getPTAcknowledgementData(PetRegistrationApplications.applicationData, tenantInfo, t);
+    const data = await getPetAcknowledgementData(PetRegistrationApplications.applicationData, tenantInfo, t);
     Digit.Utils.pdf.generate(data);
   };
 
