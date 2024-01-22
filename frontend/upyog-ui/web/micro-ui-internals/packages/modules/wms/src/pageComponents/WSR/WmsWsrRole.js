@@ -1,13 +1,13 @@
 import React from "react";
 import { LabelFieldPair, CardLabel, TextInput, CardLabelError } from "@egovernments/digit-ui-react-components";
 import { useLocation } from "react-router-dom";
-const WmsWsrActivity = ({ t, config, onSelect, formData = {}, userType, register, errors }) => {
+const WmsWsrRole = ({ t, config, onSelect, formData = {}, userType, register, errors }) => {
   const { pathname: url } = useLocation();
   const inputs = [
     {
-      label: "WMS_WSR_ACTIVITY_LABEL",
+      label: "WMS_WSR_ROLE_LABEL",
       type: "text",
-      name: "activity_name",
+      name: "role_name",
       validation: {
         isRequired: true,
         pattern: Digit.Utils.getPattern('Name'),
@@ -50,4 +50,4 @@ const WmsWsrActivity = ({ t, config, onSelect, formData = {}, userType, register
   );
 };
 
-export default WmsWsrActivity;
+export default WmsWsrRole;

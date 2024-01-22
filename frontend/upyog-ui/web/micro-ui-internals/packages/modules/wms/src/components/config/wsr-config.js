@@ -32,8 +32,34 @@ export const newConfig =[
               },
               {
                 type: "component",
-                component: "WmsWsrPercent",//TODO: Need to ask
-                key: "WmsWsrPercent",
+                component: "WmsWsrEmployee",
+                key: "WmsWsrEmployee",
+                isMandatory: true,
+                withoutLabel: true,
+              },{
+                type: "component",
+                component: "WmsWsrRole",
+                key: "WmsWsrRole",
+                isMandatory: true,
+                withoutLabel: true,
+              },
+              {
+                type: "component",
+                component: "WmsWsrStartDate",
+                key: "WmsWsrStartDate",
+                isMandatory: true,
+                withoutLabel: true,
+              },{
+                type: "component",
+                component: "WmsWsrEndDate",
+                key: "WmsWsrEndDate",
+                isMandatory: true,
+                withoutLabel: true,
+              },
+              {
+                type: "component",
+                component: "WmsWsrRemarks",//TODO: Need to ask
+                key: "WmsWsrRemarks",
                 isMandatory: true,
                 withoutLabel: true,
               }

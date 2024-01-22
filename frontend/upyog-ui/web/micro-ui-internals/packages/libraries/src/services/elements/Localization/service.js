@@ -72704,14 +72704,36 @@ export const LocalizationService = {
             "locale": "en_IN"
         },
         {
-            "code": "WMS_WSR_ACTIVITY_NAME_LABEL",
+            "code": "WMS_WSR_ACTIVITY_LABEL",
             "message": "Activity Name",
             "module": "rainmaker-common",
             "locale": "en_IN"
         },
         {
-            "code": "WMS_WSR_PERCENT_NAME_LABEL",
-            "message": "Status Percentage",
+            "code": "WMS_WSR_EMPLOYEE_NAME_LABEL",
+            "message": "Employee Name",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },{
+            "code": "WMS_WSR_ROLE_LABEL",
+            "message": "Role / Designation",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },{
+            "code": "WMS_WSR_START_DATE_LABEL",
+            "message": "Start Date",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_WSR_END_DATE_LABEL",
+            "message": "End Date",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_WSR_REMARKS_LABEL",
+            "message": "Remarks",
             "module": "rainmaker-common",
             "locale": "en_IN"
         },

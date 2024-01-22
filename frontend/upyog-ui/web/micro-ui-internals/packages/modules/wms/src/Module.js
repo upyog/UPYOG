@@ -183,7 +183,11 @@ import WmsWsrId from "./pageComponents/WSR/WmsWsrId";
 import WmsWsrPrjName from "./pageComponents/WSR/WmsWsrPrjName";
 import WmsWsrWorkName from "./pageComponents/WSR/WmsWsrWorkName";
 import WmsWsrActivity from "./pageComponents/WSR/WmsWsrActivity"
-import WmsWsrPercent from "./pageComponents/WSR/WmsWsrPercent";
+import WmsWsrEmployee from "./pageComponents/WSR/WmsWsrEmployee";
+import WmsWsrRole from "./pageComponents/WSR/WmsWsrRole";
+import WmsWsrStartDate from "./pageComponents/WSR/WmsWsrEmployee";
+import WmsWsrEndDate from "./pageComponents/WSR/WmsWsrEmployee";
+import WmsWsrRemarks from "./pageComponents/WSR/WmsWsrRemarks";
 
 /**---------------- */
 import ContrMasterAdd from "./pages/citizen/CM/index";
@@ -422,10 +426,14 @@ const componentsToRegister = {
   WmsWsrEdit:WmsWsrEdit,
   WmsWsrResponse:WmsWsrResponse,
   WmsWsrId,
-  WmsWsrActivity,
   WmsWsrPrjName,
   WmsWsrWorkName,
-  WmsWsrPercent,
+  WmsWsrActivity,
+  WmsWsrEmployee,
+  WmsWsrRole,
+  WmsWsrRemarks,
+  WmsWsrStartDate,
+  WmsWsrEndDate,
   // WmsWsrFund,
   // WmsWsrSourceOfFund,
   // WmsWsrDescriptionOfWsreme,
