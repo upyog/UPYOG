@@ -26,7 +26,7 @@ const BulkBillSearch = ({ tenantId, onSubmit, data, count, resultOk, businessSer
     data: updateMeterConnectionResponse,
     error: updateMeterError,
     mutate: meterReadingMutation,
-  } = Digit.Hooks.ws.useMeterReadingCreateAPI(businessService);
+  } = Digit.Hooks.ws.useBulkMeterReadingCreateAPI(businessService);
 
   const readExcel = async (file) => {
     const promise = new Promise((resolve, reject) => {
@@ -46,7 +46,7 @@ const BulkBillSearch = ({ tenantId, onSubmit, data, count, resultOk, businessSer
         
         const meterReadingList=data.map((meter)=>{
           
-        return{"billingPeriod":meter.billingPeriod,"currentReading":meter.currentReading,"currentReadingDate":meter.currentReadingDate,"lastReading":meter.lastReading,"lastReadingDate":meter.lastReadingDate,"connectionNo":meter.connectionNo,"meterStatus":meter.meterStatus}
+        return{"billingPeriod":meter.billingPeriod,"currentReading":meter.currentReading,"currentReadingDate":meter.currentReadingDate,"lastReading":meter.lastReading,"lastReadingDate":meter.lastReadingDate,"connectionNo":meter.connectionNo,"meterStatus":meter.meterStatus,tenantId:"pg.citya"}
         })
         resolve(meterReadingList);
       };
@@ -155,6 +155,14 @@ setMeterReadingData(meterReading)
   };
   const columns = useMemo(
     () => [
+    
+      {
+        Header: t("BILLING_CYCLE"),
+        disableSortBy: true,
+        Cell: ({ row }) => {
+          return GetCell(row.original?.["billingPeriod"]);
+        },
+      },
       {
         Header: t("WS_COMMON_TABLE_COL_CONSUMER_NO_LABEL"),
         disableSortBy: true,
@@ -172,13 +180,6 @@ setMeterReadingData(meterReading)
               )}
             </div>
           );
-        },
-      },
-      {
-        Header: t("BILLING_CYCLE"),
-        disableSortBy: true,
-        Cell: ({ row }) => {
-          return GetCell(row.original?.["billingPeriod"]);
         },
       },
       {
@@ -220,15 +221,7 @@ setMeterReadingData(meterReading)
           return GetCell(row.original?.["currentReadingDate"]);
         },
         
-      },
-      {
-        Header: t("CONSUMPTION"),
-        disableSortBy: true,
-        Cell: ({ row }) => {
-          return GetCell(row.original?.["consumption"]);
-        },
-        
-      },
+      }
      
     ],
   );
@@ -294,11 +287,6 @@ setMeterReadingData(meterReading)
                 },
               };
             }}
-            onPageSizeChange={onPageSizeChange}
-            currentPage={getValues("offset") / getValues("limit")}
-            onNextPage={nextPage}
-            onPrevPage={previousPage}
-            pageSizeLimit={getValues("limit")}
             onSort={onSort}
             disableSort={false}
             sortParams={[{ id: getValues("sortBy"), desc: getValues("sortOrder") === "DESC" ? true : false }]}

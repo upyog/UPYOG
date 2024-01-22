@@ -36,7 +36,7 @@ const BulkBillGeneration = ({ path }) => {
       return { display: "ES_COMMON_NO_DATA" }
     } else if (result?.meterReadings.length > 0) {
       let meterReadings=result?.meterReadings.map((data)=>{
-        return {"billingPeriod":data.billingPeriod,"connectionNo":data.connectionNo,"consumption":data.consumption,"currentReading":data.currentReading,"currentReadingDate":data.currentReadingDate,"lastReading":data.lastReading,"lastReadingDate":data.lastReadingDate,"meterStatus":data.meterStatus}})
+        return {"billingPeriod":data.billingPeriod,"connectionNo":data.connectionNo,"lastReading":data.lastReading,"lastReadingDate":data.lastReadingDate,"meterStatus":data.meterStatus,"currentReadingDate":"","currentReading":""}})
       return meterReadings
     } else {
       return [];
