@@ -9,7 +9,7 @@ const LanguageSelection = () => {
 
   const { data: { languages, stateInfo } = {}, isLoading } = Digit.Hooks.useStore.getInitData();
   const selectedLanguage = Digit.StoreData.getCurrentLanguage();
-
+console.log("languageslanguages",languages)
   const texts = useMemo(
     () => ({
       header: t("CS_COMMON_CHOOSE_LANGUAGE"),

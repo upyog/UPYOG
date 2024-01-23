@@ -1,20 +1,85 @@
 import React, { Fragment, useState,useEffect, useCallback, useMemo } from "react";
-import { SearchForm, Table, Card, Loader, Header,Toast } from "@egovernments/digit-ui-react-components";
+import { SearchForm, Table, Card, Loader, Header,Toast,DownloadBtnCommon, UploadFile, SubmitBar } from "@egovernments/digit-ui-react-components";
 import { useForm, Controller } from "react-hook-form";
-import SearchFields from "./SearchFields";
+import BulkBillSearchFields from "./BulkBillSearchFields";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import MobileSearchWater from "./MobileSearchWater";
 import { useHistory } from "react-router-dom";
+import {convertDateToEpoch} from "../../utils/index"
+import * as XLSX from "xlsx";
 const BulkBillSearch = ({ tenantId, onSubmit, data, count, resultOk, businessService, isLoading }) => {
-  const history = useHistory()
-  const [result,setResult]=  useState([])
   const [showToast, setShowToast] = useState(null);
-  const replaceUnderscore = (str) => {
-    str = str.replace(/_/g, " ");
-    return str;
-  };
+  const [uploadedFile, setUploadedFile] = useState(()=> null);
+  const [file,setFile] = useState("")
+  const [meterReadingData,setMeterReadingData] = useState([])
+  function selectfile(e) {
+    e.preventDefault()
+      setFile(e.target.files[0]);
+      readExcel(e.target.files[0]);
+      setUploadedFile("bulk");
 
+    }
+  const {
+    isLoading: updatingMeterConnectionLoading,
+    isError: updateMeterConnectionError,
+    data: updateMeterConnectionResponse,
+    error: updateMeterError,
+    mutate: meterReadingMutation,
+  } = Digit.Hooks.ws.useMeterReadingCreateAPI(businessService);
+
+  const readExcel = async (file) => {
+    const promise = new Promise((resolve, reject) => {
+      const fileReader = new FileReader();
+      fileReader.readAsArrayBuffer(file);
+
+      fileReader.onload = (e) => {
+        const bufferArray = e.target.result;
+
+        const wb = XLSX.read(bufferArray, { type: "buffer" });
+
+        const wsname = wb.SheetNames[0];
+
+        const ws = wb.Sheets[wsname];
+
+        const data = XLSX.utils.sheet_to_json(ws);
+        
+        const meterReadingList=data.map((meter)=>{
+          
+        return{"billingPeriod":meter.billingPeriod,"currentReading":meter.currentReading,"currentReadingDate":meter.currentReadingDate,"lastReading":meter.lastReading,"lastReadingDate":meter.lastReadingDate,"connectionNo":meter.connectionNo,"meterStatus":meter.meterStatus}
+        })
+        resolve(meterReadingList);
+      };
+
+      fileReader.onerror = (error) => {
+        reject(error);
+      };
+    });
+
+    promise.then(async (meterReading) => {
+setMeterReadingData(meterReading)
+    });
+  };
+ const handleBulkSubmit=async ()=>{
+    if (meterReadingMutation) {
+      let meterReadingsPayload = { meterReadingList: meterReadingData };
+      await meterReadingMutation(meterReadingsPayload, {
+        onError: (error, variables) => {
+
+          setShowToast({ error: true, label: error?.message ? error.message : error });
+          setTimeout(closeToast, 5000);
+        },
+        onSuccess: async (data, variables) => {
+
+          setShowToast({ key: "success", label: "WS_METER_READING_ADDED_SUCCESFULLY" });
+          setTimeout(closeToast, 3000);
+          setTimeout(() => {
+            window.location.reload();
+          }, 4000);
+        },
+      });
+    }
+  }
   const convertEpochToDate = (dateEpoch) => {
     if (dateEpoch == null || dateEpoch == undefined || dateEpoch == "") {
       return "NA";
@@ -27,15 +92,6 @@ const BulkBillSearch = ({ tenantId, onSubmit, data, count, resultOk, businessSer
     day = (day > 9 ? "" : "0") + day;
     return `${day}/${month}/${year}`;
   };
-  useEffect(async () => {
-    const payload = {
-      "BulkBillCriteria": {
-        "tenantId": "pg.citya"
-      }
-    }
-    let data = await Digit.WSService.WSSewsearchDemand(payload, window.location.href.includes("ws/sewerage/search-demand") ? "sw" : "ws")
-    setResult(data.connection)
-  }, [])
   const { t } = useTranslation();
   const { register, control, handleSubmit, setValue, getValues, reset } = useForm({
     defaultValues: {
@@ -44,16 +100,25 @@ const BulkBillSearch = ({ tenantId, onSubmit, data, count, resultOk, businessSer
       sortBy: "commencementDate",
       sortOrder: "DESC",
       searchType: "CONNECTION",
+      locality:"",
+      tenantId:""
     },
   });
-
+  const DownloadBtn = (props) => {
+    return (
+        <div onClick={props.onClick}>
+            <DownloadBtnCommon />
+        </div>
+    );
+};
   useEffect(() => {
     register("offset", 0);
     register("limit", 10);
     register("sortBy", "commencementDate");
     register("searchType", "CONNECTION");
     register("sortOrder", "DESC");
-    register("propertyId", "");
+    register("locality", "");
+    register("tenantId", "");
   }, [register]);
 
   const onSort = useCallback((args) => {
@@ -78,10 +143,16 @@ const BulkBillSearch = ({ tenantId, onSubmit, data, count, resultOk, businessSer
   const isMobile = window.Digit.Utils.browser.isMobile();
 
   if (isMobile) {
-    return <MobileSearchWater {...{ Controller, register, control, t, reset, previousPage, handleSubmit, tenantId, data, onSubmit }} />;
+    return <MobileSearchWater {...{ Controller, register, control, t, reset, previousPage, handleSubmit, tenantId, data, onSubmit ,setValue}} />;
   }
   //need to get from workflow
   const GetCell = (value) => <span className="cell-text">{value}</span>;
+  const handleExcelDownload = (e,tabData) => {s
+    e.preventDefault()
+    if (tabData?.[0] !== undefined) {
+      return Digit.Download.Excel(tabData,"Bulk-Bill");
+    }
+  };
   const columns = useMemo(
     () => [
       {
@@ -92,14 +163,9 @@ const BulkBillSearch = ({ tenantId, onSubmit, data, count, resultOk, businessSer
           return (
             <div>
               {row.original["connectionNo"] ? (
-                <span className={"link"}>
-                  <Link
-                    to={`/digit-ui/employee/ws/connection-details?applicationNumber=${row.original["connectionNo"]}&tenantId=${tenantId}&service=${
-                      row.original?.["service"]
-                      }&connectionType=${row.original?.["connectionType"]}&due=${row.original?.due || 0}&from=WS_SEWERAGE_CONNECTION_SEARCH_LABEL`}
-                  >
+                <span>
                     {row.original["connectionNo"] || "NA"}
-                  </Link>
+             
                 </span>
               ) : (
                 <span>{t("NA")}</span>
@@ -109,202 +175,72 @@ const BulkBillSearch = ({ tenantId, onSubmit, data, count, resultOk, businessSer
         },
       },
       {
-        Header: t("WS_COMMON_TABLE_COL_SERVICE_LABEL"),
+        Header: t("BILLING_CYCLE"),
         disableSortBy: true,
         Cell: ({ row }) => {
-          return GetCell(t(`WS_${row.original?.["service"]}`));
-        },
-      },
-
-      {
-        Header: t("WS_COMMON_TABLE_COL_OWN_NAME_LABEL"),
-        disableSortBy: true,
-        Cell: ({ row }) => {
-          return GetCell(row?.original?.connectionHolders?.map((owner) => owner?.name).join(",") ? row?.original?.connectionHolders?.map((owner) => owner?.name).join(",") : `${row.original?.["owner"] || "NA"}`);
+          return GetCell(row.original?.["billingPeriod"]);
         },
       },
       {
-        Header: t("WS_COMMON_TABLE_COL_STATUS_LABEL"),
+        Header: t("LAST_READING"),
         disableSortBy: true,
         Cell: ({ row }) => {
-          return GetCell(t(`WS_${row.original?.["status"]?.toUpperCase()}`));
+          return GetCell(row.original?.["lastReading"]);
         },
+        
       },
       {
-        Header: t("WS_COMMON_TABLE_COL_AMT_DUE_LABEL"),
+        Header: t("METER_READING_DATE"),
         disableSortBy: true,
         Cell: ({ row }) => {
-          if(row?.original?.["due"] <= 0)
-          {
-            return GetCell(`${row.original?.["due"]}`);
-          }
-          else {
-            return GetCell(`${row.original?.["due"] || "NA"}`);
-          }
-          
+          return GetCell(convertEpochToDate(row.original?.["lastReadingDate"]));
         },
+        
       },
       {
-        Header: t("WS_COMMON_TABLE_COL_ADDRESS"),
+        Header: t("METER_STATUS"),
         disableSortBy: true,
         Cell: ({ row }) => {
-          return GetCell(`${row.original?.["address"] || "NA"}`);
+          return GetCell(row.original?.["meterStatus"]);
         },
+        
       },
       {
-        Header: t("WS_COMMON_TABLE_COL_DUE_DATE_LABEL"),
+        Header: t("CURRECT_READING"),
         disableSortBy: true,
         Cell: ({ row }) => {
-          const status = row.original?.["status"]?.toUpperCase() || "";
-          const dueDate = row.original?.dueDate === "NA" ? t("WS_NA") : convertEpochToDate(row.original?.dueDate);
-          return GetCell(status === "INACTIVE" ? t("WS_NA") : t(`${dueDate}`));
+          return GetCell(row.original?.["currentReading"]);
         },
+        
       },
-
       {
-        Header: t("WS_COMMON_TABLE_COL_ACTION_LABEL"),
+        Header: t("CURRECT_READING_DATE"),
         disableSortBy: true,
         Cell: ({ row }) => {
-          const amount = row.original?.due;
-
-          if (amount || amount == 0) {
-            return GetCell(getActionItem(row.original?.status, row));
-          } else {
-            return GetCell(t(`${"WS_NA"}`));
-          }
+          return GetCell(row.original?.["currentReadingDate"]);
         },
+        
       },
+      {
+        Header: t("CONSUMPTION"),
+        disableSortBy: true,
+        Cell: ({ row }) => {
+          return GetCell(row.original?.["consumption"]);
+        },
+        
+      },
+     
     ],
-    []
   );
-  const columns2 = useMemo(
-    () => [
-      {
-        Header: t("WS_COMMON_TABLE_COL_CONSUMER_NO_LABEL"),
-        disableSortBy: true,
-        accessor: "connectionNo",
-        Cell: ({ row }) => {
-          return (
-            <div>
-              {row.original["connectionNo"] ? (
-                <span className={"link"}>
-                  <Link
-                    to={`/digit-ui/employee/ws/connection-details?applicationNumber=${row.original["connectionNo"]}&tenantId=${tenantId}&service=${
-                      row.original?.["service"]
-                      }&connectionType=${row.original?.["connectionType"]}&due=${row.original?.due || 0}&from=WS_SEWERAGE_CONNECTION_SEARCH_LABEL`}
-                  >
-                    {row.original["connectionNo"] || "NA"}
-                  </Link>
-                </span>
-              ) : (
-                <span>{t("NA")}</span>
-              )}
-            </div>
-          );
-        },
-      },
-      {
-        Header: t("WS_COMMON_TABLE_COL_applicationNo_LABEL"),
-        disableSortBy: true,
-        Cell: ({ row }) => {
-          return (<div>{row.original["applicationNo"]}</div>);
-        },
-      },
-
-      {
-        Header: t("WS_COMMON_TABLE_COL_propertyId_LABEL"),
-        disableSortBy: true,
-        Cell: ({ row }) => {
-          return GetCell(t(`WS_${row.original?.["propertyId"]?.toUpperCase()}`));
-        },
-      },
-  
-
-      {
-        Header: t("WS_COMMON_TABLE_COL_ACTION_LABEL"),
-        disableSortBy: true,
-        Cell: ({ row }) => {
-          return GetCell(generateDemand1(row))
-            //return (<div style={{cursor :"pointer", color :"#a82227"}}>{t(`${"WS_COMMON_COLLECT_DEMAND"}`)} </div>)
-          } 
-      },
-    ],
-    []
-  );
-
-  const generateDemand1 = (row) => {
-    return (
-        <div>
-            <span className="link">
-                <button onClick={() => { generateDemand(row) }}>
-                    {t(`${"WS_COMMON_COLLECT_DEMAND"}`)}{" "}
-                </button>
-            </span>
-        </div>
-    )
-};
-  const generateDemand = async (row) => {
-    const payload = {
-      "BulkBillCriteria": {
-        "tenantId": "pg.citya",
-        "consumerCode": row.original["connectionNo"]
-      }
-    }
-    let data = await Digit.WSService.WSSewsearchDemandGen(payload, window.location.href.includes("ws/sewerage/search-demand") ? "sw" : "ws")
-
-    setShowToast({
-      label: `${data}`
-  })
-    history.push(`/digit-ui/employee/payment/collect/SW/${encodeURIComponent(
-      row.original?.["connectionNo"])}/${row.original?.["tenantId"]}?tenantId=${row.original?.["tenantId"]}?workflow=WS&ISWSCON`)
-
-  }
-  const getActionItem = (status, row) => {
-    const userInfo = Digit.UserService.getUser();
-    const userRoles = userInfo.info.roles.map((roleData) => roleData.code);
-    const isUserAllowedToAddMeterReading = userRoles.filter(role => (role === "WS_CEMP" || role === "SW_CEMP")).length > 0
-    if(!isUserAllowedToAddMeterReading) return null
-    switch (status) {
-      case "Active":
-        return (
-          <div>
-            <span className="link">
-              {row.original?.service === "WATER" ? (
-                <Link
-                  to={{
-                    pathname: `/digit-ui/employee/payment/collect/${row.original?.["service"] === "WATER" ? "WS" : "SW"}/${encodeURIComponent(
-                      row.original?.["connectionNo"]
-                    )}/${row.original?.["tenantId"]}?tenantId=${row.original?.["tenantId"]}?workflow=WS&ISWSCON`,
-                  }}
-                >
-                  {t(`${"WS_COMMON_COLLECT_LABEL"}`)}{" "}
-                </Link>
-              ) : (
-                <Link
-                  to={{
-                    pathname: `/digit-ui/employee/payment/collect/${row.original?.["service"] === "WATER" ? "WS" : "SW"}/${encodeURIComponent(
-                      row.original?.["connectionNo"]
-                    )}/${row.original?.["tenantId"]}?tenantId=${row.original?.["tenantId"]}?workflow=SW&ISWSCON`,
-                  }}
-                >
-                  {t(`${"WS_COMMON_COLLECT_LABEL"}`)}{" "}
-                </Link>
-              )}
-            </span>
-          </div>
-        );
-    }
-  };
-
   return (
     <>
       <Header styles={{ fontSize: "32px" }}>
-        {window.location.href.includes("water") ? t("WS_WATER_SEARCH_CONNECTION_SUB_HEADER") : t("WS_SEWERAGE_SEARCH_CONNECTION_SUB_HEADER")}
+        {t("WS_WATER_SEARCH_BULK_CONNECTION_SUB_HEADER")}
       </Header>
-      {window.location.href.includes("search-demand")?"":<SearchForm className="ws-custom-wrapper" onSubmit={onSubmit} handleSubmit={handleSubmit}>
-        <SearchFields {...{ register, control, reset, tenantId, t }} />
-      </SearchForm>}
-      { isLoading ? <Loader /> : null } 
+      <SearchForm className="ws-custom-wrapper" onSubmit={onSubmit} handleSubmit={handleSubmit}>
+        <BulkBillSearchFields {...{ register, control, reset, tenantId, t,setValue }} />
+      </SearchForm>
+      {isLoading ? <Loader /> : null}
       {data?.display && !resultOk ? (
         <Card style={{ marginTop: 20 }}>
           {t(data?.display)
@@ -317,61 +253,59 @@ const BulkBillSearch = ({ tenantId, onSubmit, data, count, resultOk, businessSer
         </Card>
         // <></>
       ) : resultOk ? (
-        <Table
-          t={t}
-          data={data}
-          totalRecords={count}
-          columns={columns}
-          getCellProps={(cellInfo) => {
-            return {
-              style: {
-                minWidth: cellInfo.column.Header === t("ES_INBOX_APPLICATION_NO") ? "240px" : "",
-                padding: "20px 18px",
-                fontSize: "16px",
-              },
-            };
-          }}
-          onPageSizeChange={onPageSizeChange}
-          currentPage={getValues("offset") / getValues("limit")}
-          onNextPage={nextPage}
-          onPrevPage={previousPage}
-          pageSizeLimit={getValues("limit")}
-          onSort={onSort}
-          disableSort={false}
-          sortParams={[{ id: getValues("sortBy"), desc: getValues("sortOrder") === "DESC" ? true : false }]}
-        />
+        <div style={{ backgroundColor: "white" }}>
+
+          <div className="sideContent" style={{ float: "right", padding: "10px 30px" }}>
+            <span className="table-search-wrapper" style={{ cursor: "pointer" }}>
+              <DownloadBtn className="mrlg cursorPointer" onClick={(e) => handleExcelDownload(e, data)} />
+            </span>
+          </div>
+          <div style={{display:"flex" }}>
+          <div style={{ width: "70%" }}>
+            <UploadFile
+              id={"Bulk-Bill"}
+              extraStyleName={"propertyCreate"}
+              message={uploadedFile ? `1 ${t(`CS_ACTION_FILEUPLOADED`)}` : t(`CS_ACTION_NO_FILEUPLOADED`)}
+              accept=".xlsx"
+              onUpload={(e) => selectfile(e)}
+              onDelete={(e) => {
+                setUploadedFile(null);
+                setMeterReadingData([])
+              }}
+            />
+          </div>
+          {meterReadingData?.length >0?<div style={{top:"5px",left:"10px",position:"relative"}}>
+          <span>
+          <SubmitBar label={t("CS_COMMON_SUBMIT_READING")} onSubmit={handleBulkSubmit} />
+        </span>
+          </div>:""}
+          </div>
+          <Table
+            t={t}
+            data={data}
+            totalRecords={count}
+            columns={columns}
+            getCellProps={(cellInfo) => {
+              return {
+                style: {
+                  minWidth: cellInfo.column.Header === t("ES_INBOX_APPLICATION_NO") ? "240px" : "",
+                  padding: "20px 18px",
+                  fontSize: "16px",
+                },
+              };
+            }}
+            onPageSizeChange={onPageSizeChange}
+            currentPage={getValues("offset") / getValues("limit")}
+            onNextPage={nextPage}
+            onPrevPage={previousPage}
+            pageSizeLimit={getValues("limit")}
+            onSort={onSort}
+            disableSort={false}
+            sortParams={[{ id: getValues("sortBy"), desc: getValues("sortOrder") === "DESC" ? true : false }]}
+          />
+        </div>
       ) : null}
-      
-      {window.location.href.includes("search-demand")? result?.length > 0 ? <Table
-      t={t}
-      data={result}
-      totalRecords={count}
-      columns={columns2}
-      getCellProps={(cellInfo) => {
-        return {
-          style: {
-            minWidth: cellInfo.column.Header === t("ES_INBOX_APPLICATION_NO") ? "240px" : "",
-            padding: "20px 18px",
-            fontSize: "16px",
-          },
-        };
-      }}
-      onPageSizeChange={onPageSizeChange}
-      currentPage={getValues("offset") / getValues("limit")}
-      onNextPage={nextPage}
-      onPrevPage={previousPage}
-      pageSizeLimit={getValues("limit")}
-      onSort={onSort}
-      disableSort={false}
-      sortParams={[{ id: getValues("sortBy"), desc: getValues("sortOrder") === "DESC" ? true : false }]}
-    />:<Card style={{ marginTop: 20 }}>
-          {
-            <p  style={{ textAlign: "center" }}>
-              No Data Found
-            </p>
-          }
-  </Card>:""}
-  {showToast?.label && (
+      {showToast?.label && (
         <Toast
           label={showToast?.label}
           onClose={(w) => {
