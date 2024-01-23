@@ -26,7 +26,7 @@ const BulkBillSearch = ({ tenantId, onSubmit, data, count, resultOk, businessSer
     data: updateMeterConnectionResponse,
     error: updateMeterError,
     mutate: meterReadingMutation,
-  } = Digit.Hooks.ws.useMeterReadingCreateAPI(businessService);
+  } = Digit.Hooks.ws.useBulkMeterReadingCreateAPI(businessService);
 
   const readExcel = async (file) => {
     const promise = new Promise((resolve, reject) => {
@@ -44,10 +44,15 @@ const BulkBillSearch = ({ tenantId, onSubmit, data, count, resultOk, businessSer
 
         const data = XLSX.utils.sheet_to_json(ws);
         
-        const meterReadingList=data.map((meter)=>{
+        const meterReadingListFilter=data.map((meter)=>{
           
-        return{"billingPeriod":meter.billingPeriod,"currentReading":meter.currentReading,"currentReadingDate":meter.currentReadingDate,"lastReading":meter.lastReading,"lastReadingDate":meter.lastReadingDate,"connectionNo":meter.connectionNo,"meterStatus":meter.meterStatus}
+        return{"billingPeriod":meter.billingPeriod,"currentReading":meter.currentReading,"currentReadingDate":meter.currentReadingDate,"lastReading":meter.lastReading,"lastReadingDate":meter.lastReadingDate,"connectionNo":meter.connectionNo,"meterStatus":meter.meterStatus,tenantId:"pg.citya"}
         })
+        const meterReadingList = meterReadingListFilter.filter((item)=>{
+        console.log("ffff",convertEpochToDate(item.currentReadingDate))
+          return item.currentReading >= item.lastReading && item.currentReadingDate > item.lastReadingDate
+        })
+        console.log("reading list",meterReadingList)
         resolve(meterReadingList);
       };
 
@@ -92,6 +97,7 @@ setMeterReadingData(meterReading)
     day = (day > 9 ? "" : "0") + day;
     return `${day}/${month}/${year}`;
   };
+
   const { t } = useTranslation();
   const { register, control, handleSubmit, setValue, getValues, reset } = useForm({
     defaultValues: {
@@ -120,7 +126,7 @@ setMeterReadingData(meterReading)
     register("locality", "");
     register("tenantId", "");
   }, [register]);
-
+ 
   const onSort = useCallback((args) => {
     if (args.length === 0) return;
     setValue("sortBy", args.id);
@@ -140,6 +146,9 @@ setMeterReadingData(meterReading)
     setValue("offset", getValues("offset") - getValues("limit"));
     handleSubmit(onSubmit)();
   }
+  const closeToast = () => {
+    setShowToast(null);
+  };
   const isMobile = window.Digit.Utils.browser.isMobile();
 
   if (isMobile) {
@@ -147,7 +156,7 @@ setMeterReadingData(meterReading)
   }
   //need to get from workflow
   const GetCell = (value) => <span className="cell-text">{value}</span>;
-  const handleExcelDownload = (e,tabData) => {s
+  const handleExcelDownload = (e,tabData) => {
     e.preventDefault()
     if (tabData?.[0] !== undefined) {
       return Digit.Download.Excel(tabData,"Bulk-Bill");
@@ -155,6 +164,14 @@ setMeterReadingData(meterReading)
   };
   const columns = useMemo(
     () => [
+    
+      {
+        Header: t("BILLING_CYCLE"),
+        disableSortBy: true,
+        Cell: ({ row }) => {
+          return GetCell(row.original?.["billingPeriod"]);
+        },
+      },
       {
         Header: t("WS_COMMON_TABLE_COL_CONSUMER_NO_LABEL"),
         disableSortBy: true,
@@ -172,13 +189,6 @@ setMeterReadingData(meterReading)
               )}
             </div>
           );
-        },
-      },
-      {
-        Header: t("BILLING_CYCLE"),
-        disableSortBy: true,
-        Cell: ({ row }) => {
-          return GetCell(row.original?.["billingPeriod"]);
         },
       },
       {
@@ -217,18 +227,10 @@ setMeterReadingData(meterReading)
         Header: t("CURRECT_READING_DATE"),
         disableSortBy: true,
         Cell: ({ row }) => {
-          return GetCell(row.original?.["currentReadingDate"]);
+          return GetCell(convertEpochToDate(row.original?.["currentReadingDate"]));
         },
         
-      },
-      {
-        Header: t("CONSUMPTION"),
-        disableSortBy: true,
-        Cell: ({ row }) => {
-          return GetCell(row.original?.["consumption"]);
-        },
-        
-      },
+      }
      
     ],
   );
@@ -294,11 +296,6 @@ setMeterReadingData(meterReading)
                 },
               };
             }}
-            onPageSizeChange={onPageSizeChange}
-            currentPage={getValues("offset") / getValues("limit")}
-            onNextPage={nextPage}
-            onPrevPage={previousPage}
-            pageSizeLimit={getValues("limit")}
             onSort={onSort}
             disableSort={false}
             sortParams={[{ id: getValues("sortBy"), desc: getValues("sortOrder") === "DESC" ? true : false }]}
