@@ -99,6 +99,7 @@ export const Search = {
       // const totalAmount = response?.noOfTrips === 0 || amountPerTrip === "N/A" ? "N/A" : response?.noOfTrips * Number(amountPerTrip);
       totalAmount = demandDetails?.Demands[0]?.demandDetails?.map((detail) => detail?.taxAmount)?.reduce((a, b) => a + b) || "N/A";
     }
+    const propertyID= response.additionalDetails.propertyID || "N/A";
     var balancePaid = demandDetails?.Demands[0]?.demandDetails?.map((detail) => detail?.collectionAmount)?.reduce((a, b) => a + b) || "N/A";
     balancePaid = balancePaid - response?.advanceAmount;
     const isFullPaymentDone =

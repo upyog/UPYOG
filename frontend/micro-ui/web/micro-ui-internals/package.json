@@ -10,15 +10,11 @@
     "packages/modules/common",
     "packages/modules/core",
     "packages/modules/pgr",
-    "packages/modules/dss",
-    "packages/modules/commonPt",
     "packages/modules/pt",
-    "packages/modules/mCollect",
-    "packages/modules/obps",
-    "packages/modules/pgr",
     "packages/modules/ws",
-    "packages/modules/pgr",
-    "packages/modules/fsm"
+    "packages/modules/fsm",
+    "packages/modules/mCollect",
+    "packages/modules/obps"
   ],
   "author": "Abhinav Kushwaha <abhinav.kushwaha@egovernments.org>",
   "license": "MIT",
@@ -70,7 +66,7 @@
     "build:obps": "cd packages/modules/obps && yarn build",
     "buildD:engagement": "cd packages/modules/engagement && yarn build",
     "buildD:noc": "cd packages/modules/noc && yarn build",
-    "buildD:ws": "cd packages/modules/ws && yarn build",
+    "build:ws": "cd packages/modules/ws && yarn build",
     "buildD:bills": "cd packages/modules/bills && yarn build",
     "buildR:reports": "cd packages/modules/reports && yarn build",
     "deploy:jenkins": "./scripts/jenkins.sh"
@@ -87,9 +83,8 @@
   },
   "dependencies": {
     "lodash": "4.17.21",
-    "microbundle-crl": "^0.13.11"
-  },
-  "resolutions": {
+    "microbundle-crl": "0.13.11"
+  } ,"resolutions": {
     "**/babel-loader": "8.2.2",
     "**/@babel/core": "7.14.0",
     "**/@babel/preset-env": "7.14.0",

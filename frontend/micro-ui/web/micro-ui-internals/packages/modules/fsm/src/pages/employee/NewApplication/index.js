@@ -192,6 +192,7 @@ export const NewApplication = ({ parentUrl, heading }) => {
   }
 
   const configs = [...preFields, ...commonFields];
+
   return (
     <React.Fragment>
       <div style={{ marginLeft: "15px" }}>
