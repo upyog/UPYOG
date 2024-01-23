@@ -72752,13 +72752,13 @@ export const LocalizationService = {
         
         {
             "code": "WMS_WSR_CREATE_PAGE_LABEL",
-            "message": "Deduction Register",
+            "message": "Work Status Report",
             "module": "rainmaker-common",
             "locale": "en_IN"
         },
         {
             "code": "WMS_WSR_COMMON_CREATE_HEADER",
-            "message": "Deduction Register",
+            "message": "Work Status Report Entry",
             "module": "rainmaker-common",           
             "locale": "en_IN"
         },

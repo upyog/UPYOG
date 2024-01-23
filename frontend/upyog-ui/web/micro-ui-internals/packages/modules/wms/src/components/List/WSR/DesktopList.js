@@ -42,10 +42,10 @@ const DesktopList = ({ tableConfig, filterComponent, ...props }) => {
         },
       },
       {
-        Header: t("WMS_WSR_ML_NAME_LABEL"),
+        Header: t("WMS_WSR_ACTIVITY_LABEL"),
         disableDrtBy: true,
         Cell: ({ row }) => {
-          return GetCell(`${row.original?.milestone_name}`);
+          return GetCell(`${row.original?.activity_name}`);
         },
       },
       {
