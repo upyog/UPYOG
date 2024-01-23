@@ -157,7 +157,7 @@ export const newConfig = [
         },
         withoutLabel: true,
         key: "mbNotPaid",
-        nextStep: "tender-work-etails",
+        nextStep: "tender-work-details",
         type: "component",
         hideInEmployee: true,
       }
@@ -167,7 +167,7 @@ export const newConfig = [
     head: "",
     body: [
       {
-        route: "tender-work-etails",
+        route: "tender-work-details",
         component: "TenderWorkDetails", 
         texts: {
           headerCaption: "",
