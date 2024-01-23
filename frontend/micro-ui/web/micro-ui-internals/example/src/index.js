@@ -26,6 +26,8 @@ import { initBillsComponents, BillsModule } from "@egovernments/digit-ui-module-
 
 import { PTRModule, PTRLinks, PTRComponents } from "@upyog-niua/upyog-ui-module-ptr";
 
+import { AssetModule, AssetLinks, AssetComponents } from "@upyog-niua/upyog-ui-module-asset";
+
 
 // import {initCustomisationComponents} from "./customisations";
 
@@ -64,7 +66,8 @@ const enabledModules = [
   "FireNoc",
   "Birth",
   "Death",
-  "PTR"
+  "PTR",
+  "ASSET"
 ];
 
 const initTokens = (stateCode) => {
@@ -110,7 +113,10 @@ const initDigitUI = () => {
     BillsModule,
     PTRModule,
     PTRLinks,
-    ...PTRComponents
+    ...PTRComponents,
+    AssetModule,
+    AssetLinks,
+    ...AssetComponents
     // TLModule,
     // TLLinks,
   });
