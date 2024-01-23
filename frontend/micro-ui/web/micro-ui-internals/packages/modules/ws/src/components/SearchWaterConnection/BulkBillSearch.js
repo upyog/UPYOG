@@ -50,7 +50,7 @@ const BulkBillSearch = ({ tenantId, onSubmit, data, count, resultOk, businessSer
         })
         const meterReadingList = meterReadingListFilter.filter((item)=>{
         console.log("ffff",convertEpochToDate(item.currentReadingDate))
-          return item.currentReading >= item.lastReading && item.currentReadingDate > item.lastReadingDate
+          return item.currentReading >= item.lastReading
         })
         console.log("reading list",meterReadingList)
         resolve(meterReadingList);
