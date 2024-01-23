@@ -72704,14 +72704,36 @@ export const LocalizationService = {
             "locale": "en_IN"
         },
         {
-            "code": "WMS_WSR_ML_NAME_LABEL",
-            "message": "Milestone Name",
+            "code": "WMS_WSR_ACTIVITY_LABEL",
+            "message": "Activity Name",
             "module": "rainmaker-common",
             "locale": "en_IN"
         },
         {
-            "code": "WMS_WSR_PERCENT_NAME_LABEL",
-            "message": "Status Percentage",
+            "code": "WMS_WSR_EMPLOYEE_NAME_LABEL",
+            "message": "Employee Name",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },{
+            "code": "WMS_WSR_ROLE_LABEL",
+            "message": "Role / Designation",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },{
+            "code": "WMS_WSR_START_DATE_LABEL",
+            "message": "Start Date",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_WSR_END_DATE_LABEL",
+            "message": "End Date",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_WSR_REMARKS_LABEL",
+            "message": "Remarks",
             "module": "rainmaker-common",
             "locale": "en_IN"
         },
@@ -72730,13 +72752,13 @@ export const LocalizationService = {
         
         {
             "code": "WMS_WSR_CREATE_PAGE_LABEL",
-            "message": "Deduction Register",
+            "message": "Work Status Report",
             "module": "rainmaker-common",
             "locale": "en_IN"
         },
         {
             "code": "WMS_WSR_COMMON_CREATE_HEADER",
-            "message": "Deduction Register",
+            "message": "Work Status Report Entry",
             "module": "rainmaker-common",           
             "locale": "en_IN"
         },

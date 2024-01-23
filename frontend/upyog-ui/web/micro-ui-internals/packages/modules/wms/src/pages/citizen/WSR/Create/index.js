@@ -18,8 +18,12 @@ const WmsWsrCreate = () => {
         WsrApplication: [{
           project_name: data?.WmsWsrPrjName?.project_name,  
           work_name: data?.WmsWsrWorkName?.work_name,  
-          milestone_name: data?.WmsWsrMLName?.milestone_name,
-          percent_weightage: data?.WmsWsrPercent?.percent_weightage,
+          activity_name: data?.WmsWsrActivity?.activity_name,
+          role_name: data?.WmsWsrRole?.role_name,
+          employee_name: data?.WmsWsrEmployee?.employee_name,
+          start_date:data?.WmsWsrStartDate?.start_date,
+          end_date:data?.WmsWsrEndDate?.end_date,
+          remarks_content: data?.WmsWsrRemarks?.remarks_content,
           tenantId:tenantId
         }],
       };

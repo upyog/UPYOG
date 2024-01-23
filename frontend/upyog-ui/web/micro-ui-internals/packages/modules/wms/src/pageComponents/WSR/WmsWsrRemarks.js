@@ -1,13 +1,13 @@
 import React from "react";
 import { LabelFieldPair, CardLabel, TextInput, CardLabelError } from "@egovernments/digit-ui-react-components";
 import { useLocation } from "react-router-dom";
-const WmsWsrMLName = ({ t, config, onSelect, formData = {}, userType, register, errors }) => {
+const WmsWsrRemarks = ({ t, config, onSelect, formData = {}, userType, register, errors }) => {
   const { pathname: url } = useLocation();
   const inputs = [
     {
-      label: "WMS_DR_ML_NAME_LABEL",
+      label: "WMS_WSR_REMARKS_LABEL",
       type: "text",
-      name: "milestone_name",
+      name: "remarks_content",
       validation: {
         isRequired: true,
         pattern: Digit.Utils.getPattern('Name'),
@@ -50,4 +50,4 @@ const WmsWsrMLName = ({ t, config, onSelect, formData = {}, userType, register, 
   );
 };
 
-export default WmsWsrMLName;
+export default WmsWsrRemarks;
