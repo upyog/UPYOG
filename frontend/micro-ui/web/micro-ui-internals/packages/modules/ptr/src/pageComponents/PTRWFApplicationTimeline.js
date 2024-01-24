@@ -9,12 +9,12 @@ import PTRWFCaption from "./PTRWFCaption";
 const PTRWFApplicationTimeline = (props) => {
   console.log("idddddddddd", props)
   const { t } = useTranslation();
-  const businessService = "pet-services";
+  const businessService = props?.application?.workflow?.businessService;
   // const businessService = "ptr";
 
   const { isLoading, data } = Digit.Hooks.useWorkflowDetails({
     tenantId: props.application?.tenantId,
-    id: props.id,
+    id: props.application?.applicationNumber,
     moduleCode: businessService,
   });
   //console.log("timelinbe business service ", businessService)

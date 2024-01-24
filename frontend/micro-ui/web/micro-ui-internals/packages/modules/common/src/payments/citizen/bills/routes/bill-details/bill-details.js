@@ -7,15 +7,20 @@ import BillSumary from "./bill-summary";
 import { stringReplaceAll } from "./utils";
 
 const BillDetails = ({ paymentRules, businessService }) => {
+  console.log("businessServiceat bisllmainpage",businessService);
+  
+
   const { t } = useTranslation();
   const history = useHistory();
   const { state, pathname, search } = useLocation();
   const userInfo = Digit.UserService.getUser();
   let { consumerCode } = useParams();
+  console.log("consumerCode at bill main page",consumerCode)
   const { workflow: wrkflow, tenantId: _tenantId, authorization, ConsumerName } = Digit.Hooks.useQueryParams();
   const [bill, setBill] = useState(state?.bill);
   const tenantId = state?.tenantId || _tenantId || Digit.UserService.getUser().info?.tenantId;
   const propertyId = state?.propertyId;
+  const applicationNumber = state?.applicationNumber;
   if (wrkflow === "WNS" && consumerCode.includes("?")) consumerCode = consumerCode.substring(0, consumerCode.indexOf("?"));
   const { data, isLoading } = state?.bill
     ? { isLoading: false }
@@ -24,6 +29,11 @@ const BillDetails = ({ paymentRules, businessService }) => {
         businessService,
         consumerCode: wrkflow === "WNS" ? stringReplaceAll(consumerCode, "+", "/") : consumerCode,
       });
+
+      
+// console.log("thgis page is renderinhg here e ujedehfjhsguj")
+       
+     
 
   let Useruuid = data?.Bill?.[0]?.userId || "";
   let requestCriteria = [
@@ -46,7 +56,8 @@ const BillDetails = ({ paymentRules, businessService }) => {
     { enabled: pathname.includes("FSM") ? true : false },
     "CITIZEN"
   );
-  let { minAmountPayable, isAdvanceAllowed } = paymentRules;
+  
+  let { minAmountPayable, isAdvanceAllowed } = paymentRules; 
   minAmountPayable = wrkflow === "WNS" ? 100 : minAmountPayable;
   const billDetails = bill?.billDetails?.sort((a, b) => b.fromPeriod - a.fromPeriod)?.[0] || [];
   const Arrears =
@@ -54,7 +65,25 @@ const BillDetails = ({ paymentRules, businessService }) => {
       ?.sort((a, b) => b.fromPeriod - a.fromPeriod)
       ?.reduce((total, current, index) => (index === 0 ? total : total + current.amount), 0) || 0;
 
-  const { key, label } = Digit.Hooks.useApplicationsForBusinessServiceSearch({ businessService }, { enabled: false });
+      // debugger
+      let key ;
+      let label;
+
+      if (businessService === "pet-services"){
+        key = "applicationNumber" ;
+        label  = "PTR_UNIQUE_APPLICATION_NUMBER" ;
+        // console.log(label);
+      }
+      else {
+        const { key, label } = Digit.Hooks.useApplicationsForBusinessServiceSearch({ businessService }, { enabled: false });
+      }
+
+  //  const { key, label } = Digit.Hooks.useApplicationsForBusinessServiceSearch({ businessService }, { enabled: false });
+
+ 
+
+  console.log("label and key",label,key)
+
   const getBillingPeriod = () => {
     const { fromPeriod, toPeriod } = billDetails;
     if (fromPeriod && toPeriod) {
@@ -91,6 +120,7 @@ const BillDetails = ({ paymentRules, businessService }) => {
       return "FY " + from + "-" + to;
     } else return "N/A";
   };
+
 
   const getBillBreakDown = () => billDetails?.billAccountDetails || [];
 
@@ -133,10 +163,11 @@ const BillDetails = ({ paymentRules, businessService }) => {
   useEffect(() => {
     if (!bill && data) {
       let requiredBill = data.Bill.filter((e) => e.consumerCode == (wrkflow === "WNS" ? stringReplaceAll(consumerCode, "+", "/") : consumerCode))[0];
-      console.log("requiredBillrequiredBill",requiredBill)
       setBill(requiredBill);
     }
   }, [isLoading]);
+
+  
 
   const onSubmit = () => {
     let paymentAmount =
@@ -163,10 +194,17 @@ const BillDetails = ({ paymentRules, businessService }) => {
         tenantId: billDetails.tenantId,
         name: bill.payerName,
         mobileNumber: bill.mobileNumber && bill.mobileNumber?.includes("*") ? userData?.user?.[0]?.mobileNumber : bill.mobileNumber,      });
-    } else {
+    }  else if (businessService === "pet-services") {
+      history.push(`/digit-ui/citizen/payment/billDetails/${businessService}/${consumerCode}/${paymentAmount}`, {
+        paymentAmount,
+        tenantId: billDetails.tenantId,
+        name: bill.payerName,
+        mobileNumber: bill.mobileNumber && bill.mobileNumber?.includes("*") ? userData?.user?.[0]?.mobileNumber : bill.mobileNumber,      });
+    }else {
       history.push(`/digit-ui/citizen/payment/collect/${businessService}/${consumerCode}`, { paymentAmount, tenantId: billDetails.tenantId, propertyId: propertyId });
     }
   };
+
 
   const onChangeAmount = (value) => {
     setError("");

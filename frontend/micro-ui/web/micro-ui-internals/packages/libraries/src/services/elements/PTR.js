@@ -1,8 +1,10 @@
 import Urls from "../atoms/urls";
 import { Request } from "../atoms/Utils/Request";
 
+
  
 export const PTRService = {
+  
   create: (details, tenantId) =>
     Request({
       url: Urls.ptr.create,
@@ -56,7 +58,7 @@ export const PTRService = {
       method: "POST",
       auth: auth === false ? auth : true,
       userService: auth === false ? auth : true,
-      params: { tenantId, consumerCode: consumerCodes, businessService: "ptr" },
+      params: { tenantId, consumerCode: consumerCodes, businessService: "pet-services" },
     }),
     
 };

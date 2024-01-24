@@ -33,8 +33,9 @@ const PTRApplicationDetails = () => {
 
   console.log("jdjdjdjdjdjdjdjjdjdjdjdj")
 
-  const [billAmount, setBillAmount] = useState(null);
-  const [billStatus, setBillStatus] = useState(null);
+  // const [billAmount, setBillAmount] = useState(null);
+  // const [billStatus, setBillStatus] = useState(null);
+  const [billData, setBillData]=useState(null);
 
   let serviceSearchArgs = {
     tenantId : tenantId,
@@ -58,19 +59,34 @@ const PTRApplicationDetails = () => {
   sessionStorage.setItem("ptr-pet", JSON.stringify(application));
 
   
-  useEffect(async () => {
-    if (acknowledgementIds && tenantId &&  pet_details) {
-      const res = await Digit.PaymentService.searchBill(tenantId, { Service: "pet-services", consumerCode: acknowledgementIds });
-      // if (!res.Bill.length) {
-      //   const res1 = await Digit.PTService.ptCalculateMutation({  pet_details:  pet_details }, tenantId);
-      //   setBillAmount(res1?.[acknowledgementIds]?.totalAmount || t("CS_NA"));
-      //   setBillStatus(t(`PTR_MUT_BILL_ACTIVE`));
-      // } else {
-      //   setBillAmount(res?.Bill[0]?.totalAmount || t("CS_NA"));
-      //   setBillStatus(t(`PTR_MUT_BILL_${res?.Bill[0]?.status?.toUpperCase()}`));
-      // }
-    }
-  }, [tenantId, acknowledgementIds,  pet_details]);
+  // useEffect(async () => {
+  //   if (acknowledgementIds && tenantId &&  pet_details) {
+  //     // const res = await Digit.PaymentService.searchBill(tenantId, { Service: "pet-services", consumerCode: acknowledgementIds });
+  //     const res = await Digit.PaymentService.fetchBill(tenantId, { businessService: "pet-services", consumerCode: acknowledgementIds });
+
+  //     if (!res.Bill.length) {
+  //       // const res1 = await Digit.PTService.ptCalculateMutation({  pet_details:  pet_details }, tenantId);
+  //       setBillAmount(res1?.[acknowledgementIds]?.totalAmount || t("CS_NA"));
+  //       // setBillStatus(t(`PTR_MUT_BILL_ACTIVE`));
+  //     } else {
+  //       setBillAmount(res?.Bill[0]?.totalAmount || t("CS_NA"));
+  //       // setBillStatus(t(`PTR_MUT_BILL_${res?.Bill[0]?.status?.toUpperCase()}`));
+  //     }
+  //   }
+  // }, [tenantId, acknowledgementIds,  pet_details]);
+
+  const [loading, setLoading]=useState(false);
+
+  const fetchBillData=async()=>{
+    setLoading(true);
+    const result= await Digit.PaymentService.fetchBill(tenantId,{ businessService: "pet-services", consumerCode: acknowledgementIds, });
+  
+  setBillData(result);
+  setLoading(false);
+};
+useEffect(()=>{
+fetchBillData();
+}, [tenantId, acknowledgementIds]); 
 
   const { isLoading: auditDataLoading, isError: isAuditError, data: auditResponse } = Digit.Hooks.ptr.usePTRSearch(
     {
