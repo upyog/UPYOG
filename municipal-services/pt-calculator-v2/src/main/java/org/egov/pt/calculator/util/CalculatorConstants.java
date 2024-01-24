@@ -114,11 +114,12 @@ public class CalculatorConstants {
 
 	public static final String INTEREST_MASTER = "Interest";
 	public static final String ROAD_TYPE_RATES = "RoadTypeRates";
-	public static final String STRUCTURE_TYPE = "StructureType";
+	public static final String STRUCTURE_TYPE_RATES = "StructureTypeRates";
+	public static final String AGE_OF_PROPERTY_RATES ="AgeOfPropertyRates";
 
 
 	public static final List<String> PROPERTY_BASED_EXEMPTION_MASTERS = Collections.unmodifiableList(Arrays.asList(
-			USAGE_MAJOR_MASTER, USAGE_MINOR_MASTER, USAGE_SUB_MINOR_MASTER, USAGE_DETAIL_MASTER, OWNER_TYPE_MASTER,ROAD_TYPE_RATES,STRUCTURE_TYPE));
+			USAGE_MAJOR_MASTER, USAGE_MINOR_MASTER, USAGE_SUB_MINOR_MASTER, USAGE_DETAIL_MASTER, OWNER_TYPE_MASTER,ROAD_TYPE_RATES,STRUCTURE_TYPE_RATES,AGE_OF_PROPERTY_RATES));
 	
 	public static final List<Category> DEBIT_CATEGORIES = Collections.unmodifiableList(Arrays.asList(Category.REBATE, Category.EXEMPTION));
 

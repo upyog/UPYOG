@@ -176,6 +176,8 @@ public class PropertyRowMapper implements ResultSetExtractor<List<Property>> {
 				.unitType(rs.getString("unitType"))
 				.constructionDetail(consDetail)
 				.floorNo(rs.getInt("floorno"))
+				.ageOfProperty(rs.getString("ageofproperty"))
+				.structureType(rs.getString("structuretype"))
 				.arv(arv)
 				.id(unitId)
 				.build();

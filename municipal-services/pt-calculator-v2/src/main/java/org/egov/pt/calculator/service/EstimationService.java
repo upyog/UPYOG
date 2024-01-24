@@ -262,6 +262,7 @@ public class EstimationService {
 		
 		List<String> billingSlabIds = new LinkedList<>();
 		System.out.println(filteredBillingSlabs.size());
+		Map<String,String> mapValueOfCalculationForUnits = new HashMap<>();
 		/*
 		 * by default land should get only one slab from database per tenantId
 		 */
@@ -271,7 +272,8 @@ public class EstimationService {
 
 		else if (PT_TYPE_VACANT_LAND.equalsIgnoreCase(detail.getPropertyType())) {
 			taxAmt = taxAmt.add(BigDecimal.valueOf(filteredBillingSlabs.get(0).getUnitRate() * detail.getLandArea()));
-			taxAmt = getApplicableTaxForUnits(taxAmt,propertyBasedExemptionMasterMap,detail,detail.getPropertyType());
+			taxAmt = taxAmt.add(getApplicableTaxForUnits(taxAmt,propertyBasedExemptionMasterMap,detail,detail.getPropertyType()));
+			taxAmt = taxAmt.add(getApplicableTaxForAgeOfProperty(taxAmt,propertyBasedExemptionMasterMap,detail,detail.getPropertyType(),null));
 		} else {
 
 			double unBuiltRate = 0.0;
@@ -284,8 +286,17 @@ public class EstimationService {
 				BillingSlab slab = getSlabForCalc(filteredBillingSlabs, unit);
 				BigDecimal currentUnitTax = getTaxForUnit(slab, unit);
 				currentUnitTax = getApplicableTaxForUnits(currentUnitTax,propertyBasedExemptionMasterMap,detail,detail.getPropertyType());
+				//mapValueOfCalculationForUnits.put("DISTANCE_FROM_ROAD_"+i, tenantId)
+				//Calculating age of Property
+				
+				if(null!=unit.getAgeOfProperty()) {
+					currentUnitTax = getApplicableTaxForAgeOfProperty(currentUnitTax,propertyBasedExemptionMasterMap,detail,detail.getPropertyType(),unit);
+				}
+				
+				if(null!=unit.getStructureType()) {
+					currentUnitTax = getApplicableTaxForStructureType(currentUnitTax,propertyBasedExemptionMasterMap,detail,unit);
+				}
 				billingSlabIds.add(slab.getId()+"|"+i);
-
 				/*
 				 * counting the number of units & total area in ground floor for unbuilt area
 				 * tax calculation
@@ -306,7 +317,8 @@ public class EstimationService {
 			 */
 			BigDecimal unbuiltAmount = getUnBuiltRate(detail, unBuiltRate, groundUnitsCount, groundUnitsArea);
 			//Calculation For Road Type
-			unbuiltAmount=	getApplicableTaxForUnits(unbuiltAmount,propertyBasedExemptionMasterMap,detail,"UNBUILT");
+			unbuiltAmount =	getApplicableTaxForUnits(unbuiltAmount,propertyBasedExemptionMasterMap,detail,"UNBUILT");
+			unbuiltAmount = unbuiltAmount.add(getApplicableTaxForAgeOfProperty(unbuiltAmount,propertyBasedExemptionMasterMap,detail,"UNBUILT",null));
 			taxAmt = taxAmt.add(unbuiltAmount);
 			
 			/*
@@ -351,6 +363,55 @@ public class EstimationService {
 		}
 		return currentUnitTax;
 	}
+	
+	
+	
+	private BigDecimal getApplicableTaxForStructureType(BigDecimal currentUnitTax, Map<String, Map<String, 
+			List<Object>>> propertyBasedExemptionMasterMap,
+			PropertyDetail detail, Unit unit) {
+		
+		Map<String, List<Object>> roadTypeRates = propertyBasedExemptionMasterMap.get("StructureTypeRates");
+		String searchKey ="";
+		String assessmentYear = detail.getFinancialYear();
+		
+		searchKey = detail.getPropertyType()+"_"+unit.getStructureType();
+		Map<String, Object> applicableRoadTypeRate = mDataService.getApplicableMaster(assessmentYear,
+				roadTypeRates.get(searchKey));
+
+		if (null != applicableRoadTypeRate) {
+
+			BigDecimal currentExemption = mDataService.calculateApplicables(currentUnitTax,
+					applicableRoadTypeRate.get("value"));
+			currentUnitTax = currentExemption.add(currentUnitTax);
+		}
+		return currentUnitTax;
+	}
+	
+	private BigDecimal getApplicableTaxForAgeOfProperty(BigDecimal currentUnitTax, Map<String, Map<String, 
+			List<Object>>> propertyBasedExemptionMasterMap,
+			PropertyDetail detail, String calculationFor,Unit unit) {
+		
+		Map<String, List<Object>> roadTypeRates = propertyBasedExemptionMasterMap.get("AgeOfPropertyRates");
+		String searchKey ="";
+		String assessmentYear = detail.getFinancialYear();
+		if(calculationFor.equalsIgnoreCase("UNBUILT") || calculationFor.equalsIgnoreCase("VACANT")) {	
+			 searchKey = "VACANT";
+			
+		}else {
+			 searchKey = detail.getPropertyType()+"_"+unit.getAgeOfProperty();
+		}
+		Map<String, Object> applicableRoadTypeRate = mDataService.getApplicableMaster(assessmentYear,
+				roadTypeRates.get(searchKey));
+
+		if (null != applicableRoadTypeRate) {
+
+			BigDecimal currentExemption = mDataService.calculateApplicables(currentUnitTax,
+					applicableRoadTypeRate.get("value"));
+			currentUnitTax = currentExemption.add(currentUnitTax);
+		}
+		return currentUnitTax;
+	}
+	
 	/**
 	 * Private method to calculate the un-built area tax estimate
 	 *
@@ -650,7 +711,7 @@ public class EstimationService {
 	 * method to do a first level filtering on the slabs based on the values present in Property detail
 	 */
 	private List<BillingSlab> getSlabsFiltered(Property property, CalculationCriteria criteria,RequestInfo requestInfo) {
-
+		System.out.println("fsd");
 		PropertyDetail detail = property.getPropertyDetails().get(0);
 		log.info("financial Year in Criteria is" + criteria);
 		

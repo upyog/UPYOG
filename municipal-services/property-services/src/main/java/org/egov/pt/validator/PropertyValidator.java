@@ -101,6 +101,9 @@ public class PropertyValidator {
 		
 		//FOR Manipur Validation
 		//validatePropertyAddressFields(request, errorMap);
+		
+		
+		//validation for ageofproperty and structure type required
 		if (!CollectionUtils.isEmpty(units))
 			validateUnits(request, errorMap);
 		
