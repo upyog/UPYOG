@@ -59,6 +59,9 @@ public class Configurations {
 
 	@Value("${token.oauth.uri}")
 	private String tokenOauthURI;
+	
+	@Value("${user.oauth.uri}")
+	private String userOauthURI;
 
 	@Value("${issued.files.uri}")
 	private String issuedFilesURI;

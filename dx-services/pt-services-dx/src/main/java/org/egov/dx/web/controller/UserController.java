@@ -40,23 +40,37 @@
 
 package org.egov.dx.web.controller;
 
+import java.io.InputStream;
 import java.net.URI;
+import java.net.http.HttpHeaders;
+import java.security.NoSuchAlgorithmException;
+import java.util.List;
 
+import javax.enterprise.inject.Produces;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+import org.apache.tomcat.util.http.fileupload.IOUtils;
+import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.response.ResponseInfo;
 import org.egov.dx.service.UserService;
+import org.egov.dx.web.models.AuthResponse;
+import org.egov.dx.web.models.IssuedDocument;
+import org.egov.dx.web.models.ResponseInfoFactory;
+import org.egov.dx.web.models.TokenRequest;
+import org.egov.dx.web.models.TokenRes;
+import org.egov.dx.web.models.TokenResponse;
+import org.egov.dx.web.models.UserRes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.sun.tools.rngom.util.Uri;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -70,44 +84,53 @@ public class UserController {
 	@Autowired
 	private UserService userService;
 	
+	@Autowired
+	ResponseInfoFactory responseInfoFactory;
 		
 	@RequestMapping(value = {"/authorization/url"}, method = RequestMethod.POST )
-    public ResponseEntity<String> search(@Valid @RequestBody String requestBody,@RequestParam("module") String module)
+    public ResponseEntity<AuthResponse> search(@Valid @RequestBody RequestInfo requestInfo,@RequestParam("module") String module) throws NoSuchAlgorithmException
     { 
-	    URI redirectionURL=userService.getRedirectionURL(module);
+		AuthResponse authResponse=new AuthResponse();
+	    URI redirectionURL=userService.getRedirectionURL(module,authResponse);
+	    authResponse.setRedirectURL(redirectionURL.toString());
 		log.info("Redirection URL"+redirectionURL.toString());
-		return 	new ResponseEntity<>(redirectionURL.toString(),HttpStatus.OK);
+		return 	new ResponseEntity<>(authResponse,HttpStatus.OK);
      }	
 	
 	
 	@RequestMapping(value = "/token", method = RequestMethod.POST)
-    public ResponseEntity<Integer>  getToken(@Valid @RequestBody String requestBody)    { 
+    public ResponseEntity<TokenResponse>  getToken(@Valid @RequestBody TokenRequest tokenRequest)    { 
 		
-		
-		 return new ResponseEntity<>(0,HttpStatus.OK);
+		TokenRes tokenRes=userService.getToken(tokenRequest.getTokenReq());
+		ResponseInfo responseInfo=ResponseInfoFactory.createResponseInfoFromRequestInfo(tokenRequest.getRequestInfo(), null);
+		TokenResponse tokenResponse=TokenResponse.builder().responseInfo(responseInfo).tokenRes(tokenRes).build();
+
+		 return new ResponseEntity<>(tokenResponse,HttpStatus.OK);
 	}
 	
 	
 	
 	@RequestMapping(value = "/details", method = RequestMethod.POST)
-    public ResponseEntity<Integer>  getDetails(@Valid @RequestBody String requestBody)    { 
-		
-		
-		 return new ResponseEntity<>(0,HttpStatus.OK);
+    public ResponseEntity<TokenResponse>  getDetails(@Valid @RequestBody TokenRequest tokenRequest)    { 
+		UserRes userRes=userService.getUser(tokenRequest.getTokenReq());
+		ResponseInfo responseInfo=ResponseInfoFactory.createResponseInfoFromRequestInfo(tokenRequest.getRequestInfo(), null);
+		TokenResponse tokenResponse=TokenResponse.builder().responseInfo(responseInfo).tokenRes(null).userRes(userRes).build();
+		return new ResponseEntity<>(tokenResponse,HttpStatus.OK);
 	}
 	
 	
 	@RequestMapping(value = "/issuedfiles", method = RequestMethod.POST)
-    public ResponseEntity<Integer> getIssuedFiles(@Valid @RequestBody String requestBody)    { 
-		
-		
-		 return new ResponseEntity<>(0,HttpStatus.OK);
+    public ResponseEntity<TokenResponse> getIssuedFiles(@Valid @RequestBody TokenRequest tokenRequest)    { 
+		List<IssuedDocument> issuedDocument=userService.getIssuedDocument(tokenRequest.getTokenReq());
+		ResponseInfo responseInfo=ResponseInfoFactory.createResponseInfoFromRequestInfo(tokenRequest.getRequestInfo(), null);
+		TokenResponse tokenResponse=TokenResponse.builder().responseInfo(responseInfo).issuedDocument(issuedDocument).userRes(null).build();
+		return new ResponseEntity<>(tokenResponse,HttpStatus.OK);
 	}
 	
-	@RequestMapping(value = "/file/{id}", method = RequestMethod.POST)
-    public ResponseEntity<Integer>  getFile(@Valid @RequestBody String requestBody,@RequestParam("id") String id)    { 
-		
-		
-		 return new ResponseEntity<>(0,HttpStatus.OK);
+	@RequestMapping(value = "/file/{id}", method = RequestMethod.POST,produces = {"application/pdf"})
+	@ResponseBody	
+    public  byte[] getFile(@Valid @RequestBody TokenRequest tokenRequest,@PathVariable("id") String id)    { 
+		byte[] doc=userService.getDoc(tokenRequest.getTokenReq(),id);
+		return doc;
 	}
 }
