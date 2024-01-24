@@ -1,20 +1,20 @@
-import { MdmsService, getGeneralCriteria } from "../../services/elements/MDMS";
+import { MdmsServiceV2, getGeneralCriteria } from "../../services/elements/MDMSV2";
 import { useQuery } from "react-query";
 
 const useMDMS = (tenantId, moduleCode, type, config = { }, payload = []) => {
   const useFinancialYears = () => {
-    return useQuery("PT_FINANCIAL_YEARLS", () => MdmsService.getDataByCriteria(tenantId, payload, moduleCode));
+    return useQuery("PT_FINANCIAL_YEARLS", () => MdmsServiceV2.getDataByCriteria(tenantId, payload, moduleCode));
   };
   const useCommonFieldsConfig = () => {
-    return useQuery("COMMON_FIELDS", () => MdmsService.getCommonFieldsConfig(tenantId, moduleCode, type, payload));
+    return useQuery("COMMON_FIELDS", () => MdmsServiceV2.getCommonFieldsConfig(tenantId, moduleCode, type, payload));
   };
 
   const usePropertyTaxDocuments = () => {
-    return useQuery("PT_PROPERTY_TAX_DOCUMENTS", () => MdmsService.getDataByCriteria(tenantId, payload, moduleCode));
+    return useQuery("PT_PROPERTY_TAX_DOCUMENTS", () => MdmsServiceV2.getDataByCriteria(tenantId, payload, moduleCode));
   };
 
   /*const useGenderDetails = () => {
-    return useQuery("PT_GENDER_DETAILS", () => MdmsService.getGenderTypeDetails(tenantId, type, filter), config);
+    return useQuery("PT_GENDER_DETAILS", () => MdmsServiceV2.getGenderTypeDetails(tenantId, type, filter), config);
   };*/
 
   switch (type) {
@@ -28,7 +28,7 @@ const useMDMS = (tenantId, moduleCode, type, config = { }, payload = []) => {
       return useGenderDetails();*/
 
     default:
-      return useQuery(type, () => MdmsService.getDataByCriteria(tenantId, getGeneralCriteria(tenantId, moduleCode, type), moduleCode), config);
+      return useQuery(type, () => MdmsServiceV2.getDataByCriteria(tenantId, getGeneralCriteria(tenantId, moduleCode, type), moduleCode), config);
   }
 };
 

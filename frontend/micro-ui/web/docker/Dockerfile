@@ -3,9 +3,9 @@ FROM upyogio/alpine-node-builder-14:yarn AS build
 RUN apk update && apk upgrade
 RUN apk add --no-cache git>2.30.0
 RUN yarn add @egovernments/digit-ui-libraries
-RUN yarn add @egovernments/digit-ui-module-pt
-RUN yarn add @egovernments/digit-ui-module-fsm
-RUN yarn add @egovernments/digit-ui-module-tl
+RUN yarn add @upyog/digit-ui-module-pt
+RUN yarn add @upyog/digit-ui-module-fsm
+RUN yarn add @upyog/digit-ui-module-tl
 RUN yarn add @egovernments/digit-ui-module-dss
 RUN yarn add @egovernments/digit-ui-module-mcollect
 RUN yarn add @egovernments/digit-ui-module-pgr
@@ -13,11 +13,11 @@ RUN yarn add @egovernments/digit-ui-module-noc
 RUN yarn add @egovernments/digit-ui-module-engagement
 RUN yarn add @egovernments/digit-ui-module-hrms
 RUN yarn add @egovernments/digit-ui-module-core
-RUN yarn add @egovernments/digit-ui-module-obps
-RUN yarn add @egovernments/digit-ui-module-ws
+RUN yarn add @upyog/digit-ui-module-obps
 RUN yarn add @egovernments/digit-ui-module-common
-RUN yarn add @egovernments/digit-ui-module-workbench
+RUN yarn add @upyog/digit-ui-module-ws
 RUN yarn add @egovernments/digit-ui-module-commonpt
+RUN yarn add @egovernments/digit-ui-module-workbench
 RUN yarn add @egovernments/digit-ui-module-receipts
 RUN yarn add @egovernments/digit-ui-module-bills
 RUN yarn add @egovernments/digit-ui-module-masters
