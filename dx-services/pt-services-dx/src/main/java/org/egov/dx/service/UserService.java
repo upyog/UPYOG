@@ -1,10 +1,11 @@
 package org.egov.dx.service;
 
+import java.net.URI;
+
 import org.egov.dx.util.Configurations;
 import org.egov.dx.web.models.UserResponse;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -12,6 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -54,5 +57,22 @@ public class UserService {
     }
     
    
+    public URI getRedirectionURL(String module)
+    {
+    	 MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+    	 params.add("response_type", configurations.getResponseType());
+    	 params.add("client_id", configurations.getClientId());
+    	 params.add("state", configurations.getState());
+    	 params.add("scope", "read");
+    	 params.add("tenantId","pg.citya");
+         map.add("isInternal", "true");
+         map.add("userType", "EMPLOYEE");
+         UriComponents uriComponents = UriComponentsBuilder.fromHttpUrl(configurations.getAuthorizationURL()).queryParams(params)
+                .build();
+
+    	
+    	
+    	return uriComponents.toUri();
+    }
 
 }
