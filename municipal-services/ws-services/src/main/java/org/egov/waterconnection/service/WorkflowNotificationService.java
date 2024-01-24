@@ -13,7 +13,9 @@ import org.egov.tracer.model.CustomException;
 import org.egov.waterconnection.config.WSConfiguration;
 import org.egov.waterconnection.constants.WCConstants;
 import org.egov.waterconnection.repository.ServiceRequestRepository;
+import org.egov.waterconnection.util.EncryptionDecryptionUtil;
 import org.egov.waterconnection.util.NotificationUtil;
+import org.egov.waterconnection.util.UnmaskingUtil;
 import org.egov.waterconnection.util.WaterServicesUtil;
 import org.egov.waterconnection.validator.ValidateProperty;
 import org.egov.waterconnection.web.models.*;
@@ -35,6 +37,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
+
+import static org.egov.waterconnection.constants.WCConstants.*;
 
 import static org.egov.waterconnection.constants.WCConstants.*;
 
@@ -66,6 +70,15 @@ public class WorkflowNotificationService {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private UnmaskingUtil unmaskingUtil;
+
+    @Autowired
+    private EncryptionDecryptionUtil encryptionDecryptionUtil;
+
+    @Autowired
+    private MultiStateInstanceUtil centralInstanceUtil;
+
     String tenantIdReplacer = "$tenantId";
     String urlReplacer = "url";
     String requestInfoReplacer = "RequestInfo";
@@ -82,8 +95,7 @@ public class WorkflowNotificationService {
     String applicationKey = "$applicationkey";
     String propertyKey = "property";
     String businessService = "WS.ONE_TIME_FEE";
-
-
+    String tenantName = "tenantName";
 
     /**
      *
@@ -111,21 +123,21 @@ public class WorkflowNotificationService {
                 if (config.getIsUserEventsNotificationEnabled() != null && config.getIsUserEventsNotificationEnabled()) {
                     EventRequest eventRequest = getEventRequest(request, topic, property, applicationStatus);
                     if (eventRequest != null) {
-                        notificationUtil.sendEventNotification(eventRequest);
+                        notificationUtil.sendEventNotification(eventRequest, tenantId);
                     }
                 }}
             if(configuredChannelNames.contains(CHANNEL_NAME_SMS)){
                 if (config.getIsSMSEnabled() != null && config.getIsSMSEnabled()) {
                     List<SMSRequest> smsRequests = getSmsRequest(request, topic, property, applicationStatus);
                     if (!CollectionUtils.isEmpty(smsRequests)) {
-                        notificationUtil.sendSMS(smsRequests);
+                        notificationUtil.sendSMS(smsRequests, tenantId);
                     }
                 }}
             if(configuredChannelNames.contains(CHANNEL_NAME_EMAIL)){
                 if (config.getIsEmailNotificationEnabled() != null && config.getIsEmailNotificationEnabled()) {
                     List<EmailRequest> emailRequests = getEmailRequest(request, topic, property, applicationStatus);
                     if (!CollectionUtils.isEmpty(emailRequests)) {
-                        notificationUtil.sendEmail(emailRequests);
+                        notificationUtil.sendEmail(emailRequests, tenantId);
                     }
                 }}
         } catch (Exception ex) {
@@ -717,7 +729,8 @@ public class WorkflowNotificationService {
             waterObject.put(serviceFee, calResponse.getCalculation().get(0).getCharge());
             waterObject.put(tax, calResponse.getCalculation().get(0).getTaxAmount());
             waterObject.put(propertyKey, property);
-            String tenantId = property.getTenantId().split("\\.")[0];
+            //String tenantId = property.getTenantId().split("\\.")[0];
+            String tenantId = centralInstanceUtil.getStateLevelTenant(property.getTenantId());
             String fileStoreId = getFielStoreIdFromPDFService(waterObject, waterConnectionRequest.getRequestInfo(), tenantId);
             return getApplicationDownloadLink(tenantId, fileStoreId);
         } catch (Exception ex) {
@@ -784,7 +797,33 @@ public class WorkflowNotificationService {
         }
     }
 
-    public Map<String, String> setRecepitDownloadLink(Map<String, String> mobileNumberAndMessage,
+    /**
+     *
+     * @param tenantId TenantId
+     * @param fileStoreId File Store Id
+     * @return file store id
+     */
+    private String getApplicationDownloadLink(String tenantId, String fileStoreId) {
+        String fileStoreServiceLink = config.getFileStoreHost() + config.getFileStoreLink();
+        fileStoreServiceLink = fileStoreServiceLink.replace(tenantIdReplacer, tenantId);
+        fileStoreServiceLink = fileStoreServiceLink.replace(fileStoreIdReplacer, fileStoreId);
+        try {
+            Object response = serviceRequestRepository.fetchResultUsingGet(new StringBuilder(fileStoreServiceLink));
+            DocumentContext responseContext = JsonPath.parse(response);
+            List<Object> fileStoreIds = responseContext.read("$.fileStoreIds");
+            if (CollectionUtils.isEmpty(fileStoreIds)) {
+                throw new CustomException("EMPTY_FILESTORE_IDS_FROM_PDF_SERVICE",
+                        "NO file store id found from pdf service");
+            }
+            JSONObject obje = mapper.convertValue(fileStoreIds.get(0), JSONObject.class);
+            return obje.get(urlReplacer).toString();
+        } catch (Exception ex) {
+            log.error("PDF file store id response error!!", ex);
+            throw new CustomException("WATER_FILESTORE_PDF_EXCEPTION", "PDF response can not parsed!!!");
+        }
+    }
+
+	public Map<String, String> setRecepitDownloadLink(Map<String, String> mobileNumberAndMessage,
                                                       WaterConnectionRequest waterConnectionRequest, String message, Property property) {
 
         Map<String, String> messageToReturn = new HashMap<>();

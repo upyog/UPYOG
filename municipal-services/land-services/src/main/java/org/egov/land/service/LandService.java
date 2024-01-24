@@ -63,7 +63,7 @@ public class LandService {
 				owner.setStatus(false);
 			}
 		});
-		repository.save(landRequest);
+		repository.save(landRequest.getLandInfo().getTenantId(), landRequest);
 		return landRequest.getLandInfo();
 	}
 

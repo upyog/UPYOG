@@ -40,6 +40,10 @@ public class DriverQueryBuilder {
 				preparedStmtList.add(criteria.getTenantId());
 			}
 
+			/*
+			 * Enable part search with DriverName
+			 */
+
 			List<String> driverName = criteria.getName();
 			if (!CollectionUtils.isEmpty(driverName)
 					&& (driverName.stream().filter(name -> name.length() > 0).findFirst().orElse(null) != null)) {
@@ -87,19 +91,18 @@ public class DriverQueryBuilder {
 		int limit = config.getDefaultLimit();
 		int offset = config.getDefaultOffset();
 		String finalQuery = PAGINATION_WRAPPER.replace("{}", query);
-		
-		if (criteria.getSortBy()!=null) {
+
+		if (criteria.getSortBy() != null) {
 			finalQuery = finalQuery.replace("SORT_BY", criteria.getSortBy().toString());
 		} else {
 			finalQuery = finalQuery.replace("SORT_BY", "createdTime");
 		}
-		
-		if (criteria.getSortOrder()!=null) {
+
+		if (criteria.getSortOrder() != null) {
 			finalQuery = finalQuery.replace("SORT_ORDER", criteria.getSortOrder().toString());
 		} else {
 			finalQuery = finalQuery.replace("SORT_ORDER", " DESC ");
 		}
-		
 		if (criteria.getLimit() != null && criteria.getLimit() <= config.getMaxSearchLimit())
 			limit = criteria.getLimit();
 

@@ -323,4 +323,32 @@ public class VehicleTripService {
 			}
 		}
 	}
+
+	public void updateVehicleTrip(FSMRequest fsmRequest) {
+
+		List<VehicleTrip> vehicleTripsForApplication = getVehicleTrips(fsmRequest, null, true);
+
+		if (!CollectionUtils.isEmpty(vehicleTripsForApplication)) {
+			List<VehicleTrip> vehicleTripList = new ArrayList<>();
+			vehicleTripsForApplication.forEach(vehicleTrip -> {
+				VehicleTripDetail vehicleTripDetail = vehicleTrip.getTripDetails().get(0);
+				vehicleTripDetail.setReferenceStatus(FSMConstants.WF_ACTION_COMPLETE);
+				vehicleTripDetail.setVolume(fsmRequest.getFsm().getWasteCollected());
+				vehicleTripList.add(vehicleTrip);
+			});
+
+			StringBuilder uri = new StringBuilder(config.getVehicleHost()).append(config.getVehicleTripContextPath())
+					.append(config.getVehicleTripUpdateEndpoint());
+			VehicleTripRequest tripRequest = VehicleTripRequest.builder().vehicleTrip(vehicleTripList)
+					.requestInfo(fsmRequest.getRequestInfo())
+					.workflow(Workflow.builder().action(FSMConstants.UPDATE_ONLY_VEHICLE_TRIP_RECORD).build()).build();
+			try {
+				serviceRequestRepository.fetchResult(uri, tripRequest);
+
+			} catch (IllegalArgumentException e) {
+				throw new CustomException(FSMErrorConstants.ILLEGAL_ARGUMENT_EXCEPTION,
+						FSMConstants.OBJECTMAPPER_CONVERT_IN_USER_CALL);
+			}
+		}
+	}
 }

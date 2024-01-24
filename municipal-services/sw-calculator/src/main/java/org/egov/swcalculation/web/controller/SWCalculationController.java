@@ -2,10 +2,14 @@ package org.egov.swcalculation.web.controller;
 
 
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.Valid;
 
+import org.egov.swcalculation.service.PaymentNotificationService;
+import org.egov.swcalculation.web.models.*;
 import org.egov.swcalculation.service.DemandService;
 import org.egov.swcalculation.service.SWCalculationService;
 import org.egov.swcalculation.service.SWCalculationServiceImpl;
@@ -24,11 +28,7 @@ import org.egov.swcalculation.web.models.SewerageConnection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import lombok.Builder;
 import lombok.Getter;

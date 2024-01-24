@@ -67,12 +67,44 @@ public class UserService {
 		UserDetailResponse userDetailResponse = null;
 		if (owner != null) {
 			userDetailResponse = userExists(owner);
-			if (!isUpdate) {
-				if (userDetailResponse != null && !CollectionUtils.isEmpty(userDetailResponse.getUser())) {
-					owner = userDetailResponse.getUser().get(0);
-				} else
+
+			if (userDetailResponse != null && !CollectionUtils.isEmpty(userDetailResponse.getUser()) && !isUpdate) {
+
+				Boolean notFoundUser = Boolean.FALSE;
+				for (int j = 0; j < userDetailResponse.getUser().size(); j++) {
+					User user = userDetailResponse.getUser().get(j);
+
+					if ((user.getUserName().equalsIgnoreCase(user.getMobileNumber())
+							&& user.getName().equalsIgnoreCase(owner.getName()))
+							|| user.getName().equalsIgnoreCase(owner.getName())) {
+						// found user with mobilenumber username not same and name as equal to the
+						// applicnat name provided by ui
+						// then consider that user as applicant
+						owner = user;
+						break;
+					} else
+						notFoundUser = Boolean.TRUE;
+
+				}
+				// users exists with mobile number but non of them have the same Name so create new
+				// user
+				if (notFoundUser) {
 					owner = createVehicleOwner(owner, vehicleRequest.getRequestInfo());
+
+				}
+
 			} else {
+				if (!isUpdate) {
+					// User with mobile number itself not found then create new user and consider
+					// the new user as applicant.
+					owner = createVehicleOwner(owner, vehicleRequest.getRequestInfo());
+				} else {
+
+					HashMap<String, String> errorMap = new HashMap<>();
+					owner = updateUserDetails(owner, vehicleRequest.getRequestInfo(), errorMap);
+
+				}
+			}
 
 				HashMap<String, String> errorMap = new HashMap<>();
 				updateUserDetails(owner, vehicleRequest.getRequestInfo(), errorMap);
@@ -87,6 +119,30 @@ public class UserService {
 
 	}
 
+	private User updateUserDetails(User vehicleInfo, RequestInfo requestInfo, HashMap<String, String> errorMap) {
+		User userUpdated = new User();
+		UserRequest userRequest = UserRequest.builder().user(vehicleInfo).requestInfo(requestInfo).build();
+		StringBuilder uri = new StringBuilder();
+		uri.append(config.getUserHost()).append(config.getUserContextPath()).append(config.getUserUpdateEndpoint());
+		UserDetailResponse userResponse = ownerCall(userRequest, uri);
+		if (userResponse != null && !userResponse.getUser().isEmpty()) {
+			userUpdated = userResponse.getUser().get(0);
+		} else {
+			errorMap.put(VehicleErrorConstants.INVALID_VEHICLE_OWNER,
+					"Unable to Update UserDetails to the existing Vehicle !");
+		}
+		return userUpdated;
+
+	}
+
+	/**
+	 * Update Vehicle Details
+	 * 
+	 * @param vehicleInfo
+	 * @param requestInfo
+	 * @param errorMap
+	 * @return
+	 */
 	private User updateUserDetails(User vehicleInfo, RequestInfo requestInfo, HashMap<String, String> errorMap) {
 		User userUpdated = new User();
 		UserRequest userRequest = UserRequest.builder().user(vehicleInfo).requestInfo(requestInfo).build();
@@ -125,7 +181,9 @@ public class UserService {
 		addUserDefaultFields(owner.getTenantId(), null, owner);
 		StringBuilder uri = new StringBuilder(config.getUserHost()).append(config.getUserContextPath())
 				.append(config.getUserCreateEndpoint());
+
 		setUserName(owner);
+
 		owner.setType(Constants.CITIZEN);
 		UserDetailResponse userDetailResponse = userCall(new UserRequest(requestInfo, owner), uri);
 		log.debug("owner created --> " + userDetailResponse.getUser().get(0).getUuid());
@@ -157,7 +215,7 @@ public class UserService {
 	 */
 	private void setUserName(User owner) {
 		String uuid = UUID.randomUUID().toString();
-		owner.setUserName(owner.getMobileNumber());
+		owner.setUserName(uuid);
 		owner.setUuid(uuid);
 
 	}

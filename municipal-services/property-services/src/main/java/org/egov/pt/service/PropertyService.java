@@ -1,9 +1,7 @@
 package org.egov.pt.service;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -103,6 +101,7 @@ public class PropertyService {
 
 		propertyValidator.validateCreateRequest(request);
 		enrichmentService.enrichCreateRequest(request);
+		String tenantId = request.getProperty().getTenantId();
 		userService.createUser(request);
 		if (config.getIsWorkflowEnabled()
 				&& !request.getProperty().getCreationReason().equals(CreationReason.DATA_UPLOAD)) {
@@ -255,6 +254,7 @@ public class PropertyService {
 	 */
 	private void processPropertyUpdate(PropertyRequest request, Property propertyFromSearch) {
 
+		String tenantId = request.getProperty().getTenantId();
 		propertyValidator.validateRequestForUpdate(request, propertyFromSearch);
 		if (CreationReason.CREATE.equals(request.getProperty().getCreationReason())) {
 			userService.createUser(request);
@@ -335,6 +335,7 @@ public class PropertyService {
 	 */
 	private void processOwnerMutation(PropertyRequest request, Property propertyFromSearch) {
 
+		String tenantId = request.getProperty().getTenantId();
 		propertyValidator.validateMutation(request, propertyFromSearch);
 		userService.createUserForMutation(request, !propertyFromSearch.getStatus().equals(Status.INWORKFLOW));
 		enrichmentService.enrichAssignes(request.getProperty());
@@ -390,6 +391,7 @@ public class PropertyService {
 
 	private void terminateWorkflowAndReInstatePreviousRecord(PropertyRequest request, Property propertyFromSearch) {
 
+		String tenantId = request.getProperty().getTenantId();
 		/* current record being rejected */
 		producer.pushAfterEncrytpion(config.getUpdatePropertyTopic(), request);
 
@@ -529,6 +531,13 @@ public class PropertyService {
 		else if(!criteria.getIsRequestForOldDataEncryption())
 			return encryptionDecryptionUtil.decryptObject(properties, PTConstants.PROPERTY_MODEL, Property.class, requestInfo);
 
+		/* Decrypt here */
+		 if(criteria.getIsSearchInternal())
+			return encryptionDecryptionUtil.decryptObject(properties, "PropertyDecrypDisabled", Property.class, requestInfo);
+		else if(!criteria.getIsRequestForOldDataEncryption())
+			return encryptionDecryptionUtil.decryptObject(properties, "Property", Property.class, requestInfo);
+
+		
 		return properties;
 	}
 
@@ -562,7 +571,12 @@ public class PropertyService {
 
 
 	List<Property> getPropertiesPlainSearch(PropertyCriteria criteria, RequestInfo requestInfo) {
-		
+		String schemaTenantId = null;
+		if(criteria.getTenantId()!=null){
+			schemaTenantId = criteria.getTenantId();
+		} else if (!CollectionUtils.isEmpty(criteria.getTenantIds())) {
+			schemaTenantId = criteria.getTenantIds().iterator().next();
+		}
 		if (criteria.getLimit() != null && criteria.getLimit() > config.getMaxSearchLimit())
 			criteria.setLimit(config.getMaxSearchLimit());
 		if(criteria.getLimit()==null)
@@ -586,7 +600,7 @@ public class PropertyService {
 			propertyCriteria.setUuids(new HashSet<>(uuids));
 		}
 		propertyCriteria.setLimit(criteria.getLimit());
-		List<Property> properties = repository.getPropertiesForBulkSearch(propertyCriteria, true);
+		List<Property> properties = repository.getPropertiesForBulkSearch(propertyCriteria, schemaTenantId, true);
 		if(properties.isEmpty())
 			return Collections.emptyList();
 		Set<String> ownerIds = properties.stream().map(Property::getOwners).flatMap(List::stream)

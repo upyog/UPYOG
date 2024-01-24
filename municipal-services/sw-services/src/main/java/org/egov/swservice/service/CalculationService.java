@@ -2,20 +2,20 @@ package org.egov.swservice.service;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.request.Role;
 import org.egov.swservice.config.SWConfiguration;
-import org.egov.swservice.repository.ServiceRequestRepository;
 import org.egov.swservice.repository.SewerageDao;
 import org.egov.swservice.util.SWConstants;
+import org.egov.swservice.web.models.*;
+import org.egov.swservice.repository.ServiceRequestRepository;
 import org.egov.swservice.util.SewerageServicesUtil;
-import org.egov.swservice.web.models.CalculationCriteria;
-import org.egov.swservice.web.models.CalculationReq;
-import org.egov.swservice.web.models.CalculationRes;
-import org.egov.swservice.web.models.Property;
-import org.egov.swservice.web.models.RequestInfoWrapper;
-import org.egov.swservice.web.models.SewerageConnectionRequest;
 import org.egov.swservice.web.models.collection.Bill;
 import org.egov.swservice.web.models.collection.BillResponse;
 import org.egov.swservice.workflow.WorkflowIntegrator;
@@ -26,6 +26,9 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
+
+import static org.egov.swservice.util.SWConstants.PENDING_FOR_PAYMENT_STATUS_CODE;
+import static org.egov.swservice.util.SWConstants.WORKFLOW_NODUE_COMMENT;
 
 @Service
 @Slf4j

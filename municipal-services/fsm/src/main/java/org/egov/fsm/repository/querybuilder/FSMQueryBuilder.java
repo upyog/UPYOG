@@ -51,6 +51,9 @@ public class FSMQueryBuilder {
 			}
 		}
 
+		/*
+		 * Enable part search by application number of fsm application
+		 */
 		List<String> applicationNumber = criteria.getApplicationNos();
 		if (!CollectionUtils.isEmpty(applicationNumber) && (applicationNumber.stream()
 				.filter(checkappnumber -> checkappnumber.length() > 0).findFirst().orElse(null) != null)) {

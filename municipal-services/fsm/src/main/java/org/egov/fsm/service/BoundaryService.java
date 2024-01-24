@@ -103,9 +103,9 @@ public class BoundaryService {
 
 		DocumentContext context = JsonPath.parse(jsonString1);
 
-		List<Boundary> boundaryResponse = context
-				.read("$..boundary[?(@.code==\"{}\")]".replace("{}", fsm.getAddress().getLocality().getCode()));
-		if (boundaryResponse.isEmpty() && CollectionUtils.isEmpty((boundaryResponse))) {
+		List<Boundary> boundaryResponse = context.read("$..boundary[?(@.code==\"{}\")]".replace("{}",fsm.getAddress().getLocality().getCode()));
+
+		if (boundaryResponse.isEmpty() &&  CollectionUtils.isEmpty((boundaryResponse) )) {
 			log.debug("The boundary data was not found");
 			throw new CustomException(FSMErrorConstants.BOUNDARY_MDMS_DATA_ERROR, "The boundary data was not found");
 		}

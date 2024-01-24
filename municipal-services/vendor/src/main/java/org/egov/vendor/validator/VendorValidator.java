@@ -114,6 +114,7 @@ public class VendorValidator {
 	/**
 	 * 
 	 * @param vendorRequest
+	 * @param requestInfo
 	 */
 	public void validateCreateOrUpdateRequest(VendorRequest vendorRequest, Object mdmsData, boolean isCreate,
 			RequestInfo requestInfo) {
@@ -127,7 +128,6 @@ public class VendorValidator {
 		if (!isCreate) {
 			userService.vendorMobileExistanceCheck(vendorRequest, requestInfo);
 		}
-
 		if (isCreate) {
 			ownerService.manageOwner(vendorRequest);
 		} else {

@@ -147,5 +147,18 @@ public class PGRConstants {
 
     public static final String DEPARTMENT = "department";
 
+    public static final String COMPLAINTS_RESOLVED = "complaintsResolved";
+
+    public static final String AVERAGE_RESOLUTION_TIME = "averageResolutionTime";
+
+    public static final String TENANTID_MDC_STRING = "TENANTID";
+
+    public static String SCHEMA_REPLACE_STRING = "{schema}";
+
+    public static final String DESIGNATION = "designation";
+
+    public static final String DEPARTMENT = "department";
+
+
 
 }

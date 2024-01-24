@@ -13,8 +13,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-import javax.validation.Valid;
-
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
 import org.egov.tracer.model.CustomException;
@@ -59,6 +57,7 @@ public class DriverUserService {
 	/**
 	 * 
 	 * @param driverRequest
+	 * @param isCreateOrUpdate
 	 */
 	@SuppressWarnings("null")
 	public void manageDrivers(DriverRequest driverRequest, boolean isCreateOrUpdate) {
@@ -86,12 +85,15 @@ public class DriverUserService {
 
 	private void licenseExistCheck(DriverRequest driverRequest) {
 		DriverResponse driverResponse = driverRepository.getDriverData(new DriverSearchCriteria());
-
-		Optional<Driver> driver = driverResponse.getDriver().stream()
-				.filter(driverIdAndLicenseNumCheck -> driverIdAndLicenseNumCheck.getLicenseNumber()
-						.equalsIgnoreCase(driverRequest.getDriver().getLicenseNumber())
-						&& !driverIdAndLicenseNumCheck.getId().equalsIgnoreCase(driverRequest.getDriver().getId()))
-				.findFirst();
+		
+		Optional<Driver> driver = Optional.ofNullable(driverResponse)
+		        .map(DriverResponse::getDriver)
+		        .orElse(Collections.emptyList())
+		        .stream()
+		        .filter(driverIdAndLicenseNumCheck ->
+		                driverIdAndLicenseNumCheck.getLicenseNumber().equalsIgnoreCase(driverRequest.getDriver().getLicenseNumber())
+		                && !driverIdAndLicenseNumCheck.getId().equalsIgnoreCase(driverRequest.getDriver().getId()))
+		        .findFirst();
 
 		if (driver.isPresent()) {
 			throw new CustomException("Invalid LicenseNumber", " Driver with the same license number already exist");
@@ -100,10 +102,10 @@ public class DriverUserService {
 
 	private void driverInfoMobileNumber(User driverInfo, RequestInfo requestInfo, HashMap<String, String> errorMap,
 			Driver driver, DriverRequest driverRequest, boolean isCreateOrUpdate) {
-		UserDetailResponse userDetailResponse = userExists(driverInfo);
+		UserDetailResponse userDetailResponse = userExists(driverInfo);// 1 user
+
 		User foundDriver = null;
 		if (userDetailResponse != null && !CollectionUtils.isEmpty(userDetailResponse.getUser())) {
-
 			for (int i = 0; i < userDetailResponse.getUser().size(); i++) {
 
 				if (driver.getOwner().getMobileNumber().equals(userDetailResponse.getUser().get(i).getMobileNumber())
@@ -237,7 +239,7 @@ public class DriverUserService {
 	/**
 	 * create Employee in HRMS for Vendor owner
 	 * 
-	 * @param owner
+	 * @param driver
 	 * @param requestInfo
 	 * @return
 	 */

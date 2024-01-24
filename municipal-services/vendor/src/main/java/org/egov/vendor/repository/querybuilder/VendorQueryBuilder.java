@@ -105,6 +105,10 @@ public class VendorQueryBuilder {
 				preparedStmtList.add(criteria.getTenantId());
 			}
 
+			/*
+			 * Enable part search with VendorName
+			 */
+
 			List<String> vendorName = criteria.getName();
 			if (!CollectionUtils.isEmpty(vendorName)
 					&& (vendorName.stream().filter(name -> name.length() > 0).findFirst().orElse(null) != null)) {
@@ -124,7 +128,6 @@ public class VendorQueryBuilder {
 				}
 				builder.append(" ) ");
 			}
-			
 			List<String> ownerIds = criteria.getOwnerIds();
 			if (!CollectionUtils.isEmpty(ownerIds)) {
 				addClauseIfRequired(preparedStmtList, builder);

@@ -163,7 +163,7 @@ public class UserService {
 		return owner;
 	}
 
-	private void validateVendorExists(List<User> user) {
+	public void validateVendorExists(List<User> user) {
 		List<String> ownerIds = user.stream().map(User::getUuid).collect(Collectors.toList());
 		int count = vendorRepository.getExistingVenodrsCount(ownerIds);
 
@@ -341,7 +341,7 @@ public class UserService {
 	/**
 	 * create Employee in HRMS for Vendor owner
 	 * 
-	 * @param owner
+	 * @param driver
 	 * @param requestInfo
 	 * @return
 	 */

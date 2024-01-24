@@ -195,6 +195,10 @@ public class QueryBuilder {
 			addToPreparedStatement(preparedStmtList, type);
 		}
 
+		/*
+		 * Enable part search by registrationNumber of vehicle
+		 */
+
 		List<String> registrationNumber = criteria.getRegistrationNumber();
 		if (!CollectionUtils.isEmpty(registrationNumber) && (registrationNumber.stream()
 				.filter(checkregnumber -> checkregnumber.length() > 0).findFirst().orElse(null) != null)) {

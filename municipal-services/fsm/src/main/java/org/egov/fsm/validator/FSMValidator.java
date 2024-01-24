@@ -61,6 +61,7 @@ public class FSMValidator {
 	public void validateCreate(FSMRequest fsmRequest, Object mdmsData) {
 		mdmsValidator.validateMdmsData(mdmsData);
 		FSM fsm = fsmRequest.getFsm();
+		
 		if (!StringUtils.isEmpty(fsm.getPaymentPreference())) {
 			validatePaymentPreference(fsm.getPaymentPreference());
 		}
@@ -99,7 +100,6 @@ public class FSMValidator {
 
 		if (!errorMap.isEmpty())
 			throw new CustomException(errorMap);
-		
 	}
 
 	private void validateEmployeeData(FSM fsm, FSMRequest fsmRequest, Object mdmsData) {

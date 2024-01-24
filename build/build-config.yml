@@ -306,8 +306,7 @@ config:
         image-name: "egov-user-event"
         dockerfile: "build/maven/Dockerfile"
       - work-dir: "core-services/egov-user-event/src/main/resources/db"
-        image-name: "egov-user-event-db"
-        dockerfile: "build/maven/Dockerfile"       
+        image-name: "egov-user-event-db"       
 
   - name: "builds/upyog/core-services/pdf-service"
     build:
@@ -380,7 +379,12 @@ config:
       - work-dir: "core-services/libraries/tracer"
         image-name: "tracer"
 
-  - name: "builds/upyog/core-services/nlp-engine"
+  - name: "builds/digit-dev/core-services/libraries/digit-models"
+    build:
+      - work-dir: "core-services/libraries/digit-models"
+        image-name: "digit-models"
+
+  - name: "builds/digit-dev/core-services/nlp-engine"
     build:
       - work-dir: "core-services/nlp-engine"
         image-name: "nlp-engine"
@@ -392,6 +396,14 @@ config:
         image-name: "xstate-chatbot"
       - work-dir: "core-services/xstate-chatbot/nodejs/db"
         image-name: "xstate-chatbot-db"
+
+  - name: "builds/digit-dev/core-services/xstate-webchat"
+    build:
+      - work-dir: "core-services/xstate-webchat/nodejs"
+        image-name: "xstate-webchat"
+      - work-dir: "core-services/xstate-webchat/nodejs/db"
+        image-name: "xstate-webchat-db"
+
         
   - name: "builds/upyog/core-services/xstate-webchat"
     build:
@@ -616,14 +628,14 @@ config:
       - work-dir: "municipal-services/birth-death-services/src/main/resources/db"
         image-name: "birth-death-services-db"
 
-  - name: "builds/upyog/municipal-services/birth-registration"
+  - name: "builds/upyog/tutorials/backend-developer-guide/btr-services"
     build:
-      - work-dir: "municipal-services/birth-registration"
-        image-name: "birth-registration"
+      - work-dir: "tutorials/backend-developer-guide/btr-services"
+        image-name: "btr-services"
         dockerfile: "build/maven/Dockerfile"
-      - work-dir: "municipal-services/birth-registration/src/main/resources/db"
-        image-name: "birth-registration-db"
- 
+      - work-dir: "tutorials/backend-developer-guide/btr-services/src/main/resources/db"
+        image-name: "btr-services-db"
+
  # Utilities
  
   - name: "builds/upyog/utilities/egov-weekly-impact-notifier"

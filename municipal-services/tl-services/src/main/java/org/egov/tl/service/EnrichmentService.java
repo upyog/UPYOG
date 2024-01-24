@@ -510,10 +510,16 @@ public class EnrichmentService {
      * @param criteria The tradeLicenseSearch criteria
      */
     public void enrichSearchCriteriaWithAccountId(RequestInfo requestInfo,TradeLicenseSearchCriteria criteria){
-        if(criteria.isEmpty() && requestInfo.getUserInfo().getType().equalsIgnoreCase("CITIZEN")){
+        if(criteria.tenantIdOnly() && requestInfo.getUserInfo().getType().equalsIgnoreCase("CITIZEN")){
             criteria.setAccountId(requestInfo.getUserInfo().getUuid());
             criteria.setMobileNumber(requestInfo.getUserInfo().getUserName());
-            criteria.setTenantId(requestInfo.getUserInfo().getTenantId());
+           // criteria.setTenantId(requestInfo.getUserInfo().getTenantId());
+        }
+        
+        if(requestInfo.getUserInfo().getType().equalsIgnoreCase("CITIZEN") && criteria.mobileNumberOnly()) {
+        	criteria.setTenantId(requestInfo.getUserInfo().getTenantId());
+        	criteria.setOnlyMobileNumber(true);
+        	
         }
         
         if(requestInfo.getUserInfo().getType().equalsIgnoreCase("CITIZEN") && criteria.mobileNumberOnly()) {
