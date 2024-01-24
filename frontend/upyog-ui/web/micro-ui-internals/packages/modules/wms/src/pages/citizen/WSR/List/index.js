@@ -87,7 +87,7 @@ const WmsWsrList = ({ parentRoute, businessService = "WMS", initialStates = {}, 
         type:"text",
       },
       {
-        label: t("WMS_WSR_ML_NAME_LABEL"),
+        label: t("WMS_WSR_ACTIVITY_LABEL"),
         name: "activity_name",
         type:"text"
       },

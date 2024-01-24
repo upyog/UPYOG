@@ -42,7 +42,7 @@ const GetSlaCell = (value) => {
       [t("WMS_WSR_WORK_NAME_LABEL")]: GetCell(original?.WmsDrWorkName?.work_name || ""),
       [t("WMS_WSR_ML_NAME_LABEL")]: GetCell(original?.WmsDrMLName?.milestone_name || ""),
       [t("WMS_WSR_PERCENT_LABEL")]: GetCell(original?.WmsDrPercent?.percent_weightage || ""),
-      
+        
     }));
   };
   const serviceRequestIdKey = (original) => {return `${searchParams?.tenantId}/${original?.[t("WMS_WSR_NAME_EN_LABEL")]}`};
