@@ -34,9 +34,9 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
     useEffect(() => {
         var flag=0;
         fields.map((ob) => {
-            if(ob.isPrimaryOwner)
+            if(ob?.isPrimaryOwner)
             flag=1;
-            if (ob.name && ob.mobileNumber && ob.gender) {
+            if (ob?.name && ob?.mobileNumber && ob?.gender) {
                 setCanmovenext(false);
             }
             else {
