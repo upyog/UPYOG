@@ -491,8 +491,8 @@ public class PropertyValidator {
 		}
 
 
-//				if (institution.getType() == null)
-//					errorMap.put(" INVALID INSTITUTION OBJECT ", "The institutionType cannot be null ");
+				if (institution.getType() == null)
+					errorMap.put(" INVALID INSTITUTION OBJECT ", "The institutionType cannot be null ");
 				if (institution.getName() == null)
 					errorMap.put("INVALID INSTITUTION OBJECT", "Institution name cannot be null");
 				if (institution.getDesignation() == null)
