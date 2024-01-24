@@ -140,7 +140,7 @@ public class MasterDataService {
 		for (Entry<String, JSONArray> entry : res.entrySet()) {
 
 			String masterName = entry.getKey();
-			
+			System.out.println("mastername:::::::"+masterName);
 			/* Masters which need to be parsed will be contained in the list */
 			if (CalculatorConstants.PROPERTY_BASED_EXEMPTION_MASTERS.contains(entry.getKey()))
 				propertyBasedExemptionMasterMap.put(masterName, getParsedMaster(entry));

@@ -63,9 +63,13 @@ public class TranslationService {
 
         Map<String, Object> addressMap = new HashMap();
         Map<String, Object> localityMap = new HashMap();
+        Map<String, Object> typeOfRoadMap = new HashMap();
+        
+        typeOfRoadMap.put("code", property.getAddress().getTypeOfRoad().getCode());
         localityMap.put("area",property.getAddress().getLocality().getArea());
         localityMap.put("code",property.getAddress().getLocality().getCode());
         addressMap.put("locality",localityMap);
+        addressMap.put("typeOfRoad",typeOfRoadMap );
 
         propertyMap.put("address", addressMap);
         propertyMap.put("propertyId",property.getPropertyId());
@@ -107,6 +111,7 @@ public class TranslationService {
         propertyDetail.put("usageCategoryMinor", usageCategoryMinor);
         propertyDetail.put("ownershipCategory", ownershipCategory);
         propertyDetail.put("subOwnershipCategory", subOwnershipCategory);
+        propertyDetail.put("address", addressMap);
 
         // propertyDetail.put("adhocExemption", );
         // propertyDetail.put("adhocPenalty",);

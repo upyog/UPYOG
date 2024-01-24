@@ -2,6 +2,8 @@ package org.egov.pt.calculator.web.models.propertyV2;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
+
+import org.egov.pt.calculator.web.models.property.Address;
 import org.egov.pt.calculator.web.models.property.AuditDetails;
 import org.egov.pt.calculator.web.models.property.OwnerInfo;
 
@@ -82,7 +84,7 @@ public class PropertyV2 extends PropertyInfoV2 {
 
 	@Builder
 	public PropertyV2(String id, String propertyId, String surveyId, List<String> linkedProperties, String tenantId,
-					  String accountId, String oldPropertyId, String status, AddressV2 addressV2, String acknowldgementNumber,
+					  String accountId, String oldPropertyId, String status, Address addressV2, String acknowldgementNumber,
 					  String propertyType, String ownershipCategory, List<OwnerInfo> owners, InstitutionV2 institutionV2,
 					  String creationReason, String usageCategory, Long noOfFloors, Double landArea,
 					  BigDecimal superBuiltUpArea, String source, String channel, List<DocumentV2> documentV2s, List<UnitV2> units,

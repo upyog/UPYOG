@@ -46,6 +46,10 @@ public class CalculatorConstants {
 	public static final String PT_ADHOC_PENALTY = "PT_ADHOC_PENALTY";
 
 	public static final String PT_ADHOC_REBATE = "PT_ADHOC_REBATE";
+	
+	public static final String PT_ROAD_TYPE = "PT_ROAD_TYPE";
+	
+	
 
 //	public static final String PT_DECIMAL_CEILING_CREDIT = "PT_DECIMAL_CEILING_CREDIT";
 	
@@ -109,9 +113,12 @@ public class CalculatorConstants {
 	public static final String CANCER_CESS_MASTER = "CancerCess";
 
 	public static final String INTEREST_MASTER = "Interest";
+	public static final String ROAD_TYPE_RATES = "RoadTypeRates";
+	public static final String STRUCTURE_TYPE = "StructureType";
+
 
 	public static final List<String> PROPERTY_BASED_EXEMPTION_MASTERS = Collections.unmodifiableList(Arrays.asList(
-			USAGE_MAJOR_MASTER, USAGE_MINOR_MASTER, USAGE_SUB_MINOR_MASTER, USAGE_DETAIL_MASTER, OWNER_TYPE_MASTER));
+			USAGE_MAJOR_MASTER, USAGE_MINOR_MASTER, USAGE_SUB_MINOR_MASTER, USAGE_DETAIL_MASTER, OWNER_TYPE_MASTER,ROAD_TYPE_RATES,STRUCTURE_TYPE));
 	
 	public static final List<Category> DEBIT_CATEGORIES = Collections.unmodifiableList(Arrays.asList(Category.REBATE, Category.EXEMPTION));
 

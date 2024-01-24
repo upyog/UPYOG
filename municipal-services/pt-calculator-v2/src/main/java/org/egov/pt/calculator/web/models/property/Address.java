@@ -1,5 +1,6 @@
 package org.egov.pt.calculator.web.models.property;
 
+import org.egov.pt.calculator.web.models.TypeOfRoad;
 import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -77,6 +78,11 @@ public class Address   {
         @NotNull
         @JsonProperty("locality")
         private Boundary locality;
+        
+        @Valid
+        @NotNull
+        @JsonProperty("typeOfRoad")
+        private TypeOfRoad typeOfRoad;
 
 
 }

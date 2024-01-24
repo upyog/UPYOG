@@ -154,7 +154,9 @@ public class PropertyDetail   {
 
         @JsonProperty("auditDetails")
         private AuditDetails auditDetails;
-
+        
+        @JsonProperty("address")
+        private Address address;
 
 
     /**
