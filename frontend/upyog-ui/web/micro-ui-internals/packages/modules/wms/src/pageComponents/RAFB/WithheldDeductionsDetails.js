@@ -6,7 +6,7 @@ import { sortDropdownNames } from "../../utils/index";
 import { stringReplaceAll } from "../../utils";
 
 const WithheldDeductionsDetails = ({ t, config, onSelect, userType, formData }) => {
-  console.log("WithheldDeductionsDetails formData  ",formData)
+  console.log("WithheldDeductionsDetails formData  ",{config,formData})
   const [error, setError] = useState(null);
   const [fields, setFeilds] = useState([{ taxcategory: "", remark: "", amount: "" }]);
   
@@ -37,6 +37,7 @@ const WithheldDeductionsDetails = ({ t, config, onSelect, userType, formData }) 
     if(!error){
     setError(null);
     unitsdata = { ...units, units: fields };
+    console.log("config and fields ", {config,fields})
     onSelect(config.key, fields);
     // onSelect(config.key, unitsdata);
     // onSelect(config.key, {"fname":"with held deduction details ram","lname":"kumar"});
