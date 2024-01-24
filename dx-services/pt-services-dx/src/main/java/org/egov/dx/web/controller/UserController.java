@@ -40,17 +40,12 @@
 
 package org.egov.dx.web.controller;
 
-import java.io.InputStream;
 import java.net.URI;
-import java.net.http.HttpHeaders;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
-import javax.enterprise.inject.Produces;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
-import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.dx.service.UserService;
