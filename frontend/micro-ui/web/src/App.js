@@ -33,6 +33,13 @@ import {
   PTRLinks,
   PTRComponents,
 } from "@upyog-niua/upyog-ui-module-ptr";
+
+import {
+  AssetModule,
+  AssetLinks,
+  AssetComponents
+} from "@upyog-niua/upyog-ui-module-asset";
+
 import { initReceiptsComponents, ReceiptsModule } from "@egovernments/digit-ui-module-receipts";
 import { initOBPSComponents } from "@upyog/digit-ui-module-obps";
 import { initNOCComponents } from "@egovernments/digit-ui-module-noc";
@@ -69,7 +76,8 @@ const enabledModules = [
   "FireNoc",
   "Birth",
   "Death",
-  "PTR"
+  "PTR",
+  "ASSET"
 ];
 window.Digit.ComponentRegistryService.setupRegistry({
   ...paymentConfigs,
@@ -87,6 +95,9 @@ window.Digit.ComponentRegistryService.setupRegistry({
   PTRModule,
   PTRLinks,
   ...PTRComponents,
+  AssetModule,
+  AssetLinks,
+  ...AssetComponents
 });
 
 initPGRComponents();
