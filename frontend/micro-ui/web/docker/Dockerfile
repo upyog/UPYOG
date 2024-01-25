@@ -1,5 +1,6 @@
 FROM upyogio/alpine-node-builder-14:yarn AS build
-#FROM ghcr.io/egovernments/alpine-node-builder-14:yarn AS build
+# FROM egovio/alpine-node-builder-14:yarn AS build
+FROM ghcr.io/egovernments/alpine-node-builder-14:yarn AS build
 RUN apk update && apk upgrade
 RUN apk add --no-cache git>2.30.0
 RUN yarn add @egovernments/digit-ui-libraries
@@ -23,7 +24,7 @@ RUN yarn add @egovernments/digit-ui-module-bills
 RUN yarn add @egovernments/digit-ui-module-masters
 ARG WORK_DIR
 WORKDIR /app
-ENV NODE_OPTIONS "--max-old-space-size=4096"
+ENV NODE_OPTIONS "--max-old-space-size=8168"
 ENV GENERATE_SOURCEMAP "false"
 
 COPY ${WORK_DIR} .
@@ -36,8 +37,7 @@ RUN cd web/ \
     && chmod +x ./install-deps.sh \
     &&  ./install-deps.sh \
     && yarn install \
-    && yarn build 
-    
+    && yarn build:webpack 
 
 FROM nginx:mainline-alpine
 #FROM ghcr.io/egovernments/nginx:mainline-alpine
