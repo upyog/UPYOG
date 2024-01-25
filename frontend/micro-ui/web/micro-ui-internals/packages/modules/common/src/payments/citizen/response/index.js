@@ -642,6 +642,26 @@ export const convertEpochToDate = (dateEpoch) => {
           {t("TL_CERTIFICATE")}
         </div>
       ) : null}
+      {/*for pett */}
+      {business_service == "pet-services" ? (
+        <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginRight: "20px", marginTop:"15px",marginBottom:"15px" }} onClick={printReciept}>
+          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#a82227">
+            <path d="M0 0h24v24H0V0z" fill="none" />
+            <path d="M19 9h-4V3H9v6H5l7 7 7-7zm-8 2V5h2v6h1.17L12 13.17 9.83 11H11zm-6 7h14v2H5z" />
+          </svg>
+          {t("PTR_FEE_RECEIPT")}
+        </div>
+      ) : null}
+      {business_service == "pet-services" ? (
+        <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginTop:"15px" }} onClick={printCertificate}>
+          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#a82227">
+            <path d="M0 0h24v24H0V0z" fill="none" />
+            <path d="M19 9h-4V3H9v6H5l7 7 7-7zm-8 2V5h2v6h1.17L12 13.17 9.83 11H11zm-6 7h14v2H5z" />
+          </svg>
+          {t("PTR_CERTIFICATE")}
+        </div>
+      ) : null}
+      {/*for pett */}
       {bpaData?.[0]?.businessService === "BPA_OC" && (bpaData?.[0]?.status==="APPROVED" || bpaData?.[0]?.status==="PENDING_SANC_FEE_PAYMENT") ? (
         <div className="primary-label-btn d-grid" style={{ marginLeft: "unset" }} onClick={e => getPermitOccupancyOrderSearch("occupancy-certificate")}>
           <DownloadPrefixIcon />
@@ -669,16 +689,6 @@ export const convertEpochToDate = (dateEpoch) => {
             {t("CS_DOWNLOAD_RECEIPT")}
           </div>
       ) : null}
-
-      {/*for pet service */}
-       {business_service?.includes("pet-services") ? (
-        <div className="link" style={isMobile ? { marginTop: "8px", width: "100%", textAlign: "center" } : { marginTop: "8px" }} onClick={printReciept}>
-            {t("CS_DOWNLOAD_RECEIPT")}
-          </div>
-      ) : null}
-      {/*for pet service */}
-
-
       {business_service?.includes("WS") ? (
         <div className="link" style={isMobile ? { marginTop: "8px", width: "100%", textAlign: "center" } : { marginTop: "8px" }} onClick={printReciept}>
             {t("CS_DOWNLOAD_RECEIPT")}
@@ -706,6 +716,11 @@ export const convertEpochToDate = (dateEpoch) => {
         </div>
       )}
       {business_service == "TL" && (
+        <Link to={`/digit-ui/citizen`}>
+          <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
+        </Link>
+      )}
+      {business_service == "pet-services" && (
         <Link to={`/digit-ui/citizen`}>
           <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
         </Link>

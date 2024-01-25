@@ -94,6 +94,9 @@ export const useApplicationsForBusinessServiceSearch = ({ tenantId, businessServ
   if (window.location.href.includes("BPA.")) {
     _key = "BPA"
   } 
+  if (window.location.href.includes("pet-services")) {
+    _key = "ptr"
+  } 
 
   /* key from application ie being used as consumer code in bill */
   const { searchFn, key, label } = refObj(tenantId, filters)[_key];

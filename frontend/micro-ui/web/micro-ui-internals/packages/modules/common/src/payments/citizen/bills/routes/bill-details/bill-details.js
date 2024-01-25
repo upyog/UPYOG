@@ -65,24 +65,13 @@ const BillDetails = ({ paymentRules, businessService }) => {
       ?.sort((a, b) => b.fromPeriod - a.fromPeriod)
       ?.reduce((total, current, index) => (index === 0 ? total : total + current.amount), 0) || 0;
 
-      // debugger
-      let key ;
-      let label;
+     
 
-      if (businessService === "pet-services"){
-        key = "applicationNumber" ;
-        label  = "PTR_UNIQUE_APPLICATION_NUMBER" ;
-        // console.log(label);
-      }
-      else {
-        const { key, label } = Digit.Hooks.useApplicationsForBusinessServiceSearch({ businessService }, { enabled: false });
-      }
-
-  //  const { key, label } = Digit.Hooks.useApplicationsForBusinessServiceSearch({ businessService }, { enabled: false });
+   const { key, label } = Digit.Hooks.useApplicationsForBusinessServiceSearch({ businessService }, { enabled: false });
 
  
 
-  console.log("label and key",label,key)
+
 
   const getBillingPeriod = () => {
     const { fromPeriod, toPeriod } = billDetails;
