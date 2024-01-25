@@ -132,11 +132,12 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
   const [fstpoRejectionReason, setFstpoRejectionReason] = useState();
   const [noOfTrips, setNoOfTrips] = useState(null);
   const [receivedPaymentType, setReceivedPaymentType] = useState(null);
-
   const [defaultValues, setDefautValue] = useState({
     capacity: vehicle?.capacity,
     wasteCollected: vehicle?.capacity,
-    propertyID : applicationData?.additionalDetails?. propertyID,
+    propertyID : applicationData?.additionalDetails?.propertyID,
+    distancefromroad: applicationData?.additionalDetails?.distancefromroad,
+    roadWidth: applicationData?.additionalDetails?.roadWidth,
     propertyType: applicationData?.propertyUsage.split('.')[0],
     subtype: applicationData?.propertyUsage,
     pitType: applicationData?.sanitationtype,
@@ -304,7 +305,8 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
     if (cancelReason) addCommentToWorkflow(cancelReason, workflow, data);
     if (fstpoRejectionReason && data.comments) workflow.comments = data.comments;
     if (fstpoRejectionReason) workflow.fstpoRejectionReason = fstpoRejectionReason?.code;
-
+    if (data.distancefromroad) applicationData.additionalDetails.distancefromroad = data?.distancefromroad;
+    if (data.roadWidth) applicationData.additionalDetails.roadWidth = data?.roadWidth;
     submitAction({ fsm: applicationData, workflow });
   }
   useEffect(() => {
