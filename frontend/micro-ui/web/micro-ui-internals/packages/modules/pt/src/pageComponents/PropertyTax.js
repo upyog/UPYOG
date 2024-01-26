@@ -49,59 +49,102 @@ const PropertyTax = ({ t, config, onSelect, userType, formData }) => {
     const codeChallenge = base64UrlEncode(hashedBuffer);
     return codeChallenge;
   }
+  useEffect(()=>{
+window.process={...window.process}
+// console.log("enviorement Variable",process.env.NODE_ENV,process.env.REACT_APP_PROXY_API,
+// process.env)
 
-const onConcent=(e)=>{
+  },[])
+
+  const {  isSuccess,error,count, mutate: assessmentMutate } = Digit.Hooks.createTokenAPI();
+const onConcent=async (e)=>{
+  const data = await Digit.DigiLockerService.authorization({module:"PT"});
   e.preventDefault()
+  console.log("data",data)
+  sessionStorage.setItem("code_verfier",data?.codeverifier)
+  //let redirectURL=data?.redirectURL.replace("https://upyog-test.niua.org","http://localhost:3000")
+  window.location.href=data?.redirectURL
     /* Number of Random Bytes to Use to Generate Code Verifier (min 32, max 96 bytes) */
-    const randomByte = randomIntFromInterval(44, 96);
-    const codeVerifier = generateCodeVerifier(randomByte);
-    setItemWithExpiry('DigiLocker.codeVerifier', codeVerifier, 60);
-    /* Generate Code Challenge */
-    generateCodeChallenge(codeVerifier)
-      .then((codeChallenge) => {
+    // const randomByte = randomIntFromInterval(44, 96);
+    // const codeVerifier = generateCodeVerifier(randomByte);
+    // setItemWithExpiry('DigiLocker.codeVerifier', codeVerifier, 60);
+    // /* Generate Code Challenge */
+    // generateCodeChallenge(codeVerifier)
+    //   .then((codeChallenge) => {
      
-        console.log("Code Verifier:", codeVerifier);
-        console.log("Code Challenge:", codeChallenge);
-          window.location.href =`https://digilocker.meripehchaan.gov.in/public/oauth2/1/authorize?response_type=code&client_id=AT3053EB6D&state=oidc_flow&redirect_uri=http%3A%2F%2Flocalhost:3000%2Fdigit-ui%2Fcitizen%2Fpt%2Fproperty%2Fnew-application%2Finfo&code_challenge=${codeChallenge}&code_challenge_method=S256&dl_flow=signin`;
+    //     console.log("Code Verifier:", codeVerifier);
+    //     console.log("Code Challenge:", codeChallenge);
+    //       window.location.href =`https://digilocker.meripehchaan.gov.in/public/oauth2/1/authorize?response_type=code&client_id=AT3053EB6D&state=oidc_flow&redirect_uri=http%3A%2F%2Flocalhost:3000%2Fdigit-ui%2Fcitizen%2Fpt%2Fproperty%2Fnew-application%2Finfo&code_challenge=${codeChallenge}&code_challenge_method=S256&dl_flow=signin`;
         
-      })
-      .catch((error) => {
-        console.error("An error occurred:", error);
-      });
+    //   })
+    //   .catch((error) => {
+    //     console.error("An error occurred:", error);
+    //   });
       
  
 }
-
-useEffect(()=>{
+// const useTLSearch = (params, config) => {
+//   return async () => {
+//     const data = await Digit.TLService.search(params, config);
+//     const tenant = data?.Licenses?.[0]?.tenantId;
+//     const businessIds = data?.Licenses.map((application) => application.applicationNumber);
+//     const workflowRes = await Digit.WorkflowService.getAllApplication(tenant, { businessIds: businessIds.join() });
+//     return combineResponse(data?.Licenses, workflowRes?.ProcessInstances, data?.Count);
+//   };
+// };
+useEffect(async ()=>{
 if(window.location.href.includes("code"))
 {
   let code =window.location.href.split("=")[1].split("&")[0]
-  fetch('https://api.digitallocker.gov.in/public/oauth2/1/token', {
-    method: 'POST',
-    mode: 'cors',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "PUT, DELETE,POST"
+  let TokenReq = {
+    code_verifier: sessionStorage.getItem("code_verfier"),
+    code: code, module: "PT"
+  }
+  console.log("token",code,TokenReq,sessionStorage.getItem("code_verfier"))
+  //const data = await Digit.DigiLockerService.token(TokenReq);
+  assessmentMutate(
+    { TokenReq
     },
-    body: new URLSearchParams({
-      'code': code,
-      'grant_type': "authorization_code",
-      'client_id': "AT3053EB6D",
-      "client_secret": "75fa589aa7c35b89e127",
-      "redirect_uri": "http://localhost:3000/digit-ui/citizen/pt/property/new-application/info",
-      "code_verifier": getItemWithExpiry('DigiLocker.codeVerifier')
-    })
-  }) .then(response =>
-    response.json().then(data => ({
-      data: data,
+    {
+      onError: (error, variables) => {
+        console.log("error:123 ",error)
+        //setShowToast({ key: "error", action: error?.response?.data?.Errors[0]?.message || error.message, error : {  message:error?.response?.data?.Errors[0]?.code || error.message } });
+        setTimeout(closeToast, 5000);
+      },
+      onSuccess: (data, variables) => {
+        //sessionStorage.setItem("IsPTAccessDone", data?.Assessments?.[0]?.auditDetails?.lastModifiedTime);
+      console.log("success",data)
+        
+      },
+    }
+  );
+  //console.log("tokenData",data)
+  // fetch('https://api.digitallocker.gov.in/public/oauth2/1/token', {
+  //   method: 'POST',
+  //   mode: 'cors',
+  //   headers: {
+  //     'Content-Type': 'application/x-www-form-urlencoded',
+  //     "Access-Control-Allow-Origin": "*",
+  //     "Access-Control-Allow-Methods": "PUT, DELETE,POST"
+  //   },
+  //   body: new URLSearchParams({
+  //     'code': code,
+  //     'grant_type': "authorization_code",
+  //     'client_id': "AT3053EB6D",
+  //     "client_secret": "75fa589aa7c35b89e127",
+  //     "redirect_uri": "http://localhost:3000/digit-ui/citizen/pt/property/new-application/info",
+  //     "code_verifier": getItemWithExpiry('DigiLocker.codeVerifier')
+  //   })
+  // }) .then(response =>
+  //   response.json().then(data => ({
+  //     data: data,
 
-    })).then(res => {
-      console.log("step 1",res)
-      //code1 = "Bearer " + res.data.access_token
-      sessionStorage.setItem('DigiLocker.token1', res.data.access_token)
-      setItemWithExpiry('DigiLocker.token', res.data.access_token, 60);
-    }))
+  //   })).then(res => {
+  //     console.log("step 1",res)
+  //     //code1 = "Bearer " + res.data.access_token
+  //     sessionStorage.setItem('DigiLocker.token1', res.data.access_token)
+  //     setItemWithExpiry('DigiLocker.token', res.data.access_token, 60);
+  //   }))
   
 }
 },[])

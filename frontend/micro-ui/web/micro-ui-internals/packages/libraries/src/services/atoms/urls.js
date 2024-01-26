@@ -193,7 +193,10 @@ const Urls = {
     disconnection_notice: "/pdf-service/v1/_createnosave",
     meter_search:"/ws-calculator/meterConnection/_search"
   },
-
+digiLocker:{
+  authorization:"/requester-services-dx/user/authorization/url",
+  token:"/requester-services-dx/user/token"
+},
   engagement: {
     document: {
       search: "/egov-document-uploader/egov-du/document/_search",
