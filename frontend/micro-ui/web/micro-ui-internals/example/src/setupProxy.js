@@ -67,7 +67,8 @@ module.exports = function (app) {
     "/pet-services/pet-registration/_search",
     "/pet-services/pet-registration/_update",
     "/billing-service/bill/v2/_fetchbill",
-    "/collection-services/payments/pet-services/_search"
+    "/collection-services/payments/pet-services/_search",
+    "/requester-services-dx"
    
 
   ].forEach((location) => app.use(location, createProxy));

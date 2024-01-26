@@ -29,6 +29,7 @@ import { ReportsService } from "./services/elements/Reports";
 import HrmsService from "./services/elements/HRMS";
 import { InboxGeneral } from "./services/elements/InboxService";
 import EventsServices from "./services/elements/Events";
+import { DigiLockerService } from "./services/elements/DigiLocker";
 
 import ShareFiles from "./services/molecules/ShareFiles";
 import { GetServiceDefinitions } from "./services/molecules/ServiceDefinitions";
@@ -79,6 +80,7 @@ const initLibraries = () => {
   setupLibraries("CFService", CFService);
   setupLibraries("CustomService", CustomService);
   setupLibraries("TLService", TLService);
+  setupLibraries("DigiLockerService",DigiLockerService)
   setupLibraries("Surveys", Surveys);
   setupLibraries("HRMSService", HrmsService);
   setupLibraries("ReceiptsService", ReceiptsService);
