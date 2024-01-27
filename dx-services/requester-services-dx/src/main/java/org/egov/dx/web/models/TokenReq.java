@@ -27,4 +27,7 @@ public class TokenReq {
      
      @JsonProperty("authToken")
      private  String authToken;
+     
+     @JsonProperty("id")
+     private  String id;
 }
