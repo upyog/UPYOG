@@ -122,10 +122,10 @@ public class UserController {
 		return new ResponseEntity<>(tokenResponse,HttpStatus.OK);
 	}
 	
-	@RequestMapping(value = "/file/{id}", method = RequestMethod.POST,produces = {"application/pdf"})
+	@RequestMapping(value = "/file", method = RequestMethod.POST,produces = {"application/pdf"})
 	@ResponseBody	
-    public  byte[] getFile(@Valid @RequestBody TokenRequest tokenRequest,@PathVariable("id") String id)    { 
-		byte[] doc=userService.getDoc(tokenRequest.getTokenReq(),id);
+    public  byte[] getFile(@Valid @RequestBody TokenRequest tokenRequest)    { 
+		byte[] doc=userService.getDoc(tokenRequest.getTokenReq(),tokenRequest.getTokenReq().getId());
 		return doc;
 	}
 }
