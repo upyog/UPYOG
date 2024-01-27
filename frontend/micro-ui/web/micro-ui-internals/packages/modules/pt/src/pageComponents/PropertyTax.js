@@ -93,6 +93,7 @@ const onConcent=async (e)=>{
 //   };
 // };
 useEffect(async ()=>{
+  //sessionStorage.setItem("DigiLocker.token1","cf87055822e4aa49b0ba74778518dc400a0277e5")
 if(window.location.href.includes("code"))
 {
   let code =window.location.href.split("=")[1].split("&")[0]
@@ -101,23 +102,27 @@ if(window.location.href.includes("code"))
     code: code, module: "PT"
   }
   console.log("token",code,TokenReq,sessionStorage.getItem("code_verfier"))
+  const data = await Digit.DigiLockerService.token({TokenReq })
+  sessionStorage.setItem("DigiLocker.token1",data?.TokenRes?.access_token)
+  //sessionStorage.setItem("DigiLocker.token1",data?.)
   //const data = await Digit.DigiLockerService.token(TokenReq);
-  assessmentMutate(
-    { TokenReq
-    },
-    {
-      onError: (error, variables) => {
-        console.log("error:123 ",error)
-        //setShowToast({ key: "error", action: error?.response?.data?.Errors[0]?.message || error.message, error : {  message:error?.response?.data?.Errors[0]?.code || error.message } });
-        setTimeout(closeToast, 5000);
-      },
-      onSuccess: (data, variables) => {
-        //sessionStorage.setItem("IsPTAccessDone", data?.Assessments?.[0]?.auditDetails?.lastModifiedTime);
-      console.log("success",data)
+  // assessmentMutate(
+  //   { TokenReq
+  //   },
+  //   {
+  //     onError: (error, variables) => {
+  //       console.log("error:123 ",error)
+  //       //setShowToast({ key: "error", action: error?.response?.data?.Errors[0]?.message || error.message, error : {  message:error?.response?.data?.Errors[0]?.code || error.message } });
+  //       setTimeout(closeToast, 5000);
+  //     },
+  //     onSuccess: (data, variables) => {
+  //       //sessionStorage.setItem("IsPTAccessDone", data?.Assessments?.[0]?.auditDetails?.lastModifiedTime);
+  //     console.log("success",data,isSuccess,variables)
+  //     sessionStorage.setItem("DigiLocker.token1","94e648239a5096773d18774fb97b37f00a413587")
         
-      },
-    }
-  );
+  //     },
+  //   }
+  // );
   //console.log("tokenData",data)
   // fetch('https://api.digitallocker.gov.in/public/oauth2/1/token', {
   //   method: 'POST',

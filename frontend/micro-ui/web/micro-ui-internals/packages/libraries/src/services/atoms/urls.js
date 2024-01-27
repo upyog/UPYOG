@@ -195,7 +195,9 @@ const Urls = {
   },
 digiLocker:{
   authorization:"/requester-services-dx/user/authorization/url",
-  token:"/requester-services-dx/user/token"
+  token:"/requester-services-dx/user/token",
+  issueDoc:"/requester-services-dx/user/issuedfiles",
+  uri:"/requester-services-dx/user/file/"
 },
   engagement: {
     document: {

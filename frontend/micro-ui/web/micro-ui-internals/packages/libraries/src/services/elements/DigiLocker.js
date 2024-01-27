@@ -19,7 +19,29 @@ export const DigiLockerService = {
       auth: true,
       userService: true,
       data:data,
+    }),
+    issueDoc: ( data ) =>
+    Request({
+      url: Urls.digiLocker.issueDoc,
+      useCache: false,
+      method: "POST",
+      auth: true,
+      userService: true,
+      data:data,
+    }),
+    uri:( data) =>
+    {
+        console.log("ttttt",data)
+    Request({
+      url: Urls.digiLocker.uri + data.uriurl.uri,
+      useCache: false,
+      method: "POST",
+      auth: true,
+      userService: false,
+      data:{"TokenReq":data?.uriurl?.TokenReq}
+      
     })
+},
 };
 
 
