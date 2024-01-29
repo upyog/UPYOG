@@ -28,6 +28,7 @@ import static org.egov.pt.calculator.util.CalculatorConstants.MARKET_VALUE;
 import static org.egov.pt.calculator.util.CalculatorConstants.MUTATION_PAYMENT_PERIOD_IN_MONTH;
 import static org.egov.pt.calculator.util.CalculatorConstants.OWNER_STATUS_ACTIVE;
 import static org.egov.pt.calculator.util.CalculatorConstants.OWNER_TYPE_MASTER;
+import static org.egov.pt.calculator.util.CalculatorConstants.SPECIAL_EXCEMPTION;
 import static org.egov.pt.calculator.util.CalculatorConstants.PT_ADHOC_PENALTY;
 import static org.egov.pt.calculator.util.CalculatorConstants.PT_ADHOC_REBATE;
 import static org.egov.pt.calculator.util.CalculatorConstants.PT_ADHOC_REBATE_INVALID_AMOUNT;
@@ -59,7 +60,6 @@ import static org.egov.pt.calculator.util.CalculatorConstants.USAGE_DETAIL_MASTE
 import static org.egov.pt.calculator.util.CalculatorConstants.USAGE_MAJOR_MASTER;
 import static org.egov.pt.calculator.util.CalculatorConstants.USAGE_MINOR_MASTER;
 import static org.egov.pt.calculator.util.CalculatorConstants.USAGE_SUB_MINOR_MASTER;
-import static org.egov.pt.calculator.util.CalculatorConstants.PT_ROAD_TYPE;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -92,7 +92,6 @@ import org.egov.pt.calculator.web.models.MutationBillingSlab;
 import org.egov.pt.calculator.web.models.MutationBillingSlabRes;
 import org.egov.pt.calculator.web.models.MutationBillingSlabSearchCriteria;
 import org.egov.pt.calculator.web.models.TaxHeadEstimate;
-import org.egov.pt.calculator.web.models.TypeOfRoad;
 import org.egov.pt.calculator.web.models.collections.Payment;
 import org.egov.pt.calculator.web.models.demand.Category;
 import org.egov.pt.calculator.web.models.demand.Demand;
@@ -288,11 +287,11 @@ public class EstimationService {
 				currentUnitTax = getApplicableTaxForUnits(currentUnitTax,propertyBasedExemptionMasterMap,detail,detail.getPropertyType());
 				//mapValueOfCalculationForUnits.put("DISTANCE_FROM_ROAD_"+i, tenantId)
 				//Calculating age of Property
-				
+
 				if(null!=unit.getAgeOfProperty()) {
 					currentUnitTax = getApplicableTaxForAgeOfProperty(currentUnitTax,propertyBasedExemptionMasterMap,detail,detail.getPropertyType(),unit);
 				}
-				
+
 				if(null!=unit.getStructureType()) {
 					currentUnitTax = getApplicableTaxForStructureType(currentUnitTax,propertyBasedExemptionMasterMap,detail,unit);
 				}
@@ -363,17 +362,17 @@ public class EstimationService {
 		}
 		return currentUnitTax;
 	}
-	
-	
-	
+
+
+
 	private BigDecimal getApplicableTaxForStructureType(BigDecimal currentUnitTax, Map<String, Map<String, 
 			List<Object>>> propertyBasedExemptionMasterMap,
 			PropertyDetail detail, Unit unit) {
-		
+
 		Map<String, List<Object>> roadTypeRates = propertyBasedExemptionMasterMap.get("StructureTypeRates");
 		String searchKey ="";
 		String assessmentYear = detail.getFinancialYear();
-		
+
 		searchKey = detail.getPropertyType()+"_"+unit.getStructureType();
 		Map<String, Object> applicableRoadTypeRate = mDataService.getApplicableMaster(assessmentYear,
 				roadTypeRates.get(searchKey));
@@ -386,19 +385,19 @@ public class EstimationService {
 		}
 		return currentUnitTax;
 	}
-	
+
 	private BigDecimal getApplicableTaxForAgeOfProperty(BigDecimal currentUnitTax, Map<String, Map<String, 
 			List<Object>>> propertyBasedExemptionMasterMap,
 			PropertyDetail detail, String calculationFor,Unit unit) {
-		
+
 		Map<String, List<Object>> roadTypeRates = propertyBasedExemptionMasterMap.get("AgeOfPropertyRates");
 		String searchKey ="";
 		String assessmentYear = detail.getFinancialYear();
 		if(calculationFor.equalsIgnoreCase("UNBUILT") || calculationFor.equalsIgnoreCase("VACANT")) {	
-			 searchKey = "VACANT";
-			
+			searchKey = "VACANT";
+
 		}else {
-			 searchKey = detail.getPropertyType()+"_"+unit.getAgeOfProperty();
+			searchKey = detail.getPropertyType()+"_"+unit.getAgeOfProperty();
 		}
 		Map<String, Object> applicableRoadTypeRate = mDataService.getApplicableMaster(assessmentYear,
 				roadTypeRates.get(searchKey));
@@ -411,7 +410,7 @@ public class EstimationService {
 		}
 		return currentUnitTax;
 	}
-	
+
 	/**
 	 * Private method to calculate the un-built area tax estimate
 	 *
@@ -536,10 +535,25 @@ public class EstimationService {
 		payableTax = payableTax.add(usageExemption);
 
 		// owner exemption
-		BigDecimal userExemption = getExemption(detail.getOwners(), payableTax, assessmentYear,
-				propertyBasedExemptionMasterMap).setScale(2, 2).negate();
-		estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_OWNER_EXEMPTION).estimateAmount(userExemption).build());
-		payableTax = payableTax.add(userExemption);
+		/*
+		 * BigDecimal userExemption = getExemption(detail.getOwners(), payableTax,
+		 * assessmentYear, propertyBasedExemptionMasterMap).setScale(2, 2).negate();
+		 * estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_OWNER_EXEMPTION).
+		 * estimateAmount(userExemption).build()); payableTax =
+		 * payableTax.add(userExemption);
+		 */
+
+		//SpecialExemption for manipur
+
+		if(detail.getExemption() != null && !detail.getExemption().isEmpty())
+		{
+
+			BigDecimal userExemption = getSpecialExemption(detail.getExemption(), payableTax, assessmentYear,
+					propertyBasedExemptionMasterMap).setScale(2, 2).negate();
+			estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_OWNER_EXEMPTION).estimateAmount(userExemption).build());
+			payableTax = payableTax.add(userExemption);
+		}
+
 
 		// Fire cess
 		List<Object> fireCessMasterList = timeBasedExemeptionMasterMap.get(CalculatorConstants.FIRE_CESS_MASTER);
@@ -878,6 +892,30 @@ public class EstimationService {
 				userExemption = userExemption.add(currentExemption);
 			}
 		}
+		return userExemption;
+	}
+
+	private BigDecimal getSpecialExemption(String exemption,BigDecimal taxAmt, String financialYear,
+			Map<String, Map<String, List<Object>>> propertyMasterMap) {
+
+		Map<String, List<Object>> ownerTypeMap = propertyMasterMap.get(SPECIAL_EXCEMPTION);
+		BigDecimal userExemption = BigDecimal.ZERO;
+		//final int userCount = owners.size();
+		//BigDecimal share = taxAmt.divide(BigDecimal.valueOf(userCount),2, 2);
+
+
+
+		Map<String, Object> applicableOwnerType = mDataService.getApplicableMaster(financialYear,
+				ownerTypeMap.get(exemption));
+
+		if (null != applicableOwnerType) {
+
+			BigDecimal currentExemption = mDataService.calculateApplicables(taxAmt,
+					applicableOwnerType.get(EXEMPTION_FIELD_NAME));
+
+			userExemption = userExemption.add(currentExemption);
+		}
+
 		return userExemption;
 	}
 

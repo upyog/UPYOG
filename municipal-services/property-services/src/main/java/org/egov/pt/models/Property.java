@@ -46,6 +46,10 @@ public class Property extends PropertyInfo {
 	@JsonProperty("propertyType")
 	@SafeHtml
 	private String propertyType;
+	
+	@JsonProperty("exemption")
+	@SafeHtml
+	private String exemption;
 
 	@JsonProperty("ownershipCategory")
 	@SafeHtml
@@ -117,7 +121,7 @@ public class Property extends PropertyInfo {
 			String propertyType, String ownershipCategory, List<OwnerInfo> owners, Institution institution,
 			CreationReason creationReason, String usageCategory, Long noOfFloors, Double landArea,
 			BigDecimal superBuiltUpArea, Source source, Channel channel, List<Document> documents, List<Unit> units,
-			JsonNode additionalDetails, AuditDetails auditDetails, ProcessInstance workflow) {
+			JsonNode additionalDetails, AuditDetails auditDetails, ProcessInstance workflow,String exemption) {
 		super(id, propertyId, surveyId, linkedProperties, tenantId, accountId, oldPropertyId, status, address);
 		this.acknowldgementNumber = acknowldgementNumber;
 		this.propertyType = propertyType;
@@ -136,6 +140,7 @@ public class Property extends PropertyInfo {
 		this.additionalDetails = additionalDetails;
 		this.auditDetails = auditDetails;
 		this.workflow = workflow;
+		this.exemption= exemption;
 	}
 
 	public Property addOwnersItem(OwnerInfo ownersItem) {

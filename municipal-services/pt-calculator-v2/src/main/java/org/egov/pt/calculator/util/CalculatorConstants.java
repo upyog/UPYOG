@@ -103,6 +103,8 @@ public class CalculatorConstants {
 	public static final String FINANCIAL_YEAR_MASTER = "FinancialYear";
 
 	public static final String OWNER_TYPE_MASTER = "OwnerType";
+	
+	public static final String SPECIAL_EXCEMPTION = "SpecialExemption";
 
 	public static final String REBATE_MASTER = "Rebate";
 

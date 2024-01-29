@@ -99,6 +99,7 @@ public class PropertyRowMapper implements ResultSetExtractor<List<Property>> {
 						.auditDetails(auditdetails)
 						.institution(institute)
 						.landArea(landArea)
+						.exemption(rs.getString("exemption"))
 						.build();
 
 

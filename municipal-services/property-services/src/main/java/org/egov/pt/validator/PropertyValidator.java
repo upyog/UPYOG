@@ -303,6 +303,8 @@ public class PropertyValidator {
 				PTConstants.MDMS_PT_OCCUPANCYTYPE,
 				PTConstants.MDMS_PT_CONSTRUCTIONTYPE,
 				PTConstants.MDMS_PT_ROADTYPE));
+		
+		//PTConstants.MDMS_PT_EXEMPTION
 
 		validateInstitution(property, errorMap);
 		
@@ -390,6 +392,14 @@ public class PropertyValidator {
 		if (property.getAddress().getTypeOfRoad().getCode() != null && !codes.get(PTConstants.MDMS_PT_ROADTYPE).contains(property.getAddress().getTypeOfRoad().getCode())) {
 			errorMap.put("Invalid Type Of Road", "The Road Type '" + property.getAddress().getTypeOfRoad().getCode() + "' does not exists");
 		}
+		
+		/*
+		 * if (property.getExemption() != null &&
+		 * !codes.get(PTConstants.MDMS_PT_EXEMPTION).contains(property.getExemption()))
+		 * { errorMap.put("Invalid Type Of EXEMPTIN", "The EXEMPTION '" +
+		 * property.getExemption() + "' does not exists FOR" + property.getTenantId());
+		 * }
+		 */
 		
 		if (!CollectionUtils.isEmpty(property.getUnits()))
 			for (Unit unit : property.getUnits()) {

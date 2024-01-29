@@ -79,6 +79,7 @@ public class TranslationService {
         propertyMap.put("status", property.getStatus());
         propertyMap.put("creationReason", property.getCreationReason());
         propertyMap.put("occupancyDate", null);
+        propertyMap.put("exemption", property.getExemption());
 
         String[] propertyTypeMasterData = property.getPropertyType().split("\\.");
         String propertyType = null,propertySubType = null;
@@ -112,6 +113,7 @@ public class TranslationService {
         propertyDetail.put("ownershipCategory", ownershipCategory);
         propertyDetail.put("subOwnershipCategory", subOwnershipCategory);
         propertyDetail.put("address", addressMap);
+        propertyDetail.put("exemption", property.getExemption());
 
         // propertyDetail.put("adhocExemption", );
         // propertyDetail.put("adhocPenalty",);
