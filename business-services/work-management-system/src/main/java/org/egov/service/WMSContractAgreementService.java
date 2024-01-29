@@ -57,7 +57,13 @@ public class WMSContractAgreementService {
 	public List<WMSContractAgreementApplication> registerWMSContractAgreementRequest(WMSContractAgreementRequest wmsContractAgreementRequest) {
 		wmsContractAgreementApplicationValidator.validateContractAgreementApplication(wmsContractAgreementRequest);
 		wmsContractAgreementApplicationEnrichment.enrichContractAgreementApplication(wmsContractAgreementRequest);
-
+		//for(int i=0;i<wmsContractAgreementRequest.getWmsContractAgreementApplications().get(0).getAgreementInfo().size();i++) {
+			
+			
+			producer.push(configuration.getCreateTopic(), wmsContractAgreementRequest);
+			
+		
+		//}
         // Enrich/Upsert user in upon birth registration
        // userService.callUserService(birthRegistrationRequest);
 
@@ -68,7 +74,7 @@ public class WMSContractAgreementService {
         //calculationService.getCalculation(birthRegistrationRequest);
 
         // Push the application to the topic for persister to listen and persist
-       producer.push(configuration.getCreateTopic(), wmsContractAgreementRequest);
+       //producer.push(configuration.getCreateTopic(), wmsContractAgreementRequest);
 
         // Return the response back to user
         return wmsContractAgreementRequest.getWmsContractAgreementApplications();

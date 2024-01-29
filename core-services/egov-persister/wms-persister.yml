@@ -804,12 +804,10 @@ serviceMaps:
       isTransaction: true
       queryMaps:
 
-        - query: INSERT INTO contract_agreement (agreement_no,department_name_party1,deposit_type,deposit_amount,account_no,particulars,valid_from_date,valid_till_date,bank_branch_ifsc_code,payment_mode,designation,employee_name,witness_name_p1,address_p1,uid_p1,witness_name_p2,address_p2,uid_p2,vendor_type,vendor_name,represented_by,primary_party,sr_no,terms_and_conditions,document_description,upload_document,createdby,lastmodifiedby,createdtime, lastmodifiedtime) VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO contract_agreement (agreement_no,deposit_type,deposit_amount,account_no,particulars,valid_from_date,valid_till_date,bank_branch_ifsc_code,payment_mode,witness_name_p2,address_p2,uid_p2,vendor_type,vendor_name,represented_by,primary_party,sr_no,terms_and_conditions,document_description,upload_document,createdby,lastmodifiedby,createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: WMSContractAgreementApplication.*
           jsonMaps:
-            - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.agreement_no
-
-            - jsonPath: $.WMSContractAgreementApplication.*.party1Details.department_name_party1
+            - jsonPath: $.WMSContractAgreementApplication.*.agreement_no
 
             - jsonPath: $.WMSContractAgreementApplication.*.sDPGBGDetails.deposit_type
             
@@ -826,16 +824,6 @@ serviceMaps:
             - jsonPath: $.WMSContractAgreementApplication.*.sDPGBGDetails.bank_branch_ifsc_code
             
             - jsonPath: $.WMSContractAgreementApplication.*.sDPGBGDetails.payment_mode
-            
-            - jsonPath: $.WMSContractAgreementApplication.*.party1Details.designation
-            
-            - jsonPath: $.WMSContractAgreementApplication.*.party1Details.employee_name
-            
-            - jsonPath: $.WMSContractAgreementApplication.*.party1Details.witness_name_p1
-            
-            - jsonPath: $.WMSContractAgreementApplication.*.party1Details.address_p1
-            
-            - jsonPath: $.WMSContractAgreementApplication.*.party1Details.uid_p1
             
             - jsonPath: $.WMSContractAgreementApplication.*.party2Witness.witness_name_p2
             
@@ -868,39 +856,56 @@ serviceMaps:
             - jsonPath: $.WMSContractAgreementApplication.*.auditDetails.lastModifiedTime
             
             
-        - query: INSERT INTO agreement (agreement_no,agreement_name,agreement_date,department_name_ai,loa_no,resolution_no,resolution_date,tender_no,tender_date,agreement_type,defect_liability_period,contract_period,agreement_amount,payment_type) VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
-          basePath: WMSContractAgreementApplication.*
+        - query: INSERT INTO agreement (agreement_no,agreement_name,agreement_date,department_name_ai,loa_no,resolution_no,resolution_date,tender_no,tender_date,agreement_type,defect_liability_period,contract_period,agreement_amount,payment_type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+          basePath: WMSContractAgreementApplication.*.agreementInfo.*
           jsonMaps:
-            - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.agreement_no
+            - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.*.agreement_no
 
-            - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.agreement_name
+            - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.*.agreement_name
 
-            - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.agreement_date
+            - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.*.agreement_date
 
-            - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.department_name_ai
+            - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.*.department_name_ai
             
-            - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.loa_no
+            - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.*.loa_no
             
-            - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.resolution_no
+            - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.*.resolution_no
             
-            - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.resolution_date
+            - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.*.resolution_date
             
-            - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.tender_no
+            - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.*.tender_no
             
-            - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.tender_date
+            - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.*.tender_date
             
-            - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.agreement_type
+            - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.*.agreement_type
             
-            - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.defect_liability_period
+            - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.*.defect_liability_period
             
-            - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.contract_period
+            - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.*.contract_period
             
-            - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.agreement_amount
+            - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.*.agreement_amount
             
-            - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.payment_type
+            - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.*.payment_type
             
             
             
+            
+        - query: INSERT INTO party1details (agreement_no,department_name_party1,designation,employee_name,witness_name_p1,address_p1,uid_p1) VALUES (?, ?, ?, ?, ?, ?, ?);
+          basePath: WMSContractAgreementApplication.*.party1Details.*
+          jsonMaps:
+            - jsonPath: $.WMSContractAgreementApplication.*.party1Details.*.agreement_no
+
+            - jsonPath: $.WMSContractAgreementApplication.*.party1Details.*.department_name_party1
+
+            - jsonPath: $.WMSContractAgreementApplication.*.party1Details.*.designation
+
+            - jsonPath: $.WMSContractAgreementApplication.*.party1Details.*.employee_name
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.party1Details.*.witness_name_p1
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.party1Details.*.address_p1
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.party1Details.*.uid_p1
             
             
             

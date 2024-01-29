@@ -41,7 +41,8 @@ public class WMSContractAgreementApplicationRowMapper implements ResultSetExtrac
                     lastModifiedTime = null;
                 }
                 
-                List<AgreementInfo> agreementInfo = (List<AgreementInfo>) AgreementInfo.builder()                   
+                AgreementInfo agreementInfo = AgreementInfo.builder()
+                		.agreementNo(agreementNo)
                         .agreementName(rs.getString("aAgreementName"))
                         .agreementDate(rs.getString("aAgreementDate"))
                         .departmentNameAi(rs.getString("aDepartmentNameAi"))
@@ -56,8 +57,10 @@ public class WMSContractAgreementApplicationRowMapper implements ResultSetExtrac
                         .agreementAmount(rs.getInt("aAgreementAmount"))
                         .paymentType(rs.getString("aPaymentType"))
                         .build();
+                wmsContractAgreementApplication.addAgreementInfoItem(agreementInfo);
                 
                 Party1Details party1Details = Party1Details.builder()
+                		.agreementNo(agreementNo)
                         .departmentNameParty1(rs.getString("aDepartmentNameParty1"))
                         .designation(rs.getString("aDesignation"))
                         .employeeName(rs.getString("aEmployeeName"))
@@ -65,7 +68,7 @@ public class WMSContractAgreementApplicationRowMapper implements ResultSetExtrac
                         .addressP1(rs.getString("aAddressP1"))
                         .uidP1(rs.getString("aUidP1"))
                         .build();
-                
+                wmsContractAgreementApplication.addParty1Details(party1Details);
                 SDPGBGDetails sDPGBGDetails = SDPGBGDetails.builder()
                         .accountNo(rs.getLong("aAccountNo"))
                         .particulars(rs.getString("aParticulars"))
@@ -108,10 +111,12 @@ public class WMSContractAgreementApplicationRowMapper implements ResultSetExtrac
                         .lastModifiedBy(rs.getString("aLastmodifiedby"))
                         .lastModifiedTime(lastModifiedTime)
                         .build();
-				/*
-				 * wmsContractAgreementApplication = WMSContractAgreementApplication.builder()
-				 * .agreementNo(rs.getString("aAgreementNo")).build();
-				 */
+				
+				  wmsContractAgreementApplication = WMSContractAgreementApplication.builder()
+				  .agreementNo(rs.getString("aAgreementNo"))
+				  .auditDetails(auditdetails)
+				  .build();
+				 
                 
 				/*
 				 * wmsContractAgreementApplication = WMSContractAgreementApplication.builder()
