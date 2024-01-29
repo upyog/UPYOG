@@ -30,18 +30,15 @@ export const DigiLockerService = {
       data:data,
     }),
     uri:( data) =>
-    {
-        console.log("ttttt",data)
     Request({
-      url: Urls.digiLocker.uri + data.uriurl.uri,
+      url: Urls.digiLocker.uri,
       useCache: false,
       method: "POST",
       auth: true,
-      userService: false,
-      data:{"TokenReq":data?.uriurl?.TokenReq}
+      userService: true,
+      data:data
       
     })
-},
 };
 
 
