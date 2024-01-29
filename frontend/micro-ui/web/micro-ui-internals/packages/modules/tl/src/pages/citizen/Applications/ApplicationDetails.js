@@ -160,7 +160,8 @@ const TLApplicationDetails = () => {
             onClick: handleDownloadPdf,
           },
         ];
-
+        
+  const reversedOwners= Array.isArray(application?.[0]?.tradeLicenseDetail?.owners)? application?.[0]?.tradeLicenseDetail?.owners.slice().reverse() : [];
   return (
     <React.Fragment>
       <div className="cardHeaderWithOptions" style={isMobile ? {} : {maxWidth:"960px"}}>
@@ -239,7 +240,7 @@ const TLApplicationDetails = () => {
                 textStyle={{wordBreak:"break-word"}}
               />
               <CardSectionHeader>{t("TL_OWNERSHIP_DETAILS_HEADER")}</CardSectionHeader>
-              {application?.tradeLicenseDetail.owners.map((ele, index) => {
+              {reversedOwners.map((ele, index) => {
                 return application?.tradeLicenseDetail?.subOwnerShipCategory.includes("INSTITUTIONAL") ? (
                   <div key={index} style={multiBoxStyle}>
                     <CardSectionHeader style={multiHeaderStyle}>{`${t("TL_PAYMENT_PAID_BY_PLACEHOLDER")} - ` + (index + 1)}</CardSectionHeader>

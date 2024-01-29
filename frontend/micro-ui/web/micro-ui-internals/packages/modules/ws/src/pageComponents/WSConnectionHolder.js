@@ -1,3 +1,4 @@
+
 import { CardLabel, CheckBox, Dropdown, FormStep, Loader, MobileNumber, RadioButtons, TextInput, UploadFile } from "@egovernments/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import Timeline from "../components/Timeline";
@@ -111,7 +112,8 @@ const WSConnectionHolder = ({ t, config, onSelect, userType, formData, ownerInde
   function selectfile(e) {
     setFile(e.target.files[0]);
   }
-
+  
+const reversedOwners= Array.isArray(formData?.cpt?.details?.owners) ? formData?.cpt?.details?.owners.slice().reverse():[];
 
   const goNext = () => {
 
@@ -120,12 +122,12 @@ const WSConnectionHolder = ({ t, config, onSelect, userType, formData, ownerInde
       //need to add property data here from previous screen
       let ConnectionDet = {
       isOwnerSame:isOwnerSame,
-      name: formData?.cpt?.details?.owners?.[0]?.name,
-      mobileNumber: formData?.cpt?.details?.owners?.[0]?.mobileNumber,
-      gender: formData?.cpt?.details?.owners?.[0]?.gender ? {code:formData?.cpt?.details?.owners?.[0]?.gender, i18nKey:`COMMON_GENDER_${formData?.cpt?.details?.owners?.[0]?.gender}`} : null,
-      guardian: formData?.cpt?.details?.owners?.[0]?.fatherOrHusbandName, 
-      address: formData?.cpt?.details?.owners?.[0]?.permanentAddress,
-      relationship:formData?.cpt?.details?.owners?.[0]?.relationship ? {code : formData?.cpt?.details?.owners?.[0]?.relationship, i18nKey:`COMMON_MASTERS_OWNERTYPE_${formData?.cpt?.details?.owners?.[0]?.relationship}`} : null,
+      name: reversedOwners?.[0]?.name,
+      mobileNumber: reversedOwners?.[0]?.mobileNumber,
+      gender: reversedOwners?.[0]?.gender ? {code:reversedOwners?.[0]?.gender, i18nKey:`COMMON_GENDER_${reversedOwners?.[0]?.gender}`} : null,
+      guardian: reversedOwners?.[0]?.fatherOrHusbandName, 
+      address: reversedOwners?.[0]?.permanentAddress,
+      relationship:reversedOwners?.[0]?.relationship ? {code : reversedOwners?.[0]?.relationship, i18nKey:`COMMON_MASTERS_OWNERTYPE_${reversedOwners?.[0]?.relationship}`} : null,
       specialCategoryType:ownerType,
       documentId:documentId,
       fileStoreId:uploadedFile,

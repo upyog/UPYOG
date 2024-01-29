@@ -43,6 +43,7 @@ import {
       propAddArr.push(cpt?.details?.address?.pincode);
     }
   }
+  const reversedOwners= Array.isArray(cpt?.details?.owners) ? cpt?.details?.owners.slice().reverse() :[];
 
   return(
     <React.Fragment>
@@ -52,7 +53,7 @@ import {
     <CardHeader styles={{fontSize:"28px"}}>{t(`WS_BASIC_DETAILS_HEADER`)}</CardHeader>
         <StatusTable>
           <Row className="border-none"  label={t("WS_PROPERTY_ID_LABEL")} text={cpt?.details?.propertyId}/>
-          <Row className="border-none" label={t("WS_OWNERS_NAME_LABEL")} text={t(cpt?.details?.owners[0]?.name)} />
+          <Row className="border-none" label={t("WS_OWNERS_NAME_LABEL")} text={t(reversedOwners[0]?.name)} />
           <Row className="border-none" label={t("WS_COMMON_TABLE_COL_ADDRESS")} text={propAddArr.join(', ')} />
           <Row className="border-none" label={t("WS_CONNECTION_DETAILS_STATUS_LABEL")} text={t(cpt?.details?.status)}/>
         </StatusTable>

@@ -152,12 +152,12 @@ export const TLSearch = {
         }),
       },
     };
-
+  const reversedOwners= Array.isArray(propertyDetails?.Properties?.[0]?.owners) ? propertyDetails?.Properties?.[0]?.owners.slice().reverse():[];
     const PropertyDetail = {
       title: "PT_DETAILS",
       values: [
         { title: "TL_PROPERTY_ID", value: propertyDetails?.Properties?.[0]?.propertyId || "NA" },
-        { title: "PT_OWNER_NAME", value: propertyDetails?.Properties?.[0]?.owners[0]?.name || "NA" },
+        { title: "PT_OWNER_NAME", value: reversedOwners[0]?.name || "NA" },
         { title: "PROPERTY_ADDRESS", value: propertyAddress || "NA" },
         {
           title: "TL_VIEW_PROPERTY_DETAIL",
