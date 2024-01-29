@@ -30,6 +30,9 @@ public class CalculatorConstants {
 	public static final String PT_UNIT_USAGE_EXEMPTION = "PT_UNIT_USAGE_EXEMPTION";
 
 	public static final String PT_OWNER_EXEMPTION = "PT_OWNER_EXEMPTION";
+	
+	public static final String  PT_SPECIAL_EXEMPTION ="PT_SPECIAL_EXEMPTION";
+	public static final String  PT_ROAD_TYPE_TAX ="PT_ROAD_TYPE_TAX";
 
 	public static final String PT_TIME_REBATE = "PT_TIME_REBATE";
 
@@ -49,6 +52,10 @@ public class CalculatorConstants {
 	
 	public static final String PT_ROAD_TYPE = "PT_ROAD_TYPE";
 	
+	
+	public static final String CALCULTED_ROAD_TYPE_TAX_WITH_TAX_AMT = "CALCULTED_ROAD_TYPE_TAX_WITH_TAX_AMT";
+
+	public static final String CALCULTED_ROAD_TYPE_TAX = "CALCULTED_ROAD_TYPE_TAX";
 	
 
 //	public static final String PT_DECIMAL_CEILING_CREDIT = "PT_DECIMAL_CEILING_CREDIT";
@@ -121,7 +128,7 @@ public class CalculatorConstants {
 
 
 	public static final List<String> PROPERTY_BASED_EXEMPTION_MASTERS = Collections.unmodifiableList(Arrays.asList(
-			USAGE_MAJOR_MASTER, USAGE_MINOR_MASTER, USAGE_SUB_MINOR_MASTER, USAGE_DETAIL_MASTER, OWNER_TYPE_MASTER,ROAD_TYPE_RATES,STRUCTURE_TYPE_RATES,AGE_OF_PROPERTY_RATES));
+			USAGE_MAJOR_MASTER, USAGE_MINOR_MASTER, USAGE_SUB_MINOR_MASTER, USAGE_DETAIL_MASTER, OWNER_TYPE_MASTER,ROAD_TYPE_RATES,STRUCTURE_TYPE_RATES,AGE_OF_PROPERTY_RATES,SPECIAL_EXCEMPTION));
 	
 	public static final List<Category> DEBIT_CATEGORIES = Collections.unmodifiableList(Arrays.asList(Category.REBATE, Category.EXEMPTION));
 
