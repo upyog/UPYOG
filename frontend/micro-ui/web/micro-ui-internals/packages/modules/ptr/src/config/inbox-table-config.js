@@ -2,7 +2,7 @@
   import { Link } from "react-router-dom";
 
   const GetCell = (value) => <span className="cell-text">{value}</span>;
-  //console.log("cell value", GetCell.value)
+  
 
   const GetSlaCell = (value) => {
     if (isNaN(value)) return <span className="sla-cell-success">0</span>;
@@ -66,7 +66,7 @@
         {
           Header: t("PTR_STATUS"),
           Cell: ({ row }) => {
-            // console.log("row",row)
+            
             const wf = row.original?.workflowData;
             return GetCell(t(`${row?.original?.workflowData?.state?.["applicationStatus"]}`));
 

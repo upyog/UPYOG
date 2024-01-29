@@ -6,7 +6,7 @@ const ulbCamel = (ulb) => ulb.toLowerCase().split(" ").map(capitalize).join(" ")
 
 
 const getAssessmentInfo = (application, t) => {
-  // console.log("application", application);
+ 
   let values = [
     {
       title: t("PTR_PET_NAME"),
@@ -26,7 +26,6 @@ const getAssessmentInfo = (application, t) => {
   ];
  
   return {
-    // title: t("PT_ASSESMENT_INFO_SUB_HEADER"),
     title: t("ES_TITILE_PET_DETAILS"),
     values: values,
   };

@@ -134,6 +134,46 @@ const ApplicationDetails = () => {
   };
   let dowloadOptions = [petDetailsPDF];
 
+  const { data: reciept_data, isLoading: recieptDataLoading } = Digit.Hooks.useRecieptSearch(
+    {
+      tenantId: tenantId,
+      businessService: "pet-services",
+      consumerCodes: appDetailsToShow?.applicationData?.applicationData?.applicationNumber,
+      isEmployee: false,
+    },
+    { enabled: appDetailsToShow?.applicationData?.applicationData?.applicationNumber ? true : false }
+  );
+
+  async function getRecieptSearch({ tenantId, payments, ...params }) {
+    let response = { filestoreIds: [payments?.fileStoreId] };
+    response = await Digit.PaymentService.generatePdf(tenantId, { Payments: [{ ...payments }] }, "consolidatedreceipt");
+    const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
+    window.open(fileStore[response?.filestoreIds[0]], "_blank");
+  };
+
+  if (reciept_data && reciept_data?.Payments.length > 0 && recieptDataLoading == false)
+  dowloadOptions.push({
+    label: t("PTR_FEE_RECIEPT"),
+    onClick: () => getRecieptSearch({ tenantId: reciept_data?.Payments[0]?.tenantId, payments: reciept_data?.Payments[0] }),
+  });
+
+  const printCertificate = async () => {
+    let response = await Digit.PaymentService.generatePdf(tenantId, { PetRegistrationApplications: [data?.PetRegistrationApplications?.[0]] });
+    const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
+    window.open(fileStore[response?.filestoreIds[0]], "_blank");
+  };
+
+
+  if (reciept_data && reciept_data?.Payments.length > 0 && recieptDataLoading == false)
+  dowloadOptions.push({
+    label: t("PTR_CERTIFICATE"),
+    onClick: () => printCertificate(),
+  });
+
+
+
+
+
 
 
   return (

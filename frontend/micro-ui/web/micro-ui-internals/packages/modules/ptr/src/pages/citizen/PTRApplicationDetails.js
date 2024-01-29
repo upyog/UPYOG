@@ -31,18 +31,18 @@ const PTRApplicationDetails = () => {
   );
 
 
-  console.log("jdjdjdjdjdjdjdjjdjdjdjdj")
+ 
 
-  const [billAmount, setBillAmount] = useState(null);
-  const [billStatus, setBillStatus] = useState(null);
+ 
+  const [billData, setBillData]=useState(null);
 
-  let serviceSearchArgs = {
-    tenantId : tenantId,
-    code: [`PTR_${data?.PetRegistrationApplications?.[0]?.creationReason}`], 
-    module: ["PTR"],
-    referenceIds : [data?.PetRegistrationApplications?.[0]?.applicationNumber]
+  // let serviceSearchArgs = {
+  //   tenantId : tenantId,
+  //   code: [`PTR_${data?.PetRegistrationApplications?.[0]?.creationReason}`], 
+  //   module: ["PTR"],
+  //   referenceIds : [data?.PetRegistrationApplications?.[0]?.applicationNumber]
     
-  }
+  // }
 
 
 
@@ -53,24 +53,24 @@ const PTRApplicationDetails = () => {
   
   let  pet_details = (PetRegistrationApplications && PetRegistrationApplications.length > 0 && PetRegistrationApplications[0]) || {};
   const application =  pet_details;
-  console.log("hhhhhhhhhhhhhhhh",pet_details);
+
   
   sessionStorage.setItem("ptr-pet", JSON.stringify(application));
 
   
-  useEffect(async () => {
-    if (acknowledgementIds && tenantId &&  pet_details) {
-      const res = await Digit.PaymentService.searchBill(tenantId, { Service: "pet-services", consumerCode: acknowledgementIds });
-      // if (!res.Bill.length) {
-      //   const res1 = await Digit.PTService.ptCalculateMutation({  pet_details:  pet_details }, tenantId);
-      //   setBillAmount(res1?.[acknowledgementIds]?.totalAmount || t("CS_NA"));
-      //   setBillStatus(t(`PTR_MUT_BILL_ACTIVE`));
-      // } else {
-      //   setBillAmount(res?.Bill[0]?.totalAmount || t("CS_NA"));
-      //   setBillStatus(t(`PTR_MUT_BILL_${res?.Bill[0]?.status?.toUpperCase()}`));
-      // }
-    }
-  }, [tenantId, acknowledgementIds,  pet_details]);
+
+  const [loading, setLoading]=useState(false);
+
+  const fetchBillData=async()=>{
+    setLoading(true);
+    const result= await Digit.PaymentService.fetchBill(tenantId,{ businessService: "pet-services", consumerCode: acknowledgementIds, });
+  
+  setBillData(result);
+  setLoading(false);
+};
+useEffect(()=>{
+fetchBillData();
+}, [tenantId, acknowledgementIds]); 
 
   const { isLoading: auditDataLoading, isError: isAuditError, data: auditResponse } = Digit.Hooks.ptr.usePTRSearch(
     {
@@ -145,7 +145,7 @@ const PTRApplicationDetails = () => {
     response = await Digit.PaymentService.generatePdf(tenantId, { Payments: [{ ...payments }] }, "consolidatedreceipt");
     const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
     window.open(fileStore[response?.filestoreIds[0]], "_blank");
-  }
+  };
 
   const handleDownload = async (document, tenantid) => {
     let tenantId = tenantid ? tenantid : tenantId;
@@ -155,7 +155,7 @@ const PTRApplicationDetails = () => {
   };
 
   const printCertificate = async () => {
-    let response = await Digit.PaymentService.generatePdf(tenantId, { PetRegistrationApplications: [data?.PetRegistrationApplications?.[0]] }, "ptmutationcertificate");
+    let response = await Digit.PaymentService.generatePdf(tenantId, { PetRegistrationApplications: [data?.PetRegistrationApplications?.[0]] });
     const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
     window.open(fileStore[response?.filestoreIds[0]], "_blank");
   };
@@ -168,16 +168,16 @@ const PTRApplicationDetails = () => {
   });
 
   //commented out, need later for download receipt and certificate 
-  // if (reciept_data && reciept_data?.Payments.length > 0 && recieptDataLoading == false)
-  //   dowloadOptions.push({
-  //     label: t("MT_FEE_RECIEPT"),
-  //     onClick: () => getRecieptSearch({ tenantId: reciept_data?.Payments[0]?.tenantId, payments: reciept_data?.Payments[0] }),
-  //   });
-  // if (data?.PetRegistrationApplications?.[0]?.creationReason === "CREATE" && data?.PetRegistrationApplications?.[0]?.status === "ACTIVE")
-  //   dowloadOptions.push({
-  //     label: t("MT_CERTIFICATE"),
-  //     onClick: () => printCertificate(),
-  //   });
+  if (reciept_data && reciept_data?.Payments.length > 0 && recieptDataLoading == false)
+    dowloadOptions.push({
+      label: t("PTR_FEE_RECIEPT"),
+      onClick: () => getRecieptSearch({ tenantId: reciept_data?.Payments[0]?.tenantId, payments: reciept_data?.Payments[0] }),
+    });
+  if (data?.ResponseInfo?.status === "successful")
+    dowloadOptions.push({
+      label: t("PTR_CERTIFICATE"),
+      onClick: () => printCertificate(),
+    });
   
   return (
     <React.Fragment>

@@ -72,7 +72,6 @@ const Response = (props) => {
   }, [mutation1.data]);
   useEffect(() => {
     const onSuccess = async (successRes) => {
-      console.log("hhhhhhhhhhhhhhhh",successRes)
       setMutationHappened(true);
       queryClient.clear();
       if (successRes?.PetRegistrationApplications[0]?.creationReason === "CREATE") {

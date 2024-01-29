@@ -40,7 +40,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
   const {
     address,
     pets,
-    index=0,    // se the initial value for tesing ,  need to check why when click on change it will not coming in address page and document page 
+    index=0,    // set the initial value for tesing ,  need to check why when click on change it will not coming in address page and document page 
     isEditPET,
     isUpdatePET,
     ownerss,
@@ -166,16 +166,19 @@ const CheckPage = ({ onSubmit, value = {} }) => {
          <Row
             label={t("PTR_ADDRESS_PINCODE")}
             text={`${t(checkForNA(address?.pincode))}`}
+            // actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/pincode/`}${index}`} />}
             actionButton={<ActionButton jumpTo={`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/pincode`} />}
         />
          <Row
             label={t("MYCITY_CODE_LABEL")}
             text={`${t(checkForNA(address?.city?.name))}`}
+            // actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/address/`}${index}`} />}
             actionButton={<ActionButton jumpTo={`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/address`} />}
         />
          <Row
             label={t("PTR_LOCALITY")}
             text={`${t(checkForNA(address?.locality?.name))}`}
+            // actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/address/`}${index}`} />}
             actionButton={<ActionButton jumpTo={`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/address`} />}
         />
 

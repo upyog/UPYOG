@@ -14,7 +14,7 @@ const PTRSelectProofIdentity = ({ t, config, onSelect, userType, formData, setEr
   
 
   const { isLoading, data } = Digit.Hooks.ptr.usePetMDMS(stateId, "PetService", "Documents");
-  // console.log("datatata",data)
+  
 
   const handleSubmit = () => {
     let document = formData.documents;
@@ -32,7 +32,6 @@ const PTRSelectProofIdentity = ({ t, config, onSelect, userType, formData, setEr
       
       let isRequired = false;
       documents.map((data) => {
-        // console.log("fffffffffffffffffffffffffffffffffffff",data)
         if (doc.required && data?.documentType.includes(doc.code)) isRequired = true;
       });
       if (!isRequired && doc.required) count = count + 1;
@@ -49,7 +48,6 @@ const PTRSelectProofIdentity = ({ t, config, onSelect, userType, formData, setEr
       {!isLoading ? (
         <FormStep t={t} config={config} onSelect={handleSubmit} onSkip={onSkip} isDisabled={enableSubmit} onAdd={onAdd}>
           {data?.PetService?.Documents?.map((document, index) => {
-            // console.log("ooooooooooooooooooooooooooooooooooooooo",document)
             return (
               <PTRSelectDocument
                 key={index}
@@ -86,7 +84,6 @@ function PTRSelectDocument({
   
 }) {
   const filteredDocument = documents?.filter((item) => item?.documentType?.includes(doc?.code))[0];
-  ////console.log("ffffffff", filteredDocument);
 
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const [selectedDocument, setSelectedDocument] = useState(
@@ -97,12 +94,10 @@ function PTRSelectDocument({
       : {}
   );
 
-  ////console.log("4444444444",selectedDocument);
   const [file, setFile] = useState(null);
   const [uploadedFile, setUploadedFile] = useState(() => filteredDocument?.fileStoreId || null);
 
   const handlePTRSelectDocument = (value) => setSelectedDocument(value);
-  ////console.log("7/////////////",handlePTRSelectDocument);
 
   function selectfile(e) {
     setFile(e.target.files[0]);
@@ -144,7 +139,6 @@ function PTRSelectDocument({
       const docType = dropDownData
         .filter((e) => e.code === originalDoc?.documentType)
         .map((e) => ({ ...e, i18nKey: e?.code?.replaceAll(".", "_") }))[0];
-        //console.log("5555555555", docType);
       if (!docType) setHidden(true);
       else {
         setSelectedDocument(docType);
