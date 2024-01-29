@@ -146,6 +146,7 @@ public class EnrichmentService {
     	userinfo.setTenantId(user.getTenantId());
     	userinfo.setMobileNumber(user.getMobileNumber());
     	userinfo.setName(user.getName());
+    	userinfo.setEmail(user.getEmailId());
     	return userinfo;
     }
     public List<Challan> enrichChallanSearch(List<Challan> challans, SearchCriteria criteria, RequestInfo requestInfo){
