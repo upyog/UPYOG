@@ -97,6 +97,7 @@ const getConnectionDetails = (application, t) => {
 };
 
 const getConnectionHolderDetails = (owner, t) => {
+  console.log("inside")
   return {
     title: t("WS_COMMON_CONNECTION_HOLDER_DETAILS_HEADER"),
     values: owner?.connectionHolders?.length > 0 ? [
@@ -107,6 +108,7 @@ const getConnectionHolderDetails = (owner, t) => {
       //{ title: t("WS_CONN_HOLDER_OWN_DETAIL_RELATION_LABEL"), value: t(owner?.connectionHolders?.[0]?.relationship) || t("CS_NA") },
       //{ title: t("WS_OWNER_SPECIAL_CATEGORY"), value: owner?.connectionHolders?.[0]?.ownerType ? t(`COMMON_MASTERS_OWNERTYPE_${owner?.ownerType}`) : t("CS_NA") },
       { title: t("WS_CORRESPONDANCE_ADDRESS_LABEL"), value: owner?.connectionHolders?.[0]?.correspondenceAddress || t("CS_NA") },
+      { title: t("WS_EMAIL_ID"), value: owner?.connectionHolders?.[0]?.emailId || t("CS_NA") },
     ] : [
       { title: t("WS_CONN_HOLDER_SAME_AS_OWNER_DETAILS"), value: t("SCORE_YES") || t("CS_NA") }
     ],

@@ -10,6 +10,7 @@ const getformDataforEdit = (ChallanData,fetchBillData) => {
   let defaultval = {
     ConsumerName: ChallanData[0].citizen.name,
     mobileNumber: ChallanData[0].citizen.mobileNumber,
+    emailId: ChallanData[0].citizen.emailId,
     doorNo: ChallanData[0].address.doorNo,
     building: ChallanData[0].address.buildingName,
     streetName: ChallanData[0].address.street,
@@ -118,6 +119,7 @@ const NewChallan = ({ChallanData}) => {
         citizen: {
           name: data.ConsumerName,
           mobileNumber: data.mobileNumber,
+          emailId: data.emailId
         },
         //businessService: selectedCategoryType ? temp + "." + humanized(selectedCategoryType.code, temp) : "",
         businessService:data?.categoryType?.code,

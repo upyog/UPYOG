@@ -14,6 +14,7 @@ export const Complaint = {
     localityName,
     uploadedImages,
     mobileNumber,
+    emailId,
     name,
   }) => {
     const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -50,6 +51,7 @@ export const Complaint = {
         name: name,
         type: "CITIZEN",
         mobileNumber: mobileNumber,
+        emailId:emailId,
         roles: [
           {
             id: null,

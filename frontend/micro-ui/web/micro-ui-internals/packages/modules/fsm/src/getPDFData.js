@@ -64,6 +64,7 @@ const getPDFData = (application, tenantInfo, t) => {
         values: [
           { title: t("CS_APPLICATION_DETAILS_APPLICANT_NAME"), value: application?.citizen?.name || "N/A" },
           { title: t("CS_APPLICATION_DETAILS_APPLICANT_MOBILE"), value: application?.citizen?.mobileNumber || "N/A" },
+          { title: t("CS_APPLICATION_DETAILS_APPLICANT_EMAIL_ID"), value: application?.citizen?.emailId || application?.additionalDetails?.emailId || "NA" },
         ],
       },
       {

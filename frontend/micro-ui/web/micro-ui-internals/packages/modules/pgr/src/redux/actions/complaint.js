@@ -16,6 +16,7 @@ const createComplaint = ({
   uploadedImages,
   mobileNumber,
   name,
+  emailId,
   additionalDetails
 }) => async (dispatch, getState) => {
   const response = await Digit.Complaint.create({
@@ -34,6 +35,7 @@ const createComplaint = ({
     uploadedImages,
     mobileNumber,
     name,
+    emailId,
     additionalDetails
   });
   dispatch({
