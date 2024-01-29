@@ -104,9 +104,9 @@ public class ElasticSearchRepository {
         indexNameVsDocumentsToBeIndexed.keySet().forEach(indexName -> {
         	List<JsonNode> records=indexNameVsDocumentsToBeIndexed.get(indexName);
 
-        	if(records.size()>=39)
+        	if(records.size()>=applicationProperties.getMaxDataSizeKafka())
         	{
-        	int chunkSize=39;
+        	int chunkSize=applicationProperties.getMaxDataSizeKafka();
             for (int i = 0; i < records.size(); i += chunkSize) {
                 int end = Math.min(i + chunkSize, records.size());
                 chunkList.add(records.subList(i, end));
