@@ -91,6 +91,7 @@ export const NewApplication = ({ parentUrl, heading }) => {
     const pitDimension = data?.pitDetail;
     const applicantName = data.applicationData.applicantName;
     const mobileNumber = data.applicationData.mobileNumber;
+    const emailId = data.applicationData.emailId;
     const pincode = data?.address?.pincode;
     const street = data?.address?.street?.trim();
     const doorNo = data?.address?.doorNo?.trim();
@@ -115,6 +116,7 @@ export const NewApplication = ({ parentUrl, heading }) => {
           name: applicantName,
           mobileNumber,
           gender: gender,
+          emailId:emailId
         },
         tenantId: tenantId,
         sanitationtype: sanitationtype,

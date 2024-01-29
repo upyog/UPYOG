@@ -16,6 +16,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
     const [genderList, setGenderList] = useState([]);
     const [ownershipCategory, setOwnershipCategory] = useState(formData?.owners?.ownershipCategory);
     const [name, setName] = useState(formData?.owners?.name || "");
+    const [emailId, setEmail] = useState(formData?.owners?.emailId || "");
     const [isPrimaryOwner, setisPrimaryOwner] = useState(false);
     const [gender, setGender] = useState(formData?.owners?.gender);
     const [mobileNumber, setMobileNumber] = useState(formData?.owners?.mobileNumber || "");
@@ -28,7 +29,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
         if(owner.isPrimaryOwner == "false" ) owner.isPrimaryOwner = false
     })
     let [fields, setFeilds] = useState(
-        (formData?.owners && formData?.owners?.owners) || [{ name: "", gender: "", mobileNumber: null, isPrimaryOwner: true }]
+        (formData?.owners && formData?.owners?.owners) || [{ name: "",emailId:"", gender: "", mobileNumber: null, isPrimaryOwner: true }]
     );
 
     useEffect(() => {
@@ -95,7 +96,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
 
     function handleAdd() {
         const values = [...fields];
-        values.push({ name: "", gender: "", mobileNumber: null, isPrimaryOwner: false });
+        values.push({ name: "",emailId:"", gender: "", mobileNumber: null, isPrimaryOwner: false });
         setFeilds(values);
         setCanmovenext(true);
 
@@ -128,6 +129,15 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
         let units = [...fields];
         units[i].gender = value;
         setGender(value);
+        setFeilds(units);
+        if (units[i].gender && units[i].mobileNumber && units[i].name) {
+            setCanmovenext(false);
+        }
+    }
+    function setOwnerEmail(i, e) {
+        let units = [...fields];
+        units[i].emailId = e.target.value;
+        setEmail(e.target.value);
         setFeilds(units);
         if (units[i].gender && units[i].mobileNumber && units[i].name) {
             setCanmovenext(false);
@@ -295,6 +305,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                         ...owner,
                         active:true,
                         name: owner.name,
+                        emailId:owner.emailId,
                         mobileNumber: owner.mobileNumber,
                         isPrimaryOwner: owner.isPrimaryOwner,
                         gender: owner.gender.code,
@@ -401,7 +412,7 @@ fields =propertyData.owners.map((owner) =>{
             "active": true,
             "i18nKey": "COMMON_GENDER_FEMALE"
         }
-        return {"name":owner.name, "mobileNumber":owner.mobileNumber, gender:gender,isPrimaryOwner}
+        return {"name":owner.name,"emailId":owner.emailId, "mobileNumber":owner.mobileNumber, gender:gender,isPrimaryOwner}
     }
     else if (owner.gender =="MALE")
     {
@@ -410,7 +421,7 @@ fields =propertyData.owners.map((owner) =>{
             "active": true,
             "i18nKey": "COMMON_GENDER_MALE"
         }
-        return {"name":owner.name, "mobileNumber":owner.mobileNumber, gender:gender,isPrimaryOwner}
+        return {"name":owner.name, "emailId":owner.emailId, "mobileNumber":owner.mobileNumber, gender:gender,isPrimaryOwner}
     }
 
 })
@@ -516,6 +527,24 @@ useEffect(()=>{
                                     onSelect={(e) => setGenderName(index, e)}
                                     t={t}
                                     disabled={true}
+                                    />
+                                    <CardLabel>{`${t("CORE_EMAIL_ID")}`}</CardLabel>
+                                    <TextInput
+                                        style={{ background: "#FAFAFA" }}
+                                        t={t}
+                                        type={"emailId"}
+                                        isMandatory={false}
+                                        optionKey="i18nKey"
+                                        name="emailId"
+                                        value={field.emailId}
+                                        onChange={(e) => setOwnerEmail(index, e)}
+                                        {...(validation = {
+                                            isRequired: true,
+                                            pattern: "[A-Za-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$",
+                                            type: "emailId",
+                                            title: t("TL_EMAIL_ID_ERROR_MESSAGE"),
+                                        })}
+                                        disabled={true}
                                     />
                                     {ismultiple && (
                                         <CheckBox
