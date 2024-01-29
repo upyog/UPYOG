@@ -18,7 +18,6 @@ const App = () => {
   };
 
   const PTRCreate = Digit?.ComponentRegistryService?.getComponent("PTRCreatePet");
-  // const SearchResultsComponent = Digit?.ComponentRegistryService?.getComponent("PTSearchResultsComponent");
   const PTRApplicationDetails = Digit?.ComponentRegistryService?.getComponent("PTRApplicationDetails");
   const PTRMyApplications = Digit?.ComponentRegistryService?.getComponent("PTRMyApplications");
  
