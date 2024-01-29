@@ -5,9 +5,8 @@ import { Link } from "react-router-dom";
 import PTRWFCaption from "./PTRWFCaption";
 
 
-// ToDo: ned to check code carefully which we want and dont.
 const PTRWFApplicationTimeline = (props) => {
-  console.log("idddddddddd", props)
+  
   const { t } = useTranslation();
   const businessService = props?.application?.workflow?.businessService;
   // const businessService = "ptr";
@@ -17,7 +16,7 @@ const PTRWFApplicationTimeline = (props) => {
     id: props.application?.applicationNumber,
     moduleCode: businessService,
   });
-  //console.log("timelinbe business service ", businessService)
+  
 
   function OpenImage(imageSource, index, thumbnailsToShow) {
     window.open(thumbnailsToShow?.fullImage?.[0], "_blank");

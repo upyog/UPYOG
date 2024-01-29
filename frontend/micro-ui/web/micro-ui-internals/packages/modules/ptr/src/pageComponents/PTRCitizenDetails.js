@@ -11,7 +11,7 @@ const PTRCitizenDetails
   let index = 0
   // window.location.href.charAt(window.location.href.length - 1);
   // console.log("index in detail page ",  index)
-  // 
+   
   let validation = {};
 
   const [applicantName, setName] = useState((formData.ownerss && formData.ownerss[index] && formData.ownerss[index].applicantName) || formData?.ownerss?.applicantName || "");

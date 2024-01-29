@@ -39,8 +39,6 @@ export const PTRMyApplications = () => {
 
     if(foundValue)
     return t("CS_CF_VIEW")
-    else if(!foundValue && curservice?.status?.includes("ACTIVE"))
-    return t("CS_CF_RATE_US")
     else
     return t("CS_CF_TRACK")
   }

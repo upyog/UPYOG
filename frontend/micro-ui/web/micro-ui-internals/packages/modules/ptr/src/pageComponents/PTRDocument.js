@@ -25,7 +25,7 @@ function PTRDocument({ petdetail = {} }) {
       <React.Fragment>
         <div style={{ display: "flex", flexWrap: "wrap" }}>
           {documents?.map((document, index) => {
-            // console.log("ffffffffffffffffffffffffff",document)
+            
             let documentLink = pdfDownloadLink(data.pdfFiles, document?.fileStoreId);
             return (
               <a target="_" href={documentLink} style={{ minWidth: "160px" }} key={index}>

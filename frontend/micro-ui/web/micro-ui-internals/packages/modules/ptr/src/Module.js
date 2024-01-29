@@ -29,7 +29,6 @@ import { TableConfig } from "./config/inbox-table-config";
 import NewApplication from "./pages/employee/NewApplication";
 import ApplicationDetails from "./pages/employee/ApplicationDetails";
 import Response from "./pages/Response";
-import PTRSearchResults from "./pages/citizen/SearchResults/searchResults";
 import SelectOtp from "../../core/src/pages/citizen/Login/SelectOtp";
 import CitizenFeedback from "@egovernments/digit-ui-module-core/src/components/CitizenFeedback";
 import AcknowledgementCF from "@egovernments/digit-ui-module-core/src/components/AcknowledgementCF";
@@ -62,7 +61,7 @@ const componentsToRegister = {
   PTRSelectProofIdentity,
   PTRServiceDoc,
   PTRWFApplicationTimeline,
-  PTRSearchResults
+ 
   
   
   

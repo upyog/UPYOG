@@ -31,7 +31,7 @@ const PTRApplicationDetails = () => {
   );
 
 
-  console.log("jdjdjdjdjdjdjdjjdjdjdjdj",data);
+ 
 
  
   const [billData, setBillData]=useState(null);
@@ -53,7 +53,7 @@ const PTRApplicationDetails = () => {
   
   let  pet_details = (PetRegistrationApplications && PetRegistrationApplications.length > 0 && PetRegistrationApplications[0]) || {};
   const application =  pet_details;
-  console.log("hhhhhhhhhhhhhhhh",pet_details);
+
   
   sessionStorage.setItem("ptr-pet", JSON.stringify(application));
 
