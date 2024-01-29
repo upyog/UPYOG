@@ -6,6 +6,7 @@ import { Link, useHistory } from "react-router-dom";
 // import { getKeyNotesConfig } from "./keynotesConfig";
 
 const MyBill = ({ bill, currentPath, businessService, getKeyNotesConfig }) => {
+  console.log("busususususususuus",businessService);
   const { t } = useTranslation();
   const history = useHistory();
 

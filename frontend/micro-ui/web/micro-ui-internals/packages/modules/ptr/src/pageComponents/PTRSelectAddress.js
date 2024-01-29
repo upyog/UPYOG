@@ -10,6 +10,9 @@ const PTRSelectAddress = ({ t, config, onSelect, userType, formData, setError, c
   let tenantId = Digit.ULBService.getCurrentTenantId();
   const { pathname } = useLocation();
   const presentInModifyApplication = pathname.includes("modify");
+  
+  
+
 
   
 
@@ -77,7 +80,7 @@ const PTRSelectAddress = ({ t, config, onSelect, userType, formData, setError, c
     }
   }, [selectedCity, formData?.address?.pincode, fetchedLocalities]);
 
-  console.log("formmmmmmmmmm",formData)
+  
 
   function selectCity(city) {
     setSelectedLocality(null);
