@@ -104,7 +104,7 @@ const SelectPaymentPreference = ({ config, formData, t, onSelect, userType }) =>
   if (advanceAmount === null) {
     return <Loader />;
   }
-
+console.log("advance",advanceAmount,totalAmount,MinAmount)
   return (
     <React.Fragment>
       <Timeline currentStep={3} flow="APPLY" />
@@ -129,7 +129,7 @@ const SelectPaymentPreference = ({ config, formData, t, onSelect, userType }) =>
                   <TextInput
                     type={input.type}
                     key={input.name}
-                    disable={input.disable}
+                    disable={true}
                     onChange={(e) => setAdvanceAmountValue(e.target.value)}
                     value={advanceAmount}
                     {...input.validation}

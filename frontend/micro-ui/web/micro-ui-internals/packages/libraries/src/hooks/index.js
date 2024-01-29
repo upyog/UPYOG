@@ -265,6 +265,7 @@ import usePetDocumentSearch from "./ptr/usePetDocumentSearch";
 import useMyPetPayments from "./ptr/useMyPetPayments";
 import useTenantsPTR from "./ptr/useTenants";
 
+import createTokenAPI from "./digiLockerApi/createTokenAPI";
 
 const pgr = {
   useComplaintDetails,
@@ -588,6 +589,7 @@ const Hooks = {
   useBulkPdfDetails,
   useBillAmendmentInbox,
   useAudit,
+  createTokenAPI
 };
 
 export default Hooks;
