@@ -72525,7 +72525,7 @@ export const LocalizationService = {
         },
         {
             "code": "WMS_DR_COMMON_CREATE_HEADER",
-            "message": "Deduction Register",
+            "message": "Deduction Registion",
             "module": "rainmaker-common",           
             "locale": "en_IN"
         },
