@@ -356,7 +356,6 @@ public class EstimationService {
 				
 			}
 			unbuiltAmount =	roadTypeCalculatedValue.get(CALCULTED_ROAD_TYPE_TAX_WITH_TAX_AMT);
-			
 			unbuiltAmount = unbuiltAmount.add(getApplicableTaxForAgeOfProperty(unbuiltAmount,propertyBasedExemptionMasterMap,detail,"UNBUILT",null));
 			taxAmt = taxAmt.add(unbuiltAmount);
 
