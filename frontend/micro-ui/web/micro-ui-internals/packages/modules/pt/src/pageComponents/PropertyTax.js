@@ -229,7 +229,7 @@ function getItemWithExpiry(key) {
         <span>
           <SubmitBar label={t("PT_COMMON_NEXT")} onSubmit={onSelect} />
         </span>
-        <span>
+        <span style={{marginTop:"10px"}}>
           <SubmitBar label={t("PT_DIGILOCKER_CONSENT")} onSubmit={(e) => {onConcent(e)}} />
         </span>
       </Card>

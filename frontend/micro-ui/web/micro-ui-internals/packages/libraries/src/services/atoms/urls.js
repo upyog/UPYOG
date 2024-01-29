@@ -197,7 +197,7 @@ digiLocker:{
   authorization:"/requester-services-dx/user/authorization/url",
   token:"/requester-services-dx/user/token",
   issueDoc:"/requester-services-dx/user/issuedfiles",
-  uri:"/requester-services-dx/user/file/"
+  uri:"/requester-services-dx/user/file"
 },
   engagement: {
     document: {

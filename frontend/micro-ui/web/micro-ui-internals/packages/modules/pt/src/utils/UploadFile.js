@@ -133,7 +133,7 @@ const getCitizenStyles = (value) => {
   return citizenStyles;
 };
 
-const UploadFile = (props) => {
+const UploadFileDigiLocker = (props) => {
   const { t } = useTranslation();
   const inpRef = useRef();
   const [hasFile, setHasFile] = useState(false);
@@ -186,36 +186,28 @@ const UploadFile = (props) => {
    const fetchDigiLockerDocuments  = async (e) => {
     e.preventDefault()
    
-          let code1 = sessionStorage.getItem('DigiLocker.token1')
+          const digiLockerToken = sessionStorage.getItem('DigiLocker.token1')
           let TokenReq = {
-            "authToken":code1
+            "authToken":digiLockerToken
           }
           const res1 = await Digit.DigiLockerService.issueDoc({TokenReq })
           console.log("res1res1res1res1res1",res1)
           let uri = res1.IssuedDoc.filter((item)=>{
             return item.doctype == "DRVLC"
           })
+          let TokenReqNew = {
+            "authToken":digiLockerToken,
+            "id":uri?.[0]?.uri,
+          }
+          
          console.log("url",uri)
          if(uri?.length>0)
          {
-          let uriurl ={"uri":uri?.[0]?.uri,"TokenReq":TokenReq
-        }
+          const res2 = await Digit.DigiLockerService.uri({"TokenReq":TokenReqNew})
+
+          let c= new Blob([res2])
+          convertToFile(e,c)
           
-          const res1 = await Digit.DigiLockerService.uri({uriurl}).then(res => res.blob().then(data =>{
-            console.log("resssssssss",res)
-             var reader = new FileReader();
-             reader.readAsDataURL(data);
-            reader.onloadend = function () {
-              var base64data = reader.result;
-              var blobData = dataURItoBlob(base64data);
-              let newFile= new File([blobData], `drivingL.pdf`, { type: "application/pdf" })
-              console.log("newFile",newFile)
-              props.onUpload(e,newFile)
-            //  const response1 =  Digit.UploadServices.Filestorage("property-upload", newFile, Digit.ULBService.getStateId());
-            //   console.log("fffffffff",response1)
-          }
-          }))
-      
           // fetch('https://api.digitallocker.gov.in/public/oauth2/1/file/' + uri?.[0]?.uri, {
           //       method: 'GET',
           //       mode: 'cors',
@@ -281,6 +273,17 @@ const UploadFile = (props) => {
           //   }).catch(error => console.log('error2', error))
        
   }
+  const convertToFile = (e,blob) => {
+    var reader = new FileReader();
+    reader.readAsDataURL(blob);
+    reader.onloadend = function () {
+      var base64data = reader.result;
+      var blobData = dataURItoBlob(base64data);
+      let newFile = new File([blobData], `drivingL.pdf`, { type: "application/pdf" })
+      props.onUpload(e, newFile)
+      };
+    
+  };
   const Close = () => (
     <svg width="24" height="24" viewBox="0 0 24 24" fill="#FFFFFF" xmlns="http://www.w3.org/2000/svg">
         <path d="M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12L19 6.41Z" fill="#0B0C0C" />
@@ -347,4 +350,4 @@ const UploadFile = (props) => {
   );
 };
 
-export default UploadFile;
+export default UploadFileDigiLocker;
