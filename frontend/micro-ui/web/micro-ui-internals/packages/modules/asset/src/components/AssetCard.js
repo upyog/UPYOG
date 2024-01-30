@@ -31,14 +31,14 @@ const AssetCard = () => {
   const links=[
     
     {
-      label: t("AST_TITLE_NEW_MANAGEMNET"),
-      link: `/digit-ui/employee/ast/assetservice/new-application`,
+      label: t("AST_TITLE_ASSET_MANAGEMENT"),
+      link: `/digit-ui/employee/assetservice/new-application`,
       role: "PT_CEMP"
     },
-    // {
-    //   label: t("ES_COMMON_APPLICATION_SEARCH"),
-    //   link: `/digit-ui/employee/ptr/petservice/my-applications`,
-    // },
+    {
+      label: t("AST_TITLE_APPLICATION_SEARCH"),
+      link: `/digit-ui/employee/assetservice/my-applications`,
+    },
   ]
   const PT_CEMP = Digit.UserService.hasAccess(["PT_CEMP"]) || false;
   const propsForModuleCard = {
