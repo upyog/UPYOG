@@ -95,10 +95,7 @@ public class PGRService {
         criteria.setIsPlainSearch(false);
 
         List<ServiceWrapper> serviceWrappers = repository.getServiceWrappers(criteria);
-ServiceWrapper ss=new ServiceWrapper();
-Service s=new Service();s.setAccountId("df48e857-f945-43a4-bd67-a48a5726fca8");
-ss.setService(s);
-serviceWrappers.add(ss);
+
         if(CollectionUtils.isEmpty(serviceWrappers))
             return new ArrayList<>();;
 
