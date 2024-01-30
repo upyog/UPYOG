@@ -72177,11 +72177,6 @@ export const LocalizationService = {
             "message": "SUBMIT",
             "module": "rainmaker-common",
             "locale": "en_IN"
-        },{
-            "code": "WMS_PM_FORM_CREATE_HEAD",
-            "message": "PM-Details",
-            "module": "rainmaker-common",
-            "locale": "en_IN"
         },
         {
             "code": "WMS_NEW_PHM_FORM_HEADER",
@@ -72264,7 +72259,7 @@ export const LocalizationService = {
         },
         {
             "code": "WMS_PHM_PRJ_NAME_LABEL",
-            "message": "Work Name",
+            "message": "Project Name",
             "module": "rainmaker-common",
             "locale": "en_IN"
         },

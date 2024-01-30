@@ -128,7 +128,7 @@ PHMApplications:{
       Request({
         url: Urls.wms.PHMApplications.search,
         useCache: false,
-        method: "GET",//"POST",
+        method: "POST",//"POST",
         auth: true,
         userService: true,
         params:{...searchParams},// tenantId, ...filters, ...searchParams }//TODO:#1 Actual API needs to attach  { tenantId, ...filters, ...searchParams },
@@ -148,7 +148,7 @@ PHMApplications:{
         data: data,
         url: Urls.wms.PHMApplications.update+"/"+data.phm_id,
         useCache: false,
-        method: "PUT",
+        method: "POST",
         auth: true,
         userService: true,
         params: {  },
@@ -167,7 +167,7 @@ PHMApplications:{
       Request({
         url: Urls.wms.PHMApplications.get,
         useCache: false,
-        method: "GET",
+        method: "POST",
         auth: true,
         userService: true,
         params: { phmeme_id:phmId},
@@ -176,7 +176,7 @@ PHMApplications:{
       Request({
         url: Urls.wms.PHMApplications.count,
         useCache: false,
-        method:"GET",// "POST",
+        method:"POST",// "POST",
         auth: true,
         userService: true,
         params: {  },

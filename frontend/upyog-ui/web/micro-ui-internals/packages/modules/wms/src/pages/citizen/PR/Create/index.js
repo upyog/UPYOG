@@ -25,7 +25,7 @@ const WmsPrCreate = () => {
       };
     
       /* use customiseCreateFormData hook to make some chnages to the Employee object [0].PreduleOfRateApplication*/
-     Digit.WMSService.PHMApplications.create(PrApplications.PrApplication[0], tenantId).then((result,err)=>{
+     Digit.WMSService.PRApplications.create(PrApplications.PrApplication[0], tenantId).then((result,err)=>{
       setIsLoading(false);
        history.push("/upyog-ui/citizen/wms/pr-home");
      })

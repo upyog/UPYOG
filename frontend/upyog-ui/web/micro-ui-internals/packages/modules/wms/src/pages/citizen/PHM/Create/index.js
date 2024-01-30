@@ -13,9 +13,9 @@ const WmsPhmCreate = () => {
   const [showToast, setShowToast] = useState(null);
   const onSubmit = (data) => {
     setIsLoading(true);
-    let PhmemeApplications = 
+    let WMSPhysicalFinancialMilestoneApplications = 
       {
-        PhmemeApplication: [{
+        WMSPhysicalFinancialMilestoneApplication: [{
           project_name: data?.WmsPhmPrjName?.project_name,  
           work_name: data?.WmsPhmWorkName?.work_name,  
           milestone_name: data?.WmsPhmMLName?.milestone_name,
@@ -23,9 +23,11 @@ const WmsPhmCreate = () => {
           tenantId:tenantId
         }],
       };
+
+      // WMSPhysicalFinancialMilestoneApplication 
     
       /* use customiseCreateFormData hook to make some chnages to the Employee object [0].PhmeduleOfRateApplication*/
-     Digit.WMSService.PHMApplications.create(PhmemeApplications.PhmemeApplication[0], tenantId).then((result,err)=>{
+     Digit.WMSService.PHMApplications.create(WMSPhysicalFinancialMilestoneApplications, tenantId).then((result,err)=>{
       setIsLoading(false);
        history.push("/upyog-ui/citizen/wms/phm-home");
      })

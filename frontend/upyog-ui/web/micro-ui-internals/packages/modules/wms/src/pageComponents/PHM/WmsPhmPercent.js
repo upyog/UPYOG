@@ -10,8 +10,8 @@ const WmsPhmPercent = ({ t, config, onSelect, formData = {}, userType, register,
       name: "percent_weightage",
       validation: {
         isRequired: true,
-        pattern: Digit.Utils.getPattern('Name'),
-        title: t("WMS_COMMON_NAME_INVALID"),
+        pattern: Digit.Utils.getPattern('Num'),
+        title: t("WMS_COMMON_INVALID"),
       },
       isMandatory: true,
     },
@@ -41,7 +41,7 @@ const WmsPhmPercent = ({ t, config, onSelect, formData = {}, userType, register,
                 defaultValue={undefined}
                 {...input.validation}
               />
-            {currentValue&&currentValue.length>0&&!currentValue.match(Digit.Utils.getPattern('Name'))&&<CardLabelError style={{ width: "100%", marginTop: '-15px', fontSize: '16px', marginBottom: '12px'}}>{t("WMS_COMMON_NAME_INVALID")}</CardLabelError>}
+            {currentValue&&currentValue.length>0&&!currentValue.match(Digit.Utils.getPattern('Num'))&&<CardLabelError style={{ width: "100%", marginTop: '-15px', fontSize: '16px', marginBottom: '12px'}}>{t("WMS_COMMON_NAME_INVALID")}</CardLabelError>}
             </div>
           </LabelFieldPair>
         </React.Fragment>

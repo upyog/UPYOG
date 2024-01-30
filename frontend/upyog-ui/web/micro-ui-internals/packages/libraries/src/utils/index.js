@@ -83,7 +83,7 @@ const getPattern = (type) => {
     case "OldLicenceNo":
       return /^[a-zA-Z0-9-/]{0,64}$/;
     case "Percentage":
-      return /^(100(\.0{1,2})?|[1-9]?\d(\.\d{1,2})?)$/;
+      return /(^100([.]0{1,2})?)$|(^\d{1,2}([.]\d{1,2})?)$/;
     case "AlphaNumeric":
       return /^[a-z0-9]+$/i;
     case "Num":
