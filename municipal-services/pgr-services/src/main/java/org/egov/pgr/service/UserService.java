@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -20,6 +22,7 @@ import java.util.stream.Collectors;
 import static org.egov.pgr.util.PGRConstants.USERTYPE_CITIZEN;
 
 @org.springframework.stereotype.Service
+@Slf4j
 public class UserService {
 
 
@@ -206,7 +209,7 @@ public class UserService {
         StringBuilder uri = new StringBuilder(config.getUserHost()).append(config.getUserSearchEndpoint());
         UserDetailResponse userDetailResponse = userUtils.userCall(userSearchRequest,uri);
         List<User> users = userDetailResponse.getUser();
-
+        log.info("user search response"+ users);
         if(CollectionUtils.isEmpty(users))
             throw new CustomException("USER_NOT_FOUND","No user found for the uuids");
 
