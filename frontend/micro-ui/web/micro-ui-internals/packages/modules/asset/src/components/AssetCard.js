@@ -32,12 +32,12 @@ const AssetCard = () => {
     
     {
       label: t("AST_TITLE_ASSET_MANAGEMENT"),
-      link: `/digit-ui/employee/assetservice/new-application`,
+      link: `/digit-ui/employee/assetservice/new-asset`,
       role: "PT_CEMP"
     },
     {
       label: t("AST_TITLE_APPLICATION_SEARCH"),
-      link: `/digit-ui/employee/assetservice/my-applications`,
+      link: `/digit-ui/employee/assetservice/my-assets`,
     },
   ]
   const PT_CEMP = Digit.UserService.hasAccess(["PT_CEMP"]) || false;
