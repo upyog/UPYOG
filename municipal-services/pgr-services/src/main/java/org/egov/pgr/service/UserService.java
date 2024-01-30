@@ -94,9 +94,11 @@ public class UserService {
         UserDetailResponse userDetailResponse = searchUser(userUtils.getStateLevelTenant(tenantId),null, user.getMobileNumber());
         if (!userDetailResponse.getUser().isEmpty()) {
         	log.info("in update user");
-
+        	log.info("User response in search"+userDetailResponse.getUser().get(0));
             User userFromSearch = userDetailResponse.getUser().get(0);
-            if(!user.getName().equalsIgnoreCase(userFromSearch.getName())){
+            if(!user.getName().equalsIgnoreCase(userFromSearch.getName()) || !user.getEmailId().equalsIgnoreCase(userFromSearch.getEmailId())){
+            	log.info("Update user");
+
                 userServiceResponse = updateUser(request.getRequestInfo(),user,userFromSearch);
             }
             else userServiceResponse = userDetailResponse.getUser().get(0);
