@@ -115,7 +115,8 @@ const EDCRForm = ({ t, config, onSelect, userType, formData, ownerIndex = 0, add
                 value={name}
                 {...(validation = {
                     isRequired: true,
-                    pattern: "^[a-zA-Z]+(( )+[a-zA-z]+)*$",
+                    //pattern: "^[a-zA-Z]+(( )+[a-zA-z]+)*$",
+                    pattern: "^[a-zA-Z ]+$",
                     type: "text",
                     title: t("TL_NAME_ERROR_MESSAGE"),
                 })}

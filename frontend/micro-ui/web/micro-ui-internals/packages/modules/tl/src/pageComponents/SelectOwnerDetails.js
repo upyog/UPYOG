@@ -335,6 +335,7 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                       validation: {
                         // isRequired: true,
                         // pattern: getPattern("Email"),
+                        pattern: "[A-Za-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$",
                         type: "text",
                         title: t("TL_EMAIL_ERROR_MESSAGE"),
                       },

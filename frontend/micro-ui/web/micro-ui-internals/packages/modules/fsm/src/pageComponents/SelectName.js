@@ -39,7 +39,7 @@ const SelectName = ({ t, config, onSelect, formData = {}, userType, register, er
       type: "text",
       name: "emailId",
       validation: {
-        isRequired: true,
+        //isRequired: true,
         pattern: "[A-Za-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$",
         title: t("CORE_COMMON_EMAIL_ID_INVALID"),
       },
