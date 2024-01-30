@@ -13,7 +13,6 @@
     "packages/modules/dss",
     "packages/modules/commonPt",
     "packages/modules/pt",
-    "packages/modules/ws",
     "packages/modules/fsm"
   ],
   "author": "Abhinav Kushwaha <abhinav.kushwaha@egovernments.org>",
@@ -68,7 +67,7 @@
     "buildD:obps": "cd packages/modules/obps && yarn build",
     "buildD:engagement": "cd packages/modules/engagement && yarn build",
     "buildD:noc": "cd packages/modules/noc && yarn build",
-    "build:ws": "cd packages/modules/ws && yarn build",
+    "buildD:ws": "cd packages/modules/ws && yarn build",
     "buildD:bills": "cd packages/modules/bills && yarn build",
     "buildR:reports": "cd packages/modules/reports && yarn build",
     "deploy:jenkins": "./scripts/jenkins.sh"
