@@ -4,6 +4,9 @@ import { useTranslation } from "react-i18next";
 import { useRouteMatch } from "react-router-dom";
 
 import AssetCard from "./components/AssetCard";
+import SelectOtp from "../../core/src/pages/citizen/Login/SelectOtp";
+import CitizenFeedback from "@egovernments/digit-ui-module-core/src/components/CitizenFeedback";
+import AcknowledgementCF from "@egovernments/digit-ui-module-core/src/components/AcknowledgementCF";
 
 
 
@@ -18,9 +21,9 @@ const componentsToRegister = {
     // PTRResponse: Response,
     // PTRMyApplications: PTRMyApplications,
     // PTRApplicationDetails: PTRApplicationDetails,
-    // SelectOtp, // To-do: Temp fix, Need to check why not working if selectOtp module is already imported from core module
-    // AcknowledgementCF,
-    // CitizenFeedback,
+    SelectOtp, // To-do: Temp fix, Need to check why not working if selectOtp module is already imported from core module
+    AcknowledgementCF,
+    CitizenFeedback,
    
     
     
@@ -38,7 +41,7 @@ Object.entries(componentsToRegister).forEach(([key, value]) => {
 export const AssetModule = ({ stateCode, userType, tenants }) => {
     const { path, url } = useRouteMatch();
   
-    const moduleCode = "ASSET";
+    const moduleCode = "Astmgt";
     const language = Digit.StoreData.getCurrentLanguage();
     const { isLoading, data: store } = Digit.Services.useStore({ stateCode, moduleCode, language });
   
@@ -64,7 +67,7 @@ export const AssetModule = ({ stateCode, userType, tenants }) => {
 
 export const AssetLinks = ({ matchPath, userType }) => {
     const { t } = useTranslation();
-    const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage("PTR_PET", {});
+    const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage("ASSET_APP", {});
   
     useEffect(() => {
       clearParams();

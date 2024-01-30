@@ -9,7 +9,7 @@ const AssetCard = () => {
   const [total, setTotal] = useState("-");
   const { data, isLoading, isFetching, isSuccess } = Digit.Hooks.useNewInboxGeneral({
     tenantId: Digit.ULBService.getCurrentTenantId(),
-    ModuleCode: "ASSET",
+    ModuleCode: "Astmgt",
     // filters: { limit: 10, offset: 0, services: ["PT.CREATE", "PT.UPDATE"] },
     filters: { limit: 10, offset: 0, services: ["asset"] },
 
@@ -29,35 +29,27 @@ const AssetCard = () => {
     return null;
   }
   const links=[
-    // {
-    //   count: isLoading ? "-" : total?.totalCount,
-    //   label: t("ES_COMMON_INBOX"),
-    //   link: `/digit-ui/employee/ptr/petservice/inbox`,
-    // },
+    
     {
-      label: t("AST_TITLE_NEW_MANAGEMNET"),
-      link: `/digit-ui/employee/ptr/petservice/new-application`,
+      label: t("AST_TITLE_ASSET_MANAGEMENT"),
+      link: `/digit-ui/employee/assetservice/new-asset`,
       role: "PT_CEMP"
     },
-    // {
-    //   label: t("SEARCH_PROPERTY"),
-    //   link: `/digit-ui/employee/pt/search`,
-    // },
-    // {
-    //   label: t("ES_COMMON_APPLICATION_SEARCH"),
-    //   link: `/digit-ui/employee/ptr/petservice/my-applications`,
-    // },
+    {
+      label: t("AST_TITLE_APPLICATION_SEARCH"),
+      link: `/digit-ui/employee/assetservice/my-assets`,
+    },
   ]
   const PT_CEMP = Digit.UserService.hasAccess(["PT_CEMP"]) || false;
   const propsForModuleCard = {
     Icon: <PropertyHouse />,
     moduleName: t("AST_TITLE_ASSET_MANAGEMENT"),
     kpis: [
-    //   {
-    //     count: total?.totalCount,
-    //     label: t("ES_TITLE_INBOX"),
-    //     link: `/digit-ui/employee/ptr/petservice/inbox`,
-    //   },
+      // {
+      //   count: total?.totalCount,
+      //   label: t("ES_TITLE_INBOX"),
+      //   link: `/digit-ui/employee/ptr/petservice/inbox`,
+      // },
       // {
         
       //   count: total?.nearingSlaCount,
