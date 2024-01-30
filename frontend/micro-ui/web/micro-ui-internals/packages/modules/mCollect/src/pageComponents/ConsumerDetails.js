@@ -216,6 +216,7 @@ const OwnerForm1 = (_props) => {
               onChange={(e) => {
                 props.onChange(e.target.value)
               }}
+              disable={isEdit}
             />
             )}
             />
