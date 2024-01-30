@@ -77,7 +77,7 @@ const enabledModules = [
   "Birth",
   "Death",
   "PTR",
-  "ASSET"
+  "Astmgt",
 ];
 window.Digit.ComponentRegistryService.setupRegistry({
   ...paymentConfigs,
