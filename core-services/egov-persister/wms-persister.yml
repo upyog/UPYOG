@@ -613,6 +613,79 @@ serviceMaps:
             - jsonPath: $.WMSWorkAwardApprovalApplication.*.work_award_id
             
             
+    - version: 1.0
+      description: Persists Project Register details in tables
+      fromTopic: save-pr-application
+      isTransaction: true
+      queryMaps:
+
+        - query: INSERT INTO project_register (register_id,scheme_name,project_name,work_name,work_type,estimated_number,estimated_work_cost,sanctioned_tender_amount,status_name,bill_received_till_date,payment_received_till_date,createdby,lastmodifiedby,createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?,?,?);
+          basePath: WMSProjectRegisterApplication.*
+          jsonMaps:
+            - jsonPath: $.WMSProjectRegisterApplication.*.register_id
+            
+            - jsonPath: $.WMSProjectRegisterApplication.*.scheme_name
+
+            - jsonPath: $.WMSProjectRegisterApplication.*.project_name
+
+            - jsonPath: $.WMSProjectRegisterApplication.*.work_name
+            
+            - jsonPath: $.WMSProjectRegisterApplication.*.work_type
+            
+            - jsonPath: $.WMSProjectRegisterApplication.*.estimated_number
+
+            - jsonPath: $.WMSProjectRegisterApplication.*.estimated_work_cost
+
+            - jsonPath: $.WMSProjectRegisterApplication.*.sanctioned_tender_amount
+
+            - jsonPath: $.WMSProjectRegisterApplication.*.status_name
+
+            - jsonPath: $.WMSProjectRegisterApplication.*.bill_received_till_date
+            
+            - jsonPath: $.WMSProjectRegisterApplication.*.payment_received_till_date
+
+            - jsonPath: $.WMSProjectRegisterApplication.*.auditDetails.createdBy
+
+            - jsonPath: $.WMSProjectRegisterApplication.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.WMSProjectRegisterApplication.*.auditDetails.createdTime
+            
+            - jsonPath: $.WMSProjectRegisterApplication.*.auditDetails.lastModifiedTime
+            
+            
+            
+    - version: 1.0
+      description: Update Project Register applications in table
+      fromTopic: update-pr-application
+      isTransaction: true
+      queryMaps:
+      
+        - query: UPDATE project_register SET scheme_name = ?,project_name = ?,work_name =?,work_type=?,estimated_number=?,estimated_work_cost=?,sanctioned_tender_amount = ?, status_name = ?, bill_received_till_date = ?, payment_received_till_date = ? WHERE register_id=?;
+          basePath: WMSProjectRegisterApplication.*
+          jsonMaps:
+            - jsonPath: $.WMSProjectRegisterApplication.*.scheme_name
+            
+            - jsonPath: $.WMSProjectRegisterApplication.*.project_name
+
+            - jsonPath: $.WMSProjectRegisterApplication.*.work_name
+            
+            - jsonPath: $.WMSProjectRegisterApplication.*.work_type
+            
+            - jsonPath: $.WMSProjectRegisterApplication.*.estimated_number
+
+            - jsonPath: $.WMSProjectRegisterApplication.*.estimated_work_cost
+
+            - jsonPath: $.WMSProjectRegisterApplication.*.sanctioned_tender_amount
+
+            - jsonPath: $.WMSProjectRegisterApplication.*.status_name
+
+            - jsonPath: $.WMSProjectRegisterApplication.*.bill_received_till_date
+
+            - jsonPath: $.WMSProjectRegisterApplication.*.payment_received_till_date
+            
+            - jsonPath: $.WMSProjectRegisterApplication.*.register_id
+            
+            
                
     - version: 1.0
       description: Persists work estimation details in tables
