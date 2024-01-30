@@ -162,6 +162,7 @@ public class UserService {
     private User updateUser(RequestInfo requestInfo,User user,User userFromSearch) {
 
         userFromSearch.setName(user.getName());
+        userFromSearch.setEmailId(user.getEmailId());
         userFromSearch.setActive(true);
 
         StringBuilder uri = new StringBuilder(config.getUserHost())
