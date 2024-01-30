@@ -29,7 +29,7 @@ const SelectPaymentPreference = ({ config, formData, t, onSelect, userType }) =>
       validation: {
         isRequired: true,
       },
-      disable: MinAmount === totalAmount ? true : false,
+      disable: true,
       default: formData?.selectPaymentPreference?.advanceAmount,
       isMandatory: true,
     },
@@ -72,8 +72,8 @@ const SelectPaymentPreference = ({ config, formData, t, onSelect, userType }) =>
           Digit.SessionStorage.set("total_amount", totaltripAmount);
           Digit.SessionStorage.set("advance_amount", advanceBalanceAmount);
           formData?.selectPaymentPreference?.advanceAmount
-            ? setAdvanceAmount(formData?.selectPaymentPreference?.advanceAmount)
-            : setAdvanceAmount(advanceBalanceAmount);
+            ? setAdvanceAmount(Math.ceil(formData?.selectPaymentPreference?.advanceAmount))
+            : setAdvanceAmount(Math.ceil(advanceBalanceAmount));
 
           setError(false);
         } else if (billSlab?.price === 0) {
@@ -116,7 +116,7 @@ console.log("advance",advanceAmount,totalAmount,MinAmount)
         t={t}
       >
         <KeyNote keyValue={t("ADV_TOTAL_AMOUNT") + " (₹)"} note={max} />
-        <KeyNote keyValue={t("FSM_ADV_MIN_PAY") + " (₹)"} note={min} />
+        <KeyNote keyValue={t("FSM_ADV_MIN_PAY") + " (₹)"} note={Math.ceil(min)} />
         {inputs?.map((input, index) => {
           return (
             <React.Fragment key={index}>

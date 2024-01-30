@@ -262,7 +262,7 @@ const [description, setDescription] = useState("")
         {
           
          label: t("CS_COMPLAINT_DETAILS_COMPLAINT_PRIORITY_LEVEL"),
-            isMandatory: false,
+            isMandatory: true,
             type: "dropdown",
             populators: <Dropdown option={priorityMenu} optionKey="name" id="priorityLevel" selected={priorityLevel} select={selectedPriorityLevel} />,
           

@@ -34,6 +34,8 @@ const PropertyDetails = ({ t, config, onSelect, userType, formData }) => {
     onSelect("cpt", { details: propertyDetails?.Properties[0] });
   };
 
+  const reversedOwners= Array.isArray(propertyDetails?.Properties?.[0]?.owners) ? propertyDetails?.Properties?.[0]?.owners.slice().reverse():[];
+
   let propAddArr = [];
   if (propertyDetails && propertyDetails?.Properties.length) {
     if (propertyDetails?.Properties[0]?.address?.doorNo) {
@@ -84,7 +86,7 @@ const PropertyDetails = ({ t, config, onSelect, userType, formData }) => {
             <CardHeader>{t("PT_DETAILS")}</CardHeader>
             <StatusTable>
               <Row className="border-none" label={t(`PROPERTY_ID`)} text={propertyDetails?.Properties[0]?.propertyId} />
-              <Row className="border-none" label={t(`OWNER_NAME`)} text={propertyDetails?.Properties[0]?.owners[0]?.name} />
+              <Row className="border-none" label={t(`OWNER_NAME`)} text={reversedOwners?.[0]?.name} />
               <Row className="border-none" textStyle={{ wordBreak: "break-word" }} label={t(`PROPERTY_ADDRESS`)} text={propAddArr.join(', ')} 
               privacy={ {
                 uuid: propertyDetails?.Properties?.[0]?.owners?.[0]?.uuid,

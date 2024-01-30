@@ -1,3 +1,4 @@
+
 import { CardLabel, CheckBox, Dropdown, FormStep, Loader, MobileNumber, RadioButtons, TextInput, UploadFile } from "@egovernments/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import Timeline from "../components/Timeline";
@@ -114,7 +115,8 @@ const WSConnectionHolder = ({ t, config, onSelect, userType, formData, ownerInde
   function selectfile(e) {
     setFile(e.target.files[0]);
   }
-
+  
+const reversedOwners= Array.isArray(formData?.cpt?.details?.owners) ? formData?.cpt?.details?.owners.slice().reverse():[];
 
   const goNext = () => {
 
