@@ -2,13 +2,11 @@ import { AppContainer, BackButton, PrivateRoute } from "@egovernments/digit-ui-r
 import React from "react";
 import { Route, Switch, useRouteMatch } from "react-router-dom";
 import { shouldHideBackButton } from "../../utils";
-// import Search from "../employee/Search";
 import { useTranslation } from "react-i18next";
-import { PTMyPayments } from "./MyPayments";
 
 const hideBackButtonConfig = [
-  { screenPath: "property/new-application/acknowledgement" },
-  { screenPath: "property/edit-application/acknowledgement" },
+  { screenPath: "petservice/new-application/acknowledgement" },
+  { screenPath: "petservice/edit-application/acknowledgement" },
 
 ];
 
@@ -20,22 +18,18 @@ const App = () => {
   };
 
   const PTRCreate = Digit?.ComponentRegistryService?.getComponent("PTRCreatePet");
-  const EditProperty = Digit?.ComponentRegistryService?.getComponent("PTEditProperty");
-  const SearchResultsComponent = Digit?.ComponentRegistryService?.getComponent("PTSearchResultsComponent");
-  const PTApplicationDetails = Digit?.ComponentRegistryService?.getComponent("PTApplicationDetails");
-  const PTMyApplications = Digit?.ComponentRegistryService?.getComponent("PTMyApplications");
+  const PTRApplicationDetails = Digit?.ComponentRegistryService?.getComponent("PTRApplicationDetails");
+  const PTRMyApplications = Digit?.ComponentRegistryService?.getComponent("PTRMyApplications");
  
   return (
-    <span className={"pt-citizen"}style={{width:"100%"}}>
+    <span className={"pet-citizen"}style={{width:"100%"}}>
       <Switch>
         <AppContainer>
           {!shouldHideBackButton(hideBackButtonConfig) ? <BackButton>Back</BackButton> : ""}
           <PrivateRoute path={`${path}/petservice/new-application`} component={PTRCreate} />
-          <PrivateRoute path={`${path}/petservice/edit-application`} component={EditProperty} />
-          <Route path={`${path}/property/search-results`} component={SearchResultsComponent} />
-          <PrivateRoute path={`${path}/petservice/application/:acknowledgementIds/:tenantId`} component={PTApplicationDetails}></PrivateRoute>
-          <PrivateRoute path={`${path}/petservice/my-application`} component={PTMyApplications}></PrivateRoute>
-          <PrivateRoute path={`${path}/petservice/my-payments`} component={PTMyPayments}></PrivateRoute>
+          <PrivateRoute path={`${path}/petservice/application/:acknowledgementIds/:tenantId`} component={PTRApplicationDetails}></PrivateRoute>
+          <PrivateRoute path={`${path}/petservice/my-applications`} component={PTRMyApplications}></PrivateRoute>
+          {/* <PrivateRoute path={`${path}/petservice/my-payments`} component={PTMyPayments}></PrivateRoute> */}
           <PrivateRoute path={`${path}/petservice/search`} component={(props) => <Search {...props} t={t} parentRoute={path} />} />
         </AppContainer>
       </Switch>

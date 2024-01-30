@@ -57,6 +57,32 @@ public class WSCalculationWorkflowValidator {
 
         return genratedemand;
 	}
+	 
+	 
+	 public Boolean applicationValidationBulk(RequestInfo requestInfo,String tenantId,String connectionNo, Boolean genratedemand){
+		    Map<String,String> errorMap = new HashMap<>();
+			 List<WaterConnection> waterConnectionList = util.getWaterConnection(requestInfo,connectionNo,tenantId);
+			 WaterConnection waterConnection = null;
+			 if(waterConnectionList != null){
+				 int size = waterConnectionList.size();
+				 waterConnection = waterConnectionList.get(size-1);
+
+				 String waterApplicationNumber = waterConnection.getApplicationNo();
+				 waterConnectionValidation(requestInfo, tenantId, waterApplicationNumber, errorMap);
+
+				 String propertyId = waterConnection.getPropertyId();
+				 Property property = util.getProperty(requestInfo,tenantId,propertyId);
+				 //String propertyApplicationNumber = property.getAcknowldgementNumber();
+				 propertyValidation(requestInfo,tenantId,property,errorMap);
+			 }
+			 else{
+				 genratedemand=false;
+			 }
+
+	      
+	        return genratedemand;
+		}
+
 
 	public void waterConnectionValidation(RequestInfo requestInfo, String tenantId, String waterApplicationNumber,
 			Map<String, String> errorMap) {

@@ -2,32 +2,31 @@
   import _ from "lodash";
   import React, { useEffect, useState } from "react";
   import { Controller, useForm } from "react-hook-form";
-  import Timeline from "../components/TLTimeline";
+  import Timeline from "../components/PTRTimeline";
 
   const PTRSelectStreet = ({ t, config, onSelect, userType, formData, formState, setError, clearErrors }) => {
+    
     const onSkip = () => onSelect();
     const [focusIndex, setFocusIndex] = useState({ index: -1, type: "" });
     const { control, formState: localFormState, watch, setError: setLocalError, clearErrors: clearLocalErrors, setValue, trigger } = useForm();
     const formValue = watch();
     const { errors } = localFormState;
-    const checkLocation = window.location.href.includes("tl/new-application") || window.location.href.includes("tl/renew-application-details");
-    const isRenewal = window.location.href.includes("edit-application") || window.location.href.includes("tl/renew-application-details");
+    const checkLocation = window.location.href.includes("ptr/petservice/new-application");
 
     let inputs;
-    if (window.location.href.includes("tl")) {
-      inputs = config.inputs;
-      config.inputs[0].disable = window.location.href.includes("edit-application");
-      config.inputs[1].disable = window.location.href.includes("edit-application");
-    } else {
+
+
+    //To do - Need to change this whole page and have to make like same as owner details page because when uncomment the validation , it is throwing error  
+    
       inputs = [
         {
           label: "PTR_STREET_NAME",
           type: "text",
           name: "street",
           validation: {
-            pattern: "[a-zA-Z0-9 !@#$%^&*()_+\-={};':\\\\|,.<>/?]{1,64}",
-            // maxlength: 256,
-            title: t("CORE_COMMON_STREET_INVALID"),
+            // pattern: "[a-zA-Z0-9 !@#$%^&*()_+\-={};':\\\\|,.<>/?]{1,64}",
+            // // maxlength: 256,
+            // title: t("CORE_COMMON_STREET_INVALID"),
           },
         },
         {
@@ -35,75 +34,56 @@
           type: "text",
           name: "doorNo",
           validation: {
-            pattern: "[a-zA-Z0-9 !@#$%^&*()_+\-={};':\\\\|,.<>/?]{1,64}",
-            // maxlength: 256,
-            title: t("CORE_COMMON_DOOR_INVALID"),
+            // pattern: "[a-zA-Z0-9 !@#$%^&*()_+\-={};':\\\\|,.<>/?]{1,64}",
+            // // maxlength: 256,
+            // title: t("CORE_COMMON_DOOR_INVALID"),
           },
         },
         {
           label: "PTR_HOUSE_NAME",
           type: "text",
           name: "buildingName",
-          //  validation: {
-          // //   pattern: "[a-zA-Z0-9 !@#$%^&*()_+\-={};':\\\\|,.<>/?]{1,64}",
-          // //   // maxlength: 256,
-          // //   title: t("CORE_COMMON_DOOR_INVALID"),
-          //  },
+           validation: {
+            // pattern: "[a-zA-Z0-9 !@#$%^&*()_+\-={};':\\\\|,.<>/?]{1,64}",
+            // // maxlength: 256,
+            // title: t("CORE_COMMON_DOOR_INVALID"),
+           },
         },
         {
           label: "PTR_ADDRESS_LINE1",
           type: "text",
           name: "addressLine1",
-          //  validation: {
-          // //   pattern: "[a-zA-Z0-9 !@#$%^&*()_+\-={};':\\\\|,.<>/?]{1,64}",
-          // //   // maxlength: 256,
-          // //   title: t("CORE_COMMON_DOOR_INVALID"),
-          //  },
+           validation: {
+            // pattern: "[a-zA-Z0-9 !@#$%^&*()_+\-={};':\\\\|,.<>/?]{1,64}",
+            // // maxlength: 256,
+            // title: t("CORE_COMMON_DOOR_INVALID"),
+           },
         },
         {
           label: "PTR_ADDRESS_LINE2",
           type: "text",
           name: "addressLine2",
-          //  validation: {
-          // //   pattern: "[a-zA-Z0-9 !@#$%^&*()_+\-={};':\\\\|,.<>/?]{1,64}",
-          // //   // maxlength: 256,
-          // //   title: t("CORE_COMMON_DOOR_INVALID"),
-          //  },
+           validation: {
+            // pattern: "[a-zA-Z0-9 !@#$%^&*()_+\-={};':\\\\|,.<>/?]{1,64}",
+            // // maxlength: 256,
+            // title: t("CORE_COMMON_DOOR_INVALID"),
+           },
         },
         {
           label: "PTR_landmark",
           type: "text",
           name: "landmark",
-          //  validation: {
-          // //   pattern: "[a-zA-Z0-9 !@#$%^&*()_+\-={};':\\\\|,.<>/?]{1,64}",
-          // //   // maxlength: 256,
-          // //   title: t("CORE_COMMON_DOOR_INVALID"),
-          //  },
+           validation: {
+            // pattern: "[a-zA-Z0-9 !@#$%^&*()_+\-={};':\\\\|,.<>/?]{1,64}",
+            // // maxlength: 256,
+            // title: t("CORE_COMMON_DOOR_INVALID"),
+           },
         },
       
         
       ];
-    }
 
-    const convertValidationToRules = ({ validation, name, messages }) => {
-      // if (validation) {
-      //   let { pattern: valPattern, maxlength,minlength, required: valReq } = validation || {};
-      //   let pattern = (value) => {
-      //     if (valPattern) {
-      //       if (valPattern instanceof RegExp) return valPattern.test(value) ? true : messages?.pattern || `${name.toUpperCase()}_PATTERN`;
-      //       else if (typeof valPattern === "string")
-      //         return new RegExp(valPattern)?.test(value) ? true : messages?.pattern || `${name.toUpperCase()}_PATTERN`;
-      //     }
-      //     return true;
-      //   };
-      //   let maxLength = (value) => (maxlength ? (value?.length <= maxlength ? true : messages?.maxlength || `${name.toUpperCase()}_MAXLENGTH`) : true);
-      //   let minLength = (value) => (minlength ? (value?.length >= minlength ? true : messages?.minlength || `${name.toUpperCase()}_MINLENGTH`) : true);
-      //   let required = (value) => (valReq ? (!!value ? true : messages?.required || `${name.toUpperCase()}_REQUIRED`) : true);
-
-      //   return { pattern, required, maxLength,minlength };
-      // }
-      return {};
-    };
+   ;
 
     useEffect(() => {
       trigger();
@@ -140,7 +120,12 @@
                 control={control}
                 defaultValue={formData?.address?.[input.name]}
                 name={input.name}
-                rules={{ validate: convertValidationToRules(input) }}
+                
+                rules={{
+                  // required: t("CORE_COMMON_REQUIRED_ERRMSG"),
+                  validate: { pattern: (val) => (/^[A-Za-z]+( +[A-Za-z]+)*$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")) },
+                }}
+                
                 render={(_props) => (
                   <TextInput
                     id={input.name}
@@ -151,7 +136,6 @@
                       _props.onChange(e.target.value);
                     }}
                     onBlur={_props.onBlur}
-                    disable={isRenewal}
                     autoFocus={focusIndex?.index == index}
                     {...input.validation}
                   />
@@ -164,7 +148,6 @@
     }
     return (
       <React.Fragment>
-      {window.location.href.includes("/citizen") ? <Timeline currentStep={1}/> : null}
       <FormStep
         config={{ ...config, inputs }}
         _defaultValues={{

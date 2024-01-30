@@ -82,6 +82,7 @@ import {
           <Row className="border-none" label={t("WS_CONN_HOLDER_OWN_DETAIL_RELATION_LABEL")} text={t(ConnectionHolderDetails?.relationship?.i18nKey) || t("CS_NA")} />
           <Row className="border-none" label={t("WS_OWN_DETAIL_CROSADD")} text={ConnectionHolderDetails?.address || t("CS_NA")} />
           <Row className="border-none" label={t("WS_OWN_DETAIL_SPECIAL_APPLICANT_LABEL")} text={t(ConnectionHolderDetails?.specialCategoryType?.i18nKey) || t("CS_NA")} />
+          <Row className="border-none" label={t("WS_EMAIL_ID")} text={ConnectionHolderDetails?.emailId || t("CS_NA")}/>
     </StatusTable>
     </Card>
     <Card style={{paddingRight:"16px"}}>

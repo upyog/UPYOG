@@ -10,7 +10,6 @@ const PTRCard = () => {
   const { data, isLoading, isFetching, isSuccess } = Digit.Hooks.useNewInboxGeneral({
     tenantId: Digit.ULBService.getCurrentTenantId(),
     ModuleCode: "PTR",
-    // filters: { limit: 10, offset: 0, services: ["PT.CREATE", "PT.UPDATE"] },
     filters: { limit: 10, offset: 0, services: ["ptr"] },
 
     config: {
@@ -39,10 +38,6 @@ const PTRCard = () => {
       link: `/digit-ui/employee/ptr/petservice/new-application`,
       role: "PT_CEMP"
     },
-    // {
-    //   label: t("SEARCH_PROPERTY"),
-    //   link: `/digit-ui/employee/pt/search`,
-    // },
     {
       label: t("ES_COMMON_APPLICATION_SEARCH"),
       link: `/digit-ui/employee/ptr/petservice/my-applications`,
@@ -58,12 +53,6 @@ const PTRCard = () => {
         label: t("ES_TITLE_INBOX"),
         link: `/digit-ui/employee/ptr/petservice/inbox`,
       },
-      // {
-        
-      //   count: total?.nearingSlaCount,
-      //   label: t("TOTAL_NEARING_SLA"),
-      //   link: `/digit-ui/employee/pt/inbox`,
-      // }
     ],
     links:links.filter(link=>!link?.role||PT_CEMP),
   };

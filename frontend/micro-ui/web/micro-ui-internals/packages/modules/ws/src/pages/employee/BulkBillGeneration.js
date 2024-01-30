@@ -1,76 +1,51 @@
 import { Loader, Toast } from "@egovernments/digit-ui-react-components";
-import React, { useState, Fragment, useCallback } from "react";
+import React, { useState, Fragment, useCallback, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
 const BulkBillGeneration = ({ path }) => {
   const [isBothCallsFinished, setIsBothCallFinished] = useState(true);
   const { t } = useTranslation();
-  const tenantId = Digit.ULBService.getCurrentTenantId();
   const [payload, setPayload] = useState({});
   const [setLoading, setLoadingState] = useState(false);
   const WSBulkBillSearch = Digit.ComponentRegistryService.getComponent("WSBulkBillSearch");
-  // const [businessServ, setBusinessServ] = useState([]);
+  const tenantId = Digit.ULBService.getCurrentTenantId();
   const getUrlPathName = window.location.pathname;
   const checkPathName = getUrlPathName.includes("water/search-connection");
   const businessServ = checkPathName ? "WS" : "SW";
-
   const [showToast, setShowToast] = useState(null);
-  const serviceConfig = {
-    WATER: "WATER",
-    SEWERAGE: "SEWERAGE",
-  };
-console.log("gggggggggggggbulknill")
-  const onSubmit = useCallback((_data) => {
-    const { connectionNumber, oldConnectionNumber, mobileNumber, propertyId } = _data;
-    if (!connectionNumber && !oldConnectionNumber && !mobileNumber && !propertyId) {
-      setShowToast({ error: true, label: "WS_HOME_SEARCH_CONN_RESULTS_DESC" });
-      setTimeout(() => {
-        setShowToast(false);
-      }, 3000);
-    } else {
-      setPayload(
-        Object.keys(_data)
-          .filter((k) => _data[k])
-          .reduce((acc, key) => ({ ...acc, [key]: typeof _data[key] === "object" ? _data[key].code : _data[key] }), {})
-      );
-    }
+ 
+  const onSubmit = ((data) => {
+      setPayload({"locality":data?.locality?.code});   
   });
 
   const config = {
     enabled: !!(payload && Object.keys(payload).length > 0),
   };
 
-  let result = Digit.Hooks.ws.useSearchWS({ tenantId, filters: payload, config, bussinessService: businessServ, t ,shortAddress:true});
-  
+  let result = Digit.Hooks.ws.useBulkSearchWS({ tenantId,filters: payload, config});
+ 
   const isMobile = window.Digit.Utils.browser.isMobile();
 
   if (result?.isLoading && isMobile) {
     return <Loader />
   }
-
+ 
   const getData = () => {
-    if (result?.data?.length == 0 ) {
+    console.log("result",result)
+    if (result?.meterReadings.length == 0 ) {
       return { display: "ES_COMMON_NO_DATA" }
-    } else if (result?.data?.length > 0) {
-      return result?.data
+    } else if (result?.meterReadings.length > 0) {
+      let meterReadings=result?.meterReadings.map((data)=>{
+        return {"billingPeriod":data.billingPeriod,"connectionNo":data.connectionNo,"lastReading":data.lastReading,"lastReadingDate":data.lastReadingDate,"meterStatus":data.meterStatus,"currentReadingDate":"","currentReading":""}})
+      return meterReadings
     } else {
       return [];
     }
   }
 
   const isResultsOk = () => {
-    return result?.data?.length > 0 ? true : false;
+    return result?.meterReadings?.length > 0 ? true : false;
   }
-
-  if(!result?.isLoading)
-    result.data = result?.data?.map((item) => {
-      if (item?.connectionNo?.includes("WS")) {
-        item.service = serviceConfig.WATER;
-      } else if (item?.connectionNo?.includes("SW")) {
-        item.service = serviceConfig.SEWERAGE;
-      }
-      return item;
-    });
 
   return (
     <Fragment>

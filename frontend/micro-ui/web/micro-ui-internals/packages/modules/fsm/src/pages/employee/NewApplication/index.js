@@ -44,7 +44,7 @@ export const NewApplication = ({ parentUrl, heading }) => {
   const onFormValueChange = (setValue, formData) => {
     console.log("ProID", formData)
     if (
-      formData?. propertyID &&
+      
       formData?.propertyType &&
       formData?.subtype &&
       formData?.address?.locality?.code &&
@@ -91,12 +91,13 @@ export const NewApplication = ({ parentUrl, heading }) => {
     const pitDimension = data?.pitDetail;
     const applicantName = data.applicationData.applicantName;
     const mobileNumber = data.applicationData.mobileNumber;
+    const emailId = data.applicationData.emailId;
     const pincode = data?.address?.pincode;
     const street = data?.address?.street?.trim();
     const doorNo = data?.address?.doorNo?.trim();
     const slum = data?.address?.slum;
     const landmark = data?.address?.landmark?.trim();
-    const propertyID = data.propertyID. propertyID;
+    const propertyID = data?.propertyID?.propertyID;
     const noOfTrips = data?.tripData?.noOfTrips;
     const amount = data.tripData.amountPerTrip;
     const cityCode = data?.address?.city?.code;
@@ -115,6 +116,7 @@ export const NewApplication = ({ parentUrl, heading }) => {
           name: applicantName,
           mobileNumber,
           gender: gender,
+          emailId:emailId
         },
         tenantId: tenantId,
         sanitationtype: sanitationtype,

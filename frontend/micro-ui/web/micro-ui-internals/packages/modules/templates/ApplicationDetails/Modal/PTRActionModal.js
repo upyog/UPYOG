@@ -1,8 +1,8 @@
 import { Loader, Modal, FormComposer } from "@egovernments/digit-ui-react-components";
 import React, { useState, useEffect } from "react";
 
-import { configPTRejectApplication, configPTVerifyApplication, configPTRApproverApplication} from "../config";
-import * as predefinedConfig from "../config";
+import { configPTRApproverApplication} from "../config";
+
 
 const Heading = (props) => {
   return <h1 className="heading-m">{props.label}</h1>;
@@ -91,7 +91,8 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
           },
         ],
       });
-    } else if (!action?.showFinancialYearsModal) {
+    }
+    //  else if (!action?.showFinancialYearsModal) {
       let workflow = { action: action?.action, comment: data?.comments, businessService, moduleName: moduleCode };
       workflow["assignes"] = action?.isTerminateState || !selectedApprover ? [] : [selectedApprover];
       if (uploadedFile)
@@ -110,7 +111,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
           },
         ],
       });
-     } 
+    //  } 
    
   }
 
@@ -141,7 +142,6 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
       actionCancelOnSubmit={closeModal}
       actionSaveLabel={t(config.label.submit)}
       actionSaveOnSubmit={() => {}}
-      isDisabled={!action.showFinancialYearsModal ? PTALoading || (action?.docUploadRequired && !uploadedFile) : !selectedFinancialYear}
       formId="modal-action"
     >
        

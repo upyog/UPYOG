@@ -88,7 +88,7 @@ const OwnerForm = (_props) => {
 
 
 
-  //const isIndividualTypeOwner = useMemo(() => formData?.ownershipCategory?.code.includes("INDIVIDUAL"), [formData?.ownershipCategory?.code]);
+  
 
 
 
@@ -100,7 +100,7 @@ const OwnerForm = (_props) => {
   const [part, setPart] = React.useState({});
 
   useEffect(() => {
-    //  let _ownerType = isIndividualTypeOwner 
+    
 
     if (!_.isEqual(part, formValue)) {
       setPart({ ...formValue });
@@ -109,7 +109,7 @@ const OwnerForm = (_props) => {
       trigger();
     }
   }, [formValue]);
-  //console.log("454444544", formValue)
+  
 
 
 

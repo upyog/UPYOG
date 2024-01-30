@@ -13,26 +13,21 @@ import PTRCitizenAddress from "./pageComponents/PTRCitizenAddress";
 import PTRSelectPincode from "./pageComponents/PTRSelectPincode";
 import PTRSelectAddress from "./pageComponents/PTRSelectAddress";
 import PTRSelectProofIdentity from "./pageComponents/PTRSelectProofIdentity";
-import PetServiceDoc from "./pageComponents/PetServiceDoc";
-import PTWFApplicationTimeline from "./pageComponents/PTWFApplicationTimeline";
+import PTRServiceDoc from "./pageComponents/PTRServiceDoc";
+import PTRWFApplicationTimeline from "./pageComponents/PTRWFApplicationTimeline";
 import CitizenApp from "./pages/citizen";
-import PTCheckPage from "./pages/citizen/Create/CheckPage";
-import PTAcknowledgement from "./pages/citizen/Create/PTAcknowledgement";
-import { PTMyPayments } from "./pages/citizen/MyPayments";
-import { PTMyApplications } from "./pages/citizen/PTMyApplications";
-// import { MyProperties } from "./pages/citizen/MyProperties";
-import PTApplicationDetails from "./pages/citizen/PTApplicationDetails";
-import EditProperty from "./pages/citizen/EditProperty";
-import PTWFCaption from "./pageComponents/PTWFCaption";
-import PTWFReason from "./pageComponents/PTWFReason";
+import PTRCheckPage from "./pages/citizen/Create/CheckPage";
+import PTRAcknowledgement from "./pages/citizen/Create/PTRAcknowledgement";
+import { PTRMyApplications } from "./pages/citizen/PTRMyApplications";
+import PTRApplicationDetails from "./pages/citizen/PTRApplicationDetails";
+import PTRWFCaption from "./pageComponents/PTRWFCaption";
+import PTRWFReason from "./pageComponents/PTRWFReason";
 import EmployeeApp from "./pages/employee";
 import PTRCard from "./components/PTRCard";
 import InboxFilter from "./components/inbox/NewInboxFilter";
-// import { TableConfig } from "./config/inbox-table-config";
 import { TableConfig } from "./config/inbox-table-config";
 import NewApplication from "./pages/employee/NewApplication";
 import ApplicationDetails from "./pages/employee/ApplicationDetails";
-import EditApplication from "./pages/employee/EditApplication";
 import Response from "./pages/Response";
 import SelectOtp from "../../core/src/pages/citizen/Login/SelectOtp";
 import CitizenFeedback from "@egovernments/digit-ui-module-core/src/components/CitizenFeedback";
@@ -41,19 +36,15 @@ import AcknowledgementCF from "@egovernments/digit-ui-module-core/src/components
 
 
 const componentsToRegister = {
-  PTCheckPage,
-  PTAcknowledgement,
-  PTWFCaption,
-  PTWFReason,
-  PTMyPayments,
-  PTNewApplication: NewApplication,
+  PTRCheckPage,
+  PTRAcknowledgement,
+  PTRWFCaption,
+  PTRWFReason,
+  PTRNewApplication: NewApplication,
   ApplicationDetails: ApplicationDetails,
-  PTEditApplication: EditApplication,
-  PTResponse: Response,
-  PTMyApplications: PTMyApplications,
-  // PTMyProperties: MyProperties,
-  PTApplicationDetails: PTApplicationDetails,
-  PTEditProperty: EditProperty,
+  PTRResponse: Response,
+  PTRMyApplications: PTRMyApplications,
+  PTRApplicationDetails: PTRApplicationDetails,
   SelectOtp, // To-do: Temp fix, Need to check why not working if selectOtp module is already imported from core module
   AcknowledgementCF,
   CitizenFeedback,
@@ -68,8 +59,9 @@ const componentsToRegister = {
   PTRSelectPincode,
   PTRSelectAddress,
   PTRSelectProofIdentity,
-  PetServiceDoc,
-  PTWFApplicationTimeline,
+  PTRServiceDoc,
+  PTRWFApplicationTimeline,
+ 
   
   
   
@@ -93,7 +85,7 @@ export const PTRModule = ({ stateCode, userType, tenants }) => {
 
   addComponentsToRegistry();
 
-  Digit.SessionStorage.set("PT_TENANTS", tenants);
+  Digit.SessionStorage.set("PTR_TENANTS", tenants);
 
   useEffect(
     () =>
@@ -113,7 +105,7 @@ export const PTRModule = ({ stateCode, userType, tenants }) => {
 
 export const PTRLinks = ({ matchPath, userType }) => {
   const { t } = useTranslation();
-  const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage("PT_CREATE_PROPERTY", {});
+  const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage("PTR_PET", {});
 
   useEffect(() => {
     clearParams();
@@ -122,22 +114,22 @@ export const PTRLinks = ({ matchPath, userType }) => {
   const links = [
     
     {
-      link: `${matchPath}/ptr/new-application`,
+      link: `${matchPath}/ptr/petservice/new-application`,
       i18nKey: t("PTR_CREATE_PET_APPLICATION"),
     },
     
     {
-      link: `${matchPath}/ptr/my-application`,
+      link: `${matchPath}/ptr/petservice/my-applications`,
       i18nKey: t("PTR_MY_APPLICATIONS_HEADER"),
     },
     
     {
       link: `${matchPath}/howItWorks`,
-      i18nKey: t("PT_HOW_IT_WORKS"),
+      i18nKey: t("PTR_HOW_IT_WORKS"),
     },
     {
       link: `${matchPath}/faqs`,
-      i18nKey: t("PT_FAQ_S"),
+      i18nKey: t("PTR_FAQ_S"),
     },
   ];
 

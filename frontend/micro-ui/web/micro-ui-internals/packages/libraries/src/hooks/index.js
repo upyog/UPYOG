@@ -213,6 +213,7 @@ import WSuseSearch from "./ws/useSearch";
 import useOldValue from "./ws/useOldValue";
 import useSewSearch from "./ws/useSewSearch";
 import useSearchWS from "./ws/useSearchWS";
+import useBulkSearchWS from "./ws/useBulkSearchWS"
 import useMypaymentWS from "./ws/useMypaymentWS";
 import useWSDetailsPage from "./ws/useWSDetailsPage";
 import useWSApplicationActions from "./ws/useApplicationActions";
@@ -238,6 +239,7 @@ import useWaterPropertySearch from "./ws/useWaterPropertySearch";
 import useDisconnectionWorkflow from "./ws/useDisconnectionWorkflow";
 import useDisConnectionDetails from "./ws/useDisConnectionDetails";
 import useWSModifyDetailsPage from "./ws/useWSModifyDetailsPage";
+import useBulkMeterReadingCreateAPI from "./ws/useBulkMeterCreate";
 
 import useGetHowItWorksJSON from "./useHowItWorksJSON";
 import useGetFAQsJSON from "./useGetFAQsJSON";
@@ -253,8 +255,6 @@ import useFeedBackSearch from "./useFeedBackSearch";
 import usePetMDMS from "./ptr/usePetMDMS";
 import useBreedTypeMDMS from "./ptr/useBreedTypeMDMS";
 import usePTRCreateAPI from "./ptr/usePTRCreateAPI";
-//import useTenantsPTR from "./ptr/useTenants";
-import useTenantsPTR from "./ptr/useTenantsPTR";
 import usePTRPetMDMS from "./ptr/usePTRPetMDMS";
 import usePTRGenderMDMS from "./ptr/usePTRGenderMDMS";
 import usePTRSearch from "./ptr/usePTRSearch";
@@ -263,7 +263,9 @@ import usePTRApplicationAction from "./ptr/usePTRApplicationAction";
 import useServiceSearchPTR from "./ptr/useServiceSearchPTR";
 import usePetDocumentSearch from "./ptr/usePetDocumentSearch";
 import useMyPetPayments from "./ptr/useMyPetPayments";
+import useTenantsPTR from "./ptr/useTenants";
 
+import createTokenAPI from "./digiLockerApi/createTokenAPI";
 
 const pgr = {
   useComplaintDetails,
@@ -292,10 +294,11 @@ const ptr = {
   usePTRGenderMDMS,
   usePTRSearch,
   usePtrApplicationDetail,
-  useTenantsPTR,
+  // useTenantsPTR,
   useServiceSearchPTR,
   usePetDocumentSearch,
-  useMyPetPayments
+  useMyPetPayments,
+  useTenants: useTenantsPTR
  
 };
 
@@ -491,6 +494,7 @@ const ws = {
   WSuseSearch,
   useSewSearch,
   useSearchWS,
+  useBulkSearchWS,
   useWSDetailsPage,
   useWSApplicationActions,
   useApplicationActionsBillAmendUpdate,
@@ -513,6 +517,7 @@ const ws = {
   useDisConnectionDetails,
   useWSModifyDetailsPage,
   useToCheckPrivacyEnablement,
+  useBulkMeterReadingCreateAPI,
   useWSConfigMDMS: useWSConfigMDMS,
 };
 
@@ -584,6 +589,7 @@ const Hooks = {
   useBulkPdfDetails,
   useBillAmendmentInbox,
   useAudit,
+  createTokenAPI
 };
 
 export default Hooks;

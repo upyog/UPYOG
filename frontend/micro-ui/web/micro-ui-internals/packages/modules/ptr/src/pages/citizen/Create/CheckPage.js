@@ -16,7 +16,7 @@ import {
   checkForNA,
   getFixedFilename, 
 } from "../../../utils";
-import Timeline from "../../../components/TLTimeline";
+import Timeline from "../../../components/PTRTimeline";
 
 const ActionButton = ({ jumpTo }) => {
   const { t } = useTranslation();
@@ -31,6 +31,7 @@ const ActionButton = ({ jumpTo }) => {
 const CheckPage = ({ onSubmit, value = {} }) => {
   const { t } = useTranslation();
   const history = useHistory();
+  
 
   
 
@@ -39,9 +40,9 @@ const CheckPage = ({ onSubmit, value = {} }) => {
   const {
     address,
     pets,
-    index=0,
-    isEditProperty,
-    isUpdateProperty,
+    index=0,    // set the initial value for tesing ,  need to check why when click on change it will not coming in address page and document page 
+    isEditPET,
+    isUpdatePET,
     ownerss,
    
   } = value;
@@ -55,7 +56,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
 
   
 
-  const typeOfApplication = !isEditProperty && !isUpdateProperty ? `new-application` : `edit-application`;
+  const typeOfApplication = !isEditPET && !isUpdatePET ? `new-application` : `edit-application`;
 
 
   const [agree, setAgree] = useState(false);
@@ -165,17 +166,20 @@ const CheckPage = ({ onSubmit, value = {} }) => {
          <Row
             label={t("PTR_ADDRESS_PINCODE")}
             text={`${t(checkForNA(address?.pincode))}`}
-            actionButton={<ActionButton jumpTo={`/digit-ui/citizen/pt/property/${typeOfApplication}/pincode`} />}
+            // actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/pincode/`}${index}`} />}
+            actionButton={<ActionButton jumpTo={`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/pincode`} />}
         />
          <Row
             label={t("MYCITY_CODE_LABEL")}
             text={`${t(checkForNA(address?.city?.name))}`}
-            actionButton={<ActionButton jumpTo={`/digit-ui/citizen/pt/property/${typeOfApplication}/address`} />}
+            // actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/address/`}${index}`} />}
+            actionButton={<ActionButton jumpTo={`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/address`} />}
         />
          <Row
             label={t("PTR_LOCALITY")}
             text={`${t(checkForNA(address?.locality?.name))}`}
-            actionButton={<ActionButton jumpTo={`/digit-ui/citizen/pt/property/${typeOfApplication}/address`} />}
+            // actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/address/`}${index}`} />}
+            actionButton={<ActionButton jumpTo={`/digit-ui/citizen/ptr/petservice/${typeOfApplication}/address`} />}
         />
 
         </StatusTable>

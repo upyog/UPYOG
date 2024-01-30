@@ -2,9 +2,8 @@
   import { useForm, Controller } from "react-hook-form";
   import { TextInput, SubmitBar, LinkLabel, ActionBar, CloseSvg, DatePicker, CardLabelError, SearchForm, SearchField, Dropdown, Table, Card, MobileNumber, Loader, CardText, Header } from "@egovernments/digit-ui-react-components";
   import { Link } from "react-router-dom";
-  import MobileSearchApplication from "./MobileSearchApplication";
 
-  const PTSearchApplication = ({tenantId, isLoading, t, onSubmit, data, count, setShowToast }) => {
+  const PTRSearchApplication = ({tenantId, isLoading, t, onSubmit, data, count, setShowToast }) => {
       const isMobile = window.Digit.Utils.browser.isMobile();
       const { register, control, handleSubmit, setValue, getValues, reset, formState } = useForm({
           defaultValues: {
@@ -112,9 +111,7 @@
       let validation={}
 
       return <React.Fragment>
-                  {isMobile ?
-                  <MobileSearchApplication {...{ Controller, register, control, t, reset, previousPage, handleSubmit, tenantId, data, onSubmit, formState, setShowToast }}/>
-                  :
+                  
                   <div>
                   <Header>{t("PTR_SEARCH_PET_APPLICATIONS")}</Header>
                   < Card className={"card-search-heading"}>
@@ -248,8 +245,8 @@
                   disableSort={false}
                   sortParams={[{id: getValues("sortBy"), desc: getValues("sortOrder") === "DESC" ? true : false}]}
               />: data !== "" || isLoading && <Loader/>)}
-              </div>}
+              </div>
           </React.Fragment>
   }
 
-  export default PTSearchApplication
+  export default PTRSearchApplication

@@ -146,6 +146,52 @@ const Units = ({ t, config, onSelect, userType, formData, setError, formState, c
        "active": true
        },  
     ]
+    let ageOfPropertyOptions =[
+      {
+        "i18nKey": "PROPERTYTAX_MONTH>10",
+        "name": "greater than 10 years",
+        "code": "10",
+       "active": true
+       },
+       {
+        "i18nKey": "PROPERTYTAX_MONTH>15",
+        "name": "greater than 15 years",
+        "code": "15",
+       "active": true
+       },
+       {
+        "i18nKey": "PROPERTYTAX_MONTH>25",
+        "name": "greater than 24 years",
+        "code": "25",
+       "active": true
+       } 
+     ]
+     let structureTypeOptions =[
+      {
+        "i18nKey": "PERMANENT",
+        "name": "Permanent",
+        "code": "permanent",
+       "active": true
+       },
+       {
+        "i18nKey": "TEMPORARY",
+        "name": "Temporary",
+        "code": "temporary",
+       "active": true
+       },
+       {
+        "i18nKey": "SEMI_PERMANENT",
+        "name": "Semi Permanent",
+        "code": "semiPermanent",
+       "active": true
+       },
+       {
+        "i18nKey": "RCC",
+        "name": "RCC",
+        "code": "RCC",
+       "active": true
+       }  
+     ]
   let floorListData = [];
   function getfloorlistdata(floorlist) {
     floorListData = floorlist?.map((floor) => ({ i18nKey: "PROPERTYTAX_FLOOR_" + stringReplaceAll(floor?.code, "-", "_"), code: floor?.code })) || [];

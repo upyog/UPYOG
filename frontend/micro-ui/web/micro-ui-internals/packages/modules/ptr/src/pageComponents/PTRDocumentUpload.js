@@ -20,26 +20,11 @@ const PTRDocumentUpload = ({ t, config, onSelect, userType, formData, setError: 
   let action = "create";
 
   const { pathname } = useLocation();
-  //const isEditScreen = pathname.includes("/modify-application/");
-  //const isMutation = pathname.includes("/property-mutate/");
-
-  //if (isEditScreen) action = "update";
-
-  const propertyInitialValues = JSON.parse(sessionStorage.getItem("PropertyInitials"));
+  
 
   const { isLoading, data } = Digit.Hooks.ptr.usePetMDMS(stateId, "PetService", "Documents");   
 
 
-  // const mutationDocs = data?.PetService?.MutationDocuments;
-  // const commonDocs = data?.PetService?.Documents;
-
-  // const PTRDocument = isMutation ? mutationDocs?.map?.((doc) => commonDocs.find((e) => doc.code === e.code) || doc)
-  //   : data?.PetService?.Documents;
-  // const PTRDocument = isMutation ? mutationDocs?.map?.((doc) => commonDocs.find((e) => doc.code === e.code) || doc)
-  //   : data?.PetService?.PetDocuments;
-
-
-  // const PTRDocument = data?.PetService?.Documents;
   const PTRDocument = data?.PetService?.Documents.map(document => ({
   ...document,
   hasDropdown: true
@@ -61,7 +46,6 @@ const PTRDocumentUpload = ({ t, config, onSelect, userType, formData, setError: 
 
   return (
     <div>
-      {/*isMutation ? <CardSectionHeader>{t("PT_MUTATION_DOCUMENTS_HEADER")} </CardSectionHeader> : null*/}
       {PTRDocument?.map((document, index) => {
         return (
           <PTRSelectDocument
@@ -80,7 +64,6 @@ const PTRDocumentUpload = ({ t, config, onSelect, userType, formData, setError: 
             clearFormErrors={clearFormErrors}
             config={config}
             formState={formState}
-            propertyInitialValues={propertyInitialValues}
           />
           
         );
@@ -105,11 +88,10 @@ function PTRSelectDocument({
   config,
   formState,
   fromRawData,
-  id,
-  propertyInitialValues,
+  id
 }) {
   const filteredDocument = documents?.filter((item) => item?.documentType?.includes(doc?.code))[0];
-  ////console.log("ffffffff", filteredDocument);
+
 
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const [selectedDocument, setSelectedDocument] = useState(
@@ -120,21 +102,19 @@ function PTRSelectDocument({
       : {}
   );
 
-  ////console.log("4444444444",selectedDocument);
+  
   const [file, setFile] = useState(null);
   const [uploadedFile, setUploadedFile] = useState(() => filteredDocument?.fileStoreId || null);
 
   const handlePTRSelectDocument = (value) => setSelectedDocument(value);
-  ////console.log("7/////////////",handlePTRSelectDocument);
+ 
 
   function selectfile(e) {
     setFile(e.target.files[0]);
   }
   const { dropdownData } = doc;
-  //console.log("dshdfsgfhshfjshfjhsfhu",dropdownData)
-  //const { dropdownFilter, enabledActions, filterCondition } = doc?.additionalDetails || {};
+ 
   var dropDownData = dropdownData;
-   //let hideInput = false;
   const [isHidden, setHidden] = useState(false);
 
   const addError = () => {
@@ -196,7 +176,7 @@ function PTRSelectDocument({
       const docType = dropDownData
         .filter((e) => e.code === originalDoc?.documentType)
         .map((e) => ({ ...e, i18nKey: e?.code?.replaceAll(".", "_") }))[0];
-        //console.log("5555555555", docType);
+        
       if (!docType) setHidden(true);
       else {
         setSelectedDocument(docType);
@@ -212,7 +192,6 @@ function PTRSelectDocument({
       if (file) {
         if (file.size >= 5242880) {
           setError(t("CS_MAXIMUM_UPLOAD_SIZE_EXCEEDED"));
-          // if (!formState.errors[config.key]) setFormError(config.key, { type: doc?.code });
         } else {
           try {
             setUploadedFile(null);
@@ -244,7 +223,6 @@ function PTRSelectDocument({
           <Dropdown
             className="form-field"
             selected={selectedDocument}
-            disable={dropDownData?.length === 0 || (propertyInitialValues?.documents && propertyInitialValues?.documents.length>0 && propertyInitialValues?.documents.filter((document) => document.documentType.includes(doc?.code)).length>0? enabledActions?.[action].disableDropdown : false)}
             option={dropDownData.map((e) => ({ ...e, i18nKey: e.code?.replaceAll(".", "_") }))}
             select={handlePTRSelectDocument}
             optionKey="i18nKey"
@@ -265,7 +243,6 @@ function PTRSelectDocument({
             textStyles={{ width: "100%" }}
             inputStyles={{ width: "280px" }}
             accept=".pdf, .jpeg, .jpg, .png"   //  to accept document of all kind
-            disabled={(propertyInitialValues?.documents && propertyInitialValues?.documents.length>0 && propertyInitialValues?.documents.filter((document) => document.documentType.includes(doc?.code)).length>0? enabledActions?.[action].disableUpload : false) || !selectedDocument?.code}
             buttonType="button"
             error={!uploadedFile}
           />

@@ -21,6 +21,7 @@ const propetyData=localStorage.getItem("pgrProperty")
   const [pincode, setPincode] = useState("");
   const [mobileNumber, setMobileNumber] = useState(sessionStorage.getItem("mobileNumber") || "");
   const [fullName, setFullName] = useState(sessionStorage.getItem("name") || "");
+  const [emailId, setEmail] = useState(sessionStorage.getItem("emailId") || "");
   const [selectedCity, setSelectedCity] = useState(getCities()[0] ? getCities()[0] : null);
 const [propertyId, setPropertyId]= useState("")
 const [description, setDescription] = useState("")
@@ -152,7 +153,8 @@ const [description, setDescription] = useState("")
     //const prioritylevel=priorityLevel.code;
     const mobileNumber = data?.mobileNumber;
     const name = data?.name;
-    const formData = { ...data, cityCode, city, district, region, localityCode, localityName, landmark, complaintType, priorityLevel, mobileNumber, name };
+    const emailId=data?.emailId;
+    const formData = { ...data, cityCode, city, district, region, localityCode, localityName, landmark, complaintType, priorityLevel, mobileNumber, name,emailId};
     await dispatch(createComplaint(formData));
     await client.refetchQueries(["fetchInboxData"]);
     localStorage.removeItem("pgrProperty");
@@ -176,6 +178,10 @@ const [description, setDescription] = useState("")
   const handleName = (event) => {
     const { value } = event.target;
     setFullName(value);
+  };
+  const handleEmail = (event) => {
+    const { value } = event.target;
+    setEmail(value);
   };
   const handleDescription = (event) => {
     const { value } = event.target;
@@ -218,6 +224,21 @@ const [description, setDescription] = useState("")
               pattern: /^[A-Za-z]/,
             },
             error: t("CS_ADDCOMPLAINT_NAME_ERROR"),
+          },
+        },
+        {
+          label: t("ES_MAIL_ID"),
+          isMandatory: false,
+          type: "text",
+          value:emailId,
+          populators: {
+            name: "emailId",
+            onChange: handleEmail,
+            validation: {
+              //required: true,
+              pattern: /[A-Za-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/,
+            },
+            error: t("CS_ADDCOMPLAINT_EMAIL_ERROR"),
           },
         },
       ],
