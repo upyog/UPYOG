@@ -32,7 +32,12 @@ public class CalculatorConstants {
 	public static final String PT_OWNER_EXEMPTION = "PT_OWNER_EXEMPTION";
 	
 	public static final String  PT_SPECIAL_EXEMPTION ="PT_SPECIAL_EXEMPTION";
+	
 	public static final String  PT_ROAD_TYPE_TAX ="PT_ROAD_TYPE_TAX";
+	
+	public static final String  PT_STRUCTURE_TYPE_TAX ="PT_STRUCTURE_TYPE_TAX";
+	
+	public static final String PT_AGE_FACTOR_TAX="PT_AGE_FACTOR_TAX";
 
 	public static final String PT_TIME_REBATE = "PT_TIME_REBATE";
 
