@@ -402,8 +402,10 @@ public class EstimationService {
 		String searchKey ="";
 		String assessmentYear = detail.getFinancialYear();
 		if(detail.getAddress().getTypeOfRoad() != null) {
-			if(calculationFor.equalsIgnoreCase("UNBUILT") || calculationFor.equalsIgnoreCase("VACANT")) 
+			if(calculationFor.equalsIgnoreCase("UNBUILT") || calculationFor.equalsIgnoreCase("VACANT"))
+			{
 				searchKey = "VACANT"+"_"+detail.getAddress().getTypeOfRoad().getCode();
+			}
 			else 
 				searchKey = detail.getPropertyType()+"_"+detail.getAddress().getTypeOfRoad().getCode();
 		}
@@ -717,10 +719,19 @@ public class EstimationService {
 		
 		if(detail.getAddress().getTypeOfRoad() !=null)
 		{
-			BigDecimal typeofroadValue = typeofRoadEstimate(detail.getAddress().getTypeOfRoad().getCode(), payableTax, assessmentYear,
-							propertyBasedExemptionMasterMap).setScale(2, 2);
+			if(unit != null)
+			{
+				BigDecimal typeofroadValue = typeofRoadEstimate("BUILTUP_"+detail.getAddress().getTypeOfRoad().getCode(), payableTax, assessmentYear,
+						propertyBasedExemptionMasterMap).setScale(2, 2);
+				typeofroad.add(typeofroadValue);
+			}
+			else
+			{
+				BigDecimal typeofroadValue = typeofRoadEstimate("VACANT_"+detail.getAddress().getTypeOfRoad().getCode(), payableTax, assessmentYear,
+						propertyBasedExemptionMasterMap).setScale(2, 2);
+				typeofroad.add(typeofroadValue);
+			}
 			
-			typeofroad.add(typeofroadValue);
 			for (BigDecimal bigDecimal : typeofroad) {
 				typeofroadEsti=typeofroadEsti.add(bigDecimal);
 			}
@@ -787,7 +798,7 @@ public class EstimationService {
 		Map<String, Category> taxHeadCategoryMap = ((List<TaxHeadMaster>)masterMap.get(TAXHEADMASTER_MASTER_KEY)).stream()
 				.collect(Collectors.toMap(TaxHeadMaster::getCode, TaxHeadMaster::getCategory));
 
-		System.out.println("taxHeadCategoryMap::::"+taxHeadCategoryMap);
+		
 
 		BigDecimal taxAmt = BigDecimal.ZERO;
 		BigDecimal penalty = BigDecimal.ZERO;
@@ -1079,16 +1090,9 @@ public class EstimationService {
 		//BigDecimal share = taxAmt.divide(BigDecimal.valueOf(userCount),2, 2);
 
 		Map<String, Object> applicableOwnerType=null;
-		try
-		{
+		
 			 applicableOwnerType = mDataService.getApplicableMaster(financialYear,
-					 roadTypeMap.get("BUILTUP_"+typeofcode));
-		}
-		catch (Exception e) {
-			// TODO: handle exception
-			applicableOwnerType = mDataService.getApplicableMaster(financialYear,
-					roadTypeMap.get("VACANT_"+typeofcode));
-		}
+					 roadTypeMap.get(typeofcode));
 
 		if (null != applicableOwnerType) {
 
