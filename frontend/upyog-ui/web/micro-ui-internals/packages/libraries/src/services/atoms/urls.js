@@ -231,11 +231,11 @@ wms:{
   //   count:"https://64f5834d2b07270f705d4f91.mockapi.io/PHMApplications",
   // },
   PHMApplications:{
-    create: "http://10.216.36.250:8484/wms/wms-services/v1/pfmilestone/_create",
-    update:"http://10.216.36.250:8484/wms/wms-services/v1/pfmilestone/_update",
-    get:"http://10.216.36.250:8484/wms/wms-services/v1/pfmilestone/_view",
-    search:"http://10.216.36.250:8484/wms/wms-services/v1/pfmilestone/_search",      
-    count:"http://10.216.36.250:8484/wms/wms-services/v1/pfmilestone/_view",
+    create: "/wms/wms-services/v1/pfmilestone/_create",
+    update:"/wms/wms-services/v1/pfmilestone/_update",
+    get:"/wms/wms-services/v1/pfmilestone/_view",
+    search:"/wms/wms-services/v1/pfmilestone/_search",      
+    count:"/wms/wms-services/v1/pfmilestone/_view",
   },
   // MBApplications:{
   //   create:"https://658bef9a859b3491d3f51ac4.mockapi.io/MBApplications",
@@ -251,6 +251,14 @@ wms:{
     search:"https://658bef9a859b3491d3f51ac4.mockapi.io/MBApplications",      
     count:"https://658bef9a859b3491d3f51ac4.mockapi.io/MBApplications",
   },
+
+    // PMAApplications: {
+    //   create: "https://64f5834d2b07270f705d4f91.mockapi.io/PMAApplications",
+    //   update: "https://64f5834d2b07270f705d4f91.mockapi.io/PMAApplications",
+    //   get: "https://64f5834d2b07270f705d4f91.mockapi.io/PMAApplications/:id",
+    //   search: "https://64f5834d2b07270f705d4f91.mockapi.io/PMAApplications",
+    //   count: "https://64f5834d2b07270f705d4f91.mockapi.io/PMAApplications",
+    // },
 
     PMAApplications: {
       create: "https://64f5834d2b07270f705d4f91.mockapi.io/PMAApplications",

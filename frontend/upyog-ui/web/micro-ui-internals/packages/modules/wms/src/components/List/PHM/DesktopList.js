@@ -20,13 +20,13 @@ const DesktopList = ({ tableConfig, filterComponent, ...props }) => {
 
   const columns = React.useMemo(() => {
     return [
-      {
-        Header: t("WMS_PHM_ID_LABEL"),
-        disablePhmtBy: true,
-        Cell: ({ row }) => {
-          return GetCell(`${row.original?.phm_id}`);
-        },
-      },
+      // {
+      //   Header: t("WMS_PHM_ID_LABEL"),
+      //   disablePhmtBy: true,
+      //   Cell: ({ row }) => {
+      //     return GetCell(`${row.original?.phm_id}`);
+      //   },
+      // },
       {
         Header: t("WMS_PHM_PROJECT_NAME_LABEL"),
         disablePhmtBy: false,
@@ -52,16 +52,19 @@ const DesktopList = ({ tableConfig, filterComponent, ...props }) => {
         Header: t("WMS_PHM_PERCENT_NAME_LABEL"),
         disablePhmtBy: true,
         Cell: ({ row }) => {
-          return GetCell(`${row.original?.percent_weightage}`);
+          console.log("rowrowrow ",row)
+          return GetCell(`${row.original?.percentage_weightage}`);
+          // return GetCell(`${Math.floor(Math.random() * 100)}`);
         },
       },
       {
         Header: t("WMS_PHM_CONTROLS_LABEL"),
         disablePhmtBy: true,
         Cell: ({ row }) => {
+          console.log(row, "it is row");
           return (
             <span className="link">
-              <Link to={`/upyog-ui/citizen/wms/phm-details/${row.original.phm_id}`}>{t("WMS_PHM_EDIT_LABEL")}</Link>
+              <Link to={`/upyog-ui/citizen/wms/phm-details/${row.original.milestone_id}`}>{t("WMS_PHM_EDIT_LABEL")}</Link>
             </span>
           );
         },

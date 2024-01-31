@@ -19,7 +19,7 @@ const WmsPhmCreate = () => {
           project_name: data?.WmsPhmPrjName?.project_name,  
           work_name: data?.WmsPhmWorkName?.work_name,  
           milestone_name: data?.WmsPhmMLName?.milestone_name,
-          percent_weightage: data?.WmsPhmPercent?.percent_weightage,
+          percentage_weightage: data?.WmsPhmPercent?.percentage_weightage,
           tenantId:tenantId
         }],
       };
