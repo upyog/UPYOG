@@ -9,12 +9,10 @@
     "packages/react-components",
     "packages/modules/common",
     "packages/modules/core",
-    "packages/modules/pgr",
     "packages/modules/pt",
     "packages/modules/ws",
-    "packages/modules/fsm",
-    "packages/modules/mCollect",
-    "packages/modules/obps"
+    "packages/modules/pgr",
+    "packages/modules/fsm"
   ],
   "author": "Abhinav Kushwaha <abhinav.kushwaha@egovernments.org>",
   "license": "MIT",
@@ -23,7 +21,7 @@
     "node": ">=14"
   },
   "scripts": {
-    "start": "run-s build start:dev",
+    "start": "SKIP_PREFLIGHT_CHECK=true run-s build start:dev",
     "sprint": "SKIP_PREFLIGHT_CHECK=true run-s start:script",
     "start:dev": "run-p dev:**",
     "start:script": "./scripts/create.sh",
