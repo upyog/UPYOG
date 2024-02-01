@@ -48,6 +48,8 @@ function ApplicationDetailsContent({
 }) {
   const { t } = useTranslation();
 
+const ownersSequences= applicationDetails?.applicationData?.owners
+
   function OpenImage(imageSource, index, thumbnailsToShow) {
     window.open(thumbnailsToShow?.fullImage?.[0], "_blank");
   }
@@ -358,7 +360,7 @@ function ApplicationDetailsContent({
              </div>
           )) } */}
           {detail?.additionalDetails?.floors && <PropertyFloors floors={detail?.additionalDetails?.floors} />}
-          {detail?.additionalDetails?.owners && <PropertyOwners owners={detail?.additionalDetails?.owners} />}
+          {detail?.additionalDetails?.owners && <PropertyOwners owners={detail?.additionalDetails?.owners.slice().reverse()} />}
           {detail?.additionalDetails?.units && <TLTradeUnits units={detail?.additionalDetails?.units} />}
           {detail?.additionalDetails?.accessories && <TLTradeAccessories units={detail?.additionalDetails?.accessories} />}
           {detail?.additionalDetails?.permissions && workflowDetails?.data?.nextActions?.length > 0 && (
