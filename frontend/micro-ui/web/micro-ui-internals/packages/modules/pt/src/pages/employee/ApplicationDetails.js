@@ -72,7 +72,7 @@ const ApplicationDetails = () => {
 
   useEffect(() => {
     if (applicationDetails) {
-      applicationDetails.applicationDetails[2].additionalDetails.owners= applicationDetails?.applicationDetails?.[2]?.additionalDetails?.owners?.reverse()    
+      appDetailsToShow?.applicationData?.owners.sort((item, item2) => { return item?.additionalDetails?.ownerSequence - item2?.additionalDetails?.ownerSequence })
       setAppDetailsToShow(_.cloneDeep(applicationDetails));
       if (applicationDetails?.applicationData?.status !== "ACTIVE" && applicationDetails?.applicationData?.creationReason === "MUTATION") {
         setEnableAudit(true);
