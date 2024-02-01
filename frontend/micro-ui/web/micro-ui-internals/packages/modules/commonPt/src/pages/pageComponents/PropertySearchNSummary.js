@@ -58,6 +58,7 @@ const PropertySearchNSummary = ({ config, onSelect, userType, formData, setError
   }, [error, propertyDetails]);
   useEffect(() => {
     onSelect("cpt", { details: propertyDetails?.Properties[0] });
+    localStorage.setItem("pgrProperty",JSON.stringify(propertyDetails?.Properties[0]))
   }, [propertyDetails, pathname]);
 
   const searchProperty = () => {
@@ -100,7 +101,6 @@ const PropertySearchNSummary = ({ config, onSelect, userType, formData, setError
 
   let clns = "";
   if (window.location.href.includes("/ws/")) clns = ":"
-
   return (
     <React.Fragment>
      {(window.location.href.includes("/tl/") ? (!(formData?.tradedetils?.[0]?.structureType?.code === "MOVABLE") && (isEmpNewApplication || isEmpRenewLicense) ) : true) && <div>
@@ -125,10 +125,12 @@ const PropertySearchNSummary = ({ config, onSelect, userType, formData, setError
       <span onClick={() => history.push(`/digit-ui/employee/commonpt/search?redirectToUrl=${redirectBackUrl}&${serachParams}`, { ...state })}>
         <LinkButton label={t("CPT_SEARCH_PROPERTY")} style={{ color: "#a82227", display: "inline-block" }} />
       </span>
-      &nbsp; | &nbsp;
+      &nbsp; {window.location.href.includes("/pgr/")?"":"|"}
+       &nbsp;
+      {window.location.href.includes("/pgr/")?"":
       <span onClick={() => history.push(`/digit-ui/employee/commonpt/new-application?redirectToUrl=${redirectBackUrl}&${serachParams}`, { ...state })}>
         <LinkButton label={t("CPT_CREATE_PROPERTY")} style={{ color: "#a82227", display: "inline-block" }} />
-      </span>
+      </span>}
       {propertyDetails && propertyDetails?.Properties.length ? (
         <React.Fragment>
           <header className="card-section-header" style={{ marginBottom: "5px", marginTop: "20px" }}>

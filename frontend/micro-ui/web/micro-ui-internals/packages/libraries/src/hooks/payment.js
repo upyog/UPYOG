@@ -154,6 +154,16 @@ export const useRecieptSearch = ({ tenantId, businessService, ...params }, confi
     }
   );
 };
+export const useRecieptSearchNew = ({ tenantId, ...params }, config = {}) => {
+  return useQuery(
+    ["obps_Reciept_Search", { tenantId, params },config],
+    () => Digit.PaymentService.recieptSearchNew(tenantId, params),
+    {
+      refetchOnMount: false,
+      ...config,
+    }
+  );
+};
 
 export const useBulkPdfDetails = ({ filters }) => {
   return useQuery(["BULK_PDF_DETAILS", filters], async () => await PaymentService.getBulkPdfRecordsDetails(filters));

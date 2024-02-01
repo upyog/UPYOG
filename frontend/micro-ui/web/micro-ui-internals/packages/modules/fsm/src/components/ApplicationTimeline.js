@@ -127,7 +127,6 @@ export const ApplicationTimeline = (props) => {
 
 
   let deepCopy = _.cloneDeep( data )
-  console.log("dataaaaaaaaaaaaaaaaa",data)
 let index1 =0
 deepCopy?.timeline.map((check,index) => {
   if (check.status == "ASSING_DSO" && index1 ==0)
@@ -149,8 +148,7 @@ deepCopy?.timeline.map((check,index) => {
             </CardSectionHeader>
           )}
           {data?.timeline && data?.timeline?.length === 1 ? (
-            <CheckPoint isCompleted={true} label={t("CS_COMMON_FSM_" + `${data?.timeline[0]?.performedAction === "UPDATE" ? "UPDATE_" : ""}` + data?.timeline[0]?.status)} customChild={getTimelineCaptions(data?.timeline[0])} />
-            
+            <CheckPoint isCompleted={true} label={t("CS_COMMON_FSM_" + `${data?.timeline[0]?.performedAction === "UPDATE" ? "UPDATE_" : ""}` + data?.timeline[0]?.status)} customChild={getTimelineCaptions(data?.timeline[0])} />            
           ) : (
             <ConnectingCheckPoints>
               {data?.timeline &&

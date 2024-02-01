@@ -88,6 +88,25 @@ const PropertyDetails = () => {
 
   useEffect(() => {
     if (applicationDetails && !enableAudit) {
+      if(applicationDetails?.applicationDetails[1].title =="PT_ASSESMENT_INFO_SUB_HEADER")
+      {
+      if (applicationDetails?.applicationDetails[1].values.length ==4)
+      {
+        let obj = {
+          "title": "PT_ASSESMENT_ELECTRICITY",
+          "value": applicationDetails?.additionalDetails?.electricity || "NA"
+        }
+        applicationDetails?.applicationDetails[1].values.push(obj)
+      }
+      if (applicationDetails?.applicationDetails[1].values.length ==5)
+      {
+        let obj = {
+          "title": "PT_ASSESMENT_ELECTRICITY_UID",
+          "value": applicationDetails?.additionalDetails?.uid || "NA"
+        }
+        applicationDetails?.applicationDetails[1].values.push(obj)
+      }
+    }
       setAppDetailsToShow(_.cloneDeep(applicationDetails));
       if (applicationDetails?.applicationData?.status !== "ACTIVE") {
         setEnableAudit(true);
@@ -101,6 +120,7 @@ const PropertyDetails = () => {
       lastActiveProperty.owners = lastActiveProperty?.owners?.filter((owner) => owner.status == "ACTIVE");
       if (lastActiveProperty) {
         let applicationDetails = appDetailsToShow?.transformToAppDetailsForEmployee({ property: lastActiveProperty, t });
+
         setAppDetailsToShow({ ...appDetailsToShow, applicationDetails });
       }
     }
@@ -280,6 +300,10 @@ const PropertyDetails = () => {
     return <Loader />;
   }
   const UpdatePropertyNumberComponent = Digit?.ComponentRegistryService?.getComponent("EmployeeUpdateOwnerNumber");
+ 
+    appDetailsToShow?.applicationData?.owners.sort((item, item2) => { return item?.additionalDetails?.ownerSequence - item2?.additionalDetails?.ownerSequence })
+    
+  
   return (
     <div>
       <Header>{t("PT_PROPERTY_INFORMATION")}</Header>

@@ -22,7 +22,9 @@ public enum TaxHeadCategory {
 
 	FINES("FINES"),
 
-	CHARGES("CHARGES");
+	CHARGES("CHARGES"),
+	
+	SW_RECONNECTION("SW_RECONNECTION");
 
 	private String value;
 

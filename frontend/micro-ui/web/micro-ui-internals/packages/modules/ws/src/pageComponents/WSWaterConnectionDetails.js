@@ -53,7 +53,8 @@ const WSWaterConnectionDetails = ({ t, config, userType, onSelect, formData }) =
               "action": "INITIATE"
           },
           "channel": "CITIZEN"
-          }
+          },
+          reconnectRequest:false, disconnectRequest:false
         }
       }
       else{
@@ -92,7 +93,8 @@ const WSWaterConnectionDetails = ({ t, config, userType, onSelect, formData }) =
               "action": "INITIATE"
           },
           "channel": "CITIZEN"
-      }
+      },
+      reconnectRequest:false, disconnectRequest:false
       }
     }
 

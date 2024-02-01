@@ -293,7 +293,7 @@ const SelectAccessoriesDetails = ({ t, config, onSelect, userType, formData }) =
                     disable={true}
                     /* {...(validation = {
             isRequired: true,
-            pattern: "^[a-zA-Z-.`' ]*$",
+            pattern: "^[a-zA-Z ]*$",
             type: "text",
             title: t("PT_NAME_ERROR_MESSAGE"),
           })} */

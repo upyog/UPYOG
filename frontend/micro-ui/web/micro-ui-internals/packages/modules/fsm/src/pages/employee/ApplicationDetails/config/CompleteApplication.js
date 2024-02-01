@@ -31,6 +31,18 @@ export const configCompleteApplication = ({ t, vehicle, vehicleCapacity, noOfTri
           },
         },
         {
+          label: t("ES_FSM_ACTION_VEHICLE_CAPACITY_IN_LTRS"),
+          type: "number",
+          isMandatory: true,
+          populators: {
+            name: "capacity",
+            validation: {
+              required: true,
+            },
+          },
+          disable: true,
+        },
+        {
           label: t("ES_FSM_ACTION_WASTE_VOLUME_LABEL"),
           type: "number",
           isMandatory: true,
@@ -42,6 +54,46 @@ export const configCompleteApplication = ({ t, vehicle, vehicleCapacity, noOfTri
             },
             error: `${t("ES_FSM_ACTION_INVALID_WASTE_VOLUME")} ${vehicleCapacity} ${t("CS_COMMON_LITRES")}`,
           },
+        },
+        {
+          label: "ES_NEW_APPLICATION_PROPERTY_ID",
+          isMandatory: true,
+          type: "component",
+          route: "property-id",
+          key: "propertyID",
+          component: "SelectPropertyID",
+          disable: true,
+          texts: {
+            headerCaption: "",
+            header: "CS_FILE_APPLICATION_PROPERTY_ID",
+            cardText: "CS_FILE_APPLICATION_PROPERTY_ID_TEXT",
+            submitBarLabel: "CS_COMMON_NEXT",
+          },
+          nextStep: "property-type",
+        },
+        {
+          label: t("ES_FSM_ACTION_ROAD_WIDTH"),
+          type: "number",
+          isMandatory: true,
+          populators: {
+            name: "roadWidth",
+            validation: {
+              required: true,
+            },
+          },
+          disable: false,
+        },
+        {
+          label: t("ES_FSM_ACTION_DISTANCE_FROM_ROAD"),
+          type: "number",
+          isMandatory: true,
+          populators: {
+            name: "distancefromroad",
+            validation: {
+              required: true,
+            },
+          },
+          disable: false,
         },
         {
           label: "ES_NEW_APPLICATION_PROPERTY_TYPE",

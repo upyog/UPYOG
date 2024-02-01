@@ -42,7 +42,7 @@ const EditForm = ({ applicationData }) => {
   };
 
   const onSubmit = (data) => {
-    const formData = {
+    const formData = {     
       ...applicationData,
       address: {
         ...applicationData?.address,
@@ -57,6 +57,8 @@ const EditForm = ({ applicationData }) => {
       noOfFloors: Number(data?.noOfFloors),
       landArea: Number(data?.landarea),
       superBuiltUpArea: Number(data?.landarea),
+      additionalDetails:{...data.originalData.additionalDetails, electricity:data.electricity,uid:data.uid},
+      //electricity:data?.electricity,
       source: "MUNICIPAL_RECORDS", // required
       channel: "CFC_COUNTER", // required
       documents: applicationData?.documents ? applicationData?.documents.map((old) => {
