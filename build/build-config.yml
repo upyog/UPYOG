@@ -755,10 +755,11 @@ config:
     - work-dir: .
       dockerfile: frontend/micro-ui/web/micro-ui-internals/packages/react-components/docker/Dockerfile
       image-name: storybook
+      
   - name: builds/upyog/frontend/micro-ui/workbench-ui
     build:
       - work-dir: frontend/workbench-ui/
-        dockerfile: frontend/workbench-ui/web/workbench/Dockerfile
+        dockerfile: frontend/workbench-ui/web/docker/Dockerfile
         image-name: workbench-ui
 
   #EDCR
