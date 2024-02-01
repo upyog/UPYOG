@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.egov.web.models.AuditDetails;
+import org.egov.web.models.Contractors;
+import org.egov.web.models.PhysicalMileStoneActivity;
 import org.egov.web.models.ScheduleOfRateApplication;
 import org.egov.web.models.WMSContractorApplication;
 import org.egov.web.models.WMSPhysicalFinancialMilestoneApplication;
@@ -39,14 +41,22 @@ public class WMSPhysicalFinancialMilestoneApplicationRowMapper implements Result
                         .lastModifiedBy(rs.getString("mLastmodifiedby"))
                         .lastModifiedTime(lastModifiedTime)
                         .build();
+                PhysicalMileStoneActivity physicalMileStoneActivity=PhysicalMileStoneActivity.builder()
+                		.descriptionOfTheItem(rs.getString("mDescriptionOfTheItem"))
+                        .percentageWeightage(rs.getString("mPercentageWeightage"))
+                        .startDate(rs.getString("mStartDate"))
+                        .endDate(rs.getString("mEndDate"))
+                        .build();
                 wmsPhysicalFinancialMilestoneApplication = WMSPhysicalFinancialMilestoneApplication.builder()
                         .milestoneId(rs.getString("mMilestoneId"))
                         .projectName(rs.getString("mProjectName"))
                         .workName(rs.getString("mWorkName"))
                         .milestoneName(rs.getString("mMilestoneName"))
+                        .auditDetails(auditdetails)
+                        .physicalMileStoneActivity(physicalMileStoneActivity)
                         //.srNo(rs.getInt("mSrNo"))
                         //.activityDescription(rs.getString("mActivityDescription"))
-                        .percentageWeightage(rs.getString("mPercentageWeightage"))
+                        //.percentageWeightage(rs.getString("mPercentageWeightage"))
                         //.plannedStartDate(rs.getString("mPlannedStartDate"))
                         //.plannedEndDate(rs.getString("mPlannedEndDate"))
                         //.totalWeightage(rs.getInt("mTotalWeightage"))

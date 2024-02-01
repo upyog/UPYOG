@@ -485,7 +485,7 @@ serviceMaps:
       isTransaction: true
       queryMaps:
 
-        - query: INSERT INTO physical_financial_milestone (milestone_id,project_name,work_name,milestone_name,percentage_weightage,createdby,lastmodifiedby,createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?,?,?,?,?);
+        - query: INSERT INTO physical_financial_milestone (milestone_id,project_name,work_name,milestone_name,percentage_weightage,description_of_the_item,start_date,end_date,createdby,lastmodifiedby,createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?,?,?,?,?,?,?,?);
           basePath: WMSPhysicalFinancialMilestoneApplication.*
           jsonMaps:
             - jsonPath: $.WMSPhysicalFinancialMilestoneApplication.*.milestone_id
@@ -496,7 +496,13 @@ serviceMaps:
             
             - jsonPath: $.WMSPhysicalFinancialMilestoneApplication.*.milestone_name
 
-            - jsonPath: $.WMSPhysicalFinancialMilestoneApplication.*.percentage_weightage
+            - jsonPath: $.WMSPhysicalFinancialMilestoneApplication.*.physicalMileStoneActivity.percentage_weightage
+            
+            - jsonPath: $.WMSPhysicalFinancialMilestoneApplication.*.physicalMileStoneActivity.description_of_the_item
+            
+            - jsonPath: $.WMSPhysicalFinancialMilestoneApplication.*.physicalMileStoneActivity.start_date
+            
+            - jsonPath: $.WMSPhysicalFinancialMilestoneApplication.*.physicalMileStoneActivity.end_date
             
             - jsonPath: $.WMSPhysicalFinancialMilestoneApplication.*.auditDetails.createdBy
 
@@ -619,7 +625,7 @@ serviceMaps:
       isTransaction: true
       queryMaps:
 
-        - query: INSERT INTO project_register (register_id,scheme_name,project_name,work_name,work_type,estimated_number,estimated_work_cost,sanctioned_tender_amount,status_name,bill_received_till_date,payment_received_till_date,createdby,lastmodifiedby,createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?,?,?);
+        - query: INSERT INTO project_register (register_id,scheme_name,project_name,work_name,work_type,estimated_number,estimated_work_cost,sanctioned_tender_amount,status_name,bill_received_till_date,createdby,lastmodifiedby,createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?,?);
           basePath: WMSProjectRegisterApplication.*
           jsonMaps:
             - jsonPath: $.WMSProjectRegisterApplication.*.register_id
@@ -642,8 +648,6 @@ serviceMaps:
 
             - jsonPath: $.WMSProjectRegisterApplication.*.bill_received_till_date
             
-            - jsonPath: $.WMSProjectRegisterApplication.*.payment_received_till_date
-
             - jsonPath: $.WMSProjectRegisterApplication.*.auditDetails.createdBy
 
             - jsonPath: $.WMSProjectRegisterApplication.*.auditDetails.lastModifiedBy
@@ -660,7 +664,7 @@ serviceMaps:
       isTransaction: true
       queryMaps:
       
-        - query: UPDATE project_register SET scheme_name = ?,project_name = ?,work_name =?,work_type=?,estimated_number=?,estimated_work_cost=?,sanctioned_tender_amount = ?, status_name = ?, bill_received_till_date = ?, payment_received_till_date = ? WHERE register_id=?;
+        - query: UPDATE project_register SET scheme_name = ?,project_name = ?,work_name =?,work_type=?,estimated_number=?,estimated_work_cost=?,sanctioned_tender_amount = ?, status_name = ?, bill_received_till_date = ? WHERE register_id=?;
           basePath: WMSProjectRegisterApplication.*
           jsonMaps:
             - jsonPath: $.WMSProjectRegisterApplication.*.scheme_name
@@ -681,7 +685,6 @@ serviceMaps:
 
             - jsonPath: $.WMSProjectRegisterApplication.*.bill_received_till_date
 
-            - jsonPath: $.WMSProjectRegisterApplication.*.payment_received_till_date
             
             - jsonPath: $.WMSProjectRegisterApplication.*.register_id
             

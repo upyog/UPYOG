@@ -41,8 +41,10 @@ public class WMSProjectRegisterApplication {
 	private String statusName=null;
 	@JsonProperty("bill_received_till_date")
 	private String billReceivedTillDate=null;
-	@JsonProperty("payment_received_till_date")
-	private String paymentReceivedTillDate=null;
+	/*
+	 * @JsonProperty("payment_received_till_date") private String
+	 * paymentReceivedTillDate=null;
+	 */
 	
 	@JsonProperty("tenantId")
 	 private String tenantId = null;

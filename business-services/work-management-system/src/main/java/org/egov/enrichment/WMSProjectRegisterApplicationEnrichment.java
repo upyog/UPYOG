@@ -74,7 +74,7 @@ public class WMSProjectRegisterApplicationEnrichment {
 			existingApplication.get(0).setBillReceivedTillDate(application.getBillReceivedTillDate());
 			existingApplication.get(0).setEstimatedNumber(application.getEstimatedNumber());
 			existingApplication.get(0).setEstimatedWorkCost(application.getEstimatedWorkCost());
-			existingApplication.get(0).setPaymentReceivedTillDate(application.getPaymentReceivedTillDate());
+			//existingApplication.get(0).setPaymentReceivedTillDate(application.getPaymentReceivedTillDate());
 			existingApplication.get(0).setProjectName(application.getProjectName());
 			existingApplication.get(0).setSanctionedTenderAmount(application.getSanctionedTenderAmount());
 			existingApplication.get(0).setStatusName(application.getStatusName());

@@ -50,7 +50,7 @@ public class WMSProjectRegisterApplicationRowMapper implements ResultSetExtracto
                         .sanctionedTenderAmount(rs.getLong("pSanctionedTenderAmount"))
                         .statusName(rs.getString("pStatusName"))
                         .billReceivedTillDate(rs.getString("pBillReceivedTillDate"))
-                        .paymentReceivedTillDate(rs.getString("pPaymentReceivedTillDate"))
+                        //.paymentReceivedTillDate(rs.getString("pPaymentReceivedTillDate"))
                         .build();
             }
             //addChildrenToProperty(rs, sorApplication);

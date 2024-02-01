@@ -25,22 +25,40 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ListMultimap;
+import com.google.common.collect.Multimap;
+
 @Component
 public class WMSContractAgreementApplicationRowMapper implements ResultSetExtractor<List<WMSContractAgreementApplication>> {
     public List<WMSContractAgreementApplication> extractData(ResultSet rs) throws SQLException, DataAccessException {
         Map<String,WMSContractAgreementApplication> wmsContractAgreementApplicationMap = new LinkedHashMap<>();
-
+        List<WMSContractAgreementApplication> wmsContractAgreementApplicationList=new ArrayList<>();
+    	//ListMultimap<String,WMSContractAgreementApplication> wmsContractAgreementApplicationMap = ArrayListMultimap.create();
         while (rs.next()){
             String agreementNo = rs.getString("aAgreementNo");
+            
             WMSContractAgreementApplication wmsContractAgreementApplication = wmsContractAgreementApplicationMap.get(agreementNo);
-
-            if(wmsContractAgreementApplication == null) {
+            
+            //if(wmsContractAgreementApplication == null) {
 
             	Long lastModifiedTime = rs.getLong("aLastmodifiedtime");
                 if (rs.wasNull()) {
                     lastModifiedTime = null;
                 }
+                AuditDetails auditdetails = AuditDetails.builder()
+                        .createdBy(rs.getString("aCreatedBy"))
+                        .createdTime(rs.getLong("aCreatedtime"))
+                        .lastModifiedBy(rs.getString("aLastmodifiedby"))
+                        .lastModifiedTime(lastModifiedTime)
+                        .build();
+				
+				  wmsContractAgreementApplication = WMSContractAgreementApplication.builder()
+				  .agreementNo(rs.getString("aAgreementNo"))
+				  .auditDetails(auditdetails)
+				  .build();
                 
+               
                 AgreementInfo agreementInfo = AgreementInfo.builder()
                 		.agreementNo(agreementNo)
                         .agreementName(rs.getString("aAgreementName"))
@@ -59,6 +77,7 @@ public class WMSContractAgreementApplicationRowMapper implements ResultSetExtrac
                         .build();
                 wmsContractAgreementApplication.addAgreementInfoItem(agreementInfo);
                 
+                
                 Party1Details party1Details = Party1Details.builder()
                 		.agreementNo(agreementNo)
                         .departmentNameParty1(rs.getString("aDepartmentNameParty1"))
@@ -69,6 +88,7 @@ public class WMSContractAgreementApplicationRowMapper implements ResultSetExtrac
                         .uidP1(rs.getString("aUidP1"))
                         .build();
                 wmsContractAgreementApplication.addParty1Details(party1Details);
+               
                 SDPGBGDetails sDPGBGDetails = SDPGBGDetails.builder()
                         .accountNo(rs.getLong("aAccountNo"))
                         .particulars(rs.getString("aParticulars"))
@@ -105,17 +125,7 @@ public class WMSContractAgreementApplicationRowMapper implements ResultSetExtrac
                         .uploadDocument(rs.getString("aUploadDocument"))
                         .build();
                 
-                AuditDetails auditdetails = AuditDetails.builder()
-                        .createdBy(rs.getString("aCreatedBy"))
-                        .createdTime(rs.getLong("aCreatedtime"))
-                        .lastModifiedBy(rs.getString("aLastmodifiedby"))
-                        .lastModifiedTime(lastModifiedTime)
-                        .build();
-				
-				  wmsContractAgreementApplication = WMSContractAgreementApplication.builder()
-				  .agreementNo(rs.getString("aAgreementNo"))
-				  .auditDetails(auditdetails)
-				  .build();
+                
 				 
                 
 				/*
@@ -152,11 +162,14 @@ public class WMSContractAgreementApplicationRowMapper implements ResultSetExtrac
 				 * .documentDescription(rs.getString("aDocumentDescription"))
 				 * .uploadDocument(rs.getString("aUploadDocument")) .build();
 				 */
-            }
+            //}//null
             //addChildrenToProperty(rs, sorApplication);
             wmsContractAgreementApplicationMap.put(agreementNo, wmsContractAgreementApplication);
+            wmsContractAgreementApplicationList.addAll(wmsContractAgreementApplicationMap.values());
+            //wmsContractAgreementApplicationMap.merge(agreementNo, wmsContractAgreementApplication, null);
         }
-        return new ArrayList<>(wmsContractAgreementApplicationMap.values());
+        //return new ArrayList<>(wmsContractAgreementApplicationMap.values());
+        return wmsContractAgreementApplicationList;
     }
 
 }

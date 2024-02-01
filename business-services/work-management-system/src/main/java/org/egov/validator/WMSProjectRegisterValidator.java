@@ -51,10 +51,14 @@ public class WMSProjectRegisterValidator {
 	            if(ObjectUtils.isEmpty(application.getEstimatedWorkCost()))
 	                throw new CustomException("EG_WMS_APP_ERR", "EstimatedWorkCost is mandatory for creating ProjectRegister applications");
 	        });
-	    	wmsProjectRegisterRequest.getWmsProjectRegisterApplications().forEach(application -> {
-	            if(ObjectUtils.isEmpty(application.getPaymentReceivedTillDate()))
-	                throw new CustomException("EG_WMS_APP_ERR", "PaymentReceivedTillDate is mandatory for creating ProjectRegister applications");
-	        });
+			/*
+			 * wmsProjectRegisterRequest.getWmsProjectRegisterApplications().forEach(
+			 * application -> {
+			 * if(ObjectUtils.isEmpty(application.getPaymentReceivedTillDate())) throw new
+			 * CustomException("EG_WMS_APP_ERR",
+			 * "PaymentReceivedTillDate is mandatory for creating ProjectRegister applications"
+			 * ); });
+			 */
 	    	
 	    	wmsProjectRegisterRequest.getWmsProjectRegisterApplications().forEach(application -> {
 	            if(ObjectUtils.isEmpty(application.getProjectName()))
