@@ -55,7 +55,7 @@ export const NewApplication = ({ parentUrl, heading }) => {
       formData?.tripData?.distancefromroad &&
       formData?. address?.street &&
       formData?.address?.doorNo &&
-      (formData?.tripData?.amountPerTrip || formData?.tripData?.amountPerTrip === 0)
+      (formData?.tripData?.amountPerTrip || formData?.tripData?.amountPerTrip === 0 || formData?.tripData?.undefined?.amountPerTrip)
     ) {
       setSubmitValve(true);
       const pitDetailValues = formData?.pitDetail ? Object.values(formData?.pitDetail).filter((value) => value > 0) : null;
@@ -103,7 +103,7 @@ export const NewApplication = ({ parentUrl, heading }) => {
     const landmark = data?.address?.landmark?.trim();
     const propertyID = data?.propertyID?.propertyID;
     const noOfTrips = data?.tripData?.noOfTrips;
-    const amount = data.tripData.amountPerTrip;
+    const amount = data.tripData.amount || data?.tripData?.undefined?.amount;
     const cityCode = data?.address?.city?.code;
     const city = data?.address?.city?.name;
     const state = data?.address?.city?.state;
