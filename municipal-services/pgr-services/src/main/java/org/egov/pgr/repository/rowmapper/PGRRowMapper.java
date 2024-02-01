@@ -52,8 +52,8 @@ public class PGRRowMapper implements ResultSetExtractor<List<Service>> {
                 String lastmodifiedby = rs.getString("ser_lastmodifiedby");
                 Long lastmodifiedtime = rs.getLong("ser_lastmodifiedtime");
                 Integer rating = rs.getInt("rating");
-                String priority= rs.getString("priority");
                 if(rs.wasNull()){rating = null;}
+                String priority= rs.getString("priority");
 
                 AuditDetails auditDetails = AuditDetails.builder().createdBy(createdby).createdTime(createdtime)
                                                 .lastModifiedBy(lastmodifiedby).lastModifiedTime(lastmodifiedtime).build();
