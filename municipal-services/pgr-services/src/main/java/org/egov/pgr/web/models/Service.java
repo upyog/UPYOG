@@ -90,6 +90,6 @@ public class Service   {
 
         @NotNull
         @JsonProperty("priority")
-        private Priority priority = Priority.LOW;
+        private Priority priority = null;
 }
 
