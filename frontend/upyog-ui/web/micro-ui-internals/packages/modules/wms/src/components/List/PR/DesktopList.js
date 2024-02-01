@@ -35,13 +35,6 @@ const DesktopList = ({ tableConfig, filterComponent, ...props }) => {
         },
       },
       {
-        Header: t("WMS_PR_WORK_TYPE_LABEL"),
-        disablePrtBy: false,
-        Cell: ({ row }) => {
-          return GetCell(`${row.original?.work_type}`);
-        },
-      },
-      {
         Header: t("WMS_PR_PROJECT_NAME_LABEL"),
         disablePrtBy: false,
         Cell: ({ row }) => {
@@ -56,44 +49,51 @@ const DesktopList = ({ tableConfig, filterComponent, ...props }) => {
         },
       },
       {
+        Header: t("WMS_PR_WORK_TYPE_LABEL"),
+        disablePrtBy: false,
+        Cell: ({ row }) => {
+          return GetCell(`${row.original?.work_type}`);
+        },
+      },
+      {
         Header: t("WMS_PR_ESTNUMBER_NAME_LABEL"),
         disablePrtBy: true,
         Cell: ({ row }) => {
-          return GetCell(`${row.original?.percent_weightage}`);
+          return GetCell(`${row.original?.estimated_number}`);
         },
       },
       {
         Header: t("WMS_PR_ESTWORKCOST_NAME_LABEL"),
         disablePrtBy: true,
         Cell: ({ row }) => {
-          return GetCell(`${row.original?.percent_weightage}`);
+          return GetCell(`${row.original?.estimated_work_cost}`);
         },
       },
       {
         Header: t("WMS_PR_STA_NAME_LABEL"),
         disablePrtBy: true,
         Cell: ({ row }) => {
-          return GetCell(`${row.original?.percent_weightage}`);
+          return GetCell(`${row.original?.sanctioned_tender_amount}`);
         },
       },
       {
         Header: t("WMS_PR_STATUS_LABEL"),
         disablePrtBy: false,
         Cell: ({ row }) => {
-          return GetCell(`${row.original?.Status_name}`);
+          return GetCell(`${row.original?.status_name}`);
         },
       },
       {
-        Header: t("WMS_PR_BILL_DATE_LABEL"),
+        Header: t("WMS_PR_START_DATE_LABEL"),
         disablePrtBy: false,
         Cell: ({ row }) => {
-          return GetCell(`${row.original?.project_start_date}`);
+          return GetCell(`${row.original?.start_date}`);
         },
       },{
         Header: t("WMS_PR_PAYMENT_DATE_LABEL"),
         disablePrtBy: false,
         Cell: ({ row }) => {
-          return GetCell(`${row.original?.project_end_date}`);
+          return GetCell(`${row.original?.end_date}`);
         },
       },
       {
@@ -102,22 +102,22 @@ const DesktopList = ({ tableConfig, filterComponent, ...props }) => {
         Cell: ({ row }) => {
           return (
             <span className="link">
-              <Link to={`/upyog-ui/citizen/wms/pr-details/${row.original.pr_id}`}>{t("WMS_PR_EDIT_LABEL")}</Link>
+              <Link to={`/upyog-ui/citizen/wms/pr-details/${row.original.register_id}`}>{t("WMS_PR_EDIT_LABEL")}</Link>
             </span>
           );
         },
       },
-      {
-        Header: t("WMS_PR_CONTROLS2_LABEL"),
-        disablePrtBy: true,
-        Cell: ({ row }) => {
-          return (
-            <span className="link">
-              <Link to={`/upyog-ui/citizen/wms/pma-home/${row.original.pr_id}`}>{t("WMS_PR_COMMON_CREATE_ACTIVITY_HEADER")}</Link>
-            </span>
-          );
-        },
-      },
+      // {
+      //   Header: t("WMS_PR_CONTROLS2_LABEL"),
+      //   disablePrtBy: true,
+      //   Cell: ({ row }) => {
+      //     return (
+      //       <span className="link">
+      //         <Link to={`/upyog-ui/citizen/wms/pma-home/${row.original.register_id}`}>{t("WMS_PR_COMMON_CREATE_ACTIVITY_HEADER")}</Link>
+      //       </span>
+      //     );
+      //   },
+      // },
     ];
   }, []);
 

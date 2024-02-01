@@ -161,7 +161,7 @@ import WmsPrId from "./pageComponents/PR/WmsPrId";
 import WmsPrBillDate from "./pageComponents/PR/WmsPrBillDate";
 import WmsPrEstNumber from "./pageComponents/PR/WmsPrEstNumber";
 import WmsPrEstWorkCost from "./pageComponents/PR/WmsPrEstWorkCost";
-import WmsPrPaymentDate from "./pageComponents/PR/WmsPrPaymentDate";
+// import WmsPrPaymentDate from "./pageComponents/PR/WmsPrPaymentDate";
 import WmsPrPrjName from "./pageComponents/PR/WmsPrPrjName";
 import WmsPrSchName from "./pageComponents/PR/WmsPrSchName";
 import WmsPrSTA from "./pageComponents/PR/WmsPrSTA";
@@ -450,7 +450,7 @@ const componentsToRegister = {
   WmsPrBillDate,
   WmsPrEstNumber,
   WmsPrEstWorkCost,
-  WmsPrPaymentDate,
+  // WmsPrPaymentDate,
   WmsPrPrjName,
   WmsPrSchName,
   WmsPrSTA,

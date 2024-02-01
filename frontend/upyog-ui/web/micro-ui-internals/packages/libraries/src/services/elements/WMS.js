@@ -248,7 +248,7 @@ PMAApplications:{
     Request({
       url: Urls.wms.PMAApplications.search,
       useCache: false,
-      method: "GET",//"POST",
+      method: "POST",//"POST",
       auth: true,
       userService: true,
       params:{...searchParams},// tenantId, ...filters, ...searchParams }//TODO:#1 Actual API needs to attach  { tenantId, ...filters, ...searchParams },
@@ -268,7 +268,7 @@ PMAApplications:{
       data: data,
       url: Urls.wms.PMAApplications.update+"/"+data.phm_id,
       useCache: false,
-      method: "PUT",
+      method: "POST",
       auth: true,
       userService: true,
       params: {  },
@@ -287,7 +287,7 @@ PMAApplications:{
     Request({
       url: Urls.wms.PMAApplications.get,
       useCache: false,
-      method: "GET",
+      method: "POST",
       auth: true,
       userService: true,
       params: { phmeme_id:phmId},
@@ -296,7 +296,7 @@ PMAApplications:{
     Request({
       url: Urls.wms.PMAApplications.count,
       useCache: false,
-      method:"GET",// "POST",
+      method:"POST",// "POST",
       auth: true,
       userService: true,
       params: {  },
@@ -367,7 +367,7 @@ PRApplications:{
     Request({
       url: Urls.wms.PRApplications.search,
       useCache: false,
-      method: "GET",//"POST",
+      method: "POST",//"POST",
       auth: true,
       userService: true,
       params:{...searchParams},// tenantId, ...filters, ...searchParams }//TODO:#1 Actual API needs to attach  { tenantId, ...filters, ...searchParams },
@@ -387,7 +387,7 @@ PRApplications:{
       data: data,
       url: Urls.wms.PRApplications.update+"/"+data.pr_id,
       useCache: false,
-      method: "PUT",
+      method: "POST",
       auth: true,
       userService: true,
       params: {  },
@@ -402,11 +402,11 @@ PRApplications:{
       userService: true,
       params: { tenantId },
     }),
-  get: (phmId,tenantId) =>
+  get: (prId,tenantId) =>
     Request({
       url: Urls.wms.PRApplications.get,
       useCache: false,
-      method: "GET",
+      method: "POST",
       auth: true,
       userService: true,
       params: { phmeme_id:prId},
@@ -415,7 +415,7 @@ PRApplications:{
     Request({
       url: Urls.wms.PRApplications.count,
       useCache: false,
-      method:"GET",// "POST",
+      method:"POST",// "POST",
       auth: true,
       userService: true,
       params: {  },

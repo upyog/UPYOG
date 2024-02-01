@@ -114,6 +114,11 @@ module.exports = function (app) {
   "/wms/wms-services/v1/pfmilestone/_search",  
   "/wms/wms-services/v1/pfmilestone/_view",
   "/wms/wms-services/v1/pfmilestone/_update",
+
+  "/wms/wms-services/v1/pregister/_create",
+  "/wms/wms-services/v1/pregister/_search",  
+  "/wms/wms-services/v1/pregister/_view",
+  "/wms/wms-services/v1/pregister/_update",
   ].forEach((location) => app.use(location, MapiProxy));
   
 

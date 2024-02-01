@@ -57,25 +57,25 @@ const DesktopList = ({ tableConfig, filterComponent, ...props }) => {
           // return GetCell(`${Math.floor(Math.random() * 100)}`);
         },
       },
-      {
-        Header: t("WMS_PHM_CONTROLS_LABEL"),
-        disablePhmtBy: true,
-        Cell: ({ row }) => {
-          console.log(row, "it is row");
-          return (
-            <span className="link">
-              <Link to={`/upyog-ui/citizen/wms/phm-details/${row.original.milestone_id}`}>{t("WMS_PHM_EDIT_LABEL")}</Link>
-            </span>
-          );
-        },
-      },
+      // {
+      //   Header: t("WMS_PHM_CONTROLS_LABEL"),
+      //   disablePhmtBy: true,
+      //   Cell: ({ row }) => {
+      //     console.log(row, "it is row");
+      //     return (
+      //       <span className="link">
+      //         <Link to={`/upyog-ui/citizen/wms/phm-details/${row.original.milestone_id}`}>{t("WMS_PHM_EDIT_LABEL")}</Link>
+      //       </span>
+      //     );
+      //   },
+      // },
       {
         Header: t("WMS_PHM_CONTROLS2_LABEL"),
         disablePhmtBy: true,
         Cell: ({ row }) => {
           return (
             <span className="link">
-              <Link to={`/upyog-ui/citizen/wms/pma-home/${row.original.phm_id}`}>{t("WMS_PHM_COMMON_CREATE_ACTIVITY_HEADER")}</Link>
+              <Link to={`/upyog-ui/citizen/wms/pma-home/${row.original.milestone_id}`}>{t("WMS_PHM_COMMON_CREATE_ACTIVITY_HEADER")}</Link>
             </span>
           );
         },

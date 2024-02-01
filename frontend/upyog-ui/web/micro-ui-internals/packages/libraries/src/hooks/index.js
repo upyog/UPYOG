@@ -271,6 +271,8 @@ import useWmsPrSearch from "./wms/pr/useWmsPrSearch";
 import useWmsPrCount from "./wms/pr/useWmsPrCount";
 import useWmsPrCreate from "./wms/pr/useWmsPrCreate";
 import useWmsPrUpdate from "./wms/pr/useWmsPrUpdate";
+import useWmsPrGet from "./wms/pr/useWmsPrGet";
+
 
 import useWmsMbSearch from "./wms/mb/useWmsMbSearch";
 import useWmsMbCount from "./wms/mb/useWmsMbCount";
@@ -594,7 +596,8 @@ const wms = {
     useWmsPrSearch:useWmsPrSearch,
     useWmsPrCreate:useWmsPrCreate,
     useWmsPrUpdate:useWmsPrUpdate,
-    useWmsPrCount:useWmsPrCount
+    useWmsPrCount:useWmsPrCount,
+    useWmsPrGet:useWmsPrGet
   },
   wsr:{
     useWmsWsrSearch:useWmsWsrSearch,

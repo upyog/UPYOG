@@ -72614,14 +72614,14 @@ export const LocalizationService = {
             "locale": "en_IN"
         },
         {
-            "code": "WMS_PR_BILL_DATE_LABEL",
+            "code": "WMS_PR_START_DATE_LABEL",
             "message": "Bill Received Date ",
             "module": "rainmaker-common",
             "locale": "en_IN"
         },
         {
-            "code": "WMS_PR_PAYMENT_DATE_LABEL",
-            "message": "Payment received date",
+            "code": "WMS_PR_END_DATE_LABEL",
+            "message": "Payment Received date",
             "module": "rainmaker-common",
             "locale": "en_IN"
         },
