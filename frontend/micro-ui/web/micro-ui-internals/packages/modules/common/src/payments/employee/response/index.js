@@ -112,19 +112,19 @@ export const SuccessfulPayment = (props) => {
     }
   };
   
-  const printpetCertificate = async () => {
-    const tenantId = Digit.ULBService.getCurrentTenantId();
-    const state = Digit.ULBService.getStateId();
-    const applicationpetDetails = await Digit.PTRService.search({ applicationNumber: consumerCode, tenantId });
-    console.log("aplllldetailll",consumerCode)
-    const generatePdfKeyForPTR = "petservicecertificate";
+  // const printpetCertificate = async () => {
+  //   const tenantId = Digit.ULBService.getCurrentTenantId();
+  //   const state = Digit.ULBService.getStateId();
+  //   const applicationpetDetails = await Digit.PTRService.search({ applicationNumber: consumerCode, tenantId });
+  //   console.log("aplllldetailll",consumerCode)
+  //   const generatePdfKeyForPTR = "petservicecertificate";
 
-    if (applicationpetDetails) {
-      let response = await Digit.PaymentService.generatePdf(state, { PetRegistrationApplications: applicationpetDetails?.PetRegistrationApplications }, generatePdfKeyForPTR);
-      const fileStore = await Digit.PaymentService.printReciept(state, { fileStoreIds: response.filestoreIds[0] });
-      window.open(fileStore[response.filestoreIds[0]], "_blank");
-    }
-  };
+  //   if (applicationpetDetails) {
+  //     let response = await Digit.PaymentService.generatePdf(state, { PetRegistrationApplications: applicationpetDetails?.PetRegistrationApplications }, generatePdfKeyForPTR);
+  //     const fileStore = await Digit.PaymentService.printReciept(state, { fileStoreIds: response.filestoreIds[0] });
+  //     window.open(fileStore[response.filestoreIds[0]], "_blank");
+  //   }
+  // };
   
 
   const convertDateToEpoch = (dateString, dayStartOrEnd = "dayend") => {
@@ -481,7 +481,7 @@ export const SuccessfulPayment = (props) => {
                 {t("CS_COMMON_PRINT_CERTIFICATE")}
               </div>
             ) : null}
-            {businessService == "pet-services" ? (
+            {/* {businessService == "pet-services" ? (
               <div className="primary-label-btn d-grid" style={{ marginLeft: "unset" }} onClick={printpetCertificate}>
                 <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
                   <path d="M0 0h24v24H0z" fill="none" />
@@ -489,7 +489,7 @@ export const SuccessfulPayment = (props) => {
                 </svg>
                 {t("CS_COMMON_PRINT_CERTIFICATE")}
               </div>
-            ) : null}
+            ) : null} */}
             {data?.[0]?.businessService === "BPA_OC" && (data?.[0]?.status === "APPROVED" || data?.[0]?.status === "PENDING_SANC_FEE_PAYMENT") ? (
               <div
                 className="primary-label-btn d-grid"
