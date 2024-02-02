@@ -12,15 +12,11 @@ import java.util.stream.Collectors;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
 import org.egov.ptr.config.PetConfiguration;
-import org.egov.ptr.models.ConstructionDetail;
 import org.egov.ptr.models.Institution;
 import org.egov.ptr.models.OwnerInfo;
 import org.egov.ptr.models.PetApplicationSearchCriteria;
 import org.egov.ptr.models.PetRegistrationApplication;
 import org.egov.ptr.models.PetRegistrationRequest;
-import org.egov.ptr.models.Property;
-import org.egov.ptr.models.PropertyCriteria;
-import org.egov.ptr.models.Unit;
 import org.egov.ptr.models.enums.CreationReason;
 import org.egov.ptr.models.enums.Status;
 import org.egov.ptr.models.workflow.BusinessService;
@@ -31,7 +27,6 @@ import org.egov.ptr.service.DiffService;
 import org.egov.ptr.service.PetRegistrationService;
 import org.egov.ptr.service.WorkflowService;
 import org.egov.ptr.util.PTConstants;
-import org.egov.ptr.web.contracts.PropertyRequest;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -47,7 +42,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
-public class PropertyValidator {
+public class PetApplicationValidator {
 
     @Autowired
     private PetConfiguration configs;
@@ -58,18 +53,14 @@ public class PropertyValidator {
     @Autowired
     private ObjectMapper mapper;
     
-    
-    @Autowired
-    private DiffService diffService;
-    
     @Autowired
     private WorkflowService workflowService;
 	
 	@Autowired
 	private PetRegistrationRepository repository;
     /**
-     * Validate the masterData and ctizenInfo of the given propertyRequest
-     * @param request PropertyRequest for create
+     * Validate the masterData and ctizenInfo of the given petRequest
+     * @param request PetRequest for create
      */
     
     public void validatePetApplication(PetRegistrationRequest petRegistrationRequest) {
@@ -81,76 +72,6 @@ public class PropertyValidator {
     public PetRegistrationApplication validateApplicationExistence(PetRegistrationApplication petRegistrationApplication) {
         return repository.getApplications(PetApplicationSearchCriteria.builder().applicationNumber(petRegistrationApplication.getApplicationNumber()).build()).get(0);
     }
-	
-    /**
-     *Checks if the codes of all fields are in the list of codes obtain from master data
-     *
-     * @param property property from PropertyRequest which are to validated
-     * @param codes Map of MasterData name to List of codes in that MasterData
-     * @param errorMap Map to fill all errors caught to send as custom Exception
-     * @return Error map containing error if existed
-     *
-     */
-    private static Map<String,String> validateCodes(Property property, Map<String,List<String>> codes, Map<String,String> errorMap){
-    	
-		if (property.getPropertyType() != null && !codes.get(PTConstants.MDMS_PT_PROPERTYTYPE).contains(property.getPropertyType())) {
-			errorMap.put("Invalid PROPERTYTYPE", "The PropertyType '" + property.getPropertyType() + "' does not exists");
-		}
-
-		if (property.getOwnershipCategory() != null && !codes.get(PTConstants.MDMS_PT_OWNERSHIPCATEGORY).contains(property.getOwnershipCategory())) {
-			errorMap.put("Invalid OWNERSHIPCATEGORY", "The OwnershipCategory '" + property.getOwnershipCategory() + "' does not exists");
-		}
-
-		if (property.getUsageCategory() != null && !codes.get(PTConstants.MDMS_PT_USAGECATEGORY).contains(property.getUsageCategory())) {
-			errorMap.put("Invalid USageCategory", "The USageCategory '" + property.getUsageCategory() + "' does not exists");
-		}
-		
-		if (!CollectionUtils.isEmpty(property.getUnits()))
-			for (Unit unit : property.getUnits()) {
-
-				if (ObjectUtils.isEmpty(unit.getUsageCategory()) || unit.getUsageCategory() != null
-						&& !codes.get(PTConstants.MDMS_PT_USAGECATEGORY).contains(unit.getUsageCategory())) {
-					errorMap.put("INVALID USAGE CATEGORY ", "The Usage CATEGORY '" + unit.getUsageCategory()
-							+ "' does not exists for unit of index : " + property.getUnits().indexOf(unit));
-				}
-
-				String constructionType = unit.getConstructionDetail().getConstructionType();
-				
-				if (!ObjectUtils.isEmpty(constructionType)
-						&& !codes.get(PTConstants.MDMS_PT_CONSTRUCTIONTYPE).contains(constructionType)) {
-					errorMap.put("INVALID CONSTRUCTION TYPE ", "The CONSTRUCTION TYPE '" + constructionType
-							+ "' does not exists for unit of index : " + property.getUnits().indexOf(unit));
-				}
-				
-				if (!ObjectUtils.isEmpty(unit.getOccupancyType())
-						&& !codes.get(PTConstants.MDMS_PT_OCCUPANCYTYPE).contains(unit.getOccupancyType())) {
-					errorMap.put("INVALID OCCUPANCYTYPE TYPE ", "The OCCUPANCYTYPE TYPE '" + unit.getOccupancyType()
-							+ "' does not exists for unit of index : " + property.getUnits().indexOf(unit));
-				}
-
-			}
-
-		if (!CollectionUtils.isEmpty(errorMap))
-			throw new CustomException(errorMap);
-
-		for (OwnerInfo owner : property.getOwners()) {
-
-			if (owner.getOwnerType() != null
-					&& !codes.get(PTConstants.MDMS_PT_OWNERTYPE).contains(owner.getOwnerType())) {
-
-				errorMap.put("INVALID OWNERTYPE", "The OwnerType '" + owner.getOwnerType() + "' does not exists");
-			}
-		}
-
-		if(!CollectionUtils.isEmpty(property.getDocuments()) && property.getDocuments().contains(null))
-			errorMap.put("INVALID ENTRY IN PROPERTY DOCS", " The proeprty documents cannot contain null values");
-		
-		
-		
-
-		return errorMap;
-
-	}
 
     /**
      * Validates if MasterData is properly fetched for the given MasterData names

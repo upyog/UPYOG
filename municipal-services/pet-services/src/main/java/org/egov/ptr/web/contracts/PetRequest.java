@@ -3,7 +3,7 @@ package org.egov.ptr.web.contracts;
 import javax.validation.Valid;
 
 import org.egov.common.contract.request.RequestInfo;
-import org.egov.ptr.models.Property;
+import org.egov.ptr.models.PetRegistrationApplication;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -24,12 +24,12 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class PropertyRequest   {
+public class PetRequest   {
 	
   @JsonProperty("RequestInfo")
   private RequestInfo requestInfo;
 
-  @JsonProperty("Property")
+  @JsonProperty("PetApplications")
   @Valid
-  private Property property;
+  private PetRegistrationApplication petApplication;
 }
