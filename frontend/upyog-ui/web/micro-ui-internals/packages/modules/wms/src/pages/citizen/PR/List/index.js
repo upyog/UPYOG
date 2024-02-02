@@ -36,8 +36,9 @@ const WmsPrList = ({ parentRoute, businessService = "WMS", initialStates = {}, f
     isupdate
   );
   const { isLoading: getLoading, isError:getIsError, error:getError, data:GetData } = Digit.Hooks.wms.pr.useWmsPrGet();
-  console.log("GetData ddd ",GetData)
-  console.log("GetData ddd WMSProjectRegisterApplication",GetData?.WMSProjectRegisterApplication)
+
+  
+  console.log(PrData,"Prrrr")
 
   useEffect(() => {
 
@@ -104,12 +105,14 @@ else
   if(PRApplications!=undefined)
   alert(JSON.stringify(PRApplications))
 } */
-  if (PrData?.WMSProjectRegisterApplication.length !== null) {
+  if (PrData?.WMSProjectRegisterApplications
+ !== null) {
     if (isMobile) {
       return (
         <MobileList
           businessService={businessService}
-          data={PrData?.WMSProjectRegisterApplication}
+          data={PrData?.WMSProjectRegisterApplications
+}
           isLoading={isLoading}
           defaultSearchParams={initialStates.searchParams}
           isSearch={isList}
@@ -138,7 +141,8 @@ else
           {isList && <Header>{t("WMS_HOME_SEARCH_RESULTS_HEADING")}</Header>}
           <DesktopList
             businessService={businessService}
-            data={PrData?.WMSProjectRegisterApplication}
+            data={PrData?.WMSProjectRegisterApplications
+}
             isLoading={isLoading}
             defaultSearchParams={initialStates.searchParams}
             isSearch={isList}

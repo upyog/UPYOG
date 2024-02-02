@@ -60,7 +60,7 @@ const GetSlaCell = (value) => {
       [t("WMS_PR_ESTWORKCOST_NAME_LABEL")]: GetCell(original?.WmsPrEstWorkCost?.estimated_work_cost || ""),
       [t("WMS_PR_STA_NAME_LABEL")]: GetCell(original?.WmsPrSTA?.sanctioned_tender_amount || ""),
       [t("WMS_PR_STATUS_LABEL")]: GetCell(original?.WmsPrStatus?.status_name || ""),
-      [t("WMS_PR_START_DATE_LABEL")]: GetCell(original?.WmsPrBillDate?.start_date || ""),
+      [t("WMS_PR_START_DATE_LABEL")]: GetCell(original?.WmsPrBillDate?.bill_received_till_date || ""),
       // [t("WMS_PR_PAYMENT_DATE_LABEL")]: GetCell(original?.WmsPrPaymentDate?.payment_received_till_date || ""),
 
       

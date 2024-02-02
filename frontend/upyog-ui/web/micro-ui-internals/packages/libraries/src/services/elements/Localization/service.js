@@ -72626,8 +72626,8 @@ export const LocalizationService = {
             "locale": "en_IN"
         },
         {
-            "code": "WMS_PR_CONTROLS2_LABEL",
-            "message": "Activities",
+            "code": "WMS_PR_CONTROLS_LABEL",
+            "message": "Change",
             "module": "rainmaker-common",
             "locale": "en_IN"
         },

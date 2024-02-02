@@ -9,7 +9,7 @@ const WmsPrBillDate = ({ t, config, onSelect, formData = {}, userType, register,
     {
       label: "WMS_PR_START_DATE_LABEL",
       type: "date",
-      name: "start_date",
+      name: "bill_received_till_date",
       validation: {
         isRequired: true,
         title: t("WMS_COMMON_START_DATE_INVALID"),

@@ -13,6 +13,7 @@ const DesktopList = ({ tableConfig, filterComponent, ...props }) => {
   const GetSlaCell = (value) => {
     return value == "INACTIVE" ? <span className="sla-cell-error">{ t(value )|| ""}</span> : <span className="sla-cell-success">{ t(value) || ""}</span>;
   };
+  console.log("props  sss ",props)
   const data = props?.data;
   const tenantId = Digit.ULBService.getCurrentTenantId();
 
@@ -20,13 +21,13 @@ const DesktopList = ({ tableConfig, filterComponent, ...props }) => {
 
   const columns = React.useMemo(() => {
     return [
-      {
-        Header: t("WMS_PR_ID_LABEL"),
-        disablePrtBy: true,
-        Cell: ({ row }) => {
-          return GetCell(`${row.original?.pr_id}`);
-        },
-      },
+      // {
+      //   Header: t("WMS_PR_ID_LABEL"),
+      //   disablePrtBy: true,
+      //   Cell: ({ row }) => {
+      //     return GetCell(`${row.original?.pr_id}`);
+      //   },
+      // },
       {
         Header: t("WMS_PR_SCH_NAME_LABEL"),
         disablePrtBy: false,
@@ -87,15 +88,16 @@ const DesktopList = ({ tableConfig, filterComponent, ...props }) => {
         Header: t("WMS_PR_START_DATE_LABEL"),
         disablePrtBy: false,
         Cell: ({ row }) => {
-          return GetCell(`${row.original?.start_date}`);
-        },
-      },{
-        Header: t("WMS_PR_PAYMENT_DATE_LABEL"),
-        disablePrtBy: false,
-        Cell: ({ row }) => {
-          return GetCell(`${row.original?.end_date}`);
+          return GetCell(`${row.original?.bill_received_till_date}`);
         },
       },
+      // ,{
+      //   Header: t("WMS_PR_PAYMENT_DATE_LABEL"),
+      //   disablePrtBy: false,
+      //   Cell: ({ row }) => {
+      //     return GetCell(`${row.original?.end_date}`);
+      //   },
+      // },
       {
         Header: t("WMS_PR_CONTROLS_LABEL"),
         disablePrtBy: true,
@@ -122,7 +124,7 @@ const DesktopList = ({ tableConfig, filterComponent, ...props }) => {
   }, []);
 
   let result;
-  if (props.isLoading) {
+  if (props?.isLoading) {
     result = <Loader />;
   } else if (data?.length === 0) {
     result = (

@@ -24,7 +24,7 @@ const WmsPrCreate = () => {
           estimated_work_cost: data?.WmsPrEstWorkCost?.estimated_work_cost,  
           sanctioned_tender_amount: data?.WmsPrSTA?.sanctioned_tender_amount,
           status_name: data?.WmsPrStatus?.status_name,
-          start_date: data?.WmsPrBillDate?.start_date,
+          bill_received_till_date: data?.WmsPrBillDate?.bill_received_till_date,
           tenantId:tenantId
         }],
       };
