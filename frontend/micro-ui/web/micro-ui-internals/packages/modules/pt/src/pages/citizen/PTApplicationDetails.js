@@ -240,6 +240,8 @@ const PTApplicationDetails = () => {
       label: t("MT_CERTIFICATE"),
       onClick: () => printCertificate(),
     });
+    
+    const reversedOwners= Array.isArray(data?.Properties?.[0]?.owners) ? data?.Properties?.[0]?.owners.slice().reverse():[];
   return (
     <React.Fragment>
       <div>
@@ -521,7 +523,7 @@ const PTApplicationDetails = () => {
               <CardSubHeader style={{ fontSize: "24px" }}>{t("PT_COMMON_PROPERTY_OWNERSHIP_DETAILS_HEADER")}</CardSubHeader>
               <div className="owner-details">
                 {Array.isArray(owners) &&
-                  owners.sort((item,item2)=>{return item?.additionalDetails?.ownerSequence - item2?.additionalDetails?.ownerSequence}).map((owner, index) => (
+                  reversedOwners.sort(()=>{return reversedOwners}).map((owner, index) => (
                     <div key={index} className="owner-details-child">
                       <CardSubHeader>
                         {owners.length != 1 && (

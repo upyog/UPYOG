@@ -1,10 +1,24 @@
 package org.egov.pgr.service;
 
 
+import static org.egov.pgr.util.PGRConstants.USERTYPE_CITIZEN;
+
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.pgr.config.PGRConfiguration;
 import org.egov.pgr.util.UserUtils;
-import org.egov.pgr.web.models.*;
+import org.egov.pgr.web.models.RequestSearchCriteria;
+import org.egov.pgr.web.models.ServiceRequest;
+import org.egov.pgr.web.models.ServiceWrapper;
+import org.egov.pgr.web.models.User;
 import org.egov.pgr.web.models.user.CreateUserRequest;
 import org.egov.pgr.web.models.user.UserDetailResponse;
 import org.egov.pgr.web.models.user.UserSearchRequest;
@@ -14,12 +28,6 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
-import static org.egov.pgr.util.PGRConstants.USERTYPE_CITIZEN;
 
 @org.springframework.stereotype.Service
 @Slf4j
@@ -53,7 +61,7 @@ public class UserService {
      * Calls user search to fetch the list of user and enriches it in serviceWrappers
      * @param serviceWrappers
      */
-    public void enrichUsers(List<ServiceWrapper> serviceWrappers){
+    public void enrichUsers(List<ServiceWrapper> serviceWrappers,RequestInfo requestInfo,String tenantId){
 
         Set<String> uuids = new HashSet<>();
 
@@ -61,7 +69,7 @@ public class UserService {
             uuids.add(serviceWrapper.getService().getAccountId());
         });
 
-        Map<String, User> idToUserMap = searchBulkUser(new LinkedList<>(uuids));
+        Map<String, User> idToUserMap = searchBulkUser(new LinkedList<>(uuids),requestInfo,tenantId);
 
         serviceWrappers.forEach(serviceWrapper -> {
             serviceWrapper.getService().setCitizen(idToUserMap.get(serviceWrapper.getService().getAccountId()));
@@ -77,6 +85,7 @@ public class UserService {
      */
     private void upsertUser(ServiceRequest request){
 
+    	log.info("in upsert");
         User user = request.getService().getCitizen();
         String tenantId = request.getService().getTenantId();
         User userServiceResponse = null;
@@ -84,13 +93,19 @@ public class UserService {
         // Search on mobile number as user name
         UserDetailResponse userDetailResponse = searchUser(userUtils.getStateLevelTenant(tenantId),null, user.getMobileNumber());
         if (!userDetailResponse.getUser().isEmpty()) {
+        	log.info("in update user");
+        	log.info("User response in search"+userDetailResponse.getUser().get(0));
             User userFromSearch = userDetailResponse.getUser().get(0);
-            if(!user.getName().equalsIgnoreCase(userFromSearch.getName())){
+            if(!user.getName().equalsIgnoreCase(userFromSearch.getName()) || !user.getEmailId().equalsIgnoreCase(userFromSearch.getEmailId())){
+            	log.info("Update user");
+
                 userServiceResponse = updateUser(request.getRequestInfo(),user,userFromSearch);
             }
             else userServiceResponse = userDetailResponse.getUser().get(0);
         }
         else {
+        	log.info("in create user");
+
             userServiceResponse = createUser(request.getRequestInfo(),tenantId,user);
         }
 
@@ -149,6 +164,7 @@ public class UserService {
     private User updateUser(RequestInfo requestInfo,User user,User userFromSearch) {
 
         userFromSearch.setName(user.getName());
+        userFromSearch.setEmailId(user.getEmailId());
         userFromSearch.setActive(true);
 
         StringBuilder uri = new StringBuilder(config.getUserHost())
@@ -195,16 +211,15 @@ public class UserService {
      * @param uuids
      * @return
      */
-    private Map<String,User> searchBulkUser(List<String> uuids){
+    private Map<String,User> searchBulkUser(List<String> uuids,RequestInfo requestInfo,String tenantId){
 
         UserSearchRequest userSearchRequest =new UserSearchRequest();
         userSearchRequest.setActive(true);
         userSearchRequest.setUserType(USERTYPE_CITIZEN);
-
-
+        userSearchRequest.setRequestInfo(requestInfo);
+        userSearchRequest.setTenantId(tenantId);
         if(!CollectionUtils.isEmpty(uuids))
             userSearchRequest.setUuid(uuids);
-
 
         StringBuilder uri = new StringBuilder(config.getUserHost()).append(config.getUserSearchEndpoint());
         UserDetailResponse userDetailResponse = userUtils.userCall(userSearchRequest,uri);

@@ -41,7 +41,8 @@ const getAddress = (address, t) => {
 const getOwnerNames = (propertyData) => {
   const getActiveOwners = propertyData?.owners?.filter(owner => owner?.active);
   const getOwnersList = getActiveOwners?.map(activeOwner => activeOwner?.name)?.join(",");
-  return getOwnersList ? getOwnersList : t("NA");
+  return getOwnersList ? getOwnersList.split(",").reverse().join(",") : t("NA");
+  
 }
 
 const checkUserExist = async (userInfo) => {
@@ -358,6 +359,7 @@ export const WSSearch = {
           }
         },}, },
       ],
+     
       additionalDetails: {
         redirectUrl: {
           title: t("WS_VIEW_PROPERTY_DETAILS"),

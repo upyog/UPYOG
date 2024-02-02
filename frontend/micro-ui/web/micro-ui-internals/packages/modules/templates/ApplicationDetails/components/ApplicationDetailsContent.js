@@ -48,6 +48,9 @@ function ApplicationDetailsContent({
 }) {
   const { t } = useTranslation();
 
+const ownersSequences= applicationDetails?.applicationData?.owners
+console.log("appl", applicationDetails)
+
   function OpenImage(imageSource, index, thumbnailsToShow) {
     window.open(thumbnailsToShow?.fullImage?.[0], "_blank");
   }

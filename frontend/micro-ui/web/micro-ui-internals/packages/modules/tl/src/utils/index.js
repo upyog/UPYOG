@@ -943,9 +943,12 @@ export const convertEpochToDateDMY = (dateEpoch) => {
 };
 
 export const getOwnersForNewApplication = (formdata,t) => {
+ 
+
+const reversedOwners= Array.isArray(formdata?.cpt?.details?.owners) ? formdata?.cpt?.details?.owners.slice().reverse() : [];
   let owners = [];
   if(formdata?.ownershipCategory?.code?.includes("SINGLEOWNER") || formdata?.ownershipCategory?.code?.includes("MULTIPLEOWNER"))
-  formdata?.cpt?.details?.owners?.map((ow) => {
+ reversedOwners?.map((ow) => {
     owners.push({
       name: ow?.name,
       designation: "",
@@ -985,8 +988,9 @@ export const getOwnersForNewApplication = (formdata,t) => {
 
 export const getOwnersfromProperty = (formdata) => {
 let owners = [];
+const reversedOwners= Array.isArray(formdata?.cpt?.details?.owners) ? formdata?.cpt?.details?.owners.slice().reverse() : [];
 if((formdata?.ownershipCategory?.code?.includes("SINGLEOWNER") || formdata?.ownershipCategory?.code?.includes("MULTIPLEOWNER")))
-  formdata?.cpt?.details?.owners?.map((ow) => {
+  reversedOwners?.map((ow) => {
     owners.push({
       name: ow?.name,
       fatherOrHusbandName: ow?.fatherOrHusbandName,
