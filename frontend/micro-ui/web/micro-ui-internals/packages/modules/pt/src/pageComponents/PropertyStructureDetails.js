@@ -233,7 +233,7 @@ console.log("fields",fields)
       onSelect={goNext}
       onSkip={onSkip}
       t={t}
-      isDisabled={false}
+      isDisabled={!fields.structureType || !fields.ageOfProperty}
     >
         
           <div key={`unique`}>
