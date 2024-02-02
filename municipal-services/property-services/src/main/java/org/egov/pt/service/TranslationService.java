@@ -44,6 +44,12 @@ public class TranslationService {
 
         Map<String, Object> addressMap = new HashMap<>();
         Map<String, Object> localityMap = new HashMap<>();
+        
+        Map<String, Object> typeOfRoadMap = new HashMap();
+        typeOfRoadMap.put("code", property.getAddress().getTypeOfRoad().getCode());
+        addressMap.put("typeOfRoad",typeOfRoadMap );
+        
+        
         localityMap.put("area",property.getAddress().getLocality().getArea());
         localityMap.put("code",property.getAddress().getLocality().getCode());
         addressMap.put("locality",localityMap);
@@ -98,7 +104,8 @@ public class TranslationService {
         propertyDetail.put("propertySubType", propertySubType);
         propertyDetail.put("assessmentNumber", assessment.getAssessmentNumber());
         propertyDetail.put("assessmentDate", assessment.getAssessmentDate());
-
+        
+        propertyDetail.put("address", addressMap);
         if(assessment.getAdditionalDetails()!=null){
 
             try{
@@ -141,7 +148,8 @@ public class TranslationService {
                 unitMap.put("unitArea", unit.getConstructionDetail().getBuiltUpArea());
                 unitMap.put("arv", unit.getArv());
                 unitMap.put("occupancyType", unit.getOccupancyType());
-
+                unitMap.put("structureType", unit.getStructureType());
+                unitMap.put("ageOfProperty", unit.getAgeOfProperty());
                 String[] masterData = unit.getUsageCategory().split("\\.");
 
                 if(masterData.length >= 1)
