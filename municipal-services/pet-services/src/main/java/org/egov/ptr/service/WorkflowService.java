@@ -7,12 +7,12 @@ import java.util.Optional;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.ptr.config.PetConfiguration;
-import org.egov.ptr.models.Assessment;
+//import org.egov.ptr.models.Assessment;
 import org.egov.ptr.models.PetRegistrationApplication;
 import org.egov.ptr.models.PetRegistrationRequest;
 import org.egov.ptr.models.ProcessInstance;
 import org.egov.ptr.models.ProcessInstanceRequest;
-import org.egov.ptr.models.Property;
+//import org.egov.ptr.models.Property;
 import org.egov.ptr.models.User;
 import org.egov.ptr.models.Workflow;
 import org.egov.ptr.models.enums.CreationReason;
@@ -23,7 +23,7 @@ import org.egov.ptr.models.workflow.ProcessInstanceResponse;
 import org.egov.ptr.models.workflow.State;
 import org.egov.ptr.repository.ServiceRequestRepository;
 import org.egov.ptr.util.PropertyUtil;
-import org.egov.ptr.web.contracts.PropertyRequest;
+//import org.egov.ptr.web.contracts.PropertyRequest;
 import org.egov.ptr.web.contracts.RequestInfoWrapper;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -151,24 +151,24 @@ public class WorkflowService {
 	 * 
 	 * @param request
 	 */
-	public State updateWorkflow(PropertyRequest request, CreationReason creationReasonForWorkflow) {
-
-		State state= new State();
-//		Property property = request.getProperty();
-//		
-//		ProcessInstanceRequest workflowReq = utils.getWfForPropertyRegistry(request, creationReasonForWorkflow);
-//		State state = callWorkFlow(workflowReq);
-//		
-//		if (state.getApplicationStatus().equalsIgnoreCase(configs.getWfStatusActive()) && property.getPropertyId() == null) {
-//			
-//			String pId = utils.getIdList(request.getRequestInfo(), property.getTenantId(), configs.getPropertyIdGenName(), configs.getPropertyIdGenFormat(), 1).get(0);
-//			request.getProperty().setPropertyId(pId);
-//		}
-//		
-//		request.getProperty().setStatus(Status.fromValue(state.getApplicationStatus()));
-//		request.getProperty().getWorkflow().setState(state);
-		return state;
-	}
+//	public State updateWorkflow(PropertyRequest request, CreationReason creationReasonForWorkflow) {
+//
+//		State state= new State();
+////		Property property = request.getProperty();
+////		
+////		ProcessInstanceRequest workflowReq = utils.getWfForPropertyRegistry(request, creationReasonForWorkflow);
+////		State state = callWorkFlow(workflowReq);
+////		
+////		if (state.getApplicationStatus().equalsIgnoreCase(configs.getWfStatusActive()) && property.getPropertyId() == null) {
+////			
+////			String pId = utils.getIdList(request.getRequestInfo(), property.getTenantId(), configs.getPropertyIdGenName(), configs.getPropertyIdGenFormat(), 1).get(0);
+////			request.getProperty().setPropertyId(pId);
+////		}
+////		
+////		request.getProperty().setStatus(Status.fromValue(state.getApplicationStatus()));
+////		request.getProperty().getWorkflow().setState(state);
+//		return state;
+//	}
 
 
 	/**
