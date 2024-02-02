@@ -1,3 +1,4 @@
+import { ComplaintDetails } from "../pages/employee/ComplaintDetails";
 
  const getMohallaLocale = (value = "", tenantId = "") => {
   let convertedValue = convertDotValues(tenantId);
@@ -64,6 +65,10 @@ const getPGRcknowledgementData = async (complaintDetails,tenantInfo, t) => {
               {
                 title: t("CS_COMPLAINT_SUB_TYPE"),
                 value: complaintDetails?.details?.CS_ADDCOMPLAINT_COMPLAINT_SUB_TYPE,
+              },
+              {
+                title: t("CS_COMPLAINT_PRIORITY_LEVEL"),
+                value: complaintDetails?.service?.priority,
               },
               {
                 title: t("CS_COMPLAINT_ADDITIONAL_DETAILS"),

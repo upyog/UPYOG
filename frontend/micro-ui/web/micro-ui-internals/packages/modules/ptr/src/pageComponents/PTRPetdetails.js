@@ -46,7 +46,7 @@ const PTRPetdetails = ({ config, onSelect, userType, formData, setError, formSta
   const { data: Menu } = Digit.Hooks.ptr.usePTRPetMDMS(stateId, "PetService", "PetType");
 
   const { data: Breed_Type } = Digit.Hooks.ptr.useBreedTypeMDMS(stateId, "PetService", "BreedType");  // hooks for breed type
-  //console.log("breeedddddd",Breed_Type)
+  
   let menu = [];   //variable name for pettype
   let breed_type = [];
   // variable name for breedtype
@@ -56,7 +56,7 @@ const PTRPetdetails = ({ config, onSelect, userType, formData, setError, formSta
       menu.push({ i18nKey: `PTR_PET_${petone.code}`, code: `${petone.code}`, value: `${petone.name}` });
     });
 
-  //console.log("Menu", menu)
+  
 
 
 
@@ -88,8 +88,6 @@ const PTRPetdetails = ({ config, onSelect, userType, formData, setError, formSta
 
   useEffect(() => {
     onSelect(config?.key, pets);
-    // we need to call the breed type hook here and apply the conditional expression to get the data according to selection 
-
   }, [pets]);
 
 

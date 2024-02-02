@@ -73,6 +73,7 @@ const WSWaterConnectionDetails = ({ t, config, userType, onSelect, formData }) =
             gender: formData?.ConnectionHolderDetails?.gender?.code,
             mobileNumber: formData?.ConnectionHolderDetails?.mobileNumber,
             name: formData?.ConnectionHolderDetails?.name,
+            emailId: formData?.ConnectionHolderDetails?.emailId,
             ownerType: formData?.ConnectionHolderDetails?.specialCategoryType?.code || "NONE",
             relationship: formData?.ConnectionHolderDetails?.relationship?.code,
             sameAsPropertyAddress: false,

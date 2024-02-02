@@ -454,7 +454,7 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
                     name="email"
                     value={email}
                     onChange={(e)=>setUserEmailAddress(e.target.value)}
-                    disable={!editScreen}
+                    disable={editScreen}
                   />
                   {errors?.emailAddress && <CardLabelError> {errors?.emailAddress?.message} </CardLabelError>}
                 </div>

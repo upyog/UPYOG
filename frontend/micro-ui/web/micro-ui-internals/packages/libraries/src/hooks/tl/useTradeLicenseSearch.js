@@ -5,6 +5,7 @@ const useTradeLicenseSearch = ({ tenantId, filters, auth }, config = {}) => {
   const client = useQueryClient();
 
   const args = tenantId ? { tenantId, filters, auth } : { filters, auth };
+  console.log("useTradeLicenseSearch",filters)
   const { isLoading, error, data } = useQuery(["tradeSearchList", tenantId, filters], () => Digit.TLService.TLsearch(args), config);
   useEffect (() => {
     if(config?.filters?.tenantId)

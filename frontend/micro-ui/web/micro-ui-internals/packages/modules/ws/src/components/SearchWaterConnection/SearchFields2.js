@@ -12,7 +12,7 @@ const SearchFields = ({ register, control, reset, tenantId, t }) => {
 
   const propsForOldConnectionNumberNpropertyId = {
     pattern:  {
-      value: "[A-Za-z]{2}\-[A-Za-z]{2}\-[0-9]{4}\-[0-9]{4}\-[0-9]{2}\-[0-9]{2}\-[0-9]{6}|[A-Za-z]{2}\-[A-Za-z]{2}\-[0-9]{4}\-[0-9]{4}\-[0-9]{2}\-[0-9]{2}\-[0-9]{6}|[A-Za-z]{2}\-[A-Za-z]{2}\-[0-9]{4}\-[0-9]{2}\-[0-9]{2}\-[0-9]{6}",
+      value: "",
     },
     title: t("ERR_DEFAULT_INPUT_FIELD_MSG"),
   };
@@ -25,7 +25,7 @@ const SearchFields = ({ register, control, reset, tenantId, t }) => {
       </SearchField>
 
       <SearchField className="submit">
-        <SubmitBar label={t("WS_SEARCH_CONNECTION_SEARCH_AND_DOWNLOAD_BUTTON")} submit />
+        <SubmitBar label={t("WS_SEARCH_CONNECTION_SEARCH_INTEGRATED_BUTTON")} submit />
         <p
           onClick={() => {
             reset({

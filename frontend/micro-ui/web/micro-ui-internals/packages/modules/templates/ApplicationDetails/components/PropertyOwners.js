@@ -3,10 +3,11 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 
 function PropertyOwners({ owners }) {
+  const reversedOwners= Array.isArray(owners) ? owners.slice().reverse():[];
   const { t } = useTranslation();
 
   const checkLocation = true;
-  const checkOwnerLength = owners?.length || 1;
+  const checkOwnerLength = reversedOwners?.length || 1;
   let cardStyles = { marginTop: "19px" };
   let statusTableStyles = { position: "relative", padding: "8px" };
   let rowContainerStyle = { justifyContent: "space-between", fontSize: "16px", lineHeight: "19px", color: "#0B0C0C" };
@@ -36,7 +37,7 @@ function PropertyOwners({ owners }) {
   return (
     <React.Fragment>
       <div className="owner-details">
-      {owners.map((owner, index) => (
+      {reversedOwners.map((owner, index) => (
         <div key={t(owner?.title)} style={cardStyles} className="owner-details-child">
           {/* TODO, Later will move to classes */}
           <CardSubHeader

@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import PetApplication from "./pet-application";
 
-export const PetMyApplications = () => {
+export const PTRMyApplications = () => {
   const { t } = useTranslation();
   const tenantId = Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();
   const user = Digit.UserService.getUser().info;
@@ -39,8 +39,6 @@ export const PetMyApplications = () => {
 
     if(foundValue)
     return t("CS_CF_VIEW")
-    else if(!foundValue && curservice?.status?.includes("ACTIVE"))
-    return t("CS_CF_RATE_US")
     else
     return t("CS_CF_TRACK")
   }

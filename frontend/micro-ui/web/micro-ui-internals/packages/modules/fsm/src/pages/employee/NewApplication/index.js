@@ -44,14 +44,18 @@ export const NewApplication = ({ parentUrl, heading }) => {
   const onFormValueChange = (setValue, formData) => {
     console.log("ProID", formData)
     if (
-      formData?. propertyID &&
+      
       formData?.propertyType &&
       formData?.subtype &&
       formData?.address?.locality?.code &&
       formData?.tripData?.vehicleType &&
       formData?.channel &&
       formData?.pitType &&
-      (formData?.tripData?.amountPerTrip || formData?.tripData?.amountPerTrip === 0)
+      formData?.tripData?.roadWidth &&
+      formData?.tripData?.distancefromroad &&
+      formData?. address?.street &&
+      formData?.address?.doorNo &&
+      (formData?.tripData?.amountPerTrip || formData?.tripData?.amountPerTrip === 0 || formData?.tripData?.undefined?.amountPerTrip)
     ) {
       setSubmitValve(true);
       const pitDetailValues = formData?.pitDetail ? Object.values(formData?.pitDetail).filter((value) => value > 0) : null;
@@ -91,14 +95,15 @@ export const NewApplication = ({ parentUrl, heading }) => {
     const pitDimension = data?.pitDetail;
     const applicantName = data.applicationData.applicantName;
     const mobileNumber = data.applicationData.mobileNumber;
+    const emailId = data.applicationData.emailId;
     const pincode = data?.address?.pincode;
     const street = data?.address?.street?.trim();
     const doorNo = data?.address?.doorNo?.trim();
     const slum = data?.address?.slum;
     const landmark = data?.address?.landmark?.trim();
-    const propertyID = data.propertyID. propertyID;
+    const propertyID = data?.propertyID?.propertyID;
     const noOfTrips = data?.tripData?.noOfTrips;
-    const amount = data.tripData.amountPerTrip;
+    const amount = data.tripData.amount || data?.tripData?.undefined?.amount;
     const cityCode = data?.address?.city?.code;
     const city = data?.address?.city?.name;
     const state = data?.address?.city?.state;
@@ -115,6 +120,7 @@ export const NewApplication = ({ parentUrl, heading }) => {
           name: applicantName,
           mobileNumber,
           gender: gender,
+          emailId:emailId
         },
         tenantId: tenantId,
         sanitationtype: sanitationtype,

@@ -2,6 +2,7 @@ export const Complaint = {
   create: async ({
     cityCode,
     complaintType,
+    priorityLevel,
     description,
     landmark,
     city,
@@ -13,6 +14,7 @@ export const Complaint = {
     localityName,
     uploadedImages,
     mobileNumber,
+    emailId,
     name,
   }) => {
     const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -20,6 +22,7 @@ export const Complaint = {
       service: {
         tenantId: cityCode,
         serviceCode: complaintType,
+        priority : priorityLevel.code,
         description: description,
         additionalDetail: {},
         source: Digit.Utils.browser.isWebview() ? "mobile" : "web",
@@ -48,6 +51,7 @@ export const Complaint = {
         name: name,
         type: "CITIZEN",
         mobileNumber: mobileNumber,
+        emailId:emailId,
         roles: [
           {
             id: null,

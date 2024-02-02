@@ -93,7 +93,6 @@ const Inbox = ({
   };
 
   if (rest?.data?.length !== null) {
-    console.log("ressssss",rest)
     if (isMobile) {
       return (
         <MobileInbox

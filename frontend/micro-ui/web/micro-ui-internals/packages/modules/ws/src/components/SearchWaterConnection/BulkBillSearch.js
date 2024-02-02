@@ -1,20 +1,106 @@
-import React, { Fragment, useState,useEffect, useCallback, useMemo } from "react";
-import { SearchForm, Table, Card, Loader, Header,Toast } from "@egovernments/digit-ui-react-components";
+import React, { Fragment, useState, useEffect, useCallback, useMemo } from "react";
+import { SearchForm, Table, Card, CardText, Loader, Header, Toast, DownloadBtnCommon, UploadFile, SubmitBar, Modal} from "@egovernments/digit-ui-react-components";
 import { useForm, Controller } from "react-hook-form";
-import SearchFields from "./SearchFields";
+import BulkBillSearchFields from "./BulkBillSearchFields";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import MobileSearchWater from "./MobileSearchWater";
 import { useHistory } from "react-router-dom";
+import { convertDateToEpoch } from "../../utils/index"
+import * as XLSX from "xlsx";
 const BulkBillSearch = ({ tenantId, onSubmit, data, count, resultOk, businessService, isLoading }) => {
-  const history = useHistory()
-  const [result,setResult]=  useState([])
   const [showToast, setShowToast] = useState(null);
-  const replaceUnderscore = (str) => {
-    str = str.replace(/_/g, " ");
-    return str;
+  const [showModal, setModalReject] = useState(null);
+  const [uploadedFile, setUploadedFile] = useState(() => null);
+  const [file, setFile] = useState("")
+  const [meterReadingData, setMeterReadingData] = useState([])
+  const [rejectedReading, setRejectedReading] = useState([])
+  const [isLoadingBulkMeterReading, setIsLoadingBulkMeterReading] =useState(false)
+  function selectfile(e) {
+    e.preventDefault()
+    setFile(e.target.files[0]);
+    readExcel(e.target.files[0]);
+    setUploadedFile("bulk");
+
+  }
+  const {
+    isLoading: updatingMeterConnectionLoading,
+    isError: updateMeterConnectionError,
+    data: updateMeterConnectionResponse,
+    error: updateMeterError,
+    mutate: meterReadingMutation,
+  } = Digit.Hooks.ws.useBulkMeterReadingCreateAPI(businessService);
+
+  const readExcel = async (file) => {
+    const promise = new Promise((resolve, reject) => {
+      const fileReader = new FileReader();
+      fileReader.readAsArrayBuffer(file);
+
+      fileReader.onload = (e) => {
+        const bufferArray = e.target.result;
+
+        const wb = XLSX.read(bufferArray, { type: "buffer" });
+
+        const wsname = wb.SheetNames[0];
+
+        const ws = wb.Sheets[wsname];
+
+        const data = XLSX.utils.sheet_to_json(ws);
+
+        const meterReadingListFilter = data.map((meter) => {
+
+          return { "billingPeriod": meter.billingPeriod, "currentReading": meter.currentReading, "currentReadingDate": meter.currentReadingDate, "lastReading": meter.lastReading, "lastReadingDate": meter.lastReadingDate, "connectionNo": meter.connectionNo, "meterStatus": meter.meterStatus, tenantId: "pg.citya" }
+        })
+        const meterReadingList = meterReadingListFilter.filter((item) => {
+          return item.currentReading >= item.lastReading && ExcelDateToJSDate(item?.currentReadingDate) > item.lastReadingDate
+        })
+        const rejectedReading =
+          meterReadingListFilter.filter((element) => !meterReadingList.includes(element));
+        console.log("reading list", meterReadingList, rejectedReading)
+        setRejectedReading(rejectedReading)
+        resolve(meterReadingList, rejectedReading);
+      };
+
+      fileReader.onerror = (error) => {
+        reject(error);
+      };
+    });
+
+    promise.then(async (meterReading, rejectedReading) => {
+      setMeterReadingData(meterReading)
+
+    });
   };
 
+  const ExcelDateToJSDate = (date) => {
+    const e0date = new Date(0); // epoch "zero" date
+    const offset = e0date.getTimezoneOffset(); // tz offset in min
+
+    // calculate Excel xxx days later, with local tz offset
+    const jsdate = new Date(0, 0, date - 1, 0, -offset, 0);
+    return Digit.Utils.pt.convertDateToEpoch(jsdate?.toJSON()?.split("T")[0])
+  }
+  const handleBulkSubmit = async () => {
+    if (meterReadingMutation) {
+      setIsLoadingBulkMeterReading(true)
+      let meterReadingsPayload = { meterReadingList: meterReadingData };
+      await meterReadingMutation(meterReadingsPayload, {
+        onError: (error, variables) => {
+          setIsLoadingBulkMeterReading(false)
+          setShowToast({ error: true, label: error?.message ? error.message : error });
+          setTimeout(closeToast, 5000);
+        },
+        onSuccess: async (data, variables) => {
+          setIsLoadingBulkMeterReading(false)
+          setShowToast({ key: "success", label: "WS_METER_READING_ADDED_SUCCESFULLY" });
+          setTimeout(closeToast, 3000);
+          setTimeout(() => {
+            window.location.reload();
+          }, 5000);
+        },
+      });
+    }
+  }
   const convertEpochToDate = (dateEpoch) => {
     if (dateEpoch == null || dateEpoch == undefined || dateEpoch == "") {
       return "NA";
@@ -27,33 +113,58 @@ const BulkBillSearch = ({ tenantId, onSubmit, data, count, resultOk, businessSer
     day = (day > 9 ? "" : "0") + day;
     return `${day}/${month}/${year}`;
   };
-  useEffect(async () => {
-    const payload = {
-      "BulkBillCriteria": {
-        "tenantId": "pg.citya"
-      }
-    }
-    let data = await Digit.WSService.WSSewsearchDemand(payload, window.location.href.includes("ws/sewerage/search-demand") ? "sw" : "ws")
-    setResult(data.connection)
-  }, [])
+  const closeModal = () => {
+    setModalReject(false)
+  }
+  const setModal = () => {
+    setModalReject(false)
+    handleBulkSubmit()
+  }
+  const Heading = (props) => {
+    return <h1 className="heading-m">{props.label}</h1>;
+  };
+
+  const Close = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#FFFFFF">
+      <path d="M0 0h24v24H0V0z" fill="none" />
+      <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z" />
+    </svg>
+  );
+
+  const CloseBtn = (props) => {
+    return (
+      <div className="icon-bg-secondary" onClick={props.onClick}>
+        <Close />
+      </div>
+    );
+  };
   const { t } = useTranslation();
   const { register, control, handleSubmit, setValue, getValues, reset } = useForm({
     defaultValues: {
       offset: 0,
       limit: 10,
-      sortBy: "commencementDate",
+      sortBy: "consumerNo",
       sortOrder: "DESC",
       searchType: "CONNECTION",
+      locality: "",
+      tenantId: ""
     },
   });
-
+  const DownloadBtn = (props) => {
+    return (
+      <div onClick={props.onClick}>
+        <DownloadBtnCommon />
+      </div>
+    );
+  };
   useEffect(() => {
     register("offset", 0);
     register("limit", 10);
     register("sortBy", "commencementDate");
     register("searchType", "CONNECTION");
     register("sortOrder", "DESC");
-    register("propertyId", "");
+    register("locality", "");
+    register("tenantId", "");
   }, [register]);
 
   const onSort = useCallback((args) => {
@@ -75,236 +186,108 @@ const BulkBillSearch = ({ tenantId, onSubmit, data, count, resultOk, businessSer
     setValue("offset", getValues("offset") - getValues("limit"));
     handleSubmit(onSubmit)();
   }
+  const closeToast = () => {
+    setShowToast(null);
+  };
   const isMobile = window.Digit.Utils.browser.isMobile();
-
+  const handleProceed = () => {
+    if (rejectedReading?.length > 0) {
+      setModalReject(true)
+    }
+  }
   if (isMobile) {
-    return <MobileSearchWater {...{ Controller, register, control, t, reset, previousPage, handleSubmit, tenantId, data, onSubmit }} />;
+    return <MobileSearchWater {...{ Controller, register, control, t, reset, previousPage, handleSubmit, tenantId, data, onSubmit, setValue }} />;
   }
   //need to get from workflow
   const GetCell = (value) => <span className="cell-text">{value}</span>;
-  const columns = useMemo(
-    () => [
-      {
-        Header: t("WS_COMMON_TABLE_COL_CONSUMER_NO_LABEL"),
-        disableSortBy: true,
-        accessor: "connectionNo",
-        Cell: ({ row }) => {
-          return (
-            <div>
-              {row.original["connectionNo"] ? (
-                <span className={"link"}>
-                  <Link
-                    to={`/digit-ui/employee/ws/connection-details?applicationNumber=${row.original["connectionNo"]}&tenantId=${tenantId}&service=${
-                      row.original?.["service"]
-                      }&connectionType=${row.original?.["connectionType"]}&due=${row.original?.due || 0}&from=WS_SEWERAGE_CONNECTION_SEARCH_LABEL`}
-                  >
-                    {row.original["connectionNo"] || "NA"}
-                  </Link>
-                </span>
-              ) : (
-                <span>{t("NA")}</span>
-              )}
-            </div>
-          );
-        },
-      },
-      {
-        Header: t("WS_COMMON_TABLE_COL_SERVICE_LABEL"),
-        disableSortBy: true,
-        Cell: ({ row }) => {
-          return GetCell(t(`WS_${row.original?.["service"]}`));
-        },
-      },
-
-      {
-        Header: t("WS_COMMON_TABLE_COL_OWN_NAME_LABEL"),
-        disableSortBy: true,
-        Cell: ({ row }) => {
-          return GetCell(row?.original?.connectionHolders?.map((owner) => owner?.name).join(",") ? row?.original?.connectionHolders?.map((owner) => owner?.name).join(",") : `${row.original?.["owner"] || "NA"}`);
-        },
-      },
-      {
-        Header: t("WS_COMMON_TABLE_COL_STATUS_LABEL"),
-        disableSortBy: true,
-        Cell: ({ row }) => {
-          return GetCell(t(`WS_${row.original?.["status"]?.toUpperCase()}`));
-        },
-      },
-      {
-        Header: t("WS_COMMON_TABLE_COL_AMT_DUE_LABEL"),
-        disableSortBy: true,
-        Cell: ({ row }) => {
-          if(row?.original?.["due"] <= 0)
-          {
-            return GetCell(`${row.original?.["due"]}`);
-          }
-          else {
-            return GetCell(`${row.original?.["due"] || "NA"}`);
-          }
-          
-        },
-      },
-      {
-        Header: t("WS_COMMON_TABLE_COL_ADDRESS"),
-        disableSortBy: true,
-        Cell: ({ row }) => {
-          return GetCell(`${row.original?.["address"] || "NA"}`);
-        },
-      },
-      {
-        Header: t("WS_COMMON_TABLE_COL_DUE_DATE_LABEL"),
-        disableSortBy: true,
-        Cell: ({ row }) => {
-          const status = row.original?.["status"]?.toUpperCase() || "";
-          const dueDate = row.original?.dueDate === "NA" ? t("WS_NA") : convertEpochToDate(row.original?.dueDate);
-          return GetCell(status === "INACTIVE" ? t("WS_NA") : t(`${dueDate}`));
-        },
-      },
-
-      {
-        Header: t("WS_COMMON_TABLE_COL_ACTION_LABEL"),
-        disableSortBy: true,
-        Cell: ({ row }) => {
-          const amount = row.original?.due;
-
-          if (amount || amount == 0) {
-            return GetCell(getActionItem(row.original?.status, row));
-          } else {
-            return GetCell(t(`${"WS_NA"}`));
-          }
-        },
-      },
-    ],
-    []
-  );
-  const columns2 = useMemo(
-    () => [
-      {
-        Header: t("WS_COMMON_TABLE_COL_CONSUMER_NO_LABEL"),
-        disableSortBy: true,
-        accessor: "connectionNo",
-        Cell: ({ row }) => {
-          return (
-            <div>
-              {row.original["connectionNo"] ? (
-                <span className={"link"}>
-                  <Link
-                    to={`/digit-ui/employee/ws/connection-details?applicationNumber=${row.original["connectionNo"]}&tenantId=${tenantId}&service=${
-                      row.original?.["service"]
-                      }&connectionType=${row.original?.["connectionType"]}&due=${row.original?.due || 0}&from=WS_SEWERAGE_CONNECTION_SEARCH_LABEL`}
-                  >
-                    {row.original["connectionNo"] || "NA"}
-                  </Link>
-                </span>
-              ) : (
-                <span>{t("NA")}</span>
-              )}
-            </div>
-          );
-        },
-      },
-      {
-        Header: t("WS_COMMON_TABLE_COL_applicationNo_LABEL"),
-        disableSortBy: true,
-        Cell: ({ row }) => {
-          return (<div>{row.original["applicationNo"]}</div>);
-        },
-      },
-
-      {
-        Header: t("WS_COMMON_TABLE_COL_propertyId_LABEL"),
-        disableSortBy: true,
-        Cell: ({ row }) => {
-          return GetCell(t(`WS_${row.original?.["propertyId"]?.toUpperCase()}`));
-        },
-      },
-  
-
-      {
-        Header: t("WS_COMMON_TABLE_COL_ACTION_LABEL"),
-        disableSortBy: true,
-        Cell: ({ row }) => {
-          return GetCell(generateDemand1(row))
-            //return (<div style={{cursor :"pointer", color :"#a82227"}}>{t(`${"WS_COMMON_COLLECT_DEMAND"}`)} </div>)
-          } 
-      },
-    ],
-    []
-  );
-
-  const generateDemand1 = (row) => {
-    return (
-        <div>
-            <span className="link">
-                <button onClick={() => { generateDemand(row) }}>
-                    {t(`${"WS_COMMON_COLLECT_DEMAND"}`)}{" "}
-                </button>
-            </span>
-        </div>
-    )
-};
-  const generateDemand = async (row) => {
-    const payload = {
-      "BulkBillCriteria": {
-        "tenantId": "pg.citya",
-        "consumerCode": row.original["connectionNo"]
-      }
-    }
-    let data = await Digit.WSService.WSSewsearchDemandGen(payload, window.location.href.includes("ws/sewerage/search-demand") ? "sw" : "ws")
-
-    setShowToast({
-      label: `${data}`
-  })
-    history.push(`/digit-ui/employee/payment/collect/SW/${encodeURIComponent(
-      row.original?.["connectionNo"])}/${row.original?.["tenantId"]}?tenantId=${row.original?.["tenantId"]}?workflow=WS&ISWSCON`)
-
-  }
-  const getActionItem = (status, row) => {
-    const userInfo = Digit.UserService.getUser();
-    const userRoles = userInfo.info.roles.map((roleData) => roleData.code);
-    const isUserAllowedToAddMeterReading = userRoles.filter(role => (role === "WS_CEMP" || role === "SW_CEMP")).length > 0
-    if(!isUserAllowedToAddMeterReading) return null
-    switch (status) {
-      case "Active":
-        return (
-          <div>
-            <span className="link">
-              {row.original?.service === "WATER" ? (
-                <Link
-                  to={{
-                    pathname: `/digit-ui/employee/payment/collect/${row.original?.["service"] === "WATER" ? "WS" : "SW"}/${encodeURIComponent(
-                      row.original?.["connectionNo"]
-                    )}/${row.original?.["tenantId"]}?tenantId=${row.original?.["tenantId"]}?workflow=WS&ISWSCON`,
-                  }}
-                >
-                  {t(`${"WS_COMMON_COLLECT_LABEL"}`)}{" "}
-                </Link>
-              ) : (
-                <Link
-                  to={{
-                    pathname: `/digit-ui/employee/payment/collect/${row.original?.["service"] === "WATER" ? "WS" : "SW"}/${encodeURIComponent(
-                      row.original?.["connectionNo"]
-                    )}/${row.original?.["tenantId"]}?tenantId=${row.original?.["tenantId"]}?workflow=SW&ISWSCON`,
-                  }}
-                >
-                  {t(`${"WS_COMMON_COLLECT_LABEL"}`)}{" "}
-                </Link>
-              )}
-            </span>
-          </div>
-        );
+  const handleExcelDownload = (e, tabData) => {
+    e.preventDefault()
+    if (tabData?.[0] !== undefined) {
+      return Digit.Download.Excel(tabData, "Bulk-Bill");
     }
   };
+  const columns = useMemo(
+    () => [
 
+      {
+        Header: t("BILLING_CYCLE"),
+        disableSortBy: true,
+        Cell: ({ row }) => {
+          return GetCell(row.original?.["billingPeriod"]);
+        },
+      },
+      {
+        Header: t("WS_COMMON_TABLE_COL_CONSUMER_NO_LABEL"),
+        disableSortBy: true,
+        accessor: "connectionNo",
+        Cell: ({ row }) => {
+          return (
+            <div>
+              {row.original["connectionNo"] ? (
+                <span>
+                  {row.original["connectionNo"] || "NA"}
+
+                </span>
+              ) : (
+                <span>{t("NA")}</span>
+              )}
+            </div>
+          );
+        },
+      },
+      {
+        Header: t("LAST_READING"),
+        disableSortBy: true,
+        Cell: ({ row }) => {
+          return GetCell(row.original?.["lastReading"]);
+        },
+
+      },
+      {
+        Header: t("METER_READING_DATE"),
+        disableSortBy: true,
+        Cell: ({ row }) => {
+          return GetCell(convertEpochToDate(row.original?.["lastReadingDate"]));
+        },
+
+      },
+      {
+        Header: t("METER_STATUS"),
+        disableSortBy: true,
+        Cell: ({ row }) => {
+          return GetCell(row.original?.["meterStatus"]);
+        },
+
+      },
+      {
+        Header: t("CURRECT_READING"),
+        disableSortBy: true,
+        Cell: ({ row }) => {
+          return GetCell(row.original?.["currentReading"]);
+        },
+
+      },
+      {
+        Header: t("CURRECT_READING_DATE"),
+        disableSortBy: true,
+        Cell: ({ row }) => {
+          return GetCell(convertEpochToDate(row.original?.["currentReadingDate"]));
+        },
+
+      }
+
+    ],
+  );
   return (
     <>
       <Header styles={{ fontSize: "32px" }}>
-        {window.location.href.includes("water") ? t("WS_WATER_SEARCH_CONNECTION_SUB_HEADER") : t("WS_SEWERAGE_SEARCH_CONNECTION_SUB_HEADER")}
+        {t("WS_WATER_SEARCH_BULK_CONNECTION_SUB_HEADER")}
       </Header>
-      {window.location.href.includes("search-demand")?"":<SearchForm className="ws-custom-wrapper" onSubmit={onSubmit} handleSubmit={handleSubmit}>
-        <SearchFields {...{ register, control, reset, tenantId, t }} />
-      </SearchForm>}
-      { isLoading ? <Loader /> : null } 
+      <SearchForm className="ws-custom-wrapper" onSubmit={onSubmit} handleSubmit={handleSubmit}>
+        <BulkBillSearchFields {...{ register, control, reset, tenantId, t, setValue }} />
+      </SearchForm>
+      {isLoading ? <Loader /> : null}
+      {isLoadingBulkMeterReading && <Loader/>}
       {data?.display && !resultOk ? (
         <Card style={{ marginTop: 20 }}>
           {t(data?.display)
@@ -317,61 +300,98 @@ const BulkBillSearch = ({ tenantId, onSubmit, data, count, resultOk, businessSer
         </Card>
         // <></>
       ) : resultOk ? (
-        <Table
-          t={t}
-          data={data}
-          totalRecords={count}
-          columns={columns}
-          getCellProps={(cellInfo) => {
-            return {
-              style: {
-                minWidth: cellInfo.column.Header === t("ES_INBOX_APPLICATION_NO") ? "240px" : "",
-                padding: "20px 18px",
-                fontSize: "16px",
-              },
-            };
-          }}
-          onPageSizeChange={onPageSizeChange}
-          currentPage={getValues("offset") / getValues("limit")}
-          onNextPage={nextPage}
-          onPrevPage={previousPage}
-          pageSizeLimit={getValues("limit")}
-          onSort={onSort}
-          disableSort={false}
-          sortParams={[{ id: getValues("sortBy"), desc: getValues("sortOrder") === "DESC" ? true : false }]}
-        />
+        <div style={{ backgroundColor: "white" }}>
+
+          <div className="sideContent" style={{ float: "right", padding: "10px 30px" }}>
+            <span className="table-search-wrapper" style={{ cursor: "pointer" }}>
+              <DownloadBtn className="mrlg cursorPointer" onClick={(e) => handleExcelDownload(e, data)} />
+            </span>
+          </div>
+          <div style={{ display: "flex" }}>
+            <div style={{ width: "70%" }}>
+              <UploadFile
+                id={"Bulk-Bill"}
+                extraStyleName={"propertyCreate"}
+                message={uploadedFile ? `1 ${t(`CS_ACTION_FILEUPLOADED`)}` : t(`CS_ACTION_NO_FILEUPLOADED`)}
+                accept=".xlsx"
+                onUpload={(e) => selectfile(e)}
+                onDelete={(e) => {
+                  setUploadedFile(null);
+                  setMeterReadingData([])
+                }}
+              />
+            </div>
+            {meterReadingData?.length > 0 ? <div style={{ top: "5px", left: "10px", position: "relative" }}>
+              <span>
+                <SubmitBar label={t("WS_COMMON_SUBMIT_READING")} onSubmit={handleProceed} />
+              </span>
+            </div> : ""}
+          </div>
+          <Table
+            t={t}
+            data={data}
+            totalRecords={count}
+            columns={columns}
+            getCellProps={(cellInfo) => {
+              return {
+                style: {
+                  minWidth: cellInfo.column.Header === t("ES_INBOX_APPLICATION_NO") ? "240px" : "",
+                  padding: "20px 18px",
+                  fontSize: "16px",
+                },
+              };
+            }}
+            onSort={onSort}
+            disableSort={false}
+            sortParams={[{ id: getValues("sortBy"), desc: getValues("sortOrder") === "DESC" ? true : false }]}
+          />
+
+        </div>
       ) : null}
-      
-      {window.location.href.includes("search-demand")? result?.length > 0 ? <Table
-      t={t}
-      data={result}
-      totalRecords={count}
-      columns={columns2}
-      getCellProps={(cellInfo) => {
-        return {
-          style: {
-            minWidth: cellInfo.column.Header === t("ES_INBOX_APPLICATION_NO") ? "240px" : "",
-            padding: "20px 18px",
-            fontSize: "16px",
-          },
-        };
-      }}
-      onPageSizeChange={onPageSizeChange}
-      currentPage={getValues("offset") / getValues("limit")}
-      onNextPage={nextPage}
-      onPrevPage={previousPage}
-      pageSizeLimit={getValues("limit")}
-      onSort={onSort}
-      disableSort={false}
-      sortParams={[{ id: getValues("sortBy"), desc: getValues("sortOrder") === "DESC" ? true : false }]}
-    />:<Card style={{ marginTop: 20 }}>
-          {
-            <p  style={{ textAlign: "center" }}>
-              No Data Found
-            </p>
-          }
-  </Card>:""}
-  {showToast?.label && (
+        
+      <div>
+        {showModal && <Modal
+          headerBarMain={<Heading label={t("WS_BULK_READING_REJECT")} />}
+          headerBarEnd={<CloseBtn onClick={closeModal} />}
+          actionCancelLabel={"Cancel"}
+          actionCancelOnSubmit={closeModal}
+          actionSaveLabel={"Proceed"}
+          actionSaveOnSubmit={setModal}
+          formId="modal-action"
+          popupStyles={{ width: "auto" }}
+        >  <div style={{ width: "100%" }}>
+            <Card>
+
+              <Table
+                t={t}
+                data={rejectedReading}
+                totalRecords={rejectedReading?.length}
+                columns={columns}
+                getCellProps={(cellInfo) => {
+                  return {
+                    style: {
+                      minWidth: cellInfo.column.Header === t("ES_INBOX_APPLICATION_NO") ? "240px" : "",
+                      padding: "20px 18px",
+                      fontSize: "16px",
+                    },
+                  };
+                }}
+                onPageSizeChange={onPageSizeChange}
+                currentPage={getValues("offset") / getValues("limit")}
+                onNextPage={nextPage}
+                onPrevPage={previousPage}
+                pageSizeLimit={getValues("limit")}
+                onSort={onSort}
+                disableSort={true}
+                sortParams={[{ id: getValues("sortBy"), desc: getValues("sortOrder") === "DESC" ? true : false }]}
+              />
+              <div><CardText>{t("WS_REASON_FOR_REJECT")}</CardText></div>
+
+            </Card>
+          </div>
+        </Modal>}
+      </div>
+      {showToast?.label && (
         <Toast
           label={showToast?.label}
           onClose={(w) => {

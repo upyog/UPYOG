@@ -16,7 +16,7 @@
     let inputs;
 
 
-    //To do - Need to change this whole page and have to make like same as owner details page. 
+    //To do - Need to change this whole page and have to make like same as owner details page because when uncomment the validation , it is throwing error  
     
       inputs = [
         {

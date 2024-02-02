@@ -10,7 +10,7 @@ import { pdfDownloadLink } from "../../utils";
 import get from "lodash/get";
 import { size } from "lodash";
 
-const PetApplicationDetails = () => {
+const PTRApplicationDetails = () => {
   const { t } = useTranslation();
   const history = useHistory();
   const { acknowledgementIds, tenantId } = useParams();
@@ -30,16 +30,19 @@ const PetApplicationDetails = () => {
     },
   );
 
-  const [billAmount, setBillAmount] = useState(null);
-  const [billStatus, setBillStatus] = useState(null);
 
-  let serviceSearchArgs = {
-    tenantId : tenantId,
-    code: [`PTR_${data?.PetRegistrationApplications?.[0]?.creationReason}`], 
-    module: ["PTR"],
-    referenceIds : [data?.PetRegistrationApplications?.[0]?.applicationNumber]
+ 
+
+ 
+  const [billData, setBillData]=useState(null);
+
+  // let serviceSearchArgs = {
+  //   tenantId : tenantId,
+  //   code: [`PTR_${data?.PetRegistrationApplications?.[0]?.creationReason}`], 
+  //   module: ["PTR"],
+  //   referenceIds : [data?.PetRegistrationApplications?.[0]?.applicationNumber]
     
-  }
+  // }
 
 
 
@@ -50,23 +53,24 @@ const PetApplicationDetails = () => {
   
   let  pet_details = (PetRegistrationApplications && PetRegistrationApplications.length > 0 && PetRegistrationApplications[0]) || {};
   const application =  pet_details;
+
   
   sessionStorage.setItem("ptr-pet", JSON.stringify(application));
 
   
-  useEffect(async () => {
-    if (acknowledgementIds && tenantId &&  pet_details) {
-      const res = await Digit.PaymentService.searchBill(tenantId, { Service: "pet-services", consumerCode: acknowledgementIds });
-      // if (!res.Bill.length) {
-      //   const res1 = await Digit.PTService.ptCalculateMutation({  pet_details:  pet_details }, tenantId);
-      //   setBillAmount(res1?.[acknowledgementIds]?.totalAmount || t("CS_NA"));
-      //   setBillStatus(t(`PTR_MUT_BILL_ACTIVE`));
-      // } else {
-      //   setBillAmount(res?.Bill[0]?.totalAmount || t("CS_NA"));
-      //   setBillStatus(t(`PTR_MUT_BILL_${res?.Bill[0]?.status?.toUpperCase()}`));
-      // }
-    }
-  }, [tenantId, acknowledgementIds,  pet_details]);
+
+  const [loading, setLoading]=useState(false);
+
+  const fetchBillData=async()=>{
+    setLoading(true);
+    const result= await Digit.PaymentService.fetchBill(tenantId,{ businessService: "pet-services", consumerCode: acknowledgementIds, });
+  
+  setBillData(result);
+  setLoading(false);
+};
+useEffect(()=>{
+fetchBillData();
+}, [tenantId, acknowledgementIds]); 
 
   const { isLoading: auditDataLoading, isError: isAuditError, data: auditResponse } = Digit.Hooks.ptr.usePTRSearch(
     {
@@ -79,15 +83,15 @@ const PetApplicationDetails = () => {
     }
   );
 
-  // const { data: reciept_data, isLoading: recieptDataLoading } = Digit.Hooks.useRecieptSearch(
-  //   {
-  //     tenantId: tenantId,
-  //     businessService: "pet-services",
-  //     consumerCodes: acknowledgementIds,
-  //     isEmployee: true,
-  //   },
-  //   { enabled: acknowledgementIds ? true : false }
-  // );
+  const { data: reciept_data, isLoading: recieptDataLoading } = Digit.Hooks.useRecieptSearch(
+    {
+      tenantId: tenantId,
+      businessService: "pet-services",
+      consumerCodes: acknowledgementIds,
+      isEmployee: false,
+    },
+    { enabled: acknowledgementIds ? true : false }
+  );
 
   if (!pet_details.workflow) {
     let workflow = {
@@ -138,10 +142,10 @@ const PetApplicationDetails = () => {
 
   async function getRecieptSearch({ tenantId, payments, ...params }) {
     let response = { filestoreIds: [payments?.fileStoreId] };
-    response = await Digit.PaymentService.generatePdf(tenantId, { Payments: [{ ...payments }] }, "consolidatedreceipt");
+    response = await Digit.PaymentService.generatePdf(tenantId, { Payments: [{ ...payments }] }, "petservice-receipt");
     const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
     window.open(fileStore[response?.filestoreIds[0]], "_blank");
-  }
+  };
 
   const handleDownload = async (document, tenantid) => {
     let tenantId = tenantid ? tenantid : tenantId;
@@ -151,7 +155,7 @@ const PetApplicationDetails = () => {
   };
 
   const printCertificate = async () => {
-    let response = await Digit.PaymentService.generatePdf(tenantId, { PetRegistrationApplications: [data?.PetRegistrationApplications?.[0]] }, "ptmutationcertificate");
+    let response = await Digit.PaymentService.generatePdf(tenantId, { PetRegistrationApplications: [data?.PetRegistrationApplications?.[0]] }, "petservicecertificate");
     const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
     window.open(fileStore[response?.filestoreIds[0]], "_blank");
   };
@@ -164,16 +168,16 @@ const PetApplicationDetails = () => {
   });
 
   //commented out, need later for download receipt and certificate 
-  // if (reciept_data && reciept_data?.Payments.length > 0 && recieptDataLoading == false)
-  //   dowloadOptions.push({
-  //     label: t("MT_FEE_RECIEPT"),
-  //     onClick: () => getRecieptSearch({ tenantId: reciept_data?.Payments[0]?.tenantId, payments: reciept_data?.Payments[0] }),
-  //   });
-  // if (data?.PetRegistrationApplications?.[0]?.creationReason === "CREATE" && data?.PetRegistrationApplications?.[0]?.status === "ACTIVE")
-  //   dowloadOptions.push({
-  //     label: t("MT_CERTIFICATE"),
-  //     onClick: () => printCertificate(),
-  //   });
+  if (reciept_data && reciept_data?.Payments.length > 0 && recieptDataLoading == false)
+    dowloadOptions.push({
+      label: t("PTR_FEE_RECIEPT"),
+      onClick: () => getRecieptSearch({ tenantId: reciept_data?.Payments[0]?.tenantId, payments: reciept_data?.Payments[0] }),
+    });
+  if (data?.ResponseInfo?.status === "successful")
+    dowloadOptions.push({
+      label: t("PTR_CERTIFICATE"),
+      onClick: () => printCertificate(),
+    });
   
   return (
     <React.Fragment>
@@ -228,7 +232,7 @@ const PetApplicationDetails = () => {
           {/* <CardSubHeader style={{ fontSize: "24px" }}>{t("PTR_DOCUMENT_DETAILS")}</CardSubHeader>
           <div>
             {Array.isArray(docs) ? (
-              docs.length > 0 && <PetDocument pet_details={pet_details}></PetDocument>
+              docs.length > 0 && <PTRDocument pet_details={pet_details}></PTRDocument>
             ) : (
               <StatusTable>
                 <Row className="border-none" text={t("PTR_NO_DOCUMENTS_MSG")} />
@@ -254,7 +258,7 @@ const PetApplicationDetails = () => {
   );
 };
 
-export default PetApplicationDetails;
+export default PTRApplicationDetails;
             
            
            

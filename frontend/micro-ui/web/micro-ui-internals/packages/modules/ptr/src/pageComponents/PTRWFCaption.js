@@ -1,9 +1,9 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { TelePhone, DisplayPhotos } from "@egovernments/digit-ui-react-components";
-import PETWFReason from "./PETWFReason";
+import PTRWFReason from "./PTRWFReason";
 
-const PETWFCaption = ({ data,OpenImage }) => {
+const PTRWFCaption = ({ data,OpenImage }) => {
   const { t } = useTranslation();
   return (
     <div>
@@ -26,4 +26,4 @@ const PETWFCaption = ({ data,OpenImage }) => {
   );
 };
 
-export default PETWFCaption;
+export default PTRWFCaption;

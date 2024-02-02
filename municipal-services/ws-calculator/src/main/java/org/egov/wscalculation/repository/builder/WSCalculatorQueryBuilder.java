@@ -126,7 +126,7 @@ public class WSCalculatorQueryBuilder {
 		if(!StringUtils.isEmpty(criteria.getLocality()))
 			query=new StringBuilder(Locality_Query);
 		
-		if(!StringUtils.isEmpty(criteria.getTenantId()) && !StringUtils.isEmpty(criteria.getTenantId())){
+		if(!StringUtils.isEmpty(criteria.getTenantId()) && !StringUtils.isEmpty(criteria.getLocality())){
 			query.append(" AND");
 			query.append(" mr.tenantid= ? ");
 			preparedStatement.add(criteria.getTenantId());

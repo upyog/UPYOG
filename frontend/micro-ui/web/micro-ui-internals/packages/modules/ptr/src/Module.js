@@ -13,15 +13,15 @@ import PTRCitizenAddress from "./pageComponents/PTRCitizenAddress";
 import PTRSelectPincode from "./pageComponents/PTRSelectPincode";
 import PTRSelectAddress from "./pageComponents/PTRSelectAddress";
 import PTRSelectProofIdentity from "./pageComponents/PTRSelectProofIdentity";
-import PetServiceDoc from "./pageComponents/PetServiceDoc";
+import PTRServiceDoc from "./pageComponents/PTRServiceDoc";
 import PTRWFApplicationTimeline from "./pageComponents/PTRWFApplicationTimeline";
 import CitizenApp from "./pages/citizen";
 import PTRCheckPage from "./pages/citizen/Create/CheckPage";
 import PTRAcknowledgement from "./pages/citizen/Create/PTRAcknowledgement";
-import { PetMyApplications } from "./pages/citizen/PetMyApplications";
-import PetApplicationDetails from "./pages/citizen/PetApplicationDetails";
-import PETWFCaption from "./pageComponents/PETWFCaption";
-import PETWFReason from "./pageComponents/PETWFReason";
+import { PTRMyApplications } from "./pages/citizen/PTRMyApplications";
+import PTRApplicationDetails from "./pages/citizen/PTRApplicationDetails";
+import PTRWFCaption from "./pageComponents/PTRWFCaption";
+import PTRWFReason from "./pageComponents/PTRWFReason";
 import EmployeeApp from "./pages/employee";
 import PTRCard from "./components/PTRCard";
 import InboxFilter from "./components/inbox/NewInboxFilter";
@@ -38,13 +38,13 @@ import AcknowledgementCF from "@egovernments/digit-ui-module-core/src/components
 const componentsToRegister = {
   PTRCheckPage,
   PTRAcknowledgement,
-  PETWFCaption,
-  PETWFReason,
-  PETNewApplication: NewApplication,
+  PTRWFCaption,
+  PTRWFReason,
+  PTRNewApplication: NewApplication,
   ApplicationDetails: ApplicationDetails,
-  PETResponse: Response,
-  PetMyApplications: PetMyApplications,
-  PetApplicationDetails: PetApplicationDetails,
+  PTRResponse: Response,
+  PTRMyApplications: PTRMyApplications,
+  PTRApplicationDetails: PTRApplicationDetails,
   SelectOtp, // To-do: Temp fix, Need to check why not working if selectOtp module is already imported from core module
   AcknowledgementCF,
   CitizenFeedback,
@@ -59,8 +59,9 @@ const componentsToRegister = {
   PTRSelectPincode,
   PTRSelectAddress,
   PTRSelectProofIdentity,
-  PetServiceDoc,
+  PTRServiceDoc,
   PTRWFApplicationTimeline,
+ 
   
   
   

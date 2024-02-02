@@ -18,9 +18,8 @@ const App = () => {
   };
 
   const PTRCreate = Digit?.ComponentRegistryService?.getComponent("PTRCreatePet");
-  // const SearchResultsComponent = Digit?.ComponentRegistryService?.getComponent("PTSearchResultsComponent");
-  const PetApplicationDetails = Digit?.ComponentRegistryService?.getComponent("PetApplicationDetails");
-  const PetMyApplications = Digit?.ComponentRegistryService?.getComponent("PetMyApplications");
+  const PTRApplicationDetails = Digit?.ComponentRegistryService?.getComponent("PTRApplicationDetails");
+  const PTRMyApplications = Digit?.ComponentRegistryService?.getComponent("PTRMyApplications");
  
   return (
     <span className={"pet-citizen"}style={{width:"100%"}}>
@@ -28,8 +27,8 @@ const App = () => {
         <AppContainer>
           {!shouldHideBackButton(hideBackButtonConfig) ? <BackButton>Back</BackButton> : ""}
           <PrivateRoute path={`${path}/petservice/new-application`} component={PTRCreate} />
-          <PrivateRoute path={`${path}/petservice/application/:acknowledgementIds/:tenantId`} component={PetApplicationDetails}></PrivateRoute>
-          <PrivateRoute path={`${path}/petservice/my-application`} component={PetMyApplications}></PrivateRoute>
+          <PrivateRoute path={`${path}/petservice/application/:acknowledgementIds/:tenantId`} component={PTRApplicationDetails}></PrivateRoute>
+          <PrivateRoute path={`${path}/petservice/my-applications`} component={PTRMyApplications}></PrivateRoute>
           {/* <PrivateRoute path={`${path}/petservice/my-payments`} component={PTMyPayments}></PrivateRoute> */}
           <PrivateRoute path={`${path}/petservice/search`} component={(props) => <Search {...props} t={t} parentRoute={path} />} />
         </AppContainer>

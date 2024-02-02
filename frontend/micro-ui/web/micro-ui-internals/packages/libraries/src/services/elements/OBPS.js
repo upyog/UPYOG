@@ -629,6 +629,7 @@ export const OBPSService = {
               { title: "CORE_COMMON_NAME", value: owner?.name },
               { title: "BPA_APPLICANT_GENDER_LABEL", value: owner?.gender },
               { title: "CORE_COMMON_MOBILE_NUMBER", value: owner?.mobileNumber },
+              { title: "CORE_COMMON_EMAIL_ID", value: owner?.emailId },
               { title: "BPA_IS_PRIMARY_OWNER_LABEL", value: owner?.isPrimaryOwner, isNotTranslated: false }
             ],
           };

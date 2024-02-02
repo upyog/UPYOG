@@ -1,22 +1,22 @@
-import { ActionLinks, CardSectionHeader, CheckPoint, ConnectingCheckPoints, Loader, SubmitBar } from "@egovernments/digit-ui-react-components";
+import { ActionLinks, CardSectionHeader, CheckPoint, CloseSvg, ConnectingCheckPoints, Loader, SubmitBar } from "@egovernments/digit-ui-react-components";
 import React, { Fragment } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import PETWFCaption from "./PETWFCaption";
+import PTRWFCaption from "./PTRWFCaption";
 
 
-// ToDo: ned to check code carefully which we want and dont.
 const PTRWFApplicationTimeline = (props) => {
+  
   const { t } = useTranslation();
-  const businessService = (props.application?.creationReason && `${props.application.creationReason}`) || "ptr";
+  const businessService = props?.application?.workflow?.businessService;
   // const businessService = "ptr";
 
   const { isLoading, data } = Digit.Hooks.useWorkflowDetails({
     tenantId: props.application?.tenantId,
-    id: props.id,
+    id: props.application?.applicationNumber,
     moduleCode: businessService,
   });
-  //console.log("timelinbe business service ", businessService)
+  
 
   function OpenImage(imageSource, index, thumbnailsToShow) {
     window.open(thumbnailsToShow?.fullImage?.[0], "_blank");
@@ -30,7 +30,7 @@ const PTRWFApplicationTimeline = (props) => {
         date: checkpoint?.auditDetails?.lastModified,
         source: props.application?.channel || "",
       };
-      return <PETWFCaption data={caption} />;
+      return <PTRWFCaption data={caption} />;
     }
     else if (checkpoint.state) {
       const caption = {
@@ -41,7 +41,7 @@ const PTRWFApplicationTimeline = (props) => {
         wfComment: checkpoint.wfComment,
         thumbnailsToShow: checkpoint?.thumbnailsToShow,
       };
-      return <PETWFCaption data={caption} OpenImage={OpenImage} />;
+      return <PTRWFCaption data={caption} OpenImage={OpenImage} />;
     } 
     
    
@@ -51,7 +51,7 @@ const PTRWFApplicationTimeline = (props) => {
         name: checkpoint?.assigner?.name,
         comment: t(checkpoint?.comment),
       };
-      return <PETWFCaption data={caption} />;
+      return <PTRWFCaption data={caption} />;
     }
   };
 
@@ -70,7 +70,7 @@ const PTRWFApplicationTimeline = (props) => {
           ? (
           <div style={{ marginTop: "1em", bottom: "0px", width: "100%", marginBottom: "1.2em" }}>
             <Link
-              to={{ pathname: `/digit-ui/citizen/payment/my-bills/${businessService}/${props.id}`, state: { tenantId: props.application.tenantId, applicationNumber : props?.application?.applicationNumber } }}
+              to={{ pathname: `/digit-ui/citizen/payment/my-bills/${businessService}/${props?.application?.applicationNumber}`, state: { tenantId: props.application.tenantId, applicationNumber : props?.application?.applicationNumber } }}
             >
               <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} />
             </Link>

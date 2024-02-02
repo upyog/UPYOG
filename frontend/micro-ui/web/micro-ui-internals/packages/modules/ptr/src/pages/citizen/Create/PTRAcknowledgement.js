@@ -77,15 +77,11 @@ const PTRAcknowledgement = ({ data, onSuccess }) => {
   ) : (
     <Card>
       <BannerPicker t={t} data={mutation.data} isSuccess={mutation.isSuccess} isLoading={mutation.isIdle || mutation.isLoading} />
-      {/* {mutation.isSuccess && <CardText>{t("ES_PTR_RESPONSE_CREATE_ACTION")}</CardText>} */}
-      {/* {!mutation.isSuccess && <CardText>{t("CS_PTR_RESPONSE_ERROR")}</CardText>} */}
       <StatusTable>
         {mutation.isSuccess && (
           <Row
             rowContainerStyle={rowContainerStyle}
-            last
-            // label={t("PTR_APPLIACATION_NUMBER")}
-            // text={mutation?.data?.PetRegistrationApplications[0]?.applicationNumber}
+            last       
             textStyle={{ whiteSpace: "pre", width: "60%" }}
           />
         )}
