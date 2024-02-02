@@ -29,7 +29,7 @@ const App = () => {
           {!shouldHideBackButton(hideBackButtonConfig) ? <BackButton>Back</BackButton> : ""}
           <PrivateRoute path={`${path}/petservice/new-application`} component={PTRCreate} />
           <PrivateRoute path={`${path}/petservice/application/:acknowledgementIds/:tenantId`} component={PetApplicationDetails}></PrivateRoute>
-          <PrivateRoute path={`${path}/petservice/my-applications`} component={PetMyApplications}></PrivateRoute>
+          <PrivateRoute path={`${path}/petservice/my-application`} component={PetMyApplications}></PrivateRoute>
           {/* <PrivateRoute path={`${path}/petservice/my-payments`} component={PTMyPayments}></PrivateRoute> */}
           <PrivateRoute path={`${path}/petservice/search`} component={(props) => <Search {...props} t={t} parentRoute={path} />} />
         </AppContainer>
