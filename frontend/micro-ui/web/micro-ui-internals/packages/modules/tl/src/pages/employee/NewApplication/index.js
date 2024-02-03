@@ -55,8 +55,8 @@ const NewApplication = () => {
 
   function checkforownerPresent(formData){
     if(formData?.owners){
-      formData?.owners?.map((ob) => {
-        if(!ob?.name || !ob.mobileNumber || !ob?.fatherOrHusbandName || !ob?.relationship?.code || ob?.gender?.code)
+      formData?.cpt?.details?.owners?.map((ob) => {
+        if(!ob?.name || !ob.mobileNumber || !ob?.fatherOrHusbandName || !ob?.relationship?.code || ob?.gender?.code || !ob?.additionalDetails)
         {
           return true;
         }
@@ -152,10 +152,11 @@ const NewApplication = () => {
     }
 
     let owners = [];
-    if (data?.owners?.length > 0) {
-      data?.owners.map((data) => {
+    if (data?.cpt?.details?.owners?.length > 0) {
+      data?.cpt?.details?.owners.map((data) => {
         let obj = {};
         obj.dob = data?.dob ? convertDateToEpoch(data?.dob) : null;
+        if(data?.additionalDetails) obj.additionalDetails=data?.additionalDetails;
         if (data?.fatherOrHusbandName) obj.fatherOrHusbandName = data?.fatherOrHusbandName;
         if (data?.gender?.code) obj.gender = data?.gender?.code;
         if (data?.mobileNumber) obj.mobileNumber = Number(data?.mobileNumber);

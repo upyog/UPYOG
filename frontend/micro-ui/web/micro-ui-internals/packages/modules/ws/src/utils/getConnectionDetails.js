@@ -21,7 +21,7 @@ import {
   
   const getPropertyDetails = (application, t) => {
     const owners = application?.owners?.filter((owner) => owner.active == true) || [];
-    const names = owners?.map(owner => owner.name)?.join(",");
+    const names = owners.sort((a,b)=>a?.additionalDetails?.ownerSequence- b?.additionalDetails?.ownerSequence)?.map(owner => owner.name)?.join(",");
     return {
       title: t("WS_COMMON_PROPERTY_DETAILS"),
       values: [
