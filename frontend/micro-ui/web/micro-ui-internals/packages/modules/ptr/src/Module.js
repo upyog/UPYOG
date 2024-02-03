@@ -119,7 +119,7 @@ export const PTRLinks = ({ matchPath, userType }) => {
     },
     
     {
-      link: `${matchPath}/ptr/petservice/my-applications`,
+      link: `${matchPath}/ptr/petservice/my-application`,
       i18nKey: t("PTR_MY_APPLICATIONS_HEADER"),
     },
     

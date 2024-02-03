@@ -49,23 +49,23 @@ public class PetConfiguration {
     @Value("${ptr.kafka.update.topic}")
     private String updatePtrTopic;
     
-    @Value("${persister.save.property.topic}")
-    private String savePropertyTopic;
-
-    @Value("${persister.update.property.topic}")
-    private String updatePropertyTopic;
-
-    @Value("${persister.cancel.property.topic}")
-    private String cancelPropertyTopic;
-
-    @Value("${persister.cancel.property.assessment.topic}")
-    private String cancelPropertyAssessmentTopic;
-
-    @Value("${persister.update.document.topic}")
-    private String updateDocumentTopic;
-
-    @Value("${persister.migration.batch.count.topic}")
-    private String migartionBatchCountTopic;
+//    @Value("${persister.save.property.topic}")
+//    private String savePropertyTopic;
+//
+//    @Value("${persister.update.property.topic}")
+//    private String updatePropertyTopic;
+//
+//    @Value("${persister.cancel.property.topic}")
+//    private String cancelPropertyTopic;
+//
+//    @Value("${persister.cancel.property.assessment.topic}")
+//    private String cancelPropertyAssessmentTopic;
+//
+//    @Value("${persister.update.document.topic}")
+//    private String updateDocumentTopic;
+//
+//    @Value("${persister.migration.batch.count.topic}")
+//    private String migartionBatchCountTopic;
 
     //USER
     @Value("${egov.user.host}")
@@ -83,29 +83,29 @@ public class PetConfiguration {
     @Value("${egov.idgen.path}")
     private String idGenPath;
     
-    @Value("${egov.idgen.ack.name}")
-    private String ackIdGenName;
-
-    @Value("${egov.idgen.ack.format}")
-    private String ackIdGenFormat;
-    
-    @Value("${egov.idgen.mutation.name}")
-    private String mutationIdGenName;
-
-    @Value("${egov.idgen.mutation.format}")
-    private String mutationIdGenFormat;
-
-    @Value("${egov.idgen.assm.name}")
-    private String assessmentIdGenName;
-
-    @Value("${egov.idgen.assm.format}")
-    private String assessmentIdGenFormat;
-
-    @Value("${egov.idgen.ptid.name}")
-    private String propertyIdGenName;
-
-    @Value("${egov.idgen.ptid.format}")
-    private String propertyIdGenFormat;
+//    @Value("${egov.idgen.ack.name}")
+//    private String ackIdGenName;
+//
+//    @Value("${egov.idgen.ack.format}")
+//    private String ackIdGenFormat;
+//    
+//    @Value("${egov.idgen.mutation.name}")
+//    private String mutationIdGenName;
+//
+//    @Value("${egov.idgen.mutation.format}")
+//    private String mutationIdGenFormat;
+//
+//    @Value("${egov.idgen.assm.name}")
+//    private String assessmentIdGenName;
+//
+//    @Value("${egov.idgen.assm.format}")
+//    private String assessmentIdGenFormat;
+//
+//    @Value("${egov.idgen.ptid.name}")
+//    private String propertyIdGenName;
+//
+//    @Value("${egov.idgen.ptid.format}")
+//    private String propertyIdGenFormat;
 
     @Value("${egov.idgen.ptrid.format}")
     private String petIdGenFormat;
@@ -156,24 +156,24 @@ public class PetConfiguration {
     @Value("${egov.usr.events.download.receipt.link}")
     private String userEventReceiptDownloadLink;
     
-    //Property Search Params
-    @Value("${citizen.allowed.search.params}")
-    private String citizenSearchParams;
-
-    @Value("${employee.allowed.search.params}")
-    private String employeeSearchParams;
-
+//    //Property Search Params
+//    @Value("${citizen.allowed.search.params}")
+//    private String citizenSearchParams;
+//
+//    @Value("${employee.allowed.search.params}")
+//    private String employeeSearchParams;
+//
     @Value("${notification.url}")
     private String notificationURL;
     
-    @Value("${pt.search.pagination.default.limit}")
-    private Long defaultLimit;
-
-    @Value("${pt.search.pagination.default.offset}")
-    private Long defaultOffset;
-    
-    @Value("${pt.search.pagination.max.search.limit}")
-    private Long maxSearchLimit;
+//    @Value("${pt.search.pagination.default.limit}")
+//    private Long defaultLimit;
+//
+//    @Value("${pt.search.pagination.default.offset}")
+//    private Long defaultOffset;
+//    
+//    @Value("${pt.search.pagination.max.search.limit}")
+//    private Long maxSearchLimit;
 
     //Localization
     @Value("${egov.localization.host}")
@@ -207,11 +207,11 @@ public class PetConfiguration {
     private String receiptDownloadLink;
 	
 	//Assessments V2
-	@Value("${egov.pt.assessment.create.topic}")
-	private String createAssessmentTopic;
-	
-	@Value("${egov.pt.assessment.update.topic}")
-	private String updateAssessmentTopic;
+//	@Value("${egov.pt.assessment.create.topic}")
+//	private String createAssessmentTopic;
+//	
+//	@Value("${egov.pt.assessment.update.topic}")
+//	private String updateAssessmentTopic;
 
     @Value("${egov.msg.pay.link}")
     private String payLinkSMS;
@@ -219,8 +219,8 @@ public class PetConfiguration {
 
     // Workflow
 	
-    @Value("${pt.business.codes}")
-    private List<String> businessServiceList;
+//    @Value("${pt.business.codes}")
+//    private List<String> businessServiceList;
 
     @Value("${workflow.host}")
     private String wfHost;
@@ -237,23 +237,23 @@ public class PetConfiguration {
     @Value("${is.workflow.enabled}")
     private Boolean isWorkflowEnabled;
     
-    @Value("${property.create.workflow.name}")
-    private String createPTWfName;
+//    @Value("${property.create.workflow.name}")
+//    private String createPTWfName;
+//    
+//    @Value("${property.legacy.entry.workflow.name}")
+//    private String LegacyPTWfName;
+//    
+//    @Value("${property.update.workflow.name}")
+//    private String updatePTWfName;
     
-    @Value("${property.legacy.entry.workflow.name}")
-    private String LegacyPTWfName;
-    
-    @Value("${property.update.workflow.name}")
-    private String updatePTWfName;
-    
-    @Value("${is.mutation.workflow.enabled}")
-    private Boolean isMutationWorkflowEnabled;
-    
-    @Value("${mutation.workflow.name}")
-    private String mutationWfName;
-    
-    @Value("${mutation.workflow.open.state}")
-    private String mutationOpenState;
+//    @Value("${is.mutation.workflow.enabled}")
+//    private Boolean isMutationWorkflowEnabled;
+//    
+//    @Value("${mutation.workflow.name}")
+//    private String mutationWfName;
+//    
+//    @Value("${mutation.workflow.open.state}")
+//    private String mutationOpenState;
     
     @Value("${workflow.status.active}")
     private String wfStatusActive;
@@ -286,21 +286,21 @@ public class PetConfiguration {
     @Value("${egov.calculation.endpoint}")
     private String calculationEndpoint;
 
-    @Value("${egov.calculation.mutation.endpoint}")
-    private String mutationCalculationEndpoint;
-
+//    @Value("${egov.calculation.mutation.endpoint}")
+//    private String mutationCalculationEndpoint;
+//
 
     @Value("${egov.localization.statelevel}")
     private Boolean isLocalizationStateLevel;
 
 
     // url shortner
-
-    @Value("${egov.url.shortner.host}")
-    private String urlShortnerHost;
-
-    @Value("${egov.url.shortner.endpoint}")
-    private String urlShortnerEndpoint;
+//
+//    @Value("${egov.url.shortner.host}")
+//    private String urlShortnerHost;
+//
+//    @Value("${egov.url.shortner.endpoint}")
+//    private String urlShortnerEndpoint;
 
     @Value("${state.level.tenant.id}")
     private String stateLevelTenantId;
@@ -308,35 +308,35 @@ public class PetConfiguration {
 
     // ES Config
 
-    @Value("${elasticsearch.host}")
-    private String esHost;
+//    @Value("${elasticsearch.host}")
+//    private String esHost;
+//
+//    @Value("${property.es.index}")
+//    private String esPTIndex;
 
-    @Value("${property.es.index}")
-    private String esPTIndex;
-
-    @Value("${elasticsearch.search.endpoint}")
-    private String esSearchEndpoint;
-
-    @Value("${pt.search.name.fuziness}")
-    private String nameFuziness;
-
-    @Value("${pt.search.doorno.fuziness}")
-    private String doorNoFuziness;
-
-    @Value("${pt.search.oldpropertyid.fuziness}")
-    private String oldPropertyIdFuziness;
-
-    @Value("${pt.fuzzy.searh.is.wildcard}")
-    private Boolean isSearchWildcardBased;
+//    @Value("${elasticsearch.search.endpoint}")
+//    private String esSearchEndpoint;
+//
+//    @Value("${pt.search.name.fuziness}")
+//    private String nameFuziness;
+//
+//    @Value("${pt.search.doorno.fuziness}")
+//    private String doorNoFuziness;
+//
+//    @Value("${pt.search.oldpropertyid.fuziness}")
+//    private String oldPropertyIdFuziness;
+//
+//    @Value("${pt.fuzzy.searh.is.wildcard}")
+//    private Boolean isSearchWildcardBased;
 
     @Value("${egov.billingservice.host}")
     private String billingHost;
-
-    @Value("${egov.taxhead.search.endpoint}")
-    private String taxHeadSearchEndpoint;
-
-    @Value("${egov.taxperiod.search.endpoint}")
-    private String taxPeriodSearchEndpoint;
+//
+//    @Value("${egov.taxhead.search.endpoint}")
+//    private String taxHeadSearchEndpoint;
+//
+//    @Value("${egov.taxperiod.search.endpoint}")
+//    private String taxPeriodSearchEndpoint;
 
     @Value("${egov.demand.create.endpoint}")
     private String demandCreateEndpoint;
