@@ -12,7 +12,7 @@ import org.egov.mdms.model.MdmsCriteria;
 import org.egov.mdms.model.MdmsCriteriaReq;
 import org.egov.mdms.model.ModuleDetail;
 import org.egov.ptr.config.PetConfiguration;
-import org.egov.ptr.models.Property;
+//import org.egov.ptr.models.Property;
 import org.egov.ptr.models.enums.CreationReason;
 import org.egov.ptr.models.event.Action;
 import org.egov.ptr.models.event.ActionItem;
@@ -22,7 +22,6 @@ import org.egov.ptr.models.event.Recepient;
 import org.egov.ptr.models.event.Source;
 import org.egov.ptr.producer.Producer;
 import org.egov.ptr.repository.ServiceRequestRepository;
-import org.egov.ptr.service.NotificationService;
 import org.egov.ptr.web.contracts.*;
 import org.egov.tracer.model.CustomException;
 import org.json.JSONObject;
@@ -377,132 +376,132 @@ public class NotificationUtil {
      * returns the same url if shortening fails 
      * @param url
      */
-    public String getShortenedUrl(String url){
-    	
-        HashMap<String,String> body = new HashMap<>();
-        body.put("url",url);
-        StringBuilder builder = new StringBuilder(config.getUrlShortnerHost());
-        builder.append(config.getUrlShortnerEndpoint());
-        String res = restTemplate.postForObject(builder.toString(), body, String.class);
-
-        if(StringUtils.isEmpty(res)){
-            log.error("URL_SHORTENING_ERROR","Unable to shorten url: "+url); ;
-            return url;
-        }
-        else return res;
-    }
+//    public String getShortenedUrl(String url){
+//    	
+//        HashMap<String,String> body = new HashMap<>();
+//        body.put("url",url);
+//        StringBuilder builder = new StringBuilder(config.getUrlShortnerHost());
+//        builder.append(config.getUrlShortnerEndpoint());
+//        String res = restTemplate.postForObject(builder.toString(), body, String.class);
+//
+//        if(StringUtils.isEmpty(res)){
+//            log.error("URL_SHORTENING_ERROR","Unable to shorten url: "+url); ;
+//            return url;
+//        }
+//        else return res;
+//    }
     
     /**
     *
     * @param requestInfo
     * @param smsRequests
     */
-   public List<Event> enrichEvent(List<SMSRequest> smsRequests, RequestInfo requestInfo, String tenantId, Property property, Boolean isActionReq){
-
-		List<Event> events = new ArrayList<>();
-       Set<String> mobileNumbers = smsRequests.stream().map(SMSRequest :: getMobileNumber).collect(Collectors.toSet());
-       Map<String, String> mapOfPhnoAndUUIDs = fetchUserUUIDs(mobileNumbers, requestInfo, tenantId);
-       if (CollectionUtils.isEmpty(mapOfPhnoAndUUIDs.keySet())) {
-           log.error("UUIDs Not found for Mobilenumbers");
-       }
-       
-       Map<String,String > mobileNumberToMsg = smsRequests.stream().collect(Collectors.toMap(SMSRequest::getMobileNumber, SMSRequest::getMessage));
-       mobileNumbers.forEach(mobileNumber -> {
-       	
-           List<String> toUsers = new ArrayList<>();
-           toUsers.add(mapOfPhnoAndUUIDs.get(mobileNumber));
-           Recepient recepient = Recepient.builder().toUsers(toUsers).toRoles(null).build();
-
-           Action action = null;
-           if(isActionReq){
-               List<ActionItem> items = new ArrayList<>();
-               String msg = smsRequests.get(0).getMessage();
-               String actionLink = "";
-               if(msg.contains(PT_CORRECTION_PENDING)){
-            	   
-					String url = config.getUserEventViewPropertyLink();
-					if (property.getCreationReason().equals(CreationReason.MUTATION)) {
-						url = config.getUserEventViewMutationLink();
-					}
-					
-                   actionLink = url.replace("$mobileNo", mobileNumber)
-                           .replace("$tenantId", tenantId)
-                           .replace("$propertyId" , property.getPropertyId())
-                           .replace("$applicationNumber" , property.getAcknowldgementNumber());
-
-                   actionLink = config.getUiAppHost() + actionLink;
-                   ActionItem item = ActionItem.builder().actionUrl(actionLink).code(VIEW_APPLICATION_CODE).build();
-                   items.add(item);
-               }
-
-               if(msg.contains(ASMT_USER_EVENT_PAY)){
-                   actionLink = config.getPayLink().replace("$mobile", mobileNumber)
-                           .replace("$propertyId", property.getPropertyId())
-                           .replace("$tenantId", property.getTenantId())
-                           .replace("$businessService" , PT_BUSINESSSERVICE);
-
-                   actionLink = config.getUiAppHost() + actionLink;
-                   ActionItem item = ActionItem.builder().actionUrl(actionLink).code(config.getPayCode()).build();
-                   items.add(item);
-               }
-               if(msg.contains(PT_ALTERNATE_NUMBER) || msg.contains(PT_OLD_MOBILENUMBER) || msg.contains(VIEW_PROPERTY)){
-                   actionLink = config.getViewPropertyLink()
-                           .replace(NOTIFICATION_PROPERTYID, property.getPropertyId())
-                           .replace(NOTIFICATION_TENANTID, property.getTenantId());
-
-                   actionLink = config.getUiAppHost() + actionLink;
-                   ActionItem item = ActionItem.builder().actionUrl(actionLink).code(VIEW_PROPERTY_CODE).build();
-                   items.add(item);
-               }
-
-               if(msg.contains(TRACK_APPLICATION)){
-                   actionLink = config.getViewPropertyLink()
-                           .replace(NOTIFICATION_PROPERTYID, property.getPropertyId())
-                           .replace(NOTIFICATION_TENANTID, property.getTenantId());
-
-                   actionLink = config.getUiAppHost() + actionLink;
-                   ActionItem item = ActionItem.builder().actionUrl(actionLink).code(VIEW_PROPERTY_CODE).build();
-                   items.add(item);
-               }
-
-               if(msg.contains(TRACK_APPLICATION) && msg.contains("{MTURL}")){
-                   actionLink = getMutationUrl(property);
-                   ActionItem item = ActionItem.builder().actionUrl(actionLink).code(TRACK_APPLICATION_CODE).build();
-                   items.add(item);
-               }
-
-               if(msg.contains(NOTIFICATION_PAY_LINK)){
-                   actionLink = getPayUrl(property);
-                   ActionItem item = ActionItem.builder().actionUrl(actionLink).code(NOTIFICATION_PAY_LINK).build();
-                   items.add(item);
-               }
-
-               if(msg.contains(MT_RECEIPT_STRING))
-               {
-                   actionLink = getMutationUrl(property);
-                   ActionItem item = ActionItem.builder().actionUrl(actionLink).code(DOWNLOAD_MUTATION_RECEIPT_CODE).build();
-                   items.add(item);
-               }
-
-               if(msg.contains(MT_CERTIFICATE_STRING))
-               {
-                   actionLink = getMutationUrl(property);
-                   ActionItem item = ActionItem.builder().actionUrl(actionLink).code(DOWNLOAD_MUTATION_CERTIFICATE_CODE).build();
-                   items.add(item);
-               }
-
-                       action = Action.builder().actionUrls(items).build();
-           }
-
-           String description = removeForInAppMessage(mobileNumberToMsg.get(mobileNumber));
-           events.add(Event.builder().tenantId(tenantId).description(description)
-                   .eventType(USREVENTS_EVENT_TYPE).name(USREVENTS_EVENT_NAME)
-                   .postedBy(USREVENTS_EVENT_POSTEDBY).source(Source.WEBAPP).recepient(recepient)
-                   .eventDetails(null).actions(action).build());
-
-		});
-		return events;
-	}
+//   public List<Event> enrichEvent(List<SMSRequest> smsRequests, RequestInfo requestInfo, String tenantId, Property property, Boolean isActionReq){
+//
+//		List<Event> events = new ArrayList<>();
+//       Set<String> mobileNumbers = smsRequests.stream().map(SMSRequest :: getMobileNumber).collect(Collectors.toSet());
+//       Map<String, String> mapOfPhnoAndUUIDs = fetchUserUUIDs(mobileNumbers, requestInfo, tenantId);
+//       if (CollectionUtils.isEmpty(mapOfPhnoAndUUIDs.keySet())) {
+//           log.error("UUIDs Not found for Mobilenumbers");
+//       }
+//       
+//       Map<String,String > mobileNumberToMsg = smsRequests.stream().collect(Collectors.toMap(SMSRequest::getMobileNumber, SMSRequest::getMessage));
+//       mobileNumbers.forEach(mobileNumber -> {
+//       	
+//           List<String> toUsers = new ArrayList<>();
+//           toUsers.add(mapOfPhnoAndUUIDs.get(mobileNumber));
+//           Recepient recepient = Recepient.builder().toUsers(toUsers).toRoles(null).build();
+//
+//           Action action = null;
+//           if(isActionReq){
+//               List<ActionItem> items = new ArrayList<>();
+//               String msg = smsRequests.get(0).getMessage();
+//               String actionLink = "";
+//               if(msg.contains(PT_CORRECTION_PENDING)){
+//            	   
+//					String url = config.getUserEventViewPropertyLink();
+//					if (property.getCreationReason().equals(CreationReason.MUTATION)) {
+//						url = config.getUserEventViewMutationLink();
+//					}
+//					
+//                   actionLink = url.replace("$mobileNo", mobileNumber)
+//                           .replace("$tenantId", tenantId)
+//                           .replace("$propertyId" , property.getPropertyId())
+//                           .replace("$applicationNumber" , property.getAcknowldgementNumber());
+//
+//                   actionLink = config.getUiAppHost() + actionLink;
+//                   ActionItem item = ActionItem.builder().actionUrl(actionLink).code(VIEW_APPLICATION_CODE).build();
+//                   items.add(item);
+//               }
+//
+//               if(msg.contains(ASMT_USER_EVENT_PAY)){
+//                   actionLink = config.getPayLink().replace("$mobile", mobileNumber)
+//                           .replace("$propertyId", property.getPropertyId())
+//                           .replace("$tenantId", property.getTenantId())
+//                           .replace("$businessService" , PT_BUSINESSSERVICE);
+//
+//                   actionLink = config.getUiAppHost() + actionLink;
+//                   ActionItem item = ActionItem.builder().actionUrl(actionLink).code(config.getPayCode()).build();
+//                   items.add(item);
+//               }
+//               if(msg.contains(PT_ALTERNATE_NUMBER) || msg.contains(PT_OLD_MOBILENUMBER) || msg.contains(VIEW_PROPERTY)){
+//                   actionLink = config.getViewPropertyLink()
+//                           .replace(NOTIFICATION_PROPERTYID, property.getPropertyId())
+//                           .replace(NOTIFICATION_TENANTID, property.getTenantId());
+//
+//                   actionLink = config.getUiAppHost() + actionLink;
+//                   ActionItem item = ActionItem.builder().actionUrl(actionLink).code(VIEW_PROPERTY_CODE).build();
+//                   items.add(item);
+//               }
+//
+//               if(msg.contains(TRACK_APPLICATION)){
+//                   actionLink = config.getViewPropertyLink()
+//                           .replace(NOTIFICATION_PROPERTYID, property.getPropertyId())
+//                           .replace(NOTIFICATION_TENANTID, property.getTenantId());
+//
+//                   actionLink = config.getUiAppHost() + actionLink;
+//                   ActionItem item = ActionItem.builder().actionUrl(actionLink).code(VIEW_PROPERTY_CODE).build();
+//                   items.add(item);
+//               }
+//
+//               if(msg.contains(TRACK_APPLICATION) && msg.contains("{MTURL}")){
+//                   actionLink = getMutationUrl(property);
+//                   ActionItem item = ActionItem.builder().actionUrl(actionLink).code(TRACK_APPLICATION_CODE).build();
+//                   items.add(item);
+//               }
+//
+//               if(msg.contains(NOTIFICATION_PAY_LINK)){
+//                   actionLink = getPayUrl(property);
+//                   ActionItem item = ActionItem.builder().actionUrl(actionLink).code(NOTIFICATION_PAY_LINK).build();
+//                   items.add(item);
+//               }
+//
+//               if(msg.contains(MT_RECEIPT_STRING))
+//               {
+//                   actionLink = getMutationUrl(property);
+//                   ActionItem item = ActionItem.builder().actionUrl(actionLink).code(DOWNLOAD_MUTATION_RECEIPT_CODE).build();
+//                   items.add(item);
+//               }
+//
+//               if(msg.contains(MT_CERTIFICATE_STRING))
+//               {
+//                   actionLink = getMutationUrl(property);
+//                   ActionItem item = ActionItem.builder().actionUrl(actionLink).code(DOWNLOAD_MUTATION_CERTIFICATE_CODE).build();
+//                   items.add(item);
+//               }
+//
+//                       action = Action.builder().actionUrls(items).build();
+//           }
+//
+//           String description = removeForInAppMessage(mobileNumberToMsg.get(mobileNumber));
+//           events.add(Event.builder().tenantId(tenantId).description(description)
+//                   .eventType(USREVENTS_EVENT_TYPE).name(USREVENTS_EVENT_NAME)
+//                   .postedBy(USREVENTS_EVENT_POSTEDBY).source(Source.WEBAPP).recepient(recepient)
+//                   .eventDetails(null).actions(action).build());
+//
+//		});
+//		return events;
+//	}
 
     /**
      * Method to remove certain lines from SMS templates
@@ -594,13 +593,13 @@ public class NotificationUtil {
      * @param property
      * @return
      */
-    public String getMutationUrl(Property property) {
-
-        return getShortenedUrl(
-                config.getUiAppHost().concat(config.getViewMutationLink()
-                        .replace(NOTIFICATION_APPID, property.getAcknowldgementNumber())
-                        .replace(NOTIFICATION_TENANTID, property.getTenantId())));
-    }
+//    public String getMutationUrl(Property property) {
+//
+//        return getShortenedUrl(
+//                config.getUiAppHost().concat(config.getViewMutationLink()
+//                        .replace(NOTIFICATION_APPID, property.getAcknowldgementNumber())
+//                        .replace(NOTIFICATION_TENANTID, property.getTenantId())));
+//    }
 
     /**
      * Prepares and return url for property view screen
@@ -608,11 +607,11 @@ public class NotificationUtil {
      * @param property
      * @return
      */
-    public String getPayUrl(Property property) {
-        return getShortenedUrl(
-                config.getUiAppHost().concat(config.getPayLink().replace(EVENT_PAY_BUSINESSSERVICE,MUTATION_BUSINESSSERVICE)
-                        .replace(EVENT_PAY_PROPERTYID, property.getAcknowldgementNumber())
-                        .replace(EVENT_PAY_TENANTID, property.getTenantId())));
-    }
+//    public String getPayUrl(Property property) {
+//        return getShortenedUrl(
+//                config.getUiAppHost().concat(config.getPayLink().replace(EVENT_PAY_BUSINESSSERVICE,MUTATION_BUSINESSSERVICE)
+//                        .replace(EVENT_PAY_PROPERTYID, property.getAcknowldgementNumber())
+//                        .replace(EVENT_PAY_TENANTID, property.getTenantId())));
+//    }
 
 }

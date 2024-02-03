@@ -18,7 +18,7 @@ import org.egov.mdms.model.ModuleDetail;
 import org.egov.ptr.config.PetConfiguration;
 import org.egov.ptr.models.AuditDetails;
 import org.egov.ptr.models.OwnerInfo;
-import org.egov.ptr.models.Property;
+//import org.egov.ptr.models.Property;
 import org.egov.ptr.models.user.User;
 import org.egov.ptr.repository.ServiceRequestRepository;
 import org.egov.ptr.web.contracts.IdGenerationRequest;
@@ -72,13 +72,13 @@ public class CommonUtils {
 	 * @param property Property whose owners are to be returned
 	 * @return Owners of the property
 	 */
-	public List<User> getUserForWorkflow(Property property) {
-
-		List<User> users = new LinkedList<>();
-		users.addAll(property.getOwners());
-		users.add(OwnerInfo.builder().uuid(property.getAccountId()).build());
-		return users;
-	}
+//	public List<User> getUserForWorkflow(Property property) {
+//
+//		List<User> users = new LinkedList<>();
+//		users.addAll(property.getOwners());
+//		users.add(OwnerInfo.builder().uuid(property.getAccountId()).build());
+//		return users;
+//	}
 	
 	/**************************** ID GEN ****************************/
 

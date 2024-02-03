@@ -10,7 +10,7 @@ import java.util.List;
 
 import org.egov.ptr.models.Document;
 import org.egov.ptr.models.OwnerInfo;
-import org.egov.ptr.models.Property;
+//import org.egov.ptr.models.Property;
 import org.egov.ptr.util.PTConstants;
 import org.egov.tracer.model.CustomException;
 import org.javers.core.Javers;
@@ -93,25 +93,25 @@ public class DiffService {
      * @param propertyFromSearch License from db on which update is called
      * @return Names of Classes added or removed during update
      */
-    private List<String> getObjectsRemoved(Property propertyFromUpdate, Property propertyFromSearch, String flowType) {
-
-        Javers javers = getJavers(flowType);
-        Diff diff = javers.compare(propertyFromUpdate, propertyFromSearch);
-        List<ValueChange> changes = diff.getChangesByType(ValueChange.class);
-
-        List<String> classRemoved = new LinkedList<>();
-
-        if (CollectionUtils.isEmpty(changes))
-            return classRemoved;
-
-        changes.forEach(change -> {
-            if (change.getPropertyName().equalsIgnoreCase(VARIABLE_ACTIVE)
-                    || change.getPropertyName().equalsIgnoreCase(VARIABLE_USERACTIVE)) {
-                classRemoved.add(getObjectClassName(change.getAffectedObject().toString()));
-            }
-        });
-        return classRemoved;
-    }
+//    private List<String> getObjectsRemoved(Property propertyFromUpdate, Property propertyFromSearch, String flowType) {
+//
+//        Javers javers = getJavers(flowType);
+//        Diff diff = javers.compare(propertyFromUpdate, propertyFromSearch);
+//        List<ValueChange> changes = diff.getChangesByType(ValueChange.class);
+//
+//        List<String> classRemoved = new LinkedList<>();
+//
+//        if (CollectionUtils.isEmpty(changes))
+//            return classRemoved;
+//
+//        changes.forEach(change -> {
+//            if (change.getPropertyName().equalsIgnoreCase(VARIABLE_ACTIVE)
+//                    || change.getPropertyName().equalsIgnoreCase(VARIABLE_USERACTIVE)) {
+//                classRemoved.add(getObjectClassName(change.getAffectedObject().toString()));
+//            }
+//        });
+//        return classRemoved;
+//    }
 
     /**
      * Extracts the class name from the affectedObject string representation

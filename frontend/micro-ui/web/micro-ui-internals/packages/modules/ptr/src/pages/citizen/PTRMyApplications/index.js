@@ -63,7 +63,7 @@ export const PTRMyApplications = () => {
         {applicationsList?.length !== 0 && (
           <div>
             <p style={{ marginLeft: "16px", marginTop: "16px" }}>
-              <span className="link">{<Link to={`/digit-ui/citizen/ptr/petservice/my-applications/${t1}`}>{t("PTR_LOAD_MORE_MSG")}</Link>}</span>
+              <span className="link">{<Link to={`/digit-ui/citizen/ptr/petservice/my-application/${t1}`}>{t("PTR_LOAD_MORE_MSG")}</Link>}</span>
             </p>
           </div>
         )}

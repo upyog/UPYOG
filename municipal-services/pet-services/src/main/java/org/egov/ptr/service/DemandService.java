@@ -36,9 +36,7 @@ public class DemandService {
 	@Autowired
 	private DemandRepository demandRepository;
 
-
-
-	public List<Demand> createDemand( PetRegistrationRequest petReq) {
+	public List<Demand> createDemand(PetRegistrationRequest petReq) {
 		String tenantId = petReq.getPetRegistrationApplications().get(0).getTenantId();
 		String consumerCode = petReq.getPetRegistrationApplications().get(0).getApplicationNumber();
 		PetRegistrationApplication petApplication = petReq.getPetRegistrationApplications().get(0);
@@ -49,18 +47,14 @@ public class DemandService {
 				.taxHeadMasterCode("PET_REGISTRATION_FEE").tenantId(null).build());
 
 		Demand demand = Demand.builder().consumerCode(consumerCode).demandDetails(demandDetails).payer(owner)
-				.minimumAmountPayable(BigDecimal.valueOf(500.00)).tenantId(tenantId).taxPeriodFrom(Long.valueOf("1680307199000")).taxPeriodTo(Long.valueOf("1711929599000"))
+				.minimumAmountPayable(BigDecimal.valueOf(500.00)).tenantId(tenantId)
+				.taxPeriodFrom(Long.valueOf("1680307199000")).taxPeriodTo(Long.valueOf("1711929599000"))
 				.consumerType("ptr").businessService("pet-services").additionalDetails(null).build();
-		System.out.println("Demand details: "+demand);
+		System.out.println("Demand details: " + demand);
 		List<Demand> demands = new ArrayList<>();
 		demands.add(demand);
-		
+
 		return demandRepository.saveDemand(petReq.getRequestInfo(), demands);
 	}
 
-	
-
-
-	
-	
 }
