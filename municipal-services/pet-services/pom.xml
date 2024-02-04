@@ -154,13 +154,9 @@
 				<configuration>
 					<jsonLibrary>jackson2</jsonLibrary>
 					<classes>
-						<class>org.egov.ptr.web.contracts.AssessmentRequest</class>
-						<class>org.egov.ptr.web.contracts.AssessmentResponse</class>
-						<class>org.egov.ptr.web.contracts.PropertyRequest</class>
-						<class>org.egov.ptr.web.contracts.PropertyResponse</class>
+						<class>org.egov.ptr.web.contracts.PetRequest</class>
 					</classes>
 					<customTypeMappings>
-						<customTypeMapping>org.egov.ptr.models.enums.Source:PropertySource</customTypeMapping>
 						<customTypeMapping>org.egov.common.contract.request.User:User</customTypeMapping>
 						<customTypeMapping>org.egov.common.contract.request.RequestInfo:RequestInfo</customTypeMapping>
 						<customTypeMapping>org.egov.common.contract.response.ResponseInfo:ResponseInfo</customTypeMapping>
