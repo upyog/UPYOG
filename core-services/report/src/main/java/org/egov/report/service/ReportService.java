@@ -224,6 +224,7 @@ public class ReportService {
 
     public ReportResponse getReportData(ReportRequest reportRequest, String moduleName, String reportName, String authToken) {
         ReportDefinitions rds = ReportApp.getReportDefs();
+        log.info("search for "+ moduleName+ " "+reportName);
         ReportDefinition reportDefinition = rds.getReportDefinition(moduleName+ " "+reportName);
         List<Map<String, Object>> maps = reportRepository.getData(reportRequest, reportDefinition,authToken);
         // Call decryption service if decryption is required for the report
