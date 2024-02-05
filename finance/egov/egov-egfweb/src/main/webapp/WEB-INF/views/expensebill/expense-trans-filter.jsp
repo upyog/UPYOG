@@ -57,7 +57,6 @@
 			<c:choose>
 				<c:when test="${mandatoryFields.contains('fund')}">
 				<form:hidden path="" name="fundId" id="fundId" value="${egBillregister.egBillregistermis.fund.id }"/>
-				
 					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.fund" />
 						<span class="mandatory"></span>
 					</label>
