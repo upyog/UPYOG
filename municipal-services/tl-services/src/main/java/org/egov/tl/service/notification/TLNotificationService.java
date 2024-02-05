@@ -52,10 +52,10 @@ public class TLNotificationService {
 
   private PropertyUtil propertyUtil;
 
-	@Value("${egov.mdms.host}")
+	@Value("${mdms.v2.host}")
 	private String mdmsHost;
 
-	@Value("${egov.mdms.search.endpoint}")
+	@Value("${mdms.v2.search.endpoint}")
 	private String mdmsUrl;
 
 	@Autowired
@@ -477,77 +477,6 @@ public class TLNotificationService {
 		if(StringUtils.isEmpty(tenantId))
 			return map;
 		MdmsCriteriaReq mdmsCriteriaReq = getMdmsRequestForChannelList(requestInfo, centralInstanceUtil.getStateLevelTenant(tenantId));
-
-        Filter masterDataFilter = filter(
-                where(MODULENAME).is(moduleName)
-        );
-
-		try {
-			Object response = restTemplate.postForObject(uri.toString(), mdmsCriteriaReq, Map.class);
-			masterData = JsonPath.parse(response).read("$.MdmsRes.Channel.channelList[?]", masterDataFilter);
-		}catch(Exception e) {
-			log.error("Exception while fetching workflow states to ignore: ",e);
-		}
-
-
-		for(Map obj: masterData)
-		{
-			map.put(obj.get(ACTION),obj.get(CHANNEL_NAMES));
-		}
-		return map;
-	}
-
-	/**
-	 * Return MDMS Criteria Request
-	 * *
-	 * @param requestInfo
-	 * @param tenantId
-	 * @return MdmsCriteriaReq
-	 */
-
-	private MdmsCriteriaReq getMdmsRequestForChannelList(RequestInfo requestInfo, String tenantId){
-		MasterDetail masterDetail = new MasterDetail();
-		masterDetail.setName(CHANNEL_LIST);
-		List<MasterDetail> masterDetailList = new ArrayList<>();
-		masterDetailList.add(masterDetail);
-
-		ModuleDetail moduleDetail = new ModuleDetail();
-		moduleDetail.setMasterDetails(masterDetailList);
-		moduleDetail.setModuleName(CHANNEL);
-		List<ModuleDetail> moduleDetailList = new ArrayList<>();
-		moduleDetailList.add(moduleDetail);
-
-		MdmsCriteria mdmsCriteria = new MdmsCriteria();
-		mdmsCriteria.setTenantId(tenantId);
-		mdmsCriteria.setModuleDetails(moduleDetailList);
-
-		MdmsCriteriaReq mdmsCriteriaReq = new MdmsCriteriaReq();
-		mdmsCriteriaReq.setMdmsCriteria(mdmsCriteria);
-		mdmsCriteriaReq.setRequestInfo(requestInfo);
-
-		return mdmsCriteriaReq;
-	}
-
-	/**
-	 * Fetches Channel List based on the module name and action.
-	 *
-	 * @param requestInfo
-	 * @param tenantId
-	 * @param moduleName
-	 * @param action
-	 * @return Map of actions and its channel List
-	 */
-	public Map<Object, Object> fetchChannelList(RequestInfo requestInfo, String tenantId, String moduleName, String action){
-
-		List<Map<String,String>> masterData = new ArrayList<>();
-		Map<Object, Object> map = new HashMap<>();
-
-		StringBuilder uri = new StringBuilder();
-		uri.append(mdmsHost).append(mdmsUrl);
-
-		if(StringUtils.isEmpty(tenantId))
-			return map;
-		MdmsCriteriaReq mdmsCriteriaReq = getMdmsRequestForChannelList(requestInfo, tenantId.split("\\.")[0]);
 
         Filter masterDataFilter = filter(
                 where(MODULENAME).is(moduleName)

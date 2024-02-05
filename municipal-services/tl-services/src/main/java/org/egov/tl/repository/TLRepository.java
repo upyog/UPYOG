@@ -237,11 +237,5 @@ public class TLRepository {
     	
     }
     
-    public List <String> fetchTradeLicenseTenantIds(){
-    	List<Object> preparedStmtList = new ArrayList<>();
-    	return jdbcTemplate.query(queryBuilder.TENANTIDQUERY,preparedStmtList.toArray(),new SingleColumnRowMapper<>(String.class));
-    	
-    }
-    
 
 }

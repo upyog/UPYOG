@@ -251,7 +251,7 @@ public class NotificationUtil {
 			message = message.replace("RRRR", license.getLicenseNumber());
 		}
 		message = message.replace("XYZ", capitalize(license.getTenantId().split("\\.")[1]));
-		message = message.replace("{PORTAL_LINK}",config.getUiAppHost());
+		message = message.replace("{PORTAL_LINK}",UIHost);
 
 		//CCC - Designaion configurable according to ULB
 		// message = message.replace("CCC","");
