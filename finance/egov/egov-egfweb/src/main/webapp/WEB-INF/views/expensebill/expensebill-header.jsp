@@ -52,123 +52,97 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 
 <div class="panel panel-primary" data-collapsed="0">
-	<div class="panel-heading"></div>
+	<div class="panel-heading">
+		
+	</div>
 	<div class="form-group">
 		<c:choose>
 			<c:when test="${!billNumberGenerationAuto}">
-				<label class="col-sm-3 control-label text-right"><spring:message
-						code="lbl.billnumber" text="Bill Number" /> <span
-					class="mandatory"></span> </label>
-				<div class="col-sm-3 add-margin">
-					<form:input class="form-control patternvalidation"
-						data-pattern="alphanumericwithspecialcharacters" id="billnumber"
-						path="billnumber" maxlength="50" required="required" />
-					<form:errors path="billnumber" cssClass="add-margin error-msg" />
-				</div>
-
-				<label class="col-sm-2 control-label text-right"><spring:message
-						code="lbl.billdate" text="Bill Date" /> <span class="mandatory"></span>
+				<label class="col-sm-3 control-label text-right"><spring:message code="lbl.billnumber" text="Bill Number"/>
+					<span class="mandatory"></span>
 				</label>
 				<div class="col-sm-3 add-margin">
-					<form:input id="billdate" path="billdate"
-						class="form-control datepicker" data-date-end-date="0d"
-						required="required" />
+					<form:input class="form-control patternvalidation" data-pattern="alphanumericwithspecialcharacters" id="billnumber" path="billnumber" maxlength="50" required="required" />
+					<form:errors path="billnumber" cssClass="add-margin error-msg" />
+				</div>
+				
+				<label class="col-sm-2 control-label text-right"><spring:message code="lbl.billdate"  text="Bill Date"/>
+				<span class="mandatory"></span>
+				</label>
+				<div class="col-sm-3 add-margin">
+					<form:input id="billdate" path="billdate" class="form-control datepicker" data-date-end-date="0d" required="required" />
 					<form:errors path="billdate" cssClass="add-margin error-msg" />
 				</div>
 			</c:when>
 			<c:otherwise>
-				<label class="col-sm-3 control-label text-right"><spring:message
-						code="lbl.billdate" text="Bill Date" /> <span class="mandatory"></span>
+				<label class="col-sm-3 control-label text-right"><spring:message code="lbl.billdate"  text="Bill Date"/>
+				<span class="mandatory"></span>
 				</label>
 				<div class="col-sm-3 add-margin">
-					<form:input id="billdate" path="billdate"
-						class="form-control datepicker" data-date-end-date="0d"
-						required="required" />
+					<form:input id="billdate" path="billdate" class="form-control datepicker" data-date-end-date="0d" required="required" />
 					<form:errors path="billdate" cssClass="add-margin error-msg" />
 				</div>
 				<label class="col-sm-2 control-label text-right"></label>
-				<div class="col-sm-3 add-margin"></div>
+				<div class="col-sm-3 add-margin">
+				</div>
 			</c:otherwise>
 		</c:choose>
-
+		
 	</div>
-
-
-	<jsp:include page="expense-trans-filter.jsp" />
-
+	
+	
+	<jsp:include page="expense-trans-filter.jsp"/>
+	
 	<div class="form-group">
-		<label class="col-sm-3 control-label text-right"> <spring:message
-				code="lbl.function" text="Function" /> <span class="mandatory"></span>
+		<label class="col-sm-3 control-label text-right">
+			<spring:message code="lbl.function"  text="Function"/>	<span class="mandatory"></span>
 		</label>
 		<div class="col-sm-3 add-margin">
 			<c:if test="${egBillregister.egBillregistermis.function != null}">
-				<form:input path="" name="function" id="function"
-					class="form-control"
-					placeholder="Type first 3 letters of Function name"
-					required="required"
-					value="${egBillregister.egBillregistermis.function.code} - ${egBillregister.egBillregistermis.function.name}" />
+				<form:input path="" name ="function" id="function" class="form-control" placeholder="Type first 3 letters of Function name" required="required" value="${egBillregister.egBillregistermis.function.code} - ${egBillregister.egBillregistermis.function.name}"/>
 			</c:if>
 			<c:if test="${egBillregister.egBillregistermis.function == null}">
-				<form:input path="" name="function" id="function"
-					class="form-control"
-					placeholder="Type first 3 letters of Function name"
-					required="required" />
+				<form:input path="" name ="function" id="function" class="form-control" placeholder="Type first 3 letters of Function name" required="required"/>
 			</c:if>
-			<form:hidden path="egBillregistermis.function"
-				name="egBillregistermis.function" id="egBillregistermis.function"
-				class="form-control table-input hidden-input cfunction" />
-			<form:errors path="egBillregistermis.function"
-				cssClass="add-margin error-msg" />
+			<form:hidden path="egBillregistermis.function" name="egBillregistermis.function" id="egBillregistermis.function" class="form-control table-input hidden-input cfunction"/>
+			<form:errors path="egBillregistermis.function" cssClass="add-margin error-msg" />
 		</div>
-
-		<label class="col-sm-2 control-label text-right"><spring:message
-				code="lbl.narration" text="Narration" /> </label>
+				
+		<label class="col-sm-2 control-label text-right"><spring:message code="lbl.narration" text="Narration"/>
+		</label>
 		<div class="col-sm-3 add-margin">
-			<form:textarea path="egBillregistermis.narration" id="narration"
-				class="form-control" maxlength="1024"></form:textarea>
-			<form:errors path="egBillregistermis.narration"
-				cssClass="add-margin error-msg" />
+			<form:textarea path="egBillregistermis.narration" id="narration" class="form-control" maxlength="1024" ></form:textarea>
+			<form:errors path="egBillregistermis.narration" cssClass="add-margin error-msg" />
 		</div>
 	</div>
-
+	
 	<div class="form-group">
-		<label class="col-sm-3 control-label text-right"> <spring:message
-				code="lbl.party.billnumber" text="Party Bill Number" />
+		<label class="col-sm-3 control-label text-right">
+			<spring:message code="lbl.party.billnumber" text="Party Bill Number"/>
 		</label>
 		<div class="col-sm-3 add-margin">
-			<form:input class="form-control patternvalidation"
-				data-pattern="alphanumerichyphenbackslash" id="partyBillNumber"
-				path="egBillregistermis.partyBillNumber" maxlength="32" />
-			<form:errors path="egBillregistermis.partyBillNumber"
-				cssClass="add-margin error-msg" />
+			<form:input class="form-control patternvalidation" data-pattern="alphanumerichyphenbackslash" id="partyBillNumber" path="egBillregistermis.partyBillNumber" maxlength="32" />
+			<form:errors path="egBillregistermis.partyBillNumber" cssClass="add-margin error-msg" />		
 		</div>
-
-		<label class="col-sm-2 control-label text-right"> <spring:message
-				code="lbl.party.billdate" text="Party Bill Date" />
+		
+		<label class="col-sm-2 control-label text-right">
+			<spring:message code="lbl.party.billdate" text="Party Bill Date"/>
 		</label>
 		<div class="col-sm-3 add-margin">
-			<form:input id="partyBillDate" path="egBillregistermis.partyBillDate"
-				class="form-control datepicker" data-date-end-date="0d" />
-			<form:errors path="egBillregistermis.partyBillDate"
-				cssClass="add-margin error-msg" />
+			<form:input id="partyBillDate" path="egBillregistermis.partyBillDate" class="form-control datepicker" data-date-end-date="0d" />
+			<form:errors path="egBillregistermis.partyBillDate" cssClass="add-margin error-msg" />
 		</div>
 	</div>
 	<div class="form-group">
-		<label class="col-sm-3 control-label text-right"><spring:message
-				code="lbl.billsubtype" text="Bill Subtype" /> <span
-			class="mandatory"></span> </label>
+		<label class="col-sm-3 control-label text-right"><spring:message code="lbl.billsubtype" text="Bill Subtype"/>
+			<span class="mandatory"></span>
+		</label>
 		<div class="col-sm-3 add-margin">
-			<form:select path="egBillregistermis.egBillSubType"
-				data-first-option="false" id="billSubType" class="form-control"
-				required="required">
-				<form:option value="">
-					<spring:message code="lbl.select" text="Select" />
-				</form:option>
-				<form:options items="${billSubTypes}" itemValue="id"
-					itemLabel="name" />
+			<form:select path="egBillregistermis.egBillSubType" data-first-option="false" id="billSubType" class="form-control" required="required">
+				<form:option value=""><spring:message code="lbl.select" text="Select"/></form:option>
+				<form:options items="${billSubTypes}" itemValue="id" itemLabel="name" />
 			</form:select>
-			<form:errors path="egBillregistermis.egBillSubType"
-				cssClass="add-margin error-msg" />
+			<form:errors path="egBillregistermis.egBillSubType" cssClass="add-margin error-msg" />
 		</div>
 	</div>
 </div>
