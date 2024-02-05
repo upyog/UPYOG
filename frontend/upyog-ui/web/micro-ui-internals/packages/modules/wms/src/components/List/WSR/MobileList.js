@@ -36,13 +36,16 @@ const GetSlaCell = (value) => {
   return value == "INACTIVE" ? <span className="sla-cell-error">{ t(value )|| ""}</span> : <span className="sla-cell-success">{ t(value) || ""}</span>;
 };
   const getData = () => {
-    return data?.DRApplications?.map((original) => ({
-      [t("WMS_WSR_ID_LABEL")]: GetCell(original?.WmsDrId?.wsr_id || ""),
-      [t("WMS_WSR_PROJECT_NAME_LABEL")]: GetCell(original?.WmsDrPrjName?.project_name || ""),
-      [t("WMS_WSR_WORK_NAME_LABEL")]: GetCell(original?.WmsDrWorkName?.work_name || ""),
-      [t("WMS_WSR_ML_NAME_LABEL")]: GetCell(original?.WmsDrMLName?.milestone_name || ""),
-      [t("WMS_WSR_PERCENT_LABEL")]: GetCell(original?.WmsDrPercent?.percent_weightage || ""),
-        
+    return data?.WSRApplications?.map((original) => ({
+      [t("WMS_WSR_ID_LABEL")]: GetCell(original?.WmsWsrId?.wsr_id || ""),
+      [t("WMS_WSR_PROJECT_NAME_LABEL")]: GetCell(original?.WmsWsrPrjName?.project_name || ""),
+      [t("WMS_WSR_WORK_NAME_LABEL")]: GetCell(original?.WmsWsrWorkName?.work_name || ""),
+      [t("WMS_WSR_ACTIVITY_LABEL")]: GetCell(original?.WmsWsrActivity?.activity_name || ""),
+      [t("WMS_WSR_EMPLOYEE_NAME_LABEL")]: GetCell(original?.WmsWsrEmployee?.employee_name || ""),
+      [t("WMS_WSR_ROLE_LABEL")]: GetCell(original?.WmsWsrRole?.role_name || ""),
+      [t("WMS_WSR_START_DATE_LABEL")]: GetCell(original?.WmsWsrStartDate?.start_date || ""),
+      [t("WMS_WSR_END_DATE_LABEL")]: GetCell(original?.WmsWsrEndDate?.end_date || ""),
+      [t("WMS_WSR_REMARKS_LABEL")]: GetCell(original?.WmsWsrRemarks?.end_date || ""),
     }));
   };
   const serviceRequestIdKey = (original) => {return `${searchParams?.tenantId}/${original?.[t("WMS_WSR_NAME_EN_LABEL")]}`};
@@ -59,7 +62,7 @@ const GetSlaCell = (value) => {
             isLoading={isLoading}
             isSearch={isSearch}
             onSearch={onSearch}
-            onDrt={onDrt}
+            onWsrt={onWsrt}
             searchParams={searchParams}
             searchFields={searchFields}
             linkPrefix={linkPrefix}
