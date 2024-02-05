@@ -67,7 +67,9 @@ public class ReportRepository {
             if (parameters.containsKey(param.getName())) {
                 value = param.getSearchClause();
             }
-
+            log.info("Query before "+ query);
+            log.info("\\$_" + param.getName());
+            log.info("vauee "+ value.replace("$","\\$"));
             query = query.replaceAll("\\$_" + param.getName(), value.replace("$","\\$"));
             log.info(query);
         }
