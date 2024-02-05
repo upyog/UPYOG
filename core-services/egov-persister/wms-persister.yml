@@ -689,6 +689,70 @@ serviceMaps:
             - jsonPath: $.WMSProjectRegisterApplication.*.register_id
             
             
+            
+    - version: 1.0
+      description: Persists Work Status Report details in tables
+      fromTopic: save-wsr-application
+      isTransaction: true
+      queryMaps:
+
+        - query: INSERT INTO work_status_report (wsr_id,project_name,work_name,activity_name,role_name,employee_name,start_date,end_date,remarks_content,createdby,lastmodifiedby,createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?);
+          basePath: WMSWorkStatusReportApplication.*
+          jsonMaps:
+            - jsonPath: $.WMSWorkStatusReportApplication.*.wsr_id
+            
+            - jsonPath: $.WMSWorkStatusReportApplication.*.project_name
+
+            - jsonPath: $.WMSWorkStatusReportApplication.*.work_name
+
+            - jsonPath: $.WMSWorkStatusReportApplication.*.activity_name
+            
+            - jsonPath: $.WMSWorkStatusReportApplication.*.role_name
+            
+            - jsonPath: $.WMSWorkStatusReportApplication.*.employee_name
+
+            - jsonPath: $.WMSWorkStatusReportApplication.*.start_date
+
+            - jsonPath: $.WMSWorkStatusReportApplication.*.end_date
+
+            - jsonPath: $.WMSWorkStatusReportApplication.*.remarks_content
+
+            - jsonPath: $.WMSWorkStatusReportApplication.*.auditDetails.createdBy
+
+            - jsonPath: $.WMSWorkStatusReportApplication.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.WMSWorkStatusReportApplication.*.auditDetails.createdTime
+            
+            - jsonPath: $.WMSWorkStatusReportApplication.*.auditDetails.lastModifiedTime
+            
+            
+            
+    - version: 1.0
+      description: Update Project Register applications in table
+      fromTopic: update-wsr-application
+      isTransaction: true
+      queryMaps:
+      
+        - query: UPDATE work_status_report SET project_name = ?,work_name = ?,activity_name =?,role_name=?,employee_name=?,start_date=?,end_date = ?, remarks_content = ? WHERE wsr_id=?;
+          basePath: WMSWorkStatusReportApplication.*
+          jsonMaps:
+            - jsonPath: $.WMSWorkStatusReportApplication.*.project_name
+            
+            - jsonPath: $.WMSWorkStatusReportApplication.*.work_name
+
+            - jsonPath: $.WMSWorkStatusReportApplication.*.activity_name
+            
+            - jsonPath: $.WMSWorkStatusReportApplication.*.role_name
+            
+            - jsonPath: $.WMSWorkStatusReportApplication.*.employee_name
+
+            - jsonPath: $.WMSWorkStatusReportApplication.*.start_date
+
+            - jsonPath: $.WMSWorkStatusReportApplication.*.end_date
+
+            - jsonPath: $.WMSWorkStatusReportApplication.*.remarks_content
+
+            - jsonPath: $.WMSWorkStatusReportApplication.*.wsr_id 
                
     - version: 1.0
       description: Persists work estimation details in tables
