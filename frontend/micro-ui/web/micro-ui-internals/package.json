@@ -14,7 +14,9 @@
     "packages/modules/ws",
     "packages/modules/fsm",
     "packages/modules/mCollect",
-    "packages/modules/obps"
+    "packages/modules/obps",
+    "packages/modules/tl",
+    "packages/modules/commonPt"
   ],
   "author": "Abhinav Kushwaha <abhinav.kushwaha@egovernments.org>",
   "license": "MIT",
@@ -61,7 +63,7 @@
     "buildD:dss": "cd packages/modules/dss && yarn build",
     "buildD:mcollect": "cd packages/modules/mCollect && yarn build",
     "buildD:receipts": "cd packages/modules/receipts && yarn build",
-    "buildD:tl": "cd packages/modules/tl && yarn build",
+    "build:tl": "cd packages/modules/tl && yarn build",
     "buildD:hrms": "cd packages/modules/hrms && yarn build",
     "build:obps": "cd packages/modules/obps && yarn build",
     "buildD:engagement": "cd packages/modules/engagement && yarn build",

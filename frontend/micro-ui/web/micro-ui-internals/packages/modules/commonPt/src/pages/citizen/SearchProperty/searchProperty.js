@@ -46,7 +46,7 @@ const SearchProperty = ({ config: propsConfig, onSelect, redirectToUrl }) => {
   useEffect(() => {
     if ( !(searchData?.filters?.mobileNumber && Object.values(searchData?.filters)?.filter(ob => ob !== undefined)?.length == 1) && 
       propertyData?.Properties.length > 0 &&
-      ptSearchConfig.maxResultValidation &&
+      ptSearchConfig?.maxResultValidation &&
       propertyData?.Properties.length > ptSearchConfig.maxPropertyResult &&
       !errorShown
     ) {
@@ -330,7 +330,7 @@ const SearchProperty = ({ config: propsConfig, onSelect, redirectToUrl }) => {
 
   const onPropertySearch = async (data) => {
     if (
-      ptSearchConfig.maxResultValidation &&
+      ptSearchConfig?.maxResultValidation &&
       propertyData?.Properties.length > 0 &&
       propertyData?.Properties.length > ptSearchConfig.maxPropertyResult &&
       errorShown
@@ -448,7 +448,7 @@ const SearchProperty = ({ config: propsConfig, onSelect, redirectToUrl }) => {
     return <Loader />;
   }
 
-  let validation = ptSearchConfig.maxResultValidation && !(searchData?.filters?.mobileNumber && Object.values(searchData?.filters)?.filter(ob => ob !== undefined)?.length == 1)   ? propertyData?.Properties.length<ptSearchConfig.maxPropertyResult && (showToast == null || (showToast !== null && !showToast?.error)) : true;
+  let validation = ptSearchConfig?.maxResultValidation && !(searchData?.filters?.mobileNumber && Object.values(searchData?.filters)?.filter(ob => ob !== undefined)?.length == 1)   ? propertyData?.Properties.length<ptSearchConfig.maxPropertyResult && (showToast == null || (showToast !== null && !showToast?.error)) : true;
 
   if (propertyData && !propertyDataLoading && !error && validation) {
     let qs = {};
