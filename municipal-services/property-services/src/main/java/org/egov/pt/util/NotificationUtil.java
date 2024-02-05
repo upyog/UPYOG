@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
@@ -61,20 +62,18 @@ import com.jayway.jsonpath.JsonPath;
 public class NotificationUtil {
 
 
-	@Autowired
+    @Autowired
     private ServiceRequestRepository serviceRequestRepository;
 
-	@Autowired
+    @Autowired
     private PropertyConfiguration config;
 
     private PropertyProducer producer;
-	@Autowired
+    @Autowired
     private MultiStateInstanceUtil centralInstanceUtil;
 
-	@Autowired
-    private PropertyProducer producer;
 
-	@Autowired
+    @Autowired
     private RestTemplate restTemplate;
 
     private UserService userService;
@@ -96,6 +95,10 @@ public class NotificationUtil {
 
     @Value("${egov.mdms.search.endpoint}")
     private String mdmsUrl;
+
+    public NotificationUtil(PropertyProducer producer) {
+        this.producer = producer;
+    }
 
     /**
      * Extracts message for the specific code
@@ -132,7 +135,7 @@ public class NotificationUtil {
      * @return Localization messages for the module
      */
     public String getLocalizationMessages(String tenantId, RequestInfo requestInfo) {
-    	
+
         String locale = NOTIFICATION_LOCALE;
         Boolean isRetryNeeded = false;
         String jsonString = null;
@@ -140,21 +143,21 @@ public class NotificationUtil {
 
         if (!StringUtils.isEmpty(requestInfo.getMsgId()) && requestInfo.getMsgId().split("\\|").length >= 2) {
             locale = requestInfo.getMsgId().split("\\|")[1];
-			isRetryNeeded = true;
-		}
+            isRetryNeeded = true;
+        }
 
-		responseMap = (LinkedHashMap) serviceRequestRepository.fetchResult(getUri(tenantId, requestInfo, locale), requestInfo).get();
-		jsonString = new JSONObject(responseMap).toString();
+        responseMap = (LinkedHashMap) serviceRequestRepository.fetchResult(getUri(tenantId, requestInfo, locale), requestInfo).get();
+        jsonString = new JSONObject(responseMap).toString();
 
-		if (StringUtils.isEmpty(jsonString) && isRetryNeeded) {
+        if (StringUtils.isEmpty(jsonString) && isRetryNeeded) {
 
-			responseMap = (LinkedHashMap) serviceRequestRepository.fetchResult(getUri(tenantId, requestInfo, NOTIFICATION_LOCALE), requestInfo).get();
-			jsonString = new JSONObject(responseMap).toString();
-			if(StringUtils.isEmpty(jsonString))
-				throw new CustomException("EG_PT_LOCALE_ERROR","Localisation values not found for Property notifications");
-		}
-		return jsonString;
-	}
+            responseMap = (LinkedHashMap) serviceRequestRepository.fetchResult(getUri(tenantId, requestInfo, NOTIFICATION_LOCALE), requestInfo).get();
+            jsonString = new JSONObject(responseMap).toString();
+            if(StringUtils.isEmpty(jsonString))
+                throw new CustomException("EG_PT_LOCALE_ERROR","Localisation values not found for Property notifications");
+        }
+        return jsonString;
+    }
 
 
     /**
@@ -188,7 +191,7 @@ public class NotificationUtil {
      * @return List of SMSRequest
      */
     public List<SMSRequest> createSMSRequest(String message, Map<String, String> mobileNumberToOwnerName) {
-    	
+
         List<SMSRequest> smsRequest = new LinkedList<>();
         for (Map.Entry<String, String> entryset : mobileNumberToOwnerName.entrySet()) {
             String customizedMsg = message.replace(NOTIFICATION_OWNERNAME, entryset.getValue());
@@ -205,12 +208,12 @@ public class NotificationUtil {
      *            The list of SMSRequest to be sent
      */
     public void sendSMS(List<SMSRequest> smsRequestList, String tenantId) {
-    	
+
         if (config.getIsSMSNotificationEnabled()) {
             if (CollectionUtils.isEmpty(smsRequestList))
                 log.info("Messages from localization couldn't be fetched!");
             for (SMSRequest smsRequest : smsRequestList) {
-                producer.push(config.getSmsNotifTopic(), smsRequest);
+                producer.push("",config.getSmsNotifTopic(), smsRequest);
                 log.info("Sending SMS notification: ");
                 log.info("MobileNumber: " + smsRequest.getMobileNumber() + " Messages: " + smsRequest.getMessage());
             }
@@ -227,7 +230,7 @@ public class NotificationUtil {
      * @return
      */
     public Map<String, String> fetchUserUUIDs(Set<String> mobileNumbers, RequestInfo requestInfo, String tenantId) {
-    	
+
         Map<String, String> mapOfPhnoAndUUIDs = new HashMap<>();
         StringBuilder uri = new StringBuilder();
         uri.append(config.getUserHost()).append(config.getUserSearchEndpoint());
@@ -259,9 +262,9 @@ public class NotificationUtil {
      *
      * @param request
      */
-    public void sendEventNotification(EventRequest request) {
+    public void sendEventNotification(EventRequest request,String tenantId) {
         log.info("EVENT notification sent!");
-        producer.push(config.getSaveUserEventsTopic(), request);
+        producer.push("",config.getSaveUserEventsTopic(), request);
     }
 
 
@@ -388,7 +391,7 @@ public class NotificationUtil {
                 if(null != user) {
                     if(JsonPath.read(user, "$.user[0].emailId")!=null) {
                         String email = JsonPath.read(user, "$.user[0].emailId");
-                    mapOfPhnoAndEmailIds.put(mobileNo, email);
+                        mapOfPhnoAndEmailIds.put(mobileNo, email);
                     }
                 }else {
                     log.error("Service returned null while fetching user for username - "+mobileNo);
@@ -403,7 +406,7 @@ public class NotificationUtil {
     }
     /**
      * Method to shortent the url
-     * returns the same url if shortening fails 
+     * returns the same url if shortening fails
      * @param url
      */
     public String getShortenedUrl(String url){
@@ -422,141 +425,141 @@ public class NotificationUtil {
     }
 
     /**
-    *
-    * @param requestInfo
-    * @param smsRequests
-    */
-   public List<Event> enrichEvent(List<SMSRequest> smsRequests, RequestInfo requestInfo, String tenantId, Property property, Boolean isActionReq){
+     *
+     * @param requestInfo
+     * @param smsRequests
+     */
+    public List<Event> enrichEvent(List<SMSRequest> smsRequests, RequestInfo requestInfo, String tenantId, Property property, Boolean isActionReq){
 
-		List<Event> events = new ArrayList<>();
-       Set<String> mobileNumbers = smsRequests.stream().map(SMSRequest :: getMobileNumber).collect(Collectors.toSet());
-       Map<String, String> mapOfPhnoAndUUIDs = new HashMap<>();
+        List<Event> events = new ArrayList<>();
+        Set<String> mobileNumbers = smsRequests.stream().map(SMSRequest :: getMobileNumber).collect(Collectors.toSet());
+        Map<String, String> mapOfPhnoAndUUIDs = new HashMap<>();
 
-       for(String mobileNumber:mobileNumbers) {
-           UserDetailResponse userDetailResponse = fetchUserByUUID(mobileNumber, requestInfo, property.getTenantId());
-           try
-           {
-               OwnerInfo user= (OwnerInfo) userDetailResponse.getUser().get(0);
-               mapOfPhnoAndUUIDs.put(user.getMobileNumber(),user.getUuid());
-           }
-           catch(Exception e) {
-               log.error("Exception while fetching user object: ",e);
-           }
-       }
+        for(String mobileNumber:mobileNumbers) {
+            UserDetailResponse userDetailResponse = fetchUserByUUID(mobileNumber, requestInfo, property.getTenantId());
+            try
+            {
+                OwnerInfo user= (OwnerInfo) userDetailResponse.getUser().get(0);
+                mapOfPhnoAndUUIDs.put(user.getMobileNumber(),user.getUuid());
+            }
+            catch(Exception e) {
+                log.error("Exception while fetching user object: ",e);
+            }
+        }
 
-       if (CollectionUtils.isEmpty(mapOfPhnoAndUUIDs.keySet())) {
-           log.error("UUIDs Not found for Mobilenumbers");
-       }
+        if (CollectionUtils.isEmpty(mapOfPhnoAndUUIDs.keySet())) {
+            log.error("UUIDs Not found for Mobilenumbers");
+        }
 
-       Map<String,String > mobileNumberToMsg = smsRequests.stream().collect(Collectors.toMap(SMSRequest::getMobileNumber, SMSRequest::getMessage));
-       mobileNumbers.forEach(mobileNumber -> {
-       	
-           List<String> toUsers = new ArrayList<>();
-           toUsers.add(mapOfPhnoAndUUIDs.get(mobileNumber));
-           Recepient recepient = Recepient.builder().toUsers(toUsers).toRoles(null).build();
+        Map<String,String > mobileNumberToMsg = smsRequests.stream().collect(Collectors.toMap(SMSRequest::getMobileNumber, SMSRequest::getMessage));
+        mobileNumbers.forEach(mobileNumber -> {
 
-           Action action = null;
-           if(isActionReq){
-               List<ActionItem> items = new ArrayList<>();
-               String msg = smsRequests.get(0).getMessage();
-               log.info("Message is for Event" + msg);
-               String actionLink = "";
-               if(msg.contains(PT_CORRECTION_PENDING)){
-            	   
-					String url = config.getUserEventViewPropertyLink();
-					if (property.getCreationReason().equals(CreationReason.MUTATION)) {
-						url = config.getUserEventViewMutationLink();
-					}
-					
-                   actionLink = url.replace("$mobileNo", mobileNumber)
-                           .replace("$tenantId", tenantId)
-                           .replace("$propertyId" , property.getPropertyId())
-                           .replace("$applicationNumber" , property.getAcknowldgementNumber());
+            List<String> toUsers = new ArrayList<>();
+            toUsers.add(mapOfPhnoAndUUIDs.get(mobileNumber));
+            Recepient recepient = Recepient.builder().toUsers(toUsers).toRoles(null).build();
 
-                   actionLink = config.getUiAppHostMap().get(tenantId) + actionLink;
-                   log.info("actionLink is" + actionLink);
-                   ActionItem item = ActionItem.builder().actionUrl(actionLink).code(VIEW_APPLICATION_CODE).build();
-                   items.add(item);
-               }
+            Action action = null;
+            if(isActionReq){
+                List<ActionItem> items = new ArrayList<>();
+                String msg = smsRequests.get(0).getMessage();
+                log.info("Message is for Event" + msg);
+                String actionLink = "";
+                if(msg.contains(PT_CORRECTION_PENDING)){
 
-               if(msg.contains(ASMT_USER_EVENT_PAY)){
-                   actionLink = config.getPayLink().replace("$mobile", mobileNumber)
-                           .replace("$propertyId", property.getPropertyId())
-                           .replace("$tenantId", property.getTenantId())
-                           .replace("$businessService" , PT_BUSINESSSERVICE);
-                   
-                   log.info("3 pay link "+config.getPayLink());
-                   log.info(" 2 actionLink is" + actionLink);
+                    String url = config.getUserEventViewPropertyLink();
+                    if (property.getCreationReason().equals(CreationReason.MUTATION)) {
+                        url = config.getUserEventViewMutationLink();
+                    }
 
-                   actionLink = config.getUiAppHostMap().get(tenantId) + actionLink;
-                   log.info(" 1 actionLink is" + actionLink);
-                   ActionItem item = ActionItem.builder().actionUrl(actionLink).code(config.getPayCode()).build();
-                   items.add(item);
-               }
-               if(msg.contains(PT_ALTERNATE_NUMBER) || msg.contains(PT_OLD_MOBILENUMBER) || msg.contains(VIEW_PROPERTY)){
-                   actionLink = config.getViewPropertyLink()
-                           .replace(NOTIFICATION_PROPERTYID, property.getPropertyId())
-                           .replace(NOTIFICATION_TENANTID, property.getTenantId());
+                    actionLink = url.replace("$mobileNo", mobileNumber)
+                            .replace("$tenantId", tenantId)
+                            .replace("$propertyId" , property.getPropertyId())
+                            .replace("$applicationNumber" , property.getAcknowldgementNumber());
 
-                   actionLink = config.getUiAppHostMap().get(tenantId) + actionLink;
-                   ActionItem item = ActionItem.builder().actionUrl(actionLink).code(VIEW_PROPERTY_CODE).build();
-                   items.add(item);
-               }
+                    actionLink = config.getUiAppHostMap().get(tenantId) + actionLink;
+                    log.info("actionLink is" + actionLink);
+                    ActionItem item = ActionItem.builder().actionUrl(actionLink).code(VIEW_APPLICATION_CODE).build();
+                    items.add(item);
+                }
 
-               if(msg.contains(TRACK_APPLICATION)){
-                   actionLink = config.getViewPropertyLink()
-                           .replace(NOTIFICATION_PROPERTYID, property.getPropertyId())
-                           .replace(NOTIFICATION_TENANTID, property.getTenantId());
+                if(msg.contains(ASMT_USER_EVENT_PAY)){
+                    actionLink = config.getPayLink().replace("$mobile", mobileNumber)
+                            .replace("$propertyId", property.getPropertyId())
+                            .replace("$tenantId", property.getTenantId())
+                            .replace("$businessService" , PT_BUSINESSSERVICE);
 
-                   actionLink = config.getUiAppHostMap().get(tenantId) + actionLink;
-                   ActionItem item = ActionItem.builder().actionUrl(actionLink).code(VIEW_PROPERTY_CODE).build();
-                   items.add(item);
-               }
+                    log.info("3 pay link "+config.getPayLink());
+                    log.info(" 2 actionLink is" + actionLink);
 
-               if(msg.contains(TRACK_APPLICATION) && msg.contains("{MTURL}")){
-                   actionLink = getMutationUrl(property);
-                   ActionItem item = ActionItem.builder().actionUrl(actionLink).code(TRACK_APPLICATION_CODE).build();
-                   items.add(item);
-               }
+                    actionLink = config.getUiAppHostMap().get(tenantId) + actionLink;
+                    log.info(" 1 actionLink is" + actionLink);
+                    ActionItem item = ActionItem.builder().actionUrl(actionLink).code(config.getPayCode()).build();
+                    items.add(item);
+                }
+                if(msg.contains(PT_ALTERNATE_NUMBER) || msg.contains(PT_OLD_MOBILENUMBER) || msg.contains(VIEW_PROPERTY)){
+                    actionLink = config.getViewPropertyLink()
+                            .replace(NOTIFICATION_PROPERTYID, property.getPropertyId())
+                            .replace(NOTIFICATION_TENANTID, property.getTenantId());
 
-               if(msg.contains(NOTIFICATION_PAY_LINK)){
-                   actionLink = getPayUrl(property);
-                   log.info("actionLink is" + actionLink);
+                    actionLink = config.getUiAppHostMap().get(tenantId) + actionLink;
+                    ActionItem item = ActionItem.builder().actionUrl(actionLink).code(VIEW_PROPERTY_CODE).build();
+                    items.add(item);
+                }
 
-                   ActionItem item = ActionItem.builder().actionUrl(actionLink).code(NOTIFICATION_PAY_LINK).build();
-                   items.add(item);
-               }
+                if(msg.contains(TRACK_APPLICATION)){
+                    actionLink = config.getViewPropertyLink()
+                            .replace(NOTIFICATION_PROPERTYID, property.getPropertyId())
+                            .replace(NOTIFICATION_TENANTID, property.getTenantId());
 
-               if(msg.contains(MT_RECEIPT_STRING))
-               {
-                   actionLink = getMutationUrl(property);
-                   log.info("actionLink is" + actionLink);
+                    actionLink = config.getUiAppHostMap().get(tenantId) + actionLink;
+                    ActionItem item = ActionItem.builder().actionUrl(actionLink).code(VIEW_PROPERTY_CODE).build();
+                    items.add(item);
+                }
 
-                   ActionItem item = ActionItem.builder().actionUrl(actionLink).code(DOWNLOAD_MUTATION_RECEIPT_CODE).build();
-                   items.add(item);
-               }
+                if(msg.contains(TRACK_APPLICATION) && msg.contains("{MTURL}")){
+                    actionLink = getMutationUrl(property);
+                    ActionItem item = ActionItem.builder().actionUrl(actionLink).code(TRACK_APPLICATION_CODE).build();
+                    items.add(item);
+                }
 
-               if(msg.contains(MT_CERTIFICATE_STRING))
-               {
-                   actionLink = getMutationUrl(property);
-                   log.info("actionLink is" + actionLink);
+                if(msg.contains(NOTIFICATION_PAY_LINK)){
+                    actionLink = getPayUrl(property);
+                    log.info("actionLink is" + actionLink);
 
-                   ActionItem item = ActionItem.builder().actionUrl(actionLink).code(DOWNLOAD_MUTATION_CERTIFICATE_CODE).build();
-                   items.add(item);
-               }
+                    ActionItem item = ActionItem.builder().actionUrl(actionLink).code(NOTIFICATION_PAY_LINK).build();
+                    items.add(item);
+                }
 
-                       action = Action.builder().actionUrls(items).build();
-           }
+                if(msg.contains(MT_RECEIPT_STRING))
+                {
+                    actionLink = getMutationUrl(property);
+                    log.info("actionLink is" + actionLink);
 
-           String description = removeForInAppMessage(mobileNumberToMsg.get(mobileNumber));
-           events.add(Event.builder().tenantId(tenantId).description(description)
-                   .eventType(USREVENTS_EVENT_TYPE).name(USREVENTS_EVENT_NAME)
-                   .postedBy(USREVENTS_EVENT_POSTEDBY).source(Source.WEBAPP).recepient(recepient)
-                   .eventDetails(null).actions(action).build());
+                    ActionItem item = ActionItem.builder().actionUrl(actionLink).code(DOWNLOAD_MUTATION_RECEIPT_CODE).build();
+                    items.add(item);
+                }
 
-		});
-		return events;
-	}
+                if(msg.contains(MT_CERTIFICATE_STRING))
+                {
+                    actionLink = getMutationUrl(property);
+                    log.info("actionLink is" + actionLink);
+
+                    ActionItem item = ActionItem.builder().actionUrl(actionLink).code(DOWNLOAD_MUTATION_CERTIFICATE_CODE).build();
+                    items.add(item);
+                }
+
+                action = Action.builder().actionUrls(items).build();
+            }
+
+            String description = removeForInAppMessage(mobileNumberToMsg.get(mobileNumber));
+            events.add(Event.builder().tenantId(tenantId).description(description)
+                    .eventType(USREVENTS_EVENT_TYPE).name(USREVENTS_EVENT_NAME)
+                    .postedBy(USREVENTS_EVENT_POSTEDBY).source(Source.WEBAPP).recepient(recepient)
+                    .eventDetails(null).actions(action).build());
+
+        });
+        return events;
+    }
 
     /**
      * Method to remove certain lines from SMS templates
@@ -643,10 +646,10 @@ public class NotificationUtil {
         return mdmsCriteriaReq;
     }
 
-	public String getHost(String tenantId) {
-		String stateLevelTenantId = centralInstanceUtil.getStateLevelTenant(tenantId);
-		return config.getUiAppHostMap().get(stateLevelTenantId);
-	}
+    public String getHost(String tenantId) {
+        String stateLevelTenantId = centralInstanceUtil.getStateLevelTenant(tenantId);
+        return config.getUiAppHostMap().get(stateLevelTenantId);
+    }
 
     /**
      * Prepares and return url for mutation view screen
@@ -748,7 +751,7 @@ public class NotificationUtil {
                 if (property.getCreationReason().equals(CreationReason.UPDATE))
                     creationreason = "UPDATE";
                 break;
-              }
+            }
 
             case MUTATED_STRING: {
                 msgCode = PT_NOTIF_CF_MUTATED;

@@ -4,6 +4,7 @@ import org.egov.common.utils.MultiStateInstanceUtil;
 import org.egov.pt.models.Property;
 import org.egov.pt.util.EncryptionDecryptionUtil;
 import org.egov.pt.web.contracts.PropertyRequest;
+import org.egov.pt.web.contracts.SMSRequest;
 import org.egov.tracer.kafka.CustomKafkaTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,10 +20,10 @@ public class PropertyProducer {
 
 	@Autowired
 	private EncryptionDecryptionUtil encryptionDecryptionUtil;
-	
+
 	@Autowired
 	private MultiStateInstanceUtil centralInstanceUtil;
-	
+
 	public void push(String tenantId, String topic, Object value) {
 
 		String updatedTopic = centralInstanceUtil.getStateSpecificTopicName(tenantId, topic);
@@ -34,4 +35,8 @@ public class PropertyProducer {
 		request.setProperty(encryptionDecryptionUtil.encryptObject(request.getProperty(), "Property", Property.class));
 		push(request.getProperty().getTenantId(),topic, request);
 	}
+
+
+
+
 }

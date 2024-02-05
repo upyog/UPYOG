@@ -17,30 +17,30 @@ import org.springframework.util.StringUtils;
 
 @Component
 public class PropertyQueryBuilder {
-	
+
 	@Autowired
 	private MultiStateInstanceUtil centralInstanceUtil;
-	
+
 	@Autowired
 	private PropertyConfiguration config;
-	
+
 	private static final String SELECT = "SELECT ";
 	private static final String INNER_JOIN = "INNER JOIN";
 	private static final String LEFT_JOIN  =  "LEFT OUTER JOIN";
-	
+
 	private static String PROEPRTY_AUDIT_QUERY = "select property from {schema}.eg_pt_property_audit where propertyid=?";
 
 	private static String PROEPRTY_ID_QUERY = "select propertyid from {schema}.eg_pt_property where id in (select propertyid from {schema}.eg_pt_owner where userid IN {replace} AND status='ACTIVE')";
 
 	private static String REPLACE_STRING = "{replace}";
-	
-	private static String WITH_CLAUSE_QUERY = " WITH propertyresult AS ({replace}) SELECT * FROM propertyresult "
-											+ "INNER JOIN (SELECT propertyid, min(statusorder) as minorder FROM propertyresult GROUP BY propertyid) as minresult "
-											+ "ON minresult.propertyid=propertyresult.propertyid AND minresult.minorder=propertyresult.statusorder";
-	
 
-	 // Select query
-	
+	private static String WITH_CLAUSE_QUERY = " WITH propertyresult AS ({replace}) SELECT * FROM propertyresult "
+			+ "INNER JOIN (SELECT propertyid, min(statusorder) as minorder FROM propertyresult GROUP BY propertyid) as minresult "
+			+ "ON minresult.propertyid=propertyresult.propertyid AND minresult.minorder=propertyresult.statusorder";
+
+
+	// Select query
+
 	private static String propertySelectValues = "property.id as pid, property.propertyid, property.tenantid as ptenantid, surveyid, accountid, oldpropertyid, property.status as propertystatus, acknowldgementnumber, propertytype, ownershipcategory,property.usagecategory as pusagecategory, creationreason, nooffloors, landarea, property.superbuiltuparea as propertysbpa, linkedproperties, source, channel, property.createdby as pcreatedby, property.lastmodifiedby as plastmodifiedby, property.createdtime as pcreatedtime,"
 			+ " property.lastmodifiedtime as plastmodifiedtime, property.additionaldetails as padditionaldetails, (CASE WHEN property.status='ACTIVE' then 0 WHEN property.status='INWORKFLOW' then 1 WHEN property.status='INACTIVE' then 2 ELSE 3 END) as statusorder, ";
 
@@ -53,39 +53,39 @@ public class PropertyQueryBuilder {
 	private static String ownerSelectValues = "owner.tenantid as owntenantid, ownerInfoUuid, owner.propertyid as ownpropertyid, userid, owner.status as ownstatus, isprimaryowner, ownertype, ownershippercentage, owner.institutionid as owninstitutionid, relationship, owner.createdby as owncreatedby, owner.createdtime as owncreatedtime,owner.lastmodifiedby as ownlastmodifiedby, owner.lastmodifiedtime as ownlastmodifiedtime,owner.additionaldetails as oadditionaldetails,  ";
 
 	private static String ownerDocSelectValues = " owndoc.id as owndocid, owndoc.tenantid as owndoctenantid, owndoc.entityid as owndocentityId, owndoc.documenttype as owndoctype, owndoc.filestoreid as owndocfilestore, owndoc.documentuid as owndocuid, owndoc.status as owndocstatus, ";
-	
+
 	private static String UnitSelectValues = "unit.id as unitid, unit.tenantid as unittenantid, unit.propertyid as unitpid, floorno, unittype, unit.usagecategory as unitusagecategory, occupancytype, occupancydate, carpetarea, builtuparea, plintharea, unit.superbuiltuparea as unitspba, arv, constructiontype, constructiondate, dimensions, unit.active as isunitactive, unit.createdby as unitcreatedby, unit.createdtime as unitcreatedtime, unit.lastmodifiedby as unitlastmodifiedby, unit.lastmodifiedtime as unitlastmodifiedtime ";
 
 	private static final String TOTAL_APPLICATIONS_COUNT_QUERY = "select count(*) from eg_pt_property where tenantid = '{}';";
-	
-	private static final String QUERY = SELECT 
-			
-			+	propertySelectValues    
-			
-			+   addressSelectValues     
-			
-			+   institutionSelectValues 
-			
+
+	private static final String QUERY = SELECT
+
+			+	propertySelectValues
+
+			+   addressSelectValues
+
+			+   institutionSelectValues
+
 			+   propertyDocSelectValues
-			
-			+   ownerSelectValues 
-			
-			+   ownerDocSelectValues  
-			
+
+			+   ownerSelectValues
+
+			+   ownerDocSelectValues
+
 			+   UnitSelectValues
-			
-			+   " FROM {schema}.eg_pt_PROPERTY property " 
-			
-			+   INNER_JOIN +  " {schema}.eg_pt_ADDRESS address         ON property.id = address.propertyid " 
-			
-			+   LEFT_JOIN  +  " {schema}.eg_pt_INSTITUTION institution ON property.id = institution.propertyid " 
-			
+
+			+   " FROM {schema}.eg_pt_PROPERTY property "
+
+			+   INNER_JOIN +  " {schema}.eg_pt_ADDRESS address         ON property.id = address.propertyid "
+
+			+   LEFT_JOIN  +  " {schema}.eg_pt_INSTITUTION institution ON property.id = institution.propertyid "
+
 			+   LEFT_JOIN  +  " {schema}.eg_pt_DOCUMENT pdoc           ON property.id = pdoc.entityid "
-			
-			+   INNER_JOIN +  " {schema}.eg_pt_OWNER owner             ON property.id = owner.propertyid " 
-			
+
+			+   INNER_JOIN +  " {schema}.eg_pt_OWNER owner             ON property.id = owner.propertyid "
+
 			+   LEFT_JOIN  +  " {schema}.eg_pt_DOCUMENT owndoc         ON owner.ownerinfouuid = owndoc.entityid "
-			
+
 			+	LEFT_JOIN  +  " {schema}.eg_pt_UNIT unit		          ON property.id =  unit.propertyid ";
 
 	private static final String ID_QUERY = SELECT
@@ -103,7 +103,7 @@ public class PropertyQueryBuilder {
 			+   LEFT_JOIN  +  " {schema}.eg_pt_DOCUMENT owndoc         ON owner.ownerinfouuid = owndoc.entityid "
 
 			+	LEFT_JOIN  +  " {schema}.eg_pt_UNIT unit		          ON property.id =  unit.propertyid ";
-	
+
 	private static final String COUNT_QUERY = SELECT
 
 			+   " count(distinct property.id) FROM EG_PT_PROPERTY property "
@@ -119,18 +119,20 @@ public class PropertyQueryBuilder {
 			+   LEFT_JOIN  +  " EG_PT_DOCUMENT owndoc         ON owner.ownerinfouuid = owndoc.entityid "
 
 			+	LEFT_JOIN  +  " EG_PT_UNIT unit		          ON property.id =  unit.propertyid ";
-	
-	private static final String COUNT_QUERY = SELECT
+
+
 
 	private final String paginationWrapper = "SELECT * FROM "
 			+ "(SELECT *, DENSE_RANK() OVER (ORDER BY plastmodifiedtime DESC, pid) offset_ FROM " + "({})" + " result) result_offset "
 			+ "WHERE offset_ > ? AND offset_ <= ?";
 
 	private static final String LATEST_EXECUTED_MIGRATION_QUERY = "select * from eg_pt_enc_audit where tenantid = ? order by createdTime desc limit 1;";
+	private String PROPERTY_AUDIT_ENC_QUERY;
+	private String PROPERTY_DEFAULTER_SEARCH;
 
 	private String addPaginationWrapper(String query, List<Object> preparedStmtList, PropertyCriteria criteria) {
-		
-		
+
+
 		Long limit = config.getDefaultLimit();
 		Long offset = config.getDefaultOffset();
 		String finalQuery = paginationWrapper.replace("{}", query);
@@ -149,41 +151,41 @@ public class PropertyQueryBuilder {
 
 		return finalQuery;
 	}
-	
+
 	public String getPropertySearchQueryForDeafauterNotice (PropertyCriteria criteria, List<Object> preparedStmtList)
 	{
-		
-	Boolean isEmpty = null == criteria.getLocality() ||
-				 null == criteria.getPropertyType() || criteria.getTenantId()==null;
-	
-	if(isEmpty)
-		throw new CustomException("EG_PT_SEARCH_ERROR"," Please provide tenant, locality, propertyType for the property search for defaulter notice");
-	String currYearS;
 
-	int currYear=((new Date().getYear())+1900);
-	int currmonth=((new Date().getMonth())+1);
-	if(currmonth>=1 && currmonth <=3)
-		currYearS= (String.valueOf(currYear-1))+"-"+ (String.valueOf(currYear).substring(2,4));
-	else
-		currYearS=(String.valueOf(currYear))+"-"+ (String.valueOf(currYear+1).substring(2,4));
-		
-		
-	StringBuilder builder= new StringBuilder(PROPERTY_DEFAULTER_SEARCH);
-	preparedStmtList.add(criteria.getTenantId());
-	if(criteria.getPropertyType().equals("ALL"))
-		preparedStmtList.add("%%");
-	else
-		preparedStmtList.add("%"+criteria.getPropertyType().toUpperCase()+"%");
-	preparedStmtList.add(criteria.getLocality());
-	preparedStmtList.add(Status.ACTIVE.toString());
-	preparedStmtList.add(Status.ACTIVE.toString());
-	preparedStmtList.add(currYearS);
+		Boolean isEmpty = null == criteria.getLocality() ||
+				null == criteria.getPropertyType() || criteria.getTenantId()==null;
 
-	return builder.toString();
+		if(isEmpty)
+			throw new CustomException("EG_PT_SEARCH_ERROR"," Please provide tenant, locality, propertyType for the property search for defaulter notice");
+		String currYearS;
+
+		int currYear=((new Date().getYear())+1900);
+		int currmonth=((new Date().getMonth())+1);
+		if(currmonth>=1 && currmonth <=3)
+			currYearS= (String.valueOf(currYear-1))+"-"+ (String.valueOf(currYear).substring(2,4));
+		else
+			currYearS=(String.valueOf(currYear))+"-"+ (String.valueOf(currYear+1).substring(2,4));
+
+
+		StringBuilder builder= new StringBuilder(PROPERTY_DEFAULTER_SEARCH);
+		preparedStmtList.add(criteria.getTenantId());
+		if(criteria.getPropertyType().equals("ALL"))
+			preparedStmtList.add("%%");
+		else
+			preparedStmtList.add("%"+criteria.getPropertyType().toUpperCase()+"%");
+		preparedStmtList.add(criteria.getLocality());
+		preparedStmtList.add(Status.ACTIVE.toString());
+		preparedStmtList.add(Status.ACTIVE.toString());
+		preparedStmtList.add(currYearS);
+
+		return builder.toString();
 	}
 
 	/**
-	 * 
+	 *
 	 * @param criteria
 	 * @param preparedStmtList
 	 * @return
@@ -191,16 +193,16 @@ public class PropertyQueryBuilder {
 	public String getPropertySearchQuery(PropertyCriteria criteria, List<Object> preparedStmtList,Boolean isPlainSearch, Boolean onlyIds) {
 
 		Boolean isEmpty = CollectionUtils.isEmpty(criteria.getPropertyIds())
-					&& CollectionUtils.isEmpty(criteria.getAcknowledgementIds())
-					&& CollectionUtils.isEmpty(criteria.getOldpropertyids())
-					&& CollectionUtils.isEmpty(criteria.getUuids())
-					&& null == criteria.getMobileNumber()
-					&& null == criteria.getName()
-					&& null == criteria.getDoorNo()
-					&& null == criteria.getOldPropertyId()
-					&& (null == criteria.getFromDate() && null == criteria.getToDate())
-					&& CollectionUtils.isEmpty(criteria.getCreationReason());
-		
+				&& CollectionUtils.isEmpty(criteria.getAcknowledgementIds())
+				&& CollectionUtils.isEmpty(criteria.getOldpropertyids())
+				&& CollectionUtils.isEmpty(criteria.getUuids())
+				&& null == criteria.getMobileNumber()
+				&& null == criteria.getName()
+				&& null == criteria.getDoorNo()
+				&& null == criteria.getOldPropertyId()
+				&& (null == criteria.getFromDate() && null == criteria.getToDate())
+				&& CollectionUtils.isEmpty(criteria.getCreationReason());
+
 		if(isEmpty)
 			throw new CustomException("EG_PT_SEARCH_ERROR"," No criteria given for the property search");
 
@@ -209,10 +211,10 @@ public class PropertyQueryBuilder {
 
 		if (onlyIds)
 			builder = new StringBuilder(ID_QUERY);
-		
+
 		else if (criteria.getIsRequestForCount()) {
 			builder = new StringBuilder(COUNT_QUERY);
-			
+
 		} else
 			builder = new StringBuilder(QUERY);
 
@@ -255,8 +257,8 @@ public class PropertyQueryBuilder {
 			});
 			addClauseIfRequired(preparedStmtList,builder);
 			builder.append(" property.status IN ( ")
-				.append(createQuery(statusStringList))
-				.append(" )");
+					.append(createQuery(statusStringList))
+					.append(" )");
 			addToPreparedStatement(preparedStmtList, statusStringList);
 		}
 
@@ -266,7 +268,7 @@ public class PropertyQueryBuilder {
 			builder.append("property.creationreason IN ( ").append(createQuery(creationReasonsList)).append(" )");
 			addToPreparedStatement(preparedStmtList, creationReasonsList);
 		}
-		
+
 		Set<String> documentNumberList = criteria.getDocumentNumbers();
 
 		if(!CollectionUtils.isEmpty(documentNumberList)){
@@ -274,8 +276,8 @@ public class PropertyQueryBuilder {
 			builder.append(" property.status='ACTIVE' and owndoc.status='ACTIVE' and owndoc.documentuid  IN ( ").append(createQuery(documentNumberList)).append(" )");
 			addToPreparedStatement(preparedStmtList, documentNumberList);
 		}
-		
-		
+
+
 		if (null != criteria.getLocality()) {
 
 			addClauseIfRequired(preparedStmtList,builder);
@@ -296,7 +298,7 @@ public class PropertyQueryBuilder {
 			builder.append("property.propertyid IN (").append(createQuery(propertyIds)).append(")");
 			addToPreparedStatementWithUpperCase(preparedStmtList, propertyIds);
 		}
-		
+
 		Set<String> acknowledgementIds = criteria.getAcknowledgementIds();
 		if (!CollectionUtils.isEmpty(acknowledgementIds)) {
 
@@ -304,7 +306,7 @@ public class PropertyQueryBuilder {
 			builder.append("property.acknowldgementnumber IN (").append(createQuery(acknowledgementIds)).append(")");
 			addToPreparedStatementWithUpperCase(preparedStmtList, acknowledgementIds);
 		}
-		
+
 		Set<String> uuids = criteria.getUuids();
 		if (!CollectionUtils.isEmpty(uuids)) {
 
@@ -320,21 +322,21 @@ public class PropertyQueryBuilder {
 			builder.append("property.oldpropertyid IN (").append(createQuery(oldpropertyids)).append(")");
 			addToPreparedStatement(preparedStmtList, oldpropertyids);
 		}
-		
-		/* 
+
+		/*
 		 * Condition to evaluate if owner is active.
 		 * Inactive owners should never be shown in results
-		*/
-		
+		 */
+
 		addClauseIfRequired(preparedStmtList,builder);
 		builder.append("owner.status = ?");
 		preparedStmtList.add(Status.ACTIVE.toString());
-		
+
 
 		String withClauseQuery = WITH_CLAUSE_QUERY.replace(REPLACE_STRING, builder);
 		if (onlyIds || criteria.getIsRequestForCount())
 			return builder.toString();
-		else 
+		else
 			return addPaginationWrapper(withClauseQuery, preparedStmtList, criteria);
 	}
 
@@ -380,7 +382,7 @@ public class PropertyQueryBuilder {
 		}
 
 		if (criteria.getFromDate() != null) {
-			
+
 			addClauseIfRequired(preparedStmtList, builder);
 			/*
 			 * If user does NOT specify toDate, take today's date as the toDate by default
@@ -439,7 +441,7 @@ public class PropertyQueryBuilder {
 			preparedStmtList.add(id);
 		});
 	}
-	
+
 	private void addToPreparedStatementWithUpperCase(List<Object> preparedStmtList, Set<String> ids) {
 		ids.forEach(id -> {
 			preparedStmtList.add(id.toUpperCase());
@@ -457,8 +459,17 @@ public class PropertyQueryBuilder {
 	public String getpropertyAuditQuery() {
 		return PROEPRTY_AUDIT_QUERY;
 	}
-	
-    public String getTotalApplicationsCountQueryString(PropertyCriteria criteria) {
+
+	public String getTotalApplicationsCountQueryString(PropertyCriteria criteria) {
 		return TOTAL_APPLICATIONS_COUNT_QUERY.replace("{}",criteria.getTenantId());
-    }
+	}
+
+	public String getLastExecutionDetail(PropertyCriteria criteria, List<Object> preparedStatement) {
+		preparedStatement.add(criteria.getTenantId());
+		return LATEST_EXECUTED_MIGRATION_QUERY;
+	}
+
+	public String getpropertyAuditEncQuery() {
+		return PROPERTY_AUDIT_ENC_QUERY;
+	}
 }
