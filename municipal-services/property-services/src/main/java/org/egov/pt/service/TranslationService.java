@@ -62,6 +62,7 @@ public class TranslationService {
         propertyMap.put("status", property.getStatus());
         propertyMap.put("creationReason", property.getCreationReason());
         propertyMap.put("occupancyDate", null);
+        propertyMap.put("exemption", property.getExemption());
 
         String[] propertyTypeMasterData = property.getPropertyType().split("\\.");
         String propertyType = null,propertySubType = null;
@@ -104,8 +105,9 @@ public class TranslationService {
         propertyDetail.put("propertySubType", propertySubType);
         propertyDetail.put("assessmentNumber", assessment.getAssessmentNumber());
         propertyDetail.put("assessmentDate", assessment.getAssessmentDate());
-        
         propertyDetail.put("address", addressMap);
+        propertyDetail.put("exemption", property.getExemption());
+        
         if(assessment.getAdditionalDetails()!=null){
 
             try{
