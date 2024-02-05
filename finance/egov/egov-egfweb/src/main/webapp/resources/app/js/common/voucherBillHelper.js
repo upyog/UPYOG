@@ -116,13 +116,11 @@ function loadScheme(fundId){
 			method : "GET",
 			url : "/services/EGF/common/getschemesbyfundid",
 			data : {
-				fundId : fundId,
+				fundId : fundId
 			},
 			async : true
 		}).done(
 				function(response) {
-					console.log('Hello Parvesh ');
-					console.log(response);
 					$('#scheme').empty();
 					$('#scheme').append($("<option value=''>Select from below</option>"));
 					$.each(response, function(index, value) {
