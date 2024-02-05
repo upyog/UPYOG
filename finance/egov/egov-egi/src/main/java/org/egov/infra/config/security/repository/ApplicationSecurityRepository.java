@@ -109,11 +109,6 @@ public class ApplicationSecurityRepository implements SecurityContextRepository 
 		String tenantid = null;
 		userToken = request.getParameter(AUTH_TOKEN);
 		tenantid = request.getParameter("tenantId");
-<<<<<<< HEAD
-=======
-		userToken = "1aa1d9e9-1a80-4cd2-aa42-1e35eb5839dc";
-		tenantid = "pg.citya";
->>>>>>> parent of 519b9465c1 (libraries for testing)
 		HttpSession session = request.getSession();
 		LOGGER.info(" *** authtoken " + userToken);
 
