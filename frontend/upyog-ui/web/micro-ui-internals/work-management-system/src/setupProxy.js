@@ -17,7 +17,7 @@ const assetsProxy = createProxyMiddleware({
 });
 
 const MapiProxy = createProxyMiddleware({
-  target: "http://10.216.36.30:8484",
+  target: "http://10.216.36.250:8484",
   changeOrigin: true,
 });
 const apiProxy = createProxyMiddleware({
@@ -119,6 +119,11 @@ module.exports = function (app) {
   "/wms/wms-services/v1/pregister/_search",  
   "/wms/wms-services/v1/pregister/_view",
   "/wms/wms-services/v1/pregister/_update",
+
+  "/wms/wms-services/v1/wsr/_create",
+  "/wms/wms-services/v1/wsr/_search",  
+  "/wms/wms-services/v1/wsr/_view",
+  "/wms/wms-services/v1/wsr/_update",
   ].forEach((location) => app.use(location, MapiProxy));
   
 

@@ -36,6 +36,8 @@ const WmsWsrList = ({ parentRoute, businessService = "WMS", initialStates = {}, 
     isupdate
   );
 
+  const { isLoading: getLoading, isError:getIsError, error:getError, data:GetData } = Digit.Hooks.wms.wsr.useWmsWsrGet();
+
 
   useEffect(() => {
 
@@ -102,12 +104,12 @@ else
   if(WSRApplications!=undefined)
   alert(JSON.stringify(WSRApplications))
 } */
-  if (WsrData?.length !== null) {
+  if (WsrData?.WMSWorkStatusReportApplication!== null) {
     if (isMobile) {
       return (
         <MobileList
           businessService={businessService}
-          data={WsrData}
+          data={WsrData?.WMSWorkStatusReportApplication}
           isLoading={isLoading}
           defaultSearchParams={initialStates.searchParams}
           isSearch={isList}
@@ -136,7 +138,7 @@ else
           {isList && <Header>{t("WMS_HOME_SEARCH_RESULTS_HEADING")}</Header>}
           <DesktopList
             businessService={businessService}
-            data={WsrData}
+            data={WsrData?.WMSWorkStatusReportApplication}
             isLoading={isLoading}
             defaultSearchParams={initialStates.searchParams}
             isSearch={isList}

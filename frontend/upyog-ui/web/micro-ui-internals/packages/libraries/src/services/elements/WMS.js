@@ -421,6 +421,67 @@ PRApplications:{
       params: {  },
     }),
 },
+
+WSRApplications:{
+  search: (tenantId, filters, searchParams) =>
+    Request({
+      url: Urls.wms.WSRApplications.search,
+      useCache: false,
+      method: "POST",//"POST",
+      auth: true,
+      userService: true,
+      params:{...searchParams},// tenantId, ...filters, ...searchParams }//TODO:#1 Actual API needs to attach  { tenantId, ...filters, ...searchParams },
+    }),
+  create: (data, tenantId) =>
+    Request({
+      data: data,
+      url: Urls.wms.WSRApplications.create,
+      useCache: false,
+      method: "POST",
+      auth: true,
+      userService: true,
+      params: {  },//TODO:#1 {tenantId}
+    }),
+  update: (data, tenantId) =>
+    Request({
+      data: data,
+      url: Urls.wms.WSRApplications.update+"/"+data.wsr_id,
+      useCache: false,
+      method: "POST",
+      auth: true,
+      userService: true,
+      params: {  },
+    }),
+  delete: (data, tenantId) =>
+    Request({
+      data: data,
+      url: Urls.wms.WSRApplications.delete,
+      useCache: false,
+      method: "DELETE",
+      auth: true,
+      userService: true,
+      params: { tenantId },
+    }),
+  get: (prId,tenantId) =>
+    Request({
+      url: Urls.wms.WSRApplications.get,
+      useCache: false,
+      method: "POST",
+      auth: true,
+      userService: true,
+      params: { phmeme_id:wsrId},
+    }),
+    count: () =>
+    Request({
+      url: Urls.wms.WSRApplications.count,
+      useCache: false,
+      method:"POST",// "POST",
+      auth: true,
+      userService: true,
+      params: {  },
+    }),
+},
+
   ContractorMaster:{
     search: (tenantId, filters, searchParams) =>
       Request({

@@ -289,13 +289,22 @@ wms:{
       search: "/wms/wms-services/v1/pregister/_search",
       count: "/wms/wms-services/v1/pregister/_view",
     },
+    // WSRApplications: {
+    //   create: "https://658bef9a859b3491d3f51ac4.mockapi.io/WSRApplications",
+    //   update: "https://658bef9a859b3491d3f51ac4.mockapi.io/WSRApplications",
+    //   get: "https://658bef9a859b3491d3f51ac4.mockapi.io/WSRApplications/:id",
+    //   search: "https://658bef9a859b3491d3f51ac4.mockapi.io/WSRApplications",
+    //   count: "https://658bef9a859b3491d3f51ac4.mockapi.io/WSRApplications",
+    // },
+
     WSRApplications: {
-      create: "https://658bef9a859b3491d3f51ac4.mockapi.io/WSRApplications",
-      update: "https://658bef9a859b3491d3f51ac4.mockapi.io/WSRApplications",
-      get: "https://658bef9a859b3491d3f51ac4.mockapi.io/WSRApplications/:id",
-      search: "https://658bef9a859b3491d3f51ac4.mockapi.io/WSRApplications",
-      count: "https://658bef9a859b3491d3f51ac4.mockapi.io/WSRApplications",
+      create: "/wms/wms-services/v1/wsr/_create",
+      update: "/wms/wms-services/v1/wsr/_update",
+      get: "/wms/wms-services/v1/wsr/_view",
+      search: "/wms/wms-services/v1/wsr/_search",
+      count: "/wms/wms-services/v1/wsr/_view",
     },
+    
     ContractorMaster: {
       create: "/wms/wms-services/v1/contractor/_create",
       search: "/wms/wms-services/v1/contractor/_search",
