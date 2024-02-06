@@ -113,27 +113,6 @@ public class WSCalculationConfiguration {
     @Value("${ws.calculator.demand.successful.topic}")
     private String onDemandsSaved;
 
-    @Value("${ws.calculator.demand.failed}")
-    private String onDemandsFailure;
-
-
-    //Localization
-    @Value("${egov.localization.host}")
-    private String localizationHost;
-
-    @Value("${egov.localization.context.path}")
-    private String localizationContextPath;
-
-    @Value("${egov.localization.search.endpoint}")
-    private String localizationSearchEndpoint;
-
-    @Value("${egov.localization.statelevel}")
-    private Boolean isLocalizationStateLevel;
-
-    //SMS
-    @Value("${kafka.topics.notification.sms}")
-    private String smsNotifTopic;
-
     @Value("${notification.sms.enabled}")
     private Boolean isSMSEnabled;
 
@@ -209,27 +188,6 @@ public class WSCalculationConfiguration {
 
     @Value("${workflow.workDir.path}")
     private String workflowHost;
-
-    @Value("${workflow.process.search.path}")
-    private String searchWorkflowProcessEndPoint;
-
-    @Value("${bulk.demand.batch.value}")
-    private Integer bulkbatchSize;
-
-    @Value("${bulk.demand.offset.value}")
-    private Integer batchOffset;
-
-    @Value("${egov.internal.microservice.user.uuid}")
-    private String egovInternalMicroserviceUserUuid;
-
-    @Value("${egov.bill.search.endpoint}")
-    private String searchBillEndPoint;
-
-    @Value("${egov.ws.view.history.link}")
-    private String viewHistoryLink;
-
-    @Value("${egov.bill.details.sms.link}")
-    private String billDetailsLink;
 
     @Value("${state.level.tenant.id}")
     private String stateLevelTenantId;

@@ -64,10 +64,6 @@ public class WorkflowIntegrator {
 				|| (waterConnectionRequest.getWaterConnection().getApplicationStatus().equalsIgnoreCase(WCConstants.PENDING_FOR_PAYMENT_STATUS_CODE)
 				&& waterConnectionRequest.getWaterConnection().getApplicationNo().contains(WCConstants.APPLICATION_DISCONNECTION_CODE))) {
 			wfBusinessServiceName = config.getDisconnectBusinessServiceName();
-		} 
-		else if((waterConnectionRequest.isReconnectRequest() || waterConnectionRequest.getWaterConnection().getApplicationType().equalsIgnoreCase(WCConstants.WATER_RECONNECTION))
-				|| (waterConnectionRequest.getWaterConnection().getApplicationStatus().equalsIgnoreCase(WCConstants.DISCONNECTION_FINAL_STATE))) {
-			wfBusinessServiceName = config.getWsWorkflowReconnectionName();
 		}
 		else if(wsUtil.isModifyConnectionRequest(waterConnectionRequest)) {
 			wfBusinessServiceName = config.getModifyWSBusinessServiceName();

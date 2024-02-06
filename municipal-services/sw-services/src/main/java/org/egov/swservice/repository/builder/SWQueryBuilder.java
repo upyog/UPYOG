@@ -88,14 +88,6 @@ public class SWQueryBuilder {
 
 	private static final String LATEST_EXECUTED_MIGRATION_QUERY = "select * from eg_sw_enc_audit where tenantid = ? order by createdTime desc limit 1;";
 
-	private static final String COUNT_WRAPPER = " SELECT COUNT(*) FROM ({INTERNAL_QUERY}) AS count ";
-
-	private static final String ORDER_BY_CLAUSE = " ORDER BY sc.appCreatedDate DESC";
-
-	private static final String ORDER_BY_COUNT_CLAUSE = " ORDER BY appCreatedDate DESC";
-
-	private static final String LATEST_EXECUTED_MIGRATION_QUERY = "select * from {schema}.eg_sw_enc_audit where tenantid = ? order by createdTime desc limit 1;";
-
 	/**
 	 *
 	 * @param criteria on search criteria

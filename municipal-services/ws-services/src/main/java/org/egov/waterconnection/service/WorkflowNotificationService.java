@@ -29,6 +29,7 @@ import org.egov.waterconnection.workflow.WorkflowService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.egov.common.utils.MultiStateInstanceUtil;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -104,6 +105,7 @@ public class WorkflowNotificationService {
      */
     public void process(WaterConnectionRequest request, String topic) {
         try {
+        	String tenantId = request.getWaterConnection().getTenantId();
         	log.info("In process of consumer to generate notifications");
             String applicationStatus = request.getWaterConnection().getApplicationStatus();
             List<String> configuredChannelNames=new ArrayList<String>();
@@ -765,32 +767,6 @@ public class WorkflowNotificationService {
                 throw new CustomException("EMPTY_FILESTORE_IDS_FROM_PDF_SERVICE", "File Store Id doesn't exist in pdf service");
             }
             return fileStoreIds.get(0).toString();
-        } catch (Exception ex) {
-            log.error("PDF file store id response error!!", ex);
-            throw new CustomException("WATER_FILESTORE_PDF_EXCEPTION", "PDF response can not parsed!!!");
-        }
-    }
-
-    /**
-     *
-     * @param tenantId TenantId
-     * @param fileStoreId File Store Id
-     * @return file store id
-     */
-    private String getApplicationDownloadLink(String tenantId, String fileStoreId) {
-        String fileStoreServiceLink = config.getFileStoreHost() + config.getFileStoreLink();
-        fileStoreServiceLink = fileStoreServiceLink.replace(tenantIdReplacer, tenantId);
-        fileStoreServiceLink = fileStoreServiceLink.replace(fileStoreIdReplacer, fileStoreId);
-        try {
-            Object response = serviceRequestRepository.fetchResultUsingGet(new StringBuilder(fileStoreServiceLink));
-            DocumentContext responseContext = JsonPath.parse(response);
-            List<Object> fileStoreIds = responseContext.read("$.fileStoreIds");
-            if (CollectionUtils.isEmpty(fileStoreIds)) {
-                throw new CustomException("EMPTY_FILESTORE_IDS_FROM_PDF_SERVICE",
-                        "NO file store id found from pdf service");
-            }
-            JSONObject obje = mapper.convertValue(fileStoreIds.get(0), JSONObject.class);
-            return obje.get(urlReplacer).toString();
         } catch (Exception ex) {
             log.error("PDF file store id response error!!", ex);
             throw new CustomException("WATER_FILESTORE_PDF_EXCEPTION", "PDF response can not parsed!!!");

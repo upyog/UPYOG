@@ -218,6 +218,13 @@ public class SWConfiguration {
     
     @Value("${egov.reconnect.businessservice}")
     private String reconnectBusinessServiceName;
+    
+    @Value("${egov.url.shortner.host}")
+    private String urlShortnerHost;
+    
+ // central-instance configs
+    @Value("#{${egov.ui.app.host.map}}")
+    private Map<String, String> uiAppHostMap;
 
     @Value("${egov.idgen.sdcid.name}")
     private String sewerageDisconnectionIdGenName;

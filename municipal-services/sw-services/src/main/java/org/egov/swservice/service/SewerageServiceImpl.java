@@ -290,31 +290,6 @@ public class SewerageServiceImpl implements SewerageService {
 	public Integer getSewerageConnectionsCount(SearchCriteria criteria, RequestInfo requestInfo) {
 		return sewerageDao.getSewerageConnectionsCount(criteria, requestInfo);
 	}
-
-	/**
-	 * 
-	 * @param criteria
-	 *            SewerageConnectionSearchCriteria contains search criteria on
-	 *            sewerage connection
-	 * @param requestInfo - Request Info
-	 * @return Count of List of matching sewerage connection
-	 */
-	public Integer countAllSewerageApplications(SearchCriteria criteria, RequestInfo requestInfo) {
-		criteria.setIsCountCall(Boolean.TRUE);
-		return getSewerageConnectionsCount(criteria, requestInfo);
-	}
-
-	/**
-	 * 
-	 * @param criteria    SewerageConnectionSearchCriteria contains search criteria
-	 *                    on sewerage connection
-	 * @param requestInfo - Request Info Object
-	 * @return Count of List of matching sewerage connection
-	 */
-
-	public Integer getSewerageConnectionsCount(SearchCriteria criteria, RequestInfo requestInfo) {
-		return sewerageDao.getSewerageConnectionsCount(criteria, requestInfo);
-	}
 	
 	/**
 	 * 
@@ -492,7 +467,7 @@ public class SewerageServiceImpl implements SewerageService {
 		BusinessService businessService = workflowService.getBusinessService(config.getReconnectBusinessServiceName(),
 				sewerageConnectionRequest.getSewerageConnection().getTenantId(),
 				sewerageConnectionRequest.getRequestInfo());
-		SewerageConnection searchResult = getConnectionForUpdateRequest(
+		SewerageConnection searchResult = getConnectionForUpdateRequest(sewerageConnectionRequest.getSewerageConnection().getTenantId(),
 				sewerageConnectionRequest.getSewerageConnection().getId(), sewerageConnectionRequest.getRequestInfo());
 
 		Boolean isStateUpdatable = sewerageServicesUtil.getStatusForUpdate(businessService, previousApplicationStatus);

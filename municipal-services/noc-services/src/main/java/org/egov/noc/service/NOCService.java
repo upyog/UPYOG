@@ -63,12 +63,6 @@ public class NOCService {
 	private ObjectMapper mapper;
 
 	@Autowired
-	private ServiceRequestRepository serviceRequestRepository;
-
-	@Autowired
-	private ObjectMapper mapper;
-
-	@Autowired
 	private MultiStateInstanceUtil centralInstanceUtil;
 	/**
 	 * entry point from controller, takes care of next level logic from controller to create NOC application

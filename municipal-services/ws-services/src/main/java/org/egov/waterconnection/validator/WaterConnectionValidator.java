@@ -209,8 +209,6 @@ public class WaterConnectionValidator {
 				throw new CustomException(errorMap);
 		}
 
-	}
-
 	public void validateSearch(SearchCriteria criteria){
 		if(centralInstanceUtil.getIsEnvironmentCentralInstance() && criteria.getTenantId() == null)
 			throw new CustomException("EG_WS_INVALID_SEARCH"," TenantId is mandatory for search ");
