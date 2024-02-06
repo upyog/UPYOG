@@ -124,8 +124,8 @@
             <url>https://repository.jboss.org/nexus/content/groups/public/</url>
         </repository>
         <repository>
-            <id>javaxt.com</id>
-            <url>https://www.javaxt.com/maven</url>
+            <id>JSPRESSO</id>
+            <url>http://repository.jspresso.org/maven2/</url>
         </repository>
     </repositories>
 
@@ -1400,9 +1400,7 @@
     		<groupId>org.owasp.esapi</groupId>
     		<artifactId>esapi</artifactId>
     		<version>2.2.3.1</version>
-		</dependency>
-		
-		
+		</dependency>		
     </dependencies>
 
     <build>
