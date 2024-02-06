@@ -338,7 +338,7 @@ public class NotificationUtil {
 	public String getHost(String tenantId) {
 		String topLevelTenant = tenantId;
 		topLevelTenant = centralInstanceUtil.getStateLevelTenant(tenantId);
-		String host = config.getUiAppHostMap().get(topLevelTenant);
+		String host = (config.getUiAppHostMap().get(topLevelTenant));
 		if (ObjectUtils.isEmpty(host)) {
 			throw new CustomException("EG_NOTIF_HOST_ERR", "No host found for tenantid: " + topLevelTenant);
 		}

@@ -39,10 +39,8 @@ public class WorkflowNotificationConsumer {
 	@Autowired
 	private ObjectMapper mapper;
 
-	@Autowired
-	private EncryptionDecryptionUtil encryptionDecryptionUtil;
-	@Autowired
-	private ObjectMapper mapper;
+
+
 	/**
 	 * Consumes the sewerage connection record and send notification
 	 * 
