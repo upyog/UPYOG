@@ -102,7 +102,7 @@ public class SWCalculationServiceImpl implements SWCalculationService {
 					request.getIsconnectionCalculation());
 			unsetSewerageConnection(calculations);
 		}
-		else if (request.getIsReconnectionRequest())	
+		if (request.getIsReconnectionRequest())
 		{
 			connectionRequest = (!request.getIsReconnectionRequest());
 			masterMap = mDataService.loadExemptionMaster(request.getRequestInfo(),

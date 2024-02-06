@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.egov.swcalculation.web.models.DemandStatus;
 
@@ -383,4 +384,6 @@ public class SWCalculationConstant {
 	
 	public static final String TENANTID_MDC_STRING = "TENANTID";
 
+
+	public static Map<String, Object> masterMap;
 }
