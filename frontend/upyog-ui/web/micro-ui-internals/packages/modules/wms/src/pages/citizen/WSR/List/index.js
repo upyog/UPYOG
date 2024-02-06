@@ -104,7 +104,7 @@ else
   if(WSRApplications!=undefined)
   alert(JSON.stringify(WSRApplications))
 } */
-  if (WsrData?.WMSWorkStatusReportApplication!== null) {
+  if (WsrData?.WMSWorkStatusReportApplications!== null) {
     if (isMobile) {
       return (
         <MobileList
@@ -138,7 +138,7 @@ else
           {isList && <Header>{t("WMS_HOME_SEARCH_RESULTS_HEADING")}</Header>}
           <DesktopList
             businessService={businessService}
-            data={WsrData?.WMSWorkStatusReportApplication}
+            data={WsrData?.WMSWorkStatusReportApplications}
             isLoading={isLoading}
             defaultSearchParams={initialStates.searchParams}
             isSearch={isList}

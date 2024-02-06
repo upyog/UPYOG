@@ -17,7 +17,7 @@ const assetsProxy = createProxyMiddleware({
 });
 
 const MapiProxy = createProxyMiddleware({
-  target: "http://10.216.36.250:8484",
+  target: "http://10.216.36.30:8484",
   changeOrigin: true,
 });
 const apiProxy = createProxyMiddleware({

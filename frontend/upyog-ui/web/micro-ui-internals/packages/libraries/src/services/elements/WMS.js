@@ -462,7 +462,7 @@ WSRApplications:{
       userService: true,
       params: { tenantId },
     }),
-  get: (prId,tenantId) =>
+  get: (wsrId,tenantId) =>
     Request({
       url: Urls.wms.WSRApplications.get,
       useCache: false,
