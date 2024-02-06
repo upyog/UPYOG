@@ -28,6 +28,7 @@ const NewApplication = () => {
     { filters: { propertyIds: propertyId }, tenantId: tenantId },
     { filters: { propertyIds: propertyId }, tenantId: tenantId, enabled: propertyId ? true : false }
   );
+  console.log("pd123", propertyDetails)
 
   useEffect(() => {
     !propertyId && setPropertyId(sessionFormData?.cpt?.details?.propertyId);
@@ -55,8 +56,8 @@ const NewApplication = () => {
 
   function checkforownerPresent(formData){
     if(formData?.owners){
-      formData?.cpt?.details?.owners?.map((ob) => {
-        if(!ob?.name || !ob.mobileNumber || !ob?.fatherOrHusbandName || !ob?.relationship?.code || ob?.gender?.code || !ob?.additionalDetails)
+      formData?.owners?.map((ob) => {
+        if(!ob?.name || !ob.mobileNumber || !ob?.fatherOrHusbandName || !ob?.relationship?.code || ob?.gender?.code)
         {
           return true;
         }
@@ -79,7 +80,9 @@ const NewApplication = () => {
       formState.errors["owners"] &&
       Object.entries(formState.errors["owners"].type).filter((ob) => ob?.[1].type === "required").length == 0
     ) {
-      setSubmitValve(true);
+      if((formData?.ownershipCategory?.code==="INDIVIDUAL.SINGLEOWNER" && formData?.owners.length==1) || (formData?.ownershipCategory?.code==="INDIVIDUAL.MULTIPLEOWNERS" && formData?.owners.length>1)){
+          setSubmitValve(true);
+      }
     } else {
       setSubmitValve(!Object.keys(formState.errors).length);
     }
@@ -152,11 +155,10 @@ const NewApplication = () => {
     }
 
     let owners = [];
-    if (data?.cpt?.details?.owners?.length > 0) {
-      data?.cpt?.details?.owners.map((data) => {
+    if (data?.owners?.length > 0) {
+      data?.owners.map((data) => {
         let obj = {};
         obj.dob = data?.dob ? convertDateToEpoch(data?.dob) : null;
-        if(data?.additionalDetails) obj.additionalDetails=data?.additionalDetails;
         if (data?.fatherOrHusbandName) obj.fatherOrHusbandName = data?.fatherOrHusbandName;
         if (data?.gender?.code) obj.gender = data?.gender?.code;
         if (data?.mobileNumber) obj.mobileNumber = Number(data?.mobileNumber);
