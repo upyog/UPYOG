@@ -306,7 +306,7 @@ const Units = ({ t, config, onSelect, userType, formData, setError, formState, c
       .filter((cat) => cat?.code.includes(category?.code) && cat?.code.split(".").length === 4)
       .map((item) => {
         const codeArr = item?.code.split(".");
-        return { i18nKey: `COMMON_PROPSUBUSGTYPE_NONRESIDENTIAL_${codeArr[1]}_${codeArr[2]}_${codeArr[3]}`, code: item?.code };
+        return { i18nKey: `COMMON_PROPSUBUSGTYPE_NONRESIDENTIAL_${codeArr[1]}_${codeArr[3]}`, code: item?.code };
       });
     return menu;
   };
