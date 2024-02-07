@@ -279,14 +279,6 @@ public class SewerageServiceImpl implements SewerageService {
 		return getSewerageConnectionsCount(criteria, requestInfo);
 	}
 
-	/**
-	 *
-	 * @param criteria    SewerageConnectionSearchCriteria contains search criteria
-	 *                    on sewerage connection
-	 * @param requestInfo - Request Info Object
-	 * @return Count of List of matching sewerage connection
-	 */
-
 	public Integer getSewerageConnectionsCount(SearchCriteria criteria, RequestInfo requestInfo) {
 		return sewerageDao.getSewerageConnectionsCount(criteria, requestInfo);
 	}

@@ -106,13 +106,13 @@ public class DemandService {
 	private EnrichmentService enrichmentService;
 
 	private Object calculationReq;
-
+	private SewerageConnectionRequest request;
+	private RequestInfo requestInfo;
 
 
 	/**
 	 * Creates or updates Demand
 	 * 
-	 * @param requestInfo The RequestInfo of the calculation request
 	 * @param calculations The Calculation Objects for which demand has to be generated or updated
 	 */
 	public List<Demand> generateDemand(CalculationReq request, List<Calculation> calculations,
@@ -185,13 +185,11 @@ public class DemandService {
 	/**
 	 * Creates demand for the given list of calculations
 	 * 
-	 * @param requestInfo
-	 *            The RequestInfo of the calculation request
 	 * @param calculations
 	 *            List of calculation object
 	 * @return Demands that are created
 	 */
-	private List<Demand> createDemand(CalculationReq calculationReq, List<Calculation> calculations,
+	private List<Demand> createDemand(RequestInfo requestInfo, List<Calculation> calculations,
 			Map<String, Object> masterMap,boolean isForConnectionNO) {
 		List<Demand> demands = new LinkedList<>();
 		Set<String> sewerageConnectionIds = new HashSet<>();
@@ -206,7 +204,7 @@ public class DemandService {
 								+ " Sewerage Connection with this number does not exist ");
 			
 			SewerageConnectionRequest sewerageConnectionRequest = SewerageConnectionRequest.builder()
-					.sewerageConnection(connection).requestInfo(calculationReq.getRequestInfo()).build();
+					.sewerageConnection(connection).requestInfo(requestInfo).build();
 			
 			Property property = sWCalculationUtil.getProperty(sewerageConnectionRequest);
 			String tenantId = calculation.getTenantId();
@@ -969,8 +967,7 @@ public class DemandService {
 	}
 	
 	/**
-	 * 
-	 * @param master - List of MDMS master data
+	 *
 	 * @param requestInfo - Request Info Object
 	 * @param tenantId - Tenant Id
 	 * @param bulkBillCriteria - Critera for bulk bill generation

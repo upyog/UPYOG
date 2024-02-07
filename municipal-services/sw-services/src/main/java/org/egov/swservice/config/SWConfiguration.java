@@ -18,10 +18,8 @@ import lombok.Setter;
 @Builder
 
 @Component
-public class SWConfiguration {
-	
-    @Value("${egov.sewerageservice.pagination.default.limit}")
-    private Integer defaultLimit;
+public class SWConfiguration { @Value("${egov.sewerageservice.pagination.default.limit}")
+private Integer defaultLimit;
 
     @Value("${egov.sewerageservice.pagination.default.offset}")
     private Integer defaultOffset;
@@ -95,7 +93,7 @@ public class SWConfiguration {
 
     @Value("${egov.usr.events.create.topic}")
     private String saveUserEventsTopic;
-	
+
     @Value("${egov.user.event.notification.enabled}")
     private Boolean isUserEventsNotificationEnabled;
 
@@ -118,7 +116,7 @@ public class SWConfiguration {
 
     @Value("${egov.internal.microservice.user.uuid}")
     private String egovInternalMicroserviceUserUuid;
-	
+
     // sewerage connection Calculator
     @Value("${egov.sw.calculation.host}")
     private String calculatorHost;
@@ -130,7 +128,6 @@ public class SWConfiguration {
     private String receiptBusinessservice;
 
     // sewerage notification links configuration
-
     @Value("${sw.mseva.app.link}")
     private String mSevaAppLink;
 
@@ -202,9 +199,6 @@ public class SWConfiguration {
 
     @Value("${state.level.tenant.id}")
     private String stateLevelTenantId;
-    
-	@Value("${reconnection.sw.workflow.name}")
-	private String swWorkflowReconnectionName;
 
     //mdms
     @Value("${egov.mdms.host}")
@@ -213,9 +207,12 @@ public class SWConfiguration {
     @Value("${egov.mdms.search.endpoint}")
     private String mdmsUrl;
 
+    @Value("${egov.url.shortner.host}")
+    private String urlShortnerHost;
+
     @Value("${egov.disconnect.businessservice}")
     private String disconnectBusinessServiceName;
-    
+
     @Value("${egov.reconnect.businessservice}")
     private String reconnectBusinessServiceName;
     
@@ -223,6 +220,10 @@ public class SWConfiguration {
     private String urlShortnerHost;
     
  // central-instance configs
+    @Value("#{${egov.ui.app.host.map}}")
+    private Map<String, String> uiAppHostMap;
+
+    // central-instance configs
     @Value("#{${egov.ui.app.host.map}}")
     private Map<String, String> uiAppHostMap;
 

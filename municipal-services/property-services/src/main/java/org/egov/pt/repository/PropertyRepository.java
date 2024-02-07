@@ -8,17 +8,16 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.exception.InvalidTenantIdException;
 import org.egov.common.utils.MultiStateInstanceUtil;
+import org.egov.encryption.config.EncProperties;
 import org.egov.pt.config.PropertyConfiguration;
-import org.egov.pt.models.OwnerInfo;
-import org.egov.pt.models.Property;
-import org.egov.pt.models.PropertyCriteria;
+import org.egov.pt.models.*;
 import org.egov.pt.models.user.User;
 import org.egov.pt.models.user.UserDetailResponse;
 import org.egov.pt.models.user.UserSearchRequest;
-import org.egov.pt.models.PropertyAudit;
 import org.egov.pt.repository.builder.PropertyQueryBuilder;
 import org.egov.pt.repository.rowmapper.EncryptionCountRowMapper;
 import org.egov.pt.repository.rowmapper.OpenPropertyRowMapper;
@@ -50,31 +49,32 @@ public class PropertyRepository {
 
 	@Autowired
 	private PropertyRowMapper rowMapper;
-	
+
 	@Autowired
 	private PropertySearchRowMapper rowSearchMapper;
-	
+
 	@Autowired
 	private OpenPropertyRowMapper openRowMapper;
-	
+
 	@Autowired
 	private PropertyAuditRowMapper auditRowMapper;
-	
+
 	@Autowired
 	private PropertyUtil util;
-	
+
 	@Autowired
 	private MultiStateInstanceUtil centralUtil;
-	
-    @Autowired
-    private UserService userService;
+
+	@Autowired
+	private UserService userService;
 
 	@Autowired
 	private EncryptionCountRowMapper encryptionCountRowMapper;
 
 	@Autowired
 	private PropertyAuditEncRowMapper propertyAuditEncRowMapper;
-    
+	private EncProperties config;
+
 	public List<String> getPropertyIds(Set<String> ownerIds, String tenantId) {
 
 		List<Object> preparedStmtList = new ArrayList<>();
@@ -132,7 +132,7 @@ public class PropertyRepository {
 	}
 
 	public List<String> fetchIds(PropertyCriteria criteria, Boolean isPlainSearch) {
-		
+
 		List<Object> preparedStmtList = new ArrayList<>();
 		String basequery = "select id from {schema}.eg_pt_property";
 		StringBuilder builder = new StringBuilder(basequery);
@@ -202,7 +202,7 @@ public class PropertyRepository {
 		util.enrichOwner(userDetailResponse, properties, isOpenSearch);
 		return properties;
 	}
-	
+
 	private List<Property> getPropertyAudit(PropertyCriteria criteria) {
 
 		String query = queryBuilder.getpropertyAuditQuery();
@@ -217,27 +217,27 @@ public class PropertyRepository {
 
 
 	/**
-	 * 
+	 *
 	 * Method to enrich property search criteria with user based criteria info
-	 * 
-	 * If no info found based on user criteria boolean true will be returned so that empty list can be returned 
-	 * 
+	 *
+	 * If no info found based on user criteria boolean true will be returned so that empty list can be returned
+	 *
 	 * else returns false to continue the normal flow
-	 * 
+	 *
 	 * The enrichment of object is done this way(instead of directly applying in the search query) to fetch multiple owners related to property at once
-	 * 
+	 *
 	 * @param criteria
 	 * @param requestInfo
 	 * @return
 	 */
 	public Boolean enrichCriteriaFromUser(PropertyCriteria criteria, RequestInfo requestInfo) {
-		
+
 		Set<String> ownerIds = new HashSet<String>();
-		
+
 		if(!CollectionUtils.isEmpty(criteria.getOwnerIds()))
 			ownerIds.addAll(criteria.getOwnerIds());
 		criteria.setOwnerIds(null);
-		
+
 		String userTenant = criteria.getTenantId();
 		if(criteria.getTenantId() == null)
 			userTenant = requestInfo.getUserInfo().getTenantId();
@@ -253,16 +253,16 @@ public class PropertyRepository {
 
 		// fetching property id from owner table and enriching criteria
 		ownerIds.addAll(userDetailResponse.getUser().stream().map(User::getUuid).collect(Collectors.toSet()));
-		
+
 		if (criteria.getIsCitizen()!=null && criteria.getMobileNumber()!=null) {
 			for (OwnerInfo user : userDetailResponse.getUser()) {
 				if (user.getAlternatemobilenumber()!=null && user.getAlternatemobilenumber().equalsIgnoreCase(criteria.getMobileNumber())) {
 					ownerIds.remove(user.getUuid());
 				}
-				
+
 			}
 		}
-		
+
 		// only used to eliminate property-ids which does not have the owner
 		List<String> propertyIds = getPropertyIds(ownerIds, userTenant);
 
@@ -293,12 +293,12 @@ public class PropertyRepository {
 	}
 
 	public Integer getCount(PropertyCriteria propertyCriteria, RequestInfo requestInfo) {
-		
-        List<Object> preparedStmtList = new ArrayList<>();
-        String query = queryBuilder.getPropertySearchQuery(propertyCriteria, preparedStmtList, false, false);
-        Integer count =  jdbcTemplate.queryForObject(query, preparedStmtList.toArray(), Integer.class);
-        return count;
-    }
+
+		List<Object> preparedStmtList = new ArrayList<>();
+		String query = queryBuilder.getPropertySearchQuery(propertyCriteria, preparedStmtList, false, false);
+		Integer count =  jdbcTemplate.queryForObject(query, preparedStmtList.toArray(), Integer.class);
+		return count;
+	}
 
 	/** Method to find the total count of applications present in dB */
 	public Integer getTotalApplications(PropertyCriteria criteria) {
@@ -308,7 +308,7 @@ public class PropertyRepository {
 		Integer count = jdbcTemplate.queryForObject(query, Integer.class);
 		return count;
 	}
-	
+
 	private String createQuery(Set<String> ids) {
 		StringBuilder builder = new StringBuilder();
 		int length = ids.size();
@@ -319,7 +319,7 @@ public class PropertyRepository {
 		}
 		return builder.toString();
 	}
-	
+
 	private void addToPreparedStatement(List<Object> preparedStmtList, Set<String> ids) {
 		ids.forEach(id -> {
 			preparedStmtList.add(id);

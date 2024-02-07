@@ -127,7 +127,7 @@ public class SewerageDaoImpl implements SewerageDao {
 	}
 
 	public void updateSewerageConnection(SewerageConnectionRequest sewerageConnectionRequest,
-			boolean isStateUpdatable) {
+										 boolean isStateUpdatable) {
 		String reqAction = sewerageConnectionRequest.getSewerageConnection().getProcessInstance().getAction();
 		if (isStateUpdatable) {
 			if (SWConstants.EXECUTE_DISCONNECTION.equalsIgnoreCase(reqAction)) {
@@ -144,7 +144,7 @@ public class SewerageDaoImpl implements SewerageDao {
 
 	/**
 	 * push object for edit notification
-	 * 
+	 *
 	 * @param sewerageConnectionRequest - Sewerage Connection Request Object
 	 */
 	public void pushForEditNotification(SewerageConnectionRequest sewerageConnectionRequest,
@@ -157,7 +157,7 @@ public class SewerageDaoImpl implements SewerageDao {
 
 	/**
 	 * Enrich file store Id's
-	 * 
+	 *
 	 * @param sewerageConnectionRequest - Sewerage Connection Request Object
 	 */
 	public void enrichFileStoreIds(SewerageConnectionRequest sewerageConnectionRequest) {
@@ -166,7 +166,7 @@ public class SewerageDaoImpl implements SewerageDao {
 
 	/**
 	 * Save file store Id's
-	 * 
+	 *
 	 * @param sewerageConnectionRequest - Sewerage Connection Request Object
 	 */
 	public void saveFileStoreIds(SewerageConnectionRequest sewerageConnectionRequest) {
@@ -248,5 +248,4 @@ public class SewerageDaoImpl implements SewerageDao {
 		EncryptionCount encryptionCount = jdbcTemplate.query(query, preparedStatement.toArray(), encryptionCountRowMapper);
 		return encryptionCount;
 	}
-
 }
