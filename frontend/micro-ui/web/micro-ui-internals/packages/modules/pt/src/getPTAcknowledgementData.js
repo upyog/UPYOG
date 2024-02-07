@@ -16,15 +16,17 @@ const ulbCamel = (ulb) => ulb.toLowerCase().split(" ").map(capitalize).join(" ")
 
 const getOwner = (application, t, customTitle) => {
   let owners = [];
-  if(customTitle && customTitle.includes("TRANSFEROR"))
+  if(customTitle && customTitle.includes("TRANSFEROR")){
   if (application?.isTransferor && application?.transferorDetails) {
-    application.ownershipCategory = application?.transferorDetails?.ownershipCategory;
-    owners = [...(application?.transferorDetails?.owners) || []];
+    application.ownershipCategory = application?.transferorDetails?.ownershipCategory
+  } else if(application?.ownersInit){
+    owners = [...(application?.ownersInit) || []];
   } else {
     owners = [...(application?.owners.filter((owner) => owner.status == "INACTIVE") || [])];
-  }
-  else
+  }}
+  else{
   owners = [...(application?.owners.filter((owner) => owner.status == "ACTIVE") || [])];
+  }
   if (application?.ownershipCategory == "INDIVIDUAL.SINGLEOWNER") {
     return {
       title: t(customTitle || "PT_OWNERSHIP_INFO_SUB_HEADER"),
