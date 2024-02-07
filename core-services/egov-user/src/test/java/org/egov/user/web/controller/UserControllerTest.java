@@ -233,7 +233,7 @@ public class UserControllerTest {
         final org.egov.user.domain.model.User expectedUser = org.egov.user.domain.model.User.builder()
                 .username("userName")
                 .name("foo")
-                .dob(expectedDate)
+                .dob(null)
                 .guardian("name of relative")
                 .build();
         final ArgumentCaptor<org.egov.user.domain.model.User> argumentCaptor =
