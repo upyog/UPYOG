@@ -126,7 +126,7 @@ public class UserRequestControllerTest {
                 .pan("AITGC5624P")
                 .aadhaarNumber("96a70a9a-03bd-11e7-93ae-92361f002671")
                 .active(Boolean.TRUE)
-                .dob(expectedDOB)
+                .dob(null)
                 .passwordExpiryDate(pwdExpiryDate)
                 .locale("en_IN")
                 .type(UserType.CITIZEN)

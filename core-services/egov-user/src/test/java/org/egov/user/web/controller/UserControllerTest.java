@@ -213,7 +213,7 @@ public class UserControllerTest {
         final org.egov.user.domain.model.User user = org.egov.user.domain.model.User.builder()
                 .username("userName")
                 .name("foo")
-                .dob(expectedDate)
+                .dob(null)
                 .guardian("name of relative")
                 .build();
         when(userService.createCitizen(any(), any())).thenReturn(user);
@@ -312,7 +312,7 @@ public class UserControllerTest {
                 .correspondenceAddress(getCorrespondenceAddress())
                 .active(true)
                 .roles(getListOfRoles())
-                .dob(expectedDOB)
+                .dob(null)
                 .passwordExpiryDate(date)
                 .locale("en_IN")
                 .type(UserType.CITIZEN)
