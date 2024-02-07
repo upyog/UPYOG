@@ -19,10 +19,10 @@ import {
 } from "@egovernments/digit-ui-module-common";
 import { DigitUI } from "@egovernments/digit-ui-module-core";
 import { initLibraries } from "@egovernments/digit-ui-libraries";
-import {
-  HRMSModule,
-  initHRMSComponents,
-} from "@egovernments/digit-ui-module-hrms";
+// import {
+//   HRMSModule,
+//   initHRMSComponents,
+// } from "@egovernments/digit-ui-module-hrms";
 import {
   TLModule,
   TLLinks,
@@ -74,7 +74,7 @@ window.Digit.ComponentRegistryService.setupRegistry({
   ...PTComponents,
   MCollectLinks,
   MCollectModule,
-  HRMSModule,
+  // HRMSModule,
   TLModule,
   TLLinks,
   ReceiptsModule
@@ -84,7 +84,7 @@ initPGRComponents();
 initFSMComponents();
 initDSSComponents();
 initMCollectComponents();
-initHRMSComponents();
+// initHRMSComponents();
 initTLComponents();
 initReceiptsComponents();
 initOBPSComponents();
@@ -101,9 +101,9 @@ const moduleReducers = (initData) => ({
 });
 
 function App() {
-  const stateCode =
-    window.globalConfigs?.getConfig("STATE_LEVEL_TENANT_ID") ||
-    process.env.REACT_APP_STATE_LEVEL_TENANT_ID;
+  const stateCode = "mn"
+    // window.globalConfigs?.getConfig("STATE_LEVEL_TENANT_ID") ||
+    // process.env.REACT_APP_STATE_LEVEL_TENANT_ID;
   if (!stateCode) {
     return <h1>stateCode is not defined</h1>;
   }

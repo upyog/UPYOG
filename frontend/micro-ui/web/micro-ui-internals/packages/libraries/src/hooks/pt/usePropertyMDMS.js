@@ -33,6 +33,10 @@ const usePropertyMDMS = (tenantId, moduleCode, type, config = {}) => {
     return useQuery("PT_MAP_CONFIG", () => MdmsService.getMapConfig(tenantId, moduleCode), config);
   };
 
+  const usePTExemptionList = () => {
+    return useQuery("PT_EXEMPTION_LIST", () => MdmsService.getExemptionList(tenantId, moduleCode, type), config);
+  };
+
   const _default = () => {
     return useQuery([tenantId, moduleCode, type], () => MdmsService.getMultipleTypes(tenantId, moduleCode, type), config);
   };
@@ -58,6 +62,8 @@ const usePropertyMDMS = (tenantId, moduleCode, type, config = {}) => {
       return useMapConfig();
     case "ChargeSlabs":
       return useChargeSlabs();
+    case "ExemptionList":
+      return usePTExemptionList();
     default:
       return _default();
   }

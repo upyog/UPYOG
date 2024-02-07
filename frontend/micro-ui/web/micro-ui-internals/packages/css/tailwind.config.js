@@ -10,11 +10,11 @@ module.exports = {
     },
     colors: {
       primary: {
-        light: "#F18F5E",
-        main: "#a82227",
-        dark: "#C8602B",
+        light: "#22ab89",
+        main: "#208f74",
+        dark: "#125e4b",
       },
-      secondary: "#22394D",
+      secondary: "#224d47",
       text: {
         primary: "#0B0C0C",
         secondary: "#505A5F",
@@ -25,7 +25,7 @@ module.exports = {
       },
       border: "#D6D5D4",
       "input-border": "#464646",
-      focus: "#a82227",
+      focus: "#208f74",
       error: "#D4351C",
       success: "#00703C",
       black: "#000000",
@@ -91,7 +91,7 @@ module.exports = {
     },
     boxShadow: {
       card: "0 1px 2px 0 rgba(0, 0, 0, 0.16)",
-      radiobtn: "0 0 0 5px #a82227",
+      radiobtn: "0 0 0 5px #208f74",
     },
     inset: {
       0: 0,
