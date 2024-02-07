@@ -125,7 +125,7 @@ public class PaymentNotificationService {
                         if (applicationType.equals(APPLICATION_TYPE_RENEWAL)) {
                             String localizationMessages = tlRenewalNotificationUtil.getLocalizationMessages(license.getTenantId(), requestInfo);
                             List<SMSRequest> smsRequests = getSMSRequests(license, valMap, localizationMessages);
-                            util.sendSMS(smsRequests, config.getIsTLSMSEnabled());
+                            util.sendSMS(smsRequests, config.getIsTLSMSEnabled(), valMap.get(tenantIdKey));
                             //message = tlRenewalNotificationUtil.getOwnerPaymentMsg(license,valMap,localizationMessages);
 
                             // Event Flow
@@ -139,7 +139,7 @@ public class PaymentNotificationService {
                         } else {
                             String localizationMessages = util.getLocalizationMessages(license.getTenantId(), requestInfo);
                             List<SMSRequest> smsRequests = getSMSRequests(license, valMap, localizationMessages);
-                            util.sendSMS(smsRequests, config.getIsTLSMSEnabled());
+                            util.sendSMS(smsRequests, config.getIsTLSMSEnabled(), valMap.get(tenantIdKey));
 
                             // Event Flow
                             String message = util.getOwnerPaymentMsg(license,valMap,localizationMessages);

@@ -249,7 +249,6 @@ public class SWConstants {
 	
 	public static final int RECONNECTION =  4;
 
-
 	public static final String APPROVE_CONNECTION = "APPROVE_CONNECTION";
 
 	public static final String NEW_SEWERAGE_CONNECTION ="NEW_SEWERAGE_CONNECTION";

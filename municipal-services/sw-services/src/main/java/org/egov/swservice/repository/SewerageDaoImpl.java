@@ -248,9 +248,4 @@ public class SewerageDaoImpl implements SewerageDao {
 		EncryptionCount encryptionCount = jdbcTemplate.query(query, preparedStatement.toArray(), encryptionCountRowMapper);
 		return encryptionCount;
 	}
-
-
-
-
-
 }

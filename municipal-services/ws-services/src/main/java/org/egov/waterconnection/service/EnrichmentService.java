@@ -506,7 +506,7 @@ public class EnrichmentService {
 				}
 				
 			}
-		});
+		}});
 		return new ArrayList(connectionHashMap.values());
 	}
 

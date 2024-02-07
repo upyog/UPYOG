@@ -82,8 +82,9 @@ public class UserService {
 						// then consider that user as applicant
 						owner = user;
 						break;
-					} else
+					} else {
 						notFoundUser = Boolean.TRUE;
+					}
 
 				}
 				// users exists with mobile number but non of them have the same Name so create new
@@ -93,7 +94,7 @@ public class UserService {
 
 				}
 
-			} else {
+			 else {
 				if (!isUpdate) {
 					// User with mobile number itself not found then create new user and consider
 					// the new user as applicant.
@@ -119,30 +120,6 @@ public class UserService {
 
 	}
 
-	private User updateUserDetails(User vehicleInfo, RequestInfo requestInfo, HashMap<String, String> errorMap) {
-		User userUpdated = new User();
-		UserRequest userRequest = UserRequest.builder().user(vehicleInfo).requestInfo(requestInfo).build();
-		StringBuilder uri = new StringBuilder();
-		uri.append(config.getUserHost()).append(config.getUserContextPath()).append(config.getUserUpdateEndpoint());
-		UserDetailResponse userResponse = ownerCall(userRequest, uri);
-		if (userResponse != null && !userResponse.getUser().isEmpty()) {
-			userUpdated = userResponse.getUser().get(0);
-		} else {
-			errorMap.put(VehicleErrorConstants.INVALID_VEHICLE_OWNER,
-					"Unable to Update UserDetails to the existing Vehicle !");
-		}
-		return userUpdated;
-
-	}
-
-	/**
-	 * Update Vehicle Details
-	 * 
-	 * @param vehicleInfo
-	 * @param requestInfo
-	 * @param errorMap
-	 * @return
-	 */
 	private User updateUserDetails(User vehicleInfo, RequestInfo requestInfo, HashMap<String, String> errorMap) {
 		User userUpdated = new User();
 		UserRequest userRequest = UserRequest.builder().user(vehicleInfo).requestInfo(requestInfo).build();

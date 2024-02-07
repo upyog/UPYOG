@@ -51,9 +51,6 @@ public class WaterDaoImpl implements WaterDao {
     @Autowired
     private WSConfiguration wsConfiguration;
 
-    @Autowired
-	private EncryptionCountRowMapper encryptionCountRowMapper;
-
 	@Autowired
 	private EncryptionCountRowMapper encryptionCountRowMapper;
 
@@ -304,94 +301,5 @@ public class WaterDaoImpl implements WaterDao {
         EncryptionCount encryptionCount = jdbcTemplate.query(query, preparedStatement.toArray(), encryptionCountRowMapper);
         return encryptionCount;
     }
-
-		List<WaterConnection> waterConnectionList = new ArrayList<>();
-		List<Object> preparedStatement = new ArrayList<>();
-		
-		Set<String> ids = new HashSet<String>();
-		List<String> connectionIds = null;
-		if (criteria.getIds() != null && !criteria.getIds().isEmpty())
-			ids = criteria.getIds();
-		else
-			connectionIds = fetchWaterConIds(criteria);
-
-		if(connectionIds!=null && connectionIds.size()>0) {
-//		for (String id : connectionIds) {
-			ids.addAll(connectionIds);
-//		}
-		}
-		if (ids.isEmpty())
-			return new WaterConnectionResponse();
-
-		criteria.setIds(ids);
-		
-		String query = wsQueryBuilder.getSearchQueryStringForPlainSearch(criteria, preparedStatement, requestInfo);
-
-		if (query == null)
-			return null;
-		
-		Boolean isOpenSearch = isSearchOpen(requestInfo.getUserInfo());
-		WaterConnectionResponse connectionResponse = new WaterConnectionResponse();
-		if (isOpenSearch) {
-			waterConnectionList = jdbcTemplate.query(query, preparedStatement.toArray(), openWaterRowMapper);
-			connectionResponse = WaterConnectionResponse.builder().waterConnection(waterConnectionList)
-					.totalCount(openWaterRowMapper.getFull_count()).build();
-		} else {
-			waterConnectionList = jdbcTemplate.query(query, preparedStatement.toArray(), waterRowMapper);
-			connectionResponse = WaterConnectionResponse.builder().waterConnection(waterConnectionList)
-					.totalCount(waterRowMapper.getFull_count()).build();
-		}
-		return connectionResponse;
-	}
-	
-	public List<String> fetchWaterConIds(SearchCriteria criteria) {
-		List<Object> preparedStmtList = new ArrayList<>();
-		preparedStmtList.add(criteria.getOffset());
-		preparedStmtList.add(criteria.getLimit());
-
-		List<String> ids = jdbcTemplate.query("SELECT id from eg_ws_connection ORDER BY createdtime offset " +
-						" ? " +
-						"limit ? ",
-				preparedStmtList.toArray(),
-				new SingleColumnRowMapper<>(String.class));
-		return ids;
-	}
-
-	/* Method to push the encrypted data to the 'update' topic  */
-	@Override
-	public void updateOldWaterConnections(WaterConnectionRequest waterConnectionRequest) {
-		waterConnectionProducer.push(updateOldDataEncTopic, waterConnectionRequest);
-	}
-
-	/* Method to find the total count of applications present in dB */
-	@Override
-	public Integer getTotalApplications(SearchCriteria criteria) {
-		List<Object> preparedStatement = new ArrayList<>();
-		String query = wsQueryBuilder.getTotalApplicationsCountQueryString(criteria, preparedStatement);
-		if (query == null)
-			return 0;
-		Integer count = jdbcTemplate.queryForObject(query, preparedStatement.toArray(), Integer.class);
-		return count;
-	}
-
-	/* Method to push the old data encryption status to the 'ws-enc-audit' topic  */
-	@Override
-	public void updateEncryptionStatus(EncryptionCount encryptionCount) {
-		waterConnectionProducer.push(encryptionStatusTopic, encryptionCount);
-	}
-
-	/* Method to find the last execution details in dB */
-	@Override
-	public EncryptionCount getLastExecutionDetail(SearchCriteria criteria) {
-
-		List<Object> preparedStatement = new ArrayList<>();
-		String query = wsQueryBuilder.getLastExecutionDetail(criteria, preparedStatement);
-
-		log.info("\nQuery executed:" + query);
-		if (query == null)
-			return null;
-		EncryptionCount encryptionCount = jdbcTemplate.query(query, preparedStatement.toArray(), encryptionCountRowMapper);
-		return encryptionCount;
-	}
 	
 }

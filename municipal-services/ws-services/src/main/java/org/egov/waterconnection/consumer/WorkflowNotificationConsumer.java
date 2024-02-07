@@ -1,5 +1,6 @@
 package org.egov.waterconnection.consumer;
 
+import org.egov.waterconnection.service.MeterReadingService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.Role;

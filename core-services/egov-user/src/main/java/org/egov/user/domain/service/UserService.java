@@ -481,7 +481,7 @@ public class UserService {
         /* encrypt here */
         /* encrypted value is stored in DB*/
         user = encryptionDecryptionUtil.encryptObject(user, "User", User.class);
-        userRepository.update(user, user);
+        userRepository.update(user, user, requestInfo.getUserInfo().getId(), requestInfo.getUserInfo().getUuid());
     }
 
 

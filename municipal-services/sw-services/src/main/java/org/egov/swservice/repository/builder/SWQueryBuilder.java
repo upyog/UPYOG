@@ -88,7 +88,6 @@ public class SWQueryBuilder {
 
 	private static final String LATEST_EXECUTED_MIGRATION_QUERY = "select * from eg_sw_enc_audit where tenantid = ? order by createdTime desc limit 1;";
 
-
 	/**
 	 *
 	 * @param criteria on search criteria

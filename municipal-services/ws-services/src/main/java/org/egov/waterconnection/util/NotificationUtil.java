@@ -236,9 +236,9 @@ public class NotificationUtil {
 	 * 
 	 * @param request EventRequest Object
 	 */
-	public void sendEventNotification(EventRequest request) {
+	public void sendEventNotification(EventRequest request, String tenantId) {
 		log.info("Pushing Event: " + request.toString());
-		producer.push(config.getSaveUserEventsTopic(), request);
+		producer.push(tenantId, config.getSaveUserEventsTopic(), request);
 	}
 	public List<EmailRequest> createEmailRequest(WaterConnectionRequest waterConnectionRequest, String message, Map<String, String> mobileNumberToEmailId) {
 
@@ -266,13 +266,13 @@ public class NotificationUtil {
 	 * @param emailRequestList
 	 *            The list of EmailRequest to be sent
 	 */
-	public void sendEmail(List<EmailRequest> emailRequestList) {
+	public void sendEmail(List<EmailRequest> emailRequestList, String tenantId) {
 
 		if (config.getIsEmailNotificationEnabled()) {
 			if (CollectionUtils.isEmpty(emailRequestList))
 				log.info("Messages from localization couldn't be fetched!");
 			for (EmailRequest emailRequest : emailRequestList) {
-				producer.push(config.getEmailNotifTopic(), emailRequest);
+				producer.push(tenantId, config.getEmailNotifTopic(), emailRequest);
 				log.info("Email Request -> "+emailRequest.toString());
 				log.info("EMAIL notification sent!");
 			}
