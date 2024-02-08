@@ -29,6 +29,10 @@
       @apply p-sm text-primary-main items-center;
       display: flex !important;
       color: #a82227 !important;
+      a{
+        color: inherit;
+        text-decoration: inherit
+      }
     }
 
     .inbox-total {
@@ -606,6 +610,12 @@ background-size: cover
   width: 300px;
 
 }
+
+
+.inboxLinksFSM {
+  margin: 0 !important;
+}
+
 
 .plumber-details-new-value-wrapper {
   flex: 2 1 auto;

@@ -200,6 +200,47 @@ const RegisryInbox = (props) => {
     });
   };
 
+  const onVendorVehicleSelect = (row, selectedOption) => {
+    let vehicleData = row.original;
+    let formDetails = row.original.dsoDetails;
+    let existingVendor = vehicleData?.vendor;
+    let selectedVendor = selectedOption;
+    delete vehicleData.vendor;
+    vehicleData.vendorVehicleStatus = "ACTIVE";
+    if (existingVendor) {
+      const vehicles = existingVendor?.vehicles;
+      vehicles.splice(
+        vehicles.findIndex((ele) => ele.id === vehicleData.id),
+        1
+      );
+      const formData = {
+        vendor: {
+          ...formDetails,
+          vehicles: vehicles,
+        },
+      };
+    }
+    const formData = {
+      vendor: {
+        ...selectedVendor,
+        vehicles: selectedVendor.vehicles ? [...selectedVendor.vehicles, vehicleData] : [vehicleData],
+      },
+    };
+
+    mutateVendor(formData, {
+      onError: (error, variables) => {
+        setShowToast({ key: "error", action: error });
+        setTimeout(closeToast, 5000);
+      },
+      onSuccess: (data, variables) => {
+        setShowToast({ key: "success", action: "VENDOR" });
+        queryClient.invalidateQueries("DSO_SEARCH");
+        props.refetchData();
+        setTimeout(closeToast, 3000);
+      },
+    });
+  };
+
   const onCellClick = (row, column, length) => {
     setTableData((old) =>
       old.map((data, index) => {

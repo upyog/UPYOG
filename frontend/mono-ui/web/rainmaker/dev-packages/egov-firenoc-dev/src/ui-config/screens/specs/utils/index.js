@@ -169,10 +169,24 @@ export const getCurrentFinancialYear = () => {
   var fiscalYr = "";
   if (curMonth > 3) {
     var nextYr1 = (today.getFullYear() + 1).toString();
-    fiscalYr = today.getFullYear().toString() + "-" + nextYr1;
+    fiscalYr = today.getFullYear().toString() + "-" + nextYr1.slice(-2);
   } else {
     var nextYr2 = today.getFullYear().toString();
-    fiscalYr = (today.getFullYear() - 1).toString() + "-" + nextYr2;
+    fiscalYr = (today.getFullYear() - 1).toString() + "-" + nextYr2.slice(-2);
+  }
+  return fiscalYr;
+};
+
+export const getCurrentFinancialYearForFireNoc = () => {
+  var today = new Date();
+  var curMonth = today.getMonth();
+  var fiscalYr = "";
+  if (curMonth > 3) {
+    var nextYr1 = (today.getFullYear() + 1).toString();
+    fiscalYr = today.getFullYear().toString() + "-" + nextYr1.slice(-2);
+  } else {
+    var nextYr2 = today.getFullYear().toString();
+    fiscalYr = (today.getFullYear() - 1).toString() + "-" + nextYr2.slice(-2);
   }
   return fiscalYr;
 };

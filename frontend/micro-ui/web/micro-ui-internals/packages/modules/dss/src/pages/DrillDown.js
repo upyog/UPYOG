@@ -119,7 +119,6 @@ const DrillDown = ({ stateCode }) => {
   if (isUlbLoading) {
     return <Loader />;
   }
-console.log("ffff123445555",title)
 if(title1.includes("DSS_TOP_3"))
 {
   title1 ="NATIONAL_DSS_TOP_PERFORMING_STATES_REVENUE_POPULATION"

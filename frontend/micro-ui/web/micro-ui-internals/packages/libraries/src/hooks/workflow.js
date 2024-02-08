@@ -7,7 +7,7 @@ const useWorkflowDetails = ({ tenantId, id, moduleCode, role = "CITIZEN", servic
 
   const { isLoading, error, isError, data } = useQuery(
     ["workFlowDetails", tenantId, id, moduleCode, role, config],
-    () => Digit.WorkflowService.getDetailsById({ tenantId, id, moduleCode, role, getTripData, serviceData }),
+    () => Digit.WorkflowService.getDetailsById({ tenantId, id, moduleCode, role, getTripData }),
     getStaleData ? { ...staleDataConfig, ...config } : config
   );
 

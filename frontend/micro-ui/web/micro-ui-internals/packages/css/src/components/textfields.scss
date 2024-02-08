@@ -19,6 +19,10 @@ height: 2.0rem !important;
   @apply border-grey-dark text-grey-dark !important;
   pointer-events: none !important;
 }
+.employee-card-input:disabled {
+  @apply border-grey-dark text-grey-dark !important;
+  pointer-events: none !important;
+}
 .employee-card-input--front {
   width: fit-content !important;
   display: flex;

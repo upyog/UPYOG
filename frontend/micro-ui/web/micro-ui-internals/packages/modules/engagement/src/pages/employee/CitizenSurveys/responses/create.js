@@ -62,7 +62,6 @@ const Acknowledgement = (props) => {
     if(option === t("GO_BACK_TO_HOME")) history.push("/digit-ui/employee")
     else if(option === t("CREATE_ANOTHER_SURVEY")) history.push("/digit-ui/employee/engagement/surveys/create")
   }
-
   return (
     <Card>
       <BannerPicker

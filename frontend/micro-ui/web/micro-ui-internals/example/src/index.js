@@ -124,7 +124,6 @@ const initDigitUI = () => {
   initCommonPTComponents();
   initBillsComponents();
 
-
   // initCustomisationComponents();
 
   const moduleReducers = (initData) => ({

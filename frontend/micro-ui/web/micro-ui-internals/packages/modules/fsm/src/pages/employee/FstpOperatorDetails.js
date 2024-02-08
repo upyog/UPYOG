@@ -210,7 +210,6 @@ const FstpOperatorDetails = () => {
         history.location.pathname.includes("new") ? handleCreate() : handleSubmit();
       default:
         setSelectedAction();
-        console.debug("default case");
         break;
     }
   }, [selectedAction]);

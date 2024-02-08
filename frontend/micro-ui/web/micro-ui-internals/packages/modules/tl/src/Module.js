@@ -6,16 +6,20 @@ import TradeLicense from "../src/pageComponents/TradeLicense";
 import TLSelectGeolocation from "../src/pageComponents/TLSelectGeolocation";
 import TLSelectAddress from "./pageComponents/TLSelectAddress";
 import TLSelectPincode from "./pageComponents/TLSelectPincode";
-import Proof from "./pageComponents/Proof";
-import SelectOwnerShipDetails from "./pageComponents/SelectOwnerShipDetails";
-import SelectOwnerDetails from "./pageComponents/SelectOwnerDetails";
-import SelectOwnerAddress from "./pageComponents/SelectOwnerAddress";
-import SelectProofIdentity from "./pageComponents/SelectProofIdentity";
+// import Proof from "./pageComponents/Proof";
+import TLProof from "./pageComponents/TLProof";
+// import SelectOwnerShipDetails from "./pageComponents/SelectOwnerShipDetails";
+import TLSelectOwnerShipDetails from "./pageComponents/TLSelectOwnerShipDetails";
+// import SelectOwnerDetails from "./pageComponents/SelectOwnerDetails";
+import TLSelectOwnerDetails from "./pageComponents/TLSelectOwnerDetails";
+// import SelectOwnerAddress from "./pageComponents/SelectOwnerAddress";
+// import SelectProofIdentity from "./pageComponents/SelectProofIdentity";
+import TLSelectProofIdentity from "./pageComponents/TLSelectProofIdentity";
 import SelectOwnershipProof from "./pageComponents/SelectOwnershipProof";
 import SelectTradeName from "./pageComponents/SelectTradeName";
 import SelectStructureType from "./pageComponents/SelectStructureType";
-import SelectStreet from "./pageComponents/SelectStreet";
-import SelectVehicleType from "./pageComponents/SelectVehicleType";
+// import SelectVehicleType from "./pageComponents/SelectVehicleType";
+import TLSelectVehicleType from "./pageComponents/TLSelectVehicleType";
 import SelectBuildingType from "./pageComponents/SelectBuildingType";
 import SelectCommencementDate from "./pageComponents/SelectCommencementDate";
 import SelectTradeUnits from "./pageComponents/SelectTradeUnits";
@@ -24,7 +28,7 @@ import SelectAccessoriesDetails from "./pageComponents/SelectAccessoriesDetails"
 import TLCheckPage from "./pages/citizen/Create/CheckPage";
 import TLDocument from "./pageComponents/TLDocumets";
 import TLAcknowledgement from "./pages/citizen/Create/TLAcknowledgement";
-import MyApplications from "./pages/citizen/Applications/Application";
+import TLMyApplications from "./pages/citizen/Applications/Application";
 import TradeLicenseList  from "./pages/citizen/Renewal/TradeLicenseList";
 import TLWFApplicationTimeline from "./pageComponents/TLWFApplicationTimeline";  
 import SelectOtherTradeDetails from "./pageComponents/SelectOtherTradeDetails";
@@ -39,7 +43,7 @@ import TLAccessoriesEmployee from "./pageComponents/TLAccessoriesEmployee";
 import TLDocumentsEmployee from "./pageComponents/TLDocumentsEmployee";
 import TLCard from "./components/TLCard";
 import TLInfoLabel from "./pageComponents/TLInfoLabel";
-import SearchApplication from "./components/SearchApplication"
+import SearchLicenseApplication from "./components/SearchApplication";
 import SearchLicense from "./components/SearchLicense"
 import TL_INBOX_FILTER from "./components/inbox/InboxFilter";
 import NewApplication from "./pages/employee/NewApplication";
@@ -107,7 +111,8 @@ const componentsToRegister = {
   TradeLicense,
   SelectTradeName,
   SelectStructureType,
-  SelectVehicleType,
+  // SelectVehicleType,
+  TLSelectVehicleType,
   SelectBuildingType,
   SelectCommencementDate,
   SelectTradeUnits,
@@ -116,11 +121,15 @@ const componentsToRegister = {
   TLSelectGeolocation,
   TLSelectAddress,
   TLSelectPincode,
-  Proof,
-  SelectOwnerShipDetails,
-  SelectOwnerDetails,
-  SelectOwnerAddress,
-  SelectProofIdentity,
+  // Proof,
+  TLProof,
+  // SelectOwnerShipDetails,
+  TLSelectOwnerShipDetails,
+  // SelectOwnerDetails,
+  TLSelectOwnerDetails,
+  // SelectOwnerAddress,
+  // SelectProofIdentity,
+  TLSelectProofIdentity,
   SelectOwnershipProof,
   TLSelectStreet,
   TLSelectLandmark,
@@ -129,13 +138,13 @@ const componentsToRegister = {
   TLDocument,
   TLAcknowledgement,
   TradeLicenseList,
-  MyApplications,
+  TLMyApplications,
   TLOwnerDetailsEmployee,
   TLTradeDetailsEmployee,
   TLTradeUnitsEmployee,
   TLAccessoriesEmployee,
   TLDocumentsEmployee,
-  SearchApplication,
+  SearchLicenseApplication,
   SearchLicense,
   TL_INBOX_FILTER,
   TLInfoLabel,
@@ -156,7 +165,7 @@ const componentsToRegister = {
 };
 
 export const initTLComponents = () => {
-  Object.entries(componentsToRegister).forEach(([key, value]) => {
+  Object.entries(componentsToRegister)?.forEach(([key, value]) => {
     Digit.ComponentRegistryService.setComponent(key, value);
   });
 };

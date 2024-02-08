@@ -19,7 +19,7 @@ function todayDate() {
 }
 
 function getFilteredDsoData(dsoData, vehicle, vehicleCapacity) {
-  return dsoData?.filter((e) => e.vehicles?.find((veh) => veh?.capacity == vehicleCapacity))?.sort((a, b) => a.name.localeCompare(b.name));
+  return dsoData?.filter((e) => e.vehicles?.find((veh) => veh?.capacity == vehicleCapacity));
 }
 
 export const configAssignDso = ({ t, dsoData, dso, selectDSO, vehicleMenu, vehicle, vehicleCapacity, selectVehicle, action }) => {
@@ -104,7 +104,10 @@ export const configAssignDso = ({ t, dsoData, dso, selectDSO, vehicleMenu, vehic
               validation: {
                 required: true,
               },
-              customProps: { min: Digit.Utils.date.getDate() },
+              customProps: { 
+                min: Digit.Utils.date.getDate(),
+                max: Digit.Utils.date.getDate(Date.now() + 10 * 24 * 60 * 60 * 1000),
+               },
               defaultValue: Digit.Utils.date.getDate(),
               component: (props, customProps) => <DatePicker onChange={props.onChange} date={props.value} {...customProps} />,
             },

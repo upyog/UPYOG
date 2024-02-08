@@ -81,7 +81,7 @@ const useTradeLicenseMDMS = (tenantId, moduleCode, type, filter, config = {}) =>
         }) : null
 
         if (OwnerShipCategory) {
-          Object.keys(OwnerShipCategory).forEach((category) => {
+          Object.keys(OwnerShipCategory)?.forEach((category) => {
             // const categoryCode = OwnerShipCategory[category].code;
             ownerShipdropDown.push(formDropdown(OwnerShipCategory[category]));
           });

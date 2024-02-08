@@ -24,7 +24,7 @@ RUN yarn add @egovernments/digit-ui-module-bills
 RUN yarn add @egovernments/digit-ui-module-masters
 ARG WORK_DIR
 WORKDIR /app
-ENV NODE_OPTIONS "--max-old-space-size=8168"
+ENV NODE_OPTIONS "--max-old-space-size=8500"
 ENV GENERATE_SOURCEMAP "false"
 
 COPY ${WORK_DIR} .

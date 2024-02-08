@@ -101,7 +101,6 @@ const AssessmentDetails = () => {
     },
     }
   ); 
-
   const closeToast = () => {
     setShowToast(null);
   };

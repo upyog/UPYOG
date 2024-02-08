@@ -99,7 +99,6 @@ const Inbox = ({ parentRoute }) => {
     }
   }
   const InboxObjectInSessionStorage = Digit.SessionStorage.get("CITIZENSURVEY.INBOX")
-
   const onSearchFormReset = (setSearchFormValue) => {
     setSearchFormValue("postedBy", "")
     setSearchFormValue("title", "")

@@ -133,7 +133,6 @@ const BillDetails = ({ paymentRules, businessService }) => {
   useEffect(() => {
     if (!bill && data) {
       let requiredBill = data.Bill.filter((e) => e.consumerCode == (wrkflow === "WNS" ? stringReplaceAll(consumerCode, "+", "/") : consumerCode))[0];
-      console.log("requiredBillrequiredBill",requiredBill)
       setBill(requiredBill);
     }
   }, [isLoading]);

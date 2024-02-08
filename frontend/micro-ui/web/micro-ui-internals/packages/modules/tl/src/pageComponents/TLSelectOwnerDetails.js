@@ -14,7 +14,7 @@ import {
 
 import Timeline from "../components/TLTimeline";
 
-const SelectOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
+const TLSelectOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
   let { ownershipCategory: { code: keyToSearchOwnershipSubtype } = {} } = formData;
   const typeOfOwner = useMemo(() => {
     if (formData?.ownershipCategory?.code.includes("SINGLEOWNER")) return "SINGLEOWNER";
@@ -523,4 +523,4 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
   );
 };
 
-export default SelectOwnerDetails;
+export default TLSelectOwnerDetails;

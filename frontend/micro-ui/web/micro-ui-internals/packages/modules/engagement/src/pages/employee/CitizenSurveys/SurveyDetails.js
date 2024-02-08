@@ -21,7 +21,6 @@ const filterQuestion = (question) => {
   return { ...question, type: question.type.includes("_") ? question.type : answerTypeEnum[question.type],options:question?.options, status:question.status ? question.status : "ACTIVE", qorder:question.qorder };
 };
 
-
 /**TODO : Think of better to do this possibly in service layer */
 const TypeAnswerEnum = {
   SHORT_ANSWER_TYPE: "Short Answer",

@@ -6,7 +6,6 @@ import { RadioButtons } from "@egovernments/digit-ui-react-components";
 export const configCompleteApplication = ({ t, vehicle, vehicleCapacity, noOfTrips, applicationCreatedTime = 0, action, module }) => ({
 
   label: {
-    heading: `ES_FSM_ACTION_TITLE_${action}`,
     submit: `CS_COMMON_${action}`,
     cancel: "CS_COMMON_CLOSE",
   },

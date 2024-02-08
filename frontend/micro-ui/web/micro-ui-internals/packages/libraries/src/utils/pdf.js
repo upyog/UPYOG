@@ -830,7 +830,6 @@ function createContent(details, phoneNumber, breakPageLimit = null) {
 
   details.forEach((detail, index) => {
     if (detail?.values?.length > 0) {
-      console.log("details",detail.values)
       let column1 = [];
       let column2 = [];
 
@@ -952,7 +951,6 @@ function createContentForDetailsWithLengthOfTwo(values, data, column1, column2, 
 }
 
 function createContentForDetailsWithLengthOfOneAndThree(values, data, column1, column2, num = 0) {
-  console.log("createContentForDetailsWithLengthOfOneAndThree",values, data, column1, column2)
   values.forEach((value, index) => {
     if (index === 0) {
       column1.push({

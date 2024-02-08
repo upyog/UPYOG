@@ -72,7 +72,7 @@ import TransferProof from "./pageComponents/Mutate/transferReasonDocument";
 import UpdateNumber from "./pages/citizen/MyProperties/updateNumber";
 import EmployeeUpdateOwnerNumber from "./pages/employee/updateNumber";
 //import PTCitizenFeedback from "@egovernments/digit-ui-module-core/src/components/PTCitizenFeedback";
-
+import PTSelectLandmark from "./pageComponents/PTSelectLandmark";
 import EmployeeApp from "./pages/employee";
 import PTCard from "./components/PTCard";
 import InboxFilter from "./components/inbox/NewInboxFilter";
@@ -91,8 +91,6 @@ import CitizenFeedback from "@egovernments/digit-ui-module-core/src/components/C
 import AcknowledgementCF from "@egovernments/digit-ui-module-core/src/components/AcknowledgementCF";
 // PTAcknowledgementCF from "@egovernments/digit-ui-module-core/src/components/PTAcknowledgementCF";
 //import PTCitizenFeedbackPopUp from "./pageComponents/PTCitizenFeedbackPopUp";
-
-import PTSelectLandmark from "./pageComponents/PTSelectLandmark";
 
 const componentsToRegister = {
   PTLandArea,

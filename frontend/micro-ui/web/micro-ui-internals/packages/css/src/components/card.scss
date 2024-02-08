@@ -118,6 +118,17 @@
     @apply block text-center text-link text-link-normal mt-md;
   }
 
+
+  .card-search-heading {
+    margin-right: 0px !important;
+    margin-left: 0px !important;
+    margin-bottom: 0px !important;
+    padding-bottom: 0px;
+    padding-left: 25px;
+  }
+}
+
+
   .card-search-heading {
     margin-right: 0px !important;
     margin-left: 0px !important;
@@ -138,6 +149,7 @@
   }
 
   .header-content {
+    margin-top: 0.2rem;
   }
 
   .header-end {

@@ -1,9 +1,10 @@
 {
   "name": "micro-ui",
-  "version": "1.0.0",
+  "version": "1.7.0-beta.2",
+  "private": true,
+  "homepage": "/digit-ui",
   "author": "Jagankumar <jagan.kumar@egov.org.in>",
   "license": "MIT",
-  "private": true,
   "workspaces": [
     "micro-ui-internals/packages/libraries",
     "micro-ui-internals/packages/react-components",
@@ -12,7 +13,6 @@
   "engines": {
     "node": ">=14"
   },
-  "homepage": "/digit-ui",
   "dependencies": {
     "@upyog-niua/upyog-css": "1.0.10",
     "@egovernments/digit-ui-libraries": "1.8.0",
@@ -35,6 +35,11 @@
     "@upyog/digit-ui-module-tl": "1.7.0-beta.2",
     "@upyog/digit-ui-module-ws": "1.7.0-beta.2",
     "@egovernments/digit-ui-module-engagement": "1.7.0-beta.2",
+    "@egovernments/digit-ui-module-fsm": "1.7.0-beta.6",
+    "@egovernments/digit-ui-module-obps": "1.7.0-beta.5",
+    "@egovernments/digit-ui-module-pt": "1.7.0-beta.2",
+    "@egovernments/digit-ui-module-tl": "1.7.0-beta.5",
+    "@egovernments/digit-ui-module-ws": "1.7.0-beta.2",
     "babel-loader": "8.1.0",
     "clean-webpack-plugin": "4.0.0",
     "react": "17.0.2",

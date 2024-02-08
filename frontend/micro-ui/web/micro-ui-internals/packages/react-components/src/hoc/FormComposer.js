@@ -235,6 +235,7 @@ export const FormComposer = (props) => {
 
   const formFields = useMemo(
     () =>
+      !props?.formCardStyle &&
       props.config?.map((section, index, array) => {
         return (
           <React.Fragment key={index}>
@@ -305,6 +306,49 @@ export const FormComposer = (props) => {
       }),
     [props.config, formData]
   );
+  const formFieldsFSM = useMemo(
+    () =>
+      props?.formCardStyle &&
+      props.config?.map((section, index, array) => {
+        return (
+          <React.Fragment key={index}>
+            <div className="fsm-inline-style">
+              {section.head && (
+                <CardSectionHeader className="headererer" style={props?.sectionHeadStyle ? props?.sectionHeadStyle : {}} id={section.headId}>
+                  {t(section.head)}
+                </CardSectionHeader>
+              )}
+              {section.body.map((field, index) => {
+                if (props.fms_inline)
+                  return (
+                    <Fragment>
+                      <LabelFieldPair key={index}>
+                        {!field.withoutLabel && (
+                          <CardLabel style={{ color: field.isSectionText ? "#505A5F" : "", marginBottom: props.inline ? "8px" : "revert" }}>
+                            {t(field.label)}
+                            {field.isMandatory ? " * " : null}
+                          </CardLabel>
+                        )}
+                        <div style={field.withoutLabel ? { width: "100%", ...props?.fieldStyle } : {}} className="field">
+                          {fieldSelector(field.type, field.populators, field.isMandatory, field?.disable, field?.component, field)}
+                          {field?.description && <CardText style={{ fontSize: "14px", marginTop: "-24px" }}>{t(field?.description)}</CardText>}
+                        </div>
+                      </LabelFieldPair>
+                      {field?.populators?.name && errors && errors[field?.populators?.name] && Object.keys(errors[field?.populators?.name]).length ? (
+                        <CardLabelError style={{ width: "70%", marginLeft: "30%", fontSize: "12px", marginTop: "-21px" }}>
+                          {t(field?.populators?.error)}
+                        </CardLabelError>
+                      ) : null}
+                    </Fragment>
+                  );
+              })}
+              {!props.noBreakLine && (array.length - 1 === index ? null : <BreakLine style={props?.breaklineStyle ? props?.breaklineStyle : {}} />)}
+            </div>
+          </React.Fragment>
+        );
+      }),
+    [props.config, formData]
+  );
 
   const getCardStyles = () => {
     let styles = props.cardStyle || {};
@@ -326,7 +370,7 @@ export const FormComposer = (props) => {
         {props.heading && <CardSubHeader style={{ ...props.headingStyle }}> {props.heading} </CardSubHeader>}
         {props.description && <CardLabelDesc className={"repos"}> {props.description} </CardLabelDesc>}
         {props.text && <CardText>{props.text}</CardText>}
-        {formFields}
+        {props?.formCardStyle ? formFieldsFSM : formFields}
         {props.childrenAtTheBottom && props.children}
         {props.submitInForm && (
           <SubmitBar label={t(props.label)} style={{ ...props?.buttonStyle }} submit="submit" disabled={isDisabled} className="w-full" />

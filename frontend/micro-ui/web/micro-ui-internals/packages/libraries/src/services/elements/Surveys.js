@@ -105,5 +105,6 @@ export const Surveys = {
             userService: true,
             method: "POST",
             auth: true,
+            params:{surveyId:details.surveyId}
         }),
 };

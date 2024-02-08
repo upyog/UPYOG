@@ -56,7 +56,6 @@ const MutationForm = ({ applicationData, tenantId }) => {
       data?.originalData?.documents?.filter(
         (oldDoc) => !mutationDocs?.PropertyTax?.MutationDocuments.some((mut) => oldDoc.documentType.includes(mut.code))
       ) || [];
-      console.log("data",data)
     const submitData = {
       Property: {
         ...data.originalData,

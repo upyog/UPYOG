@@ -19,7 +19,7 @@ const amountFormatter = (value, denomination, t) => {
   }
 };
 
-export const formatter = (value, symbol, unit, commaSeparated = true, t) => {
+export const formatter = (value, symbol, unit, commaSeparated = true, t, isDecimal) => {
   if (!value && value !== 0) return "";
   switch (symbol) {
     case "amount":
@@ -31,9 +31,10 @@ export const formatter = (value, symbol, unit, commaSeparated = true, t) => {
       if (!commaSeparated) {
         return parseInt(value);
       }
-
+      if(isDecimal)
+        return value;
       const Nformatter = new Intl.NumberFormat("en-IN");
-      return Nformatter.format(Math.round(value));
+      return Nformatter.format(value);
     case "percentage":
       const Pformatter = new Intl.NumberFormat("en-IN", { maximumSignificantDigits: 3 });
       return `${Pformatter.format(value.toFixed(2))} %`;
