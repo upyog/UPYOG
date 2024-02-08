@@ -143,7 +143,7 @@ const BillDetails = ({ paymentRules, businessService }) => {
   }, [paymentType, amount]);
 
   useEffect(() => {
-    if (!isFSMLoading && application?.pdfData?.applicationStatus === "PENDING_APPL_FEE_PAYMENT_CITIZEN") {
+    if (!isFSMLoading && (application?.pdfData?.applicationStatus === "PENDING_APPL_FEE_PAYMENT_CITIZEN" || application?.pdfData?.applicationStatus ==="PENDING_APPL_FEE_PAYMENT")) {
       setPaymentAllowed(true);
       setPaymentType(t("CS_PAYMENT_ADV_COLLECTION"));
     }
@@ -231,8 +231,8 @@ const BillDetails = ({ paymentRules, businessService }) => {
             <div>
               <KeyNote keyValue={t("ES_PAYMENT_DETAILS_TOTAL_AMOUNT")} note={application?.pdfData?.totalAmount} />
               <KeyNote keyValue={t("ES_PAYMENT_DETAILS_ADV_AMOUNT")} note={application?.pdfData?.advanceAmount} />
-              {application?.pdfData?.applicationStatus !== "PENDING_APPL_FEE_PAYMENT_CITIZEN" ? (
-                <KeyNote keyValue={t("FSM_DUE_AMOUNT_TO_BE_PAID")} note={bill?.totalAmount} />
+              {application?.pdfData?.applicationStatus !== "PENDING_APPL_FEE_PAYMENT_CITIZEN" || application?.pdfData?.applicationStatus !== "PENDING_APPL_FEE_PAYMENT" ? (
+                <KeyNote keyValue={t("FSM_DUE_AMOUNT_TO_BE_PAID")} note={application?.pdfData?.totalAmount-application?.pdfData?.advanceAmount} />
               ) : null}
             </div>
           ) : (
