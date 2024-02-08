@@ -1,23 +1,8 @@
-import React, { useState, useEffect } from "react";
-import { Loader } from "@egovernments/digit-ui-react-components";
-import { Dropdown, LabelFieldPair, CardLabel } from "@egovernments/digit-ui-react-components";
+import React from "react";
+import { LabelFieldPair, CardLabel, TextInput, CardLabelError } from "@egovernments/digit-ui-react-components";
 import { useLocation } from "react-router-dom";
-
-const WmsWsrPrjName = ({ t, config, onSelect, formData = {}, userType }) => {
-  const tenantId = Digit.ULBService.getCurrentTenantId();
-
+const WmsWsrPrjName = ({ t, config, onSelect, formData = {}, userType, register, errors }) => {
   const { pathname: url } = useLocation();
-  const editScreen = url.includes("/modify-application/");
-  // const { data: Funds = [{Fund:"Fund1"},{Fund:"Fund2"}], isLoading } = Digit.Hooks.wms.useWmsMDMS(tenantId, "common-masters", "Fund") || {};
-  const [fund, setfund] = useState(formData?.WmsWsrPrjName);
-  function WmsWsrPrjName(value) {
-    setfund(value);
-  }
-
-  useEffect(() => {
-   // alert(Funds)
-    onSelect(config.key, fund);
-  }, [fund]);
   const inputs = [
     {
       label: "WMS_WSR_PROJECT_NAME_LABEL",
@@ -26,35 +11,43 @@ const WmsWsrPrjName = ({ t, config, onSelect, formData = {}, userType }) => {
       validation: {
         isRequired: true,
         pattern: Digit.Utils.getPattern('Name'),
-        title: t("WMS_COMMON_NAME_INVALID"),
+        title: t("WMS_COMMON_PROJECT_NAME_INVALID"),
       },
       isMandatory: true,
     },
   ];
 
-  // if (isLoading) {
-  //   return <Loader />;
-  // }
-
-  return inputs?.map((input, index) => {
-    return (
-      <LabelFieldPair key={index}>
-        <CardLabel className="card-label-smaller">
-          {t(input.label)}
-          {input.isMandatory ? " * " : null}
-        </CardLabel>
-        <Dropdown
-          className="form-field"
-          selected={fund}
-          option={[{code:"Project 1",Fund:"Project 1"},{code:"Project 2",Fund:"Project 2"},{code:"Project 3",Fund:"Project 3"}]}
-          select={WmsWsrPrjName}
-          optionKey="code"
-          defaultValue={undefined}
-          t={t}
-        />
-      </LabelFieldPair>
-    );
-  });
+  function setValue(value, input) {
+    onSelect(config.key, { ...formData[config.key], [input]: value });
+  }
+  
+  return (
+    <div>
+      {inputs?.map((input, index) => {
+        let currentValue=formData && formData[config.key] && formData[config.key][input.name]||'';
+        return(<React.Fragment key={index}>
+          {errors[input.name] && <CardLabelError>{t(input.error)}</CardLabelError>}
+          <LabelFieldPair>
+            <CardLabel className="card-label-smaller">
+              {t(input.label)}
+              {input.isMandatory ? " * " : null}
+            </CardLabel>
+            <div className="field">
+              <TextInput
+                key={input.name}
+                value={formData && formData[config.key] ? formData[config.key][input.name] : undefined}
+                onChange={(e) => setValue(e.target.value, input.name)}
+                disable={false}
+                defaultValue={undefined}
+                {...input.validation}
+              />
+            {currentValue&&currentValue.length>0&&!currentValue.match(Digit.Utils.getPattern('Name'))&&<CardLabelError style={{ width: "100%", marginTop: '-15px', fontSize: '16px', marginBottom: '12px'}}>{t("WMS_COMMON_PROJECT_NAME_INVALID")}</CardLabelError>}
+            </div>
+          </LabelFieldPair>
+        </React.Fragment>
+      )})}
+    </div>
+  );
 };
 
 export default WmsWsrPrjName;

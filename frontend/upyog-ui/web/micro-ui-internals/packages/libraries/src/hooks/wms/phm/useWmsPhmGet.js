@@ -7,7 +7,8 @@ export const useWmsPhmGet = (phmId, tenantId, isupdated, config = {}) => {
   const client = useQueryClient();
   const { isLoading, error, data } = useQuery(
     ["WMS_PHM_GET",phmId, tenantId, isupdated],
-    async () => await WMSService.PHMApplications.get(phmId, tenantId),
+    async () => await WMSService.PHMApplications.get(),
+    // async () => await WMSService.PHMApplications.get(phmId, tenantId),
     config
   );
   return { isLoading, error, data, revalidate: () => client.invalidateQueries(["WMS_PHM_GET", phmId, tenantId]) };

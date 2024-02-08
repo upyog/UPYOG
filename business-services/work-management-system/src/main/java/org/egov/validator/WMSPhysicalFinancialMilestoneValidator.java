@@ -52,10 +52,14 @@ public class WMSPhysicalFinancialMilestoneValidator {
 	                throw new CustomException("EG_WMS_APP_ERR", "MilestoneName is mandatory for creating Physical Financial Milestone applications");
 	        });
 	    	
-	    	wmsPhysicalFinancialMilestoneRequest.getWmsPhysicalFinancialMilestoneApplications().forEach(application -> {
-	            if(ObjectUtils.isEmpty(application.getPercentageWeightage()))
-	                throw new CustomException("EG_WMS_APP_ERR", "PercentageWeightage is mandatory for creating Physical Financial Milestone applications");
-	        });
+			/*
+			 * wmsPhysicalFinancialMilestoneRequest.
+			 * getWmsPhysicalFinancialMilestoneApplications().forEach(application -> {
+			 * if(ObjectUtils.isEmpty(application.getPercentageWeightage())) throw new
+			 * CustomException("EG_WMS_APP_ERR",
+			 * "PercentageWeightage is mandatory for creating Physical Financial Milestone applications"
+			 * ); });
+			 */
 	    	
 	    	
 	    	

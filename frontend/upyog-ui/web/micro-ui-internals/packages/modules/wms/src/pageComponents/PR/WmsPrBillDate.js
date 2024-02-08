@@ -1,15 +1,15 @@
 import React from "react";
 import { LabelFieldPair, CardLabel, TextInput, CardLabelError, DatePicker } from "@egovernments/digit-ui-react-components";
 import { useLocation } from "react-router-dom";
-import { convertEpochToDate } from "../../components/Utils";
+import { convertEpochToDate } from "./../../components/Utils";
 
 const WmsPrBillDate = ({ t, config, onSelect, formData = {}, userType, register, errors }) => {
   const { pathname: url } = useLocation();
   const inputs = [
     {
-      label: "WMS_PR_BILL_DATE_LABEL",
+      label: "WMS_PR_START_DATE_LABEL",
       type: "date",
-      name: "project_start_date",
+      name: "bill_received_till_date",
       validation: {
         isRequired: true,
         title: t("WMS_COMMON_START_DATE_INVALID"),

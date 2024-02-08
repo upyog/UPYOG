@@ -7,7 +7,8 @@ export const useWmsWsrGet = (prId, tenantId, isupdated, config = {}) => {
   const client = useQueryClient();
   const { isLoading, error, data } = useQuery(
     ["WMS_WSR_GET",prId, tenantId, isupdated],
-    async () => await WMSService.WSRApplications.get(prId, tenantId),
+    // async () => await WMSService.WSRApplications.get(prId, tenantId),
+    async () => await WMSService.WSRApplications.get(),
     config
   );
   return { isLoading, error, data, revalidate: () => client.invalidateQueries(["WMS_WSR_GET", prId, tenantId]) };

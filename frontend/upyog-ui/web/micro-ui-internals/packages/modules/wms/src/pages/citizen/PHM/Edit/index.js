@@ -69,7 +69,7 @@ const WmsPhmEdit  = () => {
     requestdata.project_name = input?.WmsPhmPrjName?.project_name ? input?.WmsPhmPrjName?.project_name : undefined;
     requestdata.work_name = input?.WmsPhmWorkName?.work_name ? input?.WmsPhmWorkName?.work_name : undefined;
     requestdata.milestone_name = input?.WmsPhmMLName?.milestone_name ? input?.WmsPhmMLName?.milestone_name : undefined;
-    requestdata.percent_weightage = input?.WmsPhmPercent?.percent_weightage ? input?.WmsPhmPercent?.percent_weightage : undefined;
+    requestdata.percentage_weightage = input?.WmsPhmPercent?.percentage_weightage ? input?.percentage_weightage?.percentage_weightage : undefined;
     // requestdata.unit = input?.WmsPhmUnit?.unit ? input?.WmsPhmUnit?.unit : undefined;
     // requestdata.rate = input?.WmsPhmRate?.rate ? input?.WmsPhmRate?.rate : undefined;
     //let ScheduleOfRateApplications = [requestdata];
@@ -97,7 +97,7 @@ const WmsPhmEdit  = () => {
     WmsPhmPrjName: { project_name: dataEdit[0]?.project_name },
     WmsPhmWorkName: { work_name: dataEdit[0]?.work_name },
     WmsPhmMLName: { milestone_name: dataEdit[0]?.milestone_name },
-    WmsPhmPercent: { percent_weightage: dataEdit[0]?.percent_weightage },
+    WmsPhmPercent: { percentage_weightage: dataEdit[0]?.percentage_weightage },
     // WmsPhmUnit: { unit: dataEdit[0]?.unit },
     // WmsPhmRate: { rate: dataEdit[0]?.rate },
     // WmsPhmStartDate: { start_date: convertEpochToDate(dataEdit[0]?.start_date )},

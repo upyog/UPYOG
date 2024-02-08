@@ -36,7 +36,7 @@ const GetSlaCell = (value) => {
   return value == "INACTIVE" ? <span className="sla-cell-error">{ t(value )|| ""}</span> : <span className="sla-cell-success">{ t(value) || ""}</span>;
 };
   const getData = () => {
-    return data?.PHMApplications?.map((original) => ({
+    return data?.WMSPhysicalFinancialMilestoneApplications?.map((original) => ({
       [t("WMS_PHM_ID_LABEL")]: GetCell(original?.WmsPhmId?.phm_id || ""),
       [t("WMS_PHM_PROJECT_NAME_LABEL")]: GetCell(original?.WmsPhmPrjName?.project_name || ""),
       [t("WMS_PHM_WORK_NAME_LABEL")]: GetCell(original?.WmsPhmWorkName?.work_name || ""),

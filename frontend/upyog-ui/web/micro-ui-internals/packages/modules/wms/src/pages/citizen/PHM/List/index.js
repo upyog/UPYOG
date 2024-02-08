@@ -35,7 +35,9 @@ const WmsPhmList = ({ parentRoute, businessService = "WMS", initialStates = {}, 
     paginationParams,
     isupdate
   );
-
+  const { isLoading: getLoading, isError:getIsError, error:getError, data:GetData } = Digit.Hooks.wms.phm.useWmsPhmGet();
+console.log("GetData ddd ",GetData)
+console.log("GetData ddd WMSPhysicalFinancialMilestoneApplications  ",GetData?.WMSPhysicalFinancialMilestoneApplications)
 
   useEffect(() => {
 
@@ -102,12 +104,14 @@ else
   if(PHMApplications!=undefined)
   alert(JSON.stringify(PHMApplications))
 } */
-  if (PhmData?.length !== null) {
+
+// console.log(phmData , "phm data hai ye");
+  if (PhmData?.WMSPhysicalFinancialMilestoneApplications.length !== null) {
     if (isMobile) {
       return (
         <MobileList
           businessService={businessService}
-          data={PhmData}
+          data={PhmData?.WMSPhysicalFinancialMilestoneApplications}
           isLoading={isLoading}
           defaultSearchParams={initialStates.searchParams}
           isSearch={isList}
@@ -136,7 +140,7 @@ else
           {isList && <Header>{t("WMS_HOME_SEARCH_RESULTS_HEADING")}</Header>}
           <DesktopList
             businessService={businessService}
-            data={PhmData}
+            data={PhmData?.WMSPhysicalFinancialMilestoneApplications}
             isLoading={isLoading}
             defaultSearchParams={initialStates.searchParams}
             isSearch={isList}

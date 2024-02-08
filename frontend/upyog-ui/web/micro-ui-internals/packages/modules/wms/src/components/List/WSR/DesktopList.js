@@ -48,11 +48,44 @@ const DesktopList = ({ tableConfig, filterComponent, ...props }) => {
           return GetCell(`${row.original?.activity_name}`);
         },
       },
+
       {
-        Header: t("WMS_WSR_PERCENT_NAME_LABEL"),
+        Header: t("WMS_WSR_EMPLOYEE_NAME_LABEL"),
         disableDrtBy: true,
         Cell: ({ row }) => {
-          return GetCell(`${row.original?.percent_weightage}`);
+          return GetCell(`${row.original?.employee_name}`);
+        },
+      },
+      
+      {
+        Header: t("WMS_WSR_ROLE_LABEL"),
+        disableDrtBy: true,
+        Cell: ({ row }) => {
+          return GetCell(`${row.original?.role_name}`);
+        },
+      },
+      
+      {
+        Header: t("WMS_WSR_START_DATE_LABEL"),
+        disableDrtBy: true,
+        Cell: ({ row }) => {
+          return GetCell(`${row.original?.start_date}`);
+        },
+      },
+
+      {
+        Header: t("WMS_WSR_END_DATE_LABEL"),
+        disableDrtBy: true,
+        Cell: ({ row }) => {
+          return GetCell(`${row.original?.end_date}`);
+        },
+      },
+      
+      {
+        Header: t("WMS_WSR_REMARKS_LABEL"),
+        disableDrtBy: true,
+        Cell: ({ row }) => {
+          return GetCell(`${row.original?.remarks_content}`);
         },
       },
       {
@@ -66,17 +99,17 @@ const DesktopList = ({ tableConfig, filterComponent, ...props }) => {
           );
         },
       },
-      {
-        Header: t("WMS_WSR_CONTROLS2_LABEL"),
-        disableDrtBy: true,
-        Cell: ({ row }) => {
-          return (
-            <span className="link">
-              <Link to={`/upyog-ui/citizen/wms/pma-home/${row.original.wsr_id}`}>{t("WMS_WSR_COMMON_CREATE_ACTIVITY_HEADER")}</Link>
-            </span>
-          );
-        },
-      },
+      // {
+      //   Header: t("WMS_WSR_CONTROLS2_LABEL"),
+      //   disableDrtBy: true,
+      //   Cell: ({ row }) => {
+      //     return (
+      //       <span className="link">
+      //         <Link to={`/upyog-ui/citizen/wms/pma-home/${row.original.wsr_id}`}>{t("WMS_WSR_COMMON_CREATE_ACTIVITY_HEADER")}</Link>
+      //       </span>
+      //     );
+      //   },
+      // },
     ];
   }, []);
 
