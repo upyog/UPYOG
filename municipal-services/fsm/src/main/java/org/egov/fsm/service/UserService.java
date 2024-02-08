@@ -62,7 +62,7 @@ public class UserService {
 			userDetailResponse = userExists(applicant);
 
 			if (userDetailResponse != null || !userDetailResponse.getUser().isEmpty()) {
-				log.info("User Exists!!!");
+				log.info("User Exists!!!"  + userDetailResponse.getUser().get(0));
 				if (!userDetailResponse.getUser().isEmpty()) {
 					Boolean foundUser = Boolean.FALSE;
 					for (int j = 0; j < userDetailResponse.getUser().size(); j++) {
@@ -81,12 +81,14 @@ public class UserService {
 					// create new user
 					if (foundUser) {
 						log.info("foundUser is "+ foundUser);
-
+						if(fsm.getCitizen().getEmailId()!=null)
+								applicant.setEmailId(fsm.getCitizen().getEmailId());
 						applicantDetailResponse = createApplicant(applicant, fsmRequest.getRequestInfo(),
 								Boolean.FALSE);
 						applicant = applicantDetailResponse.getUser().get(0);
 
 					}
+					
 				} else {
 					// User exists but only one user with the mobile number and username as same, So
 					// create new user
