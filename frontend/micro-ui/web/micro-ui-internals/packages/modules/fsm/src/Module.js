@@ -22,8 +22,6 @@ import SelectPropertySubtype from "./pageComponents/SelectPropertySubtype";
 import SelectPropertyType from "./pageComponents/SelectPropertyType";
 import SelectPropertyID from "./pageComponents/SelectPropertyID";
 import SelectTripNo from "./pageComponents/SelectTripNo";
-import SelectPropertySubtype from "./pageComponents/SelectPropertySubtype";
-import SelectPropertyType from "./pageComponents/SelectPropertyType";
 import SelectSlumName from "./pageComponents/SelectSlumName";
 // import SelectStreet from "./pageComponents/SelectStreet";
 import FSMSelectStreet from "./pageComponents/FSMSelectStreet";
