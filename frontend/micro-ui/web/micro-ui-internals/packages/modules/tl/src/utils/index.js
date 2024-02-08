@@ -544,8 +544,12 @@ export const stringToBoolean = (value) => {
 
 //FinancialYear
 export const convertToEditTrade = (data, fy = []) => {
-  const currrentFYending = fy?.filter(item => item?.code === data?.financialYear)?.[0]?.endingDate;
-  const nextFinancialYearForRenewal = fy?.filter(item => item?.startingDate === currrentFYending)?.[0]?.code;
+ 
+ // const nextFinancialYearForRenewal = fy?.filter(item => item?.startingDate === currrentFYending)?.[0]?.code;
+  let financialYear = data?.financialYear;
+  const financialYearDate = financialYear?.split('-')[1];
+  const finalFinancialYear = `20${Number(financialYearDate)}-${Number(financialYearDate)+1}`
+  const currrentFYending = fy?.filter(item => item?.code === finalFinancialYear);
   let isDirectrenewal = stringToBoolean(sessionStorage.getItem("isDirectRenewal"));
   let isSameAsPropertyOwner = sessionStorage.getItem("isSameAsPropertyOwner"); 
   let formdata = {
@@ -563,9 +567,9 @@ export const convertToEditTrade = (data, fy = []) => {
         applicationDate: data?.applicationDate,
         commencementDate: data?.commencementDate,
         issuedDate: data?.issuedDate,
-        financialYear: nextFinancialYearForRenewal || "2022-23",
-        validFrom: data?.validFrom,
-        validTo: data?.validTo,
+        financialYear: finalFinancialYear || "2022-23",
+        validFrom: currrentFYending[0].startingDate ||data?.validFrom,
+        validTo: currrentFYending[0].endingDate || data?.validTo,
         action: "INITIATE",
         wfDocuments: data?.wfDocuments,
         status: data?.status,
@@ -609,7 +613,7 @@ export const convertToEditTrade = (data, fy = []) => {
 
 //FinancialYear
 export const convertToResubmitTrade = (data) => {
-
+console.log("convertToResubmitTrade",data)
   let formdata = {
     Licenses: [
       {
