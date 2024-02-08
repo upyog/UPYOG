@@ -17,6 +17,9 @@ import java.util.List;
 
 @Component
 public class BPAQueryBuilder {
+	
+	@Autowired
+    private MultiStateInstanceUtil centralInstanceUtil;
 
 	@Autowired
 	private BPAConfiguration config;
@@ -188,6 +191,36 @@ public class BPAQueryBuilder {
         return addPaginationWrapper(builder.toString(), preparedStmtList, criteria);
 
     }
+    
+    private String addCountWrapper(String query) {
+        return countWrapper.replace("{INTERNAL_QUERY}", query);
+    }
+    
+    public String getBPASearchQueryForPlainSearch(BPASearchCriteria criteria, List<Object> preparedStmtList, List<String> edcrNos, boolean isCount) {
+
+        StringBuilder builder = new StringBuilder(QUERY);
+
+        if (criteria.getTenantId() != null) {
+            if (centralInstanceUtil.isTenantIdStateLevel(criteria.getTenantId())) {
+
+                addClauseIfRequired(preparedStmtList, builder);
+                builder.append(" bpa.tenantid like ?");
+                preparedStmtList.add('%' + criteria.getTenantId() + '%');
+            } else {
+                addClauseIfRequired(preparedStmtList, builder);
+                builder.append(" bpa.tenantid=? ");
+                preparedStmtList.add(criteria.getTenantId());
+            }
+        }
+
+
+        if(isCount)
+            return addCountWrapper(builder.toString());
+
+        return addPaginationWrapper(builder.toString(), preparedStmtList, criteria);
+
+    }
+
 
     /**
      * 

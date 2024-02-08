@@ -77,14 +77,10 @@ public class EnrichmentService {
 
 	@Autowired
 	private UserService userService;
-	
-	@Autowired
-	private MDMSValidator mdmsValidator;
-	@Autowired
-	private ServiceRequestRepository serviceRequestRepository;
 
 	@Autowired
 	private MDMSValidator mdmsValidator;
+	
 	@Autowired
 	private ServiceRequestRepository serviceRequestRepository;
 

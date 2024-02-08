@@ -103,7 +103,7 @@ public class BPANotificationService {
 			if (config.getIsSMSEnabled()) {
 				enrichSMSRequest(bpaRequest, smsRequests);
 				if (!CollectionUtils.isEmpty(smsRequests))
-					util.sendSMS(smsRequests, config.getIsSMSEnabled());
+					util.sendSMS(smsRequests, config.getIsSMSEnabled(),"");
 			}
 		}
 		}
@@ -113,7 +113,7 @@ public class BPANotificationService {
 				if (config.getIsUserEventsNotificationEnabled()) {
 				EventRequest eventRequest = getEvents(bpaRequest);
 				if (null != eventRequest)
-					util.sendEventNotification(eventRequest);
+					util.sendEventNotification(eventRequest,"");
 			    }
 		    }
 		}
