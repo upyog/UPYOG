@@ -353,7 +353,7 @@ let serviceType = data && data?.WaterConnection?.[0] ? "WATER" : "SEWERAGE";
             <Row
               className="border-none"
               label={t("WS_OWN_DETAIL_OWN_NAME_LABEL")}
-              text={PTData?.Properties?.[0]?.owners?.[0]?.name}
+              text={PTData?.Properties?.[0]?.owners.sort((a,b)=>a?.additionalDetails?.ownerSequence-b?.additionalDetails?.ownerSequence)?.[0]?.name}
               textStyle={{ whiteSpace: "pre" }}
             />
             <Row

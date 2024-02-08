@@ -15,7 +15,7 @@ const WSConnection = ({ application }) => {
       <KeyNote
         keyValue={t("WS_CONSUMER_NAME")}
         note={
-          application?.connectionHolders?.map((owner) => owner.name).join(",") || application?.property?.owners?.map((owner) => owner.name).join(",")
+          application?.connectionHolders?.map((owner) => owner.name).join(",") || application?.property?.owners.sort((a,b)=>a?.additionalDetails?.ownerSequence-b?.additionalDetails?.ownerSequence)?.map((owner) => owner.name).join(",")
         }
       />
       <KeyNote keyValue={t("WS_MYCONNECTION_ADDRESS")} note={getAddress(application?.property?.address, t)}

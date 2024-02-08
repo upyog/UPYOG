@@ -95,7 +95,7 @@ const PropertySearchNSummary = ({ config, onSelect, userType, formData, setError
 
   const getOwnerNames = (propertyData) => {
     const getActiveOwners = propertyData?.owners?.filter(owner => owner?.active);
-    const getOwnersList = getActiveOwners?.map(activeOwner => activeOwner?.name)?.join(",");
+    const getOwnersList = getActiveOwners.sort((a,b)=> a?.additionalDetails?.ownerSequence- b?.additionalDetails?.ownerSequence)?.map(activeOwner => activeOwner?.name)?.join(",");
     return getOwnersList ? getOwnersList : t("NA");
   }
 

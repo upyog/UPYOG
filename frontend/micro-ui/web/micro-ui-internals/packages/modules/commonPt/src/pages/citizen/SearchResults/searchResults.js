@@ -124,7 +124,7 @@ const PropertySearchResults = ({ template, header, actionButtonLabel, isMutation
     let addr = property?.address || {};
     return {
       property_id: property?.propertyId,
-      owner_name: (property?.owners || [])[0]?.name,
+      owner_name: (property?.owners || []).sort((a,b)=>a?.additionalDetails?.ownerSequence-b?.additionalDetails?.ownerSequence)?.[0]?.name,
       property_address: [addr.doorNo || "", addr.buildingName || "", addr.street || "", t(`TENANTS_MOHALLA_${addr.locality?.code}`) || "", t(addr.tenantId) || ""]
         .filter((a) => a)
         .join(", "),
