@@ -220,6 +220,10 @@ public class WSCalculationConstant {
 	public static final String WS_ONE_TIME_FEE = "WS_ONE_TIME_FEE";
 
 	public static final String WS_ROAD_CUTTING_CHARGE = "WS_ROAD_CUTTING_CHARGE";
+	
+	public static final String WS_ROAD_CUTTING_CHARGE_BREM = "WS_ROAD_CUTTING_CHARGE_BERMCUTTINGKATCHA";
+	
+	public static final String WS_ROAD_CUTTING_CHARGE_BMPREMIXROAD = "WS_ROAD_CUTTING_CHARGE_BMPREMIXROAD";
 
 	public static final String WS_METER_CHARGE = "WS_METER_CHARGE";
 	
