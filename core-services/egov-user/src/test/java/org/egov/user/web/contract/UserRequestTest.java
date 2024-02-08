@@ -117,7 +117,7 @@ public class UserRequestTest {
                 .pan("KR12345J")
                 .aadhaarNumber("qwerty-1234567")
                 .active(Boolean.TRUE)
-                .dob(null)
+                .dob(dateToTest)
                 .pwdExpiryDate(dateToTest)
                 .locale("en_IN")
                 .type(UserType.CITIZEN)

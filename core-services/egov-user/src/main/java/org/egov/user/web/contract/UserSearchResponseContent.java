@@ -63,7 +63,7 @@ public class UserSearchResponseContent {
     private Date createdDate;
     @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
     private Date lastModifiedDate;
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "dd-MM-yyyy")
     private Date dob;
     @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
     private Date pwdExpiryDate;
