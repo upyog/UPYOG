@@ -207,7 +207,7 @@ public class UserControllerTest {
     @Ignore
     public void test_should_update_user_details() throws Exception {
 
-        org.egov.user.domain.model.User userRequest = org.egov.user.domain.model.User.builder().name("foo").username("userName").dob(new Date("04/08/1986")).guardian("name of relative").build();
+        org.egov.user.domain.model.User userRequest = org.egov.user.domain.model.User.builder().name("foo").username("userName").dob(new Date("1986-08-04")).guardian("name of relative").build();
         when(userService.updateWithoutOtpValidation(any(org.egov.user.domain.model.User.class), any())).thenReturn
                 (userRequest);
         mockMvc.perform(post("/users/112/_updatenovalidate")
@@ -227,7 +227,7 @@ public class UserControllerTest {
         final org.egov.user.domain.model.User user = org.egov.user.domain.model.User.builder()
                 .username("userName")
                 .name("foo")
-                .dob(expectedDate)
+                .dob(new Date("1986-08-04"))
                 .guardian("name of relative")
                 .build();
         when(userService.createCitizen(any(), any())).thenReturn(user);
@@ -247,7 +247,7 @@ public class UserControllerTest {
         final org.egov.user.domain.model.User expectedUser = org.egov.user.domain.model.User.builder()
                 .username("userName")
                 .name("foo")
-                .dob(expectedDate)
+                .dob(new Date("1986-08-04"))
                 .guardian("name of relative")
                 .build();
         final ArgumentCaptor<org.egov.user.domain.model.User> argumentCaptor =
@@ -326,7 +326,7 @@ public class UserControllerTest {
                 .correspondenceAddress(getCorrespondenceAddress())
                 .active(true)
                 .roles(getListOfRoles())
-                .dob(expectedDOB)
+                .dob(new Date("1986-08-04"))
                 .passwordExpiryDate(date)
                 .locale("en_IN")
                 .type(UserType.CITIZEN)
@@ -465,7 +465,6 @@ public class UserControllerTest {
                 .name("ReceivingMode")
                 .displayName("ReceivingMode")
                 .orderNumber(0)
-                .queryParams("tenantId=")
                 .parentModule("1")
                 .serviceCode("PGR")
                 .build();
@@ -476,10 +475,7 @@ public class UserControllerTest {
 
     private Date toDate(LocalDateTime localDateTime) {
         final ZonedDateTime expectedDateTime = ZonedDateTime.of(localDateTime, ZoneId.of("Asia/Calcutta"));
-        DateTimeFormatter df =  DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        String text = expectedDateTime.format(df);
-        ZonedDateTime parsedDate = ZonedDateTime.parse(text, df);
-        return Date.from(parsedDate.toInstant());
+        return Date.from(expectedDateTime.toInstant());
     }
 
 }
