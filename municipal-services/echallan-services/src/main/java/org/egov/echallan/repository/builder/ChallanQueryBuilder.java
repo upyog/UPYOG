@@ -39,10 +39,7 @@ public class ChallanQueryBuilder {
             +INNER_JOIN_STRING
             +"{schema}.eg_challan_address chaladdr ON chaladdr.echallanid = challan.id";
 
-    private static final String COUNT_QUERY = "SELECT COUNT(challan.id) " +
-            "FROM eg_echallan challan"
-            +INNER_JOIN_STRING
-            +"eg_challan_address chaladdr ON chaladdr.echallanid = challan.id";
+
 
       private final String paginationWrapper = "SELECT * FROM " +
               "(SELECT *, DENSE_RANK() OVER (ORDER BY challan_lastModifiedTime DESC , challan_id) offset_ FROM " +

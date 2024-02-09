@@ -322,36 +322,6 @@ public class NotificationService {
 	 * @param code
 	 *            Notification Template Code
 	 */
-	private void enrichEmailRequest(ChallanRequest challanRequest, List<EmailRequest> emailRequestList, String code) {
-		Set<String> mobileNumbers = new HashSet<>();
-		String mobilenumber = challanRequest.getChallan().getCitizen().getMobileNumber();
-
-		mobileNumbers.add(mobilenumber);
-		Map<String, String> mapOfPhnoAndEmail = util.fetchUserEmailIds(mobileNumbers, challanRequest.getRequestInfo(), challanRequest.getChallan().getTenantId());
-
-		if(challanRequest.getChallan().getCitizen().getEmail()!=null && !StringUtils.isEmpty(challanRequest.getChallan().getCitizen().getEmail()) )
-			mapOfPhnoAndEmail.put(mobilenumber, challanRequest.getChallan().getCitizen().getEmail());
-
-		String message = util.getEmailCustomizedMsg(challanRequest.getRequestInfo(), challanRequest.getChallan(), code);
-
-		if (message!=null && !StringUtils.isEmpty(message)) {
-			String subject = message.substring(message.indexOf("<h2>")+4,message.indexOf("</h2>"));
-			String body = message.substring(message.indexOf("</h2>")+5);
-			Email emailobj=null;
-			EmailRequest email = null;
-			if(mapOfPhnoAndEmail.get(mobilenumber)!=null) {
-				emailobj = Email.builder().emailTo(Collections.singleton(mapOfPhnoAndEmail.get(mobilenumber))).isHTML(true).body(body).subject(subject).build();
-				email = new EmailRequest(challanRequest.getRequestInfo(),emailobj);
-				emailRequestList.add(email);
-			}
-			else
-			{
-				log.error("No email for username - "+mobilenumber);
-			}
-		} else {
-			log.error("No message configured! Notification will not be sent.");
-		}
-	}
 
 
 }
