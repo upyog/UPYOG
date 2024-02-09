@@ -29,6 +29,8 @@ public class ErrorConstants {
 	public static final String NO_ASSESSMENTS_FOUND_CODE = "NO_ASSESSMENTS_FOUND";
 	public static final String NO_ASSESSMENTS_FOUND_MSG = "Assessments being updated are unavaible in the system.";
 
+	public static final String EMPTY_RESPONSE = "Empty Response.";
+
 
 
 
