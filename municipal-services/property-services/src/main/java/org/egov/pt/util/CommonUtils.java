@@ -142,8 +142,6 @@ public class CommonUtils {
     		throw new CustomException(ErrorConstants.EMPTY_RESPONSE,
             	"Empty or non-string response received from MDMS");
 	}
-        
-        return null;
     }
 	
     public MdmsCriteriaReq prepareMdMsRequest(String tenantId,String moduleName, List<String> names, String filter, RequestInfo requestInfo) {
