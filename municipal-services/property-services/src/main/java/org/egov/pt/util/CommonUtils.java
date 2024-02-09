@@ -132,8 +132,7 @@ public class CommonUtils {
         log.info("Response: {}", response.orElse("No response"));
 	if (response.isPresent() && response.get() instanceof String && !((String) response.get()).isEmpty()) {
 	        try {
-	        	Object parsedResponse = JsonPath.read(response.get(), jsonpath);
-	        	return parsedResponse;
+	        	return JsonPath.read(response.get(), jsonpath); 
 		} catch (Exception e) {
 			throw new CustomException(ErrorConstants.INVALID_TENANT_ID_MDMS_KEY,
 			ErrorConstants.INVALID_TENANT_ID_MDMS_MSG);
