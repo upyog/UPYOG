@@ -130,14 +130,19 @@ public class CommonUtils {
         MdmsCriteriaReq criteriaReq = prepareMdMsRequest(tenantId,moduleName,names,filter,requestInfo);
         Optional<Object> response = restRepo.fetchResult(uri, criteriaReq);
         log.info("Response: {}", response.orElse("No response"));
-        try {
-        	if(response.isPresent()) {
-                return JsonPath.read(response.get(),jsonpath);
-        	}
+	if (response.isPresent() && response.get() instanceof String && !((String) response.get()).isEmpty()) {
+	        try {
+	        	Object parsedResponse = JsonPath.read(response.get(), jsonpath);
+	        	return parsedResponse;
 		} catch (Exception e) {
 			throw new CustomException(ErrorConstants.INVALID_TENANT_ID_MDMS_KEY,
-					ErrorConstants.INVALID_TENANT_ID_MDMS_MSG);
-		}
+			ErrorConstants.INVALID_TENANT_ID_MDMS_MSG);
+			}
+	} else {
+    		// Handle empty or non-string response
+    		throw new CustomException(ErrorConstants.EMPTY_RESPONSE,
+            	"Empty or non-string response received from MDMS");
+	}
         
         return null;
     }
