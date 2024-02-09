@@ -8,7 +8,7 @@ import { MCollectModule, MCollectLinks } from "@egovernments/digit-ui-module-mco
 // import { TLModule, TLLinks } from "@upyog/digit-ui-module-tl";
 import { initFSMComponents } from "@upyog/digit-ui-module-fsm";
 import { initPGRComponents } from "@egovernments/digit-ui-module-pgr";
-import { initDSSComponents } from "@upyog/digit-ui-module-dss";
+import { initDSSComponents } from "@egovernments/digit-ui-module-dss";
 import { initHRMSComponents } from "@egovernments/digit-ui-module-hrms";
 import { initReceiptsComponents, ReceiptsModule } from "@egovernments/digit-ui-module-receipts";
 // import { initReportsComponents } from "@egovernments/digit-ui-module-reports";
