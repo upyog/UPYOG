@@ -280,7 +280,7 @@ public class PropertyValidator {
 		
 		Map<String, List<String>> codes = propertyUtil.getAttributeValues(tenantId, PTConstants.MDMS_PT_MOD_NAME, masterNames,
 				"$.*.code", PTConstants.JSONPATH_CODES, request.getRequestInfo());
-		
+		log.info("code",codes);
 		if (null != codes) {
 			validateMDMSData(masterNames, codes);
 			validateCodes(property, codes, errorMap);
