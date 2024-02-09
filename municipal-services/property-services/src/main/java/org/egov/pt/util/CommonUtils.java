@@ -129,8 +129,10 @@ public class CommonUtils {
     	StringBuilder uri = new StringBuilder(configs.getMdmsHost()).append(configs.getMdmsEndPoint());
         MdmsCriteriaReq criteriaReq = prepareMdMsRequest(tenantId,moduleName,names,filter,requestInfo);
         Optional<Object> response = restRepo.fetchResult(uri, criteriaReq);
+	Object responseObject = response.get();
+	System.out.println("Response Type: " + responseObject.getClass().getName());
         log.info("Response: {}", response.orElse("No response"));
-	if (response.isPresent() && response.get() instanceof String && !((String) response.get()).isEmpty()) {
+	if (response.isPresent()) {
 	        try {
 	        	return JsonPath.read(response.get(), jsonpath); 
 		} catch (Exception e) {
@@ -140,7 +142,7 @@ public class CommonUtils {
 	} else {
     		// Handle empty or non-string response
     		throw new CustomException(ErrorConstants.EMPTY_RESPONSE,
-            	"Empty or non-string response received from MDMS");
+            	"Empty response received from MDMS");
 	}
     }
 	
