@@ -154,8 +154,8 @@ public class NotificationUtil {
      *
      * @param request EventRequest Object
      */
-    public void sendEventNotification(EventRequest request) {
-        producer.push(config.getSaveUserEventsTopic(), request);
+    public void sendEventNotification(String tenantId, EventRequest request) {
+        producer.push(tenantId,config.getSaveUserEventsTopic(), request);
         log.info("Events added to send:: " + request.getEvents());
     }
 

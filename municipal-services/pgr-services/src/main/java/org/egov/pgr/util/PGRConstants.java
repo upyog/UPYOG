@@ -140,14 +140,6 @@ public class PGRConstants {
     public static final String MDMS_DATA_SLA_KEYWORD = "slaHours";
     
     public static final String COMPLAINTS_RESOLVED = "complaintsResolved";
-    
-    public static final String AVERAGE_RESOLUTION_TIME = "averageResolutionTime";
-
-    public static final String DESIGNATION = "designation";
-
-    public static final String DEPARTMENT = "department";
-
-    public static final String COMPLAINTS_RESOLVED = "complaintsResolved";
 
     public static final String AVERAGE_RESOLUTION_TIME = "averageResolutionTime";
 
