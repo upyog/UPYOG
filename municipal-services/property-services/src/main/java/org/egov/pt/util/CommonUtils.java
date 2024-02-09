@@ -127,7 +127,7 @@ public class CommonUtils {
     	StringBuilder uri = new StringBuilder(configs.getMdmsHost()).append(configs.getMdmsEndPoint());
         MdmsCriteriaReq criteriaReq = prepareMdMsRequest(tenantId,moduleName,names,filter,requestInfo);
         Optional<Object> response = restRepo.fetchResult(uri, criteriaReq);
-        
+        log.info("response",response);
         try {
         	if(response.isPresent()) {
                 return JsonPath.read(response.get(),jsonpath);
