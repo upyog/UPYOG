@@ -154,7 +154,7 @@ public class UserRequestTest {
                 .permanentAddress(getPermanentAddress())
                 .correspondenceAddress(getCorrespondenceAddress())
                 .active(true)
-                .dob(date)
+                .dob(null)
                 .passwordExpiryDate(date)
                 .locale("en_IN")
                 .type(UserType.CITIZEN)

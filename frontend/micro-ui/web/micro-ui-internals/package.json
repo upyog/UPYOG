@@ -15,7 +15,8 @@
     "packages/modules/fsm",
     "packages/modules/ptr",
     "packages/modules/obps",
-    "packages/modules/ws"
+    "packages/modules/ws",
+    "packages/modules/dss"
   ],
   "author": "Abhinav Kushwaha <abhinav.kushwaha@egovernments.org>",
   "license": "MIT",

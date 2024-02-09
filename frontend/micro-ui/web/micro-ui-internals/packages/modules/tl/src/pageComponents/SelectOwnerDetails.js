@@ -219,7 +219,7 @@ const SelectOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                     {...{
                       validation: {
                         isRequired: true,
-                        pattern: "^[a-z0-9]+( [a-z0-9]+)*$",
+                        pattern: "^[a-zA-Z_@./()#&+- ]*$",
                         type: "text",
                         title: t("TL_NAME_ERROR_MESSAGE"),
                       },

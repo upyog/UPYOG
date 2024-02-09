@@ -5,7 +5,7 @@
   "User": {
     "name": "foo",
     "userName": "userName",
-    "dob": "04/08/1986",
+    "dob": null,
     "fatherOrHusbandName": "name of relative"
   }
 }
