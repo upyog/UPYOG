@@ -598,7 +598,7 @@ export const convertEpochToDate = (dateEpoch) => {
         applicationNumber={paymentData?.paymentDetails[0].receiptNumber}
         successful={true}
       />
-      <CardText>{t(`${bannerText}_DETAIL`)}</CardText>
+      <CardText></CardText>
       <StatusTable>
         <Row rowContainerStyle={rowContainerStyle} last label={t(label)} text={applicationNo} />
         {/** TODO : move this key and value into the hook based on business Service */}

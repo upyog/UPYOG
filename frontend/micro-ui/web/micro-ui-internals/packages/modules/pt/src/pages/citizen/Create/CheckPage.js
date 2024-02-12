@@ -246,11 +246,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
                         text={`${t(checkForNA(owner?.permanentAddress))}`}
                         actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/pt/property/${typeOfApplication}/owner-address/`}${index}`} />}
                       />
-                      <Row
-                        label={`${t("PT_COMMON_SAME_AS_PROPERTY_ADDRESS")}`}
-                        text={`${t(checkForNA(owner?.isCorrespondenceAddress))}`}
-                        actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/pt/property/${typeOfApplication}/owner-address/`}${index}`} />}
-                      />
+                      
                       {owner?.ownerType?.code !== "NONE" ? (
                         <Row
                           label={t("PT_SPECIAL_OWNER_CATEGORY_PROOF_HEADER")}
@@ -344,7 +340,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
                     )}
                     <Row
                       label={t("PT_FLOOR_NO")}
-                      text={`${unit?.floorNo}`}
+                      text={unit?.floorNo===0? t("PT_GROUND_FLOOR_OPTION") :( unit?.floorNo<0) ? `${unit?.floorNo} and Ground floor` : `Ground floor +${unit?.floorNo}`}
                       actionButton={<ActionButton jumpTo={`/digit-ui/citizen/pt/property/${typeOfApplication}/PtUnits`} />}
                     />
                     {unit?.arv && (
