@@ -312,7 +312,7 @@ const BulkBillSearch = ({ tenantId, onSubmit, data, count, resultOk, businessSer
               <UploadFile
                 id={"Bulk-Bill"}
                 extraStyleName={"propertyCreate"}
-                message={uploadedFile ? `1 ${t(`CS_ACTION_FILEUPLOADED`)}` : t(`CS_ACTION_NO_FILEUPLOADED`)}
+                message={uploadedFile ? `1 ${t(`CS_WS_ACTION_FILEUPLOADED`)}` : t(`CS_WS_ACTION_NO_FILEUPLOADED`)}
                 accept=".xlsx"
                 onUpload={(e) => selectfile(e)}
                 onDelete={(e) => {
@@ -361,7 +361,7 @@ const BulkBillSearch = ({ tenantId, onSubmit, data, count, resultOk, businessSer
           popupStyles={{ width: "auto" }}
         >  <div style={{ width: "100%" }}>
             <Card>
-
+            <div><CardText>{t("WS_REASON_FOR_REJECT")}</CardText></div>
               <Table
                 t={t}
                 data={rejectedReading}
@@ -385,7 +385,7 @@ const BulkBillSearch = ({ tenantId, onSubmit, data, count, resultOk, businessSer
                 disableSort={true}
                 sortParams={[{ id: getValues("sortBy"), desc: getValues("sortOrder") === "DESC" ? true : false }]}
               />
-              <div><CardText>{t("WS_REASON_FOR_REJECT")}</CardText></div>
+              
 
             </Card>
           </div>

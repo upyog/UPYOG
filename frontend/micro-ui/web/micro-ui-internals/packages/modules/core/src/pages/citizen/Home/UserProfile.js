@@ -54,8 +54,7 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
   console.log("ddd", dateOfBirth)
   const formattedDob=(dateOfBirth!==undefined) ?format(new Date(dateOfBirth), 'MM/dd/yyyy') : ""
   //const dateOfBirth1= (dateOfBirth!==undefined) ?dateOfBirth.split("-").reverse().join("-") : ""
-  console.log("formatted",  formattedDob)
-  const [dob, setDob] = useState(userDetails?.dob? formattedDob: "");
+  const [dob, setDob] = useState(dateOfBirth);
   const [email, setEmail] = useState(userInfo?.emailId ? userInfo.emailId : "");
   const [gender, setGender] = useState(userDetails?.gender);
   const [city, setCity] = useState(userInfo?.permanentCity ? userInfo.permanentCity : cityDetails.name);
@@ -104,7 +103,6 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
 
     setLoading(false);
   }, [userDetails !== null]);
-  console.log("Details",userDetails)
 
   let validation = {};
   const editScreen = false; // To-do: Deubug and make me dynamic or remove if not needed
@@ -449,7 +447,7 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
               <LabelFieldPair>
                 <CardLabel style={editScreen ? { color: "#B1B4B6" } : {}}>{`${t("CORE_COMMON_PROFILE_DOB")}`}*</CardLabel>
                 <div style={{ width: "100%", maxWidth:"960px" }}>
-                <DatePicker date={dob} onChange={setUserDOB} disable={true} />
+                <DatePicker date={dob || dateOfBirth} onChange={setUserDOB} disable={true} />
                   {errors?.userName && <CardLabelError> {errors?.userName?.message} </CardLabelError>}
                 </div>
               </LabelFieldPair>
@@ -596,7 +594,7 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
                   "CORE_COMMON_PROFILE_DOB"
                 )}`}</CardLabel>
                 <div style={{width: "100%"}}>
-                <DatePicker date={dob} onChange={setUserDOB} disable={true}  />
+                <DatePicker date={dob || dateOfBirth} onChange={setUserDOB} disable={true}  />
                  {/* {errors?.emailAddress && <CardLabelError> {errors?.emailAddress?.message} </CardLabelError>} */}
                 </div>
               </LabelFieldPair>             
