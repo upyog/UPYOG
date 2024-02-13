@@ -9,7 +9,8 @@
     "micro-ui-internals/packages/react-components",
     "micro-ui-internals/packages/modules/common",
     "micro-ui-internals/packages/modules/core",
-    "micro-ui-internals/packages/modules/dss"
+    "micro-ui-internals/packages/modules/dss",
+    "micro-ui-internals/packages/modules/fsm"
   ],
   "engines": {
     "node": ">=14"
@@ -30,7 +31,7 @@
     "@egovernments/digit-ui-module-dss": "1.7.0-beta.2",
     "@egovernments/digit-ui-module-hrms": "1.7.0-beta.2",
     "@egovernments/digit-ui-module-mcollect": "1.7.0-beta.2",
-    "@egovernments/digit-ui-module-commonpt":"1.7.0-beta.3",
+    "@upyog/digit-ui-module-commonpt":"1.7.0-beta.3",
     "@egovernments/digit-ui-react-components": "1.7.0-beta.2",
     "@egovernments/digit-ui-module-noc": "1.7.0-beta.2",
     "@egovernments/digit-ui-module-pgr": "1.7.0-beta.2",
