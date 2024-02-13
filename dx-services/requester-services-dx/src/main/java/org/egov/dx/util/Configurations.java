@@ -21,6 +21,9 @@ public class Configurations {
 	@Value("${pt.redirect.url}")
 	private String ptRedirectURL;
 
+	@Value("${register.redirect.url}")
+	private String registerRedirectURL;
+	
 	@Value("${api.host}")
 	private String apiHost;
 
@@ -44,6 +47,12 @@ public class Configurations {
 
 	@Value("${client.secret}")
 	private String clientSecret;
+	
+	@Value("${register.client.id}")
+	private String registerClientId;
+
+	@Value("${register.client.secret}")
+	private String registerClientSecret;
 
 	@Value("${state}")
 	private String state;

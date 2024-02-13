@@ -185,6 +185,7 @@ public class WSCalculationValidator {
 			errorMap.put("INVALID_METER_READING_BILLING_PERIOD", "Billing Period Already Exists");
 
 		if (!errorMap.isEmpty()) {
+			meterReading.setStatus(errorMap.toString());
 			return false;
 		}
 		

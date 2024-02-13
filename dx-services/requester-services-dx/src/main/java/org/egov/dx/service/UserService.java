@@ -47,9 +47,15 @@ public class UserService {
     {
     	 MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
     	 params.add("response_type", configurations.getResponseType());
-    	 params.add("client_id", configurations.getClientId());
     	 params.add("state", configurations.getState());
-    	 params.add("redirect_uri", configurations.getPtRedirectURL());
+    	 if(module.equalsIgnoreCase("REGISTER")) {
+        	 params.add("redirect_uri", configurations.getRegisterRedirectURL());
+    	 	 params.add("client_id", configurations.getRegisterClientId());}
+
+    	 else {
+    		 params.add("redirect_uri", configurations.getPtRedirectURL());
+    	 	 params.add("client_id", configurations.getClientId());
+    	 }
     	 params.add("code_challenge",getCodeChallenge(authResponse));
     	 params.add("code_challenge_method", "S256");
          params.add("dl_flow", configurations.getDlFlow());
@@ -104,10 +110,18 @@ public class UserService {
          MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
          map.add("code", tokenReq.getCode());
          map.add("grant_type", "authorization_code");
-         map.add("client_id", configurations.getClientId());
-         map.add("redirect_uri", configurations.getPtRedirectURL());
+    	 if(tokenReq.getModule().equalsIgnoreCase("REGISTER")) {
+	         map.add("client_id", configurations.getRegisterClientId());
+	         map.add("redirect_uri", configurations.getRegisterRedirectURL());
+	         map.add("client_secret", configurations.getRegisterClientSecret());
+         }
+    	 else
+    	 {
+    		 map.add("client_id", configurations.getClientId());
+    	     map.add("redirect_uri", configurations.getPtRedirectURL());
+    	     map.add("client_secret", configurations.getClientSecret());
+    	 }
          map.add("code_verifier",tokenReq.getCodeVerifier());
-         map.add("client_secret", configurations.getClientSecret());
 
          HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map,
                  headers);

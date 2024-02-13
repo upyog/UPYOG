@@ -6,6 +6,7 @@ import org.egov.tracer.model.CustomException;
 import org.egov.wscalculation.constants.MRConstants;
 import org.egov.wscalculation.constants.WSCalculationConstant;
 import org.egov.wscalculation.util.CalculatorUtil;
+import org.egov.wscalculation.web.models.MeterReading;
 import org.egov.wscalculation.web.models.Property;
 import org.egov.wscalculation.web.models.Status;
 import org.egov.wscalculation.web.models.WaterConnection;
@@ -59,24 +60,25 @@ public class WSCalculationWorkflowValidator {
 	}
 	 
 	 
-	 public Boolean applicationValidationBulk(RequestInfo requestInfo,String tenantId,String connectionNo, Boolean genratedemand){
+	 public Boolean applicationValidationBulk(RequestInfo requestInfo,MeterReading mr, Boolean genratedemand){
 		    Map<String,String> errorMap = new HashMap<>();
-			 List<WaterConnection> waterConnectionList = util.getWaterConnection(requestInfo,connectionNo,tenantId);
+			 List<WaterConnection> waterConnectionList = util.getWaterConnection(requestInfo,mr.getConnectionNo(),mr.getTenantId());
 			 WaterConnection waterConnection = null;
 			 if(waterConnectionList != null){
 				 int size = waterConnectionList.size();
 				 waterConnection = waterConnectionList.get(size-1);
 
 				 String waterApplicationNumber = waterConnection.getApplicationNo();
-				 waterConnectionValidation(requestInfo, tenantId, waterApplicationNumber, errorMap);
+				 waterConnectionValidation(requestInfo, mr.getTenantId(), waterApplicationNumber, errorMap);
 
 				 String propertyId = waterConnection.getPropertyId();
-				 Property property = util.getProperty(requestInfo,tenantId,propertyId);
+				 Property property = util.getProperty(requestInfo,mr.getTenantId(),propertyId);
 				 //String propertyApplicationNumber = property.getAcknowldgementNumber();
-				 propertyValidation(requestInfo,tenantId,property,errorMap);
+				 propertyValidation(requestInfo,mr.getTenantId(),property,errorMap);
 			 }
 			 else{
 				 genratedemand=false;
+				 mr.setStatus("Water connection object is null");
 			 }
 
 	      
