@@ -117,6 +117,7 @@ public class TradeLicenseService {
         }
        enrichmentService.enrichTLCreateRequest(tradeLicenseRequest, mdmsData);
        tlValidator.validateCreate(tradeLicenseRequest, mdmsData, billingSlabs);
+       log.info("request is " + tradeLicenseRequest);
        userService.createUser(tradeLicenseRequest, false);
        calculationService.addCalculation(tradeLicenseRequest);
 
