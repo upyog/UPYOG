@@ -21,21 +21,22 @@ import { initEngagementComponents } from "@egovernments/digit-ui-module-engageme
 import { initNOCComponents } from "@egovernments/digit-ui-module-noc";
 import { initWSComponents } from "@upyog/digit-ui-module-ws";
 import { DigitUI } from "@egovernments/digit-ui-module-core";
-import { initCommonPTComponents } from "@egovernments/digit-ui-module-commonpt";
+import { initCommonPTComponents } from "@upyog/digit-ui-module-commonpt";
 import { initBillsComponents, BillsModule } from "@egovernments/digit-ui-module-bills";
-
+import "@upyog-niua/upyog-css/example/index.css";
+import { pgrCustomizations, pgrComponents } from "./pgr";
 window.contextPath = window?.globalConfigs?.getConfig("CONTEXT_PATH");
 
 // import {initCustomisationComponents} from "./customisations";
 
 // import { PGRModule, PGRLinks } from "@egovernments/digit-ui-module-pgr";
 // import { Body, TopBar } from "@egovernments/digit-ui-react-components";
-import "@upyog-niua/upyog-css/example/index.css";
+
 // import * as comps from "@egovernments/digit-ui-react-components";
 
 // import { subFormRegistry } from "@egovernments/digit-ui-libraries";
 
-import { pgrCustomizations, pgrComponents } from "./pgr";
+
 
 var Digit = window.Digit || {};
 
