@@ -439,13 +439,13 @@ public class IngestValidator {
                     if (a.get("groupBy").equals("usageCategory") || a.get("groupBy").equals("usageType")) {
                         List < HashMap < String, String >> valuess = (List < HashMap < String, String >> ) a.get("buckets");
                         for (HashMap < String, String > b: valuess)
-                            usageCategory.add(toCamelCase(b.get("name")));
+                            usageCategory.add(b.get("name"));
                     }
                 }
                 }
             }
-    		for (String migratedTenants: usageCategory) {
-    			isValid=usageList.contains(migratedTenants); 
+    		for (String uc: usageCategory) {
+    			isValid=usageList.contains(uc); 
     			if(!isValid)
     				break;
     			else
@@ -502,8 +502,8 @@ public class IngestValidator {
 
 
         Set < String > usageList = new HashSet < String > ();
-        for (Map < String, String > migratedTenants: jsonOutput) {
-            usageList.add(migratedTenants.get("code"));
+        for (Map < String, String > usageCat: jsonOutput) {
+            usageList.add(usageCat.get("code"));
         }
         return usageList;
     }
