@@ -82,7 +82,7 @@ const SelectTrips = ({ t, config, onSelect, formData = {}, userType, styles, FSM
   }
   //console.log(formdata)
   function setValue(value, input) {
-    onSelect(config.key, { ...formData[config.key], [input]: value });
+    value && input && onSelect(config.key, { ...formData[config.key], [input]: value });
   }
   useEffect(() => {
     (async () => {
