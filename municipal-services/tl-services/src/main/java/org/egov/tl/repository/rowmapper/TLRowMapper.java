@@ -235,7 +235,7 @@ public class TLRowMapper  implements ResultSetExtractor<List<TradeLicense>> {
                     .institutionId(rs.getString("institutionid"))
                     .build();
         
-        PGobject pgObj = (PGobject) rs.getObject("additionaldetail");
+        PGobject pgObj = (PGobject) rs.getObject("oadditionaldetails");
         if(pgObj!=null){
             JsonNode additionalDetail = mapper.readTree(pgObj.getValue());
             owner.setAdditionalDetails(additionalDetail);
