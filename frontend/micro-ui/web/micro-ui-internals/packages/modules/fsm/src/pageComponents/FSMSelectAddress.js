@@ -24,7 +24,7 @@ const FSMSelectAddress = ({ t, config, onSelect, userType, formData }) => {
     t
   );
   const [localities, setLocalities] = useState();
-  const [selectedLocality, setSelectedLocality] = useState();
+  const [selectedLocality, setSelectedLocality] = useState(()=>formData?.cpt?.details?.address?.locality|| formData?.address?.locality);
 
   useEffect(() => {
     if (cities) {
@@ -42,6 +42,10 @@ const FSMSelectAddress = ({ t, config, onSelect, userType, formData }) => {
       if (formData?.address?.locality) {
         setSelectedLocality(formData.address.locality);
       }
+      if (formData?.cpt?.details?.address?.locality) {
+        setSelectedLocality(formData.cpt.details.address.locality);
+      }
+
 
       if (formData?.address?.pincode) {
         filteredLocalityList = __localityList.filter((obj) => obj.pincode?.find((item) => item == formData.address.pincode));
@@ -59,7 +63,7 @@ const FSMSelectAddress = ({ t, config, onSelect, userType, formData }) => {
         }
       }
     }
-  }, [selectedCity, formData?.address?.pincode, fetchedLocalities]);
+  }, [selectedCity, formData?.cpt?.details?.address, fetchedLocalities]);
 
   function selectCity(city) {
     setSelectedLocality(null);
@@ -68,10 +72,10 @@ const FSMSelectAddress = ({ t, config, onSelect, userType, formData }) => {
     setSelectedCity(city);
   }
 
-  function selectLocality(locality) {
-    setSelectedLocality(locality);
+  function selectLocality(selectedLocality) {
+    setSelectedLocality(selectedLocality);
     if (userType === "employee") {
-      onSelect(config.key, { ...formData[config.key], locality: locality });
+      onSelect(config.key, { ...formData[config.key], locality: selectedLocality });
     }
   }
 
@@ -109,7 +113,7 @@ const FSMSelectAddress = ({ t, config, onSelect, userType, formData }) => {
             selected={selectedLocality}
             option={localities}
             select={selectLocality}
-            optionKey="i18nkey"
+            optionKey="name"
             t={t}
           />
         </LabelFieldPair>
@@ -128,7 +132,7 @@ const FSMSelectAddress = ({ t, config, onSelect, userType, formData }) => {
             isMandatory={config.isMandatory}
             options={localities}
             selectedOption={selectedLocality}
-            optionKey="i18nkey"
+            optionKey="name"
             onSelect={selectLocality}
             t={t}
           />

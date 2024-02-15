@@ -25,6 +25,10 @@ const CreatePropertyForm = ({ config, onSelect,value, userType, redirectUrl }) =
   {
     allCities = Digit.SessionStorage.get("OBPS_TENANTS")
   }
+  if(window.location.href.includes("fsm"))
+  {
+    allCities = Digit.SessionStorage.get("FSM_TENANTS")
+  }
   const [formValue, setFormValue] = useState("");
   const [cityCode, setCityCode] = useState("");
   let enableSkip = userType=="employee"?false :config?.isSkipEnabled || sessionStorage.getItem("skipenabled");

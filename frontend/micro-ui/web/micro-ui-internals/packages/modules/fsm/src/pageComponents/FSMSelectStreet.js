@@ -80,7 +80,7 @@ const FSMSelectStreet = ({ t, config, onSelect, userType, formData, formState, s
   };
 
   useEffect(() => {
-    if(window.location.href.includes("employee/tl/") && formData?.cpt?.details)
+    if(window.location.href.includes("employee/fsm/") && formData?.cpt?.details)
     {
       setValue("doorNo", formData?.cpt?.details?.address?.doorNo);
       setValue("street", formData?.cpt?.details?.address?.street);
@@ -117,7 +117,7 @@ const FSMSelectStreet = ({ t, config, onSelect, userType, formData, formState, s
   }, [formValue]);
 
   useEffect(() => {
-    if (formData?.cpt?.details && window.location.href.includes("tl")) {
+    if (formData?.cpt?.details && window.location.href.includes("fsm")) {
       inputs?.map((input) => {
         if (getValues(input.name) !== formData?.cpt?.details?.address?.[input.name]) {
           setValue(
@@ -204,11 +204,11 @@ const FSMSelectStreet = ({ t, config, onSelect, userType, formData, formState, s
   }
   return (
     <React.Fragment>
-      {window.location.href.includes("/tl") ? <Timeline currentStep={2} /> : <Timeline currentStep={1} flow="APPLY" />}
+      {window.location.href.includes("/fsm") ? <Timeline currentStep={2} /> : <Timeline currentStep={1} flow="APPLY" />}
       <FormStep
         config={{ ...config, inputs }}
         isMandatory={true}
-        _defaultValues={{ street: formData?.address.street, doorNo: formData?.address.doorNo }}
+        _defaultValues={{ street: formData?.cpt?.details?.address.street, doorNo: formData?.cpt?.details?.address.doorNo }}
         onChange={handleSkip}
         onSelect={(data) => onSelect(config.key, data)}
         isDisabled={doorNo || street ? false : true}
