@@ -63,8 +63,8 @@ public class MDMSValidator {
         //Map<String,String> accessoryeUomMap = getAccessoryUomMap(mdmsData);
         Map<String,String> billingSlabsTradeTypeUomMap = getBillingSlabsTradeTypeUomMap(billingSlabs);
         Map<String,String> billingSlabsAccessoryUomMap = getBillingSlabsAccessoryUomMap(billingSlabs);
-
-
+        
+        log.info("tradeTypeUomMap", tradeTypeUomMap);
 
         licenseRequest.getLicenses().forEach(license -> {
 
