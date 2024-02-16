@@ -299,17 +299,21 @@ public class EstimationService {
 		else if (PT_TYPE_VACANT_LAND.equalsIgnoreCase(detail.getPropertyType())) {
 			taxAmt = taxAmt.add(BigDecimal.valueOf(filteredBillingSlabs.get(0).getUnitRate() * detail.getLandArea()));
 
-			taxHeadEstimate =  getBiilinfEstimatesForTax(requestInfo,taxAmt, usageExemption, property, propertyBasedExemptionMasterMap,
-					timeBasedExemptionMasterMap,masterMap,typeofroad,structuretype,agefactor,null);
+			/*
+			 * taxHeadEstimate = getBiilinfEstimatesForTax(requestInfo,taxAmt,
+			 * usageExemption, property, propertyBasedExemptionMasterMap,
+			 * timeBasedExemptionMasterMap,masterMap,typeofroad,structuretype,agefactor,null
+			 * );
+			 */
 			//TYPE OF ROAD
 			//Map<String,BigDecimal> roadTypeCalculatedValue = new HashMap<>();
 			//roadTypeCalculatedValue = getApplicableTaxForRoadType(taxAmt,propertyBasedExemptionMasterMap,detail,detail.getPropertyType());
 			//roadTypeCalculatedValueFinal.put(CALCULTED_ROAD_TYPE_TAX, roadTypeCalculatedValue.get(CALCULTED_ROAD_TYPE_TAX));
 			//taxAmt = taxAmt.add(roadTypeCalculatedValue.get(CALCULTED_ROAD_TYPE_TAX_WITH_TAX_AMT));
 			//AGE OF PROPERTY
-			taxAmt=taxAmt.add(getApplicableTaxForRoadType(taxAmt,propertyBasedExemptionMasterMap,detail,detail.getPropertyType()));
-			taxAmt = taxAmt.add(getApplicableTaxForAgeOfProperty(taxAmt,propertyBasedExemptionMasterMap,detail,detail.getPropertyType(),null));
-
+			taxAmt=getApplicableTaxForRoadType(taxAmt,propertyBasedExemptionMasterMap,detail,detail.getPropertyType());
+			taxAmt = getApplicableTaxForAgeOfProperty(taxAmt,propertyBasedExemptionMasterMap,detail,detail.getPropertyType(),null);
+				
 		} else {
 
 			double unBuiltRate = 0.0;
@@ -322,9 +326,14 @@ public class EstimationService {
 
 				BillingSlab slab = getSlabForCalc(filteredBillingSlabs, unit);
 				BigDecimal currentUnitTax = getTaxForUnit(slab, unit);
-
-				taxHeadEstimate =  getBiilinfEstimatesForTax(requestInfo,currentUnitTax, usageExemption, property, propertyBasedExemptionMasterMap,
-						timeBasedExemptionMasterMap,masterMap,typeofroad,structuretype,agefactor,unit);
+				BigDecimal builtuparea=new BigDecimal(unit.getUnitArea());
+				
+				/*
+				 * taxHeadEstimate = getBiilinfEstimatesForTax(requestInfo,builtuparea,
+				 * usageExemption, property, propertyBasedExemptionMasterMap,
+				 * timeBasedExemptionMasterMap,masterMap,typeofroad,structuretype,agefactor,unit
+				 * );
+				 */
 
 
 				currentUnitTax = getApplicableTaxForRoadType(currentUnitTax,propertyBasedExemptionMasterMap,detail,detail.getPropertyType());
@@ -353,18 +362,25 @@ public class EstimationService {
 						.add(getExemption(unit, currentUnitTax, assessmentYear, propertyBasedExemptionMasterMap));
 				i++;
 			}
+			
+			
 			/*
 			 * making call to get unbuilt area tax estimate
 			 */
 
 			BigDecimal unbuiltAmount = getUnBuiltRate(detail, unBuiltRate, groundUnitsCount, groundUnitsArea);
-
-			taxHeadEstimate =  getBiilinfEstimatesForTax(requestInfo,unbuiltAmount, usageExemption, property, propertyBasedExemptionMasterMap,
-					timeBasedExemptionMasterMap,masterMap,typeofroad,structuretype,agefactor,null);
+			BigDecimal unbuiltarea=getUnBuiltAre(detail, unBuiltRate, groundUnitsCount, groundUnitsArea);
+			
+			/*
+			 * taxHeadEstimate = getBiilinfEstimatesForTax(requestInfo,unbuiltarea,
+			 * usageExemption, property, propertyBasedExemptionMasterMap,
+			 * timeBasedExemptionMasterMap,masterMap,typeofroad,structuretype,agefactor,null
+			 * );
+			 */
 
 			unbuiltAmount =	getApplicableTaxForRoadType(unbuiltAmount,propertyBasedExemptionMasterMap,detail,"UNBUILT");
 
-			unbuiltAmount = unbuiltAmount.add(getApplicableTaxForAgeOfProperty(unbuiltAmount,propertyBasedExemptionMasterMap,detail,"UNBUILT",null));
+			unbuiltAmount = getApplicableTaxForAgeOfProperty(unbuiltAmount,propertyBasedExemptionMasterMap,detail,"UNBUILT",null);
 
 			taxAmt = taxAmt.add(unbuiltAmount);
 
@@ -381,7 +397,7 @@ public class EstimationService {
 
 
 		taxHeadEstimates = getEstimatesForTax(requestInfo,taxAmt, usageExemption, property, propertyBasedExemptionMasterMap,
-				timeBasedExemptionMasterMap,masterMap,taxHeadEstimate);
+				timeBasedExemptionMasterMap,masterMap);
 
 
 
@@ -407,7 +423,7 @@ public class EstimationService {
 		//Map<String, BigDecimal> retmap = new HashMap<>();
 		String searchKey ="";
 		String assessmentYear = detail.getFinancialYear();
-		System.out.println("detaildetaildetail"+detail.getAddress());
+		
 		if(detail.getAddress().getTypeOfRoad() != null) {
 			if(calculationFor.equalsIgnoreCase("UNBUILT") || calculationFor.equalsIgnoreCase("VACANT"))
 			{
@@ -425,7 +441,7 @@ public class EstimationService {
 					applicableRoadTypeRate.get("value"));
 			//retmap.put(CALCULTED_ROAD_TYPE_TAX,currentExemption);
 
-			currentUnitTax = currentExemption.add(currentUnitTax);
+			currentUnitTax = currentUnitTax.multiply(currentExemption);
 			//retmap.put(CALCULTED_ROAD_TYPE_TAX_WITH_TAX_AMT,currentUnitTax);
 		}
 		return currentUnitTax;
@@ -474,7 +490,8 @@ public class EstimationService {
 
 			BigDecimal currentExemption = mDataService.calculateApplicables(currentUnitTax,
 					applicableRoadTypeRate.get("value"));
-			currentUnitTax = currentExemption.add(currentUnitTax);
+			
+			currentUnitTax = currentUnitTax.multiply(currentExemption);
 		}
 		return currentUnitTax;
 	}
@@ -512,6 +529,23 @@ public class EstimationService {
 		}
 
 		return unBuiltAmt;
+	}
+	
+	private BigDecimal getUnBuiltAre(PropertyDetail detail, double unBuiltRate, int groundUnitsCount, Double groundUnitsArea) {
+
+		BigDecimal unBuiltAmt = BigDecimal.ZERO;
+		double diffArea = 0;
+		if (0.0 < unBuiltRate && null != detail.getLandArea() && groundUnitsCount > 0) {
+
+			diffArea = null != detail.getBuildUpArea() ? detail.getLandArea() - detail.getBuildUpArea()
+					: detail.getLandArea() - groundUnitsArea;
+			// ignoring if land Area is lesser than buildUpArea/groundUnitsAreaSum in estimate instead of throwing error
+			// since property service validates the same for calculation
+			diffArea = diffArea < 0.0 ? 0.0 : diffArea;
+			unBuiltAmt = unBuiltAmt.add(BigDecimal.valueOf((unBuiltRate / groundUnitsCount) * (diffArea)));
+		}
+
+		return new BigDecimal(diffArea);
 	}
 
 	/**
@@ -584,7 +618,7 @@ public class EstimationService {
 	 */
 	private List<TaxHeadEstimate> getEstimatesForTax(RequestInfo requestInfo,BigDecimal taxAmt, BigDecimal usageExemption, Property property,
 			Map<String, Map<String, List<Object>>> propertyBasedExemptionMasterMap,
-			Map<String, JSONArray> timeBasedExemeptionMasterMap,Map<String, Object> masterMap,List<TaxHeadEstimate> taxHeadEstimate) {
+			Map<String, JSONArray> timeBasedExemeptionMasterMap,Map<String, Object> masterMap) {
 
 
 
@@ -626,8 +660,10 @@ public class EstimationService {
 		{
 
 
-			BigDecimal othertax=BigDecimal.ZERO.setScale(2, 2);
-			taxHeadEstimate.stream().forEach(t -> t.setEstimateAmount(othertax));
+			/*
+			 * BigDecimal othertax=BigDecimal.ZERO.setScale(2, 2);
+			 * taxHeadEstimate.stream().forEach(t -> t.setEstimateAmount(othertax));
+			 */
 
 			BigDecimal userExemption = getSpecialExemption(detail.getExemption(), payableTax, assessmentYear,
 					propertyBasedExemptionMasterMap).setScale(2, 2).negate();
@@ -636,8 +672,9 @@ public class EstimationService {
 		}
 
 		
-		else
-			estimates.addAll(taxHeadEstimate);
+		/*
+		 * else estimates.addAll(taxHeadEstimate);
+		 */
 
 
 		// Fire cess
@@ -823,9 +860,15 @@ public class EstimationService {
 			switch (category) {
 
 			case TAX:
-				taxAmt = taxAmt.add(estimate.getEstimateAmount());
-				if(estimate.getTaxHeadCode().equalsIgnoreCase(PT_TAX))
-					ptTax = ptTax.add(estimate.getEstimateAmount());
+				//taxAmt = taxAmt.add(estimate.getEstimateAmount());	
+				
+				  if(estimate.getTaxHeadCode().equalsIgnoreCase(PT_TAX))
+				  {
+					  ptTax = ptTax.add(estimate.getEstimateAmount());
+					  taxAmt = taxAmt.add(estimate.getEstimateAmount());
+				  }
+					  
+				 
 				break;
 
 			case PENALTY:
@@ -1117,12 +1160,15 @@ public class EstimationService {
 		applicableOwnerType = mDataService.getApplicableMaster(financialYear,
 				roadTypeMap.get(typeofcode));
 
+		
 		if (null != applicableOwnerType) {
 
 			BigDecimal currentEstimate = mDataService.calculateApplicables(taxAmt,
 					applicableOwnerType.get("value"));
+			
 
-			roadtypeEsti = roadtypeEsti.add(currentEstimate);
+			roadtypeEsti = taxAmt.multiply(currentEstimate);
+			
 		}
 
 		return roadtypeEsti;
