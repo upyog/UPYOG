@@ -11,16 +11,21 @@ const SelectPropertyType = ({ config, onSelect, t, userType, formData }) => {
 
   const propertyTypesData = Digit.Hooks.fsm.useMDMS(stateId, "FSM", "PropertyType", { select });
 
+  const usageType=formData?.cpt!==undefined? (formData?.cpt?.details?.usageCategory==="RESIDENTIAL" ? formData?.cpt?.details?.usageCategory: formData?.cpt?.details?.usageCategory.split('.')[1]):""
+  console.log("usagetype", usageType)
   const [propertyType, setPropertyType] = useState();
 
   useEffect(() => {
+    if(formData?.cpt!==undefined){
+      setPropertyType(usageType)
+    }
     if (!propertyTypesData.isLoading && propertyTypesData.data) {
       const preFilledPropertyType = propertyTypesData.data.filter(
-        (propertyType) => propertyType.code === (formData?.propertyType?.code || formData?.propertyType)
+        (propertyType) => propertyType.code === (usageType||formData?.propertyType?.code || formData?.propertyType)
       )[0];
       setPropertyType(preFilledPropertyType);
     }
-  }, [formData?.propertyType, propertyTypesData.data]);
+  }, [formData?.cpt, formData?.propertyType, propertyTypesData.data]);
 
   const goNext = () => {
     sessionStorage.removeItem("Digit.total_amount");

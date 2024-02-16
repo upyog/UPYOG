@@ -9,6 +9,12 @@ const PropertyLocationDetails = ({ t, config, onSelect, userType, formData, form
   if(window.location.href.includes("obps"))
   {
     allCities = Digit.SessionStorage.get("OBPS_TENANTS")
+
+  }
+  if(window.location.href.includes("fsm"))
+  {
+    allCities = Digit.SessionStorage.get("FSM_TENANTS")
+    console.log("allc", allCities)
   }
   // if called from tl module get tenants from tl usetenants
   const userInfo = Digit.UserService.getUser()?.info;

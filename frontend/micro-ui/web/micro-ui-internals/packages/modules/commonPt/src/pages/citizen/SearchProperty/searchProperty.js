@@ -28,9 +28,14 @@ const SearchProperty = ({ config: propsConfig, onSelect, redirectToUrl }) => {
   let allCities = Digit.Hooks.pt.useTenants()?.sort((a, b) => a?.i18nKey?.localeCompare?.(b?.i18nKey));
   // if called from tl module get tenants from tl usetenants
   allCities = allCities ? allCities : Digit.Hooks.tl.useTenants()?.sort((a, b) => a?.i18nKey?.localeCompare?.(b?.i18nKey));  
-  if(window.location.href.includes("obps"))
+  if(window.location.href.includes("obps") )
   {
     allCities = Digit.SessionStorage.get("OBPS_TENANTS")
+  }
+  if(window.location.href.includes("fsm") )
+  {
+    allCities = Digit.SessionStorage.get("FSM_TENANTS")
+    console.log("allcities", allCities)
   }
   const [cityCode, setCityCode] = useState();
   const [formValue, setFormValue] = useState();
