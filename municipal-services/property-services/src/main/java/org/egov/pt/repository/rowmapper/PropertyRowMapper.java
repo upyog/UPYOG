@@ -327,8 +327,14 @@ public class PropertyRowMapper implements ResultSetExtractor<List<Property>> {
 		.district(rs.getString("district"))
 		.country(rs.getString("country"))
 		.pincode(rs.getString("pincode"))
+		.dagNo(rs.getString("dag_no"))
+		.village(rs.getString("village"))
+		.pattaNo(rs.getString("patta_no"))
 		.doorNo(rs.getString("doorNo"))
 		.plotNo(rs.getString("plotNo"))
+		.principalRoadName(rs.getString("principal_road_name"))
+		.subSideRoadName(rs.getString("sub_side_road_name"))
+		.commonNameOfBuilding(rs.getString("common_name_of_building"))
 		.region(rs.getString("region"))
 		.street(rs.getString("street"))
 		.id(rs.getString("addressid"))
@@ -357,9 +363,11 @@ public class PropertyRowMapper implements ResultSetExtractor<List<Property>> {
 		} catch (Exception e) {
 			throw new CustomException("PARSING ERROR", "The propertyAdditionalDetail json cannot be parsed");
 		}
+		
+		//System.out.println("propertyAdditionalDetails:::"+propertyAdditionalDetails.getCode());
 
-		if(propertyAdditionalDetails.getCode().isEmpty())
-			propertyAdditionalDetails = null;
+		//if(propertyAdditionalDetails.getCode().isEmpty())
+			//propertyAdditionalDetails = null;
 		
 		return propertyAdditionalDetails;
 	}

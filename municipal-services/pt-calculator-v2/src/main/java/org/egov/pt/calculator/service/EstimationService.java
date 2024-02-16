@@ -111,6 +111,7 @@ import org.egov.pt.calculator.web.models.demand.DemandDetail;
 import org.egov.pt.calculator.web.models.demand.DemandRequest;
 import org.egov.pt.calculator.web.models.demand.DemandResponse;
 import org.egov.pt.calculator.web.models.demand.TaxHeadMaster;
+import org.egov.pt.calculator.web.models.demand.TaxHeadMasterResponse;
 import org.egov.pt.calculator.web.models.demand.TaxPeriod;
 import org.egov.pt.calculator.web.models.demand.TaxPeriodResponse;
 import org.egov.pt.calculator.web.models.property.OwnerInfo;
@@ -268,6 +269,10 @@ public class EstimationService {
 		List<TaxHeadEstimate> taxHeadEstimates=null;
 		List<TaxHeadEstimate> taxHeadEstimate=null;
 
+		List<BigDecimal> typeofroad=new ArrayList<BigDecimal>();
+		List<BigDecimal> agefactor=new ArrayList<BigDecimal>();
+		List<BigDecimal> structuretype=new ArrayList<BigDecimal>();
+
 		if(criteria.getFromDate()==null || criteria.getToDate()==null)
 			enrichmentService.enrichDemandPeriod(criteria,assessmentYear,masterMap);
 
@@ -293,6 +298,9 @@ public class EstimationService {
 
 		else if (PT_TYPE_VACANT_LAND.equalsIgnoreCase(detail.getPropertyType())) {
 			taxAmt = taxAmt.add(BigDecimal.valueOf(filteredBillingSlabs.get(0).getUnitRate() * detail.getLandArea()));
+
+			taxHeadEstimate =  getBiilinfEstimatesForTax(requestInfo,taxAmt, usageExemption, property, propertyBasedExemptionMasterMap,
+					timeBasedExemptionMasterMap,masterMap,typeofroad,structuretype,agefactor,null);
 			//TYPE OF ROAD
 			//Map<String,BigDecimal> roadTypeCalculatedValue = new HashMap<>();
 			//roadTypeCalculatedValue = getApplicableTaxForRoadType(taxAmt,propertyBasedExemptionMasterMap,detail,detail.getPropertyType());
@@ -301,16 +309,13 @@ public class EstimationService {
 			//AGE OF PROPERTY
 			taxAmt=taxAmt.add(getApplicableTaxForRoadType(taxAmt,propertyBasedExemptionMasterMap,detail,detail.getPropertyType()));
 			taxAmt = taxAmt.add(getApplicableTaxForAgeOfProperty(taxAmt,propertyBasedExemptionMasterMap,detail,detail.getPropertyType(),null));
+
 		} else {
 
 			double unBuiltRate = 0.0;
 			int groundUnitsCount = 0;
 			Double groundUnitsArea = 0.0;
 			int i = 0;
-
-			List<BigDecimal> typeofroad=new ArrayList<BigDecimal>();
-			List<BigDecimal> agefactor=new ArrayList<BigDecimal>();
-			List<BigDecimal> structuretype=new ArrayList<BigDecimal>();
 
 
 			for (Unit unit : detail.getUnits()) {
@@ -402,6 +407,7 @@ public class EstimationService {
 		//Map<String, BigDecimal> retmap = new HashMap<>();
 		String searchKey ="";
 		String assessmentYear = detail.getFinancialYear();
+		System.out.println("detaildetaildetail"+detail.getAddress());
 		if(detail.getAddress().getTypeOfRoad() != null) {
 			if(calculationFor.equalsIgnoreCase("UNBUILT") || calculationFor.equalsIgnoreCase("VACANT"))
 			{
@@ -619,6 +625,7 @@ public class EstimationService {
 		if(detail.getExemption() != null && !detail.getExemption().isEmpty())
 		{
 
+
 			BigDecimal othertax=BigDecimal.ZERO.setScale(2, 2);
 			taxHeadEstimate.stream().forEach(t -> t.setEstimateAmount(othertax));
 
@@ -628,8 +635,9 @@ public class EstimationService {
 			payableTax = payableTax.add(userExemption);
 		}
 
-		estimates.addAll(taxHeadEstimate);
-
+		
+		else
+			estimates.addAll(taxHeadEstimate);
 
 
 		// Fire cess
@@ -869,8 +877,7 @@ public class EstimationService {
 		}
 
 
-		estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_PAYBLE_TAX).
-				estimateAmount( paybletax).build());
+		//estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_PAYBLE_TAX).estimateAmount( paybletax).build());
 
 		// false in the argument represents that the demand shouldn't be updated from this call
 		Demand oldDemand = utils.getLatestDemandForCurrentFinancialYear(requestInfo,criteria);

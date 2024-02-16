@@ -87,11 +87,19 @@ public class TranslationService {
         if(propertyTypeMasterData.length > 1)
             propertySubType = propertyTypeMasterData[1];
 
-        String[] usageCategoryMasterData = property.getUsageCategory().split("\\.");
+        String[] usageCategoryMasterData = null;
         String usageCategoryMajor = null,usageCategoryMinor = null;
-        usageCategoryMajor = usageCategoryMasterData[0];
-        if(usageCategoryMasterData.length > 1)
-            usageCategoryMinor = usageCategoryMasterData[1];
+        
+        if(property.getUsageCategory() !=null)
+        {
+        	usageCategoryMasterData = property.getUsageCategory().split("\\.");
+            usageCategoryMajor = null;
+            usageCategoryMinor = null;
+            usageCategoryMajor = usageCategoryMasterData[0];
+            if(usageCategoryMasterData.length > 1)
+                usageCategoryMinor = usageCategoryMasterData[1];
+        }
+        
 
         String[] ownershipCategoryMasterData  = property.getOwnershipCategory().split("\\.");
         String ownershipCategory = null,subOwnershipCategory = null;
