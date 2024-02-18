@@ -70,8 +70,7 @@ const FileComplaint = ({ parentRoute }) => {
     config = config.concat(obj.body.filter((a) => !a.hideInCitizen));
   });
 
-  configs = [...config]
-  configs.indexRoute = "select-trip-number";
+  
 let newConfig=[ 
         {
           "type": "component",
@@ -379,9 +378,12 @@ let newConfig=[
       "component": "AdvanceCollection"
   }
 ]
+configs = [...newConfig]
+  configs.indexRoute = "select-trip-number";
+console.log("newConfig",newConfig)
   return (
     <Switch>
-      {newConfig.map((routeObj, index) => {
+      {configs.map((routeObj, index) => {
         const { component, texts, inputs, key } = routeObj;
         const Component = typeof component === "string" ? Digit.ComponentRegistryService.getComponent(component) : component;
         return (

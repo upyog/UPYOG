@@ -11,7 +11,8 @@ const SelectPropertyType = ({ config, onSelect, t, userType, formData }) => {
 
   const propertyTypesData = Digit.Hooks.fsm.useMDMS(stateId, "FSM", "PropertyType", { select });
 
-  const usageType=formData?.cpt!==undefined? (formData?.cpt?.details?.usageCategory==="RESIDENTIAL" ? formData?.cpt?.details?.usageCategory: formData?.cpt?.details?.usageCategory.split('.')[1]):""
+  //const usageType=formData?.cpt!=="undefined"? (formData?.cpt?.details?.usageCategory==="RESIDENTIAL" ? formData?.cpt?.details?.usageCategory: formData?.cpt?.details?.usageCategory.split('.')[1]):""
+  const usageType = {} 
   console.log("usagetype", usageType)
   const [propertyType, setPropertyType] = useState();
 

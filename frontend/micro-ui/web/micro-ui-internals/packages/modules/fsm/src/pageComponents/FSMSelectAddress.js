@@ -13,8 +13,19 @@ const FSMSelectAddress = ({ t, config, onSelect, userType, formData }) => {
       : pincode
       ? allCities.filter((city) => city?.pincode?.some((pin) => pin == pincode))
       : allCities;
-
-  const [selectedCity, setSelectedCity] = useState(() => formData?.address?.city || Digit.SessionStorage.get("fsm.file.address.city") || null);
+let property = sessionStorage?.getItem("fsmProperty")
+//console.log("property",property)
+if(property !== "undefined")
+{
+ 
+    property = JSON.parse(property)
+}
+console.log("propertyproperty",property)
+// useEffect(()=>{
+//   console.log(" property?.address?.locality ", property?.address?.locality )
+//   setSelectedLocality(property?.address?.locality)
+// },[property])
+  const [selectedCity, setSelectedCity] = useState(() =>formData?.address?.city || Digit.SessionStorage.get("fsm.file.address.city")  ||  null);
   const { data: fetchedLocalities } = Digit.Hooks.useBoundaryLocalities(
     selectedCity?.code,
     "revenue",
@@ -24,7 +35,7 @@ const FSMSelectAddress = ({ t, config, onSelect, userType, formData }) => {
     t
   );
   const [localities, setLocalities] = useState();
-  const [selectedLocality, setSelectedLocality] = useState(()=>formData?.cpt?.details?.address?.locality|| formData?.address?.locality);
+  const [selectedLocality, setSelectedLocality] = useState(()=>property?.address?.locality || formData?.cpt?.details?.address?.locality|| formData?.address?.locality);
 
   useEffect(() => {
     if (cities) {
