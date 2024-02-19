@@ -17,8 +17,8 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.edcr.entity.ApplicationType;
 import org.egov.edcr.entity.EdcrApplication;
@@ -30,6 +30,7 @@ import org.egov.edcr.service.es.EdcrIndexService;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.infra.microservice.models.RequestInfo;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.hibernate.Session;
@@ -119,6 +120,7 @@ public class EdcrApplicationService {
     private Plan callDcrProcess(EdcrApplication edcrApplication, String applicationType) {
         Plan planDetail = new Plan();
         planDetail = planService.process(edcrApplication, applicationType);
+        LOG.info("area is "+planDetail.getPlanInformation().getPlotArea());
         updateFile(planDetail, edcrApplication);
         edcrApplicationDetailService.saveAll(edcrApplication.getEdcrApplicationDetails());
 
@@ -271,7 +273,7 @@ public class EdcrApplicationService {
     }
 
     @Transactional
-    public EdcrApplication createRestEdcr(final EdcrApplication edcrApplication) {
+    public EdcrApplication createRestEdcr(final EdcrApplication edcrApplication,RequestInfo requestInfo) {
         String comparisonDcrNo = edcrApplication.getEdcrApplicationDetails().get(0).getComparisonDcrNumber();
         if (edcrApplication.getApplicationDate() == null)
             edcrApplication.setApplicationDate(new Date());
@@ -279,6 +281,7 @@ public class EdcrApplicationService {
         edcrApplication.setSavedDxfFile(saveDXF(edcrApplication));
         edcrApplication.setStatus(ABORTED);
         edcrApplicationRepository.save(edcrApplication);
+        LOG.info("edcrApplication is " + edcrApplication );
         edcrApplication.getEdcrApplicationDetails().get(0).setComparisonDcrNumber(comparisonDcrNo);
         callDcrProcess(edcrApplication, NEW_SCRTNY);
         edcrIndexService.updateEdcrRestIndexes(edcrApplication, NEW_SCRTNY);
