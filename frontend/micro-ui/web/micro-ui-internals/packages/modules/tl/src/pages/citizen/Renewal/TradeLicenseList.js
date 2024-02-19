@@ -136,6 +136,7 @@ useEffect(async ()=>{
     else
     history.push(`/digit-ui/citizen/tl/tradelicence/renew-trade/${application.licenseNumber}/${application.tenantId}`);
   };
+  const ownersSequences=owners?.additionalDetails!==null ? owners.sort((a,b)=>a?.additionalDetails?.ownerSequence-b?.additionalDetails?.ownerSequence): owners
   return (
     <React.Fragment>
     <Card>
@@ -143,7 +144,7 @@ useEffect(async ()=>{
       <KeyNote keyValue={t("TL_LICENSE_NUMBERL_LABEL")} note={application.licenseNumber} />
       <KeyNote
         keyValue={t("TL_LOCALIZATION_OWNER_NAME")}
-        note={owners.map((owners, index) => (
+        note={ownersSequences.map((owners, index) => (
           <div key="index">{index == owners.length - 1 ? owners?.name + "," : owners.name}</div>
         ))}
       />

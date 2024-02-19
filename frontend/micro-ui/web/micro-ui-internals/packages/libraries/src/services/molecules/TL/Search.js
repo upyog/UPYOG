@@ -227,7 +227,7 @@ export const TLSearch = {
       : {
           title: "ES_NEW_APPLICATION_OWNERSHIP_DETAILS",
           additionalDetails: {
-            owners: response?.tradeLicenseDetail?.owners.slice().reverse()?.map((owner, index) => {
+            owners: response?.tradeLicenseDetail?.owners.sort((a,b)=>a?.additionalDetails?.ownerSequence-b?.additionalDetails?.ownerSequence).map((owner, index) => {
               let subOwnerShipCategory = response?.tradeLicenseDetail?.subOwnerShipCategory
                 ? `COMMON_MASTERS_OWNERSHIPCATEGORY_${stringReplaceAll(response?.tradeLicenseDetail?.subOwnerShipCategory, ".", "_")}`
                 : "NA";

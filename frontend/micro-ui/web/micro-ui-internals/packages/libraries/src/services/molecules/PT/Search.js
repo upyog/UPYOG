@@ -84,10 +84,11 @@ export const PTSearch = {
         { title: "PT_SEARCHPROPERTY_TABEL_STATUS", value: Digit.Utils.locale.getTransformedLocale(`WF_PT_${property?.status}`) || "NA" },
       ],
     };
+    const ownersSequences=property?.owners?.additionalDetails!==null ? property?.owners?.sort((a,b)=>a?.additionalDetails?.ownerSequence-b?.additionalDetails?.ownerSequence): property?.owners
     const ownerdetails = {
       title: "PT_OWNERSHIP_INFO_SUB_HEADER",
       additionalDetails: {
-        owners: property?.owners
+        owners: ownersSequences
           ?.filter((owner) => owner.status === "ACTIVE")
           .map((owner, index) => {
             return {

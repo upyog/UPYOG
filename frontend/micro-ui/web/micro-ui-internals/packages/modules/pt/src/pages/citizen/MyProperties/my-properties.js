@@ -29,12 +29,13 @@ const MyProperty = ({ application }) => {
   sessionStorage.removeItem("localityCode");
   sessionStorage.removeItem("landmark"); 
   sessionStorage.removeItem("propertyid")
+  const ownersSequences=owners?.additionalDetails!==null ? owners.sort((a,b)=>a?.additionalDetails?.ownerSequence-b?.additionalDetails?.ownerSequence): owners;
   return (
     <Card>
       <KeyNote keyValue={t("PT_COMMON_TABLE_COL_PT_ID")} note={application.propertyId} />
       <KeyNote
         keyValue={t("PT_COMMON_TABLE_COL_OWNER_NAME")}
-        note={owners.map((owners, index) => (
+        note={ownersSequences.map((owners, index) => (
           <div key="index">{index == owners.length - 1 ? owners?.name + "," : owners.name}</div>
         ))}
       />
