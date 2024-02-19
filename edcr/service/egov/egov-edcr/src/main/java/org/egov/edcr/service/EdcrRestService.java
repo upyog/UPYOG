@@ -237,7 +237,7 @@ public class EdcrRestService {
             edcrApplication.setThirdPartyUserTenant(tenantId);
         }
 
-        edcrApplication = edcrApplicationService.createRestEdcr(edcrApplication);
+        edcrApplication = edcrApplicationService.createRestEdcr(edcrApplication,edcrRequest.getRequestInfo());
         
         //Code to push the data of edcr application to kafka index
         EdcrIndexData edcrIndexData = new EdcrIndexData();
