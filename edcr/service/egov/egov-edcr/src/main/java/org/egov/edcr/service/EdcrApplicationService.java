@@ -280,8 +280,9 @@ public class EdcrApplicationService {
         edcrApplication.setApplicationNumber(applicationNumberGenerator.generate());
         edcrApplication.setSavedDxfFile(saveDXF(edcrApplication));
         edcrApplication.setStatus(ABORTED);
+        LOG.info("1 edcrApplication is " + edcrApplication.getPlanInformation().getPlotArea() );
         edcrApplicationRepository.save(edcrApplication);
-        LOG.info("edcrApplication is " + edcrApplication );
+        LOG.info("2 edcrApplication is " + edcrApplication.getPlanInformation().getPlotArea() );
         edcrApplication.getEdcrApplicationDetails().get(0).setComparisonDcrNumber(comparisonDcrNo);
         callDcrProcess(edcrApplication, NEW_SCRTNY);
         edcrIndexService.updateEdcrRestIndexes(edcrApplication, NEW_SCRTNY);
