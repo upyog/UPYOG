@@ -106,20 +106,37 @@ public class WMSContractAgreementApplicationEnrichment {
 	public void enrichContractAgreementApplicationUpdate(WMSContractAgreementRequest wmsContractAgreementRequest, List<WMSContractAgreementApplication> existingApplication) {
 		// Enrich lastModifiedTime and lastModifiedBy in case of update
 		for (WMSContractAgreementApplication application : wmsContractAgreementRequest.getWmsContractAgreementApplications()) {
-			existingApplication.get(0).getAgreementInfo().get(0).setAgreementName(application.getAgreementInfo().get(0).getAgreementName());
-			existingApplication.get(0).getAgreementInfo().get(0).setAgreementDate(application.getAgreementInfo().get(0).getAgreementDate());
-			existingApplication.get(0).getAgreementInfo().get(0).setDepartmentNameAi(application.getAgreementInfo().get(0).getDepartmentNameAi());
-			existingApplication.get(0).getParty1Details().get(0).setDepartmentNameParty1(application.getParty1Details().get(0).getDepartmentNameParty1());
-			existingApplication.get(0).getAgreementInfo().get(0).setLoaNo(application.getAgreementInfo().get(0).getLoaNo());
-			existingApplication.get(0).getAgreementInfo().get(0).setResolutionNo(application.getAgreementInfo().get(0).getResolutionNo());
-			existingApplication.get(0).getAgreementInfo().get(0).setResolutionDate(application.getAgreementInfo().get(0).getResolutionDate());
-			existingApplication.get(0).getAgreementInfo().get(0).setTenderNo(application.getAgreementInfo().get(0).getTenderNo());
-			existingApplication.get(0).getAgreementInfo().get(0).setTenderDate(application.getAgreementInfo().get(0).getTenderDate());
-			existingApplication.get(0).getAgreementInfo().get(0).setAgreementType(application.getAgreementInfo().get(0).getAgreementType());
-			existingApplication.get(0).getAgreementInfo().get(0).setDefectLiabilityPeriod(application.getAgreementInfo().get(0).getDefectLiabilityPeriod());
-			existingApplication.get(0).getAgreementInfo().get(0).setContractPeriod(application.getAgreementInfo().get(0).getContractPeriod());
-			existingApplication.get(0).getAgreementInfo().get(0).setAgreementAmount(application.getAgreementInfo().get(0).getAgreementAmount());
-			existingApplication.get(0).getAgreementInfo().get(0).setPaymentType(application.getAgreementInfo().get(0).getPaymentType());
+			
+			for(int i=0;i<wmsContractAgreementRequest.getWmsContractAgreementApplications().get(0).getAgreementInfo().size();i++) {
+				
+				existingApplication.get(0).getAgreementInfo().get(0).setAgreementName(application.getAgreementInfo().get(0).getAgreementName());
+				existingApplication.get(0).getAgreementInfo().get(0).setAgreementDate(application.getAgreementInfo().get(0).getAgreementDate());
+				existingApplication.get(0).getAgreementInfo().get(0).setDepartmentNameAi(application.getAgreementInfo().get(0).getDepartmentNameAi());
+				
+				existingApplication.get(0).getAgreementInfo().get(0).setLoaNo(application.getAgreementInfo().get(0).getLoaNo());
+				existingApplication.get(0).getAgreementInfo().get(0).setResolutionNo(application.getAgreementInfo().get(0).getResolutionNo());
+				existingApplication.get(0).getAgreementInfo().get(0).setResolutionDate(application.getAgreementInfo().get(0).getResolutionDate());
+				existingApplication.get(0).getAgreementInfo().get(0).setTenderNo(application.getAgreementInfo().get(0).getTenderNo());
+				existingApplication.get(0).getAgreementInfo().get(0).setTenderDate(application.getAgreementInfo().get(0).getTenderDate());
+				existingApplication.get(0).getAgreementInfo().get(0).setAgreementType(application.getAgreementInfo().get(0).getAgreementType());
+				existingApplication.get(0).getAgreementInfo().get(0).setDefectLiabilityPeriod(application.getAgreementInfo().get(0).getDefectLiabilityPeriod());
+				existingApplication.get(0).getAgreementInfo().get(0).setContractPeriod(application.getAgreementInfo().get(0).getContractPeriod());
+				existingApplication.get(0).getAgreementInfo().get(0).setAgreementAmount(application.getAgreementInfo().get(0).getAgreementAmount());
+				existingApplication.get(0).getAgreementInfo().get(0).setPaymentType(application.getAgreementInfo().get(0).getPaymentType());
+				
+			
+			}
+			
+			for(int i=0;i<wmsContractAgreementRequest.getWmsContractAgreementApplications().get(0).getParty1Details().size();i++) {
+				
+				existingApplication.get(0).getParty1Details().get(0).setDepartmentNameParty1(application.getParty1Details().get(0).getDepartmentNameParty1());
+				existingApplication.get(0).getParty1Details().get(0).setDesignation(application.getParty1Details().get(0).getDesignation());
+				existingApplication.get(0).getParty1Details().get(0).setEmployeeName(application.getParty1Details().get(0).getEmployeeName());
+				existingApplication.get(0).getParty1Details().get(0).setWitnessNameP1(application.getParty1Details().get(0).getWitnessNameP1());
+				existingApplication.get(0).getParty1Details().get(0).setAddressP1(application.getParty1Details().get(0).getAddressP1());
+				existingApplication.get(0).getParty1Details().get(0).setUidP1(application.getParty1Details().get(0).getUidP1());
+				
+			}
 			existingApplication.get(0).getSDPGBGDetails().setDepositType(application.getSDPGBGDetails().getDepositType());
 			existingApplication.get(0).getSDPGBGDetails().setDepositAmount(application.getSDPGBGDetails().getDepositAmount());
 			
@@ -129,11 +146,7 @@ public class WMSContractAgreementApplicationEnrichment {
 			existingApplication.get(0).getSDPGBGDetails().setValidTillDate(application.getSDPGBGDetails().getValidTillDate());
 			existingApplication.get(0).getSDPGBGDetails().setBankBranchIfscCode(application.getSDPGBGDetails().getBankBranchIfscCode());
 			existingApplication.get(0).getSDPGBGDetails().setPaymentMode(application.getSDPGBGDetails().getPaymentMode());
-			existingApplication.get(0).getParty1Details().get(0).setDesignation(application.getParty1Details().get(0).getDesignation());
-			existingApplication.get(0).getParty1Details().get(0).setEmployeeName(application.getParty1Details().get(0).getEmployeeName());
-			existingApplication.get(0).getParty1Details().get(0).setWitnessNameP1(application.getParty1Details().get(0).getWitnessNameP1());
-			existingApplication.get(0).getParty1Details().get(0).setAddressP1(application.getParty1Details().get(0).getAddressP1());
-			existingApplication.get(0).getParty1Details().get(0).setUidP1(application.getParty1Details().get(0).getUidP1());
+			
 			existingApplication.get(0).getParty2Witness().setWitnessNameP2(application.getParty2Witness().getWitnessNameP2());
 			existingApplication.get(0).getParty2Witness().setAddressP2(application.getParty2Witness().getAddressP2());
 			existingApplication.get(0).getParty2Witness().setUidP2(application.getParty2Witness().getUidP2());

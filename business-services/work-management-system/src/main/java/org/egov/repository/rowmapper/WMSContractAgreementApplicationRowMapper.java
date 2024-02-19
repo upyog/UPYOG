@@ -33,11 +33,11 @@ import com.google.common.collect.Multimap;
 public class WMSContractAgreementApplicationRowMapper implements ResultSetExtractor<List<WMSContractAgreementApplication>> {
     public List<WMSContractAgreementApplication> extractData(ResultSet rs) throws SQLException, DataAccessException {
         Map<String,WMSContractAgreementApplication> wmsContractAgreementApplicationMap = new LinkedHashMap<>();
-        List<WMSContractAgreementApplication> wmsContractAgreementApplicationList=new ArrayList<>();
+        //List<WMSContractAgreementApplication> wmsContractAgreementApplicationList=new ArrayList<>();
     	//ListMultimap<String,WMSContractAgreementApplication> wmsContractAgreementApplicationMap = ArrayListMultimap.create();
         
-        if (rs.next()){
-        	
+        //if (rs.next()){
+        while (rs.next()){
         	
         	
         	String agreementNo = rs.getString("aAgreementNo");
@@ -100,14 +100,10 @@ public class WMSContractAgreementApplicationRowMapper implements ResultSetExtrac
     		  .termsAndConditions(termsAndConditions)
     		  .build();
     		  
+    		  wmsContractAgreementApplicationMap.put(agreementNo, wmsContractAgreementApplication);
+            }// if null
+        	
             
-        	while (rs.next()){
-            
-            //if(wmsContractAgreementApplication == null) {
-
-            	
-                
-               
                 AgreementInfo agreementInfo = AgreementInfo.builder()
                 		.agreementNo(agreementNo)
                         .agreementName(rs.getString("aAgreementName"))
@@ -125,8 +121,8 @@ public class WMSContractAgreementApplicationRowMapper implements ResultSetExtrac
                         .paymentType(rs.getString("aPaymentType"))
                         .build();
                 wmsContractAgreementApplication.addAgreementInfoItem(agreementInfo);
-                wmsContractAgreementApplicationMap.put(agreementNo, wmsContractAgreementApplication);
-                wmsContractAgreementApplicationList.addAll(wmsContractAgreementApplicationMap.values());
+               
+                //wmsContractAgreementApplicationList.addAll(wmsContractAgreementApplicationMap.values());
                 
                 Party1Details party1Details = Party1Details.builder()
                 		.agreementNo(agreementNo)
@@ -138,12 +134,12 @@ public class WMSContractAgreementApplicationRowMapper implements ResultSetExtrac
                         .uidP1(rs.getString("aUidP1"))
                         .build();
                 wmsContractAgreementApplication.addParty1Details(party1Details);
-                wmsContractAgreementApplicationMap.put(agreementNo, wmsContractAgreementApplication);
-                wmsContractAgreementApplicationList.addAll(wmsContractAgreementApplicationMap.values());
+              
+                //wmsContractAgreementApplicationList.addAll(wmsContractAgreementApplicationMap.values());
                 
             }//rs
                 
-        }//null
+        
                 
                 
                
@@ -162,9 +158,9 @@ public class WMSContractAgreementApplicationRowMapper implements ResultSetExtrac
 			 * .values());
 			 */
             //wmsContractAgreementApplicationMap.merge(agreementNo, wmsContractAgreementApplication, null);
-        }//if rs
-        //return new ArrayList<>(wmsContractAgreementApplicationMap.values());
-        return wmsContractAgreementApplicationList;
+        //}//if rs
+        return new ArrayList<>(wmsContractAgreementApplicationMap.values());
+        //return wmsContractAgreementApplicationList;
     }
 
 }

@@ -78,16 +78,19 @@ public class WMSContractAgreementApplication {
 	public WMSContractAgreementApplication addAgreementInfoItem(AgreementInfo agreementInfoItem) {
         if(this.agreementInfo==null)
             this.agreementInfo = new ArrayList<>();
-        if(!this.agreementInfo.contains(agreementInfoItem))
-            this.agreementInfo.add(agreementInfoItem);
+        //if(this.agreementInfo.stream().filter(x-> x.getAgreementName().equalsIgnoreCase(agreementInfoItem.getAgreementName())) == null)
+        if (!this.agreementInfo.stream().anyMatch(x -> x.getAgreementName().equalsIgnoreCase(agreementInfoItem.getAgreementName())))    
+        this.agreementInfo.add(agreementInfoItem);
         return this;
     }
 	
 	public WMSContractAgreementApplication addParty1Details(Party1Details party1DetailsItem) {
         if(this.party1Details==null)
             this.party1Details = new ArrayList<>();
-        if(!this.party1Details.contains(party1DetailsItem))
-            this.party1Details.add(party1DetailsItem);
+        //if(!this.party1Details.contains(party1DetailsItem))
+        //if(this.party1Details.stream().filter(x-> x.getUidP1().equalsIgnoreCase(party1DetailsItem.getUidP1())) == null)
+        if (!this.party1Details.stream().anyMatch(x -> x.getUidP1().equalsIgnoreCase(party1DetailsItem.getUidP1())))    
+        this.party1Details.add(party1DetailsItem);
         return this;
     }
 	
