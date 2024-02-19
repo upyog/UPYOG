@@ -23,12 +23,16 @@ const WmsPmaList = ({ parentRoute, businessService = "WMS", initialStates = {}, 
     : { limit: pageSize, offset: pageOffset, pmatOrder: pmatParams?.[0]?.desc ? "DESC" : "ASC" };
   const isupdate = Digit.SessionStorage.get("isupdate");
   //const { PMAApplications } = async () => await WMSService.PMAApplications.search(tenantId, searchparams, filters);// Digit.Hooks.wms.pma.useWmsPmaSearch(
-const { isLoading: hookLoading, isError, error, data, ...rest } = Digit.Hooks.wms.pma.useWmsPmaSearch(
-    searchParams,
-    tenantId,
-    paginationParams,
-    isupdate
-  );
+    const { isLoading: hookLoading, isError, error, data:PmaData, ...rest } = Digit.Hooks.wms.phm.useWmsPmaSearch(
+      searchParams,
+      tenantId,
+      paginationParams,
+      isupdate
+    );
+
+const { isLoading: getLoading, isError:getIsError, error:getError, data:GetData } = Digit.Hooks.wms.pma.useWmsPmaGet();
+console.log("GetData ddd ",GetData)
+console.log("GetData ddd WMSPhysicalMileStoneActivityApplication  ",GetData?.WMSPhysicalMileStoneActivityApplication)
 
   useEffect(() => {
      setTotalReacords(res?.length-1);
@@ -96,7 +100,7 @@ const { isLoading: hookLoading, isError, error, data, ...rest } = Digit.Hooks.wm
   alert(JSON.stringify(PMAApplications))
 } */
   //if (PMAApplications?.length !== null) {
-  if (data?.length !== null) {
+  if (PmaData?.WMSPhysicalMileStoneActivityApplication.length !== null) {
     if (isMobile) {
       return (
         <MobileList
@@ -104,7 +108,7 @@ const { isLoading: hookLoading, isError, error, data, ...rest } = Digit.Hooks.wm
           //data={PMAApplications}
           //isLoading={isLoading}
           
-          data={data}
+          data={PmaData?.WMSPhysicalMileStoneActivityApplication}
           isLoading={hookLoading}
           defaultSearchParams={initialStates.searchParams}
           isSearch={isList}
@@ -135,7 +139,7 @@ const { isLoading: hookLoading, isError, error, data, ...rest } = Digit.Hooks.wm
             businessService={businessService}
             //data={PMAApplications}
             //isLoading={isLoading}
-            data={data}
+            data={PmaData?.WMSPhysicalMileStoneActivityApplication}
             isLoading={hookLoading}
             defaultSearchParams={initialStates.searchParams}
             isSearch={isList}

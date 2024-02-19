@@ -14,11 +14,11 @@ const WmsPmaCreate = () => {
   const [showToast, setShowToast] = useState(null);
   const onSubmit = (data) => {
     setIsLoading(true);
-    let WMSPhysicalFinancialMilestoneApplications = 
+    let WMSPhysicalMileStoneActivityApplications = 
       {
-        WMSPhysicalFinancialMilestoneApplication: [{
-          description_of_item: data?.WmsPmaDescriptionOfItem?.description_of_item, 
-          percent_weightage: data?.WmsPmaPercent?.percent_weightage, 
+        WMSPhysicalMileStoneActivityApplication: [{
+          description_of_the_item: data?.WmsPmaDescriptionOfItem?.description_of_the_item, 
+          percentage_weightage: data?.WmsPmaPercent?.percentage_weightage, 
           start_date:data?.WmsPmaStartDate?.start_date,
           end_date:data?.WmsPmaEndDate?.end_date,
           tenantId:tenantId,
@@ -26,7 +26,7 @@ const WmsPmaCreate = () => {
       };
     
       /* use customiseCreateFormData hook to make some chnages to the Employee object [0].PmaeduleOfRateApplication*/
-     Digit.WMSService.PMAApplications.create(WMSPhysicalFinancialMilestoneApplications[0].physicalMileStoneActivity, tenantId).then((result,err)=>{
+     Digit.WMSService.PMAApplications.create(WMSPhysicalMileStoneActivityApplications, tenantId).then((result,err)=>{
       setIsLoading(false);
        history.push("/upyog-ui/citizen/wms/pma-home");
      })

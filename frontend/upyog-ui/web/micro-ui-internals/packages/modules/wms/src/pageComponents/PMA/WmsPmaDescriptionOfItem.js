@@ -7,7 +7,7 @@ const WmsPmaDescriptionOfItem = ({ t, config, onSelect, formData = {}, userType,
     {
       label: "WMS_PMA_DESC_OF_ITEM_LABEL",
       type: "text",
-      name: "description_of_item",
+      name: "description_of_the_item",
       validation: {
         isRequired: true,
         pattern: Digit.Utils.getPattern('Name'),

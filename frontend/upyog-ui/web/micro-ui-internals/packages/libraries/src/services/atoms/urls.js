@@ -261,11 +261,11 @@ wms:{
     // },
 
   PMAApplications: {
-    create: "/wms/wms-services/v1/pfmilestone/_create",
-    update:"/wms/wms-services/v1/pfmilestone/_update",
-    get:"/wms/wms-services/v1/pfmilestone/_view",
-    search:"/wms/wms-services/v1/pfmilestone/_search",      
-    count:"/wms/wms-services/v1/pfmilestone/_view",
+    create: "/wms/wms-services/v1/pma/_create",
+    update:"/wms/wms-services/v1/pma/_update",
+    get:"/wms/wms-services/v1/pma/_view",
+    search:"/wms/wms-services/v1/pma/_search",      
+    count:"/wms/wms-services/v1/pma/_view",
   },
 
     DRApplications: {
