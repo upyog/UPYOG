@@ -181,7 +181,7 @@ public class EdcrRestService {
 
     @Transactional
     public EdcrDetail createEdcr(final EdcrRequest edcrRequest, final MultipartFile file,
-            Map<String, List<Object>> masterData) {
+            Map<String, List<Object>> masterData) throws Exception {
         EdcrApplication edcrApplication = new EdcrApplication();
         edcrApplication.setMdmsMasterData(masterData);
         EdcrApplicationDetail edcrApplicationDetail = new EdcrApplicationDetail();
