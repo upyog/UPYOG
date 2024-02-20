@@ -17,7 +17,7 @@ RUN yarn add @egovernments/digit-ui-module-core
 RUN yarn add @upyog/digit-ui-module-obps
 RUN yarn add @egovernments/digit-ui-module-common
 RUN yarn add @upyog/digit-ui-module-ws
-RUN yarn add @egovernments/digit-ui-module-commonpt
+RUN yarn add @upyog/digit-ui-module-commonpt
 RUN yarn add @egovernments/digit-ui-module-workbench
 RUN yarn add @egovernments/digit-ui-module-receipts
 RUN yarn add @egovernments/digit-ui-module-bills
