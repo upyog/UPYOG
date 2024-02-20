@@ -123,9 +123,16 @@ public class EdcrApplicationService {
         Plan planDetail = new Plan();
         planDetail = planService.process(edcrApplication, applicationType);
         BigDecimal area=planDetail.getPlanInformation().getPlotArea();
+        LOG.info("Area is "+ area);
+
         String occupancy=planDetail.getPlanInformation().getOccupancy();
+        LOG.info("Occupancy is "+ occupancy);
+
         if(occupancy.equalsIgnoreCase("RESIDENTIAL"))
         {
+        	
+        LOG.info("Roles are"+ requestInfo.getUserInfo().getPrimaryrole());
+
         List<String> roles=requestInfo.getUserInfo().getPrimaryrole().stream().map(e-> e.getCode()).collect(Collectors.toList());
         BigDecimal archArea=new BigDecimal(300);
         if(roles.contains("BPA_ARCHITECT") & area.compareTo(archArea)>0)
