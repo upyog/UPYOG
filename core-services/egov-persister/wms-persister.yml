@@ -1112,6 +1112,8 @@ serviceMaps:
           basePath: WMSContractAgreementApplication.*.agreementInfo.*
           jsonMaps:
           - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.*.agreement_name
+          
+          - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.*.agreement_date
 
           - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.*.department_name_ai
 
