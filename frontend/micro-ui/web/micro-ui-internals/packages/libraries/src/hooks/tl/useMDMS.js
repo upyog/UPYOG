@@ -39,7 +39,7 @@ const useMDMS = {
     useQuery(
       [tenantId, "FORM_CONFIG"],
       () =>
-      MdmsServiceV2.getDataByCriteria(
+      MdmsService.getDataByCriteria(
           tenantId,
           {
             details: {
