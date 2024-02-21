@@ -300,12 +300,12 @@ config:
         image-name: "internal-gateway"
         dockerfile: "build/maven/Dockerfile"
         
-  - name: "builds/upyog/core-services/egov-user-event"
+  - name: "builds/upyog/municipal-services/egov-user-event"
     build:
-      - work-dir: "core-services/egov-user-event"
+      - work-dir: "municipal-services/egov-user-event"
         image-name: "egov-user-event"
         dockerfile: "build/maven/Dockerfile"
-      - work-dir: "core-services/egov-user-event/src/main/resources/db"
+      - work-dir: "municipal-services/egov-user-event/src/main/resources/db"
         image-name: "egov-user-event-db"       
 
   - name: "builds/upyog/core-services/pdf-service"
@@ -388,7 +388,7 @@ config:
     build:
       - work-dir: "core-services/nlp-engine"
         image-name: "nlp-engine"
-        dockerfile: "nlp-engine/Dockerfile"
+        dockerfile: "core-services/nlp-engine/Dockerfile"
 
   - name: "builds/upyog/core-services/xstate-chatbot"
     build:
