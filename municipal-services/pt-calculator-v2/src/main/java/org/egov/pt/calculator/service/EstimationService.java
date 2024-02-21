@@ -907,20 +907,24 @@ public class EstimationService {
 
 		paybletax=totalAmount.multiply(new BigDecimal(92)).divide(new
 				BigDecimal(100)).setScale(2, 2).negate();
-
-		totalAmount=totalAmount.multiply(new BigDecimal(8)).divide(new
+		
+		
+		if(totalAmount.compareTo(new BigDecimal(600)) > 0) {
+			totalAmount=totalAmount.multiply(new BigDecimal(8)).divide(new
 				BigDecimal(100));
+		}
 
 		if(exemption.compareTo(BigDecimal.ZERO)==0) {
 			if(totalAmount.compareTo(new BigDecimal(600)) < 0) { 
+			
 				paybletax=totalAmount.negate();
 				paybletax=new BigDecimal(600).add(paybletax).setScale(2,2); 
 				totalAmount=new BigDecimal(600);
 			}
 		}
+		
 
-
-		//estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_PAYBLE_TAX).estimateAmount( paybletax).build());
+		estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_PAYBLE_TAX).category(Category.DEFICIT).estimateAmount( paybletax).build());
 
 		// false in the argument represents that the demand shouldn't be updated from this call
 		Demand oldDemand = utils.getLatestDemandForCurrentFinancialYear(requestInfo,criteria);
