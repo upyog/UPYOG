@@ -904,6 +904,7 @@ public class EstimationService {
 		BigDecimal paybletax=BigDecimal.ZERO;
 
 		//totalAmount=new BigDecimal(200).setScale(2,2);
+		
 
 		paybletax=totalAmount.multiply(new BigDecimal(92)).divide(new
 				BigDecimal(100)).setScale(2, 2).negate();
@@ -917,8 +918,8 @@ public class EstimationService {
 		if(exemption.compareTo(BigDecimal.ZERO)==0) {
 			if(totalAmount.compareTo(new BigDecimal(600)) < 0) { 
 			
-				paybletax=totalAmount.negate();
-				paybletax=new BigDecimal(600).add(paybletax).setScale(2,2); 
+				//paybletax=totalAmount.negate();
+				paybletax=taxAmt.subtract(new BigDecimal(600)).negate().setScale(2,2); 
 				totalAmount=new BigDecimal(600);
 			}
 		}
@@ -1144,7 +1145,7 @@ public class EstimationService {
 			BigDecimal currentExemption = mDataService.calculateApplicables(taxAmt,
 					applicableOwnerType.get(EXEMPTION_FIELD_NAME));
 
-			userExemption = userExemption.add(currentExemption);
+			userExemption = taxAmt.multiply(currentExemption);
 		}
 
 		return userExemption;
