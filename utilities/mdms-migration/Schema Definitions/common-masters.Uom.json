@@ -9,55 +9,27 @@
     },
     "SchemaDefinitions": [
         {
-            "id": "ab72e630-c3fc-49d8-9ac2-fedbbbec8bd0",
+            "id": "8d7d0dfd-3280-4efc-acbe-b3c1399769b7",
             "tenantId": "pg",
-            "code": "common-masters.Uom",
+            "code": "common-masters.UOM",
             "description": null,
             "definition": {
                 "type": "object",
                 "$schema": "http://json-schema.org/draft-07/schema#",
                 "required": [
-                    "id",
-                    "tenantId",
                     "code",
-                    "description",
-                    "uomCategory",
-                    "baseUom",
-                    "fromDate",
-                    "toDate",
-                    "conversionFactor"
+                    "active"
                 ],
                 "x-unique": [
                     "code"
                 ],
                 "properties": {
-                    "id": {
-                        "type": "integer"
-                    },
                     "code": {
                         "type": "string"
                     },
-                    "toDate": {
-                        "type": "integer"
-                    },
-                    "baseUom": {
+                    "active": {
                         "type": "boolean",
                         "default": true
-                    },
-                    "fromDate": {
-                        "type": "integer"
-                    },
-                    "tenantId": {
-                        "type": "string"
-                    },
-                    "description": {
-                        "type": "string"
-                    },
-                    "uomCategory": {
-                        "type": "string"
-                    },
-                    "conversionFactor": {
-                        "type": "integer"
                     }
                 },
                 "additionalProperties": false
@@ -66,8 +38,8 @@
             "auditDetails": {
                 "createdBy": "a02659b8-78a7-4f22-984d-050107432f22",
                 "lastModifiedBy": "a02659b8-78a7-4f22-984d-050107432f22",
-                "createdTime": 1701688795956,
-                "lastModifiedTime": 1701688795956
+                "createdTime": 1701688796040,
+                "lastModifiedTime": 1701688796040
             }
         }
     ]

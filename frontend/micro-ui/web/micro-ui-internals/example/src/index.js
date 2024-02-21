@@ -21,7 +21,7 @@ import { initEngagementComponents } from "@egovernments/digit-ui-module-engageme
 import { initNOCComponents } from "@egovernments/digit-ui-module-noc";
 import { initWSComponents } from "@upyog/digit-ui-module-ws";
 import { DigitUI } from "@egovernments/digit-ui-module-core";
-import { initCommonPTComponents } from "@egovernments/digit-ui-module-commonpt";
+import { initCommonPTComponents } from "@upyog/digit-ui-module-commonpt";
 import { initBillsComponents, BillsModule } from "@egovernments/digit-ui-module-bills";
 
 window.contextPath = window?.globalConfigs?.getConfig("CONTEXT_PATH");
