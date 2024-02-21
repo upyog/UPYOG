@@ -65,6 +65,9 @@ public class PropertiesManager {
     @Value("${egov.services.egov.user.host}")
     private String userHostUrl;
 
+    @Value("${egov.services.common.masters.businessdetails.url}")
+    private String businessDetailsServiceUrl;
+
     @Value("${egov.services.egf.voucher.create}")
     private String voucherCreateUrl;
     
@@ -146,7 +149,7 @@ public class PropertiesManager {
     @Value("${egov.services.egfmaster.hostname}")
     private String egfMasterHostUrl;
     
-    @Value("${token.authorization.key}")
+    @Value("${token.authorizaton.key}")
     private String tokenAuhorizationtKey;
     
     @Value("${egov.collection.receipt.voucher.save.topic}")

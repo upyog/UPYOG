@@ -150,7 +150,7 @@ public class DemandValidatorV1 {
 
 			List<DemandDetail> details = demand.getDemandDetails();
 			Map<String, TaxHeadMaster> taxHeadMap = businessTaxCodeMap.get(demand.getBusinessService());
-			log.info(" the taxhead map : " + taxHeadMap);
+			//log.info(" the taxhead map : " + taxHeadMap);
 			detailsForValidation.addAll(details);
 
 			if (isCreate) {
@@ -171,10 +171,16 @@ public class DemandValidatorV1 {
 						taxHeadsNotFound.add(detail.getTaxHeadMasterCode());
 				});
 
+			if(demandRequest.getDemands().get(0).getBusinessService().equalsIgnoreCase("WS") && demandRequest.getDemands().get(0).getAdditionalDetails() !=null && demandRequest.getDemands().get(0).getAdditionalDetails().toString().contains("connectionType"))
+			{
+				
+			}
+			else
 			validateTaxPeriod(taxPeriodBusinessMap, demand, errorMap, businessServicesWithNoTaxPeriods);
 			
 			// by default demands are being set to active during create but validation should be done for inactive/ cancelled demand in another logic
-			if(demand.getStatus() == null) demand.setStatus(StatusEnum.ACTIVE);
+			if(demand.getStatus() == null) 
+				demand.setStatus(StatusEnum.ACTIVE);
 		}
 
 		/*
@@ -419,6 +425,17 @@ public class DemandValidatorV1 {
 			Boolean isTaxLtZeroAndCollectionNeToZeroAndCollectionGtTax = tax.compareTo(BigDecimal.ZERO) < 0
 					&& collection.compareTo(tax) != 0 && collection.compareTo(BigDecimal.ZERO) != 0;
 			
+			 String taxHeadMasterCode = "WS_CHARGE,WTAXCHARGES,SEWERAGETAX,SWTAXADJUSTMENT,STAXSECURITY,STAXAPPLICATION";
+
+		        String[] substrings = {"WS_CHARGE,WTAXCHARGES,SEWERAGETAX,SWTAXADJUSTMENT,STAXSECURITY,STAXAPPLICATION"};
+
+		     
+		        for (String substring : substrings) {
+		            if (taxHeadMasterCode.contains(substring)) 
+		            {
+				System.out.println("WS Contains");
+			}
+			else {
 			if (isTaxGtZeroAndCollectionGtTaxOrCollectionLtZero) {
 				errors.add(INVALID_DEMAND_DETAIL_ERROR_MSG
 						.replace(INVALID_DEMAND_DETAIL_COLLECTION_TEXT, collection.toString())
@@ -432,11 +449,12 @@ public class DemandValidatorV1 {
 				
 			}
 		}
+			}
 		if (!CollectionUtils.isEmpty(errors))
 			errorMap.put(INVALID_DEMAND_DETAIL_KEY,
 					INVALID_DEMAND_DETAIL_MSG.replace(INVALID_DEMAND_DETAIL_REPLACETEXT, errors.toString()));
 	}
-	
+	}
 
 /*
  * 

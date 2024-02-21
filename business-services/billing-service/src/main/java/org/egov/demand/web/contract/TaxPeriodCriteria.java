@@ -14,6 +14,7 @@ import java.util.Set;
 @AllArgsConstructor
 @ToString
 @Builder
+@EqualsAndHashCode
 public class TaxPeriodCriteria {
 
     @NotNull
