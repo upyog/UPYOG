@@ -291,7 +291,7 @@ import useWmsPmaSearch from "./wms/pma/useWmsPmaSearch";
 import useWmsPmaCount from "./wms/pma/useWmsPmaCount";
 import useWmsPmaCreate from "./wms/pma/useWmsPmaCreate";
 import useWmsPmaUpdate from "./wms/pma/useWmsPmaUpdate";
-import useWmsPmaGet from "./wms/pr/useWmsPmaGet";
+import useWmsPmaGet from "./wms/pma/useWmsPmaGet";
 
 
 import useWmsCMGet from "./wms/cm/useWmsCMGet";

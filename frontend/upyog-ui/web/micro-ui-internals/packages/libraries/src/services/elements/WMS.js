@@ -266,7 +266,7 @@ PMAApplications:{
   update: (data, tenantId) =>
     Request({
       data: data,
-      url: Urls.wms.PMAApplications.update+"/"+data.phm_id,
+      url: Urls.wms.PMAApplications.update+"/"+data.pma_id,
       useCache: false,
       method: "POST",
       auth: true,
@@ -283,14 +283,14 @@ PMAApplications:{
       userService: true,
       params: { tenantId },
     }),
-  get: (phmId,tenantId) =>
+  get: (pmaId,tenantId) =>
     Request({
       url: Urls.wms.PMAApplications.get,
       useCache: false,
       method: "POST",
       auth: true,
       userService: true,
-      params: { phmeme_id:phmId},
+      params: { pma_id:pmaId},
     }),
     count: () =>
     Request({

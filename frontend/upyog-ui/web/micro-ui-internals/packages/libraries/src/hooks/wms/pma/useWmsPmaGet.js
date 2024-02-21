@@ -6,7 +6,7 @@ export const useWmsPmaGet = (phmId, tenantId, isupdated, config = {}) => {
   //isLoading: hookLoading, isError, error, data, ...rest
   const client = useQueryClient();
   const { isLoading, error, data } = useQuery(
-    ["WMS_PMA_GET",phmId, tenantId, isupdated],
+    ["WMS_PMA_GET",pmaId, tenantId, isupdated],
     // async () => await WMSService.PMAApplications.get(phmId, tenantId),
     async () => await WMSService.PMAApplications.get(),
     config

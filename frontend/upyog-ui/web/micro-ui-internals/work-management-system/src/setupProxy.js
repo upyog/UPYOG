@@ -17,7 +17,7 @@ const assetsProxy = createProxyMiddleware({
 });
 
 const MapiProxy = createProxyMiddleware({
-  target: "http://10.216.36.30:8484",
+  target: "http://10.216.36.162:8484",
   changeOrigin: true,
 });
 const apiProxy = createProxyMiddleware({
@@ -31,7 +31,7 @@ const apiProxy = createProxyMiddleware({
 // });
 const CMProxy = createProxyMiddleware({
   // target: "http://10.216.36.67:8484",
-  target: "http://10.216.36.30:8484",  
+  target: "http://10.216.36.162:8484",  
   changeOrigin: true,
 });
 module.exports = function (app) {
@@ -114,6 +114,11 @@ module.exports = function (app) {
   "/wms/wms-services/v1/pfmilestone/_search",  
   "/wms/wms-services/v1/pfmilestone/_view",
   "/wms/wms-services/v1/pfmilestone/_update",
+
+  "/wms/wms-services/v1/pma/_create",
+  "/wms/wms-services/v1/pma/_search",  
+  "/wms/wms-services/v1/pma/_view",
+  "/wms/wms-services/v1/pma/_update",
 
   "/wms/wms-services/v1/pregister/_create",
   "/wms/wms-services/v1/pregister/_search",  
