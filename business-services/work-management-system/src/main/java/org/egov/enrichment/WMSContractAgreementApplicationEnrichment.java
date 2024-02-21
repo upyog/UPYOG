@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.egov.repository.WMSWorkRepository;
 import org.egov.util.IdgenUtil;
@@ -106,60 +109,76 @@ public class WMSContractAgreementApplicationEnrichment {
 	public void enrichContractAgreementApplicationUpdate(WMSContractAgreementRequest wmsContractAgreementRequest, List<WMSContractAgreementApplication> existingApplication) {
 		// Enrich lastModifiedTime and lastModifiedBy in case of update
 		for (WMSContractAgreementApplication application : wmsContractAgreementRequest.getWmsContractAgreementApplications()) {
-			
-			for(int i=0;i<wmsContractAgreementRequest.getWmsContractAgreementApplications().get(0).getAgreementInfo().size();i++) {
+			 List<WMSContractAgreementApplication> existingApplicationResult = existingApplication.stream().filter(x -> x.getAgreementNo().equalsIgnoreCase(application.getAgreementNo())).collect(Collectors.toList());
 				
-				existingApplication.get(0).getAgreementInfo().get(i).setAgreementName(application.getAgreementInfo().get(i).getAgreementName());
-				existingApplication.get(0).getAgreementInfo().get(i).setAgreementDate(application.getAgreementInfo().get(i).getAgreementDate());
-				existingApplication.get(0).getAgreementInfo().get(i).setDepartmentNameAi(application.getAgreementInfo().get(i).getDepartmentNameAi());
+			if(existingApplicationResult.size() > 0) {
+				int k=0;
+				int j=0;
+			 for(k=0;k<application.getAgreementInfo().size();k++) {
+				 int currentIndex = k;
+				 List<AgreementInfo> existingApplicationAgreement = existingApplicationResult.get(0).getAgreementInfo().stream().filter(x -> x.getAgreementName().equalsIgnoreCase(application.getAgreementInfo().get(currentIndex).getAgreementName())).collect(Collectors.toList());
 				
-				existingApplication.get(0).getAgreementInfo().get(i).setLoaNo(application.getAgreementInfo().get(i).getLoaNo());
-				existingApplication.get(0).getAgreementInfo().get(i).setResolutionNo(application.getAgreementInfo().get(i).getResolutionNo());
-				existingApplication.get(0).getAgreementInfo().get(i).setResolutionDate(application.getAgreementInfo().get(i).getResolutionDate());
-				existingApplication.get(0).getAgreementInfo().get(i).setTenderNo(application.getAgreementInfo().get(i).getTenderNo());
-				existingApplication.get(0).getAgreementInfo().get(i).setTenderDate(application.getAgreementInfo().get(i).getTenderDate());
-				existingApplication.get(0).getAgreementInfo().get(i).setAgreementType(application.getAgreementInfo().get(i).getAgreementType());
-				existingApplication.get(0).getAgreementInfo().get(i).setDefectLiabilityPeriod(application.getAgreementInfo().get(i).getDefectLiabilityPeriod());
-				existingApplication.get(0).getAgreementInfo().get(i).setContractPeriod(application.getAgreementInfo().get(i).getContractPeriod());
-				existingApplication.get(0).getAgreementInfo().get(i).setAgreementAmount(application.getAgreementInfo().get(i).getAgreementAmount());
-				existingApplication.get(0).getAgreementInfo().get(i).setPaymentType(application.getAgreementInfo().get(i).getPaymentType());
+				//if (!application.getAgreementInfo().stream().anyMatch(x -> x.getAgreementName().equalsIgnoreCase(existingApplication.get(0).getAgreementInfo().get(i).getAgreementName()))) {
+				 if(existingApplicationAgreement.size() > 0) {
+					 //existingApplicationAgreement.get(0).setAgreementName(application.getAgreementInfo().get(i).getAgreementName());
+					 existingApplicationAgreement.get(0).setAgreementDate(application.getAgreementInfo().get(k).getAgreementDate());
+					 existingApplicationAgreement.get(0).setDepartmentNameAi(application.getAgreementInfo().get(k).getDepartmentNameAi());
 				
-			
+					 existingApplicationAgreement.get(0).setLoaNo(application.getAgreementInfo().get(k).getLoaNo());
+					 existingApplicationAgreement.get(0).setResolutionNo(application.getAgreementInfo().get(k).getResolutionNo());
+					 existingApplicationAgreement.get(0).setResolutionDate(application.getAgreementInfo().get(k).getResolutionDate());
+					 existingApplicationAgreement.get(0).setTenderNo(application.getAgreementInfo().get(k).getTenderNo());
+					 existingApplicationAgreement.get(0).setTenderDate(application.getAgreementInfo().get(k).getTenderDate());
+					 existingApplicationAgreement.get(0).setAgreementType(application.getAgreementInfo().get(k).getAgreementType());
+					 existingApplicationAgreement.get(0).setDefectLiabilityPeriod(application.getAgreementInfo().get(k).getDefectLiabilityPeriod());
+					 existingApplicationAgreement.get(0).setContractPeriod(application.getAgreementInfo().get(k).getContractPeriod());
+					 existingApplicationAgreement.get(0).setAgreementAmount(application.getAgreementInfo().get(k).getAgreementAmount());
+					 existingApplicationAgreement.get(0).setPaymentType(application.getAgreementInfo().get(k).getPaymentType());
+				
+				}
 			}
-			
-			for(int i=0;i<wmsContractAgreementRequest.getWmsContractAgreementApplications().get(0).getParty1Details().size();i++) {
+			 	
+			for(j=0;j<application.getParty1Details().size();j++) {
+				int currentIndex = j;
+				List<Party1Details> existingApplicationPartyDetails = existingApplicationResult.get(0).getParty1Details().stream().filter(x -> x.getUidP1().equalsIgnoreCase(application.getParty1Details().get(currentIndex).getUidP1())).collect(Collectors.toList());
 				
-				existingApplication.get(0).getParty1Details().get(i).setDepartmentNameParty1(application.getParty1Details().get(i).getDepartmentNameParty1());
-				existingApplication.get(0).getParty1Details().get(i).setDesignation(application.getParty1Details().get(i).getDesignation());
-				existingApplication.get(0).getParty1Details().get(i).setEmployeeName(application.getParty1Details().get(i).getEmployeeName());
-				existingApplication.get(0).getParty1Details().get(i).setWitnessNameP1(application.getParty1Details().get(i).getWitnessNameP1());
-				existingApplication.get(0).getParty1Details().get(i).setAddressP1(application.getParty1Details().get(i).getAddressP1());
-				existingApplication.get(0).getParty1Details().get(i).setUidP1(application.getParty1Details().get(i).getUidP1());
+				//if (!wmsContractAgreementRequest.getWmsContractAgreementApplications().get(0).getParty1Details().stream().anyMatch(x -> x.getUidP1().equalsIgnoreCase(existingApplication.get(0).getParty1Details().get(0).getUidP1()))) {
+				 if(existingApplicationPartyDetails.size() > 0) {
+					 existingApplicationPartyDetails.get(0).setDepartmentNameParty1(application.getParty1Details().get(j).getDepartmentNameParty1());
+					 existingApplicationPartyDetails.get(0).setDesignation(application.getParty1Details().get(j).getDesignation());
+					 existingApplicationPartyDetails.get(0).setEmployeeName(application.getParty1Details().get(j).getEmployeeName());
+					 existingApplicationPartyDetails.get(0).setWitnessNameP1(application.getParty1Details().get(j).getWitnessNameP1());
+					 existingApplicationPartyDetails.get(0).setAddressP1(application.getParty1Details().get(j).getAddressP1());
+					 //existingApplicationPartyDetails.get(0).setUidP1(application.getParty1Details().get(j).getUidP1());
+				
+				}
 				
 			}
-			existingApplication.get(0).getSDPGBGDetails().setDepositType(application.getSDPGBGDetails().getDepositType());
-			existingApplication.get(0).getSDPGBGDetails().setDepositAmount(application.getSDPGBGDetails().getDepositAmount());
+			existingApplicationResult.get(0).getSDPGBGDetails().setDepositType(application.getSDPGBGDetails().getDepositType());
+			existingApplicationResult.get(0).getSDPGBGDetails().setDepositAmount(application.getSDPGBGDetails().getDepositAmount());
 			
-			existingApplication.get(0).getSDPGBGDetails().setAccountNo(application.getSDPGBGDetails().getAccountNo());
-			existingApplication.get(0).getSDPGBGDetails().setParticulars(application.getSDPGBGDetails().getParticulars());
-			existingApplication.get(0).getSDPGBGDetails().setValidFromDate(application.getSDPGBGDetails().getValidFromDate());
-			existingApplication.get(0).getSDPGBGDetails().setValidTillDate(application.getSDPGBGDetails().getValidTillDate());
-			existingApplication.get(0).getSDPGBGDetails().setBankBranchIfscCode(application.getSDPGBGDetails().getBankBranchIfscCode());
-			existingApplication.get(0).getSDPGBGDetails().setPaymentMode(application.getSDPGBGDetails().getPaymentMode());
+			existingApplicationResult.get(0).getSDPGBGDetails().setAccountNo(application.getSDPGBGDetails().getAccountNo());
+			existingApplicationResult.get(0).getSDPGBGDetails().setParticulars(application.getSDPGBGDetails().getParticulars());
+			existingApplicationResult.get(0).getSDPGBGDetails().setValidFromDate(application.getSDPGBGDetails().getValidFromDate());
+			existingApplicationResult.get(0).getSDPGBGDetails().setValidTillDate(application.getSDPGBGDetails().getValidTillDate());
+			existingApplicationResult.get(0).getSDPGBGDetails().setBankBranchIfscCode(application.getSDPGBGDetails().getBankBranchIfscCode());
+			existingApplicationResult.get(0).getSDPGBGDetails().setPaymentMode(application.getSDPGBGDetails().getPaymentMode());
 			
-			existingApplication.get(0).getParty2Witness().setWitnessNameP2(application.getParty2Witness().getWitnessNameP2());
-			existingApplication.get(0).getParty2Witness().setAddressP2(application.getParty2Witness().getAddressP2());
-			existingApplication.get(0).getParty2Witness().setUidP2(application.getParty2Witness().getUidP2());
-			existingApplication.get(0).getContractors().setVendorType(application.getContractors().getVendorType());
-			existingApplication.get(0).getContractors().setVendorName(application.getContractors().getVendorName());
-			existingApplication.get(0).getContractors().setRepresentedBy(application.getContractors().getRepresentedBy());
-			existingApplication.get(0).getContractors().setPrimaryParty(application.getContractors().getPrimaryParty());
-			existingApplication.get(0).getTermsAndConditions().setSrNo(application.getTermsAndConditions().getSrNo());
-			existingApplication.get(0).getTermsAndConditions().setTermsAndConditions(application.getTermsAndConditions().getTermsAndConditions());
-			existingApplication.get(0).getAgreementDocuments().setDocumentDescription(application.getAgreementDocuments().getDocumentDescription());
-			existingApplication.get(0).getAgreementDocuments().setUploadDocument(application.getAgreementDocuments().getUploadDocument());
+			existingApplicationResult.get(0).getParty2Witness().setWitnessNameP2(application.getParty2Witness().getWitnessNameP2());
+			existingApplicationResult.get(0).getParty2Witness().setAddressP2(application.getParty2Witness().getAddressP2());
+			existingApplicationResult.get(0).getParty2Witness().setUidP2(application.getParty2Witness().getUidP2());
+			existingApplicationResult.get(0).getContractors().setVendorType(application.getContractors().getVendorType());
+			existingApplicationResult.get(0).getContractors().setVendorName(application.getContractors().getVendorName());
+			existingApplicationResult.get(0).getContractors().setRepresentedBy(application.getContractors().getRepresentedBy());
+			existingApplicationResult.get(0).getContractors().setPrimaryParty(application.getContractors().getPrimaryParty());
+			existingApplicationResult.get(0).getTermsAndConditions().setSrNo(application.getTermsAndConditions().getSrNo());
+			existingApplicationResult.get(0).getTermsAndConditions().setTermsAndConditions(application.getTermsAndConditions().getTermsAndConditions());
+			existingApplicationResult.get(0).getAgreementDocuments().setDocumentDescription(application.getAgreementDocuments().getDocumentDescription());
+			existingApplicationResult.get(0).getAgreementDocuments().setUploadDocument(application.getAgreementDocuments().getUploadDocument());
 //			application.setEndDate(date);
 			// application.getAuditDetails().setLastModifiedBy(birthRegistrationRequest.getRequestInfo().getUserInfo().getUuid());
+		}
+			
 		}
 	}
 

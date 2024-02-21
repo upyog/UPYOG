@@ -1108,10 +1108,10 @@ serviceMaps:
             
       
       
-        - query: UPDATE agreement SET agreement_name = ?, agreement_date = ?, department_name_ai = ?, loa_no = ?,resolution_no = ?,resolution_date = ?,tender_no = ?,tender_date = ?,agreement_type = ?,defect_liability_period = ?,contract_period = ?,agreement_amount = ?,  payment_type = ? WHERE agreement_no = ?;
+        - query: UPDATE agreement SET agreement_date = ?, department_name_ai = ?, loa_no = ?,resolution_no = ?,resolution_date = ?,tender_no = ?,tender_date = ?,agreement_type = ?,defect_liability_period = ?,contract_period = ?,agreement_amount = ?,  payment_type = ? WHERE agreement_no = ? AND agreement_name = ?;
           basePath: WMSContractAgreementApplication.*.agreementInfo.*
           jsonMaps:
-          - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.*.agreement_name
+          
           
           - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.*.agreement_date
 
@@ -1136,10 +1136,11 @@ serviceMaps:
           - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.*.agreement_amount
 
           - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.*.payment_type
-
           - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.*.agreement_no
+
+          - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.*.agreement_name
           
-        - query: UPDATE party1details SET department_name_party1 = ?, designation = ?, employee_name = ?, witness_name_p1 = ?,address_p1 = ?,uid_p1 = ? WHERE agreement_no = ?;
+        - query: UPDATE party1details SET department_name_party1 = ?, designation = ?, employee_name = ?, witness_name_p1 = ?,address_p1 = ? WHERE agreement_no = ? AND uid_p1 = ?;
           basePath: WMSContractAgreementApplication.*.party1Details.*
           jsonMaps:
           - jsonPath: $.WMSContractAgreementApplication.*.party1Details.*.department_name_party1
@@ -1151,10 +1152,8 @@ serviceMaps:
           - jsonPath: $.WMSContractAgreementApplication.*.party1Details.*.witness_name_p1
           
           - jsonPath: $.WMSContractAgreementApplication.*.party1Details.*.address_p1
-
-          - jsonPath: $.WMSContractAgreementApplication.*.party1Details.*.uid_p1
-
           - jsonPath: $.WMSContractAgreementApplication.*.party1Details.*.agreement_no
+          - jsonPath: $.WMSContractAgreementApplication.*.party1Details.*.uid_p1
             
             
     - version: 1.0
