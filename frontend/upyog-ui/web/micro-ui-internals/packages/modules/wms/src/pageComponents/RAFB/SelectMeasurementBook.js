@@ -33,20 +33,32 @@ const SelectMeasurementBook = ({ t, config, onSelect, value, userType, formData,
   );
   console.log("dropdownValue ",dropdownValue);
   const [error, setError] = useState(null);
-  let dropdownData = [];
+  
   // const tenantId = Digit.ULBService.getCurrentTenantId();
   // const stateId = Digit.ULBService.getStateId();
-  const { data: Documentsob = {} } = Digit.Hooks.pt.usePropertyMDMS(stateId, "PropertyTax", "Documents");
-  const docs = Documentsob?.PropertyTax?.Documents;
-  console.log("docs ",docs)
-  const proofOfAddress = Array.isArray(docs) && docs.filter((doc) => doc.code.includes("ADDRESSPROOF"));
-  if (proofOfAddress.length > 0) {
-    dropdownData = proofOfAddress[0]?.dropdownData;
-    dropdownData.forEach((data) => {
-      data.i18nKey = stringReplaceAll(data.code, ".", "_");
-    });
-  }
-  console.log("dropdownValue dropdownData ",dropdownData);
+
+  //Getting data from MDMS start ************
+  // let dropdownData = [];
+  // const { data: Documentsob = {} } = Digit.Hooks.pt.usePropertyMDMS(stateId, "PropertyTax", "Documents");
+  // const docs = Documentsob?.PropertyTax?.Documents;
+  // console.log("docs ",docs)
+  // const proofOfAddress = Array.isArray(docs) && docs.filter((doc) => doc.code.includes("ADDRESSPROOF"));
+  // if (proofOfAddress.length > 0) {
+  //   dropdownData = proofOfAddress[0]?.dropdownData;
+  //   dropdownData.forEach((data) => {
+  //     data.i18nKey = stringReplaceAll(data.code, ".", "_");
+  //   });
+  // }
+  // console.log("dropdownValue dropdownData ",dropdownData);
+  //Getting data from MDMS end ************
+
+  //for static use only when get data from API. then it will be delete
+const [dropdownData,setDropdownData] =useState([
+    {"i18nKey":"Measurement Book A","mbDate":"2024-02-02","mbNumber":"MB0001","amount":"234567"},
+    {"i18nKey":"Measurement Book B","mbDate":"2024-01-09","mbNumber":"MB0002","amount":"234545"},
+    {"i18nKey":"Measurement Book C","mbDate":"2024-01-16","mbNumber":"MB0003","amount":"234521"}
+  ])
+
 
   function setTypeOfDropdownValue(dropdownValue) {
     setDropdownValue(dropdownValue);
@@ -73,26 +85,7 @@ const SelectMeasurementBook = ({ t, config, onSelect, value, userType, formData,
   }, []);
 
   const goNext = () => {
-    // const getCurrentFinancialYear = () => {
-    //   var today = new Date();
-    //   var curMonth = today.getMonth();
-    //   var fiscalYr = "";
-    //   if (curMonth > 3) {
-    //     var nextYr1 = (today.getFullYear() + 1).toString();
-    //     fiscalYr = today.getFullYear().toString() + "-" + nextYr1;
-    //   } else {
-    //     var nextYr2 = today.getFullYear().toString();
-    //     fiscalYr = (today.getFullYear() - 1).toString() + "-" + nextYr2.slice(-2);
-    //   }
-    //   return fiscalYr;
-    // };
-
-    // sessionStorage.setItem("CurrentFinancialYear", FY);
-    // sessionStorage.setItem("CurrentFinancialYear", getCurrentFinancialYear());
-    // sessionStorage.setItem("CurrentFinancialYear", currentFinancialYear());
-    // onSelect(config.key, { ProjectName });
-    onSelect(config.key, { "ProjectName":dropdownValue });
-    
+    onSelect(config.key, { ...dropdownValue });
   };
   
   if (isLoading) {
@@ -108,7 +101,7 @@ const SelectMeasurementBook = ({ t, config, onSelect, value, userType, formData,
         // onSelect={handleSubmit}
         onSkip={onSkip}
         t={t}
-        isDisabled={!dropdownValue}
+        // isDisabled={!dropdownValue}
       >
         <CardLabel>{`${t("WMS_RUNNING_ACCOUNT_FINAL_BILL_MB_SELECT")}`}</CardLabel>
         {/* <TextInput

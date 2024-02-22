@@ -6,10 +6,22 @@ import { sortDropdownNames } from "../../utils/index";
 import { stringReplaceAll } from "../../utils";
 
 const WithheldDeductionsDetails = ({ t, config, onSelect, userType, formData }) => {
-  console.log("WithheldDeductionsDetails formData  ",{config,formData})
+  console.log("WithheldDeductionsDetails formData ", { config, formData });
   const [error, setError] = useState(null);
-  const [fields, setFeilds] = useState([{ taxcategory: "", remark: "", amount: "" }]);
-  
+  // const [fields, setFeilds] = useState([formData?.withheldDeductionsDetail[0]?.taxcategory?.i18nKey, formData.withheldDeductionsDetail[0]?.remark, formData.withheldDeductionsDetail[0]?.amount]||[{ taxcategory: "", remark: "", amount: "" }]);
+  const [fields, setFeilds] = useState(
+    formData?.withheldDeductionsDetail?.withheldDeductionsDetail
+      ? () => {
+          const s = [];
+          const ar = Object.keys(formData?.withheldDeductionsDetail?.withheldDeductionsDetail);
+          for (let i = 0; i < ar.length; i++) {
+            s.push(formData?.withheldDeductionsDetail?.withheldDeductionsDetail[i]);
+          }
+          return s;
+        }
+      : [{ taxcategory: "", remark: "", amount: "" }]
+  );
+
   function handleAdd() {
     const values = [...fields];
     values.push({ taxcategory: "", remark: "", amount: "" });
@@ -27,86 +39,80 @@ const WithheldDeductionsDetails = ({ t, config, onSelect, userType, formData }) 
   // const { pathname: url } = useLocation();
   // const editScreen = url.includes("/modify-application/");
 
-  
- 
-
   const goNext = () => {
-    let units = formData.TradeDetails.Units;
-    let unitsdata;
-    
-    if(!error){
-    setError(null);
-    unitsdata = { ...units, units: fields };
-    console.log("config and fields ", {config,fields})
-    onSelect(config.key, fields);
-    // onSelect(config.key, unitsdata);
-    // onSelect(config.key, {"fname":"with held deduction details ram","lname":"kumar"});
+    let withheldDeductionsDetail = formData?.withheldDeductionsDetail;
+    let un;
+
+    if (!error) {
+      setError(null);
+      un = { ...withheldDeductionsDetail, withheldDeductionsDetail: fields };
+      // console.log("config and fields ",  config, un );
+      onSelect(config.key, un);
+      // onSelect(config.key, unitsdata);
+      // onSelect(config.key, {"fname":"with held deduction details ram","lname":"kumar"});
     }
   };
 
-  useEffect(() => {
-    
-  },[])
+  //dropdown code start here
+  const { pathname: url } = useLocation();
+  const isMutation = url.includes("property-mutation");
 
-    //dropdown code start here
-    const { pathname: url } = useLocation();
-    const isMutation = url.includes("property-mutation");
-  
-    const isEditProperty = formData?.isEditProperty || false;
-    // const [dropdownValue, setDropdownValue] = useState([{ taxcategory: "" }])
-    // const [dropdownValue, setDropdownValue] = useState(
-    //   !isMutation ? formData?.address?.documents?.ProofOfAddress?.documentType || null : formData?.[config.key]?.documentType
-    // );
+  const isEditProperty = formData?.isEditProperty || false;
+  // const [dropdownValue, setDropdownValue] = useState([{ taxcategory: "" }])
+  // const [dropdownValue, setDropdownValue] = useState(
+  //   !isMutation ? formData?.address?.documents?.ProofOfAddress?.documentType || null : formData?.[config.key]?.documentType
+  // );
 
-    let dropdownData = [];
-    // const tenantId = Digit.ULBService.getCurrentTenantId();
-    const stateId = Digit.ULBService.getStateId();
+  const dropdownDataTaxCategory = [{ i18nKey: "10" }, { i18nKey: "20" }, { i18nKey: "30" }];
 
-    const { data: Documentsob = {} } = Digit.Hooks.pt.usePropertyMDMS(stateId, "PropertyTax", "Documents");
-    const docs = Documentsob?.PropertyTax?.Documents;
-    console.log("docs ",docs)
-    const proofOfAddress = Array.isArray(docs) && docs.filter((doc) => doc.code.includes("ADDRESSPROOF"));
-    if (proofOfAddress.length > 0) {
-      dropdownData = proofOfAddress[0]?.dropdownData;
-      dropdownData.forEach((data) => {
-        data.i18nKey = stringReplaceAll(data.code, ".", "_");
-      });
+  let dropdownData = [];
+  // const tenantId = Digit.ULBService.getCurrentTenantId();
+  const stateId = Digit.ULBService.getStateId();
+
+  const { data: Documentsob = {} } = Digit.Hooks.pt.usePropertyMDMS(stateId, "PropertyTax", "Documents");
+  const docs = Documentsob?.PropertyTax?.Documents;
+  const proofOfAddress = Array.isArray(docs) && docs.filter((doc) => doc.code.includes("ADDRESSPROOF"));
+  if (proofOfAddress.length > 0) {
+    dropdownData = proofOfAddress[0]?.dropdownData;
+    dropdownData.forEach((data) => {
+      data.i18nKey = stringReplaceAll(data.code, ".", "_");
+    });
+  }
+  console.log("dropdownValue dropdownData ", dropdownData);
+
+  function setTypeOfDropdownValue(i, e) {
+    // return false
+
+    console.log("dropdownValue i val ", { i, e, fields });
+    let units = [...fields];
+    console.log("dropdownValue i val two ", units);
+
+    if (e.target?.name === undefined) {
+      units[i].taxcategory = e;
+    } else {
+      const { name, value } = e.target;
+      units[i][name] = value;
     }
-    console.log("dropdownValue dropdownData ",dropdownData);
-  
-    function setTypeOfDropdownValue(i,e) {
-      // return false
-      
-      console.log("dropdownValue i val ",{i,e,fields})
-      let units = [...fields];
-      console.log("dropdownValue i val two ",units)
-
-      if(e.target?.name===undefined){
-        units[i].taxcategory = e;
-      }else{
-        const {name,value}=e.target;
-        units[i][name] = value;
-      }
-      console.log("dropdownValue i val three ",units)
-      setFeilds(units);
+    console.log("dropdownValue i val three ", units);
+    setFeilds(units);
+  }
+  console.log("dropdownValue data ", fields);
+  const handleSubmit = () => {
+    // let fileStoreId = uploadedFile;
+    // let fileDetails = file;
+    if (fileDetails) fileDetails.documentType = dropdownValue;
+    // if (fileDetails) fileDetails.fileStoreId = fileStoreId ? fileStoreId : null;
+    let address = !isMutation ? formData?.address : {};
+    if (address && address.documents) {
+      address.documents["ProofOfAddress"] = fileDetails;
+    } else {
+      address["documents"] = [];
+      address.documents["ProofOfAddress"] = fileDetails;
     }
-    console.log("dropdownValue data ",fields);
-    const handleSubmit = () => {
-      // let fileStoreId = uploadedFile;
-      // let fileDetails = file;
-      if (fileDetails) fileDetails.documentType = dropdownValue;
-      // if (fileDetails) fileDetails.fileStoreId = fileStoreId ? fileStoreId : null;
-      let address = !isMutation ? formData?.address : {};
-      if (address && address.documents) {
-        address.documents["ProofOfAddress"] = fileDetails;
-      } else {
-        address["documents"] = [];
-        address.documents["ProofOfAddress"] = fileDetails;
-      }
-      if (!isMutation) onSelect(config.key, address, "", index);
-      // else onSelect(config.key, { documentType: dropdownValue, fileStoreId }, "", index);
-    };
-    //dropdown code end here
+    if (!isMutation) onSelect(config.key, address, "", index);
+    // else onSelect(config.key, { documentType: dropdownValue, fileStoreId }, "", index);
+  };
+  //dropdown code end here
 
   const onSkip = () => onSelect();
   return (
@@ -123,7 +129,9 @@ const WithheldDeductionsDetails = ({ t, config, onSelect, userType, formData }) 
           forcedError={t(error)}
           // isDisabled={!fields[0].tradecategory || !fields[0].tradetype || !fields[0].tradesubtype}
         >
-          {fields.map((field, index) => {
+          {fields?.map((field, index) => {
+            console.log("field field field field ", field);
+            console.log("field field field field taxcategory ", field?.taxcategory);
             return (
               <div key={`${field}-${index}`}>
                 <div
@@ -160,43 +168,46 @@ const WithheldDeductionsDetails = ({ t, config, onSelect, userType, formData }) 
                     style={{ width: "100px", display: "inline" }}
                     onClick={(e) => handleRemove(index)}
                   />
-                          <Dropdown
-                            t={t}
-                            isMandatory={false}
-                            option={dropdownData}
-                            selected={fields.taxcategory}
-                            optionKey="i18nKey"
-                            name=""
-                            select={(e)=>setTypeOfDropdownValue(index,e)}
-                            placeholder={t(`PT_MUTATION_SELECT_DOC_LABEL`)}
-                          />
+                  <CardLabel>{`${t("WMS_RUNNING_ACCOUNT_FINAL_BILL_WITHHELD_TAX_CATEGORY")}`}</CardLabel>
+                  <Dropdown
+                    value={field?.taxcategory}
+                    t={t}
+                    selected={field?.taxcategory}
+                    isMandatory={false}
+                    // option={dropdownData}
+                    option={dropdownDataTaxCategory}
+                    optionKey="i18nKey"
+                    name=""
+                    select={(e) => setTypeOfDropdownValue(index, e)}
+                    placeholder={t(`PT_COMMONS_SELECT_PLACEHOLDER`)}
+                  />
 
-                          <CardLabel>{`${t("WMS_RUNNING_ACCOUNT_FINAL_BILL_WORK_NAME")}`}</CardLabel>
-                          <TextInput
-                            t={t}
-                            isMandatory={false}
-                            type={"text"}
-                            optionKey="i18nKey"
-                            name="remark"
-                            value={fields.remark}
-                            onChange={(e)=>setTypeOfDropdownValue(index,e)}
-                            // onChange={setSelectWorkName}
-                            // disable={isEdit}
-                            // {...(validation = { pattern: "^[a-zA-Z-0-9_@/#&+-.`' ]*$", isRequired: true, title: t("TL_INVALID_TRADE_NAME") })}
-                          />
-                          <CardLabel>{`${t("WMS_RUNNING_ACCOUNT_FINAL_BILL_WORK_NAME")}`}</CardLabel>
-                          <TextInput
-                            t={t}
-                            isMandatory={false}
-                            type={"text"}
-                            optionKey="i18nKey"
-                            name="amount"
-                            value={fields.amount}
-                            onChange={(e)=>setTypeOfDropdownValue(index,e)}
-                            // onChange={setSelectWorkName}
-                            // disable={isEdit}
-                            // {...(validation = { pattern: "^[a-zA-Z-0-9_@/#&+-.`' ]*$", isRequired: true, title: t("TL_INVALID_TRADE_NAME") })}
-                          />
+                  <CardLabel>{`${t("WMS_RUNNING_ACCOUNT_FINAL_BILL_WITHHELD_REMARK")}`}</CardLabel>
+                  <TextInput
+                    t={t}
+                    isMandatory={false}
+                    type={"text"}
+                    optionKey="i18nKey"
+                    name="remark"
+                    value={field?.remark}
+                    onChange={(e) => setTypeOfDropdownValue(index, e)}
+                    // onChange={setSelectWorkName}
+                    // disable={isEdit}
+                    // {...(validation = { pattern: "^[a-zA-Z-0-9_@/#&+-.`' ]*$", isRequired: true, title: t("TL_INVALID_TRADE_NAME") })}
+                  />
+                  <CardLabel>{`${t("WMS_RUNNING_ACCOUNT_FINAL_BILL_WITHHELD_AMOUNT")}`}</CardLabel>
+                  <TextInput
+                    t={t}
+                    isMandatory={false}
+                    type={"text"}
+                    optionKey="i18nKey"
+                    name="amount"
+                    value={field?.amount}
+                    onChange={(e) => setTypeOfDropdownValue(index, e)}
+                    // onChange={setSelectWorkName}
+                    // disable={isEdit}
+                    // {...(validation = { pattern: "^[a-zA-Z-0-9_@/#&+-.`' ]*$", isRequired: true, title: t("TL_INVALID_TRADE_NAME") })}
+                  />
                 </div>
               </div>
             );
@@ -204,7 +215,7 @@ const WithheldDeductionsDetails = ({ t, config, onSelect, userType, formData }) 
 
           <div style={{ justifyContent: "center", display: "flex", paddingBottom: "15px", color: "#FF8C00" }}>
             <button type="button" style={{ paddingTop: "10px" }} onClick={() => handleAdd()}>
-              {`${t("TL_ADD_MORE_TRADE_UNITS")}`}
+              {`${t("ADD_MORE_TRADE_UNITS")}`}
             </button>
           </div>
         </FormStep>

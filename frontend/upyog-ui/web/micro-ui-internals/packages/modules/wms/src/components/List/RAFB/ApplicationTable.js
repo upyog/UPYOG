@@ -14,8 +14,8 @@ const ApplicationTable = ({
   onNextPage,
   onPrevPage,
   onPageSizeChange,
-  showCheckbox
-
+  showCheckbox,
+  setSelectData
 }) => {
   return (
     <Table
@@ -34,7 +34,7 @@ const ApplicationTable = ({
       onPrevPage={onPrevPage}
       onPageSizeChange={onPageSizeChange}
       showCheckbox={showCheckbox}
-
+      setSelectData={setSelectData}
     />
   )
 }

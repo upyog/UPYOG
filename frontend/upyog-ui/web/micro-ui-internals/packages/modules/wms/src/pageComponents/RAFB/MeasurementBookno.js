@@ -7,7 +7,7 @@ const MeasurementBookno = ({ t, config, onSelect, value, userType, formData, dig
   console.log("MeasurementBookno config,formData ",{config,formData})
   let validation = {};
   const onSkip = () => onSelect();
-  const [WorkOrderNo, setWorkOrderNo] = useState(formData.ProjectInfo?.WorkOrderNo);
+  const [MbNo, setMbNo] = useState(formData.mbNotPaid?.mbNumber);
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();
   const isEdit = window.location.href.includes("/edit-application/") || window.location.href.includes("renew-trade");
@@ -24,24 +24,8 @@ const MeasurementBookno = ({ t, config, onSelect, value, userType, formData, dig
   }, []);
 
   const goNext = () => {
-    // const getCurrentFinancialYear = () => {
-    //   var today = new Date();
-    //   var curMonth = today.getMonth();
-    //   var fiscalYr = "";
-    //   if (curMonth > 3) {
-    //     var nextYr1 = (today.getFullYear() + 1).toString();
-    //     fiscalYr = today.getFullYear().toString() + "-" + nextYr1;
-    //   } else {
-    //     var nextYr2 = today.getFullYear().toString();
-    //     fiscalYr = (today.getFullYear() - 1).toString() + "-" + nextYr2.slice(-2);
-    //   }
-    //   return fiscalYr;
-    // };
-
-    // sessionStorage.setItem("CurrentFinancialYear", FY);
-    // sessionStorage.setItem("CurrentFinancialYear", getCurrentFinancialYear());
-    // sessionStorage.setItem("CurrentFinancialYear", currentFinancialYear());
-    onSelect(config.key, { WorkOrderNo });
+    onSelect();
+    // onSelect(config.key, { MbNo });
   };
   if (isLoading) {
     return <Loader></Loader>
@@ -55,7 +39,7 @@ const MeasurementBookno = ({ t, config, onSelect, value, userType, formData, dig
         onSelect={goNext}
         onSkip={onSkip}
         t={t}
-        isDisabled={!WorkOrderNo}
+        isDisabled={!MbNo}
       >
         <CardLabel>{`${t("WMS_RUNNING_ACCOUNT_FINAL_BILL_MB_NO")}`}</CardLabel>
         <TextInput
@@ -64,9 +48,10 @@ const MeasurementBookno = ({ t, config, onSelect, value, userType, formData, dig
           type={"text"}
           optionKey="i18nKey"
           name="WorkOrderNumber"
-          value={WorkOrderNo}
+          value={MbNo}
           onChange={setSelectWorkOrderNo}
-          disable={isEdit}
+          // disable={isEdit}
+          disable={true}
           {...(validation = { pattern: "^[a-zA-Z-0-9_@/#&+-.`' ]*$", isRequired: true, title: t("TL_INVALID_TRADE_NAME") })}
         />
       </FormStep>

@@ -2,19 +2,20 @@ import { CardLabel, CitizenInfoLabel, FormStep, Loader, Table, TextInput } from 
 import React, { useState, useEffect } from "react";
 import Timeline from "../../components/RAFB/Timeline";
 // import { currentFinancialYear } from "../utils";
+//delete this(static data) and Fetch data from Tender Entry module and filter   
+const TenderWorkDetail={"workName":"ABC","estimatedWorkCost":"1234543","tenderType":"Tender Type A","percentageType":"10","amount":"34567"}
 
 const TenderWorkDetails = ({ t, config, onSelect, value, userType, formData, digitTest="testqwert" }) => {
   console.log("Select Work Order No config,formData ",{config,formData})
   let validation = {};
   const onSkip = () => onSelect();
-  // const [tenderDetails, setTenderDetails] = useState((formData.TenderWorkDetail?.siyaram)||{"workName":"","estimatedWorkCost":"","tenderType":"","value":"amount","":""} ); 
-  // const [tenderDetails, setTenderDetails] = useState((formData.TenderWorkDetail?.workName && formData.TenderWorkDetail?.estimatedWorkCost && formData.TenderWorkDetail?.tenderType && formData.TenderWorkDetail?.value && formData.TenderWorkDetail?.amount)||{"workName":"","estimatedWorkCost":"","tenderType":"","value":"","amount":""} ); 
-  const [tenderDetails, setTenderDetails] = useState({"workName":formData.TenderWorkDetail?.workName,"estimatedWorkCost":formData.TenderWorkDetail?.estimatedWorkCost ,"tenderType": formData.TenderWorkDetail?.tenderType, "value": formData.TenderWorkDetail?.value ,"amount": formData.TenderWorkDetail?.amount}||{"workName":"","estimatedWorkCost":"","tenderType":"","value":"","amount":""} ); 
+  // const [tenderDetails, setTenderDetails] = useState({"workName":formData.TenderWorkDetail?.workName,"estimatedWorkCost":formData.TenderWorkDetail?.estimatedWorkCost ,"tenderType": formData.TenderWorkDetail?.tenderType, "percentageType": formData.TenderWorkDetail?.percentageType ,"amount": formData.TenderWorkDetail?.amount}||{"workName":"a","estimatedWorkCost":"","tenderType":"","value":"","amount":""} ); 
+  const [tenderDetails, setTenderDetails] = useState({"workName":TenderWorkDetail?.workName,"estimatedWorkCost":TenderWorkDetail?.estimatedWorkCost ,"tenderType": TenderWorkDetail?.tenderType, "percentageType": TenderWorkDetail?.percentageType ,"amount": TenderWorkDetail?.amount}||{"workName":"","estimatedWorkCost":"","tenderType":"","value":"","amount":""} ); 
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();
   const isEdit = window.location.href.includes("/edit-application/") || window.location.href.includes("renew-trade");
   const { isLoading, data: fydata = {} } = Digit.Hooks.tl.useTradeLicenseMDMS(stateId, "egf-master", "FinancialYear");
-console.log("tenderDetails ",{"workName":formData.TenderWorkDetail?.workName,"estimatedWorkCost":formData.TenderWorkDetail?.estimatedWorkCost ,"tenderType": formData.TenderWorkDetail?.tenderType, "value": formData.TenderWorkDetail?.value ,"amount": formData.TenderWorkDetail?.amount})
+console.log("tenderDetails ",{"workName":TenderWorkDetail?.workName,"estimatedWorkCost":TenderWorkDetail?.estimatedWorkCost ,"tenderType": TenderWorkDetail?.tenderType, "value": TenderWorkDetail?.value ,"amount": TenderWorkDetail?.amount})
   let mdmsFinancialYear = fydata["egf-master"] ? fydata["egf-master"].FinancialYear.filter(y => y.module === "TL") : [];
   let FY = mdmsFinancialYear && mdmsFinancialYear.length > 0 && mdmsFinancialYear.sort((x, y) => y.endingDate - x.endingDate)[0]?.code;
   function setSelectWorkName(e) {
@@ -57,7 +58,7 @@ console.log("tenderDetails ",{"workName":formData.TenderWorkDetail?.workName,"es
         onSelect={goNext}
         onSkip={onSkip}
         t={t}
-        // isDisabled={!WorkName}
+        // isDisabled={tenderDetails?.workName}
       >
         <CardLabel>{`${t("WMS_RUNNING_ACCOUNT_FINAL_BILL_WORK_NAME")}`}</CardLabel>
         {/* <div>Tender Work Details</div>  */}
@@ -69,7 +70,7 @@ console.log("tenderDetails ",{"workName":formData.TenderWorkDetail?.workName,"es
           name="workName"
           value={tenderDetails.workName}
           onChange={setSelectWorkName}
-          disable={isEdit}
+          disable={true}
           {...(validation = { pattern: "^[a-zA-Z-0-9_@/#&+-.`' ]*$", isRequired: true, title: t("TL_INVALID_TRADE_NAME") })}
         />
         <CardLabel>{`${t("Estimated Work Cost")}`}</CardLabel>
@@ -81,7 +82,7 @@ console.log("tenderDetails ",{"workName":formData.TenderWorkDetail?.workName,"es
           name="estimatedWorkCost"
           value={tenderDetails.estimatedWorkCost}
           onChange={setSelectWorkName}
-          disable={isEdit}
+          disable={true}
           {...(validation = { pattern: "^[a-zA-Z-0-9_@/#&+-.`' ]*$", isRequired: true, title: t("TL_INVALID_TRADE_NAME") })}
         />
         <CardLabel>{`${t("Tender Type")}`}</CardLabel>
@@ -93,19 +94,19 @@ console.log("tenderDetails ",{"workName":formData.TenderWorkDetail?.workName,"es
           name="tenderType"
           value={tenderDetails.tenderType}
           onChange={setSelectWorkName}
-          disable={isEdit}
+          disable={true}
           {...(validation = { pattern: "^[a-zA-Z-0-9_@/#&+-.`' ]*$", isRequired: true, title: t("TL_INVALID_TRADE_NAME") })}
         />
-        <CardLabel>{`${t("Value")}`}</CardLabel>
+        <CardLabel>{`${t("Percentage Type")}`}</CardLabel>
         <TextInput
           t={t}
           isMandatory={false}
           type={"text"}
           // optionKey="i18nKey"
-          name="value"
-          value={tenderDetails.value}
+          name="percentageType"
+          value={tenderDetails.percentageType}
           onChange={setSelectWorkName}
-          disable={isEdit}
+          disable={true}
           {...(validation = { pattern: "^[a-zA-Z-0-9_@/#&+-.`' ]*$", isRequired: true, title: t("TL_INVALID_TRADE_NAME") })}
         />
         <CardLabel>{`${t("Amount")}`}</CardLabel>
@@ -117,7 +118,7 @@ console.log("tenderDetails ",{"workName":formData.TenderWorkDetail?.workName,"es
           name="amount"
           value={tenderDetails.amount}
           onChange={setSelectWorkName}
-          disable={isEdit}
+          disable={true}
           {...(validation = { pattern: "^[a-zA-Z-0-9_@/#&+-.`' ]*$", isRequired: true, title: t("TL_INVALID_TRADE_NAME") })}
         />
       </FormStep>

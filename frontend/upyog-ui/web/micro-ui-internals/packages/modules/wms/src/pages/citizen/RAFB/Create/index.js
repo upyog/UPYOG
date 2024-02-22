@@ -115,7 +115,7 @@ const WmsRAFBCreate=()=>{
   };
   function handleSelect(key, data, skipStep, index, isAddMultiple = false) {
     console.log("onSelect TLInfo key, data, skipStep, index, isAddMultiple = false",{key, data, skipStep, index, isAddMultiple})
-  alert("handleSelect")
+      alert("handleSelect")
       if(key === "formData")
       setParams({...data})
       else{
