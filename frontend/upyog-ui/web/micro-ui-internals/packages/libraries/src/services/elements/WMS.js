@@ -290,7 +290,7 @@ PMAApplications:{
       method: "POST",
       auth: true,
       userService: true,
-      params: { pma_id:pmaId},
+      params: { pmaeme_id:pmaId},
     }),
     count: () =>
     Request({

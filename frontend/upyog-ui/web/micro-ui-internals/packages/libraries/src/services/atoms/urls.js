@@ -237,6 +237,13 @@ wms:{
     search:"/wms/wms-services/v1/pfmilestone/_search",      
     count:"/wms/wms-services/v1/pfmilestone/_view",
   },
+  PMAApplications: {
+    create: "/wms/wms-services/v1/pma/_create",
+    update:"/wms/wms-services/v1/pma/_update",
+    get:"/wms/wms-services/v1/pma/_view",
+    search:"/wms/wms-services/v1/pma/_search",      
+    count:"/wms/wms-services/v1/pma/_view",
+  },
   // MBApplications:{
   //   create:"https://658bef9a859b3491d3f51ac4.mockapi.io/MBApplications",
   //   update:"https://658bef9a859b3491d3f51ac4.mockapi.io/MBApplications",
@@ -259,14 +266,6 @@ wms:{
     //   search: "https://64f5834d2b07270f705d4f91.mockapi.io/PMAApplications",
     //   count: "https://64f5834d2b07270f705d4f91.mockapi.io/PMAApplications",
     // },
-
-  PMAApplications: {
-    create: "/wms/wms-services/v1/pma/_create",
-    update:"/wms/wms-services/v1/pma/_update",
-    get:"/wms/wms-services/v1/pma/_view",
-    search:"/wms/wms-services/v1/pma/_search",      
-    count:"/wms/wms-services/v1/pma/_view",
-  },
 
     DRApplications: {
       create: "https://64f5834d2b07270f705d4f91.mockapi.io/DRApplications",
