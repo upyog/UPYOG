@@ -162,6 +162,7 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
         // Additonal details
         payload.additionalDetails = {};
         if (formData?.data?.holdingNumber) payload.additionalDetails.holdingNo = formData?.data?.holdingNumber;
+        if (formData?.data?.boundaryWallLength) payload.additionalDetails.boundaryWallLength = formData?.data?.boundaryWallLength;
         if (formData?.data?.registrationDetails) payload.additionalDetails.registrationDetails = formData?.data?.registrationDetails;
         if (formData?.data?.applicationType) payload.additionalDetails.applicationType = formData?.data?.applicationType;
         if (formData?.data?.serviceType) payload.additionalDetails.serviceType = formData?.data?.serviceType;
