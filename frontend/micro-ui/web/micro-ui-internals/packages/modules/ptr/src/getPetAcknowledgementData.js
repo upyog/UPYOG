@@ -18,6 +18,8 @@
       { title: t("PTR_VACCINATION_NUMBER"), value: application?.petDetails.vaccinationNumber },
       {title: t("PTR_DOCTOR_NAME"), value: application?.petDetails.doctorName },
       {title: t("PTR_CLINIC_NAME"), value: application?.petDetails.clinicName },
+      {title: t("PTR_PET_AGE"), value: application?.petDetails.petAge },
+      {title: t("PTR_PET_SEX"), value: application?.petDetails.petGender },
     
 
 
