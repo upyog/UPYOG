@@ -171,7 +171,7 @@ public class IndexerService {
 	 */
 	public void indexWithESId(Index index, String finalJson) throws Exception {
 		StringBuilder urlForNonBulk = new StringBuilder();
-		urlForNonBulk.append(esHostUrl).append(index.getName()).append("/").append(index.getType()).append("/")
+		urlForNonBulk.append(esHostUrl).append(index.getName()).append("/")
 				.append("_index");
 		bulkIndexer.indexJsonOntoES(urlForNonBulk.toString(), finalJson, index);
 	}
