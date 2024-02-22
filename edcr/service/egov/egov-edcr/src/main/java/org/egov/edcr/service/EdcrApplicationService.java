@@ -85,64 +85,45 @@ public class EdcrApplicationService {
         return entityManager.unwrap(Session.class);
     }
 
-//    @Transactional
-//    public EdcrApplication create(final EdcrApplication edcrApplication) {
-//
-//        // edcrApplication.setApplicationDate(new Date("01/01/2020"));
-//        edcrApplication.setApplicationDate(new Date());
-//        edcrApplication.setApplicationNumber(applicationNumberGenerator.generate());
-//        edcrApplication.setSavedDxfFile(saveDXF(edcrApplication));
-//        edcrApplication.setStatus(ABORTED);
-//
-//        edcrApplicationRepository.save(edcrApplication);
-//
-//        edcrIndexService.updateIndexes(edcrApplication, NEW_SCRTNY);
-//
-//        callDcrProcess(edcrApplication, NEW_SCRTNY);
-//        edcrIndexService.updateIndexes(edcrApplication, NEW_SCRTNY);
-//
-//        return edcrApplication;
-//    }
-//
-//    @Transactional
-//    public EdcrApplication update(final EdcrApplication edcrApplication) {
-//        edcrApplication.setSavedDxfFile(saveDXF(edcrApplication));
-//        edcrApplication.setStatus(ABORTED);
-//        Plan unsavedPlanDetail = edcrApplication.getEdcrApplicationDetails().get(0).getPlan();
-//        EdcrApplication applicationRes = edcrApplicationRepository.save(edcrApplication);
-//        edcrApplication.getEdcrApplicationDetails().get(0).setPlan(unsavedPlanDetail);
-//
-//        edcrIndexService.updateIndexes(edcrApplication, RESUBMIT_SCRTNY);
-//
-//        callDcrProcess(edcrApplication, RESUBMIT_SCRTNY);
-//
-//        return applicationRes;
-//    }
+    @Transactional
+    public EdcrApplication create(final EdcrApplication edcrApplication) {
 
-    private Plan callDcrProcess(EdcrApplication edcrApplication, String applicationType, RequestInfo requestInfo) throws Exception {
+        // edcrApplication.setApplicationDate(new Date("01/01/2020"));
+        edcrApplication.setApplicationDate(new Date());
+        edcrApplication.setApplicationNumber(applicationNumberGenerator.generate());
+        edcrApplication.setSavedDxfFile(saveDXF(edcrApplication));
+        edcrApplication.setStatus(ABORTED);
+
+        edcrApplicationRepository.save(edcrApplication);
+
+        edcrIndexService.updateIndexes(edcrApplication, NEW_SCRTNY);
+
+        callDcrProcess(edcrApplication, NEW_SCRTNY);
+        edcrIndexService.updateIndexes(edcrApplication, NEW_SCRTNY);
+
+        return edcrApplication;
+    }
+
+    @Transactional
+    public EdcrApplication update(final EdcrApplication edcrApplication) {
+        edcrApplication.setSavedDxfFile(saveDXF(edcrApplication));
+        edcrApplication.setStatus(ABORTED);
+        Plan unsavedPlanDetail = edcrApplication.getEdcrApplicationDetails().get(0).getPlan();
+        EdcrApplication applicationRes = edcrApplicationRepository.save(edcrApplication);
+        edcrApplication.getEdcrApplicationDetails().get(0).setPlan(unsavedPlanDetail);
+
+        edcrIndexService.updateIndexes(edcrApplication, RESUBMIT_SCRTNY);
+
+        callDcrProcess(edcrApplication, RESUBMIT_SCRTNY);
+
+        return applicationRes;
+    }
+
+    private Plan callDcrProcess(EdcrApplication edcrApplication, String applicationType){
         Plan planDetail = new Plan();
         planDetail = planService.process(edcrApplication, applicationType);
-        BigDecimal area=planDetail.getPlanInformation().getPlotArea();
-        LOG.info("Area is "+ area);
-
-        String occupancy=planDetail.getPlanInformation().getOccupancy();
-        LOG.info("Occupancy is "+ occupancy);
-
-        if(occupancy.equalsIgnoreCase("RESIDENTIAL"))
-        {
-        	
-        LOG.info("Roles are"+ requestInfo.getUserInfo().getPrimaryrole());
-
-        List<String> roles=requestInfo.getUserInfo().getPrimaryrole().stream().map(e-> e.getCode()).collect(Collectors.toList());
-        BigDecimal archArea=new BigDecimal(300);
-        if(roles.contains("BPA_ARCHITECT") & area.compareTo(archArea)>0)
-            throw new Exception( "Scrunity is not possible for plot size" + area + "and stakeholder type -Architect.");
-        }
-        edcrApplication.setSavedDxfFile(saveDXF(edcrApplication));
-        edcrApplicationRepository.save(edcrApplication);
         updateFile(planDetail, edcrApplication);
         edcrApplicationDetailService.saveAll(edcrApplication.getEdcrApplicationDetails());
-
         return planDetail;
     }
 
@@ -292,15 +273,16 @@ public class EdcrApplicationService {
     }
 
     @Transactional
-    public EdcrApplication createRestEdcr(final EdcrApplication edcrApplication,RequestInfo requestInfo) throws Exception {
+    public EdcrApplication createRestEdcr(final EdcrApplication edcrApplication){
         String comparisonDcrNo = edcrApplication.getEdcrApplicationDetails().get(0).getComparisonDcrNumber();
         if (edcrApplication.getApplicationDate() == null)
             edcrApplication.setApplicationDate(new Date());
         edcrApplication.setApplicationNumber(applicationNumberGenerator.generate());
+        edcrApplication.setSavedDxfFile(saveDXF(edcrApplication));
         edcrApplication.setStatus(ABORTED);
-        LOG.info("2 edcrApplication is " + edcrApplication.toString() );
+        edcrApplicationRepository.save(edcrApplication);
         edcrApplication.getEdcrApplicationDetails().get(0).setComparisonDcrNumber(comparisonDcrNo);
-        callDcrProcess(edcrApplication, NEW_SCRTNY,requestInfo);
+        callDcrProcess(edcrApplication, NEW_SCRTNY);
         edcrIndexService.updateEdcrRestIndexes(edcrApplication, NEW_SCRTNY);
         return edcrApplication;
     }
