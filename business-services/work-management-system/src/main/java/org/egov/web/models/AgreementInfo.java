@@ -25,7 +25,8 @@ public class AgreementInfo {
 	
 	  @JsonProperty("agreement_no") 
 	  private String agreementNo=null;
-	 
+	  @JsonProperty("agr_id") 
+	  private String agrId=null;
 	@JsonProperty("agreement_name")
 	private String agreementName=null;
 	@JsonProperty("agreement_date")

@@ -37,9 +37,9 @@ const GetSlaCell = (value) => {
 };
   const getData = () => {
     return data?.PMAApplications?.map((original) => ({
-      [t("WMS_PMA_ID_LABEL")]: GetCell(original?.WmsPmaId?.phm_id || ""),
-      [t("WMS_PMA_DESC_OF_ITEM_LABEL")]: GetCell(original?.WmsPmaDescriptionOfItem?.description_of_item || ""),
-      [t("WMS_PMA_PERCENT_NAME_LABEL")]: GetCell(original?.WmsPPercent?.percent_weightage || ""),
+      [t("WMS_PMA_ID_LABEL")]: GetCell(original?.WmsPmaId?.pma_id || ""),
+      [t("WMS_PMA_DESC_OF_ITEM_LABEL")]: GetCell(original?.WmsPmaDescriptionOfItem?.description_of_the_item || ""),
+      [t("WMS_PMA_PERCENT_NAME_LABEL")]: GetCell(original?.WmsPmaPercent?.percentage_weightage || ""),
       [t("WMS_PMA_START_DATE_LABEL")]: GetCell(original?.WmsPmaStartDate?.start_date || ""),
       [t("WMS_PMA_END_DATE_LABEL")]: GetCell(original?.WmsPmaEndDate?.end_date || ""),
       

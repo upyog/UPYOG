@@ -80,7 +80,10 @@ public class WMSPhysicalFinancialMilestoneApplicationEnrichment {
 			existingApplication.get(0).setMilestoneName(application.getMilestoneName());
 			//existingApplication.get(0).setSrNo(application.getSrNo());
 			//existingApplication.get(0).setActivityDescription(application.getActivityDescription());
-			existingApplication.get(0).setPercentageWeightage(application.getPercentageWeightage());
+			existingApplication.get(0).getPhysicalMileStoneActivity().setPercentageWeightage(application.getPhysicalMileStoneActivity().getPercentageWeightage());
+			existingApplication.get(0).getPhysicalMileStoneActivity().setDescriptionOfTheItem(application.getPhysicalMileStoneActivity().getDescriptionOfTheItem());
+			existingApplication.get(0).getPhysicalMileStoneActivity().setStartDate(application.getPhysicalMileStoneActivity().getStartDate());
+			existingApplication.get(0).getPhysicalMileStoneActivity().setEndDate(application.getPhysicalMileStoneActivity().getEndDate());
 			/*
 			 * existingApplication.get(0).setPlannedStartDate(application.
 			 * getPlannedStartDate());

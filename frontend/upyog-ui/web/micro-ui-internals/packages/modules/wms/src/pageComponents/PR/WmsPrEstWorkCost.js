@@ -7,7 +7,7 @@ const WmsPrEstWorkCost = ({ t, config, onSelect, formData = {}, userType, regist
     {
       label: "WMS_PR_ESTWORKCOST_NAME_LABEL",
       type: "number",
-      name: "percent_weightage",
+      name: "estimated_work_cost",
       validation: {
         isRequired: true,
         pattern: Digit.Utils.getPattern('Name'),

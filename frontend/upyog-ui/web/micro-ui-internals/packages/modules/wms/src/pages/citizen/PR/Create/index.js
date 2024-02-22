@@ -13,19 +13,24 @@ const WmsPrCreate = () => {
   const [showToast, setShowToast] = useState(null);
   const onSubmit = (data) => {
     setIsLoading(true);
-    let PrApplications = 
+    let WMSProjectRegisterApplications = 
       {
-        PrApplication: [{
-          project_name: data?.WmsPrPrjName?.project_name,  
+        WMSProjectRegisterApplication: [{
+          scheme_name: data?.WmsPrSchName?.scheme_name, 
+          project_name: data?.WmsPrPrjName?.project_name, 
+          work_type: data?.WmsPrTypeOfWork?.work_type,  
           work_name: data?.WmsPrWorkName?.work_name,  
-          milestone_name: data?.WmsPrMLName?.milestone_name,
-          percent_weightage: data?.WmsPrPercent?.percent_weightage,
+          estimated_number: data?.WmsPrEstNumber?.estimated_number,  
+          estimated_work_cost: data?.WmsPrEstWorkCost?.estimated_work_cost,  
+          sanctioned_tender_amount: data?.WmsPrSTA?.sanctioned_tender_amount,
+          status_name: data?.WmsPrStatus?.status_name,
+          bill_received_till_date: data?.WmsPrBillDate?.bill_received_till_date,
           tenantId:tenantId
         }],
       };
     
       /* use customiseCreateFormData hook to make some chnages to the Employee object [0].PreduleOfRateApplication*/
-     Digit.WMSService.PHMApplications.create(PrApplications.PrApplication[0], tenantId).then((result,err)=>{
+     Digit.WMSService.PRApplications.create(WMSProjectRegisterApplications, tenantId).then((result,err)=>{
       setIsLoading(false);
        history.push("/upyog-ui/citizen/wms/pr-home");
      })

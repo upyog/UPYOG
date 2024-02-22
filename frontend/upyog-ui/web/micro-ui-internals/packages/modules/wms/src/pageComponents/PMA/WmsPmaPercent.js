@@ -7,7 +7,7 @@ const WmsPmaPercent = ({ t, config, onSelect, formData = {}, userType, register,
     {
       label: "WMS_PMA_PERCENT_NAME_LABEL",
       type: "number",
-      name: "percent_weightage",
+      name: "percentage_weightage",
       validation: {
         isRequired: true,
         pattern: Digit.Utils.getPattern('Name'),

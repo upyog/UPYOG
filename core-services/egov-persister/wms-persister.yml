@@ -485,7 +485,7 @@ serviceMaps:
       isTransaction: true
       queryMaps:
 
-        - query: INSERT INTO physical_financial_milestone (milestone_id,project_name,work_name,milestone_name,percentage_weightage,createdby,lastmodifiedby,createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?,?,?,?,?);
+        - query: INSERT INTO physical_financial_milestone (milestone_id,project_name,work_name,milestone_name,percentage_weightage,description_of_the_item,start_date,end_date,createdby,lastmodifiedby,createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?,?,?,?,?,?,?,?);
           basePath: WMSPhysicalFinancialMilestoneApplication.*
           jsonMaps:
             - jsonPath: $.WMSPhysicalFinancialMilestoneApplication.*.milestone_id
@@ -496,7 +496,13 @@ serviceMaps:
             
             - jsonPath: $.WMSPhysicalFinancialMilestoneApplication.*.milestone_name
 
-            - jsonPath: $.WMSPhysicalFinancialMilestoneApplication.*.percentage_weightage
+            - jsonPath: $.WMSPhysicalFinancialMilestoneApplication.*.physicalMileStoneActivity.percentage_weightage
+            
+            - jsonPath: $.WMSPhysicalFinancialMilestoneApplication.*.physicalMileStoneActivity.description_of_the_item
+            
+            - jsonPath: $.WMSPhysicalFinancialMilestoneApplication.*.physicalMileStoneActivity.start_date
+            
+            - jsonPath: $.WMSPhysicalFinancialMilestoneApplication.*.physicalMileStoneActivity.end_date
             
             - jsonPath: $.WMSPhysicalFinancialMilestoneApplication.*.auditDetails.createdBy
 
@@ -613,6 +619,140 @@ serviceMaps:
             - jsonPath: $.WMSWorkAwardApprovalApplication.*.work_award_id
             
             
+    - version: 1.0
+      description: Persists Project Register details in tables
+      fromTopic: save-pr-application
+      isTransaction: true
+      queryMaps:
+
+        - query: INSERT INTO project_register (register_id,scheme_name,project_name,work_name,work_type,estimated_number,estimated_work_cost,sanctioned_tender_amount,status_name,bill_received_till_date,createdby,lastmodifiedby,createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?,?);
+          basePath: WMSProjectRegisterApplication.*
+          jsonMaps:
+            - jsonPath: $.WMSProjectRegisterApplication.*.register_id
+            
+            - jsonPath: $.WMSProjectRegisterApplication.*.scheme_name
+
+            - jsonPath: $.WMSProjectRegisterApplication.*.project_name
+
+            - jsonPath: $.WMSProjectRegisterApplication.*.work_name
+            
+            - jsonPath: $.WMSProjectRegisterApplication.*.work_type
+            
+            - jsonPath: $.WMSProjectRegisterApplication.*.estimated_number
+
+            - jsonPath: $.WMSProjectRegisterApplication.*.estimated_work_cost
+
+            - jsonPath: $.WMSProjectRegisterApplication.*.sanctioned_tender_amount
+
+            - jsonPath: $.WMSProjectRegisterApplication.*.status_name
+
+            - jsonPath: $.WMSProjectRegisterApplication.*.bill_received_till_date
+            
+            - jsonPath: $.WMSProjectRegisterApplication.*.auditDetails.createdBy
+
+            - jsonPath: $.WMSProjectRegisterApplication.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.WMSProjectRegisterApplication.*.auditDetails.createdTime
+            
+            - jsonPath: $.WMSProjectRegisterApplication.*.auditDetails.lastModifiedTime
+            
+            
+            
+    - version: 1.0
+      description: Update Project Register applications in table
+      fromTopic: update-pr-application
+      isTransaction: true
+      queryMaps:
+      
+        - query: UPDATE project_register SET scheme_name = ?,project_name = ?,work_name =?,work_type=?,estimated_number=?,estimated_work_cost=?,sanctioned_tender_amount = ?, status_name = ?, bill_received_till_date = ? WHERE register_id=?;
+          basePath: WMSProjectRegisterApplication.*
+          jsonMaps:
+            - jsonPath: $.WMSProjectRegisterApplication.*.scheme_name
+            
+            - jsonPath: $.WMSProjectRegisterApplication.*.project_name
+
+            - jsonPath: $.WMSProjectRegisterApplication.*.work_name
+            
+            - jsonPath: $.WMSProjectRegisterApplication.*.work_type
+            
+            - jsonPath: $.WMSProjectRegisterApplication.*.estimated_number
+
+            - jsonPath: $.WMSProjectRegisterApplication.*.estimated_work_cost
+
+            - jsonPath: $.WMSProjectRegisterApplication.*.sanctioned_tender_amount
+
+            - jsonPath: $.WMSProjectRegisterApplication.*.status_name
+
+            - jsonPath: $.WMSProjectRegisterApplication.*.bill_received_till_date
+
+            
+            - jsonPath: $.WMSProjectRegisterApplication.*.register_id
+            
+            
+            
+    - version: 1.0
+      description: Persists Work Status Report details in tables
+      fromTopic: save-wsr-application
+      isTransaction: true
+      queryMaps:
+
+        - query: INSERT INTO work_status_report (wsr_id,project_name,work_name,activity_name,role_name,employee_name,start_date,end_date,remarks_content,createdby,lastmodifiedby,createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?);
+          basePath: WMSWorkStatusReportApplication.*
+          jsonMaps:
+            - jsonPath: $.WMSWorkStatusReportApplication.*.wsr_id
+            
+            - jsonPath: $.WMSWorkStatusReportApplication.*.project_name
+
+            - jsonPath: $.WMSWorkStatusReportApplication.*.work_name
+
+            - jsonPath: $.WMSWorkStatusReportApplication.*.activity_name
+            
+            - jsonPath: $.WMSWorkStatusReportApplication.*.role_name
+            
+            - jsonPath: $.WMSWorkStatusReportApplication.*.employee_name
+
+            - jsonPath: $.WMSWorkStatusReportApplication.*.start_date
+
+            - jsonPath: $.WMSWorkStatusReportApplication.*.end_date
+
+            - jsonPath: $.WMSWorkStatusReportApplication.*.remarks_content
+
+            - jsonPath: $.WMSWorkStatusReportApplication.*.auditDetails.createdBy
+
+            - jsonPath: $.WMSWorkStatusReportApplication.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.WMSWorkStatusReportApplication.*.auditDetails.createdTime
+            
+            - jsonPath: $.WMSWorkStatusReportApplication.*.auditDetails.lastModifiedTime
+            
+            
+            
+    - version: 1.0
+      description: Update Project Register applications in table
+      fromTopic: update-wsr-application
+      isTransaction: true
+      queryMaps:
+      
+        - query: UPDATE work_status_report SET project_name = ?,work_name = ?,activity_name =?,role_name=?,employee_name=?,start_date=?,end_date = ?, remarks_content = ? WHERE wsr_id=?;
+          basePath: WMSWorkStatusReportApplication.*
+          jsonMaps:
+            - jsonPath: $.WMSWorkStatusReportApplication.*.project_name
+            
+            - jsonPath: $.WMSWorkStatusReportApplication.*.work_name
+
+            - jsonPath: $.WMSWorkStatusReportApplication.*.activity_name
+            
+            - jsonPath: $.WMSWorkStatusReportApplication.*.role_name
+            
+            - jsonPath: $.WMSWorkStatusReportApplication.*.employee_name
+
+            - jsonPath: $.WMSWorkStatusReportApplication.*.start_date
+
+            - jsonPath: $.WMSWorkStatusReportApplication.*.end_date
+
+            - jsonPath: $.WMSWorkStatusReportApplication.*.remarks_content
+
+            - jsonPath: $.WMSWorkStatusReportApplication.*.wsr_id 
                
     - version: 1.0
       description: Persists work estimation details in tables
@@ -804,12 +944,10 @@ serviceMaps:
       isTransaction: true
       queryMaps:
 
-        - query: INSERT INTO contract_agreement (agreement_no,department_name_party1,deposit_type,deposit_amount,account_no,particulars,valid_from_date,valid_till_date,bank_branch_ifsc_code,payment_mode,designation,employee_name,witness_name_p1,address_p1,uid_p1,witness_name_p2,address_p2,uid_p2,vendor_type,vendor_name,represented_by,primary_party,sr_no,terms_and_conditions,document_description,upload_document,createdby,lastmodifiedby,createdtime, lastmodifiedtime) VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO contract_agreement (agreement_no,deposit_type,deposit_amount,account_no,particulars,valid_from_date,valid_till_date,bank_branch_ifsc_code,payment_mode,witness_name_p2,address_p2,uid_p2,vendor_type,vendor_name,represented_by,primary_party,sr_no,terms_and_conditions,document_description,upload_document,createdby,lastmodifiedby,createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: WMSContractAgreementApplication.*
           jsonMaps:
-            - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.agreement_no
-
-            - jsonPath: $.WMSContractAgreementApplication.*.party1Details.department_name_party1
+            - jsonPath: $.WMSContractAgreementApplication.*.agreement_no
 
             - jsonPath: $.WMSContractAgreementApplication.*.sDPGBGDetails.deposit_type
             
@@ -826,16 +964,6 @@ serviceMaps:
             - jsonPath: $.WMSContractAgreementApplication.*.sDPGBGDetails.bank_branch_ifsc_code
             
             - jsonPath: $.WMSContractAgreementApplication.*.sDPGBGDetails.payment_mode
-            
-            - jsonPath: $.WMSContractAgreementApplication.*.party1Details.designation
-            
-            - jsonPath: $.WMSContractAgreementApplication.*.party1Details.employee_name
-            
-            - jsonPath: $.WMSContractAgreementApplication.*.party1Details.witness_name_p1
-            
-            - jsonPath: $.WMSContractAgreementApplication.*.party1Details.address_p1
-            
-            - jsonPath: $.WMSContractAgreementApplication.*.party1Details.uid_p1
             
             - jsonPath: $.WMSContractAgreementApplication.*.party2Witness.witness_name_p2
             
@@ -868,39 +996,60 @@ serviceMaps:
             - jsonPath: $.WMSContractAgreementApplication.*.auditDetails.lastModifiedTime
             
             
-        - query: INSERT INTO agreement (agreement_no,agreement_name,agreement_date,department_name_ai,loa_no,resolution_no,resolution_date,tender_no,tender_date,agreement_type,defect_liability_period,contract_period,agreement_amount,payment_type) VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
-          basePath: WMSContractAgreementApplication.*
+        - query: INSERT INTO agreement (agr_id,agreement_no,agreement_name,agreement_date,department_name_ai,loa_no,resolution_no,resolution_date,tender_no,tender_date,agreement_type,defect_liability_period,contract_period,agreement_amount,payment_type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+          basePath: WMSContractAgreementApplication.*.agreementInfo.*
           jsonMaps:
-            - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.agreement_no
+            - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.*.agr_id
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.*.agreement_no
 
-            - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.agreement_name
+            - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.*.agreement_name
 
-            - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.agreement_date
+            - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.*.agreement_date
 
-            - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.department_name_ai
+            - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.*.department_name_ai
             
-            - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.loa_no
+            - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.*.loa_no
             
-            - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.resolution_no
+            - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.*.resolution_no
             
-            - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.resolution_date
+            - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.*.resolution_date
             
-            - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.tender_no
+            - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.*.tender_no
             
-            - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.tender_date
+            - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.*.tender_date
             
-            - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.agreement_type
+            - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.*.agreement_type
             
-            - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.defect_liability_period
+            - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.*.defect_liability_period
             
-            - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.contract_period
+            - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.*.contract_period
             
-            - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.agreement_amount
+            - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.*.agreement_amount
             
-            - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.payment_type
+            - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.*.payment_type
             
             
             
+            
+        - query: INSERT INTO party1details (party1_id,agreement_no,department_name_party1,designation,employee_name,witness_name_p1,address_p1,uid_p1) VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+          basePath: WMSContractAgreementApplication.*.party1Details.*
+          jsonMaps:
+            - jsonPath: $.WMSContractAgreementApplication.*.party1Details.*.party1_id
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.party1Details.*.agreement_no
+
+            - jsonPath: $.WMSContractAgreementApplication.*.party1Details.*.department_name_party1
+
+            - jsonPath: $.WMSContractAgreementApplication.*.party1Details.*.designation
+
+            - jsonPath: $.WMSContractAgreementApplication.*.party1Details.*.employee_name
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.party1Details.*.witness_name_p1
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.party1Details.*.address_p1
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.party1Details.*.uid_p1
             
             
             
@@ -914,12 +1063,10 @@ serviceMaps:
       isTransaction: true
       queryMaps:
       
-        - query: UPDATE contract_agreement SET agreement_info = ?, department_name_party1 = ?, deposit_type = ?, deposit_amount = ?,account_no = ?, particulars = ?, valid_from_date = ?, valid_till_date = ?, bank_branch_ifsc_code = ?, payment_mode = ?, designation = ?, employee_name = ?, witness_name_p1 = ?, address_p1 = ?, uid_p1 = ?, witness_name_p2 = ?, address_p2 = ?, uid_p2 = ?, vendor_type = ?, vendor_name = ?, represented_by = ?, primary_party = ?, sr_no = ?, terms_and_conditions = ?, document_description = ?, upload_document = ? WHERE agreement_no = ?;
+        - query: UPDATE contract_agreement SET  deposit_type = ?, deposit_amount = ?,account_no = ?, particulars = ?, valid_from_date = ?, valid_till_date = ?, bank_branch_ifsc_code = ?, payment_mode = ?, witness_name_p2 = ?, address_p2 = ?, uid_p2 = ?, vendor_type = ?, vendor_name = ?, represented_by = ?, primary_party = ?, sr_no = ?, terms_and_conditions = ?, document_description = ?, upload_document = ? WHERE agreement_no = ?;
           basePath: WMSContractAgreementApplication.*
           jsonMaps:
-            - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo
-
-            - jsonPath: $.WMSContractAgreementApplication.*.party1Details.department_name_party1
+            
 
             - jsonPath: $.WMSContractAgreementApplication.*.sDPGBGDetails.deposit_type
             
@@ -936,16 +1083,6 @@ serviceMaps:
             - jsonPath: $.WMSContractAgreementApplication.*.sDPGBGDetails.bank_branch_ifsc_code
             
             - jsonPath: $.WMSContractAgreementApplication.*.sDPGBGDetails.payment_mode
-            
-            - jsonPath: $.WMSContractAgreementApplication.*.party1Details.designation
-            
-            - jsonPath: $.WMSContractAgreementApplication.*.party1Details.employee_name
-            
-            - jsonPath: $.WMSContractAgreementApplication.*.party1Details.witness_name_p1
-            
-            - jsonPath: $.WMSContractAgreementApplication.*.party1Details.address_p1
-            
-            - jsonPath: $.WMSContractAgreementApplication.*.party1Details.uid_p1
             
             - jsonPath: $.WMSContractAgreementApplication.*.party2Witness.witness_name_p2
             
@@ -970,6 +1107,62 @@ serviceMaps:
             - jsonPath: $.WMSContractAgreementApplication.*.agreementDocuments.upload_document
             
             - jsonPath: $.WMSContractAgreementApplication.*.agreement_no
+            
+            
+            
+      
+      
+        - query: UPDATE agreement SET agreement_name = ?, agreement_date = ?, department_name_ai = ?, loa_no = ?,resolution_no = ?,resolution_date = ?,tender_no = ?,tender_date = ?,agreement_type = ?,defect_liability_period = ?,contract_period = ?,agreement_amount = ?,  payment_type = ? WHERE agr_id = ?;
+          basePath: WMSContractAgreementApplication.*.agreementInfo.*
+          jsonMaps:
+          
+          
+          - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.*.agreement_name
+          
+          - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.*.agreement_date
+
+          - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.*.department_name_ai
+
+          - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.*.loa_no
+
+          - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.*.resolution_no
+          
+          - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.*.resolution_date
+
+          - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.*.tender_no
+
+          - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.*.tender_date
+
+          - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.*.agreement_type
+
+          - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.*.defect_liability_period
+
+          - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.*.contract_period
+
+          - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.*.agreement_amount
+
+          - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.*.payment_type
+          - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.*.agr_id
+
+          
+          
+        - query: UPDATE party1details SET uid_p1 = ?,department_name_party1 = ?, designation = ?, employee_name = ?, witness_name_p1 = ?,address_p1 = ? WHERE party1_id = ?;
+          basePath: WMSContractAgreementApplication.*.party1Details.*
+          jsonMaps:
+          
+          - jsonPath: $.WMSContractAgreementApplication.*.party1Details.*.uid_p1
+          
+          - jsonPath: $.WMSContractAgreementApplication.*.party1Details.*.department_name_party1
+
+          - jsonPath: $.WMSContractAgreementApplication.*.party1Details.*.designation
+
+          - jsonPath: $.WMSContractAgreementApplication.*.party1Details.*.employee_name
+
+          - jsonPath: $.WMSContractAgreementApplication.*.party1Details.*.witness_name_p1
+          
+          - jsonPath: $.WMSContractAgreementApplication.*.party1Details.*.address_p1
+          - jsonPath: $.WMSContractAgreementApplication.*.party1Details.*.party1_id
+          
             
             
     - version: 1.0
@@ -1693,6 +1886,62 @@ serviceMaps:
 
             - jsonPath: $.WMSFunctionApplication.*.function_id
             
+            
+            
+    - version: 1.0
+      description: Persists PhysicalMileStoneActivity details in tables
+      fromTopic: save-pma-application
+      isTransaction: true
+      queryMaps:
+
+        - query: INSERT INTO physical_milestone_activity (pma_id,description_of_the_item,percentage_weightage,start_date,end_date,createdby,lastmodifiedby,createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?,?,?,?,?,?);
+          basePath: WMSPhysicalMileStoneActivityApplication.*
+          jsonMaps:
+            - jsonPath: $.WMSPhysicalMileStoneActivityApplication.*.pma_id
+
+            - jsonPath: $.WMSPhysicalMileStoneActivityApplication.*.description_of_the_item
+
+            - jsonPath: $.WMSPhysicalMileStoneActivityApplication.*.percentage_weightage
+            
+            - jsonPath: $.WMSPhysicalMileStoneActivityApplication.*.start_date
+            
+            - jsonPath: $.WMSPhysicalMileStoneActivityApplication.*.end_date
+            
+            - jsonPath: $.WMSPhysicalMileStoneActivityApplication.*.auditDetails.createdBy
+
+            - jsonPath: $.WMSPhysicalMileStoneActivityApplication.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.WMSPhysicalMileStoneActivityApplication.*.auditDetails.createdTime
+            
+            - jsonPath: $.WMSPhysicalMileStoneActivityApplication.*.auditDetails.lastModifiedTime
+            
+            
+
+            
+            
+            
+            
+            
+            
+            
+    - version: 1.0
+      description: Update PhysicalMileStoneActivity Details applications in table
+      fromTopic: update-pma-application
+      isTransaction: true
+      queryMaps:
+      
+        - query: UPDATE physical_milestone_activity SET description_of_the_item = ?,percentage_weightage = ?,start_date = ?,end_date = ? WHERE pma_id = ?;
+          basePath: WMSPhysicalMileStoneActivityApplication.*
+          jsonMaps:
+            - jsonPath: $.WMSPhysicalMileStoneActivityApplication.*.description_of_the_item
+
+            - jsonPath: $.WMSPhysicalMileStoneActivityApplication.*.percentage_weightage
+            
+            - jsonPath: $.WMSPhysicalMileStoneActivityApplication.*.start_date
+            
+            - jsonPath: $.WMSPhysicalMileStoneActivityApplication.*.end_date
+
+            - jsonPath: $.WMSPhysicalMileStoneActivityApplication.*.pma_id
             
             
     - version: 1.0

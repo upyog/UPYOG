@@ -5,7 +5,7 @@ const WmsPmaId = ({ t, config, onSelect, formData = {}, userType, register, erro
     {
       label: "",
       type: "number",
-      name: "phm_id",
+      name: "pma_id",
     },
   ];
   return (

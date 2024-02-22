@@ -23,6 +23,11 @@ import lombok.Setter;
 @Builder
 public class Party1Details {
 	
+	@JsonProperty("agreement_no") 
+	private String agreementNo=null;
+	
+	@JsonProperty("party1_id") 
+	private String party1Id=null;
 	@JsonProperty("department_name_party1")
 	private String departmentNameParty1=null;
 	@JsonProperty("designation")

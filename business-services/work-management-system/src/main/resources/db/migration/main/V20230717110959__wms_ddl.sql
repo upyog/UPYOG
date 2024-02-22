@@ -20,32 +20,7 @@ CREATE TABLE IF NOT EXISTS "state_sor" (
 
 );
 
-CREATE TABLE IF NOT EXISTS "scheme_master" (
-    "scheme_id" SERIAL PRIMARY KEY,
-    "source_of_fund" VARCHAR(255),
-    "start_date" VARCHAR(255),
-    "end_date" VARCHAR(255),
-    "scheme_name_en" VARCHAR(255),
-    "scheme_name_reg" VARCHAR(255),
-    "fund" VARCHAR(255),
-    "description_of_the_scheme" TEXT,
-    "upload_document" VARCHAR(255)
-);
 
-CREATE TABLE IF NOT EXISTS "project_master" (
-    "project_id" SERIAL PRIMARY KEY,
-    "project_number" VARCHAR(255),
-    "project_name_en" VARCHAR(255),
-    "project_name_reg" VARCHAR(255),
-    "project_description" TEXT,
-    "project_timeline" VARCHAR(255),
-    "project_start_date" DATE,
-    "project_end_date" DATE,
-    "scheme_name" VARCHAR(255),
-    "approval_number" VARCHAR(255),
-    "approval_date" DATE,
-    "status" VARCHAR(255)
-);
 
  
 
@@ -66,3 +41,4 @@ CREATE TABLE IF NOT EXISTS "work" (
     "financial_year" VARCHAR(255),
     "budget_head" VARCHAR(255)
 );
+

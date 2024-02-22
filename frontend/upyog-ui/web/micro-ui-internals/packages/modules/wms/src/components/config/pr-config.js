@@ -73,13 +73,13 @@ export const newConfig =[
                 withoutLabel: true,
               }
               ,
-              {
-                type: "component",
-                component: "WmsPrBillDate",//TODO: Need to ask
-                key: "WmsPrPaymentDate",
-                isMandatory: true,
-                withoutLabel: true,
-              }
+              // {
+              //   type: "component",
+              //   component: "WmsPrPaymentDate",//TODO: Need to ask
+              //   key: "WmsPrPaymentDate",
+              //   isMandatory: true,
+              //   withoutLabel: true,
+              // }
         ]
     },
 ];

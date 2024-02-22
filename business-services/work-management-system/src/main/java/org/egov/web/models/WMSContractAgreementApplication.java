@@ -1,8 +1,12 @@
 package org.egov.web.models;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.Valid;
+
+//import org.egov.tl.web.models.OwnerInfo;
+//import org.egov.tl.web.models.TradeLicenseDetail;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -19,17 +23,21 @@ import lombok.Setter;
 @Builder
 public class WMSContractAgreementApplication {
 	
-	/*
-	 * @JsonProperty("agreement_no") private String agreementNo=null;
-	 */
+	
+	  @JsonProperty("agreement_no") 
+	  private String agreementNo=null;
+	 
 	
 	@JsonProperty("agreementInfo")
 	//private AgreementInfo agreementInfo = null;
-	@Valid
-	private List<AgreementInfo> agreementInfo = null;
+	
+	  @Valid 
+	  private List<AgreementInfo> agreementInfo = null;
+	 
 	
 	@JsonProperty("party1Details")
-	private Party1Details party1Details = null;
+	@Valid 
+	private List<Party1Details> party1Details = null;
 	
 	@JsonProperty("sDPGBGDetails")
 	private SDPGBGDetails sDPGBGDetails = null;
@@ -67,7 +75,24 @@ public class WMSContractAgreementApplication {
 	 * 
 	 * @JsonProperty("terms_and_conditions") private String termsAndConditions=null;
 	 */
+	public WMSContractAgreementApplication addAgreementInfoItem(AgreementInfo agreementInfoItem) {
+        if(this.agreementInfo==null)
+            this.agreementInfo = new ArrayList<>();
+        //if(this.agreementInfo.stream().filter(x-> x.getAgreementName().equalsIgnoreCase(agreementInfoItem.getAgreementName())) == null)
+        if (!this.agreementInfo.stream().anyMatch(x -> x.getAgrId().equalsIgnoreCase(agreementInfoItem.getAgrId())))    
+        this.agreementInfo.add(agreementInfoItem);
+        return this;
+    }
 	
+	public WMSContractAgreementApplication addParty1Details(Party1Details party1DetailsItem) {
+        if(this.party1Details==null)
+            this.party1Details = new ArrayList<>();
+        //if(!this.party1Details.contains(party1DetailsItem))
+        //if(this.party1Details.stream().filter(x-> x.getUidP1().equalsIgnoreCase(party1DetailsItem.getUidP1())) == null)
+        if (!this.party1Details.stream().anyMatch(x -> x.getParty1Id().equalsIgnoreCase(party1DetailsItem.getParty1Id())))    
+        this.party1Details.add(party1DetailsItem);
+        return this;
+    }
 	
 	@JsonProperty("auditDetails")
 	private AuditDetails auditDetails = null;

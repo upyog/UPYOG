@@ -72177,11 +72177,6 @@ export const LocalizationService = {
             "message": "SUBMIT",
             "module": "rainmaker-common",
             "locale": "en_IN"
-        },{
-            "code": "WMS_PM_FORM_CREATE_HEAD",
-            "message": "PM-Details",
-            "module": "rainmaker-common",
-            "locale": "en_IN"
         },
         {
             "code": "WMS_NEW_PHM_FORM_HEADER",
@@ -72264,7 +72259,7 @@ export const LocalizationService = {
         },
         {
             "code": "WMS_PHM_PRJ_NAME_LABEL",
-            "message": "Work Name",
+            "message": "Project Name",
             "module": "rainmaker-common",
             "locale": "en_IN"
         },
@@ -72525,7 +72520,7 @@ export const LocalizationService = {
         },
         {
             "code": "WMS_DR_COMMON_CREATE_HEADER",
-            "message": "Deduction Register",
+            "message": "Deduction Registion",
             "module": "rainmaker-common",           
             "locale": "en_IN"
         },
@@ -72619,20 +72614,20 @@ export const LocalizationService = {
             "locale": "en_IN"
         },
         {
-            "code": "WMS_PR_BILL_DATE_LABEL",
+            "code": "WMS_PR_START_DATE_LABEL",
             "message": "Bill Received Date ",
             "module": "rainmaker-common",
             "locale": "en_IN"
         },
         {
-            "code": "WMS_PR_PAYMENT_DATE_LABEL",
-            "message": "Payment received date",
+            "code": "WMS_PR_END_DATE_LABEL",
+            "message": "Payment Received date",
             "module": "rainmaker-common",
             "locale": "en_IN"
         },
         {
-            "code": "WMS_PR_CONTROLS2_LABEL",
-            "message": "Activities",
+            "code": "WMS_PR_CONTROLS_LABEL",
+            "message": "Change",
             "module": "rainmaker-common",
             "locale": "en_IN"
         },

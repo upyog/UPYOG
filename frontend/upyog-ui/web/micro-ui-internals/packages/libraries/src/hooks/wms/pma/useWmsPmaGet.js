@@ -6,11 +6,12 @@ export const useWmsPmaGet = (phmId, tenantId, isupdated, config = {}) => {
   //isLoading: hookLoading, isError, error, data, ...rest
   const client = useQueryClient();
   const { isLoading, error, data } = useQuery(
-    ["WMS_PMA_GET",phmId, tenantId, isupdated],
-    async () => await WMSService.PMAApplications.get(phmId, tenantId),
+    ["WMS_PMA_GET",pmaId, tenantId, isupdated],
+    // async () => await WMSService.PMAApplications.get(phmId, tenantId),
+    async () => await WMSService.PMAApplications.get(),
     config
   );
-  return { isLoading, error, data, revalidate: () => client.invalidateQueries(["WMS_PMA_GET", phmId, tenantId]) };
+  return { isLoading, error, data, revalidate: () => client.invalidateQueries(["WMS_PMA_GET", pmaId, tenantId]) };
 };
 
 export default useWmsPmaGet;

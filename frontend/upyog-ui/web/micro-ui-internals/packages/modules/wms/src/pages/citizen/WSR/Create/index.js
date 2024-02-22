@@ -13,9 +13,9 @@ const WmsWsrCreate = () => {
   const [showToast, setShowToast] = useState(null);
   const onSubmit = (data) => {
     setIsLoading(true);
-    let WsrApplications = 
+    let WMSWorkStatusReportApplications = 
       {
-        WsrApplication: [{
+        WMSWorkStatusReportApplication: [{
           project_name: data?.WmsWsrPrjName?.project_name,  
           work_name: data?.WmsWsrWorkName?.work_name,  
           activity_name: data?.WmsWsrActivity?.activity_name,
@@ -29,7 +29,7 @@ const WmsWsrCreate = () => {
       };
     
       /* use customiseCreateFormData hook to make some chnages to the Employee object [0].WsreduleOfRateApplication*/
-     Digit.WMSService.WSRApplications.create(WsrApplications.WsrApplication[0], tenantId).then((result,err)=>{
+     Digit.WMSService.WSRApplications.create(WMSWorkStatusReportApplications, tenantId).then((result,err)=>{
       setIsLoading(false);
        history.push("/upyog-ui/citizen/wms/wsr-home");
      })

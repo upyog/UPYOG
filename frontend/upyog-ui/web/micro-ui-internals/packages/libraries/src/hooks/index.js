@@ -260,6 +260,7 @@ import useWmsPhmSearch from "./wms/phm/useWmsPhmSearch";
 import useWmsPhmCount from "./wms/phm/useWmsPhmCount";
 import useWmsPhmCreate from "./wms/phm/useWmsPhmCreate";
 import useWmsPhmUpdate from "./wms/phm/useWmsPhmUpdate";
+import useWmsPhmGet from "./wms/phm/useWmsPhmGet";
 
 import useWmsDrSearch from "./wms/dr/useWmsDrSearch";
 import useWmsDrCount from "./wms/dr/useWmsDrCount";
@@ -270,6 +271,8 @@ import useWmsPrSearch from "./wms/pr/useWmsPrSearch";
 import useWmsPrCount from "./wms/pr/useWmsPrCount";
 import useWmsPrCreate from "./wms/pr/useWmsPrCreate";
 import useWmsPrUpdate from "./wms/pr/useWmsPrUpdate";
+import useWmsPrGet from "./wms/pr/useWmsPrGet";
+
 
 import useWmsMbSearch from "./wms/mb/useWmsMbSearch";
 import useWmsMbCount from "./wms/mb/useWmsMbCount";
@@ -280,12 +283,17 @@ import useWmsWsrSearch from "./wms/wsr/useWmsWsrSearch";
 import useWmsWsrCount from "./wms/wsr/useWmsWsrCount";
 import useWmsWsrCreate from "./wms/wsr/useWmsWsrCreate";
 import useWmsWsrUpdate from "./wms/wsr/useWmsWsrUpdate";
+import useWmsWsrGet from "./wms/wsr/useWmsWsrGet";
+
 
 
 import useWmsPmaSearch from "./wms/pma/useWmsPmaSearch";
 import useWmsPmaCount from "./wms/pma/useWmsPmaCount";
 import useWmsPmaCreate from "./wms/pma/useWmsPmaCreate";
 import useWmsPmaUpdate from "./wms/pma/useWmsPmaUpdate";
+import useWmsPmaGet from "./wms/pma/useWmsPmaGet";
+
+
 import useWmsCMGet from "./wms/cm/useWmsCMGet";
 import useWmsCMCount from "./wms/cm/useWmsCMCount";
 import useWmsCMSearch from "./wms/cm/useWmsCMSearch";
@@ -574,7 +582,8 @@ const wms = {
     useWmsPhmSearch:useWmsPhmSearch,
     useWmsPhmCreate:useWmsPhmCreate,
     useWmsPhmUpdate:useWmsPhmUpdate,
-    useWmsPhmCount:useWmsPhmCount
+    useWmsPhmCount:useWmsPhmCount,
+    useWmsPhmGet:useWmsPhmGet
   },
   mb:{
     useWmsMbSearch:useWmsMbSearch,
@@ -592,19 +601,22 @@ const wms = {
     useWmsPrSearch:useWmsPrSearch,
     useWmsPrCreate:useWmsPrCreate,
     useWmsPrUpdate:useWmsPrUpdate,
-    useWmsPrCount:useWmsPrCount
+    useWmsPrCount:useWmsPrCount,
+    useWmsPrGet:useWmsPrGet
   },
   wsr:{
     useWmsWsrSearch:useWmsWsrSearch,
     useWmsWsrCreate:useWmsWsrCreate,
     useWmsWsrUpdate:useWmsWsrUpdate,
-    useWmsWsrCount:useWmsWsrCount
+    useWmsWsrCount:useWmsWsrCount,
+    useWmsWsrGet:useWmsWsrGet
   },
   pma:{
     useWmsPmaSearch:useWmsPmaSearch,
     useWmsPmaCreate:useWmsPmaCreate,
     useWmsPmaUpdate:useWmsPmaUpdate,
-    useWmsPmaCount:useWmsPmaCount
+    useWmsPmaCount:useWmsPmaCount,
+    useWmsPmaGet:useWmsPmaGet,
   },
   cm:{
     useWmsCMGet,

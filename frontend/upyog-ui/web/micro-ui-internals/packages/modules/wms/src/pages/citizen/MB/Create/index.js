@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import { newConfig } from "../../../../components/config/mb-config";
 import { convertEpochToDate, pdfDownloadLink } from "../../../../components/Utils";
+import Timeline from "../../../../components/MB/Timeline";
 const WmsMbCreate = () => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const { t } = useTranslation();
@@ -44,6 +45,16 @@ const WmsMbCreate = () => {
   return (
     <div>
     <Header>{t("WMS_NEW_MB_FORM_HEADER")}</Header>
+    {window.location.href.includes("/citizen") ? <Timeline currentStep={1}  /> : null}
+
+    <FormComposer
+              head={t("WMS_MB_FORM_CREATE_HEAD")}
+              label={t("WMS_COMMON_SAVE")}
+              config={configs}
+              onSubmit={onSubmit}
+              fieldStyle={{ marginRight: 0 }}
+            />
+
     <FormComposer
               head={t("WMS_MB_FORM_CREATE_HEAD")}
               label={t("WMS_COMMON_SAVE")}

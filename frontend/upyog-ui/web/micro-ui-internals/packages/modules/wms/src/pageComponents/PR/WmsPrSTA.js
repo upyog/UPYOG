@@ -7,10 +7,10 @@ const WmsPrSTA = ({ t, config, onSelect, formData = {}, userType, register, erro
     {
       label: "WMS_PR_STA_NAME_LABEL",
       type: "number",
-      name: "percent_weightage",
+      name: "sanctioned_tender_amount",
       validation: {
         isRequired: true,
-        pattern: Digit.Utils.getPattern('Name'),
+        pattern: Digit.Utils.getPattern('Num'),
         title: t("WMS_COMMON_NAME_INVALID"),
       },
       isMandatory: true,
@@ -41,7 +41,7 @@ const WmsPrSTA = ({ t, config, onSelect, formData = {}, userType, register, erro
                 defaultValue={undefined}
                 {...input.validation}
               />
-            {currentValue&&currentValue.length>0&&!currentValue.match(Digit.Utils.getPattern('Name'))&&<CardLabelError style={{ width: "100%", marginTop: '-15px', fontSize: '16px', marginBottom: '12px'}}>{t("WMS_COMMON_NAME_INVALID")}</CardLabelError>}
+            {currentValue&&currentValue.length>0&&!currentValue.match(Digit.Utils.getPattern('Num'))&&<CardLabelError style={{ width: "100%", marginTop: '-15px', fontSize: '16px', marginBottom: '12px'}}>{t("WMS_COMMON_NAME_INVALID")}</CardLabelError>}
             </div>
           </LabelFieldPair>
         </React.Fragment>
