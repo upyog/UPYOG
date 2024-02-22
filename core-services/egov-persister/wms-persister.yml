@@ -996,9 +996,11 @@ serviceMaps:
             - jsonPath: $.WMSContractAgreementApplication.*.auditDetails.lastModifiedTime
             
             
-        - query: INSERT INTO agreement (agreement_no,agreement_name,agreement_date,department_name_ai,loa_no,resolution_no,resolution_date,tender_no,tender_date,agreement_type,defect_liability_period,contract_period,agreement_amount,payment_type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO agreement (agr_id,agreement_no,agreement_name,agreement_date,department_name_ai,loa_no,resolution_no,resolution_date,tender_no,tender_date,agreement_type,defect_liability_period,contract_period,agreement_amount,payment_type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: WMSContractAgreementApplication.*.agreementInfo.*
           jsonMaps:
+            - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.*.agr_id
+            
             - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.*.agreement_no
 
             - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.*.agreement_name
@@ -1030,9 +1032,11 @@ serviceMaps:
             
             
             
-        - query: INSERT INTO party1details (agreement_no,department_name_party1,designation,employee_name,witness_name_p1,address_p1,uid_p1) VALUES (?, ?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO party1details (party1_id,agreement_no,department_name_party1,designation,employee_name,witness_name_p1,address_p1,uid_p1) VALUES (?, ?, ?, ?, ?, ?, ?, ?);
           basePath: WMSContractAgreementApplication.*.party1Details.*
           jsonMaps:
+            - jsonPath: $.WMSContractAgreementApplication.*.party1Details.*.party1_id
+            
             - jsonPath: $.WMSContractAgreementApplication.*.party1Details.*.agreement_no
 
             - jsonPath: $.WMSContractAgreementApplication.*.party1Details.*.department_name_party1
@@ -1108,10 +1112,12 @@ serviceMaps:
             
       
       
-        - query: UPDATE agreement SET agreement_date = ?, department_name_ai = ?, loa_no = ?,resolution_no = ?,resolution_date = ?,tender_no = ?,tender_date = ?,agreement_type = ?,defect_liability_period = ?,contract_period = ?,agreement_amount = ?,  payment_type = ? WHERE agreement_no = ? AND agreement_name = ?;
+        - query: UPDATE agreement SET agreement_name = ?, agreement_date = ?, department_name_ai = ?, loa_no = ?,resolution_no = ?,resolution_date = ?,tender_no = ?,tender_date = ?,agreement_type = ?,defect_liability_period = ?,contract_period = ?,agreement_amount = ?,  payment_type = ? WHERE agr_id = ?;
           basePath: WMSContractAgreementApplication.*.agreementInfo.*
           jsonMaps:
           
+          
+          - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.*.agreement_name
           
           - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.*.agreement_date
 
@@ -1136,13 +1142,16 @@ serviceMaps:
           - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.*.agreement_amount
 
           - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.*.payment_type
-          - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.*.agreement_no
+          - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.*.agr_id
 
-          - jsonPath: $.WMSContractAgreementApplication.*.agreementInfo.*.agreement_name
           
-        - query: UPDATE party1details SET department_name_party1 = ?, designation = ?, employee_name = ?, witness_name_p1 = ?,address_p1 = ? WHERE agreement_no = ? AND uid_p1 = ?;
+          
+        - query: UPDATE party1details SET uid_p1 = ?,department_name_party1 = ?, designation = ?, employee_name = ?, witness_name_p1 = ?,address_p1 = ? WHERE party1_id = ?;
           basePath: WMSContractAgreementApplication.*.party1Details.*
           jsonMaps:
+          
+          - jsonPath: $.WMSContractAgreementApplication.*.party1Details.*.uid_p1
+          
           - jsonPath: $.WMSContractAgreementApplication.*.party1Details.*.department_name_party1
 
           - jsonPath: $.WMSContractAgreementApplication.*.party1Details.*.designation
@@ -1152,8 +1161,8 @@ serviceMaps:
           - jsonPath: $.WMSContractAgreementApplication.*.party1Details.*.witness_name_p1
           
           - jsonPath: $.WMSContractAgreementApplication.*.party1Details.*.address_p1
-          - jsonPath: $.WMSContractAgreementApplication.*.party1Details.*.agreement_no
-          - jsonPath: $.WMSContractAgreementApplication.*.party1Details.*.uid_p1
+          - jsonPath: $.WMSContractAgreementApplication.*.party1Details.*.party1_id
+          
             
             
     - version: 1.0

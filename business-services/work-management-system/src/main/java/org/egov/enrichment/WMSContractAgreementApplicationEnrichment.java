@@ -84,11 +84,19 @@ public class WMSContractAgreementApplicationEnrichment {
 	        	 //Long randomNumber=(long) Math.floor(Math.random() * (9999 - 1000 + 1) + 1000);
 	        	 agreement.setAgreementNo(application.getAgreementNo());
 	        	 
+	        	 randomNumber=(long) Math.floor(Math.random() * (9999 - 1000 + 1) + 1000);
+	        	 
+	        	 agreement.setAgrId(Long.toString(randomNumber));
+	        	 
 	         }
 			 
 			 for (Party1Details party1 : application.getParty1Details()) {
 	        	 //Long randomNumber=(long) Math.floor(Math.random() * (9999 - 1000 + 1) + 1000);
 				 party1.setAgreementNo(application.getAgreementNo());
+				 
+       randomNumber=(long) Math.floor(Math.random() * (9999 - 1000 + 1) + 1000);
+	        	 
+       party1.setParty1Id(Long.toString(randomNumber));
 	        	 
 	         }
             
@@ -116,11 +124,11 @@ public class WMSContractAgreementApplicationEnrichment {
 				int j=0;
 			 for(k=0;k<application.getAgreementInfo().size();k++) {
 				 int currentIndex = k;
-				 List<AgreementInfo> existingApplicationAgreement = existingApplicationResult.get(0).getAgreementInfo().stream().filter(x -> x.getAgreementName().equalsIgnoreCase(application.getAgreementInfo().get(currentIndex).getAgreementName())).collect(Collectors.toList());
+				 List<AgreementInfo> existingApplicationAgreement = existingApplicationResult.get(0).getAgreementInfo().stream().filter(x -> x.getAgrId().equalsIgnoreCase(application.getAgreementInfo().get(currentIndex).getAgrId())).collect(Collectors.toList());
 				
 				//if (!application.getAgreementInfo().stream().anyMatch(x -> x.getAgreementName().equalsIgnoreCase(existingApplication.get(0).getAgreementInfo().get(i).getAgreementName()))) {
 				 if(existingApplicationAgreement.size() > 0) {
-					 //existingApplicationAgreement.get(0).setAgreementName(application.getAgreementInfo().get(i).getAgreementName());
+					 existingApplicationAgreement.get(0).setAgreementName(application.getAgreementInfo().get(k).getAgreementName());
 					 existingApplicationAgreement.get(0).setAgreementDate(application.getAgreementInfo().get(k).getAgreementDate());
 					 existingApplicationAgreement.get(0).setDepartmentNameAi(application.getAgreementInfo().get(k).getDepartmentNameAi());
 				
@@ -140,7 +148,7 @@ public class WMSContractAgreementApplicationEnrichment {
 			 	
 			for(j=0;j<application.getParty1Details().size();j++) {
 				int currentIndex = j;
-				List<Party1Details> existingApplicationPartyDetails = existingApplicationResult.get(0).getParty1Details().stream().filter(x -> x.getUidP1().equalsIgnoreCase(application.getParty1Details().get(currentIndex).getUidP1())).collect(Collectors.toList());
+				List<Party1Details> existingApplicationPartyDetails = existingApplicationResult.get(0).getParty1Details().stream().filter(x -> x.getParty1Id().equalsIgnoreCase(application.getParty1Details().get(currentIndex).getParty1Id())).collect(Collectors.toList());
 				
 				//if (!wmsContractAgreementRequest.getWmsContractAgreementApplications().get(0).getParty1Details().stream().anyMatch(x -> x.getUidP1().equalsIgnoreCase(existingApplication.get(0).getParty1Details().get(0).getUidP1()))) {
 				 if(existingApplicationPartyDetails.size() > 0) {
@@ -149,7 +157,7 @@ public class WMSContractAgreementApplicationEnrichment {
 					 existingApplicationPartyDetails.get(0).setEmployeeName(application.getParty1Details().get(j).getEmployeeName());
 					 existingApplicationPartyDetails.get(0).setWitnessNameP1(application.getParty1Details().get(j).getWitnessNameP1());
 					 existingApplicationPartyDetails.get(0).setAddressP1(application.getParty1Details().get(j).getAddressP1());
-					 //existingApplicationPartyDetails.get(0).setUidP1(application.getParty1Details().get(j).getUidP1());
+					 existingApplicationPartyDetails.get(0).setUidP1(application.getParty1Details().get(j).getUidP1());
 				
 				}
 				

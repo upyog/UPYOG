@@ -105,6 +105,7 @@ public class WMSContractAgreementApplicationRowMapper implements ResultSetExtrac
         	
             
                 AgreementInfo agreementInfo = AgreementInfo.builder()
+                		.agrId(rs.getString("aAgrId"))
                 		.agreementNo(agreementNo)
                         .agreementName(rs.getString("aAgreementName"))
                         .agreementDate(rs.getString("aAgreementDate"))
@@ -125,6 +126,7 @@ public class WMSContractAgreementApplicationRowMapper implements ResultSetExtrac
                 //wmsContractAgreementApplicationList.addAll(wmsContractAgreementApplicationMap.values());
                 
                 Party1Details party1Details = Party1Details.builder()
+                		.party1Id(rs.getString("aParty1Id"))
                 		.agreementNo(agreementNo)
                         .departmentNameParty1(rs.getString("aDepartmentNameParty1"))
                         .designation(rs.getString("aDesignation"))

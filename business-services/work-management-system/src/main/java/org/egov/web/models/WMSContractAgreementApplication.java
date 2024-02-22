@@ -79,7 +79,7 @@ public class WMSContractAgreementApplication {
         if(this.agreementInfo==null)
             this.agreementInfo = new ArrayList<>();
         //if(this.agreementInfo.stream().filter(x-> x.getAgreementName().equalsIgnoreCase(agreementInfoItem.getAgreementName())) == null)
-        if (!this.agreementInfo.stream().anyMatch(x -> x.getAgreementName().equalsIgnoreCase(agreementInfoItem.getAgreementName())))    
+        if (!this.agreementInfo.stream().anyMatch(x -> x.getAgrId().equalsIgnoreCase(agreementInfoItem.getAgrId())))    
         this.agreementInfo.add(agreementInfoItem);
         return this;
     }
@@ -89,7 +89,7 @@ public class WMSContractAgreementApplication {
             this.party1Details = new ArrayList<>();
         //if(!this.party1Details.contains(party1DetailsItem))
         //if(this.party1Details.stream().filter(x-> x.getUidP1().equalsIgnoreCase(party1DetailsItem.getUidP1())) == null)
-        if (!this.party1Details.stream().anyMatch(x -> x.getUidP1().equalsIgnoreCase(party1DetailsItem.getUidP1())))    
+        if (!this.party1Details.stream().anyMatch(x -> x.getParty1Id().equalsIgnoreCase(party1DetailsItem.getParty1Id())))    
         this.party1Details.add(party1DetailsItem);
         return this;
     }
