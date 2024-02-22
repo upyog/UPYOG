@@ -362,6 +362,8 @@ const BulkBillSearch = ({ tenantId, onSubmit, data, count, resultOk, businessSer
         >  <div style={{ width: "100%" }}>
             <Card>
             <div><CardText>{t("WS_REASON_FOR_REJECT")}</CardText></div>
+            <div><CardText>{t("WS_SUCCESS_DATA_COUNT")} - {meterReadingData?.length}</CardText></div>
+            <div><CardText>{t("WS_REJECT_DATA_COUNT")} - {rejectedReading?.length}</CardText></div>
               <Table
                 t={t}
                 data={rejectedReading}

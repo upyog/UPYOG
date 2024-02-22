@@ -112,7 +112,8 @@ export const setAddressDetails = (data) => {
 
 export const getownerarray = (data) => {
   const ownersData = data?.owners?.owners
-  const res = ownersData?.map((ob) => ({
+  const res = ownersData?.map((ob, index) => ({
+    additionalDetails: {ownerSequence: index, name: ob.name},
     mobileNumber: ob.mobilenumber,
     name: ob.name,
     fatherOrHusbandName: ob?.fatherOrHusbandName,
@@ -128,12 +129,17 @@ export const getownerarray = (data) => {
 export const gettradeownerarray = (data) => {
   let tradeownerarray = [];
   const isEditRenew = window.location.href.includes("renew-trade");
+  const ownersSequences=data?.tradeLicenseDetail?.owners?.additionalDetails!==null ? data?.tradeLicenseDetail?.owners?.sort((a,b)=>a?.additionalDetails?.ownerSequence-b?.additionalDetails?.ownerSequence): data.tradeLicenseDetail.owners
   data.tradeLicenseDetail.owners.map((oldowner) => {
     data?.owners?.owners.map((newowner) => {
       if(oldowner.id === newowner.id)
       {
-        if((oldowner.name !== newowner.name) || (oldowner.gender !== newowner?.gender?.code) || (oldowner.mobileNumber !== newowner.mobilenumber) || (oldowner.permanentAddress !== data?.owners?.permanentAddress) || (oldowner.relationship !== newowner.relationship?.code) || (oldowner.fatherOrHusbandName !== newowner.fatherOrHusbandName))
+        if((oldowner.name !== newowner.name) || (oldowner.gender !== newowner?.gender?.code) || (oldowner.mobileNumber !== newowner.mobilenumber) || (oldowner.permanentAddress !== data?.owners?.permanentAddress) || (oldowner.relationship !== newowner.relationship?.code) || (oldowner.fatherOrHusbandName !== newowner.fatherOrHusbandName)||(oldowner.additionalDetails!==newowner.additionalDetails))
         {
+          if (oldowner.additionalDetails !== newowner.additionalDetails)
+        {
+          oldowner.additionalDetails = newowner.additionalDetails;
+        }
         if (oldowner.name !== newowner.name)
         {
           oldowner.name = newowner.name;
@@ -173,10 +179,11 @@ export const gettradeownerarray = (data) => {
     let found = tradeownerarray.length > 0 ? tradeownerarray.some(el => el.id === oldowner.id):false;
     if(!found)tradeownerarray.push({...oldowner,active:false});   
   })
-  data?.owners?.owners.map((ob) => {
+  data?.owners?.owners.map((ob, index) => {
     if(!ob.id)
     {
       tradeownerarray.push({
+              additionalDetails:{ownerSequence: index, name: ob.name},
               mobileNumber: ob.mobilenumber,
               name: ob.name,
               fatherOrHusbandName: ob?.fatherOrHusbandName,
@@ -949,11 +956,12 @@ export const convertEpochToDateDMY = (dateEpoch) => {
 export const getOwnersForNewApplication = (formdata,t) => {
  
 
-const reversedOwners= Array.isArray(formdata?.cpt?.details?.owners) ? formdata?.cpt?.details?.owners.slice().reverse() : [];
+const ownersSequences= (formdata?.cpt?.details?.owners?.additionalDetails!==null) ? formdata?.cpt?.details?.owners.sort((a,b)=>a?.additionalDetails?.ownerSequence-b?.additionalDetails?.ownerSequence) : formdata?.cpt?.details?.owners||[];
   let owners = [];
   if(formdata?.ownershipCategory?.code?.includes("SINGLEOWNER") || formdata?.ownershipCategory?.code?.includes("MULTIPLEOWNER"))
- reversedOwners?.map((ow) => {
+ ownersSequences?.map((ow, index) => {
     owners.push({
+      additionalDetails: {ownerSequence:index, name:ow?.name},
       name: ow?.name,
       designation: "",
       mobileNumber: ow?.mobileNumber,
@@ -992,9 +1000,9 @@ const reversedOwners= Array.isArray(formdata?.cpt?.details?.owners) ? formdata?.
 
 export const getOwnersfromProperty = (formdata) => {
 let owners = [];
-const reversedOwners= Array.isArray(formdata?.cpt?.details?.owners) ? formdata?.cpt?.details?.owners.slice().reverse() : [];
+const ownersSequences= formdata?.cpt?.details?.owners?.additionalDetails!==null ? formdata?.cpt?.details?.owners.sort((a,b)=>a?.additionalDetails?.ownerSequence-b?.additionalDetails?.ownerSequence) : formdata?.cpt?.details?.owners||[];
 if((formdata?.ownershipCategory?.code?.includes("SINGLEOWNER") || formdata?.ownershipCategory?.code?.includes("MULTIPLEOWNER")))
-  reversedOwners?.map((ow) => {
+  ownersSequences?.map((ow) => {
     owners.push({
       name: ow?.name,
       fatherOrHusbandName: ow?.fatherOrHusbandName,
