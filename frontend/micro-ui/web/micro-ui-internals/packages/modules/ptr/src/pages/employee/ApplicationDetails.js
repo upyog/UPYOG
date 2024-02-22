@@ -19,6 +19,8 @@
       const [enableAudit, setEnableAudit] = useState(false);
       const [businessService, setBusinessService] = useState("ptr");
 
+      console.log("gggggg",appDetailsToShow);
+
 
 
       sessionStorage.setItem("applicationNoinAppDetails", applicationNumber);
