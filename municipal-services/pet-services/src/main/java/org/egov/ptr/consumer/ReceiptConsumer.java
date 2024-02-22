@@ -23,12 +23,7 @@ public class ReceiptConsumer {
 
 //    @KafkaListener(topics = {"${kafka.topics.receipt.create}","${kafka.topics.notification.pg.save.txns}"})
 //    public void listenPayments(final HashMap<String, Object> record,  @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
-//
-//        if(topic.equalsIgnoreCase(config.getReceiptTopic())){
-//          
-//            paymentNotificationService.process(record, topic);
-//        }
-//        else paymentNotificationService.process(record, topic);
+//    	paymentNotificationService.process(record, topic);
 //
 //    }
 }

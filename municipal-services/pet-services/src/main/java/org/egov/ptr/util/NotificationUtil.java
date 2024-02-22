@@ -2,8 +2,6 @@ package org.egov.ptr.util;
 
 
 import java.util.*;
-import java.util.stream.Collectors;
-
 import com.jayway.jsonpath.Filter;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
@@ -12,14 +10,8 @@ import org.egov.mdms.model.MdmsCriteria;
 import org.egov.mdms.model.MdmsCriteriaReq;
 import org.egov.mdms.model.ModuleDetail;
 import org.egov.ptr.config.PetConfiguration;
-//import org.egov.ptr.models.Property;
-import org.egov.ptr.models.enums.CreationReason;
-import org.egov.ptr.models.event.Action;
-import org.egov.ptr.models.event.ActionItem;
-import org.egov.ptr.models.event.Event;
+import org.egov.ptr.models.PetRegistrationApplication;
 import org.egov.ptr.models.event.EventRequest;
-import org.egov.ptr.models.event.Recepient;
-import org.egov.ptr.models.event.Source;
 import org.egov.ptr.producer.Producer;
 import org.egov.ptr.repository.ServiceRequestRepository;
 import org.egov.ptr.web.contracts.*;
@@ -37,7 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import static com.jayway.jsonpath.Criteria.where;
 import static com.jayway.jsonpath.Filter.filter;
-import static org.egov.ptr.util.PTConstants.*;
+import static org.egov.ptr.util.PTRConstants.*;
 
 
 @Slf4j
@@ -70,9 +62,13 @@ public class NotificationUtil {
         this.restTemplate = restTemplate;
     }
 
+    public static final String ACTION_STATUS_APPLY  = "APPLY";
 
+    public static final String ACTION_STATUS_VERIFY  = "VERIFY";
 
-
+    public static final String ACTION_STATUS_APPROVE = "APPROVE";
+    
+    public static final String ACTION_STATUS_REJECT  = "REJECT";
 
     /**
      * Extracts message for the specific code
@@ -279,36 +275,36 @@ public class NotificationUtil {
      * @return List of EmailRequests
      */
 
-    public List<EmailRequest> createEmailRequestFromSMSRequests(RequestInfo requestInfo,List<SMSRequest> smsRequests,String tenantId) {
-        Set<String> mobileNumbers = smsRequests.stream().map(SMSRequest :: getMobileNumber).collect(Collectors.toSet());
-        Map<String, String> mobileNumberToEmailId = fetchUserEmailIds(mobileNumbers, requestInfo, tenantId);
-        if (CollectionUtils.isEmpty(mobileNumberToEmailId.keySet())) {
-            log.error("Email Ids Not found for Mobilenumbers");
-        }
-
-        Map<String,String > mobileNumberToMsg = smsRequests.stream().collect(Collectors.toMap(SMSRequest::getMobileNumber, SMSRequest::getMessage));
-        List<EmailRequest> emailRequest = new LinkedList<>();
-        for (Map.Entry<String, String> entryset : mobileNumberToEmailId.entrySet()) {
-            String customizedMsg = "";
-            String message = mobileNumberToMsg.get(entryset.getKey());
-            if(message.contains(NOTIFICATION_EMAIL))
-                customizedMsg = message.replace(NOTIFICATION_EMAIL, entryset.getValue());
-
-            //removing lines to match Email Templates
-            if(message.contains(PT_TAX_PARTIAL))
-                customizedMsg = customizedMsg.replace(PT_TAX_PARTIAL,"");
-
-            if(message.contains(PT_TAX_FULL))
-                customizedMsg = customizedMsg.replace(PT_TAX_FULL,"");
-
-            String subject = "";
-            String body = customizedMsg;
-            Email emailobj = Email.builder().emailTo(Collections.singleton(entryset.getValue())).isHTML(false).body(body).subject(subject).build();
-            EmailRequest email = new EmailRequest(requestInfo,emailobj);
-            emailRequest.add(email);
-        }
-        return emailRequest;
-    }
+//    public List<EmailRequest> createEmailRequestFromSMSRequests(RequestInfo requestInfo,List<SMSRequest> smsRequests,String tenantId) {
+//        Set<String> mobileNumbers = smsRequests.stream().map(SMSRequest :: getMobileNumber).collect(Collectors.toSet());
+//        Map<String, String> mobileNumberToEmailId = fetchUserEmailIds(mobileNumbers, requestInfo, tenantId);
+//        if (CollectionUtils.isEmpty(mobileNumberToEmailId.keySet())) {
+//            log.error("Email Ids Not found for Mobilenumbers");
+//        }
+//
+//        Map<String,String > mobileNumberToMsg = smsRequests.stream().collect(Collectors.toMap(SMSRequest::getMobileNumber, SMSRequest::getMessage));
+//        List<EmailRequest> emailRequest = new LinkedList<>();
+//        for (Map.Entry<String, String> entryset : mobileNumberToEmailId.entrySet()) {
+//            String customizedMsg = "";
+//            String message = mobileNumberToMsg.get(entryset.getKey());
+//            if(message.contains(NOTIFICATION_EMAIL))
+//                customizedMsg = message.replace(NOTIFICATION_EMAIL, entryset.getValue());
+//
+//            //removing lines to match Email Templates
+//            if(message.contains(PT_TAX_PARTIAL))
+//                customizedMsg = customizedMsg.replace(PT_TAX_PARTIAL,"");
+//
+//            if(message.contains(PT_TAX_FULL))
+//                customizedMsg = customizedMsg.replace(PT_TAX_FULL,"");
+//
+//            String subject = "";
+//            String body = customizedMsg;
+//            Email emailobj = Email.builder().emailTo(Collections.singleton(entryset.getValue())).isHTML(false).body(body).subject(subject).build();
+//            EmailRequest email = new EmailRequest(requestInfo,emailobj);
+//            emailRequest.add(email);
+//        }
+//        return emailRequest;
+//    }
 
     /**
      * Send the EmailRequest on the EmailNotification kafka topic
@@ -509,29 +505,29 @@ public class NotificationUtil {
      * returns the message minus some lines to match In App Templates
      * @param message
      */
-    private String removeForInAppMessage(String message)
-    {
-        if(message.contains(TRACK_APPLICATION_STRING))
-            message = message.replace(TRACK_APPLICATION_STRING,"");
-        if(message.contains(VIEW_PROPERTY_STRING))
-            message = message.replace(VIEW_PROPERTY_STRING,"");
-        if(message.contains(PAY_ONLINE_STRING))
-            message = message.replace(PAY_ONLINE_STRING,"");
-        if(message.contains(PT_ONLINE_STRING))
-            message = message.replace(PT_ONLINE_STRING,"");
-
-        //mutation notification
-        if(message.contains(MT_TRACK_APPLICATION_STRING))
-            message = message.replace(MT_TRACK_APPLICATION_STRING,"");
-        if(message.contains(MT_PAYLINK_STRING))
-            message = message.replace(MT_PAYLINK_STRING,"");
-        if(message.contains(MT_CERTIFICATE_STRING))
-            message = message.replace(MT_CERTIFICATE_STRING,"");
-        if(message.contains(MT_RECEIPT_STRING))
-            message = message.replace(MT_RECEIPT_STRING,"");
-
-        return message;
-    }
+//    private String removeForInAppMessage(String message)
+//    {
+//        if(message.contains(TRACK_APPLICATION_STRING))
+//            message = message.replace(TRACK_APPLICATION_STRING,"");
+//        if(message.contains(VIEW_PROPERTY_STRING))
+//            message = message.replace(VIEW_PROPERTY_STRING,"");
+//        if(message.contains(PAY_ONLINE_STRING))
+//            message = message.replace(PAY_ONLINE_STRING,"");
+//        if(message.contains(PT_ONLINE_STRING))
+//            message = message.replace(PT_ONLINE_STRING,"");
+//
+//        //mutation notification
+//        if(message.contains(MT_TRACK_APPLICATION_STRING))
+//            message = message.replace(MT_TRACK_APPLICATION_STRING,"");
+//        if(message.contains(MT_PAYLINK_STRING))
+//            message = message.replace(MT_PAYLINK_STRING,"");
+//        if(message.contains(MT_CERTIFICATE_STRING))
+//            message = message.replace(MT_CERTIFICATE_STRING,"");
+//        if(message.contains(MT_RECEIPT_STRING))
+//            message = message.replace(MT_RECEIPT_STRING,"");
+//
+//        return message;
+//    }
 
     /**
      * Method to fetch the list of channels for a particular action from mdms configd
@@ -587,6 +583,48 @@ public class NotificationUtil {
         return mdmsCriteriaReq;
     }
 
+
+
+
+
+	public String getCustomizedMsg(RequestInfo requestInfo, PetRegistrationApplication petApplication,
+			String localizationMessage) {
+		String message = null, messageTemplate;
+		String ACTION_STATUS = petApplication.getWorkflow().getAction();
+		switch (ACTION_STATUS) {
+		
+		case ACTION_STATUS_APPLY:
+			messageTemplate = getMessageTemplate(PTRConstants.NOTIFICATION_APPLY, localizationMessage);
+			message = getMessageWithNumberAndPetDetails(petApplication, messageTemplate);
+			break;
+			
+		case ACTION_STATUS_VERIFY:
+			messageTemplate = getMessageTemplate(PTRConstants.NOTIFICATION_VERIFY, localizationMessage);
+			message = getMessageWithNumberAndPetDetails(petApplication, messageTemplate);
+			break;
+
+		case ACTION_STATUS_APPROVE:
+			messageTemplate = getMessageTemplate(PTRConstants.NOTIFICATION_APPROVE, localizationMessage);
+			message = getMessageWithNumberAndPetDetails(petApplication, messageTemplate);
+			break;
+
+		case ACTION_STATUS_REJECT:
+			messageTemplate = getMessageTemplate(PTRConstants.NOTIFICATION_REJECT, localizationMessage);
+			message = getMessageWithNumberAndPetDetails(petApplication, messageTemplate);
+			break;
+
+		}
+
+		return message;
+	}
+
+	private String getMessageWithNumberAndPetDetails(PetRegistrationApplication petApplication, String message) {
+		message = message.replace("{1}", petApplication.getApplicantName());
+		message = message.replace("{2}", petApplication.getPetDetails().getPetName());
+		message = message.replace("{3}", petApplication.getApplicationNumber());
+		return message;
+	}
+	
     /**
      * Prepares and return url for mutation view screen
      *

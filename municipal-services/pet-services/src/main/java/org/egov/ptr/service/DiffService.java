@@ -1,8 +1,8 @@
 package org.egov.ptr.service;
 
-import static org.egov.ptr.util.PTConstants.FIELDS_TO_IGNORE;
-import static org.egov.ptr.util.PTConstants.VARIABLE_ACTIVE;
-import static org.egov.ptr.util.PTConstants.VARIABLE_USERACTIVE;
+import static org.egov.ptr.util.PTRConstants.FIELDS_TO_IGNORE;
+import static org.egov.ptr.util.PTRConstants.VARIABLE_ACTIVE;
+import static org.egov.ptr.util.PTRConstants.VARIABLE_USERACTIVE;
 
 import java.math.BigDecimal;
 import java.util.LinkedList;
@@ -11,7 +11,7 @@ import java.util.List;
 import org.egov.ptr.models.Document;
 import org.egov.ptr.models.OwnerInfo;
 //import org.egov.ptr.models.Property;
-import org.egov.ptr.util.PTConstants;
+import org.egov.ptr.util.PTRConstants;
 import org.egov.tracer.model.CustomException;
 import org.javers.core.Javers;
 import org.javers.core.JaversBuilder;
@@ -142,7 +142,7 @@ public class DiffService {
 
 		switch (flowType) {
 
-		case PTConstants.MUTATION_PROCESS_CONSTANT:
+		case PTRConstants.MUTATION_PROCESS_CONSTANT:
 
 			if (javersForMutation == null)
 				javersForMutation = JaversBuilder.javers()

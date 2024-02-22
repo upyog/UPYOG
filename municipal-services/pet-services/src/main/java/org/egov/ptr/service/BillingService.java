@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import static org.egov.ptr.util.PTConstants.PT_BUSINESSSERVICE;
 
 import java.util.LinkedHashMap;
 import java.util.Optional;
