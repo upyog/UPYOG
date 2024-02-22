@@ -1,9 +1,9 @@
 package org.egov.ptr.util;
 
-import static org.egov.ptr.util.PTConstants.ASMT_MODULENAME;
-import static org.egov.ptr.util.PTConstants.BILL_AMOUNT_PATH;
-import static org.egov.ptr.util.PTConstants.BILL_NO_DEMAND_ERROR_CODE;
-import static org.egov.ptr.util.PTConstants.BILL_NO_PAYABLE_DEMAND_ERROR_CODE;
+import static org.egov.ptr.util.PTRConstants.ASMT_MODULENAME;
+import static org.egov.ptr.util.PTRConstants.BILL_AMOUNT_PATH;
+import static org.egov.ptr.util.PTRConstants.BILL_NO_DEMAND_ERROR_CODE;
+import static org.egov.ptr.util.PTRConstants.BILL_NO_PAYABLE_DEMAND_ERROR_CODE;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,9 +17,6 @@ import org.egov.common.contract.request.Role;
 import org.egov.common.contract.request.User;
 import org.egov.ptr.config.PetConfiguration;
 import org.egov.ptr.models.OwnerInfo;
-//import org.egov.ptr.models.Property;
-import org.egov.ptr.models.enums.CreationReason;
-import org.egov.ptr.models.enums.Source;
 import org.egov.ptr.models.user.UserDetailResponse;
 import org.egov.ptr.models.workflow.ProcessInstance;
 import org.egov.ptr.models.workflow.ProcessInstanceRequest;
@@ -40,7 +37,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Slf4j
-public class PropertyUtil extends CommonUtils {
+public class PetUtil extends CommonUtils {
 
 	@Autowired
 	private PetConfiguration configs;
@@ -100,9 +97,9 @@ public class PropertyUtil extends CommonUtils {
 //				.businessService(configs.getMutationWfName())
 //				.businessId(property.getAcknowldgementNumber())
 //				.comment("Payment for property processed")
-//				.moduleName(PTConstants.ASMT_MODULENAME)
+//				.moduleName(PTRConstants.ASMT_MODULENAME)
 //				.tenantId(property.getTenantId())
-//				.action(PTConstants.ACTION_PAY)
+//				.action(PTRConstants.ACTION_PAY)
 //				.build();
 //
 //		return ProcessInstanceRequest.builder()
@@ -143,7 +140,7 @@ public class PropertyUtil extends CommonUtils {
 //			objectNodeDetail = (ObjectNode) additionalDetails;
 //		}
 //		request.getProperty().setAdditionalDetails(objectNodeDetail);
-//		return objectNodeDetail.put(PTConstants.PREVIOUS_PROPERTY_PREVIOUD_UUID, uuid);
+//		return objectNodeDetail.put(PTRConstants.PREVIOUS_PROPERTY_PREVIOUD_UUID, uuid);
 //	}
 
 //	public void clearSensitiveDataForPersistance(Property property) {
@@ -208,7 +205,7 @@ public class PropertyUtil extends CommonUtils {
 
 //	public JSONObject getWnsPTworkflowConfig(PropertyRequest request){
 //		List<String> masterName = Arrays.asList( "PTWorkflow");
-//		Map<String, List<String>> codes = getAttributeValues(configs.getStateLevelTenantId(), PTConstants.MDMS_PT_MOD_NAME,masterName , "$.*",PTConstants.JSONPATH_CODES, request.getRequestInfo());
+//		Map<String, List<String>> codes = getAttributeValues(configs.getStateLevelTenantId(), PTRConstants.MDMS_PT_MOD_NAME,masterName , "$.*",PTRConstants.JSONPATH_CODES, request.getRequestInfo());
 //		JSONObject obj = new JSONObject(codes);
 //		JSONArray configArray = obj.getJSONArray("PTWorkflow");
 //		JSONObject response = new JSONObject();

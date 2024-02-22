@@ -7,11 +7,12 @@ import org.egov.ptr.config.PetConfiguration;
 import org.egov.ptr.models.AuditDetails;
 import org.egov.ptr.models.PetRegistrationApplication;
 import org.egov.ptr.models.PetRegistrationRequest;
-import org.egov.ptr.util.PropertyUtil;
-//import org.egov.ptr.web.contracts.PropertyRequest;
+import org.egov.ptr.util.PetUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+
+import ch.qos.logback.classic.Logger;
 
 @Service
 public class EnrichmentService {
@@ -23,7 +24,7 @@ public class EnrichmentService {
 	private UserService userService;
 	
 	@Autowired
-	private PropertyUtil petUtil;
+	private PetUtil petUtil;
 	
 
 
@@ -50,6 +51,7 @@ public class EnrichmentService {
 		    					doc.setAuditDetails(application.getAuditDetails());
 		    					
 		    				}
+		    				
 		    				System.out.println("Document id:"+application.getDocuments());
 		    			});
 		            

@@ -30,8 +30,6 @@ public class PetApplicationRowMapper implements ResultSetExtractor<List<PetRegis
 				if (rs.wasNull()) {
 					lastModifiedTime = null;
 				}
-//                Applicant father = Applicant.builder().id(rs.getString("pfatherid")).build();
-//                Applicant mother = Applicant.builder().id(rs.getString("pmotherid")).build();
 
 				AuditDetails auditdetails = AuditDetails.builder().createdBy(rs.getString("pcreatedBy"))
 						.createdTime(rs.getLong("pcreatedTime")).lastModifiedBy(rs.getString("plastModifiedBy"))

@@ -1,6 +1,6 @@
 package org.egov.ptr.service;
 
-import static org.egov.ptr.util.PTConstants.*;
+import static org.egov.ptr.util.PTRConstants.*;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -27,7 +27,7 @@ import org.egov.ptr.models.event.Source;
 import org.egov.ptr.models.transaction.Transaction;
 import org.egov.ptr.models.transaction.TransactionRequest;
 import org.egov.ptr.util.NotificationUtil;
-import org.egov.ptr.util.PTConstants;
+import org.egov.ptr.util.PTRConstants;
 import org.egov.ptr.web.contracts.EmailRequest;
 import org.egov.ptr.web.contracts.SMSRequest;
 import org.egov.tracer.model.CustomException;
@@ -71,9 +71,9 @@ public class PaymentNotificationService {
      * @param record
      * @param topic
      */
-//    public void process(HashMap<String, Object> record, String topic){
-//
-//
+    public void process(HashMap<String, Object> record, String topic){
+
+
 //        if(topic.equalsIgnoreCase(petConfiguration.getReceiptTopic())){
 //            processPaymentTopic(record, topic);
 //        }
@@ -82,8 +82,8 @@ public class PaymentNotificationService {
 //            processTransaction(record, topic);
 //        }
 //
-//
-//    }
+
+    }
 
 
 
@@ -383,25 +383,25 @@ public class PaymentNotificationService {
      * @param paymentMode The payment mode used for payment
      * @return  The jsonPath
      */
-    private String getJsonPath(String topic,String paymentMode, Boolean isPartiallyPayment){
-        String path = "$..messages[?(@.code==\"{}\")].message";
-        if(topic.equalsIgnoreCase(petConfiguration.getReceiptTopic()) && !isPartiallyPayment && paymentMode.equalsIgnoreCase("online"))
-            path = path.replace("{}",NOTIFICATION_PAYMENT_ONLINE);
-
-        if(topic.equalsIgnoreCase(petConfiguration.getReceiptTopic()) && !isPartiallyPayment && !paymentMode.equalsIgnoreCase("online"))
-            path = path.replace("{}",NOTIFICATION_PAYMENT_OFFLINE);
-
-        if(topic.equalsIgnoreCase(petConfiguration.getReceiptTopic())&& isPartiallyPayment && paymentMode.equalsIgnoreCase("online"))
-            path = path.replace("{}",NOTIFICATION_PAYMENT_PARTIAL_ONLINE);
-
-        if(topic.equalsIgnoreCase(petConfiguration.getReceiptTopic()) && isPartiallyPayment&& !paymentMode.equalsIgnoreCase("online"))
-            path = path.replace("{}",NOTIFICATION_PAYMENT_PARTIAL_OFFLINE);
-
-        if(topic.equalsIgnoreCase(petConfiguration.getPgTopic()))
-            path = path.replace("{}",NOTIFICATION_PAYMENT_FAIL);
-
-        return path;
-    }
+//    private String getJsonPath(String topic,String paymentMode, Boolean isPartiallyPayment){
+//        String path = "$..messages[?(@.code==\"{}\")].message";
+//        if(topic.equalsIgnoreCase(petConfiguration.getReceiptTopic()) && !isPartiallyPayment && paymentMode.equalsIgnoreCase("online"))
+//            path = path.replace("{}",NOTIFICATION_PAYMENT_ONLINE);
+//
+//        if(topic.equalsIgnoreCase(petConfiguration.getReceiptTopic()) && !isPartiallyPayment && !paymentMode.equalsIgnoreCase("online"))
+//            path = path.replace("{}",NOTIFICATION_PAYMENT_OFFLINE);
+//
+//        if(topic.equalsIgnoreCase(petConfiguration.getReceiptTopic())&& isPartiallyPayment && paymentMode.equalsIgnoreCase("online"))
+//            path = path.replace("{}",NOTIFICATION_PAYMENT_PARTIAL_ONLINE);
+//
+//        if(topic.equalsIgnoreCase(petConfiguration.getReceiptTopic()) && isPartiallyPayment&& !paymentMode.equalsIgnoreCase("online"))
+//            path = path.replace("{}",NOTIFICATION_PAYMENT_PARTIAL_OFFLINE);
+//
+//        if(topic.equalsIgnoreCase(petConfiguration.getPgTopic()))
+//            path = path.replace("{}",NOTIFICATION_PAYMENT_FAIL);
+//
+//        return path;
+//    }
 
     /**
      * Returns customized message for
@@ -409,19 +409,19 @@ public class PaymentNotificationService {
      * @param message The message template from localization
      * @param path The json path used to fetch message
      * @return Customized message depending on values in valMap
-     */
-    private String getCustomizedMessage(Map<String,String> valMap,String message,String path){
-        String customMessage = null;
-        if(path.contains(NOTIFICATION_PAYMENT_ONLINE) || path.contains(NOTIFICATION_PAYMENT_PARTIAL_ONLINE))
-            customMessage = getCustomizedOnlinePaymentMessage(message,valMap);
-        if(path.contains(NOTIFICATION_PAYMENT_OFFLINE) || path.contains(NOTIFICATION_PAYMENT_PARTIAL_OFFLINE))
-            customMessage = getCustomizedOfflinePaymentMessage(message,valMap);
-        if(path.contains(NOTIFICATION_PAYMENT_FAIL))
-            customMessage = getCustomizedPaymentFailMessage(message,valMap);
-        if(path.contains(NOTIFICATION_OLDPROPERTYID_ABSENT))
-            customMessage = getCustomizedOldPropertyIdAbsentMessage(message,valMap);
-        return customMessage;
-    }
+//     */
+//    private String getCustomizedMessage(Map<String,String> valMap,String message,String path){
+//        String customMessage = null;
+//        if(path.contains(NOTIFICATION_PAYMENT_ONLINE) || path.contains(NOTIFICATION_PAYMENT_PARTIAL_ONLINE))
+//            customMessage = getCustomizedOnlinePaymentMessage(message,valMap);
+//        if(path.contains(NOTIFICATION_PAYMENT_OFFLINE) || path.contains(NOTIFICATION_PAYMENT_PARTIAL_OFFLINE))
+//            customMessage = getCustomizedOfflinePaymentMessage(message,valMap);
+//        if(path.contains(NOTIFICATION_PAYMENT_FAIL))
+//            customMessage = getCustomizedPaymentFailMessage(message,valMap);
+//        if(path.contains(NOTIFICATION_OLDPROPERTYID_ABSENT))
+//            customMessage = getCustomizedOldPropertyIdAbsentMessage(message,valMap);
+//        return customMessage;
+//    }
 
 //    private String getReceiptLink(Map<String,String> valMap,String mobileNumber){
 //        StringBuilder builder = new StringBuilder(petConfiguration.getUiAppHost());
@@ -604,8 +604,8 @@ public class PaymentNotificationService {
 //
 //            String description = removeForInAppMessage(customizedMessage);
 //            events.add(Event.builder().tenantId(property.getTenantId()).description(description)
-//                    .eventType(PTConstants.USREVENTS_EVENT_TYPE).name(PTConstants.USREVENTS_EVENT_NAME)
-//                    .postedBy(PTConstants.USREVENTS_EVENT_POSTEDBY).source(Source.WEBAPP).recepient(recepient)
+//                    .eventType(PTRConstants.USREVENTS_EVENT_TYPE).name(PTRConstants.USREVENTS_EVENT_NAME)
+//                    .postedBy(PTRConstants.USREVENTS_EVENT_POSTEDBY).source(Source.WEBAPP).recepient(recepient)
 //                    .eventDetails(null).actions(action).build());
 //
 //        }
@@ -627,24 +627,24 @@ public class PaymentNotificationService {
 //        return url;
 //    }
 
-    /**
-     * Method to remove certain lines from SMS templates
-     * so that we can reuse the templates for in app notifications
-     * returns the message minus some lines to match In App Templates
-     * @param message
-     */
-    private String removeForInAppMessage(String message)
-    {
-        if(message.contains(PT_TAX_FAIL))
-            message = message.replace(PT_TAX_FAIL,"");
-
-        if(message.contains(PT_TAX_PARTIAL))
-            message = message.replace(PT_TAX_PARTIAL,"");
-
-        if(message.contains(PT_TAX_FULL))
-            message = message.replace(PT_TAX_FULL,"");
-
-        return message;
-    }
+//    /**
+//     * Method to remove certain lines from SMS templates
+//     * so that we can reuse the templates for in app notifications
+//     * returns the message minus some lines to match In App Templates
+//     * @param message
+//     */
+//    private String removeForInAppMessage(String message)
+//    {
+//        if(message.contains(PT_TAX_FAIL))
+//            message = message.replace(PT_TAX_FAIL,"");
+//
+//        if(message.contains(PT_TAX_PARTIAL))
+//            message = message.replace(PT_TAX_PARTIAL,"");
+//
+//        if(message.contains(PT_TAX_FULL))
+//            message = message.replace(PT_TAX_FULL,"");
+//
+//        return message;
+//    }
 
 }

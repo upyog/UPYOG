@@ -15,14 +15,13 @@ import org.egov.ptr.models.ProcessInstanceRequest;
 //import org.egov.ptr.models.Property;
 import org.egov.ptr.models.User;
 import org.egov.ptr.models.Workflow;
-import org.egov.ptr.models.enums.CreationReason;
 import org.egov.ptr.models.enums.Status;
 import org.egov.ptr.models.workflow.BusinessService;
 import org.egov.ptr.models.workflow.BusinessServiceResponse;
 import org.egov.ptr.models.workflow.ProcessInstanceResponse;
 import org.egov.ptr.models.workflow.State;
 import org.egov.ptr.repository.ServiceRequestRepository;
-import org.egov.ptr.util.PropertyUtil;
+import org.egov.ptr.util.PetUtil;
 //import org.egov.ptr.web.contracts.PropertyRequest;
 import org.egov.ptr.web.contracts.RequestInfoWrapper;
 import org.egov.tracer.model.CustomException;
@@ -45,7 +44,7 @@ public class WorkflowService {
 	private ObjectMapper mapper;
 	
 	@Autowired
-	private PropertyUtil utils;
+	private PetUtil utils;
 	
 	@Autowired
 	ServiceRequestRepository serviceRequestRepository;
