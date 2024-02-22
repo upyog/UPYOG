@@ -181,7 +181,7 @@ public class EdcrRestService {
 
     @Transactional
     public EdcrDetail createEdcr(final EdcrRequest edcrRequest, final MultipartFile file,
-            Map<String, List<Object>> masterData) throws Exception {
+            Map<String, List<Object>> masterData){
         EdcrApplication edcrApplication = new EdcrApplication();
         edcrApplication.setMdmsMasterData(masterData);
         EdcrApplicationDetail edcrApplicationDetail = new EdcrApplicationDetail();
@@ -237,7 +237,7 @@ public class EdcrRestService {
             edcrApplication.setThirdPartyUserTenant(tenantId);
         }
 
-        edcrApplication = edcrApplicationService.createRestEdcr(edcrApplication,edcrRequest.getRequestInfo());
+        edcrApplication = edcrApplicationService.createRestEdcr(edcrApplication);
         
         //Code to push the data of edcr application to kafka index
         EdcrIndexData edcrIndexData = new EdcrIndexData();
