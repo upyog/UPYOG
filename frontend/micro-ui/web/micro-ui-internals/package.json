@@ -12,7 +12,11 @@
     "packages/modules/pgr",
     "packages/modules/commonPt",
     "packages/modules/dss",
-    "packages/modules/fsm"
+    "packages/modules/fsm",
+    "packages/modules/tl",
+    "packages/modules/obps",
+    "packages/modules/ws",
+    "packages/modules/pt"
   ],
   "author": "Abhinav Kushwaha <abhinav.kushwaha@egovernments.org>",
   "license": "MIT",
