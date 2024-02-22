@@ -73362,8 +73362,62 @@ export const LocalizationService = {
             "message": "WHOLESALE",
             "module": "rainmaker-common",
             "locale": "en_IN"
-        }
-
+        },
+        {
+            "code": "WMS_RUNNING_ACCOUNT_FINAL_BILL_WITHHELD_TAX_CATEGORY",
+            "message": "Tax Category",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_RUNNING_ACCOUNT_FINAL_BILL_WITHHELD_REMARK",
+            "message": "Remark",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_RUNNING_ACCOUNT_FINAL_BILL_WITHHELD_AMOUNT",
+            "message": "Amount",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "ADD_MORE_TRADE_UNITS",
+            "message": "Add More",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_RUNNING_ACCOUNT_FINAL_BILL_RABILL_TAX_CATEGORY",
+            "message": "Tax Category",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_RUNNING_ACCOUNT_FINAL_BILL_RABILL_ADDITION_DEDUCTION",
+            "message": "Addition/Deduction",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_RUNNING_ACCOUNT_FINAL_BILL_RABILL_AMOUNT_PERCENTAGE",
+            "message": "Amount/Percentage",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_RUNNING_ACCOUNT_FINAL_BILL_RABILL_PERCENTAGE_VALUE",
+            "message": "Percentage Value",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        {
+            "code": "WMS_RUNNING_ACCOUNT_FINAL_BILL_RABILL_TOTAL",
+            "message": "Total",
+            "module": "rainmaker-common",
+            "locale": "en_IN"
+        },
+        
         
         
         

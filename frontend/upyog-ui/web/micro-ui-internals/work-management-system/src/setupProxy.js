@@ -31,7 +31,8 @@ const apiProxy = createProxyMiddleware({
 // });
 const CMProxy = createProxyMiddleware({
   // target: "http://10.216.36.67:8484",
-  target: "http://10.216.36.246:8484",  
+  // target: "http://10.216.36.246:8484",  
+  target: "http://10.216.36.30:8484",  
   changeOrigin: true,
 });
 module.exports = function (app) {

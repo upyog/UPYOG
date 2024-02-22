@@ -3,32 +3,29 @@ import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import Timeline from "../../components/RAFB/Timeline";
 import { sortDropdownNames } from "../../utils/index";
+import { stringReplaceAll } from "../../utils";
 
 const RABillsTaxDetails = ({ t, config, onSelect, userType, formData }) => {
-  console.log("Ra Bills formData  ",formData)
-  let validation = {};
-  const [TradeCategory, setTradeCategory] = useState("");
-  const [TradeType, setTradeType] = useState(formData?.TadeDetails?.Units?.TradeType || "");
-  const [TradeSubType, setTradeSubType] = useState(formData?.TadeDetails?.Units?.TradeSubType || "");
-  const [UnitOfMeasure, setUnitOfMeasure] = useState(formData?.TadeDetails?.Units?.UnitOfMeasure || "");
-  const [UomValue, setUomValue] = useState(formData?.TadeDetails?.Units?.UomValue || "");
+  console.log("RABillsTaxDetails formData ", { config, formData });
+  // RABillTaxDetail
   const [error, setError] = useState(null);
-  // debugger
-  // const [fields, setFeilds] = useState(
-  //   (formData?.TradeDetails && formData?.TradeDetails?.units) || [{ tradecategory: "", tradetype: "", tradesubtype: "", unit: null, uom: null }]
-  // );
-  // const [fields, setFeilds] = useState(
-  //   (formData?.TradeDetails && formData?.TradeDetails?.units) || [{ taxcategory: "", remark: "", amount: "" }]
-  // );
-  const [fields, setFeilds] = useState([{ taxcategory: "", remark: "", amount: "" }]);
-  console.log("fields fields ",fields)
-  const tenantId = Digit.ULBService.getCitizenCurrentTenant();
-  const stateId = Digit.ULBService.getStateId();
-  console.log("fields fields stateId ",{tenantId,stateId})
+  // const [fields, setFeilds] = useState([formData?.RABillTaxDetail[0]?.taxcategory?.i18nKey, formData.RABillTaxDetail[0]?.remark, formData.RABillTaxDetail[0]?.amount]||[{ taxcategory: "", remark: "", amount: "" }]);
+  const [fields, setFeilds] = useState(
+    formData?.RABillTaxDetail?.RABillTaxDetail
+      ? () => {
+          const s = [];
+          const ar = Object.keys(formData?.RABillTaxDetail?.RABillTaxDetail);
+          for (let i = 0; i < ar.length; i++) {
+            s.push(formData?.RABillTaxDetail?.RABillTaxDetail[i]);
+          }
+          return s;
+        }
+      : [{ taxcategory: "", addition_deduction: "", amount_percentage: "", percentageValue: "", amount: "", total: "" }]
+  );
 
   function handleAdd() {
     const values = [...fields];
-    values.push({ taxcategory: "", remark: "", amount: "" });
+    values.push({ taxcategory: "", addition_deduction: "", amount_percentage: "", percentageValue: "", amount: "", total: "" });
     setFeilds(values);
   }
 
@@ -39,255 +36,111 @@ const RABillsTaxDetails = ({ t, config, onSelect, userType, formData }) => {
       setFeilds(values);
     }
   }
-
-  const { isLoading, data: Data = {} } = Digit.Hooks.tl.useTradeLicenseMDMS(stateId, "TradeLicense", "TradeUnits", "[?(@.type=='TL')]");
-  const { data: billingSlabTradeTypeData, isLoading : isBillingSlabLoading } = Digit.Hooks.tl.useTradeLicenseBillingslab({ tenantId: tenantId, filters: {} }, {
-    select: (data) => {
-    return data?.billingSlab.filter((e) => e.tradeType && (e.applicationType === (window.location.href.includes("renew-trade") ? "RENEWAL" : "NEW")) && e.licenseType === "PERMANENT" && e.uom);
-    }});
-  let TradeCategoryMenu = [];
-  let TradeCategoryMenu2 = [];
-  //let TradeTypeMenu = [];
-console.log("Data Data1 ",Data )
-console.log("Data Data2 ",billingSlabTradeTypeData)
-  Data &&
-    Data.TradeLicense &&
-    Data.TradeLicense.TradeType.map((ob) => {
-      if (!TradeCategoryMenu2.some((TradeCategoryMenu) => TradeCategoryMenu.code === `${ob.code.split(".")[0]}`)) {
-        TradeCategoryMenu2.push({ i18nKey: `TRADELICENSE_TRADETYPE_${ob.code.split(".")[0]}`, code: `${ob.code.split(".")[0]}` });
-      }
-    });
-    console.log("TradeCategoryMenu2 ",TradeCategoryMenu2)
-
-    billingSlabTradeTypeData &&
-    billingSlabTradeTypeData.length > 0 &&
-    billingSlabTradeTypeData.filter((e) => e.structureType === formData?.TradeDetails?.BuildingType?.code.toString() ).map((ob) => {
-        if (!TradeCategoryMenu.some((TradeCategoryMenu) => TradeCategoryMenu.code === `${ob.tradeType.split(".")[0]}`)) {
-          TradeCategoryMenu.push({ i18nKey: `TRADELICENSE_TRADETYPE_${ob.tradeType.split(".")[0]}`, code: `${ob.tradeType.split(".")[0]}` });
-        }
-      });
-    billingSlabTradeTypeData &&
-    billingSlabTradeTypeData.length > 0 &&
-    billingSlabTradeTypeData.filter((e) => e.structureType === formData?.TradeDetails?.VehicleType?.code.toString() ).map((ob) => {
-        if (!TradeCategoryMenu.some((TradeCategoryMenu) => TradeCategoryMenu.code === `${ob.tradeType.split(".")[0]}`)) {
-          TradeCategoryMenu.push({ i18nKey: `TRADELICENSE_TRADETYPE_${ob.tradeType.split(".")[0]}`, code: `${ob.tradeType.split(".")[0]}` });
-        }
-      });
-
-  function getTradeTypeMenu(TradeCategory) {
-    let TradeTypeMenu = [];
-    if(TradeCategory && Data?.TradeLicense && Data?.TradeLicense?.TradeType?.length > 0)
-    {
-      Data?.TradeLicense?.TradeType?.map((ob) => {
-        if (ob.code.split(".")[0] === TradeCategory.code && !TradeTypeMenu.some((TradeTypeMenu) => TradeTypeMenu.code === `${ob.code.split(".")[1]}`))
-         {
-           TradeTypeMenu.push({ i18nKey: `TRADELICENSE_TRADETYPE_${ob.code.split(".")[1]}`, code: `${ob.code.split(".")[1]}` });
-         }
-      })
-    }
-    return TradeTypeMenu;
-    // if(billingSlabTradeTypeData && billingSlabTradeTypeData.length > 0){
-    //   if(formData?.TradeDetails?.BuildingType){
-    //     billingSlabTradeTypeData.filter((e) => e.structureType === formData?.TradeDetails?.BuildingType?.code.toString() ).map((ob) => {
-    //       if (
-    //         ob.tradeType.split(".")[0] === TradeCategory.code &&
-    //         !TradeTypeMenu.some((TradeTypeMenu) => TradeTypeMenu.code === `${ob.tradeType.split(".")[1]}`)
-    //       ) {
-    //         TradeTypeMenu.push({ i18nKey: `TRADELICENSE_TRADETYPE_${ob.tradeType.split(".")[1]}`, code: `${ob.tradeType.split(".")[1]}` });
-    //       }
-    //     });
-    //     return TradeTypeMenu;
-    //   }
-    //   else if(formData?.TradeDetails?.VehicleType){
-    //     billingSlabTradeTypeData.filter((e) => e.structureType === formData?.TradeDetails?.VehicleType?.code.toString() ).map((ob) => {
-    //       if (
-    //         ob.tradeType.split(".")[0] === TradeCategory.code &&
-    //         !TradeTypeMenu.some((TradeTypeMenu) => TradeTypeMenu.code === `${ob.tradeType.split(".")[1]}`)
-    //       ) {
-    //         TradeTypeMenu.push({ i18nKey: `TRADELICENSE_TRADETYPE_${ob.tradeType.split(".")[1]}`, code: `${ob.tradeType.split(".")[1]}` });
-    //       }
-    //     });
-    //     return TradeTypeMenu;
-    //   }
-    // }
-  }
-
-  function getTradeSubTypeMenu(TradeType) {
-    let TradeSubTypeMenu = [];
-    if(TradeType && Data?.TradeLicense && Data?.TradeLicense?.TradeType?.length > 0){
-      Data?.TradeLicense?.TradeType?.map((ob) => {
-        if (ob.code.split(".")[1] === TradeType.code && !TradeSubTypeMenu.some((TradeSubTypeMenu) => TradeSubTypeMenu.code === `${ob.code}`)) {
-                  TradeSubTypeMenu.push({ i18nKey: `TL_${ob.code}`, code: `${ob.code}` });
-                }
-      })
-    }
-    return TradeSubTypeMenu;
-    // if(TradeType && billingSlabTradeTypeData && billingSlabTradeTypeData.length > 0){
-    //   if(formData?.TradeDetails?.BuildingType){
-    //     billingSlabTradeTypeData.filter((e) => e.structureType === formData?.TradeDetails?.BuildingType?.code.toString() ).map((ob) => {
-    //       if (ob.tradeType.split(".")[1] === TradeType.code && !TradeSubTypeMenu.some((TradeSubTypeMenu) => TradeSubTypeMenu.code === `${ob.tradeType}`)) {
-    //         TradeSubTypeMenu.push({ i18nKey: `TL_${ob.tradeType}`, code: `${ob.tradeType}` });
-    //       }
-    //     });
-    //     return TradeSubTypeMenu;
-    //   }
-    //   else if(formData?.TradeDetails?.VehicleType){
-    //     billingSlabTradeTypeData.filter((e) => e.structureType === formData?.TradeDetails?.VehicleType?.code.toString() ).map((ob) => {
-    //       if (ob.tradeType.split(".")[1] === TradeType.code && !TradeSubTypeMenu.some((TradeSubTypeMenu) => TradeSubTypeMenu.code === `${ob.tradeType}`)) {
-    //         TradeSubTypeMenu.push({ i18nKey: `TL_${ob.tradeType}`, code: `${ob.tradeType}` });
-    //       }
-    //     });
-    //     return TradeSubTypeMenu;
-    //   }
-    // }
-  }
-
-  const isUpdateProperty = formData?.isUpdateProperty || false;
-  let isEditProperty = formData?.isEditProperty || false;
-  const { pathname: url } = useLocation();
-  const editScreen = url.includes("/modify-application/");
-
-  function selectTradeCategory(i, value) {
-    let units = [...fields];
-    units[i].tradecategory = value;
-    setTradeCategory(value);
-    selectTradeType(i, null);
-    selectTradeSubType(i, null);
-    selectUomValue(i,"");
-    setFeilds(units);
-  }
-  function selectTradeType(i, value) {
-    let units = [...fields];
-    console.log("units 1 ",units,value)
-    units[i].tradetype = value;
-    console.log("units 2 ",units,value)
-    setTradeType(value);
-    selectTradeSubType(i, null);
-    selectUomValue(i,"");
-    setFeilds(units);
-  }
-  function selectTradeSubType(i, value) {
-    let units = [...fields];
-    units[i].tradesubtype = value;
-    setTradeSubType(value);
-    selectUomValue(i,"");
-    setError(null);
-    // if(){
-    //   setError("TL_UOM_VALUE_GREATER_O")
-    // }
-    if(value && billingSlabTradeTypeData?.filter((ob) => ob?.tradeType === value?.code && (ob?.structureType === formData?.TradeDetails?.VehicleType?.code || ob?.structureType === formData?.TradeDetails?.BuildingType?.code))?.length <= 0)
-    {
-      setError("TL_BILLING_SLAB_NOT_FOUND_FOR_COMB")
-      window.setTimeout(function(){
-        window.scrollTo(0,0);
-      }, 0);
-    }
-    if (value == null) {
-      units[i].unit = null;
-      setUnitOfMeasure(null);
-    }
-    Array.from(document.querySelectorAll("input")).forEach((input) => (input.value = ""));
-    let uomFound = false;
-    value &&
-    billingSlabTradeTypeData &&
-    billingSlabTradeTypeData?.length > 0 &&
-    billingSlabTradeTypeData.filter((e) => e.structureType === formData?.TradeDetails?.BuildingType?.code.toString() ).map((ob) => {
-        if (value.code === ob.tradeType) {
-          units[i].unit = ob.uom;
-          uomFound = true;
-          setUnitOfMeasure(ob.uom);
-          // setFeilds(units);
-        }
-      });
-
-    value &&
-    billingSlabTradeTypeData &&
-    billingSlabTradeTypeData?.length > 0 &&
-    billingSlabTradeTypeData.filter((e) => e.structureType === formData?.TradeDetails?.VehicleType?.code.toString() ).map((ob) => {
-        if (value.code === ob.tradeType) {
-          units[i].unit = ob.uom;
-          uomFound = true;
-          setUnitOfMeasure(ob.uom);
-          // setFeilds(units);
-        }
-      });
-
-    if(!uomFound)
-    {
-      units[i].unit = null;
-      setUnitOfMeasure(null);
-    }
-    setFeilds(units);
-  }
-  function selectUnitOfMeasure(i, e) {
-    let units = [...fields];
-    units[i].unit = e.target.value;
-    setUnitOfMeasure(e.target.value);
-    setFeilds(units);
-  }
-  function selectUomValue(i, e) {
-    let units = [...fields];
-    units[i].uom = e == "" ? e : e.target.value;
-    setError(null);
-    
-    let selectedtradesubType = billingSlabTradeTypeData?.filter((ob) => ob?.tradeType === units[i]?.tradesubtype?.code && (ob?.structureType === formData?.TradeDetails?.BuildingType?.code || ob?.structureType === formData?.TradeDetails?.VehicleType?.code))
-    if(e && !(e?.target?.value && parseFloat(e?.target?.value) > 0)){
-      setError(t("TL_UOM_VALUE_GREATER_O"))
-      window.setTimeout(function(){
-        window.scrollTo(0,0);
-      }, 0);
-    }
-    else{
-    if(Number.isInteger(selectedtradesubType?.[0]?.fromUom)){
-     if(e && !(e?.target?.value && parseInt(e.target.value) >= selectedtradesubType?.[0]?.fromUom)){
-     setError(`${t("TL_FILL_CORRECT_UOM_VALUE")} ${selectedtradesubType?.[0]?.fromUom} - ${selectedtradesubType?.[0]?.toUom}`);
-     window.setTimeout(function(){
-      window.scrollTo(0,0);
-    }, 0);
-     }
-    }
-    if(Number.isInteger(selectedtradesubType?.[0]?.toUom)){
-    if(e && !(e?.target?.value && parseInt(e.target.value) <= selectedtradesubType?.[0]?.toUom)){
-      setError(`${t("TL_FILL_CORRECT_UOM_VALUE")} ${selectedtradesubType?.[0]?.fromUom} - ${selectedtradesubType?.[0]?.toUom}`);
-      window.setTimeout(function(){
-        window.scrollTo(0,0);
-      }, 0);
-      }
-    }
-  }
-      setUomValue(e == "" ? e : e.target.value);
-      setFeilds(units);
-}
+  // const { pathname: url } = useLocation();
+  // const editScreen = url.includes("/modify-application/");
 
   const goNext = () => {
-    let units = formData.TradeDetails.Units;
-    let unitsdata;
-    
-    if(!error){
-    setError(null);
-    unitsdata = { ...units, units: fields };
-    // onSelect(config.key, unitsdata);
-    onSelect(config.key, {"fname":"RA bills Tax Details ram","lname":"kumar"});
+    let RABillTaxDetail = formData?.RABillTaxDetail;
+    let un;
+
+    if (!error) {
+      setError(null);
+      un = { ...RABillTaxDetail, RABillTaxDetail: fields };
+      onSelect(config.key, un);
+      // onSelect(config.key, unitsdata);
     }
   };
 
-  useEffect(() => {
-    if(window.location.href.includes("renew-trade") && fields)
-    {
-      fields.map((value) => {
-        if(value && billingSlabTradeTypeData?.filter((ob) => ob?.tradeType === value?.tradesubtype?.code && (ob?.structureType === formData?.TradeDetails?.VehicleType?.code || ob?.structureType === formData?.TradeDetails?.BuildingType?.code))?.length <= 0)
-          {
-            setError("TL_BILLING_SLAB_NOT_FOUND_FOR_COMB");
-          }
-      })
+  //dropdown code start here
+  const { pathname: url } = useLocation();
+  const isMutation = url.includes("property-mutation");
+
+  const isEditProperty = formData?.isEditProperty || false;
+  // const [dropdownValue, setDropdownValue] = useState([{ taxcategory: "" }])
+  // const [dropdownValue, setDropdownValue] = useState(
+  //   !isMutation ? formData?.address?.documents?.ProofOfAddress?.documentType || null : formData?.[config.key]?.documentType
+  // );
+
+  const dropdownDataTaxCategory = [{ i18nKey_0: "10" }, { i18nKey_0: "20" }, { i18nKey_0: "30" }];
+  const dropdownDataAdditionDeduction = [{ i18nKey_1: "40" }, { i18nKey_1: "50" }, { i18nKey_1: "60" }];
+  const dropdownDataAmountPercentage = [{ i18nKey_2: "70" }, { i18nKey_2: "80" }, { i18nKey_2: "90" }];
+
+  let dropdownData = [];
+  // const tenantId = Digit.ULBService.getCurrentTenantId();
+  const stateId = Digit.ULBService.getStateId();
+
+  const { data: Documentsob = {} } = Digit.Hooks.pt.usePropertyMDMS(stateId, "PropertyTax", "Documents");
+  const docs = Documentsob?.PropertyTax?.Documents;
+  console.log("docs ", docs);
+  const proofOfAddress = Array.isArray(docs) && docs.filter((doc) => doc.code.includes("ADDRESSPROOF"));
+  if (proofOfAddress.length > 0) {
+    dropdownData = proofOfAddress[0]?.dropdownData;
+    dropdownData.forEach((data) => {
+      data.i18nKey = stringReplaceAll(data.code, ".", "_");
+    });
+  }
+  console.log("dropdownValue dropdownData ", dropdownData);
+
+  function setTypeOfDropdownValue(i, e, drKey = "") {
+    // return false
+
+    console.log("dropdownValue i val ", { i, e, fields });
+    let units = [...fields];
+    console.log("dropdownValue i val two ", units);
+
+    if (e.target?.name === undefined) {
+      if(drKey==="taxcategory"){
+        alert(drKey)
+      units[i].taxcategory = e;
     }
-  },[])
+    if(drKey==="addition_deduction"){
+      alert(drKey)
+      units[i].addition_deduction = e;
+    }
+    if(drKey==="amount_percentage"){
+      alert(drKey)
+      units[i].amount_percentage = e;
+    }
+    } 
+    else {
+      const { name, value } = e.target;
+      console.log("dropdownValue i val name", name, value);
+      units[i][name] = value;
+    }
+
+    // if (e.target?.name === undefined) {
+    //   units[i].taxcategory = e;
+    // } else {
+    //   const { name, value } = e.target;
+    //   console.log("dropdownValue i val name", name, value);
+    //   units[i][name] = value;
+    // }
+    console.log("dropdownValue i val three ", units);
+    setFeilds(units);
+  }
+  console.log("dropdownValue data ", fields);
+  const handleSubmit = () => {
+    // let fileStoreId = uploadedFile;
+    // let fileDetails = file;
+    if (fileDetails) fileDetails.documentType = dropdownValue;
+    // if (fileDetails) fileDetails.fileStoreId = fileStoreId ? fileStoreId : null;
+    let address = !isMutation ? formData?.address : {};
+    if (address && address.documents) {
+      address.documents["ProofOfAddress"] = fileDetails;
+    } else {
+      address["documents"] = [];
+      address.documents["ProofOfAddress"] = fileDetails;
+    }
+    if (!isMutation) onSelect(config.key, address, "", index);
+    // else onSelect(config.key, { documentType: dropdownValue, fileStoreId }, "", index);
+  };
+  //dropdown code end here
 
   const onSkip = () => onSelect();
   return (
     <React.Fragment>
       {window.location.href.includes("/citizen") ? <Timeline currentStep={6} /> : null}
-      {isLoading || isBillingSlabLoading ? (
+      {false ? (
         <Loader />
       ) : (
         <FormStep
@@ -298,7 +151,9 @@ console.log("Data Data2 ",billingSlabTradeTypeData)
           forcedError={t(error)}
           // isDisabled={!fields[0].tradecategory || !fields[0].tradetype || !fields[0].tradesubtype}
         >
-          {fields.map((field, index) => {
+          {fields?.map((field, index) => {
+            console.log("field field field field ", field);
+            console.log("field field field field taxcategory ", field?.taxcategory);
             return (
               <div key={`${field}-${index}`}>
                 <div
@@ -312,7 +167,6 @@ console.log("Data Data2 ",billingSlabTradeTypeData)
                     background: "#FAFAFA",
                   }}
                 >
-                  <CardLabel>{`${t("TL_NEW_TRADE_DETAILS_TRADE_CAT_LABEL")}*`}</CardLabel>
                   <LinkButton
                     label={
                       <div>
@@ -336,79 +190,95 @@ console.log("Data Data2 ",billingSlabTradeTypeData)
                     style={{ width: "100px", display: "inline" }}
                     onClick={(e) => handleRemove(index)}
                   />
-                  {!isLoading || !isBillingSlabLoading ? (
-                    <RadioButtons
-                      t={t}
-                      options={TradeCategoryMenu2}
-                      optionsKey="i18nKey"
-                      name={`TradeCategory-${index}`}
-                      value={field?.tradecategory}
-                      selectedOption={field?.tradecategory}
-                      onSelect={(e) => selectTradeCategory(index, e)}
-                      labelKey=""
-                      isPTFlow={true}
-                    />
-                  ) : (
-                    <Loader />
-                  )}
-                  <CardLabel>{`${t("TL_NEW_TRADE_DETAILS_TRADE_TYPE_LABEL")}*`}</CardLabel>
+                  <CardLabel>{`${t("WMS_RUNNING_ACCOUNT_FINAL_BILL_RABILL_TAX_CATEGORY")}`}</CardLabel>
                   <Dropdown
+                    value={field?.taxcategory}
                     t={t}
-                    optionKey="i18nKey"
-                    isMandatory={config.isMandatory}
-                    option={sortDropdownNames(getTradeTypeMenu(field?.tradecategory),"i18nKey",t)}
-                    selected={field?.tradetype}
-                    select={(e) => selectTradeType(index, e)}
-                  />
-                  <CardLabel>{`${t("TL_NEW_TRADE_DETAILS_TRADE_SUBTYPE_LABEL")}*`}</CardLabel>
-                    <Dropdown
-                      t={t}
-                      optionKey="i18nKey"
-                      isMandatory={config.isMandatory}
-                      option={sortDropdownNames(getTradeSubTypeMenu(field?.tradetype),"i18nKey",t)}
-                      selected={field?.tradesubtype}
-                      optionCardStyles={{maxHeight:"125px",overflow:"scroll"}}
-                      select={(e) => selectTradeSubType(index, e)}
-                    />
-                  <CardLabel>{`${t("TL_UNIT_OF_MEASURE_LABEL")}`}</CardLabel>
-                  <TextInput
-                    style={{ background: "#FAFAFA" }}
-                    t={t}
-                    type={"text"}
+                    selected={field?.taxcategory}
                     isMandatory={false}
-                    optionKey="i18nKey"
-                    name="UnitOfMeasure"
-                    //value={UnitOfMeasure}
-                    value={field?.unit}
-                    onChange={(e) => selectUnitOfMeasure(index, e)}
-                    disable={true}
+                    // option={dropdownData}
+                    option={dropdownDataTaxCategory}
+                    optionKey="i18nKey_0"
+                    name="taxcategory"
+                    select={(e) => setTypeOfDropdownValue(index, e,"taxcategory")}
+                    placeholder={t(`PT_COMMONS_SELECT_PLACEHOLDER`)}
                   />
-                  <CardLabel>{`${t("TL_NEW_TRADE_DETAILS_UOM_VALUE_LABEL")}${!field.unit ? "" : "*"}`}</CardLabel>
-                  <TextInput
-                    style={{ background: "#FAFAFA" }}
+
+                  <CardLabel>{`${t("WMS_RUNNING_ACCOUNT_FINAL_BILL_RABILL_ADDITION_DEDUCTION")}`}</CardLabel>
+                  <Dropdown
+                    value={field?.addition_deduction}
                     t={t}
-                    type={"text"}
+                    selected={field?.addition_deduction}
                     isMandatory={false}
+                    // option={dropdownData}
+                    option={dropdownDataAdditionDeduction}
+                    optionKey="i18nKey_1"
+                    name="addition_deduction"
+                    select={(e) => setTypeOfDropdownValue(index, e,"addition_deduction")}
+                    placeholder={t(`PT_COMMONS_SELECT_PLACEHOLDER`)}
+                  />
+
+                  <CardLabel>{`${t("WMS_RUNNING_ACCOUNT_FINAL_BILL_RABILL_AMOUNT_PERCENTAGE")}`}</CardLabel>
+                  <Dropdown
+                    value={field?.amount_percentage}
+                    t={t}
+                    selected={field?.amount_percentage}
+                    isMandatory={false}
+                    // option={dropdownData}
+                    option={dropdownDataAmountPercentage}
+                    optionKey="i18nKey_2"
+                    name="amount_percentage"
+                    select={(e) => setTypeOfDropdownValue(index, e,"amount_percentage")}
+                    placeholder={t(`PT_COMMONS_SELECT_PLACEHOLDER`)}
+                  />
+
+                  <CardLabel>{`${t("WMS_RUNNING_ACCOUNT_FINAL_BILL_RABILL_PERCENTAGE_VALUE")}`}</CardLabel>
+                  <TextInput
+                    t={t}
+                    isMandatory={false}
+                    type={"text"}
                     optionKey="i18nKey"
-                    name="UomValue"
-                    //value={UomValue}
-                    value={field?.uom}
-                    onChange={(e) => selectUomValue(index, e)}
-                    disable={!field.unit}
-                    {...(validation = {
-                      isRequired: true,
-                      pattern: "[0-9]+",
-                      type: "text",
-                      title: t("TL_WRONG_UOM_VALUE_ERROR"),
-                    })}
+                    name="percentageValue"
+                    value={field?.percentageValue}
+                    onChange={(e) => setTypeOfDropdownValue(index, e)}
+                    // onChange={setSelectWorkName}
+                    // disable={isEdit}
+                    // {...(validation = { pattern: "^[a-zA-Z-0-9_@/#&+-.`' ]*$", isRequired: true, title: t("TL_INVALID_TRADE_NAME") })}
+                  />
+                  <CardLabel>{`${t("WMS_RUNNING_ACCOUNT_FINAL_BILL_WITHHELD_AMOUNT")}`}</CardLabel>
+                  <TextInput
+                    t={t}
+                    isMandatory={false}
+                    type={"text"}
+                    optionKey="i18nKey"
+                    name="amount"
+                    value={field?.amount}
+                    onChange={(e) => setTypeOfDropdownValue(index, e)}
+                    // onChange={setSelectWorkName}
+                    // disable={isEdit}
+                    // {...(validation = { pattern: "^[a-zA-Z-0-9_@/#&+-.`' ]*$", isRequired: true, title: t("TL_INVALID_TRADE_NAME") })}
+                  />
+                  <CardLabel>{`${t("WMS_RUNNING_ACCOUNT_FINAL_BILL_RABILL_TOTAL")}`}</CardLabel>
+                  <TextInput
+                    t={t}
+                    isMandatory={false}
+                    type={"text"}
+                    optionKey="i18nKey"
+                    name="total"
+                    value={field?.total}
+                    onChange={(e) => setTypeOfDropdownValue(index, e)}
+                    // onChange={setSelectWorkName}
+                    // disable={isEdit}
+                    // {...(validation = { pattern: "^[a-zA-Z-0-9_@/#&+-.`' ]*$", isRequired: true, title: t("TL_INVALID_TRADE_NAME") })}
                   />
                 </div>
               </div>
             );
           })}
+
           <div style={{ justifyContent: "center", display: "flex", paddingBottom: "15px", color: "#FF8C00" }}>
             <button type="button" style={{ paddingTop: "10px" }} onClick={() => handleAdd()}>
-              {`${t("TL_ADD_MORE_TRADE_UNITS")}`}
+              {`${t("ADD_MORE_TRADE_UNITS")}`}
             </button>
           </div>
         </FormStep>

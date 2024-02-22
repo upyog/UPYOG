@@ -7,7 +7,7 @@ const MeasurementBookDate = ({ t, config, onSelect, value, userType, formData, d
   console.log("Select Work Name config,formData ",{config,formData})
   let validation = {};
   const onSkip = () => onSelect();
-  const [WorkName, setWorkName] = useState(formData.ProjectInfo?.WorkName);
+  const [WorkName, setWorkName] = useState(formData.mbNotPaid?.mbDate);
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();
   const isEdit = window.location.href.includes("/edit-application/") || window.location.href.includes("renew-trade");
@@ -24,29 +24,13 @@ const MeasurementBookDate = ({ t, config, onSelect, value, userType, formData, d
   }, []);
 
   const goNext = () => {
-    // const getCurrentFinancialYear = () => {
-    //   var today = new Date();
-    //   var curMonth = today.getMonth();
-    //   var fiscalYr = "";
-    //   if (curMonth > 3) {
-    //     var nextYr1 = (today.getFullYear() + 1).toString();
-    //     fiscalYr = today.getFullYear().toString() + "-" + nextYr1;
-    //   } else {
-    //     var nextYr2 = today.getFullYear().toString();
-    //     fiscalYr = (today.getFullYear() - 1).toString() + "-" + nextYr2.slice(-2);
-    //   }
-    //   return fiscalYr;
-    // };
-
-    // sessionStorage.setItem("CurrentFinancialYear", FY);
-    // sessionStorage.setItem("CurrentFinancialYear", getCurrentFinancialYear());
-    // sessionStorage.setItem("CurrentFinancialYear", currentFinancialYear());
-    onSelect(config.key, { WorkName });
+    onSelect()
+    // onSelect(config.key, { WorkName });
   };
   if (isLoading) {
     return <Loader></Loader>
   }
-
+console.log("WorkName ",WorkName)
   return (
     <React.Fragment>
       {window.location.href.includes("/citizen") ? <Timeline currentStep={3}  /> : null}
@@ -66,7 +50,8 @@ const MeasurementBookDate = ({ t, config, onSelect, value, userType, formData, d
           name="WorkName"
           value={WorkName}
           onChange={setSelectWorkName}
-          disable={isEdit}
+          // disable={isEdit}
+          disable={true}
           {...(validation = { pattern: "^[a-zA-Z-0-9_@/#&+-.`' ]*$", isRequired: true, title: t("TL_INVALID_TRADE_NAME") })}
         />
       </FormStep>

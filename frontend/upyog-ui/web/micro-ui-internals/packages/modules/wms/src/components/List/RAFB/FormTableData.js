@@ -6,7 +6,7 @@ import InboxLinks from "./ApplicationLinks";
 import SearchApplication from "./searchFormData";
 import { Link } from "react-router-dom";
 
-const FormTableData = ({ tableConfig, filterComponent, onChange, ...props }) => {
+const FormTableData = ({ tableConfig, filterComponent, setSelectData, ...props }) => {
   const { t } = useTranslation();
   const [FilterComponent, setComp] = useState(() => Digit.ComponentRegistryService?.getComponent(filterComponent));
 
@@ -37,10 +37,9 @@ const FormTableData = ({ tableConfig, filterComponent, onChange, ...props }) => 
       selectedRowData.push(rowData.uid);
     }
     flag = 0;
-    console.log("rowData push in ", selectedRowData);
-    onChange(selectedRowData)
+    setSelectData(selectedRowData)
   };
-
+  console.log("rowData push in ", selectedRowData);
   const columns = React.useMemo(() => {
     return [
       // {
@@ -60,12 +59,12 @@ const FormTableData = ({ tableConfig, filterComponent, onChange, ...props }) => 
       //   width: 30,
       //   Cell: ({ row },rest) => (
       //     <div>
-      //       {console.log("rowrowrow ",row)}
+      //       {/* {console.log("rowrowrow ",row)} */}
       //       <CheckBox
       //         key={row.original.uid}
       //         // onToggle={() => onToggle(row.original)}
-      //         // onClick={() => onToggle(row.original)}
-      //         onChange={() => onToggle(row.original)}
+      //         onClick={() => onToggle(row.original)}
+      //         // onChange={() => onToggle(row.original)}
       //         value={row.original.included}
       //         {...row.getToggleRowSelectedProps()}
       //       />
@@ -161,6 +160,7 @@ const FormTableData = ({ tableConfig, filterComponent, onChange, ...props }) => 
         sortParams={props.sortParams}
         totalRecords={props.totalRecords}
         showCheckbox={true}
+        setSelectData={setSelectData}
         // selectableRows
       />
     );

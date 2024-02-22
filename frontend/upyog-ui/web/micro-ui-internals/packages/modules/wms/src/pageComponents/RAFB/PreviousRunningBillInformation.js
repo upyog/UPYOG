@@ -9,16 +9,18 @@ const PreviousRunningBillInformation = ({ t, config, onSelect, value, userType, 
   let validation = {};
   const onSkip = () => onSelect();
   const [previousBills, setPreviousBills] = useState(formData.previous_bill?.previousBills);
+
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();
   const isEdit = window.location.href.includes("/edit-application/") || window.location.href.includes("renew-trade");
   const { isLoading, data: fydata = {} } = Digit.Hooks.tl.useTradeLicenseMDMS(stateId, "egf-master", "FinancialYear");
-
+console.log("fydata ",fydata)
   // let mdmsFinancialYear = fydata["egf-master"] ? fydata["egf-master"].FinancialYear.filter(y => y.module === "TL") : [];
   // let FY = mdmsFinancialYear && mdmsFinancialYear.length > 0 && mdmsFinancialYear.sort((x, y) => y.endingDate - x.endingDate)[0]?.code;
   function setSelectData(data) {
-    console.log("previous_bill data ",data.toString())
-    setPreviousBills(data.toString());
+    console.log("previous_bill data ",data)// array[1,2]
+    // console.log("previous_bill data.toString() ",data.toString())// converted array [1,2...] in string "1,2..."
+    setPreviousBills(data);
   }
 
   useEffect(() => {
@@ -26,8 +28,7 @@ const PreviousRunningBillInformation = ({ t, config, onSelect, value, userType, 
   }, []);
 
   const goNext = () => {
-    console.log("previous-running-bill config,formData config.key, { previousBills } ",config.key, { previousBills })
-    onSelect(config.key, { previousBills });
+    onSelect(config.key, [previousBills]);
   };
   if (isLoading) {
     return <Loader></Loader>
@@ -50,6 +51,7 @@ const PreviousRunningBillInformation = ({ t, config, onSelect, value, userType, 
     // ulb: tenants,
     // ulb: tenants?.find(tenant => tenant?.code === tenantId)
   });
+
   const { isError: vendorCreateError, data: updateResponse, error: updateError, mutate } = Digit?.Hooks?.wms?.te?.useWmsTESearch(tenantId);
   const {data:RAFB_Data,isSuccess:RAFB_isSuccess,isLoading:RAFB_isLoading} = Digit?.Hooks?.wms?.rafb?.useWmsRAFBGet(tenantId, "getPriviousBill") || {};
   console.log("rafbData ",{RAFB_Data,RAFB_isSuccess,RAFB_isLoading})
@@ -135,9 +137,9 @@ const PreviousRunningBillInformation = ({ t, config, onSelect, value, userType, 
       );
     });
     setData(filteredData);
-  // return rows?.filter((row) =>
-  //   searchParams?.babyLastName ? row.original?.babyLastName?.toUpperCase().startsWith(searchParams?.babyLastName.toUpperCase()) : true
-  // );
+    // return rows?.filter((row) =>
+    //   searchParams?.babyLastName ? row.original?.babyLastName?.toUpperCase().startsWith(searchParams?.babyLastName.toUpperCase()) : true
+    // );
 };
 const fetchNextPage = useCallback(() => {
   setPageOffset((prevPageOffSet) => parseInt(prevPageOffSet) + parseInt(pageSize));
@@ -186,7 +188,8 @@ const handlePageSizeChange = (e) => {
         onPageSizeChange={handlePageSizeChange}
         isLoading={isLoading}
         tenantId={tenantId}
-        onChange={setSelectData}
+        // onChange={setSelectData}
+        setSelectData={setSelectData}
         // filterComponent={filterComponent}
         // filterComponent={"d"}
       />

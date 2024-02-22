@@ -7,7 +7,7 @@ const MeasurementBookAmount = ({ t, config, onSelect, value, userType, formData,
   console.log("MeasurementBookAmount config,formData ",{config,formData})
   let validation = {};
   const onSkip = () => onSelect();
-  const [WorkOrderNo, setWorkOrderNo] = useState(formData.ProjectInfo?.WorkOrderNo);
+  const [WorkOrderNo, setWorkOrderNo] = useState(formData.mbNotPaid?.amount);
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();
   const isEdit = window.location.href.includes("/edit-application/") || window.location.href.includes("renew-trade");
@@ -24,24 +24,8 @@ const MeasurementBookAmount = ({ t, config, onSelect, value, userType, formData,
   }, []);
 
   const goNext = () => {
-    // const getCurrentFinancialYear = () => {
-    //   var today = new Date();
-    //   var curMonth = today.getMonth();
-    //   var fiscalYr = "";
-    //   if (curMonth > 3) {
-    //     var nextYr1 = (today.getFullYear() + 1).toString();
-    //     fiscalYr = today.getFullYear().toString() + "-" + nextYr1;
-    //   } else {
-    //     var nextYr2 = today.getFullYear().toString();
-    //     fiscalYr = (today.getFullYear() - 1).toString() + "-" + nextYr2.slice(-2);
-    //   }
-    //   return fiscalYr;
-    // };
-
-    // sessionStorage.setItem("CurrentFinancialYear", FY);
-    // sessionStorage.setItem("CurrentFinancialYear", getCurrentFinancialYear());
-    // sessionStorage.setItem("CurrentFinancialYear", currentFinancialYear());
-    onSelect(config.key, { WorkOrderNo });
+    onSelect();
+    // onSelect(config.key, { WorkOrderNo });
   };
   if (isLoading) {
     return <Loader></Loader>
@@ -66,7 +50,8 @@ const MeasurementBookAmount = ({ t, config, onSelect, value, userType, formData,
           name="WorkOrderNumber"
           value={WorkOrderNo}
           onChange={setSelectWorkOrderNo}
-          disable={isEdit}
+          // disable={isEdit}
+          disable={true}
           {...(validation = { pattern: "^[a-zA-Z-0-9_@/#&+-.`' ]*$", isRequired: true, title: t("TL_INVALID_TRADE_NAME") })}
         />
       </FormStep>
