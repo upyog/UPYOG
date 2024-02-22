@@ -70,7 +70,7 @@
 				<div class="col-sm-3 add-margin">
  					<form:input path="billdate" id="billdate"
 									class="form-control datepicker" data-date-end-date="0d"
-									required="required" autocomplete="off" data-inputmask="'mask': 'd/m/y'"  placeholder="DD/MM/YYYY"/>
+									required="required" autocomplete="off" data-inputmask="'mask': '99/99/9999'"  placeholder="DD/MM/YYYY"/>
 					<form:errors path="billdate" cssClass="add-margin error-msg" />
 				</div>
 			</c:when>
@@ -80,7 +80,7 @@
 				<div class="col-sm-3 add-margin">
 					<form:input path="billdate" id="billdate"
 									class="form-control datepicker" data-date-end-date="0d"
-									required="required" autocomplete="off" data-inputmask="'mask': 'd/m/y'"  placeholder="DD/MM/YYYY"/>
+									required="required" autocomplete="off" data-inputmask="'mask': '99/99/9999'"  placeholder="DD/MM/YYYY"/>
 					<form:errors path="billdate" cssClass="add-margin error-msg" />
 				</div>
 				<label class="col-sm-2 control-label text-right"></label>
@@ -195,7 +195,7 @@
 		<div class="col-sm-3 add-margin">
  		<form:input path="egBillregistermis.partyBillDate" id="partyBillDate"
 									class="form-control datepicker" data-date-end-date="0d"
-									required="required" autocomplete="off" data-inputmask="'mask': 'd/m/y'"  placeholder="DD/MM/YYYY"/>
+									required="required" autocomplete="off" data-inputmask="'mask': '99/99/9999'"  placeholder="DD/MM/YYYY"/>
 			<form:errors path="egBillregistermis.partyBillDate" cssClass="add-margin error-msg" />
 		</div>
 	</div>
