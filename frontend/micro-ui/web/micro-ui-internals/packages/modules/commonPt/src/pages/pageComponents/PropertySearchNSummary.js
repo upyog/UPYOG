@@ -58,7 +58,7 @@ const PropertySearchNSummary = ({ config, onSelect, userType, formData, setError
   }, [error, propertyDetails]);
   useEffect(() => {
     onSelect("cpt", { details: propertyDetails?.Properties[0] });
-    sessionStorage.setItem("fsmProperty",JSON.stringify(propertyDetails?.Properties[0]))
+    sessionStorage.setItem("Digit_FSM_PT",JSON.stringify(propertyDetails?.Properties[0]))
     localStorage.setItem("pgrProperty",JSON.stringify(propertyDetails?.Properties[0]))
   }, [propertyDetails, pathname]);
 

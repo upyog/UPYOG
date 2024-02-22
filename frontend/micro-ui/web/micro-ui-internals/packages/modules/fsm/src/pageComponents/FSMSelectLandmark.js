@@ -3,7 +3,15 @@ import { FormStep, TextArea, LabelFieldPair, CardLabel } from "@egovernments/dig
 import Timeline from "../components/TLTimelineInFSM";
 
 const FSMSelectLandmark = ({ t, config, onSelect, formData, userType }) => {
-  const [landmark, setLandmark] = useState();
+
+  //let property = JSON.parse(sessionStorage?.getItem("Digit_FSM_PT")||"{}")
+  let property = sessionStorage?.getItem("Digit_FSM_PT")
+if (property !== "undefined")
+{
+  property = JSON.parse(sessionStorage?.getItem("Digit_FSM_PT"))
+}
+
+  const [landmark, setLandmark] = useState(property?.propertyDetails?.address?.landmark);
 
   const [error, setError] = useState("");
 

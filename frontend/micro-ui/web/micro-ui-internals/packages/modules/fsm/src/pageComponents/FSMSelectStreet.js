@@ -8,7 +8,12 @@ const FSMSelectStreet = ({ t, config, onSelect, userType, formData, formState, s
   const onSkip = () => onSelect();
 
   const [focusIndex, setFocusIndex] = useState({ index: -1, type: "" });
-
+//const property = JSON.parse(sessionStorage.getItem("Digit_FSM_PT")|| "{}")
+let property = sessionStorage?.getItem("Digit_FSM_PT")
+if (property !== "undefined")
+{
+  property = JSON.parse(sessionStorage?.getItem("Digit_FSM_PT"))
+}
   const {
     control,
     formState: localFormState,
@@ -23,8 +28,8 @@ const FSMSelectStreet = ({ t, config, onSelect, userType, formData, formState, s
   const { errors } = localFormState;
   const checkLocation = window.location.href.includes("tl/new-application") || window.location.href.includes("tl/renew-application-details") || window.location.href.includes("tl/edit-application-details/") || window.location.href.includes("/tl/tradelicence/new-application/street") || window.location.href.includes("/tl/tradelicence/renew-trade") || window.location.href.includes("/tl/tradelicence/edit-application") ;
   const isRenewal = window.location.href.includes("edit-application") || window.location.href.includes("tl/renew-application-details");
-  const [street, setStreet] = useState();
-  const [doorNo, setDoorNo] = useState();
+  const [street, setStreet] = useState(property?.propertyDetails?.address?.street);
+  const [doorNo, setDoorNo] = useState(property?.propertyDetails?.address?.doorNo);
   let inputs;
   if (window.location.href.includes("tl")) {
     inputs = config.inputs;
@@ -208,10 +213,10 @@ const FSMSelectStreet = ({ t, config, onSelect, userType, formData, formState, s
       <FormStep
         config={{ ...config, inputs }}
         isMandatory={true}
-        _defaultValues={{ street: formData?.cpt?.details?.address.street, doorNo: formData?.cpt?.details?.address.doorNo }}
+        _defaultValues={{ street: property.propertyDetails.address.street, doorNo: property.propertyDetails.address.doorNo }}
         onChange={handleSkip}
         onSelect={(data) => onSelect(config.key, data)}
-        isDisabled={doorNo || street ? false : true}
+        isDisabled={doorNo && street ? false : true}
         t={t}
       />
     </React.Fragment>
