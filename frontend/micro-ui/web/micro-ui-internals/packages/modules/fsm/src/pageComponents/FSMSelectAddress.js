@@ -13,19 +13,20 @@ const FSMSelectAddress = ({ t, config, onSelect, userType, formData }) => {
       : pincode
       ? allCities.filter((city) => city?.pincode?.some((pin) => pin == pincode))
       : allCities;
-let property = sessionStorage?.getItem("fsmProperty")
-//console.log("property",property)
-if(property !== "undefined")
+let property = sessionStorage?.getItem("Digit_FSM_PT")
+if (property !== "undefined")
 {
- 
-    property = JSON.parse(property)
+  property = JSON.parse(sessionStorage?.getItem("Digit_FSM_PT"))
 }
-console.log("propertyproperty",property)
-// useEffect(()=>{
-//   console.log(" property?.address?.locality ", property?.address?.locality )
-//   setSelectedLocality(property?.address?.locality)
-// },[property])
-  const [selectedCity, setSelectedCity] = useState(() =>formData?.address?.city || Digit.SessionStorage.get("fsm.file.address.city")  ||  null);
+console.log("property",property)
+let cityDetail={}
+if (property)
+{
+cityDetail = cities.filter((city) =>{
+return city.code == property?.propertyDetails?.address?.tenantId
+})
+}
+  const [selectedCity, setSelectedCity] = useState(() =>formData?.address?.city ||cityDetail?.[0] ||  null);
   const { data: fetchedLocalities } = Digit.Hooks.useBoundaryLocalities(
     selectedCity?.code,
     "revenue",
@@ -34,8 +35,9 @@ console.log("propertyproperty",property)
     },
     t
   );
+ 
   const [localities, setLocalities] = useState();
-  const [selectedLocality, setSelectedLocality] = useState(()=>property?.address?.locality || formData?.cpt?.details?.address?.locality|| formData?.address?.locality);
+  const [selectedLocality, setSelectedLocality] = useState(()=>property?.propertyDetails?.address?.locality || formData?.cpt?.details?.address?.locality|| formData?.address?.locality);
 
   useEffect(() => {
     if (cities) {
@@ -49,14 +51,17 @@ console.log("propertyproperty",property)
     if (selectedCity && fetchedLocalities) {
       let __localityList = fetchedLocalities;
       let filteredLocalityList = [];
-
+console.log("formData?.address?.locality",formData?.address?.locality,formData?.cpt?.details?.address?.locality,property?.propertyDetails?.address?.locality)
       if (formData?.address?.locality) {
         setSelectedLocality(formData.address.locality);
       }
-      if (formData?.cpt?.details?.address?.locality) {
+      else if (formData?.cpt?.details?.address?.locality) {
         setSelectedLocality(formData.cpt.details.address.locality);
       }
-
+      else if (property?.propertyDetails?.address?.locality) {
+        setSelectedLocality(property?.propertyDetails?.address?.locality);
+      }
+      
 
       if (formData?.address?.pincode) {
         filteredLocalityList = __localityList.filter((obj) => obj.pincode?.find((item) => item == formData.address.pincode));

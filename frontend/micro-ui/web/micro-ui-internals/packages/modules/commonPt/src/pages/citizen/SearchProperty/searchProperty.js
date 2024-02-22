@@ -267,11 +267,7 @@ const SearchProperty = ({ config: propsConfig, onSelect, redirectToUrl }) => {
                 {...customProps}
                 selected={props.value}
                 select={(d) => {
-                  Digit.LocalizationService.getLocale({
-                    modules: [`rainmaker-${props?.value?.code}`],
-                    locale: Digit.StoreData.getCurrentLanguage(),
-                    tenantId: `${props?.value?.code}`,
-                  });              
+                  "pg.citya"              
                   if (d.code !== cityCode) props.setValue("locality", null);
                   props.onChange(d);
                 }}
@@ -543,8 +539,9 @@ const SearchProperty = ({ config: propsConfig, onSelect, redirectToUrl }) => {
     const mobileNumberLength = data?.[mobileNumber.name]?.length;
     const oldPropId = data?.[oldProperty.name];
     const propId = data?.[property.name];
-    const city = data?.city;
-
+    const city = data?.city || allCities[0];
+console.log("citycity",city)
+setCityCode(city.code);
     // if ((city!=null && Object.keys(city).length !=0) && !(mobileNumberLength > 0 || oldPropId!="" || propId!="")){
     //   setShowToast({ warning: true, label: "ERR_PT_FILL_VALID_FIELDS" });
     // }

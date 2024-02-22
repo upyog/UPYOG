@@ -149,6 +149,7 @@ const PTAcknowledgement = ({ onSuccess, onSelect, formData, redirectUrl, userTyp
     if (onSelect) {
       if (mutation.isSuccess) {
         sessionStorage.setItem("Digit_OBPS_PT",JSON.stringify(mutation?.data?.Properties[0]))
+        sessionStorage.setItem("Digit_FSM_PT",JSON.stringify(mutation?.data?.Properties[0]))
         onSelect("cpt", { details: mutation?.data?.Properties[0] });
       }
     }
