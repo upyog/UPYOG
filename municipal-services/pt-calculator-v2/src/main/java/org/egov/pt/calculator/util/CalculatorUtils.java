@@ -175,6 +175,7 @@ public class CalculatorUtils {
         details.add(MasterDetail.builder().name(CalculatorConstants.STRUCTURE_TYPE_RATES).build());
         details.add(MasterDetail.builder().name(CalculatorConstants.AGE_OF_PROPERTY_RATES).build());
         details.add(MasterDetail.builder().name(CalculatorConstants.SPECIAL_EXCEMPTION).build());
+        details.add(MasterDetail.builder().name(CalculatorConstants.USAGE_OWNER_CATEGORY_RATES).build());
         ModuleDetail mdDtl = ModuleDetail.builder().masterDetails(details)
                 .moduleName(CalculatorConstants.PROPERTY_TAX_MODULE).build();
         MdmsCriteria mdmsCriteria = MdmsCriteria.builder().moduleDetails(Arrays.asList(mdDtl)).tenantId(tenantId)
