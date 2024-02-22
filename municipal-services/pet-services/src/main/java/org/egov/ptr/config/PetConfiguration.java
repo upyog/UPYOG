@@ -210,4 +210,9 @@ public class PetConfiguration {
 
 	@Value("${egov.bill.gen.endpoint}")
 	private String billGenerateEndpoint;
+	
+	@Value("${egov.event.gen.topic}")
+	private String eventGenerateTopic;
+
+	
 }
