@@ -107,12 +107,9 @@ const PTRCitizenDetails
           value={applicantName}
           onChange={setOwnerName}
           ValidationRequired = {true}
-          {...(validation = {
-            isRequired: true,
-            pattern: "^[a-zA-Z-.`' ]*$",
-            type: "text",
-            title: t("PT_NAME_ERROR_MESSAGE"),
-          })}
+          {...{ required: true, pattern: "[A-Za-z]*", type: "text", title: t("Only alphabets are allowed") }}
+       
+         
         />
        
         <CardLabel>{`${t("PTR_MOBILE_NUMBER")}`}</CardLabel>
