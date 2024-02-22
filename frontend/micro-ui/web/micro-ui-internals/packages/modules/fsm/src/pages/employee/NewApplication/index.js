@@ -47,7 +47,7 @@ export const NewApplication = ({ parentUrl, heading }) => {
       
       formData?.propertyType &&
       formData?.subtype &&
-      formData?.address?.locality?.code &&
+      formData?.address?.locality?.code || formData?.cpt?.details?.address?.locality?.code &&
       formData?.tripData?.vehicleType &&
       formData?.channel &&
       formData?.pitType &&
@@ -90,6 +90,7 @@ export const NewApplication = ({ parentUrl, heading }) => {
   // }, [propertyType, subType, vehicle]);
 
   const onSubmit = (data) => {
+    console.log("data",data)
     const applicationChannel = data.channel;
     const sanitationtype = data?.pitType?.code;
     const pitDimension = data?.pitDetail;
@@ -107,8 +108,8 @@ export const NewApplication = ({ parentUrl, heading }) => {
     const cityCode = data?.address?.city?.code;
     const city = data?.address?.city?.name;
     const state = data?.address?.city?.state;
-    const localityCode = data?.address?.locality?.code;
-    const localityName = data?.address?.locality?.name;
+    const localityCode = data.cpt?.details?.address?.locality?.code || data?.address?.locality?.code ;
+    const localityName = data.cpt?.details?.address?.locality?.name || data?.address?.locality?.name;
     const gender = data.applicationData.applicantGender;
     const paymentPreference = amount === 0 ? null : data?.paymentPreference ? data?.paymentPreference : null;
     const advanceAmount = amount === 0 ? null : data?.advancepaymentPreference?.advanceAmount;

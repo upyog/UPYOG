@@ -5,6 +5,11 @@ import { useLocation } from "react-router-dom";
 
 const SelectPropertySubtype = ({ config, onSelect, t, userType, formData }) => {
   const { pathname: url } = useLocation();
+  let property = sessionStorage?.getItem("Digit_FSM_PT")
+  if (property !== "undefined")
+  {
+    property = JSON.parse(sessionStorage?.getItem("Digit_FSM_PT"))
+  }
   const select = (items) => items.map((item) => ({ ...item, i18nKey: t(item.i18nKey) }));
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();
@@ -15,7 +20,9 @@ const SelectPropertySubtype = ({ config, onSelect, t, userType, formData }) => {
   const [subtype, setSubtype] = useState();
 
   const [subtypeOptions, setSubtypeOptions] = useState([]);
-  const { propertyType } = formData || {};
+  console.log("propertyType",formData)
+  formData.propertyType = property?.usageCategory || formData.propertyType
+  const { propertyType } =formData || {};
 
   useEffect(() => {
     if (!propertySubtypesDataLoading && propertySubtypesData) {
