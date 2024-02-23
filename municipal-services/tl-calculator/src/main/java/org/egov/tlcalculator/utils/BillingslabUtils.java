@@ -14,11 +14,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class BillingslabUtils {
 	
-	@Value("${egov.mdms.host}")
-	private String mdmsHost;
+	@Value("${mdms.v2.host}")
+    	private String mdmsHost;
 
-	@Value("${egov.mdms.search.endpoint}")
-	private String mdmsEndpoint;
+	@Value("${mdms.v2.search.endpoint}")
+	private String mdmsSearchEndpoint;
 	
 	/**
 	 * A common method that builds MDMS request for searching master data.
