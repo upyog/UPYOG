@@ -1,4 +1,5 @@
 import { MdmsServiceV2, getGeneralCriteria } from "../../services/elements/MDMSV2";
+import { MdmsService } from "../../services/elements/MDMS";
 import { useQuery } from "react-query";
 
 const useMDMSV2 = (tenantId, moduleCode, type, config = { }, payload = []) => {
@@ -6,7 +7,7 @@ const useMDMSV2 = (tenantId, moduleCode, type, config = { }, payload = []) => {
     return useQuery("PT_FINANCIAL_YEARLS", () => MdmsServiceV2.getDataByCriteria(tenantId, payload, moduleCode));
   };
   const useCommonFieldsConfig = () => {
-    return useQuery("COMMON_FIELDS", () => MdmsServiceV2.getCommonFieldsConfig(tenantId, moduleCode, type, payload));
+    return useQuery("COMMON_FIELDS", () => MdmsService.getCommonFieldsConfig(tenantId, moduleCode, type, payload));
   };
 
   const usePropertyTaxDocuments = () => {
