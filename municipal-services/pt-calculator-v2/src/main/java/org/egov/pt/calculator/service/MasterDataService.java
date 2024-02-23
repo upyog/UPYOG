@@ -140,7 +140,7 @@ public class MasterDataService {
 		for (Entry<String, JSONArray> entry : res.entrySet()) {
 
 			String masterName = entry.getKey();
-			
+			System.out.println("mastername:::::::"+masterName);
 			/* Masters which need to be parsed will be contained in the list */
 			if (CalculatorConstants.PROPERTY_BASED_EXEMPTION_MASTERS.contains(entry.getKey()))
 				propertyBasedExemptionMasterMap.put(masterName, getParsedMaster(entry));
@@ -301,7 +301,11 @@ public class MasterDataService {
 		if (null == rate)
 			currentApplicable = flatAmt.compareTo(applicableAmount) > 0 ? applicableAmount : flatAmt;
 		else {
-			currentApplicable = applicableAmount.multiply(rate.divide(CalculatorConstants.HUNDRED));
+			//currentApplicable = applicableAmount.multiply(rate.divide(CalculatorConstants.HUNDRED));
+			
+			//currentApplicable = applicableAmount.multiply(rate);
+			
+			currentApplicable = rate;
 
 			if (null != maxAmt && BigDecimal.ZERO.compareTo(maxAmt) < 0 && currentApplicable.compareTo(maxAmt) > 0)
 				currentApplicable = maxAmt;

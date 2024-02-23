@@ -14,6 +14,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
 
+import ch.qos.logback.core.net.SyslogOutputStream;
+
 import java.util.*;
 
 @Slf4j
@@ -58,7 +60,9 @@ public class BusinessServiceRepository {
         if(!CollectionUtils.isEmpty(criteria.getBusinessServices())){
 
             criteria.getBusinessServices().forEach(businessService -> {
-                if(stateLevelMapping.get(businessService)==null || stateLevelMapping.get(businessService))
+            	//Condition Change for Manipur Implementation for Teneant Business Service Issue
+            	//if(stateLevelMapping.get(businessService)==null || stateLevelMapping.get(businessService))
+                if(stateLevelMapping.get(businessService)!=null)
                     stateLevelBusinessServices.add(businessService);
                 else
                     tenantBusinessServices.add(businessService);
@@ -69,6 +73,7 @@ public class BusinessServiceRepository {
 
         if(!CollectionUtils.isEmpty(stateLevelBusinessServices)){
             BusinessServiceSearchCriteria stateLevelCriteria = new BusinessServiceSearchCriteria();
+            System.out.println(criteria.getTenantId().split("\\.")[0]);
             stateLevelCriteria.setTenantId(criteria.getTenantId().split("\\.")[0]);
             stateLevelCriteria.setBusinessServices(stateLevelBusinessServices);
             List<Object> stateLevelPreparedStmtList = new ArrayList<>();

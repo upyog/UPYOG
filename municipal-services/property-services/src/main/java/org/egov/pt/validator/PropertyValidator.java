@@ -52,36 +52,36 @@ import lombok.extern.slf4j.Slf4j;
 public class PropertyValidator {
 
 
-    @Autowired
-    private PropertyUtil propertyUtil;
+	@Autowired
+	private PropertyUtil propertyUtil;
 
-    @Autowired
-    private PropertyConfiguration configs;
-    
-    @Autowired
-    private PropertyService service;
-    
-    @Autowired
-    private ObjectMapper mapper;
-    
-    
-    @Autowired
-    private DiffService diffService;
-    
-    @Autowired
-    private WorkflowService workflowService;
+	@Autowired
+	private PropertyConfiguration configs;
+
+	@Autowired
+	private PropertyService service;
+
+	@Autowired
+	private ObjectMapper mapper;
+
+
+	@Autowired
+	private DiffService diffService;
+
+	@Autowired
+	private WorkflowService workflowService;
 
 	@Autowired
 	EncryptionDecryptionUtil encryptionDecryptionUtil;
 
-    /**
-     * Validate the masterData and ctizenInfo of the given propertyRequest
-     * @param request PropertyRequest for create
-     */
+	/**
+	 * Validate the masterData and ctizenInfo of the given propertyRequest
+	 * @param request PropertyRequest for create
+	 */
 	public void validateCreateRequest(PropertyRequest request) {
 
 		Map<String, String> errorMap = new HashMap<>();
-		
+
 		List<Unit> units 		=	request.getProperty().getUnits();
 		List<OwnerInfo> owners 	=	request.getProperty().getOwners();
 
@@ -91,49 +91,47 @@ public class PropertyValidator {
 
 		if(CollectionUtils.isEmpty(request.getProperty().getOwners()))
 			throw new CustomException("OWNER INFO ERROR","Owners cannot be empty, please provide at least one owner information");
-		
+
 		if (!errorMap.isEmpty())
 			throw new CustomException(errorMap);
 
 		validateMasterData(request, errorMap);
 		validateMobileNumber(request, errorMap);
 		validateFields(request, errorMap);
-		
+
 		//FOR Manipur Validation
-		//validatePropertyAddressFields(request, errorMap);
+		validatePropertyAddressFields(request, errorMap);
+
+
+		//validation for ageofproperty and structure type required
 		if (!CollectionUtils.isEmpty(units))
 			validateUnits(request, errorMap);
-		
-		
+
+
 		Set<String> uniqueOwnerSet = owners.stream()
 				.map(owner -> owner.getName() + owner.getMobileNumber()).collect(Collectors.toSet());
-		
+
 		if (uniqueOwnerSet.size() != owners.size())
 			throw new CustomException("EG_PT_OWNER INFO ERROR", "Duplicate Owners in the request");
-			
-		
+
+
 
 		if (!errorMap.isEmpty())
 			throw new CustomException(errorMap);
 	}
 
-	
+
 	private void validatePropertyAddressFields(PropertyRequest request, Map<String, String> errorMap) {
 		Address address = request.getProperty().getAddress();
-		
-		if(null==address.getDagNo() || address.getDagNo().isEmpty()) {
-			errorMap.put("EG_PT_ADDRESS_DAG_ERROR","Invalid Dag No, cannot be empty");
+
+		if(null==address.getTypeOfRoad())
+			errorMap.put("TYPE_OF_ROAD_ERROR","Type of road can not be null");
+		else
+		{
+			if(address.getTypeOfRoad().getCode()==null)
+				errorMap.put("TYPE_OF_ROAD_CODE_ERROR", "Code for type of road could not be null");
 		}
-		if(null==address.getDistrictName() || address.getDistrictName().isEmpty()) {
-			errorMap.put("EG_PT_ADDRESS_DISTRICT_ERROR","Invalid District Name No, cannot be empty");
-		}
-		if(null==address.getTownName() || address.getTownName().isEmpty()) {
-			errorMap.put("EG_PT_ADDRESS_TOWN_ERROR","Invalid Town Name, cannot be empty");
-		}
-		if(null==address.getWardNo() || address.getWardNo().isEmpty()) {
-			errorMap.put("EG_PT_ADDRESS_WARD_ERROR","Invalid Ward No, cannot be empty");
-		}
-		
+
 	}
 	private void validateUnits(PropertyRequest request, Map<String, String> errorMap) {
 
@@ -141,11 +139,11 @@ public class PropertyValidator {
 		List<Unit> units = property.getUnits();
 
 		for (Unit unit : units) {
-			
+
 			ConstructionDetail consDtl = unit.getConstructionDetail();
-			
+
 			Boolean isBuiltUpAreaNull = consDtl.getBuiltUpArea() == null;
-			
+
 			if (isBuiltUpAreaNull) {
 
 				if (consDtl.getPlinthArea() == null || consDtl.getSuperBuiltUpArea() == null)
@@ -155,7 +153,7 @@ public class PropertyValidator {
 				if (consDtl.getPlinthArea() != null && consDtl.getSuperBuiltUpArea() != null) {
 					consDtl.setBuiltUpArea(consDtl.getSuperBuiltUpArea().subtract(consDtl.getPlinthArea()));
 					isBuiltUpAreaNull = false;
-					
+
 				}
 
 			} else if(!isBuiltUpAreaNull) {
@@ -168,31 +166,37 @@ public class PropertyValidator {
 						&& consDtl.getCarpetArea().compareTo(consDtl.getBuiltUpArea()) >= 0)
 					errorMap.put("UNIT INFO ERROR ", "Carpet area cannot be greater or equal than builtUp area");
 			}
+
+			if(unit.getAgeOfProperty()==null)
+				errorMap.put("AGE_FACTOR_ERROR", "Age factor can not be null");
+			if(unit.getStructureType()==null)
+				errorMap.put("STRUCTURE_TYPE_ERROR", "Structure type can not be null");
+
 		}
 	}
 
 	/**
-     * Validates the masterData,CitizenInfo and the authorization of the assessee for update
-     * @param request PropertyRequest for update
-     */
-    public void validateRequestForUpdate(PropertyRequest request, Property propertyFromSearch){ 
-    	
-    	Property property = request.getProperty();
-    	Map<String, String> errorMap = new HashMap<>();
-    	
-        if(request.getRequestInfo().getUserInfo().getType().equalsIgnoreCase("CITIZEN"))
-            validateAssessees(request,propertyFromSearch, errorMap);
+	 * Validates the masterData,CitizenInfo and the authorization of the assessee for update
+	 * @param request PropertyRequest for update
+	 */
+	public void validateRequestForUpdate(PropertyRequest request, Property propertyFromSearch){ 
 
-        Boolean isstateUpdatable =  false;
+		Property property = request.getProperty();
+		Map<String, String> errorMap = new HashMap<>();
+
+		if(request.getRequestInfo().getUserInfo().getType().equalsIgnoreCase("CITIZEN"))
+			validateAssessees(request,propertyFromSearch, errorMap);
+
+		Boolean isstateUpdatable =  false;
 
 		// third variable is needed only for mutation
 		List<String> fieldsUpdated = diffService.getUpdatedFields(property, propertyFromSearch, "");
-		
+
 		if (configs.getIsWorkflowEnabled()) {
 
 			if (request.getProperty().getWorkflow() == null)
 				throw new CustomException("EG_PT_UPDATE_WF_ERROR", "Workflow information is mandatory for update process");
-			
+
 			/*
 			 * update and mutation open state are same currently - Creation reason will change for begining of a workflow
 			 */
@@ -226,11 +230,11 @@ public class PropertyValidator {
 		if (!isstateUpdatable && (!CollectionUtils.isEmpty(objectsAdded) || !CollectionUtils.isEmpty(fieldsUpdated)))
 			throw new CustomException("EG_PT_WF_UPDATE_ERROR",
 					"The current state of workflow does not allow changes to property");
-		
-	    
-        /*
-         * Blocking owner changes in update flow
-         */
+
+
+		/*
+		 * Blocking owner changes in update flow
+		 */
 		List<String> searchOwnerUuids = propertyFromSearch.getOwners().stream().map(OwnerInfo::getUuid).collect(Collectors.toList());
 		List<String> uuidsNotFound = new ArrayList<>();
 
@@ -239,10 +243,10 @@ public class PropertyValidator {
 
 		if(searchOwnerUuids.size() != request.getProperty().getOwners().size())
 			errorMap.put("EG_PT_UPDATE_OWNER_SIZE_ERROR", "Update request cannot change owner Information please use mutation process");
-		
+
 		if (!errorMap.isEmpty())
 			throw new CustomException(errorMap);
-    }
+	}
 
 	/**
 	 * Validates common criteria of update and mutation
@@ -267,45 +271,47 @@ public class PropertyValidator {
 			throw new CustomException("EG_PT_ERROR_CREATION_REASON",
 					"The Creation reason sent in the update Request is Invalid, The Creationg reason cannot be create for an ACTIVE record");
 		}
-		
+
 		property.getAddress().setId(propertyFromSearch.getAddress().getId());
-        validateMasterData(request, errorMap);
+		validateMasterData(request, errorMap);
 
 		if (propertyFromSearch.getStatus().equals(Status.INWORKFLOW) && (property.getAcknowldgementNumber() == null
 				|| (property.getAcknowldgementNumber() != null && !propertyFromSearch.getAcknowldgementNumber()
-						.equalsIgnoreCase(property.getAcknowldgementNumber()))))
+				.equalsIgnoreCase(property.getAcknowldgementNumber()))))
 			errorMap.put("EG_PT_MUTATION_WF_UPDATE_ERROR", "Acknowledgement Number is Invalid OR NULL, Please provide the valid number");
 
 		if (!errorMap.isEmpty())
 			throw new CustomException(errorMap);
 	}
 
-    /**
-     * Validates if the fields in PropertyRequest are present in the MDMS master Data
-     *
-     * @param request PropertyRequest received for creating or update
-     *
-     */
-    private void validateMasterData(PropertyRequest request,  Map<String,String> errorMap) {
-    	
-        Property property = request.getProperty();
-        String tenantId = property.getTenantId();
+	/**
+	 * Validates if the fields in PropertyRequest are present in the MDMS master Data
+	 *
+	 * @param request PropertyRequest received for creating or update
+	 *
+	 */
+	private void validateMasterData(PropertyRequest request,  Map<String,String> errorMap) {
+
+		Property property = request.getProperty();
+		String tenantId = property.getTenantId();
 
 		List<String> masterNames = new ArrayList<>(
 				Arrays.asList(
-				PTConstants.MDMS_PT_PROPERTYTYPE,
-				PTConstants.MDMS_PT_OWNERSHIPCATEGORY,
-				PTConstants.MDMS_PT_OWNERTYPE,
-				PTConstants.MDMS_PT_USAGECATEGORY,
-				PTConstants.MDMS_PT_OCCUPANCYTYPE,
-				PTConstants.MDMS_PT_CONSTRUCTIONTYPE,
-				PTConstants.MDMS_PT_ROADTYPE));
+						PTConstants.MDMS_PT_PROPERTYTYPE,
+						PTConstants.MDMS_PT_OWNERSHIPCATEGORY,
+						PTConstants.MDMS_PT_OWNERTYPE,
+						PTConstants.MDMS_PT_USAGECATEGORY,
+						PTConstants.MDMS_PT_OCCUPANCYTYPE,
+						PTConstants.MDMS_PT_CONSTRUCTIONTYPE,
+						PTConstants.MDMS_PT_ROADTYPE));
+
+		//PTConstants.MDMS_PT_EXEMPTION
 
 		validateInstitution(property, errorMap);
-		
+
 		Map<String, List<String>> codes = propertyUtil.getAttributeValues(tenantId, PTConstants.MDMS_PT_MOD_NAME, masterNames,
 				"$.*.code", PTConstants.JSONPATH_CODES, request.getRequestInfo());
-		
+
 		if (null != codes) {
 			validateMDMSData(masterNames, codes);
 			validateCodes(property, codes, errorMap);
@@ -313,14 +319,14 @@ public class PropertyValidator {
 			errorMap.put("MASTER_FETCH_FAILED", "Couldn't fetch master data for validation");
 		}
 
-        if (!errorMap.isEmpty())
-            throw new CustomException(errorMap);
-    }
+		if (!errorMap.isEmpty())
+			throw new CustomException(errorMap);
+	}
 
-    private void validateFields(PropertyRequest request, Map<String, String> errorMap) {
+	private void validateFields(PropertyRequest request, Map<String, String> errorMap) {
 
-    	Property property = request.getProperty();
-   	
+		Property property = request.getProperty();
+
 		if (property.getAddress().getGeoLocation() == null)
 			property.getAddress().setGeoLocation(new GeoLocation());
 
@@ -343,7 +349,7 @@ public class PropertyValidator {
 						+ configs.getMinumumLandArea() + " " + configs.getLandAreaUnit());
 			}
 		}
-		
+
 		if (property.getPropertyType().contains(PTConstants.PT_TYPE_BUILTUP)) {
 
 			Long floors = property.getNoOfFloors();
@@ -353,25 +359,25 @@ public class PropertyValidator {
 						"No of floors cannot be null or lesser than value one in count for property of type : "
 								+ PTConstants.PT_TYPE_BUILTUP);
 			}
-			
+
 			if (property.getUsageCategory() == null)
 				errorMap.put("EG_PT_ERROR_USAGE",
 						"Usage Category is mandatory for for property of type : " + PTConstants.PT_TYPE_BUILTUP);
 		}
-    	
+
 	}
 
-    /**
-     *Checks if the codes of all fields are in the list of codes obtain from master data
-     *
-     * @param property property from PropertyRequest which are to validated
-     * @param codes Map of MasterData name to List of codes in that MasterData
-     * @param errorMap Map to fill all errors caught to send as custom Exception
-     * @return Error map containing error if existed
-     *
-     */
-    private static Map<String,String> validateCodes(Property property, Map<String,List<String>> codes, Map<String,String> errorMap){
-    	
+	/**
+	 *Checks if the codes of all fields are in the list of codes obtain from master data
+	 *
+	 * @param property property from PropertyRequest which are to validated
+	 * @param codes Map of MasterData name to List of codes in that MasterData
+	 * @param errorMap Map to fill all errors caught to send as custom Exception
+	 * @return Error map containing error if existed
+	 *
+	 */
+	private static Map<String,String> validateCodes(Property property, Map<String,List<String>> codes, Map<String,String> errorMap){
+
 		if (property.getPropertyType() != null && !codes.get(PTConstants.MDMS_PT_PROPERTYTYPE).contains(property.getPropertyType())) {
 			errorMap.put("Invalid PROPERTYTYPE", "The PropertyType '" + property.getPropertyType() + "' does not exists");
 		}
@@ -383,32 +389,40 @@ public class PropertyValidator {
 		if (property.getUsageCategory() != null && !codes.get(PTConstants.MDMS_PT_USAGECATEGORY).contains(property.getUsageCategory())) {
 			errorMap.put("Invalid USageCategory", "The USageCategory '" + property.getUsageCategory() + "' does not exists");
 		}
-		
+
 		if (property.getAddress().getTypeOfRoad().getCode() != null && !codes.get(PTConstants.MDMS_PT_ROADTYPE).contains(property.getAddress().getTypeOfRoad().getCode())) {
 			errorMap.put("Invalid Type Of Road", "The Road Type '" + property.getAddress().getTypeOfRoad().getCode() + "' does not exists");
 		}
-		
+
+		/*
+		 * if (property.getExemption() != null &&
+		 * !codes.get(PTConstants.MDMS_PT_EXEMPTION).contains(property.getExemption()))
+		 * { errorMap.put("Invalid Type Of EXEMPTIN", "The EXEMPTION '" +
+		 * property.getExemption() + "' does not exists FOR" + property.getTenantId());
+		 * }
+		 */
+
 		if (!CollectionUtils.isEmpty(property.getUnits()))
 			for (Unit unit : property.getUnits()) {
 
 				if (ObjectUtils.isEmpty(unit.getUsageCategory()) || unit.getUsageCategory() != null
 						&& !codes.get(PTConstants.MDMS_PT_USAGECATEGORY).contains(unit.getUsageCategory())) {
 					errorMap.put("INVALID USAGE CATEGORY ", "The Usage CATEGORY '" + unit.getUsageCategory()
-							+ "' does not exists for unit of index : " + property.getUnits().indexOf(unit));
+					+ "' does not exists for unit of index : " + property.getUnits().indexOf(unit));
 				}
 
 				String constructionType = unit.getConstructionDetail().getConstructionType();
-				
+
 				if (!ObjectUtils.isEmpty(constructionType)
 						&& !codes.get(PTConstants.MDMS_PT_CONSTRUCTIONTYPE).contains(constructionType)) {
 					errorMap.put("INVALID CONSTRUCTION TYPE ", "The CONSTRUCTION TYPE '" + constructionType
 							+ "' does not exists for unit of index : " + property.getUnits().indexOf(unit));
 				}
-				
+
 				if (!ObjectUtils.isEmpty(unit.getOccupancyType())
 						&& !codes.get(PTConstants.MDMS_PT_OCCUPANCYTYPE).contains(unit.getOccupancyType())) {
 					errorMap.put("INVALID OCCUPANCYTYPE TYPE ", "The OCCUPANCYTYPE TYPE '" + unit.getOccupancyType()
-							+ "' does not exists for unit of index : " + property.getUnits().indexOf(unit));
+					+ "' does not exists for unit of index : " + property.getUnits().indexOf(unit));
 				}
 
 			}
@@ -427,30 +441,30 @@ public class PropertyValidator {
 
 		if(!CollectionUtils.isEmpty(property.getDocuments()) && property.getDocuments().contains(null))
 			errorMap.put("INVALID ENTRY IN PROPERTY DOCS", " The proeprty documents cannot contain null values");
-		
-		
-		
+
+
+
 
 		return errorMap;
 
 	}
 
-    /**
-     * Validates if MasterData is properly fetched for the given MasterData names
-     * @param masterNames
-     * @param codes
-     */
-    private void validateMDMSData(List<String> masterNames,Map<String,List<String>> codes){
-    	
-        Map<String,String> errorMap = new HashMap<>();
-        for(String masterName:masterNames){
-            if(CollectionUtils.isEmpty(codes.get(masterName))){
-                errorMap.put("MDMS DATA ERROR ","Unable to fetch "+masterName+" codes from MDMS");
-            }
-        }
-        if (!errorMap.isEmpty())
-            throw new CustomException(errorMap);
-    }
+	/**
+	 * Validates if MasterData is properly fetched for the given MasterData names
+	 * @param masterNames
+	 * @param codes
+	 */
+	private void validateMDMSData(List<String> masterNames,Map<String,List<String>> codes){
+
+		Map<String,String> errorMap = new HashMap<>();
+		for(String masterName:masterNames){
+			if(CollectionUtils.isEmpty(codes.get(masterName))){
+				errorMap.put("MDMS DATA ERROR ","Unable to fetch "+masterName+" codes from MDMS");
+			}
+		}
+		if (!errorMap.isEmpty())
+			throw new CustomException(errorMap);
+	}
 
 
 	private void validateIds(PropertyRequest request, Map<String, String> errorMap) {
@@ -464,13 +478,13 @@ public class PropertyValidator {
 			throw new CustomException(errorMap);
 	}
 
-    /**
-     * Returns PropertyCriteria to search for properties in database with ids set from properties in request
-     *
-     * @param request PropertyRequest received for update
-     * @return PropertyCriteria containg ids of all properties and all its childrens
-     */
-    public PropertyCriteria getPropertyCriteriaForSearch(PropertyRequest request) {
+	/**
+	 * Returns PropertyCriteria to search for properties in database with ids set from properties in request
+	 *
+	 * @param request PropertyRequest received for update
+	 * @return PropertyCriteria containg ids of all properties and all its childrens
+	 */
+	public PropertyCriteria getPropertyCriteriaForSearch(PropertyRequest request) {
 
 		Property property = request.getProperty();
 
@@ -489,29 +503,29 @@ public class PropertyValidator {
 		return propertyCriteria;
 	}
 
-    /**
-     * Checks if the property ids in search response are same as in request
-     * @param responseProperties List of properties received from property Search
-     * @return
-     */
+	/**
+	 * Checks if the property ids in search response are same as in request
+	 * @param responseProperties List of properties received from property Search
+	 * @return
+	 */
 	public boolean PropertyExists(List<Property> responseProperties) {
 		return (!CollectionUtils.isEmpty(responseProperties) && responseProperties.size() == 1);
 	}
 
-    /**
-     * Validates if institution Object has null InstitutionType
-     * @param property PropertyRequest which is to be validated
-     * @param errorMap ErrorMap to catch and to throw error using CustomException
-     */
-    private void validateInstitution(Property property, Map<String,String> errorMap){
-    	
+	/**
+	 * Validates if institution Object has null InstitutionType
+	 * @param property PropertyRequest which is to be validated
+	 * @param errorMap ErrorMap to catch and to throw error using CustomException
+	 */
+	private void validateInstitution(Property property, Map<String,String> errorMap){
+
 		log.debug("contains check: " + property.getOwnershipCategory().contains("INSTITUTIONAL"));
-		
+
 		Institution institution = property.getInstitution();
-		
+
 		if(ObjectUtils.isEmpty(institution))
 			return;
-		
+
 		if (!property.getOwnershipCategory().contains("INSTITUTIONAL")) {
 
 			errorMap.put("INVALID INSTITUTION OBJECT",
@@ -520,18 +534,18 @@ public class PropertyValidator {
 		}
 
 
-				if (institution.getType() == null)
-					errorMap.put(" INVALID INSTITUTION OBJECT ", "The institutionType cannot be null ");
-				if (institution.getName() == null)
-					errorMap.put("INVALID INSTITUTION OBJECT", "Institution name cannot be null");
-				if (institution.getDesignation() == null)
-					errorMap.put("INVALID INSTITUTION OBJECT", "Designation cannot be null");
+		if (institution.getType() == null)
+			errorMap.put(" INVALID INSTITUTION OBJECT ", "The institutionType cannot be null ");
+		if (institution.getName() == null)
+			errorMap.put("INVALID INSTITUTION OBJECT", "Institution name cannot be null");
+		if (institution.getDesignation() == null)
+			errorMap.put("INVALID INSTITUTION OBJECT", "Designation cannot be null");
 	}
 
-    /**
-     * Validates the UserInfo of the the PropertyRequest. Update is allowed only for the user who created the property
-     * @param request PropertyRequest received for update
-     */
+	/**
+	 * Validates the UserInfo of the the PropertyRequest. Update is allowed only for the user who created the property
+	 * @param request PropertyRequest received for update
+	 */
 	private void validateAssessees(PropertyRequest request,Property propertyFromSearch, Map<String, String> errorMap) {
 
 		String mobileNumberFromRequestInfo = request.getRequestInfo().getUserInfo().getMobileNumber();
@@ -559,7 +573,7 @@ public class PropertyValidator {
 
 		Property property = request.getProperty();
 		List<OwnerInfo> owners = property.getOwners();
-		
+
 		if (!property.getOwnershipCategory().contains("INSTITUTIONAL")) {
 
 			owners.forEach(owner -> {
@@ -584,10 +598,10 @@ public class PropertyValidator {
 	 * @param criteria
 	 * @param requestInfo
 	 */
-    public void validatePropertyCriteria(PropertyCriteria criteria,RequestInfo requestInfo) {
-    	
+	public void validatePropertyCriteria(PropertyCriteria criteria,RequestInfo requestInfo) {
+
 		List<String> allowedParams = null;
-		
+
 		User user = requestInfo.getUserInfo();
 		String userType = user.getType();
 		Boolean isUserCitizen = "CITIZEN".equalsIgnoreCase(userType);
@@ -596,7 +610,7 @@ public class PropertyValidator {
 		if(!configs.getIsInboxSearchAllowed() && criteria.getIsInboxSearch()){
 			throw new CustomException("EG_PT_INVALID_SEARCH", "Inbox search has been disabled for property service");
 		}
-		
+
 		if (propertyUtil.isPropertySearchOpen(user) && !criteria.getIsRequestForCount()) {
 
 			if (StringUtils.isEmpty(criteria.getMobileNumber()) && CollectionUtils.isEmpty(criteria.getPropertyIds()))
@@ -617,42 +631,42 @@ public class PropertyValidator {
 				&& null == criteria.getDoorNo()
 				&& null == criteria.getOldPropertyId()
 				&& (null == criteria.getFromDate() && null == criteria.getToDate());
-		
+
 		if (isUserCitizen) {
 			criteria.setIsCitizen(true);
-			
+
 			if (isCriteriaEmpty)
 				criteria.setMobileNumber(user.getMobileNumber());
-			
+
 			allowedParams = Arrays.asList(configs.getCitizenSearchParams().split(","));
 		}
-		
+
 		else {
-			
+
 			if(criteria.getTenantId() == null)
 				throw new CustomException("EG_PT_INVALID_SEARCH"," TenantId is mandatory for search by " + userType);
-			
+
 			if(criteria.getTenantId() != null && isCriteriaEmpty)
 				throw new CustomException("EG_PT_INVALID_SEARCH"," Search is not allowed on empty Criteria, Atleast one criteria should be provided with tenantId for " + userType);
-			
+
 			allowedParams = Arrays.asList(configs.getEmployeeSearchParams().split(","));
 		}
 
 		if (criteria.getName() != null && !allowedParams.contains("name"))
 			throw new CustomException("EG_PT_INVALID_SEARCH", "Search based on name is not available for : " + userType);
 
-        if(criteria.getMobileNumber()!=null && !allowedParams.contains("mobileNumber"))
-            throw new CustomException("EG_PT_INVALID_SEARCH","Search based on mobileNumber is not available for : " + userType);
+		if(criteria.getMobileNumber()!=null && !allowedParams.contains("mobileNumber"))
+			throw new CustomException("EG_PT_INVALID_SEARCH","Search based on mobileNumber is not available for : " + userType);
 
-        if(!CollectionUtils.isEmpty(criteria.getPropertyIds()) && !allowedParams.contains("ids"))
-            throw new CustomException("EG_PT_INVALID_SEARCH","Search based on ids is not available for : " + userType);
+		if(!CollectionUtils.isEmpty(criteria.getPropertyIds()) && !allowedParams.contains("ids"))
+			throw new CustomException("EG_PT_INVALID_SEARCH","Search based on ids is not available for : " + userType);
 
-        if(!CollectionUtils.isEmpty(criteria.getOldpropertyids()) && !allowedParams.contains("oldpropertyids"))
-            throw new CustomException("EG_PT_INVALID_SEARCH","Search based on oldPropertyId is not available for userType : " + userType);
+		if(!CollectionUtils.isEmpty(criteria.getOldpropertyids()) && !allowedParams.contains("oldpropertyids"))
+			throw new CustomException("EG_PT_INVALID_SEARCH","Search based on oldPropertyId is not available for userType : " + userType);
 
-        if(!CollectionUtils.isEmpty(criteria.getOwnerIds()) && !allowedParams.contains("ownerids"))
-            throw new CustomException("EG_PT_INVALID_SEARCH","Search based on ownerId is not available for : " + userType);
-    }
+		if(!CollectionUtils.isEmpty(criteria.getOwnerIds()) && !allowedParams.contains("ownerids"))
+			throw new CustomException("EG_PT_INVALID_SEARCH","Search based on ownerId is not available for : " + userType);
+	}
 
 	/**
 	 * Validates if the mobileNumber is 10 digit and starts with 5 or greater
@@ -671,7 +685,7 @@ public class PropertyValidator {
 		else
 			return true;
 	}
-	
+
 	/*
 	 * 
 	 * Mutation methods
@@ -688,18 +702,18 @@ public class PropertyValidator {
 		Long docDate = null;
 		Double docVal = null;
 		Double marketVal = null;
-		
+
 		if (!propertyFromSearch.getStatus().equals(Status.INWORKFLOW)) {
 
 			Boolean isBillUnpaid = propertyUtil.isBillUnpaid(propertyFromSearch.getPropertyId(), propertyFromSearch.getTenantId(), request.getRequestInfo());
 			if (isBillUnpaid)
 				throw new CustomException("EG_PT_MUTATION_UNPAID_ERROR", "Property has to be completely paid for before initiating the mutation process");
 		}
-		
+
 		List<String> fieldsUpdated = diffService.getUpdatedFields(property, propertyFromSearch, PTConstants.MUTATION_PROCESS_CONSTANT);
 		// only editable field in mutation other than owners, additional details.
 		fieldsUpdated.remove("ownershipCategory");
-		
+
 		if (configs.getIsMutationWorkflowEnabled()) {
 			if (request.getProperty().getWorkflow() == null)
 				throw new CustomException("EG_PT_UPDATE_WF_ERROR", "Workflow information is mandatory for mutation process");
@@ -722,25 +736,25 @@ public class PropertyValidator {
 		@SuppressWarnings("unchecked")
 		Map<String, Object> additionalDetails = mapper.convertValue(property.getAdditionalDetails(), Map.class);
 		try {
-			
+
 			reasonForTransfer = (String) additionalDetails.get("reasonForTransfer");
 			docNo = (String) additionalDetails.get("documentNumber");
-			
+
 			String docDateString = String.valueOf(additionalDetails.get("documentDate"));
 			if(!StringUtils.isEmpty(docDateString) && !"null".equalsIgnoreCase(docDateString))
-			docDate = Long.valueOf(docDateString);
-			
+				docDate = Long.valueOf(docDateString);
+
 			String docValString = String.valueOf(additionalDetails.get("documentValue"));
 			if(!StringUtils.isEmpty(docValString) && !"null".equalsIgnoreCase(docValString))
-			docVal = Double.valueOf(docValString);
-			
+				docVal = Double.valueOf(docValString);
+
 			String marketValString = String.valueOf(additionalDetails.get("marketValue"));
 			if(!StringUtils.isEmpty(marketValString) && !"null".equalsIgnoreCase(marketValString))
-			marketVal = Double.valueOf(marketValString);
-			
+				marketVal = Double.valueOf(marketValString);
+
 		} catch (PathNotFoundException e) {
 			throw new CustomException("EG_PT_MUTATION_FIELDS_ERROR", "Mandatory fields Missing for mutation, please provide the following information in additionalDetails : "
-							+ "reasonForTransfer, documentNumber, documentDate, documentValue and marketValue");
+					+ "reasonForTransfer, documentNumber, documentDate, documentValue and marketValue");
 		} catch (Exception e) {
 			throw new CustomException("EG_PT_ADDITIONALDETAILS_PARSING_ERROR", e.toString());
 		}
@@ -752,7 +766,7 @@ public class PropertyValidator {
 		Set<String> searchOwnerUuids = propertyFromSearch.getOwners().stream().map(OwnerInfo::getUuid).collect(Collectors.toSet());
 		List<String> uuidsNotFound = new ArrayList<String>();
 		Map<String, Integer> activeMobileNumberPlusNameOwnerMap = new HashMap<>();
-		
+
 		for (OwnerInfo owner : property.getOwners()) {
 
 			if (owner.getStatus() == Status.ACTIVE) {
@@ -765,7 +779,7 @@ public class PropertyValidator {
 					activeMobileNumberPlusNameOwnerMap.put(key, val++);
 				}
 			}
-			
+
 			if (StringUtils.isEmpty(owner.getStatus())) {
 				isNullStatusFound = true;
 			}
@@ -779,7 +793,7 @@ public class PropertyValidator {
 			if (owner.getUuid() != null && !searchOwnerUuids.contains(owner.getUuid()))
 				uuidsNotFound.add(owner.getUuid());
 		}
-		
+
 		if(activeMobileNumberPlusNameOwnerMap.values().stream().anyMatch(valueCount -> valueCount > 1))
 			errorMap.put("EG_PT_MUTATION_DUPLICATE_OWNER_ERROR", "Active Owner object with combination of name and mobilenumber is repated in the update Request");
 
@@ -790,21 +804,21 @@ public class PropertyValidator {
 			errorMap.put("EG_PT_MUTATION_ALL_OWNER_INACTIVE_ERROR", "At the least one owner object should be ACTIVE");
 
 		if (!propertyFromSearch.getStatus().equals(Status.INWORKFLOW)) {
-			
+
 
 			if (!isNewOWnerAdded && !isOwnerCancelled) {
-					errorMap.put("EG_PT_MUTATION_OWNER_ERROR", "Mutation request should either add a new owner object or update an existing object to INACTIVE");
+				errorMap.put("EG_PT_MUTATION_OWNER_ERROR", "Mutation request should either add a new owner object or update an existing object to INACTIVE");
 			}
 
 			if (isOwnerCancelled && property.getOwners().size() == 1)
 				errorMap.put("EG_PT_MUTATION_OWNER_REMOVAL_ERROR", "Single owner of a property cannot be deactivated or removed in a mutation request");
 		}
-		
+
 		if (StringUtils.isEmpty(reasonForTransfer) || StringUtils.isEmpty(docNo) || ObjectUtils.isEmpty(docDate) || ObjectUtils.isEmpty(docVal) || ObjectUtils.isEmpty(marketVal)) {
-				throw new CustomException("EG_PT_MUTATION_FIELDS_ERROR", "mandatory fields Missing for mutation, please provide the following information : "
-							+ "reasonForTransfer, documentNumber, documentDate, documentValue and marketValue");
+			throw new CustomException("EG_PT_MUTATION_FIELDS_ERROR", "mandatory fields Missing for mutation, please provide the following information : "
+					+ "reasonForTransfer, documentNumber, documentDate, documentValue and marketValue");
 		}
-		
+
 		if(configs.getIsMutationWorkflowEnabled() && (ObjectUtils.isEmpty(workFlow.getAction()) || ObjectUtils.isEmpty(workFlow.getModuleName()) ||
 				ObjectUtils.isEmpty(workFlow.getBusinessService())))
 			errorMap.put("EG_PT_MUTATION_WF_FIELDS_ERROR", "mandatory fields Missing in workflow Object for Mutation please provide the following information : "
@@ -823,8 +837,8 @@ public class PropertyValidator {
 		if (!codes.get(PTConstants.MDMS_PT_MUTATIONREASON).contains(reasonForTransfer))
 			errorMap.put("EG_PT_MT_REASON_ERROR",
 					"The reason for tranfer provided is invalid, please provide a valid mdms data");
-		
-		
+
+
 		Boolean isDocsEmpty = CollectionUtils.isEmpty(property.getDocuments());
 		Boolean isTransferDocPresent = false;
 		if (!isDocsEmpty) {
@@ -848,11 +862,11 @@ public class PropertyValidator {
 	}
 
 	public void validateAlternateMobileNumberInformation(PropertyRequest request, Property propertyFromSearch) {
-		
+
 		Map<String, String> errorMap = new HashMap<>();
 		Property property = request.getProperty();
 		validateIds(request, errorMap);	
-	
+
 
 		List <String> alternateNumbersinRequest = new ArrayList<String>();
 		for(OwnerInfo owner : property.getOwners()) {
@@ -860,47 +874,47 @@ public class PropertyValidator {
 				alternateNumbersinRequest.add(owner.getAlternatemobilenumber());
 			}
 		}
-		
+
 		if(alternateNumbersinRequest.isEmpty()) {
 			throw new CustomException("EG_PT_ALTERNATE_NUMBERS_NOT_FOUND", "The alternate mobile number details are null");
 		}
-		
+
 		Map<String, String> userToAlternateNumberMap = new HashMap<String,String>(); 
-		
+
 		for(OwnerInfo owner : propertyFromSearch.getOwners()) {
 			userToAlternateNumberMap.put(owner.getUuid(), owner.getAlternatemobilenumber());
 		}
-		
+
 		boolean isAlternateNumberSame = true;
-		
+
 		for(OwnerInfo owner : property.getOwners()) {
 			if(userToAlternateNumberMap.get(owner.getUuid())!=null && userToAlternateNumberMap.get(owner.getUuid()).equals(owner.getAlternatemobilenumber()) ) {
-					isAlternateNumberSame = true;
+				isAlternateNumberSame = true;
 			}
-			
+
 			else {
 				isAlternateNumberSame=false;
 				break;
 			}
 		}
-		
+
 		if(isAlternateNumberSame) {
 			throw new CustomException("EG_PT_ALTERNATE_EXISTS", "The alternate mobile number already exists for the owner");
 		}
-		
+
 		for(OwnerInfo owner : property.getOwners()) {
 			if(!userToAlternateNumberMap.containsKey(owner.getUuid())) {
 				throw new CustomException("EG_PT_OWNER_DOES_NOT_EXIST", "New owner can not be added while updating alternate mobile number details");
 			}
-			
+
 			else {
-				
+
 				if(owner.getMobileNumber().equals(owner.getAlternatemobilenumber())) {
 					throw new CustomException("EG_PT_ALTERNATE_EXISTS", "The alternate mobile number should not be same as primary number");
 				}
 			}
 		}
-		
+
 		if(!property.getStatus().equals(Status.ACTIVE)) {throw new CustomException("EG_PT_ALTERNATE_INACTIVE","Alternate number details cannot be updated if status is not active");}
 	}
 
