@@ -78,7 +78,7 @@ public class PetRegistrationService {
 		// userService.callUserService(petRegistrationRequest); need to build the method
 		// when required
 		wfService.updateWorkflowStatus(petRegistrationRequest);
-		producer.push(config.getEventGenerateTopic(), petRegistrationRequest);
+//		producer.push(config.getEventGenerateTopic(), petRegistrationRequest);
 		producer.push(config.getCreatePtrTopic(), petRegistrationRequest);
 
 		// Return the response back to user
@@ -114,7 +114,7 @@ public class PetRegistrationService {
 			demandService.createDemand(petRegistrationRequest);
 		}
 		wfService.updateWorkflowStatus(petRegistrationRequest);
-		producer.push(config.getEventGenerateTopic(), petRegistrationRequest);
+//		producer.push(config.getEventGenerateTopic(), petRegistrationRequest);
 		producer.push(config.getUpdatePtrTopic(), petRegistrationRequest);
 
 		return petRegistrationRequest.getPetRegistrationApplications().get(0);
