@@ -27,7 +27,7 @@ public class PetNotificationConsumer {
     private ObjectMapper mapper;
 
 
-    @KafkaListener(topics = {"${ptr.kafka.create.topic}","${ptr.kafka.update.topic}"})
+    @KafkaListener(topics = {"${egov.event.gen.topic}"})
     public void listen(final HashMap<String, Object> record, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
     	
         PetRequest petRequest = new PetRequest(); 

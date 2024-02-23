@@ -24,6 +24,8 @@ const CloseBtn = (props) => {
 };
 
 const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction, actionData, applicationData, businessService, moduleCode }) => {
+
+  console.log("applicationData",applicationData);
   const { data: approverData, isLoading: PTALoading } = Digit.Hooks.useEmployeeSearch(
     tenantId,
     {
@@ -81,19 +83,19 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
     
     if (action?.action == "COMMON_APPROVED") {
       
-      let workflow = { action: "OPEN", comment: data?.comments, businessService: "ptr", moduleName: "pet-services" };
+      let workflow = { action: "OPEN", comments: data?.comments, businessService: "ptr", moduleName: "pet-services" };
       applicationData.creationReason = "CREATE";
       submitAction({
         PetRegistrationApplications: [
           {
-            ...applicationData?.applicationData,
+            ...applicationData,
             workflow,
           },
         ],
       });
     }
     //  else if (!action?.showFinancialYearsModal) {
-      let workflow = { action: action?.action, comment: data?.comments, businessService, moduleName: moduleCode };
+      let workflow = { action: action?.action, comments: data?.comments, businessService, moduleName: moduleCode };
       workflow["assignes"] = action?.isTerminateState || !selectedApprover ? [] : [selectedApprover];
       if (uploadedFile)
         workflow["documents"] = [
@@ -106,7 +108,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
       submitAction({
         PetRegistrationApplications: [
           {
-            ...applicationData?.applicationData,
+            ...applicationData,
             workflow,
           },
         ],

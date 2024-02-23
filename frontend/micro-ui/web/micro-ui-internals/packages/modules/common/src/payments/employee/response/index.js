@@ -115,7 +115,7 @@ export const SuccessfulPayment = (props) => {
   // const printpetCertificate = async () => {
   //   const tenantId = Digit.ULBService.getCurrentTenantId();
   //   const state = Digit.ULBService.getStateId();
-  //   const applicationpetDetails = await Digit.PTRService.search({ applicationNumber: consumerCode, tenantId });
+  //   const applicationpetDetails = await Digit.PTRService.search({ tenantId, applicationNumber: consumerCode });
   //   console.log("aplllldetailll",consumerCode)
   //   const generatePdfKeyForPTR = "petservicecertificate";
 
