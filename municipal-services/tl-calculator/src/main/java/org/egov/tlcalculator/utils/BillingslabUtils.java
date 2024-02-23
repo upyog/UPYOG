@@ -17,8 +17,8 @@ public class BillingslabUtils {
 	@Value("${mdms.v2.host}")
     	private String mdmsHost;
 
-	@Value("${mdms.v2.endpoint}")
-	private String mdmsSearchEndpoint;
+	@Value("${mdms.v2.search.endpoint}")
+	private String mdmsEndpoint;
 	
 	/**
 	 * A common method that builds MDMS request for searching master data.
