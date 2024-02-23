@@ -87,22 +87,36 @@ public class GenerateBillCriteria {
 	@Pattern(regexp = "^[0-9]{10}$", message = "MobileNumber should be 10 digit number")
 	private String mobileNumber;
 	
+	private Long periodFrom;
+	
+	private Long periodTo;
+	
 	public DemandCriteria toDemandCriteria() {
 		
-		Set<String> consumerCodeSet = new HashSet<>();
+		Set<String> consumerCodeSet = null;
+		Set<String> demandIdSet = null;
+
+		if (!StringUtils.isEmpty(consumerCode)) {
+			consumerCodeSet = new HashSet<>();
 		consumerCodeSet.addAll(consumerCode);
+		}
 		
-		Set<String> demandIdSet = new HashSet<>();
+		if (!StringUtils.isEmpty(demandId)) {
+			demandIdSet = new HashSet<>();
 		demandIdSet.add(demandId);
+		}
 		
 		return DemandCriteria.builder()
+				.status(DemandStatus.ACTIVE.toString())
 				.businessService(businessService)
 				.consumerCode(consumerCodeSet)
 				.mobileNumber(mobileNumber)
-				.isPaymentCompleted(false)
 				.demandId(demandIdSet)
 				.tenantId(tenantId)
+				.isPaymentCompleted(false)
 				.email(email)
+				.periodFrom(periodFrom)
+				.periodTo(periodTo)
 				.build();
 	}
 	
@@ -121,6 +135,8 @@ public class GenerateBillCriteria {
 				.tenantId(tenantId)
 				.isOrderBy(true)
 				.email(email)
+				.periodFrom(periodFrom)
+				.periodTo(periodTo)
 				.build();
 	}
 

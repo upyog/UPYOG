@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:ror="http://rorweb.com/0.1/" >
+<channel>
+  <title>ROR Sitemap for https://mseva.lgpunjab.gov.in/common-screen</title>
+  <link>https://mseva.lgpunjab.gov.in/common-screen</link>
+
+<item>
+     <link>https://mseva.lgpunjab.gov.in/common-screen</link>
+     <title>mSeva - Portal for availing Urban Municipal Services Online - Department of Local Government Punjab</title>
+     <description>Through mSeva you can avail services in Urban Local Bodies  like Property Tax , Trade License , Fire NOC , Complaints , Public Grievance Redressal , New Water Connection , New Sewerage connection , Pay utility Bills like water and sewerage</description>
+     <ror:updatePeriod>weekly</ror:updatePeriod>
+     <ror:sortOrder>0</ror:sortOrder>
+     <ror:resourceOf>sitemap</ror:resourceOf>
+</item>
+</channel>
+</rss>
+  

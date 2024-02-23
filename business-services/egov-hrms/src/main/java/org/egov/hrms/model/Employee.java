@@ -90,6 +90,8 @@ public class Employee {
 
 
     @Valid
+    @NotEmpty
+    @Size(min = 1)
     private List<Assignment> assignments = new ArrayList<>();
 
     @Valid
@@ -109,7 +111,7 @@ public class Employee {
 
     @SafeHtml
     @NotNull
-    @Size(max = 250)
+    @Size(max = 256)
     private String tenantId;
 
     @Valid

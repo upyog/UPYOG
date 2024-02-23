@@ -19,6 +19,7 @@ import lombok.Builder.Default;
 @AllArgsConstructor
 @ToString
 @Builder
+@EqualsAndHashCode
 public class TaxHeadMasterCriteria {
 
 	@NotNull

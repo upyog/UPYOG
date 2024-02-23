@@ -1,8 +1,10 @@
 package org.egov.demand.repository.querybuilder;
 
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.List;
-
+import java.util.Set;
+import org.egov.demand.web.contract.CancelBillCriteria;
+import org.egov.demand.config.ApplicationProperties;
 import org.egov.demand.model.BillSearchCriteria;
 import org.egov.demand.model.BillV2.BillStatus;
 import org.egov.demand.model.UpdateBillCriteria;
@@ -11,15 +13,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
+import org.egov.demand.util.Constants;
+
 @Component
 public class BillQueryBuilder {
 	
 	@Autowired
 	private Util util;
-	
+	@Autowired
+	private ApplicationProperties applicationProperties;
 	public static final String REPLACE_STRING = "{replace}";
-	
 	public static final String BILL_STATUS_UPDATE_BASE_QUERY = "UPDATE egbs_bill_v1 SET status=? {replace} WHERE status='ACTIVE' AND tenantId = ? ";
+
+	public static final String BILL_STATUS_UPDATE_QUERY = "UPDATE egbs_bill_v1 SET status=? WHERE status='ACTIVE' ";
+
+	public static final String BILL_STATUS_UPDATE_BATCH_QUERY = "UPDATE egbs_bill_v1 SET status=? WHERE id = ?";
 	
 	public static final String INSERT_BILL_QUERY = "INSERT into egbs_bill_v1 "
 			+"(id, tenantid, payername, payeraddress, payeremail, isactive, iscancelled, createdby, createddate, lastmodifiedby, lastmodifieddate,"
@@ -27,15 +35,16 @@ public class BillQueryBuilder {
 			+"values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 	
 	public static final String INSERT_BILLDETAILS_QUERY = "INSERT into egbs_billdetail_v1 "
-			+"(id, tenantid, billid, demandid, fromperiod, toperiod, businessservice, billno, billdate, consumercode, consumertype, billdescription, displaymessage, "
+			+ "(id, tenantid, billid, demandid, fromperiod, toperiod, businessservice, billno, billdate, consumercode, consumertype, billdescription, displaymessage, "
 			+ "minimumamount, totalamount, callbackforapportioning, partpaymentallowed, collectionmodesnotallowed, "
 			+ "createdby, createddate, lastmodifiedby, lastmodifieddate, isadvanceallowed, expirydate,additionaldetails)"
-			+"values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-	
+			+ "values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+
 	public static final String INSERT_BILLACCOUNTDETAILS_QUERY = "INSERT into egbs_billaccountdetail_v1 "
-			+"(id, tenantid, billdetail, demanddetailid, orderno, amount, adjustedamount, isactualdemand, purpose, "
+			+ "(id, tenantid, billdetail, demanddetailid, orderno, amount, adjustedamount, isactualdemand, purpose, "
 			+ "createdby, createddate, lastmodifiedby, lastmodifieddate, taxheadcode)"
-			+"values(?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+			+ "values(?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+
 	
 	
 	
@@ -66,7 +75,9 @@ public class BillQueryBuilder {
 			+ " LEFT OUTER JOIN egbs_billdetail_v1 bd ON b.id = bd.billid AND b.tenantid = bd.tenantid"
 			+ " LEFT OUTER JOIN egbs_billaccountdetail_v1 ad ON bd.id = ad.billdetail AND bd.tenantid = ad.tenantid";
 	
-	public String getBillQuery(BillSearchCriteria billSearchCriteria, List<Object> preparedStatementValues){
+	public static final String GET_LATEST_BILL_QUERY = "select bill.id from egbs_bill_v1 as bill inner join egbs_billdetail_v1 as billdetail on bill.id=billdetail.billid";
+
+	public String getBillQuery(BillSearchCriteria billSearchCriteria, List<Object> preparedStatementValues) {
 		
 		StringBuilder billQuery = new StringBuilder(BILL_BASE_QUERY);
 		String tenantId = billSearchCriteria.getTenantId();

@@ -92,8 +92,8 @@ public class DemandQueryBuilder {
 
 	public static final String DEMAND_INSERT_QUERY = "INSERT INTO egbs_demand_v1 "
 			+ "(id,consumerCode,consumerType,businessService,payer,taxPeriodFrom,taxPeriodTo,"
-			+ "minimumAmountPayable,createdby,lastModifiedby,createdtime,lastModifiedtime,tenantid, status, additionaldetails, billexpirytime, fixedBillExpiryDate) "
-			+ "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
+			+ "minimumAmountPayable,createdby,lastModifiedby,createdtime,lastModifiedtime,tenantid, status, additionaldetails, billexpirytime, fixedBillExpiryDate,ispaymentcompleted) "
+			+ "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
 
 	public static final String DEMAND_DETAIL_INSERT_QUERY = "INSERT INTO egbs_demanddetail_v1 "
 			+ "(id,demandid,taxHeadCode,taxamount,collectionamount,"
@@ -229,10 +229,10 @@ public class DemandQueryBuilder {
 	}
 
 	private static void addPagingClause(StringBuilder demandQueryBuilder, List<Object> preparedStatementValues) {
-//		demandQueryBuilder.append(" LIMIT ?");
-//		preparedStatementValues.add(500);
-//		demandQueryBuilder.append(" OFFSET ?");
-//		preparedStatementValues.add(0);
+		demandQueryBuilder.append(" LIMIT ?");
+		preparedStatementValues.add(500);
+		demandQueryBuilder.append(" OFFSET ?");
+		preparedStatementValues.add(0);
 	}
 
 	private static boolean addAndClause(StringBuilder queryString) {
@@ -242,13 +242,16 @@ public class DemandQueryBuilder {
 	
 	private static String getIdQueryForStrings(Set<String> idList) {
 
-		StringBuilder builder = new StringBuilder();
-		int length = idList.size();
-		for( int i = 0; i< length; i++){
-			builder.append(" ? ");
-			if(i != length -1) builder.append(",");
+		StringBuilder query = new StringBuilder();
+		if (!idList.isEmpty()) {
+
+			String[] list = idList.toArray(new String[idList.size()]);
+			query.append("'"+list[0]+"'");
+			for (int i = 1; i < idList.size(); i++) {
+				query.append("," + "'"+list[i]+"'");
 		}
-		return builder.toString();
+	return query.append(")").toString();
+
 	}
 
 	private void addToPreparedStatement(List<Object> preparedStmtList, Collection<String> ids)
