@@ -1,4 +1,5 @@
-import { CardLabel, FormStep, LabelFieldPair, TextInput } from "@egovernments/digit-ui-react-components";
+import { CardLabel, FormStep, LabelFieldPair, TextInput, Dropdown, Loader, LinkButton, CardLabelError } from "@egovernments/digit-ui-react-components";
+
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -12,6 +13,7 @@ const PTSelectStreet = ({ t, config, onSelect, userType, formData, formState, se
   const { errors } = localFormState;
   const checkLocation = window.location.href.includes("tl/new-application") || window.location.href.includes("tl/renew-application-details");
   const isRenewal = window.location.href.includes("edit-application") || window.location.href.includes("tl/renew-application-details");
+  const errorStyle = { width: "70%", marginLeft: "30%", fontSize: "12px", marginTop: "-21px" };
 
   let inputs;
   if (window.location.href.includes("tl")) {
@@ -45,9 +47,6 @@ const PTSelectStreet = ({ t, config, onSelect, userType, formData, formState, se
         type: "text",
         name: "village",
         validation: {
-          pattern: "[a-zA-Z0-9 !@#$%^&*()_+\-={};':\\\\|,.<>/?]{1,64}",
-          // maxlength: 256,
-          title: t("CORE_COMMON_VILLAGE_INVALID"),
         },
       },
       {
@@ -55,9 +54,6 @@ const PTSelectStreet = ({ t, config, onSelect, userType, formData, formState, se
         type: "text",
         name: "pattaNo",
         validation: {
-          pattern: "[a-zA-Z0-9 !@#$%^&*()_+\-={};':\\\\|,.<>/?]{1,64}",
-          // maxlength: 256,
-          title: t("CORE_COMMON_PATTA_INVALID"),
         },
       },
       {
@@ -65,41 +61,35 @@ const PTSelectStreet = ({ t, config, onSelect, userType, formData, formState, se
         type: "text",
         name: "dagNo",
         validation: {
-          pattern: "[a-zA-Z0-9 !@#$%^&*()_+\-={};':\\\\|,.<>/?]{1,64}",
-          // maxlength: 256,
-          title: t("CORE_COMMON_DAG_INVALID"),
         },
       },
       {
         label: "PT_PROPERTY_ADDRESS_CMN_NAME_OF_BUILDING",
         type: "text",
-        name: "cmnNameOfBuilding",
+        name: "commonNameOfBuilding",
         validation: {
-          pattern: "[a-zA-Z0-9 !@#$%^&*()_+\-={};':\\\\|,.<>/?]{1,64}",
-          // maxlength: 256,
-          title: t("CORE_COMMON_NAME_OF_BUILDING_INVALID"),
         },
       },
       {
         label: "PT_PROPERTY_ADDRESS_NAME_OF_PRINCIPAL_ROAD",
         type: "text",
-        name: "nameOfPrincipalRoad",
+        name: "principalRoadName",
+        error: 'This field is required',
+        labelChildren: '*',
+        showErrorBelowChildren: true,
         validation: {
-          pattern: "[a-zA-Z0-9 !@#$%^&*()_+\-={};':\\\\|,.<>/?]{1,64}",
-          // maxlength: 256,
-          title: t("CORE_COMMON_NAME_OF_PRINCIPAL_ROAD_INVALID"),
+          required: true,
+          
+          // title: "CORE_COMMON_STREET_INVALID",
         },
       },
-      {
-        label: "PT_PROPERTY_ADDRESS_NAME_OF_SUB_ROAD",
-        type: "text",
-        name: "nameOfSubRoad",
-        validation: {
-          pattern: "[a-zA-Z0-9 !@#$%^&*()_+\-={};':\\\\|,.<>/?]{1,64}",
-          // maxlength: 256,
-          title: t("CORE_COMMON_NAME_OF_SUB_ROAD_INVALID"),
-        },
-      },
+      // {
+      //   label: "PT_PROPERTY_ADDRESS_NAME_OF_SUB_ROAD",
+      //   type: "text",
+      //   name: "subSideRoadName",
+      //   validation: {
+      //   },
+      // },
     ];
   }
 
@@ -180,16 +170,82 @@ const PTSelectStreet = ({ t, config, onSelect, userType, formData, formState, se
       );
     });
   }
+  const [subSideRoadName, setsubSideRoadName] = useState();
+  useEffect(() => {
+    setsubSideRoadName(formData?.address?.subSideRoadName);
+  }, [formData?.address?.subSideRoadName]);
+
+  function onChangeSubRoad(e) {
+    setsubSideRoadName(e.target.value);
+  }
+  const { data: mdmsData, isLoading } = Digit.Hooks.useCommonMDMS(
+    Digit.ULBService.getStateId(),
+    "PropertyTax",
+    ["TypeOfRoad"],
+    {
+      select: (data) => {
+        return {
+          TypeOfRoad: data?.PropertyTax?.TypeOfRoad?.filter((roadType) => roadType.active)?.map((roadType) => ({
+            i18nKey: `PROPERTYTAX_ROADTYPE_${roadType.code}`,
+            code: roadType.code,
+          }))
+        };
+      },
+      retry: false,
+      enable: false,
+    }
+  );
+  const [typeOfRoad, setTypeOfRoad] = useState();
+  useEffect(() => {
+    setTypeOfRoad(formData?.address?.typeOfRoad);
+  }, [formData?.address?.typeOfRoad]);
+  function selectTypeOfRoad(value) {
+    setTypeOfRoad(value);
+  }
+  function onSubmit(data) {
+    onSelect(config.key, { ...data, subSideRoadName: subSideRoadName, typeOfRoad: typeOfRoad });
+  }
   return (
     <React.Fragment>
     {window.location.href.includes("/citizen") ? <Timeline currentStep={1}/> : null}
     <FormStep
       config={{ ...config, inputs }}
-      _defaultValues={{ street: formData?.address.street, doorNo: formData?.address.doorNo }}
-      onSelect={(data) => onSelect(config.key, data)}
+      _defaultValues={{ street: formData?.address.street, doorNo: formData?.address.doorNo, village : formData?.address.village,
+        pattaNo : formData?.address.pattaNo, dagNo : formData?.address.dagNo,
+        commonNameOfBuilding : formData?.address.commonNameOfBuilding, principalRoadName : formData?.address.principalRoadName,}}
+      // onSelect={(data) => onSelect(config.key, data)}
+      onSelect={onSubmit}
       onSkip={onSkip}
+      showErrorBelowChildren={true}
       t={t}
+      isDisabled={(!typeOfRoad && !formData?.address?.typeOfRoad) ? true : false}
+    >
+    <CardLabel>{`${t("PT_PROPERTY_ADDRESS_NAME_OF_SUB_ROAD")}`}</CardLabel>
+    <TextInput
+      style={{ background: "#FAFAFA" }}
+      key={'subSideRoadName'}
+      name={'subSideRoadName'}
+      value={subSideRoadName}
+      onChange={(e) => onChangeSubRoad(e)}
+      isMandatory={false}
+      disable={false}
     />
+
+
+    <CardLabel>{`${t("PT_PROPERTY_ADDRESS_TYPE_OF_ROAD")}`}</CardLabel>
+    <div className={"form-pt-dropdown-only"}>
+      <Dropdown
+        t={t}
+        optionKey="i18nKey"
+        isMandatory={true}
+        option={mdmsData?.TypeOfRoad}
+        selected={ formData?.address.typeOfRoad}
+        select={(e) => selectTypeOfRoad(e)}
+        
+      />
+    </div>
+    
+    </FormStep>
     </React.Fragment>
   );
 };

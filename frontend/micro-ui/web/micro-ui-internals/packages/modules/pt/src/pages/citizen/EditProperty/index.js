@@ -504,7 +504,7 @@ const EditProperty = ({ parentRoute }) => {
     if (typeof nextStep == "object" && nextStep != null && isMultiple == false) {
       if (
         nextStep[sessionStorage.getItem("IsAnyPartOfThisFloorUnOccupied")] &&
-        (nextStep[sessionStorage.getItem("IsAnyPartOfThisFloorUnOccupied")] == "map" ||
+        (nextStep[sessionStorage.getItem("IsAnyPartOfThisFloorUnOccupied")] == "pincode" ||
           nextStep[sessionStorage.getItem("IsAnyPartOfThisFloorUnOccupied")] == "un-occupied-area")
       ) {
         nextStep = `${nextStep[sessionStorage.getItem("IsAnyPartOfThisFloorUnOccupied")]}`;
@@ -536,7 +536,7 @@ const EditProperty = ({ parentRoute }) => {
     if (!isNaN(nextStep.split("/").pop())) {
       nextPage = `${match.path}/${nextStep}`;
     } else {
-      nextPage = isMultiple && nextStep !== "map" ? `${match.path}/${nextStep}/${index}` : `${match.path}/${nextStep}`;
+      nextPage = isMultiple && nextStep !== "pincode" ? `${match.path}/${nextStep}/${index}` : `${match.path}/${nextStep}`;
     }
 
     redirectWithHistory(nextPage);

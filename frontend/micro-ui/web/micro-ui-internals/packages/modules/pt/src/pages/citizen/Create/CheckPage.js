@@ -33,6 +33,8 @@ const CheckPage = ({ onSubmit, value = {} }) => {
   const { t } = useTranslation();
   const history = useHistory();
 
+  console.log("value===",value)
+
   const {
     address,
     isResdential,
@@ -59,6 +61,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
     owners,
     isEditProperty,
     isUpdateProperty,
+    exemption
   } = value;
   const typeOfApplication = !isEditProperty && !isUpdateProperty ? `new-application` : `edit-application`;
   let flatplotsize;
@@ -83,7 +86,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
   };
   return (
     <React.Fragment>
-     {window.location.href.includes("/citizen") ? <Timeline currentStep={4}/> : null}
+     {window.location.href.includes("/citizen") ? <Timeline currentStep={5}/> : null}
     <Card>
       <CardHeader>{t("PT_CHECK_CHECK_YOUR_ANSWERS")}</CardHeader>
       <div>
@@ -180,13 +183,13 @@ const CheckPage = ({ onSubmit, value = {} }) => {
                           <ActionButton jumpTo={`${`/digit-ui/citizen/pt/property/${typeOfApplication}/institutional-owner-address/`}${index}`} />
                         }
                       />
-                      <Row
+                      {/* <Row
                         label={`${t("PT_COMMON_SAME_AS_PROPERTY_ADDRESS")}`}
                         text={`${t(checkForNA(owner?.isCorrespondenceAddress))}`}
                         actionButton={
                           <ActionButton jumpTo={`${`/digit-ui/citizen/pt/property/${typeOfApplication}/institutional-owner-address/`}${index}`} />
                         }
-                      />
+                      /> */}
                       <Row
                         label={t("PT_PROOF_IDENTITY_HEADER")}
                         text={`${(owner?.documents["proofIdentity"]?.name && getFixedFilename(owner.documents["proofIdentity"].name)) || "na"}`}
@@ -236,11 +239,11 @@ const CheckPage = ({ onSubmit, value = {} }) => {
                         text={`${t(checkForNA(owner?.permanentAddress))}`}
                         actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/pt/property/${typeOfApplication}/owner-address/`}${index}`} />}
                       />
-                      <Row
+                      {/* <Row
                         label={`${t("PT_COMMON_SAME_AS_PROPERTY_ADDRESS")}`}
                         text={`${t(checkForNA(owner?.isCorrespondenceAddress))}`}
                         actionButton={<ActionButton jumpTo={`${`/digit-ui/citizen/pt/property/${typeOfApplication}/owner-address/`}${index}`} />}
-                      />
+                      /> */}
                       {owner?.ownerType?.code !== "NONE" ? (
                         <Row
                           label={t("PT_SPECIAL_OWNER_CATEGORY_PROOF_HEADER")}
@@ -584,6 +587,24 @@ const CheckPage = ({ onSubmit, value = {} }) => {
             </div>
           )}
         </div> */}
+        {(exemption && exemption.exemptionRequired?.code == "PT_COMMON_YES" && 
+          <div>
+            <CardSubHeader>{t("PT_EXEMPTION_DETAILS")}</CardSubHeader>
+            <StatusTable>
+              <Row
+                label={t("PT_EXEMPTION_TYPE")}
+                text={`${exemption?.exemptionType ? ` ${t(exemption?.exemptionType?.i18nKey)} ` : ""} `}
+                actionButton={<ActionButton jumpTo={`/digit-ui/citizen/pt/property/${typeOfApplication}/exemption-details`} />}
+              />
+              <Row
+                label={t("PT_PROOF_OF_EXEMPTION")}
+                text={`${(exemption?.documents?.exemptionProof?.name && getFixedFilename(exemption.documents.exemptionProof.name)) || "na"}`}
+                actionButton={<ActionButton jumpTo={`/digit-ui/citizen/pt/property/${typeOfApplication}/exemption-details`} />}
+              />
+            </StatusTable>
+          </div>
+        )} 
+        
         <CheckBox
           label={t("PT_FINAL_DECLARATION_MESSAGE")}
           onChange={setdeclarationhandler}

@@ -10,6 +10,7 @@
     "packages/modules/common",
     "packages/modules/core",
     "packages/modules/dss",
+    "packages/modules/pgr",
     "packages/modules/engagement",
     "packages/modules/pt"
   ],
@@ -32,6 +33,7 @@
     "dev:pt": "cd packages/modules/pt && yarn start",
     "dev:commonPt": "cd packages/modules/commonPt && yarn start",
     "dev:core": "cd packages/modules/core && yarn start",
+    "dev:pgr": "cd packages/modules/pgr && yarn start",
     
     "dev:receipts": "cd packages/modules/receipts && yarn start",
     "dev:engagement": "cd packages/modules/engagement && yarn start",
@@ -45,6 +47,7 @@
     "build:pt": "cd packages/modules/pt && yarn build",
     "buildD:commonPt": "cd packages/modules/commonPt && yarn build",
     "build:core": "cd packages/modules/core && yarn build",
+    "build:pgr": "cd packages/modules/pgr && yarn build",
     "buildD:mcollect": "cd packages/modules/mCollect && yarn build",
     "buildD:receipts": "cd packages/modules/receipts && yarn build",
     "build:engagement": "cd packages/modules/engagement && yarn build",

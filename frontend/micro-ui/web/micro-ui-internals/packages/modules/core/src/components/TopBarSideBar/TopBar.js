@@ -141,7 +141,8 @@ const TopBar = ({
                     profilePic == null ? (
                       <TextToImg name={userDetails?.info?.name || userDetails?.info?.userInfo?.name || "Employee"} />
                     ) : (
-                      <img src="http://216.48.176.229/static/8.png" style={{ height: "48px", width: "48px", borderRadius: "50%" }} />
+                      <div></div>
+                      // <img src="http://216.48.176.229/static/8.png" style={{ height: "48px", width: "48px", borderRadius: "50%" }} />
                     )
                   }
                 />
