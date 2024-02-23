@@ -24,6 +24,7 @@ public class MDMSService {
     public Map<String, Map<String, JSONArray>> searchMaster(MdmsCriteriaReq mdmsCriteriaReq) {
 
         Map<String, Map<String, Map<String, JSONArray>>> tenantIdMap = MDMSApplicationRunnerImpl.getTenantMap();
+        
 
         String tenantId = mdmsCriteriaReq.getMdmsCriteria().getTenantId();
 
@@ -110,7 +111,7 @@ public class MDMSService {
             }
         }
         log.info("MasterName... " + masterName + "isStateLevelConfiguration.." + isStateLevel);
-        if (ulbLevel == null || isStateLevel) {
+        if (ulbLevel == null && isStateLevel) {
             if (stateLevel.get(moduleName) != null) {
                 return stateLevel.get(moduleName).get(masterName);
             } else {
