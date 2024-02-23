@@ -1,6 +1,10 @@
 package org.egov.demand.repository.querybuilder;
 
+import java.util.List;
+
 import org.egov.demand.amendment.model.AmendmentCriteria;
+import org.egov.demand.util.Util;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Component;
@@ -9,6 +13,8 @@ import org.springframework.util.CollectionUtils;
 @Component
 public class AmendmentQueryBuilder {
 	
+	@Autowired
+	private Util util;
 	@Value("${amendment.default.limit}")
 	private Integer defaultLimit;
 	
@@ -39,7 +45,7 @@ public class AmendmentQueryBuilder {
 			+ " FROM egbs_amendment amendment "
 			+ " INNER JOIN "
 			+ " egbs_amendment_taxdetail amdl ON amendment.id = amdl.amendmentid " 
-			+ "	INNER JOIN egbs_document doc ON amendment.id = doc.amendmentid "
+			+ "	LEFT OUTER JOIN egbs_document doc ON amendment.id = doc.amendmentid "
 			+ " INNER JOIN (SELECT id, tenantid FROM egbs_amendment amendment WHERE {$WHERE} {$PAGE}) pagedresult "
 			+ " ON amendment.id = pagedresult.id AND amendment.tenantid = pagedresult.tenantid ";
 	

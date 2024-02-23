@@ -1,5 +1,6 @@
 package org.egov.demand.consumer.notification;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -9,12 +10,14 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.demand.model.Bill;
+import org.egov.demand.util.Constants;
 import org.egov.demand.model.BillDetail;
+import org.egov.demand.config.ApplicationProperties;
 import org.egov.demand.model.BillDetailV2;
 import org.egov.demand.model.BillV2;
-import org.egov.demand.util.Constants;
-import org.egov.demand.web.contract.BillRequest;
+import org.egov.demand.repository.ServiceRequestRepository;
 import org.egov.demand.web.contract.BillRequestV2;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -53,13 +56,22 @@ public class NotificationConsumer {
 	
     @Autowired
     private ObjectMapper objectMapper;
+		 @Autowired
+    private ApplicationProperties config;
 		
+	@Autowired
 	@Autowired
 	private KafkaTemplate<String, Object> producer;
 	
 	@Autowired
 	private RestTemplate restTemplate;
 	
+	@Autowired
+	private ServiceRequestRepository serviceRequestRepository;
+	
+	
+	private static final String WS_LOCALIZATION_MODULE = "rainmaker-ws";
+	private static final String WS_CONNECTION_BILL_GENERATION = "WATER_CONNECTION_BILL_GENERATION_SMS_MESSAGE";
     private static final String BILLING_LOCALIZATION_MODULE = "billing-services";
 	public static final String PAYMENT_MSG_LOCALIZATION_CODE = "BILLINGSERVICE_BUSINESSSERVICE_BILL_GEN_NOTIF_MSG";
 	public static final String BILL_CANCELLATION_MSG_LOCALIZATION_CODE = "BILLINGSERVICE_BILL_CANCELLATION_NOTIF_MSG";
