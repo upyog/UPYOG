@@ -23,7 +23,7 @@
   },
   "devDependencies": {
     "react-app-rewired": "^2.1.6",
-    "react-scripts": "latest"
+    "react-scripts": "4.0.3"
   },
   "browserslist": {
     "production": [

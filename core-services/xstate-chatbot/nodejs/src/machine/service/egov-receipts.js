@@ -135,8 +135,9 @@ class ReceiptService {
           hi_IN: 'संपत्ति आईडी'
         };
         example = {
-          en_IN: '(Property ID must be in format\nPB-PT-XXXX-XX-XX-XXXXX)',
-          hi_IN: '(प्रॉपर्टी आईडी प्रारूप में होनी चाहिए\nPB-PT-XXXX-XX-XX-XXXXX)'
+          en_IN: '(Property ID must be in format\nPT-xxxx-xxxxxx)',
+          hi_IN: '(संपत्ति आईडी\nPT-xxxx-xxxxxx प्रारूप में होनी चाहिए)',
+          pa_IN: '(ਪ੍ਰਾਪਰਟੀ ID ਫਾਰਮੈਟ\nPT-xxxx-xxxxxx ਵਿੱਚ ਹੋਣੀ ਚਾਹੀਦੀ ਹੈ)'
         }
       }
   

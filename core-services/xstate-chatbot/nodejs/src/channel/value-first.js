@@ -13,7 +13,7 @@ let valueFirstRequestBody = "{\"@VER\":\"1.2\",\"USER\":{\"@USERNAME\":\"\",\"@P
 
 let textMessageBody = "{\"@UDH\":\"0\",\"@CODING\":\"1\",\"@TEXT\":\"\",\"@MSGTYPE\":\"1\",\"@TEMPLATEINFO\":\"\",\"@PROPERTY\":\"0\",\"@ID\":\"\",\"ADDRESS\":[{\"@FROM\":\"\",\"@TO\":\"\",\"@SEQ\":\"\",\"@TAG\":\"\"}]}";
 
-let imageMessageBody = "{\"@UDH\":\"0\",\"@CODING\":\"1\",\"@TEXT\":\"\",\"@MSGTYPE\":\"4\",\"@MEDIADATA\":\"\",\"@CAPTION\":\"\",\"@TYPE\":\"image\",\"@CONTENTTYPE\":\"image\/png\",\"@TEMPLATEINFO\":\"\",\"@PROPERTY\":\"0\",\"@ID\":\"\",\"ADDRESS\":[{\"@FROM\":\"\",\"@TO\":\"\",\"@SEQ\":\"\",\"@TAG\":\"\"}]}";
+let imageMessageBody = "{\"@UDH\":\"0\",\"@CODING\":\"1\",\"@TEXT\":\"\",\"@MSGTYPE\":\"4\",\"@MEDIADATA\":\"\",\"@CAPTION\":\"\",\"@TYPE\":\"image\",\"@CONTENTTYPE\":\"image\/jpeg\",\"@TEMPLATEINFO\":\"\",\"@PROPERTY\":\"0\",\"@ID\":\"\",\"ADDRESS\":[{\"@FROM\":\"\",\"@TO\":\"\",\"@SEQ\":\"\",\"@TAG\":\"\"}]}";
 
 let buttontemplateMessageBody = "{\"@UDH\":\"0\",\"@CODING\":\"1\",\"@TEXT\":\"\",\"@CAPTION\":\"\",\"@TYPE\":\"\",\"@CONTENTTYPE\":\"\",\"@TEMPLATEINFO\":\"\",\"@MSGTYPE\":\"3\",\"@B_URLINFO\":\"\",\"@PROPERTY\":\"0\",\"@ID\":\"\",\"ADDRESS\":[{\"@FROM\":\"\",\"@TO\":\"\",\"@SEQ\":\"1\",\"@TAG\":\"\"}]}"
 
@@ -102,7 +102,7 @@ class ValueFirstWhatsAppProvider {
                 input = '(' + requestBody.latitude + ',' + requestBody.longitude + ')';
             } 
             else if(type === 'image'){
-                var imageInBase64String = requestBody.MediaData;
+                var imageInBase64String = requestBody.media_data;
                 input = await this.convertFromBase64AndStore(imageInBase64String);
             }
             else if(type === 'unknown' || type === 'document')
@@ -277,10 +277,21 @@ class ValueFirstWhatsAppProvider {
 
     async sendMessage(requestBody) {
         let url = config.valueFirstWhatsAppProvider.valueFirstURL;
+        let token = await this.generateBearerToken();
+        console.log('token:' + token);
+
+        if(token){
+            token = 'Bearer ' + token;
+
+        }
+        else {
+            console.error('Error in sending message');
+            return undefined;
+        }
 
         let headers = {
             'Content-Type': 'application/json',
-            'Authorization': config.valueFirstWhatsAppProvider.valuefirstLoginAuthorizationHeader
+            'Authorization': token
         }
 
         var request = {
@@ -329,6 +340,34 @@ class ValueFirstWhatsAppProvider {
         requestBody = await this.getTransformedResponse(user, messages, extraInfo);
         this.sendMessage(requestBody);       
     }
+
+    async generateBearerToken(){
+        let url = config.valueFirstWhatsAppProvider.valueFirstTokenURL;
+
+        let myheaders = {
+            'Authorization': config.valueFirstWhatsAppProvider.valuefirstLoginAuthorizationHeader
+        }
+        var requestOptions = {
+            method: 'POST',
+            headers: myheaders,
+            origin: '*'
+        };
+        url = url + '?action=generate';
+
+        console.log('URL: ' + url + JSON.stringify(requestOptions));
+        let response = await fetch(url,requestOptions);
+        console.log(response);
+        if(response.status === 200){
+            console.log('Token generated successfully');
+            let messageBack = await response.json();
+            return messageBack.token;
+        }
+        else {
+            console.error('Error while generating token');
+            console.error(response);
+            return undefined;
+            }
+        }
 
     async getTransformMessageForTemplate(reformattedMessages){
         if(reformattedMessages.length>0){

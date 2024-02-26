@@ -97,6 +97,11 @@ class PGRV1Service {
     let matchedCityMessageBundle = null;
     for(let city of cities) {
       let cityName = messageBundle[city]['en_IN'];
+       console.log(cityName);
+       if(cityAndLocality.city=="Sahibzada Ajit Singh Nagar")
+     {
+      cityAndLocality.city="Mohali";
+     }
       if(cityName.toLowerCase() == cityAndLocality.city.toLowerCase()) {
         matchedCity = city;
         matchedCityMessageBundle = messageBundle[city];
@@ -433,7 +438,7 @@ class PGRV1Service {
 
   async makeCitizenURLForComplaint(serviceRequestId, mobileNumber){
     let encodedPath = urlencode(serviceRequestId, 'utf8');
-    let url = config.egovServices.externalHost + "citizen/otpLogin?mobileNo=" + mobileNumber + "&redirectTo=complaint-details/" + encodedPath + "&channel=whatsapp&tag=complaintTrack";
+    let url = config.egovServices.externalHost + "citizen/otpLogin?mobileNo=" + mobileNumber + "&redirectTo=complaint-details/" + encodedPath;
     let shortURL = await this.getShortenedURL(url);
     return shortURL;
   }

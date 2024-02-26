@@ -97,7 +97,7 @@ class PaymentStatusUpdateEventFormatter{
         key = 'consolidatedreceipt';
    
 
-      let pdfUrl = config.egovServices.externalHost + 'pdf-service/v1/_create';
+      let pdfUrl = config.egovServices.egovServicesHost + 'pdf-service/v1/_create';
       pdfUrl = pdfUrl + '?key='+key+ '&tenantId=' + tenantId;
 
       let msgId = request.RequestInfo.msgId.split('|');
@@ -105,13 +105,21 @@ class PaymentStatusUpdateEventFormatter{
 
       let requestBody = {
         RequestInfo: {
-          authToken: request.RequestInfo.authToken,
+          authToken: user.authToken,
           msgId: msgId,
           userInfo: user.userInfo
         },
         Payments:[]
       };
       requestBody.Payments.push(payment);
+      console.log("Before PT receipt custom changes: " + JSON.stringify(requestBody));
+
+      if(businessService === 'PT'){
+        this.ptreceipt(requestBody);
+      }
+      console.log("After PT receipt custom changes: " + JSON.stringify(requestBody));
+      console.log("URL: "+ pdfUrl);
+      console.log("user token: "+ user.authToken);
 
       let options = {
         method: 'POST',
@@ -129,7 +137,7 @@ class PaymentStatusUpdateEventFormatter{
         };
         let extraInfo = {
           whatsAppBusinessNumber: config.whatsAppBusinessNumber.slice(2),
-          fileName: consumerCode
+          fileName: key
         };
 
         if(isOwner){
@@ -474,20 +482,23 @@ let messageBundle = {
     }
   },
   paymentFail:{
-    en_IN: "Sorry 😥!  The Payment Transaction has failed due to authentication failure.\n\nYour transaction reference number is *{{transaction_number}}*.\n\nTo go back to the main menu, type and send mseva.",
-    hi_IN: "क्षमा करें 😥! प्रमाणीकरण विफलता के कारण भुगतान लेनदेन विफल हो गया है। आपका लेन-देन संदर्भ संख्या *{{transaction_number}}* है।\n\nमुख्य मेनू पर वापस जाने के लिए, टाइप करें और mseva भेजें।"
+    en_IN: "Sorry 😥!  The Payment Transaction has failed due to authentication failure.\n\nYour transaction reference number is {{transaction_number}}.\n\nTo go back to the main menu, type and send mseva.",
+    hi_IN: "क्क्षमा करें 😥! प्रमाणीकरण विफलता के कारण भुगतान लेनदेन विफल हो गया है।\n\nआपकी लेन-देन संदर्भ संख्या {{transaction_number}} है।\n\nमुख्य मेनू पर वापस जाने के लिए, टाइप करें और mseva भेजें।",
+    pa_IN: "ਮਾਫ ਕਰਨਾ 😥! ਪ੍ਰਮਾਣਿਕਤਾ ਅਸਫਲ ਹੋਣ ਕਾਰਨ ਭੁਗਤਾਨ ਸੌਦਾ ਅਸਫਲ ਹੋ ਗਿਆ ਹੈ.\n\nਤੁਹਾਡਾ ਲੈਣ-ਦੇਣ ਦਾ ਹਵਾਲਾ ਨੰਬਰ {{transaction_number}} ਹੈ.\n\nਮੁੱਖ ਮੀਨੂੰ ਤੇ ਵਾਪਸ ਜਾਣ ਲਈ, ਟਾਈਪ ਕਰੋ ਅਤੇ ਮੇਲ ਭੇਜੋ."
   },
   wait:{
     en_IN: "Please wait while your receipt is being generated.",
-    hi_IN: "कृपया प्रतीक्षा करें जब तक कि आपकी रसीद उत्पन्न न हो जाए।"
+    hi_IN: "कृपया प्रतीक्षा करें जब तक आपकी रसीद तैयार की जा रही है।.",
+    pa_IN: "ਕਿਰਪਾ ਕਰਕੇ ਉਡੀਕ ਕਰੋ ਜਦੋਂ ਤੁਹਾਡੀ ਰਸੀਦ ਤਿਆਰ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ."
   },
   registration:{
-    en_IN: 'If you want to receive {{service}} bill alerts for *{{consumerCode}}* on this mobile number type and send *1*\n\nElse type and send *2*',
+    en_IN: 'If you want to receive {{service}} bill alerts for {{consumerCode}} on this mobile number type and send *1*\n\nElse type and send *2*',
     hi_IN: 'यदि आप इस मोबाइल नंबर प्रकार पर {{उपभोक्ता कोड}} के लिए बिल अलर्ट प्राप्त करना चाहते हैं और भेजें *1*\n\nअन्यथा टाइप करें और *2* भेजें'
   },
   endStatement:{
     en_IN: "👉 To go back to the main menu, type and send mseva.",
-    hi_IN: "👉 मुख्य मेनू पर वापस जाने के लिए, टाइप करें और mseva भेजें।"
+    hi_IN: '👉 मुख्य मेनू पर वापस जाने के लिए, टाइप करें और mseva भेजें।',
+    pa_IN: '👉 ਮੁੱਖ ਮੀਨੂੰ ਤੇ ਵਾਪਸ ਜਾਣ ਲਈ, ਟਾਈਪ ਕਰੋ ਅਤੇ ਮੇਲ ਭੇਜੋ.'
   }
 
 };

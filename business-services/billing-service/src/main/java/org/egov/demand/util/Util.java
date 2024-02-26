@@ -7,6 +7,23 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
+import static java.util.Objects.isNull;
+import static org.egov.demand.util.Constants.ADVANCE_BUSINESSSERVICE_JSONPATH_CODE;
+import static org.egov.demand.util.Constants.INVALID_TENANT_ID_MDMS_KEY;
+import static org.egov.demand.util.Constants.INVALID_TENANT_ID_MDMS_MSG;
+import static org.egov.demand.util.Constants.MDMS_CODE_FILTER;
+import static org.egov.demand.util.Constants.MDMS_MASTER_NAMES;
+import static org.egov.demand.util.Constants.MODULE_NAME;
+
+import java.math.BigDecimal;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
 import org.egov.demand.amendment.model.ProcessInstance;
@@ -25,12 +42,22 @@ import org.egov.mdms.model.ModuleDetail;
 import org.egov.tracer.model.CustomException;
 import org.postgresql.util.PGobject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.*;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.jayway.jsonpath.DocumentContext;
+import com.jayway.jsonpath.JsonPath;
+
+import lombok.extern.slf4j.Slf4j;
 
 import static java.util.Objects.isNull;
 import static org.egov.demand.util.Constants.*;
@@ -83,6 +110,7 @@ public class Util {
 	 * @return Map of MasterData name to the list of code in the MasterData
 	 *
 	 */
+	@Cacheable(value = "mdmsCache", sync = true, key = "{#mdmsReq.getMdmsCriteria()}")
 	public DocumentContext getAttributeValues(MdmsCriteriaReq mdmsReq) {
 		StringBuilder uri = new StringBuilder(appProps.getMdmsHost()).append(appProps.getMdmsEndpoint());
 

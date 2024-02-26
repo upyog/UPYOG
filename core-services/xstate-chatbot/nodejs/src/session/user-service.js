@@ -21,6 +21,7 @@ class UserService {
     }
 
     user = await this.enrichuserDetails(user);
+    console.log("User Response:",user);
     return user;
   }
 
@@ -36,13 +37,14 @@ class UserService {
     let response = await fetch(url, options);
     if(response.status === 200) {
       let body = await response.json();
-      user.userInfo.name = body.name;
-      user.userInfo.locale = body.locale;
+      user.userInfo.name = body.name
+      console.log("user name enrichment:",body.name);
     } 
     return user;
   }
 
   async loginUser(mobileNumber, tenantId) {
+    console.log("Inside Login user");
     let data = new URLSearchParams();
     data.append('grant_type', 'password');
     data.append('scope', 'read');
@@ -79,7 +81,16 @@ class UserService {
 
   async createUser(mobileNumber, tenantId) {
     let requestBody = {
-      RequestInfo: {},
+      RequestInfo: {
+        "apiId": "Rainmaker",
+      "ver": ".01",
+      "ts": "",
+      "action": "_create",
+      "did": "1",
+      "key": "",
+      "msgId": "20170310130900|en_IN",
+      "authToken": null
+      },
       User: {
         otpReference: config.userService.userServiceHardCodedPassword,
         permamnentCity: tenantId,
