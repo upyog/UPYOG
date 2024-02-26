@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.Builder.Default;
+import lombok.EqualsAndHashCode;
 
 @Setter
 @Getter

@@ -16,6 +16,7 @@ import org.egov.demand.config.ApplicationProperties;
 import org.egov.demand.model.BillDetailV2;
 import org.egov.demand.model.BillV2;
 import org.egov.demand.repository.ServiceRequestRepository;
+import org.egov.demand.web.contract.BillRequest;
 import org.egov.demand.web.contract.BillRequestV2;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,7 +60,7 @@ public class NotificationConsumer {
 		 @Autowired
     private ApplicationProperties config;
 		
-	@Autowired
+
 	@Autowired
 	private KafkaTemplate<String, Object> producer;
 	

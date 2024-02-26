@@ -65,6 +65,5 @@ public class BillSearchCriteria {
 	
 	private Long periodTo;
 	
-	@Default
-	private Boolean retrieveOldest = false;
+	
 }
