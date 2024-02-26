@@ -12,6 +12,7 @@ import org.egov.ptr.config.PetConfiguration;
 import org.egov.ptr.util.NotificationUtil;
 import org.egov.ptr.util.PTRConstants;
 import org.egov.ptr.web.contracts.PetRequest;
+import org.egov.ptr.models.PetRegistrationRequest;
 import org.egov.ptr.models.event.*;
 import org.egov.ptr.models.event.EventRequest;
 import org.egov.ptr.repository.ServiceRequestRepository;
@@ -33,7 +34,7 @@ public class PTRNotificationService {
 	@Autowired
 	private ServiceRequestRepository serviceRequestRepository;
 	
-	public void process(PetRequest request) {
+	public void process(PetRegistrationRequest request) {
 //		RequestInfo requestInfo = request.getRequestInfo();
 //		Map<String, String> mobileNumberToOwner = new HashMap<>();
 //		String tenantId = request.getPetApplication().getTenantId();
@@ -77,13 +78,13 @@ public class PTRNotificationService {
 				
 	}
 
-	private EventRequest getEventsForPTR(PetRequest request) {
+	private EventRequest getEventsForPTR(PetRegistrationRequest request) {
 
     	List<Event> events = new ArrayList<>();
-        String tenantId = request.getPetApplication().getTenantId();
+        String tenantId = request.getPetRegistrationApplications().get(0).getTenantId();
 		String localizationMessages = util.getLocalizationMessages(tenantId,request.getRequestInfo());
 		List<String> toUsers = new ArrayList<>();
-		String mobileNumber = request.getPetApplication().getMobileNumber();
+		String mobileNumber = request.getPetRegistrationApplications().get(0).getMobileNumber();
 
 	        Map<String, String> mapOfPhoneNoAndUUIDs = fetchUserUUIDs(mobileNumber, request.getRequestInfo(),tenantId);
 
@@ -94,7 +95,7 @@ public class PTRNotificationService {
 	        
 	        toUsers.add(mapOfPhoneNoAndUUIDs.get(mobileNumber));
 			String message = null;
-			message = util.getCustomizedMsg(request.getRequestInfo(), request.getPetApplication(), localizationMessages);
+			message = util.getCustomizedMsg(request.getRequestInfo(), request.getPetRegistrationApplications().get(0), localizationMessages);
 			 Recepient recepient = Recepient.builder().toUsers(toUsers).toRoles(null).build();
 			
 				events.add(Event.builder().tenantId(tenantId).description("Pet Registration Description")
