@@ -944,27 +944,11 @@ serviceMaps:
       isTransaction: true
       queryMaps:
 
-        - query: INSERT INTO contract_agreement (agreement_no,deposit_type,deposit_amount,account_no,particulars,valid_from_date,valid_till_date,bank_branch_ifsc_code,payment_mode,witness_name_p2,address_p2,uid_p2,vendor_type,vendor_name,represented_by,primary_party,sr_no,terms_and_conditions,document_description,upload_document,createdby,lastmodifiedby,createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO contract_agreement (agreement_no,witness_name_p2,address_p2,uid_p2,vendor_type,vendor_name,represented_by,primary_party,sr_no,terms_and_conditions,document_description,upload_document,createdby,lastmodifiedby,createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: WMSContractAgreementApplication.*
           jsonMaps:
             - jsonPath: $.WMSContractAgreementApplication.*.agreement_no
 
-            - jsonPath: $.WMSContractAgreementApplication.*.sDPGBGDetails.deposit_type
-            
-            - jsonPath: $.WMSContractAgreementApplication.*.sDPGBGDetails.deposit_amount
-            
-            - jsonPath: $.WMSContractAgreementApplication.*.sDPGBGDetails.account_no
-            
-            - jsonPath: $.WMSContractAgreementApplication.*.sDPGBGDetails.particulars
-            
-            - jsonPath: $.WMSContractAgreementApplication.*.sDPGBGDetails.valid_from_date
-            
-            - jsonPath: $.WMSContractAgreementApplication.*.sDPGBGDetails.valid_till_date
-            
-            - jsonPath: $.WMSContractAgreementApplication.*.sDPGBGDetails.bank_branch_ifsc_code
-            
-            - jsonPath: $.WMSContractAgreementApplication.*.sDPGBGDetails.payment_mode
-            
             - jsonPath: $.WMSContractAgreementApplication.*.party2Witness.witness_name_p2
             
             - jsonPath: $.WMSContractAgreementApplication.*.party2Witness.address_p2
@@ -1052,6 +1036,30 @@ serviceMaps:
             - jsonPath: $.WMSContractAgreementApplication.*.party1Details.*.uid_p1
             
             
+        - query: INSERT INTO sdpgbgdetails (sdpg_id,agreement_no,deposit_type,deposit_amount,account_no,particulars,valid_from_date,valid_till_date,bank_branch_ifsc_code,payment_mode) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+          basePath: WMSContractAgreementApplication.*.sDPGBGDetails.*
+          jsonMaps:
+            - jsonPath: $.WMSContractAgreementApplication.*.sDPGBGDetails.*.sdpg_id
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.sDPGBGDetails.*.agreement_no
+
+            - jsonPath: $.WMSContractAgreementApplication.*.sDPGBGDetails.*.deposit_type
+
+            - jsonPath: $.WMSContractAgreementApplication.*.sDPGBGDetails.*.deposit_amount
+
+            - jsonPath: $.WMSContractAgreementApplication.*.sDPGBGDetails.*.account_no
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.sDPGBGDetails.*.particulars
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.sDPGBGDetails.*.valid_from_date
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.sDPGBGDetails.*.valid_till_date
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.sDPGBGDetails.*.bank_branch_ifsc_code
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.sDPGBGDetails.*.payment_mode
+            
+            
             
             
             
@@ -1063,26 +1071,12 @@ serviceMaps:
       isTransaction: true
       queryMaps:
       
-        - query: UPDATE contract_agreement SET  deposit_type = ?, deposit_amount = ?,account_no = ?, particulars = ?, valid_from_date = ?, valid_till_date = ?, bank_branch_ifsc_code = ?, payment_mode = ?, witness_name_p2 = ?, address_p2 = ?, uid_p2 = ?, vendor_type = ?, vendor_name = ?, represented_by = ?, primary_party = ?, sr_no = ?, terms_and_conditions = ?, document_description = ?, upload_document = ? WHERE agreement_no = ?;
+        - query: UPDATE contract_agreement SET witness_name_p2 = ?, address_p2 = ?, uid_p2 = ?, vendor_type = ?, vendor_name = ?, represented_by = ?, primary_party = ?, sr_no = ?, terms_and_conditions = ?, document_description = ?, upload_document = ? WHERE agreement_no = ?;
           basePath: WMSContractAgreementApplication.*
           jsonMaps:
             
 
-            - jsonPath: $.WMSContractAgreementApplication.*.sDPGBGDetails.deposit_type
             
-            - jsonPath: $.WMSContractAgreementApplication.*.sDPGBGDetails.deposit_amount
-            
-            - jsonPath: $.WMSContractAgreementApplication.*.sDPGBGDetails.account_no
-            
-            - jsonPath: $.WMSContractAgreementApplication.*.sDPGBGDetails.particulars
-            
-            - jsonPath: $.WMSContractAgreementApplication.*.sDPGBGDetails.valid_from_date
-            
-            - jsonPath: $.WMSContractAgreementApplication.*.sDPGBGDetails.valid_till_date
-            
-            - jsonPath: $.WMSContractAgreementApplication.*.sDPGBGDetails.bank_branch_ifsc_code
-            
-            - jsonPath: $.WMSContractAgreementApplication.*.sDPGBGDetails.payment_mode
             
             - jsonPath: $.WMSContractAgreementApplication.*.party2Witness.witness_name_p2
             
@@ -1162,6 +1156,29 @@ serviceMaps:
           
           - jsonPath: $.WMSContractAgreementApplication.*.party1Details.*.address_p1
           - jsonPath: $.WMSContractAgreementApplication.*.party1Details.*.party1_id
+          
+          
+        - query: UPDATE sdpgbgdetails SET deposit_type = ?,deposit_amount = ?, account_no = ?, particulars = ?, valid_from_date = ?,valid_till_date = ?,bank_branch_ifsc_code = ?,payment_mode = ? WHERE sdpg_id = ?;
+          basePath: WMSContractAgreementApplication.*.sDPGBGDetails.*
+          jsonMaps:
+          
+          - jsonPath: $.WMSContractAgreementApplication.*.sDPGBGDetails.*.deposit_type
+          
+          - jsonPath: $.WMSContractAgreementApplication.*.sDPGBGDetails.*.deposit_amount
+
+          - jsonPath: $.WMSContractAgreementApplication.*.sDPGBGDetails.*.account_no
+
+          - jsonPath: $.WMSContractAgreementApplication.*.sDPGBGDetails.*.particulars
+
+          - jsonPath: $.WMSContractAgreementApplication.*.sDPGBGDetails.*.valid_from_date
+          
+          - jsonPath: $.WMSContractAgreementApplication.*.sDPGBGDetails.*.valid_till_date
+          
+          - jsonPath: $.WMSContractAgreementApplication.*.sDPGBGDetails.*.bank_branch_ifsc_code
+          
+          - jsonPath: $.WMSContractAgreementApplication.*.sDPGBGDetails.*.payment_mode
+          
+          - jsonPath: $.WMSContractAgreementApplication.*.sDPGBGDetails.*.sdpg_id
           
             
             

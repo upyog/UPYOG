@@ -40,7 +40,7 @@ public class WMSContractAgreementApplication {
 	private List<Party1Details> party1Details = null;
 	
 	@JsonProperty("sDPGBGDetails")
-	private SDPGBGDetails sDPGBGDetails = null;
+	private List<SDPGBGDetails> sDPGBGDetails = null;
 	
 	@JsonProperty("termsAndConditions")
 	private TermsAndConditions termsAndConditions = null;
@@ -91,6 +91,15 @@ public class WMSContractAgreementApplication {
         //if(this.party1Details.stream().filter(x-> x.getUidP1().equalsIgnoreCase(party1DetailsItem.getUidP1())) == null)
         if (!this.party1Details.stream().anyMatch(x -> x.getParty1Id().equalsIgnoreCase(party1DetailsItem.getParty1Id())))    
         this.party1Details.add(party1DetailsItem);
+        return this;
+    }
+	
+	public WMSContractAgreementApplication addSDPGBGDetails(SDPGBGDetails sDPGBGDetailsItem) {
+        if(this.sDPGBGDetails==null)
+            this.sDPGBGDetails = new ArrayList<>();
+        //if(this.agreementInfo.stream().filter(x-> x.getAgreementName().equalsIgnoreCase(agreementInfoItem.getAgreementName())) == null)
+        if (!this.sDPGBGDetails.stream().anyMatch(x -> x.getSdpgId().equalsIgnoreCase(sDPGBGDetailsItem.getSdpgId())))    
+        this.sDPGBGDetails.add(sDPGBGDetailsItem);
         return this;
     }
 	

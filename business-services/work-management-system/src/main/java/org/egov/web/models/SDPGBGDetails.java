@@ -22,6 +22,12 @@ import lombok.Setter;
 @Builder
 public class SDPGBGDetails {
 	
+	@JsonProperty("agreement_no") 
+	private String agreementNo=null;
+	
+	@JsonProperty("sdpg_id") 
+	private String sdpgId=null;
+	
 	@JsonProperty("deposit_type")
 	private String depositType=null;
 	@JsonProperty("deposit_amount")

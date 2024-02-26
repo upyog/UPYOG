@@ -54,14 +54,7 @@ public class WMSContractAgreementApplicationRowMapper implements ResultSetExtrac
                     .lastModifiedTime(lastModifiedTime)
                     .build();
             
-            SDPGBGDetails sDPGBGDetails = SDPGBGDetails.builder()
-                    .accountNo(rs.getLong("aAccountNo"))
-                    .particulars(rs.getString("aParticulars"))
-                    .validFromDate(rs.getString("aValidFromDate"))
-                    .validTillDate(rs.getString("aValidTillDate"))
-                    .bankBranchIfscCode(rs.getString("aBankBranchIfscCode"))
-                    .paymentMode(rs.getString("aPaymentMode"))
-                    .build();
+            
             
             TermsAndConditions termsAndConditions = TermsAndConditions.builder()
                     .srNo(rs.getInt("aSrNo"))
@@ -96,7 +89,6 @@ public class WMSContractAgreementApplicationRowMapper implements ResultSetExtrac
     		  .agreementDocuments(agreementDocuments)
     		  .party2Witness(party2Witness)
     		  .contractors(contractors)
-    		  .sDPGBGDetails(sDPGBGDetails)
     		  .termsAndConditions(termsAndConditions)
     		  .build();
     		  
@@ -136,6 +128,21 @@ public class WMSContractAgreementApplicationRowMapper implements ResultSetExtrac
                         .uidP1(rs.getString("aUidP1"))
                         .build();
                 wmsContractAgreementApplication.addParty1Details(party1Details);
+                
+                SDPGBGDetails sDPGBGDetails = SDPGBGDetails.builder()
+                		.sdpgId(rs.getString("aSdpgId"))
+                		.agreementNo(agreementNo)
+                		.depositType(rs.getString("aDepositType"))
+                		.depositAmount(rs.getInt("aDepositAmount"))
+                        .accountNo(rs.getLong("aAccountNo"))
+                        .particulars(rs.getString("aParticulars"))
+                        .validFromDate(rs.getString("aValidFromDate"))
+                        .validTillDate(rs.getString("aValidTillDate"))
+                        .bankBranchIfscCode(rs.getString("aBankBranchIfscCode"))
+                        .paymentMode(rs.getString("aPaymentMode"))
+                        .build();
+                
+                wmsContractAgreementApplication.addSDPGBGDetails(sDPGBGDetails);
               
                 //wmsContractAgreementApplicationList.addAll(wmsContractAgreementApplicationMap.values());
                 

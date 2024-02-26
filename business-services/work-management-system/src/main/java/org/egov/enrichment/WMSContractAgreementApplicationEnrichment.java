@@ -14,6 +14,7 @@ import org.egov.util.IdgenUtil;
 import org.egov.web.models.AgreementInfo;
 import org.egov.web.models.AuditDetails;
 import org.egov.web.models.Party1Details;
+import org.egov.web.models.SDPGBGDetails;
 import org.egov.web.models.ScheduleOfRateApplication;
 import org.egov.web.models.WMSContractAgreementApplication;
 import org.egov.web.models.WMSContractAgreementRequest;
@@ -99,6 +100,16 @@ public class WMSContractAgreementApplicationEnrichment {
        party1.setParty1Id(Long.toString(randomNumber));
 	        	 
 	         }
+			 
+			 for (SDPGBGDetails sdbg : application.getSDPGBGDetails()) {
+	        	 //Long randomNumber=(long) Math.floor(Math.random() * (9999 - 1000 + 1) + 1000);
+				 sdbg.setAgreementNo(application.getAgreementNo());
+				 
+       randomNumber=(long) Math.floor(Math.random() * (9999 - 1000 + 1) + 1000);
+	        	 
+       sdbg.setSdpgId(Long.toString(randomNumber));
+	        	 
+	         }
             
 		//}//for loop
             
@@ -122,6 +133,7 @@ public class WMSContractAgreementApplicationEnrichment {
 			if(existingApplicationResult.size() > 0) {
 				int k=0;
 				int j=0;
+				int l=0;
 			 for(k=0;k<application.getAgreementInfo().size();k++) {
 				 int currentIndex = k;
 				 List<AgreementInfo> existingApplicationAgreement = existingApplicationResult.get(0).getAgreementInfo().stream().filter(x -> x.getAgrId().equalsIgnoreCase(application.getAgreementInfo().get(currentIndex).getAgrId())).collect(Collectors.toList());
@@ -162,15 +174,29 @@ public class WMSContractAgreementApplicationEnrichment {
 				}
 				
 			}
-			existingApplicationResult.get(0).getSDPGBGDetails().setDepositType(application.getSDPGBGDetails().getDepositType());
-			existingApplicationResult.get(0).getSDPGBGDetails().setDepositAmount(application.getSDPGBGDetails().getDepositAmount());
 			
-			existingApplicationResult.get(0).getSDPGBGDetails().setAccountNo(application.getSDPGBGDetails().getAccountNo());
-			existingApplicationResult.get(0).getSDPGBGDetails().setParticulars(application.getSDPGBGDetails().getParticulars());
-			existingApplicationResult.get(0).getSDPGBGDetails().setValidFromDate(application.getSDPGBGDetails().getValidFromDate());
-			existingApplicationResult.get(0).getSDPGBGDetails().setValidTillDate(application.getSDPGBGDetails().getValidTillDate());
-			existingApplicationResult.get(0).getSDPGBGDetails().setBankBranchIfscCode(application.getSDPGBGDetails().getBankBranchIfscCode());
-			existingApplicationResult.get(0).getSDPGBGDetails().setPaymentMode(application.getSDPGBGDetails().getPaymentMode());
+			for(l=0;l<application.getSDPGBGDetails().size();l++) {
+				int currentIndex = l;
+				List<SDPGBGDetails> existingApplicationSDPGBGDetails = existingApplicationResult.get(0).getSDPGBGDetails().stream().filter(x -> x.getSdpgId().equalsIgnoreCase(application.getSDPGBGDetails().get(currentIndex).getSdpgId())).collect(Collectors.toList());
+				
+				//if (!wmsContractAgreementRequest.getWmsContractAgreementApplications().get(0).getParty1Details().stream().anyMatch(x -> x.getUidP1().equalsIgnoreCase(existingApplication.get(0).getParty1Details().get(0).getUidP1()))) {
+				 if(existingApplicationSDPGBGDetails.size() > 0) {
+					 
+					 existingApplicationSDPGBGDetails.get(0).setDepositType(application.getSDPGBGDetails().get(l).getDepositType());
+					 
+					 existingApplicationSDPGBGDetails.get(0).setDepositAmount(application.getSDPGBGDetails().get(l).getDepositAmount());
+					 existingApplicationSDPGBGDetails.get(0).setAccountNo(application.getSDPGBGDetails().get(l).getAccountNo());
+					 existingApplicationSDPGBGDetails.get(0).setParticulars(application.getSDPGBGDetails().get(l).getParticulars());
+					 existingApplicationSDPGBGDetails.get(0).setValidFromDate(application.getSDPGBGDetails().get(l).getValidFromDate());
+					 existingApplicationSDPGBGDetails.get(0).setValidTillDate(application.getSDPGBGDetails().get(l).getValidTillDate());
+					 existingApplicationSDPGBGDetails.get(0).setBankBranchIfscCode(application.getSDPGBGDetails().get(l).getBankBranchIfscCode());
+					 existingApplicationSDPGBGDetails.get(0).setPaymentMode(application.getSDPGBGDetails().get(l).getPaymentMode());
+					 
+					 
+			
+			
+				 }
+			}
 			
 			existingApplicationResult.get(0).getParty2Witness().setWitnessNameP2(application.getParty2Witness().getWitnessNameP2());
 			existingApplicationResult.get(0).getParty2Witness().setAddressP2(application.getParty2Witness().getAddressP2());
