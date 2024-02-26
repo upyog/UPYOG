@@ -64,6 +64,7 @@ const CorrospondenceAddress = ({ t, config, onSelect, value, userType, formData 
               ],
               "additionalDetail": {
                 "counsilForArchNo": formData?.LicneseType?.ArchitectNo,
+                "isSelfCertificationRequired": formData?.LicneseType?.selfCertification?formData?.LicneseType?.selfCertification: null,
               },
               "address": {
                 "city": "",
