@@ -46,7 +46,7 @@
  *
  */
 
-/*
+
 
 var $schemeId = 0;
 var $subSchemeId = 0;
@@ -63,6 +63,10 @@ $(document).ready(function(){
 		$("#fundSource").val($fundSourceId).prop('selected','selected');
 	loadScheme($('#fund').val());
 	loadSubScheme($schemeId);
+	
+	/* Syntax modified because of typehead.bundle.js library update by Khalid Rashid */
+	
+	/*
 	var functionName = new Bloodhound({
 		datumTokenizer : function(datum) {
 			return Bloodhound.tokenizers.whitespace(datum.value);
@@ -82,48 +86,9 @@ $(document).ready(function(){
 			}
 		}
 	});
-
-	functionName.initialize();
-$('#function').typeahead({
-		hint : true,
-		highlight : true,
-		minLength : 3
-	}, {
-		displayKey : 'codeName' ,
-		source : functionName.ttAdapter()
-	}).on('typeahead:selected', function (event, data) {
-		$(".cfunction").val(data.id);
-	});
+	*/
 	
-});
-
-*/
-
-
-
-
-/* Ajax call syntax modified because of typehead.bundle.js library update by Khalid Rashid */
-
-var $schemeId = 0;
-var $subSchemeId = 0;
-var $fundSourceId = 0;
-var $fundId = 0;
-
-$(document).ready(function(){
-    $schemeId = $('#schemeId').val();
-    $subSchemeId = $('#subSchemeId').val();
-    $fundSourceId = $('#fundSourceId').val();
-    $fundId = $('#fundId').val();
-    
-    if($fundId)
-        $("#fund").val($fundId).prop('selected','selected');
-    if($fundSourceId)
-        $("#fundSource").val($fundSourceId).prop('selected','selected');
-    
-    loadScheme($('#fund').val());
-    loadSubScheme($schemeId);
-    
-    var functionName = new Bloodhound({
+	    var functionName = new Bloodhound({
         datumTokenizer: Bloodhound.tokenizers.obj.whitespace('codeName'),
         queryTokenizer: Bloodhound.tokenizers.whitespace,
         remote: {
@@ -142,6 +107,23 @@ $(document).ready(function(){
         }
     });
     
+/*
+	functionName.initialize();
+$('#function').typeahead({
+		hint : true,
+		highlight : true,
+		minLength : 3
+	}, {
+		displayKey : 'codeName' ,
+		source : functionName.ttAdapter()
+	}).on('typeahead:selected', function (event, data) {
+		$(".cfunction").val(data.id);
+	});
+	
+});
+    
+*/
+
     functionName.initialize();
 
     $('#function').typeahead({
