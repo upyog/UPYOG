@@ -64,6 +64,8 @@ export const PTRSearch = {
           { title: "PTR_CLINIC_NAME", value: response?.petDetails?.clinicName },
           { title: "PTR_VACCINATED_DATE", value: response?.petDetails?.lastVaccineDate },
           { title: "PTR_VACCINATION_NUMBER", value: response?.petDetails?.vaccinationNumber },
+          { title: "PTR_PET_AGE", value: response?.petDetails?.petAge },
+          { title: "PTR_PET_SEX", value: response?.petDetails?.petGender },
 
 
         ],

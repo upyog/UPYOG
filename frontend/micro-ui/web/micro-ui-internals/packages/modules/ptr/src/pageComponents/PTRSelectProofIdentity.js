@@ -44,7 +44,7 @@ const PTRSelectProofIdentity = ({ t, config, onSelect, userType, formData, setEr
 
   return (
     <div>
-      {userType === "citizen" && <Timeline currentStep={4} />}
+      <Timeline currentStep={4} />
       {!isLoading ? (
         <FormStep t={t} config={config} onSelect={handleSubmit} onSkip={onSkip} isDisabled={enableSubmit} onAdd={onAdd}>
           {data?.PetService?.Documents?.map((document, index) => {

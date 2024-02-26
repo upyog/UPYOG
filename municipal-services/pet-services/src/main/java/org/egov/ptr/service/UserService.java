@@ -17,6 +17,8 @@ import java.util.stream.Collectors;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
 import org.egov.ptr.models.OwnerInfo;
+import org.egov.ptr.models.PetRegistrationApplication;
+import org.egov.ptr.models.PetRegistrationRequest;
 //import org.egov.ptr.models.Property;
 import org.egov.ptr.models.enums.Status;
 import org.egov.ptr.models.user.CreateUserRequest;
@@ -24,6 +26,7 @@ import org.egov.ptr.models.user.User;
 import org.egov.ptr.models.user.UserDetailResponse;
 import org.egov.ptr.models.user.UserSearchRequest;
 import org.egov.ptr.repository.ServiceRequestRepository;
+import org.egov.ptr.web.contracts.PetRequest;
 //import org.egov.ptr.web.contracts.PropertyRequest;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,109 +62,67 @@ public class UserService {
     private String userUpdateEndpoint;
 
     /**
-     * Creates user of the owners of property if it is not created already
-     * @param request PropertyRequest received for creating properties
+     * Creates user of the owners of pet if it is not created already
+     * @param request PetRegistrationRequest received for creating properties
      */
-//    public void createUser(PropertyRequest request){
-//    	
-////        Property property = request.getProperty();
-//		RequestInfo requestInfo = request.getRequestInfo();
-//		Role role = getCitizenRole();
-////		List<OwnerInfo> owners = property.getOwners();
-//
+    public void createUser(PetRegistrationRequest request){
+    	
+        PetRegistrationApplication petApplication = request.getPetRegistrationApplications().get(0);
+		RequestInfo requestInfo = request.getRequestInfo();
+		Role role = getCitizenRole();
+//		List<OwnerInfo> owners = property.getOwners();
+
 //		for (OwnerInfo ownerFromRequest : owners) {
-//
-//			addUserDefaultFields(property.getTenantId(), role, ownerFromRequest);
-//			UserDetailResponse userDetailResponse = userExists(ownerFromRequest, requestInfo);
-//			List<OwnerInfo> existingUsersFromService = userDetailResponse.getUser();
-//			Map<String, OwnerInfo> ownerMapFromSearch = existingUsersFromService.stream().collect(Collectors.toMap(OwnerInfo::getUuid, Function.identity()));
-//
-//			if (CollectionUtils.isEmpty(existingUsersFromService)) {
-//
-//				ownerFromRequest.setUserName(UUID.randomUUID().toString());
-//				userDetailResponse = createUser(requestInfo, ownerFromRequest);
-//				
-//			} else {
-//
-//				String uuid = ownerFromRequest.getUuid();
-//				if (uuid != null && ownerMapFromSearch.containsKey(uuid)) {
-//					userDetailResponse = updateExistingUser(property, requestInfo, role, ownerFromRequest, ownerMapFromSearch.get(uuid));
-//				} else {
-//
-//					ownerFromRequest.setUserName(UUID.randomUUID().toString());
-//					userDetailResponse = createUser(requestInfo, ownerFromRequest);
-//				}
-//			}
-//			// Assigns value of fields from user got from userDetailResponse to owner object
-//			setOwnerFields(ownerFromRequest, userDetailResponse, requestInfo);
+		OwnerInfo owner = new OwnerInfo();
+			addUserDefaultFields(petApplication.getTenantId(), role, owner);
+			UserDetailResponse userDetailResponse = userExists(owner, requestInfo);
+			List<OwnerInfo> existingUsersFromService = userDetailResponse.getUser();
+			Map<String, OwnerInfo> ownerMapFromSearch = existingUsersFromService.stream().collect(Collectors.toMap(OwnerInfo::getUuid, Function.identity()));
+
+			if (CollectionUtils.isEmpty(existingUsersFromService)) {
+
+				owner.setUserName(UUID.randomUUID().toString());
+				userDetailResponse = createUser(requestInfo, owner);
+				
+			} else {
+
+				String uuid = owner.getUuid();
+				if (uuid != null && ownerMapFromSearch.containsKey(uuid)) {
+					userDetailResponse = updateExistingUser(petApplication, requestInfo, role, owner, ownerMapFromSearch.get(uuid));
+				} else {
+
+					owner.setUserName(UUID.randomUUID().toString());
+					userDetailResponse = createUser(requestInfo, owner);
+				}
+			}
+			// Assigns value of fields from user got from userDetailResponse to owner object
+			setOwnerFields(owner, userDetailResponse, requestInfo);
 //		}
-//	}
+	}
 
 
     /**
      * update existing user
      * 
      */
-//	private UserDetailResponse updateExistingUser(Property property, RequestInfo requestInfo, Role role,
-//			OwnerInfo ownerFromRequest, OwnerInfo ownerInfoFromSearch) {
-//		
-//		UserDetailResponse userDetailResponse;
-//		
-//		ownerFromRequest.setId(ownerInfoFromSearch.getId());
-//		ownerFromRequest.setUuid(ownerInfoFromSearch.getUuid());
-//		addUserDefaultFields(property.getTenantId(), role, ownerFromRequest);
-//
-//		StringBuilder uri = new StringBuilder(userHost).append(userContextPath).append(userUpdateEndpoint);
-//		userDetailResponse = userCall(new CreateUserRequest(requestInfo, ownerFromRequest), uri);
-//		if (userDetailResponse.getUser().get(0).getUuid() == null) {
-//			throw new CustomException("INVALID USER RESPONSE", "The user updated has uuid as null");
-//		}
-//		return userDetailResponse;
-//	}
+	private UserDetailResponse updateExistingUser(PetRegistrationApplication petApplication, RequestInfo requestInfo, Role role,
+			OwnerInfo ownerFromRequest, OwnerInfo ownerInfoFromSearch) {
+		
+		UserDetailResponse userDetailResponse;
+		
+		ownerFromRequest.setId(ownerInfoFromSearch.getId());
+		ownerFromRequest.setUuid(ownerInfoFromSearch.getUuid());
+		addUserDefaultFields(petApplication.getTenantId(), role, ownerFromRequest);
+
+		StringBuilder uri = new StringBuilder(userHost).append(userContextPath).append(userUpdateEndpoint);
+		userDetailResponse = userCall(new CreateUserRequest(requestInfo, ownerFromRequest), uri);
+		if (userDetailResponse.getUser().get(0).getUuid() == null) {
+			throw new CustomException("INVALID USER RESPONSE", "The user updated has uuid as null");
+		}
+		return userDetailResponse;
+	}
     
 
-    /**
-     * creating multiple usersfor mutation request 
-     * 
-     * @param request
-     */
-//    public void createUserForMutation (PropertyRequest request, Boolean isWorkflowStarting){
-//    	
-//        Property property = request.getProperty();
-//		RequestInfo requestInfo = request.getRequestInfo();
-//		Role role = getCitizenRole();
-//		List<OwnerInfo> owners = property.getOwners();
-//
-//		for (OwnerInfo ownerFromRequest : owners) {
-//
-//			if (ownerFromRequest.getUuid() != null && ownerFromRequest.getStatus().equals(Status.ACTIVE) && isWorkflowStarting)
-//				continue;
-//
-//			addUserDefaultFields(property.getTenantId(), role, ownerFromRequest);
-//			UserDetailResponse userDetailResponse = userExists(ownerFromRequest, requestInfo);
-//			List<OwnerInfo> existingUsersFromService = userDetailResponse.getUser();
-//			Map<String, OwnerInfo> ownerMapFromSearch = existingUsersFromService.stream().collect(Collectors.toMap(OwnerInfo::getUuid, Function.identity()));
-//
-//			if (CollectionUtils.isEmpty(existingUsersFromService)) {
-//
-//				ownerFromRequest.setUserName(UUID.randomUUID().toString());
-//				userDetailResponse = createUser(requestInfo, ownerFromRequest);
-//				
-//			} else {
-//
-//				String uuid = ownerFromRequest.getUuid();
-//				if (uuid != null && ownerMapFromSearch.containsKey(uuid)) {
-//					userDetailResponse = updateExistingUser(property, requestInfo, role, ownerFromRequest, ownerMapFromSearch.get(uuid));
-//				} else {
-//
-//					ownerFromRequest.setUserName(UUID.randomUUID().toString());
-//					userDetailResponse = createUser(requestInfo, ownerFromRequest);
-//				}
-//			}
-//			// Assigns value of fields from user got from userDetailResponse to owner object
-//			setOwnerFields(ownerFromRequest, userDetailResponse, requestInfo);
-//		}
-//	}
 
     	private UserDetailResponse createUser(RequestInfo requestInfo, OwnerInfo owner) {
 		UserDetailResponse userDetailResponse;
@@ -213,7 +174,7 @@ public class UserService {
     /**
      * Searches if the owner is already created. Search is based on name of owner, uuid and mobileNumber
      * @param owner Owner which is to be searched
-     * @param requestInfo RequestInfo from the propertyRequest
+     * @param requestInfo RequestInfo from the PetRegistrationRequest
      * @return UserDetailResponse containing the user if present and the responseInfo
      */
 	private UserDetailResponse userExists(OwnerInfo owner, RequestInfo requestInfo) {
@@ -231,7 +192,7 @@ public class UserService {
     /**
      * Sets userName for the owner as mobileNumber if mobileNumber already assigned last 10 digits of currentTime is assigned as userName
      * @param owner owner whose username has to be assigned
-     * @param listOfMobileNumber list of unique mobileNumbers in the propertyRequest
+     * @param listOfMobileNumber list of unique mobileNumbers in the PetRegistrationRequest
      */
     private void setUserName(OwnerInfo owner,Set<String> listOfMobileNumber){
     	
@@ -247,7 +208,7 @@ public class UserService {
     }
 
     /**
-     * Fetches all the unique mobileNumbers from a propertyDetail
+     * Fetches all the unique mobileNumbers from a pet detail
      * @param property whose unique mobileNumbers are needed to be fetched
      * @return list of all unique mobileNumbers in the given propertyDetail
      */
@@ -277,7 +238,7 @@ public class UserService {
 //    }
 
     /**
-     * Returns user using user search based on propertyCriteria(owner name,mobileNumber,userName)
+     * Returns user using user search based on petApplicationCriteria(owner name,mobileNumber,userName)
      * @param userSearchRequest
      * @return serDetailResponse containing the user if present and the responseInfo
      */

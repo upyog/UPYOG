@@ -17,14 +17,13 @@ import org.egov.ptr.models.OwnerInfo;
 import org.egov.ptr.models.PetApplicationSearchCriteria;
 import org.egov.ptr.models.PetRegistrationApplication;
 import org.egov.ptr.models.PetRegistrationRequest;
-import org.egov.ptr.models.enums.CreationReason;
 import org.egov.ptr.models.enums.Status;
 import org.egov.ptr.models.user.UserDetailResponse;
 import org.egov.ptr.models.user.UserSearchRequest;
 import org.egov.ptr.models.workflow.State;
 import org.egov.ptr.producer.Producer;
 import org.egov.ptr.repository.PetRegistrationRepository;
-import org.egov.ptr.util.PTConstants;
+import org.egov.ptr.util.PTRConstants;
 import org.egov.ptr.validator.PetApplicationValidator;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,9 +77,8 @@ public class PetRegistrationService {
 		// Enrich/Upsert user in upon pet registration
 		// userService.callUserService(petRegistrationRequest); need to build the method
 		// when required
-
-		// Initiate workflow for the new application
 		wfService.updateWorkflowStatus(petRegistrationRequest);
+//		producer.push(config.getEventGenerateTopic(), petRegistrationRequest);
 		producer.push(config.getCreatePtrTopic(), petRegistrationRequest);
 
 		// Return the response back to user
@@ -104,7 +102,7 @@ public class PetRegistrationService {
 		// exists
 		PetRegistrationApplication existingApplication = validator
 				.validateApplicationExistence(petRegistrationRequest.getPetRegistrationApplications().get(0));
-		existingApplication.setWorkflow(petRegistrationRequest.getPetRegistrationApplications().get(0).getWorkflow()); 
+		existingApplication.setWorkflow(petRegistrationRequest.getPetRegistrationApplications().get(0).getWorkflow());
 		// log.info(existingApplication.toString());
 		petRegistrationRequest.setPetRegistrationApplications(Collections.singletonList(existingApplication));
 
@@ -113,14 +111,11 @@ public class PetRegistrationService {
 
 		if (petRegistrationRequest.getPetRegistrationApplications().get(0).getWorkflow().getAction()
 				.equals("APPROVE")) {
-			System.out.println("In approve case");
 			demandService.createDemand(petRegistrationRequest);
 		}
 		wfService.updateWorkflowStatus(petRegistrationRequest);
-
-		// Just like create request, update request will be handled asynchronously by
-		// the persister
-		producer.push("update-ptr-application", petRegistrationRequest);
+//		producer.push(config.getEventGenerateTopic(), petRegistrationRequest);
+		producer.push(config.getUpdatePtrTopic(), petRegistrationRequest);
 
 		return petRegistrationRequest.getPetRegistrationApplications().get(0);
 	}
