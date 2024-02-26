@@ -55,6 +55,9 @@ public class BillDetailV2 {
 	@JsonProperty("billAccountDetails")
 	@Valid
 	private List<BillAccountDetailV2> billAccountDetails;
+	
+	@JsonProperty("partPaymentAllowed")
+	private boolean partPaymentAllowed;
 
 	public BillDetailV2 addBillAccountDetailsItem(BillAccountDetailV2 billAccountDetailsItem) {
 		if (this.billAccountDetails == null) {
