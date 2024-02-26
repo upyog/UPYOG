@@ -78,7 +78,7 @@ const EmployeeModuleCard = ({ Icon, moduleName, kpis = [], links = [], isCitizen
                         ) : null}
                     </div>
                       <div style={{ textAlign:"center"}}>
-                        <span style={{ color: "#ae1e28", fontSize: "18px", fontFamily: "sans-serif", fontWeight: "bold" }}>{count || "-"}</span>
+                        <span style={{ color: "#ae8d04", fontSize: "18px", fontFamily: "sans-serif", fontWeight: "bold" }}>{count || "-"}</span>
                       </div>
                     </div>
                   </div>
@@ -115,7 +115,7 @@ const ModuleCardFullWidth = ({ moduleName,  links = [], isCitizen = false, class
           <span className="text removeHeight">{moduleName}</span>
           <span className="link">
             <a href={subHeaderLink}>
-              <span className={"inbox-total"} style={{ display: "flex", alignItems: "center", color: "#a82227", fontWeight: "bold" }}>
+              <span className={"inbox-total"} style={{ display: "flex", alignItems: "center", color: "#ae8d04", fontWeight: "bold" }}>
                 {subHeader || "-"}
                 <span style={{ marginLeft: "10px" }}>
                   {" "}

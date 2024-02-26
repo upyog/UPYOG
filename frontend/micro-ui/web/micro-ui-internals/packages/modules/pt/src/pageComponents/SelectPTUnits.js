@@ -71,23 +71,27 @@ const SelectPTUnits = React.memo(({ t, config, onSelect, userType, formData }) =
     ["Floor", "OccupancyType", "UsageCategory", "StructureType", "AgeOfProperty"],
     {
       select: (data) => {
-        let usageCategory = data?.PropertyTax?.UsageCategory?.map((category) => getUsageCategory(category.code))
-          .filter(
-            (category) => category.usageCategoryDetail === false && category.usageCategorySubMinor === false && category.usageCategoryMinor !== false
-          )
-          .map((category) => ({ code: category.usageCategoryMinor, i18nKey: `PROPERTYTAX_BILLING_SLAB_${category.usageCategoryMinor}` }));
-        let subCategory = Digit.Utils.getUnique(
-          data?.PropertyTax?.UsageCategory.map((e) => getUsageCategory(e.code))
-            .filter((e) => e.usageCategoryDetail)
-            .map((e) => ({
-              code: e.usageCategoryDetail,
-              i18nKey: `PROPERTYTAX_BILLING_SLAB_${e.usageCategoryDetail}`,
-              usageCategorySubMinor: e.usageCategorySubMinor,
-              usageCategoryMinor: e.usageCategoryMinor,
-            }))
-        );
+        // let usageCategory = data?.PropertyTax?.UsageCategory?.map((category) => getUsageCategory(category.code))
+        //   .filter(
+        //     (category) => category.usageCategoryDetail === false && category.usageCategorySubMinor === false && category.usageCategoryMinor !== false
+        //   )
+        //   .map((category) => ({ code: category.usageCategoryMinor, i18nKey: `PROPERTYTAX_BILLING_SLAB_${category.usageCategoryMinor}` }));
+        // let subCategory = Digit.Utils.getUnique(
+        //   data?.PropertyTax?.UsageCategory.map((e) => getUsageCategory(e.code))
+        //     .filter((e) => e.usageCategoryDetail)
+        //     .map((e) => ({
+        //       code: e.usageCategoryDetail,
+        //       i18nKey: `PROPERTYTAX_BILLING_SLAB_${e.usageCategoryDetail}`,
+        //       usageCategorySubMinor: e.usageCategorySubMinor,
+        //       usageCategoryMinor: e.usageCategoryMinor,
+        //     }))
+        // );
 
         return {
+          UsageCategory: data?.PropertyTax?.UsageCategory?.filter((category) => category.active)?.map((category) => ({
+            i18nKey: `PROPERTYTAX_${category.code}`,
+            code: category.code,
+          })),
           Floor: data?.PropertyTax?.Floor?.filter((floor) => floor.active)?.map((floor) => ({
             i18nKey: `PROPERTYTAX_FLOOR_${floor.code}`,
             code: floor.code,
@@ -104,8 +108,8 @@ const SelectPTUnits = React.memo(({ t, config, onSelect, userType, formData }) =
             i18nKey: `PROPERTYTAX_AGEOFPROPERTY_${age.code}`,
             code: age.code,
           })),
-          UsageCategory: usageCategory,
-          UsageSubCategory: subCategory,
+          // UsageCategory: usageCategory,
+          // UsageSubCategory: subCategory,
           usageDetails: data?.PropertyTax?.UsageCategory,
         };
       },
@@ -247,14 +251,17 @@ const SelectPTUnits = React.memo(({ t, config, onSelect, userType, formData }) =
 
   function isAllowedNext (){
     let valueNotthere=0;
+    console.log("fields==",fields)
     fields && fields?.map((ob) => {
+      
       if((!(ob?.usageCategory) || Object.keys(ob?.usageCategory) == 0) || !(ob?.occupancyType) || !(ob?.builtUpArea) /* || (!(ob?.floorNo)|| Object.keys(ob?.floorNo) == 0 )*/)
       valueNotthere=1;
-      else if(!(ob?.usageCategory?.code === "RESIDENTIAL") && !(ob?.unitType))
-      valueNotthere=1;
+      // else if(!(ob?.usageCategory?.code === "RESIDENTIAL"))
+      // valueNotthere=1;
       else if(ob?.occupancyType?.code === "RENTED" && !(ob?.arv))
       valueNotthere=1;
     })
+    console.log("valueNotthere==",valueNotthere)
     if(valueNotthere == 0)
     return false;
     else 
@@ -304,7 +311,7 @@ const SelectPTUnits = React.memo(({ t, config, onSelect, userType, formData }) =
                 selected={field?.usageCategory}
                 select={(e) => selectUsageCategory(index, e)}
               />
-              {field?.usageCategory?.code && field.usageCategory.code.includes("RESIDENTIAL") === false && (
+              {/* {field?.usageCategory?.code && field.usageCategory.code.includes("RESIDENTIAL") === false && (
                 <>
                   <CardLabel>{`${t("PT_FORM2_SUB_USAGE_TYPE")}*`}</CardLabel>
                   <div className={"form-pt-dropdown-only"}>
@@ -318,7 +325,7 @@ const SelectPTUnits = React.memo(({ t, config, onSelect, userType, formData }) =
                     />
                   </div>
                 </>
-              )}
+              )} */}
               <CardLabel>{`${t("PT_FORM2_STRUCTURE_TYPE")}*`}</CardLabel>
               <div className={"form-pt-dropdown-only"}>
                 <Dropdown

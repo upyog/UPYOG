@@ -21,7 +21,7 @@ export const PTMyApplications = () => {
   }
   let filter1 = !isNaN(parseInt(filter))
     ? { limit: "50", sortOrder: "ASC", sortBy: "createdTime", offset: off, tenantId }
-    : { limit: "4", sortOrder: "ASC", sortBy: "createdTime", offset: "0",mobileNumber:user?.mobileNumber, tenantId };
+    : { status: 'INWORKFLOW', limit: "4", sortOrder: "ASC", sortBy: "createdTime", offset: "0",mobileNumber:user?.mobileNumber, tenantId };
 
   const { isLoading, isError, error, data } = Digit.Hooks.pt.usePropertySearch({ filters: filter1 }, { filters: filter1 });
   

@@ -96,6 +96,13 @@ export const setAddressDetails = (data) => {
   return data;
 };
 
+export const setExemptionDetails = (data) => {
+  let { exemption } = data;
+
+  data.exemption = exemption && exemption.exemptionType ? exemption.exemptionType?.code : "";
+  return data;
+};
+
 export const setOwnerDetails = (data) => {
   const { address, owners } = data;
   let institution = {},
@@ -162,7 +169,7 @@ export const setOwnerDetails = (data) => {
 };
 
 export const setDocumentDetails = (data) => {
-  const { address, owners } = data;
+  const { address, owners, exemption, propertyPhoto } = data;
   let documents = [];
   if (address?.documents["ProofOfAddress"]?.id) {
     documents.push({
@@ -175,6 +182,34 @@ export const setDocumentDetails = (data) => {
     documents.push({
       fileStoreId: address?.documents["ProofOfAddress"]?.fileStoreId || "",
       documentType: address?.documents["ProofOfAddress"]?.documentType?.code || "",
+    });
+  }
+
+  if (exemption?.documents["exemptionProof"]?.id) {
+    documents.push({
+      fileStoreId: exemption?.documents["exemptionProof"]?.fileStoreId || "",
+      documentType: exemption?.documents["exemptionProof"]?.documentType || "",
+      id: exemption?.documents["exemptionProof"]?.id || "",
+      status: exemption?.documents["exemptionProof"]?.status || "",
+    });
+  } else {
+    documents.push({
+      fileStoreId: exemption?.documents["exemptionProof"]?.fileStoreId || "",
+      documentType: exemption?.documents["exemptionProof"]?.documentType || "",
+    });
+  }
+
+  if (propertyPhoto?.documents["propertyPhoto"]?.id) {
+    documents.push({
+      fileStoreId: propertyPhoto?.documents["propertyPhoto"]?.fileStoreId || "",
+      documentType: propertyPhoto?.documents["propertyPhoto"]?.documentType || "",
+      id: propertyPhoto?.documents["propertyPhoto"]?.id || "",
+      status: propertyPhoto?.documents["propertyPhoto"]?.status || "",
+    });
+  } else {
+    documents.push({
+      fileStoreId: propertyPhoto?.documents["propertyPhoto"]?.fileStoreId || "",
+      documentType: propertyPhoto?.documents["propertyPhoto"]?.documentType || "",
     });
   }
 
@@ -536,11 +571,13 @@ export const convertToProperty = (data = {}) => {
   data = setOwnerDetails(data);
   data = setAddressDetails(data);
   data = setPropertyDetails(data);
+  data = setExemptionDetails(data);
 
   const formdata = {
     Property: {
       tenantId: data.tenantId,
       address: data.address,
+      exemption: data.exemption,
 
       ownershipCategory: data?.ownershipCategory?.value,
       owners: data.owners,
@@ -680,7 +717,7 @@ export const setUpdateOwnerDetails = (data = []) => {
   return data;
 };
 export const setUpdatedDocumentDetails = (data) => {
-  const { address, owners } = data;
+  const { address, owners, exemption, propertyPhoto } = data;
   let documents = [];
   if (address?.documents["ProofOfAddress"]?.id) {
     documents.push({
@@ -693,6 +730,34 @@ export const setUpdatedDocumentDetails = (data) => {
     documents.push({
       fileStoreId: address?.documents["ProofOfAddress"]?.fileStoreId || "",
       documentType: address?.documents["ProofOfAddress"]?.documentType?.code || "",
+    });
+  }
+
+  if (exemption?.documents["exemptionProof"]?.id) {
+    documents.push({
+      fileStoreId: exemption?.documents["exemptionProof"]?.fileStoreId || "",
+      documentType: exemption?.documents["exemptionProof"]?.documentType?.code || "",
+      id: exemption?.documents["exemptionProof"]?.id || "",
+      status: exemption?.documents["exemptionProof"]?.status || "",
+    });
+  } else {
+    documents.push({
+      fileStoreId: exemption?.documents["exemptionProof"]?.fileStoreId || "",
+      documentType: exemption?.documents["exemptionProof"]?.documentType?.code || "",
+    });
+  }
+
+  if (propertyPhoto?.documents["propertyPhoto"]?.id) {
+    documents.push({
+      fileStoreId: propertyPhoto?.documents["propertyPhoto"]?.fileStoreId || "",
+      documentType: propertyPhoto?.documents["propertyPhoto"]?.documentType?.code || "",
+      id: propertyPhoto?.documents["propertyPhoto"]?.id || "",
+      status: propertyPhoto?.documents["propertyPhoto"]?.status || "",
+    });
+  } else {
+    documents.push({
+      fileStoreId: propertyPhoto?.documents["propertyPhoto"]?.fileStoreId || "",
+      documentType: propertyPhoto?.documents["propertyPhoto"]?.documentType?.code || "",
     });
   }
 
@@ -726,6 +791,7 @@ export const convertToUpdateProperty = (data = {}, t) => {
   data = setUpdateOwnerDetails(data);
   data = setUpdatedDocumentDetails(data);
   data = setPropertyDetails(data);
+  data = setExemptionDetails(data);
   data.address.city = data.address.city ? data.address.city : t(`TENANT_TENANTS_${stringReplaceAll(data?.tenantId.toUpperCase(),".","_")}`);
 
   const formdata = {
@@ -737,7 +803,7 @@ export const convertToUpdateProperty = (data = {}, t) => {
       status: data.status || "INWORKFLOW",
       tenantId: data.tenantId,
       address: data.address,
-
+      exemption: data.exemption,
       ownershipCategory: data?.ownershipCategory?.value,
       owners: data.owners,
       institution: data.institution || null,

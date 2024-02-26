@@ -30,18 +30,60 @@ const assetsProxyBillingService = createProxyMiddleware({
   target: process.env.REACT_APP_PROXY_API_BILLING_SERVICE || "https://qa.digit.org",
   changeOrigin: true,
 });
+const assetsProxyUserService = createProxyMiddleware({
+  target: process.env.REACT_APP_PROXY_API_USER_SERVICE || "https://qa.digit.org",
+  changeOrigin: true,
+});
+const assetsProxyUserPortService = createProxyMiddleware({
+  target: process.env.REACT_APP_PROXY_API_USER_OTP_SERVICE || "https://qa.digit.org",
+  changeOrigin: true,
+});
+const assetsProxyPTCalculatorService = createProxyMiddleware({
+  target: process.env.REACT_APP_PROXY_API_PT_CALCULATOR_SERVICE || "https://qa.digit.org",
+  changeOrigin: true,
+});
+const assetsProxyWorkflowService = createProxyMiddleware({
+  target: process.env.REACT_APP_PROXY_API_WORKFLOW_SERVICE || "https://qa.digit.org",
+  changeOrigin: true,
+});
+const assetsAccessControlService = createProxyMiddleware({
+  target: process.env.REACT_APP_PROXY_API_ACCESS_SERVICE || "https://qa.digit.org",
+  changeOrigin: true,
+});
+const assetsUserEventService = createProxyMiddleware({
+  target: process.env.REACT_APP_PROXY_API_USER_EVENT_SERVICE || "https://qa.digit.org",
+  changeOrigin: true,
+});
+const assetsFileStoreService = createProxyMiddleware({
+  target: process.env.REACT_APP_PROXY_API_FILE_STORE_SERVICE || "https://dev.digit.org",
+  changeOrigin: true,
+});
+const assetseServiceRequest = createProxyMiddleware({
+  target: process.env.REACT_APP_PROXY_API_SERVICE_REQUEST || "https://dev.digit.org",
+  changeOrigin: true,
+});
+const assetseInboxSearch = createProxyMiddleware({
+  target: process.env.REACT_APP_PROXY_API_INBOX_SEARCH || "https://dev.digit.org",
+  changeOrigin: true,
+});
+const assetseHRMS = createProxyMiddleware({
+  target: process.env.REACT_APP_PROXY_API_HRMS || "https://dev.digit.org",
+  changeOrigin: true,
+});
+
+
 module.exports = function (app) {
   [
-    "/access/v1/actions/mdms",
+    // "/access/v1/actions/mdms",
     // "/egov-mdms-service",
     // "/egov-location",
     // "/localization",
-    "/egov-workflow-v2",
+    // "/egov-workflow-v2",
     "/pgr-services",
-    "/filestore",
-    "/egov-hrms",
-    "/user-otp",
-    "/user",
+    // "/filestore",
+    // "/egov-hrms",
+    // "/user-otp",
+    // "/user",
     "/fsm",
     // "/billing-service",
     "/collection-services",
@@ -51,7 +93,7 @@ module.exports = function (app) {
     "/vendor",
     // "/property-services",
     "/fsm-calculator/v1/billingSlab/_search",
-    "/pt-calculator-v2",
+    // "/pt-calculator-v2",
     "/dashboard-analytics",
     "/echallan-services",
     "/egov-searcher/bill-genie/mcollectbills/_get",
@@ -63,13 +105,13 @@ module.exports = function (app) {
     "/tl-services/v1/_create",
     "/tl-services/v1/_search",
     "/egov-url-shortening/shortener",
-    "/inbox/v1/_search",
+    // "/inbox/v1/_search",
     "/tl-services",
     "/tl-calculator",
     "/edcr",
     "/bpa-services",
     "/noc-services",
-    "/egov-user-event",
+    // "/egov-user-event",
     "/egov-document-uploader",
     "/egov-pdf",
     "/egov-survey-services",
@@ -82,13 +124,23 @@ module.exports = function (app) {
     "/inbox/v1/dss/_search",
     "/inbox/v1/elastic/_search",
     "/fsm-calculator",
-    "/service-request",
+    // "/service-request",
   ].forEach((location) => app.use(location, createProxy));
   ["/egov-mdms-service"].forEach((location) => app.use(location, assetsProxyMdms));
   ["/localization"].forEach((location) => app.use(location, assetsProxyLocalisation));
   ["/property-services"].forEach((location) => app.use(location, assetsProxyPropertyService));
   ["/egov-location"].forEach((location) => app.use(location, assetsProxyEgovLocation));
   ["/billing-service"].forEach((location) => app.use(location, assetsProxyBillingService));
-
+  ["/user"].forEach((location) => app.use(location, assetsProxyUserService));
+  ["/user-otp"].forEach((location) => app.use(location, assetsProxyUserPortService));
+  ["/pt-calculator-v2"].forEach((location) => app.use(location, assetsProxyPTCalculatorService));
+  ["/egov-workflow-v2"].forEach((location) => app.use(location, assetsProxyWorkflowService));
+  ["/access/v1/actions/mdms"].forEach((location)=> app.use(location, assetsAccessControlService));
+  ["/egov-user-event"].forEach((location)=> app.use(location, assetsUserEventService));
+  ["/filestore"].forEach((location)=> app.use(location, assetsFileStoreService));
+  ["/service-request"].forEach((location)=> app.use(location, assetseServiceRequest));
+  ["/inbox/v1/_search"].forEach((location)=> app.use(location, assetseInboxSearch));
+  ["/egov-hrms"].forEach((location)=> app.use(location, assetseHRMS));
+  
   ["/pb-egov-assets"].forEach((location) => app.use(location, assetsProxy));
 };

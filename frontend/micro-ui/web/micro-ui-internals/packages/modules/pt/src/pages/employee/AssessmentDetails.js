@@ -412,7 +412,7 @@ const Penality_menu=[
                 },
               },
               {
-                belowComponent:()=><LinkLabel onClick={()=>{showPopUp(true)}} style={isMobile ? {color:"#a82227",marginLeft:"0px"} : {color:"#a82227"}}>{t("PT_ADD_REBATE_PENALITY")}</LinkLabel>
+                belowComponent:()=><LinkLabel onClick={()=>{showPopUp(true)}} style={isMobile ? {color:"#208f74",marginLeft:"0px"} : {color:"#208f74"}}>{t("PT_ADD_REBATE_PENALITY")}</LinkLabel>
               },
               {
                 title: "PT_ASSESMENT_INFO_SUB_HEADER",

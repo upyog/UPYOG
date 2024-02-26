@@ -2,19 +2,19 @@ export const newConfig =[
         {
             "head": "ES_NEW_APPLICATION_LOCATION_DETAILS",
             "body": [
-                // {
-                //     "route": "map",
-                //     "component": "PTSelectGeolocation",
-                //     "nextStep": "pincode",
-                //     "hideInEmployee": true,
-                //     "key": "address",
-                //     "texts": {
-                //         "header": "PT_GEOLOCATON_HEADER",
-                //         "cardText": "PT_GEOLOCATION_TEXT",
-                //         "nextText": "PT_COMMON_NEXT",
-                //         "skipAndContinueText": "CORE_COMMON_SKIP_CONTINUE"
-                //     }
-                // },
+                {
+                    "route": "map",
+                    "component": "PTSelectGeolocation",
+                    "nextStep": "pincode",
+                    "hideInEmployee": true,
+                    "key": "address",
+                    "texts": {
+                        "header": "PT_GEOLOCATON_HEADER",
+                        "cardText": "PT_GEOLOCATION_TEXT",
+                        "nextText": "PT_COMMON_NEXT",
+                        "skipAndContinueText": "CORE_COMMON_SKIP_CONTINUE"
+                    }
+                },
                 {
                     "route": "pincode",
                     "component": "PTSelectPincode",
@@ -51,6 +51,7 @@ export const newConfig =[
                     "component": "PTSelectStreet",
                     "key": "address",
                     "withoutLabel": true,
+                    "isMandatory": true,
                     "texts": {
                         "headerCaption": "PT_PROPERTY_LOCATION_CAPTION",
                         "header": "CS_FILE_APPLICATION_PROPERTY_LOCATION_ADDRESS_TEXT",
@@ -508,7 +509,7 @@ export const newConfig =[
                     },
                     "key": "owners",
                     "withoutLabel": true,
-                    "nextStep": null,
+                    "nextStep": 'exemption-details',
                     "hideInEmployee": true
                 },
                 {
@@ -556,7 +557,7 @@ export const newConfig =[
                     },
                     "key": "owners",
                     "withoutLabel": true,
-                    "nextStep": null,
+                    "nextStep": 'exemption-details',
                     "hideInEmployee": true
                 },
                 {
@@ -576,6 +577,48 @@ export const newConfig =[
                     "withoutLabel": true,
                     "key": "documents",
                     "type": "component"
+                }
+            ]
+        },
+        {
+            "head": "ES_NEW_APPLICATION_PROPERTY_TAX_EXEMPTION",
+            "body": [
+                
+                {
+                    "type": "component",
+                    "route": "exemption-details",
+                    "isMandatory": true,
+                    "component": "ExemptionDetails",
+                    "texts": {
+                        "headerCaption": "",
+                        "header": "PT_EXEMPTION_DETAILS",
+                        "cardText": "",
+                        "submitBarLabel": "PT_COMMONS_NEXT"
+                    },
+                    "nextStep": "property-photo",
+                    "key": "exemption",
+                    "withoutLabel": true
+                }
+            ]
+        },
+        {
+            "head": "ES_NEW_APPLICATION_PROPERTY_PHOTO",
+            "body": [
+                
+                {
+                    "type": "component",
+                    "route": "property-photo",
+                    "isMandatory": true,
+                    "component": "PropertyPhoto",
+                    "texts": {
+                        "headerCaption": "",
+                        "header": "PT_PROPERTY_PHOTO",
+                        "cardText": "",
+                        "submitBarLabel": "PT_COMMONS_NEXT"
+                    },
+                    "nextStep": null,
+                    "key": "propertyPhoto",
+                    "withoutLabel": true
                 }
             ]
         }

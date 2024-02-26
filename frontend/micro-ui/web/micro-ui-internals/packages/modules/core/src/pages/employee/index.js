@@ -79,11 +79,11 @@ const EmployeeApp = ({
                 
                 </div>
                 </div>
-              <picture>
+              {/* <picture>
                 <source id="backgroung-login" media="(min-width: 950px)" srcset="https://nugp-assets.s3.ap-south-1.amazonaws.com/nugp+asset/Banner+UPYOG+(1920x1080).jpg" style={{"position":"absolute","height":"100%","width":"100%"}} />
                   <source media="(min-width: 250px)" srcset="https://nugp-assets.s3.ap-south-1.amazonaws.com/nugp+asset/Banner+UPYOG+%28500x900%29.jpg" />
                     <img src="https://nugp-assets.s3.ap-south-1.amazonaws.com/nugp+asset/Banner+UPYOG+(1920x1080).jpg" alt="imagealttext" style={{"position":"absolute","height":"100%","width":"100%","zIndex":"1","display":window.location.href.includes("user/profile")?"none":""}}/>
-                    </picture>
+                    </picture> */}
               {/* <img class="image" id="main-img" src="https://in-egov-assets.s3.ap-south-1.amazonaws.com/images/employee-login.png" /> */}
               {/* <img class="image" id="main-img" src="https://i.postimg.cc/9Q7jT6Dd/Banner-Image-2.png" /> */}
                 {/* <img id="backgroung-login" src="https://in-egov-assets.s3.ap-south-1.amazonaws.com/images/employee-login.png" style={{"position":"absolute","height":"100%","width":"100%"}}></img> */}

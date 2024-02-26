@@ -177,6 +177,7 @@ function ApplicationDetailsContent({
         return ""
     }
   }
+  console.log("applicationDetails==",applicationDetails)
   return (
     <Card style={{ position: "relative" }} className={"employeeCard-override"}>
       {/* For UM-4418 changes */}
@@ -239,7 +240,7 @@ function ApplicationDetailsContent({
                           window.location.href.includes("tl") || window.location.href.includes("ws") ? (
                             <div style={{ width: "200%" }}>
                               <Link to={value?.to}>
-                                <span className="link" style={{ color: "#a82227" }}>
+                                <span className="link" style={{ color: "#208f74" }}>
                                   {t(value?.title)}
                                 </span>
                               </Link>
@@ -253,7 +254,7 @@ function ApplicationDetailsContent({
                         text={
                           <div>
                             <Link to={value?.to}>
-                              <span className="link" style={{ color: "#a82227" }}>
+                              <span className="link" style={{ color: "#208f74" }}>
                                 {value?.value}
                               </span>
                             </Link>
@@ -358,7 +359,7 @@ function ApplicationDetailsContent({
           {detail?.additionalDetails?.redirectUrl && (
             <div style={{ fontSize: "16px", lineHeight: "24px", fontWeight: "400", padding: "10px 0px" }}>
               <Link to={detail?.additionalDetails?.redirectUrl?.url}>
-                <span className="link" style={{ color: "#a82227" }}>
+                <span className="link" style={{ color: "#208f74" }}>
                   {detail?.additionalDetails?.redirectUrl?.title}
                 </span>
               </Link>

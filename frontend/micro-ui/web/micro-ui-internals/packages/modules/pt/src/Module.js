@@ -51,6 +51,8 @@ import SearchPropertyComponent from "./pages/citizen/SearchProperty";
 import SearchResultsComponent from "./pages/citizen/SearchResults";
 import EditProperty from "./pages/citizen/EditProperty";
 import MutateProperty from "./pages/citizen/Mutate";
+import ExemptionDetails from "./pageComponents/ExemptionDetails"
+import PropertyPhoto from "./pageComponents/PropertyPhoto"
 
 import PropertyInformation from "./pages/citizen/MyProperties/propertyInformation";
 import PTWFCaption from "./pageComponents/PTWFCaption";
@@ -172,7 +174,9 @@ const componentsToRegister = {
   SelectOtp, // To-do: Temp fix, Need to check why not working if selectOtp module is already imported from core module
   AcknowledgementCF,
   CitizenFeedback,
-  PTSelectLandmark
+  PTSelectLandmark,
+  ExemptionDetails,
+  PropertyPhoto
 };
 
 const addComponentsToRegistry = () => {
@@ -189,7 +193,7 @@ export const PTModule = ({ stateCode, userType, tenants }) => {
   const { isLoading, data: store } = Digit.Services.useStore({ stateCode, moduleCode, language });
 
   addComponentsToRegistry();
-
+  console.log("tenants===",tenants)
   Digit.SessionStorage.set("PT_TENANTS", tenants);
   useEffect(
     () =>
