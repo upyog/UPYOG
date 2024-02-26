@@ -206,7 +206,7 @@ const WSFeeEstimation = ({ wsAdditionalDetails, workflowDetails }) => {
                             showPopUp(true)
                         }}
                     >
-                        <span style={{ cursor: "pointer", color: "#a82227" }}>{t("WS_PAYMENT_ADD_REBATE_PENALTY")}</span>
+                        <span style={{ cursor: "pointer", color: "#208f74" }}>{t("WS_PAYMENT_ADD_REBATE_PENALTY")}</span>
                     </div> : null
                 }
                 {popup &&

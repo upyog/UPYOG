@@ -36,7 +36,9 @@ const CreateProperty = ({ parentRoute }) => {
     if (!isNaN(lastchar)) {
       isMultiple = true;
     }
+    console.log("currentPath==",currentPath);
     let { nextStep = {} } = config.find((routeObj) => routeObj.route === currentPath);
+    // debugger
     if (typeof nextStep == "object" && nextStep != null && isMultiple != false) {
       if (nextStep[sessionStorage.getItem("ownershipCategory")]) {
         nextStep = `${nextStep[sessionStorage.getItem("ownershipCategory")]}/${index}`;
@@ -51,7 +53,7 @@ const CreateProperty = ({ parentRoute }) => {
       } else if (nextStep[sessionStorage.getItem("area")]) {
         // nextStep = `${nextStep[sessionStorage.getItem("area")]}/${index}`;
 
-        if (`${nextStep[sessionStorage.getItem("area")]}` !== "map") {
+        if (`${nextStep[sessionStorage.getItem("area")]}` !== "pincode") {
           nextStep = `${nextStep[sessionStorage.getItem("area")]}/${index}`;
         } else {
           nextStep = `${nextStep[sessionStorage.getItem("area")]}`;
@@ -66,7 +68,7 @@ const CreateProperty = ({ parentRoute }) => {
     if (typeof nextStep == "object" && nextStep != null && isMultiple == false) {
       if (
         nextStep[sessionStorage.getItem("IsAnyPartOfThisFloorUnOccupied")] &&
-        (nextStep[sessionStorage.getItem("IsAnyPartOfThisFloorUnOccupied")] == "map" ||
+        (nextStep[sessionStorage.getItem("IsAnyPartOfThisFloorUnOccupied")] == "pincode" ||
           nextStep[sessionStorage.getItem("IsAnyPartOfThisFloorUnOccupied")] == "un-occupied-area")
       ) {
         nextStep = `${nextStep[sessionStorage.getItem("IsAnyPartOfThisFloorUnOccupied")]}`;
@@ -98,7 +100,7 @@ const CreateProperty = ({ parentRoute }) => {
     if (!isNaN(nextStep.split("/").pop())) {
       nextPage = `${match.path}/${nextStep}`;
     } else {
-      nextPage = isMultiple && nextStep !== "map" ? `${match.path}/${nextStep}/${index}` : `${match.path}/${nextStep}`;
+      nextPage = isMultiple && nextStep !== "pincode" ? `${match.path}/${nextStep}/${index}` : `${match.path}/${nextStep}`;
     }
 
     redirectWithHistory(nextPage);
@@ -128,6 +130,7 @@ const CreateProperty = ({ parentRoute }) => {
     } else {
       setParams({ ...params, ...{ [key]: { ...params[key], ...data } } });
     }
+    console.log("------",skipStep, index, isAddMultiple, key)
     goNext(skipStep, index, isAddMultiple, key);
   }
 
@@ -145,17 +148,20 @@ const CreateProperty = ({ parentRoute }) => {
   // commonFields=newConfig;
   /* use newConfig instead of commonFields for local development in case needed */
   commonFields = newConfig;
+  console.log("commonFields11==",commonFields)
   commonFields.forEach((obj) => {
     config = config.concat(obj.body.filter((a) => !a.hideInCitizen));
   });
+  console.log("commonFields22==",commonFields)
   config.indexRoute = "info";
   const CheckPage = Digit?.ComponentRegistryService?.getComponent("PTCheckPage");
   const PTAcknowledgement = Digit?.ComponentRegistryService?.getComponent("PTAcknowledgement");
+  console.log("config==",config)
   return (
     <Switch>
       {config.map((routeObj, index) => {
         const { component, texts, inputs, key } = routeObj;
-        console.log("routeObj==",routeObj)
+        // console.log("routeObj==",routeObj)
         const Component = typeof component === "string" ? Digit.ComponentRegistryService.getComponent(component) : component;
         return (
           <Route path={`${match.path}/${routeObj.route}`} key={index}>

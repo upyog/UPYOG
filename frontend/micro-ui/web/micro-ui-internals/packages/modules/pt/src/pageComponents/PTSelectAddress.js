@@ -213,7 +213,7 @@ const PTSelectAddress = ({ t, config, onSelect, userType, formData, setError, cl
       ) : null}
       <FormStep config={config} onSelect={onSubmit} t={t} isDisabled={selectedLocality ? false : true}>
         <div>
-        <CardLabel>{`District`}</CardLabel>
+        {/* <CardLabel>{`District`}</CardLabel>
           <span className={"form-pt-dropdown-only"}>
             <RadioOrSelect
               options={mdmsData?.District}
@@ -222,11 +222,11 @@ const PTSelectAddress = ({ t, config, onSelect, userType, formData, setError, cl
               onSelect={selectDistrict}
               t={t}
               isPTFlow={true}
-              //isDependent={true}
-              //labelKey="TENANT_TENANTS"
+              isDependent={true}
+              labelKey="TENANT_TENANTS"
               disabled={isEditProperty}
             />
-          </span>
+          </span> */}
           <CardLabel>{`${t("MYCITY_CODE_LABEL")} `}</CardLabel>
           <span className={"form-pt-dropdown-only"}>
             <RadioOrSelect

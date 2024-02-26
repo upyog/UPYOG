@@ -158,7 +158,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
   };
 
   const selectOtp = async () => {
-    try {
+        try {
       setIsOtpValid(true);
       setCanSubmitOtp(false);
       const { mobileNumber, otp, name } = params;
@@ -170,7 +170,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
           userType: getUserType(),
         };
         const { ResponseInfo, UserRequest: info, ...tokens } = await Digit.UserService.authenticate(requestData);
-
+        
         if (location.state?.role) {
           const roleInfo = info.roles.find((userRole) => userRole.code === location.state.role);
           if (!roleInfo || !roleInfo.code) {

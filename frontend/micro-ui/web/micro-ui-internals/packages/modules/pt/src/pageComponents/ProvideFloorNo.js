@@ -15,7 +15,7 @@ const ProvideFloorNo = ({ t, config, onSelect, userType, formData }) => {
   floorlist = floordata?.PropertyTax?.Floor;
   let i;
   let data = [];
-
+console.log("floorlist==",floorlist)
   function getfloorlistdata(floorlist) {
     for (i = 0; Array.isArray(floorlist) && i < floorlist.length; i++) {
       data.push({ i18nKey: "PROPERTYTAX_FLOOR_" + stringReplaceAll(floorlist[i].code, "-", "_") });
