@@ -86,7 +86,14 @@ const NewApplication = () => {
     } else {
       setSubmitValve(!Object.keys(formState.errors).length);
     }
-  };
+    if(formData?.ownershipCategory?.code==="INDIVIDUAL.MULTIPLEOWNERS"){
+      for(let i=0;i<formData?.owners.length;i++){
+        if(formData?.owners[i]?.gender.length===0 || formData?.owners[i]?.fatherOrHusbandName.length===0|| formData?.owners[i]?.name.length===0|| formData?.owners[i]?.mobileNumber.length===0|| formData?.owners[i]?.relationship.length===0){
+          setSubmitValve(false);
+        }
+      }
+    }
+  }; 
   const onSubmit = (data) => {
     let isSameAsPropertyOwner = sessionStorage.getItem("isSameAsPropertyOwner"); 
     if(data?.cpt?.id){
