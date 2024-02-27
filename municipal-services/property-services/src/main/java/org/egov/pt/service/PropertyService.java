@@ -511,6 +511,8 @@ public class PropertyService {
 				log.info("In Property Search before filtering");
 
 				filterPropertiesForUser(properties, criteria.getOwnerIds());
+				log.info("After filtering properties for user");
+				log.info("Properties after filtering: {}", properties);
 			} else {
 				properties = repository.getPropertiesWithOwnerInfo(criteria, requestInfo, false);
 			}
