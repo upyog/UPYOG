@@ -89,7 +89,6 @@ public class WMSContractAgreementApplicationRowMapper implements ResultSetExtrac
     		  .agreementDocuments(agreementDocuments)
     		  .party2Witness(party2Witness)
     		  .contractors(contractors)
-    		  .termsAndConditions(termsAndConditions)
     		  .build();
     		  
     		  wmsContractAgreementApplicationMap.put(agreementNo, wmsContractAgreementApplication);
@@ -143,6 +142,15 @@ public class WMSContractAgreementApplicationRowMapper implements ResultSetExtrac
                         .build();
                 
                 wmsContractAgreementApplication.addSDPGBGDetails(sDPGBGDetails);
+                
+                TermsAndConditions termsAndConditions = TermsAndConditions.builder()
+                		.tncId(rs.getString("aTncId"))
+                		.agreementNo(agreementNo)
+                        .srNo(rs.getInt("aSrNo"))
+                        .termsAndConditions(rs.getString("aTermsAndConditions"))
+                        .build();
+                
+                wmsContractAgreementApplication.addTermsAndConditions(termsAndConditions);
               
                 //wmsContractAgreementApplicationList.addAll(wmsContractAgreementApplicationMap.values());
                 

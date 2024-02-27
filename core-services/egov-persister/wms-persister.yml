@@ -944,7 +944,7 @@ serviceMaps:
       isTransaction: true
       queryMaps:
 
-        - query: INSERT INTO contract_agreement (agreement_no,witness_name_p2,address_p2,uid_p2,vendor_type,vendor_name,represented_by,primary_party,sr_no,terms_and_conditions,document_description,upload_document,createdby,lastmodifiedby,createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO contract_agreement (agreement_no,witness_name_p2,address_p2,uid_p2,vendor_type,vendor_name,represented_by,primary_party,document_description,upload_document,createdby,lastmodifiedby,createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: WMSContractAgreementApplication.*
           jsonMaps:
             - jsonPath: $.WMSContractAgreementApplication.*.agreement_no
@@ -963,9 +963,6 @@ serviceMaps:
             
             - jsonPath: $.WMSContractAgreementApplication.*.contractors.primary_party
             
-            - jsonPath: $.WMSContractAgreementApplication.*.termsAndConditions.sr_no
-            
-            - jsonPath: $.WMSContractAgreementApplication.*.termsAndConditions.terms_and_conditions
             
             - jsonPath: $.WMSContractAgreementApplication.*.agreementDocuments.document_description
             
@@ -1060,6 +1057,20 @@ serviceMaps:
             - jsonPath: $.WMSContractAgreementApplication.*.sDPGBGDetails.*.payment_mode
             
             
+        - query: INSERT INTO termsnconditions (tnc_id,agreement_no,sr_no,terms_and_conditions) VALUES (?, ?, ?, ?);
+          basePath: WMSContractAgreementApplication.*.termsAndConditions.*
+          jsonMaps:
+            - jsonPath: $.WMSContractAgreementApplication.*.termsAndConditions.*.tnc_id
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.termsAndConditions.*.agreement_no
+
+            - jsonPath: $.WMSContractAgreementApplication.*.termsAndConditions.*.sr_no
+
+            - jsonPath: $.WMSContractAgreementApplication.*.termsAndConditions.*.terms_and_conditions
+
+            
+            
+            
             
             
             
@@ -1071,7 +1082,7 @@ serviceMaps:
       isTransaction: true
       queryMaps:
       
-        - query: UPDATE contract_agreement SET witness_name_p2 = ?, address_p2 = ?, uid_p2 = ?, vendor_type = ?, vendor_name = ?, represented_by = ?, primary_party = ?, sr_no = ?, terms_and_conditions = ?, document_description = ?, upload_document = ? WHERE agreement_no = ?;
+        - query: UPDATE contract_agreement SET witness_name_p2 = ?, address_p2 = ?, uid_p2 = ?, vendor_type = ?, vendor_name = ?, represented_by = ?, primary_party = ?, document_description = ?, upload_document = ? WHERE agreement_no = ?;
           basePath: WMSContractAgreementApplication.*
           jsonMaps:
             
@@ -1091,10 +1102,6 @@ serviceMaps:
             - jsonPath: $.WMSContractAgreementApplication.*.contractors.represented_by
             
             - jsonPath: $.WMSContractAgreementApplication.*.contractors.primary_party
-            
-            - jsonPath: $.WMSContractAgreementApplication.*.termsAndConditions.sr_no
-            
-            - jsonPath: $.WMSContractAgreementApplication.*.termsAndConditions.terms_and_conditions
             
             - jsonPath: $.WMSContractAgreementApplication.*.agreementDocuments.document_description
             
@@ -1179,6 +1186,17 @@ serviceMaps:
           - jsonPath: $.WMSContractAgreementApplication.*.sDPGBGDetails.*.payment_mode
           
           - jsonPath: $.WMSContractAgreementApplication.*.sDPGBGDetails.*.sdpg_id
+          
+          
+        - query: UPDATE termsnconditions SET sr_no = ?,terms_and_conditions = ? WHERE tnc_id = ?;
+          basePath: WMSContractAgreementApplication.*.termsAndConditions.*
+          jsonMaps:
+          
+          - jsonPath: $.WMSContractAgreementApplication.*.termsAndConditions.*.sr_no
+          
+          - jsonPath: $.WMSContractAgreementApplication.*.termsAndConditions.*.terms_and_conditions
+
+          - jsonPath: $.WMSContractAgreementApplication.*.sDPGBGDetails.*.tnc_id
           
             
             

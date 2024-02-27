@@ -16,6 +16,7 @@ import org.egov.web.models.AuditDetails;
 import org.egov.web.models.Party1Details;
 import org.egov.web.models.SDPGBGDetails;
 import org.egov.web.models.ScheduleOfRateApplication;
+import org.egov.web.models.TermsAndConditions;
 import org.egov.web.models.WMSContractAgreementApplication;
 import org.egov.web.models.WMSContractAgreementRequest;
 import org.egov.web.models.WMSContractorApplication;
@@ -110,6 +111,16 @@ public class WMSContractAgreementApplicationEnrichment {
        sdbg.setSdpgId(Long.toString(randomNumber));
 	        	 
 	         }
+			 
+			 for (TermsAndConditions tnc : application.getTermsAndConditions()) {
+	        	 //Long randomNumber=(long) Math.floor(Math.random() * (9999 - 1000 + 1) + 1000);
+				 tnc.setAgreementNo(application.getAgreementNo());
+				 
+       randomNumber=(long) Math.floor(Math.random() * (9999 - 1000 + 1) + 1000);
+	        	 
+       tnc.setTncId(Long.toString(randomNumber));
+	        	 
+	         }
             
 		//}//for loop
             
@@ -134,6 +145,7 @@ public class WMSContractAgreementApplicationEnrichment {
 				int k=0;
 				int j=0;
 				int l=0;
+				int m=0;
 			 for(k=0;k<application.getAgreementInfo().size();k++) {
 				 int currentIndex = k;
 				 List<AgreementInfo> existingApplicationAgreement = existingApplicationResult.get(0).getAgreementInfo().stream().filter(x -> x.getAgrId().equalsIgnoreCase(application.getAgreementInfo().get(currentIndex).getAgrId())).collect(Collectors.toList());
@@ -198,6 +210,18 @@ public class WMSContractAgreementApplicationEnrichment {
 				 }
 			}
 			
+			for(m=0;m<application.getTermsAndConditions().size();m++) {
+				int currentIndex = m;
+				List<TermsAndConditions> existingApplicationTermsAndConditions = existingApplicationResult.get(0).getTermsAndConditions().stream().filter(x -> x.getTncId().equalsIgnoreCase(application.getTermsAndConditions().get(currentIndex).getTncId())).collect(Collectors.toList());
+				
+				//if (!wmsContractAgreementRequest.getWmsContractAgreementApplications().get(0).getParty1Details().stream().anyMatch(x -> x.getUidP1().equalsIgnoreCase(existingApplication.get(0).getParty1Details().get(0).getUidP1()))) {
+				 if(existingApplicationTermsAndConditions.size() > 0) {
+					 existingApplicationTermsAndConditions.get(0).setSrNo(application.getTermsAndConditions().get(m).getSrNo());
+					 existingApplicationTermsAndConditions.get(0).setTermsAndConditions(application.getTermsAndConditions().get(m).getTermsAndConditions());
+			
+			
+				 }
+			}
 			existingApplicationResult.get(0).getParty2Witness().setWitnessNameP2(application.getParty2Witness().getWitnessNameP2());
 			existingApplicationResult.get(0).getParty2Witness().setAddressP2(application.getParty2Witness().getAddressP2());
 			existingApplicationResult.get(0).getParty2Witness().setUidP2(application.getParty2Witness().getUidP2());
@@ -205,8 +229,7 @@ public class WMSContractAgreementApplicationEnrichment {
 			existingApplicationResult.get(0).getContractors().setVendorName(application.getContractors().getVendorName());
 			existingApplicationResult.get(0).getContractors().setRepresentedBy(application.getContractors().getRepresentedBy());
 			existingApplicationResult.get(0).getContractors().setPrimaryParty(application.getContractors().getPrimaryParty());
-			existingApplicationResult.get(0).getTermsAndConditions().setSrNo(application.getTermsAndConditions().getSrNo());
-			existingApplicationResult.get(0).getTermsAndConditions().setTermsAndConditions(application.getTermsAndConditions().getTermsAndConditions());
+			
 			existingApplicationResult.get(0).getAgreementDocuments().setDocumentDescription(application.getAgreementDocuments().getDocumentDescription());
 			existingApplicationResult.get(0).getAgreementDocuments().setUploadDocument(application.getAgreementDocuments().getUploadDocument());
 //			application.setEndDate(date);
