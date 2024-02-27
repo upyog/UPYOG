@@ -93,18 +93,6 @@ public class PetConfiguration {
 	@Value("${egov.notif.commonpay}")
 	private String commonPayLink;
 
-	@Value("${egov.notif.view.property}")
-	private String viewPropertyLink;
-
-	@Value("${egov.notif.view.mutation}")
-	private String viewMutationLink;
-
-	@Value("${egov.usr.events.view.history.link}")
-	private String userEventViewPropertyLink;
-
-	@Value("${egov.usr.events.view.mutation.history.link}")
-	private String userEventViewMutationLink;
-
 	@Value("${egov.usr.events.download.receipt.link}")
 	private String userEventReceiptDownloadLink;
 
@@ -179,16 +167,6 @@ public class PetConfiguration {
 	@Value("${egbs.fetchbill.endpoint}")
 	private String egbsFetchBill;
 
-	// Calculation
-
-	@Value("${egov.calculation.host}")
-	private String calculationHost;
-
-	@Value("${egov.calculation.context.path}")
-	private String calculationContextPath;
-
-	@Value("${egov.calculation.endpoint}")
-	private String calculationEndpoint;
 
 	@Value("${egov.localization.statelevel}")
 	private Boolean isLocalizationStateLevel;
@@ -211,8 +189,8 @@ public class PetConfiguration {
 	@Value("${egov.bill.gen.endpoint}")
 	private String billGenerateEndpoint;
 	
-	@Value("${egov.event.gen.topic}")
-	private String eventGenerateTopic;
+//	@Value("${egov.event.gen.topic}") do not delete
+//	private String eventGenerateTopic;
 
 	
 }
