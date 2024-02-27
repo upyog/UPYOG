@@ -54,7 +54,7 @@ const Units = ({ t, config, onSelect, userType, formData, setError, formState, c
   subusageoption = Menu?.PropertyTax?.UsageCategory || [];
 
   let occupencyOptions = [];
-  occupencyOptions = Menu?.PropertyTax?.OccupancyType.map((e) => ({ i18nKey: `PROPERTYTAX_OCCUPANCYTYPE_${e?.code}`, ...e })) || [];
+  occupencyOptions = Menu?.PropertyTax?.OccupancyType?.map((e) => ({ i18nKey: `PROPERTYTAX_OCCUPANCYTYPE_${e?.code}`, ...e })) || [];
 
  let rentedmonths =
   [

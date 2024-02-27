@@ -248,7 +248,7 @@ const OwnerForm = (_props) => {
                   <Controller
                     control={control}
                     name={"institution.name"}
-                    defaultValue={isEditScreen ? ( institution?.name ? institution.name : owner?.name) : null}
+                    defaultValue={isEditScreen ? (institution?.name ? institution.name : owner?.name) : null}
                     rules={{
                       required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                       validate: {
@@ -528,7 +528,7 @@ const OwnerForm = (_props) => {
                   <Controller
                     control={control}
                     name={"designation"}
-                    defaultValue={isEditScreen ? ( institution?.designation || "") : null}
+                    defaultValue={isEditScreen ? institution?.designation || "" : null}
                     rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
                     render={(props) => (
                       <TextInput

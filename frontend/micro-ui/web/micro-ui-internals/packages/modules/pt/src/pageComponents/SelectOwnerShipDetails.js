@@ -162,7 +162,11 @@ const SelectOwnerShipDetails = ({ t, config, onSelect, userType, formData, onBlu
 
   return (
     <React.Fragment>
-      {window.location.href.includes("/citizen/pt/property/property-mutation") ? <Timeline currentStep={1} flow="PT_MUTATE" /> : <Timeline currentStep={2} />}
+      {window.location.href.includes("/citizen/pt/property/property-mutation") ? (
+        <Timeline currentStep={1} flow="PT_MUTATE" />
+      ) : (
+        <Timeline currentStep={2} />
+      )}
       <FormStep t={t} config={config} onSelect={goNext} onSkip={onSkip} isDisabled={!ownershipCategory}>
         <div>
           <RadioButtons

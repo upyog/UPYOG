@@ -120,6 +120,7 @@ const PropertyDetails = () => {
       lastActiveProperty.owners = lastActiveProperty?.owners?.filter((owner) => owner.status == "ACTIVE");
       if (lastActiveProperty) {
         let applicationDetails = appDetailsToShow?.transformToAppDetailsForEmployee({ property: lastActiveProperty, t });
+
         setAppDetailsToShow({ ...appDetailsToShow, applicationDetails });
       }
     }

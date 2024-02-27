@@ -50,6 +50,9 @@ const PropertyType = ({ t, config, onSelect, userType, formData, setError, clear
   }
 
   function goNext() {
+    console.log(BuildingType?.i18nKey)
+    console.log(config.key)
+    console.log(BuildingType)
     sessionStorage.setItem("PropertyType", BuildingType?.i18nKey);
     onSelect(config.key, BuildingType);
   }

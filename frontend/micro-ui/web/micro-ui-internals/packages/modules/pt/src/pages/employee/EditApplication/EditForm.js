@@ -79,7 +79,6 @@ const EditForm = ({ applicationData }) => {
       formData.units = formData.units.filter((unit) => unit.active);
     }
     history.push("/digit-ui/employee/pt/response", { Property: formData, key: "UPDATE", action: "SUBMIT" });
-
   };
 
   if (isLoading) {
