@@ -2,6 +2,7 @@ package org.egov.demand.web.controller;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import javax.validation.Valid;
 
@@ -10,6 +11,7 @@ import org.egov.common.contract.response.ResponseInfo;
 import org.egov.demand.helper.BillHelperV2;
 import org.egov.demand.model.BillSearchCriteria;
 import org.egov.demand.model.GenerateBillCriteria;
+import org.egov.demand.model.UpdateBillCriteria;
 import org.egov.demand.model.UpdateBillRequest;
 import org.egov.demand.service.BillServicev2;
 import org.egov.demand.util.Constants;
@@ -105,7 +107,9 @@ public class BillControllerv2 {
 	public ResponseEntity<?> cancelBill(@RequestBody RequestInfoWrapper requestInfoWrapper, 
 			@ModelAttribute @Valid CancelBillCriteria cancelBillCriteria){
 		log.info("_cancelbill criteria : "+cancelBillCriteria);
-		billService.cancelBill(cancelBillCriteria);
+		UpdateBillRequest updateBillRequest =  new UpdateBillRequest();
+		updateBillRequest.setUpdateBillCriteria(new UpdateBillCriteria(cancelBillCriteria.getTenantId(),  Set.of(cancelBillCriteria.getConsumerCode().split(",")), cancelBillCriteria.getBusinessService(), null, null, null));
+		billService.cancelBill(updateBillRequest);
 		return new ResponseEntity<>(Constants.SUCCESS_CANCEL_BILL, HttpStatus.CREATED);
 	}
 	
