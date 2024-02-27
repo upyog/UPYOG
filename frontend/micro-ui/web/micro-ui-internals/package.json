@@ -8,7 +8,12 @@
     "example",
     "packages/react-components",
     "packages/modules/common",
-    "packages/modules/core"
+    "packages/modules/core",
+    "packages/modules/dss",
+    "packages/modules/pt",
+    "packages/modules/commonPt",
+    "packages/modules/fsm",
+    "packages/modules/tl"
   ],
   "author": "Abhinav Kushwaha <abhinav.kushwaha@egovernments.org>",
   "license": "MIT",
@@ -47,15 +52,15 @@
     "build:libraries": "cd packages/libraries && yarn build",
     "build:components": "cd packages/react-components && yarn build",
     "build:common": "cd packages/modules/common && yarn build",
-    "buildD:pt": "cd packages/modules/pt && yarn build",
-    "buildD:commonPt": "cd packages/modules/commonPt && yarn build",
+    "build:pt": "cd packages/modules/pt && yarn build",
+    "build:commonPt": "cd packages/modules/commonPt && yarn build",
     "build:core": "cd packages/modules/core && yarn build",
     "buildD:pgr": "cd packages/modules/pgr && yarn build",
-    "buildD:fsm": "cd packages/modules/fsm && yarn build",
-    "buildD:dss": "cd packages/modules/dss && yarn build",
+    "build:fsm": "cd packages/modules/fsm && yarn build",
+    "build:dss": "cd packages/modules/dss && yarn build",
     "buildD:mcollect": "cd packages/modules/mCollect && yarn build",
     "buildD:receipts": "cd packages/modules/receipts && yarn build",
-    "buildD:tl": "cd packages/modules/tl && yarn build",
+    "build:tl": "cd packages/modules/tl && yarn build",
     "buildD:hrms": "cd packages/modules/hrms && yarn build",
     "buildD:obps": "cd packages/modules/obps && yarn build",
     "buildD:engagement": "cd packages/modules/engagement && yarn build",
@@ -77,10 +82,8 @@
   },
   "dependencies": {
     "lodash": "4.17.21",
-    "microbundle-crl": "^0.13.11",
-    "uuid": "^9.0.1"
-  },
-  "resolutions": {
+    "microbundle-crl": "0.13.11"
+  } ,"resolutions": {
     "**/babel-loader": "8.2.2",
     "**/@babel/core": "7.14.0",
     "**/@babel/preset-env": "7.14.0",
