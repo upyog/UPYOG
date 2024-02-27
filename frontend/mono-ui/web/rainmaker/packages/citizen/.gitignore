@@ -1,24 +1,38 @@
+[10:57 AM] kumar, Palam
 # See https://help.github.com/ignore-files/ for more about ignoring files.
 
 # dependencies
+
 /node_modules
 
 # testing
+
 /coverage
 
 # production
+
 /build
 
 # misc
+
 .DS_Store
+
 .env.local
+
 .env.development.local
+
 .env.test.local
+
 .env.production.local
 
 # ignoring css files as we used scss
+
 src/**/*.css
 
 npm-debug.log*
+
 yarn-debug.log*
+
 yarn-error.log*
+Sign in for Software Support and Product Help - GitHub Support
+Access your support options and sign in to your account for GitHub software support and product assistance. Get the help you need from our dedicated support team.
