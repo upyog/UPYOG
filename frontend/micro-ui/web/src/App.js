@@ -3,7 +3,7 @@ import React from "react";
 import {
   initPGRComponents,
   PGRReducers,
-} from "@egovernments/digit-ui-module-pgr";
+} from "@upyog/digit-ui-module-pgr";
 import { initFSMComponents } from "@upyog/digit-ui-module-fsm";
 import {
   PTModule,
