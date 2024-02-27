@@ -242,16 +242,13 @@ public class DemandQueryBuilder {
 	
 	private static String getIdQueryForStrings(Set<String> idList) {
 
-		StringBuilder query = new StringBuilder();
-		if (!idList.isEmpty()) {
-
-			String[] list = idList.toArray(new String[idList.size()]);
-			query.append("'"+list[0]+"'");
-			for (int i = 1; i < idList.size(); i++) {
-				query.append("," + "'"+list[i]+"'");
+		StringBuilder builder = new StringBuilder();
+		int length = idList.size();
+		for( int i = 0; i< length; i++){
+			builder.append(" ? ");
+			if(i != length -1) builder.append(",");
 		}
-	return query.append(")").toString();
-
+		return builder.toString();
 	}
 
 	private void addToPreparedStatement(List<Object> preparedStmtList, Collection<String> ids)

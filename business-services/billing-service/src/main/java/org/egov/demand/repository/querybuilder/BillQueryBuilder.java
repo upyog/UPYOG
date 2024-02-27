@@ -114,7 +114,7 @@ public class BillQueryBuilder {
 			appendListToQuery(searchBill.getBillId(), preparedStatementValues, selectQuery);
 		}
 
-		if (!searchBill.getRetrieveOldest()) {
+		if (searchBill.getRetrieveOldest()!=null && !searchBill.getRetrieveOldest()) {
 			if (searchBill.getStatus() != null) {
 				selectQuery.append(" AND b.status = ?");
 				preparedStatementValues.add(searchBill.getStatus().toString());
@@ -166,7 +166,7 @@ public class BillQueryBuilder {
 
 		StringBuilder finalQuery;
 
-		if (searchBillCriteria.getRetrieveOldest())
+		if (searchBillCriteria.getRetrieveOldest()!=null && !searchBillCriteria.getRetrieveOldest())
 			finalQuery = new StringBuilder(BILL_MIN_QUERY.replace(REPLACE_STRING, selectQuery));
 		else
 			finalQuery = new StringBuilder(BILL_MAX_QUERY.replace(REPLACE_STRING, selectQuery));
@@ -178,7 +178,73 @@ public class BillQueryBuilder {
 		return finalQuery;
 	}
 
+/**
+	 * Bill expire query builder
+	 * 
+	 * @param billIds
+	 * @param preparedStmtList
+	 */
+	public String getBillStatusUpdateQuery(List<String> consumerCodes,String businessService, List<Object> preparedStmtList) {
+
+		StringBuilder builder = new StringBuilder(BILL_STATUS_UPDATE_QUERY);
+
+		if (!CollectionUtils.isEmpty(consumerCodes)) {
+
+			builder.append(" AND id IN ( SELECT billid from egbs_billdetail_v1 where consumercode IN (");
+			appendListToQuery(consumerCodes, preparedStmtList, builder);
+			builder.append(" AND businessservice=? )");
+			preparedStmtList.add(businessService);
+		}
+		
+		return builder.toString();
+	}
+
+	public String getBillStatusUpdateBatchQuery() {
+
+		return BILL_STATUS_UPDATE_BATCH_QUERY;
+	}
+
+
 	/**
+	 * @param billIds
+	 * @param preparedStmtList
+	 * @param query
+	 */
+	private void appendListToQuery(Collection<String> values, List<Object> preparedStmtList, StringBuilder query) {
+		int length = values.size();
+		String[] valueArray = values.toArray(new String[length]);
+
+		for (int i = 0; i < length; i++) {
+			query.append(" ?");
+			if (i != length - 1)
+				query.append(",");
+			preparedStmtList.add(valueArray[i]);
+		}
+		query.append(")");
+}
+
+	public String getLatestBillQuery(final List<Object> preparedStatementValues,
+			final CancelBillCriteria cancelBillCriteria) {
+
+		StringBuilder selectQuery = new StringBuilder(GET_LATEST_BILL_QUERY);
+		selectQuery.append(" where bill.tenantid=?");
+		preparedStatementValues.add(cancelBillCriteria.getTenantId().toString());
+
+		selectQuery.append(" AND bill.status = ?");
+		preparedStatementValues.add(Constants.ACTIVE.toString());
+
+		selectQuery.append(" AND billdetail.businessservice = ?");
+		preparedStatementValues.add(cancelBillCriteria.getBusinessService().toString());
+
+		selectQuery.append(" AND billdetail.consumercode = ?");
+		preparedStatementValues.add(cancelBillCriteria.getConsumerCode().toString());
+
+		selectQuery.append(" order by bill.createddate desc limit 1");
+
+		return selectQuery.toString();
+
+	}
+		/**
 	 * Bill expire query builder
 	 * 
 	 * @param billIds
@@ -213,21 +279,5 @@ public class BillQueryBuilder {
 		return builder.toString();
 	}
 
-	/**
-	 * @param billIds
-	 * @param preparedStmtList
-	 * @param query
-	 */
-	private void appendListToQuery(Collection<String> values, List<Object> preparedStmtList, StringBuilder query) {
-		int length = values.size();
-		String[] valueArray = values.toArray(new String[length]);
-
-		for (int i = 0; i < length; i++) {
-			query.append(" ?");
-			if (i != length - 1)
-				query.append(",");
-			preparedStmtList.add(valueArray[i]);
-		}
-		query.append(")");
-	}
+	
 }
