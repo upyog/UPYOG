@@ -225,6 +225,7 @@ public class TLRepository {
         String query = queryBuilder.TRADELICENSEIDQUERY;
         try {
             query= multiStateInstanceUtil.replaceSchemaPlaceholder(query, criteria.getTenantId());
+            log.info("Tenant ID: " + criteria.getTenantId());
         }
         catch (Exception e){
             throw new CustomException("INVALID_TENANTID","Invalid tenantId: "+criteria.getTenantId());
