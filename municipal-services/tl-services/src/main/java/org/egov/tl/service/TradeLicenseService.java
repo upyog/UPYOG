@@ -516,8 +516,10 @@ public class TradeLicenseService {
             return Collections.emptyList();
 
         criteria.setIds(ids);
+        log.info("Before criteria {}",criteria);
 
         TradeLicenseSearchCriteria idsCriteria = TradeLicenseSearchCriteria.builder().ids(ids).build();
+        log.info("After criteria {}",idsCriteria);
 
         licenses = repository.getPlainLicenseSearch(idsCriteria);
 
