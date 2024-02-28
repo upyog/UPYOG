@@ -94,6 +94,7 @@ public class MSCommController {
         try {
             String accessToken = request.getRequestInfo().getAuthToken();
             String sessionId = httpReq.getSession().getId();
+            LOGGER.info("********* Retrieved session::authtoken******** {}::{}", sessionId, accessToken);
             if(sessionId!=null && !sessionId.equalsIgnoreCase("null")){
 				LOGGER.info("********* Retrieved session::authtoken******** {}::{}", sessionId, accessToken);
                 if(redisRepository!=null){
