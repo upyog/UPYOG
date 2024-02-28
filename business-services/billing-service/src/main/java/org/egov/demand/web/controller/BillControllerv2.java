@@ -109,7 +109,12 @@ public class BillControllerv2 {
 		log.info("_cancelbill criteria : "+cancelBillCriteria);
 		UpdateBillRequest updateBillRequest =  new UpdateBillRequest();
 		updateBillRequest.setRequestInfo(requestInfoWrapper.getRequestInfo());
-		updateBillRequest.setUpdateBillCriteria(new UpdateBillCriteria(cancelBillCriteria.getTenantId(),  Set.of(cancelBillCriteria.getConsumerCode().split(",")), cancelBillCriteria.getBusinessService(), null, null, null));
+		UpdateBillCriteria objectBillCriteria =new UpdateBillCriteria();
+		objectBillCriteria.setTenantId(cancelBillCriteria.getTenantId());
+		objectBillCriteria.setConsumerCodes(Set.of(cancelBillCriteria.getConsumerCode().split(",")));
+		objectBillCriteria.setBusinessService(cancelBillCriteria.getBusinessService());
+		
+		updateBillRequest.setUpdateBillCriteria(objectBillCriteria);
 		billService.cancelBill(updateBillRequest);
 		return new ResponseEntity<>(Constants.SUCCESS_CANCEL_BILL, HttpStatus.CREATED);
 	}
