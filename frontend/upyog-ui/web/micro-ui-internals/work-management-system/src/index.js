@@ -9,9 +9,9 @@ import { PTModule, PTLinks, PTComponents } from "@egovernments/digit-ui-module-p
 // import { TLModule, TLLinks } from "@egovernments/digit-ui-module-tl";
 import { initFSMComponents } from "@egovernments/digit-ui-module-fsm";
 import { initPGRComponents } from "@egovernments/digit-ui-module-pgr";
-import { initDSSComponents } from "@egovernments/digit-ui-module-dss";
+// import { initDSSComponents } from "@egovernments/digit-ui-module-dss";
 //import { initHRMSComponents } from "@egovernments/digit-ui-module-hrms";
-import { initReceiptsComponents, ReceiptsModule } from "@egovernments/digit-ui-module-receipts";
+// import { initReceiptsComponents, ReceiptsModule } from "@egovernments/digit-ui-module-receipts";
 // import { initReportsComponents } from "@egovernments/digit-ui-module-reports";
 //import { initMCollectComponents } from "@egovernments/digit-ui-module-mcollect";
 import { initTLComponents } from "@egovernments/digit-ui-module-tl";
@@ -45,8 +45,8 @@ const enabledModules = [
   "Payment",
   "PT",
   "QuickPayLinks",
-  "DSS",
-  "MCollect",
+  // "DSS",
+  // "MCollect",
   //"HRMS",
   "TL",
   //"Receipts",
@@ -103,20 +103,20 @@ const initDigitUI = () => {
     PTModule,
     PTLinks,
     ...PTComponents,
-    MCollectLinks,
-    MCollectModule,
+    // MCollectLinks,
+    // MCollectModule,
     //HRMSModule,
-    ReceiptsModule,
-    BillsModule,
-
+    // ReceiptsModule,
+    // BillsModule,
+    WMSLinks
     // TLModule,
     // TLLinks,
   });
 
   initFSMComponents();
   initPGRComponents();
-  initDSSComponents();
-  initMCollectComponents();
+  // initDSSComponents();
+  // initMCollectComponents();
   //initHRMSComponents();
   initTLComponents();
  // initReceiptsComponents();

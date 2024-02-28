@@ -1,5 +1,5 @@
 import React, {Fragment} from "react"
-import { Controller, useWatch } from "react-hook-form";
+import { Controller } from "react-hook-form";
 import { TextInput, SubmitBar, LinkLabel, ActionBar, CloseSvg, DatePicker, CardLabelError, SearchForm, SearchField, Dropdown, Table, Card, MobileNumber, Loader, CardText, Header } from "@egovernments/digit-ui-react-components";
 
 const SearchFields = ({register, control, reset, tenantId, t, formState, setShowToast, previousPage }) => {

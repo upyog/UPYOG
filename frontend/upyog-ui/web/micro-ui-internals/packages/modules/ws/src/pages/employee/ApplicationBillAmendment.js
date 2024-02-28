@@ -21,7 +21,7 @@ import {
   Table
 } from "@egovernments/digit-ui-react-components";
 import React, { Fragment, useEffect, useMemo, useReducer, useState } from "react";
-import { Controller, useFieldArray, useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useHistory, useLocation } from "react-router-dom";
 
