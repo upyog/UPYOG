@@ -99,6 +99,17 @@ function openSource(){
 }
 function validateCutOff()
 {
+
+var voucherdate =document.getElementById('voucherDate').value ;
+
+if(voucherdate==null || voucherdate.length == 0){
+
+		bootbox.alert("<s:text name='msg.please.select.voucher.date'/> ");
+		return false;
+
+}
+
+
 	console.log(document.getElementById("cutOffDate"));
 var cutOffDatePart=document.getElementById("cutOffDate").value.split("/");
 var voucherDatePart=document.getElementById("voucherDate").value.split("/");

@@ -3266,6 +3266,30 @@ public class CommonAction extends BaseFormAction {
             LOGGER.debug("Completed ajaxGetAllCoaCodes.");
         return "process";
     }
+    
+    @SuppressWarnings("unchecked")
+    @Action(value = "/voucher/common-ajaxGetAllCoaCodes1")
+    public String ajaxGetAllCoaCodes1() {
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Starting ajaxGetAllCoaCodes...");
+
+        coaList = persistenceService.findAllBy(
+                " from CChartOfAccounts where type IN ('A','E') ");
+        // String
+        // query="select glcode||'`-`'||name||'`~`'||ID as \"code\" from chartofaccounts where classification=4 and
+        // isactiveforposting = true order by glcode ";*/
+
+        result = new StringBuffer();
+        for (CChartOfAccounts cc : coaList) {
+            result.append(cc.getGlcode() + "`-`");
+            result.append(cc.getName() + "`~`");
+            result.append(cc.getId() + "+");
+        }
+        result.append("^");
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Completed ajaxGetAllCoaCodes.");
+        return "process";
+    }
 
     @SuppressWarnings("unchecked")
     @Action(value = "/voucher/common-ajaxGetAllCoaCodesExceptCashBank")
