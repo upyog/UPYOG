@@ -13,8 +13,9 @@ const SelectAddress = ({ t, config, onSelect, userType, formData }) => {
       : pincode
       ? allCities.filter((city) => city?.pincode?.some((pin) => pin == pincode))
       : allCities;
-
-  const [selectedCity, setSelectedCity] = useState(() => formData?.address?.city || Digit.SessionStorage.get("fsm.file.address.city") || null);
+const property = sessionStorage.getItem("Digit_FSM_PT")
+console.log("property",property)
+  const [selectedCity, setSelectedCity] = useState(() => formData?.address?.city || sessionStorage.getItem("Digit_FSM_PT") || null);
   const { data: fetchedLocalities } = Digit.Hooks.useBoundaryLocalities(
     selectedCity?.code,
     "revenue",
