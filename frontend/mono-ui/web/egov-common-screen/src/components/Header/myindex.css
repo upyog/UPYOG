@@ -1,0 +1,274 @@
+.msewalogo {
+    width: 60px;
+    height: auto;
+    left: 130px;
+    top: 7px;
+    margin-top: 10px;
+    margin-bottom: 5px;    
+}
+#note{
+    color:red;
+}
+/* image rotate */
+@-webkit-keyframes rotate {
+    0% { -webkit-transform: rotate(0deg) scale(1.0); }
+    100% { -webkit-transform: rotate(360deg) scale(1.1); }
+  }
+  @-moz-keyframes rotate {
+    0% { -moz-transform: rotate(0deg) scale(1.0); }
+    100% { -moz-transform: rotate(360deg) scale(1.1); }
+  }
+  @-o-keyframes rotate {
+    0% { -o-transform: rotate(0deg) scale(1.0); }
+    100% { -o-transform: rotate(360deg) scale(1.1); }
+  }
+  @-ms-keyframes rotate {
+    0% { -ms-transform: rotate(0deg) scale(1.0); }
+    100% { -ms-transform: rotate(360deg) scale(1.1); }
+  }
+  @keyframes rotate {
+    0% { transform: rotate(0deg) scale(1.0); }
+    100% { transform: rotate(360deg) scale(1.1); }
+  }
+  @-webkit-keyframes rori {
+    0% { -webkit-transform: rotate(360deg) scale(1.1); }
+    100% { -webkit-transform: rotate(0deg) scale(1.0); }
+  }
+  @-moz-keyframes rori {
+    0% { -moz-transform: rotate(360deg) scale(1.1); }
+    100% { -moz-transform: rotate(0deg) scale(1.0); }
+  }
+  @-o-keyframes rori {
+    0% { -o-transform: rotate(360deg) scale(1.1); }
+    100% { -o-transform: rotate(0deg) scale(1.0); }
+  }
+  @-ms-keyframes rori {
+    0% { -ms-transform: rotate(360deg) scale(1.1); }
+    100% { -ms-transform: rotate(0deg) scale(1.0); }
+  }
+  @keyframes rori {
+    0% { transform: rotate(360deg) scale(1.1); }
+    100% { transform: rotate(0deg) scale(1.0); }
+  }
+  div.cardservice img:hover {
+    -webkit-animation-name: rotate;
+    -moz-animation-name: rotate;
+    -ms-animation-name: rotate;
+    -o-animation-name: rotate;
+    animation-name: rotate;
+    -webkit-animation-duration: 500ms;
+    -moz-animation-duration: 500ms;
+    -ms-animation-duration: 500ms;
+    -o-animation-duration: 500ms;
+    animation-duration: 500ms;
+    -webkit-animation-iteration-count: 1;
+    -moz-animation-iteration-count: 1;
+    -ms-animation-iteration-count: 1;
+    -o-animation-iteration-count: 1;
+    animation-iteration-count: 1;
+    -webkit-animation-timing-function: ease;
+    -moz-animation-timing-function: ease;
+    -ms-animation-timing-function: ease;
+    -o-animation-timing-function: ease;
+    animation-timing-function: ease;
+    -webkit-animation-fill-mode: forwards;
+    -moz-animation-fill-mode: forwards;
+    -ms-animation-fill-mode: forwards;
+    -o-animation-fill-mode: forwards;
+    animation-fill-mode: forwards;
+    cursor: url('https://ia801504.us.archive.org/31/items/abcde_201612/aero_link2.cur'), auto !important;
+  }
+  div.cardservice img {
+    -webkit-animation-name: rori;
+    -moz-animation-name: rori;
+    -ms-animation-name: rori;
+    -o-animation-name: rori;
+    animation-name: rori;
+    -webkit-animation-duration: 500ms;
+    -moz-animation-duration: 500ms;
+    -ms-animation-duration: 500ms;
+    -o-animation-duration: 500ms;
+    animation-duration: 500ms;
+    -webkit-animation-iteration-count: 1;
+    -moz-animation-iteration-count: 1;
+    -ms-animation-iteration-count: 1;
+    -o-animation-iteration-count: 1;
+    animation-iteration-count: 1;
+    -webkit-animation-timing-function: ease;
+    -moz-animation-timing-function: ease;
+    -ms-animation-timing-function: ease;
+    -o-animation-timing-function: ease;
+    animation-timing-function: ease;
+    vertical-align: middle;
+    max-width: 175px;
+    max-height: 175px;
+    text-align: center;
+    /* border: 1px solid #87CEEB !important;
+    background-color: #D9F9FF; */
+    margin: 25px;
+    /* cursor: url('https://ia801504.us.archive.org/31/items/abcde_201612/aero_link2.cur'), auto !important; */
+  }
+/* services */
+.cardservice img {
+    width: 100px;
+    height: auto;
+}
+.cardservice {
+    text-align: center;
+}
+.hearderchange {
+    background: #064199;
+}
+.hearderchange img {
+    margin-left: 70px;
+}
+.langu {
+    width: 160px;
+    float: left;
+    color: white;
+    text-align: center;
+}
+.langu a {
+    color: white;
+}
+.boldText a {
+    color: white;
+    font-size: 14px;
+    padding-left: 10px;
+}
+/* end */
+.secondpart {
+    padding-bottom: 40px;
+}
+.msewa-logo-postion{text-align: center; width: 30%; float: left; margin-left: 10%;}
+#emplogin{
+    width: 70%; float: right; margin-right: 10%;
+}
+#rightimg {
+    width: 100px;
+    margin-bottom: 12px;
+    margin-left: 24px;
+}
+.rightharder{
+    padding-top: 10px;
+    text-align: center;
+}
+
+.rightharder a {
+    position: relative;
+    top: 0px;
+    color: #0b519e;
+    font-weight: 600;
+}
+.row.features {
+    padding-top: 50px;
+}
+.featurestwo{
+    padding-top: 30px;
+}
+.row.featuresthree {
+    padding-top: 20px;
+    padding-bottom: 30px;
+}
+.bodaypage{
+    background:#e5e5e5;
+}
+a.custom-btn {
+    background: #f47738;
+    color: white;
+    padding: 5px 60px;
+    border-radius: 20px;
+}
+.message {
+    background-color: #f3e5de;
+    color: #f47738;
+    opacity: .8;
+    border-radius: 8px;
+    text-align: center;
+    border-color: #fb590059;
+    margin-top: 30px;
+}
+.asq h1 {
+    text-align: center;
+}
+.asq div {
+    background: #ff870b;
+    height: 4px;
+    width: 180px;
+    margin-left: 40%;
+    margin-top: 17px;
+    margin-bottom: 40px;
+
+}
+button.btn.btn-link.collapsed {
+    color: #000000d6 !important;
+    font-weight: 600;
+}
+button.btn.btn-link {
+    color: #000000d6;
+    text-decoration: none;
+    font-weight: 600;
+}
+button.btn.btn-link:hover {
+    color: #000000d6;
+    text-decoration: none;
+    font-weight: 600;
+}
+.card-body {
+    border-bottom: 10px #f49666;
+    font-size: 14px;
+    line-height: 20px;
+}
+.card-body h4 {
+    border-bottom: 10px #f49666;
+    font-size: 16px;
+    line-height: 24px;
+}
+/* --------------- */
+
+/* --------------------- */
+
+@media only screen and (max-width: 780px) and (min-width: 230px)  {
+    .row.features {
+        position: relative;
+        bottom: 0px;
+    }
+    .featurestwo{
+        position: relative;
+        bottom: 0px;
+    }
+    .card {
+        margin-top: 10px;
+    }
+    img.msewalogo {
+        position: relative;
+        right: 0px;
+    }
+    .rightharder {
+        padding-top: 15px;
+        padding-bottom: 30px;
+    }
+    a.custom-btn {
+        font-size: 12px;
+    }
+    .message {
+        background-color: #f3e5de;
+        color: #f47738;
+        opacity: .8;
+        border-radius: 8px;
+        text-align: center;
+        border-color: #fb590059;
+        margin-top: 20px;
+    }
+}
+@media only screen and (max-width: 990px) and (min-width: 780px)  {
+    a.custom-btn {
+        font-size: 10px;
+        padding: 10px 35px;
+    }
+    h5.card-title {
+        font-size: 18px;
+    }
+}
+
+    

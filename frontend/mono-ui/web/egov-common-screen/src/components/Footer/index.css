@@ -1,0 +1,39 @@
+.footerchange {
+    font-size: 14px;
+    font-weight: 600;
+    background: #0000004f;
+    height: 30px;
+    color: white;
+}
+img.wz {
+    width: 50px;
+    height: auto;
+}
+a#flink {
+    color: white !important;
+}
+a.email {
+    color: white;
+}
+.makeStyles-root-6 {
+    flex-grow: 1;
+    background-color: #0b519e !important;
+    /* background-image: linear-gradient(to right, #0d1a86 , #0aa236); */
+    
+}
+
+.infofoot {
+    background: white;
+    padding: 20px 0px;
+}
+.infofoot center {
+    color: black !important;
+    font-weight: 600;
+}
+
+@media only screen and (max-width: 780px) and (min-width: 230px)  {
+.lupwz {
+    background: #064199;
+    text-align: center;
+}
+}
