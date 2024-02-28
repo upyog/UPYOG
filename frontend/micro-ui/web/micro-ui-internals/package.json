@@ -9,6 +9,9 @@
     "packages/react-components",
     "packages/modules/common",
     "packages/modules/core",
+    "packages/modules/pt",
+    "packages/modules/tl",
+    "packages/modules/commonPt",
     "packages/modules/obps"
   ],
   "author": "Abhinav Kushwaha <abhinav.kushwaha@egovernments.org>",
