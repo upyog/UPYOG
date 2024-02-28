@@ -111,7 +111,7 @@ public class BillControllerv2 {
 		updateBillRequest.setRequestInfo(requestInfoWrapper.getRequestInfo());
 		UpdateBillCriteria objectBillCriteria =new UpdateBillCriteria();
 		objectBillCriteria.setTenantId(cancelBillCriteria.getTenantId());
-		objectBillCriteria.setConsumerCodes(Set.of(cancelBillCriteria.getConsumerCode().split(",")));
+		//objectBillCriteria.setConsumerCodes(Set.of(cancelBillCriteria.getConsumerCode().split(",")));
 		objectBillCriteria.setBusinessService(cancelBillCriteria.getBusinessService());
 		
 		updateBillRequest.setUpdateBillCriteria(objectBillCriteria);
