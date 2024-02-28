@@ -108,6 +108,7 @@ public class BillControllerv2 {
 			@ModelAttribute @Valid CancelBillCriteria cancelBillCriteria){
 		log.info("_cancelbill criteria : "+cancelBillCriteria);
 		UpdateBillRequest updateBillRequest =  new UpdateBillRequest();
+		updateBillRequest.setRequestInfo(requestInfoWrapper.getRequestInfo());
 		updateBillRequest.setUpdateBillCriteria(new UpdateBillCriteria(cancelBillCriteria.getTenantId(),  Set.of(cancelBillCriteria.getConsumerCode().split(",")), cancelBillCriteria.getBusinessService(), null, null, null));
 		billService.cancelBill(updateBillRequest);
 		return new ResponseEntity<>(Constants.SUCCESS_CANCEL_BILL, HttpStatus.CREATED);
