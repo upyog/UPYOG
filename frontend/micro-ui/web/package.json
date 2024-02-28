@@ -10,7 +10,6 @@
     "micro-ui-internals/packages/modules/common",
     "micro-ui-internals/packages/modules/core",
     "micro-ui-internals/packages/modules/dss",
-    "micro-ui-internals/packages/modules/fsm",
     "micro-ui-internals/packages/modules/commonPt",
     "micro-ui-internals/packages/modules/pt"
 
@@ -21,8 +20,8 @@
   "homepage": "/digit-ui",
   "dependencies": {
     "@upyog-niua/upyog-css": "1.0.10",
-    "@upyog/digit-ui-module-fsm": "1.7.0-beta.12",
-    "@upyog/digit-ui-module-tl": "1.7.0-beta.11",
+    "@upyog/digit-ui-module-fsm": "1.7.0-beta.14",
+    "@upyog/digit-ui-module-tl": "1.7.0-beta.12",
     "@upyog/digit-ui-module-ws": "1.7.0-beta.11",
     "@upyog/digit-ui-module-obps": "1.7.0-beta.11",
     "@upyog/digit-ui-module-pt": "1.7.0-beta.11",
