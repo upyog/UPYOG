@@ -224,6 +224,7 @@ public class TLRepository {
         preparedStmtList.add(criteria.getLimit());
         String query = queryBuilder.TRADELICENSEIDQUERY;
         try {
+            log.info("Tenant ID: " + criteria.getTenantId());
             query= multiStateInstanceUtil.replaceSchemaPlaceholder(query, criteria.getTenantId());
         }
         catch (Exception e){
