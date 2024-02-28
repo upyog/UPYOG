@@ -1,4 +1,5 @@
 import cloneDeep from "lodash/cloneDeep";
+import { v4 as uuid_v4 } from 'uuid';
 
 export const getPattern = (type) => {
   switch (type) {
@@ -22,7 +23,7 @@ export const sortDropdownNames = (options, optionkey, locilizationkey) => {
 };
 
 export const uuidv4 = () => {
-  return require("uuid/v4")();
+  return uuid_v4();
 };
 
 export const pdfDownloadLink = (documents = {}, fileStoreId = "", format = "") => {
