@@ -53,10 +53,10 @@ public class WMSContractAgreementApplication {
 	private Contractors contractors = null;
 	
 	@JsonProperty("party2Witness")
-	private Party2Witness party2Witness = null;
+	private List<Party2Witness> party2Witness = null;
 	
 	@JsonProperty("agreementDocuments")
-	private AgreementDocuments agreementDocuments = null;
+	private List<AgreementDocuments> agreementDocuments = null;
 	
 	/*
 	 * @JsonProperty("designation") private String designation=null;
@@ -109,6 +109,24 @@ public class WMSContractAgreementApplication {
         //if(this.agreementInfo.stream().filter(x-> x.getAgreementName().equalsIgnoreCase(agreementInfoItem.getAgreementName())) == null)
         if (!this.termsAndConditions.stream().anyMatch(x -> x.getTncId().equalsIgnoreCase(termsAndConditionsItem.getTncId())))    
         this.termsAndConditions.add(termsAndConditionsItem);
+        return this;
+    }
+	
+	public WMSContractAgreementApplication addAgreementDocuments(AgreementDocuments agreementDocumentsItem) {
+        if(this.agreementDocuments==null)
+            this.agreementDocuments = new ArrayList<>();
+        //if(this.agreementInfo.stream().filter(x-> x.getAgreementName().equalsIgnoreCase(agreementInfoItem.getAgreementName())) == null)
+        if (!this.agreementDocuments.stream().anyMatch(x -> x.getAdId().equalsIgnoreCase(agreementDocumentsItem.getAdId())))    
+        this.agreementDocuments.add(agreementDocumentsItem);
+        return this;
+    }
+	
+	public WMSContractAgreementApplication addParty2Witness(Party2Witness party2WitnessItem) {
+        if(this.party2Witness==null)
+            this.party2Witness = new ArrayList<>();
+        //if(this.agreementInfo.stream().filter(x-> x.getAgreementName().equalsIgnoreCase(agreementInfoItem.getAgreementName())) == null)
+        if (!this.party2Witness.stream().anyMatch(x -> x.getPwId().equalsIgnoreCase(party2WitnessItem.getPwId())))    
+        this.party2Witness.add(party2WitnessItem);
         return this;
     }
 	

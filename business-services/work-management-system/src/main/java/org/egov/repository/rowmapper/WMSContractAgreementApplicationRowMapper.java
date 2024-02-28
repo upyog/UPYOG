@@ -86,8 +86,6 @@ public class WMSContractAgreementApplicationRowMapper implements ResultSetExtrac
     		  wmsContractAgreementApplication = WMSContractAgreementApplication.builder()
     		  .agreementNo(rs.getString("aAgreementNo"))
     		  .auditDetails(auditdetails)
-    		  .agreementDocuments(agreementDocuments)
-    		  .party2Witness(party2Witness)
     		  .contractors(contractors)
     		  .build();
     		  
@@ -153,6 +151,24 @@ public class WMSContractAgreementApplicationRowMapper implements ResultSetExtrac
                 wmsContractAgreementApplication.addTermsAndConditions(termsAndConditions);
               
                 //wmsContractAgreementApplicationList.addAll(wmsContractAgreementApplicationMap.values());
+                
+                AgreementDocuments agreementDocuments = AgreementDocuments.builder()
+                		.adId(rs.getString("aAdId"))
+                		.agreementNo(agreementNo)
+                        .documentDescription(rs.getString("aDocumentDescription"))
+                        .uploadDocument(rs.getString("aUploadDocument"))
+                        .build();
+                wmsContractAgreementApplication.addAgreementDocuments(agreementDocuments);
+                
+                Party2Witness party2Witness=Party2Witness.builder()
+                		.pwId(rs.getString("aPwId"))
+                		.agreementNo(agreementNo)
+                		.witnessNameP2(rs.getString("aWitnessNameP2"))
+                        .addressP2(rs.getString("aAddressP2"))
+                        .uidP2(rs.getString("aUidP2"))
+                        .build();
+                
+                wmsContractAgreementApplication.addParty2Witness(party2Witness);
                 
             }//rs
                 

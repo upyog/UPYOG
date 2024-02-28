@@ -944,17 +944,11 @@ serviceMaps:
       isTransaction: true
       queryMaps:
 
-        - query: INSERT INTO contract_agreement (agreement_no,witness_name_p2,address_p2,uid_p2,vendor_type,vendor_name,represented_by,primary_party,document_description,upload_document,createdby,lastmodifiedby,createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO contract_agreement (agreement_no,vendor_type,vendor_name,represented_by,primary_party,createdby,lastmodifiedby,createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: WMSContractAgreementApplication.*
           jsonMaps:
             - jsonPath: $.WMSContractAgreementApplication.*.agreement_no
 
-            - jsonPath: $.WMSContractAgreementApplication.*.party2Witness.witness_name_p2
-            
-            - jsonPath: $.WMSContractAgreementApplication.*.party2Witness.address_p2
-            
-            - jsonPath: $.WMSContractAgreementApplication.*.party2Witness.uid_p2
-            
             - jsonPath: $.WMSContractAgreementApplication.*.contractors.vendor_type
             
             - jsonPath: $.WMSContractAgreementApplication.*.contractors.vendor_name
@@ -963,10 +957,6 @@ serviceMaps:
             
             - jsonPath: $.WMSContractAgreementApplication.*.contractors.primary_party
             
-            
-            - jsonPath: $.WMSContractAgreementApplication.*.agreementDocuments.document_description
-            
-            - jsonPath: $.WMSContractAgreementApplication.*.agreementDocuments.upload_document
             
             - jsonPath: $.WMSContractAgreementApplication.*.auditDetails.createdBy
 
@@ -1067,6 +1057,32 @@ serviceMaps:
             - jsonPath: $.WMSContractAgreementApplication.*.termsAndConditions.*.sr_no
 
             - jsonPath: $.WMSContractAgreementApplication.*.termsAndConditions.*.terms_and_conditions
+            
+            
+        - query: INSERT INTO agreementdocuments (ad_id,agreement_no,document_description,upload_document) VALUES (?, ?, ?, ?);
+          basePath: WMSContractAgreementApplication.*.agreementDocuments.*
+          jsonMaps:
+            - jsonPath: $.WMSContractAgreementApplication.*.agreementDocuments.*.ad_id
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.agreementDocuments.*.agreement_no
+
+            - jsonPath: $.WMSContractAgreementApplication.*.agreementDocuments.*.document_description
+
+            - jsonPath: $.WMSContractAgreementApplication.*.agreementDocuments.*.upload_document
+            
+            
+        - query: INSERT INTO party2witness (pw_id,agreement_no,witness_name_p2,address_p2,uid_p2) VALUES (?, ?, ?, ?, ?);
+          basePath: WMSContractAgreementApplication.*.party2Witness.*
+          jsonMaps:
+            - jsonPath: $.WMSContractAgreementApplication.*.party2Witness.*.pw_id
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.party2Witness.*.agreement_no
+
+            - jsonPath: $.WMSContractAgreementApplication.*.party2Witness.*.witness_name_p2
+
+            - jsonPath: $.WMSContractAgreementApplication.*.party2Witness.*.address_p2
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.party2Witness.*.uid_p2
 
             
             
@@ -1082,18 +1098,11 @@ serviceMaps:
       isTransaction: true
       queryMaps:
       
-        - query: UPDATE contract_agreement SET witness_name_p2 = ?, address_p2 = ?, uid_p2 = ?, vendor_type = ?, vendor_name = ?, represented_by = ?, primary_party = ?, document_description = ?, upload_document = ? WHERE agreement_no = ?;
+        - query: UPDATE contract_agreement SET vendor_type = ?, vendor_name = ?, represented_by = ?, primary_party = ? WHERE agreement_no = ?;
           basePath: WMSContractAgreementApplication.*
           jsonMaps:
             
 
-            
-            
-            - jsonPath: $.WMSContractAgreementApplication.*.party2Witness.witness_name_p2
-            
-            - jsonPath: $.WMSContractAgreementApplication.*.party2Witness.address_p2
-            
-            - jsonPath: $.WMSContractAgreementApplication.*.party2Witness.uid_p2
             
             - jsonPath: $.WMSContractAgreementApplication.*.contractors.vendor_type
             
@@ -1102,10 +1111,6 @@ serviceMaps:
             - jsonPath: $.WMSContractAgreementApplication.*.contractors.represented_by
             
             - jsonPath: $.WMSContractAgreementApplication.*.contractors.primary_party
-            
-            - jsonPath: $.WMSContractAgreementApplication.*.agreementDocuments.document_description
-            
-            - jsonPath: $.WMSContractAgreementApplication.*.agreementDocuments.upload_document
             
             - jsonPath: $.WMSContractAgreementApplication.*.agreement_no
             
@@ -1196,7 +1201,34 @@ serviceMaps:
           
           - jsonPath: $.WMSContractAgreementApplication.*.termsAndConditions.*.terms_and_conditions
 
-          - jsonPath: $.WMSContractAgreementApplication.*.sDPGBGDetails.*.tnc_id
+          - jsonPath: $.WMSContractAgreementApplication.*.termsAndConditions.*.tnc_id
+          
+          
+        - query: UPDATE agreementdocuments SET document_description = ?,upload_document = ? WHERE ad_id = ?;
+          basePath: WMSContractAgreementApplication.*.agreementDocuments.*
+          jsonMaps:
+          
+          - jsonPath: $.WMSContractAgreementApplication.*.agreementDocuments.*.document_description
+          
+          - jsonPath: $.WMSContractAgreementApplication.*.agreementDocuments.*.upload_document
+
+          - jsonPath: $.WMSContractAgreementApplication.*.agreementDocuments.*.ad_id
+          
+          
+        - query: UPDATE party2witness SET witness_name_p2 = ?,address_p2 = ?,uid_p2 = ? WHERE pw_id = ?;
+          basePath: WMSContractAgreementApplication.*.party2Witness.*
+          jsonMaps:
+          
+          - jsonPath: $.WMSContractAgreementApplication.*.party2Witness.*.witness_name_p2
+          
+          - jsonPath: $.WMSContractAgreementApplication.*.party2Witness.*.address_p2
+          
+          - jsonPath: $.WMSContractAgreementApplication.*.party2Witness.*.uid_p2
+
+          - jsonPath: $.WMSContractAgreementApplication.*.party2Witness.*.pw_id
+          
+          
+          
           
             
             

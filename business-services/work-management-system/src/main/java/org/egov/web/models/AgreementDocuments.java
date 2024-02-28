@@ -22,6 +22,12 @@ import lombok.Setter;
 @Builder
 public class AgreementDocuments {
 	
+	@JsonProperty("agreement_no") 
+	private String agreementNo=null;
+	
+	@JsonProperty("ad_id") 
+	private String adId=null;
+	
 	@JsonProperty("document_description")
 	private String documentDescription=null;
 	@JsonProperty("upload_document")
