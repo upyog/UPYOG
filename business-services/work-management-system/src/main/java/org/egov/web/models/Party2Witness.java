@@ -15,6 +15,12 @@ import lombok.Setter;
 @Builder
 public class Party2Witness {
 	
+	@JsonProperty("agreement_no") 
+	private String agreementNo=null;
+	
+	@JsonProperty("pw_id") 
+	private String pwId=null;
+	
 	@JsonProperty("witness_name_p2")
 	private String witnessNameP2=null;
 	@JsonProperty("address_p2")

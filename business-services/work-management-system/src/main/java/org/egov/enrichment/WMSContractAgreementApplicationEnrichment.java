@@ -11,9 +11,12 @@ import java.util.stream.Stream;
 
 import org.egov.repository.WMSWorkRepository;
 import org.egov.util.IdgenUtil;
+import org.egov.web.models.AgreementDocuments;
 import org.egov.web.models.AgreementInfo;
 import org.egov.web.models.AuditDetails;
 import org.egov.web.models.Party1Details;
+import org.egov.web.models.Party2Witness;
+
 import org.egov.web.models.SDPGBGDetails;
 import org.egov.web.models.ScheduleOfRateApplication;
 import org.egov.web.models.TermsAndConditions;
@@ -121,6 +124,26 @@ public class WMSContractAgreementApplicationEnrichment {
        tnc.setTncId(Long.toString(randomNumber));
 	        	 
 	         }
+			 
+			 for (AgreementDocuments ad : application.getAgreementDocuments()) {
+	        	 //Long randomNumber=(long) Math.floor(Math.random() * (9999 - 1000 + 1) + 1000);
+				 ad.setAgreementNo(application.getAgreementNo());
+				 
+       randomNumber=(long) Math.floor(Math.random() * (9999 - 1000 + 1) + 1000);
+	        	 
+       ad.setAdId(Long.toString(randomNumber));
+	        	 
+	         }
+			 
+			 for (Party2Witness pw: application.getParty2Witness()) {
+	        	 //Long randomNumber=(long) Math.floor(Math.random() * (9999 - 1000 + 1) + 1000);
+				 pw.setAgreementNo(application.getAgreementNo());
+				 
+       randomNumber=(long) Math.floor(Math.random() * (9999 - 1000 + 1) + 1000);
+	        	 
+       pw.setPwId(Long.toString(randomNumber));
+	        	 
+	         }
             
 		//}//for loop
             
@@ -146,6 +169,8 @@ public class WMSContractAgreementApplicationEnrichment {
 				int j=0;
 				int l=0;
 				int m=0;
+				int n=0;
+				int o=0;
 			 for(k=0;k<application.getAgreementInfo().size();k++) {
 				 int currentIndex = k;
 				 List<AgreementInfo> existingApplicationAgreement = existingApplicationResult.get(0).getAgreementInfo().stream().filter(x -> x.getAgrId().equalsIgnoreCase(application.getAgreementInfo().get(currentIndex).getAgrId())).collect(Collectors.toList());
@@ -222,18 +247,42 @@ public class WMSContractAgreementApplicationEnrichment {
 			
 				 }
 			}
-			existingApplicationResult.get(0).getParty2Witness().setWitnessNameP2(application.getParty2Witness().getWitnessNameP2());
-			existingApplicationResult.get(0).getParty2Witness().setAddressP2(application.getParty2Witness().getAddressP2());
-			existingApplicationResult.get(0).getParty2Witness().setUidP2(application.getParty2Witness().getUidP2());
+			
+			
+			for(o=0;o<application.getParty2Witness().size();o++) {
+				int currentIndex = o;
+				List<Party2Witness> existingApplicationParty2Witness = existingApplicationResult.get(0).getParty2Witness().stream().filter(x -> x.getPwId().equalsIgnoreCase(application.getParty2Witness().get(currentIndex).getPwId())).collect(Collectors.toList());
+				
+				//if (!wmsContractAgreementRequest.getWmsContractAgreementApplications().get(0).getParty1Details().stream().anyMatch(x -> x.getUidP1().equalsIgnoreCase(existingApplication.get(0).getParty1Details().get(0).getUidP1()))) {
+				 if(existingApplicationParty2Witness.size() > 0) {
+					 
+					 existingApplicationParty2Witness.get(0).setWitnessNameP2(application.getParty2Witness().get(o).getWitnessNameP2());
+					 existingApplicationParty2Witness.get(0).setAddressP2(application.getParty2Witness().get(o).getAddressP2());
+					 existingApplicationParty2Witness.get(0).setUidP2(application.getParty2Witness().get(o).getUidP2());
+			
+			
+				 }
+			}
+			
 			existingApplicationResult.get(0).getContractors().setVendorType(application.getContractors().getVendorType());
 			existingApplicationResult.get(0).getContractors().setVendorName(application.getContractors().getVendorName());
 			existingApplicationResult.get(0).getContractors().setRepresentedBy(application.getContractors().getRepresentedBy());
 			existingApplicationResult.get(0).getContractors().setPrimaryParty(application.getContractors().getPrimaryParty());
 			
-			existingApplicationResult.get(0).getAgreementDocuments().setDocumentDescription(application.getAgreementDocuments().getDocumentDescription());
-			existingApplicationResult.get(0).getAgreementDocuments().setUploadDocument(application.getAgreementDocuments().getUploadDocument());
+			for(n=0;n<application.getAgreementDocuments().size();n++) {
+				int currentIndex = n;
+				List<AgreementDocuments> existingApplicationAgreementDocuments = existingApplicationResult.get(0).getAgreementDocuments().stream().filter(x -> x.getAdId().equalsIgnoreCase(application.getAgreementDocuments().get(currentIndex).getAdId())).collect(Collectors.toList());
+				
+				//if (!wmsContractAgreementRequest.getWmsContractAgreementApplications().get(0).getParty1Details().stream().anyMatch(x -> x.getUidP1().equalsIgnoreCase(existingApplication.get(0).getParty1Details().get(0).getUidP1()))) {
+				 if(existingApplicationAgreementDocuments.size() > 0) {
+			
+					 existingApplicationAgreementDocuments.get(0).setDocumentDescription(application.getAgreementDocuments().get(n).getDocumentDescription());
+					 existingApplicationAgreementDocuments.get(0).setUploadDocument(application.getAgreementDocuments().get(n).getUploadDocument());
+			
 //			application.setEndDate(date);
 			// application.getAuditDetails().setLastModifiedBy(birthRegistrationRequest.getRequestInfo().getUserInfo().getUuid());
+				 }
+			}
 		}
 			
 		}
