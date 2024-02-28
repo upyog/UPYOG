@@ -35,7 +35,14 @@ export const newConfig1=[
                 "type": "textarea",
                 "validation": {},
                 "name": "registrationDetails"
-            }
+            },
+            // {
+            //     "label": "BPA_BOUNDARY_WALL_LENGTH_LABEL",
+            //     "type": "text",
+            //     "validation": {},
+            //     "name": "boundaryWallLength"
+            // },
+
         ]
     },
     {

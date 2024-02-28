@@ -113,6 +113,7 @@ export const getBPAFormData = async (data, mdmsData, history, t) => {
     applicationDate: data?.auditDetails?.createdTime,
     applicationType: APIScrutinyDetails?.appliactionType,
     holdingNumber: data?.additionalDetails?.holdingNo,
+    //boundaryWallLength:data?.additionalDetails?.boundaryWallLength,
     occupancyType: APIScrutinyDetails?.planDetail?.planInformation?.occupancy,
     registrationDetails: data?.additionalDetails?.registrationDetails,
     riskType: Digit.Utils.obps.calculateRiskType(
@@ -408,6 +409,7 @@ export const convertToBPAObject = (data, isOCBPA = false, isSendBackTOCitizen = 
         ...data?.additionalDetails,
         GISPlaceName : data?.address?.placeName,
         holdingNo: data?.data?.holdingNumber ? data?.data?.holdingNumber : data?.additionalDetails?.holdingNo,
+        //boundaryWallLength:data?.data?.boundaryWallLength ? data?.data?.boundaryWallLength : data?.additionalDetails?.boundaryWallLength , 
         registrationDetails: data?.data?.registrationDetails ? data?.data?.registrationDetails : data?.additionalDetails?.registrationDetails,
       },
       applicationType: "BUILDING_PLAN_SCRUTINY",
@@ -442,7 +444,7 @@ export const convertToStakeholderObject = (data) => {
         action: "APPLY",
         tradeLicenseDetail: {
           ...data?.result?.Licenses[0]?.tradeLicenseDetail,
-          additionalDetail: { counsilForArchNo: data?.formData?.LicneseType?.ArchitectNo },
+          additionalDetail: { counsilForArchNo: data?.formData?.LicneseType?.ArchitectNo, isSelfCertificationRequired:data?.formData?.LicneseType?.selfCertification},
           tradeUnits: [
             {
               ...data?.result?.Licenses[0]?.tradeLicenseDetail?.tradeUnits?.[0],
@@ -553,6 +555,7 @@ export const getBPAEditDetails = async (data, APIScrutinyDetails, mdmsData, nocd
     applicationDate: data?.auditDetails?.createdTime,
     applicationType: APIScrutinyDetails?.appliactionType,
     holdingNumber: data?.additionalDetails?.holdingNo,
+    //boundaryWallLength: data?.additionalDetails?.boundaryWallLength,
     occupancyType: APIScrutinyDetails?.planDetail?.planInformation?.occupancy,
     registrationDetails: data?.additionalDetails?.registrationDetails,
     riskType: Digit.Utils.obps.calculateRiskType(
@@ -708,7 +711,7 @@ export const printPdf = (blob) => {
   }
 };
 
-export const downloadAndPrintReciept = async (bussinessService, consumerCode, tenantId, mode = "download", pdfKey = "consolidatedreceipt") => {
+export const downloadAndPrintReciept = async (bussinessService, consumerCode, tenantId, mode = "download", pdfKey = "bpa-receipt") => {
   const response = await Digit.OBPSService.receipt_download(bussinessService, consumerCode, tenantId, { pdfKey: pdfKey });
   const responseStatus = parseInt(response.status, 10);
   if (responseStatus === 201 || responseStatus === 200) {

@@ -2,12 +2,12 @@ import React from "react";
 import ReactDOM from "react-dom";
 
 import { initLibraries } from "@egovernments/digit-ui-libraries";
-import { PGRReducers } from "@egovernments/digit-ui-module-pgr";
+import { PGRReducers } from "@upyog/digit-ui-module-pgr";
 import { PTModule, PTLinks, PTComponents } from "@upyog/digit-ui-module-pt";
 import { MCollectModule, MCollectLinks } from "@upyog/digit-ui-module-mcollect";
 // import { TLModule, TLLinks } from "@upyog/digit-ui-module-tl";
 import { initFSMComponents } from "@upyog/digit-ui-module-fsm";
-import { initPGRComponents } from "@egovernments/digit-ui-module-pgr";
+import { initPGRComponents } from "@upyog/digit-ui-module-pgr";
 import { initDSSComponents } from "@egovernments/digit-ui-module-dss";
 import { initHRMSComponents } from "@egovernments/digit-ui-module-hrms";
 import { initReceiptsComponents, ReceiptsModule } from "@egovernments/digit-ui-module-receipts";
