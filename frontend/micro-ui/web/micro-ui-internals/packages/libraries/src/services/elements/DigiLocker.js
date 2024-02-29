@@ -11,6 +11,15 @@ export const DigiLockerService = {
       userService: true,
       params: {module:"PT" },
     }),
+    register: ({ filters }) =>
+    Request({
+      url: Urls.digiLocker.register,
+      useCache: false,
+      method: "POST",
+      auth: true,
+      userService: true,
+      params: {module:"REGISTER" },
+    }),
     token: ( data ) =>
     Request({
       url: Urls.digiLocker.token,

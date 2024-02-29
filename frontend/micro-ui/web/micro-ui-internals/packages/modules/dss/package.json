@@ -1,5 +1,5 @@
 {
-  "name": "@egovernments/digit-ui-module-dss",
+  "name": "@upyog/digit-ui-module-dss",
   "version": "1.7.0-beta.2",
   "license": "MIT",
   "description": "Digit Dashboard Module",
@@ -19,7 +19,7 @@
     "react-router-dom": "5.3.0"
   },
   "dependencies": {
-    "@egovernments/digit-ui-react-components": "^1.7.0-beta.2",
+    "@upyog/digit-ui-react-components": "^1.7.0-beta.2",
     "lodash": "4.17.21",
     "react": "17.0.2",
     "react-date-range": "1.3.0",
