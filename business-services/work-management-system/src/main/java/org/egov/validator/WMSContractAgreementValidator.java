@@ -148,25 +148,34 @@ public class WMSContractAgreementValidator {
 	                throw new CustomException("EG_WMS_APP_ERR", "EmployeeName is mandatory for creating Contract Agreement applications");
 	        }));
 	    	
-	    	wmsContractAgreementRequest.getWmsContractAgreementApplications().forEach(application -> {
-	            if(ObjectUtils.isEmpty(application.getContractors().getVendorType()))
+	    	
+	    	wmsContractAgreementRequest.getWmsContractAgreementApplications().forEach(application -> 
+            application.getContractors().forEach(cont->{if(ObjectUtils.isEmpty(
+            		cont.getVendorType()))
 	                throw new CustomException("EG_WMS_APP_ERR", "VendorType is mandatory for creating Contract Agreement applications");
-	        });
+	        }));
 	    	
-	    	wmsContractAgreementRequest.getWmsContractAgreementApplications().forEach(application -> {
-	            if(ObjectUtils.isEmpty(application.getContractors().getVendorName()))
+	    	wmsContractAgreementRequest.getWmsContractAgreementApplications().forEach(application -> 
+            application.getContractors().forEach(cont->{if(ObjectUtils.isEmpty(
+            		cont.getVendorName()))
 	                throw new CustomException("EG_WMS_APP_ERR", "VendorName is mandatory for creating Contract Agreement applications");
-	        });
+	        }));
 	    	
-	    	wmsContractAgreementRequest.getWmsContractAgreementApplications().forEach(application -> {
-	            if(ObjectUtils.isEmpty(application.getContractors().getRepresentedBy()))
+	    	
+	    	wmsContractAgreementRequest.getWmsContractAgreementApplications().forEach(application -> 
+            application.getContractors().forEach(cont->{if(ObjectUtils.isEmpty(
+            		cont.getRepresentedBy()))
 	                throw new CustomException("EG_WMS_APP_ERR", "RepresentedBy is mandatory for creating Contract Agreement applications");
-	        });
+	        }));
 	    	
-	    	wmsContractAgreementRequest.getWmsContractAgreementApplications().forEach(application -> {
-	            if(ObjectUtils.isEmpty(application.getContractors().getPrimaryParty()))
+	    	wmsContractAgreementRequest.getWmsContractAgreementApplications().forEach(application -> 
+            application.getContractors().forEach(cont->{if(ObjectUtils.isEmpty(
+            		cont.getPrimaryParty()))
 	                throw new CustomException("EG_WMS_APP_ERR", "PrimaryParty is mandatory for creating Contract Agreement applications");
-	        });
+	        }));
+	    	
+	    	
+	    	
 	    }
 
 		public List<WMSContractAgreementApplication> validateApplicationUpdateRequest(

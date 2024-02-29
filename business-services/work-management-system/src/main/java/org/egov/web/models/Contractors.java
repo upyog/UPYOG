@@ -15,6 +15,13 @@ import lombok.Setter;
 @Builder
 public class Contractors {
 	
+	
+	@JsonProperty("agreement_no") 
+	private String agreementNo=null;
+	
+	@JsonProperty("con_id") 
+	private String conId=null;
+	
 	@JsonProperty("vendor_type")
 	private String vendorType=null;
 	@JsonProperty("vendor_name")

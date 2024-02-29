@@ -14,6 +14,7 @@ import org.egov.util.IdgenUtil;
 import org.egov.web.models.AgreementDocuments;
 import org.egov.web.models.AgreementInfo;
 import org.egov.web.models.AuditDetails;
+import org.egov.web.models.Contractors;
 import org.egov.web.models.Party1Details;
 import org.egov.web.models.Party2Witness;
 
@@ -144,6 +145,16 @@ public class WMSContractAgreementApplicationEnrichment {
        pw.setPwId(Long.toString(randomNumber));
 	        	 
 	         }
+			 
+			 for (Contractors con: application.getContractors()) {
+	        	 //Long randomNumber=(long) Math.floor(Math.random() * (9999 - 1000 + 1) + 1000);
+				 con.setAgreementNo(application.getAgreementNo());
+				 
+       randomNumber=(long) Math.floor(Math.random() * (9999 - 1000 + 1) + 1000);
+	        	 
+       con.setConId(Long.toString(randomNumber));
+	        	 
+	         }
             
 		//}//for loop
             
@@ -171,6 +182,7 @@ public class WMSContractAgreementApplicationEnrichment {
 				int m=0;
 				int n=0;
 				int o=0;
+				int p=0;
 			 for(k=0;k<application.getAgreementInfo().size();k++) {
 				 int currentIndex = k;
 				 List<AgreementInfo> existingApplicationAgreement = existingApplicationResult.get(0).getAgreementInfo().stream().filter(x -> x.getAgrId().equalsIgnoreCase(application.getAgreementInfo().get(currentIndex).getAgrId())).collect(Collectors.toList());
@@ -264,10 +276,23 @@ public class WMSContractAgreementApplicationEnrichment {
 				 }
 			}
 			
-			existingApplicationResult.get(0).getContractors().setVendorType(application.getContractors().getVendorType());
-			existingApplicationResult.get(0).getContractors().setVendorName(application.getContractors().getVendorName());
-			existingApplicationResult.get(0).getContractors().setRepresentedBy(application.getContractors().getRepresentedBy());
-			existingApplicationResult.get(0).getContractors().setPrimaryParty(application.getContractors().getPrimaryParty());
+			
+			for(p=0;p<application.getContractors().size();p++) {
+				int currentIndex = p;
+				List<Contractors> existingApplicationContractors = existingApplicationResult.get(0).getContractors().stream().filter(x -> x.getConId().equalsIgnoreCase(application.getContractors().get(currentIndex).getConId())).collect(Collectors.toList());
+				
+				//if (!wmsContractAgreementRequest.getWmsContractAgreementApplications().get(0).getParty1Details().stream().anyMatch(x -> x.getUidP1().equalsIgnoreCase(existingApplication.get(0).getParty1Details().get(0).getUidP1()))) {
+				 if(existingApplicationContractors.size() > 0) {
+					 
+					 existingApplicationContractors.get(0).setVendorName(application.getContractors().get(p).getVendorName());
+					 existingApplicationContractors.get(0).setVendorType(application.getContractors().get(p).getVendorType());
+					 existingApplicationContractors.get(0).setRepresentedBy(application.getContractors().get(p).getRepresentedBy());
+					 existingApplicationContractors.get(0).setPrimaryParty(application.getContractors().get(p).getPrimaryParty());
+					 
+			
+			
+				 }
+			}
 			
 			for(n=0;n<application.getAgreementDocuments().size();n++) {
 				int currentIndex = n;

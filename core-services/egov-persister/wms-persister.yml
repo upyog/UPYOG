@@ -944,18 +944,12 @@ serviceMaps:
       isTransaction: true
       queryMaps:
 
-        - query: INSERT INTO contract_agreement (agreement_no,vendor_type,vendor_name,represented_by,primary_party,createdby,lastmodifiedby,createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO contract_agreement (agreement_no,createdby,lastmodifiedby,createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?);
           basePath: WMSContractAgreementApplication.*
           jsonMaps:
             - jsonPath: $.WMSContractAgreementApplication.*.agreement_no
 
-            - jsonPath: $.WMSContractAgreementApplication.*.contractors.vendor_type
             
-            - jsonPath: $.WMSContractAgreementApplication.*.contractors.vendor_name
-            
-            - jsonPath: $.WMSContractAgreementApplication.*.contractors.represented_by
-            
-            - jsonPath: $.WMSContractAgreementApplication.*.contractors.primary_party
             
             
             - jsonPath: $.WMSContractAgreementApplication.*.auditDetails.createdBy
@@ -1083,6 +1077,23 @@ serviceMaps:
             - jsonPath: $.WMSContractAgreementApplication.*.party2Witness.*.address_p2
             
             - jsonPath: $.WMSContractAgreementApplication.*.party2Witness.*.uid_p2
+            
+            
+        - query: INSERT INTO contractors (con_id,agreement_no,vendor_type,vendor_name,represented_by,primary_party) VALUES (?, ?, ?, ?, ?, ?);
+          basePath: WMSContractAgreementApplication.*.contractors.*
+          jsonMaps:
+            - jsonPath: $.WMSContractAgreementApplication.*.contractors.*.con_id
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.contractors.*.agreement_no
+
+            - jsonPath: $.WMSContractAgreementApplication.*.contractors.*.vendor_type
+
+            - jsonPath: $.WMSContractAgreementApplication.*.contractors.*.vendor_name
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.contractors.*.represented_by
+            
+            - jsonPath: $.WMSContractAgreementApplication.*.contractors.*.primary_party
+
 
             
             
@@ -1098,21 +1109,12 @@ serviceMaps:
       isTransaction: true
       queryMaps:
       
-        - query: UPDATE contract_agreement SET vendor_type = ?, vendor_name = ?, represented_by = ?, primary_party = ? WHERE agreement_no = ?;
-          basePath: WMSContractAgreementApplication.*
-          jsonMaps:
-            
-
-            
-            - jsonPath: $.WMSContractAgreementApplication.*.contractors.vendor_type
-            
-            - jsonPath: $.WMSContractAgreementApplication.*.contractors.vendor_name
-            
-            - jsonPath: $.WMSContractAgreementApplication.*.contractors.represented_by
-            
-            - jsonPath: $.WMSContractAgreementApplication.*.contractors.primary_party
-            
-            - jsonPath: $.WMSContractAgreementApplication.*.agreement_no
+#        - query: UPDATE contract_agreement SET  primary_party = ? WHERE agreement_no = ?;
+#          basePath: WMSContractAgreementApplication.*
+#          jsonMaps:
+#            
+#
+#            - jsonPath: $.WMSContractAgreementApplication.*.agreement_no
             
             
             
@@ -1226,6 +1228,21 @@ serviceMaps:
           - jsonPath: $.WMSContractAgreementApplication.*.party2Witness.*.uid_p2
 
           - jsonPath: $.WMSContractAgreementApplication.*.party2Witness.*.pw_id
+          
+          
+        - query: UPDATE contractors SET vendor_type = ?,vendor_name = ?,represented_by = ?,primary_party = ? WHERE con_id = ?;
+          basePath: WMSContractAgreementApplication.*.contractors.*
+          jsonMaps:
+          
+          - jsonPath: $.WMSContractAgreementApplication.*.contractors.*.vendor_type
+          
+          - jsonPath: $.WMSContractAgreementApplication.*.contractors.*.vendor_name
+          
+          - jsonPath: $.WMSContractAgreementApplication.*.contractors.*.represented_by
+
+          - jsonPath: $.WMSContractAgreementApplication.*.contractors.*.primary_party
+          
+          - jsonPath: $.WMSContractAgreementApplication.*.contractors.*.con_id
           
           
           

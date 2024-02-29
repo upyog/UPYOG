@@ -86,7 +86,6 @@ public class WMSContractAgreementApplicationRowMapper implements ResultSetExtrac
     		  wmsContractAgreementApplication = WMSContractAgreementApplication.builder()
     		  .agreementNo(rs.getString("aAgreementNo"))
     		  .auditDetails(auditdetails)
-    		  .contractors(contractors)
     		  .build();
     		  
     		  wmsContractAgreementApplicationMap.put(agreementNo, wmsContractAgreementApplication);
@@ -169,6 +168,17 @@ public class WMSContractAgreementApplicationRowMapper implements ResultSetExtrac
                         .build();
                 
                 wmsContractAgreementApplication.addParty2Witness(party2Witness);
+                
+                Contractors contractors=Contractors.builder()
+                		.conId(rs.getString("aConId"))
+                		.agreementNo(agreementNo)
+                		.vendorType(rs.getString("aVendorType"))
+                        .vendorName(rs.getString("aVendorName"))
+                        .representedBy(rs.getString("aRepresentedBy"))
+                        .primaryParty(rs.getString("aPrimaryParty"))
+                        .build();
+                
+                wmsContractAgreementApplication.addContractors(contractors);
                 
             }//rs
                 
