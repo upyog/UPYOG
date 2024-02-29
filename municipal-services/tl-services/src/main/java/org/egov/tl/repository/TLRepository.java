@@ -205,8 +205,8 @@ public class TLRepository {
         List<Object> preparedStmtList = new ArrayList<>();
         String query = queryBuilder.getTLPlainSearchQuery(criteria, preparedStmtList);
         try {
+            log.info("Tenant ID:: " + criteria.getTenantId());
             query= multiStateInstanceUtil.replaceSchemaPlaceholder(query, criteria.getTenantId());
-            log.info("Tenant ID: " + criteria.getTenantId());
         }
         catch (Exception e){
             throw new CustomException("INVALID_TENANTID","Invalid tenantId: "+criteria.getTenantId());
