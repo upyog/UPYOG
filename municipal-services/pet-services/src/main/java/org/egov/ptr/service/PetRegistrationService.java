@@ -76,12 +76,9 @@ public class PetRegistrationService {
 
 		// Enrich/Upsert user in upon pet registration
 		// userService.callUserService(petRegistrationRequest); need to build the method
-		// when required
 		wfService.updateWorkflowStatus(petRegistrationRequest);
-//		producer.push(config.getEventGenerateTopic(), petRegistrationRequest);
 		producer.push(config.getCreatePtrTopic(), petRegistrationRequest);
 
-		// Return the response back to user
 		return petRegistrationRequest.getPetRegistrationApplications();
 	}
 
@@ -98,15 +95,11 @@ public class PetRegistrationService {
 	}
 
 	public PetRegistrationApplication updatePtrApplication(PetRegistrationRequest petRegistrationRequest) {
-		// Validate whether the application that is being requested for update indeed
-		// exists
 		PetRegistrationApplication existingApplication = validator
 				.validateApplicationExistence(petRegistrationRequest.getPetRegistrationApplications().get(0));
 		existingApplication.setWorkflow(petRegistrationRequest.getPetRegistrationApplications().get(0).getWorkflow());
-		// log.info(existingApplication.toString());
 		petRegistrationRequest.setPetRegistrationApplications(Collections.singletonList(existingApplication));
 
-		// Enrich application upon update
 		enrichmentService.enrichPetApplicationUponUpdate(petRegistrationRequest);
 
 		if (petRegistrationRequest.getPetRegistrationApplications().get(0).getWorkflow().getAction()
@@ -114,7 +107,6 @@ public class PetRegistrationService {
 			demandService.createDemand(petRegistrationRequest);
 		}
 		wfService.updateWorkflowStatus(petRegistrationRequest);
-//		producer.push(config.getEventGenerateTopic(), petRegistrationRequest);
 		producer.push(config.getUpdatePtrTopic(), petRegistrationRequest);
 
 		return petRegistrationRequest.getPetRegistrationApplications().get(0);
