@@ -98,6 +98,7 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
 
     setLoading(false);
   }, [userDetails !== null]);
+  console.log("Details",userDetails)
 
   let validation = {};
   const editScreen = false; // To-do: Deubug and make me dynamic or remove if not needed
@@ -117,19 +118,11 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
   }
 
   const setUserEmailAddress = (value) => {
-    if (userInfo?.userName !== value) {
-      setEmail(value);
-  
-      if (value.length && !(value.includes("@") && value.includes("."))) {
-        setErrors({
-          ...errors,
-          emailAddress: { type: "pattern", message: "CORE_COMMON_PROFILE_EMAIL_INVALID" },
-        });
-      } else {
-        setErrors({ ...errors, emailAddress: null });
-      }
-    } else {
-      setErrors({ ...errors, emailAddress: null });
+    setEmail(value);
+    if(value.length && /*!(value.includes("@") && value.includes("."))*/ !(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(value))){
+      setErrors({...errors, emailAddress: {type: "pattern", message: t("CORE_COMMON_PROFILE_EMAIL_INVALID")}})
+    }else{
+      setErrors({...errors, emailAddress : null})
     }
   }
 
@@ -207,9 +200,9 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
 
       if (email.length && !(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email))) {
         throw JSON.stringify({ type: "error", message: t("CORE_COMMON_PROFILE_EMAIL_INVALID") });
-      }
+      }     
 
-      if (changepassword && (currentPassword.length || newPassword.length || confirmPassword.length)) {
+      if (currentPassword.length || newPassword.length || confirmPassword.length) {
         if (newPassword !== confirmPassword) {
           throw JSON.stringify({ type: "error", message: t("CORE_COMMON_PROFILE_PASSWORD_MISMATCH") });
         }
