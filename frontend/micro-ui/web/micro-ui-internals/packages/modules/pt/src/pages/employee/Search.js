@@ -1,4 +1,4 @@
-import { Header, Localities, Toast } from "@egovernments/digit-ui-react-components";
+import { Header, Localities, Toast } from "@upyog/digit-ui-react-components";
 import PropertyType  from "../../utils/PropertyType";
 import React, { memo, useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";

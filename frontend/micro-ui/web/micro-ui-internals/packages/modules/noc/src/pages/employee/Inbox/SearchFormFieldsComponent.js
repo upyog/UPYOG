@@ -1,5 +1,5 @@
 import React, {Fragment} from "react"
-import { CardLabelError, SearchField, TextInput } from "@egovernments/digit-ui-react-components";
+import { CardLabelError, SearchField, TextInput } from "@upyog/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 
 const SearchFormFieldsComponents = ({registerRef, searchFormState, searchFieldComponents}) => {

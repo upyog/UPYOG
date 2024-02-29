@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, Row, CardHeader, StatusTable } from "@egovernments/digit-ui-react-components";
+import { Card, Row, CardHeader, StatusTable } from "@upyog/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { useParams, useHistory, useRouteMatch } from "react-router-dom";
 const ChallanQRCode = ({ path }) => {

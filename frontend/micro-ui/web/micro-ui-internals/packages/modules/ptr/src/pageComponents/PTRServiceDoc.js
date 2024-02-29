@@ -1,4 +1,4 @@
-import { Card, CardHeader, CardSubHeader, CardText, Loader, SubmitBar } from "@egovernments/digit-ui-react-components";
+import { Card, CardHeader, CardSubHeader, CardText, Loader, SubmitBar } from "@upyog/digit-ui-react-components";
 import React, { useEffect } from "react";
 import { cardBodyStyle, stringReplaceAll } from "../utils";
 //import { map } from "lodash-es";
