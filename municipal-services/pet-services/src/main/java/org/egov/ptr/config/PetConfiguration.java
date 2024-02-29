@@ -88,16 +88,13 @@ public class PetConfiguration {
 	@Value("${notif.email.enabled}")
 	private Boolean isEmailNotificationEnabled;
 
-	// Notif variables
+	@Value("${egov.ptr.businessService}")
+	private String businessService;
 
-	@Value("${egov.notif.commonpay}")
-	private String commonPayLink;
+	// Notif variables
 
 	@Value("${egov.usr.events.download.receipt.link}")
 	private String userEventReceiptDownloadLink;
-
-	@Value("${notification.url}")
-	private String notificationURL;
 
 	// Localization
 	@Value("${egov.localization.host}")
@@ -117,9 +114,6 @@ public class PetConfiguration {
 
 	@Value("${egov.usr.events.create.topic}")
 	private String saveUserEventsTopic;
-
-	@Value("${egov.usr.events.pay.link}")
-	private String payLink;
 
 	@Value("${egov.usr.events.pay.code}")
 	private String payCode;
@@ -167,7 +161,6 @@ public class PetConfiguration {
 	@Value("${egbs.fetchbill.endpoint}")
 	private String egbsFetchBill;
 
-
 	@Value("${egov.localization.statelevel}")
 	private Boolean isLocalizationStateLevel;
 
@@ -188,9 +181,8 @@ public class PetConfiguration {
 
 	@Value("${egov.bill.gen.endpoint}")
 	private String billGenerateEndpoint;
-	
+
 //	@Value("${egov.event.gen.topic}") do not delete
 //	private String eventGenerateTopic;
 
-	
 }

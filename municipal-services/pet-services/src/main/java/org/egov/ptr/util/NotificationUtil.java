@@ -133,8 +133,6 @@ public class NotificationUtil {
     /**
      * Returns the uri for the localization call
      *
-     * @param tenantId
-     *            TenantId of the propertyRequest
      * @return The uri for localization search call
      */
     public StringBuilder getUri(String tenantId, RequestInfo requestInfo, String locale) {
@@ -153,9 +151,6 @@ public class NotificationUtil {
 
     /**
      * Creates sms request for the each owners
-     *
-     * @param message
-     *            The message for the specific tradeLicense
      * @param mobileNumberToOwnerName
      *            Map of mobileNumber to OwnerName
      * @return List of SMSRequest
@@ -241,8 +236,6 @@ public class NotificationUtil {
     /**
      * Creates email request for the each owners
      *
-     * @param message
-     *            The message for the specific tradeLicense
      * @param mobileNumberToEmailId
      *            Map of mobileNumber to emailIds
      * @return List of EmailRequest

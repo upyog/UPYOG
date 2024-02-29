@@ -93,7 +93,7 @@ public class MeterServicesImpl implements MeterService {
 		}
 		if(mr.getStatus()==null) mr.setStatus("Meter Reading entered successfully");
 		}
-		meterReadingOutput.add(meterReadingsList.get(0));
+		meterReadingOutput.add(mr);
 
 		}
 		return meterReadingOutput;
