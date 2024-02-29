@@ -16,6 +16,8 @@ import org.egov.pg.models.BankAccount;
 import org.egov.pg.models.Transaction;
 import org.egov.pg.repository.BankAccountRepository;
 import org.egov.pg.web.models.TransactionRequest;
+import org.egov.pg.web.models.User;
+import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -23,8 +25,11 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-
+import static java.util.Collections.singletonMap;
 import lombok.extern.slf4j.Slf4j;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
 
 @Slf4j
 @Service
@@ -47,8 +52,12 @@ public class EnrichmentService {
         Transaction transaction = transactionRequest.getTransaction();
         RequestInfo requestInfo = transactionRequest.getRequestInfo();
 
-        BankAccount bankAccount = bankAccountRepository.getBankAccountsById(requestInfo, transaction.getTenantId());
-        transaction.setAdditionalFields(singletonMap(TransactionAdditionalFields.BANK_ACCOUNT_NUMBER, bankAccount.getAccountNumber()));
+        BankAccount bankAccount = bankAccountRepository.getBankAccountsById(requestInfo, transaction.getTenantId(), transaction.getBusinessService());
+        String accountWithSeprator = bankAccount.getAccountNumber();
+        String accountNumber=accountWithSeprator;
+        if(accountWithSeprator.contains("/"))
+        accountNumber = accountWithSeprator.substring(accountWithSeprator.lastIndexOf("/")+1);
+        transaction.setAdditionalFields(singletonMap(TransactionAdditionalFields.BANK_ACCOUNT_NUMBER, accountNumber));
 
         // Generate ID from ID Gen service and assign to txn object
         String txnId = idGenService.generateTxnId(transactionRequest);
@@ -61,8 +70,7 @@ public class EnrichmentService {
             transaction.setAdditionalDetails(objectMapper.createObjectNode());
             ((ObjectNode) transaction.getAdditionalDetails()).set("taxAndPayments",
                     objectMapper.valueToTree(transaction.getTaxAndPayments()));
-        }
-        else{
+      }  else{
             Map<String, Object> additionDetailsMap = objectMapper.convertValue(transaction.getAdditionalDetails(), Map.class);
             additionDetailsMap.put("taxAndPayments",(Object) transaction.getTaxAndPayments());
             transaction.setAdditionalDetails(objectMapper.convertValue(additionDetailsMap,Object.class));
@@ -105,7 +113,62 @@ public class EnrichmentService {
         newTxn.setConsumerCode(currentTxnStatus.getConsumerCode());
         newTxn.setTxnStatusMsg(currentTxnStatus.getTxnStatusMsg());
         newTxn.setReceipt(currentTxnStatus.getReceipt());
+        newTxn.setBusinessService(currentTxnStatus.getBusinessService());
 
     }
 
+  
+    /**
+	 * Converts startDay to epoch
+	 * 
+	 * @param startDay
+	 *            StartDay of applicable
+	 * @return Returns start day in milli seconds
+	 */
+	private Long getStartDayInMillis(String startDay) {
+		try {
+			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+			Date date = sdf.parse(startDay);
+			return date.getTime();
+		} catch (ParseException e) {
+			throw new CustomException("INVALID_START_DAY", "The startDate of the penalty cannot be parsed");
+		}
+    }
+
+    void enrichUpdateTransactionForCCAvanue(RequestInfo requestInfo2, List<String> keyValueList, Transaction newTxn, Transaction currentTxnStatus) {
+        RequestInfo requestInfo = requestInfo2;
+        //Transaction currentTxnStatus = keyValueList.getTransaction();
+      //;
+
+        String transactionStatus= Arrays.stream(keyValueList.get(3).split("=")).skip(1).findFirst().orElse(null);
+        AuditDetails auditDetails = AuditDetails.builder()
+                .createdBy(currentTxnStatus.getAuditDetails().getCreatedBy())
+                .createdTime(getStartDayInMillis(Arrays.stream(keyValueList.get(40).split("=")).skip(1).findFirst().orElse(null)))
+                .lastModifiedBy(currentTxnStatus.getAuditDetails().getLastModifiedBy())
+                .lastModifiedTime(System.currentTimeMillis()).build();
+        newTxn.setAuditDetails(auditDetails);
+
+        newTxn.setTxnId(Arrays.stream(keyValueList.get(0).split("=")).skip(1).findFirst().orElse(null));
+        newTxn.setGateway(currentTxnStatus.getGateway());
+        newTxn.setBillId(currentTxnStatus.getBillId());
+        newTxn.setProductInfo(currentTxnStatus.getProductInfo());
+        newTxn.setTenantId(currentTxnStatus.getTenantId());
+        newTxn.setUser(currentTxnStatus.getUser());
+        newTxn.setAdditionalDetails(currentTxnStatus.getAdditionalDetails());
+        newTxn.setTaxAndPayments(currentTxnStatus.getTaxAndPayments());
+        newTxn.setConsumerCode(currentTxnStatus.getConsumerCode());
+        newTxn.setTxnStatusMsg(Arrays.stream(keyValueList.get(8).split("=")).skip(1).findFirst().orElse(null));
+        //newTxn.setReceipt(currentTxnStatus.getReceipt());
+        newTxn.setBusinessService(currentTxnStatus.getBusinessService());
+        newTxn.setGatewayPaymentMode(Arrays.stream(keyValueList.get(5).split("=")).skip(1).findFirst().orElse(null));
+        newTxn.setGatewayStatusMsg(Arrays.stream(keyValueList.get(8).split("=")).skip(1).findFirst().orElse(null));
+        newTxn.setGatewayTxnId(Arrays.stream(keyValueList.get(0).split("=")).skip(1).findFirst().orElse(null));
+        newTxn.setReceipt(currentTxnStatus.getReceipt());
+        if(transactionStatus.contentEquals("Success")) {
+        newTxn.setTxnStatus(Transaction.TxnStatusEnum.SUCCESS);
+        }
+    }
+
+
+	
 }
