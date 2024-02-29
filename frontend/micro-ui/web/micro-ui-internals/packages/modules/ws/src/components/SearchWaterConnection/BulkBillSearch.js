@@ -11,10 +11,12 @@ import * as XLSX from "xlsx";
 const BulkBillSearch = ({ tenantId, onSubmit, data, count, resultOk, businessService, isLoading }) => {
   const [showToast, setShowToast] = useState(null);
   const [showModal, setModalReject] = useState(null);
+  const [showModalResult, setShowModalResult] = useState(null)
   const [uploadedFile, setUploadedFile] = useState(() => null);
   const [file, setFile] = useState("")
   const [meterReadingData, setMeterReadingData] = useState([])
   const [rejectedReading, setRejectedReading] = useState([])
+  const [bulkReadingStatus, setBulkReadingStatus] = useState([])
   const [isLoadingBulkMeterReading, setIsLoadingBulkMeterReading] =useState(false)
   function selectfile(e) {
     e.preventDefault()
@@ -92,11 +94,14 @@ const BulkBillSearch = ({ tenantId, onSubmit, data, count, resultOk, businessSer
         },
         onSuccess: async (data, variables) => {
           setIsLoadingBulkMeterReading(false)
+          console.log("data",data)
+          setShowModalResult(true)
+          setBulkReadingStatus(data.meterReadings)
           setShowToast({ key: "success", label: "WS_METER_READING_ADDED_SUCCESFULLY" });
           setTimeout(closeToast, 3000);
-          setTimeout(() => {
-            window.location.reload();
-          }, 5000);
+          // setTimeout(() => {
+          //   window.location.reload();
+          // }, 5000);
         },
       });
     }
@@ -115,6 +120,9 @@ const BulkBillSearch = ({ tenantId, onSubmit, data, count, resultOk, businessSer
   };
   const closeModal = () => {
     setModalReject(false)
+  }
+  const closeModalStatus = () => {
+    setShowModalResult(false)
   }
   const setModal = () => {
     setModalReject(false)
@@ -278,6 +286,86 @@ const BulkBillSearch = ({ tenantId, onSubmit, data, count, resultOk, businessSer
 
     ],
   );
+  const columns2 = useMemo(
+    () => [
+
+      {
+        Header: t("BILLING_CYCLE"),
+        disableSortBy: true,
+        Cell: ({ row }) => {
+          return GetCell(row.original?.["billingPeriod"]);
+        },
+      },
+      {
+        Header: t("WS_COMMON_TABLE_COL_CONSUMER_NO_LABEL"),
+        disableSortBy: true,
+        accessor: "connectionNo",
+        Cell: ({ row }) => {
+          return (
+            <div>
+              {row.original["connectionNo"] ? (
+                <span>
+                  {row.original["connectionNo"] || "NA"}
+
+                </span>
+              ) : (
+                <span>{t("NA")}</span>
+              )}
+            </div>
+          );
+        },
+      },
+      {
+        Header: t("LAST_READING"),
+        disableSortBy: true,
+        Cell: ({ row }) => {
+          return GetCell(row.original?.["lastReading"]);
+        },
+
+      },
+      {
+        Header: t("METER_READING_DATE"),
+        disableSortBy: true,
+        Cell: ({ row }) => {
+          return GetCell(convertEpochToDate(row.original?.["lastReadingDate"]));
+        },
+
+      },
+      {
+        Header: t("METER_STATUS"),
+        disableSortBy: true,
+        Cell: ({ row }) => {
+          return GetCell(row.original?.["meterStatus"]);
+        },
+
+      },
+      {
+        Header: t("CURRECT_READING"),
+        disableSortBy: true,
+        Cell: ({ row }) => {
+          return GetCell(row.original?.["currentReading"]);
+        },
+
+      },
+      {
+        Header: t("CURRECT_READING_DATE"),
+        disableSortBy: true,
+        Cell: ({ row }) => {
+          return GetCell(convertEpochToDate(row.original?.["currentReadingDate"]));
+        },
+
+      },
+      {
+        Header: t("CURRECT_STATUS"),
+        disableSortBy: true,
+        Cell: ({ row }) => {
+          return GetCell(row.original?.["status"]);
+        },
+
+      }
+
+    ],
+  );
   return (
     <>
       <Header styles={{ fontSize: "32px" }}>
@@ -369,6 +457,48 @@ const BulkBillSearch = ({ tenantId, onSubmit, data, count, resultOk, businessSer
                 data={rejectedReading}
                 totalRecords={rejectedReading?.length}
                 columns={columns}
+                getCellProps={(cellInfo) => {
+                  return {
+                    style: {
+                      minWidth: cellInfo.column.Header === t("ES_INBOX_APPLICATION_NO") ? "240px" : "",
+                      padding: "20px 18px",
+                      fontSize: "16px",
+                    },
+                  };
+                }}
+                onPageSizeChange={onPageSizeChange}
+                currentPage={getValues("offset") / getValues("limit")}
+                onNextPage={nextPage}
+                onPrevPage={previousPage}
+                pageSizeLimit={getValues("limit")}
+                onSort={onSort}
+                disableSort={true}
+                sortParams={[{ id: getValues("sortBy"), desc: getValues("sortOrder") === "DESC" ? true : false }]}
+              />
+              
+
+            </Card>
+          </div>
+        </Modal>}
+        {showModalResult && <Modal
+          headerBarMain={<Heading label={t("WS_BULK_READING_STATUS")} />}
+          headerBarEnd={<CloseBtn onClick={closeModalStatus} />}
+          formId="modal-action"
+          popupStyles={{ width: "auto" }}
+        >  <div style={{ width: "100%" }}>
+
+            <Card>
+            <div><CardText>{t("Bulk Meter Reading Status")}</CardText></div>
+            <div className="sideContent" style={{ float: "right", padding: "10px 30px" }}>
+            <span className="table-search-wrapper" style={{ cursor: "pointer" }}>
+              <DownloadBtn className="mrlg cursorPointer" onClick={(e) => handleExcelDownload(e, bulkReadingStatus)} />
+            </span>
+          </div>
+              <Table
+                t={t}
+                data={bulkReadingStatus}
+                totalRecords={bulkReadingStatus?.length}
+                columns={columns2}
                 getCellProps={(cellInfo) => {
                   return {
                     style: {
