@@ -48,12 +48,12 @@ const getPGRcknowledgementData = async (complaintDetails,tenantInfo, t) => {
         name: `${t(tenantInfo?.i18nKey)} ${ulbCamel(t(`ULBGRADE_${tenantInfo?.city?.ulbGrade.toUpperCase().replace(" ", "_").replace(".", "_")}`))}`,
         email: tenantInfo?.emailId,
         phoneNumber: tenantInfo?.contactNumber,
-        heading: t("PGR_ACKNOWLEDGEMENT"),
+        heading: t("NEW_GRIEVANCE_APPLICATION"),
+        applicationNumber:complaintDetails?.service?.serviceRequestId,
         details: [
           {
             title: t("CS_TITLE_APPLICATION_DETAILS"),
             values: [
-              { title: t("PGR_APPLICATION_NO"), value: complaintDetails?.service?.serviceRequestId},
               {
                 title: t("CS_COMPLAINT_FILED_DATE"),
                 value: Digit.DateUtils.ConvertTimestampToDate(complaintDetails?.audit?.details?.createdTime, "dd/MM/yyyy"),
@@ -72,7 +72,7 @@ const getPGRcknowledgementData = async (complaintDetails,tenantInfo, t) => {
               },
               {
                 title: t("CS_COMPLAINT_ADDITIONAL_DETAILS"),
-                value: complaintDetails?.details?.CS_COMPLAINT_ADDTIONAL_DETAILS,
+                value: complaintDetails?.details?.CS_COMPLAINT_ADDTIONAL_DETAILS||"NA",
               },
             ],
           },
