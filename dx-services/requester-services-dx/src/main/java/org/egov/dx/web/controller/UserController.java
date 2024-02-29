@@ -92,6 +92,16 @@ public class UserController {
 		return 	new ResponseEntity<>(authResponse,HttpStatus.OK);
      }	
 	
+	@RequestMapping(value = {"/authorization/url/citizen"}, method = RequestMethod.POST )
+    public ResponseEntity<AuthResponse> searchForcitizen(@Valid @RequestBody RequestInfo requestInfo,@RequestParam("module") String module) throws NoSuchAlgorithmException
+    { 
+		AuthResponse authResponse=new AuthResponse();
+	    URI redirectionURL=userService.getRedirectionURL(module,authResponse);
+	    authResponse.setRedirectURL(redirectionURL.toString());
+		log.info("Redirection URL"+redirectionURL.toString());
+		return 	new ResponseEntity<>(authResponse,HttpStatus.OK);
+     }	
+	
 	
 	@RequestMapping(value = "/token", method = RequestMethod.POST)
     public ResponseEntity<TokenResponse>  getToken(@Valid @RequestBody TokenRequest tokenRequest)    { 
