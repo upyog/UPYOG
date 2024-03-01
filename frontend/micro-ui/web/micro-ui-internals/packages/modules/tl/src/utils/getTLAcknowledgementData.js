@@ -31,8 +31,8 @@ const getOwnerDetails = (application, t) => {
         { title: t("TL_NEW_OWNER_DETAILS_EMAIL_LABEL"), value: owner?.emailId || t("CS_NA") },
         { title: t("TL_OWNER_SPECIAL_CATEGORY"), value: owner?.ownerType ? t(`COMMON_MASTERS_OWNERTYPE_${owner?.ownerType}`) : t("CS_NA") },
         { title: t("TL_NEW_OWNER_DETAILS_ADDR_LABEL"), value: owner?.permanentAddress || t("CS_NA") },
-      ];
-      values.push(...indOwner);
+              ];
+     values.push(...indOwner);
     });
     return {
       title: t("TL_OWNERSHIP_DETAILS_HEADER"),
@@ -76,7 +76,7 @@ const getAccessoriesDetails = (application, t) => {
   });
 
   return {
-    title: "",
+    title: "ACCESSORIES_DETAILS",
     values: values,
   };
 };
@@ -92,22 +92,19 @@ const getTradeUnitsDetails = (application, t) => {
       { title: t("TL_NEW_TRADE_SUB_TYPE_LABEL"), value: tradeSubType ? t(`TRADELICENSE_TRADETYPE_${tradeSubType}`) : t("CS_NA") },
       { title: t("TL_NEW_TRADE_DETAILS_UOM_UOM_PLACEHOLDER"), value: unit?.uom || t("CS_NA") },
       { title: t("TL_NEW_TRADE_DETAILS_UOM_VALUE_LABEL"), value: unit?.uomValue || t("CS_NA") },
-      { title: "", value: ""},
-      { title: "", value: ""},
-      { title: "", value: ""}
     ];
     values.push(...value);
   });
 
   return {
-    title: "",
+    title: "TRADE_UNIT_DETAILS",
     values: values,
   };
 };
 
 const getAddressDetails = (application, t) => {
   return {
-    title: "",
+    title: "PROPERTY_DETAILS",
     values: [
       { title: t("TL_PROPERTY_ID"), value: application?.tradeLicenseDetail?.additionalDetail?.propertyId || t("CS_NA") },
       { title: t("CORE_COMMON_PINCODE"), value: application?.tradeLicenseDetail?.address?.pincode || t("CS_NA") },
@@ -130,8 +127,10 @@ const getPTAcknowledgementData = async (application, tenantInfo, t) => {
     tenantId: tenantInfo?.code,
     title: `${t(tenantInfo?.i18nKey)} ${ulbCamel(t(`ULBGRADE_${tenantInfo?.city?.ulbGrade.toUpperCase().replace(" ", "_").replace(".", "_")}`))}`,
     name: `${t(tenantInfo?.i18nKey)} ${ulbCamel(t(`ULBGRADE_${tenantInfo?.city?.ulbGrade.toUpperCase().replace(" ", "_").replace(".", "_")}`))}`,
-    email: "",
-    phoneNumber: "",
+    email: tenantInfo?.emailId,
+    phoneNumber: tenantInfo?.contactNumber,
+    heading:t("NEW_TRADE_LICENSE_APPLICATION"),
+    applicationNumber:application?.applicationNumber,
     details: [
       // {
       //   title: t("NOC_TASK_DETAILS_HEADER"),

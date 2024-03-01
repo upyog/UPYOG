@@ -45,7 +45,7 @@ const getOwner = (application, t, customTitle) => {
     let values = [];
     owners.map((owner) => {
       let doc = [
-        { title: t("PT_OWNERSHIP_INFO_NAME"), value: owner?.name || t("CS_NA") },
+                { title: t("PT_OWNERSHIP_INFO_NAME"), value: owner?.name || t("CS_NA") },
         { title: t("PT_OWNERSHIP_INFO_MOBILE_NO"), value: owner?.mobileNumber || t("CS_NA") },
         { title: t("PT_SEARCHPROPERTY_TABEL_GUARDIANNAME"), value: owner?.fatherOrHusbandName || t("CS_NA") },
         { title: t("PT_OWNERSHIP_INFO_GENDER"), value: t(owner?.gender) || t("CS_NA") },
@@ -54,13 +54,13 @@ const getOwner = (application, t, customTitle) => {
         { title: t("PT_OWNERSHIP_INFO_USER_CATEGORY"), value: t(getPropertyOwnerTypeLocale(owner?.ownerType)) || t("CS_NA") },
         { title: t("PT_OWNERSHIP_INFO_CORR_ADDR"), value: owner?.permanentAddress || t("CS_NA") },
       ];
-      values.push(...doc);
+         values.push(...doc);
     });
     return {
       title: t(customTitle || "PT_OWNERSHIP_INFO_SUB_HEADER"),
       values: values,
     };
-  } else if (application?.ownershipCategory.includes("INSTITUTIONAL")) {
+    } else if (application?.ownershipCategory.includes("INSTITUTIONAL")) {
     return {
       title: t("PT_OWNERSHIP_INFO_SUB_HEADER"),
       values: [
@@ -281,12 +281,12 @@ const getPTAcknowledgementData = async (application, tenantInfo, t) => {
     name: `${t(tenantInfo?.i18nKey)} ${ulbCamel(t(`ULBGRADE_${tenantInfo?.city?.ulbGrade.toUpperCase().replace(" ", "_").replace(".", "_")}`))}`,
     email: tenantInfo?.emailId,
     phoneNumber: tenantInfo?.contactNumber,
-    heading: t("PT_ACKNOWLEDGEMENT"),
+    heading: t("NEW_PROPERTY_REGISTRATION"),
+    applicationNumber:application?.acknowldgementNumber,
     details: [
       {
         title: t("CS_TITLE_APPLICATION_DETAILS"),
         values: [
-          { title: t("PT_APPLICATION_NO"), value: application?.acknowldgementNumber },
           { title: t("PT_PROPERRTYID"), value: application?.propertyId },
           {
             title: t("CS_APPLICATION_DETAILS_APPLICATION_DATE"),

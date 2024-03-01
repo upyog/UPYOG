@@ -11,7 +11,14 @@
     "packages/modules/core",
     "packages/modules/commonPt",
     "packages/modules/dss",
-    "packages/modules/pt"
+    "packages/modules/pt",
+    "packages/modules/obps",
+    "packages/modules/fsm",
+    "packages/modules/pgr",
+    "packages/modules/ws",
+    "packages/modules/tl",
+    "packages/modules/mCollect"
+    
 
   ],
   "author": "Abhinav Kushwaha <abhinav.kushwaha@egovernments.org>",
