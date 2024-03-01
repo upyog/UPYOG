@@ -12,7 +12,6 @@
     "packages/modules/pgr",
     "packages/modules/dss",
     "packages/modules/commonPt",
-    "packages/modules/pt",
     "packages/modules/mCollect",
     "packages/modules/obps"
   ],
@@ -23,7 +22,7 @@
     "node": ">=14"
   },
   "scripts": {
-    "start": "SKIP_PREFLIGHT_CHECK=true run-s build start:dev",
+    "start": "run-s build start:dev",
     "sprint": "SKIP_PREFLIGHT_CHECK=true run-s start:script",
     "start:dev": "run-p dev:**",
     "start:script": "./scripts/create.sh",
@@ -53,7 +52,7 @@
     "build:libraries": "cd packages/libraries && yarn build",
     "build:components": "cd packages/react-components && yarn build",
     "build:common": "cd packages/modules/common && yarn build",
-    "build:pt": "cd packages/modules/pt && yarn build",
+    "buildD:pt": "cd packages/modules/pt && yarn build",
     "build:commonPt": "cd packages/modules/commonPt && yarn build",
     "build:core": "cd packages/modules/core && yarn build",
     "build:pgr": "cd packages/modules/pgr && yarn build",
