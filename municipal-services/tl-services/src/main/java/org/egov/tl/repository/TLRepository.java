@@ -212,7 +212,7 @@ public class TLRepository {
             throw new CustomException("INVALID_TENANTID","Invalid tenantId: "+criteria.getTenantId());
         }
         log.info("Query: " + query);
-        log.info("preparedStmtList:",preparedStmtList);
+        log.info("preparedStmtList: "+preparedStmtList);
         List<TradeLicense> licenses =  jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapper);
         sortChildObjectsById(licenses);
         return licenses;
