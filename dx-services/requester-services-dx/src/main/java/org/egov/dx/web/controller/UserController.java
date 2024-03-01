@@ -113,6 +113,16 @@ public class UserController {
 		 return new ResponseEntity<>(tokenResponse,HttpStatus.OK);
 	}
 	
+	@RequestMapping(value = "/token/citizen", method = RequestMethod.POST)
+    public ResponseEntity<TokenResponse>  getTokenCitizen(@Valid @RequestBody TokenRequest tokenRequest)    { 
+		
+		TokenRes tokenRes=userService.getToken(tokenRequest.getTokenReq());
+		ResponseInfo responseInfo=ResponseInfoFactory.createResponseInfoFromRequestInfo(tokenRequest.getRequestInfo(), null);
+		TokenResponse tokenResponse=TokenResponse.builder().responseInfo(responseInfo).tokenRes(tokenRes).build();
+
+		 return new ResponseEntity<>(tokenResponse,HttpStatus.OK);
+	}
+	
 	
 	
 	@RequestMapping(value = "/details", method = RequestMethod.POST)
