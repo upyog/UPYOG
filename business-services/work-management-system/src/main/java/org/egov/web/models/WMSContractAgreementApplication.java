@@ -29,7 +29,7 @@ public class WMSContractAgreementApplication {
 	 
 	
 	@JsonProperty("agreementInfo")
-	//private AgreementInfo agreementInfo = null;
+	
 	
 	  @Valid 
 	  private List<AgreementInfo> agreementInfo = null;

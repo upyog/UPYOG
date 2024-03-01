@@ -56,32 +56,35 @@ public class WMSContractAgreementApplicationRowMapper implements ResultSetExtrac
             
             
             
-            TermsAndConditions termsAndConditions = TermsAndConditions.builder()
-                    .srNo(rs.getInt("aSrNo"))
-                    .termsAndConditions(rs.getString("aTermsAndConditions"))
-                    .build();
-            
+			/*
+			 * TermsAndConditions termsAndConditions = TermsAndConditions.builder()
+			 * .srNo(rs.getInt("aSrNo"))
+			 * .termsAndConditions(rs.getString("aTermsAndConditions")) .build();
+			 */
             //Party2Details party2Details = Party2Details.builder()
                     
                     
             
-            Contractors contractors=Contractors.builder()
-            		.vendorType(rs.getString("aVendorType"))
-                    .vendorName(rs.getString("aVendorName"))
-                    .representedBy(rs.getString("aRepresentedBy"))
-                    .primaryParty(rs.getString("aPrimaryParty"))
-                    .build();
+			/*
+			 * Contractors contractors=Contractors.builder()
+			 * .vendorType(rs.getString("aVendorType"))
+			 * .vendorName(rs.getString("aVendorName"))
+			 * .representedBy(rs.getString("aRepresentedBy"))
+			 * .primaryParty(rs.getString("aPrimaryParty")) .build();
+			 */
             
-            Party2Witness party2Witness=Party2Witness.builder()
-            		.witnessNameP2(rs.getString("aWitnessNameP2"))
-                    .addressP2(rs.getString("aAddressP2"))
-                    .uidP2(rs.getString("aUidP2"))
-                    .build();
+			/*
+			 * Party2Witness party2Witness=Party2Witness.builder()
+			 * .witnessNameP2(rs.getString("aWitnessNameP2"))
+			 * .addressP2(rs.getString("aAddressP2")) .uidP2(rs.getString("aUidP2"))
+			 * .build();
+			 */
             
-            AgreementDocuments agreementDocuments = AgreementDocuments.builder()
-                    .documentDescription(rs.getString("aDocumentDescription"))
-                    .uploadDocument(rs.getString("aUploadDocument"))
-                    .build();
+			/*
+			 * AgreementDocuments agreementDocuments = AgreementDocuments.builder()
+			 * .documentDescription(rs.getString("aDocumentDescription"))
+			 * .uploadDocument(rs.getString("aUploadDocument")) .build();
+			 */
     		
     		  wmsContractAgreementApplication = WMSContractAgreementApplication.builder()
     		  .agreementNo(rs.getString("aAgreementNo"))

@@ -4,11 +4,15 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.egov.repository.WMSWorkRepository;
 import org.egov.util.IdgenUtil;
+import org.egov.web.models.AgreementInfo;
 import org.egov.web.models.AuditDetails;
+import org.egov.web.models.PreviousRunningBillInfo;
 import org.egov.web.models.ScheduleOfRateApplication;
+import org.egov.web.models.WMSContractAgreementApplication;
 import org.egov.web.models.WMSContractorApplication;
 import org.egov.web.models.WMSContractorRequest;
 import org.egov.web.models.WMSRunningAccountFinalBillApplication;
@@ -69,38 +73,67 @@ public class WMSRunningAccountFinalBillApplicationEnrichment {
 
 			// Enrich address UUID
 			// application.getAddress().setId(UUID.randomUUID().toString());
+			
+			for (PreviousRunningBillInfo bill : application.getPreviousRunningBillInfo()) {
+	        	 //Long randomNumber=(long) Math.floor(Math.random() * (9999 - 1000 + 1) + 1000);
+				bill.setRunningAccountId(application.getRunningAccountId());
+	        	 
+	        	 randomNumber=(long) Math.floor(Math.random() * (9999 - 1000 + 1) + 1000);
+	        	 
+	        	 bill.setPrbiId(Long.toString(randomNumber));
+	        	 
+	         }
+			
+			
 		}
 	}
+
 
 	public void enrichRunningAccountFinalBillApplicationUpdate(WMSRunningAccountFinalBillRequest wmsRunningAccountFinalBillRequest, List<WMSRunningAccountFinalBillApplication> existingApplication) {
 		// Enrich lastModifiedTime and lastModifiedBy in case of update
 		for (WMSRunningAccountFinalBillApplication application : wmsRunningAccountFinalBillRequest.getWmsRunningAccountFinalBillApplications()) {
-			existingApplication.get(0).setProjectName(application.getProjectName());
-			existingApplication.get(0).setWorkName(application.getWorkName());
-			existingApplication.get(0).setMbNo(application.getMbNo());
-			existingApplication.get(0).setMbDate(application.getMbDate());
-			existingApplication.get(0).setMbAmount(application.getMbAmount());
-			existingApplication.get(0).setEstimatedCost(application.getEstimatedCost());
-			existingApplication.get(0).setTenderType(application.getTenderType());
-			existingApplication.get(0).setValue(application.getValue());
-			existingApplication.get(0).setPercentageType(application.getPercentageType());
-			existingApplication.get(0).setAwardAmount(application.getAwardAmount());
-			existingApplication.get(0).setBillDate(application.getBillDate());
-			existingApplication.get(0).setBillNo(application.getBillNo());
-			existingApplication.get(0).setBillAmount(application.getBillAmount());
-			existingApplication.get(0).setDeductionAmount(application.getDeductionAmount());
-			existingApplication.get(0).setRemark(application.getRemark());
-			existingApplication.get(0).setSrNo(application.getSrNo());
-			existingApplication.get(0).setDeductionDescription(application.getDeductionDescription());
-			existingApplication.get(0).setAdditionDeduction(application.getAdditionDeduction());
-			existingApplication.get(0).setCalculationMethod(application.getCalculationMethod());
-			existingApplication.get(0).setPercentage(application.getPercentage());
-			existingApplication.get(0).setPercentageValue(application.getPercentageValue());
-			existingApplication.get(0).setTaxAmount(application.getTaxAmount());
-			existingApplication.get(0).setTaxCategory(application.getTaxCategory());
+			 List<WMSRunningAccountFinalBillApplication> existingApplicationResult = existingApplication.stream().filter(x -> x.getRunningAccountId().equalsIgnoreCase(application.getRunningAccountId())).collect(Collectors.toList());
+				
+			if(existingApplicationResult.size() > 0) {
+				int k=0;
+				//int j=0;
+				//int l=0;
+				//int m=0;
+				//int n=0;
+				//int o=0;
+				//int p=0;
+			 for(k=0;k<application.getPreviousRunningBillInfo().size();k++) {
+				 int currentIndex = k;
+				 List<PreviousRunningBillInfo> existingApplicationBill = existingApplicationResult.get(0).getPreviousRunningBillInfo().stream().filter(x -> x.getPrbiId().equalsIgnoreCase(application.getPreviousRunningBillInfo().get(currentIndex).getPrbiId())).collect(Collectors.toList());
+				
+				//if (!application.getAgreementInfo().stream().anyMatch(x -> x.getAgreementName().equalsIgnoreCase(existingApplication.get(0).getAgreementInfo().get(i).getAgreementName()))) {
+				 if(existingApplicationBill.size() > 0) {
+					 existingApplicationBill.get(0).setRunningAccountBillDate(application.getPreviousRunningBillInfo().get(k).getRunningAccountBillDate());
+					 existingApplicationBill.get(0).setRunningAccountBillNo(application.getPreviousRunningBillInfo().get(k).getRunningAccountBillNo());
+					 existingApplicationBill.get(0).setRunningAccountBillAmount(application.getPreviousRunningBillInfo().get(k).getRunningAccountBillAmount());
+				
+					 existingApplicationBill.get(0).setTaxAmount(application.getPreviousRunningBillInfo().get(k).getTaxAmount());
+					 existingApplicationBill.get(0).setRemark(application.getPreviousRunningBillInfo().get(k).getRemark());
+					 
+				
+				}
+			}
+			 	
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
 //			application.setEndDate(date);
 			// application.getAuditDetails().setLastModifiedBy(birthRegistrationRequest.getRequestInfo().getUserInfo().getUuid());
 		}
 	}
 
 }
+}
+	

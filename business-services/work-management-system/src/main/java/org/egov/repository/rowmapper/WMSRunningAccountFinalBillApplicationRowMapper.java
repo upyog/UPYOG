@@ -8,8 +8,17 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.egov.web.models.AgreementDocuments;
+import org.egov.web.models.AgreementInfo;
 import org.egov.web.models.AuditDetails;
+import org.egov.web.models.Contractors;
+import org.egov.web.models.Party1Details;
+import org.egov.web.models.Party2Witness;
+import org.egov.web.models.PreviousRunningBillInfo;
+import org.egov.web.models.SDPGBGDetails;
 import org.egov.web.models.ScheduleOfRateApplication;
+import org.egov.web.models.TermsAndConditions;
+import org.egov.web.models.WMSContractAgreementApplication;
 import org.egov.web.models.WMSContractorApplication;
 import org.egov.web.models.WMSRunningAccountFinalBillApplication;
 import org.egov.web.models.WMSWorkApplication;
@@ -23,54 +32,89 @@ public class WMSRunningAccountFinalBillApplicationRowMapper implements ResultSet
         Map<String,WMSRunningAccountFinalBillApplication> wmsRunningAccountFinalBillApplicationMap = new LinkedHashMap<>();
 
         while (rs.next()){
-            String runningAccountId = rs.getString("bRunningAccountId");
-            WMSRunningAccountFinalBillApplication wmsRunningAccountFinalBillApplication = wmsRunningAccountFinalBillApplicationMap.get(runningAccountId);
-
+        	
+        	
+        	String runningAccountId = rs.getString("bRunningAccountId");
+        	WMSRunningAccountFinalBillApplication wmsRunningAccountFinalBillApplication = wmsRunningAccountFinalBillApplicationMap.get(runningAccountId);
             if(wmsRunningAccountFinalBillApplication == null) {
-
-            	Long lastModifiedTime = rs.getLong("bLastmodifiedtime");
-                if (rs.wasNull()) {
-                    lastModifiedTime = null;
-                }
-                
-                AuditDetails auditdetails = AuditDetails.builder()
-                        .createdBy(rs.getString("bCreatedBy"))
-                        .createdTime(rs.getLong("bCreatedtime"))
-                        .lastModifiedBy(rs.getString("bLastmodifiedby"))
-                        .lastModifiedTime(lastModifiedTime)
-                        .build();
-                wmsRunningAccountFinalBillApplication = WMSRunningAccountFinalBillApplication.builder()
-                        .runningAccountId(rs.getString("bRunningAccountId"))
-                        .projectName(rs.getString("bProjectName"))
-                        .workName(rs.getString("bworkName"))
-                        .mbNo(rs.getInt("bMbNo"))
-                        .mbDate(rs.getString("bMbDate"))
-                        .mbAmount(rs.getInt("bMbAmount"))
-                        .estimatedCost(rs.getString("bEstimatedCost"))
-                        .tenderType(rs.getString("bTenderType"))
-                        .value(rs.getString("bValue"))
-                        .percentageType(rs.getString("bPercentageType"))
-                        .awardAmount(rs.getInt("bAwardAmount"))
-                        .billDate(rs.getString("bBillDate"))
-                        .billNo(rs.getInt("bBillNo"))
-                        .billAmount(rs.getInt("bBillAmount"))
-                        .deductionAmount(rs.getInt("bDeductionAmount"))
-                        .remark(rs.getString("bRemark"))
-                        .srNo(rs.getInt("bSrNo"))
-                        .deductionDescription(rs.getString("bDeductionDescription"))
-                        .additionDeduction(rs.getString("bAdditionDeduction"))
-                        .calculationMethod(rs.getString("bCalculationMethod"))
-                        .percentage(rs.getString("bPercentage"))
-                        .percentageValue(rs.getString("bPercentageValue"))
-                        .workOrderNo(rs.getString("bWorkOrderNo"))
-                        .taxAmount(rs.getString("bTaxAmount"))
-                        .taxCategory(rs.getString("bTaxCategory"))
-                        .build();
+            Long lastModifiedTime = rs.getLong("bLastmodifiedtime");
+            if (rs.wasNull()) {
+                lastModifiedTime = null;
             }
-            //addChildrenToProperty(rs, sorApplication);
-            wmsRunningAccountFinalBillApplicationMap.put(runningAccountId, wmsRunningAccountFinalBillApplication);
+            AuditDetails auditdetails = AuditDetails.builder()
+                    .createdBy(rs.getString("bCreatedBy"))
+                    .createdTime(rs.getLong("bCreatedtime"))
+                    .lastModifiedBy(rs.getString("bLastmodifiedby"))
+                    .lastModifiedTime(lastModifiedTime)
+                    .build();
+            
+            
+            
+            
+            
+            //Party2Details party2Details = Party2Details.builder()
+                    
+                    
+            
+           
+            
+            
+            
+            
+    		
+            wmsRunningAccountFinalBillApplication = WMSRunningAccountFinalBillApplication.builder()
+    		  .runningAccountId(rs.getString("bRunningAccountId"))
+    		  .auditDetails(auditdetails)
+    		  .percentageType(rs.getString("bPercentageType"))
+    		  .deductionAmount(rs.getInt("bDeductionAmount"))
+    		  .deductionDescription(rs.getString("bDeductionDescription"))
+    		  .calculationMethod(rs.getString("bCalculationMethod"))
+    		  .build();
+    		  
+    		  wmsRunningAccountFinalBillApplicationMap.put(runningAccountId, wmsRunningAccountFinalBillApplication);
+            }// if null
+        	
+            
+                
+               
+                
+                
+               /* Party1Details party1Details = Party1Details.builder()
+                		.party1Id(rs.getString("aParty1Id"))
+                		.agreementNo(agreementNo)
+                        .departmentNameParty1(rs.getString("aDepartmentNameParty1"))
+                        .designation(rs.getString("aDesignation"))
+                        .employeeName(rs.getString("aEmployeeName"))
+                        .witnessNameP1(rs.getString("aWitnessNameP1"))
+                        .addressP1(rs.getString("aAddressP1"))
+                        .uidP1(rs.getString("aUidP1"))
+                        .build();
+                wmsRunningAccountFinalBill.addParty1Details(party1Details);*/
+                
+                
+                
+                
+                
+                
+                
+                
+                
+            PreviousRunningBillInfo previousRunningBillInfo=PreviousRunningBillInfo.builder()
+                		.prbiId(rs.getString("bPrbiId"))
+                		.runningAccountId(runningAccountId)
+                		.runningAccountBillDate(rs.getString("bRunningAccountBillDate"))
+                        .runningAccountBillNo(rs.getString("bRunningAccountBillNo"))
+                        .runningAccountBillAmount(rs.getString("bRunningAccountBillAmount"))
+                        .taxAmount(rs.getString("bTaxAmount"))
+                        .remark(rs.getString("bRemark"))
+                        .build();
+                
+            wmsRunningAccountFinalBillApplication.addRunningAccountFinalBill(previousRunningBillInfo);
         }
+                
+            //rs next
         return new ArrayList<>(wmsRunningAccountFinalBillApplicationMap.values());
     }
 
-}
+    }
+

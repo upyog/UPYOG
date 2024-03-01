@@ -37,70 +37,145 @@ public class WMSRunningAccountFinalBillValidator {
 	                throw new CustomException("EG_WMS_APP_ERR", "tenantId is mandatory for creating Running Account Final Bill applications");
 	        });
 	    	
-	    	wmsRunningAccountFinalBillRequest.getWmsRunningAccountFinalBillApplications().forEach(application -> {
-	            if(ObjectUtils.isEmpty(application.getMbNo()))
-	                throw new CustomException("EG_WMS_APP_ERR", "MbNo is mandatory for creating Running Account Final Bill applications");
-	        });
+	    	wmsRunningAccountFinalBillRequest.getWmsRunningAccountFinalBillApplications().forEach(
+	  			  application ->
+	  			  application.getPreviousRunningBillInfo().forEach(prun->{if(ObjectUtils.isEmpty(
+	  			  prun.getRunningAccountBillAmount())) throw new CustomException("EG_WMS_APP_ERR",
+	  			  "running_account_bill_amount is mandatory for creating RunningAccountFinalBill applications");
+	  			  }));
 	    	
-	    	wmsRunningAccountFinalBillRequest.getWmsRunningAccountFinalBillApplications().forEach(application -> {
-	            if(ObjectUtils.isEmpty(application.getMbDate()))
-	                throw new CustomException("EG_WMS_APP_ERR", "MbDate is mandatory for creating Running Account Final Bill applications");
-	        });
+	    	wmsRunningAccountFinalBillRequest.getWmsRunningAccountFinalBillApplications().forEach(
+		  			  application ->
+		  			  application.getPreviousRunningBillInfo().forEach(prun->{if(ObjectUtils.isEmpty(
+		  			  prun.getRunningAccountBillDate())) throw new CustomException("EG_WMS_APP_ERR",
+		  			  "running_account_bill_date is mandatory for creating RunningAccountFinalBill applications");
+		  			  }));
 	    	
-	    	wmsRunningAccountFinalBillRequest.getWmsRunningAccountFinalBillApplications().forEach(application -> {
-	            if(ObjectUtils.isEmpty(application.getMbAmount()))
-	                throw new CustomException("EG_WMS_APP_ERR", "MbAmount is mandatory for creating Running Account Final Bill applications");
-	        });
+	    	wmsRunningAccountFinalBillRequest.getWmsRunningAccountFinalBillApplications().forEach(
+		  			  application ->
+		  			  application.getPreviousRunningBillInfo().forEach(prun->{if(ObjectUtils.isEmpty(
+		  			  prun.getRunningAccountBillNo())) throw new CustomException("EG_WMS_APP_ERR",
+		  			  "running_account_bill_no is mandatory for creating RunningAccountFinalBill applications");
+		  			  }));
 	    	
-	    	wmsRunningAccountFinalBillRequest.getWmsRunningAccountFinalBillApplications().forEach(application -> {
-	            if(ObjectUtils.isEmpty(application.getWorkName()))
-	                throw new CustomException("EG_WMS_APP_ERR", "WorkName is mandatory for creating Running Account Final Bill applications");
-	        });
+	    	wmsRunningAccountFinalBillRequest.getWmsRunningAccountFinalBillApplications().forEach(
+		  			  application ->
+		  			  application.getPreviousRunningBillInfo().forEach(prun->{if(ObjectUtils.isEmpty(
+		  			  prun.getTaxAmount())) throw new CustomException("EG_WMS_APP_ERR",
+		  			  "tax_Amount is mandatory for creating RunningAccountFinalBill applications");
+		  			  }));
 	    	
-	    	wmsRunningAccountFinalBillRequest.getWmsRunningAccountFinalBillApplications().forEach(application -> {
-	            if(ObjectUtils.isEmpty(application.getEstimatedCost()))
-	                throw new CustomException("EG_WMS_APP_ERR", "EstimatedCost is mandatory for creating Running Account Final Bill applications");
-	        });
+			/*
+			 * wmsRunningAccountFinalBillRequest.getWmsRunningAccountFinalBillApplications()
+			 * .forEach(application -> { if(ObjectUtils.isEmpty(application.getMbNo()))
+			 * throw new CustomException("EG_WMS_APP_ERR",
+			 * "MbNo is mandatory for creating Running Account Final Bill applications");
+			 * });
+			 */
 	    	
-	    	wmsRunningAccountFinalBillRequest.getWmsRunningAccountFinalBillApplications().forEach(application -> {
-	            if(ObjectUtils.isEmpty(application.getTenderType()))
-	                throw new CustomException("EG_WMS_APP_ERR", "TenderType is mandatory for creating Running Account Final Bill applications");
-	        });
+			/*
+			 * wmsRunningAccountFinalBillRequest.getWmsRunningAccountFinalBillApplications()
+			 * .forEach(application -> { if(ObjectUtils.isEmpty(application.getMbDate()))
+			 * throw new CustomException("EG_WMS_APP_ERR",
+			 * "MbDate is mandatory for creating Running Account Final Bill applications");
+			 * });
+			 */
 	    	
-	    	wmsRunningAccountFinalBillRequest.getWmsRunningAccountFinalBillApplications().forEach(application -> {
-	            if(ObjectUtils.isEmpty(application.getAwardAmount()))
-	                throw new CustomException("EG_WMS_APP_ERR", "AwardAmount is mandatory for creating Running Account Final Bill applications");
-	        });
+			/*
+			 * wmsRunningAccountFinalBillRequest.getWmsRunningAccountFinalBillApplications()
+			 * .forEach(application -> { if(ObjectUtils.isEmpty(application.getMbAmount()))
+			 * throw new CustomException("EG_WMS_APP_ERR",
+			 * "MbAmount is mandatory for creating Running Account Final Bill applications"
+			 * ); });
+			 */
 	    	
-	    	wmsRunningAccountFinalBillRequest.getWmsRunningAccountFinalBillApplications().forEach(application -> {
-	            if(ObjectUtils.isEmpty(application.getSrNo()))
-	                throw new CustomException("EG_WMS_APP_ERR", "SrNo is mandatory for creating Running Account Final Bill applications");
-	        });
+			/*
+			 * wmsRunningAccountFinalBillRequest.getWmsRunningAccountFinalBillApplications()
+			 * .forEach(application -> { if(ObjectUtils.isEmpty(application.getWorkName()))
+			 * throw new CustomException("EG_WMS_APP_ERR",
+			 * "WorkName is mandatory for creating Running Account Final Bill applications"
+			 * ); });
+			 */
 	    	
-	    	wmsRunningAccountFinalBillRequest.getWmsRunningAccountFinalBillApplications().forEach(application -> {
-	            if(ObjectUtils.isEmpty(application.getDeductionDescription()))
-	                throw new CustomException("EG_WMS_APP_ERR", "DeductionDescription is mandatory for creating Running Account Final Bill applications");
-	        });
+			/*
+			 * wmsRunningAccountFinalBillRequest.getWmsRunningAccountFinalBillApplications()
+			 * .forEach(application -> {
+			 * if(ObjectUtils.isEmpty(application.getEstimatedCost())) throw new
+			 * CustomException("EG_WMS_APP_ERR",
+			 * "EstimatedCost is mandatory for creating Running Account Final Bill applications"
+			 * ); });
+			 */
 	    	
-	    	wmsRunningAccountFinalBillRequest.getWmsRunningAccountFinalBillApplications().forEach(application -> {
-	            if(ObjectUtils.isEmpty(application.getAdditionDeduction()))
-	                throw new CustomException("EG_WMS_APP_ERR", "AdditionDeduction is mandatory for creating Running Account Final Bill applications");
-	        });
+			/*
+			 * wmsRunningAccountFinalBillRequest.getWmsRunningAccountFinalBillApplications()
+			 * .forEach(application -> {
+			 * if(ObjectUtils.isEmpty(application.getTenderType())) throw new
+			 * CustomException("EG_WMS_APP_ERR",
+			 * "TenderType is mandatory for creating Running Account Final Bill applications"
+			 * ); });
+			 */
 	    	
-	    	wmsRunningAccountFinalBillRequest.getWmsRunningAccountFinalBillApplications().forEach(application -> {
-	            if(ObjectUtils.isEmpty(application.getCalculationMethod()))
-	                throw new CustomException("EG_WMS_APP_ERR", "CalculationMethod is mandatory for creating Running Account Final Bill applications");
-	        });
+			/*
+			 * wmsRunningAccountFinalBillRequest.getWmsRunningAccountFinalBillApplications()
+			 * .forEach(application -> {
+			 * if(ObjectUtils.isEmpty(application.getAwardAmount())) throw new
+			 * CustomException("EG_WMS_APP_ERR",
+			 * "AwardAmount is mandatory for creating Running Account Final Bill applications"
+			 * ); });
+			 */
 	    	
-	    	wmsRunningAccountFinalBillRequest.getWmsRunningAccountFinalBillApplications().forEach(application -> {
-	            if(ObjectUtils.isEmpty(application.getDeductionAmount()))
-	                throw new CustomException("EG_WMS_APP_ERR", "DeductionAmount is mandatory for creating Running Account Final Bill applications");
-	        });
+			/*
+			 * wmsRunningAccountFinalBillRequest.getWmsRunningAccountFinalBillApplications()
+			 * .forEach(application -> { if(ObjectUtils.isEmpty(application.getSrNo()))
+			 * throw new CustomException("EG_WMS_APP_ERR",
+			 * "SrNo is mandatory for creating Running Account Final Bill applications");
+			 * });
+			 */
 	    	
-	    	wmsRunningAccountFinalBillRequest.getWmsRunningAccountFinalBillApplications().forEach(application -> {
-	            if(ObjectUtils.isEmpty(application.getWorkOrderNo()))
-	                throw new CustomException("EG_WMS_APP_ERR", "WorkOrderNo is mandatory for creating Running Account Final Bill applications");
-	        });
+			/*
+			 * wmsRunningAccountFinalBillRequest.getWmsRunningAccountFinalBillApplications()
+			 * .forEach(application -> {
+			 * if(ObjectUtils.isEmpty(application.getDeductionDescription())) throw new
+			 * CustomException("EG_WMS_APP_ERR",
+			 * "DeductionDescription is mandatory for creating Running Account Final Bill applications"
+			 * ); });
+			 */
+	    	
+			/*
+			 * wmsRunningAccountFinalBillRequest.getWmsRunningAccountFinalBillApplications()
+			 * .forEach(application -> {
+			 * if(ObjectUtils.isEmpty(application.getAdditionDeduction())) throw new
+			 * CustomException("EG_WMS_APP_ERR",
+			 * "AdditionDeduction is mandatory for creating Running Account Final Bill applications"
+			 * ); });
+			 */
+	    	
+			/*
+			 * wmsRunningAccountFinalBillRequest.getWmsRunningAccountFinalBillApplications()
+			 * .forEach(application -> {
+			 * if(ObjectUtils.isEmpty(application.getCalculationMethod())) throw new
+			 * CustomException("EG_WMS_APP_ERR",
+			 * "CalculationMethod is mandatory for creating Running Account Final Bill applications"
+			 * ); });
+			 */
+	    	
+			/*
+			 * wmsRunningAccountFinalBillRequest.getWmsRunningAccountFinalBillApplications()
+			 * .forEach(application -> {
+			 * if(ObjectUtils.isEmpty(application.getDeductionAmount())) throw new
+			 * CustomException("EG_WMS_APP_ERR",
+			 * "DeductionAmount is mandatory for creating Running Account Final Bill applications"
+			 * ); });
+			 */
+	    	
+			/*
+			 * wmsRunningAccountFinalBillRequest.getWmsRunningAccountFinalBillApplications()
+			 * .forEach(application -> {
+			 * if(ObjectUtils.isEmpty(application.getWorkOrderNo())) throw new
+			 * CustomException("EG_WMS_APP_ERR",
+			 * "WorkOrderNo is mandatory for creating Running Account Final Bill applications"
+			 * ); });
+			 */
 	    }
 
 		public List<WMSRunningAccountFinalBillApplication> validateApplicationUpdateRequest(

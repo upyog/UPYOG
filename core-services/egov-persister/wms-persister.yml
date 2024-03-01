@@ -1526,58 +1526,20 @@ serviceMaps:
       isTransaction: true
       queryMaps:
 
-        - query: INSERT INTO running_account_final_bill (running_account_id,project_name,work_name,mb_no,mb_date,mb_amount,estimated_cost,tender_type,value,percentage_type,award_amount,bill_date,bill_no,bill_amount,deduction_amount,remark,sr_no,deduction_description,addition_deduction,calculation_method,percentage,percentage_Value,workOrder_No,tax_Amount,tax_Category,createdby,lastmodifiedby,createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
+        - query: INSERT INTO running_account_final_bill (running_account_id,percentage_type,award_amount,deduction_amount,deduction_description,calculation_method,createdby,lastmodifiedby,createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: WMSRunningAccountFinalBillApplication.*
           jsonMaps:
             - jsonPath: $.WMSRunningAccountFinalBillApplication.*.running_account_id
-
-            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.project_name
-
-            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.work_name
-            
-            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.mb_no
-
-            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.mb_date
-
-            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.mb_amount
-
-            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.estimated_cost
-
-            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.tender_type
-            
-            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.value
 
             - jsonPath: $.WMSRunningAccountFinalBillApplication.*.percentage_type
             
             - jsonPath: $.WMSRunningAccountFinalBillApplication.*.award_amount
             
-            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.bill_date
-            
-            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.bill_no
-            
-            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.bill_amount
-            
             - jsonPath: $.WMSRunningAccountFinalBillApplication.*.deduction_amount
-            
-            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.remark
-            
-            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.sr_no
             
             - jsonPath: $.WMSRunningAccountFinalBillApplication.*.deduction_description
             
-            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.addition_deduction
-            
             - jsonPath: $.WMSRunningAccountFinalBillApplication.*.calculation_method
-            
-            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.percentage
-            
-            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.percentage_Value
-            
-            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.workOrder_No
-            
-            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.tax_Amount
-            
-            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.tax_Category
             
             - jsonPath: $.WMSRunningAccountFinalBillApplication.*.auditDetails.createdBy
 
@@ -1589,6 +1551,25 @@ serviceMaps:
             
             
             
+        - query: INSERT INTO previousrunningbillinfo (prbi_id,running_account_id,running_account_bill_date,running_account_bill_no,running_account_bill_amount,tax_Amount,remark) VALUES (?, ?, ?, ?, ?, ?, ?);
+          basePath: WMSRunningAccountFinalBillApplication.*.previousRunningBillInfo.*
+          jsonMaps:
+            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.previousRunningBillInfo.*.prbi_id
+            
+            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.previousRunningBillInfo.*.running_account_id
+
+            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.previousRunningBillInfo.*.running_account_bill_date
+
+            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.previousRunningBillInfo.*.running_account_bill_no
+            
+            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.previousRunningBillInfo.*.running_account_bill_amount
+            
+            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.previousRunningBillInfo.*.tax_Amount
+            
+            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.previousRunningBillInfo.*.remark
+            
+            
+            
             
     - version: 1.0
       description: Update Running Account Final Bill applications in table
@@ -1596,56 +1577,43 @@ serviceMaps:
       isTransaction: true
       queryMaps:
       
-        - query: UPDATE running_account_final_bill SET project_name = ?,work_name = ?, mb_no = ?, mb_date = ?, mb_amount = ?, estimated_cost = ?, tender_type = ?,value = ?, percentage_type = ?, award_amount = ?, bill_date = ?, bill_no = ?, bill_amount = ?, deduction_amount = ?, remark = ?, sr_no = ?, deduction_description = ?, addition_deduction = ?, calculation_method = ?, percentage = ?, percentage_Value = ?, tax_Amount = ?, tax_Category = ? WHERE running_account_id=?;
+        - query: UPDATE running_account_final_bill SET  percentage_type = ?, award_amount = ?,deduction_amount = ?, deduction_description = ?, calculation_method = ? WHERE running_account_id=?;
           basePath: WMSRunningAccountFinalBillApplication.*
           jsonMaps:
-            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.project_name
-
-            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.work_name
             
-            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.mb_no
-
-            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.mb_date
-
-            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.mb_amount
-
-            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.estimated_cost
-
-            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.tender_type
-            
-            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.value
 
             - jsonPath: $.WMSRunningAccountFinalBillApplication.*.percentage_type
             
             - jsonPath: $.WMSRunningAccountFinalBillApplication.*.award_amount
             
-            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.bill_date
-            
-            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.bill_no
-            
-            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.bill_amount
             
             - jsonPath: $.WMSRunningAccountFinalBillApplication.*.deduction_amount
             
-            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.remark
-            
-            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.sr_no
-            
             - jsonPath: $.WMSRunningAccountFinalBillApplication.*.deduction_description
             
-            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.addition_deduction
             
             - jsonPath: $.WMSRunningAccountFinalBillApplication.*.calculation_method
             
-            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.percentage
-            
-            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.percentage_Value
-            
-            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.tax_Amount
-            
-            - jsonPath: $.WMSRunningAccountFinalBillApplication.*.tax_Category
             
             - jsonPath: $.WMSRunningAccountFinalBillApplication.*.running_account_id	
+            
+            
+            
+        - query: UPDATE previousrunningbillinfo SET running_account_bill_date = ?,running_account_bill_no = ?,running_account_bill_amount = ?,tax_Amount = ?,remark = ? WHERE prbi_id = ?;
+          basePath: WMSRunningAccountFinalBillApplication.*.previousRunningBillInfo.*
+          jsonMaps:
+          
+          - jsonPath: $.WMSRunningAccountFinalBillApplication.*.contractors.*.running_account_bill_date
+          
+          - jsonPath: $.WMSRunningAccountFinalBillApplication.*.contractors.*.running_account_bill_no
+          
+          - jsonPath: $.WMSRunningAccountFinalBillApplication.*.contractors.*.running_account_bill_amount
+
+          - jsonPath: $.WMSRunningAccountFinalBillApplication.*.contractors.*.tax_Amount
+          
+          - jsonPath: $.WMSRunningAccountFinalBillApplication.*.contractors.*.remark
+          
+          - jsonPath: $.WMSRunningAccountFinalBillApplication.*.contractors.*.prbi_id
             
             
     - version: 1.0
