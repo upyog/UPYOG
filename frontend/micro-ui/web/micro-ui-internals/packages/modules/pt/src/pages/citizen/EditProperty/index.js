@@ -419,7 +419,7 @@ const EditProperty = ({ parentRoute }) => {
   let config = [];
   const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage("PT_CREATE_PROPERTY", { });
   const stateId = Digit.ULBService.getStateId();
-  let { data: commonFields, isLoading } = Digit.Hooks.pt.useMDMS(stateId, "PropertyTax", "CommonFieldsConfig");
+  let { data: commonFields, isLoading } = Digit.Hooks.pt.useMDMSV2(stateId, "PropertyTax", "CommonFieldsConfig");
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const acknowledgementIds = window.location.href.split("/").pop();
   const propertyIds = window.location.href.split("/").pop();

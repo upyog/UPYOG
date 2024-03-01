@@ -10,7 +10,7 @@ const ProvideFloorNo = ({ t, config, onSelect, userType, formData }) => {
   //const [SubUsageTypeOfRentedArea, setSelfOccupied] = useState(formData?.ProvideSubUsageTypeOfRentedArea);
   const [Floorno, setFloorno] = useState(formData?.Floorno || "");
 
-  const { data: floordata } = Digit.Hooks.pt.usePropertyMDMS(stateId, "PropertyTax", "Floor") || {};
+  const { data: floordata } = Digit.Hooks.pt.usePropertyMDMSV2(stateId, "PropertyTax", "Floor") || {};
   let floorlist = [];
   floorlist = floordata?.PropertyTax?.Floor;
   let i;

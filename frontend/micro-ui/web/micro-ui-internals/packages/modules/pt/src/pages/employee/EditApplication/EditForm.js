@@ -11,7 +11,7 @@ const EditForm = ({ applicationData }) => {
   const [canSubmit, setSubmitValve] = useState(false);
   const [mutationHappened, setMutationHappened, clear] = Digit.Hooks.useSessionStorage("EMPLOYEE_MUTATION_HAPPENED", false);
   const [successData, setsuccessData, clearSuccessData] = Digit.Hooks.useSessionStorage("EMPLOYEE_MUTATION_SUCCESS_DATA", {});
-  const { data: commonFields, isLoading } = Digit.Hooks.pt.useMDMS(Digit.ULBService.getStateId(), "PropertyTax", "CommonFieldsConfig");
+  const { data: commonFields, isLoading } = Digit.Hooks.pt.useMDMSV2(Digit.ULBService.getStateId(), "PropertyTax", "CommonFieldsConfig");
 
   useEffect(() => {
     setMutationHappened(false);
@@ -79,6 +79,7 @@ const EditForm = ({ applicationData }) => {
       formData.units = formData.units.filter((unit) => unit.active);
     }
     history.push("/digit-ui/employee/pt/response", { Property: formData, key: "UPDATE", action: "SUBMIT" });
+
   };
 
   if (isLoading) {

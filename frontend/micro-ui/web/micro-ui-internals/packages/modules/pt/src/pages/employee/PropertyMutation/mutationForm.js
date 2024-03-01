@@ -8,7 +8,7 @@ const MutationForm = ({ applicationData, tenantId }) => {
   const { t } = useTranslation();
   const [canSubmit, setSubmitValve] = useState(false);
 
-  const { data: mutationDocs, isLoading } = Digit.Hooks.pt.useMDMS(Digit.ULBService.getStateId(), "PropertyTax", "MutationDocuments");
+  const { data: mutationDocs, isLoading } = Digit.Hooks.pt.useMDMSV2(Digit.ULBService.getStateId(), "PropertyTax", "MutationDocuments");
   const defaultValues = {
     originalData: applicationData,
   };
@@ -56,7 +56,6 @@ const MutationForm = ({ applicationData, tenantId }) => {
       data?.originalData?.documents?.filter(
         (oldDoc) => !mutationDocs?.PropertyTax?.MutationDocuments.some((mut) => oldDoc.documentType.includes(mut.code))
       ) || [];
-      console.log("data",data)
     const submitData = {
       Property: {
         ...data.originalData,

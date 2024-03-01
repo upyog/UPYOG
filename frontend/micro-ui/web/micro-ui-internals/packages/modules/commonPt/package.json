@@ -1,6 +1,6 @@
 {
-  "name": "@egovernments/digit-ui-module-commonpt",
-  "version": "1.7.0-beta.3",
+  "name": "@upyog/digit-ui-module-commonpt",
+  "version": "2.9.0",
   "license": "MIT",
   "description": "Digit PT Light weight Module",
   "main": "dist/index.js",

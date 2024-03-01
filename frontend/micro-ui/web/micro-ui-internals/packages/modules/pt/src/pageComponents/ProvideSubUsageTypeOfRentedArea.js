@@ -16,7 +16,7 @@ const ProvideSubUsageTypeOfRentedArea = ({ t, config, onSelect, userType, formDa
   } else {
     [SubUsageTypeOfRentedArea, setSelfOccupied] = useState(formData.Subusagetypeofrentedarea?.SubUsageTypeOfRentedArea || "");
   }
-  const { data: Menu = {} } = Digit.Hooks.pt.usePropertyMDMS(stateId, "PropertyTax", "UsageCategory") || {};
+  const { data: Menu = {} } = Digit.Hooks.pt.usePropertyMDMSV2(stateId, "PropertyTax", "UsageCategory") || {};
 
   let subusageoption = [];
   subusageoption = Menu?.PropertyTax?.UsageCategory || [];

@@ -33,7 +33,7 @@ const Units = ({ t, config, onSelect, userType, formData, setError, formState, c
   const [loader, setLoader] = useState(true);
 
   const { data: Menu, isLoading } =
-    Digit.Hooks.pt.usePropertyMDMS(stateId, "PropertyTax", [
+    Digit.Hooks.pt.usePropertyMDMSV2(stateId, "PropertyTax", [
       "UsageCategory",
       "OccupancyType",
       "Floor",
@@ -436,7 +436,7 @@ function Unit({
   usageCategoryMajorMenu,
   subUsageCategoryMenu,
 }) {
-  const { data: usageMenu = {}, isLoading } = Digit.Hooks.pt.usePropertyMDMS(stateId, "PropertyTax", [
+  const { data: usageMenu = {}, isLoading } = Digit.Hooks.pt.usePropertyMDMSV2(stateId, "PropertyTax", [
     "UsageCategory",
     "OccupancyType",
     "Floor",

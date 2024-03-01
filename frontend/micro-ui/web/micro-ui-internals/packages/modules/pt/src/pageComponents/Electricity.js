@@ -128,11 +128,11 @@ const Electricity = ({ t, config, onSelect, value, userType, formData, setError:
       <FormStep
         config={config}
         onChange={handleElectricityChange}
-        defaultValue={formData?.electricity?.electricity}
+
         onSelect={goNext}
         onSkip={onSkip}
         t={t}
-        isDisabled={electricity.length===10 || formData?.electricity?.electricity? false: true}
+        isDisabled={electricity.length===10 ? false: true}
         showErrorBelowChildren={true}
       >
         <CardLabel>{`${t("PT_ELECTRICITY")}`}</CardLabel>
@@ -142,7 +142,7 @@ const Electricity = ({ t, config, onSelect, value, userType, formData, setError:
           isMandatory={false}
           optionKey="i18nKey"
           name="electricity"
-          value={electricity || formData?.electricity?.electricity}
+          value={electricity}
           onChange={handleElectricityChange}
           placeholder={"Enter a valid 10-digit electricity number"}
           {...(validation = {

@@ -22,7 +22,7 @@ const SearchPTID = ({ tenantId, t, onSubmit, onReset, searchBy, PTSearchFields, 
         }
   });
   const stateId = Digit.ULBService.getStateId();
-  const { data: usageMenu = {}, isLoading } = Digit.Hooks.pt.usePropertyMDMS(stateId, "PropertyTax", [
+  const { data: usageMenu = {}, isLoading } = Digit.Hooks.pt.usePropertyMDMSV2(stateId, "PropertyTax", [
     "UsageCategory",
     "OccupancyType",
     "Floor",

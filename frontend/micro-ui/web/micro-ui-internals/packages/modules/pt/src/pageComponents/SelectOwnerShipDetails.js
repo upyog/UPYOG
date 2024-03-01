@@ -20,8 +20,8 @@ const SelectOwnerShipDetails = ({ t, config, onSelect, userType, formData, onBlu
   let isEditProperty = formData?.isEditProperty || false;
   const [ownershipCategory, setOwnershipCategory] = useState(formData?.ownershipCategory);
   const [loader, setLoader] = useState(true);
-  const { data: SubOwnerShipCategoryOb, isLoading } = Digit.Hooks.pt.usePropertyMDMS(stateId, "PropertyTax", "SubOwnerShipCategory");
-  const { data: OwnerShipCategoryOb, isLoading: ownerShipCatLoading } = Digit.Hooks.pt.usePropertyMDMS(stateId, "PropertyTax", "OwnerShipCategory");
+  const { data: SubOwnerShipCategoryOb, isLoading } = Digit.Hooks.pt.usePropertyMDMSV2(stateId, "PropertyTax", "SubOwnerShipCategory");
+  const { data: OwnerShipCategoryOb, isLoading: ownerShipCatLoading } = Digit.Hooks.pt.usePropertyMDMSV2(stateId, "PropertyTax", "OwnerShipCategory");
   const ownerShipdropDown = [];
   let subCategoriesInOwnersType = ["INDIVIDUAL"];
   let OwnerShipCategory = {};
@@ -73,7 +73,7 @@ const SelectOwnerShipDetails = ({ t, config, onSelect, userType, formData, onBlu
     if (userType === "employee") {
       const arr = ownerShipdropDown
         ?.filter((e) => e.code.split(".").length <= 2)
-        ?.splice(0, 4)
+        ?.splice(0, 10)
         ?.map((ownerShipDetails) => ({
           ...ownerShipDetails,
           i18nKey: `PT_OWNERSHIP_${
@@ -86,7 +86,7 @@ const SelectOwnerShipDetails = ({ t, config, onSelect, userType, formData, onBlu
     return (
       ownerShipdropDown &&
       ownerShipdropDown.length &&
-      ownerShipdropDown.splice(0, 4).map((ownerShipDetails) => ({
+      ownerShipdropDown.splice(0, 10).map((ownerShipDetails) => ({
         ...ownerShipDetails,
         i18nKey: `PT_OWNERSHIP_${ownerShipDetails.value.split(".")[1] ? ownerShipDetails.value.split(".")[1] : ownerShipDetails.value.split(".")[0]}`,
       }))

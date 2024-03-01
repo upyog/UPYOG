@@ -13,7 +13,7 @@ const IsAnyPartOfThisFloorUnOccupied = ({ t, config, onSelect, userType, formDat
   } else {
     [IsAnyPartOfThisFloorUnOccupied, setSelfOccupied] = useState(formData?.IsAnyPartOfThisFloorUnOccupied);
   }
-  //const { data: Menu, isLoading } = Digit.Hooks.pt.usePropertyMDMS(stateId, "PropertyTax", "OwnerType");
+  //const { data: Menu, isLoading } = Digit.Hooks.pt.usePropertyMDMSV2(stateId, "PropertyTax", "OwnerType");
 
   const data = [
     {

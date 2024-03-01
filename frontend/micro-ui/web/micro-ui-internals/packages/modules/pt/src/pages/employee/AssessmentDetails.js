@@ -48,7 +48,7 @@ const AssessmentDetails = () => {
     data: ptCalculationEstimateData,
     mutate: ptCalculationEstimateMutate,
   } = Digit.Hooks.pt.usePtCalculationEstimate(tenantId);
-  const { data: ChargeSlabsMenu, isLoading: isChargeSlabsLoading } = Digit.Hooks.pt.usePropertyMDMS(stateId, "PropertyTax", "ChargeSlabs");
+  const { data: ChargeSlabsMenu, isLoading: isChargeSlabsLoading } = Digit.Hooks.pt.usePropertyMDMSV2(stateId, "PropertyTax", "ChargeSlabs");
  const fetchBillParams = { consumerCode : propertyId };
 
  let ptCalculationEstimateDataCopy;
@@ -101,7 +101,6 @@ const AssessmentDetails = () => {
     },
     }
   ); 
-
   const closeToast = () => {
     setShowToast(null);
   };
