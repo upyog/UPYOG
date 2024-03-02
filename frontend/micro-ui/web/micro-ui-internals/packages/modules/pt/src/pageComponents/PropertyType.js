@@ -17,7 +17,7 @@ const PropertyType = ({ t, config, onSelect, userType, formData, setError, clear
   const [BuildingType, setBuildingType] = useState(formData?.PropertyType);
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();
-  const { data: Menu = {}, isLoading } = Digit.Hooks.pt.usePropertyMDMSV2(stateId, "PropertyTax", "PTPropertyType") || {};
+  const { data: Menu = {}, isLoading } = Digit.Hooks.pt.usePropertyMDMS(stateId, "PropertyTax", "PTPropertyType") || {};
   let proptype = [];
   proptype = Menu?.PropertyTax?.PropertyType;
   let i;

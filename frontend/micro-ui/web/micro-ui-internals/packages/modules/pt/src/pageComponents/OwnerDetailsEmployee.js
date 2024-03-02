@@ -38,7 +38,7 @@ const PTEmployeeOwnershipDetails = ({ config, onSelect, userType, formData, setE
 
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();
-  const { data: mdmsData, isLoading } = Digit.Hooks.pt.usePropertyMDMSV2(stateId, "PropertyTax", [
+  const { data: mdmsData, isLoading } = Digit.Hooks.pt.usePropertyMDMS(stateId, "PropertyTax", [
     "UsageCategory",
     "OccupancyType",
     "Floor",
@@ -49,7 +49,7 @@ const PTEmployeeOwnershipDetails = ({ config, onSelect, userType, formData, setE
     "OwnerShipCategory",
   ]);
 
-  const { data: Menu } = Digit.Hooks.pt.usePTGenderMDMSV2(stateId, "common-masters", "GenderType");
+  const { data: Menu } = Digit.Hooks.pt.usePTGenderMDMS(stateId, "common-masters", "GenderType");
 
   let menu = [];
 

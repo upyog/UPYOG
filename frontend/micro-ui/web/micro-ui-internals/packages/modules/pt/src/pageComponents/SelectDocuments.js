@@ -27,7 +27,7 @@ const SelectDocuments = ({ t, config, onSelect, userType, formData, setError: se
 
   const propertyInitialValues = JSON.parse(sessionStorage.getItem("PropertyInitials"));
 
-  const { isLoading, data } = Digit.Hooks.pt.usePropertyMDMSV2(stateId, "PropertyTax", [
+  const { isLoading, data } = Digit.Hooks.pt.usePropertyMDMS(stateId, "PropertyTax", [
     "UsageCategory",
     "OccupancyType",
     "Floor",

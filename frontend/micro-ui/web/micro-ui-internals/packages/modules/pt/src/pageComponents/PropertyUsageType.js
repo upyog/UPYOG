@@ -17,11 +17,11 @@ const PropertyUsageType = ({ t, config, onSelect, userType, formData, formState,
       ? { code: `${formData?.usageCategoryMajor?.code}`, i18nKey: `PROPERTYTAX_BILLING_SLAB_OTHERS` }
       : formData?.usageCategoryMajor
   );
-  //   const { data: Menu, isLoading } = Digit.Hooks.pt.usePropertyMDMSV2(stateId, "PropertyTax", "OccupancyType");
+  //   const { data: Menu, isLoading } = Digit.Hooks.pt.usePropertyMDMS(stateId, "PropertyTax", "OccupancyType");
 
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();
-  const { data: Menu = {}, isLoading: menuLoading } = Digit.Hooks.pt.usePropertyMDMSV2(stateId, "PropertyTax", "UsageCategory") || {};
+  const { data: Menu = {}, isLoading: menuLoading } = Digit.Hooks.pt.usePropertyMDMS(stateId, "PropertyTax", "UsageCategory") || {};
   let usagecat = [];
   usagecat = Menu?.PropertyTax?.UsageCategory || [];
   let i;

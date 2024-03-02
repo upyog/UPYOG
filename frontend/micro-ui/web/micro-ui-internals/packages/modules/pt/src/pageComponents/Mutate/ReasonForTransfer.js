@@ -5,7 +5,7 @@ import Timeline from "../../components/TLTimeline";
 const ReasonForTransfer = (props) => {
   const { t, config, onSelect, userType, formData, setError, clearErrors, errors } = props;
 
-  const { data, isLoading } = Digit.Hooks.pt.useMDMSV2(Digit.ULBService.getStateId(), "PropertyTax", "ReasonForTransfer", {});
+  const { data, isLoading } = Digit.Hooks.pt.useMDMS(Digit.ULBService.getStateId(), "PropertyTax", "ReasonForTransfer", {});
 
   const [menu, setMenu] = useState([]);
 

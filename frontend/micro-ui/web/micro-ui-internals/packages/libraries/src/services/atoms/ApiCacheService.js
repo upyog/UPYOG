@@ -31,7 +31,7 @@ const getSetting = (serviceName, moduleName) => {
   const setting = getCachedSetting();
   const serviceSetting = setting.find((item) => item.serviceName === serviceName);
   const responseSetting = {
-    cacheTimeInSecs: serviceSetting.cacheTimeInSecs,
+    cacheTimeInSecs: serviceSetting?.cacheTimeInSecs,
     debounceTimeInMS: serviceSetting.debounceTimeInMS || 100,
   };
   if (!moduleName) {
@@ -42,7 +42,7 @@ const getSetting = (serviceName, moduleName) => {
     return responseSetting;
   }
   return {
-    cacheTimeInSecs: moduleSettings.cacheTimeInSecs || responseSetting.cacheTimeInSecs,
+    cacheTimeInSecs: moduleSettings?.cacheTimeInSecs || responseSetting?.cacheTimeInSecs,
     debounceTimeInMS: moduleSettings.debounceTimeInMS || responseSetting.debounceTimeInMS,
   };
 };

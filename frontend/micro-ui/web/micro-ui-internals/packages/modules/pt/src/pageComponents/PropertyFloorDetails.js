@@ -5,7 +5,7 @@ import Timeline from "../components/TLTimeline";
 const PropertyFloorsDetails = ({ t, config, onSelect, formData, userType }) => {
   const [FloorDetails, setFloorDetails] = useState(formData?.noOfFloors);
   const stateId = Digit.ULBService.getStateId();
-  const { data: Menu = {} } = Digit.Hooks.pt.usePropertyMDMSV2(stateId, "PropertyTax", "Floor") || {};
+  const { data: Menu = {} } = Digit.Hooks.pt.usePropertyMDMS(stateId, "PropertyTax", "Floor") || {};
 
   const menu = [
     {

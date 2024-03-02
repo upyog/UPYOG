@@ -15,6 +15,7 @@ module.exports = function (app) {
     "/access/v1/actions/mdms",
     "/egov-mdms-service",
     "/egov-location",
+    "/mdms-v2",
     "/localization",
     "/egov-workflow-v2",
     "/pgr-services",

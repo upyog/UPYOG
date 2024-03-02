@@ -160,7 +160,7 @@ const Search = () => {
   const SearchComponent = memo(Digit.ComponentRegistryService.getComponent("PropertySearchForm"));
   const SearchResultComponent = memo(Digit.ComponentRegistryService.getComponent("PropertySearchResults"));
   const SearchPTIDPropComponent = memo(Digit.ComponentRegistryService.getComponent("SearchPTIDProp"));
-  const { data: ptSearchConfig, isLoading } = Digit.Hooks.pt.useMDMSV2(Digit.ULBService.getStateId(), "DIGIT-UI", "HelpText", {
+  const { data: ptSearchConfig, isLoading } = Digit.Hooks.pt.useMDMS(Digit.ULBService.getStateId(), "DIGIT-UI", "HelpText", {
     select: (data) => {
       return data?.["DIGIT-UI"]?.["HelpText"]?.[0]?.PT;
     },

@@ -69,7 +69,7 @@ const UlbAssesment = ({path}) => {
 
     //   );
       const { isLoading, isSuccess,error,count, mutate: assessmentMutate } = Digit.Hooks.pt.UseAssessmentCreateUlb("pg.citya");
-      const { isLoading: financialYearsLoading, data: financialYearsData } = Digit.Hooks.pt.useMDMSV2(
+      const { isLoading: financialYearsLoading, data: financialYearsData } = Digit.Hooks.pt.useMDMS(
         tenantId,
         "pt",
         "FINANCIAL_YEARLS",

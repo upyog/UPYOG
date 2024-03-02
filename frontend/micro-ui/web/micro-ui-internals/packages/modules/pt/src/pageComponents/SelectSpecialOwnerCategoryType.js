@@ -17,7 +17,7 @@ const SelectSpecialOwnerCategoryType = ({ t, config, onSelect, userType, formDat
   const [ownerType, setOwnerType] = useState(
     (formData.owners && formData.owners[index] && formData.owners[index]?.ownerType) || formData.owners?.ownerType || {}
   );
-  const { data: Menu, isLoading } = Digit.Hooks.pt.usePropertyMDMSV2(stateId, "PropertyTax", "OwnerType");
+  const { data: Menu, isLoading } = Digit.Hooks.pt.usePropertyMDMS(stateId, "PropertyTax", "OwnerType");
   Menu ? Menu.sort((a, b) => a.name.localeCompare(b.name)) : "";
   if (Menu?.length > 0) {
     Menu?.forEach((data, index) => {

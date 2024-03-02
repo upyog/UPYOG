@@ -70,7 +70,7 @@ const SearchProperty = ({ config: propsConfig, onSelect }) => {
     getActionBar();
   }, []);
 
-  const { data: ptSearchConfig, isLoading } = Digit.Hooks.pt.useMDMSV2(Digit.ULBService.getStateId(), "DIGIT-UI", "HelpText", {
+  const { data: ptSearchConfig, isLoading } = Digit.Hooks.pt.useMDMS(Digit.ULBService.getStateId(), "DIGIT-UI", "HelpText", {
     select: (data) => {
       return data?.["DIGIT-UI"]?.["HelpText"]?.[0]?.PT;
     },
