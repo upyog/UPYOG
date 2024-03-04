@@ -285,7 +285,25 @@ const NewApplication = () => {
       <div style={{ marginLeft: "15px" }}>
         <Header>{t("ES_TITLE_NEW_TRADE_LICESE_APPLICATION")}</Header>
       </div>
-      
+      <FormComposer
+        heading={t("")}
+        isDisabled={!canSubmit}
+        label={t("ES_COMMON_APPLICATION_SUBMIT")}
+        config={configs?.map((config) => {
+          return {
+            ...config,
+            body: config.body.filter((a) => {
+              return !a.hideInEmployee;
+            }),
+            head: checkHead(config.head),
+          };
+        })}
+        fieldStyle={{ marginRight: 0 }}
+        onSubmit={onSubmit}
+        defaultValues={/* defaultValues */ sessionFormData}
+        onFormValueChange={onFormValueChange}
+        breaklineStyle={{ border: "0px" }}
+      />
       {showToast && <Toast isDleteBtn={true} error={showToast?.key === "error" ? true : false} label={error} onClose={closeToast} />}
     </div>
   );
