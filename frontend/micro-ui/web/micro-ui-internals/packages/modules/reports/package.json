@@ -1,5 +1,5 @@
 {
-    "name": "@egovernments/digit-ui-module-reports",
+    "name": "@upyog/digit-ui-module-reports",
     "version": "1.0.0",
     "description": "REPORTS",
     "license": "MIT",
@@ -15,8 +15,8 @@
         "prepublish": "yarn build"
     },
     "dependencies": {
-        
-        "@egovernments/digit-ui-react-components": "^1.7.0-beta.2",
+        "@upyog/digit-ui-react-components": "^1.7.0-beta.2",
+        "microbundle-crl": "^0.13.11",
         "react": "17.0.2",
         "react-dom": "17.0.2",
         "react-hook-form": "6.15.8",

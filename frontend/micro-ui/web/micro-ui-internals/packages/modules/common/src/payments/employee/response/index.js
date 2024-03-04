@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Banner, Card, CardText, SubmitBar, ActionBar, DownloadPrefixIcon, Loader, Menu } from "@egovernments/digit-ui-react-components";
+import { Banner, Card, CardText, SubmitBar, ActionBar, DownloadPrefixIcon, Loader, Menu } from "@upyog/digit-ui-react-components";
 import { useHistory, useParams, Link, LinkLabel } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
@@ -31,6 +31,7 @@ export const SuccessfulPayment = (props) => {
 
   props.setLink(combineResponseFSM);
   let { consumerCode, receiptNumber, businessService } = useParams();
+  console.log("consummennene",consumerCode);
   const tenantId = Digit.ULBService.getCurrentTenantId();
   receiptNumber = receiptNumber.replace(/%2F/g, "/");
   const { data = {}, isLoading: isBpaSearchLoading, isSuccess: isBpaSuccess, error: bpaerror } = Digit.Hooks.obps.useOBPSSearch(
@@ -110,6 +111,21 @@ export const SuccessfulPayment = (props) => {
       window.open(fileStore[response.filestoreIds[0]], "_blank");
     }
   };
+  
+  // const printpetCertificate = async () => {
+  //   const tenantId = Digit.ULBService.getCurrentTenantId();
+  //   const state = Digit.ULBService.getStateId();
+  //   const applicationpetDetails = await Digit.PTRService.search({ tenantId, applicationNumber: consumerCode });
+  //   console.log("aplllldetailll",consumerCode)
+  //   const generatePdfKeyForPTR = "petservicecertificate";
+
+  //   if (applicationpetDetails) {
+  //     let response = await Digit.PaymentService.generatePdf(state, { PetRegistrationApplications: applicationpetDetails?.PetRegistrationApplications }, generatePdfKeyForPTR);
+  //     const fileStore = await Digit.PaymentService.printReciept(state, { fileStoreIds: response.filestoreIds[0] });
+  //     window.open(fileStore[response.filestoreIds[0]], "_blank");
+  //   }
+  // };
+  
 
   const convertDateToEpoch = (dateString, dayStartOrEnd = "dayend") => {
     //example input format : "2018-10-02"
@@ -465,6 +481,15 @@ export const SuccessfulPayment = (props) => {
                 {t("CS_COMMON_PRINT_CERTIFICATE")}
               </div>
             ) : null}
+            {/* {businessService == "pet-services" ? (
+              <div className="primary-label-btn d-grid" style={{ marginLeft: "unset" }} onClick={printpetCertificate}>
+                <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
+                  <path d="M0 0h24v24H0z" fill="none" />
+                  <path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z" />
+                </svg>
+                {t("CS_COMMON_PRINT_CERTIFICATE")}
+              </div>
+            ) : null} */}
             {data?.[0]?.businessService === "BPA_OC" && (data?.[0]?.status === "APPROVED" || data?.[0]?.status === "PENDING_SANC_FEE_PAYMENT") ? (
               <div
                 className="primary-label-btn d-grid"

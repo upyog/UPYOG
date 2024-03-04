@@ -1,4 +1,4 @@
-import { Card, CardSubHeader, Header, Row, StatusTable, SubmitBar, ActionBar, Menu, Toast,MultiLink,DownloadBtnCommon} from "@egovernments/digit-ui-react-components";
+import { Card, CardSubHeader, Header, Row, StatusTable, SubmitBar, ActionBar, Menu, Toast,MultiLink,DownloadBtnCommon} from "@upyog/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams, useHistory, useRouteMatch } from "react-router-dom";
@@ -165,6 +165,7 @@ const EmployeeChallan = (props) => {
           <StatusTable>
             <Row label={`${t("UC_CONS_NAME_LABEL")}`} text={challanDetails?.citizen.name || t("CS_NA")} />
             <Row label={`${t("UC_MOBILE_NUMBER")}`} text={challanDetails?.citizen.mobileNumber || t("CS_NA")} />
+            <Row label={`${t("UC_EMAIL_ID")}`} text={challanDetails?.citizen.emailId || t("CS_NA")} />
             <Row label={`${t("UC_DOOR_NO_LABEL")}`} text={challanDetails?.address.doorNo || t("CS_NA")} />
             <Row label={`${t("UC_BUILDING_NAME_LABEL")}`} text={challanDetails?.address.buildingName || t("CS_NA")} />
             <Row label={`${t("UC_STREET_NAME_LABEL")}`} text={challanDetails?.address.street || t("CS_NA")} />

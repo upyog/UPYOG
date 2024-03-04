@@ -6,10 +6,15 @@ import BPAREGActionModal from "./BPAREGActionModal";
 import BPAActionModal from "./BPAActionModal";
 import NOCActionModal from "./NOCActionModal";
 import WNSActionModal from "./WNSActionModal";
+import PTRActionModal from "./PTRActionModal";
+
 
 const ActionModal = (props) => {
   if (props?.businessService.includes("PT")) {
     return <PTActionModal {...props} />;
+  }
+  if (props?.businessService.includes("ptr")) {
+    return <PTRActionModal {...props} />;
   }
 
   if (props?.businessService.includes("NewTL") || props?.businessService.includes("TL") || props?.businessService.includes("EDITRENEWAL") || props?.businessService.includes("DIRECTRENEWAL")) {

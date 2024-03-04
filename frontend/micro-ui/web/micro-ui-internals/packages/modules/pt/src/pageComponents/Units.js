@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { CardLabel, LabelFieldPair, Dropdown, TextInput, LinkButton, CardLabelError, Loader, DeleteIcon } from "@egovernments/digit-ui-react-components";
+import { CardLabel, LabelFieldPair, Dropdown, TextInput, LinkButton, CardLabelError, Loader, DeleteIcon } from "@upyog/digit-ui-react-components";
 import { stringReplaceAll } from "../utils";
 import { useForm, Controller } from "react-hook-form";
 import _ from "lodash";
@@ -146,52 +146,52 @@ const Units = ({ t, config, onSelect, userType, formData, setError, formState, c
        "active": true
        },  
     ]
-   let ageOfPropertyOptions =[
-    {
-      "i18nKey": "PROPERTYTAX_MONTH>10",
-      "name": "greater than 10 years",
-      "code": "10",
-     "active": true
-     },
-     {
-      "i18nKey": "PROPERTYTAX_MONTH>15",
-      "name": "greater than 15 years",
-      "code": "15",
-     "active": true
-     },
-     {
-      "i18nKey": "PROPERTYTAX_MONTH>25",
-      "name": "greater than 24 years",
-      "code": "25",
-     "active": true
-     } 
-   ]
-   let structureTypeOptions =[
-    {
-      "i18nKey": "PERMANENT",
-      "name": "Permanent",
-      "code": "permanent",
-     "active": true
-     },
-     {
-      "i18nKey": "TEMPORARY",
-      "name": "Temporary",
-      "code": "temporary",
-     "active": true
-     },
-     {
-      "i18nKey": "SEMI_PERMANENT",
-      "name": "Semi Permanent",
-      "code": "semiPermanent",
-     "active": true
-     },
-     {
-      "i18nKey": "RCC",
-      "name": "RCC",
-      "code": "RCC",
-     "active": true
-     }  
-   ]
+    let ageOfPropertyOptions =[
+      {
+        "i18nKey": "PROPERTYTAX_MONTH>10",
+        "name": "greater than 10 years",
+        "code": "10",
+       "active": true
+       },
+       {
+        "i18nKey": "PROPERTYTAX_MONTH>15",
+        "name": "greater than 15 years",
+        "code": "15",
+       "active": true
+       },
+       {
+        "i18nKey": "PROPERTYTAX_MONTH>25",
+        "name": "greater than 24 years",
+        "code": "25",
+       "active": true
+       } 
+     ]
+     let structureTypeOptions =[
+      {
+        "i18nKey": "PERMANENT",
+        "name": "Permanent",
+        "code": "permanent",
+       "active": true
+       },
+       {
+        "i18nKey": "TEMPORARY",
+        "name": "Temporary",
+        "code": "temporary",
+       "active": true
+       },
+       {
+        "i18nKey": "SEMI_PERMANENT",
+        "name": "Semi Permanent",
+        "code": "semiPermanent",
+       "active": true
+       },
+       {
+        "i18nKey": "RCC",
+        "name": "RCC",
+        "code": "RCC",
+       "active": true
+       }  
+     ]
   let floorListData = [];
   function getfloorlistdata(floorlist) {
     floorListData = floorlist?.map((floor) => ({ i18nKey: "PROPERTYTAX_FLOOR_" + stringReplaceAll(floor?.code, "-", "_"), code: floor?.code })) || [];
@@ -595,27 +595,7 @@ function Unit({
         {!["RESIDENTIAL"].includes(usageType?.code) ? (
           <CardLabelError style={errorStyle}>{localFormState.touched.usageCategory ? errors?.usageCategory?.message : ""}</CardLabelError>
         ) : null}
-    <LabelFieldPair>
-            <CardLabel className="card-label-smaller">{t("PT_STRUCTURE_TYPE") + " *"}</CardLabel>
-            <Controller
-              name="structureType"
-              defaultValue={unit.structureType}
-              control={control}
-              render={(props) => (
-                <Dropdown
-                  className="form-field"
-                  selected={props.value}
-                  disable={structureTypeOptions?.length === 1}
-                  option={structureTypeOptions}
-                  select={props.onChange}
-                  optionKey="i18nKey"
-                  placeholder="Select the Structure Type"
-                  onBlur={props.onBlur}
-                  t={t}
-                />
-              )}
-            />
-            </LabelFieldPair> 
+
         <LabelFieldPair>
           <CardLabel className="card-label-smaller">{t("PT_FORM2_OCCUPANCY") + " *"}</CardLabel>
           <Controller
@@ -712,30 +692,6 @@ function Unit({
           ): null}     
         </React.Fragment>          
         ) : null}         
-                      <LabelFieldPair>
-              <CardLabel className="card-label-smaller">{t("PT_FORM_AGE_OF_PROPERTY") + " *"}</CardLabel>
-              
-              <Controller
-            name="ageOfProperty"
-            defaultValue={unit?.ageOfProperty}
-            control={control}
-            render={(props) => (
-              <Dropdown
-                className="form-field"
-                selected={props.value}
-                disable={ageOfPropertyOptions?.length === 1}
-                option={ageOfPropertyOptions}
-                //select={selectSelfOccupied}
-                select={props.onChange}
-                optionKey="i18nKey"
-                placeholder="Select Age of Property"
-                onBlur={props.onBlur}
-                t={t}
-              />
-                  )}
-                />
-             
-            </LabelFieldPair>
 
         <LabelFieldPair>
           <CardLabel className="card-label-smaller">{t("PT_FORM2_BUILT_AREA") + " *"}</CardLabel>

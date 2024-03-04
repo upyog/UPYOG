@@ -162,7 +162,6 @@ export const Request = async ({
     : await Axios({ method, url: _url, data, params, headers });
 
   if (userDownload) return res;
-
   const returnData = res?.data || res?.response?.data || {};
   if (useCache && res?.data && Object.keys(returnData).length !== 0) {
     window.Digit.RequestCache[key] = returnData;
@@ -195,7 +194,7 @@ export const ServiceRequest = async ({
 }) => {
   const preHookName = `${serviceName}Pre`;
   const postHookName = `${serviceName}Post`;
-
+  console.log("resDataresData",preHookName,postHookName)
   let reqParams = params;
   let reqData = data;
   if (window[preHookName] && typeof window[preHookName] === "function") {
@@ -208,5 +207,6 @@ export const ServiceRequest = async ({
   if (window[postHookName] && typeof window[postHookName] === "function") {
     return await window[postHookName](resData);
   }
+  console.log("resData",resData)
   return resData;
 };

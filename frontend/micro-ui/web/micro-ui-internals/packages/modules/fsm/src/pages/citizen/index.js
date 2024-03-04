@@ -1,4 +1,4 @@
-import { BackButton, PrivateRoute } from "@egovernments/digit-ui-react-components";
+import { BackButton, PrivateRoute } from "@upyog/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Redirect, Switch, useLocation } from "react-router-dom";
@@ -6,6 +6,8 @@ import { Redirect, Switch, useLocation } from "react-router-dom";
 const CitizenApp = ({ path }) => {
   const location = useLocation();
   const { t } = useTranslation();
+  let isCommonPTPropertyScreen = window.location.href.includes("/ws/create-application/property-details");
+  let isAcknowledgement = window.location.href.includes("/acknowledgement") || window.location.href.includes("/disconnect-acknowledge");
   const NewApplicationCitizen = Digit.ComponentRegistryService.getComponent("FSMNewApplicationCitizen");
   const MyApplications = Digit.ComponentRegistryService.getComponent("FSMMyApplications");
   const EmployeeApplicationDetails = Digit.ComponentRegistryService.getComponent("FSMEmployeeApplicationDetails");

@@ -1,4 +1,4 @@
-import { Card, CardSubHeader, Header, LinkButton, Loader, Row, StatusTable, MultiLink, PopUp, Toast, SubmitBar } from "@egovernments/digit-ui-react-components";
+import { Card, CardSubHeader, Header, LinkButton, Loader, Row, StatusTable, MultiLink, PopUp, Toast, SubmitBar } from "@upyog/digit-ui-react-components";
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory, useParams } from "react-router-dom";
@@ -7,7 +7,7 @@ import PropertyDocument from "../../pageComponents/PropertyDocument";
 import PTWFApplicationTimeline from "../../pageComponents/PTWFApplicationTimeline";
 import { getCityLocale, getPropertyTypeLocale, propertyCardBodyStyle, getMohallaLocale, pdfDownloadLink } from "../../utils";
 import PTCitizenFeedbackPopUp from "../../pageComponents/PTCitizenFeedbackPopUp";
-//import PTCitizenFeedback from "@egovernments/digit-ui-module-core/src/components/PTCitizenFeedback";
+//import PTCitizenFeedback from "@upyog/digit-ui-module-core/src/components/PTCitizenFeedback";
 
 import get from "lodash/get";
 import { size } from "lodash";
@@ -240,6 +240,8 @@ const PTApplicationDetails = () => {
       label: t("MT_CERTIFICATE"),
       onClick: () => printCertificate(),
     });
+    
+    const reversedOwners= Array.isArray(data?.Properties?.[0]?.owners) ? data?.Properties?.[0]?.owners.slice().reverse():[];
   return (
     <React.Fragment>
       <div>
@@ -459,6 +461,16 @@ const PTApplicationDetails = () => {
                   label={t("PT_ASSESMENT1_ELECTRICITY_UID")}
                   text={(`${t(`${property.additionalDetails?.uid}`)}`) || t("CS_NA")}
                 />
+                  <Row
+                    className="border-none"
+                    label={t("PT_STRUCTURE_TYPE_LABEL")}
+                    text={`${`${property?.additionalDetails?.structureType?.i18nKey}` || t("CS_NA")}`}
+                  />
+                  <Row
+                    className="border-none"
+                    label={t("PT_AGE_OF_PROPERTY_LABEL")}
+                    text={`${`${property?.additionalDetails?.ageOfProperty?.code}` || t("CS_NA")}`}
+                  />
               </StatusTable>
               <div>
                 {Array.isArray(units) &&
@@ -494,16 +506,7 @@ const PTApplicationDetails = () => {
                               label={t("PT_BUILTUP_AREA_LABEL")}
                               text={`${`${unit?.constructionDetail?.builtUpArea} sq.ft` || t("CS_NA")}`}
                             />
-                            <Row
-                              className="border-none"
-                              label={t("PT_STRUCTURE_TYPE_LABEL")}
-                              text={`${`${property?.additionalDetails?.unit?.[index]?.structureType}` || t("CS_NA")}`}
-                            />
-                             <Row
-                              className="border-none"
-                              label={t("PT_AGE_OF_PROPERTY_LABEL")}
-                              text={`${`${property?.additionalDetails?.unit?.[index]?.ageOfProperty}` || t("CS_NA")}`}
-                            />
+                          
                             {unit.occupancyType == "RENTED" && (
                               <Row
                                 className="border-none"
@@ -520,7 +523,7 @@ const PTApplicationDetails = () => {
               <CardSubHeader style={{ fontSize: "24px" }}>{t("PT_COMMON_PROPERTY_OWNERSHIP_DETAILS_HEADER")}</CardSubHeader>
               <div className="owner-details">
                 {Array.isArray(owners) &&
-                  owners.sort((item,item2)=>{return item?.additionalDetails?.ownerSequence - item2?.additionalDetails?.ownerSequence}).map((owner, index) => (
+                  reversedOwners.sort(()=>{return reversedOwners}).map((owner, index) => (
                     <div key={index} className="owner-details-child">
                       <CardSubHeader>
                         {owners.length != 1 && (

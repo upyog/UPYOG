@@ -20,7 +20,7 @@ import {
   ActionLinks,
   Header,
   ImageViewer,
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 
 import ActionModal from "./Modal";
 import TLCaption from "../../../components/TLCaption";
@@ -50,7 +50,7 @@ const ApplicationDetails = (props) => {
     tenantId,
     applicationNumber,
     {},
-    props.userType
+    "EMPLOYEE"
   );
   const { isLoading: isDataLoading, isSuccess, data: applicationData } = Digit.Hooks.fsm.useSearch(
     tenantId,
@@ -82,9 +82,9 @@ const ApplicationDetails = (props) => {
           applicationData?.advanceAmount === null
         ? "FSM_ZERO_PAY_SERVICE"
         : "FSM",
-    role: DSO ? "FSM_DSO" : "FSM_EMPLOYEE",
+    role: "FSM_EMPLOYEE",
     serviceData: applicationDetails,
-    getTripData: DSO ? false : true,
+    getTripData: true,
   });
 
   useEffect(() => {
@@ -173,6 +173,7 @@ const ApplicationDetails = (props) => {
         date: checkpoint?.auditDetails?.created,
         name: checkpoint?.assigner,
         mobileNumber: applicationData?.citizen?.mobileNumber,
+        emailId:applicationData?.citizen?.emailId,
         source: applicationData?.source || "",
       };
       return <TLCaption data={caption} />;
