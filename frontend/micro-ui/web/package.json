@@ -12,11 +12,8 @@
     "micro-ui-internals/packages/modules/dss",
     "micro-ui-internals/packages/modules/pt",
     "micro-ui-internals/packages/modules/ws",
-    "micro-ui-internals/packages/modules/tl",
-    "micro-ui-internals/packages/modules/obps",
-    "micro-ui-internals/packages/modules/pgr",
-    "micro-ui-internals/packages/modules/fsm",
-    "micro-ui-internals/packages/modules/mcollect"
+    "micro-ui-internals/packages/modules/obps"
+
 
   ],
   "engines": {
