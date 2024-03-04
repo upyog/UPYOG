@@ -55,6 +55,16 @@ public class PetApplicationQueryBuilder {
             query.append(" ptr.mobilenumber = ? ");
             preparedStmtList.add(criteria.getMobileNumber());
         }
+        if(!ObjectUtils.isEmpty(criteria.getPetType())){
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" ptr.pettype = ? ");
+            preparedStmtList.add(criteria.getPetType());
+        }
+        if(!ObjectUtils.isEmpty(criteria.getBreedType())){
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" ptr.breedtype = ? ");
+            preparedStmtList.add(criteria.getBreedType());
+        }
         if(!ObjectUtils.isEmpty(criteria.getFromDate())){
             addClauseIfRequired(query, preparedStmtList);
             //query.append(" ptr.createdtime >= ? ");

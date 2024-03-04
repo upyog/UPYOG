@@ -124,7 +124,7 @@ public class NotificationUtil {
 			responseMap = (LinkedHashMap) serviceRequestRepository.fetchResult(getUri(tenantId, requestInfo, NOTIFICATION_LOCALE), requestInfo).get();
 			jsonString = new JSONObject(responseMap).toString();
 			if(StringUtils.isEmpty(jsonString))
-				throw new CustomException("EG_PT_LOCALE_ERROR","Localisation values not found for Property notifications");
+				throw new CustomException("EG_PT_LOCALE_ERROR","Localisation values not found for Pet notifications");
 		}
 		return jsonString;
 	}

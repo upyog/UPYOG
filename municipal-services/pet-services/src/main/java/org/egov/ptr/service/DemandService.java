@@ -50,7 +50,6 @@ public class DemandService {
 				.minimumAmountPayable(BigDecimal.valueOf(500.00)).tenantId(tenantId)
 				.taxPeriodFrom(Long.valueOf("1680307199000")).taxPeriodTo(Long.valueOf("1711929599000"))
 				.consumerType("ptr").businessService("pet-services").additionalDetails(null).build();
-		System.out.println("Demand details: " + demand);
 		List<Demand> demands = new ArrayList<>();
 		demands.add(demand);
 
