@@ -1,6 +1,6 @@
 import React, { Fragment } from "react";
 import { Controller, useWatch } from "react-hook-form";
-import { TextInput, SubmitBar, DatePicker, SearchField, Dropdown, Loader, MobileNumber } from "@egovernments/digit-ui-react-components";
+import { TextInput, SubmitBar, DatePicker, SearchField, Dropdown, Loader, MobileNumber } from "@upyog/digit-ui-react-components";
 
 const SearchFields = ({ register, control, reset, tenantId, t }) => {
   const propsForMobileNumber = {
@@ -11,19 +11,21 @@ const SearchFields = ({ register, control, reset, tenantId, t }) => {
   };
 
   const propsForOldConnectionNumberNpropertyId = {
-    pattern: "[A-Za-z]{2}\-[A-Za-z]{2}\-[0-9]{4}\-[0-9]{4}\-[0-9]{2}\-[0-9]{2}\-[0-9]{6}|[A-Za-z]{2}\-[A-Za-z]{2}\-[0-9]{4}\-[0-9]{2}\-[0-9]{2}\-[0-9]{6}",
+    pattern:  {
+      value: "",
+    },
     title: t("ERR_DEFAULT_INPUT_FIELD_MSG"),
   };
-  let validation = {}
+
   return (
     <>
       <SearchField style={{width:"100%"}}>
         <label>{t("WS_PROPERTY_ID_LABEL")}</label>
-        <TextInput name="propertyId" inputRef={register({})} {...propsForOldConnectionNumberNpropertyId} />
+        <TextInput name="propertyId" inputRef={register({})} />
       </SearchField>
 
       <SearchField className="submit">
-        <SubmitBar label={t("WS_SEARCH_CONNECTION_SEARCH_AND_DOWNLOAD_BUTTON")} submit />
+        <SubmitBar label={t("WS_SEARCH_CONNECTION_SEARCH_INTEGRATED_BUTTON")} submit />
         <p
           onClick={() => {
             reset({

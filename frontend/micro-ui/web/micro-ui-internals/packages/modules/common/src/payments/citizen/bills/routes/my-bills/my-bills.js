@@ -1,18 +1,23 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { ArrowLeft, Header, Loader } from "@egovernments/digit-ui-react-components";
+import { ArrowLeft, Header, Loader } from "@upyog/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { Link, useHistory } from "react-router-dom";
 
 import MyBill from "./my-bill";
 
 export const BillList = ({ billsList, currentPath, businessService }) => {
+  console.log("searchresulttttttt",businessService)
   const { t } = useTranslation();
   const history = useHistory();
 
   const consumerCodes = billsList.map((bill) => bill.consumerCode);
+  
+  
   // const { mobileNumber } = Digit.UserService.getUser()?.info;
 
   const searchResult = Digit.Hooks.useApplicationsForBusinessServiceSearch({ filters: { consumerCodes: consumerCodes.join() }, businessService });
+
+  
 
   /*
   call the relevant business search and find what key is being used as consumerCode in bills it is as follows :-

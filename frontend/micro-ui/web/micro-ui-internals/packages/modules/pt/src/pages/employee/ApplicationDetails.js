@@ -1,4 +1,4 @@
-import { Header, MultiLink } from "@egovernments/digit-ui-react-components";
+import { Header, MultiLink } from "@upyog/digit-ui-react-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -72,7 +72,7 @@ const ApplicationDetails = () => {
 
   useEffect(() => {
     if (applicationDetails) {
-      applicationDetails.applicationDetails[2].additionalDetails.owners= applicationDetails?.applicationDetails?.[2]?.additionalDetails?.owners?.reverse()    
+      appDetailsToShow?.applicationData?.owners.sort((item, item2) => { return item?.additionalDetails?.ownerSequence - item2?.additionalDetails?.ownerSequence })
       setAppDetailsToShow(_.cloneDeep(applicationDetails));
       if (applicationDetails?.applicationData?.status !== "ACTIVE" && applicationDetails?.applicationData?.creationReason === "MUTATION") {
         setEnableAudit(true);
@@ -217,8 +217,10 @@ const ApplicationDetails = () => {
       applicationDetails?.applicationDetails[1].values.push(obj)
     }
   }
+
+  const reversedOwners= Array.isArray(appDetailsToShow?.applicationData?.owners) ? appDetailsToShow?.applicationData?.owners.slice().reverse(): [];
   if (appDetailsToShow?.applicationData) {
-    appDetailsToShow?.applicationData?.owners.sort((item, item2) => { return item?.additionalDetails?.ownerSequence - item2?.additionalDetails?.ownerSequence })
+    appDetailsToShow?.applicationDetails?.[3]?.additionalDetails?.owners.sort(() => { return appDetailsToShow?.applicationDetails?.[3]?.additionalDetails?.owners})
   }
   return (
     <div>

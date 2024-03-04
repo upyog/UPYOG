@@ -162,7 +162,8 @@ export const getPattern = (type) => {
       return /^\d{0,8}(\.\d{1,2})?$/i;
     //return /(([0-9]+)((\.\d{1,2})?))$/i;
     case "Email":
-      return /^(?=^.{1,64}$)((([^<>()\[\]\\.,;:\s$*@'"]+(\.[^<>()\[\]\\.,;:\s@'"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,})))$/i;
+      return /[A-Za-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/i;
+      //return /^(?=^.{1,64}$)((([^<>()\[\]\\.,;:\s$*@'"]+(\.[^<>()\[\]\\.,;:\s@'"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,})))$/i;
     case "Address":
       return /^[^\$\"<>?\\\\~`!@$%^()+={}\[\]*:;“”‘’]{1,500}$/i;
     case "PAN":
@@ -244,6 +245,7 @@ export const createPayloadOfWS = async (data) => {
             ownerType: data?.ConnectionHolderDetails?.[0]?.ownerType?.code || "",
             relationship: data?.ConnectionHolderDetails?.[0]?.relationship?.code || "",
             sameAsPropertyAddress: data?.ConnectionHolderDetails?.[0]?.sameAsOwnerDetails,
+            emailId: data?.ConnectionHolderDetails?.[0].emailId || "",
           },
         ]
       : null,
@@ -353,6 +355,7 @@ export const convertToEditWSUpdate = (data) => {
             gender: data?.ConnectionHolderDetails?.gender?.code || "",
             mobileNumber: data?.ConnectionHolderDetails?.mobileNumber || "",
             name: data?.ConnectionHolderDetails?.name || "",
+            emailId:data?.ConnectionHolderDetails?.emailId || "",
             ownerType: data?.ConnectionHolderDetails?.specialCategoryType?.code || "",
             relationship: data?.ConnectionHolderDetails?.relationship?.code || "",
             sameAsPropertyAddress: data?.ConnectionHolderDetails?.sameAsOwnerDetails,
@@ -469,6 +472,7 @@ export const convertToEditSWUpdate = (data) => {
               gender: data?.ConnectionHolderDetails?.gender?.code || "",
               mobileNumber: data?.ConnectionHolderDetails?.mobileNumber || "",
               name: data?.ConnectionHolderDetails?.name || "",
+              emailId:data?.ConnectionHolderDetails?.emailId || "",
               ownerType: data?.ConnectionHolderDetails?.specialCategoryType?.code || "",
               relationship: data?.ConnectionHolderDetails?.relationship?.code || "",
               sameAsPropertyAddress: data?.ConnectionHolderDetails?.sameAsOwnerDetails,
@@ -588,7 +592,7 @@ export const createPayloadOfWSDisconnection = async (data, storeData, service) =
       dateEffectiveFrom: convertDateToEpoch(data?.date),
       isdisconnection: true,
       isDisconnectionTemporary: data?.type?.value?.code === "Temporary" || data?.type?.value?.code === "TEMPORARY" ? true : false,
-      disconnectionReason: data?.reason.value,
+      disconnectionReason: data?.reason.value?.code,
       documents: data?.documents,
       water: true,
       sewerage: false,
@@ -635,7 +639,7 @@ export const createPayloadOfWSDisconnection = async (data, storeData, service) =
       dateEffectiveFrom: convertDateToEpoch(data?.date),
       isdisconnection: true,
       isDisconnectionTemporary: data?.type?.value?.code === "Temporary" ? true : false,
-      disconnectionReason: data?.reason.value,
+      disconnectionReason: data?.reason.value?.code,
       documents: data?.documents,
       water: false,
       sewerage: true,
@@ -709,7 +713,7 @@ export const createPayloadOfWSReconnection = async (data, storeData, service) =>
       dateEffectiveFrom: convertDateToEpoch(data?.date),
       isdisconnection: true,
       isDisconnectionTemporary: data?.type?.value?.code === "Temporary" || data?.type?.value?.code === "TEMPORARY" ? true : false,
-      disconnectionReason: data?.reason.value,
+      disconnectionReason: data?.reason.value?.code,
       documents: data?.documents,
       water: true,
       sewerage: false,
@@ -757,7 +761,7 @@ export const createPayloadOfWSReconnection = async (data, storeData, service) =>
       dateEffectiveFrom: convertDateToEpoch(data?.date),
       isdisconnection: true,
       isDisconnectionTemporary: data?.type?.value?.code === "Temporary" ? true : false,
-      disconnectionReason: data?.reason.value,
+      disconnectionReason: data?.reason.value?.code,
       documents: data?.documents,
       water: false,
       sewerage: true,
@@ -809,7 +813,7 @@ export const createPayloadOfWSReSubmitDisconnection = async (data, storeData, se
       ...storeData?.applicationData,
       dateEffectiveFrom: convertDateToEpoch(data?.date),
       isDisconnectionTemporary: data?.type?.value?.code === "Temporary" ? true : false,
-      disconnectionReason: data?.reason.value,
+      disconnectionReason: data?.reason.value?.code,
       documents: data?.documents,
       water: true,
       sewerage: false,
@@ -835,7 +839,7 @@ export const createPayloadOfWSReSubmitDisconnection = async (data, storeData, se
       dateEffectiveFrom: convertDateToEpoch(data?.date),
       isdisconnection: true,
       isDisconnectionTemporary: data?.type?.value?.code === "Temporary" ? true : false,
-      disconnectionReason: data?.reason.value,
+      disconnectionReason: data?.reason.value?.code,
       documents: data?.documents,
       water: false,
       sewerage: true,
@@ -1153,6 +1157,7 @@ export const convertApplicationData = (data, serviceType, modify = false, editBy
             uuid: data?.applicationData?.connectionHolders?.[0]?.uuid,
             name: data?.applicationData?.connectionHolders?.[0]?.name || "",
             mobileNumber: data?.applicationData?.connectionHolders?.[0]?.mobileNumber || "",
+            emailId: data?.applicationData?.connectionHolders?.[0]?.emailId || "",
             guardian: data?.applicationData?.connectionHolders?.[0]?.fatherOrHusbandName || "",
             address: data?.applicationData?.connectionHolders?.[0]?.correspondenceAddress || "",
             gender: data?.applicationData?.connectionHolders?.[0]?.gender
@@ -1429,6 +1434,7 @@ export const convertEditApplicationDetails = async (data, appData, actionData) =
             gender: data?.ConnectionHolderDetails?.[0]?.gender?.code || "",
             mobileNumber: data?.ConnectionHolderDetails?.[0]?.mobileNumber || "",
             name: data?.ConnectionHolderDetails?.[0]?.name || "",
+            emailId:data?.ConnectionHolderDetails?.[0]?.emailId || "",
             ownerType: data?.ConnectionHolderDetails?.[0]?.ownerType?.code || "",
             relationship: data?.ConnectionHolderDetails?.[0]?.relationship?.code || "",
             sameAsPropertyAddress: data?.ConnectionHolderDetails?.[0]?.sameAsOwnerDetails,
@@ -1607,6 +1613,7 @@ export const convertModifyApplicationDetails = async (data, appData, actionData 
         gender: data?.ConnectionHolderDetails?.[0]?.gender?.code || "",
         mobileNumber: data?.ConnectionHolderDetails?.[0]?.mobileNumber || "",
         name: data?.ConnectionHolderDetails?.[0]?.name || "",
+        emailId:data?.ConnectionHolderDetails?.[0]?.emailId || "",
         ownerType: data?.ConnectionHolderDetails?.[0]?.ownerType?.code || "",
         relationship: data?.ConnectionHolderDetails?.[0]?.relationship?.code || "",
         sameAsPropertyAddress: data?.ConnectionHolderDetails?.[0]?.sameAsOwnerDetails,

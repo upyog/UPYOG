@@ -1,4 +1,4 @@
-import { CardLabel, FormStep, RadioOrSelect, TextInput, OpenLinkContainer, BackButton } from "@egovernments/digit-ui-react-components";
+import { CardLabel, FormStep, RadioOrSelect, TextInput, OpenLinkContainer, BackButton, CheckBox } from "@upyog/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { stringReplaceAll } from "../utils";
 import Timeline from "../components/Timeline";
@@ -20,7 +20,7 @@ const LicenseType = ({ t, config, onSelect, userType, formData }) => {
   const { data, isLoading } = Digit.Hooks.obps.useMDMS(stateId, "StakeholderRegistraition", "TradeTypetoRoleMapping");
   let isopenlink = window.location.href.includes("/openlink/");
   const isCitizenUrl = Digit.Utils.browser.isMobile() ? true : false;
-
+  const [selfCertification, setSelfCertification]=useState(formData?.selfCertification||formData?.formData?.selfCertification||null)
   if(isopenlink)  
     window.onunload = function () {
       sessionStorage.removeItem("Digit.BUILDING_PERMIT");
@@ -52,13 +52,17 @@ const LicenseType = ({ t, config, onSelect, userType, formData }) => {
 
   function goNext() {
     if (!(formData?.result && formData?.result?.Licenses[0]?.id))
-      onSelect(config.key, { LicenseType, ArchitectNo });
+      onSelect(config.key, { LicenseType, ArchitectNo, selfCertification });
     else {
       let data = formData?.formData;
       data.LicneseType.LicenseType = LicenseType;
       data.LicneseType.ArchitectNo = ArchitectNo;
+      data.LicneseType.selfCertification=selfCertification? selfCertification: false;
       onSelect("", formData)
     }
+  }
+  function selectSelfCertification(e){
+    setSelfCertification(e.target.checked);
   }
   return (
     <div>
@@ -89,6 +93,16 @@ const LicenseType = ({ t, config, onSelect, userType, formData }) => {
               name="ArchitectNo"
               value={ArchitectNo}
               onChange={selectArchitectNo}
+            />
+          </div>}
+          {LicenseType && (LicenseType?.i18nKey.includes("ARCHITECT") || LicenseType?.i18nKey.includes("_ENGINEER")||LicenseType?.i18nKey.includes("DESIGNER")||LicenseType?.i18nKey.includes("SUPERVISOR")) && 
+          <div>
+            <CheckBox
+              label={LicenseType?.i18nKey.includes("ARCHITECT") ? "[DECLARATION UNDER SELF-CERTIFICATION SCHEME ('Residential') (BY ARCHITECT)]" : LicenseType?.i18nKey.includes("_ENGINEER") ? "[DECLARATION UNDER SELF-CERTIFICATION SCHEME ('Residential') (BY ENGINEER)]" : LicenseType?.i18nKey.includes("DESIGNER")? "[DECLARATION UNDER SELF-CERTIFICATION SCHEME ('Residential') (BY DESIGNER)]" : "[DECLARATION UNDER SELF-CERTIFICATION SCHEME ('Residential') (BY SUPERVISOR)]"}
+              onChange={selectSelfCertification}
+              value={selfCertification}
+              checked={selfCertification||false}
+              style={{ marginBottom: "40px" }}
             />
           </div>}
         </FormStep>

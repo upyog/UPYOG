@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Redirect, Route, BrowserRouter as Router, Switch, useHistory, useRouteMatch, useLocation } from "react-router-dom";
-import { TypeSelectCard, Loader } from "@egovernments/digit-ui-react-components";
+import { TypeSelectCard, Loader } from "@upyog/digit-ui-react-components";
 import { newConfig } from "../../../config/NewApplication/config";
 import CheckPage from "./CheckPage";
 import Response from "./Response";
@@ -70,26 +70,75 @@ const FileComplaint = ({ parentRoute }) => {
     config = config.concat(obj.body.filter((a) => !a.hideInCitizen));
   });
 
-  configs = [...config]
-  configs.indexRoute = "select-trip-number";
-let newConfig=[
+  
+let newConfig=[ 
+        {
+          "type": "component",
+          "route": "search-property",
+          "isMandatory": true,
+          "component": "CPTSearchProperty", 
+          "key": "cptsearchproperty",
+          "withoutLabel": true,
+          "nextStep": 'search-results',
+          "hideInEmployee": true,
+        },
+        {
+          "type": "component",
+          "route": "search-results",
+          "isMandatory": true,
+          "component": "CPTSearchResults", 
+          "key": "cptsearchresults",
+          "withoutLabel": true,
+          "nextStep": 'property-type',
+          "hideInEmployee": true,
+        },
+        {
+          "type": "component",
+          "route": "create-property", 
+          "isMandatory": true,
+          "component": "CPTCreateProperty", 
+          "key": "cptcreateproperty",
+          "withoutLabel": true,
+          "isSkipEnabled" : true,
+          "nextStep": 'acknowledge-create-property',
+          "hideInEmployee": true,
+        },
+        {
+          "type": "component",
+          "route": "acknowledge-create-property", 
+          "isMandatory": true,
+          "component": "CPTAcknowledgement", 
+          "key": "cptacknowledgement",
+          "withoutLabel": true,
+          "nextStep": 'property-type',
+          "hideInEmployee": true,
+        },
+        {
+          "type": "component",
+          "route": "property-details",
+          "isMandatory": true,
+          "component": "CPTPropertyDetails", 
+          "key": "propertydetails",
+          "withoutLabel": true,
+          "nextStep": 'property-type',
+          "hideInEmployee": true,
+        },
+        
+        {
+          "head": "FSM_NEW_APPLICATION_PROPERTY",
+          "body": [
+            {
+              "component": "CPTPropertySearchNSummary",
+              "withoutLabel": true,
+              "key": "cpt",
+              "type": "component",
+              "hideInCitizen": true
+            }
+          ]
+        },
+      
   {
-      "label": "ES_NEW_APPLICATION_PROPERTY_ID",
-      "isMandatory": true,
-      "type": "component",
-      "route": "property-id",
-      "key": "propertyID",
-      "component": "SelectPropertyID",
-      "texts": {
-          "headerCaption": "",
-          "header": "CS_FILE_APPLICATION_PROPERTY_ID_LABEL",
-          "cardText": "CS_FILE_APPLICATION_PROPERTY_ID_TEXT",
-          "submitBarLabel": "CS_COMMON_NEXT"
-      },
-      "nextStep": "property-type"
-  },
-  {
-      "label": "ES_NEW_APPLICATION_PROPERTY_TYPE",
+      "label": "ES_NEW_APPLICATION_PROPERTY_TYPEs",
       "isMandatory": true,
       "type": "component",
       "route": "property-type",
@@ -280,7 +329,7 @@ let newConfig=[
           "submitBarLabel": "CS_COMMON_NEXT",
           "skipLabel": "CS_COMMON_SERVICE_SKIP_INFO"
       },
-      "nextStep": "property-id"
+      "nextStep": "search-property"
   },
   {
       "label": "a",
@@ -329,9 +378,12 @@ let newConfig=[
       "component": "AdvanceCollection"
   }
 ]
+configs = [...newConfig]
+  configs.indexRoute = "select-trip-number";
+console.log("newConfig",newConfig)
   return (
     <Switch>
-      {newConfig.map((routeObj, index) => {
+      {configs.map((routeObj, index) => {
         const { component, texts, inputs, key } = routeObj;
         const Component = typeof component === "string" ? Digit.ComponentRegistryService.getComponent(component) : component;
         return (
