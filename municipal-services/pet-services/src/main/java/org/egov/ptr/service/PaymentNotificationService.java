@@ -50,15 +50,17 @@ public class PaymentNotificationService {
 
 		PaymentRequest paymentRequest = mapper.convertValue(record, PaymentRequest.class);
 		String businessServiceString = config.getBusinessService();
-		if (businessServiceString.equals(paymentRequest.getPayment().getPaymentDetails().get(0).getBusinessService())) {
+		log.info(" Receipt consumer in process with businessService as "+ businessServiceString);
+//		if (businessServiceString.equals(paymentRequest.getPayment().getPaymentDetails().get(0).getBusinessService())) {
 			updateWorkflowStatus(paymentRequest);
-		}
+//		}
 
 	}
 
 	public void updateWorkflowStatus(PaymentRequest paymentRequest) {
 
 		ProcessInstance processInstance = getProcessInstanceForPTR(paymentRequest);
+		log.info(" Process instance of pet application "+ processInstance.toString());
 		ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(paymentRequest.getRequestInfo(),
 				Collections.singletonList(processInstance));
 		callWorkFlow(workflowRequest);
@@ -83,9 +85,10 @@ public class PaymentNotificationService {
 	}
 
 	public State callWorkFlow(ProcessInstanceRequest workflowReq) {
-
+		log.info(" Workflow Request for pet service for final step "+ workflowReq.toString());
 		ProcessInstanceResponse response = null;
 		StringBuilder url = new StringBuilder(configs.getWfHost().concat(configs.getWfTransitionPath()));
+		log.info(" URL for calling workflow service "+ workflowReq.toString());
 		Optional<Object> optional = serviceRequestRepository.fetchResult(url, workflowReq);
 		response = mapper.convertValue(optional.get(), ProcessInstanceResponse.class);
 		return response.getProcessInstances().get(0).getState();

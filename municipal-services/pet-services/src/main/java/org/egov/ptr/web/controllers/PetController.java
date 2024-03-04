@@ -24,16 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import io.swagger.annotations.ApiParam;
-//@CrossOrigin(exposedHeaders = {"Access-Control-Allow-Origin","Access-Control-Allow-Credentials","X-Get-Header"}, 
-//allowedHeaders = {"Authorization", "Origin"}, 
-//origins = {"http://localhost:3000", "*"} )
-@CrossOrigin(
-	    origins = {"http://localhost:3000","*"},
-	    allowedHeaders = {"Authorization", "Origin", "Content-Type", "Accept"},
-	    exposedHeaders = {"Access-Control-Allow-Origin", "Access-Control-Allow-Credentials", "X-Get-Header"},
-	    methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE},
-	    allowCredentials = "true"
-	    )
+
 @Controller
 @RequestMapping("/pet-registration")
 public class PetController {
