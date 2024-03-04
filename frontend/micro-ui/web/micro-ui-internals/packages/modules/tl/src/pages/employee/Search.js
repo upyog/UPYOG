@@ -1,17 +1,4 @@
 import React, { useEffect, useState } from "react";
-import {
-  TextInput,
-  Label,
-  SubmitBar,
-  LinkLabel,
-  ActionBar,
-  CloseSvg,
-  DatePicker,
-  CardLabelError,
-  SearchForm,
-  SearchField,
-  Dropdown,
-} from "@egovernments/digit-ui-react-components";
 import { useForm, Controller } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -22,7 +9,7 @@ const Search = ({ path }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const [payload, setPayload] = useState({});
 
-  const Search = Digit.ComponentRegistryService.getComponent(variant === "license" ? "SearchLicense" : "SearchApplication");
+  const Search = Digit.ComponentRegistryService.getComponent(variant === "license" ? "SearchLicense" : "SearchLicenseApplication");
 
   function onSubmit(_data) {
     Digit.SessionStorage.set("SEARCH_APPLICATION_DETAIL", {
@@ -93,15 +80,17 @@ const Search = ({ path }) => {
     config: { ...workFlowConfig }
   });
 
+  console.log("search")
+
   return (
     <Search
       t={t}
       tenantId={tenantId}
       onSubmit={onSubmit}
       data={!isLoading && isSuccess && !isWorkflowLoading && isWorkflowSuccess ? (searchReult?.length > 0
-         ? searchReult.map((obj) => ({
+         ? searchReult?.map((obj) => ({
         ...obj,
-        CurrentOwners: assigneeResults?.length > 0 ? assigneeResults.filter((elem) => elem.businessId === obj.applicationNumber).map((item) => ({
+        CurrentOwners: assigneeResults?.length > 0 ? assigneeResults?.filter((elem) => elem.businessId === obj.applicationNumber)?.map((item) => ({
           currentOwner: item.assignes !== null && item.assignes[0].name !== null ?  item.assignes[0].name : "NA"
         }))
         : {

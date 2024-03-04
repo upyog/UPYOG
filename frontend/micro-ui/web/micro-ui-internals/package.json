@@ -13,6 +13,7 @@
     "packages/modules/dss",
     "packages/modules/commonPt",
     "packages/modules/pt",
+    "packages/modules/tl",
     "packages/modules/mCollect",
     "packages/modules/obps"
   ],
@@ -61,7 +62,7 @@
     "build:dss": "cd packages/modules/dss && yarn build",
     "build:mcollect": "cd packages/modules/mCollect && yarn build",
     "buildD:receipts": "cd packages/modules/receipts && yarn build",
-    "buildD:tl": "cd packages/modules/tl && yarn build",
+    "build:tl": "cd packages/modules/tl && yarn build",
     "buildD:hrms": "cd packages/modules/hrms && yarn build",
     "build:obps": "cd packages/modules/obps && yarn build",
     "buildD:engagement": "cd packages/modules/engagement && yarn build",

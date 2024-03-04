@@ -3,7 +3,7 @@ import { Loader, TypeSelectCard } from "@egovernments/digit-ui-react-components"
 import { FormStep, RadioOrSelect, RadioButtons } from "@egovernments/digit-ui-react-components";
 import Timeline from "../components/TLTimeline";
 
-const SelectVehicleType = ({ t, config, onSelect, userType, formData }) => {
+const TLSelectVehicleType = ({ t, config, onSelect, userType, formData }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();
   const [VehicleType, setVehicleType] = useState(formData?.TradeDetails?.VehicleType);
@@ -12,7 +12,7 @@ const SelectVehicleType = ({ t, config, onSelect, userType, formData }) => {
   let menu = [];
   Menu &&
     Menu["common-masters"] &&
-    Menu["common-masters"]?.StructureType?.map((ob) => {
+    Menu["common-masters"].StructureType?.map((ob) => {
       if (!ob.code.includes("IMMOVABLE")) {
         menu.push({ i18nKey: `COMMON_MASTERS_STRUCTURETYPE_${ob.code.replaceAll(".", "_")}`, code: `${ob.code}` });
       }
@@ -45,4 +45,4 @@ const SelectVehicleType = ({ t, config, onSelect, userType, formData }) => {
     </React.Fragment>
   );
 };
-export default SelectVehicleType;
+export default TLSelectVehicleType;
