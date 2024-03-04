@@ -250,7 +250,7 @@ const showActionRestoration = ["RESTORATION_BUTTON"]
 
   const connectionDetailsReceipt = {
     order: 2,
-    label: t("WS_CONNECTION_DETAILS_RECEIPT"),
+    label: t("WS_CONNECTION_DETAILS"),
     onClick: () => downloadConnectionDetails(),
   };
 

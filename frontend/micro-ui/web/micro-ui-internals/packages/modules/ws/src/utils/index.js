@@ -65,9 +65,21 @@ export const pdfDownloadLink = (documents = {}, fileStoreId = "", format = "") =
 };
 
 /*   method to get filename  from fielstore url*/
-export const DownloadReceipt = async (consumerCode, tenantId, businessService, pdfKey = "consolidatedreceipt") => {
-  tenantId = tenantId ? tenantId : Digit.ULBService.getCurrentTenantId();
-  await Digit.Utils.downloadReceipt(consumerCode, businessService, "consolidatedreceipt", tenantId);
+// export const DownloadReceipt = async (payments,consumerCode, tenantId, businessService, pdfKey = "consolidatedreceipt") => {
+//   tenantId = tenantId ? tenantId : Digit.ULBService.getCurrentTenantId();
+//   await Digit.Utils.downloadReceipt(consumerCode, businessService, "consolidatedreceipt", tenantId);
+// };
+
+export const DownloadReceipt = async (payments,consumerCode, tenantId, businessService) => {
+  let response=null;
+  if(payments?.fileStoreId){
+    response = { filestoreIds: [payments?.fileStoreId] };
+  }
+  else{
+    response = await Digit.PaymentService.generatePdf(tenantId, { Payments: [{...payments}] }, "ws-onetime-receipt");
+ }    
+ const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
+ window.open(fileStore[response?.filestoreIds[0]], "_blank");
 };
 export const pdfDocumentName = (documentLink = "", index = 0) => {
   let documentName = decodeURIComponent(documentLink.split("?")[0].split("/").pop().slice(13)) || `Document - ${index + 1}`;
