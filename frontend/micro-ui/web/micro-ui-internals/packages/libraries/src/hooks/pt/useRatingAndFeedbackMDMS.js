@@ -1,7 +1,7 @@
 import React from "react";
 import { useQuery } from "react-query";
 import { MdmsService } from "../../services/elements/MDMS";
-import { MdmsServicV2 } from "../../services/elements/MDMSV2";
+import { MdmsServiceV2 } from "../../services/elements/MDMSV2";
 
 const useRatingAndFeedbackMDMS = {
     RatingAndFeedBack: (tenantId) =>
