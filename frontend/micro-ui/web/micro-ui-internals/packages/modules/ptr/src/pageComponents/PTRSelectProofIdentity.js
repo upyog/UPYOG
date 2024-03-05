@@ -84,18 +84,19 @@ function PTRSelectDocument({
   
 }) {
   const filteredDocument = documents?.filter((item) => item?.documentType?.includes(doc?.code))[0];
+  console.log("filetetetetet",filteredDocument);
 
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const [selectedDocument, setSelectedDocument] = useState(
     filteredDocument
-      ? { ...filteredDocument, active: filteredDocument?.status === "ACTIVE", code: filteredDocument?.documentType }
+      ? { ...filteredDocument, active: doc?.active === true, code: filteredDocument?.documentType }
       : doc?.dropdownData?.length === 1
       ? doc?.dropdownData[0]
       : {}
   );
 
   const [file, setFile] = useState(null);
-  const [uploadedFile, setUploadedFile] = useState(() => filteredDocument?.fileStoreId || null);
+  const [uploadedFile, setUploadedFile] = useState(() => filteredDocument?.filestoreId || null);
 
   const handlePTRSelectDocument = (value) => setSelectedDocument(value);
 
@@ -215,6 +216,3 @@ function PTRSelectDocument({
 }
 
 export default PTRSelectProofIdentity;
-
-
-
