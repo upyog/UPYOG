@@ -39,12 +39,12 @@ export const newConfig = [
             validation: {},
             name: "registrationDetails"
           },
-        //   {
-        //     label: "BPA_BOUNDARY_WALL_LENGTH_LABEL",
-        //     type: "text",
-        //     validation: {},
-        //     name: "boundaryWallLength"
-        // },
+          {
+            label: "BPA_BOUNDARY_WALL_LENGTH_LABEL",
+            type: "text",
+            validation: {},
+            name: "boundaryWallLength"
+        },
         ]
       },
       {

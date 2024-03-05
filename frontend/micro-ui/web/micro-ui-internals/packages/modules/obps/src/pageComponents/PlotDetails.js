@@ -6,7 +6,7 @@ import Timeline from "../components/Timeline";
 const PlotDetails = ({ formData, onSelect, config }) => {
   const { t } = useTranslation();
   const [holdingNumber, setHoldingNumber] = useState("");
-  //const [boundaryWallLength, setBoundaryWallLength] = useState("");
+  const [boundaryWallLength, setBoundaryWallLength] = useState("");
   const [registrationDetails, setRegistrationDetails] = useState("");
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const checkingFlow = formData?.uiFlow?.flow;
