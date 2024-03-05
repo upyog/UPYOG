@@ -34,5 +34,11 @@ public class PetApplicationSearchCriteria {
     
     @JsonProperty("toDate")
     private String toDate;
+    
+    @JsonProperty("petType")
+    private String petType = null;
+
+    @JsonProperty("breedType")
+    private String breedType = null;
 
 }
