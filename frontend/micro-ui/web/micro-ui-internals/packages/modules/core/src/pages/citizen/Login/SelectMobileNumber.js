@@ -103,9 +103,9 @@ const SelectMobileNumber = ({ t, onSelect, showRegisterLink, mobileNumber, onMob
           setMdmsConfig={setMdmsConfig}
         />
       </div>)}
-      <div className="col col-md-4  text-md-center p-0" style={{width:"40%", marginTop:"5px"}}>
+      {/* <div className="col col-md-4  text-md-center p-0" style={{width:"40%", marginTop:"5px"}}>
              <button className="digilocker-btn"type="submit" onClick={(e)=> register(e)}><img src="https://meripehchaan.gov.in/assets/img/icon/digi.png" class="mr-2" style={{"width":"12%"}}></img>Register with DigiLocker</button>
-                </div>
+                </div> */}
     </FormStep>
   );
 };
