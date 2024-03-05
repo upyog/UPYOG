@@ -33,7 +33,7 @@ import { initOBPSComponents } from "@upyog/digit-ui-module-obps";
 import { initNOCComponents } from "@egovernments/digit-ui-module-noc";
 import { initEngagementComponents } from "@egovernments/digit-ui-module-engagement";
 import { initWSComponents } from "@upyog/digit-ui-module-ws";
-import { initCustomisationComponents } from "./Customisations";
+// import { initCustomisationComponents } from "./Customisations";
 import { initCommonPTComponents } from "@egovernments/digit-ui-module-commonpt";
 import { initBillsComponents } from "@egovernments/digit-ui-module-bills";
 // import { initReportsComponents } from "@egovernments/digit-ui-module-reports";
@@ -94,7 +94,7 @@ initWSComponents();
 initCommonPTComponents();
 initBillsComponents();
 // initReportsComponents();
-initCustomisationComponents();
+// initCustomisationComponents();
 
 const moduleReducers = (initData) => ({
   pgr: PGRReducers(initData),
