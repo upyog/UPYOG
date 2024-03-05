@@ -11,7 +11,7 @@ import {
   LinkLabel,
   LinkButton,
   StatusTable,
-} from "@egovernments/digit-ui-react-components";
+} from  "@upyog/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useHistory, useParams } from "react-router-dom";
@@ -113,14 +113,14 @@ const TLApplicationDetails = () => {
 
   const downloadPaymentReceipt = async () => {
     const receiptFile = { filestoreIds: [paymentsHistory.Payments[0]?.fileStoreId] };
-    if (!receiptFile?.fileStoreIds?.[0]) {
+     if (receiptFile?.filestoreIds[0]!==null) {
+      const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: receiptFile.filestoreIds[0] });
+      window.open(fileStore[receiptFile.filestoreIds[0]], "_blank");
+      setShowOptions(false);      
+    } else {
       const newResponse = await Digit.PaymentService.generatePdf(tenantId, { Payments: [paymentsHistory.Payments[0]] }, "tradelicense-receipt");
       const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: newResponse.filestoreIds[0] });
       window.open(fileStore[newResponse.filestoreIds[0]], "_blank");
-      setShowOptions(false);
-    } else {
-      const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: receiptFile.filestoreIds[0] });
-      window.open(fileStore[receiptFile.filestoreIds[0]], "_blank");
       setShowOptions(false);
     }
   };

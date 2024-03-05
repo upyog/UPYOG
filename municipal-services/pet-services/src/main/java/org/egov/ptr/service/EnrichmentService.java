@@ -60,8 +60,6 @@ public class EnrichmentService {
 						doc.setAuditDetails(application.getAuditDetails());
 
 					}
-
-					System.out.println("Document id:" + application.getDocuments());
 				});
 
 			// application.setApplicationNumber(UUID.randomUUID().toString());

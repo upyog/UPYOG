@@ -1,7 +1,7 @@
 import React, { useState, Fragment, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Card, CardSectionHeader, CardLabel } from "@egovernments/digit-ui-react-components";
-import { Modal, Dropdown, Row, StatusTable, TextInput, Toast } from "@egovernments/digit-ui-react-components";
+import { Card, CardSectionHeader, CardLabel } from "@upyog/digit-ui-react-components";
+import { Modal, Dropdown, Row, StatusTable, TextInput, Toast } from "@upyog/digit-ui-react-components";
 import cloneDeep from "lodash/cloneDeep";
 
 const Penality_menu = [

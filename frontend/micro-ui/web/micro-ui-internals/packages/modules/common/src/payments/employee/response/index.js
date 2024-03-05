@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Banner, Card, CardText, SubmitBar, ActionBar, DownloadPrefixIcon, Loader, Menu } from "@egovernments/digit-ui-react-components";
+import { Banner, Card, CardText, SubmitBar, ActionBar, DownloadPrefixIcon, Loader, Menu } from "@upyog/digit-ui-react-components";
 import { useHistory, useParams, Link, LinkLabel } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
@@ -363,7 +363,7 @@ export const SuccessfulPayment = (props) => {
             assessmentYearForReceipt=fromDate+"-"+toDate;
          
           
-      payloadReceiptDetails.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails.map(ele => {
+            payments.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails.map(ele => {
          
         if(ele.taxHeadCode == "PT_TAX")
         {tax=ele.adjustedAmount;
@@ -415,7 +415,7 @@ export const SuccessfulPayment = (props) => {
       "adhoc_penalty":adhoc_penalty,
       "adhoc_rebate":adhoc_rebate,
       "roundoff":roundoff,
-      "total": payloadReceiptDetails.Payments[0].paymentDetails[0].bill.billDetails[0].amountPaid
+      "total": payments.Payments[0].paymentDetails[0].bill.billDetails[0].amountPaid
   
       };
       taxRow={
@@ -431,7 +431,7 @@ export const SuccessfulPayment = (props) => {
         "adhoc_penalty":adhoc_penaltyT,
         "adhoc_rebate":adhoc_rebateT,
         "roundoff":roundoffT,
-        "total": payloadReceiptDetails.Payments[0].paymentDetails[0].bill.billDetails[0].amount
+        "total": payments.Payments[0].paymentDetails[0].bill.billDetails[0].amount
       };
       arrearArray.push(arrearRow);
       taxArray.push(taxRow);

@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, CardHeader } from "@egovernments/digit-ui-react-components";
+import { Card, CardHeader } from "@upyog/digit-ui-react-components";
 
 const getMohallaLocale = (value = "", tenantId = "") => {
     let convertedValue = convertDotValues(tenantId);
@@ -50,15 +50,12 @@ const getMohallaLocale = (value = "", tenantId = "") => {
         name: `${t(tenantInfo?.i18nKey)} ${ulbCamel(t(`ULBGRADE_${tenantInfo?.city?.ulbGrade.toUpperCase().replace(" ", "_").replace(".", "_")}`))}`,
         email: tenantInfo?.emailId,
         phoneNumber: tenantInfo?.contactNumber,
-        heading: t("BPA_ACKNOWLEDGEMENT"),
+        heading: t("NEW_BUILD_PERMIT_APPLICATION"),
+        applicationNumber:application?.applicationNo||"NA",
         details:[
             {
                 title : t("BPA_BASIC_DETAILS_TITLE"),
                 values:[
-                    {
-                        title : t("BPA_APPLICATION_NUMBER_LABEL"), 
-                        value: application?.applicationNo||"NA",
-                    },
                     { 
                         title: application?.businessService !== t("BPA_OC") ? t("BPA_EDCR_NO_LABEL") : t("BPA_OC_EDCR_NO_LABEL"), 
                         value: application?.edcrNumber || "NA" 

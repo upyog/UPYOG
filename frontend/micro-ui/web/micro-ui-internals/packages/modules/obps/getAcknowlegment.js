@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, CardHeader } from "@egovernments/digit-ui-react-components";
+import { Card, CardHeader } from "@upyog/digit-ui-react-components";
 
 const getMohallaLocale = (value = "", tenantId = "") => {
     let convertedValue = convertDotValues(tenantId);
@@ -48,16 +48,13 @@ const getMohallaLocale = (value = "", tenantId = "") => {
         name: `${t(tenantInfo?.i18nKey)} ${ulbCamel(t(`ULBGRADE_${tenantInfo?.city?.ulbGrade.toUpperCase().replace(" ", "_").replace(".", "_")}`))}`,
         email: tenantInfo?.emailId,
         phoneNumber: tenantInfo?.contactNumber,
-        heading: t("BPA_REGISTRATION_ACKNOWLEDGEMENT"),
+        heading: t("NEW_STAKEHOLDER_REGISTRATION"),
+        applicationNumber:application?.applicationData?.applicationNumber || "NA",
         details: [
             
             {
                 title: t("CS_APPLICATION_DETAILS"),
                 values: [
-                    { 
-                        title: t("STAKEHOLDER_REGISTRATION_APPLICATION_NO"), 
-                        value: application?.applicationData?.applicationNumber || "NA",
-                    },
                     {
                         title: t("REGISTRATION_FILED_DATE"),
                         value: Digit.DateUtils.ConvertTimestampToDate(application?.applicationData?.auditDetails?.createdTime, "dd/MM/yyyy") || "NA",
