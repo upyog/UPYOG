@@ -5,7 +5,7 @@
 /lib
 /*.css
 # ignoring css files as we used scss
-src//*.css
+
 
 
 # testing
