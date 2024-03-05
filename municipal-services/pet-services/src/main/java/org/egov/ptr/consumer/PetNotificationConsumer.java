@@ -30,7 +30,7 @@ public class PetNotificationConsumer {
 		PetRegistrationRequest petRequest = new PetRegistrationRequest();
 		try {
 
-			log.debug("Consuming record: " + record);
+			log.debug("Consuming record in Pet for notification: " + record.toString());
 			petRequest = mapper.convertValue(record, PetRegistrationRequest.class);
 		} catch (final Exception e) {
 

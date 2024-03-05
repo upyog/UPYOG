@@ -49,9 +49,11 @@ public class PaymentNotificationService {
 	 * @param topic
 	 */
 	public void process(HashMap<String, Object> record, String topic) throws JsonProcessingException {
-		log.info(" Receipt consumer class entry ");
+		log.info(" Receipt consumer class entry "+ record.toString());
 		try {
+			log.info("before fetching payment request in pet");
 			PaymentRequest paymentRequest = mapper.convertValue(record, PaymentRequest.class);
+			log.info("Payment request in pet method: "+ paymentRequest.toString());
 			String businessServiceString = config.getBusinessService();
 			log.info(" Receipt consumer in process with businessService as "+ businessServiceString);
 			if (businessServiceString.equals(paymentRequest.getPayment().getPaymentDetails().get(0).getBusinessService())) {
