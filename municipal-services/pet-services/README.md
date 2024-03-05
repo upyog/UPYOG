@@ -13,9 +13,6 @@ NA
 - Location Service (Location)
 - Localisation Service (localisation)
 
-### Swagger API Contract
-
-https://editor.swagger.io/?url=https://raw.githubusercontent.com/upyog/UPYOG/master/municipal-services/docs/property-services/property-services.yml#!/
 
 ## Service Details
 
