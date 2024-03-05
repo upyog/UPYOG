@@ -14,6 +14,8 @@ import org.egov.ptr.util.NotificationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 
@@ -46,14 +48,21 @@ public class PaymentNotificationService {
 	 * @param record
 	 * @param topic
 	 */
-	public void process(HashMap<String, Object> record, String topic) {
-
-		PaymentRequest paymentRequest = mapper.convertValue(record, PaymentRequest.class);
-		String businessServiceString = config.getBusinessService();
-		log.info(" Receipt consumer in process with businessService as "+ businessServiceString);
-//		if (businessServiceString.equals(paymentRequest.getPayment().getPaymentDetails().get(0).getBusinessService())) {
-			updateWorkflowStatus(paymentRequest);
-//		}
+	public void process(HashMap<String, Object> record, String topic) throws JsonProcessingException {
+		log.info(" Receipt consumer class entry ");
+		try {
+			PaymentRequest paymentRequest = mapper.convertValue(record, PaymentRequest.class);
+			String businessServiceString = config.getBusinessService();
+			log.info(" Receipt consumer in process with businessService as "+ businessServiceString);
+			if (businessServiceString.equals(paymentRequest.getPayment().getPaymentDetails().get(0).getBusinessService())) {
+				log.info("inside If statement");
+				updateWorkflowStatus(paymentRequest);
+			}
+		} catch (IllegalArgumentException e) {
+	        log.error("Illegal argument exception occurred pet: " + e.getMessage());
+	    } catch (Exception e) {
+	        log.error("An unexpected exception occurred pet: " + e.getMessage());
+	    }
 
 	}
 
