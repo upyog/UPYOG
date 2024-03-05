@@ -11,7 +11,7 @@ import {
   CardText,
   CardHeader,
   SubmitBar,
-} from "@upyog/digit-ui-react-components";
+} from "@egovernments/digit-ui-react-components";
 import React, { useState, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useLocation } from "react-router-dom";
@@ -152,7 +152,7 @@ const WSApplicationDetails = () => {
 
   const receiptApplicationFeeDownloadObject = {
     order: 4,
-    label: t("WS_RECEIPT_APPLICATION_FEE"),
+    label: t("DOWNLOAD_RECEIPT_HEADER"),
     onClick: printApplicationReceipts,
   };
   
