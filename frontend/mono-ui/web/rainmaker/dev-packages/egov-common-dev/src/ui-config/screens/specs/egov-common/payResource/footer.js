@@ -168,7 +168,7 @@ const checkAmount = (totalAmount, customAmount, businessService) => {
             billId: get(billPayload, "Bill[0].id"),
             consumerCode: consumerCode,
             productInfo: "Common Payment",
-            gateway: "RAZORPAY",
+            gateway: "CCAVANUE",
             taxAndPayments,
             user,
             callbackUrl,
@@ -231,7 +231,7 @@ const checkAmount = (totalAmount, customAmount, businessService) => {
           //   window.location = redirectionUrl;
           //   }
     
-             if( get(goToPaymentGateway, "Transaction.tenantId")=="pb.jalandhar" || get(goToPaymentGateway, "Transaction.tenantId")=="pb.testing" )         {
+             if( get(goToPaymentGateway, "Transaction.tenantId")=="pb.jalandhar" || get(goToPaymentGateway, "Transaction.tenantId")=="pb.testing" || get(goToPaymentGateway, "Transaction.tenantId")=="pb.amritsar")         {
              debugger;
               window.location = redirectionUrl;  
              }
