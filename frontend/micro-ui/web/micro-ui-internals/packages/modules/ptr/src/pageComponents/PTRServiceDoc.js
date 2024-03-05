@@ -31,6 +31,8 @@ const PTRServiceDoc = ({ t, config, onSelect, userType, formData }) => {
           <CardText className={"primaryColor"}>{t("PTR_DOC_REQ_SCREEN_SUB_TEXT")}</CardText>
           <CardSubHeader>{t("PTR_DOC_REQ_SCREEN_LABEL")}</CardSubHeader>
           <CardText className={"primaryColor"}>{t("PTR_DOC_REQ_SCREEN_LABEL_TEXT")}</CardText>
+          <CardText style={{color: 'red'}}>{t('PTR_PDF_AND_JPG_BOTH_FORMAT_ACCEPTED_IN_DOCUMENT_UPLOAD')}</CardText>
+
           <div>
             {isLoading && <Loader />}
             {Array.isArray(docs)

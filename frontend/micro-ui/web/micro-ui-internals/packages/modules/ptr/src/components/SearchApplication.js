@@ -4,6 +4,7 @@
   import { Link } from "react-router-dom";
 
   const PTRSearchApplication = ({tenantId, isLoading, t, onSubmit, data, count, setShowToast }) => {
+    
       const isMobile = window.Digit.Utils.browser.isMobile();
       const { register, control, handleSubmit, setValue, getValues, reset, formState } = useForm({
           defaultValues: {
@@ -34,9 +35,41 @@
               i18nKey: "WF_PTR_INWORKFLOW"
           },
       ]
+      
+      const stateId = Digit.ULBService.getStateId();
+
+
+      const { data: Menu } = Digit.Hooks.ptr.usePTRPetMDMS(stateId, "PetService", "PetType");
+      // const { data: Breed_Type } = Digit.Hooks.ptr.useBreedTypeMDMS(stateId, "PetService", "BreedType");  // hooks for breed type
+
+      let menu = [];
+
+      
+      // let breed_type = [];
+
+
+      Menu &&
+    Menu.map((petone) => {
+      menu.push({ i18nKey: `PTR_PET_${petone.code}`, code: `${petone.code}`, value: `${petone.name}` });
+    });
+
+    // Breed_Type &&
+    // Breed_Type.map((breedss) => {
+    //   if (breedss.PetType == menu?.code) {
+    //     breed_type.push({
+    //       i18nKey: `PTR_BREED_TYPE_${breedss.code}`,
+    //       code: `${breedss.code}`,
+    //       value: `${breedss.name}`
+    //     });
+    //   }
+
+    // });
+
+
 
       
       const GetCell = (value) => <span className="cell-text">{value}</span>;
+      
       const columns = useMemo( () => ([
           
           {
@@ -124,8 +157,41 @@
                   </SearchField>
                   <SearchField>
                       <label>{t("PTR_SEARCH_PET_TYPE")}</label>
-                      <TextInput name="petType" inputRef={register({})} />
+                      {/* <TextInput name="petType" inputRef={register({})} /> */}
+                      <Controller
+                              control={control}
+                              name="petType"
+                              render={(props) => (
+                                  <Dropdown
+                                  selected={props.value}
+                                  select={props.onChange}
+                                  onBlur={props.onBlur}
+                                  option={menu}
+                                  optionKey="i18nKey"
+                                  t={t}
+                                  disable={false}
+                                  />
+                              )}
+                              />
                   </SearchField>
+                  {/* <SearchField>
+                      <label>{t("PTR_SEARCH_BREED_TYPE")}</label>
+                       <Controller
+                              control={control}
+                              name="breedType"
+                              render={(props) => (
+                                  <Dropdown
+                                  selected={props.value}
+                                  select={props.onChange}
+                                  onBlur={props.onBlur}
+                                  option={breed_type}
+                                  optionKey="i18nKey"
+                                  t={t}
+                                  disable={false}
+                                  />
+                              )}
+                              />
+                  </SearchField> */}
                   <SearchField>
                   <label>{t("PTR_OWNER_MOBILE_NO")}</label>
                   <MobileNumber
@@ -150,29 +216,7 @@
                   //maxlength={10}
                   />
                   <CardLabelError>{formState?.errors?.["mobileNumber"]?.message}</CardLabelError>
-                  </SearchField>
-                  <SearchField>
-                      <label>{t("PTR_SEARCH_BREED_TYPE")}</label>
-                      <TextInput name="breedType" inputRef={register({})} />
-                  </SearchField>
-                  <SearchField>
-                      <label>{t("PTR_PET_APPLICATION_STATUS")}</label>
-                      <Controller
-                              control={control}
-                              name="status"
-                              render={(props) => (
-                                  <Dropdown
-                                  selected={props.value}
-                                  select={props.onChange}
-                                  onBlur={props.onBlur}
-                                  option={applicationStatuses}
-                                  optionKey="i18nKey"
-                                  t={t}
-                                  disable={false}
-                                  />
-                              )}
-                              />
-                  </SearchField>
+                  </SearchField> 
                   <SearchField>
                       <label>{t("PTR_FROM_DATE")}</label>
                       <Controller

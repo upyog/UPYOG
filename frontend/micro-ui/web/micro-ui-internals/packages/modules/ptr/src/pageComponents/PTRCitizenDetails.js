@@ -107,7 +107,12 @@ const PTRCitizenDetails
           value={applicantName}
           onChange={setOwnerName}
           ValidationRequired = {true}
-          {...{ required: true, pattern: "[A-Za-z]*", type: "text", title: t("Only alphabets are allowed") }}
+          {...(validation = {
+            isRequired: true,
+            pattern: "^[a-zA-Z ]+$",
+            type: "tel",
+            title: t("PT_NAME_ERROR_MESSAGE"),
+          })}
        
          
         />

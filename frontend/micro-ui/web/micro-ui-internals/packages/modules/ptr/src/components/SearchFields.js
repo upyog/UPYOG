@@ -64,6 +64,7 @@ const SearchFields = ({register, control, reset, tenantId, t, formState, setShow
                             fromDate: "", 
                             toDate: "",
                             mobileNumber:"",
+                            petType:"",
                             status: "",
                             creationReason: "",
                             offset: 0,

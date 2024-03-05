@@ -266,7 +266,14 @@
                   control={control}
                   name={"emailId"}
                   defaultValue={owner?.emailId}
-                  rules={{ validate: (e) => ((e && /^[^\s@]+@[^\s@]+$/.test(e)) || !e ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")) }}
+                  rules={{
+                    validate: (value) => {
+                      const normalized = value.trim().toLowerCase();  
+                      const emailRegex = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+                  
+                      return emailRegex.test(normalized) || 'TL_EMAIL_ID_ERROR_MESSAGE';
+                    } 
+                  }}
                   render={(props) => (
                     <TextInput
                       value={props.value}
