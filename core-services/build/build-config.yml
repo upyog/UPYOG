@@ -126,9 +126,9 @@ config:
 
   - name: "builds/core-services/egov-telemetry"
     build:
-      - work-dir: "egov-telemetry"
+      - work-dir: "egov-telemetry/telemetry"
         image-name: "egov-telemetry"
-        dockerfile: "build/maven/Dockerfile"
+        dockerfile: "core-services/egov-telemetry/telemetry/Dockerfile"
 
   - name: "builds/core-services/egov-user"
     build:
