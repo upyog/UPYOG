@@ -54,7 +54,7 @@ public class PaymentNotificationService {
 			log.info("before fetching payment request in pet");
 			PaymentRequest paymentRequest = mapper.convertValue(record, PaymentRequest.class);
 			log.info("Payment request in pet method: "+ paymentRequest.toString());
-			String businessServiceString = config.getBusinessService();
+			String businessServiceString = "pet-services";
 			log.info(" Receipt consumer in process with businessService as "+ businessServiceString);
 			if (businessServiceString.equals(paymentRequest.getPayment().getPaymentDetails().get(0).getBusinessService())) {
 				log.info("inside If statement");
