@@ -61,7 +61,7 @@ public class PTRNotificationService {
 		log.info("Message for event in Pet:"+ message);
 		Recepient recepient = Recepient.builder().toUsers(toUsers).toRoles(null).build();
 		log.info("Recipient object in pet:"+ recepient.toString());
-		events.add(Event.builder().tenantId(tenantId).description("Pet Registration Description")
+		events.add(Event.builder().tenantId(tenantId).description(message)
 				.eventType(PTRConstants.USREVENTS_EVENT_TYPE).name(PTRConstants.USREVENTS_EVENT_NAME)
 				.postedBy(PTRConstants.USREVENTS_EVENT_POSTEDBY).source(Source.WEBAPP).recepient(recepient)
 				.eventDetails(null).actions(null).build());
