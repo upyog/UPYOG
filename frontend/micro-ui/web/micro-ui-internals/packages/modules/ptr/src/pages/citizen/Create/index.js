@@ -19,6 +19,9 @@ const PTRCreate = ({ parentRoute }) => {
   const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage("PTR_CREATE_PET", {});
   let { data: commonFields, isLoading } = Digit.Hooks.pt.useMDMS(stateId, "PropertyTax", "CommonFieldsConfig"); //  PROPERTY CONFIG HOOK , just for commkonfeild config 
   const goNext = (skipStep, index, isAddMultiple, key) => {
+
+    
+    
     let currentPath = pathname.split("/").pop(),
       lastchar = currentPath.charAt(currentPath.length - 1),
       isMultiple = false,
@@ -39,7 +42,9 @@ const PTRCreate = ({ parentRoute }) => {
     if (!isNaN(lastchar)) {
       isMultiple = true;
     }
-    let { nextStep = {} } = config.find((routeObj) => routeObj.route === currentPath);
+    // let { nextStep = {} } = config.find((routeObj) => routeObj.route === currentPath);
+    let { nextStep = {} } = config.find((routeObj) => routeObj.route === (currentPath || '0'));
+
 
     
     let redirectWithHistory = history.push;

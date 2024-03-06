@@ -57,12 +57,12 @@ public class PetApplicationQueryBuilder {
         }
         if(!ObjectUtils.isEmpty(criteria.getPetType())){
             addClauseIfRequired(query, preparedStmtList);
-            query.append(" ptr.pettype = ? ");
+            query.append(" LOWER(pet.pettype) = LOWER(?) ");
             preparedStmtList.add(criteria.getPetType());
         }
         if(!ObjectUtils.isEmpty(criteria.getBreedType())){
             addClauseIfRequired(query, preparedStmtList);
-            query.append(" ptr.breedtype = ? ");
+            query.append(" LOWER(pet.breedtype) = LOWER(?) ");
             preparedStmtList.add(criteria.getBreedType());
         }
         if(!ObjectUtils.isEmpty(criteria.getFromDate())){

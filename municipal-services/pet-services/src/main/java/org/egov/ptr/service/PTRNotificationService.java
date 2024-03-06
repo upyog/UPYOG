@@ -32,6 +32,7 @@ public class PTRNotificationService {
 
 	public void process(PetRegistrationRequest request) {
 		EventRequest eventRequest = getEventsForPTR(request);
+		log.info("Event Request in Pet process method"+eventRequest.toString());
 		if (null != eventRequest)
 			util.sendEventNotification(eventRequest);
 
@@ -89,6 +90,7 @@ public class PTRNotificationService {
 		userSearchRequest.put("userName", mobileNumber);
 		try {
 			Object user = serviceRequestRepository.fetchResult(uri, userSearchRequest);
+			log.info("User fetched in fetUserUUID method of pet notfication consumer"+user.toString());
 			if (null != user) {
 				String uuid = JsonPath.read(user, "$.user[0].uuid");
 				mapOfPhoneNoAndUUIDs.put(mobileNumber, uuid);
