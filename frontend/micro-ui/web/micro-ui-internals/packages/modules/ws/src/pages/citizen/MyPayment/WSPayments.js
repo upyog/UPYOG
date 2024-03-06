@@ -17,7 +17,7 @@ const WSPayments = ({ application }) => {
       <KeyNote keyValue={t("WS_PAYMENT_STATUS")} note={t(application?.paymentStatus)} />
       <SubmitBar
         label={t("WS_DOWNLOAD_RECEIPT")}
-        onSubmit={(e) => DownloadReceipt(application?.paymentDetails?.[0]?.bill?.consumerCode, application?.tenantId, application?.paymentDetails?.[0]?.bill?.consumerCode?.includes("SW")?"SW":"WS")}
+        onSubmit={(e) => DownloadReceipt(application, application?.paymentDetails?.[0]?.bill?.consumerCode, application?.tenantId, application?.paymentDetails?.[0]?.bill?.consumerCode?.includes("SW")?"SW":"WS")}
       />
     </Card>
   );

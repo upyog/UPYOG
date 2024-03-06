@@ -51,6 +51,7 @@ const ApplicationDetails = () => {
     setShowToast(null);
   };
 
+  const { data: paymentsHistory } = Digit.Hooks.tl.useTLPaymentHistory(tenantId, applicationDetails?.applicationData?.applicationNumber);
   useEffect(() => {
     if (applicationDetails?.numOfApplications?.length > 0) {
       let financialYear = cloneDeep(applicationDetails?.applicationData?.financialYear);
@@ -216,9 +217,21 @@ const ApplicationDetails = () => {
       setIsDisplayDownloadMenu(false)
     };
 
+  // const printReciept = async (businessService="TL", consumerCode=applicationDetails?.applicationData?.applicationNumber) => {
+  //   await Digit.Utils.downloadReceipt(consumerCode, businessService, 'tradelicense-receipt');
+  //   setIsDisplayDownloadMenu(false)
+  // };
   const printReciept = async (businessService="TL", consumerCode=applicationDetails?.applicationData?.applicationNumber) => {
-    await Digit.Utils.downloadReceipt(consumerCode, businessService, 'tradelicense-receipt');
-    setIsDisplayDownloadMenu(false)
+    const receiptFile = { filestoreIds: [paymentsHistory.Payments[0]?.fileStoreId] };
+    if(receiptFile.filestoreIds[0]!==null){
+      const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: receiptFile.filestoreIds[0] });
+      window.open(fileStore[receiptFile.filestoreIds[0]], "_blank"); 
+    }
+    else{
+      const newResponse = await Digit.PaymentService.generatePdf(tenantId, { Payments: [paymentsHistory.Payments[0]] }, "tradelicense-receipt");
+      const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: newResponse.filestoreIds[0] });
+      window.open(fileStore[newResponse.filestoreIds[0]], "_blank");
+    }
   };
 
   const printCertificate = async () => {

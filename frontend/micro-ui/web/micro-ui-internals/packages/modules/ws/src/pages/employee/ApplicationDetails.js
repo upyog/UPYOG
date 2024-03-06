@@ -357,9 +357,17 @@ const ApplicationDetails = () => {
   };
 
   async function getRecieptSearch(tenantId, payments, consumerCodes, receiptKey) {
-    let response = await Digit.PaymentService.generatePdf(tenantId, { Payments: [{...payments}] }, receiptKey);
+    let response=null;
+    if(payments?.fileStoreId){
+       response = { filestoreIds: [payments?.fileStoreId] }
+    const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
+    window.open(fileStore[response.filestoreIds[0]], "_blank");
+    }
+    else{
+    response = await Digit.PaymentService.generatePdf(tenantId, { Payments: [{...payments}] }, receiptKey);
     const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
     window.open(fileStore[response?.filestoreIds[0]], "_blank");
+    }
   }
 
   const handleEstimateDownload = async () => {

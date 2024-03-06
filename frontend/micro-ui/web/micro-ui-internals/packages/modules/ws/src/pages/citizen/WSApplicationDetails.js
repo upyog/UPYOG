@@ -152,7 +152,7 @@ const WSApplicationDetails = () => {
 
   const receiptApplicationFeeDownloadObject = {
     order: 4,
-    label: t("WS_RECEIPT_APPLICATION_FEE"),
+    label: t("DOWNLOAD_RECEIPT_HEADER"),
     onClick: printApplicationReceipts,
   };
   

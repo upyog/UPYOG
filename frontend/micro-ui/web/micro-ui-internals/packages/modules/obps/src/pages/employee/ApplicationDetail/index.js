@@ -34,11 +34,11 @@ const ApplicationDetail = () => {
   };
 
   let dowloadOptions = [];
-  
+  console.log("applicationDetails",applicationDetails)
   if (applicationDetails?.payments?.length > 0) {
     dowloadOptions.push({
       label: t("TL_RECEIPT"),
-      onClick: () => downloadAndPrintReciept(applicationDetails?.payments?.[0]?.paymentDetails?.[0]?.businessService || "BPAREG", applicationDetails?.applicationData?.applicationNumber, applicationDetails?.applicationData?.tenantId),
+      onClick: () => downloadAndPrintReciept(applicationDetails?.payments?.[0]?.paymentDetails?.[0]?.businessService || "BPAREG", applicationDetails?.applicationData?.applicationNumber, applicationDetails?.applicationData?.tenantId,applicationDetails?.payments),
     })
   }
 
