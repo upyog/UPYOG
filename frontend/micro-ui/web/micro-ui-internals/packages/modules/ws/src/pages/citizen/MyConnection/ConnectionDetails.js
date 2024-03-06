@@ -97,8 +97,8 @@ const ConnectionDetails = () => {
   }
 
   const handleDownloadPdf = async () => {
-    const tenantInfo = data?.WaterConnection?.[0]?.tenantId;
-    let res = data?.WaterConnection?.[0];
+    const tenantInfo = data?.WaterConnection?.[0]?.tenantId || data?.SewerageConnections?.[0]?.tenantId;
+    let res = data?.WaterConnection?.[0] || data?.SewerageConnections?.[0];
     const PDFdata = getConnectionDetailsPDF({ ...res }, { ...PTData?.Properties?.[0] }, tenantInfo, t);
     PDFdata.then((ress) => Digit.Utils.pdf.generatev1(ress));
     setShowOptions(false);

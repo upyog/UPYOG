@@ -10,6 +10,7 @@ import { getBusinessServices, convertDateToEpoch, downloadPdf, printPdf } from "
 import cloneDeep from "lodash/cloneDeep";
 
 const BpaApplicationDetail = () => {
+
   const { id } = useParams();
   const { t } = useTranslation();
   const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -73,10 +74,13 @@ const BpaApplicationDetail = () => {
   },[bpaDocs,data])
 
   async function getRecieptSearch({tenantId, payments, ...params}) {
-    let response = { filestoreIds: [payments?.fileStoreId] };
-    //if (!payments?.fileStoreId) {
-      response = await Digit.PaymentService.generatePdf(tenantId, { Payments: [{...payments}] }, "bpa-receipt");
-    //}
+    let response=null;
+    if (payments?.fileStoreId ) {
+       response = { filestoreIds: [payments?.fileStoreId] };      
+    }
+    else{
+       response = await Digit.PaymentService.generatePdf(tenantId, { Payments: [{...payments}] }, "bpa-receipt");
+    }    
     const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
     window.open(fileStore[response?.filestoreIds[0]], "_blank");
   }

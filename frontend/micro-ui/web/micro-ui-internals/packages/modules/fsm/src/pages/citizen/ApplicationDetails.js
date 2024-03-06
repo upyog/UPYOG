@@ -45,7 +45,7 @@ const ApplicationDetails = () => {
   const downloadPaymentReceipt = async () => {
     const receiptFile = { filestoreIds: [paymentsHistory.Payments[0]?.fileStoreId] };
 
-    if (!receiptFile?.fileStoreIds?.[0]) {
+    if (!receiptFile?.filestoreIds?.[0]) {
       const newResponse = await Digit.PaymentService.generatePdf(state, { Payments: [paymentsHistory.Payments[0]] }, "fsm-receipt");
       const fileStore = await Digit.PaymentService.printReciept(state, { fileStoreIds: newResponse.filestoreIds[0] });
       window.open(fileStore[newResponse.filestoreIds[0]], "_blank");

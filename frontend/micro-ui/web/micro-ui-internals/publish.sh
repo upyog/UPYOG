@@ -69,3 +69,8 @@ cd "$BASEDIR/packages/modules/ws" &&  rm -rf node_modules &&  rm -rf dist && yar
 
 msg "Building and publishing mCollect module"
 cd "$BASEDIR/packages/modules/mCollect" &&  rm -rf node_modules &&  rm -rf dist && yarn install && yarn build &&   npm publish --access public 
+
+msg "Building and publishing PTR module"
+cd "$BASEDIR/packages/modules/ptr" &&  rm -rf node_modules &&  rm -rf dist && yarn install && yarn build &&   npm publish --access public 
+
+
