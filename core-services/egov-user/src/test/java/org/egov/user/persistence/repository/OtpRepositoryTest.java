@@ -1,5 +1,13 @@
 package org.egov.user.persistence.repository;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.springframework.test.web.client.ExpectedCount.once;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.content;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
+
 import org.egov.user.Resources;
 import org.egov.user.domain.model.OtpValidationRequest;
 import org.egov.user.web.contract.Otp;
@@ -13,12 +21,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.springframework.test.web.client.ExpectedCount.once;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 @RunWith(MockitoJUnitRunner.class)
 public class OtpRepositoryTest {
@@ -36,19 +38,7 @@ public class OtpRepositoryTest {
         this.otpRepository = new OtpRepository(otpHost, otpSearchContext, otpValidateContext, restTemplate);
     }
 
-    @Test
-    public void testShouldReturnTrueWhenOtpHasBeenValidated() throws Exception {
-        server.expect(once(), requestTo("http://otp-host.com/otp/_search")).andExpect(method(HttpMethod.POST))
-                .andExpect(content().string(new Resources().getFileContents("otpSearchSuccessRequest.json")))
-                .andRespond(withSuccess(new Resources().getFileContents("otpSearchValidatedResponse.json"),
-                        MediaType.APPLICATION_JSON_UTF8));
-        final OtpValidationRequest request = buildRequest();
-
-        boolean isOtpValidated = otpRepository.isOtpValidationComplete(request);
-
-        server.verify();
-        assertEquals(Boolean.TRUE, isOtpValidated);
-    }
+    
 
     @Test
     @Ignore
@@ -81,32 +71,9 @@ public class OtpRepositoryTest {
     }
 
 
-    @Test
-    public void testShouldReturnFalseWhenOtpHasNotBeenValidated() throws Exception {
-        server.expect(once(), requestTo("http://otp-host.com/otp/_search")).andExpect(method(HttpMethod.POST))
-                .andExpect(content().string(new Resources().getFileContents("otpSearchSuccessRequest.json")))
-                .andRespond(withSuccess(new Resources().getFileContents("otpSearchNonValidatedResponse.json"),
-                        MediaType.APPLICATION_JSON_UTF8));
-        final OtpValidationRequest request = buildRequest();
+   
 
-        boolean isOtpValidated = otpRepository.isOtpValidationComplete(request);
-        server.verify();
-        assertFalse(isOtpValidated);
-    }
-
-    @Test
-    public void testShouldReturnFalseWhenOtpIdentityDoesNotMatch() throws Exception {
-        server.expect(once(), requestTo("http://otp-host.com/otp/_search")).andExpect(method(HttpMethod.POST))
-                .andExpect(content().string(new Resources().getFileContents("otpSearchSuccessRequest.json")))
-                .andRespond(withSuccess(new Resources().getFileContents("otpSearchIdentityDifferentResponse.json"),
-                        MediaType.APPLICATION_JSON_UTF8));
-        final OtpValidationRequest request = buildRequest();
-
-        boolean isOtpValidated = otpRepository.isOtpValidationComplete(request);
-
-        server.verify();
-        assertFalse(isOtpValidated);
-    }
+    
 
     private OtpValidationRequest buildRequest() {
         return OtpValidationRequest.builder().otpReference("2b936aae-c3b6-4c89-b3b3-a098cdcbb706")

@@ -55,7 +55,7 @@ public class UserServiceConstants {
     public static final String IP_HEADER_NAME = "x-real-ip";
 
 
-    public static final String PATTERN_NAME = "^[^\\\\$\\\"<>?\\\\\\\\~`!@#$%^()+={}\\\\[\\\\]*,:;“”‘’]*$";
+    public static final String PATTERN_NAME = "^[^\\$\"'<>?~`!@#$%^()+={}\\[\\]*:;“”‘’]*$";
 
 
     public static final String PATTERN_GENDER = "^[a-zA-Z ]*$";

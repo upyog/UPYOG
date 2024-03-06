@@ -44,9 +44,9 @@ public class CustomAuthenticationKeyGenerator implements AuthenticationKeyGenera
 
         MessageDigest digest;
         try {
-            digest = MessageDigest.getInstance(hashAlgorithm);
+            digest = MessageDigest.getInstance("MD5");
         } catch (NoSuchAlgorithmException e) {
-            throw new IllegalStateException(hashAlgorithm+" algorithm not available.  Fatal (should be in the JDK).");
+            throw new IllegalStateException("MD5 algorithm not available.  Fatal (should be in the JDK).");
         }
 
         try {

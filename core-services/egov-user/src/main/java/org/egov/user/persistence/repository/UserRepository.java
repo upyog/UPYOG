@@ -17,6 +17,7 @@ import org.egov.user.repository.builder.RoleQueryBuilder;
 import org.egov.user.repository.builder.UserTypeQueryBuilder;
 import org.egov.user.repository.rowmapper.UserResultSetExtractor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -199,18 +200,46 @@ public class UserRepository {
 
         List<Enum> bloodGroupEnumValues = Arrays.asList(BloodGroup.values());
         if (user.getBloodGroup() != null) {
-            if (bloodGroupEnumValues.contains(user.getBloodGroup()))
+            if (BloodGroup.A_NEGATIVE.toString().equals(user.getBloodGroup().toString())) {
                 updateuserInputs.put("BloodGroup", user.getBloodGroup().toString());
-            else
+            } else if (BloodGroup.A_POSITIVE.toString().equals(user.getBloodGroup().toString())) {
+                updateuserInputs.put("BloodGroup", user.getBloodGroup().toString());
+            } else if (BloodGroup.AB_NEGATIVE.toString().equals(user.getBloodGroup().toString())) {
+                updateuserInputs.put("BloodGroup", user.getBloodGroup().toString());
+            } else if (BloodGroup.AB_POSITIVE.toString().equals(user.getBloodGroup().toString())) {
+                updateuserInputs.put("BloodGroup", user.getBloodGroup().toString());
+            } else if (BloodGroup.O_NEGATIVE.toString().equals(user.getBloodGroup().toString())) {
+                updateuserInputs.put("BloodGroup", user.getBloodGroup().toString());
+            } else if (BloodGroup.O_POSITIVE.toString().equals(user.getBloodGroup().toString())) {
+                updateuserInputs.put("BloodGroup", user.getBloodGroup().toString());
+            } else if (BloodGroup.B_POSITIVE.toString().equals(user.getBloodGroup().toString())) {
+                updateuserInputs.put("BloodGroup", user.getBloodGroup().toString());
+            } else if (BloodGroup.B_NEGATIVE.toString().equals(user.getBloodGroup().toString())) {
+                updateuserInputs.put("BloodGroup", user.getBloodGroup().toString());
+            } else {
                 updateuserInputs.put("BloodGroup", "");
         }
-        else if (oldUser != null && oldUser.getBloodGroup() != null) {
-            if (bloodGroupEnumValues.contains(oldUser.getBloodGroup()))
+        } else if (oldUser != null && oldUser.getBloodGroup() != null) {
+            if (BloodGroup.A_NEGATIVE.toString().equals(oldUser.getBloodGroup().toString())) {
                 updateuserInputs.put("BloodGroup", oldUser.getBloodGroup().toString());
-            else
+            } else if (BloodGroup.A_POSITIVE.toString().equals(oldUser.getBloodGroup().toString())) {
+                updateuserInputs.put("BloodGroup", oldUser.getBloodGroup().toString());
+            } else if (BloodGroup.AB_NEGATIVE.toString().equals(oldUser.getBloodGroup().toString())) {
+                updateuserInputs.put("BloodGroup", oldUser.getBloodGroup().toString());
+            } else if (BloodGroup.AB_POSITIVE.toString().equals(oldUser.getBloodGroup().toString())) {
+                updateuserInputs.put("BloodGroup", oldUser.getBloodGroup().toString());
+            } else if (BloodGroup.O_NEGATIVE.toString().equals(oldUser.getBloodGroup().toString())) {
+                updateuserInputs.put("BloodGroup", oldUser.getBloodGroup().toString());
+            } else if (BloodGroup.O_POSITIVE.toString().equals(oldUser.getBloodGroup().toString())) {
+                updateuserInputs.put("BloodGroup", oldUser.getBloodGroup().toString());
+            } else if (BloodGroup.B_POSITIVE.toString().equals(oldUser.getBloodGroup().toString())) {
+                updateuserInputs.put("BloodGroup", oldUser.getBloodGroup().toString());
+            } else if (BloodGroup.B_NEGATIVE.toString().equals(oldUser.getBloodGroup().toString())) {
+                updateuserInputs.put("BloodGroup", oldUser.getBloodGroup().toString());
+            } else {
                 updateuserInputs.put("BloodGroup", "");
         }
-        else {
+        } else {
             updateuserInputs.put("BloodGroup", "");
         }
 
@@ -240,9 +269,15 @@ public class UserRepository {
 
         List<Enum> enumValues = Arrays.asList(GuardianRelation.values());
         if (user.getGuardianRelation() != null) {
-            if(enumValues.contains(user.getGuardianRelation()))
+            if (GuardianRelation.Father.toString().equals(user.getGuardianRelation().toString())) {
                 updateuserInputs.put("GuardianRelation", user.getGuardianRelation().toString());
-            else {
+            } else if (GuardianRelation.Mother.toString().equals(user.getGuardianRelation().toString())) {
+                updateuserInputs.put("GuardianRelation", user.getGuardianRelation().toString());
+            } else if (GuardianRelation.Husband.toString().equals(user.getGuardianRelation().toString())) {
+                updateuserInputs.put("GuardianRelation", user.getGuardianRelation().toString());
+            } else if (GuardianRelation.Other.toString().equals(user.getGuardianRelation().toString())) {
+                updateuserInputs.put("GuardianRelation", user.getGuardianRelation().toString());
+            } else {
                 updateuserInputs.put("GuardianRelation", "");
             }
             
@@ -279,9 +314,15 @@ public class UserRepository {
 
         List<Enum> userTypeEnumValues = Arrays.asList(UserType.values());
         if (user.getType() != null) {
-            if (userTypeEnumValues.contains(user.getType()))
+            if (UserType.BUSINESS.toString().equals(user.getType().toString())) {
                 updateuserInputs.put("Type", user.getType().toString());
-            else {
+            } else if (UserType.CITIZEN.toString().equals(user.getType().toString())) {
+                updateuserInputs.put("Type", user.getType().toString());
+            } else if (UserType.EMPLOYEE.toString().equals(user.getType().toString())) {
+                updateuserInputs.put("Type", user.getType().toString());
+            } else if (UserType.SYSTEM.toString().equals(user.getType().toString())) {
+                updateuserInputs.put("Type", user.getType().toString());
+            } else {
                 updateuserInputs.put("Type", "");
             }
         }
@@ -354,6 +395,7 @@ public class UserRepository {
      * @param tenantId  tenant id of the roles
      * @return enriched roles
      */
+	@Cacheable(value = "cRolesByCode", key = "roleCodes", sync = true)
     private Set<Role> fetchRolesByCode(Set<String> roleCodes, String tenantId) {
 
 
@@ -576,8 +618,13 @@ public class UserRepository {
      */
     private void updateRoles(User user) {
         Map<String, Object> roleInputs = new HashMap<String, Object>();
+		List<String> roleCodes = user.getRoles().stream().map(Role::getCode).collect(Collectors.toList());
         roleInputs.put("user_id", user.getId());
         roleInputs.put("user_tenantid", user.getTenantId());
+
+		// Add roles filter as well, other wise during concurrent update call there is a
+		// null pointer exception due to delete of roles
+		roleInputs.put("roles", roleCodes);
         namedParameterJdbcTemplate.update(RoleQueryBuilder.DELETE_USER_ROLES, roleInputs);
         saveUserRoles(user);
     }

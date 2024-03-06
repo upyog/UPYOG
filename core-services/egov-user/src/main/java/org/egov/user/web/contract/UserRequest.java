@@ -7,7 +7,11 @@ import org.egov.user.config.*;
 import org.egov.user.domain.model.Address;
 import org.egov.user.domain.model.Role;
 import org.egov.user.domain.model.User;
-import org.egov.user.domain.model.enums.*;
+import org.egov.user.domain.model.enums.AddressType;
+import org.egov.user.domain.model.enums.BloodGroup;
+import org.egov.user.domain.model.enums.Gender;
+import org.egov.user.domain.model.enums.GuardianRelation;
+import org.egov.user.domain.model.enums.UserType;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.SafeHtml;
 
@@ -37,7 +41,7 @@ public class UserRequest {
     private String salutation;
 
     @Pattern(regexp = UserServiceConstants.PATTERN_NAME)
-    @Size(max = 50)
+    @Size(max = 100)
     private String name;
 
     @Pattern(regexp = UserServiceConstants.PATTERN_GENDER)
@@ -102,7 +106,7 @@ public class UserRequest {
     private Long accountLockedDate;
 
     @Pattern(regexp = UserServiceConstants.PATTERN_NAME)
-    @Size(max = 50)
+    @Size(max = 100)
     private String fatherOrHusbandName;
     private GuardianRelation relationship;
 
