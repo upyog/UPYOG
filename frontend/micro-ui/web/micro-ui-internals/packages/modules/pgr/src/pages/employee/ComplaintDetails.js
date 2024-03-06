@@ -28,7 +28,7 @@ import {
   Loader,
   Modal,
   SectionalDropdown,
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 
 import { Close } from "../../Icons";
 import { useTranslation } from "react-i18next";
@@ -302,6 +302,9 @@ export const ComplaintDetails = (props) => {
     setImageZoom(null);
   }
 
+  function redirectToPage(redirectingUrl){
+      window.location.href=redirectingUrl;
+    }
   function onActionSelect(action) {
     setSelectedAction(action);
     switch (action) {
@@ -325,6 +328,11 @@ export const ComplaintDetails = (props) => {
         setPopup(true);
         setDisplayMenu(false);
         break;
+      case "EDIT":
+        let url=window.location.href;
+        let redirectingUrl=url.split("complaint")[0]+"modify-application/"+url.split("details/")[1];
+        redirectToPage(redirectingUrl);    
+        break;   
       default:
         setDisplayMenu(false);
     }

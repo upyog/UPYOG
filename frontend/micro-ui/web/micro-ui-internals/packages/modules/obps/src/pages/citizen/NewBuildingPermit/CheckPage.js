@@ -1,7 +1,7 @@
 import {
     Card, CardHeader, CardSubHeader, CardText,
     CitizenInfoLabel, Header, LinkButton, Row, StatusTable, SubmitBar, Table, CardSectionHeader, EditIcon, PDFSvg, Loader
-  } from "@egovernments/digit-ui-react-components";
+  } from "@upyog/digit-ui-react-components";
   import React,{ useMemo }  from "react";
   import { useTranslation } from "react-i18next";
   import { useHistory, useRouteMatch } from "react-router-dom";
@@ -155,7 +155,7 @@ import {
       return <Loader />
     }
 
-
+  console.log("DATA",data)
     return (
     <React.Fragment>
     <Timeline currentStep={4} />
@@ -189,6 +189,7 @@ import {
           <Row className="border-none" label={t(`BPA_KHATHA_NUMBER_LABEL`)} text={datafromAPI?.planDetail?.planInformation?.khataNo || t("CS_NA")}/>
           <Row className="border-none" label={t(`BPA_HOLDING_NUMBER_LABEL`)} text={data?.holdingNumber || t("CS_NA")} />
           <Row className="border-none" label={t(`BPA_BOUNDARY_LAND_REG_DETAIL_LABEL`)} text={data?.registrationDetails || t("CS_NA")} />
+          {/* <Row className="border-none" label={t(`BPA_BOUNDARY_WALL_LENGTH_LABEL`)} text={data?.boundaryWallLength|| t("CS_NA")} /> */}
     </StatusTable>
     </Card>
     <Card style={{paddingRight:"16px"}}>
@@ -278,7 +279,8 @@ import {
         <StatusTable>
         <Row className="border-none" textStyle={index==0 && owners.owners.length == 1 ?{paddingLeft:"12px"}:{}} label={t(`CORE_COMMON_NAME`)} text={ob?.name} />
         <Row className="border-none" label={t(`BPA_APPLICANT_GENDER_LABEL`)} text={t(ob?.gender?.i18nKey)} />
-        <Row className="border-none" label={t(`CORE_COMMON_MOBILE_NUMBER`)} text={ob?.mobileNumber} /> 
+        <Row className="border-none" label={t(`CORE_COMMON_MOBILE_NUMBER`)} text={ob?.mobileNumber} />
+        <Row className="border-none" label={t(`CORE_COMMON_EMAIL_ID`)} text={ob?.emailId || t("CS_NA")} />
         <Row className="border-none" label={t(`BPA_IS_PRIMARY_OWNER_LABEL`)} text={`${ob?.isPrimaryOwner}`} /> 
         </StatusTable>
         </div>))}

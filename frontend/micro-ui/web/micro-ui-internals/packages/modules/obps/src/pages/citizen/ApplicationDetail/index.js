@@ -1,4 +1,4 @@
-import { StatusTable, Header, Card, CardHeader, Row, PDFSvg, CardSectionHeader, MultiLink, Loader } from "@egovernments/digit-ui-react-components";
+import { StatusTable, Header, Card, CardHeader, Row, PDFSvg, CardSectionHeader, MultiLink, Loader } from "@upyog/digit-ui-react-components";
 import React, { Fragment, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -39,6 +39,7 @@ const ApplicationDetails = () => {
   useEffect(() => {
     if (License) {
       if (reciept_data?.Payments?.length > 0) {
+        //console.log("reciept_data?.Payments",reciept_data?.Payments)
         setDowloadOptions([
           {
             label: t("TL_RECEIPT"),
@@ -46,7 +47,8 @@ const ApplicationDetails = () => {
               downloadAndPrintReciept(
                 reciept_data?.Payments?.[0]?.paymentDetails?.[0]?.businessService || "BPAREG",
                 License?.applicationNumber,
-                License?.tenantId
+                License?.tenantId,
+                reciept_data?.Payments
               ),
           },
         ]);

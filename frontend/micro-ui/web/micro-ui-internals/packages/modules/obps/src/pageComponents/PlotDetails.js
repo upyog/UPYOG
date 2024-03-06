@@ -1,4 +1,4 @@
-import { Card, CardCaption, TextInput, CardHeader, Label, StatusTable, Row, SubmitBar, Loader, FormStep } from "@egovernments/digit-ui-react-components";
+import { Card, CardCaption, TextInput, CardHeader, Label, StatusTable, Row, SubmitBar, Loader, FormStep } from "@upyog/digit-ui-react-components";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import Timeline from "../components/Timeline";
@@ -6,6 +6,7 @@ import Timeline from "../components/Timeline";
 const PlotDetails = ({ formData, onSelect, config }) => {
   const { t } = useTranslation();
   const [holdingNumber, setHoldingNumber] = useState("");
+  //const [boundaryWallLength, setBoundaryWallLength] = useState("");
   const [registrationDetails, setRegistrationDetails] = useState("");
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const checkingFlow = formData?.uiFlow?.flow;

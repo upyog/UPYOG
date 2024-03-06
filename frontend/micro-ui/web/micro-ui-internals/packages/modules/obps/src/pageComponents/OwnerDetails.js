@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FormStep, TextInput, CardLabel, RadioButtons,RadioOrSelect, LabelFieldPair, Dropdown, CheckBox, LinkButton, Loader, Toast, SearchIcon, DeleteIcon } from "@egovernments/digit-ui-react-components";
+import { FormStep, TextInput, CardLabel, RadioButtons,RadioOrSelect, LabelFieldPair, Dropdown, CheckBox, LinkButton, Loader, Toast, SearchIcon, DeleteIcon } from "@upyog/digit-ui-react-components";
 import { stringReplaceAll, getPattern, convertDateTimeToEpoch, convertDateToEpoch } from "../utils";
 import Timeline from "../components/Timeline";
 import cloneDeep from "lodash/cloneDeep";
@@ -16,6 +16,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
     const [genderList, setGenderList] = useState([]);
     const [ownershipCategory, setOwnershipCategory] = useState(formData?.owners?.ownershipCategory);
     const [name, setName] = useState(formData?.owners?.name || "");
+    const [emailId, setEmail] = useState(formData?.owners?.emailId || "");
     const [isPrimaryOwner, setisPrimaryOwner] = useState(false);
     const [gender, setGender] = useState(formData?.owners?.gender);
     const [mobileNumber, setMobileNumber] = useState(formData?.owners?.mobileNumber || "");
@@ -28,15 +29,15 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
         if(owner.isPrimaryOwner == "false" ) owner.isPrimaryOwner = false
     })
     let [fields, setFeilds] = useState(
-        (formData?.owners && formData?.owners?.owners) || [{ name: "", gender: "", mobileNumber: null, isPrimaryOwner: true }]
+        (formData?.owners && formData?.owners?.owners) || [{ name: "",emailId:"", gender: "", mobileNumber: null, isPrimaryOwner: true }]
     );
 
     useEffect(() => {
         var flag=0;
         fields.map((ob) => {
-            if(ob.isPrimaryOwner)
+            if(ob?.isPrimaryOwner)
             flag=1;
-            if (ob.name && ob.mobileNumber && ob.gender) {
+            if (ob?.name && ob?.mobileNumber && ob?.gender) {
                 setCanmovenext(false);
             }
             else {
@@ -95,7 +96,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
 
     function handleAdd() {
         const values = [...fields];
-        values.push({ name: "", gender: "", mobileNumber: null, isPrimaryOwner: false });
+        values.push({ name: "",emailId:"", gender: "", mobileNumber: null, isPrimaryOwner: false });
         setFeilds(values);
         setCanmovenext(true);
 
@@ -128,6 +129,15 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
         let units = [...fields];
         units[i].gender = value;
         setGender(value);
+        setFeilds(units);
+        if (units[i].gender && units[i].mobileNumber && units[i].name) {
+            setCanmovenext(false);
+        }
+    }
+    function setOwnerEmail(i, e) {
+        let units = [...fields];
+        units[i].emailId = e.target.value;
+        setEmail(e.target.value);
         setFeilds(units);
         if (units[i].gender && units[i].mobileNumber && units[i].name) {
             setCanmovenext(false);
@@ -295,6 +305,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                         ...owner,
                         active:true,
                         name: owner.name,
+                        emailId:owner.emailId,
                         mobileNumber: owner.mobileNumber,
                         isPrimaryOwner: owner.isPrimaryOwner,
                         gender: owner.gender.code,
@@ -317,6 +328,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                 // Additonal details
                 payload.additionalDetails = {GISPlaceName:formData?.address?.placeName};
                 if (formData?.data?.holdingNumber) payload.additionalDetails.holdingNo = formData?.data?.holdingNumber;
+                //if (formData?.data?.boundaryWallLength) payload.additionalDetails.boundaryWallLength = formData?.data?.boundaryWallLength;
                 if (formData?.data?.registrationDetails) payload.additionalDetails.registrationDetails = formData?.data?.registrationDetails;
                 if (formData?.data?.applicationType) payload.additionalDetails.applicationType = formData?.data?.applicationType;
                 if (formData?.data?.serviceType) payload.additionalDetails.serviceType = formData?.data?.serviceType;
@@ -401,7 +413,7 @@ fields =propertyData.owners.map((owner) =>{
             "active": true,
             "i18nKey": "COMMON_GENDER_FEMALE"
         }
-        return {"name":owner.name, "mobileNumber":owner.mobileNumber, gender:gender,isPrimaryOwner}
+        return {"name":owner.name,"emailId":owner.emailId, "mobileNumber":owner.mobileNumber, gender:gender,isPrimaryOwner}
     }
     else if (owner.gender =="MALE")
     {
@@ -410,7 +422,7 @@ fields =propertyData.owners.map((owner) =>{
             "active": true,
             "i18nKey": "COMMON_GENDER_MALE"
         }
-        return {"name":owner.name, "mobileNumber":owner.mobileNumber, gender:gender,isPrimaryOwner}
+        return {"name":owner.name, "emailId":owner.emailId, "mobileNumber":owner.mobileNumber, gender:gender,isPrimaryOwner}
     }
 
 })
@@ -516,6 +528,24 @@ useEffect(()=>{
                                     onSelect={(e) => setGenderName(index, e)}
                                     t={t}
                                     disabled={true}
+                                    />
+                                    <CardLabel>{`${t("CORE_EMAIL_ID")}`}</CardLabel>
+                                    <TextInput
+                                        style={{ background: "#FAFAFA" }}
+                                        t={t}
+                                        type={"emailId"}
+                                        isMandatory={false}
+                                        optionKey="i18nKey"
+                                        name="emailId"
+                                        value={field.emailId}
+                                        onChange={(e) => setOwnerEmail(index, e)}
+                                        {...(validation = {
+                                            isRequired: true,
+                                            pattern: "[A-Za-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$",
+                                            type: "emailId",
+                                            title: t("TL_EMAIL_ID_ERROR_MESSAGE"),
+                                        })}
+                                        disabled={true}
                                     />
                                     {ismultiple && (
                                         <CheckBox

@@ -42,7 +42,13 @@ export const newConfig = [
               // required: true
             },
             name: "registrationDetails"
-          }
+          },
+        //   {
+        //     label: "BPA_BOUNDARY_WALL_LENGTH_LABEL",
+        //     type: "text",
+        //     validation: {},
+        //     name: "boundaryWallLength"
+        // }
         ]
       },
       {

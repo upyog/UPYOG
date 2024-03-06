@@ -1,4 +1,4 @@
-import { DetailsCard, Loader, Table } from "@egovernments/digit-ui-react-components";
+import { DetailsCard, Loader, Table } from "@upyog/digit-ui-react-components";
 import React, { memo, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useLocation, useHistory } from "react-router-dom";
@@ -51,7 +51,7 @@ const SearchPTID = ({ tenantId, t, payload, showToast, setShowToast, ptSearchCon
       {
         Header: t("PT_COMMON_TABLE_COL_OWNER_NAME"),
         disableSortBy: true,
-        Cell: ({ row }) => GetCell(row.original.ownerNames || ""),
+        Cell: ({ row }) => GetCell(row.original.owners.sort((a,b)=>a.additionalDetails.ownerSequence-b.additionalDetails.ownerSequence).map( o => o.name ). join(",") || "" ),
       },
 
       {

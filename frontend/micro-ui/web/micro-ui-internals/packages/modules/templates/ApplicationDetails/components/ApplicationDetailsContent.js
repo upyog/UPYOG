@@ -8,7 +8,7 @@ import {
   Loader,
   Row,
   StatusTable,
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 import { values } from "lodash";
 import React, { Fragment, useEffect,useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -47,6 +47,9 @@ function ApplicationDetailsContent({
   isInfoLabel = false
 }) {
   const { t } = useTranslation();
+
+const ownersSequences= applicationDetails?.applicationData?.owners
+console.log("appl", applicationDetails)
 
   function OpenImage(imageSource, index, thumbnailsToShow) {
     window.open(thumbnailsToShow?.fullImage?.[0], "_blank");
@@ -215,7 +218,7 @@ function ApplicationDetailsContent({
         return ""
     }
   }
-  console.log("applicationDetails?.applicationDetails",applicationDetails?.applicationDetails)
+  // console.log("applicationDetails?.applicationDetails",applicationDetails?.applicationDetails)
   return (
     <Card style={{ position: "relative" }} className={"employeeCard-override"}>
       {/* For UM-4418 changes */}

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Header, Card, KeyNote, LinkButton, Loader, MultiLink } from "@egovernments/digit-ui-react-components";
+import { Header, Card, KeyNote, LinkButton, Loader, MultiLink } from "@upyog/digit-ui-react-components";
 import { useHistory, useLocation, useParams } from "react-router-dom";
 import getPDFData from "../../getPDFData";
 import { getVehicleType } from "../../utils";
@@ -45,7 +45,7 @@ const ApplicationDetails = () => {
   const downloadPaymentReceipt = async () => {
     const receiptFile = { filestoreIds: [paymentsHistory.Payments[0]?.fileStoreId] };
 
-    if (!receiptFile?.fileStoreIds?.[0]) {
+    if (!receiptFile?.filestoreIds?.[0]) {
       const newResponse = await Digit.PaymentService.generatePdf(state, { Payments: [paymentsHistory.Payments[0]] }, "fsm-receipt");
       const fileStore = await Digit.PaymentService.printReciept(state, { fileStoreIds: newResponse.filestoreIds[0] });
       window.open(fileStore[newResponse.filestoreIds[0]], "_blank");

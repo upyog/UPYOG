@@ -1,4 +1,4 @@
-import { BackButton, CardLabel, CheckBox, FormStep, TextArea, Toast } from "@egovernments/digit-ui-react-components";
+import { BackButton, CardLabel, CheckBox, FormStep, TextArea, Toast } from "@upyog/digit-ui-react-components";
 import React, { useState } from "react";
 import Timeline from "../components/Timeline";
 
@@ -64,6 +64,7 @@ const CorrospondenceAddress = ({ t, config, onSelect, value, userType, formData 
               ],
               "additionalDetail": {
                 "counsilForArchNo": formData?.LicneseType?.ArchitectNo,
+                "isSelfCertificationRequired": formData?.LicneseType?.selfCertification?formData?.LicneseType?.selfCertification: null,
               },
               "address": {
                 "city": "",

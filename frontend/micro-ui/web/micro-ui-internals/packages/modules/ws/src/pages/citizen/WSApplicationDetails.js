@@ -11,7 +11,7 @@ import {
   CardText,
   CardHeader,
   SubmitBar,
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 import React, { useState, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useLocation } from "react-router-dom";
@@ -152,7 +152,7 @@ const WSApplicationDetails = () => {
 
   const receiptApplicationFeeDownloadObject = {
     order: 4,
-    label: t("WS_RECEIPT_APPLICATION_FEE"),
+    label: t("DOWNLOAD_RECEIPT_HEADER"),
     onClick: printApplicationReceipts,
   };
   
@@ -353,7 +353,7 @@ let serviceType = data && data?.WaterConnection?.[0] ? "WATER" : "SEWERAGE";
             <Row
               className="border-none"
               label={t("WS_OWN_DETAIL_OWN_NAME_LABEL")}
-              text={PTData?.Properties?.[0]?.owners?.[0]?.name}
+              text={PTData?.Properties?.[0]?.owners.sort((a,b)=>a?.additionalDetails?.ownerSequence-b?.additionalDetails?.ownerSequence)?.[0]?.name}
               textStyle={{ whiteSpace: "pre" }}
             />
             <Row
@@ -516,6 +516,25 @@ let serviceType = data && data?.WaterConnection?.[0] ? "WATER" : "SEWERAGE";
                 },
                 }}
                 />
+                <Row
+                className="border-none"
+                label={t("WS_OWN_DETAIL_EMAIL_ID_LABEL")}
+                text={data?.WaterConnection?.[0]?.connectionHolders?.[0]?.emailId || data?.SewerageConnections?.[0]?.connectionHolders?.[0]?.emailId || "NA"}
+                textStyle={{ whiteSpace: "pre" }}
+                privacy={ {
+                  uuid: applicationNobyData?.includes("WS") ? data?.WaterConnection?.[0]?.connectionHolders?.[0]?.uuid : data?.SewerageConnections?.[0]?.connectionHolders?.[0]?.uuid,
+                  fieldName: "connectionHoldersEmailId",
+                  model: "WnSConnectionOwner",
+                  showValue: false,
+                  loadData: {
+                    serviceName: serviceType === "WATER" ? "/ws-services/wc/_search" : "/sw-services/swc/_search",
+                    requestBody: {},
+                    requestParam: { tenantId, applicationNumber:applicationNobyData },
+                    jsonPath: serviceType === "WATER" ? "WaterConnection[0].connectionHolders[0].emailId" : "SewerageConnections[0].connectionHolders[0].emailId",
+                    isArray: false,
+                  }, }
+                }
+              />
             </StatusTable>
           </Card>
         ) : (
