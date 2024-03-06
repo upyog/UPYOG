@@ -282,8 +282,8 @@ const NewApplication = () => {
 
   console.log(configs,"configs");
 
-  configs[1] = configs[0];
-  configs[6] = configs[0];
+  // configs[1] = configs[0];
+  // configs[6] = configs[0];
 
   return (
     <div>
