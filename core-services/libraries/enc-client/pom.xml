@@ -131,8 +131,8 @@
           <target>8</target>
         </configuration>
       </plugin>
-      <plugin>
-        <artifactId>maven-source-plugin</artifactId>
+     <!--  <plugin>
+       <artifactId>maven-source-plugin</artifactId>
         <executions>
           <execution>
             <id>attach-sources-enc</id>
@@ -144,7 +144,7 @@
                     </configuration>
           </execution>
         </executions>
-      </plugin>
+      </plugin>-->
     </plugins>
   </build>
 </project>
