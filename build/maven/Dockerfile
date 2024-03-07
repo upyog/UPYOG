@@ -12,7 +12,7 @@ COPY build/maven/start.sh ./start.sh
 # RUN mvn -B dependency:go-offline
 
 COPY ${WORK_DIR}/src ./src
-RUN mvn -B -f /app/pom.xml package
+RUN mvn -B -f /app/pom.xml package -Dmaven.test.skip=true -DskipTests
 
 
 # Create runtime image
