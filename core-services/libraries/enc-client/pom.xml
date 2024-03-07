@@ -135,10 +135,13 @@
         <artifactId>maven-source-plugin</artifactId>
         <executions>
           <execution>
-            <id>attach-sources</id>
+            <id>attach-sources-enc</id>
             <goals>
               <goal>jar</goal>
             </goals>
+            <configuration>
+                        <classifier>enc</classifier>
+                    </configuration>
           </execution>
         </executions>
       </plugin>
