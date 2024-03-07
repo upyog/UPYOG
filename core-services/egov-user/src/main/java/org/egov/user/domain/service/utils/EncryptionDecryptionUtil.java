@@ -25,6 +25,8 @@ import java.util.stream.Collectors;
 @Slf4j
 @Component
 public class EncryptionDecryptionUtil {
+	
+	
     private EncryptionService encryptionService;
     @Autowired
     private AuditService auditService;
@@ -83,8 +85,8 @@ public class EncryptionDecryptionUtil {
 
             if(key == null)
                 key = keyPurposeMap.get("key");
-            
-            P decryptedObject = (P) encryptionService.decryptJson(requestInfo,objectToDecrypt, key, purpose, classType);
+           															//(Object ciphertextJson, String key, User user, Class<E> valueType)
+            P decryptedObject = (P) encryptionService.decryptJson(objectToDecrypt, key, encrichedUserInfo, classType);
             if (decryptedObject == null) {
                 throw new CustomException("DECRYPTION_NULL_ERROR", "Null object found on performing decryption");
             }
