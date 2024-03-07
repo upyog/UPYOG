@@ -99,7 +99,7 @@ public class NotificationUtil {
      * Fetches messages from localization service
      *
      * @param tenantId
-     *            tenantId of the PT
+     *            tenantId of the PTR
      * @param requestInfo
      *            The requestInfo of the request
      * @return Localization messages for the module
@@ -124,7 +124,7 @@ public class NotificationUtil {
 			responseMap = (LinkedHashMap) serviceRequestRepository.fetchResult(getUri(tenantId, requestInfo, NOTIFICATION_LOCALE), requestInfo).get();
 			jsonString = new JSONObject(responseMap).toString();
 			if(StringUtils.isEmpty(jsonString))
-				throw new CustomException("EG_PT_LOCALE_ERROR","Localisation values not found for Pet notifications");
+				throw new CustomException("EG_PTR_LOCALE_ERROR","Localisation values not found for Pet notifications");
 		}
 		return jsonString;
 	}
