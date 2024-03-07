@@ -9,42 +9,6 @@ public class PTRConstants {
 	private PTRConstants() {
 	}
 
-//    public static final String PT_TYPE_VACANT = "VACANT";
-//    
-//    public static final String PT_TYPE_SHAREDPROPERTY = "SHAREDPROPERTY";
-//    
-//    public static final String PT_TYPE_BUILTUP = "BUILTUP";
-//    
-//    public static final String JSONPATH_CODES = "$.MdmsRes.PropertyTax";
-//
-//    public static final String MDMS_PT_MOD_NAME = "PropertyTax";
-//
-//    public static final String MDMS_PT_PROPERTYTYPE = "PropertyType";
-//    
-//    public static final String MDMS_PT_MUTATIONREASON = "MutationReason";
-//    
-//    public static final String MDMS_PT_USAGECATEGORY = "UsageCategory";
-//
-//    public static final String MDMS_PT_PROPERTYSUBTYPE = "PropertySubType";
-//
-//    public static final String MDMS_PT_OCCUPANCYTYPE = "OccupancyType";
-//
-//    public static final String MDMS_PT_CONSTRUCTIONTYPE = "ConstructionType";
-//
-//    public static final String MDMS_PT_CONSTRUCTIONSUBTYPE = "ConstructionSubType";
-//
-//    public static final String MDMS_PT_OWNERSHIPCATEGORY = "OwnerShipCategory";
-//
-//    public static final String MDMS_PT_SUBOWNERSHIP = "SubOwnerShipCategory";
-//
-//    public static final String MDMS_PT_USAGEMAJOR = "UsageCategoryMajor";
-//
-//    public static final String MDMS_PT_USAGEMINOR = "UsageCategoryMinor";
-//
-//    public static final String MDMS_PT_USAGEDETAIL = "UsageCategoryDetail";
-//
-//    public static final String MDMS_PT_USAGESUBMINOR = "UsageCategorySubMinor";
-
 	public static final String MDMS_PT_OWNERTYPE = "OwnerType";
 
 	public static final String MDMS_PT_EGF_MASTER = "egf-master";
@@ -57,29 +21,7 @@ public class PTRConstants {
 
 	public static final String NOTIFICATION_LOCALE = "en_IN";
 
-//    public static final String NOTIFICATION_CREATE_CODE = "pt.property.en.create";
-//
-//    public static final String NOTIFICATION_UPDATE_CODE = "pt.property.en.update";
-//
-//    public static final String NOTIFICATION_EMPLOYEE_UPDATE_CODE = "pt.property.en.update.employee";
-//
-//    public static final String NOTIFICATION_PAYMENT_ONLINE = "PT_NOTIFICATION_PAYMENT_ONLINE";
-//
-//    public static final String NOTIFICATION_PAYMENT_OFFLINE = "PT_NOTIFICATION_PAYMENT_OFFLINE";
-//
-//    public static final String NOTIFICATION_PAYMENT_FAIL = "PT_NOTIFICATION_PAYMENT_FAIL";
-//
-//    public static final String NOTIFICATION_PAYMENT_PARTIAL_OFFLINE = "PT_NOTIFICATION_PAYMENT_PARTIAL_OFFLINE";
-//
-//    public static final String NOTIFICATION_PAYMENT_PARTIAL_ONLINE = "PT_NOTIFICATION_PAYMENT_PARTIAL_ONLINE";
-//    
-//    public static final String DUES_NOTIFICATION = "DUES_NOTIFICATION";
-//
-//    public static final String NOTIFICATION_OLDPROPERTYID_ABSENT = "pt.oldpropertyid.absent";
 
-//    public static final List<String> ASSESSSMENT_NOTIFICATION_CODES = Collections.unmodifiableList(Arrays.asList(NOTIFICATION_PAYMENT_ONLINE,
-//            NOTIFICATION_PAYMENT_OFFLINE, NOTIFICATION_PAYMENT_FAIL,NOTIFICATION_PAYMENT_PARTIAL_OFFLINE,
-//            NOTIFICATION_PAYMENT_PARTIAL_ONLINE,NOTIFICATION_OLDPROPERTYID_ABSENT));
 //    
 	public static final String ACTION_PAY = "PAY";
 
@@ -176,42 +118,9 @@ public class PTRConstants {
 
 	public static final String WF_STATUS_PAID_LOCALE = "PT_NOTIF_WF_STATE_LOCALE_PAID";
 
-	public static final String NOTIFICATION_MODULENAME = "rainmaker-pt";
-
-	/* PT notif loc codes */
-
-//	public static final String WF_MT_STATUS_OPEN_CODE = "PT_NOTIF_WF_MT_OPEN";
-//	
-//	public static final String WF_MT_STATUS_CHANGE_CODE =  "PT_NOTIF_WF_MT_STATE_CHANGE";
-//	
-//	public static final String WF_MT_STATUS_PAYMENT_PENDING_CODE = "PT_NOTIF_WF_MT_PAYMENT_PENDING";
-//	
-//	public static final String WF_MT_STATUS_PAID_CODE =   "PT_NOTIF_WF_MT_PAID";
-//	
-//	public static final String WF_MT_STATUS_APPROVED_CODE =  "PT_NOTIF_WF_MT_APPROVED";
-//	
-//	public static final String MT_NO_WORKFLOW = "PT_NOTIF_WF_MT_NONE";
-//	
-//	public static final String PT_UPDATE_OWNER_NUMBER = "PT_UPDATE_OWNER_NUMBER";
-//	
-//	public static final String PT_UPDATE_ALTERNATE_NUMBER = "PT_UPDATE_ALTERNATE_NUMBER";
-
-//	/* update */
-//	public static final String WF_UPDATE_STATUS_OPEN_CODE  = "PT_NOTIF_WF_OPEN";
-//	
-//	public static final String WF_UPDATE_STATUS_CHANGE_CODE = "PT_NOTIF_WF_STATUS_CHANGE";
-//	
-//	public static final String WF_UPDATE_STATUS_APPROVED_CODE =   "PT_NOTIF_WF_APPROVED";
-//	
-//	public static final String UPDATE_NO_WORKFLOW = "PT_NOTIF_WF_UPDATE_NONE";
-//	
-//	public static final String CREATE_NOTIF_CODE = "PT_NOTIF_CREATE";
-
-	/* ASSESSMENT CONSTANTS */
+	public static final String NOTIFICATION_MODULENAME = "rainmaker-ptr";
 
 	public static final String WORKFLOW_SENDBACK_CITIZEN = "SENDBACKTOCITIZEN";
-
-//    public static final String ASSESSMENT_BUSINESSSERVICE = "ASMT";
 
 	public static final String BILL_AMOUNT_PATH = "/Bill/0/totalAmount";
 
@@ -237,20 +146,6 @@ public class PTRConstants {
 
 	public static final String UPDATED_STRING = "Updated";
 
-//    public static final String PT_BUSINESSSERVICE = "PT";
-
-//    public static final String MUTATION_BUSINESSSERVICE = "PT.MUTATION";
-//
-//
-//    public static final String NOTIFICATION_PROPERTYID = "{PROPERTYID}";
-//    
-//    public static final String PT_OWNER_NAME = "{ownername}";
-//    
-//    public static final String PT_ALTERNATE_NUMBER = "{alternatenumber}";
-//    
-//    public static final String PT_OLD_MOBILENUMBER = "{oldmobilenumber}";
-//    
-//    public static final String PT_NEW_MOBILENUMBER = "{newmobilenumber}";
 
 	// PROPERTY & MUTATION
 	public static final String NOTIFICATION_APPID = "{APPID}";
@@ -269,22 +164,6 @@ public class PTRConstants {
 
 	public static final String NOTIFICATION_AMOUNT = "{AMOUNT}";
 
-	// ASSESSMENT
-//    
-//    public static final String NOTIFICATION_ASSESSMENTNUMBER = "{ASSESSMENTNUMBER}";
-//
-//    public static final String NOTIFICATION_FINANCIALYEAR = "{FINANCIALYEAR}";
-//
-//    public static final String NOTIFICATION_ASSESSMENT_CREATE = "ASMT_CREATE";
-//
-//    public static final String NOTIFICATION_ASSESSMENT_UPDATE = "ASMT_UPDATE";
-//
-//    public static final String LOCALIZATION_ASMT_PREFIX = "ASMT_";
-//
-//    public static final String NOTIFICATION_ASMT_PREFIX = "ASMT_MSG_";
-//
-//    public static final String NOTIFICATION_PAYMENT_LINK = "{PAYMENT_LINK}";
-
 	public static final String ONLINE_PAYMENT_MODE = "ONLINE";
 
 	public static final String URL_PARAMS_SEPARATER = "?";
@@ -297,16 +176,8 @@ public class PTRConstants {
 
 	public static final String SEPARATER = "&";
 
-	public static final String ADHOC_PENALTY = "adhocPenalty";
-
-	public static final String ADHOC_PENALTY_REASON = "adhocPenaltyReason";
-
-	public static final String ADHOC_REBATE = "adhocExemption";
-
-	public static final String ADHOC_REBATE_REASON = "adhocExemptionReason";
 
 	// PDF CONSUMER
-
 	public static final String KEY_ID = "id";
 
 	public static final String KEY_FILESTOREID = "filestoreid";
@@ -323,32 +194,15 @@ public class PTRConstants {
 
 	public static final String KEY_PDF_DOCUMENTTYPE = "documentType";
 
-//    public static final String PT_CORRECTION_PENDING = "CORRECTIONPENDING";
-
 	public static final String ASMT_USER_EVENT_PAY = "pay";
 
 	public static final String VIEW_APPLICATION_CODE = "View Application";
-
-//    public static final String VIEW_PROPERTY_CODE = "VIEW PROPERTY";
 
 	public static final String TRACK_APPLICATION_CODE = "TRACK APPLICATION";
 
 	public static final String DOWNLOAD_CERTIFICATE_CODE = "DOWNLOAD CERTIFICATE";
 
 	public static final String DOWNLOAD_RECEIPT_CODE = "DOWNLOAD RECEIPT";
-
-//    public static final String PAY_PENDING_PAYMENT_CODE = "DOWNLOAD RECEIPT";
-//
-//    public static final String VIEW_PROPERTY = "view";
-//
-//    public static final String TRACK_APPLICATION = "track";
-
-//    // Fuzzy Search
-//    public static final String ES_DATA_PATH = "$..Data";
-//
-//    public static final String ES_DATA_TENANTID_PATH = "$.tenantData.code";
-//
-//    public static final String ES_DATA_PROPERTYID_PATH = "$.propertyId";
 
 	// Notification Enhancement
 	public static final String CHANNEL_NAME_SMS = "SMS";
@@ -374,19 +228,11 @@ public class PTRConstants {
 
 	public static final String EVENT_PAY_BUSINESSSERVICE = "$businessService";
 
-//    public static final String EVENT_PAY_PROPERTYID = "$propertyId";
-
-	// Notification Strings for In App
-
 	public static final String TRACK_APPLICATION_STRING = "You can track your application on the link given below - {PTURL} Thank you";
-
-//    public static final String VIEW_PROPERTY_STRING = "You can view your property on the link given below - {PTURL} Thank you";
 
 	public static final String PAY_ONLINE_STRING = "Click on the URL to view the details and pay online {PAYMENT_LINK}";
 
 	public static final String PT_ONLINE_STRING = "You can pay your Property Tax online here - {PAYMENT_LINK}";
-
-//    public static final String MT_TRACK_APPLICATION_STRING ="You can track your application on the link given below - {MTURL} Thank you";
 
 	public static final String PAYLINK_STRING = "You can pay your application fee on the below link - {PAYLINK} or visit your ULB to pay your dues. Thank you";
 
