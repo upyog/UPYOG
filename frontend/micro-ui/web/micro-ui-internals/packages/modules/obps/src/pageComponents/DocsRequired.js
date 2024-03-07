@@ -36,11 +36,14 @@ const DocsRequired = ({ onSelect, onSkip, config }) => {
 
   useEffect(() => {
     let architectName = "", isDone = true;
+    let isSelfCertificationRequired;
     for (let i = 0; i < LicenseData?.Licenses?.length; i++) {
       if (LicenseData?.Licenses?.[i]?.status === "APPROVED" && isDone) {
         isDone = false;
         architectName = LicenseData?.Licenses?.[i]?.tradeLicenseDetail?.tradeUnits?.[0]?.tradeType?.split('.')[0] || "ARCHITECT";
         sessionStorage.setItem("BPA_ARCHITECT_NAME", JSON.stringify(architectName));
+        isSelfCertificationRequired=LicenseData?.Licenses?.[i]?.tradeLicenseDetail.additionalDetail.isSelfCertificationRequired;
+        sessionStorage.setItem("isSelfCertificationRequired", isSelfCertificationRequired);
       }
     }
   }, [LicenseData])
