@@ -21,7 +21,7 @@ export const newConfig1=[
             "header": "BPA_PLOT_DETAILS_TITLE",
             "cardText": "",
             "submitBarLabel": "CS_COMMON_NEXT",
-            "skipText": "CORE_COMMON_SKIP_CONTINUE"
+            //"skipText": "CORE_COMMON_SKIP_CONTINUE"
         },
         "inputs": [
             {

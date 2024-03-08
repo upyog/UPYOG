@@ -155,7 +155,7 @@ import {
       return <Loader />
     }
 
-  console.log("DATA",data)
+
     return (
     <React.Fragment>
     <Timeline currentStep={4} />
