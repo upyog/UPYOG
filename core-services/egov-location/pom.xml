@@ -66,8 +66,8 @@
     <dependency>
       <groupId>org.postgresql</groupId>
       <artifactId>postgresql</artifactId>
-      <version>9.4.1212</version>
-    </dependency>
+      <version>42.2.18</version>
+    </dependenc>
     <dependency>
       <groupId>com.h2database</groupId>
       <artifactId>h2</artifactId>
