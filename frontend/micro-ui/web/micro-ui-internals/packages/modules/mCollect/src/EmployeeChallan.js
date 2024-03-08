@@ -99,13 +99,13 @@ const EmployeeChallan = (props) => {
 
   const challanDownload = {
     order: 1,
-    label: t("PDF_STATIC_LABEL_CONSOLIDATED_RECEIPT_LETTER_HEAD"),
+    label: t("UC_CHALLAN"),
     onClick: () => downloadAndPrintChallan(challanno),
   };
 
   const receiptDownload = {
     order: 2,
-    label: t("RECEIPT"),
+    label: t("Receipt"),
     onClick: () => downloadAndPrintReciept(challanDetails?.businessService, challanno),
   };
 
