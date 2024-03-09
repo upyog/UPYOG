@@ -51,9 +51,9 @@
 <%@ taglib uri="/WEB-INF/tags/cdn.tld" prefix="cdn"%>
 <form:form role="form" action="search" modelAttribute="closedPeriodSearchRequest"
 	id="closedPeriodsearchform"
-	cssClass="form-horizontal form-groups-bordered"
+	cssClass="form-horizontal form-group rows-bordered"
 	enctype="multipart/form-data">
-	<div class="main-content">
+	<div class="main-content margin-bottom">
 	<c:if test="${mode ne 'reopen'}">
 		<td colspan="5" align="right">
 			<div align="right">
@@ -67,13 +67,13 @@
 		<div class="row">
 			<div class="col-md-12">
 				<div class="panel panel-primary" data-collapsed="0">
-					<div class="panel-heading">
+					<div class="panel-heading margin-bottom">
 						<div class="panel-title"><spring:message code='lbl.search.closed.period' /></div>
 					</div>
-					<div class="form-group">
+					<div class="form-group row">
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.cfinancialyearid" /> </label>
-						<div class="col-sm-3 add-margin">
+						<div class="col-sm-3 add-margin margin-bottom">
 							<form:select path="financialYearId" id="financialYear"
 								cssClass="form-control" cssErrorClass="form-control error">
 								<form:option value="">
@@ -87,10 +87,10 @@
 
 					</div>
 					</br> </br>
-					<div class="panel-body">
+					<div class="panel-body margin-bottom">
 						<input type="hidden" id="mode" name="mode" value="${mode}" />
-						<div class="form-group">
-							<div class="text-center">
+						<div class="form-group row">
+							<div class="text-center margin-bottom">
 								<button type='button' class='btn btn-primary' id="btnsearch">
 									<spring:message code='lbl.search' />
 								</button>
@@ -108,7 +108,7 @@
 </form:form>
 <div class="row display-hide report-section">
 	<div class="col-md-12 table-header text-left"><spring:message code="lbl.closed.period.search.result" /></div>
-	<div class="col-md-12 form-group report-table-container">
+	<div class="col-md-12 form-group row report-table-container">
 		<table class="table table-bordered table-hover multiheadertbl"
 			id="resultTable">
 			<thead>

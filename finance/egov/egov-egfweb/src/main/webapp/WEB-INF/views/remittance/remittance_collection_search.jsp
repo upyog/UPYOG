@@ -79,20 +79,20 @@ var fromDateToDateAlertMsg = '<spring:message code="msg.fromDate.must.be.lower.t
 <body>
 <form:form role="form" modelAttribute="remittanceReportModel"
 	id=""
-	cssClass="form-horizontal form-groups-bordered"
+	cssClass="form-horizontal form-group rows-bordered"
 	enctype="multipart/form-data">
-	<div class="main-content">
+	<div class="main-content margin-bottom">
 		<div class="row">
 			<div class="col-md-12">
 				<div class="panel panel-primary" data-collapsed="0">
-					<div class="panel-heading">
+					<div class="panel-heading margin-bottom">
 						<div class="subheadnew"  style="text-align: center"><spring:message code="lbl.remittance.collection.report" text="Remittance Collection Report" /></div>
 					</div>
-					<div class="panel-body">
-					<div class="form-group">
+					<div class="panel-body margin-bottom">
+					<div class="form-group row">
 							<label class="col-sm-3 control-label text-right"><spring:message
 									code="lbl.account.number" text="Account Number"/>:<span class="mandatory"></span></label>
-							<div class="col-sm-3 add-margin">
+							<div class="col-sm-3 add-margin margin-bottom">
 								<form:select name="bankAccount" path=""
 									data-first-option="false" id="bankAccountId"
 									cssClass="form-control" onchange="loadMappedService()">
@@ -106,7 +106,7 @@ var fromDateToDateAlertMsg = '<spring:message code="msg.fromDate.must.be.lower.t
 							</div>
 							<label class="col-sm-2 control-label text-right"><spring:message
 									code="lbl.financial.year"  text="Financial Year"/>:<span class="mandatory"></span></label>
-							<div class="col-sm-3 add-margin">
+							<div class="col-sm-3  margin-bottom add-margin">
 								<form:select name="financialYear" path=""
 									data-first-option="false" id="financialYearId"
 									cssClass="form-control">
@@ -120,10 +120,10 @@ var fromDateToDateAlertMsg = '<spring:message code="msg.fromDate.must.be.lower.t
 							</div>
 						</div>
 						
-						<div class="form-group">
+						<div class="form-group row">
 							<label class="col-sm-3 control-label text-right"><spring:message
 									code="lbl.fund" text="Fund"/>:</label>
-							<div class="col-sm-3 add-margin">
+							<div class="col-sm-3 margin-bottom add-margin">
 								<form:select name="fund" path=""
 									data-first-option="false" id="fundId"
 									cssClass="form-control">
@@ -137,7 +137,7 @@ var fromDateToDateAlertMsg = '<spring:message code="msg.fromDate.must.be.lower.t
 							</div>
 							<label class="col-sm-2 control-label text-right"><spring:message
 									code="lbl.payment.type"  text="Payment Type"/>:<span class="mandatory"></span></label>
-							<div class="col-sm-3 add-margin">
+							<div class="col-sm-3 margin-bottom add-margin">
 								<form:select name="instrumentType" path=""
 									data-first-option="false" id="instrumentTypeId"
 									cssClass="form-control">
@@ -151,10 +151,10 @@ var fromDateToDateAlertMsg = '<spring:message code="msg.fromDate.must.be.lower.t
 							</div>
 						</div>
 						
-						<div class="form-group">
+						<div class="form-group row">
 							<label class="col-sm-3 control-label text-right"><spring:message
 									code="lbl.service" text="Service"/>:</label>
-							<div class="col-sm-3 add-margin">
+							<div class="col-sm-3 margin-bottom add-margin">
 								<form:select name="service" path=""
 									data-first-option="false" id="serviceId"
 									cssClass="form-control">
@@ -171,27 +171,27 @@ var fromDateToDateAlertMsg = '<spring:message code="msg.fromDate.must.be.lower.t
 							</div>
 						</div>
 						
-						<div class="form-group">
+						<div class="form-group row">
 							<label class="col-sm-3 control-label text-right"><spring:message
 									code="lbl.fromDate"  text="From Date"/>:  </label>
-							<div class="col-sm-3 add-margin">
+							<div class="col-sm-3 add-margin margin-bottom">
 								<form:input path="fromDate" id="fromDate"
 									class="form-control datepicker" data-date-end-date="0d"
-									required="required" autocomplete="off" data-inputmask="'mask': 'd/m/y'"  placeholder="DD/MM/YYYY"/>
+									required="required" autocomplete="off" data-inputmask="'mask': '99/99/9999'"  placeholder="DD/MM/YYYY"/>
 								<form:errors path="fromDate" cssClass="add-margin error-msg" />
 							</div>
 							<label class="col-sm-2 control-label text-right"><spring:message
 									code="lbl.toDate"  text="To Date"/>: </label>
-							<div class="col-sm-3 add-margin">
+							<div class="col-sm-3 add-margin margin-bottom">
 								<form:input id="toDate" path="toDate"
 									class="form-control datepicker" data-date-end-date="0d"
-									required="required" autocomplete="off" data-inputmask="'mask': 'd/m/y'"  placeholder="DD/MM/YYYY" />
+									required="required" autocomplete="off" data-inputmask="'mask': '99/99/9999'"  placeholder="DD/MM/YYYY" />
 								<form:errors path="toDate" cssClass="add-margin error-msg" />
 							</div>
 						</div>
 						
-						<div class="form-group">
-							<div class="text-center">
+						<div class="form-group row">
+							<div class="text-center margin-bottom">
 								<button type='button' class='btn btn-primary' id="btnsearch">
 									<spring:message code='lbl.search' />
 								</button>
@@ -205,7 +205,7 @@ var fromDateToDateAlertMsg = '<spring:message code="msg.fromDate.must.be.lower.t
 							<div class="subheadnew col-md-12 table-header text-center" 
 								id="remittanceReportHeading"></div>
 							<!-- <div class="alert alert-success" role="alert"></div> -->
-							<div class="col-md-12 form-group report-table-container">
+							<div class="col-md-12 form-group row report-table-container">
 								<table class="table table-bordered table-hover multiheadertbl"
 									id="resultTable" style="width: 100%;table-layout: fixed;">
 									<thead>

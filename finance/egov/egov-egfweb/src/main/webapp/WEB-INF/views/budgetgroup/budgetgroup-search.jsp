@@ -50,20 +50,20 @@
 <%@ taglib uri="/WEB-INF/tags/cdn.tld" prefix="cdn" %>
 <form:form role="form" action="search" modelAttribute="budgetGroupSearchRequest"
 	id="budgetGroupsearchform"
-	cssClass="form-horizontal form-groups-bordered"
+	cssClass="form-horizontal form-group rows-bordered"
 	enctype="multipart/form-data">
-	<div class="main-content">
+	<div class="main-content margin-bottom">
 		<div class="row">
 			<div class="col-md-12">
-				<div class="panel panel-primary" data-collapsed="0">
-					<div class="panel-heading">
-						<div class="panel-title"><spring:message code="title.budgetgroup.search" text="Search Budget Group"/> </div>
+				<div class="panel panel-primary margin-bottom" data-collapsed="0">
+					<div class="panel-heading margin-bottom">
+						<div class="panel-title margin-bottom"><spring:message code="title.budgetgroup.search" text="Search Budget Group"/> </div>
 					</div>
-					<div class="panel-body">
-						<div class="form-group">
+					<div class="panel-body margin-bottom">
+						<div class="form-group row">
 							<label class="col-sm-4 control-label text-right"><spring:message
 									code="lbl.name" text="Name"/> </label>
-							<div class="col-sm-4 add-margin">
+							<div class="col-sm-4 add-margin margin-bottom">
 								<form:input path="name"
 									class="form-control text-left patternvalidation"
 									data-pattern="alphanumeric" maxlength="250" />
@@ -71,8 +71,8 @@
 							<input type="hidden" id="mode" name="mode" value="${mode}" />
 						</div>
 					</div>
-					<div class="form-group">
-						<div class="text-center">
+					<div class="form-group row">
+						<div class="text-center margin-bottom">
 							<button type='button' class='btn btn-primary' id="btnsearch">
 								<spring:message code='lbl.search' text="Search"/>
 							</button>
@@ -87,7 +87,7 @@
 </form:form>
 <div class="row display-hide report-section">
 	<div class="col-md-12 table-header text-left"><spring:message code="lbl.budget.group.search.result" text="BudgetGroup Search Result"/> </div>
-	<div class="col-md-12 form-group report-table-container">
+	<div class="col-md-12 form-group row report-table-container">
 		<table class="table table-bordered table-hover multiheadertbl"
 			id="resultTable">
 			<thead>

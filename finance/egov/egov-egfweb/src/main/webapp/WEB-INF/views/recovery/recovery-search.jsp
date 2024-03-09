@@ -51,20 +51,20 @@
 <%@ include file="/includes/taglibs.jsp"%>
 <%@ taglib uri="/WEB-INF/tags/cdn.tld" prefix="cdn" %>
 <form:form role="form" action="search" modelAttribute="recoverySearchRequest"
-	id="recoverysearchform" cssClass="form-horizontal form-groups-bordered"
+	id="recoverysearchform" cssClass="form-horizontal form-group rows-bordered"
 	enctype="multipart/form-data">
-	<div class="main-content">
+	<div class="main-content margin-bottom">
 		<div class="row">
-			<div class="col-md-12">
+			<div class="col-md-12 margin-bottom">
 				<div class="panel panel-primary" data-collapsed="0">
-					<div class="panel-heading" align="center">
+					<div class="panel-heading margin-bottom" align="center">
 						<div class="panel-title" align="center"><spring:message code="lbl.search.deductions" text="Search Deductions"/> </div>
 					</div>
-					<div class="panel-body">
-						<div class="form-group">
+					<div class="panel-body margin-bottom">
+						<div class="form-group row">
 							<label class="col-sm-2 control-label text-left"><spring:message
 									code="lbl.chartofaccounts" text="Account Code"/> </label>
-							<div class="col-sm-3">
+							<div class="col-sm-3 margin-bottom">
 								<form:select path="chartofaccountsId" id="chartofaccounts.id"
 									cssClass="form-control" cssErrorClass="form-control error">
 									<form:option value="">
@@ -79,24 +79,24 @@
 							</div>
 							<label class="col-sm-2 control-label text-left"><spring:message
 									code="lbl.deductions.code" text="Deduction Code"/> </label>
-							<div class="col-sm-3 add-margin">
+							<div class="col-sm-3 add-margin margin-bottom">
 								<form:input path="type" id="type" cssClass="form-control" cssErrorClass="form-control error"/>
 								<form:errors path="type" cssClass="error-msg" />
 							</div>
 						</div>
 						
-						<div class="form-group">
+						<div class="form-group row">
 							<label class="col-sm-2 control-label text-left"><spring:message
 									code="lbl.deductions.name" text="Deduction Name"/> </label>
-							<div class="col-sm-3 add-margin">
+							<div class="col-sm-3 add-margin margin-bottom">
 								<form:input path="recoveryName" id="recoveryName" cssClass="form-control" cssErrorClass="form-control error"/>
 								<form:errors path="recoveryName" cssClass="error-msg" />
 							</div>
 							<input type="hidden" id="mode" name="mode" value="${mode}" />
 						</div>
 
-						<div class="form-group">
-							<div class="text-center">
+						<div class="form-group row">
+							<div class="text-center margin-bottom">
 								<button type='button' class='btn btn-primary' id="btnsearch">
 									<spring:message code='lbl.search' text="Search"/>
 								</button>
@@ -112,7 +112,7 @@
 </form:form>
 <div class="row display-hide report-section">
 	<div class="col-md-12 table-header text-left"><spring:message code="lbl.deductions.search.result" text="Deductions Search Result"/></div>
-	<div class="col-md-12 form-group report-table-container">
+	<div class="col-md-12 form-group row report-table-container">
 		<table class="table table-bordered table-hover multiheadertbl"
 			id="resultTable">
 			<thead>

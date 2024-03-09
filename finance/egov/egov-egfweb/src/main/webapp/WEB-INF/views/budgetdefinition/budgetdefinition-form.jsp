@@ -61,7 +61,7 @@
 					<div class="panel-title"><spring:message code="lbl.budget.definition" text="Budget Definition"/> </div>
 				</div>
 				<div class="panel-body">
-					<div class="form-group">
+					<div class="form-group row">
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.name" text="Name"/> </label>
 						<div class="col-sm-6 add-margin">
@@ -72,7 +72,7 @@
 						</div>
 					</div>
 
-					<div class="form-group">
+					<div class="form-group row">
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.isbere" text="Budget/Revised Estimate"/> </label>
 						<div class="col-sm-2 col-xs-12 add-margin">
@@ -90,7 +90,7 @@
 						<form:errors path="isbere" cssClass="error-msg" />
 					</div>
 
-					<div class="form-group">
+					<div class="form-group row">
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.financialyear" text="Financial Year"/> </label>
 						<div class="col-sm-6 add-margin">
@@ -109,7 +109,7 @@
 							<form:errors path="financialYear" cssClass="error-msg" />
 						</div>
 					</div>
-					<div class="form-group">
+					<div class="form-group row">
 
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.parent" text="Parent"/> </label>
@@ -128,7 +128,7 @@
 						</div>
 					</div>
 
-					<div class="form-group">
+					<div class="form-group row">
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.description" text="Description"/> </label>
 						<div class="col-sm-6 add-margin">
@@ -138,7 +138,7 @@
 							<form:errors path="description" cssClass="error-msg" />
 						</div>
 					</div>
-					<div class="form-group">
+					<div class="form-group row">
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.isactivebudget" text="Active Budget"/> </label>
 						<div class="col-sm-6 add-margin">
@@ -146,7 +146,7 @@
 							<form:errors path="isActiveBudget" cssClass="error-msg" />
 						</div>
 					</div>
-					<div class="form-group">
+					<div class="form-group row">
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.isprimarybudget" text="Primary Budget"/> </label>
 						<div class="col-sm-6 add-margin">
@@ -154,7 +154,7 @@
 							<form:errors path="isPrimaryBudget" cssClass="error-msg" />
 						</div>
 					</div>
-					<div class="form-group">
+					<div class="form-group row">
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.referencebudget" text="Reference Budget"/> </label>
 						<div class="col-sm-6 add-margin">

@@ -55,7 +55,7 @@
 					<input type="hidden" name="bank" value="${bank.id}" />
 				</div>
 				<div class="panel-body">
-					<div class="form-group">
+					<div class="form-group row">
 						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.name" text="Name"/> <span class="mandatory"></span> </label>
 						<div class="col-sm-3 add-margin">
 							<form:input path="name" class="form-control text-left patternvalidation" data-pattern="alphanumeric" maxlength="50" required="required" />
@@ -67,7 +67,7 @@
 							<form:errors path="code" cssClass="error-msg" />
 						</div>
 					</div>
-					<div class="form-group">
+					<div class="form-group row">
 						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.isactive"  text="Active"/> </label>
 						<div class="col-sm-3 add-margin">
 							<form:checkbox path="isactive" />

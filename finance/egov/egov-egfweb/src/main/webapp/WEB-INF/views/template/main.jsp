@@ -93,6 +93,13 @@
 		<script>
 	        const tokenVal = '${_csrf.token}';
 	        const tokenName = '${_csrf.parameterName}';
+
+	    /*   $.ajaxSetup({
+     	   data:{
+     		   auth_token : "9ccaee95-27fc-431a-a7cd-7ac2b03ced94",
+	        		tenantId:"pg.citya"
+     	   }
+     	 }); */
 	    </script>
 	</head>
     <body class="page-body" oncontextmenu="return false;">

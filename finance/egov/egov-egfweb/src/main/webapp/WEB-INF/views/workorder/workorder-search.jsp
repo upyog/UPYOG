@@ -51,7 +51,7 @@
 <%@ include file="/includes/taglibs.jsp"%>
 <%@ taglib uri="/WEB-INF/tags/cdn.tld" prefix="cdn" %>
 <form:form role="form" action="search" modelAttribute="workOrderSearchRequest" id="workordersearchform"
-  cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
+  cssClass="form-horizontal form-group rows-bordered" enctype="multipart/form-data">
   <div class="main-content">
     <div class="row">
       <div class="col-md-12">
@@ -61,7 +61,7 @@
           </div>
           <div class="panel-body">
           <input type="hidden" id="mode" name="mode" value="${mode}" />
-             <div class="form-group">
+             <div class="form-group row">
 	              <label class="col-sm-2 control-label text-right"><spring:message code="workorder.number" text="Order No."/> </label>
 	              <div class="col-sm-3 add-margin">
 	                <form:input path="orderNumber" class="form-control text-left patternvalidation" data-pattern="alphanumeric"  maxlength="50" />
@@ -73,7 +73,7 @@
 	                <form:errors path="name" cssClass="error-msg" />
 	              </div>
               </div>
-              <div class="form-group">
+              <div class="form-group row">
 				<label class="col-sm-2 control-label text-right" for="contractor"> <spring:message code="workorder.contractor" text="Contractor Name"/>
 				</label>
 				<div class="col-sm-3 add-margin contactPerson"> 
@@ -93,7 +93,7 @@
 					<form:input path="" id="contractorcode" maxlength="100" disabled="true" cssClass="form-control"/>
 				</div>
 			</div>
-			<div class="form-group">
+			<div class="form-group row">
 				<label class="col-sm-2 control-label text-right" for="fund"> <spring:message code="workorder.fund" text="Fund"/>
 				</label>
 				<div class="col-sm-3 add-margin">
@@ -104,7 +104,7 @@
 					<form:errors path="fundId" cssClass="add-margin error-msg" />
 				</div>
 			</div>
-            <div class="form-group">
+            <div class="form-group row">
               <div class="text-center">
                 <button type='button' class='btn btn-primary' id="btnsearch">
                   <spring:message code='lbl.search' text="Search"/>
@@ -121,7 +121,7 @@
 </form:form>
 <div class="row display-hide report-section">
   <div class="col-md-12 table-header text-left"><spring:message text="Work Order Search Result" code="workorder.search.result"/></div>
-  <div class="col-md-12 form-group report-table-container">
+  <div class="col-md-12 form-group row report-table-container">
     <table class="table table-bordered table-hover multiheadertbl" id="resultTable">
       <thead>
         <tr>
