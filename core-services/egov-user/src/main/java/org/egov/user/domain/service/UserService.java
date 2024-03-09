@@ -142,7 +142,7 @@ public class UserService {
 
         /* encrypt here */
 
-        userSearchCriteria = encryptionDecryptionUtil.encryptObject(userSearchCriteria, "User", UserSearchCriteria.class);
+        userSearchCriteria = encryptionDecryptionUtil.encryptObject(userSearchCriteria, "UserSearchCriteria", UserSearchCriteria.class);
         List<User> users = userRepository.findAll(userSearchCriteria);
 
         if (users.isEmpty())
@@ -193,12 +193,13 @@ public class UserService {
         	altmobnumber = searchCriteria.getMobileNumber();
         }
 
-        searchCriteria = encryptionDecryptionUtil.encryptObject(searchCriteria, "User", UserSearchCriteria.class);
+        searchCriteria = encryptionDecryptionUtil.encryptObject(searchCriteria, "UserSearchCriteria", UserSearchCriteria.class);
         
         if(altmobnumber!=null) {
         	searchCriteria.setAlternatemobilenumber(altmobnumber);
         }
         
+        searchCriteria = encryptionDecryptionUtil.encryptObject(searchCriteria, "UserSearchCriteria", UserSearchCriteria.class);
         List<org.egov.user.domain.model.User> list = userRepository.findAll(searchCriteria);
 
         /* decrypt here / final reponse decrypted*/
@@ -231,7 +232,7 @@ public class UserService {
         user.setDefaultPasswordExpiry(defaultPasswordExpiryInDays);
         user.setTenantId(getStateLevelTenantForCitizen(user.getTenantId(), user.getType()));
         User persistedNewUser = persistNewUser(user);
-        return encryptionDecryptionUtil.decryptObject(persistedNewUser, "UserSelf", User.class, requestInfo);
+        return encryptionDecryptionUtil.decryptObject(persistedNewUser, "User", User.class, requestInfo);
 
         /* decrypt here  because encrypted data coming from DB*/
 
@@ -292,7 +293,7 @@ public class UserService {
         try {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-            headers.set("Authorization", "Basic ZWdvdi11c2VyLWNsaWVudDo=");
+            headers.set("Authorization", "Basic ZWdvdi11c2VyLWNsaWVudDplZ292LXVzZXItc2VjcmV0");
             MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
             map.add("username", user.getUsername());
             if (!isEmpty(password))
@@ -367,7 +368,7 @@ public class UserService {
             resetFailedLoginAttempts(user);
 
         User encryptedUpdatedUserfromDB = getUserByUuid(user.getUuid());
-        User decryptedupdatedUserfromDB = encryptionDecryptionUtil.decryptObject(encryptedUpdatedUserfromDB, "UserSelf", User.class, requestInfo);
+        User decryptedupdatedUserfromDB = encryptionDecryptionUtil.decryptObject(encryptedUpdatedUserfromDB, "User", User.class, requestInfo);
         return decryptedupdatedUserfromDB;
     }
 
@@ -419,9 +420,7 @@ public class UserService {
         userRepository.update(user, existingUser,requestInfo.getUserInfo().getId(), requestInfo.getUserInfo().getUuid() );
         User updatedUser = getUserByUuid(user.getUuid());
         
-        /* decrypt here */
-        existingUser = encryptionDecryptionUtil.decryptObject(existingUser, "UserSelf", User.class, requestInfo);
-        updatedUser = encryptionDecryptionUtil.decryptObject(updatedUser, "UserSelf", User.class, requestInfo);
+        updatedUser = encryptionDecryptionUtil.decryptObject(updatedUser, "User", User.class, requestInfo);
 
         setFileStoreUrlsByFileStoreIds(Collections.singletonList(updatedUser));
         String oldEmail = existingUser.getEmailId();
