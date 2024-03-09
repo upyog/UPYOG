@@ -84,7 +84,7 @@ var chequeDDDateMendatoryMessage = "<spring:message code='msg.please.select.cheq
 
 <form:form role="form" modelAttribute="dishonoredChequeModel"
 	id="dishonorChequeForm"
-	cssClass="form-horizontal form-group rows-bordered" action="/services/collection/dishonour/cheque/submit"
+	cssClass="form-horizontal form-groups-bordered" action="/services/collection/dishonour/cheque/submit"
 	enctype="multipart/form-data" >
 	<div class="main-content margin-bottom">
 		<div class="row" id="dishonor-cheque-search">

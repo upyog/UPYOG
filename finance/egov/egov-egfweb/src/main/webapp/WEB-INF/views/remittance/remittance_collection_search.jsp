@@ -79,7 +79,7 @@ var fromDateToDateAlertMsg = '<spring:message code="msg.fromDate.must.be.lower.t
 <body>
 <form:form role="form" modelAttribute="remittanceReportModel"
 	id=""
-	cssClass="form-horizontal form-group rows-bordered"
+	cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
 	<div class="main-content margin-bottom">
 		<div class="row">

@@ -63,7 +63,7 @@
 
 <form:form role="form" modelAttribute="chequeReportModel"
 	id="coaSearchResultForm"
-	cssClass="form-horizontal form-group rows-bordered"
+	cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
 	<div class="main-content margin-bottom">
 		<div class="row">

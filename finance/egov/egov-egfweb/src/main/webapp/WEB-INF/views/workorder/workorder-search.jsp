@@ -51,7 +51,7 @@
 <%@ include file="/includes/taglibs.jsp"%>
 <%@ taglib uri="/WEB-INF/tags/cdn.tld" prefix="cdn" %>
 <form:form role="form" action="search" modelAttribute="workOrderSearchRequest" id="workordersearchform"
-  cssClass="form-horizontal form-group rows-bordered" enctype="multipart/form-data">
+  cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
   <div class="main-content">
     <div class="row">
       <div class="col-md-12">

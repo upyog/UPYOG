@@ -81,7 +81,7 @@ var toDateAlertMsg = '<spring:message code="msg.please.select.toDate"/>';
 
 </script> 
 	 <form:form role="form" modelAttribute="dishonoredChequeBean" id="dishonouredChequesearchForm"
-		cssClass="form-horizontal form-group rows-bordered"
+		cssClass="form-horizontal form-groups-bordered"
 		enctype="multipart/form-data">
 		<div class="main-content margin-bottom">
 			<div class="row">

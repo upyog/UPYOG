@@ -53,20 +53,20 @@
 <%@ taglib uri="/WEB-INF/tags/cdn.tld" prefix="cdn" %>
 <form:form role="form" action="search"
 	modelAttribute="budgetUploadReport" id="budgetUploadReportsearchform"
-	cssClass="form-horizontal form-group rows-bordered"
+	cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
-	<div class="main-content margin-bottom">
+	<div class="main-content ">
 		<div class="row">
 			<div class="col-md-12">
 				<div class="panel panel-primary" data-collapsed="0">
-					<div class="panel-heading margin-bottom">
+					<div class="panel-heading">
 						<div class="panel-title"><spring:message code="lbl.budget.upload.report" text="Budget Upload Report"/> </div>
 					</div>
-					<div class="panel-body margin-bottom">
+					<div class="panel-body ">
 						<div class="form-group row">
 							<label class="col-sm-3 control-label text-right"><spring:message
 									code="lbl.budget" text="Budget"/> <span class="mandatory1">*</span></label>
-							<div class="col-sm-3 add-margin margin-bottom">
+							<div class="col-sm-3 add-margin ">
 								<form:select path="reBudget.id" required="required"
 									id="reBudget" cssClass="form-control"
 									cssErrorClass="form-control error">
@@ -80,14 +80,14 @@
 							</div>
 							<label class="col-sm-2 control-label text-right"><spring:message
 									code="lbl.referenceBudget" text="Reference Budget"/> </label>
-							<div class="col-sm-3 add-margin margin-bottom">
+							<div class="col-sm-3 add-margin ">
 								<div id="referenceBudget"></div>
 							</div>
 						</div>
 						<div class="form-group row">
 							<label class="col-sm-3 control-label text-right"><spring:message
 									code="lbl.fund" text="Fund"/><span class="mandatory1">*</span> </label>
-							<div class="col-sm-3 add-margin margin-bottom">
+							<div class="col-sm-3 add-margin ">
 								<form:select path="fund.id" required="required" id="fund.id"
 									cssClass="form-control" cssErrorClass="form-control error">
 									<form:option value="">
@@ -99,7 +99,7 @@
 							</div>
 							<label class="col-sm-2 control-label text-right"><spring:message
 									code="lbl.department" text="Department"/> </label>
-							<div class="col-sm-3 add-margin margin-bottom">
+							<div class="col-sm-3 add-margin ">
 								<form:select path="department.code" id="department.code"
 									cssClass="form-control" cssErrorClass="form-control error">
 									<form:option value="">
@@ -114,7 +114,7 @@
 						<div class="form-group row">
 							<label class="col-sm-3 control-label text-right"><spring:message
 									code="lbl.function" text="Function"/> </label>
-							<div class="col-sm-3 add-margin margin-bottom">
+							<div class="col-sm-3 add-margin ">
 								<form:select path="function.id" id="function.id"
 									cssClass="form-control" cssErrorClass="form-control error">
 									<form:option value="">
@@ -127,7 +127,7 @@
 							</div>
 						</div>
 						<div class="form-group row">
-							<div class="text-center margin-bottom">
+							<div class="text-center ">
 								<button type='button' class='btn btn-primary' id="btnsearch">
 									<spring:message code='lbl.search' text="Search"/>
 								</button>

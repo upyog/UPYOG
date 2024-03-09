@@ -52,7 +52,7 @@
 <%@ taglib uri="/WEB-INF/tags/cdn.tld" prefix="cdn" %>
 <form:form role="form" action="update"
 	modelAttribute="budgetUploadReport" id="approvebudgetsearchform"
-	cssClass="form-horizontal form-group rows-bordered"
+	cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
 	<div class="main-content margin-bottom">
 		<div class="row">

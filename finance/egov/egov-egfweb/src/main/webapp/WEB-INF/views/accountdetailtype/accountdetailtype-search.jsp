@@ -52,7 +52,7 @@
 <%@ taglib uri="/WEB-INF/tags/cdn.tld" prefix="cdn" %>
 <form:form role="form" action="search"
 	modelAttribute="accountdetailtypeSearchRequest" id="accountdetailtypesearchform"
-	cssClass="form-horizontal form-group rows-bordered"
+	cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
 	<div class="main-content">
 		<div class="row">
