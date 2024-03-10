@@ -53,7 +53,7 @@
 	id="closedPeriodsearchform"
 	cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
-	<div class="main-content margin-bottom">
+	<div class="main-content">
 	<c:if test="${mode ne 'reopen'}">
 		<td colspan="5" align="right">
 			<div align="right">
@@ -67,13 +67,13 @@
 		<div class="row">
 			<div class="col-md-12">
 				<div class="panel panel-primary" data-collapsed="0">
-					<div class="panel-heading margin-bottom">
+					<div class="panel-heading">
 						<div class="panel-title"><spring:message code='lbl.search.closed.period' /></div>
 					</div>
 					<div class="form-group row">
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.cfinancialyearid" /> </label>
-						<div class="col-sm-3 add-margin margin-bottom">
+						<div class="col-sm-3 add-margin">
 							<form:select path="financialYearId" id="financialYear"
 								cssClass="form-control" cssErrorClass="form-control error">
 								<form:option value="">
@@ -87,10 +87,10 @@
 
 					</div>
 					</br> </br>
-					<div class="panel-body margin-bottom">
+					<div class="panel-body">
 						<input type="hidden" id="mode" name="mode" value="${mode}" />
 						<div class="form-group row">
-							<div class="text-center margin-bottom">
+							<div class="text-center">
 								<button type='button' class='btn btn-primary' id="btnsearch">
 									<spring:message code='lbl.search' />
 								</button>

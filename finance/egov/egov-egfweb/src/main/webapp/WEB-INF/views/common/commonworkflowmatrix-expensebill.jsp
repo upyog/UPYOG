@@ -51,7 +51,7 @@
 <%@ taglib uri="/WEB-INF/tags/cdn.tld" prefix="cdn" %>
 <form:hidden path="" name="stateType" id="stateType" value="${stateType}"/>	
 <form:hidden path="" id="workFlowAction" name="workFlowAction"/>	
-<div class="card panel-primary" data-collapsed="0" >	
+<div class="panel panel-primary" data-collapsed="0" >	
 	<c:if test="${nextAction !='END'}" > 
 			
 		<div class="panel-heading">

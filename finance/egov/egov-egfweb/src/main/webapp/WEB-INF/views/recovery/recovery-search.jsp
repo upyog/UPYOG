@@ -53,18 +53,18 @@
 <form:form role="form" action="search" modelAttribute="recoverySearchRequest"
 	id="recoverysearchform" cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
-	<div class="main-content margin-bottom">
+	<div class="main-content">
 		<div class="row">
-			<div class="col-md-12 margin-bottom">
+			<div class="col-md-12">
 				<div class="panel panel-primary" data-collapsed="0">
-					<div class="panel-heading margin-bottom" align="center">
+					<div class="panel-heading" align="center">
 						<div class="panel-title" align="center"><spring:message code="lbl.search.deductions" text="Search Deductions"/> </div>
 					</div>
-					<div class="panel-body margin-bottom">
+					<div class="panel-body">
 						<div class="form-group row">
 							<label class="col-sm-2 control-label text-left"><spring:message
 									code="lbl.chartofaccounts" text="Account Code"/> </label>
-							<div class="col-sm-3 margin-bottom">
+							<div class="col-sm-3">
 								<form:select path="chartofaccountsId" id="chartofaccounts.id"
 									cssClass="form-control" cssErrorClass="form-control error">
 									<form:option value="">
@@ -79,7 +79,7 @@
 							</div>
 							<label class="col-sm-2 control-label text-left"><spring:message
 									code="lbl.deductions.code" text="Deduction Code"/> </label>
-							<div class="col-sm-3 add-margin margin-bottom">
+							<div class="col-sm-3 add-margin">
 								<form:input path="type" id="type" cssClass="form-control" cssErrorClass="form-control error"/>
 								<form:errors path="type" cssClass="error-msg" />
 							</div>
@@ -88,7 +88,7 @@
 						<div class="form-group row">
 							<label class="col-sm-2 control-label text-left"><spring:message
 									code="lbl.deductions.name" text="Deduction Name"/> </label>
-							<div class="col-sm-3 add-margin margin-bottom">
+							<div class="col-sm-3 add-margin">
 								<form:input path="recoveryName" id="recoveryName" cssClass="form-control" cssErrorClass="form-control error"/>
 								<form:errors path="recoveryName" cssClass="error-msg" />
 							</div>
@@ -96,7 +96,7 @@
 						</div>
 
 						<div class="form-group row">
-							<div class="text-center margin-bottom">
+							<div class="text-center">
 								<button type='button' class='btn btn-primary' id="btnsearch">
 									<spring:message code='lbl.search' text="Search"/>
 								</button>

@@ -51,25 +51,25 @@
 <%@ include file="/includes/taglibs.jsp"%>
 <%@ taglib uri="/WEB-INF/tags/cdn.tld" prefix="cdn"%>
 <form:form role="form" action="search" modelAttribute="bankStatementUploadFile" id="bankstatementsearchform" cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
-	<div class="row margin-bottom">
+	<div class="row">
 		<div class="col-md-12">
 			<div class="panel panel-primary" data-collapsed="0">
-				<div class="panel-heading margin-bottom">
+				<div class="panel-heading">
 					<div class="panel-title">
 						<spring:message code="lbl.search.bankstatement" />
 					</div>
 				</div>
-				<div class="panel-body margin-bottom">
+				<div class="panel-body">
 					<div class="form-group row">
 						<label class="col-sm-3 control-label text-end"><spring:message code="lbl.bank" />  </label>
-						<div class="col-sm-3 add-margin margin-bottom">
+						<div class="col-sm-3 add-margin">
 						<form:select path="" data-first-option="false" id="bank" class="form-control" >
 							<form:option value=""><spring:message code="lbl.select" /></form:option>
 							<form:options items="${banks}" itemValue="id" itemLabel="name" />
 						</form:select>
 						</div>
 						<label class="col-sm-2 control-label text-end"><spring:message code="lbl.bankbranch" />  </label>
-						<div class="col-sm-3 add-margin margin-bottom">
+						<div class="col-sm-3 add-margin">
 							<form:select path="" id="bankbranch" class="form-control" data-first-option="false">
 								<form:option value=""><spring:message code="lbl.select" /></form:option>
 								<form:options items="${bankbranches}" itemValue="id" itemLabel="branchname" />
@@ -79,7 +79,7 @@
 					</div>
 					<div class="form-group row">
 						<label class="col-sm-3 control-label text-end"><spring:message code="lbl.accountnumber" />  </label>
-						<div class="col-sm-3 add-margin margin-bottom">
+						<div class="col-sm-3 add-margin">
 							<form:select path="bankAccount" id="bankaccount" class="form-control" data-first-option="false">
 								<form:option value=""><spring:message code="lbl.select" /></form:option>
 							</form:select>
@@ -87,7 +87,7 @@
 						</div>
 						<label class="col-sm-2 control-label text-end"><spring:message code="lbl.asondate" />
 						</label>
-						<div class="col-sm-3 add-margin margin-bottom">
+						<div class="col-sm-3 add-margin">
 							<form:input  path="asOnDate" id="filedate"  class="form-control datepicker" data-date-end-date="0d"  autocomplete="off"/>
 						</div>
 					</div>

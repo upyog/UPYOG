@@ -54,18 +54,18 @@
 	id="accountEntitysearchform"
 	cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
-	<div class="main-content margin-bottom">
+	<div class="main-content">
 		<div class="row">
 			<div class="col-md-12">
-				<div class="panel panel-primary margin-bottom" data-collapsed="0">
-					<div class="panel-heading margin-bottom">
+				<div class="panel panel-primary" data-collapsed="0">
+					<div class="panel-heading">
 						<div class="panel-title"><spring:message code="title.accountentity.search" text="Search User Defined Code"/></div>
 					</div>
-					<div class="panel-body margin-bottom">
+					<div class="panel-body">
 						<div class="form-group row">
 							<label class="col-sm-3 control-label text-right"><spring:message
 									code="lbl.accountdetailtype" text="Account detail type"/> </label>
-							<div class="col-sm-3 add-margin margin-bottom">
+							<div class="col-sm-3 add-margin">
 								<form:select path="accountdetailtypeId"
 									id="accountdetailtype.id" cssClass="form-control"
 									cssErrorClass="form-control error">
@@ -79,7 +79,7 @@
 							</div>
 							<label class="col-sm-3 control-label text-right"><spring:message
 									code="lbl.name" text="Name"/> </label>
-							<div class="col-sm-3 add-margin margin-bottom">
+							<div class="col-sm-3 add-margin">
 								<form:input path="name"
 									class="form-control text-left patternvalidation"
 									data-pattern="alphanumeric" maxlength="350" />
@@ -89,7 +89,7 @@
 						<div class="form-group row">
 							<label class="col-sm-3 control-label text-right"><spring:message
 									code="lbl.code" text="Code"/> </label>
-							<div class="col-sm-3 add-margin margin-bottom">
+							<div class="col-sm-3 add-margin">
 								<form:input path="code"
 									class="form-control text-left patternvalidation"
 									data-pattern="alphanumeric" maxlength="25" />
@@ -104,7 +104,7 @@
 		</div>
 	</div>
 	<div class="form-group row">
-		<div class="text-center margin-bottom">
+		<div class="text-center">
 			<button type='button' class='btn btn-primary' id="btnsearch">
 				<spring:message code='lbl.search' text="Search"/>
 			</button>

@@ -86,21 +86,21 @@ var chequeDDDateMendatoryMessage = "<spring:message code='msg.please.select.cheq
 	id="dishonorChequeForm"
 	cssClass="form-horizontal form-groups-bordered" action="/services/collection/dishonour/cheque/submit"
 	enctype="multipart/form-data" >
-	<div class="main-content margin-bottom">
+	<div class="main-content">
 		<div class="row" id="dishonor-cheque-search">
 			<div class="col-md-12">
 				<div class="panel panel-primary" data-collapsed="0">
-					<div class="panel-heading margin-bottom">
-						<div class="subheadnew margin-bottom" style="text-align: center">
+					<div class="panel-heading">
+						<div class="subheadnew" style="text-align: center">
 							<spring:message code="title.dishonor.cheque.dd" />
 						<div style="text-align: center;color: red;">${errorMessage }</div>
 						</div>
 					</div>
-					<div class="panel-body margin-bottom">
+					<div class="panel-body">
 						<div class="form-group row">
 							<label class="col-sm-3 control-label text-right"><spring:message
 									code="lbl.bank.branch"/>:</label>
-							<div class="col-sm-3 add-margin margin-bottom">
+							<div class="col-sm-3 add-margin">
 								<form:select name="bankBranch" path="" data-first-option="false"
 									id="bankBranch" cssClass="form-control"
 									onchange="loadBankAccount()">
@@ -115,7 +115,7 @@ var chequeDDDateMendatoryMessage = "<spring:message code='msg.please.select.cheq
 							</div>
 							<label class="col-sm-2 control-label text-right"><spring:message
 									code="lbl.bank.account"/>:</label>
-							<div class="col-sm-3 add-margin margin-bottom">
+							<div class="col-sm-3 add-margin">
 								<form:select name="accountNumber" path=""
 									data-first-option="false" id="bankAccountId"
 									cssClass="form-control">
@@ -130,7 +130,7 @@ var chequeDDDateMendatoryMessage = "<spring:message code='msg.please.select.cheq
 							<label class="col-sm-3 control-label text-right"><spring:message
 									code="lbl.instrument.mode"/> <span
 								class="mandatory"></span>:</label>
-							<div class="col-sm-3 add-margin margin-bottom">
+							<div class="col-sm-3 add-margin">
 								<form:select name="instrumentMode" path="instrumentMode"
 									data-first-option="false" id="instrumentModeId"
 									cssClass="form-control">
@@ -148,7 +148,7 @@ var chequeDDDateMendatoryMessage = "<spring:message code='msg.please.select.cheq
 							<label class="col-sm-3 control-label text-right"><spring:message
 									code="lbl.cheque.dd.number" /> <span
 								class="mandatory"></span>:</label>
-							<div class="col-sm-3 add-margin margin-bottom">
+							<div class="col-sm-3 add-margin">
 								<form:input path="instrumentNumber" id="instrumentNumberId"
 									class="form-control" required="required" autocomplete="off"
 									maxlength="6" onkeyup="decimalvalue(this);" />
@@ -158,7 +158,7 @@ var chequeDDDateMendatoryMessage = "<spring:message code='msg.please.select.cheq
 							<label class="col-sm-2 control-label text-right"><spring:message
 									code="lbl.cheque.dd.date"/> <span
 								class="mandatory"></span>:</label>
-							<div class="col-sm-3 add-margin margin-bottom">
+							<div class="col-sm-3 add-margin">
 								<form:input id="instrumentDateId" path="transactionDate"
 									class="form-control datepicker" data-date-end-date="0d"
 									required="required" autocomplete="off"

@@ -54,7 +54,7 @@
 	modelAttribute="budgetUploadReport" id="approvebudgetsearchform"
 	cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
-	<div class="main-content margin-bottom">
+	<div class="main-content">
 		<div class="row">
 			<div class="col-md-12">
 				<div class="panel panel-primary" data-collapsed="0">
@@ -63,14 +63,14 @@
 							<spring:message code="${message}" />
 						</div>
 					</c:if>
-					<div class="panel-heading margin-bottom">
+					<div class="panel-heading">
 						<div class="panel-title"><spring:message code="title.approvebudget.search" text="Approve Uploaded Budget"/> </div>
 					</div>
-					<div class="panel-body margin-bottom">
+					<div class="panel-body">
 						<div class="form-group row">
 							<label class="col-sm-3 control-label text-right"><spring:message
 									code="lbl.budget" text="Budget"/> <span class="mandatory1">*</span></label>
-							<div class="col-sm-3 add-margin margin-bottom">
+							<div class="col-sm-3 add-margin">
 								<form:select path="reBudget.id" required="required"
 									id="reBudget" cssClass="form-control"
 									cssErrorClass="form-control error">
@@ -84,12 +84,12 @@
 							</div>
 							<label class="col-sm-2 control-label text-right"><spring:message
 									code="lbl.referenceBudget" text="Reference Budget"/> </label>
-							<div class="col-sm-3 add-margin margin-bottom">
+							<div class="col-sm-3 add-margin">
 								<div id="referenceBudget"></div>
 							</div>
 						</div>
 						<div class="form-group row">
-							<div class="text-center margin-bottom">
+							<div class="text-center">
 								<button type='submit' class='btn btn-primary' id="btnsearch">
 									<spring:message code='lbl.approve' text="Approve"/>
 								</button>

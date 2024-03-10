@@ -1749,13 +1749,6 @@ label.error {
   position: relative;
   top: -15px;
 }
-
-/*
-.form-group .margin-bottom {
-	margin-bottom: 0px;
-}
-*/
-
 .form-group div {
   margin-bottom: 15px;
 }
@@ -1819,7 +1812,7 @@ label.error {
 }
 
 
-/* Panels deprecated in bootstrap 5 and added in custom.css by khalid rashid*/
+/* Panels deprecated in bootstrap 5 and added in custom.css*/
 
 .panel {
   margin-bottom: 20px;

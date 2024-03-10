@@ -65,18 +65,18 @@
 	id="coaSearchResultForm"
 	cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
-	<div class="main-content margin-bottom">
+	<div class="main-content">
 		<div class="row">
 			<div class="col-md-12">
 				<div class="panel panel-primary" data-collapsed="0">
-					<div class="panel-heading margin-bottom">
+					<div class="panel-heading">
 						<div class="subheadnew"  style="text-align: center"><spring:message text="Surrendered Cheque Report" code="lbl.surrender.cheque.report"/></div>
 					</div>
-					<div class="panel-body margin-bottom">
+					<div class="panel-body">
 						<div class="form-group row">
 							<label class="col-sm-3 control-label text-right"><spring:message
 									code="lbl.fund" text="Fund"/>:</label>
-							<div class="col-sm-3 add-margin margin-bottom">
+							<div class="col-sm-3 add-margin">
 								<form:select name="fundId" path=""
 									data-first-option="false" id="fund"
 									cssClass="form-control" onchange="loadBankBranch()">
@@ -90,7 +90,7 @@
 							</div>
 							<label class="col-sm-2 control-label text-right"><spring:message
 									code="lbl.bank.branch"  text="Bank Branch"/></label>
-							<div class="col-sm-3 add-margin margin-bottom">
+							<div class="col-sm-3 add-margin">
 								<form:select name="bankBranch" path=""
 									data-first-option="false" id="bankBranch"
 									cssClass="form-control" onchange="loadBankAccount()">
@@ -106,7 +106,7 @@
 						<div class="form-group row">
 							<label class="col-sm-3 control-label text-right"><spring:message
 									code="lbl.bankAccount" text="Bank Account" />:</label>
-							<div class="col-sm-3 add-margin margin-bottom">
+							<div class="col-sm-3 add-margin">
 								<form:select name="bankAccountId" path=""
 									data-first-option="false" id="bankAccountId"
 									cssClass="form-control">
@@ -117,7 +117,7 @@
 							</div>
 							<label class="col-sm-2 control-label text-right"><spring:message
 									code="lbl.reason.for.surrender" text="Reason For Surrender" />:</label>
-							<div class="col-sm-3 add-margin margin-bottom">
+							<div class="col-sm-3 add-margin">
 								<form:select name="surrenderReason" path=""
 									data-first-option="false" id="surrenderReason"
 									cssClass="form-control">
@@ -134,7 +134,7 @@
 						<div class="form-group row">
 							<label class="col-sm-3 control-label text-right"><spring:message
 									code="lbl.fromDate"  text="From Date"/> <span class="mandatory"></span> </label>
-							<div class="col-sm-3 add-margin margin-bottom">
+							<div class="col-sm-3 add-margin">
 								<form:input path="fromDate" id="fromDate"
 									class="form-control datepicker" data-date-end-date="0d"
 									required="required" autocomplete="off" data-inputmask="'mask': 'd/m/y'"  placeholder="DD/MM/YYYY"/>
@@ -142,7 +142,7 @@
 							</div>
 							<label class="col-sm-2 control-label text-right"><spring:message
 									code="lbl.toDate"  text="To Date"/> <span class="mandatory"></span> </label>
-							<div class="col-sm-3 add-margin margin-bottom">
+							<div class="col-sm-3 add-margin">
 								<form:input id="toDate" path="toDate"
 									class="form-control datepicker" data-date-end-date="0d"
 									required="required" autocomplete="off" data-inputmask="'mask': 'd/m/y'"  placeholder="DD/MM/YYYY" />
@@ -150,7 +150,7 @@
 							</div>
 						</div>
 						<div class="form-group row">
-							<div class="text-center margin-bottom">
+							<div class="text-center">
 								<button type='button' class='btn btn-primary' id="btnsearch">
 									<spring:message code='lbl.search' />
 								</button>

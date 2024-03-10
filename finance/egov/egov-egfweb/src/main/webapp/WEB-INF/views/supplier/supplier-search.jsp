@@ -52,31 +52,31 @@
 <%@ taglib uri="/WEB-INF/tags/cdn.tld" prefix="cdn" %>
 <form:form role="form" action="search" modelAttribute="supplierSearchRequest" id="suppliersearchform"
   cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
-  <div class="main-content margin-bottom">
+  <div class="main-content">
     <div class="row">
-      <div class="col-md-12 margin-bottom">
+      <div class="col-md-12">
         <div class="panel panel-primary" data-collapsed="0">
-          <div class="panel-heading margin-bottom">
+          <div class="panel-heading">
             <div class="panel-title"><spring:message code="title.supplier.search"/> </div>
           </div>
-          <div class="panel-body margin-bottom">
+          <div class="panel-body">
           <input type="hidden" id="mode" name="mode" value="${mode}" />
              <div class="form-group row">
 	           	 <label class="col-sm-3 control-label text-right"><spring:message code="lbl.name"/> </label>
-	              <div class="col-sm-3 add-margin margin-bottom">
+	              <div class="col-sm-3 add-margin">
 	                <form:input path="name" class="form-control text-left patternvalidation" data-pattern="alphanumeric"
 	                  maxlength="50" />
 	                <form:errors path="name" cssClass="error-msg" />
 	              </div>
 	              <label class="col-sm-3 control-label text-right"><spring:message code="lbl.code"/> </label>
-	              <div class="col-sm-3 add-margin margin-bottom">
+	              <div class="col-sm-3 add-margin">
 	                <form:input path="code" class="form-control text-left patternvalidation" data-pattern="alphanumeric"
 	                  maxlength="50" />
 	                <form:errors path="code" cssClass="error-msg" />
 	              </div>
               </div>
             <div class="form-group row">
-              <div class="text-center margin-bottom">
+              <div class="text-center">
                 <button type='button' class='btn btn-primary' id="btnsearch">
                   <spring:message code='lbl.search'/>
                 </button>

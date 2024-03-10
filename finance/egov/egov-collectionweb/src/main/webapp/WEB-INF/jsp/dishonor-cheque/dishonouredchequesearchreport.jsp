@@ -71,7 +71,7 @@
 
 div.dataTables_wrapper div.dataTables_filter {
     text-align: right;
-    margin-bottom: -24px;
+   : -24px;
 }
 </style>
 <script type="text/javascript">
@@ -83,22 +83,22 @@ var toDateAlertMsg = '<spring:message code="msg.please.select.toDate"/>';
 	 <form:form role="form" modelAttribute="dishonoredChequeBean" id="dishonouredChequesearchForm"
 		cssClass="form-horizontal form-groups-bordered"
 		enctype="multipart/form-data">
-		<div class="main-content margin-bottom">
+		<div class="main-content">
 			<div class="row">
 				<div class="col-md-12">
 					<div class="panel panel-primary" data-collapsed="0">
-						<div class="panel-heading margin-bottom">
+						<div class="panel-heading">
 							<div class="subheadnew" style="text-align: center">
 								<spring:message code="lbl.dishonoured.cheque.report"
 									text="Dishonoured Cheque Report" />
 							</div>
 						</div>
-						<div class="panel-body margin-bottom">
+						<div class="panel-body">
 							<div class="form-group row">
 								<label class="col-sm-3 control-label text-right"><spring:message
 										code="lbl.dihonouredchequefromdate" />:<span class="mandatory"></span>
 								</label>
-								<div class="col-sm-3 add-margin margin-bottom">
+								<div class="col-sm-3 add-margin">
 									<form:input path="fromDate" class="form-control datepicker"
 										required="required" id="fromDateId" data-date-end-date="0d"
 										data-inputmask="'mask': '99/99/9999'" />
@@ -107,7 +107,7 @@ var toDateAlertMsg = '<spring:message code="msg.please.select.toDate"/>';
 								<label class="col-sm-3 control-label text-right"><spring:message
 										code="lbl.dihonouredchequetodate" />:<span class="mandatory"></span>
 								</label>
-								<div class="col-sm-3 add-margin margin-bottom">
+								<div class="col-sm-3 add-margin">
 									<form:input path="toDate" class="form-control datepicker"
 										required="required" id="toDateId" data-date-end-date="0d"
 										data-inputmask="'mask': '99/99/9999'" />
@@ -118,7 +118,7 @@ var toDateAlertMsg = '<spring:message code="msg.please.select.toDate"/>';
 						 <div class="form-group row">
 								<label class="col-sm-3 control-label text-right"><spring:message
 										code="lbl.bank.account.number" />:</label>
-								 <div class="col-sm-3 add-margin margin-bottom">
+								 <div class="col-sm-3 add-margin">
 								 <form:select name="accountNumber" path=""
 										data-first-option="false" id="bankAccountId"
 										cssClass="form-control" onchange="loadMappedService()">
@@ -133,7 +133,7 @@ var toDateAlertMsg = '<spring:message code="msg.please.select.toDate"/>';
 								</div> 
 								<label class="col-sm-3 control-label text-right"><spring:message
 										code="lbl.service"  />:</label>
-								 <div class="col-sm-3 add-margin margin-bottom">
+								 <div class="col-sm-3 add-margin">
 									 <form:select name="service" path="" data-first-option="false"
 										id="serviceId" cssClass="form-control">
 										<form:option value="">
