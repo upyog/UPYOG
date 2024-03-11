@@ -13,6 +13,7 @@ const ApplicationDetails = () => {
   const { state: locState } = useLocation();
   const tenantId = locState?.tenantId || Digit.ULBService.getCurrentTenantId();
   const state = Digit.ULBService.getStateId();
+  const [viewTimeline, setViewTimeline]=useState(false);
 
   const { isLoading, isError, error, data: application, error: errorApplication } = Digit.Hooks.fsm.useApplicationDetail(
     t,
@@ -56,6 +57,13 @@ const ApplicationDetails = () => {
       setShowOptions(false);
     }
   };
+  const handleViewTimeline=()=>{ 
+    const timelineSection=document.getElementById('timeline');
+      if(timelineSection){
+        timelineSection.scrollIntoView({behavior: 'smooth'});
+      } 
+      setViewTimeline(true);   
+  };
 
   const dowloadOptions =
     paymentsHistory?.Payments?.length > 0
@@ -80,6 +88,9 @@ const ApplicationDetails = () => {
     <React.Fragment>
       <div className="cardHeaderWithOptions">
         <Header>{t("CS_FSM_APPLICATION_DETAIL_TITLE_APPLICATION_DETAILS")}</Header>
+        <div style={{display:"flex", alignItems:"center"}}>
+        <LinkButton label={t("VIEW_TIMELINE")}  onClick={handleViewTimeline}></LinkButton>
+        </div>
         <MultiLink
           className="multilinkWrapper"
           onHeadClick={() => setShowOptions(!showOptions)}
@@ -95,7 +106,9 @@ const ApplicationDetails = () => {
             </KeyNote>
           );
         })}
-        <ApplicationTimeline application={application?.pdfData} id={id} />
+          <div id="timeline">
+            <ApplicationTimeline application={application?.pdfData} id={id} />
+          </div>       
       </Card>
     </React.Fragment>
   );

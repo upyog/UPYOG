@@ -33,6 +33,7 @@ const WSApplicationDetails = () => {
   const tenantId = Digit.SessionStorage.get("CITIZEN.COMMON.HOME.CITY")?.code || user?.info?.permanentCity || Digit.ULBService.getCurrentTenantId();
   const stateCode = Digit.ULBService.getStateId();
   const [showOptions, setShowOptions] = useState(false);
+  const [viewTimeline, setViewTimeline]=useState(false);
   const applicationNobyData = window.location.href.includes("SW_")
     ? window.location.href.substring(window.location.href.indexOf("SW_"))
     : window.location.href.substring(window.location.href.indexOf("WS_"));
@@ -108,7 +109,13 @@ const WSApplicationDetails = () => {
     window.open(fileStore[response?.filestoreIds[0]], "_blank");
   }
 
-
+  const handleViewTimeline=()=>{ 
+    const timelineSection=document.getElementById('timeline');
+      if(timelineSection){
+        timelineSection.scrollIntoView({behavior: 'smooth'});
+      } 
+      setViewTimeline(true);   
+  };
   const printApplicationReceipts = async () => {
     const tenantId = Digit.ULBService.getCurrentTenantId();
     const state = Digit.ULBService.getStateId();
@@ -236,6 +243,9 @@ let serviceType = data && data?.WaterConnection?.[0] ? "WATER" : "SEWERAGE";
         )}
       <div className="cardHeaderWithOptions" style={{ marginRight: "auto", maxWidth: "960px" }}>
         <Header>{t("WS_APPLICATION_DETAILS_HEADER")}</Header>
+        <div style={{display:"flex", alignItems:"center", color:"#A52A2A"}}>
+        <LinkButton label={t("VIEW_TIMELINE")} onClick={handleViewTimeline}></LinkButton>
+        </div>
       </div>
       {checkifPrivacyenabled && <WSInfoLabel t={t} /> }
       <div className="hide-seperator">
@@ -629,12 +639,16 @@ let serviceType = data && data?.WaterConnection?.[0] ? "WATER" : "SEWERAGE";
             ))}
         </Card>
         <Card>
+          <div id="timeline">
           {/* <PTWFApplicationTimeline application={application} id={acknowledgementIds} /> */}
+          
           <WSWFApplicationTimeline
             application={data?.WaterConnection?.[0] || data?.SewerageConnections?.[0]}
             id={data?.WaterConnection?.[0]?.applicationNo || data?.SewerageConnections?.[0]?.applicationNo}
             paymentbuttonenabled={false}
           />
+          </div>
+          
           {data?.WaterConnection?.[0]?.applicationStatus === "PENDING_FOR_PAYMENT" ||
           data?.SewerageConnections?.[0]?.applicationStatus === "PENDING_FOR_PAYMENT" ? (
             <Link

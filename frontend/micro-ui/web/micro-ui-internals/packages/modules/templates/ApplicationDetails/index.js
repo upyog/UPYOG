@@ -13,7 +13,7 @@ import ApplicationDetailsActionBar from "./components/ApplicationDetailsActionBa
 import ApplicationDetailsWarningPopup from "./components/ApplicationDetailsWarningPopup";
 
 const ApplicationDetails = (props) => {
-  const tenantId = Digit.ULBService.getCurrentTenantId();
+    const tenantId = Digit.ULBService.getCurrentTenantId();
   const state = Digit.ULBService.getStateId();
   const { t } = useTranslation();
   const history = useHistory();
@@ -34,6 +34,7 @@ const ApplicationDetails = (props) => {
     mutate,
     nocMutation,
     workflowDetails,
+    id,
     businessService,
     closeToast,
     moduleCode,
@@ -195,6 +196,7 @@ const ApplicationDetails = (props) => {
         <React.Fragment>
           <ApplicationDetailsContent
             applicationDetails={applicationDetails}
+            id={id}
             workflowDetails={workflowDetails}
             isDataLoading={isDataLoading}
             applicationData={applicationData}

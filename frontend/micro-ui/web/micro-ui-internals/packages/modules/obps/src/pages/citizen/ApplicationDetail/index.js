@@ -1,4 +1,4 @@
-import { StatusTable, Header, Card, CardHeader, Row, PDFSvg, CardSectionHeader, MultiLink, Loader } from "@upyog/digit-ui-react-components";
+import { StatusTable, Header, Card, CardHeader, Row, PDFSvg, CardSectionHeader, MultiLink, Loader, LinkButton } from "@upyog/digit-ui-react-components";
 import React, { Fragment, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -28,7 +28,7 @@ const ApplicationDetails = () => {
     },
     {}
   );
-
+  const [viewTimeline, setViewTimeline]=useState(false);
   useEffect(() => {
     if (License?.tradeLicenseDetail?.applicationDocuments?.length) {
       const fileStoresIds = License?.tradeLicenseDetail?.applicationDocuments?.map((document) => document?.fileStoreId);
@@ -68,13 +68,23 @@ const ApplicationDetails = () => {
       }
     });
   }
-
+  const handleViewTimeline=()=>{
+    setViewTimeline(true);
+      const timelineSection=document.getElementById('timeline');
+      if(timelineSection){
+        timelineSection.scrollIntoView({behavior: 'smooth'});
+      } 
+  };
   if (isLoading) return <Loader />;
 
   return (
     <Fragment>
       <div className="cardHeaderWithOptions" style={isMobile ? {} : {maxWidth:"980px"}}>
+        <div style={{display:'flex', alignItems:'center', justifyContent:'center'}}>
         <Header styles={{ fontSize: "32px", marginLeft: isMobile ? "0px" : "10px" }}>{t("BPA_TASK_DETAILS_HEADER")}</Header>
+        <div style={{display:"flex", alignItems:"center", color:"#A52A2A"}}></div>
+        <LinkButton label={t("VIEW_TIMELINE")} styles={{ fontSize: "32px", marginLeft: isMobile ? "0px" : "10px" }} onClick={handleViewTimeline}></LinkButton>
+        </div>
         {reciept_data?.Payments?.length > 0 && (
           // <div style={{right: "3%", top: "20px", position: "absolute"}}>
           <MultiLink
@@ -162,9 +172,11 @@ const ApplicationDetails = () => {
             })}
           </Card>
         )}
+        <div id="timeline">
         <Card>
           <ApplicationTimeline id={id} tenantId={License?.tenantId} />
         </Card>
+        </div>       
       </div>
     </Fragment>
   );
