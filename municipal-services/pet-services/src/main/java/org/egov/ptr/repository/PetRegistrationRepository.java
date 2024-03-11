@@ -13,24 +13,23 @@ import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.List;
 
-
 @Slf4j
 @Repository
 public class PetRegistrationRepository {
 
-    @Autowired
-    private PetApplicationQueryBuilder queryBuilder;
+	@Autowired
+	private PetApplicationQueryBuilder queryBuilder;
 
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
+	@Autowired
+	private JdbcTemplate jdbcTemplate;
 
-    @Autowired
-    private PetApplicationRowMapper rowMapper;
+	@Autowired
+	private PetApplicationRowMapper rowMapper;
 
-    public List<PetRegistrationApplication>getApplications(PetApplicationSearchCriteria searchCriteria){
-        List<Object> preparedStmtList = new ArrayList<>();
-        String query = queryBuilder.getPetApplicationSearchQuery(searchCriteria, preparedStmtList);
-        log.info("Final query: " + query);
-        return jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapper);
-    }
+	public List<PetRegistrationApplication> getApplications(PetApplicationSearchCriteria searchCriteria) {
+		List<Object> preparedStmtList = new ArrayList<>();
+		String query = queryBuilder.getPetApplicationSearchQuery(searchCriteria, preparedStmtList);
+		log.info("Final query: " + query);
+		return jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapper);
+	}
 }

@@ -28,7 +28,7 @@ public class PaymentNotificationService {
 
 	@Autowired
 	private ObjectMapper mapper;
-	
+
 	private PetConfiguration config;
 
 	@Value("${egov.mdms.host}")
@@ -49,26 +49,27 @@ public class PaymentNotificationService {
 	 * @param topic
 	 */
 	public void process(HashMap<String, Object> record, String topic) throws JsonProcessingException {
-		log.info(" Receipt consumer class entry "+ record.toString());
+		log.info(" Receipt consumer class entry " + record.toString());
 		try {
 			PaymentRequest paymentRequest = mapper.convertValue(record, PaymentRequest.class);
-			log.info("Payment request in pet method: "+ paymentRequest.toString());
+			log.info("Payment request in pet method: " + paymentRequest.toString());
 			String businessServiceString = "pet-services";
-			if (businessServiceString.equals(paymentRequest.getPayment().getPaymentDetails().get(0).getBusinessService())) {
+			if (businessServiceString
+					.equals(paymentRequest.getPayment().getPaymentDetails().get(0).getBusinessService())) {
 				updateWorkflowStatus(paymentRequest);
 			}
 		} catch (IllegalArgumentException e) {
-	        log.error("Illegal argument exception occurred pet: " + e.getMessage());
-	    } catch (Exception e) {
-	        log.error("An unexpected exception occurred pet: " + e.getMessage());
-	    }
+			log.error("Illegal argument exception occurred pet: " + e.getMessage());
+		} catch (Exception e) {
+			log.error("An unexpected exception occurred pet: " + e.getMessage());
+		}
 
 	}
 
 	public void updateWorkflowStatus(PaymentRequest paymentRequest) {
 
 		ProcessInstance processInstance = getProcessInstanceForPTR(paymentRequest);
-		log.info(" Process instance of pet application "+ processInstance.toString());
+		log.info(" Process instance of pet application " + processInstance.toString());
 		ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(paymentRequest.getRequestInfo(),
 				Collections.singletonList(processInstance));
 		callWorkFlow(workflowRequest);
@@ -93,10 +94,10 @@ public class PaymentNotificationService {
 	}
 
 	public State callWorkFlow(ProcessInstanceRequest workflowReq) {
-		log.info(" Workflow Request for pet service for final step "+ workflowReq.toString());
+		log.info(" Workflow Request for pet service for final step " + workflowReq.toString());
 		ProcessInstanceResponse response = null;
 		StringBuilder url = new StringBuilder(configs.getWfHost().concat(configs.getWfTransitionPath()));
-		log.info(" URL for calling workflow service "+ workflowReq.toString());
+		log.info(" URL for calling workflow service " + workflowReq.toString());
 		Optional<Object> optional = serviceRequestRepository.fetchResult(url, workflowReq);
 		response = mapper.convertValue(optional.get(), ProcessInstanceResponse.class);
 		return response.getProcessInstances().get(0).getState();

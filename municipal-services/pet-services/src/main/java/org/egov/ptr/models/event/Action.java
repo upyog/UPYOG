@@ -15,14 +15,14 @@ import java.util.List;
 @ToString
 @Builder
 public class Action {
-	
+
 	private String tenantId;
-	
+
 	private String id;
-	
+
 	private String eventId;
-	
+
 	@NotNull
 	private List<ActionItem> actionUrls;
-	
+
 }

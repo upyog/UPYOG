@@ -12,8 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import ch.qos.logback.classic.Logger;
-
 @Service
 public class EnrichmentService {
 

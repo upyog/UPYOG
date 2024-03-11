@@ -28,7 +28,6 @@ import lombok.Setter;
 
 public class OwnerInfo extends User {
 
-
 	@SafeHtml
 	@JsonProperty("ownerInfoUuid")
 	private String ownerInfoUuid;
@@ -66,9 +65,6 @@ public class OwnerInfo extends User {
 	@JsonProperty("documents")
 	@Valid
 	private List<Document> documents;
-
-//	@JsonProperty("relationship")
-//	private Relationship relationship;
 
 	public OwnerInfo addDocumentsItem(Document documentsItem) {
 		if (this.documents == null) {
@@ -121,20 +117,20 @@ public class OwnerInfo extends User {
 
 	@Builder()
 	public OwnerInfo(Long id, String uuid, String userName, String password, String salutation, String name,
-					 String gender, String mobileNumber, String emailId, String altContactNumber, String pan,
-					 String aadhaarNumber, String permanentAddress, String permanentCity, String permanentPincode,
-					 String correspondenceCity, String correspondencePincode, String correspondenceAddress, Boolean active,
-					 Long dob, Long pwdExpiryDate, String locale, String type, String signature, Boolean accountLocked,
-					 List<Role> roles, String fatherOrHusbandName, String bloodGroup, String identificationMark, String photo,
-					 String createdBy, Long createdDate, String lastModifiedBy, Long lastModifiedDate, String tenantId,
-					 String ownerInfoUuid, String mobileNumber2, String gender2, String fatherOrHusbandName2,
-					 String correspondenceAddress2, Boolean isPrimaryOwner, Double ownerShipPercentage, String ownerType,
-					 String institutionId, Status status, List<Document> documents,  String alternatemobilenumber) {
+			String gender, String mobileNumber, String emailId, String altContactNumber, String pan,
+			String aadhaarNumber, String permanentAddress, String permanentCity, String permanentPincode,
+			String correspondenceCity, String correspondencePincode, String correspondenceAddress, Boolean active,
+			Long dob, Long pwdExpiryDate, String locale, String type, String signature, Boolean accountLocked,
+			List<Role> roles, String fatherOrHusbandName, String bloodGroup, String identificationMark, String photo,
+			String createdBy, Long createdDate, String lastModifiedBy, Long lastModifiedDate, String tenantId,
+			String ownerInfoUuid, String mobileNumber2, String gender2, String fatherOrHusbandName2,
+			String correspondenceAddress2, Boolean isPrimaryOwner, Double ownerShipPercentage, String ownerType,
+			String institutionId, Status status, List<Document> documents, String alternatemobilenumber) {
 		super(id, uuid, userName, password, salutation, name, gender, mobileNumber, emailId, altContactNumber, pan,
 				aadhaarNumber, permanentAddress, permanentCity, permanentPincode, correspondenceCity,
 				correspondencePincode, correspondenceAddress, active, dob, pwdExpiryDate, locale, type, signature,
 				accountLocked, roles, fatherOrHusbandName, bloodGroup, identificationMark, photo, createdBy,
-				createdDate, lastModifiedBy, lastModifiedDate, tenantId,alternatemobilenumber);
+				createdDate, lastModifiedBy, lastModifiedDate, tenantId, alternatemobilenumber);
 		this.ownerInfoUuid = ownerInfoUuid;
 		mobileNumber = mobileNumber2;
 		gender = gender2;
@@ -146,21 +142,22 @@ public class OwnerInfo extends User {
 		this.institutionId = institutionId;
 		this.status = status;
 		this.documents = documents;
-//		this.relationship = relationship;		
 	}
-
 
 	public OwnerInfo(OwnerInfo ownerInfo) {
 
-		super(ownerInfo.getId(), ownerInfo.getUuid(), ownerInfo.getUserName(), ownerInfo.getPassword(), ownerInfo.getSalutation(),
-				ownerInfo.getName(), ownerInfo.getGender(), ownerInfo.getMobileNumber(), ownerInfo.getEmailId(),
-				ownerInfo.getAltContactNumber(), ownerInfo.getPan(), ownerInfo.getAadhaarNumber(), ownerInfo.getPermanentAddress(),
-				ownerInfo.getPermanentCity(), ownerInfo.getPermanentPincode(), ownerInfo.getCorrespondenceCity(),
-				ownerInfo.getCorrespondencePincode(), ownerInfo.getCorrespondenceAddress(), ownerInfo.getActive(), ownerInfo.getDob(),
-				ownerInfo.getPwdExpiryDate(), ownerInfo.getLocale(), ownerInfo.getType(), ownerInfo.getSignature(),
-				ownerInfo.getAccountLocked(), ownerInfo.getRoles(), ownerInfo.getFatherOrHusbandName(), ownerInfo.getBloodGroup(),
-				ownerInfo.getIdentificationMark(), ownerInfo.getPhoto(), ownerInfo.getCreatedBy(), ownerInfo.getCreatedDate(),
-				ownerInfo.getLastModifiedBy(), ownerInfo.getLastModifiedDate(), ownerInfo.getTenantId(),ownerInfo.getAlternatemobilenumber());
+		super(ownerInfo.getId(), ownerInfo.getUuid(), ownerInfo.getUserName(), ownerInfo.getPassword(),
+				ownerInfo.getSalutation(), ownerInfo.getName(), ownerInfo.getGender(), ownerInfo.getMobileNumber(),
+				ownerInfo.getEmailId(), ownerInfo.getAltContactNumber(), ownerInfo.getPan(),
+				ownerInfo.getAadhaarNumber(), ownerInfo.getPermanentAddress(), ownerInfo.getPermanentCity(),
+				ownerInfo.getPermanentPincode(), ownerInfo.getCorrespondenceCity(),
+				ownerInfo.getCorrespondencePincode(), ownerInfo.getCorrespondenceAddress(), ownerInfo.getActive(),
+				ownerInfo.getDob(), ownerInfo.getPwdExpiryDate(), ownerInfo.getLocale(), ownerInfo.getType(),
+				ownerInfo.getSignature(), ownerInfo.getAccountLocked(), ownerInfo.getRoles(),
+				ownerInfo.getFatherOrHusbandName(), ownerInfo.getBloodGroup(), ownerInfo.getIdentificationMark(),
+				ownerInfo.getPhoto(), ownerInfo.getCreatedBy(), ownerInfo.getCreatedDate(),
+				ownerInfo.getLastModifiedBy(), ownerInfo.getLastModifiedDate(), ownerInfo.getTenantId(),
+				ownerInfo.getAlternatemobilenumber());
 
 		this.ownerInfoUuid = ownerInfo.getOwnerInfoUuid();
 		this.fatherOrHusbandName = ownerInfo.getFatherOrHusbandName();
@@ -171,12 +168,11 @@ public class OwnerInfo extends User {
 		this.institutionId = ownerInfo.getInstitutionId();
 		this.status = ownerInfo.getStatus();
 		this.documents = copyDocuments(ownerInfo.getDocuments());
-//		this.relationship = ownerInfo.getRelationship();
 	}
 
 	private List<Document> copyDocuments(List<Document> documents) {
 
-		if(CollectionUtils.isEmpty(documents))
+		if (CollectionUtils.isEmpty(documents))
 			return null;
 
 		List<Document> newDocs = new ArrayList<>();
@@ -187,7 +183,6 @@ public class OwnerInfo extends User {
 	}
 
 	public boolean mutationEquals(OwnerInfo otherOwner) {
-
 
 		if (this == otherOwner)
 			return true;
@@ -228,12 +223,8 @@ public class OwnerInfo extends User {
 		} else if (!ownerType.equals(otherOwner.ownerType))
 			return false;
 
-//		if (relationship != otherOwner.relationship)
-//			return false;
-
 		if (status != otherOwner.status)
 			return false;
-
 
 		if (this.getName() == null) {
 			if (otherOwner.getName() != null)
@@ -247,7 +238,6 @@ public class OwnerInfo extends User {
 		} else if (!this.getMobileNumber().equals(otherOwner.getMobileNumber()))
 			return false;
 
-
 		return true;
 	}
 
@@ -256,21 +246,19 @@ public class OwnerInfo extends User {
 		return "OwnerInfo [ownerInfoUuid=" + ownerInfoUuid + ", gender=" + gender + ", fatherOrHusbandName="
 				+ fatherOrHusbandName + ", correspondenceAddress=" + correspondenceAddress + ", isPrimaryOwner="
 				+ isPrimaryOwner + ", ownerShipPercentage=" + ownerShipPercentage + ", ownerType=" + ownerType
-				+ ", institutionId=" + institutionId + ", status=" + status + ", documents=" + documents
-//				+ ", relationship=" + relationship + ", hashCode=" + hashCode() + ", Id=" + getId()
-				+ ", Uuid=" + getUuid() + ", UserName=" + getUserName() + ", Password=" + getPassword()
-				+ ", Salutation=" + getSalutation() + ", Name=" + getName() + ", MobileNumber="
-				+ getMobileNumber() + ", EmailId=" + getEmailId() + ", AltContactNumber="
-				+ getAltContactNumber() + ", Pan=" + getPan() + ", AadhaarNumber=" + getAadhaarNumber()
-				+ ", PermanentAddress=" + getPermanentAddress() + ", PermanentCity=" + getPermanentCity()
-				+ ", PermanentPincode=" + getPermanentPincode() + ", CorrespondenceCity="
-				+ getCorrespondenceCity() + ", CorrespondencePincode=" + getCorrespondencePincode()
-				+ ", Active=" + getActive() + ", Dob=" + getDob() + ", PwdExpiryDate="
+				+ ", institutionId=" + institutionId + ", status=" + status + ", documents=" + documents + ", Uuid="
+				+ getUuid() + ", UserName=" + getUserName() + ", Password=" + getPassword() + ", Salutation="
+				+ getSalutation() + ", Name=" + getName() + ", MobileNumber=" + getMobileNumber() + ", EmailId="
+				+ getEmailId() + ", AltContactNumber=" + getAltContactNumber() + ", Pan=" + getPan()
+				+ ", AadhaarNumber=" + getAadhaarNumber() + ", PermanentAddress=" + getPermanentAddress()
+				+ ", PermanentCity=" + getPermanentCity() + ", PermanentPincode=" + getPermanentPincode()
+				+ ", CorrespondenceCity=" + getCorrespondenceCity() + ", CorrespondencePincode="
+				+ getCorrespondencePincode() + ", Active=" + getActive() + ", Dob=" + getDob() + ", PwdExpiryDate="
 				+ getPwdExpiryDate() + ", Locale=" + getLocale() + ", Type=" + getType() + ", Signature="
-				+ getSignature() + ", AccountLocked=" + getAccountLocked() + ", Roles=" + getRoles()
-				+ ", BloodGroup=" + getBloodGroup() + ", IdentificationMark=" + getIdentificationMark()
-				+ ", Photo=" + getPhoto() + ", CreatedBy=" + getCreatedBy() + ", CreatedDate="
-				+ getCreatedDate() + ", LastModifiedBy=" + getLastModifiedBy() + ", LastModifiedDate="
-				+ getLastModifiedDate() + ", TenantId=" + getTenantId() + "]";
+				+ getSignature() + ", AccountLocked=" + getAccountLocked() + ", Roles=" + getRoles() + ", BloodGroup="
+				+ getBloodGroup() + ", IdentificationMark=" + getIdentificationMark() + ", Photo=" + getPhoto()
+				+ ", CreatedBy=" + getCreatedBy() + ", CreatedDate=" + getCreatedDate() + ", LastModifiedBy="
+				+ getLastModifiedBy() + ", LastModifiedDate=" + getLastModifiedDate() + ", TenantId=" + getTenantId()
+				+ "]";
 	}
 }

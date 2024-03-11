@@ -34,7 +34,7 @@ public class PTRNotificationService {
 
 	public void process(PetRegistrationRequest request) {
 		EventRequest eventRequest = getEventsForPTR(request);
-		log.info("Event Request in Pet process method"+eventRequest.toString());
+		log.info("Event Request in Pet process method" + eventRequest.toString());
 		if (null != eventRequest)
 			util.sendEventNotification(eventRequest);
 
@@ -58,13 +58,12 @@ public class PTRNotificationService {
 		String message = null;
 		message = util.getCustomizedMsg(request.getRequestInfo(), request.getPetRegistrationApplications().get(0),
 				localizationMessages);
-		log.info("Message for event in Pet:"+ message);
+		log.info("Message for event in Pet:" + message);
 		Recepient recepient = Recepient.builder().toUsers(toUsers).toRoles(null).build();
-		log.info("Recipient object in pet:"+ recepient.toString());
-		events.add(Event.builder().tenantId(tenantId).description(message)
-				.eventType(PTRConstants.USREVENTS_EVENT_TYPE).name(PTRConstants.USREVENTS_EVENT_NAME)
-				.postedBy(PTRConstants.USREVENTS_EVENT_POSTEDBY).source(Source.WEBAPP).recepient(recepient)
-				.eventDetails(null).actions(null).build());
+		log.info("Recipient object in pet:" + recepient.toString());
+		events.add(Event.builder().tenantId(tenantId).description(message).eventType(PTRConstants.USREVENTS_EVENT_TYPE)
+				.name(PTRConstants.USREVENTS_EVENT_NAME).postedBy(PTRConstants.USREVENTS_EVENT_POSTEDBY)
+				.source(Source.WEBAPP).recepient(recepient).eventDetails(null).actions(null).build());
 
 		if (!CollectionUtils.isEmpty(events)) {
 			return EventRequest.builder().requestInfo(request.getRequestInfo()).events(events).build();
@@ -92,17 +91,17 @@ public class PTRNotificationService {
 		userSearchRequest.put("userType", "CITIZEN");
 		userSearchRequest.put("userName", mobileNumber);
 		try {
-			
+
 			Object user = serviceRequestRepository.fetchResult(uri, userSearchRequest);
-			log.info("User fetched in fetUserUUID method of pet notfication consumer"+user.toString());
+			log.info("User fetched in fetUserUUID method of pet notfication consumer" + user.toString());
 //			if (null != user) {
 //				String uuid = JsonPath.read(user, "$.user[0].uuid");
 			if (user instanceof Optional) {
-		        Optional<Object> optionalUser = (Optional<Object>) user;
-		        if (optionalUser.isPresent()) {
-		            String uuid = JsonPath.read(optionalUser.get(), "$.user[0].uuid");
-				mapOfPhoneNoAndUUIDs.put(mobileNumber, uuid);
-		        }
+				Optional<Object> optionalUser = (Optional<Object>) user;
+				if (optionalUser.isPresent()) {
+					String uuid = JsonPath.read(optionalUser.get(), "$.user[0].uuid");
+					mapOfPhoneNoAndUUIDs.put(mobileNumber, uuid);
+				}
 			} else {
 				log.error("Service returned null while fetching user for username - " + mobileNumber);
 			}

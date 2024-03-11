@@ -64,11 +64,10 @@ public class EventRequest {
 	@NotNull
 	@JsonProperty("RequestInfo")
 	private RequestInfo requestInfo;
-	
+
 	@NotNull
 	@Valid
 	@JsonProperty("events")
 	private List<Event> events;
-
 
 }

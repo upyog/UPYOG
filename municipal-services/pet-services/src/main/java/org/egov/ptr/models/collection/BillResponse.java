@@ -23,6 +23,5 @@ public class BillResponse {
 
 	@JsonProperty("Bill")
 	private List<Bill> bill = new ArrayList<>();
-	
 
 }

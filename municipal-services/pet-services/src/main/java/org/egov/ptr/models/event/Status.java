@@ -54,9 +54,9 @@ public enum Status {
 
 	@Override
 	@JsonValue
-    public String toString() {
-        return name();
-    }
+	public String toString() {
+		return name();
+	}
 
 	@JsonCreator
 	public static Status fromValue(String passedValue) {

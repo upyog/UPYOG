@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-
 import java.util.LinkedHashMap;
 import java.util.Optional;
 
@@ -18,19 +17,19 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 public class BillingService {
-	
+
 	@Value("${egbs.host}")
 	private String billingHost;
-	
+
 	@Value("${egbs.fetchbill.endpoint}")
 	private String fetchBillEndpoint;
-	
+
 	@Autowired
 	private ServiceRequestRepository serviceRequestRepository;
 
 	@Autowired
 	private ObjectMapper mapper;
-	
+
 //	public BillResponse fetchBill(Property property, RequestInfo requestInfo) {
 //		
 //		StringBuilder uri = new StringBuilder(billingHost);

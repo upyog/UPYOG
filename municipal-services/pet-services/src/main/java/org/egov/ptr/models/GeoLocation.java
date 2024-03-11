@@ -19,12 +19,12 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class GeoLocation   {
-	
-  @JsonProperty("latitude")
-  private Double latitude;
+public class GeoLocation {
 
-  @JsonProperty("longitude")
-  private Double longitude;
+	@JsonProperty("latitude")
+	private Double latitude;
 
-  }
+	@JsonProperty("longitude")
+	private Double longitude;
+
+}

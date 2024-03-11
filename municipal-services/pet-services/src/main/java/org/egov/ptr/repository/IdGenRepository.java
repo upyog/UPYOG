@@ -1,6 +1,5 @@
 package org.egov.ptr.repository;
 
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,14 +20,14 @@ import org.springframework.web.client.RestTemplate;
 @Repository
 public class IdGenRepository {
 
-    @Value("${egov.idgen.host}")
-    private String idGenHost;
+	@Value("${egov.idgen.host}")
+	private String idGenHost;
 
-    @Value("${egov.idgen.path}")
-    private String idGenPath;
+	@Value("${egov.idgen.path}")
+	private String idGenPath;
 
-    @Autowired
-    private RestTemplate restTemplate;
+	@Autowired
+	private RestTemplate restTemplate;
 
 	public IdGenerationResponse getId(RequestInfo requestInfo, String tenantId, String name, String format, int count) {
 
@@ -56,6 +55,5 @@ public class IdGenRepository {
 
 		return response;
 	}
-
 
 }

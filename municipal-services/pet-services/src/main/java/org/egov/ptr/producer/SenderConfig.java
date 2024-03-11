@@ -16,27 +16,27 @@ import java.util.Map;
 @Configuration
 public class SenderConfig {
 
-    @Value("${kafka.config.bootstrap_server_config}")
-    private String bootstrapServers;
+	@Value("${kafka.config.bootstrap_server_config}")
+	private String bootstrapServers;
 
-    @Bean
-    public Map<String, Object> producerConfigs() {
-        Map<String, Object> props = new HashMap<>();
-        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
-        props.put(ProducerConfig.MAX_REQUEST_SIZE_CONFIG,10000000 );
-        return props;
-    }
+	@Bean
+	public Map<String, Object> producerConfigs() {
+		Map<String, Object> props = new HashMap<>();
+		props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+		props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+		props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
+		props.put(ProducerConfig.MAX_REQUEST_SIZE_CONFIG, 10000000);
+		return props;
+	}
 
-    @Bean
-    public ProducerFactory<String, Object> producerFactory() {
-        return new DefaultKafkaProducerFactory<>(producerConfigs());
-    }
+	@Bean
+	public ProducerFactory<String, Object> producerFactory() {
+		return new DefaultKafkaProducerFactory<>(producerConfigs());
+	}
 
-    @Bean
-    public KafkaTemplate<String, Object> kafkaTemplate() {
-        return new KafkaTemplate<>(producerFactory());
-    }
+	@Bean
+	public KafkaTemplate<String, Object> kafkaTemplate() {
+		return new KafkaTemplate<>(producerFactory());
+	}
 
 }

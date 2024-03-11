@@ -21,12 +21,10 @@ public class PTRConstants {
 
 	public static final String NOTIFICATION_LOCALE = "en_IN";
 
-
 //    
 	public static final String ACTION_PAY = "PAY";
 
 	public static final String ACTION_PAID = "PAID";
-
 
 	// Variable names for diff
 
@@ -48,16 +46,6 @@ public class PTRConstants {
 
 	public static final String VARIABLE_OWNER = "ownerInfo";
 
-	public static final List<String> FIELDS_TO_IGNORE = Collections
-			.unmodifiableList(Arrays.asList(VARIABLE_ACTION, VARIABLE_WFDOCUMENTS, VARIABLE_CREATEDBY,
-					VARIABLE_LASTMODIFIEDBY, VARIABLE_CREATEDTIME, VARIABLE_LASTMODIFIEDTIME));
-
-	public static final List<String> FIELDS_FOR_OWNER_MUTATION = Collections
-			.unmodifiableList(Arrays.asList("name", "gender", "fatherOrHusbandName"));
-
-	public static final List<String> FIELDS_FOR_PROPERTY_MUTATION = Collections.unmodifiableList(
-			Arrays.asList("propertyType", "usageCategory", "ownershipCategory", "noOfFloors", "landArea"));
-
 	public static final String CITIZEN_SENDBACK_ACTION = "SENDBACKTOCITIZEN";
 
 	public static final String WORKFLOW_START_ACTION = "INITIATE";
@@ -73,8 +61,6 @@ public class PTRConstants {
 	public static final String MUTATION_PROCESS_CONSTANT = "MUTATION";
 
 	public static final String ALTERNATE_PROCESS_CONSTANT = "ALTERNATE";
-
-	public static final String PREVIOUS_PROPERTY_PREVIOUD_UUID = "previousPropertyUuid";
 
 	/* notification constants */
 
@@ -101,8 +87,6 @@ public class PTRConstants {
 	public static final String ACTION_ALTERNATE_MOBILE = "ALTERNATE_MOBILE";
 
 	public static final String ACTION_FOR_DUES = "DUE";
-
-	public static final String ACTION_FOR_ASSESSMENT = "ASSESS";
 
 	public static final String ACTION_FOR_PAYMENT_FAILURE = "FAILURE";
 
@@ -146,8 +130,6 @@ public class PTRConstants {
 
 	public static final String UPDATED_STRING = "Updated";
 
-
-	// PROPERTY & MUTATION
 	public static final String NOTIFICATION_APPID = "{APPID}";
 
 	public static final String NOTIFICATION_CONSUMERCODE = "{CONSUMERCODE}";
@@ -157,8 +139,6 @@ public class PTRConstants {
 	public static final String NOTIFICATION_BUSINESSSERVICE = "{BUSINESSSERVICE}";
 
 	public static final String NOTIFICATION_PAY_LINK = "{PAYLINK}";
-
-	public static final String NOTIFICATION_PROPERTY_LINK = "{PTURL}";
 
 	public static final String NOTIFICATION_MUTATION_LINK = "{MTURL}";
 
@@ -175,7 +155,6 @@ public class PTRConstants {
 	public static final String OFFSET_FIELD_FOR_SEARCH_URL = "offset=";
 
 	public static final String SEPARATER = "&";
-
 
 	// PDF CONSUMER
 	public static final String KEY_ID = "id";
@@ -232,8 +211,6 @@ public class PTRConstants {
 
 	public static final String PAY_ONLINE_STRING = "Click on the URL to view the details and pay online {PAYMENT_LINK}";
 
-	public static final String PT_ONLINE_STRING = "You can pay your Property Tax online here - {PAYMENT_LINK}";
-
 	public static final String PAYLINK_STRING = "You can pay your application fee on the below link - {PAYLINK} or visit your ULB to pay your dues. Thank you";
 
 	public static final String CERTIFICATE_STRING = "You can download your certificate on the below link - {PTRURL} Thank you";
@@ -253,7 +230,5 @@ public class PTRConstants {
 	public static final String USREVENTS_EVENT_NAME = "PTR";
 
 	public static final String USREVENTS_EVENT_POSTEDBY = "SYSTEM-PTR";
-	
-	
 
 }

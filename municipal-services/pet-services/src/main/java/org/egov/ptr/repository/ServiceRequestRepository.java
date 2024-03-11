@@ -21,7 +21,7 @@ public class ServiceRequestRepository {
 
 	@Autowired
 	private RestTemplate restTemplate;
-	
+
 	@Autowired
 	private ObjectMapper mapper;
 
@@ -29,24 +29,24 @@ public class ServiceRequestRepository {
 	 * Fetches results from a REST service using the uri and object
 	 * 
 	 * @return Object
-	 * @author vishal
+	 * @author abhijeet
 	 */
 	public Optional<Object> fetchResult(StringBuilder uri, Object request) {
 
 		mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
 		Object response = null;
-		log.info("URI: "+uri.toString());
+		log.info("URI: " + uri.toString());
 		try {
-			log.info("Request: "+mapper.writeValueAsString(request));
+			log.info("Request: " + mapper.writeValueAsString(request));
 			response = restTemplate.postForObject(uri.toString(), request, Map.class);
 		} catch (HttpClientErrorException e) {
-			
+
 			log.error("External Service threw an Exception: ", e);
 			throw new ServiceCallException(e.getResponseBodyAsString());
 		} catch (Exception e) {
-			
+
 			log.error("Exception while fetching from external service: ", e);
-			throw new CustomException("REST_CALL_EXCEPTION : "+uri.toString(),e.getMessage());
+			throw new CustomException("REST_CALL_EXCEPTION : " + uri.toString(), e.getMessage());
 		}
 		return Optional.ofNullable(response);
 	}

@@ -29,38 +29,47 @@ import io.swagger.annotations.ApiParam;
 @RequestMapping("/pet-registration")
 public class PetController {
 
-    @Autowired
-    private PetRegistrationService petRegistrationService;
+	@Autowired
+	private PetRegistrationService petRegistrationService;
 
-    @Autowired
-    private ResponseInfoFactory responseInfoFactory;
+	@Autowired
+	private ResponseInfoFactory responseInfoFactory;
 
+	@RequestMapping(value = "/_create", method = RequestMethod.POST)
+	public ResponseEntity<PetRegistrationResponse> petRegistrationCreate(
+			@ApiParam(value = "Details for the new Pet Registration Application(s) + RequestInfo meta data.", required = true) @Valid @RequestBody PetRegistrationRequest petRegistrationRequest) {
+		List<PetRegistrationApplication> applications = petRegistrationService
+				.registerPtrRequest(petRegistrationRequest);
+		ResponseInfo responseInfo = responseInfoFactory
+				.createResponseInfoFromRequestInfo(petRegistrationRequest.getRequestInfo(), true);
+		PetRegistrationResponse response = PetRegistrationResponse.builder().petRegistrationApplications(applications)
+				.responseInfo(responseInfo).build();
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
 
-    @RequestMapping(value="/_create", method = RequestMethod.POST)
-    public ResponseEntity<PetRegistrationResponse> petRegistrationCreate(@ApiParam(value = "Details for the new Pet Registration Application(s) + RequestInfo meta data." ,required=true )  @Valid @RequestBody PetRegistrationRequest petRegistrationRequest) {
-        List<PetRegistrationApplication> applications = petRegistrationService.registerPtrRequest(petRegistrationRequest);
-        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(petRegistrationRequest.getRequestInfo(), true);
-        PetRegistrationResponse response = PetRegistrationResponse.builder().petRegistrationApplications(applications).responseInfo(responseInfo).build();
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-    
-    @RequestMapping(value="/_search", method = RequestMethod.POST)
-    public ResponseEntity<PetRegistrationResponse> petRegistrationSearch(@RequestBody RequestInfoWrapper requestInfoWrapper, @Valid @ModelAttribute PetApplicationSearchCriteria petApplicationSearchCriteria) {
-        List<PetRegistrationApplication> applications = petRegistrationService.searchPtrApplications(requestInfoWrapper.getRequestInfo(), petApplicationSearchCriteria);
-        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true);
-        PetRegistrationResponse response = PetRegistrationResponse.builder().petRegistrationApplications(applications).responseInfo(responseInfo).build();
-        return new ResponseEntity<>(response,HttpStatus.OK);
-    }
+	@RequestMapping(value = "/_search", method = RequestMethod.POST)
+	public ResponseEntity<PetRegistrationResponse> petRegistrationSearch(
+			@RequestBody RequestInfoWrapper requestInfoWrapper,
+			@Valid @ModelAttribute PetApplicationSearchCriteria petApplicationSearchCriteria) {
+		List<PetRegistrationApplication> applications = petRegistrationService
+				.searchPtrApplications(requestInfoWrapper.getRequestInfo(), petApplicationSearchCriteria);
+		ResponseInfo responseInfo = responseInfoFactory
+				.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true);
+		PetRegistrationResponse response = PetRegistrationResponse.builder().petRegistrationApplications(applications)
+				.responseInfo(responseInfo).build();
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
 
-    @RequestMapping(value="/_update", method = RequestMethod.POST)
-    public ResponseEntity<PetRegistrationResponse> petRegistrationUpdate(@ApiParam(value = "Details for the new (s) + RequestInfo meta data." ,required=true )  @Valid @RequestBody PetRegistrationRequest petRegistrationRequest) {
-        PetRegistrationApplication application = petRegistrationService.updatePtrApplication(petRegistrationRequest);
+	@RequestMapping(value = "/_update", method = RequestMethod.POST)
+	public ResponseEntity<PetRegistrationResponse> petRegistrationUpdate(
+			@ApiParam(value = "Details for the new (s) + RequestInfo meta data.", required = true) @Valid @RequestBody PetRegistrationRequest petRegistrationRequest) {
+		PetRegistrationApplication application = petRegistrationService.updatePtrApplication(petRegistrationRequest);
 
-        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(petRegistrationRequest.getRequestInfo(), true);
-        PetRegistrationResponse response = PetRegistrationResponse.builder().petRegistrationApplications(Collections.singletonList(application)).responseInfo(responseInfo).build();
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-    
-  
+		ResponseInfo responseInfo = responseInfoFactory
+				.createResponseInfoFromRequestInfo(petRegistrationRequest.getRequestInfo(), true);
+		PetRegistrationResponse response = PetRegistrationResponse.builder()
+				.petRegistrationApplications(Collections.singletonList(application)).responseInfo(responseInfo).build();
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
 
 }

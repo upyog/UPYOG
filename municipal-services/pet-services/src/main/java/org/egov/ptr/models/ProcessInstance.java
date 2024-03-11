@@ -17,60 +17,60 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@EqualsAndHashCode(of = {"id"})
+@EqualsAndHashCode(of = { "id" })
 @ToString
 public class ProcessInstance {
 
-    @Size(max = 64)
-    @JsonProperty("id")
-    private String id;
+	@Size(max = 64)
+	@JsonProperty("id")
+	private String id;
 
-    @NotNull
-    @Size(max = 128)
-    @JsonProperty("tenantId")
-    private String tenantId;
+	@NotNull
+	@Size(max = 128)
+	@JsonProperty("tenantId")
+	private String tenantId;
 
-    @NotNull
-    @Size(max = 128)
-    @JsonProperty("businessService")
-    private String businessService;
+	@NotNull
+	@Size(max = 128)
+	@JsonProperty("businessService")
+	private String businessService;
 
-    @NotNull
-    @Size(max = 128)
-    @JsonProperty("businessId")
-    private String businessId;
+	@NotNull
+	@Size(max = 128)
+	@JsonProperty("businessId")
+	private String businessId;
 
-    @NotNull
-    @Size(max = 128)
-    @JsonProperty("action")
-    private String action;
+	@NotNull
+	@Size(max = 128)
+	@JsonProperty("action")
+	private String action;
 
-    @NotNull
-    @Size(max = 64)
-    @JsonProperty("moduleName")
-    private String moduleName;
+	@NotNull
+	@Size(max = 64)
+	@JsonProperty("moduleName")
+	private String moduleName;
 
-    @JsonProperty("state")
-    private State state;
+	@JsonProperty("state")
+	private State state;
 
-    @JsonProperty("comment")
-    private String comment;
+	@JsonProperty("comment")
+	private String comment;
 
-    @JsonProperty("documents")
-    @Valid
-    private List<Document> documents;
+	@JsonProperty("documents")
+	@Valid
+	private List<Document> documents;
 
-    @JsonProperty("assignes")
-    private List<User> assignes;
+	@JsonProperty("assignes")
+	private List<User> assignes;
 
-    public ProcessInstance addDocumentsItem(Document documentsItem) {
-        if (this.documents == null) {
-            this.documents = new ArrayList<>();
-        }
-        if (!this.documents.contains(documentsItem))
-            this.documents.add(documentsItem);
+	public ProcessInstance addDocumentsItem(Document documentsItem) {
+		if (this.documents == null) {
+			this.documents = new ArrayList<>();
+		}
+		if (!this.documents.contains(documentsItem))
+			this.documents.add(documentsItem);
 
-        return this;
-    }
+		return this;
+	}
 
 }

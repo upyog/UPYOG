@@ -1,18 +1,13 @@
 package org.egov.ptr.models;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.egov.common.contract.response.ResponseInfo;
-import org.egov.ptr.models.PetRegistrationApplication;
 import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
-import javax.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,7 +15,8 @@ import lombok.Setter;
 import lombok.Builder;
 
 /**
- * Contract class to send response. Array of  items are used in case of search results or response for create, whereas single  item is used for update
+ * Contract class to send response. Array of items are used in case of search
+ * results or response for create, whereas single item is used for update
  */
 @ApiModel(description = "Contract class to send response. Array of  items are used in case of search results or response for create, whereas single  item is used for update")
 @Validated
@@ -31,22 +27,21 @@ import lombok.Builder;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class PetRegistrationResponse   {
-        @JsonProperty("ResponseInfo")
-        private ResponseInfo responseInfo = null;
+public class PetRegistrationResponse {
+	@JsonProperty("ResponseInfo")
+	private ResponseInfo responseInfo = null;
 
-        @JsonProperty("PetRegistrationApplications")
-        @Valid
-        private List<PetRegistrationApplication> petRegistrationApplications = null;
+	@JsonProperty("PetRegistrationApplications")
+	@Valid
+	private List<PetRegistrationApplication> petRegistrationApplications = null;
 
-
-        public PetRegistrationResponse addPetRegistrationApplicationsItem(PetRegistrationApplication petRegistrationApplicationsItem) {
-            if (this.petRegistrationApplications == null) {
-            this.petRegistrationApplications = new ArrayList<>();
-            }
-        this.petRegistrationApplications.add(petRegistrationApplicationsItem);
-        return this;
-        }
+	public PetRegistrationResponse addPetRegistrationApplicationsItem(
+			PetRegistrationApplication petRegistrationApplicationsItem) {
+		if (this.petRegistrationApplications == null) {
+			this.petRegistrationApplications = new ArrayList<>();
+		}
+		this.petRegistrationApplications.add(petRegistrationApplicationsItem);
+		return this;
+	}
 
 }
-

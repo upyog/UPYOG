@@ -23,10 +23,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-/**
- * A Object holds the basic data for a Trade License
- */
-@ApiModel(description = "A Object holds the basic data for a Trade License")
+@ApiModel(description = "A Object holds the basic data of a Process Instance")
 @Validated
 @javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2018-12-04T11:26:25.532+05:30")
 
@@ -76,8 +73,8 @@ public class ProcessInstance {
 
 	@JsonProperty("state")
 	private State state;
-	
-	/* for use of notification service in property*/
+
+	/* for use of notification service in property */
 	private String notificationAction;
 
 	@SafeHtml

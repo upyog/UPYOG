@@ -14,10 +14,10 @@ import javax.validation.constraints.NotNull;
 @ToString
 @Builder
 public class ActionItem {
-	
+
 	@NotNull
 	private String actionUrl;
-	
+
 	@NotNull
 	private String code;
 

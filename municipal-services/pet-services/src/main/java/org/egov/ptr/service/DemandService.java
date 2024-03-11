@@ -1,8 +1,6 @@
 package org.egov.ptr.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.commons.lang3.StringUtils;
-import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
 import org.egov.ptr.config.PetConfiguration;
 import org.egov.ptr.models.Demand;
@@ -11,15 +9,10 @@ import org.egov.ptr.models.PetRegistrationApplication;
 import org.egov.ptr.models.PetRegistrationRequest;
 import org.egov.ptr.repository.DemandRepository;
 import org.egov.ptr.repository.ServiceRequestRepository;
-import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
-
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 public class DemandService {

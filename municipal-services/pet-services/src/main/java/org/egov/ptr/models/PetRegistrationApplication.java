@@ -33,61 +33,59 @@ import lombok.Builder;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class PetRegistrationApplication   {
-        @JsonProperty("id")
-        private String id = null;
+public class PetRegistrationApplication {
+	@JsonProperty("id")
+	private String id = null;
 
-        @JsonProperty("tenantId")
-        private String tenantId = null;
+	@JsonProperty("tenantId")
+	private String tenantId = null;
 
-        @JsonProperty("applicationNumber")
-        private String applicationNumber = null;
+	@JsonProperty("applicationNumber")
+	private String applicationNumber = null;
 
+	@JsonProperty("applicantName")
+	private String applicantName = null;
 
-        @JsonProperty("applicantName")
-        private String applicantName = null;
+	@JsonProperty("fatherName")
+	private String fatherName = null;
 
-        @JsonProperty("fatherName")
-        private String fatherName = null;
-        
-        @JsonProperty("mobileNumber")
-        private String mobileNumber = null;
+	@JsonProperty("mobileNumber")
+	private String mobileNumber = null;
 
-        @JsonProperty("emailId")
-        private String emailId = null;
-        
-        @JsonProperty("aadharNumber")
-        private String aadharNumber = null;
+	@JsonProperty("emailId")
+	private String emailId = null;
 
-        @JsonProperty("address")
-        private Address address = null;
+	@JsonProperty("aadharNumber")
+	private String aadharNumber = null;
 
-        @JsonProperty("applicant")
-        private Applicant applicant = null;
+	@JsonProperty("address")
+	private Address address = null;
 
-        @JsonProperty("auditDetails")
-        private AuditDetails auditDetails = null;
-        
-        @JsonProperty("petDetails")
-        private PetDetails petDetails = null;
-           
-        @JsonProperty("documents")
-    	@Valid
-    	@DiffIgnore
-    	private List<Document> documents;
-        
-        @Valid
-        @JsonProperty("workflow")
-        private Workflow workflow = null; 
-        
-        public PetRegistrationApplication addDocumentsItem(Document documentsItem) {
-    		if (this.documents == null) {
-    			this.documents = new ArrayList<>();
-    		}
+	@JsonProperty("applicant")
+	private Applicant applicant = null;
 
-    		if (null != documentsItem)
-    			this.documents.add(documentsItem);
-    		return this;
-    	}
+	@JsonProperty("auditDetails")
+	private AuditDetails auditDetails = null;
+
+	@JsonProperty("petDetails")
+	private PetDetails petDetails = null;
+
+	@JsonProperty("documents")
+	@Valid
+	@DiffIgnore
+	private List<Document> documents;
+
+	@Valid
+	@JsonProperty("workflow")
+	private Workflow workflow = null;
+
+	public PetRegistrationApplication addDocumentsItem(Document documentsItem) {
+		if (this.documents == null) {
+			this.documents = new ArrayList<>();
+		}
+
+		if (null != documentsItem)
+			this.documents.add(documentsItem);
+		return this;
+	}
 }
-

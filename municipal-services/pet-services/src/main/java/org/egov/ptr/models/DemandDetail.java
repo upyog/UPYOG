@@ -7,7 +7,6 @@ import lombok.Builder.Default;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
 import java.math.BigDecimal;
 
 /**
@@ -18,33 +17,31 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class DemandDetail   {
-	
-        @JsonProperty("id")
-        private String id;
-        
-        @JsonProperty("demandId")
-        private String demandId;
+public class DemandDetail {
 
-        @JsonProperty("taxHeadMasterCode")
-        private String taxHeadMasterCode;
+	@JsonProperty("id")
+	private String id;
 
-        @JsonProperty("taxAmount")
-        private BigDecimal taxAmount;
+	@JsonProperty("demandId")
+	private String demandId;
 
-        @Default
-        @JsonProperty("collectionAmount")
-        private BigDecimal collectionAmount = BigDecimal.ZERO;
+	@JsonProperty("taxHeadMasterCode")
+	private String taxHeadMasterCode;
 
-        @JsonProperty("additionalDetails")
-        private Object additionalDetails;
+	@JsonProperty("taxAmount")
+	private BigDecimal taxAmount;
 
-        @JsonProperty("auditDetails")
-        private AuditDetails auditDetails;
+	@Default
+	@JsonProperty("collectionAmount")
+	private BigDecimal collectionAmount = BigDecimal.ZERO;
 
-        @JsonProperty("tenantId")
-        private String tenantId;
+	@JsonProperty("additionalDetails")
+	private Object additionalDetails;
 
+	@JsonProperty("auditDetails")
+	private AuditDetails auditDetails;
+
+	@JsonProperty("tenantId")
+	private String tenantId;
 
 }
-
