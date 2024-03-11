@@ -14,9 +14,9 @@ public enum Source {
 
 	@Override
 	@JsonValue
-    public String toString() {
-        return name();
-    }
+	public String toString() {
+		return name();
+	}
 
 	@JsonCreator
 	public static Source fromValue(String passedValue) {

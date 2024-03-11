@@ -164,9 +164,6 @@ public class PetConfiguration {
 	@Value("${egov.localization.statelevel}")
 	private Boolean isLocalizationStateLevel;
 
-	@Value("${state.level.tenant.id}")
-	private String stateLevelTenantId;
-
 	@Value("${egov.billingservice.host}")
 	private String billingHost;
 
@@ -181,8 +178,5 @@ public class PetConfiguration {
 
 	@Value("${egov.bill.gen.endpoint}")
 	private String billGenerateEndpoint;
-
-//	@Value("${egov.event.gen.topic}") do not delete
-//	private String eventGenerateTopic;
 
 }

@@ -17,7 +17,8 @@ import lombok.Setter;
 import lombok.Builder;
 
 /**
- * Representation of a address. Individual APIs may choose to extend from this using allOf if more details needed to be added in their case. 
+ * Representation of a address. Individual APIs may choose to extend from this
+ * using allOf if more details needed to be added in their case.
  */
 @ApiModel(description = "Representation of a address. Individual APIs may choose to extend from this using allOf if more details needed to be added in their case. ")
 @Validated
@@ -28,62 +29,60 @@ import lombok.Builder;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Address   {
-	
-	 	@JsonProperty("id")
-	 	private String id = null;
-	 
-        @JsonProperty("tenantId")
-        private String tenantId = null;
-        
-        @JsonProperty("registrationId")
-        private String registrationId = null;
+public class Address {
 
-        @JsonProperty("doorNo")
-        private String doorNo = null;
+	@JsonProperty("id")
+	private String id = null;
 
-        @JsonProperty("latitude")
-        private Double latitude = null;
+	@JsonProperty("tenantId")
+	private String tenantId = null;
 
-        @JsonProperty("longitude")
-        private Double longitude = null;
+	@JsonProperty("registrationId")
+	private String registrationId = null;
 
-        @JsonProperty("addressId")
-        private String addressId = null;
+	@JsonProperty("doorNo")
+	private String doorNo = null;
 
-        @JsonProperty("addressNumber")
-        private String addressNumber = null;
+	@JsonProperty("latitude")
+	private Double latitude = null;
 
-        @JsonProperty("type")
-        private String type = null;
+	@JsonProperty("longitude")
+	private Double longitude = null;
 
-        @JsonProperty("addressLine1")
-        private String addressLine1 = null;
+	@JsonProperty("addressId")
+	private String addressId = null;
 
-        @JsonProperty("addressLine2")
-        private String addressLine2 = null;
+	@JsonProperty("addressNumber")
+	private String addressNumber = null;
 
-        @JsonProperty("landmark")
-        private String landmark = null;
+	@JsonProperty("type")
+	private String type = null;
 
-        @JsonProperty("city")
-        private String city = null;
+	@JsonProperty("addressLine1")
+	private String addressLine1 = null;
 
-        @JsonProperty("pincode")
-        private String pincode = null;
+	@JsonProperty("addressLine2")
+	private String addressLine2 = null;
 
-        @JsonProperty("detail")
-        private String detail = null;
+	@JsonProperty("landmark")
+	private String landmark = null;
 
-        @JsonProperty("buildingName")
-        private String buildingName = null;
+	@JsonProperty("city")
+	private String city = null;
 
-        @JsonProperty("street")
-        private String street = null;
+	@JsonProperty("pincode")
+	private String pincode = null;
 
-        @JsonProperty("locality")
-        private Boundary locality = null;
+	@JsonProperty("detail")
+	private String detail = null;
 
+	@JsonProperty("buildingName")
+	private String buildingName = null;
+
+	@JsonProperty("street")
+	private String street = null;
+
+	@JsonProperty("locality")
+	private Boundary locality = null;
 
 }
-

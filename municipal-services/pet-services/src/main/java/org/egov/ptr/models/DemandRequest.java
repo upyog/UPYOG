@@ -60,7 +60,7 @@ public class DemandRequest {
 	@NotNull
 	@JsonProperty("RequestInfo")
 	private RequestInfo requestInfo;
-	
+
 	@Valid
 	@NotNull
 	@JsonProperty("Demands")

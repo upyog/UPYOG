@@ -18,13 +18,10 @@ import lombok.Setter;
 @Setter
 public class CreateUserRequest {
 
-    @JsonProperty("requestInfo")
-    private RequestInfo requestInfo;
+	@JsonProperty("requestInfo")
+	private RequestInfo requestInfo;
 
-    @JsonProperty("user")
-    private OwnerInfo user;
+	@JsonProperty("user")
+	private OwnerInfo user;
 
-    
 }
-
-

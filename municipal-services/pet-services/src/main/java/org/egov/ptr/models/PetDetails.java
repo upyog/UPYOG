@@ -25,36 +25,36 @@ import lombok.Setter;
 @NoArgsConstructor
 @Builder
 public class PetDetails {
-	 @JsonProperty("id")
-     private String id = null;
-	 
-	 @JsonProperty("petDetailsId")
-     private String petDetailsId = null;
+	@JsonProperty("id")
+	private String id = null;
 
-     @JsonProperty("petName")
-     private String petName = null;
+	@JsonProperty("petDetailsId")
+	private String petDetailsId = null;
 
-     @JsonProperty("petType")
-     private String petType = null;
+	@JsonProperty("petName")
+	private String petName = null;
 
-     @JsonProperty("breedType")
-     private String breedType = null;
+	@JsonProperty("petType")
+	private String petType = null;
 
-     @JsonProperty("petAge")
-     private String petAge = null;
+	@JsonProperty("breedType")
+	private String breedType = null;
 
-     @JsonProperty("petGender")
-     private String petGender = null;
+	@JsonProperty("petAge")
+	private String petAge = null;
 
-     @JsonProperty("clinicName")
-     private String clinicName = null;
+	@JsonProperty("petGender")
+	private String petGender = null;
 
-     @JsonProperty("doctorName")
-     private String doctorName = null;
+	@JsonProperty("clinicName")
+	private String clinicName = null;
 
-     @JsonProperty("lastVaccineDate")
-     private String lastVaccineDate = null;
+	@JsonProperty("doctorName")
+	private String doctorName = null;
 
-     @JsonProperty("vaccinationNumber")
-     private String vaccinationNumber = null;
+	@JsonProperty("lastVaccineDate")
+	private String lastVaccineDate = null;
+
+	@JsonProperty("vaccinationNumber")
+	private String vaccinationNumber = null;
 }

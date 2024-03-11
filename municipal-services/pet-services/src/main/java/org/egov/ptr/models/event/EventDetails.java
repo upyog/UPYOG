@@ -14,27 +14,27 @@ import java.math.BigDecimal;
 @ToString
 @Builder
 public class EventDetails {
-	
+
 	private String id;
-	
+
 	private String eventId;
 
 	private Long fromDate;
-	
+
 	private Long toDate;
-	
+
 	private BigDecimal latitude;
-	
+
 	private BigDecimal longitude;
-	
+
 	private String address;
-	
-	
+
 	public boolean isEmpty(EventDetails details) {
-		if(null == details.getFromDate() || null == details.getToDate() || null == details.getLatitude() || null == details.getLongitude()) {
+		if (null == details.getFromDate() || null == details.getToDate() || null == details.getLatitude()
+				|| null == details.getLongitude()) {
 			return true;
 		}
 		return false;
 	}
-	
+
 }

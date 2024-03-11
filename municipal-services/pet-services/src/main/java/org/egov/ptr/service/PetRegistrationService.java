@@ -2,38 +2,19 @@ package org.egov.ptr.service;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import javax.validation.Valid;
-
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.ptr.config.PetConfiguration;
-import org.egov.ptr.models.OwnerInfo;
 import org.egov.ptr.models.PetApplicationSearchCriteria;
 import org.egov.ptr.models.PetRegistrationApplication;
 import org.egov.ptr.models.PetRegistrationRequest;
-import org.egov.ptr.models.enums.Status;
-import org.egov.ptr.models.user.UserDetailResponse;
-import org.egov.ptr.models.user.UserSearchRequest;
-import org.egov.ptr.models.workflow.State;
 import org.egov.ptr.producer.Producer;
 import org.egov.ptr.repository.PetRegistrationRepository;
-import org.egov.ptr.util.PTRConstants;
 import org.egov.ptr.validator.PetApplicationValidator;
-import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
-import org.springframework.web.context.annotation.ApplicationScope;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.Sets;
 
 @Service
 public class PetRegistrationService {

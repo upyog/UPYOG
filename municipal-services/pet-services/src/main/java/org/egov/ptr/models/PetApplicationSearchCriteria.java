@@ -14,31 +14,31 @@ import java.util.List;
 @ToString
 public class PetApplicationSearchCriteria {
 
-    @JsonProperty("tenantId")
-    private String tenantId;
+	@JsonProperty("tenantId")
+	private String tenantId;
 
-    @JsonProperty("status")
-    private String status;
+	@JsonProperty("status")
+	private String status;
 
-    @JsonProperty("ids")
-    private List<String> ids;
+	@JsonProperty("ids")
+	private List<String> ids;
 
-    @JsonProperty("applicationNumber")
-    private String applicationNumber;
-    
-    @JsonProperty("mobileNumber")
-    private String mobileNumber;
-    
-    @JsonProperty("fromDate")
-    private String fromDate;
-    
-    @JsonProperty("toDate")
-    private String toDate;
-    
-    @JsonProperty("petType")
-    private String petType = null;
+	@JsonProperty("applicationNumber")
+	private String applicationNumber;
 
-    @JsonProperty("breedType")
-    private String breedType = null;
+	@JsonProperty("mobileNumber")
+	private String mobileNumber;
+
+	@JsonProperty("fromDate")
+	private String fromDate;
+
+	@JsonProperty("toDate")
+	private String toDate;
+
+	@JsonProperty("petType")
+	private String petType = null;
+
+	@JsonProperty("breedType")
+	private String breedType = null;
 
 }

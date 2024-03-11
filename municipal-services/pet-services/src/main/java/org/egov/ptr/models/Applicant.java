@@ -21,9 +21,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.Builder;
 
-/**
- * Details of the user applying for birth registration
- */
 @ApiModel(description = "Details of the user applying for pet registration")
 @Validated
 @javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2022-08-16T15:34:24.436+05:30")
@@ -33,120 +30,119 @@ import lombok.Builder;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Applicant   {
-        @JsonProperty("id")
-        private String id = null;
+public class Applicant {
+	@JsonProperty("id")
+	private String id = null;
 
-        @JsonProperty("userName")
-        private String userName = null;
+	@JsonProperty("userName")
+	private String userName = null;
 
-        @JsonProperty("password")
-        private String password = null;
+	@JsonProperty("password")
+	private String password = null;
 
-        @JsonProperty("salutation")
-        private String salutation = null;
+	@JsonProperty("salutation")
+	private String salutation = null;
 
-        @JsonProperty("name")
-        private String name = null;
+	@JsonProperty("name")
+	private String name = null;
 
-        @JsonProperty("gender")
-        private String gender = null;
+	@JsonProperty("gender")
+	private String gender = null;
 
-        @JsonProperty("mobileNumber")
-        private String mobileNumber = null;
+	@JsonProperty("mobileNumber")
+	private String mobileNumber = null;
 
-        @JsonProperty("emailId")
-        private String emailId = null;
+	@JsonProperty("emailId")
+	private String emailId = null;
 
-        @JsonProperty("altContactNumber")
-        private String altContactNumber = null;
+	@JsonProperty("altContactNumber")
+	private String altContactNumber = null;
 
-        @JsonProperty("pan")
-        private String pan = null;
+	@JsonProperty("pan")
+	private String pan = null;
 
-        @JsonProperty("aadhaarNumber")
-        private String aadhaarNumber = null;
+	@JsonProperty("aadhaarNumber")
+	private String aadhaarNumber = null;
 
-        @JsonProperty("permanentAddress")
-        private String permanentAddress = null;
+	@JsonProperty("permanentAddress")
+	private String permanentAddress = null;
 
-        @JsonProperty("permanentCity")
-        private String permanentCity = null;
+	@JsonProperty("permanentCity")
+	private String permanentCity = null;
 
-        @JsonProperty("permanentPincode")
-        private String permanentPincode = null;
+	@JsonProperty("permanentPincode")
+	private String permanentPincode = null;
 
-        @JsonProperty("correspondenceCity")
-        private String correspondenceCity = null;
+	@JsonProperty("correspondenceCity")
+	private String correspondenceCity = null;
 
-        @JsonProperty("correspondencePincode")
-        private String correspondencePincode = null;
+	@JsonProperty("correspondencePincode")
+	private String correspondencePincode = null;
 
-        @JsonProperty("correspondenceAddress")
-        private String correspondenceAddress = null;
+	@JsonProperty("correspondenceAddress")
+	private String correspondenceAddress = null;
 
-        @JsonProperty("active")
-        private Boolean active = null;
+	@JsonProperty("active")
+	private Boolean active = null;
 
-        @JsonProperty("dob")
-        private LocalDate dob = null;
+	@JsonProperty("dob")
+	private LocalDate dob = null;
 
-        @JsonProperty("pwdExpiryDate")
-        private LocalDate pwdExpiryDate = null;
+	@JsonProperty("pwdExpiryDate")
+	private LocalDate pwdExpiryDate = null;
 
-        @JsonProperty("locale")
-        private String locale = null;
+	@JsonProperty("locale")
+	private String locale = null;
 
-        @JsonProperty("type")
-        private String type = null;
+	@JsonProperty("type")
+	private String type = null;
 
-        @JsonProperty("signature")
-        private String signature = null;
+	@JsonProperty("signature")
+	private String signature = null;
 
-        @JsonProperty("accountLocked")
-        private Boolean accountLocked = null;
+	@JsonProperty("accountLocked")
+	private Boolean accountLocked = null;
 
-        @JsonProperty("roles")
-        @Valid
-        private List<Role> roles = null;
+	@JsonProperty("roles")
+	@Valid
+	private List<Role> roles = null;
 
-        @JsonProperty("fatherOrHusbandName")
-        private String fatherOrHusbandName = null;
+	@JsonProperty("fatherOrHusbandName")
+	private String fatherOrHusbandName = null;
 
-        @JsonProperty("bloodGroup")
-        private String bloodGroup = null;
+	@JsonProperty("bloodGroup")
+	private String bloodGroup = null;
 
-        @JsonProperty("identificationMark")
-        private String identificationMark = null;
+	@JsonProperty("identificationMark")
+	private String identificationMark = null;
 
-        @JsonProperty("photo")
-        private String photo = null;
+	@JsonProperty("photo")
+	private String photo = null;
 
-        @JsonProperty("createdBy")
-        private Long createdBy = null;
+	@JsonProperty("createdBy")
+	private Long createdBy = null;
 
-        @JsonProperty("createdDate")
-        private LocalDate createdDate = null;
+	@JsonProperty("createdDate")
+	private LocalDate createdDate = null;
 
-        @JsonProperty("lastModifiedBy")
-        private Long lastModifiedBy = null;
+	@JsonProperty("lastModifiedBy")
+	private Long lastModifiedBy = null;
 
-        @JsonProperty("lastModifiedDate")
-        private LocalDate lastModifiedDate = null;
+	@JsonProperty("lastModifiedDate")
+	private LocalDate lastModifiedDate = null;
 
-        @JsonProperty("otpReference")
-        private String otpReference = null;
+	@JsonProperty("otpReference")
+	private String otpReference = null;
 
-        @JsonProperty("tenantId")
-        private String tenantId = null;
+	@JsonProperty("tenantId")
+	private String tenantId = null;
 
-
-        public Applicant addRolesItem(Role rolesItem) {
-            if (this.roles == null) {
-            this.roles = new ArrayList<>();
-            }
-        this.roles.add(rolesItem);
-        return this;
-        }
+	public Applicant addRolesItem(Role rolesItem) {
+		if (this.roles == null) {
+			this.roles = new ArrayList<>();
+		}
+		this.roles.add(rolesItem);
+		return this;
+	}
 
 }

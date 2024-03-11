@@ -31,7 +31,7 @@ public class Institution {
 	private String tenantId;
 
 	@SafeHtml
-	@JsonProperty("name")	
+	@JsonProperty("name")
 	private String name;
 
 	@SafeHtml

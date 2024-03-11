@@ -21,10 +21,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-/**
- * A Object holds the basic data for a Trade License
- */
-@ApiModel(description = "A Object holds the basic data for a Trade License")
+@ApiModel(description = "A Object holds the basic data for a Action in workflow")
 @Validated
 @javax.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2018-12-04T11:26:25.532+05:30")
 
@@ -34,49 +31,47 @@ import lombok.ToString;
 @NoArgsConstructor
 @Builder
 @ToString
-@EqualsAndHashCode(of = {"tenantId","currentState","action"})
-public class Action   {
+@EqualsAndHashCode(of = { "tenantId", "currentState", "action" })
+public class Action {
 
-        @Size(max=256)
-        @SafeHtml
-        @JsonProperty("uuid")
-        private String uuid;
+	@Size(max = 256)
+	@SafeHtml
+	@JsonProperty("uuid")
+	private String uuid;
 
-        @Size(max=256)
-        @SafeHtml
-        @JsonProperty("tenantId")
-        private String tenantId;
+	@Size(max = 256)
+	@SafeHtml
+	@JsonProperty("tenantId")
+	private String tenantId;
 
-        @Size(max=256)
-        @SafeHtml
-        @JsonProperty("currentState")
-        private String currentState;
+	@Size(max = 256)
+	@SafeHtml
+	@JsonProperty("currentState")
+	private String currentState;
 
-        @Size(max=256)
-        @SafeHtml
-        @JsonProperty("action")
-        private String action;
+	@Size(max = 256)
+	@SafeHtml
+	@JsonProperty("action")
+	private String action;
 
-        @Size(max=256)
-        @SafeHtml
-        @JsonProperty("nextState")
-        private String nextState;
+	@Size(max = 256)
+	@SafeHtml
+	@JsonProperty("nextState")
+	private String nextState;
 
-        @Size(max=1024)
-        @JsonProperty("roles")
-        @Valid
-        private List<String> roles;
+	@Size(max = 1024)
+	@JsonProperty("roles")
+	@Valid
+	private List<String> roles;
 
-        private AuditDetails auditDetails;
+	private AuditDetails auditDetails;
 
-
-        public Action addRolesItem(String rolesItem) {
-            if (this.roles == null) {
-            this.roles = new ArrayList<>();
-            }
-        this.roles.add(rolesItem);
-        return this;
-        }
+	public Action addRolesItem(String rolesItem) {
+		if (this.roles == null) {
+			this.roles = new ArrayList<>();
+		}
+		this.roles.add(rolesItem);
+		return this;
+	}
 
 }
-

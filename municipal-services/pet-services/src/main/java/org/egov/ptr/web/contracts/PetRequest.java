@@ -14,10 +14,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-/**
- * Contract class to receive request. Array of Property items  are used in case of create . Where as single Property item is used for update
- */
-
 @ToString
 @Getter
 @Setter

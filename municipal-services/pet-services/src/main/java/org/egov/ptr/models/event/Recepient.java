@@ -14,9 +14,9 @@ import java.util.List;
 @ToString
 @Builder
 public class Recepient {
-	
+
 	private List<String> toRoles;
-	
+
 	private List<String> toUsers;
 
 }

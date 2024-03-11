@@ -14,7 +14,7 @@ import lombok.Setter;
 @Setter
 @Getter
 public class EmailRequest {
-    private RequestInfo requestInfo;
+	private RequestInfo requestInfo;
 
-    private Email email;
+	private Email email;
 }
