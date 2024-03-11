@@ -29,7 +29,7 @@ const PTApplicationDetails = () => {
   );
   const [billAmount, setBillAmount] = useState(null);
   const [billStatus, setBillStatus] = useState(null);
-
+  const [viewTimeline, setViewTimeline]=useState(false);
   let serviceSearchArgs = {
     tenantId : tenantId,
     code: [`PT_${data?.Properties?.[0]?.creationReason}`], 
@@ -216,7 +216,14 @@ const PTApplicationDetails = () => {
       window.open(fileStore[response?.filestoreIds[0]], "_blank");
     }   
   }
-
+  
+  const handleViewTimeline=()=>{ 
+    const timelineSection=document.getElementById('timeline');
+      if(timelineSection){
+        timelineSection.scrollIntoView({behavior: 'smooth'});
+      } 
+      setViewTimeline(true);   
+  };
   const handleDownload = async (document, tenantid) => {
     let tenantId = tenantid ? tenantid : tenantId;
     const res = await Digit.UploadServices.Filefetch([document?.fileStoreId], tenantId);
@@ -253,6 +260,9 @@ const PTApplicationDetails = () => {
       <div>
         <div className="cardHeaderWithOptions" style={{ marginRight: "auto", maxWidth: "960px" }}>
           <Header styles={{ fontSize: "32px" }}>{t("PT_MUTATION_APPLICATION_DETAILS")}</Header>
+          <div style={{display:"flex", alignItems:"center", color:"#A52A2A"}}>
+          <LinkButton label={t("VIEW_TIMELINE")} onClick={handleViewTimeline}></LinkButton>
+          </div>
           {dowloadOptions && dowloadOptions.length > 0 && (
             <MultiLink
               className="multilinkWrapper"
@@ -568,7 +578,9 @@ const PTApplicationDetails = () => {
               </StatusTable>
             )}
           </div>
+          <div id="timeline">
           <PTWFApplicationTimeline application={application} id={acknowledgementIds} userType={"citizen"} />
+          </div>
           {showToast && (
           <Toast
             error={showToast.key}

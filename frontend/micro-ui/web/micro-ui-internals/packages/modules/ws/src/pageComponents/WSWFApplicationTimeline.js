@@ -1,5 +1,5 @@
-import { ActionLinks, CardSectionHeader, CheckPoint, ConnectingCheckPoints, Loader, SubmitBar } from "@upyog/digit-ui-react-components";
-import React, { Fragment } from "react";
+import { ActionLinks, CardSectionHeader, CheckPoint, ConnectingCheckPoints, Loader, SubmitBar, LinkButton } from "@upyog/digit-ui-react-components";
+import React, { Fragment, useState} from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import WSWFCaption from "./WSWFCaption";
@@ -12,7 +12,7 @@ const WSWFApplicationTimeline = (props) => {
     id: props.id,
     moduleCode: businessService,
   });
-
+  const [showAllTimeline, setShowAllTimeline]=useState(false);
   function OpenImage(imageSource, index, thumbnailsToShow) {
     window.open(thumbnailsToShow?.fullImage?.[0], "_blank");
   }
@@ -106,7 +106,10 @@ const WSWFApplicationTimeline = (props) => {
   if (isLoading) {
     return <Loader />;
   }
-
+  const toggleTimeline=()=>{
+    setShowAllTimeline((prev)=>!prev);
+  }
+  
   return (
     <React.Fragment>
       {!isLoading && (
@@ -125,7 +128,7 @@ const WSWFApplicationTimeline = (props) => {
           ) : (
             <ConnectingCheckPoints>
               {data?.timeline &&
-                data?.timeline.map((checkpoint, index, arr) => {
+                data?.timeline.slice(0,showAllTimeline? data.timeline.length:2).map((checkpoint, index, arr) => {
                   return (
                     <React.Fragment key={index}>
                       <CheckPoint
@@ -139,6 +142,10 @@ const WSWFApplicationTimeline = (props) => {
                 })}
             </ConnectingCheckPoints>
           )}
+          {data?.timeline?.length > 2 && (
+          <LinkButton label={showAllTimeline? t("COLLAPSE") : t("VIEW_TIMELINE")} onClick={toggleTimeline}>
+          </LinkButton>   
+          )} 
         </Fragment>
       )}
       {data && showNextActions(data?.nextActions)}

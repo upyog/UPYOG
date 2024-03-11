@@ -1,7 +1,7 @@
 import React, { useState, Fragment, useEffect } from "react";
 import { useParams, useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { FormComposer, Header, Card, CardSectionHeader, PDFSvg, Loader, StatusTable, Row, ActionBar, SubmitBar, MultiLink } from "@upyog/digit-ui-react-components";
+import { FormComposer, Header, Card, CardSectionHeader, PDFSvg, Loader, StatusTable, Row, ActionBar, SubmitBar, MultiLink, LinkButton } from "@upyog/digit-ui-react-components";
 import ApplicationDetailsTemplate from "../../../../../templates/ApplicationDetails";
 import { newConfig as newConfigFI } from "../../../config/InspectionReportConfig";
 import get from "lodash/get";
@@ -26,7 +26,7 @@ const BpaApplicationDetail = () => {
   const stateId = Digit.ULBService.getStateId();
   const isMobile = window.Digit.Utils.browser.isMobile();
   const { isLoading: bpaDocsLoading, data: bpaDocs } = Digit.Hooks.obps.useMDMS(stateId, "BPA", ["DocTypeMapping"]);
-
+  const [viewTimeline, setViewTimeline]=useState(false);
   let { data: newConfig } = Digit.Hooks.obps.SearchMdmsTypes.getFormConfig(stateId, []);
 
   const { isMdmsLoading, data: mdmsData } = Digit.Hooks.obps.useMDMS(stateId, "BPA", ["RiskTypeComputation"]);
@@ -111,7 +111,14 @@ const BpaApplicationDetail = () => {
 
   const [showOptions, setShowOptions] = useState(false);
 
-
+  
+  const handleViewTimeline=()=>{
+    setViewTimeline(true);
+      const timelineSection=document.getElementById('timeline');
+      if(timelineSection){
+        timelineSection.scrollIntoView({behavior: 'smooth'});
+      } 
+  };
   const {
     isLoading: updatingApplication,
     isError: updateApplicationError,
@@ -316,6 +323,7 @@ const BpaApplicationDetail = () => {
       <div className={"employee-main-application-details"}>
       <div className={"employee-application-details"} style={{marginBottom: "15px"}}>
         <Header styles={{marginLeft:"0px", paddingTop: "10px", fontSize: "32px"}}>{t("CS_TITLE_APPLICATION_DETAILS")}</Header>
+        <LinkButton label={t("VIEW_TIMELINE")} onClick={handleViewTimeline}></LinkButton>
         {dowloadOptions && dowloadOptions.length>0 && <MultiLink
           className="multilinkWrapper employee-mulitlink-main-div"
           onHeadClick={() => setShowOptions(!showOptions)}
@@ -352,6 +360,7 @@ const BpaApplicationDetail = () => {
         applicationData={data?.applicationData}
         nocMutation={nocMutation}
         mutate={mutate}
+        id={"timeline"}
         workflowDetails={workflowDetails}
         businessService={workflowDetails?.data?.applicationBusinessService ? workflowDetails?.data?.applicationBusinessService : data?.applicationData?.businessService}
         moduleCode="BPA"

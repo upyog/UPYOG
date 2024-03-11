@@ -35,6 +35,7 @@ const TLApplicationDetails = () => {
   const [mutationHappened, setMutationHappened, clear] = Digit.Hooks.useSessionStorage("CITIZEN_TL_MUTATION_HAPPENED", false);
   const { tenants } = storeData || {};
   const isMobile = window.Digit.Utils.browser.isMobile();
+  const [viewTimeline, setViewTimeline]=useState(false);
   let multiBoxStyle = {
     border: "groove",
     background: "#FAFAFA",
@@ -82,7 +83,7 @@ const TLApplicationDetails = () => {
     id: id,
     moduleCode: businessService,
   });
-
+  
   let workflowDocs = [];
   if (wfdata) {
     wfdata?.timeline?.map((ob) => {
@@ -94,7 +95,14 @@ const TLApplicationDetails = () => {
       }
     });
   }
-
+  
+  const handleViewTimeline=()=>{ 
+    const timelineSection=document.getElementById('timeline');
+      if(timelineSection){
+        timelineSection.scrollIntoView({behavior: 'smooth'});
+      } 
+      setViewTimeline(true);   
+  };
   if (isLoading || iswfLoading) {
     return <Loader />;
   }
@@ -166,6 +174,9 @@ const TLApplicationDetails = () => {
     <React.Fragment>
       <div className="cardHeaderWithOptions" style={isMobile ? {} : {maxWidth:"960px"}}>
         <Header>{t("CS_TITLE_APPLICATION_DETAILS")}</Header>
+        <div style={{display:"flex", color:"#A52A2A", alignItems:"center"}}>
+        <LinkButton label={t("VIEW_TIMELINE")} onClick={handleViewTimeline}></LinkButton>
+        </div>
         <MultiLink
           className="multilinkWrapper"
           onHeadClick={() => setShowOptions(!showOptions)}
@@ -395,6 +406,7 @@ const TLApplicationDetails = () => {
                   </div>
                 </div>
               )}
+              <div id="timeline">
               <TLWFApplicationTimeline application={application} id={id} />
               {application?.status === "CITIZENACTIONREQUIRED" ? (
                 <Link
@@ -406,6 +418,7 @@ const TLApplicationDetails = () => {
                   <SubmitBar label={t("COMMON_EDIT")} />
                 </Link>
               ) : null}
+              </div>
               {/* //TODO: change the actions to be fulfilled from workflow nextactions */}
               {application?.status === "PENDINGPAYMENT" ? (
                 <Link

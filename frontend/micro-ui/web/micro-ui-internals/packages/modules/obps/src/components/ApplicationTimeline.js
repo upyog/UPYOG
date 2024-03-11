@@ -1,11 +1,12 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import { ActionLinks, CardSectionHeader, CheckPoint, ConnectingCheckPoints, Loader, SubmitBar } from "@upyog/digit-ui-react-components";
+import { ActionLinks, CardSectionHeader, CheckPoint, ConnectingCheckPoints, Loader, SubmitBar, LinkButton } from "@upyog/digit-ui-react-components";
 import BPACaption from "../pages/citizen/BpaApplicationDetail/BPACaption";
 
 const ApplicationTimeline = ({ id, tenantId }) => {
   const { t } = useTranslation();
+  const [showAllTimeline, setShowAllTimeline]=useState(false);
   const { isLoading, data } = Digit.Hooks.useWorkflowDetails({
     tenantId: tenantId,
     id: id,
@@ -43,7 +44,9 @@ const ApplicationTimeline = ({ id, tenantId }) => {
     //}
   return <BPACaption data={caption} OpenImage={OpenImage} />;
   };
-
+  const toggleTimeline=()=>{
+    setShowAllTimeline((prev)=>!prev);
+  }
   const showNextActions = (nextAction) => {
     switch (nextAction?.action) {
       case "PAY":
@@ -86,7 +89,7 @@ const ApplicationTimeline = ({ id, tenantId }) => {
           ) : (
             <ConnectingCheckPoints>
               {data?.timeline &&
-                data?.timeline.map((checkpoint, index, arr) => {
+                data?.timeline.slice(0,showAllTimeline? data.timeline.length:2).map((checkpoint, index, arr) => {
                   let timelineStatusPostfix = "";
                   if (window.location.href.includes("/obps")) {
                     if(data?.timeline[index-1]?.state?.includes("BACK_FROM") || data?.timeline[index-1]?.state?.includes("SEND_TO_CITIZEN"))
@@ -108,6 +111,10 @@ const ApplicationTimeline = ({ id, tenantId }) => {
                   );
                 })}
             </ConnectingCheckPoints>
+          )}
+          {data?.timeline?.length > 2 && (
+            <LinkButton label={showAllTimeline? t("COLLAPSE") : t("VIEW_TIMELINE")} onClick={toggleTimeline}>
+            </LinkButton>   
           )}
         </Fragment>
       )}

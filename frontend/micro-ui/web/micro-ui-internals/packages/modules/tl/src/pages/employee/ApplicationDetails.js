@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import ApplicationDetailsTemplate from "../../../../templates/ApplicationDetails";
 import cloneDeep from "lodash/cloneDeep";
 import { useParams } from "react-router-dom";
-import { Header,MultiLink } from "@upyog/digit-ui-react-components";
+import { Header,MultiLink, LinkButton } from "@upyog/digit-ui-react-components";
 import get from "lodash/get";
 import orderBy from "lodash/orderBy";
 import getPDFData from "../../utils/getTLAcknowledgementData"
@@ -20,6 +20,7 @@ const ApplicationDetails = () => {
   const [numberOfApplications, setNumberOfApplications] = useState([]);
   const [allowedToNextYear, setAllowedToNextYear] = useState(false);
   const [oldRenewalAppNo, setoldRenewalAppNo] = useState("");
+  const [viewTimeline, setViewTimeline]=useState(false);
   const [latestRenewalYearofAPP, setlatestRenewalYearofAPP] = useState("");
   sessionStorage.setItem("applicationNumber", applicationNumber)
   const { renewalPending: renewalPending } = Digit.Hooks.useQueryParams();
@@ -216,7 +217,14 @@ const ApplicationDetails = () => {
       Digit.Utils.pdf.generate(data);
       setIsDisplayDownloadMenu(false)
     };
-
+    
+    const handleViewTimeline=()=>{
+      setViewTimeline(true);
+        const timelineSection=document.getElementById('timeline');
+        if(timelineSection){
+          timelineSection.scrollIntoView({behavior: 'smooth'});
+        } 
+    };
   // const printReciept = async (businessService="TL", consumerCode=applicationDetails?.applicationData?.applicationNumber) => {
   //   await Digit.Utils.downloadReceipt(consumerCode, businessService, 'tradelicense-receipt');
   //   setIsDisplayDownloadMenu(false)
@@ -271,6 +279,9 @@ const ApplicationDetails = () => {
     <div className={"employee-main-application-details"} >
       <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
         <Header>{(applicationDetails?.applicationData?.workflowCode == "NewTL" && applicationDetails?.applicationData?.status !== "APPROVED") ? t("TL_TRADE_APPLICATION_DETAILS_LABEL") : t("TL_TRADE_LICENSE_DETAILS_LABEL")}</Header>
+        <div style={{display:"flex", color:"#A52A2A", alignItems:"center"}}>
+        <LinkButton label={t("VIEW_TIMELINE")} onClick={handleViewTimeline}></LinkButton>
+        </div>
         <MultiLink
                 className="multilinkWrapper employee-mulitlink-main-div"
                 onHeadClick={() => setIsDisplayDownloadMenu(!isDisplayDownloadMenu)}
@@ -287,6 +298,7 @@ const ApplicationDetails = () => {
         isDataLoading={isLoading}
         applicationData={applicationDetails?.applicationData}
         mutate={mutate}
+        id={"timeline"}
         workflowDetails={workflowDetails}
         businessService={businessService}
         moduleCode="TL"
