@@ -55,7 +55,7 @@
 				<input type="hidden" name="bankbranch" value="${bankbranch.id}" />
 			</div>
 			<div class="panel-body">
-				<div class="form-group">
+				<div class="form-group row">
 					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.bank" text="Bank"/> <span class="mandatory"></span> </label>
 					<div class="col-sm-3 add-margin">
 						<form:select path="bank" data-first-option="false" id="bank" class="form-control" required="required">
@@ -68,7 +68,7 @@
 					<div class="col-sm-3 add-margin">
 					</div>
 				</div>
-				<div class="form-group">
+				<div class="form-group row">
 					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.branchname" text="Branch Name/Location"/> <span class="mandatory"></span> </label>
 					<div class="col-sm-3 add-margin">
 						<form:input path="branchname" class="form-control text-left patternvalidation" data-pattern="alphanumeric" maxlength="50" required="required" />
@@ -80,7 +80,7 @@
 						<form:errors path="branchcode" cssClass="error-msg" />
 					</div>
 				</div>
-				<div class="form-group">
+				<div class="form-group row">
 					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.branchmicr" text="MICR"/></label>
 					<div class="col-sm-3 add-margin">
 						<form:input path="branchMICR" class="form-control text-left patternvalidation" data-pattern="alphanumeric" maxlength="50" />
@@ -92,7 +92,7 @@
 						<form:errors path="branchaddress1" cssClass="error-msg" />
 					</div>
 				</div>
-				<div class="form-group">
+				<div class="form-group row">
 					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.contactperson" text="Contact Person"/> </label>
 					<div class="col-sm-3 add-margin">
 						<form:input path="contactperson" class="form-control text-left patternvalidation" data-pattern="alphanumeric" maxlength="50"  />
@@ -104,7 +104,7 @@
 						<form:errors path="branchphone" cssClass="error-msg" />
 					</div>
 				</div>
-				<div class="form-group">
+				<div class="form-group row">
 					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.narration" text="Narration"/></label>
 					<div class="col-sm-3 add-margin">
 						<form:textarea path="narration" id="narration" class="form-control" maxlength="250"></form:textarea>

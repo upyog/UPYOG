@@ -61,7 +61,7 @@
 						<div class="panel-title"><spring:message code="lbl.search.function" text="Search Function"/> </div>
 					</div>
 					<div class="panel-body">
-						<div class="form-group">
+						<div class="form-group row">
 							<label class="col-sm-3 control-label text-right"><spring:message
 									code="lbl.name" text="Name"/> </label>
 							<div class="col-sm-3 add-margin">
@@ -79,7 +79,7 @@
 								<form:errors path="code" cssClass="error-msg" />
 							</div>
 
-							<div class="form-group">
+							<div class="form-group row">
 								<label class="col-sm-3 control-label text-right"><spring:message
 										code="lbl.isactive" text="Active"/> </label>
 								<div class="col-sm-3 add-margin">
@@ -88,7 +88,7 @@
 								</div>
 
 							</div>
-							<div class="form-group">
+							<div class="form-group row">
 								<label class="col-sm-3 control-label text-right"><spring:message
 										code="lbl.parentType" text="Parent Type"/></label>
 								<div class="col-sm-3 add-margin">
@@ -104,7 +104,7 @@
 								</div>
 							</div>
 							<input type="hidden" id="mode" name="mode" value="${mode}" />
-							<div class="form-group">
+							<div class="form-group row">
 								<div class="text-center">
 									<button type='button' class='btn btn-primary' id="btnsearch">
 										<spring:message code='lbl.search' text="Search"/>
@@ -121,7 +121,7 @@
 </form:form>
 <div class="row display-hide report-section">
 	<div class="col-md-12 table-header text-left"><spring:message text="Function Search Result" code="lbl.function.search.result"/> </div>
-	<div class="col-md-12 form-group report-table-container">
+	<div class="col-md-12 form-group row report-table-container">
 		<table class="table table-bordered table-hover multiheadertbl"
 			id="resultTable">
 			<thead>

@@ -56,7 +56,7 @@
 				</div>
 				<div class="panel-body">
 
-					<div class="form-group">
+					<div class="form-group row">
 
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.cfinancialyearid" /> </label>

@@ -60,7 +60,7 @@
 					</div>
 				</div>
 				<div class="panel-body">
-					<div class="form-group">
+					<div class="form-group row">
 						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.name" text="Name"/> </label>
 						<div class="col-sm-3 add-margin">
 							<form:input path="name" class="form-control text-left patternvalidation" data-pattern="alphanumeric" maxlength="50" />
@@ -72,7 +72,7 @@
 							<form:errors path="code" cssClass="error-msg" />
 						</div>
 					</div>
-					<div class="form-group">
+					<div class="form-group row">
 						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.narration" text="Narration"/> </label>
 						<div class="col-sm-3 add-margin">
 							<form:textarea path="narration" id="narration" class="form-control" maxlength="250"></form:textarea>
