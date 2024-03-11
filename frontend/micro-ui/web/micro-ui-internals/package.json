@@ -13,7 +13,11 @@
     "packages/modules/dss",
     "packages/modules/pt",
     "packages/modules/obps",
-    "packages/modules/ptr"
+    "packages/modules/ptr",
+    "packages/modules/pgr",
+    "packages/modules/tl",
+    "packages/modules/fsm",
+    "packages/modules/ws"
 
     
 
