@@ -3,7 +3,7 @@ package digit.models.coremodels.user;
 import lombok.*;
 
 import java.util.Date;
-
+@NoArgsConstructor
 @Getter
 @Setter
 @Builder

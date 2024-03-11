@@ -31,6 +31,15 @@ public class AppProperties {
     @Value("${length.keyid}")
     private Integer keyIdLength;
 
+    @Value("${master.password}")
+    private String masterPassword;
+
+    @Value("${master.salt}")
+    private String masterSalt;
+
+    @Value("${master.initialvector}")
+    private String masterInitialVector;
+
     @Value("${method.symmetric}")
     private String symmetricMethod;
 

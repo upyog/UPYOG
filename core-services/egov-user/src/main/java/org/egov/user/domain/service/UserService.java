@@ -192,19 +192,18 @@ public class UserService {
         if(searchCriteria.getMobileNumber()!=null) {
         	altmobnumber = searchCriteria.getMobileNumber();
         }
-
+      //  org.egov.user.domain.model.User user= encryptionDecryptionUtil.encryptObject(searchCriteria, "User", User.class);
         searchCriteria = encryptionDecryptionUtil.encryptObject(searchCriteria, "UserSearchCriteria", UserSearchCriteria.class);
         
         if(altmobnumber!=null) {
         	searchCriteria.setAlternatemobilenumber(altmobnumber);
         }
         
-        searchCriteria = encryptionDecryptionUtil.encryptObject(searchCriteria, "UserSearchCriteria", UserSearchCriteria.class);
         List<org.egov.user.domain.model.User> list = userRepository.findAll(searchCriteria);
 
         /* decrypt here / final reponse decrypted*/
 
-        list = encryptionDecryptionUtil.decryptObject(list, null, User.class, requestInfo);
+        list = encryptionDecryptionUtil.decryptObject(list, "UserListSelf", User.class, requestInfo);
 
         setFileStoreUrlsByFileStoreIds(list);
         return list;
