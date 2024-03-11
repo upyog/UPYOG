@@ -327,6 +327,12 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
 
                 // Additonal details
                 payload.additionalDetails = {GISPlaceName:formData?.address?.placeName};
+                payload.additionalDetails.boundaryWallLength = formData?.data?.boundaryWallLength || "NA";
+                payload.additionalDetails.area  = formData?.data.edcrDetails.planDetail.planInformation.plotArea||  "NA";
+                payload.additionalDetails.height  = formData?.data.edcrDetails.planDetail.blocks[0].building.buildingHeight || "NA";
+                payload.additionalDetails.isSelfCertificationRequired= formData?.data?.isSelfCertificationRequired || "NA";
+                payload.additionalDetails.usage  = formData?.data.occupancyType  || "NA";
+
                 if (formData?.data?.holdingNumber) payload.additionalDetails.holdingNo = formData?.data?.holdingNumber;
                 //if (formData?.data?.boundaryWallLength) payload.additionalDetails.boundaryWallLength = formData?.data?.boundaryWallLength;
                 if (formData?.data?.registrationDetails) payload.additionalDetails.registrationDetails = formData?.data?.registrationDetails;
@@ -354,8 +360,51 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                 let nameOfAchitect = sessionStorage.getItem("BPA_ARCHITECT_NAME");
                 let parsedArchitectName = nameOfAchitect ? JSON.parse(nameOfAchitect) : "ARCHITECT";
                 payload.additionalDetails.typeOfArchitect = parsedArchitectName;
+                let isSelfCertificationRequired=sessionStorage.getItem("isSelfCertificationRequired");
+                if(isSelfCertificationRequired==="undefined"){
+                    isSelfCertificationRequired=false;
+                }
+                payload.additionalDetails.isSelfCertificationRequired = isSelfCertificationRequired;
                 // create BPA call
-                Digit.OBPSService.create({ BPA: payload }, tenantId)
+                if(isSelfCertificationRequired===true && formData?.data.occupancyType==="Residential" && (parsedArchitectName=="ARCHITECT" || parsedArchitectName=="ENGINEER"|| parsedArchitectName=="DESIGNER" || parsedArchitectName=="SUPERVISOR")){
+                    if(formData?.data.edcrDetails.planDetail.blocks[0].building.buildingHeight > 15){
+                        alert("Height should not be more than 15 metres");
+                    }
+                    else if((parsedArchitectName=="ARCHITECT" || parsedArchitectName=="ENGINEER") && formData?.data.edcrDetails.planDetail.planInformation.plotArea>500){
+                            alert("Architect/Engineer can apply for area less then 500 sq. yards. in self declaration")
+                        }
+                    else if((parsedArchitectName=="DESIGNER" || parsedArchitectName=="SUPERVISOR") && formData?.data.edcrDetails.planDetail.planInformation.plotArea>250){
+                            alert("Designer/Supervisor can apply for area less then 500 sq. yards. in self declaration")
+                        }
+                    else{
+                            Digit.OBPSService.create({ BPA: payload }, tenantId)
+                            .then((result, err) => {
+                                if (result?.BPA?.length > 0) {
+                                    result?.BPA?.[0]?.landInfo?.owners?.forEach(owner => {
+                                        owner.gender = { code: owner.gender, active: true, i18nKey: `COMMON_GENDER_${owner.gender}` }
+                                    });
+                                    result.BPA[0].owners = { ...owner, owners: result?.BPA?.[0]?.landInfo?.owners, ownershipCategory: ownershipCategory };
+                                    result.BPA[0].address = result?.BPA?.[0]?.landInfo?.address;
+                                    result.BPA[0].address.city = formData.address.city;
+                                    result.BPA[0].address.locality = formData.address.locality;
+                                    result.BPA[0].placeName = formData?.address?.placeName;
+                                    result.BPA[0].data = formData.data;
+                                    result.BPA[0].BlockIds = getBlockIds(result.BPA[0].landInfo.unit);
+                                    result.BPA[0].subOccupancy= formData?.subOccupancy;
+                                    result.BPA[0].uiFlow = formData?.uiFlow;
+                                    setIsDisable(false);
+                                    onSelect("", result.BPA[0], "", true);
+                                }
+                            })
+                            .catch((e) => {
+                                setIsDisable(false);
+                                setShowToast({ key: "true", error: true, message: e?.response?.data?.Errors[0]?.message });
+                            });
+                        }                  
+                    
+                }
+                else{
+                    Digit.OBPSService.create({ BPA: payload }, tenantId)
                     .then((result, err) => {
                         if (result?.BPA?.length > 0) {
                             result?.BPA?.[0]?.landInfo?.owners?.forEach(owner => {
@@ -378,6 +427,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                         setIsDisable(false);
                         setShowToast({ key: "true", error: true, message: e?.response?.data?.Errors[0]?.message });
                     });
+                }                
             } else {
                 onSelect(config.key, ownerStep);
             }

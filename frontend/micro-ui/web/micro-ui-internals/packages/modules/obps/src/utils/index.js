@@ -113,7 +113,7 @@ export const getBPAFormData = async (data, mdmsData, history, t) => {
     applicationDate: data?.auditDetails?.createdTime,
     applicationType: APIScrutinyDetails?.appliactionType,
     holdingNumber: data?.additionalDetails?.holdingNo,
-    //boundaryWallLength:data?.additionalDetails?.boundaryWallLength,
+    boundaryWallLength:data?.additionalDetails?.boundaryWallLength,
     occupancyType: APIScrutinyDetails?.planDetail?.planInformation?.occupancy,
     registrationDetails: data?.additionalDetails?.registrationDetails,
     riskType: Digit.Utils.obps.calculateRiskType(
@@ -409,7 +409,7 @@ export const convertToBPAObject = (data, isOCBPA = false, isSendBackTOCitizen = 
         ...data?.additionalDetails,
         GISPlaceName : data?.address?.placeName,
         holdingNo: data?.data?.holdingNumber ? data?.data?.holdingNumber : data?.additionalDetails?.holdingNo,
-        //boundaryWallLength:data?.data?.boundaryWallLength ? data?.data?.boundaryWallLength : data?.additionalDetails?.boundaryWallLength , 
+        boundaryWallLength:data?.data?.boundaryWallLength ? data?.data?.boundaryWallLength : data?.additionalDetails?.boundaryWallLength , 
         registrationDetails: data?.data?.registrationDetails ? data?.data?.registrationDetails : data?.additionalDetails?.registrationDetails,
       },
       applicationType: "BUILDING_PLAN_SCRUTINY",
@@ -555,7 +555,7 @@ export const getBPAEditDetails = async (data, APIScrutinyDetails, mdmsData, nocd
     applicationDate: data?.auditDetails?.createdTime,
     applicationType: APIScrutinyDetails?.appliactionType,
     holdingNumber: data?.additionalDetails?.holdingNo,
-    //boundaryWallLength: data?.additionalDetails?.boundaryWallLength,
+    boundaryWallLength: data?.additionalDetails?.boundaryWallLength,
     occupancyType: APIScrutinyDetails?.planDetail?.planInformation?.occupancy,
     registrationDetails: data?.additionalDetails?.registrationDetails,
     riskType: Digit.Utils.obps.calculateRiskType(
