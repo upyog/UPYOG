@@ -201,7 +201,7 @@ export default class UpdateMobileDialog extends React.Component {
     const tenant = tenantId.split('.')[0];
     var myHeaders = new Headers();
     myHeaders.append("accept", "application/json, text/plain, */*");
-    myHeaders.append("authorization", "Basic ZWdvdi11c2VyLWNsaWVudDo=");
+    myHeaders.append("authorization", "Basic ZWdvdi11c2VyLWNsaWVudDplZ292LXVzZXItc2VjcmV0");
     myHeaders.append("content-type", "application/x-www-form-urlencoded");
 
     var urlencoded = new URLSearchParams();
