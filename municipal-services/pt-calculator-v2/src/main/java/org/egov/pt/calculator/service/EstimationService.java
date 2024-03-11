@@ -188,6 +188,9 @@ public class EstimationService {
 
 	@Autowired
 	private ObjectMapper mapper;
+	
+	@Value("${pt.mutation.deadline.month}")
+	private String deadLineAfterMutationDocDate;
 
 
 
@@ -1628,12 +1631,13 @@ public class EstimationService {
 		Map<String, Object> penalty = getApplicableMaster(penaltyMasterList);
 
 		if (null == penalty) return penaltyAmt;
-		Integer mutationPaymentPeriodInMonth = Integer.parseInt(String.valueOf(penalty.get(MUTATION_PAYMENT_PERIOD_IN_MONTH)));
+		Integer mutationPaymentPeriodInMonth = Integer.parseInt(String.valueOf(deadLineAfterMutationDocDate));
 		Long deadlineDate = getDeadlineDate(docDate,mutationPaymentPeriodInMonth);
 
-		if (deadlineDate < System.currentTimeMillis())
-			penaltyAmt = mDataService.calculateApplicables(taxAmt, penalty);
-
+		if (deadlineDate < System.currentTimeMillis()) {
+				penaltyAmt = mDataService.calculateApplicablesNew(taxAmt, penalty);
+		}
+			
 		return penaltyAmt;
 	}
 	/**
