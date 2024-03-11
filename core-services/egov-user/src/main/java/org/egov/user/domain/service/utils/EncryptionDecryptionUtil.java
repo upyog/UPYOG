@@ -133,13 +133,13 @@ public class EncryptionDecryptionUtil {
         Map<String,String> keyPurposeMap = new HashMap<>();
 
         if (!abacEnabled){
-            keyPurposeMap.put("key","UserSelf");
+            keyPurposeMap.put("key","UserListSelf");
             keyPurposeMap.put("purpose","AbacDisabled");
         }
 
 
         else if (isUserDecryptingForSelf(objectToDecrypt, userInfo)){
-            keyPurposeMap.put("key","UserSelf");
+            keyPurposeMap.put("key","UserListSelf");
             keyPurposeMap.put("purpose","Self");
         }
 

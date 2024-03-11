@@ -107,7 +107,7 @@ public class UserServiceTest {
         when(userRepository.create(domainUser)).thenReturn(expectedEntityUser);
 
         when(encryptionDecryptionUtil.encryptObject(domainUser, "User", User.class)).thenReturn(domainUser);
-        when(encryptionDecryptionUtil.decryptObject(expectedEntityUser, "UserSelf", User.class,
+        when(encryptionDecryptionUtil.decryptObject(expectedEntityUser, "UserListSelf", User.class,
                 getValidRequestInfo())).thenReturn(expectedEntityUser);
         User returnedUser = userService.createUser(domainUser, getValidRequestInfo());
 
@@ -136,7 +136,7 @@ public class UserServiceTest {
         when(domainUser.getPassword()).thenReturn("P@assw0rd");
         when(userRepository.create(domainUser)).thenReturn(expectedUser);
         when(encryptionDecryptionUtil.encryptObject(domainUser, "User", User.class)).thenReturn(domainUser);
-        when(encryptionDecryptionUtil.decryptObject(expectedUser, "UserSelf", User.class, getValidRequestInfo())).thenReturn(expectedUser);
+        when(encryptionDecryptionUtil.decryptObject(expectedUser, "UserListSelf", User.class, getValidRequestInfo())).thenReturn(expectedUser);
         User returnedUser = userService.createCitizen(domainUser, getValidRequestInfo());
 
         assertEquals(expectedUser, returnedUser);
