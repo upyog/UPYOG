@@ -140,14 +140,16 @@ public class PropertyService {
 		propertyValidator.validateCommonUpdateInformation(request, propertyFromSearch);
 
 		boolean isRequestForOwnerMutation = CreationReason.MUTATION.equals(request.getProperty().getCreationReason());
+		boolean isRequestForBifurcation = CreationReason.BIFURCATION.equals(request.getProperty().getCreationReason());
 		
 		boolean isNumberDifferent = checkIsRequestForMobileNumberUpdate(request, propertyFromSearch);
 
 		if (isRequestForOwnerMutation)
 			processOwnerMutation(request, propertyFromSearch);
+		else if(isRequestForBifurcation)
+			processOwnerBifurcation(request, propertyFromSearch);
 		else if(isNumberDifferent)
 			processMobileNumberUpdate(request, propertyFromSearch);
-			
 		else
 			processPropertyUpdate(request, propertyFromSearch);
 
@@ -306,6 +308,62 @@ public class PropertyService {
 		enrichmentService.enrichAssignes(request.getProperty());
 		enrichmentService.enrichMutationRequest(request, propertyFromSearch);
 		calculatorService.calculateMutationFee(request.getRequestInfo(), request.getProperty());
+
+		// TODO FIX ME block property changes FIXME
+		util.mergeAdditionalDetails(request, propertyFromSearch);
+		PropertyRequest oldPropertyRequest = PropertyRequest.builder()
+				.requestInfo(request.getRequestInfo())
+				.property(propertyFromSearch)
+				.build();
+
+		if (config.getIsMutationWorkflowEnabled()) {
+
+			State state = wfService.updateWorkflow(request, CreationReason.MUTATION);
+
+			/*
+			 * updating property from search to INACTIVE status
+			 *
+			 * to create new entry for new Mutation
+			 */
+			if (state.getIsStartState() == true
+					&& state.getApplicationStatus().equalsIgnoreCase(Status.INWORKFLOW.toString())
+					&& !propertyFromSearch.getStatus().equals(Status.INWORKFLOW)) {
+
+				propertyFromSearch.setStatus(Status.INACTIVE);
+				producer.pushAfterEncrytpion(config.getUpdatePropertyTopic(), oldPropertyRequest);
+
+				util.saveOldUuidToRequest(request, propertyFromSearch.getId());
+				/* save new record */
+				producer.pushAfterEncrytpion(config.getSavePropertyTopic(), request);
+
+			} else if (state.getIsTerminateState()
+					&& !state.getApplicationStatus().equalsIgnoreCase(Status.ACTIVE.toString())) {
+
+				terminateWorkflowAndReInstatePreviousRecord(request, propertyFromSearch);
+			} else {
+				/*
+				 * If property is In Workflow then continue
+				 */
+				producer.pushAfterEncrytpion(config.getUpdatePropertyTopic(), request);
+			}
+
+		} else {
+
+			/*
+			 * If no workflow then update property directly with mutation information
+			 */
+			producer.pushAfterEncrytpion(config.getUpdatePropertyTopic(), request);
+		}
+	}
+
+	
+	private void processOwnerBifurcation(PropertyRequest request, Property propertyFromSearch) {
+
+		propertyValidator.validateBifurcation(request, propertyFromSearch);
+		userService.createUserForMutation(request, !propertyFromSearch.getStatus().equals(Status.INWORKFLOW));
+		enrichmentService.enrichAssignes(request.getProperty());
+		enrichmentService.enrichMutationRequest(request, propertyFromSearch);
+		//calculatorService.calculateMutationFee(request.getRequestInfo(), request.getProperty());
 
 		// TODO FIX ME block property changes FIXME
 		util.mergeAdditionalDetails(request, propertyFromSearch);
