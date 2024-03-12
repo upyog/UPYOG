@@ -111,7 +111,7 @@ public class Employee {
 
     @SafeHtml
     @NotNull
-    @Size(max = 256)
+    @Size(max = 250)
     private String tenantId;
 
     @Valid

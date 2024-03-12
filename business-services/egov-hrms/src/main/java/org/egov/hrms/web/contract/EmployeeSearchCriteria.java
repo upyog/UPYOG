@@ -55,8 +55,6 @@ public class EmployeeSearchCriteria {
 	public Integer offset;
 	
 	public Integer limit;
-
-	private Boolean includeUnassigned = false;
 	
 	
 	public boolean isCriteriaEmpty(EmployeeSearchCriteria criteria) {
