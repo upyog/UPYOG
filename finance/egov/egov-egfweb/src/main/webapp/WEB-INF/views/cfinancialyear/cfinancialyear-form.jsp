@@ -59,7 +59,7 @@
 					type="hidden" value="${startingDate}" id="finYearStartDate" />
 
 				<div class="panel-body">
-					<div class="form-group">
+					<div class="form-group row">
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.finyearrange" /><span class="mandatory"></span> </label>
 						<div class="col-sm-3 add-margin">
@@ -83,7 +83,7 @@
 							<form:errors path="isActiveForPosting" cssClass="error-msg" />
 						</div>
 					</div>
-					<div class="form-group">
+					<div class="form-group row">
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.startingdate" /> <span class="mandatory"></span> </label>
 						<div class="col-sm-3 add-margin">
@@ -105,12 +105,12 @@
 						<div class="col-sm-3 add-margin">
 							<c:if test="${mode == 'create'}">
 								<form:input path="endingDate" class="form-control datepicker"
-									id="endingDate" data-inputmask="'mask': 'd/m/y'"
+									id="endingDate" data-inputmask="'mask': '99/99/9999'"
 									required="required" onchange="validateEndDate();" />
 								<form:errors path="endingDate" cssClass="error-msg" />
 							</c:if>
 							<c:if test="${mode == 'edit'}">
-								<form:input path="endingDate" data-inputmask="'mask': 'd/m/y'"
+								<form:input path="endingDate" data-inputmask="'mask': '99/99/9999'"
 									required="required" readonly="true" />
 								<form:errors path="endingDate" cssClass="error-msg" />
 							</c:if>
@@ -152,7 +152,7 @@
 													test="${mode == 'create'}">
 													<input type="text"
 														name="cFiscalPeriod[${counter.index}].startingDate"
-														value="${startingDate}" id="startDate" data-inputmask="'mask': 'd/m/y'"
+														value="${startingDate}" id="startDate" data-inputmask="'mask': '99/99/9999'"
 														class="form-control datepicker" />
 												</c:if> <c:if test="${mode == 'edit'}">
 													<input type="text"
@@ -166,7 +166,7 @@
 												<c:if test="${mode == 'create'}">
 													<input type="text"
 														name="cFiscalPeriod[${counter.index}].endingDate"
-														value="${endDate}" id="endDate" data-inputmask="'mask': 'd/m/y'"
+														value="${endDate}" id="endDate" data-inputmask="'mask': '99/99/9999'"
 														class="form-control datepicker"
 														onchange="validateFiscalEndDate();" />
 												</c:if> <c:if test="${mode == 'edit'}">

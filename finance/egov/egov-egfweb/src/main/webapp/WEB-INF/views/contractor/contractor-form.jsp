@@ -47,7 +47,7 @@
   --%>
 
 
-<div class="form-group">
+<div class="form-group row">
 	<label class="col-sm-2 control-label text-right" for="code"> <spring:message
 			code="contractor.code" text='Code' /><span class="mandatory"></span>
 	</label>
@@ -69,7 +69,7 @@
 	</div>
 </div>
 
-<div class="form-group">
+<div class="form-group row">
 	<label class="col-sm-2 control-label text-right"
 		for="correspondenceAddress"> <spring:message
 			code="contractor.correspondenceAddress" text='Correspondence Address' /><span
@@ -95,7 +95,7 @@
 	</div>
 </div>
 
-<div class="form-group">
+<div class="form-group row">
 	<label class="col-sm-2 control-label text-right" for="contactPerson">
 		<spring:message code="contractor.contactPerson" text='Contact Person' /><span
 		class="mandatory"></span>
@@ -116,7 +116,7 @@
 	</div>
 </div>
 
-<div class="form-group">
+<div class="form-group row">
 	<label class="col-sm-2 control-label text-right" for="narration">
 		<spring:message code="contractor.narration" text='Narration' />
 	</label>
@@ -138,7 +138,7 @@
 	</div>
 </div>
 
-<div class="form-group">
+<div class="form-group row">
 	<label class="col-sm-2 control-label text-right" for="tinNumber">
 		<spring:message code="contractor.tinNo" text='GST/TIN No' /><span
 		class="mandatory"></span>
@@ -162,7 +162,7 @@
 	</div>
 </div>
 
-<div class="form-group">
+<div class="form-group row">
 	<label class="col-sm-2 control-label text-right" for="bank"> <spring:message
 			code="contractor.bank" text='Bank' />
 	</label>
@@ -187,7 +187,7 @@
 	</div>
 </div>
 
-<div class="form-group">
+<div class="form-group row">
 	<label class="col-sm-2 control-label text-right" for="bankAccount">
 		<spring:message code="contractor.bankAccount"
 			text='Bank Account Number' />
@@ -198,7 +198,7 @@
 		<form:errors path="bankAccount" cssClass="add-margin error-msg" />
 	</div>
 </div>
-<div class="form-group">
+<div class="form-group row">
 	<label class="col-sm-2 control-label"><spring:message
 			code="lbl.type.contrator.supplier" /></label>
 	<div class="col-sm-2 col-xs-12 add-margin">
@@ -218,7 +218,7 @@
 	<form:errors path="contractorType" cssClass="error-msg" />
 </div>
 <div>
-	<div class="form-group" id="registerationNo" style="display: none">
+	<div class="form-group row" id="registerationNo" style="display: none">
 		<label class="col-sm-2 control-label text-right"
 			for="registrationNumber"> <spring:message
 				code="contractor.registrationNo" text='Registration No' />
@@ -232,7 +232,7 @@
 		</div>
 	</div>
 
-	<div class="form-group">
+	<div class="form-group row">
 		<label class="col-sm-2 control-label text-right" for="status">
 			<spring:message code="contractor.status" text='Status' /><span
 			class="mandatory"></span>
@@ -258,7 +258,7 @@
 			<form:errors path="panNumber" cssClass="add-margin error-msg" />
 		</div>
 	</div>
-	<div class="form-group">
+	<div class="form-group row">
 		<label class="col-sm-2 control-label text-right" for="epfNumber">
 			<spring:message code="contractor.epfNo" text='EPF No' />
 		</label>

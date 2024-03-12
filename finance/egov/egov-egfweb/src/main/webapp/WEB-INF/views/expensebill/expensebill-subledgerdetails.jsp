@@ -55,8 +55,8 @@
 		<div class="panel-title"><spring:message  code="lbl.subledger.details" text="SubLedger Details"/></div>
 	</div>
 	<div  style="padding: 0 15px;">
-		<div class="form-group">
-			<label class="col-sm-3 control-label text-right">
+		<div class="form-group row">
+			<label class="col-sm-3 control-label text-end">
 				<spring:message code="lbl.subledgertype" text="SubLedger Type"/>
 			</label>
 			<div class="col-sm-3 add-margin">
@@ -68,7 +68,7 @@
 				</select>
 			</div>
 			<div id="subLedgerCodeSection" class="display-hide">
-				<label class="col-sm-2 control-label text-right" id="subLedgerNameLabel">
+				<label class="col-sm-2 control-label text-end" id="subLedgerNameLabel">
 					<spring:message code="lbl.code" text="Code" />
 				</label>
 				<div class="col-sm-3 add-margin">
@@ -78,15 +78,15 @@
 			</div>
 		</div>
 		
-		<div class="form-group">
-			<label class="col-sm-3 control-label text-right">
+		<div class="form-group row">
+			<label class="col-sm-3 control-label text-end">
 				<spring:message code="lbl.payto" text="Pay To"/> <span class="mandatory"></span>
 			</label>
 			<div class="col-sm-3 add-margin">
 				<form:input class="form-control" id="payTo" path="egBillregistermis.payto" maxlength="350" required="required" />
 				<form:errors path="egBillregistermis.payto" cssClass="add-margin error-msg" />
 			</div>
-			<label class="col-sm-2 control-label text-right">
+			<label class="col-sm-2 control-label text-end">
 			</label>
 			<div class="col-sm-3 add-margin">
 			</div>

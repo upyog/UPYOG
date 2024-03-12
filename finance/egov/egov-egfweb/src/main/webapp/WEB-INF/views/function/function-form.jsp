@@ -56,7 +56,7 @@
 					<div class="panel-title"><spring:message code="lbl.functionid" text="Function"/> </div>
 				</div>
 				<div class="panel-body">
-					<div class="form-group">
+					<div class="form-group row">
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.name" text="Name"/> <span class="mandatory"></span> </label>
 						<div class="col-sm-3 add-margin">
@@ -74,7 +74,7 @@
 							<form:errors path="code" cssClass="error-msg" />
 						</div>
 					</div>
-					<div class="form-group">
+					<div class="form-group row">
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.llevel" text="Level"/> </label>
 						<div class="col-sm-3 add-margin">
@@ -90,7 +90,7 @@
 							<form:errors path="isActive" cssClass="error-msg" />
 						</div>
 					</div>
-					<div class="form-group">
+					<div class="form-group row">
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.parentType" text="Parent Type"/></label>
 						<div class="col-sm-3 add-margin">
@@ -105,7 +105,7 @@
 							<form:errors path="parentId" cssClass="error-msg" />
 						</div>
 					</div>
-					<div class="form-group">
+					<div class="form-group row">
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.isnotleaf" text="Isnotleaf"/> </label>
 						<div class="col-sm-3 add-margin">
