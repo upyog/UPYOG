@@ -189,6 +189,9 @@ public class EstimationService {
 
 	@Autowired
 	private ObjectMapper mapper;
+	
+	@Value("${pt.mutation.deadline.month}")
+	private String deadLineAfterMutationDocDate;
 
 
 
@@ -357,6 +360,8 @@ public class EstimationService {
 				 * counting the number of units & total area in ground floor for unbuilt area
 				 * tax calculation
 				 */
+				
+				//Ground Floor area is deducted as ground floor is connected to vacant land
 				if (unit.getFloorNo().equalsIgnoreCase("0")) {
 					groundUnitsCount += 1;
 					groundUnitsArea += unit.getUnitArea();
@@ -377,6 +382,7 @@ public class EstimationService {
 
 			BigDecimal unbuiltAmount = getUnBuiltRate(detail, unBuiltRate, groundUnitsCount, groundUnitsArea);
 			BigDecimal unbuiltarea=getUnBuiltAre(detail, unBuiltRate, groundUnitsCount, groundUnitsArea);
+			
 
 			/*
 			 * taxHeadEstimate = getBiilinfEstimatesForTax(requestInfo,unbuiltarea,
@@ -513,10 +519,14 @@ public class EstimationService {
 
 		String searchKey =null;
 
-		if(unit!=null)
+		if(unit!=null) {
 			searchKey=unit.getUsageCategoryMajor();
-		else
+		}
+			
+		else {
 			searchKey=detail.getUsageCategoryMajor();
+		}
+			
 
 		String assessmentYear = detail.getFinancialYear();
 
@@ -1635,12 +1645,13 @@ public class EstimationService {
 		Map<String, Object> penalty = getApplicableMaster(penaltyMasterList);
 
 		if (null == penalty) return penaltyAmt;
-		Integer mutationPaymentPeriodInMonth = Integer.parseInt(String.valueOf(penalty.get(MUTATION_PAYMENT_PERIOD_IN_MONTH)));
+		Integer mutationPaymentPeriodInMonth = Integer.parseInt(String.valueOf(deadLineAfterMutationDocDate));
 		Long deadlineDate = getDeadlineDate(docDate,mutationPaymentPeriodInMonth);
 
-		if (deadlineDate < System.currentTimeMillis())
-			penaltyAmt = mDataService.calculateApplicables(taxAmt, penalty);
-
+		if (deadlineDate < System.currentTimeMillis()) {
+				penaltyAmt = mDataService.calculateApplicablesNew(taxAmt, penalty);
+		}
+			
 		return penaltyAmt;
 	}
 	/**

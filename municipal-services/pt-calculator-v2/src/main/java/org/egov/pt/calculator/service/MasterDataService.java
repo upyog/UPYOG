@@ -314,6 +314,48 @@ public class MasterDataService {
 		}
 		return currentApplicable;
 	}
+	
+	
+	public BigDecimal calculateApplicablesNew(BigDecimal applicableAmount, Object config) {
+
+		BigDecimal currentApplicable = BigDecimal.ZERO;
+
+		if (null == config)
+			return currentApplicable;
+
+		@SuppressWarnings("unchecked")
+		Map<String, Object> configMap = (Map<String, Object>) config;
+
+		BigDecimal rate = null != configMap.get(CalculatorConstants.RATE_FIELD_NAME)
+				? BigDecimal.valueOf(((Number) configMap.get(CalculatorConstants.RATE_FIELD_NAME)).doubleValue())
+				: null;
+
+		BigDecimal maxAmt = null != configMap.get(CalculatorConstants.MAX_AMOUNT_FIELD_NAME)
+				? BigDecimal.valueOf(((Number) configMap.get(CalculatorConstants.MAX_AMOUNT_FIELD_NAME)).doubleValue())
+				: null;
+
+		BigDecimal minAmt = null != configMap.get(CalculatorConstants.MIN_AMOUNT_FIELD_NAME)
+				? BigDecimal.valueOf(((Number) configMap.get(CalculatorConstants.MIN_AMOUNT_FIELD_NAME)).doubleValue())
+				: null;
+
+		BigDecimal flatAmt = null != configMap.get(CalculatorConstants.FLAT_AMOUNT_FIELD_NAME)
+				? BigDecimal.valueOf(((Number) configMap.get(CalculatorConstants.FLAT_AMOUNT_FIELD_NAME)).doubleValue())
+				: BigDecimal.ZERO;
+
+		if (null == rate)
+			currentApplicable = flatAmt.compareTo(applicableAmount) > 0 ? applicableAmount : flatAmt;
+		else {
+			
+			currentApplicable = applicableAmount.multiply(rate.divide(CalculatorConstants.HUNDRED));
+			
+			if (null != maxAmt && BigDecimal.ZERO.compareTo(maxAmt) < 0 && currentApplicable.compareTo(maxAmt) > 0)
+				currentApplicable = maxAmt;
+			else if (null != minAmt && currentApplicable.compareTo(minAmt) < 0)
+				currentApplicable = minAmt;
+		}
+		return currentApplicable;
+	}
+
 
 	/**
 	 * Fetches and creates map of all required masters

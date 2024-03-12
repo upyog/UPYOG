@@ -5,11 +5,16 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.egov.pt.calculator.web.models.MutationBillingSlabSearchCriteria;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 @Component
 public class MutationBillingSlabQueryBuilder {
+	
+	private static final String ALL = "ALL";
+	@Value("${mn.mutation.fee.calculate.type}")
+	private String mutationCalculateType;
 
     public String getBillingSlabSearchQuery(MutationBillingSlabSearchCriteria billingSlabSearcCriteria,
                                             List<Object> preparedStmtList) {
@@ -41,36 +46,71 @@ public class MutationBillingSlabQueryBuilder {
             queryBuilder.append(" AND propertyType = ?");
             preparedStmtList.add(billingSlabSearcCriteria.getPropertyType());
         }
+        
+        if(!mutationCalculateType.equalsIgnoreCase(ALL)) {
+        	
+        	 if (!StringUtils.isEmpty(billingSlabSearcCriteria.getPropertySubType())) {
 
-        if (!StringUtils.isEmpty(billingSlabSearcCriteria.getPropertySubType())) {
+                 queryBuilder.append(" AND propertySubType = ?");
+                 preparedStmtList.add(billingSlabSearcCriteria.getPropertySubType());
+             }
 
-            queryBuilder.append(" AND propertySubType = ?");
-            preparedStmtList.add(billingSlabSearcCriteria.getPropertySubType());
+             if (!StringUtils.isEmpty(billingSlabSearcCriteria.getUsageCategoryMajor())) {
+
+                 queryBuilder.append(" AND usageCategoryMajor = ?");
+                 preparedStmtList.add(billingSlabSearcCriteria.getUsageCategoryMajor());
+             }
+
+             if (!StringUtils.isEmpty(billingSlabSearcCriteria.getUsageCategoryMinor())) {
+
+                 queryBuilder.append(" AND usageCategoryMinor = ?");
+                 preparedStmtList.add(billingSlabSearcCriteria.getUsageCategoryMinor());
+             }
+
+             if (!StringUtils.isEmpty(billingSlabSearcCriteria.getOwnerShipCategory())) {
+
+                 queryBuilder.append(" AND ownerShipCategory = ?");
+                 preparedStmtList.add(billingSlabSearcCriteria.getOwnerShipCategory());
+             }
+
+             if (!StringUtils.isEmpty(billingSlabSearcCriteria.getSubOwnerShipCategory())) {
+
+                 queryBuilder.append(" AND subOwnerShipCategory = ?");
+                 preparedStmtList.add(billingSlabSearcCriteria.getSubOwnerShipCategory());
+             }
+        }else {
+        	 if (!StringUtils.isEmpty(billingSlabSearcCriteria.getPropertySubType())) {
+
+                 queryBuilder.append(" AND propertySubType = ?");
+                 preparedStmtList.add(ALL);
+             }
+
+             if (!StringUtils.isEmpty(billingSlabSearcCriteria.getUsageCategoryMajor())) {
+
+                 queryBuilder.append(" AND usageCategoryMajor = ?");
+                 preparedStmtList.add(ALL);
+             }
+
+             if (!StringUtils.isEmpty(billingSlabSearcCriteria.getUsageCategoryMinor())) {
+
+                 queryBuilder.append(" AND usageCategoryMinor = ?");
+                 preparedStmtList.add(ALL);
+             }
+
+             if (!StringUtils.isEmpty(billingSlabSearcCriteria.getOwnerShipCategory())) {
+
+                 queryBuilder.append(" AND ownerShipCategory = ?");
+                 preparedStmtList.add(ALL);
+             }
+
+             if (!StringUtils.isEmpty(billingSlabSearcCriteria.getSubOwnerShipCategory())) {
+
+                 queryBuilder.append(" AND subOwnerShipCategory = ?");
+                 preparedStmtList.add(ALL);
+             }
         }
 
-        if (!StringUtils.isEmpty(billingSlabSearcCriteria.getUsageCategoryMajor())) {
-
-            queryBuilder.append(" AND usageCategoryMajor = ?");
-            preparedStmtList.add(billingSlabSearcCriteria.getUsageCategoryMajor());
-        }
-
-        if (!StringUtils.isEmpty(billingSlabSearcCriteria.getUsageCategoryMinor())) {
-
-            queryBuilder.append(" AND usageCategoryMinor = ?");
-            preparedStmtList.add(billingSlabSearcCriteria.getUsageCategoryMinor());
-        }
-
-        if (!StringUtils.isEmpty(billingSlabSearcCriteria.getOwnerShipCategory())) {
-
-            queryBuilder.append(" AND ownerShipCategory = ?");
-            preparedStmtList.add(billingSlabSearcCriteria.getOwnerShipCategory());
-        }
-
-        if (!StringUtils.isEmpty(billingSlabSearcCriteria.getSubOwnerShipCategory())) {
-
-            queryBuilder.append(" AND subOwnerShipCategory = ?");
-            preparedStmtList.add(billingSlabSearcCriteria.getSubOwnerShipCategory());
-        }
+       
         if (billingSlabSearcCriteria.getMarketValue() != null) {
 
             queryBuilder.append(" AND minMarketValue <= ?");
