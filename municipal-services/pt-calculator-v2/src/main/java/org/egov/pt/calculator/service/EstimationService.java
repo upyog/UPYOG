@@ -359,6 +359,8 @@ public class EstimationService {
 				 * counting the number of units & total area in ground floor for unbuilt area
 				 * tax calculation
 				 */
+				
+				//Ground Floor area is deducted as ground floor is connected to vacant land
 				if (unit.getFloorNo().equalsIgnoreCase("0")) {
 					groundUnitsCount += 1;
 					groundUnitsArea += unit.getUnitArea();
@@ -379,6 +381,7 @@ public class EstimationService {
 
 			BigDecimal unbuiltAmount = getUnBuiltRate(detail, unBuiltRate, groundUnitsCount, groundUnitsArea);
 			BigDecimal unbuiltarea=getUnBuiltAre(detail, unBuiltRate, groundUnitsCount, groundUnitsArea);
+			
 
 			/*
 			 * taxHeadEstimate = getBiilinfEstimatesForTax(requestInfo,unbuiltarea,
@@ -515,10 +518,14 @@ public class EstimationService {
 
 		String searchKey =null;
 
-		if(unit!=null)
+		if(unit!=null) {
 			searchKey=unit.getUsageCategoryMajor();
-		else
+		}
+			
+		else {
 			searchKey=detail.getUsageCategoryMajor();
+		}
+			
 
 		String assessmentYear = detail.getFinancialYear();
 

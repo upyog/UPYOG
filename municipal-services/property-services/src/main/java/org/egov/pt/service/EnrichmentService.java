@@ -316,7 +316,7 @@ public class EnrichmentService {
 			property.getUnits().forEach(unit -> {
 
 				unit.setId(UUID.randomUUID().toString());
-				unit.setActive(true);
+				unit.setActive(unit.getActive());
 			});
 		
 		property.getOwners().forEach(owner -> {

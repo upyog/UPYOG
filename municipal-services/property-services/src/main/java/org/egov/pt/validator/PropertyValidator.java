@@ -526,6 +526,7 @@ public class PropertyValidator {
 		if(ObjectUtils.isEmpty(institution))
 			return;
 
+		//In case institutional only , In manipur no institutional ownership category 
 		if (!property.getOwnershipCategory().contains("INSTITUTIONAL")) {
 
 			errorMap.put("INVALID INSTITUTION OBJECT",
