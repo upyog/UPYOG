@@ -362,7 +362,7 @@ public class PropertyService {
 		propertyValidator.validateBifurcation(request, propertyFromSearch);
 		userService.createUserForMutation(request, !propertyFromSearch.getStatus().equals(Status.INWORKFLOW));
 		enrichmentService.enrichAssignes(request.getProperty());
-		enrichmentService.enrichMutationRequest(request, propertyFromSearch);
+		enrichmentService.enrichBiFurcationRequest(request, propertyFromSearch);
 		//calculatorService.calculateMutationFee(request.getRequestInfo(), request.getProperty());
 
 		// TODO FIX ME block property changes FIXME

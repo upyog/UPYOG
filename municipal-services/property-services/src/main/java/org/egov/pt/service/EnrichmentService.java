@@ -270,6 +270,45 @@ public class EnrichmentService {
 		 AuditDetails auditDetails = propertyutil.getAuditDetails(requestInfo.getUserInfo().getUuid().toString(), true);
 		 property.setAuditDetails(auditDetails);
 	}
+	
+	
+	public void enrichBiFurcationRequest(PropertyRequest request, Property propertyFromSearch) {
+
+		RequestInfo requestInfo = request.getRequestInfo();
+		Property property = request.getProperty();
+		Boolean isWfEnabled = config.getIsMutationWorkflowEnabled();
+		Boolean iswfStarting = propertyFromSearch.getStatus().equals(Status.ACTIVE);
+		AuditDetails auditDetailsForUpdate = propertyutil.getAuditDetails(requestInfo.getUserInfo().getUuid().toString(), true);
+		propertyFromSearch.setAuditDetails(auditDetailsForUpdate);
+
+		if (!isWfEnabled) {
+
+			property.setStatus(Status.ACTIVE);
+
+		} else if (isWfEnabled && iswfStarting) {
+
+			enrichPropertyForBifurcation(requestInfo, property);
+		}
+
+		property.getOwners().forEach(owner -> {
+
+			if (owner.getOwnerInfoUuid() == null) {
+				
+				owner.setOwnerInfoUuid(UUID.randomUUID().toString());
+				owner.setStatus(Status.ACTIVE);
+			}
+
+			if (!CollectionUtils.isEmpty(owner.getDocuments()))
+				owner.getDocuments().forEach(doc -> {
+					if (doc.getId() == null) {
+						doc.setId(UUID.randomUUID().toString());
+						doc.setStatus(Status.ACTIVE);
+					}
+				});
+		});
+		 AuditDetails auditDetails = propertyutil.getAuditDetails(requestInfo.getUserInfo().getUuid().toString(), true);
+		 property.setAuditDetails(auditDetails);
+	}
 
 	/**
 	 * enrich property as new entry for workflow validation
@@ -285,6 +324,16 @@ public class EnrichmentService {
 			ackNo = propertyutil.getIdList(requestInfo, property.getTenantId(), config.getMutationIdGenName(), config.getMutationIdGenFormat(), 1).get(0);
 		} else
 			ackNo = propertyutil.getIdList(requestInfo, property.getTenantId(), config.getAckIdGenName(), config.getAckIdGenFormat(), 1).get(0);
+		property.setId(UUID.randomUUID().toString());
+		property.setAcknowldgementNumber(ackNo);
+		
+		enrichUuidsForNewUpdate(requestInfo, property);
+	}
+	
+	private void enrichPropertyForBifurcation(RequestInfo requestInfo, Property property) {
+		
+		String ackNo;
+		ackNo = propertyutil.getIdList(requestInfo, property.getTenantId(), config.getBifurcationIdGenName(), config.getBifurcationIdGenFormat(), 1).get(0);
 		property.setId(UUID.randomUUID().toString());
 		property.setAcknowldgementNumber(ackNo);
 		
