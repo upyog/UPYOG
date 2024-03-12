@@ -83,7 +83,8 @@ public class ChallanValidator {
 			for(Map<String,Object> financialYearProperties: taxPeriods){
 				Long startDate = (Long) financialYearProperties.get(MDMS_STARTDATE);
 				Long endDate = (Long) financialYearProperties.get(MDMS_ENDDATE);
-				if( challan.getTaxPeriodFrom() < challan.getTaxPeriodTo() && challan.getTaxPeriodFrom() >= startDate && challan.getTaxPeriodTo() <= endDate )
+				if (challan.getTaxPeriodFrom() <= challan.getTaxPeriodTo() && challan.getTaxPeriodFrom() >= startDate
+						&& challan.getTaxPeriodTo() <= endDate)
 				 	validFinancialYear = true;
 			}
 		 }
@@ -93,8 +94,8 @@ public class ChallanValidator {
 
         List<String> localityCodes = getLocalityCodes(challan.getTenantId(), request.getRequestInfo());
 
-        if(!localityCodes.contains(challan.getAddress().getLocality().getCode()))
-         	errorMap.put("Invalid Locality", "Locality details are invalid");
+//		if (!localityCodes.contains(challan.getAddress().getLocality().getCode()))
+//			errorMap.put("Invalid Locality", "Locality details are invalid");
 
         if(!currentTaxHeadCodes.isEmpty() && !requiredTaxHeadCodes.isEmpty()){
         	if(!currentTaxHeadCodes.containsAll(requiredTaxHeadCodes))
