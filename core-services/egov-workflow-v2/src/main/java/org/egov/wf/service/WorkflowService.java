@@ -20,6 +20,7 @@ import java.util.*;
 
 
 @Service
+@Slf4j
 public class WorkflowService {
 
     private WorkflowConfig config;
@@ -68,9 +69,10 @@ public class WorkflowService {
      */
     public List<ProcessInstance> transition(ProcessInstanceRequest request){
         RequestInfo requestInfo = request.getRequestInfo();
-
+		log.info("entering escalation1");
         List<ProcessStateAndAction> processStateAndActions = transitionService.getProcessStateAndActions(request.getProcessInstances(),true);
         enrichmentService.enrichProcessRequest(requestInfo,processStateAndActions);
+		log.info("entering escalation2");
         workflowValidator.validateRequest(requestInfo,processStateAndActions);
         statusUpdateService.updateStatus(requestInfo,processStateAndActions);
         return request.getProcessInstances();
