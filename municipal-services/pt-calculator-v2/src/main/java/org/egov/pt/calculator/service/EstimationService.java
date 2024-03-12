@@ -70,6 +70,7 @@ import static org.egov.pt.calculator.util.CalculatorConstants.PT_AGE_FACTOR_TAX;
 import static org.egov.pt.calculator.util.CalculatorConstants.PT_PAYBLE_TAX;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -927,6 +928,29 @@ public class EstimationService {
 				break;
 			}
 		}
+
+		BigDecimal paybletax=BigDecimal.ZERO;
+
+		//totalAmount=new BigDecimal(200).setScale(2,2);
+
+
+		paybletax=taxAmt.multiply(new BigDecimal(92)).divide(new
+				BigDecimal(100)).setScale(2, 2).negate();
+
+
+		if(taxAmt.compareTo(new BigDecimal(600)) > 0) 
+			taxAmt=taxAmt.multiply(new BigDecimal(8)).divide(new
+					BigDecimal(100)).setScale(2, 2);
+		
+		if(exemption.compareTo(BigDecimal.ZERO)==0) {
+			if(taxAmt.compareTo(new BigDecimal(600)) < 0) { 
+
+				paybletax=taxAmt.subtract(new BigDecimal(600)).negate().setScale(2,2); 
+				taxAmt=new BigDecimal(600);
+			}
+		}
+
+		
 		TaxHeadEstimate decimalEstimate = payService.roundOfDecimals(taxAmt.add(penalty), rebate.add(exemption));
 		
 		if (null != decimalEstimate) {
@@ -938,35 +962,17 @@ public class EstimationService {
 				rebate = rebate.add(decimalEstimate.getEstimateAmount());
 		}
 
+		final BigDecimal NewtaxAmmount=taxAmt;
+		estimates.stream().forEach(t->
+		{
+			if(t.getTaxHeadCode().equalsIgnoreCase("PT_TAX")) 
+				t.setEstimateAmount(NewtaxAmmount);
+			
+		});
 
 		BigDecimal totalAmount = taxAmt.add(penalty).add(rebate).add(exemption);
 
-
-		BigDecimal paybletax=BigDecimal.ZERO;
-
-		//totalAmount=new BigDecimal(200).setScale(2,2);
-
-
-		paybletax=totalAmount.multiply(new BigDecimal(92)).divide(new
-				BigDecimal(100)).setScale(2, 2).negate();
-
-
-		if(totalAmount.compareTo(new BigDecimal(600)) > 0) {
-			totalAmount=totalAmount.multiply(new BigDecimal(8)).divide(new
-					BigDecimal(100));
-		}
-
-		if(exemption.compareTo(BigDecimal.ZERO)==0) {
-			if(totalAmount.compareTo(new BigDecimal(600)) < 0) { 
-
-				//paybletax=totalAmount.negate();
-				paybletax=taxAmt.subtract(new BigDecimal(600)).negate().setScale(2,2); 
-				totalAmount=new BigDecimal(600);
-			}
-		}
-
-
-		estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_PAYBLE_TAX).category(Category.DEFICIT).estimateAmount( paybletax).build());
+		//estimates.add(TaxHeadEstimate.builder().taxHeadCode(PT_PAYBLE_TAX).category(Category.DEFICIT).estimateAmount( paybletax).build());
 
 		// false in the argument represents that the demand shouldn't be updated from this call
 		Demand oldDemand = utils.getLatestDemandForCurrentFinancialYear(requestInfo,criteria);
@@ -1186,7 +1192,8 @@ public class EstimationService {
 			BigDecimal currentExemption = mDataService.calculateApplicables(taxAmt,
 					applicableOwnerType.get(EXEMPTION_FIELD_NAME));
 
-			userExemption = taxAmt.multiply(currentExemption);
+			//userExemption = taxAmt.multiply(currentExemption);
+			userExemption = taxAmt.add(currentExemption);
 		}
 
 		return userExemption;
