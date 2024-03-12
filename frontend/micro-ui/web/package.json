@@ -13,7 +13,9 @@
     "micro-ui-internals/packages/modules/pt",
     "micro-ui-internals/packages/modules/commonPt",
     "micro-ui-internals/packages/modules/mCollect",
-    "micro-ui-internals/packages/modules/obps"
+    "micro-ui-internals/packages/modules/obps",
+    "micro-ui-internals/packages/modules/ptr"
+
 
 
   ],
@@ -39,6 +41,7 @@
     "@egovernments/digit-ui-module-receipts": "1.7.0-beta.2",
     "@upyog/digit-ui-module-tl": "1.7.0-beta.2",
     "@upyog/digit-ui-module-ws": "1.7.0-beta.2",
+    "@upyog-niua/upyog-ui-module-ptr": "1.0.7",
     "@egovernments/digit-ui-react-components": "1.7.0-beta.2",
     "babel-loader": "8.1.0",
     "react": "17.0.2",

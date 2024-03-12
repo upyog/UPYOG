@@ -88,6 +88,17 @@ const Urls = {
     
   },
 
+  ptr: {  
+    
+    create:"/pet-services/pet-registration/_create",
+    search:"/pet-services/pet-registration/_search",
+    update:"/pet-services/pet-registration/_update",
+    fetch_payment_details: "/billing-service/bill/v2/_fetchbill",
+    payment_search: "/collection-services/payments/pet-services/_search",
+    
+  },
+
+
   dss: {
     dashboardConfig: "/dashboard-analytics/dashboard/getDashboardConfig",
     getCharts: "/dashboard-analytics/dashboard/getChartV2",

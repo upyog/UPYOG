@@ -49,6 +49,8 @@ import { NOCSearch } from "./services/molecules/NOC/Search";
 import AccessControlService from "./services/elements/Access";
 import BillServices from "./services/elements/Bill";
 import { CFService } from "./services/elements/CF";
+import { PTRService } from "./services/elements/PTR";     
+
 
 import {CustomService} from "./services/elements/CustomService";    
 
@@ -63,6 +65,7 @@ const initLibraries = () => {
   setupLibraries("PersistantStorage", PersistantStorage);
   setupLibraries("UserService", UserService);
   setupLibraries("ULBService", ULBService);
+  setupLibraries("PTRService", PTRService); 
 
   setupLibraries("Config", { mergeConfig });
   setupLibraries("Services", { useStore });
