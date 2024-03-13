@@ -145,12 +145,12 @@ public class EncryptionDecryptionUtil {
 
 
         else if (isDecryptionForIndividualUser(objectToDecrypt)){
-            keyPurposeMap.put("key","User");
+            keyPurposeMap.put("key","UserListSelf");
             keyPurposeMap.put("purpose","SingleSearchResult");
         }
 
         else{
-            keyPurposeMap.put("key","User");
+            keyPurposeMap.put("key","UserListSelf");
             keyPurposeMap.put("purpose","BulkSearchResult");
         }
 

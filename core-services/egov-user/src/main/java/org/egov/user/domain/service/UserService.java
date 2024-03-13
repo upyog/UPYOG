@@ -231,7 +231,7 @@ public class UserService {
         user.setDefaultPasswordExpiry(defaultPasswordExpiryInDays);
         user.setTenantId(getStateLevelTenantForCitizen(user.getTenantId(), user.getType()));
         User persistedNewUser = persistNewUser(user);
-        return encryptionDecryptionUtil.decryptObject(persistedNewUser, "User", User.class, requestInfo);
+        return encryptionDecryptionUtil.decryptObject(persistedNewUser, null, User.class, requestInfo);
 
         /* decrypt here  because encrypted data coming from DB*/
 
