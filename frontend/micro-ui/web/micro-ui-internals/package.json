@@ -15,9 +15,7 @@
     "packages/modules/pt",
     "packages/modules/tl",
     "packages/modules/mCollect",
-    "packages/module/engagement",
-    "packages/modules/receipts",
-    "packages/modules/bills"
+    "packages/module/engagement"
   ],
   "author": "Abhinav Kushwaha <abhinav.kushwaha@egovernments.org>",
   "license": "MIT",
@@ -63,14 +61,14 @@
     "buildD:fsm": "cd packages/modules/fsm && yarn build",
     "build:dss": "cd packages/modules/dss && yarn build",
     "build:mcollect": "cd packages/modules/mCollect && yarn build",
-    "build:receipts": "cd packages/modules/receipts && yarn build",
+    "buildD:receipts": "cd packages/modules/receipts && yarn build",
     "build:tl": "cd packages/modules/tl && yarn build",
     "buildD:hrms": "cd packages/modules/hrms && yarn build",
-    "build:obps": "cd packages/modules/obps && yarn build",
+    "buildD:obps": "cd packages/modules/obps && yarn build",
     "buildD:engagement": "cd packages/modules/engagement && yarn build",
     "buildD:noc": "cd packages/modules/noc && yarn build",
     "buildD:ws": "cd packages/modules/ws && yarn build",
-    "build:bills": "cd packages/modules/bills && yarn build",
+    "buildD:bills": "cd packages/modules/bills && yarn build",
     "buildR:reports": "cd packages/modules/reports && yarn build",
     "deploy:jenkins": "./scripts/jenkins.sh"
   },
