@@ -1,10 +1,10 @@
 
-# digit-ui-react-components
+# digit-ui-module-dss
 
 ## Install
 
 ```bash
-npm install --save @egovernments/digit-ui-react-components
+npm install --save @egovernments/digit-ui-module-dss
 ```
 
 ## Limitation
@@ -22,7 +22,7 @@ frontend/micro-ui/web/package.json
 ```
 
 ```json
-"@egovernments/digit-ui-react-components":"1.5.24",
+"@egovernments/digit-ui-module-dss":"^1.5.0",
 ```
 
 then navigate to App.js
@@ -31,17 +31,24 @@ then navigate to App.js
  frontend/micro-ui/web/src/App.js
 ```
 
-Syntax for importing any component;
 
 ```jsx
-import React, { Component } from "react";
-import MyComponent from "@egovernments/digit-ui-react-components";
+/** add this import **/
 
-class Example extends Component {
-  render() {
-    return <MyComponent />;
-  }
-}
+import { initDSSComponents } from "@egovernments/digit-ui-module-dss";
+
+/** inside enabledModules add this new module key **/
+
+const enabledModules = ["DSS"];
+
+/** inside init Function call this function **/
+
+const initDigitUI = () => {
+  initDSSComponents();
+};
+```
+
+
 
 ### Changelog
 
@@ -51,7 +58,7 @@ class Example extends Component {
 
 ### Contributors
 
-[jagankumar-egov] [nipunarora-eGov] [Tulika-eGov] [Ramkrishna-egov] [nabeelmd-eGov] [anil-egov] [vamshikrishnakole-wtt-egov] 
+[jagankumar-egov] [nipunarora-eGov] [Tulika-eGov] [Ramkrishna-egov] [nabeelmd-eGov]
 
 ## Documentation
 
@@ -63,7 +70,7 @@ Documentation Site (https://core.digit.org/guides/developer-guide/ui-developer-g
 
 
 ### Published from DIGIT Frontend 
-DIGIT Frontend Repo (https://github.com/egovernments/UPYOG/tree/develop)
+DIGIT Frontend Repo (https://github.com/egovernments/UPYOG/tree/master)
 
 
 ![Logo](https://s3.ap-south-1.amazonaws.com/works-dev-asset/mseva-white-logo.png)

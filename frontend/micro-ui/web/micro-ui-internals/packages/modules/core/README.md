@@ -1,10 +1,10 @@
 
-# digit-ui-react-components
+# digit-ui-module-core
 
 ## Install
 
 ```bash
-npm install --save @egovernments/digit-ui-react-components
+npm install --save @egovernments/digit-ui-module-core
 ```
 
 ## Limitation
@@ -22,7 +22,7 @@ frontend/micro-ui/web/package.json
 ```
 
 ```json
-"@egovernments/digit-ui-react-components":"1.5.24",
+"@egovernments/digit-ui-module-core":"^1.5.0",
 ```
 
 then navigate to App.js
@@ -31,22 +31,24 @@ then navigate to App.js
  frontend/micro-ui/web/src/App.js
 ```
 
-Syntax for importing any component;
-
 ```jsx
-import React, { Component } from "react";
-import MyComponent from "@egovernments/digit-ui-react-components";
+/** add this import **/
 
-class Example extends Component {
-  render() {
-    return <MyComponent />;
-  }
-}
+import { DigitUI } from "@egovernments/digit-ui-module-core";
+
+
+/** inside render Function add  the import for the component **/
+
+  ReactDOM.render(<DigitUI stateCode={stateCode} enabledModules={enabledModules} moduleReducers={moduleReducers} />, document.getElementById("root"));
+
+```
+
+
 
 ### Changelog
 
 ```bash
-1.7.1 UPYOG base version
+1.7.1 UPYOG Base version
 ```
 
 ### Contributors
