@@ -56,7 +56,7 @@ public class BPAValidator {
 	public void validateCreate(BPARequest bpaRequest, Object mdmsData, Map<String, String> values) {
 		mdmsValidator.validateMdmsData(bpaRequest, mdmsData);
 		validateApplicationDocuments(bpaRequest, mdmsData, null, values);
-		validateApplication(bpaRequest);
+		//validateApplication(bpaRequest);
 	}
 
 
