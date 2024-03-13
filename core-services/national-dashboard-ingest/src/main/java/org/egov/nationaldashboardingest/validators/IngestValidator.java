@@ -439,7 +439,7 @@ public class IngestValidator {
                     if (a.get("groupBy").equals("usageCategory") || a.get("groupBy").equals("usageType")) {
                         List < HashMap < String, String >> valuess = (List < HashMap < String, String >> ) a.get("buckets");
                         for (HashMap < String, String > b: valuess)
-                            usageCategory.add(b.get("name"));
+                            usageCategory.add(toCamelCase(b.get("name")));
                     }
                 }
                 }
