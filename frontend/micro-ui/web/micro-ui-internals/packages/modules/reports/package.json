@@ -1,6 +1,6 @@
 {
-    "name": "@upyog/digit-ui-module-reports",
-    "version": "1.0.0",
+    "name": "@egovernments/digit-ui-module-reports",
+    "version": "1.0.1",
     "description": "REPORTS",
     "license": "MIT",
     "main": "dist/index.js",

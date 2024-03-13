@@ -1,5 +1,5 @@
 {
-  "name": "@upyog/digit-ui-react-components",
+  "name": "@egovernments/digit-ui-react-components",
   "version": "1.7.2",
   "license": "MIT",
   "main": "dist/index.js",
