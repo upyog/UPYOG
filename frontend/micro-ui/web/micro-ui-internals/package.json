@@ -7,17 +7,8 @@
     "packages/css",
     "example",
     "packages/react-components",
-    "packages/modules/common",
-    "packages/modules/core",
-    "packages/modules/pgr",
-    "packages/modules/dss",
-    "packages/modules/*",
-    "packages/modules/pt",
-    "packages/modules/tl",
-    "packages/modules/mCollect",
-    "packages/module/engagement"
+    "packages/modules/*"
   ],
-  "author": "Abhinav Kushwaha <abhinav.kushwaha@egovernments.org>",
   "license": "MIT",
   "private": true,
   "engines": {
