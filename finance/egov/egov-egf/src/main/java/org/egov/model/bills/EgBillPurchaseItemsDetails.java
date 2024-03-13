@@ -36,6 +36,11 @@ public class EgBillPurchaseItemsDetails implements java.io.Serializable{
 	private Long createdby;
 	@Column(name="lastmodifiedby")
 	private Long lastmodifiedby;
+	@Column (name="gstrate")
+	private Long gstRate;
+	@Column (name="unitvaluewithgst")
+	private double unitValueWithGst;
+	
 	
 	@ManyToOne()
 	@JoinColumn(name = "purchaseorder_id", referencedColumnName = "id")	
@@ -106,6 +111,20 @@ public class EgBillPurchaseItemsDetails implements java.io.Serializable{
 		this.lastmodifiedby = lastmodifiedby;
 	}
 	
+	public Long getGstRate() {
+		return gstRate;
+	}
+	public void setGstRate(Long gstRate) {
+		this.gstRate = gstRate;
+	}
+	
+	public double getUnitValueWithGst() {
+		return unitValueWithGst;
+	}
+	public void setUnitValueWithGst(double unitValueWithGst) {
+		this.unitValueWithGst = unitValueWithGst;
+	}
+
 	
 	public EgBillPurchaseItemsDetails() {
 		// TODO Auto-generated constructor stub

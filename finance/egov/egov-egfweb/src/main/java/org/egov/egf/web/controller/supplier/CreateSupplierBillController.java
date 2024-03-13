@@ -98,10 +98,7 @@ import org.egov.model.bills.EgBillPayeedetails;
 import org.egov.model.bills.EgBillPurchaseItemsDetails;
 import org.egov.model.bills.EgBilldetails;
 import org.egov.model.bills.EgBillregister;
-<<<<<<< HEAD
 import org.egov.model.budget.BudgetDetail;
-=======
->>>>>>> 8d2ef484acce46e0f39d80188c2b43ccca9e9508
 import org.egov.model.masters.PurchaseItems;
 import org.egov.model.masters.PurchaseOrder;
 import org.egov.services.bills.EgBillRegisterService;
@@ -126,11 +123,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-<<<<<<< HEAD
 
 
-=======
->>>>>>> 8d2ef484acce46e0f39d80188c2b43ccca9e9508
 
 /**
  * @author venki
@@ -213,12 +207,9 @@ public class CreateSupplierBillController extends BaseBillController {
 	@Autowired
 	private PurchaseItemsBillRegisterRepository purchaseItemsBillRegisterRepository;
 	
-<<<<<<< HEAD
 	 @Autowired
 	    private EgBillRegisterService egBillRegisterservice;
 	
-=======
->>>>>>> 8d2ef484acce46e0f39d80188c2b43ccca9e9508
 
 	public CreateSupplierBillController(final AppConfigValueService appConfigValuesService) {
 		super(appConfigValuesService);
@@ -259,7 +250,6 @@ public class CreateSupplierBillController extends BaseBillController {
 	}
 	
 	
-<<<<<<< HEAD
 	//added bydepak
 	
 	@GetMapping(value = "/code")
@@ -294,8 +284,6 @@ public class CreateSupplierBillController extends BaseBillController {
 	 * 
 	 */
 	
-=======
->>>>>>> 8d2ef484acce46e0f39d80188c2b43ccca9e9508
 
 	// TODO      Ajax call for get purchaseItems
 	@GetMapping(value = "/get/purchaseItems")
@@ -332,11 +320,7 @@ public class CreateSupplierBillController extends BaseBillController {
 		
 		
 		//System.out.println(egBillregister.getPurchaseItems().size());
-<<<<<<< HEAD
 		
-=======
-			
->>>>>>> 8d2ef484acce46e0f39d80188c2b43ccca9e9508
 		
 		if (FinancialConstants.BUTTONFORWARD.equalsIgnoreCase(workFlowAction) && !commonsUtil
 				.isValidApprover(egBillregister, Long.valueOf(request.getParameter(APPROVAL_POSITION)))) {
