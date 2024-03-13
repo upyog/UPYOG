@@ -416,7 +416,7 @@ export const convertToBPAObject = (data, isOCBPA = false, isSendBackTOCitizen = 
           {"BPA_DEVELOPMENT_CHARGES":sessionStorage.getItem("lessAdjusment")},
           {"BPA_OTHER_CHARGES":sessionStorage.getItem("otherCharges")}
           ],
-          P1charges:data?.data?.boundaryWallLength*2.5 + sessionStorage.getItem("plotArea") * 2.5,
+          P1charges:data?.data?.boundaryWallLength*2.5 + parseInt(sessionStorage.getItem("plotArea")) * 2.5,
         GISPlaceName : data?.address?.placeName,
         holdingNo: data?.data?.holdingNumber ? data?.data?.holdingNumber : data?.additionalDetails?.holdingNo,
         boundaryWallLength:data?.data?.boundaryWallLength ? data?.data?.boundaryWallLength : data?.additionalDetails?.boundaryWallLength , 

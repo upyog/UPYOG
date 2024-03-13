@@ -33,10 +33,11 @@ import {
     const { data, address, owners, nocDocuments, documents, additionalDetails, subOccupancy,PrevStateDocuments,PrevStateNocDocuments,applicationNo } = value;
     const isEditApplication = window.location.href.includes("editApplication");
     useEffect(()=>{
-console.log("mdmsData",mdmsData)
-const LabourCess = sessionStorage.getItem("plotArea") > 909 ?mdmsData?.BPA?.LabourCess[1].rate * sessionStorage.getItem("plotArea") : sessionStorage.getItem("plotArea")*0
+console.log("mdmsData",mdmsData,sessionStorage.getItem("plotArea"),typeof(sessionStorage.getItem("plotArea")))
+let plotArea = parseInt(sessionStorage.getItem("plotArea"))
+const LabourCess = plotArea > 909 ?mdmsData?.BPA?.LabourCess[1].rate * plotArea : 0
  const GaushalaFees =  mdmsData?.BPA?.GaushalaFees[0].rate  
- const Malbafees = (sessionStorage.getItem("plotArea") <=500 ?mdmsData?.BPA?.MalbaCharges[0].rate :sessionStorage.getItem("plotArea") >500 && sessionStorage.getItem("plotArea") <=1000 ?mdmsData?.MalbaCharges?.BPA[1].rate :mdmsData?.MalbaCharges?.BPA[2].rate || 500)
+ const Malbafees = (plotArea <=500 ?mdmsData?.BPA?.MalbaCharges[0].rate :plotArea >500 && plotArea <=1000 ?mdmsData?.MalbaCharges?.BPA[1].rate :mdmsData?.MalbaCharges?.BPA[2].rate || 500)
 sessionStorage.setItem("Malbafees",Malbafees)
 sessionStorage.setItem("WaterCharges",Malbafees/2)
 sessionStorage.setItem("GaushalaFees",GaushalaFees)
@@ -45,6 +46,7 @@ setGaushalaFees(GaushalaFees)
 setLabourCess(LabourCess)
 setMalbafees(Malbafees)
 setWaterCharges(Malbafees/2)
+console.log("mdmsData",mdmsData,Malbafees,plotArea)
 },[mdmsData])
       // for application documents
       let improvedDoc = [];
@@ -353,7 +355,7 @@ setWaterCharges(Malbafees/2)
       ))} */}
        {/* <Row className="border-none" label={t(`BPA_COMMON_TOTAL_AMT`)} text={`₹ ${paymentDetails?.Bill?.[0]?.billDetails[0]?.amount || "0"}`} /> */}
        <CardSubHeader>{t("BPA_P1_SUMMARY_FEE_EST")}</CardSubHeader> 
-       <Row className="border-none" label={t(`BPA_COMMON_P1_AMT`)} text={`₹ ${data?.boundaryWallLength*2.5 + sessionStorage.getItem("plotArea") * 2.5}`} />
+       <Row className="border-none" label={t(`BPA_COMMON_P1_AMT`)} text={`₹ ${data?.boundaryWallLength*2.5 + parseInt(sessionStorage.getItem("plotArea")) * 2.5}`} />
        <CardSubHeader>{t("BPA_P2_SUMMARY_FEE_EST")}</CardSubHeader> 
        
        <Row className="border-none" label={t(`BPA_COMMON_MALBA_AMT`)} text={`₹ ${malbafees}`} />
