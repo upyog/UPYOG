@@ -15,8 +15,10 @@ import org.springframework.stereotype.Service;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 public class EscalationService {
 
 
@@ -53,6 +55,7 @@ public class EscalationService {
      */
     public void escalateApplications(RequestInfo requestInfo, String businessService){
 
+    	log.info("Entering");
         Object mdmsData = mdmsService.mDMSCall(requestInfo);
         List<Escalation> escalations = escalationUtil.getEscalationsFromConfig(businessService, mdmsData);
         List<String> tenantIds = escalationUtil.getTenantIds(mdmsData);
@@ -73,6 +76,7 @@ public class EscalationService {
      */
     private void processEscalation(RequestInfo requestInfo, Escalation escalation, List<String> tenantIds){
 
+    	log.info("checking UUID");
         for(String tenantId: tenantIds){
 
 
