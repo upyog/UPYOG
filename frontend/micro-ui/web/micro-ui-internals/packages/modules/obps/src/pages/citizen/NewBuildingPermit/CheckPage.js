@@ -1,8 +1,8 @@
 import {
-    Card, CardHeader, CardSubHeader, CardText,
+    Card, CardHeader, CardSubHeader, CardText,TextInput,CardLabel,
     CitizenInfoLabel, Header, LinkButton, Row, StatusTable, SubmitBar, Table, CardSectionHeader, EditIcon, PDFSvg, Loader
   } from "@upyog/digit-ui-react-components";
-  import React,{ useMemo }  from "react";
+  import React,{ useEffect, useMemo, useState }  from "react";
   import { useTranslation } from "react-i18next";
   import { useHistory, useRouteMatch } from "react-router-dom";
   import Timeline from "../../../components/Timeline";
@@ -10,11 +10,20 @@ import {
   import DocumentsPreview from "../../../../../templates/ApplicationDetails/components/DocumentsPreview";
 
   const CheckPage = ({ onSubmit, value }) => {
+    const [development, setDevelopment] = useState()
+    const [otherCharges, setOtherCharges] = useState()
+    const [lessAdjusment, setLessAdjusment] = useState()
+    const [labourCess , setLabourCess] =useState()
+    const [gaushalaFees , setGaushalaFees] =useState()
+    const [malbafees , setMalbafees] =useState()
+    const [waterCharges , setWaterCharges] =useState()
     const { t } = useTranslation();
     const history = useHistory();
     const match = useRouteMatch();
     let user = Digit.UserService.getUser();
+    const state = Digit.ULBService.getStateId();
     const tenantId = user?.info?.permanentCity || value?.tenantId ||Digit.ULBService.getCurrentTenantId() ;
+    const { isMdmsLoading, data: mdmsData } = Digit.Hooks.obps.useMDMS(state, "BPA", ["GaushalaFees","MalbaCharges","LabourCess"]);
     let BusinessService;
     if(value.businessService === "BPA_LOW")
     BusinessService="BPA.LOW_RISK_PERMIT_FEE";
@@ -23,7 +32,22 @@ import {
 
     const { data, address, owners, nocDocuments, documents, additionalDetails, subOccupancy,PrevStateDocuments,PrevStateNocDocuments,applicationNo } = value;
     const isEditApplication = window.location.href.includes("editApplication");
-    
+    useEffect(()=>{
+console.log("mdmsData",mdmsData,sessionStorage.getItem("plotArea"),typeof(sessionStorage.getItem("plotArea")))
+let plotArea = parseInt(sessionStorage.getItem("plotArea"))
+const LabourCess = plotArea > 909 ?mdmsData?.BPA?.LabourCess[1].rate * plotArea : 0
+ const GaushalaFees =  mdmsData?.BPA?.GaushalaFees[0].rate  
+ const Malbafees = (plotArea <=500 ?mdmsData?.BPA?.MalbaCharges[0].rate :plotArea >500 && plotArea <=1000 ?mdmsData?.BPA?.MalbaCharges?.[1].rate :mdmsData?.BPA?.MalbaCharges[2].rate || 500)
+sessionStorage.setItem("Malbafees",Malbafees)
+sessionStorage.setItem("WaterCharges",Malbafees/2)
+sessionStorage.setItem("GaushalaFees",GaushalaFees)
+sessionStorage.setItem("LabourCess",LabourCess)
+setGaushalaFees(GaushalaFees)
+setLabourCess(LabourCess)
+setMalbafees(Malbafees)
+setWaterCharges(Malbafees/2)
+console.log("mdmsData",mdmsData,mdmsData?.MalbaCharges?.BPA[1].rate,plotArea)
+},[mdmsData])
       // for application documents
       let improvedDoc = [];
       PrevStateDocuments?.map(preDoc => { improvedDoc.push({...preDoc, module: "OBPS"}) });
@@ -324,16 +348,65 @@ import {
       <Card style={{paddingRight:"16px"}}>
       <CardSubHeader>{t("BPA_SUMMARY_FEE_EST")}</CardSubHeader> 
       <StatusTable>
-      {paymentDetails?.Bill[0]?.billDetails[0]?.billAccountDetails.map((bill,index)=>(
+      {/* {paymentDetails?.Bill[0]?.billDetails[0]?.billAccountDetails.map((bill,index)=>(
         <div key={index}>
           <Row className="border-none" label={t(`${bill.taxHeadCode}`)} text={`₹ ${bill?.amount}`} />
         </div>
-      ))}
-       <Row className="border-none" label={t(`BPA_COMMON_TOTAL_AMT`)} text={`₹ ${paymentDetails?.Bill?.[0]?.billDetails[0]?.amount || "0"}`} />
+      ))} */}
+       {/* <Row className="border-none" label={t(`BPA_COMMON_TOTAL_AMT`)} text={`₹ ${paymentDetails?.Bill?.[0]?.billDetails[0]?.amount || "0"}`} /> */}
+       <CardSubHeader>{t("BPA_P1_SUMMARY_FEE_EST")}</CardSubHeader> 
+       <Row className="border-none" label={t(`BPA_COMMON_P1_AMT`)} text={`₹ ${data?.boundaryWallLength*2.5 + parseInt(sessionStorage.getItem("plotArea")) * 2.5}`} />
+       <CardSubHeader>{t("BPA_P2_SUMMARY_FEE_EST")}</CardSubHeader> 
+       
+       <Row className="border-none" label={t(`BPA_COMMON_MALBA_AMT`)} text={`₹ ${malbafees}`} />
+       <Row className="border-none" label={t(`BPA_COMMON_LABOUR_AMT`)} text={`₹ ${labourCess}`} />
+       <Row className="border-none" label={t(`BPA_COMMON_WATER_AMT`)} text={`₹ ${waterCharges}`} />
+       <Row className="border-none" label={t(`BPA_COMMON_GAUSHALA_AMT`)} text={`₹ ${gaushalaFees}`} />
+       <CardSubHeader>{t("BPA_P2_SUMMARY_FEE_EST_MANUAL")}</CardSubHeader>
+       <CardLabel>{t("BPA_COMMON_DEVELOPMENT_AMT")}</CardLabel>
+            <TextInput
+              t={t}
+              type={"text"}
+              isMandatory={false}
+              optionKey="i18nKey"
+              name="email"
+              value={development}
+              onChange={(e) => {setDevelopment(e.target.value),sessionStorage.setItem("development",e.target.value)}}
+              //disable={userInfo?.info?.emailId && !isOpenLinkFlow ? true : false}
+              //disable={editScreen}
+              //{...{ required: true, pattern: "[A-Za-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$", type: "email", title: t("CORE_COMMON_APPLICANT_MOBILE_NUMBER_INVALID") }}
+            />
+               <CardLabel>{t("BPA_COMMON_OTHER_AMT")}</CardLabel>
+            <TextInput
+              t={t}
+              type={"text"}
+              isMandatory={false}
+              optionKey="i18nKey"
+              name="email"
+              value={otherCharges}
+              onChange={(e) => {setOtherCharges(e.target.value),sessionStorage.setItem("otherCharges",e.target.value)}}
+              //disable={userInfo?.info?.emailId && !isOpenLinkFlow ? true : false}
+              //disable={editScreen}
+              //{...{ required: true, pattern: "[A-Za-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$", type: "email", title: t("CORE_COMMON_APPLICANT_MOBILE_NUMBER_INVALID") }}
+            />
+                <CardLabel>{t("BPA_COMMON_LESS_AMT")}</CardLabel>
+            <TextInput
+              t={t}
+              type={"text"}
+              isMandatory={false}
+              optionKey="i18nKey"
+              name="email"
+              value={lessAdjusment}
+              onChange={(e) => {setLessAdjusment(e.target.value),sessionStorage.setItem("lessAdjusment",e.target.value)}}
+              //disable={userInfo?.info?.emailId && !isOpenLinkFlow ? true : false}
+              //disable={editScreen}
+              //{...{ required: true, pattern: "[A-Za-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$", type: "email", title: t("CORE_COMMON_APPLICANT_MOBILE_NUMBER_INVALID") }}
+            />
+       
        </StatusTable>
       <hr style={{color:"#cccccc",backgroundColor:"#cccccc",height:"2px",marginTop:"20px",marginBottom:"20px"}}/>
-      <CardHeader>{t("BPA_COMMON_TOTAL_AMT")}</CardHeader> 
-      <CardHeader>₹ {paymentDetails?.Bill?.[0]?.billDetails[0]?.amount || "0"}</CardHeader> 
+      {/* <CardHeader>{t("BPA_COMMON_TOTAL_AMT")}</CardHeader> 
+      <CardHeader>₹ {paymentDetails?.Bill?.[0]?.billDetails[0]?.amount || "0"}</CardHeader>  */}
       <SubmitBar label={t("BPA_SEND_TO_CITIZEN_LABEL")} onSubmit={onSubmit} />
       </Card>
     </React.Fragment>
