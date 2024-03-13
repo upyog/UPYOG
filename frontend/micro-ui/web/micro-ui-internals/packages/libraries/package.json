@@ -1,5 +1,5 @@
 {
-  "name": "@egovernments/digit-ui-libraries",
+  "name": "@upyog/digit-ui-libraries",
   "version": "1.7.1",
   "main": "dist/index.js",
   "module": "dist/index.modern.js",
