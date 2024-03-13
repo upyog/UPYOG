@@ -16,6 +16,8 @@
 				<th><%-- <spring:message code="lbl.account.code"/> --%>Items</th>
 				<th><%-- <spring:message code="lbl.account.head"/> --%>Unit</th>
 				<th><%-- <spring:message code="lbl.debit.amount"/> --%>UnitRate</th>
+				<th><%-- <spring:message code="lbl.account.head"/> --%>GSTRate</th>
+				<th><%-- <spring:message code="lbl.debit.amount"/> --%>UnitValueWithGST</th>
 				<th><%-- <spring:message code="lbl.credit.amount"/> --%>Quantity</th>
 				<th><%-- <spring:message code="lbl.action"/> --%>Amount</th>
 				<th><spring:message code="lbl.action"/></th>  					
@@ -43,6 +45,13 @@
 			</td>
 			<td>
 				<form:input path="purchaseItems[0].unitRate" id="purchaseItems[0].unitRate" class="form-control table-input unitRate" data-errormsg="Unit Rate is mandatory!"  maxlength="12"  />
+			</td> 
+			
+			<td>
+				<form:input path="purchaseItems[0].gstRate" id="purchaseItems[0].gstRate" class="form-control table-input gstRate" data-errormsg="GST Rate is mandatory!"  maxlength="12"  />
+			</td> 
+			<td>
+				<form:input path="purchaseItems[0].unitValueWithGst" id="purchaseItems[0].unitValueWithGst" class="form-control table-input unitValueWithGst" data-errormsg="Unit Value With Gst is mandatory!"  maxlength="12"  />
 			</td> 
 			<td>
 				<form:input path="purchaseItems[0].quantity" id="purchaseItems[0].quantity" class="form-control table-input quantity" data-errormsg="Quantity is mandatory!"    maxlength="12" />
@@ -75,6 +84,12 @@
 				<form:input path="purchaseItems[${item.index}].unitRate" id="purchaseItems[${item.index}].unitRate" class="form-control table-input unitRate" data-errormsg="Unit Rate is mandatory!"  maxlength="12"  value="${billDeatils.unitRate}"/>
 			</td> 
 			<td>
+				<form:input path="purchaseItems[${item.index}].gstRate" id="purchaseItems[${item.index}].gstRate" class="form-control table-input gstRate" data-errormsg="GST Rate is mandatory!"  maxlength="12"  value="${billDeatils.gstRate}"/>
+			</td> 
+			<td>
+				<form:input path="purchaseItems[${item.index}].unitValueWithGst" id="purchaseItems[${item.index}].unitValueWithGst" class="form-control table-input unitValueWithGst" data-errormsg="Unit Value With Gst is mandatory!"  maxlength="12"  value="${billDeatils.unitValueWithGst}"/>
+			</td> 
+			<td>
 				<form:input path="purchaseItems[${item.index}].quantity" id="purchaseItems[${item.index}].quantity" class="form-control table-input quantity" data-errormsg="Quantity is mandatory!"    maxlength="12"  value="${billDeatils.quantity}"/>
 			</td> 
 			<td>
@@ -91,6 +106,9 @@
 		</tbody>
 		<tfoot>
 		<tr>
+		<td></td>
+		<td></td>
+		<td></td>
 		<td></td>
 		<td></td>
 		<td></td>
@@ -113,28 +131,47 @@
 <script
         src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/services/egi'/>"></script>
         
-        
-
 <script>
 
-$(document).on('input', '.unitRate, .quantity', function () {
+$(document).on('input', '.unitRate, .gstRate, .quantity', function () {
         // Get the values of unit rate and quantity from the current row
         var unitRate = parseFloat($(this).closest('tr').find('.unitRate').val()) || 0;
         var quantity = parseInt($(this).closest('tr').find('.quantity').val()) || 0;
-
+        var gstRate = parseInt($(this).closest('tr').find('.gstRate').val()) || 0;
+       //var unitValueWithGst = parseInt($(this).closest('tr').find('.unitValueWithGst').val()) || 0;
+        console.log("deepu== gstRate: "+gstRate);
+        //calculate unitValuewithGst
+         var unitValueWithGst= ((unitRate* gstRate) / 100) + unitRate;
+         
+        console.log("deepu== unitValueWithGst: "+unitValueWithGst);
         // Calculate the amount
-        var amount = unitRate * quantity;
-
+        var amount = unitValueWithGst * quantity;
+        
+        $(this).closest('tr').find('.unitValueWithGst').val(unitValueWithGst.toFixed(2));
+        
+        //updateunitValueWithGst();
         // Update the amount field in the current row
         $(this).closest('tr').find('.amount').val(amount.toFixed(2));
         updateTotalAmount();
     });
     
-
-    function updateTotalAmount(){
     
-    	var totalAmount = 0;
+    function updateUnitValueWithGst(){
+     $('#tbldebitdetails tbody tr').each(function () {
+        // Get the unit rate and GST rate from the current row
+        var unitRate = parseFloat($(this).find('.unitRate').val()) || 0;
+        var gstRate = parseInt($(this).find('.gstRate').val()) || 0;
 
+        // Calculate the unit value with GST
+        var unitValueWithGst = unitRate + (unitRate * gstRate / 100);
+
+        // Set the calculated unit value with GST in the corresponding input field
+        //$(this).find('.unitValueWithGst').val(unitValueWithGst.toFixed(2));
+    });
+    }
+    
+    function updateTotalAmount(){
+    	var totalAmount = 0;
     // Loop through each row and accumulate the amounts
     $('#tbldebitdetails tbody tr').each(function () {
         var rowAmount = parseFloat($(this).find('.amount').val()) || 0;

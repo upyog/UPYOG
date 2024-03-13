@@ -139,7 +139,8 @@
          <jsp:include page="supplierbill-header.jsp"/>
            <div class="panel panel-primary" data-collapsed="0">
            <jsp:include page="supplierbill-purchaseitems.jsp"/>           
-           <jsp:include page="supplier-accountcodetemplate.jsp"/>    
+           <jsp:include page="supplier-accountcodetemplate.jsp"/> 
+         <%--   <jsp:include page="supplierbill-budgetdetailnew.jsp"/>  --%> 
              <jsp:include page="supplierbill-debitdetails.jsp"/>
              <jsp:include page="supplierbill-creditdetails.jsp"/>
              <jsp:include page="supplierbill-netpayable.jsp"/>

@@ -169,9 +169,12 @@ public class PurchaseOrderService implements EntityTypeService {
 		  { 
 			  PurchaseItems	  purchaseItems = new PurchaseItems();
 		  purchaseItems.setItemCode(purchaseOrder.getPurchaseItems().get(i).getItemCode());
-		  purchaseItems.setQuantity(purchaseOrder.getPurchaseItems().get(i).getQuantity());
+		  
 		  purchaseItems.setUnit(purchaseOrder.getPurchaseItems().get(i).getUnit());
 		  purchaseItems.setUnitRate(purchaseOrder.getPurchaseItems().get(i).getUnitRate());
+		  purchaseItems.setGstRate(purchaseOrder.getPurchaseItems().get(i).getGstRate());
+		  purchaseItems.setUnitValueWithGst(purchaseOrder.getPurchaseItems().get(i).getUnitValueWithGst());
+		  purchaseItems.setQuantity(purchaseOrder.getPurchaseItems().get(i).getQuantity());
 		  purchaseItems.setAmount(purchaseOrder.getPurchaseItems().get(i).getAmount());
 		  purchaseItems.setCreatedBy(purchaseOrder.getCreatedBy());
 		  purchaseItems.setLastModifiedBy(purchaseOrder.getLastModifiedBy());
@@ -248,9 +251,12 @@ public class PurchaseOrderService implements EntityTypeService {
 			  { 
 				  PurchaseItems	  purchaseItems = new PurchaseItems();
 			  purchaseItems.setItemCode(purchaseOrder.getPurchaseItems().get(i).getItemCode());
-			  purchaseItems.setQuantity(purchaseOrder.getPurchaseItems().get(i).getQuantity());
+			 // purchaseItems.setQuantity(purchaseOrder.getPurchaseItems().get(i).getQuantity());
 			  purchaseItems.setUnit(purchaseOrder.getPurchaseItems().get(i).getUnit());
 			  purchaseItems.setUnitRate(purchaseOrder.getPurchaseItems().get(i).getUnitRate());
+			  purchaseItems.setGstRate(purchaseOrder.getPurchaseItems().get(i).getGstRate());
+			  purchaseItems.setUnitValueWithGst(purchaseOrder.getPurchaseItems().get(i).getUnitValueWithGst());
+			  purchaseItems.setQuantity(purchaseOrder.getPurchaseItems().get(i).getQuantity());
 			  purchaseItems.setAmount(purchaseOrder.getPurchaseItems().get(i).getAmount());
 			  purchaseItems.setCreatedBy(purchaseOrder.getCreatedBy());
 			  purchaseItems.setLastModifiedBy(purchaseOrder.getLastModifiedBy());

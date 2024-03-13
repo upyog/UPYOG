@@ -14,8 +14,10 @@
 	<thead>
 			<tr>
 				<th><%-- <spring:message code="lbl.account.code"/> --%>Items</th>
-				<th>Unit</th>
-				<th><%-- <spring:message code="lbl.debit.amount"/> --%>UnitRate</th>
+				<th><%-- <spring:message code="lbl.debit.amount"/> --%>Unit</th>
+				<th><%-- <spring:message code="lbl.debit.amount"/> --%>UnitRate</th>			
+				<th><%-- <spring:message code="lbl.debit.amount"/> --%>GSTRate</th>
+				<th><%-- <spring:message code="lbl.debit.amount"/> --%>UnitValueWithGST</th>
 				<th><%-- <spring:message code="lbl.credit.amount"/> --%>Quantity</th>
 				<th><%-- <spring:message code="lbl.action"/> --%>Amount</th>
 				 					
@@ -30,11 +32,18 @@
 			<td><c:out value="${item.itemCode}"></c:out>
 			</td>
 			
-			<td><c:out value="${item.unit}"></c:out>
-				
+			<td><c:out value="${item.unit}"></c:out>	
 			</td> 
+			
 			<td><c:out value="${item.unitRate}"></c:out>
 			</td>
+			
+			<td><c:out value="${item.gstRate}"></c:out>
+			</td>
+			
+			<td><c:out value="${item.unitValueWithGst}"></c:out>
+			</td>
+	
 			<td><c:out value="${item.quantity}"></c:out>
 				</td> 
 			<td><c:out value="${item.amount}"></c:out>

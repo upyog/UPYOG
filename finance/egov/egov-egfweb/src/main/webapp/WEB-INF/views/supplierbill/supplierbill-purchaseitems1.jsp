@@ -14,9 +14,10 @@
 	<thead>
 			<tr>
 				<th><%-- <spring:message code="lbl.account.code"/> --%>Items</th>
-				
 				<th><%-- <spring:message code="lbl.debit.amount"/> --%>UnitRate</th>
 				<th><%-- <spring:message code="lbl.credit.amount"/> --%>Quantity</th>
+				<th><%-- <spring:message code="lbl.credit.amount"/> --%>Billed-Quantity</th>
+				<th><%-- <spring:message code="lbl.credit.amount"/> --%>UnitValueWithGST</th>
 				<th><%-- <spring:message code="lbl.action"/> --%>Amount</th>
 				 					
 			</tr>
@@ -32,8 +33,11 @@
 			</td>
 		
 			<td><input type="text" id="unitRate" name="unitRate" readonly="readonly" value="${item.unitRate}">
-			<%-- <c:out value="${item.unitRate}"></c:out> --%>
+			<%-- <c:out value="${item.unitRate}"></c:out>readonly --%>
 			</td>
+			<td><input type="number" id= "quantity" name="billed-Quantity"value="${item.quantity}">
+			
+			<td><input type="number" id= "unitValueWithGST" name="unitValueWithGST"value="${item.unitValueWithGST}">
 			<td><input type="number" id= "quantity" name="quantity" value="${item.quantity}">
 			<c:out value="${item.quantity}"></c:out>
 				</td> 
@@ -47,6 +51,9 @@
 		</tbody>
 		<tfoot>
 		<tr>
+		<td></td>
+		<td></td>
+		<td></td>
 		<td></td>
 		<td></td>
 		
@@ -84,11 +91,14 @@
         // Update form input fields with values from the purchase item
         $('#itemCode').val(purchaseItem.itemCode);
         $('#unitRate').val(purchaseItem.unitRate);
-
+        $('#gstRate').val(purchaseItem.gstRate);
+        $('#unitValueWithGst').val(purchaseItem.unitValueWithGst);
+        
         // Update other fields as needed
     }
 </script>
 <script>
+ 
 $(document).on('input', '.unitRate, .quantity', function () {
         // Get the values of unit rate and quantity from the current row
         var unitRate = parseFloat($(this).closest('tr').find('.unitRate').val()) || 0;
@@ -130,4 +140,3 @@ $(document).on('input', '.unitRate, .quantity', function () {
     }
 </script>
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-
