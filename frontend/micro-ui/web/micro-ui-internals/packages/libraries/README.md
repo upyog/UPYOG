@@ -58,7 +58,7 @@ export default App;
 ```
 
 ### Published from DIGIT Frontend 
-DIGIT Frontend Repo (https://github.com/egovernments/UPYOG/tree/develop)
+DIGIT Frontend Repo (https://github.com/upyog/UPYOG/tree/develop)
 
 ### Contributors
 

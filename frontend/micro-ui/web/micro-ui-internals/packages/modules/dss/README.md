@@ -70,7 +70,7 @@ Documentation Site (https://core.digit.org/guides/developer-guide/ui-developer-g
 
 
 ### Published from DIGIT Frontend 
-DIGIT Frontend Repo (https://github.com/egovernments/UPYOG/tree/master)
+DIGIT Frontend Repo (https://github.com/upyog/UPYOG/tree/master)
 
 
 ![Logo](https://s3.ap-south-1.amazonaws.com/works-dev-asset/mseva-white-logo.png)
