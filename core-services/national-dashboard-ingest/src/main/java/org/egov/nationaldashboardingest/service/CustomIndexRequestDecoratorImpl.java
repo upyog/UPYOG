@@ -60,14 +60,7 @@ public class CustomIndexRequestDecoratorImpl implements CustomIndexRequestDecora
 
             // Method for enriching information in base document structure
             ingestUtil.enrichMetaDataInBaseDocumentStructureForDataIngest(baseDocumentStructure, ingestData);
-
-            // Prepare base document structure
-            keyNames.forEach(name -> {
-                if(!(metricsData.get(name) instanceof ArrayNode)){
-                    Object convertedValue = jsonProcessorUtil.convertJsonNodeToNativeType(metricsData.get(name));
-                    jsonProcessorUtil.addAppropriateBoxedTypeValueToBaseDocument(baseDocumentStructure, name, convertedValue);
-                }
-            });
+            
             log.info("Base structure - " + baseDocumentStructure.toString());
 
             // Creates a map of groupByMetric vs ( map of bucketName vs ( map of (flattenedFieldName vs bucketValue) ) )
@@ -119,10 +112,18 @@ public class CustomIndexRequestDecoratorImpl implements CustomIndexRequestDecora
                     currentStructure.remove(groupByCategory);
                 });
             });
+            
+            
+         // Prepare base document structure
+            keyNames.forEach(name -> {
+                if(!(metricsData.get(name) instanceof ArrayNode)){
+                    Object convertedValue = jsonProcessorUtil.convertJsonNodeToNativeType(metricsData.get(name));
+                    jsonProcessorUtil.addAppropriateBoxedTypeValueToBaseDocument(baseDocumentStructure, name, convertedValue);
+                }
+            });
             // If metrics data does not have any group by clauses, flattening is not required and base document can be indexed directly.
-            if(CollectionUtils.isEmpty(finalDocumentsToBeIndexed)){
                 finalDocumentsToBeIndexed.add(baseDocumentStructure);
-            }
+            
             log.info(finalDocumentsToBeIndexed.toString());
         }catch(JsonProcessingException e){
             throw new CustomException("EG_PAYLOAD_READ_ERR", "Error occured while processing ingest data");
