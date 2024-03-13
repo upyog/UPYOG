@@ -65,6 +65,8 @@ const CreateEDCR = ({ parentRoute }) => {
       .then((result, err) => {
         setIsSubmitBtnDisable(false);
         if (result?.data?.edcrDetail) {
+          console.log("result?.data",result?.data)
+          sessionStorage.setItem("plotArea",result?.data?.edcrDetail[0].planDetail?.plot?.area  || 0)
           setParams(result?.data?.edcrDetail);
           history.replace(
             `/digit-ui/citizen/obps/edcrscrutiny/apply/acknowledgement`, ///${result?.data?.edcrDetail?.[0]?.edcrNumber}
