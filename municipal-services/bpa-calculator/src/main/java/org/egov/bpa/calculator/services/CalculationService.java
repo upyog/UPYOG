@@ -135,7 +135,11 @@ public class CalculationService {
 			CalulationCriteria calulationCriteria, RequestInfo requestInfo,
 			Object mdmsData) {
 		List<TaxHeadEstimate> estimates = new LinkedList<>();
-		EstimatesAndSlabs estimatesAndSlabs;
+		
+		TaxHeadEstimate estimate = new TaxHeadEstimate();
+		BigDecimal totalTax=BigDecimal.ZERO;
+
+		EstimatesAndSlabs estimatesAndSlabs = null;
 		if (calulationCriteria.getFeeType().equalsIgnoreCase(BPACalculatorConstants.LOW_RISK_PERMIT_FEE_TYPE)) {
 
 //			 stopping Application fee for lowrisk applicaiton according to BBI-391
@@ -151,7 +155,29 @@ public class CalculationService {
 
 			calulationCriteria.setFeeType(BPACalculatorConstants.LOW_RISK_PERMIT_FEE_TYPE);
 
-		} else {
+		} 
+		else if (calulationCriteria.getFeeType().equalsIgnoreCase(BPACalculatorConstants.MDMS_CALCULATIONTYPE_APL_FEETYPE))
+		{	
+			@SuppressWarnings("unchecked")
+			Map<String,String> node=(Map<String, String>)calulationCriteria.getBpa().getAdditionalDetails();
+		
+			if(!node.containsKey("boundaryWallLength"))
+				throw new CustomException(BPACalculatorConstants.PARSING_ERROR, "Boundary Wall length should not be null");
+			if(!node.containsKey("area"))
+				throw new CustomException(BPACalculatorConstants.PARSING_ERROR, "Area should not be null!!");
+
+		BigDecimal boundayWallLength=new BigDecimal(node.get("boundaryWallLength"));
+		BigDecimal area=new BigDecimal(node.get("area"));
+		
+		totalTax=boundayWallLength.multiply(BigDecimal.valueOf(9)).multiply(BigDecimal.valueOf(2.5)).add(area.multiply(BigDecimal.valueOf(9)).multiply(BigDecimal.valueOf(2.5)));
+		estimate.setEstimateAmount(totalTax);
+		estimate.setCategory(Category.FEE);
+
+		String taxHeadCode = utils.getTaxHeadCode(calulationCriteria.getBpa().getBusinessService(), calulationCriteria.getFeeType());
+		estimate.setTaxHeadCode(taxHeadCode);
+		estimates.add(estimate);
+		}
+		else {
 			estimatesAndSlabs = getBaseTax(calulationCriteria, requestInfo, mdmsData);
 			estimates.addAll(estimatesAndSlabs.getEstimates());
 		}
