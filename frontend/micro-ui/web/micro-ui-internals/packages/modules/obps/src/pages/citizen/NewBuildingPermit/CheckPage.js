@@ -37,7 +37,7 @@ console.log("mdmsData",mdmsData,sessionStorage.getItem("plotArea"),typeof(sessio
 let plotArea = parseInt(sessionStorage.getItem("plotArea"))
 const LabourCess = plotArea > 909 ?mdmsData?.BPA?.LabourCess[1].rate * plotArea : 0
  const GaushalaFees =  mdmsData?.BPA?.GaushalaFees[0].rate  
- const Malbafees = (plotArea <=500 ?mdmsData?.BPA?.MalbaCharges[0].rate :plotArea >500 && plotArea <=1000 ?mdmsData?.MalbaCharges?.BPA[1].rate :mdmsData?.MalbaCharges?.BPA[2].rate || 500)
+ const Malbafees = (plotArea <=500 ?mdmsData?.BPA?.MalbaCharges[0].rate :plotArea >500 && plotArea <=1000 ?mdmsData?.BPA?.MalbaCharges?.[1].rate :mdmsData?.BPA?.MalbaCharges[2].rate || 500)
 sessionStorage.setItem("Malbafees",Malbafees)
 sessionStorage.setItem("WaterCharges",Malbafees/2)
 sessionStorage.setItem("GaushalaFees",GaushalaFees)
@@ -46,7 +46,7 @@ setGaushalaFees(GaushalaFees)
 setLabourCess(LabourCess)
 setMalbafees(Malbafees)
 setWaterCharges(Malbafees/2)
-console.log("mdmsData",mdmsData,Malbafees,plotArea)
+console.log("mdmsData",mdmsData,mdmsData?.MalbaCharges?.BPA[1].rate,plotArea)
 },[mdmsData])
       // for application documents
       let improvedDoc = [];
