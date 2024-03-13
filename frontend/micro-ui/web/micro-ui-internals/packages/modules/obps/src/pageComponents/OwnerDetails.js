@@ -424,14 +424,13 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                         setIsDisable(false);
                         setShowToast({ key: "true", error: true, message: e?.response?.data?.Errors[0]?.message });
                     });
-                }                
+                }
             } else {
                 onSelect(config.key, ownerStep);
             }
         }
     }
     };
-
     const onSkip = () => onSelect();
 
     // if (isLoading) {
@@ -450,57 +449,14 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
         else
         return true;
     }
-    let propertyData =JSON.parse(sessionStorage.getItem("Digit_OBPS_PT"))
-if(propertyData?.owners.length >0)
-{
-    fields = propertyData.owners.map((owner) => {
-        let gender
-        if (owner.gender == "FEMALE") {
-            gender = {
-                "code": "FEMALE",
-                "active": true,
-                "i18nKey": "COMMON_GENDER_FEMALE"
-            }
-            return { "name": owner.name, "emailId": owner.emailId, "mobileNumber": owner.mobileNumber, gender: gender, isPrimaryOwner }
-        }
-        else if (owner.gender == "MALE") {
-            gender = {
-                "code": "MALE",
-                "active": true,
-                "i18nKey": "COMMON_GENDER_MALE"
-            }
-            return { "name": owner.name, "emailId": owner.emailId, "mobileNumber": owner.mobileNumber, gender: gender, isPrimaryOwner }
-        }
-
-    })
-}
     
-useEffect(()=>{
-    let propertyData =JSON.parse(sessionStorage.getItem("Digit_OBPS_PT"))
-    if(propertyData?.owners?.length == 1)
-    {let value ={
-        "code": "INDIVIDUAL.SINGLEOWNER",
-        "active": true,
-        "i18nKey": "COMMON_MASTERS_OWNERSHIPCATEGORY_INDIVIDUAL_SINGLEOWNER"
-    }
-    selectedValue(value);
-    }
-    else if(propertyData?.owners?.length > 1)
-    {
-        let value={
-            "code": "INDIVIDUAL.MULTIPLEOWNERS",
-            "active": true,
-            "i18nKey": "COMMON_MASTERS_OWNERSHIPCATEGORY_INDIVIDUAL_MULTIPLEOWNERS"
-        }
-        selectedValue(value);
-    }
-},[])
+    
 
 
     return (
         <div>
         <Timeline currentStep={2} />
-        <FormStep config={config} onSelect={goNext} onSkip={onSkip} t={t} isDisabled={canmovenext || getCanMoveNextMultiple() || !ownershipCategory || isDisable || showToast} forcedError={t(error)}>   
+        <FormStep config={config} onSelect={goNext} onSkip={onSkip} t={t} isDisabled={canmovenext || getCanMoveNextMultiple() || !ownershipCategory || isDisable} forcedError={t(error)}>   
             {!isLoading ?
                 <div style={{marginBottom: "10px"}}>
                     <div>

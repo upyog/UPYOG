@@ -48,7 +48,7 @@ export const newConfig1=[
     {
         "route": "scrutiny-details",
         "component": "ScrutinyDetails",
-        "nextStep": "search-property",
+        "nextStep": "location",
         "hideInEmployee": true,
         "key": "subOccupancy",
         "texts": {
