@@ -649,9 +649,15 @@ setCityCode(city.code);
         onFormValueChange={onFormValueChange}
         cardStyle={{marginBottom:"0",maxWidth:"960px"}}
       ></FormComposer>
+       <div style={{display:"flex"}}>
       <span className="link" style={isMobile ? {display:"flex", justifyContent:"center",paddingBottom:"16px"} : {display:"flex", justifyContent:"left",paddingBottom:"16px", marginLeft: "45px"}}>
+       
         <Link to={window.location.href.includes("/ws/")?"/digit-ui/citizen/ws/create-application/create-property" : window.location.href.includes("/tl/tradelicence/") ? "/digit-ui/citizen/tl/tradelicence/new-application/create-property":window.location.href.includes("/obps/bpa/") ? "/digit-ui/citizen/obps/bpa/building_plan_scrutiny/new_construction/create-property":window.location.href.includes("/fsm/")? "/digit-ui/citizen/fsm/new-application/create-property":"/digit-ui/citizen/commonpt/property/new-application"}>{t("CPT_REG_NEW_PROPERTY")}</Link>
       </span>
+      {window.location.href.includes("/obps/bpa/") ?<span className="link" style={isMobile ? {display:"flex", justifyContent:"center",paddingBottom:"16px"} : {display:"flex", justifyContent:"left",paddingBottom:"16px", marginLeft: "45px"}}>
+        <Link to={"/digit-ui/citizen/obps/bpa/building_plan_scrutiny/new_construction/location"}>{t("CORE_COMMON_SKIP_CONTINUE")}</Link>
+      </span>:""}
+      </div>
       {showToast && (
         <Toast
           isDleteBtn={true}

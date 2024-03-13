@@ -16,20 +16,18 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
     const [genderList, setGenderList] = useState([]);
     const [ownershipCategory, setOwnershipCategory] = useState(formData?.owners?.ownershipCategory);
     const [name, setName] = useState(formData?.owners?.name || "");
-    const [emailId, setEmail] = useState(formData?.owners?.emailId || "");
     const [isPrimaryOwner, setisPrimaryOwner] = useState(false);
     const [gender, setGender] = useState(formData?.owners?.gender);
     const [mobileNumber, setMobileNumber] = useState(formData?.owners?.mobileNumber || "");
     const [showToast, setShowToast] = useState(null);
     const [isDisable, setIsDisable] = useState(false);
-    const [ownerRoleCheck, setownerRoleCheck] = useState({});
     let Webview = !Digit.Utils.browser.isMobile();
     const ismultiple = ownershipCategory?.code.includes("MULTIPLEOWNERS") ? true : false;
     formData?.owners?.owners?.forEach(owner => {
         if(owner.isPrimaryOwner == "false" ) owner.isPrimaryOwner = false
     })
-    let [fields, setFeilds] = useState(
-        (formData?.owners && formData?.owners?.owners) || [{ name: "",emailId:"", gender: "", mobileNumber: null, isPrimaryOwner: true }]
+    const [fields, setFeilds] = useState(
+        (formData?.owners && formData?.owners?.owners) || [{ name: "", gender: "", mobileNumber: null, isPrimaryOwner: true }]
     );
 
     useEffect(() => {
@@ -96,7 +94,7 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
 
     function handleAdd() {
         const values = [...fields];
-        values.push({ name: "",emailId:"", gender: "", mobileNumber: null, isPrimaryOwner: false });
+        values.push({ name: "", gender: "", mobileNumber: null, isPrimaryOwner: false });
         setFeilds(values);
         setCanmovenext(true);
 
@@ -334,7 +332,6 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                 payload.additionalDetails.usage  = formData?.data.occupancyType  || "NA";
 
                 if (formData?.data?.holdingNumber) payload.additionalDetails.holdingNo = formData?.data?.holdingNumber;
-                //if (formData?.data?.boundaryWallLength) payload.additionalDetails.boundaryWallLength = formData?.data?.boundaryWallLength;
                 if (formData?.data?.registrationDetails) payload.additionalDetails.registrationDetails = formData?.data?.registrationDetails;
                 if (formData?.data?.applicationType) payload.additionalDetails.applicationType = formData?.data?.applicationType;
                 if (formData?.data?.serviceType) payload.additionalDetails.serviceType = formData?.data?.serviceType;
@@ -453,29 +450,31 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
         else
         return true;
     }
-let propertyData =JSON.parse(sessionStorage.getItem("Digit_OBPS_PT"))
-fields =propertyData.owners.map((owner) =>{
-    let gender
-    if (owner.gender =="FEMALE")
-    {
-        gender={
-            "code": "FEMALE",
-            "active": true,
-            "i18nKey": "COMMON_GENDER_FEMALE"
+    let propertyData =JSON.parse(sessionStorage.getItem("Digit_OBPS_PT"))
+if(propertyData?.owners.length >0)
+{
+    fields = propertyData.owners.map((owner) => {
+        let gender
+        if (owner.gender == "FEMALE") {
+            gender = {
+                "code": "FEMALE",
+                "active": true,
+                "i18nKey": "COMMON_GENDER_FEMALE"
+            }
+            return { "name": owner.name, "emailId": owner.emailId, "mobileNumber": owner.mobileNumber, gender: gender, isPrimaryOwner }
         }
-        return {"name":owner.name,"emailId":owner.emailId, "mobileNumber":owner.mobileNumber, gender:gender,isPrimaryOwner}
-    }
-    else if (owner.gender =="MALE")
-    {
-        gender={
-            "code": "MALE",
-            "active": true,
-            "i18nKey": "COMMON_GENDER_MALE"
+        else if (owner.gender == "MALE") {
+            gender = {
+                "code": "MALE",
+                "active": true,
+                "i18nKey": "COMMON_GENDER_MALE"
+            }
+            return { "name": owner.name, "emailId": owner.emailId, "mobileNumber": owner.mobileNumber, gender: gender, isPrimaryOwner }
         }
-        return {"name":owner.name, "emailId":owner.emailId, "mobileNumber":owner.mobileNumber, gender:gender,isPrimaryOwner}
-    }
 
-})
+    })
+}
+    
 useEffect(()=>{
     let propertyData =JSON.parse(sessionStorage.getItem("Digit_OBPS_PT"))
     if(propertyData.owners.length == 1)
@@ -515,7 +514,6 @@ useEffect(()=>{
                             value={ownershipCategory}
                             labelKey="PT_OWNERSHIP"
                             isDependent={true}
-                            disabled = {true}
                         />
                     </div>
                     {fields.map((field, index) => {
@@ -546,7 +544,6 @@ useEffect(()=>{
                                                     type: "tel",
                                                     title: t("CORE_COMMON_APPLICANT_MOBILE_NUMBER_INVALID"),
                                                 })}
-                                                disabled={true}
                                             />
                                             <div style={{ position: "relative", zIndex: "100", right: "35px", marginTop: "-24px", marginRight:Webview?"-20px":"-20px" }} onClick={(e) => getOwnerDetails(index, e)}> <SearchIcon /> </div>
                                         </div>
@@ -567,7 +564,6 @@ useEffect(()=>{
                                             type: "text",
                                             title: t("TL_NAME_ERROR_MESSAGE"),
                                         })}
-                                        disabled={true}
                                     />
                                     <CardLabel>{`${t("BPA_APPLICANT_GENDER_LABEL")} *`}</CardLabel>
                                     <RadioOrSelect
@@ -577,7 +573,6 @@ useEffect(()=>{
                                     optionKey="i18nKey"
                                     onSelect={(e) => setGenderName(index, e)}
                                     t={t}
-                                    disabled={true}
                                     />
                                     <CardLabel>{`${t("CORE_EMAIL_ID")}`}</CardLabel>
                                     <TextInput
