@@ -169,12 +169,18 @@ public class PurchaseOrderService implements EntityTypeService {
 		  { 
 			  PurchaseItems	  purchaseItems = new PurchaseItems();
 		  purchaseItems.setItemCode(purchaseOrder.getPurchaseItems().get(i).getItemCode());
+<<<<<<< HEAD
 		  
 		  purchaseItems.setUnit(purchaseOrder.getPurchaseItems().get(i).getUnit());
 		  purchaseItems.setUnitRate(purchaseOrder.getPurchaseItems().get(i).getUnitRate());
 		  purchaseItems.setGstRate(purchaseOrder.getPurchaseItems().get(i).getGstRate());
 		  purchaseItems.setUnitValueWithGst(purchaseOrder.getPurchaseItems().get(i).getUnitValueWithGst());
 		  purchaseItems.setQuantity(purchaseOrder.getPurchaseItems().get(i).getQuantity());
+=======
+		  purchaseItems.setQuantity(purchaseOrder.getPurchaseItems().get(i).getQuantity());
+		  purchaseItems.setUnit(purchaseOrder.getPurchaseItems().get(i).getUnit());
+		  purchaseItems.setUnitRate(purchaseOrder.getPurchaseItems().get(i).getUnitRate());
+>>>>>>> 8d2ef484acce46e0f39d80188c2b43ccca9e9508
 		  purchaseItems.setAmount(purchaseOrder.getPurchaseItems().get(i).getAmount());
 		  purchaseItems.setCreatedBy(purchaseOrder.getCreatedBy());
 		  purchaseItems.setLastModifiedBy(purchaseOrder.getLastModifiedBy());
@@ -251,12 +257,18 @@ public class PurchaseOrderService implements EntityTypeService {
 			  { 
 				  PurchaseItems	  purchaseItems = new PurchaseItems();
 			  purchaseItems.setItemCode(purchaseOrder.getPurchaseItems().get(i).getItemCode());
+<<<<<<< HEAD
 			 // purchaseItems.setQuantity(purchaseOrder.getPurchaseItems().get(i).getQuantity());
 			  purchaseItems.setUnit(purchaseOrder.getPurchaseItems().get(i).getUnit());
 			  purchaseItems.setUnitRate(purchaseOrder.getPurchaseItems().get(i).getUnitRate());
 			  purchaseItems.setGstRate(purchaseOrder.getPurchaseItems().get(i).getGstRate());
 			  purchaseItems.setUnitValueWithGst(purchaseOrder.getPurchaseItems().get(i).getUnitValueWithGst());
 			  purchaseItems.setQuantity(purchaseOrder.getPurchaseItems().get(i).getQuantity());
+=======
+			  purchaseItems.setQuantity(purchaseOrder.getPurchaseItems().get(i).getQuantity());
+			  purchaseItems.setUnit(purchaseOrder.getPurchaseItems().get(i).getUnit());
+			  purchaseItems.setUnitRate(purchaseOrder.getPurchaseItems().get(i).getUnitRate());
+>>>>>>> 8d2ef484acce46e0f39d80188c2b43ccca9e9508
 			  purchaseItems.setAmount(purchaseOrder.getPurchaseItems().get(i).getAmount());
 			  purchaseItems.setCreatedBy(purchaseOrder.getCreatedBy());
 			  purchaseItems.setLastModifiedBy(purchaseOrder.getLastModifiedBy());

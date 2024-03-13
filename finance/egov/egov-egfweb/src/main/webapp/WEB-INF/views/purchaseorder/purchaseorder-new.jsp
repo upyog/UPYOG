@@ -58,10 +58,14 @@
 					 <div class="panel-title"><spring:message code="title.purchaseorder.create" text="Purchase Order Master"/></div>
 				</div>
 			    <%@ include file="purchaseorder-form.jsp"%>
+<<<<<<< HEAD
 			    <%@ include file="purchaseorder-items.jsp"%>
+=======
+			     <%@ include file="purchaseorder-items.jsp"%>
+>>>>>>> 8d2ef484acce46e0f39d80188c2b43ccca9e9508
 			    <div class="form-group">
 			      <div class="text-center">
-			        <button type='submit' class='btn btn-primary' id="buttonSubmit"> <spring:message code='lbl.create' text="Create"/> </button>
+			        <button type='submit' class='btn btn-primary' id="buttonSubmit"> <spring:message code='lbl.create' text="Create" /> </button>
 			        <input type="button" class="btn btn-default" value="<spring:message code='lbl.clear' text='Clear'/>" id="button" name="clear" onclick="this.form.reset();">&nbsp;
 			        <a href='javascript:void(0)' class='btn btn-default' onclick="javascript:window.parent.postMessage('close','*');"><spring:message code='lbl.close' text="Close"/></a>
 			      </div>

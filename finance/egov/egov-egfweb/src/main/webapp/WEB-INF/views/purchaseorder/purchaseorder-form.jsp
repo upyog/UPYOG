@@ -45,7 +45,10 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   ~
   --%>
-  
+
+<script>
+    document.getElementById("orderValue").readOnly = true;
+</script>
   
 <div class="form-group">
 	<label class="col-sm-2 control-label text-right" for="orderNumber"> <spring:message code="purchaseorder.number" text="Order No"/><span class="mandatory"></span> 
@@ -112,7 +115,10 @@
 	<label class="col-sm-2 control-label text-right" for="orderValue"> <spring:message code="purchaseorder.ordervalue" text="Total/Order Value"/><span class="mandatory"></span> 
 	</label>
 	<div class="col-sm-3 add-margin">
-		<form:input path="orderValue" id="orderValue" cssClass="form-control patternvalidation" data-pattern="decimalvalue" required="required" />
+		<form:hidden path="" name="netPayableAmount" id="netPayableAmount" value="${netPayableAmount}"/>
+		<form:input path="orderValue" id="orderValue" cssClass="form-control patternvalidation" data-pattern="decimalvalue" onkeydown="return false;"/>
+		<%-- <span id="supplierNetPayableAmount">${supplierNetPayableAmount}</span>   value="${supplierNetPayableAmount}"  --%>
+            
 		<form:errors path="orderValue" cssClass="add-margin error-msg" />
 	</div>
 	<label class="col-sm-2 control-label text-right" for="advancePayable"> <spring:message code="purchaseorder.advancepayable" text="Advance Payable"/>

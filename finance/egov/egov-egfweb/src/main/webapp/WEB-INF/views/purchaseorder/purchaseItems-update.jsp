@@ -10,6 +10,7 @@
 <div class="panel-body">
 <input type="hidden" value="${purchaseOrder.purchaseItems.size()}" id="debitAmountrowcount"/>
 	<table class="table table-bordered" id="tbldebitdetails">
+<<<<<<< HEAD
 	<thead>
 			<tr>
 				<th><%--<spring:message code="lbl.account.code"/>--%>Items</th>
@@ -19,13 +20,27 @@
 				<th><%--<spring:message code="lbl.account.code"/>--%>UnitValueWithGST</th>
 				<th><%--<spring:message code="lbl.credit.amount"/> --%>Quantity</th>
 				<th><%--<spring:message code="lbl.action"/> --%>Amount</th>
+=======
+	
+	<thead>
+			<tr>
+				<th><%-- <spring:message code="lbl.account.code"/> --%>Items</th>
+				<th><%-- <spring:message code="lbl.account.head"/> --%>Unit</th>
+				<th><%-- <spring:message code="lbl.debit.amount"/> --%>UnitRate</th>
+				<th><%-- <spring:message code="lbl.credit.amount"/> --%>Quantity</th>
+				<th><%-- <spring:message code="lbl.action"/> --%>Amount</th>
+>>>>>>> 8d2ef484acce46e0f39d80188c2b43ccca9e9508
 				<th><spring:message code="lbl.action"/></th>  					
 			</tr>
 		</thead>
 		<tbody>
 		
 		<%-- <c:choose> --%>
+<<<<<<< HEAD
 		<%-- <c:when test="${purchaseOrder.purchaseItems.size() == 0}">
+=======
+	<%-- 	<c:when test="${purchaseOrder.purchaseItems.size() == 0}">
+>>>>>>> 8d2ef484acce46e0f39d80188c2b43ccca9e9508
 	
 	
 			<tr id="debitdetailsrow">
@@ -46,12 +61,15 @@
 				<form:input path="purchaseItems[0].unitRate" id="purchaseItems[0].unitRate" class="form-control table-input unitRate" data-errormsg="Unit Rate is mandatory!"  maxlength="12"  />
 			</td> 
 			<td>
+<<<<<<< HEAD
 				<form:input path="purchaseItems[0].gstRate" id="purchaseItems[0].gstRate" class="form-control table-input gstRate" data-errormsg="GST Rate is mandatory!"  maxlength="12"  />
 			</td> 
 			<td>
 				<form:input path="purchaseItems[0].unitValueWithGst" id="purchaseItems[0].unitValueWithGst" class="form-control table-input unitValueWithGst" data-errormsg="Unit Rate is mandatory!"  maxlength="12"  />
 			</td> 
 			<td>
+=======
+>>>>>>> 8d2ef484acce46e0f39d80188c2b43ccca9e9508
 				<form:input path="purchaseItems[0].quantity" id="purchaseItems[0].quantity" class="form-control table-input quantity" data-errormsg="Quantity is mandatory!"    maxlength="12" />
 			</td> 
 			<td>
@@ -61,8 +79,13 @@
 						 <span class="add-padding purchaseitems-delete-row" onclick="deleteDebitDetailsRow(this);">
 						 <i class="fa fa-trash"  aria-hidden="true" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span> </td>  -->
 			</tr>
+<<<<<<< HEAD
 			</c:when>
 	 --%>		 <%-- <c:otherwise> --%>
+=======
+			</c:when> --%>
+			 <%-- <c:otherwise> --%>
+>>>>>>> 8d2ef484acce46e0f39d80188c2b43ccca9e9508
 			<c:forEach items="${purchaseOrder.purchaseItems}" var="billDeatils" varStatus="item">
 			
 			<input type="hidden" value="purchaseItems[${item.index}].id" id="id"/>
@@ -81,11 +104,15 @@
 					<option value="No">No</option>
 				</form:select>
 			</td>
+<<<<<<< HEAD
 			
+=======
+>>>>>>> 8d2ef484acce46e0f39d80188c2b43ccca9e9508
 			<td>
 				<form:input path="purchaseItems[${item.index}].unitRate" id="purchaseItems[${item.index}].unitRate" class="form-control table-input unitRate" data-errormsg="Unit Rate is mandatory!"  maxlength="12"  value="${billDeatils.unitRate}"/>
 			</td> 
 			<td>
+<<<<<<< HEAD
 				<form:input path="purchaseItems[${item.index}].gstRate" id="purchaseItems[${item.index}].gstRate" class="form-control table-input gstRate" data-errormsg="GST Rate is mandatory!"  maxlength="12"  value="${billDeatils.gstRate}"/>
 			</td> 
 			
@@ -93,12 +120,17 @@
 				<form:input path="purchaseItems[${item.index}].unitValueWithGst" id="purchaseItems[${item.index}].unitValueWithGst" class="form-control table-input unitValueWithGst" data-errormsg="Unit Value With Gst is mandatory!"  maxlength="12"  value="${billDeatils.unitValueWithGst}"/>
 			</td> 
 			<td>
+=======
+>>>>>>> 8d2ef484acce46e0f39d80188c2b43ccca9e9508
 				<form:input path="purchaseItems[${item.index}].quantity" id="purchaseItems[${item.index}].quantity" class="form-control table-input quantity" data-errormsg="Quantity is mandatory!"    maxlength="12"  value="${billDeatils.quantity}"/>
 			</td> 
 			<td>
 				<form:input path="purchaseItems[${item.index}].amount" id="purchaseItems[${item.index}].amount" onblur="calcualteNetpaybleAmount1();" class="form-control table-input amount" data-errormsg="Amount is mandatory!" onkeyup="decimalvalue(this);" data-pattern="decimalvalue" data-idx="0" data-optional="0"   maxlength="12"  readonly="readonly" value="${billDeatils.amount}"/>
 			</td>
+<<<<<<< HEAD
 		
+=======
+>>>>>>> 8d2ef484acce46e0f39d80188c2b43ccca9e9508
 			<td class="text-center"><span style="cursor:pointer;" onclick="addDebitDetailsRow();"><i class="fa fa-plus" aria-hidden="true"></i></span>
 			<span class="add-padding purchaseitems-delete-row" onclick="deleteDebitDetailsRow(this);">
 			<i class="fa fa-trash"  aria-hidden="true" data-toggle="tooltip" title="" data-original-title="Delete!"></i></span> </td> 
@@ -114,8 +146,11 @@
 		<td></td>
 		<td></td>
 		<td></td>
+<<<<<<< HEAD
 		<td></td>
 		<td></td>
+=======
+>>>>>>> 8d2ef484acce46e0f39d80188c2b43ccca9e9508
 		<td>Total Amount</td>
 		<td><span id="totalAmount" >0.00</span>
 		<input type="text" name="totalAmount" id="totalAmount" readonly="readonly"/></td>
@@ -135,6 +170,7 @@
 <script
         src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/services/egi'/>"></script>
         
+<<<<<<< HEAD
   
 <script>
 
@@ -156,11 +192,26 @@ $(document).on('input', '.unitRate, .gstRate, .quantity', function () {
         $(this).closest('tr').find('.unitValueWithGst').val(unitValueWithGst.toFixed(2));
         
         //updateunitValueWithGst();
+=======
+        
+
+<script>
+
+$(document).on('input', '.unitRate, .quantity', function () {
+        // Get the values of unit rate and quantity from the current row
+        var unitRate = parseFloat($(this).closest('tr').find('.unitRate').val()) || 0;
+        var quantity = parseInt($(this).closest('tr').find('.quantity').val()) || 0;
+
+        // Calculate the amount
+        var amount = unitRate * quantity;
+
+>>>>>>> 8d2ef484acce46e0f39d80188c2b43ccca9e9508
         // Update the amount field in the current row
         $(this).closest('tr').find('.amount').val(amount.toFixed(2));
         updateTotalAmount();
     });
     
+<<<<<<< HEAD
     
     function updateUnitValueWithGst(){
      $('#tbldebitdetails tbody tr').each(function () {
@@ -177,6 +228,8 @@ $(document).on('input', '.unitRate, .gstRate, .quantity', function () {
    
     }
 
+=======
+>>>>>>> 8d2ef484acce46e0f39d80188c2b43ccca9e9508
 
     function updateTotalAmount(){
     
@@ -801,4 +854,8 @@ var creditamount = $("#supplierBillTotalCreditAmount")["0"].innerHTML;
 	return true;
 }
 
+<<<<<<< HEAD
 </script>
+=======
+</script>
+>>>>>>> 8d2ef484acce46e0f39d80188c2b43ccca9e9508
