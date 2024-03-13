@@ -477,7 +477,7 @@ if(propertyData?.owners.length >0)
     
 useEffect(()=>{
     let propertyData =JSON.parse(sessionStorage.getItem("Digit_OBPS_PT"))
-    if(propertyData.owners.length == 1)
+    if(propertyData?.owners?.length == 1)
     {let value ={
         "code": "INDIVIDUAL.SINGLEOWNER",
         "active": true,
@@ -485,7 +485,7 @@ useEffect(()=>{
     }
     selectedValue(value);
     }
-    else if(propertyData.owners.length > 1)
+    else if(propertyData?.owners?.length > 1)
     {
         let value={
             "code": "INDIVIDUAL.MULTIPLEOWNERS",

@@ -407,6 +407,15 @@ export const convertToBPAObject = (data, isOCBPA = false, isSendBackTOCitizen = 
       auditDetails: data?.auditDetails,
       additionalDetails: {
         ...data?.additionalDetails,
+        selfCertificationCharges:[
+          {"BPA_MALBA_CHARGES" : 100},
+          {"BPA_LABOUR_CESS": 0},
+          {"BPA_WATER_CHARGES":50},
+          {"BPA_GAUSHALA_CHARGES_CESS":50},
+          {"BPA_LESS_ADJUSMENT_PLOT":sessionStorage.getItem("development")},
+          {"BPA_DEVELOPMENT_CHARGES":sessionStorage.getItem("lessAdjusment")},
+          {"BPA_OTHER_CHARGES":sessionStorage.getItem("otherCharges")}
+          ],
         GISPlaceName : data?.address?.placeName,
         holdingNo: data?.data?.holdingNumber ? data?.data?.holdingNumber : data?.additionalDetails?.holdingNo,
         boundaryWallLength:data?.data?.boundaryWallLength ? data?.data?.boundaryWallLength : data?.additionalDetails?.boundaryWallLength , 
