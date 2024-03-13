@@ -2,7 +2,7 @@ import {
     Card, CardHeader, CardSubHeader, CardText,TextInput,CardLabel,
     CitizenInfoLabel, Header, LinkButton, Row, StatusTable, SubmitBar, Table, CardSectionHeader, EditIcon, PDFSvg, Loader
   } from "@upyog/digit-ui-react-components";
-  import React,{ useMemo, useState }  from "react";
+  import React,{ useEffect, useMemo, useState }  from "react";
   import { useTranslation } from "react-i18next";
   import { useHistory, useRouteMatch } from "react-router-dom";
   import Timeline from "../../../components/Timeline";
@@ -13,11 +13,17 @@ import {
     const [development, setDevelopment] = useState()
     const [otherCharges, setOtherCharges] = useState()
     const [lessAdjusment, setLessAdjusment] = useState()
+    const [labourCess , setLabourCess] =useState()
+    const [gaushalaFees , setGaushalaFees] =useState()
+    const [malbafees , setMalbafees] =useState()
+    const [waterCharges , setWaterCharges] =useState()
     const { t } = useTranslation();
     const history = useHistory();
     const match = useRouteMatch();
     let user = Digit.UserService.getUser();
+    const state = Digit.ULBService.getStateId();
     const tenantId = user?.info?.permanentCity || value?.tenantId ||Digit.ULBService.getCurrentTenantId() ;
+    const { isMdmsLoading, data: mdmsData } = Digit.Hooks.obps.useMDMS(state, "BPA", ["GaushalaFees","MalbaCharges","LabourCess"]);
     let BusinessService;
     if(value.businessService === "BPA_LOW")
     BusinessService="BPA.LOW_RISK_PERMIT_FEE";
@@ -26,7 +32,20 @@ import {
 
     const { data, address, owners, nocDocuments, documents, additionalDetails, subOccupancy,PrevStateDocuments,PrevStateNocDocuments,applicationNo } = value;
     const isEditApplication = window.location.href.includes("editApplication");
-    
+    useEffect(()=>{
+console.log("mdmsData",mdmsData)
+const LabourCess = sessionStorage.getItem("plotArea") > 909 ?mdmsData?.BPA?.LabourCess[1].rate * sessionStorage.getItem("plotArea") : sessionStorage.getItem("plotArea")*0
+ const GaushalaFees =  mdmsData?.BPA?.GaushalaFees[0].rate  
+ const Malbafees = (sessionStorage.getItem("plotArea") <=500 ?mdmsData?.BPA?.MalbaCharges[0].rate :sessionStorage.getItem("plotArea") >500 && sessionStorage.getItem("plotArea") <=1000 ?mdmsData?.MalbaCharges?.BPA[1].rate :mdmsData?.MalbaCharges?.BPA[2].rate || 500)
+sessionStorage.setItem("Malbafees",Malbafees)
+sessionStorage.setItem("WaterCharges",Malbafees/2)
+sessionStorage.setItem("GaushalaFees",GaushalaFees)
+sessionStorage.setItem("LabourCess",LabourCess)
+setGaushalaFees(GaushalaFees)
+setLabourCess(LabourCess)
+setMalbafees(Malbafees)
+setWaterCharges(Malbafees/2)
+},[mdmsData])
       // for application documents
       let improvedDoc = [];
       PrevStateDocuments?.map(preDoc => { improvedDoc.push({...preDoc, module: "OBPS"}) });
@@ -334,13 +353,13 @@ import {
       ))} */}
        {/* <Row className="border-none" label={t(`BPA_COMMON_TOTAL_AMT`)} text={`₹ ${paymentDetails?.Bill?.[0]?.billDetails[0]?.amount || "0"}`} /> */}
        <CardSubHeader>{t("BPA_P1_SUMMARY_FEE_EST")}</CardSubHeader> 
-       <Row className="border-none" label={t(`BPA_COMMON_P1_AMT`)} text={`₹ ${data?.boundaryWallLength*2.5 + 400 * 2.5}`} />
+       <Row className="border-none" label={t(`BPA_COMMON_P1_AMT`)} text={`₹ ${data?.boundaryWallLength*2.5 + sessionStorage.getItem("plotArea") * 2.5}`} />
        <CardSubHeader>{t("BPA_P2_SUMMARY_FEE_EST")}</CardSubHeader> 
        
-       <Row className="border-none" label={t(`BPA_COMMON_MALBA_AMT`)} text={`₹ ${"100"}`} />
-       <Row className="border-none" label={t(`BPA_COMMON_LABOUR_AMT`)} text={`₹ ${"0"}`} />
-       <Row className="border-none" label={t(`BPA_COMMON_WATER_AMT`)} text={`₹ ${"50"}`} />
-       <Row className="border-none" label={t(`BPA_COMMON_GAUSHALA_AMT`)} text={`₹ ${"50"}`} />
+       <Row className="border-none" label={t(`BPA_COMMON_MALBA_AMT`)} text={`₹ ${malbafees}`} />
+       <Row className="border-none" label={t(`BPA_COMMON_LABOUR_AMT`)} text={`₹ ${labourCess}`} />
+       <Row className="border-none" label={t(`BPA_COMMON_WATER_AMT`)} text={`₹ ${waterCharges}`} />
+       <Row className="border-none" label={t(`BPA_COMMON_GAUSHALA_AMT`)} text={`₹ ${gaushalaFees}`} />
        <CardSubHeader>{t("BPA_P2_SUMMARY_FEE_EST_MANUAL")}</CardSubHeader>
        <CardLabel>{t("BPA_COMMON_DEVELOPMENT_AMT")}</CardLabel>
             <TextInput
