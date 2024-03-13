@@ -1,10 +1,10 @@
 
-# digit-ui-module-pt
+# digit-ui-module-noc
 
 ## Install
 
 ```bash
-npm install --save @egovernments/digit-ui-module-pt
+npm install --save @egovernments/digit-ui-module-noc
 ```
 
 ## Limitation
@@ -22,7 +22,7 @@ frontend/micro-ui/web/package.json
 ```
 
 ```json
-"@egovernments/digit-ui-module-pt":"^1.5.0",
+"@egovernments/digit-ui-module-noc":"^1.5.0",
 ```
 
 then navigate to App.js
@@ -35,16 +35,16 @@ then navigate to App.js
 ```jsx
 /** add this import **/
 
-import { initPTComponents } from "@egovernments/digit-ui-module-pt";
+import { initnocComponents } from "@egovernments/digit-ui-module-noc";
 
 /** inside enabledModules add this new module key **/
 
-const enabledModules = ["PT"];
+const enabledModules = ["noc"];
 
 /** inside init Function call this function **/
 
 const initDigitUI = () => {
-  initPTComponents();
+  initnocComponents();
 };
 ```
 

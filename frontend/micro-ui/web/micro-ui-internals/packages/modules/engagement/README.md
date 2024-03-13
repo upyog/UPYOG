@@ -1,10 +1,10 @@
 
-# digit-ui-module-pt
+# digit-ui-module-engagement
 
 ## Install
 
 ```bash
-npm install --save @egovernments/digit-ui-module-pt
+npm install --save @egovernments/digit-ui-module-engagement
 ```
 
 ## Limitation
@@ -22,7 +22,7 @@ frontend/micro-ui/web/package.json
 ```
 
 ```json
-"@egovernments/digit-ui-module-pt":"^1.5.0",
+"@egovernments/digit-ui-module-engagement":"^1.5.0",
 ```
 
 then navigate to App.js
@@ -35,16 +35,16 @@ then navigate to App.js
 ```jsx
 /** add this import **/
 
-import { initPTComponents } from "@egovernments/digit-ui-module-pt";
+import { initengagementComponents } from "@egovernments/digit-ui-module-engagement";
 
 /** inside enabledModules add this new module key **/
 
-const enabledModules = ["PT"];
+const enabledModules = ["engagement"];
 
 /** inside init Function call this function **/
 
 const initDigitUI = () => {
-  initPTComponents();
+  initengagementComponents();
 };
 ```
 
@@ -59,7 +59,7 @@ const initDigitUI = () => {
 
 ### Contributors
 
-[jagankumar-egov] [Tulika-eGov]  [vamshikrishnakole-wtt-egov] 
+[jagankumar-egov]
 
 ## Documentation
 

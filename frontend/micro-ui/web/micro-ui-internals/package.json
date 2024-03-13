@@ -11,7 +11,7 @@
     "packages/modules/core",
     "packages/modules/pgr",
     "packages/modules/dss",
-    "packages/modules/commonPt",
+    "packages/modules/*",
     "packages/modules/pt",
     "packages/modules/tl",
     "packages/modules/mCollect",
