@@ -48,42 +48,23 @@
 package org.egov.egf.web.controller.supplier;
 
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 import javax.validation.Valid;
 
-import org.egov.commons.CChartOfAccounts;
-import org.egov.commons.CGeneralLedger;
-import org.egov.commons.CVoucherHeader;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
-import org.egov.commons.repository.CChartOfAccountsRepository;
-import org.egov.commons.repository.CGeneralLedgerRepository;
-import org.egov.commons.repository.CVoucherHeaderRepository;
-import org.egov.commons.service.CVouvherHeaderServiece;
-import org.egov.commons.service.ChartOfAccountDetailService;
 import org.egov.egf.commons.bank.service.CreateBankService;
 import org.egov.egf.masters.services.SupplierService;
 import org.egov.egf.web.adaptor.SupplierJsonAdaptor;
-import org.egov.infstr.services.PersistenceService;
 import org.egov.model.masters.Supplier;
 import org.egov.model.masters.SupplierSearchRequest;
 import org.egov.utils.FinancialConstants;
-import org.hibernate.SQLQuery;
 import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -100,8 +81,6 @@ import com.google.gson.GsonBuilder;
  * @author venki
  */
 
-
-
 @Controller
 @RequestMapping(value = "/supplier")
 public class CreateSupplierController {
@@ -113,19 +92,6 @@ public class CreateSupplierController {
 	private static final String EDIT = "supplier-edit";
 	private static final String VIEW = "supplier-view";
 	private static final String SEARCH = "supplier-search";
-	
-	private final CVouvherHeaderServiece cVoucherHeaderServiece;
-	
-	@Autowired
-    @Qualifier("persistenceService")
-    private PersistenceService persistenceService;
-
-    @Autowired
-    public CreateSupplierController(CVouvherHeaderServiece cVoucherHeaderServiece) {
-        this.cVoucherHeaderServiece = cVoucherHeaderServiece;
-    }
-       @Autowired
-       private  CVoucherHeaderRepository cVoucherHeaderRepository;
 
 	@Autowired
 	private CreateBankService createBankService;
@@ -135,9 +101,6 @@ public class CreateSupplierController {
 
 	@Autowired
 	private SupplierService supplierService;
-	
-	@PersistenceContext
-    private EntityManager entityManager; 
 
 	@Autowired
 	private MessageSource messageSource;
@@ -231,53 +194,5 @@ public class CreateSupplierController {
 		model.addAttribute("mode", mode);
 		return RESULT;
 	}
-	
-	
-//added by deepak
-	
-	@Autowired
-	private ChartOfAccountDetailService chartOfAccountDetailService;
-	
-	@Autowired
-	private CChartOfAccountsRepository chartOfAccountsRepository;
-	@Autowired
-	private CGeneralLedgerRepository cGeneralLedgerRepository;
-	
-
-
-    @GetMapping(value= "/generalLedgerDataBetweenGLCodes")
-    @ResponseBody
-    public BigDecimal getGeneralLedgerDataBetweenGLCodes(final Model model) {
-    	model.addAttribute("taxationCurrentYear", chartOfAccountDetailService.findGeneralLedgerDataBetweenGLCodes());
-
-        return chartOfAccountDetailService.findGeneralLedgerDataBetweenGLCodes();
-       
-    }
-    
-
-	@GetMapping(value ="/generalLedgerDataBetweenGLCode")
-    @ResponseBody
-    public  BigDecimal getGeneralLedgerDataBetweenGLCode(final Model model) {
-    	model.addAttribute("salesofgoodsandservicesCurrentYear", chartOfAccountDetailService.findGeneralLedgerDataBetweenGLCode());
-
-        return chartOfAccountDetailService.findGeneralLedgerDataBetweenGLCode();
-    }
-	
-    
-    @GetMapping(value ="/generalLedgerDataBetweenGLCod")
-    @ResponseBody
-    public BigDecimal getGeneralLedgerDataBetweenGLCod(final Model model) {
-    	model.addAttribute("grantsrelatedtoRevenue/generalgrantscurrentyear", chartOfAccountDetailService.findGeneralLedgerDataBetweenGLCode());
-        return chartOfAccountDetailService.findGeneralLedgerDataBetweenGLCod();
-    }
-
-    @GetMapping(value ="/generalLedgerDataBetweenGL")
-    @ResponseBody
-    public  BigDecimal getGeneralLedgerDataBetweenGL(final Model model) {
-    	model.addAttribute("InterestReceivedcurrentyear", chartOfAccountDetailService.findGeneralLedgerDataBetweenGLCode());
-
-        return chartOfAccountDetailService.findGeneralLedgerDataBetweenGL();
-    }
-	
 
 }

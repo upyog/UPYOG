@@ -14,11 +14,6 @@
 				<tr>
 					<th>Item Name</th>
 					<th>Unit Rate</th>
-<<<<<<< HEAD
-					<th>Billed-Quantity</th>
-					<th>UnitValueWithGST</th>
-=======
->>>>>>> 8d2ef484acce46e0f39d80188c2b43ccca9e9508
 					<th>Quantity</th>
 					<th>Amount</th>
 				</tr>
@@ -36,16 +31,6 @@
 									<span class="unitRate_${item.index }">${egBillPurchaseItemsDetails.unitRate }</span>
 								</td>
 								<td>
-<<<<<<< HEAD
-									<span class="billed-Quantity${item.index }">${egBillPurchaseItemsDetails.quantity }</span>
-								</td>
-								<td>
-									<span class="unitValueWithGst${item.index }">${egBillPurchaseItemsDetails.unitValueWithGst}</span>
-								</td>
-								
-								<td>
-=======
->>>>>>> 8d2ef484acce46e0f39d80188c2b43ccca9e9508
 									<span class="quantity${item.index }">${egBillPurchaseItemsDetails.quantity }</span>
 								</td>
 								

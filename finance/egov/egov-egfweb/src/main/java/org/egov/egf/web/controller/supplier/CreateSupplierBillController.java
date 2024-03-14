@@ -62,7 +62,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.ServletContext;
@@ -98,15 +97,8 @@ import org.egov.model.bills.EgBillPayeedetails;
 import org.egov.model.bills.EgBillPurchaseItemsDetails;
 import org.egov.model.bills.EgBilldetails;
 import org.egov.model.bills.EgBillregister;
-
-import org.egov.model.budget.BudgetDetail;
-
-import org.egov.model.budget.BudgetDetail;
-
 import org.egov.model.masters.PurchaseItems;
 import org.egov.model.masters.PurchaseOrder;
-import org.egov.services.bills.EgBillRegisterService;
-import org.egov.services.budget.BudgetDetailService;
 import org.egov.utils.FinancialConstants;
 import org.hibernate.validator.constraints.SafeHtml;
 import org.owasp.esapi.ESAPI;
@@ -127,9 +119,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-
-
 
 /**
  * @author venki
@@ -178,9 +167,6 @@ public class CreateSupplierBillController extends BaseBillController {
 
 	@Autowired
 	private SupplierBillService supplierBillService;
-	
-	@Autowired
-	private BudgetDetailService budgetDetailService;
 
 	@Autowired
 	private BudgetControlTypeService budgetControlTypeService;
@@ -212,10 +198,6 @@ public class CreateSupplierBillController extends BaseBillController {
 	@Autowired
 	private PurchaseItemsBillRegisterRepository purchaseItemsBillRegisterRepository;
 	
-
-	 @Autowired
-	    private EgBillRegisterService egBillRegisterservice;
-
 
 	public CreateSupplierBillController(final AppConfigValueService appConfigValuesService) {
 		super(appConfigValuesService);
@@ -257,42 +239,6 @@ public class CreateSupplierBillController extends BaseBillController {
 	
 	
 
-	//added bydepak
-	
-	@GetMapping(value = "/code")
-	@ResponseBody
-    public String getBudgetDetailsByGLcodes(@RequestParam String glCode) {
-        return budgetDetailService.getBudgetDetailsByGlcode(glCode);
-    }
-	
-	
-	/*
-	 * @GetMapping(value = "/budget")
-	 * 
-	 * @ResponseBody public List<Map<String, Object>>
-	 * getBudgetDetailsForBillController(@RequestParam Long billregisterId) {
-	 * EgBillregister billregister = egBillRegisterservice.findById(billregisterId,
-	 * isBillDateDefaultValue); return supplierBillService.getBudgetDetails() }
-	 */
-	
-	
-	/*
-	 * //Ajax call for the BudgetDetails
-	 * 
-	 * @GetMapping(value="/get/budgetDetails")
-	 * 
-	 * @ResponseBody public List<BudgetDetails>
-	 * getBudgetDetails(@RequestParam("accountCode") @SafeHtml final String
-	 * accountCode, final Model model){
-	 * System.out.println("accountCode : "+accountCode); List<budgetDetails>
-	 * budgetDetails = budgetDetailsRepository.findbyAccountCode(accountCode);
-	 * model.addAttribute("budgetDetails", budgetDetails);
-	 * //model.addAttribute("orderValue", budgetDetails); return budgetDetails; }
-	 * 
-	 */
-	
-
-
 	// TODO      Ajax call for get purchaseItems
 	@GetMapping(value = "/get/purchaseItems")
 	@ResponseBody
@@ -328,7 +274,7 @@ public class CreateSupplierBillController extends BaseBillController {
 		
 		
 		//System.out.println(egBillregister.getPurchaseItems().size());
-
+			
 		
 		if (FinancialConstants.BUTTONFORWARD.equalsIgnoreCase(workFlowAction) && !commonsUtil
 				.isValidApprover(egBillregister, Long.valueOf(request.getParameter(APPROVAL_POSITION)))) {

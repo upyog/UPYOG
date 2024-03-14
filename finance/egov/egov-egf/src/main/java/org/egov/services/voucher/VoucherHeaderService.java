@@ -47,45 +47,17 @@
  */
 package org.egov.services.voucher;
 
-import java.util.List;
-
-import org.egov.commons.CGeneralLedger;
 import org.egov.commons.CVoucherHeader;
-import org.egov.commons.Vouchermis;
-import org.egov.commons.repository.CGeneralLedgerRepository;
-import org.egov.commons.repository.CVoucherHeaderRepository;
-import org.egov.commons.repository.VouchermisRepository;
 import org.egov.infstr.services.PersistenceService;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public class VoucherHeaderService extends PersistenceService<CVoucherHeader, Long>
 {
-	@Autowired
-	private CVoucherHeaderRepository cVoucherHeaderRepository;
-	@Autowired
-	private VouchermisRepository vouchermisRepository;
-	@Autowired
-	private CGeneralLedgerRepository cgeneralLedgerRepository;
-	
     public VoucherHeaderService() {
         super(CVoucherHeader.class);
     }
 
     public VoucherHeaderService(final Class<CVoucherHeader> type) {
         super(type);
-    }
-    
-    public CVoucherHeader save(CVoucherHeader cVoucherHeader) {
-    	return  cVoucherHeaderRepository.save(cVoucherHeader);
-    }
-    
-    public Vouchermis save (Vouchermis vouchermis) {
-    	return vouchermisRepository.save(vouchermis);
-    }
-    
-   public  List<CGeneralLedger> save (List<CGeneralLedger> cgeneralLedger) {
-    	
-    	return cgeneralLedgerRepository.save(cgeneralLedger);
     }
 
 }

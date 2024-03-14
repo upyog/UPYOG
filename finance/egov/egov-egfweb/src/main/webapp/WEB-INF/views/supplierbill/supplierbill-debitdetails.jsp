@@ -62,7 +62,6 @@
 			<tr>
 				<th><spring:message code="lbl.account.code" text="Account Code"/></th>
 				<th><spring:message code="lbl.account.head" text="Account Head"/></th>
-				<%-- <th><spring:message code="lbl.budget.amount" text="Budget"/></th> --%>
 				<th><spring:message code="lbl.debit.amount" text="Debit Amount"/></th>
 				<th><spring:message code="lbl.action" text="Action"/></th>
 			</tr>
@@ -78,11 +77,6 @@
 						<td>
 							<input type="text" id="debitDetails[0].debitAccountHead" name="debitDetails[0].debitAccountHead" class="form-control debitdetailname" disabled>  
 						</td>
-						
-						 <%-- <td>
-							<form:input path="debitDetails[0].debitbudget" id="debitDetails[0].debitbudget"  data-errormsg="Budget is mandatory!" onkeyup="decimalvalue(this);" onblur="calcualteBudgetAmount();" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right budgetAmount"   maxlength="12"  />
-						</td>   --%>
-						 
 						<td>
 							<form:input path="debitDetails[0].debitamount" id="debitDetails[0].debitamount"  data-errormsg="Debit Amount is mandatory!" onkeyup="decimalvalue(this);" onblur="calcualteNetpaybleAmount();" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right debitAmount"   maxlength="12"  />
 						</td> 
@@ -100,15 +94,6 @@
 								<td>
 									<input type="text" id="debitDetails[${item.index }].debitAccountHead" name="debitDetails[${item.index }].debitAccountHead" class="form-control debitdetailname" disabled value="${billDeatils.chartOfAccounts.name }">  
 								</td>
-								<%-- 
-									<td>
-									<input type="text" id="debitDetails[${item.index }].debitBudget" name="debitDetails[${item.index }].debitBudget" class="form-control debitdetailname" disabled value="${billDeatils.chartOfAccounts.name }">  
-								</td> --%>
-								
-								<%-- <td>
-									<form:input path="debitDetails[${item.index }].debitbudget" id="debitDetails[${item.index }].debitbudget"  data-errormsg="Budget Amount is mandatory!" onkeyup="decimalvalue(this);" onblur="calcualteNetbudgetAmount();" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right budgetAmount"   maxlength="12" value="${billDeatils.creditamount }" />
-								</td> 
-				                   --%>
 								<td>
 									<form:input path="debitDetails[${item.index }].debitamount" id="debitDetails[${item.index }].debitamount"  data-errormsg="Debit Amount is mandatory!" onkeyup="decimalvalue(this);" onblur="calcualteNetpaybleAmount();" data-pattern="decimalvalue" data-idx="0" data-optional="0" class="form-control table-input text-right debitAmount"   maxlength="12" value="${billDeatils.creditamount }" />
 								</td> 

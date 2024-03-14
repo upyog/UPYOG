@@ -71,7 +71,6 @@ import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 
 import static org.egov.commons.CChartOfAccounts.SEQ_CHARTOFACCOUNTS;
@@ -262,9 +261,8 @@ public class CChartOfAccounts extends AbstractAuditable {
 	}
 
     @Override
-    public int hashCode() {    	
-        //return Integer.valueOf(glcode != null ? glcode : "0");
-    	return Objects.hash(glcode, id, name);
+    public int hashCode() {
+        return Integer.valueOf(glcode != null ? glcode : "0");
     }
 
     public Boolean getBudgetCheckReq() {

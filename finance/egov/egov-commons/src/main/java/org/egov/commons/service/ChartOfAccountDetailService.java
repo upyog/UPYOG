@@ -48,15 +48,10 @@
 package org.egov.commons.service;
 
 import org.egov.commons.CChartOfAccountDetail;
-import org.egov.commons.repository.CChartOfAccountsRepository;
 import org.egov.infstr.services.PersistenceService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.List;
-
-
 
 @Service
 public class ChartOfAccountDetailService extends PersistenceService<CChartOfAccountDetail, Long>
@@ -80,61 +75,4 @@ public class ChartOfAccountDetailService extends PersistenceService<CChartOfAcco
     public CChartOfAccountDetail getByGlcodeAndDetailTypeId(String glcode, Integer accountDetailTypeId) {
         return find("from CChartOfAccountDetail where glCodeId.glcode=? and detailTypeId.id=?", glcode, accountDetailTypeId);
     }
-    
-    //added by deepak
-    @Autowired
-    private CChartOfAccountsRepository chartOfAccountsRepository;
-
-
-    
-    public BigDecimal findGeneralLedgerDataBetweenGLCodes() {
-        List<Object[]> generalLedgerData = chartOfAccountsRepository.findGeneralLedgerDataBetweenGLCodes();
-        BigDecimal totalDebitAmount = BigDecimal.ZERO;
-        for (Object[] row : generalLedgerData) {
-            BigDecimal debitAmount = (BigDecimal) row[6]; // Assuming index 6 contains debit amount
-            totalDebitAmount = totalDebitAmount.add(debitAmount);
-        }
-        return totalDebitAmount;
-    }
-
-//return chartOfAccountsRepository.findGeneralLedgerDataBetweenGLCodes();
-         
-    
-
-    public BigDecimal findGeneralLedgerDataBetweenGLCode() {
-        List<Object[]> generalLedgerData = chartOfAccountsRepository.findGeneralLedgerDataBetweenGLCode();
-    	BigDecimal totalDebitAmount = BigDecimal.ZERO;
-        for (Object[] row : generalLedgerData) {
-            BigDecimal debitAmount = (BigDecimal) row[6];                                                         // Assuming index 6 contains debit amount
-            totalDebitAmount = totalDebitAmount.add(debitAmount);
-        }
-        return totalDebitAmount;
-    }
-    
-   
-    
-    public BigDecimal findGeneralLedgerDataBetweenGLCod() {
-        List<Object[]> generalLedgerData = chartOfAccountsRepository.findGeneralLedgerDataBetweenGLCod();
-    	BigDecimal totalDebitAmount = BigDecimal.ZERO;
-        for (Object[] row : generalLedgerData) {
-            BigDecimal debitAmount = (BigDecimal) row[6];                                                       // Assuming index 6 contains debit amount
-            totalDebitAmount = totalDebitAmount.add(debitAmount);
-        }
-        return totalDebitAmount;
-    }
-    
-
-    public BigDecimal findGeneralLedgerDataBetweenGL() {
-        List<Object[]> generalLedgerData = chartOfAccountsRepository.findGeneralLedgerDataBetweenGL();
-    	BigDecimal totalDebitAmount = BigDecimal.ZERO;
-        for (Object[] row : generalLedgerData) {
-            BigDecimal debitAmount = (BigDecimal) row[6];                                                // Assuming index 6 contains debit amount
-            totalDebitAmount = totalDebitAmount.add(debitAmount);
-        }
-        return totalDebitAmount;
-    }
-    
-    
-        
-  
 }

@@ -51,13 +51,6 @@ public class PurchaseItems extends AbstractAuditable implements EntityType{
 	@Column(name="quantity")
 	private Integer quantity;
 	
-	@Column(name="gstRate")
-	private Long gstRate;
-	
-	@Column(name="unitValueWithGst")
-     private Double unitValueWithGst;
-	
-
 	@Column(name="amount")
 	private Double amount;
 	
@@ -120,40 +113,12 @@ public class PurchaseItems extends AbstractAuditable implements EntityType{
 		return unit;
 	}
 
-	
 	public void setUnit(String unit) {
 		this.unit = unit;
 	}
 
 	
-	public Long getUnitRate() {
-		return unitRate;
-	}
 
-	public void setUnitRate(Long unitRate) {
-		this.unitRate = unitRate;
-	}
-
-
-
-	public Long getGstRate() {
-		return gstRate;
-	}
-
-	public void setGstRate(Long gstRate) {
-		this.gstRate = gstRate;
-	}
-
-	public Double getUnitValueWithGst() {
-		return unitValueWithGst;
-	}
-
-	public void setUnitValueWithGst(Double unitValueWithGst) {
-		this.unitValueWithGst = unitValueWithGst;
-	}
-	
-	
-	
 	public Integer getQuantity() {
 		return quantity;
 	}
@@ -177,15 +142,13 @@ public class PurchaseItems extends AbstractAuditable implements EntityType{
 	  this.purchaseOrder = purchaseOrder; }
 	 
 
-	public PurchaseItems(Long id, String itemCode, String unit, Long unitRate, Long gstRate, Double unitValueWithGst, Integer quantity, Double amount,
+	public PurchaseItems(Long id, String itemCode, String unit, Long unitRate, Integer quantity, Double amount,
 			PurchaseOrder purchaseOrder) {
 		super();
 		this.id = id;
 		this.itemCode = itemCode;
 		this.unit = unit;
 		this.unitRate = unitRate;
-		this.gstRate=gstRate;
-		this.unitValueWithGst=unitValueWithGst;
 		this.quantity = quantity;
 		this.amount = amount;
 		this.purchaseOrder = purchaseOrder;
@@ -195,14 +158,10 @@ public class PurchaseItems extends AbstractAuditable implements EntityType{
 		// TODO Auto-generated constructor stub
 	}
 
-	
-
 	@Override
 	public String toString() {
 		return "PurchaseItems [id=" + id + ", itemCode=" + itemCode + ", unit=" + unit + ", unitRate=" + unitRate
-				+ ", quantity=" + quantity + ", gstRate=" + gstRate + ", unitValueWithGst=" + unitValueWithGst
-				+ ", amount=" + amount + ", glcodeid=" + glcodeid + ", chartOfAccounts=" + chartOfAccounts
-				+ ", purchaseOrder=" + purchaseOrder + ", orderNumber=" + orderNumber + "]";
+				+ ", quantity=" + quantity + ", amount=" + amount + ", purchaseOrder=" + purchaseOrder + "]";
 	}
 
 	@Override
@@ -271,5 +230,14 @@ public class PurchaseItems extends AbstractAuditable implements EntityType{
 		return null;
 	}
 
+	public Long getUnitRate() {
+		return unitRate;
+	}
+
+	public void setUnitRate(Long unitRate) {
+		this.unitRate = unitRate;
+	}
+	
+	
 
 }

@@ -54,19 +54,7 @@ function getPurchaseItemsByOrderId() {
 					    itemCode: item.itemCode,
 					    unit: item.unit,
 					    unitRate: item.unitRate,
-<<<<<<< HEAD
-<<<<<<< HEAD
-					    quantity:item.quantity,
-					    unitValueWithGst:item.unitValueWithGst,
-					    //billed-quantity:item.quantity,
-=======
-=======
-					    quantity:item.quantity,
-					    unitValueWithGst:item.unitValueWithGst,
-					    //billed-quantity:item.quantity,
->>>>>>> 6d75aca06005806a5dce3b5f6e818fd3149a7977
 					    quantity: item.quantity,
->>>>>>> 8d2ef484acce46e0f39d80188c2b43ccca9e9508
 					    amount: item.amount,
 					    //purchaseOrder: item.purchaseOrder,
 					    orderNumber: item.purchaseOrder.orderNumber,
@@ -120,16 +108,6 @@ function getPurchaseItemsByOrderId() {
             				tableHTML += '<tr>';
             				tableHTML += '<th>Item Code</th>';
             				tableHTML += '<th>Unit Rate</th>';
-<<<<<<< HEAD
-<<<<<<< HEAD
-            				tableHTML += '<th contenteditable="true">Billed-Quantity</th>';
-            				tableHTML += '<th contenteditable="true">Unit Value With GST</th>';
-=======
->>>>>>> 8d2ef484acce46e0f39d80188c2b43ccca9e9508
-=======
-            				tableHTML += '<th contenteditable="true">Billed-Quantity</th>';
-            				tableHTML += '<th contenteditable="true">Unit Value With GST</th>';
->>>>>>> 6d75aca06005806a5dce3b5f6e818fd3149a7977
             				tableHTML += '<th contenteditable="true">Quantity</th>';
             				tableHTML += '<th contenteditable="true">Amount</th>';
             				tableHTML += '</tr>';
@@ -142,16 +120,6 @@ function getPurchaseItemsByOrderId() {
                 		 	tableHTML += '<tr>';
 						    tableHTML += '<td>' + data.itemCode + '</td>';
 						    tableHTML += '<td id="unitRate_' + i + '" contenteditable="true" class="editable unitRate">' + data.unitRate + '</td>';
-<<<<<<< HEAD
-<<<<<<< HEAD
-						    tableHTML += '<td id="billed-quantity' + i + '" contenteditable="true" class="editable quantity">' + data.quantity + '</td>';
-						    tableHTML += '<td id="unitValueWithGst' + i + '" contenteditable="true" class="editable unitValueWithGst">' + data.unitValueWithGst + '</td>';
-=======
->>>>>>> 8d2ef484acce46e0f39d80188c2b43ccca9e9508
-=======
-						    tableHTML += '<td id="billed-quantity' + i + '" contenteditable="true" class="editable quantity">' + data.quantity + '</td>';
-						    tableHTML += '<td id="unitValueWithGst' + i + '" contenteditable="true" class="editable unitValueWithGst">' + data.unitValueWithGst + '</td>';
->>>>>>> 6d75aca06005806a5dce3b5f6e818fd3149a7977
 						    tableHTML += '<td id="quantity_' + i + '" contenteditable="true" class="editable quantity"></td>';
 						    tableHTML += '<td id="amount_' + i + '" class="amount"></td>';
 						    tableHTML += '</tr>';
@@ -171,26 +139,9 @@ function getPurchaseItemsByOrderId() {
     var row = $(this).closest('tr');
     var unitRate = parseFloat(row.find('.unitRate').text()) || 0;
     var quantity = parseFloat($(this).text()) || 0;
-<<<<<<< HEAD
-    var unitValueWithGst = parseFloat(row.find('.unitValueWithGst').text()) || 0;
 
-    var amount = unitValueWithGst * quantity;
-    
-     // Update the unitValueWithGst field in the current row
-         $(this).closest('tr').find('.unitValueWithGst').val(unitValueWithGst.toFixed(2));
-=======
-
-<<<<<<< HEAD
     var amount = unitRate * quantity;
->>>>>>> 8d2ef484acce46e0f39d80188c2b43ccca9e9508
-=======
-    var unitValueWithGst = parseFloat(row.find('.unitValueWithGst').text()) || 0;
->>>>>>> 6d75aca06005806a5dce3b5f6e818fd3149a7977
 
-    var amount = unitValueWithGst * quantity;   
-     // Update the unitValueWithGst field in the current row
-         $(this).closest('tr').find('.unitValueWithGst').val(unitValueWithGst.toFixed(2));
-    var amount = unitRate * quantity;
     // Update the amount field in the current row
     row.find('.amount').text(amount.toFixed(2));
 
@@ -198,10 +149,6 @@ function getPurchaseItemsByOrderId() {
     updateTotalAmount();
 });
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 8d2ef484acce46e0f39d80188c2b43ccca9e9508
 function updateTotalAmount() {
     var totalAmount = 0;
 
@@ -212,18 +159,10 @@ function updateTotalAmount() {
     });
 
     // Update the total amount in the tfoot
-    $('#totalAmount').text(totalAmount.toFixed(2));   
+    $('#totalAmount').text(totalAmount.toFixed(2));
+    
     // You can update other elements here if needed
-<<<<<<< HEAD
-<<<<<<< HEAD
-    
-    
 
-=======
->>>>>>> 8d2ef484acce46e0f39d80188c2b43ccca9e9508
-
-=======
->>>>>>> 6d75aca06005806a5dce3b5f6e818fd3149a7977
     // Update the supplierNetPayableAmount using JavaScript
     var netPayableAmount = amountConverter(totalAmount);
     document.getElementById('billamount').value = netPayableAmount;
@@ -235,14 +174,8 @@ function updateTotalAmount() {
 	return formattedAmt;
 }
  
-<<<<<<< HEAD
             	
-<<<<<<< HEAD
-=======
             	
->>>>>>> 8d2ef484acce46e0f39d80188c2b43ccca9e9508
-=======
->>>>>>> 6d75aca06005806a5dce3b5f6e818fd3149a7977
                     //$('#dynamicPurchaseItemList').append(JSON.stringify(dataList));
                     
               
@@ -291,16 +224,8 @@ function updateTotalAmount() {
     }
     
   
-<<<<<<< HEAD
-   
-</script>
-=======
 
+    
    
-</script> 
+    
 </script>
-<<<<<<< HEAD
->>>>>>> 8d2ef484acce46e0f39d80188c2b43ccca9e9508
-=======
-
->>>>>>> 6d75aca06005806a5dce3b5f6e818fd3149a7977

@@ -47,8 +47,6 @@
  */
 package org.egov.commons;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.Min;
@@ -62,8 +60,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-@Entity
-@Table
 public class CGeneralLedger implements Serializable {
 
     private Long id = null;

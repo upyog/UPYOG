@@ -148,14 +148,6 @@ public class ChartOfAccountsHibernateDAO implements ChartOfAccountsDAO {
                 .setCacheable(true).list();
 
     }
-    
-    public List<CChartOfAccounts> getSecondaryCodesList() {
-        return getCurrentSession()
-                .createQuery(
-                        "from CChartOfAccounts where classification=5")
-                .setCacheable(true).list();
-
-    }
 
     
     public List<CChartOfAccounts> findDetailedAccountCodesByGlcodeOrNameLike(String searchString) {

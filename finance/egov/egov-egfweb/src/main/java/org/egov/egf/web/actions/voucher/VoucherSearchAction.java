@@ -48,7 +48,6 @@
 package org.egov.egf.web.actions.voucher;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -61,18 +60,12 @@ import java.util.List;
 import java.util.Map;
 //import org.egov.commons.VoucherDetail;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceContexts;
-
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.egov.commons.CChartOfAccounts;
-import org.egov.commons.CGeneralLedger;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.Functionary;
 import org.egov.commons.Fund;
@@ -81,9 +74,6 @@ import org.egov.commons.Scheme;
 import org.egov.commons.SubScheme;
 import org.egov.commons.Vouchermis;
 import org.egov.commons.dao.FinancialYearDAO;
-import org.egov.commons.repository.CChartOfAccountsRepository;
-import org.egov.commons.repository.CGeneralLedgerRepository;
-import org.egov.commons.repository.CVoucherHeaderRepository;
 import org.egov.egf.commons.VoucherSearchUtil;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -103,13 +93,8 @@ import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.VoucherHelper;
 import org.hibernate.Query;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-
-
 
 @ParentPackage("egov")
 @Results({ @Result(name = VoucherSearchAction.SEARCH, location = "voucherSearch-search.jsp"),
@@ -126,21 +111,6 @@ public class VoucherSearchAction extends BaseFormAction {
 	public final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy", Constants.LOCALE);
 	@Autowired
 	protected AppConfigValueService appConfigValuesService;
-	
-	@Autowired
-    private  CVoucherHeaderRepository cVoucherHeaderRepository;
-    
-    @Autowired
-	private CChartOfAccountsRepository chartOfAccountsRepository;
-	@Autowired
-	private CGeneralLedgerRepository cGeneralLedgerRepository;
-	
-	@PersistenceContext
-    private EntityManager entityManager; 
-
-
-	
-	
 	@Autowired
 	protected MicroserviceUtils microserviceUtils;
 	@Autowired
@@ -266,16 +236,6 @@ public class VoucherSearchAction extends BaseFormAction {
 	@SkipValidation
 	@Action(value = "/voucher/voucherSearch-beforesearch")
 	public String beforesearch() {
-		
-
-List<BigInteger> list = cVoucherHeaderRepository.findMissingVoucherHeaders();
-    	System.out.println(list);
-    	for (BigInteger headerId : list) {
-    	    processAndSaveGeneralLedger(headerId.longValue());
-    	}
-		
-		
-		
 		finYearDate();
 		if (showMode != null && showMode.equalsIgnoreCase("nonBillPayment")) {
 			if (LOGGER.isDebugEnabled())
@@ -286,61 +246,6 @@ List<BigInteger> list = cVoucherHeaderRepository.findMissingVoucherHeaders();
 		return SEARCH;
 
 	}
-	
-	
-	 private void processAndSaveGeneralLedger(Long headerId) {
-	        
-	        
-	    	String sqlQuery = "SELECT v.id as voucherId, eb3.debitamount as debitamount, eb3.creditamount as creditamount, coa.glcode, eb3.glcodeid " +
-	    	        "FROM citya.voucherheader v " +
-	    	        "JOIN citya.eg_billregistermis eb ON v.id = eb.voucherheaderid " +
-	    	        "JOIN citya.eg_billregister eb2 ON eb.billid = eb2.id " +
-	    	        "JOIN citya.eg_billdetails eb3 ON eb2.id = eb3.billid " +
-	    	        "JOIN citya.chartofaccounts coa ON eb3.glcodeid = coa.id " +
-	    	        "WHERE v.id = ?";
-
-	    	javax.persistence.Query query = entityManager.createNativeQuery(sqlQuery);
-	    	query.setParameter(1, headerId);
-	    	List<Object[]> resultList = ((javax.persistence.Query) query).getResultList();
-	     
-	    	List<CGeneralLedger> cgeneralLedger = new ArrayList<>();
-	        CVoucherHeader cVoucherHeader = new CVoucherHeader();
-	        CChartOfAccounts chartOfAccounts = new CChartOfAccounts();
-	    	// Assuming there are at least 3 rows in the resultList
-	    	if (resultList.size() >= 3) {
-	    	    for (int i = 0; i < 3; i++) {
-	    	        Object[] row = resultList.get(i);
-	    	        CGeneralLedger entry = new CGeneralLedger();
-	                CVoucherHeader cv = getById(headerId);
-	                CChartOfAccounts coa = getByIds((BigInteger) row[4]);
-	    	        entry.setVoucherlineId(i + 1); 
-	    	        entry.setEffectiveDate(new Date()); 
-	    	        entry.setGlcodeId(coa);
-	    	        entry.setGlcode((String) row[3]); 
-	    	        entry.setDebitAmount(row[1] != null ? ((BigDecimal) row[1]).doubleValue() : 0.0);
-	    	        entry.setCreditAmount(row[2] != null ? ((BigDecimal) row[2]).doubleValue() : 0.0);
-	    	        entry.setDescription(null); 
-	    	        entry.setVoucherHeaderId(cv); 
-
-	    	        cgeneralLedger.add(entry);
-	    	    }
-	    	}
-
-	    	// Save the list of CGeneralLedger objects
-	    	cGeneralLedgerRepository.save(cgeneralLedger);
-	    }
-		
-		
-		private CChartOfAccounts getByIds(BigInteger bigInteger) {
-	        Long id = bigInteger.longValue(); // Convert BigInteger to Long
-			return chartOfAccountsRepository.findOne(id);
-		}
-
-		private CVoucherHeader getById(Long headerId) {
-			// TODO Auto-generated method stub
-			return cVoucherHeaderRepository.findOne(headerId);
-		}
-
 
 	public void prepareSearch() {
 

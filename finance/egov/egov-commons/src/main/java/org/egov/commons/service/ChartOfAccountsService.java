@@ -106,16 +106,6 @@ public class ChartOfAccountsService extends PersistenceService<CChartOfAccounts,
         return entitysQuery.list();
 
     }
-    public List<CChartOfAccounts> getAllAccountCodes1(final String glcode) {
-
-        final Query entitysQuery = getSession()
-                .createQuery(
-                        " from CChartOfAccounts a where where type IN ('A','E') order by a.glcode");
-        entitysQuery.setString(GLCODE, glcode + "%");
-        entitysQuery.setString("name", glcode.toLowerCase() + "%");
-        return entitysQuery.list();
-
-    }
     public List<CChartOfAccounts> getGlCodes( final Set<String> glcodes) {
 
         final Query entitysQuery = getSession()
