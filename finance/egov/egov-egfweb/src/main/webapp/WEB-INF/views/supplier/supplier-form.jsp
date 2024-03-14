@@ -47,7 +47,7 @@
   --%>
 
 
-<div class="form-group row">
+<div class="form-group">
 	<label class="col-sm-2 control-label text-right" for="code"> <spring:message code="supplier.code" /><span class="mandatory"></span> 
 	</label>
 	<div class="col-sm-3 add-margin">
@@ -62,7 +62,7 @@
 	</div>
 </div>
 
-<div class="form-group row">
+<div class="form-group">
 	<label class="col-sm-2 control-label text-right" for="correspondenceAddress" > <spring:message code="supplier.correspondenceAddress"   text="Correspondence Address"/><span class="mandatory"></span>
 	</label>
 	<div class="col-sm-3 add-margin">
@@ -77,7 +77,7 @@
 	</div>
 </div>
 
-<div class="form-group row">
+<div class="form-group">
 	<label class="col-sm-2 control-label text-right" for="contactPerson"> <spring:message code="supplier.contactPerson" text="Contact Person"/><span class="mandatory"></span> 
 	</label>
 	<div class="col-sm-3 add-margin contactPerson"> 
@@ -92,7 +92,7 @@
 	</div>
 </div>
 
-<div class="form-group row">
+<div class="form-group">
 	<label class="col-sm-2 control-label text-right" for="narration"> <spring:message code="supplier.narration" text="Narration"/>
 	</label>
 	<div class="col-sm-3 add-margin">
@@ -107,7 +107,7 @@
 	</div>
 </div>
 
-<div class="form-group row">
+<div class="form-group">
 	<label class="col-sm-2 control-label text-right" for="tinNumber"> <spring:message code="supplier.tinNo" text="GST/TIN No"/>
 	</label>
 	<div class="col-sm-3 add-margin">
@@ -122,7 +122,7 @@
 	</div>
 </div>
 
-<div class="form-group row">
+<div class="form-group">
 	<label class="col-sm-2 control-label text-right" for="bank"> <spring:message code="supplier.bank" text="Bank"/>
 	</label>
 	<div class="col-sm-3 add-margin">
@@ -140,7 +140,7 @@
 	</div>
 </div>
 
-<div class="form-group row">
+<div class="form-group">
 	<label class="col-sm-2 control-label text-right" for="bankAccount"> <spring:message code="supplier.bankAccount" text="Bank Account Number"/>
 	</label>
 	<div class="col-sm-3 add-margin">
@@ -148,7 +148,7 @@
 		<form:errors path="bankAccount" cssClass="add-margin error-msg" />
 	</div>
 	</div>
-	<div class="form-group row">
+	<div class="form-group">
 	<label class="col-sm-2 control-label"><spring:message
 			code="lbl.type.contrator.supplier" /></label>
 	<div class="col-sm-2 col-xs-12 add-margin">
@@ -167,7 +167,7 @@
 	</div>
 	<form:errors path="supplierType" cssClass="error-msg" />
 </div>
-	<div class="form-group row" id="registerationNo" style="display: none">
+	<div class="form-group" id="registerationNo" style="display: none">
 	<label class="col-sm-2 control-label text-right" for="registrationNumber"> <spring:message code="supplier.registrationNo" text="Registration No"/>
 	</label>
 	<div class="col-sm-3 add-margin">
@@ -176,7 +176,7 @@
 	</div>
 </div>
 
-<div class="form-group row">
+<div class="form-group">
 	<label class="col-sm-2 control-label text-right" for="status"> <spring:message code="supplier.status" text="Status"/><span class="mandatory"></span> 
 	</label>
 	<div class="col-sm-3 add-margin">
@@ -193,7 +193,7 @@
 		<form:errors path="panNumber" cssClass="add-margin error-msg" />
 	</div>
 </div>
-<div class="form-group row">
+<div class="form-group">
 	<label class="col-sm-2 control-label text-right" for="epfNumber"> <spring:message code="supplier.epfNo" text="EPF No"/>
 	</label>
 	<div class="col-sm-3 add-margin">

@@ -61,7 +61,7 @@
           </div>
           <div class="panel-body">
           <input type="hidden" id="mode" name="mode" value="${mode}" />
-             <div class="form-group row">
+             <div class="form-group">
 	           	 <label class="col-sm-3 control-label text-right"><spring:message code="lbl.name"/> </label>
 	              <div class="col-sm-3 add-margin">
 	                <form:input path="name" class="form-control text-left patternvalidation" data-pattern="alphanumeric"
@@ -75,7 +75,7 @@
 	                <form:errors path="code" cssClass="error-msg" />
 	              </div>
               </div>
-            <div class="form-group row">
+            <div class="form-group">
               <div class="text-center">
                 <button type='button' class='btn btn-primary' id="btnsearch">
                   <spring:message code='lbl.search'/>
@@ -92,7 +92,7 @@
 </form:form>
 <div class="row display-hide report-section">
   <div class="col-md-12 table-header text-left"><spring:message code="lbl.supplier.search.result"/></div>
-  <div class="col-md-12 form-group row report-table-container">
+  <div class="col-md-12 form-group report-table-container">
     <table class="table table-bordered table-hover multiheadertbl" id="resultTable">
       <thead>
         <tr>

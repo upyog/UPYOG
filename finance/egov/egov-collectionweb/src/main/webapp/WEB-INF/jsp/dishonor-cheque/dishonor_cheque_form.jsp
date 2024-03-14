@@ -97,7 +97,7 @@ var chequeDDDateMendatoryMessage = "<spring:message code='msg.please.select.cheq
 						</div>
 					</div>
 					<div class="panel-body">
-						<div class="form-group row">
+						<div class="form-group">
 							<label class="col-sm-3 control-label text-right"><spring:message
 									code="lbl.bank.branch"/>:</label>
 							<div class="col-sm-3 add-margin">
@@ -126,7 +126,7 @@ var chequeDDDateMendatoryMessage = "<spring:message code='msg.please.select.cheq
 							</div>
 
 						</div>
-						<div class="form-group row">
+						<div class="form-group">
 							<label class="col-sm-3 control-label text-right"><spring:message
 									code="lbl.instrument.mode"/> <span
 								class="mandatory"></span>:</label>
@@ -144,7 +144,7 @@ var chequeDDDateMendatoryMessage = "<spring:message code='msg.please.select.cheq
 							</div>
 
 						</div>
-						<div class="form-group row">
+						<div class="form-group">
 							<label class="col-sm-3 control-label text-right"><spring:message
 									code="lbl.cheque.dd.number" /> <span
 								class="mandatory"></span>:</label>
@@ -162,12 +162,12 @@ var chequeDDDateMendatoryMessage = "<spring:message code='msg.please.select.cheq
 								<form:input id="instrumentDateId" path="transactionDate"
 									class="form-control datepicker" data-date-end-date="0d"
 									required="required" autocomplete="off"
-									data-inputmask="'mask': '99/99/9999'" placeholder="DD/MM/YYYY" />
+									data-inputmask="'mask': 'd/m/y'" placeholder="DD/MM/YYYY" />
 								<form:errors path="instrumentDate"
 									cssClass="add-margin error-msg" />
 							</div>
 						</div>
-						<div class="form-group row">
+						<div class="form-group">
 							<div class="text-center">
 								<button type='button' class='btn btn-primary' id="btnsearch">
 									<spring:message code='lbl.search' />
@@ -185,7 +185,7 @@ var chequeDDDateMendatoryMessage = "<spring:message code='msg.please.select.cheq
 							<div class="subheadnew col-md-12 table-header text-center"
 								id="surrenderChequeHeading"></div>
 							<!-- <div class="alert alert-success" role="alert"></div> -->
-							<div class="col-md-12 form-group row report-table-container">
+							<div class="col-md-12 form-group report-table-container">
 								<table class="table table-bordered table-hover multiheadertbl"
 									id="resultTable">
 									<thead>
@@ -218,11 +218,11 @@ var chequeDDDateMendatoryMessage = "<spring:message code='msg.please.select.cheq
 						</div>
 					</div>
 					<div class="panel-body">
-						<div class="col-sm-12 form-group row report-table-container"
+						<div class="col-sm-12 form-group report-table-container"
 							id="selectedInstrumentTableDiv"></div>
 						<form:hidden path="instHeaderIds" id="selectedInstrumentId"/>
 						<form:hidden path="voucherHeaderId" id="selectedVoucherHeaderId"/>
-						<div class="form-group row">
+						<div class="form-group">
 							<label class="col-sm-3 control-label text-right"><spring:message
 									code="lbl.transaction.date" /> <span
 								class="mandatory"></span> </label>
@@ -230,7 +230,7 @@ var chequeDDDateMendatoryMessage = "<spring:message code='msg.please.select.cheq
 								<form:input id="dishonorDateId" path="dishonorDate"
 									class="form-control datepicker" data-date-end-date="0d"
 									required="required" autocomplete="off"
-									data-inputmask="'mask': '99/99/9999'" placeholder="DD/MM/YYYY" />
+									data-inputmask="'mask': 'd/m/y'" placeholder="DD/MM/YYYY" />
 								<form:errors path="dishonorDate"
 									cssClass="add-margin error-msg" />
 							</div>
@@ -241,7 +241,7 @@ var chequeDDDateMendatoryMessage = "<spring:message code='msg.please.select.cheq
 								<form:textarea path="remarks" id="remarks" class="form-control" maxlength="1024" ></form:textarea>
 							</div>
 						</div>
-						<div class="form-group row">
+						<div class="form-group">
 							<label class="col-sm-3 control-label text-right"><spring:message
 									code="lbl.dishonor.reason" /> <span
 								class="mandatory"></span> </label>
@@ -293,7 +293,7 @@ var chequeDDDateMendatoryMessage = "<spring:message code='msg.please.select.cheq
 						<br/>
 						<br/>
 						
-						<div class="form-group row">
+						<div class="form-group">
 							<div class="text-center">
 								<button type='button' class='btn btn-default' id="btnback"
 									onclick="goBackToDishonorChequeSearch();">

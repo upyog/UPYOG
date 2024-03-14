@@ -73,7 +73,7 @@
 						<div class="subheadnew"  style="text-align: center"><spring:message text="Surrendered Cheque Report" code="lbl.surrender.cheque.report"/></div>
 					</div>
 					<div class="panel-body">
-						<div class="form-group row">
+						<div class="form-group">
 							<label class="col-sm-3 control-label text-right"><spring:message
 									code="lbl.fund" text="Fund"/>:</label>
 							<div class="col-sm-3 add-margin">
@@ -103,7 +103,7 @@
 								</form:select>
 							</div>
 						</div>
-						<div class="form-group row">
+						<div class="form-group">
 							<label class="col-sm-3 control-label text-right"><spring:message
 									code="lbl.bankAccount" text="Bank Account" />:</label>
 							<div class="col-sm-3 add-margin">
@@ -131,7 +131,7 @@
 								</form:select>
 							</div>
 						</div>
-						<div class="form-group row">
+						<div class="form-group">
 							<label class="col-sm-3 control-label text-right"><spring:message
 									code="lbl.fromDate"  text="From Date"/> <span class="mandatory"></span> </label>
 							<div class="col-sm-3 add-margin">
@@ -149,7 +149,7 @@
 								<form:errors path="toDate" cssClass="add-margin error-msg" />
 							</div>
 						</div>
-						<div class="form-group row">
+						<div class="form-group">
 							<div class="text-center">
 								<button type='button' class='btn btn-primary' id="btnsearch">
 									<spring:message code='lbl.search' />
@@ -164,7 +164,7 @@
 							<div class="subheadnew col-md-12 table-header text-center" 
 								id="surrenderChequeHeading"></div>
 							<!-- <div class="alert alert-success" role="alert"></div> -->
-							<div class="col-md-12 form-group row report-table-container">
+							<div class="col-md-12 form-group report-table-container">
 								<table class="table table-bordered table-hover multiheadertbl"
 									id="resultTable">
 									<thead>
@@ -199,7 +199,7 @@
 <%-- <div class="row display-hide report-section">
 	<div class="col-md-12 table-header text-left" id="coareportheading"></div>
 	<!-- <div class="alert alert-success" role="alert"></div> -->
-	<div class="col-md-12 form-group row report-table-container">
+	<div class="col-md-12 form-group report-table-container">
 		<table class="table table-bordered table-hover multiheadertbl"
 			id="resultTable">
 			<thead>

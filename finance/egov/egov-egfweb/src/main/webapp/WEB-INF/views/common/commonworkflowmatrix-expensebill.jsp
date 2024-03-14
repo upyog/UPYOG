@@ -45,6 +45,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   ~
   --%>
+
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -79,8 +80,8 @@
 
 				<div class="row show-row"  id="approverDetailHeading">
 				<c:if test="${nextAction !='END'}" > 
-					<div class="show-row form-group row" >
-						<label class="col-sm-3 control-label text-end"><spring:message code="lbl.approverdepartment" text="Approver Department"/><span class="mandatory"></span></label>
+					<div class="show-row form-group" >
+						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.approverdepartment" text="Approver Department"/><span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
 							<form:select path="approvalDepartment" data-first-option="false" name="approvalDepartment"
 								id="approvalDepartment" cssClass="form-control"
@@ -92,7 +93,7 @@
 									itemLabel="name" />     
 							</form:select>
 						</div>
-						<label class="col-sm-2 control-label text-end"><spring:message code="lbl.approverdesignation" text="Approver Designation"/><span class="mandatory"></span></label>
+						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.approverdesignation" text="Approver Designation"/><span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
 						<input type="hidden" id="approvalDesignationValue" value="${approvalDesignation }" />
 							<form:select path="" data-first-option="false" name="approvalDesignation"
@@ -105,8 +106,8 @@
 							</form:select>					
 						</div>
 					</div>
-					<div class="show-row form-group row">
-						<label class="col-sm-3 control-label text-end"><spring:message code="lbl.approver" text="Approver"/><span class="mandatory"></span></label>
+					<div class="show-row form-group">
+						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.approver" text="Approver"/><span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
 						<input type="hidden" id="approvalPositionValue" value="${approvalPosition }" />
 						<input type="hidden" id="approverName" name="approverName" />
@@ -120,8 +121,8 @@
 						</div> 
 					</div>
 					</c:if>
-					<div class="show-row form-group row">
-						<label class="col-sm-3 control-label text-end"><spring:message code="lbl.comments" text="Comments"/></label>
+					<div class="show-row form-group">
+						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.comments" text="Comments"/></label>
 						<div class="col-sm-8 add-margin">
 							<form:textarea class="form-control" path="approvalComent"  id="approvalComent" name="approvalComent" />
 						</div>

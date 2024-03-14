@@ -60,7 +60,7 @@
             <div class="panel-title"><spring:message code="lbl.search.fund" text="Search Fund"/> </div>
           </div>
           <div class="panel-body">
-            <div class="form-group row">
+            <div class="form-group">
             <label class="col-sm-3 control-label text-right"><spring:message code="lbl.name" text="Name"/> </label>
               <div class="col-sm-3 add-margin">
                 <form:input path="name" class="form-control text-left patternvalidation" data-pattern="alphanumeric"
@@ -75,7 +75,7 @@
               </div>
               
             </div>
-            <div class="form-group row">
+            <div class="form-group">
               <%-- <label class="col-sm-3 control-label text-right"><spring:message code="lbl.isnotleaf" /> </label>
               <div class="col-sm-3 add-margin">
                 <form:checkbox path="isnotleaf" />
@@ -100,7 +100,7 @@
               
             </div>
             <input type="hidden" id="mode" name="mode" value="${mode}" />
-            <div class="form-group row">
+            <div class="form-group">
               <div class="text-center">
                 <button type='button' class='btn btn-primary' id="btnsearch">
                   <spring:message code='lbl.search' text="Search"/>
@@ -117,7 +117,7 @@
 </form:form>
 <div class="row display-hide report-section">
   <div class="col-md-12 table-header text-left"><spring:message text="Fund Search Result" code="lbl.fund.search.result"/></div>
-  <div class="col-md-12 form-group row report-table-container">
+  <div class="col-md-12 form-group report-table-container">
     <table class="table table-bordered table-hover multiheadertbl" id="resultTable">
       <thead>
         <tr>

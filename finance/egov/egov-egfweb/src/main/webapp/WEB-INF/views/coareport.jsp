@@ -72,7 +72,7 @@
 					</div>
 					<div class="panel-body">
 
-						<div class="form-group row">
+						<div class="form-group">
 							<label class="col-sm-3 control-label text-right"><spring:message
 									code="lbl.majorcode" text="Major Code"/>:</label>
 							<div class="col-sm-3 add-margin">
@@ -103,7 +103,7 @@
 								</form:select>
 							</div>
 						</div>
-						<div class="form-group row">
+						<div class="form-group">
 							<label class="col-sm-3 control-label text-right"><spring:message
 									code="lbl.accountcode" text="Account Code"/> :</label>
 							<div class="col-sm-3 add-margin">
@@ -126,7 +126,7 @@
 								</form:select>
 							</div>
 						</div>
-						<div class="form-group row">
+						<div class="form-group">
 							<label class="col-sm-3 control-label"><spring:message
 									code="lbl.type" text="Type"/>:</label>
 							<div class="col-sm-3 add-margin">
@@ -158,7 +158,7 @@
 						</div>
 
 
-						<div class="form-group row">
+						<div class="form-group">
 							<label class="col-sm-3 control-label text-right"><spring:message
 									code="lbl.isActiveForPosting" text="Active for Posting"/>:</label>
 							<div class="col-sm-3 add-margin">
@@ -195,7 +195,7 @@
 							</div>
 						</div>
 
-						<div class="form-group row">
+						<div class="form-group">
 							<label class="col-sm-3 control-label text-right"><spring:message
 									code="lbl.budgetRequired" text="Budget Required"/>:</label>
 							<div class="col-sm-3 add-margin">
@@ -218,7 +218,7 @@
 						</div>
 
 
-						<div class="form-group row">
+						<div class="form-group">
 							<div class="text-center">
 								<button type='button' class='btn btn-primary' id="btnsearch">
 									<spring:message code='lbl.search'/>

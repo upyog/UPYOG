@@ -94,14 +94,14 @@ var toDateAlertMsg = '<spring:message code="msg.please.select.toDate"/>';
 							</div>
 						</div>
 						<div class="panel-body">
-							<div class="form-group row">
+							<div class="form-group">
 								<label class="col-sm-3 control-label text-right"><spring:message
 										code="lbl.dihonouredchequefromdate" />:<span class="mandatory"></span>
 								</label>
 								<div class="col-sm-3 add-margin">
 									<form:input path="fromDate" class="form-control datepicker"
 										required="required" id="fromDateId" data-date-end-date="0d"
-										data-inputmask="'mask': '99/99/9999'" />
+										data-inputmask="'mask': 'd/m/y'" />
 									<form:errors path="fromDate" cssClass="error-msg" />
 								</div>
 								<label class="col-sm-3 control-label text-right"><spring:message
@@ -110,12 +110,12 @@ var toDateAlertMsg = '<spring:message code="msg.please.select.toDate"/>';
 								<div class="col-sm-3 add-margin">
 									<form:input path="toDate" class="form-control datepicker"
 										required="required" id="toDateId" data-date-end-date="0d"
-										data-inputmask="'mask': '99/99/9999'" />
+										data-inputmask="'mask': 'd/m/y'" />
 									<form:errors path="toDate" cssClass="error-msg" />
 								</div>
 
 							</div>
-						 <div class="form-group row">
+						 <div class="form-group">
 								<label class="col-sm-3 control-label text-right"><spring:message
 										code="lbl.bank.account.number" />:</label>
 								 <div class="col-sm-3 add-margin">
@@ -150,7 +150,7 @@ var toDateAlertMsg = '<spring:message code="msg.please.select.toDate"/>';
 
 							</div>
 
-							  <div class="form-group row">
+							  <div class="form-group">
 								<label class="col-sm-3 control-label text-right"><spring:message
 										code="lbl.payment.type" text="Payment Type" />:</label>
 								<div class="col-sm-3 add-margin">
@@ -174,7 +174,7 @@ var toDateAlertMsg = '<spring:message code="msg.please.select.toDate"/>';
 							<form:errors path="instrumentNumber" cssClass="error-msg" />
 						</div>
 							</div>
-							  <div class="form-group row">
+							  <div class="form-group">
 								<div class="text-center">
 									<button type='button' class='btn btn-primary' id="btnsearch">
 										<spring:message code='lbl.search' />
@@ -193,7 +193,7 @@ var toDateAlertMsg = '<spring:message code="msg.please.select.toDate"/>';
 								<div class="subheadnew col-md-12 table-header text-center"
 									id="dishonouredReportHeading"></div>
 								<!-- <div class="alert alert-success" role="alert"></div> -->
-								<div class="col-md-12 form-group row report-table-container">
+								<div class="col-md-12 form-group report-table-container">
 									<table class="table table-bordered table-hover multiheadertbl"
 										id="resultTable" style="width: 100%; table-layout: fixed;">
 										<thead>

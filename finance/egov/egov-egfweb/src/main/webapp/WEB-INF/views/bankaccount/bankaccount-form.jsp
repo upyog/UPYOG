@@ -55,7 +55,7 @@
 				<input type="hidden" name="bankaccount" value="${bankaccount.id}" />
 			</div>
 			<div class="panel-body">
-				<div class="form-group row">
+				<div class="form-group">
 					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.bankbranch" text="Bank Branch"/> <span class="mandatory"></span> </label>
 					<div class="col-sm-3 add-margin">
 						<form:select path="bankbranch" data-first-option="false" id="bankbranch" class="form-control" required="required">
@@ -71,7 +71,7 @@
 					<div class="col-sm-3 add-margin">
 					</div>
 				</div>
-				<div class="form-group row">
+				<div class="form-group">
 					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.accountnumber" text="Account Number"/> <span class="mandatory"></span> </label>
 					<div class="col-sm-3 add-margin">
 						<form:input path="accountnumber" class="form-control text-left patternvalidation" data-pattern="alphanumeric" maxlength="50" required="required" />
@@ -86,7 +86,7 @@
 						<form:errors path="fund" cssClass="error-msg" />
 					</div>
 				</div>
-				<div class="form-group row">
+				<div class="form-group">
 					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.accounttype" text="Account Type"/> <span class="mandatory"></span> </label>
 					<div class="col-sm-3 add-margin">
 						<form:select path="accounttype" data-first-option="false" id="accounttype" class="form-control" required="required">
@@ -103,7 +103,7 @@
 						<form:errors path="narration" cssClass="error-msg" />
 					</div>
 				</div>
-				<div class="form-group row">
+				<div class="form-group">
 					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.payto" text="Pay To"/></label>
 					<div class="col-sm-3 add-margin">
 						<form:input path="payTo" class="form-control text-left patternvalidation" data-pattern="alphanumeric" maxlength="50" />
@@ -119,7 +119,7 @@
 						</form:select>
 					</div>
 				</div>
-				<div class="form-group row">
+				<div class="form-group">
 					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.isactive" text="Active"/> </label>
 					<div class="col-sm-3 add-margin">
 						<form:checkbox path="isactive" />

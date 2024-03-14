@@ -46,8 +46,6 @@
  *
  */
 
-
-
 var $schemeId = 0;
 var $subSchemeId = 0;
 var $fundSourceId = 0;
@@ -63,10 +61,6 @@ $(document).ready(function(){
 		$("#fundSource").val($fundSourceId).prop('selected','selected');
 	loadScheme($('#fund').val());
 	loadSubScheme($schemeId);
-	
-	/* Syntax modified because of typehead.bundle.js library update by Khalid Rashid */
-	
-	/*
 	var functionName = new Bloodhound({
 		datumTokenizer : function(datum) {
 			return Bloodhound.tokenizers.whitespace(datum.value);
@@ -86,28 +80,7 @@ $(document).ready(function(){
 			}
 		}
 	});
-	*/
-	
-	    var functionName = new Bloodhound({
-        datumTokenizer: Bloodhound.tokenizers.obj.whitespace('codeName'),
-        queryTokenizer: Bloodhound.tokenizers.whitespace,
-        remote: {
-            url: '/services/EGF/common/ajaxfunctionnames?name=%QUERY',
-            wildcard: '%QUERY',
-            transform: function(response) {
-                return $.map(response, function(ct) {
-                    return {
-                        code: ct.split("~")[0].split("-")[0],
-                        name: ct.split("~")[0].split("-")[1],
-                        id: ct.split("~")[1],
-                        codeName: ct
-                    };
-                });
-            }
-        }
-    });
-    
-/*
+
 	functionName.initialize();
 $('#function').typeahead({
 		hint : true,
@@ -121,27 +94,6 @@ $('#function').typeahead({
 	});
 	
 });
-    
-*/
-
-    functionName.initialize();
-
-    $('#function').typeahead({
-		hint: true,
-        minLength: 3,
-        highlight: true
-    }, {
-        name: 'functionName',
-        display: 'codeName',
-        source: functionName.ttAdapter()
-    }).on('typeahead:select', function(event, data) {
-        $(".cfunction").val(data.id);
-    });
-});
-
-
-
-
 $('#function').blur(function () {
 	if($('.cfunction').val()=="")
 	{

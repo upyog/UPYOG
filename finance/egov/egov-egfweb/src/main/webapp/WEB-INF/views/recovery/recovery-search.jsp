@@ -61,7 +61,7 @@
 						<div class="panel-title" align="center"><spring:message code="lbl.search.deductions" text="Search Deductions"/> </div>
 					</div>
 					<div class="panel-body">
-						<div class="form-group row">
+						<div class="form-group">
 							<label class="col-sm-2 control-label text-left"><spring:message
 									code="lbl.chartofaccounts" text="Account Code"/> </label>
 							<div class="col-sm-3">
@@ -85,7 +85,7 @@
 							</div>
 						</div>
 						
-						<div class="form-group row">
+						<div class="form-group">
 							<label class="col-sm-2 control-label text-left"><spring:message
 									code="lbl.deductions.name" text="Deduction Name"/> </label>
 							<div class="col-sm-3 add-margin">
@@ -95,7 +95,7 @@
 							<input type="hidden" id="mode" name="mode" value="${mode}" />
 						</div>
 
-						<div class="form-group row">
+						<div class="form-group">
 							<div class="text-center">
 								<button type='button' class='btn btn-primary' id="btnsearch">
 									<spring:message code='lbl.search' text="Search"/>
@@ -112,7 +112,7 @@
 </form:form>
 <div class="row display-hide report-section">
 	<div class="col-md-12 table-header text-left"><spring:message code="lbl.deductions.search.result" text="Deductions Search Result"/></div>
-	<div class="col-md-12 form-group row report-table-container">
+	<div class="col-md-12 form-group report-table-container">
 		<table class="table table-bordered table-hover multiheadertbl"
 			id="resultTable">
 			<thead>

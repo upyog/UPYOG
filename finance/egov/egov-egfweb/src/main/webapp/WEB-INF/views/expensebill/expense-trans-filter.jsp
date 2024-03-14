@@ -51,14 +51,13 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 
 
-
-<div class="form-group row">
+<div class="form-group">
 	<c:choose>
 		<c:when test="${headerFields.contains('fund')}">
 			<c:choose>
 				<c:when test="${mandatoryFields.contains('fund')}">
 				<form:hidden path="" name="fundId" id="fundId" value="${egBillregister.egBillregistermis.fund.id }"/>
-					<label class="col-sm-3 control-label text-end"><spring:message code="lbl.fund" />
+					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.fund" />
 						<span class="mandatory"></span>
 					</label>
 					<div class="col-sm-3 add-margin">
@@ -71,7 +70,7 @@
 				</c:when>
 				<c:otherwise>
 				<form:hidden path="" name="fundId" id="fundId" value="${egBillregister.egBillregistermis.fund.id }"/>
-					<label class="col-sm-3 control-label text-end"><spring:message code="lbl.fund" />
+					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.fund" />
 					</label>
 					<div class="col-sm-3 add-margin">
 						<form:select path="egBillregistermis.fund" data-first-option="false" id="fund" class="form-control"  >
@@ -84,7 +83,7 @@
 			</c:choose>
 		</c:when>
 		<c:otherwise>
-			<label class="col-sm-3 control-label text-end"></label>
+			<label class="col-sm-3 control-label text-right"></label>
 			<div class="col-sm-3 add-margin">
 			</div>
 		</c:otherwise>
@@ -93,7 +92,7 @@
 		<c:when test="${headerFields.contains('department')}">
 			<c:choose>
 				<c:when test="${mandatoryFields.contains('department')}">
-					<label class="col-sm-2 control-label text-end"><spring:message code="lbl.department" />
+					<label class="col-sm-2 control-label text-right"><spring:message code="lbl.department" />
 						<span class="mandatory"></span>
 					</label>
 					<div class="col-sm-3 add-margin">
@@ -105,7 +104,7 @@
 					</div>
 				</c:when>
 				<c:otherwise>
-					<label class="col-sm-2 control-label text-end"><spring:message code="lbl.department" />
+					<label class="col-sm-2 control-label text-right"><spring:message code="lbl.department" />
 					</label>
 					<div class="col-sm-3 add-margin">
 						<form:select path="egBillregistermis.departmentcode" data-first-option="false" id="department" class="form-control">
@@ -118,7 +117,7 @@
 			</c:choose>
 		</c:when>
 		<c:otherwise>
-			<label class="col-sm-2 control-label text-end"></label>
+			<label class="col-sm-2 control-label text-right"></label>
 			<div class="col-sm-3 add-margin">
 			</div>
 		</c:otherwise>
@@ -126,13 +125,13 @@
 	
 </div>
 
-<div class="form-group row">
+<div class="form-group">
 	<c:choose>
 		<c:when test="${headerFields.contains('scheme')}">
 			<form:hidden path="" name="schemeId" id="schemeId" value="${egBillregister.egBillregistermis.scheme.id }"/>
 			<c:choose>
 				<c:when test="${mandatoryFields.contains('scheme')}">
-					<label class="col-sm-3 control-label text-end"><spring:message code="lbl.scheme" />
+					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.scheme" />
 						<span class="mandatory"></span>
 					</label>
 					<div class="col-sm-3 add-margin">
@@ -143,7 +142,7 @@
 					</div>
 				</c:when>
 				<c:otherwise>
-					<label class="col-sm-3 control-label text-end"><spring:message code="lbl.scheme" />
+					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.scheme" />
 					</label>
 					<div class="col-sm-3 add-margin">
 						<form:select path="egBillregistermis.schemeId" data-first-option="false" id="scheme" class="form-control">
@@ -155,7 +154,7 @@
 			</c:choose>
 		</c:when>
 		<c:otherwise>
-			<label class="col-sm-3 control-label text-end"></label>
+			<label class="col-sm-3 control-label text-right"></label>
 			<div class="col-sm-3 add-margin">
 			</div>
 		</c:otherwise>
@@ -166,7 +165,7 @@
 		<form:hidden path="" name="subSchemeId" id="subSchemeId" value="${egBillregister.egBillregistermis.subScheme.id }"/>
 			<c:choose>
 				<c:when test="${mandatoryFields.contains('subscheme')}">
-					<label class="col-sm-2 control-label text-end"><spring:message code="lbl.subscheme" />
+					<label class="col-sm-2 control-label text-right"><spring:message code="lbl.subscheme" />
 						<span class="mandatory"></span>
 					</label>
 					<div class="col-sm-3 add-margin">
@@ -178,7 +177,7 @@
 					</div>
 				</c:when>
 				<c:otherwise>
-					<label class="col-sm-2 control-label text-end"><spring:message code="lbl.subscheme" />
+					<label class="col-sm-2 control-label text-right"><spring:message code="lbl.subscheme" />
 					</label>
 					<div class="col-sm-3 add-margin">
 						<form:select path="egBillregistermis.subSchemeId" data-first-option="false" id="subScheme" class="form-control">
@@ -191,20 +190,20 @@
 			</c:choose>
 		</c:when>
 		<c:otherwise>
-			<label class="col-sm-2 control-label text-end"></label>
+			<label class="col-sm-2 control-label text-right"></label>
 			<div class="col-sm-3 add-margin">
 			</div>
 		</c:otherwise>
 	</c:choose>
 </div>
 
-<div class="form-group row">
+<div class="form-group">
 	<c:choose>
 		<c:when test="${headerFields.contains('fundsource')}">
 		<form:hidden path="" name="fundSourceId" id="fundSourceId" value="${egBillregister.egBillregistermis.fundsource.id }"/>
 			<c:choose>
 				<c:when test="${mandatoryFields.contains('fundsource')}">
-					<label class="col-sm-3 control-label text-end"><spring:message code="lbl.sourcefund" />
+					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.sourcefund" />
 						<span class="mandatory"></span>
 					</label>
 					<div class="col-sm-3 add-margin">
@@ -216,7 +215,7 @@
 					</div>
 				</c:when>
 				<c:otherwise>
-					<label class="col-sm-3 control-label text-end"><spring:message code="lbl.sourcefund" />
+					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.sourcefund" />
 					</label>
 					<div class="col-sm-3 add-margin">
 						<form:select path="egBillregistermis.fundsource" data-first-option="false" id="fundSource" class="form-control" >
@@ -229,7 +228,7 @@
 			</c:choose>
 		</c:when>
 		<c:otherwise>
-			<label class="col-sm-3 control-label text-end"></label>
+			<label class="col-sm-3 control-label text-right"></label>
 			<div class="col-sm-3 add-margin">
 			</div>
 		</c:otherwise>
@@ -239,7 +238,7 @@
 		<c:when test="${headerFields.contains('field')}">
 			<c:choose>
 				<c:when test="${mandatoryFields.contains('field')}">
-					<label class="col-sm-2 control-label text-end"><spring:message code="lbl.field" />
+					<label class="col-sm-2 control-label text-right"><spring:message code="lbl.field" />
 						<span class="mandatory"></span>
 					</label>
 					<div class="col-sm-3 add-margin">
@@ -251,7 +250,7 @@
 					</div>
 				</c:when>
 				<c:otherwise>
-					<label class="col-sm-2 control-label text-end"><spring:message code="lbl.functionary" />
+					<label class="col-sm-2 control-label text-right"><spring:message code="lbl.functionary" />
 					</label>
 					<div class="col-sm-3 add-margin">
 						<form:select path="egBillregistermis.fieldid" data-first-option="false" id="field" class="form-control">
@@ -264,19 +263,19 @@
 			</c:choose>
 		</c:when>
 		<c:otherwise>
-			<label class="col-sm-2 control-label text-end"></label>
+			<label class="col-sm-2 control-label text-right"></label>
 			<div class="col-sm-3 add-margin">
 			</div>
 		</c:otherwise>
 	</c:choose>
 </div>
 
-<div class="form-group row">
+<div class="form-group">
 	<c:choose>
 		<c:when test="${headerFields.contains('functionary')}">
 			<c:choose>
 				<c:when test="${mandatoryFields.contains('functionary')}">
-					<label class="col-sm-3 control-label text-end"><spring:message code="lbl.functionaryid" />
+					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.functionaryid" />
 						<span class="mandatory"></span>
 					</label>
 					<div class="col-sm-3 add-margin">
@@ -288,7 +287,7 @@
 					</div>
 				</c:when>
 				<c:otherwise>
-					<label class="col-sm-3 control-label text-end"><spring:message code="lbl.functionaryid" />
+					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.functionaryid" />
 					</label>
 					<div class="col-sm-3 add-margin">
 						<form:select path="egBillregistermis.functionaryid" data-first-option="false" id="functionary" class="form-control">
@@ -301,10 +300,9 @@
 			</c:choose>
 		</c:when>
 		<c:otherwise>
-			<label class="col-sm-3 control-label text-end"></label>
+			<label class="col-sm-3 control-label text-right"></label>
 			<div class="col-sm-3 add-margin">
 			</div>
 		</c:otherwise>
 	</c:choose>
-
 </div>

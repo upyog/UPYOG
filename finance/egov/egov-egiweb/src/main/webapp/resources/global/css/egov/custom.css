@@ -58,7 +58,6 @@ body {
   font-family: regular;
   text-align: left;
   word-wrap: break-word;
-  font-size: 14px;
 }
 body {
   padding-top: 0px;
@@ -1622,7 +1621,7 @@ label.error {
   cursor: default;
   border: 0;
 }
-.page-container .nav-tabs .nav-item a.active:after {
+.page-container .nav-tabs li.active > a:after {
   display: block;
   content: '';
   position: absolute;
@@ -1752,7 +1751,6 @@ label.error {
 .form-group div {
   margin-bottom: 15px;
 }
-
 @media (max-width: 768px) {
   .form-group {
     padding-left: 15px;
@@ -1810,24 +1808,6 @@ label.error {
 .g-recaptcha div {
   margin: auto;
 }
-
-
-/* Panels deprecated in bootstrap 5 and added in custom.css*/
-
-.panel {
-  margin-bottom: 20px;
-  background-color: #fff;
-  border: 1px solid transparent;
-  border-radius: 4px;
-  -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
-          box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
-}
-
-.panel-body {
-  padding: 15px;
-}
-
-
 .panel-primary {
   border-color: #ffffff;
   box-shadow: 0px 0px 5px 0px #d4c2c2;
@@ -1924,32 +1904,6 @@ label.error {
 .table tbody tr:hover {
   background: #f7f7f7;
 }
-
-
-/* css for control-label class added for labels */
-@media (min-width: 768px) {
-  .form-horizontal .control-label {
-    padding-top: 7px;
-    margin-bottom: 0;
-    text-align: right;
-  }
-}
-
-@media (min-width: 768px) {
-  .form-horizontal .form-group-lg .control-label {
-    padding-top: 11px;
-    font-size: 18px;
-  }
-}
-@media (min-width: 768px) {
-  .form-horizontal .form-group-sm .control-label {
-    padding-top: 6px;
-    font-size: 12px;
-  }
-}
-
-
-
 /*datatable overrided properties*/
 @media screen and (max-width: 768px) {
   table.dataTable {
