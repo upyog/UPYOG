@@ -98,14 +98,11 @@ import org.egov.model.bills.EgBillPayeedetails;
 import org.egov.model.bills.EgBillPurchaseItemsDetails;
 import org.egov.model.bills.EgBilldetails;
 import org.egov.model.bills.EgBillregister;
-<<<<<<< HEAD
-<<<<<<< HEAD
+
 import org.egov.model.budget.BudgetDetail;
-=======
->>>>>>> 8d2ef484acce46e0f39d80188c2b43ccca9e9508
-=======
+
 import org.egov.model.budget.BudgetDetail;
->>>>>>> 6d75aca06005806a5dce3b5f6e818fd3149a7977
+
 import org.egov.model.masters.PurchaseItems;
 import org.egov.model.masters.PurchaseOrder;
 import org.egov.services.bills.EgBillRegisterService;
@@ -130,11 +127,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-<<<<<<< HEAD
 
-
-=======
->>>>>>> 8d2ef484acce46e0f39d80188c2b43ccca9e9508
 
 
 
@@ -219,18 +212,10 @@ public class CreateSupplierBillController extends BaseBillController {
 	@Autowired
 	private PurchaseItemsBillRegisterRepository purchaseItemsBillRegisterRepository;
 	
-<<<<<<< HEAD
-<<<<<<< HEAD
+
 	 @Autowired
 	    private EgBillRegisterService egBillRegisterservice;
-	
-=======
->>>>>>> 8d2ef484acce46e0f39d80188c2b43ccca9e9508
-=======
-	 @Autowired
-	    private EgBillRegisterService egBillRegisterservice;
-	
->>>>>>> 6d75aca06005806a5dce3b5f6e818fd3149a7977
+
 
 	public CreateSupplierBillController(final AppConfigValueService appConfigValuesService) {
 		super(appConfigValuesService);
@@ -271,10 +256,7 @@ public class CreateSupplierBillController extends BaseBillController {
 	}
 	
 	
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 6d75aca06005806a5dce3b5f6e818fd3149a7977
+
 	//added bydepak
 	
 	@GetMapping(value = "/code")
@@ -309,11 +291,7 @@ public class CreateSupplierBillController extends BaseBillController {
 	 * 
 	 */
 	
-<<<<<<< HEAD
-=======
->>>>>>> 8d2ef484acce46e0f39d80188c2b43ccca9e9508
-=======
->>>>>>> 6d75aca06005806a5dce3b5f6e818fd3149a7977
+
 
 	// TODO      Ajax call for get purchaseItems
 	@GetMapping(value = "/get/purchaseItems")
@@ -350,15 +328,7 @@ public class CreateSupplierBillController extends BaseBillController {
 		
 		
 		//System.out.println(egBillregister.getPurchaseItems().size());
-<<<<<<< HEAD
-<<<<<<< HEAD
-		
-=======
-			
->>>>>>> 8d2ef484acce46e0f39d80188c2b43ccca9e9508
-=======
-		
->>>>>>> 6d75aca06005806a5dce3b5f6e818fd3149a7977
+
 		
 		if (FinancialConstants.BUTTONFORWARD.equalsIgnoreCase(workFlowAction) && !commonsUtil
 				.isValidApprover(egBillregister, Long.valueOf(request.getParameter(APPROVAL_POSITION)))) {

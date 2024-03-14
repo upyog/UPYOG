@@ -1,13 +1,10 @@
 package org.egov.commons.repository;
 
-<<<<<<< HEAD
-<<<<<<< HEAD
+
 import java.math.BigInteger;
-=======
->>>>>>> 8d2ef484acce46e0f39d80188c2b43ccca9e9508
-=======
+
 import java.math.BigInteger;
->>>>>>> 6d75aca06005806a5dce3b5f6e818fd3149a7977
+
 import java.util.List;
 import java.util.Optional;
 
@@ -27,11 +24,7 @@ public interface CVoucherHeaderRepository  extends JpaRepository<CVoucherHeader,
 	
 	@Query(value = "SELECT * FROM citya.voucherheader WHERE id = (SELECT MAX(id) FROM citya.voucherheader)", nativeQuery = true)
     public  CVoucherHeader getDetailsForMaxIdFromVoucherHeaders();
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 6d75aca06005806a5dce3b5f6e818fd3149a7977
-	
+
 	
 	@Query(value = "SELECT VH.id AS MissingVoucherHeaders " +
             "FROM citya.voucherheader VH " +
@@ -39,11 +32,7 @@ public interface CVoucherHeaderRepository  extends JpaRepository<CVoucherHeader,
             "WHERE GL.voucherheaderid IS NULL",
      nativeQuery = true)
 List<BigInteger> findMissingVoucherHeaders();
-<<<<<<< HEAD
-=======
->>>>>>> 8d2ef484acce46e0f39d80188c2b43ccca9e9508
-=======
->>>>>>> 6d75aca06005806a5dce3b5f6e818fd3149a7977
+
 }
 
 

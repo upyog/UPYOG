@@ -85,17 +85,9 @@ public class PropertyTaxReceiptRegisterService implements EntityTypeService{
          String currentFinancialYear = currentDates.format(DateTimeFormatter.ofPattern("2023-24")); 
          String newVoucherNumber = String.format("1/RJV/%08d/%s/%s", nextId, currentMonth, currentFinancialYear);
          System.out.println(newVoucherNumber);
-<<<<<<< HEAD
-<<<<<<< HEAD
+
          int startNumber = 100000000;
          String formattedId = String.format("%09d",startNumber+nextId); 
-=======
-         String formattedId = String.format("%09d", nextId); 
->>>>>>> 8d2ef484acce46e0f39d80188c2b43ccca9e9508
-=======
-         int startNumber = 100000000;
-         String formattedId = String.format("%09d",startNumber+nextId); 
->>>>>>> 6d75aca06005806a5dce3b5f6e818fd3149a7977
          String cgvn = "1/JVG/CGVN" + formattedId;
          System.out.println(cgvn);     
          Date currentDateAndTime = new Date();
