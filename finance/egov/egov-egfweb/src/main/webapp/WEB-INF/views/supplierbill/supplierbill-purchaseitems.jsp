@@ -54,6 +54,9 @@ function getPurchaseItemsByOrderId() {
 					    itemCode: item.itemCode,
 					    unit: item.unit,
 					    unitRate: item.unitRate,
+					    quantity:item.quantity,
+					    unitValueWithGst:item.unitValueWithGst,
+					    //billed-quantity:item.quantity,
 					    quantity: item.quantity,
 					    amount: item.amount,
 					    //purchaseOrder: item.purchaseOrder,
@@ -108,6 +111,8 @@ function getPurchaseItemsByOrderId() {
             				tableHTML += '<tr>';
             				tableHTML += '<th>Item Code</th>';
             				tableHTML += '<th>Unit Rate</th>';
+            				tableHTML += '<th contenteditable="true">Billed-Quantity</th>';
+            				tableHTML += '<th contenteditable="true">Unit Value With GST</th>';
             				tableHTML += '<th contenteditable="true">Quantity</th>';
             				tableHTML += '<th contenteditable="true">Amount</th>';
             				tableHTML += '</tr>';
@@ -120,6 +125,8 @@ function getPurchaseItemsByOrderId() {
                 		 	tableHTML += '<tr>';
 						    tableHTML += '<td>' + data.itemCode + '</td>';
 						    tableHTML += '<td id="unitRate_' + i + '" contenteditable="true" class="editable unitRate">' + data.unitRate + '</td>';
+						    tableHTML += '<td id="billed-quantity' + i + '" contenteditable="true" class="editable quantity">' + data.quantity + '</td>';
+						    tableHTML += '<td id="unitValueWithGst' + i + '" contenteditable="true" class="editable unitValueWithGst">' + data.unitValueWithGst + '</td>';
 						    tableHTML += '<td id="quantity_' + i + '" contenteditable="true" class="editable quantity"></td>';
 						    tableHTML += '<td id="amount_' + i + '" class="amount"></td>';
 						    tableHTML += '</tr>';
@@ -140,8 +147,12 @@ function getPurchaseItemsByOrderId() {
     var unitRate = parseFloat(row.find('.unitRate').text()) || 0;
     var quantity = parseFloat($(this).text()) || 0;
 
-    var amount = unitRate * quantity;
+    var unitValueWithGst = parseFloat(row.find('.unitValueWithGst').text()) || 0;
 
+    var amount = unitValueWithGst * quantity;   
+     // Update the unitValueWithGst field in the current row
+         $(this).closest('tr').find('.unitValueWithGst').val(unitValueWithGst.toFixed(2));
+    var amount = unitRate * quantity;
     // Update the amount field in the current row
     row.find('.amount').text(amount.toFixed(2));
 
@@ -159,10 +170,8 @@ function updateTotalAmount() {
     });
 
     // Update the total amount in the tfoot
-    $('#totalAmount').text(totalAmount.toFixed(2));
-    
+    $('#totalAmount').text(totalAmount.toFixed(2));   
     // You can update other elements here if needed
-
     // Update the supplierNetPayableAmount using JavaScript
     var netPayableAmount = amountConverter(totalAmount);
     document.getElementById('billamount').value = netPayableAmount;
@@ -174,8 +183,6 @@ function updateTotalAmount() {
 	return formattedAmt;
 }
  
-            	
-            	
                     //$('#dynamicPurchaseItemList').append(JSON.stringify(dataList));
                     
               
@@ -225,7 +232,7 @@ function updateTotalAmount() {
     
   
 
-    
    
-    
+</script> 
 </script>
+

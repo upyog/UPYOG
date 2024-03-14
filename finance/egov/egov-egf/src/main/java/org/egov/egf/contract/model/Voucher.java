@@ -94,6 +94,13 @@ public class Voucher {
     private String serviceName;
     @SafeHtml
     private String referenceDocument;
+    
+    
+    
+    
+    
+    
+    
 
     public Voucher(final CVoucherHeader vh) {
         final SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");

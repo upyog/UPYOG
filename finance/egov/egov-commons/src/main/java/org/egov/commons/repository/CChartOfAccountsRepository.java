@@ -50,10 +50,49 @@ package org.egov.commons.repository;
 
 import org.egov.commons.CChartOfAccounts;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import java.util.List;
 
 
 @Repository 
 public interface CChartOfAccountsRepository extends JpaRepository<CChartOfAccounts,java.lang.Long> {
+	
+	
+	//added Deepak
+//1	
+@Query(value = "SELECT g.id AS general_ledger_id, g.* " +
+            "FROM citya.generalledger g " +
+            "JOIN citya.chartofaccounts c ON c.id = g.glcodeid " +
+            "WHERE c.glcode BETWEEN '1100102' AND '1203001'", nativeQuery = true)
+List<Object[]> findGeneralLedgerDataBetweenGLCodes();
+
+//2
+@Query(value = "SELECT g.id AS general_ledger_id, g.* " +
+        "FROM citya.generalledger g " +
+        "JOIN citya.chartofaccounts c ON c.id = g.glcodeid " +
+        "WHERE c.glcode BETWEEN '1301001' AND '1504103'", nativeQuery = true)
+List<Object[]> findGeneralLedgerDataBetweenGLCode();
+
+
+//3
+@Query(value = "SELECT g.id AS general_ledger_id, g.* " +
+        "FROM citya.generalledger g " +
+        "JOIN citya.chartofaccounts c ON c.id = g.glcodeid " +
+        "WHERE c.glcode BETWEEN '1601001' AND '1601018'", nativeQuery = true)
+List<Object[]> findGeneralLedgerDataBetweenGLCod();
+
+
+//4
+@Query(value = "SELECT g.id AS general_ledger_id, g.* " +
+        "FROM citya.generalledger g " +
+        "JOIN citya.chartofaccounts c ON c.id = g.glcodeid " +
+        "WHERE c.glcode BETWEEN '1701001' AND '1701007'", nativeQuery = true)
+List<Object[]> findGeneralLedgerDataBetweenGL();
+
+
+
+
+
 
 }

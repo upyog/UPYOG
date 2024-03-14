@@ -14,9 +14,16 @@
 	<thead>
 			<tr>
 				<th><%-- <spring:message code="lbl.account.code"/> --%>Items</th>
+<<<<<<< HEAD
+				<th><%-- <spring:message code="lbl.debit.amount"/> --%>UnitRate</th>
+				<th><%-- <spring:message code="lbl.credit.amount"/> --%>Quantity</th>
+				<th><%-- <spring:message code="lbl.credit.amount"/> --%>Billed-Quantity</th>
+				<th><%-- <spring:message code="lbl.credit.amount"/> --%>UnitValueWithGST</th>
+=======
 				
 				<th><%-- <spring:message code="lbl.debit.amount"/> --%>UnitRate</th>
 				<th><%-- <spring:message code="lbl.credit.amount"/> --%>Quantity</th>
+>>>>>>> 8d2ef484acce46e0f39d80188c2b43ccca9e9508
 				<th><%-- <spring:message code="lbl.action"/> --%>Amount</th>
 				 					
 			</tr>
@@ -32,8 +39,16 @@
 			</td>
 		
 			<td><input type="text" id="unitRate" name="unitRate" readonly="readonly" value="${item.unitRate}">
+<<<<<<< HEAD
+			<%-- <c:out value="${item.unitRate}"></c:out>readonly --%>
+			</td>
+			<td><input type="number" id= "quantity" name="billed-Quantity"value="${item.quantity}">
+			
+			<td><input type="number" id= "unitValueWithGST" name="unitValueWithGST"value="${item.unitValueWithGST}">
+=======
 			<%-- <c:out value="${item.unitRate}"></c:out> --%>
 			</td>
+>>>>>>> 8d2ef484acce46e0f39d80188c2b43ccca9e9508
 			<td><input type="number" id= "quantity" name="quantity" value="${item.quantity}">
 			<c:out value="${item.quantity}"></c:out>
 				</td> 
@@ -49,6 +64,12 @@
 		<tr>
 		<td></td>
 		<td></td>
+<<<<<<< HEAD
+		<td></td>
+		<td></td>
+		<td></td>
+=======
+>>>>>>> 8d2ef484acce46e0f39d80188c2b43ccca9e9508
 		
 		<td>Total Amount</td>
 		<td><span id="totalAmount" >0.00</span>
@@ -84,11 +105,21 @@
         // Update form input fields with values from the purchase item
         $('#itemCode').val(purchaseItem.itemCode);
         $('#unitRate').val(purchaseItem.unitRate);
+<<<<<<< HEAD
+        $('#gstRate').val(purchaseItem.gstRate);
+        $('#unitValueWithGst').val(purchaseItem.unitValueWithGst);
+        
+=======
 
+>>>>>>> 8d2ef484acce46e0f39d80188c2b43ccca9e9508
         // Update other fields as needed
     }
 </script>
 <script>
+<<<<<<< HEAD
+ 
+=======
+>>>>>>> 8d2ef484acce46e0f39d80188c2b43ccca9e9508
 $(document).on('input', '.unitRate, .quantity', function () {
         // Get the values of unit rate and quantity from the current row
         var unitRate = parseFloat($(this).closest('tr').find('.unitRate').val()) || 0;
@@ -130,4 +161,7 @@ $(document).on('input', '.unitRate, .quantity', function () {
     }
 </script>
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<<<<<<< HEAD
+=======
 
+>>>>>>> 8d2ef484acce46e0f39d80188c2b43ccca9e9508

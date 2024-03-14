@@ -140,6 +140,7 @@
 </div>
 <script>
 	$('#btnsearch').click(function(e) {
+	console.log("deepu== evalue "+ e);
 		if ($('form').valid()) {
 		} else {
 			e.preventDefault();
