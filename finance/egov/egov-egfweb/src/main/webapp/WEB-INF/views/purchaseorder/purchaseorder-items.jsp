@@ -160,9 +160,7 @@ $(document).on('input', '.unitRate, .gstRate, .quantity', function () {
         
         $(this).closest('tr').find('.unitValueWithGst').val(unitValueWithGst.toFixed(2));
         
-        //updateunitValueWithGst();
-=======
-        
+        //updateunitValueWithGst();        
 
 <script>
 
@@ -174,7 +172,6 @@ $(document).on('input', '.unitRate, .quantity', function () {
         // Calculate the amount
         var amount = unitRate * quantity;
 
->>>>>>> 8d2ef484acce46e0f39d80188c2b43ccca9e9508
         // Update the amount field in the current row
         $(this).closest('tr').find('.amount').val(amount.toFixed(2));
         updateTotalAmount();
