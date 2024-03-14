@@ -126,17 +126,11 @@ import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.exception.ConstraintViolationException;
 import org.hibernate.exception.SQLGrammarException;
-import org.hibernate.proxy.HibernateProxy;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 @Service
 @Transactional(readOnly = true)
@@ -199,10 +193,6 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
 
     @Autowired
     private BudgetDetailRepository budgetDetailRepository;
-    
-    private Gson gson = new Gson();
-    
-    private ObjectMapper objectMapper;
     
     @Autowired
     public MicroserviceUtils microserviceUtils;
@@ -2748,204 +2738,5 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
     public BudgetDetail getBudgetDetailByReferencceBudget(final String uniqueNo, final Long budgetId) {
         return budgetDetailRepository.findByReferenceBudget(uniqueNo, budgetId);
     }
-    
-    public  String getBudgetDetailsByGlcode(String glCode) {
-        if (glCode == null || glCode.trim().isEmpty()) {
-            throw new IllegalArgumentException("glCode cannot be null or empty");
-        }
-        
-        
-List<Object[]> budgetDetails = budgetDetailRepository.findBudgetDetailByGLCode(glCode);
-        
-        StringBuilder result = new StringBuilder();
-        for (Object[] budgetDetail : budgetDetails) {
-        	 Long billresisterId = null;
-        	    if (budgetDetail[0] instanceof BigInteger) {
-        	        billresisterId = ((BigInteger) budgetDetail[0]).longValue();
-        	    } else {
-        	        
-        	        billresisterId = Long.parseLong(String.valueOf(budgetDetail[0]));
-        	    }
-            
-            String billnumber = null;
-            if (budgetDetail[1] instanceof String) {
-                billnumber = (String) budgetDetail[1];
-            } else {
-               
-                billnumber = String.valueOf(budgetDetail[1]);
-            }
-              
-            
-            String billdate = String.valueOf(budgetDetail[2]);
-
-            String billtype = String.valueOf(budgetDetail[3]);
-
-            String expendituretype = String.valueOf(budgetDetail[4]);
-
-            Long egbilldetailsId = null;
-            if (budgetDetail[5] instanceof BigInteger) {
-                egbilldetailsId = ((BigInteger) budgetDetail[5]).longValue();
-            } else {
-                egbilldetailsId = Long.parseLong(String.valueOf(budgetDetail[5]));
-            }
-
-            Long billid = null;
-            if (budgetDetail[6] instanceof BigInteger) {
-                billid = ((BigInteger) budgetDetail[6]).longValue();
-            } else {
-                billid = Long.parseLong(String.valueOf(budgetDetail[6]));
-            }
-
-            Long chartofaccountsId = null;
-            if (budgetDetail[7] instanceof BigInteger) {
-                chartofaccountsId = ((BigInteger) budgetDetail[7]).longValue();
-            } else {
-                chartofaccountsId = Long.parseLong(String.valueOf(budgetDetail[7]));
-            }
-
-            String accounthead = String.valueOf(budgetDetail[8]);
-            
-            Long budgetdetailId = null;
-            if (budgetDetail[9] instanceof BigInteger) {
-                budgetdetailId = ((BigInteger) budgetDetail[9]).longValue();
-            } else {
-                budgetdetailId = Long.parseLong(String.valueOf(budgetDetail[9]));
-            }
-
-            String department = String.valueOf(budgetDetail[10]);
-
-            String function = String.valueOf(budgetDetail[11]);
-
-            Double budget = Double.parseDouble(String.valueOf(budgetDetail[12]));
-
-            Double budgetgroup = Double.parseDouble(String.valueOf(budgetDetail[13]));
-
-            Double originalamount = Double.parseDouble(String.valueOf(budgetDetail[14]));
-
-            Double approvedamount = Double.parseDouble(String.valueOf(budgetDetail[15]));
-
-            Double budgetavailable = Double.parseDouble(String.valueOf(budgetDetail[16]));
-
-            Double fund = Double.parseDouble(String.valueOf(budgetDetail[17]));
-
-            Long financialyearId = null;
-            if (budgetDetail[18] instanceof BigInteger) {
-                financialyearId = ((BigInteger) budgetDetail[18]).longValue();
-            } else {
-                financialyearId = Long.parseLong(String.valueOf(budgetDetail[18]));
-            }
-
-            String financialyear = String.valueOf(budgetDetail[19]);
-
-            Long generalledgerId = null;
-            if (budgetDetail[20] instanceof BigInteger) {
-                generalledgerId = ((BigInteger) budgetDetail[20]).longValue();
-            } else {
-                generalledgerId = Long.parseLong(String.valueOf(budgetDetail[20]));
-            }
-
-            Long voucherlineid = null;
-            if (budgetDetail[21] instanceof BigInteger) {
-                voucherlineid = ((BigInteger) budgetDetail[21]).longValue();
-            } else {
-                voucherlineid = Long.parseLong(String.valueOf(budgetDetail[21]));
-            }
-
-            Long generalLedgerVoucherheaderid = null;
-            if (budgetDetail[22] instanceof BigInteger) {
-                generalLedgerVoucherheaderid = ((BigInteger) budgetDetail[22]).longValue();
-            } else {
-                generalLedgerVoucherheaderid = Long.parseLong(String.valueOf(budgetDetail[22]));
-            }
-
-            Long glcodeid = null;
-            if (budgetDetail[23] instanceof BigInteger) {
-                glcodeid = ((BigInteger) budgetDetail[23]).longValue();
-            } else {
-                glcodeid = Long.parseLong(String.valueOf(budgetDetail[23]));
-            }
-
-            Double debitamount = Double.parseDouble(String.valueOf(budgetDetail[24]));
-
-            Double creditamount = Double.parseDouble(String.valueOf(budgetDetail[25]));
-
-            Long voucherheaderId = null;
-            if (budgetDetail[26] instanceof BigInteger) {
-                voucherheaderId = ((BigInteger) budgetDetail[26]).longValue();
-            } else {
-                voucherheaderId = Long.parseLong(String.valueOf(budgetDetail[26]));
-            }
-
-            String name = String.valueOf(budgetDetail[27]);
-
-            String type = String.valueOf(budgetDetail[28]);
-
-            String effectivedate = String.valueOf(budgetDetail[29]);
-
-            String vouchernumber = String.valueOf(budgetDetail[30]);
-
-            String voucherdate = String.valueOf(budgetDetail[31]);
-
-            String cgvn = String.valueOf(budgetDetail[32]);
-                  
-            
-            result.append("Bill Resister ID: ").append(billresisterId).append("\n");
-            result.append("Bill Number: ").append(billnumber).append("\n");         
-            result.append("billdate: ").append(budgetDetail[2]).append("\n");
-            result.append("billtype: ").append(budgetDetail[3]).append("\n");
-            result.append("expendituretype: ").append(budgetDetail[4]).append("\n");
-            result.append("egbilldetailsId: ").append(budgetDetail[5]).append("\n");
-            result.append("billid: ").append(budgetDetail[6]).append("\n");
-            result.append("chartofaccountsId: ").append(budgetDetail[7]).append("\n");
-            result.append("accounthead: ").append(budgetDetail[8]).append("\n");
-            result.append("budgetdetailId: ").append(budgetDetail[9]).append("\n");
-            result.append("department: ").append(budgetDetail[10]).append("\n");
-            result.append("function: ").append(budgetDetail[11]).append("\n");
-            result.append("budget: ").append(budgetDetail[12]).append("\n");
-            result.append("budgetgroup: ").append(budgetDetail[13]).append("\n");
-            result.append("originalamount: ").append(budgetDetail[14]).append("\n");
-            result.append("approvedamount: ").append(budgetDetail[15]).append("\n");
-            result.append("budgetavailable: ").append(budgetDetail[16]).append("\n");
-            result.append("fund: ").append(budgetDetail[17]).append("\n");
-            result.append("financialyearId: ").append(budgetDetail[18]).append("\n");
-            result.append("financialyear: ").append(budgetDetail[19]).append("\n");
-            result.append("generalledgerId: ").append(budgetDetail[20]).append("\n");
-            result.append("voucherlineid: ").append(budgetDetail[21]).append("\n");
-            result.append("generalLedgerVoucherheaderid: ").append(budgetDetail[22]).append("\n");
-            result.append("glcodeid: ").append(budgetDetail[23]).append("\n");
-            result.append("debitamount: ").append(budgetDetail[24]).append("\n");
-            result.append("creditamount: ").append(budgetDetail[25]).append("\n");
-            result.append("voucherheaderId: ").append(budgetDetail[26]).append("\n");
-            result.append("name: ").append(budgetDetail[27]).append("\n");
-            result.append("type: ").append(budgetDetail[28]).append("\n");
-            result.append("effectivedate: ").append(budgetDetail[29]).append("\n");
-            result.append("vouchernumber: ").append(budgetDetail[30]).append("\n");
-            result.append("voucherdate: ").append(budgetDetail[31]).append("\n");
-            result.append("cgvn: ").append(budgetDetail[32]).append("\n\n");
-            
-            
-            
-            for (int i = 2; i < budgetDetail.length; i++) {
-                result.append(budgetDetail[i]).append(", ");
-            }
-            result.append("\n");
-        }
-
-        System.out.println("Data:++++++++++++++++++++++++++++++++++++++++++++++++++++++++ " + result.toString()); // Print the result for debugging
-
-        return result.toString();
-
-    }
-
-    
-    // Method to deserialize JSON string back to List<BudgetDetail>
-  
-    public List<BudgetDetail> deserializeBudgetDetails(String json) {
-        return gson.fromJson(json, new TypeToken<List<BudgetDetail>>() {}.getType());
-    }
 
 }
-    
-        
-        
-

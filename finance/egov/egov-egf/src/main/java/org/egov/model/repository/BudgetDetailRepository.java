@@ -59,42 +59,20 @@ import java.util.List;
 @Repository
 public interface BudgetDetailRepository extends JpaRepository<BudgetDetail, java.lang.Long> {
 
-	List<BudgetDetail> findByBudgetIdInAndStatusId(final List<Long> rbIds, Integer status);
+    List<BudgetDetail> findByBudgetIdInAndStatusId(final List<Long> rbIds, Integer status);
 
-	List<BudgetDetail> findByBudgetReferenceBudgetId(Long budgetId);
+    List<BudgetDetail> findByBudgetReferenceBudgetId(Long budgetId);
 
-	@Query("select sum(bg.originalAmount) from BudgetDetail bg where bg.budget.id=:budgetId and bg.status.id=:status")
-	BigDecimal findBudgetAmount(@Param("budgetId") Long budgetId, @Param("status") Integer status);
+    @Query("select sum(bg.originalAmount) from BudgetDetail bg where bg.budget.id=:budgetId and bg.status.id=:status")
+    BigDecimal findBudgetAmount(@Param("budgetId") Long budgetId, @Param("status") Integer status);
 
-	Long countByBudgetIdAndStatusId(Long budgetId, Integer status);
+    Long countByBudgetIdAndStatusId(Long budgetId, Integer status);
 
-	List<BudgetDetail> findByBudgetIdAndStatusId(Long budgetId, Integer status);
+    List<BudgetDetail> findByBudgetIdAndStatusId(Long budgetId, Integer status);
 
-	List<BudgetDetail> findByBudgetIdInAndStatusIdNotIn(Long budgetId, Integer status);
+    List<BudgetDetail> findByBudgetIdInAndStatusIdNotIn(Long budgetId, Integer status);
 
-	// List<BudgetDetail> findByFunction
-
-	@Query("from BudgetDetail where uniqueNo=:uniqueNo and budget in (select id from Budget where referenceBudget.id=:budgetId)")
-	BudgetDetail findByReferenceBudget(@Param("uniqueNo") String uniqueNo, @Param("budgetId") Long budgetId);
-
-	
-	/*
-	 * @Query(value = "SELECT br., eb., c., ed., fy.financialyear " +
-	 * "FROM citya.eg_billregister br " +
-	 * "JOIN citya.eg_billdetails eb ON br.id = eb.billid " +
-	 * "JOIN citya.chartofaccounts c ON eb.glcodeid = c.id " +
-	 * "JOIN citya.egf_budgetgroup bg ON c.id = bg.maxcode " +
-	 * "JOIN citya.egf_budgetdetail ed ON bg.id = ed.budgetgroup " +
-	 * "JOIN citya.egf_budget eb2 ON ed.budget = eb2.id " +
-	 * "JOIN citya.financialyear fy ON eb2.financialyearid = fy.id " +
-	 * "WHERE c.glcode = :glCode", nativeQuery = true)
-	 */
-	
-	
-	
-	  
-	 @Query(value = "SELECT br.id AS billresisterId, br.billnumber as billnumber, br.billdate as billdate, br.billtype as billtype, br.expendituretype as expendituretype, eb.id AS egbilldetailsId, eb.billid as billid, c.id AS chartofaccountsId, bg.name AS accounthead ed.id AS budgetdetailId, ed.executing_department as department, ed.function as function, ed.budget as budget, ed.budgetgroup as budgetgroup, ed.originalamount as originalamount, ed.approvedamount as approvedamount, ed.budgetavailable as budgetavailable, ed.fund as fund, fy.id AS financialyearId, fy.financialyear as financialyear, g.id as generalledgerId, g.voucherlineid as voucherlineid, g.voucherheaderid as generalLedgerVoucherheaderid, g.glcodeid as glcodeid, g.debitamount as debitamount, g.creditamount as creditamount, v.id as voucherheaderId, v.name as name , v.type as type , v.effectivedate as effectivedate, v.vouchernumber as vouchernumber, v.voucherdate as voucherdate, v.cgvn as cgvn FROM citya.eg_billregister br JOIN citya.eg_billdetails eb ON br.id = eb.billid JOIN citya.chartofaccounts c ON eb.glcodeid = c.id JOIN citya.egf_budgetgroup bg ON c.id = bg.maxcode JOIN citya.egf_budgetdetail ed ON bg.id = ed.budgetgroup JOIN citya.egf_budget eb2 ON ed.budget = eb2.id JOIN citya.financialyear fy ON eb2.financialyearid = fy.id join citya.generalledger g on c.id = g.glcodeid join citya.voucherheader v on g.voucherheaderid = v.id WHERE c.glcode = :glCode", nativeQuery = true)
-	    List<Object[]> findBudgetDetailByGLCode(@Param("glCode") String glCode);
-
+    @Query("from BudgetDetail where uniqueNo=:uniqueNo and budget in (select id from Budget where referenceBudget.id=:budgetId)")
+    BudgetDetail findByReferenceBudget(@Param("uniqueNo") String uniqueNo, @Param("budgetId") Long budgetId);
 
 }
