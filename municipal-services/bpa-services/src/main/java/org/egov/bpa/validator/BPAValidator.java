@@ -56,7 +56,7 @@ public class BPAValidator {
 	public void validateCreate(BPARequest bpaRequest, Object mdmsData, Map<String, String> values) {
 		mdmsValidator.validateMdmsData(bpaRequest, mdmsData);
 		validateApplicationDocuments(bpaRequest, mdmsData, null, values);
-		//validateApplication(bpaRequest);
+		validateApplication(bpaRequest);
 	}
 
 
@@ -622,19 +622,21 @@ public class BPAValidator {
 	public void validateApplication(BPARequest bpaRequest)
 	{
 		@SuppressWarnings("unchecked")
-		Map<String,String> obj=(Map<String, String>) bpaRequest.getBPA().getAdditionalDetails();
+		Map<String,String> obj=(Map<String, String>)bpaRequest.getBPA().getAdditionalDetails();
 		
 		if(!obj.containsKey("boundaryWallLength") || !obj.containsKey("area") ||  !obj.containsKey("usage") || !obj.containsKey("height") || !obj.containsKey("typeOfArchitect") || !obj.containsKey("isSelfCertificationRequired") )
 		throw new CustomException(null,"Additional Details should have boundary wall length, height, area, stakeholderType , usage and self certification status to process further!!");
-		
-		if(Boolean.parseBoolean(obj.get("isSelfCertificationRequired")) &&  obj.get("usage").equalsIgnoreCase("Residential"))
+		Boolean b=Boolean.valueOf(obj.get("isSelfCertificationRequired"));
+		if(b &&  obj.get("usage").toString().equalsIgnoreCase("Residential"))
 		{
-			if(Integer.parseInt(obj.get("height"))>15)
+			BigDecimal height=new BigDecimal(obj.get("height").toString());
+			BigDecimal area=new BigDecimal(obj.get("area").toString());
+			if(height.intValue()>15)
 				throw new CustomException(null,"Height should not be more than 15 metres");
 		
-			if((obj.get("typeOfArchitect").toString().equalsIgnoreCase("ARCHITECT") || obj.get("typeOfArchitect").toString().equalsIgnoreCase("ENGINEER")) && Integer.parseInt(obj.get("area"))>500)
+			if((obj.get("typeOfArchitect").toString().equalsIgnoreCase("ARCHITECT") || obj.get("typeOfArchitect").toString().equalsIgnoreCase("ENGINEER")) && area.intValue()>500)
 				throw new CustomException(null,"Architect/Engineer can apply for area less then 500 sq. yards. in self declaration");
-			if((obj.get("typeOfArchitect").toString().equalsIgnoreCase("DESIGNER") || obj.get("typeOfArchitect").toString().equalsIgnoreCase("SUPERVISOR")) && Integer.parseInt(obj.get("area"))>250)
+			if((obj.get("typeOfArchitect").toString().equalsIgnoreCase("DESIGNER") || obj.get("typeOfArchitect").toString().equalsIgnoreCase("SUPERVISOR")) && area.intValue()>250)
 				throw new CustomException(null,"Designer/Supervisor can apply for area less then 500 sq. yards. in self declaration");
 			
 		}

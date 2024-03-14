@@ -139,7 +139,7 @@ public class CalculationService {
 		TaxHeadEstimate estimate = new TaxHeadEstimate();
 		BigDecimal totalTax=BigDecimal.ZERO;
 
-		EstimatesAndSlabs estimatesAndSlabs = null;
+		EstimatesAndSlabs estimatesAndSlabs = new EstimatesAndSlabs();
 		if (calulationCriteria.getFeeType().equalsIgnoreCase(BPACalculatorConstants.LOW_RISK_PERMIT_FEE_TYPE)) {
 
 //			 stopping Application fee for lowrisk applicaiton according to BBI-391
