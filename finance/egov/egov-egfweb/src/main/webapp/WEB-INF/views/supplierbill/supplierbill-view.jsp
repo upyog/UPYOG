@@ -74,7 +74,6 @@
         <jsp:include page="supplierbill-view-header.jsp"/>
         <jsp:include page="supplierbill-view-accountdetails.jsp"/>
         <jsp:include page="supplierbill-view-subledgeraccountdetails.jsp"/>
-        <jsp:include page="supplierbill-view-purchaseitems.jsp"/>
         <c:if test="${egBillregister.documentDetail != null &&  !egBillregister.documentDetail.isEmpty()}">
             <jsp:include page="billdocument-upload.jsp"/>
         </c:if>

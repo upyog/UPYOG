@@ -218,7 +218,6 @@
 					</table>
 				</div>
 			</s:if>
-		
 		</div>
 		<div class="buttonbottom">
 			<input name="button" type="button" class="buttonsubmit" id="button1"

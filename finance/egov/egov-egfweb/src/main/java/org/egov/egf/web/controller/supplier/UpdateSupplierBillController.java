@@ -67,7 +67,6 @@ import org.egov.commons.service.ChartOfAccountsService;
 import org.egov.commons.service.CheckListService;
 import org.egov.egf.commons.CommonsUtil;
 import org.egov.egf.expensebill.repository.DocumentUploadRepository;
-import org.egov.egf.masters.repository.PurchaseItemsBillRegisterRepository;
 import org.egov.egf.masters.services.PurchaseOrderService;
 import org.egov.egf.masters.services.SupplierService;
 import org.egov.egf.supplierbill.service.SupplierBillService;
@@ -84,7 +83,6 @@ import org.egov.infstr.models.EgChecklists;
 import org.egov.model.bills.BillType;
 import org.egov.model.bills.DocumentUpload;
 import org.egov.model.bills.EgBillPayeedetails;
-import org.egov.model.bills.EgBillPurchaseItemsDetails;
 import org.egov.model.bills.EgBilldetails;
 import org.egov.model.bills.EgBillregister;
 import org.egov.utils.FinancialConstants;
@@ -174,8 +172,6 @@ public class UpdateSupplierBillController extends BaseBillController {
     private SecurityUtils securityUtils;
     @Autowired
     private CommonsUtil commonsUtil;
-    @Autowired
-    private PurchaseItemsBillRegisterRepository purchaseItemBillRegisterRepository;
 
     public UpdateSupplierBillController(final AppConfigValueService appConfigValuesService) {
         super(appConfigValuesService);
@@ -481,8 +477,6 @@ public class UpdateSupplierBillController extends BaseBillController {
             billId = billIds[0];
         }
         final EgBillregister egBillregister = supplierBillService.getById(Long.parseLong(billId));
-        final String billnumber = egBillregister.getBillnumber();
-        final List<EgBillPurchaseItemsDetails> egBillPurchaseItemsDetails = supplierBillService.getByBillnumber1(billnumber);
         final List<DocumentUpload> documents = documentUploadRepository.findByObjectId(Long.valueOf(billId));
         egBillregister.setDocumentDetail(documents);
         Department dept = microServiceUtil.getDepartmentByCode(egBillregister.getEgBillregistermis().getDepartmentcode());
@@ -498,7 +492,6 @@ public class UpdateSupplierBillController extends BaseBillController {
                     && supplierPayableAccountList.contains(details.getChartOfAccounts()))
                 model.addAttribute(NET_PAYABLE_AMOUNT, details.getCreditamount());
         model.addAttribute(EG_BILLREGISTER, egBillregister);
-        model.addAttribute("egBillPurchaseItemsDetails", egBillPurchaseItemsDetails);
         return SUPPLIERBILL_VIEW;
     }
 

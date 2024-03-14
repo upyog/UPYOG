@@ -51,25 +51,21 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 
-<script>
-document.getElementById("billamount").readOnly = true;
-</script>
-
 <div class="panel panel-primary" data-collapsed="0">
 	<div class="panel-heading">
 		
 	</div>
-	<div class="form-group">
+	<div class="form-group row">
 		<c:choose>
 			<c:when test="${!billNumberGenerationAuto}">
-				<label class="col-sm-3 control-label text-right"><spring:message code="lbl.billnumber" text="Bill Number"/><span class="mandatory"></span>
+				<label class="col-sm-3 control-label text-end"><spring:message code="lbl.billnumber" text="Bill Number"/><span class="mandatory"></span>
 				</label>
 				<div class="col-sm-3 add-margin">
 					<form:input class="form-control patternvalidation" data-pattern="alphanumericwithspecialcharacters" id="billnumber" path="billnumber" maxlength="50" required="required" />
 					<form:errors path="billnumber" cssClass="add-margin error-msg" />
 				</div>
 				
-				<label class="col-sm-2 control-label text-right"><spring:message code="lbl.billdate" text="Bill Date"/><span class="mandatory"></span>
+				<label class="col-sm-2 control-label text-end"><spring:message code="lbl.billdate" text="Bill Date"/><span class="mandatory"></span>
 				</label>
 				<div class="col-sm-3 add-margin">
 					<form:input id="billdate" path="billdate" class="form-control datepicker" data-date-end-date="0d" required="required" />
@@ -77,13 +73,13 @@ document.getElementById("billamount").readOnly = true;
 				</div>
 			</c:when>
 			<c:otherwise>
-				<label class="col-sm-3 control-label text-right"><spring:message code="lbl.billdate" text="Bill Date"/><span class="mandatory"></span>
+				<label class="col-sm-3 control-label text-end"><spring:message code="lbl.billdate" text="Bill Date"/><span class="mandatory"></span>
 				</label>
 				<div class="col-sm-3 add-margin">
 					<form:input id="billdate" path="billdate" class="form-control datepicker" data-date-end-date="0d" required="required" />
 					<form:errors path="billdate" cssClass="add-margin error-msg" />
 				</div>
-				<label class="col-sm-2 control-label text-right"></label>
+				<label class="col-sm-2 control-label text-end"></label>
 				<div class="col-sm-3 add-margin">
 				</div>
 			</c:otherwise>
@@ -91,10 +87,10 @@ document.getElementById("billamount").readOnly = true;
 		
 	</div>
 	
-	<div class="form-group">
+	<div class="form-group row">
 		<form:hidden path="" name="purchaseOrderId" id="purchaseOrderId" value="${egBillregister.workordernumber }"/>
 		<form:hidden path="" name="supplierId" id="supplierId" value="${supplierId}"/>
-		<label class="col-sm-3 control-label text-right"><spring:message code="lbl.supplier" text="Supplier"/>
+		<label class="col-sm-3 control-label text-end"><spring:message code="lbl.supplier" text="Supplier"/>
 			<span class="mandatory"></span>
 		</label>
 		<div class="col-sm-3 add-margin">
@@ -104,30 +100,29 @@ document.getElementById("billamount").readOnly = true;
 			</form:select>
 		</div>
 		
-		<label class="col-sm-2 control-label text-right"><spring:message code="lbl.purchaseorder" text="Purchase Order"/>
+		<label class="col-sm-2 control-label text-end"><spring:message code="lbl.purchaseorder" text="Purchase Order"/>
 			<span class="mandatory"></span>
 		</label>
 		<div class="col-sm-3 add-margin">
-			<form:select path="workordernumber" data-first-option="false" id="purchaseOrder" class="form-control" required="required" onchange="getPurchaseItemsByOrderId()">
+			<form:select path="workordernumber" data-first-option="false" id="purchaseOrder" class="form-control" required="required"  >
 				<form:option value=""><spring:message code="lbl.select" text="Select"/></form:option>
-				<form:options items="${purchaseOrders}" itemValue="name" itemLabel="orderNumber"/>
+				<form:options items="${purchaseOrders}" itemValue="name" itemLabel="orderNumber" />
 			</form:select>
 			<form:errors path="workordernumber" cssClass="add-margin error-msg" />
 		</div>
 	
 	</div>
 
-	<div class="form-group">
-		<label class="col-sm-3 control-label text-right">
+	<div class="form-group row">
+		<label class="col-sm-3 control-label text-end">
 			<spring:message code="lbl.fund" text="Fund"/>
 		</label>
 		<div class="col-sm-3 add-margin">
 			<form:hidden class="form-control patternvalidation" path="egBillregistermis.fund" id="fundId"  />
 			<form:input class="form-control patternvalidation" path="egBillregistermis.fund.name" id="fundName"  value="${fundName}" disabled="true"/>
-			
 		</div>
 		
-		<label class="col-sm-2 control-label text-right">
+		<label class="col-sm-2 control-label text-end">
 			<spring:message code="lbl.department" text="Department"/>
 		</label>
 		<div class="col-sm-3 add-margin">
@@ -137,8 +132,8 @@ document.getElementById("billamount").readOnly = true;
 	
 	</div>
 	
-	<div class="form-group">
-		<label class="col-sm-3 control-label text-right">
+	<div class="form-group row">
+		<label class="col-sm-3 control-label text-end">
 			<spring:message code="lbl.scheme" text="Scheme"/>
 		</label>
 		<div class="col-sm-3 add-margin">
@@ -146,7 +141,7 @@ document.getElementById("billamount").readOnly = true;
 			<form:input class="form-control patternvalidation" path="egBillregistermis.scheme.name" id="schemeName"  value="${schemeName}" disabled="true"/>
 		</div>
 		
-		<label class="col-sm-2 control-label text-right">
+		<label class="col-sm-2 control-label text-end">
 			<spring:message code="lbl.subscheme" text="Sub Scheme"/>
 		</label>
 		<div class="col-sm-3 add-margin">
@@ -158,8 +153,8 @@ document.getElementById("billamount").readOnly = true;
 	
 	<%-- <jsp:include page="supplier-trans-filter.jsp"/> --%>
 	
-	<div class="form-group">
-		<label class="col-sm-3 control-label text-right">
+	<div class="form-group row">
+		<label class="col-sm-3 control-label text-end">
 			<spring:message code="lbl.function" text="Function"/>	<span class="mandatory"></span>
 		</label>
 		<div class="col-sm-3 add-margin">
@@ -173,7 +168,7 @@ document.getElementById("billamount").readOnly = true;
 			<form:errors path="egBillregistermis.function" cssClass="add-margin error-msg" />
 		</div>
 				
-		<label class="col-sm-2 control-label text-right"><spring:message code="lbl.narration" text="Narration"/>
+		<label class="col-sm-2 control-label text-end"><spring:message code="lbl.narration" text="Narration"/>
 		</label>
 		<div class="col-sm-3 add-margin">
 			<form:textarea path="egBillregistermis.narration" id="narration" class="form-control" maxlength="1024" ></form:textarea>
@@ -181,8 +176,8 @@ document.getElementById("billamount").readOnly = true;
 		</div>
 	</div>
 	
-	<div class="form-group">
-		<label class="col-sm-3 control-label text-right">
+	<div class="form-group row">
+		<label class="col-sm-3 control-label text-end">
 			<spring:message code="lbl.party.billnumber" text="Party Bill Number"/><span class="mandatory"></span>
 		</label>
 		<div class="col-sm-3 add-margin">
@@ -190,7 +185,7 @@ document.getElementById("billamount").readOnly = true;
 			<form:errors path="egBillregistermis.partyBillNumber" cssClass="add-margin error-msg" />		
 		</div>
 		
-		<label class="col-sm-2 control-label text-right">
+		<label class="col-sm-2 control-label text-end">
 			<spring:message code="lbl.party.billdate" text="Party Bill Date"/><span class="mandatory"></span>
 		</label>
 		<div class="col-sm-3 add-margin">
@@ -198,17 +193,16 @@ document.getElementById("billamount").readOnly = true;
 			<form:errors path="egBillregistermis.partyBillDate" cssClass="add-margin error-msg" />
 		</div>
 	</div>
-	<div class="form-group">
-		<label class="col-sm-3 control-label text-right">
+	<div class="form-group row">
+		<label class="col-sm-3 control-label text-end">
 			<spring:message code="lbl.party.bill.amount" text="Party Bill Amount"/><span class="mandatory"></span>
 		</label>
 		<div class="col-sm-3 add-margin">
-		<form:hidden path="" name="netPayableAmount" id="netPayableAmount" value="${netPayableAmount}"/>
-			<form:input  path="billamount" id="billamount" class="form-control patternvalidation" data-pattern="decimalvalue" required="required" onkeydown="return false;"/>
+			<form:input  path="billamount" id="billamount" class="form-control patternvalidation" data-pattern="decimalvalue" required="required"/>
 			<form:errors path="billamount" cssClass="add-margin error-msg" />		
 		</div>
 		
-		<label class="col-sm-2 control-label text-right">
+		<label class="col-sm-2 control-label text-end">
 			<spring:message code="lbl.billtype" text="Bill Type"/><span class="mandatory"></span>
 		</label>
 		<div class="col-sm-3 add-margin">

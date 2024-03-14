@@ -62,7 +62,7 @@
 						<div class="panel-title"><spring:message code="title.accountentity.search" text="Search User Defined Code"/></div>
 					</div>
 					<div class="panel-body">
-						<div class="form-group">
+						<div class="form-group row">
 							<label class="col-sm-3 control-label text-right"><spring:message
 									code="lbl.accountdetailtype" text="Account detail type"/> </label>
 							<div class="col-sm-3 add-margin">
@@ -86,7 +86,7 @@
 								<form:errors path="name" cssClass="error-msg" />
 							</div>
 						</div>
-						<div class="form-group">
+						<div class="form-group row">
 							<label class="col-sm-3 control-label text-right"><spring:message
 									code="lbl.code" text="Code"/> </label>
 							<div class="col-sm-3 add-margin">
@@ -103,7 +103,7 @@
 			</div>
 		</div>
 	</div>
-	<div class="form-group">
+	<div class="form-group row">
 		<div class="text-center">
 			<button type='button' class='btn btn-primary' id="btnsearch">
 				<spring:message code='lbl.search' text="Search"/>
@@ -115,7 +115,7 @@
 </form:form>
 <div class="row display-hide report-section">
 	<div class="col-md-12 table-header text-left"><spring:message code="lbl.user.defined.code.search.result" text="User Defined Code Search Result"/> </div>
-	<div class="col-md-12 form-group report-table-container">
+	<div class="col-md-12 form-group row report-table-container">
 		<table class="table table-bordered table-hover multiheadertbl"
 			id="resultTable">
 			<thead>

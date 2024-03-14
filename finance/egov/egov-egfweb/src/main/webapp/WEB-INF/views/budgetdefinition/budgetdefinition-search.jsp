@@ -60,7 +60,7 @@
 						<div class="panel-title"><spring:message code="title.budget.search" text="Search Budget Definition"/> </div>
 					</div>
 					<div class="panel-body">
-						<div class="form-group">
+						<div class="form-group row">
 							<label class="col-sm-2 control-label text-right"><spring:message
 									code="lbl.financialyear" text="Financial Year"/> </label>
 							<div class="col-sm-3 add-margin">
@@ -90,7 +90,7 @@
 						</div>
 						<div>
 							<input type="hidden" id="mode" name="mode" value="${mode}" />
-							<div class="form-group">
+							<div class="form-group row">
 								<div class="col-sm-11 add-margin">
 									<div class="text-center">
 										<button type='button' class='btn btn-primary' id="btnsearch">
@@ -110,7 +110,7 @@
 </form:form>
 <div class="row display-hide report-section">
 	<div class="col-md-12 table-header text-left"><spring:message code="lbl.budget.definition.search.result" text="Budget Definition Search Result"/> </div>
-	<div class="col-md-12 form-group report-table-container">
+	<div class="col-md-12 form-group row report-table-container">
 		<table class="table table-bordered table-hover multiheadertbl"
 			id="resultTable">
 			<thead>

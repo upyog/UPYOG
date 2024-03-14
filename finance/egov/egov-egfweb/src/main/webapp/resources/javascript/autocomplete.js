@@ -805,7 +805,7 @@ YAHOO.widget.AutoComplete.prototype.filterResults = function(sQuery, oFullRespon
     // Only if a query string is available to match against
     if(sQuery && sQuery !== "") {
         // First make a copy of the oParseResponse
-        oParsedResponse = YAHOO.widget.AutoComplete._cloneObject(oParsedResponse);       
+        oParsedResponse = YAHOO.widget.AutoComplete._cloneObject(oParsedResponse);
         
         var oAC = oCallback.scope,
             oDS = this,
@@ -860,9 +860,6 @@ YAHOO.widget.AutoComplete.prototype.filterResults = function(sQuery, oFullRespon
     }
     else {
     }
-    
-    // Mohsin
-   // console.log("oParsedResponse : "+JSON.stringify(oParsedResponse));
     
     return oParsedResponse;
 };
@@ -1439,7 +1436,6 @@ YAHOO.widget.AutoComplete.prototype._sLastTextboxValue = null;
  * @private
  */
 YAHOO.widget.AutoComplete.prototype._initProps = function() {
-
     // Correct any invalid values
     var minQueryLength = this.minQueryLength;
     if(!YAHOO.lang.isNumber(minQueryLength)) {

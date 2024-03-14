@@ -50,7 +50,6 @@ package org.egov.egf.web.controller;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -148,27 +147,11 @@ public class CFinancialYearController {
 		cFinancialYear.setIsActive(isActive);
 		cFinancialYear.setIsClosed(flag);
 		cFinancialYear.setTransferClosingBalance(flag);
-		cFinancialYear.setEndingDate(getModifiedEndDate(cFinancialYear.getEndingDate()));
 		buildFiscalPeriodDetails(cFinancialYear, cFinancialYear.getcFiscalPeriod());
 		cFinancialYearService.create(cFinancialYear);
 		redirectAttrs.addFlashAttribute(MESSAGE,
 				messageSource.getMessage("msg.cFinancialYear.success", null, Locale.ENGLISH));
 		return "redirect:/cfinancialyear/result/" + cFinancialYear.getId();
-	}
-
-	private Date getModifiedEndDate(Date date) {
-
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(date);
-
-		calendar.set(Calendar.HOUR_OF_DAY, 23);
-		calendar.set(Calendar.MINUTE, 59);
-		calendar.set(Calendar.SECOND, 59);
-
-		Date modifiedDate = calendar.getTime();
-
-		return modifiedDate;
-
 	}
 
 	@GetMapping(value = "/edit/{id}")
@@ -260,7 +243,6 @@ public class CFinancialYearController {
 			fpDetail.setIsActiveForPosting(flag);
 			fpDetail.setIsClosed(flag);
 			fpDetail.setcFinancialYear(cFinancialYear);
-			fpDetail.setEndingDate(getModifiedEndDate(fpDetail.getEndingDate()));
 			fiscalPeriodSet.add(fpDetail);
 		}
 

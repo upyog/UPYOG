@@ -166,23 +166,6 @@ public class ContractorService implements EntityTypeService {
         return query.getResultList();
 
     }
-    
-    // Added by Mohsin
-    
-    public List<Contractor> searchNew() {
-        final CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        final CriteriaQuery<Contractor> createQuery = cb.createQuery(Contractor.class);
-        final Root<Contractor> contractors = createQuery.from(Contractor.class);
-        createQuery.select(contractors);
-        final Metamodel m = entityManager.getMetamodel();
-        
-        final List<Predicate> predicates = new ArrayList<>();
-       
-        createQuery.where(predicates.toArray(new Predicate[] {}));
-        final TypedQuery<Contractor> query = entityManager.createQuery(createQuery);
-        return query.getResultList();
-
-    }
 
     public List<Contractor> getAllActiveContractors() {
         return contractorRepository.findByStatus();

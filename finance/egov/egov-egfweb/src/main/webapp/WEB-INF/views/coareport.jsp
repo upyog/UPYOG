@@ -72,7 +72,7 @@
 					</div>
 					<div class="panel-body">
 
-						<div class="form-group">
+						<div class="form-group row">
 							<label class="col-sm-3 control-label text-right"><spring:message
 									code="lbl.majorcode" text="Major Code"/>:</label>
 							<div class="col-sm-3 add-margin">
@@ -103,7 +103,7 @@
 								</form:select>
 							</div>
 						</div>
-						<div class="form-group">
+						<div class="form-group row">
 							<label class="col-sm-3 control-label text-right"><spring:message
 									code="lbl.accountcode" text="Account Code"/> :</label>
 							<div class="col-sm-3 add-margin">
@@ -126,7 +126,7 @@
 								</form:select>
 							</div>
 						</div>
-						<div class="form-group">
+						<div class="form-group row">
 							<label class="col-sm-3 control-label"><spring:message
 									code="lbl.type" text="Type"/>:</label>
 							<div class="col-sm-3 add-margin">
@@ -158,7 +158,7 @@
 						</div>
 
 
-						<div class="form-group">
+						<div class="form-group row">
 							<label class="col-sm-3 control-label text-right"><spring:message
 									code="lbl.isActiveForPosting" text="Active for Posting"/>:</label>
 							<div class="col-sm-3 add-margin">
@@ -168,8 +168,8 @@
 										<spring:message code="lbl.select" text="Select"/>
 									</option>
 									<option value="true"><spring:message code="lbl.yes" text="Yes"/></option>
-									<option value="false"><spring:message code="lbl.no" text="No"/>
-									<option value=""><spring:message code="lbl.all" text="All"/>
+									<option value="false"><spring:message code="lbl.no" text="No"/></:option>
+									<option value=""><spring:message code="lbl.all" text="All"/></:option>
 									</select>
 							</div>
 
@@ -182,20 +182,20 @@
 										<spring:message code="lbl.select" text="Select"/>
 									</option>
 									<option value="true"><spring:message code="lbl.yes" text="Yes"/>
-										
+										</:option>
 									
 									<option value="false"><spring:message code="lbl.no" text="No"/>
-										
+										</:option>
 									
 									<option value=""><spring:message code="lbl.all" text="All"/>
-										
+										</:option>
 								
 								</select>
 
 							</div>
 						</div>
 
-						<div class="form-group">
+						<div class="form-group row">
 							<label class="col-sm-3 control-label text-right"><spring:message
 									code="lbl.budgetRequired" text="Budget Required"/>:</label>
 							<div class="col-sm-3 add-margin">
@@ -205,20 +205,20 @@
 										<spring:message code="lbl.select" text="Select"/>
 									</option>
 									<option value="true"><spring:message code="lbl.yes" text="Yes"/>
-										
+										</:option>
 									
 									<option value="false"><spring:message code="lbl.no" text="No"/>
-										
+										</:option>
 									
 									<option value=""><spring:message code="lbl.all" text="All"/>
-										
+										</:option>
 								
 								</select>
 							</div>
 						</div>
 
 
-						<div class="form-group">
+						<div class="form-group row">
 							<div class="text-center">
 								<button type='button' class='btn btn-primary' id="btnsearch">
 									<spring:message code='lbl.search'/>

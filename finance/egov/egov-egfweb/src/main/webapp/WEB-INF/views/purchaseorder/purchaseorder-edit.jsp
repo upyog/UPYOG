@@ -61,21 +61,15 @@
 				<c:if test="${purchaseOrder.editAllFields}">
 					<%@ include file="purchaseorder-form.jsp"%>
 				</c:if>
-				<%@ include file="purchaseItems-update.jsp"%>
 				<c:if test="${!purchaseOrder.editAllFields}">
-				<%@ include file="purchaseorder-edit-form.jsp"%>
-					<%-- <%@ include file="purchaseorder-items.jsp"%> --%>
+					<%@ include file="purchaseorder-edit-form.jsp"%>
 				</c:if>
-				
 				<div class="form-group">
 					<div class="text-center">
 						<button type='submit' class='btn btn-primary' id="buttonSubmit"> <spring:message code='lbl.update' text="Update"/> </button>
 						<a href='javascript:void(0)' class='btn btn-default' onclick='self.close()'><spring:message code='lbl.close' text="Close"/></a>
 					</div>
 				</div>
-				<%-- <%@ include file="purchaseorder-items-edit.jsp" %> --%>
-				<%-- <%@ include file="purchaseItems-update.jsp"%> --%>
-				
 			</div>
 		</div>
 	</div>

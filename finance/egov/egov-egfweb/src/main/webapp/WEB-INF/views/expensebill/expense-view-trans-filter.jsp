@@ -49,7 +49,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%> 
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<div class="row add-border">
+<div class="row mb-3 add-border">
 	<c:choose>
 		<c:when test="${headerFields.contains('fund')}">
 			<div class="col-md-3 col-xs-6 add-margin">
@@ -85,7 +85,7 @@
 	</c:choose>
 </div>
 
-<div class="row add-border">
+<div class="row mb-3 add-border">
 	<c:choose>
 		<c:when test="${headerFields.contains('scheme')}">
 			<div class="col-md-3 col-xs-6 add-margin">
