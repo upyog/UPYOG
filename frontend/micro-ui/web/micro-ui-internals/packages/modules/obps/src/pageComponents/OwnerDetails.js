@@ -326,9 +326,8 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                 // Additonal details
                 payload.additionalDetails = {GISPlaceName:formData?.address?.placeName};
                 payload.additionalDetails.boundaryWallLength = formData?.data?.boundaryWallLength || "NA";
-                payload.additionalDetails.area  = formData?.data.edcrDetails.planDetail.planInformation.plotArea||  "NA";
-                payload.additionalDetails.height  = formData?.data.edcrDetails.planDetail.blocks[0].building.buildingHeight || "NA";
-                payload.additionalDetails.isSelfCertificationRequired= formData?.data?.isSelfCertificationRequired || "NA";
+                payload.additionalDetails.area  = (formData?.data.edcrDetails.planDetail.planInformation.plotArea).toString()||  "NA";
+                payload.additionalDetails.height  = (formData?.data.edcrDetails.planDetail.blocks[0].building.buildingHeight).toString() || "NA";
                 payload.additionalDetails.usage  = formData?.data.occupancyType  || "NA";
 
                 if (formData?.data?.holdingNumber) payload.additionalDetails.holdingNo = formData?.data?.holdingNumber;
@@ -359,9 +358,9 @@ const OwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                 payload.additionalDetails.typeOfArchitect = parsedArchitectName;
                 let isSelfCertificationRequired=sessionStorage.getItem("isSelfCertificationRequired");
                 if(isSelfCertificationRequired==="undefined"){
-                    isSelfCertificationRequired=false;
+                    isSelfCertificationRequired="false";
                 }
-                payload.additionalDetails.isSelfCertificationRequired = isSelfCertificationRequired;
+                payload.additionalDetails.isSelfCertificationRequired = isSelfCertificationRequired.toString();
                 // create BPA call
                 if(isSelfCertificationRequired===true && formData?.data.occupancyType==="Residential" && (parsedArchitectName=="ARCHITECT" || parsedArchitectName=="ENGINEER"|| parsedArchitectName=="DESIGNER" || parsedArchitectName=="SUPERVISOR")){
                     if(formData?.data.edcrDetails.planDetail.blocks[0].building.buildingHeight > 15){
