@@ -43,7 +43,7 @@ const DocsRequired = ({ onSelect, onSkip, config }) => {
         architectName = LicenseData?.Licenses?.[i]?.tradeLicenseDetail?.tradeUnits?.[0]?.tradeType?.split('.')[0] || "ARCHITECT";
         sessionStorage.setItem("BPA_ARCHITECT_NAME", JSON.stringify(architectName));
         isSelfCertificationRequired=LicenseData?.Licenses?.[i]?.tradeLicenseDetail.additionalDetail.isSelfCertificationRequired;
-        sessionStorage.setItem("isSelfCertificationRequired", isSelfCertificationRequired);
+        sessionStorage.setItem("isSelfCertificationRequired", JSON.stringify(isSelfCertificationRequired));
       }
     }
   }, [LicenseData])
