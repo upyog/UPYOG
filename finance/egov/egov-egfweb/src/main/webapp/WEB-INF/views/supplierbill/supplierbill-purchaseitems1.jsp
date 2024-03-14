@@ -15,11 +15,17 @@
 			<tr>
 				<th><%-- <spring:message code="lbl.account.code"/> --%>Items</th>
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 6d75aca06005806a5dce3b5f6e818fd3149a7977
 				<th><%-- <spring:message code="lbl.debit.amount"/> --%>UnitRate</th>
 				<th><%-- <spring:message code="lbl.credit.amount"/> --%>Quantity</th>
 				<th><%-- <spring:message code="lbl.credit.amount"/> --%>Billed-Quantity</th>
 				<th><%-- <spring:message code="lbl.credit.amount"/> --%>UnitValueWithGST</th>
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> 6d75aca06005806a5dce3b5f6e818fd3149a7977
 				
 				<th><%-- <spring:message code="lbl.debit.amount"/> --%>UnitRate</th>
 				<th><%-- <spring:message code="lbl.credit.amount"/> --%>Quantity</th>
@@ -40,12 +46,18 @@
 		
 			<td><input type="text" id="unitRate" name="unitRate" readonly="readonly" value="${item.unitRate}">
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 6d75aca06005806a5dce3b5f6e818fd3149a7977
 			<%-- <c:out value="${item.unitRate}"></c:out>readonly --%>
 			</td>
 			<td><input type="number" id= "quantity" name="billed-Quantity"value="${item.quantity}">
 			
 			<td><input type="number" id= "unitValueWithGST" name="unitValueWithGST"value="${item.unitValueWithGST}">
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> 6d75aca06005806a5dce3b5f6e818fd3149a7977
 			<%-- <c:out value="${item.unitRate}"></c:out> --%>
 			</td>
 >>>>>>> 8d2ef484acce46e0f39d80188c2b43ccca9e9508
@@ -65,11 +77,17 @@
 		<td></td>
 		<td></td>
 <<<<<<< HEAD
+<<<<<<< HEAD
 		<td></td>
 		<td></td>
 		<td></td>
 =======
 >>>>>>> 8d2ef484acce46e0f39d80188c2b43ccca9e9508
+=======
+		<td></td>
+		<td></td>
+		<td></td>
+>>>>>>> 6d75aca06005806a5dce3b5f6e818fd3149a7977
 		
 		<td>Total Amount</td>
 		<td><span id="totalAmount" >0.00</span>
@@ -106,6 +124,7 @@
         $('#itemCode').val(purchaseItem.itemCode);
         $('#unitRate').val(purchaseItem.unitRate);
 <<<<<<< HEAD
+<<<<<<< HEAD
         $('#gstRate').val(purchaseItem.gstRate);
         $('#unitValueWithGst').val(purchaseItem.unitValueWithGst);
         
@@ -120,6 +139,15 @@
  
 =======
 >>>>>>> 8d2ef484acce46e0f39d80188c2b43ccca9e9508
+=======
+        $('#gstRate').val(purchaseItem.gstRate);
+        $('#unitValueWithGst').val(purchaseItem.unitValueWithGst);
+                // Update other fields as needed
+    }
+</script>
+<script>
+ 
+>>>>>>> 6d75aca06005806a5dce3b5f6e818fd3149a7977
 $(document).on('input', '.unitRate, .quantity', function () {
         // Get the values of unit rate and quantity from the current row
         var unitRate = parseFloat($(this).closest('tr').find('.unitRate').val()) || 0;

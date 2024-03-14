@@ -17,10 +17,17 @@
 				<th><%-- <spring:message code="lbl.account.head"/> --%>Unit</th>
 				<th><%-- <spring:message code="lbl.debit.amount"/> --%>UnitRate</th>
 <<<<<<< HEAD
+<<<<<<< HEAD
 				<th><%-- <spring:message code="lbl.account.head"/> --%>GSTRate</th>
 				<th><%-- <spring:message code="lbl.debit.amount"/> --%>UnitValueWithGST</th>
 =======
 >>>>>>> 8d2ef484acce46e0f39d80188c2b43ccca9e9508
+=======
+
+				<th><%-- <spring:message code="lbl.account.head"/> --%>GSTRate</th>
+				<th><%-- <spring:message code="lbl.debit.amount"/> --%>UnitValueWithGST</th>
+
+>>>>>>> 6d75aca06005806a5dce3b5f6e818fd3149a7977
 				<th><%-- <spring:message code="lbl.credit.amount"/> --%>Quantity</th>
 				<th><%-- <spring:message code="lbl.action"/> --%>Amount</th>
 				<th><spring:message code="lbl.action"/></th>  					
@@ -57,8 +64,13 @@
 			<td>
 				<form:input path="purchaseItems[0].unitValueWithGst" id="purchaseItems[0].unitValueWithGst" class="form-control table-input unitValueWithGst" data-errormsg="Unit Value With Gst is mandatory!"  maxlength="12"  />
 			</td> 
+<<<<<<< HEAD
 =======
 >>>>>>> 8d2ef484acce46e0f39d80188c2b43ccca9e9508
+=======
+
+
+>>>>>>> 6d75aca06005806a5dce3b5f6e818fd3149a7977
 			<td>
 				<form:input path="purchaseItems[0].quantity" id="purchaseItems[0].quantity" class="form-control table-input quantity" data-errormsg="Quantity is mandatory!"    maxlength="12" />
 			</td> 
@@ -91,14 +103,23 @@
 			</td> 
 			<td>
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6d75aca06005806a5dce3b5f6e818fd3149a7977
 				<form:input path="purchaseItems[${item.index}].gstRate" id="purchaseItems[${item.index}].gstRate" class="form-control table-input gstRate" data-errormsg="GST Rate is mandatory!"  maxlength="12"  value="${billDeatils.gstRate}"/>
 			</td> 
 			<td>
 				<form:input path="purchaseItems[${item.index}].unitValueWithGst" id="purchaseItems[${item.index}].unitValueWithGst" class="form-control table-input unitValueWithGst" data-errormsg="Unit Value With Gst is mandatory!"  maxlength="12"  value="${billDeatils.unitValueWithGst}"/>
 			</td> 
 			<td>
+<<<<<<< HEAD
 =======
 >>>>>>> 8d2ef484acce46e0f39d80188c2b43ccca9e9508
+=======
+
+
+>>>>>>> 6d75aca06005806a5dce3b5f6e818fd3149a7977
 				<form:input path="purchaseItems[${item.index}].quantity" id="purchaseItems[${item.index}].quantity" class="form-control table-input quantity" data-errormsg="Quantity is mandatory!"    maxlength="12"  value="${billDeatils.quantity}"/>
 			</td> 
 			<td>
@@ -119,11 +140,19 @@
 		<td></td>
 		<td></td>
 <<<<<<< HEAD
+<<<<<<< HEAD
 		<td></td>
 		<td></td>
 		<td></td>
 =======
 >>>>>>> 8d2ef484acce46e0f39d80188c2b43ccca9e9508
+=======
+
+		<td></td>
+		<td></td>
+		<td></td>
+
+>>>>>>> 6d75aca06005806a5dce3b5f6e818fd3149a7977
 		<td>Total Amount</td>
 		<td><span id="totalAmount" >0.00</span>
 		<!-- <input type="text" name="totalAmount" id="totalAmount" readonly="readonly"/> --></td>
@@ -144,6 +173,10 @@
         src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/services/egi'/>"></script>
         
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6d75aca06005806a5dce3b5f6e818fd3149a7977
 <script>
 
 $(document).on('input', '.unitRate, .gstRate, .quantity', function () {
@@ -159,12 +192,18 @@ $(document).on('input', '.unitRate, .gstRate, .quantity', function () {
         console.log("deepu== unitValueWithGst: "+unitValueWithGst);
         // Calculate the amount
         var amount = unitValueWithGst * quantity;
+<<<<<<< HEAD
         
         $(this).closest('tr').find('.unitValueWithGst').val(unitValueWithGst.toFixed(2));
         
         //updateunitValueWithGst();
 =======
+=======
+>>>>>>> 6d75aca06005806a5dce3b5f6e818fd3149a7977
         
+        $(this).closest('tr').find('.unitValueWithGst').val(unitValueWithGst.toFixed(2));
+        
+        //updateunitValueWithGst();        
 
 <script>
 
@@ -202,11 +241,34 @@ $(document).on('input', '.unitRate, .quantity', function () {
     	var totalAmount = 0;
 =======
 
+    
+    function updateUnitValueWithGst(){
+     $('#tbldebitdetails tbody tr').each(function () {
+        // Get the unit rate and GST rate from the current row
+        var unitRate = parseFloat($(this).find('.unitRate').val()) || 0;
+        var gstRate = parseInt($(this).find('.gstRate').val()) || 0;
+
+        // Calculate the unit value with GST
+        var unitValueWithGst = unitRate + (unitRate * gstRate / 100);
+
+        // Set the calculated unit value with GST in the corresponding input field
+        //$(this).find('.unitValueWithGst').val(unitValueWithGst.toFixed(2));
+    });
+    }
+    
+    function updateTotalAmount(){
+    	var totalAmount = 0;
+
+
     function updateTotalAmount(){
     
     	var totalAmount = 0;
 
+<<<<<<< HEAD
 >>>>>>> 8d2ef484acce46e0f39d80188c2b43ccca9e9508
+=======
+
+>>>>>>> 6d75aca06005806a5dce3b5f6e818fd3149a7977
     // Loop through each row and accumulate the amounts
     $('#tbldebitdetails tbody tr').each(function () {
         var rowAmount = parseFloat($(this).find('.amount').val()) || 0;
@@ -809,7 +871,14 @@ var creditamount = $("#supplierBillTotalCreditAmount")["0"].innerHTML;
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 </script>
 =======
 </script>
 >>>>>>> 8d2ef484acce46e0f39d80188c2b43ccca9e9508
+=======
+
+</script>
+</script>
+
+>>>>>>> 6d75aca06005806a5dce3b5f6e818fd3149a7977

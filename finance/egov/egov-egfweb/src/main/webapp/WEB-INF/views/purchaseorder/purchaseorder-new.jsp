@@ -59,10 +59,18 @@
 				</div>
 			    <%@ include file="purchaseorder-form.jsp"%>
 <<<<<<< HEAD
+<<<<<<< HEAD
 			    <%@ include file="purchaseorder-items.jsp"%>
 =======
 			     <%@ include file="purchaseorder-items.jsp"%>
 >>>>>>> 8d2ef484acce46e0f39d80188c2b43ccca9e9508
+=======
+
+			    <%@ include file="purchaseorder-items.jsp"%>
+
+			     <%@ include file="purchaseorder-items.jsp"%>
+
+>>>>>>> 6d75aca06005806a5dce3b5f6e818fd3149a7977
 			    <div class="form-group">
 			      <div class="text-center">
 			        <button type='submit' class='btn btn-primary' id="buttonSubmit"> <spring:message code='lbl.create' text="Create" /> </button>

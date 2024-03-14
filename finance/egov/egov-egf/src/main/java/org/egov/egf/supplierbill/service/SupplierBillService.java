@@ -100,9 +100,11 @@ import org.egov.model.bills.EgBillPayeedetails;
 import org.egov.model.bills.EgBillPurchaseItemsDetails;
 import org.egov.model.bills.EgBilldetails;
 import org.egov.model.bills.EgBillregister;
+import org.egov.model.budget.BudgetDetail;
 import org.egov.model.budget.BudgetGroup;
 import org.egov.model.masters.PurchaseItems;
 import org.egov.model.masters.PurchaseOrder;
+import org.egov.model.repository.BudgetDetailRepository;
 import org.egov.pims.commons.Position;
 import org.egov.services.masters.SchemeService;
 import org.egov.services.masters.SubSchemeService;
@@ -201,7 +203,11 @@ public class SupplierBillService {
     
     @Autowired
     private PurchaseItemsBillRegisterRepository puechaseItemsBillRegisterRepo;
-
+    
+   
+   
+	
+    
     @Autowired
     public SupplierBillService(final SupplierBillRepository supplierBillRepository, final ScriptService scriptExecutionService) {
         this.supplierBillRepository = supplierBillRepository;
@@ -289,6 +295,8 @@ public class SupplierBillService {
      			
      			egBillPurchaseItemsDetails.setItemCode(purchaseItems.getItemCode());     		
      		    egBillPurchaseItemsDetails.setUnitRate(purchaseItems.getUnitRate());
+     		    egBillPurchaseItemsDetails.setGstRate(purchaseItems.getGstRate());
+     		    egBillPurchaseItemsDetails.setUnitValueWithGst(purchaseItems.getUnitValueWithGst());
      		    egBillPurchaseItemsDetails.setQuantity(purchaseItems.getQuantity());
      		    egBillPurchaseItemsDetails.setAmount(purchaseItems.getAmount());
      		    egBillPurchaseItemsDetails.setCreatedby(egBillregister.getCreatedBy());
@@ -656,6 +664,10 @@ public class SupplierBillService {
         return budgetApprDetailsMap;
 
     }
+    
+    //code by testing 
+    
+   
 
     public List<Map<String, Object>> getBudgetDetailsForBill(EgBillregister billregister) {
 
@@ -753,4 +765,16 @@ public class SupplierBillService {
         List<Designation> desgnList = microServiceUtil.getDesignation(desgnCode);
         return !desgnList.isEmpty() ?  desgnList.get(0) : null;
     }
+    
+    
+    
+    //added by depepak
+    
+	/*
+	 * public List<BudgetDetail> findByBudgetGroupName(String groupName) { return
+	 * BudgetDetailRepository.findByBudgetGroupName(groupName); }
+	 */
+    
+    
+    
 }
