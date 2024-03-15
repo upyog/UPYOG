@@ -205,12 +205,14 @@ public class TLRepository {
         List<Object> preparedStmtList = new ArrayList<>();
         String query = queryBuilder.getTLPlainSearchQuery(criteria, preparedStmtList);
         try {
+            log.info("Tenant ID:: " + criteria.getTenantId());
             query= multiStateInstanceUtil.replaceSchemaPlaceholder(query, criteria.getTenantId());
         }
         catch (Exception e){
             throw new CustomException("INVALID_TENANTID","Invalid tenantId: "+criteria.getTenantId());
         }
         log.info("Query: " + query);
+        log.info("preparedStmtList: "+preparedStmtList);
         List<TradeLicense> licenses =  jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapper);
         sortChildObjectsById(licenses);
         return licenses;
@@ -223,6 +225,7 @@ public class TLRepository {
         preparedStmtList.add(criteria.getLimit());
         String query = queryBuilder.TRADELICENSEIDQUERY;
         try {
+            log.info("Tenant ID: " + criteria.getTenantId());
             query= multiStateInstanceUtil.replaceSchemaPlaceholder(query, criteria.getTenantId());
         }
         catch (Exception e){
