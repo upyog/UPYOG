@@ -1,7 +1,6 @@
 package org.egov.pg.service;
 
 import java.net.URI;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -13,7 +12,6 @@ import org.egov.pg.models.TransactionDump;
 import org.egov.pg.models.TransactionDumpRequest;
 import org.egov.pg.producer.Producer;
 import org.egov.pg.repository.TransactionRepository;
-import org.egov.pg.service.gateways.ccAvanue.AesUtil;
 import org.egov.pg.validator.TransactionValidator;
 import org.egov.pg.web.models.TransactionCriteria;
 import org.egov.pg.web.models.TransactionRequest;
@@ -89,12 +87,12 @@ public class TransactionService {
         else{
             URI uri = gatewayService.initiateTxn(transaction);
             transaction.setRedirectUrl(uri.toString());
-			if (uri.getRawQuery() != null && transaction.getGateway().equals("RAZORPAY")) {
-				String param = uri.getRawQuery();
-				String[] orderId = param.split("orderId=");
-				if (orderId!=null && orderId.length > 1)
-					transaction.setGatewayTxnId(orderId[1]);
-			}
+if(uri.getRawQuery()!=null&&transaction.getGateway().equals("RAZORPAY")){
+Stringparam=uri.getRawQuery();
+String[]orderId=param.split("orderId=");
+if(orderId!=null&&orderId.length>1)
+transaction.setGatewayTxnId(orderId[1]);
+}
             dump.setTxnRequest(uri.toString());
         }
 
@@ -148,21 +146,6 @@ public class TransactionService {
 
         Transaction newTxn = null;
 
-      if(currentTxnStatus.getGateway().contentEquals("CCAVANUE")) {
-    	   
-    	 AesUtil aes = new AesUtil("D14357BBD21BD64FF7D074944DB08DFE");
-   		 String decResp = aes.decrypt(requestParams.get("encResp"));
-   		 String[] keyValuePairs = decResp.split("&");
-   		 List<String> keyValueList = Arrays.asList(keyValuePairs);
-   		  newTxn = currentTxnStatus;
-   	// Enrich the new transaction status before persisting
-          enrichmentService.enrichUpdateTransactionForCCAvanue(requestInfo,keyValueList, newTxn,currentTxnStatus);
-       // Check if transaction is successful, amount matches etc
-          if (validator.shouldGenerateReceipt(currentTxnStatus, newTxn)) {
-             	TransactionRequest request = TransactionRequest.builder().requestInfo(requestInfo).transaction(newTxn).build();
-             	paymentsService.registerPayment(request);
-             }
-       }else {
         if(validator.skipGateway(currentTxnStatus)) {
             newTxn = currentTxnStatus;
 
@@ -171,13 +154,13 @@ public class TransactionService {
 
             // Enrich the new transaction status before persisting
             enrichmentService.enrichUpdateTransaction(new TransactionRequest(requestInfo, currentTxnStatus), newTxn);
+        }
+
         // Check if transaction is successful, amount matches etc
         if (validator.shouldGenerateReceipt(currentTxnStatus, newTxn)) {
         	TransactionRequest request = TransactionRequest.builder().requestInfo(requestInfo).transaction(newTxn).build();
         	paymentsService.registerPayment(request);
         }
-           } 
-       }
 
         TransactionDump dump = TransactionDump.builder()
                 .txnId(currentTxnStatus.getTxnId())

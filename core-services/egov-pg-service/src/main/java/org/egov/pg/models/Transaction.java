@@ -28,6 +28,12 @@ import java.util.Map;
 public class Transaction {
 
     @SafeHtml
+   @JsonProperty("businessService")
+	@NotNull
+	@Size(min = 1)
+	private String businessService;
+
+    @SafeHtml
     @JsonProperty("tenantId")
     @NotNull
     @Size(min = 2, max = 50)
