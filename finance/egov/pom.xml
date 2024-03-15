@@ -95,12 +95,12 @@
 
     <distributionManagement>
         <repository>
-            <id>repo.egovernments.org</id>
+            <id>nexus-repo.digit.org</id>
             <name>eGov ERP Releases Repository</name>
             <url>http://nexus-repo.digit.org/nexus/content/repositories/releases/</url>
         </repository>
         <snapshotRepository>
-            <id>repo.egovernments.org</id>
+            <id>nexus-repo.digit.org</id>
             <name>eGov ERP Snapshots Repository</name>
             <url>http://nexus-repo.digit.org/nexus/content/repositories/snapshots/</url>
         </snapshotRepository>
@@ -108,7 +108,7 @@
 
     <repositories>
         <repository>
-            <id>repo.egovernments.org</id>
+            <id>nexus-repo.digit.org</id>
             <name>eGov Public Repository Group</name>
             <url>http://nexus-repo.digit.org/nexus/content/groups/public/</url>
             <snapshots>
@@ -131,7 +131,7 @@
 
     <pluginRepositories>
         <pluginRepository>
-            <id>repo.egovernments.org</id>
+            <id>nexus-repo.digit.org</id>
             <name>eGov Public Repository Group</name>
             <url>http://nexus-repo.digit.org/nexus/content/groups/public/</url>
             <releases>
