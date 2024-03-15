@@ -57,7 +57,7 @@
 	<label class="col-sm-2 control-label text-right" for="orderDate"> <spring:message code="purchaseorder.date" text="Order Date"/><span class="mandatory"></span>
 	</label>
 	<div class="col-sm-3 add-margin">
-		<form:input path="orderDate" class="form-control datepicker" required="required" id="orderDate"  data-date-end-date="0d" data-inputmask="'mask': 'd/m/y'"/>
+		<form:input path="orderDate" class="form-control datepicker" required="required" id="orderDate"  data-date-end-date="0d" data-inputmask="'mask': '99/99/9999'"/>
 		<form:errors path="orderDate" cssClass="add-margin error-msg" />
 	</div>
 </div>
@@ -175,7 +175,7 @@
 	<label class="col-sm-2 control-label text-right" for="sanctionDate"> <spring:message code="purchaseorder.sanctiondate" text="Sanction Date"/>
 	</label>
 	<div class="col-sm-3 add-margin">
-		<form:input path="sanctionDate" class="form-control datepicker" id="sanctionDate"  data-date-end-date="0d" data-inputmask="'mask': 'd/m/y'"/>
+		<form:input path="sanctionDate" class="form-control datepicker" id="sanctionDate"  data-date-end-date="0d" data-inputmask="'mask': '99/99/9999'"/>
 		<form:errors path="sanctionDate" cssClass="add-margin error-msg" />
 	</div>
 </div> 
