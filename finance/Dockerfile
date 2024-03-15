@@ -6,8 +6,8 @@ WORKDIR /app
 COPY ${WORK_DIR} ./${WORK_DIR}
 #RUN cd ${WORK_DIR} \
 #    && mvn clean package -DskipTests
-COPY entrypoint.sh ./${WORK_DIR}/entrypoint.sh
-RUN chmod +x ./${WORK_DIR}/entrypoint.sh && ./${WORK_DIR}/entrypoint.sh
+#COPY entrypoint.sh ./${WORK_DIR}/entrypoint.sh
+#RUN chmod +x ./${WORK_DIR}/entrypoint.sh && ./${WORK_DIR}/entrypoint.sh
 
 # Create runtime image
 FROM egovio/wildfly:1-helm-fin-e6312078
