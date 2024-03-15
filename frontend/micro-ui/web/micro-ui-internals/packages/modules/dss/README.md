@@ -1,10 +1,10 @@
 
-# digit-ui-module-pt
+# digit-ui-module-dss
 
 ## Install
 
 ```bash
-npm install --save @egovernments/digit-ui-module-pt
+npm install --save @egovernments/digit-ui-module-dss
 ```
 
 ## Limitation
@@ -22,7 +22,7 @@ frontend/micro-ui/web/package.json
 ```
 
 ```json
-"@egovernments/digit-ui-module-pt":"^1.5.0",
+"@egovernments/digit-ui-module-dss":"^1.5.0",
 ```
 
 then navigate to App.js
@@ -35,31 +35,30 @@ then navigate to App.js
 ```jsx
 /** add this import **/
 
-import { initPTComponents } from "@egovernments/digit-ui-module-pt";
+import { initDSSComponents } from "@egovernments/digit-ui-module-dss";
 
 /** inside enabledModules add this new module key **/
 
-const enabledModules = ["PT"];
+const enabledModules = ["DSS"];
 
 /** inside init Function call this function **/
 
 const initDigitUI = () => {
-  initPTComponents();
+  initDSSComponents();
 };
 ```
-
 
 
 
 ### Changelog
 
 ```bash
-1.7.1 UPYOG Base version
+1.7.1 UPYOG base version
 ```
 
 ### Contributors
 
-[jagankumar-egov] [Tulika-eGov]  [vamshikrishnakole-wtt-egov] 
+[jagankumar-egov] [nipunarora-eGov] [Tulika-eGov] [Ramkrishna-egov] [nabeelmd-eGov]
 
 ## Documentation
 
@@ -71,7 +70,7 @@ Documentation Site (https://core.digit.org/guides/developer-guide/ui-developer-g
 
 
 ### Published from DIGIT Frontend 
-DIGIT Frontend Repo (https://github.com/upyog/UPYOG/tree/develop)
+DIGIT Frontend Repo (https://github.com/upyog/UPYOG/tree/master)
 
 
 ![Logo](https://s3.ap-south-1.amazonaws.com/works-dev-asset/mseva-white-logo.png)

@@ -1,10 +1,10 @@
 
-# digit-ui-module-pt
+# digit-ui-module-core
 
 ## Install
 
 ```bash
-npm install --save @egovernments/digit-ui-module-pt
+npm install --save @egovernments/digit-ui-module-core
 ```
 
 ## Limitation
@@ -22,7 +22,7 @@ frontend/micro-ui/web/package.json
 ```
 
 ```json
-"@egovernments/digit-ui-module-pt":"^1.5.0",
+"@egovernments/digit-ui-module-core":"^1.5.0",
 ```
 
 then navigate to App.js
@@ -31,23 +31,17 @@ then navigate to App.js
  frontend/micro-ui/web/src/App.js
 ```
 
-
 ```jsx
 /** add this import **/
 
-import { initPTComponents } from "@egovernments/digit-ui-module-pt";
+import { DigitUI } from "@egovernments/digit-ui-module-core";
 
-/** inside enabledModules add this new module key **/
 
-const enabledModules = ["PT"];
+/** inside render Function add  the import for the component **/
 
-/** inside init Function call this function **/
+  ReactDOM.render(<DigitUI stateCode={stateCode} enabledModules={enabledModules} moduleReducers={moduleReducers} />, document.getElementById("root"));
 
-const initDigitUI = () => {
-  initPTComponents();
-};
 ```
-
 
 
 
@@ -59,7 +53,7 @@ const initDigitUI = () => {
 
 ### Contributors
 
-[jagankumar-egov] [Tulika-eGov]  [vamshikrishnakole-wtt-egov] 
+[jagankumar-egov] [nipunarora-eGov] [Tulika-eGov] [Ramkrishna-egov] [nabeelmd-eGov] [anil-egov] [vamshikrishnakole-wtt-egov] 
 
 ## Documentation
 
