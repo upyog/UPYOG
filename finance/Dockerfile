@@ -5,7 +5,11 @@ WORKDIR /app
 # copy the project files
 COPY ${WORK_DIR} ./${WORK_DIR}
 RUN cd ${WORK_DIR} \
+<<<<<<< HEAD
 && mvn clean package -DskipTests
+=======
+    && mvn clean package -DskipTests
+>>>>>>> parent of 486ad64739 (Welp)
 #COPY entrypoint.sh ./${WORK_DIR}/entrypoint.sh
 #RUN chmod +x ./${WORK_DIR}/entrypoint.sh && ./${WORK_DIR}/entrypoint.sh
 

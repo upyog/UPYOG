@@ -47,7 +47,7 @@
   --%>
   
   
-<div class="form-group">
+<div class="form-group row">
 	<label class="col-sm-2 control-label text-right" for="orderNumber"> <spring:message code="workorder.number" text="Order No."/><span class="mandatory"></span> 
 	</label>
 	<div class="col-sm-3 add-margin">
@@ -57,13 +57,13 @@
 	<label class="col-sm-2 control-label text-right" for="orderDate"> <spring:message code="workorder.date" text="Order Date"/><span class="mandatory"></span>
 	</label>
 	<div class="col-sm-3 add-margin">
-		<form:input path="orderDate" class="form-control datepicker" required="required" id="orderDate"  data-date-end-date="0d" data-inputmask="'mask': 'd/m/y'"/>
+		<form:input path="orderDate" class="form-control datepicker" required="required" id="orderDate"  data-date-end-date="0d" data-inputmask="'mask': '99/99/9999'"/>
 		<form:errors path="orderDate" cssClass="add-margin error-msg" />
 	</div>
 </div>
 
 
-<div class="form-group">
+<div class="form-group row">
 	<label class="col-sm-2 control-label text-right" for="name"> <spring:message code="workorder.name" text="Order Name"/><span class="mandatory"></span>
 	</label>
 	<div class="col-sm-3 add-margin">
@@ -72,7 +72,7 @@
 	</div>
 </div>
 
-<div class="form-group">
+<div class="form-group row">
 	<label class="col-sm-2 control-label text-right" for="description" > <spring:message code="workorder.description"   text="Description"/></label>
 	<div class="col-sm-3 add-margin">
 		<form:textarea path="description" id="description" cols="35" cssClass="form-control textfieldsvalidate patternvalidation"  maxlength = "250" />
@@ -86,7 +86,7 @@
 	</div>
 </div>
 
-<div class="form-group">
+<div class="form-group row">
 	<label class="col-sm-2 control-label text-right" for="contractor"> <spring:message code="workorder.contractor" text="Contractor Name"/><span class="mandatory"></span> 
 	</label>
 	<div class="col-sm-3 add-margin contactPerson"> 
@@ -108,7 +108,7 @@
 	</div>
 </div>
 
-<div class="form-group">
+<div class="form-group row">
 	<label class="col-sm-2 control-label text-right" for="orderValue"> <spring:message code="workorder.ordervalue" text="Total/Order Value"/><span class="mandatory"></span> 
 	</label>
 	<div class="col-sm-3 add-margin">
@@ -123,7 +123,7 @@
 	</div>
 </div>
 
-<div class="form-group">
+<div class="form-group row">
 	<label class="col-sm-2 control-label text-right" for="fund"> <spring:message code="workorder.fund" text="Fund"/><span class="mandatory"></span> 
 	</label>
 	<div class="col-sm-3 add-margin">
@@ -144,7 +144,7 @@
 	</div>
 </div>
 
-<div class="form-group">
+<div class="form-group row">
 	<label class="col-sm-2 control-label text-right" for="scheme"> <spring:message code="workorder.scheme" text="Scheme"/>
 	</label>
 	<div class="col-sm-3 add-margin">
@@ -165,7 +165,7 @@
 	</div>
 </div>
 
-<div class="form-group">
+<div class="form-group row">
 	<label class="col-sm-2 control-label text-right" for="sanctionNumber"> <spring:message code="workorder.sanctionnumber" text="Sanction No."/>
 	</label>
 	<div class="col-sm-3 add-margin">
@@ -175,7 +175,7 @@
 	<label class="col-sm-2 control-label text-right" for="sanctionDate"> <spring:message code="workorder.sanctiondate" text="Sanction Date"/>
 	</label>
 	<div class="col-sm-3 add-margin">
-		<form:input path="sanctionDate" class="form-control datepicker" id="sanctionDate"  data-date-end-date="0d" data-inputmask="'mask': 'd/m/y'"/>
+		<form:input path="sanctionDate" class="form-control datepicker" id="sanctionDate"  data-date-end-date="0d" data-inputmask="'mask': '99/99/9999'"/>
 		<form:errors path="sanctionDate" cssClass="add-margin error-msg" />
 	</div>
 </div> 

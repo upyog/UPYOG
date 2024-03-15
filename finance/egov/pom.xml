@@ -123,11 +123,18 @@
             <id>JBoss Repository</id>
             <url>https://repository.jboss.org/nexus/content/groups/public/</url>
         </repository>
+<<<<<<< HEAD
 	<repository>
 			<id>javaxt.com</id>
 			<url>http://www.javaxt.com/maven</url>
 	</repository>
         
+=======
+        <repository>
+			<id>javaxt.com</id>
+			<url>http://www.javaxt.com/maven</url>
+		</repository>
+>>>>>>> parent of 486ad64739 (Welp)
     </repositories>
 
     <pluginRepositories>

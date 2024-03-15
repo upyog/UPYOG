@@ -123,7 +123,7 @@
         </div>
     </spring:hasBindErrors>
 
-     <div class="tab-pane fade in active" id="supplierbillheader">
+     <div class="tab-pane fade show active" id="supplierbillheader">
          <jsp:include page="supplierbill-header.jsp"/>
            <div class="panel panel-primary" data-collapsed="0">
            <jsp:include page="supplier-accountcodetemplate.jsp"/>    
