@@ -2,7 +2,6 @@ package org.egov.bpa.calculator.services;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -28,6 +27,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
@@ -47,7 +48,7 @@ public class CalculationService {
 	@Autowired
 	private DemandService demandService;
 
-	@Autowired
+	@Autowired	
 	private EDCRService edcrService;
 	
 	@Autowired
@@ -169,14 +170,30 @@ public class CalculationService {
 		BigDecimal boundayWallLength=new BigDecimal(node.get("boundaryWallLength"));
 		BigDecimal area=new BigDecimal(node.get("area"));
 		
-		totalTax=boundayWallLength.multiply(BigDecimal.valueOf(9)).multiply(BigDecimal.valueOf(2.5)).add(area.multiply(BigDecimal.valueOf(9)).multiply(BigDecimal.valueOf(2.5)));
-		estimate.setEstimateAmount(totalTax);
+		totalTax=boundayWallLength.multiply(BigDecimal.valueOf(2.5)).add(area.multiply(BigDecimal.valueOf(9)).multiply(BigDecimal.valueOf(2.5)));
+		estimate.setEstimateAmount(totalTax.abs());
 		estimate.setCategory(Category.FEE);
 
 		String taxHeadCode = utils.getTaxHeadCode(calulationCriteria.getBpa().getBusinessService(), calulationCriteria.getFeeType());
 		estimate.setTaxHeadCode(taxHeadCode);
 		estimates.add(estimate);
 		}
+		
+//		else if (calulationCriteria.getFeeType().equalsIgnoreCase(BPACalculatorConstants.MDMS_CALCULATIONTYPE_SANC_FEETYPE))
+//		{	
+//			@SuppressWarnings("unchecked")
+//			Map<String,String> node=(Map<String, String>)calulationCriteria.getBpa().getAdditionalDetails();
+//			String fee=node.get("selfCertificationCharges");
+//			org.json.JSONArray jsonArray = new org.json.JSONArray (fee);
+//		for (int i = 0; i < jsonArray.length(); i++) {
+//		//estimate.setEstimateAmount(parameterPaths.get(i).;
+//		estimate.setCategory(Category.FEE);
+//		String taxHeadCode = utils.getTaxHeadCode(calulationCriteria.getBpa().getBusinessService(), calulationCriteria.getFeeType());
+//		estimate.setTaxHeadCode(taxHeadCode);
+//		estimates.add(estimate);
+//		}
+//		}
+
 		else {
 			estimatesAndSlabs = getBaseTax(calulationCriteria, requestInfo, mdmsData);
 			estimates.addAll(estimatesAndSlabs.getEstimates());
