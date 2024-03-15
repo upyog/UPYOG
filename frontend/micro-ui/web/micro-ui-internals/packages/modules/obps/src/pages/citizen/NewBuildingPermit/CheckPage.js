@@ -34,7 +34,7 @@ import {
     const isEditApplication = window.location.href.includes("editApplication");
     useEffect(()=>{
 console.log("mdmsData",mdmsData,sessionStorage.getItem("plotArea"),typeof(sessionStorage.getItem("plotArea")))
-let plotArea = parseInt(sessionStorage.getItem("plotArea"))
+let plotArea = parseInt(sessionStorage.getItem("plotArea")) *9
 const LabourCess = plotArea > 909 ?mdmsData?.BPA?.LabourCess[1].rate * plotArea : 0
  const GaushalaFees =  mdmsData?.BPA?.GaushalaFees[0].rate  
  const Malbafees = (plotArea <=500 ?mdmsData?.BPA?.MalbaCharges[0].rate :plotArea >500 && plotArea <=1000 ?mdmsData?.BPA?.MalbaCharges?.[1].rate :mdmsData?.BPA?.MalbaCharges[2].rate || 500)
@@ -355,7 +355,7 @@ console.log("mdmsData",mdmsData,mdmsData?.MalbaCharges?.BPA[1].rate,plotArea)
       ))} */}
        {/* <Row className="border-none" label={t(`BPA_COMMON_TOTAL_AMT`)} text={`₹ ${paymentDetails?.Bill?.[0]?.billDetails[0]?.amount || "0"}`} /> */}
        <CardSubHeader>{t("BPA_P1_SUMMARY_FEE_EST")}</CardSubHeader> 
-       <Row className="border-none" label={t(`BPA_COMMON_P1_AMT`)} text={`₹ ${data?.boundaryWallLength*2.5 + parseInt(sessionStorage.getItem("plotArea")) * 2.5}`} />
+       <Row className="border-none" label={t(`BPA_COMMON_P1_AMT`)} text={`₹ ${data?.boundaryWallLength*2.5 + parseInt(sessionStorage.getItem("plotArea"))* 9 * 2.5}`} />
        <CardSubHeader>{t("BPA_P2_SUMMARY_FEE_EST")}</CardSubHeader> 
        
        <Row className="border-none" label={t(`BPA_COMMON_MALBA_AMT`)} text={`₹ ${malbafees}`} />
