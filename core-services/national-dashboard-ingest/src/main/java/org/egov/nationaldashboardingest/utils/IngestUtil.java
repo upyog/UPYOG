@@ -29,7 +29,6 @@ public class IngestUtil {
         baseDocumentStructure.put(IngestConstants.REGION, ingestData.getRegion());
         baseDocumentStructure.put(IngestConstants.STATE, ingestData.getState());
         baseDocumentStructure.put(IngestConstants.ULB, ingestData.getUlb());
-        baseDocumentStructure.put(IngestConstants.WARD, ingestData.getWard());
         if(!ObjectUtils.isEmpty(ingestData.getAuditDetails())) {
             baseDocumentStructure.put(IngestConstants.CREATED_BY, ingestData.getAuditDetails().getCreatedBy());
             baseDocumentStructure.put(IngestConstants.CREATED_TIME, ingestData.getAuditDetails().getCreatedTime());
