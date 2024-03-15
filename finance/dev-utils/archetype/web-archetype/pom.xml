@@ -46,12 +46,12 @@
 
   <distributionManagement>
     <repository>
-      <id>repo.egovernments.org</id>
+      <id>nexus-repo.digit.org</id>
       <name>eGov ERP Releases Repository</name>
       <url>http://nexus-repo.digit.org/nexus/content/repositories/releases/</url>
     </repository>
     <snapshotRepository>
-      <id>repo.egovernments.org</id>
+      <id>nexus-repo.digit.org</id>
       <name>eGov ERP Snapshots Repository</name>
       <url>http://nexus-repo.digit.org/nexus/content/repositories/snapshots/</url>
     </snapshotRepository>
