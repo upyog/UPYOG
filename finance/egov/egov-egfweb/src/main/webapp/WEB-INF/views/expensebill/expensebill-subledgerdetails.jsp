@@ -67,11 +67,11 @@
 					</c:forEach>
 				</select>
 			</div>
-			<div id="subLedgerCodeSection" class="display-hide">
-				<label class="col-sm-2 control-label text-end" id="subLedgerNameLabel">
+			<div id="subLedgerCodeSection" class="col display-hide row">
+				<label class="col-sm-4 control-label text-end" id="subLedgerNameLabel">
 					<spring:message code="lbl.code" text="Code" />
 				</label>
-				<div class="col-sm-3 add-margin">
+				<div class="col-sm-6 add-margin">
 					<input type="hidden" name="detailkeyId" id="detailkeyId">
 					<input type="text" name="subLedgerCode" id="subLedgerCode" class="form-control" placeholder="Type first 3 letters of SubLedger name"  />
 				</div>

@@ -137,7 +137,7 @@
 							<div class="col-sm-3 add-margin">
 								<form:input path="fromDate" id="fromDate"
 									class="form-control datepicker" data-date-end-date="0d"
-									required="required" autocomplete="off" data-inputmask="'mask': 'd/m/y'"  placeholder="DD/MM/YYYY"/>
+									required="required" autocomplete="off" data-inputmask="'mask': '99/99/9999'"  placeholder="DD/MM/YYYY"/>
 								<form:errors path="fromDate" cssClass="add-margin error-msg" />
 							</div>
 							<label class="col-sm-2 control-label text-right"><spring:message
@@ -145,7 +145,7 @@
 							<div class="col-sm-3 add-margin">
 								<form:input id="toDate" path="toDate"
 									class="form-control datepicker" data-date-end-date="0d"
-									required="required" autocomplete="off" data-inputmask="'mask': 'd/m/y'"  placeholder="DD/MM/YYYY" />
+									required="required" autocomplete="off" data-inputmask="'mask': '99/99/9999'"  placeholder="DD/MM/YYYY" />
 								<form:errors path="toDate" cssClass="add-margin error-msg" />
 							</div>
 						</div>
