@@ -53,7 +53,7 @@
 
     <groupId>org.egov</groupId>
     <artifactId>egov-erp</artifactId>
-    <version>3.0.0-COE-SNAPSHOT</version>
+    <version>3.0.2-COE-SNAPSHOT</version>
 
     <packaging>pom</packaging>
 
@@ -97,12 +97,12 @@
         <repository>
             <id>repo.egovernments.org</id>
             <name>eGov ERP Releases Repository</name>
-            <url>https://nexus-repo.digit.org/nexus/content/repositories/releases/</url>
+            <url>http://repo.egovernments.org/nexus/content/repositories/releases/</url>
         </repository>
         <snapshotRepository>
             <id>repo.egovernments.org</id>
             <name>eGov ERP Snapshots Repository</name>
-            <url>https://nexus-repo.digit.org/nexus/content/repositories/snapshots/</url>
+            <url>http://repo.egovernments.org/nexus/content/repositories/snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
 
@@ -110,7 +110,7 @@
         <repository>
             <id>repo.egovernments.org</id>
             <name>eGov Public Repository Group</name>
-            <url>https://nexus-repo.digit.org/nexus/content/groups/public/</url>
+            <url>http://repo.egovernments.org/nexus/content/groups/public/</url>
             <snapshots>
                 <enabled>true</enabled>
                 <updatePolicy>always</updatePolicy>
@@ -123,25 +123,17 @@
             <id>JBoss Repository</id>
             <url>https://repository.jboss.org/nexus/content/groups/public/</url>
         </repository>
-<<<<<<< HEAD
-	<repository>
-			<id>javaxt.com</id>
-			<url>http://www.javaxt.com/maven</url>
-	</repository>
-        
-=======
         <repository>
-			<id>javaxt.com</id>
-			<url>http://www.javaxt.com/maven</url>
-		</repository>
->>>>>>> parent of 486ad64739 (Welp)
+            <id>JSPRESSO</id>
+            <url>http://repository.jspresso.org/maven2/</url>
+        </repository>
     </repositories>
 
     <pluginRepositories>
         <pluginRepository>
             <id>repo.egovernments.org</id>
             <name>eGov Public Repository Group</name>
-            <url>https://nexus-repo.digit.org/nexus/content/groups/public/</url>
+            <url>http://repo.egovernments.org/nexus/content/groups/public/</url>
             <releases>
                 <enabled>true</enabled>
             </releases>

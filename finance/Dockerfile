@@ -6,7 +6,11 @@ WORKDIR /app
 COPY ${WORK_DIR} ./${WORK_DIR}
 RUN cd ${WORK_DIR} \
 <<<<<<< HEAD
+<<<<<<< HEAD
 && mvn clean package -DskipTests
+=======
+    && mvn clean package -DskipTests
+>>>>>>> parent of 486ad64739 (Welp)
 =======
     && mvn clean package -DskipTests
 >>>>>>> parent of 486ad64739 (Welp)
