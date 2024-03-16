@@ -168,7 +168,7 @@ public class CalculationService {
 		BigDecimal boundayWallLength=new BigDecimal(node.get("boundaryWallLength"));
 		BigDecimal area=new BigDecimal(node.get("area"));
 		
-		totalTax=boundayWallLength.multiply(BigDecimal.valueOf(9)).multiply(BigDecimal.valueOf(2.5)).add(area.multiply(BigDecimal.valueOf(9)).multiply(BigDecimal.valueOf(2.5)));
+		totalTax=boundayWallLength.multiply(BigDecimal.valueOf(2.5)).add(area.multiply(BigDecimal.valueOf(9)).multiply(BigDecimal.valueOf(2.5)));
 		estimate.setEstimateAmount(totalTax.abs());
 		estimate.setCategory(Category.FEE);
 
