@@ -180,9 +180,9 @@ public class CalculationService {
 		else if (calulationCriteria.getFeeType().equalsIgnoreCase(BPACalculatorConstants.MDMS_CALCULATIONTYPE_SANC_FEETYPE))
 		{	
 			@SuppressWarnings("unchecked")
-			Map<String,Map<String,Integer>> node=(Map<String, Map<String,Integer>>)calulationCriteria.getBpa().getAdditionalDetails();
-			Map<String,Integer> fee=node.get("selfCertificationCharges");
-			for(Map.Entry<String,Integer> entry : fee.entrySet()){
+			Map<String,Map<String,String>> node=(Map<String, Map<String,String>>)calulationCriteria.getBpa().getAdditionalDetails();
+			Map<String,String> fee=node.get("selfCertificationCharges");
+			for(Map.Entry<String,String> entry : fee.entrySet()){
 				TaxHeadEstimate estimatee = new TaxHeadEstimate();
 				BigDecimal amount=new BigDecimal(entry.getValue());
 				taxhead=entry.getKey();
