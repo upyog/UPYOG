@@ -6,7 +6,6 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
 import org.egov.bpa.calculator.config.BPACalculatorConfig;
 import org.egov.bpa.calculator.kafka.broker.BPACalculatorProducer;
 import org.egov.bpa.calculator.utils.BPACalculatorConstants;
@@ -27,8 +26,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
@@ -48,7 +45,7 @@ public class CalculationService {
 	@Autowired
 	private DemandService demandService;
 
-	@Autowired	
+	@Autowired
 	private EDCRService edcrService;
 	
 	@Autowired
@@ -139,6 +136,7 @@ public class CalculationService {
 		
 		TaxHeadEstimate estimate = new TaxHeadEstimate();
 		BigDecimal totalTax=BigDecimal.ZERO;
+		String taxhead=null;
 
 		EstimatesAndSlabs estimatesAndSlabs = new EstimatesAndSlabs();
 		if (calulationCriteria.getFeeType().equalsIgnoreCase(BPACalculatorConstants.LOW_RISK_PERMIT_FEE_TYPE)) {
@@ -179,20 +177,21 @@ public class CalculationService {
 		estimates.add(estimate);
 		}
 		
-//		else if (calulationCriteria.getFeeType().equalsIgnoreCase(BPACalculatorConstants.MDMS_CALCULATIONTYPE_SANC_FEETYPE))
-//		{	
-//			@SuppressWarnings("unchecked")
-//			Map<String,String> node=(Map<String, String>)calulationCriteria.getBpa().getAdditionalDetails();
-//			String fee=node.get("selfCertificationCharges");
-//			org.json.JSONArray jsonArray = new org.json.JSONArray (fee);
-//		for (int i = 0; i < jsonArray.length(); i++) {
-//		//estimate.setEstimateAmount(parameterPaths.get(i).;
-//		estimate.setCategory(Category.FEE);
-//		String taxHeadCode = utils.getTaxHeadCode(calulationCriteria.getBpa().getBusinessService(), calulationCriteria.getFeeType());
-//		estimate.setTaxHeadCode(taxHeadCode);
-//		estimates.add(estimate);
-//		}
-//		}
+		else if (calulationCriteria.getFeeType().equalsIgnoreCase(BPACalculatorConstants.MDMS_CALCULATIONTYPE_SANC_FEETYPE))
+		{	
+			@SuppressWarnings("unchecked")
+			Map<String,Map<String,Integer>> node=(Map<String, Map<String,Integer>>)calulationCriteria.getBpa().getAdditionalDetails();
+			Map<String,Integer> fee=node.get("selfCertificationCharges");
+			for(Map.Entry<String,Integer> entry : fee.entrySet()){
+				TaxHeadEstimate estimatee = new TaxHeadEstimate();
+				BigDecimal amount=new BigDecimal(entry.getValue());
+				taxhead=entry.getKey();
+				estimatee.setEstimateAmount(amount);
+				estimatee.setCategory(Category.FEE);
+				estimatee.setTaxHeadCode(taxhead);
+				estimates.add(estimatee);	
+			}
+		}
 
 		else {
 			estimatesAndSlabs = getBaseTax(calulationCriteria, requestInfo, mdmsData);
