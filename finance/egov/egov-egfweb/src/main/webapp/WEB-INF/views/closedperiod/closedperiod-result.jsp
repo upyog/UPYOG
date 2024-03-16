@@ -65,7 +65,7 @@
 			</div>
 		</div>
 	</div>
-	<div class="form-group row">
+	<div class="form-group">
 		<div class="text-center">
 			<a href='javascript:void(0)' class='btn btn-default'
 									onclick="window.parent.postMessage('close','*');window.close();"><spring:message code='lbl.close' /></a>

@@ -61,8 +61,8 @@ $(document).ready(function(){
 		<i class="fa fa-info-circle" aria-hidden="true"  data-toggle="popover" data-trigger="hover" data-content='<spring:message code="msg.predefined.set.of.accountcode.template" />'></i></div>
 	</div>
 	<div  style="padding: 0 15px;">
-		<div class="form-group row">
-			<label class="col-sm-3 control-label text-end">
+		<div class="form-group">
+			<label class="col-sm-3 control-label text-right">
 				<spring:message code="lbl.template" />
 			</label>
 			<div class="col-sm-3 add-margin">

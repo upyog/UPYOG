@@ -56,7 +56,7 @@
 					<div class="panel-title"><spring:message code="lbl.user.defined.code" text=" User Defined Code"/></div>
 				</div>
 				<div class="panel-body">
-					<div class="form-group row">
+					<div class="form-group">
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.accountdetailtype" text="Account detail type"/> <span class="mandatory"></span>
 						</label>
@@ -81,7 +81,7 @@
 							<form:errors path="name" cssClass="error-msg" />
 						</div>
 					</div>
-					<div class="form-group row">
+					<div class="form-group">
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.code" text="Code"/> <span class="mandatory"></span> </label>
 						<div class="col-sm-3 add-margin">
@@ -99,7 +99,7 @@
 							<form:errors path="narration" cssClass="error-msg" />
 						</div>
 					</div>
-					<div class="form-group row">
+					<div class="form-group">
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.isactive" text="Active"/> </label>
 						<div class="col-sm-3 add-margin">

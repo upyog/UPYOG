@@ -1438,6 +1438,11 @@ public class PaymentAction extends BasePaymentAction {
     public String ajaxGetAccountBalance() throws ParseException {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Inside ajaxGetAccountBalance.");
+        System.out.println("**********************************************************************************");
+        System.out.println("**********************************************************************************");
+        System.out.println("**********************************  parameters.get(\"bankaccount\")[0] : "+(parameters.get("bankaccount")[0])+"************************************************");
+        System.out.println("**********************************************************************************");
+        System.out.println("**********************************************************************************");
         getBankBalance(parameters.get("bankaccount")[0], parameters.get("voucherDate")[0], null, null, null);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed ajaxGetAccountBalance.");

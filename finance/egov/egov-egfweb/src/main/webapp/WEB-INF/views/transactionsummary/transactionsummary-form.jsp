@@ -77,7 +77,7 @@
 					</span>
 				</center>
 				<div class="panel-body" id="mainTSForm">
-					<div class="form-group row">
+					<div class="form-group">
 						<form:input type="hidden" path="id" />
 						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.financialyear" /><span class="mandatory1">*</span></label>
 						<div class="col-sm-3 add-margin">
@@ -100,7 +100,7 @@
 							<form:errors path="departmentcode" cssClass="error-msg" />
 						</div>
 					</div>
-					<div class="form-group row">
+					<div class="form-group">
 						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.fund" /><span class="mandatory1">*</span></label>
 						<div class="col-sm-3 add-margin">
 							<form:select path="fund.id" id="fund.id" cssClass="form-control mandatory" cssErrorClass="form-control error">
@@ -125,7 +125,7 @@
 							<form:errors path="functionid" cssClass="error-msg" />
 						</div>
 					</div>
-					<div class="form-group row">
+					<div class="form-group">
 
 						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.type" /><span class="mandatory1">*</span></label>
 						<div class="col-sm-3 add-margin">
@@ -138,7 +138,7 @@
 							</select>
 						</div>
 					</div>
-					<div class="form-group row">
+					<div class="form-group">
 						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.major" /></label>
 						<div class="col-sm-3 add-margin">
 							<select name="major" id="major" class="form-control">
@@ -150,7 +150,7 @@
 							</select>
 						</div>
 					</div>
-					<div class="form-group row" id="divProceed">
+					<div class="form-group" id="divProceed">
 						<div class="text-center">
 							<button type='button' class='btn btn-primary' id="buttonProceed">
 								<spring:message code='lbl.proceed' />

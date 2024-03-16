@@ -55,7 +55,7 @@
           <div class="panel-title"><spring:message code="lbl.fund" text="Fund" /></div>
         </div>
         <div class="panel-body">
-          <div class="form-group row">
+          <div class="form-group">
             <label class="col-sm-3 control-label text-right"><spring:message code="lbl.name" text="Name"/> <span
               class="mandatory"></span> </label>
             <div class="col-sm-3 add-margin">
@@ -71,7 +71,7 @@
               <form:errors path="code" cssClass="error-msg" />
             </div>
           </div>
-          <div class="form-group row">
+          <div class="form-group">
             <label class="col-sm-3 control-label text-right"><spring:message code="lbl.identifier" text="Identifier"/> </label>
             <div class="col-sm-3 add-margin">
               <form:input path="identifier" class="form-control text-right patternvalidation" data-pattern="number" />
@@ -84,7 +84,7 @@
               <form:errors path="llevel" cssClass="error-msg" />
             </div>
           </div>
-          <div class="form-group row">
+          <div class="form-group">
             <label class="col-sm-3 control-label text-right"><spring:message code="lbl.parentid" text="Parent Fund"/> </label>
             <div class="col-sm-3 add-margin">
               <form:select path="parentId" id="parentId.id" cssClass="form-control"
@@ -102,7 +102,7 @@
               <form:errors path="isnotleaf" cssClass="error-msg" />
             </div>
           </div>
-          <div class="form-group row">
+          <div class="form-group">
             <label class="col-sm-3 control-label text-right"><spring:message code="lbl.isactive" text="Active"/> </label>
             <div class="col-sm-3 add-margin">
               <form:checkbox path="isactive" />

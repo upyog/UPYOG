@@ -82,7 +82,6 @@
         border-radius: 5px;
     }
 </style>
-
     <form:form name="expenseBillForm" role="form" method="post" action="create" modelAttribute="egBillregister" id="egBillregister" class="form-horizontal form-groups-bordered" enctype="multipart/form-data">
 	
     <div class="position_alert">
@@ -120,24 +119,15 @@
             <br/>
         </div>
     </spring:hasBindErrors>
-    
-<ul class="nav nav-tabs" id="settingstab">
-    <li class="nav-item">
-        <a class="nav-link active" data-bs-toggle="tab" href="#expensebillheader" data-tabidx="0">
-            Header
-        </a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" data-bs-toggle="tab" href="#checklist" data-tabidx="1">
-            CheckList
-        </a>
-    </li>
-</ul>
-
-    
+    <ul class="nav nav-tabs" id="settingstab">
+        <li class="active"><a data-toggle="tab" href="#expensebillheader"
+                              data-tabidx=0><spring:message code="lbl.header" text="Header"/></a></li>
+        <li><a data-toggle="tab" href="#checklist" data-tabidx=1><spring:message
+                code="lbl.checklist" text="CheckList"/> </a></li>
+    </ul>
 
     <div class="tab-content">
-        <div class="tab-pane fade show active" id="expensebillheader">
+        <div class="tab-pane fade in active" id="expensebillheader">
             <jsp:include page="expensebill-header.jsp"/>
             <jsp:include page="expensebill-subledgerdetails.jsp"/>
             <jsp:include page="expensebill-accountcode-template.jsp"/>

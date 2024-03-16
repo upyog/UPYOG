@@ -49,8 +49,8 @@
 
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ include file="/includes/taglibs.jsp"%>
-<%@ taglib uri="/WEB-INF/tags/cdn.tld" prefix="cdn" %>
-<form:form role="form" action="search" modelAttribute="contractorSearchRequest" id="contractorsearchform"
+<%@ taglib uri="/WEB-INF/tags/cdn.tld" prefix="cdn"%>
+<!--<form:form role="form" action="search" modelAttribute="contractorSearchRequest" id="contractorsearchform"
   cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
   <div class="main-content">
     <div class="row">
@@ -61,7 +61,7 @@
           </div>
           <div class="panel-body">
           <input type="hidden" id="mode" name="mode" value="${mode}" />
-             <div class="form-group row">
+             <div class="form-group">
 	           	 <label class="col-sm-3 control-label text-right"><spring:message code="lbl.name" text="Name"/> </label>
 	              <div class="col-sm-3 add-margin">
 	                <form:input path="name" class="form-control text-left patternvalidation" data-pattern="alphanumeric"
@@ -75,7 +75,7 @@
 	                <form:errors path="code" cssClass="error-msg" />
 	              </div>
               </div>
-            <div class="form-group row">
+            <div class="form-group">
               <div class="text-center">
                 <button type='button' class='btn btn-primary' id="btnsearch">
                   <spring:message code='lbl.search' />
@@ -89,28 +89,54 @@
       </div>
     </div>
   </div>
-</form:form>
+</form:form>-->
 <div class="row display-hide report-section">
-  <div class="col-md-12 table-header text-left"><spring:message code="lbl.contractor.search.result" text="Contractor Search Result"/> </div>
-  <div class="col-md-12 form-group row report-table-container">
-    <table class="table table-bordered table-hover multiheadertbl" id="resultTable">
-      <thead>
-        <tr>
-          <th><spring:message code="lbl.name" text="Name"/></th>
-          <th><spring:message code="lbl.code" text="Code"/></th>
-          <th><spring:message code="contractor.status" text="Status"/></th>
-        </tr>
-      </thead>
-    </table>
-  </div>
+	<div class="col-md-12 add-margin table-header text-left">
+		<!--<spring:message code="lbl.contractor.search.result"
+			text="Contractor Search Result" />-->
+			<spring:message code="lbl.contractor.list"
+			text="Contractor List" />
+	</div>
+	<div class="col-md-12 table-header text-left">
+		<button type='button' class='btn btn-primary'
+			id="btnNewContractor">
+			<spring:message code='lbl.create.new.contractor' />
+		</button>
+	</div>
+	<div class="col-md-12 form-group report-table-container">
+		<table class="table table-bordered table-hover multiheadertbl"
+			id="resultTable">
+			<thead>
+				<tr>
+					<th><spring:message code="lbl.action" text="Action" /></th>
+					<th><spring:message code="lbl.name" text="Name" /></th>
+					<th><spring:message code="lbl.code" text="Code" /></th>
+					<th><spring:message code="lbl.contact.number" text="Contact Number" /></th>
+					<th><spring:message code="lbl.mobile.number" text="Mobile Number" /></th>
+					<th><spring:message code="lbl.gst.tin.number" text="GST/TIN Number" /></th>
+					<th><spring:message code="contractor.status" text="Status" /></th>
+				</tr>
+			</thead>
+		</table>
+	</div>
 </div>
 <script>
-	$('#btnsearch').click(function(e) {
-		if ($('form').valid()) {
-		} else {
-			e.preventDefault();
-		}
+	$(document).ready(function() {
+		callAjaxForContractorData();
 	});
+
+	/*
+	 * 
+	 $(document).ready(function() {
+	 callAjaxSearch();
+	 });
+	
+	 $('#btnsearch').click(function(e) {
+	 if ($('form').valid()) {
+	 } else {
+	 e.preventDefault();
+	 }
+	 });*/
 </script>
 <link rel="stylesheet"
 	href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/services/egi'/>" />
@@ -140,4 +166,5 @@
 	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.print.min.js' context='/services/egi'/>"></script>
 <script type="text/javascript"
 	src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/services/egi'/>"></script>
-<script type="text/javascript" src="<cdn:url value='/resources/app/js/contractorHelper.js?rnd=${app_release_no}' context='/services/EGF'/>"></script>
+<script type="text/javascript"
+	src="<cdn:url value='/resources/app/js/contractorHelper.js?rnd=${app_release_no}' context='/services/EGF'/>"></script>

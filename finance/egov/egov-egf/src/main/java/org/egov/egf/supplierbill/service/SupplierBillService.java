@@ -47,6 +47,7 @@
  */
 package org.egov.egf.supplierbill.service;
 
+import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -74,6 +75,8 @@ import org.egov.egf.billsubtype.service.EgBillSubTypeService;
 import org.egov.egf.dashboard.event.FinanceEventType;
 import org.egov.egf.dashboard.event.listener.FinanceDashboardService;
 import org.egov.egf.expensebill.repository.DocumentUploadRepository;
+import org.egov.egf.masters.repository.PurchaseItemsBillRegisterRepository;
+import org.egov.egf.masters.repository.PurchaseItemRepository;
 import org.egov.egf.supplierbill.repository.SupplierBillRepository;
 import org.egov.egf.utils.FinancialUtils;
 import org.egov.eis.entity.Assignment;
@@ -94,9 +97,12 @@ import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.model.bills.DocumentUpload;
 import org.egov.model.bills.EgBillPayeedetails;
+import org.egov.model.bills.EgBillPurchaseItemsDetails;
 import org.egov.model.bills.EgBilldetails;
 import org.egov.model.bills.EgBillregister;
 import org.egov.model.budget.BudgetGroup;
+import org.egov.model.masters.PurchaseItems;
+import org.egov.model.masters.PurchaseOrder;
 import org.egov.pims.commons.Position;
 import org.egov.services.masters.SchemeService;
 import org.egov.services.masters.SubSchemeService;
@@ -105,12 +111,20 @@ import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.hibernate.Session;
 import org.joda.time.DateTime;
+import org.objectweb.asm.TypeReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.reflect.TypeToken;
 
 /**
  * @author venki
@@ -181,6 +195,12 @@ public class SupplierBillService {
     
     @Autowired
     FinanceDashboardService finDashboardService;
+    
+    @Autowired
+    private PurchaseItemRepository purchaseItemRepository;
+    
+    @Autowired
+    private PurchaseItemsBillRegisterRepository puechaseItemsBillRegisterRepo;
 
     @Autowired
     public SupplierBillService(final SupplierBillRepository supplierBillRepository, final ScriptService scriptExecutionService) {
@@ -199,6 +219,10 @@ public class SupplierBillService {
     public EgBillregister getByBillnumber(final String billNumber) {
         return supplierBillRepository.findByBillnumber(billNumber);
     }
+    
+    public List<EgBillPurchaseItemsDetails> getByBillnumber1(final String billregister_id) {
+        return puechaseItemsBillRegisterRepo.findAllByBillRegister(billregister_id);
+    }
 
     @Transactional
     public EgBillregister create(final EgBillregister egBillregister) {
@@ -208,6 +232,7 @@ public class SupplierBillService {
     @Transactional
     public EgBillregister create(final EgBillregister egBillregister, final Long approvalPosition, final String approvalComent,
             final String additionalRule, final String workFlowAction, final String approvalDesignation) {
+    
         if (StringUtils.isBlank(egBillregister.getBilltype()))
             egBillregister.setBilltype(FinancialConstants.BILLTYPE_FINAL_BILL);
         egBillregister.getEgBillregistermis().setEgBillregister(egBillregister);
@@ -241,8 +266,47 @@ public class SupplierBillService {
          } catch (final ValidationException e) {
          throw new ValidationException(e.getErrors());
          }
+		
+         
 
         final EgBillregister savedEgBillregister = supplierBillRepository.save(egBillregister);
+        
+        /*----------------------Purcahseitems save code -------------------------------*/
+        
+        System.out.println(egBillregister.getPurchaseItems());
+     	Gson gson = new Gson();      		
+     		
+     		List<PurchaseItems> purchaseItemsList = gson.fromJson(egBillregister.getPurchaseObject(), new TypeToken<List<PurchaseItems>>(){}.getType());
+     		
+     		List<EgBillPurchaseItemsDetails> egBillPurchaseItemsDetailsList = new ArrayList<>();      		
+			
+     							
+     		for(PurchaseItems purchaseItems : purchaseItemsList) {
+     			
+     			LOG.info("Filtered PurchaseItems: {} ", purchaseItemsList);
+     			
+     			EgBillPurchaseItemsDetails egBillPurchaseItemsDetails = new EgBillPurchaseItemsDetails();
+     			
+     			egBillPurchaseItemsDetails.setItemCode(purchaseItems.getItemCode());     		
+     		    egBillPurchaseItemsDetails.setUnitRate(purchaseItems.getUnitRate());
+     		    egBillPurchaseItemsDetails.setQuantity(purchaseItems.getQuantity());
+     		    egBillPurchaseItemsDetails.setAmount(purchaseItems.getAmount());
+     		    egBillPurchaseItemsDetails.setCreatedby(egBillregister.getCreatedBy());
+     		    egBillPurchaseItemsDetails.setLastmodifiedby(egBillregister.getLastModifiedBy());
+     		    egBillPurchaseItemsDetails.setOrdernumber(purchaseItems.getOrderNumber());
+     		    egBillPurchaseItemsDetails.setEgBillregister(egBillregister); 		    
+     		 
+     		    
+     		   egBillPurchaseItemsDetailsList.add(egBillPurchaseItemsDetails);
+     		   
+     		  puechaseItemsBillRegisterRepo.save(egBillPurchaseItemsDetails);  		   
+     		   
+     		}
+     		  
+     		egBillregister.setPurchaseItems(purchaseItemsList);
+     		//puechaseItemsBillRegisterRepo.save(egBillPurchaseItemsDetailsList.get(0));
+     		
+     		/*----------------------Purcahseitems save code end---------------------------EgBillPurchaseItemsDetails----*/
 
         if (workFlowAction.equals(FinancialConstants.CREATEANDAPPROVE)) {
             if (FinancialConstants.STANDARD_EXPENDITURETYPE_PURCHASE.equals(egBillregister.getExpendituretype()))

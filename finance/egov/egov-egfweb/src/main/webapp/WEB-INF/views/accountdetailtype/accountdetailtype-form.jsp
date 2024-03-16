@@ -56,7 +56,7 @@
 					<div class="panel-title"><spring:message code="lbl.account.entity" text="Account Entity"/> </div>
 				</div>
 				<div class="panel-body">
-					<div class="form-group row">
+					<div class="form-group">
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.name" text="Name"/><span class="mandatory"></label>
 						<div class="col-sm-3 add-margin">
@@ -74,7 +74,7 @@
 							<form:errors path="description" cssClass="error-msg" />
 						</div>
 					</div>
-					<div class="form-group row">
+					<div class="form-group">
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.isactive" text="Active"/> </label>
 						<div class="col-sm-3 add-margin">

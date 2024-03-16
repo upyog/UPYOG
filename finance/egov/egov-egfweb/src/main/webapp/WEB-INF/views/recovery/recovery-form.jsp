@@ -56,7 +56,7 @@
 					<div class="panel-title"><spring:message code="lbl.deductions"/> </div>
 				</div>
 				<div class="panel-body">
-					<div class="form-group row">
+					<div class="form-group">
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.recoverycode"/> <span class="mandatory1">*</span></label>
 						<div class="col-sm-3 add-margin">
@@ -74,7 +74,7 @@
 							<form:errors path="recoveryName" cssClass="error-msg" />
 						</div>
 					</div>
-					<div class="form-group row">
+					<div class="form-group">
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.accountDetailType"/></label>
 						<div class="col-sm-3 add-margin">
@@ -106,7 +106,7 @@
 							<form:errors path="chartofaccounts" cssClass="error-msg" />
 						</div>
 					</div>
-					<div class="form-group row">
+					<div class="form-group">
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.bankloan"/> </label>
 						<div class="col-sm-3 add-margin">
@@ -120,7 +120,7 @@
 							<form:errors path="isactive" cssClass="error-msg" />
 						</div>
 					</div>
-					<div class="form-group row display-hide" id="bankDiv">
+					<div class="form-group display-hide" id="bankDiv">
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.bank" /> </label>
 						<div class="col-sm-3 add-margin">
@@ -134,7 +134,7 @@
 							<form:errors path="bank" cssClass="error-msg" />
 						</div>
 					</div>
-					<div class="form-group row">
+					<div class="form-group">
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.remitted"/> <span class="mandatory1">*</span></label>
 						<div class="col-sm-3 add-margin">
@@ -152,7 +152,7 @@
 							<form:errors path="ifscCode" cssClass="error-msg" />
 						</div>
 					</div>
-					<div class="form-group row">
+					<div class="form-group">
 
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.accountnumber" text="Account Number"/> </label>

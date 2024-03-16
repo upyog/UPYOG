@@ -65,7 +65,7 @@
 					<div class="panel-title"><spring:message code="lbl.budget.group" text="Budget Group"/> </div>
 				</div>
 				<div class="panel-body">
-					<div class="form-group row">
+					<div class="form-group">
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.name" text="Name"/> <span class="mandatory"></span> </label>
 						<div class="col-sm-6 add-margin">
@@ -75,7 +75,7 @@
 							<form:errors path="name" cssClass="error-msg" />
 						</div>
 					</div>
-					<div class="form-group row">
+					<div class="form-group">
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.accounttype" text="Account Type"/><span class="mandatory"></span></label>
 						<div class="col-sm-4 add-margin">
@@ -90,7 +90,7 @@
 							<form:errors path="accountType" cssClass="error-msg" />
 						</div>
 					</div>
-					<div class="form-group row">
+					<div class="form-group">
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.budgetingtype" text="Budgeting Type"/> </label>
 						<div class="col-sm-3 add-margin">
@@ -107,7 +107,7 @@
 						value="${budgetGroup.majorCode.id}" /> <input type="hidden"
 						id="maxCodeValue" value="${budgetGroup.maxCode.id}" /> <input
 						type="hidden" id="minCodeValue" value="${budgetGroup.minCode.id}" />
-					<div class="form-group row">
+					<div class="form-group">
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.majorcode" text="Major Code"/> </label>
 						<div class="col-sm-6 add-margin">
@@ -125,12 +125,12 @@
 						</div>
 					</div>
 					<tr>
-						<div class="form-group row">
+						<div class="form-group">
 							<label class="col-sm-6 control-label text-center">OR</label>
 						</div>
 					</tr>
 					<br>
-					<div class="form-group row">
+					<div class="form-group">
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.mincode" text="Detailed Min Code"/> </label>
 						<div class="col-sm-6 add-margin">
@@ -148,7 +148,7 @@
 						</div>
 
 					</div>
-					<div class="form-group row">
+					<div class="form-group">
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.maxcode" text="Detailed Max Code"/> </label>
 						<div class="col-sm-6 add-margin">
@@ -165,7 +165,7 @@
 							<form:errors path="maxCode" cssClass="error-msg" />
 						</div>
 					</div>
-					<div class="form-group row">
+					<div class="form-group">
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.description" text="Description"/> </label>
 						<div class="col-sm-6 add-margin">
@@ -176,7 +176,7 @@
 						</div>
 					</div>
 
-					<div class="form-group row">
+					<div class="form-group">
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.bgisactive" text="Budget Group Active"/> </label>
 						<div class="col-sm-3 add-margin">

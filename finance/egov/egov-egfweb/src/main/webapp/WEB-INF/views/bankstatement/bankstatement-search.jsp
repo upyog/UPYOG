@@ -60,15 +60,15 @@
 					</div>
 				</div>
 				<div class="panel-body">
-					<div class="form-group row">
-						<label class="col-sm-3 control-label text-end"><spring:message code="lbl.bank" />  </label>
+					<div class="form-group">
+						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.bank" />  </label>
 						<div class="col-sm-3 add-margin">
 						<form:select path="" data-first-option="false" id="bank" class="form-control" >
 							<form:option value=""><spring:message code="lbl.select" /></form:option>
 							<form:options items="${banks}" itemValue="id" itemLabel="name" />
 						</form:select>
 						</div>
-						<label class="col-sm-2 control-label text-end"><spring:message code="lbl.bankbranch" />  </label>
+						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.bankbranch" />  </label>
 						<div class="col-sm-3 add-margin">
 							<form:select path="" id="bankbranch" class="form-control" data-first-option="false">
 								<form:option value=""><spring:message code="lbl.select" /></form:option>
@@ -77,15 +77,15 @@
 							<form:errors path="" cssClass="error-msg" />
 						</div>
 					</div>
-					<div class="form-group row">
-						<label class="col-sm-3 control-label text-end"><spring:message code="lbl.accountnumber" />  </label>
+					<div class="form-group">
+						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.accountnumber" />  </label>
 						<div class="col-sm-3 add-margin">
 							<form:select path="bankAccount" id="bankaccount" class="form-control" data-first-option="false">
 								<form:option value=""><spring:message code="lbl.select" /></form:option>
 							</form:select>
 							<form:errors path="" cssClass="error-msg" />
 						</div>
-						<label class="col-sm-2 control-label text-end"><spring:message code="lbl.asondate" />
+						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.asondate" />
 						</label>
 						<div class="col-sm-3 add-margin">
 							<form:input  path="asOnDate" id="filedate"  class="form-control datepicker" data-date-end-date="0d"  autocomplete="off"/>

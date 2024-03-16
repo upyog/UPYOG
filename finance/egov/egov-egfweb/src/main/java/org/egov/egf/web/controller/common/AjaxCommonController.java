@@ -334,6 +334,15 @@ public class AjaxCommonController {
 			coa.setIsSubLedger(!coa.getChartOfAccountDetails().isEmpty());
 		return toJSON(chartOfAccounts, CChartOfAccounts.class, ChartOfAccountsAdaptor.class);
 	}
+	
+	@GetMapping(value = "/getallaccountcodes1", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public String findAllAccountCodes1(@RequestParam @SafeHtml final String glcode) {
+		final List<CChartOfAccounts> chartOfAccounts = chartOfAccountsService.getAllAccountCodes1(glcode);
+		for (final CChartOfAccounts coa : chartOfAccounts)
+			coa.setIsSubLedger(!coa.getChartOfAccountDetails().isEmpty());
+		return toJSON(chartOfAccounts, CChartOfAccounts.class, ChartOfAccountsAdaptor.class);
+	}
 
     @GetMapping(value = "/getaccountdetailtypesbyglcodeid")
     @ResponseBody

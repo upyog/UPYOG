@@ -67,7 +67,7 @@
 						<div class="panel-title"><spring:message code="title.approvebudget.search" text="Approve Uploaded Budget"/> </div>
 					</div>
 					<div class="panel-body">
-						<div class="form-group row">
+						<div class="form-group">
 							<label class="col-sm-3 control-label text-right"><spring:message
 									code="lbl.budget" text="Budget"/> <span class="mandatory1">*</span></label>
 							<div class="col-sm-3 add-margin">
@@ -88,7 +88,7 @@
 								<div id="referenceBudget"></div>
 							</div>
 						</div>
-						<div class="form-group row">
+						<div class="form-group">
 							<div class="text-center">
 								<button type='submit' class='btn btn-primary' id="btnsearch">
 									<spring:message code='lbl.approve' text="Approve"/>

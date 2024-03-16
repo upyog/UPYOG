@@ -48,8 +48,11 @@
 package org.egov.model.masters;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -57,6 +60,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -73,6 +78,8 @@ import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.utils.FinancialConstants;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.model.bills.EgBillPurchaseItemsDetails;
+import org.egov.model.masters.PurchaseItems;
 
 @Entity
 @Table(name = "EGF_PURCHASEORDER")
@@ -141,8 +148,29 @@ public class PurchaseOrder extends AbstractAuditable implements EntityType {
 
     @Transient
     private Boolean editAllFields;
+    
+	
+	
+  // @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+ //   @JoinColumn(name="ordernumber")
+   // @OneToMany(mappedBy="purchaseOrder")
+   @OneToMany(mappedBy = "purchaseOrder", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PurchaseItems> purchaseItems = new ArrayList<>();
+   
+   @OneToMany(mappedBy = "purchaseOrder", cascade = CascadeType.ALL, orphanRemoval = true)
+   private List<EgBillPurchaseItemsDetails> egBillPurchaseItemsDetails;
+	 
+	 
 
-    @Override
+    public List<PurchaseItems> getPurchaseItems() {
+		return purchaseItems;
+	}
+
+	public void setPurchaseItems(List<PurchaseItems> purchaseItems) {
+		this.purchaseItems = purchaseItems;
+	}
+
+	@Override
     public String getBankname() {
         return null;
     }
@@ -330,5 +358,7 @@ public class PurchaseOrder extends AbstractAuditable implements EntityType {
     public void setEditAllFields(Boolean editAllFields) {
         this.editAllFields = editAllFields;
     }
+
+	
 
 }

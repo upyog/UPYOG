@@ -55,10 +55,10 @@
 	<div class="panel-heading">
 		
 	</div>
-	<div class="form-group row">
+	<div class="form-group">
 		<c:choose>
 			<c:when test="${!billNumberGenerationAuto}">
-				<label class="col-sm-3 control-label text-end"><spring:message code="lbl.billnumber" text="Bill Number"/>
+				<label class="col-sm-3 control-label text-right"><spring:message code="lbl.billnumber" text="Bill Number"/>
 					<span class="mandatory"></span>
 				</label>
 				<div class="col-sm-3 add-margin">
@@ -66,7 +66,7 @@
 					<form:errors path="billnumber" cssClass="add-margin error-msg" />
 				</div>
 				
-				<label class="col-sm-2 control-label text-end"><spring:message code="lbl.billdate"  text="Bill Date"/>
+				<label class="col-sm-2 control-label text-right"><spring:message code="lbl.billdate"  text="Bill Date"/>
 				<span class="mandatory"></span>
 				</label>
 				<div class="col-sm-3 add-margin">
@@ -75,14 +75,14 @@
 				</div>
 			</c:when>
 			<c:otherwise>
-				<label class="col-sm-3 control-label text-end"><spring:message code="lbl.billdate"  text="Bill Date"/>
+				<label class="col-sm-3 control-label text-right"><spring:message code="lbl.billdate"  text="Bill Date"/>
 				<span class="mandatory"></span>
 				</label>
 				<div class="col-sm-3 add-margin">
 					<form:input id="billdate" path="billdate" class="form-control datepicker" data-date-end-date="0d" required="required" />
 					<form:errors path="billdate" cssClass="add-margin error-msg" />
 				</div>
-				<label class="col-sm-2 control-label text-end"></label>
+				<label class="col-sm-2 control-label text-right"></label>
 				<div class="col-sm-3 add-margin">
 				</div>
 			</c:otherwise>
@@ -93,8 +93,8 @@
 	
 	<jsp:include page="expense-trans-filter.jsp"/>
 	
-	<div class="form-group row">
-		<label class="col-sm-3 control-label text-end">
+	<div class="form-group">
+		<label class="col-sm-3 control-label text-right">
 			<spring:message code="lbl.function"  text="Function"/>	<span class="mandatory"></span>
 		</label>
 		<div class="col-sm-3 add-margin">
@@ -108,7 +108,7 @@
 			<form:errors path="egBillregistermis.function" cssClass="add-margin error-msg" />
 		</div>
 				
-		<label class="col-sm-2 control-label text-end"><spring:message code="lbl.narration" text="Narration"/>
+		<label class="col-sm-2 control-label text-right"><spring:message code="lbl.narration" text="Narration"/>
 		</label>
 		<div class="col-sm-3 add-margin">
 			<form:textarea path="egBillregistermis.narration" id="narration" class="form-control" maxlength="1024" ></form:textarea>
@@ -116,8 +116,8 @@
 		</div>
 	</div>
 	
-	<div class="form-group row">
-		<label class="col-sm-3 control-label text-end">
+	<div class="form-group">
+		<label class="col-sm-3 control-label text-right">
 			<spring:message code="lbl.party.billnumber" text="Party Bill Number"/>
 		</label>
 		<div class="col-sm-3 add-margin">
@@ -125,7 +125,7 @@
 			<form:errors path="egBillregistermis.partyBillNumber" cssClass="add-margin error-msg" />		
 		</div>
 		
-		<label class="col-sm-2 control-label text-end">
+		<label class="col-sm-2 control-label text-right">
 			<spring:message code="lbl.party.billdate" text="Party Bill Date"/>
 		</label>
 		<div class="col-sm-3 add-margin">
@@ -133,8 +133,8 @@
 			<form:errors path="egBillregistermis.partyBillDate" cssClass="add-margin error-msg" />
 		</div>
 	</div>
-	<div class="form-group row">
-		<label class="col-sm-3 control-label text-end"><spring:message code="lbl.billsubtype" text="Bill Subtype"/>
+	<div class="form-group">
+		<label class="col-sm-3 control-label text-right"><spring:message code="lbl.billsubtype" text="Bill Subtype"/>
 			<span class="mandatory"></span>
 		</label>
 		<div class="col-sm-3 add-margin">

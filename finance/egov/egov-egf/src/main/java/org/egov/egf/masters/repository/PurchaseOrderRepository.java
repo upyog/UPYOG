@@ -49,6 +49,7 @@ package org.egov.egf.masters.repository;
 
 import java.util.List;
 
+import org.egov.model.masters.PurchaseItems;
 import org.egov.model.masters.PurchaseOrder;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -68,7 +69,10 @@ public interface PurchaseOrderRepository extends JpaRepository<PurchaseOrder, Lo
     public List<PurchaseOrder> findActiveOrders();
 
     public List<PurchaseOrder> findBySupplier_Id(Long id);
-
+    
+   // @Query(value="select * from citya.egf_purchaseorder where ordernumber=:orderNumber", nativeQuery = true)
     public PurchaseOrder findByOrderNumber(String orderNumber);
+
+	public PurchaseItems save(PurchaseItems ac);
 
 }

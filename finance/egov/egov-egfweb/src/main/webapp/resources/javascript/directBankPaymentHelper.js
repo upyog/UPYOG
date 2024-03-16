@@ -63,6 +63,7 @@ function validate() {
 	return true;
 }
 function updateAndCheckAmount() {
+
 	var debit = document.getElementById('totaldbamount').value;
 	var credit = document.getElementById('totalcramount').value;
 	var dbcr = debit - credit;

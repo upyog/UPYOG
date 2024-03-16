@@ -64,7 +64,7 @@
 				</spring:hasBindErrors>
 				<div class="panel-body">
 					<input type="hidden" value="${startingDate}" id="finYearStartDate" />
-					<div class="form-group row">
+					<div class="form-group">
 
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.cfinancialyearid" /><span class="mandatory"></span> </label>
@@ -87,7 +87,7 @@
 							<form:errors path="isClosed" cssClass="error-msg" />
 						</div> -->
 					</div>
-					<div class="form-group row">
+					<div class="form-group">
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.frommonth" /> <span class="mandatory"></span> </label>
 						<div class="col-sm-3 add-margin">
@@ -116,7 +116,7 @@
 						</div>
 					</div>
 
-					<div class="form-group row">
+					<div class="form-group">
 
 						<label class="col-sm-3 control-label"><spring:message
 								code="lbl.closetype" /></label>
@@ -142,7 +142,7 @@
 						</div>
 						<form:errors path="closeType" cssClass="error-msg" />
 					</div>
-					<div class="form-group row">
+					<div class="form-group">
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.remarks" /> <span class="mandatory"></span> </label>
 						<div class="col-sm-3 add-margin">
