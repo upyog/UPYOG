@@ -198,6 +198,11 @@ const Urls = {
       delete: "/egov-survey-services/egov-ss/survey/_delete",
       submitResponse: "/egov-survey-services/egov-ss/survey/response/_submit",
       showResults: "/egov-survey-services/egov-ss/survey/response/_results",
+      createSurvey: "/service-request/service/definition/v1/_create",
+      cfdefinitionsearch: "/service-request/service/definition/v1/_search",
+      submitSurveyResponse: "/service-request/service/v1/_create",
+      selectedSurveySearch: "/service-request/service/v1/_search",
+      updateSurvey:"/service-request/service/definition/v1/_update",
     },
   },
 

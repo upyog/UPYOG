@@ -40,7 +40,7 @@ const SurveyDetailsView = ({surveyTitle,surveyDesc,t,surveyId}) => {
         >
           <header style={{ color:"#a82227"}}>{t("SURVEY_QUESTIONS")}</header>
         </button> */}
-        <LinkLabel  onClick={() => history.push(`/digit-ui/employee/engagement/surveys/inbox/details/${surveyId}`)}>
+        <LinkLabel  onClick={() => history.push(`/digit-ui/employee/engagement/surveys/inbox/details/${surveyTitle}`)}>
         {t("VIEW_SURVEY_QUESTIONS")}
         </LinkLabel>
         

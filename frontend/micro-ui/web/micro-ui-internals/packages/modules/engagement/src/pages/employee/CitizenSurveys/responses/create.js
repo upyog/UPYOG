@@ -4,12 +4,13 @@ import React, { useEffect,useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link,useHistory } from "react-router-dom";
 const getMessage = (mutation) => {
-  if (mutation.isSuccess) return mutation.data?.Surveys?.[0]?.uuid;
+  if (mutation.isSuccess) return mutation.data?.ServiceDefinition?.[0]?.id;
   return "";
 };
 
 const BannerPicker = (props) => {
   const { t } = useTranslation();
+  console.log(props.mutation,"props.mutation")
   return (
     <Banner
       message={props.mutation.isSuccess ? t(`SURVEY_FORM_CREATED`) : t("SURVEY_FORM_FAILURE")}
@@ -24,7 +25,7 @@ const Acknowledgement = (props) => {
   const queryClient = useQueryClient();
   const { t } = useTranslation();
   const tenantId = Digit.ULBService.getCurrentTenantId();
-  const mutation = Digit.Hooks.survey.useCreate();
+  const mutation = Digit.Hooks.survey.useServeyCreateDef();
   const { state } = props.location;
   const history = useHistory();
   const [isActionClicked,setIsActionClicked] = useState(false) 

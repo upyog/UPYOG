@@ -2,37 +2,53 @@ import { Loader } from "@egovernments/digit-ui-react-components";
 import React, { useEffect } from "react";
 import { useQueryClient } from "react-query";
 import CitizenSurveyForm from "../../../components/Surveys/CitizenSurveyForm";
+import CitizenSurveyDisplayForm from "../../../components/Surveys/CitizenSurveyDisplayForm";
 
 const ShowSurvey = ({ location }) => {
   const surveyData = location?.state;
   const questions = surveyData?.questions;
   const tenantIds = Digit.ULBService.getCitizenCurrentTenant();
+  const user = Digit.UserService.getUser();
   const mutation = Digit.Hooks.survey.useShowResults();
 
-  const queryClient = useQueryClient();
+  let ServiceCriteria = {
+    tenantId: tenantIds,
+    ids: [],
+    serviceDefIds: [],
+    referenceIds: [surveyData.code],
+    accountId: user?.info?.uuid || "dda30b0a-ae2d-4f87-8b52-d1fc73ed7643",
+  }
+  const { data: selecedSurveyData, isLoading } = Digit.Hooks.survey.useSelectedSurveySearch({ServiceCriteria},{})
 
+  const queryClient = useQueryClient();
   useEffect(() => {
-    const onSuccess = () => {
-      queryClient.clear();
-    };
-    mutation.mutate(
-      {
-        surveyId: surveyData.uuid,
-      },
-      {
-        onSuccess,
-      }
-    );
+    // const onSuccess = () => {
+    //   queryClient.clear();
+    // };
+    // mutation.mutate(
+    //   {
+    //     surveyId: surveyData.uuid,
+    //   },
+    //   {
+    //     onSuccess,
+    //   }
+    // );
   }, []);
 
-  if (mutation.isLoading && !mutation.isIdle) {
+  if (isLoading) {
     return <Loader />;
   }
 
-  if (mutation.isError) return <div>An error occured...</div>;
+  // if (mutation.isError) return <div>An error occured...</div>;
 
   //questionid in answers uuid in surveys needs to be matched
-  const answers = mutation?.data?.answers;
+  const answers = selecedSurveyData.Service[0].attributes;
+  answers?.map((element)=>{
+    element.uuid = element.id;
+    element.questionId = element.attributeCode;
+    element.answer = [JSON.parse(element.value)];
+    element.citizenId = selecedSurveyData.Service.accountId;
+  })
   const formDefaultValues = {};
   answers?.map((ans) => {
     if (ans?.answer.length === 1) formDefaultValues[ans?.questionId] = ans?.answer[0];
@@ -48,7 +64,7 @@ const ShowSurvey = ({ location }) => {
   //   }
   // })
 
-  return <CitizenSurveyForm surveyData={surveyData} submitDisabled={true} formDisabled={true} formDefaultValues={formDefaultValues} />;
+  return <CitizenSurveyDisplayForm surveyData={surveyData} submitDisabled={true} formDisabled={true} formDefaultValues={formDefaultValues} />;
 };
 
 export default ShowSurvey;
