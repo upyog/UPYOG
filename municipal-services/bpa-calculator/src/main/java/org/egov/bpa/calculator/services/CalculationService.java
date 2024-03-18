@@ -186,6 +186,8 @@ public class CalculationService {
 				TaxHeadEstimate estimatee = new TaxHeadEstimate();
 				BigDecimal amount=new BigDecimal(entry.getValue());
 				taxhead=entry.getKey();
+				if(taxhead.equalsIgnoreCase("BPA_LESS_ADJUSMENT_PLOT"))
+					amount=amount.multiply(new BigDecimal(-1));
 				estimatee.setEstimateAmount(amount);
 				estimatee.setCategory(Category.FEE);
 				estimatee.setTaxHeadCode(taxhead);
