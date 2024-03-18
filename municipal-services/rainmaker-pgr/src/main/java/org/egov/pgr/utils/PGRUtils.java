@@ -70,6 +70,9 @@ public class PGRUtils {
 	@Value("${egov.common.masters.host}")
 	private String commonMasterHost;
 
+	@Value("${egov.common.masters.search.endpoint}")
+	private String commonMasterSearchEndpoint;
+
 	@Value("${egov.localization.host}")
 	private String localizationHost;
 
