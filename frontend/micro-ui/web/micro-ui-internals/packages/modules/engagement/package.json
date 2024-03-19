@@ -26,6 +26,7 @@
         "react-query": "3.6.1",
         "react-router-dom": "5.3.0",
         "react-time-picker": "4.2.1",
-        "recharts": "2.0.9"
+        "recharts": "2.0.9",
+        "microbundle-crl": "0.13.11"
     }
 }
