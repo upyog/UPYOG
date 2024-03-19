@@ -1,5 +1,5 @@
 {
-    "name": "@egovernments/digit-ui-module-engagement",
+    "name": "@upyog/digit-ui-module-engagement",
     "version": "1.7.2",
     "license": "MIT",
     "main": "dist/index.js",
