@@ -10,7 +10,6 @@ const getMessage = (mutation) => {
 
 const BannerPicker = (props) => {
   const { t } = useTranslation();
-  console.log(props.mutation,"props.mutation")
   return (
     <Banner
       message={props.mutation.isSuccess ? t(`SURVEY_FORM_CREATED`) : t("SURVEY_FORM_FAILURE")}

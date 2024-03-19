@@ -160,8 +160,6 @@ const CitizenSurveyDisplayForm = ({ surveyData, onFormSubmit,submitDisabled,form
 //         "qorder": 6
 //     }
 // ]
-  console.log(surveyQuestion, "surveyQuestion ooo")
-
 
   const {t} = useTranslation()
   if(isLoading){

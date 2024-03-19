@@ -11,7 +11,6 @@ const getMessage = (mutation) => {
 
 const BannerPicker = (props) => {
   const { t } = useTranslation();
-  console.log(props,"props")
   return (
     <Banner
       message={props.mutation.isSuccess ? t(`ENGAGEMENT_SURVEY_UPDATED`) : t("ENGAGEMENT_SURVEY_UPDATE_FAILURE")}

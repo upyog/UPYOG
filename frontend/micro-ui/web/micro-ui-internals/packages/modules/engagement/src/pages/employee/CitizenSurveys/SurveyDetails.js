@@ -99,7 +99,6 @@ const SurveyDetails = ({ location, match }) => {
   const { isLoading, data: surveyData } = Digit.Hooks.survey.useCfdefinitionsearchresult({ServiceDefinitionCriteria},{
     select: (data) => {
       const surveyObj = data?.ServiceDefinition?.[0];
-      console.log(surveyObj)
       return {
         uuid: surveyObj.code,
         title: surveyObj.code,

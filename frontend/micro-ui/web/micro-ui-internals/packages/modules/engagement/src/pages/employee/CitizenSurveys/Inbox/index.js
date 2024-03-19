@@ -201,7 +201,6 @@ const Inbox = ({ parentRoute }) => {
 
     // data.hasOwnProperty("") ? delete data?.[""] : null
     // dispatch({ action: "mutateSearchForm", data })
-    console.log(data,"data")
     dispatch({ action: "mutateSearchDefinationForm", data });
 
 
@@ -212,7 +211,6 @@ const Inbox = ({ parentRoute }) => {
     dispatch({ action: "mutateFilterForm", data });
   }
 
-  console.log("APPLE")
 
   const propsForSearchForm = { SearchFormFields, onSearchFormSubmit, searchFormDefaultValues: formState?.ServiceDefinitionCriteria?.code[0], resetSearchFormDefaultValues: searchFormDefaultValues, onSearchFormReset }
 

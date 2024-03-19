@@ -15,7 +15,6 @@ const useInboxMobileCardsData = ({parentRoute, table }) => {
             [t("EVENTS_POSTEDBY_LABEL")]: postedBy,
     }))
 
-    console.log(t("TL_COMMON_TABLE_COL_APP_NO"),"table")
 
 
     return ({ data:dataForMobileInboxCards, linkPrefix:`${parentRoute}/surveys/inbox/details/`, serviceRequestIdKey:t("CS_SURVEY_TITLE")})
