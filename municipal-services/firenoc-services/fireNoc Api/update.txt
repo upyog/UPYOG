@@ -1,0 +1,198 @@
+https://mseva-uat.lgpunjab.gov.in/firenoc-services/v1/_search?tenantId=pb.testing&applicationNumber=PB-FN-2024-03-19-083254
+
+response:
+{
+    "ResponseInfo": {
+        "apiId": "Mihy",
+        "ver": ".01",
+        "ts": null,
+        "resMsgId": "uief87324",
+        "msgId": "20170310130900|en_IN",
+        "status": "successful"
+    },
+    "FireNOCs": [
+        {
+            "id": "a990cac3-23d4-4023-95b9-ad52fa5fafa8",
+            "tenantId": "pb.testing",
+            "fireNOCDetails": {
+                "id": "d01f3136-cb3a-4be0-97b5-379353d07f2f",
+                "applicationNumber": "PB-FN-2024-03-19-083254",
+                "status": "PENDINGPAYMENT",
+                "fireNOCType": "NEW",
+                "firestationId": "FS_TESTING_01",
+                "applicationDate": 1710839334073,
+                "financialYear": "2019-20",
+                "action": "APPLY",
+                "channel": "COUNTER",
+                "noOfBuildings": "SINGLE",
+                "buildings": [
+                    {
+                        "id": "502d6d3c-096e-4e15-84d3-e6c1295f2c00",
+                        "tenantId": "pb.testing",
+                        "name": "abcd",
+                        "usageType": "HOTEL",
+                        "usageSubType": "STAR2",
+                        "uoms": [
+                            {
+                                "id": "48f089ca-f87c-42ed-aefe-81ad1fcc3393",
+                                "code": "HEIGHT_OF_BUILDING",
+                                "value": 3,
+                                "isActiveUom": true,
+                                "active": true
+                            },
+                            {
+                                "id": "b2608a01-9575-4e61-92ce-0ab36ef96929",
+                                "code": "NO_OF_FLOORS",
+                                "value": 2,
+                                "isActiveUom": false,
+                                "active": true
+                            },
+                            {
+                                "id": "7de4d812-1920-4195-ba62-d4f033b89552",
+                                "code": "HEIGHT_OF_BUILDING",
+                                "value": 3,
+                                "isActiveUom": false,
+                                "active": false
+                            },
+                            {
+                                "id": "362a3621-38ab-4fc6-b0ae-f452b2a191c8",
+                                "code": "NO_OF_FLOORS",
+                                "value": 2,
+                                "isActiveUom": false,
+                                "active": false
+                            }
+                        ],
+                        "applicationDocuments": [],
+                        "landArea": 100,
+                        "totalCoveredArea": 100,
+                        "parkingArea": 30
+                    }
+                ],
+                "propertyDetails": {
+                    "id": "5f72a9e7-9608-4695-913e-40d9d806cb82",
+                    "address": {
+                        "tenantId": "pb.testing",
+                        "city": "pb.jalandhar",
+                        "areaType": "Urban",
+                        "subDistrict": "pb.testing",
+                        "locality": {
+                            "code": "SC12"
+                        }
+                    }
+                },
+                "applicantDetails": {
+                    "ownerShipType": "INDIVIDUAL.SINGLEOWNER",
+                    "owners": [
+                        {
+                            "id": 1627994,
+                            "userName": "c2d7d2be-fb71-4415-8241-3df70a9a1c20",
+                            "useruuid": "9a050fa3-2cd4-41e2-8e24-00abad34c770",
+                            "active": true,
+                            "ownerType": "INDIVIDUAL.SINGLEOWNER",
+                            "relationship": "FATHER",
+                            "tenantId": "pb",
+                            "fatherOrHusbandName": "gfdg",
+                            "name": "meenakshi",
+                            "gender": "MALE",
+                            "mobileNumber": "8558972492",
+                            "emailId": "nagarmeenakshi27@gmail.com",
+                            "correspondenceAddress": "#12 SEC 33 A",
+                            "type": "CITIZEN",
+                            "accountLocked": false,
+                            "accountLockedDate": 0,
+                            "createdBy": 1485395,
+                            "lastModifiedBy": 1,
+                            "roles": [
+                                {
+                                    "code": "CITIZEN",
+                                    "name": "Citizen",
+                                    "tenantId": "pb"
+                                }
+                            ],
+                            "uuid": "9a050fa3-2cd4-41e2-8e24-00abad34c770",
+                            "createdDate": 1705582267000,
+                            "lastModifiedDate": 1710859365000,
+                            "dob": 951350400000,
+                            "pwdExpiryDate": 1713397867000
+                        }
+                    ],
+                    "additionalDetail": {
+                        "id": "dde426f4-8f5b-4348-ba4f-c4ff511d419f",
+                        "ownerAuditionalDetail": {
+                            "documents": [
+                                {
+                                    "tenantId": "pb.testing",
+                                    "fileStoreId": "62cfc6c7-e61a-4639-b5ab-123086ce9ec6",
+                                    "documentType": "OWNER.PROPERTY.OWNERSHIPPROOF"
+                                },
+                                {
+                                    "dropdown": {
+                                        "value": "OWNER.IDENTITYPROOF.AADHAAR"
+                                    },
+                                    "tenantId": "pb.testing",
+                                    "fileStoreId": "f75a6e57-c958-414f-a39c-3992b247fdb2",
+                                    "documentType": "OWNER.IDENTITYPROOF"
+                                },
+                                {
+                                    "tenantId": "pb.testing",
+                                    "fileStoreId": "4d45205e-12a1-41d6-80ac-5cb0ef7f8644",
+                                    "documentType": "OWNER.PROPERTY.FIREDRAWING"
+                                },
+                                {
+                                    "tenantId": "pb.testing",
+                                    "fileStoreId": "736de3e9-a8e1-4936-8d7f-ac46a9f63af0",
+                                    "documentType": "OWNER.PROPERTY.OWNERSHIPCHECKLIST"
+                                }
+                            ]
+                        }
+                    }
+                },
+                "additionalDetail": {
+                    "documents": [],
+                    "ownerAuditionalDetail": {
+                        "id": "dde426f4-8f5b-4348-ba4f-c4ff511d419f",
+                        "ownerAuditionalDetail": {
+                            "documents": [
+                                {
+                                    "tenantId": "pb.testing",
+                                    "fileStoreId": "62cfc6c7-e61a-4639-b5ab-123086ce9ec6",
+                                    "documentType": "OWNER.PROPERTY.OWNERSHIPPROOF"
+                                },
+                                {
+                                    "dropdown": {
+                                        "value": "OWNER.IDENTITYPROOF.AADHAAR"
+                                    },
+                                    "tenantId": "pb.testing",
+                                    "fileStoreId": "f75a6e57-c958-414f-a39c-3992b247fdb2",
+                                    "documentType": "OWNER.IDENTITYPROOF"
+                                },
+                                {
+                                    "tenantId": "pb.testing",
+                                    "fileStoreId": "4d45205e-12a1-41d6-80ac-5cb0ef7f8644",
+                                    "documentType": "OWNER.PROPERTY.FIREDRAWING"
+                                },
+                                {
+                                    "tenantId": "pb.testing",
+                                    "fileStoreId": "736de3e9-a8e1-4936-8d7f-ac46a9f63af0",
+                                    "documentType": "OWNER.PROPERTY.OWNERSHIPCHECKLIST"
+                                }
+                            ]
+                        }
+                    }
+                },
+                "auditDetails": {
+                    "createdBy": "8e9b3b23-78d8-4da7-8883-ab03b5b37bf2",
+                    "lastModifiedBy": "8e9b3b23-78d8-4da7-8883-ab03b5b37bf2",
+                    "createdTime": 1710839333980,
+                    "lastModifiedTime": 1710839565598
+                }
+            },
+            "auditDetails": {
+                "createdBy": "8e9b3b23-78d8-4da7-8883-ab03b5b37bf2",
+                "lastModifiedBy": "8e9b3b23-78d8-4da7-8883-ab03b5b37bf2",
+                "createdTime": 1710839333980,
+                "lastModifiedTime": 1710839565598
+            }
+        }
+    ]
+}
