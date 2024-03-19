@@ -1,0 +1,155 @@
+https://mseva-uat.lgpunjab.gov.in/firenoc-services/v1/_create?
+
+request:
+{"RequestInfo":{"apiId":"Mihy","ver":".01","action":"","did":"1","key":"","msgId":"20170310130900|en_IN","requesterId":"","authToken":"fff35dd5-6c56-4d79-8811-781e5e966688"},"FireNOCs":[{"fireNOCDetails":{"noOfBuildings":"SINGLE","fireNOCType":"NEW","propertyDetails":{"address":{"areaType":"Urban","city":"pb.jalandhar","subDistrict":"pb.testing","locality":{"code":"SC12"}}},"firestationId":"FS_TESTING_01","buildings":[{"name":"abcd","usageType":"HOTEL","usageSubType":"STAR2","landArea":100,"totalCoveredArea":100,"uomsMap":{"HEIGHT_OF_BUILDING":"3","NO_OF_FLOORS":"2"},"parkingArea":30,"uoms":[{"code":"HEIGHT_OF_BUILDING","value":3,"isActiveUom":true,"active":true},{"code":"NO_OF_FLOORS","value":2,"isActiveUom":false,"active":true}],"applicationDocuments":[]}],"applicantDetails":{"owners":[{"mobileNumber":"8558972492","emailId":"nagarmeenakshi27@gmail.com","correspondenceAddress":"#12 SEC 33 A","gender":"MALE","name":"meenakshi","dob":951416999000,"fatherOrHusbandName":"gfdg","relationship":"FATHER"}],"ownerShipMajorType":"INDIVIDUAL","ownerShipType":"INDIVIDUAL.SINGLEOWNER","additionalDetail":{"ownerAuditionalDetail":{"documents":[]}}},"action":"INITIATE","additionalDetail":{"documents":[]},"channel":"COUNTER","financialYear":"2019-20","tenantId":"pb.testing"},"tenantId":"pb.testing","isLegacy":false}]}
+
+response:
+{
+    "ResponseInfo": {
+        "apiId": "Mihy",
+        "ver": ".01",
+        "ts": null,
+        "resMsgId": "uief87324",
+        "msgId": "20170310130900|en_IN",
+        "status": "successful"
+    },
+    "FireNOCs": [
+        {
+            "fireNOCDetails": {
+                "noOfBuildings": "SINGLE",
+                "fireNOCType": "NEW",
+                "propertyDetails": {
+                    "address": {
+                        "areaType": "Urban",
+                        "city": "pb.jalandhar",
+                        "subDistrict": "pb.testing",
+                        "locality": {
+                            "code": "SC12"
+                        },
+                        "id": "5f72a9e7-9608-4695-913e-40d9d806cb82"
+                    }
+                },
+                "firestationId": "FS_TESTING_01",
+                "buildings": [
+                    {
+                        "name": "abcd",
+                        "usageType": "HOTEL",
+                        "usageSubType": "STAR2",
+                        "landArea": 100,
+                        "totalCoveredArea": 100,
+                        "uomsMap": {
+                            "HEIGHT_OF_BUILDING": "3",
+                            "NO_OF_FLOORS": "2"
+                        },
+                        "parkingArea": 30,
+                        "uoms": [
+                            {
+                                "code": "HEIGHT_OF_BUILDING",
+                                "value": 3,
+                                "isActiveUom": true,
+                                "active": true,
+                                "id": "7de4d812-1920-4195-ba62-d4f033b89552"
+                            },
+                            {
+                                "code": "NO_OF_FLOORS",
+                                "value": 2,
+                                "isActiveUom": false,
+                                "active": true,
+                                "id": "362a3621-38ab-4fc6-b0ae-f452b2a191c8"
+                            }
+                        ],
+                        "applicationDocuments": [],
+                        "id": "502d6d3c-096e-4e15-84d3-e6c1295f2c00"
+                    }
+                ],
+                "applicantDetails": {
+                    "owners": [
+                        {
+                            "mobileNumber": "8558972492",
+                            "emailId": "nagarmeenakshi27@gmail.com",
+                            "correspondenceAddress": "#12 SEC 33 A",
+                            "gender": "MALE",
+                            "name": "meenakshi",
+                            "dob": 951350400000,
+                            "fatherOrHusbandName": "gfdg",
+                            "relationship": "FATHER",
+                            "id": 1627994,
+                            "userName": "c2d7d2be-fb71-4415-8241-3df70a9a1c20",
+                            "salutation": null,
+                            "altContactNumber": null,
+                            "pan": null,
+                            "aadhaarNumber": null,
+                            "permanentAddress": null,
+                            "permanentCity": null,
+                            "permanentPinCode": null,
+                            "correspondenceCity": null,
+                            "correspondencePinCode": null,
+                            "active": true,
+                            "locale": null,
+                            "type": "CITIZEN",
+                            "accountLocked": false,
+                            "accountLockedDate": 0,
+                            "signature": null,
+                            "bloodGroup": null,
+                            "photo": null,
+                            "identificationMark": null,
+                            "createdBy": 1485395,
+                            "password": null,
+                            "otpReference": null,
+                            "lastModifiedBy": 1,
+                            "tenantId": "pb",
+                            "roles": [
+                                {
+                                    "code": "CITIZEN",
+                                    "name": "Citizen",
+                                    "tenantId": "pb"
+                                }
+                            ],
+                            "uuid": "9a050fa3-2cd4-41e2-8e24-00abad34c770",
+                            "createdDate": 1705582267000,
+                            "lastModifiedDate": 1710859134000,
+                            "pwdExpiryDate": 1713378067000,
+                            "ownerUUID": "52775a69-5490-4182-af49-62b534f8fc78"
+                        }
+                    ],
+                    "ownerShipMajorType": "INDIVIDUAL",
+                    "ownerShipType": "INDIVIDUAL.SINGLEOWNER",
+                    "additionalDetail": {
+                        "ownerAuditionalDetail": {
+                            "documents": []
+                        },
+                        "id": "dde426f4-8f5b-4348-ba4f-c4ff511d419f"
+                    }
+                },
+                "action": "INITIATE",
+                "additionalDetail": {
+                    "documents": [],
+                    "ownerAuditionalDetail": {
+                        "ownerAuditionalDetail": {
+                            "documents": []
+                        },
+                        "id": "dde426f4-8f5b-4348-ba4f-c4ff511d419f"
+                    }
+                },
+                "channel": "COUNTER",
+                "financialYear": "2019-20",
+                "tenantId": "pb.testing",
+                "id": "d01f3136-cb3a-4be0-97b5-379353d07f2f",
+                "applicationNumber": "PB-FN-2024-03-19-083254",
+                "applicationDate": 1710839334073,
+                "status": "INITIATED"
+            },
+            "tenantId": "pb.testing",
+            "isLegacy": false,
+            "id": "a990cac3-23d4-4023-95b9-ad52fa5fafa8",
+            "auditDetails": {
+                "createdBy": "8e9b3b23-78d8-4da7-8883-ab03b5b37bf2",
+                "lastModifiedBy": "",
+                "createdTime": 1710839333980,
+                "lastModifiedTime": 0
+            },
+            "dateOfApplied": 1710839334073
+        }
+    ]
+}
+
