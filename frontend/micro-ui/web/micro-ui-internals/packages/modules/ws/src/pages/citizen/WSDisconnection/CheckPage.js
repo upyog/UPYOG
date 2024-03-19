@@ -1,7 +1,7 @@
 import {
     Card, CardHeader, CardSubHeader, CardText,
     CitizenInfoLabel, LinkButton, Row, StatusTable, SubmitBar, EditIcon, Header, CardSectionHeader, Loader
-  } from "@egovernments/digit-ui-react-components";
+  } from "@upyog/digit-ui-react-components";
   import React, { useState } from "react";
   import { useTranslation } from "react-i18next";
   import { useHistory, useRouteMatch, Link } from "react-router-dom";
@@ -144,7 +144,7 @@ import { convertDateToEpoch, convertEpochToDate, createPayloadOfWSDisconnection,
         <Row className="border-none" label={t("WS_DISCONNECTION_TYPE")} text={t(value.WSDisconnectionForm.type.value.i18nKey)}/>
         <Row className="border-none" label={t("WS_DISCONNECTION_PROPOSED_DATE")} text={convertEpochToDate(convertDateToEpoch(value.WSDisconnectionForm.date))}/>
        {value.WSDisconnectionForm.type.value.code == "Temporary"? <Row className="border-none" label={t("WS_DISCONNECTION_PROPOSED_END_DATE")} text={convertEpochToDate(convertDateToEpoch(value.WSDisconnectionForm.endDate))}/>:""}
-        <Row className="border-none" label={t("WS_DISCONNECTION_REASON")} text={value.WSDisconnectionForm.reason.value}/>         
+        <Row className="border-none" label={t("WS_DISCONNECTION_REASON")} text={t(value.WSDisconnectionForm.reason.value.i18nKey)}/>         
       </StatusTable>
     </Card>
  

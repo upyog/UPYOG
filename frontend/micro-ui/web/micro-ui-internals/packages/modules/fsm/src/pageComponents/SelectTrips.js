@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { getVehicleType } from "../utils";
-import { LabelFieldPair, CardLabel, TextInput, Dropdown, Loader, CardLabelError } from "@egovernments/digit-ui-react-components";
+import { LabelFieldPair, CardLabel, TextInput, Dropdown, Loader, CardLabelError } from "@upyog/digit-ui-react-components";
 import { useLocation, useParams } from "react-router-dom";
 
 const SelectTrips = ({ t, config, onSelect, formData = {}, userType, styles, FSMTextFieldStyle }) => {
@@ -61,14 +61,14 @@ const SelectTrips = ({ t, config, onSelect, formData = {}, userType, styles, FSM
       type: "text",
       name: "distancefromroad",
       default: formData?.tripData?.distancefromroad,
-      //isMandatory: true,
+      isMandatory: true,
     },
     {
       label: "ES_NEW_APPLICATION_ROAD_WIDTH",
       type: "text",
       name: "roadWidth",
       default: formData?.tripData?.roadWidth,
-      //isMandatory: true,
+      isMandatory: true,
     }
   ];
 

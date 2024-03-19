@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FormStep, TextInput, LabelFieldPair, CardLabel, WrapUnMaskComponent } from "@egovernments/digit-ui-react-components";
+import { FormStep, TextInput, LabelFieldPair, CardLabel, WrapUnMaskComponent } from "@upyog/digit-ui-react-components";
 import { useForm, Controller } from "react-hook-form";
 import _ from "lodash";
 import Timeline from "../components/TLTimelineInFSM";
@@ -39,6 +39,7 @@ const SelectStreet = ({ t, config, onSelect, userType, formData, formState, setE
         label: "PT_PROPERTY_ADDRESS_STREET_NAME",
         type: "text",
         name: "street",
+        isMandatory: true,
         validation: {
           pattern: "[a-zA-Z0-9 ]{1,255}",
           // maxlength: 256,
@@ -49,6 +50,7 @@ const SelectStreet = ({ t, config, onSelect, userType, formData, formState, setE
         label: "PT_PROPERTY_ADDRESS_HOUSE_NO",
         type: "text",
         name: "doorNo",
+        isMandatory: true,
         validation: {
           pattern: "[A-Za-z0-9#,/ -]{1,63}",
           // maxlength: 256,
@@ -134,7 +136,7 @@ const SelectStreet = ({ t, config, onSelect, userType, formData, formState, setE
         <LabelFieldPair key={index}>
           <CardLabel className="card-label-smaller">
             {t(input.label)}
-            {config.isMandatory ? " * " : null}
+            {input.isMandatory ? " * " : null}
           </CardLabel>
           <div className="field">
             <Controller
@@ -196,10 +198,11 @@ const SelectStreet = ({ t, config, onSelect, userType, formData, formState, setE
       {window.location.href.includes("/tl") ? <Timeline currentStep={2} /> : <Timeline currentStep={1} flow="APPLY" />}
       <FormStep
         config={{ ...config, inputs }}
+        isMandatory={true}
         _defaultValues={{ street: formData?.address.street, doorNo: formData?.address.doorNo }}
         onChange={handleSkip}
         onSelect={(data) => onSelect(config.key, data)}
-        isDisabled={doorNo || street ? false : true}
+        isDisabled={doorNo && street ? false : true}
         t={t}
       />
     </React.Fragment>

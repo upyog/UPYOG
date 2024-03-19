@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
-import { CardLabel, LabelFieldPair, Dropdown, TextInput, LinkButton, CardLabelError, MobileNumber, DatePicker, Loader, CardSectionHeader } from "@egovernments/digit-ui-react-components";
+import { CardLabel, LabelFieldPair, Dropdown, TextInput, LinkButton, CardLabelError, MobileNumber, DatePicker, Loader, CardSectionHeader } from "@upyog/digit-ui-react-components";
 import { useForm, Controller, useWatch } from "react-hook-form";
 import * as func from "../pages/employee/Utils/Category";
 import { sortDropdownNames } from "../pages/employee/Utils/Sortbyname";
@@ -11,6 +11,7 @@ import { getUniqueItemsFromArray, commonTransform, stringReplaceAll,getPattern, 
 const createConsumerDetails = () => ({
   ConsumerName: "",
   mobileNumber: "",
+  emailId:"",
   // key: Date.now(),
 });
 
@@ -199,6 +200,28 @@ const OwnerForm1 = (_props) => {
             </div>
           </LabelFieldPair>  
           <CardLabelError style={errorStyle}>{localFormState.touched.mobileNumber ? errors?.mobileNumber?.message : ""}</CardLabelError>
+          <LabelFieldPair>  
+          <CardLabel style={{paddingTop:"10px"}} className="card-label-smaller">{`${t("UC_EMAIL_ID")}`}</CardLabel>
+          <div className="field">
+          <Controller
+          control={control}
+          name="emailId"
+          defaultValue={consumerdetail?.emailId}
+          rules={{  validate: { pattern: (val) => (/[A-Za-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/.test(val) ? true : t("CS_ADDCOMPLAINT_EMAIL_ERROR")) } }}
+          render={(props) => (
+            <TextInput
+              t={t}
+              isMandatory={false}
+              value={props.value}
+              onChange={(e) => {
+                props.onChange(e.target.value)
+              }}
+              disable={isEdit}
+            />
+            )}
+            />
+            </div>
+            </LabelFieldPair>  
       </div>
       </div>
     </React.Fragment>

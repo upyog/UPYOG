@@ -10,7 +10,7 @@ import {
   RemoveableTag,
   Toast,
   Loader,
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 import React, { useEffect, useState, useMemo } from "react";
 import { render } from "react-dom";
 import { useTranslation } from "react-i18next";
@@ -162,6 +162,7 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
         // Additonal details
         payload.additionalDetails = {};
         if (formData?.data?.holdingNumber) payload.additionalDetails.holdingNo = formData?.data?.holdingNumber;
+        if (formData?.data?.boundaryWallLength) payload.additionalDetails.boundaryWallLength = formData?.data?.boundaryWallLength;
         if (formData?.data?.registrationDetails) payload.additionalDetails.registrationDetails = formData?.data?.registrationDetails;
         if (formData?.data?.applicationType) payload.additionalDetails.applicationType = formData?.data?.applicationType;
         if (formData?.data?.serviceType) payload.additionalDetails.serviceType = formData?.data?.serviceType;

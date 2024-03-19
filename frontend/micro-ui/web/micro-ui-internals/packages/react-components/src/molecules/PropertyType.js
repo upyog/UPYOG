@@ -1,6 +1,6 @@
 import React from "react";
 import { Loader } from "../atoms/Loader";
-import {Dropdown} from "@egovernments/digit-ui-react-components";;
+import {Dropdown} from "@upyog/digit-ui-react-components";;
 import { useTranslation } from "react-i18next";
 
 const PropertyType = ({ selectLocality, keepNull, selected, optionCardStyles, style, disable, disableLoader }) => {
