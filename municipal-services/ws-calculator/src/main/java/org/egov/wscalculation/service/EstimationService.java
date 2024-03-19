@@ -411,6 +411,10 @@ public class EstimationService {
 			meterCost = new BigDecimal(feeObj.getAsNumber(WSCalculationConstant.METER_COST_CONST).toString());
 		}
 		BigDecimal roadCuttingCharge = BigDecimal.ZERO;
+
+		BigDecimal roadCuttingChargeBerm = BigDecimal.ZERO;
+		BigDecimal roadCuttingChargeBMPrefixRoad = BigDecimal.ZERO;
+
 		BigDecimal usageTypeCharge = BigDecimal.ZERO;
 
 		if(criteria.getWaterConnection().getRoadCuttingInfo() != null){
@@ -419,7 +423,11 @@ public class EstimationService {
 				if (roadCuttingInfo.getRoadType() != null)
 					singleRoadCuttingCharge = getChargeForRoadCutting(masterData, roadCuttingInfo.getRoadType(),
 							roadCuttingInfo.getRoadCuttingArea());
-
+				if(roadCuttingInfo.getRoadType().equalsIgnoreCase("BERMCUTTINGKATCHA"))
+					roadCuttingChargeBerm=singleRoadCuttingCharge;
+				else if(roadCuttingInfo.getRoadType().equalsIgnoreCase("BMPREMIXROAD"))
+					roadCuttingChargeBMPrefixRoad=singleRoadCuttingCharge;
+				
 				BigDecimal singleUsageTypeCharge = BigDecimal.ZERO;
 				if (roadCuttingInfo.getRoadCuttingArea() != null)
 					singleUsageTypeCharge = getUsageTypeFee(masterData,
@@ -452,9 +460,17 @@ public class EstimationService {
 		if (!(otherCharges.compareTo(BigDecimal.ZERO) == 0))
 			estimates.add(TaxHeadEstimate.builder().taxHeadCode(WSCalculationConstant.WS_OTHER_CHARGE)
 					.estimateAmount(otherCharges.setScale(2, 2)).build());
-		if (!(roadCuttingCharge.compareTo(BigDecimal.ZERO) == 0))
-			estimates.add(TaxHeadEstimate.builder().taxHeadCode(WSCalculationConstant.WS_ROAD_CUTTING_CHARGE)
-					.estimateAmount(roadCuttingCharge.setScale(2, 2)).build());
+//		if (!(roadCuttingCharge.compareTo(BigDecimal.ZERO) == 0))
+//			estimates.add(TaxHeadEstimate.builder().taxHeadCode(WSCalculationConstant.WS_ROAD_CUTTING_CHARGE)
+//					.estimateAmount(roadCuttingCharge.setScale(2, 2)).build());
+		if (!(roadCuttingChargeBerm.compareTo(BigDecimal.ZERO) == 0))
+			estimates.add(TaxHeadEstimate.builder().taxHeadCode(WSCalculationConstant.WS_ROAD_CUTTING_CHARGE_BREM)
+					.estimateAmount(roadCuttingChargeBerm.setScale(2, 2)).build());
+		
+		if (!(roadCuttingChargeBMPrefixRoad.compareTo(BigDecimal.ZERO) == 0))
+			estimates.add(TaxHeadEstimate.builder().taxHeadCode(WSCalculationConstant.WS_ROAD_CUTTING_CHARGE_BMPREMIXROAD)
+					.estimateAmount(roadCuttingChargeBMPrefixRoad.setScale(2, 2)).build());
+
 		if (!(usageTypeCharge.compareTo(BigDecimal.ZERO) == 0))
 			estimates.add(TaxHeadEstimate.builder().taxHeadCode(WSCalculationConstant.WS_ONE_TIME_FEE)
 					.estimateAmount(usageTypeCharge.setScale(2, 2)).build());
