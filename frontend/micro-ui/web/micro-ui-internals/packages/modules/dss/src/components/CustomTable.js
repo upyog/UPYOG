@@ -196,7 +196,7 @@ const CustomTable = ({ data = {}, onSearch, setChartData, setChartDenomination, 
     return t(code);
   };
 
-  const getDrilldownCharts = (value, filterKey, label, filters = []) => {
+  const getDrilldownCharts = (value, filterKey, label, filters = []) => {   
     if (response?.responseData?.drillDownChartId && response?.responseData?.drillDownChartId !== "none") {
       let currentValue = value;
       if (filterKey === "tenantId") {
@@ -241,9 +241,9 @@ const CustomTable = ({ data = {}, onSearch, setChartData, setChartDenomination, 
     return (originalRow, rowIndex, columns) => {
       const cellValue = originalRow?.[name];
       if (plot?.symbol === "amount") {
-        return typeof cellValue === "object"
-          ? { value: Digit.Utils.dss.formatter(convertDenomination(cellValue?.value), "number", "Lac", true, t, isFinance ? true : false), insight: cellValue?.insight }
-          : String(Digit.Utils.dss.formatter(convertDenomination(cellValue), "number", "Lac", true, t, isFinance ? true : false));
+        return typeof cellValue === "object" 
+          ? { value: Digit.Utils.dss.formatter(convertDenomination(cellValue?.value), "number", "Lac", true, t, isFinance ? true : true), insight: cellValue?.insight }
+          : String(Digit.Utils.dss.formatter(convertDenomination(cellValue), "number", "Lac", true, t, isFinance ? true : true));
       } else if (plot?.symbol === "number" || plot?.symbol === "percentage") {
         return typeof cellValue === "object"
           ? { value: Digit.Utils.dss.formatter(cellValue?.value, "number", "Lac", true, t), insight: cellValue?.insight }
@@ -299,6 +299,98 @@ if(chartKey == "xptFyByStatesv3")
         {
             "label": "",
             "name": "State",
+            "value": null,
+            "strValue": null,
+            "symbol": "text"
+        },
+        {
+            "label": null,
+            "name": "2021-22",
+            "value": "",
+            "strValue": null,
+            "symbol": "number"
+        },
+        {
+            "label": null,
+            "name": "2022-23",
+            "value": "",
+            "strValue": null,
+            "symbol": "number"
+        },
+        {
+            "label": null,
+            "name": "2023-24",
+            "value": "",
+            "strValue": null,
+            "symbol": "number"
+        }
+    ]
+  }
+  
+}else if (chartKey == "xptFyByUlbv3")
+{
+  columns= {
+    "headerName": "",
+    "headerValue": 5,
+    "headerSymbol": null,
+    "insight": null,
+    "plots": [
+        {
+            "label": "5",
+            "name": "S.N.",
+            "value": null,
+            "strValue": null,
+            "symbol": "text"
+        },
+        {
+            "label": "",
+            "name": "Ulb",
+            "value": null,
+            "strValue": null,
+            "symbol": "text"
+        },
+        {
+            "label": null,
+            "name": "2021-22",
+            "value": "",
+            "strValue": null,
+            "symbol": "number"
+        },
+        {
+            "label": null,
+            "name": "2022-23",
+            "value": "",
+            "strValue": null,
+            "symbol": "number"
+        },
+        {
+            "label": null,
+            "name": "2023-24",
+            "value": "",
+            "strValue": null,
+            "symbol": "number"
+        }
+    ]
+  }
+}
+else if (chartKey == "xptFyByWardv3")
+{
+  columns= {
+    "headerName": "",
+    "headerValue": 5,
+    "headerSymbol": null,
+    "insight": null,
+    "plots": [
+        {
+            "label": "5",
+            "name": "S.N.",
+            "value": null,
+            "strValue": null,
+            "symbol": "text"
+        },
+        {
+            "label": "",
+            "name": "Ward",
             "value": null,
             "strValue": null,
             "symbol": "text"

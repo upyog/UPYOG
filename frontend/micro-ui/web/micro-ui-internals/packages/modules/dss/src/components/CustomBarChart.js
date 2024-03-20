@@ -159,16 +159,13 @@ const CustomBarChart = ({
     filters: value?.filters,
     moduleLevel: value?.moduleLevel || moduleCode,
   });
-  console.log("hhhhhhhh",data)
   const chartData = useMemo(() => {
     if (!response) return null;
-    console.log("ressssssssss",response?.responseData)
     let possibleValues = ["pttopPerformingStatesRevenue","ptbottomPerformingStatesRevenue","tltopPerformingStatesRevenue","tlbottomPerformingStatesRevenue","obpstopPerformingStatesRevenue","obpsbottomPerformingStatesRevenue","noctopPerformingStatesRevenue","nocbottomPerformingStatesRevenue","wstopPerformingStatesRevenue","wsbottomPerformingStatesRevenue","OverviewtopPerformingStates","OverviewbottomPerformingStates"]
    
     setChartDenomination("number");
     const dd = response?.responseData?.data?.map((bar) => {
       let plotValue = bar?.plots?.[0].value || 0;
-      console.log("barrrrrrr",plotValue,data)
       let type =""
       if(possibleValues.includes(data?.id))
       {
