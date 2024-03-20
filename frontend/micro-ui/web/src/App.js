@@ -3,7 +3,7 @@ import React from "react";
 import {
   initPGRComponents,
   PGRReducers,
-} from "@egovernments/digit-ui-module-pgr";
+} from "@upyog/digit-ui-module-pgr";
 import { initFSMComponents } from "@upyog/digit-ui-module-fsm";
 import {
   PTModule,
@@ -11,7 +11,7 @@ import {
   PTComponents,
 } from "@upyog/digit-ui-module-pt";
 import { MCollectModule, MCollectLinks, initMCollectComponents } from "@egovernments/digit-ui-module-mcollect";
-import { initDSSComponents } from "@egovernments/digit-ui-module-dss";
+import { initDSSComponents } from "@upyog/digit-ui-module-dss";
 import {
   PaymentModule,
   PaymentLinks,
