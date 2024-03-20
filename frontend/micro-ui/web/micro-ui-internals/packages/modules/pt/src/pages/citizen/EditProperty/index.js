@@ -1,5 +1,5 @@
 // import React from "react";
-import { Loader } from "@egovernments/digit-ui-react-components";
+import { Loader } from "@upyog/digit-ui-react-components";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
@@ -449,6 +449,7 @@ const EditProperty = ({ parentRoute }) => {
       }
       sessionStorage.setItem("propertyInitialObject", JSON.stringify({ ...application }));
       let propertyEditDetails = getPropertyEditDetails(application);
+      console.log("propertyEditDetails",propertyEditDetails)
       setParams({ ...params, ...propertyEditDetails });
     }
   }, [data]);

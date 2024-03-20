@@ -16,15 +16,17 @@ const ulbCamel = (ulb) => ulb.toLowerCase().split(" ").map(capitalize).join(" ")
 
 const getOwner = (application, t, customTitle) => {
   let owners = [];
-  if(customTitle && customTitle.includes("TRANSFEROR"))
+  if(customTitle && customTitle.includes("TRANSFEROR")){
   if (application?.isTransferor && application?.transferorDetails) {
-    application.ownershipCategory = application?.transferorDetails?.ownershipCategory;
-    owners = [...(application?.transferorDetails?.owners) || []];
+    application.ownershipCategory = application?.transferorDetails?.ownershipCategory
+  } else if(application?.ownersInit){
+    owners = [...(application?.ownersInit) || []];
   } else {
     owners = [...(application?.owners.filter((owner) => owner.status == "INACTIVE") || [])];
-  }
-  else
+  }}
+  else{
   owners = [...(application?.owners.filter((owner) => owner.status == "ACTIVE") || [])];
+  }
   if (application?.ownershipCategory == "INDIVIDUAL.SINGLEOWNER") {
     return {
       title: t(customTitle || "PT_OWNERSHIP_INFO_SUB_HEADER"),
@@ -43,7 +45,7 @@ const getOwner = (application, t, customTitle) => {
     let values = [];
     owners.map((owner) => {
       let doc = [
-        { title: t("PT_OWNERSHIP_INFO_NAME"), value: owner?.name || t("CS_NA") },
+                { title: t("PT_OWNERSHIP_INFO_NAME"), value: owner?.name || t("CS_NA") },
         { title: t("PT_OWNERSHIP_INFO_MOBILE_NO"), value: owner?.mobileNumber || t("CS_NA") },
         { title: t("PT_SEARCHPROPERTY_TABEL_GUARDIANNAME"), value: owner?.fatherOrHusbandName || t("CS_NA") },
         { title: t("PT_OWNERSHIP_INFO_GENDER"), value: t(owner?.gender) || t("CS_NA") },
@@ -52,13 +54,13 @@ const getOwner = (application, t, customTitle) => {
         { title: t("PT_OWNERSHIP_INFO_USER_CATEGORY"), value: t(getPropertyOwnerTypeLocale(owner?.ownerType)) || t("CS_NA") },
         { title: t("PT_OWNERSHIP_INFO_CORR_ADDR"), value: owner?.permanentAddress || t("CS_NA") },
       ];
-      values.push(...doc);
+         values.push(...doc);
     });
     return {
       title: t(customTitle || "PT_OWNERSHIP_INFO_SUB_HEADER"),
       values: values,
     };
-  } else if (application?.ownershipCategory.includes("INSTITUTIONAL")) {
+    } else if (application?.ownershipCategory.includes("INSTITUTIONAL")) {
     return {
       title: t("PT_OWNERSHIP_INFO_SUB_HEADER"),
       values: [
@@ -70,6 +72,7 @@ const getOwner = (application, t, customTitle) => {
         { title: t("PT_OWNERSHIP_INFO_TEL_PHONE_NO"), value: owners[0]?.altContactNumber || t("CS_NA") },
         { title: t("PT_OWNERSHIP_INFO_CORR_ADDR"), value: owners[0]?.correspondenceAddress || t("CS_NA") },
         { title: t("PT_FORM3_OWNERSHIP_TYPE"), value: t(application?.ownershipCategory) || t("CS_NA") },
+        { title: t("PT_OWNERSHIP_INFO_EMAIL_ID"), value: owners[0]?.emailId || t("CS_NA") },
       ],
     };
   } else {
@@ -91,6 +94,8 @@ const getAssessmentInfo = (application, t) => {
     { title: t("PT_ASSESMENT_INFO_NO_OF_FLOOR"), value: t(application?.noOfFloors) || t("CS_NA") },
     { title: t("PT_ASSESMENT_INFO_ELECTRICITY_ID"), value: t(application?.additionalDetails?.electricity) || t("CS_NA") },
     { title: t("PT_ASSESMENT_INFO_ELECTRICITY_UID"), value: t(application?.additionalDetails?.uid) || t("CS_NA") },
+    { title:  t("PT_FORM2_PROPERTY_TYPE"),value: t(application?.additionalDetails?.structureType.i18nKey) || t("CS_NA")},
+     {title:  t("PT_FORM2_AGE_OF_PROPERTY"),value: t(application?.additionalDetails?.ageOfProperty.code)|| t("CS_NA")},
   ];
   application.units = application?.units?.filter((unit) => unit.active == true) || [];
   let flrno,
@@ -131,14 +136,6 @@ const getAssessmentInfo = (application, t) => {
       {
         title: (flrno = unit?.floorNo) > -3 ? t("PT_FORM2_BUILT_AREA") : "",
         value: (flrno = unit?.floorNo) > -3 ? t(unit?.constructionDetail?.builtUpArea) || t("CS_NA") : "",
-      },
-      {
-        title: (flrno = unit?.floorNo) > -3 ? t("PT_FORM2_PROPERTY_TYPE") : "",
-        value: (flrno = unit?.floorNo) > -3 ? t(application?.additionalDetails?.unit?.[0]?.structureType) || t(unit.additionalDetails.structureType) || t("CS_NA") : "",
-      },
-      {
-        title: (flrno = unit?.floorNo) > -3 ? t("PT_FORM2_AGE_OF_PROPERTY") : "",
-        value: (flrno = unit?.floorNo) > -3 ? t(application?.additionalDetails?.unit?.[0]?.ageOfProperty) ||t(unit.additionalDetails.ageOfProperty)|| t("CS_NA") : "",
       },
       {
         title:
@@ -284,12 +281,12 @@ const getPTAcknowledgementData = async (application, tenantInfo, t) => {
     name: `${t(tenantInfo?.i18nKey)} ${ulbCamel(t(`ULBGRADE_${tenantInfo?.city?.ulbGrade.toUpperCase().replace(" ", "_").replace(".", "_")}`))}`,
     email: tenantInfo?.emailId,
     phoneNumber: tenantInfo?.contactNumber,
-    heading: t("PT_ACKNOWLEDGEMENT"),
+    heading: t("NEW_PROPERTY_REGISTRATION"),
+    applicationNumber:application?.acknowldgementNumber,
     details: [
       {
         title: t("CS_TITLE_APPLICATION_DETAILS"),
         values: [
-          { title: t("PT_APPLICATION_NO"), value: application?.acknowldgementNumber },
           { title: t("PT_PROPERRTYID"), value: application?.propertyId },
           {
             title: t("CS_APPLICATION_DETAILS_APPLICATION_DATE"),

@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useHistory, useParams } from "react-router-dom";
 import {
@@ -13,7 +13,7 @@ import {
   LinkButton,
   Loader,
   Rating,
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 import _ from "lodash";
 import TLCaption from "./TLCaption";
 
@@ -24,7 +24,7 @@ export const ApplicationTimeline = (props) => {
     id: props.id,
     moduleCode: "FSM",
   });
-
+  const [showAllTimeline, setShowAllTimeline]=useState(false);
   const getTimelineCaptions = (checkpoint) => {
     const __comment = checkpoint?.comment?.split("~");
     const reason = __comment ? __comment[0] : null;
@@ -124,7 +124,9 @@ export const ApplicationTimeline = (props) => {
   if (isLoading) {
     return <Loader />;
   }
-
+  const toggleTimeline=()=>{
+    setShowAllTimeline((prev)=>!prev);
+  }
 
   let deepCopy = _.cloneDeep( data )
 let index1 =0
@@ -152,7 +154,7 @@ deepCopy?.timeline.map((check,index) => {
           ) : (
             <ConnectingCheckPoints>
               {data?.timeline &&
-                data?.timeline.map((checkpoint, index, arr) => {
+                data?.timeline.slice(0,showAllTimeline? data.timeline.length:2).map((checkpoint, index, arr) => {
                   return (
                     <React.Fragment key={index}>
                       <CheckPoint
@@ -165,6 +167,10 @@ deepCopy?.timeline.map((check,index) => {
                   );
                 })}
             </ConnectingCheckPoints>
+          )}
+          {data?.timeline?.length > 2 && (
+            <LinkButton label={showAllTimeline? t("COLLAPSE") : t("VIEW_TIMELINE")} onClick={toggleTimeline}>
+            </LinkButton>
           )}
         </Fragment>
       )}
