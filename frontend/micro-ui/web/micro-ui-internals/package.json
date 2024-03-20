@@ -6,7 +6,8 @@
     "packages/libraries",
     "packages/css",
     "example",
-    "packages/react-components"  
+    "packages/react-components" ,
+    "packages/modules/*"  
   ],
   "license": "MIT",
   "private": true,
